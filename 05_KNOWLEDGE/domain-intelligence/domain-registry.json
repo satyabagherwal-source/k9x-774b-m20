@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T23:02:12.502Z",
-  "total_records": 2040,
+  "last_updated": "2026-11-19T23:16:19.075Z",
+  "total_records": 2041,
   "domains": {
     "A": {
       "total": 17,
@@ -57,7 +57,7 @@
       ]
     },
     "D": {
-      "total": 840,
+      "total": 841,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -898,7 +898,8 @@
         "DOM-D-6FA503EE",
         "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-",
         "DOM-D-2BF9F19D",
-        "DOM-D-9D38D4A5"
+        "DOM-D-9D38D4A5",
+        "DOM-D-34CA9B71"
       ]
     },
     "E": {
@@ -8773,8 +8774,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "96f8b06df28d8c970dce88df943366409224c49d07e8ea2dfbc769e46f60cb9d",
-      "created_at": "2026-11-19T22:19:53.936Z"
+      "content_hash": "820f2766d02b775f1c4581c6a846630efdbe8b19b788fb49c7e3927b7cbb2646",
+      "created_at": "2026-11-19T23:16:19.075Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12990,8 +12991,8 @@
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "repository": "doobidoo/mcp-memory-service",
-      "content_hash": "d9622622023847262672dbe36e6bd7bb42fdcc723a55161e762c4e42ea5fe3a5",
-      "created_at": "2026-11-18T17:01:53.336Z"
+      "content_hash": "fd2a48311fb56d0a1385771b1da1dc930ff157a20c4e8cf5d6fbb17176fd97b3",
+      "created_at": "2026-11-19T23:15:46.919Z"
     },
     "DOM-D-0BBA6E16": {
       "record_id": "DOM-D-0BBA6E16",
@@ -15389,8 +15390,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "40b7953b2ad3b16ca097f83e8ab99a8190925811f36da2bae327690a3d3eb1b8",
-      "created_at": "2026-11-19T16:07:24.643Z"
+      "content_hash": "28ef055748c1a4b60496559d1fe5cdd1f85859dd68f76b4775c5f92327f57789",
+      "created_at": "2026-11-19T23:15:43.326Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -19938,8 +19939,8 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-learnings-architecture-intelligence-projectdiscovery-nuc.md",
       "repository": "projectdiscovery-nuclei-learnings",
-      "content_hash": "7fe2c04238d5b8edb072632966b5698ab4e9ed63ba3ae729e9e5a090067b26fd",
-      "created_at": "2026-11-18T23:26:30.686Z"
+      "content_hash": "ae9d86b10c1e4710626235f848ac163a653a82972b349298b83dd8d884910f26",
+      "created_at": "2026-11-19T23:16:17.232Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants",
@@ -21706,8 +21707,8 @@
       "title": "Technical Construction Intelligence: doobidoo-mcp-memory-service-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-learnings-technical-construction-intelligence-doobid.md",
       "repository": "doobidoo-mcp-memory-service-learnings",
-      "content_hash": "c674eabd3282d2d0ed1496ff2c3907cbf3b74380fe143470efab97acb4f30ffc",
-      "created_at": "2026-11-17T01:54:53.893Z"
+      "content_hash": "b233341be2cefb1e1c2028bc9c0a75cbd181b391b844093de9a99a40b54ff5df",
+      "created_at": "2026-11-19T23:16:17.980Z"
     },
     "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core",
@@ -34183,6 +34184,48 @@
       "repository": "burntsushi-ripgrep-learnings",
       "content_hash": "abb66cc2ca087b117e3153f4d9adc2dae5b952e44f2decf60c79057bc51f0d87",
       "created_at": "2026-11-19T23:02:10.636Z"
+    },
+    "DOM-D-34CA9B71": {
+      "record_id": "DOM-D-34CA9B71",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): projectdiscovery/nuclei",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  \n> **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  \n> **Source Version**: `b1d47824`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-s",
+      "content_hash": "9c6b1ff72c76ef624335597a960da2fcd99301088ff3943b234b8ae32c7881aa",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  \n> **Source**: github ([https://github.com/pr -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  \n> **Source**: github ([https://github.com/pr",
+      "provenance": {
+        "source_uri": "project://projectdiscovery-nuclei/projectdiscovery-nuclei-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T23:15:49.951Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (projectdiscovery-nuclei)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of projectdiscovery-nuclei"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T23:16:16.937Z"
     }
   }
 }

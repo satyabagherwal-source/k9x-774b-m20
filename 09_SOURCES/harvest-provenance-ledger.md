@@ -11434,3 +11434,6 @@ Every entry in this ledger must capture:
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `3cd5f717` | Multi-dimensional audit evidence | 2026-11-19T22:36:17.989Z |
 | `learn-github-burntsushi-ripgrep` | `https://github.com/BurntSushi/ripgrep` | `6670aede` | Multi-dimensional audit evidence | 2026-11-19T22:56:58.341Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `f752313f` | Multi-dimensional audit evidence | 2026-11-19T23:02:06.551Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `b1d47824` | Multi-dimensional audit evidence | 2026-11-19T23:15:43.133Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `bbc14454` | Multi-dimensional audit evidence | 2026-11-19T23:15:46.571Z |
+| `learn-dom-d-34ca9b71` | `project://projectdiscovery-nuclei` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | 2026-11-19T23:16:16.961Z |

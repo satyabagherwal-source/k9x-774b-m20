@@ -11401,3 +11401,6 @@
 | `CYCLE-20261119-QABL` | `2026-11-19T22:36:17.985Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9463` | Yes (`f0a0f197...`) |
 | `CYCLE-20261119-GVDS` | `2026-11-19T22:56:58.336Z` | `BurntSushi/ripgrep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9464` | Yes (`5c2a5c0b...`) |
 | `CYCLE-20261119-NH77` | `2026-11-19T23:02:06.547Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9465` | Yes (`015eb68c...`) |
+| `CYCLE-20261119-4ZA0` | `2026-11-19T23:15:43.128Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | Yes (`047d377e...`) |
+| `CYCLE-20261119-51XJ` | `2026-11-19T23:15:46.567Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9466` | Yes (`af512c45...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T23:16:16.961Z` | `projectdiscovery-nuclei` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-34CA9B71` [Domain D] | Yes (`9c6b1ff7...`) |

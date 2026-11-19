@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T23:02:06.562Z",
+  "last_updated": "2026-11-19T23:15:46.580Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "dca1e9bc0b76fdfb601c19ac74b2b52235fe3af9d32fe922968e0a28631811cc",
-      "verified_at": "2026-11-18T17:01:52.881Z",
+      "content_hash": "af512c456cd655a4382669d5a3054a3a4f8939f8671ef632a46dd32b46e5d5aa",
+      "verified_at": "2026-11-19T23:15:46.579Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T17:01:52.881Z"
+      "last_updated": "2026-11-19T23:15:46.579Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "08872929a3503c167a57b92d8fc1882ff30f54961707ab22f7183b1a675dd67a",
-      "verified_at": "2026-11-19T16:07:24.292Z",
+      "content_hash": "047d377ecf27b8975c2ff6c69e72210a092c6648ae646f4b0670a5b973038fbb",
+      "verified_at": "2026-11-19T23:15:43.141Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:07:24.292Z"
+      "last_updated": "2026-11-19T23:15:43.141Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",

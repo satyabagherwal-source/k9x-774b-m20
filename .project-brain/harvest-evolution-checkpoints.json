@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T23:02:12.853Z",
+  "last_updated": "2026-11-19T23:16:19.371Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T21:43:51.561Z",
@@ -88,9 +88,9 @@
       "staged_for_review": 0
     },
     "projectdiscovery-nuclei-learnings.md": {
-      "processed_at": "2026-11-18T23:26:30.359Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-19T23:16:16.961Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "astral-sh-uv-learnings.md": {
       "processed_at": "2026-11-19T16:41:10.204Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-19T22:19:53.429Z",
+      "processed_at": "2026-11-19T23:16:18.440Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -373,7 +373,7 @@
       "staged_for_review": 1
     },
     "doobidoo-mcp-memory-service-learnings.md": {
-      "processed_at": "2026-11-17T01:54:52.591Z",
+      "processed_at": "2026-11-19T23:16:17.418Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3528,7 +3528,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2349,
-  "total_canonical_promoted": 396,
-  "total_staged_for_review": 1756
+  "total_dossiers_evaluated": 2352,
+  "total_canonical_promoted": 397,
+  "total_staged_for_review": 1758
 }

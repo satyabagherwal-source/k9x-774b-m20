@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T23:02:11.232Z",
+  "updated_at": "2026-11-19T23:16:17.585Z",
   "stats": {
-    "total_discovered": 6055,
-    "approved_pending_harvest": 5723,
+    "total_discovered": 6056,
+    "approved_pending_harvest": 5724,
     "harvested_count": 0,
     "rejected_count": 332,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5705,
+      "COMMUNITY_AND_EXPERT": 5706,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 113,
       "ENGINEERING_BLOGS": 4,
@@ -130908,6 +130908,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
         "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-CFBEC5FD619E": {
+      "id": "SRC-CFBEC5FD619E",
+      "url": "https://claude.ai/code/session_01AfRe2AbUtUQWGCVPiNd32B",
+      "title": "https://claude.ai/code/session_01AfRe2AbUtUQWGCVPiNd32B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T23:16:17.585Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
       }
     }
   }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T23:02:12.688Z",
+  "last_updated": "2026-11-19T23:16:19.231Z",
   "total_verified_learnings": 9022,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22055,
+  "total_items": 22058,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113691,13 +113691,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-56X4-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-5QVQ-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c1fd3a050ac4d03b0f7960802e1e1db061fba980da28961a4875aaa1a2cad2cc",
+      "content_hash": "e2ef68ebd0bf44ba9d11edf940ad31ac20711490068a2705433b6d7b0c51a8a8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T22:19:53.803Z"
+      "persisted_at": "2026-11-19T23:16:18.914Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113707,9 +113707,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "96f8b06df28d8c970dce88df943366409224c49d07e8ea2dfbc769e46f60cb9d",
+      "content_hash": "820f2766d02b775f1c4581c6a846630efdbe8b19b788fb49c7e3927b7cbb2646",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T22:19:53.936Z"
+      "persisted_at": "2026-11-19T23:16:19.075Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113719,9 +113719,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b63c8b94505ad6d68a3e0b1ac37a1d513fea73c21d67c740b6ad4ca550a02a68",
+      "content_hash": "3d01b814f52d7549fb6178a1da246b1f8bb8ff0a8bb8e096ddbd43d4ee7cf962",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T22:19:54.067Z"
+      "persisted_at": "2026-11-19T23:16:19.231Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -223296,8 +223296,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "7957cfe5",
-      "content_hash": "dca1e9bc0b76fdfb601c19ac74b2b52235fe3af9d32fe922968e0a28631811cc",
+      "source_version": "bbc14454",
+      "content_hash": "af512c456cd655a4382669d5a3054a3a4f8939f8671ef632a46dd32b46e5d5aa",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -223325,6 +223325,11 @@
           "number": 9261,
           "title": "fix(api): preserve 400 validation errors and clean up temporary files on upload",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9466,
+          "title": "accept comma-separated extensions in directory ingestion",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223332,7 +223337,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T17:01:52.628Z",
+      "verified_at": "2026-11-19T23:15:46.381Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223374,10 +223379,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "7957cfe5",
-      "content_hash": "d9622622023847262672dbe36e6bd7bb42fdcc723a55161e762c4e42ea5fe3a5",
+      "source_version": "bbc14454",
+      "content_hash": "fd2a48311fb56d0a1385771b1da1dc930ff157a20c4e8cf5d6fbb17176fd97b3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T17:01:53.336Z"
+      "persisted_at": "2026-11-19T23:15:46.919Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service",
@@ -223386,10 +223391,10 @@
       "relative_path": "12_DECISIONS/ADR-doobidoo-mcp-memory-service-adr-subsystem-boundary-modular-decoupling-in-doobido.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "7957cfe5",
-      "content_hash": "85052e49ff7c25cb698073e368ef88b706e7ede2a8655c56eeb207c821855fed",
+      "source_version": "bbc14454",
+      "content_hash": "92d3ca49262f545134c03e6dcf266b4abb871ee8e1bd408c4b366441bb8a31ff",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T17:01:53.519Z"
+      "persisted_at": "2026-11-19T23:15:47.061Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service",
@@ -223398,10 +223403,10 @@
       "relative_path": "08_VERIFICATION/doobidoo-mcp-memory-service-verification-protocol-empirical-defect-shield-for-do.md",
       "title": "Verification Protocol: Empirical Defect Shield for doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "7957cfe5",
-      "content_hash": "f9b1d88ec951b050ba6ab5f68adb4d77f4642575b29cce6c7840b8bb8f788e25",
+      "source_version": "bbc14454",
+      "content_hash": "6e54970a9acb83b587b2bdb4987eed8d61c9df12458363f1e61449b60069a2f6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T17:01:53.679Z"
+      "persisted_at": "2026-11-19T23:15:47.189Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin",
@@ -229850,8 +229855,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "2e587bc5",
-      "content_hash": "08872929a3503c167a57b92d8fc1882ff30f54961707ab22f7183b1a675dd67a",
+      "source_version": "b1d47824",
+      "content_hash": "047d377ecf27b8975c2ff6c69e72210a092c6648ae646f4b0670a5b973038fbb",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -229911,7 +229916,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T16:07:24.092Z",
+      "verified_at": "2026-11-19T23:15:42.950Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229953,10 +229958,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "2e587bc5",
-      "content_hash": "40b7953b2ad3b16ca097f83e8ab99a8190925811f36da2bae327690a3d3eb1b8",
+      "source_version": "b1d47824",
+      "content_hash": "28ef055748c1a4b60496559d1fe5cdd1f85859dd68f76b4775c5f92327f57789",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T16:07:24.643Z"
+      "persisted_at": "2026-11-19T23:15:43.326Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei",
@@ -243104,9 +243109,9 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "7fe2c04238d5b8edb072632966b5698ab4e9ed63ba3ae729e9e5a090067b26fd",
+      "content_hash": "ae9d86b10c1e4710626235f848ac163a653a82972b349298b83dd8d884910f26",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T23:26:30.686Z"
+      "persisted_at": "2026-11-19T23:16:17.232Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni",
@@ -248163,9 +248168,9 @@
       "title": "Technical Construction Intelligence: doobidoo-mcp-memory-service-learnings Core Invariants",
       "repository": "doobidoo-mcp-memory-service-learnings",
       "source_version": "HEAD",
-      "content_hash": "c674eabd3282d2d0ed1496ff2c3907cbf3b74380fe143470efab97acb4f30ffc",
+      "content_hash": "b233341be2cefb1e1c2028bc9c0a75cbd181b391b844093de9a99a40b54ff5df",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T01:54:53.893Z"
+      "persisted_at": "2026-11-19T23:16:17.980Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service-learnin": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service-learnin",
@@ -248175,9 +248180,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in doobidoo-mcp-memory-service-learnings",
       "repository": "doobidoo-mcp-memory-service-learnings",
       "source_version": "HEAD",
-      "content_hash": "1e2fff2d1a7c30aee9613ef6a23c6676cd767ab68081c24c614a4ad72bb6ffc7",
+      "content_hash": "07533804845985168d6fc30eed008ef34b6fa07ff036ed617ef435a8bc774784",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T01:54:54.011Z"
+      "persisted_at": "2026-11-19T23:16:18.137Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service-le": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service-le",
@@ -248187,9 +248192,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for doobidoo-mcp-memory-service-learnings",
       "repository": "doobidoo-mcp-memory-service-learnings",
       "source_version": "HEAD",
-      "content_hash": "cb8308f9fb0ff7881aa9a9bc2a5ae4f1fd16137a5c119c4ee1b2a895c89fce48",
+      "content_hash": "1957ccd3b86b71468852c1156dacb1af1e06e4e0615dec44fbff029c7102dc02",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T01:54:54.119Z"
+      "persisted_at": "2026-11-19T23:16:18.277Z"
     },
     "learn-github-lottie-react-native-lottie-react-native": {
       "learning_id": "learn-github-lottie-react-native-lottie-react-native",
@@ -298421,6 +298426,44 @@
       "content_hash": "782d10bc15f31dfa1ef4727ec805f229bbde147f5c4b81468589f2992457bf82",
       "domain_letter": "K",
       "persisted_at": "2026-11-19T23:02:10.842Z"
+    },
+    "rule-9466": {
+      "learning_id": "rule-9466",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9466,
+      "title": "accept comma-separated extensions in directory ingestion",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "bbc14454",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T23:15:46.381Z"
+    },
+    "candidate_directive-accept-comma-separated-extensions-in-directory-ingestion": {
+      "item_id": "candidate_directive-accept-comma-separated-extensions-in-directory-ingestion",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5234-accept-comma-separated-extensions-in-directory-ingestion.md",
+      "title": "accept comma-separated extensions in directory ingestion",
+      "repository": "doobidoo/mcp-memory-service",
+      "source_version": "bbc14454",
+      "content_hash": "98f3deafaff588bafe525aac1fefbedf4c718f22546da0d8c6a5c455585dc797",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T23:15:46.772Z"
+    },
+    "candidate_directive-cli-accept-comma-separated-extensions-in-directory-ingestion": {
+      "item_id": "candidate_directive-cli-accept-comma-separated-extensions-in-directory-ingestion",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5Q1E-cli-accept-comma-separated-extensions-in-directory-ingestion.md",
+      "title": "cli): accept comma-separated extensions in directory ingestion",
+      "repository": "doobidoo-mcp-memory-service-learnings",
+      "source_version": "HEAD",
+      "content_hash": "204be4ab129c0f2e26baf5d9afcceca8135569bc58336cfea6ad9913d18e4d5b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T23:16:17.822Z"
     }
   },
   "ai-builder-brain": {

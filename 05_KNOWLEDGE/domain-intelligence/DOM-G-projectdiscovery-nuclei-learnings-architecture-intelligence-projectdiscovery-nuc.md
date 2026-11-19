@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T23:26:30.455Z",
+  "timestamp": "2026-11-19T23:16:17.101Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-projectdiscovery-nuclei-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [projectdiscovery-nuclei-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T23:26:30.455Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T23:16:17.101Z`  
 > **Learning ID**: `LEARN-EVO-projectdiscovery-nuclei-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: A (Human & Need Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 84%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from projectdiscovery-nuclei-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `28b60e68`  
+> **Source Version**: `b1d47824`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T23:26:13.960Z  
+> **Timestamp**: 2026-11-19T23:15:42.679Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T23:26:13.955Z  
+> **Harvest Timestamp**: 2026-11-19T23:15:42.551Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 33088 stars
+- **Stars / Engagement**: 33126 stars
 
 ---
 
@@ -1634,541 +1634,248 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `28b60e68` (2026-11-18)
-**Commit Message**: Merge pull request #8173 from projectdiscovery/feat/7387-raw-body
+### Incident Patch 1: `b1d47824` (2026-11-19)
+**Commit Message**: Merge pull request #8187 from projectdiscovery/fix/8186-project-raw
 
-add raw_body and raw_response http parts
+keep raw responses only for requests reading raw parts
 
-**File**: `SYNTAX-REFERENCE.md` (modified, +2/-0)
+**File**: `pkg/protocols/http/http.go` (modified, +0/-7)
 ```diff
-@@ -1021,6 +1021,8 @@ Part Definitions:
- - <code>response</code> - HTTP response received from server
- - <code>status_code</code> - Status Code received from the Server
- - <code>body</code> - HTTP response body received from server (default)
-+- <code>raw_body</code> - HTTP response body as received, before content decoding
-+- <code>raw_response</code> - HTTP response headers followed by raw_body
- - <code>content_length</code> - HTTP Response content length
- - <code>header,all_headers</code> - HTTP response headers
- - <code>duration</code> - HTTP request time duration
-```
-
-**File**: `pkg/protocols/http/cluster.go` (modified, +1/-1)
-```diff
-@@ -18,5 +18,5 @@ func (request *Request) TmplClusterKey() uint64 {
- // IsClusterable returns true if the request is eligible to be clustered.
- func (request *Request) IsClusterable() bool {
- 	//nolint
--	return !(len(request.Payloads) > 0 || len(request.Fuzzing) > 0 || len(request.Raw) > 0 || len(request.Body) > 0 || request.Unsafe || request.NeedsRequestCondition() || request.Name != "")
-+	return !(len(request.Payloads) > 0 || len(request.Fuzzing) > 0 || len(request.Raw) > 0 || len(request.Body) > 0 || request.Unsafe || request.NeedsRequestCondition() || request.Name != "" || request.readsRawResponse)
- }
-```
-
-**File**: `pkg/protocols/http/http.go` (modified, +28/-7)
-```diff
-@@ -5,6 +5,7 @@ import (
- 	"fmt"
- 	"math"
- 	"net/http"
-+	"slices"
- 	"strings"
- 	"time"
- 
-@@ -151,6 +152,9 @@ type Request struct {
- 	// sharesResponse lets other templates reuse a response this request gets,
- 	// and this request reuse theirs (see httpclientpool.WithSharedResponse)
- 	sharesResponse bool
-+	// readsRawResponse keeps the response bytes as received, before content
-+	// decoding, for the raw_body and raw_response parts
-+	readsRawResponse bool
- 
- 	// description: |
- 	//   SelfContained specifies if the request is self-contained.
-@@ -301,6 +305,8 @@ var RequestPartDefinitions = map[string]string{
- 	"response":              "HTTP response received from server",
- 	"status_code":           "Status Code received from the Server",
- 	"body":                  "HTTP response body received from server (default)",
-+	"raw_body":              "HTTP response body as received, before content decoding",
-+	"raw_response":          "HTTP response headers followed by raw_body",
- 	"content_length":        "HTTP Response content length",
- 	"header,all_headers":    "HTTP response headers",
- 	"duration":              "HTTP request time duration",
-@@ -591,21 +597,36 @@ func (request *Request) Compile(options *protocols.ExecutorOptions) error {
- 		request.connConfiguration.Connection.DisableKeepAlive = true
- 	}
- 	request.sharesResponse = canShareResponse(request, options.Flow)
-+	request.readsRawResponse = reads(request, options.Flow, "raw_body", "raw_response")
- 	return nil
+@@ -622,13 +622,6 @@ func reads(request *Request, flow string, parts ...string) bool {
+ 	})
  }
  
- // canShareResponse reports whether a response another template got for the
- // same request is as good as sending it again. A shared response arrives at
- // once, so nothing that measures time may take one: race requests, timing
--// analyzers, and a request whose operators or flow read the duration. The
--// operators are searched whole, so a new field that can read it, as LLM
--// matcher inputs do, is covered without being listed.
-+// analyzers, and a request whose operators or flow read the duration.
- func canShareResponse(request *Request, flow string) bool {
--	if request.Race || request.Analyzer != nil || strings.Contains(flow, "duration") {
--		return false
--	}
-+	return !request.Race && request.Analyzer == nil && !reads(request, flow, "duration")
-+}
-+
-+// reads reports whether the operators or flow of request may read any of
-+// parts. The operators are searched whole, so a new field that can read a
-+// part, as LLM matcher inputs do, is covered without being listed.
-+func reads(request *Request, flow string, parts ...string) bool {
- 	operators, err := json.Marshal(request.Operators)
--	return err == nil && !bytes.Contains(operators, []byte("duration"))
-+	if err != nil {
-+		return true
-+	}
-+	return slices.ContainsFunc(parts, func(part string) bool {
-+		return strings.Contains(flow, part) || bytes.Contains(operators, []byte(part))
-+	})
-+}
-+
-+// keepsRawResponse reports whether responses keep their bytes as received.
-+// The project file stores those, decoded again when read back, so a cached
-+// response serves templates reading raw_body and the others alike.
-+func (request *Request) keepsRawResponse() bool {
-+	return request.readsRawResponse || request.options.ProjectFile != nil
- }
- 
+-// keepsRawResponse reports whether responses keep their bytes as received.
+-// The project file stores those, decoded again when read back, so a cached
+-// response serves templates reading raw_body and the others alike.
+-func (request *Request) keepsRawResponse() bool {
+-	return request.readsRawResponse || request.options.ProjectFile != nil
+-}
+-
  // RebuildGenerator rebuilds the generator for the request
+ func (request *Request) RebuildGenerator() error {
+ 	generator, err := generators.New(request.Payloads, request.AttackType.Value, request.options.TemplatePath, request.options.Catalog, request.options.Options.AttackType, request.options.Options)
 ```
 
-**File**: `pkg/protocols/http/raw_body_test.go` (added, +85/-0)
+**File**: `pkg/protocols/http/project_charset_test.go` (added, +80/-0)
 ```diff
-@@ -0,0 +1,85 @@
+@@ -0,0 +1,80 @@
 +package http
 +
 +import (
-+	"bytes"
-+	"compress/gzip"
 +	"context"
 +	"net/http"
 +	"net/http/httptest"
 +	"testing"
-+	"time"
 +
 +	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
 +	"github.com/projectdiscovery/nuclei/v3/pkg/model"
 +	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
 +	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
 +	"github.com/projectdiscovery/nuclei/v3/pkg/operators/extractors"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators/matchers"
 +	"github.com/projectdiscovery/nuclei/v3/pkg/output"
++	"github.com/projectdiscovery/nuclei/v3/pkg/projectfile"
 +	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
 +	"github.com/stretchr/testify/require"
++	"golang.org/x/text/encoding"
++	"golang.org/x/text/encoding/charmap"
++	"golang.org/x/text/encoding/simplifiedchinese"
 +)
 +
-+func TestRawBodyKeepsTheBytesAsReceived(t *testing.T) {
-+	var compressed bytes.Buffer
-+	writer := gzip.NewWriter(&compressed)
-+	writer.ModTime = time.Unix(1700000000, 0)
-+	_, _ = writer.Write([]byte(`{"hello":"world"}`))
-+	require.NoError(t, writer.Close())
-+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Encoding", "gzip")
-+		_, _ = w.Write(compressed.Bytes())
-+	}))
-+	defer ts.Close()
-+
-+	execute := func(t *testing.T, extractor *extractors.Extractor) output.InternalEvent {
-+		options := testutils.DefaultOptions
-+		testutils.Init(options)
-+		request := &Request{
-+			ID:        "raw-body",
-+			Path:      []string{"{{BaseURL}}"},
-+			Operators: operators.Operators{Extractors: []*extractors.Extractor{extractor}},
-+		}
-+		executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
-+			ID:   "raw-body",
-+			Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Info}, Name: "test"},
-+		})
-+		require.NoError(t, request.Compile(executerOpts))
-+
-+		var event output.InternalEvent
-+		err := request.ExecuteWithResults(contextargs.NewWithInput(context.Background(), ts.URL), output.InternalEvent{}, output.InternalEvent{}, func(e *output.InternalWrappedEvent) {
-+			event = e.InternalEvent
-+		})
-+		require.NoError(t, err)
-+		return event
++// A plain request under -project must decode a legacy charset once, both when
++// the response comes from the server and when it is replayed from the cache.
++func TestProjectCacheReplayDecodesCharsetOnce(t *testing.T) {
++	cases := []struct {
++		name    string
++		charset string
++		enc     encoding.Encoding
++		text    string
++	}{
++		{name: "windows-1251", charset: "windows-1251", enc: charmap.Windows1251, text: "Привет, мир"},
++		{name: "gbk", charset: "gbk", enc: simplifiedchinese.GBK, text: "你好，世界"},
 +	}
++	for _, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			encoded, err := tc.enc.NewEncoder().String(tc.text)
++			require.NoError(t, err)
++			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				w.Header().Set("Content-Type", "text/plain; charset="+tc.charset)
++				_, _ = w.Write([]byte(encoded))
++			}))
++			defer ts.Close()
 +
-+	t.Run("reading raw_body", func(t *testing.T) {
-+		event := execute(t, &extractors.Extractor{
-+			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
-+			DSL:  []string{"to_string(gzip_mtime(raw_body))"},
-+		})
-+		require.Equal(t, compressed.String(), event["raw_body"])
-+		require.Contains(t, event["raw_response"], compressed.String())
-+		require.Equal(t, `{"hello":"world"}`, event["body"], "body stays decoded")
-+	})
-+	t.Run("not reading it", func(t *testing.T) {
-+		event := execute(t, &extractors.Extractor{
-+			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
-+			DSL:  []string{"body"},
-+		})
-+		require.NotContains(t, event, "raw_body")
-+		require.Equal(t, `{"hello":"world"}`, event["body"])
-+	})
-+}
++			project, err := projectfile.New(&projectfile.Options{Path: t.TempDir(), Cleanup: true})
++			require.NoError(t, err)
++			defer project.Close()
 +
-+func TestReadsRawResponse(t *testing.T) {
-+	readsRaw := func(request *Request, flow string) bool { return reads(request, flow, "raw_body", "raw_response") }
-+	require.False(t, readsRaw(&Request{Operators: operators.Operators{Matchers: []*matchers.Matcher{{Words: []string{"admin"}}}}}, ""))
-+	require.True(t, readsRaw(&Request{Operators: operators.Operators{Matchers: []*matchers.Matcher{{Part: "raw_body"}}}}, ""))
-+	require.True(t, readsRaw(&Request{Operators: operators.Operators{Extractors: []*extractors.Extractor{{DSL: []string{"gzip_mtime(raw_body)"}}}}}, ""))
-+	require.True(t, readsRaw(&Request{Operators: operators.Operators{Matchers: []*matchers.Matcher{{Part: "raw_response"}}}}, ""))
-+	require.True(t, readsRaw(&Request{}, "http(1) && template.raw_body != ''"))
++			execute := func(t *testing.T) string {
++				options := testutils.DefaultOptions
++				testutils.Init(options)
++				request := &Request{
++					ID:   "project-charset",
++					Path: []string{"{{BaseURL}}"},
++					Operators: operators.Operators{Extractors: []*extractors.Extractor{{
++						Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
++						DSL:  []string{"body"},
++					}}},
++				}
++				executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
++					ID:   "project-charset",
++					Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Info}, Name: "test"},
++				})
++				executerOpts.ProjectFile = project
++				require.NoError(t, request.Compile(executerOpts))
 +
-+	require.False(t, (&Request{readsRawResponse: true}).IsClusterable(), "a cluster runs on one member's response")
-+}
-```
-
-**File**: `pkg/protocols/http/request.go` (modified, +17/-2)
-```diff
-@@ -1341,6 +1341,13 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 				}
- 			}
- 
-+			if request.keepsRawResponse() && generatedRequest.request.Header.Get("Accept-Encoding") == "" &&
-+				generatedRequest.request.Header.Get("Range") == "" && generatedRequest.request.Method != http.MethodHead {
-+				// the transport decodes a response to the gzip header it adds
-+				// itself, leaving nothing raw; sending the same header keeps the
-+				// request on the wire unchanged
-+				generatedRequest.request.Header.Set("Accept-Encoding", "gzip")
++				var event output.InternalEvent
++				err := request.ExecuteWithResults(contextargs.NewWithInput(context.Background(), ts.URL), output.InternalEvent{}, output.InternalEvent{}, func(e *output.InternalWrappedEvent) {
++					event = e.InternalEvent
++				})
++				require.NoError(t, err)
++				body, _ := event["body"].(string)
++				return body
 +			}
- 			if request.sharesResponse {
- 				generatedRequest.request.WithContext(httpclientpool.WithSharedResponse(generatedRequest.request.Context(), request.options.TemplateID))
- 			}
-@@ -1510,7 +1517,11 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 
- 	// respChain is http response chain that reads response body
- 	// efficiently by reusing buffers and does all decoding and optimizations
--	respChain := httpUtils.NewResponseChain(resp, int64(maxBodylimit))
-+	newResponseChain := httpUtils.NewResponseChain
-+	if request.keepsRawResponse() {
-+		newResponseChain = httpUtils.NewResponseChainWithRaw
++
++			require.Equal(t, tc.text, execute(t), "first run decodes the response")
++			require.Equal(t, tc.text, execute(t), "replayed run must not decode the body again")
++		})
 +	}
-+	respChain := newResponseChain(resp, int64(maxBodylimit))
- 	defer respChain.Close() // reuse buffers
- 
- 	// we only intend to log/save the final redirected response
-@@ -1532,7 +1543,7 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 	onceFunc := sync.OnceFunc(func() {
- 		// if nuclei-project is enabled store the response if not previously done
- 		if request.options.ProjectFile != nil && !fromCache {
--			if err := request.options.ProjectFile.Set(projectCacheKey, resp, respChain.BodyBytes()); err != nil {
-+			if err := request.options.ProjectFile.Set(projectCacheKey, resp, respChain.RawBodyBytes()); err != nil {
- 				errx = errors.Wrap(err, "could not store in project file")
- 			}
- 		}
-@@ -1639,6 +1650,10 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 		}
- 
- 		outputEvent := request.responseToDSLMap(respChain.Response(), input.MetaInput.Input, matchedURL, convUtil.String(dumpedRequest.data), fullResponseStr, bodyStr, headersStr, duration, generatedRequest.meta)
-+		if request.readsRawResponse {
-+			outputEvent["raw_body"] = respChain.RawBodyString()
-+			outputEvent["raw_response"] = respChain.RawFullResponseString()
-+		}
- 		// add response fields to template context and merge templatectx variables to output event
- 		request.options.AddTemplateVars(input.MetaInput, request.Type(), request.ID, outputEvent)
- 		if request.options.HasTemplateCtx(input.MetaInput) {
++}
 ```
 
-**File**: `pkg/templates/templates_doc.go` (modified, +8/-0)
+**File**: `pkg/protocols/http/raw_body_test.go` (modified, +43/-3)
 ```diff
-@@ -437,6 +437,14 @@ func init() {
- 			Key:   "body",
- 			Value: "HTTP response body received from server (default)",
- 		},
-+		{
-+			Key:   "raw_body",
-+			Value: "HTTP response body as received, before content decoding",
-+		},
-+		{
-+			Key:   "raw_response",
-+			Value: "HTTP response headers followed by raw_body",
-+		},
- 		{
- 			Key:   "content_length",
- 			Value: "HTTP Response content length",
-```
-
----
-
-### Incident Patch 2: `941ac291` (2026-11-18)
-**Commit Message**: add raw_body and raw_response http parts
-
-**File**: `SYNTAX-REFERENCE.md` (modified, +2/-0)
-```diff
-@@ -1021,6 +1021,8 @@ Part Definitions:
- - <code>response</code> - HTTP response received from server
- - <code>status_code</code> - Status Code received from the Server
- - <code>body</code> - HTTP response body received from server (default)
-+- <code>raw_body</code> - HTTP response body as received, before content decoding
-+- <code>raw_response</code> - HTTP response headers followed by raw_body
- - <code>content_length</code> - HTTP Response content length
- - <code>header,all_headers</code> - HTTP response headers
- - <code>duration</code> - HTTP request time duration
-```
-
-**File**: `pkg/protocols/http/cluster.go` (modified, +1/-1)
-```diff
-@@ -18,5 +18,5 @@ func (request *Request) TmplClusterKey() uint64 {
- // IsClusterable returns true if the request is eligible to be clustered.
- func (request *Request) IsClusterable() bool {
- 	//nolint
--	return !(len(request.Payloads) > 0 || len(request.Fuzzing) > 0 || len(request.Raw) > 0 || len(request.Body) > 0 || request.Unsafe || request.NeedsRequestCondition() || request.Name != "")
-+	return !(len(request.Payloads) > 0 || len(request.Fuzzing) > 0 || len(request.Raw) > 0 || len(request.Body) > 0 || request.Unsafe || request.NeedsRequestCondition() || request.Name != "" || request.readsRawResponse)
- }
-```
-
-**File**: `pkg/protocols/http/http.go` (modified, +28/-7)
-```diff
-@@ -5,6 +5,7 @@ import (
- 	"fmt"
- 	"math"
- 	"net/http"
-+	"slices"
- 	"strings"
- 	"time"
+@@ -16,6 +16,7 @@ import (
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/operators/extractors"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/operators/matchers"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
++	"github.com/projectdiscovery/nuclei/v3/pkg/projectfile"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
+ 	"github.com/stretchr/testify/require"
+ )
+@@ -32,7 +33,7 @@ func TestRawBodyKeepsTheBytesAsReceived(t *testing.T) {
+ 	}))
+ 	defer ts.Close()
  
-@@ -151,6 +152,9 @@ type Request struct {
- 	// sharesResponse lets other templates reuse a response this request gets,
- 	// and this request reuse theirs (see httpclientpool.WithSharedResponse)
- 	sharesResponse bool
-+	// readsRawResponse keeps the response bytes as received, before content
-+	// decoding, for the raw_body and raw_response parts
-+	readsRawResponse bool
+-	execute := func(t *testing.T, extractor *extractors.Extractor) output.InternalEvent {
++	execute := func(t *testing.T, project *projectfile.ProjectFile, extractor *extractors.Extractor) output.InternalEvent {
+ 		options := testutils.DefaultOptions
+ 		testutils.Init(options)
+ 		request := &Request{
+@@ -44,6 +45,7 @@ func TestRawBodyKeepsTheBytesAsReceived(t *testing.T) {
+ 			ID:   "raw-body",
+ 			Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Info}, Name: "test"},
+ 		})
++		executerOpts.ProjectFile = project
+ 		require.NoError(t, request.Compile(executerOpts))
  
- 	// description: |
- 	//   SelfContained specifies if the request is self-contained.
-@@ -301,6 +305,8 @@ var RequestPartDefinitions = map[string]string{
- 	"response":              "HTTP response received from server",
- 	"status_code":           "Status Code received from the Server",
- 	"body":                  "HTTP response body received from server (default)",
-+	"raw_body":              "HTTP response body as received, before content decoding",
-+	"raw_response":          "HTTP response headers followed by raw_body",
- 	"content_length":        "HTTP Response content length",
- 	"header,all_headers":    "HTTP response headers",
- 	"duration":              "HTTP request time duration",
-@@ -591,21 +597,36 @@ func (request *Request) Compile(options *protocols.ExecutorOptions) error {
- 		request.connConfiguration.Connection.DisableKeepAlive = true
+ 		var event output.InternalEvent
+@@ -55,7 +57,7 @@ func TestRawBodyKeepsTheBytesAsReceived(t *testing.T) {
  	}
- 	request.sharesResponse = canShareResponse(request, options.Flow)
-+	request.readsRawResponse = reads(request, options.Flow, "raw_body", "raw_response")
- 	return nil
- }
  
- // canShareResponse reports whether a response another template got for the
- // same request is as good as sending it again. A shared response arrives at
- // once, so nothing that measures time may take one: race requests, timing
--// analyzers, and a request whose operators or flow read the duration. The
--// operators are searched whole, so a new field that can read it, as LLM
--// matcher inputs do, is covered without being listed.
-+// analyzers, and a request whose operators or flow read the duration.
- func canShareResponse(request *Request, flow string) bool {
--	if request.Race || request.Analyzer != nil || strings.Contains(flow, "duration") {
--		return false
--	}
-+	return !request.Race && request.Analyzer == nil && !reads(request, flow, "duration")
-+}
-+
-+// reads reports whether the operators or flow of request may read any of
-+// parts. The operators are searched whole, so a new field that can read a
-+// part, as LLM matcher inputs do, is covered without being listed.
-+func reads(request *Request, flow string, parts ...string) bool {
- 	operators, err := json.Marshal(request.Operators)
--	return err == nil && !bytes.Contains(operators, []byte("duration"))
-+	if err != nil {
-+		return true
-+	}
-+	return slices.ContainsFunc(parts, func(part string) bool {
-+		return strings.Contains(flow, part) || bytes.Contains(operators, []byte(part))
-+	})
-+}
-+
-+// keepsRawResponse reports whether responses keep their bytes as received.
-+// The project file stores those, decoded again when read back, so a cached
-+// response serves templates reading raw_body and the others alike.
-+func (request *Request) keepsRawResponse() bool {
-+	return request.readsRawResponse || request.options.ProjectFile != nil
- }
- 
- // RebuildGenerator rebuilds the generator for the request
-```
-
-**File**: `pkg/protocols/http/raw_body_test.go` (added, +85/-0)
-```diff
-@@ -0,0 +1,85 @@
-+package http
-+
-+import (
-+	"bytes"
-+	"compress/gzip"
-+	"context"
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
-+	"time"
-+
-+	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators/extractors"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators/matchers"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestRawBodyKeepsTheBytesAsReceived(t *testing.T) {
-+	var compressed bytes.Buffer
-+	writer := gzip.NewWriter(&compressed)
-+	writer.ModTime = time.Unix(1700000000, 0)
-+	_, _ = writer.Write([]byte(`{"hello":"world"}`))
-+	require.NoError(t, writer.Close())
-+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Encoding", "gzip")
-+		_, _ = w.Write(compressed.Bytes())
-+	}))
-+	defer ts.Close()
-+
-+	execute := func(t *testing.T, extractor *extractors.Extractor) output.InternalEvent {
-+		options := testutils.DefaultOptions
-+		testutils.Init(options)
-+		request := &Request{
-+			ID:        "raw-body",
-+			Path:      []string{"{{BaseURL}}"},
-+			Operators: operators.Operators{Extractors: []*extractors.Extractor{extractor}},
-+		}
-+		executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
-+			ID:   "raw-body",
-+			Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Info}, Name: "test"},
-+		})
-+		require.NoError(t, request.Compile(executerOpts))
-+
-+		var event output.InternalEvent
-+		err := request.ExecuteWithResults(contextargs.NewWithInput(context.Background(), ts.URL), output.InternalEvent{}, output.InternalEvent{}, func(e *output.InternalWrappedEvent) {
-+			event = e.InternalEvent
-+		})
+ 	t.Run("reading raw_body", func(t *testing.T) {
+-		event := execute(t, &extractors.Extractor{
++		event := execute(t, nil, &extractors.Extractor{
+ 			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
+ 			DSL:  []string{"to_string(gzip_mtime(raw_body))"},
+ 		})
+@@ -64,13 +66,51 @@ func TestRawBodyKeepsTheBytesAsReceived(t *testing.T) {
+ 		require.Equal(t, `{"hello":"world"}`, event["body"], "body stays decoded")
+ 	})
+ 	t.Run("not reading it", func(t *testing.T) {
+-		event := execute(t, &extractors.Extractor{
++		event := execute(t, nil, &extractors.Extractor{
+ 			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
+ 			DSL:  []string{"body"},
+ 		})
+ 		require.NotContains(t, event, "raw_body")
+ 		require.Equal(t, `{"hello":"world"}`, event["body"])
+ 	})
++	t.Run("not reading it under -project", func(t *testing.T) {
++		project, err := projectfile.New(&projectfile.Options{Path: t.TempDir(), Cleanup: true})
 +		require.NoError(t, err)
-+		return event
-+	}
-+
-+	t.Run("reading raw_body", func(t *testing.T) {
-+		event := execute(t, &extractors.Extractor{
-+			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
-+			DSL:  []string{"to_string(gzip_mtime(raw_body))"},
-+		})
-+		require.Equal(t, compressed.String(), event["raw_body"])
-+		require.Contains(t, event["raw_response"], compressed.String())
-+		require.Equal(t, `{"hello":"world"}`, event["body"], "body stays decoded")
-+	})
-+	t.Run("not reading it", func(t *testing.T) {
-+		event := execute(t, &extractors.Extractor{
++		defer project.Close()
++		event := execute(t, project, &extractors.Extractor{
 +			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
 +			DSL:  []string{"body"},
 +		})
-+		require.NotContains(t, event, "raw_body")
-+		require.Equal(t, `{"hello":"world"}`, event["body"])
++		require.NotContains(t, event, "content_encoding", "the transport decodes the response as without -project")
++		require.EqualValues(t, len(`{"hello":"world"}`), event["content_length"])
 +	})
-+}
++	t.Run("project cache keeps raw and decoded apart", func(t *testing.T) {
++		project, err := projectfile.New(&projectfile.Options{Path: t.TempDir(), Cleanup: true})
++		require.NoError(t, err)
++		defer project.Close()
++		plain := &extractors.Extractor{
++			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
++			DSL:  []string{"body"},
++		}
++		raw := &extractors.Extractor{
++			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
++			DSL:  []string{"to_string(gzip_mtime(raw_body))"},
++		}
 +
-+func TestReadsRawResponse(t *testing.T) {
-+	readsRaw := func(request *Request, flow string) bool { return reads(request, flow, "raw_body", "raw_response") }
-+	require.False(t, readsRaw(&Request{Operators: operators.Operators{Matchers: []*matchers.Matcher{{Words: []string{"admin"}}}}}, ""))
-+	require.True(t, readsRaw(&Request{Operators: operators.Operators{Matchers: []*matchers.Matcher{{Part: "raw_body"}}}}, ""))
-+	require.True(t, readsRaw(&Request{Operators: operators.Operators{Extractors: []*extractors.Extractor{{DSL: []string{"gzip_mtime(raw_body)"}}}}}, ""))
-+	require.True(t, readsRaw(&Request{Operators: operators.Operators{Matchers: []*matchers.Matcher{{Part: "raw_response"}}}}, ""))
-+	require.True(t, readsRaw(&Request{}, "http(1) && template.raw_body != ''"))
++		first := execute(t, project, plain)
++		require.Equal(t, `{"hello":"world"}`, first["body"])
++		second := execute(t, project, raw)
++		require.Equal(t, compressed.String(), second["raw_body"], "a raw reader must not reuse the decoded cache entry")
++		require.Equal(t, `{"hello":"world"}`, second["body"])
 +
-+	require.False(t, (&Request{readsRawResponse: true}).IsClusterable(), "a cluster runs on one member's response")
-+}
++		other, err := projectfile.New(&projectfile.Options{Path: t.TempDir(), Cleanup: true})
++		require.NoError(t, err)
++		defer other.Close()
++		_ = execute(t, other, raw)
++		third := execute(t, other, plain)
++		require.Equal(t, `{"hello":"world"}`, third["body"], "a plain reader must not reuse the raw cache entry")
++		require.EqualValues(t, len(`{"hello":"world"}`), third["content_length"])
++	})
+ }
+ 
+ func TestReadsRawResponse(t *testing.T) {
 ```
 
-**File**: `pkg/protocols/http/request.go` (modified, +17/-2)
+**File**: `pkg/protocols/http/request.go` (modified, +9/-2)
 ```diff
-@@ -1341,6 +1341,13 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
+@@ -1189,6 +1189,11 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
+ 			if maxBodylimit := request.getEffectiveReadLimit(); maxBodylimit > 0 {
+ 				projectCacheKey = append(projectCacheKey, []byte(fmt.Sprintf(":limit:%d", maxBodylimit))...)
+ 			}
++			// A raw-reading request stores the encoded bytes. A plain request
++			// stores the decoded body. They must not share a cache entry.
++			if request.readsRawResponse {
++				projectCacheKey = append(projectCacheKey, ":raw"...)
++			}
+ 		}
+ 
+ 		// A truncated dump leaves part of the body out, so check the rest
+@@ -1369,7 +1374,7 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
  				}
  			}
  
-+			if request.keepsRawResponse() && generatedRequest.request.Header.Get("Accept-Encoding") == "" &&
-+				generatedRequest.request.Header.Get("Range") == "" && generatedRequest.request.Method != http.MethodHead {
-+				// the transport decodes a response to the gzip header it adds
-+				// itself, leaving nothing raw; sending the same header keeps the
-+				// request on the wire unchanged
-+				generatedRequest.request.Header.Set("Accept-Encoding", "gzip")
-+			}
- 			if request.sharesResponse {
- 				generatedRequest.request.WithContext(httpclientpool.WithSharedResponse(generatedRequest.request.Context(), request.options.TemplateID))
- 			}
-@@ -1510,7 +1517,11 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 
+-			if request.keepsRawResponse() && generatedRequest.request.Header.Get("Accept-Encoding") == "" &&
++			if request.readsRawResponse && generatedRequest.request.Header.Get("Accept-Encoding") == "" &&
+ 				generatedRequest.request.Header.Get("Range") == "" && generatedRequest.request.Method != http.MethodHead {
+ 				// the transport decodes a response to the gzip header it adds
+ 				// itself, leaving nothing raw; sending the same header keeps the
+@@ -1546,7 +1551,9 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
  	// respChain is http response chain that reads response body
  	// efficiently by reusing buffers and does all decoding and optimizations
--	respChain := httpUtils.NewResponseChain(resp, int64(maxBodylimit))
-+	newResponseChain := httpUtils.NewResponseChain
-+	if request.keepsRawResponse() {
-+		newResponseChain = httpUtils.NewResponseChainWithRaw
-+	}
-+	respChain := newResponseChain(resp, int64(maxBodylimit))
- 	defer respChain.Close() // reuse buffers
- 
- 	// we only intend to log/save the final redirected response
-@@ -1532,7 +1543,7 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 	onceFunc := sync.OnceFunc(func() {
- 		// if nuclei-project is enabled store the response if not previously done
- 		if request.options.ProjectFile != nil && !fromCache {
--			if err := request.options.ProjectFile.Set(projectCacheKey, resp, respChain.BodyBytes()); err != nil {
-+			if err := request.options.ProjectFile.Set(projectCacheKey, resp, respChain.RawBodyBytes()); err != nil {
- 				errx = errors.Wrap(err, "could not store in project file")
- 			}
- 		}
-@@ -1639,6 +1650,10 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 		}
- 
- 		outputEvent := request.responseToDSLMap(respChain.Response(), input.MetaInput.Input, matchedURL, convUtil.String(dumpedRequest.data), fullResponseStr, bodyStr, headersStr, duration, generatedRequest.meta)
-+		if request.readsRawResponse {
-+			outputEvent["raw_body"] = respChain.RawBodyString()
-+			outputEvent["raw_response"] = respChain.RawFullResponseString()
-+		}
- 		// add response fields to template context and merge templatectx variables to output event
- 		request.options.AddTemplateVars(input.MetaInput, request.Type(), request.ID, outputEvent)
- 		if request.options.HasTemplateCtx(input.MetaInput) {
-```
-
-**File**: `pkg/templates/templates_doc.go` (modified, +8/-0)
-```diff
-@@ -437,6 +437,14 @@ func init() {
- 			Key:   "body",
- 			Value: "HTTP response body received from server (default)",
- 		},
-+		{
-+			Key:   "raw_body",
-+			Value: "HTTP response body as received, before content decoding",
-+		},
-+		{
-+			Key:   "raw_response",
-+			Value: "HTTP response headers followed by raw_body",
-+		},
- 		{
- 			Key:   "content_length",
- 			Value: "HTTP Response content length",
+ 	newResponseChain := httpUtils.NewResponseChain
+-	if request.keepsRawResponse() {
++	// The project file stores the bytes as received, because a replay decodes
++	// them again and a decoded body would be decoded twice.
++	if request.readsRawResponse || request.options.ProjectFile != nil {
+ 		newResponseChain = httpUtils.NewResponseChainWithRaw
+ 	}
+ 	respChain := newResponseChain(resp, int64(maxBodylimit))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8187** (2026-11-19): keep raw responses only for requests reading raw parts (@dogancanbakir)
+- **PR #8184** (2026-11-19): fix(http): start the @timeout deadline when the request is sent (@dwisiswant0)
+- **PR #8183** (2026-11-19): fix(http): key host errors of a scheme-less target by its request port (@dwisiswant0)
+- **PR #8182** (2026-11-19): fix(hostbackoff): give back the slot of a cancelled wait (@dwisiswant0)
 - **PR #8173** (2026-11-18): add raw_body and raw_response http parts (@dogancanbakir)
 - **PR #8171** (2026-11-18): chore: refresh security context (@github-actions[bot])
-- **PR #8170** (2026-11-18): perf(httpcache): replace sandrolain/httpcache with x/net/http/cache (@dwisiswant0)
-- **PR #8168** (2026-11-18): fix(operators): fall back to the HTML parser when an XML-prolog document fails to parse as XML (@liangzaihuanyv)
-- **PR #8167** (2026-11-17): ci(release): pin actions by SHA and attest release archives (@johncgoat)
-- **PR #8166** (2026-11-17): build(docker): pin alpine by digest and run as non-root (@johncgoat)
 
 ---
 
@@ -2182,38 +1889,6 @@ add raw_body and raw_response http parts
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Empirical Invariant Guard in SYNTAX-REFERENCE.md
-
-**RULE**:
-When implementing operations in `SYNTAX-REFERENCE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `28b60e68`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `SYNTAX-REFERENCE.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-- <code>raw_body</code> - HTTP response body as received, before content decoding
-- <code>raw_response</code> - HTTP response headers followed by raw_body
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `28b60e68` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

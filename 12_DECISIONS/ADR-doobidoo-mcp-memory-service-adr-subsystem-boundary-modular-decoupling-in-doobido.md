@@ -4,17 +4,17 @@
 {
   "source_repository": "doobidoo/mcp-memory-service",
   "source_url": "https://github.com/doobidoo/mcp-memory-service",
-  "source_version": "7957cfe5",
+  "source_version": "bbc14454",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T17:01:53.149Z",
+  "timestamp": "2026-11-19T23:15:46.771Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-doobidoo-mcp-memory-service",
   "canonical_classification": "architecture_decision"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `7957cfe5`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T17:01:53.149Z`  
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `bbc14454`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T23:15:46.771Z`  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`
 
 
@@ -30,7 +30,7 @@ During deep inspection of doobidoo/mcp-memory-service, modular boundaries, perfo
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T17:01:51.628Z  
+> **Harvest Timestamp**: 2026-11-19T23:15:45.592Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2924,11 +2924,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2068** (2026-11-17): **Claim automation counts a maintainer's comment as an earlier claim**
-  *Symptoms*: ## What happens  On an issue labelled `auto-assign`, a `/claim` from a contributor is sent to manual confirmation when an earlier comment by a maintainer contains a phrase the claim classifier knows. The contributor gets "existing work, an earlier claim, edit or withdrawal needs a maintainer's confirmation" on an issue that is free.  Seen on #2060 on 2026-11-17. The issue had no assignee, no linked PR and no earlier claim. My comment settling the scope said "the content exists in another store and no longer names it". A contributor then commented `/claim`, the bot added `claim-pending` and posted the manual reply instead of assigning.  ## Why  In `scripts/ci/mark_claim_pending.py`:  - `WITHDRAWAL` (line 284) matches `no longer`, so `possible_claim()` returns true for the maintainer's comment. - `read_claim_history()` (line 685) builds `claims` from every comment that passes `human()` (line 355). `human()` checks the user type and login only, so maintainers are included. - `confirmed_claim()` (line 377) sees a comment by a different login before the command and returns `claims[0]`, the maintainer's comment. - `claim_ambiguity()` (line 387) finds that this "first claim" is not a command and reports ambiguity, and `prepare_assignment()` takes the manual path.  `should_label()` and `hint_command()` already skip comments whose `author_association` is in `EXEMPT_ASSOCIATIONS`. The claim history does not.  ## Reproduce  Run the classifier on the body of https://github.com/doobidoo/m
+- **Issue #2090** (2026-11-19): **fix(chunker): sentence-aware chunking strips ending punctuation and breaks overlap boundaries**
+  *Symptoms*: ### Bug Description  When using TextChunker with respect_sentence_boundaries=True (or using loaders that rely on sentence-aware chunking), all sentence-ending punctuation ('.', '!', '?') is stripped from     intermediate sentences. This produces run-on chunks where sentences have lost their punctuation.      Furthermore, _get_overlap_text() attempts to locate sentence boundaries inside the chunk overlap using self.sentence_endings.split(overlap). Because the preceding chunk text has had     all its sentence punctuation stripped, the splitter fails to find any sentence boundary, falling back to a raw character slice that chops words in half (e.g. "tence here Third     sentence here").  ### Steps to Reproduce  1. Run Python with the ingestion chunker:     ```python     from mcp_memory_service.ingestion.chunker import ChunkingStrategy, TextChunker      strategy = ChunkingStrategy(         chunk_size=80,         chunk_overlap=0,         respect_paragraph_boundaries=False,         respect_sentence_boundaries=True,         min_chunk_size=10,     )     chunker = TextChunker(strategy)     text = "First sentence here. Second sentence here! Third sentence here? Fourth sentence here."     chunks = [chunk for chunk, _ in chunker.chunk_text(text)]     print(chunks)  2. Observe the first chunk in the output.  ### Expected Behavior  The emitted text chunks should preserve all sentence-ending punctuation marks ('.', '!', '?') and maintain grammatically complete sentences:  ['First sentence h
 
-- **Issue #2041** (2026-11-18): **[Bug]: Document upload API swallows HTTP 400 validation errors as 500 and leaks temporary files on batch failure**
-  *Symptoms*: ### Bug Description    In mcp-memory-service/src/mcp_memory_service/web/api/documents.py:238-241, both upload_document (POST   /api/documents/upload) and batch_upload_documents (POST /api/documents/batch-upload) catch generic Exception and   raise HTTPException(status_code=500, detail="Internal server error") without re-raising HTTPException.   This causes two distinct issues:    1. HTTP 400 Validation Errors are Swallowed as HTTP 500:   Both endpoints validate input and explicitly raise HTTPException(status_code=400, ...):       • When an unsupported file format is uploaded (raise HTTPException(status_code=400, detail="Unsupported file       type: ...")) (L185-L188, L281-L284)       • When a tag exceeds MAX_TAG_LENGTH in parse_and_validate_tags() (raise HTTPException(status_code=400,       detail="Tag exceeds maximum length...")) (L96-L100)       • When files is empty in batch upload (raise HTTPException(status_code=400, detail="No files provided")) (L267)   Because HTTPException is a subclass of Exception, the broad except Exception: block intercepts it, logs a critical   unhandled exception traceback (logger.exception("Upload error")), and returns a generic 500 Internal Server Error   to the client. The client never receives the explanation of what validation rule failed.   2. Temporary File Leak on Batch Upload Validation Failure:   In batch_upload_documents, files are looped over and written to disk via tempfile.NamedTemporaryFile(delete=False,   ...). If a subsequent fi
+- **Issue #2083** (2026-11-19): **[Bug]:  GET /api/search/similar/{content_hash} Fails with 404 in Multi-Memory Databases Due to Vector Retrieve on Hash Hex**
+  *Symptoms*: ### Bug Description  The endpoint `GET /api/search/similar/{content_hash}` in `src/mcp_memory_service/web/api/search.py` attempts to find the target memory by calling `storage.retrieve(content_hash,     n_results=1)` instead of `storage.get_by_hash(content_hash)`.  Because `storage.retrieve()` executes a semantic vector similarity search, it generates an embedding vector for the 64-character hexadecimal SHA-256 string and returns the memory     whose content vector happens to be closest in cosine distance to that hex string.  In any database containing multiple memories, the top vector result for a random SHA-256 string is almost never the target memory itself. As a result, the subsequent equality check:     ```python     if not target_results or target_results[0].memory.content_hash != content_hash:         raise HTTPException(status_code=404, detail="Memory not found")     ```     fails and raises HTTP 404 "Memory not found", even though the memory exists in the database.  Furthermore, running vector embedding inference over SHA-256 strings wastes compute and introduces unnecessary latency.  ### Steps to Reproduce   1. In an empty test database, store two distinct memories:        - Memory A: `"Alpha service handles user authentication and session tokens."`        - Memory B: `"Database cluster stores persistent records for users and sessions."` 2. Obtain `hash_A` for Memory A. 3. Call `GET /api/search/similar/{hash_A}`.   ### Expected Behavior  - HTTP 200 OK.     - Memory 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2945,111 +2945,124 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cc58ab35` (2026-11-18)
-**Commit Message**:  fix(api): preserve 400 validation errors and clean up temporary files on upload failure (#2041) (#2057)
+### Incident Patch 1: `bbc14454` (2026-11-19)
+**Commit Message**: fix(cli): accept comma-separated extensions in directory ingestion (#2092)
 
-* fix(api): preserve 400 validation errors and prevent temp file leaks in document uploads (#2041)
+* fix(cli): accept comma-separated extensions in directory ingestion
 
-* refactor(api): consolidate temp cleanup helper and tighten single-upload leak test (#2041)
+* docs(changelog): record the CLI extension filter fix (#2092)
 
 ---------
 
 Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/2041.fixed.md` (added, +2/-0)
+**File**: `changelog.d/2092.fixed.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++- **Directory ingestion accepts comma-separated extensions (#2092, @alksv1).** The documented `--extensions pdf,md` option previously skipped ordinary PDF and Markdown files. It now imports both file types, and repeating `--extensions` still works.
+```
+
+**File**: `src/mcp_memory_service/cli/ingestion.py` (modified, +6/-1)
+```diff
+@@ -202,7 +202,12 @@ async def run_batch_ingestion():
+             
+             # Determine file extensions to process
+             if extensions:
+-                file_extensions = [ext.lstrip('.') for ext in extensions]
++                file_extensions = [
++                    ext.strip().lstrip('.')
++                    for value in extensions
++                    for ext in value.split(',')
++                    if ext.strip()
++                ]
+             else:
+                 file_extensions = list(SUPPORTED_FORMATS.keys())
+             
+```
+
+**File**: `tests/unit/test_cli_ingestion.py` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++"""Exercise mcp_memory_service.cli.ingestion through the public Click command."""
++
++from pathlib import Path
++
++import pytest
++from click.testing import CliRunner
++
++from mcp_memory_service.cli.main import cli
++
++
++@pytest.mark.parametrize(
++    ("options", "expected_files"),
++    [
++        (["--extensions", "pdf,md"], ["manual.pdf", "notes.md"]),
++        (["-e", ".pdf", "-e", "md"], ["manual.pdf", "notes.md"]),
++        (["-e", "pdf, .md,", "-e", ".pdf"], ["manual.pdf", "notes.md"]),
++        ([], ["manual.pdf", "notes.md", "other.txt"]),
++        (["-e", ""], []),
++        (["-e", ", ,"], []),
++    ],
++)
++def test_ingest_directory_extensions(
++    tmp_path: Path, options: list[str], expected_files: list[str]
++) -> None:
++    files = [tmp_path / name for name in ("manual.pdf", "notes.md", "other.txt")]
++    for path in files:
++        path.touch()
++
++    result = CliRunner().invoke(
++        cli, ["ingest-directory", str(tmp_path), "--dry-run", *options]
++    )
++
++    assert result.exit_code == (0 if expected_files else 1), result.output
++    for path in files:
++        assert result.output.count(str(path)) == expected_files.count(path.name)
+```
+
+---
+
+### Incident Patch 2: `6829b73e` (2026-11-19)
+**Commit Message**: fix(web): use get_by_hash in /search/similar endpoint (#2083) (#2085)
+
+* fix(web): look up target memory by hash in /search/similar endpoint (#2083)
+
+* fix(review): clean changelog fragment and assert non-empty similar results (#2083)
+
+**File**: `changelog.d/2083.fixed.md` (added, +2/-0)
 ```diff
 @@ -0,0 +1,2 @@
-+- **Document upload API swallowed 400 validation errors as 500 and leaked temporary files (#2041).**
-+  `POST /api/documents/upload` and `POST /api/documents/batch-upload` caught generic `Exception` without re-raising `HTTPException`, transforming client validation errors into 500 Internal Server Errors. Batch uploads that failed validation also orphaned temporary files created for preceding files. `HTTPException` is now re-raised and temporary files are cleaned up on failure.
++- **`GET /api/search/similar/{content_hash}` returned 404 in multi-memory databases (#2083).**
++  The endpoint passed the 64-character SHA-256 hex string to `storage.retrieve()`, running a vector similarity search instead of looking up the memory by primary key. When the database had more than one memory, the nearest vector match to the hex string almost never matched the target memory, causing the lookup to fail. The endpoint now calls `storage.get_by_hash()`, guaranteeing O(1) indexed retrieval and eliminating unnecessary embedding computation.
 ```
 
-**File**: `src/mcp_memory_service/web/api/documents.py` (modified, +25/-2)
+**File**: `src/mcp_memory_service/web/api/search.py` (modified, +3/-8)
 ```diff
-@@ -146,6 +146,18 @@ class UploadStatus(BaseModel):
-     created_at: datetime
-     completed_at: Optional[datetime] = None
+@@ -538,16 +538,11 @@ async def find_similar(
+     start_time = time.time()
  
-+
-+def _cleanup_temp_files(*paths: Optional[str]) -> None:
-+    """Best-effort removal of temporary files during upload error handling."""
-+    for path in paths:
-+        if path:
-+            try:
-+                os.unlink(path)
-+            except OSError:
-+                # File already deleted or unreachable; ignore cleanup errors
-+                pass
-+
-+
- @router.post("/upload", response_model=Dict[str, Any])
- async def upload_document(
-     background_tasks: BackgroundTasks,
-@@ -172,6 +184,7 @@ async def upload_document(
-     Uses FastAPI BackgroundTasks for proper async processing.
-     """
-     logger.info("Document upload endpoint called")
-+    temp_path = None
      try:
-         # Read file content
-         file_content = await file.read()
-@@ -235,7 +248,13 @@ async def upload_document(
-             "message": f"Document {file.filename} queued for processing"
-         }
- 
-+    except HTTPException:
-+        # File creation currently happens after validation, but guard against
-+        # leaks if validation or file creation order changes in the future.
-+        _cleanup_temp_files(temp_path)
-+        raise
-     except Exception:
-+        _cleanup_temp_files(temp_path)
-         logger.exception("Upload error")
-         raise HTTPException(status_code=500, detail="Internal server error")
- 
-@@ -262,6 +281,7 @@ async def batch_upload_documents(
-     Returns:
-         Batch upload session information
-     """
-+    temp_paths = []
-     try:
-         if not files:
-             raise HTTPException(status_code=400, detail="No files provided")
-@@ -271,7 +291,6 @@ async def batch_upload_documents(
- 
-         # Create batch upload session
-         batch_id = str(uuid.uuid4())
--        temp_paths = []
- 
-         # Validate and save all files
-         for file in files:
-@@ -292,9 +311,9 @@ async def batch_upload_documents(
-                 suffix=safe_ext
-             )
-             temp_path = temp_file.name
-+            temp_paths.append((file.filename, temp_path, len(content)))
-             with temp_file:
-                 temp_file.write(content)
--            temp_paths.append((file.filename, temp_path, len(content)))
- 
-         # Calculate total file size for the batch
-         total_file_size = sum(file_size for _, _, file_size in temp_paths)
-@@ -326,7 +345,11 @@ async def batch_upload_documents(
-             "message": f"Batch of {len(files)} documents queued for processing"
-         }
- 
-+    except HTTPException:
-+        _cleanup_temp_files(*(p for _, p, _ in temp_paths))
-+        raise
-     except Exception:
-+        _cleanup_temp_files(*(p for _, p, _ in temp_paths))
-         logger.exception("Batch upload error")
-         raise HTTPException(status_code=500, detail="Internal server error")
- 
+-        # First, get the target memory by searching with its hash
+-        # This is inefficient but works with current storage interface
++        # Look up the target memory directly by its hash
+         scope = resolve_store(store)
+-        target_results = await storage.retrieve(content_hash, n_results=1, store=scope)
+-
+-        if not target_results or target_results[0].memory.content_hash != content_hash:
++        target_memory = await storage.get_by_hash(content_hash, store=scope)
++        if not target_memory:
+             raise HTTPException(status_code=404, detail="Memory not found")
+-
+-        target_memory = target_results[0].memory
+-
+         # Use the target memory's content to find similar memories
+         similar_results = await storage.retrieve(
+             query=target_memory.content,
 ```
 
-**File**: `tests/web/api/test_documents_upload_errors.py` (added, +174/-0)
+**File**: `tests/web/api/test_search_similar.py` (added, +135/-0)
 ```diff
-@@ -0,0 +1,174 @@
+@@ -0,0 +1,135 @@
 +# Copyright 2024 Heinrich Krupp
 +#
 +# Licensed under the Apache License, Version 2.0 (the "License");
@@ -3064,911 +3077,366 @@ Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 +# See the License for the specific language governing permissions and
 +# limitations under the License.
 +
-+"""Regression coverage for document upload validation error propagation and temp file cleanup (Issue #2041)."""
-+
-+import io
-+import os
-+from unittest.mock import MagicMock
-+import pytest
-+from fastapi import HTTPException, UploadFile
-+
-+from mcp_memory_service.web.api import documents
-+
-+
-+def _make_upload_file(filename: str, content: bytes = b"sample text") -> UploadFile:
-+    return UploadFile(filename=filename, file=io.BytesIO(content))
-+
-+
-+@pytest.mark.asyncio
-+async def test_upload_document_unsupported_file_type_raises_400():
-+    """Verify single file upload with unsupported extension raises 400 Bad Request, not 500."""
-+    bad_file = _make_upload_file("program.exe")
-+    bg_tasks = MagicMock()
-+
-+    with pytest.raises(HTTPException) as exc_info:
-+        await documents.upload_document(
-+            background_tasks=bg_tasks,
-+            file=bad_file,
-+            tags="test",
-+            user=None,
-+        )
-+
-+    assert exc_info.value.status_code == 400
-+    assert "Unsupported file type: .exe" in exc_info.value.detail
-+    bg_tasks.add_task.assert_not_called()
-+
-+
-+@pytest.mark.asyncio
-+async def test_upload_document_tag_too_long_raises_400():
-+    """Verify tag exceeding MAX_TAG_LENGTH raises 400 Bad Request, not 500."""
-+    good_file = _make_upload_file("notes.txt")
-+    long_tag = "x" * 105
-+    bg_tasks = MagicMock()
-+
-+    with pytest.raises(HTTPException) as exc_info:
-+        await documents.upload_document(
-+            background_tasks=bg_tasks,
-+            file=good_file,
-+            tags=long_tag,
-+            user=None,
-+        )
-+
-+    assert exc_info.value.status_code == 400
-+    assert "exceeds maximum length" in exc_info.value.detail
-+    bg_tasks.add_task.assert_not_called()
-+
-+
-+@pytest.mark.asyncio
-+async def test_upload_document_cleans_up_temp_file_on_error(monkeypatch):
-+    """Verify temp file is unlinked if an unexpected exception occurs before background queueing."""
-+    good_file = _make_upload_file("doc.txt", b"hello world")
-+    bg_tasks = MagicMock()
-+
-+    created_temp_files = []
-+    real_named_temp = documents.tempfile.NamedTemporaryFile
-+
-+    def tracking_temp_file(*args, **kwargs):
-+        tf = real_named_temp(*args, **kwargs)
-+        created_temp_files.append(tf.name)
-+        return tf
-+
-+    monkeypatch.setattr(documents.tempfile, "NamedTemporaryFile", tracking_temp_file)
-+
-+    def boom(*args, **kwargs):
-+        raise RuntimeError("queue failed")
-+
-+    monkeypatch.setattr(documents.UploadStatus, "__init__", boom)
-+
-+    with pytest.raises(HTTPException) as exc_info:
-+        await documents.upload_document(
-+            background_tasks=bg_tasks,
-+            file=good_file,
-+            tags="valid",
-+            user=None,
-+        )
-+
-+    assert exc_info.value.status_code == 500
-+    assert len(created_temp_files) == 1
-+    assert not os.path.exists(created_temp_files[0]), f"Temp file {created_temp_files[0]} was leaked on disk!"
-+
-+
-+@pytest.mark.asyncio
-+async def test_batch_upload_empty_files_raises_400():
-+    """Verify empty file list raises 400 Bad Request, not 500."""
-+    bg_tasks = MagicMock()
-+
-+    with pytest.raises(HTTPException) as exc_info:
-+        await documents.batch_upload_documents(
-+            background_tasks=bg_tasks,
-+            files=[],
-+            tags="test",
-+            user=None,
-+        )
-+
-+    assert exc_info.value.status_code == 400
-+    assert exc_info.value.detail == "No files provided"
-+    bg_tasks.add_task.assert_not_called()
-+
-+
-+@pytest.mark.asyncio
-+async def test_batch_upload_tag_too_long_raises_400():
-+    """Verify tag exceeding MAX_TAG_LENGTH in batch upload raises 400 Bad Request, not 500."""
-+    file1 = _make_upload_file("doc1.txt")
-+    long_tag = "y" * 105
-+    bg_tasks = MagicMock()
-+
-+    with pytest.raises(HTTPException) as exc_info:
-+        await documents.batch_upload_documents(
-+            background_tasks=bg_tasks,
-+            files=[file1],
-+            tags=long_tag,
-+            user=None,
-+        )
-+
-+    assert exc_info.value.status_code == 400
-+    assert "exceeds maximum length" in exc_info.value.detail
-+    bg_tasks.add_task.assert_not_called()
-+
-+
-+@pytest.mark.asyncio
-+async def test_batch_upload_unsupported_file_cleans_up_partial_temp_files(monkeypatch):
-+    """Verify batch upload unlinks previously written temporary files when a subsequent file fails validatio
-```
-
----
-
-### Incident Patch 2: `4c0ae9f5` (2026-11-18)
-**Commit Message**: fix(cloudflare): set get_by_hash_is_store_scoped and close the write gaps first (#1915) (#2054)
-
-* fix(cloudflare): set get_by_hash_is_store_scoped and close two write gaps (#1915)
-
-Part 3 of 3 of #1915. With the read paths (#1923) and the hybrid sync
-queue (#1924) honoring store, CloudflareStorage now sets
-get_by_hash_is_store_scoped, so a per-store credential gets the
-store-confined tools for its store on Cloudflare as on sqlite-vec.
-
-Before the flip, two write paths still reached another store:
-
-- store() staged the Vectorize vector and R2 body, both keyed by the
-  content hash, before D1 rejected a duplicate row, so storing content
-  that lived in another store overwrote that memory's vector metadata.
-  It now refuses an exact duplicate before staging, with sqlite-vec's
-  message.
-- storing content whose row is a tombstone in another store purged that
-  tombstone and moved the hash into the caller's store. That is refused
-  now; re-storing content deleted from the same store still works.
-
-DELETE /api/memories/{hash}?store= also passes the store to the delete
-itself on backends that confine, not only to the lookup before it.
-
-Assisted-by: Claude Code / claude-opus-5-5
-Machine: M
-
-**File**: `changelog.d/1915.fixed.md` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+- **Per-store credentials work on Cloudflare (closes #1915, tonydzi).** With the read paths
-+  and the hybrid sync queue confined to `store`, `CloudflareStorage` now sets
-+  `get_by_hash_is_store_scoped`, so a `read:<s>`/`write:<s>` credential is granted
-+  `memory_search`, `memory_list` and the other store-confined tools for that store, as on
-+  sqlite-vec, instead of being refused. Three gaps closed first. `store()` staged the Vectorize
-+  vector and R2 body, both keyed by content hash alone, before D1 rejected a duplicate row,
-+  so storing content that already lived in another store overwrote that memory's vector
-+  metadata; it now refuses an exact duplicate before staging, with the same message as
-+  sqlite-vec. Storing content whose D1 row is a tombstone in another store purged that
-+  tombstone and moved the hash into the caller's store; that is refused now too, with the same message, while
-+  re-storing content deleted from the same store works as before.
-+  `DELETE /api/memories/{hash}?store=` checked the hash in the store but then
-+  deleted unscoped; the delete itself now carries the store on backends that confine.
-```
-
-**File**: `src/mcp_memory_service/storage/cloudflare.py` (modified, +61/-5)
-```diff
-@@ -199,9 +199,10 @@ def _tag_match_params(tag: str) -> List[str]:
- class CloudflareStorage(MemoryStorage):
-     """Cloudflare-based storage backend using Vectorize, D1, and R2."""
- 
--    # Hash-addressed operations (#1878) and the read paths (#1915) honor
--    # ``store``, but get_by_hash_is_store_scoped stays False until the hybrid
--    # sync queue carries ``store`` to Cloudflare too (#1915 points 2 and 3).
-+    # Hash-addressed operations (#1878), the read paths and the hybrid sync
-+    # queue (#1915) honor ``store``, so per-store credentials can be granted the
-+    # store-confined tools here as on sqlite-vec.
-+    get_by_hash_is_store_scoped = True
- 
-     # Content length limit from configuration
-     _MAX_CONTENT_LENGTH = CLOUDFLARE_MAX_CONTENT_LENGTH
-@@ -736,6 +737,9 @@ async def _store_memory(
-         )
-         r2_key = None
-         try:
-+            refusal = await self._live_duplicate_refusal(memory, store, restore_id)
-+            if refusal:
-+                return False, refusal
-             content_size, r2_key, stored_content = await self._stage_memory_artifacts(
-                 memory, vector_id, restore_id
-             )
-@@ -779,6 +783,57 @@ async def _store_memory(
-             logger.error("Failed to store memory %s: %s", _sanitize_log_value(memory.content_hash), _sanitize_log_value(e))
-             return False, f"Storage failed: {str(e)}"
- 
-+    @staticmethod
-+    def _exact_duplicate_message(existing_store: str, requested_store: str) -> str:
-+        """Describe an exact-hash conflict the way sqlite-vec does."""
-+        message = "Duplicate content detected (exact match)"
-+        if existing_store != requested_store:
-+            return f"{message}; already exists in store {existing_store!r}"
-+        return message
-+
-+    async def _live_duplicate_refusal(
-+        self, memory: Memory, store: str, restore_id: Optional[str]
-+    ) -> Optional[str]:
-+        """Refuse an exact duplicate before staging anything.
-+
-+        The vector id and R2 key of a normal store are the content hash, so
-+        staging first would overwrite the live memory's vector metadata, in
-+        whichever store it lives, before D1 rejected the row. A restore stages
-+        under its own keys and is checked against the tombstone instead.
-+        """
-+        if restore_id is not None:
-+            return None
-+        existing = await self._existing_row_of(memory.content_hash)
-+        if existing is None:
-+            return None
-+        existing_store, deleted = existing
-+        if deleted and existing_store == store:
-+            return None  # re-storing content deleted from this store
-+        # A tombstone in another store is refused too: re-storing would purge
-+        # it and move the hash into this store. Same message as a live
-+        # duplicate, so the caller does not learn whether it was deleted.
-+        return self._exact_duplicate_message(existing_store, store)
-+
-+    async def _existing_row_of(self, content_hash: str) -> Optional[Tuple[str, bool]]:
-+        """Return ``(store, is_tombstone)`` of the D1 row for ``content_hash``, if any.
-+
-+        ``content_hash`` is unique across stores in D1, as in sqlite-vec.
-+        """
-+        response = await self._retry_request(
-+            "POST", f"{self.d1_url}/query",
-+            json={
-+                "sql": "SELECT store, deleted_at FROM memories WHERE content_hash = ? LIMIT 1",
-+                "params": [content_hash],
-+            },
-+        )
-+        result = response.json()
-+        if not result.get("success"):
-+            raise ValueError(f"Failed to check for an existing memory in D1: {result}")
-+        rows = result.get("result", [{}])[0].get("results") or []
-+        if not rows:
-+            return None
-+        return rows[0].get("store") or "default", rows[0].get("deleted_at") is not None
-+
-     async def _cleanup_staged_restore_artifacts(
-         self, vector_id: Optional[str], r2_key: Optional[str]
-     ) -> None:
-@@ -2458,12 +2513,12 @@ async def recall(self, query: Optional[str] = None, n_results: int = 5, start_ti
- 
-             # Build D1 query for time-based retrieval
-             if time_where:
--                sql = f"SELECT * FROM memories WHERE {time_where}{store_sql} ORDER BY created_at DESC LIMIT ?"
-+                sql = f"SELECT * FROM memories WHERE deleted_at IS NULL AND {time_where}{store_sql} ORDER BY created_at DESC LIMIT ?"
-                 params.extend(store_params)
-                 params.append(n_results)
-             else:
-                 # No time filters, get most recent
--                sql = f"SELECT * FROM memories WHERE 1 = 1{store_sql} ORDER BY created_at DESC LIMIT ?"
-+                sql = f"SELECT * FROM memories WHERE deleted_at IS NULL{store_sql} ORDER BY created_at DESC LIMIT ?"
-                 params = [*store_params, n_results]
- 
-             payload = {"sql": sql, "params": params}
-@@ -2826,6 +2881,7 @@ async def get_memories_by_time_range(
-         end_time: float,
- 
-```
-
-**File**: `src/mcp_memory_service/web/api/memories.py` (modified, +8/-1)
-```diff
-@@ -496,7 +496,14 @@ async def delete_memory(
-         if not existing:
-             raise HTTPException(status_code=404, detail="Memory not found")
- 
--        success, message = await storage.delete(content_hash)
-+        # Confine the delete itself, not only the lookup before it. Backends
-+        # that cannot confine do not accept a named ``store`` yet.
-+        scope = (
-+            {"store": resolve_store(store)}
-+            if getattr(storage, "get_by_hash_is_store_scoped", False)
-+            else {}
-+        )
-+        success, message = await storage.delete(content_hash, **scope)
-         
-         # Broadcast SSE event for memory deletion
-         try:
-```
-
-**File**: `tests/unit/test_cloudflare_storage.py` (modified, +4/-2)
-```diff
-@@ -163,8 +163,10 @@ async def test_store_memory_small_content(self, cloudflare_storage, sample_memor
-             # Mock Vectorize storage (bypasses HTTP client) - must be AsyncMock for async method
-             with patch.object(cloudflare_storage, '_store_vectorize_vector', new_callable=AsyncMock):
-                 with patch.object(cloudflare_storage, '_retry_request') as mock_request:
--                    # Need 6 responses: tombstone purge + memory insert + 2 calls per tag
-+                    # Need 7 responses: duplicate check + tombstone purge + memory insert
-+                    # + 2 calls per tag
-                     mock_request.side_effect = [
-+                        mock_d1_response,  # Check for a live row with this hash
-                         mock_d1_response,  # Purge matching tombstone
-                         mock_d1_response,  # Insert memory
-                         mock_d1_response,  # Insert tag "test"
-@@ -179,7 +181,7 @@ async def test_store_memory_small_content(self, cloudflare_storage, sample_memor
-                     assert "successfully" in message.lower()
- 
-                     # Verify all D1 calls were made
--                    assert mock_request.call_count == 6
-+                    assert mock_request.call_count == 7
-     
-     @pytest.mark.asyncio
-     async def test_store_memory_large_content(self, cloudflare_storage):
-```
-
-**File**: `tests/unit/test_cloudflare_store_scope.py` (modified, +19/-0)
-```diff
-@@ -429,3 +429,22 @@ async def test_count_excludes_soft_deleted_memories(cloudflare_storage, d1, two_
-         await cloudflare_storage.get_all_memories(store="b")
-     )
-     assert await cloudflare_storage.count_all_memories(store="all") == 1
-+
-+
-+@pytest.mark.asyncio
-+async def test_time_only_recall_skips_soft_deleted_memories(cloudflare_storage, d1, two_stores):
-+    d1.db.execute("UPDATE memories SET deleted_at = 1.0 WHERE store = 'b'")
-+    d1.db.commit()
-+
-+    assert _hashes(await cloudflare_storage.recall(None, store="b")) == set()
-+    assert _hashes(await cloudflare_storage.recall(None, start_timestamp=0, store="b")) == set()
-+    assert _hashes(await cloudflare_storage.recall(None, store="a")) == {two_stores["a"]}
-+
-+
-+@pytest.mark.asyncio
-+async def test_time_range_accepts_exclude_pending_as_base_search_passes_it(cloudflare_storage, two_stores):
-+    # base.py's time-only search calls get_memories_by_time_range(..., exclude_pending=True, store=...)
-+    a = two_stores["a"]
-+    window = (0.0, 4102444800.0)
-+
-+    assert _hashes(await cloudflare_storage.get_memories_by_time_range(*window, exclude_pending=True, store="a")) == {a}
-```
-
-**File**: `tests/web/api/test_cloudflare_store_grant.py` (added, +212/-0)
-```diff
-@@ -0,0 +1,212 @@
-+"""A per-store credential on Cloudflare stays inside its store (#1915).
-+
-+With ``get_by_hash_is_store_scoped`` set on Cloudflare, a ``read:a`` credential
-+is granted ``memory_search`` and ``memory_list`` for ``store="a"``. These tests
-+drive the real /mcp shim against ``CloudflareStorage`` with D1 replaced by an
-+in-memory SQLite database and Vectorize answering every query with every stored
-+vector, so only the store predicate keeps another store's memories out.
++"""
++Tests for GET /api/search/similar/{content_hash} endpoint.
++Verifies that target memories are looked up directly by hash rather than through
++vector search, preventing false 404 errors in multi-memory databases.
 +"""
 +
-+import sqlite3
-+from unittest.mock import AsyncMock, Mock
-+
++import os
++import tempfile
 +import pytest
 +import pytest_asyncio
 +from fastapi.testclient import TestClient
 +
-+from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.storage.cloudflare import CloudflareStorage
-+from mcp_memory_service.utils.hashing import generate_content_hash
 +from mcp_memory_service.web.dependencies import set_storage
-+from tests.unit.test_cloudflare_store_scope import _FakeD1
-+
-+TEXT_A = "store a keeps the zebra rollout notes"
-+TEXT_B = "store b keeps the zebra incident notes"
-+
-+
-+class _FakeCloudflare(_FakeD1):
-+    """D1 on SQLite; Vectorize returns every stored vector for any query."""
-+
-+    def __init__(self, storage):
-+        super().__init__(storage)
-+        # TestClient runs the app on another thread than the fixture.
-+        self.db.close()
-+        self.db = sqlite3.connect(":memory:", check_same_thread=False)
-+        self.db.row_factory = sqlite3.Row
-+        self.db.execute("PRAGMA foreign_keys = ON")
-+        self.vector_upserts = []
-+
-+    async def __call__(self, method, url, **kwargs):
-+        if url == f"{self.storage.vectorize_url}/query":
-+            ids = [r[0] for r in self.db.execute("SELECT vector_id FROM memories").fetchall()]
-+            matches = [{"id": vector_id, "score": 0.9} for vector_id in ids]
-+            return Mock(json=Mock(return_value={"success": True, "result": {"matches": matches}}))
-+        return await super().__call__(method, url, **kwargs)
++from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
 +
 +
 +@pytest.fixture
-+def cloudflare_storage():
-+    return CloudflareStorage(
-+        api_token="test-token",
-+        account_id="test-account",
-+        vectorize_index="test-index",
-+        d1_database_id="test-db",
-+        r2_bucket="test-bucket",
-+        embedding_model="@cf/baai/bge-base-en-v1.5",
-+    )
++def temp_db():
++    """Create a temporary database for testing."""
++    with tempfile.TemporaryDirectory() as tmpdir:
++        db_path = os.path.join(tmpdir, "test_search_similar.db")
++        yield db_path
 +
 +
 +@pytest_asyncio.fixture
-+async def cloudflare(cloudflare_storage, monkeypatch):
++async def initialized_storage(temp_db, monkeypatch):
++    """Create and initialize a real SQLite storage backend."""
 +    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
-+    fake = _FakeCloudflare(cloudflare_storage)
-+    monkeypatch.setattr(cloudflare_storage, "_retry_request", fake)
-+    upsert = AsyncMock()
-+    monkeypatch.setattr(cloudflare_storage, "_store_vectorize_vector", upsert)
-+    for name in ("_delete_vectorize_vector", "_store_r2_content", "_delete_r2_content"):
-+        monkeypatch.setattr(cloudflare_storage, name, AsyncMock())
-+    monkeypatch.setattr(cloudflare_storage, "_generate_embedding", AsyncMock(return_value=[0.1]))
-+    await cloudflare_storage._initialize_d1_schema()
-+    for text, store in ((TEXT_A, "a"), (TEXT_B, "b")):
-+        memory = Memory(content=text, content_hash=generate_content_hash(text), tags=["zebra"])
-+        ok, msg = await cloudflare_storage.store(memory, store=store)
-+        assert ok, msg
-+    fake.vector_upserts = upsert
-+    yield fake
-+    fake.db.close()
++    monkeypatch.setenv("MCP_MEMORY_ALLOW_HASH_EMBEDDINGS", "1")
++    monkeypatch.setenv("MCP_MEMORY_ONNX_ALLOW_DOWNLOAD", "0")
++
++    storage = SqliteVecMemoryStorage(temp_db)
++    await storage.initialize()
++    yield storage
++    await storage.close()
 +
 +
 +@pytest.fixture
-+def make_client(cloudflare_storage, cloudflare, monkeypatch):
++def test_app(initialized_storage, monkeypatch):
++    """Create a FastAPI test application with initialized storage."""
++    monkeypatch.setenv("MCP_API_KEY", "")
++    monkeypatch.setenv("MCP_OAUTH_ENABLED", "false")
++    monkeypatch.setenv("MCP_ALLOW_ANONYMOUS_ACCESS", "true")
++    monkeypatch.setenv("INCLUDE_HOSTNAME", "false")
++
 +    from mcp_memory_service.web.app import app
-+    from mcp_memory_service.web.oauth import middleware
-+    from mcp_memory_service.web.api import mcp
-+    from mcp_memory_service.web import dependencies
++    from mcp_memory_service.web.oauth.middleware import (
++        get_current_user,
++        require_write_access,
++        require_read_access,
++        require_store_read,
++        AuthenticationResult,
++    )
 +
-+    monkeypatch.setattr(middleware, "API_KEY", None)
-+    monkeypatch.setattr(middleware, "OAUTH_ENABLED", False)
-+    monkeypatch.setattr(middleware, "ALLOW_ANONYMOUS_ACCESS", True)
-+    monkeypatch.setattr(dependencies, "_storage", None)
-+    set_storage(cloudflare_storage)
-+    monkeypatch.setattr(mcp, "_memory_server", None)
++    set_storage(initialized_storage)
 +
-+    def _make(scope):
-+        async def mock_user():
-+            return middleware.AuthenticationResult(
-+                authenticated=True, client_id="c", scope=scope, auth_method="test",
-+            )
++    async def mock_get_current_user():
++        return AuthenticationResult(
++            authenticated=True,
++            client_id="test_client",
++            scope="read write admin",
++            auth_method="test",
++        )
 +
-+        app.dependency_overrides[middleware.get_current_user] = mock_user
-+        app.dependency_overrides[middleware.require_read_access] = mock_user
-+        return TestClient(app)
++    app.dependency_overrides[get_current_user] = mock_get_current_user
++    app.dependency_overrides[require_write_access] = mock_get_current_user
++    app.dependency_overrides[require_read_access] = mock_get_current_user
++    app.dependency_overrides[require_store_read] = mock_get_current_user
 +
-+    yield _make
++    client = TestClient(app)
++    yield client
++
 +    app.dependency_overrides.clear()
 +
 +
-+def _call(client, name, arguments):
-+    return client.post("/mcp", json={
-+        "jsonrpc": "2.0", "id": 1, "method": "tools/call",
-+        "params": {"name": name, "arguments": arguments},
-+    })
++@pytest.mark.integration
++def test_search_similar_with_multiple_memories(test_app):
++    """GET /api/search/similar/{content_hash} succeeds when multiple memories exist in the DB."""
++    # Seed 3 distinct memories
++    res1 = test_app.post(
++        "/api/memories",
++        json={"content": "Alpha service handles authentication and token refresh.", "tags": ["auth"]},
++    )
++    assert res1.status_code == 200
++    hash1 = res1.json()["content_hash"]
 +
++    res2 = test_app.post(
++        "/api/memories",
++        json={"content": "Beta service validates session tokens and user permissions.", "tags": ["auth", "security"]},
++    )
++    assert res2.status_code == 200
++    hash2 = res2.json()["content_hash"]
 +
-+def _text(response):
-+    assert response.status_code == 200, response.text
-+    body = response.json()
-+    assert "error" not in body, body
-+    return " ".join(part.get("text", "") for part in body["result"]["content"])
++    res3 = test_app.post(
++        "/api/memories",
++        json={"content": "Gamma database stores user preferences and configuration.", "tags": ["storage"]},
++    )
++    assert res3.status_code == 200
++    hash3 = res3.json()["content_hash"]
 +
++    # Call similar search for hash1
++    response = test_app.get(f"/api/search/similar/{hash1}")
++    assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
 +
-+def test_cloudflare_confines_get_by_hash_to_store():
-+    assert CloudflareStorage.get_by_hash_is_store_scoped is True
++    data = response.json()
++    assert data["search_type"] == "similar"
++    assert len(data["results"]) == 2
++    # Ensure the target memory itself is filtered out and the remaining memories are returned
++    result_hashes = [r["memory"]["content_hash"] for r in data["results"]]
++    assert hash1 not in result_hashes
++    assert hash2 in result_hashes
++    assert hash3 in result_hashes
 +
 +
 +@pytest.mark.integration
-+def test_read_grant_searche
++def test_search_similar_returns_404_for_unknown_hash(test_app):
++    """GET /api/search/similar/{content_hash} returns 404 for nonexistent memory hash."""
++    fake_hash = "0" * 64
++    response = test_app.get(f"/api/search/similar/{fake_hash}")
++    assert response.status_code == 404
++    assert response.json()["detail"] == "Memory not found"
 ```
 
 ---
 
-### Incident Patch 3: `a5b29978` (2026-11-18)
-**Commit Message**: fix(onnx): enable tokenizer truncation for Hub models and replace vec0 rows cleanly (#2073) (#2074)
+### Incident Patch 3: `943f0872` (2026-11-19)
+**Commit Message**: fix(storage): duplicate refusal no longer names the other store (#2060) (#2081)
 
-* fix(onnx): enable tokenizer truncation for Hub models and replace vec0 rows cleanly (#2073)
+* fix(storage): duplicate refusal no longer names the other store (#2060)
 
-* fix(onnx): add changelog fragment, split max-length helpers, and batch regen savepoints (#2073)
+content_hash is unique across stores, so storing content that already exists
+in another store is refused. The refusal named that store, which let a
+store-scoped credential learn store names (often tenant or project names).
+It now says only that the content exists in another store, on sqlite-vec and
+Cloudflare alike. The same-store message is unchanged.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AfRe2AbUtUQWGCVPiNd32B
+
+* test(storage): use the temp_db_path fixture and Black formatting (#2060)
+
+Addresses review feedback: SQLite-vec tests use the temp_db_path fixture
+rather than managing their own temporary directory.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AfRe2AbUtUQWGCVPiNd32B
 
 ---------
 
-Co-authored-by: Salyvn <[REDACTED_EMAIL]>
+Co-authored-by: Deviprasad <[REDACTED_EMAIL]>
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/2074.fixed.md` (added, +2/-0)
+**File**: `changelog.d/2060.fixed.md` (added, +7/-0)
 ```diff
-@@ -0,0 +1,2 @@
-+- **Hub ONNX models failed past 512 tokens and embedding regeneration aborted on existing rows (#2073, #2074, @SalyyS1).**
-+  Pre-exported Hugging Face Hub models such as `intfloat/multilingual-e5-small` ship `tokenizer.json` with `"truncation": null`, so inputs longer than the position embedding table crashed ONNX Runtime with `BroadcastIterator::Init`, and `scripts/maintenance/regenerate_embeddings.py` used `INSERT OR REPLACE` on the `sqlite-vec` `vec0` virtual table, raising `UNIQUE constraint failed` whenever a row already had a vector. `_init_model` now enables truncation when unset using the model's usable sequence length (accounting for RoBERTa/XLM-RoBERTa/MPNet padding offsets and ignoring Hugging Face `model_max_length` sentinels), and `regenerate_embeddings.py` replaces vectors via per-row savepoints inside 10-row batch transactions.
+@@ -0,0 +1,7 @@
++- **Duplicate refusals no longer name the other store (closes #2060).** `content_hash` is
++  unique across stores, so storing content that already exists in a different store is
++  refused. The refusal used to say which store held it, which let a store-scoped credential
++  learn store names that are often tenant or project names. It now says only
++  `Duplicate content detected (exact match); already exists in another store`, on sqlite-vec
++  and Cloudflare alike. The same-store message is unchanged. An operator can still find the
++  row with `store="all"`.
 ```
 
-**File**: `scripts/maintenance/regenerate_embeddings.py` (modified, +24/-6)
+**File**: `src/mcp_memory_service/storage/cloudflare.py` (modified, +6/-2)
 ```diff
-@@ -110,12 +110,30 @@ async def _regenerate_all(actual_storage, memories):
-                 continue
+@@ -785,10 +785,14 @@ async def _store_memory(
  
-             # Insert embedding into the memory's own store partition. memory_embeddings is
--            # a vec0 table with `store` as a partition key (#1521); writing without it lands
--            # the vector in the wrong partition, invisible to store-scoped KNN search.
--            actual_storage.conn.execute(
--                'INSERT OR REPLACE INTO memory_embeddings(rowid, content_embedding, store) VALUES (?, ?, ?)',
--                (result[0], serialize_float32(embedding), mem['store'])
--            )
-+            # a vec0 virtual table with `store` as a partition key (#1521): vec0 does not
-+            # support SQLite's `INSERT OR REPLACE` conflict resolution and raises
-+            # `UNIQUE constraint failed on memory_embeddings primary key` when a rowid
-+            # already exists (#2073). Open an outer batch transaction so `RELEASE SAVEPOINT`
-+            # does not auto-commit each row individually, while keeping a per-row savepoint
-+            # so a failed insert restores the deleted vector cleanly.
-+            rowid = result[0]
-+            if not getattr(actual_storage.conn, 'in_transaction', False):
-+                actual_storage.conn.execute('BEGIN')
-+            actual_storage.conn.execute('SAVEPOINT regen_emb')
-+            try:
-+                actual_storage.conn.execute(
-+                    'DELETE FROM memory_embeddings WHERE rowid = ?',
-+                    (rowid,),
-+                )
-+                actual_storage.conn.execute(
-+                    'INSERT INTO memory_embeddings(rowid, content_embedding, store) VALUES (?, ?, ?)',
-+                    (rowid, serialize_float32(embedding), mem['store']),
-+                )
-+                actual_storage.conn.execute('RELEASE SAVEPOINT regen_emb')
-+            except Exception:
-+                actual_storage.conn.execute('ROLLBACK TO SAVEPOINT regen_emb')
-+                actual_storage.conn.execute('RELEASE SAVEPOINT regen_emb')
-+                raise
+     @staticmethod
+     def _exact_duplicate_message(existing_store: str, requested_store: str) -> str:
+-        """Describe an exact-hash conflict the way sqlite-vec does."""
++        """Describe an exact-hash conflict the way sqlite-vec does.
++
++        The message does not name the other store, so a store-scoped credential
++        cannot learn store names.
++        """
+         message = "Duplicate content detected (exact match)"
+         if existing_store != requested_store:
+-            return f"{message}; already exists in store {existing_store!r}"
++            return f"{message}; already exists in another store"
+         return message
  
-             success_count += 1
- 
+     async def _live_duplicate_refusal(
 ```
 
-**File**: `src/mcp_memory_service/embeddings/onnx_embeddings.py` (modified, +86/-1)
+**File**: `src/mcp_memory_service/storage/mixins/store.py` (modified, +8/-2)
 ```diff
-@@ -5,6 +5,7 @@
- """
+@@ -41,10 +41,16 @@ class StoreMixin:
+     def _exact_duplicate_message(
+         existing_store: str | None, requested_store: str
+     ) -> str:
+-        """Describe a global exact-hash conflict and name its other store."""
++        """Describe a global exact-hash conflict without naming the other store.
++
++        ``content_hash`` is unique across stores, so a conflict with another store
++        is refused. The message says only that the content exists in another store:
++        store names are often tenant or project names, and a store-scoped
++        credential must not learn them.
++        """
+         message = "Duplicate content detected (exact match)"
+         if existing_store is not None and existing_store != requested_store:
+-            return f"{message}; already exists in store {existing_store!r}"
++            return f"{message}; already exists in another store"
+         return message
  
- import hashlib
-+import json
- import logging
- import os
- import re
-@@ -262,6 +263,79 @@ def _find_onnx_file(self):
-                 return cand
-         return None
- 
-+    # Model families whose position embedding table reserves indices
-+    # 0..pad_token_id (e.g. XLM-RoBERTa / RoBERTa / MPNet have
-+    # max_position_embeddings=514 and pad_token_id=1 -> 512 usable tokens).
-+    _OFFSET_POSITION_MODEL_TYPES = frozenset({
-+        "xlm-roberta",
-+        "roberta",
-+        "camembert",
-+        "mpnet",
-+        "bart",
-+        "mbart",
-+        "longformer",
-+    })
-+    _MAX_REASONABLE_SEQ_LEN = 1_000_000
-+    _DEFAULT_MAX_SEQ_LEN = 512
-+
-+    @staticmethod
-+    def _read_json_dict(path: Path) -> Optional[dict]:
-+        """Read a JSON object from disk, returning None if absent or malformed."""
-+        if not path.exists():
-+            return None
-+        try:
-+            data = json.loads(path.read_text(encoding="utf-8"))
-+        except Exception as exc:
-+            logger.debug(
-+                "Could not parse %s: %s",
-+                _sanitize_log_value(path),
-+                _sanitize_log_value(exc),
-+            )
-+            return None
-+        return data if isinstance(data, dict) else None
-+
-+    @classmethod
-+    def _bounded_seq_len(cls, value: object) -> Optional[int]:
-+        """Return value when it is a positive integer within reasonable sequence bounds."""
-+        if isinstance(value, bool) or not isinstance(value, int):
-+            return None
-+        if 0 < value <= cls._MAX_REASONABLE_SEQ_LEN:
-+            return value
-+        return None
-+
-+    @classmethod
-+    def _usable_config_max_length(cls, cfg: dict) -> Optional[int]:
-+        """Extract usable sequence length from config.json, subtracting RoBERTa/MPNet pad offset."""
-+        max_pos = cls._bounded_seq_len(cfg.get("max_position_embeddings"))
-+        if max_pos is None:
-+            return None
-+        model_type = str(cfg.get("model_type") or "").lower()
-+        if model_type not in cls._OFFSET_POSITION_MODEL_TYPES:
-+            return max_pos
-+        pad_id = cfg.get("pad_token_id", 1)
-+        if not isinstance(pad_id, bool) and isinstance(pad_id, int) and 0 <= pad_id < max_pos - 1:
-+            return max_pos - (pad_id + 1)
-+        return max_pos
-+
-+    @classmethod
-+    def _resolve_max_length(cls, model_dir: Path) -> int:
-+        """Derive safe tokenizer truncation length from config.json / tokenizer_config.json."""
-+        candidates: List[int] = []
-+
-+        cfg = cls._read_json_dict(model_dir / "config.json")
-+        if cfg is not None:
-+            cfg_max = cls._usable_config_max_length(cfg)
-+            if cfg_max is not None:
-+                candidates.append(cfg_max)
-+
-+        tok_cfg = cls._read_json_dict(model_dir / "tokenizer_config.json")
-+        if tok_cfg is not None:
-+            tok_max = cls._bounded_seq_len(tok_cfg.get("model_max_length"))
-+            if tok_max is not None:
-+                candidates.append(tok_max)
-+
-+        return min(candidates) if candidates else cls._DEFAULT_MAX_SEQ_LEN
-+
-     def _init_model(self):
-         """Initialize ONNX model and tokenizer."""
-         model_path = self._resolve_model_path()
-@@ -286,8 +360,19 @@ def _init_model(self):
-             providers=self._preferred_providers
-         )
-         
--        # Initialize tokenizer
-+        # Initialize tokenizer. Many Hugging Face Hub repos (e.g.
-+        # intfloat/multilingual-e5-small) ship tokenizer.json with
-+        # "truncation": null, causing inputs longer than max_position_embeddings
-+        # to fail inside ONNX Runtime's position-embedding broadcast (#2073).
-         self._tokenizer = Tokenizer.from_file(str(tokenizer_path))
-+        if self._tokenizer.truncation is None:
-+            max_len = self._resolve_max_length(tokenizer_path.parent)
-+            self._tokenizer.enable_truncation(max_length=max_len)
-+            logger.info(
-+                "Enabled ONNX tokenizer truncation at max_length=%s for '%s'",
-+                _sanitize_log_value(max_len),
-+                _sanitize_log_value(self.model_name),
-+            )
-         
-         # Get model info
-         self.embedding_dimension = self._model.get_outputs()[0].shape[-1]
+     def _purge_tombstone(self, content_hash: str) -> None:
 ```
 
-**File**: `tests/test_onnx_custom_model.py` (modified, +99/-0)
+**File**: `tests/storage/test_duplicate_refusal_hides_store_name.py` (added, +69/-0)
 ```diff
-@@ -136,3 +136,102 @@ def test_default_model_name_never_validated(monkeypatch):
-     m = _make_without_io(monkeypatch, "all-MiniLM-L6-v2")
-     assert m._is_default_model is True
- 
+@@ -0,0 +1,69 @@
++"""An exact-duplicate refusal does not name the store that holds the content.
 +
-+def test_resolve_max_length_xlm_roberta_and_bert(tmp_path):
-+    """_resolve_max_length accounts for RoBERTa/XLM-R padding offset (#2073)."""
-+    import json
-+    from mcp_memory_service.embeddings.onnx_embeddings import ONNXEmbeddingModel
++``content_hash`` is unique across stores, so storing content that already lives
++in another store is refused. Store names are often tenant, team or project names,
++so the message says only that the content exists in another store, and a
++store-scoped credential cannot learn which one.
++"""
 +
-+    # 1. No config files -> 512 fallback
-+    assert ONNXEmbeddingModel._resolve_max_length(tmp_path) == 512
++import os
 +
-+    # 2. XLM-RoBERTa (e.g. intfloat/multilingual-e5-small): 514 - (1 + 1) == 512
-+    #    even when tokenizer_config.json uses HF's VERY_LARGE_INTEGER sentinel.
-+    (tmp_path / "config.json").write_text(json.dumps({
-+        "model_type": "xlm-roberta",
-+        "max_position_embeddings": 514,
-+        "pad_token_id": 1,
-+    }))
-+    (tmp_path / "tokenizer_config.json").write_text(json.dumps({
-+        "model_max_length": 1000000000000000019884624838656,
-+    }))
-+    assert ONNXEmbeddingModel._resolve_max_length(tmp_path) == 512
++import pytest
++import pytest_asyncio
 +
-+    # 3. Long-context XLM-RoBERTa (e.g. bge-m3): 8194 - 2 == 8192
-+    (tmp_path / "config.json").write_text(json.dumps({
-+        "model_type": "xlm-roberta",
-+        "max_position_embeddings": 8194,
-+        "pad_token_id": 1,
-+    }))
-+    assert ONNXEmbeddingModel._resolve_max_length(tmp_path) == 8192
++from mcp_memory_service.models.memory import Memory
++from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
++from mcp_memory_service.utils.hashing import generate_content_hash
 +
-+    # 4. BERT model with tighter tokenizer_config model_max_length=256
-+    (tmp_path / "config.json").write_text(json.dumps({
-+        "model_type": "bert",
-+        "max_position_embeddings": 512,
-+        "pad_token_id": 0,
-+    }))
-+    (tmp_path / "tokenizer_config.json").write_text(json.dumps({
-+        "model_max_length": 256,
-+    }))
-+    assert ONNXEmbeddingModel._resolve_max_length(tmp_path) == 256
++os.environ["MCP_MEMORY_ALLOW_HASH_EMBEDDINGS"] = "1"
++
++FIRST_STORE = "acme-payments-team"
++SECOND_STORE = "globex-research"
 +
 +
-+def test_init_model_enables_truncation_when_tokenizer_truncation_is_null(monkeypatch, tmp_path):
-+    """Hub tokenizers without built-in truncation get truncated to model limit (#2073)."""
-+    import json
-+    from tokenizers import Tokenizer
-+    from tokenizers.models import WordLevel
-+    from tokenizers.pre_tokenizers import Whitespace
-+    from mcp_memory_service.embeddings import onnx_embeddings as mod
-+
-+    vocab = {"[UNK]": 0, "[PAD]": 1, "hello": 2, "world": 3}
-+    tok = Tokenizer(WordLevel(vocab=vocab, unk_token="[UNK]"))
-+    tok.pre_tokenizer = Whitespace()
-+    assert tok.truncation is None
-+
-+    model_dir = tmp_path / "multilingual-e5-small"
-+    model_dir.mkdir()
-+    (model_dir / "model.onnx").write_bytes(b"stub-onnx")
-+    tok.save(str(model_dir / "tokenizer.json"))
-+    (model_dir / "config.json").write_text(json.dumps({
-+        "model_type": "xlm-roberta",
-+        "max_position_embeddings": 514,
-+        "pad_token_id": 1,
-+    }))
-+
-+    class _StubIO:
-+        def __init__(self, name, shape=None):
-+            self.name = name
-+            self.shape = shape or [1, 384]
-+
-+    class _StubSession:
-+        def __init__(self, path, providers=None):
-+            self.path = path
-+
-+        def get_outputs(self):
-+            return [_StubIO("last_hidden_state", [1, 512, 384])]
-+
-+        def get_inputs(self):
-+            return [_StubIO("input_ids"), _StubIO("attention_mask")]
-+
-+    monkeypatch.setattr(mod.ort, "InferenceSession", _StubSession)
-+    monkeypatch.setattr(mod.ONNXEmbeddingModel, "_download_model_if_needed", lambda self: None)
-+
-+    orig_init = mod.ONNXEmbeddingModel._init_model
-+
-+    def _patched_init(self):
-+        self._model_dir = model_dir
-+        orig_init(self)
-+
-+    monkeypatch.setattr(mod.ONNXEmbeddingModel, "_init_model", _patched_init)
-+
-+    instance = mod.ONNXEmbeddingModel(model_name="multilingual-e5-small")
-+    assert instance._tokenizer.truncation is not None
-+    assert instance._tokenizer.truncation["max_length"] == 512
-+
-+    long_text = " ".join(["hello"] * 700)
-+    encoded = instance._tokenizer.encode(long_text)
-+    assert len(encoded.ids) == 512
++@pytest_asyncio.fixture
++async def storage(temp_db_path):
++    s = SqliteVecMemoryStorage(os.path.join(temp_db_path, "test.db"))
++    await s.initialize()
++    yield s
++    await s.close()
 +
 +
++def _memory(content):
++    return Memory(
++        content=content, content_hash=generate_content_hash(content), tags=["t"]
++    )
++
++
++@pytest.mark.asyncio
++async def test_refusal_for_content_in_another_store_does_not_name_it(storage):
++    content = "The incident review is scheduled for Friday."
++    ok, msg = await storage.store(
++        _memory(content), skip_semantic_dedup=True, store=FIRST_STORE
++    )
++    assert ok, msg
++
++    ok, msg = await storage.store(
++        _memory(content), skip_semantic_dedup=True, store=SECOND_STORE
++    )
++
++    assert not ok
++    assert msg.startswith("Duplicate content detected (exact match)")
++    assert "another store" in msg
++    assert FIRST_STORE not in msg
++
++
++@pytest.mark.asyncio
++async def test_refusal_in_the_same_store_keeps_the_plain_message(storage):
++    content = "Quarterly planning notes live in the shared drive."
++    ok, msg = await storage.store(
++        _memory(content), skip_semantic_dedup=True, store=FIRST_STORE
++    )
++    assert ok, msg
++
++    ok, msg = await storage.store(
++        _memory(content), skip_semantic_dedup=True, store=FIRST_STORE
++    )
++
++    assert not ok
++    assert msg == "Duplicate content detected (exact match)"
 ```
 
-**File**: `tests/unit/test_onnx_truncation_and_regen.py` (added, +303/-0)
+**File**: `tests/storage/test_store_scope_semantic_dedup.py` (modified, +11/-7)
 ```diff
-@@ -0,0 +1,303 @@
-+"""Unit tests for ONNX Hub tokenizer truncation and embedding regeneration (#2073)."""
-+
-+import asyncio
-+import importlib
-+import json
-+import sqlite3
-+import struct
-+import sys
-+import types
-+from pathlib import Path
-+
-+
-+def _import_onnx_embeddings_with_stubs(monkeypatch):
-+    """Import onnx_embeddings even in minimal unit-test environments without numpy."""
-+    if "numpy" not in sys.modules:
-+        try:
-+            import numpy  # noqa: F401
-+        except ImportError:
-+            fake_np = types.ModuleType("numpy")
-+            fake_np.ndarray = object
-+            monkeypatch.setitem(sys.modules, "numpy", fake_np)
-+    mod_name = "mcp_memory_service.embeddings.onnx_embeddings"
-+    if mod_name in sys.modules:
-+        return importlib.reload(sys.modules[mod_name])
-+    return importlib.import_module(mod_name)
-+
-+
-+def _load_regenerate_module(monkeypatch):
-+    """Import scripts/maintenance/regenerate_embeddings.py with lightweight storage/config stubs."""
-+    try:
-+        import sqlite_vec  # noqa: F401
-+    except ImportError:
-+        fake_sqlite_vec = types.ModuleType("sqlite_vec")
-+        fake_sqlite_vec.serialize_float32 = lambda vec: struct.pack(f"{len(vec)}f", *vec)
-+        monkeypatch.setitem(sys.modules, "sqlite_vec", fake_sqlite_vec)
-+
-+    fake_factory = types.ModuleType("mcp_memory_service.storage.factory")
-+    fake_factory.create_storage_instance = None
-+    monkeypatch.setitem(sys.modules, "mcp_memory_service.storage.factory", fake_factory)
-+
-+    fake_cfg = types.ModuleType("mcp_memory_service.config")
-+    fake_cfg.SQLITE_VEC_PATH = ":memory:"
-+    monkeypatch.setitem(sys.modules, "mcp_memory_service.config", fake_cfg)
-+
-+    repo_root = Path(__file__).resolve().parents[2]
-+    monkeypatch.syspath_prepend(str(repo_root / "scripts" / "maintenance"))
-+    if "regenerate_embeddings" in sys.modules:
-+        return importlib.reload(sys.modules["regenerate_embeddings"])
-+    return importlib.import_module("regenerate_embeddings")
-+
-+
-+def test_resolve_max_length_handles_offset_and_sentinel(monkeypatch, tmp_path: Path):
-+    mod = _import_onnx_embeddings_with_stubs(monkeypatch)
-+    cls = mod.ONNXEmbeddingModel
-+
-+    # Default when neither config.json nor tokenizer_config.json exists.
-+    assert cls._resolve_max_length(tmp_path) == 512
-+
-+    # XLM-RoBERTa (intfloat/multilingual-e5-small): 514 - (pad_token_id=1 + 1) = 512,
-+    # ignoring Hugging Face's VERY_LARGE_INTEGER sentinel in tokenizer_config.json.
-+    (tmp_path / "config.json").write_text(
-+        json.dumps({"model_type": "xlm-roberta", "max_position_embeddings": 514, "pad_token_id": 1}),
-+        encoding="utf-8",
-+    )
-+    (tmp_path / "tokenizer_config.json").write_text(
-+        json.dumps({"model_max_length": 1000000000000000019884624838656}),
-+        encoding="utf-8",
-+    )
-+    assert cls._resolve_max_length(tmp_path) == 512
-+
-+    # MPNet (all-mpnet-base-v2): 514 - 2 = 512.
-+    (tmp_path / "config.json").write_text(
-+        json.dumps({"model_type": "mpnet", "max_position_embeddings": 514, "pad_token_id": 1}),
-+        encoding="utf-8",
-+    )
-+    assert cls._resolve_max_length(tmp_path) == 512
-+
-+    # BGE-M3 long-context XLM-RoBERTa: 8194 - 2 = 8192.
-+    (tmp_path / "config.json").write_text(
-+        json.dumps({"model_type": "xlm-roberta", "max_position_embeddings": 8194, "pad_token_id": 1}),
-+        encoding="utf-8",
-+    )
-+    assert cls._resolve_max_length(tmp_path) == 8192
-+
-+    # BERT with explicit stricter tokenizer_config.json limit (256 < 512).
-+    (tmp_path / "config.json").write_text(
-+        json.dumps({"model_type": "bert", "max_position_embeddings": 512, "pad_token_id": 0}),
-+        encoding="utf-8",
-+    )
-+    (tmp_path / "tokenizer_config.json").write_text(
-+        json.dumps({"model_max_length": 256}),
-+        encoding="utf-8",
-+    )
-+    assert cls._resolve_max_length(tmp_path) == 256
-+
-+
-+def test_init_model_enables_truncation_only_when_null(monkeypatch, tmp_path: Path):
-+    mod = _import_onnx_embeddings_with_stubs(monkeypatch)
-+
-+    model_dir = tmp_path / "e5"
-+    model_dir.mkdir()
-+    (model_dir / "model.onnx").write_bytes(b"stub")
-+    (model_dir / "tokenizer.json").write_text("{}", encoding="utf-8")
-+    (model_dir / "config.json").write_text(
-+        json.dumps({"model_type": "xlm-roberta", "max_position_embeddings": 514, "pad_token_id": 1}),
-+        encoding="utf-8",
-+    )
-+
-+    class _StubTokenizer:
-+        def __init__(self, initial_truncation):
-+            self.truncation = initial_truncation
-+            self.enabled_with = None
-+
-+        def enable_truncation(self, max_length):
-+            self.enabled_with = max_length
-+            self.truncation = {"max_length": max_length}
-+
-+    class _StubIO:
-+        def __init__(self, name, shape=None):
-+            self.name = name
-+            self.shape = shape or [1, 384]
-+
-+    class _StubSession:
-+        def __init__(self, *_a, **_kw):
-+            pass
-+
-+        def get_outputs(
+@@ -167,7 +167,7 @@ async def test_semantic_dedup_only_rejects_matches_in_target_store(storage):
+ 
+ 
+ @pytest.mark.asyncio
+-async def test_exact_duplicate_names_the_store_that_already_has_the_hash(storage):
++async def test_exact_duplicate_does_not_name_the_store_that_already_has_the_hash(storage):
+     content = "identical content must remain globally unique"
+     memory = _memory(content)
+ 
+@@ -177,15 +177,17 @@ async def test_exact_duplicate_names_the_store_that_already_has_the_hash(storage
+     ok, message = await storage.store(_memory(content), store="default")
+     assert not ok
+     assert "exact match" in message
+-    assert "knowledge" in message
++    assert "another store" in message
++    assert "knowledge" not in message
+ 
+     batch_results = await storage.store_batch([_memory(content)], store="default")
+     assert not batch_results[0][0]
+-    assert "knowledge" in batch_results[0][1]
++    assert "another store" in batch_results[0][1]
++    assert "knowledge" not in batch_results[0][1]
+ 
+ 
+ @pytest.mark.asyncio
+-async def test_store_race_names_winning_store_without_partial_writes(storage):
++async def test_store_race_does_not_name_winning_store_without_partial_writes(storage):
+     memory = _memory("content inserted by a competing writer")
+     racing_connection = _race_connection(storage, memory, "winner")
+     storage.conn = racing_connection
+@@ -197,12 +199,13 @@ async def test_store_race_names_winning_store_without_partial_writes(storage):
+     assert racing_connection.injected
+     assert racing_connection.integrity_error_seen
+     assert not ok
+-    assert "winner" in message
++    assert "another store" in message
++    assert "winner" not in message
+     _assert_only_winning_record(storage.conn, memory, "winner")
+ 
+ 
+ @pytest.mark.asyncio
+-async def test_store_batch_race_names_winning_store_without_partial_writes(storage):
++async def test_store_batch_race_does_not_name_winning_store_without_partial_writes(storage):
+     memory = _memory("batch content inserted by a competing writer")
+     racing_connection = _race_connection(storage, memory, "winner")
+     storage.conn = racing_connection
+@@ -212,5 +215,6 @@ async def test_store_batch_race_names_winning_store_without_partial_writes(stora
+     assert racing_connection.injected
+     assert racing_connection.integrity_error_seen
+     assert not results[0][0]
+-    assert "winner" in results[0][1]
++    assert "another store" in results[0][1]
++    assert "winner" not in results[0][1]
+     _assert_only_winning_record(storage.conn, memory, "winner")
+```
+
+**File**: `tests/web/api/test_cloudflare_store_grant.py` (modified, +1/-1)
+```diff
+@@ -172,7 +172,7 @@ async def test_tombstone_of_another_store_is_not_taken_over(cloudflare_storage,
+     ok, msg = await cloudflare_storage.store(memory, store="a")
+ 
+     assert not ok
+-    assert msg == "Duplicate content detected (exact match); already exists in store 'b'"
++    assert msg == "Duplicate content detected (exact match); already exists in another store"
+     cloudflare.vector_upserts.assert_not_called()
+     row = cloudflare.row(content_hash)
+     assert row["store"] == "b" and row["deleted_at"] is not None
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2076** (2026-11-18): docs(contributing): block an account that keeps opening unclaimed PRs after a close (@doobidoo)
-- **PR #2075** (closed): fix(cloudflare): exclude tombstones from D1 timestamp queries (#2059) (@bfs2021)
-- **PR #2074** (2026-11-18): fix(onnx): enable tokenizer truncation for Hub models and replace vec0 rows cleanly (#2073) (@SalyyS1)
-- **PR #2072** (2026-11-18): chore(deps): bump the uv group with 9 updates (@dependabot[bot])
-- **PR #2071** (2026-11-18): --adapt-min-class: stray-label classes sit the balancing out; default flips to oversample (@Yoel-qin)
-- **PR #2070** (2026-11-18): feat(consolidation): report consolidation progress over SSE (#2011) (@massimiliano1991)
+- **PR #2092** (2026-11-19): fix(cli): accept comma-separated extensions in directory ingestion (@alksv1)
+- **PR #2091** (2026-11-19): fix(chunker): preserve sentence punctuation and overlap boundaries (#2090) (@Adil-Khan-N)
+- **PR #2087** (2026-11-19): fix(time-parser): preserve month years, accept now, and fall through on non-date between queries (#2086) (@Adil-Khan-N)
+- **PR #2085** (2026-11-19): fix(web): use get_by_hash in /search/similar endpoint (#2083) (@Adil-Khan-N)
+- **PR #2084** (2026-11-19): fix(storage): preserve timestamp boundaries in delete_memories fallba… (@Adil-Khan-N)
+- **PR #2082** (2026-11-19): docs(contributing): say that linking an issue means a reference in the PR description (@doobidoo)
 
 ---
 
@@ -3988,22 +3456,21 @@ Co-authored-by: Salyvn <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix(api): preserve 400 validation errors and clean up temporary files on upload 
+## X. cli): accept comma-separated extensions in directory ingestion
 
 **RULE**:
-When implementing operations in `changelog.d/2041.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/2092.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cc58ab35`: fix(api): preserve 400 validation errors and clean up temporary files on upload failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bbc14454`: cli): accept comma-separated extensions in directory ingestion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2041.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2092.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Document upload API swallowed 400 validation errors as 500 and leaked temporary files (#2041).**
-  `POST /api/documents/upload` and `POST /api/documents/batch-upload` caught generic `Exception` without re-raising `HTTPException`, transforming client validation errors into 500 Internal Server Errors. Batch uploads that failed validation also orphaned temporary files created for preceding files. `HTTPException` is now re-raised and temporary files are cleaned up on failure.
+- **Directory ingestion accepts comma-separated extensions (#2092, @alksv1).** The documented `--extensions pdf,md` option previously skipped ordinary PDF and Markdown files. It now imports both file types, and repeating `--extensions` still works.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -4013,7 +3480,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cc58ab35` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bbc14454` are properly handled with clean fallback behavior.
 
 
 ## Consequences

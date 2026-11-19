@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T23:02:06.558Z",
-  "total_cycles_completed": 10883,
-  "total_learnings_persisted": 10883,
-  "total_rules_promoted": 10240,
+  "last_updated": "2026-11-19T23:15:46.577Z",
+  "total_cycles_completed": 10885,
+  "total_learnings_persisted": 10885,
+  "total_rules_promoted": 10241,
   "history": [
-    {
-      "timestamp": "2026-11-19T02:56:06.244Z",
-      "repository": "Qwen/Qwen3-8B",
-      "learningId": "learn-huggingface-qwen-qwen3-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T02:56:11.293Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T02:56:50.505Z",
       "repository": "argoproj/argo-workflows",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-19T23:02:06.558Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T23:15:43.138Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T23:15:46.577Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

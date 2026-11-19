@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "7957cfe5",
+    "sourceVersion": "bbc14454",
     "license": "Apache-2.0",
-    "contentHash": "dca1e9bc0b76fdfb601c19ac74b2b52235fe3af9d32fe922968e0a28631811cc",
-    "lastHarvestedAt": "2026-11-18T17:01:52.870Z",
+    "contentHash": "af512c456cd655a4382669d5a3054a3a4f8939f8671ef632a46dd32b46e5d5aa",
+    "lastHarvestedAt": "2026-11-19T23:15:46.571Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "2e587bc5",
+    "sourceVersion": "b1d47824",
     "license": "MIT",
-    "contentHash": "08872929a3503c167a57b92d8fc1882ff30f54961707ab22f7183b1a675dd67a",
-    "lastHarvestedAt": "2026-11-19T16:07:24.283Z",
+    "contentHash": "047d377ecf27b8975c2ff6c69e72210a092c6648ae646f4b0670a5b973038fbb",
+    "lastHarvestedAt": "2026-11-19T23:15:43.133Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {

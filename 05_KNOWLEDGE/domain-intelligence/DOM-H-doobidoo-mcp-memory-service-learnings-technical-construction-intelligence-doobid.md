@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T01:54:53.660Z",
+  "timestamp": "2026-11-19T23:16:17.695Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-doobidoo-mcp-memory-service-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [doobidoo-mcp-memory-service-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T01:54:53.660Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T23:16:17.695Z`  
 > **Learning ID**: `LEARN-EVO-doobidoo-mcp-memory-service-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 81%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from doobidoo-mcp-memory-service-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `30f9eb40`  
+> **Source Version**: `bbc14454`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T01:54:47.008Z  
+> **Timestamp**: 2026-11-19T23:15:45.598Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T01:54:47.002Z  
+> **Harvest Timestamp**: 2026-11-19T23:15:45.592Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2133 stars
+- **Stars / Engagement**: 2136 stars
 
 ---
 
@@ -2939,11 +2939,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2030** (2026-11-16): **[Bug]: time_expr "between november and january" returns an inverted range and matches nothing**
-  *Symptoms*: ### Bug Description  A `between` range over month names that crosses New Year comes back with the start after the end, so `memory_search(time_expr=...)` returns no memories at all, with no error.  `between november and january` (run on 2026-11-15) resolves to 2026-11-01 .. 2026-01-31. Each month rolls back to its most recent occurrence on its own, and the start is never moved to the previous year. This happens for every cross-year month range whose first month is the current month or earlier (e.g. "between october and march" today), so for most of the year these searches are always empty. Yearless M/D ranges were fixed for the same problem in #1347; month names were not.  ### Steps to Reproduce  1. Clone main and install: `pip install -e .` 2. Save the script below as `repro_between_months.py` 3. Run `python repro_between_months.py`  ```python import asyncio, hashlib, logging, os, tempfile from datetime import datetime, timezone  tmp = tempfile.mkdtemp(prefix="mcp-repro-") os.environ["MCP_MEMORY_BASE_DIR"] = tmp os.environ["MCP_MEMORY_ALLOW_HASH_EMBEDDINGS"] = "1" logging.disable(logging.CRITICAL)  from mcp_memory_service.models.memory import Memory from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage from mcp_memory_service.utils.time_parser import parse_time_expression   def memory(content, when):     m = Memory(content=content, content_hash=hashlib.sha256(content.encode()).hexdigest(),                tags=["repro"], memory_type="note")     m.created_at 
+- **Issue #2090** (2026-11-19): **fix(chunker): sentence-aware chunking strips ending punctuation and breaks overlap boundaries**
+  *Symptoms*: ### Bug Description  When using TextChunker with respect_sentence_boundaries=True (or using loaders that rely on sentence-aware chunking), all sentence-ending punctuation ('.', '!', '?') is stripped from     intermediate sentences. This produces run-on chunks where sentences have lost their punctuation.      Furthermore, _get_overlap_text() attempts to locate sentence boundaries inside the chunk overlap using self.sentence_endings.split(overlap). Because the preceding chunk text has had     all its sentence punctuation stripped, the splitter fails to find any sentence boundary, falling back to a raw character slice that chops words in half (e.g. "tence here Third     sentence here").  ### Steps to Reproduce  1. Run Python with the ingestion chunker:     ```python     from mcp_memory_service.ingestion.chunker import ChunkingStrategy, TextChunker      strategy = ChunkingStrategy(         chunk_size=80,         chunk_overlap=0,         respect_paragraph_boundaries=False,         respect_sentence_boundaries=True,         min_chunk_size=10,     )     chunker = TextChunker(strategy)     text = "First sentence here. Second sentence here! Third sentence here? Fourth sentence here."     chunks = [chunk for chunk, _ in chunker.chunk_text(text)]     print(chunks)  2. Observe the first chunk in the output.  ### Expected Behavior  The emitted text chunks should preserve all sentence-ending punctuation marks ('.', '!', '?') and maintain grammatically complete sentences:  ['First sentence h
 
-- **Issue #2029** (2026-11-16): **[Bug]: time_expr "day before yesterday" selects yesterday**
-  *Symptoms*: ### Bug Description  `parse_time_expression("day before yesterday")` returns yesterday's window, so `memory_search(time_expr="day before yesterday")` silently returns the wrong day's memories, with no error. The parser matches the word "yesterday" inside the phrase and ignores "day before". `extract_time_expression` has the same problem and leaves "day before" in the search text.  ### Steps to Reproduce  1. Clone main and install: `pip install -e .` 2. Save the script below as `repro_day_before_yesterday.py` 3. Run `python repro_day_before_yesterday.py`  ```python import asyncio, hashlib, logging, os, tempfile from datetime import datetime, timedelta, timezone  tmp = tempfile.mkdtemp(prefix="mcp-repro-") os.environ["MCP_MEMORY_BASE_DIR"] = tmp os.environ["MCP_MEMORY_ALLOW_HASH_EMBEDDINGS"] = "1" logging.disable(logging.CRITICAL)  from mcp_memory_service.models.memory import Memory from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage from mcp_memory_service.utils.time_parser import parse_time_expression   def memory(content, when):     m = Memory(content=content, content_hash=hashlib.sha256(content.encode()).hexdigest(),                tags=["repro"], memory_type="note")     m.created_at = when.timestamp()     m.created_at_iso = datetime.fromtimestamp(m.created_at, tz=timezone.utc).isoformat()     return m   async def main():     noon = datetime.now().replace(hour=12, minute=0, second=0, microsecond=0)     storage = SqliteVecMemoryStorage(os.path.join(tmp, 
+- **Issue #2083** (2026-11-19): **[Bug]:  GET /api/search/similar/{content_hash} Fails with 404 in Multi-Memory Databases Due to Vector Retrieve on Hash Hex**
+  *Symptoms*: ### Bug Description  The endpoint `GET /api/search/similar/{content_hash}` in `src/mcp_memory_service/web/api/search.py` attempts to find the target memory by calling `storage.retrieve(content_hash,     n_results=1)` instead of `storage.get_by_hash(content_hash)`.  Because `storage.retrieve()` executes a semantic vector similarity search, it generates an embedding vector for the 64-character hexadecimal SHA-256 string and returns the memory     whose content vector happens to be closest in cosine distance to that hex string.  In any database containing multiple memories, the top vector result for a random SHA-256 string is almost never the target memory itself. As a result, the subsequent equality check:     ```python     if not target_results or target_results[0].memory.content_hash != content_hash:         raise HTTPException(status_code=404, detail="Memory not found")     ```     fails and raises HTTP 404 "Memory not found", even though the memory exists in the database.  Furthermore, running vector embedding inference over SHA-256 strings wastes compute and introduces unnecessary latency.  ### Steps to Reproduce   1. In an empty test database, store two distinct memories:        - Memory A: `"Alpha service handles user authentication and session tokens."`        - Memory B: `"Database cluster stores persistent records for users and sessions."` 2. Obtain `hash_A` for Memory A. 3. Call `GET /api/search/similar/{hash_A}`.   ### Expected Behavior  - HTTP 200 OK.     - Memory 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2960,570 +2960,498 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `15a9e9a9` (2026-11-16)
-**Commit Message**: fix(security): keep memory_store side effects inside the granted store (GHSA-989p-hfjf-q97q) (#2036)
+### Incident Patch 1: `bbc14454` (2026-11-19)
+**Commit Message**: fix(cli): accept comma-separated extensions in directory ingestion (#2092)
 
-* fix(security): keep auto-capture and the NLI check inside the granted store (GHSA-989p-hfjf-q97q)
+* fix(cli): accept comma-separated extensions in directory ingestion
 
-A client holding only write:<store> could overwrite the default store
-through memory_store. handle_store_memory wrote the memory to the granted
-store but ran auto-capture without it: capture(), _try_evolve() and
-evolve_memory() took no store, so extracted candidates were compared with
-"default", replaced a similar memory there or were inserted there.
+* docs(changelog): record the CLI extension filter fix (#2092)
 
-The NLI contradiction check on store had the same gap, inline and in the
-background task: it searched "default" whatever store the memory went to,
-linked the two with a contradicts edge and reported the hit count. For the
-same reason it missed contradictions inside a named store.
+---------
 
-store is now passed down all of these paths, and evolve_memory() refuses a
-hash from another store on its own. The handler forwards the store the
-caller named rather than its "default" fallback: forwarding the fallback
-would have switched evolution off for every caller on a backend whose
-get_by_hash ignores store (Cloudflare, Milvus).
+Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
-The auto-capture and NL
-
-**File**: `changelog.d/ghsa-989p.fixed.md` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+- **A per-store write grant could write to and supersede memories in another store through `memory_store` (GHSA-989p-hfjf-q97q, reported by [RISCON Labs](https://www.risconlabs.com), @RISCON-Labs).**
-+  With `auto_extract=true`, `handle_store_memory` stored the memory in the granted store but ran auto-capture without it. `AutoCaptureService.capture()`, `SessionHarvester._try_evolve()` and `MemoryService.evolve_memory()` took no `store`, so the extracted candidates were compared with the `default` store, replaced a similar memory there, or were inserted there. A client holding only `write:projectA` could overwrite `default`. The NLI contradiction check on store (`MCP_NLI_ON_STORE`, inline and background) had the same gap: it compared a memory with the `default` store whatever store it was written to, linked the two with a `contradicts` edge and reported the hit count to the caller. It also missed contradictions inside a named store for the same reason. Conflict detection on store, which runs on every write without any flag, compared the new memory with every store as well and tagged a near-identical memory in another store `conflict:unresolved`, with `contradicts` edges between the two; it is confined to the store of the write now. `store` is now passed down all of these paths, and `evolve_memory()` refuses a hash from another store by itself. Setting `MCP_AUTO_EXTRACT_DEFAULT=false` was never a mitigation: an explicit `auto_extract` argument wins. Affected: 12.4.0 to 12.10.0, on backends that confine by store (sqlite-vec, hybrid). On Cloudflare and Milvus a per-store grant never authorized these calls; there, auto-capture for a named store now stores candidates in that store without evolving existing ones.
-```
-
-**File**: `src/mcp_memory_service/consolidation/quarantine.py` (modified, +2/-1)
-```diff
-@@ -357,8 +357,9 @@ async def _run_on_store_checks(
-         try:
-             from ..reasoning.nli import detect_contradictions_nli
- 
-+            nli_store_kw = {"store": store} if store is not None else {}
-             result = await detect_contradictions_nli(
--                storage, memory_hash=content_hash, dry_run=False
-+                storage, memory_hash=content_hash, dry_run=False, **nli_store_kw
-             )
-             pairs_detected = result.get("pairs_detected", 0)
-             logger.info(
-```
-
-**File**: `src/mcp_memory_service/harvest/auto_capture.py` (modified, +31/-16)
-```diff
-@@ -76,6 +76,32 @@ def extract_from_text(self, text: str, role: str = "assistant") -> List[HarvestC
-             if c.confidence >= self.min_confidence and c.memory_type in self.types
-         ]
- 
-+    async def _store_candidate(
-+        self,
-+        candidate,
-+        parent_hash: Optional[str],
-+        conversation_id: Optional[str],
-+        store: Optional[str],
-+    ) -> Dict[str, Any]:
-+        """Store one candidate as its own memory, in ``store`` when one is named."""
-+        tags = ["auto-capture"] + candidate.tags
-+        if parent_hash:
-+            tags.append(f"source:{parent_hash[:12]}")
-+        # An unnamed store is left to store_memory()'s default.
-+        store_kw: Dict[str, Any] = {"store": store} if store is not None else {}
-+        return await self.memory_service.store_memory(
-+            content=candidate.content,
-+            tags=tags,
-+            memory_type=candidate.memory_type,
-+            metadata={
-+                "confidence": candidate.confidence,
-+                "source": "auto_capture",
-+                "extracted_from": parent_hash,
-+            },
-+            conversation_id=conversation_id,
-+            **store_kw,
-+        )
-+
-     async def capture(
-         self,
-         text: str,
-@@ -86,6 +112,7 @@ async def capture(
-         dry_run: bool = True,
-         link_parent: bool = True,
-         harvest_config: Optional[HarvestConfig] = None,
-+        store: Optional[str] = None,
-     ) -> AutoCaptureResult:
-         """Extract candidates and optionally store them with graph links."""
-         candidates = self.extract_from_text(text, role=role)
-@@ -106,7 +133,9 @@ async def capture(
- 
-         for candidate in candidates:
-             try:
--                evolved, child_hash = await self._harvester._try_evolve(candidate, config)
-+                evolved, child_hash = await self._harvester._try_evolve(
-+                    candidate, config, store=store
-+                )
-                 if evolved:
-                     result.evolved += 1
-                     result.stored += 1
-@@ -119,21 +148,7 @@ async def capture(
-                         )
-                     continue
- 
--                tags = ["auto-capture"] + candidate.tags
--                if parent_hash:
--                    tags.append(f"source:{parent_hash[:12]}")
--
--                resp = await self.memory_service.store_memory(
--                    content=candidate.content,
--                    tags=tags,
--                    memory_type=candidate.memory_type,
--                    metadata={
--                        "confidence": candidate.confidence,
--                        "source": "auto_capture",
--                        "extracted_from": parent_hash,
--                    },
--                    conversation_id=conversation_id,
--                )
-+                resp = await self._store_candidate(candidate, parent_hash, conversation_id, store)
- 
-                 if not (isinstance(resp, dict) and resp.get("success")):
-                     if isinstance(resp, dict) and resp.get("refused_recreate"):
-```
-
-**File**: `src/mcp_memory_service/harvest/harvester.py` (modified, +14/-1)
-```diff
-@@ -342,7 +342,9 @@ def _is_older_statement(candidate, existing) -> bool:
-         existing_time = memory_statement_time(existing)
-         return existing_time is not None and candidate_time < existing_time
- 
--    async def _try_evolve(self, candidate, config: "HarvestConfig", metadata=None):
-+    async def _try_evolve(
-+        self, candidate, config: "HarvestConfig", metadata=None, store: Optional[str] = None
-+    ):
-         """Check for similar active memory; if found, evolve it.
- 
-         Returns ``(evolved, new_hash)``. ``evolved`` is True when an existing
-@@ -357,11 +359,21 @@ async def _try_evolve(self, candidate, config: "HarvestConfig", metadata=None):
-         if not hasattr(self.memory_service, "storage") or not self.memory_service.storage:
-             return False, None
- 
-+        # A caller confined to one store may only evolve a memory of that store.
-+        # Where get_by_hash ignores ``store`` that cannot be guaranteed, so the
-+        # candidate is stored as its own memory instead (as memory_update refuses).
-+        store_kw = {}
-+        if store not in (None, "all"):
-+            if not getattr(self.memory_service.storage, "get_by_hash_is_store_scoped", False):
-+                return False, None
-+            store_kw = {"store": store}
-+
-         try:
-             similar = await self.memory_service.storage.retrieve(
-                 candidate.content,
-                 n_results=1,
-                 min_confidence=config.min_confidence_to_evolve,
-+                **store_kw,
-             )
-         except Exception as e:
-             logger.debug("Similarity check failed, falling back to store: %s", _sanitize_log_value(str(e)))
-@@ -390,6 +402,7 @@ async def _try_evolve(self, candidate, config: "HarvestConfig", metadata=None):
-                 memory_type=candidate.memory_type,
-                 metadata=metadata if metadata is not None else default_metadata,
-                 reason=f"Session harvest: {datetime.now(timezone.utc).isoformat()}",
-+                **store_kw,
-             )
-             if ok:
-                 logger.info("Evolved memory %s→%s", existing_hash[:8], new_hash[:8] if new_hash else "?")
-```
-
-**File**: `src/mcp_memory_service/reasoning/nli.py` (modified, +24/-14)
-```diff
-@@ -21,7 +21,7 @@
- import os
- import re
- from dataclasses import dataclass
--from typing import List, Tuple
-+from typing import Any, Dict, List, Optional, Tuple
- 
- from .nli_patterns import load_nli_patterns
- from ..config.locale import get_active_locales
-@@ -439,8 +439,22 @@ async def _classify_band(
-     return contradictions
- 
- 
-+async def _entity_candidates(graph, entities, memory_hash: str) -> set:
-+    """Hashes of the other memories that share an entity with ``memory_hash``."""
-+    candidate_hashes = set()
-+    for entity in entities:
-+        try:
-+            hashes = await graph.find_memories_by_entity(entity)
-+            if hashes:
-+                candidate_hashes.update(hashes)
-+        except Exception:
-+            continue
-+    candidate_hashes.discard(memory_hash)
-+    return candidate_hashes
-+
-+
- async def detect_contradictions_nli(
--    storage, memory_hash: str = None, dry_run: bool = True
-+    storage, memory_hash: str = None, dry_run: bool = True, store: Optional[str] = None
- ) -> dict:
-     """
-     NLI-enhanced contradiction detection — 4-stage pipeline.
-@@ -466,8 +480,13 @@ async def detect_contradictions_nli(
-     if memory_hash is None:
-         return result
- 
-+    # Compare only inside the store the memory was written to. Omitted, the
-+    # search below falls back to "default" and a memory in another store gets
-+    # compared with, and linked to, the default store's memories.
-+    store_kw: Dict[str, Any] = {} if store in (None, "all") else {"store": store}
-+
-     # Get the source memory
--    mem_a = await storage.get_by_hash(memory_hash)
-+    mem_a = await storage.get_by_hash(memory_hash, **store_kw)
-     if mem_a is None:
-         return result
- 
-@@ -486,22 +505,13 @@ async def detect_contradictions_nli(
-         return result
- 
-     # Stage 1: Entity overlap gate
--    candidate_hashes = set()
--    for entity in entities_a:
--        try:
--            hashes = await graph.find_memories_by_entity(entity)
--            if hashes:
--                candidate_hashes.update(hashes)
--        except Exception:
--            continue
--    candidate_hashes.discard(memory_hash)
--
-+    candidate_hashes = await _entity_candidates(graph, entities_a, memory_hash)
-     if not candidate_hashes:
-         return result
- 
-     # Stage 2: Embedding pre-filter — get candidates in similarity band
-     try:
--        search_result = await storage.search_memories(query=mem_a.content, limit=20)
-+        search_result = await storage.search_memories(query=mem_a.content, limit=20, **store_kw)
-     except Exception:
-         search_result = {}
- 
-```
-
-**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +74/-51)
-```diff
-@@ -222,6 +222,78 @@ def _dedup_outcome_note(result: dict) -> str:
-     return _one_dedup_note(result)
- 
- 
-+async def _nli_note_after_store(server, result: dict, store: str) -> str:
-+    """Run the inline NLI contradiction check for the memory just stored.
-+
-+    The check compares within ``store``, the partition the memory was written
-+    to (GHSA-989p-hfjf-q97q). Returns the line to append to the response.
-+    """
-+    try:
-+        from ...reasoning.nli import detect_contradictions_nli
-+        mem_hash = result["memory"].get("content_hash")
-+        if mem_hash:
-+            nli_result = await detect_contradictions_nli(
-+                server.storage, memory_hash=mem_hash, dry_run=False, store=store
-+            )
-+            if nli_result.get("pairs_detected", 0) > 0:
-+                return f"\n⚠️ Contradiction detected: {nli_result['pairs_detected']} conflict(s) registered."
-+    except Exception as e:
-+        logger.debug("NLI on-store check failed: %s", _sanitize_log_value(e))
-+    return ""
-+
-+
-+async def _auto_capture_note(server, arguments: dict, content, result: dict, conversation_id) -> str:
-+    """RFC #1008 §3: optional inline auto-capture from the stored content.
-+
-+    Returns the line to append to the response, empty when nothing ran.
-+    """
-+    from ...config import MCP_AUTO_EXTRACT_DEFAULT, MCP_AUTO_EXTRACT_MIN_CONFIDENCE
-+    from ...harvest.auto_capture import (
-+        AutoCaptureService,
-+        parent_hash_from_store_result,
-+    )
-+
-+    auto_extract = arguments.get("auto_extract")
-+    if auto_extract is None:
-+        auto_extract = MCP_AUTO_EXTRACT_DEFAULT
-+
-+    # Recursion guard: skip auto-extract for memories produced by auto-capture itself
-+    metadata_arg = arguments.get("metadata") or {}
-+    if isinstance(metadata_arg, dict) and metadata_arg.get("source") == "auto_capture":
-+        auto_extract = False
-+
-+    if not (auto_extract and content):
-+        return ""
-+    try:
-+        min_conf = arguments.get("min_extract_confidence")
-+        if min_conf is None:
-+            min_conf = MCP_AUTO_EXTRACT_MIN_CONFIDENCE
-+        capture_service = AutoCaptureService(
-+            memory_service=server.memory_service,
-+            min_confidence=min_conf,
-+            types=arguments.get("extract_types"),
-+        )
-+        capture = await capture_service.capture(
-+            content,
-+            role=arguments.get("role") or "assistant",
-+            parent_hash=parent_hash_from_store_result(result),
-+            conversation_id=conversation_id,
-+            dry_run=False,
-+            # The store the caller named, not the handler's "default" fallback:
-+            # capture() leaves an unnamed store to the storage defaults, and a
-+            # named one is enforced (GHSA-989p-hfjf-q97q).
-+            store=arguments.get("store"),
-+        )
-+        if capture.candidates:
-+            return (
-+                f"\nAuto-capture: {capture.stored} stored, {capture.evolved} evolved "
-+                f"from {len(capture.candidates)} candidate(s)."
-+            )
-+    except Exception as cap_err:
-+        logger.warning("auto-capture failed: %s", _sanitize_log_value(cap_err))
-+    return ""
-+
-+
- async def handle_store_memory(server, arguments: dict) -> List[types.TextContent]:
-     content = arguments.get("content")
-     metadata = arguments.get("metadata", {})
-@@ -378,15 +450,7 @@ async def handle_store_memory(server, arguments: dict) -> List[types.TextContent
-                 logger.debug("Could not schedule background NLI checks: %s", _sanitize_log_value(e))
- 
-         if nli_on_store and result.get("success") and "memory" in result:
--            try:
--                from ...reasoning.nli import detect_contradictions_nli
--                mem_hash = result["memory"].get("content_hash")
--                if mem_hash:
--                    nli_result = await detect_contradictions_nli(server.storage, memory_hash=mem_hash, dry_run=False)
--                    if nli_result.get("pairs_detected", 0) > 0:
--                        message += f"\n⚠️ Contradiction detected: {nli_result['pairs_detected']} conflict(s) registered."
--            except Exception as e:
--                logger.debug("NLI on-store check failed: %s", _sanitize_log_value(e))
-+            message += await _nli_note_after_store(server, result, store)
- 
-         # §6: Check against active beliefs (if belief service available)
-         if nli_on_store and result.get("success") and "memory" in result:
-@@ -405,48 +469,7 @@ async def handle_store_memory(server, arguments: dict) -> List[types.TextContent
-             except Exception as e:
-                 logger.debug("Belief quarantine check failed: %s", _sanitize_log_value(e))
- 
--        # RFC #1008 §3: optional inline auto-capture from stored content
--        from ...config import MCP_AUTO_EXTRACT_DEFAULT, MCP_AUTO_EXTRACT_MIN_CONFIDENCE
--        from ...harvest.auto_capture import (
--            AutoCaptureService,
--            parent_hash_from_store_re
-```
-
-**File**: `src/mcp_memory_service/services/memory_service.py` (modified, +16/-3)
-```diff
-@@ -717,6 +717,7 @@ async def evolve_memory(
-         memory_type: Optional[str] = None,
-         metadata: Optional[Dict[str, Any]] = None,
-         reason: Optional[str] = None,
-+        store: Optional[str] = None,
-     ) -> Tuple[bool, str, Optional[str]]:
-         """Versioned update that gets the same post-store steps as store_memory().
- 
-@@ -731,17 +732,29 @@ async def evolve_memory(
-         """
-         if not hasattr(self.storage, "update_memory_versioned"):
-             return False, "Storage backend does not support versioned updates", None
-+
-+        store_kw: Dict[str, Any] = {}
-+        if store not in (None, "all"):
-+            if not getattr(self.storage, "get_by_hash_is_store_scoped", False):
-+                return (
-+                    False,
-+                    "Store-scoped memory evolution is not supported by the active storage backend",
-+                    None,
-+                )
-+            store_kw = {"store": store}
-+
-         # Storage inherits omitted tags/type from the old version; keep that
-         # version around so the re-read fallback below can do the same.
-         previous = None
-         if tags is None or memory_type is None:
--            previous = await self.storage.get_by_hash(existing_hash)
-+            previous = await self.storage.get_by_hash(existing_hash, **store_kw)
-         ok, msg, new_hash = await self.storage.update_memory_versioned(
-             existing_hash,
-             content,
-             new_tags=tags,
-             new_memory_type=memory_type,
-             reason=reason,
-+            **store_kw,
-         )
-         if not ok or not new_hash:
-             return ok, msg, new_hash
-@@ -761,7 +774,7 @@ async def evolve_memory(
-         # is reported and worked around rather than turned into a failed evolve.
-         if final_metadata:
-             meta_ok, meta_msg = await self.storage.update_memory_metadata(
--                new_hash, {"metadata": final_metadata}, preserve_timestamps=True
-+                new_hash, {"metadata": final_metadata}, preserve_timestamps=True, **store_kw
-             )
-             if not meta_ok:
-                 logger.warning(
-@@ -770,7 +783,7 @@ async def evolve_memory(
-                 )
-                 msg = f"{msg} (metadata update failed: {meta_msg})"
- 
--        memory = await self.storage.get_by_hash(new_hash)
-+        memory = await self.storage.get_by_hash(new_hash, **store_kw)
-         if memory is None:
-             # Re-read failed; score the version as written instead of skipping it.
-             memory = self._as_written(new_hash, content, tags, memory_type, final_metadata, previous)
-```
-
-**File**: `src/mcp_memory_service/storage/mixins/metadata.py` (modified, +17/-5)
-```diff
-@@ -642,9 +642,16 @@ def _effective_confidence(
-         return round((confidence if confidence is not None else 1.0) * decay, 4)
- 
-     def _detect_conflicts(
--        self, new_hash: str, new_content: str, embedding, exclude_hash: Optional[str] = None
-+        self, new_hash: str, new_content: str, embedding, exclude_hash: Optional[str] = None,
-+        store: Optional[str] = None,
-     ) -> list:
--        """Detect conflicting active memories for a newly stored memory."""
-+        """Detect conflicting active memories for a newly stored memory.
-+
-+        With ``store`` set (other than ``"all"``) only memories of that store are
-+        compared: _record_conflicts() tags the other memory and links the pair,
-+        which a caller confined to one store must not do to another
-+        (GHSA-989p-hfjf-q97q).
-+        """
-         from difflib import SequenceMatcher
- 
-         SIMILARITY_THRESHOLD = 0.95
-@@ -653,21 +660,26 @@ def _detect_conflicts(
-         if not self.conn or embedding is None:
-             return []
- 
-+        # Qualified: memory_embeddings has a store column as well.
-+        confined = store not in (None, "all")
-+        store_sql = " AND m.store = ?" if confined else ""
-+        store_params = (store,) if confined else ()
-         try:
-             cursor = self.conn.execute(
--                """SELECT m.content_hash, m.content,
-+                f"""SELECT m.content_hash, m.content,
-                           vec_distance_cosine(me.content_embedding, ?) as distance
-                    FROM memories m
-                    JOIN memory_embeddings me ON m.rowid = me.rowid
-                    WHERE m.deleted_at IS NULL
-                      AND (m.superseded_by IS NULL OR m.superseded_by = '')
--                     AND m.content_hash NOT IN (?, ?)
-+                     AND m.content_hash NOT IN (?, ?){store_sql}
-                    ORDER BY distance ASC
-                    LIMIT 5""",
-                 (
-                     serialize_float32(embedding),
-                     new_hash,
-                     exclude_hash if exclude_hash is not None else new_hash,
-+                    *store_params,
-                 ),
-             )
-             candidates = cursor.fetchall()
-@@ -697,7 +709,7 @@ def _detect_conflicts(
- 
-     async def _record_conflicts(self, new_hash: str, conflicts: list) -> None:
-         """Tag conflicting memories and create graph edges."""
--        import json as _json
-+        import json as _json  # inline import
- 
-         def _record_all_conflicts():
-             for c in conflicts:
-```
-
----
-
-### Incident Patch 2: `6a321767` (2026-11-16)
-**Commit Message**: fix: prevent dashboard overflow at tablet widths (#2047)
-
-**File**: `changelog.d/2012.fixed.md` (added, +1/-0)
+**File**: `changelog.d/2092.fixed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+- **The dashboard stays within the viewport on tablet widths (#2012).** The localized navigation could exceed the available row width between the mobile and desktop breakpoints; it now wraps at tablet widths, while the header keeps its compact icon controls so long translations do not force horizontal scrolling.
++- **Directory ingestion accepts comma-separated extensions (#2092, @alksv1).** The documented `--extensions pdf,md` option previously skipped ordinary PDF and Markdown files. It now imports both file types, and repeating `--extensions` still works.
 ```
 
-**File**: `src/mcp_memory_service/web/static/style.css` (modified, +8/-0)
+**File**: `src/mcp_memory_service/cli/ingestion.py` (modified, +6/-1)
 ```diff
-@@ -1912,6 +1912,14 @@ body.dark-mode .form-group label {
- }
- 
- @media (min-width: 769px) and (max-width: 1024px) {
-+    .nav-container {
-+        flex-wrap: wrap;
-+    }
-+
-+    .btn-text {
-+        display: none;
-+    }
-+
-     .dashboard-grid {
-         grid-template-columns: 1fr 300px;
-     }
+@@ -202,7 +202,12 @@ async def run_batch_ingestion():
+             
+             # Determine file extensions to process
+             if extensions:
+-                file_extensions = [ext.lstrip('.') for ext in extensions]
++                file_extensions = [
++                    ext.strip().lstrip('.')
++                    for value in extensions
++                    for ext in value.split(',')
++                    if ext.strip()
++                ]
+             else:
+                 file_extensions = list(SUPPORTED_FORMATS.keys())
+             
 ```
 
-**File**: `tests/web/test_dashboard_style_guard.py` (modified, +13/-0)
+**File**: `tests/unit/test_cli_ingestion.py` (added, +35/-0)
 ```diff
-@@ -106,3 +106,16 @@ def test_weights_stay_at_or_below_600():
-         if not sel.startswith("@font-face") and re.search(r"font-weight:\s*(700|800|900|bold)\b", body)
-     ]
-     assert offenders == []
+@@ -0,0 +1,35 @@
++"""Exercise mcp_memory_service.cli.ingestion through the public Click command."""
++
++from pathlib import Path
++
++import pytest
++from click.testing import CliRunner
++
++from mcp_memory_service.cli.main import cli
 +
 +
-+def test_tablet_navigation_wraps_for_translated_labels():
-+    tablet = re.search(
-+        r"@media\s*\(min-width:\s*769px\)\s*and\s*\(max-width:\s*1024px\)\s*\{(.*?)\n\}",
-+        CSS,
-+        flags=re.S,
++@pytest.mark.parametrize(
++    ("options", "expected_files"),
++    [
++        (["--extensions", "pdf,md"], ["manual.pdf", "notes.md"]),
++        (["-e", ".pdf", "-e", "md"], ["manual.pdf", "notes.md"]),
++        (["-e", "pdf, .md,", "-e", ".pdf"], ["manual.pdf", "notes.md"]),
++        ([], ["manual.pdf", "notes.md", "other.txt"]),
++        (["-e", ""], []),
++        (["-e", ", ,"], []),
++    ],
++)
++def test_ingest_directory_extensions(
++    tmp_path: Path, options: list[str], expected_files: list[str]
++) -> None:
++    files = [tmp_path / name for name in ("manual.pdf", "notes.md", "other.txt")]
++    for path in files:
++        path.touch()
++
++    result = CliRunner().invoke(
++        cli, ["ingest-directory", str(tmp_path), "--dry-run", *options]
 +    )
-+    assert tablet is not None
-+    nav = re.search(r"\.nav-container\s*\{([^}]*)\}", tablet.group(1))
-+    assert nav is not None
-+    assert re.search(r"flex-wrap:\s*wrap\s*;", nav.group(1))
-+    assert re.search(r"\.btn-text\s*\{[^}]*display:\s*none\s*;", tablet.group(1))
++
++    assert result.exit_code == (0 if expected_files else 1), result.output
++    for path in files:
++        assert result.output.count(str(path)) == expected_files.count(path.name)
 ```
 
 ---
 
-### Incident Patch 3: `30f9eb40` (2026-11-16)
-**Commit Message**: docs(readme): add downloads, Docker, CI, contributors and Glama badges, fix DeepWiki badge (#2048)
+### Incident Patch 2: `6829b73e` (2026-11-19)
+**Commit Message**: fix(web): use get_by_hash in /search/similar endpoint (#2083) (#2085)
 
-deepwiki.com/badge.svg answers 429 to GitHub's image proxy, so the badge rendered as a broken image. It is now a static shields.io badge with the same link target.
+* fix(web): look up target memory by hash in /search/similar endpoint (#2083)
 
-**File**: `README.md` (modified, +6/-1)
+* fix(review): clean changelog fragment and assert non-empty similar results (#2083)
+
+**File**: `changelog.d/2083.fixed.md` (added, +2/-0)
 ```diff
-@@ -14,10 +14,15 @@ context in 5ms — without cloud lock-in or API costs.
- [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
- [![PyPI version](https://img.shields.io/pypi/v/mcp-memory-service?color=blue&logo=pypi&logoColor=white)](https://pypi.org/project/mcp-memory-service/)
- [![Python](https://img.shields.io/pypi/pyversions/mcp-memory-service?logo=python&logoColor=white)](https://pypi.org/project/mcp-memory-service/)
-+[![PyPI Downloads](https://static.pepy.tech/personalized-badge/mcp-memory-service?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/mcp-memory-service)
-+[![Docker Pulls](https://img.shields.io/docker/pulls/doobidoo/mcp-memory-service?logo=docker&logoColor=white)](https://hub.docker.com/r/doobidoo/mcp-memory-service)
-+[![CI](https://img.shields.io/github/actions/workflow/status/doobidoo/mcp-memory-service/ci.yml?branch=main&logo=github&label=CI)](https://github.com/doobidoo/mcp-memory-service/actions/workflows/ci.yml)
- [![GitHub stars](https://img.shields.io/github/stars/doobidoo/mcp-memory-service?logo=github&label=stars)](https://github.com/doobidoo/mcp-memory-service)
-+[![Contributors](https://img.shields.io/github/contributors/doobidoo/mcp-memory-service)](https://github.com/doobidoo/mcp-memory-service/graphs/contributors)
- [![Remote MCP](https://img.shields.io/badge/MCP-Remote%20Support-blue?logo=anthropic)](https://github.com/doobidoo/mcp-memory-service/blob/main/docs/remote-mcp-setup.md)
- [![OAuth 2.0](https://img.shields.io/badge/Auth-OAuth%202.0%20%2B%20DCR-green)](https://github.com/doobidoo/mcp-memory-service/blob/main/docs/oauth-setup.md)
--[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/doobidoo/mcp-memory-service)
-+[![Ask DeepWiki](https://img.shields.io/badge/DeepWiki-Ask-0969da)](https://deepwiki.com/doobidoo/mcp-memory-service)
-+[![Glama score](https://glama.ai/mcp/servers/doobidoo/mcp-memory-service/badges/score.svg)](https://glama.ai/mcp/servers/doobidoo/mcp-memory-service)
+@@ -0,0 +1,2 @@
++- **`GET /api/search/similar/{content_hash}` returned 404 in multi-memory databases (#2083).**
++  The endpoint passed the 64-character SHA-256 hex string to `storage.retrieve()`, running a vector similarity search instead of looking up the memory by primary key. When the database had more than one memory, the nearest vector match to the hex string almost never matched the target memory, causing the lookup to fail. The endpoint now calls `storage.get_by_hash()`, guaranteeing O(1) indexed retrieval and eliminating unnecessary embedding computation.
+```
+
+**File**: `src/mcp_memory_service/web/api/search.py` (modified, +3/-8)
+```diff
+@@ -538,16 +538,11 @@ async def find_similar(
+     start_time = time.time()
  
- Getting started: [English](https://mcpmemory.services/) · [Deutsch](https://mcpmemory.services/de/) · [Español](https://mcpmemory.services/es/) · [日本語](https://mcpmemory.services/ja/) · [简体中文](https://mcpmemory.services/zh-cn/) · [繁體中文](https://mcpmemory.services/zh-tw/) · [Français](https://mcpmemory.services/fr/) · [Português (Brasil)](https://mcpmemory.services/pt-br/) · [한국어](https://mcpmemory.services/ko/)
+     try:
+-        # First, get the target memory by searching with its hash
+-        # This is inefficient but works with current storage interface
++        # Look up the target memory directly by its hash
+         scope = resolve_store(store)
+-        target_results = await storage.retrieve(content_hash, n_results=1, store=scope)
+-
+-        if not target_results or target_results[0].memory.content_hash != content_hash:
++        target_memory = await storage.get_by_hash(content_hash, store=scope)
++        if not target_memory:
+             raise HTTPException(status_code=404, detail="Memory not found")
+-
+-        target_memory = target_results[0].memory
+-
+         # Use the target memory's content to find similar memories
+         similar_results = await storage.retrieve(
+             query=target_memory.content,
+```
+
+**File**: `tests/web/api/test_search_similar.py` (added, +135/-0)
+```diff
+@@ -0,0 +1,135 @@
++# Copyright 2024 Heinrich Krupp
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++"""
++Tests for GET /api/search/similar/{content_hash} endpoint.
++Verifies that target memories are looked up directly by hash rather than through
++vector search, preventing false 404 errors in multi-memory databases.
++"""
++
++import os
++import tempfile
++import pytest
++import pytest_asyncio
++from fastapi.testclient import TestClient
++
++from mcp_memory_service.web.dependencies import set_storage
++from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
++
++
++@pytest.fixture
++def temp_db():
++    """Create a temporary database for testing."""
++    with tempfile.TemporaryDirectory() as tmpdir:
++        db_path = os.path.join(tmpdir, "test_search_similar.db")
++        yield db_path
++
++
++@pytest_asyncio.fixture
++async def initialized_storage(temp_db, monkeypatch):
++    """Create and initialize a real SQLite storage backend."""
++    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
++    monkeypatch.setenv("MCP_MEMORY_ALLOW_HASH_EMBEDDINGS", "1")
++    monkeypatch.setenv("MCP_MEMORY_ONNX_ALLOW_DOWNLOAD", "0")
++
++    storage = SqliteVecMemoryStorage(temp_db)
++    await storage.initialize()
++    yield storage
++    await storage.close()
++
++
++@pytest.fixture
++def test_app(initialized_storage, monkeypatch):
++    """Create a FastAPI test application with initialized storage."""
++    monkeypatch.setenv("MCP_API_KEY", "")
++    monkeypatch.setenv("MCP_OAUTH_ENABLED", "false")
++    monkeypatch.setenv("MCP_ALLOW_ANONYMOUS_ACCESS", "true")
++    monkeypatch.setenv("INCLUDE_HOSTNAME", "false")
++
++    from mcp_memory_service.web.app import app
++    from mcp_memory_service.web.oauth.middleware import (
++        get_current_user,
++        require_write_access,
++        require_read_access,
++        require_store_read,
++        AuthenticationResult,
++    )
++
++    set_storage(initialized_storage)
++
++    async def mock_get_current_user():
++        return AuthenticationResult(
++            authenticated=True,
++            client_id="test_client",
++            scope="read write admin",
++            auth_method="test",
++        )
++
++    app.dependency_overrides[get_current_user] = mock_get_current_user
++    app.dependency_overrides[require_write_access] = mock_get_current_user
++    app.dependency_overrides[require_read_access] = mock_get_current_user
++    app.dependency_overrides[require_store_read] = mock_get_current_user
++
++    client = TestClient(app)
++    yield client
++
++    app.dependency_overrides.clear()
++
++
++@pytest.mark.integration
++def test_search_similar_with_multiple_memories(test_app):
++    """GET /api/search/similar/{content_hash} succeeds when multiple memories exist in the DB."""
++    # Seed 3 distinct memories
++    res1 = test_app.post(
++        "/api/memories",
++        json={"content": "Alpha service handles authentication and token refresh.", "tags": ["auth"]},
++    )
++    assert res1.status_code == 200
++    hash1 = res1.json()["content_hash"]
++
++    res2 = test_app.post(
++        "/api/memories",
++        json={"content": "Beta service validates session tokens and user permissions.", "tags": ["auth", "security"]},
++    )
++    assert res2.status_code == 200
++    hash2 = res2.json()["content_hash"]
++
++    res3 = test_app.post(
++        "/api/memories",
++        json={"content": "Gamma database stores user preferences and configuration.", "tags": ["storage"]},
++    )
++    assert res3.status_code == 200
++    hash3 = res3.json()["content_hash"]
++
++    # Call similar search for hash1
++    response = test_app.get(f"/api/search/similar/{hash1}")
++    assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
++
++    data = response.json()
++    assert data["search_type"] == "similar"
++    assert len(data["results"]) == 2
++    # Ensure the target memory itself is filtered out and the remaining memories are returned
++    result_hashes = [r["memory"]["content_hash"] for r in data["results"]]
++    assert hash1 not in result_hashes
++    assert hash2 in result_hashes
++    assert hash3 in result_hashes
++
++
++@pytest.mark.integration
++def test_search_similar_returns_404_for_unknown_hash(test_app):
++    """GET /api/search/similar/{content_hash} returns 404 for nonexistent memory hash."""
++    fake_hash = "0" * 64
++    response = test_app.get(f"/api/search/similar/{fake_hash}")
++    assert response.status_code == 404
++    assert response.json()["detail"] == "Memory not found"
+```
+
+---
+
+### Incident Patch 3: `943f0872` (2026-11-19)
+**Commit Message**: fix(storage): duplicate refusal no longer names the other store (#2060) (#2081)
+
+* fix(storage): duplicate refusal no longer names the other store (#2060)
+
+content_hash is unique across stores, so storing content that already exists
+in another store is refused. The refusal named that store, which let a
+store-scoped credential learn store names (often tenant or project names).
+It now says only that the content exists in another store, on sqlite-vec and
+Cloudflare alike. The same-store message is unchanged.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AfRe2AbUtUQWGCVPiNd32B
+
+* test(storage): use the temp_db_path fixture and Black formatting (#2060)
+
+Addresses review feedback: SQLite-vec tests use the temp_db_path fixture
+rather than managing their own temporary directory.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AfRe2AbUtUQWGCVPiNd32B
+
+---------
+
+Co-authored-by: Deviprasad <[REDACTED_EMAIL]>
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/2060.fixed.md` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++- **Duplicate refusals no longer name the other store (closes #2060).** `content_hash` is
++  unique across stores, so storing content that already exists in a different store is
++  refused. The refusal used to say which store held it, which let a store-scoped credential
++  learn store names that are often tenant or project names. It now says only
++  `Duplicate content detected (exact match); already exists in another store`, on sqlite-vec
++  and Cloudflare alike. The same-store message is unchanged. An operator can still find the
++  row with `store="all"`.
+```
+
+**File**: `src/mcp_memory_service/storage/cloudflare.py` (modified, +6/-2)
+```diff
+@@ -785,10 +785,14 @@ async def _store_memory(
  
+     @staticmethod
+     def _exact_duplicate_message(existing_store: str, requested_store: str) -> str:
+-        """Describe an exact-hash conflict the way sqlite-vec does."""
++        """Describe an exact-hash conflict the way sqlite-vec does.
++
++        The message does not name the other store, so a store-scoped credential
++        cannot learn store names.
++        """
+         message = "Duplicate content detected (exact match)"
+         if existing_store != requested_store:
+-            return f"{message}; already exists in store {existing_store!r}"
++            return f"{message}; already exists in another store"
+         return message
+ 
+     async def _live_duplicate_refusal(
+```
+
+**File**: `src/mcp_memory_service/storage/mixins/store.py` (modified, +8/-2)
+```diff
+@@ -41,10 +41,16 @@ class StoreMixin:
+     def _exact_duplicate_message(
+         existing_store: str | None, requested_store: str
+     ) -> str:
+-        """Describe a global exact-hash conflict and name its other store."""
++        """Describe a global exact-hash conflict without naming the other store.
++
++        ``content_hash`` is unique across stores, so a conflict with another store
++        is refused. The message says only that the content exists in another store:
++        store names are often tenant or project names, and a store-scoped
++        credential must not learn them.
++        """
+         message = "Duplicate content detected (exact match)"
+         if existing_store is not None and existing_store != requested_store:
+-            return f"{message}; already exists in store {existing_store!r}"
++            return f"{message}; already exists in another store"
+         return message
+ 
+     def _purge_tombstone(self, content_hash: str) -> None:
+```
+
+**File**: `tests/storage/test_duplicate_refusal_hides_store_name.py` (added, +69/-0)
+```diff
+@@ -0,0 +1,69 @@
++"""An exact-duplicate refusal does not name the store that holds the content.
++
++``content_hash`` is unique across stores, so storing content that already lives
++in another store is refused. Store names are often tenant, team or project names,
++so the message says only that the content exists in another store, and a
++store-scoped credential cannot learn which one.
++"""
++
++import os
++
++import pytest
++import pytest_asyncio
++
++from mcp_memory_service.models.memory import Memory
++from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
++from mcp_memory_service.utils.hashing import generate_content_hash
++
++os.environ["MCP_MEMORY_ALLOW_HASH_EMBEDDINGS"] = "1"
++
++FIRST_STORE = "acme-payments-team"
++SECOND_STORE = "globex-research"
++
++
++@pytest_asyncio.fixture
++async def storage(temp_db_path):
++    s = SqliteVecMemoryStorage(os.path.join(temp_db_path, "test.db"))
++    await s.initialize()
++    yield s
++    await s.close()
++
++
++def _memory(content):
++    return Memory(
++        content=content, content_hash=generate_content_hash(content), tags=["t"]
++    )
++
++
++@pytest.mark.asyncio
++async def test_refusal_for_content_in_another_store_does_not_name_it(storage):
++    content = "The incident review is scheduled for Friday."
++    ok, msg = await storage.store(
++        _memory(content), skip_semantic_dedup=True, store=FIRST_STORE
++    )
++    assert ok, msg
++
++    ok, msg = await storage.store(
++        _memory(content), skip_semantic_dedup=True, store=SECOND_STORE
++    )
++
++    assert not ok
++    assert msg.startswith("Duplicate content detected (exact match)")
++    assert "another store" in msg
++    assert FIRST_STORE not in msg
++
++
++@pytest.mark.asyncio
++async def test_refusal_in_the_same_store_keeps_the_plain_message(storage):
++    content = "Quarterly planning notes live in the shared drive."
++    ok, msg = await storage.store(
++        _memory(content), skip_semantic_dedup=True, store=FIRST_STORE
++    )
++    assert ok, msg
++
++    ok, msg = await storage.store(
++        _memory(content), skip_semantic_dedup=True, store=FIRST_STORE
++    )
++
++    assert not ok
++    assert msg == "Duplicate content detected (exact match)"
+```
+
+**File**: `tests/storage/test_store_scope_semantic_dedup.py` (modified, +11/-7)
+```diff
+@@ -167,7 +167,7 @@ async def test_semantic_dedup_only_rejects_matches_in_target_store(storage):
+ 
+ 
+ @pytest.mark.asyncio
+-async def test_exact_duplicate_names_the_store_that_already_has_the_hash(storage):
++async def test_exact_duplicate_does_not_name_the_store_that_already_has_the_hash(storage):
+     content = "identical content must remain globally unique"
+     memory = _memory(content)
+ 
+@@ -177,15 +177,17 @@ async def test_exact_duplicate_names_the_store_that_already_has_the_hash(storage
+     ok, message = await storage.store(_memory(content), store="default")
+     assert not ok
+     assert "exact match" in message
+-    assert "knowledge" in message
++    assert "another store" in message
++    assert "knowledge" not in message
+ 
+     batch_results = await storage.store_batch([_memory(content)], store="default")
+     assert not batch_results[0][0]
+-    assert "knowledge" in batch_results[0][1]
++    assert "another store" in batch_results[0][1]
++    assert "knowledge" not in batch_results[0][1]
+ 
+ 
+ @pytest.mark.asyncio
+-async def test_store_race_names_winning_store_without_partial_writes(storage):
++async def test_store_race_does_not_name_winning_store_without_partial_writes(storage):
+     memory = _memory("content inserted by a competing writer")
+     racing_connection = _race_connection(storage, memory, "winner")
+     storage.conn = racing_connection
+@@ -197,12 +199,13 @@ async def test_store_race_names_winning_store_without_partial_writes(storage):
+     assert racing_connection.injected
+     assert racing_connection.integrity_error_seen
+     assert not ok
+-    assert "winner" in message
++    assert "another store" in message
++    assert "winner" not in message
+     _assert_only_winning_record(storage.conn, memory, "winner")
+ 
+ 
+ @pytest.mark.asyncio
+-async def test_store_batch_race_names_winning_store_without_partial_writes(storage):
++async def test_store_batch_race_does_not_name_winning_store_without_partial_writes(storage):
+     memory = _memory("batch content inserted by a competing writer")
+     racing_connection = _race_connection(storage, memory, "winner")
+     storage.conn = racing_connection
+@@ -212,5 +215,6 @@ async def test_store_batch_race_names_winning_store_without_partial_writes(stora
+     assert racing_connection.injected
+     assert racing_connection.integrity_error_seen
+     assert not results[0][0]
+-    assert "winner" in results[0][1]
++    assert "another store" in results[0][1]
++    assert "winner" not in results[0][1]
+     _assert_only_winning_record(storage.conn, memory, "winner")
+```
+
+**File**: `tests/web/api/test_cloudflare_store_grant.py` (modified, +1/-1)
+```diff
+@@ -172,7 +172,7 @@ async def test_tombstone_of_another_store_is_not_taken_over(cloudflare_storage,
+     ok, msg = await cloudflare_storage.store(memory, store="a")
+ 
+     assert not ok
+-    assert msg == "Duplicate content detected (exact match); already exists in store 'b'"
++    assert msg == "Duplicate content detected (exact match); already exists in another store"
+     cloudflare.vector_upserts.assert_not_called()
+     row = cloudflare.row(content_hash)
+     assert row["store"] == "b" and row["deleted_at"] is not None
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2048** (2026-11-16): docs(readme): add downloads, Docker, CI, contributors and Glama badges, fix DeepWiki badge (@doobidoo)
-- **PR #2047** (2026-11-16): fix: prevent dashboard overflow at tablet widths (@jay23606)
-- **PR #2043** (2026-11-16): fix(dashboard): report a finished consolidation on the status island (#2006) (@dodoshell)
-- **PR #2042** (2026-11-16): feat(dashboard): report document imports to the status island (#2004) (@jilsnshah)
-- **PR #2039** (2026-11-16): Semantic dedup reads its one row through the KNN pushdown (#2032) (@Yoel-qin)
-- **PR #2038** (2026-11-16): refactor(logging): guard the six remaining handler, web/api, quality and sync modules (#1146) (@massimiliano1991)
+- **PR #2092** (2026-11-19): fix(cli): accept comma-separated extensions in directory ingestion (@alksv1)
+- **PR #2091** (2026-11-19): fix(chunker): preserve sentence punctuation and overlap boundaries (#2090) (@Adil-Khan-N)
+- **PR #2087** (2026-11-19): fix(time-parser): preserve month years, accept now, and fall through on non-date between queries (#2086) (@Adil-Khan-N)
+- **PR #2085** (2026-11-19): fix(web): use get_by_hash in /search/similar endpoint (#2083) (@Adil-Khan-N)
+- **PR #2084** (2026-11-19): fix(storage): preserve timestamp boundaries in delete_memories fallba… (@Adil-Khan-N)
+- **PR #2082** (2026-11-19): docs(contributing): say that linking an issue means a reference in the PR description (@doobidoo)
 
 ---
 
@@ -3543,22 +3471,21 @@ deepwiki.com/badge.svg answers 429 to GitHub's image proxy, so the badge rendere
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security): keep memory_store side effects inside the granted store (GHSA-989p-hf
+## X. cli): accept comma-separated extensions in directory ingestion
 
 **RULE**:
-When implementing operations in `changelog.d/ghsa-989p.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/2092.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `15a9e9a9`: security): keep memory_store side effects inside the granted store (GHSA-989p-hfjf-q97q). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bbc14454`: cli): accept comma-separated extensions in directory ingestion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/ghsa-989p.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2092.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **A per-store write grant could write to and supersede memories in another store through `memory_store` (GHSA-989p-hfjf-q97q, reported by [RISCON Labs](https://www.risconlabs.com), @RISCON-Labs).**
-  With `auto_extract=true`, `handle_store_memory` stored the memory in the granted store but ran auto-capture without it. `AutoCaptureService.capture()`, `SessionHarvester._try_evolve()` and `MemoryService.evolve_memory()` took no `store`, so the extracted candidates were compared with the `default` store, replaced a similar memory there, or were inserted there. A client holding only `write:projectA` could overwrite `default`. The NLI contradiction check on store (`MCP_NLI_ON_STORE`, inline and background) had the same gap: it compared a memory with the `default` store whatever store it was written to, linked the two with a `contradicts` edge and reported the hit count to the caller. It also missed contradictions inside a named store for the same reason. Conflict detection on store, which runs on every write without any flag, compared the new memory with every store as well and tagged a near-identical memory in another store `conflict:unresolved`, with `contradicts` edges between the t
+- **Directory ingestion accepts comma-separated extensions (#2092, @alksv1).** The documented `--extensions pdf,md` option previously skipped ordinary PDF and Markdown files. It now imports both file types, and repeating `--extensions` still works.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3568,7 +3495,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `15a9e9a9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bbc14454` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
