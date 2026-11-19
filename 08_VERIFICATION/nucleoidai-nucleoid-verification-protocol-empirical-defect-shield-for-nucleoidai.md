@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "52f8bf48",
+  "source_version": "08c6985f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T09:43:56.987Z",
+  "timestamp": "2026-11-19T11:50:44.875Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `52f8bf48`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T09:43:56.987Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `08c6985f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T11:50:44.875Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `52f8bf48`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `08c6985f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T09:43:55.854Z  
+> **Harvest Timestamp**: 2026-11-19T11:50:43.327Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1574,150 +1574,344 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `52f8bf48` (2026-11-19)
-**Commit Message**: Draft NUC 123 List and Population Variances and Standard Deviations
+### Incident Patch 1: `08c6985f` (2026-11-19)
+**Commit Message**: Remove comments from ARC datasets
 
-Category: Utility enhancement, drawn uniformly at random (index 2 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle. Utility enhancement requires the token
-non-regression gate in continuous mode.
+Remove descriptive comments from three datasets and update the dataset agent, grammar, and documentation to require executable code only. Object snapshots remain unchanged.
 
-Requested change: lists and class instance lists gain the read-only
-queries variance and stdev. RECEIVER.variance() returns the population
-variance of the items, the mean of their squared deviations from their
-mean, and RECEIVER.variance(selector) that of selector(item);
-RECEIVER.stdev() and RECEIVER.stdev(selector) return its square root.
-Both divide by the number of values, as numpy's var and std and Python's
-statistics.pvariance and pstdev do, and follow NUC 84's median beside
-NUC 68's sum and NUC 80's average: the same receivers, numeric
-conversion, selector rules, NaN and undefined results, and liveness
-under NUC 61's shared query rules. At the accepted revision these calls
-raise TypeError("<receiver>.variance is not a function") and
-TypeError("<receiver>.stdev is not a function"); only inputs that were
-errors change, and bindings, properties and methods na
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `.claude/agents/arc-dataset.agent.md` (modified, +3/-8)
 ```diff
-@@ -131,6 +131,7 @@ Created: 31-Jul-2026
- | [108](nuc-0108.md) | List and Population Partitions | Accepted |
- | [111](nuc-0111.md) | Reactive String Padding | Accepted |
- | [114](nuc-0114.md) | List and Population Products | Accepted |
-+| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Draft |
+@@ -94,9 +94,8 @@ formatting exactly:
+   `input_value`, `output_value`.
+ - Two-space indentation, one matrix row per line, and `implementation`,
+   `input_value`, and `output_value` each on a single line.
+-- Natural-language `#` comments appear only in `declarations`, where they are
+-  optional and describe its classes and rules, and in `implementation`, where
+-  they describe the object it constructs. No other field carries them.
++- No field carries `#` comments: every declaration and every `implementation`
++  is executable code alone, as in every existing dataset.
  
- ### Reasoning enhancement
+ ## Model the world
  
-@@ -299,6 +300,7 @@ Created: 31-Jul-2026
- | [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Accepted |
-+| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Draft |
+@@ -236,11 +235,6 @@ The caller decides whether to propose the feature; you never start a NUC.
+   datasets) with named arguments matching its parameters, where `width` and
+   `height` are the input mask's nonzero bounding-box column and row counts and
+   `volume` is its number of nonzero cells.
+-- Before that code, `implementation` holds `#` comment lines that describe the
+-  object, as in every existing dataset: its kind and colors, then its size,
+-  position and, when it points, its direction, such as
+-  `# 2 by 2 at x 5, y 1, pointing southeast`. They do not change its
+-  snapshots.
+ - Never hand-write `input_value` or `output_value`. As `arc/src/analyzer.ts`
+   does, run the Nucleoid executable (`NUCLEOID_EXECUTABLE`, else the debug
+   build in `target/debug/`; build it with `cargo build` if missing) as
+@@ -281,6 +275,7 @@ Verify with a throwaway script outside the repository; do not add tests:
+   output masks reproduces `output_matrix`, cell for cell.
+ - Every `input_value.volume` and `output_value.volume` equals the number of
+   nonzero cells in the instance's input or output mask.
++- No declaration or `implementation` holds a `#` comment line.
+ - Rerunning Nucleoid reproduces every `input_value` and `output_value`.
  
- ## Copyright
- 
+ For an explicitly authorized padding-only repair, restore unambiguous
 ```
 
-**File**: `docs/nuc-0123.md` (added, +73/-0)
+**File**: `arc/README.md` (modified, +39/-80)
 ```diff
-@@ -0,0 +1,73 @@
-+# NUC 123 -- List and Population Variances and Standard Deviations
-+
-+```
-+NUC: 123
-+Title: List and Population Variances and Standard Deviations
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Utility enhancement
-+Created: 19-Nov-2026
-+```
-+
-+## Abstract
-+
-+- Lists and class instance lists gain two read-only queries, `variance`
-+  and `stdev`. `RECEIVER.variance()` returns the population variance of the
-+  receiver's items, the mean of their squared deviations from their mean,
-+  and `RECEIVER.variance(selector)` that of `selector(item)` for every item.
-+  `RECEIVER.stdev()` and `RECEIVER.stdev(selector)` return its square root,
-+  the population standard deviation.
-+- Both divide by the number of values, as numpy's `var` and `std` and
-+  Python's `statistics.pvariance` and `statistics.pstdev` do, and as a case
-+  of [NUC 80](nuc-0080.md) does when it writes the variance out from two
-+  averages. A list or a class population holds every value it describes,
-+  so it is the whole population, and a single value has variance `0`.
-+- They follow [NUC 84](nuc-0084.md)'s `median`, beside
-+  [NUC 68](nuc-0068.md)'s `sum` and [NUC 80](nuc-0080.md)'s `average`:
-+  the same receivers, numeric conversion, selector rules, NaN and undefined
-+  results, and liveness under [NUC 61](nuc-0061.md)'s shared query rules.
-+- At the accepted revision these calls are run-time errors,
-+  `TypeError("<receiver>.variance is not a function")` and
-+  `TypeError("<receiver>.stdev is not a function")`. Only inputs that were
-+  errors change. No syntax, keyword, token or error type is added, and
-+  bindings, properties and methods named `variance` or `stdev` keep their
-+  accepted results.
-+
-+## Motivation
-+
-+- World models summarize their populations. Lists and class populations
-+  already have their sums, extremes, averages, medians and modes, but not
-+  their spread. A model that asks how far readings, prices or scores
-+  scatter must write the variance out from two averages, as a case of
-+  NUC 80 does with
-+  `team.scores.average(score -> score * score) - team.mean() ** 2`, and a
-+  standard deviation wraps that in `Math.sqrt`.
-+- The written-out formula repeats the receiver and the selector, is easy
-+  to get wrong, and loses precision when large values spread little,
-+  because subtracting two close averages cancels their leading digits.
-+  `variance()` and `stdev()` name the statistic once, as `average()` and
-+  `median()` do, and can compute it from the deviations themselves.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
+@@ -398,15 +398,9 @@ three juxtaposed statements and raises `ReferenceError`. The solver's own
+ same. Every snapshot is the state that the same rules give when spelled with
+ `=`.
+ 
+-Each snippet starts with `#` comment lines that describe the object it
+-constructs, in the style of the declarations' comments: its kind and colors,
+-then its size and position and, when it points, its direction. They put the
+-instance's own arguments and input mask into words, and Nucleoid skips them,
+-so they change no snapshot:
++Snippets and declarations hold executable code alone, with no `#` comment:
+ 
+ ```nuc
+-# A corner whose vertex and both segments are color 9,
+-# 2 by 2 at x 5, y 1, pointing southeast
+ obj7e96305711c2 is Obj(x=5, y=1, width=2, height=2, orientation=135, volume=3, vertex_color=9, vertical_segment_color=9, horizontal_segment_color=9)
+ ```
+ 
+@@ -614,9 +608,8 @@ row, of one color or with its lone color in the middle cell, has no head and
+ takes the horizontal axis, 90. The rules leave `orientation` unchanged: each
+ bar keeps 90, and each cleared row, which has no output cell, keeps its input
+ orientation, 270 for three of the cleared rows and 90 for the other five. The
+-declarations hold executable code and one `#` comment, the orientation line
+-that every dataset places above its class. The test pair follows the training
+-pairs at the same level and is annotated by the same rules.
++test pair follows the training pairs at the same level and is annotated by the
++same rules.
+ 
+ `dataset.25ff71a9.json` annotates the four original training pairs from
+ `data\training\25ff71a9.json`, in order, followed by its two test pairs, six
+@@ -665,10 +658,8 @@ both states because the figure moves without turning: 90 for the bars,
+ horizontal lines without a head; 135 and 45 for the trominoes, corners that
+ point toward their vertex, the bottom-right cell of the third figure's box and
+ the top-right cell of the fourth's; and 0 for the test pairs' vertical 2-cell
+-bar and single cell. The declarations hold executable code and one `#` comment,
+-the orientation line that every dataset places above its class. The test pairs
+-follow the training pairs at the same level and are annotated by the same
+-rules.
++bar and single cell. The test pairs follow the training pairs at the same level
++and are annotated by the same rules.
+ 
+ `dataset.27a28665.json` annotates the seven original training pairs from
+ `data\training\27a28665.json`, in order, followed by its three test pairs,
+@@ -804,10 +795,8 @@ and keeps that orientation with its inside marker: the training corners point
+ at 225 and 45, and at 45, 225, and 135, and the test corners at 45, 315, 225,
+ and 135, so only the test pair has a corner at 315. The declarations write
+ their assignments with `is` and their tags as bare words, with no quoted
+-string, and hold `#` comments: two lines above the class, the orientation line
+-among them, and one above the `marker_color` rule. Each implementation starts
+-with two comment lines that describe its corner. The test pair follows the
+-training pairs at the same level and is annotated by the same rules.
++string. The test pair follows the training pairs at the same level and is
++annotated by the same rules.
+ 
+ `dataset.3c9b0459.json` annotates the four original training pairs from
+ `data\training\3c9b0459.json`, in order, followed by its test pair, five
+@@ -858,10 +847,8 @@ bounding-box origin, 0 and 0, equal to `output_value.x`/`output_value.y`.
+ `output_canvas` is `EXACT` because each output keeps its input's 3 by 3
+ canvas; with no zero cell to crop, `FIT` would frame the same grids.
+ Orientation is 0 in every input state, where the mosaic is not turned, and
+-180 in every output state. The declarations hold executable code and one `#`
+-comment, the orientation line that every dataset places above its class. The
+-test pair follows the training pairs at the same level and is annotated by the
+-same rules.
++180 in every output state. The test pair follows the training pairs at the same
++level and is annotated by the same rules.
+ 
+ `dataset.44f52bb0.json` annotates the six original training pairs from
+ `data\training\44f52bb0.json`, in order, followed by its two test pairs,
+@@ -1052,14 +1039,11 @@ in that order, where `width` and `height` are the column and row counts of the
+ block's box, the nonzero bounding box of its input mask, and `volume` the
+ number of its nonzero cells, 3, 3, and 9 in every
+ pair, with no color, parts list, canvas size, or matrix of cells, because
+-the rules need none: the block's cells travel in its masks. Its declaration,
+-comments included, is that of `dataset.6150a2bd.json`. Each implementation
+-passes `x=0, y=0, width=3, height=3, orientation=0, volume=9` after comment
+-lines that name the block's colors in reading order and its box, such as
+-`# The whole block of colors 6, 1 and 8,` and `# 3 by 3 at x 0, y 0` for the
+-first training input. Three unconditional, commented class-level rules turn
+-every block into t
+```
+
+**File**: `arc/nucleoid.ebnf` (modified, +2/-3)
+```diff
+@@ -1,5 +1,5 @@
+-declaration          ::= ( COMMENT NEWLINE )* ( classStmt | ifStmt | classRule )
+-implementation       ::= ( COMMENT NEWLINE )* NAME assign NAME
++declaration          ::= classStmt | ifStmt | classRule
++implementation       ::= NAME assign NAME
+                          '(' labeledArgument ( ',' labeledArgument )+ ')'
+ assign               ::= 'is' | '='
+ 
+@@ -50,6 +50,5 @@ RESERVED             ::= 'and' | 'class' | 'else' | 'if' | 'in' | 'not' | 'of' |
+ CLASS_REF            ::= '$' NAME
+ INTEGER              ::= [0-9]+
+ STRING               ::= "'" [^']* "'"
+-COMMENT              ::= '#' [^#xA]*
+ NEWLINE              ::= #xA
+ INDENT               ::= '    '
+```
+
+**File**: `arc/src/dataset/dataset.3aa6fb7a.json` (modified, +11/-11)
+```diff
+@@ -1,8 +1,8 @@
+ {
+   "declarations": [
+-    "# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\n# Each object is a one-color corner, three cells of a 2 by 2 box that meet at its vertex, and it points toward that vertex.\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.color is color",
++    "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.color is color",
+     "$Obj.tag is l3337",
+-    "# Every corner gets its inside marker: the open cell of its box, diagonally across from its vertex, turns color 1 and completes the square.\n$Obj.marker_color is 1",
++    "$Obj.marker_color is 1",
+     "$Obj.volume is $Obj.volume@first + 1"
+   ],
+   "output_canvas": "EXACT",
+@@ -53,7 +53,7 @@
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# A corner of color 8,\n# 2 by 2 at x 1, y 1, pointing southwest\nobj06bbbdc98e71 is Obj(x=1, y=1, width=2, height=2, orientation=225, volume=3, color=8)",
++          "implementation": "obj06bbbdc98e71 is Obj(x=1, y=1, width=2, height=2, orientation=225, volume=3, color=8)",
+           "input_value": {"color":8,"height":2,"id":"obj06bbbdc98e71","orientation":225,"tag":"l6747","volume":3,"width":2,"x":1,"y":1},
+           "output_value": {"color":8,"height":2,"id":"obj06bbbdc98e71","marker_color":1,"orientation":225,"tag":"l3337","volume":4,"width":2,"x":1,"y":1}
+         },
+@@ -83,7 +83,7 @@
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# A corner of color 8,\n# 2 by 2 at x 4, y 3, pointing northeast\nobj812b7881ec0e is Obj(x=4, y=3, width=2, height=2, orientation=45, volume=3, color=8)",
++          "implementation": "obj812b7881ec0e is Obj(x=4, y=3, width=2, height=2, orientation=45, volume=3, color=8)",
+           "input_value": {"color":8,"height":2,"id":"obj812b7881ec0e","orientation":45,"tag":"l6747","volume":3,"width":2,"x":4,"y":3},
+           "output_value": {"color":8,"height":2,"id":"obj812b7881ec0e","marker_color":1,"orientation":45,"tag":"l3337","volume":4,"width":2,"x":4,"y":3}
+         }
+@@ -135,7 +135,7 @@
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# A corner of color 8,\n# 2 by 2 at x 4, y 0, pointing northeast\nobj3a91dc0b584b is Obj(x=4, y=0, width=2, height=2, orientation=45, volume=3, color=8)",
++          "implementation": "obj3a91dc0b584b is Obj(x=4, y=0, width=2, height=2, orientation=45, volume=3, color=8)",
+           "input_value": {"color":8,"height":2,"id":"obj3a91dc0b584b","orientation":45,"tag":"l6747","volume":3,"width":2,"x":4,"y":0},
+           "output_value": {"color":8,"height":2,"id":"obj3a91dc0b584b","marker_color":1,"orientation":45,"tag":"l3337","volume":4,"width":2,"x":4,"y":0}
+         },
+@@ -165,7 +165,7 @@
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# A corner of color 8,\n# 2 by 2 at x 2, y 2, pointing southwest\nobj1d5b3380e76e is Obj(x=2, y=2, width=2, height=2, orientation=225, volume=3, color=8)",
++          "implementation": "obj1d5b3380e76e is Obj(x=2, y=2, width=2, height=2, orientation=225, volume=3, color=8)",
+           "input_value": {"color":8,"height":2,"id":"obj1d5b3380e76e","orientation":225,"tag":"l6747","volume":3,"width":2,"x":2,"y":2},
+           "output_value": {"color":8,"height":2,"id":"obj1d5b3380e76e","marker_color":1,"orientation":225,"tag":"l3337","volume":4,"width":2,"x":2,"y":2}
+         },
+@@ -195,7 +195,7 @@
+             [0, 0, 0, 1, 8, 0, 0],
+             [0, 0, 0, 8, 8, 0, 0]
+           ],
+-          "implementation": "# A corner of color 8,\n# 2 by 2 at x 3, y 5, pointing southeast\nobje29de8da7b6d is Obj(x=3, y=5, width=2, height=2, orientation=135, volume=3, color=8)",
++          "implementation": "obje29de8da7b6d is Obj(x=3, y=5, width=2, height=2, orientation=135, volume=3, color=8)",
+           "input_value": {"color":8,"height":2,"id":"obje29de8da7b6d","orientation":135,"tag":"l6747","volume":3,"width":2,"x":3,"y":5},
+           "output_value": {"color":8,"height":2,"id":"obje29de8da7b6d","marker_color":1,"orientation":135,"tag":"l3337","volume":4,"width":2,"x":3,"y":5}
+         }
+@@ -247,7 +247,7 @@
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# A corner of color 8,\n# 2 by 2 at x 5, y 0, pointing northeast\nobje1ac1e9c728c is Obj(x=5, y=0, width=
+```
+
+**File**: `arc/src/dataset/dataset.dae9d2b5.json` (modified, +17/-17)
+```diff
+@@ -1,8 +1,8 @@
+ {
+   "declarations": [
+-    "# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\n# Each object is a whole panel figure, including any disconnected pieces.\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.volume = volume\n    this.tag = 'l9100'",
+-    "# Register the right panel with the left panel without changing either figure's shape.\nif $Obj.x@first >= canvas_width / 2:\n    $Obj.x = $Obj.x@first - canvas_width / 2",
+-    "# Recolor every occupied figure cell; identically colored overlaps compose as a union.\n$Obj.fill_color = 6"
++    "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.volume = volume\n    this.tag = 'l9100'",
++    "if $Obj.x@first >= canvas_width / 2:\n    $Obj.x = $Obj.x@first - canvas_width / 2",
++    "$Obj.fill_color = 6"
+   ],
+   "output_canvas": "FIT",
+   "dataset": [
+@@ -36,7 +36,7 @@
+             [6, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# The whole left-panel corner of color 4,\n# 2 by 2 at x 0, y 0, pointing northwest\nobj9794a3111594 = Obj(x=0, y=0, width=2, height=2, orientation=315, volume=3)",
++          "implementation": "obj9794a3111594 = Obj(x=0, y=0, width=2, height=2, orientation=315, volume=3)",
+           "input_value": {"height":2,"id":"obj9794a3111594","orientation":315,"tag":"l9100","volume":3,"width":2,"x":0,"y":0},
+           "output_value": {"fill_color":6,"height":2,"id":"obj9794a3111594","orientation":315,"tag":"l9100","volume":3,"width":2,"x":0,"y":0}
+         },
+@@ -58,7 +58,7 @@
+             [6, 0, 0],
+             [0, 0, 6]
+           ],
+-          "implementation": "# The whole right-panel pattern of color 3,\n# 3 by 3 at x 3, y 0\nobj76d109fcf155 = Obj(x=3, y=0, width=3, height=3, orientation=0, volume=4)",
++          "implementation": "obj76d109fcf155 = Obj(x=3, y=0, width=3, height=3, orientation=0, volume=4)",
+           "input_value": {"height":3,"id":"obj76d109fcf155","orientation":0,"tag":"l9100","volume":4,"width":3,"x":3,"y":0},
+           "output_value": {"fill_color":6,"height":3,"id":"obj76d109fcf155","orientation":0,"tag":"l9100","volume":4,"width":3,"x":0,"y":0}
+         }
+@@ -94,7 +94,7 @@
+             [6, 0, 0],
+             [0, 0, 6]
+           ],
+-          "implementation": "# The whole left-panel pattern of color 4,\n# 3 by 3 at x 0, y 0\nobjc2fe1d5c024b = Obj(x=0, y=0, width=3, height=3, orientation=0, volume=4)",
++          "implementation": "objc2fe1d5c024b = Obj(x=0, y=0, width=3, height=3, orientation=0, volume=4)",
+           "input_value": {"height":3,"id":"objc2fe1d5c024b","orientation":0,"tag":"l9100","volume":4,"width":3,"x":0,"y":0},
+           "output_value": {"fill_color":6,"height":3,"id":"objc2fe1d5c024b","orientation":0,"tag":"l9100","volume":4,"width":3,"x":0,"y":0}
+         },
+@@ -116,7 +116,7 @@
+             [6, 0, 0],
+             [6, 0, 0]
+           ],
+-          "implementation": "# The whole right-panel corner of color 3,\n# 3 by 2 at x 3, y 0, pointing northwest\nobj3981ce96f289 = Obj(x=3, y=0, width=2, height=3, orientation=315, volume=4)",
++          "implementation": "obj3981ce96f289 = Obj(x=3, y=0, width=2, height=3, orientation=315, volume=4)",
+           "input_value": {"height":3,"id":"obj3981ce96f289","orientation":315,"tag":"l9100","volume":4,"width":2,"x":3,"y":0},
+           "output_value": {"fill_color":6,"height":3,"id":"obj3981ce96f289","orientation":315,"tag":"l9100","volume":4,"width":2,"x":0,"y":0}
+         }
+@@ -152,7 +152,7 @@
+             [0, 6, 6],
+             [6, 6, 0]
+           ],
+-          "implementation": "# The whole left-panel pattern of color 4,\n# 3 by 3 at x 0, y 0\nobj501566e9788a = Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5)",
++          "implementation": "obj501566e9788a = Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5)",
+           "input_value": {"height":3,"id":"obj501566e9788a","orientation":0,"tag":"l9100","volume":5,"width":3,"x":0,"y":0},
+           "output_value": {"fill_color":6,"height":3,"id":"obj501566e9788a","orientation":0,"tag":"l9100","volume":5,"width":3,"x":0,"y":0}
+         },
+@@ -174,7 +174,7 @@
+             [6, 0, 6],
+             [0, 0, 6]
+           ],
+-          "implementation": "# The whole right-panel pattern of color 3,\n# 3 by 3 at x 3, y 0\nobj19bac09d8db8 = Obj(x=3, y=0, width=3, height=3, orientation=0, volume=4)",
++          "implementation": "obj19bac09d8db8 = Obj(x=3, y=0, width=3, height=3, orientation=0, volume=4)",
+           "input_value": {"height":3,"id":"obj19bac09d8db8","orientation":0,"tag":"l9100","volume":4,"width":3,"x":3,"y":0},
+           "output_value": {"fill_color
+```
+
+**File**: `arc/src/dataset/dataset.fafffa47.json` (modified, +14/-14)
+```diff
+@@ -1,8 +1,8 @@
+ {
+   "declarations": [
+-    "# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\n# Each object is the whole figure of one panel, the top or bottom half of the canvas, including any disconnected pieces.\n# holes are the [column, row] cells of its panel that the figure leaves empty, counted from the top-left corner of the panel.\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, holes: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100\n    this.holes is holes",
++    "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, holes: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100\n    this.holes is holes",
+     "$Obj.tag is l8372",
+-    "# Overlay the panels and keep the holes that every panel shares.\n$Obj.points is $Obj.holes.filter(hole => all figure in Obj: figure.holes.includes(hole))",
++    "$Obj.points is $Obj.holes.filter(hole => all figure in Obj: figure.holes.includes(hole))",
+     "$Obj.fill_color is 2",
+     "$Obj.x is $Obj.points.min(point => point[0])",
+     "$Obj.y is $Obj.points.min(point => point[1])",
+@@ -48,7 +48,7 @@
+             [2, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# The whole top-panel pattern of color 9,\n# 3 by 3 at x 0, y 0\nobje25bf2e9e53d is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=7, holes=[[0, 0], [0, 1]])",
++          "implementation": "obje25bf2e9e53d is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=7, holes=[[0, 0], [0, 1]])",
+           "input_value": {"height":3,"holes":[[0,0],[0,1]],"id":"obje25bf2e9e53d","orientation":0,"tag":"l9100","volume":7,"width":3,"x":0,"y":0},
+           "output_value": {"fill_color":2,"height":2,"holes":[[0,0],[0,1]],"id":"obje25bf2e9e53d","orientation":0,"points":[[0,0],[0,1]],"tag":"l8372","volume":2,"width":1,"x":0,"y":0}
+         },
+@@ -73,7 +73,7 @@
+             [2, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# The whole bottom-panel pattern of color 1,\n# 3 by 3 at x 0, y 3\nobj999f7889a66e is Obj(x=0, y=3, width=3, height=3, orientation=0, volume=5, holes=[[0, 0], [2, 0], [0, 1], [1, 1]])",
++          "implementation": "obj999f7889a66e is Obj(x=0, y=3, width=3, height=3, orientation=0, volume=5, holes=[[0, 0], [2, 0], [0, 1], [1, 1]])",
+           "input_value": {"height":3,"holes":[[0,0],[2,0],[0,1],[1,1]],"id":"obj999f7889a66e","orientation":0,"tag":"l9100","volume":5,"width":3,"x":0,"y":3},
+           "output_value": {"fill_color":2,"height":2,"holes":[[0,0],[2,0],[0,1],[1,1]],"id":"obj999f7889a66e","orientation":0,"points":[[0,0],[0,1]],"tag":"l8372","volume":2,"width":1,"x":0,"y":0}
+         }
+@@ -115,7 +115,7 @@
+             [0, 0, 0],
+             [0, 2, 0]
+           ],
+-          "implementation": "# The whole top-panel pattern of color 9,\n# 3 by 3 at x 0, y 0\nobj07489bc01ff6 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, holes=[[1, 0], [0, 1], [0, 2], [1, 2]])",
++          "implementation": "obj07489bc01ff6 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, holes=[[1, 0], [0, 1], [0, 2], [1, 2]])",
+           "input_value": {"height":3,"holes":[[1,0],[0,1],[0,2],[1,2]],"id":"obj07489bc01ff6","orientation":0,"tag":"l9100","volume":5,"width":3,"x":0,"y":0},
+           "output_value": {"fill_color":2,"height":3,"holes":[[1,0],[0,1],[0,2],[1,2]],"id":"obj07489bc01ff6","orientation":0,"points":[[1,0],[1,2]],"tag":"l8372","volume":2,"width":1,"x":1,"y":0}
+         },
+@@ -140,7 +140,7 @@
+             [0, 0, 0],
+             [0, 2, 0]
+           ],
+-          "implementation": "# The whole bottom-panel pattern of color 1,\n# 3 by 3 at x 0, y 3\nobjf496979cac4a is Obj(x=0, y=3, width=3, height=3, orientation=0, volume=4, holes=[[1, 0], [1, 1], [2, 1], [1, 2], [2, 2]])",
++          "implementation": "objf496979cac4a is Obj(x=0, y=3, width=3, height=3, orientation=0, volume=4, holes=[[1, 0], [1, 1], [2, 1], [1, 2], [2, 2]])",
+           "input_value": {"height":3,"holes":[[1,0],[1,1],[2,1],[1,2],[2,2]],"id":"objf496979cac4a","orientation":0,"tag":"l9100","volume":4,"width":3,"x":0,"y":3},
+           "output_value": {"fill_color":2,"height":3,"holes":[[1,0],[1,1],[2,1],[1,2],[2,2]],"id":"objf496979cac4a","orientation":0,"points":[[1,0],[1,2]],"tag":"l8372","volume":2,"width":1,"x":1,"y":0}
+         }
+@@ -182,7 +182,7 @@
+             [0, 2, 0],
+             [0, 2, 2]
+           ],
+-          "implementation": "# The whole top-panel pattern of color 9,\n# 3 by 3 at x 0, y 0\nobj92a92c4b1e74 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=4, holes=[[0, 0], [2, 0], [1, 1], [1, 2], [2, 2]])",
++          "implementation": "obj92a
 ```
 
 ---
 
-### Incident Patch 2: `8c27bb30` (2026-11-19)
-**Commit Message**: NUC 122 Python-Style Except Clauses
-
-Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Language compatibility, token comparison skipped):
-the frozen candidate meets every hard criterion and passes every policy
-check, and the token check does not apply to continuous Language
-compatibility cycles. The cycle found no stale Draft, drew Language
-compatibility uniformly from the five eligible categories, allocated
-NUC 122 in 259343d1, and completed it with a fresh baseline, candidate,
-proposer, Rust improvement pass and evaluator.
-
-A try statement may spell its catch clause with Python's catch-all
-headers: directly after the body, except: and except Exception: are
-exactly catch:, binding error, and except Exception as NAME: is exactly
-catch NAME:. Each builds the accepted Stmt::Try, or Stmt::TryFinally
-with NUC 119's finally:, so rollback, the binder's scope, returns, loops
-and nesting run as with catch. try_statement reads its clause header
-through the private clause_parameter, which first asks the private
-except_header: it matches the identifier except, optionally Exception,
-optionally as and a name, and then a colon, without consuming tokens,
-and advan
+### Incident Patch 2: `9af29ad1` (2026-11-19)
+**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
 **File**: `README.md` (modified, +28/-0)
 ```diff
@@ -1911,9 +2105,17 @@ and advan
  **Flattening keeps the dirty tiles of every room counted**
 ```
 
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
+**File**: `docs/nuc-0000.md` (modified, +4/-2)
 ```diff
-@@ -165,7 +165,7 @@ Created: 31-Jul-2026
+@@ -131,6 +131,7 @@ Created: 31-Jul-2026
+ | [108](nuc-0108.md) | List and Population Partitions | Accepted |
+ | [111](nuc-0111.md) | Reactive String Padding | Accepted |
+ | [114](nuc-0114.md) | List and Population Products | Accepted |
++| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Draft |
+ 
+ ### Reasoning enhancement
+ 
+@@ -165,7 +166,7 @@ Created: 31-Jul-2026
  | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Accepted |
  | [117](nuc-0117.md) | First and Last Element Methods | Accepted |
  | [118](nuc-0118.md) | Case Conversion Method Aliases | Accepted |
@@ -1922,12 +2124,13 @@ and advan
  
  ### Documentation
  
-@@ -298,7 +298,7 @@ Created: 31-Jul-2026
+@@ -298,7 +299,8 @@ Created: 31-Jul-2026
  | [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Accepted |
  | [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
  | [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
 -| [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Draft |
 +| [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Accepted |
++| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Draft |
  
  ## Copyright
  
@@ -2039,70 +2242,82 @@ and advan
 +  compatibility with one tool-backed uniform
 ```
 
-**File**: `docs/nucleoid.g4` (modified, +28/-4)
+**File**: `docs/nuc-0123.md` (added, +73/-0)
 ```diff
-@@ -310,12 +310,30 @@ repeatStmt
- 
- // Without finallyClause a tryStmt is Stmt::Try, with it Stmt::TryFinally.
- tryStmt
--    : TRY body lineSeparator* CATCH (LPAREN name RPAREN | name)? body finallyClause?
-+    : TRY body lineSeparator* (catchClause | exceptClause) finallyClause?
-     ;
- 
--// FINALLY starts the logical line after the catch body, at the tryStmt's
--// layout level: only NEWLINEs follow the catch body, and the token before
--// FINALLY is a NEWLINE or the DEDENT that closes it. FINALLY on the catch
-+catchClause
-+    : CATCH (LPAREN name RPAREN | name)? body
-+    ;
+@@ -0,0 +1,73 @@
++# NUC 123 -- List and Population Variances and Standard Deviations
 +
-+// Python's catch-all headers build the tree of their catch spelling (NUC 122):
-+// 'EXCEPT COLON' and 'EXCEPT EXCEPTION COLON' are 'CATCH COLON', binding the
-+// name error, and 'EXCEPT EXCEPTION AS name COLON' is 'CATCH name COLON'. The
-+// whole header, through its COLON, is matched before any of it is consumed,
-+// and its suite is the explicit-colon suite of CATCH. Any other EXCEPT where
-+// CATCH is expected, a header without its COLON included, keeps
-+// SyntaxError("Expected 'catch' after 'try'") at the EXCEPT. On an inline
-+// body's line, EXCEPT after ';' begins another statement of the body, and a
-+// destructuring, enumLine or predicateSentence ends only before NEWLINE, ';',
-+// DEDENT, '}', EOF, ELSE or CATCH, never before EXCEPT.
-+exceptClause
-+    : EXCEPT (EXCEPTION (AS name)?)? suite
-+    ;
++```
++NUC: 123
++Title: List and Population Variances and Standard Deviations
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Utility enhancement
++Created: 19-Nov-2026
++```
 +
-+// FINALLY starts the logical line after the catch or except body, at the
-+// tryStmt's layout level: only NEWLINEs follow that body, and the token before
-+// FINALLY is a NEWLINE or the DEDENT that closes it. FINALLY on that
- // body's line, after ';', or inside '(' and '[', which suppress layout, keeps
- // its name reading, and so does 'FINALLY COLON name' before NEWLINE, ';',
- // DEDENT or EOF, which stays a typeDeclaration.
-@@ -911,6 +929,8 @@ enumName
-     | PATH
-     | INTERSECT
-     | EXCEPT
-+    | EXCEPTION
-+    | AS
-     | UNION
-     | NODES
-     | HOLDS
-@@ -1001,6 +1021,8 @@ DEPTH            : 'depth';
- PATH             : 'path';
- INTERSECT        : 'intersect';
- EXCEPT           : 'except';
-+EXCEPTION        : 'Exception';
-+AS               : 'as';
- UNION            : 'union';
- NODES            : 'nodes';
- HOLDS            : 'holds';
-@@ -1194,6 +1216,8 @@ fragment REGEX_CHAR
-  * new X(...)               -> X(...).
-  * for xs:                  -> iteration with the item name "it".
-  * catch without a name     -> the binding "error".
-+ * except:                  -> catch:, also except Exception:.
-+ * except Exception as e:   -> catch e:.
-  * model directly before |> -> Expr::Model.
-  * |> intersect(model)      -> its other selection is Expr::Model; also except
-  *                             and union.
++## Abstract
++
++- Lists and class instance lists gain two read-only queries, `variance`
++  and `stdev`. `RECEIVER.variance()` returns the population variance of the
++  receiver's items, the mean of their squared deviations from their mean,
++  and `RECEIVER.variance(selector)` that of `selector(item)` for every item.
++  `RECEIVER.stdev()` and `RECEIVER.stdev(selector)` return its square root,
++  the population standard deviation.
++- Both divide by the number of values, as numpy's `var` and `std` and
++  Python's `statistics.pvariance` and `statistics.pstdev` do, and as a case
++  of [NUC 80](nuc-0080.md) does when it writes the variance out from two
++  averages. A list or a class population holds every value it describes,
++  so it is the whole population, and a single value has variance `0`.
++- They follow [NUC 84](nuc-0084.md)'s `median`, beside
++  [NUC 68](nuc-0068.md)'s `sum` and [NUC 80](nuc-0080.md)'s `average`:
++  the same receivers, numeric conversion, selector rules, NaN and undefined
++  results, and liveness under [NUC 61](nuc-0061.md)'s shared query rules.
++- At the accepted revision these calls are run-time errors,
++  `TypeError("<receiver>.variance is not a function")` and
++  `TypeError("<receiver>.stdev is not a function")`. Only inputs that were
++  errors change. No syntax, keyword, token or error type is added, and
++  bindings, properties and methods named `variance` or `stdev` keep their
++  accepted results.
++
++## Motivation
++
++- World models summarize their populations. Lists and class populations
++  already have their sums, extremes, averages, medians and modes, but not
++  their spread. A model that asks how far readings, prices or scores
++  scatter must write the variance out from two averages, as a case of
++  NUC 80 does with
++  `team.scores.average(score -> score * score) - team.mean() ** 2`, and a
++  standard deviation wraps that in `Math.sqrt`.
++- The written-out formula repeats the receiver and the selector, is easy
++  to get wrong, and loses precision when large values spread little,
++  because subtracting two close averages cancels their leading digits.
++  `variance()` and `stdev()` name the statistic once, as `average()` and
++  `median()` do, and can compute it from the deviations themselves.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2131,32 +2346,40 @@ and advan
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 123 List and Population Variances and Standard Deviations
+## X. Remove comments from ARC datasets
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `52f8bf48`: Draft NUC 123 List and Population Variances and Standard Deviations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08c6985f`: Remove comments from ARC datasets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Draft |
-| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Draft |
+- No field carries `#` comments: every declaration and every `implementation`
+  is executable code alone, as in every existing dataset.
+- No declaration or `implementation` holds a `#` comment line.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- Natural-language `#` comments appear only in `declarations`, where they are
+  optional and describe its classes and rules, and in `implementation`, where
+  they describe the object it constructs. No other field carries them.
+- Before that code, `implementation` holds `#` comment lines that describe the
+  object, as in every existing dataset: its kind and colors, then its size,
+  position and, when it points, its direction, such as
+  `# 2 by 2 at x 5, y 1, pointing southeast`. They do not change its
+  snapshots.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `52f8bf48` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08c6985f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

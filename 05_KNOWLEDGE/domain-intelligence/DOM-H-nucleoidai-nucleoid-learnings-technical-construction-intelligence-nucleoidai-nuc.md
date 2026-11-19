@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T04:13:34.687Z",
+  "timestamp": "2026-11-19T11:51:26.544Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T04:13:34.687Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T11:51:26.544Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nucleoidai-nucleoid-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `259343d1`  
+> **Source Version**: `08c6985f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T04:13:28.911Z  
+> **Timestamp**: 2026-11-19T11:50:43.334Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T04:03:27.332Z  
+> **Harvest Timestamp**: 2026-11-19T11:50:43.327Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1591,92 +1591,727 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `259343d1` (2026-11-19)
-**Commit Message**: Draft NUC 122 Python-Style Except Clauses
+### Incident Patch 1: `08c6985f` (2026-11-19)
+**Commit Message**: Remove comments from ARC datasets
 
-Category: Language compatibility, drawn uniformly at random (index 4 of
-the five eligible categories in NUC 1's registry, p = 1/5, no redraw)
-for a continuous /nuc-proposal cycle. Language compatibility skips token
-comparison entirely; every other check still applies.
+Remove descriptive comments from three datasets and update the dataset agent, grammar, and documentation to require executable code only. Object snapshots remain unchanged.
 
-Requested change: a try statement may spell its catch clause with
-Python's except. except: and except Exception: catch every error as
-catch: does, and except Exception as NAME: binds the error to NAME as
-catch NAME: does, also with a finally: clause of NUC 119 after it. At
-the accepted revision each such program is a whole-program parse error,
-SyntaxError("Expected 'catch' after 'try'"); only those programs change.
-Every other name after except, as in except e: or except ValueError:,
-keeps that error, because Python reads it as a filter by exception
-class, and except stays an ordinary name everywhere else, including
-NUC 106's except stage.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `.claude/agents/arc-dataset.agent.md` (modified, +3/-8)
 ```diff
-@@ -165,6 +165,7 @@ Created: 31-Jul-2026
+@@ -94,9 +94,8 @@ formatting exactly:
+   `input_value`, `output_value`.
+ - Two-space indentation, one matrix row per line, and `implementation`,
+   `input_value`, and `output_value` each on a single line.
+-- Natural-language `#` comments appear only in `declarations`, where they are
+-  optional and describe its classes and rules, and in `implementation`, where
+-  they describe the object it constructs. No other field carries them.
++- No field carries `#` comments: every declaration and every `implementation`
++  is executable code alone, as in every existing dataset.
+ 
+ ## Model the world
+ 
+@@ -236,11 +235,6 @@ The caller decides whether to propose the feature; you never start a NUC.
+   datasets) with named arguments matching its parameters, where `width` and
+   `height` are the input mask's nonzero bounding-box column and row counts and
+   `volume` is its number of nonzero cells.
+-- Before that code, `implementation` holds `#` comment lines that describe the
+-  object, as in every existing dataset: its kind and colors, then its size,
+-  position and, when it points, its direction, such as
+-  `# 2 by 2 at x 5, y 1, pointing southeast`. They do not change its
+-  snapshots.
+ - Never hand-write `input_value` or `output_value`. As `arc/src/analyzer.ts`
+   does, run the Nucleoid executable (`NUCLEOID_EXECUTABLE`, else the debug
+   build in `target/debug/`; build it with `cargo build` if missing) as
+@@ -281,6 +275,7 @@ Verify with a throwaway script outside the repository; do not add tests:
+   output masks reproduces `output_matrix`, cell for cell.
+ - Every `input_value.volume` and `output_value.volume` equals the number of
+   nonzero cells in the instance's input or output mask.
++- No declaration or `implementation` holds a `#` comment line.
+ - Rerunning Nucleoid reproduces every `input_value` and `output_value`.
+ 
+ For an explicitly authorized padding-only repair, restore unambiguous
+```
+
+**File**: `arc/README.md` (modified, +39/-80)
+```diff
+@@ -398,15 +398,9 @@ three juxtaposed statements and raises `ReferenceError`. The solver's own
+ same. Every snapshot is the state that the same rules give when spelled with
+ `=`.
+ 
+-Each snippet starts with `#` comment lines that describe the object it
+-constructs, in the style of the declarations' comments: its kind and colors,
+-then its size and position and, when it points, its direction. They put the
+-instance's own arguments and input mask into words, and Nucleoid skips them,
+-so they change no snapshot:
++Snippets and declarations hold executable code alone, with no `#` comment:
+ 
+ ```nuc
+-# A corner whose vertex and both segments are color 9,
+-# 2 by 2 at x 5, y 1, pointing southeast
+ obj7e96305711c2 is Obj(x=5, y=1, width=2, height=2, orientation=135, volume=3, vertex_color=9, vertical_segment_color=9, horizontal_segment_color=9)
+ ```
+ 
+@@ -614,9 +608,8 @@ row, of one color or with its lone color in the middle cell, has no head and
+ takes the horizontal axis, 90. The rules leave `orientation` unchanged: each
+ bar keeps 90, and each cleared row, which has no output cell, keeps its input
+ orientation, 270 for three of the cleared rows and 90 for the other five. The
+-declarations hold executable code and one `#` comment, the orientation line
+-that every dataset places above its class. The test pair follows the training
+-pairs at the same level and is annotated by the same rules.
++test pair follows the training pairs at the same level and is annotated by the
++same rules.
+ 
+ `dataset.25ff71a9.json` annotates the four original training pairs from
+ `data\training\25ff71a9.json`, in order, followed by its two test pairs, six
+@@ -665,10 +658,8 @@ both states because the figure moves without turning: 90 for the bars,
+ horizontal lines without a head; 135 and 45 for the trominoes, corners that
+ point toward their vertex, the bottom-right cell of the third figure's box and
+ the top-right cell of the fourth's; and 0 for the test pairs' vertical 2-cell
+-bar and single cell. The declarations hold executable code and one `#` comment,
+-the orientation line that every dataset places above its class. The test pairs
+-follow the training pairs at the same level and are annotated by the same
+-rules.
++bar and single cell. The test pairs follow the training pairs at the same level
++and are annotated by the same rules.
+ 
+ `dataset.27a28665.json` annotates the seven original training pairs from
+ `data\training\27a28665.json`, in order, followed by its three test pairs,
+@@ -804,10 +795,8 @@ and keeps that orientation with its inside marker: the training corners point
+ at 225 and 45, and at 45, 225, and 135, and the test corners at 45, 315, 225,
+ and 135, so only the test pair has a corner at 315. The declarations write
+ their assignments with `is` and their tags as bare words, with no quoted
+-string, and hold `#` comments: two lines above the class, the orientation line
+-among them, and one above the `marker_color` rule. Each implementation starts
+-with two comment lines that describe its corner. The test pair follows the
+-training pairs at the same level and is annotated by the same rules.
++string. The test pair follows the training pairs at the same level and is
++annotated by the same rules.
+ 
+ `dataset.3c9b0459.json` annotates the four original training pairs from
+ `data\training\3c9b0459.json`, in order, followed by its test pair, five
+@@ -858,10 +847,8 @@ bounding-box origin, 0 and 0, equal to `output_value.x`/`output_value.y`.
+ `output_canvas` is `EXACT` because each output keeps its input's 3 by 3
+ canvas; with no zero cell to crop, `FIT` would frame the same grids.
+ Orientation is 0 in every input state, where the mosaic is not turned, and
+-180 in every output state. The declarations hold executable code and one `#`
+-comment, the orientation line that every dataset places above its class. The
+-test pair follows the training pairs at the same level and is annotated by the
+-same rules.
++180 in every output state. The test pair follows the training pairs at the same
++level and is annotated by the same rules.
+ 
+ `dataset.44f52bb0.json` annotates the six original training pairs from
+ `data\training\44f52bb0.json`, in order, followed by its two test pairs,
+@@ -1052,14 +1039,11 @@ in that order, where `width` and `height` are the column and row counts of the
+ block's box, the nonzero bounding box of its input mask, and `volume` the
+ number of its nonzero cells, 3, 3, and 9 in every
+ pair, with no color, parts list, canvas size, or matrix of cells, because
+-the rules need none: the block's cells travel in its masks. Its declaration,
+-comments included, is that of `dataset.6150a2bd.json`. Each implementation
+-passes `x=0, y=0, width=3, height=3, orientation=0, volume=9` after comment
+-lines that name the block's colors in reading order and its box, such as
+-`# The whole block of colors 6, 1 and 8,` and `# 3 by 3 at x 0, y 0` for the
+-first training input. Three unconditional, commented class-level rules turn
+-every block into t
+```
+
+**File**: `arc/nucleoid.ebnf` (modified, +2/-3)
+```diff
+@@ -1,5 +1,5 @@
+-declaration          ::= ( COMMENT NEWLINE )* ( classStmt | ifStmt | classRule )
+-implementation       ::= ( COMMENT NEWLINE )* NAME assign NAME
++declaration          ::= classStmt | ifStmt | classRule
++implementation       ::= NAME assign NAME
+                          '(' labeledArgument ( ',' labeledArgument )+ ')'
+ assign               ::= 'is' | '='
+ 
+@@ -50,6 +50,5 @@ RESERVED             ::= 'and' | 'class' | 'else' | 'if' | 'in' | 'not' | 'of' |
+ CLASS_REF            ::= '$' NAME
+ INTEGER              ::= [0-9]+
+ STRING               ::= "'" [^']* "'"
+-COMMENT              ::= '#' [^#xA]*
+ NEWLINE              ::= #xA
+ INDENT               ::= '    '
+```
+
+**File**: `arc/src/dataset/dataset.3aa6fb7a.json` (modified, +11/-11)
+```diff
+@@ -1,8 +1,8 @@
+ {
+   "declarations": [
+-    "# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\n# Each object is a one-color corner, three cells of a 2 by 2 box that meet at its vertex, and it points toward that vertex.\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.color is color",
++    "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.color is color",
+     "$Obj.tag is l3337",
+-    "# Every corner gets its inside marker: the open cell of its box, diagonally across from its vertex, turns color 1 and completes the square.\n$Obj.marker_color is 1",
++    "$Obj.marker_color is 1",
+     "$Obj.volume is $Obj.volume@first + 1"
+   ],
+   "output_canvas": "EXACT",
+@@ -53,7 +53,7 @@
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# A corner of color 8,\n# 2 by 2 at x 1, y 1, pointing southwest\nobj06bbbdc98e71 is Obj(x=1, y=1, width=2, height=2, orientation=225, volume=3, color=8)",
++          "implementation": "obj06bbbdc98e71 is Obj(x=1, y=1, width=2, height=2, orientation=225, volume=3, color=8)",
+           "input_value": {"color":8,"height":2,"id":"obj06bbbdc98e71","orientation":225,"tag":"l6747","volume":3,"width":2,"x":1,"y":1},
+           "output_value": {"color":8,"height":2,"id":"obj06bbbdc98e71","marker_color":1,"orientation":225,"tag":"l3337","volume":4,"width":2,"x":1,"y":1}
+         },
+@@ -83,7 +83,7 @@
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# A corner of color 8,\n# 2 by 2 at x 4, y 3, pointing northeast\nobj812b7881ec0e is Obj(x=4, y=3, width=2, height=2, orientation=45, volume=3, color=8)",
++          "implementation": "obj812b7881ec0e is Obj(x=4, y=3, width=2, height=2, orientation=45, volume=3, color=8)",
+           "input_value": {"color":8,"height":2,"id":"obj812b7881ec0e","orientation":45,"tag":"l6747","volume":3,"width":2,"x":4,"y":3},
+           "output_value": {"color":8,"height":2,"id":"obj812b7881ec0e","marker_color":1,"orientation":45,"tag":"l3337","volume":4,"width":2,"x":4,"y":3}
+         }
+@@ -135,7 +135,7 @@
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# A corner of color 8,\n# 2 by 2 at x 4, y 0, pointing northeast\nobj3a91dc0b584b is Obj(x=4, y=0, width=2, height=2, orientation=45, volume=3, color=8)",
++          "implementation": "obj3a91dc0b584b is Obj(x=4, y=0, width=2, height=2, orientation=45, volume=3, color=8)",
+           "input_value": {"color":8,"height":2,"id":"obj3a91dc0b584b","orientation":45,"tag":"l6747","volume":3,"width":2,"x":4,"y":0},
+           "output_value": {"color":8,"height":2,"id":"obj3a91dc0b584b","marker_color":1,"orientation":45,"tag":"l3337","volume":4,"width":2,"x":4,"y":0}
+         },
+@@ -165,7 +165,7 @@
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# A corner of color 8,\n# 2 by 2 at x 2, y 2, pointing southwest\nobj1d5b3380e76e is Obj(x=2, y=2, width=2, height=2, orientation=225, volume=3, color=8)",
++          "implementation": "obj1d5b3380e76e is Obj(x=2, y=2, width=2, height=2, orientation=225, volume=3, color=8)",
+           "input_value": {"color":8,"height":2,"id":"obj1d5b3380e76e","orientation":225,"tag":"l6747","volume":3,"width":2,"x":2,"y":2},
+           "output_value": {"color":8,"height":2,"id":"obj1d5b3380e76e","marker_color":1,"orientation":225,"tag":"l3337","volume":4,"width":2,"x":2,"y":2}
+         },
+@@ -195,7 +195,7 @@
+             [0, 0, 0, 1, 8, 0, 0],
+             [0, 0, 0, 8, 8, 0, 0]
+           ],
+-          "implementation": "# A corner of color 8,\n# 2 by 2 at x 3, y 5, pointing southeast\nobje29de8da7b6d is Obj(x=3, y=5, width=2, height=2, orientation=135, volume=3, color=8)",
++          "implementation": "obje29de8da7b6d is Obj(x=3, y=5, width=2, height=2, orientation=135, volume=3, color=8)",
+           "input_value": {"color":8,"height":2,"id":"obje29de8da7b6d","orientation":135,"tag":"l6747","volume":3,"width":2,"x":3,"y":5},
+           "output_value": {"color":8,"height":2,"id":"obje29de8da7b6d","marker_color":1,"orientation":135,"tag":"l3337","volume":4,"width":2,"x":3,"y":5}
+         }
+@@ -247,7 +247,7 @@
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# A corner of color 8,\n# 2 by 2 at x 5, y 0, pointing northeast\nobje1ac1e9c728c is Obj(x=5, y=0, width=
+```
+
+**File**: `arc/src/dataset/dataset.dae9d2b5.json` (modified, +17/-17)
+```diff
+@@ -1,8 +1,8 @@
+ {
+   "declarations": [
+-    "# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\n# Each object is a whole panel figure, including any disconnected pieces.\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.volume = volume\n    this.tag = 'l9100'",
+-    "# Register the right panel with the left panel without changing either figure's shape.\nif $Obj.x@first >= canvas_width / 2:\n    $Obj.x = $Obj.x@first - canvas_width / 2",
+-    "# Recolor every occupied figure cell; identically colored overlaps compose as a union.\n$Obj.fill_color = 6"
++    "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.volume = volume\n    this.tag = 'l9100'",
++    "if $Obj.x@first >= canvas_width / 2:\n    $Obj.x = $Obj.x@first - canvas_width / 2",
++    "$Obj.fill_color = 6"
+   ],
+   "output_canvas": "FIT",
+   "dataset": [
+@@ -36,7 +36,7 @@
+             [6, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# The whole left-panel corner of color 4,\n# 2 by 2 at x 0, y 0, pointing northwest\nobj9794a3111594 = Obj(x=0, y=0, width=2, height=2, orientation=315, volume=3)",
++          "implementation": "obj9794a3111594 = Obj(x=0, y=0, width=2, height=2, orientation=315, volume=3)",
+           "input_value": {"height":2,"id":"obj9794a3111594","orientation":315,"tag":"l9100","volume":3,"width":2,"x":0,"y":0},
+           "output_value": {"fill_color":6,"height":2,"id":"obj9794a3111594","orientation":315,"tag":"l9100","volume":3,"width":2,"x":0,"y":0}
+         },
+@@ -58,7 +58,7 @@
+             [6, 0, 0],
+             [0, 0, 6]
+           ],
+-          "implementation": "# The whole right-panel pattern of color 3,\n# 3 by 3 at x 3, y 0\nobj76d109fcf155 = Obj(x=3, y=0, width=3, height=3, orientation=0, volume=4)",
++          "implementation": "obj76d109fcf155 = Obj(x=3, y=0, width=3, height=3, orientation=0, volume=4)",
+           "input_value": {"height":3,"id":"obj76d109fcf155","orientation":0,"tag":"l9100","volume":4,"width":3,"x":3,"y":0},
+           "output_value": {"fill_color":6,"height":3,"id":"obj76d109fcf155","orientation":0,"tag":"l9100","volume":4,"width":3,"x":0,"y":0}
+         }
+@@ -94,7 +94,7 @@
+             [6, 0, 0],
+             [0, 0, 6]
+           ],
+-          "implementation": "# The whole left-panel pattern of color 4,\n# 3 by 3 at x 0, y 0\nobjc2fe1d5c024b = Obj(x=0, y=0, width=3, height=3, orientation=0, volume=4)",
++          "implementation": "objc2fe1d5c024b = Obj(x=0, y=0, width=3, height=3, orientation=0, volume=4)",
+           "input_value": {"height":3,"id":"objc2fe1d5c024b","orientation":0,"tag":"l9100","volume":4,"width":3,"x":0,"y":0},
+           "output_value": {"fill_color":6,"height":3,"id":"objc2fe1d5c024b","orientation":0,"tag":"l9100","volume":4,"width":3,"x":0,"y":0}
+         },
+@@ -116,7 +116,7 @@
+             [6, 0, 0],
+             [6, 0, 0]
+           ],
+-          "implementation": "# The whole right-panel corner of color 3,\n# 3 by 2 at x 3, y 0, pointing northwest\nobj3981ce96f289 = Obj(x=3, y=0, width=2, height=3, orientation=315, volume=4)",
++          "implementation": "obj3981ce96f289 = Obj(x=3, y=0, width=2, height=3, orientation=315, volume=4)",
+           "input_value": {"height":3,"id":"obj3981ce96f289","orientation":315,"tag":"l9100","volume":4,"width":2,"x":3,"y":0},
+           "output_value": {"fill_color":6,"height":3,"id":"obj3981ce96f289","orientation":315,"tag":"l9100","volume":4,"width":2,"x":0,"y":0}
+         }
+@@ -152,7 +152,7 @@
+             [0, 6, 6],
+             [6, 6, 0]
+           ],
+-          "implementation": "# The whole left-panel pattern of color 4,\n# 3 by 3 at x 0, y 0\nobj501566e9788a = Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5)",
++          "implementation": "obj501566e9788a = Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5)",
+           "input_value": {"height":3,"id":"obj501566e9788a","orientation":0,"tag":"l9100","volume":5,"width":3,"x":0,"y":0},
+           "output_value": {"fill_color":6,"height":3,"id":"obj501566e9788a","orientation":0,"tag":"l9100","volume":5,"width":3,"x":0,"y":0}
+         },
+@@ -174,7 +174,7 @@
+             [6, 0, 6],
+             [0, 0, 6]
+           ],
+-          "implementation": "# The whole right-panel pattern of color 3,\n# 3 by 3 at x 3, y 0\nobj19bac09d8db8 = Obj(x=3, y=0, width=3, height=3, orientation=0, volume=4)",
++          "implementation": "obj19bac09d8db8 = Obj(x=3, y=0, width=3, height=3, orientation=0, volume=4)",
+           "input_value": {"height":3,"id":"obj19bac09d8db8","orientation":0,"tag":"l9100","volume":4,"width":3,"x":3,"y":0},
+           "output_value": {"fill_color
+```
+
+**File**: `arc/src/dataset/dataset.fafffa47.json` (modified, +14/-14)
+```diff
+@@ -1,8 +1,8 @@
+ {
+   "declarations": [
+-    "# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\n# Each object is the whole figure of one panel, the top or bottom half of the canvas, including any disconnected pieces.\n# holes are the [column, row] cells of its panel that the figure leaves empty, counted from the top-left corner of the panel.\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, holes: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100\n    this.holes is holes",
++    "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, holes: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100\n    this.holes is holes",
+     "$Obj.tag is l8372",
+-    "# Overlay the panels and keep the holes that every panel shares.\n$Obj.points is $Obj.holes.filter(hole => all figure in Obj: figure.holes.includes(hole))",
++    "$Obj.points is $Obj.holes.filter(hole => all figure in Obj: figure.holes.includes(hole))",
+     "$Obj.fill_color is 2",
+     "$Obj.x is $Obj.points.min(point => point[0])",
+     "$Obj.y is $Obj.points.min(point => point[1])",
+@@ -48,7 +48,7 @@
+             [2, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# The whole top-panel pattern of color 9,\n# 3 by 3 at x 0, y 0\nobje25bf2e9e53d is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=7, holes=[[0, 0], [0, 1]])",
++          "implementation": "obje25bf2e9e53d is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=7, holes=[[0, 0], [0, 1]])",
+           "input_value": {"height":3,"holes":[[0,0],[0,1]],"id":"obje25bf2e9e53d","orientation":0,"tag":"l9100","volume":7,"width":3,"x":0,"y":0},
+           "output_value": {"fill_color":2,"height":2,"holes":[[0,0],[0,1]],"id":"obje25bf2e9e53d","orientation":0,"points":[[0,0],[0,1]],"tag":"l8372","volume":2,"width":1,"x":0,"y":0}
+         },
+@@ -73,7 +73,7 @@
+             [2, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# The whole bottom-panel pattern of color 1,\n# 3 by 3 at x 0, y 3\nobj999f7889a66e is Obj(x=0, y=3, width=3, height=3, orientation=0, volume=5, holes=[[0, 0], [2, 0], [0, 1], [1, 1]])",
++          "implementation": "obj999f7889a66e is Obj(x=0, y=3, width=3, height=3, orientation=0, volume=5, holes=[[0, 0], [2, 0], [0, 1], [1, 1]])",
+           "input_value": {"height":3,"holes":[[0,0],[2,0],[0,1],[1,1]],"id":"obj999f7889a66e","orientation":0,"tag":"l9100","volume":5,"width":3,"x":0,"y":3},
+           "output_value": {"fill_color":2,"height":2,"holes":[[0,0],[2,0],[0,1],[1,1]],"id":"obj999f7889a66e","orientation":0,"points":[[0,0],[0,1]],"tag":"l8372","volume":2,"width":1,"x":0,"y":0}
+         }
+@@ -115,7 +115,7 @@
+             [0, 0, 0],
+             [0, 2, 0]
+           ],
+-          "implementation": "# The whole top-panel pattern of color 9,\n# 3 by 3 at x 0, y 0\nobj07489bc01ff6 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, holes=[[1, 0], [0, 1], [0, 2], [1, 2]])",
++          "implementation": "obj07489bc01ff6 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, holes=[[1, 0], [0, 1], [0, 2], [1, 2]])",
+           "input_value": {"height":3,"holes":[[1,0],[0,1],[0,2],[1,2]],"id":"obj07489bc01ff6","orientation":0,"tag":"l9100","volume":5,"width":3,"x":0,"y":0},
+           "output_value": {"fill_color":2,"height":3,"holes":[[1,0],[0,1],[0,2],[1,2]],"id":"obj07489bc01ff6","orientation":0,"points":[[1,0],[1,2]],"tag":"l8372","volume":2,"width":1,"x":1,"y":0}
+         },
+@@ -140,7 +140,7 @@
+             [0, 0, 0],
+             [0, 2, 0]
+           ],
+-          "implementation": "# The whole bottom-panel pattern of color 1,\n# 3 by 3 at x 0, y 3\nobjf496979cac4a is Obj(x=0, y=3, width=3, height=3, orientation=0, volume=4, holes=[[1, 0], [1, 1], [2, 1], [1, 2], [2, 2]])",
++          "implementation": "objf496979cac4a is Obj(x=0, y=3, width=3, height=3, orientation=0, volume=4, holes=[[1, 0], [1, 1], [2, 1], [1, 2], [2, 2]])",
+           "input_value": {"height":3,"holes":[[1,0],[1,1],[2,1],[1,2],[2,2]],"id":"objf496979cac4a","orientation":0,"tag":"l9100","volume":4,"width":3,"x":0,"y":3},
+           "output_value": {"fill_color":2,"height":3,"holes":[[1,0],[1,1],[2,1],[1,2],[2,2]],"id":"objf496979cac4a","orientation":0,"points":[[1,0],[1,2]],"tag":"l8372","volume":2,"width":1,"x":1,"y":0}
+         }
+@@ -182,7 +182,7 @@
+             [0, 2, 0],
+             [0, 2, 2]
+           ],
+-          "implementation": "# The whole top-panel pattern of color 9,\n# 3 by 3 at x 0, y 0\nobj92a92c4b1e74 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=4, holes=[[0, 0], [2, 0], [1, 1], [1, 2], [2, 2]])",
++          "implementation": "obj92a
+```
+
+---
+
+### Incident Patch 2: `9af29ad1` (2026-11-19)
+**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
+
+**File**: `README.md` (modified, +28/-0)
+```diff
+@@ -2617,6 +2617,34 @@ assert([readings, moved], [[-1, 3, 4], [2, false]])
+   warning clears. See the
+   [root contract](nucleoid.spec.md#held-values-of-reasoning-selections).
+ 
++## Python-style except clauses
++
++**Except clauses fall back to another sensor when a reading fails**
++
++```nuc
++hall = 19
++try:
++    kitchen = cellar + 1
++except Exception as fault:
++    kitchen = hall - 1
++    note = fault
++heating = kitchen < 20
++assert([kitchen, note, heating], [18, ReferenceError("cellar is not defined"), true])
++hall = 22
++assert([kitchen, heating], [21, false])
++```
++
++- [NUC 122](docs/nuc-0122.md) reads Python's catch-all clause headers:
++  `except:` and `except Exception:` are `catch:`, and
++  `except Exception as fault:` is `catch fault:`, with the same suite, the
++  same rollback of the failed body and the same binding.
++- The kitchen's reading derives from a cellar sensor that has not
++  reported, so reading it fails, and the clause estimates the kitchen from
++  the hall instead and records why. The estimate is a declaration like any
++  other, so it follows the hall's reading, and the heating follows the
++  estimate. See the
++  [root contract](nucleoid.spec.md#python-style-except-clauses).
++
+ ## Reactive list flattening
+ 
+ **Flat turns nested lists into one live list**
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +19/-16)
+```diff
+@@ -799,19 +799,22 @@
+ {"id":"spec-0799","description":"Nucleoid gives the values that a change reaches and the model with holds","code":"rate = 0.2\nprice = 10\nqty = 3\nsubtotal = price * qty\ntax = subtotal * rate\nreach = price |> affects |> holds\nknown = model |> holds\nassert(reach, [30, 6])\nassert(known, [0.2, 10, 3, 30, 6])\ntotal = subtotal + tax\nassert(reach, [30, 6, 36])\nqty = 4\nassert(reach, [40, 8, 48])\ntax = qty * rate\nassert(reach, [40, 40.8])\ndelete total\nassert(known, [0.2, 10, 4, 40, 0.8])\nreach","return":"[40]"}
+ {"id":"spec-0800","description":"Nucleoid gives the values behind class level rules with holds","code":"fee = 2\nclass Order(price, qty):\n    this.price = price\n    this.qty = qty\n$Order.total = $Order.price * $Order.qty\n$Order.basis = $Order.total |> why |> holds\nfirst = Order(10, 2)\nassert(first.basis, [20, 10, 2])\n$Order.total = $Order.price * $Order.qty + fee\nsecond = Order(4, 5)\nreach = fee |> affects |> holds\nassert([first.basis, second.basis], [[22, 10, 2, 2], [22, 4, 5, 2]])\nassert(reach, [22, 22])\nfirst.qty = 3\nfee = 1\nassert([first.basis, second.basis], [[31, 10, 3, 1], [21, 4, 5, 1]])\nassert(reach, [31, 21])\nfirst.total |> why |> stated |> holds","return":"[1]"}
+ {"id":"spec-0801","description":"Nucleoid rolls back failed updates through held values","code":"price = 10\nqty = 3\nsubtotal = price * qty\nvalues = subtotal |> why |> holds\nfailure = \"\"\ntry:\n    values = 1 |> holds\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Cannot explain 1\"))\nassert(values, [30, 10, 3])\ntry:\n    fee = 2\n    subtotal = price * qty + fee\n    assert(values, [32, 10, 3, 2])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert(values, [30, 10, 3])\nqty = 4\ninputs = subtotal |> why |> stated |> holds\n[values, inputs]","return":"[[40,10,4],[10,4]]"}
+-{"id":"spec-0802","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0803","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0804","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0805","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0806","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0807","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
+-{"id":"spec-0808","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nasse
+```
+
+**File**: `dataset/nucleoid.synth.86.jsonl` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++{"id":"synth-86-0001","description":"Except catches a failed reading and falls back to a default","code":"reading = 0\ntry:\n    reading = sensor * 2\nexcept:\n    reading = -1\nreading","return":"-1"}
++{"id":"synth-86-0002","description":"A bare except binds the error to error as catch does","code":"try:\n    level = tank + 1\nexcept:\n    level = error\nlevel","return":"\"ReferenceError: tank is not defined\""}
++{"id":"synth-86-0003","description":"Except Exception catches every error","code":"try:\n    size = (4).resize(2)\nexcept Exception:\n    size = 0\nsize","return":"0"}
++{"id":"synth-86-0004","description":"Except Exception as a name binds the thrown value as it was thrown","code":"try:\n    throw 404\nexcept Exception as failure:\n    code = failure + 1\ncode","return":"405"}
++{"id":"synth-86-0005","description":"A failed body rolls back before its except clause runs","code":"stock = 10\nreserved = stock - 2\ntry:\n    stock = 3\n    throw \"SHORT\"\nexcept Exception as reason:\n    note = reason\n[stock, reserved, note]","return":"[10,8,\"SHORT\"]"}
++{"id":"synth-86-0006","description":"Except clauses return from functions","code":"def length_of(text):\n    try:\n        if text == \"\":\n            throw \"EMPTY\"\n        return text.length\n    except Exception as problem:\n        return problem\n[length_of(\"abc\"), length_of(\"\")]","return":"[3,\"EMPTY\"]"}
++{"id":"synth-86-0007","description":"Except clauses return from methods","code":"class Thermostat(limit):\n    this.limit = limit\n    def check(target):\n        try:\n            if target > this.limit:\n                throw \"TOO HOT\"\n            return target\n        except Exception as alarm:\n            return alarm\nhall = Thermostat(28)\n[hall.check(22), hall.check(35)]","return":"[22,\"TOO HOT\"]"}
++{"id":"synth-86-0008","description":"An error raised in an except clause reaches the enclosing one","code":"def probe(depth):\n    try:\n        try:\n            throw depth\n        except Exception as inner:\n            throw inner * 10\n    except Exception as outer:\n        return outer + 1\nprobe(4)","return":"41"}
++{"id":"synth-86-0009","description":"A finally clause runs after an except clause","code":"log = []\ntry:\n    throw \"X\"\nexcept Exception as e:\n    log.push(e)\nfinally:\n    log.push(\"done\")\nlog","return":"[\"X\",\"done\"]"}
++{"id":"synth-86-0010","description":"Except clauses take inline suites","code":"try: total = price * 2\nexcept: total = 0\ntotal","return":"0"}
++{"id":"synth-86-0011","description":"Except follows a colon-free try header","code":"try\n    total = count + 1\nexcept Exception as e:\n    total = 0\ntotal","return":"0"}
++{"id":"synth-86-0012","description":"Declarations in an except clause stay live","code":"base = 4\ntry:\n    value = missing\nexcept:\n    value = base * 2\nbase = 5\nvalue","return":"10"}
++{"id":"synth-86-0013","description":"An except binder shadows an outer name only inside its clause","code":"e = \"outer\"\ntry:\n    throw \"inner\"\nexcept Exception as e:\n    seen = e\n[seen, e]","return":"[\"inner\",\"outer\"]"}
++{"id":"synth-86-0014","description":"Except Exception is a fixed word that a variable named Exception does not change","code":"Exception = \"not a class\"\ntry:\n    x = missing\nexcept Exception:\n    x = Exception\nx","return":"\"not a class\""}
++{"id":"synth-86-0015","description":"Except clauses run inside braced arrow functions","code":"fallback = (v) => {\n    try:\n        return v.calibrate()\n    except:\n        return 0\n}\nfallback(5)","return":"0"}
++{"id":"synth-86-0016","description":"Except clauses run inside if blocks","code":"ready = true\nif ready:\n    try:\n        r = gauge.read()\n    except:\n        r = \"offline\"\nr","return":"\"offline\""}
+```
+
+**File**: `docs/README.md` (modified, +53/-1)
+```diff
+@@ -2509,7 +2509,55 @@ visits.length
+   before a `catch`. See the
+   [root contract](../nucleoid.spec.md#finally-clauses).
+ 
+-Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md).
++### Python-style except clauses
++
++```
++def ratio(part, whole):
++    try:
++        if whole == 0:
++            throw "EMPTY"
++        return part / whole
++    except Exception as reason:
++        return reason
++assert([ratio(3, 4), ratio(1, 0)], [0.75, "EMPTY"])
++try:
++    share = stock / 2
++except Exception:
++    share = 0
++try:
++    level = stock.reorder()
++except:
++    level = error
++assert([share, level], [0, ReferenceError("stock is not defined")])
++stock = 8
++share
++```
++
++- This is the complete
++  `Nucleoid reads Python except clauses as catch clauses` program in
++  `tests/reference.md`, without its title and expected-return metadata; it
++  returns `0`.
++- [NUC 122](nuc-0122.md) reads Python's catch-all clause headers where a
++  `catch` clause belongs: `except:` and `except Exception:` are exactly
++  `catch:`, binding the error to `error`, and `except Exception as NAME:` is
++  exactly `catch NAME:`. Each builds the same statement as its `catch`
++  spelling, so rollback, the binding and its scope, `return`, nested `try`
++  statements and a following `finally:` behave as they do with `catch`.
++- The header takes its colon. `except`, `Exception` and `as` stay ordinary
++  names, and every other header where `catch` belongs, such as `except e:`,
++  `except ValueError:` or a colon-free `except Exception as e`, keeps
++  `SyntaxError("Expected 'catch' after 'try'")`.
++- Differences from Python: typed and filtered clauses, several clauses,
++  `else:`, `except*` and `raise` are not added, and Nucleoid raises with
++  `throw`. The bound value is the error's text, such as
++  `"ReferenceError: stock is not defined"`, or the thrown value, not an
++  exception object. `Exception` catches every error, since Nucleoid has no
++  exits like `SystemExit` that Python's `Exception` leaves out, and an outer
++  name that the clause's binder shadows keeps its value, where Python
++  unbinds it. See the
++  [root contract](../nucleoid.spec.md#python-style-except-clauses).
++
++Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md), [NUC 122](nuc-0122.md).
+ 
+ ---
+ 
+@@ -5063,6 +5111,10 @@ try:                                   run the body; a failure rolls it back
+     statement
+ catch name:                            then runs this suite with the error bound
+     statement
++except Exception as name:              Python's spelling of catch name: (NUC 122)
++    statement
++except:                                Python's spelling of catch:, binding error (NUC 122)
++    statement
+ finally:                               runs however the statement ends (NUC 119)
+     statement
+ return expression                      yield from a block or function
+```
+
+**File**: `docs/examples.md` (modified, +34/-0)
+```diff
+@@ -4142,6 +4142,40 @@ hours = 15
+   [NUC 121](nuc-0121.md) and the
+   [root contract](../nucleoid.spec.md#held-values-of-reasoning-selections).
+ 
++## Python-style except clauses
++
++**Except clauses refuse an overdrawn transfer and keep both wallets whole**
++
++```nuc
++class Wallet(owner, coins):
++    this.owner = owner
++    this.coins = coins
++def transfer(source, target, amount):
++    target.coins = target.coins + amount
++    if amount > source.coins.value:
++        throw source.owner + " LACKS " + amount
++    source.coins = source.coins - amount
++ana = Wallet("Ana", 50)
++ben = Wallet("Ben", 10)
++try:
++    transfer(ana, ben, 80)
++except Exception as refusal:
++    log = refusal
++assert([ana.coins, ben.coins, log], [50, 10, "Ana LACKS 80"])
++transfer(ana, ben, 20)
++[ana.coins, ben.coins]
++# return: [30,30]
++```
++
++- `transfer` credits the target before it finds that the source lacks the
++  coins, so the refused transfer has already changed Ben's wallet when it
++  throws. The failed body is rolled back before the `except` clause runs,
++  so both wallets keep what they had, and the clause records the refusal.
++- `except Exception as refusal:` is exactly `catch refusal:`, so a transfer
++  the source can afford then goes through as before. See
++  [NUC 122](nuc-0122.md) and the
++  [root contract](../nucleoid.spec.md#python-style-except-clauses).
++
+ ## Reactive list flattening
+ 
+ **Flattening keeps the dirty tiles of every room counted**
+```
+
+**File**: `docs/nuc-0000.md` (modified, +4/-2)
+```diff
+@@ -131,6 +131,7 @@ Created: 31-Jul-2026
+ | [108](nuc-0108.md) | List and Population Partitions | Accepted |
+ | [111](nuc-0111.md) | Reactive String Padding | Accepted |
+ | [114](nuc-0114.md) | List and Population Products | Accepted |
++| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Draft |
+ 
+ ### Reasoning enhancement
+ 
+@@ -165,7 +166,7 @@ Created: 31-Jul-2026
  | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Accepted |
  | [117](nuc-0117.md) | First and Last Element Methods | Accepted |
  | [118](nuc-0118.md) | Case Conversion Method Aliases | Accepted |
-+| [122](nuc-0122.md) | Python-Style Except Clauses | Draft |
+-| [122](nuc-0122.md) | Python-Style Except Clauses | Draft |
++| [122](nuc-0122.md) | Python-Style Except Clauses | Accepted |
  
  ### Documentation
  
-@@ -297,6 +298,7 @@ Created: 31-Jul-2026
+@@ -298,7 +299,8 @@ Created: 31-Jul-2026
  | [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Accepted |
  | [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
  | [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
-+| [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Draft |
+-| [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Draft |
++| [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Accepted |
++| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0122.md` (added, +64/-0)
+**File**: `docs/nuc-0122.md` (modified, +1154/-28)
 ```diff
-@@ -0,0 +1,64 @@
-+# NUC 122 -- Python-Style Except Clauses
+@@ -4,57 +4,1183 @@
+ NUC: 122
+ Title: Python-Style Except Clauses
+ Author: Can Mingir <canmingir@gmail.com>
+-Status: Draft
++Status: Accepted
+ Type: Standards Track
+ Category: Language compatibility
+ Created: 18-Nov-2026
++Requires: 9, 46, 119
+ ```
+ 
+ ## Abstract
+ 
+-- A `try` statement may spell its catch clause with Python's `except`.
+-  `except:` and `except Exception:` catch every error, as `catch:` does,
+-  and `except Exception as NAME:` binds the error to `NAME`, as
+-  `catch NAME:` does.
+-- Such a program reads exactly as its `catch` spelling, including a
+-  `finally:` clause of [NUC 119](nuc-0119.md) after the `except` clause.
+-- At the accepted revision each such program is a whole-program parse
+-  error, `SyntaxError("Expected 'catch' after 'try'")`. Only those programs
+-  change.
+-- Every other name after `except`, as in `except e:` or
+-  `except ValueError:`, keeps that error, because Python reads it as a
+-  filter by exception class, which Nucleoid's errors do not have. `except`
+-  stays an ordinary name everywhere else, including the `except` stage of
+-  [NUC 106](nuc-0106.md).
++- A `try` statement may spell its catch clause with Python's catch-all
++  `except` headers. Where a `catch` clause belongs, directly after the
++  body:
++  - `except:` and `except Exception:` are exactly `catch:`, so the error is
++    bound to the name `error`;
++  - `except Exception as NAME:`, where `NAME` is a name, is exactly
++    `catch NAME:`.
++- Each header builds the statement of its `catch` spelling, `Stmt::Try`, or
++  `Stmt::TryFinally` with a `finally:` clause of [NUC 119](nuc-0119.md)
++  after it, with the same parameter and suites. So the clause behaves as
++  `catch` does: the failed body is rolled back first, the bound name is
++  scoped to the clause, and returns, loops, nested `try` statements and the
++  declarations of either suite run as they do with `catch`.
++- The header ends with its colon, as Python requires. Every other header
++  where `catch` belongs keeps the accepted
++  `SyntaxError("Expected 'catch' after 'try'")` at the `except`, byte for
++  byte, among them `except e:`, `except ValueError:`, a parenthesized or
++  comma-separated list, a binder that is not a name and a header without its
++  colon. A `try` statement still takes one clause.
++- `except`, `Exception` and `as` stay ordinary names everywhere else,
++  including the `except` stage of [NUC 106](nuc-0106.md). No keyword, lexer
++  token, syntax-tree node, error type or message is added.
++- Only inputs that were errors at the accepted revision change: programs
++  in which a `try` statement's body is directly followed by a matching
++  header, each of which raised `SyntaxError("Expected 'catch' after 'try'")`
++  at the `except` of such a header. The authoritative contract is
++  [Python-style except clauses](../nucleoid.spec.md#python-style-except-clauses).
+ 
+ ## Motivation
+ 
+ - Nucleoid already reads many of Python's spellings: `def`, `elif`, `None`,
+-  `self`, `lambda`, `not in`, `pass` and, through NUC 119, `finally:`. Its
+-  error handling still knows only `catch`, so a model or a programmer who
+-  writes Python's `try:` and `except Exception as error:` gets a parse
+-  error for the whole program.
+-- The catch-all forms `except:` and `except Exception as error:` are
+-  Python's spellings of a clause that catches every error, which is what
+-  Nucleoid's `catch` does. Reading them lets familiar Python error handling
+-  run unchanged, as the language-superset aspiration of
+-  [NUC 1](nuc-0001.md) asks.
++  `self`, `lambda`, `not in`, `pass` and, through [NUC 119](nuc-0119.md),
++  `finally:`. Its error handling still knows only `catch`, so a model or a
++  programmer who writes Python's `try:` and `except Exception as error:`
++  gets a parse error for the whole program, and nothing in it runs:
++
++  ```
++  def ratio(part, whole):
++      try:
++          if whole == 0:
++              throw "EMPTY"
++          return part / whole
++      except Exception as reason:
++          return reason
++  ratio(1, 0)
++  ```
++
++  The accepted parser rejects it with
++  `SyntaxError("Expected 'catch' after 'try'")` at line 6, column 5.
++  Writing `catch reason:` makes it run and return `"EMPTY"`.
++- The catch-all forms `except:`, `except Exception:` and
++  `except Exception as error:` are Python's spellings of a clause that
++  catches every error, which is what Nucleoid's `catch` does. Reading them
++  lets familiar error handling run unchanged, as the language-superset
++  aspiration of [NUC 1](nuc-0001.md) asks.
++- World models handle readings and updates that can fail: a sensor that has
++  not reported, a transfer that a wallet cannot cover. The `except` clause
++  keeps the Python habit for that handling, and the transaction rollback of
++  Nucleoid's `catch` keeps the model consistent.
+ 
+ ## Rationale
+ 
+-- Pending: the proposer completes this section.
++- **Category and mode.** The allocating continuous cycle drew Language
++  compatibility with one tool-backed uniform
+```
+
+**File**: `docs/nuc-0123.md` (added, +73/-0)
+```diff
+@@ -0,0 +1,73 @@
++# NUC 123 -- List and Population Variances and Standard Deviations
 +
 +```
-+NUC: 122
-+Title: Python-Style Except Clauses
++NUC: 123
++Title: List and Population Variances and Standard Deviations
 +Author: Can Mingir <canmingir@gmail.com>
 +Status: Draft
 +Type: Standards Track
-+Category: Language compatibility
-+Created: 18-Nov-2026
++Category: Utility enhancement
++Created: 19-Nov-2026
 +```
 +
 +## Abstract
 +
-+- A `try` statement may spell its catch clause with Python's `except`.
-+  `except:` and `except Exception:` catch every error, as `catch:` does,
-+  and `except Exception as NAME:` binds the error to `NAME`, as
-+  `catch NAME:` does.
-+- Such a program reads exactly as its `catch` spelling, including a
-+  `finally:` clause of [NUC 119](nuc-0119.md) after the `except` clause.
-+- At the accepted revision each such program is a whole-program parse
-+  error, `SyntaxError("Expected 'catch' after 'try'")`. Only those programs
-+  change.
-+- Every other name after `except`, as in `except e:` or
-+  `except ValueError:`, keeps that error, because Python reads it as a
-+  filter by exception class, which Nucleoid's errors do not have. `except`
-+  stays an ordinary name everywhere else, including the `except` stage of
-+  [NUC 106](nuc-0106.md).
++- Lists and class instance lists gain two read-only queries, `variance`
++  and `stdev`. `RECEIVER.variance()` returns the population variance of the
++  receiver's items, the mean of their squared deviations from their mean,
++  and `RECEIVER.variance(selector)` that of `selector(item)` for every item.
++  `RECEIVER.stdev()` and `RECEIVER.stdev(selector)` return its square root,
++  the population standard deviation.
++- Both divide by the number of values, as numpy's `var` and `std` and
++  Python's `statistics.pvariance` and `statistics.pstdev` do, and as a case
++  of [NUC 80](nuc-0080.md) does when it writes the variance out from two
++  averages. A list or a class population holds every value it describes,
++  so it is the whole population, and a single value has variance `0`.
++- They follow [NUC 84](nuc-0084.md)'s `median`, beside
++  [NUC 68](nuc-0068.md)'s `sum` and [NUC 80](nuc-0080.md)'s `average`:
++  the same receivers, numeric conversion, selector rules, NaN and undefined
++  results, and liveness under [NUC 61](nuc-0061.md)'s shared query rules.
++- At the accepted revision these calls are run-time errors,
++  `TypeError("<receiver>.variance is not a function")` and
++  `TypeError("<receiver>.stdev is not a function")`. Only inputs that were
++  errors change. No syntax, keyword, token or error type is added, and
++  bindings, properties and methods named `variance` or `stdev` keep their
++  accepted results.
 +
 +## Motivation
 +
-+- Nucleoid already reads many of Python's spellings: `def`, `elif`, `None`,
-+  `self`, `lambda`, `not in`, `pass` and, through NUC 119, `finally:`. Its
-+  error handling still knows only `catch`, so a model or a programmer who
-+  writes Python's `try:` and `except Exception as error:` gets a parse
-+  error for the whole program.
-+- The catch-all forms `except:` and `except Exception as error:` are
-+  Python's spellings of a clause that catches every error, which is what
-+  Nucleoid's `catch` does. Reading them lets familiar Python error handling
-+  run unchanged, as the language-superset aspiration of
-+  [NUC 1](nuc-0001.md) asks.
++- World models summarize their populations. Lists and class populations
++  already have their sums, extremes, averages, medians and modes, but not
++  their spread. A model that asks how far readings, prices or scores
++  scatter must write the variance out from two averages, as a case of
++  NUC 80 does with
++  `team.scores.average(score -> score * score) - team.mean() ** 2`, and a
++  standard deviation wraps that in `Math.sqrt`.
++- The written-out formula repeats the receiver and the selector, is easy
++  to get wrong, and loses precision when large values spread little,
++  because subtracting two close averages cancels their leading digits.
++  `variance()` and `stdev()` name the statistic once, as `average()` and
++  `median()` do, and can compute it from the deviations themselves.
 +
 +## Rationale
 +
@@ -1700,387 +2335,6 @@ Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
 +
 +This document is licensed under the Apache License, Version 2.0. See
 +[LICENSE](../LICENSE) for the full text.
-```
-
----
-
-### Incident Patch 2: `c4802b50` (2026-11-19)
-**Commit Message**: NUC 121 Held Values of Reasoning Selections
-
-Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Reasoning enhancement, token comparison required):
-the frozen candidate meets every hard criterion and passes every policy
-check, including the token non-regression gate. The cycle found no stale
-Draft, drew Reasoning enhancement uniformly from the five eligible
-categories, allocated NUC 121 in 226268f4, and completed it with fresh
-baselines, candidate, proposer, Rust improvement pass and evaluator.
-
-A final pipeline stage, selection |> holds, gives the values that the
-steps of a reasoning selection hold, as a list in the selection's order:
-exactly the accepted (selection).map(step => step.holds), where a
-reference alone denotes its own one-step selection, as for NUC 112's
-nodes. It shares the final-stage path of nodes: the parser maps holds
-after |> to the new public variant Stage::Holds, the crate-private
-Stage::projection and StepField choose the step field that a final
-stage projects, and Runtime::projected builds the same step records, so
-later anonymous objects are numbered as under the accepted spelling, but
-records no read of them, so a standing de
-
-**File**: `README.md` (modified, +30/-0)
-```diff
-@@ -2587,6 +2587,36 @@ assert(inspect.map(step -> step.node), ["flow", "pressure", "valve", "temperatur
-   valve joins them. See the
-   [root contract](nucleoid.spec.md#union-reasoning-selections).
- 
-+## Held values of reasoning selections
-+
-+**Holds lists the readings behind a frost warning and what the wind moves**
-+
-+```nuc
-+air = 3
-+ground = -1
-+wind = 12
-+chill = air - wind / 4
-+frost = chill + ground < 1
-+readings = frost |> why |> stated |> holds
-+moved = wind |> affects |> holds
-+assert(readings, [-1, 3, 12])
-+assert(moved, [0, true])
-+wind = 4
-+assert([readings, moved], [[-1, 3, 4], [2, false]])
-+```
-+
-+- [NUC 121](docs/nuc-0121.md) adds the final reasoning stage `|> holds`,
-+  which gives the values of a selection's steps in their order.
-+  `frost |> why |> stated |> holds` lists the readings the frost warning
-+  rests on, and `wind |> affects |> holds` the values that a change of the
-+  wind reaches: the chill and the warning itself.
-+- Both lists are the values that
-+  `(frost |> why |> stated).map(step => step.holds)` and
-+  `(wind |> affects).map(step => step.holds)` give, and they stay live the
-+  same way: once the wind drops, the readings show its new speed and the
-+  warning clears. See the
-+  [root contract](nucleoid.spec.md#held-values-of-reasoning-selections).
-+
- ## Reactive list flattening
- 
- **Flat turns nested lists into one live list**
-```
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +20/-16)
-```diff
-@@ -795,19 +795,23 @@
- {"id":"spec-0795","description":"Nucleoid narrows a union of explanations to its facts and conclusions","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\nfacts = why tax |> union(why shipping) |> stated\nrules = why tax |> union(why shipping) |> derived\nassert(facts.map(s -> s.node), [\"rate\", \"price\", \"quantity\"])\nassert(rules.map(s -> s.node), [\"tax\", \"subtotal\", \"shipping\"])\nfee = 2\nshipping = quantity * 2 + fee\nassert(facts.map(s -> s.node), [\"rate\", \"price\", \"quantity\", \"fee\"])\nsubtotal = 25\nassert(facts.map(s -> s.node), [\"subtotal\", \"rate\", \"quantity\", \"fee\"])\nassert(rules.map(s -> s.node), [\"tax\", \"shipping\"])","return":null}
- {"id":"spec-0796","description":"Nucleoid joins what two changes of each instance reach with union","code":"class Part(cost, weight):\n    this.cost = cost\n    this.weight = weight\n$Part.price = $Part.cost * 2\n$Part.freight = $Part.weight * 3\n$Part.charge = $Part.price + $Part.freight\n$Part.reach = $Part.cost |> affects |> union($Part.weight |> affects)\nbolt = Part(4, 1)\nnut = Part(2, 5)\nassert(bolt.reach.map(s -> s.node), [\"bolt.price\", \"bolt.charge\", \"bolt.freight\"])\nassert(nut.reach.map(s -> s.node), [\"nut.price\", \"nut.charge\", \"nut.freight\"])\n$Part.duty = $Part.weight * 0.1\nassert(nut.reach.map(s -> s.node), [\"nut.price\", \"nut.charge\", \"nut.freight\", \"nut.duty\"])\nbolt.weight = 10\nassert(bolt.reach.map(s -> s.holds), [8, 38, 30, 1])\nnut.reach.length","return":"4"}
- {"id":"spec-0797","description":"Nucleoid restores unions after failed changes","code":"price = 10\nquantity = 3\nsubtotal = price * quantity\nshipping = quantity * 2\neither = why subtotal |> union(why shipping)\nfailure = \"\"\ntry:\n    either = why subtotal |> union(1)\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Cannot explain 1\"))\nassert(either.map(s -> s.node), [\"subtotal\", \"price\", \"quantity\", \"shipping\"])\ntry:\n    fee = 2\n    shipping = quantity * 2 + fee\n    assert(either.map(s -> s.node), [\"subtotal\", \"price\", \"quantity\", \"shipping\", \"fee\"])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert(either.map(s -> s.node), [\"subtotal\", \"price\", \"quantity\", \"shipping\"])\nquantity = 6\nassert(either.map(s -> s.holds), [60, 10, 6, 12])","return":null}
--{"id":"spec-0798","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0799","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0800","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0801","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0802","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0803","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4
-```
-
-**File**: `dataset/nucleoid.synth.85.jsonl` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+{"id":"synth-85-0001","description":"Holds gives the values of every step of an explanation, in the explanation's order","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> holds","return":"[35,30,5,10,3]"}
-+{"id":"synth-85-0002","description":"Holds after stated gives the values of the facts that a conclusion rests on","code":"seed = 2\nmiddle = seed + 3\nresult = middle * 2\nresult |> why |> stated |> holds","return":"[2]"}
-+{"id":"synth-85-0003","description":"Holds after derived gives the values of the conclusions on the way to a value","code":"seed = 2\nmiddle = seed + 3\nresult = middle * 2\nresult |> why |> derived |> holds","return":"[10,5]"}
-+{"id":"synth-85-0004","description":"Holds after affects gives the values that a change of one fact reaches","code":"rate = 0.5\nprice = 10\nsubtotal = price * 3\ntax = subtotal * rate\ntotal = subtotal + tax\nprice |> affects |> holds","return":"[30,15,45]"}
-+{"id":"synth-85-0005","description":"Holds of the model gives the value of every node, without the declarations that hold a stage","code":"a = 1\nb = a + 1\nvalues = b |> why |> holds\nmodel |> holds","return":"[1,2]"}
-+{"id":"synth-85-0006","description":"Holds gives strings and booleans as the steps hold them","code":"name = \"Ada\"\ntitle = \"Dr\"\nlabel = title + \" \" + name\nlong = label.length > 5\nlong |> why |> holds","return":"[true,\"Dr Ada\",\"Dr\",\"Ada\"]"}
-+{"id":"synth-85-0007","description":"A reference alone gives its own value as a list of one","code":"price = 10\nqty = 3\ntotal = price * qty\n[total |> holds, price |> holds]","return":"[[30],[10]]"}
-+{"id":"synth-85-0008","description":"A prefix stage and depth before holds give the values within one step","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\nwhy total |> depth(1) |> holds","return":"[35,30,5]"}
-+{"id":"synth-85-0009","description":"Holds after union gives the values behind either of two results, each node once","code":"price = 10\nquantity = 3\nrate = 0.5\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntax |> why |> union(shipping |> why) |> holds","return":"[15,30,0.5,10,3,6]"}
-+{"id":"synth-85-0010","description":"Holds after intersect gives the values of the causes that two results share","code":"price = 10\nquantity = 3\nrate = 0.5\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntax |> why |> intersect(shipping |> why) |> holds","return":"[3]"}
-+{"id":"synth-85-0011","description":"A standing declaration of held values follows a rewiring and a change of value","code":"a = 1\nb = a + 2\nc = b * 2\nvalues = c |> why |> holds\nx = 5\nb = x + 1\nx = 7\nvalues","return":"[16,8,7]"}
-+{"id":"synth-85-0012","description":"A class-level rule holds the values behind each instance's own total","code":"class Order(price, qty):\n    this.price = price\n    this.qty = qty\n$Order.total = $Order.price * $Order.qty\n$Order.basis = $Order.total |> why |> holds\nfirst = Order(10, 2)\nsecond = Order(4, 5)\nfirst.qty = 3\n[first.basis, second.basis]","return":"[[30,10,3],[20,4,5]]"}
-```
-
-**File**: `docs/README.md` (modified, +69/-3)
-```diff
-@@ -4201,6 +4201,9 @@ volume
- - `selection |> nodes` lists the steps' `node` names, as
-   `(selection).map(step => step.node)` does for the selection the pipeline
-   denotes ([NUC 112](nuc-0112.md)).
-+- `selection |> holds` lists the steps' `holds` values, as
-+  `(selection).map(step => step.holds)` does for the selection the pipeline
-+  denotes ([NUC 121](nuc-0121.md)).
- 
- ```
- a = 1
-@@ -4521,6 +4524,62 @@ facts
-   [node names of reasoning selections](../nucleoid.spec.md#node-names-of-reasoning-selections)
-   section.
- 
-+### Held values of reasoning selections
-+
-+```
-+price = 10
-+qty = 3
-+shipping = 5
-+subtotal = price * qty
-+total = subtotal + shipping
-+facts = total |> why |> stated |> holds
-+reach = price |> affects |> holds
-+assert(facts, [5, 10, 3])
-+assert(reach, [30, 35])
-+base = 4
-+shipping = base + 1
-+price = 20
-+[facts, reach]
-+```
-+
-+- This is the complete `Nucleoid gives the values of selections with holds`
-+  program in `tests/reference.md`, without its title and expected-return
-+  metadata; it returns `[[4,20,3],[60,65]]`.
-+- [NUC 121](nuc-0121.md) adds the final stage `selection |> holds`. It gives
-+  the `holds` values of the selection's steps as a list, in their order, so
-+  `total |> why |> stated |> holds` gives the values of the facts the total
-+  rests on and `price |> affects |> holds` the values that a change of the
-+  price reaches. It is exactly `(selection).map(step => step.holds)`, where
-+  `selection` is the selection that the pipeline before `holds` denotes,
-+  read as the stages read their source, and each value is the one its step
-+  holds, unchanged.
-+- The selection is written as for `nodes`: a reference, which denotes its
-+  own one-step selection rather than its value, `model`, a prefix stage such
-+  as `why total`, or a pipeline of any of the stages above but `nodes`. So
-+  `total |> holds` is a list of the total's value, as
-+  `(total |> why |> depth(0)).map(step => step.holds)` is. An empty
-+  selection gives `[]`, and a selection that a `depth(null)` makes undefined
-+  gives undefined.
-+- The stage ends the pipeline, as `nodes` does: a stage after it, `nodes`
-+  included, or an `intersect`, `except`, `union` or `path` argument that
-+  ends with it, has a list of values rather than a selection and raises
-+  `TypeError("Cannot explain <source>")`, as it does after the accepted
-+  spelling.
-+- Only `|>` followed by `holds` is the stage; `holds` stays an ordinary name
-+  everywhere else, the `holds` field of a step record included, and there
-+  is no prefix form. A local or parameter, variable, function or class named
-+  `holds` shadows the stage, as bindings shadow the other stages: the
-+  pipeline then raises `TypeError("holds is not an operation")` before
-+  selecting its source.
-+- The list stays live through every observation its selection made, the
-+  values it gives included, and a declaration that holds it is a reasoning
-+  observer. A stored declaration whose stage gives a `null` value settles
-+  to `null`, as one that reads a null property does. It renders as
-+  `selection|>holds`.
-+- The authoritative contract is the
-+  [held values of reasoning selections](../nucleoid.spec.md#held-values-of-reasoning-selections)
-+  section.
-+
- ### Live structure
- 
- - A reasoning assignment follows both values and graph structure.
-@@ -4562,9 +4621,11 @@ c = b * 2
-   `except(other)` stages, which NUC 11 does not plan either, the
-   [NUC 112](nuc-0112.md) candidate adds a final `nodes` stage, which names
-   the nodes of a selection and, unlike NUC 11's operations, returns a list
--  rather than a selection, and the [NUC 120](nuc-0120.md) candidate adds a
--  `union(other)` stage, which NUC 11 does not plan either. Other NUC 11
--  operations remain proposals, not dependencies.
-+  rather than a selection, the [NUC 120](nuc-0120.md) candidate adds a
-+  `union(other)` stage, which NUC 11 does not plan either, and the
-+  [NUC 121](nuc-0121.md) candidate adds a final `holds` stage, which gives
-+  the values of a selection's steps and, like `nodes`, returns a list. Other
-+  NUC 11 operations remain proposals, not dependencies.
- 
- ### Quantifiers
- 
-@@ -5075,6 +5136,11 @@ reference |> why |> stated |> nodes   the names of the facts an explanation rest
- reference |> affects |> nodes         the names of what a change of the reference reaches (NUC 112)
- model |> nodes                        the names of the current model's nodes (NUC 112)
- selection |> nodes                    the list (selection).map(step => step.node); ends the pipeline (NUC 112)
-+reference |> why |> holds             the values of an explanation's steps, in its order (NUC 121)
-+reference |> why |> stated |> holds   the values of the facts an explanation rests on (NUC 121)
-+reference |> affects |> holds         the values of what a change of the reference reaches (NUC 121)
-+model |> holds                        the values of the current model's nodes (NUC 121)
-+selection |> holds                    the list (selection).map(
-```
-
-**File**: `docs/examples.md` (modified, +29/-0)
-```diff
-@@ -4113,6 +4113,35 @@ wages = 3500
-   [NUC 120](nuc-0120.md) and the
-   [root contract](../nucleoid.spec.md#union-reasoning-selections).
- 
-+## Held values of reasoning selections
-+
-+**Holds shows the figures behind an invoice and the totals on the way**
-+
-+```nuc
-+hours = 12
-+rate = 80
-+travel = 150
-+labor = hours * rate
-+invoice = labor + travel
-+inputs = invoice |> why |> stated |> holds
-+totals = invoice |> why |> derived |> holds
-+assert([inputs, totals], [[150, 12, 80], [1110, 960]])
-+discount = 100
-+invoice = labor + travel - discount
-+hours = 15
-+[inputs, totals]
-+# return: [[150,100,15,80],[1250,1200]]
-+```
-+
-+- `invoice |> why |> stated |> holds` gives the figures the invoice rests
-+  on, the travel cost, the hours and the rate, and
-+  `invoice |> why |> derived |> holds` the totals on the way to it, the
-+  invoice and the labor, each in the order of the explanation.
-+- The values follow the model: once the invoice takes off a discount, the
-+  discount joins the figures, and more hours raise both totals. See
-+  [NUC 121](nuc-0121.md) and the
-+  [root contract](../nucleoid.spec.md#held-values-of-reasoning-selections).
-+
- ## Reactive list flattening
- 
- **Flattening keeps the dirty tiles of every room counted**
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -148,7 +148,7 @@ Created: 31-Jul-2026
- | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Accepted |
- | [112](nuc-0112.md) | Node Names of Reasoning Selections | Accepted |
- | [120](nuc-0120.md) | Union Reasoning Selections | Accepted |
--| [121](nuc-0121.md) | Held Values of Reasoning Selections | Draft |
-+| [121](nuc-0121.md) | Held Values of Reasoning Selections | Accepted |
- 
- ### Language compatibility
- 
-@@ -296,7 +296,7 @@ Created: 31-Jul-2026
- | [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Accepted |
- | [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Accepted |
- | [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
--| [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-+| [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nucleoid.g4` (modified, +8/-1)
-```diff
-@@ -508,7 +508,8 @@ stage
-     | STATED
-     | DERIVED
-     | DIFF
--    | NODES                                               // Expr::Reason
-+    | NODES
-+    | HOLDS                                               // Expr::Reason
-     | DEPTH LPAREN expression RPAREN                       // Expr::Depth
-     | PATH LPAREN expression RPAREN                        // Expr::Path
-     | (INTERSECT | EXCEPT) LPAREN expression RPAREN        // Expr::Combine
-@@ -912,6 +913,7 @@ enumName
-     | EXCEPT
-     | UNION
-     | NODES
-+    | HOLDS
-     | MODEL
-     | FIRST
-     | LAST
-@@ -1001,6 +1003,7 @@ INTERSECT        : 'intersect';
- EXCEPT           : 'except';
- UNION            : 'union';
- NODES            : 'nodes';
-+HOLDS            : 'holds';
- MODEL            : 'model';
- FIRST            : 'first';
- LAST             : 'last';
-@@ -1204,6 +1207,10 @@ fragment REGEX_CHAR
-  *                             after it, or an intersect, except, union or path
-  *                             argument that ends with it, parses and then
-  *                             raises TypeError("Cannot explain <source>").
-+ * s |> holds               -> Expr::Reason with Stage::Holds, the values that
-+ *                             s's steps hold. It ends the pipeline as nodes
-+ *                             does, and a binding named holds shadows it at
-+ *                             run time.
-  * An object containing spread uses Expr::SpreadObject, with later entries
-  * winning; otherwise it uses Expr::ObjectLiteral. Numeric keys become text.
-  *
-```
-
-**File**: `nucleoid.spec.md` (modified, +197/-2)
-```diff
-@@ -3029,8 +3029,8 @@ statement positions; caught values and transaction recovery are unchanged.
-   `derived`, `diff`, `intersect` and `except` keep a step by a property of its
-   node, so after a union they keep what they keep of each side:
-   `S |> union(O) |> stated` is `(S |> stated).concat(O |> except(S) |> stated)`.
--  A later `why` or `affects` walks from every step of the union, and `nodes`
--  names them.
-+  A later `why` or `affects` walks from every step of the union, `nodes`
-+  names them and `holds` gives their values.
- - Each step keeps the distance of the walk that selected it: the steps of
-   `SELECTION` their own, and the steps added from `OTHER` the distances they
-   have in `OTHER`'s own selection. So `S |> union(O) |> depth(n)` is
-@@ -3187,6 +3187,110 @@ statement positions; caught values and transaction recovery are unchanged.
-   `Nucleoid rolls back failed updates through node names` specify the
-   executable behavior. `tests/reasoning_node_names.rs` executes the rest.
- 
-+## Held values of reasoning selections
-+
-+- [NUC 121](docs/nuc-0121.md) adds the final pipeline stage
-+  `SELECTION |> holds`. It gives the `holds` values of the steps that
-+  `SELECTION` selects, as a list in the selection's order. It is exactly
-+  `(SELECTION).map(step => step.holds)`, where `SELECTION` is the selection
-+  that the pipeline before `holds` denotes, read as the accepted stages read
-+  their source: `total |> why |> holds` is
-+  `(why total).map(step => step.holds)` and
-+  `total |> why |> stated |> holds` is
-+  `(total |> why |> stated).map(step => step.holds)`.
-+- Each element is the value that the step's record holds in its `holds`
-+  field, unchanged: a number, string, boolean, list, object or `null`. An
-+  instance's own step gives the instance itself, a variable that holds a
-+  function gives the function, and the step of a class, a function
-+  declaration or an `if` block gives `null`, as their records do.
-+- A reference alone denotes its own one-step selection, not its value, so
-+  `total |> holds` is a list that holds the total's value, as
-+  `(total |> why |> depth(0)).map(step => step.holds)` is, while the value
-+  `(total).map(step => step.holds)` of a number raises
-+  `TypeError("number.map is not a function")`.
-+- So `total |> why |> stated |> holds` gives the values of the facts a
-+  conclusion rests on, `total |> why |> derived |> holds` the values of the
-+  conclusions on the way to it, `price |> affects |> holds` the values that
-+  a change of the price reaches, and `model |> holds` the value of every
-+  node of the model in model order, without pending nodes and reasoning
-+  observers.
-+- `SELECTION` is written as the source of a pipeline is: a reference, which
-+  selects its own step; `model`; a prefix stage, as in `why total |> holds`;
-+  or a pipeline of the stages `why`, `affects`, `stated`, `derived`,
-+  `depth`, `path`, `intersect`, `except`, `union` and `diff`. An empty
-+  selection gives `[]`. A selection that a `depth` stage with a `null` or
-+  undefined limit makes undefined gives undefined, which a declaration
-+  stores as `null`, as a read from that selection does.
-+- The stage ends the pipeline, as `nodes` does: its result is a list of
-+  values, not a selection. A stage written after it has that list as its
-+  source, which is neither a reference nor a selection, so
-+  `total |> why |> holds |> why` and `total |> why |> holds |> nodes` raise
-+  `TypeError("Cannot explain total|>why|>holds")`, as the same stages after
-+  `(why total).map(step => step.holds)` raise for that source, and
-+  `total |> why |> nodes |> holds` raises
-+  `TypeError("Cannot explain total|>why|>nodes")`. An `intersect`,
-+  `except`, `union` or `path` argument that ends with `holds` raises
-+  `TypeError("Cannot explain <argument>")`, such as
-+  `TypeError("Cannot explain shipping|>why|>holds")` for
-+  `intersect(shipping |> why |> holds)`. A name that holds the list is a
-+  reasoning observer, which no selection holds, so after
-+  `values = shipping |> why |> holds`, `intersect(values)` keeps nothing.
-+- Only `|>` followed by the name `holds` is the stage. `holds` remains an
-+  ordinary lexer identifier: variables, parameters, properties, keys,
-+  functions and methods named `holds` keep their accepted meanings, and so
-+  does the `holds` field of a step record. There is no prefix form, so
-+  `holds total` remains the two statements `holds` and `total`. `|> Holds`
-+  and `|> hold` keep their parse-time
-+  `TypeError("<name> is not an operation")`, and a line break after `|>`
-+  keeps `SyntaxError("Expected an operation")`.
-+- A local or parameter, state variable, function or class named `holds`
-+  shadows the stage, as for `stated`, `derived`, `depth`, `diff`, `path`,
-+  `intersect`, `except`, `union` and `nodes`: the pipeline then raises
-+  `TypeError("holds is not an operation")` at the running statement, before
-+  its source is selected. A binding declared after a standing declaration
-+  makes it
 ```
 
 #### Recent Merged Pull Requests:
@@ -2109,32 +2363,40 @@ records no read of them, so a standing de
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 122 Python-Style Except Clauses
+## X. Remove comments from ARC datasets
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `259343d1`: Draft NUC 122 Python-Style Except Clauses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08c6985f`: Remove comments from ARC datasets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [122](nuc-0122.md) | Python-Style Except Clauses | Draft |
-| [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Draft |
+- No field carries `#` comments: every declaration and every `implementation`
+  is executable code alone, as in every existing dataset.
+- No declaration or `implementation` holds a `#` comment line.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- Natural-language `#` comments appear only in `declarations`, where they are
+  optional and describe its classes and rules, and in `implementation`, where
+  they describe the object it constructs. No other field carries them.
+- Before that code, `implementation` holds `#` comment lines that describe the
+  object, as in every existing dataset: its kind and colors, then its size,
+  position and, when it points, its direction, such as
+  `# 2 by 2 at x 5, y 1, pointing southeast`. They do not change its
+  snapshots.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `259343d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08c6985f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

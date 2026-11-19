@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T11:12:59.805Z",
+  "last_updated": "2026-11-19T11:50:44.621Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1820,14 +1820,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "content_hash": "5d545727d66c6e7c19bf9dbc74210115a4e2f1bf676f1e6d7bc30d6a4f419451",
-      "verified_at": "2026-11-14T20:35:49.216Z",
+      "content_hash": "4d53aa79da16969337cc8bdd141bb981259cff24fada91966776413bf0d86106",
+      "verified_at": "2026-11-19T11:50:26.910Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T20:35:49.216Z"
+      "last_updated": "2026-11-19T11:50:26.910Z"
     },
     "Phocinae/Phocinae-Largha-150M-v1": {
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "f98bdc43b5f70eb5514845b13b85b26cc7a3e42b119f06d6d2119497ecdd3cb1",
-      "verified_at": "2026-11-19T09:43:56.810Z",
+      "content_hash": "37d22bf1540a9e13f70f84a8570f1181171c21c532709946852dc28ef195a70f",
+      "verified_at": "2026-11-19T11:50:44.620Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T09:43:56.810Z"
+      "last_updated": "2026-11-19T11:50:44.620Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9996,14 +9996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vectifyai-pageindex",
-      "content_hash": "011088f43bedc9fbdbf36e4bbd03be7a247336da1b45a16f46bc8166ba3ad057",
-      "verified_at": "2026-11-18T10:18:53.906Z",
+      "content_hash": "550f4e17bfbce4fd6b31fb807194a61a54f4cae50cb3792372e1aef7c9b4f52e",
+      "verified_at": "2026-11-19T11:50:41.772Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T10:18:53.906Z"
+      "last_updated": "2026-11-19T11:50:41.772Z"
     },
     "dalance/procs": {
       "repository": "dalance/procs",

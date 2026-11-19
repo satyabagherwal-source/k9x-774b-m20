@@ -4,22 +4,22 @@
 {
   "source_repository": "VectifyAI/PageIndex",
   "source_url": "https://github.com/VectifyAI/PageIndex",
-  "source_version": "340b8535",
+  "source_version": "ab19dc0e",
   "license": "MIT",
-  "timestamp": "2026-11-18T10:18:54.082Z",
+  "timestamp": "2026-11-19T11:50:42.047Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-vectifyai-pageindex",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `340b8535`).  
-> **License**: MIT | **Timestamp**: `2026-11-18T10:18:54.082Z`  
+> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `ab19dc0e`).  
+> **License**: MIT | **Timestamp**: `2026-11-19T11:50:42.047Z`  
 > **Learning ID**: `learn-github-vectifyai-pageindex`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `VectifyAI/PageIndex` (Commit: `340b8535`)
+- **Target Repository**: `VectifyAI/PageIndex` (Commit: `ab19dc0e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T10:18:53.006Z  
+> **Harvest Timestamp**: 2026-11-19T11:50:40.428Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 40465 stars
+- **Stars / Engagement**: 40483 stars
 
 ---
 
@@ -1144,6 +1144,7 @@ class CloudAPI:
         metadata: Optional[Dict[str, Any]] = None,
         collection_id: Optional[str] = None,
         index: bool = True,
+        extract: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
         Upload a PDF document for processing; the tree is built in the background,
@@ -1159,11 +1160,19 @@ class CloudAPI:
             metadata (dict, optional): Your own JSON-serializable tags for the document;
                 returned in get_tree/get_ocr responses and list_documents entries. Defaults to None.
             collection_id (str, optional): Collection ID to store the document in, in place of a folder. Defaults to None.
+            extract (dict, optional): With ``index=False``, an extract job's
+                configuration, as ``create_extract()`` takes it: the job
+                starts on the document, and only its extraction is charged,
+                once it completes. A job that does not complete leaves the
+                document this upload made failed, with its name and file but
+                no pages, until you delete it.
 
         Returns:
             dict: {'doc_id': ...} — plus 'name', the stored document name
                 (a taken name gains a numeric suffix), when the server
-                returns it.
+                returns it, and with ``extract`` 'extract_job_id'. A file
+                stored already whose pages are not ready starts no job:
+                {'doc_id', 'duplicate': True}.
         """
         if mode not in (None, "flash"):
             raise PageIndexAPIError(
@@ -1185,6 +1194,8 @@ class CloudAPI:
             data['metadata'] = json.dumps(metadata)
         if collection_id is not None:
             data['collection_id'] = collection_id
+        if extract is not None:
+            data['extract'] = json.dumps(extract)
 
         with open(file_path, "rb") as f:
             response = self._http.post(
@@ -1194,6 +1205,13 @@ class CloudAPI:
                 data=data
             )
 
+        if response.status_code == 409 and extract is not None:
+            try:
+                stored = response.json()["detail"]["doc_id"]
+            except (ValueError, KeyError, TypeError):
+                stored = None
+            if stored:
+                return {"doc_id": stored, "duplicate": True}
         if response.status_code != 200:
             raise PageIndexAPIError(
                 f"Failed to submit document: {response.text}",
@@ -1324,35 +1342,7 @@ class CloudAPI:
             timeout=30
         )
         if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to get document image: {response.text}",
-                status_code=response.status_code)
-        url = response.json().get("url")
-        if not url:
-            raise PageIndexAPIError(f"No image URL returned for {img_id!r}.")
-        return url
-
-    # ---------- TREE GENERATION ----------
-
-    def get_tree(self, doc_id: str, node_summary: bool = False,
-                 include_text: bool = True) -> Dict[str, Any]:
-        """
-        Get tree generation status and results.
-
-        Args:
-            doc_id (str): Document ID.
-            node_summary (bool): Include node summaries (default False).
-
-        Returns:
-            dict: API response with status and, if ready, tree structure.
-        """
-        response = self._http.get(
-            f"{self.BASE_URL}/doc/{_enc(doc_id)}/?type=tree&summary={node_summary}"
-            f"&include_text={str(include_text).lower()}",
-            headers=self._headers(),
-            timeout=30
-        )
-        if res
+    
 ```
 
 ### Core Architecture Module: `pageindex/errors.py`
@@ -1404,13 +1394,15 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #687** (2026-11-18): **build: lift the litellm cap; 1.109 fixed the mcp import it was for**
-  *Symptoms*: Installs get current LiteLLM again instead of staying on 1.105, and own-model chat keeps working with an older mcp: the `<1.106` cap gives way to `litellm>=1.109.0`.  LiteLLM 1.106 through 1.108.3 import the proxy MCP handler on every call with tools, and that import fails under mcp<2.2 (BerriAI/litellm#46045). 1.108.4 and 1.109.0 onward import it only for a gateway tool (#45961). Every broken release, 1.107.0 included, sits below the new floor, so no `!=` list and no upper bound are needed. Fresh installs move to openai 3 and openai-agents 0.25.  ## Changes  - `pyproject.toml`, `requirements.txt`: `litellm>=1.109.0`, cap and its comments gone. - Kept for an install below the floor (another package can pin litellm lower, and pip lets the last install win): `_drop_repeated_thinking`, and the Claude "none" ladder and Databricks fill, which 1.110 makes redundant but 1.109 still needs. Two comments now say which versions need them. - Removed the tripwire tests asserting LiteLLM still has those three bugs: 1.109 or 1.110 fixed each, so they fail on every version CI installs. The behaviour tests of the kept code stay. - New direct test for `_drop_repeated_thinking` with both stream shapes, since no LiteLLM in range produces the repeat any more. - `ModelSettings.timeout` (openai-agents 0.25) added to the settings samples; `LitellmModel` does not forward it. - From 1.109 LiteLLM passes an unknown Bedrock model's `reasoning_effort` through instead of dropping it, so the summary ladder
-
-- **Issue #686** (2026-11-17): **refactor: PageIndexClient.build_index() is named build_outline_index(), and its errors say outline index**
-  *Symptoms*: `PageIndexClient.build_index()` is renamed `build_outline_index()`, and the errors and docstrings say "outline index" where they said "index".  What a `PageSearchClient` or `PageExtractClient` upload leaves out is the document's outline: the tree `get_tree()` returns. Its pages are stored and can be searched already, so "no index" did not say what was missing.  `build_index()` was added in #681, after v0.7.0, and has not been released, so it is renamed with no alias.  ## Changes  - `PageIndexClient.build_outline_index(doc_id, wait=True, timeout=1800.0)` replaces `build_index()`. - `get_tree()` on a document without one raises `Document '<id>' has no outline index (index_status: skipped). Build one with build_outline_index(doc_id).` - The cloud-only, timeout and could-not-be-built errors name the outline index. - The `PageSearchClient` and `PageExtractClient` docstrings say their uploads build no outline index.  Not changed: the cloud route `POST /doc/{id}/index`, `CloudAPI.build_index()`, and the `index_status` field with its value `skipped`.  ## Testing  Full suite: 1275 passed, 7 skipped. 
+- **Issue #691** (2026-11-19): **fix: extract(file) uploads the file again when the stored document it waited for is deleted, and its docstrings say only a completed job is charged**
+  *Symptoms*: `PageExtractClient.extract(file)` is charged its extraction alone, once the job completes: a job that fails or is cancelled is not charged, and leaves the file it uploaded as a failed document, with its name and file but no pages (VectifyAI/pageindex-compute#914). The same file uploaded again is then a new document. The docstrings now say so.  Such a job also keeps its document processing until it ends. A second `extract()` of the same file meanwhile gets a 409 naming that document and waits for it; if the first job then does not complete, the document fails, and `extract()` now uploads the file again, once, instead of raising.  **Merge once VectifyAI/pageindex-compute#914 is on Prod**: the code works with either server, but the docstrings describe the new pricing.  ## Changes  - `extract(file)`: after a 409 for a stored file, a document that fails or is gone while it is waited for makes the file be uploaded once more. - The retry when the collection found earlier is gone moved into `_store`, so both uploads have it. - Docstrings of `extract()` (`document`, `pages`), `cancel_extract()`, `delete_extract()` and `CloudAPI.submit_document(extract=)`. Only a document the upload made fails; a file stored already keeps its document.  ## Verification  - New tests: the waited-for document fails, or is deleted, and the file is uploaded again; a second failure raises. - Full suite: 1274 passed. `test_summary_effort_ladder_is_what_litellm_would_send` and `test_litellm_model_settings_list
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"1c1b8dee3d4eaad83997f6a36d27b3761f4f51ce","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"1c1b8dee3d4eaad83997f6a36d27b3761f4f51ce","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"1c1b8dee3d4eaad83997f6a36d27b3761f4f51ce","mergeGateEnabled":false,"pullRequestNumber":686,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-17T13:37:51.031756Z">2026-11-17T13:37:51.031756Z</relative-time> | `1c1b8de` | PR opened | | 🔒
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"1b2718bdd5d14096f8c8ec0d309193f553ae6bb2","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"1b2718bdd5d14096f8c8ec0d309193f553ae6bb2","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"1b2718bdd5d14096f8c8ec0d309193f553ae6bb2","mergeGateEnabled":false,"pullRequestNumber":691,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-19T07:05:03.739471Z">2026-11-19T07:05:03.739471Z</relative-time> | `1b2718b` | New commits | | 
+
+- **Issue #690** (2026-11-19): **feat: PageExtractClient.extract(file) uploads the file with its job, so the upload is not charged on its own**
+  *Symptoms*: `PageExtractClient.extract("a.pdf", schema)` now makes one upload that carries the extraction's configuration, and the server starts the job with it (VectifyAI/pageindex-compute#912). The upload is not charged on its own: the job is the only charge, and at least the file's upload price ($0.10 per 1,000 pages).  When the upload starts no job, `extract()` does what it did before: it waits for the document and starts the job itself. That happens for a file stored already whose pages are still being read (the server answers 409 with the stored `doc_id`), and on a server without extraction on upload, so this can be released before or after the server change.  ## Changes  - `CloudAPI.submit_document(extract=)` sends the configuration with the upload. A 409 that names a `doc_id` is returned as `{"doc_id": ..., "duplicate": True}`. - `extract(file)`: one upload; with `extract_job_id` in the answer it reads that job, otherwise it waits for the document and calls `POST /extract`. - Docstrings of `extract()` and `cancel_extract()`: no separate upload charge; a job started by an upload is charged the upload price if it fails or is cancelled after reading the file. `pages`: the extraction is charged for those pages alone, but a file still costs at least its upload price, for all its pages.  ## Verification  - `tests/test_client.py` covers the one-upload path, both fallbacks (409 with a `doc_id`, and an answer without `extract_job_id`), and a 409 without a `doc_id`. - Full suite: 390 passe
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"175cf42992a6d719c3d93480accd6c42cd40f106","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":"175cf42992a6d719c3d93480accd6c42cd40f106","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"175cf42992a6d719c3d93480accd6c42cd40f106","mergeGateEnabled":false,"pullRequestNumber":690,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-18T13:25:40.666558Z">2026-11-18T13:25:40.666558Z</relative-time> | `175cf42` | New commits | | 🔒
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1427,307 +1419,187 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `340b8535` (2026-11-18)
-**Commit Message**: build: lift the litellm cap; 1.109 fixed the mcp import it was for (#687)
+### Incident Patch 1: `ab19dc0e` (2026-11-19)
+**Commit Message**: fix: extract(file) uploads the file again when the stored document it waited for fails, and its docstrings say only a completed job is charged (#691)
 
-LiteLLM 1.106 through 1.108.3 import the proxy MCP handler on every call
-with tools, and that import fails under mcp<2.2 (BerriAI/litellm#46045).
-1.108.4 and 1.109.0 onward import it only for a gateway tool (#45961).
-The floor is now 1.109.0 with no upper bound: 1.106.*, 1.107.* (1.107.0
-was malware) and 1.108.0-1.108.3 all sit below it. Fresh installs move
-to openai 3 and openai-agents 0.25.
+A job that fails or is cancelled is not charged and leaves the file it uploaded as a failed document, with its name and file but no pages. extract() waiting on a stored document that fails or is gone uploads the file again, once.
 
-Kept for an install below the floor (another package can pin litellm
-lower, and pip lets the last install win): _drop_repeated_thinking, and
-the Claude "none" ladder and Databricks fill, which 1.110 makes redundant
-but 1.109 still needs.
-
-Tests:
-- The tripwires asserting LiteLLM still repeats streamed thinking, still
-  sends Claude no thinking for "none", and still drops a Databricks switch
-  beside "none" are removed: 1.109 or 1.110 fixed each, so they fail on
-  every version CI installs. The behaviour tests of the kept code stay.
-- No LiteLLM in range repeats streamed thinking any more, so
-  _drop_repeated_thinking gets a direct test with both stream shapes.
-- openai-agents 0.25 adds ModelSettings.timeout; LitellmMod
-
-**File**: `pageindex/local_chat.py` (modified, +2/-2)
+**File**: `pageindex/cloud_api.py` (modified, +4/-2)
 ```diff
-@@ -1182,8 +1182,8 @@ def _cut_text(output) -> list:
+@@ -73,8 +73,10 @@ def submit_document(
+             collection_id (str, optional): Collection ID to store the document in, in place of a folder. Defaults to None.
+             extract (dict, optional): With ``index=False``, an extract job's
+                 configuration, as ``create_extract()`` takes it: the job
+-                starts on the document, and the upload is not charged on its
+-                own.
++                starts on the document, and only its extraction is charged,
++                once it completes. A job that does not complete leaves the
++                document this upload made failed, with its name and file but
++                no pages, until you delete it.
  
- def _drop_repeated_thinking(chunk, streamed: list) -> None:
-     """Blank a closing thinking block's text that repeats what streamed:
--    LiteLLM's Anthropic stream sends the whole text again beside the
--    signature. A test fails once it stops; this goes then."""
-+    LiteLLM's Anthropic stream below our floor sends the whole text again
-+    beside the signature, and an install can still land there."""
-     choices = getattr(chunk, "choices", None)
-     delta = getattr(choices[0], "delta", None) if choices else None
-     for block in getattr(delta, "thinking_blocks", None) or ():
+         Returns:
+             dict: {'doc_id': ...} — plus 'name', the stored document name
 ```
 
-**File**: `pageindex/utils.py` (modified, +2/-2)
+**File**: `pageindex/page_extract.py` (modified, +47/-28)
 ```diff
-@@ -457,8 +457,8 @@ def _is_unrecoverable(exc: BaseException) -> bool:
- 
- 
- # Claude's own ways to turn thinking off, then its lowest effort: the ladder
--# down a Claude model's thinking, as LiteLLM sends no thinking field for
--# reasoning_effort "none" (BerriAI/litellm#47924, #44298).
-+# down a Claude model's thinking, as LiteLLM below 1.110 sends no thinking
-+# field for reasoning_effort "none" (BerriAI/litellm#47924, #44298).
- _CLAUDE_LADDER = ({"thinking": {"type": "disabled"}}, {"thinking": {"type": "between_tools"}},
-                   {"reasoning_effort": "low"})
- _CLAUDE_ROUTES = ("anthropic", "bedrock", "vertex_ai", "azure_ai", "databricks")
-```
-
-**File**: `pyproject.toml` (modified, +1/-4)
-```diff
-@@ -34,10 +34,7 @@ openai = ">=2.45.0"
- # loses its empty content (0.18.1), Claude thinking fails validation (<0.20).
- openai-agents = ">=0.20.0"
- mcp = ">=1.19.0,<3"
--# <1.106: from 1.106 a call with tools imports LiteLLM's proxy MCP handler,
--# which needs mcp>=2.2 (BerriAI/litellm#46045). The fix (#45961) is in the
--# 1.107 line: lift the cap at its first clean release (1.107.0 was malware).
--litellm = ">=1.105.1,<1.106"
-+litellm = ">=1.109.0"
- PyPDF2 = ">=3.0.0"
- pypdfium2 = ">=5"
- sortedcontainers = ">=2.4.0"
-```
-
-**File**: `requirements.txt` (modified, +1/-2)
-```diff
-@@ -1,5 +1,4 @@
--# <1.106 until LiteLLM ships its mcp import fix: see pyproject.toml.
--litellm>=1.105.1,<1.106
-+litellm>=1.109.0
- openai>=2.45.0
- requests>=2.28.0
- # MCP retries use Retry(allowed_methods=...), added in urllib3 1.26.
-```
-
-**File**: `tests/test_client.py` (modified, +2/-29)
-```diff
-@@ -4226,33 +4226,6 @@ def test_a_refusal_is_one_litellm_puts_on_no_cause_or_on_a_param():
-     assert not _refusal(litellm.AuthenticationError(**args))
- 
- 
--def test_litellm_still_drops_a_databricks_switch_beside_none():
--    """Fails once LiteLLM keeps a thinking switch sent beside
--    reasoning_effort "none" on Databricks, as it does on Claude's other
--    routes: then the fill hook (local_chat._register_fill) needn't take the
--    "none" off any more."""
--    pytest.importorskip("litellm")
--    from litellm.utils import get_optional_params
--    assert "thinking" not in get_optional_params(
--        model="databricks-claude-sonnet-5", custom_llm_provider="databricks",
--        reasoning_effort="none", thinking={"type": "disabled"})
--
--
--@pytest.mark.parametrize("model", ["claude-haiku-5-5", "claude-sonnet-5", "claude-opus-5",
--                                   "claude-sonnet-5-5"])
--def test_litellm_still_sends_claude_no_thinking_for_none(model):
--    """Fails once LiteLLM itself turns the model's thinking off for "none"
--    (BerriAI/litellm#47924, #44298), which can show only after the
--    litellm <1.106 cap is lifted: then the LiteLLM routes no longer need
--    _claude_none for it. Keep its _CLAUDE_NONE row: the Messages lane
--    still needs it, as Anthropic's effort takes no "none"."""
--    pytest.importorskip("litellm")
--    from litellm.utils import get_optional_params
--    assert "thinking" not in get_optional_params(
--        model=model, custom_llm_provider="anthropic", reasoning_effort="none",
--        drop_params=True)
--
--
- def test_parse_pages_keeps_whitespace_tolerance():
-     """0.2.10 accepted whitespace around parts (int() tolerance); the SDK
-     surface keeps that while the tool layer stays on the strict pattern."""
-@@ -5122,7 +5095,7 @@ def test_summary_effort_ladder_is_what_litellm_would_send():
-     """On LiteLLM's real map: a level LiteLLM would drop is skipped, read
-     as LiteLLM reads it (azure/gpt-5-nano as gpt-5-nano); a model it
-     doesn't know on an OpenAI-format API gets the effort as is, on any
--    other none it would drop; no rung LiteLLM sends as thinking turned on
-+    other only what LiteLLM would send; no rung LiteLLM sends as thinking turned on
-     (off stays); a Claude model, as LiteLLM tells one, goes down Claude's own
-     switches, from its known one on, past disabled where LiteLLM's map says
-     it always thinks; a rung this process saw refused is left out."""
-@@ -5142,7 +5115,7 @@ def efforts(*levels, forced=False):
-                           ("azure/my-gpt-deployment", efforts("none", "low", forced=True)),
-                           ("fireworks_ai/accounts/fireworks/models/test-unknown",
-                            efforts("none", "low", forced=True)),
--                          ("bedrock/qwen.test-unknown-v9", []),
-+                          ("bedrock/qwen.test-unknown-v9", efforts("none", "low")),
-                           ("bedrock/arn:aws:bedrock:us-east-1:123456789012:"
-                            "application-inference-profile/test", []),
-                           ("bedrock/us.amazon.nova-2-lite-v1:0", []),
-```
-
-**File**: `tests/test_local_chat.py` (modified, +21/-15)
-```diff
-@@ -1786,21 +1786,15 @@ def _model_key_missing():
- 
- 
- @needs_agents
--@pytest.mark.parametrize("stream, blank", [(False, True), (True, True),
--                                           (True, False)])
-+@pytest.mark.parametrize("stream", [False, True])
- def test_claude_thinking_reaches_the_anthropic_wire_once(client, store_path,
--                                                         monkeypatch, stream,
--                                                         blank):
-+                                                         monkeypatch, stream):
-     """Through LiteLLM's own Anthropic parsing and request building, with
-     no effort set: the run's next request carries the signed thinking
--    block once, a stream's closing repeat of its text blanked. Without the
--    blanking LiteLLM's stream must still repeat it, or the blanking goes."""
-+    block once."""
-     pytest.importorskip("litellm")
-     from litellm.llms.custom_httpx.http_handler import (AsyncHTTPHandler,
-                                                         HTTPHandler)
--    if not blank:
--        monkeypatch.setattr(local_chat, "_drop_repeated_thinking",
--                            lambda chunk, streamed: None)
-     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-test")
-     doc_id = seed_doc(store_path, "pi-a", "report.pdf")
-     thinking = {"type": "thinking", "thinking": "plan step",
-@@ -1838,15 +1832,27 @@ async def fake_apost(self, url=None, *args, **kwargs):
-     assert not {"thinking", "output_config"} & set(bodies[0])
-     turn = next(m for m in bodies[1]["messages"] if m["role"] == "assistant")
-     sent = [b for b in turn["content"] if b["type"] == "thinking"]
--    if not blank:
--        assert sent == [{**thinking, "thinking": "plan stepplan step"}], (
--            "LiteLLM stopped repeating streamed thinking: drop "
--            "_drop_repeated_thinking")
--        return
-     assert sent == [thinking]
-     assert result["messages"][0]["thinking_blocks"] == [thinking]
- 
- 
-+def test_a_closing_thinking_block_repeating_the_stream_is_blanked():
-+    """LiteLLM below our floor repeats the streamed text in the signed
-+    closing block; only that repeat is blanked."""
-+    for parts, closing, kept in ((["plan ", "step"], "plan step", ""),
-+                                 (["plan ", "step"], "", ""),
-+                                 ([], "plan step", "plan step")):
-+        streamed = []
-+        blocks = [{"type": "thinking", "thinking": part} for part in parts]
-+        blocks.append({"type": "thinking", "thinking": closing, "signature": "SIG1"})
-+        for block in blocks:
-+            chunk = types.SimpleNamespace(choices=[types.SimpleNamespace(
-+                delta=types.SimpleNamespace(thinking_blocks=[block]))])
-+            local_chat._drop_repeated_thinking(chunk, streamed)
-+        assert blocks[-1]["thinking"] == kept
-+        assert streamed == []
-+
-+
- def test_repeated_answers_keep_their_own_fields():
-     """Records keep conversation order: a repeated answer (or a reused call
-     id) gets its own reply's fields back, not the latest one's."""
-@@ -4391,7 +4397,7 @@ def test_litellm_model_settings_list_matches_litellm_model(monkeypatch):
-         "response_include": ["reasoning.encrypted_content"],
-         "top_logprobs": 2, "extra_query": {"q": "1"}, "extra_body": {"x": 1},
-         "extra_headers": {"X-Probe": "1"}, "extra_args": {"y": 2},
--        "retry": {"max_retries": 1},
-+        "retry": {"max_retries": 1}, "timeout": 5.0,
-         "context_management": [{"type": "compaction",
-                                 "compact_threshold": 1000}],
-         "prompt_cache_options": {"mode": "explicit", "ttl": "30m"},
-```
-
----
-
-### Incident Patch 2: `8ec0c23d` (2026-11-17)
-**Commit Message**: docs: an upload without an outline index is charged, at less than one that builds it, and CloudAPI.build_index() is named build_outline_index() (#683)
-
-* docs: the docstrings say an upload without an outline index is charged, at less than one that builds it
-
-* refactor: CloudAPI.build_index() is named build_outline_index(), as PageIndexClient's method is
-
-**File**: `pageindex/client.py` (modified, +4/-3)
-```diff
-@@ -1164,8 +1164,9 @@ def build_outline_index(self, doc_id: str, wait: bool = True,
-         """
-         Build the outline index of a cloud document that has none, as one
-         uploaded with ``PageSearchClient`` or ``PageExtractClient``;
--        ``get_tree()`` then returns it. Indexing is charged as an upload's
--        is. A document that has its outline index is left as it is.
-+        ``get_tree()`` then returns it. Building it is charged, at the price
-+        of an upload that builds its index. A document that has its outline
-+        index is left as it is.
-         Cloud-only: local mode raises PageIndexAPIError.
- 
-         Args:
-@@ -1183,7 +1184,7 @@ def build_outline_index(self, doc_id: str, wait: bool = True,
-         api = self._require_cloud(
-             "build_outline_index is cloud-only — a local document is indexed "
-             "when it is submitted.")
--        built = api.build_index(doc_id)
-+        built = api.build_outline_index(doc_id)
-         deadline = time.monotonic() + timeout
-         while wait and built["index_status"] in ("queued", "processing"):
-             if time.monotonic() >= deadline:
-```
-
-**File**: `pageindex/cloud_api.py` (modified, +1/-1)
-```diff
-@@ -269,7 +269,7 @@ def get_tree(self, doc_id: str, node_summary: bool = False,
-                 status_code=response.status_code)
-         return response.json()
- 
--    def build_index(self, doc_id: str) -> Dict[str, Any]:
-+    def build_outline_index(self, doc_id: str) -> Dict[str, Any]:
-         """
-         Build the tree of a document stored without one.
- 
-```
-
-**File**: `pageindex/page_extract.py` (modified, +5/-3)
-```diff
-@@ -58,16 +58,18 @@ def extract(
+@@ -58,21 +58,24 @@ def extract(
  
          Args:
              document (str): A PDF's path: the file is uploaded to
--                ``collection`` first, with no outline index built, and
--                uploading the same file again uses the stored document. Or
-+                ``collection`` first, with no outline index built (the upload
-+                is charged for every page of the file), and uploading the
-+                same file again uses the stored document. Or
-                 the ``doc_id`` of an uploaded document: one still processing
-                 is waited for first, and with ``wait=False`` raises
-                 PageIndexAPIError (HTTP 409).
+-                ``collection`` with the job, with no outline index built, and
+-                the job is the only charge: the extraction, but not less than
+-                the file's upload price ($0.10 per 1,000 pages), which is
+-                also what the job costs if it fails or is cancelled after
+-                reading the file. Uploading the same file again uses the
+-                stored document. Or the ``doc_id`` of an uploaded document:
++                ``collection`` with the job, with no outline index built.
++                Only the extraction is charged, once the job completes, and
++                the file is kept as a document from then on; a job that fails
++                or is cancelled is not charged, and leaves a file it uploaded
++                as a failed document, with its name and file but no pages,
++                until you delete it. Uploading the same file again uses the
++                stored document, unless it failed: then the file is uploaded
++                as a new document, usually under a suffixed name such as
++                ``name_1.pdf``. Or
++                the ``doc_id`` of an uploaded document:
+                 one still processing is waited for first, and with
+                 ``wait=False`` raises PageIndexAPIError (HTTP 409).
              schema (dict | type): A JSON Schema whose top is an object or an
                  array, or a Pydantic model class.
              tier (str): "standard" (default) or "pro".
              pages (str | int | tuple, optional): Extract from these pages
--                only, and only they are charged: "3-9", (3, 9) or 3.
-+                only, and the extraction is charged for them alone: "3-9",
-+                (3, 9) or 3.
+                 only: "3-9", (3, 9) or 3. The extraction is charged for them
+-                alone, but a file still costs at least its upload price, for
+-                all its pages.
++                alone.
              cite_sources (bool): Give the page each list item is on, under
                  'extract_metadata'.
              system_prompt (str, optional): Your own instructions for the
+@@ -119,20 +122,26 @@ def extract(
+         document = os.fspath(document)
+         deadline = time.monotonic() + timeout
+         if os.path.exists(document):
+-            try:
++            for last in (False, True):
+                 stored = self._store(document, collection, configuration)
+-            except PageIndexAPIError as exc:
+-                # The collection found earlier is gone: find or make it again.
+-                if exc.status_code != 404 or not self._collections.pop(collection, None):
+-                    raise
+-                stored = self._store(document, collection, configuration)
+-            if "extract_job_id" in stored:
+-                job = api.get_extract(stored["extract_job_id"])
+-                return self._done(job, deadline, timeout) if wait else job
+-            # No job started: the file is stored already and not ready, or
+-            # the server is older than extraction on upload.
++                if "extract_job_id" in stored:
++                    job = api.get_extract(stored["extract_job_id"])
++                    return self._done(job, deadline, timeout) if wait else job
++                # No job started: the file is stored already and not ready, or
++                # the server is older than extraction on upload.
++                try:
++                    self.pageindex._wait_until_ready(
++                        stored["doc_id"], deadline - time.monotonic())
++                    break
++                except PageIndexAPIError as exc:
++                    # The job it was stored with did not complete, and failed
++                    # it, or it was deleted: the file is uploaded again.
++                    if last or not (
++                            exc.status_code == 404
++                            or self.pageindex.get_document(
++                                stored["doc_id"]).get("status") == "failed"):
++                        raise
+             document = stored["doc_id"]
+-            self.pageindex._wait_until_ready(document, deadline - time.monotonic())
+         elif document.lower().endswith(".pdf"):
+             raise FileNotFoundError(document)
+         try:
+@@ -146,9 +155,18 @@ def extract(
+ 
+     def _store(self, file_path: str, collection: Optional[str],
+                configuration: dict) -> dict:
+-        return self.pageindex._upload(
+-            file_path, False, collection_id=self._collection(collection),
+-            index=False, extract=configuration)
++        def upload():
++            return self.pageindex._upload(
++                file_path, False, collection_id=self._collection(collection),
++                index=False, extract=configuration)
++
++        try:
++            return upload()
++        except PageIndexAPIError as exc:
++            # The collection found earlier is gone: find or make it again.
++            if exc.status_code != 404 or not self._collections.pop(collection, None):
++     
 ```
 
-**File**: `pageindex/page_search.py` (modified, +1/-1)
+**File**: `tests/test_client.py` (modified, +47/-0)
 ```diff
-@@ -43,7 +43,7 @@ def upload(
-     ) -> dict[str, Any]:
-         """
-         Upload a PDF to search. Its pages are stored and no outline index is
--        built, so no indexing is charged;
-+        built, so the upload is charged less than one that builds it;
-         ``PageIndexClient.build_outline_index()`` builds one later. Uploading
-         the same file to the same place again returns the stored document.
+@@ -2401,6 +2401,53 @@ def to(method, path, kw):
+     assert calls[-1]["data"]["doc_id"] == "pi-1"
  
+ 
++@pytest.mark.parametrize("stored, reads", [
++    ({"id": "pi-1", "status": "failed"}, 2),  # its job did not complete
++    ((404, {"detail": "Document not found."}), 1),  # deleted meanwhile
++])
++def test_extract_uploads_again_when_the_document_it_waited_for_fails(
++        extracting, sample_pdf, monkeypatch, stored, reads):
++    client, calls, answers = extracting
++    monkeypatch.setattr("pageindex.client.time.sleep", lambda s: None)
++    # stored by another job, still processing
++    uploads = iter([
++        (409, {"detail": {"message": "still processed", "doc_id": "pi-1"}}),
++        {"doc_id": "pi-2", "name": "sample.pdf", "extract_job_id": "ext_1"}])
++    def to(method, path, kw):
++        if path == "/collections/":
++            return {"collections": [{"id": "c-9", "name": "Page Extract"}], "total": 1}
++        if path == "/doc/":
++            return next(uploads)
++        if path == "/doc/pi-1/metadata/":
++            return stored
++        return {"id": "ext_1", "status": "pending"}
++    answers.to = to
++
++    assert client.extract(sample_pdf, {"type": "object"}, wait=False) == {
++        "id": "ext_1", "status": "pending"}
++    assert [(c["method"], c["path"]) for c in calls] == [
++        ("GET", "/collections/"), ("POST", "/doc/"),
++        *[("GET", "/doc/pi-1/metadata/")] * reads,
++        ("POST", "/doc/"), ("GET", "/extract/ext_1/")]
++
++
++def test_extract_raises_when_the_document_it_waited_for_fails_again(
++        extracting, sample_pdf, monkeypatch):
++    client, calls, answers = extracting
++    monkeypatch.setattr("pageindex.client.time.sleep", lambda s: None)
++    def to(method, path, kw):
++        if path == "/collections/":
++            return {"collections": [{"id": "c-9", "name": "Page Extract"}], "total": 1}
++        if path == "/doc/":
++            return 409, {"detail": {"message": "still processed", "doc_id": "pi-1"}}
++        return {"id": "pi-1", "status": "failed"}
++    answers.to = to
++
++    with pytest.raises(PageIndexAPIError, match="failed"):
++        client.extract(sample_pdf, {"type": "object"})
++    assert [c["path"] for c in calls].count("/doc/") == 2  # one upload again
++
++
+ def test_extract_raises_a_conflict_that_names_no_document(extracting, sample_pdf):
+     client, calls, answers = extracting
+     answers.to = lambda method, path, kw: (
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #691** (2026-11-19): fix: extract(file) uploads the file again when the stored document it waited for is deleted, and its docstrings say only a completed job is charged (@rejojer)
+- **PR #690** (2026-11-19): feat: PageExtractClient.extract(file) uploads the file with its job, so the upload is not charged on its own (@rejojer)
 - **PR #687** (2026-11-18): build: lift the litellm cap; 1.109 fixed the mcp import it was for (@rejojer)
 - **PR #686** (2026-11-17): refactor: PageIndexClient.build_index() is named build_outline_index(), and its errors say outline index (@rejojer)
 - **PR #685** (closed): docs: README shows PageSearchClient and PageExtractClient beside PageIndexClient (@rejojer)
 - **PR #684** (2026-11-17): feat: a cloud client without PAGEINDEX_API_KEY reads the key Page Search or Page Extract users already export, each product client its own first (@rejojer)
-- **PR #683** (2026-11-17): docs: an upload without an outline index is charged, at less than one that builds it, and CloudAPI.build_index() is named build_outline_index() (@rejojer)
-- **PR #682** (2026-11-17): docs(cloud): submit_document no longer calls the cloud default the OCR-based cloud pipeline (@noobakong)
 
 ---
 
@@ -1747,33 +1619,35 @@ Tests:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: lift the litellm cap; 1.109 fixed the mcp import it was for
+## X. extract(file) uploads the file again when the stored document it waited for fail
 
 **RULE**:
-When implementing operations in `pageindex/local_chat.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pageindex/cloud_api.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `340b8535`: build: lift the litellm cap; 1.109 fixed the mcp import it was for. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ab19dc0e`: extract(file) uploads the file again when the stored document it waited for fails, and its docstrings say only a completed job is charged. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/local_chat.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/cloud_api.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    LiteLLM's Anthropic stream below our floor sends the whole text again
-    beside the signature, and an install can still land there."""
+                starts on the document, and only its extraction is charged,
+                once it completes. A job that does not complete leaves the
+                document this upload made failed, with its name and file but
+                no pages, until you delete it.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-    LiteLLM's Anthropic stream sends the whole text again beside the
-    signature. A test fails once it stops; this goes then."""
+                starts on the document, and the upload is not charged on its
+                own.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `340b8535` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ab19dc0e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

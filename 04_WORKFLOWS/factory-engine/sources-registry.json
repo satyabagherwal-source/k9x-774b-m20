@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T11:13:02.754Z",
-    "lastVerified": "2026-11-19T11:13:02.754Z",
+    "lastChecked": "2026-11-19T11:50:48.019Z",
+    "lastVerified": "2026-11-19T11:50:48.019Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -324,12 +324,12 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T09:43:55.854Z",
-    "lastVerified": "2026-11-19T09:43:55.854Z",
+    "lastChecked": "2026-11-19T11:50:43.327Z",
+    "lastVerified": "2026-11-19T11:50:43.327Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "f98bdc43b5f70eb5514845b13b85b26cc7a3e42b119f06d6d2119497ecdd3cb1",
+    "contentHash": "37d22bf1540a9e13f70f84a8570f1181171c21c532709946852dc28ef195a70f",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -499,14 +499,14 @@
     "officialUrl": "https://github.com/VectifyAI/PageIndex",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-18T10:18:53.006Z",
-    "lastVerified": "2026-11-18T10:18:53.006Z",
+    "lastChecked": "2026-11-19T11:50:40.428Z",
+    "lastVerified": "2026-11-19T11:50:40.428Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "011088f43bedc9fbdbf36e4bbd03be7a247336da1b45a16f46bc8166ba3ad057",
+    "contentHash": "550f4e17bfbce4fd6b31fb807194a61a54f4cae50cb3792372e1aef7c9b4f52e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -645,9 +645,9 @@
   "defguard-defguard": {
     "name": "defguard",
     "officialUrl": "https://github.com/DefGuard/defguard",
-    "lastChecked": "2026-11-19T01:55:06.818Z",
+    "lastChecked": "2026-11-19T11:50:33.541Z",
     "revisionIdentifier": "a0570118",
-    "lastVerified": "2026-11-19T01:55:06.818Z"
+    "lastVerified": "2026-11-19T11:50:33.541Z"
   },
   "topoteretes-cognee": {
     "name": "cognee",
@@ -854,9 +854,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-11-18T11:22:34.835Z",
+    "lastChecked": "2026-11-19T11:50:31.070Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-11-18T11:22:34.835Z"
+    "lastVerified": "2026-11-19T11:50:31.070Z"
   },
   "rustls-rustls": {
     "name": "rustls",
@@ -7067,5 +7067,36 @@
     "lastChecked": "2026-11-19T11:07:57.947Z",
     "revisionIdentifier": "283eb0c5",
     "lastVerified": "2026-11-19T11:07:57.947Z"
+  },
+  "bgreenwell-doxx": {
+    "name": "doxx",
+    "officialUrl": "https://github.com/bgreenwell/doxx",
+    "lastChecked": "2026-11-19T11:50:23.530Z",
+    "revisionIdentifier": "062819a1",
+    "lastVerified": "2026-11-19T11:50:23.530Z"
+  },
+  "hf-qwen-qwen-image-2.1-turbo": {
+    "name": "Qwen/Qwen-Image-2.1-Turbo",
+    "officialUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T11:50:26.094Z",
+    "lastVerified": "2026-11-19T11:50:26.094Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+    "contentHash": "4d53aa79da16969337cc8bdd141bb981259cff24fada91966776413bf0d86106",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "linkwarden-linkwarden": {
+    "name": "linkwarden",
+    "officialUrl": "https://github.com/linkwarden/linkwarden",
+    "lastChecked": "2026-11-19T11:50:28.649Z",
+    "revisionIdentifier": "24adcc14",
+    "lastVerified": "2026-11-19T11:50:28.649Z"
   }
 }

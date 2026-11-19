@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T11:13:05.426Z",
+  "last_updated": "2026-11-19T11:51:27.147Z",
   "total_verified_learnings": 9017,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21755,
+  "total_items": 21762,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -228691,8 +228691,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "52f8bf48",
-      "content_hash": "f98bdc43b5f70eb5514845b13b85b26cc7a3e42b119f06d6d2119497ecdd3cb1",
+      "source_version": "08c6985f",
+      "content_hash": "37d22bf1540a9e13f70f84a8570f1181171c21c532709946852dc28ef195a70f",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -228815,6 +228815,11 @@
           "number": 9367,
           "title": "Draft NUC 123 List and Population Variances and Standard Deviations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9374,
+          "title": "Remove comments from ARC datasets",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228822,7 +228827,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T09:43:56.620Z",
+      "verified_at": "2026-11-19T11:50:44.364Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228876,10 +228881,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "52f8bf48",
-      "content_hash": "9778c996661b52821567541430f4df1d48bf094a854052ea0f8492ed12803592",
+      "source_version": "08c6985f",
+      "content_hash": "6cc8bcd97681a7032b3e7459930562f3b98d0c5afdc4c458887cc8e487e5755e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T09:43:57.266Z"
+      "persisted_at": "2026-11-19T11:50:45.304Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -229903,9 +229908,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "95efb0720c332d7a18189392a051178b2d433ea4bbe5d60cac0a777eac4b5058",
+      "content_hash": "58c274126ddfc49c8f888a18bf32350569efc82acec91b45a64ad5a0ce532073",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T04:13:35.098Z"
+      "persisted_at": "2026-11-19T11:51:27.147Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -230404,10 +230409,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "259343d1",
-      "content_hash": "af53df535b206738b830343491332911cf84eea66371730115c75543c654af35",
+      "source_version": "08c6985f",
+      "content_hash": "e82ffad8e4c04260c3c3c1ba268aa975d1c0a56019e2c5d4758b0859879eac67",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T04:13:30.281Z"
+      "persisted_at": "2026-11-19T11:50:45.089Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian",
@@ -230429,9 +230434,9 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "847f1a4a3702b59edf4efd4043a72f035dbdb33f9963277d7045beaf50470a4d",
+      "content_hash": "4f78faddff8b734cac7df29e61635925b33f8186c74ca54986577e6afffc3bc2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T04:13:34.953Z"
+      "persisted_at": "2026-11-19T11:51:26.928Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
@@ -236109,7 +236114,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
       "source_version": "hf-qwen-qwen-image-2.1-turbo",
-      "content_hash": "5d545727d66c6e7c19bf9dbc74210115a4e2f1bf676f1e6d7bc30d6a4f419451",
+      "content_hash": "4d53aa79da16969337cc8bdd141bb981259cff24fada91966776413bf0d86106",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
       "promoted_rules": [
@@ -236129,7 +236134,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T20:35:49.068Z",
+      "verified_at": "2026-11-19T11:50:26.590Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240978,8 +240983,8 @@
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "340b8535",
-      "content_hash": "011088f43bedc9fbdbf36e4bbd03be7a247336da1b45a16f46bc8166ba3ad057",
+      "source_version": "ab19dc0e",
+      "content_hash": "550f4e17bfbce4fd6b31fb807194a61a54f4cae50cb3792372e1aef7c9b4f52e",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "promoted_rules": [
@@ -241002,6 +241007,11 @@
           "number": 9195,
           "title": "lift the litellm cap; 1.109 fixed the mcp import it was for",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9373,
+          "title": "extract(file) uploads the file again when the stored document it waited for fail",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241009,7 +241019,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T10:18:53.729Z",
+      "verified_at": "2026-11-19T11:50:41.456Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241051,10 +241061,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vectifyai-pageindex-technical-construction-intelligence-vectifyai-pageindex-core.md",
       "title": "Technical Construction Intelligence: VectifyAI/PageIndex Core Invariants",
       "repository": "VectifyAI/PageIndex",
-      "source_version": "340b8535",
-      "content_hash": "ce2e14a7bd99d4b687f6c180f543a919fc19c4576241e2f4a44133f24e1bc61f",
+      "source_version": "ab19dc0e",
+      "content_hash": "1db3c8f042d38e0527b4f55c3f77ac9525cf3d301c30f013968a8f0a97ea3177",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T10:18:54.213Z"
+      "persisted_at": "2026-11-19T11:50:42.274Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vectifyai-pageindex": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vectifyai-pageindex",
@@ -241063,10 +241073,10 @@
       "relative_path": "08_VERIFICATION/vectifyai-pageindex-verification-protocol-empirical-defect-shield-for-vectifyai-.md",
       "title": "Verification Protocol: Empirical Defect Shield for VectifyAI/PageIndex",
       "repository": "VectifyAI/PageIndex",
-      "source_version": "340b8535",
-      "content_hash": "25131325aeaa2c8313b4515d0b7801117778247d4cea356f4ba730e94e7081bb",
+      "source_version": "ab19dc0e",
+      "content_hash": "8893ad7d3914d59450ff26e4eac23712adbae1a020e73ebbb691e35ba1609e67",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T10:18:54.338Z"
+      "persisted_at": "2026-11-19T11:50:42.488Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning",
@@ -256261,9 +256271,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vectifyai-pageindex-learnings",
       "repository": "vectifyai-pageindex-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a6bc334e733c7237b9c56f9d01597c99335ebe785ad297ec929e2d87881665b",
+      "content_hash": "dacfde143b0d9873e92180eac13bca10a9e679f01956e85af0e61c6cbb4d18ff",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T14:35:31.515Z"
+      "persisted_at": "2026-11-19T11:51:25.917Z"
     },
     "rule-8746": {
       "learning_id": "rule-8746",
@@ -294072,6 +294082,94 @@
       "content_hash": "66a2916edd03fa16a685db9de8136ba0ce102d7c1868d9499bddbc5552e15373",
       "domain_letter": "G",
       "persisted_at": "2026-11-19T11:13:05.267Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-turbo-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen-image-2-1-turbo-research-knowledge-intelligence-qwen-qwen-image-2-1.md",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen-Image-2.1-Turbo Core Invariants",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "source_version": "hf-qwen-qwen-image-2.1-turbo",
+      "content_hash": "2d20f9760b7c9e99882982331a7016e0c1e6c0e65d2c669a492920ed82a6826f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T11:50:27.126Z"
+    },
+    "rule-9373": {
+      "learning_id": "rule-9373",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9373,
+      "title": "extract(file) uploads the file again when the stored document it waited for fail",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "ab19dc0e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T11:50:41.456Z"
+    },
+    "candidate_directive-extract-file-uploads-the-file-again-when-the-stored-document-it-waited-for-fail": {
+      "item_id": "candidate_directive-extract-file-uploads-the-file-again-when-the-stored-document-it-waited-for-fail",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OYZN-extract-file-uploads-the-file-again-when-the-stored-document-it-waited-for-fail.md",
+      "title": "extract(file) uploads the file again when the stored document it waited for fail",
+      "repository": "vectifyai-pageindex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2490bd7dc9175d7f9647543ca6a0aa92a3a86edb6236f2193fe10c52f0cafde5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T11:51:25.486Z"
+    },
+    "rule-9374": {
+      "learning_id": "rule-9374",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9374,
+      "title": "Remove comments from ARC datasets",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "08c6985f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T11:50:44.364Z"
+    },
+    "candidate_directive-remove-comments-from-arc-datasets": {
+      "item_id": "candidate_directive-remove-comments-from-arc-datasets",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OZXH-remove-comments-from-arc-datasets.md",
+      "title": "Remove comments from ARC datasets",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ac0d2b155d6793d98c792de531e0141d48c1c177a4f80d59d771444806e88548",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T11:51:26.704Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-inva": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen-image-2-1-turbo-learnings-research-knowledge-intelligence-hf-qwen-q.md",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen-image-2.1-turbo-learnings Core Invariants",
+      "repository": "hf-qwen-qwen-image-2.1-turbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "82477e804b424e421dc0b4c2fe825798efb53689af93f36619f78621658ec2e7",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T11:51:24.836Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-learnings-core-invariant": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vectifyai-pageindex-learnings-technical-construction-intelligence-vectifyai-page.md",
+      "title": "Technical Construction Intelligence: vectifyai-pageindex-learnings Core Invariants",
+      "repository": "vectifyai-pageindex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2a41cef910a94a77f7697a7d59f22673cb030b82447ca9fa7cba523de4003cf9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T11:51:25.700Z"
     }
   },
   "ai-builder-brain": {

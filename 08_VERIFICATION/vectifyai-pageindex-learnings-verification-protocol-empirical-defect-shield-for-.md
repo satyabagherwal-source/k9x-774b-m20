@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T14:35:31.161Z",
+  "timestamp": "2026-11-19T11:51:25.304Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-vectifyai-pageindex-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [vectifyai-pageindex-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T14:35:31.161Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T11:51:25.304Z`  
 > **Learning ID**: `LEARN-EVO-vectifyai-pageindex-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source**: github ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
-> **Source Version**: `c9f1a879`  
+> **Source Version**: `ab19dc0e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T14:34:57.648Z  
+> **Timestamp**: 2026-11-19T11:50:40.434Z  
 > **Learning ID**: `learn-github-vectifyai-pageindex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T14:34:57.642Z  
+> **Harvest Timestamp**: 2026-11-19T11:50:40.428Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 40452 stars
+- **Stars / Engagement**: 40483 stars
 
 ---
 
@@ -363,6 +363,8 @@ from typing import TYPE_CHECKING as _TYPE_CHECKING
 from .chat_stream import ChatStream, MessagesStream, ChatObject
 from .client import PageIndexClient, PageIndexCloudClient, PageIndexLocalClient
 from .errors import PageIndexAPIError
+from .page_extract import PageExtractClient
+from .page_search import PageSearchClient
 from .types import (ChatConfig, ChatProcessOptions, CloudIndexConfig,
                     IndexConfig, LocalIndexConfig)
 
@@ -375,6 +377,7 @@ if _TYPE_CHECKING:
 
 __all__ = [
     "PageIndexClient", "PageIndexCloudClient", "PageIndexLocalClient",
+    "PageSearchClient", "PageExtractClient",
     "PageIndexAPIError",
     "IndexConfig", "CloudIndexConfig", "LocalIndexConfig", "ChatConfig",
     "ChatProcessOptions", "ChatStream", "MessagesStream", "ChatObject",
@@ -390,8 +393,9 @@ _LAZY = {
 }
 _SUBMODULES = {"agent_tools", "chat_stream", "client", "cloud_api", "errors",
                "flash", "imaging", "integrations", "local_api", "local_chat",
-               "local_store", "mcp_bridge", "page_index_classic",
-               "page_index_md", "retry", "tree_optimize", "types", "utils"}
+               "local_store", "mcp_bridge", "page_extract", "page_index_classic",
+               "page_index_md", "page_search", "retry", "tree_optimize", "types",
+               "utils"}
 
 
 def __getattr__(name):
@@ -1029,11 +1033,25 @@ _LOCAL_INDEX_KEYS = ("model", "summary_model", "backend", "storage_path",
 _RESERVED_MODE_WORDS = {"hosted", "managed"}
 
 
-def _env_cloud_key(spelling: str, inline: str = "api_key=...") -> str:
+# Page Search's and Page Extract's keys, which work here once their accounts
+# have moved, read only when PAGEINDEX_API_KEY is not set.
+_ENV_KEYS = ("PAGEINDEX_API_KEY", "PAGEINDEX_SEARCH_API_KEY",
+             "PAGEINDEX_EXTRACT_API_KEY")
+
+
+def _env_key(own: Optional[str] = None) -> Optional[str]:
+    """The key the environment gives; of the two older names, ``own`` is
+    read before the other."""
     # .env support lives in utils' import-time load_dotenv(): load it
     # before the read, or a key in .env is visible only by import order.
     from . import utils  # noqa: F401
-    key = os.environ.get("PAGEINDEX_API_KEY")
+    names = (_ENV_KEYS[0], own, *_ENV_KEYS[1:])
+    return next((os.environ[name] for name in names
+                 if name and os.environ.get(name)), None)
+
+
+def _env_cloud_key(spelling: str, inline: str = "api_key=...") -> str:
+    key = _env_key()
     if not key:
         raise PageIndexAPIError(
             f"{spelling} reads the PageIndex API key from the "
@@ -1078,23 +1096,12 @@ def _resolve_index_slot(index) -> "tuple[_CloudKey, dict[str, Any]]":
         # must never fall through and silently become a model name.
         word = index.strip().lower()
         if word in (PAGEINDEX_CLOUD, "cloud"):
-            return lambda: _env_cloud_key(f'index="{index.strip()}"',
-                                          'index={"api_key": ...}'), {}
-        if word == "local":
-            return None, {}
-        if word in _RESERVED_MODE_WORDS:
-            raise PageIndexAPIError(
-                f'index="{index}" is not a mode word — the cloud spelling '
-                'is index="cloud" (key from PAGEINDEX_API_KEY) or '
-                'index={"api_key": ...}.')
-        if index.strip():
-            return None, {"index_model": index}
-        raise PageIndexAPIError(
+            return lambda: _env
 ```
 
 ### Core Architecture Module: `pageindex/cloud_api.py`
 ```
-"""Cloud mode of the PageIndex SDK, based on the 0.2.8 client."""
+"""Cloud mode of the PageIndex SDK: the client of the PageIndex Cloud API."""
 import os
 import requests
 from pathlib import Path
@@ -1150,25 +1157,36 @@ class CloudAPI:
         folder_id: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
         collection_id: Optional[str] = None,
+        index: bool = True,
+        extract: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
-        Upload a PDF document for processing; the tree is built in the background.
+        Upload a PDF document for processing; the tree is built in the background,
+        or not at all with ``index=False``.
         Immediately returns a document identifier (`doc_id`) for subsequent operations.
 
         Args:
             file_path (str): Path to the PDF file.
-            mode (str, optional): None (default), the OCR-based cloud pipeline, or "flash".
+            mode (str, optional): None (default), the default cloud pipeline, or "flash".
             beta_headers (List[str], optional): Beta feature headers (e.g., ["block_reference"]
                 to enable block-level content with bounding boxes). Defaults to None.
             folder_id (str, optional): Folder (workspace) ID to assign the document to. Defaults to None.
             metadata (dict, optional): Your own JSON-serializable tags for the document;
                 returned in get_tree/get_ocr responses and list_documents entries. Defaults to None.
             collection_id (str, optional): Collection ID to store the document in, in place of a folder. Defaults to None.
+            extract (dict, optional): With ``index=False``, an extract job's
+                configuration, as ``create_extract()`` takes it: the job
+                starts on the document, and only its extraction is charged,
+                once it completes. A job that does not complete leaves the
+                document this upload made failed, with its name and file but
+                no pages, until you delete it.
 
         Returns:
             dict: {'doc_id': ...} — plus 'name', the stored document name
                 (a taken name gains a numeric suffix), when the server
-                returns it.
+                returns it, and with ``extract`` 'extract_job_id'. A file
+                stored already whose pages are not ready starts no job:
+                {'doc_id', 'duplicate': True}.
         """
         if mode not in (None, "flash"):
             raise PageIndexAPIError(
@@ -1180,6 +1198,8 @@ class CloudAPI:
             # The server rejects if_retrieval alongside algorithm=flash, and
             # keeps node text for Flash trees by default.
             data = {'algorithm': 'flash'}
+        if not index:
+            data = {'algorithm': 'none'}
         if beta_headers is not None:
             data['beta_headers'] = json.dumps(beta_headers)
         if folder_id is not None:
@@ -1188,6 +1208,8 @@ class CloudAPI:
             data['metadata'] = json.dumps(metadata)
         if collection_id is not None:
             data['collection_id'] = collection_id
+        if extract is not None:
+            data['extract'] = json.dumps(extract)
 
         with open(file_path, "rb") as f:
             response = self._http.post(
@@ -1197,6 +1219,13 @@ class CloudAPI:
                 data=data
             )
 
+        if response.status_code == 409 and extract is not None:
+            try:
+                stored = response.json()["detail"]["doc_id"]
+            except (ValueError, KeyError, TypeError):
+                stored = None
+            if stored:
+                return {"doc_id": stored, "duplicate": True}
         if response.status_code != 200:
             raise PageIndexAPIError(
                 f"Failed to submit document: {response.text}",
@@ -1327,38 +1356,7 @@ class CloudAPI:
             timeout=30
         )
         if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to get document image: {response.text}",
-                status_code=response.status_code)
-        url = response.json().get("url")
-        if not url:
-            raise PageIndexAPIError(f"No image URL returned for {img_id!r}.")
-        return url
-
-    # ---------- TREE GENERATION ----------
-
-    def get_tree(self, doc_id: str, node_summary: bool = False,
-                 include_text: bool = True) -> Dict[str, Any]:
-        """
-        Get tree generation status and results.
-
-        Args:
-            doc_id (str): Document ID.
-            node_summary (bool): Include node summaries (default False).
-
-        Returns:
-            dict: API response with status and, if ready, tree structure.
-        """
-        response = self._http.get(
-            f"{self.BASE_URL}/doc/{_enc(doc_id)}/?type=tree&summary={node_summary}"
-            f"&include_text={str(include_text).lower()}",
-            headers=self._headers(),
-            timeout=30
-        )
-        if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to get tree result: {response.text}",
-                sta
+    
 ```
 
 ### Core Architecture Module: `pageindex/errors.py`
@@ -1410,15 +1408,15 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #678** (2026-11-15): **feat: page_image() gives a page, or a part of it drawn sharper, as an image; update_document() sets metadata keys; list_documents(filter=) lists by metadata**
-  *Symptoms*: Six more things the Page Search and Page Extract SDKs offer and the client lacked, though the cloud already serves them: a page, or a part of it, as an image; changing a document's metadata; listing documents by metadata; and waiting for a document or an extract job.  Stacked on #677 (search and Extract methods): the base is its branch so that only this change shows. It goes to `main` once #677 is merged.  ## Changes  - `page_image(doc_id, page, box=None)` returns the page as JPEG bytes, where `get_page_image()` returns a link. With `box`, (x0, y0, x1, y1) as fractions of the page from its top left, it returns only that part, drawn sharper, to read small print. The whole page is downloaded from the presigned link without the API key. - `update_document(doc_id, metadata=...)` sets metadata keys: a key set to `None` is removed and the keys not named stay. The cloud replaces a document's metadata whole, so the client reads it, merges and writes it back; of two writers at once the later one wins. - `list_documents(filter=...)` lists only the documents whose metadata meets a filter such as `{"year": {"$gte": 2023}}`. - `wait_document(doc_id, timeout=1800)` waits until a document is ready and returns it. In local mode it returns at once. - `wait_extract(job_id, timeout=3600)` waits for an extract job started with `extract(..., wait=False)`; `extract()` now shares its loop. - `get_collection(collection_id)` returns one collection, read from the list. - All but `wait_document` are cl
+- **Issue #691** (2026-11-19): **fix: extract(file) uploads the file again when the stored document it waited for is deleted, and its docstrings say only a completed job is charged**
+  *Symptoms*: `PageExtractClient.extract(file)` is charged its extraction alone, once the job completes: a job that fails or is cancelled is not charged, and leaves the file it uploaded as a failed document, with its name and file but no pages (VectifyAI/pageindex-compute#914). The same file uploaded again is then a new document. The docstrings now say so.  Such a job also keeps its document processing until it ends. A second `extract()` of the same file meanwhile gets a 409 naming that document and waits for it; if the first job then does not complete, the document fails, and `extract()` now uploads the file again, once, instead of raising.  **Merge once VectifyAI/pageindex-compute#914 is on Prod**: the code works with either server, but the docstrings describe the new pricing.  ## Changes  - `extract(file)`: after a 409 for a stored file, a document that fails or is gone while it is waited for makes the file be uploaded once more. - The retry when the collection found earlier is gone moved into `_store`, so both uploads have it. - Docstrings of `extract()` (`document`, `pages`), `cancel_extract()`, `delete_extract()` and `CloudAPI.submit_document(extract=)`. Only a document the upload made fails; a file stored already keeps its document.  ## Verification  - New tests: the waited-for document fails, or is deleted, and the file is uploaded again; a second failure raises. - Full suite: 1274 passed. `test_summary_effort_ladder_is_what_litellm_would_send` and `test_litellm_model_settings_list
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"469bd912d1ef6eca50b8d632abe1ea72e98e1325","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"469bd912d1ef6eca50b8d632abe1ea72e98e1325","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"469bd912d1ef6eca50b8d632abe1ea72e98e1325","mergeGateEnabled":false,"pullRequestNumber":678,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-15T18:06:43.570517Z">2026-11-15T18:06:43.570517Z</relative-time> | `469bd91` | PR opened | | 🔒
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"1b2718bdd5d14096f8c8ec0d309193f553ae6bb2","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"1b2718bdd5d14096f8c8ec0d309193f553ae6bb2","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"1b2718bdd5d14096f8c8ec0d309193f553ae6bb2","mergeGateEnabled":false,"pullRequestNumber":691,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-19T07:05:03.739471Z">2026-11-19T07:05:03.739471Z</relative-time> | `1b2718b` | New commits | | 
 
-- **Issue #677** (2026-11-15): **feat: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image**
-  *Symptoms*: The cloud already offers page search, document search, Extract and page images cut to a box, but the client had no methods for them: they were reachable only through the cloud's MCP tools. This adds what the Page Search and Page Extract SDKs offer and the client lacked. All of it is cloud-only, except `wait_document`; local mode raises `PageIndexAPIError`.  `client.search(questions, document=doc_id)` returns, for each question, the pages that help answer it. Without `document` it searches across documents: the most relevant documents for each question are found first, and only their pages are searched. Both return one shape: results, then documents, then pages.  `client.extract(document, schema)` turns a PDF, or an uploaded document, into JSON that fits a JSON Schema or a Pydantic model, and waits for the result by default.  ## Changes  Search  - `search(questions, *, document, documents, collection, folder, recursive, filter, max_documents, document_top_k, top_k, include_text, start_page, end_page)`: the parameter names follow the Page Search SDK; `folder` and `recursive` are new, for PageIndex's folders. Across documents each question opens at most `max_documents` (default 3) or exactly `document_top_k`, up to 10, and a document several questions chose is searched once. A document whose pages cannot be searched goes to `failed_documents`; running out of credits, or every opened document failing, raises. - `search_documents(questions, *, document_ids, collection, folder, rec
+- **Issue #690** (2026-11-19): **feat: PageExtractClient.extract(file) uploads the file with its job, so the upload is not charged on its own**
+  *Symptoms*: `PageExtractClient.extract("a.pdf", schema)` now makes one upload that carries the extraction's configuration, and the server starts the job with it (VectifyAI/pageindex-compute#912). The upload is not charged on its own: the job is the only charge, and at least the file's upload price ($0.10 per 1,000 pages).  When the upload starts no job, `extract()` does what it did before: it waits for the document and starts the job itself. That happens for a file stored already whose pages are still being read (the server answers 409 with the stored `doc_id`), and on a server without extraction on upload, so this can be released before or after the server change.  ## Changes  - `CloudAPI.submit_document(extract=)` sends the configuration with the upload. A 409 that names a `doc_id` is returned as `{"doc_id": ..., "duplicate": True}`. - `extract(file)`: one upload; with `extract_job_id` in the answer it reads that job, otherwise it waits for the document and calls `POST /extract`. - Docstrings of `extract()` and `cancel_extract()`: no separate upload charge; a job started by an upload is charged the upload price if it fails or is cancelled after reading the file. `pages`: the extraction is charged for those pages alone, but a file still costs at least its upload price, for all its pages.  ## Verification  - `tests/test_client.py` covers the one-upload path, both fallbacks (409 with a `doc_id`, and an answer without `extract_job_id`), and a 409 without a `doc_id`. - Full suite: 390 passe
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"71b3674d3fa681b1b0084b9757c2256068f92afc","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":"71b3674d3fa681b1b0084b9757c2256068f92afc","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"71b3674d3fa681b1b0084b9757c2256068f92afc","mergeGateEnabled":false,"pullRequestNumber":677,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-15T18:38:00.775560Z">2026-11-15T18:38:00.775560Z</relative-time> | `71b3674` | New commits | | 🔒
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"175cf42992a6d719c3d93480accd6c42cd40f106","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":"175cf42992a6d719c3d93480accd6c42cd40f106","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"175cf42992a6d719c3d93480accd6c42cd40f106","mergeGateEnabled":false,"pullRequestNumber":690,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-18T13:25:40.666558Z">2026-11-18T13:25:40.666558Z</relative-time> | `175cf42` | New commits | | 🔒
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1435,357 +1433,187 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9f1a879` (2026-11-15)
-**Commit Message**: feat: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image (#677)
+### Incident Patch 1: `ab19dc0e` (2026-11-19)
+**Commit Message**: fix: extract(file) uploads the file again when the stored document it waited for fails, and its docstrings say only a completed job is charged (#691)
 
-- search(questions, document=...) returns, for each question, the pages that help answer it. Without document it finds the most relevant documents for each question first and searches only their pages, joining the cloud's two calls; both return one shape: results, then documents, then pages. search_documents() returns the documents likely to hold each answer. Parameter names follow the Page Search SDK; folder and recursive are new, for PageIndex's folders.
-- extract(document, schema) turns a PDF's path, or an uploaded document's id, into JSON that fits a JSON Schema or a Pydantic model. It waits for the result by default, and for a document still processing first. get_extract, list_extracts, cancel_extract, delete_extract and wait_extract manage jobs; a status read that fails during a wait names the job, which goes on running.
-- page_image(doc_id, page, box=None) returns a page as JPEG bytes, or with box only that part of it, drawn sharper. update_document(doc_id, metadata=...) sets the keys named, removes those set to None and keeps the rest. list_documen
+A job that fails or is cancelled is not charged and leaves the file it uploaded as a failed document, with its name and file but no pages. extract() waiting on a stored document that fails or is gone uploads the file again, once.
 
-**File**: `pageindex/client.py` (modified, +513/-1)
+**File**: `pageindex/cloud_api.py` (modified, +4/-2)
 ```diff
-@@ -7,7 +7,7 @@
- import time
- import warnings
- from typing import (TYPE_CHECKING, Any, Callable, Iterator, Literal, Mapping,
--                    Optional, Union, cast, overload)
-+                    Optional, Sequence, Union, cast, overload)
- 
- from .chat_stream import ChatStream, MessagesStream, ChatObject
- from .errors import PageIndexAPIError
-@@ -917,6 +917,16 @@ def submit_document(
-             self._wait_until_ready(result["doc_id"])
-         return result
- 
-+    def wait_document(self, doc_id: str, timeout: float = 1800.0) -> dict[str, Any]:
-+        """
-+        Wait until a document is ready for use, and return it as
-+        ``get_document()`` does. Raises PageIndexAPIError if its processing
-+        failed, or is not done within ``timeout`` seconds (it goes on in the
-+        cloud). A local document is ready at once.
-+        """
-+        self._wait_until_ready(doc_id, timeout)
-+        return self.get_document(doc_id)
-+
-     def _wait_until_ready(self, doc_id: str, timeout: float = 1800.0) -> None:
-         import requests
-         interval = 2.0
-@@ -1040,6 +1050,32 @@ def get_page_image(self, doc_id: str, page: int) -> str:
-             "rendering. Create the client with an api_key to get page images."
-         ).get_page_image(doc_id=doc_id, page=page)
- 
-+    def page_image(self, doc_id: str, page: int,
-+                   box: Optional[Sequence[float]] = None) -> bytes:
-+        """
-+        One page as JPEG bytes: the image itself, where ``get_page_image()``
-+        gives a link to it. With ``box``, only that part of the page, drawn
-+        sharper, to read small print. Cloud-only: local mode renders no page
-+        images.
-+
-+            crop = client.page_image(doc_id, 12, box=(0.1, 0.4, 0.9, 0.7))
-+
-+        Args:
-+            doc_id (str): Document ID.
-+            page (int): 1-based page number.
-+            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as
-+                fractions of the page's width and height from its top left,
-+                each from 0 to 1, with x0 < x1 and y0 < y1. A box the cloud
-+                cannot read raises PageIndexAPIError (HTTP 422).
-+
-+        Returns:
-+            bytes: The JPEG.
-+        """
-+        return self._require_cloud(
-+            "page_image is cloud-only — local mode has no page-image "
-+            "rendering. Create the client with an api_key to get page images."
-+        ).page_image(doc_id=doc_id, page=page, box=box)
-+
-     def get_document_image(self, doc_id: str, img_id: str) -> str:
-         """
-         A short-lived URL to an image OCR extracted from the document.
-@@ -2233,6 +2269,7 @@ def list_documents(
-         folder_id: Optional[str] = None,
-         recursive: bool = False,
-         collection_id: Optional[str] = None,
-+        filter: Optional[dict[str, Any]] = None,
-     ) -> dict[str, Any]:
-         """
-         List documents with pagination, newest first.
-@@ -2247,6 +2284,10 @@ def list_documents(
-             collection_id (str, optional): Cloud-only: list one collection's
-                 documents. Passing ``folder_id`` or ``recursive`` too raises
-                 PageIndexAPIError (HTTP 400).
-+            filter (dict, optional): Cloud-only: list only the documents
-+                whose metadata meets it, e.g. ``{"year": {"$gte": 2023}}``.
-+                A key alone is equality; the operators are $eq, $ne, $in,
-+                $gt, $gte, $lt, $lte, and $and / $or over a list of filters.
+@@ -73,8 +73,10 @@ def submit_document(
+             collection_id (str, optional): Collection ID to store the document in, in place of a folder. Defaults to None.
+             extract (dict, optional): With ``index=False``, an extract job's
+                 configuration, as ``create_extract()`` takes it: the job
+-                starts on the document, and the upload is not charged on its
+-                own.
++                starts on the document, and only its extraction is charged,
++                once it completes. A job that does not complete leaves the
++                document this upload made failed, with its name and file but
++                no pages, until you delete it.
  
          Returns:
-             dict: {'documents': [...], 'total', 'limit', 'offset'}.
-@@ -2257,10 +2298,43 @@ def list_documents(
-         collection, for a folder reached only through a share of
-         something below it, and for every local document.
-         """
-+        if filter is not None:
-+            return self._require_cloud(
-+                "list_documents(filter=) is cloud-only — metadata filters "
-+                "are not supported in local mode. Create the client with an "
-+                "api_key to use them."
-+            ).list_documents(limit=limit, offset=offset, folder_id=folder_id,
-+                             recursive=recursive, collection_id=collection_id,
-+                             metadata_filter=filter)
-         return self._api.list_documents(limit=limit, offset=offset,
-                                         folder_id=folder_id, recursive=recursive,
-                                         collection_id=collection_id)
- 
-+    def update_document(self, doc_id: str, *,
-+                        metadata: dict[str, Any]) -> dict[str, Any]:
-+        """
-+        Set metadata keys on a document: a key set to None is removed, and
-+        the keys not named stay. The metadata rules of ``submit_document()``
-+        apply: a breach raises PageIndexAPIError (HTTP 400). Cloud-only:
-+        local mode raises PageIndexAPIError.
-+
-+            client.update_document(doc_id, metadata={"year": 2025, "draft": None})
-+
-+        The client reads the document's metadata, then writes t
+             dict: {'doc_id': ...} — plus 'name', the stored document name
 ```
 
-**File**: `pageindex/cloud_api.py` (modified, +242/-2)
+**File**: `pageindex/page_extract.py` (modified, +47/-28)
 ```diff
-@@ -2,7 +2,7 @@
- import os
- import requests
- from pathlib import Path
--from typing import Optional, Dict, Any, List, Union, Iterator
-+from typing import Optional, Dict, Any, List, Sequence, Union, Iterator
- import json
- import urllib.parse
+@@ -58,21 +58,24 @@ def extract(
  
-@@ -186,6 +186,34 @@ def get_page_image(self, doc_id: str, page: int) -> str:
-                 return img["url"]
-         raise PageIndexAPIError(f"No image URL returned for page {page}.")
+         Args:
+             document (str): A PDF's path: the file is uploaded to
+-                ``collection`` with the job, with no outline index built, and
+-                the job is the only charge: the extraction, but not less than
+-                the file's upload price ($0.10 per 1,000 pages), which is
+-                also what the job costs if it fails or is cancelled after
+-                reading the file. Uploading the same file again uses the
+-                stored document. Or the ``doc_id`` of an uploaded document:
++                ``collection`` with the job, with no outline index built.
++                Only the extraction is charged, once the job completes, and
++                the file is kept as a document from then on; a job that fails
++                or is cancelled is not charged, and leaves a file it uploaded
++                as a failed document, with its name and file but no pages,
++                until you delete it. Uploading the same file again uses the
++                stored document, unless it failed: then the file is uploaded
++                as a new document, usually under a suffixed name such as
++                ``name_1.pdf``. Or
++                the ``doc_id`` of an uploaded document:
+                 one still processing is waited for first, and with
+                 ``wait=False`` raises PageIndexAPIError (HTTP 409).
+             schema (dict | type): A JSON Schema whose top is an object or an
+                 array, or a Pydantic model class.
+             tier (str): "standard" (default) or "pro".
+             pages (str | int | tuple, optional): Extract from these pages
+                 only: "3-9", (3, 9) or 3. The extraction is charged for them
+-                alone, but a file still costs at least its upload price, for
+-                all its pages.
++                alone.
+             cite_sources (bool): Give the page each list item is on, under
+                 'extract_metadata'.
+             system_prompt (str, optional): Your own instructions for the
+@@ -119,20 +122,26 @@ def extract(
+         document = os.fspath(document)
+         deadline = time.monotonic() + timeout
+         if os.path.exists(document):
+-            try:
++            for last in (False, True):
+                 stored = self._store(document, collection, configuration)
+-            except PageIndexAPIError as exc:
+-                # The collection found earlier is gone: find or make it again.
+-                if exc.status_code != 404 or not self._collections.pop(collection, None):
+-                    raise
+-                stored = self._store(document, collection, configuration)
+-            if "extract_job_id" in stored:
+-                job = api.get_extract(stored["extract_job_id"])
+-                return self._done(job, deadline, timeout) if wait else job
+-            # No job started: the file is stored already and not ready, or
+-            # the server is older than extraction on upload.
++                if "extract_job_id" in stored:
++                    job = api.get_extract(stored["extract_job_id"])
++                    return self._done(job, deadline, timeout) if wait else job
++                # No job started: the file is stored already and not ready, or
++                # the server is older than extraction on upload.
++                try:
++                    self.pageindex._wait_until_ready(
++                        stored["doc_id"], deadline - time.monotonic())
++                    break
++                except PageIndexAPIError as exc:
++                    # The job it was stored with did not complete, and failed
++                    # it, or it was deleted: the file is uploaded again.
++                    if last or not (
++                            exc.status_code == 404
++                            or self.pageindex.get_document(
++                                stored["doc_id"]).get("status") == "failed"):
++                        raise
+             document = stored["doc_id"]
+-            self.pageindex._wait_until_ready(document, deadline - time.monotonic())
+         elif document.lower().endswith(".pdf"):
+             raise FileNotFoundError(document)
+         try:
+@@ -146,9 +155,18 @@ def extract(
  
-+    def page_image(self, doc_id: str, page: int, box: Optional[Sequence[float]] = None) -> bytes:
-+        """A rendered page as JPEG bytes.
+     def _store(self, file_path: str, collection: Optional[str],
+                configuration: dict) -> dict:
+-        return self.pageindex._upload(
+-            file_path, False, collection_id=self._collection(collection),
+-            index=False, extract=configuration)
++        def upload():
++            return self.pageindex._upload(
++                file_path, False, collection_id=self._collection(collection),
++                index=False, extract=configuration)
 +
-+        Args:
-+            doc_id (str): Document ID.
-+            page (int): 1-based page number.
-+            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as fractions
-+                of the page from its top left: only that part, drawn sharper.
-+
-+        Returns:
-+            bytes: The JPEG.
-+        """
-+        if box is None:
-+            # a presigned URL: the API key stays off it
-+            response = self._http.get(self.get_page_image(doc_id, page), timeout=60)
-+        else:
-+            response = self._http.get(
-+                f"{self.BASE_URL}/doc/s3/{_enc(doc_id)}/images/region",
-+                headers=self._headers(),
-+                params={"page": page, "box": ",".join(str(v) for v in box)},
-+                timeout=60
-+            )
-+        if response.status_code != 200:
-+            raise PageIndexAPIError(
-+                f"Failed to get page image: {response.text}",
-+                status_code=response.status_code)
-+        return response.content
-+
-     def get_document_image(self, doc_id: str, img_id: str) -> str:
-         """Presigned URL for an embedded image extracted during OCR.
- 
-@@ -422,6 +450,29 @@ def get_document(self, doc_id: str) -> Dict[str, Any]:
-                 status_code=response.status_code)
-         return response.json()
- 
-+    def set_document_metadata(self, doc_id: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
-+        """
-+        Replace a document's metadata (your own tags) with `metadata`.
-+
-+        Args:
-+            doc_id (str): Document ID.
-+            metadata (dict): The whole of the new metadata; {} clears it.
-+
-+        Returns:
-+            dict: {"doc_id": ..., "metadata": ...}
-+        """
-+        response = self._http.put(
-+            f"{self.BASE_URL}/doc/{_enc(doc_id)}/metadata/",
-+            headers=self._headers(),
-+            json=metadata,
-+            timeout=30
-+        )
-+        if response.status_code != 200:
-+            raise PageIndexAPIError(
-+                f"Failed to update document metadata: {response.text}",
-+                status_code=response.status_code)
-+        return response.json()
-+
-     def delete_document(self, doc_id: str) -> Dict[str, Any]:
-         """
-         Delete a PageIndex document and all its associated data.
-@@ -443,7 +494,7 @@ def delete_document(self, doc_id: str) -> Dict[str, Any]:
-                 status_code=response.status_code)
-         return response.json() if response.content else {}
- 
--    def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[str] = None, name: Optional[str] = None, recursive: bool = False, collection_id: Optional[str] = None) -> Dict[str, Any]:
-+    def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[str] = None, name: Optional[str] = None, recursive: bool = False, collection_id: Optional[str] = None, metadata_filter: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-         """
-         List all documents for the authenticated user with pagination.
- 
-@@ -455,6 +506,7 @@ def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[s
-             recursive (bool, optional): Also return documents in descendant folders of folder_id.
-                 Defaults to False (direct contents only).
-             collection_id (str, optional): Return one collection's documents. Defaults to None.
-+            metadata_filter (dict, optional): Return only the documents whose metadata meets it. Defaults to None.
- 
-         Returns:
-             dict: API response containing:
-@@ -477,6 +529,8 @@ def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[s
-             params["recursive"] = recursive
-         if collection_id is not None:
-             params["collection_id"] = collection_id
-+        if metadata_filter is not None:
-+            params["metadata_filter"] = json.dumps(metadata_filter)
- 
-         response = self._http.get(
-             f"{self.BASE_URL}/docs/",
-@@ -744,3 +798,189 @@ def delete_metadata_schema(
-                 f"Failed to delete metadata schema: {response.text}",
-                 status_code=response.status_code)
-         return response.json()
-+
-+    # ---------- SEARCH ----------
-+
-+    def search_pages(
-+        self,
-+        doc_id: str,
-+        questions: List[str],
-+        top_k: Optional[int] = None,
-+        include_text: bool = False,
-+        start_page: Opti
++        try:
++            return upload()
++        except PageIndexAPIError as exc:
++            # The collection found earlier is gone: find or make it again.
++            if exc.status_code != 404 or not self._collections.pop(collection, None):
++     
 ```
 
-**File**: `tests/test_client.py` (modified, +439/-0)
+**File**: `tests/test_client.py` (modified, +47/-0)
 ```diff
-@@ -2037,6 +2037,445 @@ def test_cloud_collection_wiring(cloud, sample_pdf):
-     assert calls[-1]["params"] == {"limit": 50, "offset": 0, "collection_id": "c/1"}
+@@ -2401,6 +2401,53 @@ def to(method, path, kw):
+     assert calls[-1]["data"]["doc_id"] == "pi-1"
  
  
-+def test_search_and_extract_are_cloud_only(local_client):
-+    for call in (lambda: local_client.search("q", document="d"),
-+                 lambda: local_client.search_documents("q"),
-+                 lambda: local_client.extract("d", {"type": "object"}),
-+                 lambda: local_client.get_extract("ext_1"),
-+                 local_client.list_extracts,
-+                 lambda: local_client.cancel_extract("ext_1"),
-+                 lambda: local_client.delete_extract("ext_1")):
-+        with pytest.raises(PageIndexAPIError, match="cloud-only"):
-+            call()
-+
-+
-+@pytest.fixture
-+def served(monkeypatch):
-+    """A cloud client whose requests answers.to(method, path, kw) answers,
-+    with a payload, a (status, payload) pair or a FakeResponse."""
-+    client = PageIndexClient(api_key="secret")
-+    calls = []
-+    class Answers:
-+        to = staticmethod(lambda method, path, kw: {})
-+    def handler(method, url, kw):
-+        path = url.replace("https://api.pageindex.ai", "", 1)
-+        calls.append({"method": method, "path": path, **kw})
-+        answer = Answers.to(method, path, kw)
-+        if isinstance(answer, FakeResponse):
-+            return answer
-+        status, payload = answer if isinstance(answer, tuple) else (200, answer)
-+        return FakeResponse(payload, status_code=status, text=json.dumps(payload))
-+    _patch_requests(monkeypatch, handler)
-+    return client, calls, Answers
-+
-+
-+def test_search_one_document(served):
-+    client, calls, answers = served
-+    info = {"id": "pi/1", "name": "q1.pdf", "pageNum": 20, "folderId": "f-1",
-+            "collectionId": None, "metadata": {"year": 2025}, "status": "completed"}
-+    pages = [{"page": 4, "relevance": 0.9, "read": "text"}]
-+    more = [{"page": 7, "relevance": 0.2, "read": "image"}]
-+    usage = {"pages": 20, "questions": 1, "billable_pages": 19, "credits": 0.19,
-+             "balance": 99.81}
-+    answers.to = lambda method, path, kw: info if method == "GET" else {
-+        "id": "srch_1", "doc_id": "pi/1",
-+        "results": [{"question": "revenue?", "pages": pages, "more_pages": more}],
-+        "failed_pages": [9], "usage": usage, "seconds": 1.2}
-+
-+    found = client.search("revenue?", document="pi/1", start_page=2, end_page=21)
-+
-+    assert (calls[-1]["method"], calls[-1]["path"]) == ("POST", "/doc/pi%2F1/page-search/")
-+    assert calls[-1]["json"] == {"questions": ["revenue?"], "include_text": False,
-+                                 "start_page": 2, "end_page": 21}
-+    assert found == {
-+        "id": "srch_1",
-+        "results": [{"question": "revenue?", "documents": [{
-+            "id": "pi/1", "name": "q1.pdf", "pageNum": 20, "folderId": "f-1",
-+            "collectionId": None, "metadata": {"year": 2025}, "relevance": None,
-+            "pages": pages, "more_pages": more, "failed_pages": [9]}]}],
-+        "failed_documents": [],
-+        "processing_documents": [],
-+        "usage": {"documents": 0, "billable_documents": 0, **usage},
-+        "seconds": 1.2,
-+    }
-+
-+
-+def _found_document(doc_id, relevance):
-+    return {"id": doc_id, "name": f"{doc_id}.pdf", "pageNum": 10, "folderId": None,
-+            "collectionId": "c-1", "metadata": None, "relevance": relevance}
-+
-+
-+def _documents_found(first, second):
-+    return {"id": "srch_d",
-+            "results": [{"question": "q1", "documents": first, "more_documents": []},
-+                        {"question": "q2", "documents": second, "more_documents": []}],
-+            "failed_documents": ["x"], "processing_documents": ["y"],
-+            "usage": {"documents": 4, "questions": 2, "billable_documents": 3,
-+                      "credits": 0.12, "balance": 50.0},
-+            "seconds": 0.5}
-+
-+
-+def _pages_found(path, kw):
-+    doc_id = path.split("/")[2]
-+    return {"id": f"srch_{doc_id}", "doc_id": doc_id,
-+            "results": [{"question": q, "pages": [{"page": int(q[1]), "relevance": 0.9,
-+                                                   "read": "text"}]}
-+                        for q in kw["json"]["questions"]],
-+            "failed_pages": [], "seconds": 1.0,
-+            "usage": {"pages": 10, "questions": len(kw["json"]["questions"]),
-+                      "billable_pages": 10, "credits": 0.11, "balance": 49.89}}
-+
-+
-+def test_search_across_documents(served):
-+    client, calls, answers = served
-+    a, b, c = (_found_document(doc_id, r) for doc_id, r in (("a", 0.9), ("b", 0.8), ("c", 0.7)))
-+    judged = _documents_found([a, b, c], [b])
++@pytest.mark.parametrize("stored, reads", [
++    ({"id": "pi-1", "status": "failed"}, 2),  # its job did not complete
++    ((404, {"detail": "Document not found."}), 1),  # deleted meanwhile
++])
++def test_extract_uploads_again_when_the_document_it_waited_for_fails(
++        extracting, sample_pdf, monkeypatch, stored, reads):
++    client, calls, answers = extracting
++    monkeypatch.setattr("pageindex.client.time.sleep", lambda s: None)
++    # stored by another job, still processing
++    uploads = iter([
++        (409, {"detail": {"message": "still processed", "doc_id": "pi-1"}}),
++        {"doc_id": "pi-2", "name": "sample.pdf", "extract_job_id": "ext_1"}])
 +    def to(method, path, kw):
-+        if path == "/docs/search/":
-+            return judged
-+        if path.startswith("/doc/a/"):
-+            return 409, {"detail": "The document's pages are not ready."}
-+        return _pages_found(path, kw)
++        if path == "/collections/":
++            return {"collections": [{"id": "c-9", "name": "Page Extract"}], "total": 1}
++        if path == "/doc/":
++            return next(uploads)
++        if path == "/doc/pi-1/metadata/":
++            return stored
++        return {"id": "ext_1", "status": "pending"}
 +    answers.to = to
 +
-+    found = client.search(["q1", "q2"], collection="c-1", 
++    assert client.extract(sample_pdf, {"type": "object"}, wait=False) == {
++        "id": "ext_1", "status": "pending"}
++    assert [(c["method"], c["path"]) for c in calls] == [
++        ("GET", "/collections/"), ("POST", "/doc/"),
++        *[("GET", "/doc/pi-1/metadata/")] * reads,
++        ("POST", "/doc/"), ("GET", "/extract/ext_1/")]
++
++
++def test_extract_raises_when_the_document_it_waited_for_fails_again(
++        extracting, sample_pdf, monkeypatch):
++    client, calls, answers = extracting
++    monkeypatch.setattr("pageindex.client.time.sleep", lambda s: None)
++    def to(method, path, kw):
++        if path == "/collections/":
++            return {"collections": [{"id": "c-9", "name": "Page Extract"}], "total": 1}
++        if path == "/doc/":
++            return 409, {"detail": {"message": "still processed", "doc_id": "pi-1"}}
++        return {"id": "pi-1", "status": "failed"}
++    answers.to = to
++
++    with pytest.raises(PageIndexAPIError, match="failed"):
++        client.extract(sample_pdf, {"type": "object"})
++    assert [c["path"] for c in calls].count("/doc/") == 2  # one upload again
++
++
+ def test_extract_raises_a_conflict_that_names_no_document(extracting, sample_pdf):
+     client, calls, answers = extracting
+     answers.to = lambda method, path, kw: (
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #678** (2026-11-15): feat: page_image() gives a page, or a part of it drawn sharper, as an image; update_document() sets metadata keys; list_documents(filter=) lists by metadata (@rejojer)
-- **PR #677** (2026-11-15): feat: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image (@rejojer)
-- **PR #674** (2026-11-14): release: collections, chat(collection_id=) with box citations, and get_citations for library paths (@rejojer)
-- **PR #673** (2026-11-13): fix(chat): own-model chat drops a citation box on a page whose picture the call never saw (@rejojer)
-- **PR #671** (2026-11-13): test: the live copy checks skip while the cloud addresses documents by path and local mode does not (@rejojer)
-- **PR #670** (2026-11-13): test: the live envelope check passes on the cloud's text outline and on a picture page's extra blocks (@rejojer)
+- **PR #691** (2026-11-19): fix: extract(file) uploads the file again when the stored document it waited for is deleted, and its docstrings say only a completed job is charged (@rejojer)
+- **PR #690** (2026-11-19): feat: PageExtractClient.extract(file) uploads the file with its job, so the upload is not charged on its own (@rejojer)
+- **PR #687** (2026-11-18): build: lift the litellm cap; 1.109 fixed the mcp import it was for (@rejojer)
+- **PR #686** (2026-11-17): refactor: PageIndexClient.build_index() is named build_outline_index(), and its errors say outline index (@rejojer)
+- **PR #685** (closed): docs: README shows PageSearchClient and PageExtractClient beside PageIndexClient (@rejojer)
+- **PR #684** (2026-11-17): feat: a cloud client without PAGEINDEX_API_KEY reads the key Page Search or Page Extract users already export, each product client its own first (@rejojer)
 
 ---
 
@@ -1805,56 +1633,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. the client searches pages and documents, extracts JSON from a PDF, and returns a
+## X. extract(file) uploads the file again when the stored document it waited for fail
 
 **RULE**:
-When implementing operations in `pageindex/client.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pageindex/cloud_api.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9f1a879`: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ab19dc0e`: extract(file) uploads the file again when the stored document it waited for fails, and its docstrings say only a completed job is charged. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/client.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/cloud_api.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                    Optional, Sequence, Union, cast, overload)
-    def wait_document(self, doc_id: str, timeout: float = 1800.0) -> dict[str, Any]:
-        """
-        Wait until a document is ready for use, and return it as
-        ``get_document()`` does. Raises PageIndexAPIError if its processing
-        failed, or is not done within ``timeout`` seconds (it goes on in the
-        cloud). A local document is ready at once.
-        """
-        self._wait_until_ready(doc_id, timeout)
-        return self.get_document(doc_id)
-
-    def page_image(self, doc_id: str, page: int,
-                   box: Optional[Sequence[float]] = None) -> bytes:
-        """
-        One page as JPEG bytes: the image itself, where ``get_page_image()``
-        gives a link to it. With ``box``, only that part of the page, drawn
-        sharper, to read small print. Cloud-only: local mode renders no page
-        images.
-
-            crop = client.page_image(doc_id, 12, box=(0.1, 0.4, 0.9, 0.7))
-
-        Args:
-            doc_id (str): Document ID.
-            page (int): 1-based page number.
-            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as
-                fractions of the page's width and
+                starts on the document, and only its extraction is charged,
+                once it completes. A job that does not complete leaves the
+                document this upload made failed, with its name and file but
+                no pages, until you delete it.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-                    Optional, Union, cast, overload)
+                starts on the document, and the upload is not charged on its
+                own.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9f1a879` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ab19dc0e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

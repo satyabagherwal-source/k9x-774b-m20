@@ -375,8 +375,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceVersion": "hf-qwen-qwen-image-2.1-turbo",
     "license": "Open-Source",
-    "contentHash": "5d545727d66c6e7c19bf9dbc74210115a4e2f1bf676f1e6d7bc30d6a4f419451",
-    "lastHarvestedAt": "2026-11-14T20:35:49.208Z",
+    "contentHash": "4d53aa79da16969337cc8bdd141bb981259cff24fada91966776413bf0d86106",
+    "lastHarvestedAt": "2026-11-19T11:50:26.900Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "52f8bf48",
+    "sourceVersion": "08c6985f",
     "license": "Apache-2.0",
-    "contentHash": "f98bdc43b5f70eb5514845b13b85b26cc7a3e42b119f06d6d2119497ecdd3cb1",
-    "lastHarvestedAt": "2026-11-19T09:43:56.802Z",
+    "contentHash": "37d22bf1540a9e13f70f84a8570f1181171c21c532709946852dc28ef195a70f",
+    "lastHarvestedAt": "2026-11-19T11:50:44.610Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "340b8535",
+    "sourceVersion": "ab19dc0e",
     "license": "MIT",
-    "contentHash": "011088f43bedc9fbdbf36e4bbd03be7a247336da1b45a16f46bc8166ba3ad057",
-    "lastHarvestedAt": "2026-11-18T10:18:53.899Z",
+    "contentHash": "550f4e17bfbce4fd6b31fb807194a61a54f4cae50cb3792372e1aef7c9b4f52e",
+    "lastHarvestedAt": "2026-11-19T11:50:41.762Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {

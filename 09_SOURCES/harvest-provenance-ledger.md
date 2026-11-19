@@ -11293,3 +11293,7 @@ Every entry in this ledger must capture:
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `be684af5` | Multi-dimensional audit evidence | 2026-11-19T11:08:06.170Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `20746425` | Multi-dimensional audit evidence | 2026-11-19T11:08:11.516Z |
 | `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-19T11:12:59.793Z |
+| `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-19T11:50:26.900Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `ab19dc0e` | Multi-dimensional audit evidence | 2026-11-19T11:50:41.762Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `08c6985f` | Multi-dimensional audit evidence | 2026-11-19T11:50:44.610Z |
+| `learn-dom-d-8c81e436` | `project://hf-qwen-qwen-image-2.1-turbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | 2026-11-19T11:51:24.561Z |
