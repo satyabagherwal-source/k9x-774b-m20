@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T15:58:58.316Z",
-  "total_cycles_completed": 10800,
-  "total_learnings_persisted": 10800,
-  "total_rules_promoted": 10173,
+  "last_updated": "2026-11-19T16:07:24.288Z",
+  "total_cycles_completed": 10805,
+  "total_learnings_persisted": 10805,
+  "total_rules_promoted": 10176,
   "history": [
-    {
-      "timestamp": "2026-11-18T20:14:32.170Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T20:37:34.797Z",
-      "repository": "deepseek-ai/DeepSeek-V4-Pro",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T20:37:37.923Z",
-      "repository": "aome510/spotify-player",
-      "learningId": "learn-github-aome510-spotify-player",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T20:37:54.773Z",
-      "repository": "typedb/typedb",
-      "learningId": "learn-github-typedb-typedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T20:45:38.160Z",
-      "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T20:45:48.472Z",
       "repository": "clastix/kamaji",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-19T15:58:58.316Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T16:07:10.980Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T16:07:13.473Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T16:07:19.599Z",
+      "repository": "thaw-app/Thaw",
+      "learningId": "learn-github-thaw-app-thaw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T16:07:22.859Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T16:07:24.288Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

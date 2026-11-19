@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T15:59:29.509Z",
+  "last_updated": "2026-11-19T16:08:34.300Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T12:40:39.625Z",
@@ -63,9 +63,9 @@
       "staged_for_review": 0
     },
     "zed-industries-zed-learnings.md": {
-      "processed_at": "2026-11-17T20:25:41.984Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-19T16:07:56.510Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "gkd-kit-gkd-learnings.md": {
       "processed_at": "2026-11-14T18:15:25.506Z",
@@ -588,7 +588,7 @@
       "staged_for_review": 1
     },
     "thaw-app-thaw-learnings.md": {
-      "processed_at": "2026-11-15T09:55:28.250Z",
+      "processed_at": "2026-11-19T16:08:33.459Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2838,8 +2838,8 @@
       "staged_for_review": 0
     },
     "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md": {
-      "processed_at": "2026-11-15T02:16:15.315Z",
-      "promoted_canonical": 0,
+      "processed_at": "2026-11-19T16:08:32.981Z",
+      "promoted_canonical": 1,
       "staged_for_review": 0
     },
     "hf-vllm-sr-d3-learnings.md": {
@@ -3518,7 +3518,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2268,
-  "total_canonical_promoted": 386,
-  "total_staged_for_review": 1692
+  "total_dossiers_evaluated": 2271,
+  "total_canonical_promoted": 388,
+  "total_staged_for_review": 1693
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source**: github ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
-> **Source Version**: `fc8e171f`  
+> **Source Version**: `ad8ef227`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T13:47:00.439Z  
+> **Timestamp**: 2026-11-19T16:07:21.813Z  
 > **Learning ID**: `learn-github-chaos-mesh-chaos-mesh`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T13:47:00.432Z  
+> **Harvest Timestamp**: 2026-11-19T16:07:21.808Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Chaos Engineering Platform for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7992 stars
+- **Stars / Engagement**: 7993 stars
 
 ---
 
@@ -917,13 +917,14 @@ func init() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5244** (2026-11-17): **fix(build): use pnpm 10 for release-2.7 Dashboard**
-  *Symptoms*: Use pnpm 10 in the release-2.7 build image. This matches the Dashboard CI toolchain and lets release builds install the existing workspace lockfile with `--frozen-lockfile`. 
-
-- **Issue #5242** (2026-11-16): **fix(httpchaos): upgrade chaos-tproxy to 0.6.0**
-  *Symptoms*: ## What problem does this PR solve?  External HTTP requests to the target Pod can keep timing out after HTTPChaos reports recovery.  ## What's changed and how does it work?  Upgrade the Chaos Daemon to [chaos-tproxy v0.6.0](https://github.com/chaos-mesh/chaos-tproxy/releases/tag/v0.6.0). The new version announces the restored MAC address so clients can reach the Pod again. Verified in the ARM64 Playground that requests through the Pod IP and Service recover after manual stop and experiment expiration.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [x] I have updated the `CHANGELOG.md` - [ ] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  All commits are signed off.
+- **Issue #5251** (2026-11-19): **fix(stresschaos): validate memory stressor sizes**
+  *Symptoms*: ## What problem does this PR solve?  A StressChaos memory size like `100 MB` could pass API validation and reach memStress as separate arguments. A missing or zero size could also pass validation without specifying any memory to allocate.  ## What's changed and how does it work?  - Require a positive memory size from `size` or `options --size` before starting memStress, and reject sizes containing whitespace. Both forms require whole-number percentages from 1% to 100% for the effective memory size. - Preserve legacy `--size` options. When repeated, the last flag sets the effective size, matching memStress. - Join memory arguments with a single space. Unit tests cover size validation, option precedence, and argument generation.  ## Related changes  - [x] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  The StressChaos docs should describe the positive size requirement, the 1–100% range for whole-number percentages, and the `options --size` alternative.  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [x] I have updated the `CHANGELOG.md` - [ ] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [x] Unit test - [ ] E2E test - [ ] Manual test  ### Side effects  - [x] **Breaking backward compatibility**  Configurations with whitespace in the memory size, a fractional 
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5242?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 34.47%. Comparing base ([`d60be9d`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/d60be9d4a14ec1ca47efdd1b74d2315ae09f8ba3?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`2133238`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/213323836aacf3b3a401fd62d05adcbf34c9500d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 1 commits behind head on master.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff    
+  > **Review the following changes in direct dependencies.** Learn more about [Socket for GitHub](https://socket.dev?utm_medium=gh).  <table> <thead> <tr> <th>Diff</th> <th width="200px">Package</th> <th align="left" width="100px">Supply Chain<br/>Security</th> <th align="left" width="100px">Vulnerability</th> <th align="left" width="100px">Quality</th> <th align="left" width="100px">Maintenance</th> <th align="left" width="100px">License</th> </tr> </thead> <tbody> <tr><td align="center"><a href="https://socket.dev/dashboard/org/chaos-mesh/diff-scan/c5071f82-fdf0-453e-9197-cf1c599ec87d?tab=dependencies&dependency_item_key=101948575119"><img src="https://github-app-statics.socket.dev/diff-updated.svg" title="Updated" alt="Updated" width="20" height="20"></a></td><td><a href="https://socket.dev/dashboard/org/chaos-mesh/diff-scan/c5071f82-fdf0-453e-9197-cf1c599ec87d?tab=dependencies&dependency_item_key=101948575119">golang/​github.com/​dustin/​go-humanize@​v1.0.1 ⏵ v1.1.0</a></td><td align="
+  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5251?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :x: Patch coverage is `91.66667%` with `5 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 34.69%. Comparing base ([`4b9ea76`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/4b9ea76facfa88a78e88e982a4cb978852e0a85d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`1d0b9ee`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/1d0b9eefd45689d1501c7377ed3a71b614348092?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 1 commits behind head on master.  | [Files with missing lines](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/52
+
+- **Issue #5249** (2026-11-18): **fix(stresschaos): upgrade memStress to v0.4.0**
+  *Symptoms*: ## What problem does this PR solve?  The memStress version used by Chaos Daemon can panic when the memory ramp is shorter than one millisecond. It also starts the initial memory workers one second apart.  ## What's changed and how does it work?  Use memStress v0.4.0 in the Chaos Daemon image. This release fixes sub-millisecond ramps and starts the initial workers concurrently.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [x] I have updated the `CHANGELOG.md` - [ ] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  Downloaded and extracted both release archives using the URLs from the Dockerfile. Confirmed each contains an executable `memStress` for the expected Linux architecture.  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  Signed off all commits.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -940,77 +941,261 @@ func init() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fc8e171f` (2026-11-18)
-**Commit Message**: go: bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the go_modules group across 1 directory (#5237)
+### Incident Patch 1: `ad8ef227` (2026-11-19)
+**Commit Message**: fix(schedule): ignore missing Schedules and retry read failures (#5243)
+
+Co-authored-by: Yue Yang <[REDACTED_EMAIL]>
+Signed-off-by: YuMin Kim <[REDACTED_EMAIL]>
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -78,6 +78,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
+ - Require a positive, space-free memory size in StressChaos and accept only whole-number percentages up to 100%. Clarify the memory stressor options and OOM behavior. [#5251](https://github.com/chaos-mesh/chaos-mesh/pull/5251)
+ - Upgrade memStress to [v0.4.0](https://github.com/chaos-mesh/memStress/releases/tag/v0.4.0) to fix sub-millisecond memory ramps and start the initial StressChaos memory workers concurrently. [#5249](https://github.com/chaos-mesh/chaos-mesh/pull/5249)
+ - Add `time` to the StressChaos memory stressor [#5247](https://github.com/chaos-mesh/chaos-mesh/pull/5247)
++- Retry failed Schedule reads and ignore missing Schedules in the cron controller [#5243](https://github.com/chaos-mesh/chaos-mesh/pull/5243)
+ - Upgrade chaos-tproxy to [v0.6.0](https://github.com/chaos-mesh/chaos-tproxy/releases/tag/v0.6.0) to fix delayed recovery of external HTTP requests after HTTPChaos stops. [#5242](https://github.com/chaos-mesh/chaos-mesh/pull/5242)
+ - Fix PhysicalMachineChaos disk-fill requests to honor `fill-by-fallocate`. Setting it to `true` uses `fallocate`. Setting it to `false` or omitting it now uses `dd` [#5205](https://github.com/chaos-mesh/chaos-mesh/pull/5205)
+ - Fix PhysicalMachineChaos Redis Sentinel `redisPath` to accept executable directories. Remove existing boolean values before upgrading [#5204](https://github.com/chaos-mesh/chaos-mesh/pull/5204)
+```
+
+**File**: `controllers/schedule/cron/controller.go` (modified, +1/-2)
+```diff
+@@ -51,8 +51,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
+ 	schedule := &v1alpha1.Schedule{}
+ 	err := r.Get(ctx, req.NamespacedName, schedule)
+ 	if err != nil {
+-		r.Log.Error(err, "unable to get chaos")
+-		return ctrl.Result{}, nil
++		return ctrl.Result{}, client.IgnoreNotFound(err)
+ 	}
+ 
+ 	if schedule.IsPaused() {
+```
+
+**File**: `controllers/schedule/cron/controller_test.go` (added, +91/-0)
+```diff
+@@ -0,0 +1,91 @@
++// Copyright 2026 Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++//
++
++package cron
++
++import (
++	"context"
++	"testing"
++
++	"github.com/go-logr/logr"
++	"github.com/go-logr/logr/funcr"
++	. "github.com/onsi/ginkgo/v2"
++	. "github.com/onsi/gomega"
++	k8sError "k8s.io/apimachinery/pkg/api/errors"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/types"
++	ctrl "sigs.k8s.io/controller-runtime"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
++
++	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
++)
++
++func TestCron(t *testing.T) {
++	RegisterFailHandler(Fail)
++	RunSpecs(t, "Schedule cron suite")
++}
++
++var _ = Describe("Reconcile", func() {
++	It("logs no error when the Schedule has been deleted", func() {
++		scheme := runtime.NewScheme()
++		Expect(v1alpha1.AddToScheme(scheme)).To(Succeed())
++
++		var errorLogs []string
++		inner := funcr.New(func(_, _ string) {}, funcr.Options{})
++		r := &Reconciler{
++			Client: fake.NewClientBuilder().WithScheme(scheme).Build(),
++			Log:    logr.New(&errorCountingSink{LogSink: inner.GetSink(), count: &errorLogs}),
++		}
++
++		result, err := r.Reconcile(context.Background(), ctrl.Request{
++			NamespacedName: types.NamespacedName{Namespace: "default", Name: "deleted-schedule"},
++		})
++
++		Expect(err).ToNot(HaveOccurred())
++		Expect(result).To(Equal(ctrl.Result{}))
++		Expect(errorLogs).To(BeEmpty())
++	})
++
++	It("returns other Schedule read errors for retry", func() {
++		readErr := k8sError.NewServiceUnavailable("failed to read Schedule")
++		r := &Reconciler{
++			Client: fake.NewClientBuilder().WithInterceptorFuncs(interceptor.Funcs{
++				Get: func(context.Context, client.WithWatch, client.ObjectKey, client.Object, ...client.GetOption) error {
++					return readErr
++				},
++			}).Build(),
++		}
++
++		result, err := r.Reconcile(context.Background(), ctrl.Request{
++			NamespacedName: types.NamespacedName{Namespace: "default", Name: "schedule"},
++		})
++
++		Expect(err).To(MatchError(readErr))
++		Expect(result).To(Equal(ctrl.Result{}))
++	})
++})
++
++// errorCountingSink records the message of every Error call.
++type errorCountingSink struct {
++	logr.LogSink
++	count *[]string
++}
++
++func (s *errorCountingSink) Error(err error, msg string, keysAndValues ...interface{}) {
++	*s.count = append(*s.count, msg)
++	s.LogSink.Error(err, msg, keysAndValues...)
++}
+```
+
+---
+
+### Incident Patch 2: `b9f593b0` (2026-11-19)
+**Commit Message**: go: bump go.opentelemetry.io/otel/trace (#5248)
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `e2e-test/go.mod` (modified, +5/-4)
+**File**: `go.mod` (modified, +4/-3)
 ```diff
-@@ -105,12 +105,13 @@ require (
- 	github.com/xlab/treeprint v1.2.0 // indirect
+@@ -275,9 +275,10 @@ require (
+ 	go.opencensus.io v0.24.0 // indirect
  	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
  	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
 -	go.opentelemetry.io/otel v1.45.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
 -	go.opentelemetry.io/otel/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
 -	go.opentelemetry.io/otel/trace v1.45.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
 +	go.opentelemetry.io/otel/log v1.47.0 // indirect
 +	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
 +	go.opentelemetry.io/otel/trace v1.47.0 // indirect
  	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/dig v1.19.0 // indirect
  	go.uber.org/multierr v1.11.0 // indirect
- 	go.uber.org/zap v1.28.0 // indirect
 ```
 
-**File**: `e2e-test/go.sum` (modified, +12/-10)
+**File**: `go.sum` (modified, +8/-8)
 ```diff
-@@ -258,20 +258,22 @@ go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ
- go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
+@@ -762,8 +762,8 @@ go.opentelemetry.io/contrib/exporters/autoexport v0.67.0 h1:4fnRcNpc6YFtG3zsFw9a
+ go.opentelemetry.io/contrib/exporters/autoexport v0.67.0/go.mod h1:qTvIHMFKoxW7HXg02gm6/Wofhq5p3Ib/A/NNt1EoBSQ=
  go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 h1:8tvICD4vSTOOsNrsI4Ljf6C+6UKvpTEH5XY3JMoyPoo=
  go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0/go.mod h1:z9+yiacE0IHRqM4qFfkbt/JYlmYXgss8GY/jXoNuPJI=
 -go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
 -go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
 +go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
 +go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
+ go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.21.0 h1:WseeVYf5dJZTsyPiyW5L14k5qsSibqXAMTSiFEDiWr0=
+ go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.21.0/go.mod h1:SiLZnQS6Qk2eCpvr2CH/XMAOa64TWGXxEZJZCpD2Lmc=
+ go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.21.0 h1:fvNHGyo3CdRv/DQveXqhqBxnKTDyRaC5sMSQxilX/A0=
+@@ -786,18 +786,18 @@ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.42.0 h1:lSZHgNHfbmQTPf
+ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.42.0/go.mod h1:so9ounLcuoRDu033MW/E0AD4hhUjVqswrMF5FoZlBcw=
+ go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.42.0 h1:s/1iRkCKDfhlh1JF26knRneorus8aOwVIDhvYx9WoDw=
+ go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.42.0/go.mod h1:UI3wi0FXg1Pofb8ZBiBLhtMzgoTm1TYkMvn71fAqDzs=
+-go.opentelemetry.io/otel/log v0.21.0 h1:SLsVDGmtyBrdw8/a2Z0bOIxou/+bN4z56GebH7T0LvA=
+-go.opentelemetry.io/otel/log v0.21.0/go.mod h1:iReetQrZL9Wyg84cCkOoCmqDHS5RCFfyxC7J+r8fn8g=
 -go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
 -go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
--go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
--go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
--go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
--go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
 +go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
 +go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
 +go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
 +go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
-+go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
-+go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
+ go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
+ go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
+ go.opentelemetry.io/otel/sdk/log v0.21.0 h1:QsE7XSR0ktQdKmRKGnR+f1ObGF32WG+7MER/P9KgmYc=
+ go.opentelemetry.io/otel/sdk/log v0.21.0/go.mod h1:m9mApjCoD2/1QuKCAptjv+BrG9WKOvQLVdNx+iBldTo=
+ go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
+ go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
+-go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
+-go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
 +go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
 +go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
  go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
  go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
+ go.uber.org/atomic v1.3.2/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
+```
+
+---
+
+### Incident Patch 3: `43aeb18d` (2026-11-19)
+**Commit Message**: fix(helm): render rollme only while helm generates the certificates (#5246)
+
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Co-authored-by: Egor Shevdin <[REDACTED_EMAIL]>
+Co-authored-by: Yue Yang <[REDACTED_EMAIL]>
+Signed-off-by: Egor Shevdin <[REDACTED_EMAIL]>
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -27,6 +27,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
+ 
+ ### Changed
+ 
++- Avoid unnecessary Pod rollouts when cert-manager manages the certificates [#5246](https://github.com/chaos-mesh/chaos-mesh/pull/5246)
+ - Pull Helm chart images from `cr.chaos-mesh.dev` by default; set `images.registry=ghcr.io` to keep pulling from GitHub Container Registry [#5226](https://github.com/chaos-mesh/chaos-mesh/pull/5226)
+ - Add multi-value event filters, time sorting, and a `GET /events/page` endpoint for Dashboard Events pagination [#5222](https://github.com/chaos-mesh/chaos-mesh/pull/5222), [#5229](https://github.com/chaos-mesh/chaos-mesh/pull/5229)
+ - Omit the redundant `SYS_PTRACE` declaration from the privileged Chaos Daemon security context in Helm manifests [#5215](https://github.com/chaos-mesh/chaos-mesh/pull/5215)
+```
+
+**File**: `helm/chaos-mesh/templates/chaos-daemon-daemonset.yaml` (modified, +2/-2)
+```diff
+@@ -36,8 +36,8 @@ spec:
+         {{- include "chaos-mesh.labels" . | nindent 8 }}
+         app.kubernetes.io/component: chaos-daemon
+       annotations:
+-        {{- /* it requires to reload the latest re-generated certs for mtls after helm upgrade*/}}
+-        {{- if .Values.chaosDaemon.mtls.enabled }}
++        {{- /* it requires to reload the latest re-generated certs for mtls after helm upgrade; certs issued by cert-manager are not re-generated by helm */}}
++        {{- if and .Values.chaosDaemon.mtls.enabled (not .Values.webhook.certManager.enabled) }}
+         rollme: {{ randAlphaNum 5 | quote }}
+         {{- end }}
+     {{- with .Values.chaosDaemon.podAnnotations }}
+```
+
+**File**: `helm/chaos-mesh/templates/controller-manager-deployment.yaml` (modified, +3/-1)
+```diff
+@@ -37,8 +37,10 @@ spec:
+         {{- include "chaos-mesh.labels" . | nindent 8 }}
+         app.kubernetes.io/component: controller-manager
+       annotations:
+-        {{- /* it requires to reload the latest re-generated certs for mtls after helm upgrade*/}}
++        {{- /* it requires to reload the latest re-generated certs for mtls after helm upgrade; certs issued by cert-manager are not re-generated by helm */}}
++        {{- if or (not .Values.webhook.certManager.enabled) .Values.controllerManager.chaosdSecurityMode }}
+         rollme: {{ randAlphaNum 5 | quote }}
++        {{- end }}
+     {{- with .Values.controllerManager.podAnnotations }}
+ {{ toYaml . | indent 8 }}
+     {{- end }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5251** (2026-11-19): fix(stresschaos): validate memory stressor sizes (@g1eny0ung)
+- **PR #5249** (2026-11-18): fix(stresschaos): upgrade memStress to v0.4.0 (@g1eny0ung)
+- **PR #5248** (2026-11-19): go: bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 in the go_modules group across 1 directory (@dependabot[bot])
+- **PR #5247** (2026-11-19): fix(stresschaos): support the time field of the memory stressor (@cvas22)
+- **PR #5246** (2026-11-19): fix(helm): render rollme only while helm generates the certificates (@sheveg)
 - **PR #5244** (2026-11-17): fix(build): use pnpm 10 for release-2.7 Dashboard (@g1eny0ung)
-- **PR #5242** (2026-11-16): fix(httpchaos): upgrade chaos-tproxy to 0.6.0 (@g1eny0ung)
-- **PR #5241** (2026-11-17): chore(release): prepare v2.7.4 (@g1eny0ung)
-- **PR #5240** (2026-11-14): chore: pull images from cr.chaos-mesh.dev on release-2.7 (@g1eny0ung)
-- **PR #5239** (2026-11-14): fix(ui): backport dashboard dependency security updates to 2.7 (@g1eny0ung)
-- **PR #5238** (2026-11-14): fix(physicalmachinechaos): backport validation and UID fixes to 2.7 (@g1eny0ung)
 
 ---
 
@@ -1030,35 +1215,28 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. go: bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the 
+## X. schedule): ignore missing Schedules and retry read failures
 
 **RULE**:
-When implementing operations in `e2e-test/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fc8e171f`: go: bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the go_modules group across 1 directory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad8ef227`: schedule): ignore missing Schedules and retry read failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e-test/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	go.opentelemetry.io/otel v1.47.0 // indirect
-	go.opentelemetry.io/otel/log v1.47.0 // indirect
-	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+- Retry failed Schedule reads and ignore missing Schedules in the cron controller [#5243](https://github.com/chaos-mesh/chaos-mesh/pull/5243)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	go.opentelemetry.io/otel v1.45.0 // indirect
-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fc8e171f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad8ef227` are properly handled with clean fallback behavior.

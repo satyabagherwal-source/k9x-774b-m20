@@ -1465,8 +1465,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "42bb4cb96e065602bcf14e17cc96057c8b3b459a7c14189fa24b9c5f119ed1b7",
-    "lastHarvestedAt": "2026-11-15T02:16:10.763Z",
+    "contentHash": "a7cf24d3b03422846b5fd9f7eea2a8dd7b066ee15cb6c7364dfcc03c6d1b8531",
+    "lastHarvestedAt": "2026-11-19T16:07:10.973Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8"
   },
   "amplifthq-opentag": {
@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "fc8e171f",
+    "sourceVersion": "ad8ef227",
     "license": "Apache-2.0",
-    "contentHash": "cbeca0b16f351cd8259c78ca2c1c2e3647d5666974cbe6c87487d81ada368208",
-    "lastHarvestedAt": "2026-11-18T13:47:01.631Z",
+    "contentHash": "d3b319d313ad367af6953e360049aa312f5f57199b70c6809150fbb66c9a86a7",
+    "lastHarvestedAt": "2026-11-19T16:07:22.854Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "28b60e68",
+    "sourceVersion": "2e587bc5",
     "license": "MIT",
-    "contentHash": "e0035c3dd5a58c321d63af1ca3f96963baf26aa624f76172cbd6e8f627c24569",
-    "lastHarvestedAt": "2026-11-18T23:26:14.876Z",
+    "contentHash": "08872929a3503c167a57b92d8fc1882ff30f54961707ab22f7183b1a675dd67a",
+    "lastHarvestedAt": "2026-11-19T16:07:24.283Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "4122f44f",
+    "sourceVersion": "6ae76a6a",
     "license": "NOASSERTION",
-    "contentHash": "adf62c1bd9b075e55b2f9ee619518b1abc063eebe429d862de539b5e0ba4793e",
-    "lastHarvestedAt": "2026-11-17T20:25:26.815Z",
+    "contentHash": "808a4b95966b7850ecb85df71a2adcd53a5ed57c9995ddcc4f5ecef88381c583",
+    "lastHarvestedAt": "2026-11-19T16:07:13.468Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {
@@ -7833,10 +7833,10 @@
     "repository": "thaw-app/Thaw",
     "platform": "github",
     "sourceUrl": "https://github.com/thaw-app/Thaw",
-    "sourceVersion": "e29a4376",
+    "sourceVersion": "8b34c731",
     "license": "GPL-3.0",
-    "contentHash": "c72bfc81746e5c50cf43b9f3639b0ef222040d45ec98f8348f17304f21fc8e59",
-    "lastHarvestedAt": "2026-11-15T09:49:56.399Z",
+    "contentHash": "ee0645a674c6575caf6bdc1bb40cb6fcc802da98b7f23c2b1c5cfd4d1fe69efa",
+    "lastHarvestedAt": "2026-11-19T16:07:19.593Z",
     "learningId": "learn-github-thaw-app-thaw"
   },
   "rtk-ai-rtk": {

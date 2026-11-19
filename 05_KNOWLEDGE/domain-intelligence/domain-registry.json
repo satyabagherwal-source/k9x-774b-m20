@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T15:59:29.244Z",
-  "total_records": 1990,
+  "last_updated": "2026-11-19T16:08:33.975Z",
+  "total_records": 1996,
   "domains": {
     "A": {
       "total": 15,
@@ -55,7 +55,7 @@
       ]
     },
     "D": {
-      "total": 829,
+      "total": 832,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -885,7 +885,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-radixark-daisyrose-27b-learnings-core-invaria",
         "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
         "DOM-D-8C81E436",
-        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-inva"
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-inva",
+        "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-cor",
+        "DOM-D-66709892",
+        "DOM-D-FFFC1DD3"
       ]
     },
     "E": {
@@ -967,7 +970,7 @@
       ]
     },
     "G": {
-      "total": 345,
+      "total": 347,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1313,7 +1316,9 @@
         "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
         "domain_intelligence-architecture-intelligence-milvus-io-milvus-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-thaw-app-thaw-core-invariants",
+        "domain_intelligence-architecture-intelligence-thaw-app-thaw-learnings-core-invariants"
       ]
     },
     "H": {
@@ -1923,7 +1928,7 @@
       ]
     },
     "K": {
-      "total": 103,
+      "total": 104,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2027,7 +2032,8 @@
         "domain_intelligence-quality-verification-intelligence-duckdb-duckdb-learnings-core-invariants",
         "DOM-K-F1A58A5D",
         "domain_intelligence-quality-verification-intelligence-meshtastic-meshtastic-android-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-meshtastic-meshtastic-android-learnings-core-i"
+        "domain_intelligence-quality-verification-intelligence-meshtastic-meshtastic-android-learnings-core-i",
+        "domain_intelligence-quality-verification-intelligence-chaos-mesh-chaos-mesh-core-invariants"
       ]
     },
     "L": {
@@ -15339,8 +15345,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "f0bcc2df92ba809596de654ce2d9ff7450113183444b3b325f243cc850318e26",
-      "created_at": "2026-11-18T23:26:15.195Z"
+      "content_hash": "40b7953b2ad3b16ca097f83e8ab99a8190925811f36da2bae327690a3d3eb1b8",
+      "created_at": "2026-11-19T16:07:24.643Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -16335,8 +16341,8 @@
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "repository": "zed-industries/zed",
-      "content_hash": "06bb0bede422cf90134b62e6cddd77d7e1ef00e7c891993db5bcb92b07d235af",
-      "created_at": "2026-11-17T20:25:27.090Z"
+      "content_hash": "68069d65474ba321ca254b0c7939ef694f9ac1f2bd3b3aa6a06e572b6ee4d9b2",
+      "created_at": "2026-11-19T16:07:13.680Z"
     },
     "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants",
@@ -16344,8 +16350,8 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-learnings-content-information-intelligence-zed-industries-zed.md",
       "repository": "zed-industries-zed-learnings",
-      "content_hash": "9d3633d50339b7b56102163f8a140e2ce46cee8a9b589087571d0b57501a3922",
-      "created_at": "2026-11-17T20:25:42.381Z"
+      "content_hash": "3cc22c588df9839d733c81dc7ad01ab07fd278889522a7e6343b681a1bb39b78",
+      "created_at": "2026-11-19T16:07:56.947Z"
     },
     "DOM-D-C9202D2F": {
       "record_id": "DOM-D-C9202D2F",
@@ -19015,8 +19021,8 @@
       "title": "Research & Knowledge Intelligence: hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-learnings-research-knowledge-int.md",
       "repository": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings",
-      "content_hash": "8423593f054881c5330176252fb0874671b9c2e79c8f417317e7ddbdd58cf28c",
-      "created_at": "2026-11-15T02:16:15.517Z"
+      "content_hash": "9639d5fc9ba186aecfb9d5f975d4ab69fe6e093ac77cbd180720dbd976e5f19d",
+      "created_at": "2026-11-19T16:08:33.229Z"
     },
     "DOM-D-F32FC521": {
       "record_id": "DOM-D-F32FC521",
@@ -33377,6 +33383,126 @@
       "repository": "meshtastic-meshtastic-android-learnings",
       "content_hash": "8c1b39b4897f54ee2ed2d3b5cce081ba0dd86a140eb129cdb33081205103ad2e",
       "created_at": "2026-11-19T15:59:29.244Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-cor": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-cor",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-research-knowledge-intelligence-.md",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "content_hash": "5285babeb2a26f2169e293e22151f5fc7bb0f827decd187687bfac057a2a80c7",
+      "created_at": "2026-11-19T16:07:11.173Z"
+    },
+    "domain_intelligence-architecture-intelligence-thaw-app-thaw-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-thaw-app-thaw-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: thaw-app/Thaw Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-thaw-app-thaw-architecture-intelligence-thaw-app-thaw-core-invariants.md",
+      "repository": "thaw-app/Thaw",
+      "content_hash": "ae54ec2e291264a7cad003afde7dbf4667181f942dcb2a19bea65f557e400dee",
+      "created_at": "2026-11-19T16:07:19.973Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-chaos-mesh-chaos-mesh-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-chaos-mesh-chaos-mesh-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: chaos-mesh/chaos-mesh Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-chaos-mesh-chaos-mesh-quality-verification-intelligence-chaos-mesh-chaos-mesh-co.md",
+      "repository": "chaos-mesh/chaos-mesh",
+      "content_hash": "f6d1625da3452573f26f9c7f7902191eb55151d73588f3e2bfb9df51728e3d57",
+      "created_at": "2026-11-19T16:07:23.226Z"
+    },
+    "DOM-D-66709892": {
+      "record_id": "DOM-D-66709892",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): zed-industries/zed",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  \n> **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  \n> **Source Version**: `6ae76a6a`  \n> **License**: NOASSERTION  \n> **Synthesized By**: zero-clone-structur",
+      "content_hash": "8a5116394d40136208cebd43e9bce91b24fef69aa8021fa5ff1b2f79eeff55ec",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  \n> **Source**: github ([https://github.com/zed-ind -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  \n> **Source**: github ([https://github.com/zed-ind",
+      "provenance": {
+        "source_uri": "project://zed-industries-zed/zed-industries-zed-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T16:07:27.590Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zed-industries-zed)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of zed-industries-zed"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T16:07:56.483Z"
+    },
+    "DOM-D-FFFC1DD3": {
+      "record_id": "DOM-D-FFFC1DD3",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8](https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8))  \n> **Source",
+      "content_hash": "7fe9c598365ec284834a0a0de7d41e2a3c0c61b1e3ca2ac3bb751e4a6c8ba307",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md`  \n> **Source**: huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md`  \n> **Source**: huggin",
+      "provenance": {
+        "source_uri": "project://hf-dealignai-deepseek-v4.1-flash-uncensored-fp8/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T16:07:57.119Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-dealignai-deepseek-v4.1-flash-uncensored-fp8)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-dealignai-deepseek-v4.1-flash-uncensored-fp8"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T16:08:32.955Z"
+    },
+    "domain_intelligence-architecture-intelligence-thaw-app-thaw-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-thaw-app-thaw-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: thaw-app-thaw-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-thaw-app-thaw-learnings-architecture-intelligence-thaw-app-thaw-learnings-core-i.md",
+      "repository": "thaw-app-thaw-learnings",
+      "content_hash": "0ee864f2d2dabc8c0630df6133714e76cbcbfadc1326c6eaa62bc8aec8b9fa43",
+      "created_at": "2026-11-19T16:08:33.975Z"
     }
   }
 }

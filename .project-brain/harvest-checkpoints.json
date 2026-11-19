@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T15:58:58.320Z",
+  "last_updated": "2026-11-19T16:07:24.292Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2272,14 +2272,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "content_hash": "42bb4cb96e065602bcf14e17cc96057c8b3b459a7c14189fa24b9c5f119ed1b7",
-      "verified_at": "2026-11-15T02:16:10.783Z",
+      "content_hash": "a7cf24d3b03422846b5fd9f7eea2a8dd7b066ee15cb6c7364dfcc03c6d1b8531",
+      "verified_at": "2026-11-19T16:07:10.984Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T02:16:10.783Z"
+      "last_updated": "2026-11-19T16:07:10.984Z"
     },
     "amplifthq/opentag": {
       "repository": "amplifthq/opentag",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "cbeca0b16f351cd8259c78ca2c1c2e3647d5666974cbe6c87487d81ada368208",
-      "verified_at": "2026-11-18T13:47:01.645Z",
+      "content_hash": "d3b319d313ad367af6953e360049aa312f5f57199b70c6809150fbb66c9a86a7",
+      "verified_at": "2026-11-19T16:07:22.862Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:47:01.645Z"
+      "last_updated": "2026-11-19T16:07:22.862Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "e0035c3dd5a58c321d63af1ca3f96963baf26aa624f76172cbd6e8f627c24569",
-      "verified_at": "2026-11-18T23:26:14.883Z",
+      "content_hash": "08872929a3503c167a57b92d8fc1882ff30f54961707ab22f7183b1a675dd67a",
+      "verified_at": "2026-11-19T16:07:24.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T23:26:14.883Z"
+      "last_updated": "2026-11-19T16:07:24.292Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "adf62c1bd9b075e55b2f9ee619518b1abc063eebe429d862de539b5e0ba4793e",
-      "verified_at": "2026-11-17T20:25:26.822Z",
+      "content_hash": "808a4b95966b7850ecb85df71a2adcd53a5ed57c9995ddcc4f5ecef88381c583",
+      "verified_at": "2026-11-19T16:07:13.476Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T20:25:26.822Z"
+      "last_updated": "2026-11-19T16:07:13.476Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",
@@ -11781,14 +11781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-thaw-app-thaw",
-      "content_hash": "c72bfc81746e5c50cf43b9f3639b0ef222040d45ec98f8348f17304f21fc8e59",
-      "verified_at": "2026-11-15T09:49:56.408Z",
+      "content_hash": "ee0645a674c6575caf6bdc1bb40cb6fcc802da98b7f23c2b1c5cfd4d1fe69efa",
+      "verified_at": "2026-11-19T16:07:19.603Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T09:49:56.408Z"
+      "last_updated": "2026-11-19T16:07:19.603Z"
     },
     "rtk-ai/rtk": {
       "repository": "rtk-ai/rtk",

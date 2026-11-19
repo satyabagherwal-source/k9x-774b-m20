@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T15:59:27.672Z",
+  "updated_at": "2026-11-19T16:08:32.979Z",
   "statistics": {
-    "total_nodes": 384,
+    "total_nodes": 386,
     "total_edges": 180,
     "domain_distribution": {
-      "D": 255,
+      "D": 257,
       "M": 1,
       "H": 57,
       "J": 14,
@@ -8589,6 +8589,50 @@
       ],
       "created_at": "2026-11-19T15:59:27.672Z",
       "updated_at": "2026-11-19T15:59:27.672Z"
+    },
+    "DOM-D-66709892": {
+      "id": "DOM-D-66709892",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): zed-industries/zed",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  \n> **Source**: github ([https://github.com/zed-ind -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  \n> **Source**: github ([https://github.com/zed-ind",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://zed-industries-zed/zed-industries-zed-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T16:07:27.590Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zed-industries-zed)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-19T16:07:56.507Z",
+      "updated_at": "2026-11-19T16:07:56.507Z"
+    },
+    "DOM-D-FFFC1DD3": {
+      "id": "DOM-D-FFFC1DD3",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md`  \n> **Source**: huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md`  \n> **Source**: huggin",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-dealignai-deepseek-v4.1-flash-uncensored-fp8/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T16:07:57.119Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-dealignai-deepseek-v4.1-flash-uncensored-fp8)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-19T16:08:32.979Z",
+      "updated_at": "2026-11-19T16:08:32.979Z"
     }
   },
   "edges": [

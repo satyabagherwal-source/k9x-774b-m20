@@ -4,24 +4,24 @@
 {
   "source_repository": "zed-industries/zed",
   "source_url": "https://github.com/zed-industries/zed",
-  "source_version": "4122f44f",
+  "source_version": "6ae76a6a",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T20:25:26.985Z",
+  "timestamp": "2026-11-19T16:07:13.674Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zed-industries-zed",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zed-industries/zed](https://github.com/zed-industries/zed) (Revision: `4122f44f`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T20:25:26.985Z`  
+> **Provenance**: Harvested from [zed-industries/zed](https://github.com/zed-industries/zed) (Revision: `6ae76a6a`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-19T16:07:13.674Z`  
 > **Learning ID**: `learn-github-zed-industries-zed`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence)
-- **Confidence Rating**: 88%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 85%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zed-industries/zed:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:25:26.089Z  
+> **Harvest Timestamp**: 2026-11-19T16:07:12.982Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 95223 stars
+- **Stars / Engagement**: 95324 stars
 
 ---
 
@@ -2348,593 +2348,643 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d39178f6` (2026-11-16)
-**Commit Message**: agent_ui: Keep focus when background threads auto-send queued messages (#66787)
+### Incident Patch 1: `0c5af8c5` (2026-11-19)
+**Commit Message**: Remove dead code and redundant checks in git, debugger, and panel UIs (#67149)
 
 ## Summary
 
-Typing in one conversation no longer loses keyboard focus when a
-different, background conversation finishes a turn and automatically
-sends its next queued follow-up. Sending a queued message yourself (Send
-Now, or fast-tracking the next queued message by pressing Send in the
-empty composer) still returns focus to that thread's composer.
+Removes unused code and redundant work. No behavior changes.
 
-The focus decision stays in the shared queued-entry dispatch. Each
-caller now passes an explicit source (automatic or manual), and the
-dispatch focuses the composer only for manual sends. Queue validation,
-cancellation, sending and error recovery are unchanged.
+- Diagnostics no longer clones the buffer snapshot for every row it
+scans when expanding context. The callee takes a reference.
+- The project panel's download path no longer calls the blocking
+`Path::exists` before `Fs::create_dir`, which already succeeds when the
+directory exists.
+- Removes `cx.notify()` calls right after callees that already notify:
+`update_visible_entries`, `Picker::update_matches`, `Picker::refresh`,
+`set_selected_index` and `Pane::set_zoomed`.
+- Calls `select_thread` directly. It already returns early for the
+current thread.
+- Replaces `collect::<Vec<_>>().len()` with `count()` and
+`Some(i).and_then(f)` with `f(i)`.
+- Drops clones made only to be borrowed, `.peekable()` calls that never
+peek, and `let _ =` on unit values.
+- Removes unused code:
+  - four `git::repository` helpers
+- `open_branches` and `open_stash`, which were never registered as
+action handlers
+  - `ProjectDiff::deploy_at_project_path`
+  - `RepositorySelector::update_repository_entries`
+  - `ProjectSymbols`
+- the git graph's never-read `SplitS
 
-Closes #66416
-
-## Testing
-
-Automated checks run locally on the initial fixed implementation:
-
-- New regression test for automatic sends failed without the fix (at the
-foreground composer focus assertion) and passes with it. A second new
-test covers manual sends keeping focus. Both passed scheduler seeds
-0-19.
-- All `agent_ui` and `gpui_apple` tests passed, `cargo fmt --check` and
-`./script/clippy -p agent_ui -p gpui_apple` passed, and a full
-development build succeeded.
-- The full workspace suite a
-
-**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +101/-0)
+**File**: `crates/command_palette/src/command_palette.rs` (modified, +0/-3)
 ```diff
-@@ -5082,6 +5082,107 @@ pub(crate) mod tests {
-         );
-     }
+@@ -713,9 +713,6 @@ impl PickerDelegate for CommandPaletteDelegate {
  
-+    #[gpui::test]
-+    async fn test_auto_sending_queued_messages_preserves_focus(cx: &mut TestAppContext) {
-+        init_test(cx);
-+
-+        let connection = StubAgentConnection::new();
-+        let (background_conversation, cx) =
-+            setup_conversation_view(StubAgentServer::new(connection.clone()), cx).await;
-+        add_to_workspace(background_conversation.clone(), cx);
-+        let background_thread = active_thread(&background_conversation, cx);
-+        message_editor(&background_conversation, cx).update_in(cx, |editor, window, cx| {
-+            editor.set_text("first", window, cx);
-+        });
-+        background_thread.update_in(cx, |view, window, cx| view.send(window, cx));
-+        cx.run_until_parked();
-+
-+        let session_id = background_thread.update_in(cx, |view, window, cx| {
-+            view.add_to_queue(vec!["second".into()], vec![], window, cx);
-+            view.add_to_queue(vec!["third".into()], vec![], window, cx);
-+            view.thread.read(cx).session_id().clone()
-+        });
-+
-+        let foreground_conversation = background_conversation.update_in(cx, |view, window, cx| {
-+            cx.new(|cx| {
-+                ConversationView::new(
-+                    view.agent.clone(),
-+                    view.connection_store.clone(),
-+                    view.connection_key.clone(),
-+                    None,
-+                    None,
-+                    None,
-+                    None,
-+                    None,
-+                    view.workspace.clone(),
-+                    view.project.clone(),
-+                    view.thread_store.clone(),
-+                    AgentThreadSource::AgentPanel,
-+                    window,
-+                    cx,
-+                )
-+            })
-+        });
-+        cx.run_until_parked();
-+        add_to_workspace(foreground_conversation.clone(), cx);
-+        let foreground_editor = message_editor(&foreground_conversation, cx);
-+        foreground_editor.update_in(cx, |editor, window, cx| {
-+            editor.focus_handle(cx).focus(window, cx);
-+        });
-+        cx.simulate_input("before");
-+
-+        for (remaining, expected_text) in [(1, "before typing"), (0, "before typing typing")] {
-+            connection.end_turn(session_id.clone(), acp_v1::StopReason::EndTurn);
-+            cx.run_until_parked();
-+
-+            background_thread.read_with(cx, |view, cx| {
-+                assert_eq!(view.message_queue.len(), remaining);
-+                assert_eq!(view.thread.read(cx).status(), ThreadStatus::Generating);
-+            });
-+            foreground_editor.update_in(cx, |editor, window, cx| {
-+                assert!(editor.focus_handle(cx).is_focused(window));
-+            });
-+            cx.simulate_input(" typing");
-+            assert_eq!(
-+                foreground_editor.read_with(cx, |editor, cx| editor.text(cx)),
-+                expected_text
-+            );
-+            assert!(
-+                message_editor(&background_conversation, cx)
-+                    .read_with(cx, |editor, cx| { editor.is_empty(cx) })
-+            );
-+        }
-+    }
-+
-+    #[gpui::test]
-+    async fn test_manual_queued_message_sends_focus_composer(cx: &mut TestAppContext) {
-+        init_test(cx);
-+
-+        for send_now in [false, true] {
-+            let (conversation, cx) =
-+                setup_conversation_view(StubAgentServer::default_response(), cx).await;
-+            add_to_workspace(conversation.clone(), cx);
-+            let thread_view = active_thread(&conversation, cx);
-+            thread_view.update_in(cx, |view, window, cx| {
-+                view.add_to_queue(vec!["queued".into()], vec![], window, cx);
-+                let entry = view.message_queue.first().expect("queued message");
-+                let id = entry.id;
-+                entry.editor.focus_handle(cx).focus(window, cx);
-+                if send_now {
-+                    view.send_queued_message_now(id, window, cx);
-+                } else {
-+                    view.send(window, cx);
-+                }
-+                assert!(view.message_queue.is_empty());
-+                assert!(view.message_editor.focus_handle(cx).is_focused(window));
-+            });
-+            cx.run_until_parked();
-+            message_editor(&conversation, cx).update_in(cx, |editor, window, cx| {
-+                assert!(editor.focus_handle(cx).is_focused(window));
-+            });
-+        }
-+    }
-+
-     #[gpui::test]
-     async fn test_queued_message_steer_defaults_off_and_toggles(cx: &mut TestAppContext) {
-         init_test(cx);
-```
-
-**File**: `crates/agent_ui/src/conversation_view/thread_view.rs` (modified, +15/-4)
-```diff
-@@ -842,6 +842,11 @@ pub struct TurnFields {
-     pub reported_activity_generation: Option<u64>,
- }
- 
-+enum QueuedMessageDispatchSource {
-+    Automatic,
-+    Manual,
-+}
-+
- enum ThreadControlsPosition {
-     /// Below a finalized assistant message.
-     TurnEnd {
-@@ -2216,7 +2221,7 @@ impl ThreadView {
-                 return;
-             }
-             if let Some(entry) = self.message_queue.try_fast_track(is_generating) {
--                self.dispatch_queued_entry(entry, window, cx);
-+                self.dispatch_queued_entry(entry, QueuedMessageDispatchSource::Manual, window, cx);
-             }
-             return;
-         }
-@@ -3102,7 +3107,7 @@ impl ThreadView {
-             .message_queue
-             .on_generation_stopped(is_first_editor_focused)
-         {
--            self.dispatch_queued_entry(entry, window, cx);
-+            self.dispatch_queued_entry(entry, QueuedMessageDispatchSource::Automatic, window, cx);
-             true
-         } else {
-             false
-@@ -3120,7 +3125,7 @@ impl ThreadView {
-         }
-         let is_generating = self.thread.read(cx).status() == acp_thread::ThreadStatus::Generating;
-         if let Some(entry) = self.message_queue.send_now(id, is_generating) {
--            self.dispatch_queued_entry(entry, window, cx);
-+            self.dispatch_queued_entry(entry, QueuedMessageDispatchSource::Manual, window, cx);
-         }
-     }
- 
-@@ -3130,14 +3135,20 @@ impl ThreadView {
-     fn dispatch_queued_entry(
-         &mut self,
-         entry: QueueEntry,
-+        source: QueuedMessageDispatchSource,
-         window: &mut Window,
-         cx: &mut Context<Self>,
-     ) {
-         self.sync_queue_flag_to_native_thread(cx);
- 
-         cx.emit(AcpThreadViewEvent::Interacted);
- 
--        self.message_editor.focus_handle(cx).focus(window, cx);
-+        match source {
-+            QueuedMessageDispatchSource::Automatic => {}
-+            QueuedMessageDispatchSource::Manual => {
-+                self.message_editor.focus_handle(cx).focus(window, cx);
-+            }
-+        }
- 
-         // A queued message can itself be a built-in command (e.g. the user typed
-         // `/compact` while a turn was generating). Detect that so we run it as a
-```
-
----
-
-### Incident Patch 2: `430a7810` (2026-11-16)
-**Commit Message**: Fix duplicate language server notifications (#67021)
-
-## Summary
-
-Repeated language server messages could stack identical notifications
-while previewing themes.
-
-- Skip an actionless prompt when a visible prompt has the same server
-name, level, and message.
-- Compare those fields directly while retaining per-request numeric IDs
-and keeping action-bearing prompts independent.
-- Preserve the existing notification and its dismissal timer when
-discarding a duplicate.
-- Move LSP-specific auto-dismiss setup into the prompt instead of
-generic notification handling.
-
-Implementation:
-[`show_language_server_prompt`](https://github.com/zed-industries/zed/blob/ffaa5fbe8c30bc819c3d118e688b28c1f1a64fe1/crates/workspace/src/notifications.rs#L228-L253)
-and
-[`LanguageServerPrompt::new`](https://github.com/zed-industries/zed/blob/ffaa5fbe8c30bc819c3d118e688b28c1f1a64fe1/crates/workspace/src/notifications.rs#L274-L303).
-
-This changes visible-notification handling, not the upstream
-settings-to-LSP configuration refresh path.
-
-![Original reproduction
-screenshot](https://github.com/user-attachments/assets/c3cce22e-e1b8-4047-ad44-8eda72bca659)
-
-## Testing
-
-### Automated validation
-
-- `cargo test --offlin
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -22013,6 +22013,7 @@ dependencies = [
-  "itertools 0.14.0",
-  "language",
-  "log",
-+ "lsp",
-  "markdown",
-  "menu",
-  "node_runtime",
-```
-
-**File**: `crates/workspace/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -78,6 +78,7 @@ client = { workspace = true, features = ["test-support"] }
- db = { workspace = true, features = ["test-support"] }
- fs = { workspace = true, features = ["test-support"] }
- gpui = { workspace = true, features = ["test-support"] }
-+lsp.workspace = true
- project = { workspace = true, features = ["test-support"] }
- remote = { workspace = true, features = ["test-support"] }
- session = { workspace = true, features = ["test-support"] }
-```
-
-**File**: `crates/workspace/src/notifications.rs` (modified, +207/-40)
-```diff
-@@ -3,13 +3,13 @@ use crate::{
- };
- use anyhow::Context as _;
- use gpui::{
--    AnyEntity, AnyView, App, AppContext as _, AsyncApp, AsyncWindowContext, ClickEvent, Context,
--    DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, PromptLevel, Render, ScrollHandle,
--    Task, TextStyleRefinement, UnderlineStyle, WeakEntity,
-+    AnyView, App, AppContext as _, AsyncApp, AsyncWindowContext, ClickEvent, Context, DismissEvent,
-+    Entity, EventEmitter, FocusHandle, Focusable, PromptLevel, Render, ScrollHandle, Task,
-+    TextStyleRefinement, UnderlineStyle, WeakEntity,
- };
- use markdown::{CopyButtonVisibility, Markdown, MarkdownElement, MarkdownStyle};
- use parking_lot::Mutex;
--use project::project_settings::ProjectSettings;
-+use project::{LanguageServerPromptRequest, project_settings::ProjectSettings};
- use settings::Settings;
- use theme_settings::ThemeSettings;
- 
-@@ -117,39 +117,6 @@ impl Workspace {
-             })
-             .detach();
- 
--            if let Ok(prompt) =
--                AnyEntity::from(notification.clone()).downcast::<LanguageServerPrompt>()
--            {
--                let is_prompt_without_actions = prompt
--                    .read(cx)
--                    .request
--                    .as_ref()
--                    .is_some_and(|request| request.actions.is_empty());
--
--                let dismiss_timeout_ms = ProjectSettings::get_global(cx)
--                    .global_lsp_settings
--                    .notifications
--                    .dismiss_timeout_ms;
--
--                if is_prompt_without_actions {
--                    if let Some(dismiss_duration_ms) = dismiss_timeout_ms.filter(|&ms| ms > 0) {
--                        let task = cx.spawn({
--                            let id = id.clone();
--                            async move |this, cx| {
--                                cx.background_executor()
--                                    .timer(Duration::from_millis(dismiss_duration_ms))
--                                    .await;
--                                let _ = this.update(cx, |workspace, cx| {
--                                    workspace.dismiss_notification(&id, cx);
--                                });
--                            }
--                        });
--                        prompt.update(cx, |prompt, _| {
--                            prompt.dismiss_task = Some(task);
--                        });
--                    }
--                }
+     fn confirm(&mut self, secondary: bool, window: &mut Window, cx: &mut Context<Picker<Self>>) {
+         if secondary {
+-            if self.matches.is_empty() {
+-                return;
 -            }
-             notification.into()
-         });
-     }
-@@ -257,6 +224,34 @@ impl Workspace {
-             });
-         }
-     }
-+
-+    pub(crate) fn show_language_server_prompt(
-+        &mut self,
-+        request: &LanguageServerPromptRequest,
-+        cx: &mut Context<Self>,
-+    ) {
-+        if request.actions.is_empty()
-+            && self.notifications.iter().any(|(_, view)| {
-+                let Ok(prompt) = view.clone().downcast::<LanguageServerPrompt>() else {
-+                    return false;
-+                };
-+                prompt.read(cx).request.as_ref().is_some_and(|existing| {
-+                    existing.actions.is_empty()
-+                        && existing.level == request.level
-+                        && existing.lsp_name == request.lsp_name
-+                        && existing.message == request.message
-+                })
-+            })
-+        {
-+            return;
-+        }
-+
-+        self.show_notification(
-+            NotificationId::composite::<LanguageServerPrompt>(request.id),
-+            cx,
-+            |cx| cx.new(|cx| LanguageServerPrompt::new(request.clone(), cx)),
-+        );
-+    }
- }
- 
- pub struct LanguageServerPrompt {
-@@ -276,15 +271,34 @@ impl Focusable for LanguageServerPrompt {
- impl Notification for LanguageServerPrompt {}
- 
- impl LanguageServerPrompt {
--    pub fn new(request: project::LanguageServerPromptRequest, cx: &mut App) -> Self {
-+    pub fn new(request: project::LanguageServerPromptRequest, cx: &mut Context<Self>) -> Self {
-         let markdown = cx.new(|cx| Markdown::new(request.message.clone().into(), None, None, cx));
-+        let dismiss_task = if request.actions.is_empty() {
-+            ProjectSettings::get_global(cx)
-+                .global_lsp_settings
-+                .notifications
-+                .dismiss_timeout_ms
-+                .filter(|&duration| duration > 0)
-+                .map(|dismiss_duration_ms| {
-+                    cx.spawn(async move |prompt, cx| {
-+                        cx.background_executor()
-+                            .timer(Duration::from_millis(dismiss_duration_ms))
-+                            .await;
-+                        prompt
-+                            .update(cx, |prompt, cx| prompt.dismiss_notification(cx))
-+                            .ok();
-+                    })
-+                })
-+        } else {
-+            None
-+        };
- 
-         Self {
-             focus_handle: cx.focus_handle(),
-             request: Some(request),
-             scroll_handle: ScrollHandle::ne
+             let Some(selected_command) = self.selected_command() else {
+                 return;
+             };
 ```
 
-**File**: `crates/workspace/src/workspace.rs` (modified, +1/-11)
+**File**: `crates/debugger_ui/src/dropdown_menus.rs` (modified, +1/-1)
 ```diff
-@@ -1920,17 +1920,7 @@ impl Workspace {
-                 }
+@@ -94,7 +94,7 @@ impl DebugPanel {
+         let running_state = running_state?;
  
-                 project::Event::LanguageServerPrompt(request) => {
--                    struct LanguageServerPrompt;
+         let mut session_entries = Vec::with_capacity(self.sessions_with_children.len() * 3);
+-        let mut sessions_with_children = self.sessions_with_children.iter().peekable();
++        let mut sessions_with_children = self.sessions_with_children.iter();
+ 
+         while let Some((root, children)) = sessions_with_children.next() {
+             let root_entry = if let Ok([single_child]) = <&[_; 1]>::try_from(children.as_slice())
+```
+
+**File**: `crates/debugger_ui/src/new_process_modal.rs` (modified, +2/-5)
+```diff
+@@ -220,7 +220,6 @@ impl NewProcessModal {
+                                 debug_picker
+                                     .update_in(cx, |picker, window, cx| {
+                                         picker.refresh(window, cx);
+-                                        cx.notify();
+                                     })
+                                     .ok();
+                             }
+@@ -1052,9 +1051,7 @@ impl DebugDelegate {
+                 .debug_panel
+                 .update(cx, |debug_panel, cx| {
+                     let project = debug_panel.project().read(cx);
+-                    let worktrees: Vec<_> = project.visible_worktrees(cx).collect();
 -
--                    this.show_notification(
--                        NotificationId::composite::<LanguageServerPrompt>(request.id),
--                        cx,
--                        |cx| {
--                            cx.new(|cx| {
--                                notifications::LanguageServerPrompt::new(request.clone(), cx)
--                            })
--                        },
--                    );
-+                    return this.show_language_server_prompt(request, cx);
-                 }
+-                    let mut path = if worktrees.len() > 1
++                    let mut path = if project.visible_worktrees(cx).count() > 1
+                         && let Some(worktree) = project.worktree_for_id(*worktree_id, cx)
+                     {
+                         worktree
+@@ -1271,7 +1268,7 @@ impl PickerDelegate for DebugDelegate {
+                         let index = delegate
+                             .matches
+                             .partition_point(|matching_task| matching_task.candidate_id <= index);
+-                        Some(index).and_then(|index| (index != 0).then(|| index - 1))
++                        (index != 0).then(|| index - 1)
+                     });
  
-                 project::Event::AgentLocationChanged => {
+                     if delegate.matches.is_empty() {
 ```
 
----
-
-### Incident Patch 3: `4191aeaf` (2026-11-16)
-**Commit Message**: agent_ui: Check only the clicked pattern in pipeline permission dropdown (#56492)
-
-Closes #55523
-
-When the agent proposes a [chained
-command](https://github.com/zed-industries/zed/issues/55523) like `ls &&
-git status && git log`, the permission dropdown lists an "Always for `X`
-commands" checkbox per sub-command. Clicking one checkbox activates
-pattern mode with *all* patterns pre-checked, so the user appeared to be
-approving every command in the pipeline even though they had only
-clicked one. Pressing Allow then allow-listed every sub-command.
-
-Fix: the first click activates pattern mode with only the clicked
-pattern checked. Additional patterns require explicit checks.
-
-**Note**: I've rebased onto `main` after #65039, which moved the
-dropdown's selection state into `Conversation`. The dropdown's click
-handler and the `ToggleCommandPattern` action handler now both call
-`Conversation::toggle_permission_pattern`, so the fix lives in one
-place. The duplicated fix and the one-click-behind workaround from the
-previous version of this PR are gone.
-
-**Self-Review Checklist**
-
-- [x] I've reviewed my own diff for quality, security, and reliability
-- [x] Unsafe blocks (if any) have justifyi
-
-**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +63/-10)
+**File**: `crates/debugger_ui/src/session/running.rs` (modified, +2/-11)
 ```diff
-@@ -400,26 +400,26 @@ impl Conversation {
-         pattern_index: usize,
-         cx: &mut Context<Self>,
-     ) {
--        let Some(request) = self.permission_request(session_id, request_id, cx) else {
-+        let Some(PermissionOptions::DropdownWithPatterns { patterns, .. }) = self
-+            .permission_request(session_id, request_id, cx)
-+            .and_then(PermissionRequest::legacy_options)
-+        else {
+@@ -610,7 +610,6 @@ fn render_debugger_tab_bar(
+                     .on_click(cx.listener(move |pane, _, _, cx| {
+                         let is_zoomed = pane.is_zoomed();
+                         pane.set_zoomed(!is_zoomed, cx);
+-                        cx.notify();
+                     }))
+                     .tooltip({
+                         let focus_handle = focus_handle.clone();
+@@ -1346,13 +1345,7 @@ impl RunningState {
+             // This prevents the NodeJS REPL from appearing, which is not the desired behavior
+             // The expected usage is for users to provide their own Node command, e.g., `node test.js`
+             // This allows the NodeJS debug client to attach correctly
+-            if args
+-                .iter()
+-                .filter(|arg| !arg.starts_with("--"))
+-                .collect::<Vec<_>>()
+-                .len()
+-                > 1
+-            {
++            if args.iter().filter(|arg| !arg.starts_with("--")).count() > 1 {
+                 Some(args.remove(0))
+             } else {
+                 None
+@@ -1763,9 +1756,7 @@ impl RunningState {
              return;
          };
--        let Some(options) = request.legacy_options() else {
-+        if pattern_index >= patterns.len() {
-             return;
--        };
--        let pattern_count = match options {
--            PermissionOptions::DropdownWithPatterns { patterns, .. } => patterns.len(),
--            _ => 0,
--        };
-+        }
-         match self.permission_selections.get_mut(&request_id) {
-             Some(selection @ thread_view::PermissionSelection::SelectedPatterns(_)) => {
-                 selection.toggle_pattern(pattern_index);
-+                if !selection.has_any_checked_patterns() {
-+                    self.permission_selections.remove(&request_id);
-+                }
-             }
-             _ => {
-                 self.permission_selections.insert(
-                     request_id,
--                    thread_view::PermissionSelection::SelectedPatterns(
--                        (0..pattern_count).collect(),
--                    ),
-+                    thread_view::PermissionSelection::SelectedPatterns(vec![pattern_index]),
-                 );
-             }
-         }
-@@ -16959,6 +16959,53 @@ pub(crate) mod tests {
+ 
+-        if Some(ThreadId(selected_thread.id)) != self.thread_id {
+-            self.select_thread(ThreadId(selected_thread.id), window, cx);
+-        }
++        self.select_thread(ThreadId(selected_thread.id), window, cx);
+     }
+ 
+     pub fn selected_thread_id(&self) -> Option<ThreadId> {
+```
+
+**File**: `crates/diagnostics/src/diagnostics.rs` (modified, +2/-2)
+```diff
+@@ -1114,7 +1114,7 @@ async fn heuristic_syntactic_expand(
+                 ..node_range.start.row)
+                 .rev()
+                 .find(|row| {
+-                    is_line_blank_or_indented_less(indent_level, *row, tab_size, &snapshot.clone())
++                    is_line_blank_or_indented_less(indent_level, *row, tab_size, &snapshot)
+                 })
+             else {
+                 return Some(node_row_range);
+@@ -1126,7 +1126,7 @@ async fn heuristic_syntactic_expand(
+                     snapshot.row_count(),
+                 ))
+                 .find(|row| {
+-                    is_line_blank_or_indented_less(indent_level, *row, tab_size, &snapshot.clone())
++                    is_line_blank_or_indented_less(indent_level, *row, tab_size, &snapshot)
+                 })
+             else {
+                 return Some(node_row_range);
+```
+
+**File**: `crates/git/src/repository.rs` (modified, +1/-25)
+```diff
+@@ -271,21 +271,6 @@ impl Branch {
+             .strip_prefix("refs/remotes/")
+             .and_then(|stripped| stripped.split("/").next())
+     }
+-
+-    pub fn tracking_status(&self) -> Option<UpstreamTrackingStatus> {
+-        self.upstream
+-            .as_ref()
+-            .and_then(|upstream| upstream.tracking.status())
+-    }
+-
+-    pub fn priority_key(&self) -> (bool, Option<i64>) {
+-        (
+-            self.is_head,
+-            self.most_recent_commit
+-                .as_ref()
+-                .map(|commit| commit.commit_timestamp),
+-        )
+-    }
+ }
+ 
+ #[derive(Clone, Debug, Hash, PartialEq, Eq)]
+@@ -445,10 +430,6 @@ impl Upstream {
+             .and_then(|stripped| stripped.split("/").next())
+     }
+ 
+-    pub fn stripped_ref_name(&self) -> Option<&str> {
+-        self.ref_name.strip_prefix("refs/remotes/")
+-    }
+-
+     pub fn branch_name(&self) -> Option<&str> {
+         self.ref_name
+             .strip_prefix("refs/remotes/")
+@@ -479,10 +460,6 @@ impl From<UpstreamTrackingStatus> for UpstreamTracking {
+ }
+ 
+ impl UpstreamTracking {
+-    pub fn is_gone(&self) -> bool {
+-        matches!(self, UpstreamTracking::Gone)
+-    }
+-
+     pub fn status(&self) -> Option<UpstreamTrackingStatus> {
+         match self {
+             UpstreamTracking::Gone => None,
+@@ -2788,7 +2765,7 @@ impl GitRepository for RealGitRepository {
+         async move {
+             let git = git?;
+             git.run_remote_command(Some(askpass), &env, &["commit", "--quiet", "-m"], |cmd| {
+-                cmd.arg(&message.to_string())
++                cmd.arg(message.as_str())
+                     .arg("--cleanup=strip")
+                     .stdout(Stdio::piped())
+                     .stderr(Stdio::piped());
+@@ -3782,7 +3759,6 @@ impl GitBinary {
+         Ok(String::from_utf8(output.stdout)?)
+     }
+ 
+-    #[allow(clippy::disallowed_methods)]
+     pub(crate) fn build_command<S>(&self, args: &[S]) -> util::command::Command
+     where
+         S: AsRef<OsStr>,
+```
+
+**File**: `crates/git_hosting_providers/src/providers/azure.rs` (modified, +1/-1)
+```diff
+@@ -66,7 +66,7 @@ impl Azure {
+ 
+         // HTTPS format: https://{organization}.visualstudio.com/{project}/_git/{repo}
+         // or with DefaultCollection: https://{organization}.visualstudio.com/DefaultCollection/{project}/_git/{repo}
+-        let mut path_segments = url.path_segments()?.peekable();
++        let mut path_segments = url.path_segments()?;
+ 
+         let first_segment = path_segments.next()?;
+         let project = if first_segment == "DefaultCollection" {
+```
+
+**File**: `crates/git_ui/src/branch_picker.rs` (modified, +0/-1)
+```diff
+@@ -499,7 +499,6 @@ impl BranchList {
+             picker.delegate.branch_filter = branch_filter;
+             picker.update_matches(picker.query(cx), window, cx);
+             picker.refresh_placeholder(window, cx);
+-            cx.notify();
          });
      }
  
-+    #[gpui::test]
-+    async fn test_toggle_command_pattern_toggles_only_clicked_pattern(cx: &mut TestAppContext) {
-+        init_test(cx);
-+        let (conversation_view, cx) =
-+            setup_conversation_view(StubAgentServer::default_response(), cx).await;
-+        let (thread, conversation) = active_thread(&conversation_view, cx)
-+            .read_with(cx, |view, _| {
-+                (view.thread.clone(), view.conversation.clone())
-+            });
-+        let session_id = thread.read_with(cx, |thread, _| thread.session_id().clone());
-+        // A chained command gets one pattern row per sub-command (`ls`, `git status`, `git log`).
-+        let options = ToolPermissionContext::new(
-+            TerminalTool::NAME,
-+            vec!["ls && git status && git log".into()],
-+        )
-+        .build_permission_options();
-+        let (request_id, _response) =
-+            request_test_tool_authorization_with_options(&thread, "pipeline", options, cx);
-+
-+        let toggle = |pattern_index, cx: &mut VisualTestContext| {
-+            conversation.update(cx, |conversation, cx| {
-+                conversation.toggle_permission_pattern(&session_id, request_id, pattern_index, cx);
-+                match conversation.permission_selections.get(&request_id) {
-+                    Some(thread_view::PermissionSelection::SelectedPatterns(checked)) => {
-+                        let mut checked = checked.clone();
-+                        checked.sort();
-+                        Some(checked)
-+                    }
-+                    Some(thread_view::PermissionSelection::Choice(_)) => {
-+                        panic!("toggling a pattern must not select a dropdown choice")
-+                    }
-+                    None => None,
-+                }
-+            })
-+        };
-+        // An index with no matching row must not enter pattern mode.
-+        assert_eq!(toggle(99, cx), None);
-+        // The first click on a row other than the first checks only that row.
-+        assert_eq!(toggle(1, cx), Some(vec![1]));
-+        // Later clicks add only their own row...
-+        assert_eq!(toggle(0, cx), Some(vec![0, 1]));
-+        // ...and remove only their own row.
-+        assert_eq!(toggle(1, cx), Some(vec![0]));
-+        // Unchecking the last row goes back to the default selection.
-+        assert_eq!(toggle(0, cx), None);
-+    }
-+
-     #[gpui::test]
-     async fn test_allow_button_uses_selected_granularity(cx: &mut TestAppContext) {
-         init_test(cx);
-@@ -17669,6 +17716,12 @@ pub(crate) mod tests {
-         cx.run_until_parked();
- 
-         if with_patterns {
-+            let pattern = cx
-+                .debug_bounds("MENU_ITEM-Always for `cargo test` commands")
-+                .expect("the rendered persistent dropdown should offer the cargo pattern");
-+            cx.simulate_click(pattern.center(), gpui::Modifiers::default());
-+            cx.run_until_parked();
-+            // Toggling `sort` on and off must leave only `cargo test` checked.
-             for _ in 0..2 {
-                 let pattern = cx
-                     .debug_bounds("MENU_ITEM-Always for `sort` commands")
 ```
 
-**File**: `crates/agent_ui/src/conversation_view/thread_view.rs` (modified, +3/-2)
+---
+
+### Incident Patch 2: `f88e54ee` (2026-11-18)
+**Commit Message**: agent_ui: Open tool call locations for files that are not text (#67092)
+
+## Summary
+
+Clicking a tool call's location label ("Read screenshot.png"), or the
+"Go to File" button above image tool output, did nothing for image
+files, and each read logged "Binary files are not supported".
+`ToolCall::resolve_location` resolves locations by opening a text
+buffer, which fails for binary files, and `AgentThreadEntry::location`
+required that buffer, so `open_tool_call_location` returned before
+opening anything.
+
+`AgentThreadEntry::location` now returns the resolved location as an
+`Option<AgentLocation>`. `open_tool_call_location` already opens the
+path through the workspace (which picks the image viewer for images), so
+the resolved anchor is only used to place the cursor, falling back to
+the reported line when unresolved. This also makes a text file location
+clickable before resolution finishes. An earlier attempt, #65860, was
+closed by the CLA bot without review.
+
+Known limit, unchanged here: when one tool call lists several locations
+the label is not clickable (existing `locations.len() == 1` rule), and
+every image output's "Go to File" opens the first location, because ACP
+doesn't link con
+
+**File**: `crates/acp_thread/src/acp_thread.rs` (modified, +17/-11)
 ```diff
-@@ -691,7 +691,8 @@ pub(crate) enum PermissionSelection {
-     Choice(usize),
-     /// "Select options…" mode where individual command patterns can be toggled.
-     /// Contains the indices of checked patterns in the `patterns` list.
--    /// All patterns start checked when this mode is first activated.
-+    /// Only the pattern the user clicked is checked when this mode is first activated;
-+    /// the user must explicitly check any additional patterns.
-     SelectedPatterns(Vec<usize>),
- }
- 
-@@ -712,7 +713,7 @@ impl PermissionSelection {
+@@ -1122,7 +1122,7 @@ impl AgentThreadEntry {
          }
      }
  
--    fn has_any_checked_patterns(&self) -> bool {
-+    pub(super) fn has_any_checked_patterns(&self) -> bool {
-         match self {
-             Self::SelectedPatterns(checked) => !checked.is_empty(),
-             _ => false,
+-    pub fn location(&self, ix: usize) -> Option<(ToolCallLocation, AgentLocation)> {
++    pub fn location(&self, ix: usize) -> Option<(ToolCallLocation, Option<AgentLocation>)> {
+         if let AgentThreadEntry::ToolCall(ToolCall {
+             locations,
+             resolved_locations,
+@@ -1131,7 +1131,7 @@ impl AgentThreadEntry {
+         {
+             Some((
+                 locations.get(ix)?.clone(),
+-                resolved_locations.get(ix)?.clone()?,
++                resolved_locations.get(ix).cloned().flatten(),
+             ))
+         } else {
+             None
+@@ -18400,10 +18400,9 @@ mod tests {
+         assert_eq!(absolute.path, respelled.path);
+         thread.update(cx, |thread, cx| {
+             let (index, call) = thread.tool_call(&id).expect("tool");
+-            let (location, _) = thread.entries[index]
+-                .location(0)
+-                .expect("resolved location");
++            let (location, resolved) = thread.entries[index].location(0).expect("location");
+             assert_eq!(location, absolute);
++            assert!(resolved.is_some());
+             let resolved_locations = call.resolved_locations.clone();
+             thread
+                 .upsert_wire_tool_call(acp_v2::ToolCallUpdate::new("location-migration"), cx)
+@@ -18427,15 +18426,17 @@ mod tests {
+             let (index, call) = thread.tool_call(&id).expect("tool");
+             assert_eq!(call.locations, vec![respelled.clone()]);
+             assert!(call.resolved_locations.is_empty());
+-            assert!(thread.entries[index].location(0).is_none());
++            assert_eq!(
++                thread.entries[index].location(0),
++                Some((respelled.clone(), None))
++            );
+         });
+         cx.run_until_parked();
+         thread.update(cx, |thread, cx| {
+             let (index, _) = thread.tool_call(&id).expect("tool");
+-            let (location, _) = thread.entries[index]
+-                .location(0)
+-                .expect("refreshed projection");
++            let (location, resolved) = thread.entries[index].location(0).expect("location");
+             assert_eq!(location, respelled);
++            assert!(resolved.is_some(), "refreshed projection");
+             thread
+                 .update_tool_call(
+                     acp_v1::ToolCallUpdate::new(
+@@ -18452,7 +18453,10 @@ mod tests {
+             let (index, call) = thread.tool_call(&id).expect("tool");
+             assert_eq!(call.locations, vec![relative.clone()]);
+             assert!(call.resolved_locations.is_empty());
+-            assert!(thread.entries[index].location(0).is_none());
++            assert_eq!(
++                thread.entries[index].location(0),
++                Some((relative.clone(), None))
++            );
+         });
+         cx.run_until_parked();
+         thread.update(cx, |thread, cx| {
+@@ -19066,8 +19070,10 @@ mod tests {
+         thread.read_with(cx, |thread, cx| {
+             let (tool_call_location, agent_location) = thread.entries[0]
+                 .location(0)
+-                .expect("external tool-call location should resolve");
++                .expect("external tool-call location");
+             assert_eq!(tool_call_location.path, skill_path);
++            let agent_location =
++                agent_location.expect("external tool-call location should resolve");
+ 
+             let buffer = agent_location
+                 .buffer
+```
+
+**File**: `crates/agent_ui/src/conversation_view/thread_view.rs` (modified, +98/-0)
+```diff
+@@ -11817,6 +11817,7 @@ impl ThreadView {
+                 active_editor.update_in(cx, |editor, window, cx| {
+                     let snapshot = editor.buffer().read(cx).snapshot(cx);
+                     if snapshot.as_singleton().is_some()
++                        && let Some(agent_location) = agent_location
+                         && let Some(anchor) = snapshot.anchor_in_excerpt(agent_location.position)
+                     {
+                         editor.change_selections(Default::default(), window, cx, |selections| {
+@@ -15918,6 +15919,103 @@ mod tests {
+ 
+         fn flush(&self) {}
+     }
++
++    #[gpui::test]
++    async fn test_open_tool_call_location_without_resolved_buffer(cx: &mut gpui::TestAppContext) {
++        use agent_client_protocol::v1::schema as acp;
++
++        crate::conversation_view::tests::init_test(cx);
++        cx.update(|cx| {
++            agent::ThreadStore::init_global(cx);
++            language_model::LanguageModelRegistry::test(cx);
++        });
++
++        let fs = FakeFs::new(cx.executor());
++        fs.insert_tree(
++            path!("/project"),
++            json!({"notes.txt": "first\nsecond\nthird\n"}),
++        )
++        .await;
++        fs.insert_file(
++            path!("/project/screenshot.png"),
++            b"\x89PNG\r\n\x1a\n\0\0\0\rIHDR\0\0\0\x01".to_vec(),
++        )
++        .await;
++        let project = Project::test(fs, [path!("/project").as_ref()], cx).await;
++        let (multi_workspace, cx) =
++            cx.add_window_view(|window, cx| MultiWorkspace::test_new(project.clone(), window, cx));
++        let workspace = multi_workspace.read_with(cx, |workspace, _| workspace.workspace().clone());
++        let panel = workspace.update_in(cx, |workspace, window, cx| {
++            let panel = cx.new(|cx| crate::AgentPanel::new(workspace, window, cx));
++            workspace.add_panel(panel.clone(), window, cx);
++            panel
++        });
++        let connection = acp_thread::StubAgentConnection::new();
++        crate::test_support::open_thread_with_connection(&panel, connection.clone(), cx);
++        let session_id = crate::test_support::active_session_id(&panel, cx);
++        let thread_view = panel.read_with(cx, |panel, cx| {
++            panel.active_thread_view(cx).expect("active thread view")
++        });
++
++        let send_read =
++            |id: &'static str, path: &str, line: Option<u32>, cx: &mut gpui::VisualTestContext| {
++                cx.update(|_window, cx| {
++                    connection.send_update(
++                        session_id.clone(),
++                        acp::SessionUpdate::ToolCall(
++                            acp::ToolCall::new(acp::ToolCallId::new(id), "Read")
++                                .kind(acp::ToolKind::Read)
++                                .locations(vec![acp::ToolCallLocation::new(path).line(line)]),
++                        ),
++                        cx,
++                    );
++                });
++                thread_view.read_with(cx, |thread_view, cx| {
++                    thread_view
++                        .thread
++                        .read(cx)
++                        .tool_call(&acp_v2::ToolCallId::new(id))
++                        .expect("tool call")
++                        .0
++                })
++            };
++        let open_location = |entry_ix: usize, cx: &mut gpui::VisualTestContext| {
++            thread_view.update_in(cx, |thread_view, window, cx| {
++                thread_view.open_tool_call_location(entry_ix, 0, window, cx);
++            });
++            cx.run_until_parked();
++            workspace.read_with(cx, |workspace, cx| {
++                workspace.active_item(cx).expect("location should open")
++            })
++        };
++
++        let image_ix = send_read("read-image", path!("/project/screenshot.png"), None, cx);
++        cx.run_until_parked();
++        thread_view.read_with(cx, |thread_view, cx| {
++            let (_, resolved) = thread_view.thread.read(cx).entries()[image_ix]
++                .location(0)
++                .expect("location");
++            assert!(resolved.is_none(), "binary files never resolve to a buffer");
++        });
++        let item = open_location(image_ix, cx);
++        cx.read(|cx| {
++            assert_eq!(item.tab_content_text(0, cx), "screenshot.png");
++            assert!(item.downcast::<Editor>().is_none());
++        });
++
++        // Clicking before resolution finishes still opens the reported line.
++        let text_ix = send_read("read-text", path!("/project/notes.txt"), Some(2), cx);
++        let editor = open_location(text_ix, cx)
++            .downcast::<Editor>()
++            .expect("text file should open in an editor");
++        editor.update_in(cx, |editor, window, cx| {
++            let snapshot = editor.snapshot(window, cx);
++            assert_eq!(
++                editor.selections.newest::<Point>(&snapshot).head(),
++                Point::new(1, 0)
++            );
++        });
++    }
+ }
+ 
+ const FAST_MODE_WARNIN
+```
+
+---
+
+### Incident Patch 3: `da294762` (2026-11-18)
+**Commit Message**: editor: Fix crash after moving a project with a split diff to a new window (#67128)
+
+## Summary
+
+Fixes #66688.
+
+When splitting, the RHS display map has a weak reference to the LHS
+display map. If the RHS editor outlives the `SplittableEditor`, the LHS
+display map will be deallocated. However, the scroll anchor may still
+refer to it. This leads to a panic in `ScrollManager::native_anchor` at
+line `scroll.rs:242`.
+
+This PR ensures that the same clean-up as in `unsplit` occurs when the
+`SplittableEditor` is released. The first commit refactors this clean-up
+into a function that takes a `&mut App`. The second commit adds this
+function to an `on_release` handler.
+
+We choose to do clean-up on release rather than adding fallback logic in
+`native_anchor`, as it removes the stale state in its source. Fallback
+logic can be added if desired.
+
+## Testing
+
+- Added test case `test_rhs_editor_outlives_released_split`. This
+scrolls within the LHS, releases the split editor, ensures that the RHS
+editor lives longer, and attempts to get the native anchor. Before this
+change, this test panics with the error given in the issue. After this
+change, the test passes.
+- All tests pass in `cargo test -p edi
+
+**File**: `crates/editor/src/split.rs` (modified, +102/-17)
+```diff
+@@ -663,6 +663,13 @@ impl SplittableEditor {
+                     cx.notify();
+                 }
+             }),
++            // Either editor can outlive this one and the other editor. A scroll anchor set by the
++            // other side can't be converted once that side's display map is released.
++            cx.on_release(|this, cx| {
++                if let Some(lhs) = &this.lhs {
++                    Self::unshare_scroll_anchors(&lhs.editor, &this.rhs_editor, cx);
++                }
++            }),
+         ];
+ 
+         let this = cx.weak_entity();
+@@ -1158,27 +1165,14 @@ impl SplittableEditor {
+             return;
+         };
+ 
+-        // Detach the stale lhs editor from the shared scroll anchor while the split companion still exists,
+-        // so its anchor can be converted to lhs native before rhs tears down split specific state.
+-        lhs.editor.update(cx, |editor, cx| {
+-            let lhs_snapshot = editor.display_map.update(cx, |dm, cx| dm.snapshot(cx));
+-            editor
+-                .scroll_manager
+-                .unshare_scroll_anchor(&lhs_snapshot, cx);
++        // Converting an anchor set by the other side relies on split state that the teardown below removes.
++        Self::unshare_scroll_anchors(&lhs.editor, &self.rhs_editor, cx);
++
++        lhs.editor.update(cx, |editor, _| {
+             editor.set_on_local_selections_changed(None);
+         });
+ 
+         self.rhs_editor.update(cx, |rhs, cx| {
+-            let rhs_snapshot = rhs.display_map.update(cx, |dm, cx| dm.snapshot(cx));
+-            let native_anchor = rhs.scroll_manager.native_anchor(&rhs_snapshot, cx);
+-            let rhs_display_map_id = rhs_snapshot.display_map_id;
+-            rhs.scroll_manager
+-                .scroll_anchor_entity()
+-                .update(cx, |shared, _| {
+-                    shared.scroll_anchor = native_anchor;
+-                    shared.display_map_id = Some(rhs_display_map_id);
+-                });
+-
+             rhs.set_on_local_selections_changed(None);
+             rhs.set_delegate_expand_excerpts(false);
+             rhs.buffer().update(cx, |buffer, cx| {
+@@ -1193,6 +1187,31 @@ impl SplittableEditor {
+         cx.notify();
+     }
+ 
++    fn unshare_scroll_anchors(
++        lhs_editor: &Entity<Editor>,
++        rhs_editor: &Entity<Editor>,
++        cx: &mut App,
++    ) {
++        lhs_editor.update(cx, |editor, cx| {
++            let lhs_snapshot = editor.display_map.update(cx, |dm, cx| dm.snapshot(cx));
++            editor
++                .scroll_manager
++                .unshare_scroll_anchor(&lhs_snapshot, cx);
++        });
++
++        rhs_editor.update(cx, |rhs, cx| {
++            let rhs_snapshot = rhs.display_map.update(cx, |dm, cx| dm.snapshot(cx));
++            let native_anchor = rhs.scroll_manager.native_anchor(&rhs_snapshot, cx);
++            let rhs_display_map_id = rhs_snapshot.display_map_id;
++            rhs.scroll_manager
++                .scroll_anchor_entity()
++                .update(cx, |shared, _| {
++                    shared.scroll_anchor = native_anchor;
++                    shared.display_map_id = Some(rhs_display_map_id);
++                });
++        });
++    }
++
+     pub fn update_excerpts_for_path(
+         &mut self,
+         path: PathKey,
+@@ -4569,6 +4588,72 @@ mod tests {
+         )
+     }
+ 
++    #[gpui::test]
++    async fn test_rhs_editor_outlives_released_split(cx: &mut gpui::TestAppContext) {
++        use multi_buffer::ToPoint as _;
++        use rope::Point;
++
++        let (editor, cx) = init_test(cx, SoftWrap::None, DiffViewStyle::Split).await;
++
++        let content = (0..50)
++            .map(|row| format!("line {row}"))
++            .collect::<Vec<_>>()
++            .join("\n");
++        let (buffer, diff) = buffer_with_diff(&content, &content, cx);
++
++        editor.update(cx, |editor, cx| {
++            editor.update_excerpts_for_path(
++                PathKey::sorted(0),
++                buffer.clone(),
++                vec![Point::new(0, 0)..buffer.read(cx).max_point()],
++                0,
++                diff.clone(),
++                cx,
++            );
++        });
++        cx.run_until_parked();
++
++        let (rhs_editor, lhs_editor) = editor.update(cx, |editor, _cx| {
++            let lhs = editor.lhs.as_ref().expect("should have lhs editor");
++            (editor.rhs_editor.clone(), lhs.editor.clone())
++        });
++
++        // Scroll from the lhs so that the shared anchor is native to the lhs display map.
++        lhs_editor.update_in(cx, |editor, window, cx| {
++            editor.set_scroll_position(gpui::Point::new(0., 10.), window, cx);
++        });
++        cx.run_until_parked();
++
++        let expected_row = rhs_editor.update(cx, |editor, cx| {
++            let snapshot = editor.display_snapshot(cx);
++            editor
++                .scroll_manager
++                .native_anchor(&snapshot, cx)
++                .anchor
++                .to_point(snapshot.buffer_snapshot())
++                .row
++        });
++
+
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #67101** (2026-11-17): helix: Honor `use_system_clipboard` (#66906) (cherry-pick to stable) (@zed-zippy[bot])
-- **PR #67100** (2026-11-17): helix: Honor `use_system_clipboard` (#66906) (cherry-pick to preview) (@zed-zippy[bot])
-- **PR #67093** (2026-11-17): Fix empty strip at bottom of commit modal (#67090) (cherry-pick to preview) (@zed-zippy[bot])
-- **PR #67090** (2026-11-17): Fix empty strip at bottom of commit modal (@keantx)
-- **PR #67088** (closed): gpui: Add TextLayout::try_bounds (@TriptoAfsin)
-- **PR #67079** (2026-11-17): onboarding: Keep header pinned while scrolling (@aakashbapna)
+- **PR #67190** (2026-11-19): agent_ui: Organize ACP config options in the agent composer (@benbrandt)
+- **PR #67189** (2026-11-19): search: Ensure text finder clears on no results (#67147) (cherry-pick to stable) (@zed-zippy[bot])
+- **PR #67188** (2026-11-19): search: Ensure text finder clears on no results (#67147) (cherry-pick to preview) (@zed-zippy[bot])
+- **PR #67186** (2026-11-19): sandbox_linux: Remove timeout (@cameron1024)
+- **PR #67185** (closed): Update zed  (@Jose-PS)
+- **PR #67184** (2026-11-19): Add an Ultrafast response speed picker (@bennetbo)
 
 ---
 
@@ -2948,61 +2998,6 @@ previous version of this PR are gone.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. agent_ui: Keep focus when background threads auto-send queued messages
-
-**RULE**:
-When implementing operations in `crates/agent_ui/src/conversation_view.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `d39178f6`: agent_ui: Keep focus when background threads auto-send queued messages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/agent_ui/src/conversation_view.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-    #[gpui::test]
-    async fn test_auto_sending_queued_messages_preserves_focus(cx: &mut TestAppContext) {
-        init_test(cx);
-
-        let connection = StubAgentConnection::new();
-        let (background_conversation, cx) =
-            setup_conversation_view(StubAgentServer::new(connection.clone()), cx).await;
-        add_to_workspace(background_conversation.clone(), cx);
-        let background_thread = active_thread(&background_conversation, cx);
-        message_editor(&background_conversation, cx).update_in(cx, |editor, window, cx| {
-            editor.set_text("first", window, cx);
-        });
-        background_thread.update_in(cx, |view, window, cx| view.send(window, cx));
-        cx.run_until_parked();
-
-        let session_id = background_thread.update_in(cx, |view, window, cx| {
-            view.add_to_queue(vec!["second".into()], vec![], window, cx);
-            view.add_to_queue(vec!["third".into()], vec![], window, cx);
-            view.thread.read(cx).session_id().clone()
-        });
-
-        let foreground_conversation = background_conversation.update_in(cx, |view, window, cx| {
-            cx.new(|cx| {
-                ConversationView::new(
-                    v
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d39178f6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

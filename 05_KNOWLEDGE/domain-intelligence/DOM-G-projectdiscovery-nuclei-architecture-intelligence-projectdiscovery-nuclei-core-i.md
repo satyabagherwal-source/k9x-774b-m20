@@ -4,24 +4,24 @@
 {
   "source_repository": "projectdiscovery/nuclei",
   "source_url": "https://github.com/projectdiscovery/nuclei",
-  "source_version": "28b60e68",
+  "source_version": "2e587bc5",
   "license": "MIT",
-  "timestamp": "2026-11-18T23:26:15.059Z",
+  "timestamp": "2026-11-19T16:07:24.487Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-projectdiscovery-nuclei",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `28b60e68`).  
-> **License**: MIT | **Timestamp**: `2026-11-18T23:26:15.059Z`  
+> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `2e587bc5`).  
+> **License**: MIT | **Timestamp**: `2026-11-19T16:07:24.487Z`  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), A (Human & Need Intelligence), H (Technical Construction Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from projectdiscovery/nuclei:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T23:26:13.955Z  
+> **Harvest Timestamp**: 2026-11-19T16:07:23.248Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 33088 stars
+- **Stars / Engagement**: 33121 stars
 
 ---
 
@@ -1620,541 +1620,1110 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `28b60e68` (2026-11-18)
-**Commit Message**: Merge pull request #8173 from projectdiscovery/feat/7387-raw-body
+### Incident Patch 1: `5fbb495d` (2026-11-19)
+**Commit Message**: fix(http): start the @timeout deadline when the request is sent
 
-add raw_body and raw_response http parts
+A request's timeout should bound its exchange with the host, not the
+time it spends queued. a4422d896 moved the default HTTP timeout into
+executeRequest, after the rate-limit token and the body budget, but a
+template that uses @timeout still got its deadlines from
+parseAnnotations while the request was being built. Every raw request
+of such a template, annotated or not, spent that deadline waiting for
+a token, so a request paced past it failed with "context deadline
+exceeded" without being sent, and its token was used up anyway.
 
-**File**: `SYNTAX-REFERENCE.md` (modified, +2/-0)
+parseAnnotations now records the timeout and its cause, and
+executeRequest starts it when the request is sent, as it does for the
+default timeout. Each kind of timeout keeps the cause it had.
+
+A @timeout that does not parse or is not positive now gets the default
+timeout on every path. Only the sequential path used to fill the
+default in, so the parallel, race and pipeline paths sent such a
+request with no deadline for an unparsable value, and with one that
+had already expired for a zero or negative value.
+
+Fixes: #8176
+Fixes: #8179
+Refs: #8162
+Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
+
+**File**: `pkg/protocols/http/build_request.go` (modified, +15/-15)
 ```diff
-@@ -1021,6 +1021,8 @@ Part Definitions:
- - <code>response</code> - HTTP response received from server
- - <code>status_code</code> - Status Code received from the Server
- - <code>body</code> - HTTP response body received from server (default)
-+- <code>raw_body</code> - HTTP response body as received, before content decoding
-+- <code>raw_response</code> - HTTP response headers followed by raw_body
- - <code>content_length</code> - HTTP Response content length
- - <code>header,all_headers</code> - HTTP response headers
- - <code>duration</code> - HTTP request time duration
+@@ -74,17 +74,19 @@ var (
+ 
+ // generatedRequest is a single generated request wrapped for a template request
+ type generatedRequest struct {
+-	original             *Request
+-	rawRequest           *raw.Request
+-	meta                 map[string]interface{}
+-	pipelinedClient      *rawhttp.PipelineClient
+-	request              *retryablehttp.Request
+-	dynamicValues        map[string]interface{}
+-	interactshURLs       []string
+-	customCancelFunction context.CancelFunc
+-	// sendTimeout starts after the body budget admits the request.
+-	sendTimeout  time.Duration
+-	bodyReserved bool
++	original        *Request
++	rawRequest      *raw.Request
++	meta            map[string]any
++	pipelinedClient *rawhttp.PipelineClient
++	request         *retryablehttp.Request
++	dynamicValues   map[string]any
++	interactshURLs  []string
++	// sendTimeout bounds the exchange with the host, and sendTimeoutCause is
++	// the error it ends with. executeRequest starts it after the rate-limit
++	// and backoff waits and the body budget, so no wait uses it up.
++	sendTimeout      time.Duration
++	sendTimeoutCause error
++	bodyReserved     bool
+ 	// requestURLPattern tracks unmodified request url pattern without values ( it is used for constant vuln_hash)
+ 	// ex: {{BaseURL}}/api/exp?param={{randstr}}
+ 	requestURLPattern string
+@@ -608,9 +610,6 @@ func (r *requestGenerator) generateRawRequest(ctx context.Context, rawRequest st
+ 		}
+ 
+ 		unsafeReq := &generatedRequest{rawRequest: rawRequestData, meta: generatorValues, original: r.request, interactshURLs: r.interactshURLs}
+-		if annotationOverrides.cancelFunc != nil {
+-			unsafeReq.customCancelFunction = annotationOverrides.cancelFunc
+-		}
+ 
+ 		if len(annotationOverrides.interactshURLs) > 0 {
+ 			unsafeReq.interactshURLs = append(unsafeReq.interactshURLs, annotationOverrides.interactshURLs...)
+@@ -669,7 +668,8 @@ func (r *requestGenerator) generateRawRequest(ctx context.Context, rawRequest st
+ 			return nil, errkit.Wrap(reqWithOverrides.err, "failed to apply raw request annotations")
+ 		}
+ 		generatedRequest.request = reqWithOverrides.request
+-		generatedRequest.customCancelFunction = reqWithOverrides.cancelFunc
++		generatedRequest.sendTimeout = reqWithOverrides.timeout
++		generatedRequest.sendTimeoutCause = reqWithOverrides.timeoutCause
+ 		generatedRequest.interactshURLs = append(generatedRequest.interactshURLs, reqWithOverrides.interactshURLs...)
+ 	}
+ 
 ```
 
-**File**: `pkg/protocols/http/cluster.go` (modified, +1/-1)
+**File**: `pkg/protocols/http/request.go` (modified, +5/-6)
 ```diff
-@@ -18,5 +18,5 @@ func (request *Request) TmplClusterKey() uint64 {
- // IsClusterable returns true if the request is eligible to be clustered.
- func (request *Request) IsClusterable() bool {
- 	//nolint
--	return !(len(request.Payloads) > 0 || len(request.Fuzzing) > 0 || len(request.Raw) > 0 || len(request.Body) > 0 || request.Unsafe || request.NeedsRequestCondition() || request.Name != "")
-+	return !(len(request.Payloads) > 0 || len(request.Fuzzing) > 0 || len(request.Raw) > 0 || len(request.Body) > 0 || request.Unsafe || request.NeedsRequestCondition() || request.Name != "" || request.readsRawResponse)
+@@ -708,8 +708,10 @@ executionLoop:
+ 				return false, true, nil, err
+ 			}
+ 			defer reservation.done()
+-			if generatedHttpRequest.customCancelFunction == nil {
++
++			if generatedHttpRequest.sendTimeout == 0 {
+ 				generatedHttpRequest.sendTimeout = request.options.Options.GetTimeouts().HttpTimeout
++				generatedHttpRequest.sendTimeoutCause = ErrHttpEngineRequestDeadline
+ 			}
+ 			// ideally if http template used a custom port or hostname
+ 			// we would want to update it in input but currently templateCtx logic
+@@ -723,10 +725,6 @@ executionLoop:
+ 				return false, true, nil, err
+ 			}
+ 
+-			if generatedHttpRequest.customCancelFunction != nil {
+-				defer generatedHttpRequest.customCancelFunction()
+-			}
+-
+ 			hasInteractMarkers := interactsh.HasMarkers(data) || len(generatedHttpRequest.interactshURLs) > 0
+ 			if input.MetaInput.Input == "" {
+ 				input.MetaInput.Input = generatedHttpRequest.URL()
+@@ -1094,7 +1092,8 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
+ 		defer releaseBody()
+ 	}
+ 	if generatedRequest.sendTimeout > 0 && generatedRequest.request != nil {
+-		ctx, cancel := context.WithTimeoutCause(generatedRequest.request.Context(), generatedRequest.sendTimeout, ErrHttpEngineRequestDeadline)
++		ctx, cancel := context.WithTimeoutCause(
++			generatedRequest.request.Context(), generatedRequest.sendTimeout, generatedRequest.sendTimeoutCause)
+ 		defer cancel()
+ 		generatedRequest.request = generatedRequest.request.WithContext(ctx)
+ 	}
+```
+
+**File**: `pkg/protocols/http/request_annotations.go` (modified, +18/-11)
+```diff
+@@ -72,8 +72,11 @@ func hasTimeoutAnnotation(rawRequest string) bool {
  }
+ 
+ type annotationOverrides struct {
+-	request        *retryablehttp.Request
+-	cancelFunc     context.CancelFunc
++	request *retryablehttp.Request
++	// timeout bounds the request once it is sent, and timeoutCause is the
++	// error it ends with.
++	timeout        time.Duration
++	timeoutCause   error
+ 	interactshURLs []string
+ 	err            error
+ }
+@@ -146,30 +149,34 @@ func (r *Request) parseAnnotations(rawRequest string, request *retryablehttp.Req
+ 	}
+ 
+ 	// @timeout:duration
++	// The timeout is only recorded here. executeRequest starts it after the
++	// rate-limit and body-budget waits, so those waits do not use it up (#8176).
++	// NoTimeout leaves the client without the HTTP timeout, so every request
++	// records one: the default, unless a valid annotation replaces it.
+ 	if r.connConfiguration.NoTimeout {
+ 		modified = true
+-		var ctx context.Context
++		overrides.timeout, overrides.timeoutCause = r.options.Options.GetTimeouts().HttpTimeout, ErrRequestTimeoutDeadline
+ 
+ 		if duration := reTimeoutAnnotation.FindStringSubmatch(annotations); len(duration) > 0 {
+ 			value := strings.TrimSpace(duration[1])
+-			if parsedTimeout, err := time.ParseDuration(value); err == nil {
++			parsedTimeout, err := time.ParseDuration(value)
++			// A timeout that does not parse or is not positive keeps the default.
++			if err == nil && parsedTimeout > 0 {
+ 				// Cap at maximum allowed timeout to prevent DoS via extremely large timeout values
+ 				if parsedTimeout > maxAnnotationTimeout {
+ 					parsedTimeout = maxAnnotationTimeout
+ 				}
+ 
+-				//nolint:govet // cancelled automatically by withTimeout
+-				// global timeout is overridden by annotation by replacing context
+-				ctx, overrides.cancelFunc = context.WithTimeoutCause(context.TODO(), parsedTimeout, ErrTimeoutAnnotationDeadline)
++				overrides.timeout, overrides.timeoutCause = parsedTimeout, ErrTimeoutAnnotationDeadline
++				// The replaced context drops the input's cancellation (#8178).
++				ctx := context.TODO()
+ 				// add timeout value to context
+ 				ctx = context.WithValue(ctx, httpclientpool.WithCustomTimeout{}, httpclientpool.WithCustomTimeout{Timeout: parsedTimeout})
+ 				request = request.Clone(ctx)
+ 			}
+ 		} else {
+-			//nolint:govet // cancelled automatically by withTimeout
+-			// global timeout is overridden by annotation by replacing context
+-			ctx, overrides.cancelFunc = context.WithTimeoutCause(context.TODO(), r.options.Options.GetTimeouts().HttpTimeout, ErrRequestTimeoutDeadline)
+-			request = request.Clone(ctx)
++			// The replaced context drops the input's cancellation (#8178).
++			request = request.Clone(context.TODO())
+ 		}
+ 	}
+ 
 ```
 
-**File**: `pkg/protocols/http/http.go` (modified, +28/-7)
+**File**: `pkg/protocols/http/request_annotations_test.go` (modified, +54/-26)
 ```diff
-@@ -5,6 +5,7 @@ import (
- 	"fmt"
- 	"math"
+@@ -83,7 +83,7 @@ func TestRequestParseAnnotationsSNI(t *testing.T) {
+ 		require.ErrorIs(t, overrides.err, commoninteractsh.ErrInteractshClientNotInitialized)
+ 		require.Empty(t, overrides.interactshURLs)
+ 		require.Same(t, httpReq, overrides.request)
+-		require.Nil(t, overrides.cancelFunc)
++		require.Zero(t, overrides.timeout)
+ 	})
+ }
+ 
+@@ -101,21 +101,18 @@ func TestRequestParseAnnotationsTimeout(t *testing.T) {
+ 		require.Nil(t, err, "could not create http request")
+ 
+ 		overrides, modified := request.parseAnnotations(rawRequest, httpReq)
+-		require.NotNil(t, overrides.cancelFunc, "could not initialize valid cancel function")
+ 		require.True(t, modified, "could not get correct modified value")
++		require.Equal(t, 2*time.Second, overrides.timeout, "timeout value mismatch")
++		require.ErrorIs(t, overrides.timeoutCause, ErrTimeoutAnnotationDeadline)
+ 
+-		// Verify context has deadline
+-		deadline, deadlined := overrides.request.Context().Deadline()
+-		require.True(t, deadlined, "could not get set request deadline")
++		// The deadline starts when the request is sent, not when it is built.
++		_, deadlined := overrides.request.Context().Deadline()
++		require.False(t, deadlined, "request deadline started before the request was sent")
+ 
+ 		// Verify the timeout value is stored in context
+ 		customTimeout, ok := overrides.request.Context().Value(httpclientpool.WithCustomTimeout{}).(httpclientpool.WithCustomTimeout)
+ 		require.True(t, ok, "custom timeout not found in context")
+ 		require.Equal(t, 2*time.Second, customTimeout.Timeout, "timeout value mismatch")
+-
+-		// Verify deadline is approximately 2 seconds from now
+-		expectedDeadline := time.Now().Add(2 * time.Second)
+-		require.WithinDuration(t, expectedDeadline, deadline, 100*time.Millisecond, "deadline not set correctly")
+ 	})
+ 
+ 	t.Run("large-timeout", func(t *testing.T) {
+@@ -133,23 +130,17 @@ func TestRequestParseAnnotationsTimeout(t *testing.T) {
+ 		require.Nil(t, err, "could not create http request")
+ 
+ 		overrides, modified := request.parseAnnotations(rawRequest, httpReq)
+-		require.NotNil(t, overrides.cancelFunc, "could not initialize valid cancel function")
+ 		require.True(t, modified, "could not get correct modified value")
+ 
+-		// Verify context has deadline
+-		deadline, deadlined := overrides.request.Context().Deadline()
+-		require.True(t, deadlined, "could not get set request deadline")
+-
+ 		// Verify the timeout was capped at 5 minutes (not 10 minutes)
+ 		customTimeout, ok := overrides.request.Context().Value(httpclientpool.WithCustomTimeout{}).(httpclientpool.WithCustomTimeout)
+ 		require.True(t, ok, "custom timeout not found in context")
+ 
+ 		require.Equal(t, 5*time.Minute, customTimeout.Timeout, "timeout should be capped at 5 minutes")
+ 		require.Less(t, customTimeout.Timeout, 10*time.Minute, "timeout should be less than requested 10 minutes")
+ 
+-		// Verify deadline matches the capped timeout
+-		expectedDeadline := time.Now().Add(5 * time.Minute)
+-		require.WithinDuration(t, expectedDeadline, deadline, 100*time.Millisecond, "deadline not set to capped timeout")
++		// Verify the request carries the capped timeout
++		require.Equal(t, 5*time.Minute, overrides.timeout, "request timeout not set to capped timeout")
+ 	})
+ 
+ 	t.Run("below-cap-timeout", func(t *testing.T) {
+@@ -167,22 +158,16 @@ func TestRequestParseAnnotationsTimeout(t *testing.T) {
+ 		require.Nil(t, err, "could not create http request")
+ 
+ 		overrides, modified := request.parseAnnotations(rawRequest, httpReq)
+-		require.NotNil(t, overrides.cancelFunc, "could not initialize valid cancel function")
+ 		require.True(t, modified, "could not get correct modified value")
+ 
+-		// Verify context has deadline
+-		deadline, deadlined := overrides.request.Context().Deadline()
+-		require.True(t, deadlined, "could not get set request deadline")
+-
+ 		// Verify the timeout is NOT capped - should be 2 minutes
+ 		customTimeout, ok := overrides.request.Context().Value(httpclientpool.WithCustomTimeout{}).(httpclientpool.WithCustomTimeout)
+ 		require.True(t, ok, "custom timeout not found in context")
+ 
+ 		require.Equal(t, 2*time.Minute, customTimeout.Timeout, "timeout should be the requested 2 minutes")
+ 
+-		// Verify deadline matches the requested timeout
+-		expectedDeadline := time.Now().Add(2 * time.Minute)
+-		require.WithinDuration(t, expectedDeadline, deadline, 100*time.Millisecond, "deadline not set to requested timeout")
++		// Verify the request carries the requested timeout
++		require.Equal(t, 2*time.Minute, overrides.timeout, "request timeout not set to requested timeout")
+ 	})
+ 
+ 	t.Run("negative", func(t *testing.T) {
+@@ -197,11 +182,54 @@ func TestRequestParseAnnotationsTimeout(t *testing.T) {
+ 		require.Nil(t, err, "could not create http request")
+ 
+ 		newRequestWithOverrides, modified := request.parseAnnotations(rawRequest, httpReq)
+-		require.Nil(t, newRequestWithOverrides.cancelFunc, "cancel function should be nil")
++		require.Zero(t, newRequestWithOverrides.timeout, "timeout should be 
+```
+
+**File**: `pkg/protocols/http/request_test.go` (modified, +166/-0)
+```diff
+@@ -9,6 +9,7 @@ import (
+ 	"net"
  	"net/http"
+ 	"net/http/httptest"
 +	"slices"
  	"strings"
- 	"time"
- 
-@@ -151,6 +152,9 @@ type Request struct {
- 	// sharesResponse lets other templates reuse a response this request gets,
- 	// and this request reuse theirs (see httpclientpool.WithSharedResponse)
- 	sharesResponse bool
-+	// readsRawResponse keeps the response bytes as received, before content
-+	// decoding, for the raw_body and raw_response parts
-+	readsRawResponse bool
- 
- 	// description: |
- 	//   SelfContained specifies if the request is self-contained.
-@@ -301,6 +305,8 @@ var RequestPartDefinitions = map[string]string{
- 	"response":              "HTTP response received from server",
- 	"status_code":           "Status Code received from the Server",
- 	"body":                  "HTTP response body received from server (default)",
-+	"raw_body":              "HTTP response body as received, before content decoding",
-+	"raw_response":          "HTTP response headers followed by raw_body",
- 	"content_length":        "HTTP Response content length",
- 	"header,all_headers":    "HTTP response headers",
- 	"duration":              "HTTP request time duration",
-@@ -591,21 +597,36 @@ func (request *Request) Compile(options *protocols.ExecutorOptions) error {
- 		request.connConfiguration.Connection.DisableKeepAlive = true
- 	}
- 	request.sharesResponse = canShareResponse(request, options.Flow)
-+	request.readsRawResponse = reads(request, options.Flow, "raw_body", "raw_response")
- 	return nil
+ 	"sync"
+ 	"sync/atomic"
+@@ -836,6 +837,171 @@ func TestHTTPExtractMultipleReuseStopsOnceBranchesAfterCancellation(t *testing.T
+ 	require.Less(t, time.Since(startedAt), 750*time.Millisecond)
  }
  
- // canShareResponse reports whether a response another template got for the
- // same request is as good as sending it again. A shared response arrives at
- // once, so nothing that measures time may take one: race requests, timing
--// analyzers, and a request whose operators or flow read the duration. The
--// operators are searched whole, so a new field that can read it, as LLM
--// matcher inputs do, is covered without being listed.
-+// analyzers, and a request whose operators or flow read the duration.
- func canShareResponse(request *Request, flow string) bool {
--	if request.Race || request.Analyzer != nil || strings.Contains(flow, "duration") {
--		return false
--	}
-+	return !request.Race && request.Analyzer == nil && !reads(request, flow, "duration")
-+}
-+
-+// reads reports whether the operators or flow of request may read any of
-+// parts. The operators are searched whole, so a new field that can read a
-+// part, as LLM matcher inputs do, is covered without being listed.
-+func reads(request *Request, flow string, parts ...string) bool {
- 	operators, err := json.Marshal(request.Operators)
--	return err == nil && !bytes.Contains(operators, []byte("duration"))
-+	if err != nil {
-+		return true
++// A request's timeout bounds its exchange with the host. The wait for a
++// rate-limit token comes before that, so a paced request must still be sent
++// (#8162, #8176).
++//
++//nolint:paralleltest // the cases share the protocol state testutils.Init sets up
++func TestRequestTimeoutStartsAfterRateLimitWait(t *testing.T) {
++	tests := []struct {
++		name string
++		raw  []string
++	}{
++		{
++			name: "default timeout",
++			raw: []string{
++				"GET /first HTTP/1.1\nHost: {{Hostname}}",
++				"GET /second HTTP/1.1\nHost: {{Hostname}}",
++			},
++		},
++		{
++			name: "timeout annotation",
++			raw: []string{
++				"@timeout: 500ms\nGET /first HTTP/1.1\nHost: {{Hostname}}",
++				"@timeout: 500ms\nGET /second HTTP/1.1\nHost: {{Hostname}}",
++			},
++		},
++		{
++			// An annotation on one request turns off the client timeout for
++			// all of them, so the other request takes the default timeout.
++			name: "request beside a timeout annotation",
++			raw: []string{
++				"@timeout: 500ms\nGET /first HTTP/1.1\nHost: {{Hostname}}",
++				"GET /second HTTP/1.1\nHost: {{Hostname}}",
++			},
++		},
 +	}
-+	return slices.ContainsFunc(parts, func(part string) bool {
-+		return strings.Contains(flow, part) || bytes.Contains(operators, []byte(part))
-+	})
-+}
-+
-+// keepsRawResponse reports whether responses keep their bytes as received.
-+// The project file stores those, decoded again when read back, so a cached
-+// response serves templates reading raw_body and the others alike.
-+func (request *Request) keepsRawResponse() bool {
-+	return request.readsRawResponse || request.options.ProjectFile != nil
- }
- 
- // RebuildGenerator rebuilds the generator for the request
-```
-
-**File**: `pkg/protocols/http/raw_body_test.go` (added, +85/-0)
-```diff
-@@ -0,0 +1,85 @@
-+package http
-+
-+import (
-+	"bytes"
-+	"compress/gzip"
-+	"context"
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
-+	"time"
-+
-+	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators/extractors"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators/matchers"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestRawBodyKeepsTheBytesAsReceived(t *testing.T) {
-+	var compressed bytes.Buffer
-+	writer := gzip.NewWriter(&compressed)
-+	writer.ModTime = time.Unix(1700000000, 0)
-+	_, _ = writer.Write([]byte(`{"hello":"world"}`))
-+	require.NoError(t, writer.Close())
-+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Encoding", "gzip")
-+		_, _ = w.Write(compressed.Bytes())
-+	}))
-+	defer ts.Close()
-+
-+	execute := func(t *testing.T, extractor *extractors.Extractor) output.InternalEvent {
-+		options := testutils.DefaultOptions
-+		testutils.Init(options)
-+		request := &Request{
-+			ID:        "raw-body",
-+			Path:      []string{"{{BaseURL}}"},
-+			Operators: operators.Operators{Extractors: []*extractors.Extractor{extractor}},
-+		}
-+		executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
-+			ID:   "raw-body",
-+			Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Info}, Name: "test"},
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			request := &Request{Raw: tt.raw} //nolint:exhaustruct,exhaustruct_v5 // zero values are the template defaults
++			require.Equal(t, []string{"/first", "/second"}, executePacedRequests(t, request))
 +		})
-+		require.NoError(t, request.Compile(executerOpts))
-+
-+		var event output.InternalEvent
-+		err := request.ExecuteWithResults(contextargs.NewWithInput(context.Background(), ts.URL), output.InternalEvent{}, output.InternalEvent{}, func(e *output.InternalWrappedEvent) {
-+			event = e.InternalEvent
-+		})
-+		require.NoError(t, err)
-+		return event
 +	}
-+
-+	t.Run("reading raw_body", func(t *testing.T) {
-+		event := execute(t, &extractors.Extractor{
-+			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
-+			DSL:  []string{"to_string(gzip_mtime(raw_body))"},
-+		})
-+		require.Equal(t, compressed.String(), event["raw_body"])
-+		require.Contains(t, event["raw_response"], compressed.String())
-+		require.Equal(t, `{"hello":"world"}`, event["body"], "body stays decoded")
-+	})
-+	t.Run("not reading it", func(t *testing.T) {
-+		event := execute(t, &extractors.Extractor{
-+			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
-+			DSL:  []string{"body"},
-+		})
-+		require.NotContains(t, event, "raw_body")
-+		require.Equal(t, `{"hello":"world"}`, event["body"])
-+	})
 +}
 +
-+func TestReadsRawResponse(t *testing.T) {
-+	readsRaw := func(request *Request, flow string) bool { return reads(request, flow, "raw_body", "raw_response") }
-+	require.False(t, readsRaw(&Request{Operators: operators.Operators{Matchers: []*matchers.Matcher{{Words: []string{"admin"}}}}}, ""))
-+	require.True(t, readsRaw(&Request{Operators: operators.Operators{Matchers: []*matchers.Matcher{{Part: "raw_body"}}}}, ""))
-+	require.True(t, readsRaw(&Request{Operators: operators.Operators{Extractors: []*extractors.Extractor{{DSL: []string{"gzip_mtime(raw_body)"}}}}}, ""))
-+	require.True(t, readsRaw(&Request{Operators: operators.Operators{Matchers: []*matchers.Matcher{{Part: "raw_response"}}}}, ""))
-+	require.True(t, readsRaw(&Request{}, "http(1) && template.raw_body != ''"))
-+
-+	require.False(t, (&Request{readsRawResponse: true}).IsClusterable(), "a cluster runs on one member's response")
++// The parallel path builds each request before a worker takes its rate-limit
++// token, so the timeout has to start after that wait as well (#8176).
++//
++//nolint:paralleltest // shares the protocol state testutils.Init sets up
++func TestParallelRequestTimeoutStartsAfterRateLimitWait(t *testing.T) {
++	//nolint:exhaustruct,exhaustruct_v5 // zero values are the template defaults
++	request := &Request{
++		Raw:      []string{"@timeout: 500ms\nGET /{{path}} HTTP/1.1\nHost: {{Hostname}}"},
++		Threads:  1,
++		Payloads: map[string]any{"path": []string{"first", "second"}},
++	}
++	require.Equal(t, []string{"/first", "/second"}, executePacedRequests(t, request))
 +}
-```
-
-**File**: `pkg/protocols/http/request.go` (modified, +17/-2)
-```diff
-@@ -1341,6 +1341,13 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 				}
- 			}
- 
-+			if request.keepsRawResponse() && generatedRequest.request.Header.Get("Accept-Encoding") == "" &&
-+				generatedRequest.request.Header.Get("Range") == "" && generatedRequest.request.Method != http.MethodHead {
-+				// the transport decodes a response to the gzip header it adds
-+				// itself, leaving nothing raw; sending the same header keeps the
-+				// request on the wire unchanged
-+				generatedRequest.request.Header.Set("Accept-Encoding", "gzip")
++
++// With @timeout the client has no overall timeout of its own, so the request's
++// deadline bounds reading the response. A valid annotation sets it on every
++// path; one that does not parse or is not positive keeps the default (#8176).
++//
++//nolint:paralleltest // the cases share the protocol state testutils.Init sets up
++func TestTimeoutAnnotationBoundsResponse(t *testing.T) {
++	const stall = 2 * time.Second
++
++	tests := []struct {
++		name        string
++		annotation  string
++		httpTimeout time.Duration
++		parallel    bool
++	}{
++		{name: "annotation, sequential", annotation: "300ms", httpTimeout: time.Minute, parallel: false},
++		{name: "annotation, parallel", annotation: "300ms", httpTimeout: time.Minute, parallel: true},
++		{name: "unparsable annotation, parallel", annotation: "soon", httpTimeout: 300 * time.Millisecond, parallel: true},
++		{name: "zero annotation, parallel", annotation: "0s", httpTimeout: 300 * time.Millisecond, parallel: true},
++	}
++	for _, test := range tests {
++		t.Run(test.name, func(t *testing.T) {
++			options := testutils.DefaultOptions.Copy()
++			timeouts := *options.GetTimeouts()
++			timeouts.HttpTimeout = test.httpTimeout
++			options.SetTimeouts(&timeouts)
++			testutils.Init(options)
++			t.Cleanup(func() { testutils.Cleanup(options) })
++
++			// The headers arrive at once and the body stalls, so only the
++			// request's deadline can end the read before the stall does.
++			server := httptest.NewServer(http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
++				resp.Header().Set("Content-Length", "2")
++				resp.WriteHeader(http.StatusOK)
++				_ = http.NewResponseController(resp).Flush()
++
++				select {
++				case <-req.Context().Done():
++				case <-time.After(stall):
++					_, _ = resp.Write([]byte("ok"))
++				}
++			}))
++			t.Cleanup(server.Close)
++
++			//nolint:exhaustruct,exhaustruct_v5 // zero values are the template defaults
++			request := &Request{Raw: []string{"@timeout: " + test.annotation + "\nGET / HTTP/1.1\nHost: {{Hostname}}"}}
++			if test.parallel {
++				request.Raw = []string{"@timeout: " + test.annotation + "\nGET /?p={{p}} HTTP/1.1\nHost: {{Hostname}}"}
++				request.Threads = 1
++				request.Payloads = map[string]any{"p": []string{"a"}}
 +			}
- 			if request.sharesResponse {
- 				generatedRequest.request.WithContext(httpclientpool.WithSharedResponse(generatedRequest.request.Context(), request.options.TemplateID))
- 			}
-@@ -1510,7 +1517,11 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 
- 	// respChain is http response chain that reads response body
- 	// efficiently by reusing buffers and does all decoding and optimizations
--	respChain := httpUtils.NewResponseChain(resp, int64(maxBodylimit))
-+	newResponseChain := httpUtils.NewResponseChain
-+	if request.keepsRawResponse() {
-+		newResponseChain = httpUtils.NewResponseChainWithRaw
-+	}
-+	respChain := newResponseChain(resp, int64(maxBodylimit))
- 	defer respChain.Close() // reuse buffers
- 
- 	// we only intend to log/save the final redirected response
-@@ -1532,7 +1543,7 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 	onceFunc := sync.OnceFunc(func() {
- 		// if nuclei-project is enabled store the response if not previously done
- 		if request.options.ProjectFile != nil && !fromCache {
--			if err := request.options.ProjectFile.Set(projectCacheKey, resp, respChain.BodyBytes()); err != nil {
-+			if err := request.options.ProjectFile.Set(projectCacheKey, resp, respChain.RawBodyBytes()); err != nil {
- 				errx = errors.Wrap(err, "could not store in project file")
- 			}
- 		}
-@@ -1639,6 +1650,10 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 		}
- 
- 		outputEvent := request.responseToDSLMap(respChain.Response(), input.MetaInput.Input, matchedURL, convUtil.String(dumpedRequest.data), fullResponseStr, bodyStr, headersStr, duration, generatedRequest.meta)
-+		if request.readsRawResponse {
-+			outputEvent["raw_body"] = respChain.RawBodyString()
-+			outputEvent["raw_response"] = respChain.RawFullResponseString()
-+		}
- 		// add response fields to template context and merge templatectx variables to output event
- 		request.options.AddTemplateVars(input.MetaInput, request.Type(), request.ID, outputEvent)
- 		if request.options.HasTemplateCtx(input.MetaInput) {
-```
-
-**File**: `pkg/templates/templates_doc.go` (modified, +8/-0)
-```diff
-@@ -437,6 +437,14 @@ func init() {
- 			Key:   "body",
- 			Value: "HTTP response body received from server (default)",
- 		},
-+		{
-+			Key:   "raw_body",
-+			Value: "HTTP response body as received, before content decoding",
-+		},
-+		{
-+			Key:   "raw_response",
-+			Value: "HTTP response headers followed by raw_body",
-+		},
- 		{
- 			Key:   "content_length",
- 			Value: "HTTP Response content length",
++
++			require.NoError(t, request.Compile(testutils.NewMockExecuterOptions(options, nil)))
++
++			start := time.Now()
++			err := request.ExecuteWithResults(contextargs.NewWithInput(t.Context(), server.URL),
++				make(output.InternalEvent), make(output.InternalEvent), func(*output.InternalWrappedEvent) {})
++			require.Error(t, err)
++			require.Less(t, time.Since(start), stall, "the response was read past the request's timeout")
++		})
++	
 ```
 
 ---
 
-### Incident Patch 2: `941ac291` (2026-11-18)
-**Commit Message**: add raw_body and raw_response http parts
+### Incident Patch 2: `2e587bc5` (2026-11-19)
+**Commit Message**: fix(jira): close retest tickets on Jira Server (#8123)
 
-**File**: `SYNTAX-REFERENCE.md` (modified, +2/-0)
-```diff
-@@ -1021,6 +1021,8 @@ Part Definitions:
- - <code>response</code> - HTTP response received from server
- - <code>status_code</code> - Status Code received from the Server
- - <code>body</code> - HTTP response body received from server (default)
-+- <code>raw_body</code> - HTTP response body as received, before content decoding
-+- <code>raw_response</code> - HTTP response headers followed by raw_body
- - <code>content_length</code> - HTTP Response content length
- - <code>header,all_headers</code> - HTTP response headers
- - <code>duration</code> - HTTP request time duration
-```
+* fix(jira): close linked issue by ID and use server search
 
-**File**: `pkg/protocols/http/cluster.go` (modified, +1/-1)
-```diff
-@@ -18,5 +18,5 @@ func (request *Request) TmplClusterKey() uint64 {
- // IsClusterable returns true if the request is eligible to be clustered.
- func (request *Request) IsClusterable() bool {
- 	//nolint
--	return !(len(request.Payloads) > 0 || len(request.Fuzzing) > 0 || len(request.Raw) > 0 || len(request.Body) > 0 || request.Unsafe || request.NeedsRequestCondition() || request.Name != "")
-+	return !(len(request.Payloads) > 0 || len(request.Fuzzing) > 0 || len(request.Raw) > 0 || len(request.Body) > 0 || request.Unsafe || request.NeedsRequestCondition() || request.Name != "" || request.readsRawResponse)
- }
-```
+Codex-Session: codex resume 01a1c1de-e73c-7622-949e-fbbbd741b6c5
 
-**File**: `pkg/protocols/http/http.go` (modified, +28/-7)
+* fix(jira): preserve project-scoped lookup across configs
+
+Codex-Session: codex resume 01a1c1de-e73c-7622-949e-fbbbd741b6c5
+
+* fix(jira): validate linked ticket before direct transition
+
+Codex-Session: codex resume 01a1c1de-e73c-7622-949e-fbbbd741b6c5
+
+* fix(jira): target verification ticket without changing retest scope
+
+Codex-Session: codex resume 01a1c1de-e73c-7622-949e-fbbbd741b6c5
+
+* docs(jira): describe targeted close method
+
+Codex-Session: codex resume 01a1c1de-e73c-7622-949e-fbbbd741b6c5
+
+* test(jira): use synthetic issue IDs in fixtures
+
+Codex-Session: codex resume 01a1c1de-e73c-7622-949e-fbbbd741b6c5
+
+* fix(jira): lowercase error strings for lint
+
+Codex-Session: codex resume 01a1c1de-e73c-7622-949e-fbbbd741b6c5
+
+* fix(jira): select open ticket before closing
+
+Codex-Session: codex resume 01a1c1de-e73c-7622-949e-fbbbd741b6c5
+
+**File**: `pkg/reporting/trackers/jira/jira.go` (modified, +41/-36)
 ```diff
-@@ -5,6 +5,7 @@ import (
- 	"fmt"
- 	"math"
+@@ -7,7 +7,6 @@ import (
  	"net/http"
-+	"slices"
+ 	"net/url"
  	"strings"
- 	"time"
+-	"sync"
+ 	"text/template"
  
-@@ -151,6 +152,9 @@ type Request struct {
- 	// sharesResponse lets other templates reuse a response this request gets,
- 	// and this request reuse theirs (see httpclientpool.WithSharedResponse)
- 	sharesResponse bool
-+	// readsRawResponse keeps the response bytes as received, before content
-+	// decoding, for the raw_body and raw_response parts
-+	readsRawResponse bool
+ 	"github.com/andygrunwald/go-jira"
+@@ -171,9 +170,6 @@ type Integration struct {
+ 	Formatter
+ 	jira    *jira.Client
+ 	options *Options
+-
+-	once         *sync.Once
+-	transitionID string
+ }
  
- 	// description: |
- 	//   SelfContained specifies if the request is self-contained.
-@@ -301,6 +305,8 @@ var RequestPartDefinitions = map[string]string{
- 	"response":              "HTTP response received from server",
- 	"status_code":           "Status Code received from the Server",
- 	"body":                  "HTTP response body received from server (default)",
-+	"raw_body":              "HTTP response body as received, before content decoding",
-+	"raw_response":          "HTTP response headers followed by raw_body",
- 	"content_length":        "HTTP Response content length",
- 	"header,all_headers":    "HTTP response headers",
- 	"duration":              "HTTP request time duration",
-@@ -591,21 +597,36 @@ func (request *Request) Compile(options *protocols.ExecutorOptions) error {
- 		request.connConfiguration.Connection.DisableKeepAlive = true
+ // Options contains the configuration options for jira client
+@@ -256,7 +252,6 @@ func New(options *Options) (*Integration, error) {
+ 	integration := &Integration{
+ 		jira:    jiraClient,
+ 		options: options,
+-		once:    &sync.Once{},
  	}
- 	request.sharesResponse = canShareResponse(request, options.Flow)
-+	request.readsRawResponse = reads(request, options.Flow, "raw_body", "raw_response")
- 	return nil
+ 	return integration, nil
  }
+@@ -404,40 +399,50 @@ func (i *Integration) CloseIssue(event *output.ResultEvent) error {
+ 		return nil
+ 	}
  
- // canShareResponse reports whether a response another template got for the
- // same request is as good as sending it again. A shared response arrives at
- // once, so nothing that measures time may take one: race requests, timing
--// analyzers, and a request whose operators or flow read the duration. The
--// operators are searched whole, so a new field that can read it, as LLM
--// matcher inputs do, is covered without being listed.
-+// analyzers, and a request whose operators or flow read the duration.
- func canShareResponse(request *Request, flow string) bool {
--	if request.Race || request.Analyzer != nil || strings.Contains(flow, "duration") {
--		return false
--	}
-+	return !request.Race && request.Analyzer == nil && !reads(request, flow, "duration")
+-	issue, err := i.FindExistingIssue(event, false)
++	issue, err := i.FindExistingIssue(event, true)
+ 	if err != nil {
+ 		return err
+-	} else if issue.ID != "" {
+-		// Lazy load the transitions ID in case it's not set.
+-		// StatusNot is a target status name (matches JQL usage below and the
+-		// field's semantics); find the transition that moves to that status.
+-		i.once.Do(func() {
+-			transitions, _, err := i.jira.Issue.GetTransitions(issue.ID)
+-			if err != nil {
+-				return
+-			}
+-			for _, transition := range transitions {
+-				if transition.To.Name == i.options.StatusNot {
+-					i.transitionID = transition.ID
+-					break
+-				}
+-			}
+-		})
+-		if i.transitionID == "" {
+-			return nil
+-		}
+-		transition := jira.CreateTransitionPayload{
+-			Transition: jira.TransitionPayload{
+-				ID: i.transitionID,
+-			},
+-		}
++	}
++	if issue.ID == "" {
++		return nil
++	}
++	return i.CloseIssueByID(issue.ID)
 +}
+ 
+-		_, err = i.jira.Issue.DoTransitionWithPayload(issue.ID, transition)
++// CloseIssueByID transitions a known Jira issue to the configured target status.
++func (i *Integration) CloseIssueByID(issueID string) error {
++	if i.options.StatusNot == "" {
++		return nil
++	}
++	if issueID == "" {
++		return fmt.Errorf("jira issue ID is required")
++	}
 +
-+// reads reports whether the operators or flow of request may read any of
-+// parts. The operators are searched whole, so a new field that can read a
-+// part, as LLM matcher inputs do, is covered without being listed.
-+func reads(request *Request, flow string, parts ...string) bool {
- 	operators, err := json.Marshal(request.Operators)
--	return err == nil && !bytes.Contains(operators, []byte("duration"))
++	transitions, _, err := i.jira.Issue.GetTransitions(issueID)
 +	if err != nil {
-+		return true
++		return fmt.Errorf("get Jira issue %s transitions: %w", issueID, err)
 +	}
-+	return slices.ContainsFunc(parts, func(part string) bool {
-+		return strings.Contains(flow, part) || bytes.Contains(operators, []byte(part))
-+	})
-+}
++	for _, transition := range transitions {
++		if transition.To.Name != i.options.StatusNot {
++			continue
++		}
++		_, err = i.jira.Issue.DoTransitionWithPayload(issueID, jira.CreateTransitionPayload{
++			Transition: jira.TransitionPayload{ID: transition.ID},
++		})
+ 		if err != nil {
+-			return err
++			return fmt.Errorf("transition Jira issue %s: %w", issueID, err)
+ 		}
++		return nil
++	}
 +
-+// keepsRawResponse reports whether responses keep their bytes as received.
-+// The project file stores those, decoded again when read back, so a cached
-+// response serves templates reading raw_body and the others alike.
-+func (request *Request) keepsRawResponse() bool {
-+	return request.readsRawResponse || request.options.ProjectFile != nil
++	currentIssue, _, err := i.jira.Issue.Get(issueID, nil)
++	if err != nil {
++		return fmt.Errorf("get Jira issue %s status: %w", issueID, err)
++	}
++	if currentIssue.Fields != nil && currentIssue.Fields.Status != nil && currentIssue.Fields.Status.Name == i.options.StatusNot {
++		return nil
+ 	}
+-	return nil
++	return fmt.Errorf("jira issue %s has no transition to %q", issueID, i.options.StatusNot)
  }
  
- // RebuildGenerator rebuilds the generator for the request
+ // FindExistingIssue checks if the issue already exists and returns its ID
+@@ -495,12 +500,12 @@ func (i *Integration) FindExistingIssue(event *output.ResultEvent, useStatus boo
+ 		}, nil
+ 	}
+ 
+-	searchOptions := &jira.SearchOptionsV2{
++	searchOptions := &jira.SearchOptions{
+ 		MaxResults: 1, // if any issue exists, then we won't create a new one
+ 		Fields:     []string{"summary", "description", "issuetype", "status", "priority", "project"},
+ 	}
+ 
+-	issues, resp, err := i.jira.Issue.SearchV2JQL(jql, searchOptions)
++	issues, resp, err := i.jira.Issue.Search(jql, searchOptions)
+ 	if err != nil {
+ 		var data string
+ 		if resp != nil && resp.Body != nil {
+@@ -510,7 +515,7 @@ func (i *Integration) FindExistingIssue(event *output.ResultEvent, useStatus boo
+ 		return jira.Issue{}, fmt.Errorf("%w => %s", err, data)
+ 	}
+ 
+-	switch resp.Total {
++	switch len(issues) {
+ 	case 0:
+ 		return jira.Issue{}, nil
+ 	case 1:
 ```
 
-**File**: `pkg/protocols/http/raw_body_test.go` (added, +85/-0)
+**File**: `pkg/reporting/trackers/jira/jira_test.go` (modified, +184/-0)
 ```diff
-@@ -0,0 +1,85 @@
-+package http
-+
-+import (
-+	"bytes"
-+	"compress/gzip"
-+	"context"
-+	"net/http"
+@@ -1,7 +1,9 @@
+ package jira
+ 
+ import (
++	"fmt"
+ 	"net/http"
 +	"net/http/httptest"
-+	"testing"
-+	"time"
-+
-+	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators/extractors"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators/matchers"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestRawBodyKeepsTheBytesAsReceived(t *testing.T) {
-+	var compressed bytes.Buffer
-+	writer := gzip.NewWriter(&compressed)
-+	writer.ModTime = time.Unix(1700000000, 0)
-+	_, _ = writer.Write([]byte(`{"hello":"world"}`))
-+	require.NoError(t, writer.Close())
-+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Encoding", "gzip")
-+		_, _ = w.Write(compressed.Bytes())
+ 	"os"
+ 	"strings"
+ 	"testing"
+@@ -15,6 +17,188 @@ import (
+ 	"github.com/stretchr/testify/require"
+ )
+ 
++func TestCloseIssueUsesServerSearchResult(t *testing.T) {
++	transitionCalls := 0
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		switch {
++		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/search"):
++			_, _ = w.Write([]byte(`{"issues":[{"id":"10001","key":"TEST-1","fields":{"status":{"name":"Open"}}}]}`))
++		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/search/jql"):
++			http.Error(w, "", http.StatusForbidden)
++		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/transitions"):
++			_, _ = w.Write([]byte(`{"transitions":[{"id":"5","to":{"name":"Done"}}]}`))
++		case r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/transitions"):
++			transitionCalls++
++			w.WriteHeader(http.StatusNoContent)
++		default:
++			http.Error(w, "unexpected endpoint", http.StatusNotFound)
++		}
 +	}))
-+	defer ts.Close()
++	defer server.Close()
 +
-+	execute := func(t *testing.T, extractor *extractors.Extractor) output.InternalEvent {
-+		options := testutils.DefaultOptions
-+		testutils.Init(options)
-+		request := &Request{
-+			ID:        "raw-body",
-+			Path:      []string{"{{BaseURL}}"},
-+			Operators: operators.Operators{Extractors: []*extractors.Extractor{extractor}},
-+		}
-+		executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
-+			ID:   "raw-body",
-+			Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Info}, Name: "test"},
-+		})
-+		require.NoError(t, request.Compile(executerOpts))
-+
-+		var event output.InternalEvent
-+		err := request.ExecuteWithResults(contextargs.NewWithInput(context.Background(), ts.URL), output.InternalEvent{}, output.InternalEvent{}, func(e *output.InternalWrappedEvent) {
-+			event = e.InternalEvent
-+		})
-+		require.NoError(t, err)
-+		return event
-+	}
-+
-+	t.Run("reading raw_body", func(t *testing.T) {
-+		event := execute(t, &extractors.Extractor{
-+			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
-+			DSL:  []string{"to_string(gzip_mtime(raw_body))"},
-+		})
-+		require.Equal(t, compressed.String(), event["raw_body"])
-+		require.Contains(t, event["raw_response"], compressed.String())
-+		require.Equal(t, `{"hello":"world"}`, event["body"], "body stays decoded")
-+	})
-+	t.Run("not reading it", func(t *testing.T) {
-+		event := execute(t, &extractors.Extractor{
-+			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
-+			DSL:  []string{"body"},
-+		})
-+		require.NotContains(t, event, "raw_body")
-+		require.Equal(t, `{"hello":"world"}`, event["body"])
-+	})
++	integration, err := New(&Options{URL: server.URL, AccountID: "test", Token: "test", ProjectName: "TEST", StatusNot: "Done"})
++	require.NoError(t, err)
++	err = integration.CloseIssue(&output.ResultEvent{TemplateID: "pdcp-verify", Host: "example.test", Info: model.Info{Name: "Test issue"}})
++	require.NoError(t, err)
++	require.Equal(t, 1, transitionCalls)
 +}
 +
-+func TestReadsRawResponse(t *testing.T) {
-+	readsRaw := func(request *Request, flow string) bool { return reads(request, flow, "raw_body", "raw_response") }
-+	require.False(t, readsRaw(&Request{Operators: operators.Operators{Matchers: []*matchers.Matcher{{Words: []string{"admin"}}}}}, ""))
-+	require.True(t, readsRaw(&Request{Operators: operators.Operators{Matchers: []*matchers.Matcher{{Part: "raw_body"}}}}, ""))
-+	require.True(t, readsRaw(&Request{Operators: operators.Operators{Extractors: []*extractors.Extractor{{DSL: []string{"gzip_mtime(raw_body)"}}}}}, ""))
-+	require.True(t, readsRaw(&Request{Operators: operators.Operators{Matchers: []*matchers.Matcher{{Part: "raw_response"}}}}, ""))
-+	require.True(t, readsRaw(&Request{}, "http(1) && template.raw_body != ''"))
-+
-+	require.False(t, (&Request{readsRawResponse: true}).IsClusterable(), "a cluster runs on one member's response")
-+}
-```
-
-**File**: `pkg/protocols/http/request.go` (modified, +17/-2)
-```diff
-@@ -1341,6 +1341,13 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 				}
- 			}
- 
-+			if request.keepsRawResponse() && generatedRequest.request.Header.Get("Accept-Encoding") == "" &&
-+				generatedRequest.request.Header.Get("Range") == "" && generatedRequest.request.Method != http.MethodHead {
-+				// the transport decodes a response to the gzip header it adds
-+				// itself, leaving nothing raw; sending the same header keeps the
-+				// request on the wire unchanged
-+				generatedRequest.request.Header.Set("Accept-Encoding", "gzip")
++func TestCloseIssueFindsOpenIssueWhenOlderMatchIsDone(t *testing.T) {
++	transitioned := ""
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		switch {
++		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/search"):
++			if strings.Contains(r.URL.Query().Get("jql"), `status != "Done"`) {
++				_, _ = w.Write([]byte(`{"issues":[{"id":"10002","key":"TEST-2"}]}`))
++			} else {
++				_, _ = w.Write([]byte(`{"issues":[{"id":"10001","key":"TEST-1"}]}`))
 +			}
- 			if request.sharesResponse {
- 				generatedRequest.request.WithContext(httpclientpool.WithSharedResponse(generatedRequest.request.Context(), request.options.TemplateID))
- 			}
-@@ -1510,7 +1517,11 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 
- 	// respChain is http response chain that reads response body
- 	// efficiently by reusing buffers and does all decoding and optimizations
--	respChain := httpUtils.NewResponseChain(resp, int64(maxBodylimit))
-+	newResponseChain := httpUtils.NewResponseChain
-+	if request.keepsRawResponse() {
-+		newResponseChain = httpUtils.NewResponseChainWithRaw
-+	}
-+	respChain := newResponseChain(resp, int64(maxBodylimit))
- 	defer respChain.Close() // reuse buffers
- 
- 	// we only intend to log/save the final redirected response
-@@ -1532,7 +1543,7 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 	onceFunc := sync.OnceFunc(func() {
- 		// if nuclei-project is enabled store the response if not previously done
- 		if request.options.ProjectFile != nil && !fromCache {
--			if err := request.options.ProjectFile.Set(projectCacheKey, resp, respChain.BodyBytes()); err != nil {
-+			if err := request.options.ProjectFile.Set(projectCacheKey, resp, respChain.RawBodyBytes()); err != nil {
- 				errx = errors.Wrap(err, "could not store in project file")
- 			}
- 		}
-@@ -1639,6 +1650,10 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 		}
- 
- 		outputEvent := request.responseToDSLMap(respChain.Response(), input.MetaInput.Input, matchedURL, convUtil.String(dumpedRequest.data), fullResponseStr, bodyStr, headersStr, duration, generatedRequest.meta)
-+		if request.readsRawResponse {
-+			outputEvent["raw_body"] = respChain.RawBodyString()
-+			outputEvent["raw_response"] = respChain.RawFullResponseString()
++		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/issue/10001/transitions"):
++			_, _ = w.Write([]byte(`{"transitions":[]}`))
++		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/issue/10001"):
++			_, _ = w.Write([]byte(`{"fields":{"status":{"name":"Done"}}}`))
++		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/issue/10002/transitions"):
++			_, _ = w.Write([]byte(`{"transitions":[{"id":"5","to":{"name":"Done"}}]}`))
++		case r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/issue/10002/transitions"):
++			transitioned = "10002"
++			w.WriteHeader(http.StatusNoContent)
++		default:
++			http.Error(w, "unexpected endpoint", http.StatusNotFound)
 +		}
- 		// add response fields to template context and merge templatectx variables to output event
- 		request.options.AddTemplateVars(input.MetaInput, request.Type(), request.ID, outputEvent)
- 		if request.options.HasTemplateCtx(input.MetaInput) {
++	}))
++	defer server.Close()
++
++	integration, err := New(&Options{URL: server.URL, AccountID: "test", Token: "test", ProjectName: "TEST", StatusNot: "Done"})
++	require.NoError(t, err)
++	err = integration.CloseIssue(&output.ResultEvent{TemplateID: "pdcp-verify", Host: "example.test", Info: model.Info{Name: "Test issue"}})
++	require.NoError(t, err)
++	require.Equal(t, "10002", transitioned)
++}
++
++func TestCloseIssueSearchesConfiguredProjectWhenEventHasAnotherJiraID(t *testing.T) {
++	searchCalls, transitionCalls := 0, 0
++	searchJQL := ""
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		switch {
++		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/search"):
++			searchCalls++
++			searchJQL = r.URL.Query().Get("jql")
++			_, _ = w.Write([]byte(`{"issues":[{"id":"123","key":"TEST-1","fields":{"status":{"name":"Open"}}}]}`))
++		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/search/jql"):
++			http.Error(w, "", http.StatusForbidden)
++		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/issue/123/transitions"):
++			_, _ = w.Write([]byte(`{"transitions":[{"id":"5","to":{"name":"Done"}}]}`))
++		case r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/issue/123/transitions"):
++			transitionCalls++
++			w.WriteHeader(http.StatusNoContent)
++		default:
++			http.Error(w, "unexpected endpoint", http.StatusNotFound)
++		}
++	}))
++	defer server.Close()
++
++	integration, err := New(&Options{URL: server.URL, AccountID: "test", Token: "test", ProjectName: "TEST", StatusNot: "Done"})
++	require.NoError(t, err)
++	err = integration.CloseIssue(&output.ResultEvent{
++		TemplateID: "pdcp-verify",
++		Host:       "example.test",
++		IssueTrackers: map[string]output.IssueTrackerMetadata{
++			"jira": {IssueID: "10001", IssueURL: server.URL + "/browse/OTHER-1"},
++		},
++	})
++	require.NoError(t, err)
++	require.Equal(t, 1, searchCalls)
++	require.Contains(t, searchJQL, `project = "TEST"`)
++	require.Equal(t, 1, transitionCalls)
++}
++
++func TestCloseIssueByIDTargetsOnlyCreatedTicket(t *testing.T) {
++	searchCalls, transitionCalls := 0, 0
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		switch {
++		case r.Method == http.MethodGet && s
 ```
 
-**File**: `pkg/templates/templates_doc.go` (modified, +8/-0)
+---
+
+### Incident Patch 3: `245b8903` (2026-11-19)
+**Commit Message**: Merge pull request #8184 from projectdiscovery/dwisiswant0/fix/http/start-the-timeout-deadline-when-the-request-is
+
+fix(http): start the @timeout deadline when the request is sent
+
+**File**: `pkg/protocols/http/build_request.go` (modified, +15/-15)
 ```diff
-@@ -437,6 +437,14 @@ func init() {
- 			Key:   "body",
- 			Value: "HTTP response body received from server (default)",
- 		},
+@@ -74,17 +74,19 @@ var (
+ 
+ // generatedRequest is a single generated request wrapped for a template request
+ type generatedRequest struct {
+-	original             *Request
+-	rawRequest           *raw.Request
+-	meta                 map[string]interface{}
+-	pipelinedClient      *rawhttp.PipelineClient
+-	request              *retryablehttp.Request
+-	dynamicValues        map[string]interface{}
+-	interactshURLs       []string
+-	customCancelFunction context.CancelFunc
+-	// sendTimeout starts after the body budget admits the request.
+-	sendTimeout  time.Duration
+-	bodyReserved bool
++	original        *Request
++	rawRequest      *raw.Request
++	meta            map[string]any
++	pipelinedClient *rawhttp.PipelineClient
++	request         *retryablehttp.Request
++	dynamicValues   map[string]any
++	interactshURLs  []string
++	// sendTimeout bounds the exchange with the host, and sendTimeoutCause is
++	// the error it ends with. executeRequest starts it after the rate-limit
++	// and backoff waits and the body budget, so no wait uses it up.
++	sendTimeout      time.Duration
++	sendTimeoutCause error
++	bodyReserved     bool
+ 	// requestURLPattern tracks unmodified request url pattern without values ( it is used for constant vuln_hash)
+ 	// ex: {{BaseURL}}/api/exp?param={{randstr}}
+ 	requestURLPattern string
+@@ -608,9 +610,6 @@ func (r *requestGenerator) generateRawRequest(ctx context.Context, rawRequest st
+ 		}
+ 
+ 		unsafeReq := &generatedRequest{rawRequest: rawRequestData, meta: generatorValues, original: r.request, interactshURLs: r.interactshURLs}
+-		if annotationOverrides.cancelFunc != nil {
+-			unsafeReq.customCancelFunction = annotationOverrides.cancelFunc
+-		}
+ 
+ 		if len(annotationOverrides.interactshURLs) > 0 {
+ 			unsafeReq.interactshURLs = append(unsafeReq.interactshURLs, annotationOverrides.interactshURLs...)
+@@ -669,7 +668,8 @@ func (r *requestGenerator) generateRawRequest(ctx context.Context, rawRequest st
+ 			return nil, errkit.Wrap(reqWithOverrides.err, "failed to apply raw request annotations")
+ 		}
+ 		generatedRequest.request = reqWithOverrides.request
+-		generatedRequest.customCancelFunction = reqWithOverrides.cancelFunc
++		generatedRequest.sendTimeout = reqWithOverrides.timeout
++		generatedRequest.sendTimeoutCause = reqWithOverrides.timeoutCause
+ 		generatedRequest.interactshURLs = append(generatedRequest.interactshURLs, reqWithOverrides.interactshURLs...)
+ 	}
+ 
+```
+
+**File**: `pkg/protocols/http/request.go` (modified, +11/-6)
+```diff
+@@ -402,6 +402,12 @@ func (request *Request) executeParallelHTTP(input *contextargs.Context, dynamicV
+ 						spmHandler.Release()
+ 						return false
+ 					}
++					// Same default as the sequential loop: a request that has no
++					// annotation timeout still gets the HTTP timeout once it is sent.
++					if t.req.sendTimeout == 0 {
++						t.req.sendTimeout = request.options.Options.GetTimeouts().HttpTimeout
++						t.req.sendTimeoutCause = ErrHttpEngineRequestDeadline
++					}
+ 					hasInteractMatchers := interactsh.HasMatchers(request.CompiledOperators)
+ 					needsRequestEvent := hasInteractMatchers && request.NeedsRequestCondition()
+ 					err = request.executeRequest(t.updatedInput, t.req, make(map[string]interface{}), hasInteractMatchers, func(event *output.InternalWrappedEvent) {
+@@ -731,8 +737,10 @@ executionLoop:
+ 				return false, true, nil, err
+ 			}
+ 			defer reservation.done()
+-			if generatedHttpRequest.customCancelFunction == nil {
++
++			if generatedHttpRequest.sendTimeout == 0 {
+ 				generatedHttpRequest.sendTimeout = request.options.Options.GetTimeouts().HttpTimeout
++				generatedHttpRequest.sendTimeoutCause = ErrHttpEngineRequestDeadline
+ 			}
+ 			// ideally if http template used a custom port or hostname
+ 			// we would want to update it in input but currently templateCtx logic
+@@ -746,10 +754,6 @@ executionLoop:
+ 				return false, true, nil, err
+ 			}
+ 
+-			if generatedHttpRequest.customCancelFunction != nil {
+-				defer generatedHttpRequest.customCancelFunction()
+-			}
+-
+ 			hasInteractMarkers := interactsh.HasMarkers(data) || len(generatedHttpRequest.interactshURLs) > 0
+ 			if input.MetaInput.Input == "" {
+ 				input.MetaInput.Input = generatedHttpRequest.URL()
+@@ -1117,7 +1121,8 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
+ 		defer releaseBody()
+ 	}
+ 	if generatedRequest.sendTimeout > 0 && generatedRequest.request != nil {
+-		ctx, cancel := context.WithTimeoutCause(generatedRequest.request.Context(), generatedRequest.sendTimeout, ErrHttpEngineRequestDeadline)
++		ctx, cancel := context.WithTimeoutCause(
++			generatedRequest.request.Context(), generatedRequest.sendTimeout, generatedRequest.sendTimeoutCause)
+ 		defer cancel()
+ 		generatedRequest.request = generatedRequest.request.WithContext(ctx)
+ 	}
+```
+
+**File**: `pkg/protocols/http/request_annotations.go` (modified, +18/-11)
+```diff
+@@ -72,8 +72,11 @@ func hasTimeoutAnnotation(rawRequest string) bool {
+ }
+ 
+ type annotationOverrides struct {
+-	request        *retryablehttp.Request
+-	cancelFunc     context.CancelFunc
++	request *retryablehttp.Request
++	// timeout bounds the request once it is sent, and timeoutCause is the
++	// error it ends with.
++	timeout        time.Duration
++	timeoutCause   error
+ 	interactshURLs []string
+ 	err            error
+ }
+@@ -146,30 +149,34 @@ func (r *Request) parseAnnotations(rawRequest string, request *retryablehttp.Req
+ 	}
+ 
+ 	// @timeout:duration
++	// The timeout is only recorded here. executeRequest starts it after the
++	// rate-limit and body-budget waits, so those waits do not use it up (#8176).
++	// NoTimeout leaves the client without the HTTP timeout, so every request
++	// records one: the default, unless a valid annotation replaces it.
+ 	if r.connConfiguration.NoTimeout {
+ 		modified = true
+-		var ctx context.Context
++		overrides.timeout, overrides.timeoutCause = r.options.Options.GetTimeouts().HttpTimeout, ErrRequestTimeoutDeadline
+ 
+ 		if duration := reTimeoutAnnotation.FindStringSubmatch(annotations); len(duration) > 0 {
+ 			value := strings.TrimSpace(duration[1])
+-			if parsedTimeout, err := time.ParseDuration(value); err == nil {
++			parsedTimeout, err := time.ParseDuration(value)
++			// A timeout that does not parse or is not positive keeps the default.
++			if err == nil && parsedTimeout > 0 {
+ 				// Cap at maximum allowed timeout to prevent DoS via extremely large timeout values
+ 				if parsedTimeout > maxAnnotationTimeout {
+ 					parsedTimeout = maxAnnotationTimeout
+ 				}
+ 
+-				//nolint:govet // cancelled automatically by withTimeout
+-				// global timeout is overridden by annotation by replacing context
+-				ctx, overrides.cancelFunc = context.WithTimeoutCause(context.TODO(), parsedTimeout, ErrTimeoutAnnotationDeadline)
++				overrides.timeout, overrides.timeoutCause = parsedTimeout, ErrTimeoutAnnotationDeadline
++				// The replaced context drops the input's cancellation (#8178).
++				ctx := context.TODO()
+ 				// add timeout value to context
+ 				ctx = context.WithValue(ctx, httpclientpool.WithCustomTimeout{}, httpclientpool.WithCustomTimeout{Timeout: parsedTimeout})
+ 				request = request.Clone(ctx)
+ 			}
+ 		} else {
+-			//nolint:govet // cancelled automatically by withTimeout
+-			// global timeout is overridden by annotation by replacing context
+-			ctx, overrides.cancelFunc = context.WithTimeoutCause(context.TODO(), r.options.Options.GetTimeouts().HttpTimeout, ErrRequestTimeoutDeadline)
+-			request = request.Clone(ctx)
++			// The replaced context drops the input's cancellation (#8178).
++			request = request.Clone(context.TODO())
+ 		}
+ 	}
+ 
+```
+
+**File**: `pkg/protocols/http/request_annotations_test.go` (modified, +54/-26)
+```diff
+@@ -83,7 +83,7 @@ func TestRequestParseAnnotationsSNI(t *testing.T) {
+ 		require.ErrorIs(t, overrides.err, commoninteractsh.ErrInteractshClientNotInitialized)
+ 		require.Empty(t, overrides.interactshURLs)
+ 		require.Same(t, httpReq, overrides.request)
+-		require.Nil(t, overrides.cancelFunc)
++		require.Zero(t, overrides.timeout)
+ 	})
+ }
+ 
+@@ -101,21 +101,18 @@ func TestRequestParseAnnotationsTimeout(t *testing.T) {
+ 		require.Nil(t, err, "could not create http request")
+ 
+ 		overrides, modified := request.parseAnnotations(rawRequest, httpReq)
+-		require.NotNil(t, overrides.cancelFunc, "could not initialize valid cancel function")
+ 		require.True(t, modified, "could not get correct modified value")
++		require.Equal(t, 2*time.Second, overrides.timeout, "timeout value mismatch")
++		require.ErrorIs(t, overrides.timeoutCause, ErrTimeoutAnnotationDeadline)
+ 
+-		// Verify context has deadline
+-		deadline, deadlined := overrides.request.Context().Deadline()
+-		require.True(t, deadlined, "could not get set request deadline")
++		// The deadline starts when the request is sent, not when it is built.
++		_, deadlined := overrides.request.Context().Deadline()
++		require.False(t, deadlined, "request deadline started before the request was sent")
+ 
+ 		// Verify the timeout value is stored in context
+ 		customTimeout, ok := overrides.request.Context().Value(httpclientpool.WithCustomTimeout{}).(httpclientpool.WithCustomTimeout)
+ 		require.True(t, ok, "custom timeout not found in context")
+ 		require.Equal(t, 2*time.Second, customTimeout.Timeout, "timeout value mismatch")
+-
+-		// Verify deadline is approximately 2 seconds from now
+-		expectedDeadline := time.Now().Add(2 * time.Second)
+-		require.WithinDuration(t, expectedDeadline, deadline, 100*time.Millisecond, "deadline not set correctly")
+ 	})
+ 
+ 	t.Run("large-timeout", func(t *testing.T) {
+@@ -133,23 +130,17 @@ func TestRequestParseAnnotationsTimeout(t *testing.T) {
+ 		require.Nil(t, err, "could not create http request")
+ 
+ 		overrides, modified := request.parseAnnotations(rawRequest, httpReq)
+-		require.NotNil(t, overrides.cancelFunc, "could not initialize valid cancel function")
+ 		require.True(t, modified, "could not get correct modified value")
+ 
+-		// Verify context has deadline
+-		deadline, deadlined := overrides.request.Context().Deadline()
+-		require.True(t, deadlined, "could not get set request deadline")
+-
+ 		// Verify the timeout was capped at 5 minutes (not 10 minutes)
+ 		customTimeout, ok := overrides.request.Context().Value(httpclientpool.WithCustomTimeout{}).(httpclientpool.WithCustomTimeout)
+ 		require.True(t, ok, "custom timeout not found in context")
+ 
+ 		require.Equal(t, 5*time.Minute, customTimeout.Timeout, "timeout should be capped at 5 minutes")
+ 		require.Less(t, customTimeout.Timeout, 10*time.Minute, "timeout should be less than requested 10 minutes")
+ 
+-		// Verify deadline matches the capped timeout
+-		expectedDeadline := time.Now().Add(5 * time.Minute)
+-		require.WithinDuration(t, expectedDeadline, deadline, 100*time.Millisecond, "deadline not set to capped timeout")
++		// Verify the request carries the capped timeout
++		require.Equal(t, 5*time.Minute, overrides.timeout, "request timeout not set to capped timeout")
+ 	})
+ 
+ 	t.Run("below-cap-timeout", func(t *testing.T) {
+@@ -167,22 +158,16 @@ func TestRequestParseAnnotationsTimeout(t *testing.T) {
+ 		require.Nil(t, err, "could not create http request")
+ 
+ 		overrides, modified := request.parseAnnotations(rawRequest, httpReq)
+-		require.NotNil(t, overrides.cancelFunc, "could not initialize valid cancel function")
+ 		require.True(t, modified, "could not get correct modified value")
+ 
+-		// Verify context has deadline
+-		deadline, deadlined := overrides.request.Context().Deadline()
+-		require.True(t, deadlined, "could not get set request deadline")
+-
+ 		// Verify the timeout is NOT capped - should be 2 minutes
+ 		customTimeout, ok := overrides.request.Context().Value(httpclientpool.WithCustomTimeout{}).(httpclientpool.WithCustomTimeout)
+ 		require.True(t, ok, "custom timeout not found in context")
+ 
+ 		require.Equal(t, 2*time.Minute, customTimeout.Timeout, "timeout should be the requested 2 minutes")
+ 
+-		// Verify deadline matches the requested timeout
+-		expectedDeadline := time.Now().Add(2 * time.Minute)
+-		require.WithinDuration(t, expectedDeadline, deadline, 100*time.Millisecond, "deadline not set to requested timeout")
++		// Verify the request carries the requested timeout
++		require.Equal(t, 2*time.Minute, overrides.timeout, "request timeout not set to requested timeout")
+ 	})
+ 
+ 	t.Run("negative", func(t *testing.T) {
+@@ -197,11 +182,54 @@ func TestRequestParseAnnotationsTimeout(t *testing.T) {
+ 		require.Nil(t, err, "could not create http request")
+ 
+ 		newRequestWithOverrides, modified := request.parseAnnotations(rawRequest, httpReq)
+-		require.Nil(t, newRequestWithOverrides.cancelFunc, "cancel function should be nil")
++		require.Zero(t, newRequestWithOverrides.timeout, "timeout should be 
+```
+
+**File**: `pkg/protocols/http/request_test.go` (modified, +204/-0)
+```diff
+@@ -837,6 +837,210 @@ func TestHTTPExtractMultipleReuseStopsOnceBranchesAfterCancellation(t *testing.T
+ 	require.Less(t, time.Since(startedAt), 750*time.Millisecond)
+ }
+ 
++// A request's timeout bounds its exchange with the host. The wait for a
++// rate-limit token comes before that, so a paced request must still be sent
++// (#8162, #8176).
++//
++//nolint:paralleltest // the cases share the protocol state testutils.Init sets up
++func TestRequestTimeoutStartsAfterRateLimitWait(t *testing.T) {
++	tests := []struct {
++		name string
++		raw  []string
++	}{
 +		{
-+			Key:   "raw_body",
-+			Value: "HTTP response body as received, before content decoding",
++			name: "default timeout",
++			raw: []string{
++				"GET /first HTTP/1.1\nHost: {{Hostname}}",
++				"GET /second HTTP/1.1\nHost: {{Hostname}}",
++			},
 +		},
 +		{
-+			Key:   "raw_response",
-+			Value: "HTTP response headers followed by raw_body",
++			name: "timeout annotation",
++			raw: []string{
++				"@timeout: 500ms\nGET /first HTTP/1.1\nHost: {{Hostname}}",
++				"@timeout: 500ms\nGET /second HTTP/1.1\nHost: {{Hostname}}",
++			},
 +		},
- 		{
- 			Key:   "content_length",
- 			Value: "HTTP Response content length",
++		{
++			// An annotation on one request turns off the client timeout for
++			// all of them, so the other request takes the default timeout.
++			name: "request beside a timeout annotation",
++			raw: []string{
++				"@timeout: 500ms\nGET /first HTTP/1.1\nHost: {{Hostname}}",
++				"GET /second HTTP/1.1\nHost: {{Hostname}}",
++			},
++		},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			request := &Request{Raw: tt.raw} //nolint:exhaustruct,exhaustruct_v5 // zero values are the template defaults
++			require.Equal(t, []string{"/first", "/second"}, executePacedRequests(t, request))
++		})
++	}
++}
++
++// The parallel path builds each request before a worker takes its rate-limit
++// token, so the timeout has to start after that wait as well (#8176).
++//
++//nolint:paralleltest // shares the protocol state testutils.Init sets up
++func TestParallelRequestTimeoutStartsAfterRateLimitWait(t *testing.T) {
++	//nolint:exhaustruct,exhaustruct_v5 // zero values are the template defaults
++	request := &Request{
++		Raw:      []string{"@timeout: 500ms\nGET /{{path}} HTTP/1.1\nHost: {{Hostname}}"},
++		Threads:  1,
++		Payloads: map[string]any{"path": []string{"first", "second"}},
++	}
++	require.Equal(t, []string{"/first", "/second"}, executePacedRequests(t, request))
++}
++
++// With @timeout the client has no overall timeout of its own, so the request's
++// deadline bounds reading the response. A valid annotation sets it on every
++// path; one that does not parse or is not positive keeps the default (#8176).
++//
++//nolint:paralleltest // the cases share the protocol state testutils.Init sets up
++func TestTimeoutAnnotationBoundsResponse(t *testing.T) {
++	const stall = 2 * time.Second
++
++	tests := []struct {
++		name        string
++		annotation  string
++		httpTimeout time.Duration
++		parallel    bool
++	}{
++		{name: "annotation, sequential", annotation: "300ms", httpTimeout: time.Minute, parallel: false},
++		{name: "annotation, parallel", annotation: "300ms", httpTimeout: time.Minute, parallel: true},
++		{name: "unparsable annotation, parallel", annotation: "soon", httpTimeout: 300 * time.Millisecond, parallel: true},
++		{name: "zero annotation, parallel", annotation: "0s", httpTimeout: 300 * time.Millisecond, parallel: true},
++	}
++	for _, test := range tests {
++		t.Run(test.name, func(t *testing.T) {
++			options := testutils.DefaultOptions.Copy()
++			timeouts := *options.GetTimeouts()
++			timeouts.HttpTimeout = test.httpTimeout
++			options.SetTimeouts(&timeouts)
++			testutils.Init(options)
++			t.Cleanup(func() { testutils.Cleanup(options) })
++
++			// The headers arrive at once and the body stalls, so only the
++			// request's deadline can end the read before the stall does.
++			server := httptest.NewServer(http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
++				resp.Header().Set("Content-Length", "2")
++				resp.WriteHeader(http.StatusOK)
++				_ = http.NewResponseController(resp).Flush()
++
++				select {
++				case <-req.Context().Done():
++				case <-time.After(stall):
++					_, _ = resp.Write([]byte("ok"))
++				}
++			}))
++			t.Cleanup(server.Close)
++
++			//nolint:exhaustruct,exhaustruct_v5 // zero values are the template defaults
++			request := &Request{Raw: []string{"@timeout: " + test.annotation + "\nGET / HTTP/1.1\nHost: {{Hostname}}"}}
++			if test.parallel {
++				request.Raw = []string{"@timeout: " + test.annotation + "\nGET /?p={{p}} HTTP/1.1\nHost: {{Hostname}}"}
++				request.Threads = 1
++				request.Payloads = map[string]any{"p": []string{"a"}}
++			}
++
++			require.NoError(t, request.Compile(testutils.NewMockExecuterOptions(options, nil)))
++
++			start := time.Now()
++			err := request.ExecuteWithResults(contextargs.NewWithInput(t.Context(), server.URL),
++				make(output.InternalEvent), make(output.InternalEvent), func(*output.InternalWrappedEvent) {})
++			require.Error(t, err)
++			require.Less(t, time.Since(start), stall, "the response was read past the request's timeout")
++		})
++	}
++}
++
++// A template with a raw @timeout turns off the client timeout for all of its
++// requests. A parallel reque
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8184** (2026-11-19): fix(http): start the @timeout deadline when the request is sent (@dwisiswant0)
+- **PR #8183** (2026-11-19): fix(http): key host errors of a scheme-less target by its request port (@dwisiswant0)
+- **PR #8182** (2026-11-19): fix(hostbackoff): give back the slot of a cancelled wait (@dwisiswant0)
 - **PR #8173** (2026-11-18): add raw_body and raw_response http parts (@dogancanbakir)
 - **PR #8171** (2026-11-18): chore: refresh security context (@github-actions[bot])
 - **PR #8170** (2026-11-18): perf(httpcache): replace sandrolain/httpcache with x/net/http/cache (@dwisiswant0)
-- **PR #8168** (2026-11-18): fix(operators): fall back to the HTML parser when an XML-prolog document fails to parse as XML (@liangzaihuanyv)
-- **PR #8167** (2026-11-17): ci(release): pin actions by SHA and attest release archives (@johncgoat)
-- **PR #8166** (2026-11-17): build(docker): pin alpine by digest and run as non-root (@johncgoat)
 
 ---
 
@@ -2174,32 +2743,59 @@ add raw_body and raw_response http parts
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in SYNTAX-REFERENCE.md
+## X. http): start the @timeout deadline when the request is sent
 
 **RULE**:
-When implementing operations in `SYNTAX-REFERENCE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/protocols/http/build_request.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `28b60e68`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5fbb495d`: http): start the @timeout deadline when the request is sent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `SYNTAX-REFERENCE.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/http/build_request.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- <code>raw_body</code> - HTTP response body as received, before content decoding
-- <code>raw_response</code> - HTTP response headers followed by raw_body
+	original        *Request
+	rawRequest      *raw.Request
+	meta            map[string]any
+	pipelinedClient *rawhttp.PipelineClient
+	request         *retryablehttp.Request
+	dynamicValues   map[string]any
+	interactshURLs  []string
+	// sendTimeout bounds the exchange with the host, and sendTimeoutCause is
+	// the error it ends with. executeRequest starts it after the rate-limit
+	// and backoff waits and the body budget, so no wait uses it up.
+	sendTimeout      time.Duration
+	sendTimeoutCause error
+	bodyReserved     bool
+		generatedRequest.sendTimeout = reqWithOverrides.timeout
+		generatedRequest.sendTimeoutCause = reqWithOverrides.timeoutCause
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	original             *Request
+	rawRequest           *raw.Request
+	meta                 map[string]interface{}
+	pipelinedClient      *rawhttp.PipelineClient
+	request              *retryablehttp.Request
+	dynamicValues        map[string]interface{}
+	interactshURLs       []string
+	customCancelFunction context.CancelFunc
+	// sendTimeout starts after the body budget admits the request.
+	sendTimeout  time.Duration
+	bodyReserved bool
+		if annotationOverrides.cancelFunc != nil {
+			unsafeReq.customCancelFunction = annotationOverrides.cancelFunc
+		}
+		generatedRequest.customCancelFunction = reqWithOverrides.cancelFunc
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `28b60e68` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5fbb495d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -11341,3 +11341,10 @@ Every entry in this ledger must capture:
 | `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `097f70bc` | Multi-dimensional audit evidence | 2026-11-19T15:58:52.078Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `56ad7d6c` | Multi-dimensional audit evidence | 2026-11-19T15:58:58.311Z |
 | `learn-dom-h-d41da63c` | `project://oxc-project-oxc` | `c5890024` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md` | 2026-11-19T15:59:27.674Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-19T16:07:10.973Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `6ae76a6a` | Multi-dimensional audit evidence | 2026-11-19T16:07:13.468Z |
+| `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `8b34c731` | Multi-dimensional audit evidence | 2026-11-19T16:07:19.593Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `ad8ef227` | Multi-dimensional audit evidence | 2026-11-19T16:07:22.854Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `2e587bc5` | Multi-dimensional audit evidence | 2026-11-19T16:07:24.283Z |
+| `learn-dom-d-66709892` | `project://zed-industries-zed` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md` | 2026-11-19T16:07:56.510Z |
+| `learn-dom-d-fffc1dd3` | `project://hf-dealignai-deepseek-v4.1-flash-uncensored-fp8` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | 2026-11-19T16:08:32.981Z |

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T15:59:29.385Z",
+  "last_updated": "2026-11-19T16:08:34.148Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21842,
+  "total_items": 21853,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -229705,8 +229705,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "28b60e68",
-      "content_hash": "e0035c3dd5a58c321d63af1ca3f96963baf26aa624f76172cbd6e8f627c24569",
+      "source_version": "2e587bc5",
+      "content_hash": "08872929a3503c167a57b92d8fc1882ff30f54961707ab22f7183b1a675dd67a",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -229754,6 +229754,11 @@
           "number": 9298,
           "title": "Empirical Invariant Guard in SYNTAX-REFERENCE.md",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9403,
+          "title": "start the @timeout deadline when the request is sent",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229761,7 +229766,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T23:26:14.706Z",
+      "verified_at": "2026-11-19T16:07:24.092Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229803,10 +229808,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "28b60e68",
-      "content_hash": "f0bcc2df92ba809596de654ce2d9ff7450113183444b3b325f243cc850318e26",
+      "source_version": "2e587bc5",
+      "content_hash": "40b7953b2ad3b16ca097f83e8ab99a8190925811f36da2bae327690a3d3eb1b8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T23:26:15.195Z"
+      "persisted_at": "2026-11-19T16:07:24.643Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei",
@@ -229815,10 +229820,10 @@
       "relative_path": "08_VERIFICATION/projectdiscovery-nuclei-verification-protocol-empirical-defect-shield-for-projec.md",
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery/nuclei",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "28b60e68",
-      "content_hash": "a92d51ec584e2ede7d6645af061ca7dffe4f4fdcc777ac1963351d0c8466d6ef",
+      "source_version": "2e587bc5",
+      "content_hash": "397c8d8e4cdc5b44daf6ff90b05ef50f9deab3608a877e4eb36c08f24eb29908",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T23:26:15.324Z"
+      "persisted_at": "2026-11-19T16:07:24.793Z"
     },
     "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog": {
       "item_id": "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog",
@@ -232258,8 +232263,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "4122f44f",
-      "content_hash": "adf62c1bd9b075e55b2f9ee619518b1abc063eebe429d862de539b5e0ba4793e",
+      "source_version": "6ae76a6a",
+      "content_hash": "808a4b95966b7850ecb85df71a2adcd53a5ed57c9995ddcc4f5ecef88381c583",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -232284,7 +232289,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T20:25:26.680Z",
+      "verified_at": "2026-11-19T16:07:13.258Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232326,10 +232331,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "repository": "zed-industries/zed",
-      "source_version": "4122f44f",
-      "content_hash": "06bb0bede422cf90134b62e6cddd77d7e1ef00e7c891993db5bcb92b07d235af",
+      "source_version": "6ae76a6a",
+      "content_hash": "68069d65474ba321ca254b0c7939ef694f9ac1f2bd3b3aa6a06e572b6ee4d9b2",
       "domain_letter": "I",
-      "persisted_at": "2026-11-17T20:25:27.090Z"
+      "persisted_at": "2026-11-19T16:07:13.680Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed",
@@ -232363,9 +232368,9 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "9d3633d50339b7b56102163f8a140e2ce46cee8a9b589087571d0b57501a3922",
+      "content_hash": "3cc22c588df9839d733c81dc7ad01ab07fd278889522a7e6343b681a1bb39b78",
       "domain_letter": "I",
-      "persisted_at": "2026-11-17T20:25:42.381Z"
+      "persisted_at": "2026-11-19T16:07:56.947Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings",
@@ -240433,7 +240438,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
-      "content_hash": "42bb4cb96e065602bcf14e17cc96057c8b3b459a7c14189fa24b9c5f119ed1b7",
+      "content_hash": "a7cf24d3b03422846b5fd9f7eea2a8dd7b066ee15cb6c7364dfcc03c6d1b8531",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "promoted_rules": [],
@@ -240442,7 +240447,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T02:16:10.586Z",
+      "verified_at": "2026-11-19T16:07:10.742Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240519,9 +240524,9 @@
       "title": "Research & Knowledge Intelligence: hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings Core Invariants",
       "repository": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings",
       "source_version": "HEAD",
-      "content_hash": "8423593f054881c5330176252fb0874671b9c2e79c8f417317e7ddbdd58cf28c",
+      "content_hash": "9639d5fc9ba186aecfb9d5f975d4ab69fe6e093ac77cbd180720dbd976e5f19d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T02:16:15.517Z"
+      "persisted_at": "2026-11-19T16:08:33.229Z"
     },
     "learn-huggingface-vllm-sr-d3": {
       "learning_id": "learn-huggingface-vllm-sr-d3",
@@ -244857,14 +244862,19 @@
       "slug": "thaw-app-thaw",
       "platform": "github",
       "source_url": "https://github.com/thaw-app/Thaw",
-      "source_version": "e29a4376",
-      "content_hash": "c72bfc81746e5c50cf43b9f3639b0ef222040d45ec98f8348f17304f21fc8e59",
+      "source_version": "8b34c731",
+      "content_hash": "ee0645a674c6575caf6bdc1bb40cb6fcc802da98b7f23c2b1c5cfd4d1fe69efa",
       "dossier_path": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "promoted_rules": [
         {
           "number": 8605,
           "title": "cap the build, test packages only when they change, key the compile cache on",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9401,
+          "title": "update pictures of hidden items when their icons change",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -244873,7 +244883,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T09:49:56.268Z",
+      "verified_at": "2026-11-19T16:07:19.387Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244927,10 +244937,10 @@
       "relative_path": "08_VERIFICATION/thaw-app-thaw-verification-protocol-empirical-defect-shield-for-thaw-app-thaw.md",
       "title": "Verification Protocol: Empirical Defect Shield for thaw-app/Thaw",
       "repository": "thaw-app/Thaw",
-      "source_version": "e29a4376",
-      "content_hash": "2ac15b64987a628b5348edffc3440de530387065f6758870c30d5985266d8224",
+      "source_version": "8b34c731",
+      "content_hash": "a62f7311e3b4a33484acff09a48d9e63c70d322878be9655550f2db6f6f92a23",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T09:49:56.732Z"
+      "persisted_at": "2026-11-19T16:07:20.123Z"
     },
     "learn-github-open-policy-agent-gatekeeper": {
       "learning_id": "learn-github-open-policy-agent-gatekeeper",
@@ -245118,9 +245128,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for thaw-app-thaw-learnings",
       "repository": "thaw-app-thaw-learnings",
       "source_version": "HEAD",
-      "content_hash": "8d4be3dfc94dc948d39f04c04a6ca75c95aa59df60ba3210ba1d709e801b2625",
+      "content_hash": "586c8430446996cd97d99ebf9ef77035df78d024833da3121b3b84530d3e1c78",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T09:55:28.607Z"
+      "persisted_at": "2026-11-19T16:08:34.148Z"
     },
     "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-learnings-core-in": {
       "item_id": "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-learnings-core-in",
@@ -261651,8 +261661,8 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "fc8e171f",
-      "content_hash": "cbeca0b16f351cd8259c78ca2c1c2e3647d5666974cbe6c87487d81ada368208",
+      "source_version": "ad8ef227",
+      "content_hash": "d3b319d313ad367af6953e360049aa312f5f57199b70c6809150fbb66c9a86a7",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
@@ -261665,6 +261675,11 @@
           "number": 9234,
           "title": "bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9402,
+          "title": "ignore missing Schedules and retry read failures",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -261672,7 +261687,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T13:47:01.371Z",
+      "verified_at": "2026-11-19T16:07:22.654Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -261726,10 +261741,10 @@
       "relative_path": "08_VERIFICATION/chaos-mesh-chaos-mesh-verification-protocol-empirical-defect-shield-for-chaos-me.md",
       "title": "Verification Protocol: Empirical Defect Shield for chaos-mesh/chaos-mesh",
       "repository": "chaos-mesh/chaos-mesh",
-      "source_version": "fc8e171f",
-      "content_hash": "ec92a82801cb7487d37f46fa20fca1c8403a08c032f5007c9425003995c71e9f",
+      "source_version": "ad8ef227",
+      "content_hash": "4cc749ad76ce3bdec71c150dc6f60eb6a1d182a9a4c143a640ad0284efe64110",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T13:47:02.260Z"
+      "persisted_at": "2026-11-19T16:07:23.415Z"
     },
     "rule-8813": {
       "learning_id": "rule-8813",
@@ -295334,6 +295349,144 @@
       "content_hash": "8c1b39b4897f54ee2ed2d3b5cce081ba0dd86a140eb129cdb33081205103ad2e",
       "domain_letter": "K",
       "persisted_at": "2026-11-19T15:59:29.244Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-cor": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-cor",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-research-knowledge-intelligence-.md",
+      "title": "Research & Knowledge Intelligence: dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8 Core Invariants",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
+      "content_hash": "5285babeb2a26f2169e293e22151f5fc7bb0f827decd187687bfac057a2a80c7",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T16:07:11.173Z"
+    },
+    "rule-9401": {
+      "learning_id": "rule-9401",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9401,
+      "title": "update pictures of hidden items when their icons change",
+      "source_url": "https://github.com/thaw-app/Thaw",
+      "source_version": "8b34c731",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T16:07:19.387Z"
+    },
+    "candidate_directive-update-pictures-of-hidden-items-when-their-icons-change": {
+      "item_id": "candidate_directive-update-pictures-of-hidden-items-when-their-icons-change",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U2H7-update-pictures-of-hidden-items-when-their-icons-change.md",
+      "title": "update pictures of hidden items when their icons change",
+      "repository": "thaw-app/Thaw",
+      "source_version": "8b34c731",
+      "content_hash": "5f2af0cffbe6180b6b9d3a5b958ffbc98fd2d9caee5713d5f2b0ff7b80d61d2a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T16:07:19.825Z"
+    },
+    "domain_intelligence-architecture-intelligence-thaw-app-thaw-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-thaw-app-thaw-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-thaw-app-thaw-architecture-intelligence-thaw-app-thaw-core-invariants.md",
+      "title": "Architecture Intelligence: thaw-app/Thaw Core Invariants",
+      "repository": "thaw-app/Thaw",
+      "source_version": "8b34c731",
+      "content_hash": "ae54ec2e291264a7cad003afde7dbf4667181f942dcb2a19bea65f557e400dee",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T16:07:19.973Z"
+    },
+    "rule-9402": {
+      "learning_id": "rule-9402",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9402,
+      "title": "ignore missing Schedules and retry read failures",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "ad8ef227",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T16:07:22.654Z"
+    },
+    "candidate_directive-ignore-missing-schedules-and-retry-read-failures": {
+      "item_id": "candidate_directive-ignore-missing-schedules-and-retry-read-failures",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U4ZE-ignore-missing-schedules-and-retry-read-failures.md",
+      "title": "ignore missing Schedules and retry read failures",
+      "repository": "chaos-mesh/chaos-mesh",
+      "source_version": "ad8ef227",
+      "content_hash": "8a8a5c2dad4b9cbae21ce9f6fa31f21fe3bffe08b85b158a14f97f750f2a7bad",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T16:07:23.067Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-chaos-mesh-chaos-mesh-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-chaos-mesh-chaos-mesh-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-chaos-mesh-chaos-mesh-quality-verification-intelligence-chaos-mesh-chaos-mesh-co.md",
+      "title": "Quality & Verification Intelligence: chaos-mesh/chaos-mesh Core Invariants",
+      "repository": "chaos-mesh/chaos-mesh",
+      "source_version": "ad8ef227",
+      "content_hash": "f6d1625da3452573f26f9c7f7902191eb55151d73588f3e2bfb9df51728e3d57",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T16:07:23.226Z"
+    },
+    "rule-9403": {
+      "learning_id": "rule-9403",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9403,
+      "title": "start the @timeout deadline when the request is sent",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "2e587bc5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T16:07:24.092Z"
+    },
+    "candidate_directive-start-the-timeout-deadline-when-the-request-is-sent": {
+      "item_id": "candidate_directive-start-the-timeout-deadline-when-the-request-is-sent",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U62V-start-the-timeout-deadline-when-the-request-is-sent.md",
+      "title": "start the @timeout deadline when the request is sent",
+      "repository": "projectdiscovery/nuclei",
+      "source_version": "2e587bc5",
+      "content_hash": "6c3ea2d138553bb48fc20272a293ed181f7893f263036b7c8f3ed50f1b0ffab4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T16:07:24.492Z"
+    },
+    "candidate_directive-capture-update-pictures-of-hidden-items-when-their-icons-change": {
+      "item_id": "candidate_directive-capture-update-pictures-of-hidden-items-when-their-icons-change",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VNJW-capture-update-pictures-of-hidden-items-when-their-icons-change.md",
+      "title": "capture): update pictures of hidden items when their icons change",
+      "repository": "thaw-app-thaw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "06ad91b8d4c403aa11fb07c2e57ee9e9bfdf2a1dfecb1ae819a6b08b3708fd93",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T16:08:33.805Z"
+    },
+    "domain_intelligence-architecture-intelligence-thaw-app-thaw-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-thaw-app-thaw-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-thaw-app-thaw-learnings-architecture-intelligence-thaw-app-thaw-learnings-core-i.md",
+      "title": "Architecture Intelligence: thaw-app-thaw-learnings Core Invariants",
+      "repository": "thaw-app-thaw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0ee864f2d2dabc8c0630df6133714e76cbcbfadc1326c6eaa62bc8aec8b9fa43",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T16:08:33.975Z"
     }
   },
   "ai-builder-brain": {

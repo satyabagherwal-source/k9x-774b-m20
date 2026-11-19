@@ -11308,3 +11308,10 @@
 | `CYCLE-20261119-J6P6` | `2026-11-19T15:58:52.074Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9399` | Yes (`fee09e94...`) |
 | `CYCLE-20261119-JBIC` | `2026-11-19T15:58:58.308Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9400` | Yes (`e0104392...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T15:59:27.674Z` | `oxc-project-oxc` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-D41DA63C` [Domain H] | Yes (`d24df70d...`) |
+| `CYCLE-20261119-TVND` | `2026-11-19T16:07:10.969Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`a7cf24d3...`) |
+| `CYCLE-20261119-TXKO` | `2026-11-19T16:07:13.464Z` | `zed-industries/zed` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zed-industries-zed-learnings.md` | Yes (`808a4b95...`) |
+| `CYCLE-20261119-U2AU` | `2026-11-19T16:07:19.590Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9401` | Yes (`ee0645a6...`) |
+| `CYCLE-20261119-U4TE` | `2026-11-19T16:07:22.850Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9402` | Yes (`d3b319d3...`) |
+| `CYCLE-20261119-U5X3` | `2026-11-19T16:07:24.279Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9403` | Yes (`08872929...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T16:07:56.510Z` | `zed-industries-zed` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-66709892` [Domain D] | Yes (`8a511639...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T16:08:32.981Z` | `hf-dealignai-deepseek-v4.1-flash-uncensored-fp8` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-FFFC1DD3` [Domain D] | Yes (`7fe9c598...`) |
