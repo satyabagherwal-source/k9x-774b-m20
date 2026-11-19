@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/autotrust/JEV-35B",
   "source_version": "hf-autotrust-jev-35b",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T00:05:22.585Z",
+  "timestamp": "2026-11-19T14:55:37.470Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-autotrust-jev-35b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [autotrust/AutoTrust-Decider-Pro-35B](https://huggingface.co/autotrust/JEV-35B) (Revision: `hf-autotru`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T00:05:22.585Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T14:55:37.470Z`  
 > **Learning ID**: `learn-huggingface-autotrust-jev-35b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autotrust/JEV-35B](https://huggingface.co/autotrust/JEV-35B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T00:05:21.723Z  
+> **Harvest Timestamp**: 2026-11-19T14:52:21.514Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1588784 downloads | 3624 likes
+- **Stars / Engagement**: 1031598 downloads | 4180 likes
 
 ---
 

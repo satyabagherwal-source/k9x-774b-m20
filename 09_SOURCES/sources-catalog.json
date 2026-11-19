@@ -1355,8 +1355,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B",
     "sourceVersion": "hf-autotrust-jev-35b",
     "license": "Open-Source",
-    "contentHash": "305de66ceebdb2dd243384ba03f6e9fefc9ebfb26258750d3d0a518ead3b0200",
-    "lastHarvestedAt": "2026-11-15T00:05:22.357Z",
+    "contentHash": "ee075ea2a47b1a50227fdf520e635ff647b751be6c1273db91ed34ece4c87858",
+    "lastHarvestedAt": "2026-11-19T14:55:37.269Z",
     "learningId": "learn-huggingface-autotrust-jev-35b"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "ff78457b",
+    "sourceVersion": "72006e5e",
     "license": "MIT",
-    "contentHash": "4e4cbb0f77f326be72fe1cd20e5538b5499cebe93628892cc8dca2aeccd83904",
-    "lastHarvestedAt": "2026-11-18T11:55:08.321Z",
+    "contentHash": "9e43376c6eb655809b20a3560d01d46afe050deb82a30bcc8d1b52146c962123",
+    "lastHarvestedAt": "2026-11-19T14:52:38.521Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {

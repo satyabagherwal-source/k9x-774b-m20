@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T14:20:28.781Z",
+  "updated_at": "2026-11-19T14:55:40.793Z",
   "stats": {
-    "total_discovered": 5891,
-    "approved_pending_harvest": 5578,
+    "total_discovered": 5892,
+    "approved_pending_harvest": 5579,
     "harvested_count": 0,
     "rejected_count": 313,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5543,
+      "COMMUNITY_AND_EXPERT": 5544,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -127432,6 +127432,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
         "fileName": "agent-of-empires-agent-of-empires-learnings.md"
+      }
+    },
+    "SRC-0F7811C0022F": {
+      "id": "SRC-0F7811C0022F",
+      "url": "https://github.com/tursodatabase/turso/pull/12101",
+      "title": "https://github.com/tursodatabase/turso/pull/12101",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T14:55:40.793Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+        "fileName": "tursodatabase-turso-learnings.md"
       }
     }
   }

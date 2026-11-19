@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T14:28:42.842Z",
+  "last_updated": "2026-11-19T14:55:41.890Z",
   "total_records": 1981,
   "domains": {
     "A": {
@@ -8190,10 +8190,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "9cbde88da17b311629d757ac2604291502cabd5a24cf775705e912900ffdf61d",
-      "created_at": "2026-11-19T07:06:38.179Z"
+      "content_hash": "33d031b8bc465a0c4f164162b00b7dec796161f42a18a7e418a48ed34cde6089",
+      "created_at": "2026-11-19T14:52:39.354Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -11372,8 +11372,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "d89e47e6b67df1132db245a7194a8b8f6e73eb8324914fbbf1783fdb64994b99",
-      "created_at": "2026-11-19T02:11:34.948Z"
+      "content_hash": "4b2339c27372da0d39baad1be4ab43bd666fc9514bc26f4c2feff6813d34d112",
+      "created_at": "2026-11-19T14:55:41.890Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -18418,8 +18418,8 @@
       "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-35B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-research-knowledge-intelligence-autotrust-autotrust-decider.md",
       "repository": "autotrust/AutoTrust-Decider-Pro-35B",
-      "content_hash": "e79e12dfaed418e550e770907d351804ac14919c3e435a0be60f816ed2d3ffeb",
-      "created_at": "2026-11-15T00:05:22.585Z"
+      "content_hash": "c3bc922fd8fcae615d2b7be39f9fcc50073953b451fc902ba4e7497244baa0f9",
+      "created_at": "2026-11-19T14:55:37.471Z"
     },
     "domain_intelligence-research-knowledge-intelligence-conceptcountry-qwen-concept-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-conceptcountry-qwen-concept-27b-core-invariants",
@@ -18535,8 +18535,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-jev-35b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-learnings-research-knowledge-intelligence-hf-autotrust-jev-.md",
       "repository": "hf-autotrust-jev-35b-learnings",
-      "content_hash": "9edf3782f32e235c276bc07526b50c6caf1cbd03c798b98d5a6f917d2b9103f5",
-      "created_at": "2026-11-15T00:06:43.573Z"
+      "content_hash": "48924b5d46f7f165c165eca8b23862bb446e04869401acb25ceca82f1b63cb18",
+      "created_at": "2026-11-19T14:55:40.515Z"
     },
     "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants",
@@ -24143,8 +24143,8 @@
       "title": "Technical Construction Intelligence: tursodatabase-turso-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-learnings-technical-construction-intelligence-tursodatabase-.md",
       "repository": "tursodatabase-turso-learnings",
-      "content_hash": "4c983b63055efdc9b574cfcf93d17d3385255dd8f1ccfd1fe3f5428d38cb0a46",
-      "created_at": "2026-11-17T18:05:45.648Z"
+      "content_hash": "5ed65abe38ac3851b6ca95902522dca93a0dab47488d23e822ada803439aa70f",
+      "created_at": "2026-11-19T14:55:41.154Z"
     },
     "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants",

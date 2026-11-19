@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-FY9M",
-    "timestamp": "2026-11-17T21:56:55.738Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "0bf3516a067582afc7bb1acf89a52a01d30035233f3fcbdf0c0cf96acd659cae",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-Y1DM",
-    "timestamp": "2026-11-17T22:10:59.578Z",
-    "repository": "audio-cpp/audio.cpp-gguf",
-    "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf",
-    "contentHash": "93f748a7b6a07b7c9fc1ae90436ef05b2a56e1a0e7728f594a62c871d6efacb5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-Y37I",
     "timestamp": "2026-11-17T22:11:01.950Z",
     "repository": "apache/arrow",
@@ -7492,6 +7462,36 @@
     "contentHash": "4403bc7e30db6fbb6d34199f4dbeeaba83b2bebcca1a88b08e1c432f0ed65679",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-60OL",
+    "timestamp": "2026-11-19T14:52:38.517Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "9e43376c6eb655809b20a3560d01d46afe050deb82a30bcc8d1b52146c962123",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-9ULT",
+    "timestamp": "2026-11-19T14:55:37.265Z",
+    "repository": "autotrust/AutoTrust-Decider-Pro-35B",
+    "learningId": "learn-huggingface-autotrust-jev-35b",
+    "contentHash": "ee075ea2a47b1a50227fdf520e635ff647b751be6c1273db91ed34ece4c87858",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

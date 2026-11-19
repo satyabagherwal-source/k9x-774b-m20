@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-19T13:35:27.362Z",
-    "lastVerified": "2026-11-19T13:35:27.362Z",
+    "lastChecked": "2026-11-19T14:52:33.547Z",
+    "lastVerified": "2026-11-19T14:52:33.547Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T14:28:40.865Z",
-    "lastVerified": "2026-11-19T14:28:40.865Z",
+    "lastChecked": "2026-11-19T14:55:40.152Z",
+    "lastVerified": "2026-11-19T14:55:40.152Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1140,14 +1140,14 @@
     "officialUrl": "https://github.com/tursodatabase/turso",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T11:55:07.356Z",
-    "lastVerified": "2026-11-18T11:55:07.356Z",
+    "lastChecked": "2026-11-19T14:52:37.299Z",
+    "lastVerified": "2026-11-19T14:52:37.299Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "4e4cbb0f77f326be72fe1cd20e5538b5499cebe93628892cc8dca2aeccd83904",
+    "contentHash": "9e43376c6eb655809b20a3560d01d46afe050deb82a30bcc8d1b52146c962123",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1378,9 +1378,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-19T04:44:10.336Z",
+    "lastChecked": "2026-11-19T14:52:28.728Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-19T04:44:10.336Z"
+    "lastVerified": "2026-11-19T14:52:28.728Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -1567,9 +1567,9 @@
   "kubesphere-kubesphere": {
     "name": "kubesphere",
     "officialUrl": "https://github.com/kubesphere/kubesphere",
-    "lastChecked": "2026-11-18T12:50:54.882Z",
+    "lastChecked": "2026-11-19T14:52:26.112Z",
     "revisionIdentifier": "04a29b5c",
-    "lastVerified": "2026-11-18T12:50:54.882Z"
+    "lastVerified": "2026-11-19T14:52:26.112Z"
   },
   "zama-ai-tfhe-rs": {
     "name": "tfhe-rs",
@@ -7428,5 +7428,36 @@
     "lastChecked": "2026-11-19T14:28:21.184Z",
     "revisionIdentifier": "f95cdff4",
     "lastVerified": "2026-11-19T14:28:21.184Z"
+  },
+  "atanunq-viu": {
+    "name": "viu",
+    "officialUrl": "https://github.com/atanunq/viu",
+    "lastChecked": "2026-11-19T14:52:18.573Z",
+    "revisionIdentifier": "5733be5f",
+    "lastVerified": "2026-11-19T14:52:18.573Z"
+  },
+  "hf-autotrust-jev-35b": {
+    "name": "autotrust/AutoTrust-Decider-Pro-35B",
+    "officialUrl": "https://huggingface.co/autotrust/JEV-35B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T14:52:21.514Z",
+    "lastVerified": "2026-11-19T14:52:21.514Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-autotrust-jev-35b",
+    "contentHash": "ee075ea2a47b1a50227fdf520e635ff647b751be6c1273db91ed34ece4c87858",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "codeeditapp-codeedit": {
+    "name": "CodeEdit",
+    "officialUrl": "https://github.com/CodeEditApp/CodeEdit",
+    "lastChecked": "2026-11-19T14:52:23.556Z",
+    "revisionIdentifier": "fa2aebd8",
+    "lastVerified": "2026-11-19T14:52:23.556Z"
   }
 }

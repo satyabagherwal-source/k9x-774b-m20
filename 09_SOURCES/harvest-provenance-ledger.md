@@ -11320,3 +11320,5 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `ba5c7e53` | Multi-dimensional audit evidence | 2026-11-19T14:28:30.759Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `71fdf1c8` | Multi-dimensional audit evidence | 2026-11-19T14:28:35.709Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `3aa2775c` | Multi-dimensional audit evidence | 2026-11-19T14:28:37.656Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `72006e5e` | Multi-dimensional audit evidence | 2026-11-19T14:52:38.521Z |
+| `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-19T14:55:37.269Z |

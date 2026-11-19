@@ -4,22 +4,22 @@
 {
   "source_repository": "tursodatabase/turso",
   "source_url": "https://github.com/tursodatabase/turso",
-  "source_version": "ff78457b",
+  "source_version": "72006e5e",
   "license": "MIT",
-  "timestamp": "2026-11-18T11:55:08.506Z",
+  "timestamp": "2026-11-19T14:52:38.908Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tursodatabase-turso",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `ff78457b`).  
-> **License**: MIT | **Timestamp**: `2026-11-18T11:55:08.506Z`  
+> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `72006e5e`).  
+> **License**: MIT | **Timestamp**: `2026-11-19T14:52:38.908Z`  
 > **Learning ID**: `learn-github-tursodatabase-turso`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tursodatabase/turso` (Commit: `ff78457b`)
+- **Target Repository**: `tursodatabase/turso` (Commit: `72006e5e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T11:55:07.356Z  
+> **Harvest Timestamp**: 2026-11-19T14:52:37.299Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25290 stars
+- **Stars / Engagement**: 25299 stars
 
 ---
 
@@ -1443,16 +1443,13 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12036** (2026-11-18): **core/vdbe: pass the connection to opcodes instead of storing it in Program**
-  *Symptoms*: `vdbe::Program` held the compiled bytecode and the connection it runs on, and every opcode function reached the connection through `program.connection`. A unit test in core therefore had to open a database to call any opcode function, also one that never uses the connection.  The goal is that core has no dialect and no SQL parser of its own. Opening a `Database` needs a dialect, and core has none to give to its own unit tests, so a unit test in core must be able to test bytecode execution without opening a database. This PR is one step toward that:  - `Program` now holds only the prepared program. `Statement` has the connection and passes it down when it steps or aborts the program. - Every opcode function receives the connection as an argument next to the pager: `fn(&Program, &mut ProgramState, &Insn, &Arc<Connection>, &Arc<Pager>) -> InsnResult`. A subprogram of a trigger or a foreign key action gets the connection of its parent statement, as before. - Six opcode functions that use neither the connection nor the pager (`op_set_subtype`, `op_hash_probe`, `op_decr_jump_zero`, `op_make_record`, `op_sorter_data`, `op_if_null_row`) are generic over the types of both. The dispatch table instantiates them with the real types, so all opcodes still have one function pointer type, and the compiler rejects any use of the connection or the pager in them. Their unit tests pass `()` for both and no longer open a database.  Only the six opcodes whose tests needed it are generic. Many more
-  **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `49030a6e9901` is [here](https://github.com/tursodatabase/turso/pull/12036#pullrequestreview-5955141722).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer reviews every new commit pushed to this pull request, up to 3 reviews each time the `autofixer: review-requested` label is added. It then removes the label; adding the label again asks for more.</sub>  <!-- autofixer:contributor-review:49030a6e9901b07a7739870d947d8a76bb8066f3 --> <!-- autofixer:contributor-review-recommends:49030a6e9901b07a7739870d947d8a76bb8066f3 --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiNDkwMzBhNmU5OTAxYjA3YTc3Mzk4NzBkOTQ3ZDhhNzZiYjgwNjZmMyIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMThUMTA6NDk6MjUuOTE5WiIsInZlcmRpY3QiOiJhcHByb3ZlIiwicmVjb21tZW5kYXRpb24
-  > ### Autofixer follow-ups  - Not filed: Switching the journal mode to MVCC adds 1 to the connection's total change count. Duplicate of #11588: Reproduces on main (Turso prints 1, sqlite3 prints 0), but open issue #11588 already reports that PRAGMA journal_mode=mvcc sets total_changes() to 1.  <!-- autofixer:follow-ups-done -->
+- **Issue #12107** (2026-11-19): **postgres: add more known-gap tests against PostgreSQL**
+  *Symptoms*: Adds 22 tests to the known-gap suite from #12084. They cover cases where tursopg gives a different result than PostgreSQL 18 and that had no test yet. They follow the rules in the "Known gaps" section of `postgres/CONTRIBUTING.md`.  ## New gaps  **operators-functions (B)** - B-128 (S1), B-129 (S1): jsonb `||` and `-` return wrong values with no error. B-122 stops at its `jsonb_set` error, so it did not show this. - B-130 (S2): 16 nested scalar subqueries. tursopg accepts 15. B-124 tests 64 levels. - B-131 (S2): `pg_options_to_table` with a column alias list. - B-132 (S2): `pg_size_pretty`.  **ddl-catalog (E)** - E-99 to E-105 (S4, E-104 S1): `pg_available_extensions()`, index names in `pg_indexes`, `conkey` and `indkey` as arrays, an unquoted name that finds a quoted mixed-case schema, a `regclass` cast of an unknown name. - E-107, E-108 (S2): a PL/pgSQL trigger function, and a `SECURITY DEFINER` function with `SET search_path`. - E-109 to E-114 (S4): the privilege functions, `pg_has_role`, `pg_is_other_temp_schema`, `pg_column_is_updatable`, the relation size functions, `pg_stat_user_tables`.  **Regression tests** (match PostgreSQL already, no `@tursopg` block) - A-81: a `numeric(10,2)` column rounds on insert. A-22 covers the literal cast, which still fails. - E-106: the `pg_class` row level security flags.  ## Notes  - All expected results come from real runs on tursopg and on PostgreSQL 18. - When a test fails because of an older gap, a comment names it, for example "see 
 
-- **Issue #12027** (2026-11-18): **core: replace EngineDialect with Dialect::get_internal_dialect()**
-  *Symptoms*: Core runs two kinds of statements: the user's statements, with the rules of the database's dialect, and statements that core or the frontend runs for itself (helpers, reads of engine metadata, schema writes, the maintenance of materialized views). The second kind is SQLite syntax and expects SQLite rules in every database. For example, the PostgreSQL frontend creates its catalog tables with `INTEGER PRIMARY KEY` and relies on SQLite generating the key.  For parsing, the `Dialect` trait already has this split: `parse` and `parse_internal`. For everything after parsing it did not. To give internal statements SQLite rules, core replaced the database's dialect with `EngineDialect`, a dialect of its own, in the translator and in six places in the maintenance of materialized views.  The goal is that core has no dialect and no SQL parser of its own, and gets everything that depends on the SQL dialect from the dialect passed to `Database::open()`. This PR is one step toward that:  - Add a required method `Dialect::get_internal_dialect()`, which returns the dialect for the statements that core and the frontend run for themselves. - `SqliteDialect` returns itself. `PostgresDialect` returns `SqliteDialect`, so `turso_pg` now depends on `turso_sqlite` outside tests too. `turso_sqlite` depends only on core, so there is no cycle. - Core uses `connection.dialect().get_internal_dialect()` in the seven places that used `EngineDialect`. - `EngineDialect` is now under `#[cfg(test)]`. Only the u
+- **Issue #12101** (2026-11-19): **core, postgres: use less stack when preparing a statement**
+  *Symptoms*: ## Description  On main, preparing a PostgreSQL-dialect statement uses 47–63 KB of stack in a release build. On a 64 KB stack, that leaves almost nothing for the caller's own frames.  This PR cuts PostgreSQL-dialect prepare by 20–24 KB and SQLite-dialect prepare by about 2 KB.  **Measurements** (stack used by `Connection::prepare`, release build, macOS arm64, table `t(id INTEGER PRIMARY KEY, value INTEGER)`):  | statement | dialect | on main | in this PR | |---|---|---|---| | `SELECT 1` | PostgreSQL | 58.5 KB | 34.4 KB | | `SELECT id, value FROM t ORDER BY id` | PostgreSQL | 63.2 KB | 39.0 KB | | `INSERT INTO t VALUES (2, 2)` | PostgreSQL | 47.2 KB | 27.5 KB | | `SELECT id, value FROM t ORDER BY id` | SQLite | 34.8 KB | 32.7 KB |  Method (not in the PR): fill the stack below the caller with a marker byte, call `prepare`, find the lowest byte that changed.  ## Motivation and context  - **`Statement` holds `ProgramState` (2,032 bytes) inline**, so `Statement` is 2,624 bytes. The PostgreSQL frontend moves it through builder calls (`with_result_kind`, `with_tx_tracking`, `with_post_run`, …), and the caller's frame holds a copy per move. This PR boxes the state: `Statement` is about 600 bytes. - **On main, `prepare_statement_inner` parses, translates and prepares in one function.** Its stack frame (26 KB per `scripts/stack/frame-sizes.sh`) stays allocated while `prepare_translated_cmd` plans the statement. This PR moves parsing and translation into `translate_statement`, marked `#
   **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `77ae4088fcaa` is [here](https://github.com/tursodatabase/turso/pull/12027#pullrequestreview-5954026282).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge.</sub>  <!-- autofixer:contributor-review:77ae4088fcaa42d97ae67953c77e112e3ac757f1 --> <!-- autofixer:contributor-review-recommends:77ae4088fcaa42d97ae67953c77e112e3ac757f1 --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiNTAyYjBkZTM2ZGY3YmE5NzgyMGZlMTZlMDBkYTMxMmU3MTY0ZmQxOSIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMThUMDk6MDE6MDcuNzg4WiIsInZlcmRpY3QiOiJhcHByb3ZlIiwicmVjb21tZW5kYXRpb24iOnsidmFsdWUiOiJyZWNvbW1lbmQiLCJyZWFzb24iOiJCZWhhdmlvci1wcmVzZXJ2aW5nIHJlZmFjdG9yOiBpZGVudGljYWwgb3V0cHV0IGFuZCBkYXRhYmFzZSBmaWxlcyBvbiBtYWluIGFuZCB0aGlzIHB1bGwgcmVxdWVzdCBmb3IgU1FMaXRlIGFuZCBQb3N0Z3JlU1FM
+  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `2894e3f53592` is [here](https://github.com/tursodatabase/turso/pull/12101#pullrequestreview-5975493652).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge.</sub>  <!-- autofixer:contributor-review:2894e3f53592b8099a1513fd4894afaf4ca8c9bf --> <!-- autofixer:contributor-review-recommends:2894e3f53592b8099a1513fd4894afaf4ca8c9bf --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiMTgwMjRkZDAxZGU1ODU3MjFkYzYxMzIwNzA5ZTAzOGNkNmE0MWFhMCIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMTlUMTI6NDM6MzYuODIwWiIsInZlcmRpY3QiOiJhcHByb3ZlIiwicmVjb21tZW5kYXRpb24iOnsidmFsdWUiOiJyZWNvbW1lbmQiLCJyZWFzb24iOiJSZXN1bHRzIGFyZSBpZGVudGljYWwgb24gbWFpbiBhbmQgd2l0aCB0aGlzIGNoYW5nZSwgYW5kIHRoZSBzdGFjayBzYXZpbmdzIGFyZSByZXByb2R1Y2VkIGhlcmUgKGFib3V0IDI1IEtCIGZvciBQb3N0Z3JlU1FM
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1469,869 +1466,638 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `21b65578` (2026-11-18)
-**Commit Message**: Merge 'parser: reject NULL as a pragma value' from sath000007
+### Incident Patch 1: `1befb62a` (2026-11-19)
+**Commit Message**: Merge 'core/vdbe: fix sum and avg over a window after an infinite value leaves' from app/turso-github-handyman
 
-`PRAGMA foreign_keys = NULL` (and `PRAGMA foreign_keys(NULL)`) was
-accepted and treated as OFF. SQLite rejects it with a syntax error near
-"NULL".
+## Problem
 
-Root cause: `Parser::parse_pragma_value` has a catch-all branch that
-accepts any keyword token as a pragma value (so values like `OFF` work).
-`NULL` is a keyword token, so it was turned into a
-`Literal::Keyword("NULL")`. The boolean pragma handler then maps unknown
-values to false.
+```sql
+-- tursopg (Turso's PostgreSQL-compatible server)
+SELECT n, avg(x) OVER (ORDER BY n ROWS BETWEEN CURRENT ROW AND CURRENT ROW)
+FROM (VALUES (1, 1e308 * 10), (2, 1.0), (3, 1.0)) AS v(n, x);
+-- panic: Avg xInverse without matching xStep
 
-Fix: reject `TK_NULL` explicitly in `parse_pragma_value` with the usual
-unexpected-token error. Other keyword values are unchanged.
+SELECT n, sum(x) OVER w, avg(x) OVER w
+FROM (VALUES (1, 1e308 * 10), (2, 1.0), (3, 2.0), (4, 4.0)) AS v(n, x)
+WINDOW w AS (ORDER BY n ROWS BETWEEN 1 PRECEDING AND CURRENT ROW);
+-- Turso:      Inf|Inf, Inf|Inf, NULL|NULL, NULL|NULL
+-- PostgreSQL: Infinity|Infinity, Infinity|Infinity, 3|1.5, 6|3
+```
 
-Fixes #11735
+The SQLite dialect (`tursodb`) panics on the same `avg` window.
+`sqlite3` returns NULL there instead.
 
-## Testing
+There are two causes, both in `core/vdbe/execute.rs`:
+- `avg()` did not count a row added after its sum became NaN (stored as
+NULL). Removing that row from the frame still decreased the count, so
+the count reached 0 and the `debug_assert!` failed. SQLite's `sumStep`
+counts every non-NULL row.
+- Removing a row from a frame adds its negation to the total. When an
+infinite value leaves the frame, the total becomes `Inf - Inf`, whi
 
-- Added `parser::tests::test_pragma_value_rejects_null`. It fails
-without the fix and passes with it.
-- `cargo test -p turso_parser`: 35 passed.
-- `cargo fmt -p turso_parser -- --check` and `cargo clippy -p
-turso_parser --all-targets`: clean.
-- I did not run the full workspace test suite or the TCL compat tests.
-
-An AI coding assistant helped find the code path and draft the change
-and the test. I reviewed the diff, and checked that the new test fails
-before the fix.
-
-Reviewed-by: Mikaël Francoeur (@LeMikaelF)
-
-Closes #11961
-
-**File**: `sqlite/parser/src/parser.rs` (modified, +21/-0)
+**File**: `core/dialect/mod.rs` (modified, +12/-0)
 ```diff
-@@ -3847,6 +3847,16 @@ impl<'a> Parser<'a> {
-             TK_ID | TK_STRING | TK_INDEXED | TK_JOIN_KW | TK_LBRACKET => {
-                 Ok(Box::new(Expr::Name(self.parse_nm()?)))
+@@ -518,6 +518,18 @@ pub trait Dialect: Send + Sync + 'static {
+         false
+     }
+ 
++    /// Whether `sum()` and `avg()` count their infinite inputs apart from
++    /// the total of the finite ones.
++    ///
++    /// PostgreSQL does, so a moving window frame gives a finite result again
++    /// once its infinite values leave it. SQLite adds them to the total.
++    /// Removing a row from a window frame adds its negation, so once an
++    /// infinite value leaves, the total is `Inf - Inf`, which is NaN, and
++    /// the result stays NULL.
++    fn sum_counts_infinite_inputs(&self) -> bool {
++        false
++    }
++
+     /// Whether `ALTER TABLE ADD COLUMN` with a non-constant default works on
+     /// a table that has rows.
+     ///
+```
+
+**File**: `core/vdbe/execute.rs` (modified, +183/-39)
+```diff
+@@ -7426,11 +7426,12 @@ fn kbn_init_from_int(acc: &mut Value, i: i64, state: &mut SumAggState) {
+ /// Initialize aggregate payload with default values.
+ /// Payload layout by aggregate type:
+ /// - Count/Count0: [Integer(0)]
+-/// - Sum: [Null, Float(0.0), Integer(0), Integer(0), Integer(0)]
+-///   // acc, r_err, approx, ovrfl, count
+-/// - Total: [Float(0.0), Float(0.0), Integer(0), Integer(0), Integer(0)]
++/// - Sum: [Null, Float(0.0), Integer(0), Integer(0), Integer(0), Integer(0), Integer(0)]
++///   // acc, r_err, approx, ovrfl, count, pos_inf, neg_inf
++/// - Total: [Float(0.0), Float(0.0), Integer(0), Integer(0), Integer(0), Integer(0), Integer(0)]
+ ///   // same but starts at 0.0
+-/// - Avg: [Float(0.0), Float(0.0), Integer(0)]  // sum, r_err, count - uses KBN like SUM
++/// - Avg: [Float(0.0), Float(0.0), Integer(0), Integer(0), Integer(0)]
++///   // sum, r_err, count, pos_inf, neg_inf - uses KBN like SUM
+ /// - Min/Max: [Null]
+ /// - GroupConcat/StringAgg:
+ ///   [Null|Text, Integer(count), Integer(first separator length),
+@@ -7445,7 +7446,7 @@ fn init_agg_payload(func: &AggFunc, payload: &mut crate::alloc::Vec<Value>) -> R
+             payload.push(Value::from_i64(0));
+         }
+         AggFunc::Sum | AggFunc::Total => {
+-            payload.try_reserve_exact(5)?;
++            payload.try_reserve_exact(7)?;
+             let acc = if matches!(func, AggFunc::Total) {
+                 Value::from_f64(0.0)
+             } else {
+@@ -7456,12 +7457,16 @@ fn init_agg_payload(func: &AggFunc, payload: &mut crate::alloc::Vec<Value>) -> R
+             payload.push(Value::from_i64(0));
+             payload.push(Value::from_i64(0));
+             payload.push(Value::from_i64(0));
++            payload.push(Value::from_i64(0));
++            payload.push(Value::from_i64(0));
+         }
+         AggFunc::Avg => {
+-            payload.try_reserve_exact(3)?;
++            payload.try_reserve_exact(5)?;
+             payload.push(Value::from_f64(0.0));
+             payload.push(Value::from_f64(0.0));
+             payload.push(Value::from_i64(0));
++            payload.push(Value::from_i64(0));
++            payload.push(Value::from_i64(0));
+         }
+         AggFunc::Min | AggFunc::Max => {
+             payload.try_reserve_exact(1)?;
+@@ -7531,13 +7536,17 @@ fn init_agg_payload(func: &AggFunc, payload: &mut crate::alloc::Vec<Value>) -> R
+ /// # Payload layouts (see `init_agg_payload` for initial values):
+ /// - **Count**: `[count: Integer]` - increments if arg is not NULL
+ /// - **Count0**: `[count: Integer]` - always increments (COUNT(*))
+-/// - **Avg**: `[sum: Float, r_err: Float, count: Integer]` - uses KBN compensation like SUM
++/// - **Avg**: `[sum: Float, r_err: Float, count: Integer, pos_inf: Integer, neg_inf: Integer]`
++///   - uses KBN compensation like SUM
+ /// - **Sum/Total**:
+-///   `[acc, r_err: Float, approx: Integer, ovrfl: Integer, count: Integer]`
++///   `[acc, r_err: Float, approx: Integer, ovrfl: Integer, count: Integer,
++///     pos_inf: Integer, neg_inf: Integer]`
+ ///   - `acc`: running sum (Null/Integer/Float depending on inputs)
+ ///   - `r_err`: Kahan-Babuška-Neumaier compensation term for floating-point precision
+ ///   - `approx`: 1 if result is approximate (float arithmetic used)
+ ///   - `ovrfl`: 1 if integer overflow occurred (Total promotes to float, Sum errors)
++///   - `pos_inf`/`neg_inf`: number of +Inf/-Inf inputs, which are not added to `acc`
++///     when `counts_infinite_inputs` is set (see `Dialect::sum_counts_infinite_inputs`)
+ /// - **Min/Max**: `[current_extreme: Value]` - tracks min/max seen so far
+ /// - **GroupConcat/StringAgg**:
+ ///   `[accumulated: Null|Text, count: Integer, first_separator_len: Integer,
+@@ -7553,6 +7562,7 @@ fn update_agg_payload(
+     maybe_arg2: Option<&Value>, // for GroupConcat/StringAgg, JsonGroupObject/JsonbGroupObject,
+     payload: &mut crate::alloc::Vec<Value>,
+     collation: CollationSeq,
++    counts_infinite_inputs: bool,
+ ) -> Result<()> {
+     match func {
+         AggFunc::Count => {
+@@ -7583,40 +7593,50 @@ fn update_agg_payload(
+             if matches!(arg, Value::Null) {
+                 return Ok(());
              }
-+            // SQLite's pragma value grammar does not accept NULL
-+            TK_NULL => {
-+                let offset = self.offset();
-+                let token = self.peek_no_eof()?;
-+                Err(unexpected_token_error(
-+                    token,
-+                    offset,
-+                    &[TK_ID, TK_STRING, TK_INTEGER, TK_FLOAT],
-+                ))
-+            }
-             tt if tt
-                 .as_str()
-                 .is_some_and(|s| s.chars().next().is_some_and(|c| c.is_ascii_alphabetic())) =>
-@@ -13444,6 +13454,17 @@ mod tests {
-         }
+-            // invariant as per init_agg_payload: payload[0] is Float (sum), payload[1] is Float (r_err), payload[2] is Integer (count)
+-            let [sum_val, r_err_val, count_val, ..] = payload.as_mut_slice() else {
++            // invariant as per init_agg_payload: payload[0] is Float (sum), payload[1] is Float (r_err),
++            // payload[2] is Integer (count), payload[3] and payload[4] are Integer (pos_inf, neg_inf)
++            let [sum_val, r_err_val, count_val, pos_inf, neg_inf, ..] = payload.as_mut_slice()
++            else {
+                 mark_unlikely();
+                 return Err(LimboError::InternalError(
+                     "Avg: payload too short".to_string(),
+                 ));
+             };
+-            if matches!(*sum_val, Value::Null) {
+-                return Ok(());
+-            }
+-       
+```
+
+**File**: `postgres/frontend/catalog.rs` (modified, +4/-0)
+```diff
+@@ -403,6 +403,10 @@ impl Dialect for PostgresDialect {
+         true
      }
  
-+    #[test]
-+    fn test_pragma_value_rejects_null() {
-+        for sql in [
-+            b"PRAGMA foreign_keys = NULL".as_slice(),
-+            b"PRAGMA foreign_keys(NULL)".as_slice(),
-+        ] {
-+            let result = Parser::new(sql).next().unwrap();
-+            assert!(result.is_err(), "expected parse error for {sql:?}");
-+        }
++    fn sum_counts_infinite_inputs(&self) -> bool {
++        true
 +    }
 +
-     #[test]
-     fn test_create_type_as_struct() {
-         let sql = b"CREATE TYPE point AS STRUCT(x INT, y INT)";
+     fn add_column_computes_default_for_existing_rows(&self) -> bool {
+         true
+     }
+```
+
+**File**: `postgres/tests/integration/postgres/dialect.rs` (modified, +39/-0)
+```diff
+@@ -1915,6 +1915,45 @@ fn test_postgres_window_avg_partition(db: TempDatabase) {
+     }
+ }
+ 
++// PostgreSQL rejects `1e308::float8 * 10` as an overflow, so its results
++// below come from the same rows written with 'Infinity'::float8. NaN is
++// returned as NULL.
++#[turso_macros::test(mvcc)]
++fn test_postgres_window_sum_avg_are_finite_after_infinite_values_leave_frame(db: TempDatabase) {
++    let conn = db.connect_postgres();
++    conn.execute("CREATE TABLE t (n int, x float8)").unwrap();
++    conn.execute(
++        "INSERT INTO t VALUES (1, 1e308::float8 * 10), (2, 1), (3, 2), (4, 4), \
++         (5, -1e308::float8 * 10), (6, 1e308::float8 * 10), (7, 8)",
++    )
++    .unwrap();
++
++    assert_eq!(
++        rows_of(
++            &conn,
++            "SELECT n, avg(x) OVER (ORDER BY n ROWS BETWEEN CURRENT ROW AND CURRENT ROW) \
++             FROM t ORDER BY n",
++        ),
++        ["1|Inf", "2|1.0", "3|2.0", "4|4.0", "5|-Inf", "6|Inf", "7|8.0"]
++    );
++    assert_eq!(
++        rows_of(
++            &conn,
++            "SELECT n, sum(x) OVER w, avg(x) OVER w FROM t \
++             WINDOW w AS (ORDER BY n ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) ORDER BY n",
++        ),
++        [
++            "1|Inf|Inf",
++            "2|Inf|Inf",
++            "3|3.0|1.5",
++            "4|6.0|3.0",
++            "5|-Inf|-Inf",
++            "6||",
++            "7|Inf|Inf",
++        ]
++    );
++}
++
+ // ==================== OPERATORS: ||, ILIKE, JSON ====================
+ 
+ #[turso_macros::test(mvcc)]
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/window/frame_sum_overflow.sqltest` (modified, +26/-0)
+```diff
+@@ -68,3 +68,29 @@ test window-sum-all-int-overflow-errors {
+ }
+ expect error {
+ }
++
++# Inf + -Inf is NaN, which sum() and avg() return as NULL. Removing a row
++# from a frame adds its negation, so once an infinite value leaves the
++# frame the total is NaN and the result stays NULL for the rest of the
++# partition. avg() still counts each row added after that, so removing
++# those rows later finds them counted.
++setup infinite_value {
++    CREATE TABLE inf(n INT, x REAL);
++    INSERT INTO inf VALUES (1, 1e999), (2, 1.0), (3, 2.0), (4, 4.0);
++}
++
++@setup infinite_value
++test window-sum-avg-stay-null-after-infinite-value-leaves-frame {
++    SELECT n,
++           avg(x) OVER (ORDER BY n ROWS BETWEEN CURRENT ROW AND CURRENT ROW),
++           avg(x) OVER (ORDER BY n ROWS BETWEEN 1 PRECEDING AND CURRENT ROW),
++           sum(x) OVER (ORDER BY n ROWS BETWEEN 1 PRECEDING AND CURRENT ROW),
++           total(x) OVER (ORDER BY n ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)
++    FROM inf;
++}
++expect {
++    1|Inf|Inf|Inf|Inf
++    2||Inf|Inf|Inf
++    3||||
++    4||||
++}
 ```
 
 ---
 
-### Incident Patch 2: `18b2e35a` (2026-11-18)
-**Commit Message**: Merge 'core: move the built-in functions to core/functions/builtin.rs' from Pekka Enberg
+### Incident Patch 2: `8097ffc2` (2026-11-19)
+**Commit Message**: Merge 'core/translate: report no such column, not a panic, for unselected CTEs' from app/turso-github-handyman
 
-`core/dialect/engine.rs` holds two unrelated things: the dialect that
-the engine uses for the statements it runs for itself, with its parser
-entry points, and the built-in SQL functions that every dialect uses.
+## Problem
 
-This moves the functions to `core/functions/builtin.rs`, next to the
-other function code. `core::dialect` re-exports the items that the
-frontends call (`resolve_builtin_function`, `call_builtin_scalar`,
-`SQLITE_VERSION` and `SQLITE_VERSION_NUMBER`), so the frontends no
-longer name the `engine` module for them.
+```sql
+WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT x WHERE EXISTS (SELECT 1 FROM c));
+WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT (SELECT x FROM c), (SELECT x));
+-- Turso:  panic "Outer query subquery result_columns_start_reg must be set in program"
+-- SQLite: no such column: x
+```
 
-The code is moved as is, so no behaviour changes.
+Before it plans a FROM clause subquery, `parse_from_clause_table` in
+`core/translate/planner.rs` plans each CTE that the subquery reads (here
+through `EXISTS (SELECT 1 FROM c)`) and adds it to the subquery's outer
+query references. It marked that entry `cte_definition_only: false`, so
+column binding treated `c` as an outer table. `x` bound to the CTE's
+column, but no code computes that column for this scope, so code
+generation panicked. The same happened with `c.x`, with a subquery after
+a `JOIN`, and in a `LATERAL` subquery on the PostgreSQL frontend.
 
-Split out of #11816, which removes the engine dialect. The built-in
-functions stay, so this move does not depend on that work.
+## Fix
 
-Closes #12016
+The entry is now always `cte_definition_only: true`. Column binding
+skips such entries, so a CTE's columns are visible only where a FROM
+clause names the CTE. This is how
+`add_ctes_read_by_subqueries_as_outer_refs` a
 
-**File**: `core/dialect/engine.rs` (modified, +3/-1402)
+**File**: `core/translate/planner.rs` (modified, +1/-4)
 ```diff
-@@ -1,68 +1,14 @@
--//! The engine's own SQL and the built-ins every dialect composes with.
-+//! The engine's own SQL.
- //!
- //! The engine compiles SQLite syntax: a frontend dialect translates its
- //! statements into the SQLite AST, and the statements the engine runs for
--//! itself are written in SQLite SQL. This module has the parts of that
--//! language that every dialect shares: the parser entry points, the
--//! built-in functions, and the built-in catalog tables (`pragma_*`
--//! table-valued functions, `json_each`/`json_tree`, `sqlite_dbpage`,
--//! `btree_dump`, and `sqlite_turso_types`), which each dialect registers
--//! with [`crate::schema::builtin::schema_builder`].
-+//! itself are written in SQLite SQL. This module has the parser entry
-+//! points for that SQL.
- //!
- //! [`EngineDialect`] is the dialect of the statements the engine runs for
- //! itself. The SQLite dialect that users open databases with is
- //! `SqliteDialect` in the `turso_sqlite` crate.
- 
--use super::ScalarFuncContext;
--use crate::functions::datetime::{
--    exec_date, exec_date_diff, exec_date_minus, exec_date_plus, exec_datetime_full, exec_julianday,
--    exec_strftime, exec_time, exec_timediff, exec_unixepoch,
--};
--use crate::functions::datetime_input::exec_temporal_encode;
--use crate::functions::math::{exec_gcd, exec_lcm};
--use crate::functions::printf::exec_printf;
--use crate::functions::string::{exec_lpad, exec_repeat, exec_rpad};
--use crate::info;
--#[cfg(feature = "json")]
--use crate::json;
--use crate::namespace::{mangle_name, NamespaceId};
--use crate::numeric::decimal::{
--    bigdecimal_to_blob, blob_to_bigdecimal, check_numeric_limits, format_numeric,
--    numeric_from_value, validate_precision_scale, MAX_FRACTION_DIGITS,
--};
--use crate::numeric::Numeric;
--use crate::stats::StatAccum;
--use crate::translate::roles;
--use crate::types::AsValueRef;
--use crate::vdbe::array::{
--    compute_array_length_at_dim, exec_array_append, exec_array_cat, exec_array_contains,
--    exec_array_contains_all, exec_array_overlap, exec_array_position, exec_array_prepend,
--    exec_array_remove, exec_array_slice, exec_array_to_string, exec_string_to_array,
--};
--use crate::vdbe::{registers_to_ref_values, Register};
--use crate::{LimboError, Value, ValueRef};
--use bigdecimal::Zero;
--use branches::{mark_unlikely, unlikely};
--use std::borrow::Cow;
--use std::sync::atomic::Ordering;
--
--/// SQLite version reported by compatibility APIs.
--///
--/// This must equal `sqlite/version`, which `scripts/install-sqlite3.sh`
--/// reads; a test checks that, and that [`SQLITE_VERSION_NUMBER`] matches.
--/// Keep README.md and COMPAT.md in sync when bumping it.
--pub const SQLITE_VERSION: &str = "3.50.4";
--
--/// Integer form of [`SQLITE_VERSION`] used by `sqlite3_libversion_number()`.
--pub const SQLITE_VERSION_NUMBER: i32 = 3_050_004;
--
--#[cfg(all(feature = "fts", not(target_family = "wasm")))]
--use crate::function::FtsFunc;
--#[cfg(feature = "json")]
--use crate::function::JsonFunc;
--#[allow(unused_imports)]
--use crate::function::{AggFunc, Func, MathFunc, ScalarFunc, VectorFunc, WindowFunc};
--
- /// The dialect of the statements the engine runs for itself: SQLite SQL
- /// with the built-in functions and catalog tables.
- pub(crate) struct EngineDialect;
-@@ -164,1348 +110,3 @@ pub fn table_sql_for_replay(sql: &str) -> crate::Result<String> {
-     }
-     .to_string())
+@@ -1645,9 +1645,6 @@ fn parse_from_clause_table(
+                 if already_visible {
+                     continue;
+                 }
+-                let name_used_by_table_on_the_left = outer_query_refs_for_subquery
+-                    .iter()
+-                    .any(|reference| reference.identifier == cte_definition.name);
+                 // This plan only makes the name visible. A later FROM lookup performs
+                 // the real CTE use and validates its explicit column list.
+                 let cte_table = plan_cte(
+@@ -1671,7 +1668,7 @@ fn parse_from_clause_table(
+                         .then(|| cte_definition.select.clone()),
+                     cte_explicit_columns: cte_definition.explicit_columns.clone(),
+                     cte_id: Some(cte_definition.cte_id),
+-                    cte_definition_only: name_used_by_table_on_the_left,
++                    cte_definition_only: true,
+                     rowid_referenced: false,
+                     outer_join_may_null_extend: false,
+                     scope_depth: 0,
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/cte.sqltest` (modified, +38/-0)
+```diff
+@@ -1668,6 +1668,44 @@ expect error {
+     no such column: y
  }
--
--/// Resolve a name against the built-in SQLite function set.
--///
--/// This table is the SQLite dialect's scalar/aggregate/window name surface,
--/// and doubles as the shared helper other dialects compose with when they
--/// want a built-in under the same name. Engine mechanics that classify
--/// already-translated AST (aggregate/window detection in the planner,
--/// determinism checks on schema expressions) also resolve against it
--/// directly, because the translated AST always references the engine
--/// surface regardless of the frontend dialect.
--pub fn resolve_builtin_function(name: &str, arg_count: usize) -> crate::Result<Option<Func>> {
--    let func = resolve_builtin_function_name(name, arg_count)?;
--    // Reject scalar calls whose argument count is not in `arities()`.
--    if let Some(Func::Scalar(srf)) = &func {
--        let arities = srf.arities();
--        if !arities.contains(&-1) && !arities.contains(&(arg_count as i32)) {
--            crate::bail_parse_error!("wrong number of arguments to function {}()", name)
--        }
--    }
--    Ok(func)
--}
--
--/// Resolves a built-in function by name without checking the argument count
--/// of scalar functions.
--pub(crate) fn resolve_builtin_function_name(
--    name: &str,
--    arg_count: usize,
--) -> crate::Result<Option<Func>> {
--    let normalized_name = crate::util::normalize_ident(name);
--    match normalized_name.as_str() {
--        "avg" => {
--            if arg_count != 1 {
--                crate::bail_parse_error!("wrong number of arguments to function {}()", name)
--            }
--            Ok(Some(Func::Agg(AggFunc::Avg)))
--        }
--  
-```
-
-**File**: `core/dialect/mod.rs` (modified, +16/-10)
-```diff
-@@ -6,15 +6,21 @@
- //! dialect wherever the meaning of SQL text is dialect-specific: parsing
- //! statements into the engine AST and interpreting persisted schema text.
- //! The frontends live in their own crates: the SQLite dialect in
--//! `turso_sqlite` and the PostgreSQL dialect in `turso_pg`. The [`engine`]
--//! module has what they share: the parser entry points, the built-in
--//! functions, the catalog tables that ship with every Turso build
--//! (`pragma_*`, `json_each`/`json_tree`, `sqlite_dbpage`, `btree_dump`,
--//! `sqlite_turso_types`), and the dialect of the statements the engine
--//! runs for itself.
-+//! `turso_sqlite` and the PostgreSQL dialect in `turso_pg`. Both compose
-+//! with what ships with every Turso build: the built-in functions
-+//! ([`resolve_builtin_function`], [`call_builtin_scalar`]) and the catalog
-+//! tables (`pragma_*`, `json_each`/`json_tree`, `sqlite_dbpage`,
-+//! `btree_dump`, `sqlite_turso_types`) that
-+//! [`crate::schema::builtin::schema_builder`] installs. The [`engine`]
-+//! module has the parser entry points and the dialect of the statements
-+//! the engine runs for itself.
  
- pub mod engine;
- 
-+pub use crate::functions::builtin::{
-+    call_builtin_scalar, resolve_builtin_function, SQLITE_VERSION, SQLITE_VERSION_NUMBER,
-+};
-+
- pub(crate) use engine::EngineDialect;
- 
- use crate::{
-@@ -285,28 +291,28 @@ pub trait Dialect: Send + Sync + 'static {
-     /// The dialect owns its scalar function surface: the SQLite dialect
-     /// resolves the built-in set, another dialect resolves its own —
-     /// mapping names onto engine primitives where it wants them (usually
--    /// by composing with [`engine::resolve_builtin_function`]) and onto
-+    /// by composing with [`resolve_builtin_function`]) and onto
-     /// [`Func::Dialect`] for functions it executes
-     /// itself via [`Dialect::exec_scalar_function`]. Consulted
-     /// before extension functions; engine-generated helper statements
-     /// always resolve with SQLite semantics instead.
-     fn resolve_function(&self, name: &str, arg_count: usize) -> Result<Option<Func>> {
--        engine::resolve_builtin_function(name, arg_count)
-+        resolve_builtin_function(name, arg_count)
-     }
- 
-     /// Run built-in scalar function `func` on the registers that hold its
-     /// arguments.
-     ///
-     /// The default runs the shared implementation in
--    /// [`engine::call_builtin_scalar`]; a dialect overrides it for the
-+    /// [`call_builtin_scalar`]; a dialect overrides it for the
-     /// functions whose behavior differs and delegates the rest.
-     fn call_scalar(
-         &self,
-         context: &ScalarFuncContext<'_>,
-         func: &ScalarFunc,
-         args: &[Register],
-     ) -> Result<Value> {
--        engine::call_builtin_scalar(context, func, args)
-+        call_builtin_scalar(context, func, args)
-     }
- 
-     /// Execute a dialect scalar function at runtime.
-```
-
-**File**: `core/function.rs` (modified, +2/-2)
-```diff
-@@ -2040,15 +2040,15 @@ impl Func {
-         false
-     }
-     /// Resolve a built-in function name. Thin wrapper over
--    /// [`crate::dialect::engine::resolve_builtin_function_name`], where the
-+    /// [`crate::functions::builtin::resolve_builtin_function_name`], where the
-     /// SQLite name table lives; kept on `Func` for the engine call sites
-     /// that classify translated AST.
-     ///
-     /// Does not reject a wrong argument count for a scalar function: schema
-     /// loading uses this, and a schema written by an older Turso that accepted
-     /// such a call must still load. Translating the call rejects it.
-     pub fn resolve_function(name: &str, arg_count: usize) -> Result<Option<Self>, LimboError> {
--        crate::dialect::engine::resolve_builtin_function_name(name, arg_count)
-+        crate::functions::builtin::resolve_builtin_function_name(name, arg_count)
-     }
- 
-     /// Returns a list of all built-in functions for PRAGMA function_list.
-```
-
-**File**: `core/functions/builtin.rs` (added, +1397/-0)
-```diff
-@@ -0,0 +1,1397 @@
-+//! The built-in SQL functions: the names they resolve from and the scalar
-+//! functions' code.
-+
-+use crate::dialect::ScalarFuncContext;
-+use crate::functions::datetime::{
-+    exec_date, exec_date_diff, exec_date_minus, exec_date_plus, exec_datetime_full, exec_julianday,
-+    exec_strftime, exec_time, exec_timediff, exec_unixepoch,
-+};
-+use crate::functions::datetime_input::exec_temporal_encode;
-+use crate::functions::math::{exec_gcd, exec_lcm};
-+use crate::functions::printf::exec_printf;
-+use crate::functions::string::{exec_lpad, exec_repeat, exec_rpad};
-+use crate::info;
-+#[cfg(feature = "json")]
-+use crate::json;
-+use crate::namespace::{mangle_name, NamespaceId};
-+use crate::numeric::decimal::{
-+    bigdecimal_to_blob, blob_to_bigdecimal, check_numeric_limits, format_numeric,
-+    numeric_from_value, validate_precision_scale, MAX_FRACTION_DIGITS,
-+};
-+use crate::numeric::Numeric;
-+use crate::stats::StatAccum;
-+use crate::translate::roles;
-+use crate::types::AsValueRef;
-+use crate::vdbe::array::{
-+    compute_array_length_at_dim, exec_array_append, exec_array_cat, exec_array_contains,
-+    exec_array_contains_all, exec_array_overlap, exec_array_position, exec_array_prepend,
-+    exec_array_remove, exec_array_slice, exec_array_to_string, exec_string_to_array,
-+};
-+use crate::vdbe::{registers_to_ref_values, Register};
-+use crate::{LimboError, Value, ValueRef};
-+use bigdecimal::Zero;
-+use branches::{mark_unlikely, unlikely};
-+use std::borrow::Cow;
-+use std::sync::atomic::Ordering;
-+
-+/// SQLite version reported by compatibility APIs.
-+///
-+/// This must equal `sqlite/version`, which `scripts/install-sqlite3.sh`
-+/// reads; a test checks that, and that [`SQLITE_VERSION_NUMBER`] matches.
-+/// Keep README.md and COMPAT.md in sync when bumping it.
-+pub const SQLITE_VERSION: &str = "3.50.4";
-+
-+/// Integer form of [`SQLITE_VERSION`] used by `sqlite3_libversion_number()`.
-+pub const SQLITE_VERSION_NUMBER: i32 = 3_050_004;
-+
-+#[cfg(all(feature = "fts", not(target_family = "wasm")))]
-+use crate::function::FtsFunc;
-+#[cfg(feature = "json")]
-+use crate::function::JsonFunc;
-+#[allow(unused_imports)]
-+use crate::function::{AggFunc, Func, MathFunc, ScalarFunc, VectorFunc, WindowFunc};
-+
-+/// Resolve a name against the built-in SQLite function set.
-+///
-+/// This table is the SQLite dialect's scalar/aggregate/window name surface,
-+/// and doubles as the shared helper other dialects compose with when they
-+/// want a built-in under the same name. Engine mechanics that classify
-+/// already-translated AST (aggregate/window detection in the planner,
-+/// determinism checks on schema expressions) also resolve against it
-+/// directly, because the translated AST always references the engine
-+/// surface regardless of the frontend dialect.
-+pub fn resolve_builtin_function(name: &str, arg_count: usize) -> crate::Result<Option<Func>> {
-+    let func = resolve_builtin_function_name(name, arg_count)?;
-+    // Reject scalar calls whose argument count is not in `arities()`.
-+    if let Some(Func::Scalar(srf)) = &func {
-+        let arities = srf.arities();
-+        if !arities.contains(&-1) && !arities.contains(&(arg_count as i32)) {
-+            crate::bail_parse_error!("wrong number of arguments to function {}()", name)
-+        }
-+    }
-+    Ok(func)
++# A FROM clause subquery can read a CTE through a nested subquery, but the CTE's
++# columns are not visible in the FROM clause subquery itself.
++test cte-columns-not-visible-in-from-subquery-whose-exists-reads-cte {
++    WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT x WHERE EXISTS (SELECT 1 FROM c));
++}
++expect error {
++    no such column: x
 +}
 +
-+/// Resolves a built-in function by name without checking the argument count
-+/// of scalar functions.
-+pub(crate) fn resolve_builtin_function_name(
-+    name: &str,
-+    arg_count: usize,
-+) -> crate::Result<Option<Func>> {
-+    let normalized_name = crate::util::normalize_ident(name);
-+    match normalized_name.as_str() {
-+        "avg" => {
-+            if arg_count != 1 {
-+                crate::bail_parse_error!("wrong number of arguments to function {}()", name)
-+            }
-+            Ok(Some(Func::Agg(AggFunc::Avg)))
-+        }
-+        "count" => {
-+            // Handle both COUNT() and COUNT(expr) cases
-+            if arg_count == 0 {
-+                Ok(Some(Func::Agg(AggFunc::Count0))) // COUNT() case
-+            } else if arg_count == 1 {
-+                Ok(Some(Func::Agg(AggFunc::Count))) // COUNT(expr) case
-+            } else {
-+                crate::bail_parse_error!("wrong number of arguments to function {}()", name)
-+            }
-+        }
-+        "group_concat" => {
-+            if arg_count != 1 && arg_count != 2 {
-+                crate::bail_parse_error!("wrong number of arguments to function {}()", name)
-+            }
-+            Ok(Some(Func::Agg(AggFunc::GroupConcat)))
-+        }
-+        "max" if arg_count > 1 => Ok(Some(Func::Scalar(ScalarFunc::Max))),
-+        "max" => {
-+            if arg_count < 1 {
-+                crate::bail_parse_error!("wrong number of arguments to function {}()", name)
-+            }
-+            Ok(Some(Func::Agg(AggFunc::Max)))
-+        }
-+        "min" if arg_count > 1 => Ok(Some(Func::Scalar(ScalarFunc::Min))),
-+        "min" => {
-+            if arg_count < 1 {
-+                crate
++test cte-columns-not-visible-in-from-subquery-whose-scalar-subquery-reads-cte {
++    WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT (SELECT x FROM c), (SELECT x));
++}
++expect error {
++    no such column: x
++}
++
++test cte-qualified-column-not-visible-in-from-subquery-whose-exists-reads-cte {
++    WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT c.x WHERE EXISTS (SELECT 1 FROM c));
++}
++expect error {
++    no such column: c\.x
++}
++
++test cte-columns-not-visible-in-joined-from-subquery-whose-exists-reads-cte {
++    WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT 1) JOIN (SELECT x WHERE EXISTS (SELECT 1 FROM c));
++}
++expect error {
++    no such column: x
++}
++
++test cte-columns-visible-in-from-subquery-that-selects-from-cte {
++    WITH c AS (SELECT 5 AS x)
++    SELECT * FROM (SELECT x, (SELECT x), (SELECT count(*) FROM c) FROM c);
++}
++expect {
++    5|5|1
++}
++
+ # A CTE is not a table-valued function; calling it with arguments is an error.
+ test cte-referenced-with-call-arguments-rejected {
+     WITH cte1(x) AS (VALUES(1)) SELECT * FROM cte1(7);
 ```
 
-**File**: `core/functions/mod.rs` (modified, +1/-0)
+**File**: `testing/shared-sqltests/lateral-errors.sqltest` (modified, +17/-0)
 ```diff
-@@ -1,3 +1,4 @@
-+pub mod builtin;
- pub mod datetime;
- pub mod datetime_input;
- pub mod math;
-```
-
-**File**: `core/translate/expr/binding.rs` (modified, +1/-1)
-```diff
-@@ -656,7 +656,7 @@ pub(crate) fn validate_function_tail(
-         Ok(func) => func,
-         // SQLite reports OVER on a scalar function before a wrong argument count.
-         Err(err) if filter_over.over_clause.is_some() => {
--            match crate::dialect::engine::resolve_builtin_function_name(name, arg_count) {
-+            match crate::functions::builtin::resolve_builtin_function_name(name, arg_count) {
-                 Ok(Some(Func::Scalar(_))) => {
-                     crate::bail_parse_error!("{} may not be used as a window function", name)
-                 }
-```
-
-**File**: `core/translate/expr/expr_type.rs` (modified, +1/-1)
-```diff
-@@ -236,7 +236,7 @@ impl<'a> TypeEnv<'a> {
-             // The schema is read without the connection's dialect. Both
-             // dialects resolve built-in functions the same way.
-             Self::Table { syms, .. } | Self::TypeBody { syms, .. } => {
--                match crate::dialect::engine::resolve_builtin_function(name, arg_count)? {
-+                match crate::dialect::resolve_builtin_function(name, arg_count)? {
-                     Some(func) => Ok(Some(func)),
-                     None => Ok(syms.resolve_function(name, arg_count).map(Func::External)),
-                 }
-```
-
-**File**: `postgres/frontend/catalog.rs` (modified, +1/-1)
-```diff
-@@ -215,7 +215,7 @@ impl Dialect for PostgresDialect {
-         if name.eq_ignore_ascii_case("random") {
-             return Ok(None);
-         }
--        turso_core::dialect::engine::resolve_builtin_function(name, arg_count)
-+        turso_core::dialect::resolve_builtin_function(name, arg_count)
-     }
- 
-     fn requires_custom_types(&self) -> bool {
+@@ -544,3 +544,20 @@ expect {
+     2|2
+     3|0
+ }
++
++# A CTE that a subquery reads does not make its columns visible in a LATERAL
++# subquery whose FROM clause does not name it.
++test lateral-cannot-read-columns-of-a-cte-it-does-not-select-from {
++    WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT 1 AS y) AS s, LATERAL (SELECT x WHERE EXISTS (SELECT 1 FROM c)) AS l;
++}
++expect error {
++    no such column: x
++}
++@sqlstate 42703
++expect @tursopg error {
++    no such column: x
++}
++@sqlstate 42703
++expect @postgres error {
++    column "x" does not exist
++}
 ```
 
 ---
 
-### Incident Patch 3: `135431db` (2026-11-17)
-**Commit Message**: core: move the built-in functions to core/functions/builtin.rs
+### Incident Patch 3: `315e9a32` (2026-11-19)
+**Commit Message**: skills/debugging: fix log paths and the ThreadSanitizer and simulator commands
 
-`core/dialect/engine.rs` held two unrelated things: the dialect that
-the engine uses for the statements it runs for itself, with its parser
-entry points, and the built-in SQL functions that every dialect uses.
-The engine dialect is going away, and the built-in functions are not.
+The skill said to get trace logs from make test, but the Makefile sets
+RUST_LOG=off, and it named testing/test.log as the output. tursodb reads
+RUST_LOG and writes to stderr or to the file given with -t. The
+ThreadSanitizer command never set -Zsanitizer=thread, so it ran without the
+sanitizer, and it used rustup override, which changes the toolchain of the
+checkout; it now uses cargo +nightly with RUSTFLAGS.
 
-Move the functions to `core/functions/builtin.rs`, next to the other
-function code. `core::dialect` re-exports the items that the frontends
-call (`resolve_builtin_function`, `call_builtin_scalar`,
-`SQLITE_VERSION` and `SQLITE_VERSION_NUMBER`), so the frontends no
-longer name the `engine` module for them. No behaviour changes.
+The architecture overview and the repeated manual inspection section are
+removed. The skill is now the only copy.
 
-**File**: `core/dialect/engine.rs` (modified, +3/-1402)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.claude/skills/debugging/SKILL.md` (modified, +31/-62)
 ```diff
-@@ -1,68 +1,14 @@
--//! The engine's own SQL and the built-ins every dialect composes with.
-+//! The engine's own SQL.
- //!
- //! The engine compiles SQLite syntax: a frontend dialect translates its
- //! statements into the SQLite AST, and the statements the engine runs for
--//! itself are written in SQLite SQL. This module has the parts of that
--//! language that every dialect shares: the parser entry points, the
--//! built-in functions, and the built-in catalog tables (`pragma_*`
--//! table-valued functions, `json_each`/`json_tree`, `sqlite_dbpage`,
--//! `btree_dump`, and `sqlite_turso_types`), which each dialect registers
--//! with [`crate::schema::builtin::schema_builder`].
-+//! itself are written in SQLite SQL. This module has the parser entry
-+//! points for that SQL.
- //!
- //! [`EngineDialect`] is the dialect of the statements the engine runs for
- //! itself. The SQLite dialect that users open databases with is
- //! `SqliteDialect` in the `turso_sqlite` crate.
+@@ -1,104 +1,73 @@
+ ---
+ name: debugging
+-description: How to debug tursodb using Bytecode comparison, logging, ThreadSanitizer, deterministic simulation, and corruption analysis tools
++description: How to debug tursodb using bytecode comparison, logging, ThreadSanitizer, deterministic simulation, stack usage scripts, and corruption analysis tools
+ ---
+ # Debugging Guide
  
--use super::ScalarFuncContext;
--use crate::functions::datetime::{
--    exec_date, exec_date_diff, exec_date_minus, exec_date_plus, exec_datetime_full, exec_julianday,
--    exec_strftime, exec_time, exec_timediff, exec_unixepoch,
--};
--use crate::functions::datetime_input::exec_temporal_encode;
--use crate::functions::math::{exec_gcd, exec_lcm};
--use crate::functions::printf::exec_printf;
--use crate::functions::string::{exec_lpad, exec_repeat, exec_rpad};
--use crate::info;
--#[cfg(feature = "json")]
--use crate::json;
--use crate::namespace::{mangle_name, NamespaceId};
--use crate::numeric::decimal::{
--    bigdecimal_to_blob, blob_to_bigdecimal, check_numeric_limits, format_numeric,
--    numeric_from_value, validate_precision_scale, MAX_FRACTION_DIGITS,
--};
--use crate::numeric::Numeric;
--use crate::stats::StatAccum;
--use crate::translate::roles;
--use crate::types::AsValueRef;
--use crate::vdbe::array::{
--    compute_array_length_at_dim, exec_array_append, exec_array_cat, exec_array_contains,
--    exec_array_contains_all, exec_array_overlap, exec_array_position, exec_array_prepend,
--    exec_array_remove, exec_array_slice, exec_array_to_string, exec_string_to_array,
--};
--use crate::vdbe::{registers_to_ref_values, Register};
--use crate::{LimboError, Value, ValueRef};
--use bigdecimal::Zero;
--use branches::{mark_unlikely, unlikely};
--use std::borrow::Cow;
--use std::sync::atomic::Ordering;
+-## Bytecode Comparison Flow
++## Bytecode Comparison
+ 
+-Turso aims for SQLite compatibility. When behavior differs:
 -
--/// SQLite version reported by compatibility APIs.
--///
--/// This must equal `sqlite/version`, which `scripts/install-sqlite3.sh`
--/// reads; a test checks that, and that [`SQLITE_VERSION_NUMBER`] matches.
--/// Keep README.md and COMPAT.md in sync when bumping it.
--pub const SQLITE_VERSION: &str = "3.50.4";
+-```
+-1. EXPLAIN query in sqlite3
+-2. EXPLAIN query in tursodb
+-3. Compare bytecode
+-   ├─ Different → bug in code generation
+-   └─ Same but results differ → bug in VM or storage layer
+-```
 -
--/// Integer form of [`SQLITE_VERSION`] used by `sqlite3_libversion_number()`.
--pub const SQLITE_VERSION_NUMBER: i32 = 3_050_004;
+-### Example
++When Turso and SQLite give different results, run `EXPLAIN` on both:
+ 
+ ```bash
+-# SQLite
+ sqlite3 :memory: "EXPLAIN SELECT 1 + 1;"
 -
--#[cfg(all(feature = "fts", not(target_family = "wasm")))]
--use crate::function::FtsFunc;
--#[cfg(feature = "json")]
--use crate::function::JsonFunc;
--#[allow(unused_imports)]
--use crate::function::{AggFunc, Func, MathFunc, ScalarFunc, VectorFunc, WindowFunc};
+-# Turso
+ cargo run --bin tursodb :memory: "EXPLAIN SELECT 1 + 1;"
+ ```
+ 
+-## Manual Query Inspection
 -
- /// The dialect of the statements the engine runs for itself: SQLite SQL
- /// with the built-in functions and catalog tables.
- pub(crate) struct EngineDialect;
-@@ -164,1348 +110,3 @@ pub fn table_sql_for_replay(sql: &str) -> crate::Result<String> {
-     }
-     .to_string())
- }
+-```bash
+-cargo run --bin tursodb :memory: 'SELECT * FROM foo;'
+-cargo run --bin tursodb :memory: 'EXPLAIN SELECT * FROM foo;'
+-```
++Different bytecode means a bug in code generation (`core/translate/`). Same bytecode
++with different results means a bug in the VM or storage layer.
+ 
+ ## Logging
+ 
+-```bash
+-# Trace core during tests
+-RUST_LOG=none,turso_core=trace make test
++`tursodb` logs with `tracing`. It reads `RUST_LOG` (default level: warn) and writes to
++stderr, or to a file with `-t <file>` (`--tracing-output`).
+ 
+-# Output goes to testing/test.log
+-# Warning: can be megabytes per test run
++```bash
++RUST_LOG=turso_core=trace cargo run --bin tursodb -- -t /tmp/turso.log :memory: 'SELECT 1;'
+ ```
+ 
++Logs can reach megabytes. `make test` sets `RUST_LOG=off`, so use `cargo run` or `cargo test` to get logs.
++
+ ## Threading Issues
+ 
+-Use stress tests with ThreadSanitizer:
++Run the stress test under ThreadSanitizer. It needs a nightly toolchain with the `rust-src` component, and `--target` set to the host target (`x86_64-unknown-linux-gnu` on Linux, `aarch64-apple-darwin` on Apple Silicon):
+ 
+ ```bash
+-rustup toolchain install nightly
+-rustup override set nightly
+-cargo run -Zbuild-std --target x86_64-unknown-linux-gnu \
++RUSTFLAGS="-Zsanitizer=thread" cargo +nightly run -Zbuild-std --target x86_64-unknown-linux-gnu \
+   -p turso_stress -- --vfs syscall --nr-threads 4 --nr-iterations 1000
+ ```
+ 
++Flags: `--vfs`, `--nr-threads` (`-t`), `--nr-iterations` (`-i`); see `--help` for the rest.
++
+ ## Deterministic Simulation
+ 
+-Reproduce bugs with seed. Note: simulator uses legacy "limbo" naming.
++Replay a failure with its seed. The simulator binary is named `limbo_sim`.
+ 
+ ```bash
+-# Simulator
+ RUST_LOG=limbo_sim=debug cargo run --bin limbo_sim -- -s <seed>
+ 
+-# Whopper (concurrent DST)
++# Whopper (concurrent simulator). Repeat a run with the same seed and flags.
+ SEED=1234 ./testing/concurrent-simulator/bin/run
+ ```
+ 
++See `testing/concurrent-simulator/README.md` for flags such as `--mode` and `--swarm`.
++
+ ## Stack Usage
+ 
+-Parsing and translating an expression recurse once per level of nesting, so
+-the stack frame size of those functions limits how deep an expression can be.
+-Three scripts in `scripts/stack/` measure stack use. Use a release build
+-(`cargo build --release --bin tursodb`): debug builds do not reuse stack slots,
+-so their frames say little about what users run. Run each script with `-h`
+-for all options.
++Parsing and translating an expression recurse once per level of nesting, so frame
++size limits how deep an expression can be. Scripts in `scripts/stack/` measure it
++(`-h` lists options). Use a release build (`cargo build --release --bin tursodb`);
++debug builds do not reuse stack slots, so their frames say little about what users run.
+ 
+ ```bash
+-# Frame size of each function, read from its prologue. -c compares two binaries.
+-scripts/stack/frame-sizes.sh 'translate::expr::'
+-scripts/stack/frame-sizes.sh -c /tmp/tursodb-main 'translate_expr$' 'parse_expr_inner$'
 -
--/// Resolve a name against the built-in SQLite function set.
--///
--/// This table is the SQLite dialect's scalar/aggregate/window name surface,
--/// and doubles as the shared helper other dialects compose with when they
--/// want a built-in under the same name. Engine mechanics that classify
--/// already-translated AST (aggregate/window detection in the planner,
--/// determinism checks on schema expressions) also resolve against it
--/// directly, because the translated AST always references the engine
--/// surface regardless of the frontend dialect.
--pub fn resolve_builtin_function(name: &str, arg_count: usize) -> crate::Result<Option<Func>> {
--    let func = resolve_builtin_function_name(name, arg_count)?;
--    // Reject scalar calls whose argument count is not in `arities()`.
--    if let Some(Func::Scalar(srf)) = &func {
--        let arities = srf.arities();
--        if !arities.contains(&-1) && !arities.contains(&(arg_count as i32)) {
--            crate::bail_parse_error!("wrong number of arguments to function {}()", name)
--        }
--    }
--    Ok(func)
--}
+-# Smallest stack that runs a SQL script, per binary. -S adds sqlite3.
+-scripts/stack/min-stack.sh -S -b /tmp/tursodb-main -b target/release/tursodb deep.sql
 -
--/// Resolves a built-in function by name without checking the argument count
--/// of scalar functions.
--pub(crate) fn resolve_builtin_function_name(
--    name: &str,
--    arg_count: usize,
--) -> crate::Result<Option<Func>> {
--    let normalized_name = crate::util::normalize_ident(name);
--    match normalized_name.as_str() {
--        "avg" => {
--            if arg_count != 1 {
--                crate::bail_parse_error!("wrong number of arguments to function {}()", name)
--            }
--            Ok(Some(Func::Agg(AggFunc::Avg)))
--        }
--  
+-# Which functions use the stack at the deepest point (runs under lldb).
+-scripts/stack/stack-profile.sh deep.sql
++scripts/stack/frame-sizes.sh '<function name pattern>'        # frame size per function; -c compares two binaries
++scripts/stack/min-stack.sh -S -b target/release/tursodb deep.sql   # smallest stack that runs a script
++scripts/stack/stack-profile.sh deep.sql                 # functions on the stack at its deepest point (lldb)
+ ```
+ 
+-Functions that recurse per level should be small. Move rare and large paths
+-into `#[inline(never)]` helpers, like SQLite's `SQLITE_NOINLINE`.
+-
+-## Architecture Reference
+-
+-- **Parser** → AST from SQL strings
+-- **Code generator** → bytecode from AST
+-- **Virtual machine** → executes SQLite-compatible bytecode
+-- **Storage layer** → B-tree operations, paging
+-
+-## Corruption Debugging
++Functions that recurse per 
 ```
 
-**File**: `core/dialect/mod.rs` (modified, +16/-10)
+**File**: `docs/agent-guides/debugging.md` (removed, +0/-98)
 ```diff
-@@ -6,15 +6,21 @@
- //! dialect wherever the meaning of SQL text is dialect-specific: parsing
- //! statements into the engine AST and interpreting persisted schema text.
- //! The frontends live in their own crates: the SQLite dialect in
--//! `turso_sqlite` and the PostgreSQL dialect in `turso_pg`. The [`engine`]
--//! module has what they share: the parser entry points, the built-in
--//! functions, the catalog tables that ship with every Turso build
--//! (`pragma_*`, `json_each`/`json_tree`, `sqlite_dbpage`, `btree_dump`,
--//! `sqlite_turso_types`), and the dialect of the statements the engine
--//! runs for itself.
-+//! `turso_sqlite` and the PostgreSQL dialect in `turso_pg`. Both compose
-+//! with what ships with every Turso build: the built-in functions
-+//! ([`resolve_builtin_function`], [`call_builtin_scalar`]) and the catalog
-+//! tables (`pragma_*`, `json_each`/`json_tree`, `sqlite_dbpage`,
-+//! `btree_dump`, `sqlite_turso_types`) that
-+//! [`crate::schema::builtin::schema_builder`] installs. The [`engine`]
-+//! module has the parser entry points and the dialect of the statements
-+//! the engine runs for itself.
- 
- pub mod engine;
- 
-+pub use crate::functions::builtin::{
-+    call_builtin_scalar, resolve_builtin_function, SQLITE_VERSION, SQLITE_VERSION_NUMBER,
-+};
-+
- pub(crate) use engine::EngineDialect;
- 
- use crate::{
-@@ -285,28 +291,28 @@ pub trait Dialect: Send + Sync + 'static {
-     /// The dialect owns its scalar function surface: the SQLite dialect
-     /// resolves the built-in set, another dialect resolves its own —
-     /// mapping names onto engine primitives where it wants them (usually
--    /// by composing with [`engine::resolve_builtin_function`]) and onto
-+    /// by composing with [`resolve_builtin_function`]) and onto
-     /// [`Func::Dialect`] for functions it executes
-     /// itself via [`Dialect::exec_scalar_function`]. Consulted
-     /// before extension functions; engine-generated helper statements
-     /// always resolve with SQLite semantics instead.
-     fn resolve_function(&self, name: &str, arg_count: usize) -> Result<Option<Func>> {
--        engine::resolve_builtin_function(name, arg_count)
-+        resolve_builtin_function(name, arg_count)
-     }
- 
-     /// Run built-in scalar function `func` on the registers that hold its
-     /// arguments.
-     ///
-     /// The default runs the shared implementation in
--    /// [`engine::call_builtin_scalar`]; a dialect overrides it for the
-+    /// [`call_builtin_scalar`]; a dialect overrides it for the
-     /// functions whose behavior differs and delegates the rest.
-     fn call_scalar(
-         &self,
-         context: &ScalarFuncContext<'_>,
-         func: &ScalarFunc,
-         args: &[Register],
-     ) -> Result<Value> {
--        engine::call_builtin_scalar(context, func, args)
-+        call_builtin_scalar(context, func, args)
-     }
- 
-     /// Execute a dialect scalar function at runtime.
-```
-
-**File**: `core/function.rs` (modified, +2/-2)
-```diff
-@@ -2040,15 +2040,15 @@ impl Func {
-         false
-     }
-     /// Resolve a built-in function name. Thin wrapper over
--    /// [`crate::dialect::engine::resolve_builtin_function_name`], where the
-+    /// [`crate::functions::builtin::resolve_builtin_function_name`], where the
-     /// SQLite name table lives; kept on `Func` for the engine call sites
-     /// that classify translated AST.
-     ///
-     /// Does not reject a wrong argument count for a scalar function: schema
-     /// loading uses this, and a schema written by an older Turso that accepted
-     /// such a call must still load. Translating the call rejects it.
-     pub fn resolve_function(name: &str, arg_count: usize) -> Result<Option<Self>, LimboError> {
--        crate::dialect::engine::resolve_builtin_function_name(name, arg_count)
-+        crate::functions::builtin::resolve_builtin_function_name(name, arg_count)
-     }
- 
-     /// Returns a list of all built-in functions for PRAGMA function_list.
-```
-
-**File**: `core/functions/builtin.rs` (added, +1397/-0)
-```diff
-@@ -0,0 +1,1397 @@
-+//! The built-in SQL functions: the names they resolve from and the scalar
-+//! functions' code.
-+
-+use crate::dialect::ScalarFuncContext;
-+use crate::functions::datetime::{
-+    exec_date, exec_date_diff, exec_date_minus, exec_date_plus, exec_datetime_full, exec_julianday,
-+    exec_strftime, exec_time, exec_timediff, exec_unixepoch,
-+};
-+use crate::functions::datetime_input::exec_temporal_encode;
-+use crate::functions::math::{exec_gcd, exec_lcm};
-+use crate::functions::printf::exec_printf;
-+use crate::functions::string::{exec_lpad, exec_repeat, exec_rpad};
-+use crate::info;
-+#[cfg(feature = "json")]
-+use crate::json;
-+use crate::namespace::{mangle_name, NamespaceId};
-+use crate::numeric::decimal::{
-+    bigdecimal_to_blob, blob_to_bigdecimal, check_numeric_limits, format_numeric,
-+    numeric_from_value, validate_precision_scale, MAX_FRACTION_DIGITS,
-+};
-+use crate::numeric::Numeric;
-+use crate::stats::StatAccum;
-+use crate::translate::roles;
-+use crate::types::AsValueRef;
-+use crate::vdbe::array::{
-+    compute_array_length_at_dim, exec_array_append, exec_array_cat, exec_array_contains,
-+    exec_array_contains_all, exec_array_overlap, exec_array_position, exec_array_prepend,
-+    exec_array_remove, exec_array_slice, exec_array_to_string, exec_string_to_array,
-+};
-+use crate::vdbe::{registers_to_ref_values, Register};
-+use crate::{LimboError, Value, ValueRef};
-+use bigdecimal::Zero;
-+use branches::{mark_unlikely, unlikely};
-+use std::borrow::Cow;
-+use std::sync::atomic::Ordering;
-+
-+/// SQLite version reported by compatibility APIs.
-+///
-+/// This must equal `sqlite/version`, which `scripts/install-sqlite3.sh`
-+/// reads; a test checks that, and that [`SQLITE_VERSION_NUMBER`] matches.
-+/// Keep README.md and COMPAT.md in sync when bumping it.
-+pub const SQLITE_VERSION: &str = "3.50.4";
-+
-+/// Integer form of [`SQLITE_VERSION`] used by `sqlite3_libversion_number()`.
-+pub const SQLITE_VERSION_NUMBER: i32 = 3_050_004;
-+
-+#[cfg(all(feature = "fts", not(target_family = "wasm")))]
-+use crate::function::FtsFunc;
-+#[cfg(feature = "json")]
-+use crate::function::JsonFunc;
-+#[allow(unused_imports)]
-+use crate::function::{AggFunc, Func, MathFunc, ScalarFunc, VectorFunc, WindowFunc};
-+
-+/// Resolve a name against the built-in SQLite function set.
-+///
-+/// This table is the SQLite dialect's scalar/aggregate/window name surface,
-+/// and doubles as the shared helper other dialects compose with when they
-+/// want a built-in under the same name. Engine mechanics that classify
-+/// already-translated AST (aggregate/window detection in the planner,
-+/// determinism checks on schema expressions) also resolve against it
-+/// directly, because the translated AST always references the engine
-+/// surface regardless of the frontend dialect.
-+pub fn resolve_builtin_function(name: &str, arg_count: usize) -> crate::Result<Option<Func>> {
-+    let func = resolve_builtin_function_name(name, arg_count)?;
-+    // Reject scalar calls whose argument count is not in `arities()`.
-+    if let Some(Func::Scalar(srf)) = &func {
-+        let arities = srf.arities();
-+        if !arities.contains(&-1) && !arities.contains(&(arg_count as i32)) {
-+            crate::bail_parse_error!("wrong number of arguments to function {}()", name)
-+        }
-+    }
-+    Ok(func)
-+}
-+
-+/// Resolves a built-in function by name without checking the argument count
-+/// of scalar functions.
-+pub(crate) fn resolve_builtin_function_name(
-+    name: &str,
-+    arg_count: usize,
-+) -> crate::Result<Option<Func>> {
-+    let normalized_name = crate::util::normalize_ident(name);
-+    match normalized_name.as_str() {
-+        "avg" => {
-+            if arg_count != 1 {
-+                crate::bail_parse_error!("wrong number of arguments to function {}()", name)
-+            }
-+            Ok(Some(Func::Agg(AggFunc::Avg)))
-+        }
-+        "count" => {
-+            // Handle both COUNT() and COUNT(expr) cases
-+            if arg_count == 0 {
-+                Ok(Some(Func::Agg(AggFunc::Count0))) // COUNT() case
-+            } else if arg_count == 1 {
-+                Ok(Some(Func::Agg(AggFunc::Count))) // COUNT(expr) case
-+            } else {
-+                crate::bail_parse_error!("wrong number of arguments to function {}()", name)
-+            }
-+        }
-+        "group_concat" => {
-+            if arg_count != 1 && arg_count != 2 {
-+                crate::bail_parse_error!("wrong number of arguments to function {}()", name)
-+            }
-+            Ok(Some(Func::Agg(AggFunc::GroupConcat)))
-+        }
-+        "max" if arg_count > 1 => Ok(Some(Func::Scalar(ScalarFunc::Max))),
-+        "max" => {
-+            if arg_count < 1 {
-+                crate::bail_parse_error!("wrong number of arguments to function {}()", name)
-+            }
-+            Ok(Some(Func::Agg(AggFunc::Max)))
-+        }
-+        "min" if arg_count > 1 => Ok(Some(Func::Scalar(ScalarFunc::Min))),
-+        "min" => {
-+            if arg_count < 1 {
-+                crate
-```
-
-**File**: `core/functions/mod.rs` (modified, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
-+pub mod builtin;
- pub mod datetime;
- pub mod datetime_input;
- pub mod math;
-```
-
-**File**: `core/translate/expr/binding.rs` (modified, +1/-1)
-```diff
-@@ -656,7 +656,7 @@ pub(crate) fn validate_function_tail(
-         Ok(func) => func,
-         // SQLite reports OVER on a scalar function before a wrong argument count.
-         Err(err) if filter_over.over_clause.is_some() => {
--            match crate::dialect::engine::resolve_builtin_function_name(name, arg_count) {
-+            match crate::functions::builtin::resolve_builtin_function_name(name, arg_count) {
-                 Ok(Some(Func::Scalar(_))) => {
-                     crate::bail_parse_error!("{} may not be used as a window function", name)
-                 }
-```
-
-**File**: `core/translate/expr/expr_type.rs` (modified, +1/-1)
-```diff
-@@ -236,7 +236,7 @@ impl<'a> TypeEnv<'a> {
-             // The schema is read without the connection's dialect. Both
-             // dialects resolve built-in functions the same way.
-             Self::Table { syms, .. } | Self::TypeBody { syms, .. } => {
--                match crate::dialect::engine::resolve_builtin_function(name, arg_count)? {
-+                match crate::dialect::resolve_builtin_function(name, arg_count)? {
-                     Some(func) => Ok(Some(func)),
-                     None => Ok(syms.resolve_function(name, arg_count).map(Func::External)),
-                 }
-```
-
-**File**: `postgres/frontend/catalog.rs` (modified, +1/-1)
-```diff
-@@ -215,7 +215,7 @@ impl Dialect for PostgresDialect {
-         if name.eq_ignore_ascii_case("random") {
-             return Ok(None);
-         }
--        turso_core::dialect::engine::resolve_builtin_function(name, arg_count)
-+        turso_core::dialect::resolve_builtin_function(name, arg_count)
-     }
- 
-     fn requires_custom_types(&self) -> bool {
+@@ -1,98 +0,0 @@
+----
+-name: debugging
+-description: Bytecode comparison, logging, ThreadSanitizer, deterministic simulation
+----
+-# Debugging Guide
+-
+-## Bytecode Comparison Flow
+-
+-Turso aims for SQLite compatibility. When behavior differs:
+-
+-```
+-1. EXPLAIN query in sqlite3
+-2. EXPLAIN query in tursodb
+-3. Compare bytecode
+-   ├─ Different → bug in code generation
+-   └─ Same but results differ → bug in VM or storage layer
+-```
+-
+-### Example
+-
+-```bash
+-# SQLite
+-sqlite3 :memory: "EXPLAIN SELECT 1 + 1;"
+-
+-# Turso
+-cargo run --bin tursodb :memory: "EXPLAIN SELECT 1 + 1;"
+-```
+-
+-## Manual Query Inspection
+-
+-```bash
+-cargo run --bin tursodb :memory: 'SELECT * FROM foo;'
+-cargo run --bin tursodb :memory: 'EXPLAIN SELECT * FROM foo;'
+-```
+-
+-## Logging
+-
+-```bash
+-# Trace core during tests
+-RUST_LOG=none,turso_core=trace make test
+-
+-# Output goes to testing/test.log
+-# Warning: can be megabytes per test run
+-```
+-
+-## Threading Issues
+-
+-Use stress tests with ThreadSanitizer:
+-
+-```bash
+-rustup toolchain install nightly
+-rustup override set nightly
+-cargo run -Zbuild-std --target x86_64-unknown-linux-gnu \
+-  -p turso_stress -- --vfs syscall --nr-threads 4 --nr-iterations 1000
+-```
+-
+-## Deterministic Simulation
+-
+-Reproduce bugs with seed. Note: simulator uses legacy "limbo" naming.
+-
+-```bash
+-# Simulator
+-RUST_LOG=limbo_sim=debug cargo run --bin limbo_sim -- -s <seed>
+-
+-# Whopper (concurrent DST)
+-SEED=1234 ./testing/concurrent-simulator/bin/run
+-```
+-
+-## Stack Usage
+-
+-Parsing and translating an expression recurse once per level of nesting, so
+-the stack frame size of those functions limits how deep an expression can be.
+-Three scripts in `scripts/stack/` measure stack use. Use a release build
+-(`cargo build --release --bin tursodb`): debug builds do not reuse stack slots,
+-so their frames say little about what users run. Run each script with `-h`
+-for all options.
+-
+-```bash
+-# Frame size of each function, read from its prologue. -c compares two binaries.
+-scripts/stack/frame-sizes.sh 'translate::expr::'
+-scripts/stack/frame-sizes.sh -c /tmp/tursodb-main 'translate_expr$' 'parse_expr_inner$'
+-
+-# Smallest stack that runs a SQL script, per binary. -S adds sqlite3.
+-scripts/stack/min-stack.sh -S -b /tmp/tursodb-main -b target/release/tursodb deep.sql
+-
+-# Which functions use the stack at the deepest point (runs under lldb).
+-scripts/stack/stack-profile.sh deep.sql
+-```
+-
+-Functions that recurse per level should be small. Move rare and large paths
+-into `#[inline(never)]` helpers, like SQLite's `SQLITE_NOINLINE`.
+-
+-## Architecture Reference
+-
+-- **Parser** → AST from SQL strings
+-- **Code generator** → bytecode from AST
+-- **Virtual machine** → executes SQLite-compatible bytecode
+-- **Storage layer** → B-tree operations, paging
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12036** (2026-11-18): core/vdbe: pass the connection to opcodes instead of storing it in Program (@penberg)
-- **PR #12027** (2026-11-18): core: replace EngineDialect with Dialect::get_internal_dialect() (@penberg)
-- **PR #12022** (2026-11-18): tursopg: refuse date, time, timetz and interval types (@jussisaurio)
-- **PR #12019** (2026-11-18): core: parse SQL using per-database dialect (@penberg)
-- **PR #12016** (2026-11-18): core: move the built-in functions to core/functions/builtin.rs (@penberg)
-- **PR #12011** (2026-11-18): core/mvcc: extract sqlite_schema row parsing into dedicated module (@pedrocarlo)
+- **PR #12107** (2026-11-19): postgres: add more known-gap tests against PostgreSQL (@dswbx)
+- **PR #12101** (2026-11-19): core, postgres: use less stack when preparing a statement (@jussisaurio)
+- **PR #12098** (2026-11-19): postgres/tests: expect 0A000 for refused table functions in the gap tests (@jussisaurio)
+- **PR #12097** (2026-11-19): Cut AGENTS.md and skills down to facts that match the code (@jussisaurio)
+- **PR #12093** (2026-11-19): postgres: move pg_query to 18.1 to parse PostgreSQL 18 (@glommer)
+- **PR #12090** (2026-11-19): core/schema: read the schema at reparse as a list of load steps (@pedrocarlo)
 
 ---
 
@@ -2351,39 +2117,30 @@ longer name the `engine` module for them. No behaviour changes.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'parser: reject NULL as a pragma value' from sath000007
+## X. Merge 'core/vdbe: fix sum and avg over a window after an infinite value leaves' 
 
 **RULE**:
-When implementing operations in `sqlite/parser/src/parser.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/dialect/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `21b65578`: Merge 'parser: reject NULL as a pragma value' from sath000007. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1befb62a`: Merge 'core/vdbe: fix sum and avg over a window after an infinite value leaves' from app/turso-github-handyman. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlite/parser/src/parser.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/dialect/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // SQLite's pragma value grammar does not accept NULL
-            TK_NULL => {
-                let offset = self.offset();
-                let token = self.peek_no_eof()?;
-                Err(unexpected_token_error(
-                    token,
-                    offset,
-                    &[TK_ID, TK_STRING, TK_INTEGER, TK_FLOAT],
-                ))
-            }
-    #[test]
-    fn test_pragma_value_rejects_null() {
-        for sql in [
-            b"PRAGMA foreign_keys = NULL".as_slice(),
-            b"PRAGMA foreign_keys(NULL)".as_slice(),
-        ] {
-            let result = Parser::new(sql).next().unwrap();
-            assert!(result.is_err(), "expected parse error for {sql:?}");
-        }
+    /// Whether `sum()` and `avg()` count their infinite inputs apart from
+    /// the total of the finite ones.
+    ///
+    /// PostgreSQL does, so a moving window frame gives a finite result again
+    /// once its infinite values leave it. SQLite adds them to the total.
+    /// Removing a row from a window frame adds its negation, so once an
+    /// infinite value leaves, the total is `Inf - Inf`, which is NaN, and
+    /// the result stays NULL.
+    fn sum_counts_infinite_inputs(&self) -> bool {
+        false
     }
 
 ```
@@ -2395,7 +2152,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `21b65578` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1befb62a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T14:28:37.662Z",
-  "total_cycles_completed": 10780,
-  "total_learnings_persisted": 10780,
-  "total_rules_promoted": 10159,
+  "last_updated": "2026-11-19T14:55:37.275Z",
+  "total_cycles_completed": 10782,
+  "total_learnings_persisted": 10782,
+  "total_rules_promoted": 10160,
   "history": [
-    {
-      "timestamp": "2026-11-18T17:51:23.508Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T18:00:19.566Z",
-      "repository": "amazon/chronos-2",
-      "learningId": "learn-huggingface-amazon-chronos-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T18:09:56.934Z",
       "repository": "wcandillon/react-native-skia",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T14:52:38.526Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T14:55:37.275Z",
+      "repository": "autotrust/AutoTrust-Decider-Pro-35B",
+      "learningId": "learn-huggingface-autotrust-jev-35b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

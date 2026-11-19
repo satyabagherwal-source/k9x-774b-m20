@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T14:28:42.992Z",
+  "last_updated": "2026-11-19T14:55:42.037Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21803,
+  "total_items": 21805,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112990,25 +112990,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "e139e251",
-      "content_hash": "9cbde88da17b311629d757ac2604291502cabd5a24cf775705e912900ffdf61d",
+      "source_version": "72006e5e",
+      "content_hash": "33d031b8bc465a0c4f164162b00b7dec796161f42a18a7e418a48ed34cde6089",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T07:06:38.179Z"
+      "persisted_at": "2026-11-19T14:52:39.354Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/tursodatabase-limbo-verification-protocol-empirical-defect-shield-for-tursodatab.md",
+      "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "source_version": "e139e251",
-      "content_hash": "caf7c33131c37169b002eb5710e6729d552c24800cc5302cc3e9138c7b9c8828",
+      "source_version": "72006e5e",
+      "content_hash": "83a57b595bb3cd3c1a7bb6678312e1d5fc6e73c5391ab3d0f881a83a9162fd3b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T07:06:38.356Z"
+      "persisted_at": "2026-11-19T14:52:39.505Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -213491,13 +213491,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "e139e251",
-      "content_hash": "d516bb8b60c28af18a12dfe762b52f81921a0760d641ecc2cf6a005c6eab079d",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "72006e5e",
+      "content_hash": "9e43376c6eb655809b20a3560d01d46afe050deb82a30bcc8d1b52146c962123",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213533,6 +213533,11 @@
           "number": 9347,
           "title": "Merge 'core/dialect: replace CatalogChange with typed requests and a dialect-bui",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9388,
+          "title": "Merge 'core/vdbe: fix sum and avg over a window after an infinite value leaves'",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213540,7 +213545,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T07:06:37.523Z",
+      "verified_at": "2026-11-19T14:52:38.312Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218524,13 +218529,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZACO-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-9Y26-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "c3b62f86f25f06b517de751284c926854e7ee28b89078d91b78b77841f2f0857",
+      "content_hash": "5b2cf8b8a20e167ad69634b036c3b0a1ddb2af5302215de2b57ad46233c4d3d0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T02:11:34.824Z"
+      "persisted_at": "2026-11-19T14:55:41.742Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218540,9 +218545,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d89e47e6b67df1132db245a7194a8b8f6e73eb8324914fbbf1783fdb64994b99",
+      "content_hash": "4b2339c27372da0d39baad1be4ab43bd666fc9514bc26f4c2feff6813d34d112",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T02:11:34.948Z"
+      "persisted_at": "2026-11-19T14:55:41.890Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218552,9 +218557,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "8d310ed60f416ed446f6372cb75bf7cc1e2c7ee5e824a3050cc5220badf0a5c1",
+      "content_hash": "0e411d72330c468b4ddb733ad933e29b38603753377fb500ff10b2838b4e1c4d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T02:11:35.075Z"
+      "persisted_at": "2026-11-19T14:55:42.037Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -238751,7 +238756,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B",
       "source_version": "hf-autotrust-jev-35b",
-      "content_hash": "305de66ceebdb2dd243384ba03f6e9fefc9ebfb26258750d3d0a518ead3b0200",
+      "content_hash": "ee075ea2a47b1a50227fdf520e635ff647b751be6c1273db91ed34ece4c87858",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
       "promoted_rules": [],
@@ -238760,7 +238765,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T00:05:22.165Z",
+      "verified_at": "2026-11-19T14:55:37.031Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238777,9 +238782,9 @@
       "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-35B Core Invariants",
       "repository": "autotrust/AutoTrust-Decider-Pro-35B",
       "source_version": "hf-autotrust-jev-35b",
-      "content_hash": "e79e12dfaed418e550e770907d351804ac14919c3e435a0be60f816ed2d3ffeb",
+      "content_hash": "c3bc922fd8fcae615d2b7be39f9fcc50073953b451fc902ba4e7497244baa0f9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T00:05:22.585Z"
+      "persisted_at": "2026-11-19T14:55:37.471Z"
     },
     "learn-huggingface-conceptcountry-qwen-concept-27b": {
       "learning_id": "learn-huggingface-conceptcountry-qwen-concept-27b",
@@ -238840,9 +238845,9 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-jev-35b-learnings Core Invariants",
       "repository": "hf-autotrust-jev-35b-learnings",
       "source_version": "HEAD",
-      "content_hash": "9edf3782f32e235c276bc07526b50c6caf1cbd03c798b98d5a6f917d2b9103f5",
+      "content_hash": "48924b5d46f7f165c165eca8b23862bb446e04869401acb25ceca82f1b63cb18",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T00:06:43.573Z"
+      "persisted_at": "2026-11-19T14:55:40.515Z"
     },
     "learn-github-shifthackz-sdai-kmp": {
       "learning_id": "learn-github-shifthackz-sdai-kmp",
@@ -257976,9 +257981,9 @@
       "title": "Technical Construction Intelligence: tursodatabase-turso-learnings Core Invariants",
       "repository": "tursodatabase-turso-learnings",
       "source_version": "HEAD",
-      "content_hash": "4c983b63055efdc9b574cfcf93d17d3385255dd8f1ccfd1fe3f5428d38cb0a46",
+      "content_hash": "5ed65abe38ac3851b6ca95902522dca93a0dab47488d23e822ada803439aa70f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T18:05:45.648Z"
+      "persisted_at": "2026-11-19T14:55:41.154Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso-learnings",
@@ -257988,9 +257993,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase-turso-learnings",
       "repository": "tursodatabase-turso-learnings",
       "source_version": "HEAD",
-      "content_hash": "c01fed788ac420741ed5ba5b8d06b9c25da79e28564750e9685085d2304f963e",
+      "content_hash": "ed3070716980c1f2427f59f7fae8e6f375440ce59cd9237a3a12f5906e82840f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T18:05:45.791Z"
+      "persisted_at": "2026-11-19T14:55:41.356Z"
     },
     "learn-huggingface-n4ze3m-tiny-voca": {
       "learning_id": "learn-huggingface-n4ze3m-tiny-voca",
@@ -294775,6 +294780,32 @@
       "content_hash": "5161bfb3de4c8507041d73ed7770ca47e1d6071e3f3bc2b3a80de78063bcc796",
       "domain_letter": "G",
       "persisted_at": "2026-11-19T14:28:42.842Z"
+    },
+    "rule-9388": {
+      "learning_id": "rule-9388",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9388,
+      "title": "Merge 'core/vdbe: fix sum and avg over a window after an infinite value leaves'",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "72006e5e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T14:52:38.312Z"
+    },
+    "candidate_directive-merge-core-vdbe-fix-sum-and-avg-over-a-window-after-an-infinite-value-leaves": {
+      "item_id": "candidate_directive-merge-core-vdbe-fix-sum-and-avg-over-a-window-after-an-infinite-value-leaves",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9XHJ-merge-core-vdbe-fix-sum-and-avg-over-a-window-after-an-infinite-value-leaves.md",
+      "title": "Merge 'core/vdbe: fix sum and avg over a window after an infinite value leaves'",
+      "repository": "tursodatabase-turso-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8edc0af9376f387eda6cda63da2c3bdb6f756aa6eada0b1bac0690bc58cc2d48",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T14:55:41.004Z"
     }
   },
   "ai-builder-brain": {

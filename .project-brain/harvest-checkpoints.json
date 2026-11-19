@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T14:28:37.666Z",
+  "last_updated": "2026-11-19T14:55:37.278Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "d516bb8b60c28af18a12dfe762b52f81921a0760d641ecc2cf6a005c6eab079d",
-      "verified_at": "2026-11-19T07:06:37.755Z",
+      "content_hash": "9e43376c6eb655809b20a3560d01d46afe050deb82a30bcc8d1b52146c962123",
+      "verified_at": "2026-11-19T14:52:38.530Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T07:06:37.755Z"
+      "last_updated": "2026-11-19T14:52:38.530Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -18966,14 +18966,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-35b",
-      "content_hash": "305de66ceebdb2dd243384ba03f6e9fefc9ebfb26258750d3d0a518ead3b0200",
-      "verified_at": "2026-11-15T00:05:22.404Z",
+      "content_hash": "ee075ea2a47b1a50227fdf520e635ff647b751be6c1273db91ed34ece4c87858",
+      "verified_at": "2026-11-19T14:55:37.278Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T00:05:22.404Z"
+      "last_updated": "2026-11-19T14:55:37.278Z"
     },
     "ConceptCountry/qwen-concept-27b": {
       "repository": "ConceptCountry/qwen-concept-27b",
