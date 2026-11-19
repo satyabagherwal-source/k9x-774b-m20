@@ -11158,3 +11158,6 @@
 | `CYCLE-20261119-25AQ` | `2026-11-19T00:49:49.394Z` | `octodns/octodns` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9312` | Yes (`606b7e87...`) |
 | `CYCLE-20261119-29KK` | `2026-11-19T00:49:54.932Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9313` | Yes (`76b11299...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T00:50:27.525Z` | `hf-baai-bge-reranker-v2-m3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9B951EAF` [Domain D] | Yes (`2a839bd5...`) |
+| `CYCLE-20261119-CTAX` | `2026-11-19T00:58:07.065Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`b96fcd45...`) |
+| `CYCLE-20261119-D2BV` | `2026-11-19T00:58:18.763Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3499` | Yes (`511db8bd...`) |
+| `CYCLE-20261119-D5JI` | `2026-11-19T00:58:22.926Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9314` | Yes (`753e9b00...`) |

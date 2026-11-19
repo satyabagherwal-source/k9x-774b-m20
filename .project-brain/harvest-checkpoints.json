@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T00:49:54.945Z",
+  "last_updated": "2026-11-19T00:58:22.938Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1490,14 +1490,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "50c4ab9d3612d8bb692a137c5d927c8e9cf61cd7b81000207454fc5afd7c6001",
-      "verified_at": "2026-11-14T09:08:07.042Z",
+      "content_hash": "b96fcd45476d2a236be0110843ca5b7df2b3f381de4922d5fa234b6c0213d75c",
+      "verified_at": "2026-11-19T00:58:07.076Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T09:08:07.042Z"
+      "last_updated": "2026-11-19T00:58:07.076Z"
     },
     "FacebookAI/xlm-roberta-base": {
       "repository": "FacebookAI/xlm-roberta-base",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "71595d7aa1e571c48e6b66c362b4ac61e9abcd8794655a210a056ae9a6435fc2",
-      "verified_at": "2026-11-18T00:07:57.602Z",
+      "content_hash": "511db8bdc28056b7e2b27b04a81580b1f4fcb1922ab35269287abaa6a6ea103b",
+      "verified_at": "2026-11-19T00:58:18.775Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T00:07:57.602Z"
+      "last_updated": "2026-11-19T00:58:18.775Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "8a95280c874f724c166963b038920d3fe649597c1fbbb2ac9ab5cd5b3fd29024",
-      "verified_at": "2026-11-18T08:21:35.316Z",
+      "content_hash": "753e9b00ae69560e874a16bffe2f878d5b83a21c1f11354080c50a13f406f560",
+      "verified_at": "2026-11-19T00:58:22.937Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T08:21:35.316Z"
+      "last_updated": "2026-11-19T00:58:22.937Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",

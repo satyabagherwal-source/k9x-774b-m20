@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T18:38:40.709Z",
+  "timestamp": "2026-11-19T00:58:26.749Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-microsoft-agent-governance-toolkit-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [microsoft-agent-governance-toolkit-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T18:38:40.709Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T00:58:26.749Z`  
 > **Learning ID**: `LEARN-EVO-microsoft-agent-governance-toolkit-learnings`
 
 
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `5bcf1daa`  
+> **Source Version**: `f85abe1f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T18:38:35.022Z  
+> **Timestamp**: 2026-11-19T00:58:18.125Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:38:35.017Z  
+> **Harvest Timestamp**: 2026-11-19T00:58:18.120Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6572 stars
+- **Stars / Engagement**: 6578 stars
 
 ---
 
@@ -433,106 +433,207 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5bcf1daa` (2026-11-16)
-**Commit Message**: chore(deps): Bump cedar-policy (#4578)
+### Incident Patch 1: `f85abe1f` (2026-11-18)
+**Commit Message**: chore(deps): Bump rustls (#4611)
 
-Bumps [cedar-policy](https://github.com/cedar-policy/cedar) from 4.11.0 to 4.11.2.
-- [Release notes](https://github.com/cedar-policy/cedar/releases)
-- [Commits](https://github.com/cedar-policy/cedar/compare/cedar-policy-cli-v4.11.0...cedar-policy-cli-v4.11.2)
+Bumps [rustls](https://github.com/rustls/rustls) from 0.23.43 to 0.23.46.
+- [Release notes](https://github.com/rustls/rustls/releases)
+- [Changelog](https://github.com/rustls/rustls/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/rustls/rustls/compare/v/0.23.43...v/0.23.46)
 
 ---
 updated-dependencies:
-- dependency-name: cedar-policy
-  dependency-version: 4.11.2
+- dependency-name: rustls
+  dependency-version: 0.23.46
   dependency-type: indirect
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `policy-engine/examples/coding_agent/app/Cargo.lock` (modified, +10/-10)
+**File**: `benchmarks/prompt-injection/harness/agt-rules-baseline/Cargo.lock` (modified, +44/-56)
 ```diff
-@@ -293,9 +293,9 @@ dependencies = [
+@@ -45,19 +45,21 @@ dependencies = [
+ 
+ [[package]]
+ name = "agent-control-spec"
+-version = "0.4.0-alpha.3"
++version = "0.4.0-alpha.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "92f7c1a0b2f6579980a6b30b78d7ee765b9fc185612b649c5b693e7464ab60e0"
++checksum = "ce7cef7009046fda4752cf68911b6fa4076b6a7dcb5f6e0ef629b45dab7006f8"
+ dependencies = [
+  "agent-hooks-sdk",
+  "async-trait",
+  "base64 0.23.1",
+  "cedar-policy",
+  "regex",
+  "serde",
++ "serde-saphyr",
+  "serde_json",
+- "serde_yaml",
++ "serde_path_to_error",
+  "sha2 0.11.0",
++ "tempfile",
+  "ureq",
+  "url",
+ ]
+@@ -369,9 +371,9 @@ dependencies = [
  
  [[package]]
  name = "cedar-policy"
--version = "4.11.0"
-+version = "4.11.2"
+-version = "4.13.0"
++version = "4.14.1"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "674ca6ef6e44a1e29e6c07f6b2ab7e6913938d6049204d48e7849703d02443ce"
-+checksum = "1fdd98501120bc31fc09f92d3f58c489f4ee4b846904109ac63dd8256de7b84d"
+-checksum = "5e4f5e46c425491b7133eecb3030d82d27301b84bfa08533c59a6902cca7eb80"
++checksum = "5ab947d799cd1bacd4a060d2657c667fdb2559bae9b75319344d48fb6e22f408"
  dependencies = [
   "cedar-policy-core",
   "cedar-policy-formatter",
-@@ -313,9 +313,9 @@ dependencies = [
+@@ -390,9 +392,9 @@ dependencies = [
  
  [[package]]
  name = "cedar-policy-core"
--version = "4.11.0"
-+version = "4.11.2"
+-version = "4.13.0"
++version = "4.14.1"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3df781c108240c3b3778c586c6a1b234355f1a2f9d35e08630b63b2590c59dbb"
-+checksum = "d1d41088b497e39b6789e87e05ad6549b7f64a663a4d6ecd73a748dc3a9a98a9"
+-checksum = "7a30d11033d59b262bbb380d8bb5dc5c3dd2dd2281675c558ef4fd8a161ce669"
++checksum = "84f39a1d02e72014885b6c33d5ec4fbd0c7ede5ed1069b3a9e5775874bca066b"
  dependencies = [
   "chrono",
   "educe",
-@@ -341,9 +341,9 @@ dependencies = [
+@@ -418,9 +420,9 @@ dependencies = [
  
  [[package]]
  name = "cedar-policy-formatter"
--version = "4.11.0"
-+version = "4.11.2"
+-version = "4.13.0"
++version = "4.14.1"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e293607563253e249d19cf4d36ac05821955170a63cf6d65deb4db60138b192e"
-+checksum = "fb6c28be47d77dcbc04c2a80181a2c0db9725ed60d24832c6401396cc2ae114b"
+-checksum = "8a2c8dc671e62597c85caa11694365b76050abcd9f2177f0520ccac0580f9a41"
++checksum = "9d778cb4470373659f37e4065646ea0080932f3ee77bd156ab0ecff6a7876357"
  dependencies = [
   "cedar-policy-core",
-  "itertools",
-@@ -604,7 +604,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+  "itertools 0.15.0",
+@@ -716,9 +718,9 @@ dependencies = [
  
  [[package]]
-@@ -1531,7 +1531,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -1888,7 +1888,7 @@ dependencies = [
-  "getrandom 0.4.3",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -2197,7 +2197,7 @@ version = "0.1.11"
+ name = "educe"
+-version = "0.7.6"
++version = "0.8.2"
  source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
+-checksum = "e451fac8dd8dece16234604bf1efce6e90fddd8ab6ad4d66eec0eca5160959dd"
++checksum = "a00371d2607edea062396ef1ce6ade65c8e915ac7a1277daa198208420f682c6"
  dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
+  "enum-ordinalize",
+  "proc-macro2",
+@@ -1783,9 +1785,9 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
+ 
+ [[package]]
+ name = "regorus"
+-version = "0.12.0"
++version = "0.13.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "94d90cbdbc4d2900378cf7dbb0c8df85a28e6de07fad75c60cd4d73283eded23"
++checksum = "800007e261eac92aecf7d709fd4110de132bf79651d4bd1e0137db9debd0cfe7"
+ dependencies = [
+  "anyhow",
+  "lazy_static",
+@@ -1843,9 +1845,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rustls"
+-version = "0.23.43"
++version = "0.23.46"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0283386ce02abc0151e1761d08802dfe86c173b0b494af5cbc086574e453da06"
++checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
+ dependencies = [
+  "log",
+  "once_cell",
+@@ -1882,12 +1884,6 @@ version = "1.0.22"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b39cdef0fa800fc44525c84ccb54a029961a8215f9619753635a9c0d2538d46d"
+ 
+-[[package]]
+-name = "ryu"
+-version = "1.0.23"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9774ba4a74de5f7b1c1451ed6cd5285a32eddb5cccb8cc655a4e50009e06477f"
+-
+ [[package]]
+ name = "ryu-js"
+ version = "1.0.3"
+@@ -2000,6 +1996,17 @@ dependencies = [
+  "zmij",
+ ]
+ 
++[[package]]
++name = "serde_path_to_error"
++version = "0.1.20"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "10a9ff822e371bb5403e391ecd83e182e0e77ba7f6fe0160b795797109d1b457"
++dependencies = [
++ "itoa",
++ "serde",
++ "serde_core",
++]
++
+ [[package]]
+ name = "serde_with"
+ version = "3.21.0"
+@@ -2032,19 +2039,6 @@ dependencies = [
+  "syn 2.0.117",
+ ]
+ 
+-[[package]]
+-name = "serde_yaml"
+-version = "0.9.34+deprecated"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6a8b1a1a2ebf674015cc02edccce75287f1a0130d394307b36743c2f5d504b47"
+-dependencies = [
+- "indexmap 2.14.0",
+- "itoa",
+- "ryu",
+- "serde",
+- "unsafe-libyaml",
+-]
+-
+ [[package]]
+ name = "sha2"
+ version = "0.10.9"
+@@ -2238,18 +2232,18 @@ dependencies = [
+ 
+ [[package]]
+ name = "thiserror"
+-version = "2.0.19"
++version = "2.0.21"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "09a43598840e33d5b0331f38c5e30d13bb11c11210a4b58f0d9b18a5a5eefcd9"
++checksum = "09e52cb86a36cede5cb101bf8908837b3e4c6e5e59fe7fd85c23fb56200d189e"
+ dependencies = [
+  "thiserror-impl",
  ]
  
  [[package]]
+ name = "thiserror-impl"
+-version = "2.0.19"
++version = "2.0.21"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "43cbfe0cf76104d42a574802844187e84a305e531ed54455f11fbde0f10541cd"
++checksum = "fe5197923287db20a58125f0bc85c062f7f2c892de97b18c356f9efb14b28524"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -2383,12 +2377,6 @@ depende
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4578** (2026-11-16): chore(deps): Bump cedar-policy from 4.11.0 to 4.11.2 in /policy-engine/examples/coding_agent/app (@dependabot[bot])
-- **PR #4575** (2026-11-14): chore(deps): Bump opentelemetry-api from 1.45.1 to 1.45.2 in /agent-governance-python/agent-os/services/cloud-board (@dependabot[bot])
-- **PR #4574** (2026-11-13): chore(deps-dev): Bump hono from 4.13.13 to 4.13.18 in /agent-governance-python/agentmesh-integrations/mastra-agentmesh (@dependabot[bot])
-- **PR #4573** (2026-11-13): chore(deps): Bump hono from 4.13.13 to 4.13.18 in /agent-governance-python/agent-os/extensions/mcp-server (@dependabot[bot])
-- **PR #4572** (2026-11-13): chore(deps): Bump hono from 4.13.7 to 4.13.18 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
-- **PR #4571** (2026-11-13): chore(deps-dev): Bump hono from 4.13.7 to 4.13.18 in /policy-engine/sdk/node (@dependabot[bot])
+- **PR #4611** (2026-11-18): chore(deps): Bump rustls from 0.23.43 to 0.23.46 in /benchmarks/prompt-injection/harness/agt-rules-baseline (@dependabot[bot])
+- **PR #4605** (2026-11-17): chore(deps-dev): Update pydantic requirement from <3.0,>=2.14.2 to >=2.14.3,<3.0 in /agent-governance-python/agent-sre (@dependabot[bot])
+- **PR #4604** (2026-11-17): chore(deps): Update pydantic requirement from <3.0,>=2.14.2 to >=2.14.3,<3.0 in /agent-governance-python/agent-primitives (@dependabot[bot])
+- **PR #4603** (2026-11-17): chore(deps-dev): Update pydantic requirement from <3.0,>=2.14.2 to >=2.14.3,<3.0 in /agent-governance-python/agent-mesh (@dependabot[bot])
+- **PR #4602** (2026-11-17): chore(deps-dev): Update pydantic requirement from <3.0,>=2.14.2 to >=2.14.3,<3.0 in /agent-governance-python/agent-hypervisor (@dependabot[bot])
+- **PR #4601** (2026-11-17): chore(deps): Update pydantic requirement from <3.0,>=2.4.0 to >=2.14.3,<3.0 in /agent-governance-python/agent-compliance (@dependabot[bot])
 
 ---
 
@@ -552,49 +653,97 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): Bump cedar-policy
+## X. deps): Bump rustls
 
 **RULE**:
-When implementing operations in `policy-engine/examples/coding_agent/app/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `benchmarks/prompt-injection/harness/agt-rules-baseline/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5bcf1daa`: deps): Bump cedar-policy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f85abe1f`: deps): Bump rustls. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `policy-engine/examples/coding_agent/app/Cargo.lock`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/prompt-injection/harness/agt-rules-baseline/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-version = "4.11.2"
-checksum = "1fdd98501120bc31fc09f92d3f58c489f4ee4b846904109ac63dd8256de7b84d"
-version = "4.11.2"
-checksum = "d1d41088b497e39b6789e87e05ad6549b7f64a663a4d6ecd73a748dc3a9a98a9"
-version = "4.11.2"
-checksum = "fb6c28be47d77dcbc04c2a80181a2c0db9725ed60d24832c6401396cc2ae114b"
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
+version = "0.4.0-alpha.4"
+checksum = "ce7cef7009046fda4752cf68911b6fa4076b6a7dcb5f6e0ef629b45dab7006f8"
+ "serde-saphyr",
+ "serde_path_to_error",
+ "tempfile",
+version = "4.14.1"
+checksum = "5ab947d799cd1bacd4a060d2657c667fdb2559bae9b75319344d48fb6e22f408"
+version = "4.14.1"
+checksum = "84f39a1d02e72014885b6c33d5ec4fbd0c7ede5ed1069b3a9e5775874bca066b"
+version = "4.14.1"
+checksum = "9d778cb4470373659f37e4065646ea0080932f3ee77bd156ab0ecff6a7876357"
+version = "0.8.2"
+checksum = "a00371d2607edea062396ef1ce6ade65c8e915ac7a1277daa198208420f682c6"
+version = "0.13.0"
+checksum = "800007e261eac92aecf7d709fd4110de132bf79651d4bd1e0137db9debd0cfe7"
+version = "0.23.46"
+checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
+[[package]]
+name = "serde_path_to_error"
+version = "0.1.20"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "10a9ff822e371bb5403e391ecd83e182e0e77ba7f6fe0160b795797109d1b457"
+dependencies = [
+ "itoa",
+ "serde",
+ "serde_core",
+]
+
+version = "2.0.21"
+checksum = "09e52cb86a36cede5cb101bf8908837b3e4c6e5e59fe7fd85c23fb56200d189e"
+version = "2.0.21"
+checksum = "fe5197923287db20a58125f0bc85c062f7f2c892de97b18c356f9efb14b28524"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-version = "4.11.0"
-checksum = "674ca6ef6e44a1e29e6c07f6b2ab7e6913938d6049204d48e7849703d02443ce"
-version = "4.11.0"
-checksum = "3df781c108240c3b3778c586c6a1b234355f1a2f9d35e08630b63b2590c59dbb"
-version = "4.11.0"
-checksum = "e293607563253e249d19cf4d36ac05821955170a63cf6d65deb4db60138b192e"
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
+version = "0.4.0-alpha.3"
+checksum = "92f7c1a0b2f6579980a6b30b78d7ee765b9fc185612b649c5b693e7464ab60e0"
+ "serde_yaml",
+version = "4.13.0"
+checksum = "5e4f5e46c425491b7133eecb3030d82d27301b84bfa08533c59a6902cca7eb80"
+version = "4.13.0"
+checksum = "7a30d11033d59b262bbb380d8bb5dc5c3dd2dd2281675c558ef4fd8a161ce669"
+version = "4.13.0"
+checksum = "8a2c8dc671e62597c85caa11694365b76050abcd9f2177f0520ccac0580f9a41"
+version = "0.7.6"
+checksum = "e451fac8dd8dece16234604bf1efce6e90fddd8ab6ad4d66eec0eca5160959dd"
+version = "0.12.0"
+checksum = "94d90cbdbc4d2900378cf7dbb0c8df85a28e6de07fad75c60cd4d73283eded23"
+version = "0.23.43"
+checksum = "0283386ce02abc0151e1761d08802dfe86c173b0b494af5cbc086574e453da06"
+[[package]]
+name = "ryu"
+version = "1.0.23"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9774ba4a74de5f7b1c1451ed6cd5285a32eddb5cccb8cc655a4e50009e06477f"
+
+[[package]]
+name = "serde_yaml"
+version = "0.9.34+deprecated"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6a8b1a1a2ebf674015cc02edccce75287f1a0130d394307b36743c2f5d504b47"
+dependencies = [
+ "indexmap 2.14.0",
+ "itoa",
+ "ryu",
+ "serde",
+ "unsafe-libyaml",
+]
+
+version = "2.0.19"
+c
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5bcf1daa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f85abe1f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T00:41:47.513Z",
+  "updated_at": "2026-11-19T00:58:27.655Z",
   "stats": {
-    "total_discovered": 5732,
-    "approved_pending_harvest": 5423,
+    "total_discovered": 5738,
+    "approved_pending_harvest": 5429,
     "harvested_count": 0,
     "rejected_count": 309,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5399,
+      "COMMUNITY_AND_EXPERT": 5404,
       "OFFICIAL_DOCUMENTATION": 185,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
-      "SECURITY_ADVISORIES": 25,
+      "SECURITY_ADVISORIES": 26,
       "LEGAL_AND_REGULATORY": 2,
       "RESEARCH_AND_ACADEMIA": 6
     }
@@ -123962,6 +123962,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
         "fileName": "apache-zookeeper-learnings.md"
+      }
+    },
+    "SRC-BAFE9E5FE8F7": {
+      "id": "SRC-BAFE9E5FE8F7",
+      "url": "https://github.com/rustls/rustls/releases",
+      "title": "https://github.com/rustls/rustls/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T00:58:26.573Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-7C29F36DA03C": {
+      "id": "SRC-7C29F36DA03C",
+      "url": "https://github.com/rustls/rustls/blob/main/CHANGELOG.md",
+      "title": "https://github.com/rustls/rustls/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T00:58:26.612Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-7701BCC1FDF1": {
+      "id": "SRC-7701BCC1FDF1",
+      "url": "https://github.com/rustls/rustls/compare/v/0.23.43...v/0.23.46",
+      "title": "https://github.com/rustls/rustls/compare/v/0.23.43...v/0.23.46",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T00:58:26.648Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-F5901EEF464F": {
+      "id": "SRC-F5901EEF464F",
+      "url": "https://github.com/StarRocks/starrocks/pull/NNNNN",
+      "title": "https://github.com/StarRocks/starrocks/pull/NNNNN",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T00:58:27.580Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
+        "fileName": "starrocks-starrocks-learnings.md"
+      }
+    },
+    "SRC-C422221A210E": {
+      "id": "SRC-C422221A210E",
+      "url": "https://repo1.maven.org/maven2/com/starrocks",
+      "title": "https://repo1.maven.org/maven2/com/starrocks",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T00:58:27.618Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
+        "fileName": "starrocks-starrocks-learnings.md"
+      }
+    },
+    "SRC-DEE5135DE385": {
+      "id": "SRC-DEE5135DE385",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-59902",
+      "title": "Vulnerability Advisory CVE-2026-59902",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T00:58:27.655Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
+        "fileName": "starrocks-starrocks-learnings.md"
       }
     }
   }

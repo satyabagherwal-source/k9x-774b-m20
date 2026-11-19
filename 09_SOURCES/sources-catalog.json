@@ -1125,8 +1125,8 @@
     "sourceUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceVersion": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
     "license": "Open-Source",
-    "contentHash": "50c4ab9d3612d8bb692a137c5d927c8e9cf61cd7b81000207454fc5afd7c6001",
-    "lastHarvestedAt": "2026-11-14T09:08:07.034Z",
+    "contentHash": "b96fcd45476d2a236be0110843ca5b7df2b3f381de4922d5fa234b6c0213d75c",
+    "lastHarvestedAt": "2026-11-19T00:58:07.069Z",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese"
   },
   "hf-facebookai-xlm-roberta-base": {
@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "3528751a",
+    "sourceVersion": "f85abe1f",
     "license": "MIT",
-    "contentHash": "71595d7aa1e571c48e6b66c362b4ac61e9abcd8794655a210a056ae9a6435fc2",
-    "lastHarvestedAt": "2026-11-18T00:07:57.594Z",
+    "contentHash": "511db8bdc28056b7e2b27b04a81580b1f4fcb1922ab35269287abaa6a6ea103b",
+    "lastHarvestedAt": "2026-11-19T00:58:18.767Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "37e75d93",
+    "sourceVersion": "01c149aa",
     "license": "Apache-2.0",
-    "contentHash": "8a95280c874f724c166963b038920d3fe649597c1fbbb2ac9ab5cd5b3fd29024",
-    "lastHarvestedAt": "2026-11-18T08:21:35.295Z",
+    "contentHash": "753e9b00ae69560e874a16bffe2f878d5b83a21c1f11354080c50a13f406f560",
+    "lastHarvestedAt": "2026-11-19T00:58:22.930Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {

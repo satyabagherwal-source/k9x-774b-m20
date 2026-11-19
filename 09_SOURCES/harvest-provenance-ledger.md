@@ -11191,3 +11191,6 @@ Every entry in this ledger must capture:
 | `learn-github-octodns-octodns` | `https://github.com/octodns/octodns` | `fd8d1a6b` | Multi-dimensional audit evidence | 2026-11-19T00:49:49.398Z |
 | `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `a5635dec` | Multi-dimensional audit evidence | 2026-11-19T00:49:54.936Z |
 | `learn-dom-d-9b951eaf` | `project://hf-baai-bge-reranker-v2-m3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | 2026-11-19T00:50:27.525Z |
+| `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-11-19T00:58:07.069Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `f85abe1f` | Multi-dimensional audit evidence | 2026-11-19T00:58:18.767Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `01c149aa` | Multi-dimensional audit evidence | 2026-11-19T00:58:22.930Z |

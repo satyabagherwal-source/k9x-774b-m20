@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T00:50:28.733Z",
+  "last_updated": "2026-11-19T00:58:28.101Z",
   "total_verified_learnings": 9010,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21557,
+  "total_items": 21561,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -59278,15 +59278,15 @@
       "learning_id": "rule-3499",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3499,
-      "title": "bump rustls-webpki and webpki-roots to fix RUSTSEC advisories (#6936)",
-      "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "0117f078",
+      "title": "Bump rustls",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "f85abe1f",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-21T02:49:56.658Z"
+      "verified_at": "2026-11-19T00:58:18.593Z"
     },
     "rule-3500": {
       "learning_id": "rule-3500",
@@ -113389,10 +113389,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-architecture-intelligence-microsoft-agent-gov.md",
       "title": "Architecture Intelligence: microsoft/agent-governance-toolkit Core Invariants",
       "repository": "microsoft/agent-governance-toolkit",
-      "source_version": "3528751a",
-      "content_hash": "f6d8ea8cae0eac4f8a3f04b0dab82c8284011bff5cd17a5d1e7f3404ae203eb6",
+      "source_version": "f85abe1f",
+      "content_hash": "0c2b6cccca4f0f57f73cae7a564ad9f982fb999764164b892e2b594b03ef3c71",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T00:07:57.899Z"
+      "persisted_at": "2026-11-19T00:58:19.086Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit",
@@ -113401,22 +113401,22 @@
       "relative_path": "12_DECISIONS/ADR-microsoft-agent-governance-toolkit-adr-subsystem-boundary-modular-decoupling-in-.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in microsoft/agent-governance-toolkit",
       "repository": "microsoft/agent-governance-toolkit",
-      "source_version": "3528751a",
-      "content_hash": "049c03677a41df8cfa7686d176122d9fdbbf23c5486d1199aee22aba84d37756",
+      "source_version": "f85abe1f",
+      "content_hash": "34da87a34988ea89fd473bbe96341d7d527808389a95ebdd33a57cf522fb0f2b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T00:07:58.039Z"
+      "persisted_at": "2026-11-19T00:58:19.219Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-agent-governance-too": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-agent-governance-too",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/microsoft-agent-governance-toolkit-verification-protocol-empirical-defect-shield.md",
-      "title": "Verification Protocol: Empirical Defect Shield for microsoft/agent-governance-toolkit",
-      "repository": "microsoft/agent-governance-toolkit",
-      "source_version": "3528751a",
-      "content_hash": "222fb9c152404c624a9dd04dfe756bbf5a71c8790c8b0a25e9ba8cd1a031d2d1",
+      "relative_path": "08_VERIFICATION/microsoft-agent-governance-toolkit-learnings-verification-protocol-empirical-def.md",
+      "title": "Verification Protocol: Empirical Defect Shield for microsoft-agent-governance-toolkit-learnings",
+      "repository": "microsoft-agent-governance-toolkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "69c32c672a50c6ba2f3c9b4a1a10f4210f6498f6d3218b01af2d73272777c5ba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T00:07:58.160Z"
+      "persisted_at": "2026-11-19T00:58:27.232Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari",
@@ -113438,9 +113438,9 @@
       "title": "Architecture Intelligence: microsoft-agent-governance-toolkit-learnings Core Invariants",
       "repository": "microsoft-agent-governance-toolkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "da3c6dffb12a9064916bc093b2945066784328dba19238fb8fd3d254b881f30e",
+      "content_hash": "7d37f27fca99e837523a10ef02b744f42ea8d94230117cb43b464caad5e3a5c1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:38:40.916Z"
+      "persisted_at": "2026-11-19T00:58:26.984Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit-": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit-",
@@ -113450,9 +113450,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in microsoft-agent-governance-toolkit-learnings",
       "repository": "microsoft-agent-governance-toolkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "ac04acfff25783d8e1db501e56e4f2bd8fd580222f780d36b345df6be316c9c9",
+      "content_hash": "8f7cb4b4195b959d7469b8ac5ce014672bae619901470076399aebafc69bfda7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:38:41.040Z"
+      "persisted_at": "2026-11-19T00:58:27.116Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants",
@@ -216837,11 +216837,16 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "3528751a",
-      "content_hash": "71595d7aa1e571c48e6b66c362b4ac61e9abcd8794655a210a056ae9a6435fc2",
+      "source_version": "f85abe1f",
+      "content_hash": "511db8bdc28056b7e2b27b04a81580b1f4fcb1922ab35269287abaa6a6ea103b",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
+        {
+          "number": 3499,
+          "title": "Bump rustls",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8389,
           "title": "docs(changelog): record the conversation guardian invisible-character fix",
@@ -216868,7 +216873,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T00:07:57.430Z",
+      "verified_at": "2026-11-19T00:58:18.593Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227543,7 +227548,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "50c4ab9d3612d8bb692a137c5d927c8e9cf61cd7b81000207454fc5afd7c6001",
+      "content_hash": "b96fcd45476d2a236be0110843ca5b7df2b3f381de4922d5fa234b6c0213d75c",
       "dossier_path": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "promoted_rules": [],
@@ -227552,7 +227557,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T09:08:06.872Z",
+      "verified_at": "2026-11-19T00:58:06.858Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227569,9 +227574,9 @@
       "title": "Research & Knowledge Intelligence: jonatasgrosman/wav2vec2-large-xlsr-53-japanese Core Invariants",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "6da33bf853432d92fff24ace8d85317edbb9b084e49c43a8d6c4c4c7d2fef5af",
+      "content_hash": "c887e7e14bfcb762d559191ab14ff4d78a8dcd17f8d71ab55f79029cdb014f75",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T09:08:07.192Z"
+      "persisted_at": "2026-11-19T00:58:07.247Z"
     },
     "learn-huggingface-laion-clap-htsat-fused": {
       "learning_id": "learn-huggingface-laion-clap-htsat-fused",
@@ -227632,9 +227637,9 @@
       "title": "Research & Knowledge Intelligence: hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings Core Invariants",
       "repository": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings",
       "source_version": "HEAD",
-      "content_hash": "f5d8c2b833efe3e317eaa76c15404b581322a898339f910fb34e07d712c50066",
+      "content_hash": "9f1946e3cf1eadb91b1ecf2caced79e3a6aa256343d6e660ec02a7ff538a68df",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T09:18:33.453Z"
+      "persisted_at": "2026-11-19T00:58:26.339Z"
     },
     "learn-huggingface-facebookai-xlm-roberta-base": {
       "learning_id": "learn-huggingface-facebookai-xlm-roberta-base",
@@ -232541,8 +232546,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "37e75d93",
-      "content_hash": "8a95280c874f724c166963b038920d3fe649597c1fbbb2ac9ab5cd5b3fd29024",
+      "source_version": "01c149aa",
+      "content_hash": "753e9b00ae69560e874a16bffe2f878d5b83a21c1f11354080c50a13f406f560",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -232580,6 +232585,11 @@
           "number": 9176,
           "title": "Optional-Index Degradation Invariant under Shared-Data Storage",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9314,
+          "title": "[Tool] release-notes skill: file security upgrades and fixes under Security",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232587,7 +232597,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T08:21:35.095Z",
+      "verified_at": "2026-11-19T00:58:22.751Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232629,10 +232639,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "repository": "StarRocks/starrocks",
-      "source_version": "37e75d93",
-      "content_hash": "fa6648e7ed8a2d02813d2d71ef89e88cbc602688886d7aef9c4064e23760f492",
+      "source_version": "01c149aa",
+      "content_hash": "39c71cc2ccc2e6ab516965c5eb10b00985b55d52f374c30317eab47d878f93d7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T08:21:35.749Z"
+      "persisted_at": "2026-11-19T00:58:23.253Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks",
@@ -232641,10 +232651,10 @@
       "relative_path": "08_VERIFICATION/starrocks-starrocks-verification-protocol-empirical-defect-shield-for-starrocks-.md",
       "title": "Verification Protocol: Empirical Defect Shield for StarRocks/starrocks",
       "repository": "StarRocks/starrocks",
-      "source_version": "37e75d93",
-      "content_hash": "a207b97b49077067113a62674e3b02cbd17b580bf3aab7182e035b7290177d84",
+      "source_version": "01c149aa",
+      "content_hash": "e80895893b7c908ed28886d408663f74491e148f829d5e0d6d0d005fb90c021d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T08:21:35.884Z"
+      "persisted_at": "2026-11-19T00:58:23.385Z"
     },
     "learn-huggingface-autotrust-jev-27b-vl": {
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
@@ -232741,9 +232751,9 @@
       "title": "Technical Construction Intelligence: starrocks-starrocks-learnings Core Invariants",
       "repository": "starrocks-starrocks-learnings",
       "source_version": "HEAD",
-      "content_hash": "f1a48c293874798610d921b28f9bc86644fabdbefe67da79c908927b561a5c0f",
+      "content_hash": "591b3c52156a15f12ed30ca909fdc8838ab3a0c36acbf0e243761984798d2ae2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T08:22:07.594Z"
+      "persisted_at": "2026-11-19T00:58:27.972Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks-learnings",
@@ -232753,9 +232763,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for starrocks-starrocks-learnings",
       "repository": "starrocks-starrocks-learnings",
       "source_version": "HEAD",
-      "content_hash": "4758c0898bfb91c494443679f938db91eda2bc3ccb107a4e4585ad99c5d60d15",
+      "content_hash": "37350c575ad47263f91c7e60e7087d7458d2f081639a497dd75ab8b47485f021",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T08:22:07.757Z"
+      "persisted_at": "2026-11-19T00:58:28.101Z"
     },
     "learn-github-oven-sh-bun": {
       "learning_id": "learn-github-oven-sh-bun",
@@ -291148,6 +291158,56 @@
       "content_hash": "0b818a07adadf3847c720d715ef23274aea1db1e22818cc5b4aad43559016466",
       "domain_letter": "H",
       "persisted_at": "2026-11-19T00:50:28.452Z"
+    },
+    "candidate_directive-bump-rustls": {
+      "item_id": "candidate_directive-bump-rustls",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D2H8-bump-rustls.md",
+      "title": "Bump rustls",
+      "repository": "microsoft/agent-governance-toolkit",
+      "source_version": "f85abe1f",
+      "content_hash": "19c606fddb4cf50bb22d6ca51abc1b2a9d83c2e9e4ab261b2749ec3c73833088",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T00:58:18.957Z"
+    },
+    "rule-9314": {
+      "learning_id": "rule-9314",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9314,
+      "title": "[Tool] release-notes skill: file security upgrades and fixes under Security",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "01c149aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T00:58:22.751Z"
+    },
+    "candidate_directive-tool-release-notes-skill-file-security-upgrades-and-fixes-under-security": {
+      "item_id": "candidate_directive-tool-release-notes-skill-file-security-upgrades-and-fixes-under-security",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D9BX-tool-release-notes-skill-file-security-upgrades-and-fixes-under-security.md",
+      "title": "[Tool] release-notes skill: file security upgrades and fixes under Security",
+      "repository": "starrocks-starrocks-learnings",
+      "source_version": "HEAD",
+      "content_hash": "63bc7c2fc466db3739c482b033eaf21995ea63d921222f042ae9c45cb75d4e90",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T00:58:27.840Z"
+    },
+    "candidate_directive-deps-bump-rustls": {
+      "item_id": "candidate_directive-deps-bump-rustls",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D8KG-deps-bump-rustls.md",
+      "title": "deps): Bump rustls",
+      "repository": "microsoft-agent-governance-toolkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d1aa239a2635d6f0f6adcc0fb97f1fa66d38802b77a45205c044a4ed72830241",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T00:58:26.850Z"
     }
   },
   "ai-builder-brain": {
