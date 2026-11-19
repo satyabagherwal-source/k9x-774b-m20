@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T09:19:43.750Z",
+  "timestamp": "2026-11-19T07:14:27.793Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dnscontrol-dnscontrol-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dnscontrol-dnscontrol-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T09:19:43.750Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T07:14:27.793Z`  
 > **Learning ID**: `LEARN-EVO-dnscontrol-dnscontrol-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), B (Product Intelligence)
 - **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
-> **Source Version**: `1adf8aea`  
+> **Source Version**: `cc95a67a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T09:14:46.038Z  
+> **Timestamp**: 2026-11-19T07:14:21.769Z  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T09:14:46.033Z  
+> **Harvest Timestamp**: 2026-11-19T07:14:21.763Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Infrastructure as code for DNS!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4010 stars
+- **Stars / Engagement**: 4011 stars
 
 ---
 
@@ -685,15 +685,11 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5117** (2026-11-17): **refactor(p/OPENWRT): fix golint warnings**
-  *Symptoms*: # Issue  golint, which is obsolete but still useful, reports warnings.  # Resolution  Replace `idCounter += 1` with `idCounter++`.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
-  **Post-Mortem & Fix Analysis**:
-  > CC @huskyistaken for visibility
+- **Issue #5122** (2026-11-18): **docs: update REFACTORING_PROJECTS and release notes template**
+  *Symptoms*: 
 
-- **Issue #5116** (2026-11-17): **refactor(p/CLOUDNS): fix golint warnings**
-  *Symptoms*: # Issue  golint, which is obsolete but still useful, reports warnings.  # Resolution  Rename `ttl_` to `ttl64` (no underscores in Go names).  🤖 Generated with [Claude Code](https://claude.com/claude-code)
-  **Post-Mortem & Fix Analysis**:
-  > CC @pragmaton for visibility.
+- **Issue #5120** (2026-11-18): **build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4**
+  *Symptoms*: Bumps [step-security/harden-runner](https://github.com/step-security/harden-runner) from 2.22.3 to 2.22.4. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's releases</a>.</em></p> <blockquote> <h2>v2.22.4</h2> <h2>What's Changed</h2> <ul> <li>Fixed a Linux agent memory leak that could cause runners to run out of memory during jobs with heavy process or network activity.</li> <li>The workaround for GitHub’s DNS resolver and outbound proxy experiment on GitHub-hosted Linux runners now defaults to enabled when feature flags can’t be fetched.</li> <li>Improved HTTP/2 TLS interception on Linux (enterprise tier).</li> <li>Added retries for failed monitoring API requests, improving reliability of monitoring initialization and raw-event uploads.</li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/step-security/harden-runner/compare/v2.22.3...v2.22.4">https://github.com/step-security/harden-runner/compare/v2.22.3...v2.22.4</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/step-security/harden-runner/commit/1d88384fd173af6ecb012dfd0264a306b711241a"><code>1d88384</code></a> Merge pull request <a href="https://redirect.github.com/step-security/harden-runner/issues/716">#716</a> from step-security/rc-48</li> <li><a href="https://github.com/step-security/harden-runner/commit/26249c00f9d7bd75872eeed44f5bc
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -710,393 +706,148 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c3db94d0` (2026-11-17)
-**Commit Message**: fix(preview): skip delegation check when a zone is pending creation (#5097)
+### Incident Patch 1: `0e98ff40` (2026-11-18)
+**Commit Message**: build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4 (#5120)
 
-`dnscontrol preview` can still exit with "completed with errors" for a
-zone that `push` would create. #4612 stopped preview from fetching
-records for a not-yet-created zone, but `oneZone` still asks every DNS
-provider for its nameservers first, as part of the delegation check.
-Providers whose `GetNameservers` looks the zone up (e.g. CLOUDFLARE, via
-the zone cache) return an error for a zone that does not exist yet,
-which surfaces as a `DetermineNS` error. Providers that return a static
-list (e.g. LUADNS) were already fine.
+Bumps
+[step-security/harden-runner](https://github.com/step-security/harden-runner)
+from 2.22.3 to 2.22.4.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's
+releases</a>.</em></p>
+<blockquote>
+<h2>v2.22.4</h2>
+<h2>What's Changed</h2>
+<ul>
+<li>Fixed a Linux agent memory leak that could cause runners to run out
+of memory during jobs with heavy process or network activity.</li>
+<li>The workaround for GitHub’s DNS resolver and outbound proxy
+experiment on GitHub-hosted Linux runners now defaults to enabled when
+feature flags can’t be fetched.</li>
+<li>Improved HTTP/2 TLS interception on Linux (enterprise tier).</li>
+<li>Added retries for failed monitoring API requests, improving
+reliability of monitoring initialization and raw-event uploads.</li>
+</ul>
+<p><strong>Full Changelog</strong>: <a
+href="https://github.com/step-security/harden-runner/compare/v2.22.3...v2.22.4">https://github.com/step-security/harden-runner/compare/v2.22.3...v2.22.4</a></p>
+</blockquote>
+</details>
+<details>
+<summary>Commits</su
 
-When preview finds the zone pending creation at any provider, this
-change:
-
-- gathers nameservers only from the providers where the zone already
-exists, so their record diffs still include the NS records;
-- skips the registrar check, since the full nameserver list is not known
-until the zone is created, and reports "Skipping registrar ... It will
-be checked when you run `dnscontrol push`" instead.
-
-`push` and `preview --populate-on-preview` are unchanged: the zone
-exists by the time the delegation is checked. `--no-populate` is also
-unchanged and still reports an error for a missing zon
-
-**File**: `commands/ppreviewPush.go` (modified, +58/-4)
+**File**: `.github/workflows/fuzzing.yml` (modified, +1/-1)
 ```diff
-@@ -588,7 +588,17 @@ func oneZonePopulate(zone *models.DomainConfig, zc *CmdZoneCache) error {
- func oneZone(zone *models.DomainConfig, args PPreviewArgs, push bool) error {
- 	var errs []error
- 	// Fix the parent zone's delegation: (if able/needed)
--	delegationCorrections, dcCount, err := generateDelegationCorrections(zone, zone.DNSProviderInstances, zone.RegistrarInstance)
-+	var delegationCorrections []*models.Correction
-+	var dcCount int
-+	var err error
-+	if existing, pending := splitPendingCreation(zone, push, args.PopulateOnPreview); len(pending) != 0 {
-+		// Some providers can't report the nameservers of a zone that does not
-+		// exist yet (GetNameservers fails), so the delegation can't be
-+		// determined until the zone is created on push.
-+		delegationCorrections, err = generatePendingDelegationCorrections(zone, existing, pending)
-+	} else {
-+		delegationCorrections, dcCount, err = generateDelegationCorrections(zone, zone.DNSProviderInstances, zone.RegistrarInstance)
-+	}
- 	if err != nil {
- 		errs = append(errs, err)
- 	}
-@@ -799,6 +809,20 @@ func reportZonePendingCreation(zone *models.DomainConfig, providerName string, p
- 	return zoneWillBeCreated(zone, providerName)
- }
+@@ -27,7 +27,7 @@ jobs:
+         target: [FuzzConfigJSON, FuzzTXTQuoted]
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+-        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
  
-+// splitPendingCreation partitions the zone's DNS providers into those where
-+// the zone exists and those where this run will report it as pending creation
-+// (see reportZonePendingCreation).
-+func splitPendingCreation(zone *models.DomainConfig, push, populateOnPreview bool) (existing, pending []*models.DNSProviderInstance) {
-+	for _, provider := range zone.DNSProviderInstances {
-+		if reportZonePendingCreation(zone, provider.Name, push, populateOnPreview) {
-+			pending = append(pending, provider)
-+		} else {
-+			existing = append(existing, provider)
-+		}
-+	}
-+	return existing, pending
-+}
-+
- func generatePopulateCorrections(provider *models.DNSProviderInstance, dc *models.DomainConfig, zcache *CmdZoneCache) ([]*models.Correction, error) {
- 	lister, ok := provider.Driver.(providers.ZoneLister)
- 	if !ok {
-@@ -839,14 +863,44 @@ func generateZoneCorrections(zone *models.DomainConfig, provider *models.DNSProv
- 	return zoneCorrections, reports, actualChangeCount, nil
- }
- 
--func generateDelegationCorrections(zone *models.DomainConfig, providers []*models.DNSProviderInstance, _ *models.RegistrarInstance) ([]*models.Correction, int, error) {
--	// fmt.Printf("DEBUG: generateDelegationCorrections start zone=%q nsList = %v\n", zone.Name, zone.Nameservers)
-+// determineNameservers sets the zone's nameservers from the given providers and
-+// adds the corresponding NS records to the zone.
-+func determineNameservers(zone *models.DomainConfig, providers []*models.DNSProviderInstance) ([]*models.Correction, error) {
- 	nsList, err := nameservers.DetermineNameserversForProviders(zone, providers, true)
- 	if err != nil {
--		return msg(fmt.Sprintf("DetermineNS: zone %q; Error: %s", zone.Name, err)), 0, err
-+		return msg(fmt.Sprintf("DetermineNS: zone %q; Error: %s", zone.Name, err)), err
- 	}
- 	zone.Nameservers = nsList
- 	nameservers.AddNSRecords(zone)
-+	return nil, nil
-+}
-+
-+// generatePendingDelegationCorrections is used instead of
-+// generateDelegationCorrections when the zone is pending creation at one or
-+// more providers. Nameservers are gathered only from the providers where the
-+// zone exists (so their record diffs still include the NS records) and the
-+// registrar is not checked, since the full nameserver list is not yet known.
-+func generatePendingDelegationCorrections(zone *models.DomainConfig, existing, pending []*models.DNSProviderInstance) ([]*models.Correction, error) {
-+	if corrections, err := determineNameservers(zone, existing); err != nil {
-+		return corrections, err
-+	}
-+
-+	names := make([]string, len(pending))
-+	for i, provider := range pending {
-+		names[i] = provider.Name
-+	}
-+	return msg(fmt.Sprintf("Skipping registrar %q: The delegation of %q can not be checked until the zone is created at %s. It will be checked when you run `dnscontrol push`.",
-+		zone.RegistrarName,
-+		zone.Name,
-+		strings.Join(names, ", "),
-+	)), nil
-+}
-+
-+func generateDelegationCorrections(zone *models.DomainConfig, providers []*models.DNSProviderInstance, _ *models.RegistrarInstance) ([]*models.Correction, int, error) {
-+	// fmt.Printf("DEBUG: generateDelegationCorrections start zone=%q nsList = %v\n", zone.Name, zone.Nameservers)
-+	if corrections, err := determineNameservers(zone, providers); err != nil {
-+		return corrections, 0, err
-+	}
- 
- 	if len(zone.Nameservers) == 0 && zone.Metadata["no_ns"] != "true" {
- 		return []*models.Correction{{Msg: fmt.Sprintf("Skipping registrar %q: No nameservers declared for domain %q. Add {no_ns: 'true'} to force",
 ```
 
-**File**: `commands/ppreviewPush_test.go` (modified, +111/-0)
+**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,8 @@
- package commands
+@@ -36,7 +36,7 @@ jobs:
  
- import (
-+	"errors"
-+	"strings"
- 	"testing"
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+-        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
  
- 	"github.com/DNSControl/dnscontrol/v5/models"
-@@ -248,3 +250,112 @@ func Test_reportZonePendingCreation(t *testing.T) {
- 		})
- 	}
- }
-+
-+// fakeDNSProvider is a models.DNSProvider whose GetNameservers fails when the
-+// zone does not exist, like providers that look the zone up at the API.
-+type fakeDNSProvider struct {
-+	zoneExists bool
-+	nsCalls    int
-+}
-+
-+func (f *fakeDNSProvider) AuditRecords(models.Records) []error { return nil }
-+
-+func (f *fakeDNSProvider) GetNameservers(string) ([]*models.Nameserver, error) {
-+	f.nsCalls++
-+	if !f.zoneExists {
-+		return nil, errors.New("zone not found")
-+	}
-+	return models.ToNameservers([]string{"ns1.example.net", "ns2.example.net"})
-+}
-+
-+func (f *fakeDNSProvider) GetZoneRecords(*models.DomainConfig) (models.Records, error) {
-+	return nil, errors.New("not implemented")
-+}
-+
-+func (f *fakeDNSProvider) GetZoneRecordsCorrections(*models.DomainConfig, models.Records) ([]*models.Correction, int, error) {
-+	return nil, 0, errors.New("not implemented")
-+}
-+
-+type fakeRegistrar struct {
-+	calls int
-+}
-+
-+func (f *fakeRegistrar) GetRegistrarCorrections(*models.DomainConfig) ([]*models.Correction, error) {
-+	f.calls++
-+	return nil, nil
-+}
-+
-+func Test_splitPendingCreation(t *testing.T) {
-+	zone := models.MustNewDomainConfig("example.com")
-+	zone.DNSProviderInstances = []*models.DNSProviderInstance{
-+		{ProviderBase: models.ProviderBase{Name: "new"}},
-+		{ProviderBase: models.ProviderBase{Name: "old"}},
-+	}
-+	zone.StorePopulateCorrections("new", []*models.Correction{{Msg: "Ensuring zone exists", F: func() error { return nil }}})
-+
-+	tests := []struct {
-+		name              string
-+		push              bool
-+		populateOnPreview bool
-+		wantPending       int
-+	}{
-+		{name: "preview", wantPending: 1},
-+		{name: "push", push: true, wantPending: 0},
-+		{name: "preview with --populate-on-preview", populateOnPreview: true, wantPending: 0},
-+	}
-+
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			existing, pending := splitPendingCreation(zone, tc.push, tc.populateOnPreview)
-+			if len(pending) != tc.wantPending || len(existing)+len(pending) != 2 {
-+				t.Errorf("splitPendingCreation() = %d existing, %d pending; want %d pending", len(existing), len(pending), tc.wantPending)
-+			}
-+			if tc.wantPending == 1 && pending[0].Name != "new" {
-+				t.Errorf("splitPendingCreation() pending = %q, want %q", pending[0].Name, "new")
-+			}
-+		})
-+	}
-+}
-+
-+// Previewing a zone that push will create must not fail just because the
-+// provider can't list nameservers for a zone that does not exist yet.
-+func Test_oneZone_pendingCreationSkipsDelegation(t *testing.T) {
-+	newProv := &fakeDNSProvider{zoneExists: false}
-+	oldProv := &fakeDNSProvider{zoneExists: true}
-+	reg := &fakeRegistrar{}
-+
-+	zone := models.MustNewDomainConfig("example.com")
-+	zone.RegistrarName = "reg"
-+	zone.RegistrarInstance = &models.RegistrarInstance{ProviderBase: models.ProviderBase{Name: "reg"}, Driver: reg}
-+	zone.DNSProviderInstances = []*models.DNSProviderInstance{
-+		{ProviderBase: models.ProviderBase{Name: "new"}, Driver: newProv, NumberOfNameservers: -1},
-+		{ProviderBase: models.ProviderBase{Name: "old"}, Driver: oldProv, NumberOfNameservers: -1},
-+	}
-+	zone.StorePopulateCorrections("new", []*models.Correction{{Msg: "Ensuring zone exists", F: func() error { return nil }}})
-+
-+	// Limit record processing to the pending provider; the fake can't diff records.
-+	if err := oneZone(zone, PPreviewArgs{FilterArgs: FilterArgs{Providers: "new"}}, false); err != nil {
-+		t.Fatalf("oneZone() error = %v, want nil", err)
-+	}
-+
-+	if newProv.nsCalls != 0 {
-+		t.Errorf("GetNameservers called %d time(s) on the provider where the zone is pending creation", newProv.nsCalls)
-+	}
-+	if oldProv.nsCalls != 1 {
-+		t.Errorf("GetNameservers called %d time(s) on the provider where the zone exists, want 1", oldProv.nsCalls)
-+	}
-+	if len(zone.Nameservers) != 2 {
-+		t.Errorf("zone has %d nameservers, want 2 from the existing provider", len(zone.Nameservers))
-+	}
-+	if reg.calls != 0 {
-+		t.Errorf("GetRegistrarCorrections called %d time(s), want 0", reg.calls)
-+	}
-+
-+	corrections := zone.GetCorrections("reg")
-+	if len(corrections) != 1 || corrections[0].F != nil || !strings.Contains(corrections[0].Msg, "Skipping registrar") {
-+		t.Errorf("registrar corrections = %+v, want one informational message", corrections)
-+	}
-+	if got := zone.GetChangeCount("reg"); got != 0 {
-+		t.Errorf("registrar change count = %d, want 0", got)
-+	}
-+}
 ```
 
 ---
 
-### Incident Patch 2: `0c7e95df` (2026-11-17)
-**Commit Message**: fix: reject empty and handle absolute labels in D_EXTEND() (#5104)
-
-## Bug
-
-Under `D_EXTEND("sub.example.com", ...)`, `LabelFromDnsconfigjs` joined
-every label to the subdomain without the checks `D()` applies, so it
-built broken names that nothing downstream rejected:
-
-| dnsconfig.js | before (label stored) | after |
-|---|---|---|
-| `A("", ...)` | `.sub` | error: `label "" is invalid. Use "@" ...` |
-| `A("foo.", ...)` | `foo..sub` | error: `label "foo." is not in domain
-"example.com"` |
-| `A("foo.other.com.", ...)` | `foo.other.com..sub` | error: not in
-domain |
-| `A("www.sub.example.com.", ...)` | `www.sub.example.com..sub` |
-`www.sub` |
-
-(`checkLabel` in pkg/normalize has checks for `""` and a trailing `.`,
-but they never saw these, because the label had already been joined to
-the subdomain.)
-
-## Fix
-
-In `labelFromDnsconfigjs`, an empty label or one ending in `.` is
-handled by the same code as in `D()`. Labels ending in `.` are absolute,
-so the subdomain doesn't apply to them.
-
-## Tests
-
-- New `TestDomainConfig_LabelFromDnsconfigjsErrors`.
-- Two new success cases in `TestDomainConfig_LabelFromDnsconfigjs`.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-auth
-
-**File**: `models/record_label.go` (modified, +3/-1)
-```diff
-@@ -171,7 +171,9 @@ func stripReverseZoneSuffix(label, zone string) string {
- // labelFromDnsconfigjs implements LabelFromDnsconfigjs, except for the
- // reverse zone suffix stripping.
- func (dc *DomainConfig) labelFromDnsconfigjs(rawLabel, subdomainASCII string) (string, error) {
--	if subdomainASCII == "" {
-+	// An empty label is rejected, and a label ending in "." is absolute, the
-+	// same as without D_EXTEND(); the subdomain does not apply to either.
-+	if subdomainASCII == "" || rawLabel == "" || strings.HasSuffix(rawLabel, ".") {
- 		return dc.labelFromDnsconfigjsHelper(rawLabel)
- 	}
- 
-```
-
-**File**: `models/record_label_test.go` (modified, +25/-0)
-```diff
-@@ -31,6 +31,29 @@ func TestDomainConfig_LabelFromFQDNNoDot(t *testing.T) {
- 	}
- }
- 
-+func TestDomainConfig_LabelFromDnsconfigjsErrors(t *testing.T) {
-+	tests := []struct {
-+		tname     string
-+		subdomain string
-+		label     string
-+	}{
-+		{"empty", "", ""},
-+		{"empty under a subdomain", "sub", ""},
-+		{"trailing dot", "", "foo."},
-+		{"trailing dot under a subdomain", "sub", "foo."},
-+		{"other zone", "", "foo.other.com."},
-+		{"other zone under a subdomain", "sub", "foo.other.com."},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.tname, func(t *testing.T) {
-+			dc := models.MustNewDomainConfig("example.com")
-+			if got, err := dc.LabelFromDnsconfigjs(tt.label, tt.subdomain); err == nil {
-+				t.Errorf("LabelFromDnsconfigjs(%q, %q) = %q, want error", tt.label, tt.subdomain, got)
-+			}
-+		})
-+	}
-+}
-+
- func TestDomainConfig_LabelFromDnsconfigjs(t *testing.T) {
- 	const ip6Zone = "8.b.d.0.1.0.0.2.ip6.arpa"
- 	const ip6Sub = "d.c.b.a.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0"
-@@ -57,6 +80,8 @@ func TestDomainConfig_LabelFromDnsconfigjs(t *testing.T) {
- 		{"ip6 zone suffix is stripped", ip6Zone, "", "1.0." + ip6Zone, "1.0"},
- 		{"forward zone suffix is not stripped", "example.com", "", "www.example.com", "www.example.com"},
- 		{"ip6 zone suffix is stripped under subdomain a", ip6Zone, "a", "1.a." + ip6Zone, "1.a"},
-+		{"fqdn under a subdomain is absolute", "example.com", "sub", "www.sub.example.com.", "www.sub"},
-+		{"zone fqdn under a subdomain is the apex", "example.com", "sub", "example.com.", "@"},
- 	}
- 	for _, tt := range tests {
- 		t.Run(tt.tname, func(t *testing.T) {
-```
-
----
-
-### Incident Patch 3: `1adf8aea` (2026-11-17)
-**Commit Message**: refactor(p/OPENWRT): fix golint warnings (#5117)
+### Incident Patch 2: `df0698d5` (2026-11-18)
+**Commit Message**: fix(p/AZURE_PRIVATE_DNS): mark AZURE_ALIAS as not supported (#5119)
 
 # Issue
 
-golint, which is obsolete but still useful, reports warnings.
+AZURE_ALIAS is not supported on Azure Private DNS
 
 # Resolution
 
-Replace `idCounter += 1` with `idCounter++`.
+Mark it as unsupported.
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `providers/openwrt/api.go` (modified, +2/-2)
+**File**: `build/generate/providers_test.go` (modified, +3/-3)
 ```diff
-@@ -20,7 +20,7 @@ type rpcRequest struct {
- }
- 
- func getAuthorization(username string, password string, host string) (string, error) {
--	idCounter += 1
-+	idCounter++
- 	reqBody, err := json.Marshal(rpcRequest{
- 		ID:     idCounter,
- 		Method: "login",
-@@ -196,7 +196,7 @@ func (c *openwrtProvider) uciGetAll() (map[string]nativeRecord, error) {
- func (c *openwrtProvider) uciCall(method string, params []any) ([]byte, error) {
- 	client := &http.Client{}
- 
--	idCounter += 1
-+	idCounter++
- 	requestBody, err := json.Marshal(rpcRequest{
- 		ID:     idCounter,
- 		Method: method,
+@@ -172,7 +172,7 @@ func TestFeatureMatrixStructure(t *testing.T) {
+ 	// them, and under BIND, whose "*" claims the entire catalog (bind.md
+ 	// documents that it writes every type verbatim).
+ 	azureAlias := recordTypeFeature("AZURE_ALIAS")
+-	for _, provider := range []string{"AZURE_DNS", "AZURE_PRIVATE_DNS", "BIND"} {
++	for _, provider := range []string{"AZURE_DNS", "BIND"} {
+ 		if note := matrix.Providers[provider][azureAlias]; note == nil || !note.HasFeature {
+ 			t.Fatalf("%s must claim AZURE_ALIAS support", provider)
+ 		}
+@@ -408,8 +408,8 @@ func TestGenerateFeatureMatrixRendersRecordTypesList(t *testing.T) {
+ 				t.Error("BIND's \"*\" claims every type; its bullet must list AZURE_ALIAS")
+ 			}
+ 		case strings.HasPrefix(line, "- [AZURE_PRIVATE_DNS](azureprivatedns.md):"):
+-			if !strings.Contains(line, azureAlias) {
+-				t.Error("AZURE_PRIVATE_DNS bullet must list AZURE_ALIAS")
++			if strings.Contains(line, azureAlias) {
++				t.Error("AZURE_PRIVATE_DNS bullet must not list AZURE_ALIAS")
+ 			}
+ 		}
+ 	}
+```
+
+**File**: `documentation/provider/azureprivatedns.md` (modified, +2/-1)
+```diff
+@@ -227,7 +227,8 @@ The ResourceGroup is case-insensitive (it is lowercased internally).
+   - [get-zones](../commands/get-zones.md): ✅
+   - [AUTODNSSEC](../language-reference/domain-modifiers/AUTODNSSEC_ON.md): ❌
+ - Supported Record Types
+-  - [A](../language-reference/domain-modifiers/A.md) [AAAA](../language-reference/domain-modifiers/AAAA.md) [AZURE_ALIAS](../language-reference/domain-modifiers/AZURE_ALIAS.md) [CNAME](../language-reference/domain-modifiers/CNAME.md) [MX](../language-reference/domain-modifiers/MX.md) [PTR](../language-reference/domain-modifiers/PTR.md) [SRV](../language-reference/domain-modifiers/SRV.md) [TXT](../language-reference/domain-modifiers/TXT.md)
++  - [A](../language-reference/domain-modifiers/A.md) [AAAA](../language-reference/domain-modifiers/AAAA.md) [CNAME](../language-reference/domain-modifiers/CNAME.md) [MX](../language-reference/domain-modifiers/MX.md) [PTR](../language-reference/domain-modifiers/PTR.md) [SRV](../language-reference/domain-modifiers/SRV.md) [TXT](../language-reference/domain-modifiers/TXT.md)
+     - Not supported: [ALIAS](../language-reference/domain-modifiers/ALIAS.md) (Azure DNS does not provide a generic ALIAS functionality. Use AZURE_ALIAS instead.)
++    - Not supported: [AZURE_ALIAS](../language-reference/domain-modifiers/AZURE_ALIAS.md) (Azure Private DNS does not support alias records)
+     - Not supported: [CAA](../language-reference/domain-modifiers/CAA.md) (Azure Private DNS does not support CAA records)
+ <!-- provider-features-end -->
+```
+
+**File**: `documentation/provider/index.md` (modified, +2/-1)
+```diff
+@@ -194,8 +194,9 @@ NOTE: "Unimplemented" means that the provider's API supports this record type bu
+ - [AXFRDDNS](axfrddns.md): [A](../language-reference/domain-modifiers/A.md) [AAAA](../language-reference/domain-modifiers/AAAA.md) [CAA](../language-reference/domain-modifiers/CAA.md) [CNAME](../language-reference/domain-modifiers/CNAME.md) [DHCID](../language-reference/domain-modifiers/DHCID.md) [DNAME](../language-reference/domain-modifiers/DNAME.md) [DS](../language-reference/domain-modifiers/DS.md) [HTTPS](../language-reference/domain-modifiers/HTTPS.md) [LOC](../language-reference/domain-modifiers/LOC.md) [MX](../language-reference/domain-modifiers/MX.md) [NAPTR](../language-reference/domain-modifiers/NAPTR.md) [NS](../language-reference/domain-modifiers/NS.md) [OPENPGPKEY](../language-reference/domain-modifiers/OPENPGPKEY.md) [PTR](../language-reference/domain-modifiers/PTR.md) [SMIMEA](../language-reference/domain-modifiers/SMIMEA.md) [SRV](../language-reference/domain-modifiers/SRV.md) [SSHFP](../language-reference/domain-modifiers/SSHFP.md) [SVCB](../language-reference/domain-modifiers/SVCB.md) [TLSA](../language-reference/domain-modifiers/TLSA.md) [TXT](../language-reference/domain-modifiers/TXT.md)
+ - [AZURE_DNS](azuredns.md): [A](../language-reference/domain-modifiers/A.md) [AAAA](../language-reference/domain-modifiers/AAAA.md) [AZURE_ALIAS](../language-reference/domain-modifiers/AZURE_ALIAS.md) [CAA](../language-reference/domain-modifiers/CAA.md) [CNAME](../language-reference/domain-modifiers/CNAME.md) [MX](../language-reference/domain-modifiers/MX.md) [NS](../language-reference/domain-modifiers/NS.md) [PTR](../language-reference/domain-modifiers/PTR.md) [SRV](../language-reference/domain-modifiers/SRV.md) [TXT](../language-reference/domain-modifiers/TXT.md)
+   - Not supported: [ALIAS](../language-reference/domain-modifiers/ALIAS.md) (Azure DNS does not provide a generic ALIAS functionality. Use AZURE_ALIAS instead.)
+-- [AZURE_PRIVATE_DNS](azureprivatedns.md): [A](../language-reference/domain-modifiers/A.md) [AAAA](../language-reference/domain-modifiers/AAAA.md) [AZURE_ALIAS](../language-reference/domain-modifiers/AZURE_ALIAS.md) [CNAME](../language-reference/domain-modifiers/CNAME.md) [MX](../language-reference/domain-modifiers/MX.md) [PTR](../language-reference/domain-modifiers/PTR.md) [SRV](../language-reference/domain-modifiers/SRV.md) [TXT](../language-reference/domain-modifiers/TXT.md)
++- [AZURE_PRIVATE_DNS](azureprivatedns.md): [A](../language-reference/domain-modifiers/A.md) [AAAA](../language-reference/domain-modifiers/AAAA.md) [CNAME](../language-reference/domain-modifiers/CNAME.md) [MX](../language-reference/domain-modifiers/MX.md) [PTR](../language-reference/domain-modifiers/PTR.md) [SRV](../language-reference/domain-modifiers/SRV.md) [TXT](../language-reference/domain-modifiers/TXT.md)
+   - Not supported: [ALIAS](../language-reference/domain-modifiers/ALIAS.md) (Azure DNS does not provide a generic ALIAS functionality. Use AZURE_ALIAS instead.)
++  - Not supported: [AZURE_ALIAS](../language-reference/domain-modifiers/AZURE_ALIAS.md) (Azure Private DNS does not support alias records)
+   - Not supported: [CAA](../language-reference/domain-modifiers/CAA.md) (Azure Private DNS does not support CAA records)
+ - [BIND](bind.md): [A](../language-reference/domain-modifiers/A.md) [AAAA](../language-reference/domain-modifiers/AAAA.md) [ADGUARDHOME_AAAA_PASSTHROUGH](../language-reference/domain-modifiers/ADGUARDHOME_AAAA_PASSTHROUGH.md) [ADGUARDHOME_A_PASSTHROUGH](../language-reference/domain-modifiers/ADGUARDHOME_A_PASSTHROUGH.md) [AKAMAICDN](../language-reference/domain-modifiers/AKAMAICDN.md) [AKAMAITLC](../language-reference/domain-modifiers/AKAMAITLC.md) [ALIAS](../language-reference/domain-modifiers/ALIAS.md) [AZURE_ALIAS](../language-reference/domain-modifiers/AZURE_ALIAS.md) [BUNNY_DNS_PZ](../language-reference/domain-modifiers/BUNNY_DNS_PZ.md) [BUNNY_DNS_RDR](../language-reference/domain-modifiers/BUNNY_DNS_RDR.md) [CAA](../language-reference/domain-modifiers/CAA.md) [CF_WORKER_ROUTE](../language-reference/domain-modifiers/CF_WORKER_ROUTE.md) [CLOUDFLAREAPI_SINGLE_REDIRECT](../language-reference/domain-modifiers/CF_SINGLE_REDIRECT.md) [CLOUDNS_WR](../language-reference/domain-modifiers/CLOUDNS_WR.md) [CNAME](../language-reference/domain-modifiers/CNAME.md) [CSYNC](../language-reference/domain-modifiers/CSYNC.md) [DHCID](../language-reference/domain-modifiers/DHCID.md) [DNAME](../language-reference/domain-modifiers/DNAME.md) [DNSKEY](../language-reference/domain-modifiers/DNSKEY.md) [DS](../language-reference/domain-modifiers/DS.md) [FRAME](../language-reference/domain-modifiers/FRAME.md) [HTTPS](../language-reference/domain-modifiers/HTTPS.md) [LOC](../language-reference/domain-modifiers/LOC.md) [LUA](../language-reference/domain-modifiers/LUA.md) [MIKROTIK_FORWARDER](../language-reference/domain-modifiers/MIKROTIK_FORWARDER.md) [MIKROTIK_FWD](../language-reference/domain-modifiers/MIK
+```
+
+**File**: `providers/azureprivatedns/azurePrivateDnsProvider.go` (modified, +1/-1)
+```diff
+@@ -96,7 +96,7 @@ func init() {
+ 		Maintainer:   "@matthewmgamble",
+ 		SupportedTypes: []string{
+ 			"Basic8",
+-			"AZURE_ALIAS",
++			"AZURE_ALIAS:Cannot:Azure Private DNS does not support alias records",
+ 			"PTR",
+ 			"CAA:Cannot:Azure Private DNS does not support CAA records",
+ 			"NS:Cannot",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5122** (2026-11-18): docs: update REFACTORING_PROJECTS and release notes template (@TomOnTime)
+- **PR #5120** (2026-11-18): build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4 (@dependabot[bot])
+- **PR #5119** (2026-11-18): fix(p/AZURE_PRIVATE_DNS): mark AZURE_ALIAS as not supported (@TomOnTime)
+- **PR #5118** (2026-11-18): chore: prep release (@TomOnTime)
 - **PR #5117** (2026-11-17): refactor(p/OPENWRT): fix golint warnings (@TomOnTime)
 - **PR #5116** (2026-11-17): refactor(p/CLOUDNS): fix golint warnings (@TomOnTime)
-- **PR #5115** (2026-11-17): refactor: fix golint warnings (@TomOnTime)
-- **PR #5114** (2026-11-17): docs: Note about refactoring preview (@TomOnTime)
-- **PR #5113** (2026-11-17): refactor: remove record type checks from AuditRecords made redundant by SupportedTypes (@TomOnTime)
-- **PR #5112** (2026-11-17): refactor: add missing code comments (@TomOnTime)
 
 ---
 
@@ -1116,59 +867,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. preview): skip delegation check when a zone is pending creation
+## X. build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4
 
 **RULE**:
-When implementing operations in `commands/ppreviewPush.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/fuzzing.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c3db94d0`: preview): skip delegation check when a zone is pending creation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0e98ff40`: build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `commands/ppreviewPush.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/fuzzing.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	var delegationCorrections []*models.Correction
-	var dcCount int
-	var err error
-	if existing, pending := splitPendingCreation(zone, push, args.PopulateOnPreview); len(pending) != 0 {
-		// Some providers can't report the nameservers of a zone that does not
-		// exist yet (GetNameservers fails), so the delegation can't be
-		// determined until the zone is created on push.
-		delegationCorrections, err = generatePendingDelegationCorrections(zone, existing, pending)
-	} else {
-		delegationCorrections, dcCount, err = generateDelegationCorrections(zone, zone.DNSProviderInstances, zone.RegistrarInstance)
-	}
-// splitPendingCreation partitions the zone's DNS providers into those where
-// the zone exists and those where this run will report it as pending creation
-// (see reportZonePendingCreation).
-func splitPendingCreation(zone *models.DomainConfig, push, populateOnPreview bool) (existing, pending []*models.DNSProviderInstance) {
-	for _, provider := range zone.DNSProviderInstances {
-		if reportZonePendingCreation(zone, provider.Name, push, populateOnPreview) {
-			pending = append(pending, provider)
-		} else {
-			existing = append(existing, provider)
-		}
-	}
-	return existing, pending
-}
-
-// dete
+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	delegationCorrections, dcCount, err := generateDelegationCorrections(zone, zone.DNSProviderInstances, zone.RegistrarInstance)
-func generateDelegationCorrections(zone *models.DomainConfig, providers []*models.DNSProviderInstance, _ *models.RegistrarInstance) ([]*models.Correction, int, error) {
-	// fmt.Printf("DEBUG: generateDelegationCorrections start zone=%q nsList = %v\n", zone.Name, zone.Nameservers)
-		return msg(fmt.Sprintf("DetermineNS: zone %q; Error: %s", zone.Name, err)), 0, err
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c3db94d0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0e98ff40` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

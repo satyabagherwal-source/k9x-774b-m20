@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
   "source_version": "hf-canberkkkkkk-ema-lightning",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T17:39:52.424Z",
+  "timestamp": "2026-11-19T07:14:13.484Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-canberkkkkkk-ema-lightning",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [canberkkkkkk/ema-lightning](https://huggingface.co/canberkkkkkk/ema-lightning) (Revision: `hf-canberk`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T17:39:52.424Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T07:14:13.484Z`  
 > **Learning ID**: `learn-huggingface-canberkkkkkk-ema-lightning`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/canberkkkkkk/ema-lightning](https://huggingface.co/canberkkkkkk/ema-lightning))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T17:39:51.589Z  
+> **Harvest Timestamp**: 2026-11-19T07:14:12.568Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-speech
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 89885 downloads | 462 likes
+- **Stars / Engagement**: 88330 downloads | 467 likes
 
 ---
 

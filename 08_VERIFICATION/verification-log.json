@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-ZKKI",
-    "timestamp": "2026-11-17T18:56:13.794Z",
-    "repository": "briaai/Fibo-2.0-dev",
-    "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
-    "contentHash": "77319363e73a84a12dddc790abb6b0f0a9f21a95f821718ea1e49d6969b4dfb0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-ZSRJ",
-    "timestamp": "2026-11-17T18:56:24.415Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "30bcb05b737061f22294bc237f0b9e7fb429a4ab2799eb8f99b0e7c4173e0b1e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-AMB8",
-    "timestamp": "2026-11-17T19:04:49.268Z",
-    "repository": "XHToken/Spark-X2.6-4B-GGUF",
-    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
-    "contentHash": "cd57dcd4b47e43c6657f7b1d009b4da6b85c86f1ce204e43c8f304084389e749",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-AOFU",
     "timestamp": "2026-11-17T19:04:52.026Z",
     "repository": "agent-of-empires/agent-of-empires",
@@ -7490,6 +7445,51 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "d516bb8b60c28af18a12dfe762b52f81921a0760d641ecc2cf6a005c6eab079d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-SHI2",
+    "timestamp": "2026-11-19T07:14:13.274Z",
+    "repository": "canberkkkkkk/ema-lightning",
+    "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+    "contentHash": "fc4ce72c1db06cdc0472d6063a217dc21b1cae6f34628d0dc2cf1e74842988a3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-SM0T",
+    "timestamp": "2026-11-19T07:14:19.133Z",
+    "repository": "necolas/react-native-web",
+    "learningId": "learn-github-necolas-react-native-web",
+    "contentHash": "2c16a124dbf22b246b97684e9dafc3242c2ef659d2ac172681624f5258f743d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-SOUI",
+    "timestamp": "2026-11-19T07:14:22.794Z",
+    "repository": "DNSControl/dnscontrol",
+    "learningId": "learn-github-dnscontrol-dnscontrol",
+    "contentHash": "405e4fcfe90f14b070926d4257022adc5281c48ac57f726effeb2bbd1e9da12e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

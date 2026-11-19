@@ -655,8 +655,8 @@
     "sourceUrl": "https://huggingface.co/canberkkkkkk/ema-lightning",
     "sourceVersion": "hf-canberkkkkkk-ema-lightning",
     "license": "Open-Source",
-    "contentHash": "4110c666b5c220b4bc9f6c02f26475bf71ed0ca04bbbaed355d283da9c87b070",
-    "lastHarvestedAt": "2026-11-14T17:39:52.213Z",
+    "contentHash": "fc4ce72c1db06cdc0472d6063a217dc21b1cae6f34628d0dc2cf1e74842988a3",
+    "lastHarvestedAt": "2026-11-19T07:14:13.278Z",
     "learningId": "learn-huggingface-canberkkkkkk-ema-lightning"
   },
   "hf-google-embeddinggemma-2": {
@@ -5413,10 +5413,10 @@
     "repository": "DNSControl/dnscontrol",
     "platform": "github",
     "sourceUrl": "https://github.com/DNSControl/dnscontrol",
-    "sourceVersion": "1adf8aea",
+    "sourceVersion": "cc95a67a",
     "license": "MIT",
-    "contentHash": "5fd719412df2560c71ae0d0c0375f851a8d730e2d31a2faf6780e877ccdcb99a",
-    "lastHarvestedAt": "2026-11-18T09:14:46.953Z",
+    "contentHash": "405e4fcfe90f14b070926d4257022adc5281c48ac57f726effeb2bbd1e9da12e",
+    "lastHarvestedAt": "2026-11-19T07:14:22.798Z",
     "learningId": "learn-github-dnscontrol-dnscontrol"
   },
   "ydb-platform-ydb": {
@@ -7123,10 +7123,10 @@
     "repository": "necolas/react-native-web",
     "platform": "github",
     "sourceUrl": "https://github.com/necolas/react-native-web",
-    "sourceVersion": "06726fb2",
+    "sourceVersion": "68858292",
     "license": "MIT",
-    "contentHash": "77b78dcb961d240b56a4a377336c34e5af487a1bea9ab5cc981e625675d4439c",
-    "lastHarvestedAt": "2026-11-18T06:15:27.625Z",
+    "contentHash": "2c16a124dbf22b246b97684e9dafc3242c2ef659d2ac172681624f5258f743d2",
+    "lastHarvestedAt": "2026-11-19T07:14:19.137Z",
     "learningId": "learn-github-necolas-react-native-web"
   },
   "zvec-ai-zvec-grep": {

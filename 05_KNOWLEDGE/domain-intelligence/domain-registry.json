@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T07:06:43.468Z",
+  "last_updated": "2026-11-19T07:14:28.068Z",
   "total_records": 1955,
   "domains": {
     "A": {
@@ -16828,8 +16828,8 @@
       "title": "Research & Knowledge Intelligence: canberkkkkkk/ema-lightning Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-canberkkkkkk-ema-lightning-research-knowledge-intelligence-canberkkkkkk-ema-l.md",
       "repository": "canberkkkkkk/ema-lightning",
-      "content_hash": "f0c11db45d76161762899fa37fc55935c8d3771242fbf82dfe1cc0b46eb329a8",
-      "created_at": "2026-11-14T17:39:52.424Z"
+      "content_hash": "68e97d175fc3d6f58ebf0034ba9754f87dd0db1918a2aa0fa5a2dd0991e21664",
+      "created_at": "2026-11-19T07:14:13.485Z"
     },
     "domain_intelligence-architecture-intelligence-pola-rs-polars-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-pola-rs-polars-core-invariants",
@@ -16906,8 +16906,8 @@
       "title": "Research & Knowledge Intelligence: hf-canberkkkkkk-ema-lightning-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-canberkkkkkk-ema-lightning-learnings-research-knowledge-intelligence-hf-canbe.md",
       "repository": "hf-canberkkkkkk-ema-lightning-learnings",
-      "content_hash": "ef820ab55da719525cabcb660d056893e5a8e02917aebe557c4248478b70e7c2",
-      "created_at": "2026-11-14T17:40:48.077Z"
+      "content_hash": "7d687fd15d322bf02c0c6cef0ad5eab26af8cb1cd21c69b10b99320aca93e7a6",
+      "created_at": "2026-11-19T07:14:26.389Z"
     },
     "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-learnings-core-invariants",
@@ -18614,8 +18614,8 @@
       "title": "Technical Construction Intelligence: necolas/react-native-web Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-necolas-react-native-web-technical-construction-intelligence-necolas-react-nativ.md",
       "repository": "necolas/react-native-web",
-      "content_hash": "cdb07b0bbf8ec9110bc343827cd1281f1e919a93da9f2f72be4872318b57658e",
-      "created_at": "2026-11-18T06:15:27.928Z"
+      "content_hash": "4d41475923d8bf694288454dc16ed6b40be6c182606861167615ea6aceeddc31",
+      "created_at": "2026-11-19T07:14:19.509Z"
     },
     "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants",
@@ -18683,8 +18683,8 @@
       "title": "Technical Construction Intelligence: necolas-react-native-web-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-necolas-react-native-web-learnings-technical-construction-intelligence-necolas-r.md",
       "repository": "necolas-react-native-web-learnings",
-      "content_hash": "7743458b802774284720f7f769b39d2ae9ff4bdecb1791eaff1f18d50b360d23",
-      "created_at": "2026-11-18T06:16:01.208Z"
+      "content_hash": "ca19e88d0ea24c054ca7c2cad1a56c00e7d6279aac307758c2121c1aefeae69c",
+      "created_at": "2026-11-19T07:14:27.136Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-nvfp4-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-nvfp4-core-i",
@@ -30620,8 +30620,8 @@
       "title": "Technical Construction Intelligence: DNSControl/dnscontrol Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dnscontrol-dnscontrol-technical-construction-intelligence-dnscontrol-dnscontrol-.md",
       "repository": "DNSControl/dnscontrol",
-      "content_hash": "516165584c57db602f6349260e1f892af765b3445169f3b9067550cb2f0de87e",
-      "created_at": "2026-11-18T09:14:47.262Z"
+      "content_hash": "5218ec588bdc3214c4428b808368be52dabcf79a0182dae052e5f9fa8f86ad14",
+      "created_at": "2026-11-19T07:14:23.161Z"
     },
     "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-learnings-core-invaria",
@@ -30629,8 +30629,8 @@
       "title": "Technical Construction Intelligence: dnscontrol-dnscontrol-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dnscontrol-dnscontrol-learnings-technical-construction-intelligence-dnscontrol-d.md",
       "repository": "dnscontrol-dnscontrol-learnings",
-      "content_hash": "3889917bf8e324da706b5eef110ab9bc234b77079c64f4a0c14067da1e55feb1",
-      "created_at": "2026-11-18T09:19:43.993Z"
+      "content_hash": "c6bab194952ffed1d099d4616b7c0773f83040080e507cfea57802710f1b2167",
+      "created_at": "2026-11-19T07:14:28.068Z"
     },
     "DOM-H-CC987E5F": {
       "record_id": "DOM-H-CC987E5F",

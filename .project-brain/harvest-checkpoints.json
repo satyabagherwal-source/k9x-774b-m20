@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T07:06:37.756Z",
+  "last_updated": "2026-11-19T07:14:22.807Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -815,14 +815,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-canberkkkkkk-ema-lightning",
-      "content_hash": "4110c666b5c220b4bc9f6c02f26475bf71ed0ca04bbbaed355d283da9c87b070",
-      "verified_at": "2026-11-14T17:39:52.222Z",
+      "content_hash": "fc4ce72c1db06cdc0472d6063a217dc21b1cae6f34628d0dc2cf1e74842988a3",
+      "verified_at": "2026-11-19T07:14:13.287Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T17:39:52.222Z"
+      "last_updated": "2026-11-19T07:14:13.287Z"
     },
     "google/embeddinggemma-2": {
       "repository": "google/embeddinggemma-2",
@@ -8241,14 +8241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dnscontrol-dnscontrol",
-      "content_hash": "5fd719412df2560c71ae0d0c0375f851a8d730e2d31a2faf6780e877ccdcb99a",
-      "verified_at": "2026-11-18T09:14:46.960Z",
+      "content_hash": "405e4fcfe90f14b070926d4257022adc5281c48ac57f726effeb2bbd1e9da12e",
+      "verified_at": "2026-11-19T07:14:22.806Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T09:14:46.960Z"
+      "last_updated": "2026-11-19T07:14:22.806Z"
     },
     "ydb-platform/ydb": {
       "repository": "ydb-platform/ydb",
@@ -10731,14 +10731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-necolas-react-native-web",
-      "content_hash": "77b78dcb961d240b56a4a377336c34e5af487a1bea9ab5cc981e625675d4439c",
-      "verified_at": "2026-11-18T06:15:27.632Z",
+      "content_hash": "2c16a124dbf22b246b97684e9dafc3242c2ef659d2ac172681624f5258f743d2",
+      "verified_at": "2026-11-19T07:14:19.148Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T06:15:27.632Z"
+      "last_updated": "2026-11-19T07:14:19.149Z"
     },
     "zvec-ai/zvec-grep": {
       "repository": "zvec-ai/zvec-grep",

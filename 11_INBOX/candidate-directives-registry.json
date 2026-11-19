@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T07:06:43.289Z",
+  "last_updated": "2026-11-19T07:14:27.891Z",
   "directives": [
     {
       "id": "CD-001",
@@ -32361,6 +32361,46 @@
       "source_repo": "tursodatabase-limbo",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-4592DC-merge-core-dialect-replace-catalogchange.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-SS2U",
+      "directive_title": "[fix] Docs: dead MDN link for TextInput autoComplete",
+      "source_repo": "necolas-react-native-web-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SS2U-fix-docs-dead-mdn-link-for-textinput-autocomplete.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-SSS2",
+      "directive_title": "build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4",
+      "source_repo": "dnscontrol-dnscontrol-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SSS2-build-deps-bump-step-security-harden-runner-from-2-22-3-to-2-22-4.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-04DDAD",
+      "directive_title": "[fix] Docs: dead MDN link for TextInput autoComplete",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "necolas-react-native-web",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-04DDAD--fix-docs-dead-mdn-link-for-textinput-au.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-024DF4",
+      "directive_title": "build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dnscontrol-dnscontrol",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-024DF4-build-deps-bump-step-security-harden-run.md",
       "staged_date": "2026-11-19"
     }
   ]

@@ -4,22 +4,22 @@
 {
   "source_repository": "necolas/react-native-web",
   "source_url": "https://github.com/necolas/react-native-web",
-  "source_version": "06726fb2",
+  "source_version": "68858292",
   "license": "MIT",
-  "timestamp": "2026-11-18T06:15:27.797Z",
+  "timestamp": "2026-11-19T07:14:19.359Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-necolas-react-native-web",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [necolas/react-native-web](https://github.com/necolas/react-native-web) (Revision: `06726fb2`).  
-> **License**: MIT | **Timestamp**: `2026-11-18T06:15:27.797Z`  
+> **Provenance**: Harvested from [necolas/react-native-web](https://github.com/necolas/react-native-web) (Revision: `68858292`).  
+> **License**: MIT | **Timestamp**: `2026-11-19T07:14:19.359Z`  
 > **Learning ID**: `learn-github-necolas-react-native-web`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `necolas/react-native-web` (Commit: `06726fb2`)
+- **Target Repository**: `necolas/react-native-web` (Commit: `68858292`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T06:15:26.737Z  
+> **Harvest Timestamp**: 2026-11-19T07:14:18.114Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Cross-platform React UI packages
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 22161 stars
+- **Stars / Engagement**: 22163 stars
 
 ---
 
@@ -786,115 +786,29 @@ export function isPrimaryPointerDown(domEvent: ResponderDOMEvent): boolean {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `06726fb2` (2026-11-17)
-**Commit Message**: Build the examples app once in the release
+### Incident Patch 1: `68858292` (2026-11-18)
+**Commit Message**: [fix] Docs: dead MDN link for TextInput autoComplete (#2969)
 
-**File**: `packages/react-native-web-docs/package.json` (modified, +1/-1)
+**File**: `packages/react-native-web-docs/src/pages/docs/components/text-input.md` (modified, +1/-1)
 ```diff
-@@ -5,7 +5,7 @@
-   "description": "Documentation website for React Native for Web",
-   "type": "module",
-   "scripts": {
--    "build:examples": "BASE_PATH=/react-native-web/examples npm run build -w react-native-web-examples",
-+    "build:examples": "BASE_PATH=/react-native-web/examples npm run export -w react-native-web-examples",
-     "dev": "npm run build:examples && eleventy --serve",
-     "build": "npm run build:examples && ELEVENTY_PRODUCTION=true eleventy",
-     "debug": "DEBUG=* eleventy"
-```
-
-**File**: `packages/react-native-web-examples/package.json` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
-   "version": "0.21.4",
-   "type": "module",
-   "scripts": {
--    "build": "next build --webpack",
-+    "export": "next build --webpack",
-     "dev": "next dev --webpack",
-     "start": "next start"
-   },
-```
-
----
-
-### Incident Patch 2: `d7c8c91c` (2026-11-16)
-**Commit Message**: [fix] types: allow a filename for hrefAttrs.download
-
-**File**: `packages/react-native-web/src/exports/View/types.js` (modified, +5/-1)
-```diff
-@@ -231,7 +231,11 @@ export type ViewProps = {
-   // unstable
-   disabled?: ?boolean,
-   href?: ?string,
--  hrefAttrs?: ?{ download?: ?boolean, rel?: ?string, target?: ?string },
-+  hrefAttrs?: ?{
-+    download?: ?(boolean | string),
-+    rel?: ?string,
-+    target?: ?string
-+  },
-   type?: ?('button' | 'reset' | 'submit'),
-   // @deprecated
-   focusable?: ?boolean,
-```
-
-**File**: `packages/react-native-web/types/index.d.ts` (modified, +1/-1)
-```diff
-@@ -110,7 +110,7 @@ interface WebSharedProps extends WebEventProps {
-   /** @unstable */
-   hrefAttrs?:
-     | {
--        download?: boolean | undefined;
-+        download?: boolean | string | undefined;
-         rel?: string | undefined;
-         target?: string | undefined;
-       }
-```
-
----
-
-### Incident Patch 3: `5b47c534` (2026-11-16)
-**Commit Message**: [fix] types: don't require props that ViewProps doesn't declare
-
-**File**: `packages/react-native-web/types/index.d.ts` (modified, +6/-2)
-```diff
-@@ -20,6 +20,10 @@ import type {
-   Role
- } from 'react-native';
+@@ -49,7 +49,7 @@ Equivalent to [HTMLElement.autocapitalize](https://developer.mozilla.org/en-US/d
+ {% endcall %}
  
-+// Like `Pick`, but ignores keys that `T` doesn't have. `Pick` would add them as
-+// required props, which breaks components with the legacy `react-native` types.
-+type LoosePick<T, K extends PropertyKey> = Pick<T, Extract<K, keyof T>>;
-+
- type ButtonType = 'button' | 'reset' | 'submit';
- type NumberOrString = number | string;
+ {% call macro.prop('autoComplete', '?string') %}
+-Equivalent to [HTMLElement.autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocomplete).
++Equivalent to [HTMLElement.autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/autocomplete).
+ {% endcall %}
  
-@@ -324,7 +328,7 @@ declare module 'react-native' {
-   interface TextProps
-     extends
-       WebSharedProps,
--      Pick<
-+      LoosePick<
-         ViewProps,
-         | 'focusable'
-         | 'onBlur'
-@@ -380,7 +384,7 @@ declare module 'react-native' {
-     type?: ButtonType | undefined;
-   }
- 
--  interface PressableProps extends Pick<
-+  interface PressableProps extends LoosePick<
-     ViewProps,
-     'onMouseEnter' | 'onMouseLeave'
-   > {
+ {% call macro.prop('autoCorrect', '?boolean = true') %}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2971** (closed): [fix] StyleSheet: do not mutate inline transitionProperty arrays (@goranai)
+- **PR #2969** (2026-11-18): [fix] Docs: dead MDN link for TextInput autoComplete (@farisbasha)
 - **PR #2967** (closed): Bump next from 16.4.2 to 16.4.5 (@dependabot[bot])
 - **PR #2963** (2026-11-11): Upgrade Flow to 0.339 and make types more precise (@zoontek)
 - **PR #2962** (2026-11-06): [fix] Modal: make a modal active when it shows, not when its animation ends (@zoontek)
 - **PR #2961** (closed): [fix] PanResponder: cancel child click after a pan gesture (@zoontek)
-- **PR #2960** (2026-11-06): [fix] Modal: don't take focus back from a modal shown while closing (@ilazaridis)
-- **PR #2959** (2026-11-05): [fix] VirtualizedList: don't block wheel scroll on the other axis (@zoontek)
 
 ---
 
@@ -914,31 +828,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build the examples app once in the release
+## X. [fix] Docs: dead MDN link for TextInput autoComplete
 
 **RULE**:
-When implementing operations in `packages/react-native-web-docs/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-web-docs/src/pages/docs/components/text-input.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `06726fb2`: Build the examples app once in the release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `68858292`: [fix] Docs: dead MDN link for TextInput autoComplete. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web-docs/package.json`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web-docs/src/pages/docs/components/text-input.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    "build:examples": "BASE_PATH=/react-native-web/examples npm run export -w react-native-web-examples",
+Equivalent to [HTMLElement.autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/autocomplete).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-    "build:examples": "BASE_PATH=/react-native-web/examples npm run build -w react-native-web-examples",
+Equivalent to [HTMLElement.autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocomplete).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `06726fb2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `68858292` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

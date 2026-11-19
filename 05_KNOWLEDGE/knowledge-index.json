@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T07:06:43.655Z",
+  "last_updated": "2026-11-19T07:14:28.215Z",
   "total_verified_learnings": 9015,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21675,
+  "total_items": 21679,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -233423,7 +233423,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
       "source_version": "hf-canberkkkkkk-ema-lightning",
-      "content_hash": "4110c666b5c220b4bc9f6c02f26475bf71ed0ca04bbbaed355d283da9c87b070",
+      "content_hash": "fc4ce72c1db06cdc0472d6063a217dc21b1cae6f34628d0dc2cf1e74842988a3",
       "dossier_path": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "promoted_rules": [],
@@ -233432,7 +233432,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T17:39:52.020Z",
+      "verified_at": "2026-11-19T07:14:13.035Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233449,9 +233449,9 @@
       "title": "Research & Knowledge Intelligence: canberkkkkkk/ema-lightning Core Invariants",
       "repository": "canberkkkkkk/ema-lightning",
       "source_version": "hf-canberkkkkkk-ema-lightning",
-      "content_hash": "f0c11db45d76161762899fa37fc55935c8d3771242fbf82dfe1cc0b46eb329a8",
+      "content_hash": "68e97d175fc3d6f58ebf0034ba9754f87dd0db1918a2aa0fa5a2dd0991e21664",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T17:39:52.424Z"
+      "persisted_at": "2026-11-19T07:14:13.485Z"
     },
     "learn-github-pola-rs-polars": {
       "learning_id": "learn-github-pola-rs-polars",
@@ -233688,9 +233688,9 @@
       "title": "Research & Knowledge Intelligence: hf-canberkkkkkk-ema-lightning-learnings Core Invariants",
       "repository": "hf-canberkkkkkk-ema-lightning-learnings",
       "source_version": "HEAD",
-      "content_hash": "ef820ab55da719525cabcb660d056893e5a8e02917aebe557c4248478b70e7c2",
+      "content_hash": "7d687fd15d322bf02c0c6cef0ad5eab26af8cb1cd21c69b10b99320aca93e7a6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T17:40:48.077Z"
+      "persisted_at": "2026-11-19T07:14:26.389Z"
     },
     "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-learnings-core-invariants",
@@ -238513,8 +238513,8 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "1adf8aea",
-      "content_hash": "5fd719412df2560c71ae0d0c0375f851a8d730e2d31a2faf6780e877ccdcb99a",
+      "source_version": "cc95a67a",
+      "content_hash": "405e4fcfe90f14b070926d4257022adc5281c48ac57f726effeb2bbd1e9da12e",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
@@ -238532,6 +238532,11 @@
           "number": 9184,
           "title": "skip delegation check when a zone is pending creation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9349,
+          "title": "build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238539,7 +238544,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T09:14:46.786Z",
+      "verified_at": "2026-11-19T07:14:22.601Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238593,10 +238598,10 @@
       "relative_path": "08_VERIFICATION/dnscontrol-dnscontrol-verification-protocol-empirical-defect-shield-for-dnscontr.md",
       "title": "Verification Protocol: Empirical Defect Shield for DNSControl/dnscontrol",
       "repository": "DNSControl/dnscontrol",
-      "source_version": "1adf8aea",
-      "content_hash": "36c89aed6e56e6fc3aed480533e11658906d068e52b9990ee7c1d4fe29155345",
+      "source_version": "cc95a67a",
+      "content_hash": "216057d43383723946cb435d697cce03fa9c1f5cb928437c1d34727ae22fd6ec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T09:14:47.391Z"
+      "persisted_at": "2026-11-19T07:14:23.376Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized",
@@ -238642,9 +238647,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dnscontrol-dnscontrol-learnings",
       "repository": "dnscontrol-dnscontrol-learnings",
       "source_version": "HEAD",
-      "content_hash": "28fd2e39620296c3921e209af949d0eba1d3e6c11c3845322309d6b361f46caf",
+      "content_hash": "ffc95c9b77f2a10471e59919927985a8e42da4627225f47186d8f7c085960a70",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T09:19:44.150Z"
+      "persisted_at": "2026-11-19T07:14:28.215Z"
     },
     "learn-huggingface-autotrust-jev-35b": {
       "learning_id": "learn-huggingface-autotrust-jev-35b",
@@ -239147,8 +239152,8 @@
       "slug": "necolas-react-native-web",
       "platform": "github",
       "source_url": "https://github.com/necolas/react-native-web",
-      "source_version": "06726fb2",
-      "content_hash": "77b78dcb961d240b56a4a377336c34e5af487a1bea9ab5cc981e625675d4439c",
+      "source_version": "68858292",
+      "content_hash": "2c16a124dbf22b246b97684e9dafc3242c2ef659d2ac172681624f5258f743d2",
       "dossier_path": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "promoted_rules": [
@@ -239161,6 +239166,11 @@
           "number": 9138,
           "title": "Build the examples app once in the release",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9348,
+          "title": "[fix] Docs: dead MDN link for TextInput autoComplete",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239168,7 +239178,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:15:27.458Z",
+      "verified_at": "2026-11-19T07:14:18.938Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239210,10 +239220,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-necolas-react-native-web-technical-construction-intelligence-necolas-react-nativ.md",
       "title": "Technical Construction Intelligence: necolas/react-native-web Core Invariants",
       "repository": "necolas/react-native-web",
-      "source_version": "06726fb2",
-      "content_hash": "cdb07b0bbf8ec9110bc343827cd1281f1e919a93da9f2f72be4872318b57658e",
+      "source_version": "68858292",
+      "content_hash": "4d41475923d8bf694288454dc16ed6b40be6c182606861167615ea6aceeddc31",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T06:15:27.928Z"
+      "persisted_at": "2026-11-19T07:14:19.509Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-necolas-react-native-web": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-necolas-react-native-web",
@@ -239222,10 +239232,10 @@
       "relative_path": "08_VERIFICATION/necolas-react-native-web-verification-protocol-empirical-defect-shield-for-necol.md",
       "title": "Verification Protocol: Empirical Defect Shield for necolas/react-native-web",
       "repository": "necolas/react-native-web",
-      "source_version": "06726fb2",
-      "content_hash": "36f3628e12067fa59331310ba5d846009e985dc1817fcb7b8d3af7275f927067",
+      "source_version": "68858292",
+      "content_hash": "0931f1fff4ce6ee02245716cf1541e1879b1030bf74a1eb9b5dc9d5c2478428a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:15:28.053Z"
+      "persisted_at": "2026-11-19T07:14:19.910Z"
     },
     "learn-github-volcengine-openviking": {
       "learning_id": "learn-github-volcengine-openviking",
@@ -239354,9 +239364,9 @@
       "title": "Technical Construction Intelligence: necolas-react-native-web-learnings Core Invariants",
       "repository": "necolas-react-native-web-learnings",
       "source_version": "HEAD",
-      "content_hash": "7743458b802774284720f7f769b39d2ae9ff4bdecb1791eaff1f18d50b360d23",
+      "content_hash": "ca19e88d0ea24c054ca7c2cad1a56c00e7d6279aac307758c2121c1aefeae69c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T06:16:01.208Z"
+      "persisted_at": "2026-11-19T07:14:27.136Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-necolas-react-native-web-learn": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-necolas-react-native-web-learn",
@@ -239366,9 +239376,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for necolas-react-native-web-learnings",
       "repository": "necolas-react-native-web-learnings",
       "source_version": "HEAD",
-      "content_hash": "e9af84a3b09bcc47f248f80e53254f66a1af12fc02203e1b2eeed05584b35cbd",
+      "content_hash": "6d25844d50150dd043c4c30f1f3bb4b739f1e61eb4f2293f4b4cfb85da961db6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:16:01.353Z"
+      "persisted_at": "2026-11-19T07:14:27.285Z"
     },
     "learn-huggingface-autotrust-jev-35b-nvfp4": {
       "learning_id": "learn-huggingface-autotrust-jev-35b-nvfp4",
@@ -285368,10 +285378,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dnscontrol-dnscontrol-technical-construction-intelligence-dnscontrol-dnscontrol-.md",
       "title": "Technical Construction Intelligence: DNSControl/dnscontrol Core Invariants",
       "repository": "DNSControl/dnscontrol",
-      "source_version": "1adf8aea",
-      "content_hash": "516165584c57db602f6349260e1f892af765b3445169f3b9067550cb2f0de87e",
+      "source_version": "cc95a67a",
+      "content_hash": "5218ec588bdc3214c4428b808368be52dabcf79a0182dae052e5f9fa8f86ad14",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T09:14:47.262Z"
+      "persisted_at": "2026-11-19T07:14:23.161Z"
     },
     "rule-9185": {
       "learning_id": "rule-9185",
@@ -285419,9 +285429,9 @@
       "title": "Technical Construction Intelligence: dnscontrol-dnscontrol-learnings Core Invariants",
       "repository": "dnscontrol-dnscontrol-learnings",
       "source_version": "HEAD",
-      "content_hash": "3889917bf8e324da706b5eef110ab9bc234b77079c64f4a0c14067da1e55feb1",
+      "content_hash": "c6bab194952ffed1d099d4616b7c0773f83040080e507cfea57802710f1b2167",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T09:19:43.993Z"
+      "persisted_at": "2026-11-19T07:14:28.068Z"
     },
     "rule-9186": {
       "learning_id": "rule-9186",
@@ -292895,6 +292905,58 @@
       "content_hash": "4af58f2570e531336106a63e21c3fc6661e4ac8ccd15e2b057bb8d27b9aab145",
       "domain_letter": "B",
       "persisted_at": "2026-11-19T07:06:41.944Z"
+    },
+    "rule-9348": {
+      "learning_id": "rule-9348",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9348,
+      "title": "[fix] Docs: dead MDN link for TextInput autoComplete",
+      "source_url": "https://github.com/necolas/react-native-web",
+      "source_version": "68858292",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T07:14:18.938Z"
+    },
+    "candidate_directive-fix-docs-dead-mdn-link-for-textinput-autocomplete": {
+      "item_id": "candidate_directive-fix-docs-dead-mdn-link-for-textinput-autocomplete",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SS2U-fix-docs-dead-mdn-link-for-textinput-autocomplete.md",
+      "title": "[fix] Docs: dead MDN link for TextInput autoComplete",
+      "repository": "necolas-react-native-web-learnings",
+      "source_version": "HEAD",
+      "content_hash": "da5e8b7b3b058deffc1c7e86dbebe64595e30a6b42745b3dfa2d041edf5e02d6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T07:14:26.982Z"
+    },
+    "rule-9349": {
+      "learning_id": "rule-9349",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9349,
+      "title": "build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4",
+      "source_url": "https://github.com/DNSControl/dnscontrol",
+      "source_version": "cc95a67a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T07:14:22.601Z"
+    },
+    "candidate_directive-build-deps-bump-step-security-harden-runner-from-2-22-3-to-2-22-4": {
+      "item_id": "candidate_directive-build-deps-bump-step-security-harden-runner-from-2-22-3-to-2-22-4",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SSS2-build-deps-bump-step-security-harden-runner-from-2-22-3-to-2-22-4.md",
+      "title": "build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4",
+      "repository": "dnscontrol-dnscontrol-learnings",
+      "source_version": "HEAD",
+      "content_hash": "360a457c516e818c1146f7be441c6e3bb2eca20d1e89723313194588c2ae2934",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T07:14:27.891Z"
     }
   },
   "ai-builder-brain": {

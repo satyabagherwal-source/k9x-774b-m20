@@ -11222,3 +11222,6 @@
 | `CYCLE-20261119-ICPR` | `2026-11-19T07:06:20.511Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`908315c1...`) |
 | `CYCLE-20261119-IEG4` | `2026-11-19T07:06:22.756Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9346` | Yes (`aec7ab90...`) |
 | `CYCLE-20261119-IQ0D` | `2026-11-19T07:06:37.741Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9347` | Yes (`d516bb8b...`) |
+| `CYCLE-20261119-SHI2` | `2026-11-19T07:14:13.274Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | Yes (`fc4ce72c...`) |
+| `CYCLE-20261119-SM0T` | `2026-11-19T07:14:19.133Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9348` | Yes (`2c16a124...`) |
+| `CYCLE-20261119-SOUI` | `2026-11-19T07:14:22.794Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9349` | Yes (`405e4fcf...`) |

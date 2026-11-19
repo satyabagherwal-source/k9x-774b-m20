@@ -11255,3 +11255,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-19T07:06:20.516Z |
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `6a85f360` | Multi-dimensional audit evidence | 2026-11-19T07:06:22.761Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `e139e251` | Multi-dimensional audit evidence | 2026-11-19T07:06:37.746Z |
+| `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-11-19T07:14:13.278Z |
+| `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `68858292` | Multi-dimensional audit evidence | 2026-11-19T07:14:19.137Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `cc95a67a` | Multi-dimensional audit evidence | 2026-11-19T07:14:22.798Z |

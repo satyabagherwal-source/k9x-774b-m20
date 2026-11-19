@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T07:06:43.052Z",
+  "updated_at": "2026-11-19T07:14:27.645Z",
   "stats": {
-    "total_discovered": 5809,
-    "approved_pending_harvest": 5498,
+    "total_discovered": 5816,
+    "approved_pending_harvest": 5505,
     "harvested_count": 0,
     "rejected_count": 311,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5464,
-      "OFFICIAL_DOCUMENTATION": 186,
+      "COMMUNITY_AND_EXPERT": 5468,
+      "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 36,
@@ -125642,6 +125642,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
         "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-22347A56F420": {
+      "id": "SRC-22347A56F420",
+      "url": "https://developer.mozilla.org/en-US/d",
+      "title": "https://developer.mozilla.org/en-US/d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:14:26.627Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
+        "fileName": "necolas-react-native-web-learnings.md"
+      }
+    },
+    "SRC-73A923760472": {
+      "id": "SRC-73A923760472",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocomplete",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocomplete",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:14:26.672Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
+        "fileName": "necolas-react-native-web-learnings.md"
+      }
+    },
+    "SRC-3CB1BB8E0F02": {
+      "id": "SRC-3CB1BB8E0F02",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/autocomplete",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/autocomplete",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:14:26.713Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
+        "fileName": "necolas-react-native-web-learnings.md"
+      }
+    },
+    "SRC-046E5CDDCCDE": {
+      "id": "SRC-046E5CDDCCDE",
+      "url": "https://github.com/step-security/harden-runner/compare/v2.22.3...v2.22.4",
+      "title": "https://github.com/step-security/harden-runner/compare/v2.22.3...v2.22.4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:14:27.519Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+        "fileName": "dnscontrol-dnscontrol-learnings.md"
+      }
+    },
+    "SRC-A4124D2AE8CB": {
+      "id": "SRC-A4124D2AE8CB",
+      "url": "https://github.com/step-security/harden-runner/commit/1d88384fd173af6ecb012dfd0264a306b711241a",
+      "title": "https://github.com/step-security/harden-runner/commit/1d88384fd173af6ecb012dfd0264a306b711241a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:14:27.558Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+        "fileName": "dnscontrol-dnscontrol-learnings.md"
+      }
+    },
+    "SRC-C2EB55ACADA9": {
+      "id": "SRC-C2EB55ACADA9",
+      "url": "https://redirect.github.com/step-security/harden-runner/issues/716",
+      "title": "https://redirect.github.com/step-security/harden-runner/issues/716",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:14:27.602Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+        "fileName": "dnscontrol-dnscontrol-learnings.md"
+      }
+    },
+    "SRC-27875FF74100": {
+      "id": "SRC-27875FF74100",
+      "url": "https://github.com/step-security/harden-runner/commit/26249c00f9d7bd75872eeed44f5bc",
+      "title": "https://github.com/step-security/harden-runner/commit/26249c00f9d7bd75872eeed44f5bc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:14:27.645Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+        "fileName": "dnscontrol-dnscontrol-learnings.md"
       }
     }
   }

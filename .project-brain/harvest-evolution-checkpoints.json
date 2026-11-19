@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T07:06:43.808Z",
+  "last_updated": "2026-11-19T07:14:28.347Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T02:03:45.340Z",
@@ -308,7 +308,7 @@
       "staged_for_review": 1
     },
     "necolas-react-native-web-learnings.md": {
-      "processed_at": "2026-11-18T06:16:00.835Z",
+      "processed_at": "2026-11-19T07:14:26.565Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1138,7 +1138,7 @@
       "staged_for_review": 0
     },
     "dnscontrol-dnscontrol-learnings.md": {
-      "processed_at": "2026-11-18T09:19:43.634Z",
+      "processed_at": "2026-11-19T07:14:27.436Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2678,8 +2678,8 @@
       "staged_for_review": 0
     },
     "hf-canberkkkkkk-ema-lightning-learnings.md": {
-      "processed_at": "2026-11-14T17:40:47.849Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T07:14:26.188Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-unsloth-embeddinggemma-2-gguf-learnings.md": {
@@ -3503,7 +3503,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2193,
+  "total_dossiers_evaluated": 2196,
   "total_canonical_promoted": 378,
-  "total_staged_for_review": 1641
+  "total_staged_for_review": 1643
 }
