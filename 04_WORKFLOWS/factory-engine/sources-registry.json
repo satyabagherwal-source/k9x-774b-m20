@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T14:55:40.152Z",
-    "lastVerified": "2026-11-19T14:55:40.152Z",
+    "lastChecked": "2026-11-19T15:03:33.548Z",
+    "lastVerified": "2026-11-19T15:03:33.548Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T14:03:30.929Z",
-    "lastVerified": "2026-11-19T14:03:30.929Z",
+    "lastChecked": "2026-11-19T15:03:31.955Z",
+    "lastVerified": "2026-11-19T15:03:31.955Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1210,9 +1210,9 @@
   "neondatabase-neon": {
     "name": "neon",
     "officialUrl": "https://github.com/neondatabase/neon",
-    "lastChecked": "2026-11-18T12:03:27.888Z",
+    "lastChecked": "2026-11-19T15:03:29.363Z",
     "revisionIdentifier": "fa504217",
-    "lastVerified": "2026-11-18T12:03:27.888Z"
+    "lastVerified": "2026-11-19T15:03:29.363Z"
   },
   "sharkdp-fd": {
     "name": "sharkdp/fd",
@@ -1423,9 +1423,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-19T05:06:11.563Z",
+    "lastChecked": "2026-11-19T15:03:26.866Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-19T05:06:11.563Z"
+    "lastVerified": "2026-11-19T15:03:26.866Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -1638,11 +1638,21 @@
     "lastVerified": "2026-11-18T12:58:22.243Z"
   },
   "loft-sh-vcluster": {
-    "name": "vcluster",
+    "name": "loft-sh/vcluster",
     "officialUrl": "https://github.com/loft-sh/vcluster",
-    "lastChecked": "2026-11-18T12:58:24.739Z",
-    "revisionIdentifier": "92186138",
-    "lastVerified": "2026-11-18T12:58:24.739Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-19T15:03:29.797Z",
+    "lastVerified": "2026-11-19T15:03:29.797Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-loft-sh-vcluster",
+    "contentHash": "8f8b9e0959afc826468a2ac68624e6877db050463ffeab484f1606f40a33fb9e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sigstore-cosign": {
     "name": "cosign",
@@ -7459,5 +7469,36 @@
     "lastChecked": "2026-11-19T14:52:23.556Z",
     "revisionIdentifier": "fa2aebd8",
     "lastVerified": "2026-11-19T14:52:23.556Z"
+  },
+  "imsnif-diskonaut": {
+    "name": "diskonaut",
+    "officialUrl": "https://github.com/imsnif/diskonaut",
+    "lastChecked": "2026-11-19T15:03:16.778Z",
+    "revisionIdentifier": "65cd8290",
+    "lastVerified": "2026-11-19T15:03:16.778Z"
+  },
+  "hf-openbmb-minicpm-v-4.7-35b-a3b": {
+    "name": "openbmb/MiniCPM-V-4.7-35B-A3B",
+    "officialUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T15:03:19.434Z",
+    "lastVerified": "2026-11-19T15:03:19.434Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+    "contentHash": "05545c19da84baac80c6010c70cdb41c87588a2fd9e11e52c5f3202ab74ffc9c",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pointfreeco-swift-composable-architecture": {
+    "name": "swift-composable-architecture",
+    "officialUrl": "https://github.com/pointfreeco/swift-composable-architecture",
+    "lastChecked": "2026-11-19T15:03:21.887Z",
+    "revisionIdentifier": "bf66bd83",
+    "lastVerified": "2026-11-19T15:03:21.887Z"
   }
 }

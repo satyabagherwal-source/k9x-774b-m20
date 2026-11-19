@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T14:55:37.278Z",
+  "last_updated": "2026-11-19T15:03:30.536Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2126,14 +2126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "content_hash": "e64fe6a5b98aeabe04c3a271df39276e70e55172d461d37375f5bd4874d9ad59",
-      "verified_at": "2026-11-15T00:37:45.470Z",
+      "content_hash": "05545c19da84baac80c6010c70cdb41c87588a2fd9e11e52c5f3202ab74ffc9c",
+      "verified_at": "2026-11-19T15:03:21.336Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T00:37:45.470Z"
+      "last_updated": "2026-11-19T15:03:21.336Z"
     },
     "openbmb/MiniCPM-V-4.7-1B": {
       "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -11046,14 +11046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-loft-sh-vcluster",
-      "content_hash": "ceb0afc426f6e16a07255392e239584becb2c49151beaef0663a8946896f8175",
-      "verified_at": "2026-11-17T19:44:57.010Z",
+      "content_hash": "8f8b9e0959afc826468a2ac68624e6877db050463ffeab484f1606f40a33fb9e",
+      "verified_at": "2026-11-19T15:03:30.536Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T19:44:57.010Z"
+      "last_updated": "2026-11-19T15:03:30.536Z"
     },
     "arkivanov/Decompose": {
       "repository": "arkivanov/Decompose",

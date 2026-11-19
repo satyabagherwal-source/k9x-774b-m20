@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T14:55:40.793Z",
+  "updated_at": "2026-11-19T15:03:34.090Z",
   "stats": {
-    "total_discovered": 5892,
-    "approved_pending_harvest": 5579,
+    "total_discovered": 5894,
+    "approved_pending_harvest": 5581,
     "harvested_count": 0,
     "rejected_count": 313,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5544,
+      "COMMUNITY_AND_EXPERT": 5546,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -127454,6 +127454,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
         "fileName": "tursodatabase-turso-learnings.md"
+      }
+    },
+    "SRC-45DE0B737C93": {
+      "id": "SRC-45DE0B737C93",
+      "url": "https://github.com/helm-unittest/helm-unittest",
+      "title": "https://github.com/helm-unittest/helm-unittest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:03:34.047Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
+        "fileName": "loft-sh-vcluster-learnings.md"
+      }
+    },
+    "SRC-858E1E2E206B": {
+      "id": "SRC-858E1E2E206B",
+      "url": "https://github.com/helm-unittest/helm-unittest/releases/download/v1.2.1/unittest-1.2.1.tgz",
+      "title": "https://github.com/helm-unittest/helm-unittest/releases/download/v1.2.1/unittest-1.2.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:03:34.090Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
+        "fileName": "loft-sh-vcluster-learnings.md"
       }
     }
   }

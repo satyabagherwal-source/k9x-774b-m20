@@ -1365,8 +1365,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b",
     "license": "Open-Source",
-    "contentHash": "e64fe6a5b98aeabe04c3a271df39276e70e55172d461d37375f5bd4874d9ad59",
-    "lastHarvestedAt": "2026-11-15T00:37:45.459Z",
+    "contentHash": "05545c19da84baac80c6010c70cdb41c87588a2fd9e11e52c5f3202ab74ffc9c",
+    "lastHarvestedAt": "2026-11-19T15:03:21.330Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b"
   },
   "hf-openbmb-minicpm-v-4.7-1b": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "92186138",
+    "sourceVersion": "e8a22cc7",
     "license": "Apache-2.0",
-    "contentHash": "ceb0afc426f6e16a07255392e239584becb2c49151beaef0663a8946896f8175",
-    "lastHarvestedAt": "2026-11-17T19:44:57.003Z",
+    "contentHash": "8f8b9e0959afc826468a2ac68624e6877db050463ffeab484f1606f40a33fb9e",
+    "lastHarvestedAt": "2026-11-19T15:03:30.530Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {

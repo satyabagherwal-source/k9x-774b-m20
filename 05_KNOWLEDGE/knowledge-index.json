@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T14:55:42.037Z",
+  "last_updated": "2026-11-19T15:03:35.320Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21805,
+  "total_items": 21808,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6b261786a65f03a06c9b98b1811da11919d90a054b1d5f593395784fac412e27",
+      "content_hash": "6d86abaf51ef406dd1d1f9783af3f8691fea005b8c31708b1e3bd9dd421aa023",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T12:20:13.165Z"
+      "persisted_at": "2026-11-19T15:03:35.224Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4305a52f4b949250177800f11bdb0a3fd31841bb02019b9f831619d5e962d3c0",
+      "content_hash": "01a78dea1ac49d130a2f935508d8f3dc43d943d5358a760d614034a0473b8bbd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T12:20:13.289Z"
+      "persisted_at": "2026-11-19T15:03:35.320Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -221688,8 +221688,8 @@
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "92186138",
-      "content_hash": "ceb0afc426f6e16a07255392e239584becb2c49151beaef0663a8946896f8175",
+      "source_version": "e8a22cc7",
+      "content_hash": "8f8b9e0959afc826468a2ac68624e6877db050463ffeab484f1606f40a33fb9e",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "promoted_rules": [
@@ -221702,6 +221702,11 @@
           "number": 9041,
           "title": "match allowed node proxy subpaths exactly",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9389,
+          "title": "create the restored etcd data directory with 0700",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221709,7 +221714,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:44:56.843Z",
+      "verified_at": "2026-11-19T15:03:30.391Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221751,10 +221756,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-deployment-operations-intelligence-loft-sh-vcluster-core-invari.md",
       "title": "Deployment & Operations Intelligence: loft-sh/vcluster Core Invariants",
       "repository": "loft-sh/vcluster",
-      "source_version": "92186138",
-      "content_hash": "44aec0256a65e89beb3d90385c9c0158d04b4f5ec5f09805504b8889edebf782",
+      "source_version": "e8a22cc7",
+      "content_hash": "84e0c72033fefbc4ab5078c18ce76d49899c29538b2bf3f70711cc99e890fe51",
       "domain_letter": "L",
-      "persisted_at": "2026-11-17T19:44:57.289Z"
+      "persisted_at": "2026-11-19T15:03:30.799Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster",
@@ -221763,10 +221768,10 @@
       "relative_path": "08_VERIFICATION/loft-sh-vcluster-verification-protocol-empirical-defect-shield-for-loft-sh-vclus.md",
       "title": "Verification Protocol: Empirical Defect Shield for loft-sh/vcluster",
       "repository": "loft-sh/vcluster",
-      "source_version": "92186138",
-      "content_hash": "9655e415777c85b27c087b80dc0382562c8210d145827f4afc8706b672d9c35f",
+      "source_version": "e8a22cc7",
+      "content_hash": "ef0529eda589ba26c60e795d3efc3efb6f0d4678a7a606a3d658bd24429611da",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:44:57.411Z"
+      "persisted_at": "2026-11-19T15:03:30.907Z"
     },
     "learn-github-neuron-core-neuron-ai": {
       "learning_id": "learn-github-neuron-core-neuron-ai",
@@ -221893,9 +221898,9 @@
       "title": "Deployment & Operations Intelligence: loft-sh-vcluster-learnings Core Invariants",
       "repository": "loft-sh-vcluster-learnings",
       "source_version": "HEAD",
-      "content_hash": "9263bc9e5e5a661c151e4d552d031e5e922a1bd141bebcf2c1ab874a5ec761e0",
+      "content_hash": "9b7689273c1a77467a6522543d659f373669aa3ee3d73e059b38e7547a024d2d",
       "domain_letter": "L",
-      "persisted_at": "2026-11-17T19:45:05.480Z"
+      "persisted_at": "2026-11-19T15:03:34.379Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster-learnings",
@@ -221905,9 +221910,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for loft-sh-vcluster-learnings",
       "repository": "loft-sh-vcluster-learnings",
       "source_version": "HEAD",
-      "content_hash": "b5d4ce3fd368cfb8ff5ed875edb268a4ff7c2501d593b69e3ee58e79fa97a7b7",
+      "content_hash": "e06839c93e90f8624b35d24f670a9351e4a58f9c751138e6207f9482aba8e8ed",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:45:05.605Z"
+      "persisted_at": "2026-11-19T15:03:34.497Z"
     },
     "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria",
@@ -239035,7 +239040,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
-      "content_hash": "e64fe6a5b98aeabe04c3a271df39276e70e55172d461d37375f5bd4874d9ad59",
+      "content_hash": "05545c19da84baac80c6010c70cdb41c87588a2fd9e11e52c5f3202ab74ffc9c",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "promoted_rules": [],
@@ -239044,7 +239049,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T00:37:45.274Z",
+      "verified_at": "2026-11-19T15:03:21.167Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239061,9 +239066,9 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-35B-A3B Core Invariants",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
-      "content_hash": "db03e462d49029215fdb5d7560e486939e3b27ac0255c72d57956b7eba3ee165",
+      "content_hash": "7124e572a99c0fd80cdbe1afb150e7a06d93631ae989372f2087ea219f13eef7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T00:37:45.665Z"
+      "persisted_at": "2026-11-19T15:03:21.492Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-core-",
@@ -239073,9 +239078,9 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-35b-a3b-learnings Core Invariants",
       "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-learnings",
       "source_version": "HEAD",
-      "content_hash": "cab05e0628c8e9e38166c95304338f69cca3e45df4fa4de59c13adf5d11f6b74",
+      "content_hash": "e4a8e1ed3a80b5c6f15531d6512512980d7a9a9620e80374e72c20e9453ea705",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T00:38:22.854Z"
+      "persisted_at": "2026-11-19T15:03:33.820Z"
     },
     "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants",
@@ -293998,13 +294003,13 @@
       "item_id": "candidate_directive-build-download-onnx-runtime-archives-from-npmmirror",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PZV0-build-download-onnx-runtime-archives-from-npmmirror.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-K38D-build-download-onnx-runtime-archives-from-npmmirror.md",
       "title": "build): download ONNX Runtime archives from npmmirror",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "79caf24a85c615edd893b45ac73c94fa9fb52436783c329892c4d31756430836",
+      "content_hash": "916f7b96fd4ccb9f0f1fffbef78e347c863a25638071006dd041986400e535d7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T12:20:12.876Z"
+      "persisted_at": "2026-11-19T15:03:35.005Z"
     },
     "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -294014,9 +294019,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "7dc9d2f2a38bb8b27f3b74cb3de87e7878e3f5fef8acbb4a13fb05496507c652",
+      "content_hash": "cfa5b5e1d690caa9d6811324da7a2960271bb5bd8cd56392d362f6b8b6ed3504",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T12:20:13.024Z"
+      "persisted_at": "2026-11-19T15:03:35.117Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -294806,6 +294811,44 @@
       "content_hash": "8edc0af9376f387eda6cda63da2c3bdb6f756aa6eada0b1bac0690bc58cc2d48",
       "domain_letter": "H",
       "persisted_at": "2026-11-19T14:55:41.004Z"
+    },
+    "rule-9389": {
+      "learning_id": "rule-9389",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9389,
+      "title": "create the restored etcd data directory with 0700",
+      "source_url": "https://github.com/loft-sh/vcluster",
+      "source_version": "e8a22cc7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T15:03:30.391Z"
+    },
+    "candidate_directive-create-the-restored-etcd-data-directory-with-0700": {
+      "item_id": "candidate_directive-create-the-restored-etcd-data-directory-with-0700",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JZW8-create-the-restored-etcd-data-directory-with-0700.md",
+      "title": "create the restored etcd data directory with 0700",
+      "repository": "loft-sh/vcluster",
+      "source_version": "e8a22cc7",
+      "content_hash": "a4fcef8c45f05cb5f298063cd244114acec05266d3f4437b60387742a5961ec1",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-19T15:03:30.685Z"
+    },
+    "candidate_directive-snapshot-create-the-restored-etcd-data-directory-with-0700": {
+      "item_id": "candidate_directive-snapshot-create-the-restored-etcd-data-directory-with-0700",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K2NN-snapshot-create-the-restored-etcd-data-directory-with-0700.md",
+      "title": "snapshot): create the restored etcd data directory with 0700",
+      "repository": "loft-sh-vcluster-learnings",
+      "source_version": "HEAD",
+      "content_hash": "605b0355668271952bddc00cf2b6ebf8e65152aec80bb3c1ab57b6be8b1b972e",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-19T15:03:34.264Z"
     }
   },
   "ai-builder-brain": {

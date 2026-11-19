@@ -11289,3 +11289,5 @@
 | `CYCLE-20261119-B4WK` | `2026-11-19T14:28:37.652Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9387` | Yes (`4403bc7e...`) |
 | `CYCLE-20261119-60OL` | `2026-11-19T14:52:38.517Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9388` | Yes (`9e43376c...`) |
 | `CYCLE-20261119-9ULT` | `2026-11-19T14:55:37.265Z` | `autotrust/AutoTrust-Decider-Pro-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`ee075ea2...`) |
+| `CYCLE-20261119-JSOE` | `2026-11-19T15:03:21.327Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md` | Yes (`05545c19...`) |
+| `CYCLE-20261119-JZS0` | `2026-11-19T15:03:30.528Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9389` | Yes (`8f8b9e09...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source**: github ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
-> **Source Version**: `92186138`  
+> **Source Version**: `e8a22cc7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T19:44:56.138Z  
+> **Timestamp**: 2026-11-19T15:03:29.801Z  
 > **Learning ID**: `learn-github-loft-sh-vcluster`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:44:56.133Z  
+> **Harvest Timestamp**: 2026-11-19T15:03:29.797Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: vCluster creates tenant clusters: fully isolated environments delivered as managed Kubernetes, or as the foundation for Slurm, Ray, Run:ai and inference clusters. Each gets its own API server, CRDs and RBAC, and runs on an existing cluster or standalone on bare metal. CNCF Certified Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11380 stars
+- **Stars / Engagement**: 11383 stars
 
 ---
 
@@ -1474,368 +1474,573 @@ func ResumeVCluster(ctx context.Context, kubeClient *kubernetes.Clientset, name,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `92186138` (2026-11-17)
-**Commit Message**: fix(kubeletproxy): match allowed node proxy subpaths exactly (#2742)
+### Incident Patch 1: `e8a22cc7` (2026-11-19)
+**Commit Message**: fix(snapshot): create the restored etcd data directory with 0700 (#4275)
 
-* fix(kubeletproxy): match allowed node proxy subpaths exactly
+* fix(snapshot): create the restored etcd data directory with 0700
 
-* fix(kubeletproxy): adds AI suggestion to e2e tests
+The restore path moved the embedded etcd data directory aside and recreated it with 0777. etcd creates and checks its data directory with 0700, and the directory holds the restored database with every Secret of the virtual cluster. Unit test added for backupFolder.
 
-Monorepo-Commit: 662030ef7d51b35d2e9baecf990e8a4d1c89a57a
+Signed-off-by: Youssef Omar Bouden <[REDACTED_EMAIL]>
 
-**File**: `e2e/test_security/kubeletproxy/test_kubelet_proxy.go` (modified, +145/-20)
+* test(snapshot): move backupFolder test into restoreclient_test.go and use t.Context
+
+---------
+
+Signed-off-by: Youssef Omar Bouden <[REDACTED_EMAIL]>
+Co-authored-by: Robin Afflerbach <[REDACTED_EMAIL]>
+Co-authored-by: Robin Afflerbach <[REDACTED_EMAIL]>
+
+**File**: `pkg/snapshot/restoreclient.go` (modified, +1/-1)
 ```diff
-@@ -2,6 +2,7 @@
- package kubeletproxy
+@@ -1049,7 +1049,7 @@ func backupFolder(ctx context.Context, dir string) error {
+ 		return err
+ 	}
+ 
+-	return os.MkdirAll(dir, 0777)
++	return os.MkdirAll(dir, 0700)
+ }
+ 
+ func restoreBackupFolder(ctx context.Context, dir string) error {
+```
+
+**File**: `pkg/snapshot/restoreclient_test.go` (modified, +25/-0)
+```diff
+@@ -725,3 +725,28 @@ func TestNewRestoreEtcdClientRefusesServingEmbeddedDatabase(t *testing.T) {
+ 		t.Errorf("refused restore moved the database aside: stat backup err = %v", err)
+ 	}
+ }
++
++func TestBackupFolderRecreatesPrivateDir(t *testing.T) {
++	dir := filepath.Join(t.TempDir(), "etcd")
++	if err := os.MkdirAll(filepath.Join(dir, "member"), 0700); err != nil {
++		t.Fatal(err)
++	}
++	if err := os.WriteFile(filepath.Join(dir, "member", "db"), []byte("old"), 0600); err != nil {
++		t.Fatal(err)
++	}
++
++	if err := backupFolder(t.Context(), dir); err != nil {
++		t.Fatalf("backupFolder() = %v; want no error", err)
++	}
++
++	info, err := os.Stat(dir)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if perm := info.Mode().Perm(); perm != 0700 {
++		t.Errorf("recreated data dir mode = %v; want %v", perm, os.FileMode(0700))
++	}
++	if _, err := os.Stat(filepath.Join(dir+".backup", "member", "db")); err != nil {
++		t.Errorf("previous data dir not kept as backup: %v", err)
++	}
++}
+```
+
+---
+
+### Incident Patch 2: `f9acf2b4` (2026-11-19)
+**Commit Message**: fix(ci): install the signed helm-unittest release with verification (#2762)
+
+* fix(ci): install the signed helm-unittest release with verification
+
+* fix(ci): keep the helm 3 plugin install in push head chart
+
+Monorepo-Commit: f7bde206fe61768514f5092b68369c328e0d9089
+
+**File**: `.github/helm-unittest-public-key.asc` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++-----BEGIN PGP PUBLIC KEY BLOCK-----
++
++mQINBGlSpn8BEACgPtkTgI3PaPSC+xm9I7nDTawRsUjE8/ERroe9amUzjXNz0rIy
++sg00pryj3MVDd4soUVRGB6cT1s/6782nVX4FJWaxC9rzDK/TXe6bVvMSlXiI9Omi
++z82rnI7ujSHc2QAwJMu7NntPwtW6iFeoOmnEmqg4WUHFrHIRKFqbbDPFss+wKBab
++D6/AcJe8X1GufBGJwO21O9Pt+Q3dcTw/9pIJRx0+uuaU9eURjC0bzmCQPyZjqvdB
++3SrQl4VI5bNZbk78MlhDlEfi5XFzyzXgaNR0AoDaAZKEvUsKuM4q0FBlRyo9ClGk
++UWKiBDk0GXlkWt+129Y8L+r7LzwPgj1fVd9zPguptdCyX06o2RWgtT4f+JLnsxud
++93fbzksjkP25kByhK0ZEcW7ZxYsWg+RX3oUokkPxXyOMlKG/GXcSd2WAOW189Ojt
++HeqntLD4HYF2uf3iNq1i2ILGEpHo7/8j0MRBAoGUlWsrLnaOw83kV8o5OKr+Xlq4
++lUMogboIFxGLEW6dU4nDn2sfPzhwRE/VAEFb2MuRGY86EDvBYqVNEY+13W8G9KyT
++S3sWu8zNXDq+uVIr5ltRgfT6G5ItWz1GA9T9FGdxzqW5S6z8L34p4vE4/u9raRxq
++tISFKvx0GhroITa5xOgKOf1i72FifO5cg8s2+qiOfqDOYSDeNYB9ByckGQARAQAB
++tC1oZWxtLXVuaXR0ZXN0IFBsdWdpbiA8aGVsbXVuaXR0ZXN0QGdtYWlsLmNvbT6J
++AlgEEwEKAEIDGy8EBQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAFiEEhTAIzQsK
++Wi2gT/ilYWrUf2W1SscFAmn8zUIFCQRsjcMACgkQYWrUf2W1SsdOYA/+MsMjeIXR
+++hmlXh7imU29hC7CjeSy24bKNCXa8ehTyKt0SQLkVsIM1nKeWR7IuJspkpvStWsp
++c7VxC46/Tj6e1toAFOMH9cDGX5eGkqZL4NMtfNNn64c46ZsA4TTsbDCTuhudmOfa
++xhH1bt5IEu4aSQtHbXiJYPrk5kvOqQduuA/KBOVIcKSjjdQYeNATYAfs/6A4qMOH
++1Lcv9Vjgk/+gI0foUic2ScOSp9Uv7AXAzeQqTy1nQUOOPXIJVwyPNEexgUc8r1TB
++grgRrYhP9YPL+3nlYzhHQ7VtkpZr2xIfrjRFyGzDf4kt/gOexwZOB0jietS77CA5
++SoQi0b/TMrFr3qglxIZjrwb54T3TOAyb7LxzvcxA/Oqffg3Zfdw6v8k4QMO5zqa/
++WnQwWcwk81BY/FVO4sQmqStXh55N5bFRTQsE0VqMXIMzQlEDlASBQv9xLSEdgxhb
++WlMoWj3f6I64kQa6El4XCPBYMHlNN+G9O61MB/CD3FOjbXeQzdDuzQv0Yw5cxN/S
++/vK4DBoApx01Cwe4KhX6g7yyZb4FXNDTWlajhp5p+WJaQlj0F2wABqIEVLL0y5Yi
++JDKZqsTcL+oNvU692iQhk+OFQc17mMkTXZ05Z47tMsCkutpn+yNhsGSMNJrTq651
++V4ZJfMTEOlVESEoV5Papq9gv+ibV6SV0EBU=
++=Xlcc
++-----END PGP PUBLIC KEY BLOCK-----
+```
+
+**File**: `.github/workflows/unit-tests.yaml` (modified, +2/-1)
+```diff
+@@ -30,7 +30,8 @@ jobs:
+         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+       - name: Install Helm Unit Test Plugin
+         run: |
+-          helm plugin install https://github.com/helm-unittest/helm-unittest --version v0.4.4
++          gpg --dearmor --output "$RUNNER_TEMP/helm-unittest.gpg" .github/helm-unittest-public-key.asc
++          helm plugin install https://github.com/helm-unittest/helm-unittest/releases/download/v1.2.1/unittest-1.2.1.tgz --keyring "$RUNNER_TEMP/helm-unittest.gpg"
+       - name: Run Helm Unit Tests
+         run: |
+           helm unittest chart
+```
+
+**File**: `chart/tests/role_test.yaml` (modified, +9/-0)
+```diff
+@@ -52,6 +52,9 @@ tests:
+                 - apiGroups: [""]
+                   resources: ["test"]
+                   verbs: ["test"]
++    capabilities:
++      majorVersion: 1
++      minorVersion: 34
+     asserts:
+       - hasDocuments:
+           count: 1
+@@ -81,6 +84,9 @@ tests:
+             - apiGroups: [""]
+               resources: ["test"]
+               verbs: ["test"]
++    capabilities:
++      majorVersion: 1
++      minorVersion: 34
+     asserts:
+       - hasDocuments:
+           count: 1
+@@ -296,6 +302,9 @@ tests:
+     release:
+       name: my-release
+       namespace: my-namespace
++    capabilities:
++      majorVersion: 1
++      minorVersion: 34
+     asserts:
+       - hasDocuments:
+           count: 1
+```
+
+---
+
+### Incident Patch 3: `1b0f9b46` (2026-11-18)
+**Commit Message**: fix(telemetry): send structured cli usage instead of the raw command line (#2748)
+
+* fix(telemetry): send structured cli usage instead of the raw command line
+
+Build the CLI telemetry event from the command cobra parsed: command
+path, flag names, values of boolean and allowlisted flags, arg count,
+driver, duration and an error category. Raw arguments and error text
+are no longer sent.
+
+* refactor(telemetry): accept the driver names the cli parser accepts
+
+Monorepo-Commit: f7f4ca49081d2c58665d4b737a5bd11b545037a7
+
+**File**: `cmd/vclusterctl/cmd/root.go` (modified, +1/-1)
+```diff
+@@ -57,7 +57,7 @@ func NewRootCmd(log log.Logger) *cobra.Command {
+ 
+ 			// start telemetry — skip for completion commands
+ 			if !isCompletionCommand(cobraCmd) {
+-				telemetry.StartCLI(globalFlags.LoadedConfig(log))
++				telemetry.StartCLI(globalFlags.LoadedConfig(log), cobraCmd)
+ 			}
+ 
+ 			if globalFlags.Silent {
+```
+
+**File**: `pkg/telemetry/cli_event.go` (added, +122/-0)
+```diff
+@@ -0,0 +1,122 @@
++package telemetry
++
++import (
++	"cmp"
++	"context"
++	"errors"
++	"net"
++	"regexp"
++	"slices"
++	"strings"
++
++	"github.com/loft-sh/vcluster/pkg/cli/config"
++	"github.com/loft-sh/vcluster/pkg/cli/find"
++	"github.com/spf13/cobra"
++	"github.com/spf13/pflag"
++	kerrors "k8s.io/apimachinery/pkg/api/errors"
++)
++
++// releaseVersion matches release versions such as v0.30.0 or 1.33.1-rc.2. It
++// is deliberately narrower than semver: an arbitrary pre-release or build
++// suffix could hold any text.
++var releaseVersion = regexp.MustCompile(`^v?\d{1,4}\.\d{1,4}\.\d{1,4}(-(alpha|beta|rc|next)\.\d{1,4})?$`)
++
++func oneOf(allowed ...string) func(string) bool {
++	return func(value string) bool {
++		return slices.Contains(allowed, value)
++	}
++}
++
++// isDriver accepts the names the CLI accepts for a driver. The parser also
++// takes an empty string, which is not a value that was typed.
++func isDriver(value string) bool {
++	_, err := config.ParseDriverType(value)
++	return value != "" && err == nil
++}
++
++// sentFlagValues lists, by flag name, the non-boolean flags whose value is
++// sent, and the check a value has to pass. A value that fails the check is
++// left out and only the flag name is sent. Flags that are not listed here
++// never have their value sent, so a flag belongs here only if every value
++// its check accepts is safe to send for every command that has a flag of
++// that name.
++var sentFlagValues = map[string]func(string) bool{
++	"driver":        isDriver,
++	"use-driver":    isDriver,
++	"output":        oneOf("table", "json", "yaml"),
++	"chart-version": releaseVersion.MatchString,
++	"version":       releaseVersion.MatchString,
++}
++
++// cliCommandProperties describes the invocation of cmd without any free-form
++// command line value: the command path, the names of the flags that were set,
++// the values of boolean flags and of the flags in sentFlagValues, the number of
++// positional args and the driver the command starts with.
++func cliCommandProperties(cliConfig *config.CLI, cmd *cobra.Command) map[string]interface{} {
++	flagNames := []string{}
++	flagValues := map[string]string{}
++	cmd.Flags().Visit(func(flag *pflag.Flag) {
++		flagNames = append(flagNames, flag.Name)
++
++		isValid := sentFlagValues[flag.Name]
++		if flag.Value.Type() == "bool" {
++			isValid = oneOf("true", "false")
++		}
++		if value := flag.Value.String(); isValid != nil && isValid(value) {
++			flagValues[flag.Name] = value
++		}
++	})
++
++	properties := map[string]interface{}{
++		"command":     strings.Fields(cmd.CommandPath()),
++		"flags":       flagNames,
++		"flag_values": flagValues,
++		"args":        len(cmd.Flags().Args()),
++	}
++
++	// resolved the way the commands resolve it: a non-empty --driver wins over
++	// the config, and nothing at all means helm
++	driverFlag := ""
++	if flag := cmd.Flags().Lookup("driver"); flag != nil {
++		driverFlag = flag.Value.String()
++	}
++	if driver, err := config.ParseDriverType(cmp.Or(driverFlag, string(cliConfig.Driver.Type))); err == nil {
++		properties["driver"] = string(driver)
++	}
++
++	return properties
++}
++
++// errorCategory names the kind of failure behind err from a fixed set. It
++// looks only at error types and sentinel values in the chain, never at text.
++func errorCategory(err error) string {
++	var (
++		notFoundErr *find.VClusterNotFoundError
++		apiStatus   kerrors.APIStatus
++		netErr      net.Error
++	)
++
++	switch {
++	case errors.Is(err, context.Canceled):
++		return "canceled"
++	case errors.Is(err, context.DeadlineExceeded):
++		return "timeout"
++	case errors.As(err, &notFoundErr):
++		return "vcluster_not_found"
++	case kerrors.IsUnauthorized(err):
++		return "kubernetes_unauthorized"
++	case kerrors.IsForbidden(err):
++		return "kubernetes_forbidden"
++	case kerrors.IsNotFound(err):
++		return "kubernetes_not_found"
++	case errors.As(err, &apiStatus):
++		return "kubernetes_other"
++	case errors.As(err, &netErr):
++		if netErr.Timeout() {
++			return "timeout"
++		}
++		return "network"
++	default:
++		return "other"
++	}
++}
+```
+
+**File**: `pkg/telemetry/cli_event_test.go` (added, +422/-0)
+```diff
+@@ -0,0 +1,422 @@
++package telemetry
++
++import (
++	"context"
++	"encoding/json"
++	"errors"
++	"fmt"
++	"io"
++	"net"
++	"net/url"
++	"os"
++	"strings"
++	"syscall"
++	"testing"
++	"time"
++
++	"github.com/loft-sh/analytics-client/client"
++	"github.com/loft-sh/vcluster/pkg/cli/config"
++	"github.com/loft-sh/vcluster/pkg/cli/find"
++	"github.com/loft-sh/vcluster/pkg/upgrade"
++	"github.com/spf13/cobra"
++	"gotest.tools/v3/assert"
++	kerrors "k8s.io/apimachinery/pkg/api/errors"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++)
++
++// Plain alphanumeric on purpose: the properties are JSON inside JSON, and
++// characters that get escaped would hide the value from a substring search.
++const commandLineValue = "s3cr3tvalue"
++
++// runDuration is how long every test command runs, so the recorded duration
++// has a lower bound only a start taken before the run can reach.
++const runDuration = 20 * time.Millisecond
++
++type recordingAnalyticsClient struct {
++	events []client.Event
++}
++
++func (r *recordingAnalyticsClient) RecordEvent(event client.Event) {
++	r.events = append(r.events, event)
++}
++
++func (r *recordingAnalyticsClient) Flush() {}
++
++// textValue is a flag value that keeps whatever text it is given and reports
++// the type it is told to.
++type textValue struct {
++	text     string
++	typeName string
++}
++
++func (v *textValue) String() string { return v.text }
++
++func (v *textValue) Set(text string) error {
++	v.text = text
++	return nil
++}
++
++func (v *textValue) Type() string { return v.typeName }
++
++// testCLI is a command tree that declares flags the way the CLI commands do
++// and starts the collector from the root pre-run, as the CLI does.
++type testCLI struct {
++	rootCmd         *cobra.Command
++	cliConfig       *config.CLI
++	analyticsClient *recordingAnalyticsClient
++	collector       *cliCollector
++}
++
++func newTestCLI(configuredDriver string) *testCLI {
++	cli := &testCLI{
++		cliConfig:       &config.CLI{Driver: config.Driver{Type: config.DriverType(configuredDriver)}},
++		analyticsClient: &recordingAnalyticsClient{},
++	}
++
++	var driver, chartVersion string
++	var upgradeExisting bool
++
++	// run fails with an error quoting the args and flag values, as the wrapped
++	// errors of the real commands can, unless --succeed is set. Before that it
++	// overwrites what the flags are bound to and the configured driver, as
++	// commands do while they run.
++	run := func(cmd *cobra.Command, args []string) error {
++		flagValues := []string{}
++		for _, name := range []string{"access-key", "driver", "chart-version", "namespace"} {
++			if flag := cmd.Flags().Lookup(name); flag != nil {
++				flagValues = append(flagValues, flag.Value.String())
++			}
++		}
++
++		time.Sleep(runDuration)
++		driver, chartVersion, upgradeExisting = string(config.PlatformDriver), "9.9.9", false
++		cli.cliConfig.Driver.Type = config.PlatformDriver
++
++		if succeed, _ := cmd.Flags().GetBool("succeed"); succeed {
++			return nil
++		}
++
++		return fmt.Errorf("failed with args %q and flags %q", args, flagValues)
++	}
++
++	rootCmd := &cobra.Command{
++		Use:           "vcluster",
++		SilenceUsage:  true,
++		SilenceErrors: true,
++		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
++			var err error
++			cli.collector, err = newCLICollector(cli.analyticsClient, cli.cliConfig, cmd)
++
++			return err
++		},
++	}
++	rootCmd.PersistentFlags().StringP("namespace", "n", "", "")
++	rootCmd.PersistentFlags().Bool("succeed", false, "")
++
++	loginCmd := &cobra.Command{Use: "login", RunE: run}
++	loginCmd.Flags().String("access-key", "", "")
++
++	createCmd := &cobra.Command{Use: "create", Aliases: []string{"new"}, RunE: run}
++	createCmd.Flags().StringArray("set", nil, "")
++	createCmd.Flags().StringArrayP("values", "f", nil, "")
++	createCmd.Flags().StringVar(&driver, "driver", "", "")
++	createCmd.Flags().StringVar(&chartVersion, "chart-version", "", "")
++	createCmd.Flags().BoolVar(&upgradeExisting, "upgrade", false, "")
++	createCmd.Flags().Bool("connect", true, "")
++
++	connectCmd := &cobra.Command{Use: "connect", RunE: run}
++
++	// flags that share a name or a type name with the ones whose value is sent
++	lookalikeCmd := &cobra.Command{Use: "lookalike", RunE: run}
++	lookalikeCmd.Flags().StringSlice("output", nil, "")
++	lookalikeCmd.Flags().Count("version", "")
++	lookalikeCmd.Flags().Var(&textValue{typeName: "bool"}, "force", "")
++	lookalikeCmd.Flags().Var(&textValue{typeName: "string"}, "driver", "")
++
++	platformCmd := &cobra.Command{Use: "platform"}
++	platformLoginCmd := &cobra.Command{Use: "login", RunE: run}
++	platformLoginCmd.Flags().String("access-key", "", "")
++	platformCmd.AddCommand(platformLoginCmd)
++
++	rootCmd.AddCommand(loginCmd, createCmd, connectCmd, lookalikeCmd, platformCmd)
++	rootCmd.SetOut(io.Discard)
++	rootCmd.SetErr(io.Discard)
++	cli.rootCmd = rootCmd
++
++	return cli
++}
++
++func TestRecordCLISendsOnlyBoundedValues(t *testing.T) {
++	type properties = map[string]interface{}
++	list := func(values ...interface{}) []interface{} { return 
+```
+
+**File**: `pkg/telemetry/collect_cli.go` (modified, +20/-12)
+```diff
+@@ -2,7 +2,7 @@ package telemetry
  
  import (
-+	"bytes"
- 	"context"
  	"encoding/json"
- 	"fmt"
-@@ -15,11 +16,14 @@ import (
- 	"github.com/loft-sh/vcluster/pkg/util/random"
- 	. "github.com/onsi/ginkgo/v2"
- 	. "github.com/onsi/gomega"
-+	"github.com/prometheus/common/expfmt"
-+	"github.com/prometheus/common/model"
- 	corev1 "k8s.io/api/core/v1"
- 	kerrors "k8s.io/apimachinery/pkg/api/errors"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/client-go/kubernetes"
- 	"k8s.io/client-go/rest"
-+	statsv1alpha1 "k8s.io/kubelet/pkg/apis/stats/v1alpha1"
+-	"os"
++	"maps"
+ 	"runtime"
+ 	"time"
+ 
+@@ -11,6 +11,7 @@ import (
+ 	"github.com/loft-sh/vcluster/pkg/cli/config"
+ 	"github.com/loft-sh/vcluster/pkg/upgrade"
+ 	"github.com/loft-sh/vcluster/pkg/util/loghelper"
++	"github.com/spf13/cobra"
  )
  
- // KubeletProxySpec registers the spec.
-@@ -38,15 +42,7 @@ func KubeletProxySpec() {
- 			})
+ type ErrorSeverityType string
+@@ -31,15 +32,18 @@ type CLICollector interface {
+ 	Flush()
+ }
  
- 			It("GET /healthz via node proxy returns ok for every virtual node", func(ctx context.Context) {
--				var nodes *corev1.NodeList
--				By("waiting for at least one virtual node to be registered", func() {
--					Eventually(func(g Gomega) {
--						var err error
--						nodes, err = vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
--						g.Expect(err).To(Succeed(), "failed to list virtual nodes")
--						g.Expect(nodes.Items).NotTo(BeEmpty(), "expected at least one virtual node")
--					}).WithPolling(constants.PollingInterval).WithTimeout(constants.PollingTimeout).Should(Succeed())
--				})
-+				nodes := waitForVirtualNodes(ctx, vClusterClientset)
- 
- 				By("checking /healthz returns ok for each node", func() {
- 					for _, node := range nodes.Items {
-@@ -60,9 +56,7 @@ func KubeletProxySpec() {
- 			})
- 
- 			It("GET /pods via node proxy returns only pods belonging to this vcluster", func(ctx context.Context) {
--				nodes, err := vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
--				Expect(err).To(Succeed())
--				Expect(nodes.Items).NotTo(BeEmpty())
-+				nodes := waitForVirtualNodes(ctx, vClusterClientset)
- 
- 				var virtualPodKeys map[string]bool
- 				By("collecting all virtual pod identities", func() {
-@@ -94,9 +88,7 @@ func KubeletProxySpec() {
- 			})
- 
- 			It("GET /runningpods via node proxy returns only pods belonging to this vcluster", func(ctx context.Context) {
--				nodes, err := vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
--				Expect(err).To(Succeed())
--				Expect(nodes.Items).NotTo(BeEmpty())
-+				nodes := waitForVirtualNodes(ctx, vClusterClientset)
- 
- 				virtualPods, err := vClusterClientset.CoreV1().Pods("").List(ctx, metav1.ListOptions{})
- 				Expect(err).To(Succeed())
-@@ -125,9 +117,7 @@ func KubeletProxySpec() {
- 			})
- 
- 			It("GET /containerLogs for a non-existent pod returns 403 Forbidden", func(ctx context.Context) {
--				nodes, err := vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
--				Expect(err).To(Succeed())
--				Expect(nodes.Items).NotTo(BeEmpty())
-+				nodes := waitForVirtualNodes(ctx, vClusterClientset)
- 
- 				By("requesting container logs for a pod that does not exist in the virtual cluster", func() {
- 					_, err := vClusterClientset.RESTClient().Get().
-@@ -140,8 +130,37 @@ func KubeletProxySpec() {
- 				})
- 			})
- 
--			// The following two specs share a running pod, so they run sequentially in an Ordered
--			// context. BeforeAll creates the pod once; both It blocks depend on it existing.
-+			// A single-encoded %2e%2e decodes to a literal ".." segment and is rejected with 400 before
-+			// the path is classified. The double-encoded form decodes to a literal "%2e%2e" segment, so
-+			// it passes the dot-segment check and only the exact subpath match rejects it.
-+			It("GET with a double-encoded traversal ending in /healthz returns 403 Forbidden", func(ctx context.Context) {
-+				nodes := waitForVirtualNodes(ctx, vClusterClientset)
-+
-+				By("requesting a path that names /configz but ends in the allowed /healthz", func() {
-+					rawPath := fmt.Sprintf("/api/v1/nodes/%s/proxy/configz/%%252e%%252e/healthz", nodes.Items[0].Name)
-+					code, body := getRawPath(ctx, rawPath)
-+					Expect(code).To(Equal(http.StatusForbidden),
-+						"expected 403 for %q, got %d: %s", rawPath, code, body)
-+					Expect(body).To(ContainSubstring("proxy subpath not permitted in shared mode"),
-+						"unexpected response body for %q", rawPath)
-+				})
-+			})
-+
-+			It("GET a path that only ends in /healthz returns 403 Forbidden", func(ctx context.Context) {
-+				nodes := waitForVirtualNodes(ctx, vClusterClientset)
-+
-+				By("requesting a kubelet /logs path whose last segment is healthz", func() {
-+					_, err := vClusterClientset.RESTClient().Get().
-+						AbsPath(fmt.Sprintf("/api/v1/nodes/%s/proxy/logs/x/healthz", nodes.Items[0].Name)).
-+						DoRaw(ctx)
-+					Expect(err).To(HaveOccurred(), "expected 403 for a path that only ends in /healthz")
-+					Expect(kerrors.IsForbidden(err)).To(BeTrue(),
-+						"expected 403 Forbidden, got: %v", err)
-+				})
-+			})
-+
-+			// The following specs share a running pod, so they run sequentially in an Ordered
-+			// context. BeforeAll creates the pod once; every It block depends on it existing.
- 			Context("with a running test pod", Ordered, func() {
- 				va
-```
-
-**File**: `pkg/server/filters/metrics.go` (modified, +47/-5)
-```diff
-@@ -133,13 +133,26 @@ func enforceKubeletSubpathAllowlist(
- 		return false
+-// StartCLI starts collecting events and sending them to the backend from the CLI
+-func StartCLI(cliConfig *config.CLI) {
++// StartCLI starts collecting events and sending them to the backend from the
++// CLI. cmd is the command about to run. What is recorded about the command
++// line is taken here, before the command can change the variables its flags
++// are bound to.
++func StartCLI(cliConfig *config.CLI, cmd *cobra.Command) {
+ 	// if disabled, we return noop collector
+ 	if cliConfig.TelemetryDisabled || upgrade.GetVersion() == upgrade.DevelopmentVersion {
+ 		return
  	}
  
-+	// reject empty segments before classifying the path: "/proxy/%2Fpods" decodes to "//pods"
-+	if hasEmptySegment(reqPath) {
-+		responsewriters.ErrorNegotiated(
-+			kerrors.NewBadRequest("proxy path must not contain empty segments"),
-+			s, corev1.SchemeGroupVersion, w, req,
-+		)
-+		return false
-+	}
-+
- 	switch {
- 	case IsKubeletHealthz(reqPath):
- 		// allowed — health check, no tenant data, forward as-is in all modes
-+		// drop the client-supplied encoding so the proxied URL is built from the validated path
-+		req.URL.RawPath = ""
- 		return true
- 
- 	case IsKubeletMetrics(reqPath), IsKubeletStats(reqPath), IsKubeletPods(reqPath):
- 		// allowed — response is filtered tenant-scoped inside handleNodeRequest
-+		// drop the client-supplied encoding so the proxied URL is built from the validated path
-+		req.URL.RawPath = ""
- 		return true
- 
- 	case IsKubeletContainerLogs(reqPath):
-@@ -367,21 +380,44 @@ func isNodesProxy(r *request.RequestInfo) bool {
- 		r.Subresource == "proxy"
- }
- 
-+var kubeletMetricsSubpaths = map[string]bool{
-+	"/metrics":                   true,
-+	"/metrics/cadvisor":          true,
-+	"/metrics/probes":            true,
-+	"/metrics/resource":          true,
-+	"/metrics/resource/v1alpha1": true,
-+	"/metrics/resource/v1beta1":  true,
-+}
-+
-+// kubeletSubpath returns the kubelet-local path for p. A node proxy path
-+// (/api/v1/nodes/{node}/proxy/...) is reduced to the part after /proxy; any other
-+// path is returned unchanged and treated as already kubelet-local.
-+func kubeletSubpath(p string) string {
-+	parts := strings.SplitN(p, "/", 7)
-+	if len(parts) < 6 || parts[0] != "" || parts[1] != "api" || parts[2] != "v1" || parts[3] != "nodes" || parts[4] == "" || parts[5] != "proxy" {
-+		return p
-+	}
-+	if len(parts) == 6 {
-+		return ""
-+	}
-+	return "/" + parts[6]
-+}
-+
- func IsKubeletHealthz(path string) bool {
--	return strings.HasSuffix(path, "/healthz")
-+	return kubeletSubpath(path) == "/healthz"
- }
- 
- func IsKubeletStats(path string) bool {
--	return strings.HasSuffix(path, "/stats/summary")
-+	return kubeletSubpath(path) == "/stats/summary"
- }
- 
- func IsKubeletMetrics(path string) bool {
--	return strings.HasSuffix(path, "/metrics") || strings.HasSuffix(path, "/metrics/cadvisor") || strings.HasSuffix(path, "/metrics/probes") || strings.HasSuffix(path, "/metrics/resource") || strings.HasSuffix(path, "/metrics/resource/v1alpha1") || strings.HasSuffix(path, "/metrics/resource/v1beta1")
-+	return kubeletMetricsSubpaths[kubeletSubpath(path)]
- }
- 
- func IsKubeletPods(path string) bool {
--	p := strings.TrimRight(path, "/")
--	return strings.HasSuffix(p, "/pods") || strings.HasSuffix(p, "/runningpods")
-+	p := strings.TrimRight(kubeletSubpath(path), "/")
-+	return p == "/pods" || p == "/runningpods"
- }
- 
- const kubeletContainerLogsSegment = "/proxy/containerLogs/"
-@@ -431,6 +467,12 @@ func hasDotSegment(reqPath string) bool {
- 	return false
- }
- 
-+// hasEmptySegment reports whether reqPath contains an empty "/"-separated segment, such as the
-+// one in "/proxy//pods"
-+func hasEmptySegment(reqPath string) bool {
-+	return strings.Contains(reqPath, "//")
-+}
-+
- func rewritePods(ctx *synccontext.SyncContext, data []byte) ([]byte, error) {
- 	podList := &corev1.PodList{}
- 	if err := json.Unmarshal(data, podList); err != nil {
-```
-
-**File**: `pkg/server/filters/metrics_test.go` (modified, +296/-1)
-```diff
-@@ -142,12 +142,109 @@ func TestEnforceKubeletSubpathAllowlistRejectsUnvalidatedPaths(t *testing.T) {
- 			sharedNode: false,
- 			wantStatus: http.StatusForbidden,
- 		},
-+		// percent-encoded dot segments are decoded into req.URL.Path by the URL parser,
-+		// so they must be rejected exactly like literal ones
-+		{
-+			name:       "encoded traversal ending in an allowed suffix",
-+			path:       "/api/v1/nodes/node-1/proxy/configz/%2e%2e/healthz",
-+			sharedNode: true,
-+			wantStatus: http.StatusBadRequest,
-+		},
-+		{
-+			name:       "uppercase encoded traversal to pods",
-+			path:       "/api/v1/nodes/node-1/proxy/configz/%2E%2E/pods",
-+			sharedNode: true,
-+			wantStatus: http.StatusBadRequest,
-+		},
-+		{
-+			name:       "mixed literal and encoded dot segment",
-+			path:       "/api/v1/nodes/node-1/proxy/configz/.%2e/metrics",
-+			sharedNode: true,
-+			wantStatus: http.StatusBadRequest,
-+		},
-+		{
-+			name:       "containerLogs with encoded traversal to pods",
-+			path:       "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod/container/%2e%2e/%2e%2e/%2e%2e/%2e%2e/pods",
-+			sharedNode: true,
-+			wantStatus: http.StatusBadRequest,
-+		},
-+		{
-+			name:       "containerLogs with encoded slashes and dots",
-+			path:       "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod/container%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2fpods",
-+			sharedNode: true,
-+			wantStatus: http.StatusBadRequest,
-+		},
-+		// double encoding decodes to a literal "%2e%2e" segment; it is not a dot segment,
-+		// but the path no longer exactly matches an allowed subpath
-+		{
-+			name:       "double-encoded traversal ending in an allowed suffix",
-+			path:       "/api/v1/nodes/node-1/proxy/configz/%252e%252e/healthz",
-+			sharedNode: true,
-+			wantStatus: http.StatusForbidden,
-+		},
-+		// an encoded slash right after /proxy decodes to an empty segment; with host node sync
-+		// off, unknown subpaths are forwarded, so these must be rejected before classification
-+		{
-+			name:       "encoded slash before pods on dedicated nodes",
-+			path:       "/api/v1/nodes/node-1/proxy/%2Fpods",
-+			sharedNode: false,
-+			wantStatus: http.StatusBadRequest,
-+		},
-+		{
-+			name:       "encoded slash before stats summary on dedicated nodes",
-+			path:       "/api/v1/nodes/node-1/proxy/%2Fstats/summary",
-+			sharedNode: false,
-+			wantStatus: http.StatusBadRequest,
-+		},
-+		{
-+			name:       "encoded slash before metrics cadvisor on dedicated nodes",
-+			path:       "/api/v1/nodes/node-1/proxy/%2Fmetrics/cadvisor",
-+			sharedNode: false,
-+			wantStatus: http.StatusBadRequest,
-+		},
-+		{
-+			name:       "empty segment inside an allowed subpath on dedicated nodes",
-+			path:       "/api/v1/nodes/node-1/proxy/stats%2F%2Fsummary",
-+			sharedNode: false,
-+			wantStatus: http.StatusBadRequest,
-+		},
-+		{
-+			name:       "encoded slash before pods",
-+			path:       "/api/v1/nodes/node-1/proxy/%2Fpods",
-+			sharedNode: true,
-+			wantStatus: http.StatusBadRequest,
-+		},
-+		// paths that only end in an allowed subpath must not be classified as that subpath
-+		{
-+			name:       "suffix-only healthz under kubelet logs",
-+			path:       "/api/v1/nodes/node-1/proxy/logs/x/healthz",
-+			sharedNode: true,
-+			wantStatus: http.StatusForbidden,
-+		},
-+		{
-+			name:       "suffix-only pods",
-+			path:       "/api/v1/nodes/node-1/proxy/configz/pods",
-+			sharedNode: true,
-+			wantStatus: http.StatusForbidden,
-+		},
-+		{
-+			name:       "suffix-only metrics",
-+			path:       "/api/v1/nodes/node-1/proxy/debug/metrics",
-+			sharedNode: true,
-+			wantStatus: http.StatusForbidden,
-+		},
-+		{
-+			name:       "suffix-only stats",
-+			path:       "/api/v1/nodes/node-1/proxy/logs/stats/summary",
-+			sharedNode: true,
-+			wantStatus: http.StatusForbidden,
-+		},
- 	}
- 
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
-+			// the URL parser decodes the path the same way the vcluster's HTTP server does
- 			req := httptest.NewRequest(http.MethodGet, "http://vcluster.local"+tt.path, nil)
--			req.URL.Path = tt.path
- 			w := httptest.NewRecorder()
- 
- 			// a nil register context proves the request is rejected before any lookup or forwarding
-@@ -161,6 +258,204 @@ func TestEnforceKubeletSubpathAllowlistRejectsUnvalidatedPaths(t *testing.T) {
+ 	// create a new default collector
+-	collector, err := newCLICollector()
++	collector, err := newCLICollector(client.NewClient(), cliConfig, cmd)
+ 	if err != nil {
+ 		// Log the problem but don't fail - use disabled Collector instead
+ 		loghelper.New("telemetry").Infof("%s", err.Error())
+@@ -48,10 +52,12 @@ func StartCLI(cliConfig *config.CLI) {
  	}
  }
  
-+// With host node sync off the nodes are dedicated to the virtual cluster, so unknown subpaths are
-+// forwarded by design. Paths that only end in an allowed subpath, or hide one behind double
-+// encoding, are unknown subpaths: they must be forwarded as sent and must not be classified as an
-+// allowed subpath, so handleNodeRequest applies no pods, stats or metrics rewrite to them.
-+func TestEnforceKubeletSubpathAllowlistForwardsUnknownPathsOnDedicatedNodes(t *testing.T) {
-+	s := serializer.NewCodecFactory(scheme.Scheme)
-+	tests := []struct {
-+		name string
-+		path string
-+	}{
-+		{
-+			name: "suffix-only healthz under kubelet logs",
-+			path: "/api/v1/nodes/node-1/proxy/logs/x/healthz",
-+		},
-+		{
-+			name: "suffix-only pods",
-+			path: "/
+-func newCLICollector() (*cliCollector, error) {
++func newCLICollector(analyticsClient client.Client, cliConfig *config.CLI, cmd *cobra.Command) (*cliCollector, error) {
+ 	defaultCollector := &cliCollector{
+-		analyticsClient: client.NewClient(),
+-		log:             loghelper.New("telemetry"),
++		analyticsClient:   analyticsClient,
++		log:               loghelper.New("telemetry"),
++		commandProperties: cliCommandProperties(cliConfig, cmd),
++		startTime:         time.Now(),
+ 	}
+ 
+ 	return defaultCollector, nil
+@@ -61,6 +67,9 @@ type cliCollector struct {
+ 	analyticsClient client.Client
+ 
+ 	log loghelper.Logger
++
++	commandProperties map[string]interface{}
++	startTime         time.Time
+ }
+ 
+ func (d *cliCollector) Flush() {
+@@ -69,17 +78,16 @@ func (d *cliCollector) Flush() {
+ 
+ func (d *cliCollector) RecordCLI(cliConfig *config.CLI, self *managementv1.Self, err error) {
+ 	timezone, _ := time.Now().Zone()
+-	eventProperties := map[string]interface{}{
+-		"command": os.Args,
+-		"version": upgrade.GetVersion(),
+-	}
++	eventProperties := maps.Clone(d.commandProperties)
++	eventProperties["version"] = upgrade.GetVersion()
++	eventProperties["duration_ms"] = time.Since(d.startTime).Milliseconds()
+ 	userProperties := map[string]interface{}{
+ 		"os_name":  runtime.GOOS,
+ 		"os_arch":  runtime.GOARCH,
+ 		"timezone": timezone,
+ 	}
+ 	if err != nil {
+-		eventProperties["error"] = err.Error()
++		eventProperties["error"] = errorCategory(err)
+ 	}
+ 
+ 	// build the event and record
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4285** (closed): [v0.37] chore: bump minimum platform version to v4.12.7 (@deniseschannon)
 - **PR #4281** (closed): sync: add envVars injection for host-synced pods (@dlenrow)
+- **PR #4275** (2026-11-19): fix(snapshot): create the restored etcd data directory with 0700 (@blacksoxx)
 - **PR #4270** (2026-11-11): [v0.35] chore: bump minimum platform version to v4.10.10 (@deniseschannon)
 - **PR #4269** (2026-11-11): [v0.36] chore: bump minimum platform version to v4.11.5 (@deniseschannon)
 - **PR #4268** (2026-11-11): [v0.37] chore: bump minimum platform version to v4.12.6 (@deniseschannon)
-- **PR #4263** (2026-11-04): ci: point free-disk-space at its new owner lumbroso-commons (v0.32) (@Piotr1215)
-- **PR #4262** (2026-11-04): ci: point free-disk-space at its new owner lumbroso-commons (v0.33) (@Piotr1215)
 
 ---
 
@@ -1855,66 +2060,28 @@ Monorepo-Commit: 662030ef7d51b35d2e9baecf990e8a4d1c89a57a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. kubeletproxy): match allowed node proxy subpaths exactly
+## X. snapshot): create the restored etcd data directory with 0700
 
 **RULE**:
-When implementing operations in `e2e/test_security/kubeletproxy/test_kubelet_proxy.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/snapshot/restoreclient.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `92186138`: kubeletproxy): match allowed node proxy subpaths exactly. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e8a22cc7`: snapshot): create the restored etcd data directory with 0700. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/test_security/kubeletproxy/test_kubelet_proxy.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/snapshot/restoreclient.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"bytes"
-	"github.com/prometheus/common/expfmt"
-	"github.com/prometheus/common/model"
-	statsv1alpha1 "k8s.io/kubelet/pkg/apis/stats/v1alpha1"
-				nodes := waitForVirtualNodes(ctx, vClusterClientset)
-				nodes := waitForVirtualNodes(ctx, vClusterClientset)
-				nodes := waitForVirtualNodes(ctx, vClusterClientset)
-				nodes := waitForVirtualNodes(ctx, vClusterClientset)
-			// A single-encoded %2e%2e decodes to a literal ".." segment and is rejected with 400 before
-			// the path is classified. The double-encoded form decodes to a literal "%2e%2e" segment, so
-			// it passes the dot-segment check and only the exact subpath match rejects it.
-			It("GET with a double-encoded traversal ending in /healthz returns 403 Forbidden", func(ctx context.Context) {
-				nodes := waitForVirtualNodes(ctx, vClusterClientset)
-
-				By("requesting a path that names /configz but ends in the allowed /healthz", func() {
-					rawPath := fmt.Sprintf("/api/v1/nodes/%s/proxy/configz/%%252e%%252e/healthz", nodes.Items[0].Name)
-					code, body := getRawPath(ctx, rawPath)
-					Expect(code).To(Equal(http.StatusForbidden),
-						"expected 403 for %q, got %d: %s", rawPath, code, body)
-					Expect(body).To(ContainSubst
+	return os.MkdirAll(dir, 0700)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-				var nodes *corev1.NodeList
-				By("waiting for at least one virtual node to be registered", func() {
-					Eventually(func(g Gomega) {
-						var err error
-						nodes, err = vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
-						g.Expect(err).To(Succeed(), "failed to list virtual nodes")
-						g.Expect(nodes.Items).NotTo(BeEmpty(), "expected at least one virtual node")
-					}).WithPolling(constants.PollingInterval).WithTimeout(constants.PollingTimeout).Should(Succeed())
-				})
-				nodes, err := vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
-				Expect(err).To(Succeed())
-				Expect(nodes.Items).NotTo(BeEmpty())
-				nodes, err := vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
-				Expect(err).To(Succeed())
-				Expect(nodes.Items).NotTo(BeEmpty())
-				nodes, err := vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
-				Expect(err).To(Succeed())
-				Expect(nodes.Items).NotTo(BeEmpty())
-			// The following two specs share a running pod, so they run sequentially in an Ordered
-			// context. BeforeAll creates the pod once; both It blocks depend on it existing.
+	return os.MkdirAll(dir, 0777)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `92186138` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e8a22cc7` are properly handled with clean fallback behavior.

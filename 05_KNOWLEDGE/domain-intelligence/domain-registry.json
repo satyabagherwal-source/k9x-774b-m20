@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T14:55:41.890Z",
+  "last_updated": "2026-11-19T15:03:35.117Z",
   "total_records": 1981,
   "domains": {
     "A": {
@@ -12590,8 +12590,8 @@
       "title": "Deployment & Operations Intelligence: loft-sh/vcluster Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-deployment-operations-intelligence-loft-sh-vcluster-core-invari.md",
       "repository": "loft-sh/vcluster",
-      "content_hash": "44aec0256a65e89beb3d90385c9c0158d04b4f5ec5f09805504b8889edebf782",
-      "created_at": "2026-11-17T19:44:57.289Z"
+      "content_hash": "84e0c72033fefbc4ab5078c18ce76d49899c29538b2bf3f70711cc99e890fe51",
+      "created_at": "2026-11-19T15:03:30.799Z"
     },
     "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants",
@@ -12659,8 +12659,8 @@
       "title": "Deployment & Operations Intelligence: loft-sh-vcluster-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-learnings-deployment-operations-intelligence-loft-sh-vcluster-l.md",
       "repository": "loft-sh-vcluster-learnings",
-      "content_hash": "9263bc9e5e5a661c151e4d552d031e5e922a1bd141bebcf2c1ab874a5ec761e0",
-      "created_at": "2026-11-17T19:45:05.480Z"
+      "content_hash": "9b7689273c1a77467a6522543d659f373669aa3ee3d73e059b38e7547a024d2d",
+      "created_at": "2026-11-19T15:03:34.379Z"
     },
     "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria",
@@ -18553,8 +18553,8 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-35B-A3B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-35b-a3b-research-knowledge-intelligence-openbmb-minicpm.md",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "content_hash": "db03e462d49029215fdb5d7560e486939e3b27ac0255c72d57956b7eba3ee165",
-      "created_at": "2026-11-15T00:37:45.665Z"
+      "content_hash": "7124e572a99c0fd80cdbe1afb150e7a06d93631ae989372f2087ea219f13eef7",
+      "created_at": "2026-11-19T15:03:21.492Z"
     },
     "DOM-D-C5F6E511": {
       "record_id": "DOM-D-C5F6E511",
@@ -18604,8 +18604,8 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-35b-a3b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-research-knowledge-intelligence-hf-op.md",
       "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-learnings",
-      "content_hash": "cab05e0628c8e9e38166c95304338f69cca3e45df4fa4de59c13adf5d11f6b74",
-      "created_at": "2026-11-15T00:38:22.854Z"
+      "content_hash": "e4a8e1ed3a80b5c6f15531d6512512980d7a9a9620e80374e72c20e9453ea705",
+      "created_at": "2026-11-19T15:03:33.820Z"
     },
     "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants",
@@ -33111,8 +33111,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "7dc9d2f2a38bb8b27f3b74cb3de87e7878e3f5fef8acbb4a13fb05496507c652",
-      "created_at": "2026-11-19T12:20:13.024Z"
+      "content_hash": "cfa5b5e1d690caa9d6811324da7a2960271bb5bd8cd56392d362f6b8b6ed3504",
+      "created_at": "2026-11-19T15:03:35.117Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
