@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T01:32:58.094Z",
+  "last_updated": "2026-11-19T01:47:33.003Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T01:06:12.357Z",
@@ -843,7 +843,7 @@
       "staged_for_review": 1
     },
     "ydb-platform-ydb-learnings.md": {
-      "processed_at": "2026-11-17T11:10:02.045Z",
+      "processed_at": "2026-11-19T01:47:31.601Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2558,8 +2558,8 @@
       "staged_for_review": 0
     },
     "hf-nomic-ai-nomic-embed-text-v1.5-learnings.md": {
-      "processed_at": "2026-11-14T11:34:36.813Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T01:47:31.239Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-google-gemma-4-26b-a4b-it-learnings.md": {
@@ -3073,7 +3073,7 @@
       "staged_for_review": 0
     },
     "dicklesworthstone-destructive_command_guard-learnings.md": {
-      "processed_at": "2026-11-15T22:39:59.667Z",
+      "processed_at": "2026-11-19T01:47:32.257Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3483,7 +3483,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2139,
+  "total_dossiers_evaluated": 2142,
   "total_canonical_promoted": 373,
-  "total_staged_for_review": 1605
+  "total_staged_for_review": 1607
 }

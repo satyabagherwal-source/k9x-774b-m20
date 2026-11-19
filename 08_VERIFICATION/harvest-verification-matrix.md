@@ -11171,3 +11171,6 @@
 | `CYCLE-20261119-L6SW` | `2026-11-19T01:32:37.424Z` | `kubearmor/KubeArmor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9318` | Yes (`a48b0b5e...`) |
 | `CYCLE-20261119-LA3T` | `2026-11-19T01:32:41.705Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9319` | Yes (`c473607f...`) |
 | `CYCLE-20261119-LHSQ` | `2026-11-19T01:32:51.674Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9320` | Yes (`2d229912...`) |
+| `CYCLE-20261119-3UZA` | `2026-11-19T01:47:08.566Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9321` | Yes (`8afe8e4c...`) |
+| `CYCLE-20261119-44HZ` | `2026-11-19T01:47:20.903Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9322` | Yes (`b8e6b7f5...`) |
+| `CYCLE-20261119-4A63` | `2026-11-19T01:47:28.251Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`26cf7265...`) |

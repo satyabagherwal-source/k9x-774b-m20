@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-CRHA",
-    "timestamp": "2026-11-17T16:46:31.198Z",
-    "repository": "sensenova/SenseNova-Loop-9B",
-    "learningId": "learn-huggingface-sensenova-sensenova-loop-9b",
-    "contentHash": "a26e8e39aeec134b66f5c690ad0fbdedf881753836da0b1455b309fdf72e3815",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-CTHY",
-    "timestamp": "2026-11-17T16:46:33.814Z",
-    "repository": "InternScience/Sage-A1.5",
-    "learningId": "learn-huggingface-internscience-sage-a1-5",
-    "contentHash": "1c12b9937c6eda0892cd429b17ea10d2625ed8e7369e577fb1bdc7542d4e2329",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-CZ8I",
-    "timestamp": "2026-11-17T16:46:41.250Z",
-    "repository": "sceneview/sceneview",
-    "learningId": "learn-github-sceneview-sceneview",
-    "contentHash": "7d38ec63829696c2dbbbcb86c8da71dc44512725736ff2714d1690da2da9e687",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-D220",
     "timestamp": "2026-11-17T16:46:44.904Z",
     "repository": "sigstore/cosign",
@@ -7492,6 +7447,51 @@
     "contentHash": "2d22991263db765e9204e7e1aab12dd6054327e43fd4873d0da24447f375ca29",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-3UZA",
+    "timestamp": "2026-11-19T01:47:08.566Z",
+    "repository": "Dicklesworthstone/destructive_command_guard",
+    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+    "contentHash": "8afe8e4cf6ba7d434209546581a5c5441575599dc1b84cd80a183c8d5e914904",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-44HZ",
+    "timestamp": "2026-11-19T01:47:20.903Z",
+    "repository": "ydb-platform/ydb",
+    "learningId": "learn-github-ydb-platform-ydb",
+    "contentHash": "b8e6b7f516a9ed05cf84d07c36fa92db1b090bb9ddb85cd352a2b4ae280758c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-4A63",
+    "timestamp": "2026-11-19T01:47:28.251Z",
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+    "contentHash": "26cf7265980afd940d0b8a8271e539feec5bee2bcc7e74530c9221068431ae88",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

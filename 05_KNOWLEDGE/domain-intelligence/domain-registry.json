@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T01:32:57.752Z",
+  "last_updated": "2026-11-19T01:47:32.605Z",
   "total_records": 1932,
   "domains": {
     "A": {
@@ -15089,8 +15089,8 @@
       "title": "Research & Knowledge Intelligence: nomic-ai/nomic-embed-text-v1.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nomic-ai-nomic-embed-text-v1-5-research-knowledge-intelligence-nomic-ai-nomic.md",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "content_hash": "73a7fcb4649bada5a8c839f29e05af8770bf7fd9d88051aca176adbe2fecde71",
-      "created_at": "2026-11-14T11:33:59.922Z"
+      "content_hash": "8dec51fde19b18c4947e3d4751a6943b6aec3d2550457e7dc38bf8882ef9afdb",
+      "created_at": "2026-11-19T01:47:28.444Z"
     },
     "DOM-D-BFA5A06D": {
       "record_id": "DOM-D-BFA5A06D",
@@ -15140,8 +15140,8 @@
       "title": "Research & Knowledge Intelligence: hf-nomic-ai-nomic-embed-text-v1.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nomic-ai-nomic-embed-text-v1-5-learnings-research-knowledge-intelligence-hf-n.md",
       "repository": "hf-nomic-ai-nomic-embed-text-v1.5-learnings",
-      "content_hash": "55bf85277cf5ab047352efdeb9c6b26a39612696bd130370a76a7efd9f352c41",
-      "created_at": "2026-11-14T11:34:37.055Z"
+      "content_hash": "b0f2f6081d177ecf4be4cdb1f2c68664b43d7622ea137fdfdc5ec112c97e4cbb",
+      "created_at": "2026-11-19T01:47:31.432Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-gemma-4-26b-a4b-it-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-gemma-4-26b-a4b-it-core-invariants",
@@ -17024,8 +17024,8 @@
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "repository": "ydb-platform/ydb",
-      "content_hash": "e02cfcbf4770c2cdc2bf8f9d2dcda31a2e3efef9ff905a99ee449a6aa0376cd1",
-      "created_at": "2026-11-17T11:09:58.092Z"
+      "content_hash": "9a48308c75a1f506bd9db960bf4bc25d11598fd5cc040234446d1dcc498387d3",
+      "created_at": "2026-11-19T01:47:21.233Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -22363,8 +22363,8 @@
       "title": "Architecture Intelligence: Dicklesworthstone/destructive_command_guard Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dicklesworthstone-destructive_command_guard-architecture-intelligence-dickleswor.md",
       "repository": "Dicklesworthstone/destructive_command_guard",
-      "content_hash": "07703971a36a9665dd223a0cf582250298a82912b5d16fa93867519a0df3eb64",
-      "created_at": "2026-11-15T22:39:45.755Z"
+      "content_hash": "5cb746e7d09a02bffd27626f4a0fbbcb86c760e2e8ff6cda961c369082c43eef",
+      "created_at": "2026-11-19T01:47:08.908Z"
     },
     "domain_intelligence-architecture-intelligence-slatedb-slatedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-slatedb-slatedb-learnings-core-invariants",
@@ -22381,8 +22381,8 @@
       "title": "Architecture Intelligence: dicklesworthstone-destructive_command_guard-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dicklesworthstone-destructive_command_guard-learnings-architecture-intelligence-.md",
       "repository": "dicklesworthstone-destructive_command_guard-learnings",
-      "content_hash": "b689cc10346cdb2e6cbd83eddb056f6e5b286cb41bc68a510f3b48e6781f9fea",
-      "created_at": "2026-11-15T22:40:00.027Z"
+      "content_hash": "e4be0381598a08c5b43a595bb9a140db55c946bb04ca31c05847c12ed2670ddb",
+      "created_at": "2026-11-19T01:47:32.605Z"
     },
     "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-learnings-core-invariants",
@@ -23085,8 +23085,8 @@
       "title": "Technical Construction Intelligence: ydb-platform-ydb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-learnings-technical-construction-intelligence-ydb-platform-ydb-.md",
       "repository": "ydb-platform-ydb-learnings",
-      "content_hash": "01171a242b6ba685b9fa2e35d22bf2066b46e916865a550c5ebf7ad2917e28dc",
-      "created_at": "2026-11-17T11:10:02.320Z"
+      "content_hash": "83b8e920e0739c0a57ac4602d42644e2e4e6e093f253cbc262093484d44b469f",
+      "created_at": "2026-11-19T01:47:31.981Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants",

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T01:32:57.934Z",
+  "last_updated": "2026-11-19T01:47:32.880Z",
   "total_verified_learnings": 9012,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21589,
+  "total_items": 21593,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -228850,7 +228850,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
       "source_version": "hf-nomic-ai-nomic-embed-text-v1.5",
-      "content_hash": "b97d3d61e6b7560f25f49e1a3d8d3a24bd091a40ecdff34533f52dc59f071144",
+      "content_hash": "26cf7265980afd940d0b8a8271e539feec5bee2bcc7e74530c9221068431ae88",
       "dossier_path": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "promoted_rules": [],
@@ -228859,7 +228859,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T11:33:59.561Z",
+      "verified_at": "2026-11-19T01:47:28.076Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228876,9 +228876,9 @@
       "title": "Research & Knowledge Intelligence: nomic-ai/nomic-embed-text-v1.5 Core Invariants",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
       "source_version": "hf-nomic-ai-nomic-embed-text-v1.5",
-      "content_hash": "73a7fcb4649bada5a8c839f29e05af8770bf7fd9d88051aca176adbe2fecde71",
+      "content_hash": "8dec51fde19b18c4947e3d4751a6943b6aec3d2550457e7dc38bf8882ef9afdb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T11:33:59.922Z"
+      "persisted_at": "2026-11-19T01:47:28.444Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nomic-ai-nomic-embed-text-v1-5-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nomic-ai-nomic-embed-text-v1-5-learnings-core",
@@ -228888,9 +228888,9 @@
       "title": "Research & Knowledge Intelligence: hf-nomic-ai-nomic-embed-text-v1.5-learnings Core Invariants",
       "repository": "hf-nomic-ai-nomic-embed-text-v1.5-learnings",
       "source_version": "HEAD",
-      "content_hash": "55bf85277cf5ab047352efdeb9c6b26a39612696bd130370a76a7efd9f352c41",
+      "content_hash": "b0f2f6081d177ecf4be4cdb1f2c68664b43d7622ea137fdfdc5ec112c97e4cbb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T11:34:37.055Z"
+      "persisted_at": "2026-11-19T01:47:31.432Z"
     },
     "learn-huggingface-google-gemma-4-26b-a4b-it": {
       "learning_id": "learn-huggingface-google-gemma-4-26b-a4b-it",
@@ -234157,8 +234157,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "fb116037",
-      "content_hash": "1898eaeb24d5d579fe940de461e09b27f194dd0774a1ec9d5e319d5d5bfa6f90",
+      "source_version": "ba1e7c3e",
+      "content_hash": "b8e6b7f516a9ed05cf84d07c36fa92db1b090bb9ddb85cd352a2b4ae280758c0",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -234171,6 +234171,11 @@
           "number": 8958,
           "title": "race crash between cancel and ordinary shutdown",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9322,
+          "title": "[Hash join] Fix SIGILL on CPUs without AVX2: apply AVX2 only to the SIMD layout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234178,7 +234183,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T11:09:57.620Z",
+      "verified_at": "2026-11-19T01:47:20.728Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234220,10 +234225,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "repository": "ydb-platform/ydb",
-      "source_version": "fb116037",
-      "content_hash": "e02cfcbf4770c2cdc2bf8f9d2dcda31a2e3efef9ff905a99ee449a6aa0376cd1",
+      "source_version": "ba1e7c3e",
+      "content_hash": "9a48308c75a1f506bd9db960bf4bc25d11598fd5cc040234446d1dcc498387d3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T11:09:58.092Z"
+      "persisted_at": "2026-11-19T01:47:21.233Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb",
@@ -234232,10 +234237,10 @@
       "relative_path": "08_VERIFICATION/ydb-platform-ydb-verification-protocol-empirical-defect-shield-for-ydb-platform-.md",
       "title": "Verification Protocol: Empirical Defect Shield for ydb-platform/ydb",
       "repository": "ydb-platform/ydb",
-      "source_version": "fb116037",
-      "content_hash": "72c58a611e0b523f33b0e64756b72f8050863f5833c4404dfed17569ff8f8855",
+      "source_version": "ba1e7c3e",
+      "content_hash": "cabd0becaca224dc9feb5ca680812f6b289b03b429adc832887720ebabaa5ee7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T11:09:58.209Z"
+      "persisted_at": "2026-11-19T01:47:21.371Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -249634,14 +249639,19 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "37d14736",
-      "content_hash": "f73dae4cae87782c7f676bd3b5e010a88053c61aab5550590301505961e300c2",
+      "source_version": "f239e1be",
+      "content_hash": "8afe8e4cf6ba7d434209546581a5c5441575599dc1b84cd80a183c8d5e914904",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
         {
           "number": 8660,
           "title": "keep regex fragments from widening Bash heredoc dialects [skip ci]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9321,
+          "title": "Merge remote-tracking branch 'origin/dependabot/github_actions/actions-b7cdeb98a",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -249650,7 +249660,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T22:39:45.215Z",
+      "verified_at": "2026-11-19T01:47:08.384Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -249692,10 +249702,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dicklesworthstone-destructive_command_guard-architecture-intelligence-dickleswor.md",
       "title": "Architecture Intelligence: Dicklesworthstone/destructive_command_guard Core Invariants",
       "repository": "Dicklesworthstone/destructive_command_guard",
-      "source_version": "37d14736",
-      "content_hash": "07703971a36a9665dd223a0cf582250298a82912b5d16fa93867519a0df3eb64",
+      "source_version": "f239e1be",
+      "content_hash": "5cb746e7d09a02bffd27626f4a0fbbcb86c760e2e8ff6cda961c369082c43eef",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T22:39:45.755Z"
+      "persisted_at": "2026-11-19T01:47:08.908Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-dicklesworthstone-destructive_comma": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-dicklesworthstone-destructive_comma",
@@ -249705,9 +249715,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in dicklesworthstone-destructive_command_guard-learnings",
       "repository": "dicklesworthstone-destructive_command_guard-learnings",
       "source_version": "HEAD",
-      "content_hash": "a2c3661961b855a04454473b668abd18eef06fbe9a5dcd3e05fc9d4b5081c687",
+      "content_hash": "b6d40ca7ac1cc45a52dc23216fd6b548d2b4b3c1f51d81f45c3d884b2020f010",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T22:40:00.168Z"
+      "persisted_at": "2026-11-19T01:47:32.759Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dicklesworthstone-destructive_": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dicklesworthstone-destructive_",
@@ -249717,9 +249727,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dicklesworthstone-destructive_command_guard-learnings",
       "repository": "dicklesworthstone-destructive_command_guard-learnings",
       "source_version": "HEAD",
-      "content_hash": "c3c2351060f65f26b92b590ad3a320800ea7320f9ba8a65958dedc648f5b80cf",
+      "content_hash": "bfbb8d0ae297a7643a239df70340702fe02038f492f70bfc0be2fc41aecf842b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T22:40:00.296Z"
+      "persisted_at": "2026-11-19T01:47:32.880Z"
     },
     "rule-8661": {
       "learning_id": "rule-8661",
@@ -249791,9 +249801,9 @@
       "title": "Architecture Intelligence: dicklesworthstone-destructive_command_guard-learnings Core Invariants",
       "repository": "dicklesworthstone-destructive_command_guard-learnings",
       "source_version": "HEAD",
-      "content_hash": "b689cc10346cdb2e6cbd83eddb056f6e5b286cb41bc68a510f3b48e6781f9fea",
+      "content_hash": "e4be0381598a08c5b43a595bb9a140db55c946bb04ca31c05847c12ed2670ddb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T22:40:00.027Z"
+      "persisted_at": "2026-11-19T01:47:32.605Z"
     },
     "rule-8662": {
       "learning_id": "rule-8662",
@@ -252593,9 +252603,9 @@
       "title": "Technical Construction Intelligence: ydb-platform-ydb-learnings Core Invariants",
       "repository": "ydb-platform-ydb-learnings",
       "source_version": "HEAD",
-      "content_hash": "01171a242b6ba685b9fa2e35d22bf2066b46e916865a550c5ebf7ad2917e28dc",
+      "content_hash": "83b8e920e0739c0a57ac4602d42644e2e4e6e093f253cbc262093484d44b469f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T11:10:02.320Z"
+      "persisted_at": "2026-11-19T01:47:31.981Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb-learnings",
@@ -252605,9 +252615,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ydb-platform-ydb-learnings",
       "repository": "ydb-platform-ydb-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a3e39b4fc0da74a7aba6eb3891dcc285cf445b1a0db34d21a09fe33c19f9e29",
+      "content_hash": "b76793cb09199df4fcab6b8eb46018ddc772eda6439fdab15de0cd380bb0a18b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T11:10:02.428Z"
+      "persisted_at": "2026-11-19T01:47:32.121Z"
     },
     "rule-8694": {
       "learning_id": "rule-8694",
@@ -291618,6 +291628,58 @@
       "content_hash": "dbe74ff1e32521ef4cf75fd9db32cf72f622e3cbe4061f140b22fd18c9a5f324",
       "domain_letter": "H",
       "persisted_at": "2026-11-19T01:32:57.548Z"
+    },
+    "rule-9321": {
+      "learning_id": "rule-9321",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9321,
+      "title": "Merge remote-tracking branch 'origin/dependabot/github_actions/actions-b7cdeb98a",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "f239e1be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T01:47:08.384Z"
+    },
+    "candidate_directive-merge-remote-tracking-branch-origin-dependabot-github_actions-actions-b7cdeb98a": {
+      "item_id": "candidate_directive-merge-remote-tracking-branch-origin-dependabot-github_actions-actions-b7cdeb98a",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4DF0-merge-remote-tracking-branch-origin-dependabot-github_actions-actions-b7cdeb98a.md",
+      "title": "Merge remote-tracking branch 'origin/dependabot/github_actions/actions-b7cdeb98a",
+      "repository": "dicklesworthstone-destructive_command_guard-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a6b857ede60f8cd48ddfdab6f75d2d46bee515dc2c95853591c9332d7ef0f0b1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T01:47:32.464Z"
+    },
+    "rule-9322": {
+      "learning_id": "rule-9322",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9322,
+      "title": "[Hash join] Fix SIGILL on CPUs without AVX2: apply AVX2 only to the SIMD layout",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "ba1e7c3e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T01:47:20.728Z"
+    },
+    "candidate_directive-hash-join-fix-sigill-on-cpus-without-avx2-apply-avx2-only-to-the-simd-layout": {
+      "item_id": "candidate_directive-hash-join-fix-sigill-on-cpus-without-avx2-apply-avx2-only-to-the-simd-layout",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4CXI-hash-join-fix-sigill-on-cpus-without-avx2-apply-avx2-only-to-the-simd-layout.md",
+      "title": "[Hash join] Fix SIGILL on CPUs without AVX2: apply AVX2 only to the SIMD layout",
+      "repository": "ydb-platform-ydb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1a5a0e7ecffae5cc4600d83fe760040e87d7a0b77c9ddbb2eed36c1178834169",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T01:47:31.833Z"
     }
   },
   "ai-builder-brain": {

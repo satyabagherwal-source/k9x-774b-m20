@@ -11204,3 +11204,6 @@ Every entry in this ledger must capture:
 | `learn-github-kubearmor-kubearmor` | `https://github.com/kubearmor/KubeArmor` | `d026c0dc` | Multi-dimensional audit evidence | 2026-11-19T01:32:37.428Z |
 | `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `c9064896` | Multi-dimensional audit evidence | 2026-11-19T01:32:41.710Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `916acb12` | Multi-dimensional audit evidence | 2026-11-19T01:32:51.678Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `f239e1be` | Multi-dimensional audit evidence | 2026-11-19T01:47:08.570Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `ba1e7c3e` | Multi-dimensional audit evidence | 2026-11-19T01:47:20.908Z |
+| `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-11-19T01:47:28.255Z |

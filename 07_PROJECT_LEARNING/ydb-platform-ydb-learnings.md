@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `fb116037`  
+> **Source Version**: `ba1e7c3e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T11:09:57.036Z  
+> **Timestamp**: 2026-11-19T01:47:19.986Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T11:09:57.031Z  
+> **Harvest Timestamp**: 2026-11-19T01:47:19.980Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4791 stars
+- **Stars / Engagement**: 4792 stars
 
 ---
 
@@ -2065,281 +2065,654 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dbf3e5f9` (2026-11-17)
-**Commit Message**: fix race crash between cancel and ordinary shutdown (#59455)
+### Incident Patch 1: `7dfbe704` (2026-11-18)
+**Commit Message**: [Hash join] Fix SIGILL on CPUs without AVX2: apply AVX2 only to the SIMD layout (#59865)
 
-**File**: `ydb/core/tx/columnshard/bg_tasks/session/session.h` (modified, +4/-1)
+**File**: `ydb/library/yql/dq/comp_nodes/hash_join_utils/packing_simd_impl.h` (modified, +5/-0)
 ```diff
-@@ -76,7 +76,10 @@ class TSession {
-     }
+@@ -1,9 +1,12 @@
+ #pragma once
  
-     void FinishActor() {
--        AFL_VERIFY(!!ActorId);
-+        // Stop() or an earlier completion may have already requested actor shutdown.
-+        if (!ActorId) {
-+            return;
-+        }
-         NActors::TActivationContext::AsActorContext().Send(*ActorId, new NActors::TEvents::TEvPoisonPill);
-         ActorId.reset();
-     }
-```
-
-**File**: `ydb/core/tx/columnshard/export/actor/ut/ut_export_actor_lifecycle.cpp` (modified, +115/-0)
-```diff
-@@ -27,6 +27,7 @@
- #include <library/cpp/testing/hook/hook.h>
- #include <util/random/random.h>
+ #include "packing.h"
++#include "tuple_simd_target.h"
  
-+#include <algorithm>
- #include <iterator>
+ #include <array>
+ 
++TUPLE_LAYOUT_TARGET_PUSH
++
+ // This implementation is instantiated only by the ISA-specific libraries.
  
  namespace NKikimr {
-@@ -867,6 +868,120 @@ Y_UNIT_TEST_SUITE(TExportActorLifecycle) {
-         UNIT_ASSERT_VALUES_EQUAL(GetExportActorsAliveCounter(runtime), 0);
-     }
+@@ -547,3 +550,5 @@ Y_FORCE_INLINE void SIMDPack<TTraits>::UnpackTupleOr(
+ } // namespace NPackedTuple
+ } // namespace NMiniKQL
+ } // namespace NKikimr
++
++TUPLE_LAYOUT_TARGET_POP
+```
+
+**File**: `ydb/library/yql/dq/comp_nodes/hash_join_utils/simd/layout/avx2/ya.make` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@ IF (ARCH_X86_64 AND OS_LINUX)
  
-+    Y_UNIT_TEST(CancelDuringInFlightCursorSaveDoesNotAbort) {
-+        Aws::S3::S3Client s3Client = NTestUtils::MakeS3Client();
-+        NTestUtils::CreateBucket("test", s3Client);
+ YQL_LIBRARY()
+ 
+-CFLAGS(-mavx2)
++CFLAGS(-DTUPLE_LAYOUT_AVX2)
+ 
+ SRCS(tuple_avx2.cpp)
+ 
+```
+
+**File**: `ydb/library/yql/dq/comp_nodes/hash_join_utils/simd/layout/sse42/ya.make` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@ IF (ARCH_X86_64 AND OS_LINUX)
+ 
+ YQL_LIBRARY()
+ 
+-CFLAGS(-msse4.2)
++CFLAGS(-DTUPLE_LAYOUT_SSE42)
+ 
+ SRCS(tuple_sse42.cpp)
+ 
+```
+
+**File**: `ydb/library/yql/dq/comp_nodes/hash_join_utils/tuple_simd_impl.h` (modified, +5/-0)
+```diff
+@@ -4,10 +4,13 @@
+ #include "hashes_calc.h"
+ #include "packing_simd_impl.h"
+ #include "tuple_bitmatrix.h"
++#include "tuple_simd_target.h"
+ 
+ #include <algorithm>
+ #include <queue>
+ 
++TUPLE_LAYOUT_TARGET_PUSH
 +
-+        TTestBasicRuntime runtime;
-+        TTester::Setup(runtime);
+ // Included only by the ISA-specific layout implementations. Keeping the layout
+ // and packing definitions together allows inlining without LTO.
+ namespace NKikimr::NMiniKQL::NPackedTuple {
+@@ -822,3 +825,5 @@ void TTupleLayoutSIMD<TTraits>::BucketPack(
+ }
+ 
+ } // namespace NKikimr::NMiniKQL::NPackedTuple
 +
-+        const ui64 tableId = 1;
-+        const std::vector<NArrow::NTest::TTestColumn> schema = { NArrow::NTest::TTestColumn("key1", TTypeInfo(NTypeIds::Uint64)),
-+            NArrow::NTest::TTestColumn("key2", TTypeInfo(NTypeIds::Uint64)), NArrow::NTest::TTestColumn("field", TTypeInfo(NTypeIds::Utf8)) };
-+        auto csControllerGuard = NKikimr::NYDBTest::TControllers::RegisterCSControllerGuard<NOlap::TWaitCompactionController>();
-+        auto planStep = PrepareTablet(runtime, tableId, schema, 2);
-+        ui64 txId = 111;
++TUPLE_LAYOUT_TARGET_POP
+```
+
+**File**: `ydb/library/yql/dq/comp_nodes/hash_join_utils/tuple_simd_target.h` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++#pragma once
 +
-+        TActorId sender = runtime.AllocateEdgeActor();
++// ISA-specific layout libraries are built without -m flags: inline code from
++// shared headers (std::, util) must stay callable on any CPU. Put includes
++// first, then wrap only the layout code in TUPLE_LAYOUT_TARGET_PUSH/POP.
++#if defined(TUPLE_LAYOUT_AVX2)
++#ifdef __AVX2__
++#error "Build the AVX2 tuple layout without -mavx2"
++#endif
++#define TUPLE_LAYOUT_TARGET_PUSH _Pragma("clang attribute push(__attribute__((target(\"avx2\"))), apply_to = function)")
++#define TUPLE_LAYOUT_TARGET_POP _Pragma("clang attribute pop")
++#elif defined(TUPLE_LAYOUT_SSE42)
++#define TUPLE_LAYOUT_TARGET_PUSH _Pragma("clang attribute push(__attribute__((target(\"sse4.2\"))), apply_to = function)")
++#define TUPLE_LAYOUT_TARGET_POP _Pragma("clang attribute pop")
++#else
++#define TUPLE_LAYOUT_TARGET_PUSH
++#define TUPLE_LAYOUT_TARGET_POP
++#endif
+```
+
+---
+
+### Incident Patch 2: `3551a421` (2026-11-18)
+**Commit Message**: tests(distconf): poll ring/heal asserts instead of fixed sleeps (#59229)
+
+**File**: `ydb/tests/functional/config/test_distconf_self_heal.py` (modified, +38/-22)
+```diff
+@@ -6,6 +6,7 @@
+ from copy import deepcopy
+ 
+ from ydb.tests.library.common.types import Erasure
++from ydb.tests.library.common.wait_for import retry_assertions
+ from ydb.tests.library.harness.kikimr_runner import KiKiMR
+ from ydb.tests.library.harness.kikimr_config import KikimrConfigGenerator
+ from ydb.tests.library.harness.util import LogLevels
+@@ -175,11 +176,13 @@ def do_test(self, configName):
+ 
+         logger.info("Start SelfHeal")
+         logger.info(self.do_request({"SelfHealStateStorage": {"WaitForConfigStep": 1, "ForceHeal": True}}))
+-        time.sleep(10)
+ 
+-        rg = get_ring_group(self.do_request_config(), configName)
+-        assert_eq(rg["NToSelect"], 9)
+-        assert_eq(len(rg["Ring"]), 9)
++        def wait_healed():
++            rg = get_ring_group(self.do_request_config(), configName)
++            assert_eq(rg["NToSelect"], 9)
++            assert_eq(len(rg["Ring"]), 9)
 +
-+        std::vector<ui64> writeIds;
-+        ui64 writeId = 1;
-+        UNIT_ASSERT(WriteData(runtime, sender, writeId++, tableId, MakeTestBlob({ 0, 5 }, schema), schema, true, &writeIds));
-+        planStep = ProposeCommit(runtime, sender, ++txId, writeIds);
-+        PlanCommit(runtime, sender, planStep, txId);
++        retry_assertions(wait_healed, timeout_seconds=30, step_seconds=1.0)
+ 
+ 
+ class TestKiKiMRDistConfSelfHealNotNeed(KiKiMRDistConfSelfHealTest):
+@@ -240,11 +243,16 @@ def do_test(self, configName):
+         logger.info(self.do_request({"SelfHealStateStorage": {"WaitForConfigStep": 2, "ForceHeal": True}}))
+         time.sleep(1)
+         assert_eq(len(self.do_request_config()[f"{configName}Config"]["RingGroups"]), 2)
+-        time.sleep(10)
+ 
+-        rg = self.do_request_config()[f"{configName}Config"]["Ring"]
+-        assert_eq(rg["NToSelect"], 9)
+-        assert_eq(len(rg["Ring"]), 9)
++        def wait_parallel_healed():
++            config = self.do_request_config()[f"{configName}Config"]
++            # Heal goes RingGroups → single Ring; KeyError is not retried by retry_assertions.
++            assert_that("Ring" in config, f"still waiting for single Ring: {config}")
++            rg = config["Ring"]
++            assert_eq(rg["NToSelect"], 9)
++            assert_eq(len(rg["Ring"]), 9)
 +
-+        const NOlap::TSnapshot backupSnapshot(planStep.Val(), txId);
-+        const auto txBody = MakeBackupTxBody(tableId, backupSnapshot);
-+        const ui64 backupTxId = ++txId;
++        retry_assertions(wait_parallel_healed, timeout_seconds=30, step_seconds=1.0)
+ 
+ 
+ class TestKiKiMRDistConfSelfHealParallelCall2(KiKiMRDistConfSelfHealTest):
+@@ -345,16 +353,22 @@ def do_test(self, configName):
+         logger.info("Start SelfHeal with allowed nodes restriction (forbidding node %s) for %s",
+                     self.forbidden_node_id, configName)
+         logger.info(self.do_request({"SelfHealStateStorage": {"WaitForConfigStep": 1, "ForceHeal": True}}))
+-        time.sleep(10)
+ 
+-        healed_config = self.do_request_config()
+-        node_ids = extract_all_node_ids(healed_config, configName)
++        def wait_allowed_nodes():
++            healed_config = self.do_request_config()
++            rg = get_ring_group(healed_config, configName)
++            # do_bad_config leaves NToSelect=5; wait until heal restores a full ring.
++            assert_eq(rg["NToSelect"], 9)
++            assert_eq(len(rg["Ring"]), 9)
++            node_ids = extract_all_node_ids(healed_config, configName)
+ 
+-        assert_that(len(node_ids) > 0, f"Healed {configName} config has no nodes: {healed_config}")
+-        assert_that(self.forbidden_node_id not in node_ids,
+-                    f"Forbidden node {self.forbidden_node_id} present in healed {configName} config: {node_ids}")
+-        assert_that(node_ids <= set(self.allowed_node_ids),
+-                    f"Healed {configName} config uses nodes outside the allowed list: {node_ids - set(self.allowed_node_ids)}")
++            assert_that(len(node_ids) > 0, f"Healed {configName} config has no nodes: {healed_config}")
++            assert_that(self.forbidden_node_id not in node_ids,
++                        f"Forbidden node {self.forbidden_node_id} present in healed {configName} config: {node_ids}")
++            assert_that(node_ids <= set(self.allowed_node_ids),
++                        f"Healed {configName} config uses nodes outside the allowed list: {node_ids - set(self.allowed_node_ids)}")
 +
-+        TActorId exportActor;
-+        auto initObserver = runtime.AddObserver<NKqp::TEvKqpCompute::TEvScanInitActor>([&](auto& ev) {
-+            if (!exportActor) {
-+                exportActor = ev->Recipient;
++        retry_assertions(wait_allowed_nodes, timeout_seconds=30, step_seconds=1.0)
+ 
+ 
+ class TestKiKiMRDistConfSelfHealAutomaticManagementDisabled(KiKiMRDistConfSelfHealTest):
+@@ -432,10 +446,12 @@ def do_test(self, configName):
+         else:
+             disabled_before = get_ring_group(self.do_request_config(), self.disabled_config_name)
+             logger.info(self.do_request({"SelfHealStateStorage": {"WaitForConfigStep": 1, "ForceHeal": True}}))
+-            time.sleep(10)
+ 
+-            disabled_after = get_ring_group(self.do_request_config(), self.disabled_config_name)
+-            assert_eq(disabled_after, disabled_before)
+-            rg = get_ring_group(self.do_request_config(), configName)
+-            assert_eq(rg["NToSelect"], 9)
+-            assert_eq(len(rg["Ring"]), 9)
++            def wait_mixed_healed():
++                disabled_after = get_ring_group(self.do_request_config(), self.disabled_config_name)
++                assert_eq(disabled_after, disabled_before)
++                rg = get_ring_group(self.do_request_config(), configName)
++                assert_e
+```
+
+**File**: `ydb/tests/functional/config/test_distconf_sentinel_node_status.py` (modified, +72/-43)
+```diff
+@@ -6,6 +6,7 @@
+ import time
+ 
+ from ydb.tests.library.common.types import Erasure
++from ydb.tests.library.common.wait_for import retry_assertions
+ from ydb.tests.library.harness.kikimr_runner import KiKiMR
+ from ydb.tests.library.harness.kikimr_config import KikimrConfigGenerator
+ from ydb.tests.library.harness.util import LogLevels
+@@ -150,15 +151,19 @@ def do_test(self, configName):
+         assert_eq(len(rg["Ring"]), 9)
+         self.validate_contains_nodes(rg, [4])
+         self.kill_nodes(lambda hosts, i: i == 3)
+-        time.sleep(25)
+-        rg2 = get_ring_group(self.do_request_config(), configName)
+-        assert_eq(rg["NToSelect"], 9)
+-        assert_eq(len(rg["Ring"]), 9)
+-        self.validate_not_contains_nodes(rg2, [4])
+-        assert_that("RingGroupActorIdOffset" not in rg2)  # reassign node api used instead adding new ring groups test
+-        for ring in rg2:
+-            assert_that("IsDisabled" not in rg)
+-        assert_that(rg != rg2)
++
++        def wait_node_removed():
++            rg2 = get_ring_group(self.do_request_config(), configName)
++            assert_eq(rg["NToSelect"], 9)
++            assert_eq(len(rg["Ring"]), 9)
++            self.validate_not_contains_nodes(rg2, [4])
++            assert_that("RingGroupActorIdOffset" not in rg2)  # reassign node api used instead adding new ring groups test
++            for ring in rg2:
++                assert_that("IsDisabled" not in rg)
++            assert_that(rg != rg2)
++            return rg2
++
++        rg2 = retry_assertions(wait_node_removed, timeout_seconds=40, step_seconds=1.0)
+         self.cluster.nodes[4].start()
+         time.sleep(25)
+         rg3 = get_ring_group(self.do_request_config(), configName)
+@@ -174,17 +179,30 @@ def do_test(self, configName):
+         rg = get_ring_group(self.do_request_config(), configName)
+         self.validate_contains_nodes(rg, [2, 3, 12, 15])
+         self.kill_nodes(lambda hosts, i: i == 1 or i == 2)
+-        time.sleep(30)
+-        rg = self.do_request_config()[f"{configName}Config"]["Ring"]
+-        self.validate_not_contains_nodes(rg, [2, 3])
+-        self.validate_contains_nodes(rg, [6, 12, 15])
+-        assert_eq(rg["RingGroupActorIdOffset"], 1)  # full reconfiguration applied
++
++        def wait_first_reassign():
++            config = self.do_request_config()[f"{configName}Config"]
++            # Mid-heal config may still be RingGroups; KeyError is not retried by retry_assertions.
++            assert_that("Ring" in config, f"still waiting for single Ring: {config}")
++            rg = config["Ring"]
++            self.validate_not_contains_nodes(rg, [2, 3])
++            self.validate_contains_nodes(rg, [6, 12, 15])
++            assert_eq(rg["RingGroupActorIdOffset"], 1)  # full reconfiguration applied
++            return rg
++
++        retry_assertions(wait_first_reassign, timeout_seconds=40, step_seconds=1.0)
+         self.cluster.nodes[12].stop()
+-        time.sleep(30)
+-        rg = self.do_request_config()[f"{configName}Config"]["Ring"]
+-        self.validate_not_contains_nodes(rg, [12])
+-        self.validate_contains_nodes(rg, [6, 9, 15])  # 12 -> 9 reassigned
+-        assert_eq(rg["RingGroupActorIdOffset"], 1)  # offset not changed -> reassign node api used
++
++        def wait_second_reassign():
++            config = self.do_request_config()[f"{configName}Config"]
++            assert_that("Ring" in config, f"still waiting for single Ring: {config}")
++            rg = config["Ring"]
++            self.validate_not_contains_nodes(rg, [12])
++            self.validate_contains_nodes(rg, [6, 9, 15])  # 12 -> 9 reassigned
++            assert_eq(rg["RingGroupActorIdOffset"], 1)  # offset not changed -> reassign node api used
++            return rg
++
++        retry_assertions(wait_second_reassign, timeout_seconds=40, step_seconds=1.0)
+ 
+ 
+ class TestKiKiMRDistConfSelfHeal2NodesDisconnected(KiKiMRDistConfNodeStatusTest):
+@@ -197,12 +215,16 @@ def do_test(self, configName):
+         assert_eq(len(rg["Ring"]), 9)
+         self.validate_contains_nodes(rg, [2, 3])
+         self.kill_nodes(lambda hosts, i: i == 1 or i == 2)
+-        time.sleep(25)
+-        rg2 = get_ring_group(self.do_request_config(), configName)
+-        assert_eq(rg["NToSelect"], 9)
+-        assert_eq(len(rg["Ring"]), 9)
+-        self.validate_not_contains_nodes(rg2, [2, 3])
+-        assert_that(rg != rg2)
++
++        def wait_two_nodes_removed():
++            rg2 = get_ring_group(self.do_request_config(), configName)
++            assert_eq(rg["NToSelect"], 9)
++            assert_eq(len(rg["Ring"]), 9)
++            self.validate_not_contains_nodes(rg2, [2, 3])
++            assert_that(rg != rg2)
++            return rg2
++
++        retry_assertions(wait_two_nodes_removed, timeout_seconds=40, step_seconds=1.0)
+ 
+ 
+ class TestKiKiMRDistConfSelfHealDCDisconnected(KiKiMRDistConfNodeStatusTest):
+@@ -245,14 +267,17 @@ class TestKiKiMRDistConfSelfHealPileupReplicas(KiKiMRDistConfNodeStatusTest):
+     def do_test(self, configName):
+    
+```
+
+---
+
+### Incident Patch 3: `5b5e3ed8` (2026-11-18)
+**Commit Message**: Add HNSW schema and build lifecycle (#59267)
+
+**File**: `ydb/core/base/kmeans_clusters.cpp` (modified, +14/-0)
+```diff
+@@ -14,6 +14,7 @@
+ #include <cmath>
+ #include <span>
+ #include <util/stream/str.h>
++#include <util/generic/size_literals.h>
+ 
+ namespace NKikimr::NKMeans {
+ 
+@@ -1005,6 +1006,19 @@ bool ValidateHnswSettingsPartial(const Ydb::Table::KMeansTreeSettings& settings,
+     return ValidateSettingsImpl(settings, true, error, true);
+ }
+ 
++bool AutoSelectHnswSettings(Ydb::Table::KMeansTreeSettings& settings, ui64 dataSizeBytes, TString& error) {
++    if (!settings.has_levels() || !settings.levels()) {
++        settings.set_levels(1);
++    }
++    if (!settings.has_clusters() || !settings.clusters()) {
++        // Cap the default before narrowing to the protobuf's uint32 field.
++        // Explicit cluster counts are validated below without clamping.
++        const ui64 clusters = Min<ui64>(dataSizeBytes / 1_GB + 1, MaxClusters);
++        settings.set_clusters(clusters);
++    }
++    return ValidateHnswSettingsPartial(settings, error);
++}
++
+ ui64 ComputeOptimalClusters(ui64 levels, ui64 searchWidth, ui64 rowCount, double avgClustersPerVector) {
+     // C = ((L * T * P * N) / (1 + T * (L - 1))) ^ (1 / (L + 1))
+     double num = levels * searchWidth * avgClustersPerVector * rowCount;
+```
+
+**File**: `ydb/core/base/kmeans_clusters.h` (modified, +2/-0)
+```diff
+@@ -79,6 +79,8 @@ bool ValidateSettingsPartial(const Ydb::Table::KMeansTreeSettings& settings, TSt
+ bool ValidateHnswSettings(const Ydb::Table::KMeansTreeSettings& settings, TString& error);
+ bool ValidateHnswSettingsPartial(const Ydb::Table::KMeansTreeSettings& settings, TString& error);
+ 
++bool AutoSelectHnswSettings(Ydb::Table::KMeansTreeSettings& settings, ui64 dataSizeBytes, TString& error);
++
+ ui64 ComputeOptimalClusters(ui64 levels, ui64 searchWidth, ui64 rowCount, double avgClustersPerVector);
+ double ComputeEfficiencyScore(ui64 levels, ui64 clusters, ui64 searchWidth, ui64 rowCount, double avgClustersPerVector);
+ 
+```
+
+**File**: `ydb/core/base/table_index.cpp` (modified, +4/-0)
+```diff
+@@ -96,6 +96,7 @@ bool IsSecondaryIndex(NKikimrSchemeOp::EIndexType indexType) {
+         case NKikimrSchemeOp::EIndexTypeGlobalUnique:
+             return true;
+         case NKikimrSchemeOp::EIndexTypeGlobalVectorKmeansTree:
++        case NKikimrSchemeOp::EIndexTypeGlobalHnsw:
+         case NKikimrSchemeOp::EIndexTypeGlobalFulltextPlain:
+         case NKikimrSchemeOp::EIndexTypeGlobalFulltextRelevance:
+         case NKikimrSchemeOp::EIndexTypeGlobalJson:
+@@ -118,6 +119,7 @@ TTableColumns CalcTableImplDescription(NKikimrSchemeOp::EIndexType indexType, co
+     auto takeKeyColumns = index.KeyColumns.size();
+     if (!isSecondaryIndex) { // vector and fulltext indexes have special embedding and text key columns
+         Y_ASSERT(indexType == NKikimrSchemeOp::EIndexTypeGlobalVectorKmeansTree
++            || indexType == NKikimrSchemeOp::EIndexTypeGlobalHnsw
+             || indexType == NKikimrSchemeOp::EIndexTypeGlobalFulltextPlain
+             || indexType == NKikimrSchemeOp::EIndexTypeGlobalFulltextRelevance
+             || indexType == NKikimrSchemeOp::EIndexTypeGlobalJson
+@@ -292,6 +294,7 @@ bool IsCompatibleIndex(NKikimrSchemeOp::EIndexType indexType, const TTableColumn
+     } else {
+         // Vector and fulltext indexes allow to add all columns both to index & data
+         Y_ASSERT(indexType == NKikimrSchemeOp::EIndexTypeGlobalVectorKmeansTree
++            || indexType == NKikimrSchemeOp::EIndexTypeGlobalHnsw
+             || indexType == NKikimrSchemeOp::EIndexTypeGlobalFulltextPlain
+             || indexType == NKikimrSchemeOp::EIndexTypeGlobalFulltextRelevance
+             || indexType == NKikimrSchemeOp::EIndexTypeGlobalJson
+@@ -338,6 +341,7 @@ std::span<const std::string_view> GetImplTables(
+         case NKikimrSchemeOp::EIndexTypeGlobalUnique:
+             return GlobalSecondaryImplTables;
+         case NKikimrSchemeOp::EIndexTypeGlobalVectorKmeansTree:
++        case NKikimrSchemeOp::EIndexTypeGlobalHnsw:
+             if (indexKeys.size() == 1) {
+                 return GlobalKMeansTreeImplTables;
+             } else {
+```
+
+**File**: `ydb/core/base/ut_hnsw_settings/hnsw_settings_ut.cpp` (modified, +47/-0)
+```diff
+@@ -9,6 +9,9 @@
+ #include <util/generic/ylimits.h>
+ #include <util/string/builder.h>
+ 
++#include <array>
++#include <utility>
++
+ namespace NKikimr::NKMeans {
+     namespace {
+ 
+@@ -97,6 +100,50 @@ namespace NKikimr::NKMeans {
+             UNIT_ASSERT(!ValidateHnswSettings(settings, error));
+         }
+ 
++        Y_UNIT_TEST(DefaultRoutingSettings) {
++            auto settings = MakeSettings();
++            settings.clear_clusters();
++            settings.clear_levels();
++            TString error;
++            UNIT_ASSERT_C(AutoSelectHnswSettings(settings, 0, error), error);
++            UNIT_ASSERT_VALUES_EQUAL(settings.clusters(), 1u);
++            UNIT_ASSERT_VALUES_EQUAL(settings.levels(), 1u);
++            settings.clear_clusters();
++            UNIT_ASSERT_C(AutoSelectHnswSettings(settings, 3ull << 30, error), error);
++            UNIT_ASSERT_VALUES_EQUAL(settings.clusters(), 4u);
++        }
++
++        Y_UNIT_TEST(AutoSelectedRoutingClustersAreCapped) {
++            const std::array<std::pair<ui64, ui32>, 4> cases = {{
++                {(2047ull << 30) - 1, 2047},
++                {2047ull << 30, 2048},
++                {2048ull << 30, 2048},
++                {Max<ui64>(), 2048},
++            }};
++            for (const auto& [dataSize, expectedClusters] : cases) {
++                auto settings = MakeSettings();
++                settings.clear_clusters();
++                TString error;
++                UNIT_ASSERT_C(AutoSelectHnswSettings(settings, dataSize, error), error);
++                UNIT_ASSERT_VALUES_EQUAL(settings.clusters(), expectedClusters);
++                UNIT_ASSERT_C(ValidateHnswSettings(settings, error), error);
 +            }
-+        });
-+        NActors::TBlockEvents<NOlap::NBackground::TEvLocalTransactionCompleted> blocked(runtime, [&](const auto& ev) {
-+            return exportActor && ev->Recipient == exportActor;
-+        });
-+        // Hold the pill from the first FinishActor so the second completion is
-+        // handled while that actor is still alive.
-+        NActors::TBlockEvents<TEvents::TEvPoisonPill> blockedPoison(runtime, [&](const auto& ev) {
-+            return exportActor && ev->Recipient == exportActor;
-+        });
++        }
 +
-+        const auto txIdOf = [](const auto& ev) {
-+            return ev->Get()->GetInternalTxId();
-+        };
-+        const auto dump = [&]() {
-+            TStringBuilder out;
-+            for (const auto& ev : blocked) {
-+                out << txIdOf(ev) << " ";
-+            }
-+            return TString(out);
-+        };
-+        std::vector<ui64> known;
-+        const auto isKnown = [&](ui64 id) {
-+            return std::find(known.begin(), known.end(), id) != known.end();
-+        };
-+        const auto waitNew = [&](const char* title) {
-+            ui64 found = 0;
-+            TestWaitCondition(runtime, title, [&]() {
-+                for (const auto& ev : blocked) {
-+                    if (!isKnown(txIdOf(ev))) {
-+                        found = txIdOf(ev);
-+                        return true;
-+                    }
++        Y_UNIT_TEST(ExplicitRoutingClustersKeepValidation) {
++            for (const ui32 clusters : {1u, 64u, 2048u, 2049u, Max<ui32>()}) {
++                auto settings = MakeSettings();
++                settings.set_clusters(clusters);
++                TString error;
++                const bool valid = AutoSelectHnswSettings(settings, Max<ui64>(), error);
++                UNIT_ASSERT_VALUES_EQUAL(valid, clusters <= 2048);
++                UNIT_ASSERT_VALUES_EQUAL(settings.clusters(), clusters);
++                if (!valid) {
++                    UNIT_ASSERT_STRING_CONTAINS(error, "clusters");
 +                }
-+                return false;
-+            }, TDuration::Seconds(30));
-+            known.push_back(found);
-+            return found;
-+        };
-+        const auto deliver = [&](ui64 id) {
-+            auto it = std::find_if(blocked.begin(), blocked.end(), [&](const auto& ev) {
-+                return txIdOf(ev) == id;
-+            });
-+            UNIT_ASSERT_C(it != blocked.end(), "missing completion " << id << " queue=[" << dump() << "]");
-+            std::iter_swap(blocked.begin(), it);
-+            blocked.Unblock(1);
-+            runtime.SimulateSleep(TDuration::MilliSeconds(200));
-+        };
++            }
++        }
 +
-+        ForwardToTablet(runtime, TTestTxConfig::TxTablet0, sender,
-+            new TEvColumnShard::TEvProposeTransaction(NKikimrTxColumnShard::TX_KIND_BACKUP, sender, backupTxId, txBody.SerializeAsString()));
+         Y_UNIT_TEST(ConstructionResourceLimits) {
+             auto settings = MakeSettings();
+             auto* vector = settings.mutable_settings();
+```
+
+**File**: `ydb/core/protos/flat_scheme_op.proto` (modified, +11/-1)
+```diff
+@@ -440,6 +440,9 @@ message TTableDescription {
+     // Actual number of table partitions (shards), always filled in describe
+     // results, so clients don't need to request the TablePartitions list.
+     optional uint64 PartitionCount = 55;
 +
-+        const ui64 progressId = waitNew("cursor save completion");
-+        UNIT_ASSERT_VALUES_EQUAL_C(blocked.size(), 1, dump());
-+        UNIT_ASSERT_VALUES_EQUAL(GetExportActorCounter(runtime, "Value/Export/SaveCursor/Inflight")->Val(), 1);
++    // Local graph of the logical index owning this physical posting table.
++    optional TLocalHnswIndexDescription LocalHnswIndex = 56;
+ }
+ 
+ message TCompressionOptions {
+@@ -1386,7 +1389,7 @@ message THnswIndexDescription {
+     // Includes the routing tree settings as well as the local graph parameters.
+     optional Ydb.Table.KMeansTreeSettings Settings = 1;
+ 
+-    // Set by SchemeShard from the posting-table schema for DataShard graph builds.
++    // Set in LocalHnswIndex by SchemeShard for DataShard graph builds.
+     // This is the posting-table column ID, which may differ from the base table's.
+     optional uint32 EmbeddingColumnId = 2;
+ 
+@@ -1396,6 +1399,13 @@ message THnswIndexDescription {
+     optional string IndexPath = 4;
+ }
+ 
++message TLocalHnswIndexDescription {
++    // Identity of the logical index owning this graph, not a child of this table.
++    optional NKikimrProto.TPathID IndexId = 1;
++    optional uint64 SchemaVersion = 2;
++    optional THnswIndexDescription HnswIndexDescription = 3;
++}
 +
-+        ForwardToTablet(runtime, TTestTxConfig::TxTablet0, sender, new TEvDataShard::TEvCancelBackup(backupTxId, tableId));
+ message TFulltextIndexDescription {
+     optional Ydb.Table.FulltextIndexSettings Settings = 1;
+     // When true, the fulltext index uses the __ydb_row_id Uint64 column of the main table as doc_id
+```
+
+**File**: `ydb/core/protos/tx_datashard.proto` (modified, +6/-0)
+```diff
+@@ -1863,6 +1863,8 @@ message TEvLocalKMeansRequest {
+     optional bool OverlapOutForeign = 26;
+ 
+     optional NKikimrTx.TKeyRange KeyRange = 27;
 +
-+        const ui64 stateId = waitNew("cancel state save completion");
-+        deliver(stateId);
-+        const ui64 finish1 = waitNew("first propose-finish completion");
-+        deliver(progressId);
-+        const ui64 state2 = waitNew("second state save completion");
-+        deliver(state2);
-+        const ui64 finish2 = waitNew("second propose-finish completion");
-+        UNIT_ASSERT_VALUES_EQUAL_C(blocked.size(), 2, dump());
++    optional NKikimrSchemeOp.EIndexType IndexType = 28 [default = EIndexTypeGlobalVectorKmeansTree];
+ }
+ 
+ message TEvLocalKMeansResponse {
+@@ -1921,6 +1923,8 @@ message TEvReshuffleKMeansRequest {
+     optional bool OverlapOutForeign = 20;
+ 
+     optional NKikimrTx.TKeyRange KeyRange = 21;
 +
-+        deliver(finish1);
-+        UNIT_ASSERT_VALUES_EQUAL(blockedPoison.size(
++    optional NKikimrSchemeOp.EIndexType IndexType = 22 [default = EIndexTypeGlobalVectorKmeansTree];
+ }
+ 
+ message TEvReshuffleKMeansResponse {
+@@ -2049,6 +2053,8 @@ message TEvPrefixKMeansRequest {
+ 
+     optional bool Adaptive = 25;
+     optional uint32 Levels = 26;
++
++    optional NKikimrSchemeOp.EIndexType IndexType = 27 [default = EIndexTypeGlobalVectorKmeansTree];
+ }
+ 
+ message TEvPrefixKMeansResponse {
 ```
 
----
-
-### Incident Patch 2: `0e041d62` (2026-11-17)
-**Commit Message**: Change cpu requirements for topics tests (#59510)
-
-**File**: `ydb/tests/functional/sqs/merge_split_common_table/fifo/ya.make` (modified, +1/-1)
+**File**: `ydb/core/tx/datashard/backup_restore_common.h` (modified, +17/-5)
 ```diff
-@@ -12,7 +12,7 @@ IF (SANITIZER_TYPE)
-     REQUIREMENTS(ram:32 cpu:4)
- ELSE()
-     SIZE(MEDIUM)
--    REQUIREMENTS(cpu:4)
-+    REQUIREMENTS(cpu:2)
- ENDIF()
+@@ -24,11 +24,23 @@ class TBackupRestoreUnitBase : public TExecutionUnit {
+     virtual void ResetWaiting(TOperation::TPtr op) = 0;
+     virtual bool Run(TOperation::TPtr op, TTransactionContext& txc, const TActorContext& ctx) = 0;
  
- DEPENDS(
-```
-
-**File**: `ydb/tests/functional/sqs/migration/compatibility/large/ya.make` (modified, +1/-0)
-```diff
-@@ -6,5 +6,6 @@ INCLUDE(${ARCADIA_ROOT}/ydb/tests/functional/sqs/migration/suites/large.inc)
++    // Most backup/restore Run() failures mean "nothing was started" and the
++    // unit is done. Units that perform flat-table reads may instead need the
++    // transaction restarted after a page fault.
++    virtual EExecutionStatus RunFailureStatus() const {
++        return EExecutionStatus::Executed;
++    }
++
+     virtual bool HasResult(TOperation::TPtr op) const = 0;
+     virtual bool ProcessResult(TOperation::TPtr op, const TActorContext& ctx) = 0;
  
- FORK_SUBTESTS()
- SPLIT_FACTOR(5)
-+REQUIREMENTS(cpu:1)
+     virtual void Cancel(TActiveTransaction* tx, const TActorContext& ctx) = 0;
  
- END()
-```
-
-**File**: `ydb/tests/functional/sqs/migration/compatibility/multinode/ya.make` (modified, +1/-1)
-```diff
-@@ -7,5 +7,5 @@ INCLUDE(${ARCADIA_ROOT}/ydb/tests/functional/sqs/migration/suites/multinode.inc)
- FORK_SUBTESTS()
- SPLIT_FACTOR(20)
- 
--REQUIREMENTS(cpu:4)
-+REQUIREMENTS(cpu:3)
- END()
-```
-
-**File**: `ydb/tests/functional/sqs/migration/finished/large/ya.make` (modified, +1/-0)
-```diff
-@@ -6,5 +6,6 @@ INCLUDE(${ARCADIA_ROOT}/ydb/tests/functional/sqs/migration/suites/large.inc)
- 
- FORK_SUBTESTS()
- SPLIT_FACTOR(5)
-+REQUIREMENTS(cpu:1)
- 
- END()
-```
-
-**File**: `ydb/tests/functional/sqs/migration/suites/with_quotas.inc` (modified, +2/-3)
-```diff
-@@ -9,10 +9,9 @@ DATA(
-     arcadia/ydb/tests/functional/sqs/with_quotas
- )
- 
-+REQUIREMENTS(cpu:1)
- IF (SANITIZER_TYPE == "thread")
--    REQUIREMENTS(ram:32 cpu:1)
--ELSE()
--    REQUIREMENTS(cpu:2)
-+    REQUIREMENTS(ram:32)
- ENDIF()
- 
- DEPENDS(
-```
-
-**File**: `ydb/tests/functional/sqs/migration/topic_creation/cloud/ya.make` (modified, +1/-0)
-```diff
-@@ -6,5 +6,6 @@ INCLUDE(${ARCADIA_ROOT}/ydb/tests/functional/sqs/migration/suites/cloud.inc)
- 
- FORK_SUBTESTS()
- SPLIT_FACTOR(40)
-+REQUIREMENTS(cpu:1)
- 
- END()
-```
-
-**File**: `ydb/tests/functional/sqs/migration/topic_creation/common/ya.make` (modified, +1/-0)
-```diff
-@@ -6,6 +6,7 @@ INCLUDE(${ARCADIA_ROOT}/ydb/tests/functional/sqs/migration/suites/common.inc)
- 
- FORK_SUBTESTS()
- SPLIT_FACTOR(60)
-+REQUIREMENTS(cpu:1)
- 
- TEST_SRCS(
-     ydb/tests/functional/sqs/common/test_garbage_collection.py
-```
-
-**File**: `ydb/tests/functional/sqs/migration/topic_creation/messaging/ya.make` (modified, +1/-0)
-```diff
-@@ -6,5 +6,6 @@ INCLUDE(${ARCADIA_ROOT}/ydb/tests/functional/sqs/migration/suites/messaging.inc)
- 
- FORK_SUBTESTS()
- SPLIT_FACTOR(60)
-+REQUIREMENTS(cpu:1)
- 
- END()
-```
-
----
-
-### Incident Patch 3: `dc1cd2af` (2026-11-17)
-**Commit Message**: Fix absolute Topic path fixtures (#59516)
-
-**File**: `ydb/core/persqueue/public/describer/describer_ut.cpp` (modified, +0/-16)
-```diff
-@@ -273,22 +273,6 @@ Y_UNIT_TEST_SUITE(TDescriberTests) {
-         UNIT_ASSERT_VALUES_EQUAL(topicInfo.RealPath, "/Root/topic1");
++    void ScheduleRestart(TOperation::TPtr op, const TActorContext& ctx) {
++        op->SetWaitingForRestartFlag();
++        ctx.Schedule(TDuration::Seconds(1), new TDataShard::TEvPrivate::TEvRestartOperation(op->GetTxId()));
++    }
++
+     void Abort(TOperation::TPtr op, const TActorContext& ctx, const TString& error) {
+         TActiveTransaction* tx = dynamic_cast<TActiveTransaction*>(op.Get());
+         Y_ENSURE(tx, "cannot cast operation of kind " << op->GetKind());
+@@ -65,8 +77,9 @@ class TBackupRestoreUnitBase : public TExecutionUnit {
      }
  
--    Y_UNIT_TEST(TopicNotCanonizedPath) {
--        auto setup = std::make_shared<TTopicSdkTestSetup>(TEST_CASE_NAME);
--        EnableDescriberLogs(*setup);
--
--        ExecuteDDL(*setup, "CREATE TOPIC topic1");
--
--        auto& runtime = setup->GetRuntime();
--        StartDescribe(runtime, {"Root/topic1"});
--        auto topics = WaitResult(runtime);
--
--        UNIT_ASSERT(topics.contains("Root/topic1"));
--        auto& topicInfo = topics["Root/topic1"];
--        UNIT_ASSERT_VALUES_EQUAL(topicInfo.Status, NDescriber::EStatus::Success);
--        UNIT_ASSERT_VALUES_EQUAL(topicInfo.RealPath, "/Root/topic1");
--    }
--
-     // -------------------------------------------------------------------------
-     // P0 — authorization
-     // -------------------------------------------------------------------------
+ public:
+-    TBackupRestoreUnitBase(EExecutionUnitKind kind, TDataShard& self, TPipeline& pipeline)
+-        : TExecutionUnit(kind, false, self, pipeline)
++    TBackupRestoreUnitBase(EExecutionUnitKind kind, TDataShard& self, TPipeline& pipeline,
++            bool executionMightRestart = false)
++        : TExecutionUnit(kind, executionMightRestart, self, pipeline)
+     {
+     }
+ 
+@@ -100,7 +113,7 @@ class TBackupRestoreUnitBase : public TExecutionUnit {
+                 {"tabletId", DataShard.TabletID()});
+ 
+             if (!Run(op, txc, ctx)) {
+-                return EExecutionStatus::Executed;
++                return RunFailureStatus();
+             }
+ 
+             SetWaiting(op);
+@@ -117,8 +130,7 @@ class TBackupRestoreUnitBase : public TExecutionUnit {
+                 PersistResult(op, txc);
+             } else {
+                 Y_DEBUG_ABORT_UNLESS(!HasResult(op));
+-                op->SetWaitingForRestartFlag();
+-                ctx.Schedule(TDuration::Seconds(1), new TDataShard::TEvPrivate::TEvRestartOperation(op->GetTxId()));
++                ScheduleRestart(op, ctx);
+             }
+         }
+ 
+```
+
+**File**: `ydb/core/tx/datashard/build_index/kmeans_helper.cpp` (modified, +34/-1)
+```diff
+@@ -82,6 +82,34 @@ void AddRowToDataWithForeign(TBufferData& buffer, TClusterId parent, TArrayRef<c
+     buffer.AddRow(pk, data, origKey);
+ }
+ 
++google::protobuf::RepeatedPtrField<TProtoStringType> MakeUploadDataColumns(const TUserTable& table,
++    const TProtoStringType& embedding, const google::protobuf::RepeatedPtrField<TProtoStringType>& data,
++    NKikimrSchemeOp::EIndexType indexType,
++    const google::protobuf::RepeatedPtrField<TProtoStringType>& pkColumns)
++{
++    auto result = data;
++    if (indexType != NKikimrSchemeOp::EIndexTypeGlobalHnsw
++            || std::find(data.begin(), data.end(), embedding) != data.end()) {
++        return result;
++    }
++    // HNSW builds its graph from the posting-table vectors. Embeddings in the
++    // original primary key already travel in key cells, including prefix scans
++    // whose intermediate table has a different primary key.
++    if (!pkColumns.empty()) {
++        if (std::find(pkColumns.begin(), pkColumns.end(), embedding) != pkColumns.end()) {
++            return result;
++        }
++    } else {
++        for (const auto tag : table.KeyColumnIds) {
++            if (table.Columns.at(tag).Name == embedding) {
++                return result;
++            }
++        }
++    }
++    *result.Add() = embedding;
++    return result;
++}
++
+ TTags MakeScanTags(const TUserTable& table, const TProtoStringType& embedding,
+     const google::protobuf::RepeatedPtrField<TProtoStringType>& data, bool forBuild, NTable::TPos& embeddingPos,
+     NTable::TPos& dataPos, NTable::TPos* isForeignPos)
+@@ -100,7 +128,12 @@ TTags MakeScanTags(const TUserTable& table, const TProtoStringType& embedding,
+         dataPos = result.size();
+     } else {
+         embeddingPos = result.size();
+-        dataPos = result.size() + (forBuild ? 0 : 1); // always include embedding in build tables
++        // The embedding is already emitted as part of sourcePk when it belongs
++        // to the main table key. Keep scanning it for distance calculations,
++        // but don't duplicate it among the output value cells.
++        const bool embeddingIsKey = std::find(table.KeyColumnIds.begin(), table.KeyColumnIds.end(), embeddingTag)
++            != table.KeyColumnIds.end();
++        dataPos = result.size() + (!forBuild || embeddingIsKey);
+         result.push_back(embeddingTag);
+     }
+     for (const auto& column : data) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #59788** (2026-11-17): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #59777** (2026-11-17): YDBRELIABILITY-95 Add feature flag (@kuzin57)
-- **PR #59775** (2026-11-17): Remove inactive error-tags CI workflow (@maximyurchuk)
-- **PR #59771** (2026-11-17): Fix use-of-unitialized value in PDisk test (@serbel324)
-- **PR #59768** (closed): LOGBROKER-10680: [PQ] Fix exceeding the partition write quota behind a feature flag (@shokhor)
-- **PR #59766** (2026-11-17): docs: clarify default SELECT window frames (@fomichev3000)
+- **PR #59977** (2026-11-19): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #59976** (2026-11-19): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #59975** (2026-11-19): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
+- **PR #59974** (2026-11-19): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #59970** (2026-11-18): [Backport stable-26-3-1] PR #59966: Apply shared TSAN suppressions to YDB recipe tests (@ydbot)
+- **PR #59969** (2026-11-18): [Backport stable-26-4-1] PR #59966: Apply shared TSAN suppressions to YDB recipe tests (@ydbot)
 
 ---
 
@@ -2359,31 +2732,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. race crash between cancel and ordinary shutdown
+## X. [Hash join] Fix SIGILL on CPUs without AVX2: apply AVX2 only to the SIMD layout
 
 **RULE**:
-When implementing operations in `ydb/core/tx/columnshard/bg_tasks/session/session.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/library/yql/dq/comp_nodes/hash_join_utils/packing_simd_impl.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dbf3e5f9`: race crash between cancel and ordinary shutdown. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7dfbe704`: [Hash join] Fix SIGILL on CPUs without AVX2: apply AVX2 only to the SIMD layout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/tx/columnshard/bg_tasks/session/session.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/library/yql/dq/comp_nodes/hash_join_utils/packing_simd_impl.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        // Stop() or an earlier completion may have already requested actor shutdown.
-        if (!ActorId) {
-            return;
-        }
+#include "tuple_simd_target.h"
+TUPLE_LAYOUT_TARGET_PUSH
+
+
+TUPLE_LAYOUT_TARGET_POP
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-        AFL_VERIFY(!!ActorId);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dbf3e5f9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7dfbe704` are properly handled with clean fallback behavior.

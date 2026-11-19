@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T22:39:59.787Z",
+  "timestamp": "2026-11-19T01:47:32.359Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dicklesworthstone-destructive_command_guard-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dicklesworthstone-destructive_command_guard-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T22:39:59.787Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T01:47:32.359Z`  
 > **Learning ID**: `LEARN-EVO-dicklesworthstone-destructive_command_guard-learnings`
 
 
@@ -27,10 +27,10 @@ During deep inspection of dicklesworthstone-destructive_command_guard-learnings,
 ## Decision
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source**: github ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
-> **Source Version**: `37d14736`  
+> **Source Version**: `f239e1be`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T22:39:44.354Z  
+> **Timestamp**: 2026-11-19T01:47:07.579Z  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -44,7 +44,7 @@ During deep inspection of dicklesworthstone-destructive_command_guard-learnings,
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T22:39:41.685Z  
+> **Harvest Timestamp**: 2026-11-19T01:47:03.961Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -54,7 +54,7 @@ During deep inspection of dicklesworthstone-destructive_command_guard-learnings,
 - **Description**: A fast Rust safety hook that blocks destructive shell, git, and filesystem commands before AI coding agents run them. 50+ security packs (databases, Kubernetes, Docker, cloud, Terraform), heredoc/inline-script scanning, CI scan mode, and explain mode; works with Claude Code, Codex, Gemini, Copilot, Cursor, and more.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6361 stars
+- **Stars / Engagement**: 6368 stars
 
 ---
 
@@ -2537,280 +2537,83 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `37d14736` (2026-11-14)
-**Commit Message**: fix(hook): keep regex fragments from widening Bash heredoc dialects [skip ci]
+### Incident Patch 1: `f239e1be` (2026-11-17)
+**Commit Message**: Merge remote-tracking branch 'origin/dependabot/github_actions/actions-b7cdeb98aa'
 
-The Windows-shape precheck split a quoted heredoc regex at parentheses and
-pipes, then treated the fragment .*?)^\\ as a caret-assembled executable.
-The vendored Bash parser correctly recognizes the original heredoc and its
-quoted trailing rg pattern; the false signal comes from the shape precheck.
-
-Use the existing bounded Cmd tokenizer and decoder to withdraw caret
-evidence only from punctuation-only fragments where every actual
-caret-bearing word decodes to directory separators alone. Preserve evidence for executable names, expansions,
-quotes, Unicode whitespace boundary differences, incomplete tokenization,
-and exhausted proof bounds. Heredoc masking and executable-source analysis
-remain unchanged.
-
-Add two unit tests and three real-binary regression tests for #654:
-the exact report and five benign variants, Bash/POSIX diagnostic parity,
-executed POSIX destruction, and explicit or mislabeled Windows deletion.
-
-Validation completed: vendored Bash-parser probe for the exact report,
-bash -n for all six benign fixtures, independent source review, and a
-static UBS scan (no critical findings or findings on
-
-**File**: `src/hook.rs` (modified, +133/-9)
+**File**: `.github/workflows/dist.yml` (modified, +1/-1)
 ```diff
-@@ -2787,6 +2787,10 @@ fn is_percent_expansion(token: &str) -> bool {
- /// change which executable runs. A quoted first token is data to whatever
- /// shell runs it, not an executable name being assembled, so it is excluded.
- fn segment_command_word_is_cmd_assembled(segment: &str) -> bool {
-+    use crate::normalize::{
-+        NormalizeTokenKind, ShellTokenDecoder, ShellTokenRole, tokenize_for_shell_dialect,
-+    };
-+
-     let Some(first) = segment.split_whitespace().next() else {
-         return false;
-     };
-@@ -2798,19 +2802,77 @@ fn segment_command_word_is_cmd_assembled(segment: &str) -> bool {
-     // Only an unquoted caret can assemble a cmd executable; a quoted caret
-     // is literal text. Keep real g^it / doc^ker evidence, including inside
-     // interpreter strings passed through an opaque shell sink.
--    let mut quote = None;
--    for byte in first.bytes() {
--        if let Some(delimiter) = quote {
--            if byte == delimiter {
--                quote = None;
-+    let has_unquoted_caret = |word: &str| {
-+        let mut quote = None;
-+        for byte in word.bytes() {
-+            if let Some(delimiter) = quote {
-+                if byte == delimiter {
-+                    quote = None;
-+                }
-+            } else if matches!(byte, b'\'' | b'"') {
-+                quote = Some(byte);
-+            } else if byte == b'^' {
-+                return true;
-             }
--        } else if matches!(byte, b'\'' | b'"') {
--            quote = Some(byte);
--        } else if byte == b'^' {
-+        }
-+        false
-+    };
-+    if !has_unquoted_caret(first) {
-+        return is_percent_expansion(first);
-+    }
-+
-+    // The raw heredoc scan can split a regex at '(' and '|', presenting
-+    // ".*?)^\" as an apparent command word (#654). Cmd reads that as ".*?",
-+    // a closing group, and "^\": the only caret-bearing word decodes to a
-+    // directory root, which cannot be an executable. Use the existing Cmd
-+    // lexer so a real ")g^it" still supplies evidence. Do not infer anything
-+    // about runtime expansions or quote boundaries: the initial whitespace
-+    // split may end inside a quoted word, and Cmd does not quote apostrophes.
-+    // Bound this optional proof, which also runs before the whole-command
-+    // parse size gate.
-+    const MAX_CMD_SHAPE_WORD_BYTES: usize = 4096;
-+    // Another word beside the caret word may name an executable without
-+    // using a caret itself. Only punctuation-only fragments can lose evidence.
-+    if first.len() > MAX_CMD_SHAPE_WORD_BYTES
-+        || first.contains(['%', '!', '\'', '"'])
-+        || first
-+            .bytes()
-+            .any(|byte| byte.is_ascii_alphanumeric() || !byte.is_ascii())
-+    {
-+        return true;
-+    }
-+    // Cmd only splits ASCII whitespace. A Unicode whitespace byte can be
-+    // part of an executable path, so the apparent word must also be complete
-+    // under that rule before a directory-only fragment can withdraw evidence.
-+    let cmd_word_start = segment.trim_ascii_start();
-+    if !cmd_word_start.starts_with(first)
-+        || cmd_word_start
-+            .as_bytes()
-+            .get(first.len())
-+            .is_some_and(|byte| !byte.is_ascii_whitespace())
-+    {
-+        return true;
-+    }
-+    let mut decoder = ShellTokenDecoder::new(ShellDialect::Cmd);
-+    let mut saw_caret_word = false;
-+    for word in tokenize_for_shell_dialect(first, ShellDialect::Cmd)
-+        .iter()
-+        .filter(|token| token.kind == NormalizeTokenKind::Word)
-+        .filter_map(|token| token.text(first))
-+        .filter(|word| has_unquoted_caret(word))
-+    {
-+        saw_caret_word = true;
-+        if decoder
-+            .decode(word, ShellTokenRole::Syntax)
-+            .is_none_or(|decoded| {
-+                decoded.is_empty() || !decoded.bytes().all(|byte| matches!(byte, b'/' | b'\\'))
-+            })
-+        {
-             return true;
-         }
-     }
--    is_percent_expansion(first)
-+    // A different tokenization that loses the candidate supplies no proof.
-+    !saw_caret_word
- }
+@@ -379,7 +379,7 @@ jobs:
+         run: ls -laR dist
  
- fn is_windows_path_token(token: &str) -> bool {
-@@ -5622,6 +5684,68 @@ mod tests {
-         }
-     }
+       - name: Install cosign
+-        uses: sigstore/cosign-installer@v4.1.2
++        uses: sigstore/cosign-installer@v4.1.3
  
-+    #[test]
-+    fn issue_654_regex_group_fragments_do_not_name_cmd_executables() {
-+        for fragment in [r".*?)^\", r".*?)^/^\", r".*?)^\^\"] {
-+            assert!(
-+                !segment_command_word_is_cmd_assembled(fragment),
-+                "a caret that only escapes directory separators is not an executable: {fragment:?}"
-+            );
-+        }
-+        for fragment in [
-+            "g^it reset --hard",
-+            "g\"\"^it reset --hard",
-+            "foo)g^it reset --hard",
-+            r"foo)^\)del/s/q C:\important",
-+            r"del/s/q)^\ C:\important",
-+            "g^)it reset --hard",
-+            "g\")\"^it reset --hard",
-+            "a')x'b^it reset --hard",
-+            r#"^\"Program Files\g^it.exe" reset --hard"#,
-+            "^\\\u{00a0}\\g^it reset --hard",
-+           
+       - name: Sign release artifacts (sigstore bundle)
+         run: |
 ```
 
-**File**: `tests/repro_451_windows_pack_activation.rs` (modified, +121/-0)
+---
+
+### Incident Patch 2: `6ef9d7a4` (2026-11-17)
+**Commit Message**: Merge remote-tracking branch 'origin/dependabot/cargo/rust-minor-patch-cc994a21e9'
+
+**File**: `Cargo.lock` (modified, +7/-7)
 ```diff
-@@ -325,3 +325,124 @@ fn windows_cli_payload_defaults_respect_explicit_exclusions() {
-         assert_eq!(diagnostic_json(&explicit)["decision"], "deny");
-     }
- }
-+
-+/// #654: the body and the single-quoted rg argument both contain << as
-+/// literal text. The apostrophe in the body is not a shell quote.
-+const ISSUE_654_COMMAND: &str = r#"cat > /tmp/x/a.py <<'EOF'
-+p = r"^<<<<<<< [^\n]*\n(.*?)^\|\|\|\|\|\|\| [^\n]*\n(.*?)"
-+row's
-+EOF
-+python3 /tmp/x/a.py && for f in a.txt; do rg -c '^(<<<<<<<|=======|>>>>>>>)( |$)' "$f" || echo 0; done"#;
-+
-+#[test]
-+fn issue_654_quoted_conflict_markers_keep_bash_hook_and_posix_cli_in_agreement() {
-+    let commands = [
-+        ISSUE_654_COMMAND.to_string(),
-+        // Each of these minimal edits was allowed in the original report.
-+        ISSUE_654_COMMAND.replace("row's\n", ""),
-+        ISSUE_654_COMMAND
-+            .lines()
-+            .filter(|line| !line.starts_with("p = "))
-+            .collect::<Vec<_>>()
-+            .join("\n"),
-+        ISSUE_654_COMMAND.replace("'^(<<<<<<<|=======|>>>>>>>)( |$)'", "'x'"),
-+        // The same literal body is data whether cat writes or appends it,
-+        // and a later quoted pattern must not turn it into Windows syntax.
-+        ISSUE_654_COMMAND.replace("python3 /tmp/x/a.py && ", ""),
-+        ISSUE_654_COMMAND.replacen("cat >", "cat >>", 1),
-+    ];
-+    for command in &commands {
-+        let payload = serde_json::json!({
-+            "hook_event_name": "PreToolUse",
-+            "tool_name": "Bash",
-+            "tool_input": {"command": command},
-+        })
-+        .to_string();
-+        let hook = run_windows_diagnostic(&[], Some(&payload), Some("# empty\n"));
-+        assert!(
-+            hook.status.success(),
-+            "hook failed for {command:?}: {}",
-+            String::from_utf8_lossy(&hook.stderr)
-+        );
-+        // A deny or an incomplete-analysis ask is a JSON document, never a
-+        // successful silent allow. Also check the CLI's explicit decision.
-+        assert!(
-+            hook.stdout.is_empty(),
-+            "safe Bash heredoc must be allowed: {command:?}\nstdout: {}\nstderr: {}",
-+            String::from_utf8_lossy(&hook.stdout),
-+            String::from_utf8_lossy(&hook.stderr)
-+        );
-+        let diagnostic = run_windows_diagnostic(
-+            &["test", "--stdin", "--dialect", "posix", "--format", "json"],
-+            Some(command),
-+            Some("# empty\n"),
-+        );
-+        assert_eq!(
-+            diagnostic.status.code(),
-+            Some(0),
-+            "POSIX CLI failed for {command:?}: {}",
-+            String::from_utf8_lossy(&diagnostic.stderr)
-+        );
-+        assert_eq!(
-+            diagnostic_json(&diagnostic)["decision"],
-+            "allow",
-+            "{command}"
-+        );
-+    }
-+}
-+
-+#[test]
-+fn issue_654_heredoc_data_does_not_hide_executed_destructive_commands() {
-+    let trailing_delete = format!("{ISSUE_654_COMMAND}\nrm -rf ./important");
-+    for command in [
-+        trailing_delete.as_str(),
-+        // The outer shell executes substitutions in an unquoted heredoc.
-+        "cat > /tmp/x/a.py <<EOF\n$(rm -rf ./important)\nEOF\nrg '^(<<<<<<<|=======|>>>>>>>)( |$)' a.txt",
-+        // A shell receives code, even when the delimiter is quoted.
-+        "bash <<'EOF'\nrm -rf ./important\nEOF",
-+        // A file written by cat and subsequently run as shell is also code.
-+        "cat > /tmp/x/a.sh <<'EOF'\nrm -rf ./important\nEOF\nbash /tmp/x/a.sh\nrg '^(<<<<<<<|=======|>>>>>>>)( |$)' a.txt",
-+    ] {
-+        let payload = serde_json::json!({
-+            "hook_event_name": "PreToolUse",
-+            "tool_name": "Bash",
-+            "tool_input": {"command": command},
-+        })
-+        .to_string();
-+        let hook = run_windows_diagnostic(&[], Some(&payload), Some("# empty\n"));
-+        assert!(hook.status.success(), "structured hook denial exits zero");
-+        let json = diagnostic_json(&hook);
-+        let verdict = &json["hookSpecificOutput"];
-+        assert_eq!(verdict["permissionDecision"], "deny", "{command}: {json}");
-+        let rule = verdict["ruleId"]
-+            .as_str()
-+            .unwrap_or_else(|| panic!("expected a concrete destructive rule: {command}: {json}"));
-+        assert!(
-+            !rule.starts_with("windows.") && !rule.starts_with("heredoc.powershell:"),
-+            "POSIX execution must be denied for its own rule, not the #654 false positive: {command}: {json}"
-+        );
-+    }
-+}
-+
-+#[test]
-+fn issue_654_preserves_explicit_and_mislabeled_windows_deletion_detection() {
-+    for tool in ["PowerShell", "Bash"] {
-+        let payload = serde_json::json!({
-+            "hook_event_name": "PreToolUse",
-+            "tool_name": tool,
-+            "tool_input": {"command": r"Remove-Item -Recurse -Force C:\important"},
-+        })
-+        .to_string();
-+        let hook = run_windows_diagnostic(&[], Some(&payload), Some("# empty\n"));
-+        assert!(hook.status.success(), "structur
+@@ -955,7 +955,7 @@ dependencies = [
+  "criterion",
+  "ctrlc",
+  "dirs",
+- "fancy-regex 0.20.0",
++ "fancy-regex 0.20.2",
+  "flate2",
+  "fs2",
+  "glob",
+@@ -1160,9 +1160,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "fancy-regex"
+-version = "0.20.0"
++version = "0.20.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "20ed7f62ce0ae0da1a8b93c3c7104ab7e0760a74491e097c701fff966e945390"
++checksum = "0a2e16b9a584b602f1e0e5e22c30ca0906786088c27500653e432d086def8b53"
+ dependencies = [
+  "bit-set 0.8.0",
+  "regex-automata",
+@@ -1205,9 +1205,9 @@ checksum = "aedcfb3409746eddb02b9e19ebda1c3394f759a152e48ee875a0844d1b955484"
+ 
+ [[package]]
+ name = "flate2"
+-version = "1.1.10"
++version = "1.1.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6e634e2e0ebac1ee034020da1ca582e17ffe4e0f5e985823721e168928136dcb"
++checksum = "626d4928326b646e70f65ed36fc7cf9f206bdb68a0019ee7c6b4709da4e084c4"
+ dependencies = [
+  "crc32fast",
+  "miniz_oxide",
+@@ -4318,9 +4318,9 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
+ 
+ [[package]]
+ name = "smallvec"
+-version = "1.16.4"
++version = "1.16.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d0d5d4b1981b8bbbb7aed204cae5726d683d5d6ac7e74ec54122ea28f315e7c8"
++checksum = "149309498a5f7334b12ddae0cad8aba81ce785fe91755068867e017cf98fee46"
+ 
+ [[package]]
+ name = "socket2"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #659** (2026-11-17): deps(deps): bump rusqlite from 0.41.1 to 0.42.0 (@dependabot[bot])
+- **PR #658** (2026-11-17): deps(deps): bump the rust-minor-patch group with 3 updates (@dependabot[bot])
+- **PR #657** (2026-11-17): ci(deps): bump sigstore/cosign-installer from 4.1.2 to 4.1.3 in the actions group (@dependabot[bot])
 - **PR #651** (closed): ci(deps): bump sigstore/cosign-installer from 4.1.2 to 4.1.3 in the actions group (@dependabot[bot])
 - **PR #650** (closed): deps(deps): bump flate2 from 1.1.10 to 1.1.11 in the rust-minor-patch group (@dependabot[bot])
 - **PR #637** (closed): fix(powershell): preserve call/dot-source operators across compound statements, scriptblock .Invoke(), and *.exe tool names (@stevemoraco)
-- **PR #632** (2026-11-02): deps(deps): bump fancy-regex from 0.19.2 to 0.20.0 (@dependabot[bot])
-- **PR #631** (2026-11-02): deps(deps): bump rusqlite from 0.40.2 to 0.41.1 (@dependabot[bot])
-- **PR #630** (2026-11-02): deps(deps): bump the rust-minor-patch group with 2 updates (@dependabot[bot])
 
 ---
 
@@ -2830,68 +2633,31 @@ static UBS scan (no critical findings or findings on
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hook): keep regex fragments from widening Bash heredoc dialects [skip ci]
+## X. Merge remote-tracking branch 'origin/dependabot/github_actions/actions-b7cdeb98a
 
 **RULE**:
-When implementing operations in `src/hook.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/dist.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `37d14736`: hook): keep regex fragments from widening Bash heredoc dialects [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f239e1be`: Merge remote-tracking branch 'origin/dependabot/github_actions/actions-b7cdeb98aa'. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/hook.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/dist.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    use crate::normalize::{
-        NormalizeTokenKind, ShellTokenDecoder, ShellTokenRole, tokenize_for_shell_dialect,
-    };
-
-    let has_unquoted_caret = |word: &str| {
-        let mut quote = None;
-        for byte in word.bytes() {
-            if let Some(delimiter) = quote {
-                if byte == delimiter {
-                    quote = None;
-                }
-            } else if matches!(byte, b'\'' | b'"') {
-                quote = Some(byte);
-            } else if byte == b'^' {
-                return true;
-        }
-        false
-    };
-    if !has_unquoted_caret(first) {
-        return is_percent_expansion(first);
-    }
-
-    // The raw heredoc scan can split a regex at '(' and '|', presenting
-    // ".*?)^\" as an apparent command word (#654). Cmd reads that as ".*?",
-    // a closing group, and "^\": the only caret-bearing word decodes to a
-    // directory root, which cannot be an executable. Use the existing Cmd
-    // lexer so a real ")g^it" still supplies evidence. Do not infer anything
-    // about runtime expansions or quote boundaries: the initial whitespace
-    // split may end inside a quoted word, and Cmd does not quote apostrophes.
-    // Bound this opti
+        uses: sigstore/cosign-installer@v4.1.3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    let mut quote = None;
-    for byte in first.bytes() {
-        if let Some(delimiter) = quote {
-            if byte == delimiter {
-                quote = None;
-        } else if matches!(byte, b'\'' | b'"') {
-            quote = Some(byte);
-        } else if byte == b'^' {
-    is_percent_expansion(first)
+        uses: sigstore/cosign-installer@v4.1.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `37d14736` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f239e1be` are properly handled with clean fallback behavior.
 
 
 ## Consequences
