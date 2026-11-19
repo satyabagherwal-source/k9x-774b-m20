@@ -4,24 +4,24 @@
 {
   "source_repository": "authzed/spicedb",
   "source_url": "https://github.com/authzed/spicedb",
-  "source_version": "f060cbd7",
+  "source_version": "c9e95eba",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T14:15:54.919Z",
+  "timestamp": "2026-11-19T16:33:26.397Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-authzed-spicedb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [authzed/spicedb](https://github.com/authzed/spicedb) (Revision: `f060cbd7`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T14:15:54.919Z`  
+> **Provenance**: Harvested from [authzed/spicedb](https://github.com/authzed/spicedb) (Revision: `c9e95eba`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T16:33:26.397Z`  
 > **Learning ID**: `learn-github-authzed-spicedb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from authzed/spicedb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T14:15:53.748Z  
+> **Harvest Timestamp**: 2026-11-19T16:33:25.189Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7227 stars
+- **Stars / Engagement**: 7230 stars
 
 ---
 
@@ -1100,13 +1100,13 @@ func inputMessagesForService[S any](
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3507** (2026-11-18): **fix(docker): update grpc_health_probe to v0.4.63 for CVE-2026-97054**
-  *Symptoms*: ## Summary  The Trivy job now fails on the container image because of the bundled `grpc_health_probe`, not the `spicedb` binary:  | Binary | Vulnerability | Severity | Built with | Fixed in | |---|---|---|---|---| | `usr/local/bin/grpc_health_probe` (v0.4.61) | [CVE-2026-97054](https://avd.aquasec.com/nvd/cve-2026-97054), `net/http` `MaxBytesReader` on HTTP/1 servers | MEDIUM | Go 1.27.3 | Go 1.26.11, 1.27.4 |  The `spicedb` binary and the OS packages have no findings. `main` last passed this job at `9029f074`, before the vulnerability database picked up the CVE, so the next run on `main` would fail the same way. It currently fails on unrelated PRs, such as #3506.  This updates `grpc_health_probe` from v0.4.61 to [v0.4.63](https://github.com/grpc-ecosystem/grpc-health-probe/releases/tag/v0.4.63), which is built with `toolchain go1.27.4`:  - **`Dockerfile`:** `ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.63`. The image is built with the same ko configuration as v0.4.61 (`bare: true`), so the binary is still at `/ko-app/grpc-health-probe`. - **`Dockerfile.release`:** the v0.4.63 release binary. `grpc_health_probe-linux-amd64` and `-arm64` are published for it.  A CHANGELOG entry is included, as for the previous probe update (#3407).  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #3509** (2026-11-18): **fix(graph): give each LookupResources3 producer its own caveat runner**
+  *Symptoms*: ## Problem  LookupResources3 creates one `CaveatRunner` per request and stores it in `lr3refs`. The producers of `relationshipsIter` run concurrently, and each one calls `RunCaveatExpression` on that shared runner. `CaveatRunner` caches caveat definitions and compiled caveats in plain maps, so it isn't safe for concurrent use.  When a lookup reaches caveated relationships through more than one entrypoint (for example `permission view = viewer + editor` with both relations caveated), those maps are written concurrently. Under load this aborts the process with `fatal error: concurrent map writes`, which can't be recovered. It happens with or without caveat context in the request, because caveats are evaluated either way to compute missing context.  With a dispatch concurrency limit of 1 the producers don't overlap, which is why serial configurations and the existing tests don't show it.  ## Fix  Create the caveat runner inside each producer, as LookupResources2 already does. Compiled caveats are still shared through the schema-tied compiled caveat cache (`CompiledCaveatCacheFor`), so the extra cost is two small maps per producer. The now-unused `caveatRunner` field is removed from `lr3refs`.  ## Testing  - New `TestLookupResources3OverSchemaWithCursors` case, "caveats evaluated by concurrent producers": three relations, each with its own caveat, unioned into one permission.   - Without the fix: 16 `DATA RACE` reports under `go test -race -count=3`.   - With the fix: passes clea
 
-- **Issue #3506** (2026-11-18): **feat(dispatch): let programs that embed SpiceDB add secondary dispatch strategies**
-  *Symptoms*: ## Summary  Secondary dispatch strategies became pluggable in #3468, but only inside `internal/dispatch/remote`. Their interfaces have unexported methods, and the list of strategies is unexported, so a program that embeds SpiceDB can't add its own. This PR adds a public extension point for that.  ## The extension point  The new package `pkg/dispatch/secondary` provides:  - **`Strategy` and `Policy`:** the public counterparts of the engine's strategy and policy. `Policy` has the decision points `Start`, `ReadyToClaim`, `Done` and `NoWinnerError`. - **`ResultObserver`:** optional. A policy that implements it is given every participant's result (`ObserveResult`); policies that don't are never called per result. - **`BasePolicy`:** the default decisions, for embedding. - **`Function`:** declares a strategy function: its CEL name, the request kinds that may call it (`Methods`), and the `Strategy`. Expressions call it as `name(['secondary', ...])`.  A program registers functions through `server.Config.DispatchSecondaryStrategies` (or `SetDispatchSecondaryStrategies` / `WithDispatchSecondaryStrategies`). Its expressions can then call them like the built-in strategies:  ```go config.DispatchSecondaryStrategies = append(config.DispatchSecondaryStrategies, secondary.Function{ 	Name:     "my_strategy", 	Methods:  []string{"check"}, 	Strategy: myStrategy{}, }) ```  ```cel request.resource_relation.namespace == 'document' ? my_strategy(['cache']) : prefer_primary() ```  **Checked at start
+- **Issue #3508** (2026-11-18): **refactor(dispatch): stop recovering panics from external strategies**
+  *Symptoms*: ## Summary  Follow-up to #3506. It removes the panic recovery around external secondary dispatch strategies, which was raised in review after #3506 merged.  #3506 recovered panics from strategies registered by a program that embeds SpiceDB, logged them, and counted them in `remote_dispatch_external_strategy_panics_total`. That was the only `recover()` in SpiceDB's non-test code under `internal/` and `pkg/`, and the server has no panic-recovery middleware. Everywhere else, including the built-in strategies running in the same goroutines, a panic is a bug and crashes the process. That also avoids carrying on with a policy left half-updated.  The case that motivated the recovery, a `Function` without a `Strategy`, is already rejected at startup by the registration checks from #3506, which stay. An embedder that wants extra protection can still recover inside its own strategy.  ## Changes  - `strategy_external.go`: the adapter calls the external policy directly. This removes `recoverCallback`, `reportExternalPanic` and `primaryOnlyPolicy`. - `metrics.go`: removes `remote_dispatch_external_strategy_panics_total`. It was never released. - `strategy_external_test.go`: removes `TestExternalStrategyPanicsAreContained`. - `pkg/dispatch/secondary`: documents that panics in a `Strategy` or `Policy` are not recovered. The README drops the recovery and the metric.  No CHANGELOG entry: neither the recovery nor the metric has been released.  `go test ./internal/dispatch/... ./pkg/dispatch/..
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/authzed/spicedb/pull/3506?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) Report :x: Patch coverage is `98.09524%` with `2 lines` in your changes missing coverage. Please review. | [Files with missing lines](https://app.codecov.io/gh/authzed/spicedb/pull/3506?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) | Patch % | Lines | |---|---|---| | [internal/dispatch/remote/expr.go](https://app.codecov.io/gh/authzed/spicedb/pull/3506?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed#diff-aW50ZXJuYWwvZGlzcGF0Y2gvcmVtb3RlL2V4cHIuZ28=) | 94.60% | [2 Missing :warning: ](https://app.codecov.io/gh/authzed/spicedb/pull/3506?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=a
+  > ## [Codecov](https://app.codecov.io/gh/authzed/spicedb/pull/3508?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) Report :white_check_mark: All modified and coverable lines are covered by tests.  :loudspeaker: Thoughts on this report? [Let us know!](https://github.com/codecov/feedback/issues/255)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1123,369 +1123,560 @@ func inputMessagesForService[S any](
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2c12a6e8` (2026-11-18)
-**Commit Message**: fix(docker): update grpc_health_probe to v0.4.63 for CVE-2026-97054 (#3507)
+### Incident Patch 1: `c9e95eba` (2026-11-18)
+**Commit Message**: chore: fix test panic (#3503)
 
-grpc_health_probe v0.4.61 is built with Go 1.27.3, which Trivy now flags
-for CVE-2026-97054 (net/http MaxBytesReader on HTTP/1 servers, fixed in
-Go 1.26.11 and 1.27.4). v0.4.63 is built with Go 1.27.4. Its image is
-built with the same ko configuration, so the binary stays at
-/ko-app/grpc-health-probe.
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `internal/datastore/memdb/memdb.go` (modified, +4/-4)
 ```diff
-@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
- - Postgres: the minimum supported version is now 15. PostgreSQL 14 reached end of life on November 12, 2026 and is no longer tested. (https://github.com/authzed/spicedb/pull/3486)
+@@ -134,15 +134,15 @@ func (mdb *memdbDatastore) SnapshotReader(dr datastore.Revision) datastore.Reade
+ 	defer mdb.RUnlock()
  
- ### Fixed
-+- Container images: `grpc_health_probe` is updated to v0.4.63, built with Go 1.27.4, which fixes CVE-2026-97054 in `net/http`'s `MaxBytesReader` for HTTP/1 servers. v0.4.61 was built with Go 1.27.3. The `spicedb` binary is not affected.
- - CockroachDB: a long-lived Watch no longer fails with `maximum changes byte size of N exceeded; adjust --datastore-watch-change-buffer-maximum-size accordingly` once the changes it has carried over its lifetime add up to more than `--datastore-watch-change-buffer-maximum-size`. The Watch change buffer added each change's size to its running total but never subtracted it once the change was sent, so the limit capped everything a stream had ever carried rather than what it was holding. CockroachDB keeps one buffer for the whole stream, and the flag has defaulted to 15% of available memory since v1.49.0, so every long-lived Watch on CockroachDB eventually failed under the default configuration; setting the flag to `0` was the workaround. Sent changes are now subtracted. Changing the same caveat twice at one revision, or touching or deleting the same relationship twice at one revision, no longer counts it twice. (https://github.com/authzed/spicedb/pull/3501)
- - Postgres: SpiceDB started with `--datastore-readonly=true` no longer tries to write a "heartbeat" row to the database every few seconds. A read-only instance can't write, so every attempt failed and logged `cannot execute INSERT in a read-only transaction (SQLSTATE 25006)` followed by `failed to write heartbeat revision`, about once every 5 seconds per pod. The heartbeat is now turned off for read-only instances, the same way garbage collection already was. Instances that are not read-only are unchanged. (https://github.com/authzed/spicedb/pull/3479)
- - Schema: writing a schema no longer strips the `aliasing_relation` and `canonical_cache_key` annotations from definitions that did not change. Since v1.49.0, every schema write replaced unchanged definitions with unannotated copies, in both the legacy and single-store schema modes, so permissions that alias a relation were dispatched as separate subproblems and equivalent permissions stopped sharing dispatch cache entries, increasing dispatch count, latency and datastore load. All definitions are now annotated on write, and writing the schema again restores annotations already lost. Computing the annotations also allocates far less memory. (https://github.com/authzed/spicedb/issues/3412)
+ 	if err := mdb.checkNotClosed(); err != nil {
+-		return &memdbReader{nil, nil, err, time.Now()}
++		return newErrorReader(err)
+ 	}
+ 
+ 	if len(mdb.revisions) == 0 {
+-		return &memdbReader{nil, nil, errors.New("memdb datastore is not ready"), time.Now()}
++		return newErrorReader(errors.New("memdb datastore is not ready"))
+ 	}
+ 
+ 	if err := mdb.checkRevisionLocalCallerMustLock(dr); err != nil {
+-		return &memdbReader{nil, nil, err, time.Now()}
++		return newErrorReader(err)
+ 	}
+ 
+ 	// sort.Search finds the first snapshot newer than the requested revision,
+@@ -160,7 +160,7 @@ func (mdb *memdbDatastore) SnapshotReader(dr datastore.Revision) datastore.Reade
+ 
+ 	rev := mdb.revisions[revIndex]
+ 	if rev.db == nil {
+-		return &memdbReader{nil, nil, errors.New("memdb datastore is already closed"), time.Now()}
++		return newErrorReader(errors.New("memdb datastore is already closed"))
+ 	}
+ 
+ 	roTxn := rev.db.Txn(false)
 ```
 
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `internal/datastore/memdb/memdb_test.go` (modified, +68/-3)
 ```diff
-@@ -18,7 +18,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/g
- FROM cgr.dev/chainguard/static@sha256:17367e4d3ae2b46c3290858e483fac09be085c92b372360fe3bf6a6150848fde
- # NOTE: the copy target location differs from Dockerfile.release for historical reasons. It's referenced in
- # compose files and elsewhere so we're keeping it the way it is.
--COPY --from=ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.61 /ko-app/grpc-health-probe /bin/grpc_health_probe
-+COPY --from=ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.63 /ko-app/grpc-health-probe /bin/grpc_health_probe
- COPY --from=spicedb-builder /go/src/app/spicedb /usr/local/bin/spicedb
- ENV PATH="$PATH:/usr/local/bin"
- EXPOSE 50051
+@@ -144,7 +144,72 @@ func TestAnythingAfterCloseDoesNotPanic(t *testing.T) {
+ 	_, err = ds.OptimizedRevision(t.Context())
+ 	require.ErrorIs(err, ErrMemDBIsClosed)
+ 
+-	reader := ds.SnapshotReader(datastore.NoRevision)
+-	_, err = reader.CountRelationships(t.Context(), "blah")
+-	require.ErrorIs(err, ErrMemDBIsClosed)
++	requireAllReaderMethodsFail(t, ds.SnapshotReader(datastore.NoRevision), ErrMemDBIsClosed)
++}
++
++// TestErrorReaderDoesNotPanic covers the readers SnapshotReader returns when it
++// cannot read the requested revision. Each method must return the error instead
++// of panicking.
++func TestErrorReaderDoesNotPanic(t *testing.T) {
++	sentinel := errors.New("sentinel")
++	requireAllReaderMethodsFail(t, newErrorReader(sentinel), sentinel)
++}
++
++func requireAllReaderMethodsFail(t *testing.T, reader datastore.Reader, expected error) {
++	t.Helper()
++
++	calls := map[string]func(ctx context.Context) error{
++		"CountRelationships": func(ctx context.Context) error {
++			_, err := reader.CountRelationships(ctx, "blah")
++			return err
++		},
++		"LookupCounters": func(ctx context.Context) error {
++			_, err := reader.LookupCounters(ctx)
++			return err
++		},
++		"ReadStoredSchema": func(ctx context.Context) error {
++			_, err := reader.ReadStoredSchema(ctx)
++			return err
++		},
++		"QueryRelationships": func(ctx context.Context) error {
++			_, err := reader.QueryRelationships(ctx, datastore.RelationshipsFilter{OptionalResourceType: "document"})
++			return err
++		},
++		"ReverseQueryRelationships": func(ctx context.Context) error {
++			_, err := reader.ReverseQueryRelationships(ctx, datastore.SubjectsFilter{SubjectType: "user"})
++			return err
++		},
++		"LegacyReadNamespaceByName": func(ctx context.Context) error {
++			_, _, err := reader.LegacyReadNamespaceByName(ctx, "document")
++			return err
++		},
++		"LegacyListAllNamespaces": func(ctx context.Context) error {
++			_, err := reader.LegacyListAllNamespaces(ctx)
++			return err
++		},
++		"LegacyLookupNamespacesWithNames": func(ctx context.Context) error {
++			_, err := reader.LegacyLookupNamespacesWithNames(ctx, []string{"document"})
++			return err
++		},
++		"LegacyReadCaveatByName": func(ctx context.Context) error {
++			_, _, err := reader.LegacyReadCaveatByName(ctx, "somecaveat")
++			return err
++		},
++		"LegacyListAllCaveats": func(ctx context.Context) error {
++			_, err := reader.LegacyListAllCaveats(ctx)
++			return err
++		},
++		"LegacyLookupCaveatsWithNames": func(ctx context.Context) error {
++			_, err := reader.LegacyLookupCaveatsWithNames(ctx, []string{"somecaveat"})
++			return err
++		},
++	}
++
++	for name, call := range calls {
++		t.Run(name, func(t *testing.T) {
++			var err error
++			require.NotPanics(t, func() { err = call(t.Context()) })
++			require.ErrorIs(t, err, expected)
++		})
++	}
+ }
 ```
 
-**File**: `Dockerfile.release` (modified, +1/-1)
+**File**: `internal/datastore/memdb/readonly.go` (modified, +12/-0)
 ```diff
-@@ -6,7 +6,7 @@ ARG TARGETOS
- ARG TARGETARCH
- ARG TARGETPLATFORM
- # NOTE: downloads the health probe binary directly from the official release.
--ADD --chmod=755 https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.61/grpc_health_probe-${TARGETOS}-${TARGETARCH} /usr/local/bin/grpc_health_probe
-+ADD --chmod=755 https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.63/grpc_health_probe-${TARGETOS}-${TARGETARCH} /usr/local/bin/grpc_health_probe
- COPY $TARGETPLATFORM/spicedb /usr/local/bin/spicedb
- ENV PATH="$PATH:/usr/local/bin"
- EXPOSE 50051
+@@ -27,6 +27,18 @@ type memdbReader struct {
+ 	now      time.Time
+ }
+ 
++// newErrorReader returns a reader on which every operation fails with err.
++// Its txSource returns err and it uses a no-op locker, so a method that skips
++// its initErr check still returns err instead of panicking on a nil locker.
++func newErrorReader(err error) *memdbReader {
++	return &memdbReader{
++		TryLocker: noopTryLocker{},
++		txSource:  func() (*memdb.Txn, error) { return nil, err },
++		initErr:   err,
++		now:       time.Now(),
++	}
++}
++
+ func (r *memdbReader) CountRelationships(ctx context.Context, name string) (int, error) {
+ 	counters, err := r.LookupCounters(ctx)
+ 	if err != nil {
 ```
 
 ---
 
-### Incident Patch 2: `9029f074` (2026-11-17)
-**Commit Message**: fix(datastore): release watch buffer bytes when changes are sent (#3501)
+### Incident Patch 2: `14a50ec2` (2026-11-18)
+**Commit Message**: refactor(dispatch): stop recovering panics from external strategies (#3508)
 
-* fix(datastore): release watch buffer bytes when changes are sent
+#3506 recovered panics from strategies registered by a program that
+embeds SpiceDB, logging them and counting them in
+remote_dispatch_external_strategy_panics_total. That was the only
+recover() in SpiceDB's non-test code: everywhere else, built-in
+strategies included, a panic is a bug and crashes the process, which
+also avoids carrying on with a policy left in an inconsistent state.
 
-The Watch change buffer added each change's size to currentByteSize but
-never subtracted it when FilterAndRemoveRevisionChanges dropped the
-change after sending it. On CockroachDB, which keeps one buffer for the
-whole stream, a long-lived Watch therefore failed with "maximum changes
-byte size of N exceeded" once the changes it had carried over its
-lifetime passed --datastore-watch-change-buffer-maximum-size. The flag
-has defaulted to 15% of available memory since v1.49.0, so this hit the
-default configuration.
+The concrete case that motivated it, a Function without a Strategy, is
+rejected at startup by the registration checks, which stay. Remove the
+recovery, its metric and test, and document that panics are not
+recovered.
 
-removeAllChangesBefore now subtracts the size of each removed record's
-relationship touches, relationship deletes and changed definitions.
-
-Also fixes two double counts in the same accounting:
-- a caveat changed twice at one revision: the existing entry was looked
-  up under the namespace prefix instead of the caveat prefix
-- a relationship touched twice at one revision: the earlier touch was
-  replaced without subtracting its size
-
-Refs OSS-1035
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(datastore): use safecast for w
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `internal/dispatch/remote/README.md` (modified, +1/-5)
 ```diff
-@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
- - Postgres: the minimum supported version is now 15. PostgreSQL 14 reached end of life on November 12, 2026 and is no longer tested. (https://github.com/authzed/spicedb/pull/3486)
+@@ -122,9 +122,7 @@ Programs that embed SpiceDB add strategies without changing this package, throug
+ Registration is checked at startup: a function without a `Strategy`, a name that is not callable
+ from CEL (not an identifier, or a reserved word), a name that already names a function (a
+ built-in strategy, a CEL function such as `duration`, or another registered one), and a call from
+-a request kind not in `Methods` all fail startup. A panic in the strategy's code is recovered,
+-logged and counted in `remote_dispatch_external_strategy_panics_total`; it fails that participant
+-or race, not the process. External strategies run on the same engine as the
++a request kind not in `Methods` all fail startup. External strategies run on the same engine as the
+ built-in ones, through an adapter ([strategy_external.go](strategy_external.go)) that the
+ built-in strategies don't go through. Their races are counted in
+ `remote_dispatch_secondary_strategy_total` under the function's name.
+@@ -144,8 +142,6 @@ All are prefixed with `spicedb_dispatch_`:
+   and went to the primary only.
+ - `remote_dispatch_hedge_wait_duration_seconds` and `..._hedge_actual_wait_duration_seconds`:
+   computed and actual primary wait, `hedged` only.
+-- `remote_dispatch_external_strategy_panics_total{strategy}`: panics recovered from external
+-  strategies (see [External strategies](#external-strategies)).
  
- ### Fixed
-+- CockroachDB: a long-lived Watch no longer fails with `maximum changes byte size of N exceeded; adjust --datastore-watch-change-buffer-maximum-size accordingly` once the changes it has carried over its lifetime add up to more than `--datastore-watch-change-buffer-maximum-size`. The Watch change buffer added each change's size to its running total but never subtracted it once the change was sent, so the limit capped everything a stream had ever carried rather than what it was holding. CockroachDB keeps one buffer for the whole stream, and the flag has defaulted to 15% of available memory since v1.49.0, so every long-lived Watch on CockroachDB eventually failed under the default configuration; setting the flag to `0` was the workaround. Sent changes are now subtracted. Changing the same caveat twice at one revision, or touching or deleting the same relationship twice at one revision, no longer counts it twice. (https://github.com/authzed/spicedb/pull/3501)
- - Postgres: SpiceDB started with `--datastore-readonly=true` no longer tries to write a "heartbeat" row to the database every few seconds. A read-only instance can't write, so every attempt failed and logged `cannot execute INSERT in a read-only transaction (SQLSTATE 25006)` followed by `failed to write heartbeat revision`, about once every 5 seconds per pod. The heartbeat is now turned off for read-only instances, the same way garbage collection already was. Instances that are not read-only are unchanged. (https://github.com/authzed/spicedb/pull/3479)
- - Schema: writing a schema no longer strips the `aliasing_relation` and `canonical_cache_key` annotations from definitions that did not change. Since v1.49.0, every schema write replaced unchanged definitions with unannotated copies, in both the legacy and single-store schema modes, so permissions that alias a relation were dispatched as separate subproblems and equivalent permissions stopped sharing dispatch cache entries, increasing dispatch count, latency and datastore load. All definitions are now annotated on write, and writing the schema again restores annotations already lost. Computing the annotations also allocates far less memory. (https://github.com/authzed/spicedb/issues/3412)
- - LookupResources and Expand: the read connection pool can no longer deadlock because a request held one connection while waiting for another. LookupResources dispatched further lookups while its relationships query still held its connection, so on a schema of several levels every connection in the pool could end up held by a request waiting for another one. Since client cancellation does not reach the pool, the server stayed stuck until restarted. LookupResources now reads the relationships for each query in full before dispatching, with a single query when the request has no limit, and in pages when it does. Expand over an arrow now reads the schema before reading relationships, instead of once per relationship. With the single-store schema (`--experimental-schema-mode` set to `read-new-write-both` or `read-new-write-new`), caveat and namespace definitions are loaded before relationships are read, which also resolves the caveated LookupResources deadlock reported in the issue. The default legacy schema mode still loads definitions while relationships are being read, and is not fixed by this change. (https://github.com/authzed/spicedb/issues/3433)
+ For example:
+ 
 ```
 
-**File**: `internal/datastore/common/changes.go` (modified, +51/-3)
+**File**: `internal/dispatch/remote/metrics.go` (modified, +0/-10)
 ```diff
-@@ -92,6 +92,13 @@ func (ch *Changes[R, K]) AddRelationshipChange(
- 			}
- 		}
+@@ -68,17 +68,7 @@ var exprEvalErrorsCounter = prometheus.NewCounterVec(prometheus.CounterOpts{
+ 	Help:      "number of dispatches whose secondary dispatch expression failed to evaluate; they are sent to the primary only",
+ }, []string{"rpc"})
  
-+		// If the same tuple was already touched at this revision, the new touch replaces it.
-+		if existing, ok := record.relTouches[key]; ok {
-+			if err := ch.adjustByteSize(existing, -1); err != nil {
-+				return err
-+			}
-+		}
-+
- 		record.relTouches[key] = rel
- 		if err := ch.adjustByteSize(rel, 1); err != nil {
- 			return err
-@@ -100,6 +107,13 @@ func (ch *Changes[R, K]) AddRelationshipChange(
- 	case tuple.UpdateOperationDelete:
- 		_, alreadyTouched := record.relTouches[key]
- 		if !alreadyTouched {
-+			// If the same tuple was already deleted at this revision, the new delete replaces it.
-+			if existing, ok := record.relDeletes[key]; ok {
-+				if err := ch.adjustByteSize(existing, -1); err != nil {
-+					return err
-+				}
-+			}
-+
- 			record.relDeletes[key] = rel
- 			if err := ch.adjustByteSize(rel, 1); err != nil {
- 				return err
-@@ -270,7 +284,7 @@ func (ch *Changes[R, K]) AddChangedDefinition(
- 	case *core.CaveatDefinition:
- 		delete(record.caveatsDeleted, t.Name)
- 
--		if existing, ok := record.definitionsChanged[nsPrefix+t.Name]; ok {
-+		if existing, ok := record.definitionsChanged[caveatPrefix+t.Name]; ok {
- 			if err := ch.adjustByteSize(existing, -1); err != nil {
- 				return err
- 			}
-@@ -299,13 +313,17 @@ func (ch *Changes[R, K]) AsRevisionChanges(lessThanFunc func(lhs, rhs K) bool) i
- // and returning the filtered changes.
- func (ch *Changes[R, K]) FilterAndRemoveRevisionChanges(lessThanFunc func(lhs, rhs K) bool, boundRev R) iter.Seq2[datastore.RevisionChanges, error] {
- 	return func(yield func(datastore.RevisionChanges, error) bool) {
-+		stopped := false
- 		for change, err := range ch.revisionChanges(lessThanFunc, boundRev, true) {
- 			if !yield(change, err) {
-+				stopped = true
- 				break
- 			}
- 		}
- 
--		ch.removeAllChangesBefore(boundRev)
-+		if err := ch.removeAllChangesBefore(boundRev); err != nil && !stopped {
-+			yield(datastore.RevisionChanges{}, err)
-+		}
- 	}
- }
- 
-@@ -367,13 +385,43 @@ func (ch *Changes[R, K]) revisionChanges(lessThanFunc func(lhs, rhs K) bool, bou
- 	}
- }
- 
--func (ch *Changes[R, K]) removeAllChangesBefore(boundRev R) {
-+// removeAllChangesBefore removes the records before the bound revision and releases their
-+// size from the buffered byte count, so the maximum size bounds what is currently buffered
-+// rather than everything the Changes has ever held.
-+func (ch *Changes[R, K]) removeAllChangesBefore(boundRev R) error {
- 	ch.recordsMutex.Lock()
- 	defer ch.recordsMutex.Unlock()
- 
- 	for rk, cr := range ch.records {
- 		if boundRev.GreaterThan(cr.rev) {
-+			if err := ch.releaseRecordByteSize(cr); err != nil {
-+				return err
-+			}
- 			delete(ch.records, rk)
- 		}
- 	}
-+
-+	return nil
-+}
-+
-+// releaseRecordByteSize subtracts the size of everything the record holds that was counted
-+// when it was added: relationship touches and deletes, and changed definitions.
-+// NOTE assumes that the mutex has been acquired.
-+func (ch *Changes[R, K]) releaseRecordByteSize(cr changeRecord[R]) error {
-+	for _, rel := range cr.relTouches {
-+		if err := ch.adjustByteSize(rel, -1); err != nil {
-+			return err
-+		}
-+	}
-+	for _, rel := range cr.relDeletes {
-+		if err := ch.adjustByteSize(rel, -1); err != nil {
-+			return err
-+		}
-+	}
-+	for _, def := range cr.definitionsChanged {
-+		if err := ch.adjustByteSize(def, -1); err != nil {
-+			return err
-+		}
-+	}
-+	return nil
- }
+-// externalStrategyPanicsCounter counts panics recovered from strategies registered by a program
+-// that embeds SpiceDB, by the strategy function's name, which comes from configuration.
+-var externalStrategyPanicsCounter = prometheus.NewCounterVec(prometheus.CounterOpts{
+-	Namespace: "spicedb",
+-	Subsystem: "dispatch",
+-	Name:      "remote_dispatch_external_strategy_panics_total",
+-	Help:      "number of panics recovered from secondary dispatch strategies registered by a program that embeds SpiceDB; each failed one participant or race instead of the process",
+-}, []string{"strategy"})
+-
+ func init() {
+-	prometheus.MustRegister(externalStrategyPanicsCounter)
+ 	prometheus.MustRegister(dispatchCounter)
+ 	prometheus.MustRegister(hedgeWaitHistogram)
+ 	prometheus.MustRegister(hedgeActualWaitHistogram)
 ```
 
-**File**: `internal/datastore/common/changes_test.go` (modified, +137/-0)
+**File**: `internal/dispatch/remote/strategy_external.go` (modified, +3/-51)
 ```diff
-@@ -10,6 +10,7 @@ import (
- 	"strings"
- 	"testing"
+@@ -2,14 +2,12 @@ package remote
  
-+	"github.com/ccoveille/go-safecast/v2"
- 	"github.com/stretchr/testify/require"
- 	"golang.org/x/sync/errgroup"
+ import (
+ 	"context"
+-	"runtime/debug"
+ 	"time"
  
-@@ -828,6 +829,142 @@ func TestMaximumSizeReplacement(t *testing.T) {
- 	require.Equal(t, int64(243), ch.currentByteSize)
+ 	"github.com/authzed/cel-go/cel"
+ 	"github.com/authzed/cel-go/common/types"
+ 	"github.com/authzed/cel-go/common/types/ref"
+ 
+-	log "github.com/authzed/spicedb/internal/logging"
+ 	"github.com/authzed/spicedb/pkg/dispatch/secondary"
+ )
+ 
+@@ -48,22 +46,13 @@ type externalStrategy struct {
+ 
+ func (s externalStrategy) name() string { return s.function }
+ 
+-// newPolicy creates the external policy for a race. If the strategy panics, the race runs the
+-// primary only.
+-func (s externalStrategy) newPolicy(r raceRequest) (policy racePolicy) {
+-	defer func() {
+-		if recovered := recover(); recovered != nil {
+-			reportExternalPanic(s.function, "NewPolicy", recovered)
+-			policy = primaryOnlyPolicy{}
+-		}
+-	}()
+-
++func (s externalStrategy) newPolicy(r raceRequest) racePolicy {
+ 	participants := make([]secondary.Participant, len(r.participants))
+ 	for i, p := range r.participants {
+ 		participants[i] = publicParticipant(p)
+ 	}
+ 
+-	adapted := externalPolicy{function: s.function, policy: s.strategy.NewPolicy(secondary.Race{
++	adapted := externalPolicy{policy: s.strategy.NewPolicy(secondary.Race{
+ 		Method:       r.reqKey,
+ 		Request:      r.request,
+ 		Participants: participants,
+@@ -81,36 +70,25 @@ func publicParticipant(p participant) secondary.Participant {
  }
  
-+// bufferedByteSize returns the size of everything currently buffered, which currentByteSize
-+// is expected to match whenever a maximum size is set.
-+func bufferedByteSize[R datastore.Revision, K comparable](ch *Changes[R, K]) int64 {
-+	ch.recordsMutex.RLock()
-+	defer ch.recordsMutex.RUnlock()
-+
-+	var size int64
-+	for _, cr := range ch.records {
-+		for _, rel := range cr.relTouches {
-+			size += int64(rel.SizeVT())
-+		}
-+		for _, rel := range cr.relDeletes {
-+			size += int64(rel.SizeVT())
-+		}
-+		for _, def := range cr.definitionsChanged {
-+			size += int64(def.SizeVT())
-+		}
-+	}
-+	return size
-+}
-+
-+func TestMaximumSizeReleasedOnRemove(t *testing.T) {
-+	ctx := t.Context()
-+	rel := tuple.MustParse("document:foo#viewer@user:tom")
-+
-+	// The bound fits two changes at once, so a long-lived stream that releases each change
-+	// before adding the next must never exceed it, however many changes it carries.
-+	maxSize, err := safecast.Convert[uint64](rel.SizeVT() * 2)
-+	require.NoError(t, err)
-+	ch := NewChanges(revisions.HLCKeyFunc, datastore.WatchRelationships, maxSize)
-+
-+	for i := 1; i <= 100; i++ {
-+		rev, err := revisions.HLCRevisionFromString(strconv.Itoa(i))
-+		require.NoError(t, err)
-+		nextRev, err := revisions.HLCRevisionFromString(strconv.Itoa(i + 1))
-+		require.NoError(t, err)
-+
-+		require.NoError(t, ch.AddRelationshipChange(ctx, rev, rel, tuple.UpdateOperationTouch), "iteration %d", i)
-+
-+		results, err := collectChanges(ch.FilterAndRemoveRevisionChanges(revisions.HLCKeyLessThanFunc, nextRev))
-+		require.NoError(t, err)
-+		require.Len(t, results, 1)
-+		require.True(t, ch.IsEmpty())
-+		require.Equal(t, int64(0), ch.currentByteSize, "iteration %d", i)
-+	}
-+}
-+
-+func TestMaximumSizePartialRemove(t *testing.T) {
-+	ctx := t.Context()
-+	ch := NewChanges(revisions.HLCKeyFunc, datastore.WatchRelationships|datastore.WatchSchema, 1<<20)
-+
-+	revs := make([]revisions.HLCRevision, 4)
-+	for i := range revs {
-+		rev, err := revisions.HLCRevisionFromString(strconv.Itoa(i + 1))
-+		require.NoError(t, err)
-+		revs[i] = rev
-+	}
-+
-+	// Fill the first two revisions with every kind of change that is counted.
-+	for _, rev := range revs[:2] {
-+		require.NoError(t, ch.AddRelationshipChange(ctx, rev, tuple.MustParse("document:foo#viewer@user:tom"), tuple.UpdateOperationTouch))
-+		require.NoError(t, ch.AddRelationshipChange(ctx, rev, tuple.MustParse("document:bar#viewer@user:sarah"), tuple.UpdateOperationDelete))
-+		require.NoError(t, ch.AddChangedDefinition(ctx, rev, &core.NamespaceDefinition{Name: "document"}))
-+		require.NoError(t, ch.AddChangedDefinition(ctx, rev, &core.CaveatDefinition{Name: "somecaveat", SerializedExpression: []byte("abc")}))
-+	}
-+	require.NoError(t, ch.AddRelationshipChange(ctx, revs[2], tuple.MustParse("document:baz#viewer@user:fred"), tuple.UpdateOperationTouch))
-+
-+	sizeBefore := ch.currentByteSize
-+	require.Equal(t, bufferedByteSize(ch), sizeBefore)
-+
-+	// Release the first two revisions; only the third remains counted.
-+	results, err := collectChanges(ch.FilterAndRemoveRevisionChanges(revisions.HLCKeyLessThanFunc, revs[2]))
-+	require.NoError(t, err)
-+	require.Len(t, results, 2)
-+	require.Equal(t, int64(tuple.MustParse("document:baz#viewer@user:fred").SizeVT()), ch.currentByteSize)
-+	require.Equal(t, bufferedByteSize(ch), ch.currentByteSize)
-+
-+	results, err = collectChanges(ch.FilterAndRemoveRevisionChanges(revisions.HLCKeyLessThanFunc, revs[3]))
-+	require.NoError(t, err)
-+	require.Len(t, results, 1)
-+	require.Equal(t, int64(0), ch.currentByteSize)
-+}
-+
-+func TestMaximumSizeTouchReplacement(t *testing.T) {
-+	ctx := t.Context()
-+	rel := tuple.MustParse("document:foo#viewer@user:tom")
-+	ch := NewChanges(revisions.HLCKeyFunc, datastore.WatchRelationships, 1<<20)
-+
-+	rev, err := revisions.HLCRevisionFromString("1")
-+	require.NoError(t, err)
-+
-+	require.NoError(t, ch.AddRelationshipChange(ctx, rev, rel, tuple.UpdateOperationTouch))
-+	require.NoError(t, ch.AddRelationshipChange(ctx, rev, rel, tuple.UpdateOperationTouch))
-+	require.Equal(t, int64(rel.SizeVT()), ch.currentByteSize)
-+	require.Equal(t, bufferedByteSize(ch), ch.currentByteSize)
-+}
-+
-+func TestMaximumSizeDeleteReplacement(t *testing.T) {
-+	ctx := t.Context()
-+	rel := tuple.MustParse("document:foo#viewer@user:tom")
-+	ch := NewChanges(revisions.HLCKeyFunc, datastore.WatchRelationships, 1<<20)
-+
-+	rev, err := revisions.HLCRevisionFromString("1")
-+	require.NoError(t, err)
-+
-+	require.NoError(t, ch.AddRelationshipChange(ctx, rev, rel, tuple.UpdateOperationDelete))
-+	require.NoError(t, ch.AddRelationshipChange(ctx, rev, rel, tuple.UpdateOperationDelete))
-+	require.Equal(t, int64(rel.SizeVT()), ch.currentByteSize)
-+	require.Equal(t, bufferedByteSize(ch), ch.curren
+ // externalPolicy adapts a secondary.Policy to the engine's racePolicy.
+-//
+-// The policy is code of the program that embeds SpiceDB, called from participant goroutines that
+-// nothing else recovers. So that a bug in it fails a dispatch instead of the process, every call
+-// recovers from a panic: it is logged and counted, and the call is taken as the safest answer
+-// (the participant does not start, does not claim the race, or the engine's default error is
+-// returned).
+ type externalPolicy struct {
+-	function string
+-	policy   secondary.Policy
++	policy secondary.Policy
+ }
+ 
+ func (e externalPolicy) start(ctx context.Context, p participant) bool {
+-	defer e.recoverCallback("Start")
+ 	return e.policy.Start(ctx, publicParticipant(p))
+ }
+ 
+ func (e externalPolicy) readyToClaim(ctx context.Context, p participant, received int, complete bool) bool {
+-	defer e.recoverCallback("ReadyToClaim")
+ 	return e.policy.ReadyToClaim(ctx, publicParticipant(p), received, complete)
+ }
+ 
+ func (externalPolicy) firstResult(participant, time.Duration) {}
+ 
+ func (e externalPolicy) done(p participant, err error) {
+-	defer e.recoverCallback("Done")
+ 	e.policy.Done(publicParticipant(p), err)
+ }
+ 
+ func (e externalPolicy) noWinnerError(errs map[string]error) error {
+-	defer e.recoverCallback("NoWinnerError")
+ 	return e.policy.NoWinnerError(errs)
+ }
+ 
+@@ -121,31 +99,5 @@ type observingExternalPolicy struct {
+ }
+ 
+ func (o observingExternalPolicy) observe(p participant, result any) {
+-	defer o.recoverCallback("ObserveResult")
+ 	o.observer.ObserveResult(publicParticipant(p), result)
+ }
+-
+-// recoverCallback recovers from a panic in a policy callback, which then returns its results'
+-// zero values. It must be deferred directly.
+-func (e externalPolicy) recoverCallback(callback string) {
+-	if recovered := recover(); recovered != nil {
+-		reportExternalPanic(e.function, callback, recovered)
+-	}
+-}
+-
+-func reportExternalPanic(function, callback string, recovered any) {
+-	externalStrategyPanicsCounter.WithLabelValues(function).Inc()
+-	log.Error().
+-		Str("strategy", function).
+-		Str("callback", callback).
+-		Interface("panic", recovered).
+-		Bytes("stack", debug.Stack()).
+-		Msg("secondary dispatch strategy panicked; failing the participant instead of the process")
+-}
+-
+-// primaryOnlyPolicy runs the primary only: it replaces a policy the strategy failed to create.
+-type primaryOnlyPolicy struct {
+-	basePolicy
+-}
+-
+-func (primaryOnlyPolicy) start(_ context.Context, p participant) bool { return p.primary }
+```
+
+**File**: `internal/dispatch/remote/strategy_external_test.go` (modified, +0/-75)
+```diff
+@@ -227,78 +227,3 @@ func TestExternalPolicyDelegatesNoWinnerError(t *testing.T) {
+ 	adapted.firstResult(testSecondary, time.Millisecond) // external policies are not told latencies
+ 	require.ErrorIs(t, adapted.noWinnerError(map[string]error{primaryDispatcher: errors.New("primary failed")}), want)
+ }
+-
+-// panickingStrategy panics in the callbacks it is told to.
+-type panickingStrategy struct {
+-	inNewPolicy, inObserve, inPrimaryClaim bool
+-}
+-
+-func (s panickingStrategy) NewPolicy(secondary.Race) secondary.Policy {
+-	if s.inNewPolicy {
+-		panic("NewPolicy failed")
+-	}
+-	return panickingPolicy{strategy: s}
+-}
+-
+-type panickingPolicy struct {
+-	secondary.BasePolicy
+-	strategy panickingStrategy
+-}
+-
+-func (p panickingPolicy) ObserveResult(secondary.Participant, any) {
+-	if p.strategy.inObserve {
+-		panic("ObserveResult failed")
+-	}
+-}
+-
+-func (p panickingPolicy) ReadyToClaim(ctx context.Context, pt secondary.Participant, received int, complete bool) bool {
+-	if pt.Primary && p.strategy.inPrimaryClaim {
+-		panic("ReadyToClaim failed")
+-	}
+-	// Only the primary may win, so the outcome does not depend on scheduling.
+-	return pt.Primary && p.BasePolicy.ReadyToClaim(ctx, pt, received, complete)
+-}
+-
+-func TestExternalStrategyPanicsAreContained(t *testing.T) {
+-	tests := []struct {
+-		name     string
+-		strategy panickingStrategy
+-		wantErr  bool
+-	}{
+-		{name: "NewPolicy: the race runs the primary only", strategy: panickingStrategy{inNewPolicy: true}},
+-		{name: "ObserveResult: the result is still used", strategy: panickingStrategy{inObserve: true}},
+-		{name: "ReadyToClaim: the participant does not win", strategy: panickingStrategy{inPrimaryClaim: true}, wantErr: true},
+-	}
+-
+-	for _, tc := range tests {
+-		t.Run(tc.name, func(t *testing.T) {
+-			synctest.Test(t, func(t *testing.T) {
+-				primary := &gatedCheckClient{resp: &v1.DispatchCheckResponse{Metadata: &v1.ResponseMeta{DispatchCount: fromPrimary}}}
+-				secondaryClient := &gatedCheckClient{resp: &v1.DispatchCheckResponse{Metadata: &v1.ResponseMeta{DispatchCount: fromSecondary}}}
+-				parsed, err := ParseDispatchExpression("check", "panicking(['secondary'])",
+-					secondary.Function{Name: "panicking", Strategy: tc.strategy})
+-				require.NoError(t, err)
+-				d, err := NewClusterDispatcher(primary, nil, ClusterDispatcherConfig{
+-					DispatchOverallTimeout: time.Hour,
+-					SecondaryDispatch: map[string]SecondaryDispatch{
+-						"secondary": {Name: "secondary", Client: secondaryClient, MaximumPrimaryHedgingDelay: time.Millisecond},
+-					},
+-					SecondaryDispatchExprs:      map[string]*DispatchExpr{"check": parsed},
+-					StartingPrimaryHedgingDelay: time.Millisecond,
+-				})
+-				require.NoError(t, err)
+-				panics := testutil.ToFloat64(externalStrategyPanicsCounter.WithLabelValues("panicking"))
+-
+-				resp, err := d.DispatchCheck(t.Context(), testCheckRequest())
+-				synctest.Wait() // a losing participant's callbacks may still be running
+-				if tc.wantErr {
+-					require.Error(t, err)
+-				} else {
+-					require.NoError(t, err)
+-					require.Equal(t, fromPrimary, resp.Metadata.DispatchCount)
+-				}
+-				require.Greater(t, testutil.ToFloat64(externalStrategyPanicsCounter.WithLabelValues("panicking")), panics)
+-			})
+-		})
+-	}
+-}
+```
+
+**File**: `pkg/dispatch/secondary/secondary.go` (modified, +2/-3)
+```diff
+@@ -74,9 +74,8 @@ type Participant struct {
+ // participants' goroutines, so implementations must be safe for concurrent use. Embed BasePolicy
+ // to keep the default decisions.
+ //
+-// A panic in NewPolicy or in a Policy method is recovered, logged and counted in
+-// remote_dispatch_external_strategy_panics_total: the race then runs the primary only, or the
+-// participant does not start or claim the race, or the engine's default error is returned.
++// As elsewhere in SpiceDB, a panic in a Strategy or Policy is not recovered: it crashes the
++// process.
+ type Policy interface {
+ 	// Start blocks until p may start, and must return promptly once ctx is done. Returning false
+ 	// means p never runs.
 ```
 
 ---
 
-### Incident Patch 3: `abb5b0d6` (2026-11-17)
-**Commit Message**: chore: fix another test flake (#3504)
+### Incident Patch 3: `ec377f15` (2026-11-18)
+**Commit Message**: fix(graph): give each LookupResources3 producer its own caveat runner (#3509)
 
-**File**: `internal/dispatch/remote/cluster_test.go` (modified, +11/-2)
+* fix(graph): give each LookupResources3 producer its own caveat runner
+
+LookupResources3 created one CaveatRunner per request and shared it, via
+lr3refs, with the relationshipsIter producers, which run concurrently.
+CaveatRunner caches caveat definitions and compiled caveats in plain maps,
+so evaluating caveated relationships on several entrypoints at once raced
+on those maps and could abort the process with "concurrent map writes".
+
+Create the runner inside each producer instead, as LookupResources2 does.
+Compiled caveats remain shared through the schema-tied compiled caveat
+cache, so this only costs two small maps per producer.
+
+Add a LookupResources3 case with three caveated relations unioned into one
+permission; under -race it reports the data race without this change.
+
+Fixes DATA-1099
+
+* chore: changelog
+
+---------
+
+Co-authored-by: Tanner Stirrat <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -48,7 +48,13 @@ type fakeDispatchSvc struct {
+@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+ - Dispatch and telemetry: CA bundles read from disk via `--dispatch-upstream-ca-path` and the telemetry client's CA path are now re-read on every outbound TLS handshake, so a rotated certificate authority is picked up without a process restart. Previously the CA pool was set once at startup and stayed fixed for the life of the process, causing handshakes to fail with "certificate signed by unknown authority" after the old CA was retired. (https://github.com/authzed/spicedb/pull/3296)
+ - Dispatch: LookupResources cursors are now locked to the dispatcher that produced them when secondary dispatchers are configured. Previously a cursor returned by a secondary was never tagged, and LookupResources3 cursors were never checked at all, so every page raced the primary against the secondaries and a cursor produced by one could be sent to the other, failing the request with an invalid cursor error. A cursor without a secondary tag is now resumed by the primary only.
+ - Dispatch: when a LookupResources continuation locked to a secondary dispatcher fails, the secondary's error is now returned with its gRPC status, instead of a generic "no dispatcher returned results" error with code Unknown. (https://github.com/authzed/spicedb/pull/3468)
++- LookupResources v3: fixed an issue with concurrent map writes in the caveat runner by giving each producer its own caveat runner. (https://github.com/authzed/spicedb/pull/3509)
  
- func (fds *fakeDispatchSvc) DispatchCheck(ctx context.Context, _ *v1.DispatchCheckRequest) (*v1.DispatchCheckResponse, error) {
- 	fds.calls.Add(1)
--	time.Sleep(fds.sleepTime)
+ ## [1.57.1] - 2026-11-10
+ ### Fixed
+```
+
+**File**: `internal/dispatch/graph/lookupresources3_test.go` (modified, +33/-0)
+```diff
+@@ -426,6 +426,39 @@ func TestLookupResources3OverSchemaWithCursors(t *testing.T) {
+ 			genResourceIds("document", 2450),
+ 			[]string{"somecondition"},
+ 		},
++		{
++			"caveats evaluated by concurrent producers",
++			`definition user {}
 +
-+	// Stop sleeping once the caller cancels, so a dispatcher that lost a race does not keep
-+	// running in the background.
-+	select {
-+	case <-time.After(fds.sleepTime):
-+	case <-ctx.Done():
-+	}
++			 caveat firstcaveat(first int) {
++				first == 1
++			 }
++
++			 caveat secondcaveat(second int) {
++				second == 2
++			 }
++
++			 caveat thirdcaveat(third int) {
++				third == 3
++			 }
++
++			 definition document {
++				relation viewer: user with firstcaveat
++				relation editor: user with secondcaveat
++				relation owner: user with thirdcaveat
++				permission view = viewer + editor + owner
++			 }`,
++			joinTuples(
++				genRelsWithCaveat("document", "viewer", "user", "tom", "firstcaveat", map[string]any{"first": 1}, 0, 500),
++				genRelsWithCaveat("document", "editor", "user", "tom", "secondcaveat", map[string]any{"second": 2}, 500, 500),
++				genRelsWithCaveat("document", "owner", "user", "tom", "thirdcaveat", map[string]any{"third": 3}, 1000, 500),
++			),
++			RR("document", "view"),
++			ONR("user", "tom", "..."),
++			nil,
++			genResourceIds("document", 1500),
++			nil,
++		},
+ 		{
+ 			"larger arrow dispatch",
+ 			`definition user {}
+```
+
+**File**: `internal/graph/lookupresources3.go` (modified, +6/-7)
+```diff
+@@ -273,13 +273,10 @@ func (crr *CursoredLookupResources3) LookupResources3(req ValidatedLookupResourc
+ 		return err
+ 	}
+ 	ts := schema.NewTypeSystem(schema.ResolverFor(sr))
+-	caveatRunner := caveats.NewCaveatRunner(crr.caveatTypeSet)
+-
+ 	refs := lr3refs{
+ 		req:              req,
+ 		reader:           reader,
+ 		ts:               ts,
+-		caveatRunner:     caveatRunner,
+ 		concurrencyLimit: crr.concurrencyLimit,
+ 	}
  
- 	select {
- 	case <-ctx.Done():
-@@ -1008,7 +1014,10 @@ func TestGetPrimaryWaitTime(t *testing.T) {
+@@ -362,9 +359,6 @@ type lr3refs struct {
+ 	// ts is the type system used to resolve types and relations for the lookup resources operation.
+ 	ts *schema.TypeSystem
  
- func TestCheckUsesMaximumDelayByDefaultForPrimary(t *testing.T) {
- 	conn := connectionForDispatching(t, &fakeDispatchSvc{dispatchCount: 1, sleepTime: 0 * time.Millisecond})
--	secondaryConn := connectionForDispatching(t, &fakeDispatchSvc{dispatchCount: 2, sleepTime: 20 * time.Millisecond})
-+	// The primary starts immediately, so only the secondary's sleep keeps it from winning. Make
-+	// it long enough that a slow primary on a loaded CI runner still wins; the secondary stops
-+	// sleeping as soon as the race is over.
-+	secondaryConn := connectionForDispatching(t, &fakeDispatchSvc{dispatchCount: 2, sleepTime: 5 * time.Second})
+-	// caveatRunner is the caveat runner used to run caveats for the lookup resources operation.
+-	caveatRunner *caveats.CaveatRunner
+-
+ 	// concurrencyLimit is the maximum number of concurrent operations that can be performed.
+ 	concurrencyLimit uint16
+ }
+@@ -881,6 +875,11 @@ func (crr *CursoredLookupResources3) relationshipsIter(
+ 						return
+ 					}
  
- 	parsed, err := ParseDispatchExpression("check", "['secondary']")
- 	require.NoError(t, err)
++					// Producers run concurrently and CaveatRunner is not safe for concurrent use,
++					// so each producer gets its own runner. Compiled caveats are still shared via
++					// the schema-tied compiled caveat cache.
++					caveatRunner := caveats.NewCaveatRunner(crr.caveatTypeSet)
++
+ 					rm := newRelationshipsChunk(int(crr.dispatchChunkSize), dbCursor)
+ 					for rel, err := range relationships {
+ 						if err != nil {
+@@ -892,7 +891,7 @@ func (crr *CursoredLookupResources3) relationshipsIter(
+ 						var missingContextParameters []string
+ 						if rel.OptionalCaveat != nil && rel.OptionalCaveat.CaveatName != "" {
+ 							caveatExpr := caveats.CaveatAsExpr(rel.OptionalCaveat)
+-							runResult, err := refs.caveatRunner.RunCaveatExpression(ctx, caveatExpr, refs.req.Context.AsMap(), caveatSR, caveats.RunCaveatExpressionNoDebugging)
++							runResult, err := caveatRunner.RunCaveatExpression(ctx, caveatExpr, refs.req.Context.AsMap(), caveatSR, caveats.RunCaveatExpressionNoDebugging)
+ 							if err != nil {
+ 								yieldError(err)
+ 								return
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3509** (2026-11-18): fix(graph): give each LookupResources3 producer its own caveat runner (@ostafen)
+- **PR #3508** (2026-11-18): refactor(dispatch): stop recovering panics from external strategies (@ostafen)
 - **PR #3507** (2026-11-18): fix(docker): update grpc_health_probe to v0.4.63 for CVE-2026-97054 (@ostafen)
 - **PR #3506** (2026-11-18): feat(dispatch): let programs that embed SpiceDB add secondary dispatch strategies (@ostafen)
 - **PR #3505** (closed): feat(dispatch): add a compare secondary dispatch strategy for Check (@ostafen)
 - **PR #3504** (2026-11-17): chore: fix test flake in race logic (@tstirrat15)
-- **PR #3501** (2026-11-17): fix(datastore): release watch buffer bytes when changes are sent (@julianleonard123)
-- **PR #3499** (2026-11-16): feat(cmd): add --grpc-max-conn-age-grace (@ecordell)
 
 ---
 
@@ -1505,31 +1696,37 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docker): update grpc_health_probe to v0.4.63 for CVE-2026-97054
+## X. fix test panic
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/datastore/memdb/memdb.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2c12a6e8`: docker): update grpc_health_probe to v0.4.63 for CVE-2026-97054. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9e95eba`: fix test panic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/datastore/memdb/memdb.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Container images: `grpc_health_probe` is updated to v0.4.63, built with Go 1.27.4, which fixes CVE-2026-97054 in `net/http`'s `MaxBytesReader` for HTTP/1 servers. v0.4.61 was built with Go 1.27.3. The `spicedb` binary is not affected.
+		return newErrorReader(err)
+		return newErrorReader(errors.New("memdb datastore is not ready"))
+		return newErrorReader(err)
+		return newErrorReader(errors.New("memdb datastore is already closed"))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		return &memdbReader{nil, nil, err, time.Now()}
+		return &memdbReader{nil, nil, errors.New("memdb datastore is not ready"), time.Now()}
+		return &memdbReader{nil, nil, err, time.Now()}
+		return &memdbReader{nil, nil, errors.New("memdb datastore is already closed"), time.Now()}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2c12a6e8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9e95eba` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

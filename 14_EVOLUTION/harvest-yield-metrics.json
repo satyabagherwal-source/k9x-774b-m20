@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T16:25:01.214Z",
-  "total_cycles_completed": 10812,
-  "total_learnings_persisted": 10812,
-  "total_rules_promoted": 10180,
+  "last_updated": "2026-11-19T16:33:29.475Z",
+  "total_cycles_completed": 10818,
+  "total_learnings_persisted": 10818,
+  "total_rules_promoted": 10185,
   "history": [
-    {
-      "timestamp": "2026-11-18T21:42:08.920Z",
-      "repository": "bigscience/bloom",
-      "learningId": "learn-huggingface-bigscience-bloom",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T21:42:10.797Z",
-      "repository": "transact-rs/sqlx",
-      "learningId": "learn-github-transact-rs-sqlx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T21:42:19.075Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T21:42:22.733Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T21:42:26.390Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T21:50:06.672Z",
-      "repository": "stabilityai/stable-diffusion-3-medium",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T21:50:09.761Z",
       "repository": "grpc/grpc-rust",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-11-19T16:25:01.214Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T16:33:14.192Z",
+      "repository": "black-forest-labs/flux-3-image-klein",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T16:33:17.957Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T16:33:21.847Z",
+      "repository": "darrylmorley/whatcable",
+      "learningId": "learn-github-darrylmorley-whatcable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T16:33:26.214Z",
+      "repository": "authzed/spicedb",
+      "learningId": "learn-github-authzed-spicedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T16:33:27.997Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T16:33:29.475Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

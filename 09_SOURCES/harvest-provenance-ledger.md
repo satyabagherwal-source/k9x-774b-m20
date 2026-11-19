@@ -11356,3 +11356,9 @@ Every entry in this ledger must capture:
 | `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `3f0ffc85` | Multi-dimensional audit evidence | 2026-11-19T16:24:50.885Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `93ba239f` | Multi-dimensional audit evidence | 2026-11-19T16:25:01.209Z |
 | `learn-dom-d-b8ecd4b4` | `project://hf-liquidai-lfm2.5-24b-a2b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md` | 2026-11-19T16:25:30.743Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-19T16:33:14.187Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `084e3627` | Multi-dimensional audit evidence | 2026-11-19T16:33:17.951Z |
+| `learn-github-darrylmorley-whatcable` | `https://github.com/darrylmorley/whatcable` | `6dcd0c37` | Multi-dimensional audit evidence | 2026-11-19T16:33:21.842Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `c9e95eba` | Multi-dimensional audit evidence | 2026-11-19T16:33:26.209Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `c4919869` | Multi-dimensional audit evidence | 2026-11-19T16:33:27.992Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `ae665a46` | Multi-dimensional audit evidence | 2026-11-19T16:33:29.470Z |

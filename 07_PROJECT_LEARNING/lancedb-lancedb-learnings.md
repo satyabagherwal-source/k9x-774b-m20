@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `a6d7d02f`  
+> **Source Version**: `ae665a46`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T13:17:31.032Z  
+> **Timestamp**: 2026-11-19T16:33:28.521Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T13:17:31.025Z  
+> **Harvest Timestamp**: 2026-11-19T16:33:28.516Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11934 stars
+- **Stars / Engagement**: 11947 stars
 
 ---
 
@@ -1254,569 +1254,510 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a653d861` (2026-11-18)
-**Commit Message**: fix(python): allow static diagnostic imports in Functions (#5084)
+### Incident Patch 1: `ae665a46` (2026-11-19)
+**Commit Message**: docs: mark Blob v2 GA for ordinary tables in Enterprise 1.15.0 (#5094)
 
-Functions previously rejected every `sys` or `importlib` import even
-when the source only used a statically visible diagnostic. Allow exactly
-`sys.stderr`, `sys.version_info`, and `importlib.metadata.version`, with
-direct imports, `from` imports, and aliases treated identically whether
-they appear at module level or inside the function or class body.
+The Quickstart and table guide describe Blob columns as Early access
+without naming a product version. Document general availability for
+ordinary tables starting with LanceDB Enterprise 1.15.0 and make the
+Realtime Engine and MemWAL scope visible in the table guide.
 
-Every other use of a namespace-access module still fails at decoration.
-The error now names the rejected operation, such as `sys.modules`, and
-lists the supported diagnostic operations.
+Xuanwo confirmed Enterprise 1.15.0 as the first edition to document GA
+for ordinary-table Blob v2. Enterprise 1.13.0 and 1.14.0 retain their
+existing status. The Enterprise 1.15.0 edition must carry this wording
+when prepared from its release inputs. Earlier saved editions keep their
+historical guidance.
 
-Tests package and execute the artifact offline for each import form, and
-reject unsupported attributes, submodules, dynamic attribute access, and
-rebinding. ENT-3918.
+Refs ENT-3556.
 
-**File**: `docs/src/python/python.md` (modified, +35/-13)
+**File**: `docs/web/management/table.mdx` (modified, +3/-7)
 ```diff
-@@ -481,19 +481,41 @@ scaler.close()
- ### Function packaging restrictions
+@@ -395,16 +395,12 @@ file, up to 64 KiB by default, and larger values are stored outside it.
  
- The decorator snapshots the Function's source and referenced globals into a new
--module. It conservatively rejects imports of `sys`, `builtins`, `importlib`,
--`inspect`, `gc`, `ctypes`, and `types`, including submodules such as `ctypes.util`
--and `importlib.metadata`. This applies to imports inside function or class bodies
--and references to module-level aliases. Even ordinary uses such as `sys.version`
--and `ctypes.util.find_library` are blocked: these modules can reach names outside
--the reconstructed Function namespace. References to `globals`, `locals`, `vars`,
--`eval`, `exec`, `compile`, and `__import__` are rejected as dynamic namespace access.
--These restrictions also apply to the deprecated `@udf` alias.
+ ### Blob columns {#multimodal-blob-v2}
+ 
+-<Badge color="purple">Early access</Badge>
 -
--For legitimate uses, move the code into an importable helper module and ship it
--with `code=`, or install its package with `pip=` or `conda=`. Imported helpers keep
--their own namespace; the packager does not scan their bodies. Helpers defined in
--`__main__` are copied by source and have the same restrictions as the Function.
-+module. It supports three statically recognizable diagnostic operations:
-+`sys.stderr`, `sys.version_info`, and `importlib.metadata.version`. Direct
-+imports, `from` imports, and aliases are treated the same way, whether the
-+import appears inside a function or class body or at module level.
-+
-+Other imports of `sys`, `builtins`, `importlib`, `inspect`, `gc`, `ctypes`, and
-+`types`, including submodules such as `ctypes.util` and `importlib.resources`,
-+remain blocked. This applies to imports inside function or class bodies and
-+references to module-level aliases. Even ordinary uses such as `sys.version`
-+and `ctypes.util.find_library` are blocked: these modules can reach names
-+outside the reconstructed Function namespace. References to `globals`, `locals`,
-+`vars`, `eval`, `exec`, `compile`, and `__import__` are rejected as dynamic
-+namespace access. These restrictions also apply to the deprecated `@udf` alias.
-+
-+For example, a diagnostic Function can report its Python version and NumPy
-+version without a helper module:
-+
-+```python
-+import importlib.metadata
-+import sys
-+
-+from lancedb import function
-+
-+
-+@function(pip=["numpy"])
-+def report(value: int) -> str:
-+    print("diagnostic", file=sys.stderr)
-+    return f"numpy {importlib.metadata.version('numpy')} on {sys.version_info}"
-+```
-+
-+For other restricted uses, move the code into an importable helper module and
-+ship it with `code=`, or install its package with `pip=` or `conda=`. Imported
-+helpers keep their own namespace; the packager does not scan their bodies.
-+Helpers defined in `__main__` are copied by source and have the same
-+restrictions as the Function.
+ Filter rows by their metadata first. Then read the matching blob bytes in
+ Python, or copy the matching rows to another table with Enterprise SQL.
  
- For example, put this helper in `native_diagnostics/__init__.py`:
+-{/* Draft for Blob v2 GA. Confirm release status before removing Early access.
+-
+-Blob v2 GA supports standard tables. Tables with Realtime or MemWAL enabled
+-are outside the GA support scope.
+-*/}
++Starting with LanceDB Enterprise 1.15.0, Blob v2 is generally available on
++ordinary tables. Tables with Realtime Engine or MemWAL enabled are outside
++this support scope.
+ 
+ #### From image files to a filtered table {#photo-tutorial}
  
 ```
 
-**File**: `docs/web/management/function.mdx` (modified, +19/-0)
+**File**: `docs/web/quickstart.mdx` (modified, +2/-2)
 ```diff
-@@ -767,6 +767,25 @@ seen and unsupported where it cannot: `globals()`, `eval`, `sys.modules`,
- `builtins`. Closures and a non-standard `__builtins__` are rejected outright.
- </Warning>
+@@ -370,8 +370,8 @@ Store images, audio, or other binary data alongside vectors and metadata, in a c
+ For image files and larger payloads, follow the
+ [Blob photo tutorial](/management/table#photo-tutorial) to create an ordinary
+ Blob table, filter its metadata, save and check an image, and copy matching rows.
+-It includes an Embedded path and an Enterprise SQL path. Blob columns are in
+-Early access.
++The tutorial covers LanceDB Embedded and Enterprise SQL. Blob v2 is generally
++available on ordinary tables starting with LanceDB Enterprise 1.15.0.
  
-+Three statically recognizable diagnostic operations are supported: `sys.stderr`,
-+`sys.version_info`, and `importlib.metadata.version`. Direct imports, `from`
-+imports, and aliases work the same way. Any other use of `sys`, `builtins`,
-+`importlib`, `inspect`, `gc`, `ctypes`, or `types` is rejected; move it into an
-+importable helper module.
-+
-+```python
-+import importlib.metadata
-+import sys
-+
-+from lancedb import function
-+
-+
-+@function(pip=["numpy"])
-+def report(value: int) -> str:
-+    print("diagnostic", file=sys.stderr)
-+    return f"numpy {importlib.metadata.version('numpy')} on {sys.version_info}"
-+```
-+
- In practice this means a function should be self-contained: take its inputs as
- arguments, import what it needs at module level, and avoid capturing state from
- the surrounding scope.
-```
-
-**File**: `python/python/lancedb/functions.py` (modified, +214/-33)
-```diff
-@@ -16,6 +16,7 @@
- import base64
- import functools
- import hashlib
-+import importlib.metadata
- import importlib.util
- import inspect
- import symtable
-@@ -2114,6 +2115,17 @@ def _python_extension_type(data_type: pa.DataType) -> Optional[pa.ExtensionType]
- _DYNAMIC_NAMESPACE_ACCESS = frozenset(
-     {"globals", "locals", "vars", "eval", "exec", "compile", "__import__"}
- )
-+# Static diagnostic operations the packager can reconstruct. Anything else that
-+# reaches through a namespace-access module remains unrepresentable.
-+_APPROVED_NAMESPACE_ATTRIBUTES = {
-+    "sys": frozenset({"stderr", "version_info"}),
-+    "importlib.metadata": frozenset({"version"}),
-+}
-+_APPROVED_NAMESPACE_OPERATIONS = (
-+    "sys.stderr",
-+    "sys.version_info",
-+    "importlib.metadata.version",
-+)
- # Modules that hand out namespaces (`sys.modules`, `builtins`, importers,
- # introspection). The artifact's module namespace holds only the names it was
- # packaged with, so reaching around it cannot be represented.
-@@ -2128,28 +2140,170 @@ def _python_extension_type(data_type: pa.DataType) -> Optional[pa.ExtensionType]
- )
+ ## 8\. Train on your data {#8-train}
  
- 
-+_APPROVED_NAMESPACE_HINT = (
-+    "The supported diagnostic operations are "
-+    + ", ".join(_APPROVED_NAMESPACE_OPERATIONS)
-+    + ". "
-+)
-+
-+
-+def _namespace_operation_error(operations: Sequence[str]) -> ValueError:
-+    label = operations[0] if len(operations) == 1 else list(operations)
-+    return ValueError(
-+        f"@function cannot package namespace operation {label!r}. "
-+        "The artifact's module namespace holds only the names it was packaged "
-+        "with, so references that reach around it cannot be represented. "
-+        + _APPROVED_NAMESPACE_HINT
-+        + _NAMESPACE_HELPER_HINT
-+    )
-+
-+
- def _namespace_import_error(modules: Sequence[str]) -> ValueError:
-     return ValueError(
-         f"@function cannot package imports from namespace-access modules: {modules!r}. "
-         f"Imports of {', '.join(sorted(_NAMESPACE_MODULES))} (including submodules) "
-         "are blocked because they can access names outside the packaged "
--        "Function's reconstructed module namespace. " + _NAMESPACE_HELPER_HINT
-+        "Function's reconstructed module namespace. "
-+        + _APPROVED_NAMESPACE_HINT
-+        + _NAMESPACE_HELPER_HINT
-     )
- 
- 
--def _namespace_imports(definition: Union[ast.FunctionDef, ast.ClassDef]) -> list[str]:
--    found: set[str] = set()
-+def _namespace_import_bindings(
-+    definition: Union[ast.FunctionDef, ast.ClassDef],
-+) -> tuple[dict[str, frozenset[str]], list[str], list[str]]:
-+    """Return approved diagnostic bindings and rejected imports.
-+
-+    A binding maps the local name an import creates to the attribute paths
-+    that may be read through it. Rejected modules and operations are kept
-+    separate so each error names the relevant rule.
-+    """
-+    bindings: dict[str, frozenset[str]] = {}
-+    blocked_modules: set[str] = set()
-+    blocked_operations: set[str] = set()
-     for node in ast.walk(definition):
-         if isinstance(node, ast.Import):
--            found.update(
--                alias.name
--                for alias in node.names
--                if alias.name.split(".")[0] in _NAMESPACE_MODULES
--            )
--        elif isinstance(node, ast.ImportFrom) and node.module:
--            if node.module.split(".")[0] in _NAMESPACE_MODULES:
--                found.add(node.module)
--    return sorted(found)
-+            for alias in node.names:
-+                root = alias.name.split(".")[0]
-+                if root not in _NAMESPACE_MODULES:
-+                    continue
-+                attributes = _APPROVED_NAMESPACE_ATTRIBUTES.get(alias.name)
-+                if attributes is None:
-+                    blocked_modules.add(alias.name)
-+                    continue
-+                if alias.asname:
-+                    name = alias.asname
-+                    bases = frozenset(f"{name}.{attribute}" for attribute in attributes)
-+                else:
-+                    name = root
-+                    module = alias.name if "." in alias.name else name
-+                    bases = frozenset(
-+                        f"{module}.{attribute}" for attribute in attributes
-+                    )
-+                bindings[name] = bindings.get(name, frozenset()) | bases
-+        elif (
-+            isinstance(node, ast.ImportFrom)
-+            and node.level == 0
-+            and node.module
-+            and node.module.split(".")[0] in _NAMESPACE_MODULES
-+        ):
-+            if node.module == "importlib":
-+                for alias in node.names:
-+                    if alias.name == "metadata":
-+                        name = alias.asname or "metadata"
-+                        bindings[name] = bindings.get(name, frozenset()) | frozenset(
-+                            {f"{name}.version"}
-+                        )
-+                    else:
-+                        blocked_modules.add("importlib")
-+                continue
-+            attributes = _A
-```
-
-**File**: `python/python/tests/test_function_packaging.py` (modified, +140/-2)
-```diff
-@@ -727,15 +727,13 @@ def closes_over(value: int) -> int:
- @pytest.mark.parametrize(
-     "module_name",
-     [
--        "sys",
-         "builtins",
-         "importlib",
-         "inspect",
-         "gc",
-         "ctypes",
-         "types",
-         "ctypes.util",
--        "importlib.metadata",
-     ],
- )
- @pytest.mark.parametrize("import_style", ["import", "from", "global"])
-@@ -772,6 +770,146 @@ def test_namespace_module_errors_explain_the_rule_and_remedy(
-     assert "dynamic namespace access" not in message
- 
- 
-+@pytest.mark.parametrize("module_level", [False, True], ids=["body", "module"])
-+@pytest.mark.parametrize(
-+    ("import_statement", "expression"),
-+    [
-+        ("import sys", "sys.stderr"),
-+        ("import sys as diagnostic", "diagnostic.stderr"),
-+        ("from sys import stderr", "stderr"),
-+        ("from sys import stderr as error_stream", "error_stream"),
-+        ("import sys", "sys.version_info"),
-+        ("import sys as diagnostic", "diagnostic.version_info"),
-+        ("from sys import version_info", "version_info"),
-+        ("from sys import version_info as python_version", "python_version"),
-+        ("import importlib.metadata", "importlib.metadata.version('pytest')"),
-+        ("import importlib.metadata as diagnostic", "diagnostic.version('pytest')"),
-+        ("from importlib import metadata", "metadata.version('pytest')"),
-+        (
-+            "from importlib import metadata as diagnostic",
-+            "diagnostic.version('pytest')",
-+        ),
-+        ("from importlib.metadata import version", "version('pytest')"),
-+        (
-+            "from importlib.metadata import version as diagnostic",
-+            "diagnostic('pytest')",
-+        ),
-+    ],
-+)
-+def test_diagnostic_namespace_operations_package_and_run(
-+    helper_package, module_level, import_statement, expression
-+):
-+    if module_level:
-+        source = (
-+            f"{import_statement}\n\n"
-+            "def probe(value: str) -> str:\n"
-+            f"    return str({expression}) + value\n"
-+        )
-+    else:
-+        source = (
-+            "def probe(value: str) -> str:\n"
-+            f"    {import_statement}\n"
-+            f"    return str({expression}) + value\n"
-+        )
-+    module = helper_package("fx_diagnostic_operation", {"__init__.py": source})
-+
-+    packaged = artifact(function(module.probe)).decode()
-+    namespace = {}
-+    exec(compile(packaged, "user_function.py", "exec"), namespace)
-+    assert namespace["probe"]("!").endswith("!")
-+
-+
-+@pytest.mark.parametrize(
-+    ("body", "operation"),
-+    [
-+        ("import sys\nreturn str(sys.modules)", "sys.modules"),
-+        ("import sys as s\nreturn str(s.path)", "s.path"),
-+        ("import sys\nreturn str(sys.version)", "sys.version"),
-+        ("import sys\nreturn str(sys.stdout)", "sys.stdout"),
-+        ("import sys\nreturn str(getattr(sys, 'stderr'))", "sys"),
-+        ("import sys\nstream = sys\nreturn str(stream)", "sys"),
-+        ("import sys\nsys = object()\nreturn str(sys)", "sys"),
-+        ("from sys import path\nreturn str(path)", "sys.path"),
-+        (
-+            "import importlib.metadata\n"
-+            "return importlib.metadata.distribution('pytest').version",
-+            "importlib.metadata.distribution",
-+        ),
-+        (
-+            "import importlib.metadata as m\nreturn m.distribution('pytest').version",
-+            "m.distribution",
-+        ),
-+        (
-+            "from importlib.metadata import distribution\n"
-+            "return distribution('pytest').version",
-+            "importlib.metadata.distribution",
-+        ),
-+        (
-+            "from importlib.metadata import version\nreturn str(version.__globals__)",
-+            "version.__globals__",
-+        ),
-+        (
-+            "import importlib\nreturn str(importlib.import_module('os'))",
-+            "importlib",
-+        ),
-+        (
-+            "from importlib import import_module\nreturn str(import_module('os'))",
-+            "importlib",
-+        ),
-+        (
-+            "import importlib.resources\nreturn str(importlib.resources.files('x'))",
-+            "importlib.resources",
-+        ),
-+        ("import inspect\nreturn str(inspect.currentframe())", "inspect"),
-+        (
-+            "from ctypes import util\nreturn str(util.find_library('c'))",
-+            "ctypes",
-+        ),
-+        ("import gc\nreturn str(gc.get_objects())", "gc"),
-+        ("import builtins\nreturn str(builtins)", "builtins"),
-+        ("import types\nreturn str(types.SimpleNamespace())", "types"),
-+    ],
-+)
-+def test_unsupported_namespace_operations_are_rejected(helper_package, body, operation):
-+    source = "def blocked(value: str) -> str:\n" + textwrap.indent(body, "    ")
-+    module = helper_package(
-+        "fx_unsupported_namespace_operation", {"__init__.py": source}
-+    )
-+
-+    with pytest.raises(ValueError) as error:
-+        function(module.blocked)
-+    message = str(error.value)
-+    assert repr(operation) in message
 ```
 
 ---
 
-### Incident Patch 2: `a6d7d02f` (2026-11-18)
-**Commit Message**: docs: add semantic sampling guide (#5085)
+### Incident Patch 2: `4b428101` (2026-11-19)
+**Commit Message**: feat: expose the RTREE index in the Python and TypeScript SDKs (#4942)
 
-Add a standalone Semantic Sampling guide immediately below Statistical
-Sampling in Data Curation, with links from the curation overview and SQL
-sampling reference. Explain per-partition row quotas, repeatability,
-filtering order, and index requirements.
+Part of #4554. Supersedes #4555.
 
-```sql
-SELECT id, caption
-FROM documents
-TABLESAMPLE IVF (embedding, 100 ROWS)
-REPEATABLE (42);
+This exposes Lance's R-tree index in the Python and TypeScript SDKs.
+Python gets a `lancedb.index.RTree` config with an optional `page_size`,
+accepted by `create_index(config=...)` on local, async and remote
+tables. TypeScript gets `Index.rtree({ pageSize })` and `RTreeOptions`.
+Both map to the Rust crate's existing `Index::RTree`, so remote tables
+send `index_type: "RTREE"`. The index accelerates `ST_Intersects`,
+`ST_Contains`, `ST_Within`, `ST_Touches`, `ST_Crosses`, `ST_Overlaps`,
+`ST_Covers` and `ST_CoveredBy` filters between a GeoArrow column and a
+constant geometry, in either argument order, including as a prefilter on
+vector search. The scalar index docs page gets an R-tree section.
+
+`geo` is now a default feature of the Python and Node packages. Without
+it, a local table can neither build the index nor evaluate `ST_*`
+filters, and because wheels and npm packages are prebuilt, an opt-in
+Cargo feature would not reach users. pylance already ships with `geo`
+on. It adds pure-Rust crates under licenses that `deny.toml` already
+allows. `Cargo.lock` doesn't change, and the thi
+
+**File**: `docs/src/js/classes/Index.md` (modified, +48/-0)
+```diff
+@@ -258,3 +258,51 @@ using an underlying bitmap index.
+ #### Returns
+ 
+ [`Index`](Index.md)
++
++***
++
++### rtree()
++
++```ts
++static rtree(options?): Index
++```
++
++Create an RTree index.
++
++An RTree index is a scalar index on a GeoArrow geometry column, that is, a
++column whose Arrow field metadata sets `ARROW:extension:name` to a GeoArrow
++type such as `geoarrow.point`, `geoarrow.polygon` or `geoarrow.wkb`. It
++stores the bounding box of each geometry and accelerates spatial filters.
++
++The index accelerates `ST_Intersects`, `ST_Contains`, `ST_Within`,
++`ST_Touches`, `ST_Crosses`, `ST_Overlaps`, `ST_Covers` and `ST_CoveredBy`
++between the indexed column and a constant geometry, in either argument
++order, for example
++`ST_Within(geom, ST_GeomFromText('POLYGON ((...))'))`, as well as
++`geom IS NULL`. These filters can be combined with other conditions using
++`AND`.
++
++See the R-tree section of https://docs.lancedb.com/indexing/scalar-index
++for storing geometry, the other spatial functions, and spatial filters on
++vector search.
++
++Remote tables send the `RTREE` index type to the server, which must
++support it.
++
++#### Parameters
++
++* **options?**: `Partial`&lt;[`RTreeOptions`](../interfaces/RTreeOptions.md)&gt;
++
++#### Returns
++
++[`Index`](Index.md)
++
++#### Example
++
++```ts
++await table.createIndex("geom", { config: Index.rtree() });
++await table
++  .query()
++  .where("ST_Intersects(geom, ST_GeomFromText('POLYGON ((0 0, 4 0, 0 4, 0 0))'))")
++  .toArray();
++```
 ```
 
-**File**: `docs/web/curation/index.mdx` (modified, +1/-0)
+**File**: `docs/src/js/globals.md` (modified, +1/-0)
 ```diff
-@@ -24,6 +24,7 @@ records belong, and save the selected data or the rules used to produce it.
- | [Scope to what changed](/curation/changes) | How to process only the rows added since your last run. |
- | [Profile a dataset](/curation/aggregate) | Whether coverage, missing values and class balance suit the task. |
- | [Statistical Sampling](/curation/statistical-sampling) | Which random fraction to inspect or use for an experiment. |
-+| [Semantic Sampling](/curation/semantic-sampling) | How to draw rows from every cluster in an existing IVF vector index. |
- | [Selective Sampling](/curation/selective-sampling) | How to re-fetch specific rows by ID, address or offset. |
- | [Join datasets](/curation/join) | How to attach labels, metadata or scores stored elsewhere. |
- | [Rank and deduplicate](/curation/windowing) | Which records to keep when several share an explicit key. |
+@@ -137,6 +137,7 @@
+ - [QueryExecutionOptions](interfaces/QueryExecutionOptions.md)
+ - [RTEStats](interfaces/RTEStats.md)
+ - [RTEWriteSpec](interfaces/RTEWriteSpec.md)
++- [RTreeOptions](interfaces/RTreeOptions.md)
+ - [RefreshColumnOptions](interfaces/RefreshColumnOptions.md)
+ - [RefreshColumnResult](interfaces/RefreshColumnResult.md)
+ - [RefreshMaterializedViewResult](interfaces/RefreshMaterializedViewResult.md)
 ```
 
-**File**: `docs/web/curation/semantic-sampling.mdx` (added, +121/-0)
+**File**: `docs/src/js/interfaces/RTreeOptions.md` (added, +21/-0)
 ```diff
-@@ -0,0 +1,121 @@
-+---
-+title: "Semantic Sampling"
-+sidebarTitle: "Semantic Sampling"
-+description: "Sample rows from every cluster in an existing IVF vector index with SQL TABLESAMPLE IVF."
-+icon: circle-nodes
-+keywords: ["semantic sampling", "sampling", "tablesample", "ivf", "clusters", "embeddings", "repeatable"]
-+availability:
-+  embedded: unavailable
-+  enterprise: available
-+---
+@@ -0,0 +1,21 @@
++[**@lancedb/lancedb**](../README.md) • **Docs**
 +
-+Semantic sampling draws rows from every partition of an existing IVF vector
-+index. Each partition acts as a cluster of similar embeddings. Use it to
-+inspect examples across your embedding space, build a dataset with broader
-+topic coverage, or try an expensive operation on examples from each cluster.
-+The clusters reflect your embeddings and index; they do not guarantee
-+coverage of every label or topic.
++***
 +
-+## Sample rows from every cluster {#sample}
++[@lancedb/lancedb](../globals.md) / RTreeOptions
 +
-+Connect with an [Enterprise SQL client](/basics/sql). The examples assume a
-+`documents` table with `id`, `caption`, and `embedding` columns. The
-+`embedding` column must have an up-to-date, single-segment
-+[IVF vector index](/indexing/vector-index) that includes every live row.
-+Wait for the index build to finish before sampling.
++# Interface: RTreeOptions
++
++Options to create an `RTREE` index
++
++## Properties
++
++### pageSize?
++
++```ts
++optional pageSize: number;
++```
++
++The maximum number of entries in each R-tree page.
++
++Must be at least 2. The default is 4096.
+```
+
+**File**: `docs/web-tests/py/test_indexing.py` (modified, +77/-0)
+```diff
+@@ -561,6 +561,83 @@ def generate_uuids(num_items):
+     assert len(result) == n + len(new_users)
+ 
+ 
++def test_scalar_index_rtree(tmp_db):
++    db = tmp_db
++
++    # --8<-- [start:scalar_index_rtree_data]
++    import pyarrow as pa
++
++    point = pa.struct([("x", pa.float64()), ("y", pa.float64())])
++    schema = pa.schema(
++        [
++            pa.field("name", pa.string()),
++            pa.field(
++                "location", point, metadata={"ARROW:extension:name": "geoarrow.point"}
++            ),
++            pa.field("vector", pa.list_(pa.float32(), 2)),
++        ]
++    )
++    places = [
++        ("Ferry Building", -122.3937, 37.7955, [0.7, 0.3]),
++        ("Golden Gate Park", -122.4862, 37.7694, [0.1, 0.9]),
++        ("Oakland Museum", -122.2638, 37.7987, [1.0, 0.05]),
++    ]
++    data = pa.Table.from_pylist(
++        [
++            {"name": name, "location": {"x": x, "y": y}, "vector": vector}
++            for name, x, y, vector in places
++        ],
++        schema=schema,
++    )
++    table = db.create_table("places", data)
++    # --8<-- [end:scalar_index_rtree_data]
++
++    # --8<-- [start:scalar_index_rtree_create]
++    from lancedb.index import RTree
++
++    table.create_index("location", config=RTree())
++    # --8<-- [end:scalar_index_rtree_create]
++
++    # --8<-- [start:scalar_index_rtree_filter]
++    san_francisco = (
++        "ST_GeomFromText('POLYGON ((-122.52 37.70, -122.35 37.70, "
++        "-122.35 37.83, -122.52 37.83, -122.52 37.70))')"
++    )
++    in_san_francisco = f"ST_Within(location, {san_francisco})"
++
++    places_in_sf = table.search().where(in_san_francisco).select(["name"]).to_list()
++    # [{'name': 'Ferry Building'}, {'name': 'Golden Gate Park'}]
++    # --8<-- [end:scalar_index_rtree_filter]
++
++    assert sorted(row["name"] for row in places_in_sf) == [
++        "Ferry Building",
++        "Golden Gate Park",
++    ]
++
++    # --8<-- [start:scalar_index_rtree_vector]
++    # The nearest place overall is in Oakland; the spatial prefilter keeps the
++    # search inside San Francisco.
++    nearest_in_sf = (
++        table.search([1.0, 0.0])
++        .where(in_san_francisco)
++        .select(["name", "_distance"])
++        .limit(1)
++        .to_list()
++    )
++    # [{'name': 'Ferry Building', '_distance': 0.18}]
++    # --8<-- [end:scalar_index_rtree_vector]
++
++    assert nearest_in_sf[0]["name"] == "Ferry Building"
++    assert nearest_in_sf[0]["_distance"] == pytest.approx(0.18, abs=1e-6)
++    nearest = table.search([1.0, 0.0]).select(["name", "_distance"]).limit(1)
++    assert nearest.to_list()[0]["name"] == "Oakland Museum"
++
++    # --8<-- [start:scalar_index_rtree_explain]
++    plan = table.search().where(in_san_francisco).explain_plan(verbose=True)
++    assert "ScalarIndexQuery" in plan
++    # --8<-- [end:scalar_index_rtree_explain]
++
++
+ @pytest.mark.asyncio
+ async def test_scalar_index_nested_fields(mem_db_async):
+     db = mem_db_async
+```
+
+**File**: `docs/web/indexing/scalar-index.mdx` (modified, +141/-1)
+```diff
+@@ -20,19 +20,25 @@ import {
+     PyScalarIndexUuidWait as ScalarIndexUuidWait,
+     PyScalarIndexUuidUpsert as ScalarIndexUuidUpsert,
+     PyScalarIndexNestedFields as ScalarIndexNestedFields,
++    PyScalarIndexRtreeData as ScalarIndexRtreeData,
++    PyScalarIndexRtreeCreate as ScalarIndexRtreeCreate,
++    PyScalarIndexRtreeFilter as ScalarIndexRtreeFilter,
++    PyScalarIndexRtreeVector as ScalarIndexRtreeVector,
++    PyScalarIndexRtreeExplain as ScalarIndexRtreeExplain,
+ } from '/snippets/indexing.mdx';
+ 
+ Scalar indexes accelerate filters on values such as numbers, categories and
+ strings. Use them for selective table queries or metadata filters combined
+ with vector and full-text search.
+ 
+-LanceDB supports five types of scalar indexes:
++LanceDB supports these scalar index types, among others:
+ 
+ - `BTREE`: Stores column data in sorted order for binary search. Best for columns with many unique values.
+ - `BITMAP`: Uses bitmaps to track value presence. Ideal for columns with few unique values (e.g., categories, tags).
+ - `LABEL_LIST`: Special index for `List<T>` and `LargeList<T>` columns of primitive values supporting `array_has_all` and `array_has_any` queries.
+ - `FM`: FM-Index over string or binary columns that accelerates substring search via `contains(col, 'needle')`.
+ - `NGRAM`: Trigram index over UTF-8 string columns that accelerates substring search via `contains(col, 'needle')`, along with some `LIKE` and regular-expression filters.
++- `RTREE`: R-tree over GeoArrow geometry columns that accelerates spatial filters such as `ST_Intersects` and `ST_Within`.
+ 
+ <Tip title="Working with scalar indices">
+ Use scalar indexes with:
+@@ -52,6 +58,7 @@ Use scalar indexes with:
+ | List of low cardinality of numbers or strings                   | `array_has_any`, `array_has_all`          | `LABEL_LIST` |
+ | String or binary (`Utf8`, `LargeUtf8`, `Binary`, `LargeBinary`) | `contains(col, 'needle')`                 | `FM`         |
+ | String (`Utf8`, `LargeUtf8`)                                    | `contains(col, 'needle')`, `LIKE`, regex  | `NGRAM`      |
++| GeoArrow geometry (`geoarrow.point`, `geoarrow.polygon`, `geoarrow.wkb`, ...) | `ST_Intersects`, `ST_Within`, `ST_Contains` and other spatial relationships, `is null` | `RTREE` |
+ 
+ ## Scalar Index Operations
+ 
+@@ -222,6 +229,139 @@ before consolidating their segments. Consolidation rejects these legacy
+ row-ID segments. Tables without stable row IDs retain the earlier index format.
+ </Note>
+ 
++## R-tree index for geospatial filters {#rtree}
++
++The `RTREE` index is a scalar index over a column of GeoArrow geometries. It
++stores the bounding box of every geometry and accelerates spatial filters, on
++their own or as the prefilter of a vector search. Use it when queries restrict
++results to a region, such as the scenes over an area of interest, the places
++inside a city, or the log records along a route.
++
++### Store geometry as GeoArrow {#rtree-geoarrow}
++
++A column holds geometry when its Arrow field carries GeoArrow extension
++metadata: `ARROW:extension:name` names the geometry type, such as
++`geoarrow.point`, `geoarrow.linestring`, `geoarrow.polygon` or
++`geoarrow.multipolygon` for native coordinates, or `geoarrow.wkb` for
++well-known binary. LanceDB keeps that metadata when it stores the column.
++
++You can build the field with PyArrow alone. A point is a struct of `x` and `y`
++coordinates:
 +
 +<CodeGroup>
-+```sql SQL icon="database"
-+SELECT id, caption
-+FROM documents
-+TABLESAMPLE IVF (embedding, 100 ROWS)
-+REPEATABLE (42);
++    <CodeBlock filename="Python" language="Python" icon="python">
++    {ScalarIndexRtreeData}
++    </CodeBlock>
++</CodeGroup>
++
++Libraries such as [`geoarrow-rust-core`](https://pypi.org/project/geoarrow-rust-core/)
++(`geoarrow.rust.core`) produce arrays with this metadata already, so a table
++built from them works the same way.
++
++### Create an R-tree index {#rtree-create}
++
++Pass the `RTree` config in Python, `Index.rtree()` in TypeScript, or
++`Index::RTree` in Rust. The optional page size sets the maximum number of
++entries in each R-tree page; it must be at least 2 and defaults to 4096.
++
++<CodeGroup>
++    <CodeBlock filename="Python" language="Python" icon="python">
++    {ScalarIndexRtreeCreate}
++    </CodeBlock>
++
++```typescript TypeScript icon="square-js"
++import { Index } from "@lancedb/lancedb";
++
++await table.createIndex("location", { config: Index.rtree() });
++```
++
++```rust Rust icon="rust"
++use lancedb::index::Index;
++use lancedb::index::scalar::RTreeIndexBuilder;
++
++table
++    .create_index(&["location"], Index::RTree(RTreeIndexBuilder::default()))
++    .execute()
++    .await?;
 +```
 +</CodeGroup>
 +
-+This selects up to **100 rows from each IVF partition**, without replacement.
-+A partition with fewer than 100 rows contributes all its rows; empty
-+partitions contribute none. The result contains the table's existing columns,
-+so you can project the fields you need without returning `embedding`.
++`list_indices()` reports the index type as `"RTree"`, and `index_stats()`
++reports it as `"RTREE"`. In the Rust crate, building the index on a local
++table requires the `geo` feature; the Python and TypeScript packages include
++it. In the embedded library, `optimize()` adds new rows to the index. Rows
++that are not indexed yet are still filtered, just without the index.
 +
-+The count is per partition, not a limit on the whole result. For example:
++### Filter with spatial predicates {#rtree-filter}
 +
-+| Rows in a partition | Rows selected with `100 ROWS` |
-+| --- | --- |
-+| 5 | 5 |
-+| 100 | 100 |
-+| 1,000 | 100 |
-+
-+With 1,024 populated partitions, the query returns at most 102,400 rows.
-+Choose the quota with the number of partitions and your output budget in mind.
-+
-+Equal quotas give sparse clusters more weight relative to their size.
-+This makes semantic sampling useful for cluster coverage, but the resulting
-+sample does not preserve the table's overall distribution. Use
-+[Statistical Sampling](/curation/statistical-sampling) for uniform row
-+sampling or account for the different sampling probabilities when estimating
-+whole-table statistics.
-+
-+To group records by partition or select a subset of whole partitions, use
-+[`ivf_partition()`](/sql/dql/ivf-partition) instead. Its `count` argument
-+selects the number of partitions; `TABLESAMPLE IVF` selects rows within
-+every partition.
-+
-+## Repeat a sample {#repeatable}
-+
-+`REPEATABLE (42)` fixes the seed. With the same table snapshot, index, and
-+seed, repeated queries select the same rows. Output order is unspecified.
-+Omit `REPEATABLE` to draw a new sample each time.
-+
-+Changes to the source data or rebuilding the index can change the selected
-+rows even with the same seed. Save a sample when you need a fixed dataset
-+for evaluation or comparison:
-+
-+<CodeGroup>
-+```sql SQL icon="database"
-+CREATE TABLE semantic_eval AS
-+SELECT id, caption, embedding
-+FROM documents
-+TABLESAMPLE IVF (embedding, 100 ROWS)
-+REPEATABLE (42);
-+```
-+</CodeGroup>
-+
-+Create the output once with a fresh name and keep it unchanged. Record the
-+source version and sampling policy alongside the result.
-+
-+## Filter sampled rows {#filters}
-+
-+Sampling happens before `WHERE`, joins, aggregation, and an outer `LIMIT`.
-+For example, this draws up to 100 rows per partition and then removes rows
-+with missing captions:
-+
-+<CodeGroup>
-+```sql SQL icon="database"
-+SELECT id, caption
-+FROM documents
-+TABLESAMPLE IVF (embedding, 100 ROWS)
-+REPEATABLE (42)
-+WHERE caption IS NOT NULL;
-+```
-+</CodeGroup>
-+
-+The result can contain fewer than 100 rows from a partition after filtering.
-+If you need a quota from an eligible subset, first save that subset as a
-+base table and build its IVF index before sampling it.
-+
-+## Requirements and limits {#requirements}
-+
-+| Requirement | Behavior |
-+| --- | --- |
-+| Source | Sample a base table directly. Views, derived relations, WAL-backed tables, and `CHANGES` relations are unsupported. |
-+| Vector column | Name the indexed vector column directly, rather than an expression. |
-+| Index | Exactly one eligible IVF index segment must cover every current fragment and assign every live row exactly once. Missing, ambiguous, or stale indexes are rejected. |
-+| New or unindexed rows | Rebuild the index so all live rows are covered by a single segment. Null vectors omitted by the index also prevent complete coverage. |
-+| Deleted rows | Tables with deletion vectors are rejected. Compact deleted rows and rebuild the IVF index before sampling. |
-+| Row count and seed | Use nonnegative integer literals. A count of zero returns no rows. This mode accepts row counts, not percentages. |
-+
-+Sampling examines the membership of every partition and fetches projected
-+data for the select
++Spatial predica
 ```
 
-**File**: `docs/web/curation/statistical-sampling.mdx` (modified, +2/-0)
+**File**: `docs/web/snippets/indexing.mdx` (modified, +10/-0)
 ```diff
-@@ -16,6 +16,8 @@ statistics without reading every row. For a random subset through the
- Python SDK instead -- in Embedded or Enterprise -- see
- [Permutation](/training/permutation). To select specific, known rows
- rather than a random fraction, see [Selective Sampling](/curation/selective-sampling).
-+To draw rows from every cluster of an existing vector index, use
-+[Semantic Sampling](/curation/semantic-sampling).
+@@ -26,6 +26,16 @@ export const PyScalarIndexOptimize = "table.add([{\"vector\": [7, 8], \"book_id\
  
- ## Example data {#example-data}
+ export const PyScalarIndexPrefilter = "table = db.open_table(\"book_with_embeddings\")\ntable.search([1.2] * 2).where(\"book_id != 3\").limit(10).to_pandas()\n";
  
-```
-
-**File**: `docs/web/docs.json` (modified, +1/-0)
-```diff
-@@ -450,6 +450,7 @@
-               "curation/create-function",
-               "curation/chunking",
-               "curation/statistical-sampling",
-+              "curation/semantic-sampling",
-               "curation/selective-sampling",
-               "curation/aggregate",
-               "curation/join",
-```
-
-**File**: `docs/web/sql/dql/sampling.mdx` (modified, +3/-0)
-```diff
-@@ -22,6 +22,9 @@ SELECT * FROM documents TABLESAMPLE (500 ROWS)  -- 500 rows
- 
- A bare number is a **percentage**. Add `ROWS` for a count instead.
- 
-+To sample rows independently from every partition of an IVF vector index,
-+use [`TABLESAMPLE IVF`](/curation/semantic-sampling).
++export const PyScalarIndexRtreeCreate = "from lancedb.index import RTree\n\ntable.create_index(\"location\", config=RTree())\n";
 +
- ## Rows or fragments {#methods}
++export const PyScalarIndexRtreeData = "import pyarrow as pa\n\npoint = pa.struct([(\"x\", pa.float64()), (\"y\", pa.float64())])\nschema = pa.schema(\n    [\n        pa.field(\"name\", pa.string()),\n        pa.field(\n            \"location\", point, metadata={\"ARROW:extension:name\": \"geoarrow.point\"}\n        ),\n        pa.field(\"vector\", pa.list_(pa.float32(), 2)),\n    ]\n)\nplaces = [\n    (\"Ferry Building\", -122.3937, 37.7955, [0.7, 0.3]),\n    (\"Golden Gate Park\", -122.4862, 37.7694, [0.1, 0.9]),\n    (\"Oakland Museum\", -122.2638, 37.7987, [1.0, 0.05]),\n]\ndata = pa.Table.from_pylist(\n    [\n        {\"name\": name, \"location\": {\"x\": x, \"y\": y}, \"vector\": vector}\n        for name, x, y, vector in places\n    ],\n    schema=schema,\n)\ntable = db.create_table(\"places\", data)\n";
++
++export const PyScalarIndexRtreeExplain = "plan = table.search().where(in_san_francisco).explain_plan(verbose=True)\nassert \"ScalarIndexQuery\" in plan\n";
++
++export const PyScalarIndexRtreeFilter = "san_francisco = (\n    \"ST_GeomFromText('POLYGON ((-122.52 37.70, -122.35 37.70, \"\n    \"-122.35 37.83, -122.52 37.83, -122.52 37.70))')\"\n)\nin_san_francisco = f\"ST_Within(location, {san_francisco})\"\n\nplaces_in_sf = table.search().where(in_san_francisco).select([\"name\"]).to_list()\n# [{'name': 'Ferry Building'}, {'name': 'Golden Gate Park'}]\n";
++
++export const PyScalarIndexRtreeVector = "# The nearest place overall is in Oakland; the spatial prefilter keeps the\n# search inside San Francisco.\nnearest_in_sf = (\n    table.search([1.0, 0.0])\n    .where(in_san_francisco)\n    .select([\"name\", \"_distance\"])\n    .limit(1)\n    .to_list()\n)\n# [{'name': 'Ferry Building', '_distance': 0.18}]\n";
++
+ export const PyScalarIndexUuidData = "def generate_random_names():\n    base_names = [\"Alice\", \"Bob\", \"Carla\", \"David\", \"Eve\", \"Frank\", \"Grace\"]\n    letter = random.choice(string.ascii_uppercase)\n    return f\"{random.choice(base_names)} {letter}.\"\n\ndef generate_uuids(num_items):\n    return [uuid.uuid4().bytes for _ in range(num_items)]\n\n# Generate some UUIDs and random names\nn = 7\nuuids = generate_uuids(n)\nnames = [generate_random_names() for _ in range(n)]\n";
  
- The standard calls these two methods of one clause. They are different
+ export const PyScalarIndexUuidTable = "table_name = \"index-on-uuid\"\n\nuuid_array = pa.array(uuids, pa.uuid())\nname_array = pa.array(names, pa.string())\nschema = pa.schema(\n    [\n        pa.field(\"id\", pa.uuid()),\n        pa.field(\"name\", pa.string()),\n    ]\n)\ndata_table = pa.Table.from_arrays([uuid_array, name_array], schema=schema)\ntable = db.create_table(table_name, data=data_table, mode=\"overwrite\")\n";
+```
+
+**File**: `nodejs/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -46,7 +46,7 @@ aws-lc-rs = "=1.18.1"
+ napi-build = "2.3.1"
+ 
+ [features]
+-default = ["remote", "lancedb/aws", "lancedb/gcs", "lancedb/azure", "lancedb/dynamodb", "lancedb/oss", "lancedb/huggingface", "lancedb/goosefs", "lancedb/metrics-otel"]
++default = ["remote", "lancedb/aws", "lancedb/gcs", "lancedb/azure", "lancedb/dynamodb", "lancedb/oss", "lancedb/huggingface", "lancedb/goosefs", "lancedb/metrics-otel", "lancedb/geo"]
+ fp16kernels = ["lancedb/fp16kernels"]
+ remote = ["lancedb/remote"]
+ experimental-functions = ["lancedb/experimental-functions"]
+```
+
+**File**: `nodejs/__test__/remote.test.ts` (modified, +81/-0)
+```diff
+@@ -1435,6 +1435,87 @@ describe("remote connection", () => {
+     expect(createIndexBody?.["custom_stop_words"]).toEqual(["the"]);
+   });
+ 
++  it("sends RTree options to remote tables", async () => {
++    const createIndexBodies: Record<string, unknown>[] = [];
++
++    await withMockDatabase(
++      (req, res) => {
++        const path = req.url ?? "";
++        if (path.endsWith("/describe/")) {
++          res.writeHead(200, { "Content-Type": "application/json" }).end(
++            JSON.stringify({
++              name: "t",
++              version: 1,
++              schema: {
++                fields: [
++                  {
++                    name: "geom",
++                    type: {
++                      type: "struct",
++                      fields: [
++                        {
++                          name: "x",
++                          type: { type: "double" },
++                          nullable: false,
++                        },
++                        {
++                          name: "y",
++                          type: { type: "double" },
++                          nullable: false,
++                        },
++                      ],
++                    },
++                    nullable: true,
++                    metadata: { "ARROW:extension:name": "geoarrow.point" },
++                  },
++                ],
++              },
++            }),
++          );
++          return;
++        }
++
++        if (path.endsWith("/create_index/")) {
++          let raw = "";
++          req.on("data", (chunk) => {
++            raw += chunk;
++          });
++          req.on("end", () => {
++            createIndexBodies.push(JSON.parse(raw));
++            res.writeHead(200).end();
++          });
++          return;
++        }
++
++        res.writeHead(404).end();
++      },
++      async (db) => {
++        const table = await db.openTable("t");
++        await table.createIndex("geom", { config: Index.rtree() });
++        await table.createIndex("geom", {
++          config: Index.rtree({ pageSize: 1024 }),
++          name: "geom_rtree",
++        });
++      },
++    );
++
++    expect(createIndexBodies).toEqual([
++      {
++        column: "geom",
++        // biome-ignore lint/style/useNamingConvention: server wire format
++        index_type: "RTREE",
++      },
++      {
++        column: "geom",
++        // biome-ignore lint/style/useNamingConvention: server wire format
++        index_type: "RTREE",
++        name: "geom_rtree",
++        // biome-ignore lint/style/useNamingConvention: server wire format
++        page_size: 1024,
++      },
++    ]);
++  });
++
+   it("diffs and cherry-picks remote branches", async () => {
+     const sampleDiff = {
+       fromBranch: "exp",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5094** (2026-11-19): docs: mark Blob v2 GA for ordinary tables in Enterprise 1.15.0 (@Xuanwo)
+- **PR #5092** (2026-11-19): docs: add sidebar icons for Function failures and catalog pagination (@brendanclement)
+- **PR #5090** (2026-11-18): ci: publish and verify the CLI shell installer (@ChilePiquin)
 - **PR #5087** (2026-11-18): docs: add an ordinary Blob v2 photo tutorial (@Xuanwo)
 - **PR #5086** (2026-11-18): docs: show how to read and copy filtered blob rows (@Xuanwo)
 - **PR #5085** (2026-11-18): docs: add semantic sampling guide (@jackye1995)
-- **PR #5084** (2026-11-18): fix(python): allow static diagnostic imports in Functions (@Xuanwo)
-- **PR #5080** (2026-11-18): docs: say the Tables page covers schema changes and field metadata (@brendanclement)
-- **PR #5079** (2026-11-17): docs: publish the CLI page (@brendanclement)
 
 ---
 
@@ -1836,67 +1777,36 @@ REPEATABLE (42);
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. python): allow static diagnostic imports in Functions
+## X. docs: mark Blob v2 GA for ordinary tables in Enterprise 1.15.0
 
 **RULE**:
-When implementing operations in `docs/src/python/python.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/web/management/table.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a653d861`: python): allow static diagnostic imports in Functions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae665a46`: docs: mark Blob v2 GA for ordinary tables in Enterprise 1.15.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/python/python.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/web/management/table.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-module. It supports three statically recognizable diagnostic operations:
-`sys.stderr`, `sys.version_info`, and `importlib.metadata.version`. Direct
-imports, `from` imports, and aliases are treated the same way, whether the
-import appears inside a function or class body or at module level.
-
-Other imports of `sys`, `builtins`, `importlib`, `inspect`, `gc`, `ctypes`, and
-`types`, including submodules such as `ctypes.util` and `importlib.resources`,
-remain blocked. This applies to imports inside function or class bodies and
-references to module-level aliases. Even ordinary uses such as `sys.version`
-and `ctypes.util.find_library` are blocked: these modules can reach names
-outside the reconstructed Function namespace. References to `globals`, `locals`,
-`vars`, `eval`, `exec`, `compile`, and `__import__` are rejected as dynamic
-namespace access. These restrictions also apply to the deprecated `@udf` alias.
-
-For example, a diagnostic Function can report its Python version and NumPy
-version without a helper module:
-
-```python
-import importlib.metadata
-import sys
-
-from lancedb import function
-
-
-@function(pip=["numpy"])
-def report(value: int) -> str:
-    print("diagnostic", file=sys.stderr)
-
+Starting with LanceDB Enterprise 1.15.0, Blob v2 is generally available on
+ordinary tables. Tables with Realtime Engine or MemWAL enabled are outside
+this support scope.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-module. It conservatively rejects imports of `sys`, `builtins`, `importlib`,
-`inspect`, `gc`, `ctypes`, and `types`, including submodules such as `ctypes.util`
-and `importlib.metadata`. This applies to imports inside function or class bodies
-and references to module-level aliases. Even ordinary uses such as `sys.version`
-and `ctypes.util.find_library` are blocked: these modules can reach names outside
-the reconstructed Function namespace. References to `globals`, `locals`, `vars`,
-`eval`, `exec`, `compile`, and `__import__` are rejected as dynamic namespace access.
-These restrictions also apply to the deprecated `@udf` alias.
+<Badge color="purple">Early access</Badge>
 
-For legitimate uses, move the code into an importable helper module and ship it
-with `code=`, or install its package with `pip=` or `conda=`. Imported helpers keep
-their own namespace; the packager does not scan their bodies. Helpers defined in
-`__main__` are copied by source and have the same restrictions as the Function.
+{/* Draft for Blob v2 GA. Confirm release status before removing Early access.
+
+Blob v2 GA supports standard tables. Tables with Realtime or MemWAL enabled
+are outside the GA support scope.
+*/}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a653d861` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae665a46` are properly handled with clean fallback behavior.

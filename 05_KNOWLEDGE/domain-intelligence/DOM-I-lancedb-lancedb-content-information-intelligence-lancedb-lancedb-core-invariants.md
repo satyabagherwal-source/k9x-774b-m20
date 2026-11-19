@@ -4,24 +4,24 @@
 {
   "source_repository": "lancedb/lancedb",
   "source_url": "https://github.com/lancedb/lancedb",
-  "source_version": "7d50d2d2",
+  "source_version": "ae665a46",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T21:16:18.256Z",
+  "timestamp": "2026-11-19T16:33:29.656Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lancedb-lancedb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `7d50d2d2`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T21:16:18.256Z`  
+> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `ae665a46`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T16:33:29.656Z`  
 > **Learning ID**: `learn-github-lancedb-lancedb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from lancedb/lancedb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T21:16:17.466Z  
+> **Harvest Timestamp**: 2026-11-19T16:33:28.516Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11894 stars
+- **Stars / Engagement**: 11947 stars
 
 ---
 
@@ -1247,11 +1247,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5012** (2026-11-13): **fix(remote): preserve branches in cache prewarm requests**
-  *Symptoms*: Calling `prewarm_data` or `prewarm_index` on a checked-out remote branch currently targets main. Both methods omit the branch context, which can warm the wrong snapshot, miss a branch-only index, or fail when the branch's minimum read version is ahead of main. This PR carries the table handle's branch through the existing request helpers. Main requests retain their existing format, with no public API changes. 
+- **Issue #5084** (2026-11-18): **fix(python): allow static diagnostic imports in Functions**
+  *Symptoms*: Functions previously rejected every `sys` or `importlib` import even when the source only used a statically visible diagnostic. Allow exactly `sys.stderr`, `sys.version_info`, and `importlib.metadata.version`, with direct imports, `from` imports, and aliases treated identically whether they appear at module level or inside the function or class body.  Every other use of a namespace-access module still fails at decoration. The error now names the rejected operation, such as `sys.modules`, and lists the supported diagnostic operations.  Tests package and execute the artifact offline for each import form, and reject unsupported attributes, submodules, dynamic attribute access, and rebinding. ENT-3918. 
 
-- **Issue #5010** (2026-11-13): **fix(ci): support Cargo 1.100 artifact layout in cleanup fixture**
-  *Symptoms*: Cargo 1.100 moves intermediate compiler artifacts into per-unit build directories and emits `build_script_build` instead of `build-script-build`. The unlocked-build fixture currently fails on its old rlib path before the SDK build starts, even though the library survives cleanup.  Discover compiler inputs recursively and accept both build-script names while preserving the library, generated-input, ordinary-executable, discarded-test, linker-failure and outside-target assertions. The standalone fixture reproduces the failure before this change and passes afterward on Rust/Cargo 1.100.0; it also passes on 1.97.0. Fault injection confirms missing libraries and other retained inputs still fail their assertions. Production cleanup and normal workflow coverage are unchanged. 
+- **Issue #5073** (2026-11-17): **fix(deps): ignore unmaintained chrono family advisories**
+  *Symptoms*: `cargo deny` fails on main because RUSTSEC-2026-0543 (`chrono`), RUSTSEC-2026-0555 (`chrono-tz`) and RUSTSEC-2026-0542 (`humantime`) mark the chrono family unmaintained. Add exceptions reviewed on 2026-11-17, with the advisory links and the upstream migration constraint; none of the three is a vulnerability and RustSec lists no patched version for any of them (chrono recommends jiff/time).  Dependency paths (from `cargo tree -i` at version fb34b1c7 of main):  - `chrono` 0.4.45: arrow 59 / datafusion 55 and the lance stack, across the workspace. - `chrono-tz` 0.10.4: arrow-array → arrow → datafusion/lance. - `humantime` 2.3.0: lance, object_store (through datafusion), and xet-runtime.  Clearing the advisories requires the arrow/datafusion/lance ecosystem to migrate off chrono; no upstream fix exists to consume. Also remove the RUSTSEC-2026-0441 `pin-utils` ignore, which the current lockfile no longer needs.  Validation on commit 04259a04 (cargo-deny 0.21.0, the version the CI action installs):  - Before: `cargo deny check advisories` failed on the three chrono-family advisories, and warned that the pin-utils ignore was not encountered. - After: `cargo deny check advisories bans licenses sources` passes all four checks, matching the Rust CI deny job. - `git diff --check` passes. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1268,768 +1268,510 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `db098ba8` (2026-11-13)
-**Commit Message**: fix(ci): support Cargo 1.100 artifact layout in cleanup fixture (#5010)
+### Incident Patch 1: `ae665a46` (2026-11-19)
+**Commit Message**: docs: mark Blob v2 GA for ordinary tables in Enterprise 1.15.0 (#5094)
 
-Cargo 1.100 moves intermediate compiler artifacts into per-unit build
-directories and emits `build_script_build` instead of
-`build-script-build`. The unlocked-build fixture currently fails on its
-old rlib path before the SDK build starts, even though the library
-survives cleanup.
+The Quickstart and table guide describe Blob columns as Early access
+without naming a product version. Document general availability for
+ordinary tables starting with LanceDB Enterprise 1.15.0 and make the
+Realtime Engine and MemWAL scope visible in the table guide.
 
-Discover compiler inputs recursively and accept both build-script names
-while preserving the library, generated-input, ordinary-executable,
-discarded-test, linker-failure and outside-target assertions. The
-standalone fixture reproduces the failure before this change and passes
-afterward on Rust/Cargo 1.100.0; it also passes on 1.97.0. Fault
-injection confirms missing libraries and other retained inputs still
-fail their assertions. Production cleanup and normal workflow coverage
-are unchanged.
+Xuanwo confirmed Enterprise 1.15.0 as the first edition to document GA
+for ordinary-table Blob v2. Enterprise 1.13.0 and 1.14.0 retain their
+existing status. The Enterprise 1.15.0 edition must carry this wording
+when prepared from its release inputs. Earlier saved editions keep their
+historical guidance.
 
-**File**: `ci/tests/test_build_no_lock.py` (modified, +5/-3)
+Refs ENT-3556.
+
+**File**: `docs/web/management/table.mdx` (modified, +3/-7)
 ```diff
-@@ -88,9 +88,11 @@ def test_links_all_targets_and_retains_compiler_inputs(self):
-             self.assertTrue((target / "fixture_cli").is_file())
-             # Cargo guarantees this binary for test execution, not compile-time reads.
-             subprocess.run([str(target / "fixture_cli")], check=True)
--            self.assertTrue(list((target / "deps").glob("libartifact_fixture*.rlib")))
--            self.assertTrue(list((target / "build").glob("*/build-script-build")))
--            self.assertTrue(list((target / "build").glob("*/out/generated.rs")))
-+            # Cargo 1.100 nests compiler inputs in per-unit build directories and
-+            # names the build-script executable build_script_build.
-+            self.assertTrue(list(target.rglob("libartifact_fixture*.rlib")))
-+            self.assertTrue(list((target / "build").rglob("build[-_]script[-_]build")))
-+            self.assertTrue(list((target / "build").rglob("out/generated.rs")))
+@@ -395,16 +395,12 @@ file, up to 64 KiB by default, and larger values are stored outside it.
  
-     def test_link_failure_preserves_cargo_status_and_diagnostic(self):
-         with tempfile.TemporaryDirectory(prefix=".no-lock-", dir=SCRIPT.parent) as temp:
+ ### Blob columns {#multimodal-blob-v2}
+ 
+-<Badge color="purple">Early access</Badge>
+-
+ Filter rows by their metadata first. Then read the matching blob bytes in
+ Python, or copy the matching rows to another table with Enterprise SQL.
+ 
+-{/* Draft for Blob v2 GA. Confirm release status before removing Early access.
+-
+-Blob v2 GA supports standard tables. Tables with Realtime or MemWAL enabled
+-are outside the GA support scope.
+-*/}
++Starting with LanceDB Enterprise 1.15.0, Blob v2 is generally available on
++ordinary tables. Tables with Realtime Engine or MemWAL enabled are outside
++this support scope.
+ 
+ #### From image files to a filtered table {#photo-tutorial}
+ 
+```
+
+**File**: `docs/web/quickstart.mdx` (modified, +2/-2)
+```diff
+@@ -370,8 +370,8 @@ Store images, audio, or other binary data alongside vectors and metadata, in a c
+ For image files and larger payloads, follow the
+ [Blob photo tutorial](/management/table#photo-tutorial) to create an ordinary
+ Blob table, filter its metadata, save and check an image, and copy matching rows.
+-It includes an Embedded path and an Enterprise SQL path. Blob columns are in
+-Early access.
++The tutorial covers LanceDB Embedded and Enterprise SQL. Blob v2 is generally
++available on ordinary tables starting with LanceDB Enterprise 1.15.0.
+ 
+ ## 8\. Train on your data {#8-train}
+ 
 ```
 
 ---
 
-### Incident Patch 2: `7d50d2d2` (2026-11-13)
-**Commit Message**: chore(deps): bump Rust deps flagged by security scans (#5035)
+### Incident Patch 2: `4b428101` (2026-11-19)
+**Commit Message**: feat: expose the RTREE index in the Python and TypeScript SDKs (#4942)
 
-## Summary
+Part of #4554. Supersedes #4555.
 
-Bumps the Rust dependencies flagged by Aikido that have a
-semver-compatible fix available. Supersedes #5009 (rustls in the docs
-lockfile is included here).
+This exposes Lance's R-tree index in the Python and TypeScript SDKs.
+Python gets a `lancedb.index.RTree` config with an optional `page_size`,
+accepted by `create_index(config=...)` on local, async and remote
+tables. TypeScript gets `Index.rtree({ pageSize })` and `RTreeOptions`.
+Both map to the Rust crate's existing `Index::RTree`, so remote tables
+send `index_type: "RTREE"`. The index accelerates `ST_Intersects`,
+`ST_Contains`, `ST_Within`, `ST_Touches`, `ST_Crosses`, `ST_Overlaps`,
+`ST_Covers` and `ST_CoveredBy` filters between a GeoArrow column and a
+constant geometry, in either argument order, including as a prefilter on
+vector search. The scalar index docs page gets an R-tree section.
 
-Root `Cargo.lock`:
+`geo` is now a default feature of the Python and Node packages. Without
+it, a local table can neither build the index nor evaluate `ST_*`
+filters, and because wheels and npm packages are prebuilt, an opt-in
+Cargo feature would not reach users. pylance already ships with `geo`
+on. It adds pure-Rust crates under licenses that `deny.toml` already
+allows. `Cargo.lock` doesn't change, and the thi
 
-| Crate | From | To |
-| --- | --- | --- |
-| mio | 1.2.0 | 1.2.5 |
-| smallvec | 1.15.1 | 1.16.5 |
-| thread_local | 1.1.9 | 1.1.10 |
-| tinyvec | 1.11.0 | 1.13.3 |
-| zerocopy / zerocopy-derive | 0.8.48 | 0.8.63 |
-| event-listener | 5.4.1 | 5.4.2 |
-| arrayvec | 0.7.6 | 0.7.8 |
-| wasm-bindgen (+ js-sys, web-sys) | 0.2.121 | 0.2.130 |
-| getrandom 0.4 | 0.4.2 | 0.4.3 (drops wasip3 → wasmparser 0.244) |
-| brotli | 3.5.0 | 9.1.1 (via `random_word` dev-dep 0.4.3 → 1.0.0) |
-
-`docs/web-tests/rs/Cargo.lock` gets the same crates plus rustls, hyper,
-h2, moka, bytes, crossbeam-epoch and anyhow. That crate is not a
-workspace member, so cargo refused to resolve it; it now has an empty
-`[workspace]` table.
-
-Still open, blocked upstream: quick-xml 0.41 (lance-io), rand 0.9
-(datafusion/lance/candle), heapless 0.8 (rstar via geo), paste,
-unsafe-libyaml (rattler_conda_types, lindera), fast-float/smartstring
-(polars 0.39), number_prefix (needs hf-hub 1.0 mig
-
-**File**: `Cargo.lock` (modified, +54/-228)
+**File**: `docs/src/js/classes/Index.md` (modified, +48/-0)
 ```diff
-@@ -63,15 +63,15 @@ dependencies = [
+@@ -258,3 +258,51 @@ using an underlying bitmap index.
+ #### Returns
  
- [[package]]
- name = "alloc-no-stdlib"
--version = "2.0.4"
-+version = "3.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cc7bb162ec39d46ab1ca8c77bf72e890535becd1751bb45f64c597edb4c8c6b3"
-+checksum = "c2fb6cfd47bf496ff64095c20eaba0c201404ee38714d4142fcfa1dc334fcc7a"
- 
- [[package]]
- name = "alloc-stdlib"
--version = "0.2.2"
-+version = "0.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "94fb8275041c72129eb51b7d0322c29b8387a0386127718b096429201a5d6ece"
-+checksum = "0b5c1865780388bfa186411ab5f247819487fc4864c6e9c3106611fa347586e1"
- dependencies = [
-  "alloc-no-stdlib",
- ]
-@@ -221,9 +221,9 @@ checksum = "76a2e8124351fda1ef8aaaa3bbd7ebbcb486bbcd4225aca0aa0d84bb2db8fecb"
- 
- [[package]]
- name = "arrayvec"
--version = "0.7.6"
-+version = "0.7.8"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
-+checksum = "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
- 
- [[package]]
- name = "arrow"
-@@ -1474,9 +1474,9 @@ dependencies = [
- 
- [[package]]
- name = "brotli"
--version = "3.5.0"
-+version = "9.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d640d25bc63c50fb1f0b545ffd80207d2e10a4c965530809b40ba3386825c391"
-+checksum = "627b7cfb0578f0eafce087a90fcd40add1231900b69e4d4de2d456260a4f5d81"
- dependencies = [
-  "alloc-no-stdlib",
-  "alloc-stdlib",
-@@ -1485,9 +1485,9 @@ dependencies = [
- 
- [[package]]
- name = "brotli-decompressor"
--version = "2.5.1"
-+version = "6.3.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4e2e4afe60d7dd600fdd3de8d0f08c2b7ec039712e3b6137ff98b7004e82de4f"
-+checksum = "75c74c9c51b9140663e196b5fb88bc94c334d7a497c8311cb759d8557874747f"
- dependencies = [
-  "alloc-no-stdlib",
-  "alloc-stdlib",
-@@ -2261,7 +2261,7 @@ checksum = "9c035cb64cba03dad2fb921f3e218785e8cf9a41790da5eb3a1400f62fa2be11"
- dependencies = [
-  "cpubits",
-  "ctutils",
-- "getrandom 0.4.2",
-+ "getrandom 0.4.3",
-  "hybrid-array",
-  "num-traits",
-  "rand_core 0.10.1",
-@@ -2285,7 +2285,7 @@ version = "0.2.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "77727bb15fa921304124b128af125e7e3b968275d1b108b379190264f4423710"
- dependencies = [
-- "getrandom 0.4.2",
-+ "getrandom 0.4.3",
-  "hybrid-array",
-  "rand_core 0.10.1",
- ]
-@@ -3504,11 +3504,10 @@ checksum = "40404c3f5f511ec4da6fe866ddf6a717c309fdbb69fbbad7b0f3edab8f2e835f"
- 
- [[package]]
- name = "event-listener"
--version = "5.4.1"
-+version = "5.4.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e13b66accf52311f30a0db42147dadea9850cb48cd070028831ae5f5d4b856ab"
-+checksum = "5a23add41df1562121a9393cb065eab5146a1242410f23a644851e90cfd669d2"
- dependencies = [
-- "concurrent-queue",
-  "parking",
-  "pin-project-lite",
- ]
-@@ -4248,17 +4247,15 @@ dependencies = [
- 
- [[package]]
- name = "getrandom"
--version = "0.4.2"
-+version = "0.4.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0de51e6874e94e7bf76d726fc5d13ba782deca734ff60d5bb2fb2607c7406555"
-+checksum = "300e883d756b2e4ec94e02791f39b04b522276138852cfc41d9fb7e904106099"
- dependencies = [
-  "cfg-if 1.0.4",
-  "js-sys",
-  "libc",
-  "r-efi 6.0.0",
-  "rand_core 0.10.1",
-- "wasip2",
-- "wasip3",
-  "wasm-bindgen",
- ]
- 
-@@ -4939,12 +4936,6 @@ version = "2.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "e4a2c462a4d927d512f5f882a033ddd62f33a05bb9f230d98f736ac3dc85938f"
- 
--[[package]]
--name = "id-arena"
--version = "2.3.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3d3067d79b975e8844ca9eb072e16b31c3c1c36928edf9c6789548c524d0d954"
--
- [[package]]
- name = "ident_case"
- version = "1.0.1"
-@@ -5275,13 +5266,12 @@ dependencies = [
- 
- [[package]]
- name = "js-sys"
--version = "0.3.98"
-+version = "0.3.107"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "67df7112613f8bfd9150013a0314e196f4800d3201ae742489d999db2f979f08"
-+checksum = "8dc09d2154098bbf4ef54eab6b117a3c24cbbffe94046b16ee6d6d4510584d3a"
- dependencies = [
-  "cfg-if 1.0.4",
-  "futures-util",
-- "once_cell",
-  "wasm-bindgen",
- ]
- 
-@@ -6243,12 +6233,6 @@ dependencies = [
-  "spin 0.9.9",
- ]
- 
--[[package]]
--name = "leb128fmt"
--version = "0.1.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "09edd9e8b54e49e587e4f6295a7d29c3ea94d469cb40ab8ca70b288248a81db2"
--
- [[package]]
- name = "lexical-core"
- version = "1.0.6"
-@@ -6704,9 +6688,9 @@ dependencies = [
- 
- [[package]]
- name = "mio"
--version = "1.2.0"
-+version = "1.2.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "50b7e5b27aa02a74bac8c3f23f448f8d87ff11f92d3aac1a6ed369ee08cc56c1"
-+checksum = "20521a903f02b0a573cd6840e9d0a5a0cc043d361fe924092cd70f8556cc9c4a"
- dependencies = [
-  "libc",
-  "wasi 0.11.1+wasi-snapshot-preview1",
-@@ -8550,16 +8534,6 @@ d
-```
-
-**File**: `docs/web-tests/rs/Cargo.lock` (modified, +68/-233)
-```diff
-@@ -87,9 +87,9 @@ checksum = "940b3a0ca603d1eade50a4846a2afffd5ef57a9feac2c0e2ec2e14f9ead76000"
- 
- [[package]]
- name = "anyhow"
--version = "1.0.102"
-+version = "1.0.104"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
-+checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
- 
- [[package]]
- name = "ar_archive_writer"
-@@ -129,9 +129,9 @@ checksum = "76a2e8124351fda1ef8aaaa3bbd7ebbcb486bbcd4225aca0aa0d84bb2db8fecb"
- 
- [[package]]
- name = "arrayvec"
--version = "0.7.6"
-+version = "0.7.8"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
-+checksum = "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
- 
- [[package]]
- name = "arrow"
-@@ -683,9 +683,9 @@ checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
- 
- [[package]]
- name = "bytes"
--version = "1.11.1"
-+version = "1.12.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1e748733b7cbc798e1434b6ac524f0c1ff2ab456fe201501e6497c8417a4fc33"
-+checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
- 
- [[package]]
- name = "cast"
-@@ -1019,9 +1019,9 @@ dependencies = [
- 
- [[package]]
- name = "crossbeam-epoch"
--version = "0.9.18"
-+version = "0.9.21"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5b82ac4a3c2ca9c3460964f020e1402edd5753411d7737aa39c3714ad1b5420e"
-+checksum = "dc74980687109a3b14c72fd458107bf0baa1da1a1a805e178d15501ba9b86d9d"
- dependencies = [
-  "crossbeam-utils",
- ]
-@@ -1904,7 +1904,7 @@ dependencies = [
-  "libc",
-  "option-ext",
-  "redox_users",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -1993,7 +1993,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -2004,11 +2004,10 @@ checksum = "40404c3f5f511ec4da6fe866ddf6a717c309fdbb69fbbad7b0f3edab8f2e835f"
- 
- [[package]]
- name = "event-listener"
--version = "5.4.1"
-+version = "5.4.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e13b66accf52311f30a0db42147dadea9850cb48cd070028831ae5f5d4b856ab"
-+checksum = "5a23add41df1562121a9393cb065eab5146a1242410f23a644851e90cfd669d2"
- dependencies = [
-- "concurrent-queue",
-  "parking",
-  "pin-project-lite",
- ]
-@@ -2289,17 +2288,15 @@ dependencies = [
- 
- [[package]]
- name = "getrandom"
--version = "0.4.2"
-+version = "0.4.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0de51e6874e94e7bf76d726fc5d13ba782deca734ff60d5bb2fb2607c7406555"
-+checksum = "300e883d756b2e4ec94e02791f39b04b522276138852cfc41d9fb7e904106099"
- dependencies = [
-  "cfg-if",
-  "js-sys",
-  "libc",
-  "r-efi 6.0.0",
-  "rand_core 0.10.1",
-- "wasip2",
-- "wasip3",
-  "wasm-bindgen",
- ]
- 
-@@ -2317,9 +2314,9 @@ checksum = "0cc23270f6e1808e30a928bdc84dea0b9b4136a8bc82338574f23baf47bbd280"
- 
- [[package]]
- name = "h2"
--version = "0.4.12"
-+version = "0.4.20"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f3c0b69cfcb4e1b9f1bf2f53f95f766e4661169728ec61cd3fe5a0166f2d1386"
-+checksum = "7d29020232d6aa3fb1daca64c1127cf662cf97f254ae16c18c05b8ab635fc118"
- dependencies = [
-  "atomic-waker",
-  "bytes",
-@@ -2475,9 +2472,9 @@ checksum = "135b12329e5e3ce057a9f972339ea52bc954fe1e9358ef27f95e89716fbc5424"
- 
- [[package]]
- name = "hyper"
--version = "1.8.1"
-+version = "1.12.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2ab2d4f250c3d7b1c9fcdff1cece94ea4e2dfbec68614f7b87cb205f24ca9d11"
-+checksum = "2c3e324da4c95177d6291d4c8730197c0d1822f8a9766814a4a44fa5ab797c9c"
- dependencies = [
-  "atomic-waker",
-  "bytes",
-@@ -2490,7 +2487,6 @@ dependencies = [
-  "httpdate",
-  "itoa",
-  "pin-project-lite",
-- "pin-utils",
-  "smallvec",
-  "tokio",
-  "want",
-@@ -2699,12 +2695,6 @@ version = "2.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "e4a2c462a4d927d512f5f882a033ddd62f33a05bb9f230d98f736ac3dc85938f"
- 
--[[package]]
--name = "id-arena"
--version = "2.3.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3d3067d79b975e8844ca9eb072e16b31c3c1c36928edf9c6789548c524d0d954"
--
- [[package]]
- name = "ident_case"
- version = "1.0.1"
-@@ -2808,7 +2798,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
- dependencies = [
-  "hermit-abi",
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -2876,7 +2866,7 @@ dependencies = [
-  "portable-atomic",
-  "portable-atomic-util",
-  "serde_core",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -2917,11 +2907,12 @@ dependencies = [
- 
- [[package]]
- name = "js-sys"
--version = "0.3.83"
-+version = "0.3.107"
- source = "regist
-```
-
-**File**: `docs/web-tests/rs/Cargo.toml` (modified, +4/-0)
-```diff
-@@ -1,3 +1,7 @@
-+# Standalone crate pinned to a published lancedb release, not part of the root
-+# workspace. Without this, cargo commands here fail to resolve the workspace.
-+[workspace]
+ [`Index`](Index.md)
 +
- [package]
- name = "rs"
- version = "0.1.0"
++***
++
++### rtree()
++
++```ts
++static rtree(options?): Index
++```
++
++Create an RTree index.
++
++An RTree index is a scalar index on a GeoArrow geometry column, that is, a
++column whose Arrow field metadata sets `ARROW:extension:name` to a GeoArrow
++type such as `geoarrow.point`, `geoarrow.polygon` or `geoarrow.wkb`. It
++stores the bounding box of each geometry and accelerates spatial filters.
++
++The index accelerates `ST_Intersects`, `ST_Contains`, `ST_Within`,
++`ST_Touches`, `ST_Crosses`, `ST_Overlaps`, `ST_Covers` and `ST_CoveredBy`
++between the indexed column and a constant geometry, in either argument
++order, for example
++`ST_Within(geom, ST_GeomFromText('POLYGON ((...))'))`, as well as
++`geom IS NULL`. These filters can be combined with other conditions using
++`AND`.
++
++See the R-tree section of https://docs.lancedb.com/indexing/scalar-index
++for storing geometry, the other spatial functions, and spatial filters on
++vector search.
++
++Remote tables send the `RTREE` index type to the server, which must
++support it.
++
++#### Parameters
++
++* **options?**: `Partial`&lt;[`RTreeOptions`](../interfaces/RTreeOptions.md)&gt;
++
++#### Returns
++
++[`Index`](Index.md)
++
++#### Example
++
++```ts
++await table.createIndex("geom", { config: Index.rtree() });
++await table
++  .query()
++  .where("ST_Intersects(geom, ST_GeomFromText('POLYGON ((0 0, 4 0, 0 4, 0 0))'))")
++  .toArray();
++```
 ```
 
-**File**: `rust/lancedb/Cargo.toml` (modified, +1/-1)
+**File**: `docs/src/js/globals.md` (modified, +1/-0)
 ```diff
-@@ -118,7 +118,7 @@ lance-testing = { workspace = true }
- # production remote feature so Python wheels do not resolve its Axum 0.7 stack.
- lance-namespace-impls = { workspace = true, features = ["rest-adapter"] }
- tempfile = { workspace = true }
--random_word = { version = "0.4.3", features = ["en"] }
-+random_word = { version = "1.0.0", features = ["en"] }
- tokio = { workspace = true, features = ["io-util", "macros", "net", "test-util"] }
- uuid = { workspace = true }
- walkdir = "2"
+@@ -137,6 +137,7 @@
+ - [QueryExecutionOptions](interfaces/QueryExecutionOptions.md)
+ - [RTEStats](interfaces/RTEStats.md)
+ - [RTEWriteSpec](interfaces/RTEWriteSpec.md)
++- [RTreeOptions](interfaces/RTreeOptions.md)
+ - [RefreshColumnOptions](interfaces/RefreshColumnOptions.md)
+ - [RefreshColumnResult](interfaces/RefreshColumnResult.md)
+ - [RefreshMaterializedViewResult](interfaces/RefreshMaterializedViewResult.md)
 ```
 
----
-
-### Incident Patch 3: `1765747f` (2026-11-13)
-**Commit Message**: fix: allow updates to Function input columns (#4985)
-
-Updating an input column on a table with a Function binding currently
-fails before the write, although the write path already preserves
-freshness for bindings whose inputs are unchanged. Allow input updates
-through the normal update builder while retaining supported
-binding-metadata validation and the guard against writing computed or
-internal assignment outputs directly.
-
-Lance rewrites only the matched rows. Their affected Function outputs
-keep their previous values and their changed input signatures make them
-eligible for refresh; unchanged fragments retain their freshness.
-Rewrites affecting only unrelated inputs keep the existing
-freshness-preservation path.
-
-For a table whose Function reads `title`, this update now succeeds while
-retaining the previous computed values until refresh:
-
-```python
-table.update(where="id = 7", values={"title": "revised"})
-```
-
-Server consumers need this crate update before remote input updates gain
-the behavior.
-
-Adds regressions for a one-row input update, retained output values,
-freshness scope, independent binding preservation, and atomic rejection
-of mixed input/output writes. Local builds 
-
-**File**: `rust/lancedb/src/table/computed_columns.rs` (modified, +50/-4)
+**File**: `docs/src/js/interfaces/RTreeOptions.md` (added, +21/-0)
 ```diff
-@@ -1757,10 +1757,20 @@ pub(crate) fn ensure_not_written<'a>(
-     schema: &ArrowSchema,
-     written: impl IntoIterator<Item = &'a str>,
- ) -> Result<()> {
--    let declared: Vec<String> = computed_columns(schema)
-+    ensure_supported_function_metadata(schema)?;
-+    let mut declared: Vec<String> = computed_columns(schema)
-         .into_iter()
-         .map(|declaration| declaration.name)
-         .collect();
-+    declared.extend(
-+        function_bindings(schema)?
-+            .into_iter()
-+            .filter_map(|binding| {
-+                binding
-+                    .assignment()
-+                    .map(|assignment| assignment.output_name.clone())
+@@ -0,0 +1,21 @@
++[**@lancedb/lancedb**](../README.md) • **Docs**
++
++***
++
++[@lancedb/lancedb](../globals.md) / RTreeOptions
++
++# Interface: RTreeOptions
++
++Options to create an `RTREE` index
++
++## Properties
++
++### pageSize?
++
++```ts
++optional pageSize: number;
++```
++
++The maximum number of entries in each R-tree page.
++
++Must be at least 2. The default is 4096.
+```
+
+**File**: `docs/web-tests/py/test_indexing.py` (modified, +77/-0)
+```diff
+@@ -561,6 +561,83 @@ def generate_uuids(num_items):
+     assert len(result) == n + len(new_users)
+ 
+ 
++def test_scalar_index_rtree(tmp_db):
++    db = tmp_db
++
++    # --8<-- [start:scalar_index_rtree_data]
++    import pyarrow as pa
++
++    point = pa.struct([("x", pa.float64()), ("y", pa.float64())])
++    schema = pa.schema(
++        [
++            pa.field("name", pa.string()),
++            pa.field(
++                "location", point, metadata={"ARROW:extension:name": "geoarrow.point"}
++            ),
++            pa.field("vector", pa.list_(pa.float32(), 2)),
++        ]
++    )
++    places = [
++        ("Ferry Building", -122.3937, 37.7955, [0.7, 0.3]),
++        ("Golden Gate Park", -122.4862, 37.7694, [0.1, 0.9]),
++        ("Oakland Museum", -122.2638, 37.7987, [1.0, 0.05]),
++    ]
++    data = pa.Table.from_pylist(
++        [
++            {"name": name, "location": {"x": x, "y": y}, "vector": vector}
++            for name, x, y, vector in places
++        ],
++        schema=schema,
++    )
++    table = db.create_table("places", data)
++    # --8<-- [end:scalar_index_rtree_data]
++
++    # --8<-- [start:scalar_index_rtree_create]
++    from lancedb.index import RTree
++
++    table.create_index("location", config=RTree())
++    # --8<-- [end:scalar_index_rtree_create]
++
++    # --8<-- [start:scalar_index_rtree_filter]
++    san_francisco = (
++        "ST_GeomFromText('POLYGON ((-122.52 37.70, -122.35 37.70, "
++        "-122.35 37.83, -122.52 37.83, -122.52 37.70))')"
++    )
++    in_san_francisco = f"ST_Within(location, {san_francisco})"
++
++    places_in_sf = table.search().where(in_san_francisco).select(["name"]).to_list()
++    # [{'name': 'Ferry Building'}, {'name': 'Golden Gate Park'}]
++    # --8<-- [end:scalar_index_rtree_filter]
++
++    assert sorted(row["name"] for row in places_in_sf) == [
++        "Ferry Building",
++        "Golden Gate Park",
++    ]
++
++    # --8<-- [start:scalar_index_rtree_vector]
++    # The nearest place overall is in Oakland; the spatial prefilter keeps the
++    # search inside San Francisco.
++    nearest_in_sf = (
++        table.search([1.0, 0.0])
++        .where(in_san_francisco)
++        .select(["name", "_distance"])
++        .limit(1)
++        .to_list()
++    )
++    # [{'name': 'Ferry Building', '_distance': 0.18}]
++    # --8<-- [end:scalar_index_rtree_vector]
++
++    assert nearest_in_sf[0]["name"] == "Ferry Building"
++    assert nearest_in_sf[0]["_distance"] == pytest.approx(0.18, abs=1e-6)
++    nearest = table.search([1.0, 0.0]).select(["name", "_distance"]).limit(1)
++    assert nearest.to_list()[0]["name"] == "Oakland Museum"
++
++    # --8<-- [start:scalar_index_rtree_explain]
++    plan = table.search().where(in_san_francisco).explain_plan(verbose=True)
++    assert "ScalarIndexQuery" in plan
++    # --8<-- [end:scalar_index_rtree_explain]
++
++
+ @pytest.mark.asyncio
+ async def test_scalar_index_nested_fields(mem_db_async):
+     db = mem_db_async
+```
+
+**File**: `docs/web/indexing/scalar-index.mdx` (modified, +141/-1)
+```diff
+@@ -20,19 +20,25 @@ import {
+     PyScalarIndexUuidWait as ScalarIndexUuidWait,
+     PyScalarIndexUuidUpsert as ScalarIndexUuidUpsert,
+     PyScalarIndexNestedFields as ScalarIndexNestedFields,
++    PyScalarIndexRtreeData as ScalarIndexRtreeData,
++    PyScalarIndexRtreeCreate as ScalarIndexRtreeCreate,
++    PyScalarIndexRtreeFilter as ScalarIndexRtreeFilter,
++    PyScalarIndexRtreeVector as ScalarIndexRtreeVector,
++    PyScalarIndexRtreeExplain as ScalarIndexRtreeExplain,
+ } from '/snippets/indexing.mdx';
+ 
+ Scalar indexes accelerate filters on values such as numbers, categories and
+ strings. Use them for selective table queries or metadata filters combined
+ with vector and full-text search.
+ 
+-LanceDB supports five types of scalar indexes:
++LanceDB supports these scalar index types, among others:
+ 
+ - `BTREE`: Stores column data in sorted order for binary search. Best for columns with many unique values.
+ - `BITMAP`: Uses bitmaps to track value presence. Ideal for columns with few unique values (e.g., categories, tags).
+ - `LABEL_LIST`: Special index for `List<T>` and `LargeList<T>` columns of primitive values supporting `array_has_all` and `array_has_any` queries.
+ - `FM`: FM-Index over string or binary columns that accelerates substring search via `contains(col, 'needle')`.
+ - `NGRAM`: Trigram index over UTF-8 string columns that accelerates substring search via `contains(col, 'needle')`, along with some `LIKE` and regular-expression filters.
++- `RTREE`: R-tree over GeoArrow geometry columns that accelerates spatial filters such as `ST_Intersects` and `ST_Within`.
+ 
+ <Tip title="Working with scalar indices">
+ Use scalar indexes with:
+@@ -52,6 +58,7 @@ Use scalar indexes with:
+ | List of low cardinality of numbers or strings                   | `array_has_any`, `array_has_all`          | `LABEL_LIST` |
+ | String or binary (`Utf8`, `LargeUtf8`, `Binary`, `LargeBinary`) | `contains(col, 'needle')`                 | `FM`         |
+ | String (`Utf8`, `LargeUtf8`)                                    | `contains(col, 'needle')`, `LIKE`, regex  | `NGRAM`      |
++| GeoArrow geometry (`geoarrow.point`, `geoarrow.polygon`, `geoarrow.wkb`, ...) | `ST_Intersects`, `ST_Within`, `ST_Contains` and other spatial relationships, `is null` | `RTREE` |
+ 
+ ## Scalar Index Operations
+ 
+@@ -222,6 +229,139 @@ before consolidating their segments. Consolidation rejects these legacy
+ row-ID segments. Tables without stable row IDs retain the earlier index format.
+ </Note>
+ 
++## R-tree index for geospatial filters {#rtree}
++
++The `RTREE` index is a scalar index over a column of GeoArrow geometries. It
++stores the bounding box of every geometry and accelerates spatial filters, on
++their own or as the prefilter of a vector search. Use it when queries restrict
++results to a region, such as the scenes over an area of interest, the places
++inside a city, or the log records along a route.
++
++### Store geometry as GeoArrow {#rtree-geoarrow}
++
++A column holds geometry when its Arrow field carries GeoArrow extension
++metadata: `ARROW:extension:name` names the geometry type, such as
++`geoarrow.point`, `geoarrow.linestring`, `geoarrow.polygon` or
++`geoarrow.multipolygon` for native coordinates, or `geoarrow.wkb` for
++well-known binary. LanceDB keeps that metadata when it stores the column.
++
++You can build the field with PyArrow alone. A point is a struct of `x` and `y`
++coordinates:
++
++<CodeGroup>
++    <CodeBlock filename="Python" language="Python" icon="python">
++    {ScalarIndexRtreeData}
++    </CodeBlock>
++</CodeGroup>
++
++Libraries such as [`geoarrow-rust-core`](https://pypi.org/project/geoarrow-rust-core/)
++(`geoarrow.rust.core`) produce arrays with this metadata already, so a table
++built from them works the same way.
++
++### Create an R-tree index {#rtree-create}
++
++Pass the `RTree` config in Python, `Index.rtree()` in TypeScript, or
++`Index::RTree` in Rust. The optional page size sets the maximum number of
++entries in each R-tree page; it must be at least 2 and defaults to 4096.
++
++<CodeGroup>
++    <CodeBlock filename="Python" language="Python" icon="python">
++    {ScalarIndexRtreeCreate}
++    </CodeBlock>
++
++```typescript TypeScript icon="square-js"
++import { Index } from "@lancedb/lancedb";
++
++await table.createIndex("location", { config: Index.rtree() });
++```
++
++```rust Rust icon="rust"
++use lancedb::index::Index;
++use lancedb::index::scalar::RTreeIndexBuilder;
++
++table
++    .create_index(&["location"], Index::RTree(RTreeIndexBuilder::default()))
++    .execute()
++    .await?;
++```
++</CodeGroup>
++
++`list_indices()` reports the index type as `"RTree"`, and `index_stats()`
++reports it as `"RTREE"`. In the Rust crate, building the index on a local
++table requires the `geo` feature; the Python and TypeScript packages include
++it. In the embedded library, `optimize()` adds new rows to the index. Rows
++that are not indexed yet are still filtered, just without the index.
++
++### Filter with spatial predicates {#rtree-filter}
++
++Spatial predica
+```
+
+**File**: `docs/web/snippets/indexing.mdx` (modified, +10/-0)
+```diff
+@@ -26,6 +26,16 @@ export const PyScalarIndexOptimize = "table.add([{\"vector\": [7, 8], \"book_id\
+ 
+ export const PyScalarIndexPrefilter = "table = db.open_table(\"book_with_embeddings\")\ntable.search([1.2] * 2).where(\"book_id != 3\").limit(10).to_pandas()\n";
+ 
++export const PyScalarIndexRtreeCreate = "from lancedb.index import RTree\n\ntable.create_index(\"location\", config=RTree())\n";
++
++export const PyScalarIndexRtreeData = "import pyarrow as pa\n\npoint = pa.struct([(\"x\", pa.float64()), (\"y\", pa.float64())])\nschema = pa.schema(\n    [\n        pa.field(\"name\", pa.string()),\n        pa.field(\n            \"location\", point, metadata={\"ARROW:extension:name\": \"geoarrow.point\"}\n        ),\n        pa.field(\"vector\", pa.list_(pa.float32(), 2)),\n    ]\n)\nplaces = [\n    (\"Ferry Building\", -122.3937, 37.7955, [0.7, 0.3]),\n    (\"Golden Gate Park\", -122.4862, 37.7694, [0.1, 0.9]),\n    (\"Oakland Museum\", -122.2638, 37.7987, [1.0, 0.05]),\n]\ndata = pa.Table.from_pylist(\n    [\n        {\"name\": name, \"location\": {\"x\": x, \"y\": y}, \"vector\": vector}\n        for name, x, y, vector in places\n    ],\n    schema=schema,\n)\ntable = db.create_table(\"places\", data)\n";
++
++export const PyScalarIndexRtreeExplain = "plan = table.search().where(in_san_francisco).explain_plan(verbose=True)\nassert \"ScalarIndexQuery\" in plan\n";
++
++export const PyScalarIndexRtreeFilter = "san_francisco = (\n    \"ST_GeomFromText('POLYGON ((-122.52 37.70, -122.35 37.70, \"\n    \"-122.35 37.83, -122.52 37.83, -122.52 37.70))')\"\n)\nin_san_francisco = f\"ST_Within(location, {san_francisco})\"\n\nplaces_in_sf = table.search().where(in_san_francisco).select([\"name\"]).to_list()\n# [{'name': 'Ferry Building'}, {'name': 'Golden Gate Park'}]\n";
++
++export const PyScalarIndexRtreeVector = "# The nearest place overall is in Oakland; the spatial prefilter keeps the\n# search inside San Francisco.\nnearest_in_sf = (\n    table.search([1.0, 0.0])\n    .where(in_san_francisco)\n    .select([\"name\", \"_distance\"])\n    .limit(1)\n    .to_list()\n)\n# [{'name': 'Ferry Building', '_distance': 0.18}]\n";
++
+ export const PyScalarIndexUuidData = "def generate_random_names():\n    base_names = [\"Alice\", \"Bob\", \"Carla\", \"David\", \"Eve\", \"Frank\", \"Grace\"]\n    letter = random.choice(string.ascii_uppercase)\n    return f\"{random.choice(base_names)} {letter}.\"\n\ndef generate_uuids(num_items):\n    return [uuid.uuid4().bytes for _ in range(num_items)]\n\n# Generate some UUIDs and random names\nn = 7\nuuids = generate_uuids(n)\nnames = [generate_random_names() for _ in range(n)]\n";
+ 
+ export const PyScalarIndexUuidTable = "table_name = \"index-on-uuid\"\n\nuuid_array = pa.array(uuids, pa.uuid())\nname_array = pa.array(names, pa.string())\nschema = pa.schema(\n    [\n        pa.field(\"id\", pa.uuid()),\n        pa.field(\"name\", pa.string()),\n    ]\n)\ndata_table = pa.Table.from_arrays([uuid_array, name_array], schema=schema)\ntable = db.create_table(table_name, data=data_table, mode=\"overwrite\")\n";
+```
+
+**File**: `nodejs/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -46,7 +46,7 @@ aws-lc-rs = "=1.18.1"
+ napi-build = "2.3.1"
+ 
+ [features]
+-default = ["remote", "lancedb/aws", "lancedb/gcs", "lancedb/azure", "lancedb/dynamodb", "lancedb/oss", "lancedb/huggingface", "lancedb/goosefs", "lancedb/metrics-otel"]
++default = ["remote", "lancedb/aws", "lancedb/gcs", "lancedb/azure", "lancedb/dynamodb", "lancedb/oss", "lancedb/huggingface", "lancedb/goosefs", "lancedb/metrics-otel", "lancedb/geo"]
+ fp16kernels = ["lancedb/fp16kernels"]
+ remote = ["lancedb/remote"]
+ experimental-functions = ["lancedb/experimental-functions"]
+```
+
+**File**: `nodejs/__test__/remote.test.ts` (modified, +81/-0)
+```diff
+@@ -1435,6 +1435,87 @@ describe("remote connection", () => {
+     expect(createIndexBody?.["custom_stop_words"]).toEqual(["the"]);
+   });
+ 
++  it("sends RTree options to remote tables", async () => {
++    const createIndexBodies: Record<string, unknown>[] = [];
++
++    await withMockDatabase(
++      (req, res) => {
++        const path = req.url ?? "";
++        if (path.endsWith("/describe/")) {
++          res.writeHead(200, { "Content-Type": "application/json" }).end(
++            JSON.stringify({
++              name: "t",
++              version: 1,
++              schema: {
++                fields: [
++                  {
++                    name: "geom",
++                    type: {
++                      type: "struct",
++                      fields: [
++                        {
++                          name: "x",
++                          type: { type: "double" },
++                          nullable: false,
++                        },
++                        {
++                          name: "y",
++                          type: { type: "double" },
++                          nullable: false,
++                        },
++                      ],
++                    },
++                    nullable: true,
++                    metadata: { "ARROW:extension:name": "geoarrow.point" },
++                  },
++                ],
++              },
 +            }),
-+    );
-     for name in written {
-         if declared.iter().any(|declared| *declared == root(name)) {
-             return Err(Error::InvalidInput {
-@@ -2532,10 +2542,15 @@ pub(crate) mod test_support {
-             )])
-             .await
-             .unwrap();
--        let inputs = ["title".to_string(), "body".to_string()];
-+        let schema = dataset.schema();
-         let outputs = bindings
-             .iter()
-             .flat_map(|binding| {
-+                let inputs = binding
-+                    .inputs()
-+                    .iter()
-+                    .map(|input| input.field_path.clone())
-+                    .collect::<Vec<_>>();
-                 let assignment = binding.assignment().map(|assignment| {
-                     (
-                         assignment.output_name.clone(),
-@@ -2547,9 +2562,9 @@ pub(crate) mod test_support {
-                     .iter()
-                     .map(|output| (output.output_name.clone(), output.output_ordinal))
-                     .chain(assignment)
--                    .map(|(name, ordinal)| {
-+                    .map(move |(name, ordinal)| {
-                         (
--                            dataset.schema().field(&name).unwrap().id as u32,
-+                            schema.field(&name).unwrap().id as u32,
-                             function_computed_column_metadata(
-                                 binding.binding_id(),
-                                 ordinal,
-@@ -4144,6 +4159,37 @@ mod tests {
-         ArrowSchema::new(fields)
-     }
- 
-+    #[test]
-+    fn input_writes_preserve_the_assignment_column_guard() {
-+        let mut raw: Value = serde_json::to_value(test_support::text_features_binding("")).unwrap();
-+        raw["assignment"] = serde_json::json!({
-+            "output_name": "__function_assignment_fb_01K3TEXT", "output_field_id": -1,
++          );
++          return;
++        }
++
++        if (path.endsWith("/create_index/")) {
++          let raw = "";
++          req.on("data", (chunk) => {
++            raw += chunk;
++          });
++          req.on("end", () => {
++            createIndexBodies.push(JSON.parse(raw));
++            res.writeHead(200).end();
++          });
++          return;
++        }
++
++        res.writeHead(404).end();
++      },
++      async (db) => {
++        const table = await db.openTable("t");
++        await table.createIndex("geom", { config: Index.rtree() });
++        await table.createIndex("geom", {
++          config: Index.rtree({ pageSize: 1024 }),
++          name: "geom_rtree",
 +        });
-+        raw["outputs"][0]["nullable"] = Value::Bool(true);
-+        raw["outputs"][1]["nullable"] = Value::Bool(true);
-+        raw["output_schema"]["fields"].as_array_mut().unwrap().push(serde_json::json!({
-+            "name": "__function_assignment_fb_01K3TEXT", "nullable": true, "type": {"type": "bool"},
-+        }));
-+        let binding: FunctionBinding = serde_json::from_value(raw).unwrap();
-+        let schema = ArrowSchema::new_with_metadata(
-+            valid_function_binding_schema(true, true, &binding)
-+                .fields()
-+                .to_vec(),
-+            HashMap::from([(
-+                FUNCTION_BINDINGS_META_KEY.into(),
-+                function_bindings_metadata(&[binding]).unwrap(),
-+            )]),
-+        );
-+        ensure_not_written(&schema, ["title", "body"]).unwrap();
-+        for output in [
-+            "search_text",
-+            "search_token_count",
-+            "__function_assignment_fb_01K3TEXT",
-+        ] {
-+            assert!(ensure_not_written(&schema, [output]).is_err(), "{output}");
-+        }
-+    }
++      },
++    );
 +
-     #[test]
-     fn test_non_nullable_function_inputs_can_bind_to_nullable_parameters() {
-         let binding = FunctionBinding::from_json(include_str!(
-```
-
-**File**: `rust/lancedb/src/table/freshness.rs` (modified, +122/-0)
-```diff
-@@ -2646,6 +2646,8 @@ mod tests {
-     use lance_file::version::ConcreteFileVersion;
-     use lance_table::format::overlay::{DataOverlayFile, OverlayCoverage};
- 
-+    use crate::table::computed_columns::test_support::{stamp_bindings, text_features_binding};
++    expect(createIndexBodies).toEqual([
++      {
++        column: "geom",
++        // biome-ignore lint/style/useNamingConvention: server wire format
++        index_type: "RTREE",
++      },
++      {
++        column: "geom",
++        // biome-ignore lint/style/useNamingConvention: server wire format
++        index_type: "RTREE",
++        name: "geom_rtree",
++        // biome-ignore lint/style/useNamingConvention: server wire format
++        page_size: 1024,
++      },
++    ]);
++  });
 +
-     const COLUMN: &str = "doubled";
-     const EXPRESSION: &str = "value * 2";
- 
-@@ -3126,6 +3128,126 @@ mod tests {
-         }
-     }
- 
-+    #[tokio::test]
-+    async fn input_update_dirties_only_the_updated_rows_and_retains_outputs() {
-+        let table = fresh_function_table().await;
-+        let result = table
-+            .update()
-+            .only_if("title = 'a'")
-+            .column("body", "'changed'")
-+            .execute()
-+            .await
-+            .unwrap();
-+        assert_eq!(result.rows_updated, 1);
-+        let dataset = table.as_native().unwrap().dataset.get().await.unwrap();
-+        for output in ["search_text", "search_token_count"] {
-+            let stale = function_plan(&dataset, output).await;
-+            let mut dirty_rows = 0;
-+            for fragment in dataset.get_fragments() {
-+                if stale.needs_recompute(fragment.id() as u32) {
-+                    let batch = fragment
-+                        .scan()
-+                        .project(&["title"])
-+                        .unwrap()
-+                        .try_into_batch()
-+                        .await
-+                        .unwrap();
-+                    let titles = batch
-+                        .column(0)
-+                        .as_any()
-+                        .downcast_ref::<arrow_array::StringArray>()
-+                        .unwrap();
-+                    assert!(titles.iter().all(|title| title == Some("a")), "{stale:?}");
-+                    dirty_rows += batch.num_rows();
-+                }
-+            }
-+            assert_eq!(dirty_rows, 1, "{stale:?}");
-+        }
-+        assert_eq!(table.count_rows(Some("title = 'a' AND body = 'changed' AND search_text = 'a x' AND search_token_count = 2".into())).await.unwrap(), 1);
-+    }
-+
-+    #[tokio::test]
-+    async fn input_update_keeps_an_independent_function_binding_fresh() {
-+        let batch = arrow_array::record_batch!(
-+            ("title", Utf8, ["a", "b", "c", "d"]),
-+            ("body", Utf8, ["x", "y", "z", "w"]),
-+            ("search_text", Utf8, ["a x", "b y", "c z", "d w"]),
-+            ("search_token_count", Int64, [2, 2, 2, 2]),
-+            ("search_text_other", Utf8, ["a a", "b b", "c c", "d d"]),
-+            ("search_token_count_other", Int64, [2, 2, 2, 2])
-+        )
-+        .unwrap();
-+        let table = crate::connect("memory://")
-+            .execute()
-+            .await
-+            .unwrap()
-+            .create_table("independent_functions", batch)
-+            .write_options(crate::table::WriteOptions {
-+                lance_write_params: Some(WriteParams {
-+                    max_rows_per_file: 2,
-+                    ..Default::default()
-+                }),
-+            })
-+            .execute()
-+            .await
-+            .unwrap();
-+        let mut other = serde_json::to_value(text_features_binding("_other")).unwrap();
-+        other["inputs"][1]["field_path"] = serde_json::json!("title");
-+        other["inputs"][1]["field_id"] = other["inputs"][0]["field_id"].clone();
-+        let bindings = [
-+            text_features_binding(""),
-+            serde_json::from_value(other).unwrap(),
-+        ];
-+        stamp_bindings(&table, &bindings).await;
-+        let native = table.as_native().unwrap();
-+        let mut dataset = native.dataset.get().await.unwrap().as_ref().clone();
-+        for binding in &bindings {
-+            let paths = binding
-+                .inputs()
-+                .iter()
-+                .map(|input| input.field_path.clone())
-+                .collect::<Vec<_>>();
-+            let inputs = fields_for_paths(dataset.schema(), &paths).unwrap();
-+            let signatures = signatures_for(&dataset, &[0, 1], &inputs).unwrap();
-+            for output in binding.outputs() {
-+                write_signatures(
-+                    &mut dataset,
-+                    &output.output_name,
-+                    binding.binding_id(),
-+                    signatures.clone(),
-+                )
-+                .await
-+                .unwrap();
-+            }
-+        }
-+        native.dataset.update(dataset);
-+        table
-+            .update()
-+            .only_if("title = 'a'")
-+            .column("body", "'changed'")
-+            .execute()
-+            .await
-+            .unwrap();
-+        let dataset = native.dataset.get().await.unwrap();
-+        assert!(
-+            function_plan(&dataset, "search_text")
-+                .await
-+                .needs_recompute(2)
-+        );
-+        let other = &bindings[1];
-+        let inputs = fields_for_paths(dataset.schema(), &["title".into()]).unwrap();
-+        for output in other.outputs() {
-+            let stale =
-+                staleness_against(&dataset, &ou
-```
-
-**File**: `rust/lancedb/src/table/update.rs` (modified, +20/-13)
-```diff
-@@ -103,11 +103,6 @@ pub(crate) async fn execute_update(
-     // 1. Snapshot the current dataset
-     let dataset = table.dataset.get().await?;
-     crate::materialized_view::ensure_not_a_view(&table.name, &dataset.schema().metadata, "update")?;
--    super::computed_columns::ensure_not_function_bound(
--        &arrow_schema::Schema::from(dataset.schema()),
--        "update",
--        update.columns.iter().map(|(name, _)| name.as_str()),
--    )?;
-     super::computed_columns::ensure_not_written(
-         &arrow_schema::Schema::from(dataset.schema()),
-         update.columns.iter().map(|(name, _)| name.as_str()),
-@@ -473,26 +468,38 @@ mod tests {
-         assert_eq!(0, tbl.count_rows(Some("i == 0".to_string())).await.unwrap());
-     }
- 
--    /// A Function binding protects only the columns it reads or writes; any
--    /// other column updates as on a plain table.
-     #[tokio::test]
--    async fn update_on_a_function_table_refuses_only_bound_columns() {
-+    async fn update_allows_function_inputs_but_protects_outputs() {
-         let table = crate::table::computed_columns::test_support::bound_table().await;
--        let result = table.update().column("spare", "7").execute().await.unwrap();
-+        let result = table
-+            .update()
-+            .column("title", "'changed'")
-+            .execute()
-+            .await
-+            .unwrap();
-         assert_eq!(result.rows_updated, 1);
--        for column in ["title", "search_text"] {
-+        assert_eq!(
-+            table
-+                .count_rows(Some("title = 'changed' AND search_text = 'a b'".into()))
-+                .await
-+                .unwrap(),
-+            1
-+        );
-+        for column in ["search_text", "search_token_count"] {
-+            let version = table.version().await.unwrap();
-             let err = table
-                 .update()
--                .column(column, "'x'")
-+                .column("title", "'must not commit'")
-+                .column(column, "NULL")
-                 .execute()
-                 .await
-                 .unwrap_err();
-             assert!(
-                 matches!(&err, crate::Error::InvalidInput { message }
--                    if message.contains(&format!("update of '{column}'"))
--                        && message.contains("a Function binding reads or writes it")),
-+                if message.contains("is computed") && message.contains("cannot be written directly")),
-                 "{column}: {err:?}"
-             );
-+            assert_eq!(table.version().await.unwrap(), version);
-         }
-     }
- }
+   it("diffs and cherry-picks remote branches", async () => {
+     const sampleDiff = {
+       fromBranch: "exp",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5035** (2026-11-13): chore(deps): bump Rust deps flagged by security scans (@wjones127)
-- **PR #5023** (closed): docs: move the Blob range draft comment out of the TypeScript CodeBlock (@brendanclement)
-- **PR #5012** (2026-11-13): fix(remote): preserve branches in cache prewarm requests (@ChilePiquin)
-- **PR #5011** (2026-11-12): ci(java): publish beta releases to Fury instead of Maven Central (@wjones127)
-- **PR #5010** (2026-11-13): fix(ci): support Cargo 1.100 artifact layout in cleanup fixture (@Xuanwo)
-- **PR #5009** (closed): chore(deps): bump rustls to 0.23.46 in docs web-tests (@wjones127)
+- **PR #5094** (2026-11-19): docs: mark Blob v2 GA for ordinary tables in Enterprise 1.15.0 (@Xuanwo)
+- **PR #5092** (2026-11-19): docs: add sidebar icons for Function failures and catalog pagination (@brendanclement)
+- **PR #5090** (2026-11-18): ci: publish and verify the CLI shell installer (@ChilePiquin)
+- **PR #5087** (2026-11-18): docs: add an ordinary Blob v2 photo tutorial (@Xuanwo)
+- **PR #5086** (2026-11-18): docs: show how to read and copy filtered blob rows (@Xuanwo)
+- **PR #5085** (2026-11-18): docs: add semantic sampling guide (@jackye1995)
 
 ---
 
@@ -2049,37 +1791,39 @@ of mixed input/output writes. Local builds
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): support Cargo 1.100 artifact layout in cleanup fixture
+## X. docs: mark Blob v2 GA for ordinary tables in Enterprise 1.15.0
 
 **RULE**:
-When implementing operations in `ci/tests/test_build_no_lock.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/web/management/table.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `db098ba8`: ci): support Cargo 1.100 artifact layout in cleanup fixture. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae665a46`: docs: mark Blob v2 GA for ordinary tables in Enterprise 1.15.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/tests/test_build_no_lock.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/web/management/table.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            # Cargo 1.100 nests compiler inputs in per-unit build directories and
-            # names the build-script executable build_script_build.
-            self.assertTrue(list(target.rglob("libartifact_fixture*.rlib")))
-            self.assertTrue(list((target / "build").rglob("build[-_]script[-_]build")))
-            self.assertTrue(list((target / "build").rglob("out/generated.rs")))
+Starting with LanceDB Enterprise 1.15.0, Blob v2 is generally available on
+ordinary tables. Tables with Realtime Engine or MemWAL enabled are outside
+this support scope.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            self.assertTrue(list((target / "deps").glob("libartifact_fixture*.rlib")))
-            self.assertTrue(list((target / "build").glob("*/build-script-build")))
-            self.assertTrue(list((target / "build").glob("*/out/generated.rs")))
+<Badge color="purple">Early access</Badge>
+
+{/* Draft for Blob v2 GA. Confirm release status before removing Early access.
+
+Blob v2 GA supports standard tables. Tables with Realtime or MemWAL enabled
+are outside the GA support scope.
+*/}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `db098ba8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae665a46` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

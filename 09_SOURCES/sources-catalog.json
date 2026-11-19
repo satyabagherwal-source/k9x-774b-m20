@@ -1545,8 +1545,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
     "sourceVersion": "hf-black-forest-labs-flux-3-image-klein",
     "license": "Open-Source",
-    "contentHash": "3dabd21aecf1f79d9631c5db4e7623f716302638da9b04f874f0edec4b4b3927",
-    "lastHarvestedAt": "2026-11-15T03:13:26.660Z",
+    "contentHash": "0860393eddaa2e954ceb1cff1d305cf0a47eba93aba101284df47667eecdd767",
+    "lastHarvestedAt": "2026-11-19T16:33:14.187Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein"
   },
   "hf-pyannote-speaker-diarization-community-1": {
@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "f060cbd7",
+    "sourceVersion": "c9e95eba",
     "license": "Apache-2.0",
-    "contentHash": "e3f1892ae5237f13ada073f57142622fc853f43333ec18ef95c27ec7af1d16ea",
-    "lastHarvestedAt": "2026-11-18T14:15:54.725Z",
+    "contentHash": "30ad716224ae04b65a90cb05db485aafa1cd460f31be3f88d8cccdab4d87427f",
+    "lastHarvestedAt": "2026-11-19T16:33:26.209Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "f7701d5f",
+    "sourceVersion": "c4919869",
     "license": "MIT",
-    "contentHash": "9db5b8b665a834a2ab787f415b7a77a9d1305a8ae216c7e6d7ee843e8f550e87",
-    "lastHarvestedAt": "2026-11-15T06:45:15.877Z",
+    "contentHash": "53f007c9f3ddad6a8e5276e580c0122f060f3d948724cb2171eb2cd423588609",
+    "lastHarvestedAt": "2026-11-19T16:33:27.992Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "a6d7d02f",
+    "sourceVersion": "ae665a46",
     "license": "Apache-2.0",
-    "contentHash": "4b1bdec01711914855d0c2f13893d9368d8ce97087f16de21b5a915e7a40d182",
-    "lastHarvestedAt": "2026-11-18T13:17:32.241Z",
+    "contentHash": "04d06beba287b139be0f4922abdedc0c751a894ebac62311ac3fd3e955f04d63",
+    "lastHarvestedAt": "2026-11-19T16:33:29.470Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "73e945ec",
+    "sourceVersion": "084e3627",
     "license": "NOASSERTION",
-    "contentHash": "01a5efcffa9dde9fcfa58d7c0974921dcbcef701a8831d99df21dbcb861f44fd",
-    "lastHarvestedAt": "2026-11-17T21:03:05.447Z",
+    "contentHash": "4677864a6895e566f893c5bfbdddaef39fd2035b7d7547171fb76ce8bd462763",
+    "lastHarvestedAt": "2026-11-19T16:33:17.951Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {
@@ -7893,10 +7893,10 @@
     "repository": "darrylmorley/whatcable",
     "platform": "github",
     "sourceUrl": "https://github.com/darrylmorley/whatcable",
-    "sourceVersion": "67be75e4",
+    "sourceVersion": "6dcd0c37",
     "license": "NOASSERTION",
-    "contentHash": "76f0494454a7cb26562cde4d5a02a16c08cbe5bd9c23d36edeaa21e964a8c0db",
-    "lastHarvestedAt": "2026-11-15T11:12:38.834Z",
+    "contentHash": "a414be723b0e7ed5dcfef6a851ff48c98c8f898d5ead3160bafe3f0c1d21c3b9",
+    "lastHarvestedAt": "2026-11-19T16:33:21.842Z",
     "learningId": "learn-github-darrylmorley-whatcable"
   },
   "xcodesorg-xcodesapp": {

@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T16:17:06.448Z",
+  "updated_at": "2026-11-19T16:33:34.228Z",
   "stats": {
-    "total_discovered": 5929,
-    "approved_pending_harvest": 5614,
+    "total_discovered": 5936,
+    "approved_pending_harvest": 5621,
     "harvested_count": 0,
     "rejected_count": 315,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5581,
+      "COMMUNITY_AND_EXPERT": 5587,
       "OFFICIAL_DOCUMENTATION": 189,
-      "STANDARDS_AND_SPECIFICATIONS": 111,
+      "STANDARDS_AND_SPECIFICATIONS": 112,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 36,
       "LEGAL_AND_REGULATORY": 2,
@@ -128254,6 +128254,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
         "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-A4882ECE4610": {
+      "id": "SRC-A4882ECE4610",
+      "url": "https://en.wikipedia.org/wiki/Pairing_heap",
+      "title": "https://en.wikipedia.org/wiki/Pairing_heap",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T16:33:32.837Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-137E7171F69F": {
+      "id": "SRC-137E7171F69F",
+      "url": "https://www.boost.org/doc/libs/1_64_0/doc/html/intrusive/intrusive_vs_nontrusive.html",
+      "title": "https://www.boost.org/doc/libs/1_64_0/doc/html/intrusive/intrusive_vs_nontrusive.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T16:33:32.878Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-DBA1F0EF1E82": {
+      "id": "SRC-DBA1F0EF1E82",
+      "url": "https://github.com/litespeedtech/lsquic/blob/v4.11.2/CHANGELOG",
+      "title": "https://github.com/litespeedtech/lsquic/blob/v4.11.2/CHANGELOG",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T16:33:32.919Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-F25DDDD28857": {
+      "id": "SRC-F25DDDD28857",
+      "url": "https://github.com/oven-sh/WebKit/releases/download/autobuild-$%7Bversion",
+      "title": "https://github.com/oven-sh/WebKit/releases/download/autobuild-$%7Bversion",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T16:33:32.981Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-B7A7743CF76D": {
+      "id": "SRC-B7A7743CF76D",
+      "url": "https://github.com/oven-sh/WebKit/releases/download/$asset",
+      "title": "https://github.com/oven-sh/WebKit/releases/download/$asset",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T16:33:33.019Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-CE83B627260C": {
+      "id": "SRC-CE83B627260C",
+      "url": "https://www.rfc-editor.org/rfc/rfc9000",
+      "title": "IETF RFC 9000",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T16:33:33.071Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-1ECF35414C08": {
+      "id": "SRC-1ECF35414C08",
+      "url": "https://github.com/darrylmorley/TUIkit.git",
+      "title": "https://github.com/darrylmorley/TUIkit.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T16:33:34.228Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
+        "fileName": "darrylmorley-whatcable-learnings.md"
       }
     }
   }

@@ -4,45 +4,31 @@
 {
   "source_repository": "darrylmorley/whatcable",
   "source_url": "https://github.com/darrylmorley/whatcable",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "6dcd0c37",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-19T16:33:22.037Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-darrylmorley-whatcable",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [darrylmorley/whatcable](https://github.com/darrylmorley/whatcable) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [darrylmorley/whatcable](https://github.com/darrylmorley/whatcable) (Revision: `6dcd0c37`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-19T16:33:22.037Z`  
+> **Learning ID**: `learn-github-darrylmorley-whatcable`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `darrylmorley/whatcable` (Commit: `historical`)
+- **Target Repository**: `darrylmorley/whatcable` (Commit: `6dcd0c37`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md`  
-> **Source**: github ([https://github.com/darrylmorley/whatcable](https://github.com/darrylmorley/whatcable))  
-> **Source Version**: `6d8580a0`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T01:11:49.665Z  
-> **Learning ID**: `learn-github-darrylmorley-whatcable`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): darrylmorley/whatcable
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/darrylmorley/whatcable](https://github.com/darrylmorley/whatcable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T01:11:49.655Z  
+> **Harvest Timestamp**: 2026-11-19T16:33:20.825Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: macOS menu bar app that tells you, in plain English, what each USB-C cable plugged into your Mac can actually do
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9111 stars
+- **Stars / Engagement**: 9141 stars
 
 ---
 
@@ -1754,450 +1740,420 @@ public enum ConnectedDeviceTree {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6d8580a0` (2026-11-10)
-**Commit Message**: Mirror from private (2ebfc38a)
+### Incident Patch 1: `6dcd0c37` (2026-11-16)
+**Commit Message**: Mirror from private (dbb642d1)
 
-**File**: `Sources/WhatCable/Resources/fa.lproj/Localizable.strings` (modified, +2/-0)
+**File**: `Package.resolved` (modified, +1/-1)
 ```diff
-@@ -88,6 +88,8 @@
- "COMMUNITY" = "جامعه";
- "Contribute Diagnostic Data" = "مشارکت در ارسال داده‌های تشخیصی";
- "Contribute Diagnostic Data…" = "مشارکت در ارسال داده‌های تشخیصی…";
-+"Before you start" = "پیش از شروع";
-+"Plug in the cables and devices you want included, then leave everything connected until it finishes. Plugging or unplugging during the run can leave gaps in the results." = "کابل‌ها و دستگاه‌هایی را که می‌خواهید در نتایج باشند وصل کنید، سپس تا پایان کار همه را متصل نگه دارید. وصل یا جدا کردن دستگاه‌ها در حین اجرا ممکن است باعث ناقص شدن نتایج شود.";
- "Privacy" = "حریم خصوصی";
- "Pro" = "Pro";
- "Proceed" = "ادامه";
+@@ -6,7 +6,7 @@
+       "location" : "https://github.com/darrylmorley/TUIkit.git",
+       "state" : {
+         "branch" : "main",
+-        "revision" : "18246360bbdefd5ad7e5eab47955d47eac9d824f"
++        "revision" : "c86e48dacbaf6ebcb002dbfa28164b6705282406"
+       }
+     }
+   ],
 ```
 
-**File**: `Sources/WhatCableNotifications/Resources/fa.lproj/Localizable.strings` (modified, +1/-1)
+**File**: `Sources/WhatCableCore/Resources/de.lproj/Localizable.strings` (modified, +53/-2)
 ```diff
-@@ -12,4 +12,4 @@
- "System reports charger at %lldW" = "سیستم شارژر را با توان %lldW گزارش می‌دهد";
- "Charger advertises up to %lldW" = "شارژر تا %lldW را اعلام می‌کند";
+@@ -407,10 +407,10 @@
+ 
+ /* Session monitor verdicts. */
+ "Battery full, not drawing power" = "Battery full, not drawing power";
+-"Performing as expected" = "Performing as expected";
++"Performing as expected" = "Funktioniert wie erwartet";
+ "No problems seen while watching this cable." = "No problems seen while watching this cable.";
+ "Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
+-"Not performing as expected" = "Not performing as expected";
++"Not performing as expected" = "Funktioniert nicht wie erwartet";
+ "Isn't performing as expected" = "Isn't performing as expected";
+ 
+ /* Power Monitor system power source indicator. */
+@@ -844,3 +844,54 @@
+ "Thunderbolt devices disconnected" = "Thunderbolt-Geräte getrennt";
+ "Wattage not reported" = "Wattzahl nicht gemeldet";
+ "%@ (%@)" = "%1$@ (%2$@)";
++
++/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
++   terminal UI: keep translations short. The key letters in the footer
++   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
++   so they stay as they are. ===== */
++"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab wechseln  r aktualisieren  c melden  q beenden  ↑↓ auswählen  enter auf-/zuklappen";
++"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab wechseln  r aktualisieren  q beenden  ↑↓ blättern";
++"Tab switch  r refresh  q quit" = "Tab wechseln  r aktualisieren  q beenden";
++"Overview" = "Übersicht";
++"Negotiation" = "Aushandlung";
++"WhatCable Dashboard - %@" = "WhatCable-Dashboard - %@";
++"Updated: %@" = "Aktualisiert: %@";
++"waiting..." = "Warten...";
++"No active connections" = "Keine aktiven Verbindungen";
++"Live power per port. System totals at the top." = "Live-Leistung pro Anschluss. Systemsummen oben.";
++"System" = "System";
++"Desktop Mac (no battery)" = "Desktop-Mac (kein Akku)";
++"Adapter: %@" = "Netzteil: %@";
++"No charger" = "Kein Ladegerät";
++"No active power ports" = "Keine aktiven Stromanschlüsse";
++"no live draw  contract up to %@" = "keine Live-Messung  Vertrag bis zu %@";
++"Waiting for telemetry..." = "Warte auf Telemetrie...";
++"Contract: %@" = "Vertrag: %@";
++"VConn: %@  %@" = "VConn: %1$@  %2$@";
++"Resistance: %@" = "Widerstand: %@";
++"Health: %@" = "Zustand: %@";
++"no live draw to chart" = "keine Live-Messung für das Diagramm";
++"Draw  (%@)" = "Verbrauch  (%@)";
++"last %llds" = "letzte %llds";
++"last %lldm" = "letzte %lldm";
++"last %lldm %llds" = "letzte %1$lldm %2$llds";
++"Worth keeping an eye on" = "Im Auge behalten";
++"Signal conflict detected" = "Signalkonflikt erkannt";
++"Cable e-marker says %@ but controller reads %@." = "Der e-marker des Kabels meldet %1$@, der Controller liest aber %2$@.";
++"The controller's reading is used." = "Der Wert des Controllers wird verwendet.";
++"Ports" = "Anschlüsse";
++"Data: %@" = "Daten: %@";
++"Charging: %@" = "Laden: %@";
++"Battery: fully charged" = "Akku: vollständig geladen";
++"Charging path: %@" = "Ladepfad: %@";
++"No active power sources" = "Keine aktiven Stromquellen";
++"Port %lld" = "Anschluss %lld";
++"measuring (%@)" = "Messung läuft (%@)";
++"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm Pfad geschätzt (%2$@, %3$@ A Spanne, R2 %4$@)";
++"No Thunderbolt controller" = "Kein Thunderbolt-Controller";
++"%@, up to %lld Gb/s" = "%1$@, bis zu %2$lld Gbit/s";
++"No data-capable ports" = "Keine datenfähigen Anschlüsse";
++/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
++"%@ to %@ (Thunderbolt link to a device)" = "%1$@ an %2$@";
++"Power adapter" = "Netzteil";
++"error: %@" = "Fehler: %@";
+```
+
+**File**: `Sources/WhatCableCore/Resources/de.lproj/Localizable.stringsdict` (modified, +33/-0)
+```diff
+@@ -50,5 +50,38 @@
+ 			<string>%lld Hubs anzeigen</string>
+ 		</dict>
+ 	</dict>
++	<!-- Pro terminal dashboard, the CLI dashboard flag. -->
++	<key>%lld samples</key>
++	<dict>
++		<key>NSStringLocalizedFormatKey</key>
++		<string>%#@count@</string>
++		<key>count</key>
++		<dict>
++			<key>NSStringFormatSpecTypeKey</key>
++			<string>NSStringPluralRuleType</string>
++			<key>NSStringFormatValueTypeKey</key>
++			<string>lld</string>
++			<key>one</key>
++			<string>%lld Messwert</string>
++			<key>other</key>
++			<string>%lld Messwerte</string>
++		</dict>
++	</dict>
++	<key>%lld ports idle</key>
++	<dict>
++		<key>NSStringLocalizedFormatKey</key>
++		<string>%#@count@</string>
++		<key>count</key>
++		<dict>
++			<key>NSStringFormatSpecTypeKey</key>
++			<string>NSStringPluralRuleType</string>
++			<key>NSStringFormatValueTypeKey</key>
++			<string>lld</string>
++			<key>one</key>
++			<string>%lld Anschluss inaktiv</string>
++			<key>other</key>
++			<string>%lld Anschlüsse inaktiv</string>
++		</dict>
++	</dict>
+ </dict>
+ </plist>
+```
+
+**File**: `Sources/WhatCableCore/Resources/en.lproj/Localizable.strings` (modified, +51/-0)
+```diff
+@@ -848,3 +848,54 @@
+ "Thunderbolt devices disconnected" = "Thunderbolt devices disconnected";
+ "Wattage not reported" = "Wattage not reported";
+ "%@ (%@)" = "%@ (%@)";
++
++/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
++   terminal UI: keep translations short. The key letters in the footer
++   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
++   so they stay as they are. ===== */
++"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse";
++"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab switch  r refresh  q quit  ↑↓ scroll";
++"Tab switch  r refresh  q quit" = "Tab switch  r refresh  q quit";
++"Overview" = "Overview";
++"Negotiation" = "Negotiation";
++"WhatCable Dashboard - %@" = "WhatCable Dashboard - %@";
++"Updated: %@" = "Updated: %@";
++"waiting..." = "waiting...";
++"No active connections" = "No active connections";
++"Live power per port. System totals at the top." = "Live power per port. System totals at the top.";
++"System" = "System";
++"Desktop Mac (no battery)" = "Desktop Mac (no battery)";
++"Adapter: %@" = "Adapter: %@";
++"No charger" = "No charger";
++"No active power ports" = "No active power ports";
++"no live draw  contract up to %@" = "no live draw  contract up to %@";
++"Waiting for telemetry..." = "Waiting for telemetry...";
++"Contract: %@" = "Contract: %@";
++"VConn: %@  %@" = "VConn: %1$@  %2$@";
++"Resistance: %@" = "Resistance: %@";
++"Health: %@" = "Health: %@";
++"no live draw to chart" = "no live draw to chart";
++"Draw  (%@)" = "Draw  (%@)";
++"last %llds" = "last %llds";
++"last %lldm" = "last %lldm";
++"last %lldm %llds" = "last %1$lldm %2$llds";
++"Worth keeping an eye on" = "Worth keeping an eye on";
++"Signal conflict detected" = "Signal conflict detected";
++"Cable e-marker says %@ but controller reads %@." = "Cable e-marker says %1$@ but controller reads %2$@.";
++"The controller's reading is used." = "The controller's reading is used.";
++"Ports" = "Ports";
++"Data: %@" = "Data: %@";
++"Charging: %@" = "Charging: %@";
++"Battery: fully charged" = "Battery: fully charged";
++"Charging path: %@" = "Charging path: %@";
++"No active power sources" = "No active power sources";
++"Port %lld" = "Port %lld";
++"measuring (%@)" = "measuring (%@)";
++"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm path est. (%2$@, %3$@ A span, R2 %4$@)";
++"No Thunderbolt controller" = "No Thunderbolt controller";
++"%@, up to %lld Gb/s" = "%1$@, up to %2$lld Gb/s";
++"No data-capable ports" = "No data-capable ports";
++/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
++"%@ to %@ (Thunderbolt link to a device)" = "%1$@ to %2$@";
++"Power adapter" = "Power adapter";
++"error: %@" = "error: %@";
+```
+
+**File**: `Sources/WhatCableCore/Resources/en.lproj/Localizable.stringsdict` (modified, +33/-0)
+```diff
+@@ -50,5 +50,38 @@
+ 			<string>Show %lld hubs</string>
+ 		</dict>
+ 	</dict>
++	<!-- Pro terminal dashboard, the CLI dashboard flag. -->
++	<key>%lld samples</key>
++	<dict>
++		<key>NSStringLocalizedFormatKey</key>
++		<string>%#@count@</string>
++		<key>count</key>
++		<dict>
++			<key>NSStringFormatSpecTypeKey</key>
++			<string>NSStringPluralRuleType</string>
++			<key>NSStringFormatValueTypeKey</key>
++			<string>lld</string>
++			<key>one</key>
++			<string>%lld sample</string>
++			<key>other</key>
++			<string>%lld samples</string>
++		</dict>
++	</dict>
++	<key>%lld ports idle</key>
++	<dict>
++		<key>NSStringLocalizedFormatKey</key>
++		<string>%#@count@</string>
++		<key>count</key>
++		<dict>
++			<key>NSStringFormatSpecTypeKey</key>
++			<string>NSStringPluralRuleType</string>
++			<key>NSStringFormatValueTypeKey</key>
++			<string>lld</string>
++			<key>one</key>
++			<string>%lld port idle</string>
++			<key>other</key>
++			<string>%lld ports idle</string>
++		</dict>
++	</dict>
+ </dict>
+ </plist>
+```
+
+**File**: `Sources/WhatCableCore/Resources/es.lproj/Localizable.strings` (modified, +53/-2)
+```diff
+@@ -407,10 +407,10 @@
+ 
+ /* Session monitor verdicts. */
+ "Battery full, not drawing power" = "Battery full, not drawing power";
+-"Performing as expected" = "Performing as expected";
++"Performing as expected" = "Funciona como se esperaba";
+ "No problems seen while watching this cable." = "No problems seen while watching this cable.";
+ "Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
+-"Not performing as expected" = "Not performing as expected";
++"Not performing as expected" = "No funciona como se esperaba";
+ "Isn't performing as expected" = "Isn't performing as expected";
+ 
+ /* Power Monitor system power source indicator. */
+@@ -844,3 +844,54 @@
+ "Thunderbolt devices disconnected" = "Dispositivos Thunderbolt desconectados";
+ "Wattage not reported" = "Potencia no reportada";
+ "%@ (%@)" = "%1$@ (%2$@)";
++
++/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
++   terminal UI: keep translations short. The key letters in the footer
++   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
++   so they stay as they are. ===== */
++"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab cambiar  r actualizar  c informar  q salir  ↑↓ seleccionar  enter expandir/contraer";
++"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab cambiar  r actualizar  q salir  ↑↓ desplazar";
++"Tab switch  r refresh  q quit" = "Tab cambiar  r actualizar  q salir";
++"Overview" = "Resumen";
++"Negotiation" = "Negociación";
++"WhatCable Dashboard - %@" = "Panel de WhatCable - %@";
++"Updated: %@" = "Actualizado: %@";
++"waiting..." = "esperando...";
++"No active connections" = "No hay conexiones activas";
++"Live power per port. System totals at the top." = "Alimentación en vivo por puerto. Totales del sistema arriba.";
++"System" = "Sistema";
++"Desktop Mac (no battery)" = "Mac de escritorio (sin batería)";
++"Adapter: %@" = "Adaptador: %@";
++"No charger" = "Sin cargador";
++"No active power ports" = "No hay puertos de alimentación activos";
++"no live draw  contract up to %@" = "sin consumo en vivo  contrato hasta %@";
++"Waiting for telemetry..." = "Esperando telemetría...";
++"Contract: %@" = "Contrato: %@";
++"VConn: %@  %@" = "VConn: %1$@  %2$@";
++"Resistance: %@" = "Resistencia: %@";
++"Health: %@" = "Estado: %@";
++"no live draw to chart" = "sin consumo en vivo que graficar";
++"Draw  (%@)" = "Consumo  (%@)";
++"last %llds" = "últimos %llds";
++"last %lldm" = "últimos %lldm";
++"last %lldm %llds" = "últimos %1$lldm %2$llds";
++"Worth keeping an eye on" = "Conviene vigilarlo";
++"Signal conflict detected" = "Conflicto de señales detectado";
++"Cable e-marker says %@ but controller reads %@." = "El e-marker del cable indica %1$@, pero el controlador lee %2$@.";
++"The controller's reading is used." = "Se usa la lectura del controlador.";
++"Ports" = "Puertos";
++"Data: %@" = "Datos: %@";
++"Charging: %@" = "Carga: %@";
++"Battery: fully charged" = "Batería: carga completa";
++"Charging path: %@" = "Ruta de carga: %@";
++"No active power sources" = "No hay fuentes de alimentación activas";
++"Port %lld" = "Puerto %lld";
++"measuring (%@)" = "midiendo (%@)";
++"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm ruta est. (%2$@, rango %3$@ A, R2 %4$@)";
++"No Thunderbolt controller" = "Sin controlador Thunderbolt";
++"%@, up to %lld Gb/s" = "%1$@, hasta %2$lld Gb/s";
++"No data-capable ports" = "No hay puertos con datos";
++/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
++"%@ to %@ (Thunderbolt link to a device)" = "%1$@ a %2$@";
++"Power adapter" = "Adaptador de corriente";
++"error: %@" = "Error: %@";
+```
+
+**File**: `Sources/WhatCableCore/Resources/es.lproj/Localizable.stringsdict` (modified, +33/-0)
+```diff
+@@ -50,5 +50,38 @@
+ 			<string>Mostrar %lld hubs</string>
+ 		</dict>
+ 	</dict>
++	<!-- Pro terminal dashboard, the CLI dashboard flag. -->
++	<key>%lld samples</key>
++	<dict>
++		<key>NSStringLocalizedFormatKey</key>
++		<string>%#@count@</string>
++		<key>count</key>
++		<dict>
++			<key>NSStringFormatSpecTypeKey</key>
++			<string>NSStringPluralRuleType</string>
++			<key>NSStringFormatValueTypeKey</key>
++			<string>lld</string>
++			<key>one</key>
++			<string>%lld muestra</string>
++			<key>other</key>
++			<string>%lld muestras</string>
++		</dict>
++	</dict>
++	<key>%lld ports idle</key>
++	<dict>
++		<key>NSStringLocalizedFormatKey</key>
++		<string>%#@count@</string>
++		<key>count</key>
++		<dict>
++			<key>NSStringFormatSpecTypeKey</key>
++			<string>NSStringPluralRuleType</string>
++			<key>NSStringFormatValueTypeKey</key>
++			<string>lld</string>
++			<key>one</key>
++			<string>%lld puerto inactivo</string>
++			<key>other</key>
++			<string>%lld puertos inactivos</string>
++		</dict>
++	</dict>
+ </dict>
+ </plist>
+```
+
+**File**: `Sources/WhatCableCore/Resources/fa.lproj/Localizable.strings` (modified, +51/-0)
+```diff
+@@ -848,3 +848,54 @@
+ "Thunderbolt devices disconnected" = "دستگاه‌های Thunderbolt جدا شدند";
  "Wattage not reported" = "توان گزارش نشده است";
--"%@ (%@)" = "%@ (%@)";
-+"%@ (%@)" = "%1$@ (%2$@)";
-```
-
-**File**: `TRANSLATIONS.md` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- # Translations
- 
--WhatCable ships in 19 languages. Community translations are welcome and
-+WhatCable ships in 20 languages. Community translations are welcome and
- credited in the release notes. A few ground rules keep them mergeable.
- 
- ## The one rule that matters
-```
-
-**File**: `docs/index.html` (modified, +3/-3)
-```diff
-@@ -1147,7 +1147,7 @@ <h1>Know what your USB-C cable <span class="accent">can really do.</span></h1>
-         <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Open source, Pro optional</span>
-         <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Apple Silicon, macOS 14+</span>
-         <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Signed and notarised</span>
--        <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Available in 19 languages</span>
-+        <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Available in 20 languages</span>
-       </div>
-     </div>
-     <div class="hero-shot">
-@@ -1264,7 +1264,7 @@ <h2>Plain answers for cables that all look the same.</h2>
-     <div class="feature-cta">
-       <div>
-         <strong>Check your cables on the Mac you already use.</strong>
--        <span>Free, open source, and available in 19 languages.</span>
-+        <span>Free, open source, and available in 20 languages.</span>
-       </div>
-       <a class="button primary" href="https://github.com/darrylmorley/whatcable/releases/latest/download/WhatCable.zip" download>Download WhatCable for free <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
-     </div>
-@@ -1393,7 +1393,7 @@ <h2>Common questions.</h2>
-       <details class="faq-item"><summary>Does WhatCable just read the e-marker?</summary><p>No. The e-marker is the cable’s digital label, but WhatCable also uses the connection information your Mac provides. It compares the port, cable and connected device, and checks display links too. This helps explain why the connection is working at a particular speed or charging rate.</p><p><strong>Technical detail:</strong> On Thunderbolt and USB4 connections, controller reports can show the negotiated link speed. That confirms the speed reached in that connection, not the cable’s absolute maximum. A compatible passive cable with an older 40 Gbps identity may legitimately carry newer 80 Gbps signalling. Missing faster-link evidence does not prove a lower physical limit.</p></details>
-       <details class="faq-item"><summary>Why does my cable show no e-marker data?</summary><p>The cable may have no identity chip, or your Mac may not have read it yet. Try connecting a charger, dock or device at the far end, then check again. Missing information alone does not mean the cable is broken.</p><p><strong>Technical detail:</strong> Some basic USB 2.0 cables do not require an e-marker. Full-featured cables and cables carrying more than 3 A do. Whether macOS exposes the identity also depends on the port and connected equipment; connecting another device can help trigger a read but does not guarantee one.</p></details>
-       <details class="faq-item"><summary>Can it tell me if a cable is fake?</summary><p>Not definitively. WhatCable helps you investigate inconsistent reports and connection problems. A missing manufacturer or certificate alone does not prove a cable is counterfeit.</p><p><strong>Technical detail:</strong> The trust checks examine identity and capability fields against USB Power Delivery rules. Malformed or contradictory fields are different from missing information. The app cannot inspect the physical wiring or authenticate every product label.</p></details>
--      <details class="faq-item"><summary>What languages is WhatCable available in?</summary><p>19, and the diagnostic verdicts are translated too, not just the menus: Armenian, Brazilian Portuguese, Dutch, English, French, German, Hindi, Italian, Japanese, Korean, Latvian, Norwegian, Polish, Russian, Simplified Chinese, Spanish, Traditional Chinese, Turkish, and Ukrainian. WhatCable follows your Mac's language by default, or you can pick one in Settings. Translations are community-refinable, so if something reads oddly in your language, <a href="https://github.com/darrylmorley/whatcable/issues" style="color: var(--accent);">open an issue</a> and we'll fix it.</p></details>
-+      <details class="faq-item"><summary>What languages is WhatCable available in?</summary><p>20, and the diagnostic verdicts are transl
-```
-
-**File**: `docs/instructions.html` (modified, +2/-2)
-```diff
-@@ -871,7 +871,7 @@ <h3>Display</h3>
-   <li><strong>Opacity:</strong> how solid the WhatCable window is. Turn it down to see what's behind the panel while you work.</li>
-   <li><strong>Menu bar icon:</strong> choose which icon WhatCable uses in the menu bar, so it fits in with whatever else you keep up there.</li>
-   <li><strong>Show charging watts in the menu bar:</strong> when something is charging, show the live wattage next to the menu bar icon. Pick <strong>Number</strong> (a watts readout) or <strong>Bar</strong> (a small fill gauge).</li>
--  <li><strong>Language:</strong> override the system language. 19 languages available: Deutsch, English, Espa&ntilde;ol, Fran&ccedil;ais, Italiano, Latvie&scaron;u, Nederlands, Norsk Bokm&aring;l, Polski, Portugu&ecirc;s (Brasil), T&uuml;rk&ccedil;e, &#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;, &#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072;, &#2361;&#2367;&#2344;&#2381;&#2342;&#2368;, &#26085;&#26412;&#35486;, &#54620;&#44397;&#50612;, &#20013;&#25991; (&#31616;&#20307;), &#20013;&#25991; (&#32321;&#39636;), and &#1344;&#1377;&#1397;&#1381;&#1408;&#1381;&#1398;. Takes effect on next launch.</li>
-+  <li><strong>Language:</strong> override the system language. 20 languages available: Deutsch, English, Espa&ntilde;ol, Fran&ccedil;ais, Italiano, Latvie&scaron;u, Nederlands, Norsk Bokm&aring;l, Polski, Portugu&ecirc;s (Brasil), T&uuml;rk&ccedil;e, &#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;, &#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072;, &#2361;&#2367;&#2344;&#2381;&#2342;&#2368;, &#26085;&#26412;&#35486;, &#54620;&#44397;&#50612;, &#20013;&#25991; (&#31616;&#20307;), &#20013;&#25991; (&#32321;&#39636;), &#1601;&#1575;&#1585;&#1587;&#1740;, and &#1344;&#1377;&#1397;&#1381;&#1408;&#1381;&#1398;. Takes effect on next launch.</li>
- </ul>
- 
- <h3>Notifications</h3>
-@@ -960,7 +960,7 @@ <h3>Cable history <span class="pro-badge">Pro</span></h3>
-   Add a cable, give it a name, and WhatCable starts keeping a record of how it actually performs over time, not just a snapshot of the moment it's plugged in. It recognises the cable on later connections from its e-marker fingerprint and builds up a timeline: when you last used it, what it negotiated each time, and whether it has been misbehaving.
- </p>
- <p>
--  You get a saved-cables list, an all-time summary per cable (best and typical data speed, charging power, fault counts), and a verdict right on the port card so you don't have to dig. A per-cable graph plots its data speed over time against its rated ceiling, with 7-day, 30-day, and all-time views. Cables you haven't added still get the live reading as before, they just aren't recorded. Cables with no e-marker chip at all can't be added: with nothing to recognise them by, there's no way to tell one from another on a later connection. Localised in 19 languages.
-+  You get a saved-cables list, an all-time summary per cable (best and typical data speed, charging power, fault counts), and a verdict right on the port card so you don't have to dig. A per-cable graph plots its data speed over time against its rated ceiling, with 7-day, 30-day, and all-time views. Cables you haven't added still get the live reading as before, they just aren't recorded. Cables with no e-marker chip at all can't be added: with nothing to recognise them by, there's no way to tell one from another on a later connection. Localised in 20 languages.
- </p>
- 
- <figure>
-```
-
-**File**: `src/index.njk` (modified, +3/-3)
-```diff
-@@ -695,7 +695,7 @@ extraHead: |
-         <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Open source, Pro optional</span>
-         <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Apple Silicon, macOS 14+</span>
-         <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Signed and notarised</span>
--        <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Available in 19 languages</span>
-+        <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Available in 20 languages</span>
-       </div>
-     </div>
-     <div class="hero-shot">
-@@ -867,7 +867,7 @@ extraHead: |
-     <div class="feature-cta">
-       <div>
-         <strong>Check your cables on the Mac you already use.</strong>
--        <span>Free, open source, and available in 19 languages.</span>
-+        <span>Free, open source, and available in 20 languages.</span>
-       </div>
-       <a class="button primary" href="{{ site.downloadUrl }}" download>Download WhatCable for free <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
-     </div>
-@@ -1013,7 +1013,7 @@ extraHead: |
-       <details class="faq-item"><summary>Does WhatCable just read the e-marker?</summary><p>No. The e-marker is the cable’s digital label, but WhatCable also uses the connection information your Mac provides. It compares the port, cable and connected device, and checks display links too. This helps explain why the connection is working at a particular speed or charging rate.</p><p><strong>Technical detail:</strong> On Thunderbolt and USB4 connections, controller reports can show the negotiated link speed. That confirms the speed reached in that connection, not the cable’s absolute maximum. A compatible passive cable with an older 40 Gbps identity may legitimately carry newer 80 Gbps signalling. Missing faster-link evidence does not prove a lower physical limit.</p></details>
-       <details class="faq-item"><summary>Why does my cable show no e-marker data?</summary><p>The cable may have no identity chip, or your Mac may not have read it yet. Try connecting a charger, dock or device at the far end, then check again. Missing information alone does not mean the cable is broken.</p><p><strong>Technical detail:</strong> Some basic USB 2.0 cables do not require an e-marker. Full-featured cables and cables carrying more than 3 A do. Whether macOS exposes the identity also depends on the port and connected equipment; connecting another device can help trigger a read but does not guarantee one.</p></details>
-       <details class="faq-item"><summary>Can it tell me if a cable is fake?</summary><p>Not definitively. WhatCable helps you investigate inconsistent reports and connection problems. A missing manufacturer or certificate alone does not prove a cable is counterfeit.</p><p><strong>Technical detail:</strong> The trust checks examine identity and capability fields against USB Power Delivery rules. Malformed or contradictory fields are different from missing information. The app cannot inspect the physical wiring or authenticate every product label.</p></details>
--      <details class="faq-item"><summary>What languages is WhatCable available in?</summary><p>19, and the diagnostic verdicts are translated too, not just the menus: Armenian, Brazilian Portuguese, Dutch, English, French, German, Hindi, Italian, Japanese, Korean, Latvian, Norwegian, Polish, Russian, Simplified Chinese, Spanish, Traditional Chinese, Turkish, and Ukrainian. WhatCable follows your Mac's language by default, or you can pick one in Settings. Translations are community-refinable, so if something reads oddly in your language, <a href="https://github.com/darrylmorley/whatcable/issues" style="color: var(--accent);">open an issue</a> and we'll fix it.</p></details>
-+      <details class="faq-item"><summary>What languages is WhatCable available in?</summary><p>20, and the diagnostic verdicts are translated too, not just the menus: Armenian, Brazilian Portuguese, Dutch, English, French, German, Hindi, Italian, Japanese, Korean, Latvian, Norwegian, Persian, Polish, Russian, Simplified Ch
-```
-
-**File**: `src/instructions.njk` (modified, +2/-2)
-```diff
-@@ -416,7 +416,7 @@ extraHead: |
-   <li><strong>Opacity:</strong> how solid the WhatCable window is. Turn it down to see what's behind the panel while you work.</li>
-   <li><strong>Menu bar icon:</strong> choose which icon WhatCable uses in the menu bar, so it fits in with whatever else you keep up there.</li>
-   <li><strong>Show charging watts in the menu bar:</strong> when something is charging, show the live wattage next to the menu bar icon. Pick <strong>Number</strong> (a watts readout) or <strong>Bar</strong> (a small fill gauge).</li>
--  <li><strong>Language:</strong> override the system language. 19 languages available: Deutsch, English, Espa&ntilde;ol, Fran&ccedil;ais, Italiano, Latvie&scaron;u, Nederlands, Norsk Bokm&aring;l, Polski, Portugu&ecirc;s (Brasil), T&uuml;rk&ccedil;e, &#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;, &#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072;, &#2361;&#2367;&#2344;&#2381;&#2342;&#2368;, &#26085;&#26412;&#35486;, &#54620;&#44397;&#50612;, &#20013;&#25991; (&#31616;&#20307;), &#20013;&#25991; (&#32321;&#39636;), and &#1344;&#1377;&#1397;&#1381;&#1408;&#1381;&#1398;. Takes effect on next launch.</li>
-+  <li><strong>Language:</strong> override the system language. 20 languages available: Deutsch, English, Espa&ntilde;ol, Fran&ccedil;ais, Italiano, Latvie&scaron;u, Nederlands, Norsk Bokm&aring;l, Polski, Portugu&ecirc;s (Brasil), T&uuml;rk&ccedil;e, &#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;, &#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072;, &#2361;&#2367;&#2344;&#2381;&#2342;&#2368;, &#26085;&#26412;&#35486;, &#54620;&#44397;&#50612;, &#20013;&#25991; (&#31616;&#20307;), &#20013;&#25991; (&#32321;&#39636;), &#1601;&#1575;&#1585;&#1587;&#1740;, and &#1344;&#1377;&#1397;&#1381;&#1408;&#1381;&#1398;. Takes effect on next launch.</li>
- </ul>
- 
- <h3>Notifications</h3>
-@@ -505,7 +505,7 @@ extraHead: |
-   Add a cable, give it a name, and WhatCable starts keeping a record of how it actually performs over time, not just a snapshot of the moment it's plugged in. It recognises the cable on later connections from its e-marker fingerprint and builds up a timeline: when you last used it, what it negotiated each time, and whether it has been misbehaving.
- </p>
- <p>
--  You get a saved-cables list, an all-time summary per cable (best and typical data speed, charging power, fault counts), and a verdict right on the port card so you don't have to dig. A per-cable graph plots its data speed over time against its rated ceiling, with 7-day, 30-day, and all-time views. Cables you haven't added still get the live reading as before, they just aren't recorded. Cables with no e-marker chip at all can't be added: with nothing to recognise them by, there's no way to tell one from another on a later connection. Localised in 19 languages.
-+  You get a saved-cables list, an all-time summary per cable (best and typical data speed, charging power, fault counts), and a verdict right on the port card so you don't have to dig. A per-cable graph plots its data speed over time against its rated ceiling, with 7-day, 30-day, and all-time views. Cables you haven't added still get the live reading as before, they just aren't recorded. Cables with no e-marker chip at all can't be added: with nothing to recognise them by, there's no way to tell one from another on a later connection. Localised in 20 languages.
- </p>
- 
- <figure>
-```
-
----
-
-### Incident Patch 2: `9fe707bd` (2026-11-10)
-**Commit Message**: Add Persian (fa) translation (#644)
-
-* Add Persian (fa) translation
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Fix three Persian strings flagged in review
-
-Use opacity rather than transparency, say the Mac isn't drawing power
-from the charger, and use the Persian names of WhatCable's own screens.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Persian: keep right-to-left layout for sentences that start with a name
-
-macOS takes the paragraph direction from the first strong letter, so
-sentences that began with a Latin name were laid out left to right.
-Reword them to start with Persian, or add a right-to-left mark where a
-name must come first, and isolate file name and path placeholders.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ Click the **gear icon** in the popover header to open Settings, where you can:
- - Adjust the font size and the window opacity
- - Show technical details (the same raw IOKit data that ⌥-click reveals)
- - Skip deep USB probing, a compatibility switch for the few KVM switches and hubs that misbehave when WhatCable reads capability info from the devices behind them
--- Switch language (English, Armenian, Brazilian Portuguese, Dutch, French, German, Hindi, Italian, Japanese, Korean, Latvian, Norwegian, Polish, Russian, Simplified Chinese, Spanish, Traditional Chinese, Turkish, Ukrainian, or follow your system default)
-+- Switch language (English, Armenian, Brazilian Portuguese, Dutch, French, German, Hindi, Italian, Japanese, Korean, Latvian, Norwegian, Persian, Polish, Russian, Simplified Chinese, Spanish, Traditional Chinese, Turkish, Ukrainian, or follow your system default)
- - Get notifications when cables are connected or disconnected, and when an app update is available
- - Contribute anonymised port and power diagnostics to improve hardware coverage (opt-in, manual)
- 
-```
-
-**File**: `Sources/WhatCable/Resources/fa.lproj/Localizable.strings` (added, +188/-0)
-```diff
-@@ -0,0 +1,188 @@
-+"%@ profiles" = "%@ پروفایل";
-+"%lld USB-C ports and 1 MagSafe port detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "%lld درگاه USB-C و یک درگاه MagSafe شناسایی شد، اما در حال حاضر چیزی متصل نیست. برای دیدن آن‌ها، «پنهان کردن درگاه‌های خالی» را در تنظیمات خاموش کنید.";
-+"%lld USB-C ports detected, but nothing is currently plugged in. Turn off \"Hide empty ports\" in Settings to see them." = "%lld درگاه USB-C شناسایی شد، اما در حال حاضر چیزی متصل نیست. برای دیدن آن‌ها، «پنهان کردن درگاه‌های خالی» را در تنظیمات خاموش کنید.";
-+"About %@" = "دربارهٔ %@";
-+"Active" = "فعال";
-+"Active cable electronics" = "الکترونیک فعال کابل";
-+"All raw IOKit properties (%lld)" = "همهٔ ویژگی‌های خام IOKit (%lld)";
-+"Behavior" = "رفتار";
-+"Built by %@." = "ساخته‌شده توسط %@.";
-+"Cable trust signals" = "سیگنال‌های اعتماد کابل";
-+"Cancel" = "لغو";
-+"Check for Updates…" = "بررسی به‌روزرسانی‌ها…";
-+"Connected devices" = "دستگاه‌های متصل";
-+"Connection" = "اتصال";
-+"Display" = "نمایشگر";
-+"Desktop Mac: charger identity (FedDetails) is not available." = "در Mac رومیزی: هویت شارژر (FedDetails) در دسترس نیست.";
-+"Done" = "انجام شد";
-+"Downloading…" = "در حال دانلود…";
-+"Newer version found, installing it…" = "نسخهٔ جدیدتر پیدا شد، در حال نصب…";
-+"Checking for the latest version…" = "در حال بررسی آخرین نسخه…";
-+"File a GitHub issue with this cable's e-marker fingerprint" = "ثبت یک issue در GitHub با اثر انگشت e-marker این کابل";
-+"Font size" = "اندازهٔ قلم";
-+"Opacity" = "میزان کدری";
-+"Helps the maintainer reproduce charger / cable behavior tied to specific hardware." = "به توسعه‌دهنده کمک می‌کند رفتار شارژر / کابل وابسته به سخت‌افزار خاص را بازتولید کند.";
-+"Hide empty ports" = "پنهان کردن درگاه‌های خالی";
-+"Host (%@)" = "میزبان (%@)";
-+"Include Mac model and macOS version" = "شامل مدل Mac و نسخهٔ macOS";
-+"Install failed: %@" = "نصب ناموفق بود: %@";
-+"This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew." = "این حساب کاربری نمی‌تواند برنامه‌ها را در این مکان به‌روزرسانی کند. نسخهٔ جدید را از whatcable.uk دانلود کنید یا با Homebrew به‌روزرسانی نمایید.";
-+"WhatCable can't update itself from its current folder. Move WhatCable into your Applications folder, relaunch it, and try again, or download the latest version from whatcable.uk." = "برنامهٔ WhatCable نمی‌تواند خود را از پوشهٔ فعلی‌اش به‌روزرسانی کند. WhatCable را به پوشهٔ Applications منتقل کنید، آن را دوباره باز کنید و مجدداً تلاش کنید، یا آخرین نسخه را از whatcable.uk دانلود نمایید.";
-+"Install update" = "نصب به‌روزرسانی";
-+"Installing, WhatCable will relaunch" = "در حال نصب، WhatCable دوباره راه‌اندازی خواهد شد";
-+"Keep window open" = "باز نگه داشتن پنجره";
-+"Language" = "زبان";
-+"Launch at login" = "اجرا هنگام ورود به سیستم";
-+"Lives in the menu bar with no Dock icon." = "بدون نماد Dock در نوار منو قرار می‌گیرد.";
-+"Menu bar icon" = "نماد نوار منو";
-+"Show charging watts in the menu bar" = "نمایش وات شارژ در نوار منو";
-+"Watts display" = "نمایش وات";
-+"Number" = "عدد";
-+"Bar" = "نوار";
-+/* Menu bar icon choices */
-+"Cable" = "کابل";
-+"Cable, horizontal" = "کابل، افقی";
-+"Bolt" = "صاعقه";
-+"Power plug" = "دوشاخه برق";
-+"Power cord" = "کابل برق";
-+"No" = "خیر";
-+"No USB-C ports detected" = "هیچ درگاه USB-C شناسایی نشد";
-+"Nothing connected" = "چیزی متصل نیست";
-+"Notifications" = "اعلان‌ها";
-+"Notify on cable changes" = "اعلان هنگام تغییر کابل";
-+"Notify on app updates" = "اعلان هنگام به‌روزرسانی برنامه";
-+"Open in GitHub" = "باز کردن در GitHub";
-+"Opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit there." = "یک issue از پیش پرشده در GitHub را در مرورگر شما باز می‌کند. تا زمانی که آنجا ارسال نکنید، چیزی فرستاده نمی‌شود.";
-+"Optical" = "نوری";
-+"Plug events" = "رویدادهای اتصال";
-+"Preview of what will be included:" = "پیش‌نمایش مواردی که شامل خواهد شد:";
-+"Provisioned" = "پیکربندی‌شده";
-+"Quit" = "خروج";
-+"Quit %@" = "خروج از %@";
-+"Refresh" = "تازه‌سازی";
-+"Report this cable" = "گزارش این کابل";
-+"Runs as a regular Dock app with a window." = "به‌عنوان یک برنامهٔ معمولی Dock همراه با پنجره اجرا می‌شود.";
-+"System Default" = "پیش‌فرض سیستم";
-+"Settings" = "تنظیمات";
-+"Settings…" = "تنظیمات…";
-+"Show in menu bar" = "نمایش در نوار منو";
-+"Show technical details" = "نمایش جزئیات فنی";
-+"SuperSpeed" = "SuperSpeed";
-+"Supported" = "پشتیبانی می‌شود";
-+"This Mac doesn't seem to expose its port-controller services. Hit refresh, or check System Information > USB." = "به نظر می‌رسد این Mac سرویس‌های کنترل‌کنندهٔ درگاه خود را ارائه نمی‌دهد. تازه‌سازی را بزنید یا System Information > USB را بررسی کنید.";
-+"Thunderbolt fabric" = "بستر Thunderbolt";
-+"Transports" = "پروتکل‌های انتقال";
-+"Unknown" = "نامشخص";
-+"Verifying signature…" = "در حال تأیید امضا…";
-+"View release" = "مشاهدهٔ نسخه";
-+"What gets shared?" = "چه مواردی به اشتراک گذاشته می‌شود؟";
-+"WhatCable %@ is available" = "نسخهٔ %@ از WhatCable در دسترس است";
-+"WhatCable on 
-```
-
-**File**: `Sources/WhatCable/Resources/fa.lproj/Localizable.stringsdict` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+<?xml version="1.0" encoding="UTF-8"?>
-+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-+<plist version="1.0">
-+<dict>
-+	<key>%lld USB devices</key>
-+	<dict>
-+		<key>NSStringLocalizedFormatKey</key>
-+		<string>%#@count@</string>
-+		<key>count</key>
-+		<dict>
-+			<key>NSStringFormatSpecTypeKey</key>
-+			<string>NSStringPluralRuleType</string>
-+			<key>NSStringFormatValueTypeKey</key>
-+			<string>lld</string>
-+			<key>one</key>
-+			<string>%lld دستگاه USB</string>
-+			<key>other</key>
-+			<string>%lld دستگاه USB</string>
-+		</dict>
-+	</dict>
-+	<key>Show %lld hubs</key>
-+	<dict>
-+		<key>NSStringLocalizedFormatKey</key>
-+		<string>%#@count@</string>
-+		<key>count</key>
-+		<dict>
-+			<key>NSStringFormatSpecTypeKey</key>
-+			<string>NSStringPluralRuleType</string>
-+			<key>NSStringFormatValueTypeKey</key>
-+			<string>lld</string>
-+			<key>one</key>
-+			<string>نمایش %lld هاب</string>
-+			<key>other</key>
-+			<string>نمایش %lld هاب</string>
-+		</dict>
-+	</dict>
-+</dict>
-+</plist>
-```
-
-**File**: `Sources/WhatCableCore/Resources/fa.lproj/Localizable.strings` (added, +671/-0)
-```diff
-@@ -0,0 +1,671 @@
-+"0.2-0.5 mW" = "0.2-0.5 mW";
-+"0.5-1 mW" = "0.5-1 mW";
-+"1-5 mW" = "1-5 mW";
-+"3 A" = "3 A";
-+"5 A" = "5 A";
-+"5-10 mW" = "5-10 mW";
-+"50-200 µW" = "50-200 µW";
-+"< 50 µW" = "< 50 µW";
-+"> 10 mW" = "> 10 mW";
-+"Active %@ cable, %@" = "کابل فعال %1$@، %2$@";
-+"Active cable" = "کابل فعال";
-+"Active cable (contains signal-conditioning electronics)" = "کابل فعال (شامل مدارهای الکترونیکی بهبود سیگنال)";
-+"Active cable (VDO 2):" = "کابل فعال (VDO 2):";
-+"Alternate Mode Adapter" = "آداپتور Alternate Mode";
-+"Both the charger and cable can do more, but the Mac is currently asking for less. This is normal once the battery is mostly full, or when the system is idle." = "هر دو شارژر و کابل توانایی بیشتری دارند، اما Mac در حال حاضر توان کمتری درخواست می‌کند. این حالت وقتی باتری تقریباً پر است یا سیستم در حالت بی‌کاری قرار دارد عادی است.";
-+"Cable does not advertise an e-marker (basic cable)" = "کابل e-marker را اعلام نمی‌کند (کابل معمولی)";
-+"Cable is limiting charging speed" = "کابل سرعت شارژ را محدود کرده است";
-+"Cable identified as %@" = "کابل به‌عنوان %@ شناسایی شد";
-+"This e-marker is used in: %@" = "این e-marker در موارد زیر استفاده می‌شود: %@";
-+"Cable rated for %@ at up to %lldV (~%lldW)" = "کابل مشخص‌شده برای %1$@ تا حداکثر %2$lldV (~%3$lldW)";
-+"Cable rated to %lldV / %@, delivers up to %lldW (USB-PD caps at 48V)" = "کابل دارای مشخصهٔ %1$lldV / %2$@، ارائه تا حداکثر %3$lldW (حداکثر سقف USB-PD برابر 48V است)";
-+"Cable speed: %@" = "سرعت کابل: %@";
-+"Cable trust signals:" = "سیگنال‌های اعتماد کابل:";
-+"Carrying DisplayPort video" = "انتقال ویدیوی DisplayPort";
-+"Carrying both data and DisplayPort video." = "انتقال هم‌زمان داده و ویدیوی DisplayPort.";
-+"Charger advertises up to %lldW" = "شارژر تا حداکثر %lldW را اعلام می‌کند";
-+"Charger: %@" = "شارژر: %@";
-+"Charger: %@ %@" = "شارژر: %1$@ %2$@";
-+"Charger identified as %@" = "شارژر به عنوان %@ شناسایی شد";
-+"Charger and cable are well-matched. The Mac draws what it needs moment to moment, up to this limit." = "شارژر و کابل کاملاً همخوانی دارند. Mac لحظه‌به‌لحظه تا این سقف، توان مورد نیازش را دریافت می‌کند.";
-+"Charger can deliver up to %lldW, but this cable is only rated to carry %lldW. Replace the cable to charge faster." = "شارژر می‌تواند تا %1$lldW توان ارائه دهد، اما این کابل فقط برای انتقال %2$lldW رده‌بندی شده است. برای شارژ سریع‌تر کابل را تعویض کنید.";
-+"Charging" = "در حال شارژ";
-+"Charging at %lldW (charger can do up to %lldW)" = "در حال شارژ با %1$lldW (شارژر تا %2$lldW توانایی دارد)";
-+"Charging only" = "فقط شارژ";
-+"Charging well · up to %lldW" = "شارژ مناسب · تا %lldW";
-+"Charging · %lldW charger" = "در حال شارژ · شارژر %lldW";
-+"System reports charger at %lldW" = "سیستم شارژر را %lldW گزارش می‌کند";
-+"Charging: " = "شارژ: ";
-+"Connected devices:" = "دستگاه‌های متصل:";
-+"Connected" = "متصل";
-+"Connected device: %@, %@" = "دستگاه متصل: %1$@، %2$@";
-+"Connected to %@" = "متصل به %@";
-+"Connected via %lld hops: %@" = "متصل از طریق %1$lld گام: %2$@";
-+"Connected." = "متصل شد.";
-+"Copper" = "مسی";
-+"Couldn't determine cable type from this port." = "تشخیص نوع کابل از این درگاه امکان‌پذیر نبود.";
-+"Currently negotiated: %@ @ %@ (%@)" = "مذاکره‌شده در حال حاضر: %1$@ @ %2$@ (%3$@)";
-+"Display connected" = "نمایشگر متصل";
-+"Display connected · %lldW charger" = "نمایشگر متصل · شارژر %lldW";
-+"Display connected, data blocked" = "نمایشگر متصل، داده مسدود است";
-+"Display connected, data blocked · %lldW charger" = "نمایشگر متصل، داده مسدود است · شارژر %lldW";
-+"DisplayPort video over USB-C Alt Mode." = "ویدیوی DisplayPort از طریق USB-C Alt Mode.";
-+"E-marker claims EPR support but reports only 20V max VBUS" = "این E-marker ادعای پشتیبانی از EPR دارد اما حداکثر VBUS را فقط 20V گزارش می‌کند";
-+"E-marker reports no vendor identity" = "این E-marker هیچ شناسهٔ سازنده‌ای گزارش نمی‌کند";
-+"E-marker uses a reserved cable-latency value" = "این E-marker از مقدار رزروشدهٔ cable-latency استفاده می‌کند";
-+"E-marker uses a reserved current-rating value" = "این E-marker از مقدار رزروشدهٔ current-rating استفاده می‌کند";
-+"E-marker uses a reserved data-speed value" = "این E-marker از مقدار رزروشدهٔ data-speed استفاده می‌کند";
-+"E-marker uses an invalid VDO version" = "این E-marker از نسخهٔ نامعتبر VDO استفاده می‌کند";
-+"E-marker uses an invalid cable-termination value" = "این E-marker از مقدار نامعتبر cable-termination استفاده می‌کند";
-+"Last leg drops from %@ to %@" = "بخش پایانی از %1$@ به %2$@ افت می‌کند";
-+"This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "این کابل در e-marker خود vendor ID گزارش نمی‌کند، که در کابل‌های اصلی معمول است. تنها در صورتی ارزش بررسی دقیق‌تر دارد که سایر داده‌های قابلیت کابل نیز ناهماهنگ باشند.";
-+"Linked at %@" = "پیوند با %@";
-+"Negotiation hasn't completed yet." = "مذاکره هنوز کامل نشده است.";
-+"Charger on standby" = "شارژر در حالت آماده‌به‌کار";
-+"Another charger is powering the Mac right now. macOS d
-```
-
-**File**: `Sources/WhatCableCore/Resources/fa.lproj/Localizable.stringsdict` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+<?xml version="1.0" encoding="UTF-8"?>
-+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-+<plist version="1.0">
-+<dict>
-+	<key>via %lld hubs</key>
-+	<dict>
-+		<key>NSStringLocalizedFormatKey</key>
-+		<string>%#@count@</string>
-+		<key>count</key>
-+		<dict>
-+			<key>NSStringFormatSpecTypeKey</key>
-+			<string>NSStringPluralRuleType</string>
-+			<key>NSStringFormatValueTypeKey</key>
-+			<string>lld</string>
-+			<key>one</key>
-+			<string>از طریق %lld هاب</string>
-+			<key>other</key>
-+			<string>از طریق %lld هاب</string>
-+		</dict>
-+	</dict>
-+</dict>
-+</plist>
-```
-
-**File**: `Sources/WhatCableNotifications/Resources/fa.lproj/Localizable.strings` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+"%@ negotiated" = "%@ توافق شد";
-+"Charger connected" = "شارژر متصل شد";
-+"Charger disconnected" = "شارژر جدا شد";
-+"Connected: %@" = "متصل شد: %@";
-+"Disconnected: %@" = "جدا شد: %@";
-+"Reconnected: %@" = "اتصال مجدد برقرار شد: %@";
-+"USB device" = "دستگاه USB";
-+"USB devices connected" = "دستگاه‌های USB متصل شدند";
-+"USB devices disconnected" = "دستگاه‌های USB جدا شدند";
-+"Thunderbolt devices connected" = "دستگاه‌های Thunderbolt متصل شدند";
-+"Thunderbolt devices disconnected" = "دستگاه‌های Thunderbolt جدا شدند";
-+"System reports charger at %lldW" = "سیستم شارژر را با توان %lldW گزارش می‌دهد";
-+"Charger advertises up to %lldW" = "شارژر تا %lldW را اعلام می‌کند";
-+"Wattage not reported" = "توان گزارش نشده است";
-+"%@ (%@)" = "%@ (%@)";
-```
-
-**File**: `scripts/smoke-test.sh` (modified, +1/-0)
-```diff
-@@ -281,6 +281,7 @@ cat > "${CONTENTS_DIR}/Info.plist" <<PLIST
-         <string>en</string>
-         <string>de</string>
-         <string>es</string>
-+        <string>fa</string>
-         <string>fr</string>
-         <string>hi</string>
-         <string>hy</string>
+ "%@ (%@)" = "%1$@ (%2$@)";
++
++/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
++   terminal UI: keep translations short. The key letters in the footer
++   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
++   so they stay as they are. ===== */
++"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab تعویض  r تازه‌سازی  c گزارش  q خروج  ↑↓ انتخاب  enter باز/بسته کردن";
++"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab تعویض  r تازه‌سازی  q خروج  ↑↓ پیمایش";
++"Tab switch  r refresh  q quit" = "Tab تعویض  r تازه‌سازی  q خروج";
++"Overview" = "نمای کلی";
++"Negotiation" = "مذاکره";
++"WhatCable Dashboard - %@" = "داشبورد WhatCable - %@";
++"Updated: %@" = "به‌روزرسانی: %@";
++"waiting..." = "در انتظار...";
++"No active connections" = "اتصال فعالی وجود ندارد";
++"Live power per port. System totals at the top." = "توان زنده برای هر درگاه. مجموع سیستم در بالا.";
++"System" = "سیستم";
++"Desktop Mac (no battery)" = "Mac رومیزی (بدون باتری)";
++"Adapter: %@" = "آداپتور: %@";
++"No charger" = "بدون شارژر";
++"No active power ports" = "درگاه توان فعالی وجود ندارد";
++"no live draw  contract up to %@" = "مصرف زنده‌ای نیست  قرارداد تا %@";
++"Waiting for telemetry..." = "در انتظار تله‌متری...";
++"Contract: %@" = "قرارداد: %@";
++"VConn: %@  %@" = "VConn: %1$@  %2$@";
++"Resistance: %@" = "مقاومت: %@";
++"Health: %@" = "سلامت: %@";
++"no live draw to chart" = "مصرف زنده‌ای برای نمودار نیست";
++"Draw  (%@)" = "مصرف  (%@)";
++"last %llds" = "%lld ثانیهٔ اخیر";
++"last %lldm" = "%lld دقیقهٔ اخیر";
++"last %lldm %llds" = "%1$lld دقیقه و %2$lld ثانیهٔ اخیر";
++"Worth keeping an eye on" = "بهتر است زیر نظر باشد";
++"Signal conflict detected" = "تعارض سیگنال شناسایی شد";
++"Cable e-marker says %@ but controller reads %@." = "e-marker کابل %1$@ را گزارش می‌کند، اما کنترلر %2$@ را می‌خواند.";
++"The controller's reading is used." = "مقدار خوانده‌شده توسط کنترلر استفاده می‌شود.";
++"Ports" = "درگاه‌ها";
++"Data: %@" = "داده: %@";
++"Charging: %@" = "شارژ: %@";
++"Battery: fully charged" = "باتری: کاملاً شارژ شده";
++"Charging path: %@" = "مسیر شارژ: %@";
++"No active power sources" = "منبع توان فعالی وجود ندارد";
++"Port %lld" = "درگاه %lld";
++"measuring (%@)" = "در حال اندازه‌گیری (%@)";
++"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm برآورد مسیر (%2$@، بازهٔ %3$@ A، R2 %4$@)";
++"No Thunderbolt controller" = "کنترلر Thunderbolt وجود ندارد";
++"%@, up to %lld Gb/s" = "%1$@، تا %2$lld Gb/s";
++"No data-capable ports" = "درگاه دارای قابلیت داده وجود ندارد";
++/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
++"%@ to %@ (Thunderbolt link to a device)" = "%1$@ به %2$@";
++"Power adapter" = "آداپتور برق";
++"error: %@" = "خطا: %@";
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #668** (2026-11-12): Remove markdown rendering from cable report template (@salt-lick)
+- **PR #660** (2026-11-12): README: Update usbee[hive] details (@ferdnyc)
 - **PR #646** (2026-11-10): Traditional Chinese language update (@jimmyorz)
 - **PR #645** (2026-11-10): Update Italian language (@bovirus)
 - **PR #644** (2026-11-10): Add Persian (fa) translation (@aliafshany)
 - **PR #643** (2026-10-13): Traditional Chinese language update (@jimmyorz)
-- **PR #638** (2026-10-10): Traditional Chinese language update (@jimmyorz)
-- **PR #635** (2026-10-10): Traditional Chinese language update (@jimmyorz)
 
 ---
 
@@ -2217,32 +2173,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Mirror from private (2ebfc38a)
+## X. Mirror from private (dbb642d1)
 
 **RULE**:
-When implementing operations in `Sources/WhatCable/Resources/fa.lproj/Localizable.strings`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in darrylmorley/whatcable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Package.resolved`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in darrylmorley/whatcable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6d8580a0`: Mirror from private (2ebfc38a). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6dcd0c37`: Mirror from private (dbb642d1). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/WhatCable/Resources/fa.lproj/Localizable.strings`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Package.resolved`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-"Before you start" = "پیش از شروع";
-"Plug in the cables and devices you want included, then leave everything connected until it finishes. Plugging or unplugging during the run can leave gaps in the results." = "کابل‌ها و دستگاه‌هایی را که می‌خواهید در نتایج باشند وصل کنید، سپس تا پایان کار همه را متصل نگه دارید. وصل یا جدا کردن دستگاه‌ها در حین اجرا ممکن است باعث ناقص شدن نتایج شود.";
+        "revision" : "c86e48dacbaf6ebcb002dbfa28164b6705282406"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+        "revision" : "18246360bbdefd5ad7e5eab47955d47eac9d824f"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6d8580a0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6dcd0c37` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

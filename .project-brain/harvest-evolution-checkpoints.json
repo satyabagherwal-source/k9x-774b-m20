@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T16:25:31.806Z",
+  "last_updated": "2026-11-19T16:33:34.810Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T12:40:39.625Z",
@@ -78,7 +78,7 @@
       "staged_for_review": 1
     },
     "oven-sh-bun-learnings.md": {
-      "processed_at": "2026-11-17T21:03:27.885Z",
+      "processed_at": "2026-11-19T16:33:32.731Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -623,9 +623,9 @@
       "staged_for_review": 1
     },
     "darrylmorley-whatcable-learnings.md": {
-      "processed_at": "2026-11-15T11:14:39.611Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-19T16:33:34.152Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "hf-liquidai-lfm3-audio-2b-learnings.md": {
       "processed_at": "2026-11-16T16:21:54.451Z",
@@ -2853,8 +2853,8 @@
       "staged_for_review": 0
     },
     "hf-black-forest-labs-flux-3-image-klein-learnings.md": {
-      "processed_at": "2026-11-15T03:14:18.862Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T16:33:33.813Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-pyannote-speaker-diarization-community-1-learnings.md": {
@@ -3518,7 +3518,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2277,
+  "total_dossiers_evaluated": 2280,
   "total_canonical_promoted": 389,
-  "total_staged_for_review": 1697
+  "total_staged_for_review": 1699
 }

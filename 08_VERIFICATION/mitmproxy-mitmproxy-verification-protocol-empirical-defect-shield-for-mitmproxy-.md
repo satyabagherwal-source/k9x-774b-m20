@@ -4,22 +4,22 @@
 {
   "source_repository": "mitmproxy/mitmproxy",
   "source_url": "https://github.com/mitmproxy/mitmproxy",
-  "source_version": "f7701d5f",
+  "source_version": "c4919869",
   "license": "MIT",
-  "timestamp": "2026-11-15T06:45:16.046Z",
+  "timestamp": "2026-11-19T16:33:28.181Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mitmproxy-mitmproxy",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy) (Revision: `f7701d5f`).  
-> **License**: MIT | **Timestamp**: `2026-11-15T06:45:16.046Z`  
+> **Provenance**: Harvested from [mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy) (Revision: `c4919869`).  
+> **License**: MIT | **Timestamp**: `2026-11-19T16:33:28.181Z`  
 > **Learning ID**: `learn-github-mitmproxy-mitmproxy`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `mitmproxy/mitmproxy` (Commit: `f7701d5f`)
+- **Target Repository**: `mitmproxy/mitmproxy` (Commit: `c4919869`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T06:45:14.955Z  
+> **Harvest Timestamp**: 2026-11-19T16:33:27.032Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: An interactive TLS-capable intercepting HTTP proxy for penetration testers and software developers.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 46966 stars
+- **Stars / Engagement**: 47090 stars
 
 ---
 
@@ -1319,11 +1319,13 @@ class QuicStartServerHook(commands.StartHook):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8615** (2026-11-14): **update mitmproxy-rs**
-  *Symptoms*: 
+- **Issue #8626** (2026-11-19): **mitmweb: add clear button to filter inputs**
+  *Symptoms*: #### Description  Add a clear (`×`) button inside `FilterInput` (`Search`, `Highlight`, and `Intercept` inputs in `mitmweb`) when the input has a non-empty value, allowing users to quickly reset active filters with a single click while keeping focus on the input.  #### Checklist   - [x] I have updated tests where applicable.  - [x] I have added an entry to the CHANGELOG.
+  **Post-Mortem & Fix Analysis**:
+  > Sure! Here are the screenshots of the filter inputs:  **When populated (showing the `×` clear button):** <img width="1072" height="114" alt="image" src="https://github.com/user-attachments/assets/39d58453-1152-4130-8971-155cdb9e1edf" />  **When empty / after clicking `×`:** <img width="1072" height="114" alt="image" src="https://github.com/user-attachments/assets/a161a60e-da38-4775-9565-6835aa94b125" />
 
-- **Issue #8607** (2026-11-13): **build(deps-dev): bump maturin from 1.15.0 to 1.16.0**
-  *Symptoms*: Bumps [maturin](https://github.com/pyo3/maturin) from 1.15.0 to 1.16.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/pyo3/maturin/releases">maturin's releases</a>.</em></p> <blockquote> <h2>v1.16.0</h2> <h2>What's Changed</h2> <ul> <li>Update version mapping for GraalPy 3.13 by <a href="https://github.com/msimacek"><code>@​msimacek</code></a> in <a href="https://redirect.github.com/PyO3/maturin/pull/3297">PyO3/maturin#3297</a></li> <li>properly normalize / validate abiflags and include in environment signature by <a href="https://github.com/davidhewitt"><code>@​davidhewitt</code></a> in <a href="https://redirect.github.com/PyO3/maturin/pull/3299">PyO3/maturin#3299</a></li> <li>[pre-commit.ci] pre-commit autoupdate by <a href="https://github.com/pre-commit-ci"><code>@​pre-commit-ci</code></a>[bot] in <a href="https://redirect.github.com/PyO3/maturin/pull/3295">PyO3/maturin#3295</a></li> <li>Fix MinGW stable ABI library names in generated PyO3 config by <a href="https://github.com/Udonburo"><code>@​Udonburo</code></a> in <a href="https://redirect.github.com/PyO3/maturin/pull/3298">PyO3/maturin#3298</a></li> <li>[pre-commit.ci] pre-commit autoupdate by <a href="https://github.com/pre-commit-ci"><code>@​pre-commit-ci</code></a>[bot] in <a href="https://redirect.github.com/PyO3/maturin/pull/3303">PyO3/maturin#3303</a></li> <li>fix: lossy-decode external command output in interpreter discovery by <a href="https://github.com/devtechedge"
+- **Issue #8616** (2026-11-17): **mitmweb: keep WebSocket open on invalid filter expressions**
+  *Symptoms*: Fixes #8239  ## Summary - Catches `ValueError` from `flowfilter.parse(expr)` in `ClientConnection.update_filter` (`mitmproxy/tools/web/app.py`), logs a warning, and returns early instead of letting `on_message` close the WebSocket with code `1011` (`Internal server error.`). - Adds `test_websocket_invalid_filter_keeps_connection_open` in `test/mitmproxy/tools/web/test_app.py` verifying that sending an invalid filter (such as an unmatched quote while typing) keeps the connection open and allows subsequent valid filter updates to succeed.  ## Verification - `uv run --python 3.12 pytest test/mitmproxy/tools/web/test_app.py` with `test_process_list` deselected -> 47 passed, 1 deselected (`test_process_list` fails on Windows due to `mitmproxy_rs.process_info.active_executables()` environment error) - `uv run --python 3.12 mypy mitmproxy/tools/web/app.py` -> Success: no issues found in 1 source file
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1340,137 +1342,90 @@ class QuicStartServerHook(commands.StartHook):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f7701d5f` (2026-11-14)
-**Commit Message**: update mitmproxy-rs (#8615)
+### Incident Patch 1: `42332843` (2026-11-19)
+**Commit Message**: Show the traceback when client replay crashes (#8614)
 
-**File**: `pyproject.toml` (modified, +1/-1)
-```diff
-@@ -46,7 +46,7 @@ dependencies = [
-     "hyperframe>=6.0,<=6.1.0",
-     "kaitaistruct>=0.10,<=0.11",
-     "ldap3>=2.8,<=2.9.1",
--    "mitmproxy_rs>=0.12.15,<0.13",  # relaxed upper bound here: we control this
-+    "mitmproxy_rs>=0.12.16,<0.13",  # relaxed upper bound here: we control this
-     "pydivert>=2.0.3,<=3.1.3; sys_platform == 'win32'",
-     "pyOpenSSL>=24.3,<=27.0.0",
-     "pyparsing>=3.3.2,<=3.3.3",
-```
-
-**File**: `uv.lock` (modified, +15/-15)
-```diff
-@@ -1151,7 +1151,7 @@ requires-dist = [
-     { name = "hyperframe", specifier = ">=6.0,<=6.1.0" },
-     { name = "kaitaistruct", specifier = ">=0.10,<=0.11" },
-     { name = "ldap3", specifier = ">=2.8,<=2.9.1" },
--    { name = "mitmproxy-rs", specifier = ">=0.12.15,<0.13" },
-+    { name = "mitmproxy-rs", specifier = ">=0.12.16,<0.13" },
-     { name = "publicsuffix2", specifier = ">=2.20190812,<=2.20191221" },
-     { name = "pydivert", marker = "sys_platform == 'win32'", specifier = ">=2.0.3,<=3.1.3" },
-     { name = "pyopenssl", specifier = ">=24.3,<=27.0.0" },
-@@ -1199,45 +1199,45 @@ tox = [
- 
- [[package]]
- name = "mitmproxy-linux"
--version = "0.12.15"
-+version = "0.12.16"
- source = { registry = "https://pypi.org/simple" }
--sdist = { url = "https://files.pythonhosted.org/packages/ac/c0/1dcc17036fa58aae33aa3878e386dd55b88955e882ef794075ac98894da6/mitmproxy_linux-0.12.15.tar.gz", hash = "sha256:438615c3eaaa7a84b75ede3fccacdac1df31584746e6f3d58678d5883f06c1c2", size = 1298806, upload-time = "2026-10-22T00:49:20.641Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/97/26/1ecf0cb64ab46c4d04a06f4300b79d4557321ded7317f290652e76e3a8a8/mitmproxy_linux-0.12.16.tar.gz", hash = "sha256:2e661e5e0c7cf37e0d100b22126180ec07c619de96093f06ad655160a5f35f53", size = 1300433, upload-time = "2026-11-14T23:07:44.899Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/62/31/538d49c2e4943fac02ae154967b7ed21a952c7650e5835e60e41ac69bab4/mitmproxy_linux-0.12.15-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:59e54f1ab8952530333c91b484fad16a3ad4ade35473929d30ca68d6a9267a27", size = 1519055, upload-time = "2026-10-22T00:49:06.707Z" },
--    { url = "https://files.pythonhosted.org/packages/fa/ef/32bf79a030d7d0775c31d0c866d68030da386d738be284e8527c0ffa230e/mitmproxy_linux-0.12.15-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b5b1c277980ba37de4af21da19fd67466e0ebdefba7c0c325d6c9d48c32a94f8", size = 1627251, upload-time = "2026-10-22T00:49:08.815Z" },
-+    { url = "https://files.pythonhosted.org/packages/df/f8/27fd58f3488f24c653f00bb34411bfe2633cd1603eddb0d58c79a9b4aa1a/mitmproxy_linux-0.12.16-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:96e00379be84d3be82ef60288c1f4b241efe14c41966959f0a4095b8b9ac0fcb", size = 1524269, upload-time = "2026-11-14T23:07:33.193Z" },
-+    { url = "https://files.pythonhosted.org/packages/f2/b2/90837d64dec0aad3483edb0977d4792acf111047415c9dc4e5ed008fc7ff/mitmproxy_linux-0.12.16-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:87409215261b56ea7ccfedb0fe37b0f4accdd5e84d32596f6bdbabd0f42e5a9f", size = 1630986, upload-time = "2026-11-14T23:07:34.827Z" },
- ]
- 
- [[package]]
- name = "mitmproxy-macos"
--version = "0.12.15"
-+version = "0.12.16"
- source = { registry = "https://pypi.org/simple" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/63/98/ce0d7feb45bacd086ac387d97b6b7725b5b5a0edf84283fbeebdd3da85e6/mitmproxy_macos-0.12.15-py3-none-any.whl", hash = "sha256:ed5693f89b0cbd1d2a8c5a31baed2bd7a74b0aad68672e08444c1868c38f49f8", size = 2508792, upload-time = "2026-10-22T00:49:10.199Z" },
-+    { url = "https://files.pythonhosted.org/packages/7f/57/fecefcff11ea01f31b4cfcae3a2b7862d8a6cbf9a93b8f91bc6bbea535bc/mitmproxy_macos-0.12.16-py3-none-any.whl", hash = "sha256:aeec3a4e5d0d1bc5c98b296dc2cccd69703188e5946250d4f67f1e6b149823e0", size = 2508791, upload-time = "2026-11-14T23:07:36.122Z" },
- ]
- 
- [[package]]
- name = "mitmproxy-rs"
--version = "0.12.15"
-+version = "0.12.16"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "mitmproxy-linux", marker = "sys_platform == 'linux'" },
-     { name = "mitmproxy-macos", marker = "sys_platform == 'darwin'" },
-     { name = "mitmproxy-windows", marker = "os_name == 'nt'" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/21/18/0882ae668dbba421194e28aa68b35a795dc830ebc1cea4611d3cb38143ca/mitmproxy_rs-0.12.15.tar.gz", hash = "sha256:f1e7e3273a4ba25289a8060e2c7b2bca16d0cd59a25f0b61ca94be7938e88327", size = 1332240, upload-time = "2026-10-22T00:49:22.026Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/68/97/28e88c4f4c2bc4cdc22696838de1c056d3834e69fa7e071fb60edd22bd7e/mitmproxy_rs-0.12.16.tar.gz", hash = "sha256:4781c3b282a9cd2937e87d7db25ede8f22651f1961a92ec1ecd026b4fab5eb72", size = 1334800, upload-time = "2026-11-14T23:07:46.032Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/0e/ac/8e208fd35bf9d7349506ceb7aca84ee892bc298bebc567703fada8f5d558/mitmproxy_rs-0.12.15-cp312-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:071ac37c407b70caec118ec9e6cb110e7d6b53c5aafcba48d23f74696ae9ae6c", size = 7097906, upload-time = "2026-10-22T00:49:11.903Z" },
--    { url = "https://files.pythonhosted.org/packages/ad/a6/29720f59f99908ffe5d0f67a0097ed9b1b8c059c55173a8d02bba4630e38/mitmproxy_rs-0.12.15-cp312-abi3-manylinux_2_17_aarch64.many
-```
-
----
-
-### Incident Patch 2: `0c08a9b7` (2026-11-14)
-**Commit Message**: Skip addons that don't implement an event in trigger_event (#8577)
-
-* Skip addons that don't implement an event in trigger_event
-
-trigger_event() entered safecall() and invoke_addon() for every addon in
-the chain, even though most addons implement only a few hooks. mitmdump
-has 34 addons and only 0-13 of them handle any given flow hook, so most
-of the per-event cost went to context managers and generators that found
-nothing to call.
-
-Check for the hook attribute first and skip the addon when it is missing.
-Addons with sub-addons still take the full path.
+* Fix missing traceback in client replay crash logs
 
 * [autofix.ci] apply automated fixes
+
+* Fix the exc_info type annotation in the client replay log
 
 ---------
 
 Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.com>
-Co-authored-by: Maximilian Hils <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +3/-0)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -7,6 +7,9 @@
+@@ -7,6 +7,8 @@
  
  ## Unreleased: mitmproxy next
  
-+- Speed up addon event dispatch by skipping addons that don't implement the event.
-+  This saves work on every flow and makes plain HTTP proxying noticeably faster.
-+  ([#8577](https://github.com/mitmproxy/mitmproxy/pull/8577), @b84330808)
- - Fix a crash when an addon or `modify_headers` sets an HTTP/3 header name or value longer than
-   65,535 bytes, which QPACK cannot encode. The client now receives a 502 error instead, or a stream
-   reset if the response was already partly sent.
++- Show the traceback when client replay crashes.
++  ([#8614](https://github.com/mitmproxy/mitmproxy/pull/8614), @Giardi77)
+ - Speed up addon event dispatch by skipping addons that don't implement the event.
+   This saves work on every flow and makes plain HTTP proxying noticeably faster.
+   ([#8577](https://github.com/mitmproxy/mitmproxy/pull/8577), @b84330808)
 ```
 
-**File**: `mitmproxy/addonmanager.py` (modified, +6/-0)
+**File**: `mitmproxy/addons/clientplayback.py` (modified, +2/-2)
 ```diff
-@@ -287,6 +287,12 @@ async def trigger_event(self, event: hooks.Hook):
-         Asynchronously trigger an event across all addons.
-         """
-         for i in self.chain:
-+            # Most addons only implement a handful of hooks. Skip the ones that
-+            # cannot handle this event before setting up safecall() and invoke_addon(),
-+            # which is the bulk of the cost per addon. Addons with sub-addons always
-+            # take the full path.
-+            if not hasattr(i, "addons") and getattr(i, event.name, None) is None:
-+                continue
-             try:
-                 with safecall():
-                     await self.invoke_addon(i, event)
+@@ -118,11 +118,11 @@ def log(
+         message: str,
+         level: int = logging.INFO,
+         exc_info: Literal[True]
+-        | tuple[type[BaseException] | None, BaseException | None, TracebackType | None]
++        | tuple[type[BaseException], BaseException, TracebackType | None]
+         | None = None,
+     ) -> None:
+         assert isinstance(level, int)
+-        logger.log(level=level, msg=f"[replay] {message}")
++        logger.log(level=level, msg=f"[replay] {message}", exc_info=exc_info)
+ 
+     async def handle_hook(self, hook: commands.StartHook) -> None:
+         (data,) = hook.args()
+```
+
+**File**: `test/mitmproxy/addons/test_clientplayback.py` (modified, +15/-0)
+```diff
+@@ -11,6 +11,8 @@
+ from mitmproxy.connection import Address
+ from mitmproxy.exceptions import CommandError
+ from mitmproxy.exceptions import OptionsError
++from mitmproxy.options import Options
++from mitmproxy.proxy import events
+ from mitmproxy.test import taddons
+ from mitmproxy.test import tflow
+ 
+@@ -168,6 +170,19 @@ async def raise_err(*_, **__):
+         await cp.done()
+ 
+ 
++async def test_replay_log_traceback(monkeypatch, caplog_async):
++    """If the proxy core crashes during replay, we log the traceback."""
++
++    def raise_err(*_, **__):
++        raise ValueError("oops")
++
++    handler = ReplayHandler(tflow.tflow(live=False), Options())
++    monkeypatch.setattr(handler.layer, "handle_event", raise_err)
++    await handler.server_event(events.Start())
++    await caplog_async.await_log("mitmproxy has crashed!")
++    assert "ValueError: oops" in caplog_async.caplog.text
++
++
+ def test_check():
+     cp = ClientPlayback()
+     f = tflow.tflow(resp=True)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8626** (2026-11-19): mitmweb: add clear button to filter inputs (@Anto1368)
+- **PR #8616** (closed): mitmweb: keep WebSocket open on invalid filter expressions (@EnesKartal)
 - **PR #8615** (2026-11-14): update mitmproxy-rs (@mhils)
+- **PR #8614** (2026-11-19): Show the traceback when client replay crashes (@Giardi77)
 - **PR #8607** (2026-11-13): build(deps-dev): bump maturin from 1.15.0 to 1.16.0 (@dependabot[bot])
 - **PR #8606** (2026-11-13): build(deps): bump asgiref from 3.11.0 to 3.13.0 (@dependabot[bot])
-- **PR #8605** (2026-11-13): build(deps-dev): bump click from 8.4.2 to 8.5.1 (@dependabot[bot])
-- **PR #8604** (2026-11-13): build(deps-dev): bump build from 1.5.0 to 1.6.1 (@dependabot[bot])
-- **PR #8602** (2026-11-13): build(deps): bump pyparsing from 3.3.2 to 3.3.3 (@dependabot[bot])
 
 ---
 
@@ -1490,31 +1445,32 @@ Co-authored-by: Maximilian Hils <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update mitmproxy-rs
+## X. Show the traceback when client replay crashes
 
 **RULE**:
-When implementing operations in `pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f7701d5f`: update mitmproxy-rs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `42332843`: Show the traceback when client replay crashes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyproject.toml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    "mitmproxy_rs>=0.12.16,<0.13",  # relaxed upper bound here: we control this
+- Show the traceback when client replay crashes.
+  ([#8614](https://github.com/mitmproxy/mitmproxy/pull/8614), @Giardi77)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-    "mitmproxy_rs>=0.12.15,<0.13",  # relaxed upper bound here: we control this
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f7701d5f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `42332843` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

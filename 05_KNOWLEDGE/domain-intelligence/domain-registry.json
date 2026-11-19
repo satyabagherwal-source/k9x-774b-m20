@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T16:25:31.523Z",
+  "last_updated": "2026-11-19T16:33:34.554Z",
   "total_records": 1999,
   "domains": {
     "A": {
@@ -7991,8 +7991,8 @@
       "title": "Architecture Intelligence: mitmproxy/mitmproxy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mitmproxy-mitmproxy-architecture-intelligence-mitmproxy-mitmproxy-core-invariant.md",
       "repository": "mitmproxy/mitmproxy",
-      "content_hash": "1c4084b3f2b813ac09ca5b56a7794c07261c4cb75ce9a531de7ddf0728daae5a",
-      "created_at": "2026-11-15T06:45:16.154Z"
+      "content_hash": "48c085bec4790bf564210ade9b6daf17a8a8a6220e0708bfcd657eb49064e995",
+      "created_at": "2026-11-19T16:33:28.330Z"
     },
     "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-core-invariants",
@@ -10754,8 +10754,8 @@
       "title": "Content & Information Intelligence: lancedb/lancedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-lancedb-lancedb-content-information-intelligence-lancedb-lancedb-core-invariants.md",
       "repository": "lancedb/lancedb",
-      "content_hash": "99e40d0f43cb6ce907fffb54ef22662f1a91da5545381684164863dad93eeec1",
-      "created_at": "2026-11-13T21:16:18.325Z"
+      "content_hash": "90fba17c23e1b4518eb0f98cee2588671cb0f561499144f1f29c0d584729d461",
+      "created_at": "2026-11-19T16:33:29.801Z"
     },
     "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants",
@@ -16647,8 +16647,8 @@
       "title": "Technical Construction Intelligence: oven-sh/bun Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-technical-construction-intelligence-oven-sh-bun-core-invariants.md",
       "repository": "oven-sh/bun",
-      "content_hash": "f3385fa52581333a978c49c4949ff18c330697e9bbabc4164d2bcae2cedc3460",
-      "created_at": "2026-11-17T21:03:05.747Z"
+      "content_hash": "76af26a62566c726e11b33e6742ac7c1fe53d27135c15ff99bc984d518d97423",
+      "created_at": "2026-11-19T16:33:18.293Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants",
@@ -16707,8 +16707,8 @@
       "title": "Technical Construction Intelligence: oven-sh-bun-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-learnings-technical-construction-intelligence-oven-sh-bun-learnings-.md",
       "repository": "oven-sh-bun-learnings",
-      "content_hash": "b1a374f1d3e64a3d79891a0ae8e6b24be62210c07a4ee8a099dbec4fcf5e549c",
-      "created_at": "2026-11-17T21:03:28.252Z"
+      "content_hash": "4e5138d60f9355e9d8b976f74bd2885c84219a76af98c238b31688ef5ae75f57",
+      "created_at": "2026-11-19T16:33:33.413Z"
     },
     "DOM-D-02DACB51": {
       "record_id": "DOM-D-02DACB51",
@@ -19171,8 +19171,8 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/flux-3-image-klein Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-research-knowledge-intelligence-black-fo.md",
       "repository": "black-forest-labs/flux-3-image-klein",
-      "content_hash": "65854e2d8ffce5a3012700e0a2e15af3cfb928583365733b9d5bc0f6c02880da",
-      "created_at": "2026-11-15T03:13:26.866Z"
+      "content_hash": "517254315604100a02afdc2b4064f572996ec2ac8e90fdff92210210e6115004",
+      "created_at": "2026-11-19T16:33:14.354Z"
     },
     "domain_intelligence-architecture-intelligence-tw93-mole-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tw93-mole-core-invariants",
@@ -19240,8 +19240,8 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux-3-image-klein-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-black-forest-labs-flux-3-image-klein-learnings",
-      "content_hash": "2d0b7b8f4123629031b32e78d2215fd764bf537797c7aa072a32a2728e6c6370",
-      "created_at": "2026-11-15T03:14:19.109Z"
+      "content_hash": "651574f6b67c5684b19987e93191cad2227b43ed5171c5ca78dcb1c627fc95a2",
+      "created_at": "2026-11-19T16:33:33.987Z"
     },
     "domain_intelligence-architecture-intelligence-tw93-mole-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tw93-mole-learnings-core-invariants",
@@ -20806,8 +20806,8 @@
       "title": "Research & Knowledge Intelligence: darrylmorley/whatcable Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-darrylmorley-whatcable-research-knowledge-intelligence-darrylmorley-whatcable-co.md",
       "repository": "darrylmorley/whatcable",
-      "content_hash": "8f1cde6889256ec9cf63edbd3040384d9ee658f49f673fe84bc9ac6c00c94262",
-      "created_at": "2026-11-15T11:12:39.052Z"
+      "content_hash": "2c813c06300db1a16f0802869f755b7c011817861c84a563422e8f970df768a8",
+      "created_at": "2026-11-19T16:33:22.182Z"
     },
     "domain_intelligence-architecture-intelligence-paradedb-paradedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-paradedb-paradedb-core-invariants",
@@ -20968,8 +20968,8 @@
       "title": "Research & Knowledge Intelligence: darrylmorley-whatcable-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-darrylmorley-whatcable-learnings-research-knowledge-intelligence-darrylmorley-wh.md",
       "repository": "darrylmorley-whatcable-learnings",
-      "content_hash": "577d735487391ab30c763e3a2cae5502978d68385eb1f47c7f9b70b460a1be6d",
-      "created_at": "2026-11-15T11:14:39.867Z"
+      "content_hash": "51defe8ed54f571a18915337bebbd35a7e6b6b90919e0bed5029d21b62cf3ee7",
+      "created_at": "2026-11-19T16:33:34.554Z"
     },
     "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-core-invariants",
@@ -24911,8 +24911,8 @@
       "title": "Technical Construction Intelligence: authzed/spicedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-authzed-spicedb-technical-construction-intelligence-authzed-spicedb-core-invaria.md",
       "repository": "authzed/spicedb",
-      "content_hash": "9095baa4d5b8b76cada6a42ba9203a658bb8c354b7b7a5d06cfd2b7a11a13ea6",
-      "created_at": "2026-11-18T14:15:55.066Z"
+      "content_hash": "3187527e300ab49487f93158217fe78b36a33828396a9a51b42a9e2550142534",
+      "created_at": "2026-11-19T16:33:26.543Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-",

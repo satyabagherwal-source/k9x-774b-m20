@@ -11323,3 +11323,9 @@
 | `CYCLE-20261119-GLHD` | `2026-11-19T16:24:50.882Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9406` | Yes (`ea3224ce...`) |
 | `CYCLE-20261119-GTG6` | `2026-11-19T16:25:01.206Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9407` | Yes (`f809030f...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T16:25:30.743Z` | `hf-liquidai-lfm2.5-24b-a2b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B8ECD4B4` [Domain D] | Yes (`60f340c0...`) |
+| `CYCLE-20261119-RDTY` | `2026-11-19T16:33:14.183Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md` | Yes (`0860393e...`) |
+| `CYCLE-20261119-RGQK` | `2026-11-19T16:33:17.948Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9408` | Yes (`4677864a...`) |
+| `CYCLE-20261119-RJQM` | `2026-11-19T16:33:21.838Z` | `darrylmorley/whatcable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9409` | Yes (`a414be72...`) |
+| `CYCLE-20261119-RN3X` | `2026-11-19T16:33:26.205Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9410` | Yes (`30ad7162...`) |
+| `CYCLE-20261119-ROHG` | `2026-11-19T16:33:27.988Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9411` | Yes (`53f007c9...`) |
+| `CYCLE-20261119-RPMJ` | `2026-11-19T16:33:29.467Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9412` | Yes (`04d06beb...`) |
