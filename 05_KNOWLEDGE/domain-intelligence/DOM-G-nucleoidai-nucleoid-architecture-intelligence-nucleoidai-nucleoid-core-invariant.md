@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "a4304377",
+  "source_version": "e737db35",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T15:42:39.495Z",
+  "timestamp": "2026-11-19T17:06:58.657Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `a4304377`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T15:42:39.495Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `e737db35`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T17:06:58.657Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), F (Design Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T15:42:37.904Z  
+> **Harvest Timestamp**: 2026-11-19T17:06:57.180Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1185,7 +1185,7 @@ export async function declarations({ train_dataset }) {
   milestone.inferring_declarations();
 
   const {
-    result: { declarations, output_canvas },
+    result: { class_declaration, declarations, output_canvas },
   } = await llm.generate({
     grammar: true,
     messages: [
@@ -1195,12 +1195,14 @@ export async function declarations({ train_dataset }) {
           query:
           ${JSON.stringify({
             ...train_dataset,
+            class_declaration: "<CLASS_DECLARATION>",
             declarations: "<DECLARATIONS>",
             output_canvas: "<OUTPUT_CANVAS>",
           })}
           json_format:
           {
             "result": {
+              "class_declaration": <CLASS_DECLARATION>,
               "declarations": <DECLARATIONS>,
               "output_canvas": <OUTPUT_CANVAS>
             }
@@ -1210,9 +1212,12 @@ export async function declarations({ train_dataset }) {
     ],
   });
 
-  milestone.declarations_inferred({ declarations, output_canvas });
+  milestone.declarations_inferred({
+    declarations: [class_declaration, ...declarations],
+    output_canvas,
+  });
 
-  return { declarations, output_canvas };
+  return { class_declaration, declarations, output_canvas };
 }
 
 export async function instances({ train_dataset }) {
@@ -1288,7 +1293,7 @@ export async function value({
     [
       `canvas_width = ${canvas_width}`,
       `canvas_height = ${canvas_height}`,
-      train_dataset.declarations[0],
+      train_dataset.class_declaration,
       implementation,
     ].join("\n\n")
   );
@@ -1319,6 +1324,7 @@ export async function state(train_dataset) {
       [
         `canvas_width = ${canvas_width}`,
         `canvas_height = ${canvas_height}`,
+        train_dataset.class_declaration,
         ...train_dataset.declarations,
         ...implementations,
         "Obj[:]",
@@ -1363,6 +1369,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
       output_matrix: output,
       instances: undefined,
     })),
+    class_declaration: undefined,
     declarations: undefined,
     output_canvas: undefined,
   };
@@ -1382,10 +1389,12 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   const next_instance_name = (): string =>
     `obj${String(instance_index++).padStart(12, "0")}`;
 
-  const { declarations, output_canvas } = await analyzer.declarations({
-    train_dataset,
-  });
+  const { class_declaration, declarations, output_canvas } =
+    await analyzer.declarations({
+      train_dataset,
+    });
 
+  train_dataset.class_declaration = class_declaration;
   train_dataset.declarations = declarations;
   train_dataset.output_canvas = output_canvas;
 
@@ -1425,6 +1434,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     }
 
     await object.state({
+      class_declaration,
       declarations,
       input_matrix: dataset.input_matrix,
       input_instances: dataset.instances,
@@ -1465,6 +1475,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   }
 
   await object.state({
+    class_declaration,
     declarations,
     input_matrix: test_input_matrix,
     input_instances,
@@ -1588,40 +1599,208 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a4304377` (2026-11-19)
-**Commit Message**: Enable grammar for implementation generation
+### Incident Patch 1: `e737db35` (2026-11-19)
+**Commit Message**: Separate ARC class definitions from rules
 
-Request grammar-constrained output when generating ARC implementations.
+Move class definitions into a dedicated field across ARC datasets and pass them separately through analysis, visualization, synthesis, and state execution.
 
-**File**: `arc/src/object.ts` (modified, +1/-0)
+**File**: `arc/README.md` (modified, +7/-5)
 ```diff
-@@ -77,6 +77,7 @@ async function implementation({
-   });
-   const { implementation } = await llm.generate({
-     few_shot: few_shot && few_shot_function,
-+    grammar: true,
-     messages: [
-       {
-         role: "assistant",
+@@ -285,10 +285,10 @@ call passes its own:
+ 
+ | Call | Few-shot properties of each instruction dataset |
+ | --- | --- |
+-| `analyzer.declarations` | `declarations`, `output_canvas`, and each pair's `input_matrix` and `output_matrix` |
+-| `analyzer.instances`, `visualizer.instances` | `declarations`, and each pair's `input_matrix`, `output_matrix`, and `instances` with `input_instance_matrix` and `output_instance_matrix` |
+-| `analyzer.value` | `declarations`, and each pair's `instances` with `instance_name`, `input_instance_matrix`, and `implementation` |
+-| `visualizer.value` | `declarations`, and the instances of every pair in one list, with `implementation`, `input_value`, and `input_instance_matrix` |
++| `analyzer.declarations` | `class_declaration`, `declarations`, `output_canvas`, and each pair's `input_matrix` and `output_matrix` |
++| `analyzer.instances`, `visualizer.instances` | `class_declaration`, `declarations`, and each pair's `input_matrix`, `output_matrix`, and `instances` with `input_instance_matrix` and `output_instance_matrix` |
++| `analyzer.value` | `class_declaration`, and each pair's `instances` with `instance_name`, `input_instance_matrix`, and `implementation` |
++| `visualizer.value` | `class_declaration`, and the instances of every pair in one list, with `implementation`, `input_value`, and `input_instance_matrix` |
+ | `visualizer.output_instance_matrix` | The instances of every pair in one list, with `input_value`, `input_instance_matrix`, `output_value`, and `output_instance_matrix` |
+ 
+ `analyzer.value` sends no `train_dataset`, so its examples carry the
+@@ -2518,12 +2518,14 @@ There are 2 sections in our approach: analysis and visualization. In analysis ph
+ ##### 1. Find patterns and Represent in `nuc` lang
+ 
+ The LLM finds pattern for given training input and output data and creates declarations in `nuc` lang.
++The class declaration goes in `class_declaration`, a string, and
++`declarations` holds the declarations that follow it.
+ It also infers the `output_canvas` from the training pairs.
+ 
+ ```json
+ {
++  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int, vertical_segment_color: int, horizontal_segment_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.vertex_color is vertex_color\n    this.vertical_segment_color is vertical_segment_color\n    this.horizontal_segment_color is horizontal_segment_color",
+   "declarations": [
+-    "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int, vertical_segment_color: int, horizontal_segment_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.vertex_color is vertex_color\n    this.vertical_segment_color is vertical_segment_color\n    this.horizontal_segment_color is horizontal_segment_color",
+     "if $Obj.vertex_color is 9 and $Obj.vertical_segment_color is 9 and $Obj.horizontal_segment_color is 9:\n    $Obj.tag is l6624\n    $Obj.marker_color is 4\n    $Obj.x is $Obj.x@first - 1 if $Obj.orientation > 180 else $Obj.x@first\n    $Obj.y is $Obj.y@first - 1 if $Obj.orientation < 90 or $Obj.orientation > 270 else $Obj.y@first\n    $Obj.width is $Obj.width@first + 1\n    $Obj.height is $Obj.height@first + 1\n    $Obj.volume is $Obj.volume@first + 1"
+   ],
+   "output_canvas": "EXACT"
 ```
 
----
-
-### Incident Patch 2: `37670c62` (2026-11-19)
-**Commit Message**: Enable grammar for instance generation
-
-Request grammar-constrained output when generating visualizer instances.
-
-**File**: `arc/src/visualizer.ts` (modified, +1/-0)
+**File**: `arc/src/analyzer.ts` (modified, +10/-4)
 ```diff
-@@ -11,6 +11,7 @@ export async function instances({ train_dataset, test_input_matrix }) {
-     result: { instances },
+@@ -8,7 +8,7 @@ export async function declarations({ train_dataset }) {
+   milestone.inferring_declarations();
+ 
+   const {
+-    result: { declarations, output_canvas },
++    result: { class_declaration, declarations, output_canvas },
    } = await llm.generate({
-     few_shot: null,
-+    grammar: true,
+     grammar: true,
      messages: [
-       {
-         role: "assistant",
+@@ -18,12 +18,14 @@ export async function declarations({ train_dataset }) {
+           query:
+           ${JSON.stringify({
+             ...train_dataset,
++            class_declaration: "<CLASS_DECLARATION>",
+             declarations: "<DECLARATIONS>",
+             output_canvas: "<OUTPUT_CANVAS>",
+           })}
+           json_format:
+           {
+             "result": {
++              "class_declaration": <CLASS_DECLARATION>,
+               "declarations": <DECLARATIONS>,
+               "output_canvas": <OUTPUT_CANVAS>
+             }
+@@ -33,9 +35,12 @@ export async function declarations({ train_dataset }) {
+     ],
+   });
+ 
+-  milestone.declarations_inferred({ declarations, output_canvas });
++  milestone.declarations_inferred({
++    declarations: [class_declaration, ...declarations],
++    output_canvas,
++  });
+ 
+-  return { declarations, output_canvas };
++  return { class_declaration, declarations, output_canvas };
+ }
+ 
+ export async function instances({ train_dataset }) {
+@@ -111,7 +116,7 @@ export async function value({
+     [
+       `canvas_width = ${canvas_width}`,
+       `canvas_height = ${canvas_height}`,
+-      train_dataset.declarations[0],
++      train_dataset.class_declaration,
+       implementation,
+     ].join("\n\n")
+   );
+@@ -142,6 +147,7 @@ export async function state(train_dataset) {
+       [
+         `canvas_width = ${canvas_width}`,
+         `canvas_height = ${canvas_height}`,
++        train_dataset.class_declaration,
+         ...train_dataset.declarations,
+         ...implementations,
+         "Obj[:]",
+```
+
+**File**: `arc/src/app.ts` (modified, +8/-3)
+```diff
+@@ -19,6 +19,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+       output_matrix: output,
+       instances: undefined,
+     })),
++    class_declaration: undefined,
+     declarations: undefined,
+     output_canvas: undefined,
+   };
+@@ -38,10 +39,12 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+   const next_instance_name = (): string =>
+     `obj${String(instance_index++).padStart(12, "0")}`;
+ 
+-  const { declarations, output_canvas } = await analyzer.declarations({
+-    train_dataset,
+-  });
++  const { class_declaration, declarations, output_canvas } =
++    await analyzer.declarations({
++      train_dataset,
++    });
+ 
++  train_dataset.class_declaration = class_declaration;
+   train_dataset.declarations = declarations;
+   train_dataset.output_canvas = output_canvas;
+ 
+@@ -81,6 +84,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+     }
+ 
+     await object.state({
++      class_declaration,
+       declarations,
+       input_matrix: dataset.input_matrix,
+       input_instances: dataset.instances,
+@@ -121,6 +125,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+   }
+ 
+   await object.state({
++    class_declaration,
+     declarations,
+     input_matrix: test_input_matrix,
+     input_instances,
+```
+
+**File**: `arc/src/dataset/dataset.017c7c7b.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
++  "class_declaration": "# Each object is the whole color-1 pattern, as tall as the grid, whose rows repeat every period rows. The output continues it down to 9 rows and draws it in color 2\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100\n    this.color is color\n    this.period is period",
+   "declarations": [
+-    "# Each object is the whole color-1 pattern, as tall as the grid, whose rows repeat every period rows. The output continues it down to 9 rows and draws it in color 2\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100\n    this.color is color\n    this.period is period",
+     "# Each pattern becomes l8384, a pattern repeating down\n$Obj.tag is l8384",
+     "# It continues downward, below its last row\n$Obj.extension_direction is down",
+     "# Its height grows to 1.5 times its input height, 6 rows to 9, the height of the output grid\n$Obj.height is $Obj.height@first * 3 / 2",
+```
+
+**File**: `arc/src/dataset/dataset.0ca9ddb6.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
++  "class_declaration": "# Each object is one single-cell point. A color-1 point grows an orthogonal cross of color 7, a color-2 point a diagonal cross of color 4, and points of other colors stay as they are\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l7544\n    this.vertex_color is vertex_color",
+   "declarations": [
+-    "# Each object is one single-cell point. A color-1 point grows an orthogonal cross of color 7, a color-2 point a diagonal cross of color 4, and points of other colors stay as they are\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l7544\n    this.vertex_color is vertex_color",
+     "# A color-1 point grows 4 orthogonal arms of color 7\nif $Obj.vertex_color is 1:\n    $Obj.tag is l1707\n    $Obj.marker_color is 7\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4",
+     "# A color-2 point grows 4 diagonal arms of color 4\nif $Obj.vertex_color is 2:\n    $Obj.tag is l2404\n    $Obj.marker_color is 4\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4"
+   ],
+```
+
+**File**: `arc/src/dataset/dataset.0d3d703e.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
++  "class_declaration": "# Each object is one full-height column of a single color. Every column swaps its color for its partner: 1 and 5, 2 and 6, 3 and 4, 8 and 9 swap\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6953\n    this.color is color",
+   "declarations": [
+-    "# Each object is one full-height column of a single color. Every column swaps its color for its partner: 1 and 5, 2 and 6, 3 and 4, 8 and 9 swap\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6953\n    this.color is color",
+     "# Each column takes the partner of its input color: find the pair holding the input color, then the other member of that pair\n$Obj.color is [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)"
+   ],
+   "output_canvas": "EXACT",
+```
+
+**File**: `arc/src/dataset/dataset.25d8a9c8.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
++  "class_declaration": "# Each object is one full-width row of 3 cells. A row whose cells share one color turns all 5, and any other row is cleared to the background\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, parts: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l3058\n    this.parts is parts",
+   "declarations": [
+-    "# Each object is one full-width row of 3 cells. A row whose cells share one color turns all 5, and any other row is cleared to the background\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, parts: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l3058\n    this.parts is parts",
+     "# A row with one distinct color is filled with 5; any other row gets 0, the background\n$Obj.fill_color is 5 if $Obj.parts.distinct().length is 1 else 0",
+     "# A cleared row keeps no cells; a filled row keeps its 3 input cells\n$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.volume@first"
+   ],
+```
+
+**File**: `arc/src/dataset/dataset.25ff71a9.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
++  "class_declaration": "# Each object is the one shape in the grid. Every shape moves down by one row\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100",
+   "declarations": [
+-    "# Each object is the one shape in the grid. Every shape moves down by one row\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100",
+     "# Each shape moves down one row from its input row; its cells and size stay the same\n$Obj.y is $Obj.y@first + 1"
+   ],
+   "output_canvas": "EXACT",
 ```
 
 #### Recent Merged Pull Requests:
@@ -1650,31 +1829,41 @@ Request grammar-constrained output when generating visualizer instances.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Enable grammar for implementation generation
+## X. Separate ARC class definitions from rules
 
 **RULE**:
-When implementing operations in `arc/src/object.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a4304377`: Enable grammar for implementation generation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e737db35`: Separate ARC class definitions from rules. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/object.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    grammar: true,
+| `analyzer.declarations` | `class_declaration`, `declarations`, `output_canvas`, and each pair's `input_matrix` and `output_matrix` |
+| `analyzer.instances`, `visualizer.instances` | `class_declaration`, `declarations`, and each pair's `input_matrix`, `output_matrix`, and `instances` with `input_instance_matrix` and `output_instance_matrix` |
+| `analyzer.value` | `class_declaration`, and each pair's `instances` with `instance_name`, `input_instance_matrix`, and `implementation` |
+| `visualizer.value` | `class_declaration`, and the instances of every pair in one list, with `implementation`, `input_value`, and `input_instance_matrix` |
+The class declaration goes in `class_declaration`, a string, and
+`declarations` holds the declarations that follow it.
+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int, vertical_segment_color: int, horizontal_segment_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.vertex_color is vertex_color\n    this.vertical_segment_color is vert
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+| `analyzer.declarations` | `declarations`, `output_canvas`, and each pair's `input_matrix` and `output_matrix` |
+| `analyzer.instances`, `visualizer.instances` | `declarations`, and each pair's `input_matrix`, `output_matrix`, and `instances` with `input_instance_matrix` and `output_instance_matrix` |
+| `analyzer.value` | `declarations`, and each pair's `instances` with `instance_name`, `input_instance_matrix`, and `implementation` |
+| `visualizer.value` | `declarations`, and the instances of every pair in one list, with `implementation`, `input_value`, and `input_instance_matrix` |
+    "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int, vertical_segment_color: int, horizontal_segment_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.vertex_color is vertex_color\n    this.vertical_segment_color is vertical_segment_color\n    this.horizontal_segment_color is horizontal_segment_color",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a4304377` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e737db35` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T16:25:30.741Z",
+  "updated_at": "2026-11-19T17:07:53.119Z",
   "statistics": {
-    "total_nodes": 387,
-    "total_edges": 180,
+    "total_nodes": 388,
+    "total_edges": 181,
     "domain_distribution": {
       "D": 258,
       "M": 1,
-      "H": 57,
+      "H": 58,
       "J": 14,
       "K": 22,
       "L": 7,
@@ -20,7 +20,7 @@
       "I": 4
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 179,
+      "CONSTRAINED_BY_ARCHITECTURE": 180,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -8655,6 +8655,29 @@
       ],
       "created_at": "2026-11-19T16:25:30.740Z",
       "updated_at": "2026-11-19T16:25:30.740Z"
+    },
+    "DOM-H-2A9142C7": {
+      "id": "DOM-H-2A9142C7",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Turn panics in Arrow C stream callbacks into stream errors",
+      "summary": "Prevents defects observed in production commit `60a4ec62`: Turn panics in Arrow C stream callbacks into stream errors. Unvalidated execution -> When implementing operations in `crates/polars-arrow/src/ffi/stream.rs`, engineers MUST enforce rigorous boundary validation, safe state tra",
+      "confidence": 0.9,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://pola-rs-polars/pola-rs-polars-learnings.md",
+        "source_version": "e02c237a",
+        "observed_at": "2026-11-19T17:06:42.780Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (pola-rs-polars)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-19T17:07:53.118Z",
+      "updated_at": "2026-11-19T17:07:53.118Z"
     }
   },
   "edges": [
@@ -10457,6 +10480,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-8C81E436 [D] with Domain M",
       "created_at": "2026-11-19T11:51:24.558Z"
+    },
+    {
+      "id": "EDGE-61821F0244D1",
+      "sourceId": "DOM-H-2A9142C7",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-2A9142C7 [H] with Domain G",
+      "created_at": "2026-11-19T17:07:53.119Z"
     }
   ]
 }

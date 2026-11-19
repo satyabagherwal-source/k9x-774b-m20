@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T16:41:11.479Z",
-  "total_records": 1999,
+  "last_updated": "2026-11-19T17:07:55.489Z",
+  "total_records": 2002,
   "domains": {
     "A": {
       "total": 15,
@@ -1325,7 +1325,7 @@
       ]
     },
     "H": {
-      "total": 466,
+      "total": 469,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1792,7 +1792,10 @@
         "domain_intelligence-technical-construction-intelligence-xevrion-hatchzip-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-core-invar",
         "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-learnings-",
-        "DOM-H-D41DA63C"
+        "DOM-H-D41DA63C",
+        "domain_intelligence-technical-construction-intelligence-pola-rs-polars-core-invariants",
+        "DOM-H-2A9142C7",
+        "domain_intelligence-technical-construction-intelligence-pola-rs-polars-learnings-core-invariants"
       ]
     },
     "I": {
@@ -15078,8 +15081,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "6f56fcc3862c1d50f62183d09d5735df37baedb0f24a3aae0c1ba7815c2b84a6",
-      "created_at": "2026-11-19T15:42:39.685Z"
+      "content_hash": "1cbc5c896314adbd6e076f6be565020e9cfebd38a68a3f6c9b8c8c0e839f7b57",
+      "created_at": "2026-11-19T17:06:58.847Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15528,8 +15531,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "2beefb46eef199f84852b06ba10fbd7ea20b55769f4cf80836e244c80131bb1a",
-      "created_at": "2026-11-18T14:08:12.265Z"
+      "content_hash": "5334bc1bc3583ad6f338bb955675afb59827885f83d8ecbaf43a6d0770c3ad87",
+      "created_at": "2026-11-19T17:07:55.489Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -19336,8 +19339,8 @@
       "title": "Research & Knowledge Intelligence: meta-models/Muse-Spark-Open-816B-A42B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-models-muse-spark-open-816b-a42b-research-knowledge-intelligence-meta-mo.md",
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-      "content_hash": "a018f3fb4098b3fa8e205ac929ed77eaf76059de9337dd71176442dd06fc6ed4",
-      "created_at": "2026-11-15T03:48:03.464Z"
+      "content_hash": "778445d172d9c51b545e51ab0c41e4ae2384bcc3a31856308457750b256d2ffb",
+      "created_at": "2026-11-19T17:07:13.070Z"
     },
     "domain_intelligence-architecture-intelligence-nativescript-nativescript-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nativescript-nativescript-core-invariants",
@@ -19402,8 +19405,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-models-muse-spark-open-816b-a42b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-models-muse-spark-open-816b-a42b-learnings-research-knowledge-intelligen.md",
       "repository": "hf-meta-models-muse-spark-open-816b-a42b-learnings",
-      "content_hash": "4793566fed85169c27c70553cb12de7896c8fd7d29df425850d3a1ea4c5efac0",
-      "created_at": "2026-11-15T03:48:46.648Z"
+      "content_hash": "4829d4ee8abe40cb463c02abb5ca530a5649e9db0eb458728595e80e738cb611",
+      "created_at": "2026-11-19T17:07:54.438Z"
     },
     "domain_intelligence-architecture-intelligence-nativescript-nativescript-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nativescript-nativescript-learnings-core-invariants",
@@ -33566,6 +33569,66 @@
       "repository": "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings",
       "content_hash": "abe9602c250cb521b8535a69e03625989f1ae4847a12db71071cc417825aaac0",
       "created_at": "2026-11-19T16:25:30.950Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-pola-rs-polars-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-pola-rs-polars-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: pola-rs/polars Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pola-rs-polars-technical-construction-intelligence-pola-rs-polars-core-invariant.md",
+      "repository": "pola-rs/polars",
+      "content_hash": "c1f6e282af000a586717613f1db4199fa1e75cae179775e95f2e079855be9292",
+      "created_at": "2026-11-19T17:06:44.464Z"
+    },
+    "DOM-H-2A9142C7": {
+      "record_id": "DOM-H-2A9142C7",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "Turn panics in Arrow C stream callbacks into stream errors",
+      "content": "When implementing operations in `crates/polars-arrow/src/ffi/stream.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "d58311eac5c116b0a9f1256a6be490c79b8142df5e968826e7070d4368430943",
+      "summary": "Prevents defects observed in production commit `60a4ec62`: Turn panics in Arrow C stream callbacks into stream errors. Unvalidated execution -> When implementing operations in `crates/polars-arrow/src/ffi/stream.rs`, engineers MUST enforce rigorous boundary validation, safe state tra",
+      "provenance": {
+        "source_uri": "project://pola-rs-polars/pola-rs-polars-learnings.md",
+        "source_version": "e02c237a",
+        "observed_at": "2026-11-19T17:06:42.780Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (pola-rs-polars)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of pola-rs-polars"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.9,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T17:07:53.075Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-pola-rs-polars-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-pola-rs-polars-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: pola-rs-polars-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pola-rs-polars-learnings-technical-construction-intelligence-pola-rs-polars-lear.md",
+      "repository": "pola-rs-polars-learnings",
+      "content_hash": "bd464b7218cdfe29d4e221d045bf91ece6254d2f07798d0f854f9a56888d529f",
+      "created_at": "2026-11-19T17:07:53.740Z"
     }
   }
 }

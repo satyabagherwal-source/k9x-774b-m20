@@ -1565,8 +1565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b",
     "license": "Open-Source",
-    "contentHash": "c75d5fac8b844852ee547b21402989680acdf9afc88fc4a0b145e866a3ee7126",
-    "lastHarvestedAt": "2026-11-15T03:48:03.267Z",
+    "contentHash": "c6146e0992f659c26a1dcb52839b8a7219ee0e44816a1fa575a347722a7e1d63",
+    "lastHarvestedAt": "2026-11-19T17:07:12.831Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b"
   },
   "hf-black-forest-labs-flux-3-image-klein-comfy": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "a4304377",
+    "sourceVersion": "e737db35",
     "license": "Apache-2.0",
-    "contentHash": "dade5f3be01e570c5df0444750bb9a78a19a57956ff2757b0f91dc385b637cc1",
-    "lastHarvestedAt": "2026-11-19T15:42:39.236Z",
+    "contentHash": "a7c096ddc4c131ec51ed0aa269a0fee136edfdd508279b4f6f0d7534191d1f60",
+    "lastHarvestedAt": "2026-11-19T17:06:58.401Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "dec76f87",
+    "sourceVersion": "e02c237a",
     "license": "MIT",
-    "contentHash": "950edeb95fe3455bf781b8acdd00b577c5d9e35ad1014d5b37e859d6093315ea",
-    "lastHarvestedAt": "2026-11-17T21:41:02.847Z",
+    "contentHash": "d0c7a3bbb1c7dce5fd8fc53766b38660bf48623b468c649a7e55a787190dcf33",
+    "lastHarvestedAt": "2026-11-19T17:06:44.019Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {

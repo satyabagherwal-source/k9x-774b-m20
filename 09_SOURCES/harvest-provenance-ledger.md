@@ -11365,3 +11365,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-19T16:40:53.951Z |
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `9b34eb69` | Multi-dimensional audit evidence | 2026-11-19T16:40:56.377Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `fefb2cb8` | Multi-dimensional audit evidence | 2026-11-19T16:41:06.961Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `e02c237a` | Multi-dimensional audit evidence | 2026-11-19T17:06:44.019Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e737db35` | Multi-dimensional audit evidence | 2026-11-19T17:06:58.401Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-19T17:07:12.831Z |
+| `learn-dom-h-2a9142c7` | `project://pola-rs-polars` | `e02c237a` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pola-rs-polars-learnings.md` | 2026-11-19T17:07:53.122Z |

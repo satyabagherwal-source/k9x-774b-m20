@@ -19,9 +19,9 @@
   "gravitl-netmaker": {
     "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-11-19T08:02:38.166Z",
+    "lastChecked": "2026-11-19T17:06:48.518Z",
     "revisionIdentifier": "098d26a7",
-    "lastVerified": "2026-11-19T08:02:38.166Z"
+    "lastVerified": "2026-11-19T17:06:48.518Z"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T16:41:10.062Z",
-    "lastVerified": "2026-11-19T16:41:10.062Z",
+    "lastChecked": "2026-11-19T17:07:15.788Z",
+    "lastVerified": "2026-11-19T17:07:15.788Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -320,22 +320,21 @@
     "lastVerified": "2026-11-19T10:47:18.930Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T16:16:59.477Z",
-    "lastVerified": "2026-11-19T16:16:59.477Z",
+    "lastChecked": "2026-11-19T17:06:57.180Z",
+    "lastVerified": "2026-11-19T17:06:57.180Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "dade5f3be01e570c5df0444750bb9a78a19a57956ff2757b0f91dc385b637cc1",
+    "contentHash": "a7c096ddc4c131ec51ed0aa269a0fee136edfdd508279b4f6f0d7534191d1f60",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a4304377"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1995,9 +1994,9 @@
   "oceanbase-oceanbase": {
     "name": "oceanbase",
     "officialUrl": "https://github.com/oceanbase/oceanbase",
-    "lastChecked": "2026-11-18T13:34:19.250Z",
+    "lastChecked": "2026-11-19T17:06:50.980Z",
     "revisionIdentifier": "d375c6d7",
-    "lastVerified": "2026-11-18T13:34:19.250Z"
+    "lastVerified": "2026-11-19T17:06:50.980Z"
   },
   "unhappychoice-gitlogue": {
     "name": "gitlogue",
@@ -2393,9 +2392,9 @@
   "goodrain-rainbond": {
     "name": "rainbond",
     "officialUrl": "https://github.com/goodrain/rainbond",
-    "lastChecked": "2026-11-18T14:32:04.609Z",
+    "lastChecked": "2026-11-19T17:06:46.109Z",
     "revisionIdentifier": "5508cd38",
-    "lastVerified": "2026-11-18T14:32:04.609Z"
+    "lastVerified": "2026-11-19T17:06:46.109Z"
   },
   "crate-crate": {
     "name": "crate/crate",
@@ -7928,5 +7927,46 @@
     "lastChecked": "2026-11-19T16:40:55.887Z",
     "revisionIdentifier": "9836fd83",
     "lastVerified": "2026-11-19T16:40:55.887Z"
+  },
+  "pola-rs-polars": {
+    "name": "pola-rs/polars",
+    "officialUrl": "https://github.com/pola-rs/polars",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-19T17:06:42.653Z",
+    "lastVerified": "2026-11-19T17:06:42.653Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-pola-rs-polars",
+    "contentHash": "d0c7a3bbb1c7dce5fd8fc53766b38660bf48623b468c649a7e55a787190dcf33",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 12,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-meta-models-muse-spark-open-816b-a42b": {
+    "name": "meta-models/Muse-Spark-Open-816B-A42B",
+    "officialUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T17:06:41.042Z",
+    "lastVerified": "2026-11-19T17:06:41.042Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+    "contentHash": "c6146e0992f659c26a1dcb52839b8a7219ee0e44816a1fa575a347722a7e1d63",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sindresorhus-gifski": {
+    "name": "Gifski",
+    "officialUrl": "https://github.com/sindresorhus/Gifski",
+    "lastChecked": "2026-11-19T17:06:43.495Z",
+    "revisionIdentifier": "e184b284",
+    "lastVerified": "2026-11-19T17:06:43.495Z"
   }
 }

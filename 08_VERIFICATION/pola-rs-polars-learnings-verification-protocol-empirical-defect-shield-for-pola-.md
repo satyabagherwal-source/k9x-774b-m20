@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T21:41:20.390Z",
+  "timestamp": "2026-11-19T17:07:53.406Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pola-rs-polars-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pola-rs-polars-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T21:41:20.390Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T17:07:53.406Z`  
 > **Learning ID**: `LEARN-EVO-pola-rs-polars-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `dec76f87`  
+> **Source Version**: `e02c237a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T21:41:01.908Z  
+> **Timestamp**: 2026-11-19T17:06:42.780Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T21:41:01.903Z  
+> **Harvest Timestamp**: 2026-11-19T17:06:42.653Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40367 stars
+- **Stars / Engagement**: 40385 stars
 
 ---
 
@@ -1722,11 +1722,11 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30823** (2026-11-17): **`drop_nans()` in `group_by().agg()` drops null values whose underlying slot is NaN (regression since 1.35)**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame(     {"g": [1, 1, 2], "x": [float("nan"), 1.0, float("nan")], "y": [None, 2.0, None]} ).with_columns(s=pl.col("x") + pl.col("y")) print(df["s"].to_list()) print(df.select(pl.col("s").drop_nans())["s"].to_list()) print(df.group_by("g", maintain_order=True).agg(pl.col("s").drop_nans())) ```  ### Log output  ```shell total memory: 755.264 GiB (810958176256 bytes) async thread count: 32 blocking thread count: 512 keys/aggregates are not partitionable: running default HASH AGGREGATION [None, 3.0, None] [None, 3.0, None] shape: (2, 2) ┌─────┬───────────┐ │ g   ┆ s         │ │ --- ┆ ---       │ │ i64 ┆ list[f64] │ ╞═════╪═══════════╡ │ 1   ┆ [3.0]     │ │ 2   ┆ []        │ └─────┴───────────┘ ```  ### Issue description  Column `s` is `[null, 3.0, null]`: it has no NaN. `select(pl.col("s").drop_nans())` keeps both nulls, but inside `group_by(...).agg(...)` the same expression drops them, so group 1 gets `[3.0]` and group 2 gets `[]`. `pl.col("s").drop_nans().len().over("g")` is affected too: it gives `[1, 1, 0]` instead of `[2, 2, 1]`. The in-memory and the streaming engine give the same wrong result. Nulls that come straight from the constructor (`[1.0, None, 2.0]`) are kept; the nulls here come from `NaN + null`, so the va
+- **Issue #30871** (2026-11-19): **Streaming join on a single List/Array/Struct key finds no matches when both inputs are sorted descending (merge join)**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example   ```python import polars as pl  left = pl.DataFrame({"k": [[3], [2], [2], [1]], "l": ["a", "b", "c", "d"]}).sort("k", descending=True) right = pl.DataFrame({"k": [[3], [2], [0]], "r": ["A", "B", "Z"]}).sort("k", descending=True)  q = left.lazy().join(right.lazy(), on="k") print(q.collect().rows())  # default engine (streaming) print(q.collect(engine="in-memory").rows()) print(left.join(right, on="k").rows())  q.sink_parquet("out.parquet") print(pl.read_parquet("out.parquet").height)  print(left.lazy().join(right.lazy(), on="k", how="left").collect().rows())  # sorted ascending, the same join is correct print(left.sort("k").lazy().join(right.sort("k").lazy(), on="k").collect().height) ```  Output:  ``` [] [([3], 'a', 'A'), ([2], 'b', 'B'), ([2], 'c', 'B')] [([3], 'a', 'A'), ([2], 'b', 'B'), ([2], 'c', 'B')] 0 [([3], 'a', None), ([2], 'b', None), ([2], 'c', None), ([1], 'd', None)] 3 ```  ### Log output  ```shell $ POLARS_VERBOSE=1 python ...   # stderr excerpt for q.collect() above: first graph phase, "updating <node>" lines omitted polars-stream: updating graph state polars-stream: running in-memory-sink in subgraph polars-stream: running with-columns in subgraph polars-stream: running in-memory-source in subgraph polars-stream: running in-memory-source in subgraph
 
-- **Issue #30784** (2026-11-15): **Streaming Parquet sinks continue consuming input after an upload failure**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example (Using some of Polars' internal pytest fixtures)  ```python import io import re  import pytest import polars as pl   @pytest.mark.parametrize("partitioned", [False, True]) def test_sink_error_stops_input(s3, plmonkeypatch, partitioned):     for name, value in {         "POLARS_CLOUD_FOOTER_READ_SIZE": "512",         "POLARS_NUM_READERS_PRE_INIT": "1",         "POLARS_MAX_CONCURRENT_SCANS": "1",         "POLARS_MAX_OPEN_SINKS": "1",         "POLARS_INFLIGHT_SINK_MORSEL_LIMIT": "1",         "POLARS_UPLOAD_CHUNK_SIZE": "1024",     }.items():         plmonkeypatch.setenv(name, value)      data = io.BytesIO()     pl.DataFrame({"x": range(1024)}).write_parquet(         data, compression="uncompressed"     )     keys = [f"input/{i}.parquet" for i in range(32)]     for key in keys:         s3.client.put_object(             Bucket="bucket", Key=key, Body=data.getvalue()         )      def fail_upload(environ):         if environ["REQUEST_METHOD"] == "PUT":             return True         return None      s3.on_request = fail_upload     mark = len(s3.log)      source = pl.scan_parquet(         [f"s3://bucket/{key}" for key in keys],         storage_options=s3.storage_options,     )     target = (         pl.PartitionBy("s3://bucket/output/", max_rows_per_file=1024)         if
+- **Issue #30860** (2026-11-18): **read_csv on an unbuffered io.FileIO pipe fails on Linux with OSError: No such device (os error 19) (regression in 2.x)**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import os import polars as pl  def make_pipe():     r, w = os.pipe()     os.write(w, b"a,b\n1,2\n3,4\n")     os.close(w)     return r  # fails: exact io.FileIO wrapping a pipe with open(make_pipe(), "rb", buffering=0) as f:     print(pl.read_csv(f))  # works: io.BufferedReader wrapping a pipe # with open(make_pipe(), "rb") as f: #     print(pl.read_csv(f)) ```   ### Log output  ```shell total memory: 31.076 GiB (33367142400 bytes) _init_credential_provider_builder(): credential_provider_init = None async thread count: 22 blocking thread count: 512 sourcing csv scan file schema from: 'open-file' OSError: No such device (os error 19) ```  ### Issue description  Results on Linux, Python 3.14.3:  | Source | polars 1.44.2 | polars 2.1.0 | |---|---|---| | `open(pipe_fd, "rb", buffering=0)` (`FileIO`) | OK | **OSError: os error 19** | | `open(pipe_fd, "rb")` (`BufferedReader`) | OK | OK | | `f.read()` (bytes) | OK | OK |  - Error 19 is ENODEV, which is what `mmap()` returns for a pipe. Only Linux is affected; the same code works on Windows. - Likely cause, in `try_get_pyfile` in `crates/polars-python/src/file.rs` (tag `py-2.1.0`):   ```rust   py_f.is_exact_instance(FileIO)       || (is_exact_instance(Buffered*) || is_exact_instance(TextIOWrapper) && ...)        
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1743,244 +1743,578 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8579b224` (2026-11-17)
-**Commit Message**: fix: Keep nulls in `drop_nans` inside `group_by` and `over` (#30836)
+### Incident Patch 1: `60a4ec62` (2026-11-19)
+**Commit Message**: fix: Turn panics in Arrow C stream callbacks into stream errors (#30886)
 
-**File**: `crates/polars-expr/src/dispatch/groups_dispatch.rs` (modified, +2/-1)
-```diff
-@@ -480,7 +480,8 @@ pub fn drop_nans<'a>(
-         let values = ac.flat_naive();
-         let mut values = values.is_nan().unwrap();
-         values.rechunk_mut();
--        values.downcast_as_array().values().clone()
-+        // A null slot can hold a NaN value, so mask with the validity.
-+        values.downcast_as_array().true_and_valid()
-     } else {
-         Bitmap::new_with_value(false, 1)
-     };
-```
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `crates/polars-stream/src/physical_plan/lower_group_by.rs` (modified, +21/-17)
+**File**: `crates/polars-arrow/src/ffi/stream.rs` (modified, +55/-21)
 ```diff
-@@ -874,29 +874,33 @@ fn try_lower_agg_input_expr(
-             function: function @ (IRFunctionExpr::DropNulls | IRFunctionExpr::DropNans),
-             options: _,
-         } => {
--            let input = &inputs_ref[0];
--            if !is_elementwise_rec_cached(input.node(), expr_arena, expr_cache) {
-+            let input = inputs_ref[0].node();
-+            if !is_elementwise_rec_cached(input, expr_arena, expr_cache) {
-                 return Ok(None);
+@@ -1,5 +1,6 @@
+ use std::ffi::{CStr, CString};
+ use std::ops::DerefMut;
++use std::panic::AssertUnwindSafe;
+ 
+ use polars_error::{PolarsError, PolarsResult, polars_bail, polars_err};
+ 
+@@ -127,25 +128,61 @@ impl<Iter: DerefMut<Target = ArrowArrayStream>> ArrowArrayStreamReader<Iter> {
+ }
+ 
+ struct PrivateData {
+-    iter: Box<dyn Iterator<Item = PolarsResult<Box<dyn Array>>>>,
++    iter: Box<dyn Iterator<Item = PolarsResult<Box<dyn Array>>> + Send>,
+     field: Field,
+     error: Option<CString>,
++    /// Whether a callback panicked, which ends the stream as `iter` is left in an unknown state.
++    panicked: bool,
+ }
+ 
+-unsafe extern "C" fn get_next(iter: *mut ArrowArrayStream, array: *mut ArrowArray) -> i32 {
++/// The status of a failed callback, as no status of the interface itself is ever this.
++const CALLBACK_ERROR: i32 = 2001;
++
++fn error_cstring(message: &str) -> CString {
++    CString::new(message.replace('\0', "\\0")).unwrap()
++}
++
++/// Run the body of a stream callback, storing a panic as the stream's error, as unwinding out of
++/// an `extern "C"` function aborts the process.
++unsafe fn catch_callback(
++    iter: *mut ArrowArrayStream,
++    body: impl FnOnce(&mut PrivateData) -> i32,
++) -> i32 {
+     if iter.is_null() {
+-        return 2001;
++        return CALLBACK_ERROR;
+     }
+-    let private = &mut *((*iter).private_data as *mut PrivateData);
++    let private = (*iter).private_data as *mut PrivateData;
++    if (*private).panicked {
++        return CALLBACK_ERROR;
++    }
++    match std::panic::catch_unwind(AssertUnwindSafe(|| body(&mut *private))) {
++        Ok(status) => status,
++        Err(payload) => {
++            let message = payload
++                .downcast_ref::<&str>()
++                .copied()
++                .or_else(|| payload.downcast_ref::<String>().map(String::as_str))
++                .unwrap_or("unknown panic");
++            (*private).error = Some(error_cstring(&format!(
++                "panic in an Arrow C stream callback: {message}"
++            )));
++            (*private).panicked = true;
++            CALLBACK_ERROR
++        },
++    }
++}
+ 
+-    match private.iter.next() {
++unsafe extern "C" fn get_next(iter: *mut ArrowArrayStream, array: *mut ArrowArray) -> i32 {
++    catch_callback(iter, |private| match private.iter.next() {
+         Some(Ok(item)) => {
+             // check that the array has the same dtype as field
+             let item_dt = item.dtype();
+             let expected_dt = private.field.dtype();
+             if item_dt != expected_dt {
+-                private.error = Some(CString::new(format!("The iterator produced an item of data type {item_dt:?} but the producer expects data type {expected_dt:?}").as_bytes().to_vec()).unwrap());
+-                return 2001; // custom application specific error (since this is never a result of this interface)
++                private.error = Some(error_cstring(&format!(
++                    "The iterator produced an item of data type {item_dt:?} but the producer expects data type {expected_dt:?}"
++                )));
++                return CALLBACK_ERROR;
              }
  
-+            let predicate = if matches!(function, IRFunctionExpr::DropNulls) {
-+                AExprBuilder::new_from_node(input).is_not_null(expr_arena)
-+            } else {
-+                let input_schema = input_stream.output_schema(phys_sm);
-+                let dtype = expr_arena
-+                    .get(input)
-+                    .to_dtype(&ToFieldContext::new(expr_arena, input_schema))?;
-+                // `drop_nans` only drops values of float columns.
-+                if !dtype.is_float() {
-+                    return Ok(Some((input_stream, input, true)));
-+                }
-+                // Keep nulls, for which `is_not_nan` is null.
-+                let x = AExprBuilder::new_from_node(input);
-+                let is_null = x.is_null(expr_arena);
-+                x.is_not_nan(expr_arena).or(is_null, expr_arena)
-+            };
-+
-             let output_name = unique_column_name();
-             let predicate_name = unique_column_name();
-             let mut select_exprs = keys.to_vec();
--            select_exprs.push(ExprIR::new(
--                input.node(),
--                OutputName::Alias(output_name.clone()),
--            ));
--            let predicate = AExprBuilder::function(
--                vec![inputs_ref[0].clone()],
--                if matches!(function, IRFunctionExpr::DropNulls) {
--                    IRFunctionExpr::Boolean(IRBooleanFunction::IsNotNull)
--                } else {
--                    IRFunctionExpr::Boolean(IRBooleanFunction::IsNotNan)
--                },
--                expr_arena,
--            )
--            .expr_ir(predicate_name.clone());
--            select_exprs.push(predicate);
-+            select_exprs.push(ExprIR::new(input, OutputName::Alias(output_name.clone())));
-+            select_exprs.push(predicate.expr_ir(predicate_name.clone()));
+             std::ptr::write(array, export_array_to_c(item));
+@@ -154,29 +191,23 @@ unsafe extern "C" fn get_next(iter: *mut ArrowArrayStream, array: *mut ArrowArra
+             0
+         },
+         Some(Err(err)) => {
+-            // A NUL would end the C string: without it, `CString::new` can't fail (and a panic
+-            // here can't unwind out of this `extern "C"` function).
+-            let message = err.to_string().replace('\0', "\\0");
+-            private.error = Some(CString::new(message).unwrap());
+-            2001 // custom application specific error (since this is never a result of this interface)
++            private.error = Some(error_cstring(&err.to_string()));
++            CALLBACK_ERROR
+         },
+         None => {
+             let a = ArrowArray::empty();
+             std::ptr::write_unaligned(array, a);
+             private.error = None;
+             0
+         },
+-    }
++    })
+ }
  
-             let mut stream = build_select_stream(
-                 input_stream,
+ unsafe extern "C" fn get_schema(iter: *mut ArrowArrayStream, schema: *mut ArrowSchema) -> i32 {
+-    if iter.is_null() {
+-        return 2001;
+-    }
+-    let private = &mut *((*iter).private_data as *mut PrivateData);
+-
+-    std::ptr::write(schema, export_field_to_c(&private.field));
+-    0
++    catch_callback(iter, |private| {
++        std::ptr::write(schema, export_field_to_c(&private.field));
++        0
++    })
+ }
+ 
+ unsafe extern "C" fn get_last_error(iter: *mut ArrowArrayStream) -> *const ::std::os::raw::c_char {
+@@ -202,14 +233,17 @@ unsafe extern "C" fn release(iter: *mut ArrowArrayStream) {
+ }
+ 
+ /// Exports an iterator to the [C stream interface](https://arrow.apache.org/docs/format/CStreamInterface.html)
++///
++/// The iterator must be `Send`, as the consumer may read the stream from any thread.
+ pub fn export_iterator(
+-    iter: Box<dyn Iterator<Item = PolarsResult<Box<dyn Array>>>>,
++    iter: Box<dyn Iterator<Item = Polars
 ```
 
-**File**: `py-polars/tests/unit/operations/test_group_by.py` (modified, +130/-0)
+**File**: `crates/polars/tests/it/arrow/ffi/stream.rs` (modified, +29/-0)
 ```diff
-@@ -2417,6 +2417,136 @@ def test_group_by_drop_nans(s: pl.Series) -> None:
-     )
+@@ -42,3 +42,32 @@ fn stream_reader_try_new_invalid_argument_error_on_released_stream() {
+         _ => panic!("ArrowArrayStreamReader::try_new did not return an InvalidArgumentError"),
+     }
+ }
++
++#[test]
++fn panic_in_iterator_ends_stream() -> PolarsResult<()> {
++    use std::sync::Arc;
++    use std::sync::atomic::{AtomicUsize, Ordering};
++
++    let array: Box<dyn Array> = Box::new(Int32Array::from(&[Some(1), None]));
++    let field = Field::new("a".into(), array.dtype().clone(), true);
++    let calls = Arc::new(AtomicUsize::new(0));
++    let iter = {
++        let (array, calls) = (array.clone(), calls.clone());
++        std::iter::from_fn(move || match calls.fetch_add(1, Ordering::Relaxed) {
++            0 => Some(Ok(array.clone())),
++            1 => panic!("iterator boom"),
++            _ => Some(Ok(array.clone())),
++        })
++    };
++
++    let stream = Box::new(ffi::export_iterator(Box::new(iter), field));
++    let mut reader = unsafe { ffi::ArrowArrayStreamReader::try_new(stream)? };
++
++    assert_eq!(unsafe { reader.next() }.unwrap()?, array);
++    for _ in 0..2 {
++        let err = unsafe { reader.next() }.unwrap().unwrap_err();
++        assert!(err.to_string().contains("iterator boom"), "{err}");
++    }
++    assert_eq!(calls.load(Ordering::Relaxed), 2);
++    Ok(())
++}
+```
+
+**File**: `py-polars/tests/unit/interop/test_interop.py` (modified, +20/-0)
+```diff
+@@ -27,6 +27,8 @@
+ from tests.unit.utils.pycapsule_utils import PyCapsuleArrayHolder, PyCapsuleStreamHolder
+ 
+ if TYPE_CHECKING:
++    from collections.abc import Callable
++
+     from tests.conftest import PlMonkeyPatch
  
  
-+@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
-+@pytest.mark.parametrize("dtype", [pl.Float16, pl.Float32, pl.Float64])
-+@pytest.mark.parametrize("sorted_key", [False, True])
-+def test_group_by_drop_nans_keeps_nan_payload_nulls_30823(
-+    engine: EngineType, dtype: PolarsDataType, sorted_key: bool
-+) -> None:
-+    # `s` is [null, 3.0, NaN, NaN, null] and both nulls hold a NaN value.
-+    lf = (
-+        pl.DataFrame(
-+            {
-+                "g": [1, 1, 1, 2, 2],
-+                "x": [float("nan"), 1.0, float("nan"), float("nan"), float("nan")],
-+                "y": [None, 2.0, 0.0, 0.0, None],
-+            },
-+            schema_overrides={"x": dtype, "y": dtype},
-+        )
-+        .with_columns(s=pl.col("x") + pl.col("y"))
-+        .lazy()
-+    )
-+    if sorted_key:
-+        lf = lf.set_sorted("g")
-+
-+    out = (
-+        lf.group_by("g", maintain_order=True)
-+        .agg(
-+            list=pl.col("s").drop_nans(),
-+            first_list=(pl.col("x").first() + pl.col("y").first()).drop_nans(),
-+            diff_list=(pl.col("y").diff() + float("nan")).drop_nans(),
-+        )
-+        .collect(engine=engine)
-+    )
-+    expected = pl.DataFrame(
-+        {
-+            "g": [1, 2],
-+            "list": [[None, 3.0], [None]],
-+            "first_list": [[None], []],
-+            "diff_list": [[None, None], [None, None]],
-+        },
-+        schema_overrides={
-+            c: pl.List(dtype) for c in ["list", "first_list", "diff_list"]
-+        },
-+    )
-+    assert_frame_equal(out, expected)
-+
-+    # Only reductions, which the streaming engine lowers to a filter.
-+    out = (
-+        lf.group_by("g", maintain_order=True)
-+        .agg(
-+            len=pl.col("s").drop_nans().len(),
-+            null_count=pl.col("s").drop_nans().null_count(),
-+        )
-+        .collect(engine=engine)
-+    )
-+    expected = pl.DataFrame(
-+        {"g": [1, 2], "len": [2, 1], "null_count": [1, 1]},
-+        schema_overrides={
-+            "len": pl.get_index_type(),
-+            "null_count": pl.get_index_type(),
-+        },
-+    )
-+    assert_frame_equal(out, expected)
-+
-+    out = lf.select(
-+        pl.col("s").drop_nans().len().over("g"),
-+        list=pl.col("s").implode().list.eval(pl.element().drop_nans()),
-+    ).collect(engine=engine)
-+    expected = pl.DataFrame(
-+        {"s": [2, 2, 2, 1, 1], "list": [[None, 3.0, None]] * 5},
-+        schema_overrides={"s": pl.get_index_type(), "list": pl.List(dtype)},
-+    )
-+    assert_frame_equal(out, expected)
+@@ -1903,3 +1905,21 @@ def test_export_arrow_to_c_logical_dtype(s: pl.Series) -> None:
+     arr = pa.Array._import_from_c(ctypes.addressof(c_array), ctypes.addressof(c_schema))
+     arr.validate(full=True)
+     assert arr.equals(s.to_arrow(compat_level=CompatLevel.newest()))
 +
 +
-+@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
-+@pytest.mark.parametrize("maintain_order", [False, True])
 +@pytest.mark.parametrize(
-+    "cols", [["f"], ["i", "s", "b", "n", "d", "l"], ["f", "i", "s", "b", "n", "d", "l"]]
++    "export",
++    [
++        lambda df: pa.table(df),
++        lambda df: pa.RecordBatchReader.from_stream(df.lazy().collect_batches()),
++    ],
++    ids=["DataFrame", "LazyFrame.collect_batches"],
 +)
-+def test_group_by_drop_nans_reduction_30823(
-+    engine: EngineType, maintain_order: bool, cols: list[str]
++def test_arrow_c_stream_raises_on_a_nul_in_a_column_name(
++    export: Callable[[pl.DataFrame], Any],
 +) -> None:
-+    # drop_nans keeps nulls, and it keeps everything in non-float columns.
-+    df = pl.DataFrame(
-+        {
-+            "g": [1, 1, 2],
-+            "f": [None, 1.0, float("nan")],
-+            "i": [None, 1, 2],
-+            "s": [None, "a", "b"],
-+            "b": [None, True, False],
-+            "n": [None, None, None],
-+            "d": [None, Decimal("1.0"), Decimal("2.0")],
-+            "l": [None, [1.0], [float("nan")]],
-+        },
-+        schema_overrides={"d": pl.Decimal(10, 1)},
-+    )
-+    out = (
-+        df.lazy()
-+        .group_by("g", maintain_order=maintain_order)
-+        .agg(
-+            pl.col(cols).drop_nans().len().name.suffix("_len"),
-+            pl.col(cols).drop_nans().null_count().name.suffix("_null_count"),
-+            pl.col(cols).drop_nans().n_unique().name.suffix("_n_unique"),
-+            pl.col(cols).drop_nans().first().name.suffix("_first"),
-+        )
-+        .collect(engine=engine)
-+        .sort("g")
-+    )
-+    # Group 2 of `f` is empty after drop_nans.
-+    idx = pl.get_index_type()
-+    expected = pl.DataFrame(
-+        [pl.Series("g", [1, 2])]
-+        + [pl.Series(f"{c}_len", [2, 0 if c == "f" else 1], idx) for c in cols]
-+        + [
-+            pl.Series(f"{c}_null_count", [2, 1] if c == "n" else [1, 0], idx)
-+            for c in cols
-+        ]
-+        + [
-+            pl.Series(f"{c}_n_unique", [1, 1] if c == "n" else [2, int(c != "f")], idx)
-+            for c in cols
-+        ]
-+        + [
-+            df[c].gather([0, 2]).alias(f"{c}_first")
-+            if c != "f"
-+            else pl.Series("f_first", [None, None], pl.Float64)
-+            for c in cols
-+        ]
-+    )
-+    assert_frame_equal(out, expected)
++    # Exporting the name panics in the stream's `get_schema` callback.
++    df = pl.DataFrame({"a\0b": [1]})
 +
-+
- @pytest.mark.slow
- @pytest.mark.parametrize(
-     ("expr", "check_order", "returns_scalar", "length_preserving", "is_window"),
++    with pytest.raises(OSError, match="panic in an Arrow C stream callback"):
++        export(df)
 ```
 
 ---
 
-### Incident Patch 2: `b8a17622` (2026-11-17)
-**Commit Message**: fix: Lower the default OOC dirty page limit to 0.8 of total memory (#30838)
+### Incident Patch 2: `501ba548` (2026-11-19)
+**Commit Message**: fix: Lower the cloud connect timeout to 10 seconds (#30897)
 
-**File**: `crates/polars-config/src/lib.rs` (modified, +1/-1)
+**File**: `crates/polars-io/src/cloud/options.rs` (modified, +89/-20)
 ```diff
-@@ -107,7 +107,7 @@ const OOC_LOG_METRICS: &str = "POLARS_OOC_LOG_METRICS";
- const DEFAULT_OOC_LOG_METRICS: bool = false;
+@@ -333,33 +333,81 @@ impl CloudType {
  
- const OOC_DIRTY_LIMIT_FRACTION: &str = "POLARS_OOC_DIRTY_LIMIT_FRACTION";
--const DEFAULT_OOC_DIRTY_LIMIT_FRACTION: f64 = 0.9;
-+const DEFAULT_OOC_DIRTY_LIMIT_FRACTION: f64 = 0.8;
+ pub static USER_AGENT: &str = concat!("polars", "/", env!("CARGO_PKG_VERSION"),);
  
- const OOMKILL_THRESHOLD_FRACTION: &str = "POLARS_OOMKILL_THRESHOLD_FRACTION";
- const DEFAULT_OOMKILL_THRESHOLD_FRACTION: f64 = f64::INFINITY;
++/// HTTP client timeouts from the environment, in whole seconds. 0 disables a timeout.
+ #[cfg(any(feature = "aws", feature = "gcp", feature = "azure", feature = "http"))]
+-pub(super) fn get_client_options() -> ClientOptions {
+-    use std::num::NonZeroU64;
++struct HttpTimeouts {
++    /// DNS lookup, TCP connect and TLS handshake.
++    connect: Option<std::time::Duration>,
++    /// Wait for the response headers, then each gap between reads of the body. The header
++    /// timer starts when the request is created, so it also limits sending a request body.
++    read: Option<std::time::Duration>,
++    /// One request attempt up to the end of the response body, whatever its progress.
++    request: Option<std::time::Duration>,
++}
++
++#[cfg(any(feature = "aws", feature = "gcp", feature = "azure", feature = "http"))]
++impl HttpTimeouts {
++    fn from_env() -> Self {
++        fn secs(name: &str, default: u64) -> Option<std::time::Duration> {
++            let secs = std::env::var(name).map_or(default, |x| {
++                x.parse::<u64>()
++                    .unwrap_or_else(|_| panic!("invalid value for {name}: {x}"))
++            });
++            (secs > 0).then(|| std::time::Duration::from_secs(secs))
++        }
+ 
++        Self {
++            connect: secs("POLARS_HTTP_CONNECT_TIMEOUT_SECONDS", 10),
++            read: secs("POLARS_HTTP_READ_TIMEOUT_SECONDS", 0),
++            request: secs("POLARS_HTTP_REQUEST_TIMEOUT_SECONDS", 0),
++        }
++    }
++}
++
++#[cfg(any(feature = "aws", feature = "gcp", feature = "azure", feature = "http"))]
++pub(super) fn get_client_options() -> ClientOptions {
+     use reqwest::header::HeaderValue;
+ 
+-    ClientOptions::new()
+-        // Disables the time limit for downloading the response body.
+-        .with_timeout_disabled()
+-        // Set the time limit for establishing the connection.
+-        .with_connect_timeout(std::time::Duration::from_secs(
+-            std::env::var("POLARS_HTTP_CONNECT_TIMEOUT_SECONDS")
+-                .map(|x| {
+-                    x.parse::<NonZeroU64>()
+-                        .ok()
+-                        .unwrap_or_else(|| {
+-                            panic!("invalid value for POLARS_HTTP_CONNECT_TIMEOUT_SECONDS: {x}")
+-                        })
+-                        .get()
+-                })
+-                .unwrap_or(5 * 60),
+-        ))
++    let HttpTimeouts {
++        connect,
++        read,
++        request,
++    } = HttpTimeouts::from_env();
++
++    let opts = ClientOptions::new()
+         .with_user_agent(HeaderValue::from_static(USER_AGENT))
+         .with_allow_http(true)
+         .with_dns_resolver(Arc::new(
+             CachingResolver::new(DnsResolverConfig::from_env()),
+-        ))
++        ));
++
++    // `ClientOptions::new()` sets a connect and a request timeout of its own.
++    let opts = match connect {
++        Some(v) => opts.with_connect_timeout(v),
++        None => opts.with_connect_timeout_disabled(),
++    };
++    let opts = match read {
++        Some(v) => opts.with_read_timeout(v),
++        None => opts.with_read_timeout_disabled(),
++    };
++    match request {
++        Some(v) => opts.with_timeout(v),
++        None => opts.with_timeout_disabled(),
++    }
++}
++
++/// Logs the timeouts of a client, as set by the environment and `storage_options`.
++#[cfg(any(feature = "aws", feature = "gcp", feature = "azure", feature = "http"))]
++fn log_http_timeouts(get_config_value: impl Fn(object_store::ClientConfigKey) -> Option<String>) {
++    use object_store::ClientConfigKey as K;
++
++    let get = |key| get_config_value(key).unwrap_or_else(|| "disabled".to_string());
++    eprintln!(
++        "object-store http timeouts: connect: {}, read: {}, request: {}",
++        get(K::ConnectTimeout),
++        get(K::ReadTimeout),
++        get(K::Timeout),
++    );
+ }
+ 
+ #[cfg(feature = "aws")]
+@@ -497,6 +545,10 @@ impl CloudOptions {
+             }
+         }
+ 
++        if polars_core::config::verbose() {
++            log_http_timeouts(|key| builder.get_config_value(&AmazonS3ConfigKey::Client(key)));
++        }
++
+         if builder
+             .get_config_value(&AmazonS3ConfigKey::DefaultRegion)
+             .is_none()
+@@ -527,8 +579,14 @@ impl CloudOptions {
+                             "'(default_)region' not set; polars will try to get it from bucket\n\nSet the region manually to silence this warning."
+                         );
+                         let result = with_concurrency_budget(1, || async {
+-                            reqwest::Client::builder()
++                            // A single HEAD that is not retried.
++                            let mut client = reqwest::Client::builder()
+                                 .user_agent(USER_AGENT)
++                                .timeout(std::time::Duration::from_secs(30));
++                            if let Some(v) = HttpTimeouts::from_env().connect {
+
+```
+
+---
+
+### Incident Patch 3: `4d76833f` (2026-11-18)
+**Commit Message**: fix!: Make SQL `DELETE` change the registered table in a `SQLContext` (#30869)
+
+**File**: `crates/polars-sql/src/context.rs` (modified, +25/-7)
+```diff
+@@ -3138,23 +3138,41 @@ impl SQLContext {
+             polars_bail!(SQLInterface: "unexpected statement type; expected DELETE")
+         };
+         let (from, selection) = delete_parts(delete)?;
+-        if let TableFactor::Table { name, .. } = &from.relation
+-            && let Some((tbl, table)) = self.catalog_change_target(name)?
+-        {
++        let TableFactor::Table { name, .. } = &from.relation else {
++            polars_bail!(SQLInterface: "DELETE requires a registered table")
++        };
++        if let Some((tbl, table)) = self.catalog_change_target(name)? {
+             polars_bail!(
+                 SQLInterface: "DELETE of catalog table '{}' ('{}') must be performed on the catalog (see `SQLContext::catalog_statement`)",
+                 tbl, display_name(&table.full_name())
+             );
+         }
+         let lf = self.delete_target(from)?;
+-        match selection {
++        let tbl = object_name_to_string(name);
++        polars_ensure!(
++            key_ignoring_case(&self.table_map.read().unwrap(), &tbl)?.is_some(),
++            SQLInterface: "DELETE requires a registered table; '{}' is not one", tbl
++        );
++        let remaining = match selection {
+             // no WHERE clause; equivalent to TRUNCATE (drop all rows)
+-            None => Ok(lf.clear()),
++            None => lf.clear(),
+             // apply constraint as inverted filter (drops rows matching the selection)
+             Some(selection) => {
+-                self.process_where(lf, Some(selection), FilterMode::RemoveTrue, None)
++                let remaining =
++                    self.process_where(lf, Some(selection), FilterMode::RemoveTrue, None)?;
++                // A missing column fails here, before the table changes (no data is read).
++                LazyFrame::from(remaining.logical_plan.clone()).collect_schema()?;
++                remaining
+             },
+-        }
++        };
++        // Later statements see the remaining rows, as after TRUNCATE. Locked only now:
++        // resolving the table and its WHERE read the table map.
++        let mut table_map = self.table_map.write().unwrap();
++        let Some(key) = key_ignoring_case(&table_map, &tbl)?.cloned() else {
++            polars_bail!(SQLInterface: "DELETE requires a registered table; '{}' is not one", tbl)
++        };
++        table_map.insert(key, remaining.clone());
++        Ok(remaining)
+     }
+ 
+     fn delete_target(&mut self, from: &TableWithJoins) -> PolarsResult<LazyFrame> {
+```
+
+**File**: `py-polars/docs/source/reference/sql/table_operations.rst` (modified, +17/-0)
+```diff
+@@ -378,6 +378,23 @@ DELETE
+ Remove specific rows from a table using an (optional) constraint.
+ Omitting the constraint deletes *all* rows, equivalent to `TRUNCATE`.
+ 
++On a registered table, it returns the remaining rows, and later statements in the same
++context see the table without the deleted rows. Source files and the original frame are
++not changed.
++
++The table keeps the condition, not its result. Each read of the table runs the condition
++again on the table's source. A subquery of the condition keeps its tables as registered at
++the time of the ``DELETE``.
++
++- A condition that names a missing column fails at the ``DELETE`` and leaves the table
++  unchanged. Other errors in the condition, such as a string compared with an integer or a
++  cast of a string that is not a number, show when the table is read, on each read until
++  the table is registered again.
++- Collecting the result of a ``DELETE`` computes the remaining rows. Leave the result lazy
++  when only the change is needed.
++- Each ``DELETE`` adds its condition to the table. After many, register the collected rows
++  again: ``ctx.register("t", ctx.execute("SELECT * FROM t", eager=True))``.
++
+ On a table of an attached catalog, it deletes the matching rows in one commit, as one
+ snapshot. It returns the statement, not the remaining rows. Rows where the condition is NULL
+ are kept.
+```
+
+**File**: `py-polars/tests/unit/sql/test_catalogs.py` (modified, +11/-0)
+```diff
+@@ -4485,6 +4485,17 @@ def test_delete_catalog_table_float_condition(lake: CountingCatalog) -> None:
+     assert len(table_rows(lake, "tpch", "f")) == 2
+ 
+ 
++@pytest.mark.write_disk
++def test_delete_registered_table_shadowing_catalog_table(lake: CountingCatalog) -> None:
++    # a registered table of the name wins: DELETE changes it, not the catalog table
++    ctx = lake_ctx(lake)
++    ctx.register("lineitem", pl.LazyFrame({"k": [1, 2], "v": ["x", "y"]}))
++    ctx.execute("DELETE FROM lineitem WHERE k = 1")
++    assert ctx.execute("SELECT k FROM lineitem", eager=True)["k"].to_list() == [2]
++    res = ctx.execute("SELECT k FROM lake.tpch.lineitem ORDER BY k", eager=True)
++    assert res["k"].to_list() == [1, 2]
++
++
+ @pytest.mark.write_disk
+ def test_delete_catalog_table_resolution(lake: CountingCatalog) -> None:
+     ctx = lake_ctx(lake)
+```
+
+**File**: `py-polars/tests/unit/sql/test_table_operations.py` (modified, +141/-0)
+```diff
+@@ -505,6 +505,7 @@ def test_qualified_table_name_ddl() -> None:
+     [
+         ("My Table", 'DROP TABLE "My Table"'),
+         ("My Table", 'TRUNCATE TABLE "My Table"'),
++        ("My Table", 'DELETE FROM "My Table"'),
+         ("frame", "DROP TABLE FRAME"),
+     ],
+ )
+@@ -845,3 +846,143 @@ def test_information_schema_columns(test_frame: pl.LazyFrame) -> None:
+         lf = ctx.execute("SELECT column_name FROM information_schema.columns")
+         ctx.unregister("df")
+         assert lf.collect()["column_name"].to_list() == ["a", "x", "y", "z", "x2", "y"]
++
++
++def test_delete_from_registered_table_30714() -> None:
++    # later statements see the deletion, as after TRUNCATE; DELETE returns the rest
++    with pl.SQLContext({"t": pl.LazyFrame({"a": [1, 2, 3, 4, 5]})}) as ctx:
++        res = ctx.execute("DELETE FROM t WHERE a = 1", eager=True)
++        assert res["a"].to_list() == [2, 3, 4, 5]
++        assert ctx.execute("SELECT a FROM t", eager=True)["a"].to_list() == [2, 3, 4, 5]
++
++        # a lazy execute changes the table too
++        ctx.execute("DELETE FROM t WHERE a = 5")
++        assert ctx.execute("SELECT a FROM t", eager=True)["a"].to_list() == [2, 3, 4]
++
++        # an alias names the same table
++        ctx.execute("DELETE FROM t AS x WHERE x.a = 4")
++        assert ctx.execute("SELECT a FROM t", eager=True)["a"].to_list() == [2, 3]
++
++        # a subquery on the table sees it as before the DELETE
++        ctx.execute("DELETE FROM t WHERE a IN (SELECT min(a) FROM t)")
++        assert ctx.execute("SELECT a FROM t", eager=True)["a"].to_list() == [3]
++        assert ctx.tables() == ["t"]
++
++        # without WHERE, as TRUNCATE
++        ctx.execute("DELETE FROM T")
++        out = ctx.execute("SELECT * FROM t", eager=True)
++        assert out.height == 0
++        assert out.columns == ["a"]
++
++
++@pytest.mark.write_disk
++def test_delete_leaves_sources_unchanged(tmp_path: Path) -> None:
++    df = pl.DataFrame({"a": [1, 2, 3]})
++    path = tmp_path / "t.parquet"
++    df.write_parquet(path)
++    with pl.SQLContext({"scan": pl.scan_parquet(path), "frame": df}) as ctx:
++        ctx.execute("DELETE FROM scan WHERE a = 1")
++        ctx.execute("DELETE FROM frame WHERE a = 2")
++        assert ctx.execute("SELECT a FROM scan", eager=True)["a"].to_list() == [2, 3]
++        # the condition is pushed into the scan
++        assert "SELECTION" in ctx.execute("SELECT a FROM scan").explain()
++        assert ctx.execute("SELECT a FROM frame", eager=True)["a"].to_list() == [1, 3]
++    assert_frame_equal(pl.read_parquet(path), df)
++    assert df["a"].to_list() == [1, 2, 3]
++
++    # `df.sql` runs in its own context
++    assert df.sql("DELETE FROM self WHERE a = 1")["a"].to_list() == [2, 3]
++    assert df["a"].to_list() == [1, 2, 3]
++
++
++def test_delete_in_scope_persists() -> None:
++    # a table registered before the scope keeps the deletion, as after TRUNCATE
++    ctx = pl.SQLContext({"t": pl.LazyFrame({"a": [1, 2]})})
++    with ctx:
++        ctx.execute("DELETE FROM t WHERE a = 1")
++    assert ctx.execute("SELECT a FROM t", eager=True)["a"].to_list() == [2]
++
++    # registering it again restores it
++    ctx.register("t", pl.LazyFrame({"a": [1, 2]}))
++    assert ctx.execute("SELECT count(*) FROM t", eager=True).item() == 2
++
++
++def test_delete_table_name_case() -> None:
++    frames = {
++        "Foo": pl.LazyFrame({"x": ["Foo", "Foo"]}),
++        "FOO": pl.LazyFrame({"x": ["FOO"]}),
++    }
++    with pl.SQLContext(frames) as ctx:
++        # the exact name wins
++        ctx.execute("DELETE FROM FOO")
++        assert ctx.execute("SELECT count(*) FROM FOO", eager=True).item() == 0
++        assert ctx.execute("SELECT count(*) FROM Foo", eager=True).item() == 2
++        with pytest.raises(SQLInterfaceError, match=r"foo.*matches more than one"):
++            ctx.execute("DELETE FROM foo")
++
++
++@pytest.mark.parametrize(
++    ("query", "error"),
++    [
++        (
++            "DELETE FROM (SELECT * FROM t) AS s WHERE a = 1",
++            "DELETE requires a registered table",
++        ),
++        ("DELETE FROM missing", "relation 'missing' was not found"),
++        # refused before its condition is checked
++        ("DELETE FROM v WHERE a = 'x'", "DELETE requires a registered table; 'v'"),
++    ],
++)
++def test_delete_requires_registered_table(query: str, error: str) -> None:
++    with pl.SQLContext({"t": pl.LazyFrame({"a": [1]})}) as ctx:
++        ctx.execute("CREATE VIEW v AS SELECT a FROM t")
++        with pytest.raises(SQLInterfaceError, match=error):
++            ctx.execute(query)
++        assert ctx.execute("SELECT count(*) FROM t", eager=True).item() == 1
++
++
++@pytest.mark.parametrize(
++    ("condition", "error"),
++    [
++        ("missing = 1", pl.exceptions.ColumnNotFoundError),
++        ("a IN (SELECT s FROM u)", pl.exceptions.InvalidOperationError),
++    ],
++)
++def test_delete_failure_leaves_table_unchanged(
++    condition: str, error: type[Exception]
++) -> None:
++    frames = {"t": pl.LazyFrame({"a": [1, 2]}), "u": pl.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30859** (2026-11-17): ci: Ignore unmaintained advisories for chrono, chrono-tz and humantime (@dancsi)
-- **PR #30856** (2026-11-17): feat: Support CALL rewrite_data_files (compaction) on Iceberg catalog tables in SQL (@kdn36)
-- **PR #30854** (closed): fix: Re-resolve a reused scan when its local files change (@nameexhaustion)
-- **PR #30845** (2026-11-17): feat: Support escape string literals in SQL (@ritchie46)
-- **PR #30844** (2026-11-17): feat: Support JSON operators after a JSON cast in SQL (@ritchie46)
-- **PR #30840** (2026-11-17): feat: Support query parameters in SQL (@ritchie46)
+- **PR #30902** (2026-11-19): fix: Evaluate the quantile argument per group in `group_by` (@dancsi)
+- **PR #30900** (2026-11-19): feat: Report cloud read stats in the in-flight concurrency log (@kdn36)
+- **PR #30897** (2026-11-19): fix: Lower the cloud connect timeout to 10 seconds and add env vars (@kdn36)
+- **PR #30896** (2026-11-19): fix: Merge a single nested descending key in the right order (@kdn36)
+- **PR #30894** (2026-11-19): refactor(rust): Attach the plan of a failed conversion to the error as data (@kdn36)
+- **PR #30892** (2026-11-18): fix(python): Use per-account ADLS SAS tokens vended by Iceberg catalogs (@Ferdinanddb)
 
 ---
 
@@ -2000,32 +2334,80 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Keep nulls in `drop_nans` inside `group_by` and `over`
+## X. Turn panics in Arrow C stream callbacks into stream errors
 
 **RULE**:
-When implementing operations in `crates/polars-expr/src/dispatch/groups_dispatch.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-arrow/src/ffi/stream.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8579b224`: Keep nulls in `drop_nans` inside `group_by` and `over`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `60a4ec62`: Turn panics in Arrow C stream callbacks into stream errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-expr/src/dispatch/groups_dispatch.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-arrow/src/ffi/stream.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // A null slot can hold a NaN value, so mask with the validity.
-        values.downcast_as_array().true_and_valid()
+use std::panic::AssertUnwindSafe;
+    iter: Box<dyn Iterator<Item = PolarsResult<Box<dyn Array>>> + Send>,
+    /// Whether a callback panicked, which ends the stream as `iter` is left in an unknown state.
+    panicked: bool,
+/// The status of a failed callback, as no status of the interface itself is ever this.
+const CALLBACK_ERROR: i32 = 2001;
+
+fn error_cstring(message: &str) -> CString {
+    CString::new(message.replace('\0', "\\0")).unwrap()
+}
+
+/// Run the body of a stream callback, storing a panic as the stream's error, as unwinding out of
+/// an `extern "C"` function aborts the process.
+unsafe fn catch_callback(
+    iter: *mut ArrowArrayStream,
+    body: impl FnOnce(&mut PrivateData) -> i32,
+) -> i32 {
+        return CALLBACK_ERROR;
+    let private = (*iter).private_data as *mut PrivateData;
+    if (*private).panicked {
+        return CALLBACK_ERROR;
+    }
+    match std::panic::catch_unwind(AssertUnwindSafe(|| body(&mut *private))) {
+        Ok(status) => status,
+        Err(payload) => {
+            let message = payload
+                .downcast_ref::<&str>()
+                .copied()
+                .or_else(|| payload.downcast_ref::<String>().map(String::as_str))
+         
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        values.downcast_as_array().values().clone()
+    iter: Box<dyn Iterator<Item = PolarsResult<Box<dyn Array>>>>,
+unsafe extern "C" fn get_next(iter: *mut ArrowArrayStream, array: *mut ArrowArray) -> i32 {
+        return 2001;
+    let private = &mut *((*iter).private_data as *mut PrivateData);
+    match private.iter.next() {
+                private.error = Some(CString::new(format!("The iterator produced an item of data type {item_dt:?} but the producer expects data type {expected_dt:?}").as_bytes().to_vec()).unwrap());
+                return 2001; // custom application specific error (since this is never a result of this interface)
+            // A NUL would end the C string: without it, `CString::new` can't fail (and a panic
+            // here can't unwind out of this `extern "C"` function).
+            let message = err.to_string().replace('\0', "\\0");
+            private.error = Some(CString::new(message).unwrap());
+            2001 // custom application specific error (since this is never a result of this interface)
+    }
+    if iter.is_null() {
+        return 2001;
+    }
+    let private = &mut *((*iter).private_data as *mut PrivateData);
+
+    std::ptr::write(schema, export_field_to_c(&private.field));
+    0
+    iter: Box
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8579b224` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `60a4ec62` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

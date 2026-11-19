@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T14:08:12.010Z",
+  "timestamp": "2026-11-19T17:07:55.152Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T14:08:12.010Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T17:07:55.152Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), F (Design Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `9eeb878b`  
+> **Source Version**: `e737db35`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T14:05:00.611Z  
+> **Timestamp**: 2026-11-19T17:06:57.186Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T14:05:00.468Z  
+> **Harvest Timestamp**: 2026-11-19T17:06:57.180Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -130,7 +130,7 @@ pub fn generate(statement: &Stmt) -> String {
         } => format!("for {key},{value} of {iterable}"),
         Stmt::While { condition, body } => loop_key("while", condition, body),
         Stmt::Repeat { count, body } => loop_key("repeat", count, body),
-        Stmt::Try { .. } => "try".to_string(),
+        Stmt::Try { .. } | Stmt::TryFinally { .. } => "try".to_string(),
         Stmt::Declaration { name, type_name } => format!("{name}:{type_name}"),
         Stmt::Pass => "pass".to_string(),
         Stmt::Suppose { target, body } => {
@@ -149,6 +149,18 @@ fn loop_key(word: &str, header: &Expr, body: &[Stmt]) -> String {
 
 fn loop_suite(word: &str, header: &Expr, body: &[Stmt]) -> String {
     format!("{word} {header}:\n{}", indent(&source_all(body)))
+}
+
+fn try_suite(body: &[Stmt], parameter: &str, catch: &[Stmt]) -> String {
+    format!(
+        "try:\n{}\ncatch {parameter}:\n{}",
+        indent(&source_all(body)),
+        indent(&source_all(catch))
+    )
+}
+
+fn finally_suite(attempt: &str, finally: &[Stmt]) -> String {
+    format!("{attempt}\nfinally:\n{}", indent(&source_all(finally)))
 }
 
 fn assignment_source(target: &Expr, value: &Expr) -> String {
@@ -266,11 +278,13 @@ fn source(statement: &Stmt) -> String {
             body,
             parameter,
             catch,
-        } => format!(
-            "try:\n{}\ncatch {parameter}:\n{}",
-            indent(&source_all(body)),
-            indent(&source_all(catch))
-        ),
+        } => try_suite(body, parameter, catch),
+        Stmt::TryFinally {
+            body,
+            parameter,
+            catch,
+            finally,
+        } => finally_suite(&try_suite(body, parameter, catch), finally),
         Stmt::Block(body) => format!("{{\n{}\n}}", source_all(body)),
         Stmt::Suppose { target, body } => format!(
             "{}suppose:\n{}",
@@ -1184,7 +1198,9 @@ import object from "./object.ts";
 export async function declarations({ train_dataset }) {
   milestone.inferring_declarations();
 
-  const { declarations, output_canvas } = await llm.generate({
+  const {
+    result: { class_declaration, declarations, output_canvas },
+  } = await llm.generate({
     grammar: true,
     messages: [
       {
@@ -1193,25 +1209,35 @@ export async function declarations({ train_dataset }) {
           query:
           ${JSON.stringify({
             ...train_dataset,
+            class_declaration: "<CLASS_DECLARATION>",
             declarations: "<DECLARATIONS>",
             output_canvas: "<OUTPUT_CANVAS>",
           })}
           json_format:
-          { "declarations": <DECLARATIONS>, "output_canvas": <OUTPUT_CANVAS> }
+          {
+            "result": {
+              "class_declaration": <CLASS_DECLARATION>,
+              "declarations": <DECLARATIONS>,
+              "output_canvas": <OUTPUT_CANVAS>
+            }
+          }
         `,
       },
     ],
   });
 
-  milestone.declarations_inferred({ declarations, output_canvas });
+  milestone.declarations_inferred({
+    declarations: [class_declaration, ...declarations],
+    output_canvas,
+  });
 
-  return { declarations, output_canvas };
+  return { class_declaration, declarations, output_canvas };
 }
 
 export async function instances({ train_dataset }) {
   milestone.segmenting_training_objects();
 
-  const { instances } = await llm.generate({
+  const { result: instances } = await llm.generate({
     messages: [
       {
         role: "user",
@@ -1231,7 +1257,7 @@ export async function instances({ train_dataset }) {
           })}
           json_format:
           {
-            "instances": [{
+            "result": [{
               "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
               "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
             }]
@@ -1246,8 +1272,15 @@ export async function instances({ train_dataset }) {
   return { instances };
 }
 
-export async function value({ train_dataset, input_matrix, instance }) {
-  milestone.constructing_instance({ instance_name: instance.instance_name });
+export async function value({
+  instance_name,
+  train_dataset,
+  input_matrix,
+  instance,
+}) {
+  milestone.constructing_instance({ instance_name });
+
+  instance.instance_name = instance_name;
 
   const { x, y, width, height, volume } = Matrix.locate(
     instance.input_instance_matrix
@@ -1266,7 +1299,7 @@ export async function value({ train_dataset, input_matrix, instance }) {
     volume,
   });
 
-  milestone.evaluating_rules({ instance_name: instance.instance_name });
+  milestone.evaluating_rules({ instance_name });
 
   const canvas_width: number = input_matrix[0].length;
   const canvas_height: number = input_matrix.length;
@@ -1274,20 +1307,21 @@ export async function value({ train_dataset, input_matrix, instance }) {
     [
       `canvas_width = ${canvas_width}`,
       `canvas_height = ${canvas_height}`,
-      train_dataset.declarations[0],
+      train_dataset.class_declaration,
       implementation,
     ].join("\n\n")
   );
 
   milestone.instance_constructed({
-    instance_name: instance.instance_name,
+    instance_name,
     input_instance_matrix: instance.input_instance_matrix,
     output_instance_matrix: instance.output_instance_matrix,
     implementation,
     input_value,
   });
 
-  return { implementation, input_value };
+  instance.implementation = implementation;
+  instance.input_value = input_value;
 }
 
 export async function state(train_dataset) {
@@ -1304,6 +1338,7 @@ export async function state(train_dataset) {
       [
         `canvas_width = ${canvas_width}`,
         `canvas_height = ${canvas_height}`,
+        train_dataset.class_declaration,
         ...train_dataset.declarations,
         ...implementations,
         "Obj[:]",
@@ -1335,6 +1370,7 @@ import * as milestone from "./lib/milestone.ts";
 import arc_dataset from "./lib/arc_dataset.ts";
 import fs from "node:fs/promises";
 import synthesizer from "./synthesizer.ts";
+import object from "./object.ts";
 
 // Genesis puzzle_id: 3aa6fb7a
 export async function start(puzzle_id: string = "3aa6fb7a") {
@@ -1347,6 +1383,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
       output_matrix: output,
       instances: undefined,
     })),
+    class_declaration: undefined,
     declarations: undefined,
     output_canvas: undefined,
   };
@@ -1366,10 +1403,12 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   const next_instance_name = (): string =>
     `obj${String(instance_index++).padStart(12, "0")}`;
 
-  const { declarations, output_canvas } = await analyzer.declarations({
-    train_dataset,
-  });
+  const { class_declaration, declarations, output_canvas } =
+    await analyzer.declarations({
+      train_dataset,
+    });
 
+  train_dataset.class_declaration = class_declaration;
   train_dataset.declarations = declarations;
   train_dataset.output_canvas = output_canvas;
 
@@ -1379,13 +1418,44 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     });
 
     for (const instance of instances) {
-      instance.instance_name = next_instance_name();
+      await analyzer.value({
+        instance_name: next_instance_name(),
+        train_dataset,
+        input_matrix: dataset.input_matrix,
+        instance,
+      });
     }
 
     dataset.instances = instances;
   }
 
   await analyzer.state(train_dataset);
+
+  milestone.synthesizing_training_dataset();
+
+  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
+
+  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
+
+  for (const dataset of synthesized_dataset) {
+    for (const instance of dataset.instances) {
+      await analyzer.value({
+        instance_name: next_instance_name(),
+        train_dataset,
+        input_matrix: dataset.input_matrix,
+        instance,
+      });
+    }
+
+    await object.state({
+      class_declaration,
+      declarations,
+      input_matrix: dataset.input_matrix,
+      input_instances: dataset.instances,
+    });
+
+    train_dataset.dataset.push(dataset);
+  }
 
   milestone.visualization();
 
@@ -1394,12 +1464,8 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     test_input_matrix,
   });
 
-  let result_matrix = Matrix.draw(
-    [],
-    test_input_matrix.length,
-    test_input_matrix[0].length,
-    0,
-    0
+  let result_matrix = Array.from({ length: test_input_matrix.length }, () =>
+    Array(test_input_matrix[0].length).fill(0)
   );
 
   const input_instances = [];
@@ -1422,11 +1488,12 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     });
   }
 
-  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
-
-  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
-
-  await visualizer.state({ declarations, test_input_matrix, input_instances });
+  await object.state({
+    class_declaration,
+    declarations,
+    input_matrix: test_input_matrix,
+    input_instances,
+  });
 
   for (const input_instance of input_instances) {
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
@@ -1546,133 +1613,208 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9eeb878b` (2026-11-18)
-**Commit Message**: Draft NUC 119 Finally Clauses for Try Statements
+### Incident Patch 1: `e737db35` (2026-11-19)
+**Commit Message**: Separate ARC class definitions from rules
 
-Category: Runtime features, drawn uniformly at random (index 1 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle. Runtime applicability: new_feature,
-since no accepted construct runs a suite on every exit of a try
-statement, so the token non-regression gate is skipped as NUC 1's matrix
-requires for a brand-new runtime feature.
+Move class definitions into a dedicated field across ARC datasets and pass them separately through analysis, visualization, synthesis, and state execution.
 
-Requested change: a complete try/catch statement may end with a finally
-clause, finally: followed by a suite on its own line, which runs every
-time the statement ends: after the body completes, after the catch suite
-handles a failure, and before a return in either leaves the function or
-the program. The pending outcome stands unless the finally suite returns
-or fails, which replaces it. A failed body's changes are rolled back
-before the catch suite runs, as now, and a failed catch suite's changes
-before the finally suite runs. At the accepted revision each such
-program raises SyntaxError("Unexpected ':'") at the colon after finally;
-finally stays an ordinary name everywhere else, a bare finally line
-followed by an indented block keeps its accepted re
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `arc/README.md` (modified, +7/-5)
 ```diff
-@@ -96,6 +96,7 @@ Created: 31-Jul-2026
- | [85](nuc-0085.md) | Fixed Cross-Property Class Anchors | Automatic-Accepted: independent evaluation rejected it because fixed-only cycles whose rules build fresh objects never settle; `$Pair.a = {v: $Pair.b@first}` with `$Pair.b = {v: $Pair.a@first}` reaches the 100,000-step propagation limit instead of settling as the proposal claims |
- | [90](nuc-0090.md) | Enum Declarations | Accepted |
- | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
-+| [119](nuc-0119.md) | Finally Clauses for Try Statements | Draft |
+@@ -285,10 +285,10 @@ call passes its own:
  
- ### Utility enhancement
+ | Call | Few-shot properties of each instruction dataset |
+ | --- | --- |
+-| `analyzer.declarations` | `declarations`, `output_canvas`, and each pair's `input_matrix` and `output_matrix` |
+-| `analyzer.instances`, `visualizer.instances` | `declarations`, and each pair's `input_matrix`, `output_matrix`, and `instances` with `input_instance_matrix` and `output_instance_matrix` |
+-| `analyzer.value` | `declarations`, and each pair's `instances` with `instance_name`, `input_instance_matrix`, and `implementation` |
+-| `visualizer.value` | `declarations`, and the instances of every pair in one list, with `implementation`, `input_value`, and `input_instance_matrix` |
++| `analyzer.declarations` | `class_declaration`, `declarations`, `output_canvas`, and each pair's `input_matrix` and `output_matrix` |
++| `analyzer.instances`, `visualizer.instances` | `class_declaration`, `declarations`, and each pair's `input_matrix`, `output_matrix`, and `instances` with `input_instance_matrix` and `output_instance_matrix` |
++| `analyzer.value` | `class_declaration`, and each pair's `instances` with `instance_name`, `input_instance_matrix`, and `implementation` |
++| `visualizer.value` | `class_declaration`, and the instances of every pair in one list, with `implementation`, `input_value`, and `input_instance_matrix` |
+ | `visualizer.output_instance_matrix` | The instances of every pair in one list, with `input_value`, `input_instance_matrix`, `output_value`, and `output_instance_matrix` |
  
-@@ -291,6 +292,7 @@ Created: 31-Jul-2026
- | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Standards Track | Language compatibility | Accepted |
- | [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Accepted |
- | [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Accepted |
-+| [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Draft |
+ `analyzer.value` sends no `train_dataset`, so its examples carry the
+@@ -2518,12 +2518,14 @@ There are 2 sections in our approach: analysis and visualization. In analysis ph
+ ##### 1. Find patterns and Represent in `nuc` lang
  
- ## Copyright
+ The LLM finds pattern for given training input and output data and creates declarations in `nuc` lang.
++The class declaration goes in `class_declaration`, a string, and
++`declarations` holds the declarations that follow it.
+ It also infers the `output_canvas` from the training pairs.
  
+ ```json
+ {
++  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int, vertical_segment_color: int, horizontal_segment_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.vertex_color is vertex_color\n    this.vertical_segment_color is vertical_segment_color\n    this.horizontal_segment_color is horizontal_segment_color",
+   "declarations": [
+-    "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int, vertical_segment_color: int, horizontal_segment_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.vertex_color is vertex_color\n    this.vertical_segment_color is vertical_segment_color\n    this.horizontal_segment_color is horizontal_segment_color",
+     "if $Obj.vertex_color is 9 and $Obj.vertical_segment_color is 9 and $Obj.horizontal_segment_color is 9:\n    $Obj.tag is l6624\n    $Obj.marker_color is 4\n    $Obj.x is $Obj.x@first - 1 if $Obj.orientation > 180 else $Obj.x@first\n    $Obj.y is $Obj.y@first - 1 if $Obj.orientation < 90 or $Obj.orientation > 270 else $Obj.y@first\n    $Obj.width is $Obj.width@first + 1\n    $Obj.height is $Obj.height@first + 1\n    $Obj.volume is $Obj.volume@first + 1"
+   ],
+   "output_canvas": "EXACT"
 ```
 
-**File**: `docs/nuc-0119.md` (added, +82/-0)
+**File**: `arc/src/analyzer.ts` (modified, +10/-4)
 ```diff
-@@ -0,0 +1,82 @@
-+# NUC 119 -- Finally Clauses for Try Statements
-+
-+```
-+NUC: 119
-+Title: Finally Clauses for Try Statements
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Runtime features
-+Created: 18-Nov-2026
-+```
-+
-+## Abstract
-+
-+- A complete `try`/`catch` statement may end with a `finally` clause,
-+  `finally:` followed by a suite, which runs every time the statement
-+  ends: after the body completes, after the catch suite handles a
-+  failure, and before a `return` in either of them leaves the function or
-+  the program.
-+- The pending outcome stands unless the `finally` suite changes it: a
-+  value that the body or the catch suite returns is still returned, and
-+  an error that the catch suite raises still propagates afterwards. A
-+  `return` or a failure of the `finally` suite replaces it, as in Python,
-+  JavaScript and Java.
-+- Nucleoid's transactions are kept. A failed body's changes are rolled
-+  back before the catch suite runs, as they are now, and a failed catch
-+  suite's changes before the `finally` suite runs, so no suite runs on the
-+  partial changes of a failed one. When an error leaves the statement, the
-+  enclosing rollback undoes what the `finally` suite changed, with the
-+  rest of the statement.
-+- At the accepted revision each of these programs raises
-+  `SyntaxError("Unexpected ':'")` at the colon after `finally`. Only those
-+  programs change. `finally` stays an ordinary name everywhere else, as a
-+  variable, property, object key, function or parameter, as in
-+  `finally = 4`, `c ? finally : 1` and `{a: 2 finally: 3}`; a bare
-+  `finally` line followed by an indented block keeps its accepted reading;
-+  and `try` without `catch` keeps
-+  `SyntaxError("Expected 'catch' after 'try'")`.
-+
-+## Motivation
-+
-+- Mainstream languages with `try`/`catch` have a clause that runs however
-+  the statement ends: `finally` in Python, JavaScript, TypeScript, Java,
-+  Kotlin and C#, `ensure` in Ruby, and `defer` in Swift and Go. Programs
-+  and models written by people and LLMs use it to record that an
-+  operation ran, to count attempts or to log on every path. In Nucleoid
-+  each of them raises `SyntaxError("Unexpected ':'")` at `finally:`.
-+- Without it, a function whose body and catch suite both return has to
-+  repeat the shared work before each `return`, or turn each `return` into
-+  an assignment of a result followed by one `return` after the statement.
-+  Inside a function such an assignment writes state, because a function's
-+  only local names are its parameters and loop variables, so the rewrite
-+  changes the shape of the program and adds a state name the model did
-+  not have.
-+- World models record what happened as well as what holds: an attempt, an
-+  audit entry, a retry count. A `finally` clause states such a record
-+  once, beside the operation it follows, and keeps the statement's
-+  transaction: what the record writes commits with the statement or rolls
-+  back with it.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
+@@ -8,7 +8,7 @@ export async function declarations({ train_dataset }) {
+   milestone.inferring_declarations();
+ 
+   const {
+-    result: { declarations, output_canvas },
++    result: { class_declaration, declarations, output_canvas },
+   } = await llm.generate({
+     grammar: true,
+     messages: [
+@@ -18,12 +18,14 @@ export async function declarations({ train_dataset }) {
+           query:
+           ${JSON.stringify({
+             ...train_dataset,
++            class_declaration: "<CLASS_DECLARATION>",
+             declarations: "<DECLARATIONS>",
+             output_canvas: "<OUTPUT_CANVAS>",
+           })}
+           json_format:
+           {
+             "result": {
++              "class_declaration": <CLASS_DECLARATION>,
+               "declarations": <DECLARATIONS>,
+               "output_canvas": <OUTPUT_CANVAS>
+             }
+@@ -33,9 +35,12 @@ export async function declarations({ train_dataset }) {
+     ],
+   });
+ 
+-  milestone.declarations_inferred({ declarations, output_canvas });
++  milestone.declarations_inferred({
++    declarations: [class_declaration, ...declarations],
++    output_canvas,
++  });
+ 
+-  return { declarations, output_canvas };
++  return { class_declaration, declarations, output_canvas };
+ }
+ 
+ export async function instances({ train_dataset }) {
+@@ -111,7 +116,7 @@ export async function value({
+     [
+       `canvas_width = ${canvas_width}`,
+       `canvas_height = ${canvas_height}`,
+-      train_dataset.declarations[0],
++      train_dataset.class_declaration,
+       implementation,
+     ].join("\n\n")
+   );
+@@ -142,6 +147,7 @@ export async function state(train_dataset) {
+       [
+         `canvas_width = ${canvas_width}`,
+         `canvas_height = ${canvas_height}`,
++        train_dataset.class_declaration,
+         ...train_dataset.declarations,
+         ...implementations,
+         "Obj[:]",
+```
+
+**File**: `arc/src/app.ts` (modified, +8/-3)
+```diff
+@@ -19,6 +19,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+       output_matrix: output,
+       instances: undefined,
+     })),
++    class_declaration: undefined,
+     declarations: undefined,
+     output_canvas: undefined,
+   };
+@@ -38,10 +39,12 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+   const next_instance_name = (): string =>
+     `obj${String(instance_index++).padStart(12, "0")}`;
+ 
+-  const { declarations, output_canvas } = await analyzer.declarations({
+-    train_dataset,
+-  });
++  const { class_declaration, declarations, output_canvas } =
++    await analyzer.declarations({
++      train_dataset,
++    });
+ 
++  train_dataset.class_declaration = class_declaration;
+   train_dataset.declarations = declarations;
+   train_dataset.output_canvas = output_canvas;
+ 
+@@ -81,6 +84,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+     }
+ 
+     await object.state({
++      class_declaration,
+       declarations,
+       input_matrix: dataset.input_matrix,
+       input_instances: dataset.instances,
+@@ -121,6 +125,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+   }
+ 
+   await object.state({
++    class_declaration,
+     declarations,
+     input_matrix: test_input_matrix,
+     input_instances,
+```
+
+**File**: `arc/src/dataset/dataset.017c7c7b.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
++  "class_declaration": "# Each object is the whole color-1 pattern, as tall as the grid, whose rows repeat every period rows. The output continues it down to 9 rows and draws it in color 2\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100\n    this.color is color\n    this.period is period",
+   "declarations": [
+-    "# Each object is the whole color-1 pattern, as tall as the grid, whose rows repeat every period rows. The output continues it down to 9 rows and draws it in color 2\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100\n    this.color is color\n    this.period is period",
+     "# Each pattern becomes l8384, a pattern repeating down\n$Obj.tag is l8384",
+     "# It continues downward, below its last row\n$Obj.extension_direction is down",
+     "# Its height grows to 1.5 times its input height, 6 rows to 9, the height of the output grid\n$Obj.height is $Obj.height@first * 3 / 2",
+```
+
+**File**: `arc/src/dataset/dataset.0ca9ddb6.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
++  "class_declaration": "# Each object is one single-cell point. A color-1 point grows an orthogonal cross of color 7, a color-2 point a diagonal cross of color 4, and points of other colors stay as they are\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l7544\n    this.vertex_color is vertex_color",
+   "declarations": [
+-    "# Each object is one single-cell point. A color-1 point grows an orthogonal cross of color 7, a color-2 point a diagonal cross of color 4, and points of other colors stay as they are\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l7544\n    this.vertex_color is vertex_color",
+     "# A color-1 point grows 4 orthogonal arms of color 7\nif $Obj.vertex_color is 1:\n    $Obj.tag is l1707\n    $Obj.marker_color is 7\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4",
+     "# A color-2 point grows 4 diagonal arms of color 4\nif $Obj.vertex_color is 2:\n    $Obj.tag is l2404\n    $Obj.marker_color is 4\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4"
+   ],
+```
+
+**File**: `arc/src/dataset/dataset.0d3d703e.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
++  "class_declaration": "# Each object is one full-height column of a single color. Every column swaps its color for its partner: 1 and 5, 2 and 6, 3 and 4, 8 and 9 swap\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6953\n    this.color is color",
+   "declarations": [
+-    "# Each object is one full-height column of a single color. Every column swaps its color for its partner: 1 and 5, 2 and 6, 3 and 4, 8 and 9 swap\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6953\n    this.color is color",
+     "# Each column takes the partner of its input color: find the pair holding the input color, then the other member of that pair\n$Obj.color is [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)"
+   ],
+   "output_canvas": "EXACT",
+```
+
+**File**: `arc/src/dataset/dataset.25d8a9c8.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
++  "class_declaration": "# Each object is one full-width row of 3 cells. A row whose cells share one color turns all 5, and any other row is cleared to the background\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, parts: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l3058\n    this.parts is parts",
+   "declarations": [
+-    "# Each object is one full-width row of 3 cells. A row whose cells share one color turns all 5, and any other row is cleared to the background\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, parts: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l3058\n    this.parts is parts",
+     "# A row with one distinct color is filled with 5; any other row gets 0, the background\n$Obj.fill_color is 5 if $Obj.parts.distinct().length is 1 else 0",
+     "# A cleared row keeps no cells; a filled row keeps its 3 input cells\n$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.volume@first"
+   ],
+```
+
+**File**: `arc/src/dataset/dataset.25ff71a9.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
++  "class_declaration": "# Each object is the one shape in the grid. Every shape moves down by one row\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100",
+   "declarations": [
+-    "# Each object is the one shape in the grid. Every shape moves down by one row\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100",
+     "# Each shape moves down one row from its input row; its cells and size stay the same\n$Obj.y is $Obj.y@first + 1"
+   ],
+   "output_canvas": "EXACT",
 ```
 
 #### Recent Merged Pull Requests:
@@ -1701,32 +1843,41 @@ followed by an indented block keeps its accepted re
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 119 Finally Clauses for Try Statements
+## X. Separate ARC class definitions from rules
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9eeb878b`: Draft NUC 119 Finally Clauses for Try Statements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e737db35`: Separate ARC class definitions from rules. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [119](nuc-0119.md) | Finally Clauses for Try Statements | Draft |
-| [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Draft |
+| `analyzer.declarations` | `class_declaration`, `declarations`, `output_canvas`, and each pair's `input_matrix` and `output_matrix` |
+| `analyzer.instances`, `visualizer.instances` | `class_declaration`, `declarations`, and each pair's `input_matrix`, `output_matrix`, and `instances` with `input_instance_matrix` and `output_instance_matrix` |
+| `analyzer.value` | `class_declaration`, and each pair's `instances` with `instance_name`, `input_instance_matrix`, and `implementation` |
+| `visualizer.value` | `class_declaration`, and the instances of every pair in one list, with `implementation`, `input_value`, and `input_instance_matrix` |
+The class declaration goes in `class_declaration`, a string, and
+`declarations` holds the declarations that follow it.
+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int, vertical_segment_color: int, horizontal_segment_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.vertex_color is vertex_color\n    this.vertical_segment_color is vert
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+| `analyzer.declarations` | `declarations`, `output_canvas`, and each pair's `input_matrix` and `output_matrix` |
+| `analyzer.instances`, `visualizer.instances` | `declarations`, and each pair's `input_matrix`, `output_matrix`, and `instances` with `input_instance_matrix` and `output_instance_matrix` |
+| `analyzer.value` | `declarations`, and each pair's `instances` with `instance_name`, `input_instance_matrix`, and `implementation` |
+| `visualizer.value` | `declarations`, and the instances of every pair in one list, with `implementation`, `input_value`, and `input_instance_matrix` |
+    "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int, vertical_segment_color: int, horizontal_segment_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.vertex_color is vertex_color\n    this.vertical_segment_color is vertical_segment_color\n    this.horizontal_segment_color is horizontal_segment_color",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9eeb878b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e737db35` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
