@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T18:20:07.872Z",
-  "total_cycles_completed": 10840,
-  "total_learnings_persisted": 10840,
-  "total_rules_promoted": 10199,
+  "last_updated": "2026-11-19T18:32:59.280Z",
+  "total_cycles_completed": 10842,
+  "total_learnings_persisted": 10842,
+  "total_rules_promoted": 10200,
   "history": [
-    {
-      "timestamp": "2026-11-18T23:26:26.837Z",
-      "repository": "apache/shardingsphere",
-      "learningId": "learn-github-apache-shardingsphere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T23:34:40.997Z",
-      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T23:34:51.260Z",
       "repository": "gocd/gocd",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-19T18:20:07.872Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T18:32:55.938Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T18:32:59.280Z",
+      "repository": "tw93/Pake",
+      "learningId": "learn-github-tw93-pake",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

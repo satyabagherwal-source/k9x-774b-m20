@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T18:20:39.471Z",
+  "last_updated": "2026-11-19T18:33:09.635Z",
   "total_records": 2010,
   "domains": {
     "A": {
@@ -8743,8 +8743,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "b0d531eb137f92e98214255135d29269eefb4abc96f78ea33e2d690a1a7025a7",
-      "created_at": "2026-11-19T15:50:59.829Z"
+      "content_hash": "4ccfeb4219f551b4a1ca0a8596ac9f067e942abe3cb38bf57aa6e3e1ff600bcc",
+      "created_at": "2026-11-19T18:33:09.635Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -17363,8 +17363,8 @@
       "title": "Technical Construction Intelligence: tw93/Pake Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-technical-construction-intelligence-tw93-pake-core-invariants.md",
       "repository": "tw93/Pake",
-      "content_hash": "bbcc41e4fd0e10791d0e3ef94a8a0c4219324ea6e25e50568463e184bf833cb1",
-      "created_at": "2026-11-17T23:17:27.494Z"
+      "content_hash": "ebd7e9196c88cbd40304b46133ff900de300fea67970d7cd55b7ed2d10bffb42",
+      "created_at": "2026-11-19T18:32:59.746Z"
     },
     "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants",
@@ -17381,8 +17381,8 @@
       "title": "Technical Construction Intelligence: tw93-pake-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-learnings-technical-construction-intelligence-tw93-pake-learnings-core.md",
       "repository": "tw93-pake-learnings",
-      "content_hash": "197a3e3016be7b5907a7237aad14a2e5ad118a7879f4cbdb6ab463c1ae216afa",
-      "created_at": "2026-11-17T23:19:27.631Z"
+      "content_hash": "4872c01b6f6faaded1412c608268cf3ffbe96ae7350f7e853fe5c88a115cf998",
+      "created_at": "2026-11-19T18:33:08.099Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -19761,8 +19761,8 @@
       "title": "Research & Knowledge Intelligence: OpenMOSS-Team/MOSS-Image-SFT Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-sft-research-knowledge-intelligence-openmoss-team-mo.md",
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-      "content_hash": "72ca526aa903d2a40968fb4ea9958fcb866c5fd282f98baacf4f8c2fdee9c00d",
-      "created_at": "2026-11-15T05:36:45.585Z"
+      "content_hash": "3943ed3abddb59b500f3acd5154038230e86c5d95bd08fecd8276c8a3cf5a490",
+      "created_at": "2026-11-19T18:32:56.175Z"
     },
     "domain_intelligence-content-information-intelligence-1jehuang-jcode-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-1jehuang-jcode-learnings-core-invariants",
@@ -19821,8 +19821,8 @@
       "title": "Research & Knowledge Intelligence: hf-openmoss-team-moss-image-sft-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-sft-learnings-research-knowledge-intelligence-hf-ope.md",
       "repository": "hf-openmoss-team-moss-image-sft-learnings",
-      "content_hash": "a1bbc4d53c875ebac75c384809aa56ca6b7e66e87c8f78f22e868ff7db6b14c2",
-      "created_at": "2026-11-15T05:37:22.962Z"
+      "content_hash": "1a281b0d5a8fade8deffeb93af99ee7826a417f1d2b13890a0a7e91e0cd6372b",
+      "created_at": "2026-11-19T18:33:08.708Z"
     },
     "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-1-flash-1017-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-1-flash-1017-core-invari",

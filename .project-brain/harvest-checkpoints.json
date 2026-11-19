@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T18:20:07.876Z",
+  "last_updated": "2026-11-19T18:32:59.285Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2661,14 +2661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-sft",
-      "content_hash": "defb48f51daa34ac53a8f9bbd9732e2be18161ccf7b32a709f0ec3e9af75fbb7",
-      "verified_at": "2026-11-15T05:36:45.387Z",
+      "content_hash": "c489df5aa6cd2c1dd49ff1a324265c7a01b6456ee6621fa75b274bece76cf451",
+      "verified_at": "2026-11-19T18:32:55.942Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T05:36:45.387Z"
+      "last_updated": "2026-11-19T18:32:55.942Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash-1017": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -2691,14 +2691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-pake",
-      "content_hash": "799d3c4ee500604d5f04db676e7bb4ac2d4ee288db3bc6e7de23fd2873fc0154",
-      "verified_at": "2026-11-17T23:17:27.095Z",
+      "content_hash": "c44571c60aac70116639b0fa812f1bcb677e3f1fab3a110158dbf650780f7607",
+      "verified_at": "2026-11-19T18:32:59.284Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T23:17:27.095Z"
+      "last_updated": "2026-11-19T18:32:59.284Z"
     },
     "datalab-to/indra-ocr": {
       "repository": "datalab-to/indra-ocr",

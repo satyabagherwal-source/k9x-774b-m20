@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T18:20:39.764Z",
+  "last_updated": "2026-11-19T18:33:09.978Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T12:40:39.625Z",
@@ -183,7 +183,7 @@
       "staged_for_review": 1
     },
     "tw93-pake-learnings.md": {
-      "processed_at": "2026-11-17T23:19:27.184Z",
+      "processed_at": "2026-11-19T18:33:07.538Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-19T15:50:59.233Z",
+      "processed_at": "2026-11-19T18:33:08.923Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2888,8 +2888,8 @@
       "staged_for_review": 0
     },
     "hf-openmoss-team-moss-image-sft-learnings.md": {
-      "processed_at": "2026-11-15T05:37:22.734Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T18:33:08.486Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md": {
@@ -3518,7 +3518,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2298,
+  "total_dossiers_evaluated": 2301,
   "total_canonical_promoted": 392,
-  "total_staged_for_review": 1709
+  "total_staged_for_review": 1711
 }

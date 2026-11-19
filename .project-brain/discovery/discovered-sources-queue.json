@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T18:20:38.254Z",
+  "updated_at": "2026-11-19T18:33:07.618Z",
   "stats": {
-    "total_discovered": 5951,
-    "approved_pending_harvest": 5635,
+    "total_discovered": 5952,
+    "approved_pending_harvest": 5636,
     "harvested_count": 0,
     "rejected_count": 316,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5602,
+      "COMMUNITY_AND_EXPERT": 5603,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 112,
       "ENGINEERING_BLOGS": 4,
@@ -128731,6 +128731,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
         "fileName": "nguyenphutrong-quotio-learnings.md"
+      }
+    },
+    "SRC-1BDD8AB61166": {
+      "id": "SRC-1BDD8AB61166",
+      "url": "https://accounts.google.com/gsi/select?client_id=1",
+      "title": "https://accounts.google.com/gsi/select?client_id=1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T18:33:07.618Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tw93-pake-learnings.md",
+        "fileName": "tw93-pake-learnings.md"
       }
     }
   }

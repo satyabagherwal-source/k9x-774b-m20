@@ -11387,3 +11387,5 @@ Every entry in this ledger must capture:
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `22c627e7` | Multi-dimensional audit evidence | 2026-11-19T18:20:05.503Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `64f9b9ba` | Multi-dimensional audit evidence | 2026-11-19T18:20:07.867Z |
 | `learn-dom-d-2bf9f19d` | `project://nguyenphutrong-quotio` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md` | 2026-11-19T18:20:38.076Z |
+| `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-19T18:32:55.931Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `1382507e` | Multi-dimensional audit evidence | 2026-11-19T18:32:59.274Z |

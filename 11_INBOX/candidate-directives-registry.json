@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T18:20:39.313Z",
+  "last_updated": "2026-11-19T18:33:09.451Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-926Z",
+      "id": "CD-1LQE",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-926Z-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-1LQE-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-19",
@@ -33923,6 +33923,35 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-19",
       "domain_letter": "K"
+    },
+    {
+      "id": "CD-1KJN",
+      "directive_title": "stop showing sites Tauri's global API, which DeepSeek reads as an unofficial cli",
+      "source_repo": "tw93-pake-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-1KJN-stop-showing-sites-tauri-s-global-api-which-deepseek-reads-as-an-unofficial-cli.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-37ABCA",
+      "directive_title": "stop showing sites Tauri's global API, which DeepSeek reads as an unofficial cli",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tw93-pake",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-37ABCA-stop-showing-sites-tauri-s-global-api-wh.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-54B089",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-54B089-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-19"
     }
   ]
 }

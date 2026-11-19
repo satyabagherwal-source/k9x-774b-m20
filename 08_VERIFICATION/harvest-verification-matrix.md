@@ -11354,3 +11354,5 @@
 | `CYCLE-20261119-KSU4` | `2026-11-19T18:20:05.500Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9425` | Yes (`9e0f5919...`) |
 | `CYCLE-20261119-KUNR` | `2026-11-19T18:20:07.863Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9426` | Yes (`994d4b6a...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T18:20:38.076Z` | `nguyenphutrong-quotio` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2BF9F19D` [Domain D] | Yes (`118f42c3...`) |
+| `CYCLE-20261119-1BAV` | `2026-11-19T18:32:55.927Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md` | Yes (`c489df5a...`) |
+| `CYCLE-20261119-1DVQ` | `2026-11-19T18:32:59.270Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9427` | Yes (`c44571c6...`) |

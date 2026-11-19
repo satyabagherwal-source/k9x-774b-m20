@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T18:20:39.626Z",
+  "last_updated": "2026-11-19T18:33:09.818Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21917,
+  "total_items": 21919,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-926Z-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-1LQE-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a137df9f293704cf88a83475aa338cf46089f95eb40d4433623199b31d7ba4e",
+      "content_hash": "c7808a1c689297b044e40dd7113e48c4e2cc80dc97e4405815fad9c365754a3d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T15:50:59.680Z"
+      "persisted_at": "2026-11-19T18:33:09.451Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b0d531eb137f92e98214255135d29269eefb4abc96f78ea33e2d690a1a7025a7",
+      "content_hash": "4ccfeb4219f551b4a1ca0a8596ac9f067e942abe3cb38bf57aa6e3e1ff600bcc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T15:50:59.829Z"
+      "persisted_at": "2026-11-19T18:33:09.635Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "258a353c1efa7ffdcabfebce8a474d1cc4e4b012d4de09730c0f18c2037e6b3d",
+      "content_hash": "e0ee43f52970415d35f6feb51f6af9d156d963ab6681de73ccbbac6a9e17474e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T15:50:59.977Z"
+      "persisted_at": "2026-11-19T18:33:09.818Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -235173,8 +235173,8 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "6a7812c4",
-      "content_hash": "799d3c4ee500604d5f04db676e7bb4ac2d4ee288db3bc6e7de23fd2873fc0154",
+      "source_version": "1382507e",
+      "content_hash": "c44571c60aac70116639b0fa812f1bcb677e3f1fab3a110158dbf650780f7607",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
@@ -235192,6 +235192,11 @@
           "number": 9079,
           "title": "show alert, confirm and prompt in macOS apps",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9427,
+          "title": "stop showing sites Tauri's global API, which DeepSeek reads as an unofficial cli",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235199,7 +235204,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T23:17:26.859Z",
+      "verified_at": "2026-11-19T18:32:59.024Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235241,10 +235246,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-technical-construction-intelligence-tw93-pake-core-invariants.md",
       "title": "Technical Construction Intelligence: tw93/Pake Core Invariants",
       "repository": "tw93/Pake",
-      "source_version": "6a7812c4",
-      "content_hash": "bbcc41e4fd0e10791d0e3ef94a8a0c4219324ea6e25e50568463e184bf833cb1",
+      "source_version": "1382507e",
+      "content_hash": "ebd7e9196c88cbd40304b46133ff900de300fea67970d7cd55b7ed2d10bffb42",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T23:17:27.494Z"
+      "persisted_at": "2026-11-19T18:32:59.746Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake",
@@ -235253,10 +235258,10 @@
       "relative_path": "08_VERIFICATION/tw93-pake-verification-protocol-empirical-defect-shield-for-tw93-pake.md",
       "title": "Verification Protocol: Empirical Defect Shield for tw93/Pake",
       "repository": "tw93/Pake",
-      "source_version": "6a7812c4",
-      "content_hash": "413f77e8dc68da9ab12afeaff6159eeecabd022f4c9348267d8979b27b31838c",
+      "source_version": "1382507e",
+      "content_hash": "c421080d4da3dd902be4530bcdead6bfafe73fa583b2bd7581c4b39483571b52",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T23:17:27.673Z"
+      "persisted_at": "2026-11-19T18:32:59.932Z"
     },
     "learn-github-aquasecurity-trivy": {
       "learning_id": "learn-github-aquasecurity-trivy",
@@ -235407,9 +235412,9 @@
       "title": "Technical Construction Intelligence: tw93-pake-learnings Core Invariants",
       "repository": "tw93-pake-learnings",
       "source_version": "HEAD",
-      "content_hash": "197a3e3016be7b5907a7237aad14a2e5ad118a7879f4cbdb6ab463c1ae216afa",
+      "content_hash": "4872c01b6f6faaded1412c608268cf3ffbe96ae7350f7e853fe5c88a115cf998",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T23:19:27.631Z"
+      "persisted_at": "2026-11-19T18:33:08.099Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake-learnings",
@@ -235419,9 +235424,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tw93-pake-learnings",
       "repository": "tw93-pake-learnings",
       "source_version": "HEAD",
-      "content_hash": "86d2df63dd78bd5b0eba38a81e3269f2a9cb28b94179502fc4511e191c5ebac3",
+      "content_hash": "1b188405c1114455666d875c09dedd21ffcb983d0e9763216d9539fe95dd8e12",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T23:19:27.811Z"
+      "persisted_at": "2026-11-19T18:33:08.301Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -242752,7 +242757,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
       "source_version": "hf-openmoss-team-moss-image-sft",
-      "content_hash": "defb48f51daa34ac53a8f9bbd9732e2be18161ccf7b32a709f0ec3e9af75fbb7",
+      "content_hash": "c489df5aa6cd2c1dd49ff1a324265c7a01b6456ee6621fa75b274bece76cf451",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "promoted_rules": [],
@@ -242761,7 +242766,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T05:36:45.198Z",
+      "verified_at": "2026-11-19T18:32:55.682Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242778,9 +242783,9 @@
       "title": "Research & Knowledge Intelligence: OpenMOSS-Team/MOSS-Image-SFT Core Invariants",
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
       "source_version": "hf-openmoss-team-moss-image-sft",
-      "content_hash": "72ca526aa903d2a40968fb4ea9958fcb866c5fd282f98baacf4f8c2fdee9c00d",
+      "content_hash": "3943ed3abddb59b500f3acd5154038230e86c5d95bd08fecd8276c8a3cf5a490",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T05:36:45.585Z"
+      "persisted_at": "2026-11-19T18:32:56.175Z"
     },
     "candidate_directive-tui-retain-unchanged-cells-in-sparse-frame-snapshots": {
       "item_id": "candidate_directive-tui-retain-unchanged-cells-in-sparse-frame-snapshots",
@@ -242838,9 +242843,9 @@
       "title": "Research & Knowledge Intelligence: hf-openmoss-team-moss-image-sft-learnings Core Invariants",
       "repository": "hf-openmoss-team-moss-image-sft-learnings",
       "source_version": "HEAD",
-      "content_hash": "a1bbc4d53c875ebac75c384809aa56ca6b7e66e87c8f78f22e868ff7db6b14c2",
+      "content_hash": "1a281b0d5a8fade8deffeb93af99ee7826a417f1d2b13890a0a7e91e0cd6372b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T05:37:22.962Z"
+      "persisted_at": "2026-11-19T18:33:08.708Z"
     },
     "candidate_directive-deps-update-all-go-dependencies-main": {
       "item_id": "candidate_directive-deps-update-all-go-dependencies-main",
@@ -296417,6 +296422,32 @@
       "content_hash": "72a6ed703fe2049625ab55f9c5ecbd15cc2081d207102a3d1cdb694c5b814e4d",
       "domain_letter": "K",
       "persisted_at": "2026-11-19T18:20:39.313Z"
+    },
+    "rule-9427": {
+      "learning_id": "rule-9427",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9427,
+      "title": "stop showing sites Tauri's global API, which DeepSeek reads as an unofficial cli",
+      "source_url": "https://github.com/tw93/Pake",
+      "source_version": "1382507e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T18:32:59.024Z"
+    },
+    "candidate_directive-stop-showing-sites-tauri-s-global-api-which-deepseek-reads-as-an-unofficial-cli": {
+      "item_id": "candidate_directive-stop-showing-sites-tauri-s-global-api-which-deepseek-reads-as-an-unofficial-cli",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1KJN-stop-showing-sites-tauri-s-global-api-which-deepseek-reads-as-an-unofficial-cli.md",
+      "title": "stop showing sites Tauri's global API, which DeepSeek reads as an unofficial cli",
+      "repository": "tw93-pake-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0f0e477790c67cafb306874add366fa434922a87cecc680b995edf3acdc0fe55",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T18:33:07.913Z"
     }
   },
   "ai-builder-brain": {
