@@ -11348,3 +11348,7 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `2e587bc5` | Multi-dimensional audit evidence | 2026-11-19T16:07:24.283Z |
 | `learn-dom-d-66709892` | `project://zed-industries-zed` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md` | 2026-11-19T16:07:56.510Z |
 | `learn-dom-d-fffc1dd3` | `project://hf-dealignai-deepseek-v4.1-flash-uncensored-fp8` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | 2026-11-19T16:08:32.981Z |
+| `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-11-19T16:16:47.826Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `a7ba68b4` | Multi-dimensional audit evidence | 2026-11-19T16:16:50.555Z |
+| `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `61e2bda5` | Multi-dimensional audit evidence | 2026-11-19T16:16:58.026Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `802c4d10` | Multi-dimensional audit evidence | 2026-11-19T16:17:02.937Z |

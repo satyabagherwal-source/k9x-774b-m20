@@ -1485,8 +1485,8 @@
     "sourceUrl": "https://huggingface.co/vllm-sr/d3",
     "sourceVersion": "hf-vllm-sr-d3",
     "license": "Open-Source",
-    "contentHash": "e1ef3ac69ff501181d939c6ca8eff664012bad7fda3b6cb4de6a6b60e2667378",
-    "lastHarvestedAt": "2026-11-15T02:34:57.749Z",
+    "contentHash": "ca423d5c3d8af719556ac507c6cdbfb920b7e56b910cd253427c2dc6ed02a4c0",
+    "lastHarvestedAt": "2026-11-19T16:16:47.826Z",
     "learningId": "learn-huggingface-vllm-sr-d3"
   },
   "nguyenphutrong-quotio": {
@@ -2403,10 +2403,10 @@
     "repository": "kubeedge/kubeedge",
     "platform": "github",
     "sourceUrl": "https://github.com/kubeedge/kubeedge",
-    "sourceVersion": "3a9cb19f",
+    "sourceVersion": "61e2bda5",
     "license": "Apache-2.0",
-    "contentHash": "766e6afb5ad16907e8c2e48e4766e5cf0cf9b8a8599e91453e843f10092c6348",
-    "lastHarvestedAt": "2026-11-17T20:45:36.357Z",
+    "contentHash": "ae2e607b671e497fd37d2261acad32656a7aec717848db1f0ec89cbffda6ccdf",
+    "lastHarvestedAt": "2026-11-19T16:16:58.026Z",
     "learningId": "learn-github-kubeedge-kubeedge"
   },
   "giancarloerra-socraticode": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "8d519498",
+    "sourceVersion": "802c4d10",
     "license": "Apache-2.0",
-    "contentHash": "1ae4ac9fc3564f685d60012f8733c9f10d0bb9af0ed6776b8d33490e6688391b",
-    "lastHarvestedAt": "2026-11-18T12:58:34.894Z",
+    "contentHash": "0aa6debbd14f964cde53a4339f64815d57e88a06dcf2a1a5546ba926fe5c6a88",
+    "lastHarvestedAt": "2026-11-19T16:17:02.937Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "a5f06105",
+    "sourceVersion": "a7ba68b4",
     "license": "MIT",
-    "contentHash": "eaa5e4975db478481a7bfc45f5db6f57703972ea7aab1664fb02af627b57f7f8",
-    "lastHarvestedAt": "2026-11-17T20:33:09.211Z",
+    "contentHash": "609f07e9319adbb75979a66d902ea8863197805401780ed88e3f0b471a78bc23",
+    "lastHarvestedAt": "2026-11-19T16:16:50.555Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {

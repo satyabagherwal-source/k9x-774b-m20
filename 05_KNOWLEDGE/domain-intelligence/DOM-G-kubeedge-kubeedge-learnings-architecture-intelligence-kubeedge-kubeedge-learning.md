@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T23:35:15.934Z",
+  "timestamp": "2026-11-19T16:17:07.533Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kubeedge-kubeedge-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kubeedge-kubeedge-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T23:35:15.934Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T16:17:07.533Z`  
 > **Learning ID**: `LEARN-EVO-kubeedge-kubeedge-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 69%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from kubeedge-kubeedge-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source**: github ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
-> **Source Version**: `5251e89f`  
+> **Source Version**: `61e2bda5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T23:35:03.936Z  
+> **Timestamp**: 2026-11-19T16:16:57.055Z  
 > **Learning ID**: `learn-github-kubeedge-kubeedge`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T23:35:03.933Z  
+> **Harvest Timestamp**: 2026-11-19T16:16:57.051Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Kubernetes Native Edge Computing Framework (project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7635 stars
+- **Stars / Engagement**: 7636 stars
 
 ---
 
@@ -1240,11 +1240,11 @@ func RuleContains(rulePath, rule2Path string) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7454** (2026-11-19): **metaserver: keep retrying when getting the CA fails**
+  *Symptoms*: **What type of PR is this?** /kind bug  **What this PR does / why we need it**: `ServerCertificateManager.WaitForCAReady` polls for up to 4 minutes to get the Kubernetes CA from the cloud, but its condition function returned the error of a failed attempt (`return false, err`). `wait.PollUntilContextTimeout` stops polling as soon as the condition returns an error, so a single failure, for example a `SendSync` timeout right after the edge connects, ended the wait immediately instead of retrying. `MetaServer.Start` panics on that error when the `RequireAuthorization` feature gate is enabled, so edgecore crashes.  This logs the failure and keeps polling until the CA is received or the 4 minutes pass. If the wait times out, the error now also includes the last failure, so the cause is still visible. The poll interval and timeout move to package variables (same values) so the tests can shorten them.  The `certificate` package had no tests; this adds `manager_test.go`: - `TestWaitForCAReadyRetriesAfterFailure`: two failed attempts, then the CA is received and written. It fails without the change, because the first error ends the wait. - `TestWaitForCAReadyTimeoutReportsLastError`: every attempt fails, and the timeout error contains the last failure. - `TestWaitForCAReadyWaitsForCloudConnection`: no request is sent while the cloud is not connected.  **Which issue(s) this PR fixes**: None; found while reading the metaserver startup code.  **Special notes for your reviewer**: The tests
+
 - **Issue #7432** (2026-11-16): **Upgrade docker dependency to v28.0.0**
   *Symptoms*: <!--  Thanks for sending a pull request!  Here are some tips for you:  1. If this is your first time, please read our contributor guidelines: https://github.com/kubeedge/kubeedge/blob/master/CONTRIBUTING.md 2. Ensure you have added or ran the appropriate tests for your PR  -->  **What type of PR is this?**   /kind bug   **What this PR does / why we need it**:  Upgrade docker dependency to v28.0.0  /sig security  **Which issue(s) this PR fixes**: <!-- *Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. _If PR is about `failing-tests or flakes`, please post the related issues/tests in a comment and do not use `Fixes`_* --> Fixes #  **Special notes for your reviewer**:  **Does this PR introduce a user-facing change?**: <!-- If no, just write "NONE" in the release-note block below. If yes, a release note is required: Enter your extended release note in the block below. If the PR requires additional action from users switching to the new release, include the string "action required". --> ```release-note  ``` 
-
-- **Issue #7431** (2026-11-16): **Upgrade golang.org/x/crypto to v0.52.0**
-  *Symptoms*: <!--  Thanks for sending a pull request!  Here are some tips for you:  1. If this is your first time, please read our contributor guidelines: https://github.com/kubeedge/kubeedge/blob/master/CONTRIBUTING.md 2. Ensure you have added or ran the appropriate tests for your PR  -->  **What type of PR is this?**   /kind bug    **What this PR does / why we need it**:  Upgrade golang.org/x/crypto to v0.52.0   /sig security   **Which issue(s) this PR fixes**: <!-- *Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. _If PR is about `failing-tests or flakes`, please post the related issues/tests in a comment and do not use `Fixes`_* --> Fixes #  **Special notes for your reviewer**:  **Does this PR introduce a user-facing change?**: <!-- If no, just write "NONE" in the release-note block below. If yes, a release note is required: Enter your extended release note in the block below. If the PR requires additional action from users switching to the new release, include the string "action required". --> ```release-note  ``` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1261,295 +1261,173 @@ func RuleContains(rulePath, rule2Path string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5251e89f` (2026-11-16)
-**Commit Message**: Merge pull request #7360 from adity1raut/fix/nodetask-checktimeout-deleted-job
+### Incident Patch 1: `61e2bda5` (2026-11-19)
+**Commit Message**: Merge pull request #7454 from arshil42/fix/metaserver-ca-wait-retry
 
-nodetask: handle deleted job in CheckTimeout
+metaserver: keep retrying when getting the CA fails
 
-**File**: `cloud/pkg/controllermanager/nodetask/configupdatejob_handler.go` (modified, +6/-0)
+**File**: `edge/pkg/metamanager/metaserver/certificate/manager.go` (modified, +19/-5)
 ```diff
-@@ -166,6 +166,12 @@ func (h *ConfigUpdateJobReconcileHandler) CheckTimeout(ctx context.Context, jobN
- 	if err != nil {
- 		return err
- 	}
-+	// The job can be gone while its timeout job is still running, e.g. when
-+	// its finalizer is removed manually and the reconciler never releases it.
-+	if job == nil {
-+		logger.V(2).Info("job is not found, no need to check timeout")
-+		return nil
-+	}
- 	if job.Status.Phase != operationsv1alpha2.JobPhaseInProgress {
- 		logger.V(2).Info("job is not in InProgress phase, no need to check timeout")
- 		return nil
-```
-
-**File**: `cloud/pkg/controllermanager/nodetask/configupdatejob_handler_test.go` (modified, +7/-0)
-```diff
-@@ -445,6 +445,13 @@ func TestConfigUpdateJobCheckTimeout(t *testing.T) {
- 		assert.ErrorContains(t, err, "failed to get")
+@@ -47,6 +47,13 @@ const (
+ 	CertificatesDir = "/etc/kubeedge/pki/metaserver"
+ )
+ 
++var (
++	// caPollInterval and caPollTimeout set how often and how long WaitForCAReady
++	// tries to get the CA. They are variables so that tests can shorten them.
++	caPollInterval = 5 * time.Second
++	caPollTimeout  = 4 * time.Minute
++)
++
+ type ServerCertificateManager struct {
+ 	certificate.Manager
+ }
+@@ -116,18 +123,25 @@ func (scm *ServerCertificateManager) WaitForCertReady() error {
  	})
- 
-+	t.Run("job is not found", func(t *testing.T) {
-+		// The job is deleted, so the client has no object for it.
-+		handler := NewConfigUpdateJobReconcileHandler(fakeConfigUpdateJobClient(), nil)
-+		err := handler.CheckTimeout(ctx, jobName)
-+		require.NoError(t, err)
-+	})
-+
- 	noTimeoutCases := []struct {
- 		name string
- 		job  *operationsv1alpha2.ConfigUpdateJob
-```
-
-**File**: `cloud/pkg/controllermanager/nodetask/imageprepulljob_handler.go` (modified, +6/-0)
-```diff
-@@ -167,6 +167,12 @@ func (h *ImagePrePullJobReconcileHandler) CheckTimeout(ctx context.Context, jobN
- 	if err != nil {
- 		return err
- 	}
-+	// The job can be gone while its timeout job is still running, e.g. when
-+	// its finalizer is removed manually and the reconciler never releases it.
-+	if job == nil {
-+		logger.V(2).Info("job is not found, no need to check timeout")
-+		return nil
-+	}
- 	if job.Status.Phase != operationsv1alpha2.JobPhaseInProgress {
- 		logger.V(2).Info("job is not in InProgress phase, no need to check timeout")
- 		return nil
-```
-
-**File**: `cloud/pkg/controllermanager/nodetask/imageprepulljob_handler_test.go` (modified, +7/-0)
-```diff
-@@ -367,6 +367,13 @@ func TestImagePrePullJobUpdateJobStatus(t *testing.T) {
- func TestImagePrePullJobCheckTimeout(t *testing.T) {
- 	ctx := context.TODO()
- 
-+	t.Run("job is not found", func(t *testing.T) {
-+		// The job is deleted, so the client has no object for it.
-+		handler := NewImagePrePullJobReconcileHandler(fakeImagePrePullJobClient(), nil)
-+		err := handler.CheckTimeout(ctx, "test-job")
-+		require.NoError(t, err)
-+	})
-+
- 	t.Run("job is not in progress", func(t *testing.T) {
- 		var updateJobStatusCalled bool
- 		patches := gomonkey.NewPatches()
-```
-
-**File**: `cloud/pkg/controllermanager/nodetask/nodeupgradejob_handler.go` (modified, +6/-0)
-```diff
-@@ -166,6 +166,12 @@ func (h *NodeUpgradeJobReconcileHandler) CheckTimeout(ctx context.Context, jobNa
- 	if err != nil {
- 		return err
- 	}
-+	// The job can be gone while its timeout job is still running, e.g. when
-+	// its finalizer is removed manually and the reconciler never releases it.
-+	if job == nil {
-+		logger.V(2).Info("job is not found, no need to check timeout")
-+		return nil
-+	}
- 	if job.Status.Phase != operationsv1alpha2.JobPhaseInProgress {
- 		logger.V(3).Info("job is not in InProgress phase, no need to check timeout")
- 		return nil
-```
-
-**File**: `cloud/pkg/controllermanager/nodetask/nodeupgradejob_handler_test.go` (modified, +7/-0)
-```diff
-@@ -363,6 +363,13 @@ func TestNodeUpgradeJobUpdateJobStatus(t *testing.T) {
- func TestNodeUpgradeJobCheckTimeout(t *testing.T) {
- 	ctx := context.TODO()
- 
-+	t.Run("job is not found", func(t *testing.T) {
-+		// The job is deleted, so the client has no object for it.
-+		handler := NewNodeUpgradeJobReconcileHandler(fakeNodeUpgradeJobClient(), nil)
-+		err := handler.CheckTimeout(ctx, "test-job")
-+		require.NoError(t, err)
-+	})
-+
- 	t.Run("job is not in progress", func(t *testing.T) {
- 		var updateJobStatusCalled bool
- 		patches := gomonkey.NewPatches()
-```
-
-**File**: `cloud/pkg/controllermanager/nodetask/reconcile_runner.go` (modified, +5/-0)
-```diff
-@@ -135,6 +135,11 @@ func RunReconcile[T NodeJobType](
- 			if err != nil {
- 				return err
- 			}
-+			// The job may be deleted after it was fetched at the start of the reconcile.
-+			if job == nil {
-+				logger.V(2).Info("the node job is not found, no need to calculate status")
-+				return nil
-+			}
- 			changed := handler.CalculateStatus(ctx, job)
- 			if changed {
- 				return handler.UpdateJobStatus(ctx, job)
-```
-
-**File**: `cloud/pkg/controllermanager/nodetask/reconcile_runner_test.go` (modified, +41/-0)
-```diff
-@@ -105,6 +105,47 @@ func TestRunReconcile(t *testing.T) {
- 		assert.NoError(t, err)
- 		assert.Equal(t, 0, handler.called["CalculateStatus"])
- 	})
-+
-+	t.Run("job is gone before calculating status", func(t *testing.T) {
-+		// RunReconcile starts a timeout job for the job in progress, release it so it
-+		// does not leak into other tests through the global timeout jobs map.
-+		t.Cleanup(func() {
-+			ReleaseTimeoutJob[operationsv1alpha2.ImagePrePullJob](ctx, req.Name, operationsv1alpha2.ResourceImagePrePullJob)
-+		})
-+		handler := &goneAfterFirstGetHandler{
-+			fakeReconcileHandler: fakeReconcileHandler{
-+				obj: &operationsv1alpha2.ImagePrePullJob{
-+					ObjectMeta: metav1.ObjectMeta{
-+						Name:       "test-job",
-+						Finalizers: []string{operationsv1alpha2.FinalizerImagePrePullJob},
-+					},
-+					Status: operationsv1alpha2.ImagePrePullJobStatus{
-+						Phase: operationsv1alpha2.JobPhaseInProgress,
-+					},
-+				},
-+			},
-+		}
-+		err := RunReconcile(ctx, req, handler)
-+		assert.NoError(t, err)
-+		assert.Equal(t, 2, handler.called["GetJob"])
-+		assert.Equal(t, 0, handler.called["CalculateStatus"])
-+		assert.Equal(t, 0, handler.called["UpdateJobStatus"])
-+	})
-+}
-+
-+// goneAfterFirstGetHandler returns the job only on the first GetJob call,
-+// as if the job is deleted while it is being reconciled.
-+type goneAfterFirstGetHandler struct {
-+	fakeReconcileHandler
-+}
-+
-+func (h *goneAfterFirstGetHandler) GetJob(ctx context.Context, req controllerruntime.Request,
-+) (*operationsv1alpha2.ImagePrePullJob, error) {
-+	job, err := h.fakeReconcileHandler.GetJob(ctx, req)
-+	if h.called["GetJob"] > 1 {
-+		return nil, nil
-+	}
-+	return job, err
  }
  
- type fakeReconcileHandler struct {
-```
-
----
-
-### Incident Patch 2: `36575032` (2026-11-16)
-**Commit Message**: Merge pull request #7346 from arpitjain099/fix/servicebus-client-timeout-defaults
-
-servicebus: stop clobbering the caller's response header timeout
-
-**File**: `edge/pkg/servicebus/util/httpclient.go` (modified, +4/-5)
-```diff
-@@ -86,12 +86,11 @@ func GetURLClient(option *URLClientOption) (client *URLClient, err error) {
- 	if option == nil {
- 		option = DefaultURLClientOption
- 	} else {
--		switch {
--		case option.HandshakeTimeout == 0:
-+		if option.HandshakeTimeout == 0 {
- 			option.HandshakeTimeout = DefaultURLClientOption.HandshakeTimeout
--			fallthrough
--		case option.ResponseHeaderTimeout == 0:
--			option.ResponseHeaderTimeout = DefaultURLClientOption.HandshakeTimeout
-+		}
-+		if option.ResponseHeaderTimeout == 0 {
-+			option.ResponseHeaderTimeout = DefaultURLClientOption.ResponseHeaderTimeout
++// WaitForCAReady gets the Kubernetes CA from the cloud, retrying until it succeeds
++// or caPollTimeout passes. A failed attempt does not stop the retries.
+ func (scm *ServerCertificateManager) WaitForCAReady() error {
+-	return wait.PollUntilContextTimeout(context.Background(), 5*time.Second, 4*time.Minute, true, func(ctx context.Context) (bool, error) {
++	var lastErr error
++	err := wait.PollUntilContextTimeout(context.Background(), caPollInterval, caPollTimeout, true, func(ctx context.Context) (bool, error) {
+ 		if !cloudconnection.IsConnected() {
+ 			return false, nil
  		}
- 	}
- 
-```
-
-**File**: `edge/pkg/servicebus/util/httpclient_test.go` (modified, +46/-0)
-```diff
-@@ -122,3 +122,49 @@ func getMockServer(_ *testing.T) *httptest.Server {
- 	}))
- 	return ts
+-		err := scm.getKubeAPIServerCA()
+-		if err != nil {
+-			klog.Errorf("get k8s CA failed, %v", err)
+-			return false, err
++		if err := scm.getKubeAPIServerCA(); err != nil {
++			klog.Errorf("get k8s CA failed, will retry: %v", err)
++			lastErr = err
++			return false, nil
+ 		}
+ 		return true, nil
+ 	})
++	if err != nil && lastErr != nil {
++		return fmt.Errorf("%v, last error: %v", err, lastErr)
++	}
++	return err
  }
-+
-+func TestGetURLClientTimeoutDefaults(t *testing.T) {
-+	tests := map[string]struct {
-+		option             *URLClientOption
-+		wantHandshake      time.Duration
-+		wantResponseHeader time.Duration
-+	}{
-+		"nil option": {
-+			option:             nil,
-+			wantHandshake:      30 * time.Second,
-+			wantResponseHeader: 60 * time.Second,
-+		},
-+		"both unset": {
-+			option:             &URLClientOption{},
-+			wantHandshake:      30 * time.Second,
-+			wantResponseHeader: 60 * time.Second,
-+		},
-+		"only response header set": {
-+			option:             &URLClientOption{ResponseHeaderTimeout: 5 * time.Second},
-+			wantHandshake:      30 * time.Second,
-+			wantResponseHeader: 5 * time.Second,
-+		},
-+		"only handshake set": {
-+			option:             &URLClientOption{HandshakeTimeout: 5 * time.Second},
-+			wantHandshake:      5 * time.Second,
-+			wantResponseHeader: 60 * time.Second,
-+		},
-+	}
-+
-+	for name, tt := range tests {
-+		t.Run(name, func(t *testing.T) {
-+			client, err := GetURLClient(tt.option)
-+			if err != nil {
-+				t.Fatalf("GetURLClient error: %v", err)
-+			}
-+			if client.options.HandshakeTimeout != tt.wantHandshake {
-+				t.Errorf("HandshakeTimeout: got %v, want %v",
-+					client.options.HandshakeTimeout, tt.wantHandshake)
-+			}
-+			if client.options.ResponseHeaderTimeout != tt.wantResponseHeader {
-+				t.Errorf("ResponseHeaderTimeout: got %v, want %v",
-+					client.options.ResponseHeaderTimeout, tt.wantResponseHeader)
-+			}
-+		})
-+	}
-+}
+ 
+ func (scm *ServerCertificateManager) getKubeAPIServerCA() error {
 ```
 
----
-
-### Incident Patch 3: `de742477` (2026-11-16)
-**Commit Message**: Merge pull request #7355 from saket0187/fix/keadm-bootstrap-file-mode
-
-keadm: create bootstrap token file with 0640 permissions
-
-**File**: `keadm/cmd/keadm/app/cmd/edge/join.go` (modified, +0/-4)
+**File**: `edge/pkg/metamanager/metaserver/certificate/manager_test.go` (added, +101/-0)
 ```diff
-@@ -173,10 +173,6 @@ func setEdgedNodeLabels(opt *common.JoinOptions) map[string]string {
- 
- func createBootstrapFile(opt *common.JoinOptions) error {
- 	bootstrapFile := constants.BootstrapFile
--	_, err := os.Create(bootstrapFile)
--	if err != nil {
--		return err
--	}
- 
- 	// write token to bootstrap-edgecore.conf file
- 	token := []byte(opt.Token)
+@@ -0,0 +1,101 @@
++/*
++Copyright 2026 The KubeEdge Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package certificate
++
++import (
++	"errors"
++	"testing"
++	"time"
++
++	"github.com/agiledragon/gomonkey/v2"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"k8s.io/client-go/util/cert"
++
++	beehivecontext "github.com/kubeedge/beehive/pkg/core/context"
++	"github.com/kubeedge/beehive/pkg/core/model"
++	"github.com/kubeedge/kubeedge/edge/pkg/common/cloudconnection"
++)
++
++// patchCAPolling shortens the CA polling for a test and connects to the cloud.
++func patchCAPolling(t *testing.T, interval, timeout time.Duration) {
++	t.Helper()
++	oldInterval, oldTimeout := caPollInterval, caPollTimeout
++	caPollInterval, caPollTimeout = interval, timeout
++	cloudconnection.SetConnected(true)
++	t.Cleanup(func() {
++		caPollInterval, caPollTimeout = oldInterval, oldTimeout
++		cloudconnection.SetConnected(false)
++	})
++}
++
++func TestWaitForCAReadyRetriesAfterFailure(t *testing.T) {
++	patchCAPolling(t, 10*time.Millisecond, 5*time.Second)
++
++	calls := 0
++	patches := gomonkey.NewPatches()
++	defer patches.Reset()
++	patches.ApplyFunc(beehivecontext.SendSync, func(_ string, _ model.Message, _ time.Duration) (model.Message, error) {
++		calls++
++		if calls < 3 {
++			return model.Message{}, errors.New("timeout")
++		}
++		return *model.NewMessage("").FillBody([]byte("ca data")), nil
++	})
++	var written []byte
++	patches.ApplyFunc(cert.WriteCert, func(_ string, data []byte) error {
++		written = data
++		return nil
++	})
++
++	scm := &ServerCertificateManager{}
++	require.NoError(t, scm.WaitForCAReady())
++	assert.Equal(t, 3, calls)
++	assert.Equal(t, []byte("ca data"), written)
++}
++
++func TestWaitForCAReadyTimeoutReportsLastError(t *testing.T) {
++	patchCAPolling(t, 10*time.Millisecond, 100*time.Millisecond)
++
++	patches := gomonkey.NewPatches()
++	defer patches.Reset()
++	patches.ApplyFunc(beehivecontext.SendSync, func(_ string, _ model.Message, _ time.Duration) (model.Message, error) {
++		return model.Message{}, errors.New("cloudcore is not ready")
++	})
++
++	scm := &ServerCertificateManager{}
++	err := scm.WaitForCAReady()
++	require.Error(t, err)
++	assert.Contains(t, err.Error(), "cloudcore is not ready")
++}
++
++func TestWaitForCAReadyWaitsForCloudConnection(t *testing.T) {
++	patchCAPolling(t, 10*time.Millisecond, 100*time.Millisecond)
++	cloudconnection.SetConnected(false)
++
++	calls := 0
++	patches := gomonkey.NewPatches()
++	defer patches.Reset()
++	patches.ApplyFunc(beehivecontext.SendSync, func(_ string, _ model.Message, _ time.Duration) (model.Message, error) {
++		calls++
++		return model.Message{}, errors.New("unexpected call")
++	})
++
++	scm := &ServerCertificateManager{}
++	require.Error(t, scm.WaitForCAReady())
++	assert.Equal(t, 0, calls, "the CA must not be requested while the cloud is not connected")
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7454** (2026-11-19): metaserver: keep retrying when getting the CA fails (@arshil42)
 - **PR #7432** (2026-11-16): Upgrade docker dependency to v28.0.0 (@Shelley-BaoYue)
 - **PR #7431** (2026-11-16): Upgrade golang.org/x/crypto to v0.52.0 (@Shelley-BaoYue)
 - **PR #7428** (closed): Upgrade golang.org/x/crypto to v0.52.0 (@kubeedge-bot)
 - **PR #7386** (2026-10-27): metaserver: add unit tests for the unhold-upgrade handlers (@adity1raut)
 - **PR #7379** (2026-10-27): metamanager : support for arrayList of objects for watch events creation (@EncHawk)
-- **PR #7360** (2026-11-16): nodetask: handle deleted job in CheckTimeout (@adity1raut)
 
 ---
 
@@ -1569,36 +1447,53 @@ keadm: create bootstrap token file with 0640 permissions
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in configupdatejob_handler.go
+## X. Empirical Invariant Guard in manager.go
 
 **RULE**:
-When implementing operations in `cloud/pkg/controllermanager/nodetask/configupdatejob_handler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `edge/pkg/metamanager/metaserver/certificate/manager.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5251e89f`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `61e2bda5`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cloud/pkg/controllermanager/nodetask/configupdatejob_handler.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `edge/pkg/metamanager/metaserver/certificate/manager.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// The job can be gone while its timeout job is still running, e.g. when
-	// its finalizer is removed manually and the reconciler never releases it.
-	if job == nil {
-		logger.V(2).Info("job is not found, no need to check timeout")
-		return nil
+var (
+	// caPollInterval and caPollTimeout set how often and how long WaitForCAReady
+	// tries to get the CA. They are variables so that tests can shorten them.
+	caPollInterval = 5 * time.Second
+	caPollTimeout  = 4 * time.Minute
+)
+
+// WaitForCAReady gets the Kubernetes CA from the cloud, retrying until it succeeds
+// or caPollTimeout passes. A failed attempt does not stop the retries.
+	var lastErr error
+	err := wait.PollUntilContextTimeout(context.Background(), caPollInterval, caPollTimeout, true, func(ctx context.Context) (bool, error) {
+		if err := scm.getKubeAPIServerCA(); err != nil {
+			klog.Errorf("get k8s CA failed, will retry: %v", err)
+			lastErr = err
+			return false, nil
+	if err != nil && lastErr != nil {
+		return fmt.Errorf("%v, last error: %v", err, lastErr)
 	}
+	return err
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	return wait.PollUntilContextTimeout(context.Background(), 5*time.Second, 4*time.Minute, true, func(ctx context.Context) (bool, error) {
+		err := scm.getKubeAPIServerCA()
+		if err != nil {
+			klog.Errorf("get k8s CA failed, %v", err)
+			return false, err
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5251e89f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `61e2bda5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T16:08:33.523Z",
+  "updated_at": "2026-11-19T16:17:06.448Z",
   "stats": {
-    "total_discovered": 5924,
-    "approved_pending_harvest": 5609,
+    "total_discovered": 5929,
+    "approved_pending_harvest": 5614,
     "harvested_count": 0,
     "rejected_count": 315,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5576,
+      "COMMUNITY_AND_EXPERT": 5581,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -128144,6 +128144,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
         "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-3FC6065F96C3": {
+      "id": "SRC-3FC6065F96C3",
+      "url": "https://github.com/astral-sh/ruff/commit/ac705f2b5d4edda7349db2510b6925c1f3162d65",
+      "title": "https://github.com/astral-sh/ruff/commit/ac705f2b5d4edda7349db2510b6925c1f3162d65",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T16:17:06.300Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-1427AA738DF2": {
+      "id": "SRC-1427AA738DF2",
+      "url": "https://github.com/astral-sh/ruff/actions/runs/44431435606/attempts/1",
+      "title": "https://github.com/astral-sh/ruff/actions/runs/44431435606/attempts/1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T16:17:06.339Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-5FDD64CC1D56": {
+      "id": "SRC-5FDD64CC1D56",
+      "url": "https://github.com/astral-sh/ruff/actions/runs/44431435598/attempts/1",
+      "title": "https://github.com/astral-sh/ruff/actions/runs/44431435598/attempts/1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T16:17:06.376Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-B2B5FFAB6FDE": {
+      "id": "SRC-B2B5FFAB6FDE",
+      "url": "https://github.com/astral-sh/ruff/issues/30224",
+      "title": "https://github.com/astral-sh/ruff/issues/30224",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T16:17:06.412Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-2F15CC5183DA": {
+      "id": "SRC-2F15CC5183DA",
+      "url": "https://github.com/astral-sh/ruff/issues/28930",
+      "title": "https://github.com/astral-sh/ruff/issues/28930",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T16:17:06.448Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
       }
     }
   }

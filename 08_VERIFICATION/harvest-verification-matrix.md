@@ -11315,3 +11315,7 @@
 | `CYCLE-20261119-U5X3` | `2026-11-19T16:07:24.279Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9403` | Yes (`08872929...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T16:07:56.510Z` | `zed-industries-zed` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-66709892` [Domain D] | Yes (`8a511639...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T16:08:32.981Z` | `hf-dealignai-deepseek-v4.1-flash-uncensored-fp8` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-FFFC1DD3` [Domain D] | Yes (`7fe9c598...`) |
+| `CYCLE-20261119-68R2` | `2026-11-19T16:16:47.822Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`ca423d5c...`) |
+| `CYCLE-20261119-6AUV` | `2026-11-19T16:16:50.551Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md` | Yes (`609f07e9...`) |
+| `CYCLE-20261119-6GME` | `2026-11-19T16:16:58.022Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9404` | Yes (`ae2e607b...`) |
+| `CYCLE-20261119-6KET` | `2026-11-19T16:17:02.933Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9405` | Yes (`0aa6debb...`) |

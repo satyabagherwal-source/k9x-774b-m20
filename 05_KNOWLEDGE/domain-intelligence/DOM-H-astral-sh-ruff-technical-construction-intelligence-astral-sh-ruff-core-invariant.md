@@ -4,24 +4,24 @@
 {
   "source_repository": "astral-sh/ruff",
   "source_url": "https://github.com/astral-sh/ruff",
-  "source_version": "a5f06105",
+  "source_version": "a7ba68b4",
   "license": "MIT",
-  "timestamp": "2026-11-17T20:33:09.396Z",
+  "timestamp": "2026-11-19T16:16:50.776Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-astral-sh-ruff",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [astral-sh/ruff](https://github.com/astral-sh/ruff) (Revision: `a5f06105`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T20:33:09.396Z`  
+> **Provenance**: Harvested from [astral-sh/ruff](https://github.com/astral-sh/ruff) (Revision: `a7ba68b4`).  
+> **License**: MIT | **Timestamp**: `2026-11-19T16:16:50.776Z`  
 > **Learning ID**: `learn-github-astral-sh-ruff`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 74%
+- **Secondary Corroborating Domains**: B (Product Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from astral-sh/ruff:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:33:08.300Z  
+> **Harvest Timestamp**: 2026-11-19T16:16:50.106Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 51436 stars
+- **Stars / Engagement**: 51315 stars
 
 ---
 
@@ -2128,14 +2128,14 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30493** (2026-11-17): **Fix handling of parenthesized duplicate items (`B033`, `RUF068`)**
-  *Symptoms*: ## Summary  Fixes #30343.  `remove_member` deleted only the duplicate's own range, which doesn't include the parentheses around it. The B033 fix turned `{1, (1)}` into `{1)}` and `{1, (1), 2}` into `{1, (2}`, RUF068 did the same with `__all__ = ["A", ("B"), ("B")]`, and the fix was reverted as a syntax error.  `remove_member` now takes the parent expression and the tokens, and deletes the member's `parenthesized_range`, the same way `remove_argument` does. For a member without parentheses the range is the same as before, so the existing fixes don't change.  I added a set with one and with two levels of parentheses to the B033 fixture and a parenthesized list entry to the RUF068 fixture. 
-
-- **Issue #30485** (2026-11-17): **[ty] Prefer earlier variable and parameter annotations on assignment**
-  *Symptoms*: Splitting `x: int = value` into `x: int` followed by `x = value` could change the type of `x`. If `value` was `Any`, the annotated assignment kept `int`, but the separate assignment bound `x` to `Any`. Reassigning an annotated parameter had the same problem.  Use the earlier variable or parameter annotation when it and the inferred value type are mutually assignable. This works in both directions. Assigning a `list[int]` to a variable declared as `list[Any]` keeps the variable usable as `list[Any]`. Assigning `1` to an `int` parameter still narrows it to `Literal[1]`. Assignment diagnostics continue to check the inferred right-hand side.  Related to the [discussion of prior annotations in astral-sh/ty#4988](https://github.com/astral-sh/ty/issues/4988#issuecomment-6841393687). 
+- **Issue #30549** (2026-11-19): **[ty] Preserve argument inference for unannotated overload parameters**
+  *Symptoms*: ty could infer `Unknown` for a call when one overload left a parameter unannotated and another supplied a type for it. In this example, `first()` has no arguments to infer `T` from, so its return type defaults to `int` unless the caller supplies an expected type.  ```python from typing import overload, reveal_type from typing_extensions import Never, TypeVar  T = TypeVar("T", default=int)  def first(*values: T) -> T:     return values[0]  @overload def choose(value, index: int) -> int: ... @overload def choose(value: Never, index: object) -> object: ... def choose(value, index):     return index  reveal_type(choose(first(), 1))  # previously Unknown, now int ```  Both overloads initially match. The first gives `first()` no expected type, so it infers `int`. The second infers `Never` for the same expression. Previously, ty reused `Never` while checking the first overload and treated the call as ambiguous. It now uses the argument type inferred for each overload, so the first overload wins.  ## Test plan  Checked the original example with a nested `create()` whose return type is a type variable bounded by `int`. ty reveals `int` for `choose(create(), 1)`, including when `create()` is replaced by `next(iter([]))`.  
   **Post-Mortem & Fix Analysis**:
-  > <!-- generated-comment typing-conformance --> <!-- report-run:43978914622:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.60%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>137/146</b>.  </details>  ---  Results for [4f16a7c](https://github.com/astral-sh/ruff/commit/4f16a7c407dd6d820290d3ed8a1b40dafeea366d) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/43978914622/attempts/1) 
-  > <!-- generated-comment memory --> <!-- report-run:43978914843:1 -->  ## Memory usage report  ### Summary  | Project | Old | New | Diff | Outcome | |---------|-----|-----|------|---------| | prefect | 450.62MB | 450.85MB | +0.05% (230.76kB) | ⏫ | | flake8 | 35.99MB | 35.99MB | -0.01% (3.26kB) | ⬇️ | | trio | 90.45MB | 90.45MB | -0.01% (7.99kB) | ⬇️ | | sphinx | 173.69MB | 173.15MB | -0.31% (558.50kB) | ⬇️ |  ### Significant changes  <details> <summary>Click to expand detailed breakdown</summary>  ### prefect  | Name | Old | New | Diff | Outcome | |------|-----|-----|------|---------| | `TypePair` | 6.02MB | 6.06MB | +0.69% (42.75kB) |⏫ | | `check_file_impl` | 5.64MB | 5.67MB | +0.66% (38.06kB) |⏫ | | `when_assignable_to_owned_impl::interned_arguments` | 1.13MB | 1.16MB | +2.71% (31.29kB) |⏫ | | `infer_definition_types` | 36.75MB | 36.78MB | +0.08% (29.11kB) |⏫ | | `when_assignable_to_owned_impl` | 1005.12kB | 1.01MB | +2.78% (27.90kB) |⏫ | | `infer_expression_types_impl` | 22.66MB | 22.
+  > <!-- generated-comment typing-conformance --> <!-- report-run:44431435606:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.60%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>137/146</b>.  </details>  ---  Results for [ac705f2](https://github.com/astral-sh/ruff/commit/ac705f2b5d4edda7349db2510b6925c1f3162d65) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/44431435606/attempts/1) 
+  > <!-- generated-comment memory --> <!-- report-run:44431435598:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [ac705f2](https://github.com/astral-sh/ruff/commit/ac705f2b5d4edda7349db2510b6925c1f3162d65) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/44431435598/attempts/1) 
+
+- **Issue #30547** (2026-11-19): **[ty] Fix lambda parameter inference with an unsolved ParamSpec**
+  *Symptoms*: ## Summary  In this code on ty 0.0.107, `wrap(lambda n: n + 1)` alone works fine, but passing that same result straight to `register` makes ty report an error on `n + 1`.  ```python from collections.abc import Callable  def wrap[**P](f: Callable[P, int]) -> Callable[P, int]:     return f  def register[**P](f: Callable[P, int]) -> None: ...  wrap(lambda n: n + 1)            # OK register(wrap(lambda n: n + 1))  # Error in ty 0.0.107 ```  `P` stands for all the parameters of the callback. Neither `wrap` nor `register` says what type `n` has. In the nested call, we wrongly gave `n` the type of the whole parameter list, `(*args: object, **kwargs: object)`, and then rejected the addition.  With this fix, `n` stays `Unknown` in both calls. If the callback signature does give a concrete type for a parameter, ty still uses it.  Fixes astral-sh/ty#5075.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2152,919 +2152,313 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `51b50bd7` (2026-11-17)
-**Commit Message**: [ty] Fix stack overflow checking a generic base initializer (#30473)
+### Incident Patch 1: `4872a7c0` (2026-11-18)
+**Commit Message**: [`pyflakes`] Fix false negative when a name is assigned more than once (`F823`) (#30524)
 
-ty used to abort with a stack overflow while checking this
-`super().__init__` call. It now reports `invalid-argument-type` on
-`value` in `super().__init__(value)`.
+## Summary
+
+Fixes #30224.
+
+F823 didn't fire here:
 
 ```python
-class Box[T]:
-    def __init__[A, B](self: "Box[A]", value: A | tuple[B]) -> None: ...
+x = 0
 
-class Child[T](Box[bytes]):
-    def __init__(self, value: T | tuple[T]) -> None:
-        super().__init__(value)
+def f():
+    print(x)
+    x = 1
+    x = 2
 ```
 
-The receiver for that call is a `Child[T]`, which is already a
-`Box[bytes]`. That fixes `A` to `bytes`. A one-element tuple is valid
-because the initializer can infer `B = T`. But `Child[str]("hello")`
-would forward a plain string where the initializer expects `bytes` or a
-tuple.
+Only the first `x = 1` is linked to the global `x`. The second
+assignment is linked to the first one, and since the rule only looked at
+the last binding for each name, it never got back to the global. It now
+follows the chain back through the earlier bindings in the function.
 
-ty now uses the receiver’s existing class type arguments when checking a
-constructor method. Looking up the method on a bare generic class still
-allows the call to infer those arguments.
+## Notes to reviewers
 
-The stack overflow happened while ty was trying to explain the failed
-call. It combined type-variable bindings inferred from individual
-arguments, then repeatedly substituted them into each other. A cycle
-through a tuple element can add another layer of `tuple[...]` on every
-sub
+Two existing snapshots (`load_after_unbind_from_module_scope` and
+`load_after_multiple_unbinds_from_module_scope`) pick up a new F823 on
+the `print(x)` after an `except ... as x` block. That's correct: the
+`except` clause makes `x` local to the function, so the read raises
+`UnboundLocalError` either way. If no exception was raised, `x` was
+never assigned, and if one was, `x` was deleted when the handler ended.
 
-**File**: `crates/ty_python_semantic/resources/mdtest/class/super.md` (modified, +9/-6)
+---------
+
+Co-authored-by: Brent Westbrook <[REDACTED_EMAIL]>
+
+**File**: `crates/ruff_linter/resources/mdtest/pyflakes/undefined-local.md` (added, +29/-0)
 ```diff
-@@ -773,9 +773,9 @@ super(B, B())[0]
- 
- ### Generic base initializer
- 
--A generic base initializer can inherit both its own class's generic context and the subclass's
--generic context. The merged context is not the same as the subclass's enclosing context and should
--not be freshened as a recursive reference.
-+Inside `Child[S]`, the base initializer expects a callback that accepts `S`, even though `S`
-+defaults to `BaseException`. For example, a `Child[ValueError]` could pass a `ValueError` to the
-+callback, so a callback that only accepts `OSError` is too narrow.
- 
- ```py
- from collections.abc import Callable
-@@ -789,11 +789,14 @@ class Base(Generic[T]):
-     def __init__(self, check: Callable[[T], bool] | None) -> None:
-         self.check = check
- 
-+def has_filename(error: OSError) -> bool:
-+    return error.filename is not None
+@@ -0,0 +1,29 @@
++# `undefined-local` (`F823`)
 +
- class Child(Base[S], Generic[S]):
-     def __init__(self, check: Callable[[S], bool] | None) -> None:
--        # Regression test: Freshening the merged context made this expect
--        # `Callable[[BaseException], bool]` instead of `Callable[[S], bool]`.
--        super().__init__(check)
-+        super().__init__(check)  # ok
-+        # error: [invalid-argument-type] "Expected `((S@Child, /) -> bool) | None`"
-+        super().__init__(has_filename)
- ```
- 
- ## Inferring `Self` in `super()` calls
++```toml
++[lint]
++select = ["F823"]
++```
++
++## Multiple assignments
++
++Regression tests for <https://github.com/astral-sh/ruff/issues/30224>.
++
++```py
++my_var = 0
++
++def f():
++    print(my_var)  # error: [undefined-local]
++    my_var = 1
++    my_var = 2
++
++def f():
++    my_var += 1  # error: [undefined-local]
++    my_var += 1
++
++# OK: the read comes after the first local binding.
++def f():
++    my_var = 1
++    print(my_var)
++    my_var = 2
++```
 ```
 
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/classes.md` (modified, +79/-0)
+**File**: `crates/ruff_linter/src/rules/pyflakes/rules/undefined_local.rs` (modified, +9/-1)
 ```diff
-@@ -1781,6 +1781,12 @@ reveal_type(generic_context(into_regular_callable(D)))
- reveal_type(D(1))  # revealed: D[int]
- ```
- 
-+Through `super(D, D)`, the inherited `__new__` infers the specialization from its `cls` argument.
-+
-+```py
-+reveal_type(super(D, D).__new__(D[str]))  # revealed: D[str]
-+```
-+
- ### Generic class inherits `__init__` from generic base class
- 
- ```py
-@@ -1805,6 +1811,24 @@ reveal_type(C(1, "str"))  # revealed: C[int, str]
- reveal_type(D(1, "str"))  # revealed: D[int, str]
- ```
- 
-+Passing the bare class to `super` leaves the initializer unbound, so each call can infer its type
-+arguments.
-+
-+```py
-+def initialize(child: D[int, str]) -> None:
-+    super(D, D).__init__(child, 1, "value")  # ok
-+```
-+
-+Inside a class method, `super()` uses the specialization of `cls`. The initializer's `t` parameter
-+expects `T`, which could be a type other than `int`.
-+
-+```py
-+class Child(D[T, str]):
-+    @classmethod
-+    def initialize(cls, child: "Child[T]") -> None:
-+        super().__init__(child, 1, "value")  # error: [invalid-argument-type] "Expected `T@Child`"
-+```
-+
- ### Generic class inherits `__init__` from `dict`
- 
- This is a specific example of the above, since it was reported specifically by a user.
-@@ -1899,6 +1923,57 @@ reveal_type(C(1, True))  # revealed: C[int]
- wrong_innards: C[int] = C("five", 1)
- ```
- 
-+### Calling a generic initializer on an existing instance
-+
-+An inherited initializer can infer its own type parameters from the arguments. Its explicit `self`
-+annotation must also match the specialization of the receiver.
-+
-+```py
-+from collections.abc import Callable
-+from typing import Generic, TypeVar
-+
-+E = TypeVar("E")
-+A = TypeVar("A")
-+B = TypeVar("B")
-+T = TypeVar("T", bound=str | int)
-+
-+class Either(Generic[E]):
-+    value: E
-+
-+    def __init__(
-+        self: "Either[A | B]",
-+        first: type[A],
-+        second: type[B],
-+        default: A | B | Callable[[], A | B],
-+    ) -> None: ...
-+
-+class TextOrNumber(Either[str | int], Generic[T]):
-+    def initialize(self, default: T | Callable[[], T]) -> None:
-+        super().__init__(str, int, default)  # ok
-+        super().__init__(str, bytes, default)  # error: [invalid-argument-type] "found `Self@initialize`"
-+```
-+
-+An instance of `Either[T]` can accept values of type `T`. Even with the upper bound `str | int`, `T`
-+could be `str` alone, so the initializer cannot assume it accepts both types.
-+
-+```py
-+class Child(Either[T]):
-+    def initialize(self, cls: type[T], default: T | Callable[[], T]) -> None:
-+        super().__init__(cls, cls, default)  # ok
-+        super().__init__(str, int, default)  # error: [invalid-argument-type] "Expected `Either[str | int]`"
-+```
-+
-+For `Either[bytes]`, the receiver is incompatible whether it is bound implicitly or passed
-+explicitly to the inherited method.
-+
-+```py
-+class Bytes(Either[bytes], Generic[T]):
-+    def initialize(self, default: T | Callable[[], T]) -> None:
-+        super().__init__(str, int, default)  # error: [invalid-argument-type] "found `Self@initialize`"
-+        self.__init__(str, int, default)  # error: [invalid-argument-type] "found `Self@initialize`"
-+        Bytes.__init__(self, str, int, default)  # error: [invalid-argument-type] "found `Self@initialize`"
-+```
-+
- ### Class-scoped type variables in `__init__` receiver annotations
- 
- The `invalid-init-type-variable` rule rejects class-scoped type variables in explicit `__init__`
-@@ -2103,6 +2178,10 @@ T = TypeVar("T")
- class A(Generic[T]):
-     x: T
- 
-+    def reset(self, x: T) -> None:
-+        self.__init__(x)  # ok
-+        self.__init__(42)  # error: [invalid-argument-type]
-+
- # revealed: ty_extensions._internal.GenericContext[T@A]
- reveal_type(generic_context(A))
- # revealed: ty_extensions._internal.GenericContext[T@A]
+@@ -52,7 +52,15 @@ pub(crate) fn undefined_local(checker: &Checker, scope_id: ScopeId, scope: &Scop
+     if scope.kind.is_function() {
+         for (name, binding_id) in scope.bindings() {
+             // If the variable shadows a binding in a parent scope...
+-            if let Some(shadowed_id) = checker.semantic().shadowed_binding(binding_id) {
++            //
++            // Only the first binding of a name in this scope is linked to the binding that it
++            // shadows in a parent scope. Later bindings shadow the earlier bindings in this scope
++            // instead. For example, in `print(x); x = 1; x = 2`, `x = 2` shadows `x = 1`, and only
++            // `x = 1` shadows the global `x`, so walk back through the bindings in this scope.
++            if let Some(shadowed_id) = scope
++                .shadowed_bindings(binding_id)
++                .find_map(|binding_id| checker.semantic().shadowed_binding(binding_id))
++            {
+                 let shadowed = checker.semantic().binding(shadowed_id);
+                 // And that binding was referenced in the current scope...
+                 if let Some(range) = shadowed.references().find_map(|reference_id| {
 ```
 
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/pep695/classes.md` (modified, +75/-0)
+**File**: `crates/ruff_linter/src/rules/pyflakes/snapshots/ruff_linter__rules__pyflakes__tests__load_after_multiple_unbinds_from_module_scope.snap` (modified, +7/-0)
 ```diff
-@@ -1043,6 +1043,12 @@ reveal_type(generic_context(into_regular_callable(D)))
- reveal_type(D(1))  # revealed: C[Unknown, int]
- ```
- 
-+Through `super(D, D)`, the inherited `__new__` infers the specialization from its `cls` argument.
+@@ -34,3 +34,10 @@ help: Remove assignment to unused variable `x`
+ 12 +     except ValueError:
+ 13 |         pass
+    |
 +
-+```py
-+reveal_type(super(D, D).__new__(D[str]))  # revealed: C[str, int]
-+```
-+
- ### Explicit access to constructors of bare generic classes
- 
- Bare `__new__` and `__init__` members retain the class type variables in their generic contexts.
-@@ -1096,6 +1102,24 @@ reveal_type(C(1, "str"))  # revealed: C[Literal[1], Literal["str"]]
- reveal_type(D(1, "str"))  # revealed: D[Literal[1], Literal["str"]]
- ```
- 
-+Passing the bare class to `super` leaves the initializer unbound, so each call can infer its type
-+arguments.
-+
-+```py
-+def initialize(child: D[int, str]) -> None:
-+    super(D, D).__init__(child, 1, "value")  # ok
-+```
-+
-+Inside a class method, `super()` uses the specialization of `cls`. The initializer's `t` parameter
-+expects `T`, which could be a type other than `int`.
-+
-+```py
-+class Child[T](D[T, str]):
-+    @classmethod
-+    def initialize(cls, child: "Child[T]") -> None:
-+        super().__init__(child, 1, "value")  # error: [invalid-argument-type] "Expected `T@Child`"
-+```
-+
- ### Generic class inherits `__init__` from `dict`
- 
- This is a specific example of the above, since it was reported specifically by a user.
-@@ -1173,6 +1197,53 @@ reveal_type(C(1, True))  # revealed: C[int]
- wrong_innards: C[int] = C("five", 1)
- ```
- 
-+### Calling a generic initializer on an existing instance
-+
-+An inherited initializer can infer its own type parameters from the arguments. Its explicit `self`
-+annotation must also match the specialization of the receiver.
-+
-+```py
-+from collections.abc import Callable
-+
-+type Factory[T] = Callable[[], T]
-+
-+class Either[T]:
-+    value: T
-+
-+    def __init__[A, B](
-+        self: "Either[A | B]",
-+        first: type[A],
-+        second: type[B],
-+        default: A | B | Factory[A | B],
-+    ) -> None: ...
-+
-+class TextOrNumber[T: str | int](Either[str | int]):
-+    def initialize(self, default: T | Factory[T]) -> None:
-+        super().__init__(str, int, default)  # ok
-+        super().__init__(str, bytes, default)  # error: [invalid-argument-type] "found `Self@initialize`"
-+```
-+
-+An instance of `Either[T]` can accept values of type `T`. Even with the upper bound `str | int`, `T`
-+could be `str` alone, so the initializer cannot assume it accepts both types.
-+
-+```py
-+class Child[T: str | int](Either[T]):
-+    def initialize(self, cls: type[T], default: T | Factory[T]) -> None:
-+        super().__init__(cls, cls, default)  # ok
-+        super().__init__(str, int, default)  # error: [invalid-argument-type] "Expected `Either[str | int]`"
-+```
-+
-+For `Either[bytes]`, the receiver is incompatible whether it is bound implicitly or passed
-+explicitly to the inherited method.
-+
-+```py
-+class Bytes[T: str | int](Either[bytes]):
-+    def initialize(self, default: T | Factory[T]) -> None:
-+        super().__init__(str, int, default)  # error: [invalid-argument-type] "found `Self@initialize`"
-+        self.__init__(str, int, default)  # error: [invalid-argument-type] "found `Self@initialize`"
-+        Bytes.__init__(self, str, int, default)  # error: [invalid-argument-type] "found `Self@initialize`"
-+```
-+
- ### Class-scoped type variables in `__init__` receiver annotations
- 
- The `invalid-init-type-variable` rule rejects class-scoped type variables in explicit `__init__`
-@@ -1395,6 +1466,10 @@ from ty_extensions._internal import generic_context, into_regular_callable
- class A[T]:
-     x: T
- 
-+    def reset(self, x: T) -> None:
-+        self.__init__(x)  # ok
-+        self.__init__(42)  # error: [invalid-argument-type]
-+
- # revealed: ty_extensions._internal.GenericContext[T@A]
- reveal_type(generic_context(A))
- # revealed: ty_extensions._internal.GenericContext[T@A]
++F823 Local variable `x` referenced before assignment
++  --> <filename>:16:11
++   |
++15 |     # This should resolve to the `x` in `x = 1`.
++16 |     print(x)
++   |           ^
 ```
 
-**File**: `crates/ty_python_semantic/src/types.rs` (modified, +12/-15)
+**File**: `crates/ruff_linter/src/rules/pyflakes/snapshots/ruff_linter__rules__pyflakes__tests__load_after_unbind_from_module_scope.snap` (modified, +7/-0)
 ```diff
-@@ -1385,16 +1385,14 @@ bitflags! {
-         /// Likewise, a divergent marker from cyclic inference does not establish a concrete member.
-         const REQUIRE_CONCRETE = 1 << 5;
- 
--        /// Do not add the class's generic context to inherited member signatures.
-+        /// Add the class's type variables to constructor signatures so they can be inferred
-+        /// from the arguments. A method bound to an existing instance already has a fixed
-+        /// class specialization, including when it is accessed through `super()`.
-         ///
--        /// Constructor methods reached through a fixed class-object value such as `type[T]` use
--        /// the class's type variables, but those variables are not inference targets for the call.
--        /// A method's own generic context remains inferable.
--          ///
-         /// TODO: Arguably this does not deserve to be a member lookup policy; instead, we should
-         /// track the owned and inherited generic contexts separately in `Signature` and not
-         /// preemptively merge them.
--        const NO_INHERITED_GENERIC_CONTEXT = 1 << 6;
-+        const INHERIT_GENERIC_CONTEXT = 1 << 6;
-     }
- }
- 
-@@ -1435,9 +1433,9 @@ impl MemberLookupPolicy {
-         self.contains(Self::REQUIRE_CONCRETE)
-     }
- 
--    /// Do not add the class's generic context to inherited member signatures.
--    const fn no_inherited_generic_context(self) -> bool {
--        self.contains(Self::NO_INHERITED_GENERIC_CONTEXT)
-+    /// Include the class's type variables when inferring a constructor signature.
-+    const fn inherit_generic_context(self) -> bool {
-+        self.contains(Self::INHERIT_GENERIC_CONTEXT)
-     }
- }
- 
-@@ -8139,12 +8137,11 @@ impl<'db> Type<'db> {
-             } else {
-                 None
-             };
--        let constructor_member_policy =
--            if class_generic_context.is_some() && inferable_class_context.is_none() {
--                MemberLookupPolicy::NO_INHERITED_GENERIC_CONTEXT
--            } else {
--                MemberLookupPolicy::default()
--            };
-+        let constructor_member_policy = if inferable_class_context.is_some() {
-+            MemberLookupPolicy::INHERIT_GENERIC_CONTEXT
-+        } else {
-+            MemberLookupPolicy::default()
-+        };
- 
-         // Keep bespoke constructor behavior for cases that don't map cleanly to `__new__`/`__init__`.
-         let fallback_bindings = || {
-```
-
-**File**: `crates/ty_python_semantic/src/types/bound_super.rs` (modified, +12/-2)
-```diff
-@@ -962,7 +962,7 @@ impl<'db> BoundSuperType<'db> {
-         db: &'db dyn Db,
-         env: &ProgramEnvironment<'db>,
-         name: &str,
--        policy: MemberLookupPolicy,
-+        mut policy: MemberLookupPolicy,
-     ) -> PlaceAndQualifiers<'db> {
-         let owner = self.owner(db);
-         let class = match &owner {
-@@ -976,7 +976,17 @@ impl<'db> BoundSuperType<'db> {
-                     .find_name_in_mro_with_policy(db, env, name, policy)
-                     .expect("Calling `find_name_in_mro` on Unknown should return `Some`");
-             }
--            SuperOwnerKind::Resolved(resolved_owner) => resolved_owner.lookup_anchor,
-+            SuperOwnerKind::Resolved(resolved_owner) => {
-+                // With a bare class as the owner, e.g. `super(Child, Child).__init__`, the call
-+                // can infer the class's type arguments from the explicit receiver.
-+                if matches!(name, "__new__" | "__init__")
-+                    && resolved_owner.receiver == DescriptorReceiverKind::Class
-+                    && resolved_owner.owner_type.is_class_literal()
-+                {
-+                    policy |= MemberLookupPolicy::INHERIT_GENERIC_CONTEXT;
-+                }
-+                resolved_owner.lookup_anchor
-+            }
-         };
- 
-         let mut mro_after_pivot = self.skip_until_after_pivot(db, env, owner.iter_mro(db, env));
-```
-
-**File**: `crates/ty_python_semantic/src/types/class.rs` (modified, +1/-1)
-```diff
-@@ -2398,7 +2398,7 @@ impl<'db> ClassType<'db> {
-         }
- 
-         let dunder_new_callables = lookup_type
--            .lookup_dunder_new(db, env, MemberLookupPolicy::default())
-+            .lookup_dunder_new(db, env, MemberLookupPolicy::INHERIT_GENERIC_CONTEXT)
-             .and_then(|place_and_quals| {
-                 receiver
-                     .resolve_dunder_new_callable(db, env, place_and_quals.place)
-```
-
-**File**: `crates/ty_python_semantic/src/types/class/static_literal.rs` (modified, +6/-6)
-```diff
-@@ -1536,7 +1536,7 @@ impl<'db> StaticClassLiteral<'db> {
-                         db,
-                         env,
-                         name,
--                        policy,
-+                        policy | MemberLookupPolicy::INHERIT_GENERIC_CONTEXT,
-                         self.iter_mro(db, Some(specialization)),
-                     )
-                 }
-@@ -1586,10 +1586,10 @@ impl<'db> StaticClassLiteral<'db> {
-             }
-         }
- 
--        let inherited_generic_context = if policy.no_inherited_generic_context() {
--            None
--        } else {
-+        let inherited_generic_context = if policy.inherit_generic_context() {
-             self.inherited_generic_context(db)
-+        } else {
-+            None
-         };
-         let result = MroLookup::new(db, env, mro_iter).class_member(
-             name,
-@@ -2158,7 +2158,7 @@ impl<'db> StaticClassLiteral<'db> {
- 
-             let signature = match name {
-                 "__new__" | "__init__" => Signature::new_generic(
--                    inherited_generic_context.or_else(|| self.inherited_generic_context(db)),
-+                    inherited_generic_context,
-                     Parameters::standard(parameters),
-                     return_ty,
-                 ),
-@@ -2229,7 +2229,7 @@ impl<'db> StaticClassLiteral<'db> {
-                     name,
-                     self.apply_optional_specialization(db, specialization),
-                     fields_iter,
--                    specialization.map(|s| s.generic_context(db)),
-+                    inherited_generic_context,
-                 )
-             }
-             (
-```
-
-**File**: `crates/ty_python_semantic/src/types/generics.rs` (modified, +64/-69)
-```diff
-@@ -37,7 +37,7 @@ use crate::types::typevar::{
- use crate::types::variance::VarianceInferable;
- use crate::types::visitor::{
-     TypeCollector, TypeVisitor, any_over_type, any_over_type_expanding_aliases,
--    walk_type_with_recursion_guard,
-+    any_over_type_including_alias_arguments, walk_type_with_recursion_guard,
- };
- use crate::types::{
-     ApplyTypeMappingVisitor, BindingContext, BoundTypeVarInstance, CallableType, CallableTypes,
-@@ -948,15 +948,7 @@ impl<'db> GenericContext<'db> {
-             db,
-             self,
-             self.variables(db)
--                .map(|typevar| match typevar.kind(db) {
--                    TypeVarKind::LegacyTypeVarTuple | TypeVarKind::Pep695TypeVarTuple => {
--                        Type::homogeneous_tuple(db, &env, Type::unknown())
--                    }
--                    TypeVarKind::LegacyParamSpec | TypeVarKind::Pep695ParamSpec => {
--                        Type::paramspec_value_callable(db, Parameters::unknown())
--                    }
--                    _ => Type::unknown(),
--                })
-+                .map(|typevar| typevar.unknown_value(db, &env))
-                 .collect::<Box<[_]>>(),
-             None,
-             (known_class == Some(KnownClass::Tuple))
-@@ -1120,15 +1112,7 @@ impl<'db> GenericContext<'db> {
-                     TypeContext::default(),
-                 )
-             } else {
--                match typevar.kind(db) {
--                    TypeVarKind::LegacyTypeVarTuple | TypeVarKind::Pep695TypeVarTuple => {
--                        Type::homogeneous_tuple(db, &env, Type::unknown())
--                    }
--                    TypeVarKind::LegacyParamSpec | TypeVarKind::Pep695ParamSpec => {
--                        Type::paramspec_value_callable(db, Parameters::unknown())
--                    }
--                    _ => Type::unknown(),
--                }
-+                typevar.unknown_value(db, &env)
-             };
-             expanded.push(ty);
-         }
-@@ -2932,10 +2916,13 @@ impl<'db, 'c> SpecializationBuilder<'db, 'c> {
-             Option<&CandidateTypeVarSolution<'db>>,
-         ) -> Option<PathBoundSolution<'db>>,
-     ) -> PendingInference<'db, T> {
--        let merged_types = self
-+        let mut merged_types = self
-             .solve_hash_map_with(self.generic_context, &mut |typevar, bounds| {
-                 choose(typevar, bounds).and_then(PathBoundSolution::as_type)
-             });
-+        if reason == TypeVarInferenceFallback::Unsatisfiable {
-+            self.remove_expanding_cycles(&mut merged_types);
-+        }
-         PendingInference {
-             merged_types,
-             solutions: Err(reason),
-@@ -3154,7 +3141,7 @@ impl<'db, 'c> SpecializationBuilder<'db, 'c> {
-         // dependency resolver marks `T` and `U` unresolved while preserving independent bindings.
-         if types
-             .iter()
--            .any(|(identity, ty)| self.has_expanding_cycle(generic_context, types, *identity, *ty))
-+            .any(|(identity, ty)| self.has_expanding_cycle(types, *identity, *ty))
-         {
-             inference.merged_types = self
-                 .solve_hash_map_with(generic_context, &mut |typevar, bounds| {
-@@ -3248,7 +3235,6 @@ impl<'db, 'c> SpecializationBuilder<'db, 'c> {
- 
-     fn has_expanding_cycle(
-         &self,
--        generic_context: GenericContext<'db>,
-         types: &FxHashMap<BoundTypeVarIdentity<'db>, Type<'db>>,
-         identity: BoundTypeVarIdentity<'db>,
-         ty: Type<'db>,
-@@ -3267,62 +3253,45 @@ impl<'db, 'c> SpecializationBuilder<'db, 'c> {
-             // Unions and intersections are flattened and deduplicated as they are constructed.
-             // A cyclic reference directly inside one can add elements but cannot create
-             // unbounded nesting. Keep looking inside its elements for a genuinely embedded edge.
--            Type::Union(union) => union.elements(db).iter().any(|element| {
--                self.has_expanding_cycle(generic_context, types, identity, *element)
--            }),
-+            Type::Union(union) => union
-+                .elements(db)
-+                .iter()
-+                .any(|element| self.has_expanding_cycle(types, identity, *element)),
-             Type::Intersection(intersection) => intersection
-                 .iter_positive(db)
-                 .chain(intersection.iter_negative(db))
--                .any(|element| self.has_expanding_cycle(generic_context, types, identity, element)),
--            _ => any_over_type(db, self.env, ty, false, |nested| {
--                nested.as_typevar().is_some_and(|dependency| {
--                    let dependency = dependency.identity(db);
--                    dependency != identity
--                        && generic_context.contains(db, dependency)
--                        && self.reaches_pending_typevar(
--                            generic_context,
--                            types,
--                            dependency,
--                            identity,
--     
+@@ -17,3 +17,10 @@ help: Remove assignment to unused variable `x`
+ 7 +     except ValueError:
+ 8 |         pass
+   |
++
++F823 Local variable `x` referenced before assignment
++  --> <filename>:11:11
++   |
++10 |     # This should resolve to the `x` in `x = 1`.
++11 |     print(x)
++   |           ^
 ```
 
 ---
 
-### Incident Patch 2: `1e0a2ce2` (2026-11-17)
-**Commit Message**: [ty] Check fixed prefixes when assigning ParamSpec callables to gradual Concatenate (#30470)
+### Incident Patch 2: `f1edf755` (2026-11-18)
+**Commit Message**: Fix the multiline string example in Known Deviations from Black (#30447)
 
 ## Summary
 
-ty previously accepted `call_with_int(callback)` below, even though a
-caller can pass `forward` a function that takes no arguments.
+The documentation had an incorrect formatting example for multiline
+strings when using ruff and black. Found under
+`docs/formatter/black.md`. Changed the examples to match what I found on
+my own testing environment with Black 26.10.1 and Ruff 0.17.5. Changed
+the `# Input`, `# Black` and `# Ruff` blocks accordingly.
 
-```python
-from typing import Callable, Concatenate
+My comment on issue #28930:
+https://github.com/astral-sh/ruff/issues/28930#issuecomment-6894925305
 
-def call_with_int(callback: Callable[Concatenate[int, ...], None]) -> None:
-    callback(1)
+Fixes #28930
 
-def forward[**P](callback: Callable[P, None]) -> None:
-    call_with_int(callback)  # now an error
-```
+## Notes to reviewers
 
-Check the fixed positional parameters before the caller's `ParamSpec`
-against the prefix required by `Concatenate`. This also rules out
-overloads that require more positional parameters than the callback
-guarantees.
+I changed the `""""` to the more common `"""` since the extra `"` would
+get wrapped into the string. I didn't change the paragraph below the
+examples, because I wasn't sure if that's still accurate, since Black 26
+does move the `"""` onto the `call(` line.
+This is my first pull request. I'm happy about any feedback and will
+change anything accordingly. I'm excited to contribute to a project I
+use.
 
-This fixes a bug that otherwise caused new false-positive regressions on
-https://github.com/astral-sh/ruff/pull/30423.
-
-## Ecosystem report
-
-The public run for `deb2cd0da5` found three expected changes across 165
-projects. ty now reports a missing class receiver in a
-pytest-autoprofile wrapper annotation and removes two incorrect
-overload-related errors in discord.py. [Full ecosystem
-report](https://github.com/astral-sh/ruff/pull/30470#issuecomment-6927397479).
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/paramspec.md` (modified, +41/-0)
+**File**: `docs/formatter/black.md` (modified, +19/-23)
 ```diff
-@@ -1399,6 +1399,47 @@ wrapped(1, enabled="yes")  # error: [invalid-argument-type]
- wrapped()  # error: [missing-argument]
- ```
+@@ -134,47 +134,43 @@ We agree that Ruff's formatting (that matches Black's 23) is hard to read and ne
  
-+### Assignability to a callable with a gradual tail
-+
-+If the target requires an initial `int`, the callback must accept it before `P`. The caller can
-+specialize `P` to an empty parameter list.
-+
-+```py
-+from typing import Callable, Concatenate, ParamSpec
-+
-+P = ParamSpec("P")
-+
-+def takes_int(callback: Callable[Concatenate[int, ...], None]) -> None: ...
-+def check(
-+    bare: Callable[P, None],
-+    accepts_int: Callable[Concatenate[int, P], None],
-+    accepts_str: Callable[Concatenate[str, P], None],
-+) -> None:
-+    takes_int(bare)  # error: [invalid-argument-type]
-+    takes_int(accepts_int)  # ok
-+    takes_int(accepts_str)  # error: [invalid-argument-type]
-+```
-+
-+### Matching overloads by prefix length
-+
-+Only the second overload applies when the callback guarantees one positional parameter.
-+
-+```py
-+from typing import Callable, Concatenate, ParamSpec, overload
-+
-+P = ParamSpec("P")
-+
-+@overload
-+def pick(f: Callable[Concatenate[str, str, P], None]) -> str: ...
-+@overload
-+def pick(f: Callable[Concatenate[str, P], None]) -> None: ...
-+def pick(f):
-+    raise NotImplementedError
-+
-+def check(callback: Callable[Concatenate[str, P], None]) -> None:
-+    reveal_type(pick(callback))  # revealed: None
-+```
-+
- ### Parameter lists inferred from consumers
+ ### Call expressions with a single multiline string argument
  
- A consumer of a callback supplies an upper bound on the callback's parameter list.
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/pep695/concatenate.md` (modified, +34/-1)
-```diff
-@@ -796,7 +796,7 @@ def decorator[**P1](func: Callable[Concatenate[int, P1], None]) -> Callable[P1,
+-Unlike Black, Ruff preserves the indentation of a single multiline-string argument in a call expression:
++Black and Ruff both preserve the indentation inside the multiline-string argument in a call expression. The key difference is the placement of the opening quotation marks and the placement of the closing parenthesis:
  
- def foo[**P2](f: Callable[P2, None]) -> None:
-     reveal_type(f)  # revealed: (**P2@foo) -> None
--    # TODO: This should raise an invalid-argument-type error
-+    # error: [invalid-argument-type]
-     reveal_type(decorator(f))  # revealed: (...) -> None
- ```
+ ```python
+ # Input
+ call(
+-  """"
+-  A multiline
+-  string
+-  """
++    """
++    A multiline
++    string
++    """
+ )
  
-@@ -812,6 +812,21 @@ def concat_paramspec[**P, T](fn: Callable[Concatenate[int, P], T]):
-     reveal_type(gradual_generic(fn))  # revealed: T@concat_paramspec
- ```
+-dedent(""""
++dedent("""
+     A multiline
+     string
+ """)
  
-+If the target requires an initial `int`, the callback must accept it before `P`. The caller can
-+specialize `P` to an empty parameter list.
-+
-+```py
-+def takes_int(callback: Callable[Concatenate[int, ...], None]) -> None: ...
-+def check[**P](
-+    bare: Callable[P, None],
-+    accepts_int: Callable[Concatenate[int, P], None],
-+    accepts_str: Callable[Concatenate[str, P], None],
-+) -> None:
-+    takes_int(bare)  # error: [invalid-argument-type]
-+    takes_int(accepts_int)  # ok
-+    takes_int(accepts_str)  # error: [invalid-argument-type]
-+```
-+
- ### Concatenate `...` to concatenate `ParamSpec`
+ # Black
+-call(
+-  """"
+-  A multiline
+-  string
+-  """
+-)
++call("""
++    A multiline
++    string
++    """)
  
- ```py
-@@ -839,3 +854,21 @@ def assign[**P3](x: Callable[P3, None], /, *args: P3.args, **kwargs: P3.kwargs)
-     # error: [invalid-assignment] "Object of type `def consumer[**P2](x: (**P2) -> None, /, *args: P2.args, **kwargs: P2.kwargs) -> None` is not assignable to `ConsumerType[P3@assign]`"
-     wrapped: ConsumerType[P3] = consumer
- ```
-+
-+### Matching overloads by prefix length
-+
-+Only the second overload applies when the callback guarantees one positional parameter.
-+
-+```py
-+from typing import Callable, Concatenate, overload
-+
-+@overload
-+def pick[**P](f: Callable[Concatenate[str, str, P], None]) -> str: ...
-+@overload
-+def pick[**P](f: Callable[Concatenate[str, P], None]) -> None: ...
-+def pick(f):
-+    raise NotImplementedError
-+
-+def check[**P](callback: Callable[Concatenate[str, P], None]) -> None:
-+    reveal_type(pick(callback))  # revealed: None
-+```
-```
-
-**File**: `crates/ty_python_semantic/src/types/signatures.rs` (modified, +13/-7)
-```diff
-@@ -4153,19 +4153,25 @@ impl<'c, 'db> TypeRelationChecker<'_, 'c, 'db> {
-                     }
-                 }
+-dedent(
+-  """"
+-  A multiline
+-  string
+-"""
+-)
++dedent("""
++    A multiline
++    string
++""")
  
--                // Other is a `Concatenate` with gradual form while self is a regular non-gradual
--                // callable
--                (
--                    ParametersKind::Standard,
--                    ParametersKind::Concatenate(ConcatenateTail::Gradual),
--                ) => {
-+                // Only the fixed prefix of a parameter list ending in a caller-owned
-+                // ParamSpec is guaranteed to accept positional arguments.
-+                (_, ParametersKind::Concatenate(ConcatenateTail::Gradual))
-+                    if let Some(source_prefix) = match source_parameters.kind() {
-+                        ParametersKind::Standard => Some(source_parameters.as_slice()),
-+                        _ => source_parameters.as_paramspec_with_prefix().and_then(
-+                            |(prefix, tail)| {
-+                                (!tail.is_inferable(db, self.inferable)).then_some(prefix)
-+                            },
-+                        ),
-+                    } =>
-+                {
-                     let target_prefix_params =
-                         &target_parameters.as_slice()[..target_parameters.len().saturating_sub(2)];
  
-                     let mut parameters = ParametersZip {
-                         current_source: None,
-                         current_target: None,
--                        source_iter: source_parameters.iter(),
-+                        source_iter: source_prefix.iter(),
-                         target_iter: target_prefix_params.iter(),
-                     };
+ # Ruff
+ call(
+-  """"
+-  A multiline
+-  string
+-  """
++    """
++    A multiline
++    string
++    """
+ )
  
+-dedent(""""
++dedent("""
+     A multiline
+     string
+ """)
 ```
 
 ---
 
-### Incident Patch 3: `8a90960b` (2026-11-16)
-**Commit Message**: [ty] Fix stale diagnostic when using `diagnosticMode: "workspace"` (#30415)
+### Incident Patch 3: `9cda3860` (2026-11-18)
+**Commit Message**: [`pyflakes`] Ignore `__traceback_hide__` in `unused-variable` (`F841`) (#29600)
 
 ## Summary
 
-Today, ty looks only at the final batch to decide whether to keep a
-workspace diagnostic pull open. If ty streams every changed diagnostic
-as a partial result, the final batch is empty, so ty suspends the pull.
-The switch to `gen-lsp-types` introduced this regression when the
-handler lost the distinction between a complete report and the last
-batch of a streamed report.
-[#24894](https://github.com/astral-sh/ruff/pull/24894)
+Add `__traceback_hide__` to the allowlist of exceptions to the
+`unused-variable` rule (`F841`) and document the reasoning behind each.
 
-If the user then fixes an error that ty streamed for `a.py`, ty retries
-the suspended pull with its original `previousResultIds`. Those IDs
-predate the error, so ty can miss that it needs to clear the diagnostic
-for `a.py`, leaving the fixed error in the Problems panel.
+Django's debug page, Werkzeug's debugger, and the Python Sentry SDK all
+hide frames that set `__traceback_hide__ = True`. Like the existing
+`__tracebackhide__` and others, these are read at runtime from frame
+locals and are thus not "unused" in the normal sense, but `ruff`
+requires per-line ignores nonetheless. Since these are pseudo-standards
+in the Python ecosystem, they're worth supporting by default.
 
-With this change, ty tracks changes across the entire pull. After
-streaming the error for `a.py`, ty sends a final response even if the
-final batch is empty. The client can then include the result ID for
-`a.py` in its next pull, allowing ty to clear the diagnostic when the
-file is fixed. Pulls with no changes still long-poll.
+## Test Plan
 
-The new regression test reproduced the timeout with uv disabled, and all
-32 pull-
+- Added a fixture function assigning each exempt name to validate their
+exceptionality
 
-**File**: `crates/ty_server/src/server/api/requests/workspace_diagnostic.rs` (modified, +39/-19)
+Co-authored-by: Brent Westbrook <[REDACTED_EMAIL]>
+
+**File**: `crates/ruff_linter/resources/test/fixtures/pyflakes/F841_0.py` (modified, +9/-0)
 ```diff
-@@ -110,15 +110,15 @@ impl RequestHandler for WorkspaceDiagnosticRequestHandler {
-     type RequestType = WorkspaceDiagnosticRequest;
- }
- 
--impl BackgroundRequestHandler for WorkspaceDiagnosticRequestHandler {
--    fn run(
-+impl WorkspaceDiagnosticRequestHandler {
-+    fn workspace_diagnostics(
-         snapshot: &SessionSnapshot,
-         client: &Client,
-         params: WorkspaceDiagnosticParams,
--    ) -> Result<WorkspaceDiagnosticReport> {
-+    ) -> WorkspaceDiagnosticReportResult {
-         if !snapshot.global_settings().diagnostic_mode().is_workspace() {
-             tracing::debug!("Workspace diagnostics is disabled; returning empty report");
--            return Ok(WorkspaceDiagnosticReport { items: vec![] });
-+            return WorkspaceDiagnosticReportResult::Report(WorkspaceDiagnosticReport::default());
-         }
- 
-         if snapshot
-@@ -132,7 +132,7 @@ impl BackgroundRequestHandler for WorkspaceDiagnosticRequestHandler {
-             // Returning an empty workspace report makes `handle_request` suspend the request.
-             // Skip the response writer: it would clear diagnostics for previous result IDs
-             // that we have not checked yet. Suspension retains the request, not this snapshot.
--            return Ok(WorkspaceDiagnosticReport { items: vec![] });
-+            return WorkspaceDiagnosticReportResult::Report(WorkspaceDiagnosticReport::default());
-         }
- 
-         let writer = ResponseWriter::new(
-@@ -163,7 +163,17 @@ impl BackgroundRequestHandler for WorkspaceDiagnosticRequestHandler {
-             db.check_with_reporter(&mut reporter);
-         }
- 
--        Ok(reporter.into_final_report())
-+        reporter.into_final_report()
-+    }
-+}
+@@ -187,3 +187,12 @@ class NonlocalDunderClass:
+     def foo():
+         nonlocal __class__
+         __class__ = 1
 +
-+impl BackgroundRequestHandler for WorkspaceDiagnosticRequestHandler {
-+    fn run(
-+        snapshot: &SessionSnapshot,
-+        client: &Client,
-+        params: WorkspaceDiagnosticParams,
-+    ) -> Result<WorkspaceDiagnosticReport> {
-+        Ok(Self::workspace_diagnostics(snapshot, client, params).into_report())
-     }
- 
-     fn handle_request(
-@@ -172,7 +182,7 @@ impl BackgroundRequestHandler for WorkspaceDiagnosticRequestHandler {
-         client: &Client,
-         params: WorkspaceDiagnosticParams,
-     ) {
--        let result = Self::run(&snapshot, client, params.clone());
-+        let result = Self::workspace_diagnostics(&snapshot, client, params.clone());
- 
-         // Test if this is a no-op result, in which case we should long-poll the request and
-         // only respond once some diagnostics have changed to get the latest result ids.
-@@ -183,7 +193,9 @@ impl BackgroundRequestHandler for WorkspaceDiagnosticRequestHandler {
-         //   case we shouldn't do any long polling because some diagnostics changed).
-         // * If this is a full report, then check if all items are unchanged (or empty), the same as for
-         //   the non-streaming case.
--        if let Ok(WorkspaceDiagnosticReport { items }) = &result {
-+        if let WorkspaceDiagnosticReportResult::Report(WorkspaceDiagnosticReport { items }) =
-+            &result
-+        {
-             let all_unchanged = items.iter().all(|item| {
-                 matches!(
-                     item,
-@@ -211,7 +223,7 @@ impl BackgroundRequestHandler for WorkspaceDiagnosticRequestHandler {
-             }
-         }
- 
--        client.respond(id, result);
-+        client.respond(id, Ok(result.into_report()));
-     }
- }
- 
-@@ -249,7 +261,7 @@ impl<'a> WorkspaceDiagnosticsProgressReporter<'a> {
-         }
-     }
- 
--    fn into_final_report(self) -> WorkspaceDiagnosticReport {
-+    fn into_final_report(self) -> WorkspaceDiagnosticReportResult {
-         let state = self.state.into_inner().unwrap();
-         state.response.into_final_report()
-     }
-@@ -510,7 +522,7 @@ impl<'a> ResponseWriter<'a> {
-     ///
-     /// The result can be a partial or full report depending on whether the server's streaming
-     /// diagnostics and if it already sent some diagnostics.
--    fn into_final_report(mut self) -> WorkspaceDiagnosticReport {
-+    fn into_final_report(mut self) -> WorkspaceDiagnosticReportResult {
-         let mut items = Vec::new();
- 
-         // Handle files that had diagnostics in previous request but no longer have any
-@@ -576,15 +588,12 @@ impl ReportingMode {
-     fn create_result(
-         &mut self,
-         items: Vec<WorkspaceDocumentDiagnosticReport>,
--    ) -> WorkspaceDiagnosticReport {
-+    ) -> WorkspaceDiagnosticReportResult {
-         match self {
--            ReportingMode::Streaming(streaming) => match streaming.create_result(items) {
--                WorkspaceDiagnosticReportResult::Report(report) => report,
--                WorkspaceDiagnosticReportResult::PartialReport(
--                    WorkspaceDiagnosticReportPartialResult { items },
--                ) => WorkspaceDiagnosticReport { items },
--            },
--            ReportingMode::Bulk(..) => WorkspaceDiagnosticReport { items },
-+            ReportingMode::Streaming(streaming) => streaming.cr
++
++# OK, these names are read by debuggers and traceback tools via frame locals.
++def traceback_hiding():
++    __tracebackhide__ = True
++    __traceback_hide__ = True
++    __traceback_info__ = "info"
++    __traceback_supplement__ = (object,)
++    __debuggerskip__ = True
 ```
 
-**File**: `crates/ty_server/tests/e2e/pull_diagnostics.rs` (modified, +34/-0)
+**File**: `crates/ruff_linter/src/checkers/ast/analyze/deferred_scopes.rs` (modified, +6/-4)
 ```diff
-@@ -1034,6 +1034,40 @@ def foo() -> str:
-     Ok(())
- }
- 
-+#[test]
-+fn workspace_pull_finishes_when_all_diagnostics_were_streamed() -> Result<()> {
-+    let mut server = TestServerBuilder::new()?
-+        .with_workspace(SystemPath::new("src"), None)?
-+        .with_initialization_options(
-+            &ClientOptions::default().with_diagnostic_mode(DiagnosticMode::Workspace),
-+        )
-+        .with_file("src/a.py", "missing_a\n")?
-+        .with_file("src/b.py", "missing_b\n")?
-+        .build()
-+        .wait_until_workspaces_are_initialized();
-+
-+    let token = lsp_types::ProgressToken::String("diagnostics".into());
-+    let request = server.send_request::<WorkspaceDiagnosticRequest>(WorkspaceDiagnosticParams {
-+        identifier: None,
-+        previous_result_ids: Vec::new(),
-+        work_done_progress_params: WorkDoneProgressParams::default(),
-+        partial_result_params: PartialResultParams {
-+            partial_result_token: Some(token.clone()),
-+        },
-+    });
-+
-+    let progress = server.await_notification::<ProgressNotification>();
-+    assert_eq!(progress.token, token);
-+    let batch: WorkspaceDiagnosticReportPartialResult = serde_json::from_value(progress.value)?;
-+    assert_eq!(batch.items.len(), 2);
-+
-+    let response = server
-+        .try_await_response::<WorkspaceDiagnosticRequest>(&request, Some(Duration::from_secs(2)))
-+        .expect("a pull that streamed changed diagnostics must finish");
-+    assert!(response.items.is_empty());
-+    Ok(())
-+}
-+
- /// Tests that the server's diagnostic streaming (partial results) work correctly
- /// with result ids.
- #[test]
+@@ -166,12 +166,14 @@ pub(crate) fn deferred_scopes(checker: &Checker) {
+                             && !binding.is_nonlocal()
+                             && !binding.is_global()
+                             && !checker.settings().dummy_variable_rgx.is_match(name)
++                            // semi-standard names read from frame locals at runtime by some tools
+                             && !matches!(
+                                 name,
+-                                "__tracebackhide__"
+-                                    | "__traceback_info__"
+-                                    | "__traceback_supplement__"
+-                                    | "__debuggerskip__"
++                                "__tracebackhide__" // used by pytest, IPython
++                                    | "__traceback_hide__" // used by Django, Sentry, Werkzeug
++                                    | "__traceback_info__" // used by Zope
++                                    | "__traceback_supplement__" // used by Zope
++                                    | "__debuggerskip__" // used by IPython debugger
+                             )
+                         {
+                             return Some((name, binding));
+```
+
+**File**: `crates/ruff_linter/src/rules/pyflakes/rules/unused_variable.rs` (modified, +5/-0)
+```diff
+@@ -24,6 +24,11 @@ use crate::{Edit, Fix, FixAvailability, Violation};
+ /// prefixed with an underscore, or some other value that adheres to the
+ /// [`lint.dummy-variable-rgx`] pattern.
+ ///
++/// This rule ignores the following variables, which debuggers and traceback
++/// tools read from the function's local variables at runtime:
++/// `__tracebackhide__`, `__traceback_hide__`, `__traceback_info__`,
++/// `__traceback_supplement__`, and `__debuggerskip__`.
++///
+ /// ## Example
+ /// ```python
+ /// def foo():
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30504** (closed): [refurb] Fix invalid syntax in parenthesized hashlib-digest-hex fixes (FURB181) (@xAngad)
-- **PR #30502** (2026-11-17): Several minor docs improvements (@ntBre)
-- **PR #30498** (2026-11-17): [ty] Sync bundled ty-extensions docstrings (@sharkdp)
-- **PR #30497** (2026-11-17): [ty] Document runtime support in ty-extensions (@sharkdp)
-- **PR #30496** (closed): [`flake8-bandit`] Detect `exec_command` calls on paramiko clients (`S601`) (@ArnabDutta01)
-- **PR #30494** (2026-11-17): Infer the Ruff release tag from the crate version (@sharkdp)
+- **PR #30578** (2026-11-19): Bump version to 0.17.6 (@astral-automations-bot[bot])
+- **PR #30577** (closed): [flake8-tidy-imports] fix wrongly generated warnings for nested lazy imports (@Ashu3208)
+- **PR #30574** (2026-11-19): Separate Ruff configuration loading from settings resolution (@MichaReiser)
+- **PR #30573** (2026-11-19): Clarify Ruff's root settings and resolver entries (@MichaReiser)
+- **PR #30572** (2026-11-19): [ty] Add NumPy to ecosystem runs (@AlexWaygood)
+- **PR #30571** (2026-11-19): Avoid repeated scans of unclosed script metadata blocks (@MichaReiser)
 
 ---
 
@@ -3084,44 +2478,59 @@ The new regression test reproduced the timeout with uv disabled, and all
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ty] Fix stack overflow checking a generic base initializer
+## X. [`pyflakes`] Fix false negative when a name is assigned more than once (`F823`)
 
 **RULE**:
-When implementing operations in `crates/ty_python_semantic/resources/mdtest/class/super.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ruff_linter/resources/mdtest/pyflakes/undefined-local.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `51b50bd7`: [ty] Fix stack overflow checking a generic base initializer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4872a7c0`: [`pyflakes`] Fix false negative when a name is assigned more than once (`F823`). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/resources/mdtest/class/super.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ruff_linter/resources/mdtest/pyflakes/undefined-local.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Inside `Child[S]`, the base initializer expects a callback that accepts `S`, even though `S`
-defaults to `BaseException`. For example, a `Child[ValueError]` could pass a `ValueError` to the
-callback, so a callback that only accepts `OSError` is too narrow.
-def has_filename(error: OSError) -> bool:
-    return error.filename is not None
+# `undefined-local` (`F823`)
 
-        super().__init__(check)  # ok
-        # error: [invalid-argument-type] "Expected `((S@Child, /) -> bool) | None`"
-        super().__init__(has_filename)
+```toml
+[lint]
+select = ["F823"]
+```
+
+## Multiple assignments
+
+Regression tests for <https://github.com/astral-sh/ruff/issues/30224>.
+
+```py
+my_var = 0
+
+def f():
+    print(my_var)  # error: [undefined-local]
+    my_var = 1
+    my_var = 2
+
+def f():
+    my_var += 1  # error: [undefined-local]
+    my_var += 1
+
+# OK: the read comes after the first local binding.
+def f():
+    my_var = 1
+    print(my_var)
+    my_var = 2
+```
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-A generic base initializer can inherit both its own class's generic context and the subclass's
-generic context. The merged context is not the same as the subclass's enclosing context and should
-not be freshened as a recursive reference.
-        # Regression test: Freshening the merged context made this expect
-        # `Callable[[BaseException], bool]` instead of `Callable[[S], bool]`.
-        super().__init__(check)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `51b50bd7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4872a7c0` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

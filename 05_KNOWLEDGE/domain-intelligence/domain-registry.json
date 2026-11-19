@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T16:08:33.975Z",
+  "last_updated": "2026-11-19T16:17:07.787Z",
   "total_records": 1996,
   "domains": {
     "A": {
@@ -10457,8 +10457,8 @@
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "repository": "langchain4j/langchain4j",
-      "content_hash": "a6195b0220a011c9152542ea39fa1678482542fb6f6d8d38bf77bbfacc3edd76",
-      "created_at": "2026-11-18T12:58:35.165Z"
+      "content_hash": "e52e8e42d10e8512922075dc9f5554fa8cb737e065e17e364f212ed421cbbb81",
+      "created_at": "2026-11-19T16:17:03.261Z"
     },
     "DOM-D-9936936B": {
       "record_id": "DOM-D-9936936B",
@@ -19072,8 +19072,8 @@
       "title": "Research & Knowledge Intelligence: vllm-sr/d3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-vllm-sr-d3-research-knowledge-intelligence-vllm-sr-d3-core-invariants.md",
       "repository": "vllm-sr/d3",
-      "content_hash": "7c3d586eafb0b29c4f2bea7c782b94df7caf23adf59f0e02f2d323378bc9b514",
-      "created_at": "2026-11-15T02:34:57.959Z"
+      "content_hash": "22309a60bd8c23ca4c74b27a812e20f92436c8af38b00787574d325c3e5e112d",
+      "created_at": "2026-11-19T16:16:48.031Z"
     },
     "DOM-D-608927A6": {
       "record_id": "DOM-D-608927A6",
@@ -19123,8 +19123,8 @@
       "title": "Research & Knowledge Intelligence: hf-vllm-sr-d3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-vllm-sr-d3-learnings-research-knowledge-intelligence-hf-vllm-sr-d3-learnings-.md",
       "repository": "hf-vllm-sr-d3-learnings",
-      "content_hash": "ccb7263d3f1ed7fc2216bae403e44df39eb2d0fac7d95cce0fe525b1e5c523f0",
-      "created_at": "2026-11-15T02:35:54.295Z"
+      "content_hash": "d51965bf079110b2b7b14d78564d1405bed3bfccc1da5ec1d42b3145c4fddb56",
+      "created_at": "2026-11-19T16:17:07.267Z"
     },
     "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-core-invariants",
@@ -23695,8 +23695,8 @@
       "title": "Technical Construction Intelligence: astral-sh/ruff Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-technical-construction-intelligence-astral-sh-ruff-core-invariant.md",
       "repository": "astral-sh/ruff",
-      "content_hash": "1afbcb53bdcc3826b028961ee3f30438c5b388e70b19d9f609ef3195beeb68d3",
-      "created_at": "2026-11-17T20:33:09.521Z"
+      "content_hash": "99d1dc0de178c162055d01c7fc21aa625d5755dc40c16e0e58b891651cdb2ec3",
+      "created_at": "2026-11-19T16:16:50.923Z"
     },
     "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants",
@@ -23704,8 +23704,8 @@
       "title": "Technical Construction Intelligence: astral-sh-ruff-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-learnings-technical-construction-intelligence-astral-sh-ruff-lear.md",
       "repository": "astral-sh-ruff-learnings",
-      "content_hash": "4cfb0e018a2c84dc18887fe7d82231fec3dff3e58d82688d64509afb6ec49681",
-      "created_at": "2026-11-17T20:33:26.789Z"
+      "content_hash": "b24302c56eae6cf885abfe2bb4496c4df041f158d048a27ecd6986fe005c2d5a",
+      "created_at": "2026-11-19T16:17:06.790Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar",
@@ -24863,8 +24863,8 @@
       "title": "Architecture Intelligence: kubeedge/kubeedge Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubeedge-kubeedge-architecture-intelligence-kubeedge-kubeedge-core-invariants.md",
       "repository": "kubeedge/kubeedge",
-      "content_hash": "924cf2b5af2ba6bed118f60af7d72836de27d088adcc596a12bc5aa1662d71c6",
-      "created_at": "2026-11-16T23:35:05.176Z"
+      "content_hash": "1bb30e755d5aacf8f1f0e4baf144b3a4834347d553ed9cac7bb2329ada7555c7",
+      "created_at": "2026-11-19T16:16:58.364Z"
     },
     "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-learnings-core-invariants",
@@ -24890,8 +24890,8 @@
       "title": "Architecture Intelligence: kubeedge-kubeedge-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubeedge-kubeedge-learnings-architecture-intelligence-kubeedge-kubeedge-learning.md",
       "repository": "kubeedge-kubeedge-learnings",
-      "content_hash": "0a3db6803d546e8d7a0beba766f677516c280ab85df20421f4fec8c97d294b4a",
-      "created_at": "2026-11-16T23:35:16.159Z"
+      "content_hash": "d74e48c5c9341b7476a16ca589b8bd87415a62dec1915e829a339a6bb9769663",
+      "created_at": "2026-11-19T16:17:07.787Z"
     },
     "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-core-invariants",

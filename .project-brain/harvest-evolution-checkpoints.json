@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T16:08:34.300Z",
+  "last_updated": "2026-11-19T16:17:08.054Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T12:40:39.625Z",
@@ -1448,7 +1448,7 @@
       "staged_for_review": 1
     },
     "astral-sh-ruff-learnings.md": {
-      "processed_at": "2026-11-17T20:33:26.216Z",
+      "processed_at": "2026-11-19T16:17:06.177Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1538,7 +1538,7 @@
       "staged_for_review": 0
     },
     "kubeedge-kubeedge-learnings.md": {
-      "processed_at": "2026-11-17T20:45:44.758Z",
+      "processed_at": "2026-11-19T16:17:07.428Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2843,8 +2843,8 @@
       "staged_for_review": 0
     },
     "hf-vllm-sr-d3-learnings.md": {
-      "processed_at": "2026-11-15T02:35:54.049Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T16:17:07.089Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md": {
@@ -3518,7 +3518,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2271,
+  "total_dossiers_evaluated": 2274,
   "total_canonical_promoted": 388,
-  "total_staged_for_review": 1693
+  "total_staged_for_review": 1695
 }

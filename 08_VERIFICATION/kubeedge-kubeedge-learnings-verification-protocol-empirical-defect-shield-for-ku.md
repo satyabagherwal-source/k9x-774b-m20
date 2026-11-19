@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T20:45:44.895Z",
+  "timestamp": "2026-11-19T16:17:07.533Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kubeedge-kubeedge-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kubeedge-kubeedge-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T20:45:44.895Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T16:17:07.533Z`  
 > **Learning ID**: `LEARN-EVO-kubeedge-kubeedge-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source**: github ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
-> **Source Version**: `3a9cb19f`  
+> **Source Version**: `61e2bda5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T20:45:35.401Z  
+> **Timestamp**: 2026-11-19T16:16:57.055Z  
 > **Learning ID**: `learn-github-kubeedge-kubeedge`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:45:35.395Z  
+> **Harvest Timestamp**: 2026-11-19T16:16:57.051Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Kubernetes Native Edge Computing Framework (project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7635 stars
+- **Stars / Engagement**: 7636 stars
 
 ---
 
@@ -1237,11 +1237,11 @@ func RuleContains(rulePath, rule2Path string) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7454** (2026-11-19): **metaserver: keep retrying when getting the CA fails**
+  *Symptoms*: **What type of PR is this?** /kind bug  **What this PR does / why we need it**: `ServerCertificateManager.WaitForCAReady` polls for up to 4 minutes to get the Kubernetes CA from the cloud, but its condition function returned the error of a failed attempt (`return false, err`). `wait.PollUntilContextTimeout` stops polling as soon as the condition returns an error, so a single failure, for example a `SendSync` timeout right after the edge connects, ended the wait immediately instead of retrying. `MetaServer.Start` panics on that error when the `RequireAuthorization` feature gate is enabled, so edgecore crashes.  This logs the failure and keeps polling until the CA is received or the 4 minutes pass. If the wait times out, the error now also includes the last failure, so the cause is still visible. The poll interval and timeout move to package variables (same values) so the tests can shorten them.  The `certificate` package had no tests; this adds `manager_test.go`: - `TestWaitForCAReadyRetriesAfterFailure`: two failed attempts, then the CA is received and written. It fails without the change, because the first error ends the wait. - `TestWaitForCAReadyTimeoutReportsLastError`: every attempt fails, and the timeout error contains the last failure. - `TestWaitForCAReadyWaitsForCloudConnection`: no request is sent while the cloud is not connected.  **Which issue(s) this PR fixes**: None; found while reading the metaserver startup code.  **Special notes for your reviewer**: The tests
+
 - **Issue #7432** (2026-11-16): **Upgrade docker dependency to v28.0.0**
   *Symptoms*: <!--  Thanks for sending a pull request!  Here are some tips for you:  1. If this is your first time, please read our contributor guidelines: https://github.com/kubeedge/kubeedge/blob/master/CONTRIBUTING.md 2. Ensure you have added or ran the appropriate tests for your PR  -->  **What type of PR is this?**   /kind bug   **What this PR does / why we need it**:  Upgrade docker dependency to v28.0.0  /sig security  **Which issue(s) this PR fixes**: <!-- *Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. _If PR is about `failing-tests or flakes`, please post the related issues/tests in a comment and do not use `Fixes`_* --> Fixes #  **Special notes for your reviewer**:  **Does this PR introduce a user-facing change?**: <!-- If no, just write "NONE" in the release-note block below. If yes, a release note is required: Enter your extended release note in the block below. If the PR requires additional action from users switching to the new release, include the string "action required". --> ```release-note  ``` 
-
-- **Issue #7431** (2026-11-16): **Upgrade golang.org/x/crypto to v0.52.0**
-  *Symptoms*: <!--  Thanks for sending a pull request!  Here are some tips for you:  1. If this is your first time, please read our contributor guidelines: https://github.com/kubeedge/kubeedge/blob/master/CONTRIBUTING.md 2. Ensure you have added or ran the appropriate tests for your PR  -->  **What type of PR is this?**   /kind bug    **What this PR does / why we need it**:  Upgrade golang.org/x/crypto to v0.52.0   /sig security   **Which issue(s) this PR fixes**: <!-- *Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. _If PR is about `failing-tests or flakes`, please post the related issues/tests in a comment and do not use `Fixes`_* --> Fixes #  **Special notes for your reviewer**:  **Does this PR introduce a user-facing change?**: <!-- If no, just write "NONE" in the release-note block below. If yes, a release note is required: Enter your extended release note in the block below. If the PR requires additional action from users switching to the new release, include the string "action required". --> ```release-note  ``` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1258,447 +1258,173 @@ func RuleContains(rulePath, rule2Path string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a9cb19f` (2026-11-17)
-**Commit Message**: Merge pull request #7371 from saket0187/fix/cloudstream-exec-attach-busy-loop
+### Incident Patch 1: `61e2bda5` (2026-11-19)
+**Commit Message**: Merge pull request #7454 from arshil42/fix/metaserver-ca-wait-retry
 
-cloudstream, edgestream: stop exec/attach busy loop after the client closes
+metaserver: keep retrying when getting the CA fails
 
-**File**: `cloud/pkg/cloudstream/containerattach_connection.go` (modified, +17/-18)
+**File**: `edge/pkg/metamanager/metaserver/certificate/manager.go` (modified, +19/-5)
 ```diff
-@@ -97,6 +97,8 @@ func (ah *ContainerAttachConnection) SendConnection() (stream.EdgedConnection, e
- func (ah *ContainerAttachConnection) Serve() error {
- 	defer func() {
- 		close(ah.closeChan)
-+		// Unblock any stuck write to the client; removing this connection waits for it.
-+		ah.Conn.Close()
- 		klog.V(6).Infof("%s stop successfully", ah.String())
- 	}()
+@@ -47,6 +47,13 @@ const (
+ 	CertificatesDir = "/etc/kubeedge/pki/metaserver"
+ )
  
-@@ -131,26 +133,23 @@ func (ah *ContainerAttachConnection) Serve() error {
- 			return fmt.Errorf("%s find edge peer done, so stop this connection", ah.String())
- 		default:
++var (
++	// caPollInterval and caPollTimeout set how often and how long WaitForCAReady
++	// tries to get the CA. They are variables so that tests can shorten them.
++	caPollInterval = 5 * time.Second
++	caPollTimeout  = 4 * time.Minute
++)
++
+ type ServerCertificateManager struct {
+ 	certificate.Manager
+ }
+@@ -116,18 +123,25 @@ func (scm *ServerCertificateManager) WaitForCertReady() error {
+ 	})
+ }
+ 
++// WaitForCAReady gets the Kubernetes CA from the cloud, retrying until it succeeds
++// or caPollTimeout passes. A failed attempt does not stop the retries.
+ func (scm *ServerCertificateManager) WaitForCAReady() error {
+-	return wait.PollUntilContextTimeout(context.Background(), 5*time.Second, 4*time.Minute, true, func(ctx context.Context) (bool, error) {
++	var lastErr error
++	err := wait.PollUntilContextTimeout(context.Background(), caPollInterval, caPollTimeout, true, func(ctx context.Context) (bool, error) {
+ 		if !cloudconnection.IsConnected() {
+ 			return false, nil
  		}
--		func() {
--			n, err := ah.Conn.Read(data[:])
--			if err != nil {
--				if !errors.Is(err, io.EOF) {
--					klog.Errorf("%s failed to read from client: %v", ah.String(), err)
--					return
--				}
-+		n, err := ah.Conn.Read(data[:])
-+		if err != nil {
-+			if !errors.Is(err, io.EOF) {
-+				klog.Errorf("%s failed to read from client: %v", ah.String(), err)
-+			} else {
- 				klog.V(6).Infof("%s read EOF from client", ah.String())
--				sendCloseMessage()
--				return
--			}
--			if n <= 0 {
--				return
--			}
--			msg := stream.NewMessage(connector.GetMessageID(), stream.MessageTypeData, data[:n])
--			if err := ah.WriteToTunnel(msg); err != nil {
--				klog.Errorf("%s failed to write to tunnel server, err: %v", ah.String(), err)
--				return
- 			}
--		}()
-+			sendCloseMessage()
-+			return nil
-+		}
-+		if n <= 0 {
-+			continue
-+		}
-+		msg := stream.NewMessage(connector.GetMessageID(), stream.MessageTypeData, data[:n])
-+		if err := ah.WriteToTunnel(msg); err != nil {
-+			klog.Errorf("%s failed to write to tunnel server, err: %v", ah.String(), err)
-+		}
- 	}
- }
- 
-```
-
-**File**: `cloud/pkg/cloudstream/containerexec_connection.go` (modified, +17/-18)
-```diff
-@@ -97,6 +97,8 @@ func (c *ContainerExecConnection) SendConnection() (stream.EdgedConnection, erro
- func (c *ContainerExecConnection) Serve() error {
- 	defer func() {
- 		close(c.closeChan)
-+		// Unblock any stuck write to the client; removing this connection waits for it.
-+		c.Conn.Close()
- 		klog.V(6).Infof("%s stop successfully", c.String())
- 	}()
- 
-@@ -130,26 +132,23 @@ func (c *ContainerExecConnection) Serve() error {
- 			return fmt.Errorf("%s find edge peer done, so stop this connection", c.String())
- 		default:
- 		}
--		func() {
--			n, err := c.Conn.Read(data[:])
--			if err != nil {
--				if !errors.Is(err, io.EOF) {
--					klog.Errorf("%s failed to read from client: %v", c.String(), err)
--					return
--				}
-+		n, err := c.Conn.Read(data[:])
-+		if err != nil {
-+			if !errors.Is(err, io.EOF) {
-+				klog.Errorf("%s failed to read from client: %v", c.String(), err)
-+			} else {
- 				klog.V(6).Infof("%s read EOF from client", c.String())
--				sendCloseMessage()
--				return
--			}
--			if n <= 0 {
--				return
--			}
--			msg := stream.NewMessage(connector.GetMessageID(), stream.MessageTypeData, data[:n])
--			if err := c.WriteToTunnel(msg); err != nil {
--				klog.Errorf("%s failed to write to tunnel server, err: %v", c.String(), err)
--				return
- 			}
--		}()
-+			sendCloseMessage()
-+			return nil
-+		}
-+		if n <= 0 {
-+			continue
-+		}
-+		msg := stream.NewMessage(connector.GetMessageID(), stream.MessageTypeData, data[:n])
-+		if err := c.WriteToTunnel(msg); err != nil {
-+			klog.Errorf("%s failed to write to tunnel server, err: %v", c.String(), err)
-+		}
- 	}
- }
- 
-```
-
-**File**: `cloud/pkg/cloudstream/containerexec_connection_test.go` (modified, +130/-5)
-```diff
-@@ -19,8 +19,11 @@ package cloudstream
- import (
- 	"context"
- 	"errors"
-+	"io"
-+	"net"
- 	"net/http"
- 	"net/url"
-+	"sync"
- 	"testing"
- 	"time"
- 
-@@ -244,14 +247,11 @@ func TestServe_Exec(t *testing.T) {
- 					r:            r,
- 					Conn:         conn,
- 					session:      session,
--					edgePeerStop: make(chan struct{}),
-+					edgePeerStop: make(chan struct{}, 1),
- 					closeChan:    make(chan bool),
- 				}
- 
--				go func() {
--					time.Sleep(50 * time.Millisecond)
--					execConn.EdgePeerDone() <- struct{}{}
--				}()
-+				execConn.EdgePeerDone() <- struct{}{}
- 
- 				return execConn, cancel
- 			},
-@@ -296,6 +296,131 @@ func TestServe_Exec(t *testing.T) {
- 	}
- }
- 
-+type readErrConn struct {
-+	MockConn
-+	err   error
-+	reads int
-+}
-+
-+func (m *readErrConn) Read(b []byte) (int, error) {
-+	m.reads++
-+	if m.reads == 1 {
-+		return 0, nil
-+	}
-+	if m.readBuffer.Len() > 0 {
-+		return m.readBuffer.Read(b)
-+	}
-+	return 0, m.err
-+}
-+
-+type countingTunneler struct {
-+	MockTunneler
-+	sent map[stream.MessageType]int
-+}
-+
-+func (m *countingTunneler) WriteMessage(message *stream.Message) error {
-+	m.sent[message.MessageType]++
-+	if message.MessageType == stream.MessageTypeData {
-+		return assert.AnError
-+	}
-+	return nil
-+}
-+
-+type blockedWriteConn struct {
-+	MockConn
-+	writing chan struct{}
-+	closed  chan struct{}
-+}
-+
-+func (m *blockedWriteConn) Read([]byte) (int, error) {
-+	<-m.writing
-+	return 0, io.EOF
-+}
-+
-+func (m *blockedWriteConn) Write([]byte) (int, error) {
-+	close(m.writing)
-+	<-m.closed
-+	return 0, net.ErrClosed
-+}
-+
-+func (m *blockedWriteConn) Close() error {
-+	close(m.closed)
-+	return nil
-+}
-+
-+func TestServe_ClientClosed(t *testing.T) {
-+	r := &restful.Request{Request: &http.Request{URL: &url.URL{}}}
-+	testCases := []struct {
-+		name    string
-+		newConn func(net.Conn, *Session) APIServerConnection
-+	}{
-+		{
-+			name: "exec",
-+			newConn: func(conn net.Conn, session *Session) APIServerConnection {
-+				return &ContainerExecConnection{
-+					ctx:          context.Background(),
-+					r:            r,
-+					Conn:         conn,
-+					session:      session,
-+					edgePeerStop: make(chan struct{}),
-+					closeChan:    make(chan bool),
-+				}
-+			},
-+		},
-+		{
-+			name: "attach",
-+			newConn: func(conn net.Conn, session *Session) APIServerConnection {
-+				return &ContainerAttachConnection{
-+					ctx:          context.Background(),
-+					r:            r,
-+					Conn:         conn,
-+					session:      session,
-+					edgePeerStop: make(chan struct{}),
-+					closeChan:    make(chan bool),
-+				}
-+			},
-+		},
-+	}
-+
-+	for _, tc := range testCases {
-+		for _, readErr := range []error{io.EOF, errors.New("connection reset by peer")} {
-+			t.Run(tc.name+" "+readErr.Error(), func(t *testing.T) {
-+				assert := assert.New(t)
-+				conn := &readErrConn{err: readErr}
-+				conn.readBuffer.WriteString("ls\n")
-+				tun := &countingTunneler{sent: map[stream.MessageType]int{}}
-+				apiConn := tc.newConn(conn, &Session{tunnel: tun})
-+				time.AfterFunc(time.Second, apiConn.SetEdgePeerDone)
-+
-+				assert.NoError(apiConn.Serve())
-+				assert.Equal(3, conn.reads)
-+				assert.Equal(1, tun.sent[stream.MessageTypeData])
-+				assert.Equal(1, tun.sent[stream.MessageTypeRemoveConnect])
-+			})
-+		}
-+
-+		t.Run(tc.name+" blocked write", func(t *testing.T) {
-+			assert := assert.New(t)
-+			conn := &blockedWriteConn{writing: make(chan struct{}), closed: make(chan struct{})}
-+			session := &Session{tunnel: &MockTunneler{}, apiConnlock: &sync.RWMutex{}}
-+			apiConn := tc.newConn(conn, session)
-+			session.apiServerConn = map[uint64]APIServerConnection{0: apiConn}
-+			proxyErr := make(chan error, 1)
-+			go func() {
-+				proxyErr <- session.ProxyTunnelMessageToApiserver(stream.NewMessage(0, stream.MessageTypeData, []byte("x")))
-+			}()
-+
-+			assert.NoError(apiConn.Serve())
-+			select {
-+			case err := <-proxyErr:
-+				assert.ErrorIs(err, net.ErrClosed)
-+			case <-time.After(time.Second):
-+				t.Fatal("client write still blocked after Serve returned, so DeleteAPIServerConnection would hang")
-+			}
-+		})
-+	}
-+}
-+
- func TestSetEdgePeerDone_Closed(t *testing.T) {
- 	assert := assert.New(t)
- 
-```
-
-**File**: `cloud/pkg/cloudstream/streamserver.go` (modified, +2/-8)
-```diff
-@@ -276,10 +276,7 @@ func (s *StreamServer) getExec(request *restful.Request, response *restful.Respo
- 	}
- 
- 	defer func() {
+-		err := scm.getKubeAPIServerCA()
 -		if err != nil {
--			session.DeleteAPIServerConnection(execConnection)
--			klog.Infof("Delete %s from %s", execConnection.String(), session.String())
--		}
-+		session.DeleteAPIServerConnection(execConnection)
- 	}()
+-			klog.Errorf("get k8s CA failed, %v", err)
+-			return false, err
++		if err := scm.getKubeAPIServerCA(); err != nil {
++			klog.Errorf("get k8s CA failed, will retry: %v", err)
++			lastErr = err
++			return false, nil
+ 		}
+ 		return true, nil
+ 	})
++	if err != nil && lastErr != nil {
++		return fmt.Errorf("%v, last error: %v", err, lastErr)
++	}
++	return err
+ }
  
- 	if err = execConnection.Serve(); err != nil {
-@@ -346,10 +343,7 @@ func (s *StreamServer) getAttach(request *restful.Request, response *restful.Res
- 	}
- 
- 	defer func() {
--		if err != nil {
--			session.DeleteAPIServerConnection(attachConnection)
--			klog.Infof("Delete %s from %s", attachConnection.String(), session.String())
--		}
-+		session.DeleteAPIServerConnection(attachConnection)
- 	}()
- 
- 	if err = attachConnection.Serve(); err != nil {
+ func (scm *ServerCertificateManager) getKubeAPIServerCA() error {
 ```
 
-**File**: `edge/pkg/edgestream/tunnel.go` (modified, +18/-9)
+**File**: `edge/pkg/metamanager/metaserver/certificate/manager_test.go` (added, +101/-0)
 ```diff
-@@ -58,7 +58,8 @@ func (s *TunnelSession) serveLogsConnection(m *stream.Message) error {
- 	}
- 
- 	s.AddLocalConnection(m.ConnectID, logCon)
--	return logCon.Serve(s.Tunnel)
-+	go s.serveLocalConnection(m, logCon)
-+	return nil
- }
- 
- func (s *TunnelSession) serveContainerExecConnection(m *stream.Message) error {
-@@ -73,7 +74,8 @@ func (s *TunnelSession) serveContainerExecConnection(m *stream.Message) error {
- 
- 	s.AddLocalConnection(m.ConnectID, execCon)
- 	klog.V(6).Infof("Get Exec Connection info: %+v", *execCon)
--	return execCon.Serve(s.Tunnel)
-+	go s.serveLocalConnection(m, execCon)
-+	return nil
- }
- 
- func (s *TunnelSession) serveContainerAttachConnection(m *stream.Message) error {
-@@ -88,7 +90,8 @@ func (s *TunnelSession) serveContainerAttachConnection(m *stream.Message) error
- 
- 	s.AddLocalConnection(m.ConnectID, attachCon)
- 	klog.V(6).Infof("Get Attach Connection info: %+v", *attachCon)
--	return attachCon.Serve(s.Tunnel)
-+	go s.serveLocalConnection(m, attachCon)
-+	return nil
- }
- 
- func (s *TunnelSession) serveMetricsConnection(m *stream.Message) error {
-@@ -102,7 +105,16 @@ func (s *TunnelSession) serveMetricsConnection(m *stream.Message) error {
- 	}
- 
- 	s.AddLocalConnection(m.ConnectID, metricsCon)
--	return metricsCon.Serve(s.Tunnel)
-+	go s.serveLocalConnection(m, metricsCon)
-+	return nil
+@@ -0,0 +1,101 @@
++/*
++Copyright 2026 The KubeEdge Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package certificate
++
++import (
++	"errors"
++	"testing"
++	"time"
++
++	"github.com/agiledragon/gomonkey/v2"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"k8s.io/client-go/util/cert"
++
++	beehivecontext "github.com/kubeedge/beehive/pkg/core/context"
++	"github.com/kubeedge/beehive/pkg/core/model"
++	"github.com/kubeedge/kubeedge/edge/pkg/common/cloudconnection"
++)
++
++// patchCAPolling shortens the CA polling for a test and connects to the cloud.
++func patchCAPolling(t *testing.T, interval, timeout time.Duration) {
++	t.Helper()
++	oldInterval, oldTimeout := caPollInterval, caPollTimeout
++	caPollInterval, caPollTimeout = interval, timeout
++	cloudconnection.SetConnected(true)
++	t.Cleanup(func() {
++		caPollInterval, caPollTimeout = oldInterval, oldTimeout
++		cloudconnection.SetConnected(false)
++	})
 +}
 +
-+func (s *TunnelSession) serveLocalConnection(m *stream.Message, con stream.EdgedConnection) {
-+	if err := con.Serve(s.Tunnel); err != nil {
-+		klog.Errorf("Serve %s error %v", con.String(), err)
-+	}
-+	s.DeleteLocalConnection(m.ConnectID)
-+	klog.V(6).Infof("Delete local connection MessageID %v Type %s", m.ConnectID, m.MessageType.String())
- }
- 
- func (s *TunnelSession) ServeConnection(m *stream.Message) {
-@@ -125,11 +137,7 @@ func (s *TunnelSession) ServeConnection(m *stream.Message) {
- 		}
- 	default:
- 		klog.Errorf("Wrong message type %v", m.MessageType)
--		return
- 	}
--
--	s.DeleteLocalConnection(m.ConnectID)
--	klog.V(6).Infof("Delete local connection MessageID %v Type %s", m.ConnectID, m.MessageType.String())
- }
- 
- func (s *TunnelSession) Close() {
-@@ -197,7 +205,8 @@ func (s *TunnelSession) Serve() error {
- 			stream.MessageTypeExecConnect,
- 			stream.MessageTypeMetricConnect,
- 			stream.MessageTypeAttachConnect:
--			go s.ServeConnection(mess)
-+			// Not a goroutine: the connection must be registered before the next message is read.
-+			s.ServeConnection(mess)
- 		case stream.MessageTypeData,
- 			stream.MessageTypeRemoveConnect:
- 			s.WriteToLocalConnection(mess)
-```
-
-**File**: `edge/pkg/edgestream/tunnel_test.go` (modified, +37/-0)
-```diff
-@@ -3,6 +3,8 @@ package edgestream
- import (
- 	"bytes"
- 	"io"
-+	"net"
-+	"net/url"
- 	"testing"
- 	"time"
- 
-@@ -151,3 +153,38 @@ func TestServeDispatchUnsupportedMessageType(t *testing.T) {
- 		t.Errorf("Expected clean/close not to be called on local connection")
- 	}
- }
++func TestWaitForCAReadyRetriesAfterFailure(t *testing.T) {
++	patchCAPolling(t, 10*time.Millisecond, 5*time.Second)
 +
-+func TestServeQueuesMessageForNewConnection(t *testing.T) {
-+	// Nothing answers the TLS handshake, so the connection never starts reading ReadChan.
-+	ln, err := net.Listen("tcp", "127.0.0.1:0")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	defer ln.Close()
++	calls := 0
++	patches := gomonkey.NewPatches()
++	defer patches.Reset()
++	patches.ApplyFunc(beehivecontext.SendSync, func(_ string, _ model.Message, _ time.Duration) (model.Message, error) {
++		calls++
++		if calls < 3 {
++			return model.Message{}, errors.New("timeout")
++		}
++		return *model.NewMessage("").FillBody([]byte("ca data")), nil
++	})
++	var written []byte
++	patches.ApplyFunc(cert.WriteCert, func(_ string, data []byte) error {
++		written = data
++		return nil
++	})
 +
-+	connect, err := (&stream.EdgedExecConnection{
-+		MessID: 1,
-+		URL:    url.URL{Scheme: "https", Host: ln.Addr().String()},
-+	}).CreateConnectMessage()
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	session := &TunnelSession{
-+		Tunnel: &mockTunneler{
-+			messages: []*stream.Message{connect, stream.NewMessage(1, stream.MessageTypeRemoveConnect, nil)},
-+		},
-+		localCons: make(map[uint64]stream.EdgedConnection),
-+	}
++	scm := &ServerCertificateManager{}
++	require.NoError(t, scm.WaitForCAReady())
++	assert.Equal(t, 3, calls)
++	assert.Equal(t, []byte("ca data"), written)
++}
 +
-+	if err := session.Serve(); err != io.EOF {
-+		t.Fatalf("Expected io.EOF, got %v", err)
-+	}
++func TestWaitForCAReadyTimeoutReportsLastError(t *testing.T) {
++	patchCAPolling(t, 10*time.Millisecond, 100*time.Millisecond)
 +
-+	con, ok := session.GetLocalConnection(1)
-+	if !ok {
-+		t.Fatal("Expected the exec connection to be registered")
-+	}
-+	if n := len(con.(*stream.EdgedExecConnection).ReadChan); n != 1 {
-+		t.Fatalf("Expected the RemoveConnect to be queued for the connection, got %d queued messages", n)
-+	}
++	patches := gomonkey.NewPatches()
++	defer patches.Reset()
++	patches.ApplyFunc(beehivecontext.SendSync, func(_ string, _ model.Message, _ time.Duration) (model.Message, error) {
++		return model.Message{}, errors.New("cloudcore is not ready")
++	})
++
++	scm := &ServerCertificateManager{}
++	err := scm.WaitForCAReady()
++	require.Error(t, err)
++	assert.Contains(t, err.Error(), "cloudcore is not ready")
++}
++
++func TestWaitForCAReadyWaitsForCloudConnection(t *testing.T) {
++	patchCAPolling(t, 10*time.Millisecond, 100*time.Millisecond)
++	cloudconnection.SetConnected(false)
++
++	calls := 0
++	patches := gomonkey.NewPatches()
++	defer patches.Reset()
++	patches.ApplyFunc(beehivecontext.SendSync, func(_ string, _ model.Message, _ time.Duration) (model.Message, error) {
++		calls++
++		return model.Message{}, errors.New("unexpected call")
++	})
++
++	scm := &ServerCertificateManager{}
++	require.Error(t, scm.WaitForCAReady())
++	assert.Equal(t, 0, calls, "the CA must not be requested while the cloud is not connected")
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7454** (2026-11-19): metaserver: keep retrying when getting the CA fails (@arshil42)
 - **PR #7432** (2026-11-16): Upgrade docker dependency to v28.0.0 (@Shelley-BaoYue)
 - **PR #7431** (2026-11-16): Upgrade golang.org/x/crypto to v0.52.0 (@Shelley-BaoYue)
 - **PR #7428** (closed): Upgrade golang.org/x/crypto to v0.52.0 (@kubeedge-bot)
 - **PR #7386** (2026-10-27): metaserver: add unit tests for the unhold-upgrade handlers (@adity1raut)
 - **PR #7379** (2026-10-27): metamanager : support for arrayList of objects for watch events creation (@EncHawk)
-- **PR #7371** (2026-11-17): cloudstream, edgestream: stop exec/attach busy loop after the client closes (@saket0187)
 
 ---
 
@@ -1718,64 +1444,53 @@ cloudstream, edgestream: stop exec/attach busy loop after the client closes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in containerattach_connection.go
+## X. Empirical Invariant Guard in manager.go
 
 **RULE**:
-When implementing operations in `cloud/pkg/cloudstream/containerattach_connection.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `edge/pkg/metamanager/metaserver/certificate/manager.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a9cb19f`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `61e2bda5`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cloud/pkg/cloudstream/containerattach_connection.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `edge/pkg/metamanager/metaserver/certificate/manager.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// Unblock any stuck write to the client; removing this connection waits for it.
-		ah.Conn.Close()
-		n, err := ah.Conn.Read(data[:])
-		if err != nil {
-			if !errors.Is(err, io.EOF) {
-				klog.Errorf("%s failed to read from client: %v", ah.String(), err)
-			} else {
-			sendCloseMessage()
-			return nil
-		}
-		if n <= 0 {
-			continue
-		}
-		msg := stream.NewMessage(connector.GetMessageID(), stream.MessageTypeData, data[:n])
-		if err := ah.WriteToTunnel(msg); err != nil {
-			klog.Errorf("%s failed to write to tunnel server, err: %v", ah.String(), err)
-		}
+var (
+	// caPollInterval and caPollTimeout set how often and how long WaitForCAReady
+	// tries to get the CA. They are variables so that tests can shorten them.
+	caPollInterval = 5 * time.Second
+	caPollTimeout  = 4 * time.Minute
+)
+
+// WaitForCAReady gets the Kubernetes CA from the cloud, retrying until it succeeds
+// or caPollTimeout passes. A failed attempt does not stop the retries.
+	var lastErr error
+	err := wait.PollUntilContextTimeout(context.Background(), caPollInterval, caPollTimeout, true, func(ctx context.Context) (bool, error) {
+		if err := scm.getKubeAPIServerCA(); err != nil {
+			klog.Errorf("get k8s CA failed, will retry: %v", err)
+			lastErr = err
+			return false, nil
+	if err != nil && lastErr != nil {
+		return fmt.Errorf("%v, last error: %v", err, lastErr)
+	}
+	return err
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		func() {
-			n, err := ah.Conn.Read(data[:])
-			if err != nil {
-				if !errors.Is(err, io.EOF) {
-					klog.Errorf("%s failed to read from client: %v", ah.String(), err)
-					return
-				}
-				sendCloseMessage()
-				return
-			}
-			if n <= 0 {
-				return
-			}
-			msg := stream.NewMessage(connector.GetMessageID(), stream.MessageTypeData, data[:n])
-			if err := ah.WriteToTunnel(msg); err != nil {
-				klog.Errorf("%s failed to write to tunnel server, err: %v", ah.String(), err)
-				return
-		}()
+	return wait.PollUntilContextTimeout(context.Background(), 5*time.Second, 4*time.Minute, true, func(ctx context.Context) (bool, error) {
+		err := scm.getKubeAPIServerCA()
+		if err != nil {
+			klog.Errorf("get k8s CA failed, %v", err)
+			return false, err
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a9cb19f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `61e2bda5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -4,24 +4,24 @@
 {
   "source_repository": "langchain4j/langchain4j",
   "source_url": "https://github.com/langchain4j/langchain4j",
-  "source_version": "8d519498",
+  "source_version": "802c4d10",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T12:58:35.051Z",
+  "timestamp": "2026-11-19T16:17:03.117Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-langchain4j-langchain4j",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [langchain4j/langchain4j](https://github.com/langchain4j/langchain4j) (Revision: `8d519498`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T12:58:35.051Z`  
+> **Provenance**: Harvested from [langchain4j/langchain4j](https://github.com/langchain4j/langchain4j) (Revision: `802c4d10`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T16:17:03.117Z`  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), F (Design Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from langchain4j/langchain4j:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T12:58:34.103Z  
+> **Harvest Timestamp**: 2026-11-19T16:17:01.971Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13419 stars
+- **Stars / Engagement**: 13424 stars
 
 ---
 
@@ -831,11 +831,11 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7122** (2026-11-18): **[BUG] OpenAiTokenCountEstimator cannot be created for GPT-6 model names**
+  *Symptoms*: **Describe the bug**  `new OpenAiTokenCountEstimator("gpt-6.1-sol")` throws an exception instead of returning an estimator. The `String` constructor selects `O200K_BASE` only for names starting with `o` or `gpt-4.` or `gpt-5`, so GPT-6 names fall through to `ENCODING_REGISTRY.getEncodingForModel(modelName)`, which jtokkit cannot resolve. `OpenAiChatModelName` has no GPT-6 constant, so the `String` constructor is the only way to use such a deployment.  **Log and Stack trace**  ``` java.lang.IllegalArgumentException: Model 'gpt-6.1-sol' is unknown to jtokkit 	at dev.langchain4j.model.openai.OpenAiTokenCountEstimator.<init>(OpenAiTokenCountEstimator.java:69) ```  **To Reproduce**  ```java // same for gpt-6-sol, gpt-6.1-sol, etc. new OpenAiTokenCountEstimator("gpt-6.1-sol"); ```  **Expected behavior**  The estimator is created and counts tokens with the o200k_base encoding.  **Please complete the following information:** - LangChain4j version: 1.23.0-beta33 (`main`) - LLM(s) used: OpenAI gpt-6.1-sol - Java version: 25 - Spring Boot version (if applicable): N/A  **Additional context**  Adding GPT-6 constants to `OpenAiChatModelName` is a separate change and not needed to fix this.  NOTE: this bug report is basically a copy of [Issue 5918](https://github.com/langchain4j/langchain4j/issues/5918) and [Issue 7121](https://github.com/langchain4j/langchain4j/issues/7121), which relate to missing models in Azure.
+
 - **Issue #7042** (2026-11-10): **[BUG] A parent listener with inheritedBySubagents() never sees an MCP or A2A subagent**
   *Symptoms*: <!-- Please provide as many details as possible, this will help us to deliver a fix as soon as possible. Thank you! -->  **Describe the bug**  DefaultMcpClientBuilder.setParent() (and the A2A one) don't call registerInheritedParentListener(parent.listener()) like the other agent types do, so a parent listener with inheritedBySubagents() never sees an MCP or A2A subagent. **Log and Stack trace** <!-- Please provide a log and a stack trace (with exception), if applicable. -->  **To Reproduce** <!-- Please provide a relevant code snippets to reproduce this bug. -->  **Expected behavior** <!-- A clear and concise description of what you expected to happen. -->  **Please complete the following information:** - LangChain4j version: - LLM(s) used:  - Java version:  - Spring Boot version (if applicable):   **Additional context** <!-- Add any other context about the problem here. --> 
-
-- **Issue #7041** (2026-11-10): **[BUG] DefaultMcpClient constructor doesn't close its transport when initialize() fails**
-  *Symptoms*: <!-- Please provide as many details as possible, this will help us to deliver a fix as soon as possible. Thank you! -->  **Describe the bug**  `DefaultMcpClient` constructor doesn't close its transport when initialize() fails, so with a Supplier<McpClient> each failed attempt can leave one open, for example a stdio subprocess.  **Log and Stack trace**  <!-- Please provide a log and a stack trace (with exception), if applicable. -->  **To Reproduce** <!-- Please provide a relevant code snippets to reproduce this bug. -->  **Expected behavior** <!-- A clear and concise description of what you expected to happen. -->  **Please complete the following information:** - LangChain4j version: - LLM(s) used:  - Java version:  - Spring Boot version (if applicable):   **Additional context** <!-- Add any other context about the problem here. --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -852,173 +852,147 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d6c0ff8` (2026-11-18)
-**Commit Message**: fix(agentic): convert a number to a BigDecimal or BigInteger agent argument (#7163)
+### Incident Patch 1: `802c4d10` (2026-11-19)
+**Commit Message**: Update dependency org.opensearch.client:opensearch-java to v2.26.0 (#7181)
 
-## Issue
-Closes #7161
+## Dependency convergence
 
-## Change
-A planner like the supervisor reads the arguments of an agent from JSON,
-so a number reaches the agentic scope as an `Integer`, a `Long` or a
-`Double`. `AgentUtil.adaptValueToType` converted such a value to every
-primitive numeric type and its wrapper, but passed it unchanged to an
-argument declared as `BigDecimal` or `BigInteger`, so the agent failed
-with `argument type mismatch`. The same happened invoking an untyped
-agent with a number for such an argument.
+opensearch-java 2.26.0 brings `commons-logging` 1.3.5 and `httpcore5-h2`
+5.3.4, which fail the `DependencyConvergence` enforcer rule in
+`langchain4j-opensearch` (against `commons-logging` 1.2 from
+`opensearch-rest-client`/`httpclient` 4.5.14, and `httpcore5-h2` 5.3.6
+from `httpclient5` 5.5.2). b8296ba4e pins both in the module's
+`dependencyManagement`: `commons-logging` 1.3.5 and `httpcore5-h2` 5.3.6
+(the version main already resolves). `httpclient5` stays on 5.5.2.
 
-The `Number` branch of `adaptValueToType` now also converts to:
-- `BigDecimal`, through the decimal string of the number, so that a
-`double` like `0.1` becomes `0.1` and not its binary approximation, and
-a `BigInteger` keeps all its digits;
-- `BigInteger`, through the same `BigDecimal`, taking the integer part,
-as an `int` argument already does.
+Resolved dependencies compared with main: opensearch-java 2.9.0 →
+2.26.0, commons-logging 1.2 → 1.3.5, parsson 1.1.4 → 1.1.6, new
+jakarta.annotation-api 1.3.5 (runtime).
 
-Strings were already converted correctly through the JSON reader; a test
-now pins that too.
+The OpenSearch integration tests were run locally, because they do not
+run on PRs: 128 run, 0 failures, 2 skipped by design, including the
+AWS/LocalStack IT (9/9). Enforcer and revapi pass.
 
-Tests added to `AgentArgumentConversionTest`: conversion of `Integer`,
-`Double` (including `0.1`) and a large `BigInteger` to `BigDecimal`; of
-`Integer`, `Long` and a large `
+---
 
-**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/AgentUtil.java` (modified, +5/-0)
+This PR contains the following updates:
+
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+|
+[org.opensearch.client:opensearch-java](https://redirect.
+
+**File**: `langchain4j-opensearch/pom.xml` (modified, +11/-1)
 ```diff
-@@ -43,6 +43,7 @@
- import java.lang.reflect.ParameterizedType;
- import java.lang.reflect.Proxy;
- import java.lang.reflect.Type;
-+import java.math.BigDecimal;
- import java.util.ArrayList;
- import java.util.Arrays;
- import java.util.Collection;
-@@ -532,6 +533,10 @@ private static Object adaptValueToType(Object value, Class<?> type, String argum
-                 case "float", "java.lang.Float" -> n.floatValue();
-                 case "short", "java.lang.Short" -> n.shortValue();
-                 case "byte", "java.lang.Byte" -> n.byteValue();
-+                // through the decimal string of the number, so that a double like 0.1 becomes 0.1 and not its
-+                // binary approximation, and a BigInteger or BigDecimal keeps all its digits
-+                case "java.math.BigDecimal" -> new BigDecimal(n.toString());
-+                case "java.math.BigInteger" -> new BigDecimal(n.toString()).toBigInteger();
-                 default -> value;
-             };
-         }
-```
-
-**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/AgentArgumentConversionTest.java` (modified, +53/-1)
-```diff
-@@ -8,6 +8,8 @@
- import dev.langchain4j.agentic.scope.DefaultAgenticScope;
- import dev.langchain4j.service.V;
- import java.lang.reflect.Method;
-+import java.math.BigDecimal;
-+import java.math.BigInteger;
- import java.util.Map;
- import org.junit.jupiter.api.Test;
+@@ -13,7 +13,7 @@
+     <name>LangChain4j :: Integration :: OpenSearch</name>
  
-@@ -42,6 +44,56 @@ interface RecordAgent {
-         String register(@V("doc") Constructible doc);
-     }
+     <properties>
+-        <opensearch-java.version>2.9.0</opensearch-java.version>
++        <opensearch-java.version>2.26.0</opensearch-java.version>
+         <opensearch-containers.version>2.1.4</opensearch-containers.version>
+         <jsonpath.version>2.10.0</jsonpath.version>
+     </properties>
+@@ -25,6 +25,11 @@
+                 <artifactId>commons-codec</artifactId>
+                 <version>1.23.0</version>
+             </dependency>
++            <dependency>
++                <groupId>commons-logging</groupId>
++                <artifactId>commons-logging</artifactId>
++                <version>1.3.5</version>
++            </dependency>
+             <dependency>
+                 <groupId>jakarta.json</groupId>
+                 <artifactId>jakarta.json-api</artifactId>
+@@ -45,6 +50,11 @@
+                 <artifactId>httpcore5</artifactId>
+                 <version>5.4.4</version>
+             </dependency>
++            <dependency>
++                <groupId>org.apache.httpcomponents.core5</groupId>
++                <artifactId>httpcore5-h2</artifactId>
++                <version>5.3.6</version>
++            </dependency>
+         </dependencies>
+     </dependencyManagement>
  
-+    interface PaymentAgent {
-+        @Agent("pays an amount")
-+        String pay(@V("doc") BigDecimal amount);
-+    }
-+
-+    interface CountingAgent {
-+        @Agent("counts something")
-+        String count(@V("doc") BigInteger count);
-+    }
-+
-+    @Test
-+    void a_number_from_the_planner_is_converted_to_a_big_decimal_argument() {
-+        assertThat(arguments(PaymentAgent.class, 12)).isEqualTo(new BigDecimal("12"));
-+        assertThat(arguments(PaymentAgent.class, 12.5)).isEqualTo(new BigDecimal("12.5"));
-+        assertThat(arguments(PaymentAgent.class, 0.1)).isEqualTo(new BigDecimal("0.1"));
-+        assertThat(arguments(PaymentAgent.class, new BigInteger("123456789012345678901234567890")))
-+                .isEqualTo(new BigDecimal("123456789012345678901234567890"));
-+    }
-+
-+    @Test
-+    void a_number_from_the_planner_is_converted_to_a_big_integer_argument() {
-+        assertThat(arguments(CountingAgent.class, 12)).isEqualTo(BigInteger.valueOf(12));
-+        assertThat(arguments(CountingAgent.class, 12L)).isEqualTo(BigInteger.valueOf(12));
-+        assertThat(arguments(CountingAgent.class, new BigDecimal("123456789012345678901234567890")))
-+                .isEqualTo(new BigInteger("123456789012345678901234567890"));
-+    }
-+
-+    @Test
-+    void a_string_from_the_planner_is_converted_to_a_big_number_argument() {
-+        assertThat(arguments(PaymentAgent.class, "12.5")).isEqualTo(new BigDecimal("12.5"));
-+        assertThat(arguments(CountingAgent.class, "12")).isEqualTo(BigInteger.valueOf(12));
-+    }
-+
-+    public static class Payer {
-+        @Agent(description = "pays an amount", outputKey = "receipt")
-+        public String pay(@V("amount") BigDecimal amount) {
-+            return "paid " + amount.toPlainString();
-+        }
-+    }
-+
-+    @Test
-+    void an_agent_with_a_big_decimal_argument_can_be_invoked_with_a_number() {
-+        UntypedAgent agent = AgenticServices.sequenceBuilder()
-+                .subAgents(new Payer())
-+                .outputKey("receipt")
-+                .build();
-+
-+        assertThat(agent.invoke(Map.of("amount", 12.5))).isEqualTo("paid 12.5");
-+    }
-+
-     @Test
-     void a_type_the_planner_cannot_build_names_the_argument_and_the_remedy() {
-         assertThatThrownBy(() -> arguments(RegistrationAgent.class, Map.of("author", "Mario")))
-@@ -66,7 +118,7 @@ void a_record_argument_is_built_from_the_planners_map() {
-         assertThat(((Constructible) argument).author()).isEqualTo("Mario");
-     }
- 
--    private static Object arguments(Class<?> agentClass, Map<String, Object> plannerValue) {
-+    private static Object arguments(Class<?> agentClass, Object plannerValue) {
-         DefaultAgenticScope scope = new AgenticScopeRegistry("test-agent").create("test-memory");
-         scope.writeState("doc", plannerValue);
-         Method method = agentClass.getDeclaredMethods()[0];
 ```
 
 ---
 
-### Incident Patch 2: `8d519498` (2026-11-18)
-**Commit Message**: Release: exclude only the integration test modules of the default build
+### Incident Patch 2: `41c197df` (2026-11-19)
+**Commit Message**: Update dependency org.jetbrains:annotations to v23.1.0 (#7157)
 
-The "Release the rest of the modules" step excluded every directory under
-integration-tests that has a pom.xml. The Spring starter and Quarkus
-extension test apps are only added to the build by the
-test-assertions-frameworks profile, and Maven fails on an exclusion of a
-module that is not in the reactor. The exclusions now come from the default
-<modules> of integration-tests/pom.xml.
+This PR contains the following updates:
 
-**File**: `.github/workflows/release.yaml` (modified, +4/-2)
-```diff
-@@ -154,8 +154,10 @@ jobs:
-             EXCLUDES="$EXCLUDES,$EMBEDDING_MODULES_EXCLUDES"
-           fi
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+|
+[org.jetbrains:annotations](https://redirect.github.com/JetBrains/java-annotations)
+| `23.0.0` → `23.1.0` |
+![age](https://developer.mend.io/api/mc/badges/age/maven/org.jetbrains:annotations/23.1.0?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/org.jetbrains:annotations/23.0.0/23.1.0?slim=true)
+|
+
+---
+
+> [!WARNING]
+> Some dependencies could not be looked up. Check the [Dependency
+Dashboard](../issues/2069) for more information.
+
+---
+
+### Release Notes
+
+<details>
+<summary>JetBrains/java-annotations
+(org.jetbrains:annotations)</summary>
+
+###
+[`v23.1.0`](https://redirect.github.com/JetBrains/java-annotations/blob/HEAD/CHANGELOG.md#Version-2310)
+
+[Compare
+Source](https://redirect.github.com/JetBrains/java-annotations/compare/23.0.0...23.1.0)
+
+- Added new annotation: `@ApiStatus.Obsolete`.
+
+</details>
+
+---
+
+### Configuration
+
+📅 **Schedule**: (in timezone Europe/Berlin)
+
+- Branch creation
  
--          # Exclude integration-tests and all its submodules
--          INTEGRATION_TEST_MODULES=$(find integration-tests -mindepth 1 -maxdepth 2 -type d -exec test -f "{}/pom.xml" \; -print | paste -sd , -)
-+          # Exclude integration-tests and all its submodules. Only the modules of the default build are listed:
-+          # modules added by a profile (e.g. test-assertions-frameworks) are not in this reactor, and Maven
-+          # fails on an exclusion of a module it does not know.
-+          INTEGRATION_TEST_MODULES=$(awk '/<modules>/ { in_modules = 1 } in_modules && /<module>/ { gsub(/.*<module>|<\/module>.*/, ""); print "integration-tests/" $0 } /<\/modules>/ { exit }' integration-tests/pom.xml | paste -sd , -)
-           EXCLUDES="$EXCLUDES,!integration-tests"
-           if [ -n "$INTEGRATION_TEST_MODULES" ]; then
-             INTEGRATION_TEST_EXCLUDES=$(echo "$INTEGRATION_TEST_MODULES" | sed 's/[^,]*/!\0/g')
+
+**File**: `langchain4j-milvus-v2/pom.xml` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@
+             <dependency>
+                 <groupId>org.jetbrains</groupId>
+                 <artifactId>annotations</artifactId>
+-                <version>23.0.0</version>
++                <version>23.1.0</version>
+             </dependency>
+         </dependencies>
+     </dependencyManagement>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7181** (2026-11-19): Update dependency org.opensearch.client:opensearch-java to v2.26.0 (@renovate[bot])
 - **PR #7167** (2026-11-18): In-process models: warn to load only ONNX model files you trust (@dliubarskyi)
 - **PR #7164** (2026-11-17): Google GenAI TTS IT: transcribe the audio with gemini-3.8-flash (@dliubarskyi)
 - **PR #7163** (2026-11-18): fix(agentic): convert a number to a BigDecimal or BigInteger agent argument (@Ayomipo18)
 - **PR #7159** (2026-11-18): MCP Streamable HTTP: fail on an error status without reading the response body (@dliubarskyi)
-- **PR #7154** (2026-11-17): Renovate: keep kotlinx-coroutines and the Kotlin compiler compatible with Kotlin 1.9 (@dliubarskyi)
-- **PR #7153** (2026-11-17): Azure: azure-sdk-bom 1.3.10 and Netty 4.2 in the Azure modules (@dliubarskyi)
+- **PR #7157** (2026-11-19): Update dependency org.jetbrains:annotations to v23.1.0 (@renovate[bot])
 
 ---
 
@@ -1038,35 +1012,41 @@ module that is not in the reactor. The exclusions now come from the default
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agentic): convert a number to a BigDecimal or BigInteger agent argument
+## X. Update dependency org.opensearch.client:opensearch-java to v2.26.0
 
 **RULE**:
-When implementing operations in `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/AgentUtil.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `langchain4j-opensearch/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d6c0ff8`: agentic): convert a number to a BigDecimal or BigInteger agent argument. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `802c4d10`: Update dependency org.opensearch.client:opensearch-java to v2.26.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/AgentUtil.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-opensearch/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import java.math.BigDecimal;
-                // through the decimal string of the number, so that a double like 0.1 becomes 0.1 and not its
-                // binary approximation, and a BigInteger or BigDecimal keeps all its digits
-                case "java.math.BigDecimal" -> new BigDecimal(n.toString());
-                case "java.math.BigInteger" -> new BigDecimal(n.toString()).toBigInteger();
+        <opensearch-java.version>2.26.0</opensearch-java.version>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.3.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5-h2</artifactId>
+                <version>5.3.6</version>
+            </dependency>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        <opensearch-java.version>2.9.0</opensearch-java.version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d6c0ff8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `802c4d10` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
