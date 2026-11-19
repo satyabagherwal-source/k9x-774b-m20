@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T20:34:29.190Z",
+  "updated_at": "2026-11-19T20:56:27.463Z",
   "statistics": {
-    "total_nodes": 391,
+    "total_nodes": 392,
     "total_edges": 181,
     "domain_distribution": {
-      "D": 260,
+      "D": 261,
       "M": 1,
       "H": 59,
       "J": 14,
@@ -8744,6 +8744,28 @@
       ],
       "created_at": "2026-11-19T20:34:29.190Z",
       "updated_at": "2026-11-19T20:34:29.190Z"
+    },
+    "DOM-D-9D38D4A5": {
+      "id": "DOM-D-9D38D4A5",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): skyhook-io/radar",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  \n> **Source**: github ([https://github.com/skyhook-i -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  \n> **Source**: github ([https://github.com/skyhook-i",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://skyhook-io-radar/skyhook-io-radar-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T20:55:59.086Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (skyhook-io-radar)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-19T20:56:27.463Z",
+      "updated_at": "2026-11-19T20:56:27.463Z"
     }
   },
   "edges": [

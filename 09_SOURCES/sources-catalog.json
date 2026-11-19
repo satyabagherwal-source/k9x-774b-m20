@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "9ef0e544",
+    "sourceVersion": "12f3d096",
     "license": "MIT",
-    "contentHash": "ccb24fadce8d5879391a5fbd11292c95f3306445aeec933e3bf312b544f32689",
-    "lastHarvestedAt": "2026-11-18T20:14:32.165Z",
+    "contentHash": "639d0dcf56ad0e78636af32e2143928c23aed9fd6fc72ccb2daa772728596161",
+    "lastHarvestedAt": "2026-11-19T20:55:55.790Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "dc1a4622",
+    "sourceVersion": "cc6aee8f",
     "license": "Apache-2.0",
-    "contentHash": "b27cc1fb7edb3ca6881083d66ca5ea9b1d1ef802e1dd649eb310c8a7c94ca1f7",
-    "lastHarvestedAt": "2026-11-18T15:35:16.325Z",
+    "contentHash": "cd1cece927a427fa89a0d53fb52d4eb7e8e7591ee96b8d9ecf2dbcac2d6fb24a",
+    "lastHarvestedAt": "2026-11-19T20:55:53.784Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "a1b7415e",
+    "sourceVersion": "48d67dfb",
     "license": "NOASSERTION",
-    "contentHash": "dd8b44420f8c6c58a668b36f9b5f0a9279d8324af5fccc5d5137f40cef57c171",
-    "lastHarvestedAt": "2026-11-19T14:03:33.832Z",
+    "contentHash": "27bbfe828429281bfe4b8fb2fd7b7477e3956e931a5f89b8727c6f6786355c1c",
+    "lastHarvestedAt": "2026-11-19T20:55:52.421Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "e02bbdaa",
+    "sourceVersion": "ccb8393e",
     "license": "Apache-2.0",
-    "contentHash": "c17403fb063e4f1753bfe4f6c25d2256a023a2385a7fdc6c9400399e6054250e",
-    "lastHarvestedAt": "2026-11-18T16:31:42.390Z",
+    "contentHash": "952c6adf3991acc07b464136a80c3d71e83ae82b488f01d798878534c6766208",
+    "lastHarvestedAt": "2026-11-19T20:55:49.692Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {

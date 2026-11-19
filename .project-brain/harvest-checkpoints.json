@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T20:33:56.729Z",
+  "last_updated": "2026-11-19T20:55:55.822Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "ccb24fadce8d5879391a5fbd11292c95f3306445aeec933e3bf312b544f32689",
-      "verified_at": "2026-11-18T20:14:32.172Z",
+      "content_hash": "639d0dcf56ad0e78636af32e2143928c23aed9fd6fc72ccb2daa772728596161",
+      "verified_at": "2026-11-19T20:55:55.821Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T20:14:32.172Z"
+      "last_updated": "2026-11-19T20:55:55.822Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -4281,14 +4281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xerj-org-xerj",
-      "content_hash": "b27cc1fb7edb3ca6881083d66ca5ea9b1d1ef802e1dd649eb310c8a7c94ca1f7",
-      "verified_at": "2026-11-18T15:35:16.332Z",
+      "content_hash": "cd1cece927a427fa89a0d53fb52d4eb7e8e7591ee96b8d9ecf2dbcac2d6fb24a",
+      "verified_at": "2026-11-19T20:55:53.792Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T15:35:16.332Z"
+      "last_updated": "2026-11-19T20:55:53.792Z"
     },
     "markmead/hyperui": {
       "repository": "markmead/hyperui",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "dd8b44420f8c6c58a668b36f9b5f0a9279d8324af5fccc5d5137f40cef57c171",
-      "verified_at": "2026-11-19T14:03:33.840Z",
+      "content_hash": "27bbfe828429281bfe4b8fb2fd7b7477e3956e931a5f89b8727c6f6786355c1c",
+      "verified_at": "2026-11-19T20:55:52.430Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T14:03:33.840Z"
+      "last_updated": "2026-11-19T20:55:52.430Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "c17403fb063e4f1753bfe4f6c25d2256a023a2385a7fdc6c9400399e6054250e",
-      "verified_at": "2026-11-18T16:31:42.400Z",
+      "content_hash": "952c6adf3991acc07b464136a80c3d71e83ae82b488f01d798878534c6766208",
+      "verified_at": "2026-11-19T20:55:49.700Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T16:31:42.400Z"
+      "last_updated": "2026-11-19T20:55:49.701Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",

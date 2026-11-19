@@ -11375,3 +11375,8 @@
 | `CYCLE-20261119-0PST` | `2026-11-19T20:24:26.525Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9437` | Yes (`9caa6622...`) |
 | `CYCLE-20261119-CXRF` | `2026-11-19T20:33:56.716Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9438, Rule 9439, Rule 9440` | Yes (`7866f4e6...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T20:34:29.192Z` | `rtk-ai-rtk` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-E8006564` [Domain H] | Yes (`1f898ab4...`) |
+| `CYCLE-20261119-52UW` | `2026-11-19T20:55:49.688Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md` | Yes (`952c6adf...`) |
+| `CYCLE-20261119-54YP` | `2026-11-19T20:55:52.417Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9441` | Yes (`27bbfe82...`) |
+| `CYCLE-20261119-560K` | `2026-11-19T20:55:53.780Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9442` | Yes (`cd1cece9...`) |
+| `CYCLE-20261119-57KA` | `2026-11-19T20:55:55.786Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`639d0dcf...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T20:56:27.465Z` | `skyhook-io-radar` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9D38D4A5` [Domain D] | Yes (`7e380c97...`) |

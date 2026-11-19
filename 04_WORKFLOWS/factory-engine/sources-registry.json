@@ -41,22 +41,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-19T19:31:12.886Z",
-    "lastVerified": "2026-11-19T19:31:12.886Z",
+    "lastChecked": "2026-11-19T20:55:55.330Z",
+    "lastVerified": "2026-11-19T20:55:55.330Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "ccb24fadce8d5879391a5fbd11292c95f3306445aeec933e3bf312b544f32689",
-    "promotedRulesCount": 1,
+    "contentHash": "639d0dcf56ad0e78636af32e2143928c23aed9fd6fc72ccb2daa772728596161",
+    "promotedRulesCount": 0,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9ef0e544"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -80,8 +79,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T20:34:00.150Z",
-    "lastVerified": "2026-11-19T20:34:00.150Z",
+    "lastChecked": "2026-11-19T20:55:58.963Z",
+    "lastVerified": "2026-11-19T20:55:58.963Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -190,9 +189,9 @@
   "sxyazi-yazi": {
     "name": "yazi",
     "officialUrl": "https://github.com/sxyazi/yazi",
-    "lastChecked": "2026-11-18T09:43:10.935Z",
+    "lastChecked": "2026-11-19T20:55:36.013Z",
     "revisionIdentifier": "d5e4beb6",
-    "lastVerified": "2026-11-18T09:43:10.935Z"
+    "lastVerified": "2026-11-19T20:55:36.013Z"
   },
   "hf-edge0-audio8-asr-infinite": {
     "name": "Edge0/Audio8-ASR-Infinite",
@@ -1144,14 +1143,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T14:03:32.801Z",
-    "lastVerified": "2026-11-19T14:03:32.801Z",
+    "lastChecked": "2026-11-19T20:55:51.402Z",
+    "lastVerified": "2026-11-19T20:55:51.402Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "dd8b44420f8c6c58a668b36f9b5f0a9279d8324af5fccc5d5137f40cef57c171",
+    "contentHash": "27bbfe828429281bfe4b8fb2fd7b7477e3956e931a5f89b8727c6f6786355c1c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2837,14 +2836,14 @@
     "officialUrl": "https://github.com/xerj-org/xerj",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T15:35:15.693Z",
-    "lastVerified": "2026-11-18T15:35:15.693Z",
+    "lastChecked": "2026-11-19T20:55:52.779Z",
+    "lastVerified": "2026-11-19T20:55:52.779Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "b27cc1fb7edb3ca6881083d66ca5ea9b1d1ef802e1dd649eb310c8a7c94ca1f7",
+    "contentHash": "cd1cece927a427fa89a0d53fb52d4eb7e8e7591ee96b8d9ecf2dbcac2d6fb24a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3150,14 +3149,14 @@
     "officialUrl": "https://github.com/skyhook-io/radar",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T16:31:41.087Z",
-    "lastVerified": "2026-11-18T16:31:41.087Z",
+    "lastChecked": "2026-11-19T20:55:48.025Z",
+    "lastVerified": "2026-11-19T20:55:48.025Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "c17403fb063e4f1753bfe4f6c25d2256a023a2385a7fdc6c9400399e6054250e",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "contentHash": "952c6adf3991acc07b464136a80c3d71e83ae82b488f01d798878534c6766208",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8464,5 +8463,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hartemyaakoub-seo-toolkit": {
+    "name": "seo-toolkit",
+    "officialUrl": "https://github.com/hartemyaakoub/seo-toolkit",
+    "lastChecked": "2026-11-19T20:55:38.521Z",
+    "revisionIdentifier": "e1126c75",
+    "lastVerified": "2026-11-19T20:55:38.521Z"
+  },
+  "twostraws-controlroom": {
+    "name": "ControlRoom",
+    "officialUrl": "https://github.com/twostraws/ControlRoom",
+    "lastChecked": "2026-11-19T20:55:41.014Z",
+    "revisionIdentifier": "1764564f",
+    "lastVerified": "2026-11-19T20:55:41.014Z"
   }
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T20:34:31.581Z",
-  "total_records": 2022,
+  "last_updated": "2026-11-19T20:56:29.763Z",
+  "total_records": 2024,
   "domains": {
     "A": {
       "total": 15,
@@ -55,7 +55,7 @@
       ]
     },
     "D": {
-      "total": 839,
+      "total": 840,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -895,7 +895,8 @@
         "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-invarian",
         "DOM-D-6FA503EE",
         "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-",
-        "DOM-D-2BF9F19D"
+        "DOM-D-2BF9F19D",
+        "DOM-D-9D38D4A5"
       ]
     },
     "E": {
@@ -1954,7 +1955,7 @@
       ]
     },
     "K": {
-      "total": 104,
+      "total": 105,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2059,7 +2060,8 @@
         "DOM-K-F1A58A5D",
         "domain_intelligence-quality-verification-intelligence-meshtastic-meshtastic-android-core-invariants",
         "domain_intelligence-quality-verification-intelligence-meshtastic-meshtastic-android-learnings-core-i",
-        "domain_intelligence-quality-verification-intelligence-chaos-mesh-chaos-mesh-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-chaos-mesh-chaos-mesh-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-xerj-org-xerj-learnings-core-invariants"
       ]
     },
     "L": {
@@ -9388,8 +9390,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "a7e53c52990036ebd30c3605edf842cf3ee0ee388bc98036d8fecdd9fa6ea4b0",
-      "created_at": "2026-11-19T14:03:34.202Z"
+      "content_hash": "59e0b35eeeefc3c9a48a07bde3000188bfa588f91b387aa5dc6b78cb731359d0",
+      "created_at": "2026-11-19T20:55:52.776Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -9466,8 +9468,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "b9a19603c1ca6b59b0fa9a8530227a516fdbd3239a25cfeb673279c54d4c2cb0",
-      "created_at": "2026-11-18T16:01:21.385Z"
+      "content_hash": "12ff1f70cb4c9f077ea8b5b35aeac0ed647558b8cedff2cd7c2b1bd891aa2c83",
+      "created_at": "2026-11-19T20:56:28.453Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -11317,8 +11319,8 @@
       "title": "Technical Construction Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bitterbot-ai-bitterbot-desktop-technical-construction-intelligence-bitterbot-ai-.md",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "content_hash": "9fec65337b5b2abcabedc6046365c1e6f879d4c3b70d97d8fb8bc5c58468e3c3",
-      "created_at": "2026-11-14T00:48:51.423Z"
+      "content_hash": "7024abe2763bf9fbf3e059acd3181c609aa12dd3b33066b68b64d04fb0ac9bd7",
+      "created_at": "2026-11-19T20:55:56.168Z"
     },
     "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
@@ -14945,8 +14947,8 @@
       "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
       "repository": "skyhook-io/radar",
-      "content_hash": "f0a84ee02245f30c2963995b21ef50eca4b40b3d493ff9f5bb0c71efa1b871e9",
-      "created_at": "2026-11-18T16:31:42.845Z"
+      "content_hash": "be876c3ee15ac5c57a01b167721898372b26863e3fd5512c810a5275541cac25",
+      "created_at": "2026-11-19T20:55:49.902Z"
     },
     "DOM-D-694FEEFE": {
       "record_id": "DOM-D-694FEEFE",
@@ -15056,8 +15058,8 @@
       "title": "Architecture Intelligence: skyhook-io-radar-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-learnings-architecture-intelligence-skyhook-io-radar-learnings-.md",
       "repository": "skyhook-io-radar-learnings",
-      "content_hash": "a2c4f9280cabe8184f3481473b6347414da0308c1d048d717775bc77b712a309",
-      "created_at": "2026-11-18T16:32:24.350Z"
+      "content_hash": "ce2bda2dad6dfccd585bc4cec5b657359ef0fb9369a4623bd5d68e87bff17cab",
+      "created_at": "2026-11-19T20:56:27.886Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants",
@@ -29035,8 +29037,8 @@
       "title": "Quality & Verification Intelligence: xerj-org/xerj Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-xerj-org-xerj-quality-verification-intelligence-xerj-org-xerj-core-invariants.md",
       "repository": "xerj-org/xerj",
-      "content_hash": "a070a9467af6caf5b7221eda64bbf723fa9f95a8ad5d0cccb709974eea1db290",
-      "created_at": "2026-11-17T22:40:03.972Z"
+      "content_hash": "d81b2b84f92bebb7366034a5d70d6ae60e6dae055716d48572b5e8e02e50c807",
+      "created_at": "2026-11-19T20:55:54.138Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari",
@@ -33920,6 +33922,57 @@
       "repository": "tableproapp-tablepro-learnings",
       "content_hash": "64b7afbfa5ffd43f1b2de0982efa50da62e1596647f60dea3e3f68fcf859e9d5",
       "created_at": "2026-11-19T20:34:30.765Z"
+    },
+    "DOM-D-9D38D4A5": {
+      "record_id": "DOM-D-9D38D4A5",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): skyhook-io/radar",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  \n> **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  \n> **Source Version**: `ccb8393e`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synt",
+      "content_hash": "7e380c978c5bd99683b42931cc74182fa86f8bd2be3268d383669f033a8272d9",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  \n> **Source**: github ([https://github.com/skyhook-i -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  \n> **Source**: github ([https://github.com/skyhook-i",
+      "provenance": {
+        "source_uri": "project://skyhook-io-radar/skyhook-io-radar-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T20:55:59.086Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (skyhook-io-radar)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of skyhook-io-radar"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T20:56:27.441Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-xerj-org-xerj-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-xerj-org-xerj-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: xerj-org-xerj-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-xerj-org-xerj-learnings-quality-verification-intelligence-xerj-org-xerj-learning.md",
+      "repository": "xerj-org-xerj-learnings",
+      "content_hash": "3b5219ac467ca3fd83406f3219bd6efc765b4b05f759fe152f6830fbc3adc12e",
+      "created_at": "2026-11-19T20:56:29.763Z"
     }
   }
 }

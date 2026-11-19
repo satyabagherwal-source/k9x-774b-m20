@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T20:34:31.192Z",
+  "updated_at": "2026-11-19T20:56:29.351Z",
   "stats": {
-    "total_discovered": 6003,
-    "approved_pending_harvest": 5686,
+    "total_discovered": 6018,
+    "approved_pending_harvest": 5687,
     "harvested_count": 0,
-    "rejected_count": 317,
+    "rejected_count": 331,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5654,
+      "COMMUNITY_AND_EXPERT": 5669,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 112,
       "ENGINEERING_BLOGS": 4,
@@ -129868,6 +129868,239 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
         "fileName": "provablehq-snarkos-learnings.md"
+      }
+    },
+    "SRC-C23EDB5C2306": {
+      "id": "SRC-C23EDB5C2306",
+      "url": "http://localhost:1/",
+      "title": "http://localhost:1/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T20:56:27.591Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
+      }
+    },
+    "SRC-9A082B67929A": {
+      "id": "SRC-9A082B67929A",
+      "url": "https://github.com/xerj-org/xerj",
+      "title": "https://github.com/xerj-org/xerj",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T20:56:28.797Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
+        "fileName": "xerj-org-xerj-learnings.md"
+      }
+    },
+    "SRC-F1A1FD760631": {
+      "id": "SRC-F1A1FD760631",
+      "url": "http://localhost:9604/",
+      "title": "http://localhost:9604/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T20:56:28.837Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
+        "fileName": "xerj-org-xerj-learnings.md"
+      }
+    },
+    "SRC-87F826F3CF63": {
+      "id": "SRC-87F826F3CF63",
+      "url": "http://localhost:9605/",
+      "title": "http://localhost:9605/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T20:56:28.886Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
+        "fileName": "xerj-org-xerj-learnings.md"
+      }
+    },
+    "SRC-6364B5079D94": {
+      "id": "SRC-6364B5079D94",
+      "url": "http://localhost:9600/",
+      "title": "http://localhost:9600/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T20:56:28.924Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
+        "fileName": "xerj-org-xerj-learnings.md"
+      }
+    },
+    "SRC-A72B5F6F72E8": {
+      "id": "SRC-A72B5F6F72E8",
+      "url": "http://localhost:9601/",
+      "title": "http://localhost:9601/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T20:56:28.966Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
+        "fileName": "xerj-org-xerj-learnings.md"
+      }
+    },
+    "SRC-10CB21533FE8": {
+      "id": "SRC-10CB21533FE8",
+      "url": "http://localhost:8000/v1%60",
+      "title": "http://localhost:8000/v1%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T20:56:29.014Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
+        "fileName": "xerj-org-xerj-learnings.md"
+      }
+    },
+    "SRC-A917627111DE": {
+      "id": "SRC-A917627111DE",
+      "url": "http://localhost:8000/v1/embeddings%60",
+      "title": "http://localhost:8000/v1/embeddings%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T20:56:29.053Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
+        "fileName": "xerj-org-xerj-learnings.md"
+      }
+    },
+    "SRC-B3113AE5D894": {
+      "id": "SRC-B3113AE5D894",
+      "url": "http://host:port`",
+      "title": "http://host:port`",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T20:56:29.103Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
+        "fileName": "xerj-org-xerj-learnings.md"
+      }
+    },
+    "SRC-9AB62CE79C2F": {
+      "id": "SRC-9AB62CE79C2F",
+      "url": "http://host:port/`",
+      "title": "http://host:port/`",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T20:56:29.140Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
+        "fileName": "xerj-org-xerj-learnings.md"
+      }
+    },
+    "SRC-528B284EDEFF": {
+      "id": "SRC-528B284EDEFF",
+      "url": "http://host:port/v1`",
+      "title": "http://host:port/v1`",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T20:56:29.190Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
+        "fileName": "xerj-org-xerj-learnings.md"
+      }
+    },
+    "SRC-D4EDD0B57B00": {
+      "id": "SRC-D4EDD0B57B00",
+      "url": "http://127.0.0.2:9/",
+      "title": "http://127.0.0.2:9/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T20:56:29.228Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
+        "fileName": "xerj-org-xerj-learnings.md"
+      }
+    },
+    "SRC-EE068D43947A": {
+      "id": "SRC-EE068D43947A",
+      "url": "http://localhost:9200/",
+      "title": "http://localhost:9200/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T20:56:29.265Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
+        "fileName": "xerj-org-xerj-learnings.md"
+      }
+    },
+    "SRC-61E4024DD2F8": {
+      "id": "SRC-61E4024DD2F8",
+      "url": "http://localhost:9200`",
+      "title": "http://localhost:9200`",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T20:56:29.313Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
+        "fileName": "xerj-org-xerj-learnings.md"
+      }
+    },
+    "SRC-DE50753565B7": {
+      "id": "SRC-DE50753565B7",
+      "url": "http://a:1/",
+      "title": "http://a:1/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS",
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T20:56:29.351Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
+        "fileName": "xerj-org-xerj-learnings.md"
       }
     }
   }

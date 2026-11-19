@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T16:01:21.074Z",
+  "timestamp": "2026-11-19T20:56:28.173Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-freenet-freenet-core-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [freenet-freenet-core-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T16:01:21.074Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T20:56:28.173Z`  
 > **Learning ID**: `LEARN-EVO-freenet-freenet-core-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 67%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 81%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from freenet-freenet-core-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `9811972d`  
+> **Source Version**: `48d67dfb`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T15:59:53.217Z  
+> **Timestamp**: 2026-11-19T20:55:51.408Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T15:59:53.211Z  
+> **Harvest Timestamp**: 2026-11-19T20:55:51.402Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3129 stars
+- **Stars / Engagement**: 3131 stars
 
 ---
 
@@ -1766,11 +1766,13 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6280** (2026-11-18): **fix(hosting): bound per-neighbor hosting adverts and close disconnect race**
-  *Symptoms*: ## Problem  `NeighborHostingManager` stores, per ring neighbour, the set of contract ids that neighbour advertises (`neighbor_contracts`). Three weaknesses in how it is filled and consumed:  1. **Unbounded per-neighbour set.** `HostingAnnounce{added}` and an unsolicited `HostingStateResponse{contracts}` were stored verbatim, with no cap, until the connection dropped. Each message also cloned the neighbour's whole current set (`previously_known`) to compute the diff, so a one-id message cost O(stored set) time and a transient copy of the set. 2. **Per-copy sync work.** Duplicate ids in `added` each passed the overlap filter, so the dispatch loop in `node.rs` did one full-state `get_contract_state_by_id` and one `SyncStateToPeer` per copy. The `Summaries` path already caps the same work at `MAX_STALE_SYNCS_PER_SUMMARIES` (32). 3. **Check-then-write race.** The dispatch arm resolves the sender's key, then writes. A large snapshot applied after `on_peer_disconnected` re-created the departed sender's entry, which nothing removes.  ## Approach  - `MAX_ADVERTISED_CONTRACTS_PER_NEIGHBOR = 65,536` (about 4 MiB per neighbour). An honest peer advertises what it hosts. The hosting cache charges at least 8 KiB per hosted contract against 1/8 of RAM, which is 32,768 contracts on a 2 GiB node; measured sets are far smaller (telemetry median 417, max 2,814; a busy peer about 6,200). 65,536 is twice the 2 GiB ceiling and about 10 times the largest measured set. A node with over 16 GiB of RAM 
+- **Issue #6300** (2026-11-19): **build: release 0.2.161**
+  *Symptoms*: **Automated release PR**  - freenet: → **0.2.161** - fdev: → **0.3.323**  This PR will auto-merge once GitHub CI passes. Generated by: `.github/workflows/release.yml` 
 
-- **Issue #6279** (2026-11-18): **fix: bound remote-controlled relay inputs (UPDATE loop, HTL, reconcile rate, streaming admission)**
-  *Symptoms*: ## Problem  Four relay paths acted on a value from the inbound message, or on a count of inbound messages, without a bound of their own:  - **UPDATE request loop (#3911).** `UpdateMsg::RequestUpdate` and `RequestUpdateStreaming` carry no hops-to-live and no visited list, and each relay excludes only itself and the previous hop when it picks the next one. For a contract no reachable peer hosts, the request can come back to a relay it already passed through. The in-flight gate `active_relay_update_txs` does not stop that, because its entry is removed when the relay driver exits, before the request returns. The cycle did not end on its own. - **HTL clamp.** `drive_relay_put`, `drive_relay_put_streaming`, `drive_relay_probe_reconcile` and `drive_relay_subscribe` decremented the wire HTL without first bounding it by `ring.max_hops_to_live`, unlike the GET relay and `drive_relay_probe`. - **ProbeReconcile and the UPDATE rate limiter.** A `PutMsg::ProbeReconcile` delta is merged through `update_contract`, the path every UPDATE takes, but the PUT dispatch never charged it to `update_rate_limiter`. - **Streaming PUT relay drivers.** Each `PutMsg::RequestStreaming` with a new transaction id started a relay driver that waits up to 60 s for its stream, with no limit on how many waited.  ## Approach  - **UPDATE loop: a node-local record, with no wire change.** Adding an HTL field to `RequestUpdate*` would break decoding on every peer that predates it, because bincode is positional and the
+- **Issue #6299** (2026-11-19): **chore(release): raise the QUIC-native wire floor to 0.2.162**
+  *Symptoms*: ## Problem `quic_native_floor_tracks_the_shipping_release` fails once `Cargo.toml` is at 0.2.161: `QUIC_NATIVE_MIN_VERSION` is (0, 2, 161) and `QUIC_NATIVE_SHIPPED_IN` is `None`. Found by checking the release-marker tests before the 0.2.161 soak.  ## Approach Raise the floor to 0.2.162, as #6273 did for 0.2.160. Native connect is still off in production (`QUIC_NATIVE_PERCENT` is 0), so this changes no behaviour, and the native connect work is still changing before it is enabled, so no release is frozen as the floor yet.  ## Testing Full `cargo test -p freenet --lib` with the crate at 0.2.161 and this change; `cargo fmt --check`.  [AI-assisted - Claude]
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md **Files reviewed:** 1  The diff changes the `QUIC_NATIVE_MIN_VERSION` constant from `(0, 2, 161)` to `(0, 2, 162)` in `crates/core/src/node/network_bridge/p2p_protoc.rs`. It also adds one sentence to the doc comment saying why. This continues the pattern in the existing comment.  - The commit title follows conventional commits (`chore(release): …`) and is under 72 characters. - The existing floor-invariant tests at `p2p_protoc.rs:4421-4455` cover the constant. They check that the floor stays above the last release without a decoder and stays ahead of the crate version. No new tests are needed for a value bump. - The doc comment is updated with the change, so nothing is stale. - I made no check on whether the PR description has the Problem, Solution, Testing and Fixes sections. The review inputs don't include it.  No rule violations detected.  <!-- warning-count: 0
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1787,1113 +1789,730 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9811972d` (2026-11-18)
-**Commit Message**: fix(hosting): bound per-neighbor hosting adverts and close disconnect race (#6280)
+### Incident Patch 1: `48d67dfb` (2026-11-19)
+**Commit Message**: fix(connect): enforce the transient connection budget; bound FixedRate flight size (#6296)
 
-**File**: `crates/core/src/node.rs` (modified, +270/-5)
+**File**: `crates/core/src/config.rs` (modified, +6/-2)
 ```diff
-@@ -2538,9 +2538,30 @@ where
-                 );
-                 return Ok(());
-             };
--            let result = op_manager
-+            // `source_pub_key` was resolved above, but this task runs
-+            // concurrently with the event loop's disconnect handling and
-+            // applying a large message takes a while. Ring membership is
-+            // therefore re-checked AFTER the message is applied (see
-+            // `handle_message_unless_disconnected`); otherwise a peer that
-+            // drops its connection in between leaves a neighbor-hosting entry
-+            // behind that nothing ever removes.
-+            let Some(result) = op_manager
-                 .neighbor_hosting
--                .handle_message(&source_pub_key, message.clone());
-+                .handle_message_unless_disconnected(&source_pub_key, message.clone(), || {
-+                    op_manager
-+                        .ring
-+                        .connection_manager
-+                        .get_peer_by_pub_key(&source_pub_key)
-+                        .is_some()
-+                })
-+            else {
-+                tracing::debug!(
-+                    %source,
-+                    peer = %source_pub_key,
-+                    "NeighborHosting: sender left the ring while its message was applied, discarded"
-+                );
-+                return Ok(());
-+            };
-             if let Some(response) = result.response {
-                 // Send response back to sender
-                 let response_msg =
-@@ -2553,7 +2574,38 @@ where
-             // so the neighbor gets current state if they're stale after restart.
-             // Only sync contracts we're actively interested in (receiving updates
-             // or have downstream subscribers) — skip cached-only contracts.
--            for instance_id in result.overlapping_contracts {
-+            //
-+            // The ids are already distinct (`handle_message` de-duplicates), and
-+            // the number of state FETCHES per message is capped at
-+            // `MAX_STALE_SYNCS_PER_SUMMARIES`, the same budget the `Summaries`
-+            // path uses (ANT-2026-27GZI7ZB: a repeated id used to cost one
-+            // full-state fetch and one sync per copy). The budget is charged at
-+            // the `get_contract_state_by_id` call, not at the emit: the fetch
-+            // and the `flush_pending_broadcast_on_interest` after it are the
-+            // work being bounded, and they also run for ids that then fail the
-+            // post-fetch check or return no state. Ids skipped before the fetch
-+            // (banned, or neither served nor owing a broadcast) are free.
-+            // Overflow is not dropped: InterestSync revisits every shared
-+            // contract within 2*ceil(shared/64)-1 rounds of its 5-minute
-+            // heartbeat (about 75 minutes for 500 shared contracts). When over
-+            // the budget the start is rotated at random so the same prefix does
-+            // not consume it every time.
-+            let mut overlapping_contracts = result.overlapping_contracts;
-+            let overlap_budget = stale_sync_emit_budget(overlapping_contracts.len());
-+            if overlapping_contracts.len() > overlap_budget {
-+                let start = crate::config::GlobalRng::random_range(0..overlapping_contracts.len());
-+                overlapping_contracts.rotate_left(start);
-+            }
-+            let mut overlap_fetched = 0usize;
-+            for instance_id in overlapping_contracts {
-+                if overlap_fetched >= overlap_budget {
-+                    // Telemetry only: may overstate when the remaining
-+                    // unvisited ids would all have been skipped for free.
-+                    op_manager
-+                        .neighbor_hosting
-+                        .note_sync_budget_hit(&source_pub_key, overlap_budget);
-+                    break;
-+                }
-                 // Phase 7 egress gate. If we've banned the contract,
-                 // don't proactively push its state to a sibling peer
-                 // via the overlap-sync path — that would undermine
-@@ -2610,6 +2662,7 @@ where
-                 {
-                     continue;
-                 }
-+                overlap_fetched += 1;
-                 if let Some((key, state)) =
-                     get_contract_state_by_id(&op_manager, &instance_id).await
-                 {
-@@ -7350,8 +7403,8 @@ mod tests {
-         // ordering check can't false-pass on a neighbouring handler. The loop
-         // is the only site that iterates `result.overlapping_contracts`.
-         let loop_start = src
--            .find("for instance_id in result.overlapping_contracts {")
--            .expect("NeighborHosting overlap-sync loop not found");
-+            .find("NetMessageV1::NeighborHosting { ref message } => {")
-+            .expect("NeighborHosting dispatch arm not found");
-         let loop_src = &src[loop_start..];
+@@ -2508,7 +2508,9 @@ pub struct NetworkArgs {
+     #[serde(rename = "transient-budget", skip_serializing_if = "Option::is_none")]
+     pub transient_budget: Option<usize>,
  
-         let gate_
+-    /// Time (in seconds) before an unpromoted transient connection is dropped.
++    /// Time (in seconds) after which an unpromoted transient connection is counted
++    /// as expired. Its transport stays open, and its slot in the transient budget
++    /// is held until it is promoted or closed.
+     #[arg(long, env = "TRANSIENT_TTL_SECS")]
+     #[serde(rename = "transient-ttl-secs", skip_serializing_if = "Option::is_none")]
+     pub transient_ttl_secs: Option<u64>,
+@@ -2919,7 +2921,9 @@ pub struct NetworkApiConfig {
+     #[serde(default = "default_transient_budget", rename = "transient-budget")]
+     pub transient_budget: usize,
+ 
+-    /// Time (in seconds) before an unpromoted transient connection is dropped.
++    /// Time (in seconds) after which an unpromoted transient connection is counted
++    /// as expired. Its transport stays open, and its slot in the transient budget
++    /// is held until it is promoted or closed.
+     #[serde(default = "default_transient_ttl_secs", rename = "transient-ttl-secs")]
+     pub transient_ttl_secs: u64,
+ 
 ```
 
-**File**: `crates/core/src/node/neighbor_hosting.rs` (modified, +459/-40)
+**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs` (modified, +209/-36)
 ```diff
-@@ -23,7 +23,13 @@
- //! `OpManager::get_broadcast_targets_update()`, where HashSet naturally deduplicates
- //! any overlap.
+@@ -644,12 +644,18 @@ impl P2pConnManager {
+         }
+         let key = key.clone();
+         let connection_manager = &self.bridge.op_manager.ring.connection_manager;
+-        let was_transient = connection_manager.drop_transient(peer_addr);
++        // Read, not removed: the connection keeps its transient slot unless
++        // the ring takes it (`add_connection` removes the entry), so a
++        // promotion refused at the cap leaves it counted.
++        let was_transient = connection_manager.transient_entry(peer_addr);
  
--use std::{collections::HashSet, sync::Arc};
-+use std::{
-+    collections::HashSet,
-+    sync::{
-+        Arc,
-+        atomic::{AtomicU64, Ordering},
-+    },
-+};
+         // Promote if: (a) was tracked as transient, OR (b) not already in ring.
+-        // Case (b) handles expired transient TTL: transport preserved per 76058cf4
+-        // but tracking entry gone. Without this, CONNECT succeeds but peer is never
+-        // added to ring topology (#3113).
++        // Case (b) handles an open connection with no tracking entry (#3113:
++        // the entry used to expire at the TTL while the transport stayed open;
++        // an open connection now holds its entry until it is promoted or
++        // closed, so this is the fallback for one that never had one).
++        // Without this, CONNECT succeeds but peer is never added to ring
++        // topology.
+         let needs_promotion = was_transient.is_some() || !connection_manager.is_in_ring(peer_addr);
+         let transient_expired = was_transient.is_none() && needs_promotion;
  
- use dashmap::DashMap;
- use freenet_stdlib::prelude::{ContractInstanceId, ContractKey};
-@@ -49,6 +55,34 @@ use crate::transport::TransportPublicKey;
- // bound the spec calls out: a co-host advertisement can be stale for at most one
- // heartbeat interval after a dropped update.
+@@ -682,6 +688,7 @@ impl P2pConnManager {
+                     transient_expired,
+                     "connect_peer: rejecting transient promotion to enforce cap"
+                 );
++                self.count_refused_promotion(peer_addr);
+                 return Promotion::Refused;
+             }
+             // The key promoted is the one the caller passed: for a
+@@ -724,6 +731,7 @@ impl P2pConnManager {
+                     .connection_manager
+                     .is_in_ring(peer_addr)
+             {
++                self.count_refused_promotion(peer_addr);
+                 return Promotion::Refused;
+             }
+             // A promotion only when the ring took an address it did not hold.
+@@ -781,6 +789,33 @@ impl P2pConnManager {
+         Promotion::AlreadyInRing
+     }
  
-+/// Most contract ids this node remembers one neighbour advertising (65,536,
-+/// about 4 MiB of set per neighbour).
-+///
-+/// `neighbor_contracts[peer]` is filled from the peer's own `HostingAnnounce`
-+/// and `HostingStateResponse` messages and lives as long as the connection, so
-+/// without a bound one neighbour decides how much heap this node spends on it
-+/// (ANT-2026-N74RDRBN: 4 x 1,000,000 ids cost about 330 MiB).
-+///
-+/// Sizing, from what an honest peer can advertise. A node advertises every
-+/// contract it hosts, and the hosting cache bounds that count by memory: each
-+/// hosted contract is charged at least `HOSTED_ENTRY_BYTES` (8 KiB) against a
-+/// resident-overhead budget of 1/8 of the node's RAM. A 2 GiB node therefore
-+/// tops out at 32,768 hosted contracts. Measured sets are far smaller: a
-+/// `hosting_contract_count` telemetry sample (16,578 readings) had median 417
-+/// and max 2,814, and a busy peer was seen hosting about 6,200. 65,536
-+/// is twice the 2 GiB ceiling and about 10 times the largest measured set. A
-+/// node with more than 16 GiB of RAM can hold more than this, and its
-+/// neighbours then stop consulting it as a co-host for the overflow ids. That
-+/// is the same best-effort outcome as a dropped announce: freshness of those
-+/// contracts falls back to the subscription tree and InterestSync anti-entropy
-+/// (hosting-invariants 1), and nothing is evicted or forgotten elsewhere.
-+///
-+/// Ids over the cap are not stored and the peer is not told. Saturation is
-+/// counted (`over_cap_ids_total`) and logged at `info!` on power-of-two message
-+/// counts only, so release builds show it while the sender cannot flood the log.
-+/// Both write sites go through this bound.
-+pub(crate) const MAX_ADVERTISED_CONTRACTS_PER_NEIGHBOR: usize = 65_536;
-+
- /// Result from handling a neighbor hosting message.
- ///
- /// Contains an optional response message to send back, plus any contracts
-@@ -98,6 +132,20 @@ pub struct NeighborHostingManager {
-     /// Keyed by TransportPublicKey (stable identity) rather than SocketAddr (mutable
-     /// due to NAT/reconnection), so entries survive address changes.
-     neighbor_contracts: DashMap<TransportPublicKey, HashSet<ContractInstanceId>>,
-+
-+    /// Messages whose ids were partly dropped by the per-neighbour cap.
-+    over_cap_messages: AtomicU64,
-+    /// Ids dropped by the per-neighbour cap, in total.
-+    over_cap_ids: AtomicU64,
-+    /// Inbound messages whose proximity syncs hit the per-message budget.
-+    sync_budget_hits: AtomicU64,
-+}
-+
-+/// Log at `info!` when `count` is a power of two (1, 2, 4, 8, ...): saturation
-+/// shows up in release builds (`debug!` is compiled out) while the volume of
-+/// log lines stays logarithmic in a peer-controlled event count.
-+fn is_log_point(count: u64) -> bool {
-+    count.is_power_of_two()
- }
- 
- impl Default for NeighborHostingManager {
-@@ -112,9 +160,58 @@ impl NeighborHostingManager {
-         Self {
-             my_contracts: Arc::new(DashMap::new()),
-             neighbor_contracts: DashMap::new(),
-+            over_cap_messages: AtomicU64::new(0),
-+            over_cap_ids: AtomicU64::new(0),
-+            sync_budget_hits: AtomicU64::new(0),
-+        }
-+    }
-+
-+    /// Record that `dropped` ids from `from` exceeded the per-neighbour cap.
-+    fn note_over_cap(&self, from: &TransportPublicKey, dropped: usize) {
-+        if dropped == 0 {
++    /// A connection the ring refused stays open outside it, so it must hold a
++    /// transient slot like any other such connection. One with no entry (it
++    /// never had one) is registered and held here; when the budget or its
++    /// source's share refuses that, it stays uncounted and
++    /// [`Self::uncounted_outside_ring`] reports it, for the caller to close.
++    fn count_refused_promotion(&self, peer_addr: SocketAddr) {
++        let cm = &self.bridge.op_manager.ring.connection_manager;
++        if cm.is_transient(peer_addr) || cm.is_in_ring(peer_addr) {
 +            return;
 +        }
-+        self.over_cap_ids
-+            .fetch_add(dropped as u64, Ordering::Relaxed);
-+        let messages = self.over_cap_messages.fetch_add(1, Ordering::Relaxed) + 1;
-+        if is_log_point(messages) {
-+            info!(
-+                peer = %from,
-+                dropped,
-+                messages_over_cap = messages,
-+                cap = MAX_ADVERTISED_CONTRACTS_PER_NEIGHBOR,
-+                "NEIGHBOR_HOSTING: neighbor advertised more contracts than the per-neighbor cap; overflow ignored (logged at power-of-two counts)"
-+            );
-         }
-     }
- 
-+    /// Record that an inbound message's proximity syncs hit the per-message
-+    /// budget. Called by the dispatch loop in `node.rs`; logs at `info!` on
-+    /// power-of-two counts only.
-+    pub(crate) fn note_sync_budget_hit(&self, from: &TransportPublicKey, budget: usize) {
-+        let hits = self.sync_budget_hits.fetch_add(1, Ordering::Relaxed) + 1;
-+        if is_log_point(hits) {
-+        
-```
-
----
-
-### Incident Patch 2: `aaf7d1ac` (2026-11-18)
-**Commit Message**: fix: bound remote-controlled relay inputs (UPDATE loop, HTL, reconcile rate, streaming admission) (#6279)
-
-**File**: `crates/core/src/node.rs` (modified, +200/-0)
-```diff
-@@ -1720,6 +1720,42 @@ where
-                         htl,
-                         skip_list,
-                     } => {
-+                        // A reconcile delivers a delta that is merged through
-+                        // `update_contract`, the same path an UPDATE takes, so it
-+                        // is charged to the UPDATE rate limiter
-+                        // (ANT-2026-0ILTPRIJ), in its own class: a separate stamp
-+                        // in the same (sender, contract) entry, at the request
-+                        // interval. Sharing the Request stamp would refuse a
-+                        // client's UPDATE that follows its PUT within the
-+                        // interval through the same first hop, and a refused
-+                        // `RequestUpdate` is lost until anti-entropy. A sender
-+                        // alternating opcodes gains at most one extra bounded
-+                        // budget. Only a remote sender is charged; `source_addr`
-+                        // is `None` for this node's own loopback.
-+                        //
-+                        // A refused reconcile is not repaired: it is best-effort
-+                        // by design (the originator holds the merged state and
-+                        // anti-entropy heals the receiver, see
-+                        // `drive_relay_probe_reconcile`), and the limiter records
-+                        // the refusal in its counters and its once-a-minute log.
-+                        if let Some(sender_addr) = source_addr {
-+                            let decision = op_manager.ring.update_rate_limiter.check_and_record(
-+                                sender_addr,
-+                                *key.id(),
-+                                crate::ring::update_rate_limit::UpdateClass::Reconcile,
-+                            );
-+                            if !decision.is_allowed() {
-+                                tracing::debug!(
-+                                    tx = %id,
-+                                    contract = %key,
-+                                    %sender_addr,
-+                                    ?decision,
-+                                    phase = "put_probe_reconcile_rate_limited",
-+                                    "PUT dispatch: ProbeReconcile refused by the UPDATE rate limiter"
-+                                );
-+                                return Ok(());
-+                            }
-+                        }
-                         if let Err(err) = put::op_ctx_task::start_relay_probe_reconcile(
-                             op_manager.clone(),
-                             *id,
-@@ -8830,6 +8866,170 @@ mod tests {
-         );
-     }
- 
-+    /// ANT-2026-0ILTPRIJ: a `PutMsg::ProbeReconcile` delivers a delta that is
-+    /// merged like an UPDATE, so it must be charged to the UPDATE rate limiter.
-+    /// Before the fix the PUT dispatch went straight to the driver and the
-+    /// limiter never saw it. The reconcile has its own class, so a
-+    /// `RequestUpdate` right after it from the same sender is still admitted.
-+    #[tokio::test]
-+    async fn probe_reconcile_is_charged_to_the_update_rate_limiter() {
-+        use crate::message::NetMessageV1;
-+        use crate::operations::put::PutMsg;
-+        use crate::operations::test_utils::MockNetworkBridge;
-+        use crate::ring::update_rate_limit::UpdateClass;
-+        use crate::util::time_source::SharedMockTimeSource;
-+
-+        let clock = SharedMockTimeSource::new();
-+        let config_args = crate::config::ConfigArgs {
-+            id: Some("probe-reconcile-rate-limit".to_string()),
-+            mode: Some(crate::contract::OperationMode::Local),
-+            ..Default::default()
-+        };
-+        let mut node_config = NodeConfig::new(config_args.build().await.expect("build Config"))
-+            .await
-+            .expect("build NodeConfig");
-+        node_config.update_rate_limit_time_source_override =
-+            Some(std::sync::Arc::new(clock.clone()));
-+
-+        let (notification_rx, notification_tx) = crate::node::event_loop_notification_channel();
-+        let crate::node::EventLoopNotificationsReceiver {
-+            notifications_receiver: _notifications_receiver,
-+            mut op_execution_receiver,
-+        } = notification_rx;
-+        let (ops_ch_channel, _ch_channel, _wait_for_event) =
-+            crate::contract::contract_handler_channel();
-+        let connection_manager = crate::ring::ConnectionManager::new(&node_config);
-+        let (result_router_tx, _result_router_rx) = tokio::sync::mpsc::channel(100);
-+        let task_monitor = crate::node::background_task_monitor::BackgroundTaskMonitor::new();
-+        let op_manager = std::sync::Arc::new(
-+            crate::node::OpManager::new(
-+                notification_tx,
-+                ops_ch_channel,
-+                &node_config,
-+                crate::tracing::DynamicRegister::new(vec![]),
-+                connection_manager,
-+
-```
-
-**File**: `crates/core/src/node/op_state_manager.rs` (modified, +18/-0)
-```diff
-@@ -322,6 +322,16 @@ pub(crate) struct OpManager {
-     /// exists primarily for robustness against GC-spawned re-entries
-     /// and routing-bloom false-positive retransmissions.
-     pub(crate) active_relay_update_txs: Arc<DashSet<Transaction>>,
-+    /// `RequestUpdate*` transactions this node has relayed, remembered past
-+    /// the driver's lifetime so a request that comes back around a routing
-+    /// cycle is dropped (#3911). See
-+    /// [`crate::operations::update::recent_requests`].
-+    pub(crate) recent_relay_update_requests:
-+        Arc<crate::operations::update::recent_requests::RecentRelayedRequests>,
-+    /// Per-source and node-wide bound on streaming PUT relay drivers in
-+    /// flight. See [`crate::operations::put::stream_admission`].
-+    pub(crate) relay_put_stream_admission:
-+        Arc<crate::operations::put::stream_admission::RelayStreamAdmission>,
-     /// Same role as `active_relay_get_txs` but for PUT relay. PUT
-     /// relay has req/response semantics like GET (but forwards once
-     /// — no per-hop retry), so amplification risk is comparable.
-@@ -411,6 +421,8 @@ impl Clone for OpManager {
-             node_identity: self.node_identity,
-             active_relay_get_txs: self.active_relay_get_txs.clone(),
-             active_relay_update_txs: self.active_relay_update_txs.clone(),
-+            recent_relay_update_requests: self.recent_relay_update_requests.clone(),
-+            relay_put_stream_admission: self.relay_put_stream_admission.clone(),
-             active_relay_put_txs: self.active_relay_put_txs.clone(),
-             active_relay_subscribe_txs: self.active_relay_subscribe_txs.clone(),
-             active_relay_connect_txs: self.active_relay_connect_txs.clone(),
-@@ -855,6 +867,12 @@ impl OpManager {
-             node_identity,
-             active_relay_get_txs,
-             active_relay_update_txs,
-+            recent_relay_update_requests: Arc::new(
-+                crate::operations::update::recent_requests::RecentRelayedRequests::new(),
-+            ),
-+            relay_put_stream_admission: Arc::new(
-+                crate::operations::put::stream_admission::RelayStreamAdmission::new(),
-+            ),
-             active_relay_put_txs,
-             active_relay_subscribe_txs,
-             active_relay_connect_txs,
-```
-
-**File**: `crates/core/src/operations/orphan_streams.rs` (modified, +205/-1)
-```diff
-@@ -92,14 +92,75 @@ pub struct OrphanStreamRegistry {
-     /// both the embedded metadata (in fragment #1) and the separate metadata
-     /// message arrive — only the first one should be processed.
-     claimed_streams: DashMap<StreamKey, ()>,
-+
-+    /// Keys whose claimant gave up before the stream arrived
-+    /// ([`Self::abandon_claim`]), with when. A stream that arrives for one
-+    /// while no claimant is waiting is cancelled instead of parked: the key's
-+    /// `claimed_streams` entry blocks new claims, so a parked orphan would
-+    /// only hold its buffer until GC. A new claim of the key clears its mark.
-+    /// Bounded by [`MAX_ABANDONED_CLAIMS`] and expired by `gc_expired`.
-+    abandoned: DashMap<StreamKey, Instant>,
- }
- 
-+/// Most abandoned claims remembered at once. Past this an abandoned stream
-+/// is parked and aged out by `gc_expired`, as before abandonment existed.
-+const MAX_ABANDONED_CLAIMS: usize = 4096;
-+
- impl OrphanStreamRegistry {
-     /// Creates a new empty registry.
-     pub fn new() -> Self {
-         Self {
-             slots: Default::default(),
-             claimed_streams: DashMap::new(),
-+            abandoned: DashMap::new(),
-+        }
-+    }
-+
-+    /// Give up a claim whose `claim_or_wait` future was dropped mid-wait (a
-+    /// streaming PUT relay driver evicted by its admission bound).
-+    ///
-+    /// Removes the dead waiter the dropped future left, cancels the stream if
-+    /// it already arrived in the meantime, and otherwise marks the key so the
-+    /// stream is cancelled when it arrives. A live waiter at the key belongs to
-+    /// another claimant and is left alone, unmarked.
-+    ///
-+    /// A mark only ever applies while nobody else wants the stream: every
-+    /// read and write of `abandoned` happens under the key's `slots` entry
-+    /// lock (lock order: `slots`, then `abandoned`), a new claim of the key
-+    /// clears the mark, and `register_orphan` honours a mark only when no
-+    /// live waiter is parked. The new claim matters because `gc_expired`
-+    /// clears `claimed_streams` wholesale, after which the same key can be
-+    /// announced and claimed again.
-+    pub fn abandon_claim(&self, peer_addr: SocketAddr, stream_id: StreamId) {
-+        use dashmap::mapref::entry::Entry;
-+        let key = (peer_addr, stream_id);
-+        match self.slots.entry(key) {
-+            Entry::Occupied(occupied) if matches!(occupied.get(), Slot::Orphan(..)) => {
-+                let Slot::Orphan(handle, _) = occupied.remove() else {
-+                    unreachable!("the match guard checked for an orphan");
-+                };
-+                handle.cancel();
-+            }
-+            Entry::Occupied(occupied) => {
-+                let Slot::Waiter(tx) = occupied.get() else {
-+                    unreachable!("the arm above took every orphan");
-+                };
-+                if tx.is_closed() {
-+                    // Our own dead waiter: remove it and mark, both under the
-+                    // entry lock.
-+                    if self.abandoned.len() < MAX_ABANDONED_CLAIMS {
-+                        self.abandoned.insert(key, Instant::now());
-+                    }
-+                    occupied.remove();
-+                }
-+                // Otherwise another claimant's live waiter: it wants the stream.
-+            }
-+            Entry::Vacant(vacant) => {
-+                if self.abandoned.len() < MAX_ABANDONED_CLAIMS {
-+                    self.abandoned.insert(key, Instant::now());
-+                }
-+                drop(vacant);
-+            }
-         }
-     }
- 
-@@ -123,6 +184,11 @@ impl OrphanStreamRegistry {
-         // or will find our orphan (#5731).
-         match self.slots.entry(key) {
-             Entry::Occupied(occupied) if matches!(occupied.get(), Slot::Waiter(_)) => {
-+                // A live waiter wants this stream, whatever an older abandoned
-+                // claim of the same key left behind.
-+                if matches!(occupied.get(), Slot::Waiter(tx) if !tx.is_closed()) {
-+                    self.abandoned.remove(&key);
-+                }
-                 // `remove` consumes the entry, releasing the shard lock before
-                 // the handle is sent.
-                 let Slot::Waiter(waiter) = occupied.remove() else {
-@@ -157,6 +223,19 @@ impl OrphanStreamRegistry {
-                 occupied.insert(Slot::Orphan(handle, Instant::now()));
-             }
-             Entry::Vacant(vacant) => {
-+                // Its claimant gave up (`abandon_claim`) and nobody has claimed
-+                // the key since (a new claim clears the mark): cancel the
-+                // stream rather than park an orphan nobody can claim.
-+                if self.abandoned.remove(&key).is_some() {
-+                    drop(vacant);
-+                    tracing::debug!(
-+                        %peer_addr,
-+                        stream_id = %stream_id,
-+                        "Stream arrived for an abandoned claim; cancelling
-```
-
-**File**: `crates/core/src/operations/put.rs` (modified, +1/-0)
-```diff
-@@ -10,6 +10,7 @@
- //! consume them.
- 
- pub(crate) mod op_ctx_task;
-+pub(crate) mod stream_admission;
- 
- pub(crate) use self::messages::{PutMsg, PutStreamingPayload};
- use freenet_stdlib::prelude::*;
-```
-
-**File**: `crates/core/src/operations/put/op_ctx_task.rs` (modified, +692/-6)
-```diff
-@@ -1945,6 +1945,11 @@ where
-     CB: NetworkBridge + Clone + Send + 'static,
- {
-     let key = contract.key();
-+    // The sender writes `htl`, so bound it by this node's own limit before
-+    // anything reads it, as the GET relay and `drive_relay_probe` do
-+    // (ANT-2026-QLQ8OSNJ). Without the clamp the sender chooses how many
-+    // nodes the PUT walks.
-+    let htl = htl.min(op_manager.ring.max_hops_to_live);
- 
-     tracing::info!(
-         tx = %incoming_tx,
-@@ -3342,6 +3347,9 @@ where
-     #[cfg(any(test, feature = "testing"))]
-     RELAY_PUT_STREAMING_DRIVER_CALL_COUNT.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
- 
-+    let originator_loopback =
-+        Some(upstream_addr) == op_manager.ring.connection_manager.get_own_addr();
-+
-     if !op_manager.active_relay_put_txs.insert(incoming_tx) {
-         RELAY_PUT_STREAMING_DEDUP_REJECTS.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-         tracing::debug!(
-@@ -3362,14 +3370,76 @@ where
-         return Ok(());
-     }
- 
-+    // Bound how many drivers wait for a stream that has not arrived yet, per
-+    // source and node-wide (ANT-2026-16KQ0AS7). The permit covers only the
-+    // unclaimed phase; the driver releases it when its claim ends. This node's
-+    // own streaming PUT is not counted. Taken after the dedup gate, so a
-+    // duplicate neither takes a slot nor evicts anyone.
-+    let admission_permit = if originator_loopback {
-+        None
-+    } else {
-+        match op_manager
-+            .relay_put_stream_admission
-+            .try_admit(upstream_addr)
++        if cm
++            .register_transient(peer_addr, Some(Location::from_address(&peer_addr)))
++            .is_ok()
 +        {
-+            Ok(permit) => Some(permit),
-+            Err(refusal) => {
-+                op_manager.active_relay_put_txs.remove(&incoming_tx);
-+                let refused = op_manager.relay_put_stream_admission.refused_total();
-+                // Release-visible, but logarithmic in the refusal count so a
-+                // sustained flood does not become a log flood.
-+                if refused.is_power_of_two() {
-+                    tracing::info!(
-+                        tx = %incoming_tx,
-+                        contract = %contract_key,
-+                        %upstream_addr,
-+                        ?refusal,
-+                        refused_total = refused,
-+                        unclaimed = op_manager.relay_put_stream_admission.unclaimed(),
-+                        phase = "relay_put_streaming_admission_refused",
-+                        "PUT streaming relay: too many unclaimed streaming PUTs from this \
-+                         source, refusing"
-+                    );
-+                } else {
-+                    tracing::debug!(
-+                        tx = %incoming_tx,
-+                        contract = %contract_key,
-+                        %upstream_addr,
-+                        ?refusal,
-+                        phase = "relay_put_streaming_admission_refused",
-+                        "PUT streaming relay: too many unclaimed streaming PUTs from this \
-+                         source, refusing"
-+                    );
-+                }
-+                // Answer the upstream, one reply per announcement, so a
-+                // streaming originator (which cannot advance to another peer)
-+                // fails now instead of waiting out its attempt (#5671).
-+                if let Err(err) = relay_put_send_error(
-+                    &op_manager,
-+                    incoming_tx,
-+                    STREAM_ADMISSION_REFUSED_CAUSE.to_string(),
-+                    upstream_addr,
-+                )
-+                .await
-+                {
-+                    tracing::debug!(
-+                        tx = %incoming_tx,
-+                        %upstream_addr,
-+                        error = %err,
-+                        "PUT streaming relay: could not report the refusal upstream"
-+                    );
-+                }
-+                return Ok(());
-+            }
++            cm.hold_transient(peer_addr);
 +        }
-+    };
++    }
 +
-     // Routing/hosting attribution (Group C): count this as a genuine relayed
-     // PUT, mirroring `start_relay_put`. A direct `PutMsg::RequestStreaming`
-     // (or a `PutMsg::Request` that upgrades to streaming on forward) dispatches
-     // here, so without this the largest PUT relays were undercounted. Exclude
-     // the originator-loopback case (own streaming PUT mapped to
-     // `upstream_addr=own_addr`), consistent with the non-streaming path.
--    let originator_loopback =
--        Some(upstream_addr) == op_manager.ring.connection_manager.get_own_addr();
-     if !originator_loopback {
-         crate::node::network_status::record_relayed_put();
-     }
-@@ -3394,6 +3464,7 @@ where
++    /// An open connection at `peer_addr` that is neither in the ring nor
++    /// holding a transient slot.
++    fn uncounted_outside_ring(&self, peer_addr: SocketAddr) -> bool {
++        let cm = &self.bridge.op_manager.ring.connection_manager;
++        self.connections.contains_key(&peer_addr)
++            && !cm.is_transient(peer_addr)
++            && !cm.is_in_ring(peer_addr)
++    }
++
+     // `origin` is telemetry carried alongside the dial; bundling it with the
+     // other arguments would only move them into a one-use struct.
+     #[allow(clippy::too_many_arguments)]
+@@ -965,6 +1000,16 @@ impl P2pConnManager {
+                         );
+                     })
+                     .ok();
++                // Kept open, it would be outside the ring and uncounted.
++                if self.uncounted_outside_ring(peer_addr) {
++                    self.drop_connection_by_addr(
++                        peer_addr,
++                        handshake_commands,
++                        crate::tracing::DisconnectReason::ConnectionLimitReached,
++                    )
++                    .await;
++                    fail_awaiting_connection_callbacks(state, peer_addr).await;
++                }
+                 return Ok(());
+             }
  
-     GlobalExecutor::spawn(run_relay_put_streaming(
-         guard,
-+        admission_permit,
-         op_manager,
-         conn_manager,
-         incoming_tx,
-@@ -3415,6 +3486,11 @@ struct RelayPutStreamingInflightGuard {
-     incoming_tx: Transaction,
- }
+@@ -2530,16 +2575,29 @@ impl P2pConnManager {
+             );
+         }
  
-+/// Cause sent upstream when a streaming PUT announcement is refused, or its
-+/// driver evicted, b
++        // The slot taken at the top of this function is gone if the
++        // replacement above released the old connection's slot at this
++        // address; take it again. Registering an address already tracked
++        // succeeds without taking a second slot.
+         if is_transient {
+             let cm = &self.bridge.op_manager.ring.connection_manager;
+-            let current = cm.transient_count();
+-            if current >= cm.transient_budget() {
++            if !cm.try_register_transient(peer_addr, None) {
+                 tracing::warn!(
+                     remote = %peer_addr,
+                     budget = cm.transient_budge
 ```
 
-**File**: `crates/core/src/operations/put/stream_admission.rs` (added, +357/-0)
+**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle/tests.rs` (modified, +714/-0)
 ```diff
-@@ -0,0 +1,357 @@
-+//! Bound on streaming PUT relay drivers still waiting for their stream
-+//! (ANT-2026-16KQ0AS7).
-+//!
-+//! A `PutMsg::RequestStreaming` starts a relay driver whose first step waits up
-+//! to `STREAM_CLAIM_TIMEOUT` (60 s) for the announced stream. The announcement
-+//! is a small message and the stream a separate transfer, so the number of
-+//! drivers waiting for a stream was decided by the peers sending
-+//! announcements; the transport's per-connection stream limits do not count an
-+//! announcement whose stream never comes.
-+//!
-+//! A permit covers only that UNCLAIMED phase: it is taken when the driver
-+//! starts and released as soon as the claim ends, whether the stream arrived or
-+//! not. What happens after the claim is bounded by the transport's
-+//! per-connection inbound-stream and byte limits, as for any stream.
-+//!
-+//! Two bounds:
-+//!
-+//! - **Per source**, at most [`PER_SOURCE_CAP`] unclaimed drivers. A source is
-+//!   the previous hop's IPv4 address or IPv6 /64 (an IPv4-mapped address counts
-+//!   as IPv4), so more ports or more addresses in one /64 add nothing. A new
-+//!   announcement over this cap is refused.
-+//! - **Node-wide**, at most [`NODE_WIDE_CAP`]. At this cap the OLDEST unclaimed
-+//!   driver is evicted to admit the newcomer, rather than refusing it. An
-+//!   honest stream is claimed within about one round trip of its announcement,
-+//!   so the oldest waiter is the one least likely to ever see its stream, and
-+//!   no set of sources can lock the node out by holding every permit for the
-+//!   claim timeout.
-+//!
-+//! A refused announcement and an evicted driver both answer their upstream with
-+//! a `PutMsg::Error` (one reply per announcement, so no amplification); the
-+//! upstream would otherwise wait out its whole attempt.
+@@ -5244,3 +5244,717 @@ async fn local_and_udp_failures_carry_no_native_outcome() {
+         "a local failure of a native dial"
+     );
+ }
 +
-+use std::collections::{BTreeMap, HashMap};
-+use std::net::{IpAddr, SocketAddr};
-+use std::sync::Arc;
-+use std::sync::atomic::{AtomicU64, Ordering};
-+
-+use tokio::sync::oneshot;
-+
-+/// Unclaimed streaming PUT relay drivers one source (the previous hop) may
-+/// have at once.
-+///
-+/// Sized for an honest gateway relaying many joiners' PUTs, which all count
-+/// against that gateway's address. A permit is held only from the
-+/// announcement until the stream is claimed, i.e. until fragment 1 arrives.
-+///
-+/// # How long fragment 1 can lag its announcement on a busy link
-+///
-+/// Outbound streams on one connection are INTERLEAVED, not sent one after
-+/// another. On the UDP session each stream is its own task
-+/// (`PeerConnection::outbound_stream_with_id` / `pipe_stream_to_remote`
-+/// push a spawned `send_stream` onto `outbound_stream_futures`), and each
-+/// task admits its packets one at a time: wait for congestion-window
-+/// space, then reserve that one packet from the connection's token bucket.
-+/// On the QUIC path quinn multiplexes streams itself. So fragment 1 of a
-+/// new stream does not wait for earlier transfers to finish. It waits for
-+/// window space, which opens within about one round trip, and for the
-+/// single packets the other active streams on the link have reserved ahead
-+/// of it, about one packet per active stream. The sender emits fragment 1
-+/// right after its announcement, and fragment 1 also carries a copy of it.
-+///
-+/// So the lag is about one round trip plus K packet times for K active
-+/// streams on the link: at K = 32 and 1.25 MB/s, about 36 ms on top of
-+/// the round trip. Taking 300 ms per permit as a generous figure, 32
-+/// permits let one previous hop have about 100 streaming PUTs per second
-+/// announced through it before any is refused. A streaming PUT carries
-+/// more than the 64 KiB streaming threshold, so that is at least 6.5 MB/s
-+/// of PUT payload over one link. If field data shows refusals from honest
-+/// gateways, raise this constant: the node-wide cap with eviction is what
-+/// bounds memory, not this one.
-+pub(crate) const PER_SOURCE_CAP: usize = 32;
-+
-+/// Unclaimed streaming PUT relay drivers this node holds across all sources.
-+/// At this cap the oldest is evicted. A driver waiting for its stream holds
-+/// a few KB, so a full set is a few MiB.
-+pub(crate) const NODE_WIDE_CAP: usize = 512;
-+
-+/// Where an announcement came from, at the granularity one host controls.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-+enum Source {
-+    V4(u32),
-+    /// The top 64 bits of an IPv6 address: a host usually holds a whole /64.
-+    V6Prefix(u64),
++/// An inbound connection nobody expected, as the handshake driver reports
++/// it: not transient, and without a peer identity.
++async fn unexpected_inbound(h: &mut Harness, addr: SocketAddr) {
++    h.handshake_event(HandshakeEvent::InboundConnection {
++        transaction: None,
++        matched: HandshakeInboundMatch::Unexpected,
++        connection: Box::new(IdleConnection::new(addr)),
++        transient: false,
++    })
++    .await;
 +}
 +
-+impl Source {
-+    fn of(addr: SocketAddr) -> Self {
-+        match addr.ip() {
-+            IpAddr::V4(v4) => Source::V4(u32::from(v4)),
-+            IpAddr::V6(v6) => match v6.to_ipv4_mapped() {
-+                Some(v4) => Source::V4(u32::from(v4)),
-+                None => Source::V6Prefix((u128::from(v6) >> 64) as u64),
-+            },
++fn transient_count(h: &Harness) -> usize {
++    h.mgr
++        .bridge
++        .op_manager
++        .ring
++        .connection_manager
++        .transient_count()
++}
++
++/// At the transient budget, an unexpected inbound connection closes the
++/// oldest connection still waiting outside the ring and takes its slot, so a
++/// host that fills the budget has to keep opening connections to keep it
++/// full, rather than holding it and refusing every joiner.
++#[tokio::test]
++async fn unexpected_inbound_at_the_budget_evicts_the_oldest_unpromoted() {
++    let mut h = Harness::with_config("transient-budget-evict-oldest", |config| {
++        config.transient_budget = 2;
++    })
++    .await;
++    let cm = h.mgr.bridge.op_manager.ring.connection_manager.clone();
++    let addr = |n: u8| SocketAddr::from(([198, 51, 100, 216], 7300 + u16::from(n)));
++    unexpected_inbound(&mut h, addr(1)).await;
++    unexpected_inbound(&mut h, addr(2)).await;
++    assert_eq!(cm.transient_count(), 2, "premise: the budget is spent");
++
++    unexpected_inbound(&mut h, addr(3)).await;
++    assert!(
++        !h.mgr.connections.contains_key(&addr(1)),
++        "the oldest is closed"
++    );
++    assert!(!cm.is_transient(addr(1)));
++    for kept in [addr(2), addr(3)] {
++        assert!(h.mgr.connections.contains_key(&kept));
++        assert!(cm.is_transient(kept));
++    }
++    assert_eq!(cm.transient_count(), 2);
++    assert_eq!(cm.transient_evictions(), 1);
++
++    unexpected_inbound(&mut h, addr(4)).await;
++    assert!(
++        !h.mgr.connections.contains_key(&addr(2)),
++        "then the next oldest"
++    );
++    assert!(h.mgr.connections.contains_key(&addr(3)));
++    assert!(h.mgr.connections.contains_key(&addr(4)));
++    assert_eq!(cm.transient_evictions(), 2);
++    h.assert_open_transports_match();
++}
++
++/// An unexpected inbound connection the budget refuses is closed, not kept
++/// open and uncounted. Here every slot is held by a registration no open
++/// connection owns, so there is nothing to evict.
++#[tokio::test]
++async fn unexpected_inbound_refused_by_the_budget_is_dropped() {
++    let mut h = Harness::with_config("transient-budget-unexpected-inbound", |config| {
++        config.transient_budget = 2;
++    })
++    .await;
++    let cm = h.mgr.bridge.op_manager.ring.connection_manager.clone();
++    for port in [7301, 7302] {
++        assert!(cm.try_register_transient(SocketAddr::from(([198, 51, 100, 210], port)), None));
++    }
++    let addr = SocketAddr::from(([198, 51, 100, 210], 7303));
++    unexpected_inbound(&mut h, addr).await;
++    assert!(
++        !h.mgr.connections.contains_key(&addr),
++        "refused by the budget: dropped"
++    );
++    assert!(!cm.is_transient(addr));
++    assert_eq!(h.ring_key_at(addr), None, "not in the ring");
++    assert_eq!(cm.transient_count(), 2);
++    assert_eq!(cm.transient_evictions(), 0);
++    h.assert_open_transports_match();
++}
++
++/// The budget counts the connections open outside the ring, not those
++/// younger than `transient_ttl`: an unpromoted connection keeps its slot past
++/// the TTL (neither its expiry timer nor the periodic cleanup gives it back
++/// while the transport is open), and gives it back when it is promoted.
++#[tokio::test(start_paused = true)]
++async fn an_unpromoted_connection_keeps_its_budget_slot_past_the_ttl() {
++    let mut h = Harness::with_config("transient-budget-slot-held", |config| {
++        config.transient_budget = 1;
++    })
++    .await;
++    let first = SocketAddr::from(([198, 51, 100, 211], 7311));
++    let second = SocketAddr::from(([198, 51, 100, 211], 7312));
++    let third = SocketAddr::from(([198, 51, 100, 211], 7313));
++    let cm = h.mgr.bridge.op_manager.ring.connection_manager.clone();
++
++    unexpected_inbound(&mut h, first).await;
++    assert!(h.mgr.connections.contains_key(&first));
++    assert_eq!(cm.transient_count(), 1, "premise: the budget is spent");
++
++    // Past the TTL: the expiry timer has run, and so has a cleanup.
++    tokio::time::sleep(cm.transient_ttl() + Duration::from_secs(1)).await;
++    assert_eq!(cm.cleanup_expired_transients(), 0);
++    assert!(
++        h.mgr.connections.contains_key(&first),
++        "premise: still open"
++    );
++    assert!(cm.is_transient(first), "an open connection keeps its slot");
++    // The slot is still spent, so the next connection has to evict it.
++    unexpected_inbound(&mut h, second).await;
++    assert!(h.mgr.con
+```
+
+**File**: `crates/core/src/node/network_status.rs` (modified, +52/-7)
+```diff
+@@ -163,6 +163,8 @@ pub(crate) struct OtelStatusScalars {
+     /// scalar source rather than a new provider.
+     pub bootstrap_transient_registered: u64,
+     pub bootstrap_transient_expired: u64,
++    pub bootstrap_transient_source_refusals: u64,
++    pub bootstrap_transient_evictions: u64,
+     pub bootstrap_promoted_to_ring: u64,
+     pub bootstrap_time_to_min_connections: Option<Duration>,
+     /// Time from process start to this node's FIRST ring connection (#5858).
+@@ -204,6 +206,8 @@ pub(crate) fn otel_status_scalars() -> Option<OtelStatusScalars> {
+         op_stats: status.op_stats.clone(),
+         bootstrap_transient_registered: b.transient_registered,
+         bootstrap_transient_expired: b.transient_expired,
++        bootstrap_transient_source_refusals: b.transient_source_refusals,
++        bootstrap_transient_evictions: b.transient_evictions,
+         bootstrap_promoted_to_ring: b.promoted_to_ring,
+         bootstrap_time_to_min_connections: b.time_to_min_connections,
+         bootstrap_time_to_first_ring_connection: b.time_to_first_ring_connection,
+@@ -441,7 +445,7 @@ pub struct NetworkStatus {
+ }
+ 
+ /// Bootstrap-acceptance-churn counters (issue #4787): a restarted node's
+-/// connection to a gateway lingers as transient, its tracking entry expires,
++/// connection to a gateway lingers as transient, its TTL elapses,
+ /// and (if the onward CONNECT never promotes it) the underlying transport is
+ /// later reaped as a zombie by a separate, uninstrumented sweep — cycling the
+ /// joiner through repeated reconnects before it acquires real peers. These
+@@ -456,9 +460,9 @@ pub struct NetworkStatus {
+ /// signature reported in the issue.
+ ///
+ /// They are still not a clean partition of `transient_registered`: the #3113
+-/// recovery path (a slow CONNECT that completes after the tracking entry's
+-/// TTL already expired, `handle_connect_peer`) increments BOTH
+-/// `transient_expired` (the tracking entry lapsed) AND `promoted_to_ring` (it
++/// recovery path (a slow CONNECT that completes after the transient TTL
++/// elapsed, `handle_connect_peer`) increments BOTH
++/// `transient_expired` (the TTL elapsed unpromoted) AND `promoted_to_ring` (it
+ /// promoted anyway) for the SAME connection. So `transient_expired +
+ /// promoted_to_ring` can exceed `transient_registered`, and a connection that
+ /// recovers this way is indistinguishable in these counters from one that is
+@@ -542,7 +546,15 @@ pub struct BootstrapChurnStats {
+     /// and a re-registration of an already-tracked address (nothing new
+     /// inserted) do not inflate it.
+     pub transient_registered: u64,
++    /// Transient registrations whose TTL elapsed before the connection was
++    /// promoted, whether it was still open then or had already closed.
+     pub transient_expired: u64,
++    /// Transient registrations refused because the address's source (IPv4
++    /// address or IPv6 /64) already held its share of the budget.
++    pub transient_source_refusals: u64,
++    /// Unpromoted connections closed to admit a newcomer at the transient
++    /// budget.
++    pub transient_evictions: u64,
+     /// Counts promotions the ring actually accepted — both promotion call
+     /// sites gate on `Ring::add_connection`'s reported `added`, so a
+     /// cap-rejected promotion attempt is not counted as a promotion.
+@@ -1643,9 +1655,11 @@ pub fn record_bootstrap_transient_registered() {
+     }
+ }
+ 
+-/// Record that a transient tracking entry expired (TTL elapsed) before the
+-/// onward CONNECT promoted it — issue #4787 instrumentation. Called from the
+-/// "Transient connection expired" site in
++/// Record that a transient connection's TTL elapsed before the onward
++/// CONNECT promoted it — issue #4787 instrumentation. Counted whether the
++/// connection is still open (it keeps its budget slot until it is promoted or
++/// closed) or had already closed, as before slots were held. Called from the
++/// "Transient connection past its TTL" site in
+ /// `p2p_protoc/connection_lifecycle.rs`.
+ pub fn record_bootstrap_transient_expired() {
+     if let Some(status) = NETWORK_STATUS.get() {
+@@ -1656,6 +1670,32 @@ pub fn record_bootstrap_transient_expired() {
+     }
+ }
+ 
++/// Record that a transient registration was refused for its source's share
++/// of the budget. Called from `ConnectionManager::register_transient`.
++pub fn record_transient_source_refused() {
++    if let Some(status) = NETWORK_STATUS.get() {
++        if let Ok(mut s) = status.write() {
++            s.bootstrap_churn_stats.transient_source_refusals = s
++                .bootstrap_churn_stats
++                .transient_source_refusals
++                .saturating_add(1);
 +        }
 +    }
 +}
 +
-+/// Why an announcement was refused.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub(crate) enum Refusal {
-+    SourceAtCap,
-+}
-+
-+pub(crate) struct Rela
++/// Record that an unpromoted connection was closed to admit a newcomer at the
++/// transient budget. Called from `ConnectionManager::record_transient_eviction`.
++pub fn record_transient_evicted() {
++    if let Some(status) = NETWORK_STATUS.get() {
++        if let Ok(mut s) = status.write() {
++       
 ```
 
-**File**: `crates/core/src/operations/subscribe/op_ctx_task.rs` (modified, +63/-0)
+**File**: `crates/core/src/node/testing_impl.rs` (modified, +24/-0)
 ```diff
-@@ -1760,6 +1760,11 @@ async fn drive_relay_subscribe(
-     is_renewal: bool,
-     upstream_addr: std::net::SocketAddr,
- ) -> Result<(), OpError> {
-+    // The sender writes `htl`, so bound it by this node's own limit before
-+    // anything reads it, as the GET relay does (ANT-2026-QLQ8OSNJ). The visited
-+    // bloom alone does not stop a long walk.
-+    let htl = htl.min(op_manager.ring.max_hops_to_live);
+@@ -1712,6 +1712,9 @@ pub struct SimNetwork {
+     /// the capability-derived default, so a test can force cache pressure with a
+     /// tiny budget and observe demand-driven eviction (#4642 piece A).
+     hosting_budget_override: Option<u64>,
++    /// Transient connection budget (`--transient-budget`) for every node this
++    /// network builds, when set ([`SimNetwork::with_transient_budget`]).
++    transient_budget_override: Option<usize>,
+     /// Per-node capture slots for the live `Arc<Ring>`, populated by
+     /// `run_controlled_simulation` so governance sim tests can read each
+     /// node's `contract_ban_list` after the simulation completes. Keyed by
+@@ -1933,6 +1936,7 @@ impl SimNetwork {
+             broadcast_target_list_floor_override: Some(Self::SIM_MIGRATION_DISABLED_FLOOR),
+             hosting_clock: None,
+             hosting_budget_override: None,
++            transient_budget_override: None,
+             shared_rings: HashMap::new(),
+             node_port_override,
+             quic_datagram_drops: Vec::new(),
+@@ -2745,6 +2749,20 @@ impl SimNetwork {
+         self.hosting_clock.clone()
+     }
+ 
++    /// Give every node this network builds `budget` as its transient
++    /// connection budget. Call before `start*`.
++    pub fn with_transient_budget(&mut self, budget: usize) -> &mut Self {
++        self.transient_budget_override = Some(budget);
++        // Patch already-built configs (see `with_hosting_budget`).
++        for (builder, _) in self.gateways.iter_mut() {
++            builder.config.transient_budget = budget;
++        }
++        for (builder, _) in self.nodes.iter_mut() {
++            builder.config.transient_budget = budget;
++        }
++        self
++    }
 +
-     tracing::info!(
-         tx = %incoming_tx,
-         %instance_id,
-@@ -6060,3 +6065,61 @@ mod bootstrap_subscription_tests {
+     /// Set the per-node hosting-cache byte budget (`max_hosting_storage`) for
+     /// every node this network builds. A tiny budget forces cache pressure so a
+     /// test can observe demand-driven eviction of low-demand contracts
+@@ -3766,6 +3784,9 @@ impl SimNetwork {
+             if let Some(budget) = self.hosting_budget_override {
+                 std::sync::Arc::make_mut(&mut config.config).max_hosting_storage = budget;
+             }
++            if let Some(budget) = self.transient_budget_override {
++                config.transient_budget = budget;
++            }
+             config.key_pair = keypair;
+             config.network_listener_ip = ip.into();
+             config.network_listener_port = port;
+@@ -3873,6 +3894,9 @@ impl SimNetwork {
+             if let Some(budget) = self.hosting_budget_override {
+                 std::sync::Arc::make_mut(&mut config.config).max_hosting_storage = budget;
+             }
++            if let Some(budget) = self.transient_budget_override {
++                config.transient_budget = budget;
++            }
+             for GatewayConfig {
+                 peer_key_location,
+                 location,
+```
+
+**File**: `crates/core/src/operations/put/stream_admission.rs` (modified, +3/-1)
+```diff
+@@ -76,7 +76,9 @@ pub(crate) const PER_SOURCE_CAP: usize = 32;
+ pub(crate) const NODE_WIDE_CAP: usize = 512;
+ 
+ /// Where an announcement came from, at the granularity one host controls.
+-/// Also the source unit of `operations::relay_admission`.
++/// Also the source unit of `operations::relay_admission`, and groups the
++/// transient connection budget's per-source share
++/// (`ConnectionManager::try_register_transient`).
+ #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+ pub(crate) enum Source {
+     V4(u32),
+```
+
+**File**: `crates/core/src/ring.rs` (modified, +14/-1)
+```diff
+@@ -91,7 +91,7 @@ pub(crate) mod contract_exec_metrics;
+ pub(crate) mod delta_incompat;
+ /// Shadow-mode detector for repairs that never converge (see the module docs).
+ pub(crate) mod futile_repair;
+-pub(crate) use connection_manager::ConnectionManager;
++pub(crate) use connection_manager::{ConnectionManager, TransientRefusal, TransientTtlOutcome};
+ // Nearest-neighbor ring lattice (successor+predecessor base edges).
+ // `nn_lattice_active_for` is the full activation gate — the flag AND the
+ // minimum-degree floor (`NN_LATTICE_MIN_MAX_CONNECTIONS`) — used by the
+@@ -287,6 +287,8 @@ fn apply_bootstrap_churn_stats(
+ ) {
+     snapshot.bootstrap_transient_registered = Some(b.transient_registered);
+     snapshot.bootstrap_transient_expired = Some(b.transient_expired);
++    snapshot.bootstrap_transient_source_refusals = Some(b.transient_source_refusals);
++    snapshot.bootstrap_transient_evictions = Some(b.transient_evictions);
+     snapshot.bootstrap_promoted_to_ring = Some(b.promoted_to_ring);
+     snapshot.bootstrap_time_to_min_connections_secs =
+         b.time_to_min_connections.map(|d| d.as_secs_f64());
+@@ -2369,6 +2371,7 @@ impl Ring {
+             // `router_snapshot_json_includes_routing_attribution_counters`.
+             snapshot.ring_connections = Some(cm.connection_count() as u64);
+             snapshot.transient_connections = Some(cm.transient_count() as u64);
++            snapshot.transient_largest_source = Some(cm.transient_largest_source() as u64);
+             snapshot.connections_to_gateways =
+                 crate::node::network_status::connections_to_gateways();
+             if let Some((gets, puts, subscribes, updates)) =
+@@ -6200,6 +6203,12 @@ impl Ring {
+             crate::transport::TRANSPORT_METRICS.connection_peer_bytes(peer.socket_addr()),
          );
-     }
- }
-+
-+/// ANT-2026-QLQ8OSNJ: the SUBSCRIBE relay clamps the hops-to-live a sender
-+/// writes to this node's own limit before it forwards. Drives the real
-+/// `start_relay_subscribe` against a stubbed event loop.
-+#[cfg(test)]
-+mod relay_htl_clamp_tests {
-+    use super::*;
-+    use crate::operations::route_attempt::driver_test_support::op_manager_with_peers_and_store;
-+    use std::time::Duration;
-+
-+    #[tokio::test(flavor = "current_thread", start_paused = true)]
-+    async fn relay_subscribe_clamps_an_oversized_wire_htl() {
-+        let (op_manager, mut rx, _peers, _guards, _store) =
-+            op_manager_with_peers_and_store("relay-subscribe-htl-clamp", 3).await;
-+        let forwarded = Arc::new(parking_lot::Mutex::new(Vec::new()));
-+        let log = forwarded.clone();
-+        tokio::spawn(async move {
-+            let mut held = Vec::new();
-+            while let Some((reply_tx, msg, _target)) = rx.recv().await {
-+                if let NetMessage::V1(NetMessageV1::Subscribe(SubscribeMsg::Request {
-+                    htl, ..
-+                })) = &msg
-+                {
-+                    log.lock().push(*htl);
-+                }
-+                held.push(reply_tx);
-+            }
-+        });
-+
-+        let tx = Transaction::new::<SubscribeMsg>();
-+        let upstream: std::net::SocketAddr = "10.0.0.42:31337".parse().unwrap();
-+        start_relay_subscribe(
-+            op_manager.clone(),
-+            tx,
-+            ContractInstanceId::new([0x5a; 32]),
-+            usize::MAX,
-+            VisitedPeers::new(&tx),
-+            false,
-+            upstream,
-+        )
-+        .await
-+        .expect("the relay starts");
-+        for _ in 0..100 {
-+            tokio::time::sleep(Duration::from_millis(100)).await;
-+            if !forwarded.lock().is_empty() {
-+                break;
-+            }
-+        }
-+
-+        let max_htl = op_manager.ring.max_hops_to_live;
-+        assert_eq!(
-+            forwarded.lock().first().copied(),
-+            Some(max_htl - 1),
-+            "a wire HTL above max_hops_to_live must be clamped before it is \
-+             decremented and forwarded"
-+        );
-+    }
-+}
+         crate::node::network_status::record_peer_disconnected(peer.socket_addr());
++        // A connection kept outside the ring holds a slot in the transient
++        // budget for as long as it is open (`ConnectionManager::hold_transient`).
++        // Every path that closes a connection reaches this, so the slot is
++        // given back here, before the early return below for a connection the
++        // ring never held.
++        self.connection_manager.drop_transient(peer.socket_addr());
+         let orphaned_transactions = self
+             .live_tx_tracker
+             .prune_transactions_from_peer(peer.socket_addr());
+@@ -11750,6 +11759,8 @@ mod cost_pressure_seam_tests {
+             &BootstrapChurnStats {
+                 transient_registered: 11,
+                 transient_expired: 12,
++                transient_source_refusals: 22,
++                transient_evictions: 23,
+                 promoted_to_ring: 13,
+                 time_to_min_connections: Some(Duration::from_millis(14_500)),
+                 time_to_first_ring_connection: Some(Duration::from_millis(2_345)),
+@@ -11762,6 +11773,8 @@ mod cost_pressure_seam_tests {
+         );
+         assert_eq!(snapshot.bootstrap_transient_registered, Some(11));
+         assert_eq!(snapshot.bootstrap_transient_expired, Some(12));
++        assert_eq!(snapshot.bootstrap_transient_source_refusals, Some(22));
++        assert_eq!(snapshot.bootstrap_transient_evictions, Some(23));
+         assert_eq!(snapshot.bootstrap_promoted_to_ring, Some(13));
+         assert_eq!(snapshot.bootstrap_time_to_min_connections_secs, Some(14.5));
+         assert_eq!(snapshot.bootstrap_completed, Some(true));
 ```
 
-**File**: `crates/core/src/operations/update.rs` (modified, +1/-0)
+**File**: `crates/core/src/ring/connection_manager.rs` (modified, +600/-25)
 ```diff
-@@ -12,6 +12,7 @@
- pub(crate) mod op_ctx_task;
- pub(crate) mod pending_broadcast;
- pub(crate) mod propagation_stats;
-+pub(crate) mod recent_requests;
+@@ -28,6 +28,7 @@ use std::time::Duration;
+ use tokio::time::Instant;
  
- use freenet_stdlib::prelude::*;
+ use crate::config::GlobalRng;
++use crate::operations::put::stream_admission::Source as TransientSource;
+ use crate::topology::{Limits, TopologyManager};
+ use crate::util::backoff::{ExponentialBackoff, TrackedBackoff};
  
+@@ -41,6 +42,53 @@ pub(crate) struct TransientEntry {
+     pub location: Option<Location>,
+     /// When this transient entry was created (for expiration cleanup).
+     pub created_at: Instant,
++    /// Set once an open connection kept outside the ring owns the entry
++    /// (`ConnectionManager::hold_transient`). Such an entry is exempt from
++    /// age expiry: it is given back only when the connection is promoted
++    /// (`drop_transient`, `add_connection`) or closed
++    /// (`Ring::prune_connection`, which every teardown path calls). Its life
++    /// is bounded ONLY by its connection closing, through the zombie sweep or
++    /// the transport idle timeout; nothing guarantees that a connection held
++    /// open indefinitely is ever closed, which is the known gap in #5922 (no
++    /// time bound on such a connection yet). Eviction at the budget
++    /// (`oldest_held_transient`) limits how many slots such entries can take.
++    pub held: bool,
++    /// Distinguishes this entry from earlier and later ones at the same
++    /// address (`ConnectionManager::transient_generation`).
++    pub generation: u64,
++}
++
++/// What became of a transient entry when its TTL elapsed
++/// (`ConnectionManager::transient_ttl_outcome`).
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub(crate) enum TransientTtlOutcome {
++    /// Promoted into the ring before the TTL (or never registered).
++    Promoted,
++    /// Still held by its open, unpromoted connection.
++    StillHeld,
++    /// Its connection closed without being promoted.
++    Closed,
++}
++
++/// Why a transient registration was refused.
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub(crate) enum TransientRefusal {
++    /// The node-wide transient budget is spent.
++    Budget,
++    /// The address's source already holds its share of the budget.
++    SourceShare,
++}
++
++/// A source's share of the transient budget is at least this many slots, so
++/// many joiners behind one carrier-grade NAT still fit on a small budget.
++const MIN_TRANSIENT_SOURCE_SHARE: usize = 16;
++/// A source holds at most this fraction (1/N) of the transient budget: 128 of
++/// the default 2048.
++const TRANSIENT_SOURCE_SHARE_DIVISOR: usize = 16;
++
++/// The most transient slots one source may hold under `budget`.
++fn transient_source_share(budget: usize) -> usize {
++    (budget / TRANSIENT_SOURCE_SHARE_DIVISOR).max(MIN_TRANSIENT_SOURCE_SHARE)
+ }
+ 
+ /// Maximum time a pending reservation can remain before being considered stale.
+@@ -563,6 +611,21 @@ pub(crate) struct ConnectionManager {
+     open_transports: Arc<dashmap::DashSet<SocketAddr>>,
+     transient_in_use: Arc<AtomicUsize>,
+     transient_budget: usize,
++    /// Transient entries per source (IPv4 address or IPv6 /64), each at most
++    /// `transient_source_share`. Kept equal to the sources of
++    /// `transient_connections`: every insert counts, every removal releases.
++    transient_per_source: Arc<DashMap<TransientSource, usize>>,
++    /// `max(MIN_TRANSIENT_SOURCE_SHARE, transient_budget / TRANSIENT_SOURCE_SHARE_DIVISOR)`.
++    transient_source_share: usize,
++    transient_source_refusals: Arc<AtomicU64>,
++    transient_evictions: Arc<AtomicU64>,
++    /// Transient entries in registration order, as `(addr, generation)`;
++    /// entries no longer in the map are skipped and dropped lazily.
++    transient_order: Arc<Mutex<std::collections::VecDeque<(SocketAddr, u64)>>>,
++    transient_generation: Arc<AtomicU64>,
++    /// Generations of held entries promoted before their TTL, until their
++    /// TTL timer asks (`take_promoted_within_ttl`), with when.
++    transient_promoted_within_ttl: Arc<DashMap<u64, Instant>>,
+     transient_ttl: Duration,
+     pub min_connections: usize,
+     pub max_connections: usize,
+@@ -770,6 +833,13 @@ impl ConnectionManager {
+             open_transports: Arc::new(dashmap::DashSet::new()),
+             transient_in_use: Arc::new(AtomicUsize::new(0)),
+             transient_budget,
++            transient_per_source: Arc::new(DashMap::new()),
++            transient_source_share: transient_source_share(transient_budget),
++            transient_source_refusals: Arc::new(AtomicU64::new(0)),
++            transient_evictions: Arc::new(AtomicU64::new(0)),
++            transient_order: Arc::new(Mutex::new(std::collections::VecDeque::new())),
++            transient_generation: Arc::new(AtomicU64::new(0)),
++            transient_promoted_within_ttl: Arc::new(DashMap::new()),
+             transient_ttl,
+             min_connections,
+             max_connections,
+@@ -1981,34 +2051,281 @@ impl ConnectionManager {
+     /// Attempts to register a transient connection, enforcing the configured budget.
+     /// Returns `false` when the budg
 ```
 
 ---
 
-### Incident Patch 3: `37e8fbda` (2026-11-18)
-**Commit Message**: fix: store only contract ids in PendingBroadcastStore and expire eagerly (#6274)
+### Incident Patch 2: `a669ccb9` (2026-11-19)
+**Commit Message**: build: release 0.2.161 (#6300)
 
-**File**: `crates/core/src/node.rs` (modified, +7/-3)
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -2551,9 +2551,13 @@ where
-                 // `pending_broadcasts` clause so the #4359 fresh-PUT flush at
-                 // the matching arm still runs for any contract that owes one.
-                 // Skipping is safe for the flush because a deferred broadcast
--                // is only ever stashed for a contract THIS node originated
--                // (broadcast give-up), so the flush is a guaranteed no-op for
--                // every contract this gate skips. The predicates take a
-+                // is only ever stashed for a contract THIS node stored and
-+                // tried to fan out (broadcast give-up). That includes a remote
-+                // peer's PUT stored under every-hop hosting, not only
-+                // contracts this node originated, so the guard here is the
-+                // `pending_broadcasts` clause above: any contract that owes a
-+                // flush passes the gate, and every contract the gate skips has
-+                // no pending entry. The predicates take a
-                 // synthetic key with a zero code hash: `ContractKey` equality
-                 // and hashing are instance-only (freenet-stdlib `key.rs`), so
-                 // the hosting / subscription maps resolve correctly from the
+@@ -1899,7 +1899,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "fdev"
+-version = "0.3.322"
++version = "0.3.323"
+ dependencies = [
+  "anyhow",
+  "axum",
+@@ -2078,7 +2078,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "freenet"
+-version = "0.2.160"
++version = "0.2.161"
+ dependencies = [
+  "aes-gcm",
+  "ahash",
 ```
 
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +5/-1)
+**File**: `apps/freenet-ping/Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -6711,7 +6711,11 @@ pub(crate) mod tests {
-         // does not start writing a stash on every fan-out.
-         let branch = &body[covered_pos..retry_pos];
-         assert!(
--            branch.contains("pending_broadcasts.take(key.id()).is_some()"),
-+            branch
-+                .split_whitespace()
-+                .collect::<Vec<_>>()
-+                .join(" ")
-+                .contains("if op_manager.pending_broadcasts.take(key.id()) {"),
-             "the fully-covered branch must act on a deferred re-broadcast stash \
-              only when one EXISTS. An unconditional take discards an earlier \
-              give-up's stash with no replacement; an unconditional stash adds a \
+@@ -1715,7 +1715,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "freenet"
+-version = "0.2.160"
++version = "0.2.161"
+ dependencies = [
+  "aes-gcm",
+  "ahash",
 ```
 
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/broadcast.rs` (modified, +30/-35)
+**File**: `crates/core/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -320,12 +320,11 @@ impl P2pConnManager {
-             // every fully-covered fan-out — the COMMON outcome in the clique
-             // regime this design targets — and re-emit on every new subscriber.
-             // So: only if something was already stashed (meaning an earlier
--            // broadcast genuinely gave up on this contract) do we put the
--            // current state back in its place.
--            if op_manager.pending_broadcasts.take(key.id()).is_some() {
--                op_manager
--                    .pending_broadcasts
--                    .stash(*key.id(), new_state.clone());
-+            // broadcast genuinely gave up on this contract) do we refresh its
-+            // stash (the store holds only the id and time; the flush reads the
-+            // CURRENT state).
-+            if op_manager.pending_broadcasts.take(key.id()) {
-+                op_manager.pending_broadcasts.stash(*key.id());
-                 tracing::debug!(
-                     contract = %key,
-                     phase = "fully_covered_stash_refresh",
-@@ -438,9 +437,7 @@ impl P2pConnManager {
-                 // the freshly-registered target and propagates. The store is
-                 // bounded by size and TTL so a churn of fresh ids that never
-                 // gain a subscriber cannot pin memory.
--                op_manager
--                    .pending_broadcasts
--                    .stash(*key.id(), new_state.clone());
-+                op_manager.pending_broadcasts.stash(*key.id());
- 
-                 // Lost-wakeup guard (#4359 re-review): stash() runs here on the
-                 // event-loop task while the interest-resolve flush runs on the
-@@ -472,35 +469,33 @@ impl P2pConnManager {
-                     &key,
-                     &crate::ring::broadcast_coverage::BroadcastOrigin::local(),
-                 );
--                if !recheck.targets.is_empty() {
--                    if let Some(stashed) = op_manager.pending_broadcasts.take(key.id()) {
-+                if !recheck.targets.is_empty() && op_manager.pending_broadcasts.take(key.id()) {
-+                    tracing::debug!(
-+                        contract = %key,
-+                        target_count = recheck.targets.len(),
-+                        phase = "pending_broadcast_stash_recheck",
-+                        "A target appeared while giving up; re-emitting the deferred \
-+                         fresh-contract broadcast immediately instead of leaving it \
-+                         stashed for a future flush (#4359)"
-+                    );
-+                    if let Err(e) = op_manager.try_notify_node_event(
-+                        crate::message::NodeEvent::BroadcastStateChange {
-+                            key,
-+                            new_state: new_state.clone(),
-+                            is_retry: false,
-+                            is_reemit: true,
-+                        },
-+                    ) {
-+                        // Channel full/closed: re-stash so the next interest
-+                        // flush still recovers it. Losing it would re-open the
-+                        // locally-hosted-only failure this fix closes.
-+                        op_manager.pending_broadcasts.stash(*key.id());
-                         tracing::debug!(
-                             contract = %key,
--                            target_count = recheck.targets.len(),
--                            phase = "pending_broadcast_stash_recheck",
--                            "A target appeared while giving up; re-emitting the deferred \
--                             fresh-contract broadcast immediately instead of leaving it \
--                             stashed for a future flush (#4359)"
-+                            error = %e,
-+                            "pending_broadcast_stash_recheck: immediate re-emit dropped; \
-+                             re-stashed for the next interest signal"
-                         );
--                        if let Err(e) = op_manager.try_notify_node_event(
--                            crate::message::NodeEvent::BroadcastStateChange {
--                                key,
--                                new_state: stashed.clone(),
--                                is_retry: false,
--                                is_reemit: true,
--                            },
--                        ) {
--                            // Channel full/closed: re-stash so the next interest
--                            // flush still recovers it. Losing it would re-open the
--                            // locally-hosted-only failure this fix closes.
--                            op_manager.pending_broadcasts.stash(*key.id(), stashed);
--                            tracing::debug!(
--                                contract = %key,
--                                error = %e,
--                                "pending_broadcast_stash_recheck: immediate re-emit dropped; \
--                                 re-stashed for the next in
+@@ -1,6 +1,6 @@
+ [package]
+ name = "freenet"
+-version = "0.2.160"
++version = "0.2.161"
+ edition = "2024"
+ rust-version = "1.85"
+ publish = true
 ```
 
-**File**: `crates/core/src/node/op_state_manager.rs` (modified, +137/-68)
+**File**: `crates/fdev/Cargo.toml` (modified, +4/-4)
 ```diff
-@@ -31,7 +31,7 @@ use crate::{
-     message::{InterestMessage, MessageStats, NetMessage, NetMessageV1, NodeEvent, Transaction},
-     operations::{
-         OpCtx, OpError, connect::ConnectForwardEstimator, orphan_streams::OrphanStreamRegistry,
--        stream_progress::StreamProgressRegistry,
-+        stream_progress::StreamProgressRegistry, update::pending_broadcast::StateRead,
-     },
-     ring::{
-         ConnectionManager, Distance, LiveTransactionTracker, Location, PeerConnectionBackoff,
-@@ -1196,21 +1196,20 @@ impl OpManager {
-     /// Issue #4359: a never-before-seen contract id loses the race between the
-     /// broadcast give-up window (~6 s) and the much slower interest/
-     /// subscription/proximity resolve. When the broadcast handler gives up it
--    /// stashes the state in [`Self::pending_broadcasts`]. This is called on the
-+    /// records the contract in [`Self::pending_broadcasts`]. This is called on the
-     /// **first viable-target signal** for the contract — see the call-site list
-     /// in the trigger-completeness note below — so the deferred state is
-     /// re-emitted as a `BroadcastStateChange { is_retry: false, is_reemit: true }`,
-     /// which now finds the just-appeared target and propagates.
-     ///
--    /// ## Stale-state safety (issue #4359 re-review, SHOULD-FIX 4)
-+    /// ## State is read at flush time
-     ///
--    /// Rather than re-emit the give-up-time *bytes* (which a newer locally
--    /// applied UPDATE could have superseded in the meantime), this re-reads the
--    /// **current** local state for the contract and broadcasts that. The stash
--    /// entry's role is "this contract still owes a fan-out"; its bytes are only
--    /// a fallback used when the live read fails (contract handler unavailable),
--    /// which is strictly no worse than the give-up-time state we would otherwise
--    /// have re-emitted.
-+    /// [`Self::pending_broadcasts`] holds only the contract id and the stash
-+    /// time, never state bytes (#5551). This re-reads the **current** local
-+    /// state for the contract and broadcasts that, so a newer locally-applied
-+    /// UPDATE is never clobbered. If the contract is no longer held locally
-+    /// the broadcast is skipped and counted (a node must not re-serve a copy it
-+    /// no longer hosts).
-     ///
-     /// ## Trigger completeness (issue #4359 re-review, MUST-FIX 1)
-     ///
-@@ -1247,7 +1246,7 @@ impl OpManager {
-     /// future `register_peer_interest` call site forgetting the flush.
-     ///
-     /// Best-effort via [`Self::try_notify_node_event`]: if the channel is full
--    /// the state is re-stashed for the next signal. No-op (no read, no emit)
-+    /// the id is re-stashed for the next signal. No-op (no read, no emit)
-     /// when nothing is pending for the contract — the overwhelmingly common
-     /// case, kept cheap by checking membership before any contract-handler read.
-     pub(crate) async fn flush_pending_broadcast_on_interest(&self, key: &ContractKey) {
-@@ -1264,10 +1263,12 @@ impl OpManager {
-         .await;
-     }
+@@ -1,6 +1,6 @@
+ [package]
+ name = "fdev"
+-version = "0.3.322"
++version = "0.3.323"
+ edition = "2024"
+ rust-version = "1.85"
+ publish = true
+@@ -14,12 +14,12 @@ readme = "README.md"
+ # (v0.2.x), so we embed the matching freenet version literally — `v{ version }`
+ # would expand to the fdev crate version and 404. release.yml rewrites the
+ # `vX.Y.Z` segment whenever the freenet version is bumped (issue #3995).
+-pkg-url = "{ repo }/releases/download/v0.2.160/fdev-{ target }.tar.gz"
++pkg-url = "{ repo }/releases/download/v0.2.161/fdev-{ target }.tar.gz"
+ pkg-fmt = "tgz"
+ bin-dir = "fdev"
  
--    /// Read the current local state for `key` from the contract handler, or
--    /// `None` if we don't host it / the read fails. Used by the #4359 deferred
--    /// re-broadcast flush to avoid re-emitting superseded give-up-time bytes.
--    async fn read_current_contract_state(&self, key: &ContractKey) -> Option<WrappedState> {
-+    /// Read the current local state for `key` from the contract handler. Used
-+    /// by the #4359 deferred re-broadcast flush, which stores no state bytes.
-+    /// Only a handler answer of "no state" is [`StateRead::NotHeld`]; a timeout,
-+    /// queue refusal, dropped channel or store error is [`StateRead::Error`],
-+    /// which the flush treats as transient.
-+    async fn read_current_contract_state(&self, key: &ContractKey) -> StateRead {
-         use crate::contract::ContractHandlerEvent;
-         match self
-             .notify_contract_handler(ContractHandlerEvent::GetQuery {
-@@ -1279,8 +1280,11 @@ impl OpManager {
-             Ok(ContractHandlerEvent::GetResponse {
-                 response: Ok(store_response),
-                 ..
--            }) => store_response.state,
--            _ => None,
-+            }) => match store_response.state {
-+                Some(state) => StateRead::Held(state),
-+                None => StateRead::NotHeld,
-+            },
-+            _ => StateRead::Error,
-         }
-     }
+ [package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
+-pkg-url = "{ repo }/releases/download/v0.2.160/fdev-{ target }.zip"
++pkg-url = "{ repo }/releases/download/v0.2.161/fdev-{ target }.zip"
+ pkg-fmt = "zip"
+ bin-dir = "fdev.exe"
  
-@@ -2543,9 +2547,9 @@ fn try_notify_node_event_on(
- ///    to a concurrent drain (TTL expiry, a targets-found take, another flush);
- ///    again a no-op.
- /// 3. **stashed → re-read current state** — re-broadcast the CURRENT local
--///    state (`read_current_state` returned `Some`) rather than the possibly
--///    superseded give-up-time bytes; fall back to the stashed `bytes` when the
--///    live read fails (`None`) so we never regress to dropping the broadcast.
-+///    state (`StateRead::Held`); the store holds no bytes. `NotHeld` skips and
-+//
+@@ -56,7 +56,7 @@ ed25519-dalek = { version = "2", features = ["rand_core", "serde"] }
+ hex = { workspace = true }
+ 
+ # internal
+-freenet = { path = "../core", version = "0.2.160", features = ["testing"] }
++freenet = { path = "../core", version = "0.2.161", features = ["testing"] }
+ freenet-stdlib = { workspace = true }
+ 
+ [dev-dependencies]
 ```
 
-**File**: `crates/core/src/operations/update/pending_broadcast.rs` (modified, +437/-128)
+---
+
+### Incident Patch 3: `6b11328d` (2026-11-19)
+**Commit Message**: chore(release): raise the QUIC-native wire floor to 0.2.162 (#6299)
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +2/-2)
 ```diff
-@@ -15,11 +15,15 @@
- //! other node GETs `NotFound`.
- //!
- //! Rather than lengthen the give-up timeout (a band-aid that still races), this
--//! store keeps the last broadcast state for a contract that exhausted its retry
--//! budget with no targets. When the *first viable broadcast target* for that
--//! contract appears later, the deferred state is drained and re-emitted as a
--//! single `BroadcastStateChange { is_reemit: true }` — which now finds the
--//! freshly-appeared target and propagates.
-+//! store remembers that a contract exhausted its retry budget with no targets
-+//! and still owes a fan-out. It records only the contract id and the stash
-+//! time, never the state bytes. When the *first viable broadcast target* for
-+//! that contract appears later, the entry is drained, the CURRENT local state
-+//! is read, and it is re-emitted as a single
-+//! `BroadcastStateChange { is_reemit: true }` — which now finds the
-+//! freshly-appeared target and propagates. If the contract is no longer held
-+//! locally at that point the broadcast is skipped and counted: this node must
-+//! not re-serve a copy it no longer hosts (hosting-invariants, invariant 1).
- //!
- //! ## First-viable-target signal set (issue #4359 re-review, MUST-FIX 1)
- //!
-@@ -55,14 +59,29 @@
- //! ## Bounding (per `.claude/rules/code-style.md` per-key-collection rule and
- //! the AGENTS.md "cleanup exemptions must be time-bounded" rule)
- //!
--//! The store is bounded two ways so a churn of network-influenced fresh ids
--//! cannot pin memory:
-+//! Stashes come from this node's own broadcast give-up, which fires for any
-+//! state it stores and fans out, including a remote peer's PUT stored under
-+//! every-hop hosting, so remote peers can influence which ids are stashed. The
-+//! store therefore holds NO state bytes (an earlier revision held full states,
-+//! up to `MAX_STATE_SIZE` each, which a count cap does not bound: #5551).
-+//! Memory is bounded by [`MAX_PENDING_BROADCASTS`] x (contract id + timestamp +
-+//! LRU node), about a hundred kilobytes in total, whatever the state sizes.
- //!
--//! * **Size**: at most [`MAX_PENDING_BROADCASTS`] contracts. A new insert at
--//!   capacity evicts the oldest entry (it pruning expired entries first).
--//! * **Age (TTL)**: an entry older than [`PENDING_BROADCAST_TTL`] is dropped on
--//!   the next insert/take and never re-broadcast. A fresh PUT that never gains a
--//!   subscriber is therefore released, not pinned forever.
-+//! * **Count**: at most [`MAX_PENDING_BROADCASTS`] ids. An insert at capacity
-+//!   evicts the least-recently-stashed id (counted, and logged at `info!` on
-+//!   powers of two so a flood is visible in release builds). An evicted id
-+//!   loses its deferred broadcast until anti-entropy repairs it, so eviction is
-+//!   a cost, but one that costs the attacker as many distinct ids as the cap.
-+//! * **Age (TTL)**: an entry older than [`PENDING_BROADCAST_TTL_MS`] is never
-+//!   re-broadcast. Expired entries are dropped eagerly, on every
-+//!   [`PendingBroadcastStore::stash`] and every
-+//!   [`PendingBroadcastStore::contains`] (called from the interest-activity
-+//!   paths), not only when the same contract is later taken.
-+//!
-+//! Entries are evicted and expired in stash order (re-stashing an id refreshes
-+//! its position and timestamp without growing the store). If the system clock
-+//! steps backwards, an expired entry can sit behind a newer one until the clock
-+//! catches up; the count cap still bounds it.
- //!
- //! Timestamps come from [`GlobalSimulationTime`](crate::config::GlobalSimulationTime)
- //! so the TTL is deterministic under the simulation clock (DST).
-@@ -87,112 +106,253 @@
- //! even a hypothetical small skew could only shift an eviction by a tolerance
- //! far below the window. No shared/atomic clock is needed here.
+@@ -1227,8 +1227,8 @@ use crate::operations::connect::native::NativeWire;
+ /// which ships while the data ramp is still under watch. Raised to 0.2.161
+ /// for 0.2.160: native connect is still off (`QUIC_NATIVE_PERCENT` is 0) and
+ /// its wire fields may change before it is enabled, so no release is frozen
+-/// as the floor yet.
+-pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 161);
++/// as the floor yet. Raised to 0.2.162 for 0.2.161 for the same reasons.
++pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 162);
  
-+use std::num::NonZeroUsize;
-+use std::sync::atomic::{AtomicU64, Ordering};
-+
- use freenet_stdlib::prelude::{ContractInstanceId, WrappedState};
-+use lru::LruCache;
-+use parking_lot::Mutex;
- 
- use crate::config::GlobalSimulationTime;
- 
--/// Maximum number of distinct contracts with a deferred broadcast pending. A
--/// fresh insert at capacity evicts the oldest entry rather than growing the
--/// map. 1024 comfortably covers the realistic count of fresh-id PUTs in flight
--/// on a busy node while capping worst-case memory at a bounded multiple of the
--/// largest stashed state.
-+/// Maximum number of distinct contracts with a deferred broadcast pending. The
-+/// store holds only ids and timestamps, so this bounds memory at roughly
-+/// `1024 x (32-byte id + 8-byte timestamp + LRU node)`. Raising it only costs
-+/// that much per entry; it exists so a churn of fresh ids cannot grow the map
-+/// without bound, and so a flood must supply this many distinct ids to evict a
-+/// legitimate entry.
- const MAX_PENDING_BROADCASTS: usize = 1024;
- 
- /// How long a deferred broadcast stays eligible for re-emission. After this the
- /// entry is dropped without re-b
+ /// Has the decoder for the QUIC-native `ConnectMsg` variants shipped, and in
+ /// which release?
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6280** (2026-11-18): fix(hosting): bound per-neighbor hosting adverts and close disconnect race (@sanity)
-- **PR #6279** (2026-11-18): fix: bound remote-controlled relay inputs (UPDATE loop, HTL, reconcile rate, streaming admission) (@sanity)
-- **PR #6278** (2026-11-18): build: release 0.2.160 (@sanity)
-- **PR #6274** (2026-11-18): fix: store only contract ids in PendingBroadcastStore and expire eagerly (@sanity)
-- **PR #6273** (2026-11-18): chore(release): raise the QUIC-native wire floor to 0.2.161 (@sanity)
-- **PR #6271** (2026-11-18): fix: run initiate_buffer and instance setup under the guest backstop (@sanity)
+- **PR #6300** (2026-11-19): build: release 0.2.161 (@sanity)
+- **PR #6299** (2026-11-19): chore(release): raise the QUIC-native wire floor to 0.2.162 (@sanity)
+- **PR #6298** (2026-11-19): fix: bound contract-handler event admission per priority class (@sanity)
+- **PR #6297** (2026-11-19): feat(quic): native joiners inside the connection cap, with their own queue share (@sanity)
+- **PR #6296** (2026-11-19): fix(connect): enforce the transient connection budget; bound FixedRate flight size (@sanity)
+- **PR #6295** (2026-11-19): test: give the merge-budget sims a measured nextest timeout (@sanity)
 
 ---
 
@@ -2913,59 +2532,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hosting): bound per-neighbor hosting adverts and close disconnect race
+## X. connect): enforce the transient connection budget; bound FixedRate flight size
 
 **RULE**:
-When implementing operations in `crates/core/src/node.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/config.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9811972d`: hosting): bound per-neighbor hosting adverts and close disconnect race. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `48d67dfb`: connect): enforce the transient connection budget; bound FixedRate flight size. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/node.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/config.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // `source_pub_key` was resolved above, but this task runs
-            // concurrently with the event loop's disconnect handling and
-            // applying a large message takes a while. Ring membership is
-            // therefore re-checked AFTER the message is applied (see
-            // `handle_message_unless_disconnected`); otherwise a peer that
-            // drops its connection in between leaves a neighbor-hosting entry
-            // behind that nothing ever removes.
-            let Some(result) = op_manager
-                .handle_message_unless_disconnected(&source_pub_key, message.clone(), || {
-                    op_manager
-                        .ring
-                        .connection_manager
-                        .get_peer_by_pub_key(&source_pub_key)
-                        .is_some()
-                })
-            else {
-                tracing::debug!(
-                    %source,
-                    peer = %source_pub_key,
-                    "NeighborHosting: sender left the ring while its message was applied, discarded"
-                );
-                return Ok(());
-            };
-            //
-            // The ids are already distinct (`h
+    /// Time (in seconds) after which an unpromoted transient connection is counted
+    /// as expired. Its transport stays open, and its slot in the transient budget
+    /// is held until it is promoted or closed.
+    /// Time (in seconds) after which an unpromoted transient connection is counted
+    /// as expired. Its transport stays open, and its slot in the transient budget
+    /// is held until it is promoted or closed.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            let result = op_manager
-                .handle_message(&source_pub_key, message.clone());
-            for instance_id in result.overlapping_contracts {
-            .find("for instance_id in result.overlapping_contracts {")
-            .expect("NeighborHosting overlap-sync loop not found");
+    /// Time (in seconds) before an unpromoted transient connection is dropped.
+    /// Time (in seconds) before an unpromoted transient connection is dropped.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9811972d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `48d67dfb` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

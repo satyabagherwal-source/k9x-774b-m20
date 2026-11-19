@@ -11408,3 +11408,8 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `590bfc1f` | Multi-dimensional audit evidence | 2026-11-19T20:24:26.529Z |
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `5f81080f` | Multi-dimensional audit evidence | 2026-11-19T20:33:56.720Z |
 | `learn-dom-h-e8006564` | `project://rtk-ai-rtk` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md` | 2026-11-19T20:34:29.192Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `ccb8393e` | Multi-dimensional audit evidence | 2026-11-19T20:55:49.692Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `48d67dfb` | Multi-dimensional audit evidence | 2026-11-19T20:55:52.421Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `cc6aee8f` | Multi-dimensional audit evidence | 2026-11-19T20:55:53.784Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `12f3d096` | Multi-dimensional audit evidence | 2026-11-19T20:55:55.790Z |
+| `learn-dom-d-9d38d4a5` | `project://skyhook-io-radar` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md` | 2026-11-19T20:56:27.465Z |
