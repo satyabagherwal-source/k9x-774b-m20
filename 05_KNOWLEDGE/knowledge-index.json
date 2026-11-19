@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T07:14:28.215Z",
+  "last_updated": "2026-11-19T07:43:18.490Z",
   "total_verified_learnings": 9015,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21679,
+  "total_items": 21692,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -233737,7 +233737,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
       "source_version": "hf-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "7a6d3eedbe07b00a85d247126e949dc67ef458b9ecd426bdfd2e654599732e67",
+      "content_hash": "d232a01eaf74d991ec746010cdeb188d2aae9daa34e611bb8f9b8a078c013f2e",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "promoted_rules": [],
@@ -233746,7 +233746,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T17:51:05.196Z",
+      "verified_at": "2026-11-19T07:42:19.848Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233763,9 +233763,9 @@
       "title": "Research & Knowledge Intelligence: unsloth/embeddinggemma-2-GGUF Core Invariants",
       "repository": "unsloth/embeddinggemma-2-GGUF",
       "source_version": "hf-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "dcd6c6eae9e6f8ed9162c6de43017876276c5b6adc7a210258355f89bbc8cfbc",
+      "content_hash": "3bf9cb517487fd712e797b5d15be2caca818314b94a09b937c309ec4554ac56e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T17:51:05.494Z"
+      "persisted_at": "2026-11-19T07:42:20.196Z"
     },
     "learn-github-apache-arrow": {
       "learning_id": "learn-github-apache-arrow",
@@ -234002,9 +234002,9 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-embeddinggemma-2-gguf-learnings Core Invariants",
       "repository": "hf-unsloth-embeddinggemma-2-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "3419a2de6dbc8c7821640a8396c9ab0620227ec2f7d4486838463d13f5a08d0f",
+      "content_hash": "dc099f1c93df0d02c7927c2fce0522c6615b423227af5d56475b1d6b6da864fb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T17:51:54.131Z"
+      "persisted_at": "2026-11-19T07:43:17.426Z"
     },
     "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants",
@@ -251994,8 +251994,8 @@
       "slug": "medialab-xan",
       "platform": "github",
       "source_url": "https://github.com/medialab/xan",
-      "source_version": "d0482266",
-      "content_hash": "f08ce5368c987f4f93dc7b4e75641c119ccb6338655645fdc40c6ccf352b016e",
+      "source_version": "7e357947",
+      "content_hash": "7ed62287abd288f00d16b0f8fde12d5afa634a1c22dcb8facf6aa77c83d1153d",
       "dossier_path": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "promoted_rules": [
@@ -252008,6 +252008,21 @@
           "number": 9000,
           "title": "Improving performance of xan from -f=parquet",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9351,
+          "title": "Zero-Allocation Reusable Serialization Buffer Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9352,
+          "title": "Guard-Then-Consume IOBuffer Separation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9353,
+          "title": "Floating-Point Integer Downgrade Epsilon Window Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -252015,7 +252030,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T16:30:51.109Z",
+      "verified_at": "2026-11-19T07:41:45.000Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252057,10 +252072,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-medialab-xan-technical-construction-intelligence-medialab-xan-core-invariants.md",
       "title": "Technical Construction Intelligence: medialab/xan Core Invariants",
       "repository": "medialab/xan",
-      "source_version": "d0482266",
-      "content_hash": "30b6eef371ef51dbf8ec61041f34e36008635b0baea43852d224a6aba533f965",
+      "source_version": "7e357947",
+      "content_hash": "bcd9226c7469425c45eef2c1eef0a15579c84df6505ebde106f9ca21ac3ce3d9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T16:30:51.507Z"
+      "persisted_at": "2026-11-19T07:41:45.720Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-medialab-xan": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-medialab-xan",
@@ -252069,10 +252084,10 @@
       "relative_path": "08_VERIFICATION/medialab-xan-verification-protocol-empirical-defect-shield-for-medialab-xan.md",
       "title": "Verification Protocol: Empirical Defect Shield for medialab/xan",
       "repository": "medialab/xan",
-      "source_version": "d0482266",
-      "content_hash": "99dff4ef7713cbd3afd2f59b5ecb087b0e4405a31b9ebff2826ab21531dba7df",
+      "source_version": "7e357947",
+      "content_hash": "c9602b919327472d57dfa8bfe0748742b9e684ee7e1156696fd069ce69ecf201",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:30:51.623Z"
+      "persisted_at": "2026-11-19T07:41:45.950Z"
     },
     "learn-github-rickclephas-kmp-nativecoroutines": {
       "learning_id": "learn-github-rickclephas-kmp-nativecoroutines",
@@ -252191,9 +252206,9 @@
       "title": "Technical Construction Intelligence: medialab-xan-learnings Core Invariants",
       "repository": "medialab-xan-learnings",
       "source_version": "HEAD",
-      "content_hash": "3f428c960c3a1b6b4d3536669892c3fd2fb24c447f7cee4e0422afa3214cb630",
+      "content_hash": "40eae91106ae98f54bb979a1ed83994abf447a21ac83bf268b1a9a0c59db7ce5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T16:31:08.849Z"
+      "persisted_at": "2026-11-19T07:43:16.838Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-medialab-xan-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-medialab-xan-learnings",
@@ -252203,9 +252218,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for medialab-xan-learnings",
       "repository": "medialab-xan-learnings",
       "source_version": "HEAD",
-      "content_hash": "842f17ee40fcf7580463521963c0b111b703435bdc384d349a6e466b528eefe9",
+      "content_hash": "f6143ff4eb43cfcb1c829341e1451b03d5b60d1cd4e091c8b82acb72d0452852",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:31:08.962Z"
+      "persisted_at": "2026-11-19T07:43:17.098Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants",
@@ -273237,14 +273252,19 @@
       "slug": "tickernelz-opencode-mem",
       "platform": "github",
       "source_url": "https://github.com/tickernelz/opencode-mem",
-      "source_version": "e42d23c4",
-      "content_hash": "0cf22914af4c6f7eb6fa546b16400b202627544922b15828055a883904903595",
+      "source_version": "94a849ca",
+      "content_hash": "41bf54493c63c5c42e77fcf572a7015d43963be986d417875a4530ab08a4097a",
       "dossier_path": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "promoted_rules": [
         {
           "number": 8987,
           "title": "bump the minor-and-patch group across 2 directories with 10 updates",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9350,
+          "title": "make external profile cleanup timeout configurable",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -273253,7 +273273,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T15:35:15.539Z",
+      "verified_at": "2026-11-19T07:37:33.472Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273307,10 +273327,10 @@
       "relative_path": "08_VERIFICATION/tickernelz-opencode-mem-verification-protocol-empirical-defect-shield-for-ticker.md",
       "title": "Verification Protocol: Empirical Defect Shield for tickernelz/opencode-mem",
       "repository": "tickernelz/opencode-mem",
-      "source_version": "e42d23c4",
-      "content_hash": "716813c9bd916e65a53a89093f30596c4acc9cf389dbdb6fb2ba24fab34ee483",
+      "source_version": "94a849ca",
+      "content_hash": "425f939855d9549dcae7d1be08fc4cb59da5dfb7f6974ac9b6285f757d10c3f4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T15:35:16.106Z"
+      "persisted_at": "2026-11-19T07:37:34.116Z"
     },
     "candidate_directive-add-min-count-privacy-threshold-default-5": {
       "item_id": "candidate_directive-add-min-count-privacy-threshold-default-5",
@@ -273368,9 +273388,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tickernelz-opencode-mem-learnings",
       "repository": "tickernelz-opencode-mem-learnings",
       "source_version": "HEAD",
-      "content_hash": "7099e46512a1eb80626fb7989373b639501885ccf75fd40882d619a7377b3acd",
+      "content_hash": "ae7bc578e6d1a02f9617d83876227d80c2a26efb486cdb743cf7c23026a65f6d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T15:35:21.370Z"
+      "persisted_at": "2026-11-19T07:43:18.490Z"
     },
     "candidate_directive-synthesize-add-min-count-privacy-threshold-default-5": {
       "item_id": "candidate_directive-synthesize-add-min-count-privacy-threshold-default-5",
@@ -292957,6 +292977,170 @@
       "content_hash": "360a457c516e818c1146f7be441c6e3bb2eca20d1e89723313194588c2ae2934",
       "domain_letter": "H",
       "persisted_at": "2026-11-19T07:14:27.891Z"
+    },
+    "rule-9350": {
+      "learning_id": "rule-9350",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9350,
+      "title": "make external profile cleanup timeout configurable",
+      "source_url": "https://github.com/tickernelz/opencode-mem",
+      "source_version": "94a849ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T07:37:33.472Z"
+    },
+    "candidate_directive-make-external-profile-cleanup-timeout-configurable": {
+      "item_id": "candidate_directive-make-external-profile-cleanup-timeout-configurable",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MI6P-make-external-profile-cleanup-timeout-configurable.md",
+      "title": "make external profile cleanup timeout configurable",
+      "repository": "tickernelz/opencode-mem",
+      "source_version": "94a849ca",
+      "content_hash": "4d562c982e68d74d458e77b600bba803c27f6aaec8bb3b544b83b8fe20f9c432",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-19T07:37:33.845Z"
+    },
+    "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-tickernelz-opencode-mem-content-information-intelligence-tickernelz-opencode-mem.md",
+      "title": "Content & Information Intelligence: tickernelz/opencode-mem Core Invariants",
+      "repository": "tickernelz/opencode-mem",
+      "source_version": "94a849ca",
+      "content_hash": "a3e1ed230109e305af07e6a408c8096337a374b50c4a042bf0f56e49eed3fc7f",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-19T07:37:33.984Z"
+    },
+    "rule-9351": {
+      "learning_id": "rule-9351",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9351,
+      "title": "Zero-Allocation Reusable Serialization Buffer Invariant",
+      "source_url": "https://github.com/medialab/xan",
+      "source_version": "7e357947",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T07:41:45.000Z"
+    },
+    "rule-9352": {
+      "learning_id": "rule-9352",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9352,
+      "title": "Guard-Then-Consume IOBuffer Separation Invariant",
+      "source_url": "https://github.com/medialab/xan",
+      "source_version": "7e357947",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T07:41:45.000Z"
+    },
+    "rule-9353": {
+      "learning_id": "rule-9353",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9353,
+      "title": "Floating-Point Integer Downgrade Epsilon Window Invariant",
+      "source_url": "https://github.com/medialab/xan",
+      "source_version": "7e357947",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T07:41:45.000Z"
+    },
+    "candidate_directive-zero-allocation-reusable-serialization-buffer-invariant": {
+      "item_id": "candidate_directive-zero-allocation-reusable-serialization-buffer-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TUHY-zero-allocation-reusable-serialization-buffer-invariant.md",
+      "title": "Zero-Allocation Reusable Serialization Buffer Invariant",
+      "repository": "medialab-xan-learnings",
+      "source_version": "HEAD",
+      "content_hash": "004182abd32f706b096344879ceef26e00e4a9e3bc1ddfb6016035dc10d4f998",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T07:43:16.392Z"
+    },
+    "candidate_directive-guard-then-consume-iobuffer-separation-invariant": {
+      "item_id": "candidate_directive-guard-then-consume-iobuffer-separation-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TUHZ-guard-then-consume-iobuffer-separation-invariant.md",
+      "title": "Guard-Then-Consume IOBuffer Separation Invariant",
+      "repository": "medialab-xan-learnings",
+      "source_version": "HEAD",
+      "content_hash": "449390bf4868c56570b46d5e0ec38f3bfb8c36e7bb29d153ae82b566b5227050",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T07:43:16.550Z"
+    },
+    "candidate_directive-floating-point-integer-downgrade-epsilon-window-invariant": {
+      "item_id": "candidate_directive-floating-point-integer-downgrade-epsilon-window-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TUHZ-floating-point-integer-downgrade-epsilon-window-invariant.md",
+      "title": "Floating-Point Integer Downgrade Epsilon Window Invariant",
+      "repository": "medialab-xan-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1416d8dc137e868c19c9bb554115644172abac86592fb501184302618f6a58db",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T07:43:16.687Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-medialab-xan": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-medialab-xan",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-medialab-xan-adr-subsystem-boundary-modular-decoupling-in-medialab-xan.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in medialab/xan",
+      "repository": "medialab/xan",
+      "source_version": "7e357947",
+      "content_hash": "7d8e41ec02799b749625449b0d7c3c715a1743600f160bd182dfb43a86359510",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T07:41:45.843Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-medialab-xan-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-medialab-xan-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-medialab-xan-learnings-adr-subsystem-boundary-modular-decoupling-in-medialab-xan.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in medialab-xan-learnings",
+      "repository": "medialab-xan-learnings",
+      "source_version": "HEAD",
+      "content_hash": "330ea62fbdda303fc9bf925046cd4e89b7f6b3e9e4de8fa3f1ee3319fca66dfe",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T07:43:16.975Z"
+    },
+    "candidate_directive-config-make-external-profile-cleanup-timeout-configurable": {
+      "item_id": "candidate_directive-config-make-external-profile-cleanup-timeout-configurable",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TVW5-config-make-external-profile-cleanup-timeout-configurable.md",
+      "title": "config): make external profile cleanup timeout configurable",
+      "repository": "tickernelz-opencode-mem-learnings",
+      "source_version": "HEAD",
+      "content_hash": "232edce081ac6a7b25bd2aac88b087b2eaed6d0ed30d6730b025c36f5c817c59",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-19T07:43:18.209Z"
+    },
+    "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-learnings-core-invarian": {
+      "item_id": "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-learnings-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-tickernelz-opencode-mem-learnings-content-information-intelligence-tickernelz-op.md",
+      "title": "Content & Information Intelligence: tickernelz-opencode-mem-learnings Core Invariants",
+      "repository": "tickernelz-opencode-mem-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c0c5f257e9e60d69740a430c5aebc7a73a877ce9fceb36a32e41315d96f23fdb",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-19T07:43:18.352Z"
     }
   },
   "ai-builder-brain": {

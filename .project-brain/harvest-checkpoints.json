@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T07:14:22.807Z",
+  "last_updated": "2026-11-19T07:42:20.036Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -845,14 +845,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "7a6d3eedbe07b00a85d247126e949dc67ef458b9ecd426bdfd2e654599732e67",
-      "verified_at": "2026-11-14T17:51:05.346Z",
+      "content_hash": "d232a01eaf74d991ec746010cdeb188d2aae9daa34e611bb8f9b8a078c013f2e",
+      "verified_at": "2026-11-19T07:42:20.035Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T17:51:05.346Z"
+      "last_updated": "2026-11-19T07:42:20.035Z"
     },
     "Cloudflare/clef": {
       "repository": "Cloudflare/clef",
@@ -2198,14 +2198,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tickernelz-opencode-mem",
-      "content_hash": "0cf22914af4c6f7eb6fa546b16400b202627544922b15828055a883904903595",
-      "verified_at": "2026-11-17T15:35:15.707Z",
+      "content_hash": "41bf54493c63c5c42e77fcf572a7015d43963be986d417875a4530ab08a4097a",
+      "verified_at": "2026-11-19T07:37:33.661Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:35:15.707Z"
+      "last_updated": "2026-11-19T07:37:33.661Z"
     },
     "autotrust/JEV-35B-NVFP4": {
       "repository": "autotrust/JEV-35B-NVFP4",
@@ -10431,14 +10431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-medialab-xan",
-      "content_hash": "f08ce5368c987f4f93dc7b4e75641c119ccb6338655645fdc40c6ccf352b016e",
-      "verified_at": "2026-11-17T16:30:51.254Z",
+      "content_hash": "7ed62287abd288f00d16b0f8fde12d5afa634a1c22dcb8facf6aa77c83d1153d",
+      "verified_at": "2026-11-19T07:41:45.173Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:30:51.254Z"
+      "last_updated": "2026-11-19T07:41:45.173Z"
     },
     "onejs/one": {
       "repository": "onejs/one",

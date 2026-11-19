@@ -11258,3 +11258,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-11-19T07:14:13.278Z |
 | `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `68858292` | Multi-dimensional audit evidence | 2026-11-19T07:14:19.137Z |
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `cc95a67a` | Multi-dimensional audit evidence | 2026-11-19T07:14:22.798Z |
+| `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `94a849ca` | Multi-dimensional audit evidence | 2026-11-19T07:37:33.653Z |
+| `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `7e357947` | Multi-dimensional audit evidence | 2026-11-19T07:41:45.167Z |
+| `learn-huggingface-unsloth-embeddinggemma-2-gguf` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-19T07:42:20.028Z |
+| `learn-dom-h-50b52106` | `project://medialab-xan` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/medialab-xan-learnings.md` | 2026-11-19T07:42:48.163Z |
+| `learn-dom-k-f1a58a5d` | `project://medialab-xan` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/medialab-xan-learnings.md` | 2026-11-19T07:43:16.188Z |

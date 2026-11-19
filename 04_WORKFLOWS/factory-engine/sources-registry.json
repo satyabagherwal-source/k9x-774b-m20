@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T07:14:26.052Z",
-    "lastVerified": "2026-11-19T07:14:26.052Z",
+    "lastChecked": "2026-11-19T07:42:22.840Z",
+    "lastVerified": "2026-11-19T07:42:22.840Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -141,9 +141,9 @@
   "stakater-reloader": {
     "name": "Reloader",
     "officialUrl": "https://github.com/stakater/Reloader",
-    "lastChecked": "2026-11-18T09:28:29.021Z",
+    "lastChecked": "2026-11-19T07:37:23.876Z",
     "revisionIdentifier": "5f3fdbdc",
-    "lastVerified": "2026-11-18T09:28:29.021Z"
+    "lastVerified": "2026-11-19T07:37:23.876Z"
   },
   "microsoft-security-101": {
     "name": "Security-101",
@@ -242,9 +242,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-19T06:30:13.845Z",
+    "lastChecked": "2026-11-19T07:37:31.347Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-19T06:30:13.845Z"
+    "lastVerified": "2026-11-19T07:37:31.347Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1999,9 +1999,9 @@
   "mitmproxy-mitmproxy": {
     "name": "mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
-    "lastChecked": "2026-11-19T00:22:48.100Z",
+    "lastChecked": "2026-11-19T07:37:26.344Z",
     "revisionIdentifier": "f7701d5f",
-    "lastVerified": "2026-11-19T00:22:48.100Z"
+    "lastVerified": "2026-11-19T07:37:26.344Z"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -6639,5 +6639,63 @@
     "lastChecked": "2026-11-19T07:14:22.125Z",
     "revisionIdentifier": "2263a19d",
     "lastVerified": "2026-11-19T07:14:22.125Z"
+  },
+  "medialab-xan": {
+    "name": "medialab/xan",
+    "officialUrl": "https://github.com/medialab/xan",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-19T07:37:20.906Z",
+    "lastVerified": "2026-11-19T07:37:20.906Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-medialab-xan",
+    "contentHash": "7ed62287abd288f00d16b0f8fde12d5afa634a1c22dcb8facf6aa77c83d1153d",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-unsloth-embeddinggemma-2-gguf": {
+    "name": "unsloth/embeddinggemma-2-GGUF",
+    "officialUrl": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T07:37:19.097Z",
+    "lastVerified": "2026-11-19T07:37:19.097Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+    "contentHash": "d232a01eaf74d991ec746010cdeb188d2aae9daa34e611bb8f9b8a078c013f2e",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jetbrains-kotlinconf-app": {
+    "name": "kotlinconf-app",
+    "officialUrl": "https://github.com/JetBrains/kotlinconf-app",
+    "lastChecked": "2026-11-19T07:37:21.352Z",
+    "revisionIdentifier": "146e891c",
+    "lastVerified": "2026-11-19T07:37:21.352Z"
+  },
+  "tickernelz-opencode-mem": {
+    "name": "tickernelz/opencode-mem",
+    "officialUrl": "https://github.com/tickernelz/opencode-mem",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-19T07:37:32.615Z",
+    "lastVerified": "2026-11-19T07:37:32.615Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-tickernelz-opencode-mem",
+    "contentHash": "41bf54493c63c5c42e77fcf572a7015d43963be986d417875a4530ab08a4097a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

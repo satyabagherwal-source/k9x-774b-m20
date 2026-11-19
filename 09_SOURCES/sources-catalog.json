@@ -675,8 +675,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
     "sourceVersion": "hf-unsloth-embeddinggemma-2-gguf",
     "license": "Open-Source",
-    "contentHash": "7a6d3eedbe07b00a85d247126e949dc67ef458b9ecd426bdfd2e654599732e67",
-    "lastHarvestedAt": "2026-11-14T17:51:05.338Z",
+    "contentHash": "d232a01eaf74d991ec746010cdeb188d2aae9daa34e611bb8f9b8a078c013f2e",
+    "lastHarvestedAt": "2026-11-19T07:42:20.028Z",
     "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf"
   },
   "hf-cloudflare-clef": {
@@ -1413,10 +1413,10 @@
     "repository": "tickernelz/opencode-mem",
     "platform": "github",
     "sourceUrl": "https://github.com/tickernelz/opencode-mem",
-    "sourceVersion": "e42d23c4",
+    "sourceVersion": "94a849ca",
     "license": "MIT",
-    "contentHash": "0cf22914af4c6f7eb6fa546b16400b202627544922b15828055a883904903595",
-    "lastHarvestedAt": "2026-11-17T15:35:15.700Z",
+    "contentHash": "41bf54493c63c5c42e77fcf572a7015d43963be986d417875a4530ab08a4097a",
+    "lastHarvestedAt": "2026-11-19T07:37:33.653Z",
     "learningId": "learn-github-tickernelz-opencode-mem"
   },
   "hf-autotrust-jev-35b-nvfp4": {
@@ -6913,10 +6913,10 @@
     "repository": "medialab/xan",
     "platform": "github",
     "sourceUrl": "https://github.com/medialab/xan",
-    "sourceVersion": "d0482266",
+    "sourceVersion": "7e357947",
     "license": "Unlicense",
-    "contentHash": "f08ce5368c987f4f93dc7b4e75641c119ccb6338655645fdc40c6ccf352b016e",
-    "lastHarvestedAt": "2026-11-17T16:30:51.247Z",
+    "contentHash": "7ed62287abd288f00d16b0f8fde12d5afa634a1c22dcb8facf6aa77c83d1153d",
+    "lastHarvestedAt": "2026-11-19T07:41:45.167Z",
     "learningId": "learn-github-medialab-xan"
   },
   "onejs-one": {

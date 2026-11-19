@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T07:14:27.891Z",
+  "last_updated": "2026-11-19T07:43:18.209Z",
   "directives": [
     {
       "id": "CD-001",
@@ -32402,6 +32402,61 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-024DF4-build-deps-bump-step-security-harden-run.md",
       "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-MI6P",
+      "directive_title": "make external profile cleanup timeout configurable",
+      "source_repo": "tickernelz/opencode-mem",
+      "source_commit": "94a849ca",
+      "staged_file": "11_INBOX/candidate-directives/CD-MI6P-make-external-profile-cleanup-timeout-configurable.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-TUHY",
+      "directive_title": "Zero-Allocation Reusable Serialization Buffer Invariant",
+      "source_repo": "medialab-xan-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TUHY-zero-allocation-reusable-serialization-buffer-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-TUHZ",
+      "directive_title": "Floating-Point Integer Downgrade Epsilon Window Invariant",
+      "source_repo": "medialab-xan-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TUHZ-floating-point-integer-downgrade-epsilon-window-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-TUHZ",
+      "directive_title": "Guard-Then-Consume IOBuffer Separation Invariant",
+      "source_repo": "medialab-xan-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TUHZ-guard-then-consume-iobuffer-separation-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-TVW5",
+      "directive_title": "config): make external profile cleanup timeout configurable",
+      "source_repo": "tickernelz-opencode-mem-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TVW5-config-make-external-profile-cleanup-timeout-configurable.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "I"
     }
   ]
 }

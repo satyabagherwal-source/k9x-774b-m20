@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T07:14:28.068Z",
-  "total_records": 1955,
+  "last_updated": "2026-11-19T07:43:18.352Z",
+  "total_records": 1959,
   "domains": {
     "A": {
       "total": 13,
@@ -1299,7 +1299,7 @@
       ]
     },
     "H": {
-      "total": 454,
+      "total": 455,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1754,11 +1754,12 @@
         "domain_intelligence-technical-construction-intelligence-autotrust-autotrust-decider-pro-vision-27b-c",
         "domain_intelligence-technical-construction-intelligence-prometheus-prometheus-core-invariants",
         "domain_intelligence-technical-construction-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invar",
-        "domain_intelligence-technical-construction-intelligence-prometheus-prometheus-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-prometheus-prometheus-learnings-core-invaria",
+        "DOM-H-50B52106"
       ]
     },
     "I": {
-      "total": 97,
+      "total": 99,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1856,7 +1857,9 @@
         "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-core-invariants",
         "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-learnings-core-invaria",
         "domain_intelligence-content-information-intelligence-gluesql-gluesql-core-invariants",
-        "domain_intelligence-content-information-intelligence-gluesql-gluesql-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-gluesql-gluesql-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-core-invariants",
+        "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-learnings-core-invarian"
       ]
     },
     "J": {
@@ -1891,7 +1894,7 @@
       ]
     },
     "K": {
-      "total": 100,
+      "total": 101,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1992,7 +1995,8 @@
         "DOM-K-A46CD8EF",
         "domain_intelligence-quality-verification-intelligence-clastix-kamaji-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-duckdb-duckdb-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-duckdb-duckdb-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-duckdb-duckdb-learnings-core-invariants",
+        "DOM-K-F1A58A5D"
       ]
     },
     "L": {
@@ -16924,8 +16928,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/embeddinggemma-2-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-embeddinggemma-2-gguf-research-knowledge-intelligence-unsloth-embeddi.md",
       "repository": "unsloth/embeddinggemma-2-GGUF",
-      "content_hash": "dcd6c6eae9e6f8ed9162c6de43017876276c5b6adc7a210258355f89bbc8cfbc",
-      "created_at": "2026-11-14T17:51:05.494Z"
+      "content_hash": "3bf9cb517487fd712e797b5d15be2caca818314b94a09b937c309ec4554ac56e",
+      "created_at": "2026-11-19T07:42:20.196Z"
     },
     "domain_intelligence-content-information-intelligence-apache-arrow-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-arrow-core-invariants",
@@ -17002,8 +17006,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-embeddinggemma-2-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-embeddinggemma-2-gguf-learnings-research-knowledge-intelligence-hf-un.md",
       "repository": "hf-unsloth-embeddinggemma-2-gguf-learnings",
-      "content_hash": "3419a2de6dbc8c7821640a8396c9ab0620227ec2f7d4486838463d13f5a08d0f",
-      "created_at": "2026-11-14T17:51:54.131Z"
+      "content_hash": "dc099f1c93df0d02c7927c2fce0522c6615b423227af5d56475b1d6b6da864fb",
+      "created_at": "2026-11-19T07:43:17.426Z"
     },
     "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants",
@@ -22949,8 +22953,8 @@
       "title": "Technical Construction Intelligence: medialab/xan Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-medialab-xan-technical-construction-intelligence-medialab-xan-core-invariants.md",
       "repository": "medialab/xan",
-      "content_hash": "30b6eef371ef51dbf8ec61041f34e36008635b0baea43852d224a6aba533f965",
-      "created_at": "2026-11-17T16:30:51.507Z"
+      "content_hash": "bcd9226c7469425c45eef2c1eef0a15579c84df6505ebde106f9ca21ac3ce3d9",
+      "created_at": "2026-11-19T07:41:45.720Z"
     },
     "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-core-invariants",
@@ -22967,8 +22971,8 @@
       "title": "Technical Construction Intelligence: medialab-xan-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-medialab-xan-learnings-technical-construction-intelligence-medialab-xan-learning.md",
       "repository": "medialab-xan-learnings",
-      "content_hash": "3f428c960c3a1b6b4d3536669892c3fd2fb24c447f7cee4e0422afa3214cb630",
-      "created_at": "2026-11-17T16:31:08.849Z"
+      "content_hash": "40eae91106ae98f54bb979a1ed83994abf447a21ac83bf268b1a9a0c59db7ce5",
+      "created_at": "2026-11-19T07:43:16.838Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants",
@@ -32803,6 +32807,92 @@
       "repository": "hf-reson8-rumble-2-flash-learnings",
       "content_hash": "14832458dab0d27d29f14a1a46c69acbb93809ba29d5843b2310379458977686",
       "created_at": "2026-11-19T06:53:06.124Z"
+    },
+    "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: tickernelz/opencode-mem Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-tickernelz-opencode-mem-content-information-intelligence-tickernelz-opencode-mem.md",
+      "repository": "tickernelz/opencode-mem",
+      "content_hash": "a3e1ed230109e305af07e6a408c8096337a374b50c4a042bf0f56e49eed3fc7f",
+      "created_at": "2026-11-19T07:37:33.984Z"
+    },
+    "DOM-H-50B52106": {
+      "record_id": "DOM-H-50B52106",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Heap Allocation Bottleneck in High-Dimensional Array Deserialization (BUG-PERF-NPY-01)",
+      "content": "High-throughput numeric parsers must reuse formatting buffers (`zmij::Buffer`) and push directly into low-level writer interfaces (`write_field_no_quoting`), avoiding closure-based mapping of string allocations.",
+      "content_hash": "dfee5cd9106b834820b6f9ce61453ec01c873bf272336d1c01ca5c33ff16b5cd",
+      "summary": "The deserialization loop was mapping every cell value through `cell.unwrap().to_string()`. This resulted in a heap allocation per column, wh -> High-throughput numeric parsers must reuse formatting buffers (`zmij::Buffer`) and push directly into low-level writer interfaces (`write_fi",
+      "provenance": {
+        "source_uri": "project://medialab-xan/medialab-xan-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T07:42:22.957Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (medialab-xan)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit SHA: `7e357947`, Issue: `#1176`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T07:42:48.138Z"
+    },
+    "DOM-K-F1A58A5D": {
+      "record_id": "DOM-K-F1A58A5D",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Layer Violation and Invariant Bypass in Scraper IO Buffering (BUG-ARCH-SCRAPE-02)",
+      "content": "Keep I/O buffers strictly concerned with storage and lifetime management. Parsing MUST happen uniformly downstream after guards are verified on the extracted string reference.",
+      "content_hash": "c15139612f03dbf6459ce6de57bdadd58c78a85e91ff5bac28edb4fdad2e6057",
+      "summary": "Architectural erosion: `IOBuffer` was given parsing behavior (`read_file_as_html`) instead of behaving strictly as a raw byte/string contain -> Keep I/O buffers strictly concerned with storage and lifetime management. Parsing MUST happen uniformly downstream after guards are verified",
+      "provenance": {
+        "source_uri": "project://medialab-xan/medialab-xan-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T07:42:22.957Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (medialab-xan)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit SHA: `025cd803`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T07:43:16.168Z"
+    },
+    "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-learnings-core-invarian": {
+      "record_id": "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-learnings-core-invarian",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: tickernelz-opencode-mem-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-tickernelz-opencode-mem-learnings-content-information-intelligence-tickernelz-op.md",
+      "repository": "tickernelz-opencode-mem-learnings",
+      "content_hash": "c0c5f257e9e60d69740a430c5aebc7a73a877ce9fceb36a32e41315d96f23fdb",
+      "created_at": "2026-11-19T07:43:18.352Z"
     }
   }
 }

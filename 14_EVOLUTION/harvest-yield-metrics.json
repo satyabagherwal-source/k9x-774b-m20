@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T07:14:22.803Z",
-  "total_cycles_completed": 10725,
-  "total_learnings_persisted": 10725,
-  "total_rules_promoted": 10118,
+  "last_updated": "2026-11-19T07:42:20.033Z",
+  "total_cycles_completed": 10728,
+  "total_learnings_persisted": 10728,
+  "total_rules_promoted": 10122,
   "history": [
-    {
-      "timestamp": "2026-11-18T14:24:24.866Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T14:32:00.523Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T14:32:16.366Z",
-      "repository": "crate/crate",
-      "learningId": "learn-github-crate-crate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T14:40:28.751Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -1403,6 +1382,27 @@
       "repository": "DNSControl/dnscontrol",
       "learningId": "learn-github-dnscontrol-dnscontrol",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T07:37:33.658Z",
+      "repository": "tickernelz/opencode-mem",
+      "learningId": "learn-github-tickernelz-opencode-mem",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T07:41:45.171Z",
+      "repository": "medialab/xan",
+      "learningId": "learn-github-medialab-xan",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T07:42:20.033Z",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

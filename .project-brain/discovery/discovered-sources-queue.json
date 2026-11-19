@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T07:14:27.645Z",
+  "updated_at": "2026-11-19T07:43:17.993Z",
   "stats": {
-    "total_discovered": 5816,
-    "approved_pending_harvest": 5505,
+    "total_discovered": 5826,
+    "approved_pending_harvest": 5514,
     "harvested_count": 0,
-    "rejected_count": 311,
+    "rejected_count": 312,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5468,
+      "COMMUNITY_AND_EXPERT": 5478,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -125796,6 +125796,219 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
         "fileName": "dnscontrol-dnscontrol-learnings.md"
+      }
+    },
+    "SRC-E9990634D6E2": {
+      "id": "SRC-E9990634D6E2",
+      "url": "http://example.test/v1",
+      "title": "http://example.test/v1",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T07:43:17.652Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
+        "fileName": "tickernelz-opencode-mem-learnings.md"
+      }
+    },
+    "SRC-C52E191DC071": {
+      "id": "SRC-C52E191DC071",
+      "url": "https://opencode-mem.zhafron.my.id/docs",
+      "title": "https://opencode-mem.zhafron.my.id/docs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:43:17.697Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
+        "fileName": "tickernelz-opencode-mem-learnings.md"
+      }
+    },
+    "SRC-D585081463C4": {
+      "id": "SRC-D585081463C4",
+      "url": "https://img.shields.io/npm/v/opencode-mem.svg",
+      "title": "https://img.shields.io/npm/v/opencode-mem.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:43:17.732Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
+        "fileName": "tickernelz-opencode-mem-learnings.md"
+      }
+    },
+    "SRC-576EBF2D9538": {
+      "id": "SRC-576EBF2D9538",
+      "url": "https://www.npmjs.com/package/opencode-mem",
+      "title": "https://www.npmjs.com/package/opencode-mem",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:43:17.767Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
+        "fileName": "tickernelz-opencode-mem-learnings.md"
+      }
+    },
+    "SRC-D247CAFEAEBE": {
+      "id": "SRC-D247CAFEAEBE",
+      "url": "https://img.shields.io/npm/dm/opencode-mem.svg",
+      "title": "https://img.shields.io/npm/dm/opencode-mem.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:43:17.813Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
+        "fileName": "tickernelz-opencode-mem-learnings.md"
+      }
+    },
+    "SRC-AB15A963B27E": {
+      "id": "SRC-AB15A963B27E",
+      "url": "https://img.shields.io/npm/l/opencode-mem.svg",
+      "title": "https://img.shields.io/npm/l/opencode-mem.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:43:17.850Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
+        "fileName": "tickernelz-opencode-mem-learnings.md"
+      }
+    },
+    "SRC-15B6719D5534": {
+      "id": "SRC-15B6719D5534",
+      "url": "https://img.shields.io/github/stars/tickernelz/opencode-mem.svg",
+      "title": "https://img.shields.io/github/stars/tickernelz/opencode-mem.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:43:17.883Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
+        "fileName": "tickernelz-opencode-mem-learnings.md"
+      }
+    },
+    "SRC-58A391F0284A": {
+      "id": "SRC-58A391F0284A",
+      "url": "https://img.shields.io/badge/website-opencode--mem.zhafron.my.id-blue",
+      "title": "https://img.shields.io/badge/website-opencode--mem.zhafron.my.id-blue",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:43:17.928Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
+        "fileName": "tickernelz-opencode-mem-learnings.md"
+      }
+    },
+    "SRC-674CC215B99F": {
+      "id": "SRC-674CC215B99F",
+      "url": "https://opencode-mem.zhafron.my.id/",
+      "title": "https://opencode-mem.zhafron.my.id/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:43:17.960Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
+        "fileName": "tickernelz-opencode-mem-learnings.md"
+      }
+    },
+    "SRC-E4FC68EA3B15": {
+      "id": "SRC-E4FC68EA3B15",
+      "url": "https://img.shields.io/badge/docs-opencode--mem.zhafron.my.id%2Fdocs-blue",
+      "title": "https://img.shields.io/badge/docs-opencode--mem.zhafron.my.id%2Fdocs-blue",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:43:17.993Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
+        "fileName": "tickernelz-opencode-mem-learnings.md"
       }
     }
   }

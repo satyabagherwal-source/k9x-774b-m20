@@ -11225,3 +11225,8 @@
 | `CYCLE-20261119-SHI2` | `2026-11-19T07:14:13.274Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | Yes (`fc4ce72c...`) |
 | `CYCLE-20261119-SM0T` | `2026-11-19T07:14:19.133Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9348` | Yes (`2c16a124...`) |
 | `CYCLE-20261119-SOUI` | `2026-11-19T07:14:22.794Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9349` | Yes (`405e4fcf...`) |
+| `CYCLE-20261119-MI1D` | `2026-11-19T07:37:33.649Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9350` | Yes (`41bf5449...`) |
+| `CYCLE-20261119-RW3W` | `2026-11-19T07:41:45.164Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9351, Rule 9352, Rule 9353` | Yes (`7ed62287...`) |
+| `CYCLE-20261119-SN08` | `2026-11-19T07:42:20.024Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`d232a01e...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T07:42:48.163Z` | `medialab-xan` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-50B52106` [Domain H] | Yes (`dfee5cd9...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T07:43:16.188Z` | `medialab-xan` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-F1A58A5D` [Domain K] | Yes (`c1513961...`) |
