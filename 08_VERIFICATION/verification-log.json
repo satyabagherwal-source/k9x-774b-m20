@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-TOAB",
-    "timestamp": "2026-11-18T04:11:30.995Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "38a762cf83a9a461391662132d473c49563310f6214558173a31054288b4fd3f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-5F1Y",
-    "timestamp": "2026-11-18T04:20:38.902Z",
-    "repository": "apple/FastFrames-L",
-    "learningId": "learn-huggingface-apple-fastframes-l",
-    "contentHash": "3d12a966d3be4e37b46954ed1eb190d33fd3395ef4dcf90bc1241484fda64250",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-5GW5",
-    "timestamp": "2026-11-18T04:20:41.285Z",
-    "repository": "Comfy-Org/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-    "contentHash": "0ac77fc50e183bdd5f7769d2010b87a7d0f5948b5b1637357115d5fa4542757a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-5ODM",
     "timestamp": "2026-11-18T04:20:50.986Z",
     "repository": "argoproj/argo-events",
@@ -7490,6 +7445,51 @@
     "repository": "tw93/Pake",
     "learningId": "learn-github-tw93-pake",
     "contentHash": "c44571c60aac70116639b0fa812f1bcb677e3f1fab3a110158dbf650780f7607",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-LSZ0",
+    "timestamp": "2026-11-19T18:48:51.948Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+    "contentHash": "de6a12d6aa33073a5e3f74e7b7de196903f7e8a5112d790c17817849a7cebec1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-LXAB",
+    "timestamp": "2026-11-19T18:48:57.539Z",
+    "repository": "openkruise/kruise",
+    "learningId": "learn-github-openkruise-kruise",
+    "contentHash": "80b0e7660f5530992c4405eb49462614b0f94d83ac790ab7df15c4b8faee4a66",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-M0K3",
+    "timestamp": "2026-11-19T18:49:01.779Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "ac56e8199e2fe5ac8e04d701263c4add038f3af41eaa9f85f7fb029ddc27ba4b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

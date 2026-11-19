@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T18:33:09.451Z",
+  "last_updated": "2026-11-19T18:49:07.184Z",
   "directives": [
     {
       "id": "CD-001",
@@ -31951,11 +31951,11 @@
       "staged_date": "2026-11-19"
     },
     {
-      "id": "CD-ETSU",
+      "id": "CD-LXHH",
       "directive_title": "fix typos",
-      "source_repo": "goharbor/harbor",
-      "source_commit": "67748c71",
-      "staged_file": "11_INBOX/candidate-directives/CD-ETSU-fix-typos.md",
+      "source_repo": "openkruise/kruise",
+      "source_commit": "859efa1c",
+      "staged_file": "11_INBOX/candidate-directives/CD-LXHH-fix-typos.md",
       "status": "STAGED_FOR_REVIEW",
       "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
       "date_staged": "2026-11-19",
@@ -31982,11 +31982,11 @@
       "staged_date": "2026-11-19"
     },
     {
-      "id": "CD-F0N4",
+      "id": "CD-M40Q",
       "directive_title": "docs: fix typos",
-      "source_repo": "goharbor-harbor-learnings",
+      "source_repo": "openkruise-kruise-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-F0N4-docs-fix-typos.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-M40Q-docs-fix-typos.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-19",
@@ -33951,6 +33951,35 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-54B089-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-M4Q8",
+      "directive_title": "Revert \"Update JDK to 27.0.1.1+4\"",
+      "source_repo": "crate-crate-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-M4Q8-revert-update-jdk-to-27-0-1-1-4.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-8DA2C1",
+      "directive_title": "docs: fix typos",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "openkruise-kruise",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8DA2C1-docs-fix-typos.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-0C89AB",
+      "directive_title": "Revert \"Update JDK to 27.0.1.1+4\"",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "crate-crate",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0C89AB-revert-update-jdk-to-27-0-1-1-4-.md",
       "staged_date": "2026-11-19"
     }
   ]

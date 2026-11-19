@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T02:02:53.790Z",
+  "timestamp": "2026-11-19T18:49:06.140Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-openkruise-kruise-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [openkruise-kruise-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T02:02:53.790Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T18:49:06.140Z`  
 > **Learning ID**: `LEARN-EVO-openkruise-kruise-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 69%
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from openkruise-kruise-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openkruise-kruise-learnings.md`  
 > **Source**: github ([https://github.com/openkruise/kruise](https://github.com/openkruise/kruise))  
-> **Source Version**: `df1edb99`  
+> **Source Version**: `859efa1c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T02:02:17.583Z  
+> **Timestamp**: 2026-11-19T18:48:56.648Z  
 > **Learning ID**: `learn-github-openkruise-kruise`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openkruise-kruise-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openkruise/kruise](https://github.com/openkruise/kruise))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T02:02:17.577Z  
+> **Harvest Timestamp**: 2026-11-19T18:48:56.403Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Automated management of large-scale applications on Kubernetes (incubating project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 5391 stars
+- **Stars / Engagement**: 5393 stars
 
 ---
 
@@ -1239,11 +1239,14 @@ func main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2668** (2026-11-19): **docs: fix typos**
+  *Symptoms*: Fixes spelling mistakes found with codespell (documentation only; no functional change).
+  **Post-Mortem & Fix Analysis**:
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign veophi for approval by writing `/assign @veophi` in a comment. For more information see:[The Kubernetes Code Review Process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process).  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=openkruise%2Fkruise).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/openkruise/kruise/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["veophi"]} -->
+  > Welcome @Adham-Kiwan! It looks like this is your first PR to openkruise/kruise 🎉
+
 - **Issue #2661** (2026-11-16): **fix(persistentpodstate): only manage auto-generated PersistentPodState owned by the workload**
   *Symptoms*: ### Ⅰ. Describe what this PR does  When a StatefulSet's `kruise.io/auto-generate-persistent-pod-state` annotation changes, the PersistentPodState controller fetches the PersistentPodState with the workload's `namespace/name` and then deletes it (annotation is not `true`) or overwrites its spec (annotation is `true`). It never checks who owns that PersistentPodState.  As a result, a native `apps/v1` StatefulSet and an `apps.kruise.io` StatefulSet with the same name in the same namespace interfere with each other: toggling the annotation on one of them deletes the PersistentPodState generated for the other one. A manually created PersistentPodState with the same name is also deleted.  This PR makes the auto-generate path only manage a PersistentPodState that is controlled by the workload which triggered the reconcile (controller ownerReference UID matches). Otherwise the PersistentPodState is left untouched. Auto-generated PersistentPodStates have always been created with a controller ownerReference to the workload, so existing objects are not affected.  ### Ⅱ. Does this pull request fix one issue?  NONE  ### Ⅲ. Describe how to verify it  Added `TestAutoGeneratePersistentPodState`, covering: - PPS owned by a same-name Kruise StatefulSet is kept when the native StatefulSet disables auto-generation. - Manually created PPS (no ownerReference) is kept. - PPS owned by the StatefulSet itself is still deleted / updated / created as before.  Without the controller change, the first thr
-
-- **Issue #2649** (2026-11-05): **[release-1.9] Backport Nov 5 controller fixes**
-  *Symptoms*: ## Summary - Backport five fixes merged into master on 2026-11-05:   - `c6e343cc1`: reconcile WorkloadSpread when a Pod becomes unschedulable.   - `df39dca75`: prevent an empty custom-workload scale selector from matching every Pod.   - `c8edcbce7`: wait for PVC and StorageClass caches in StatefulSet test setup.   - `174e02a85`: clear CloneSet's stale ProgressDeadlineExceeded condition on a new update revision.   - `c6d106679`: do not count failed BroadcastJob Pod creations as active. - Preserve release-1.9 APIs: adapt the CloneSet backport to existing `v1alpha1` types; no API promotion/removal, CRD, generated-client, or webhook changes. - Exclude `0a6738682`, which fixes only CloneSet `v1beta1` validation; release-1.9's `v1alpha1` validation already uses the correct assignment.  ## Test plan - [x] `go test -race ./pkg/controller/workloadspread ./pkg/util/controllerfinder ./pkg/controller/statefulset ./pkg/controller/cloneset ./pkg/controller/broadcastjob` with Kubernetes 1.32.0 envtest assets. - [x] `go test -race ./pkg/webhook/cloneset/validating ./pkg/controller/cloneset/utils ./pkg/util/workloadspread`. - [x] Verify formatting, `git diff --check`, and unchanged API definitions, CRDs, and generated clients. - [x] Backport-specific static code review.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1260,182 +1263,31 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `df1edb99` (2026-11-12)
-**Commit Message**: fix(persistentpodstate): only manage auto-generated PersistentPodState owned by the workload
+### Incident Patch 1: `859efa1c` (2026-11-18)
+**Commit Message**: docs: fix typos
 
-The auto-generate reconcile looked up the PersistentPodState by the workload's namespace/name and deleted or updated it without checking ownership. A same-name workload of a different kind (e.g. apps/v1 StatefulSet vs apps.kruise.io StatefulSet) could therefore remove or rewrite a PersistentPodState that belongs to another workload, or one created manually.
+Signed-off-by: Adham Kiwan <[REDACTED_EMAIL]>
 
-Skip the PersistentPodState unless it is controlled by the workload that triggered the reconcile.
-
-Signed-off-by: liheng <[REDACTED_EMAIL]>
-
-**File**: `pkg/controller/persistentpodstate/persistent_pod_state_controller.go` (modified, +7/-0)
+**File**: `docs/proposals/20210628-workloadspread.md` (modified, +1/-1)
 ```diff
-@@ -392,6 +392,13 @@ func (r *ReconcilePersistentPodState) autoGeneratePersistentPodState(req ctrl.Re
- 		// not found
- 		oldObj = nil
- 	}
-+	// only manage the persistentPodState auto generated by this workload,
-+	// and never touch the one created manually or generated by another workload with the same name.
-+	if oldObj != nil && !metav1.IsControlledBy(oldObj, &workload.Metadata) {
-+		klog.InfoS("PersistentPodState is not controlled by the workload, and skip it", "persistentPodState", klog.KObj(oldObj),
-+			"workload", klog.KRef(ns, name), "apiVersion", apiVersion, "kind", kind)
-+		return nil
-+	}
+@@ -199,7 +199,7 @@ WorkloadSpread has both webhook and controller. Controller should collaborate wi
  
- 	// auto generate persistentPodState crd object
- 	if workload.Metadata.Annotations[appsv1alpha1.AnnotationAutoGeneratePersistentPodState] == "true" {
-```
-
-**File**: `pkg/controller/persistentpodstate/persistent_pod_state_controller_test.go` (modified, +184/-0)
-```diff
-@@ -25,6 +25,7 @@ import (
+ The webhook is responsible for injecting rules into pod, updating `missingReplicas` and recording the creation or deletion entry of Pod into map.
  
- 	appsv1 "k8s.io/api/apps/v1"
- 	corev1 "k8s.io/api/core/v1"
-+	"k8s.io/apimachinery/pkg/api/errors"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/apimachinery/pkg/types"
-@@ -38,6 +39,7 @@ import (
+-The controller is responsible for updating the missingReplicas along with other statics, and cleaning `creatingPods` and `deletingPods` map.
++The controller is responsible for updating the missingReplicas along with other statistics, and cleaning `creatingPods` and `deletingPods` map.
  
- 	appsv1alpha1 "github.com/openkruise/kruise/apis/apps/v1alpha1"
- 	appsv1beta1 "github.com/openkruise/kruise/apis/apps/v1beta1"
-+	"github.com/openkruise/kruise/pkg/util"
- 	"github.com/openkruise/kruise/pkg/util/controllerfinder"
- 	"github.com/openkruise/kruise/pkg/util/fieldindex"
- )
-@@ -562,3 +564,185 @@ func getLatestPersistentPodState(client client.Client, staticIP *appsv1beta1.Per
- 	err := client.Get(context.TODO(), Key, newPersistentPodState)
- 	return newPersistentPodState, err
- }
-+
-+func TestAutoGeneratePersistentPodState(t *testing.T) {
-+	nativeStsUID := types.UID("5f0ce1a5-7a43-4b0a-9d3c-1b8c3f5e6a01")
-+	newNativeSts := func(annotations map[string]string) *appsv1.StatefulSet {
-+		return &appsv1.StatefulSet{
-+			ObjectMeta: metav1.ObjectMeta{
-+				Namespace:   "ns-test",
-+				Name:        "test-sts",
-+				UID:         nativeStsUID,
-+				Annotations: annotations,
-+			},
-+			Spec: appsv1.StatefulSetSpec{
-+				Replicas: ptr.To[int32](0),
-+			},
-+		}
-+	}
-+	newPps := func(owner *metav1.OwnerReference, targetRef appsv1beta1.TargetReference, keys ...string) *appsv1beta1.PersistentPodState {
-+		pps := &appsv1beta1.PersistentPodState{
-+			ObjectMeta: metav1.ObjectMeta{
-+				Namespace: "ns-test",
-+				Name:      "test-sts",
-+			},
-+			Spec: appsv1beta1.PersistentPodStateSpec{
-+				TargetReference: targetRef,
-+				RequiredPersistentTopology: &appsv1beta1.NodeTopologyTerm{
-+					Keys: keys,
-+				},
-+			},
-+		}
-+		if owner != nil {
-+			pps.OwnerReferences = []metav1.OwnerReference{*owner}
-+		}
-+		return pps
-+	}
-+	kruiseStsOwner := &metav1.OwnerReference{
-+		APIVersion: KruiseKindSts.GroupVersion().String(),
-+		Kind:       KruiseKindSts.Kind,
-+		Name:       kruiseStsDemo.Name,
-+		UID:        kruiseStsDemo.UID,
-+		Controller: ptr.To(true),
-+	}
-+	kruiseStsRef := appsv1beta1.TargetReference{
-+		APIVersion: KruiseKindSts.GroupVersion().String(),
-+		Kind:       KruiseKindSts.Kind,
-+		Name:       kruiseStsDemo.Name,
-+	}
-+	nativeStsOwner := &metav1.OwnerReference{
-+		APIVersion: KindSts.GroupVersion().String(),
-+		Kind:       KindSts.Kind,
-+		Name:       "test-sts",
-+		UID:        nativeStsUID,
-+		Controller: ptr.To(true),
-+	}
-+	nativeStsRef := appsv1beta1.TargetReference{
-+		APIVersion: KindSts.GroupVersion().String(),
-+		Kind:       KindSts.Kind,
-+		Name:       "test-sts",
-+	}
-+
-+	cases := []struct {
-+		name        string
-+		getSts      func() *appsv1.StatefulSet
-+		getPps      func() *appsv1beta1.PersistentPodState
-+		expectExist bool
-+		expectKeys  []string
-+	}{
-+		{
-+			name: "auto generate disabled, pps generated by the same-name kruise statefulset, and keep it",
-+			getSts: func() *appsv1.StatefulSet {
-+				return newNativeSts(map[string]string{appsv1alpha1.AnnotationAutoGeneratePersistentPodState: "false"})
-+			},
-+			getPps: func() *appsv1beta1.PersistentPodState {
-+				return newPps(kruiseStsOwner, kruiseStsRef, podStateNodeTopologyLabel)
-+			},
-+			expectExist: true,
-+			expectKeys:  []string{podStateNodeTopologyLabel},
-+		},
-+		{
-+			name: "auto generate disabled, pps created manually, and keep it",
-+			getSts: func() *appsv1.StatefulSet {
-+				return newNativeSts(map[string]string{appsv1alpha1.AnnotationAutoGeneratePersistentPodState: "false"})
-+			},
-+			getPps: func() *appsv1beta1.PersistentPodState {
-+				return newPps(nil, nativeStsRef, podStateNodeTopologyLabel)
-+			},
-+			expectExist: true,
-+			expectKeys:  []string{podStateNodeTopologyLabel},
-+		},
-+		{
-+			name: "auto generate disabled, pps generated by the statefulset, and delete it",
-+			getSts: func() *appsv1.StatefulSet {
-+				return newNativeSts(map[string]string{appsv1alpha1.AnnotationAutoGeneratePersistentPodState: "false"})
-+			},
-+			getPps: func() *appsv1beta1.PersistentPodState {
-+				return newPps(nativeStsOwner, nativeStsRef, podStateNodeTopologyLabel)
-+			},
-+			expectExist: false,
-+		},
-+		{
-+			name: "auto generate enabled, pps generated by the same-name kruise statefulset, and keep it unchanged",
-+			getSts: func() *appsv1.StatefulSet {
-+				return newNativeSts(map[string]string{
-+					appsv1alpha1.AnnotationAutoGeneratePersistentPodState: "true",
-+					appsv1alpha1.AnnotationRequiredPersistentTopology:     podStateZoneTopologyLabel,
-+				})
-+			},
-+			getPps: func() *appsv1beta1.PersistentPodState {
-+				return newPps(kruiseStsOwner, kruiseStsRef, podStateNodeTopologyLabel)
-+			},
-+			expectExist: true,
-+			expectKeys:  []string{podStateNodeTopologyLabel},
-+		},
-+		{
-+			name: "auto generate enabled, pps generated by the statefulset, and update it",
-+			getSts: func() *appsv1.StatefulSet {
-+				return newNativeSts(map[string]string{
-+					appsv1alpha1.AnnotationAutoGeneratePersistentPodState: "true",
-+					appsv1alpha1.AnnotationRequiredPersistentTopology:     po
+ ### Replicas control
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2668** (2026-11-19): docs: fix typos (@Adham-Kiwan)
 - **PR #2661** (2026-11-16): fix(persistentpodstate): only manage auto-generated PersistentPodState owned by the workload (@zmberg)
 - **PR #2649** (2026-11-05): [release-1.9] Backport Nov 5 controller fixes (@furykerry)
 - **PR #2642** (2026-11-05): fix(controllerfinder): don't match every pod for an empty scale selector (@sarankumar1325)
 - **PR #2635** (2026-11-05): fix(statefulset): wait for PVC and StorageClass caches in test setup (@photoszzt)
 - **PR #2634** (2026-11-05): fix(workloadspread): reconcile when a pod becomes unschedulable (@Ishaan400)
-- **PR #2626** (2026-10-20): docs(changelog): add v1.9.1 and v1.9.2 release notes (@furykerry)
 
 ---
 
@@ -1455,37 +1307,31 @@ Signed-off-by: liheng <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. persistentpodstate): only manage auto-generated PersistentPodState owned by the 
+## X. docs: fix typos
 
 **RULE**:
-When implementing operations in `pkg/controller/persistentpodstate/persistent_pod_state_controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openkruise/kruise. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/proposals/20210628-workloadspread.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openkruise/kruise. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `df1edb99`: persistentpodstate): only manage auto-generated PersistentPodState owned by the workload. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `859efa1c`: docs: fix typos. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/controller/persistentpodstate/persistent_pod_state_controller.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/proposals/20210628-workloadspread.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// only manage the persistentPodState auto generated by this workload,
-	// and never touch the one created manually or generated by another workload with the same name.
-	if oldObj != nil && !metav1.IsControlledBy(oldObj, &workload.Metadata) {
-		klog.InfoS("PersistentPodState is not controlled by the workload, and skip it", "persistentPodState", klog.KObj(oldObj),
-			"workload", klog.KRef(ns, name), "apiVersion", apiVersion, "kind", kind)
-		return nil
-	}
+The controller is responsible for updating the missingReplicas along with other statistics, and cleaning `creatingPods` and `deletingPods` map.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+The controller is responsible for updating the missingReplicas along with other statics, and cleaning `creatingPods` and `deletingPods` map.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `df1edb99` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `859efa1c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

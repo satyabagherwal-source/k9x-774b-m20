@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T18:33:07.372Z",
-    "lastVerified": "2026-11-19T18:33:07.372Z",
+    "lastChecked": "2026-11-19T18:49:05.142Z",
+    "lastVerified": "2026-11-19T18:49:05.142Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -170,12 +170,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T17:38:08.158Z",
-    "lastVerified": "2026-11-19T17:38:08.158Z",
+    "lastChecked": "2026-11-19T18:48:59.093Z",
+    "lastVerified": "2026-11-19T18:48:59.093Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -184,7 +184,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "17861239"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -582,9 +583,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-19T11:08:02.966Z",
+    "lastChecked": "2026-11-19T18:48:54.080Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-19T11:08:02.966Z"
+    "lastVerified": "2026-11-19T18:48:54.080Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -2411,12 +2412,12 @@
     "officialUrl": "https://github.com/crate/crate",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-18T14:32:15.323Z",
-    "lastVerified": "2026-11-18T14:32:15.323Z",
+    "lastChecked": "2026-11-19T18:49:00.522Z",
+    "lastVerified": "2026-11-19T18:49:00.522Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crate-crate",
-    "contentHash": "0a651b5f501251f3070918e7c54eb72dc0a6224a99a04dfade5bd1e6c891d456",
+    "contentHash": "ac56e8199e2fe5ac8e04d701263c4add038f3af41eaa9f85f7fb029ddc27ba4b",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -2750,11 +2751,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "openkruise-kruise": {
-    "name": "kruise",
+    "name": "openkruise/kruise",
     "officialUrl": "https://github.com/openkruise/kruise",
-    "lastChecked": "2026-11-18T15:22:13.276Z",
-    "revisionIdentifier": "df1edb99",
-    "lastVerified": "2026-11-18T15:22:13.276Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-19T18:48:56.403Z",
+    "lastVerified": "2026-11-19T18:48:56.403Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-openkruise-kruise",
+    "contentHash": "80b0e7660f5530992c4405eb49462614b0f94d83ac790ab7df15c4b8faee4a66",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
@@ -8193,5 +8204,36 @@
     "lastChecked": "2026-11-19T18:32:57.463Z",
     "revisionIdentifier": "59a740fc",
     "lastVerified": "2026-11-19T18:32:57.463Z"
+  },
+  "mrjackwills-oxker": {
+    "name": "oxker",
+    "officialUrl": "https://github.com/mrjackwills/oxker",
+    "lastChecked": "2026-11-19T18:48:43.895Z",
+    "revisionIdentifier": "791342c0",
+    "lastVerified": "2026-11-19T18:48:43.895Z"
+  },
+  "hf-deepseek-ai-deepseek-v4.1-flash-1017": {
+    "name": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T18:48:46.572Z",
+    "lastVerified": "2026-11-19T18:48:46.572Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+    "contentHash": "de6a12d6aa33073a5e3f74e7b7de196903f7e8a5112d790c17817849a7cebec1",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dimillian-icecubesapp": {
+    "name": "IceCubesApp",
+    "officialUrl": "https://github.com/Dimillian/IceCubesApp",
+    "lastChecked": "2026-11-19T18:48:48.905Z",
+    "revisionIdentifier": "98098b9c",
+    "lastVerified": "2026-11-19T18:48:48.905Z"
   }
 }

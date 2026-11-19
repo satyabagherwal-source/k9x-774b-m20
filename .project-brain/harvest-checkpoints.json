@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T18:32:59.285Z",
+  "last_updated": "2026-11-19T18:49:01.795Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2676,14 +2676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "content_hash": "c29e5332152c812877c2858cdef54cef60ef65410a59fcbf5940f5ea8ec963e7",
-      "verified_at": "2026-11-15T06:00:00.578Z",
+      "content_hash": "de6a12d6aa33073a5e3f74e7b7de196903f7e8a5112d790c17817849a7cebec1",
+      "verified_at": "2026-11-19T18:48:51.963Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T06:00:00.578Z"
+      "last_updated": "2026-11-19T18:48:51.963Z"
     },
     "tw93/Pake": {
       "repository": "tw93/Pake",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "0a651b5f501251f3070918e7c54eb72dc0a6224a99a04dfade5bd1e6c891d456",
-      "verified_at": "2026-11-18T14:32:16.370Z",
+      "content_hash": "ac56e8199e2fe5ac8e04d701263c4add038f3af41eaa9f85f7fb029ddc27ba4b",
+      "verified_at": "2026-11-19T18:49:01.794Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T14:32:16.370Z"
+      "last_updated": "2026-11-19T18:49:01.794Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -4656,14 +4656,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openkruise-kruise",
-      "content_hash": "397ef3617c94eb968acdf4d911cb582685acde1c599406362119d38f34ed3ed8",
-      "verified_at": "2026-11-17T02:02:18.474Z",
+      "content_hash": "80b0e7660f5530992c4405eb49462614b0f94d83ac790ab7df15c4b8faee4a66",
+      "verified_at": "2026-11-19T18:48:57.554Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T02:02:18.474Z"
+      "last_updated": "2026-11-19T18:48:57.554Z"
     },
     "callstack/react-native-paper": {
       "repository": "callstack/react-native-paper",

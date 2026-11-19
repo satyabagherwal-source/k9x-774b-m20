@@ -11356,3 +11356,6 @@
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T18:20:38.076Z` | `nguyenphutrong-quotio` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2BF9F19D` [Domain D] | Yes (`118f42c3...`) |
 | `CYCLE-20261119-1BAV` | `2026-11-19T18:32:55.927Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md` | Yes (`c489df5a...`) |
 | `CYCLE-20261119-1DVQ` | `2026-11-19T18:32:59.270Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9427` | Yes (`c44571c6...`) |
+| `CYCLE-20261119-LSZ0` | `2026-11-19T18:48:51.948Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | Yes (`de6a12d6...`) |
+| `CYCLE-20261119-LXAB` | `2026-11-19T18:48:57.539Z` | `openkruise/kruise` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1683` | Yes (`80b0e766...`) |
+| `CYCLE-20261119-M0K3` | `2026-11-19T18:49:01.779Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9428` | Yes (`ac56e819...`) |

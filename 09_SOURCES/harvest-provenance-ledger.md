@@ -11389,3 +11389,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-2bf9f19d` | `project://nguyenphutrong-quotio` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md` | 2026-11-19T18:20:38.076Z |
 | `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-19T18:32:55.931Z |
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `1382507e` | Multi-dimensional audit evidence | 2026-11-19T18:32:59.274Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-19T18:48:51.953Z |
+| `learn-github-openkruise-kruise` | `https://github.com/openkruise/kruise` | `859efa1c` | Multi-dimensional audit evidence | 2026-11-19T18:48:57.543Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `39117a4b` | Multi-dimensional audit evidence | 2026-11-19T18:49:01.784Z |

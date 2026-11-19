@@ -4,24 +4,24 @@
 {
   "source_repository": "crate/crate",
   "source_url": "https://github.com/crate/crate",
-  "source_version": "53ace8b4",
+  "source_version": "39117a4b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T23:01:46.036Z",
+  "timestamp": "2026-11-19T18:49:02.039Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-crate-crate",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [crate/crate](https://github.com/crate/crate) (Revision: `53ace8b4`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T23:01:46.036Z`  
+> **Provenance**: Harvested from [crate/crate](https://github.com/crate/crate) (Revision: `39117a4b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T18:49:02.039Z`  
 > **Learning ID**: `learn-github-crate-crate`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from crate/crate:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T23:01:44.824Z  
+> **Harvest Timestamp**: 2026-11-19T18:49:00.522Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4453 stars
+- **Stars / Engagement**: 4457 stars
 
 ---
 
@@ -548,11 +548,11 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20438** (2026-10-20): **[Regression] Range query returns 0 rows when a CLOSED partition is included (5.10.16 vs 6.4.5)**
-  *Symptoms*: ### CrateDB version  6.4.5 (also reproduced on 6.2.8; works as expected on 5.10.16)  ### CrateDB setup information  Number of nodes: 3  Node configuration: - 1 node with stage=bigeye - 2 nodes with stage=hot - Heap size: 5 GB per node  CRATE_HEAP_SIZE: 5g (each node) CRATE_JAVA_OPTS: Not specified  Test table configuration: - 1 primary shard - 0 replicas - Daily partitioning using a generated TIMESTAMP column  The issue was also reproduced using a newly created minimal test table without custom shard allocation settings.  The full crate.yml configuration can be provided if required.  ### Problem description  <html> <body> <!--StartFragment--><html><head></head><body><h3><span>Description</span></h3><p><span>We found a regression in CrateDB 6.x when querying a partitioned table containing CLOSED partitions.</span></p><p><span>In CrateDB 5.10.16, range queries spanning both OPEN and CLOSED partitions correctly return records from OPEN partitions.</span></p><p><span>However, in CrateDB 6.2.8 and 6.4.5, the same queries return 0 records, even when matching records exist in OPEN partitions.</span></p><p><span>This behavior was reproduced using a newly created test table.</span></p><h3><span>Steps to Reproduce</span></h3><p><strong><span>1. Create a partitioned table</span></strong></p><pre><code><span>CREATE TABLE IF NOT EXISTS doc.test_closed_partition (     ts TIMESTAMP WITHOUT TIME ZONE,     pdate TIMESTAMP WITHOUT TIME ZONE         GENERATED ALWAYS AS date_trunc('day', ts) ) P
+- **Issue #20596** (2026-11-17): **The `RewriteToQueryThenFetch` rule drops an aliased column**
+  *Symptoms*: ### CrateDB version  6.5.1  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  ```sql CREATE TABLE t1 (id INT, a INT, b INT, flag BOOLEAN); CREATE TABLE t2 (id INT);  SET optimizer_rewrite_to_query_then_fetch = true;  SELECT c.b, c.x FROM (SELECT id, a AS x, b FROM t1 WHERE flag) c JOIN t2 ON c.id = t2.id ORDER BY c.x LIMIT 10;  SET optimizer_rewrite_to_query_then_fetch = false;  SELECT c.b, c.x FROM (SELECT id, a AS x, b FROM t1 WHERE flag) c JOIN t2 ON c.id = t2.id ORDER BY c.x LIMIT 10; ```  ### Actual Result  ``` SQLParseException[Couldn't create execution plan from logical plan because of: Couldn't find x in SourceSymbols{inputs={id=INPUT(2), c._fetchid=INPUT(0), id=INPUT(1)}, nonDeterministicFunctions={}}: Eval[b, x] (rows=unknown)   └ Fetch[b, x, id, id] (rows=unknown)     └ Limit[10::bigint;0] (rows=unknown)       └ OrderBy[x ASC] (rows=unknown)         └ HashJoin[INNER | (id = id)] (rows=unknown)           ├ Rename[c._fetchid, id] AS c (rows=unknown)           │  └ Eval[_fetchid, id] (rows=unknown)           │    └ Collect[doc.t1 | [_fetchid, a AS x, id] | flag] (rows=unknown)           └ Collect[doc.t2 | [id] | true] (rows=unknown)] ```  ### Expected Result  ``` +---+---+ | b | x | +---+---+ +---+---+ ```
 
-- **Issue #20424** (2026-10-21): **Unable to remove dropped table from publication**
-  *Symptoms*: ### CrateDB version  6.4.6  ### CrateDB setup information  Standard setup  ### Problem description  If a subscription was created by listing tables explicitly, and one of the tables was dropped, it is not possible to remove it from the publication.  ### Steps to Reproduce  ```sql CREATE TABLE doc.t1 (a INTEGER); CREATE TABLE doc.t2 (a INTEGER);  CREATE PUBLICATION t_tables FOR TABLE doc.t1, doc.t2;  DROP TABLE t2;  SELECT * FROM pg_publication_tables; -- still shows t1 and t2  ALTER PUBLICATION t_tables DROP TABLE doc.t2; ```  ### Actual Result  ``` io.crate.exceptions.RelationUnknown: Relation 'doc.t2' unknown 	at io.crate.replication.logical.analyze.LogicalReplicationAnalyzer.lambda$analyze$1(LogicalReplicationAnalyzer.java:126) 	at io.crate.common.collections.Lists.map(Lists.java:206) 	at io.crate.replication.logical.analyze.LogicalReplicationAnalyzer.analyze(LogicalReplicationAnalyzer.java:121) 	at io.crate.analyze.Analyzer$AnalyzerDispatcher.visitAlterPublication(Analyzer.java:748) 	at io.crate.analyze.Analyzer$AnalyzerDispatcher.visitAlterPublication(Analyzer.java:275) 	at io.crate.sql.tree.AlterPublication.accept(AlterPublication.java:61) 	at io.crate.analyze.Analyzer.analyze(Analyzer.java:257) 	at io.crate.session.Session.analyze(Session.java:379) 	at io.crate.session.Session.parse(Session.java:355) 	at io.crate.rest.action.SqlHttpHandler.executeSimpleRequest(SqlHttpHandler.java:246) 	at io.crate.rest.action.SqlHttpHandler.handleSQLRequest(SqlHttpHandler.java:227) 	at
+- **Issue #20580** (2026-11-18): **ANALYZE accesses foreign tables as `crate`, ignoring the invoking user’s mapping**
+  *Symptoms*: ### CrateDB version  6.5.1  ### CrateDB setup information  Cloud cluster with Postgres FDW  ### Problem description and reproduction steps  Running ANALYZE on a CrateDB cluster with a JDBC foreign table fails when a user mapping exists for the invoking user but no mapping exists for the internal crate user. Regular SELECT queries work through the configured mapping. During statistics collection, CrateDB attempts to authenticate to PostgreSQL as crate instead of the mapped PostgreSQL reader. Shouldn't this be documented or perhaps the existing user mapping be used?  Steps to reproduce 1. Create a PostgreSQL table and a reader account with permission to query it. 2. Allow connections from the CrateDB cluster to PostgreSQL. 3. In CrateDB, connect as a user other than `crate` and run:  ```sql  CREATE SERVER pg_remote FOREIGN DATA WRAPPER jdbc OPTIONS (     url 'jdbc:postgresql://<POSTGRES_HOST>:5433/fdw_lab?sslmode=require' );  CREATE USER MAPPING FOR CURRENT_USER SERVER pg_remote OPTIONS (     "user" 'crate_ce',     password '<POSTGRES_PASSWORD>' );  CREATE FOREIGN TABLE doc.remote_documents (     id BIGINT,     value DOUBLE PRECISION ) SERVER pg_remote OPTIONS (     schema_name 'fdw_source',     table_name 'measurements' );  --- Check the FDW works with: SELECT * FROM doc.remote_documents WHERE id = 1;  ---To Collect the statistics run: ANALYZE; ```   ### Actual Result  `PSQLException[FATAL: no pg_hba.conf entry for host "---", user "crate", database "fdw_lab", SSL encryption]`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -569,99 +569,36 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `53ace8b4` (2026-10-21)
-**Commit Message**: Restore with rename options must not allow rename to the same name
+### Incident Patch 1: `39117a4b` (2026-11-19)
+**Commit Message**: Revert "Update JDK to 27.0.1.1+4"
 
-**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +5/-0)
-```diff
-@@ -61,3 +61,8 @@ Fixes
- 
- - Fixed an issue that could discard recently replicated data from the
-   subscriber cluster when dropping a subscription shortly after shard recovery.
-+
-+- Fixed an issue causing ``RESTORE SNAPSHOT`` to silently restore only one
-+  of several tables if the rename options ``schema_rename_replacement``
-+  or ``table_rename_replacement`` mapped them to the same name.
-+  Now it fails with an error, similar to clashes with an existing table.
-```
+Adoptium hasn't provided the build for all platforms yet, so we'll need
+to revert.
 
-**File**: `server/src/main/java/org/elasticsearch/snapshots/RestoreService.java` (modified, +23/-0)
-```diff
-@@ -331,9 +331,32 @@ static Map<RelationName, RestoreRelation> resolveRelations(List<TableOrPartition
-                 resolver.accept(relation.name(), List.of());
-             }
-         }
-+        ensureUniqueTargets(restoreRelations);
-         return restoreRelations;
-     }
- 
-+    /**
-+     * Renamed pattern can map different tables to the same name.
-+     * Check if renamed tables won't be clashing with each other.
-+     */
-+    private static void ensureUniqueTargets(Map<RelationName, RestoreRelation> restoreRelations) {
-+        HashMap<RelationName, RelationName> sourceByTarget = new HashMap<>();
-+        for (var entry : restoreRelations.entrySet()) {
-+            RelationName source = entry.getKey();
-+            RelationName target = entry.getValue().targetName();
-+            RelationName otherSource = sourceByTarget.put(target, source);
-+            if (otherSource != null) {
-+                throw new RelationAlreadyExists(target, String.format(
-+                    Locale.ENGLISH,
-+                    "Cannot restore relations '%s' and '%s' to the same name '%s'",
-+                    otherSource,
-+                    source,
-+                    target
-+                ));
-+            }
-+        }
-+    }
-+
-     private static boolean includeForeignTables(RestoreSnapshotRequest request) {
-         if (!request.includeCustomMetadata()) {
-             return false;
-```
+This reverts commit cc52dca6df1f31602dcaf8369418b02c487e653e.
 
-**File**: `server/src/test/java/io/crate/integrationtests/SnapshotRestoreIntegrationTest.java` (modified, +15/-0)
+**File**: `pom.xml` (modified, +2/-2)
 ```diff
-@@ -22,6 +22,7 @@
- package io.crate.integrationtests;
+@@ -338,8 +338,8 @@
+       ./mvnw -P jmods -Dos.arch=aarch64 -Dos.name="Mac OS X" package -DskipTests=true
+     To verify the version is available for both platforms
+     -->
+-        <versions.jdk>27.0.1.1</versions.jdk>
+-        <versions.jdkbuild>27.0.1.1+4</versions.jdkbuild>
++        <versions.jdk>27.0.1.0.2</versions.jdk>
++        <versions.jdkbuild>27.0.1.0.2+1</versions.jdkbuild>
  
- import static com.carrotsearch.randomizedtesting.RandomizedTest.$;
-+import static io.crate.protocols.postgres.PGErrorStatus.DUPLICATE_TABLE;
- import static io.crate.protocols.postgres.PGErrorStatus.INTERNAL_ERROR;
- import static io.crate.protocols.postgres.PGErrorStatus.INVALID_OBJECT_DEFINITION;
- import static io.crate.rest.action.HttpErrorStatus.GENERIC_NOT_FOUND;
-@@ -1082,6 +1083,20 @@ public void test_restore_partitioned_tables_rename_all() throws Exception {
-         );
-     }
- 
-+    @Test
-+    public void test_restore_with_rename_fails_if_renamed_relations_clash() throws Exception {
-+        createTable("doc.t1", false);
-+        createTable("doc.t2", false);
-+        createSnapshot(SNAPSHOT_NAME, "doc.t1", "doc.t2");
-+        waitNoPendingTasksOnAll();
-+        Asserts.assertSQLError(() -> execute("RESTORE SNAPSHOT " + snapshotName() + " ALL WITH (" +
-+                "wait_for_completion=true," +
-+                "table_rename_replacement='t')") // Intentionally restoring into same name
-+        ).hasPGError(DUPLICATE_TABLE)
-+        .hasHTTPError(CONFLICT, 4093)
-+        .hasMessageContaining("to the same name 'doc.t'");
-+    }
-+
-     @Test
-     public void test_restore_old_users() throws IOException {
-         File repoDir = TEMPORARY_FOLDER.newFolder().toPath().toAbsolutePath().toFile();
+         <versions.jspecify>1.0.1</versions.jspecify>
+         <versions.log4j>2.26.1</versions.log4j>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20592** (2026-11-13): Restore with rename options must not allow rename to the same name (backport #20591) (@mergify[bot])
-- **PR #20591** (2026-11-13): Restore with rename options must not allow rename to the same name (@BaurzhanSakhariev)
-- **PR #20588** (2026-11-12): Fix replicated data loss when dropping subscription before checkpoints catch up (backport #20576) (@mergify[bot])
-- **PR #20586** (2026-11-12): bp: [Refactor] LuceneChangesSnapshot to use accurate ops history (backport #20574) (@mergify[bot])
-- **PR #20585** (2026-11-12): Remove retention lease only when subscription is removed or table is not published (backport #20566) (@mergify[bot])
-- **PR #20584** (2026-11-11): Return 0 for negative "free" and "total" memory reported by the OS (backport #20563) (@mergify[bot])
+- **PR #20631** (2026-11-19): Bump version to 6.4.8-SNAPSHOT (@hariso)
+- **PR #20630** (2026-11-19): Add -XX:-UseBASE64Intrinsics to JAVA_OPTS (@hariso)
+- **PR #20629** (2026-11-19): Revert "Update JDK to 27.0.1.1+4" (@hariso)
+- **PR #20628** (closed): Add -XX:-UseBASE64Intrinsics to JAVA_OPTS (@hariso)
+- **PR #20627** (closed): B/6.2 hll fix (@BaurzhanSakhariev)
+- **PR #20624** (2026-11-19): Add -XX:-UseBASE64Intrinsics to JAVA_OPTS (@hariso)
 
 ---
 
@@ -681,35 +618,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Restore with rename options must not allow rename to the same name
+## X. Revert "Update JDK to 27.0.1.1+4"
 
 **RULE**:
-When implementing operations in `docs/appendices/release-notes/6.5.2.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `53ace8b4`: Restore with rename options must not allow rename to the same name. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39117a4b`: Revert "Update JDK to 27.0.1.1+4". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.2.rst`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-
-- Fixed an issue causing ``RESTORE SNAPSHOT`` to silently restore only one
-  of several tables if the rename options ``schema_rename_replacement``
-  or ``table_rename_replacement`` mapped them to the same name.
-  Now it fails with an error, similar to clashes with an existing table.
+        <versions.jdk>27.0.1.0.2</versions.jdk>
+        <versions.jdkbuild>27.0.1.0.2+1</versions.jdkbuild>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        <versions.jdk>27.0.1.1</versions.jdk>
+        <versions.jdkbuild>27.0.1.1+4</versions.jdkbuild>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `53ace8b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39117a4b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

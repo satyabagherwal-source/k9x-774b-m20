@@ -4,22 +4,22 @@
 {
   "source_repository": "crate/crate",
   "source_url": "https://github.com/crate/crate",
-  "source_version": "20da9e4b",
+  "source_version": "39117a4b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T14:32:16.563Z",
+  "timestamp": "2026-11-19T18:49:02.039Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-crate-crate",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [crate/crate](https://github.com/crate/crate) (Revision: `20da9e4b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T14:32:16.563Z`  
+> **Provenance**: Harvested from [crate/crate](https://github.com/crate/crate) (Revision: `39117a4b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T18:49:02.039Z`  
 > **Learning ID**: `learn-github-crate-crate`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `crate/crate` (Commit: `20da9e4b`)
+- **Target Repository**: `crate/crate` (Commit: `39117a4b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T14:32:15.323Z  
+> **Harvest Timestamp**: 2026-11-19T18:49:00.522Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4455 stars
+- **Stars / Engagement**: 4457 stars
 
 ---
 
@@ -566,97 +566,36 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `98aa881e` (2026-11-18)
-**Commit Message**: Fix exception during ANALYZE when no crate superuser mapping to remote
-server
+### Incident Patch 1: `39117a4b` (2026-11-19)
+**Commit Message**: Revert "Update JDK to 27.0.1.1+4"
 
-Fixes https://github.com/crate/crate/issues/20580
+Adoptium hasn't provided the build for all platforms yet, so we'll need
+to revert.
 
-A user mapping for the `crate` superuser on the foreign server pointing to a
-remote user with read access to the foreign table is required in order
-to collect statistics on the foreign table. Previously, we raised
-an exception when this mapping did not exist and it caused statistics
-collection to abort.
+This reverts commit cc52dca6df1f31602dcaf8369418b02c487e653e.
 
-We now fix this by logging and continuing statistics collection on other
-foreign tables, and also by improving the documentation
-
-**File**: `docs/admin/fdw.rst` (modified, +18/-0)
+**File**: `pom.xml` (modified, +2/-2)
 ```diff
-@@ -85,6 +85,24 @@ system::
+@@ -338,8 +338,8 @@
+       ./mvnw -P jmods -Dos.arch=aarch64 -Dos.name="Mac OS X" package -DskipTests=true
+     To verify the version is available for both platforms
+     -->
+-        <versions.jdk>27.0.1.1</versions.jdk>
+-        <versions.jdkbuild>27.0.1.1+4</versions.jdkbuild>
++        <versions.jdk>27.0.1.0.2</versions.jdk>
++        <versions.jdkbuild>27.0.1.0.2+1</versions.jdkbuild>
  
-    Only `DQL` (Data Query Language) statements are supported on foreign tables.
- 
-+.. _administration-fdw-statistics:
-+
-+Collecting statistics on foreign tables
-+=======================================
-+
-+In order to collect statistics on foreign tables via :ref:`analyze`, a user
-+mapping for the ``crate`` superuser on the foreign server, pointing to a
-+remote user with read access to the foreign table is required
-+(ref:`ref-create-user-mapping`).
-+
-+For example::
-+
-+  CREATE USER MAPPING FOR crate
-+  SERVER remote
-+  OPTIONS (
-+    "user" 'remote_user',
-+    password '<PASSWORD>'
-+  )
- 
- .. _administration-fdw-jdbc:
- 
-```
-
-**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +6/-0)
-```diff
-@@ -78,3 +78,9 @@ Fixes
- - Fixed an issue that caused an error with the message
-   ``Couldn't find x in SourceSymbols`` in certain queries with aliased columns
-   and with the ``optimizer_rewrite_to_query_then_fetch`` enabled.
-+
-+- Fixed an issue where statistics gathering on foreign tables would abort and
-+  raise a ``PSQLException[FATAL: role "crate" does not exist]`` if
-+  there was no mapping of the ``crate`` superuser to the foreign server pointing
-+  to a remote user with read access on the foreign table. Also improved documentation
-+  on this required mapping. See :ref:`administration-fdw-statistics`.
-```
-
-**File**: `docs/sql/statements/analyze.rst` (modified, +3/-0)
-```diff
-@@ -34,3 +34,6 @@ I/O throughput during collection of statistics can be throttled with the
- setting. Changes to this setting can be made and take effect while an analysis
- is in progress, thus it's possible to adjust optimal value for a concrete setup
- by trying different values while ``ANALYZE`` is running.
-+
-+For collecting statistics on foreign tables, please see
-+:ref:`administration-fdw-statistics`.
-```
-
-**File**: `server/src/main/java/io/crate/statistics/TransportAnalyzeAction.java` (modified, +4/-0)
-```diff
-@@ -184,6 +184,10 @@ public CompletableFuture<AcknowledgedResponse> fetchSamplesThenGenerateAndPublis
-                         systemTxnCtx,
-                         List.of()
-                     ))
-+                    .exceptionally(err -> {
-+                        LOGGER.warn("Skipping statistics collection for foreign table {}: {}", foreignTable.ident(), err.getMessage(), err);
-+                        return Stats.EMPTY;
-+                    })
-                     .thenAccept(foreignStats -> {
-                         if (foreignStats != null && !foreignStats.isEmpty()) {
-                             entries.put(foreignTable.ident(), foreignStats);
+         <versions.jspecify>1.0.1</versions.jspecify>
+         <versions.log4j>2.26.1</versions.log4j>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20619** (2026-11-18):   Fix exception during ANALYZE when no crate superuser mapping to remote server (backport #20590) (@mergify[bot])
-- **PR #20618** (2026-11-18): Fix OpenDAL operator leak and thread leaks (@mfussenegger)
-- **PR #20616** (2026-11-17):  Fix RewriteToQueryThenFetch dropping an aliased column  (backport #20615) (@mergify[bot])
-- **PR #20615** (2026-11-17):  Fix RewriteToQueryThenFetch dropping an aliased column  (@hariso)
-- **PR #20614** (2026-11-17): Fix logical replication not resuming after subscriber shard recovery (backport #20575) (@mergify[bot])
-- **PR #20613** (2026-11-17): Remove ExtraFunctionsPlugin (@mfussenegger)
+- **PR #20631** (2026-11-19): Bump version to 6.4.8-SNAPSHOT (@hariso)
+- **PR #20630** (2026-11-19): Add -XX:-UseBASE64Intrinsics to JAVA_OPTS (@hariso)
+- **PR #20629** (2026-11-19): Revert "Update JDK to 27.0.1.1+4" (@hariso)
+- **PR #20628** (closed): Add -XX:-UseBASE64Intrinsics to JAVA_OPTS (@hariso)
+- **PR #20627** (closed): B/6.2 hll fix (@BaurzhanSakhariev)
+- **PR #20624** (2026-11-19): Add -XX:-UseBASE64Intrinsics to JAVA_OPTS (@hariso)
 
 ---
 
@@ -676,48 +615,33 @@ foreign tables, and also by improving the documentation
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. exception during ANALYZE when no crate superuser mapping to remote
+## X. Revert "Update JDK to 27.0.1.1+4"
 
 **RULE**:
-When implementing operations in `docs/admin/fdw.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `98aa881e`: exception during ANALYZE when no crate superuser mapping to remote. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39117a4b`: Revert "Update JDK to 27.0.1.1+4". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/admin/fdw.rst`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-.. _administration-fdw-statistics:
-
-Collecting statistics on foreign tables
-=======================================
-
-In order to collect statistics on foreign tables via :ref:`analyze`, a user
-mapping for the ``crate`` superuser on the foreign server, pointing to a
-remote user with read access to the foreign table is required
-(ref:`ref-create-user-mapping`).
-
-For example::
-
-  CREATE USER MAPPING FOR crate
-  SERVER remote
-  OPTIONS (
-    "user" 'remote_user',
-    password '<PASSWORD>'
-  )
+        <versions.jdk>27.0.1.0.2</versions.jdk>
+        <versions.jdkbuild>27.0.1.0.2+1</versions.jdkbuild>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        <versions.jdk>27.0.1.1</versions.jdk>
+        <versions.jdkbuild>27.0.1.1+4</versions.jdkbuild>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `98aa881e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39117a4b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

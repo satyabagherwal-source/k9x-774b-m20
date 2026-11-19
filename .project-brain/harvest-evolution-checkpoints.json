@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T18:33:09.978Z",
+  "last_updated": "2026-11-19T18:49:07.726Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T12:40:39.625Z",
@@ -1328,7 +1328,7 @@
       "staged_for_review": 1
     },
     "crate-crate-learnings.md": {
-      "processed_at": "2026-11-18T14:32:20.060Z",
+      "processed_at": "2026-11-19T18:49:06.870Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2893,8 +2893,8 @@
       "staged_for_review": 0
     },
     "hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md": {
-      "processed_at": "2026-11-15T06:00:49.205Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T18:49:05.315Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-liquidai-lfm3-omni-2b-learnings.md": {
@@ -3228,7 +3228,7 @@
       "staged_for_review": 1
     },
     "openkruise-kruise-learnings.md": {
-      "processed_at": "2026-11-17T02:02:53.639Z",
+      "processed_at": "2026-11-19T18:49:05.814Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3518,7 +3518,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2301,
+  "total_dossiers_evaluated": 2304,
   "total_canonical_promoted": 392,
-  "total_staged_for_review": 1711
+  "total_staged_for_review": 1713
 }

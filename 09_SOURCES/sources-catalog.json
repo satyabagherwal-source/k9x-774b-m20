@@ -1695,8 +1695,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
     "license": "Open-Source",
-    "contentHash": "c29e5332152c812877c2858cdef54cef60ef65410a59fcbf5940f5ea8ec963e7",
-    "lastHarvestedAt": "2026-11-15T06:00:00.569Z",
+    "contentHash": "de6a12d6aa33073a5e3f74e7b7de196903f7e8a5112d790c17817849a7cebec1",
+    "lastHarvestedAt": "2026-11-19T18:48:51.953Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017"
   },
   "tw93-pake": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "20da9e4b",
+    "sourceVersion": "39117a4b",
     "license": "Apache-2.0",
-    "contentHash": "0a651b5f501251f3070918e7c54eb72dc0a6224a99a04dfade5bd1e6c891d456",
-    "lastHarvestedAt": "2026-11-18T14:32:16.361Z",
+    "contentHash": "ac56e8199e2fe5ac8e04d701263c4add038f3af41eaa9f85f7fb029ddc27ba4b",
+    "lastHarvestedAt": "2026-11-19T18:49:01.784Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -3023,10 +3023,10 @@
     "repository": "openkruise/kruise",
     "platform": "github",
     "sourceUrl": "https://github.com/openkruise/kruise",
-    "sourceVersion": "df1edb99",
+    "sourceVersion": "859efa1c",
     "license": "NOASSERTION",
-    "contentHash": "397ef3617c94eb968acdf4d911cb582685acde1c599406362119d38f34ed3ed8",
-    "lastHarvestedAt": "2026-11-17T02:02:18.467Z",
+    "contentHash": "80b0e7660f5530992c4405eb49462614b0f94d83ac790ab7df15c4b8faee4a66",
+    "lastHarvestedAt": "2026-11-19T18:48:57.543Z",
     "learningId": "learn-github-openkruise-kruise"
   },
   "callstack-react-native-paper": {
