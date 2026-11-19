@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T13:22:06.388Z",
+  "last_updated": "2026-11-19T13:35:31.153Z",
   "total_records": 1978,
   "domains": {
     "A": {
@@ -8711,8 +8711,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "eb4a1a7ba594ccb408e7dc9076f31b3689e364f4a705de72e1dd509043feb96b",
-      "created_at": "2026-11-19T06:53:07.328Z"
+      "content_hash": "b77329d34d5c996699953b7305b222b7dbb24ce1cc6e015bdb8bc509045f3f51",
+      "created_at": "2026-11-19T13:35:31.153Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12131,8 +12131,8 @@
       "title": "Architecture Intelligence: zeromicro/go-zero Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeromicro-go-zero-architecture-intelligence-zeromicro-go-zero-core-invariants.md",
       "repository": "zeromicro/go-zero",
-      "content_hash": "78f7c9e5694e06edbbdd00dc5772a64579aa2609bc53a8df05d3f53e8a9d179a",
-      "created_at": "2026-11-16T21:28:25.720Z"
+      "content_hash": "927fb6b3421ed625052e6eb07b28bc25d64da6bbe3ee516bf7e317e08e4c896a",
+      "created_at": "2026-11-19T13:35:26.534Z"
     },
     "DOM-D-79605CEE": {
       "record_id": "DOM-D-79605CEE",
@@ -12200,8 +12200,8 @@
       "title": "Architecture Intelligence: zeromicro-go-zero-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeromicro-go-zero-learnings-architecture-intelligence-zeromicro-go-zero-learning.md",
       "repository": "zeromicro-go-zero-learnings",
-      "content_hash": "8c2fe07485c6124493240bdd6edf40b1471a2e47955c81eb36f60a58c6a107f9",
-      "created_at": "2026-11-16T21:28:29.276Z"
+      "content_hash": "d2b3c571031a7ba1256002b3ac5ee22ebc5998b866c32f46867fbf0de69a2919",
+      "created_at": "2026-11-19T13:35:30.332Z"
     },
     "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-pro-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-pro-core-invariants",
@@ -18160,8 +18160,8 @@
       "title": "Research & Knowledge Intelligence: facebook/sam3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-sam3-research-knowledge-intelligence-facebook-sam3-core-invariants.md",
       "repository": "facebook/sam3",
-      "content_hash": "67a37d9f31fa029c66dacf299c6fb64a96d4c19687c1f411ec76cf69e93f3ec3",
-      "created_at": "2026-11-14T22:16:18.831Z"
+      "content_hash": "30286e1a12f597e2a7a56686a016468d917885a8b07098d36d4c2313f80ef2a3",
+      "created_at": "2026-11-19T13:35:15.749Z"
     },
     "DOM-D-DD21AD65": {
       "record_id": "DOM-D-DD21AD65",
@@ -18211,8 +18211,8 @@
       "title": "Research & Knowledge Intelligence: hf-facebook-sam3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-sam3-learnings-research-knowledge-intelligence-hf-facebook-sam3-lear.md",
       "repository": "hf-facebook-sam3-learnings",
-      "content_hash": "b4f28ac1d50e86830731ce9bf2682adc7cc371436c0822d9f94fc3723b89df03",
-      "created_at": "2026-11-14T22:16:49.434Z"
+      "content_hash": "0300f5bf73bf03f82fa3b1ecf738fb52d5a6ad1d0f91fb0a85df140fa1dff7f5",
+      "created_at": "2026-11-19T13:35:29.642Z"
     },
     "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-learnings-core-invaria",

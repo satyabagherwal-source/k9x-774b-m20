@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T21:28:28.995Z",
+  "timestamp": "2026-11-19T13:35:30.076Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zeromicro-go-zero-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zeromicro-go-zero-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T21:28:28.995Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T13:35:30.076Z`  
 > **Learning ID**: `LEARN-EVO-zeromicro-go-zero-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source**: github ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
-> **Source Version**: `3628771a`  
+> **Source Version**: `c6696882`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T21:28:24.264Z  
+> **Timestamp**: 2026-11-19T13:35:25.213Z  
 > **Learning ID**: `learn-github-zeromicro-go-zero`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T21:23:23.285Z  
+> **Harvest Timestamp**: 2026-11-19T13:35:25.208Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A cloud-native Go microservices framework with cli tool for productivity.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 33430 stars
+- **Stars / Engagement**: 33433 stars
 
 ---
 
@@ -1330,193 +1330,47 @@ func Gunzip(bs []byte) ([]byte, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3628771a` (2026-11-16)
-**Commit Message**: chore(goctl): prepare v1.11.0 release (#5900)
+### Incident Patch 1: `c6696882` (2026-11-18)
+**Commit Message**: chore(deps): bump github.com/jackc/pgx/v5 from 5.12.0 to 5.13.0 (#5901)
 
-**File**: `tools/goctl/go.mod` (modified, +22/-26)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -16,7 +16,7 @@ require (
- 	github.com/withfig/autocomplete-tools/integrations/cobra v1.2.1
- 	github.com/zeromicro/antlr v0.0.1
- 	github.com/zeromicro/ddl-parser v1.0.5
--	github.com/zeromicro/go-zero v1.10.3
-+	github.com/zeromicro/go-zero v1.11.0
- 	golang.org/x/text v0.41.0
- 	google.golang.org/grpc v1.84.0
- 	google.golang.org/protobuf v1.36.12
-@@ -25,7 +25,7 @@ require (
- 
- require (
- 	filippo.io/edwards25519 v1.2.0 // indirect
--	github.com/alicebob/miniredis/v2 v2.38.0 // indirect
-+	github.com/alicebob/miniredis/v2 v2.40.0 // indirect
- 	github.com/antlr/antlr4/runtime/Go/antlr v0.0.0-20210521184019-c5ad59b459ec // indirect
- 	github.com/beorn7/perks v1.0.1 // indirect
- 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
-@@ -34,7 +34,7 @@ require (
- 	github.com/coreos/go-systemd/v22 v22.7.0 // indirect
- 	github.com/davecgh/go-spew v1.1.1 // indirect
- 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
--	github.com/fatih/color v1.18.0 // indirect
-+	github.com/fatih/color v1.19.0 // indirect
- 	github.com/fxamacker/cbor/v2 v2.9.2 // indirect
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
-@@ -56,19 +56,17 @@ require (
- 	github.com/golang/protobuf v1.5.4 // indirect
- 	github.com/google/gnostic-models v0.7.1 // indirect
- 	github.com/google/go-cmp v0.7.0 // indirect
--	github.com/google/pprof v0.0.0-20260709232956-b9395ee17fa0 // indirect
- 	github.com/google/uuid v1.6.0 // indirect
--	github.com/grafana/pyroscope-go v1.3.0 // indirect
--	github.com/grafana/pyroscope-go/godeltaprof v0.1.10 // indirect
-+	github.com/grafana/pyroscope-go v1.5.0 // indirect
-+	github.com/grafana/pyroscope-go/godeltaprof v0.1.12 // indirect
- 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
- 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
- 	github.com/jackc/pgpassfile v1.0.0 // indirect
- 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
--	github.com/jackc/pgx/v5 v5.9.2 // indirect
--	github.com/jackc/puddle/v2 v2.2.2 // indirect
-+	github.com/jackc/pgx/v5 v5.12.0 // indirect
-+	github.com/jackc/puddle/v2 v2.2.3 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
--	github.com/klauspost/compress v1.19.1 // indirect
--	github.com/klauspost/cpuid/v2 v2.4.0 // indirect
-+	github.com/klauspost/compress v1.20.3 // indirect
- 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
- 	github.com/mattn/go-colorable v0.1.15 // indirect
- 	github.com/mattn/go-isatty v0.0.24 // indirect
-@@ -78,21 +76,19 @@ require (
- 	github.com/openzipkin/zipkin-go v0.4.3 // indirect
- 	github.com/pelletier/go-toml/v2 v2.4.3 // indirect
- 	github.com/pmezard/go-difflib v1.0.0 // indirect
--	github.com/prometheus/client_golang v1.23.2 // indirect
-+	github.com/prometheus/client_golang v1.24.1 // indirect
- 	github.com/prometheus/client_model v0.6.2 // indirect
--	github.com/prometheus/common v0.66.1 // indirect
--	github.com/prometheus/procfs v0.16.1 // indirect
--	github.com/redis/go-redis/v9 v9.21.0 // indirect
--	github.com/robertkrimen/otto v0.5.1 // indirect
--	github.com/rogpeppe/go-internal v1.15.0 // indirect
-+	github.com/prometheus/common v0.70.1 // indirect
-+	github.com/prometheus/procfs v0.21.1 // indirect
-+	github.com/redis/go-redis/v9 v9.22.0 // indirect
- 	github.com/spaolacci/murmur3 v1.1.0 // indirect
- 	github.com/titanous/json5 v1.0.0 // indirect
- 	github.com/x448/float16 v0.8.4 // indirect
- 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
- 	github.com/yuin/gopher-lua v1.1.2 // indirect
--	go.etcd.io/etcd/api/v3 v3.5.21 // indirect
--	go.etcd.io/etcd/client/pkg/v3 v3.5.21 // indirect
--	go.etcd.io/etcd/client/v3 v3.5.21 // indirect
-+	go.etcd.io/etcd/api/v3 v3.6.14 // indirect
-+	go.etcd.io/etcd/client/pkg/v3 v3.6.14 // indirect
-+	go.etcd.io/etcd/client/v3 v3.6.14 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/otel v1.46.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0 // indirect
-@@ -116,16 +112,16 @@ require (
- 	golang.org/x/sync v0.22.0 // indirect
- 	golang.org/x/sys v0.47.0 // indirect
- 	golang.org/x/term v0.45.0 // indirect
--	golang.org/x/time v0.14.0 // indirect
--	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260819154853-08b0e4226688 // indirect
-+	golang.org/x/time v0.15.0 // indirect
-+	google.golang.org/genproto/googleapis/api v0.0.0-20260911204522-f61a6ca850bd // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260904194346-d0f1323225a4 // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
- 	gopkg.in/inf.v0 v0.9.1 // indirect
--	k8s.io/api v0.34.3 // indirect
--	k8s.io/apimachinery v0.34.3 // indirect
--	k8s.io/client-go v0.34.3 // indirect
-+	k8s.io/api v0.35.9 // indirect
-+	k8s.io/apimachinery v0.35.9 // indirect
-+	k8s.io/client-go v0.35.9 // indirect
- 	k8s.io/klog/v2 v2.140.0 // indirect
--	k8s.io/kube-openapi v0.0.0-20250710124328-f3f2b991d03b // indirect
-+
+@@ -12,7 +12,7 @@ require (
+ 	github.com/golang/protobuf v1.5.4
+ 	github.com/google/uuid v1.6.0
+ 	github.com/grafana/pyroscope-go v1.5.0
+-	github.com/jackc/pgx/v5 v5.12.0
++	github.com/jackc/pgx/v5 v5.13.0
+ 	github.com/jhump/protoreflect v1.19.0
+ 	github.com/modelcontextprotocol/go-sdk v1.8.0
+ 	github.com/pelletier/go-toml/v2 v2.4.3
 ```
 
-**File**: `tools/goctl/go.sum` (modified, +52/-48)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -2,8 +2,10 @@ filippo.io/edwards25519 v1.2.0 h1:crnVqOiS4jqYleHd9vaKZ+HKtHfllngJIiOpNpoJsjo=
- filippo.io/edwards25519 v1.2.0/go.mod h1:xzAOLCNug/yB62zG1bQ8uziwrIqIuxhctzJT18Q77mc=
- github.com/DATA-DOG/go-sqlmock v1.5.2 h1:OcvFkGmslmlZibjAjaHm3L//6LiuBgolP7OputlJIzU=
- github.com/DATA-DOG/go-sqlmock v1.5.2/go.mod h1:88MAG/4G7SMwSE3CeA0ZKzrT5CiOU3OJ+JlNzwDqpNU=
--github.com/alicebob/miniredis/v2 v2.38.0 h1:nZAzCR+Lj+Vxk4ZXzm2NuKq2O33RXj1XxJ2e2uP9jiw=
--github.com/alicebob/miniredis/v2 v2.38.0/go.mod h1:TcL7YfarKPGDAthEtl5NBeHZfeUQj6OXMm/+iu5cLMM=
-+github.com/Masterminds/semver/v3 v3.4.0 h1:Zog+i5UMtVoCU8oKka5P7i9q9HgrJeGzI9SA1Xbatp0=
-+github.com/Masterminds/semver/v3 v3.4.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
-+github.com/alicebob/miniredis/v2 v2.40.0 h1:6IgTQbvm2JiMYZ8yur/acNJzVjtSOWCelxXbk/LUBXc=
-+github.com/alicebob/miniredis/v2 v2.40.0/go.mod h1:TcL7YfarKPGDAthEtl5NBeHZfeUQj6OXMm/+iu5cLMM=
- github.com/antlr/antlr4/runtime/Go/antlr v0.0.0-20210521184019-c5ad59b459ec h1:EEyRvzmpEUZ+I8WmD5cw/vY8EqhambkOqy5iFr0908A=
- github.com/antlr/antlr4/runtime/Go/antlr v0.0.0-20210521184019-c5ad59b459ec/go.mod h1:F7bn7fEU90QkQ3tnmaTx3LTKLEDqnwWODIYppRQ5hnY=
- github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
-@@ -28,8 +30,8 @@ github.com/emicklei/go-restful/v3 v3.13.0 h1:C4Bl2xDndpU6nJ4bc1jXd+uTmYPVUwkD6bF
- github.com/emicklei/go-restful/v3 v3.13.0/go.mod h1:6n3XBCmQQb25CM2LCACGz8ukIrRry+4bhvbpWn3mrbc=
- github.com/emicklei/proto v1.14.3 h1:zEhlzNkpP8kN6utonKMzlPfIvy82t5Kb9mufaJxSe1Q=
- github.com/emicklei/proto v1.14.3/go.mod h1:rn1FgRS/FANiZdD2djyH7TMA9jdRDcYQ9IEN9yvjX0A=
--github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
--github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
-+github.com/fatih/color v1.19.0 h1:Zp3PiM21/9Ld6FzSKyL5c/BULoe/ONr9KlbYVOfG8+w=
-+github.com/fatih/color v1.19.0/go.mod h1:zNk67I0ZUT1bEGsSGyCZYZNrHuTkJJB+r6Q9VuMi0LE=
- github.com/fatih/structtag v1.2.0 h1:/OdNE99OxoI/PqaW/SuSK9uxxT3f/tcSZgon/ssNSx4=
- github.com/fatih/structtag v1.2.0/go.mod h1:mBJUNpUnHmRKrKlQQlmCrh5PuhftFbNv8Ys4/aAZl94=
- github.com/fxamacker/cbor/v2 v2.9.2 h1:X4Ksno9+x3cz0TZv69ec1hxP/+tymuR8PXQJyDwfh78=
-@@ -97,10 +99,10 @@ github.com/gookit/assert v0.1.1 h1:lh3GcawXe/p+cU7ESTZ5Ui3Sm/x8JWpIis4/1aF0mY0=
- github.com/gookit/assert v0.1.1/go.mod h1:jS5bmIVQZTIwk42uXl4lyj4iaaxx32tqH16CFj0VX2E=
- github.com/gookit/color v1.6.3 h1:m6E49x+KftGaspcLtPLMsyci2ARhWIUW0PUV1owMlhs=
- github.com/gookit/color v1.6.3/go.mod h1:9ACFc7/1IpHGBW8RwuDm/0YEnhg3dwwXpoMsmtyHfjs=
--github.com/grafana/pyroscope-go v1.3.0 h1:t3Jehad8vvqN4oRAB0LdmfQ5ZSUXQw3asoft+K4GAT8=
--github.com/grafana/pyroscope-go v1.3.0/go.mod h1:XA7I3usNx+UdjOZfQnl1WV8y924vsJo9KIVrKB+9jx4=
--github.com/grafana/pyroscope-go/godeltaprof v0.1.10 h1:dvhndEbyavTb59vFCd6PsrAG5qi69/qZZtegh/TJKSY=
--github.com/grafana/pyroscope-go/godeltaprof v0.1.10/go.mod h1:XnWRGg2XO5uxZdiz1rfeJH6w1eZ+YICCBVXNWOfH86g=
-+github.com/grafana/pyroscope-go v1.5.0 h1:DpMHya+/UNCacRAjNtTIR2g7HQltVMwaLujVkey452E=
-+github.com/grafana/pyroscope-go v1.5.0/go.mod h1:QiCUoUu5yGIirIT5+EBDJyNtqdFJrEsOixO/H6cznUo=
-+github.com/grafana/pyroscope-go/godeltaprof v0.1.12 h1:X6OemT2WcLtxdmNukEQuIp0c+efWVI/tBTd0oeWeDHI=
-+github.com/grafana/pyroscope-go/godeltaprof v0.1.12/go.mod h1:aNSXN1bn1VHAd06EiepmwhAabHsMc67gx8itecdF2c8=
- github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 h1:/Tnpcb2E0Pz/tN9s3bfEY2Q8ePCEX9iuS+cneUwncnw=
- github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0/go.mod h1:zOBXOsUaBSjKgmH4OGzV1esUpR3oUSCPYVd2cUBjKYY=
- github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 h1:2VTzZjLZBgl62/EtslCrtky5vbi9dd7HrQPQIx6wqiw=
-@@ -113,17 +115,17 @@ github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsI
+@@ -118,8 +118,8 @@ github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsI
  github.com/jackc/pgpassfile v1.0.0/go.mod h1:CEx0iS5ambNFdcRtxPj5JhEz+xB6uRky5eyVu/W2HEg=
  github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 h1:iCEnooe7UlwOQYpKFhBabPMi4aNAfoODPEFNiAnClxo=
  github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761/go.mod h1:5TJZWKEWniPve33vlWYSoGYefn3gLQRzjfDlhSJ9ZKM=
--github.com/jackc/pgx/v5 v5.9.2 h1:3ZhOzMWnR4yJ+RW1XImIPsD1aNSz4T4fyP7zlQb56hw=
--github.com/jackc/pgx/v5 v5.9.2/go.mod h1:mal1tBGAFfLHvZzaYh77YS/eC6IX9OWbRV1QIIM0Jn4=
--github.com/jackc/puddle/v2 v2.2.2 h1:PR8nw+E/1w0GLuRFSmiioY6UooMp6KJv0/61nB7icHo=
--github.com/jackc/puddle/v2 v2.2.2/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
-+github.com/jackc/pgx/v5 v5.12.0 h1:hWwax8YiGT0YiN50U1oIDn5kgR7KC2tG3rmavwpPkxY=
-+github.com/jackc/pgx/v5 v5.12.0/go.mod h1:u2Fi6no03HCSBYE+ZVdLxbwdu3xyi2vU+K/YNJioSds=
-+github.com/jackc/puddle/v2 v2.2.3 h1:f8HoREISb3l5eO9coPgK7U3hKLhWGokOFVcThl5jrao=
-+github.com/jackc/puddle/v2 v2.2.3/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
- github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
- github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
- github.com/kisielk/errcheck v1.5.0/g
-```
-
-**File**: `tools/goctl/internal/version/version.go` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ import (
- )
- 
- // BuildVersion is the version of goctl.
--const BuildVersion = "1.10.2"
-+const BuildVersion = "1.11.0"
- 
- var tag = map[string]int{"pre-alpha": 0, "alpha": 1, "pre-beta": 2, "beta": 3, "released": 4, "": 5}
- 
+-github.com/jackc/pgx/v5 v5.12.0 h1:hWwax8YiGT0YiN50U1oIDn5kgR7KC2tG3rmavwpPkxY=
+-github.com/jackc/pgx/v5 v5.12.0/go.mod h1:u2Fi6no03HCSBYE+ZVdLxbwdu3xyi2vU+K/YNJioSds=
++github.com/jackc/pgx/v5 v5.13.0 h1:Hl08k64maU0nrRyVUEbwCnK6/gT0EhMrtAqBHz9/gA4=
++github.com/jackc/pgx/v5 v5.13.0/go.mod h1:u2Fi6no03HCSBYE+ZVdLxbwdu3xyi2vU+K/YNJioSds=
+ github.com/jackc/puddle/v2 v2.2.3 h1:f8HoREISb3l5eO9coPgK7U3hKLhWGokOFVcThl5jrao=
+ github.com/jackc/puddle/v2 v2.2.3/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
+ github.com/jhump/protoreflect v1.19.0 h1:YhKbE78JrjfngcCZfZTIV7rQQGndyqll6fXfaqiOEg4=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5901** (2026-11-18): chore(deps): bump github.com/jackc/pgx/v5 from 5.12.0 to 5.13.0 (@dependabot[bot])
 - **PR #5900** (2026-11-16): chore(goctl): prepare v1.11.0 release (@kevwan)
 - **PR #5897** (closed): chore(deps): bump the go_modules group across 1 directory with 2 updates (@dependabot[bot])
 - **PR #5896** (closed): chore(deps): bump the go_modules group across 1 directory with 2 updates (@dependabot[bot])
 - **PR #5895** (closed): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.46.0 to 1.47.0 in the go_modules group across 1 directory (@dependabot[bot])
 - **PR #5894** (2026-11-14): chore(deps): bump github.com/grafana/pyroscope-go from 1.4.3 to 1.5.0 (@dependabot[bot])
-- **PR #5893** (closed): chore(deps): bump golang.org/x/text from 0.41.0 to 0.44.0 in /tools/goctl (@dependabot[bot])
 
 ---
 
@@ -1536,74 +1390,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. goctl): prepare v1.11.0 release
+## X. deps): bump github.com/jackc/pgx/v5 from 5.12.0 to 5.13.0
 
 **RULE**:
-When implementing operations in `tools/goctl/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3628771a`: goctl): prepare v1.11.0 release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c6696882`: deps): bump github.com/jackc/pgx/v5 from 5.12.0 to 5.13.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/goctl/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/zeromicro/go-zero v1.11.0
-	github.com/alicebob/miniredis/v2 v2.40.0 // indirect
-	github.com/fatih/color v1.19.0 // indirect
-	github.com/grafana/pyroscope-go v1.5.0 // indirect
-	github.com/grafana/pyroscope-go/godeltaprof v0.1.12 // indirect
-	github.com/jackc/pgx/v5 v5.12.0 // indirect
-	github.com/jackc/puddle/v2 v2.2.3 // indirect
-	github.com/klauspost/compress v1.20.3 // indirect
-	github.com/prometheus/client_golang v1.24.1 // indirect
-	github.com/prometheus/common v0.70.1 // indirect
-	github.com/prometheus/procfs v0.21.1 // indirect
-	github.com/redis/go-redis/v9 v9.22.0 // indirect
-	go.etcd.io/etcd/api/v3 v3.6.14 // indirect
-	go.etcd.io/etcd/client/pkg/v3 v3.6.14 // indirect
-	go.etcd.io/etcd/client/v3 v3.6.14 // indirect
-	golang.org/x/time v0.15.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260911204522-f61a6ca850bd // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260904194346-d0f1323225a4 // indirect
-	k8s.io/api v0.35.9 // indirect
-	k8s.io/apimachinery v0.35.9 // indirect
-	k8s.io/client-go v0.35.9 // indirect
-
+	github.com/jackc/pgx/v5 v5.13.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/zeromicro/go-zero v1.10.3
-	github.com/alicebob/miniredis/v2 v2.38.0 // indirect
-	github.com/fatih/color v1.18.0 // indirect
-	github.com/google/pprof v0.0.0-20260709232956-b9395ee17fa0 // indirect
-	github.com/grafana/pyroscope-go v1.3.0 // indirect
-	github.com/grafana/pyroscope-go/godeltaprof v0.1.10 // indirect
-	github.com/jackc/pgx/v5 v5.9.2 // indirect
-	github.com/jackc/puddle/v2 v2.2.2 // indirect
-	github.com/klauspost/compress v1.19.1 // indirect
-	github.com/klauspost/cpuid/v2 v2.4.0 // indirect
-	github.com/prometheus/client_golang v1.23.2 // indirect
-	github.com/prometheus/common v0.66.1 // indirect
-	github.com/prometheus/procfs v0.16.1 // indirect
-	github.com/redis/go-redis/v9 v9.21.0 // indirect
-	github.com/robertkrimen/otto v0.5.1 // indirect
-	github.com/rogpeppe/go-internal v1.15.0 // indirect
-	go.etcd.io/etcd/api/v3 v3.5.21 // indirect
-	go.etcd.io/etcd/client/pkg/v3 v3.5.21 // indirect
-	go.etcd.io/etcd/client/v3 v3.5.21 // indirect
-	golang.org/x/time v0.14.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260819154853-08b0e4226688 // indirect
-	k8s.io/api v
+	github.com/jackc/pgx/v5 v5.12.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3628771a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c6696882` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -11308,3 +11308,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-11-19T13:21:47.434Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `e35413c6` | Multi-dimensional audit evidence | 2026-11-19T13:21:55.641Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9631a1dd` | Multi-dimensional audit evidence | 2026-11-19T13:22:01.411Z |
+| `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-19T13:35:15.568Z |
+| `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `c6696882` | Multi-dimensional audit evidence | 2026-11-19T13:35:26.198Z |

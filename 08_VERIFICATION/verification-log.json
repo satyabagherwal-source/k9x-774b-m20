@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-J4MJ",
-    "timestamp": "2026-11-17T21:03:24.715Z",
-    "repository": "Ontos-AI/knowhere",
-    "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "7c0e03d8c765f89a122603a53ab8c876b4fdfb03cf386c4574497ec306776793",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-7EH3",
-    "timestamp": "2026-11-17T21:22:17.223Z",
-    "repository": "BAAI/bge-small-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-    "contentHash": "29f461b676b480bd80f8d3249e908696d9c744a743be0f30f0b0af2382cd76f5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-7FR3",
     "timestamp": "2026-11-17T21:22:18.879Z",
     "repository": "astral-sh/uv",
@@ -7492,6 +7462,36 @@
     "contentHash": "9e788b3191342b30ee27cdaa9d8bd0d1f1964465df9ed318351bfd5f366ec892",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-EI5O",
+    "timestamp": "2026-11-19T13:35:15.564Z",
+    "repository": "facebook/sam3",
+    "learningId": "learn-huggingface-facebook-sam3",
+    "contentHash": "f250847e10ad20a330ee5649495fb3a227c97ad5bc80708cbfca1814bc47a417",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-EQCY",
+    "timestamp": "2026-11-19T13:35:26.194Z",
+    "repository": "zeromicro/go-zero",
+    "learningId": "learn-github-zeromicro-go-zero",
+    "contentHash": "20cc2a2fac5a5654dc3063c688bb2256ef9aab7dc8c735a6cd06e4c735df8c0f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

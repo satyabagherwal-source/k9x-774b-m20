@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T13:22:01.447Z",
+  "last_updated": "2026-11-19T13:35:26.206Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1909,14 +1909,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebook-sam3",
-      "content_hash": "ccccc3c0cee5f6f7e1bb48fa4b5b6193d785ac8a9cafb4fe158e3cb0121bcdd7",
-      "verified_at": "2026-11-14T22:16:18.688Z",
+      "content_hash": "f250847e10ad20a330ee5649495fb3a227c97ad5bc80708cbfca1814bc47a417",
+      "verified_at": "2026-11-19T13:35:15.576Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T22:16:18.688Z"
+      "last_updated": "2026-11-19T13:35:15.576Z"
     },
     "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF": {
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -10776,14 +10776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeromicro-go-zero",
-      "content_hash": "1317570e6c9cb08fe5a99e74a9ace90473d637e1212feeb94651204d78a1036f",
-      "verified_at": "2026-11-16T21:28:25.365Z",
+      "content_hash": "20cc2a2fac5a5654dc3063c688bb2256ef9aab7dc8c735a6cd06e4c735df8c0f",
+      "verified_at": "2026-11-19T13:35:26.205Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T21:28:25.365Z"
+      "last_updated": "2026-11-19T13:35:26.205Z"
     },
     "t8y2/dbx": {
       "repository": "t8y2/dbx",

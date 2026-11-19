@@ -625,8 +625,8 @@
     "sourceUrl": "https://huggingface.co/facebook/sam3",
     "sourceVersion": "hf-facebook-sam3",
     "license": "Open-Source",
-    "contentHash": "ccccc3c0cee5f6f7e1bb48fa4b5b6193d785ac8a9cafb4fe158e3cb0121bcdd7",
-    "lastHarvestedAt": "2026-11-14T22:16:18.680Z",
+    "contentHash": "f250847e10ad20a330ee5649495fb3a227c97ad5bc80708cbfca1814bc47a417",
+    "lastHarvestedAt": "2026-11-19T13:35:15.568Z",
     "learningId": "learn-huggingface-facebook-sam3"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
@@ -7153,10 +7153,10 @@
     "repository": "zeromicro/go-zero",
     "platform": "github",
     "sourceUrl": "https://github.com/zeromicro/go-zero",
-    "sourceVersion": "3628771a",
+    "sourceVersion": "c6696882",
     "license": "MIT",
-    "contentHash": "1317570e6c9cb08fe5a99e74a9ace90473d637e1212feeb94651204d78a1036f",
-    "lastHarvestedAt": "2026-11-16T21:28:25.354Z",
+    "contentHash": "20cc2a2fac5a5654dc3063c688bb2256ef9aab7dc8c735a6cd06e4c735df8c0f",
+    "lastHarvestedAt": "2026-11-19T13:35:26.198Z",
     "learningId": "learn-github-zeromicro-go-zero"
   },
   "t8y2-dbx": {

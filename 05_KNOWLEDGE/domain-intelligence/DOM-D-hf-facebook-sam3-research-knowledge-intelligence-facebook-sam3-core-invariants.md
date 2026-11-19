@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/facebook/sam3",
   "source_version": "hf-facebook-sam3",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T22:16:18.831Z",
+  "timestamp": "2026-11-19T13:35:15.748Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-facebook-sam3",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [facebook/sam3](https://huggingface.co/facebook/sam3) (Revision: `hf-faceboo`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T22:16:18.831Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T13:35:15.748Z`  
 > **Learning ID**: `learn-huggingface-facebook-sam3`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/facebook/sam3](https://huggingface.co/facebook/sam3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T22:11:17.512Z  
+> **Harvest Timestamp**: 2026-11-19T13:35:14.950Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: mask-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2065427 downloads | 6597 likes
+- **Stars / Engagement**: 1924898 downloads | 7018 likes
 
 ---
 

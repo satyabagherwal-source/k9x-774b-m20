@@ -3,7 +3,7 @@
 > **Source Version**: `hf-facebook-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T22:16:18.333Z  
+> **Timestamp**: 2026-11-19T13:35:15.142Z  
 > **Learning ID**: `learn-huggingface-facebook-sam3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/facebook/sam3](https://huggingface.co/facebook/sam3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T22:11:17.512Z  
+> **Harvest Timestamp**: 2026-11-19T13:35:14.950Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: mask-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2065427 downloads | 6597 likes
+- **Stars / Engagement**: 1924898 downloads | 7018 likes
 
 ---
 

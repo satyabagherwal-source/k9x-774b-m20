@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T13:22:01.443Z",
-  "total_cycles_completed": 10768,
-  "total_learnings_persisted": 10768,
-  "total_rules_promoted": 10151,
+  "last_updated": "2026-11-19T13:35:26.202Z",
+  "total_cycles_completed": 10770,
+  "total_learnings_persisted": 10770,
+  "total_rules_promoted": 10152,
   "history": [
-    {
-      "timestamp": "2026-11-18T17:01:55.707Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T17:10:16.065Z",
-      "repository": "google/electra-base-discriminator",
-      "learningId": "learn-huggingface-google-electra-base-discriminator",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T17:10:26.505Z",
       "repository": "koderover/zadig",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T13:35:15.573Z",
+      "repository": "facebook/sam3",
+      "learningId": "learn-huggingface-facebook-sam3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T13:35:26.202Z",
+      "repository": "zeromicro/go-zero",
+      "learningId": "learn-github-zeromicro-go-zero",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

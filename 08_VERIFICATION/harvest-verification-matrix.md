@@ -11275,3 +11275,5 @@
 | `CYCLE-20261119-X6LI` | `2026-11-19T13:21:47.430Z` | `nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md` | Yes (`d8165b05...`) |
 | `CYCLE-20261119-XCXH` | `2026-11-19T13:21:55.637Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9380` | Yes (`8b203522...`) |
 | `CYCLE-20261119-XHDR` | `2026-11-19T13:22:01.407Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`9e788b31...`) |
+| `CYCLE-20261119-EI5O` | `2026-11-19T13:35:15.564Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`f250847e...`) |
+| `CYCLE-20261119-EQCY` | `2026-11-19T13:35:26.194Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9381` | Yes (`20cc2a2f...`) |
