@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T10:47:20.952Z",
-  "total_cycles_completed": 10751,
-  "total_learnings_persisted": 10751,
-  "total_rules_promoted": 10141,
+  "last_updated": "2026-11-19T11:12:59.799Z",
+  "total_cycles_completed": 10754,
+  "total_learnings_persisted": 10754,
+  "total_rules_promoted": 10143,
   "history": [
-    {
-      "timestamp": "2026-11-18T15:59:54.207Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T16:00:07.220Z",
-      "repository": "briaai/RMBG-3.0",
-      "learningId": "learn-huggingface-briaai-rmbg-3-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T16:14:15.471Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T16:22:14.739Z",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -1403,6 +1382,27 @@
       "repository": "nolabs-ai/nono",
       "learningId": "learn-github-nolabs-ai-nono",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T11:08:06.178Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T11:08:11.522Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T11:12:59.799Z",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -11290,3 +11290,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-19T10:47:09.508Z |
 | `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `cc3ff0fe` | Multi-dimensional audit evidence | 2026-11-19T10:47:11.218Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `540850e3` | Multi-dimensional audit evidence | 2026-11-19T10:47:20.947Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `be684af5` | Multi-dimensional audit evidence | 2026-11-19T11:08:06.170Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `20746425` | Multi-dimensional audit evidence | 2026-11-19T11:08:11.516Z |
+| `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-19T11:12:59.793Z |

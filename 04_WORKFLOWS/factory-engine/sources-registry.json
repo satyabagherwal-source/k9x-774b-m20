@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T10:47:24.229Z",
-    "lastVerified": "2026-11-19T10:47:24.229Z",
+    "lastChecked": "2026-11-19T11:13:02.754Z",
+    "lastVerified": "2026-11-19T11:13:02.754Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-19T09:07:16.027Z",
+    "lastChecked": "2026-11-19T11:08:08.050Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-19T09:07:16.027Z"
+    "lastVerified": "2026-11-19T11:08:08.050Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -407,14 +407,14 @@
     "officialUrl": "https://github.com/milvus-io/milvus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T10:08:52.939Z",
-    "lastVerified": "2026-11-18T10:08:52.939Z",
+    "lastChecked": "2026-11-19T11:08:10.333Z",
+    "lastVerified": "2026-11-19T11:08:10.333Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "d966e46438ba3b5e24f152ddb9db6516cc2df74b18cc2e9992d87973fc510c6a",
+    "contentHash": "51c8048745b426e0fa6fbd910779db761c3fbbe508ce51b48780691e16ab47a8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -572,9 +572,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-19T01:47:10.746Z",
+    "lastChecked": "2026-11-19T11:08:02.966Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-19T01:47:10.746Z"
+    "lastVerified": "2026-11-19T11:08:02.966Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -784,12 +784,12 @@
     "officialUrl": "https://github.com/gardener/gardener",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T11:06:49.355Z",
-    "lastVerified": "2026-11-18T11:06:49.355Z",
+    "lastChecked": "2026-11-19T11:08:04.763Z",
+    "lastVerified": "2026-11-19T11:08:04.763Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gardener-gardener",
-    "contentHash": "fc85ec67bc72126e08aa2b2b7e51a6dcafa50c7d0f54b3b0b7cb9c84cb042cd0",
+    "contentHash": "97b72da9a5f60f4df27bdc4f76a32095c83fca4528f3ff92b0e09bb27e152072",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -7036,5 +7036,36 @@
     "lastChecked": "2026-11-19T10:47:11.634Z",
     "revisionIdentifier": "11edd391",
     "lastVerified": "2026-11-19T10:47:11.634Z"
+  },
+  "ouch-org-ouch": {
+    "name": "ouch",
+    "officialUrl": "https://github.com/ouch-org/ouch",
+    "lastChecked": "2026-11-19T11:07:52.952Z",
+    "revisionIdentifier": "6df14b05",
+    "lastVerified": "2026-11-19T11:07:52.952Z"
+  },
+  "hf-conwayresearch-underdog-saluki-27b-1.0": {
+    "name": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "officialUrl": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T11:07:55.444Z",
+    "lastVerified": "2026-11-19T11:07:55.444Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+    "contentHash": "6cbe2852ccecfc9418d9766e0c9fd4bd1054323408254aaac61761ccbe53d782",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nativescript-nativescript": {
+    "name": "NativeScript",
+    "officialUrl": "https://github.com/NativeScript/NativeScript",
+    "lastChecked": "2026-11-19T11:07:57.947Z",
+    "revisionIdentifier": "283eb0c5",
+    "lastVerified": "2026-11-19T11:07:57.947Z"
   }
 }

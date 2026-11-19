@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T10:47:20.956Z",
+  "last_updated": "2026-11-19T11:12:59.805Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1805,14 +1805,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "content_hash": "9bd3f60541df41266bdee248d3901528b4da6dccc94af2be2994b80bea1c5bc8",
-      "verified_at": "2026-11-14T19:59:28.151Z",
+      "content_hash": "6cbe2852ccecfc9418d9766e0c9fd4bd1054323408254aaac61761ccbe53d782",
+      "verified_at": "2026-11-19T11:12:59.804Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T19:59:28.151Z"
+      "last_updated": "2026-11-19T11:12:59.804Z"
     },
     "Qwen/Qwen-Image-2.1-Turbo": {
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "d966e46438ba3b5e24f152ddb9db6516cc2df74b18cc2e9992d87973fc510c6a",
-      "verified_at": "2026-11-18T10:08:53.910Z",
+      "content_hash": "51c8048745b426e0fa6fbd910779db761c3fbbe508ce51b48780691e16ab47a8",
+      "verified_at": "2026-11-19T11:08:11.526Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T10:08:53.910Z"
+      "last_updated": "2026-11-19T11:08:11.526Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "fc85ec67bc72126e08aa2b2b7e51a6dcafa50c7d0f54b3b0b7cb9c84cb042cd0",
-      "verified_at": "2026-11-18T11:06:50.237Z",
+      "content_hash": "97b72da9a5f60f4df27bdc4f76a32095c83fca4528f3ff92b0e09bb27e152072",
+      "verified_at": "2026-11-19T11:08:06.182Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T11:06:50.237Z"
+      "last_updated": "2026-11-19T11:08:06.182Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",

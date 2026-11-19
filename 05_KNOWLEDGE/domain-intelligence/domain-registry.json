@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T10:47:26.620Z",
-  "total_records": 1969,
+  "last_updated": "2026-11-19T11:13:05.090Z",
+  "total_records": 1971,
   "domains": {
     "A": {
       "total": 13,
@@ -958,7 +958,7 @@
       ]
     },
     "G": {
-      "total": 342,
+      "total": 344,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1301,7 +1301,9 @@
         "domain_intelligence-architecture-intelligence-nezhahq-nezha-core-invariants",
         "domain_intelligence-architecture-intelligence-nezhahq-nezha-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-core-invariants",
-        "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
+        "domain_intelligence-architecture-intelligence-milvus-io-milvus-learnings-core-invariants"
       ]
     },
     "H": {
@@ -11558,8 +11560,8 @@
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "repository": "gardener/gardener",
-      "content_hash": "0a540c1c3c1d7de5f90f648505e5832742feb9ec60c5ebdf24505aeb8f8fc1ca",
-      "created_at": "2026-11-18T11:06:50.542Z"
+      "content_hash": "7535997449520c4a6e8106c39881df6513ef750244a4ec7bff9c8a5d75451b91",
+      "created_at": "2026-11-19T11:08:06.604Z"
     },
     "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
@@ -11653,8 +11655,8 @@
       "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-learnings-deployment-operations-intelligence-gardener-gardener.md",
       "repository": "gardener-gardener-learnings",
-      "content_hash": "22abed5200c9aac49123aba04d2f4d4913c66296facdbea5c5620534950669c2",
-      "created_at": "2026-11-17T18:05:45.030Z"
+      "content_hash": "d756eb6b4e122fa18ba3b2a4ae1719cfb7eb764d31fc417825d1963bc2f270ce",
+      "created_at": "2026-11-19T11:13:04.130Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari",
@@ -17559,8 +17561,8 @@
       "title": "Research & Knowledge Intelligence: ConwayResearch/Underdog-Saluki-27B-1.0 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conwayresearch-underdog-saluki-27b-1-0-research-knowledge-intelligence-conway.md",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-      "content_hash": "dc140aa9a952b1e52e5572a6911091dce5cfcb523b62042fb23f56e88eb5a0ab",
-      "created_at": "2026-11-14T19:59:28.293Z"
+      "content_hash": "350da32edeeb3480a03d29f1d4be9f7f70c7a4ec3ffc43c227fcac456cb2f8f8",
+      "created_at": "2026-11-19T11:13:00.038Z"
     },
     "DOM-D-E0561FD8": {
       "record_id": "DOM-D-E0561FD8",
@@ -17610,8 +17612,8 @@
       "title": "Research & Knowledge Intelligence: hf-conwayresearch-underdog-saluki-27b-1.0-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conwayresearch-underdog-saluki-27b-1-0-learnings-research-knowledge-intellige.md",
       "repository": "hf-conwayresearch-underdog-saluki-27b-1.0-learnings",
-      "content_hash": "3cf50dc8fa59f1c3da19dd9041b906a7d2c96f9442d7ba034b9ad67875fa7fa0",
-      "created_at": "2026-11-14T20:00:03.697Z"
+      "content_hash": "bd246659599b9a7b8f01d4ab00b634587219ece921c999bdd2cb60608413d4f6",
+      "created_at": "2026-11-19T11:13:03.183Z"
     },
     "domain_intelligence-technical-construction-intelligence-zleap-ai-sag-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zleap-ai-sag-learnings-core-invariants",
@@ -33101,6 +33103,24 @@
       "repository": "zvec-ai-zvec-grep-learnings",
       "content_hash": "40e17a3413446b2457dabc25487a8acc14eb88b16c96aa7d612e132626aa3685",
       "created_at": "2026-11-19T10:47:25.438Z"
+    },
+    "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: milvus-io/milvus Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-milvus-io-milvus-architecture-intelligence-milvus-io-milvus-core-invariants.md",
+      "repository": "milvus-io/milvus",
+      "content_hash": "8faee44375fad3ebc02c487ce36c372ff01056aea27ffb7b4c088b54d2649557",
+      "created_at": "2026-11-19T11:08:11.961Z"
+    },
+    "domain_intelligence-architecture-intelligence-milvus-io-milvus-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: milvus-io-milvus-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-milvus-io-milvus-learnings-architecture-intelligence-milvus-io-milvus-learnings-.md",
+      "repository": "milvus-io-milvus-learnings",
+      "content_hash": "71dd4106dee80365f04b853d725a09195c3857aca7ec031049751f1e993656ac",
+      "created_at": "2026-11-19T11:13:05.090Z"
     }
   }
 }

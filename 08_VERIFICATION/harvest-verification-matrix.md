@@ -11257,3 +11257,6 @@
 | `CYCLE-20261119-EBPC` | `2026-11-19T10:47:09.504Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`37fd7aeb...`) |
 | `CYCLE-20261119-ED0U` | `2026-11-19T10:47:11.214Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9369` | Yes (`742844eb...`) |
 | `CYCLE-20261119-EKJ3` | `2026-11-19T10:47:20.943Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9370` | Yes (`5bf865f7...`) |
+| `CYCLE-20261119-59CL` | `2026-11-19T11:08:06.165Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9371` | Yes (`97b72da9...`) |
+| `CYCLE-20261119-5DH3` | `2026-11-19T11:08:11.511Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9372` | Yes (`51c80487...`) |
+| `CYCLE-20261119-BJWS` | `2026-11-19T11:12:59.788Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | Yes (`6cbe2852...`) |

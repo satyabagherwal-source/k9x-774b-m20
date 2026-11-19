@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T10:47:25.093Z",
+  "updated_at": "2026-11-19T11:13:04.653Z",
   "stats": {
-    "total_discovered": 5871,
-    "approved_pending_harvest": 5558,
+    "total_discovered": 5877,
+    "approved_pending_harvest": 5564,
     "harvested_count": 0,
     "rejected_count": 313,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5523,
+      "COMMUNITY_AND_EXPERT": 5529,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -126992,6 +126992,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
         "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-4C2017B33DA9": {
+      "id": "SRC-4C2017B33DA9",
+      "url": "https://hub.docker.com/_/nginx",
+      "title": "https://hub.docker.com/_/nginx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T11:13:03.470Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-A839B09C5125": {
+      "id": "SRC-A839B09C5125",
+      "url": "https://redirect.github.com/nginx/docker-nginx",
+      "title": "https://redirect.github.com/nginx/docker-nginx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T11:13:03.526Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-2D818C4DF7CD": {
+      "id": "SRC-2D818C4DF7CD",
+      "url": "https://redirect.github.com/nginx/docker-nginx/compare/1.31.8...1.31.9",
+      "title": "https://redirect.github.com/nginx/docker-nginx/compare/1.31.8...1.31.9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T11:13:03.576Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-971489CD06D3": {
+      "id": "SRC-971489CD06D3",
+      "url": "https://github.com/timuthy",
+      "title": "https://github.com/timuthy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T11:13:03.644Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-929DEE3AA9A9": {
+      "id": "SRC-929DEE3AA9A9",
+      "url": "https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline-for-tcus/5824/pipeline-overview",
+      "title": "https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline-for-tcus/5824/pipeline-overview",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T11:13:04.600Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
+        "fileName": "milvus-io-milvus-learnings.md"
+      }
+    },
+    "SRC-F77D9B32643F": {
+      "id": "SRC-F77D9B32643F",
+      "url": "https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline-for-tcus/5824/artifact",
+      "title": "https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline-for-tcus/5824/artifact",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T11:13:04.653Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
+        "fileName": "milvus-io-milvus-learnings.md"
       }
     }
   }

@@ -1175,8 +1175,8 @@
     "sourceUrl": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
     "sourceVersion": "hf-conwayresearch-underdog-saluki-27b-1.0",
     "license": "Open-Source",
-    "contentHash": "9bd3f60541df41266bdee248d3901528b4da6dccc94af2be2994b80bea1c5bc8",
-    "lastHarvestedAt": "2026-11-14T19:59:28.144Z",
+    "contentHash": "6cbe2852ccecfc9418d9766e0c9fd4bd1054323408254aaac61761ccbe53d782",
+    "lastHarvestedAt": "2026-11-19T11:12:59.793Z",
     "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0"
   },
   "hf-google-gemma-4-26b-a4b-it": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "2d0d14cb",
+    "sourceVersion": "20746425",
     "license": "Apache-2.0",
-    "contentHash": "d966e46438ba3b5e24f152ddb9db6516cc2df74b18cc2e9992d87973fc510c6a",
-    "lastHarvestedAt": "2026-11-18T10:08:53.902Z",
+    "contentHash": "51c8048745b426e0fa6fbd910779db761c3fbbe508ce51b48780691e16ab47a8",
+    "lastHarvestedAt": "2026-11-19T11:08:11.516Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "3593919a",
+    "sourceVersion": "be684af5",
     "license": "Apache-2.0",
-    "contentHash": "fc85ec67bc72126e08aa2b2b7e51a6dcafa50c7d0f54b3b0b7cb9c84cb042cd0",
-    "lastHarvestedAt": "2026-11-18T11:06:50.230Z",
+    "contentHash": "97b72da9a5f60f4df27bdc4f76a32095c83fca4528f3ff92b0e09bb27e152072",
+    "lastHarvestedAt": "2026-11-19T11:08:06.170Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {

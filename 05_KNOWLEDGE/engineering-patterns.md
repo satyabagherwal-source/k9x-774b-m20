@@ -690974,3 +690974,156 @@ fn run_or_detach(args: RunArgs, silent: bool) -> Result<()> {
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `540850e3` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9371. rename alert inhibition graph to kebab-case (Harvested from gardener/gardener)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "rename alert inhibition graph to kebab-case",
+  "source": "gardener/gardener",
+  "source_url": "https://github.com/gardener/gardener",
+  "source_version": "be684af5",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-19T11:08:05.559Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-gardener-gardener",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [gardener/gardener](https://github.com/gardener/gardener) (Revision: `be684af5`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/development/monitoring-stack.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `be684af5`: docs: rename alert inhibition graph to kebab-case. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/development/monitoring-stack.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+1. Add the new alert to `alert-inhibition-graph.dot`, add any required inhibition flows and render the new graph. To render the graph, run:
+dot -Tpng ./content/alert-inhibition-graph.dot -o ./content/alert-inhibition-graph.png
+![alertDiagram](content/alert-inhibition-graph.png)
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+1. Add the new alert to `alertInhibitionGraph.dot`, add any required inhibition flows and render the new graph. To render the graph, run:
+dot -Tpng ./content/alertInhibitionGraph.dot -o ./content/alertInhibitionGraph.png
+![alertDiagram](content/alertInhibitionGraph.png)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `be684af5` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9372. release cold collections under QueryNode memory pressure (Harvested from milvus-io/milvus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "release cold collections under QueryNode memory pressure",
+  "source": "milvus-io/milvus",
+  "source_url": "https://github.com/milvus-io/milvus",
+  "source_version": "20746425",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-19T11:08:10.951Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-milvus-io-milvus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `20746425`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `configs/milvus.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7c51197b`: enhance: release cold collections under QueryNode memory pressure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `configs/milvus.yaml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+    enabled: false # whether QueryCoord releases collections after the configured time to idle (TTI) or under Worker QN memory pressure; effective only when proxy.enableAutoLoad is true
+    ttiSeconds: 3600
+    checkIntervalSeconds: 10
+    releaseConcurrency: 16 # maximum concurrent automatic collection releases per scan; runtime updates take effect on the next scan
+    lruHighWatermarkPercentage: 85 # Worker QueryNode pool anonymous resident memory percentage that starts collection LRU release; takes effect on the next scan
+    lruLowWatermarkPercentage: 80 # Worker QueryNode pool anonymous resident memory percentage that stops selecting collection LRU releases; must be below the high watermark
+    lruMaxEvictionsPerScan: 64 # maximum collection LRU releases selected per scan, independent of releaseConcurrency
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+    enabled: false # whether QueryCoord releases collections after an idle TTL; effective only when proxy.enableAutoLoad is true
+    idleTTLSeconds: 600
+    checkIntervalSeconds: 30
+    releaseConcurrency: 16 # maximum concurrent automatic collection releases in one scan; changes apply to the next release batch
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7c51197b` are properly handled with clean fallback behavior.

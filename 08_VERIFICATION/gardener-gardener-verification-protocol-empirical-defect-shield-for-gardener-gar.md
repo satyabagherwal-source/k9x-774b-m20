@@ -4,22 +4,22 @@
 {
   "source_repository": "gardener/gardener",
   "source_url": "https://github.com/gardener/gardener",
-  "source_version": "3593919a",
+  "source_version": "be684af5",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T11:06:50.409Z",
+  "timestamp": "2026-11-19T11:08:06.416Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gardener-gardener",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gardener/gardener](https://github.com/gardener/gardener) (Revision: `3593919a`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T11:06:50.409Z`  
+> **Provenance**: Harvested from [gardener/gardener](https://github.com/gardener/gardener) (Revision: `be684af5`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T11:08:06.416Z`  
 > **Learning ID**: `learn-github-gardener-gardener`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `gardener/gardener` (Commit: `3593919a`)
+- **Target Repository**: `gardener/gardener` (Commit: `be684af5`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T11:06:49.355Z  
+> **Harvest Timestamp**: 2026-11-19T11:08:04.763Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -737,17 +737,14 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16382** (2026-11-18): **Update module golang.org/x/tools to v0.53.0 - autoclosed**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [golang.org/x/tools](https://pkg.go.dev/golang.org/x/tools) | [`v0.52.1-0.20261117052324-6bc5e25e1abb` → `v0.53.0`](https://cs.opensource.google/go/x/tools/+/refs/tags/v0.52.1-0.20261117052324-6bc5e25e1abb...refs/tags/v0.53.0) | ![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2ftools/v0.53.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/golang.org%2fx%2ftools/v0.52.1-0.20261117052324-6bc5e25e1abb/v0.53.0?slim=true) |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNDkuMSIsInVwZGF0ZWRJblZlciI6IjQ0LjI0OS4xIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
+- **Issue #16389** (2026-11-19): **Update nginx Docker tag to v1.31.9**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [nginx](https://hub.docker.com/_/nginx) ([source](https://redirect.github.com/nginx/docker-nginx)) | patch | `1.31.8` → `1.31.9` |  ---  ### Release Notes  <details> <summary>nginx/docker-nginx (nginx)</summary>  ### [`v1.31.9`](https://redirect.github.com/nginx/docker-nginx/compare/1.31.8...1.31.9)  [Compare Source](https://redirect.github.com/nginx/docker-nginx/compare/1.31.8...1.31.9)  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNDkuMSIsInVwZGF0ZWRJblZlciI6IjQ0LjI0OS4xIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
   **Post-Mortem & Fix Analysis**:
-  > ### ℹ️ Artifact update notice  ##### File name: hack/tools/go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - 3 additional dependencies were updated   Details:   | **Package**              | **Change**                                                                   | | :----------------------- | :--------------------------------------------------------------------------- | | `golang.org/x/mod`       | `v0.42.0` -> `v0.43.0`                                                       | | `golang.org/x/net`       | `v0.62.0` -> `v0.63.0`                                                       | | `golang.org/x/telemetry` | `v0.0.0-20261009151841-97e8ea77aa2a` -> `v0.0.0-20261116191925-e77a43154acb` |
   > /label skip-review
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [timuthy](https://github.com/timuthy) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["timuthy"]} -->
 
-- **Issue #16381** (2026-11-18): **Update golang.org/x/exp digest to 7a49493**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [golang.org/x/exp](https://pkg.go.dev/golang.org/x/exp) | require | digest | `e397061` → `7a49493` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNDkuMSIsInVwZGF0ZWRJblZlciI6IjQ0LjI0OS4xIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
-  **Post-Mortem & Fix Analysis**:
-  > ### ℹ️ Artifact update notice  ##### File name: hack/tools/go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - 4 additional dependencies were updated   Details:   | **Package**              | **Change**                                                                   | | :----------------------- | :--------------------------------------------------------------------------- | | `golang.org/x/tools`     | `v0.52.1-0.20261117052324-6bc5e25e1abb` -> `v0.53.0`                         | | `golang.org/x/mod`       | `v0.42.0` -> `v0.43.0`                                                       | | `golang.org/x/net`       | `v0.62.0` -> `v0.63.0`                                                       | | `golang.org/x/telemetry` | `v0.0.0-20261009151841-97e8ea77aa2a` -> `v0.0.0-20261116191925-e77a43154acb` |
-  > /label skip-review
+- **Issue #16384** (2026-11-19): **docs: rename alert inhibition graph to kebab-case**
+  *Symptoms*: /area monitoring /kind cleanup  **What this PR does / why we need it**:  Renames the alert inhibition graph assets under `docs/development/content/` from CamelCase to kebab-case and updates all references. Consistent lowercase/kebab-case file names avoid case-sensitivity issues in downstream tooling and documentation aggregation.  | Before | After | | --- | --- | | `alertInhibitionGraph.png` | `alert-inhibition-graph.png` | | `alertInhibitionGraph.dot` | `alert-inhibition-graph.dot` |  The `.dot` source is renamed alongside its rendered `.png`. References updated: - `docs/development/monitoring-stack.md` (image link and the `dot -Tpng ...` render instructions) - `docs/monitoring/alerting.md` (image link)  **Which issue(s) this PR fixes**: Fixes #  **Special notes for your reviewer**: Pure rename plus reference update, no content changes.  **Release note**: ```other operator NONE ``` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -764,388 +761,184 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3593919a` (2026-11-18)
-**Commit Message**: [GEP-28] Protect etcd quorum during rolling updates of control plane nodes (#16240)
+### Incident Patch 1: `be684af5` (2026-11-19)
+**Commit Message**: docs: rename alert inhibition graph to kebab-case (#16384)
 
-* Documentation
+Signed-off-by: klocke-io <[REDACTED_EMAIL]>
 
-Assisted-by: Claude <[REDACTED_EMAIL]>
-
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
-
-* Label static etcd pods with `is-critical-static-pod=true`
-
-Co-authored-by: Johannes Scheerer <[REDACTED_EMAIL]>
-Co-authored-by: DobromirPeev <[REDACTED_EMAIL]>
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
-
-* Add health checker for critical static pods
-
-Co-authored-by: Johannes Scheerer <[REDACTED_EMAIL]>
-Co-authored-by: DobromirPeev <[REDACTED_EMAIL]>
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
-
-* Enable new health checker in healthcheck controller
-
-only for control plane nodes and only when the Node object exists/the
-node name is known
-
-Co-authored-by: Johannes Scheerer <[REDACTED_EMAIL]>
-Co-authored-by: DobromirPeev <[REDACTED_EMAIL]>
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
-
-* Don't attempt acquiring Lease if other node has unhealthy etcd pods
-
-to prevent breaking the 2/3-quorum
-
-Co-authored-by: Johannes Scheerer <[REDACTED_EMAIL]>
-Co-authored-by: DobromirPeev <[REDACTED_EMAIL]>
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
-
-* Augment control plane pool `MachineDeployment` with `CriticalControlPlan
-
-**File**: `cmd/gardener-node-agent/app/app.go` (modified, +1/-1)
+**File**: `docs/development/monitoring-stack.md` (modified, +3/-3)
 ```diff
-@@ -234,7 +234,7 @@ func run(ctx context.Context, cancel context.CancelFunc, log logr.Logger, cfg *n
- 		Manager:            mgr,
- 		BootstrapRunnables: bootstrapRunnables,
- 		ActualRunnables: []manager.Runnable{manager.RunnableFunc(func(ctx context.Context) error {
--			return controller.AddToManager(ctx, cancel, mgr, cfg, hostName, machineName, nodeName, cfgDir)
-+			return controller.AddToManager(ctx, cancel, mgr, cfg, hostName, machineName, nodeName, cfgDir, isControlPlaneNode)
- 		})},
- 	}); err != nil {
- 		return fmt.Errorf("failed adding runnables to manager: %w", err)
+@@ -67,9 +67,9 @@ The alert definitions are located in `charts/seed-monitoring/charts/core/charts/
+ 
+ 1. Adding additional alerts for a component which already has a set of alerts. In this case you have to extend the existing rule file for the component.
+ 1. Adding alerts for a new component. In this case a new rule file with name scheme `example-component.rules.yaml` needs to be added.
+-1. Add the new alert to `alertInhibitionGraph.dot`, add any required inhibition flows and render the new graph. To render the graph, run:
++1. Add the new alert to `alert-inhibition-graph.dot`, add any required inhibition flows and render the new graph. To render the graph, run:
+ ```bash
+-dot -Tpng ./content/alertInhibitionGraph.dot -o ./content/alertInhibitionGraph.png
++dot -Tpng ./content/alert-inhibition-graph.dot -o ./content/alert-inhibition-graph.png
+ ```
+ 1. Create a test for the new alert. See `Alert Tests`.
+ 
+@@ -125,7 +125,7 @@ Shoot Alertmanager
+ 
+ All alerts related to components running on the Shoot workers are inhibited in case of an issue with the vpn connection, because those components can't be scraped anymore and Prometheus will fire alerts in consequence. The components running on the workers are probably healthy and the alerts are presumably false positives. The inhibition flow is shown in the figure below. If you add a new alert, make sure to add it to the diagram.
+ 
+-![alertDiagram](content/alertInhibitionGraph.png)
++![alertDiagram](content/alert-inhibition-graph.png)
+ 
+ ### Alert Attributes
+ 
 ```
 
-**File**: `dev-setup/skaffold-gardenadm.yaml` (modified, +1/-0)
+**File**: `docs/monitoring/alerting.md` (modified, +1/-1)
 ```diff
-@@ -1044,6 +1044,7 @@ build:
-             - pkg/apis/authentication/v1alpha1
-             - pkg/apis/config
-             - pkg/apis/config/gardenlet/v1alpha1
-+            - pkg/apis/config/nodeagent/v1alpha1
-             - pkg/apis/core
-             - pkg/apis/core/install
-             - pkg/apis/core/v1
-```
-
-**File**: `dev-setup/skaffold-operator.yaml` (modified, +1/-0)
-```diff
-@@ -1054,6 +1054,7 @@ build:
-             - pkg/apis/authentication/v1alpha1
-             - pkg/apis/config
-             - pkg/apis/config/gardenlet/v1alpha1
-+            - pkg/apis/config/nodeagent/v1alpha1
-             - pkg/apis/core
-             - pkg/apis/core/install
-             - pkg/apis/core/v1
-```
-
-**File**: `docs/concepts/node-agent.md` (modified, +11/-5)
-```diff
-@@ -107,11 +107,12 @@ Therefore, while serial reconciliation benefits both components, it is the `etcd
- Serial reconciliation is enabled by setting the `reconciliation.osc.node-agent.gardener.cloud/serial` annotation to `"true"` on the `Secret` containing the `OperatingSystemConfig`.
- When this annotation is present, the controller uses a leader election mechanism based on Kubernetes `Lease` objects to coordinate reconciliation across multiple `gardener-node-agent` instances:
+@@ -134,4 +134,4 @@ inhibit_rules:
  
--1. **Lease Acquisition**: Before starting reconciliation, each `gardener-node-agent` instance attempts to acquire a `Lease` object with the same name as the `Secret` (in the `kube-system` namespace). The `Lease` is owned by the `Secret` via an `OwnerReference`.
--2. **Reconciliation with Lock**: Only the instance that successfully acquires the `Lease` proceeds with reconciliation. The `Lease` has a duration of 10 minutes and is renewed in the beginning of the reconciliation process.
--3. **Lock Release**: After successful reconciliation, the instance releases the `Lease` by clearing its holder identity, making it available for other instances to acquire.
--4. **Waiting for Lock**: Instances that fail to acquire the `Lease` (because another instance holds it) will requeue their reconciliation and wait. The controller watches the `Lease` object and automatically requeues when it detects the `Lease` has been released.
--5. **Lease Expiry Handling**: If a `Lease` holder fails to renew the `Lease` before it expires, other instances can detect this and attempt to acquire the `Lease` to proceed with reconciliation.
-+1. **Quorum Protection**: Before attempting to acquire the `Lease`, each instance checks the `CriticalControlPlanePodsUnhealthy` condition (see [Health Check Controller](#health-check-controller)) of the other nodes in its worker pool. A sibling is considered at risk when the condition reports `True`, is missing, or is stale (the health check controller refreshes the condition's heartbeat every interval, so a missing or stale condition means the sibling's `gardener-node-agent` stopped reporting and its `etcd` health is unknown). While any sibling is at risk, the instance backs off and requeues (after `1m`) instead of acquiring the `Lease`, so a node is never updated while another control plane node's `etcd` might be unhealthy.
-+2. **Lease Acquisition**: Before starting reconciliation, each `gardener-node-agent` instance attempts to acquire a `Lease` object with the same name as the `Secret` (in the `kube-system` namespace). The `Lease` is owned by the `Secret` via an `OwnerReference`.
-+3. **Reconciliation with Lock**: Only the instance that successfully acquires the `Lease` proceeds with reconciliation. The `Lease` has a duration of 10 minutes and is renewed in the beginning of the reconciliation process.
-+4. **Lock Release**: After successful reconciliation, the instance releases the `Lease` by clearing its holder identity, making it available for other instances to acquire.
-+5. **Waiting for Lock**: Instances that fail to acquire the `Lease` (because another instance holds it) will requeue their reconciliation and wait. The controller watches the `Lease` object and automatically requeues when it detects the `Lease` has been released.
-+6. **Lease Expiry Handling**: If a `Lease` holder fails to renew the `Lease` before it expires, other instances can detect this and attempt to acquire the `Lease` to proceed with reconciliation.
+ Below is a graph visualizing the inhibition rules:
  
- ##### Behavior Changes
- 
-@@ -150,6 +151,11 @@ This controller performs periodic health checks on the node's critical component
- It watches the `Node` object and executes configured health checkers at regular intervals.
- If a health check fails, the controller can restart the affected systemd service to restore normal operation.
- 
-+On control plane nodes of self-hosted shoot clusters, an additional checker watches the critical static pods running on the node.
-+It lists the `Pod`s in the `kube-system` namespace that carry the `shoot.gardener.cloud/is-critical-static-pod=true` label (set on the `etcd` static pods) and reports their readiness and health to the `CriticalControlPlanePodsUnhealthy` condition on the `Node`.
-+The condition is used by the [serial reconciliation](#serial-reconciliation) to avoid updating a node while another control plane node's `etcd` is unhealthy, protecting the `etcd` quorum.
-+Additionally, the condition is appended to `.spec.template.spec.machineConfiguration.nodeConditions` of the control plane pool's `MachineDeployment` so that `machine-controller-manager` also treats a node reporting it as unhealthy.
-+
- ### [Hostname Check Controller](../../pkg/nodeagent/controller/hostnamecheck)
- 
- This controller periodically checks whether the hostname of the machine has changed.
-```
-
-**File**: `extensions/pkg/controller/worker/genericactuator/actuator_reconcile.go` (modified, +32/-4)
-```diff
-@@ -27,6 +27,7 @@ import (
- 	extensionsworkerhelper "github.com/gardener/gardener/extensions/pkg/controller/worker/helper"
- 	v1beta1helper "github.com/gardener/gardener/pkg/api/core/v1beta1/helper"
- 	extensionsv1alpha1helper "github.com/gardener/gardener/pkg/api/extensions/v1alpha1/helper"
-+	nodeagentconfigv1alpha1 "github.com/gardener/gardener/pkg/apis/config/nodeagent/v1alpha1"
- 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
- 	extensionsv1alpha1 "github.com/gardener/gardener/pkg/apis/extensions/v1alpha1"
- 	"github.com/gardener/gardener/pkg/controllerutils"
-@@ -37,6 +38,12 @@ import (
- 	retryutils "github.com/gardener/gardener/pkg/utils/retry"
- )
- 
-+// defaultMachineControllerManagerNodeConditions mirrors the default value of machine-controller-manager's
-+// `--node-conditions` flag. We don't set this flag, so machine-controller-manager uses this default for machines
-+// without an explicit `.spec.machineConfiguration.nodeConditions`. A unit test guards against drift from the upstream
-+// default.
-+const defaultMachineControllerManagerNodeConditions = "KernelDeadlock,ReadonlyFilesystem,DiskPressure,NetworkUnavailable"
-+
- func (a *genericActuator) Reconcile(ctx context.Context, log logr.Logger, worker *extensionsv1alpha1.Worker, cluster *extensionscontroller.Cluster) error {
- 	log = log.WithValues("operation", "reconcile")
- 
-@@ -216,15 +223,19 @@ func deployMachineDeployments(
- 		}
- 	}
- 
--	var taskFns = make([]flow.TaskFn, 0, len(wantedMachineDeployments))
-+	var (
-+		taskFns          = make([]flow.TaskFn, 0, len(wantedMachineDeployments))
-+		controlPlanePool = v1beta1helper.ControlPlaneWorkerPoolForShoot(cluster.Shoot.Spec.Provider.Workers)
-+	)
- 	for _, deployment := range wantedMachineDeployments {
- 		var (
--			existingMachineDeployment = getExistingMachineDeployment(existingMachineDeployments, deployment.Name)
--			shootIsAwake              = shootIsAwake(extensionscontroller.IsHibernationEnabled(cluster), existingMachineDeployments)
-+			existingMachineDeployment     = getExistingMachineDeployment(existingMachineDeployments, deployment.Name)
-+			shootIsAwake                  = shootIsAwake(extensionscontroller.IsHibernationEnabled(cluster), existingMachineDeployments)
-+			deploymentForControlPlanePool = controlPlanePool != nil && controlPlanePool.Name == deployment.PoolName
- 		)
- 
- 		taskFns = append(taskFns, func(ctx context.Context) error {
--			return deployMachineDeployment(ctx, log, cl, worker, deployment, existingMachineDeployment, clusterAutoscalerUsed, isHibernated, shootIsAwake)
-+			return deployMachineDeployment(ctx, log, cl, worker, deployment, existingMachineDeployment, clusterAutoscalerUsed, isHibernated, shootIsAwake, deploymentForControlPlanePool)
- 		})
- 	}
- 
-@@ -241,6 +252,7 @@ func deployMachineDeployment(
- 	clusterAutoscalerUsed bool,
- 	isHibernationEnabled bool,
- 	shootIsAwake bool,
-+	deploymentForControlPlanePool bool,
- ) error {
- 	var labels = map[string]string{extensionsworkercontroller.LabelKeyMachineDeploymentName: deployment.Name}
- 
-@@ -332,6 +344,22 @@ func deployMachineDeployment(
- 			}
- 		}
- 
-+		if deploymentForControlPlanePool {
-+			// `MachineConfiguration` is a pointer in `Machine.Spec`, so it must be initialized before setting
-+			// `NodeConditions` below (do not remove this nil-guard).
-+			if machineDeployment.Spec.Template.Spec.MachineConfiguration == nil {
-+				machineDeployment.Spec.Template.Spec.MachineConfiguration = &machinev1alpha1.MachineConfiguration{}
-+			}
-+			// When no node conditions are configured for this pool, machine-controller-manager falls back to its own
-+			// default set. Appending to this default (instead of a nil value) prevents the control plane machines from
-+			// losing machine-controller-manager's default node conditions.
-+			nodeConditions := defaultMachineControllerManagerNodeConditions
-+			if machineDeployment.Spec.Template.Spec.NodeConditions != nil {
-+				nodeConditions = *machineDeployment.Spec.Template.Spec.NodeConditions
-+			}
-+			machineDeployment.Spec.Template.Spec.NodeConditions = new(strings.Join([]string{nodeConditions, string(nodeagentconfigv1alpha1.ConditionTypeCriticalControlPlanePodsUnhealthy)}, ","))
-+		}
-+
- 		log.Info("Deploying machine deployment", "machineDeployment", client.ObjectKeyFromObject(machineDeployment), "replicas", machineDeployment.Spec.Replicas)
- 		return nil
- 	}); err != nil {
-```
-
-**File**: `extensions/pkg/controller/worker/genericactuator/actuator_reconcile_test.go` (modified, +51/-0)
-```diff
-@@ -8,6 +8,7 @@ import (
- 	"context"
- 
- 	machinev1alpha1 "github.com/gardener/machine-controller-manager/pkg/apis/machine/v1alpha1"
-+	mcmoptions "github.com/gardener/machine-controller-manager/pkg/util/provider/app/options"
- 	"github.com/go-logr/logr"
- 	. "github.com/onsi/ginkgo/v2"
- 	. "github.com/onsi/gomega"
-@@ -34,6 +35,12 @@ import (
- )
- 
- var _ = Describe("ActuatorReconcile", func() {
-+	Describe("defaultMachineControllerManagerNodeConditions", func() {
-+		It("should match machine-controller-manager's default node conditions", func() {
-+			Expect(defaultMachineControllerManagerNodeConditions).To(Equal(mcmoptions.NewMCServer().NodeConditions))
-+		})
-+	})
-+
- 	Describe("#validateMachineDeploymentPoolNames", func() {
- 		It("should reject unknown worker pools", func() {
- 			worker := &extensionsv1alpha1.Worker{
-@@ -306,6 +313,50 @@ var _ = Describe("ActuatorReconcile", func() {
- 			)
- 		})
- 
-+		When("shoot has a control plane worker pool", func() {
-+			BeforeEach(func() {
-+				cluster.Shoot.Spec.Provider.Workers = []gardencorev1beta1.Worker{{
-+					Name:         "pool1",
-+					ControlPlane: &gardencorev1beta1.WorkerControlPlane{},
-+				}}
-+			})
-+
-+			It("should append the critical control plane pods node condition to the control plane pool's MachineDeployment", func() {
-+				wantedMachineDeployments = append(wantedMachineDeployments,
-+					buildWantedMachineDeployment("2", machinev1alpha1.RollingUpdateMachineDeploymentStrategyType, nil),
-+				)
-+
-+				expectedControlPlaneMachineDeployment := buildExpectedMachineDeployment("namespace", 2, "1", wantedMachineDeployments[0])
-+				expectedControlPlaneMachineDeployment.Spec.Template.Spec.MachineConfiguration = &machinev1alpha1.MachineConfiguration{
-+					NodeConditions: new("KernelDeadlock,ReadonlyFilesystem,DiskPressure,NetworkUnavailable,CriticalControlPlanePodsUnhealthy"),
-+				}
-+
-+				testMachineDeployments(wantedMachineDeployments, []*machinev1alpha1.MachineDeployment{
-+					expectedControlPlaneMachineDeployment,
-+					buildExpectedMachineDeployment("namespace", 2, "1", wantedMachineDeployments[1]),
-+				})
-+			})
-+
-+			It("should append the critical control plane pods node condition to the control plane pool's pre-existing node conditions", func() {
-+				wantedMachineDeployments[0].MachineConfiguration = &machinev1alpha1.MachineConfiguration{
-+					NodeConditions: new("CustomCondition"),
-+				}
-+				wantedMachineDeployments = append(wantedMachineDeployments,
-+					buildWantedMachineDeployment("2", machinev1alpha1.RollingUpdateMachineDeploymentStrategyType, nil),
-+				)
-+
-+				expectedControlPlaneMachineDeployment := buildExpectedMachineDeployment("namespace", 2, "1", wantedMachineDeployments[0])
-+				expectedControlPlaneMachineDeployment.Spec.Template.Spec.MachineConfiguration = &machinev1alpha1.MachineConfiguration{
-+					NodeConditions: new("CustomCondition,CriticalControlPlanePodsUnhealthy"),
-+				}
-+
-+				testMachineDeployments(wantedMachineDeployments, []*machinev1alpha1.MachineDeployment{
-+					expectedControlPlaneMachineDeployment,
-+					buildExpectedMachineDeployment("namespace", 2, "1", wantedMachineDeployments[1]),
-+				})
-+			})
-+		})
-+
- 		When("there are existing MachineDeployments", func() {
- 			BeforeEach(func() {
- 				testDeployment = &machinev1alpha1.MachineDeployment{
-```
-
-**File**: `pkg/apis/config/nodeagent/v1alpha1/types.go` (modified, +3/-0)
-```diff
-@@ -57,6 +57,9 @@ const (
- 
- 	// ConditionTypeSystemdUnitsReady is the node condition type indicating whether all managed systemd units are healthy.
- 	ConditionTypeSystemdUnitsReady corev1.NodeConditionType = "SystemdUnitsReady"
-+
-+	// ConditionTypeCriticalControlPlanePodsUnhealthy is the node condition type indicating whether any critical control plane pod is unhealthy.
-+	ConditionTypeCriticalControlPlanePodsUnhealthy corev1.NodeConditionType = "CriticalControlPlanePodsUnhealthy"
- )
- 
- // OSVersionRegex is a regular expression to match operating system versions.
-```
-
-**File**: `pkg/apis/core/v1beta1/constants/types_constants.go` (modified, +2/-0)
-```diff
-@@ -1147,6 +1147,8 @@ const (
- 	TaintNodeCriticalComponentsNotReady = "node.gardener.cloud/critical-components-not-ready"
- 	// LabelNodeCriticalComponent is the label key for marking node-critical component pods.
- 	LabelNodeCriticalComponent = "node.gardener.cloud/critical-component"
-+	// LabelIsCriticalStaticPod is the label key for critical static pods.
-+	LabelIsCriticalStaticPod = "shoot.gardener.cloud/is-critical-static-pod"
- 	// AnnotationPrefixWaitForCSINode is the annotation key for csi-driver-node pods, indicating they use the driver
- 	// specified in the value.
- 	AnnotationPrefixWaitForCSINode = "node.gardener.cloud/wait-for-csi-node-"
+-![inhibitionGraph](../development/content/alertInhibitionGraph.png)
++![inhibitionGraph](../development/content/alert-inhibition-graph.png)
 ```
 
 ---
 
-### Incident Patch 2: `5d67e3a9` (2026-11-18)
-**Commit Message**: [apiserver] Validate `shoot.gardener.cloud/expiration-timestamp` on Shoot creation (#16312)
+### Incident Patch 2: `958e85d1` (2026-11-19)
+**Commit Message**: [healthcheck] Clone health checks before injecting per-reconciliation clients (#16375)
 
-The `quotavalidator` admission plugin only validated the expiration
-timestamp annotation against the quota's `.spec.clusterLifetimeDays` on
-`UPDATE`, so a value provided already at creation time was admitted
-unchecked. Enable the lifetime check on `CREATE` as well, and reject
-unparsable values with a forbidden error instead of an internal error.
+The health checks in `Actuator.healthChecks` are shared and long-lived, while
+their clients and logger are injected per reconciliation. Without cloning,
+concurrent reconciliations for different shoots overwrite each other's injected
+clients, so a check could run against the wrong shoot's cluster. Restore the
+per-reconciliation `shallowCopy` that was dropped in a previous refactoring.
 
 Assisted-by: Claude <[REDACTED_EMAIL]>
 
 Signed-off-by: rfranzke <[REDACTED_EMAIL]>
 
-**File**: `plugin/pkg/shoot/quotavalidator/admission.go` (modified, +2/-1)
+**File**: `extensions/pkg/controller/healthcheck/healthcheck_actuator.go` (modified, +20/-1)
 ```diff
-@@ -183,6 +183,7 @@ func (q *QuotaValidator) Validate(_ context.Context, a admission.Attributes, _ a
+@@ -7,6 +7,7 @@ package healthcheck
+ import (
+ 	"context"
+ 	"fmt"
++	"reflect"
+ 	"strings"
+ 	"sync"
+ 	"time"
+@@ -86,7 +87,10 @@ func (a *Actuator) ExecuteHealthCheckFunctions(ctx context.Context, log logr.Log
+ 	)
  
- 	if a.GetOperation() == admission.Create {
- 		checkQuota = true
-+		checkLifetime = true
- 	}
+ 	for _, hc := range a.healthChecks {
+-		check := hc.HealthCheck
++		// Clone the health check to avoid data races: the health checks are shared and long-lived, while the clients
++		// and logger below are injected per reconciliation. Without the clone, concurrent reconciliations for different
++		// shoots would overwrite each other's injected clients.
++		check := shallowCopy(hc.HealthCheck)
+ 		SourceClientInfo(a.sourceClient, check)
+ 		if _, ok := check.(TargetClient); ok {
+ 			if targetClient == nil {
+@@ -265,6 +269,21 @@ func (a *Actuator) ExecuteHealthCheckFunctions(ctx context.Context, log logr.Log
+ 	return &checkResults, nil
+ }
  
- 	if a.GetOperation() == admission.Update {
-@@ -252,7 +253,7 @@ func (q *QuotaValidator) Validate(_ context.Context, a admission.Attributes, _ a
- 
- 		plannedExpirationTime, err := time.Parse(time.RFC3339, lifetime)
- 		if err != nil {
--			return apierrors.NewInternalError(err)
-+			return admission.NewForbidden(a, fmt.Errorf("could not parse the value of the %s annotation as RFC3339 time: %w", v1beta1constants.ShootExpirationTimestamp, err))
- 		}
- 
- 		maxPossibleExpirationTime = q.clock.Now().Add(time.Duration(*maxShootLifetime*24) * time.Hour)
++// shallowCopy returns a shallow copy of the given HealthCheck. It is used to isolate the per-reconciliation client and
++// logger injection from the shared, long-lived health check instances. The copy is shallow because only the top-level
++// fields (clients, logger) are mutated after cloning.
++func shallowCopy(healthCheck HealthCheck) HealthCheck {
++	value := reflect.ValueOf(healthCheck)
++	if value.Kind() != reflect.Pointer {
++		// The injection relies on pointer receivers, so a non-pointer HealthCheck cannot carry injected state anyway.
++		return healthCheck
++	}
++
++	copied := reflect.New(value.Elem().Type())
++	copied.Elem().Set(value.Elem())
++	return copied.Interface().(HealthCheck)
++}
++
+ func (a *Actuator) getPreCheckFuncObject(ctx context.Context, request types.NamespacedName) (any, error) {
+ 	if isGardenExtensionClass(a.extensionClasses) {
+ 		garden, err := getGarden(ctx, a.sourceClient)
 ```
 
-**File**: `plugin/pkg/shoot/quotavalidator/admission_test.go` (modified, +27/-0)
+**File**: `extensions/pkg/controller/healthcheck/healthcheck_actuator_test.go` (added, +65/-0)
 ```diff
-@@ -22,6 +22,7 @@ import (
- 	securityv1alpha1 "github.com/gardener/gardener/pkg/apis/security/v1alpha1"
- 	gardencoreinformers "github.com/gardener/gardener/pkg/client/core/informers/externalversions"
- 	securityinformers "github.com/gardener/gardener/pkg/client/security/informers/externalversions"
-+	. "github.com/gardener/gardener/pkg/utils/test/matchers"
- 	. "github.com/gardener/gardener/plugin/pkg/shoot/quotavalidator"
- )
- 
-@@ -431,6 +432,32 @@ var _ = Describe("quotavalidator", func() {
- 			})
- 		})
- 
-+		Context("tests for the lifetime of a Shoot on creation", func() {
-+			It("should pass as the shoot expiration time does not exceed the minimum .spec.clusterLifetimeDays among the quotas", func() {
-+				metav1.SetMetaDataAnnotation(&shoot.ObjectMeta, v1beta1constants.ShootExpirationTimestamp, "2018-01-02T00:00:00+00:00") // plus 1 day compared to time.Now()
-+				attrs := admission.NewAttributesRecord(&shoot, nil, core.Kind("Shoot").WithVersion("version"), shoot.Namespace, shoot.Name, core.Resource("shoots").WithVersion("version"), "", admission.Create, &metav1.CreateOptions{}, false, nil)
+@@ -0,0 +1,65 @@
++// SPDX-FileCopyrightText: Contributors to the Gardener project
++//
++// SPDX-License-Identifier: Apache-2.0
 +
-+				err := admissionHandler.Validate(context.TODO(), attrs, nil)
-+				Expect(err).NotTo(HaveOccurred())
-+			})
++package healthcheck
 +
-+			It("should fail as the shoot expiration time exceeds the minimum .spec.clusterLifetimeDays among the quotas", func() {
-+				metav1.SetMetaDataAnnotation(&shoot.ObjectMeta, v1beta1constants.ShootExpirationTimestamp, "2018-01-05T00:00:00+00:00") // plus 4 days compared to time.Now()
-+				attrs := admission.NewAttributesRecord(&shoot, nil, core.Kind("Shoot").WithVersion("version"), shoot.Namespace, shoot.Name, core.Resource("shoots").WithVersion("version"), "", admission.Create, &metav1.CreateOptions{}, false, nil)
++import (
++	"context"
 +
-+				err := admissionHandler.Validate(context.TODO(), attrs, nil)
-+				Expect(err).To(HaveOccurred())
-+			})
++	"github.com/go-logr/logr"
++	. "github.com/onsi/ginkgo/v2"
++	. "github.com/onsi/gomega"
++	"k8s.io/apimachinery/pkg/types"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	fakeclient "sigs.k8s.io/controller-runtime/pkg/client/fake"
 +
-+			It("should fail as the shoot expiration time is not a valid RFC3339 timestamp", func() {
-+				metav1.SetMetaDataAnnotation(&shoot.ObjectMeta, v1beta1constants.ShootExpirationTimestamp, "not-a-timestamp")
-+				attrs := admission.NewAttributesRecord(&shoot, nil, core.Kind("Shoot").WithVersion("version"), shoot.Namespace, shoot.Name, core.Resource("shoots").WithVersion("version"), "", admission.Create, &metav1.CreateOptions{}, false, nil)
++	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
++)
 +
-+				err := admissionHandler.Validate(context.TODO(), attrs, nil)
-+				Expect(err).To(BeForbiddenError())
-+			})
++type fakeHealthCheck struct {
++	// sourceClient is set via injection on the per-reconciliation copy.
++	sourceClient client.Client
++	// observedClients records the clients seen by Check across all executions, keyed by the copy that ran.
++	observedClients map[*fakeHealthCheck]client.Client
++}
++
++func (c *fakeHealthCheck) Check(context.Context, types.NamespacedName) (*SingleCheckResult, error) {
++	c.observedClients[c] = c.sourceClient
++	return &SingleCheckResult{Status: gardencorev1beta1.ConditionTrue}, nil
++}
++
++func (c *fakeHealthCheck) SetLoggerSuffix(string, string) {}
++
++func (c *fakeHealthCheck) InjectSourceClient(sourceClient client.Client) {
++	c.sourceClient = sourceClient
++}
++
++var _ = Describe("actuator", func() {
++	Describe("#ExecuteHealthCheckFunctions", func() {
++		It("should inject the client into a copy and leave the shared health check untouched", func() {
++			var (
++				shared = &fakeHealthCheck{observedClients: map[*fakeHealthCheck]client.Client{}}
++
++				sourceClient = fakeclient.NewClientBuilder().Build()
++
++				actuator = &Actuator{
++					sourceClient: sourceClient,
++					healthChecks: []ConditionTypeToHealthCheck{
++						{ConditionType: "ControlPlaneHealthy", HealthCheck: shared},
++					},
++				}
++			)
++
++			_, err := actuator.ExecuteHealthCheckFunctions(context.Background(), logr.Discard(), types.NamespacedName{Namespace: "shoot--foo--bar"})
++			Expect(err).NotTo(HaveOccurred())
++
++			Expect(shared.sourceClient).To(BeNil())
++			Expect(shared.observedClients).To(HaveLen(1))
++			for copied, observed := range shared.observedClients {
++				Expect(copied).NotTo(BeIdenticalTo(shared))
++				Expect(observed).To(BeIdenticalTo(sourceClient))
++			}
 +		})
-+
- 		Context("tests for extending the lifetime of a Shoot", func() {
- 			BeforeEach(func() {
- 				oldShoot = *shoot.DeepCopy()
++	})
++})
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16389** (2026-11-19): Update nginx Docker tag to v1.31.9 (@renovate[bot])
+- **PR #16384** (2026-11-19): docs: rename alert inhibition graph to kebab-case (@klocke-io)
 - **PR #16382** (closed): Update module golang.org/x/tools to v0.53.0 - autoclosed (@renovate[bot])
 - **PR #16381** (2026-11-18): Update golang.org/x/exp digest to 7a49493 (@renovate[bot])
 - **PR #16378** (2026-11-18): [release-v1.155] Fix `gardener-operator` CA rotation (@gardener-prow-cherrypicker[bot])
-- **PR #16374** (2026-11-17): (docs): Use `:443` to access virtualservices in local scenario (@voelzmo)
-- **PR #16367** (2026-11-17): Update dependency gardener/autoscaler to v1.33.2 (@renovate[bot])
-- **PR #16366** (2026-11-17): Fix `gardener-operator` CA rotation (@timuthy)
+- **PR #16375** (2026-11-19): [healthcheck] Clone health checks before injecting per-reconciliation clients (@rfranzke)
 
 ---
 
@@ -1165,31 +958,35 @@ Signed-off-by: rfranzke <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [GEP-28] Protect etcd quorum during rolling updates of control plane nodes
+## X. docs: rename alert inhibition graph to kebab-case
 
 **RULE**:
-When implementing operations in `cmd/gardener-node-agent/app/app.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/development/monitoring-stack.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3593919a`: [GEP-28] Protect etcd quorum during rolling updates of control plane nodes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `be684af5`: docs: rename alert inhibition graph to kebab-case. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/gardener-node-agent/app/app.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/development/monitoring-stack.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			return controller.AddToManager(ctx, cancel, mgr, cfg, hostName, machineName, nodeName, cfgDir, isControlPlaneNode)
+1. Add the new alert to `alert-inhibition-graph.dot`, add any required inhibition flows and render the new graph. To render the graph, run:
+dot -Tpng ./content/alert-inhibition-graph.dot -o ./content/alert-inhibition-graph.png
+![alertDiagram](content/alert-inhibition-graph.png)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-			return controller.AddToManager(ctx, cancel, mgr, cfg, hostName, machineName, nodeName, cfgDir)
+1. Add the new alert to `alertInhibitionGraph.dot`, add any required inhibition flows and render the new graph. To render the graph, run:
+dot -Tpng ./content/alertInhibitionGraph.dot -o ./content/alertInhibitionGraph.png
+![alertDiagram](content/alertInhibitionGraph.png)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3593919a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `be684af5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
