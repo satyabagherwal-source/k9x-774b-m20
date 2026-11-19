@@ -11310,3 +11310,7 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9631a1dd` | Multi-dimensional audit evidence | 2026-11-19T13:22:01.411Z |
 | `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-19T13:35:15.568Z |
 | `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `c6696882` | Multi-dimensional audit evidence | 2026-11-19T13:35:26.198Z |
+| `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-19T14:03:26.928Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `67748c71` | Multi-dimensional audit evidence | 2026-11-19T14:03:29.959Z |
+| `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `b0fdd8df` | Multi-dimensional audit evidence | 2026-11-19T14:03:30.993Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `a1b7415e` | Multi-dimensional audit evidence | 2026-11-19T14:03:33.832Z |

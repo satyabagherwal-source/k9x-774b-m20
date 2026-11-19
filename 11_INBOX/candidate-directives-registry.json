@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T13:35:31.012Z",
+  "last_updated": "2026-11-19T14:03:39.136Z",
   "directives": [
     {
       "id": "CD-001",
@@ -31951,15 +31951,15 @@
       "staged_date": "2026-11-19"
     },
     {
-      "id": "CD-5GVL",
+      "id": "CD-ETSU",
       "directive_title": "fix typos",
-      "source_repo": "open-policy-agent/opa",
-      "source_commit": "674d3362",
-      "staged_file": "11_INBOX/candidate-directives/CD-5GVL-fix-typos.md",
+      "source_repo": "goharbor/harbor",
+      "source_commit": "67748c71",
+      "staged_file": "11_INBOX/candidate-directives/CD-ETSU-fix-typos.md",
       "status": "STAGED_FOR_REVIEW",
       "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
       "date_staged": "2026-11-19",
-      "domain_letter": "H"
+      "domain_letter": "G"
     },
     {
       "id": "CD-C6HG",
@@ -31982,15 +31982,15 @@
       "staged_date": "2026-11-19"
     },
     {
-      "id": "CD-C5T9",
+      "id": "CD-F0N4",
       "directive_title": "docs: fix typos",
-      "source_repo": "open-policy-agent-opa-learnings",
+      "source_repo": "goharbor-harbor-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-C5T9-docs-fix-typos.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-F0N4-docs-fix-typos.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-19",
-      "domain_letter": "H"
+      "domain_letter": "G"
     },
     {
       "id": "CD-REV-9503D4",
@@ -33052,6 +33052,55 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0001D3-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-EZES",
+      "directive_title": "close the gaps left after the compare sweep (#173 follow-up)",
+      "source_repo": "bahdotsh-wrkflw-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EZES-close-the-gaps-left-after-the-compare-sweep-173-follow-up.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-EWPP",
+      "directive_title": "bound contract-handler event admission per priority class",
+      "source_repo": "freenet/freenet-core",
+      "source_commit": "a1b7415e",
+      "staged_file": "11_INBOX/candidate-directives/CD-EWPP-bound-contract-handler-event-admission-per-priority-class.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-261A47",
+      "directive_title": "close the gaps left after the compare sweep (#173 follow-up)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "bahdotsh-wrkflw",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-261A47-close-the-gaps-left-after-the-compare-sw.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-6812A4",
+      "directive_title": "Forensic Learning Record (Deep Inspection): AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6812A4-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-D5DE4C",
+      "directive_title": "docs: fix typos",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "goharbor-harbor",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D5DE4C-docs-fix-typos.md",
       "staged_date": "2026-11-19"
     }
   ]

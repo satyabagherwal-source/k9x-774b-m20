@@ -11277,3 +11277,7 @@
 | `CYCLE-20261119-XHDR` | `2026-11-19T13:22:01.407Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`9e788b31...`) |
 | `CYCLE-20261119-EI5O` | `2026-11-19T13:35:15.564Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`f250847e...`) |
 | `CYCLE-20261119-EQCY` | `2026-11-19T13:35:26.194Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9381` | Yes (`20cc2a2f...`) |
+| `CYCLE-20261119-ER7W` | `2026-11-19T14:03:26.924Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`2c2a204d...`) |
+| `CYCLE-20261119-ETK2` | `2026-11-19T14:03:29.954Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1683` | Yes (`95292329...`) |
+| `CYCLE-20261119-EUCU` | `2026-11-19T14:03:30.990Z` | `bahdotsh/wrkflw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9382` | Yes (`cc34c889...`) |
+| `CYCLE-20261119-EWJO` | `2026-11-19T14:03:33.828Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9383` | Yes (`dd8b4442...`) |

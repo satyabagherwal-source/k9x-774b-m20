@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T13:35:31.153Z",
-  "total_records": 1978,
+  "last_updated": "2026-11-19T14:03:39.292Z",
+  "total_records": 1980,
   "domains": {
     "A": {
-      "total": 13,
+      "total": 15,
       "record_ids": [
         "DOM-A-DD59FA01",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
@@ -19,7 +19,9 @@
         "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants",
         "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants",
         "domain_intelligence-human-need-intelligence-crate-crate-core-invariants",
-        "domain_intelligence-human-need-intelligence-crate-crate-learnings-core-invariants"
+        "domain_intelligence-human-need-intelligence-crate-crate-learnings-core-invariants",
+        "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-core-invariants",
+        "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-learnings-core-invariants"
       ]
     },
     "B": {
@@ -9344,8 +9346,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "f1cddc876f1adb646eb91efa77069e89ebf15f6ab4974fca2d62ba856a16c659",
-      "created_at": "2026-11-19T03:39:20.267Z"
+      "content_hash": "a7e53c52990036ebd30c3605edf842cf3ee0ee388bc98036d8fecdd9fa6ea4b0",
+      "created_at": "2026-11-19T14:03:34.202Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -12227,8 +12229,8 @@
       "title": "Architecture Intelligence: goharbor/harbor Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-architecture-intelligence-goharbor-harbor-core-invariants.md",
       "repository": "goharbor/harbor",
-      "content_hash": "388e3665aeb8004fcacc2897ef6b2638338e2c717dc13194eedd75a54670cfef",
-      "created_at": "2026-11-18T12:24:00.959Z"
+      "content_hash": "848749f561b4689cc7b56ab54d72419f5e0de2742d0352f40ee8e7a62871570f",
+      "created_at": "2026-11-19T14:03:30.443Z"
     },
     "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants",
@@ -12305,8 +12307,8 @@
       "title": "Architecture Intelligence: goharbor-harbor-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-learnings-architecture-intelligence-goharbor-harbor-learnings-co.md",
       "repository": "goharbor-harbor-learnings",
-      "content_hash": "8b751b47691a064f07ae0e9d3fa4afd35a2e83fd58fdeaac236eba875e46d84f",
-      "created_at": "2026-11-14T02:06:56.328Z"
+      "content_hash": "24bb6bed70ebdd876371e93dcff0d6cbd5406a43d5392975e2c8d2762e81979a",
+      "created_at": "2026-11-19T14:03:39.292Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tongyi-mai-z-image-turbo-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tongyi-mai-z-image-turbo-core-invariants",
@@ -18229,8 +18231,8 @@
       "title": "Research & Knowledge Intelligence: AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-research-knowledge-intelligen.md",
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-      "content_hash": "246bb4b89d06e8de3ddba3d9cd0e2e20ba36fabbd85d51fafd90a3bfd183db7b",
-      "created_at": "2026-11-14T22:39:17.172Z"
+      "content_hash": "aa46fcfd688db8a96d37e7d36a2cf0c4064a42c7ee5935274981fcbce3df17a5",
+      "created_at": "2026-11-19T14:03:27.139Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
@@ -18274,8 +18276,8 @@
       "title": "Research & Knowledge Intelligence: hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-learnings-research-knowledge-.md",
       "repository": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings",
-      "content_hash": "aca82af291ec2183876f06590386e1f7f03fc3c2f05bb38ed40052c0b4cfe139",
-      "created_at": "2026-11-14T22:39:38.189Z"
+      "content_hash": "02df09f686857cf77733abc5b2b7c824ddaa3a00af94c0cf030c6c588d56f018",
+      "created_at": "2026-11-19T14:03:38.374Z"
     },
     "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-learnings-core-invariants",
@@ -33224,6 +33226,24 @@
       "repository": "xevrion-hatchzip-learnings",
       "content_hash": "4f9e86a8a82adc8ddd3c25110ccfbb56717cf305003c42a2a04c7450a1bcd9ae",
       "created_at": "2026-11-19T13:08:08.534Z"
+    },
+    "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: bahdotsh/wrkflw Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-bahdotsh-wrkflw-human-need-intelligence-bahdotsh-wrkflw-core-invariants.md",
+      "repository": "bahdotsh/wrkflw",
+      "content_hash": "0e901cd247797ac01adbbe3a13dcd9acd6d015beff872622728ddb530af331b8",
+      "created_at": "2026-11-19T14:03:31.370Z"
+    },
+    "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-learnings-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: bahdotsh-wrkflw-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-bahdotsh-wrkflw-learnings-human-need-intelligence-bahdotsh-wrkflw-learnings-core.md",
+      "repository": "bahdotsh-wrkflw-learnings",
+      "content_hash": "f2faf4a83f44e73b2461c9ccc50a72d630b0f7072e506b58854365adb246b9ff",
+      "created_at": "2026-11-19T14:03:37.726Z"
     }
   }
 }

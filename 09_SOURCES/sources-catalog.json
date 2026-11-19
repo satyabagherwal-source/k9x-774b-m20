@@ -775,8 +775,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "2e97dd05b3bd047bbfd26cb82822e277d74f0ebd98b44aebb4a40b88d3a21173",
-    "lastHarvestedAt": "2026-11-14T22:39:16.977Z",
+    "contentHash": "2c2a204df72ea3c2d89494fe74f72006305c37a0fc148ed3f8a998f0a0e3c331",
+    "lastHarvestedAt": "2026-11-19T14:03:26.928Z",
     "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "9d143719",
+    "sourceVersion": "a1b7415e",
     "license": "NOASSERTION",
-    "contentHash": "23ab74fcce81b4bd8659f1576afaba50310ce5e2ef82a5704eadca50f05e849f",
-    "lastHarvestedAt": "2026-11-19T03:39:19.906Z",
+    "contentHash": "dd8b44420f8c6c58a668b36f9b5f0a9279d8324af5fccc5d5137f40cef57c171",
+    "lastHarvestedAt": "2026-11-19T14:03:33.832Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "966747bd",
+    "sourceVersion": "67748c71",
     "license": "Apache-2.0",
-    "contentHash": "9813239bcd7d9d9f5a0ab06265c18174fe9ed299449369ebc0e6543163f30dde",
-    "lastHarvestedAt": "2026-11-18T12:24:00.640Z",
+    "contentHash": "95292329bc2e9c91cd39e4dadd04ea587c51389f09d95c6c4345e0bd62e1e306",
+    "lastHarvestedAt": "2026-11-19T14:03:29.959Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {
@@ -7413,10 +7413,10 @@
     "repository": "bahdotsh/wrkflw",
     "platform": "github",
     "sourceUrl": "https://github.com/bahdotsh/wrkflw",
-    "sourceVersion": "a7e479f2",
+    "sourceVersion": "b0fdd8df",
     "license": "MIT",
-    "contentHash": "1818df581c557b75d1bdc22568e36578198fa1e6db1435880aa40d4e41ff0b1f",
-    "lastHarvestedAt": "2026-11-16T05:17:35.147Z",
+    "contentHash": "cc34c8899f0465ef79642028d4fbea36006a45f9acc6af88b14f0cdd7dd1835e",
+    "lastHarvestedAt": "2026-11-19T14:03:30.993Z",
     "learningId": "learn-github-bahdotsh-wrkflw"
   },
   "jordanbaird-ice": {

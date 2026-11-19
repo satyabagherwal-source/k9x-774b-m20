@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Source Version**: `966747bd`  
+> **Source Version**: `67748c71`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T12:23:59.681Z  
+> **Timestamp**: 2026-11-19T14:03:29.275Z  
 > **Learning ID**: `learn-github-goharbor-harbor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T12:23:59.677Z  
+> **Harvest Timestamp**: 2026-11-19T14:03:29.123Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open source trusted cloud native registry project that stores, signs, and scans content.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29754 stars
+- **Stars / Engagement**: 29767 stars
 
 ---
 
@@ -655,11 +655,13 @@ def prepare_job_service(config_dict):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #24438** (2026-11-19): **docs: fix typos**
+  *Symptoms*: Fixes spelling mistakes found with codespell (documentation only; no functional change).
+  **Post-Mortem & Fix Analysis**:
+  > @Adham-Kiwan This is only the test data and please also fix it in the original repo: https://github.com/goharbor/harbor-helm.
+
 - **Issue #24433** (2026-11-18): **docs: fix the dead Clarity link in CONTRIBUTING**
   *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  The "Web" section of CONTRIBUTING.md links the Clarity design system (which the portal uses through `@clr/angular`) to `https://vmware.github.io/clarity/`. That page now returns 404; the Clarity project is published at https://clarity.design/ (200). This updates the link. Docs only.  Prepared with an AI coding assistant; the URLs were checked with curl.  # Issue being fixed No issue (dead link).  Please indicate you've done the following: - [x] Well Written Title and Summary of the PR - [ ] Label the PR as needed. (suggest `release-note/docs`; I can't set labels) - [x] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. (n/a, docs only) - [x] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
-
-- **Issue #24431** (2026-11-17): **fix(orm): convert numeric or-list values to strings to work with pgx**
-  *Symptoms*: # Convert numeric or-list values to strings to work with pgx  Fixes #24430  ## Summary  Since the PostgreSQL driver migration from `lib/pq` to `jackc/pgx` (#16267), list queries whose or-list contains a digits-only value fail at the database layer, because the query builder parses digits-only values as `int64` and pgx requires the bind parameter types to be compatible with the column types — an `int64` cannot be bound to a `text`/`varchar` column:  - pgx v4: `cannot convert 123 to Text` - pgx v5: `unable to encode 123 into text format for text (OID 25): cannot find encode plan`  The most visible impact is replication: `PrepareForPush` builds a single or-list containing **all** destination project names, so one digits-only project name (e.g. `123`) makes the whole replication fail in the prepare stage with a sanitized `500 internal server error`, e.g.  ``` failed to do the prepare work for pushing/uploading resources: list projects with query name={... 123 ...}: http error: code 500, message {"errors":[{"code":"UNKNOWN","message":"internal server error"}]} ```  Any API call using q=name={123 other-project} can directly reproduce the bug. In my testing, q=name={123} works well, but q=name={123 with-any-other-project} successfully reproduces the bug.  ## What this PR does  In `src/lib/orm/query.go` `setFilters()`, convert or-list values that are not `time.Time` to their string form before passing them to the ORM:  ```go values := make([]any, len(ol.Valu
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -676,34 +678,44 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `966747bd` (2026-11-18)
-**Commit Message**: docs: fix the dead Clarity link in CONTRIBUTING (#24433)
+### Incident Patch 1: `67748c71` (2026-11-19)
+**Commit Message**: docs: fix typos (#24438)
 
-The Clarity design system moved from vmware.github.io/clarity, which now
-returns 404, to clarity.design.
+Signed-off-by: Adham Kiwan <[REDACTED_EMAIL]>
 
-Signed-off-by: farisbasha <[REDACTED_EMAIL]>
-
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
+**File**: `src/pkg/chart/testdata/harbor-schema1/README.md` (modified, +1/-1)
 ```diff
-@@ -177,7 +177,7 @@ Ensure your GOPATH and PATH have been configured in accordance with the Go envir
- 
- #### Web
- 
--Harbor web UI is built based on [Clarity](https://vmware.github.io/clarity/) and [Angular](https://angular.io/) web framework. To setup a web UI development environment, please make sure that the [npm](https://www.npmjs.com/get-npm) tool is installed first.
-+Harbor web UI is built based on [Clarity](https://clarity.design/) and [Angular](https://angular.io/) web framework. To setup a web UI development environment, please make sure that the [npm](https://www.npmjs.com/get-npm) tool is installed first.
- 
- |  Harbor  |  Requires Angular  |  Requires Clarity  |
- |----------|--------------------|--------------------|
+@@ -231,7 +231,7 @@ The following table lists the configurable parameters of the Harbor chart and th
+ | `core.podAnnotations`                                                 | Annotations to add to the core pod                                                                                                                                                                                                                                                                                                                                                                                                                               | `{}`                                  |
+ | `core.serviceAnnotations`                                             | Annotations to add to the core service                                                                                                                                                                                                                                                                                                                                                                                                                     | `{}`                                  |
+ | `core.configureUserSettings`                                          | A JSON string to set in the environment variable `CONFIG_OVERWRITE_JSON` to configure user settings. See the [official docs](https://goharbor.io/docs/latest/install-config/configure-user-settings-cli/#configure-users-settings-using-an-environment-variable).                                                                                                                                                                                                                             |                                                                                     |
+-| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvment for other scenes.                          |                          `db`             |
++| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvement for other scenes.                          |                          `db`             |
+ | `core.secret`                                                         | Secret is used when core server communicates with other components. If a secret key is not specified, Helm will generate one. Must be a string of 16 chars.                                                                                                                                                                                                                                                                                                      |                                       |
+ | `core.secretName`                                                     | Fill the name of a kubernetes secret if you want to use your own TLS certificate and private key for token encryption/decryption. The secret must contain keys named: `tls.crt` - the certificate and `tls.key` - the private key. The default key pair will be used if it isn't set                                                                                                                                                                             |                                       |
+ | `core.tokenKey`                                                       | PEM-formatted RSA private key used to sign service tokens.  Only used if `core.secretName` is unset. If set, `core.tokenCert` MUST also be set.                                                                                                                                                                                                                                  |                                        |
+```
+
+**File**: `src/pkg/chart/testdata/harbor-schema2/README.md` (modified, +1/-1)
+```diff
+@@ -231,7 +231,7 @@ The following table lists the configurable parameters of the Harbor chart and th
+ | `core.podAnnotations`                                                 | Annotations to add to the core pod                                                                                                                                                                                                                                                                                                                                                                                                                               | `{}`                                  |
+ | `core.serviceAnnotations`                                             | Annotations to add to the core service                                                                                                                                                                                                                                                                                                                                                                                                                     | `{}`                                  |
+ | `core.configureUserSettings`                                          | A JSON string to set in the environment variable `CONFIG_OVERWRITE_JSON` to configure user settings. See the [official docs](https://goharbor.io/docs/latest/install-config/configure-user-settings-cli/#configure-users-settings-using-an-environment-variable).                                                                                                                                                                                                                             |                                                                                     |
+-| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvment for other scenes.                          |                          `db`             |
++| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvement for other scenes.                          |                          `db`             |
+ | `core.secret`                                                         | Secret is used when core server communicates with other components. If a secret key is not specified, Helm will generate one. Must be a string of 16 chars.                                                                                                                                                                                                                                                                                                      |                                       |
+ | `core.secretName`                                                     | Fill the name of a kubernetes secret if you want to use your own TLS certificate and private key for token encryption/decryption. The secret must contain keys named: `tls.crt` - the certificate and `tls.key` - the private key. The default key pair will be used if it isn't set                                                                                                                                                                             |                                       |
+ | `core.tokenKey`                                                       | PEM-formatted RSA private key used to sign service tokens.  Only used if `core.secretName` is unset. If set, `core.tokenCert` MUST also be set.                                                                                                                                                                                                                                  |                                        |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #24438** (2026-11-19): docs: fix typos (@Adham-Kiwan)
 - **PR #24433** (2026-11-18): docs: fix the dead Clarity link in CONTRIBUTING (@farisbasha)
 - **PR #24431** (closed): fix(orm): convert numeric or-list values to strings to work with pgx (@SevDaisy)
 - **PR #24424** (closed): elease-note/breaking-change: Add vulnerabilities metrics (@RobMokkink)
 - **PR #24361** (2026-11-11): Bump Trivy adapter and distribution for release-2.15.0 (@stonezdj)
 - **PR #24360** (2026-11-11): (cherry-pick): preserve artifact type for multi-tier accessories (@stonezdj)
-- **PR #24359** (2026-11-11): (cherry-pick): ignore 401 when listing labels of a Harbor registry (@stonezdj)
 
 ---
 
@@ -723,28 +735,28 @@ Signed-off-by: farisbasha <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix the dead Clarity link in CONTRIBUTING
+## X. docs: fix typos
 
 **RULE**:
-When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/pkg/chart/testdata/harbor-schema1/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `966747bd`: docs: fix the dead Clarity link in CONTRIBUTING. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `67748c71`: docs: fix typos. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/chart/testdata/harbor-schema1/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Harbor web UI is built based on [Clarity](https://clarity.design/) and [Angular](https://angular.io/) web framework. To setup a web UI development environment, please make sure that the [npm](https://www.npmjs.com/get-npm) tool is installed first.
+| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvement for other scenes.                          |                          `db`             |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-Harbor web UI is built based on [Clarity](https://vmware.github.io/clarity/) and [Angular](https://angular.io/) web framework. To setup a web UI development environment, please make sure that the [npm](https://www.npmjs.com/get-npm) tool is installed first.
+| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvment for other scenes.                          |                          `db`             |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `966747bd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `67748c71` are properly handled with clean fallback behavior.

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T13:35:31.418Z",
+  "last_updated": "2026-11-19T14:03:39.577Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T12:40:39.625Z",
@@ -433,7 +433,7 @@
       "staged_for_review": 1
     },
     "goharbor-harbor-learnings.md": {
-      "processed_at": "2026-11-14T02:06:55.933Z",
+      "processed_at": "2026-11-19T14:03:38.550Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1373,7 +1373,7 @@
       "staged_for_review": 1
     },
     "bahdotsh-wrkflw-learnings.md": {
-      "processed_at": "2026-11-16T05:17:44.462Z",
+      "processed_at": "2026-11-19T14:03:37.167Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2783,7 +2783,7 @@
       "staged_for_review": 0
     },
     "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md": {
-      "processed_at": "2026-11-14T22:39:38.016Z",
+      "processed_at": "2026-11-19T14:03:38.179Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3518,7 +3518,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2241,
+  "total_dossiers_evaluated": 2244,
   "total_canonical_promoted": 385,
-  "total_staged_for_review": 1673
+  "total_staged_for_review": 1676
 }

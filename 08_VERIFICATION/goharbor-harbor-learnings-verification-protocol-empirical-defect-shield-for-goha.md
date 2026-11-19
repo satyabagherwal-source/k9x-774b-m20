@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T02:06:56.134Z",
+  "timestamp": "2026-11-19T14:03:39.040Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-goharbor-harbor-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [goharbor-harbor-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T02:06:56.134Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T14:03:39.040Z`  
 > **Learning ID**: `LEARN-EVO-goharbor-harbor-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Source Version**: `e7dbdea2`  
+> **Source Version**: `67748c71`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T02:06:21.053Z  
+> **Timestamp**: 2026-11-19T14:03:29.275Z  
 > **Learning ID**: `learn-github-goharbor-harbor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T02:06:21.049Z  
+> **Harvest Timestamp**: 2026-11-19T14:03:29.123Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: An open source trusted cloud native registry project that stores, signs, and scans content.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29726 stars
+- **Stars / Engagement**: 29767 stars
 
 ---
 
@@ -680,13 +680,13 @@ def prepare_job_service(config_dict):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24382** (2026-11-12): **Retention policy API panics with 500 when scope or trigger is missing**
-  *Symptoms*: ### Expected behavior and actual behavior  `POST /api/v2.0/retentions` and `PUT /api/v2.0/retentions/{id}` should answer 400 when the body has no `scope` or no `trigger`.  Both return 500 instead, and core logs a nil pointer panic. The handlers read `p.Scope.Level` and `p.Scope.Reference` for the access check without checking `scope` is set, and `CreateRetention` in the retention controller reads `p.Trigger.Kind` the same way.  ``` Handler crashed with error runtime error: invalid memory address or nil pointer dereference github.com/goharbor/harbor/src/server/v2.0/handler/retention.go:409 github.com/goharbor/harbor/src/server/v2.0/handler/retention.go:169 ```  ### Steps to reproduce the problem  ```sh R=$HARBOR/api/v2.0/retentions curl -su admin:$PASS -X POST $R -H 'Content-Type: application/json' -d '{"algorithm":"or","rules":[]}' curl -su admin:$PASS -X POST $R -H 'Content-Type: application/json' -d '{"algorithm":"or","rules":[],"scope":{"level":"project","ref":2}}' curl -su admin:$PASS -X PUT $R/1 -H 'Content-Type: application/json' -d '{"algorithm":"or","rules":[]}' ```  All three return `500 {"errors":[{"code":"UNKNOWN","message":"internal server error"}]}`.  ### Versions  - harbor version: main (fac9abd1f1e2) 
-
-- **Issue #24361** (2026-11-11): **Bump Trivy adapter and distribution for release-2.15.0**
-  *Symptoms*: Bump Trivy adapter to v0.40.1 and distribution to v2.8.3-harbor.4.  Reference: #24316.  Validation: release tags verified; Makefile pins and download URL checked; git diff --check passed.
+- **Issue #24438** (2026-11-19): **docs: fix typos**
+  *Symptoms*: Fixes spelling mistakes found with codespell (documentation only; no functional change).
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/goharbor/harbor/pull/24361?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor) Report :white_check_mark: All modified and coverable lines are covered by tests. :warning: Please [upload](https://docs.codecov.com/docs/codecov-uploader) report for BASE (`release-2.15.0@47f3055`). [Learn more](https://docs.codecov.io/docs/error-reference?utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor#section-missing-base-commit) about missing BASE report.  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/goharbor/harbor/pull/24361/graphs/tree.svg?width=650&height=150&src=pr&token=6SOPrJGDVW&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor)](https://app.codecov.io/gh/goharbor/harbor/pull/24361?src=pr&el=tree&utm
+  > @Adham-Kiwan This is only the test data and please also fix it in the original repo: https://github.com/goharbor/harbor-helm.
+
+- **Issue #24433** (2026-11-18): **docs: fix the dead Clarity link in CONTRIBUTING**
+  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  The "Web" section of CONTRIBUTING.md links the Clarity design system (which the portal uses through `@clr/angular`) to `https://vmware.github.io/clarity/`. That page now returns 404; the Clarity project is published at https://clarity.design/ (200). This updates the link. Docs only.  Prepared with an AI coding assistant; the URLs were checked with curl.  # Issue being fixed No issue (dead link).  Please indicate you've done the following: - [x] Well Written Title and Summary of the PR - [ ] Label the PR as needed. (suggest `release-note/docs`; I can't set labels) - [x] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. (n/a, docs only) - [x] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -703,118 +703,44 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `54a9dc30` (2026-11-13)
-**Commit Message**: fix(replication): ignore 401 when listing labels of a Harbor registry (#24357)
+### Incident Patch 1: `67748c71` (2026-11-19)
+**Commit Message**: docs: fix typos (#24438)
 
-Adapter.Info lists the global labels of the remote Harbor to fill the label
-filter values. Earlier Harbor versions allowed a Harbor registry endpoint to
-be configured without an access key and secret; for such endpoints the labels
-API returns 401, and the error was propagated from Info, which broke
-replication that used to work.
+Signed-off-by: Adham Kiwan <[REDACTED_EMAIL]>
 
-When ListLabels fails with 401, log a warning and continue with empty label
-values instead of returning the error. Other errors are still returned.
-
-Signed-off-by: stonezdj <[REDACTED_EMAIL]>
-
-**File**: `src/pkg/reg/adapter/harbor/base/adapter.go` (modified, +13/-1)
+**File**: `src/pkg/chart/testdata/harbor-schema1/README.md` (modified, +1/-1)
 ```diff
-@@ -126,7 +126,19 @@ func (a *Adapter) Info() (*model.RegistryInfo, error) {
- 
- 	labels, err := a.Client.ListLabels()
- 	if err != nil {
--		return nil, err
-+		// Registries may be configured without an access key and secret, which
-+		// earlier versions allowed. Listing labels then fails with 401; log it
-+		// and continue with no label values instead of failing Info, which
-+		// would break replication for such registries.
-+		if e, ok := err.(*common_http.Error); !ok || e.Code != http.StatusUnauthorized {
-+			return nil, err
-+		}
-+		url := ""
-+		if a.Registry != nil {
-+			url = a.Registry.URL
-+		}
-+		log.Warningf("failed to list labels of the Harbor registry %s, unauthorized, continue with empty labels: %v", url, err)
-+		labels = nil
- 	}
- 	info.SupportedResourceFilters = append(info.SupportedResourceFilters,
- 		&model.FilterStyle{
+@@ -231,7 +231,7 @@ The following table lists the configurable parameters of the Harbor chart and th
+ | `core.podAnnotations`                                                 | Annotations to add to the core pod                                                                                                                                                                                                                                                                                                                                                                                                                               | `{}`                                  |
+ | `core.serviceAnnotations`                                             | Annotations to add to the core service                                                                                                                                                                                                                                                                                                                                                                                                                     | `{}`                                  |
+ | `core.configureUserSettings`                                          | A JSON string to set in the environment variable `CONFIG_OVERWRITE_JSON` to configure user settings. See the [official docs](https://goharbor.io/docs/latest/install-config/configure-user-settings-cli/#configure-users-settings-using-an-environment-variable).                                                                                                                                                                                                                             |                                                                                     |
+-| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvment for other scenes.                          |                          `db`             |
++| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvement for other scenes.                          |                          `db`             |
+ | `core.secret`                                                         | Secret is used when core server communicates with other components. If a secret key is not specified, Helm will generate one. Must be a string of 16 chars.                                                                                                                                                                                                                                                                                                      |                                       |
+ | `core.secretName`                                                     | Fill the name of a kubernetes secret if you want to use your own TLS certificate and private key for token encryption/decryption. The secret must contain keys named: `tls.crt` - the certificate and `tls.key` - the private key. The default key pair will be used if it isn't set                                                                                                                                                                             |                                       |
+ | `core.tokenKey`                                                       | PEM-formatted RSA private key used to sign service tokens.  Only used if `core.secretName` is unset. If set, `core.tokenCert` MUST also be set.                                                                                                                                                                                                                                  |                                        |
 ```
 
-**File**: `src/pkg/reg/adapter/harbor/base/adapter_test.go` (modified, +47/-0)
+**File**: `src/pkg/chart/testdata/harbor-schema2/README.md` (modified, +1/-1)
 ```diff
-@@ -16,7 +16,9 @@ package base
- 
- import (
- 	"net/http"
-+	"net/http/httptest"
- 	"strconv"
-+	"strings"
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
-@@ -75,6 +77,51 @@ func TestInfo(t *testing.T) {
- 	server.Close()
- }
- 
-+func newLabelsStatusServer(status int) *httptest.Server {
-+	return test.NewServer(
-+		&test.RequestHandlerMapping{
-+			Method:  http.MethodGet,
-+			Pattern: "/api/systeminfo",
-+			Handler: func(w http.ResponseWriter, r *http.Request) {},
-+		},
-+		&test.RequestHandlerMapping{
-+			Method:  http.MethodGet,
-+			Pattern: "/api",
-+			Handler: func(w http.ResponseWriter, r *http.Request) {
-+				if strings.HasSuffix(r.URL.Path, "/labels") {
-+					w.WriteHeader(status)
-+					return
-+				}
-+				w.WriteHeader(http.StatusNotFound)
-+			},
-+		},
-+	)
-+}
-+
-+func TestInfoListLabelsUnauthorized(t *testing.T) {
-+	server := newLabelsStatusServer(http.StatusUnauthorized)
-+	defer server.Close()
-+
-+	adapter, err := New(&model.Registry{URL: server.URL})
-+	require.Nil(t, err)
-+	info, err := adapter.Info()
-+	require.Nil(t, err)
-+	require.Equal(t, 3, len(info.SupportedResourceFilters))
-+	labelFilter := info.SupportedResourceFilters[2]
-+	assert.Equal(t, model.FilterTypeLabel, labelFilter.Type)
-+	assert.Empty(t, labelFilter.Values)
-+}
-+
-+func TestInfoListLabelsOtherError(t *testing.T) {
-+	server := newLabelsStatusServer(http.StatusInternalServerError)
-+	defer server.Close()
-+
-+	adapter, err := New(&model.Registry{URL: server.URL})
-+	require.Nil(t, err)
-+	_, err = adapter.Info()
-+	assert.NotNil(t, err)
-+}
-+
- func TestPrepareForPush(t *testing.T) {
- 	server := test.NewServer(&test.RequestHandlerMapping{
- 		Method:  http.MethodPost,
+@@ -231,7 +231,7 @@ The following table lists the configurable parameters of the Harbor chart and th
+ | `core.podAnnotations`                                                 | Annotations to add to the core pod                                                                                                                                                                                                                                                                                                                                                                                                                               | `{}`                                  |
+ | `core.serviceAnnotations`                                             | Annotations to add to the core service                                                                                                                                                                                                                                                                                                                                                                                                                     | `{}`                                  |
+ | `core.configureUserSettings`                                          | A JSON string to set in the environment variable `CONFIG_OVERWRITE_JSON` to configure user settings. See the [official docs](https://goharbor.io/docs/latest/install-config/configure-user-settings-cli/#configure-users-settings-using-an-environment-variable).                                                                                                                                                                                                                             |                                                                                     |
+-| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvment for other scenes.                          |                          `db`             |
++| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvement for other scenes.                          |                          `db`             |
+ | `core.secret`                                                         | Secret is used when core server communicates with other components. If a secret key is not specified, Helm will generate one. Must be a string of 16 chars.                                                                                                                                                                                                                                                                                                      |                                       |
+ | `core.secretName`                                                     | Fill the name of a kubernetes secret if you want to use your own TLS certificate and private key for token encryption/decryption. The secret must contain keys named: `tls.crt` - the certificate and `tls.key` - the private key. The default key pair will be used if it isn't set                                                                                                                                                                             |                                       |
+ | `core.tokenKey`                                                       | PEM-formatted RSA private key used to sign service tokens.  Only used if `core.secretName` is unset. If set, `core.tokenCert` MUST also be set.                                                                                                                                                                                                                                  |                                        |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #24438** (2026-11-19): docs: fix typos (@Adham-Kiwan)
+- **PR #24433** (2026-11-18): docs: fix the dead Clarity link in CONTRIBUTING (@farisbasha)
+- **PR #24431** (closed): fix(orm): convert numeric or-list values to strings to work with pgx (@SevDaisy)
+- **PR #24424** (closed): elease-note/breaking-change: Add vulnerabilities metrics (@RobMokkink)
 - **PR #24361** (2026-11-11): Bump Trivy adapter and distribution for release-2.15.0 (@stonezdj)
 - **PR #24360** (2026-11-11): (cherry-pick): preserve artifact type for multi-tier accessories (@stonezdj)
-- **PR #24359** (2026-11-11): (cherry-pick): ignore 401 when listing labels of a Harbor registry (@stonezdj)
-- **PR #24358** (2026-11-13): (cherry-pick): ignore 401 when listing labels of a Harbor registry (@stonezdj)
-- **PR #24357** (2026-11-13): fix(replication): ignore 401 when listing labels of a Harbor registry (@stonezdj)
-- **PR #24354** (2026-11-13): Publish online installer package for RC releases (@stonezdj)
 
 ---
 
@@ -834,43 +760,31 @@ Signed-off-by: stonezdj <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. replication): ignore 401 when listing labels of a Harbor registry
+## X. docs: fix typos
 
 **RULE**:
-When implementing operations in `src/pkg/reg/adapter/harbor/base/adapter.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/pkg/chart/testdata/harbor-schema1/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `54a9dc30`: replication): ignore 401 when listing labels of a Harbor registry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `67748c71`: docs: fix typos. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/reg/adapter/harbor/base/adapter.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/chart/testdata/harbor-schema1/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// Registries may be configured without an access key and secret, which
-		// earlier versions allowed. Listing labels then fails with 401; log it
-		// and continue with no label values instead of failing Info, which
-		// would break replication for such registries.
-		if e, ok := err.(*common_http.Error); !ok || e.Code != http.StatusUnauthorized {
-			return nil, err
-		}
-		url := ""
-		if a.Registry != nil {
-			url = a.Registry.URL
-		}
-		log.Warningf("failed to list labels of the Harbor registry %s, unauthorized, continue with empty labels: %v", url, err)
-		labels = nil
+| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvement for other scenes.                          |                          `db`             |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		return nil, err
+| `core.quotaUpdateProvider`                                            | The provider for updating project quota(usage), there are 2 options, redis or db. By default it is implemented by db but you can configure it to redis which can improve the performance of high concurrent pushing to the same project, and reduce the database connections spike and occupies. Using redis will bring up some delay for quota usage updation for display, so only suggest switch provider to redis if you were ran into the db connections spike around the scenario of high concurrent pushing to same project, no improvment for other scenes.                          |                          `db`             |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `54a9dc30` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `67748c71` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

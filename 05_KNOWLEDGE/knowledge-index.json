@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T13:35:31.294Z",
+  "last_updated": "2026-11-19T14:03:39.444Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21787,
+  "total_items": 21793,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -33953,14 +33953,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1683,
       "title": "fix typos",
-      "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "674d3362",
+      "source_url": "https://github.com/goharbor/harbor",
+      "source_version": "67748c71",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-19T04:08:21.321Z"
+      "verified_at": "2026-11-19T14:03:29.757Z"
     },
     "rule-1684": {
       "learning_id": "rule-1684",
@@ -114637,10 +114637,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "9d143719",
-      "content_hash": "f1cddc876f1adb646eb91efa77069e89ebf15f6ab4974fca2d62ba856a16c659",
+      "source_version": "a1b7415e",
+      "content_hash": "a7e53c52990036ebd30c3605edf842cf3ee0ee388bc98036d8fecdd9fa6ea4b0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T03:39:20.267Z"
+      "persisted_at": "2026-11-19T14:03:34.202Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114649,10 +114649,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "9d143719",
-      "content_hash": "3ea0197d95c187cb668fca10298dd1023b9c764a3fb3b78f45a75bb8d780a1f6",
+      "source_version": "a1b7415e",
+      "content_hash": "b513cc6193379d647a89909c95709da1abf70bcc0b6e9a2531757a80365dd811",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T03:39:20.413Z"
+      "persisted_at": "2026-11-19T14:03:34.353Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -219884,8 +219884,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "9d143719",
-      "content_hash": "23ab74fcce81b4bd8659f1576afaba50310ce5e2ef82a5704eadca50f05e849f",
+      "source_version": "a1b7415e",
+      "content_hash": "dd8b44420f8c6c58a668b36f9b5f0a9279d8324af5fccc5d5137f40cef57c171",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -219963,6 +219963,11 @@
           "number": 9328,
           "title": "give a node's threads one stream-id counter",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9383,
+          "title": "bound contract-handler event admission per priority class",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219970,7 +219975,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T03:39:19.690Z",
+      "verified_at": "2026-11-19T14:03:33.643Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221023,11 +221028,16 @@
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "966747bd",
-      "content_hash": "9813239bcd7d9d9f5a0ab06265c18174fe9ed299449369ebc0e6543163f30dde",
+      "source_version": "67748c71",
+      "content_hash": "95292329bc2e9c91cd39e4dadd04ea587c51389f09d95c6c4345e0bd62e1e306",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "promoted_rules": [
+        {
+          "number": 1683,
+          "title": "fix typos",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8419,
           "title": "ignore 401 when listing labels of a Harbor registry",
@@ -221044,7 +221054,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T12:24:00.457Z",
+      "verified_at": "2026-11-19T14:03:29.757Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221086,10 +221096,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-architecture-intelligence-goharbor-harbor-core-invariants.md",
       "title": "Architecture Intelligence: goharbor/harbor Core Invariants",
       "repository": "goharbor/harbor",
-      "source_version": "966747bd",
-      "content_hash": "388e3665aeb8004fcacc2897ef6b2638338e2c717dc13194eedd75a54670cfef",
+      "source_version": "67748c71",
+      "content_hash": "848749f561b4689cc7b56ab54d72419f5e0de2742d0352f40ee8e7a62871570f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T12:24:00.959Z"
+      "persisted_at": "2026-11-19T14:03:30.443Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-goharbor-harbor": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-goharbor-harbor",
@@ -221274,9 +221284,9 @@
       "title": "Architecture Intelligence: goharbor-harbor-learnings Core Invariants",
       "repository": "goharbor-harbor-learnings",
       "source_version": "HEAD",
-      "content_hash": "8b751b47691a064f07ae0e9d3fa4afd35a2e83fd58fdeaac236eba875e46d84f",
+      "content_hash": "24bb6bed70ebdd876371e93dcff0d6cbd5406a43d5392975e2c8d2762e81979a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T02:06:56.328Z"
+      "persisted_at": "2026-11-19T14:03:39.292Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-goharbor-harbor-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-goharbor-harbor-learnings",
@@ -221286,9 +221296,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for goharbor-harbor-learnings",
       "repository": "goharbor-harbor-learnings",
       "source_version": "HEAD",
-      "content_hash": "02725bf2143c6e3b53806fd7ce04ef7ece4fe667a76671a6d42f88bd7e6b5497",
+      "content_hash": "44edb43ef44dd1477ef8af83c05aecaa43139d15faa47fed0e537be859456c3c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T02:06:56.431Z"
+      "persisted_at": "2026-11-19T14:03:39.444Z"
     },
     "learn-huggingface-tongyi-mai-z-image-turbo": {
       "learning_id": "learn-huggingface-tongyi-mai-z-image-turbo",
@@ -229064,17 +229074,23 @@
       "slug": "bahdotsh-wrkflw",
       "platform": "github",
       "source_url": "https://github.com/bahdotsh/wrkflw",
-      "source_version": "a7e479f2",
-      "content_hash": "1818df581c557b75d1bdc22568e36578198fa1e6db1435880aa40d4e41ff0b1f",
+      "source_version": "b0fdd8df",
+      "content_hash": "cc34c8899f0465ef79642028d4fbea36006a45f9acc6af88b14f0cdd7dd1835e",
       "dossier_path": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9382,
+          "title": "close the gaps left after the compare sweep (#173 follow-up)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T05:17:35.006Z",
+      "verified_at": "2026-11-19T14:03:30.797Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229114,10 +229130,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/bahdotsh-wrkflw-agent-contract-bahdotsh-wrkflw-autonomous-specialist-persona.md",
       "title": "Agent Contract: bahdotsh/wrkflw Autonomous Specialist Persona",
       "repository": "bahdotsh/wrkflw",
-      "source_version": "a7e479f2",
-      "content_hash": "d39b600517b983221c4ce7e93942a6a30334b3536f506afe16505ccef059130f",
-      "domain_letter": "L",
-      "persisted_at": "2026-11-16T05:17:35.490Z"
+      "source_version": "b0fdd8df",
+      "content_hash": "1c6aa75a950f477db9f0457bdf9b118e004a4e2f188ec7696ad8d8f842542cc4",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-19T14:03:31.519Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bahdotsh-wrkflw": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bahdotsh-wrkflw",
@@ -229126,10 +229142,10 @@
       "relative_path": "08_VERIFICATION/bahdotsh-wrkflw-verification-protocol-empirical-defect-shield-for-bahdotsh-wrkfl.md",
       "title": "Verification Protocol: Empirical Defect Shield for bahdotsh/wrkflw",
       "repository": "bahdotsh/wrkflw",
-      "source_version": "a7e479f2",
-      "content_hash": "fede1b2735e0470592b32a10eefe85c67387d40a6ac4a9e6af5e25eb8663a7a4",
+      "source_version": "b0fdd8df",
+      "content_hash": "787e013e98bb710f751b42038a0fad9fe53ec95fe60dde1b0f3ed42f649e2d68",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T05:17:35.571Z"
+      "persisted_at": "2026-11-19T14:03:31.651Z"
     },
     "learn-github-czy0729-bangumi": {
       "learning_id": "learn-github-czy0729-bangumi",
@@ -229332,9 +229348,9 @@
       "title": "Agent Contract: bahdotsh-wrkflw-learnings Autonomous Specialist Persona",
       "repository": "bahdotsh-wrkflw-learnings",
       "source_version": "HEAD",
-      "content_hash": "13b97edc7da06daaa76f464534a32107f3289f66e1dc01d5b4e098d9bd2deaf2",
-      "domain_letter": "L",
-      "persisted_at": "2026-11-16T05:17:44.844Z"
+      "content_hash": "cf1063a93c710cb6d8db911b4cb9e7fcc742682d9e52b5a247eea0ab1853c4c1",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-19T14:03:37.893Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bahdotsh-wrkflw-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bahdotsh-wrkflw-learnings",
@@ -229344,9 +229360,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for bahdotsh-wrkflw-learnings",
       "repository": "bahdotsh-wrkflw-learnings",
       "source_version": "HEAD",
-      "content_hash": "6630853fd69b25396b8b2742df8651b2fdadbeecbbebe40b5eab89f765ba5df6",
+      "content_hash": "afc6fc6e00e1a2b819e4526756038f6c0863c1b32a6c840258005f731dfa6b1b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T05:17:44.941Z"
+      "persisted_at": "2026-11-19T14:03:38.025Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-26b-a4b-it-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-26b-a4b-it-learnings-core-inva",
@@ -237952,7 +237968,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
-      "content_hash": "2e97dd05b3bd047bbfd26cb82822e277d74f0ebd98b44aebb4a40b88d3a21173",
+      "content_hash": "2c2a204df72ea3c2d89494fe74f72006305c37a0fc148ed3f8a998f0a0e3c331",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "promoted_rules": [],
@@ -237961,7 +237977,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T22:39:16.768Z",
+      "verified_at": "2026-11-19T14:03:26.687Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237978,9 +237994,9 @@
       "title": "Research & Knowledge Intelligence: AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF Core Invariants",
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
-      "content_hash": "246bb4b89d06e8de3ddba3d9cd0e2e20ba36fabbd85d51fafd90a3bfd183db7b",
+      "content_hash": "aa46fcfd688db8a96d37e7d36a2cf0c4064a42c7ee5935274981fcbce3df17a5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T22:39:17.172Z"
+      "persisted_at": "2026-11-19T14:03:27.139Z"
     },
     "learn-github-sharkdp-fd": {
       "learning_id": "learn-github-sharkdp-fd",
@@ -238211,9 +238227,9 @@
       "title": "Research & Knowledge Intelligence: hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings Core Invariants",
       "repository": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "aca82af291ec2183876f06590386e1f7f03fc3c2f05bb38ed40052c0b4cfe139",
+      "content_hash": "02df09f686857cf77733abc5b2b7c824ddaa3a00af94c0cf030c6c588d56f018",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T22:39:38.189Z"
+      "persisted_at": "2026-11-19T14:03:38.374Z"
     },
     "candidate_directive-build-update-gradle-wrapper-to-9-9-1": {
       "item_id": "candidate_directive-build-update-gradle-wrapper-to-9-9-1",
@@ -292286,13 +292302,13 @@
       "item_id": "candidate_directive-fix-typos",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5GVL-fix-typos.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ETSU-fix-typos.md",
       "title": "fix typos",
-      "repository": "open-policy-agent/opa",
-      "source_version": "674d3362",
-      "content_hash": "4463dab7efaaf48326d57686953d9d29ed97f2875f96a285b32cb58114ec72f7",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-19T04:08:21.682Z"
+      "repository": "goharbor/harbor",
+      "source_version": "67748c71",
+      "content_hash": "e5b8ff58628bb9fbda73bccdba1c774a43ccdc57785beffaa0343b879e6f2587",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T14:03:30.271Z"
     },
     "rule-9329": {
       "learning_id": "rule-9329",
@@ -292324,13 +292340,13 @@
       "item_id": "candidate_directive-docs-fix-typos",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-C5T9-docs-fix-typos.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-F0N4-docs-fix-typos.md",
       "title": "docs: fix typos",
-      "repository": "open-policy-agent-opa-learnings",
+      "repository": "goharbor-harbor-learnings",
       "source_version": "HEAD",
-      "content_hash": "1c1887d5d3a2993ed943a7b215f6e7cda4423a0a4071415fbbdf6da3cc56b28a",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-19T04:13:33.933Z"
+      "content_hash": "89b190bddf5fcc38a0d2175d624a5fdcd631f58056ca10d807aa9bc3665093bb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T14:03:39.136Z"
     },
     "rule-9330": {
       "learning_id": "rule-9330",
@@ -294535,6 +294551,82 @@
       "content_hash": "878a2c8ed4668019d338c28e2794760e6e4f3447ab3685db858bf8c1abcaeed5",
       "domain_letter": "G",
       "persisted_at": "2026-11-19T13:35:30.188Z"
+    },
+    "rule-9382": {
+      "learning_id": "rule-9382",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9382,
+      "title": "close the gaps left after the compare sweep (#173 follow-up)",
+      "source_url": "https://github.com/bahdotsh/wrkflw",
+      "source_version": "b0fdd8df",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T14:03:30.797Z"
+    },
+    "candidate_directive-close-the-gaps-left-after-the-compare-sweep-173-follow-up": {
+      "item_id": "candidate_directive-close-the-gaps-left-after-the-compare-sweep-173-follow-up",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EZES-close-the-gaps-left-after-the-compare-sweep-173-follow-up.md",
+      "title": "close the gaps left after the compare sweep (#173 follow-up)",
+      "repository": "bahdotsh-wrkflw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "772e430c25923279ae82b6fbc54021245a69c9fc8b1bae686707c57f16f2744b",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-19T14:03:37.546Z"
+    },
+    "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-bahdotsh-wrkflw-human-need-intelligence-bahdotsh-wrkflw-core-invariants.md",
+      "title": "Human & Need Intelligence: bahdotsh/wrkflw Core Invariants",
+      "repository": "bahdotsh/wrkflw",
+      "source_version": "b0fdd8df",
+      "content_hash": "0e901cd247797ac01adbbe3a13dcd9acd6d015beff872622728ddb530af331b8",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-19T14:03:31.370Z"
+    },
+    "rule-9383": {
+      "learning_id": "rule-9383",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9383,
+      "title": "bound contract-handler event admission per priority class",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "a1b7415e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T14:03:33.643Z"
+    },
+    "candidate_directive-bound-contract-handler-event-admission-per-priority-class": {
+      "item_id": "candidate_directive-bound-contract-handler-event-admission-per-priority-class",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EWPP-bound-contract-handler-event-admission-per-priority-class.md",
+      "title": "bound contract-handler event admission per priority class",
+      "repository": "freenet/freenet-core",
+      "source_version": "a1b7415e",
+      "content_hash": "5f71b9b8ff2f28e7aaddc1aa98b3a6a4dab3bf09fa07427e09101e4e6b79933b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T14:03:34.052Z"
+    },
+    "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-learnings-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-bahdotsh-wrkflw-learnings-human-need-intelligence-bahdotsh-wrkflw-learnings-core.md",
+      "title": "Human & Need Intelligence: bahdotsh-wrkflw-learnings Core Invariants",
+      "repository": "bahdotsh-wrkflw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f2faf4a83f44e73b2461c9ccc50a72d630b0f7072e506b58854365adb246b9ff",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-19T14:03:37.726Z"
     }
   },
   "ai-builder-brain": {

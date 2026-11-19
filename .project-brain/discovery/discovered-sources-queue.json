@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T13:08:08.187Z",
+  "updated_at": "2026-11-19T14:03:38.936Z",
   "stats": {
-    "total_discovered": 5883,
-    "approved_pending_harvest": 5570,
+    "total_discovered": 5890,
+    "approved_pending_harvest": 5577,
     "harvested_count": 0,
     "rejected_count": 313,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5535,
+      "COMMUNITY_AND_EXPERT": 5542,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -127256,6 +127256,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
         "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-C2D6A48690AA": {
+      "id": "SRC-C2D6A48690AA",
+      "url": "https://cli.github.com/packages",
+      "title": "https://cli.github.com/packages",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T14:03:37.239Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
+        "fileName": "bahdotsh-wrkflw-learnings.md"
+      }
+    },
+    "SRC-4C54CF553AB0": {
+      "id": "SRC-4C54CF553AB0",
+      "url": "https://cli.github.com/packages/githubcli-archive-keyring.gpg",
+      "title": "https://cli.github.com/packages/githubcli-archive-keyring.gpg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T14:03:37.300Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
+        "fileName": "bahdotsh-wrkflw-learnings.md"
+      }
+    },
+    "SRC-B45E879CBE52": {
+      "id": "SRC-B45E879CBE52",
+      "url": "https://github.com/goharbor/harbor-helm",
+      "title": "https://github.com/goharbor/harbor-helm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T14:03:38.776Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-0F3F4929CC9B": {
+      "id": "SRC-0F3F4929CC9B",
+      "url": "https://vmware.github.io/clarity/%60",
+      "title": "https://vmware.github.io/clarity/%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T14:03:38.816Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-13FF583F1DB4": {
+      "id": "SRC-13FF583F1DB4",
+      "url": "https://clarity.design/",
+      "title": "https://clarity.design/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T14:03:38.858Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-1BE4D21CF47A": {
+      "id": "SRC-1BE4D21CF47A",
+      "url": "https://github.com/goharbor/website",
+      "title": "https://github.com/goharbor/website",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T14:03:38.897Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-6718B133B57E": {
+      "id": "SRC-6718B133B57E",
+      "url": "https://goharbor.io/docs/latest/install-config/configure-user-settings-cli",
+      "title": "https://goharbor.io/docs/latest/install-config/configure-user-settings-cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T14:03:38.936Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
       }
     }
   }
