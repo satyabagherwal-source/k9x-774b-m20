@@ -255,8 +255,8 @@
     "sourceUrl": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
     "sourceVersion": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "2a34e8119edf3deb3e4da9ac8077980b4b7a2cde7d1c12f6e8a466adae4b5d72",
-    "lastHarvestedAt": "2026-11-14T19:33:38.594Z",
+    "contentHash": "bd1bc6dc367e4b5d5454ac1f9ab428abccb561cb4c67a8f760b42d6a6163b618",
+    "lastHarvestedAt": "2026-11-19T10:15:37.149Z",
     "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf"
   },
   "hf-deepseek-ai-deepseek-r1": {
@@ -7373,10 +7373,10 @@
     "repository": "tw93/Mole",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Mole",
-    "sourceVersion": "a381d561",
+    "sourceVersion": "7966afdd",
     "license": "GPL-3.0",
-    "contentHash": "513b09b71cbee1553e3c571844c4370bd2ee2a91bb4f329a418e1aacd89e76ce",
-    "lastHarvestedAt": "2026-11-18T07:14:03.474Z",
+    "contentHash": "584aaebc80d5385f671dda8006c333364a50f2362833c2d88f88144199b51996",
+    "lastHarvestedAt": "2026-11-19T10:15:44.765Z",
     "learningId": "learn-github-tw93-mole"
   },
   "siderolabs-talos": {
@@ -12958,5 +12958,15 @@
     "contentHash": "5b6318c99d555a4da9abbd33822ffa339293bd09f5c26e02e3f76bdd6e993d49",
     "lastHarvestedAt": "2026-11-19T09:43:41.613Z",
     "learningId": "learn-github-vcaesar-riot"
+  },
+  "hf-radixark-daisyrose-27b": {
+    "repository": "RadixArk/DaisyRose-27B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/RadixArk/DaisyRose-27B",
+    "sourceVersion": "hf-radixark-daisyrose-27b",
+    "license": "Open-Source",
+    "contentHash": "40573d65738333d21d2aa74d53d2d6bc87b0ec8a436cdce7b21ced895863c79f",
+    "lastHarvestedAt": "2026-11-19T10:15:58.226Z",
+    "learningId": "learn-huggingface-radixark-daisyrose-27b"
   }
 }

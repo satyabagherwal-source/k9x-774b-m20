@@ -11250,3 +11250,7 @@
 | `CYCLE-20261119-4VAA` | `2026-11-19T09:43:49.090Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9366` | Yes (`c893eff2...`) |
 | `CYCLE-20261119-4YT5` | `2026-11-19T09:43:53.657Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7277` | Yes (`6c9e0fd7...`) |
 | `CYCLE-20261119-518E` | `2026-11-19T09:43:56.798Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9367` | Yes (`f98bdc43...`) |
+| `CYCLE-20261119-9RJT` | `2026-11-19T10:15:37.145Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`bd1bc6dc...`) |
+| `CYCLE-20261119-9XFD` | `2026-11-19T10:15:44.761Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9368` | Yes (`584aaebc...`) |
+| `CYCLE-20261119-A7TA` | `2026-11-19T10:15:58.222Z` | `RadixArk/DaisyRose-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md` | Yes (`40573d65...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T10:16:28.054Z` | `hf-radixark-daisyrose-27b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-14D059C0` [Domain D] | Yes (`3eff38c8...`) |

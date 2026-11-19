@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T09:18:27.609Z",
+  "updated_at": "2026-11-19T10:16:28.052Z",
   "statistics": {
-    "total_nodes": 381,
-    "total_edges": 178,
+    "total_nodes": 382,
+    "total_edges": 179,
     "domain_distribution": {
-      "D": 253,
+      "D": 254,
       "M": 1,
       "H": 56,
       "J": 14,
@@ -20,7 +20,7 @@
       "I": 4
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 177,
+      "CONSTRAINED_BY_ARCHITECTURE": 178,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -8521,6 +8521,29 @@
       ],
       "created_at": "2026-11-19T09:18:27.609Z",
       "updated_at": "2026-11-19T09:18:27.609Z"
+    },
+    "DOM-D-14D059C0": {
+      "id": "DOM-D-14D059C0",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): RadixArk/DaisyRose-27B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-radixark-daisyrose-27b/hf-radixark-daisyrose-27b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T10:16:01.182Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-radixark-daisyrose-27b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-19T10:16:28.051Z",
+      "updated_at": "2026-11-19T10:16:28.051Z"
     }
   },
   "edges": [
@@ -10303,6 +10326,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-28CD838B [D] with Domain M",
       "created_at": "2026-11-19T06:53:05.885Z"
+    },
+    {
+      "id": "EDGE-B43A1A3CF476",
+      "sourceId": "DOM-D-14D059C0",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-14D059C0 [D] with Domain M",
+      "created_at": "2026-11-19T10:16:28.052Z"
     }
   ]
 }

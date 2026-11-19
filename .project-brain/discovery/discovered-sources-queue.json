@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T09:44:00.338Z",
+  "updated_at": "2026-11-19T10:16:28.074Z",
   "stats": {
-    "total_discovered": 5854,
-    "approved_pending_harvest": 5541,
+    "total_discovered": 5855,
+    "approved_pending_harvest": 5542,
     "harvested_count": 0,
     "rejected_count": 313,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5506,
+      "COMMUNITY_AND_EXPERT": 5507,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -126618,6 +126618,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vcaesar-riot-learnings.md",
         "fileName": "vcaesar-riot-learnings.md"
+      }
+    },
+    "SRC-BA6DF33853B0": {
+      "id": "SRC-BA6DF33853B0",
+      "url": "https://huggingface.co/RadixArk/DaisyRose-27B",
+      "title": "https://huggingface.co/RadixArk/DaisyRose-27B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:16:28.074Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md",
+        "fileName": "hf-radixark-daisyrose-27b-learnings.md"
       }
     }
   }

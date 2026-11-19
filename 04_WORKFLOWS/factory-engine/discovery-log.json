@@ -21634,5 +21634,17 @@
     "qualityScore": 3424,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-19T09:42:48.307Z"
+  },
+  {
+    "name": "RadixArk/DaisyRose-27B",
+    "fullName": "RadixArk/DaisyRose-27B",
+    "url": "https://huggingface.co/RadixArk/DaisyRose-27B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: RadixArk/DaisyRose-27B (120 likes, 0 downloads)",
+    "likes": 120,
+    "downloads": 0,
+    "qualityScore": 1200,
+    "discoveredAt": "2026-11-19T10:13:19.576Z"
   }
 ]

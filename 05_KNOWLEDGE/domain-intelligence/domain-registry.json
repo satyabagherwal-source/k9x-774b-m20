@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T09:44:01.666Z",
-  "total_records": 1964,
+  "last_updated": "2026-11-19T10:16:29.304Z",
+  "total_records": 1967,
   "domains": {
     "A": {
       "total": 13,
@@ -53,7 +53,7 @@
       ]
     },
     "D": {
-      "total": 823,
+      "total": 826,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -877,7 +877,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-lilylilith-qi_2-1_anyangle-learnings-core-inv",
         "domain_intelligence-research-knowledge-intelligence-reson8-rumble-2-flash-core-invariants",
         "DOM-D-28CD838B",
-        "domain_intelligence-research-knowledge-intelligence-hf-reson8-rumble-2-flash-learnings-core-invarian"
+        "domain_intelligence-research-knowledge-intelligence-hf-reson8-rumble-2-flash-learnings-core-invarian",
+        "domain_intelligence-research-knowledge-intelligence-radixark-daisyrose-27b-core-invariants",
+        "DOM-D-14D059C0",
+        "domain_intelligence-research-knowledge-intelligence-hf-radixark-daisyrose-27b-learnings-core-invaria"
       ]
     },
     "E": {
@@ -17458,8 +17461,8 @@
       "title": "Research & Knowledge Intelligence: SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-research-knowledge-intellig.md",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "content_hash": "e8e91d4a68f3f263a0b4c50441d506e9b20c4bd5b8479d007b3bae38376b896d",
-      "created_at": "2026-11-14T19:33:38.764Z"
+      "content_hash": "6f87a9df34bd016f1947d2afd1bb87ad7a2b48215b2acd23ac875162aa5b3879",
+      "created_at": "2026-11-19T10:15:37.335Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-",
@@ -17467,8 +17470,8 @@
       "title": "Research & Knowledge Intelligence: hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-learnings-research-knowledg.md",
       "repository": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings",
-      "content_hash": "6dfd84e9fc510259945c5068ad63e5866a4a4d9120b2ce2de5dbc332acaa2d59",
-      "created_at": "2026-11-14T19:33:50.749Z"
+      "content_hash": "2400f1790bbbea330de121a1fb7bae9ea4ffc782f6cbe6a88033f744fca50444",
+      "created_at": "2026-11-19T10:16:28.676Z"
     },
     "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-core-invariants",
@@ -19145,8 +19148,8 @@
       "title": "Architecture Intelligence: tw93/Mole Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tw93-mole-architecture-intelligence-tw93-mole-core-invariants.md",
       "repository": "tw93/Mole",
-      "content_hash": "4fa07cb4ac39aa6024c0305f6b8bcbec74ac80081aaa2ad62abf6a19db5258fc",
-      "created_at": "2026-11-18T07:14:03.810Z"
+      "content_hash": "c7160dff5be72ce8e04721269fd867499b1412d46003097828d4c1f0467d8064",
+      "created_at": "2026-11-19T10:15:45.097Z"
     },
     "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-core-invariants",
@@ -19214,8 +19217,8 @@
       "title": "Architecture Intelligence: tw93-mole-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tw93-mole-learnings-architecture-intelligence-tw93-mole-learnings-core-invariant.md",
       "repository": "tw93-mole-learnings",
-      "content_hash": "fd142af03d5fee5df00b94028ba11f14e23ca8bc72f08b1dc7ada5e52346c8d1",
-      "created_at": "2026-11-18T07:14:16.831Z"
+      "content_hash": "7bc860e524da8fea89c00e8e2305b7ff0873819560d8e9abd4af53598613f33c",
+      "created_at": "2026-11-19T10:16:29.304Z"
     },
     "domain_intelligence-research-knowledge-intelligence-pyannote-speaker-diarization-community-1-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-pyannote-speaker-diarization-community-1-core-in",
@@ -33018,6 +33021,66 @@
       "repository": "vcaesar-riot-learnings",
       "content_hash": "27d9eec4baa07902ad92193bc505849515a27ca568a0a64b5bfc18f9b8bda4ec",
       "created_at": "2026-11-19T09:44:00.681Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-radixark-daisyrose-27b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-radixark-daisyrose-27b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: RadixArk/DaisyRose-27B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-radixark-daisyrose-27b-research-knowledge-intelligence-radixark-daisyrose-27b.md",
+      "repository": "RadixArk/DaisyRose-27B",
+      "content_hash": "d37f4c59db43ce8fd1e65ee95795283300019e49a70105f9b86e9fa22e110a1d",
+      "created_at": "2026-11-19T10:15:58.408Z"
+    },
+    "DOM-D-14D059C0": {
+      "record_id": "DOM-D-14D059C0",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): RadixArk/DaisyRose-27B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/RadixArk/DaisyRose-27B](https://huggingface.co/RadixArk/DaisyRose-27B))  \n> **Source Version**: `hf-radixark-`  \n> **License**: Open-Source  \n> **Synth",
+      "content_hash": "3eff38c831cc8a5c9989246c0957fccd1cb68c4832e4b002af45c10364fbb011",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "provenance": {
+        "source_uri": "project://hf-radixark-daisyrose-27b/hf-radixark-daisyrose-27b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T10:16:01.182Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-radixark-daisyrose-27b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-radixark-daisyrose-27b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T10:16:28.023Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-radixark-daisyrose-27b-learnings-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-radixark-daisyrose-27b-learnings-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-radixark-daisyrose-27b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-radixark-daisyrose-27b-learnings-research-knowledge-intelligence-hf-radixark-.md",
+      "repository": "hf-radixark-daisyrose-27b-learnings",
+      "content_hash": "796d71b7b998eca23fea701b67e489d7a8ddf9bdf0d0f0996dafa3ab0627c9d2",
+      "created_at": "2026-11-19T10:16:28.285Z"
     }
   }
 }

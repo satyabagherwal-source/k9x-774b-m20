@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
   "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T19:33:38.763Z",
+  "timestamp": "2026-11-19T10:15:37.334Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF](https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF) (Revision: `hf-sc117-q`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T19:33:38.763Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T10:15:37.334Z`  
 > **Learning ID**: `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF](https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T19:33:38.082Z  
+> **Harvest Timestamp**: 2026-11-19T10:15:36.580Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4119079 downloads | 1006 likes
+- **Stars / Engagement**: 4217023 downloads | 1156 likes
 
 ---
 

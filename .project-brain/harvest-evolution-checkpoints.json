@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T09:44:01.949Z",
+  "last_updated": "2026-11-19T10:16:29.732Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T08:09:21.220Z",
@@ -383,7 +383,7 @@
       "staged_for_review": 1
     },
     "tw93-mole-learnings.md": {
-      "processed_at": "2026-11-18T07:14:16.410Z",
+      "processed_at": "2026-11-19T10:16:28.874Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2723,7 +2723,7 @@
       "staged_for_review": 1
     },
     "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md": {
-      "processed_at": "2026-11-14T19:33:50.567Z",
+      "processed_at": "2026-11-19T10:16:28.479Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3506,9 +3506,14 @@
       "processed_at": "2026-11-19T09:44:00.048Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-radixark-daisyrose-27b-learnings.md": {
+      "processed_at": "2026-11-19T10:16:28.054Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2214,
-  "total_canonical_promoted": 383,
-  "total_staged_for_review": 1654
+  "total_dossiers_evaluated": 2217,
+  "total_canonical_promoted": 384,
+  "total_staged_for_review": 1656
 }

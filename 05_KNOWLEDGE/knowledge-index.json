@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T09:44:01.830Z",
-  "total_verified_learnings": 9016,
+  "last_updated": "2026-11-19T10:16:29.592Z",
+  "total_verified_learnings": 9017,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21732,
+  "total_items": 21737,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -235549,7 +235549,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "2a34e8119edf3deb3e4da9ac8077980b4b7a2cde7d1c12f6e8a466adae4b5d72",
+      "content_hash": "bd1bc6dc367e4b5d5454ac1f9ab428abccb561cb4c67a8f760b42d6a6163b618",
       "dossier_path": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "promoted_rules": [],
@@ -235558,7 +235558,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T19:33:38.441Z",
+      "verified_at": "2026-11-19T10:15:36.948Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235575,9 +235575,9 @@
       "title": "Research & Knowledge Intelligence: SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF Core Invariants",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "e8e91d4a68f3f263a0b4c50441d506e9b20c4bd5b8479d007b3bae38376b896d",
+      "content_hash": "6f87a9df34bd016f1947d2afd1bb87ad7a2b48215b2acd23ac875162aa5b3879",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T19:33:38.764Z"
+      "persisted_at": "2026-11-19T10:15:37.335Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-",
@@ -235587,9 +235587,9 @@
       "title": "Research & Knowledge Intelligence: hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings Core Invariants",
       "repository": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "6dfd84e9fc510259945c5068ad63e5866a4a4d9120b2ce2de5dbc332acaa2d59",
+      "content_hash": "2400f1790bbbea330de121a1fb7bae9ea4ffc782f6cbe6a88033f744fca50444",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T19:33:50.749Z"
+      "persisted_at": "2026-11-19T10:16:28.676Z"
     },
     "learn-github-aws-aws-cdk": {
       "learning_id": "learn-github-aws-aws-cdk",
@@ -240827,8 +240827,8 @@
       "slug": "tw93-mole",
       "platform": "github",
       "source_url": "https://github.com/tw93/Mole",
-      "source_version": "a381d561",
-      "content_hash": "513b09b71cbee1553e3c571844c4370bd2ee2a91bb4f329a418e1aacd89e76ce",
+      "source_version": "7966afdd",
+      "content_hash": "584aaebc80d5385f671dda8006c333364a50f2362833c2d88f88144199b51996",
       "dossier_path": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "promoted_rules": [
@@ -240841,6 +240841,11 @@
           "number": 9150,
           "title": "keep task probe and removal timeouts scoped to each task",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9368,
+          "title": "docs(incidents): record I-79 to I-84 for the fixes since V1.72.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240848,7 +240853,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T07:14:03.297Z",
+      "verified_at": "2026-11-19T10:15:44.582Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240890,10 +240895,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tw93-mole-architecture-intelligence-tw93-mole-core-invariants.md",
       "title": "Architecture Intelligence: tw93/Mole Core Invariants",
       "repository": "tw93/Mole",
-      "source_version": "a381d561",
-      "content_hash": "4fa07cb4ac39aa6024c0305f6b8bcbec74ac80081aaa2ad62abf6a19db5258fc",
+      "source_version": "7966afdd",
+      "content_hash": "c7160dff5be72ce8e04721269fd867499b1412d46003097828d4c1f0467d8064",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T07:14:03.810Z"
+      "persisted_at": "2026-11-19T10:15:45.097Z"
     },
     "agent_contract-agent-contract-tw93-mole-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-tw93-mole-autonomous-specialist-persona",
@@ -240902,10 +240907,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/tw93-mole-agent-contract-tw93-mole-autonomous-specialist-persona.md",
       "title": "Agent Contract: tw93/Mole Autonomous Specialist Persona",
       "repository": "tw93/Mole",
-      "source_version": "a381d561",
-      "content_hash": "f7317f020e0f0b7a1cfc3d1a4658d69745acd55e8d55034210f7c7f70801e718",
+      "source_version": "7966afdd",
+      "content_hash": "9d57f800c135d66c55724ed55f0274b5532ba83aa06ba30ee33ea84948dd02c5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T07:14:03.945Z"
+      "persisted_at": "2026-11-19T10:15:45.233Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole",
@@ -240914,10 +240919,10 @@
       "relative_path": "08_VERIFICATION/tw93-mole-verification-protocol-empirical-defect-shield-for-tw93-mole.md",
       "title": "Verification Protocol: Empirical Defect Shield for tw93/Mole",
       "repository": "tw93/Mole",
-      "source_version": "a381d561",
-      "content_hash": "942e8ce8739a82f3d488910120ec5e6839dc72dbc3c2ded358589313366cb03f",
+      "source_version": "7966afdd",
+      "content_hash": "30b8bd7069c3f7444c571fa99be52917344f463e7c78066bc61dac6f949b739d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T07:14:04.062Z"
+      "persisted_at": "2026-11-19T10:15:45.348Z"
     },
     "rule-8569": {
       "learning_id": "rule-8569",
@@ -241075,9 +241080,9 @@
       "title": "Architecture Intelligence: tw93-mole-learnings Core Invariants",
       "repository": "tw93-mole-learnings",
       "source_version": "HEAD",
-      "content_hash": "fd142af03d5fee5df00b94028ba11f14e23ca8bc72f08b1dc7ada5e52346c8d1",
+      "content_hash": "7bc860e524da8fea89c00e8e2305b7ff0873819560d8e9abd4af53598613f33c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T07:14:16.831Z"
+      "persisted_at": "2026-11-19T10:16:29.304Z"
     },
     "agent_contract-agent-contract-tw93-mole-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-tw93-mole-learnings-autonomous-specialist-persona",
@@ -241087,9 +241092,9 @@
       "title": "Agent Contract: tw93-mole-learnings Autonomous Specialist Persona",
       "repository": "tw93-mole-learnings",
       "source_version": "HEAD",
-      "content_hash": "ddaa8991dde329e1aa192f189f32295db363e325fb733fca34f98c1b5866eddf",
+      "content_hash": "cf85a1403116552a06f03fc3ff1af98238b57158e74c0decf5432927748947cc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T07:14:16.969Z"
+      "persisted_at": "2026-11-19T10:16:29.457Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole-learnings",
@@ -241099,9 +241104,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tw93-mole-learnings",
       "repository": "tw93-mole-learnings",
       "source_version": "HEAD",
-      "content_hash": "d4dc97bd29bc58ba49431253004237eae41dfd413796447b2243f1cbb6a2f0dd",
+      "content_hash": "36f57d6f9b300e720e9e17392ae5cbae198f6dae06a2eb25a1261bbc61c3055b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T07:14:17.093Z"
+      "persisted_at": "2026-11-19T10:16:29.592Z"
     },
     "candidate_directive-ci-retry-transient-package-download-failures": {
       "item_id": "candidate_directive-ci-retry-transient-package-download-failures",
@@ -293746,6 +293751,83 @@
       "content_hash": "713cd43207f001e93151d631bc11ac276fc23b0364f50ddd02e3646fdae33f69",
       "domain_letter": "K",
       "persisted_at": "2026-11-19T09:44:01.830Z"
+    },
+    "rule-9368": {
+      "learning_id": "rule-9368",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9368,
+      "title": "docs(incidents): record I-79 to I-84 for the fixes since V1.72.0",
+      "source_url": "https://github.com/tw93/Mole",
+      "source_version": "7966afdd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T10:15:44.582Z"
+    },
+    "candidate_directive-docs-incidents-record-i-79-to-i-84-for-the-fixes-since-v1-72-0": {
+      "item_id": "candidate_directive-docs-incidents-record-i-79-to-i-84-for-the-fixes-since-v1-72-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AVO5-docs-incidents-record-i-79-to-i-84-for-the-fixes-since-v1-72-0.md",
+      "title": "docs(incidents): record I-79 to I-84 for the fixes since V1.72.0",
+      "repository": "tw93-mole-learnings",
+      "source_version": "HEAD",
+      "content_hash": "106649ea233e070bc33680a26d9e14ff3e8a05a7c8fe7237cf3eee432a9b833f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T10:16:29.152Z"
+    },
+    "learn-huggingface-radixark-daisyrose-27b": {
+      "learning_id": "learn-huggingface-radixark-daisyrose-27b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "RadixArk/DaisyRose-27B",
+      "repository": "RadixArk/DaisyRose-27B",
+      "slug": "hf-radixark-daisyrose-27b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/RadixArk/DaisyRose-27B",
+      "source_version": "hf-radixark-daisyrose-27b",
+      "content_hash": "40573d65738333d21d2aa74d53d2d6bc87b0ec8a436cdce7b21ced895863c79f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-19T10:15:58.054Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-radixark-daisyrose-27b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-radixark-daisyrose-27b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-radixark-daisyrose-27b-research-knowledge-intelligence-radixark-daisyrose-27b.md",
+      "title": "Research & Knowledge Intelligence: RadixArk/DaisyRose-27B Core Invariants",
+      "repository": "RadixArk/DaisyRose-27B",
+      "source_version": "hf-radixark-daisyrose-27b",
+      "content_hash": "d37f4c59db43ce8fd1e65ee95795283300019e49a70105f9b86e9fa22e110a1d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T10:15:58.408Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-radixark-daisyrose-27b-learnings-core-invaria": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-radixark-daisyrose-27b-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-radixark-daisyrose-27b-learnings-research-knowledge-intelligence-hf-radixark-.md",
+      "title": "Research & Knowledge Intelligence: hf-radixark-daisyrose-27b-learnings Core Invariants",
+      "repository": "hf-radixark-daisyrose-27b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "796d71b7b998eca23fea701b67e489d7a8ddf9bdf0d0f0996dafa3ab0627c9d2",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T10:16:28.285Z"
     }
   },
   "ai-builder-brain": {

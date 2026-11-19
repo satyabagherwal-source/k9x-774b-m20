@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T09:43:56.810Z",
+  "last_updated": "2026-11-19T10:15:58.235Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -275,14 +275,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "2a34e8119edf3deb3e4da9ac8077980b4b7a2cde7d1c12f6e8a466adae4b5d72",
-      "verified_at": "2026-11-14T19:33:38.603Z",
+      "content_hash": "bd1bc6dc367e4b5d5454ac1f9ab428abccb561cb4c67a8f760b42d6a6163b618",
+      "verified_at": "2026-11-19T10:15:37.157Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T19:33:38.603Z"
+      "last_updated": "2026-11-19T10:15:37.157Z"
     },
     "deepseek-ai/DeepSeek-R1": {
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -11106,14 +11106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-mole",
-      "content_hash": "513b09b71cbee1553e3c571844c4370bd2ee2a91bb4f329a418e1aacd89e76ce",
-      "verified_at": "2026-11-18T07:14:03.481Z",
+      "content_hash": "584aaebc80d5385f671dda8006c333364a50f2362833c2d88f88144199b51996",
+      "verified_at": "2026-11-19T10:15:44.772Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:14:03.481Z"
+      "last_updated": "2026-11-19T10:15:44.772Z"
     },
     "siderolabs/talos": {
       "repository": "siderolabs/talos",
@@ -19529,6 +19529,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-19T09:43:41.621Z"
+    },
+    "RadixArk/DaisyRose-27B": {
+      "repository": "RadixArk/DaisyRose-27B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-radixark-daisyrose-27b",
+      "content_hash": "40573d65738333d21d2aa74d53d2d6bc87b0ec8a436cdce7b21ced895863c79f",
+      "verified_at": "2026-11-19T10:15:58.234Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-19T10:15:58.234Z"
     }
   },
   "repos": {

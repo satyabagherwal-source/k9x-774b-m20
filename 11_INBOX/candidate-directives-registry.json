@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T09:44:01.528Z",
+  "last_updated": "2026-11-19T10:16:29.152Z",
   "directives": [
     {
       "id": "CD-001",
@@ -32702,6 +32702,35 @@
       "source_repo": "arkivanov-decompose",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F217B7-empirical-invariant-guard-in-decompose-a.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-AVO5",
+      "directive_title": "docs(incidents): record I-79 to I-84 for the fixes since V1.72.0",
+      "source_repo": "tw93-mole-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-AVO5-docs-incidents-record-i-79-to-i-84-for-the-fixes-since-v1-72-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-40AC21",
+      "directive_title": "Forensic Learning Record (Deep Inspection): SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-40AC21-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-3D332C",
+      "directive_title": "docs(incidents): record I-79 to I-84 for the fixes since V1.72.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tw93-mole",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3D332C-docs-incidents-record-i-79-to-i-84-for-t.md",
       "staged_date": "2026-11-19"
     }
   ]

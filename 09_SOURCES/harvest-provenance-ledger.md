@@ -11283,3 +11283,7 @@ Every entry in this ledger must capture:
 | `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `207df1ef` | Multi-dimensional audit evidence | 2026-11-19T09:43:49.094Z |
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `01794fd9` | Multi-dimensional audit evidence | 2026-11-19T09:43:53.660Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `52f8bf48` | Multi-dimensional audit evidence | 2026-11-19T09:43:56.802Z |
+| `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-11-19T10:15:37.149Z |
+| `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `7966afdd` | Multi-dimensional audit evidence | 2026-11-19T10:15:44.765Z |
+| `learn-huggingface-radixark-daisyrose-27b` | `https://huggingface.co/RadixArk/DaisyRose-27B` | `hf-radixar` | Multi-dimensional audit evidence | 2026-11-19T10:15:58.226Z |
+| `learn-dom-d-14d059c0` | `project://hf-radixark-daisyrose-27b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md` | 2026-11-19T10:16:28.054Z |
