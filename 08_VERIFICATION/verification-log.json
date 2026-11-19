@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-G5PN",
-    "timestamp": "2026-11-17T20:33:06.539Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-    "contentHash": "cb799b9519474f3aa11190a1efdf16fa8beff215f76c9db39009a0fa8dffc0c7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-G7RS",
     "timestamp": "2026-11-17T20:33:09.208Z",
     "repository": "astral-sh/ruff",
@@ -7492,6 +7477,21 @@
     "contentHash": "37d22bf1540a9e13f70f84a8570f1181171c21c532709946852dc28ef195a70f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-PWL1",
+    "timestamp": "2026-11-19T12:20:08.629Z",
+    "repository": "Phocinae/Phocinae-Largha-150M-v1",
+    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+    "contentHash": "e4b57f4ac5bf51536c1d3839905642acd1e8f14dbccc44d66630f3dfac4ae3b2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

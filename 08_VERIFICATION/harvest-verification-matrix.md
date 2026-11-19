@@ -11264,3 +11264,4 @@
 | `CYCLE-20261119-O199` | `2026-11-19T11:50:41.757Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9373` | Yes (`550f4e17...`) |
 | `CYCLE-20261119-O3GD` | `2026-11-19T11:50:44.605Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9374` | Yes (`37d22bf1...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T11:51:24.561Z` | `hf-qwen-qwen-image-2.1-turbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-8C81E436` [Domain D] | Yes (`0b327bdb...`) |
+| `CYCLE-20261119-PWL1` | `2026-11-19T12:20:08.629Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`e4b57f4a...`) |

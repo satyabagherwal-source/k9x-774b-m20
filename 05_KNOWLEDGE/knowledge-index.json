@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T11:51:27.147Z",
+  "last_updated": "2026-11-19T12:20:13.289Z",
   "total_verified_learnings": 9017,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "dc76efcd0a8966950459656e168f0c9ea505b63c4853c40992a8cff67ed7fbb2",
+      "content_hash": "6b261786a65f03a06c9b98b1811da11919d90a054b1d5f593395784fac412e27",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T10:47:25.580Z"
+      "persisted_at": "2026-11-19T12:20:13.165Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "bcad8822d50c2b4b9142d8b5131290515decbd42fdd8877b6032077e10766127",
+      "content_hash": "4305a52f4b949250177800f11bdb0a3fd31841bb02019b9f831619d5e962d3c0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T10:47:25.708Z"
+      "persisted_at": "2026-11-19T12:20:13.289Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -236655,7 +236655,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
       "source_version": "hf-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "469ce49b104feb0188171ad278a275e11cb43be53bf442fcf85c08dd440410b3",
+      "content_hash": "e4b57f4ac5bf51536c1d3839905642acd1e8f14dbccc44d66630f3dfac4ae3b2",
       "dossier_path": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "promoted_rules": [],
@@ -236664,7 +236664,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T21:20:50.368Z",
+      "verified_at": "2026-11-19T12:20:08.424Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236681,9 +236681,9 @@
       "title": "Research & Knowledge Intelligence: Phocinae/Phocinae-Largha-150M-v1 Core Invariants",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
       "source_version": "hf-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "167a58108c81bec764794ca328e567365fb0e09d78e239a7c6cb47ab46121c26",
+      "content_hash": "7b9dd30a291920258c11b28668723b70d90b4c98c026d2fbdf6ee22512fe060b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T21:20:50.627Z"
+      "persisted_at": "2026-11-19T12:20:08.809Z"
     },
     "learn-github-automattic-harper": {
       "learning_id": "learn-github-automattic-harper",
@@ -237024,9 +237024,9 @@
       "title": "Research & Knowledge Intelligence: hf-phocinae-phocinae-largha-150m-v1-learnings Core Invariants",
       "repository": "hf-phocinae-phocinae-largha-150m-v1-learnings",
       "source_version": "HEAD",
-      "content_hash": "8c06bf6bef7bd15267401c6ac2f98ce1a70befa60086e810973f0b6d92b92c1b",
+      "content_hash": "b0e4207aa8c7500f72b49ddc46e839387223e6e49f379cf754870603934bff14",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T21:21:32.820Z"
+      "persisted_at": "2026-11-19T12:20:11.789Z"
     },
     "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants",
@@ -287106,9 +287106,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "edc28850c3090d016db92304f06179e6b88eb9e57046ae94c478af6927643c19",
+      "content_hash": "5a5a86689a98f99481c68e5645d39984608b287c4303925f00c7cdff3a7cbdc4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T08:09:21.546Z"
+      "persisted_at": "2026-11-19T12:20:12.219Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -293927,13 +293927,13 @@
       "item_id": "candidate_directive-build-download-onnx-runtime-archives-from-npmmirror",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ENVW-build-download-onnx-runtime-archives-from-npmmirror.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PZV0-build-download-onnx-runtime-archives-from-npmmirror.md",
       "title": "build): download ONNX Runtime archives from npmmirror",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8c1bbbd78c29261014d59ccf34ee5f22b73cb36270c76ba47f5f1d895beac6b2",
+      "content_hash": "79caf24a85c615edd893b45ac73c94fa9fb52436783c329892c4d31756430836",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T10:47:25.293Z"
+      "persisted_at": "2026-11-19T12:20:12.876Z"
     },
     "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -293943,9 +293943,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "40e17a3413446b2457dabc25487a8acc14eb88b16c96aa7d612e132626aa3685",
+      "content_hash": "7dc9d2f2a38bb8b27f3b74cb3de87e7878e3f5fef8acbb4a13fb05496507c652",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T10:47:25.438Z"
+      "persisted_at": "2026-11-19T12:20:13.024Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",

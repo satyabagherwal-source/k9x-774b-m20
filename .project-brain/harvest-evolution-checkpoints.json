@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T11:51:27.328Z",
+  "last_updated": "2026-11-19T12:20:13.433Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-19T08:09:21.220Z",
+      "processed_at": "2026-11-19T12:20:11.961Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-19T10:47:24.347Z",
+      "processed_at": "2026-11-19T12:20:12.379Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2753,8 +2753,8 @@
       "staged_for_review": 0
     },
     "hf-phocinae-phocinae-largha-150m-v1-learnings.md": {
-      "processed_at": "2026-11-14T21:21:32.664Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T12:20:11.613Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-microsoft-frognano-4b-2609-learnings.md": {
@@ -3513,7 +3513,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2226,
+  "total_dossiers_evaluated": 2229,
   "total_canonical_promoted": 385,
-  "total_staged_for_review": 1662
+  "total_staged_for_review": 1664
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T11:51:26.928Z",
+  "last_updated": "2026-11-19T12:20:13.024Z",
   "total_records": 1975,
   "domains": {
     "A": {
@@ -17818,8 +17818,8 @@
       "title": "Research & Knowledge Intelligence: Phocinae/Phocinae-Largha-150M-v1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-phocinae-phocinae-largha-150m-v1-research-knowledge-intelligence-phocinae-pho.md",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
-      "content_hash": "167a58108c81bec764794ca328e567365fb0e09d78e239a7c6cb47ab46121c26",
-      "created_at": "2026-11-14T21:20:50.627Z"
+      "content_hash": "7b9dd30a291920258c11b28668723b70d90b4c98c026d2fbdf6ee22512fe060b",
+      "created_at": "2026-11-19T12:20:08.809Z"
     },
     "domain_intelligence-quality-verification-intelligence-automattic-harper-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-automattic-harper-core-invariants",
@@ -17905,8 +17905,8 @@
       "title": "Research & Knowledge Intelligence: hf-phocinae-phocinae-largha-150m-v1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-phocinae-phocinae-largha-150m-v1-learnings-research-knowledge-intelligence-hf.md",
       "repository": "hf-phocinae-phocinae-largha-150m-v1-learnings",
-      "content_hash": "8c06bf6bef7bd15267401c6ac2f98ce1a70befa60086e810973f0b6d92b92c1b",
-      "created_at": "2026-11-14T21:21:32.820Z"
+      "content_hash": "b0e4207aa8c7500f72b49ddc46e839387223e6e49f379cf754870603934bff14",
+      "created_at": "2026-11-19T12:20:11.789Z"
     },
     "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants",
@@ -31071,8 +31071,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "edc28850c3090d016db92304f06179e6b88eb9e57046ae94c478af6927643c19",
-      "created_at": "2026-11-19T08:09:21.546Z"
+      "content_hash": "5a5a86689a98f99481c68e5645d39984608b287c4303925f00c7cdff3a7cbdc4",
+      "created_at": "2026-11-19T12:20:12.219Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -33105,8 +33105,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "40e17a3413446b2457dabc25487a8acc14eb88b16c96aa7d612e132626aa3685",
-      "created_at": "2026-11-19T10:47:25.438Z"
+      "content_hash": "7dc9d2f2a38bb8b27f3b74cb3de87e7878e3f5fef8acbb4a13fb05496507c652",
+      "created_at": "2026-11-19T12:20:13.024Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
