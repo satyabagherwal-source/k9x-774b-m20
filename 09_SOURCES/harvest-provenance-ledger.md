@@ -11492,3 +11492,5 @@ Every entry in this ledger must capture:
 | `learn-dom-d-5cb7bd90` | `project://sigstore-cosign` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md` | 2026-11-20T04:30:04.542Z |
 | `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `74760655` | Multi-dimensional audit evidence | 2026-11-20T04:37:48.042Z |
 | `learn-dom-d-c031d2b0` | `project://o2sh-onefetch` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/o2sh-onefetch-learnings.md` | 2026-11-20T04:38:24.569Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `3599c4e9` | Multi-dimensional audit evidence | 2026-11-20T04:48:27.214Z |
+| `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `c88c005c` | Multi-dimensional audit evidence | 2026-11-20T04:48:37.194Z |

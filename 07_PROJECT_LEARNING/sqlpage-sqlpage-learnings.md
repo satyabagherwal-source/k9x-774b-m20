@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source**: github ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
-> **Source Version**: `1fe252ca`  
+> **Source Version**: `c88c005c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T06:49:16.724Z  
+> **Timestamp**: 2026-11-20T04:48:36.296Z  
 > **Learning ID**: `learn-github-sqlpage-sqlpage`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T06:49:16.719Z  
+> **Harvest Timestamp**: 2026-11-20T04:48:36.291Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1161,129 +1161,568 @@ export function initInstantMotion(root) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1fe252ca` (2026-11-17)
-**Commit Message**: Let big number titles and descriptions wrap (#1603)
+### Incident Patch 1: `c88c005c` (2026-11-19)
+**Commit Message**: Explore monthly sales exports with DuckDB (#1605)
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+* Test DuckDB CSV reporting through ODBC
+
+* Explore DuckDB monthly sales from CSV exports
+
+* Run DuckDB reporting SQL directly through SQLPage
+
+**File**: `.github/hurl-examples.yml` (modified, +8/-0)
 ```diff
-@@ -2,6 +2,8 @@
+@@ -63,6 +63,14 @@ all_examples:
+   - 'src/app_config.rs'
+   - 'src/webserver/database/connect.rs'
  
- ## unreleased
++# Follow a monthly CSV report from a SQLPage table into ODBC detail rows.
++'examples/duckdb-reporting':
++  - 'src/app_config.rs'
++  - 'src/webserver/http_request_info.rs'
++  - 'src/webserver/request_variables.rs'
++  - 'src/webserver/database/**'
++  - 'sqlpage/templates/table.handlebars'
++
+ # Create a PostgreSQL-backed page, request it, and render dynamic rows in a table.
+ 'examples/SQLPage developer user interface':
+   - 'src/filesystem.rs'
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +10/-6)
+```diff
+@@ -279,6 +279,7 @@ jobs:
+           - platform: linux/amd64
+             variant: duckdb
+             tag_suffix: -linux-amd64-duckdb
++            export: true
+           - platform: linux/arm64
+             variant: duckdb
+             tag_suffix: -linux-arm64-duckdb
+@@ -318,8 +319,7 @@ jobs:
+         with:
+           username: ${{ env.REGISTRY_USERNAME }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
+-      # The Hurl examples run against a real image, so the one platform they use
+-      # is also exported as a tarball instead of only being pushed by digest.
++      # Export both amd64 variants for the Hurl examples.
+       - name: Build image for Hurl examples
+         if: matrix.export
+         uses: docker/build-push-action@v7
+@@ -330,7 +330,7 @@ jobs:
+           labels: ${{ steps.meta.outputs.labels }}
+           tags: |
+             ${{ steps.meta.outputs.tags }}
+-            ${{ env.REGISTRY_IMAGE }}:main
++            ${{ env.REGISTRY_IMAGE }}:main${{ matrix.variant == 'duckdb' && '-duckdb' || '' }}
+           outputs: type=docker,dest=${{ runner.temp }}/sqlpage.tar
+           cache-from: |
+             type=gha,scope=${{ steps.cache-scope.outputs.artifact }}
+@@ -342,7 +342,7 @@ jobs:
+         if: matrix.export
+         uses: actions/upload-artifact@v7
+         with:
+-          name: sqlpage-linux-amd64-minimal-image
++          name: sqlpage-linux-amd64-${{ matrix.variant }}-image
+           path: ${{ runner.temp }}/sqlpage.tar
+           if-no-files-found: error
+           retention-days: 1
+@@ -424,6 +424,8 @@ jobs:
+       fail-fast: false
+       matrix:
+         example: ${{ fromJSON(needs.hurl_examples.outputs.examples) }}
++    env:
++      SQLPAGE_IMAGE_VARIANT: ${{ matrix.example == 'examples/duckdb-reporting' && 'duckdb' || 'minimal' }}
+     steps:
+       - uses: actions/checkout@v7
+       - name: Install Hurl
+@@ -435,12 +437,14 @@ jobs:
+       - name: Download SQLPage image
+         uses: actions/download-artifact@v8
+         with:
+-          name: sqlpage-linux-amd64-minimal-image
++          name: sqlpage-linux-amd64-${{ env.SQLPAGE_IMAGE_VARIANT }}-image
+           path: ${{ runner.temp }}/sqlpage-image
+       - name: Load SQLPage image
+         run: |
+           docker load --input "${{ runner.temp }}/sqlpage-image/sqlpage.tar"
+-          docker tag "${{ env.REGISTRY_IMAGE }}:main" "${{ env.REGISTRY_IMAGE }}:latest"
++          if [[ "$SQLPAGE_IMAGE_VARIANT" == minimal ]]; then
++            docker tag "${{ env.REGISTRY_IMAGE }}:main" "${{ env.REGISTRY_IMAGE }}:latest"
++          fi
+       - name: Run example Hurl test
+         run: scripts/test-examples-hurl.sh "${{ matrix.example }}"
  
-+- Set `wrap` on a `big_number` component to show long titles and descriptions across multiple lines.
-+
- ## v0.48.0 (2026-11-12)
- 
- - Updated Rust and browser dependencies, including ApexCharts 8.8.1, Tabler 1.7.4, Tabler icons 3.51, and Tom Select 2.7. Chart series names and labels now display HTML as text, fixing upstream script injection in legends and tooltips.
 ```
 
-**File**: `examples/official-site/sqlpage/migrations/49_big_number.sql` (modified, +1/-0)
+**File**: `examples/duckdb-reporting/README.md` (added, +19/-0)
 ```diff
-@@ -8,6 +8,7 @@ INSERT INTO component(name, icon, description, introduced_in_version) VALUES
- INSERT INTO parameter(component, name, description, type, top_level, optional) SELECT 'big_number', * FROM (VALUES
-     -- Top-level parameters (for the whole big_number list)
-     ('columns', 'The number of columns to display the big numbers in (default is one column per item).', 'INTEGER', TRUE, TRUE),
-+    ('wrap', 'Wrap long titles and descriptions onto multiple lines. By default, they are truncated with an ellipsis.', 'BOOLEAN', TRUE, TRUE),
-     -- id and class, at both levels, come from 99_shared_id_class_attributes.sql
-     -- Item-level parameters (for each big number)
-     ('title', 'The title or label for the big number.', 'TEXT', FALSE, TRUE),
+@@ -0,0 +1,19 @@
++# DuckDB CSV report
++
++Run `docker compose up` from this folder and open [the monthly sales report](http://localhost:8080/).
++Compare sales and revenue by month and region, then follow **View sales** to see
++the transactions and the targets in effect on their sale dates.
++
++Drop another monthly export into `sales/` with the same CSV columns to include
++it in the report. Both pages query the typed CSV files directly with DuckDB's
++`read_csv`. The summary groups dates into months with `time_bucket` and
++aggregates with `GROUP BY ALL`. The detail page uses `arg_max_null` to pick
++the regional target for the latest effective date on or before each sale.
++SQLPage builds the drill-down links and binds their month and region to the
++detail query. Request the detail page with `Accept: application/json` for JSON.
++
++Run the end-to-end test from the repository root.
++
++```sh
++scripts/test-examples-hurl.sh examples/duckdb-reporting
++```
 ```
 
-**File**: `sqlpage/templates/big_number.handlebars` (modified, +3/-3)
+**File**: `examples/duckdb-reporting/docker-compose.yml` (added, +10/-0)
 ```diff
-@@ -8,12 +8,12 @@
-   {{#unless ../columns}}style="min-width: 9rem;"{{/unless}}
-   {{~#if id}} id="{{id}}"{{/if~}}
-   >
--    <div class="card flex-fill {{#if color}}bg-{{color}}-lt{{/if}}" style="--tblr-card-spacer-y: 1rem;">
-+    <div class="card flex-fill {{#if ../wrap}}h-100 {{/if}}{{#if color}}bg-{{color}}-lt{{/if}}" style="--tblr-card-spacer-y: 1rem;">
-       <div class="card-body d-flex flex-column">
-         
-         {{#if title}}
-         <div class="d-flex align-items-center">
--          <div class="subheader text-truncate me-2">
-+          <div class="subheader me-2{{#unless ../wrap}} text-truncate{{/unless}}"{{#if ../wrap}} style="overflow-wrap: anywhere;"{{/if}}>
-             {{#if title_link}}
-               <a href="{{title_link}}" class="text-decoration-none"
-                  {{#if title_link_new_tab}}
-@@ -79,7 +79,7 @@
-        
-         {{#if description}}
-         <div class="d-flex flex-wrap mb-2" title="{{description}}">
--          <div class="text-truncate me-2">{{description}}</div>
-+          <div class="me-2{{#unless ../wrap}} text-truncate{{/unless}}"{{#if ../wrap}} style="overflow-wrap: anywhere;"{{/if}}>{{description}}</div>
-           {{#if change_percent}}
-           <div class="ms-auto">
-             <span class="text-{{#if (gte change_percent 0)}}success{{else}}danger{{/if}} d-inline-flex align-items-center lh-1">
+@@ -0,0 +1,10 @@
++services:
++  web:
++    image: ${SQLPAGE_IMAGE:-lovasoa/sqlpage:main-duckdb}
++    ports:
++      - "8080:8080"
++    volumes:
++      - .:/var/www:ro
++    environment:
++      # Keep the fixture small while crossing the baseline driver's 16-row batch boundary.
++      SQLPAGE_MAX_PENDING_ROWS: "16"
 ```
 
-**File**: `tests/end-to-end/fixtures/big-number/index.sql` (modified, +10/-0)
+**File**: `examples/duckdb-reporting/index.sql` (added, +26/-0)
 ```diff
-@@ -21,3 +21,13 @@ SELECT
-     'default-color' AS id,
-     'Default value' AS title,
-     '9,012' AS value;
+@@ -0,0 +1,26 @@
++select 'shell' as component, 'Monthly sales' as title;
++select 'table' as component, 'Sales by month and region' as title, 'Report' as markdown;
 +
-+SELECT 'big_number' AS component, 2 AS columns, $wrap = 'true' AS wrap;
-+
-+SELECT
-+    'long-text' AS id,
-+    'Items checked across all locations during the reporting period' AS title,
-+    120 AS value,
-+    'Includes items from the main collection and all storage locations.' AS description;
-+
-+SELECT 'short-text' AS id, 'Locations' AS title, 8 AS value;
++with sales as (
++    select region, amount, time_bucket(interval '1 month', sold_on) as sale_month
++    from read_csv(
++        'sales/*.csv',
++        header = true,
++        columns = {
++            'sale_id': 'INTEGER', 'region': 'VARCHAR',
++            'sold_on': 'DATE', 'amount': 'DECIMAL(12,2)'
++        }
++    )
++)
++select
++    strftime(sale_month, '%Y-%m') as Month,
++    region as Region,
++    count(*) as Sales,
++    sum(amount) as Revenue,
++    '[View sales](' || sqlpage.link(
++        'sales.sql',
++        json_object('month', sale_month, 'region', region)
++    ) || ')' as Report
++from sales
++group by all
++order by Month desc, Region;
 ```
 
-**File**: `tests/end-to-end/fixtures/big-number/test.ts` (modified, +34/-0)
+**File**: `examples/duckdb-reporting/sales.sql` (added, +26/-0)
 ```diff
-@@ -42,3 +42,37 @@ for (const theme of ["light", "dark"]) {
-     }
-   });
- }
+@@ -0,0 +1,26 @@
++select 'table' as component, 'Sales and targets' as title;
 +
-+test("long titles and descriptions wrap only when requested", async ({
-+  page,
-+}) => {
-+  await page.setViewportSize({ width: 640, height: 800 });
-+  for (const wrap of [false, true]) {
-+    await page.goto(`/big-number/?wrap=${wrap}`);
-+    const card = page.locator("#long-text .card");
-+    const title = card.getByText("Items checked across all locations", {
-+      exact: false,
-+    });
-+    const description = card.getByText(
-+      "Includes items from the main collection",
-+      {
-+        exact: false,
-+      },
-+    );
-+    for (const text of [title, description]) {
-+      const layout = await text.evaluate((element) => ({
-+        clipped: element.scrollWidth > element.clientWidth,
-+        multiline:
-+          element.clientHeight >
-+          1.5 * Number.parseFloat(getComputedStyle(element).lineHeight),
-+      }));
-+      expect(layout).toEqual({ clipped: !wrap, multiline: wrap });
++select
++    sales.sale_id,
++    sales.sold_on,
++    sales.amount,
++    arg_max_null(targets.target_amount, targets.effective_on) as target_amount
++from read_csv(
++    'sales/*.csv',
++    header = true,
++    columns = {
++        'sale_id': 'INTEGER', 'region': 'VARCHAR',
++        'sold_on': 'DATE', 'amount': 'DECIMAL(12,2)'
 +    }
-+    if (wrap) {
-+      const neighbor = page.locator("#short-text .card");
-+      expect((await card.boundingBox())?.height).toBe(
-+        (await neighbor.boundingBox())?.height,
-+      );
-+    }
-+  }
-+});
++) as sales
++left join read_csv(
++    'targets.csv',
++    header = true,
++    columns = {'region': 'VARCHAR', 'effective_on': 'DATE', 'target_amount': 'DECIMAL(12,2)'}
++) as targets
++    on sales.region = targets.region
++    and sales.sold_on >= targets.effective_on
++where time_bucket(interval '1 month', sales.sold_on) = cast($month as date)
++    and sales.region = $region
++group by all
++order by sales.sold_on desc, sales.sale_id desc;
+```
+
+**File**: `examples/duckdb-reporting/sales/2026-07.csv` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++sale_id,region,sold_on,amount
++1,North,2026-07-01,3.50
++2,North,2026-07-02,
++3,North,2026-07-03,-8.75
++4,South,2026-07-04,90.01
++5,North,2026-07-05,24.40
++6,North,2026-07-06,16.20
++7,North,2026-07-07,105.78
++8,North,2026-07-08,1.02
++9,North,2026-07-09,10.02
++10,South,2026-07-10,0.00
++11,North,2026-07-11,8.38
++12,North,2026-07-12,51.26
++13,North,2026-07-13,33.02
++14,North,2026-07-14,98.07
++15,North,2026-07-15,10.50
++16,North,2026-07-16,19.32
++17,North,2026-07-17,
++18,North,2026-07-18,30.14
++19,North,2026-07-19,24.92
++20,North,2026-07-20,1234.56
+```
+
+**File**: `examples/duckdb-reporting/sales/2026-08.csv` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++sale_id,region,sold_on,amount
++21,North,2026-08-01,40.00
++22,North,2026-08-03,60.00
++23,South,2026-08-04,17.25
+```
+
+---
+
+### Incident Patch 2: `15958af5` (2026-11-19)
+**Commit Message**: Exercise transactional user onboarding on SQL Server (#1606)
+
+* Test SQL Server form writes and recovery
+
+* Preserve capacity of SQL Server group lists
+
+* Exercise SQL Server JSON form memberships
+
+* Onboard SQL Server users and memberships in one transaction
+
+* Run native SQL Server onboarding in the SQLPage request
+
+**File**: `.github/hurl-examples.yml` (modified, +7/-0)
+```diff
+@@ -82,6 +82,13 @@ all_examples:
+   - 'src/webserver/database/sql_to_json.rs'
+   - 'sqlpage/templates/form.handlebars'
+ 
++# Round-trip SQL Server JSON multi-selects and recover after a failed write.
++'examples/microsoft sql server advanced forms':
++  - 'src/webserver/http_request_info.rs'
++  - 'src/webserver/request_variables.rs'
++  - 'src/webserver/database/**'
++  - 'sqlpage/templates/form.handlebars'
++
+ # A real cookie jar round-trips an encoded space and removes it from a subfolder.
+ 'examples/read-and-set-http-cookies':
+   - 'src/render.rs'
+```
+
+**File**: `examples/microsoft sql server advanced forms/README.md` (modified, +18/-24)
+```diff
+@@ -1,34 +1,28 @@
+-# Handling json data in Microsoft SQL Server
++# Onboard users and assign groups with SQL Server
+ 
+-This demonstrates both how to produce and read json data from a SQL query
+-in MS SQL Server (or Azure SQL Database), for creating advanced forms.
+-
+-This lets your user interact with your database with a simple web interface,
+-even when you have multiple tables, with one-to-many relationships.
++Create groups, then use a SQLPage form to onboard users and assign their
++memberships. SQL Server saves the user and memberships together.
+ 
+ ![](./screenshots/app.png)
+ 
+-## Documentation
+-
+-SQLPage requires JSON to create multi-select input (dropdowns where an user can select multiple values).
+-The result of these multi-selects is a JSON array, which also needs to be read by SQL queries.
+-
+-This example demonstrates how to consume [JSON](https://en.wikipedia.org/wiki/JSON) data from a SQL Server database,
+-using the [`OPENJSON`](https://docs.microsoft.com/en-us/sql/t-sql/functions/openjson-transact-sql)
+-function to parse the JSON data into a table,
+-and [`FOR JSON PATH`](https://learn.microsoft.com/en-us/sql/relational-databases/json/format-query-results-as-json-with-for-json-sql-server)
+-to format query results as a JSON array.
++## Try it
+ 
++Run `docker compose up` in this directory and open the [onboarding page](http://localhost:8080/).
++The database container runs `sqlcmd` to create the tables.
+ 
+-This demonstrates an application designed for managing groups and users, allowing the creation of new groups, adding users, and assigning users to one or multiple groups. 
++1. Create two groups. Use **View group** in the confirmation to jump to the new group. A blank description is saved as SQL `NULL`.
++2. Under **Add a user**, enter a name and select both groups. You can also add a user with no groups.
++3. Submit the form and check the memberships under **Users**.
+ 
+-The application has the following sections:
++## How it works
+ 
+-- **Create a New Group**: A form where users can enter the name of a new group.
+-- **Groups Display**: A list of existing groups.
+-- **Add a User**: A form where users can enter the name of a new user and select one or multiple groups to assign to this user.
+-- **Users Display**: A list of existing users and their associated group memberships.
++- `OUTPUT INSERTED` gives SQLPage the new group and its generated ID for the confirmation link. `FOR JSON PATH` supplies the groups to the multi-select.
++- SQLPage binds the submitted name and group choices into the `IF ... BEGIN ... END` batch in `index.sql`. `SCOPE_IDENTITY()` returns the new user ID, and `OPENJSON ... WITH` reads the selected IDs as integers.
++- The batch saves the user and memberships in one transaction. If a selected group has been deleted since the form loaded, the foreign key rejects the selection and `XACT_ABORT` rolls back the entire transaction.
++- `CROSS APPLY` and `STRING_AGG` summarize memberships for each user. Users without memberships stay visible.
+ 
+-When users submit the form, their selections are packaged up and sent to the database server. The server receives these selections as a structured JSON array.
++Run the end-to-end test from the repository root.
+ 
+-The database then takes this list of selections and temporarily converts it into a format it can work with using the `OPENJSON` function, before saving the information permanently in the database tables. This allows the system to process multiple selections at once in an efficient way.
++```sh
++scripts/test-examples-hurl.sh 'examples/microsoft sql server advanced forms'
++```
+```
+
+**File**: `examples/microsoft sql server advanced forms/docker-compose.yml` (modified, +1/-0)
+```diff
+@@ -11,6 +11,7 @@ services:
+     environment:
+       RUST_LOG: sqlpage=debug
+       DATABASE_URL: mssql://sa:YourStrong!Passw0rd@db:1433/
++      MAX_DATABASE_POOL_CONNECTIONS: 1
+   db:
+     image: mcr.microsoft.com/mssql/server:2022-latest
+     volumes:
+```
+
+**File**: `examples/microsoft sql server advanced forms/index.sql` (modified, +49/-20)
+```diff
+@@ -1,37 +1,66 @@
+ select 'form' as component, 'Create a new Group' as title, 'Create' as validate;
+-select 'Name' as name;
++select 'Name' as name, 255 as maxlength;
++select 'GroupDescription' as name, 'Description (optional)' as label, 80 as maxlength;
+ 
+-insert into groups(name) select :Name where :Name is not null;
++set GroupDescription = nullif(:GroupDescription, N'');
++insert into dbo.groups (name, description)
++output
++    'alert' as component,
++    'success' as color,
++    'Group created' as title,
++    inserted.name as description,
++    concat('#group-', inserted.id) as link,
++    'View group' as link_text
++select :Name, :GroupDescription
++where :Name is not null;
+ 
+ select 'list' as component, 'Groups' as title, 'No group yet' as empty_title;
+-select name as title from groups;
++select concat('group-', id) as id, name as title, description
++from dbo.groups
++order by id;
+ 
+ select 'form' as component, 'Add a user' as title, 'Add' as validate;
+ select 'UserName' as name, 'Name' as label;
+-select 
+-    'Memberships[]'  as name,
++select
++    'Memberships[]' as name,
+     'Group memberships' as label,
+     'select' as type,
+-    1     as multiple,
+-    'press ctrl to select multiple values' as description,
++    1 as multiple,
+     (
+-        SELECT name as label, id as value
+-        FROM groups
+-        FOR JSON PATH -- this builds a JSON array of objects
++        select name as label, id as value
++        from dbo.groups
++        order by id
++        for json path
+     ) as options;
+ 
+-insert into users(name) select :UserName where :UserName is not null;
++if :UserName is not null
++begin
++    set nocount on;
++    set xact_abort on;
++
++    begin transaction;
++
++    insert into dbo.users (name) values (:UserName);
++    declare @user_id int = scope_identity();
++
++    insert into dbo.group_members (group_id, user_id)
++    select group_id, @user_id
++    from openjson(:Memberships) with (group_id int '$');
+ 
+-insert into group_members(group_id, user_id)
+-select json_elem.value, IDENT_CURRENT('users')
+-from openjson(:Memberships) as json_elem
+-where :Memberships is not null;
++    commit transaction;
++end;
+ 
+ select 'list' as component, 'Users' as title, 'No user yet' as empty_title;
+ select
+     users.name as title,
+-    string_agg(groups.name, ', ') as description
+-from users
+-left join group_members on users.id = group_members.user_id
+-left join groups on groups.id = group_members.group_id
+-group by users.id, users.name;
+\ No newline at end of file
++    memberships.description,
++    iif(memberships.description is null, 'No groups assigned', null) as description_md
++from dbo.users
++cross apply (
++    select string_agg(cast(groups.name as nvarchar(max)), N', ')
++        within group (order by groups.id) as description
++    from dbo.group_members
++    join dbo.groups on groups.id = group_members.group_id
++    where group_members.user_id = users.id
++) as memberships
++order by users.id;
+```
+
+**File**: `examples/microsoft sql server advanced forms/sqlpage/mssql-migrations/0001_db_init.sql` (modified, +3/-2)
+```diff
+@@ -1,11 +1,12 @@
+ create table users (
+     id int primary key IDENTITY(1,1),
+-    name varchar(255) not null
++    name nvarchar(255) not null
+ );
+ 
+ create table groups (
+     id int primary key IDENTITY(1,1),
+-    name varchar(255) not null
++    name nvarchar(255) not null,
++    description nvarchar(80) null
+ );
+ 
+ create table group_members (
+```
+
+**File**: `examples/microsoft sql server advanced forms/test.hurl` (removed, +0/-1)
+```diff
+@@ -1 +0,0 @@
+-../../test.hurl
+\ No newline at end of file
+```
+
+**File**: `examples/microsoft sql server advanced forms/test.hurl` (added, +100/-0)
+```diff
+@@ -0,0 +1,100 @@
++GET http://127.0.0.1:8080/
++HTTP 200
++[Asserts]
++xpath "//form//input[@name='Name']" exists
++xpath "//form//input[@name='GroupDescription']" exists
++xpath "//code[@class='sqlpage-error-description']" not exists
++
++# The form maps a blank description to SQL NULL before binding the insert.
++POST http://127.0.0.1:8080/
++[FormParams]
++Name: L'équipe 東京
++GroupDescription:
++HTTP 200
++[Captures]
++unicode_group_id: xpath "string(//select[@name='Memberships[]'][@multiple]/option[normalize-space(.)=\"L'équipe 東京\"]/@value)"
++[Asserts]
++xpath "//code[@class='sqlpage-error-description']" not exists
++variable "unicode_group_id" matches "^[0-9]+$"
++xpath "string(//div[contains(@class, 'alert-success')][.//h4='Group created']//div[@class='alert-description'])" == "L'équipe 東京"
++xpath "//div[contains(@class, 'alert-success')][.//h4='Group created']//a[@href='#group-{{unicode_group_id}}']" exists
++xpath "//div[@id='group-{{unicode_group_id}}']" exists
++
++GET http://127.0.0.1:8080/
++Accept: application/json
++HTTP 200
++[Asserts]
++jsonpath "$[4].id" == "group-{{unicode_group_id}}"
++jsonpath "$[4].title" == "L'équipe 東京"
++jsonpath "$[4].description" == null
++
++# SQL Server rejects descriptions longer than the column's 80 characters.
++POST http://127.0.0.1:8080/
++[FormParams]
++Name: Rejected group
++GroupDescription: This description is more than eighty characters long and exceeds the database column size.
++HTTP 200
++[Asserts]
++xpath "string(//code[@class='sqlpage-error-description'])" contains "would be truncated"
++xpath "//div[contains(@class, 'alert-success')][.//h4='Group created']" not exists
++
++POST http://127.0.0.1:8080/
++[FormParams]
++Name: Recovered group
++GroupDescription: Saved after a failed write
++HTTP 200
++[Captures]
++recovered_group_id: xpath "string(//select[@name='Memberships[]'][@multiple]/option[normalize-space(.)='Recovered group']/@value)"
++[Asserts]
++xpath "//code[@class='sqlpage-error-description']" not exists
++xpath "//select[@name='Memberships[]'][@multiple]/option[@value='{{unicode_group_id}}']" exists
++variable "recovered_group_id" matches "^[0-9]+$"
++
++GET http://127.0.0.1:8080/
++Accept: application/json
++HTTP 200
++[Asserts]
++jsonpath "$[*].title" not contains "Rejected group"
++jsonpath "$[5].id" == "group-{{recovered_group_id}}"
++jsonpath "$[5].title" == "Recovered group"
++jsonpath "$[5].description" == "Saved after a failed write"
++
++# A stale group selection rejects the whole onboarding transaction.
++POST http://127.0.0.1:8080/
++Content-Type: application/x-www-form-urlencoded
++`UserName=Report+Reader&Memberships%5B%5D={{unicode_group_id}}&Memberships%5B%5D=-1`
++HTTP 200
++[Asserts]
++xpath "string(//code[@class='sqlpage-error-description'])" contains "FK_group_members_groups"
++
++GET http://127.0.0.1:8080/
++Accept: application/json
++HTTP 200
++[Asserts]
++jsonpath "$[*].title" not contains "Report Reader"
++
++# Submit two options rendered from FOR JSON PATH. SQLPage binds the selections
++# as a JSON array and OPENJSON expands it into membership rows.
++POST http://127.0.0.1:8080/
++Content-Type: application/x-www-form-urlencoded
++`UserName=Report+Reader&Memberships%5B%5D={{unicode_group_id}}&Memberships%5B%5D={{recovered_group_id}}`
++HTTP 200
++[Asserts]
++xpath "//code[@class='sqlpage-error-description']" not exists
++
++POST http://127.0.0.1:8080/
++[FormParams]
++UserName: Élodie
++HTTP 200
++[Asserts]
++xpath "//code[@class='sqlpage-error-description']" not exists
++xpath "//p[normalize-space()='No groups assigned']" exists
++
++GET http://127.0.0.1:8080/
++Accept: application/json
++HTTP 200
++[Asserts]
++jsonpath "$[10].title" == "Report Reader"
++jsonpath "$[10].description" == "L'équipe 東京, Recovered group"
++jsonpath "$[11].title" == "Élodie"
++jsonpath "$[11].description" == null
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1606** (2026-11-19): Exercise transactional user onboarding on SQL Server (@lovasoa)
+- **PR #1605** (2026-11-19): Explore monthly sales exports with DuckDB (@lovasoa)
 - **PR #1603** (2026-11-17): Let big number titles and descriptions wrap (@lovasoa)
+- **PR #1602** (2026-11-19): Keep every file of a `multiple` file input, and add `sqlpage.persist_uploaded_files` (@theochr72)
 - **PR #1601** (2026-11-12): Update 'http_only' cookie description (@lovasoa)
 - **PR #1595** (2026-11-12): refactor(database) :: decode rows into named columns first (@81reap)
-- **PR #1594** (2026-11-12): refactor(database) :: share connection setup between pools (@81reap)
-- **PR #1593** (2026-11-12): test(transactions) :: check the rollback through a page (@81reap)
-- **PR #1592** (2026-11-10): fix(deps) :: stop trusting compromised eMudhra certificates (@81reap)
 
 ---
 
@@ -1303,21 +1742,27 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Let big number titles and descriptions wrap
+## X. Explore monthly sales exports with DuckDB
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/hurl-examples.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1fe252ca`: Let big number titles and descriptions wrap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c88c005c`: Explore monthly sales exports with DuckDB. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/hurl-examples.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Set `wrap` on a `big_number` component to show long titles and descriptions across multiple lines.
+# Follow a monthly CSV report from a SQLPage table into ODBC detail rows.
+'examples/duckdb-reporting':
+  - 'src/app_config.rs'
+  - 'src/webserver/http_request_info.rs'
+  - 'src/webserver/request_variables.rs'
+  - 'src/webserver/database/**'
+  - 'sqlpage/templates/table.handlebars'
 
 ```
 
@@ -1328,4 +1773,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1fe252ca` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c88c005c` are properly handled with clean fallback behavior.

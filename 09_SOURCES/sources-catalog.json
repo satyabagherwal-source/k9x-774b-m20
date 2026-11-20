@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "3e89f3b5",
+    "sourceVersion": "3599c4e9",
     "license": "Apache-2.0",
-    "contentHash": "8bd4b8f0fba215e1b43c1cfa4ca336a66debfd92e4e1bfa77771c25ff55ca9c6",
-    "lastHarvestedAt": "2026-11-18T16:41:05.399Z",
+    "contentHash": "fc52ea10ef1f60e9af0653a8f8330ad011fabea70af9b9cfccfe86acd53f74f9",
+    "lastHarvestedAt": "2026-11-20T04:48:27.214Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -4723,10 +4723,10 @@
     "repository": "sqlpage/SQLPage",
     "platform": "github",
     "sourceUrl": "https://github.com/sqlpage/SQLPage",
-    "sourceVersion": "1fe252ca",
+    "sourceVersion": "c88c005c",
     "license": "MIT",
-    "contentHash": "4882323f14429fae10178e63fc6856f3e9c4e152f53a21e6610729f957faeea1",
-    "lastHarvestedAt": "2026-11-18T06:49:17.639Z",
+    "contentHash": "382485af7fa8f5f2b5bf014630f6d10bb365edf344c55ca99d79815956713243",
+    "lastHarvestedAt": "2026-11-20T04:48:37.194Z",
     "learningId": "learn-github-sqlpage-sqlpage"
   },
   "douyinfe-semi-design": {

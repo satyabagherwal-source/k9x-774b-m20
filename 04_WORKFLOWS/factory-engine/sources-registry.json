@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T04:02:36.434Z",
-    "lastVerified": "2026-11-20T04:02:36.434Z",
+    "lastChecked": "2026-11-20T04:48:34.044Z",
+    "lastVerified": "2026-11-20T04:48:34.044Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T04:37:58.373Z",
-    "lastVerified": "2026-11-20T04:37:58.373Z",
+    "lastChecked": "2026-11-20T04:48:40.271Z",
+    "lastVerified": "2026-11-20T04:48:40.271Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1887,12 +1887,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "projectdiscovery/nuclei",
+    "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T23:15:42.551Z",
-    "lastVerified": "2026-11-19T23:15:42.551Z",
+    "lastChecked": "2026-11-20T04:48:29.141Z",
+    "lastVerified": "2026-11-20T04:48:29.141Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -1901,7 +1901,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b1d47824"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -3272,14 +3273,14 @@
     "officialUrl": "https://github.com/GitoxideLabs/gitoxide",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T16:41:04.416Z",
-    "lastVerified": "2026-11-18T16:41:04.416Z",
+    "lastChecked": "2026-11-20T04:48:26.063Z",
+    "lastVerified": "2026-11-20T04:48:26.063Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "8bd4b8f0fba215e1b43c1cfa4ca336a66debfd92e4e1bfa77771c25ff55ca9c6",
+    "contentHash": "fc52ea10ef1f60e9af0653a8f8330ad011fabea70af9b9cfccfe86acd53f74f9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5004,11 +5005,21 @@
     "revisionIdentifier": "45007a31"
   },
   "sqlpage-sqlpage": {
-    "name": "SQLPage",
+    "name": "sqlpage/SQLPage",
     "officialUrl": "https://github.com/sqlpage/SQLPage",
-    "lastChecked": "2026-11-18T22:57:56.653Z",
-    "revisionIdentifier": "1fe252ca",
-    "lastVerified": "2026-11-18T22:57:56.653Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-20T04:48:36.291Z",
+    "lastVerified": "2026-11-20T04:48:36.291Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-sqlpage-sqlpage",
+    "contentHash": "382485af7fa8f5f2b5bf014630f6d10bb365edf344c55ca99d79815956713243",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "salvo-rs-salvo": {
     "name": "salvo",
@@ -5359,9 +5370,9 @@
   "goss-org-goss": {
     "name": "goss",
     "officialUrl": "https://github.com/goss-org/goss",
-    "lastChecked": "2026-11-19T00:22:45.687Z",
+    "lastChecked": "2026-11-20T04:48:26.531Z",
     "revisionIdentifier": "dcd065d9",
-    "lastVerified": "2026-11-19T00:22:45.687Z"
+    "lastVerified": "2026-11-20T04:48:26.531Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -9249,5 +9260,19 @@
     "lastChecked": "2026-11-20T04:37:48.474Z",
     "revisionIdentifier": "ef33ee57",
     "lastVerified": "2026-11-20T04:37:48.474Z"
+  },
+  "matthews-wong-structured-data-validator": {
+    "name": "structured-data-validator",
+    "officialUrl": "https://github.com/matthews-wong/structured-data-validator",
+    "lastChecked": "2026-11-20T04:48:21.578Z",
+    "revisionIdentifier": "e85df7a4",
+    "lastVerified": "2026-11-20T04:48:21.578Z"
+  },
+  "oliviertassinari-react-swipeable-views": {
+    "name": "react-swipeable-views",
+    "officialUrl": "https://github.com/oliviertassinari/react-swipeable-views",
+    "lastChecked": "2026-11-20T04:48:24.015Z",
+    "revisionIdentifier": "c637ad7d",
+    "lastVerified": "2026-11-20T04:48:24.015Z"
   }
 }

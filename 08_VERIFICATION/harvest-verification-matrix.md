@@ -11459,3 +11459,5 @@
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T04:30:04.542Z` | `sigstore-cosign` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5CB7BD90` [Domain D] | Yes (`968ce483...`) |
 | `CYCLE-20261120-N6H1` | `2026-11-20T04:37:48.037Z` | `o2sh/onefetch` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md` | Yes (`5c46c91a...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T04:38:24.569Z` | `o2sh-onefetch` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C031D2B0` [Domain D] | Yes (`d92151a9...`) |
+| `CYCLE-20261120-0VNU` | `2026-11-20T04:48:27.210Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9512` | Yes (`fc52ea10...`) |
+| `CYCLE-20261120-13D3` | `2026-11-20T04:48:37.191Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9513` | Yes (`382485af...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T04:37:48.051Z",
+  "last_updated": "2026-11-20T04:48:37.202Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "8bd4b8f0fba215e1b43c1cfa4ca336a66debfd92e4e1bfa77771c25ff55ca9c6",
-      "verified_at": "2026-11-18T16:41:05.407Z",
+      "content_hash": "fc52ea10ef1f60e9af0653a8f8330ad011fabea70af9b9cfccfe86acd53f74f9",
+      "verified_at": "2026-11-20T04:48:27.222Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T16:41:05.407Z"
+      "last_updated": "2026-11-20T04:48:27.222Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",
@@ -7206,14 +7206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sqlpage-sqlpage",
-      "content_hash": "4882323f14429fae10178e63fc6856f3e9c4e152f53a21e6610729f957faeea1",
-      "verified_at": "2026-11-18T06:49:17.646Z",
+      "content_hash": "382485af7fa8f5f2b5bf014630f6d10bb365edf344c55ca99d79815956713243",
+      "verified_at": "2026-11-20T04:48:37.201Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T06:49:17.646Z"
+      "last_updated": "2026-11-20T04:48:37.201Z"
     },
     "DouyinFE/semi-design": {
       "repository": "DouyinFE/semi-design",

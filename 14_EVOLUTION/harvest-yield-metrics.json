@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T04:37:48.047Z",
-  "total_cycles_completed": 10926,
-  "total_learnings_persisted": 10926,
-  "total_rules_promoted": 10292,
+  "last_updated": "2026-11-20T04:48:37.199Z",
+  "total_cycles_completed": 10928,
+  "total_learnings_persisted": 10928,
+  "total_rules_promoted": 10294,
   "history": [
-    {
-      "timestamp": "2026-11-19T07:41:45.171Z",
-      "repository": "medialab/xan",
-      "learningId": "learn-github-medialab-xan",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T07:42:20.033Z",
-      "repository": "unsloth/embeddinggemma-2-GGUF",
-      "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T07:51:02.044Z",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -1403,6 +1389,20 @@
       "repository": "o2sh/onefetch",
       "learningId": "learn-github-o2sh-onefetch",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T04:48:27.219Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T04:48:37.199Z",
+      "repository": "sqlpage/SQLPage",
+      "learningId": "learn-github-sqlpage-sqlpage",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

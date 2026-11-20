@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T04:29:29.508Z",
+  "updated_at": "2026-11-20T04:48:41.370Z",
   "stats": {
-    "total_discovered": 6180,
-    "approved_pending_harvest": 5843,
+    "total_discovered": 6182,
+    "approved_pending_harvest": 5845,
     "harvested_count": 0,
     "rejected_count": 337,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5825,
-      "OFFICIAL_DOCUMENTATION": 193,
+      "COMMUNITY_AND_EXPERT": 5826,
+      "OFFICIAL_DOCUMENTATION": 194,
       "STANDARDS_AND_SPECIFICATIONS": 114,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 36,
@@ -133624,6 +133624,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
         "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-53BF4731ECC4": {
+      "id": "SRC-53BF4731ECC4",
+      "url": "https://docs.microsoft.com/en-us/sql/t-sql/functions/openjson-transact-sql",
+      "title": "https://docs.microsoft.com/en-us/sql/t-sql/functions/openjson-transact-sql",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:48:41.332Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-D86A6D5767B2": {
+      "id": "SRC-D86A6D5767B2",
+      "url": "https://learn.microsoft.com/en-us/sql/relational-databases/json/format-query-results-as-json-with-for-json-sql-server",
+      "title": "https://learn.microsoft.com/en-us/sql/relational-databases/json/format-query-results-as-json-with-for-json-sql-server",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:48:41.370Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
       }
     }
   }
