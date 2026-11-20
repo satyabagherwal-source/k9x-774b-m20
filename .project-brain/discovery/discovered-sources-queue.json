@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T07:06:21.832Z",
+  "updated_at": "2026-11-20T07:36:07.400Z",
   "stats": {
-    "total_discovered": 6264,
-    "approved_pending_harvest": 5924,
+    "total_discovered": 6268,
+    "approved_pending_harvest": 5928,
     "harvested_count": 0,
     "rejected_count": 340,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5906,
+      "COMMUNITY_AND_EXPERT": 5908,
       "OFFICIAL_DOCUMENTATION": 195,
-      "STANDARDS_AND_SPECIFICATIONS": 115,
+      "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 36,
       "LEGAL_AND_REGULATORY": 2,
@@ -135451,6 +135451,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
         "fileName": "greptimeteam-greptimedb-learnings.md"
+      }
+    },
+    "SRC-D01A9BA38BA3": {
+      "id": "SRC-D01A9BA38BA3",
+      "url": "https://www.rfc-editor.org/rfc/rfc5804",
+      "title": "IETF RFC 5804",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T07:36:06.425Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-0DA70D4B9A50": {
+      "id": "SRC-0DA70D4B9A50",
+      "url": "https://www.rfc-editor.org/rfc/rfc4648",
+      "title": "IETF RFC 4648",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T07:36:06.467Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-080F39E243DD": {
+      "id": "SRC-080F39E243DD",
+      "url": "https://developer.android.com/about/versions/14/behavior-changes-all",
+      "title": "https://developer.android.com/about/versions/14/behavior-changes-all",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T07:36:07.360Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+        "fileName": "juullabs-kable-learnings.md"
+      }
+    },
+    "SRC-2072A3B069D9": {
+      "id": "SRC-2072A3B069D9",
+      "url": "https://cs.android.com/android/platform/superproject/main/+/main:packages/modules/Bluetooth/framework/java/android/bluetooth/BluetoothDevice.java",
+      "title": "https://cs.android.com/android/platform/superproject/main/+/main:packages/modules/Bluetooth/framework/java/android/bluetooth/BluetoothDevice.java",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T07:36:07.400Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
+        "fileName": "juullabs-kable-learnings.md"
       }
     }
   }

@@ -11500,3 +11500,6 @@
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T07:06:21.580Z` | `greptimeteam-greptimedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-28C46858` [Domain K] | Yes (`f5b96b27...`) |
 | `CYCLE-20261120-97WX` | `2026-11-20T07:14:54.417Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9538` | Yes (`c36b19d8...`) |
 | `CYCLE-20261120-9CS7` | `2026-11-20T07:15:00.727Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9539` | Yes (`f89a56be...`) |
+| `CYCLE-20261120-09PA` | `2026-11-20T07:35:56.446Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9540` | Yes (`82637fe0...`) |
+| `CYCLE-20261120-0DB0` | `2026-11-20T07:36:01.116Z` | `JuulLabs/kable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9541` | Yes (`af7bab64...`) |
+| `CYCLE-20261120-0ERR` | `2026-11-20T07:36:03.015Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9542` | Yes (`c53b7789...`) |

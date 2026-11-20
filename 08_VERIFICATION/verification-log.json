@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-8WMZ",
-    "timestamp": "2026-11-18T10:55:16.283Z",
-    "repository": "dkhamsing/open-source-ios-apps",
-    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-    "contentHash": "daa288c651d549c01207fd824b3334fdd2046fd8a9917334b237273ca7f27d54",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-NJLZ",
-    "timestamp": "2026-11-18T11:06:39.239Z",
-    "repository": "deepseek-ai/DeepSeek-R1",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-    "contentHash": "482de0a7c8b845b531276c496b7cbd4b76c89a27a09143dac6bcb22cb5b6f69c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-NLC0",
-    "timestamp": "2026-11-18T11:06:41.472Z",
-    "repository": "max-sixty/worktrunk",
-    "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "c26f2bea60f19bd103703a8d8210289def4c94e104b3dabbab2033739d021465",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-NPBV",
     "timestamp": "2026-11-18T11:06:46.651Z",
     "repository": "react-hook-form/react-hook-form",
@@ -7490,6 +7445,51 @@
     "repository": "ydb-platform/ydb",
     "learningId": "learn-github-ydb-platform-ydb",
     "contentHash": "f89a56be80377a11670eee46a482b9fc0a3af1936d72e46582ed8ab4c394d5f3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-09PA",
+    "timestamp": "2026-11-20T07:35:56.446Z",
+    "repository": "pimalaya/himalaya",
+    "learningId": "learn-github-pimalaya-himalaya",
+    "contentHash": "82637fe01b7493f03326b5e828d4108cbfffbed8526a0d728064c6412db6ea89",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-0DB0",
+    "timestamp": "2026-11-20T07:36:01.116Z",
+    "repository": "JuulLabs/kable",
+    "learningId": "learn-github-juullabs-kable",
+    "contentHash": "af7bab64cdef4af4aaedb59f591e79af64c07b89c2e925de86351403ef103d35",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-0ERR",
+    "timestamp": "2026-11-20T07:36:03.015Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "c53b7789c2a08892cd93e03a49711aa448965c031b4d4f92d4b8a4bbb49d1693",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

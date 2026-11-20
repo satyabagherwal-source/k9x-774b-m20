@@ -11533,3 +11533,6 @@ Every entry in this ledger must capture:
 | `learn-dom-k-28c46858` | `project://greptimeteam-greptimedb` | `5dec7b19` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md` | 2026-11-20T07:06:21.580Z |
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `e7bfa815` | Multi-dimensional audit evidence | 2026-11-20T07:14:54.421Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `7b95bfd8` | Multi-dimensional audit evidence | 2026-11-20T07:15:00.731Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `a5623dca` | Multi-dimensional audit evidence | 2026-11-20T07:35:56.450Z |
+| `learn-github-juullabs-kable` | `https://github.com/JuulLabs/kable` | `9836c4e2` | Multi-dimensional audit evidence | 2026-11-20T07:36:01.120Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `a4d2f0c0` | Multi-dimensional audit evidence | 2026-11-20T07:36:03.019Z |

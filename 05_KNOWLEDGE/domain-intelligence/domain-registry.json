@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T07:23:44.554Z",
-  "total_records": 2100,
+  "last_updated": "2026-11-20T07:36:08.455Z",
+  "total_records": 2102,
   "domains": {
     "A": {
       "total": 17,
@@ -1359,7 +1359,7 @@
       ]
     },
     "H": {
-      "total": 496,
+      "total": 498,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1856,7 +1856,9 @@
         "domain_intelligence-technical-construction-intelligence-octodns-octodns-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria",
         "domain_intelligence-technical-construction-intelligence-crawlcove-robots-txt-tester-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-robots-txt-tester-learni"
+        "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-robots-txt-tester-learni",
+        "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-learnings-core-invariants"
       ]
     },
     "I": {
@@ -10132,8 +10134,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "repository": "open-policy-agent/opa",
-      "content_hash": "5459c87ba3e722a7b26863d08437d1523e7822957bc760ee862a6517ca93a44e",
-      "created_at": "2026-11-19T04:08:21.821Z"
+      "content_hash": "e1a6e146bc4ef245187d0fa8ca5b33c3418d0258c25fd975a967d446804666ef",
+      "created_at": "2026-11-20T07:36:03.360Z"
     },
     "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants",
@@ -10201,8 +10203,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-learnings-technical-construction-intelligence-open-policy-.md",
       "repository": "open-policy-agent-opa-learnings",
-      "content_hash": "f7e91d2bd9a25da60ed27d92dd5aadb3f274f21c08d22f3081d46bb47f292257",
-      "created_at": "2026-11-19T04:13:34.087Z"
+      "content_hash": "986d96cfcb55f0e0ac5eb3a362131dec407ad638a079a95e6843a3fc740c55e5",
+      "created_at": "2026-11-20T07:36:08.455Z"
     },
     "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-",
@@ -23499,8 +23501,8 @@
       "title": "Architecture Intelligence: JuulLabs/kable Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juullabs-kable-architecture-intelligence-juullabs-kable-core-invariants.md",
       "repository": "JuulLabs/kable",
-      "content_hash": "49a76f3cd731b835b80ed1b69236c8f97fd3673ec28abbedce384c30a0611fa2",
-      "created_at": "2026-11-16T03:57:17.588Z"
+      "content_hash": "3df276b8be7da0b1be52ddc567e1687aecade74b1ad271d8e00cd148c1896db5",
+      "created_at": "2026-11-20T07:36:01.456Z"
     },
     "DOM-F-4F38FEA1": {
       "record_id": "DOM-F-4F38FEA1",
@@ -23559,8 +23561,8 @@
       "title": "Architecture Intelligence: juullabs-kable-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juullabs-kable-learnings-architecture-intelligence-juullabs-kable-learnings-core.md",
       "repository": "juullabs-kable-learnings",
-      "content_hash": "f557b1a57592de77a205324ea9805c39651ca05d4778237700b4c58db305e491",
-      "created_at": "2026-11-16T03:57:50.567Z"
+      "content_hash": "a7ff4ec64303ef92b90a041bfc13a7b015ca57b1ec5cb9f236496d4e07b792a5",
+      "created_at": "2026-11-20T07:36:07.755Z"
     },
     "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-core-invariants",
@@ -35472,6 +35474,24 @@
       "confidence": 0.7,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-20T07:06:21.540Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: pimalaya/himalaya Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pimalaya-himalaya-technical-construction-intelligence-pimalaya-himalaya-core-inv.md",
+      "repository": "pimalaya/himalaya",
+      "content_hash": "5522fac204c7b000637b3d5861342dccffa6a6f543fddba0caaed6a1ff981b79",
+      "created_at": "2026-11-20T07:35:56.815Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: pimalaya-himalaya-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pimalaya-himalaya-learnings-technical-construction-intelligence-pimalaya-himalay.md",
+      "repository": "pimalaya-himalaya-learnings",
+      "content_hash": "19027dd5f4b5b33917259bcf6b286b706b0a8df8d2143d448266559b8569d879",
+      "created_at": "2026-11-20T07:36:06.823Z"
     }
   }
 }

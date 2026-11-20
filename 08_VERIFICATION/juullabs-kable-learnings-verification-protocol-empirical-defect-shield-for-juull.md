@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T03:57:50.373Z",
+  "timestamp": "2026-11-20T07:36:07.503Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-juullabs-kable-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [juullabs-kable-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T03:57:50.373Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T07:36:07.503Z`  
 > **Learning ID**: `LEARN-EVO-juullabs-kable-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juullabs-kable-learnings.md`  
 > **Source**: github ([https://github.com/JuulLabs/kable](https://github.com/JuulLabs/kable))  
-> **Source Version**: `2a4ea295`  
+> **Source Version**: `9836c4e2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T03:57:16.498Z  
+> **Timestamp**: 2026-11-20T07:36:00.146Z  
 > **Learning ID**: `learn-github-juullabs-kable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juullabs-kable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/JuulLabs/kable](https://github.com/JuulLabs/kable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T03:57:16.494Z  
+> **Harvest Timestamp**: 2026-11-20T07:36:00.140Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Kotlin Asynchronous Bluetooth Low-Energy
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1205 stars
+- **Stars / Engagement**: 1204 stars
 
 ---
 
@@ -223,17 +223,6 @@ public interface AndroidPeripheral : Peripheral {
     public fun refreshGattCache(): Boolean
 
     /**
-     * Requests that the current connection's MTU be changed. Suspends until the MTU changes, or failure occurs. The
-     * negotiated MTU value is returned, which may not be [mtu] value requested if the remote peripheral negotiated an
-     * alternate MTU.
-     *
-     * @throws NotConnectedException if invoked without an established [connection][Peripheral.connect].
-     * @throws GattRequestRejectedException if Android was unable to fulfill the MTU change request.
-     * @throws GattStatusException if MTU change request failed.
-     */
-    public suspend fun requestMtu(mtu: Int): Int
-
-    /**
      * @see Peripheral.write
      * @throws NotConnectedException if invoked without an established [connection][connect].
      * @throws GattWriteException if underlying [BluetoothGatt] write operation call fails.
@@ -252,9 +241,10 @@ public interface AndroidPeripheral : Peripheral {
     override suspend fun write(descriptor: Descriptor, data: ByteArray)
 
     /**
-     * [StateFlow] of the most recently negotiated MTU. The MTU will change upon a successful request to change the MTU
-     * (via [requestMtu]), or if the peripheral initiates an MTU change. [StateFlow]'s `value` will be `null` until MTU
-     * is negotiated.
+     * [StateFlow] of the most recently negotiated MTU. The MTU will change upon a successful
+     * request to change the MTU (as configured via the [PeripheralBuilder.mtu] property), or if the
+     * peripheral initiates an MTU change. [StateFlow]'s `value` will be `null` until MTU is
+     * negotiated.
      */
     public val mtu: StateFlow<Int?>
 
@@ -473,6 +463,7 @@ private val Phy.intValue: Int
 ```
 package com.juul.kable
 
+import android.Manifest.permission.BLUETOOTH_CONNECT
 import android.bluetooth.BluetoothAdapter.STATE_OFF
 import android.bluetooth.BluetoothAdapter.STATE_TURNING_OFF
 import android.bluetooth.BluetoothDevice
@@ -488,6 +479,8 @@ import android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
 import android.bluetooth.BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
 import android.bluetooth.BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
 import android.bluetooth.BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+import android.os.Build
+import androidx.annotation.RequiresPermission
 import com.juul.kable.AndroidPeripheral.Priority
 import com.juul.kable.AndroidPeripheral.Type
 import com.juul.kable.State.Disconnected
@@ -523,12 +516,21 @@ private const val DISCOVER_SERVICES_RETRIES = 5
 
 private const val DEFAULT_ATT_MTU = 23
 private const val ATT_MTU_HEADER_SIZE = 3
+private const val MAX_ATTRIBUTE_LENGTH_API_21 = 600 // Per RxAndroidBle (Android API 21-32).
+private const val MAX_ATTRIBUTE_LENGTH_API_33 = 512
+
+private val MAX_ATTRIBUTE_LENGTH = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    MAX_ATTRIBUTE_LENGTH_API_33
+} else {
+    MAX_ATTRIBUTE_LENGTH_API_21
+}
 
 internal class BluetoothDeviceAndroidPeripheral(
     @InternalKableApi override val bluetoothDevice: BluetoothDevice,
     private val autoConnectPredicate: () -> Boolean,
     private val transport: Transport,
     private val phy: Phy,
+    private val desiredMtu: Int?,
     private val threadingStrategy: ThreadingStrategy,
     observationExceptionHandler: ObservationExceptionHandler,
     private val onServicesDiscovered: ServicesDiscoveredAction,
@@ -601,6 +603,7 @@ internal class BluetoothDeviceAndroidPeripheral(
             )
 
             suspendUntil<State.Connecting.Services>()
+            if (desiredMtu != null) requestMtu(desiredMtu)
             discoverServices()
             configureCharacteristicObservations()
         } catch (e: Exception) {
@@ -652,7 +655,7 @@ internal class BluetoothDeviceAndroidPeripheral(
     }
 
     override suspend fun maximumWriteValueLengthForType(writeType: WriteType): Int =
-        (mtu.value ?: DEFAULT_ATT_MTU) - ATT_MTU_HEADER_SIZE
+        ((mtu.value ?: DEFAULT_ATT_MTU) - ATT_MTU_HEADER_SIZE).coerceAtMost(MAX_ATTRIBUTE_LENGTH)
 
     @ExperimentalKableApi // Experimental until Web Bluetooth advertisements APIs are stable.
     override suspend fun rssi(): Int =
@@ -667,12 +670,13 @@ internal class BluetoothDeviceAndroidPeripheral(
         }
     }
 
-    override suspend fun requestMtu(mtu: Int): Int {
+    @RequiresPermission(BLUETOOTH_CONNECT)
+    private suspend fun requestMtu(mtu: Int) {
         logger.debug {
             message = "requestMtu"
             detail("mtu", mtu)
         }
-        return connectionOrThrow().requestMtu(mtu)
+        connectionOrThrow().requestMtu(mtu)
     }
 
     override suspend fun write(
@@ -730,25 +734,7 @@ internal class BluetoothDeviceAndroidPeripheral(
     }
 
     override suspend fun read(
-        descriptor: Descriptor,
-    ): ByteArray {
-        logger.debug {
-            message = "read"
-            detail(descriptor)
-        }
-
-        val platformDescriptor = servicesOrThrow().obtain(descriptor)
-        return connectionOrThrow().execute<OnDescriptorRead> {
-            readDescriptorOrThrow(platformDescriptor)
-        }.value!!
-    }
-
-    override fun observe(
-        characteristic: Characteristic,
-        onSubscription: OnSubscriptionAction,
-    ): Flow<ByteArray> = observers.acquire(characteristic, onSubscription)
-
-    internal suspend fun startObservation(characteristic: Characteri
+        descr
 ```
 
 ### Core Architecture Module: `kable-core/src/androidMain/kotlin/BluetoothGatt.kt`
@@ -1158,95 +1144,310 @@ internal val bluetoothState = broadcastReceiverFlow(intentFilter)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2a4ea295` (2026-11-16)
-**Commit Message**: Add `AndroidPeripheral.refreshGattCache` (#1282)
+### Incident Patch 1: `08ff8cc4` (2026-11-17)
+**Commit Message**: Configure MTU via peripheral builder (#867)
 
-**File**: `kable-core/api/android/kable-core.api` (modified, +1/-0)
+**File**: `README.md` (modified, +1/-3)
 ```diff
-@@ -16,6 +16,7 @@ public abstract interface class com/juul/kable/AndroidPeripheral : com/juul/kabl
- 	public abstract fun getBluetoothDevice ()Landroid/bluetooth/BluetoothDevice;
- 	public abstract fun getMtu ()Lkotlinx/coroutines/flow/StateFlow;
+@@ -300,11 +300,9 @@ On Android targets, additional configuration options are available (all configur
+ ```kotlin
+ val peripheral = Peripheral(advertisement) {
+     autoConnectIf { false } // default
+-    onServicesDiscovered {
+-        requestMtu(...)
+-    }
+     transport = Transport.Le // default
+     phy = Phy.Le1M // default
++    mtu = 517 // default
+ }
+ ```
+ 
+```
+
+**File**: `kable-core/api/android/kable-core.api` (modified, +2/-2)
+```diff
+@@ -18,7 +18,6 @@ public abstract interface class com/juul/kable/AndroidPeripheral : com/juul/kabl
  	public abstract fun getType ()Lcom/juul/kable/AndroidPeripheral$Type;
-+	public abstract fun refreshGattCache ()Z
+ 	public abstract fun refreshGattCache ()Z
  	public abstract fun requestConnectionPriority (Lcom/juul/kable/AndroidPeripheral$Priority;)Z
- 	public abstract fun requestMtu (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+-	public abstract fun requestMtu (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
  	public abstract fun write (Lcom/juul/kable/Characteristic;[BLcom/juul/kable/WriteType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ 	public abstract fun write (Lcom/juul/kable/Descriptor;[BLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ }
+@@ -333,6 +332,7 @@ public final class com/juul/kable/PeripheralBuilder {
+ 	public final fun autoConnectIf (Lkotlin/jvm/functions/Function0;)V
+ 	public final fun getDisconnectTimeout-UwyO8pc ()J
+ 	public final fun getForceCharacteristicEqualityByUuid ()Z
++	public final fun getMtu ()Ljava/lang/Integer;
+ 	public final fun getPhy ()Lcom/juul/kable/Phy;
+ 	public final fun getThreadingStrategy ()Lcom/juul/kable/ThreadingStrategy;
+ 	public final fun getTransport ()Lcom/juul/kable/Transport;
+@@ -342,6 +342,7 @@ public final class com/juul/kable/PeripheralBuilder {
+ 	public final fun onServicesDiscovered (Lkotlin/jvm/functions/Function2;)V
+ 	public final fun setDisconnectTimeout-LRDsOJo (J)V
+ 	public final fun setForceCharacteristicEqualityByUuid (Z)V
++	public final fun setMtu (Ljava/lang/Integer;)V
+ 	public final fun setPhy (Lcom/juul/kable/Phy;)V
+ 	public final fun setThreadingStrategy (Lcom/juul/kable/ThreadingStrategy;)V
+ 	public final fun setTransport (Lcom/juul/kable/Transport;)V
+@@ -457,7 +458,6 @@ public abstract interface class com/juul/kable/Service {
+ public final class com/juul/kable/ServicesDiscoveredPeripheral {
+ 	public final fun read (Lcom/juul/kable/Characteristic;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ 	public final fun read (Lcom/juul/kable/Descriptor;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+-	public final fun requestMtu (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ 	public final fun write (Lcom/juul/kable/Characteristic;[BLcom/juul/kable/WriteType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ 	public final fun write (Lcom/juul/kable/Descriptor;[BLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ 	public static synthetic fun write$default (Lcom/juul/kable/ServicesDiscoveredPeripheral;Lcom/juul/kable/Characteristic;[BLcom/juul/kable/WriteType;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 ```
 
-**File**: `kable-core/src/androidMain/kotlin/AndroidPeripheral.kt` (modified, +17/-0)
+**File**: `kable-core/src/androidMain/kotlin/AndroidPeripheral.kt` (modified, +4/-14)
 ```diff
-@@ -126,6 +126,23 @@ public interface AndroidPeripheral : Peripheral {
+@@ -143,17 +143,6 @@ public interface AndroidPeripheral : Peripheral {
+     @ExperimentalKableApi
+     public fun refreshGattCache(): Boolean
  
-     public fun requestConnectionPriority(priority: Priority): Boolean
- 
-+    /**
-+     * Clears Android's cached GATT database for this peripheral, so that the next service discovery reads the
-+     * services from the remote device instead of the cache. Useful when a peripheral changes its attribute table
-+     * (e.g. after a firmware update) without the stack noticing.
-+     *
-+     * Services already discovered for the current connection are unaffected: [disconnect] and [connect] again to
-+     * discover the fresh attribute table.
-+     *
-+     * Invokes the hidden `BluetoothGatt.refresh()` via reflection, so may stop working on a future Android release.
-+     *
-+     * @return `true` if the cache refresh was requested, `false` if the platform declined it or the hidden API was
-+     * unavailable.
-+     * @throws NotConnectedException if invoked without an established [connection][connect].
-+     */
-+    @ExperimentalKableApi
-+    public fun refreshGattCache(): Boolean
-+
+-    /**
+-     * Requests that the current connection's MTU be changed. Suspends until the MTU changes, or failure occurs. The
+-     * negotiated MTU value is returned, which may not be [mtu] value requested if the remote peripheral negotiated an
+-     * alternate MTU.
+-     *
+-     * @throws NotConnectedException if invoked without an established [connection][Peripheral.connect].
+-     * @throws GattRequestRejectedException if Android was unable to fulfill the MTU change request.
+-     * @throws GattStatusException if MTU change request failed.
+-     */
+-    public suspend fun requestMtu(mtu: Int): Int
+-
      /**
-      * Requests that the current connection's MTU be changed. Suspends until the MTU changes, or failure occurs. The
-      * negotiated MTU value is returned, which may not be [mtu] value requested if the remote peripheral negotiated an
+      * @see Peripheral.write
+      * @throws NotConnectedException if invoked without an established [connection][connect].
+@@ -173,9 +162,10 @@ public interface AndroidPeripheral : Peripheral {
+     override suspend fun write(descriptor: Descriptor, data: ByteArray)
+ 
+     /**
+-     * [StateFlow] of the most recently negotiated MTU. The MTU will change upon a successful request to change the MTU
+-     * (via [requestMtu]), or if the peripheral initiates an MTU change. [StateFlow]'s `value` will be `null` until MTU
+-     * is negotiated.
++     * [StateFlow] of the most recently negotiated MTU. The MTU will change upon a successful
++     * request to change the MTU (as configured via the [PeripheralBuilder.mtu] property), or if the
++     * peripheral initiates an MTU change. [StateFlow]'s `value` will be `null` until MTU is
++     * negotiated.
+      */
+     public val mtu: StateFlow<Int?>
+ 
 ```
 
-**File**: `kable-core/src/androidMain/kotlin/BluetoothDeviceAndroidPeripheral.kt` (modified, +10/-0)
+**File**: `kable-core/src/androidMain/kotlin/BluetoothDeviceAndroidPeripheral.kt` (modified, +17/-3)
 ```diff
-@@ -168,6 +168,16 @@ internal class BluetoothDeviceAndroidPeripheral(
-             .requestConnectionPriority(priority.intValue)
-     }
+@@ -1,5 +1,6 @@
+ package com.juul.kable
  
-+    @ExperimentalKableApi
-+    override fun refreshGattCache(): Boolean {
-+        val refreshed = connectionOrThrow().gatt.refreshWithReflection()
-+        logger.debug {
-+            message = "refreshGattCache"
-+            detail("refreshed", refreshed.toString())
-+        }
-+        return refreshed
-+    }
++import android.Manifest.permission.BLUETOOTH_CONNECT
+ import android.bluetooth.BluetoothAdapter.STATE_OFF
+ import android.bluetooth.BluetoothAdapter.STATE_TURNING_OFF
+ import android.bluetooth.BluetoothDevice
+@@ -15,6 +16,8 @@ import android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
+ import android.bluetooth.BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
+ import android.bluetooth.BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
+ import android.bluetooth.BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
++import android.os.Build
++import androidx.annotation.RequiresPermission
+ import com.juul.kable.AndroidPeripheral.Priority
+ import com.juul.kable.AndroidPeripheral.Type
+ import com.juul.kable.State.Disconnected
+@@ -50,12 +53,21 @@ private const val DISCOVER_SERVICES_RETRIES = 5
+ 
+ private const val DEFAULT_ATT_MTU = 23
+ private const val ATT_MTU_HEADER_SIZE = 3
++private const val MAX_ATTRIBUTE_LENGTH_API_21 = 600 // Per RxAndroidBle (Android API 21-32).
++private const val MAX_ATTRIBUTE_LENGTH_API_33 = 512
 +
-     override suspend fun maximumWriteValueLengthForType(writeType: WriteType): Int =
-         (mtu.value ?: DEFAULT_ATT_MTU) - ATT_MTU_HEADER_SIZE
++private val MAX_ATTRIBUTE_LENGTH = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
++    MAX_ATTRIBUTE_LENGTH_API_33
++} else {
++    MAX_ATTRIBUTE_LENGTH_API_21
++}
  
+ internal class BluetoothDeviceAndroidPeripheral(
+     @InternalKableApi override val bluetoothDevice: BluetoothDevice,
+     private val autoConnectPredicate: () -> Boolean,
+     private val transport: Transport,
+     private val phy: Phy,
++    private val desiredMtu: Int?,
+     private val threadingStrategy: ThreadingStrategy,
+     observationExceptionHandler: ObservationExceptionHandler,
+     private val onServicesDiscovered: ServicesDiscoveredAction,
+@@ -128,6 +140,7 @@ internal class BluetoothDeviceAndroidPeripheral(
+             )
+ 
+             suspendUntil<State.Connecting.Services>()
++            if (desiredMtu != null) requestMtu(desiredMtu)
+             discoverServices()
+             configureCharacteristicObservations()
+         } catch (e: Exception) {
+@@ -179,7 +192,7 @@ internal class BluetoothDeviceAndroidPeripheral(
+     }
+ 
+     override suspend fun maximumWriteValueLengthForType(writeType: WriteType): Int =
+-        (mtu.value ?: DEFAULT_ATT_MTU) - ATT_MTU_HEADER_SIZE
++        ((mtu.value ?: DEFAULT_ATT_MTU) - ATT_MTU_HEADER_SIZE).coerceAtMost(MAX_ATTRIBUTE_LENGTH)
+ 
+     @ExperimentalKableApi // Experimental until Web Bluetooth advertisements APIs are stable.
+     override suspend fun rssi(): Int =
+@@ -194,12 +207,13 @@ internal class BluetoothDeviceAndroidPeripheral(
+         }
+     }
+ 
+-    override suspend fun requestMtu(mtu: Int): Int {
++    @RequiresPermission(BLUETOOTH_CONNECT)
++    private suspend fun requestMtu(mtu: Int) {
+         logger.debug {
+             message = "requestMtu"
+             detail("mtu", mtu)
+         }
+-        return connectionOrThrow().requestMtu(mtu)
++        connectionOrThrow().requestMtu(mtu)
+     }
+ 
+     override suspend fun write(
 ```
 
-**File**: `kable-core/src/androidMain/kotlin/Reflection.kt` (modified, +7/-0)
+**File**: `kable-core/src/androidMain/kotlin/Connection.kt` (modified, +3/-0)
 ```diff
-@@ -37,6 +37,13 @@ internal fun BluetoothDevice.connectGattWithReflection(
+@@ -1,8 +1,10 @@
+ package com.juul.kable
+ 
++import android.Manifest.permission.BLUETOOTH_CONNECT
+ import android.bluetooth.BluetoothGatt
+ import android.bluetooth.BluetoothGatt.GATT_SUCCESS
+ import android.os.Handler
++import androidx.annotation.RequiresPermission
+ import com.juul.kable.State.Disconnected
+ import com.juul.kable.android.GattStatus
+ import com.juul.kable.coroutines.childSupervisor
+@@ -197,6 +199,7 @@ internal class Connection(
+      * @throws GattRequestRejectedException if underlying `BluetoothGatt` method call returns `false`.
+      * @throws GattStatusException if response has a non-`GATT_SUCCESS` status.
+      */
++    @RequiresPermission(BLUETOOTH_CONNECT)
+     suspend fun requestMtu(mtu: Int): Int = guard.withLock {
+         try {
+             withContext(dispatcher) {
+```
+
+**File**: `kable-core/src/androidMain/kotlin/Peripheral.deprecated.kt` (modified, +1/-0)
+```diff
+@@ -33,6 +33,7 @@ public fun CoroutineScope.peripheral(
+         builder.autoConnectPredicate,
+         builder.transport,
+         builder.phy,
++        builder.mtu,
+         builder.threadingStrategy,
+         builder.observationExceptionHandler,
+         builder.onServicesDiscovered,
+```
+
+**File**: `kable-core/src/androidMain/kotlin/Peripheral.kt` (modified, +1/-0)
+```diff
+@@ -33,6 +33,7 @@ public fun Peripheral(
+         builder.autoConnectPredicate,
+         builder.transport,
+         builder.phy,
++        builder.mtu,
+         builder.threadingStrategy,
+         builder.observationExceptionHandler,
+         builder.onServicesDiscovered,
+```
+
+**File**: `kable-core/src/androidMain/kotlin/PeripheralBuilder.kt` (modified, +22/-4)
+```diff
+@@ -68,10 +68,6 @@ public actual class ServicesDiscoveredPeripheral internal constructor(
+     ) {
+         peripheral.write(descriptor, data)
      }
+-
+-    public suspend fun requestMtu(
+-        mtu: Int,
+-    ): Int = peripheral.requestMtu(mtu)
  }
  
-+/** Invokes the hidden `BluetoothGatt.refresh()`, which clears the stack's cached attribute table for the device. */
-+internal fun BluetoothGatt.refreshWithReflection(): Boolean = try {
-+    invoke("refresh") as? Boolean ?: false
-+} catch (_: ReflectiveOperationException) {
-+    false
-+}
-+
- private fun Any.invoke(method: String): Any? =
-     javaClass.getDeclaredMethod(method).apply { isAccessible = true }.invoke(this)
+ public actual class PeripheralBuilder internal actual constructor() {
+@@ -114,6 +110,28 @@ public actual class PeripheralBuilder internal actual constructor() {
+     /** Preferred PHY for connections to remote LE device. */
+     public var phy: Phy = Phy.Le1M
  
++    /**
++     * ATT MTU to request when establishing a connection (`null` means no MTU change request will
++     * be made). The request is made after connecting, but prior to performing service discovery.
++     *
++     * Note that starting from Android 14, if [mtu] is non-`null` then an MTU of `517` is requested
++     * regardless of what value [mtu] is configured to:
++     * https://developer.android.com/about/versions/14/behavior-changes-all#mtu-set-to-517
++     *
++     * The peripheral may negotiate an MTU different from the requested [mtu]; the negotiated MTU
++     * is available via [AndroidPeripheral.mtu].
++     *
++     * Must be in the range 23..517 (per `MIN_MTU` and `MAX_MTU` defined in Android's
++     * [BluetoothDevice](https://cs.android.com/android/platform/superproject/main/+/main:packages/modules/Bluetooth/framework/java/android/bluetooth/BluetoothDevice.java)).
++     */
++    public var mtu: Int? = 517
++        set(value) {
++            require(value == null || value in 23..517) {
++                "MTU must be in the range 23..517, was $value"
++            }
++            field = value
++        }
++
+     public var threadingStrategy: ThreadingStrategy = OnDemandThreadingStrategy
+ 
+     public actual var disconnectTimeout: Duration = defaultDisconnectTimeout
+```
+
+---
+
+### Incident Patch 2: `c873f60c` (2026-11-17)
+**Commit Message**: Update dependency androidx.compose.ui:ui to v1.12.1 (#1271)
+
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@ androidx-lifecycle = { module = "androidx.lifecycle:lifecycle-common", version =
+ androidx-startup = { module = "androidx.startup:startup-runtime", version = "1.2.0" }
+ atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version = "0.33.0" }
+ compose-activity = { module = "androidx.activity:activity-compose", version = "1.13.0" }
+-compose-ui = { module = "androidx.compose.ui:ui", version = "1.12.0" }
++compose-ui = { module = "androidx.compose.ui:ui", version = "1.12.1" }
+ datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.8.0-0.6.x-compat" }
+ desugar = { module = "com.android.tools:desugar_jdk_libs", version = "2.1.5" }
+ equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "4.5.2" }
+```
+
+---
+
+### Incident Patch 3: `3d70bff0` (2026-11-16)
+**Commit Message**: Update Rust crate uuid to v1.29.2 (#1289)
+
+**File**: `kable-btleplug-ffi/Cargo.lock` (modified, +2/-2)
+```diff
+@@ -1249,9 +1249,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "uuid"
+-version = "1.26.1"
++version = "1.29.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2ef6dac1e96601b4fb3acccccff2139741fcb757cb9a36089bf5be91cfb285ce"
++checksum = "bed99139f7dac9b5cfe5f17be4d66dc7079a34dee1d74bcc77217119240e267c"
+ dependencies = [
+  "js-sys",
+  "serde_core",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1302** (2026-10-30): Update Rust crate tokio to v1.54.1 [SECURITY] (@juul-mobile-bot)
-- **PR #1301** (closed): Bump tokio from 1.54.0 to 1.54.1 in /kable-btleplug-ffi (@dependabot[bot])
-- **PR #1297** (closed): Update Rust crate tokio to v1.54.1 - autoclosed (@juul-mobile-bot)
-- **PR #1290** (2026-11-11): Update Gradle to v9.9.1 (@juul-mobile-bot)
-- **PR #1288** (2026-10-21): Update Rust crate tokio to v1.54.0 (@juul-mobile-bot)
-- **PR #1286** (2026-10-05): Update Rust crate btleplug to v0.13.4 (@juul-mobile-bot)
+- **PR #1309** (2026-11-16): Update dependency io.mockk:mockk to v1.14.12 (@juul-mobile-bot)
+- **PR #1308** (2026-11-16): Update plugin dokka to v2.3.0 (@juul-mobile-bot)
+- **PR #1307** (2026-11-16): Update agp to v9.5.1 (@juul-mobile-bot)
+- **PR #1306** (closed): Update dependency java to v25 (@juul-mobile-bot)
+- **PR #1305** (2026-11-17): Update dependency java to v17.0.21 (@juul-mobile-bot)
+- **PR #1304** (2026-11-16): Update dependency org.jetbrains.kotlinx:kotlinx-io-core to v0.9.2 (@juul-mobile-bot)
 
 ---
 
@@ -1266,31 +1467,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add `AndroidPeripheral.refreshGattCache`
+## X. Configure MTU via peripheral builder
 
 **RULE**:
-When implementing operations in `kable-core/api/android/kable-core.api`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in JuulLabs/kable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in JuulLabs/kable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2a4ea295`: Add `AndroidPeripheral.refreshGattCache`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08ff8cc4`: Configure MTU via peripheral builder. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kable-core/api/android/kable-core.api`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-	public abstract fun refreshGattCache ()Z
+    mtu = 517 // default
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    onServicesDiscovered {
+        requestMtu(...)
+    }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2a4ea295` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08ff8cc4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

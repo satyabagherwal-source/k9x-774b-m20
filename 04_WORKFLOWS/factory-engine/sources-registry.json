@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T06:45:18.727Z",
-    "lastVerified": "2026-11-20T06:45:18.727Z",
+    "lastChecked": "2026-11-20T07:36:04.743Z",
+    "lastVerified": "2026-11-20T07:36:04.743Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T07:23:41.410Z",
-    "lastVerified": "2026-11-20T07:23:41.410Z",
+    "lastChecked": "2026-11-20T07:36:06.153Z",
+    "lastVerified": "2026-11-20T07:36:06.153Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1009,9 +1009,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-20T02:27:46.412Z",
+    "lastChecked": "2026-11-20T07:35:59.721Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-20T02:27:46.412Z"
+    "lastVerified": "2026-11-20T07:35:59.721Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -4151,14 +4151,14 @@
     "officialUrl": "https://github.com/pimalaya/himalaya",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T19:51:57.387Z",
-    "lastVerified": "2026-11-18T19:51:57.387Z",
+    "lastChecked": "2026-11-20T07:35:55.260Z",
+    "lastVerified": "2026-11-20T07:35:55.260Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "92b72d53a46a740e63f9d25bb14694e350495026489d335aca639178d5d90626",
+    "contentHash": "82637fe01b7493f03326b5e828d4108cbfffbed8526a0d728064c6412db6ea89",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6032,9 +6032,9 @@
   "olric-data-olric": {
     "name": "olric",
     "officialUrl": "https://github.com/olric-data/olric",
-    "lastChecked": "2026-11-19T02:03:42.325Z",
+    "lastChecked": "2026-11-20T07:36:02.267Z",
     "revisionIdentifier": "9092df94",
-    "lastVerified": "2026-11-19T02:03:42.325Z"
+    "lastVerified": "2026-11-20T07:36:02.267Z"
   },
   "yvgude-lean-ctx": {
     "name": "lean-ctx",
@@ -6357,14 +6357,14 @@
     "officialUrl": "https://github.com/open-policy-agent/opa",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T04:03:19.973Z",
-    "lastVerified": "2026-11-19T04:03:19.973Z",
+    "lastChecked": "2026-11-20T07:36:02.043Z",
+    "lastVerified": "2026-11-20T07:36:02.043Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "3b1f6b3510aa4d37979797566c59dd027df54977e4e6460de98dbbbc8ae3e5f6",
+    "contentHash": "c53b7789c2a08892cd93e03a49711aa448965c031b4d4f92d4b8a4bbb49d1693",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9626,5 +9626,29 @@
     "lastChecked": "2026-11-20T07:23:31.478Z",
     "revisionIdentifier": "3048f024",
     "lastVerified": "2026-11-20T07:23:31.478Z"
+  },
+  "m0ntydad0n-pseo-engine-oss": {
+    "name": "pseo-engine-oss",
+    "officialUrl": "https://github.com/m0ntydad0n/pseo-engine-oss",
+    "lastChecked": "2026-11-20T07:35:52.080Z",
+    "revisionIdentifier": "945ce349",
+    "lastVerified": "2026-11-20T07:35:52.080Z"
+  },
+  "juullabs-kable": {
+    "name": "JuulLabs/kable",
+    "officialUrl": "https://github.com/JuulLabs/kable",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-20T07:36:00.140Z",
+    "lastVerified": "2026-11-20T07:36:00.140Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-juullabs-kable",
+    "contentHash": "af7bab64cdef4af4aaedb59f591e79af64c07b89c2e925de86351403ef103d35",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -4743,10 +4743,10 @@
     "repository": "pimalaya/himalaya",
     "platform": "github",
     "sourceUrl": "https://github.com/pimalaya/himalaya",
-    "sourceVersion": "edf58f38",
+    "sourceVersion": "a5623dca",
     "license": "Apache-2.0",
-    "contentHash": "92b72d53a46a740e63f9d25bb14694e350495026489d335aca639178d5d90626",
-    "lastHarvestedAt": "2026-11-18T19:51:58.417Z",
+    "contentHash": "82637fe01b7493f03326b5e828d4108cbfffbed8526a0d728064c6412db6ea89",
+    "lastHarvestedAt": "2026-11-20T07:35:56.450Z",
     "learningId": "learn-github-pimalaya-himalaya"
   },
   "shopify-react-native-skia": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "674d3362",
+    "sourceVersion": "a4d2f0c0",
     "license": "Apache-2.0",
-    "contentHash": "3b1f6b3510aa4d37979797566c59dd027df54977e4e6460de98dbbbc8ae3e5f6",
-    "lastHarvestedAt": "2026-11-19T04:08:21.492Z",
+    "contentHash": "c53b7789c2a08892cd93e03a49711aa448965c031b4d4f92d4b8a4bbb49d1693",
+    "lastHarvestedAt": "2026-11-20T07:36:03.019Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
@@ -8773,10 +8773,10 @@
     "repository": "JuulLabs/kable",
     "platform": "github",
     "sourceUrl": "https://github.com/JuulLabs/kable",
-    "sourceVersion": "2a4ea295",
+    "sourceVersion": "9836c4e2",
     "license": "Apache-2.0",
-    "contentHash": "c89e8cabc74d8c50aebc0736afa58094ba9a27132dc0f4f4ac683d6cfc98f198",
-    "lastHarvestedAt": "2026-11-16T03:57:17.338Z",
+    "contentHash": "af7bab64cdef4af4aaedb59f591e79af64c07b89c2e925de86351403ef103d35",
+    "lastHarvestedAt": "2026-11-20T07:36:01.120Z",
     "learningId": "learn-github-juullabs-kable"
   },
   "tmolavi-siteprobe": {

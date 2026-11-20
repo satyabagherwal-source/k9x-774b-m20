@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T19:52:15.589Z",
+  "timestamp": "2026-11-20T07:36:06.564Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pimalaya-himalaya-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pimalaya-himalaya-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T19:52:15.589Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T07:36:06.564Z`  
 > **Learning ID**: `LEARN-EVO-pimalaya-himalaya-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source**: github ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
-> **Source Version**: `edf58f38`  
+> **Source Version**: `a5623dca`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T19:51:57.394Z  
+> **Timestamp**: 2026-11-20T07:35:55.453Z  
 > **Learning ID**: `learn-github-pimalaya-himalaya`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T19:51:57.387Z  
+> **Harvest Timestamp**: 2026-11-20T07:35:55.260Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: CLI to manage emails
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7675 stars
+- **Stars / Engagement**: 7683 stars
 
 ---
 
@@ -104,10 +104,19 @@ pub fn output_data<T>(command: &str, output: ImapOutput<T>) -> T {
     output.data
 }
 
+/// Turns an ENVELOPE address list into shared addresses, the markers of
+/// a group (RFC 3501 §7.4.2, a NIL host) left out and its members kept.
+pub fn to_addresses(list: &[Address<'_>]) -> Vec<crate::email::address::Address> {
+    list.iter()
+        .filter(|addr| addr.host.0.is_some())
+        .map(to_address)
+        .collect()
+}
+
 /// Turns an envelope address into the shared address shape, its personal
 /// name read as `message read` reads a header, `None` when absent or
 /// empty.
-pub fn to_address(addr: &Address<'_>) -> crate::email::address::Address {
+fn to_address(addr: &Address<'_>) -> crate::email::address::Address {
     let name = addr
         .name
         .0
@@ -143,6 +152,15 @@ fn format_email(addr: &Address<'_>) -> String {
     }
 }
 
+/// Checks a sequence set argument as clap takes it, so a value that is
+/// none is refused with the command line, before the session opens.
+pub fn sequence_set_parser(raw: &str) -> Result<String, String> {
+    match parse_sequence_set(raw) {
+        Ok(_) => Ok(raw.to_owned()),
+        Err(err) => Err(err.to_string()),
+    }
+}
+
 /// Parses a sequence set argument, naming it when it is not one.
 pub fn parse_sequence_set(raw: &str) -> Result<SequenceSet> {
     SequenceSet::try_from(raw).map_err(|_| {
@@ -163,6 +181,34 @@ mod tests {
     }
 }
 
+#[cfg(test)]
+mod parser_tests {
+    use clap::Parser;
+
+    use crate::cli::Cli;
+
+    /// A sequence set that is none is refused with the command line, so
+    /// it exits 2 before the secret command runs and the session opens.
+    #[test]
+    fn a_bad_sequence_set_is_refused_by_the_grammar() {
+        for args in [
+            &["imap", "fetch", "abc"][..],
+            &["imap", "store", "abc", "-f", "\\Seen"],
+            &["imap", "copy", "abc", "Archive"],
+            &["imap", "move", "abc", "Archive"],
+        ] {
+            let argv = [&["himalaya"][..], args].concat();
+            let err = Cli::try_parse_from(&argv).err();
+            let err = err.unwrap_or_else(|| panic!("{args:?} parsed"));
+            assert_eq!(err.kind(), clap::error::ErrorKind::ValueValidation, "{err}");
+
+            let argv = [&["himalaya"][..], args].concat();
+            let argv: Vec<String> = argv.iter().map(|arg| arg.replace("abc", "1:*")).collect();
+            assert!(Cli::try_parse_from(&argv).is_ok(), "{argv:?}");
+        }
+    }
+}
+
 ```
 
 ### Core Architecture Module: `src/pimdir/queue/cancel.rs`
@@ -172,18 +218,25 @@ mod tests {
 //! The `pimdir queue cancel` command, retracting one queued or parked
 //! action before its owner applies it.
 
-use std::fmt;
+use std::{
+    fmt,
+    io::{IsTerminal, stdin},
+};
 
 use anyhow::{Result, bail};
 use clap::Parser;
-use io_pimdir::client::producer::PimdirActionStatus;
-use pimalaya_cli::{printer::Printer, prompt, sanitize};
+use io_pimdir::{client::producer::PimdirActionStatus, codec::PimdirActionHandle};
+use pimalaya_cli::{error::CodedError, printer::Printer, prompt, sanitize};
 use schemars::JsonSchema;
 use serde::Serialize;
 
-use crate::pimdir::client::PimdirClient;
+use crate::{
+    error::ErrorCode,
+    pimdir::client::{PimdirClient, uncancellable},
+};
 
-/// Cancel one queued or parked action, by the row id `queue list` prints.
+/// Cancel one queued or parked action, by the handle a receipt prints or
+/// the row id `queue list` prints.
 ///
 /// This is the only way back for a queued creation: a staged flag or move is
 /// undone by doing the opposite, where a message that does not exist yet
@@ -199,9 +252,10 @@ use crate::pimdir::client::PimdirClient;
 /// version of the sync engine wrote is refused rather than reshaped.
 #[derive(Debug, Parser)]
 pub struct PimdirQueueCancelCommand {
-    /// Row id of the queued action, as `pimdir queue list` prints it.
+    /// The handle of the queued action, as a receipt prints it, or its bare
+    /// row id, as `pimdir queue list` prints it.
     #[arg(value_name = "ROW")]
-    pub id: i64,
+    pub id: PimdirActionHandle,
     /// Do not ask for confirmation.
     #[arg(long, short)]
     pub yes: bool,
@@ -210,12 +264,12 @@ pub struct PimdirQueueCancelCommand {
 impl PimdirQueueCancelCommand {
     /// Retracts the queued action the row id names.
     pub fn execute(self, printer: &mut impl Printer, client: &mut PimdirClient) -> Result<()> {
-        let (named, unconfirmed) = match client.queue_row(self.id)? {
+        let (named, unconfirmed) = match client.queue_row(&self.id)? {
             PimdirActionStatus::Pending { kind, .. } | PimdirActionStatus::Parked { kind, .. } => {
                 (kind, false)
             }
             PimdirActionStatus::Unconfirmed { kind, .. } => (kind, true),
-            _ => (String::from("action"), false),
+            status => return Err(uncancellable(&self.id, &status)),
         };
         let question = match unconfirmed {
             true => format!(
@@ -230,13 +284,23 @@ impl PimdirQueueCancelCommand {
                 self.id
             ),
         };
+        if !self.yes && !stdin().is_terminal() {
+            let message = format!(
+                "Cannot ask to cancel row {} with no terminal: pass --yes",
+                self.id
+            );
+            return Err(CodedError::new(ErrorCode::ConfirmationRequired, message).into());
+        }
+
         if !self.yes && !prompt::bool(question, false)? {
             bail!("Cancellation aborted");
         }
 
-        let kind = client.cancel_queued(self.id)?;
+        let handle = client.named(&self.id)?;
+        let kind = client.cancel_queued(&self.id)?;
         printer.out(PimdirQueueCancelOutput {
-            id: self.id,
+            row: handle.id,
+            handle: handle.to_string(),
             kind,
             unconfirmed,
         })
@@ -247,9 +311,12 @@ impl PimdirQueueCancelCommand {
 #[derive(Clone, Debug, Serialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct PimdirQueueCancelOutput {
-    /// The row that was cancelled.
-    #[serde(rename = "row")]
-    pub id: i64,
+    /// The queue row id cancelled.
+    pub row: i64,
+    /// The row's handle, its id under the store's identity (pimdir STORAGE
+    /// §4.5): the handle given, or the bare id given named under this
+    /// store's identity.
+    pub handle: String,
     /// The action kind it held: `add`, `submit`, `set-flags`, ...
     pub kind: String,
     /// Whether the row was unconfirmed, its request sent and its outcome
@@ -260,7 +327,7 @@ pub struct PimdirQueueCancelOutput {
 impl fmt::Display for PimdirQueueCancelOutput {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let kind = sanitize::text(&self.kind);
-        let id = self.id;
+        let id = &self.handle;
         match self.unconfirmed {
             true => writeln!(
                 f,
@@ -281,7 +348,8 @@ mod tests {
     #[test]
     fn cancelling_an_unconfirmed_row_says_it_may_have_taken_effect() {
         let cancelled = PimdirQueueCancelOutput {
-            id: 9,
+            row: 9,
+            handle: "e2646df031cd876334410c4df14ebd86.1.9".into(),
             kind: "submit".into(),
             unconfirmed: true,
         };
@@ -289,7 +357,12 @@ mod tests {
         let json = serde_json::to_value(&cancelled).unwrap();
         assert_eq!(
             json,
-            serde_json::json!({"row": 9, "kind": "submit", "unconfirmed": true})
+            serde_json::json!({
+                "row": 9,
+                "handle": "e2646df031cd876334410c4df14ebd86.1.9",
+                "kind": "submit",
+                "unconfirmed": true,
+            })
         );
         let line = cancelled.to_string();
         assert!(line.contains("may have taken effect"), "{line}");
@@ -359,7 +432,8 @@ impl PimdirQueueCommand {
 //! # pimdir queue list
 //!
 //! The `pimdir queue list` command, listing the creations and sends staged
-//! in one mailbox and the rows parked there.
+//! in the account, the rows parked there and the refusals standing, or
+//! those of one mailbox.
 
 use std::fmt;
 
@@ -369,19 +443,17 @@ use pimalaya_cli::{listing::Listing, printer::Printer, sanitize};
 use schemars::JsonSchema;
 use serde::Serialize;
 
-use crate::{
-    account::context::Account, backend::Backend, pimdir::client::PimdirClient,
-    shared::mailbox::arg::MailboxArg,
-};
+use crate::{account::context::Account, backend::Backend, pimdir::client::PimdirClient};
 
-/// List the messages staged for creation or sending in a mailbox.
+/// List the messages staged for creation or sending in the account.
 ///
 /// A saved message waits in the queue until the sync engine applies it and
 /// has no id until then, so `envelope list` cannot show it. A sent message
 /// waits there until the store's owner sends it, filed under the mailbox it
 /// was saved to or the account's sent alias. This is where both show: the
-/// row id to cancel one by, when it was queued, its kind (`add` or
-/// `submit`) and its subject.
+/// row handle to cancel one by, when it was queued, its kind (`add` or
+/// `submit`) and its subject. The whole account is listed, mailbox by
+/// mailbox, unless `--mailbox` names one.
 ///
 /// Staged flags, moves and deletions need no such view, addressing messages
 /// that already exist. A row of any kind the sync engine parked, refusing to
@@ -396,36 +468,48 @@ use crate::{
 ///
 /// JSON output: `{"messages": [<row>], "parked": [<row>], "refused":
 /// [{"collection", "itemId", "source", "reason", "refusedAt"}]}`, each row,
-/// pending or parked, `{"row", "kind", "collection", "linkId", "itemId",
-/// "producer", "queuedAt", "attempts", "unconfirmed", "error",
-/// "subject"}`, as every Pimalaya program prints a queue row.
+/// pending or parked, `{"row", "handle", "kind", "collection", "linkId",
+/// "itemId", "producer", "queuedAt", "attempts", "unconfirmed", "error",
+/// "subject"}`, as every Pimalaya program prints a queue row, plus the
+/// row's handle.
 #[derive(Debug, Parser)]
 pub struct PimdirQueueListCommand {
-    #[command(flatten)]
-    pub mailbox: MailboxArg,
+    /// The one mailbox to list, a name, alias, role or id; the whole
+    /// account when omitted.
+    #[arg(short = 'm', long = "mailbox", value_name = "NAME")]
+    pub mailbox: Option<String>,
 }
 
 impl PimdirQueueListCommand {
-    /// Lists the creations and sends staged in the mailbox and the rows
-    /// parked there, and prints them.
+    /// Lists the creations and sends staged in the account, or in the one
+    /// mailbox named, the rows parked there and the refusals standing,
+    /// and prints them.
     pub fn execute(
         self,
         printer: &mut impl Printer,
         account: &mut Account,
         client: &mut PimdirClient,
     ) -> Result<()> {
-        let mailbox = self.mailbox.resolve(account);
-        let messages = client.queued_rows(&mailbox)?;
-        let parked = client.parked_rows(&mailbox)?;
-        let refused = client.refused_rows(&mailbox)?;
+        let mailboxes = match &self.mailbox {
+            Some(mailbox) => vec![account.resolve_mailbox(mailbox).to_string()],
+            None => client.mail_collection_ids()?,
+        };
 
-        printer.out(PimdirQueueListOutput {
+        let mut output = PimdirQueueListOutput {
             account: account.name().to_string(),
-            mailbox,
-            messages,
-            parked,
-            refused,
-        })
+            mailbox: self.mailbox.as_ref().and(mailboxes.first().cloned()),
+            messages: Vec::new(),
+            parked: Vec::new(),
+            refused: Vec::new(),
+        };
+
+        for mailbox in &mailboxes {
+            output.messages.extend(client.queued_rows(mailbox)?);
+            output.parked.extend(client.parked_rows(mailbox)?);
+            output.refused.extend(client.refused_rows(mailbox)?);
+        }
+
+        printer.out(output)
     }
 }
 
@@ -439,6 +523,10 @@ pub struct PimdirQueueRow {
     /// names a queued action, not a message: a creation has no id until
     /// the sync engine applies it, and gets a different one then.
     pub row: i64,
+    /// The row's handle, its id under the store's identity (pimdir STORAGE
+    /// §4.5), which `pimdir queue show` and `cancel` take and check, a
+    /// restored copy of the store refusing it rather than another row.
+    pub handle: String,
     /// The row's action as the store holds it, never re-spelled: `add`,
     /// `submit`, `set-flags`, `move`, `remove`, `collection-create`, ...
     pub kind: String,
@@ -475,14 +563,15 @@ pub struct PimdirQueueListOutput {
     /// The name of the account listed.
     #[serde(skip)]
     pub account: String,
-    /// The mailbox listed, its alias resolved.
+    /// The one mailbox listed, its alias resolved, `None` for the whole
+    /// account.
     #[serde(skip)]
-    pub mailbox: String,
-    /// The creations and sends staged in the mailbox.
+    pub mailbox: Option<String>,
+    /// The creations and sends staged, mailbox by mailbox.
     pub messages: Vec<PimdirQueueRow>,
-    /// The mailbox's parked rows, any kind.
+    /// The parked rows, any kind, mailbox by mailbox.
     pub parked: Vec<PimdirQueueRow>,
-    /// The refusals standing in the mailbox, per message and source.
+    /// The refusals standing, per message and source.
     pub refused: Vec<PimdirQueueRefused>,
 }
 
@@ -507,7 +596,9 @@ pub struct PimdirQueueRefused {
 impl fmt::Display for PimdirQueueListOutput {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut listing = Listing::new(&self.account, Some(Backend::Pimdir.as_str()));
-        listing.head("Mailbox", &self.mailbox);
+        if let Some(mailbox) = &self.mailbox {
+            listing.head("Mailbox", mailbox);
+        }
 
         for queued in &self.messages {
             let what = queued.subject.as_deref().or(queued.item_id.as_deref());
@@ -544,11 +635,11 @@ impl fmt::Display for PimdirQueueListOutput {
     }
 }
 
-/// The text cells of `row`: its id, its `state`, when it was queued, its
+/// The text cells of `row`: its handle, its `state`, when it was queued, its
 /// kind, then `last`.
 fn cells(row: &PimdirQueueRow, state: &str, last: Option<&str>) -> [String; 5] {
     [
-        row.row.to_string(),
+        sanitize::text(&row.handle).into_owned(),
         String::from(state),
         sanitize::text(&row.queued_at).into_owned(),
         sanitize::text(&row.kind).into_owned(),
@@ -562,10 +653,13 @@ mod tests {
 
     use super::{PimdirQueueListOutput, PimdirQueueRefused, PimdirQueueRow};
 
+    const STORE: &str = "e2646df031cd876334410c4df14ebd86";
+
     /// A pending row of `kind` in `imap/Sent`.
     fn row(row: i64, kind: &str) -> PimdirQueueRow {
         PimdirQueueRow {
             row,
+            handle: format!("{STORE}.1.{row}"),
             kind: kind.into(),
             collection: "imap/Sent".into(),
             link_id: None,
@@ -583,39 +677,7 @@ mod tests {
     /// as every Pimalaya program prints them, and one line each under the
     /// way to cancel one.
     #[test]
-    fn a_pending_and_a_parked_row_keep_one_shape() {
-        let output = PimdirQueueListOutput {
-            account: "perso".into(),
-            mailbox: "imap/Sent".into(),
-            messages: vec![
-                PimdirQueueRow {
-                    link_id: Some("d1@x.org".into()),
-                    subject: Some("hi".into()),
-                    ..row(3, "add")
-                },
-                row(4, "submit"),
-            ],
-            parked: vec![PimdirQueueRow {
-                item_id: Some("7".into()),
-                attempts: 1,
-                unconfirmed: true,
-                error: Some("unconfirmed: timed out".into()),
-                subject: Some("Report".into()),
-                ..row(2, "move")
-            }],
-            refused: vec![PimdirQueueRefused {
-                collection: "imap/Sent".into(),
-                item_id: "9".into(),
-                source: "imap".into(),
-                reason: "NO [CANNOT] refused".into(),
-                refused_at: "2026-11-15T09:10:00.000Z".into(),
-            }],
-        };
-
-        let json = serde_json::to_value(&output).unwrap();
-        assert_eq!(
-            json["messages"][1],
-         
+    fn a_pending_and_a_pa
 ```
 
 ### Core Architecture Module: `src/pimdir/queue/mod.rs`
@@ -642,7 +704,10 @@ use std::fmt;
 
 use anyhow::Result;
 use clap::Parser;
-use io_pimdir::client::producer::{PimdirActionStatus, PimdirReceiptRefusal};
+use io_pimdir::{
+    client::producer::{PimdirActionStatus, PimdirReceiptRefusal},
+    codec::PimdirActionHandle,
+};
 use pimalaya_cli::{printer::Printer, sanitize};
 use schemars::JsonSchema;
 use serde::Serialize;
@@ -667,21 +732,23 @@ use crate::pimdir::client::PimdirClient;
 /// mailbox it was queued on, or under none once that mailbox is gone; past
 /// that, and for a cancelled row, the state is `unknown`.
 ///
-/// JSON output: `{"row", "state", "collection", "kind", "attempts",
-/// "error", "appliedAt", "seq", "refusals": [{"collection", "source",
-/// "reason", "refusedAt"}]}`.
+/// JSON output: `{"row", "handle", "state", "collection", "kind",
+/// "attempts", "error", "appliedAt", "seq", "refusals": [{"collection",
+/// "source", "reason", "refusedAt"}]}`.
 #[derive(Debug, Parser)]
 pub struct PimdirQueueShowCommand {
-    /// The queue row id.
+    /// The handle of the queue row, as a receipt prints it, or its bare
+    /// id, as `pimdir queue list` prints it.
     #[arg(value_name = "ROW")]
-    pub id: i64,
+    pub id: PimdirActionHandle,
 }
 
 impl PimdirQueueShowCommand {
     /// Looks the row up in the account's queue and receipts.
     pub fn execute(self, printer: &mut impl Printer, client: &mut PimdirClient) -> Result<()> {
-        let status = client.queue_row(self.id)?;
-        printer.out(PimdirQueueShowOutput::new(self.id, status))
+        let status = client.queue_row(&self.id)?;
+        let handle = client.named(&self.id)?;
+        printer.out(PimdirQueueShowOutput::new(&handle, status))
     }
 }
 
@@ -713,8 +780,11 @@ pub enum PimdirQueueState {
 #[serde(rename_all = "camelCase")]
 pub struct PimdirQueueShowOutput {
     /// The queue row id.
-    #[serde(rename = "row")]
-    pub queue_id: i64,
+    pub row: i64,
+    /// The row's handle, its id under the store's identity (pimdir STORAGE
+    /// §4.5): the handle given, or the bare id given named under this
+    /// store's identity.
+    pub handle: String,
     /// Where it stands.
     pub state: PimdirQueueState,
     /// The collection it is anchored on: `null` when unknown, and for an
@@ -766,10 +836,11 @@ impl From<PimdirReceiptRefusal> for PimdirQueueRefusal {
 }
 
 impl PimdirQueueShowOutput {
-    /// Projects io-pimdir's status of row `queue_id`.
-    pub fn new(queue_id: i64, status: PimdirActionStatus) -> Self {
+    /// Projects io-pimdir's status of the row `handle` names.
+    pub fn new(handle: &PimdirActionHandle, status: PimdirActionStatus) -> Self {
         let row = Self {
-            queue_id,
+            row: handle.id,
+            handle: handle.to_string(),
             state: PimdirQueueState::Unknown,
             collection: None,
             kind: None,
@@ -842,7 +913,7 @@ impl PimdirQueueShowOutput {
 
 impl fmt::Display for PimdirQueueShowOutput {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let id = self.queue_id;
+        let id = &self.handle;
         let collection = sanitize::text(self.collection.as_deref().unwrap_or_default());
         let kind = sanitize::text(self.kind.as_deref().unwrap_or_default());
 
@@ -887,25 +958,7 @@ impl fmt::Display for PimdirQueueShowOutput {
                 f,
                 "Row {id} is neither queued nor known applied: cancelled, or applied long ago"
             ),
-            PimdirQueueState::Reset => writeln!(
-                f,
-                "Row {id} was queued in another store: a copy restored since, where this id \
-                 may name another row"
-            ),
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn an_applied_add_prints_its_seq() {
-        let row = PimdirQueueShowOutput::new(
-            12,
-            PimdirActionStatus::Applied {
-                applied_at: "2026-10-04T20:0
+            PimdirQueueState::Reset => writel
 ```
 
 ### Core Architecture Module: `src/account/capability.rs`
@@ -1005,24 +1058,35 @@ impl AccountCapabilityCommand {
 
 #[cfg(feature = "mbox")]
 use std::fs::File;
-use std::path::PathBuf;
+use std::{fmt, path::PathBuf};
 
 use anyhow::Result;
 #[cfg(feature = "mbox")]
 use anyhow::bail;
 use clap::Parser;
-use pimalaya_cli::{account::AccountCheckOutput, error::PartialOutcome, printer::Printer};
+use pimalaya_cli::{
+    account::BackendCheck, error::PartialOutcome, fields::Fields, printer::Printer, sanitize,
+};
 use pimalaya_config::secret::SecretResolver;
 
 #[cfg(feature = "imap")]
 use crate::config::imap::ImapConfig;
-use crate::{backend::Backend, cli::resolve_account, error::ErrorCode};
+use schemars::JsonSchema;
+use serde::Serialize;
+
+use crate::{
+    backend::Backend,
+    cli::resolve_account,
+    config::tls::{RustlsCryptoConfig, TlsConfig, TlsProviderConfig},
+    error::ErrorCode,
+};
 
 /// Validate the account configuration.
 ///
 /// Every backend `--backend` allows is opened, which exercises the same
 /// handshake and authentication paths a real command takes. The report
-/// names each backend and whether it answered.
+/// names each backend, whether it answered and, for a network one, the
+/// TLS it connected with: its own `tls` block over the account's.
 ///
 /// The report is printed whole, each backend with its outcome and, when it
 /// failed, its code and why. A failed backend exits the command with
@@ -1056,7 +1120,7 @@ impl AccountCheckCommand {
             )),
             allow(unused_mut)
         )]
-        let mut report = AccountCheckOutput::<ErrorCode> {
+        let mut report = AccountCheckReport {
             account: name,
             backends: Vec::new(),
         };
@@ -1080,37 +1144,38 @@ impl AccountCheckCommand {
         if backend.allows_imap()
             && let Some(imap_config) = &account_config.imap
         {
-            report
-                .backends
-                .push(check("imap", connect_imap(imap_config, &mut resolver)));
+            report.backends.push(
+                check("imap", connect_imap(imap_config, &mut resolver)).trusting(&imap_config.tls),
+            );
         }
 
         #[cfg(feature = "jmap")]
         if backend.allows_jmap()
             && let Some(jmap_config) = &account_config.jmap
         {
-            report
-                .backends
-                .push(check("jmap", connect_jmap(jmap_config, &mut resolver)));
+            report.backends.push(
+                check("jmap", connect_jmap(jmap_config, &mut resolver)).trusting(&jmap_config.tls),
+            );
         }
 
         #[cfg(feature = "gmail")]
         if backend.allows_gmail()
             && let Some(gmail_config) = &account_config.gmail
         {
-            report
-                .backends
-                .push(check("gmail", connect_gmail(gmail_config, &mut resolver)));
+            report.backends.push(
+                check("gmail", connect_gmail(gmail_config, &mut resolver))
+                    .trusting(&gmail_config.tls),
+            );
         }
 
         #[cfg(feature = "msgraph")]
         if backend.allows_msgraph()
             && let Some(msgraph_config) = &account_config.msgraph
         {
-            report.backends.push(check(
-                "msgraph",
-                connect_msgraph(msgraph_config, &mut resolver),
-            ));
+            report.backends.push(
+                check("msgraph", connect_msgraph(msgraph_config, &mut resolver))
+                    .trusting(&msgraph_config.tls),
+            );
         }
 
         #[cfg(feature = "maildir")]
@@ -1144,18 +1209,19 @@ impl AccountCheckCommand {
         if backend.allows_smtp()
             && let Some(smtp_config) = &account_config.smtp
         {
-            report
-                .backends
-                .push(check("smtp", connect_smtp(smtp_config, &mut resolver)));
+            report.backends.push(
+                check("smtp", connect_smtp(smtp_config, &mut resolver)).trusting(&smtp_config.tls),
+            );
         }
 
         #[cfg(feature = "sieve")]
         if backend.allows_sieve()
             && let Some(sieve_config) = &account_config.sieve
         {
-            report
-                .backends
-                .push(check("sieve", connect_sieve(sieve_config, &mut resolver)));
+            report.backends.push(
+                check("sieve", connect_sieve(sieve_config, &mut resolver))
+                    .trusting(&sieve_config.tls),
+            );
         }
 
         if report.backends.is_empty() {
@@ -1166,7 +1232,7 @@ impl AccountCheckCommand {
             ));
         }
 
-        let failed = report.backends.iter().any(|check| !check.ok);
+        let failed = report.backends.iter().any(|row| !row.check.ok);
         printer.out(report)?;
 
         // NOTE: the report names every backend's outcome, so a failed one
@@ -1206,7 +1272,7 @@ fn connect_imap(imap_config: &ImapConfig, resolver: &mut SecretResolver) -> Resu
         })
         .transpose()?;
     let opts = ImapClientStdConnectOptions {
-        tls: imap_config.tls.clone().into_tls(imap_config.alpn.clone()),
+        tls: imap_config.tls.clone().into_tls(imap_config.alpn.clone())?,
         proxy: ProxyConfig::resolve(imap_config.proxy.clone(), resolver)?,
         sasl,
         session: ImapSessionOpenOptions {
@@ -1253,7 +1319,10 @@ fn connect_gmail(
 
     let token = gmail_token(gmail_config.auth.clone(), resolver)?;
     let options = GmailClientStdConnectOptions {
-        tls: gmail_config.tls.clone().into_tls(gmail_config.alpn.clone()),
+        tls: gmail_config
+            .tls
+            .clone()
+            .into_tls(gmail_config.alpn.clone())?,
         proxy: ProxyConfig::resolve(gmail_config.proxy.clone(), resolver)?,
         user_id: gmail_config.user_id.clone(),
     };
@@ -1279,7 +1348,7 @@ fn connect_msgraph(
         tls: msgraph_config
             .tls
             .clone()
-            .into_tls(msgraph_config.alpn.clone()),
+            .into_tls(msgraph_config.alpn.clone())?,
         proxy: ProxyConfig::resolve(msgraph_config.proxy.clone(), resolver)?,
         user_id: msgraph_config.user_id.clone(),
     };
@@ -1289,19 +1358,7 @@ fn connect_msgraph(
     Ok(())
 }
 
-/// Checks that the Maildir root is a directory and lists its Maildirs, so
-/// a store the listing cannot walk fails here rather than on first use.
-#[cfg(feature = "maildir")]
-fn connect_maildir(maildir_config: &crate::config::maildir::MaildirConfig) -> Result<()> {
-    let client = crate::maildir::client::MaildirClient::new(maildir_config.clone());
-    client.list_mailboxes(false)?;
-
-    Ok(())
-}
-
-/// Checks that the mbox root is a directory and the spool, when set, a
-/// readable file, not a directory.
-#[cfg(feature = "mbox")]
+/// Checks that the Maildir root is a director
 ```
 
 ### Core Architecture Module: `src/account/cli.rs`
@@ -1643,23 +1700,559 @@ impl Account {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `edf58f38` (2026-11-17)
-**Commit Message**: chore(deny): ignore the unmaintained chrono advisory
+### Incident Patch 1: `a04ff103` (2026-11-18)
+**Commit Message**: fix: the family analysis fix-now batch (HIM-1 to HIM-5, HIM-10, HIM-14, HIM-18, HIM-19, TRI-1)
 
-**File**: `deny.toml` (modified, +8/-0)
+- HIM-2: a Gmail or-group keeps each conjunction in parentheses.
+- HIM-3: an unpaged Gmail listing reads every page.
+- TRI-1: pimdir queue show and cancel keep to the account's mail rows.
+- HIM-1: the MCP server refuses an mbox path outside mbox.root.
+- HIM-18: imap raw stops framing at a literal that is no UTF-8 (no panic, no
+  forged completion), exit 3.
+- HIM-4: a message past the MIME parser caps is refused as
+  message-too-complex.
+- HIM-14: search query nesting and operator chains are bounded.
+- HIM-5: a mistyped path holding a colon is no longer read as a message.
+- HIM-10: the mbox envelope cache is private (0700 dir, 0600 files).
+- HIM-19: sieve activate refuses an empty script name.
+
+**File**: `CHANGELOG.md` (modified, +10/-0)
 ```diff
-@@ -28,3 +28,11 @@ allow = [
-   "Unicode-3.0",
-   "Zlib",
- ]
+@@ -275,6 +275,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ### Fixed
+ 
++- Fixed a Gmail search flattening an `and` under an `or`: `from alice and subject invoice or from bob` went out as `{from:alice subject:invoice from:bob}`, which Gmail reads as three alternatives, and a `date` clause beside an `or` matched the whole label. An alternative holding more than one term is now wrapped in parentheses, `{(from:alice subject:invoice) from:bob}`.
++- Fixed `envelope list` and `envelope search` with `--page-size 0` on Gmail reading the first 100 messages and saying the listing was complete: they follow every next page token, 500 messages a page, as Microsoft Graph and IMAP list the whole mailbox.
++- Fixed `pimdir queue show` and `pimdir queue cancel` reaching a row another app of the store queued on an address book or calendar of the same account: such a row reads `unknown` and is refused, as Cardamum and Calendula keep to their own kind.
++- Fixed `himalaya mcp` over an mbox account reading and appending to an mbox outside `mbox.root` given as an absolute mailbox path: the server refuses it, read or write. The command line still opens any mbox by its absolute path.
++- Fixed `imap raw` panicking (exit 101) on a literal holding a byte that is no UTF-8, and splitting such a literal's tail into responses, so a body line `A1 NO forged` read as a tagged completion: io-imap decodes the reply lossily, so the reply is framed up to the response announcing that literal, the rest printed as one `unparsed` event, and the command exits 3.
++- Fixed a message past the MIME parser's own caps (more than 10,000 parts) being read in part, one unsplit `multipart/mixed` part hiding what it held from `message read`, `attachment list|download` and the MCP tools: it is refused with `message-too-complex`.
++- Fixed a search query nesting thousands of parentheses, or chaining thousands of `and`, `or` or `not`, aborting the process with a stack overflow, a `repl` or `mcp` session with it: past 32 nested parentheses or 256 operators the query is refused with `search-invalid`, naming the bound.
++- Fixed a mistyped path holding a colon (a Maildir file name's `:2,S`, a Windows drive `C:\`) being stored as a message made of the path by `message add` and the other commands taking a message: a message must open on a header field named with letters, digits, `-`, `_` and `.`. A file under a path holding a backslash followed by `n` or `r` is now found, the path being looked up before the escapes of an inline message are decoded.
++- Fixed the mbox envelope cache being readable by every user of the host under the usual umask: `<XDG cache>/himalaya/mbox/` is created and kept at mode 0700, its files written at 0600.
++- Fixed `sieve activate ""` deactivating every script and reporting an activation (RFC 5804 reads `SETACTIVE ""` as a deactivation): an empty name is refused as a usage error before connecting; `sieve deactivate` deactivates.
+ - Fixed `message reply --all` keeping the user's own address in `Cc` when the account sets no `email`: it leaves out the reply's `From` (`--from`, else `email`) and the account's logins, the user names its IMAP and SMTP SASL blocks hold when they read as an address.
+ - Fixed `pimdir mailbox create --json` leaving `parent` out for a mailbox at the top: it prints `null`.
+ - Fixed a move whose source and target are one mailbox writing anyway: on mbox, `message move -f A -t A` and `mbox message move -m A -t A` rewrote the file, the message at its end, then failed with "Cannot find the message appended"; on IMAP the server gave the messages new UIDs; on pimdir a move was queued. Each now changes nothing and counts the messages, as JMAP, Gmail, Microsoft Graph and Maildir did.
+```
+
+**File**: `cairn/changes/archive/the-capped-message-is-refused/delta.md` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++---
++cairn: delta
++change: the-capped-message-is-refused
++---
 +
-+[advisories]
-+# chrono is unmaintained, not vulnerable, with no maintained release to
-+# move to. imap-types exposes it in its API (duesee/imap-codec#752), and
-+# the family moves its own code to jiff.
-+ignore = [
-+  { id = "RUSTSEC-2026-0543", reason = "chrono unmaintained, see duesee/imap-codec#752" },
-+]
++# Delta
++
++## ADDED Requirements
++
++None.
++
++## MODIFIED Requirements
++
++### Requirement: A message too complex is refused whole
++A message the MIME parser (mime-rs) stopped splitting at its own entity or nesting cap SHALL be refused the same way, a part it left unsplit hiding what it holds; the `message-too-complex` row of the error code table says so.
++
++## REMOVED Requirements
++
++None.
+```
+
+**File**: `cairn/changes/archive/the-capped-message-is-refused/proposal.md` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++---
++cairn: change
++id: the-capped-message-is-refused
++status: landed
++created: 2026-11-18
++---
++
++# The capped message is refused
++
++## Why
++
++Finding HIM-4 of the family's cli-family-analysis-2026-11-15 plan, rechecked on the live head 2026-11-18. A message past mime-rs's own entity cap (`ENTITIES_MAX`, 10,000) was read in part: the parser leaves the multipart it stopped at unsplit, which src/shared/message/part.rs counted as one part, so 10,001 attachment parts exited 0 as one `multipart/mixed`, and a decoy text part beside such an inner multipart hid what it held from `message read`, `attachment list` and the MCP tools. cairn/spec/commands.md says such a message is refused rather than read in part. The finding asked mime-rs for a mark on a capped parse: mime-rs 0.2.0 already sets one, `MimeAnomaly::PartLimit` on the entity it stopped at (`NestingLimit` past its depth), so no library change is needed.
++
++## What
++
++- `measure` refuses, with `message-too-complex`, an entity carrying `PartLimit` or `NestingLimit`.
+```
+
+**File**: `cairn/changes/archive/the-capped-message-is-refused/tasks.md` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++---
++cairn: tasks
++change: the-capped-message-is-refused
++---
++
++# Tasks
++
++- [x] Test `a_message_past_the_parser_cap_is_refused` (src/shared/message/part.rs), flat and behind a decoy, failing on the old code.
++- [x] The anomaly check in `measure`.
++- [x] Fold into cairn/spec/commands.md; CHANGELOG; the log entry.
+```
+
+**File**: `cairn/changes/archive/the-colon-path-is-no-message/delta.md` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++---
++cairn: delta
++change: the-colon-path-is-no-message
++---
++
++# Delta
++
++## ADDED Requirements
++
++None.
++
++## MODIFIED Requirements
++
++### Requirement: Raw message input is shared
++A positional naming no file SHALL be the message only when it opens on a header field, a name of letters, digits, `-`, `_` and `.` then a colon, a one-letter name followed by `/` or `\` being a Windows drive, so a mistyped path, a Maildir file name holding `:2,` included, is refused rather than stored. The file SHALL be looked up under the positional as typed, before the `\n` and `\r` escapes of an inline message are decoded.
++
++## REMOVED Requirements
++
++None.
+```
+
+**File**: `cairn/changes/archive/the-colon-path-is-no-message/proposal.md` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++---
++cairn: change
++id: the-colon-path-is-no-message
++status: landed
++created: 2026-11-18
++---
++
++# The colon path is no message
++
++## Why
++
++Finding HIM-5 of the family's cli-family-analysis-2026-11-15 plan, rechecked on the live head 2026-11-18. `himalaya message add -m Sent '/nonexistent/Mail/cur/1700000000.host:2,S'` exited 0 with a receipt, the stored message being the path: `opens_on_a_field` accepted any printable run before the first colon, and every Maildir file name holds `:2,`, as a Windows path holds `C:`. The escapes of an inline message were also decoded before the file test, so an existing file under a path holding a backslash then `n` or `r` (`C:\Users\nick\...`) was not found. cairn/spec/commands.md says a mistyped path is refused.
++
++## What
++
++- `opens_on_a_field` (src/shared/message/arg.rs) holds the field name to letters, digits, `-`, `_` and `.`, and reads a one-letter name followed by `/` or `\` as a Windows drive.
++- `resolve` looks the file up under the positional as typed, then decodes the escapes of an inline message.
+```
+
+**File**: `cairn/changes/archive/the-colon-path-is-no-message/tasks.md` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++---
++cairn: tasks
++change: the-colon-path-is-no-message
++---
++
++# Tasks
++
++- [x] Tests `a_missing_path_holding_a_colon_is_not_a_message` and `a_path_holding_a_backslash_is_read` (src/shared/message/arg.rs), both failing on the old code.
++- [x] The name rule and the lookup order.
++- [x] Fold into cairn/spec/commands.md; CHANGELOG; the log entry.
+```
+
+**File**: `cairn/changes/archive/the-empty-script-is-refused/delta.md` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++---
++cairn: delta
++change: the-empty-script-is-refused
++---
++
++# Delta
++
++## ADDED Requirements
++
++None.
++
++## MODIFIED Requirements
++
++### Requirement: ManageSieve commands
++`activate` SHALL refuse an empty name as a usage error, exit 2, before connecting (RFC 5804 reads `SETACTIVE ""` as a deactivation).
++
++## REMOVED Requirements
++
++None.
+```
+
+---
+
+### Incident Patch 2: `15ffe166` (2026-11-19)
+**Commit Message**: fix(imap): print an undecoded raw response as base64 in text
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -87,7 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Changed the io-managesieve dependency to 0.5.
+ - Changed the io-pimdir dependency to 0.18.
+ - Changed the pimalaya-cli dependency to 0.7.
+-- **BREAKING**: Changed `imap raw` to print each response from its exact octets, as io-imap 0.12 frames them: one that is UTF-8 prints as text, parsed as before, one that is not, such as a response carrying an 8-bit literal, prints under `--json` as an `undecoded` event `{base64}`, its octets in standard base64, where io-imap's lossy decoding replaced each such byte by U+FFFD. A tagged response that is not UTF-8, its status left unread, exits 3. The text form prints such a response lossily.
++- **BREAKING**: Changed `imap raw` to print each response from its exact octets, as io-imap 0.12 frames them: one that is UTF-8 prints as text, parsed as before, one that is not, such as a response carrying an 8-bit literal, prints under `--json` as an `undecoded` event `{base64}`, its octets in standard base64, where io-imap's lossy decoding replaced each such byte by U+FFFD. A tagged response that is not UTF-8, its status left unread, exits 3. The text form prints such a response as one line, `undecoded (base64): ` then the same base64, where it printed it with each such byte replaced by U+FFFD.
+ - Changed `attachment download` to name a saved part through pimalaya-cli's `sanitize::path_component`, the family's path component rule, its trimming, leading dots and `attachment` fallback kept: a name of dots and spaces, such as `. .`, no longer comes out as `.`.
+ - **BREAKING**: Changed a pimdir queue row to print `row`, the row id, an integer, with `handle` beside it, the row under the store's identity: a string naming the store id, the incarnation and the row id joined by periods (`"e2646df031cd876334410c4df14ebd86.1.42"`, pimdir STORAGE §4.5), as Calendula and Cardamum print them. The receipts of `pimdir message add|send` (`copyRow` with `copyHandle`), `pimdir mailbox create|rename|delete`, `pimdir flag add|set|remove` and `pimdir tag` carry both, `null` both where nothing was staged, as do the rows of `pimdir queue list`, whose text prints the handle in place of the bare id, and `pimdir queue show|cancel`, a bare id given there named under the store's identity. `queue show` and `queue cancel` take the handle, checked against the store, or the bare id, unchecked. A handle of a restored copy of the store reads `reset` in `queue show` and is refused `store-reset` by `queue cancel`, the row left queued.
+ - **BREAKING**: Changed a mailbox the backend does not hold to fail coded `mailbox-not-found` on IMAP, JMAP, Gmail and Microsoft Graph, where it printed `code: null`: an IMAP `SELECT`, `APPEND`, `COPY`, `MOVE`, `RENAME` or `DELETE` refused `NO [NONEXISTENT]` or `NO [TRYCREATE]`, or refused with a plain `NO` (as Fastmail answers) for a mailbox the one `LIST` then sent does not show, the server's answer kept in `sources`; a JMAP, Gmail or Graph name, id or role no mailbox, label or folder carries. The copy a send saves to such a mailbox is an `errors` entry so coded.
+```
+
+**File**: `MIGRATION.md` (modified, +1/-1)
+```diff
+@@ -62,7 +62,7 @@ What a script or a frontend reads off `--json` and the text output changes, and
+ - **`account check` prints every backend and exits 3** when one fails, each row carrying the failure's `code`, where v2 exited 0 whatever failed.
+ - **`account list` names only the built backends under `backends`.** A backend the account declares and the build leaves out moves to `notBuilt`, marked ` (not built)` in text, where v2 listed every declared block under `backends`: a script reading a reduced build's accounts reads both keys, `{"name":"a","default":true,"backends":["maildir"],"notBuilt":["mbox"]}` where v2 printed `"backends":["maildir","mbox"]`. A full build lists as before, beside `"notBuilt":[]`.
+ - **A protocol command prints its completion.** Every `imap` command prints `status` (`OK`, or `NO`/`BAD` with `text`, exiting 3). `imap select` prints the mailbox state beside it, the number of the first unseen message as `firstUnseen`. `imap raw` and `sieve raw` print the server's untagged or data responses as events, one JSON line each, then the completion; `smtp raw` prints `{code, text}`. Exit 3 means the server refused; exit 1 still means no answer.
+-- **`imap raw` prints the server's exact octets.** A response that is not UTF-8, such as a `FETCH` carrying an 8-bit body literal, prints under `--json` as `{"event":"undecoded","base64":"..."}`, the response's octets (its literals and final CRLF included) in standard base64, where v2 printed it as text with each such byte replaced by U+FFFD. Decode `base64` to read it; a UTF-8 response prints as text, as before.
++- **`imap raw` prints the server's exact octets.** A response that is not UTF-8, such as a `FETCH` carrying an 8-bit body literal, prints under `--json` as `{"event":"undecoded","base64":"..."}`, the response's octets (its literals and final CRLF included) in standard base64, where v2 printed it as text with each such byte replaced by U+FFFD. The text form prints it as one line, `undecoded (base64): ` then the same base64. Decode `base64` to read it; a UTF-8 response prints as text, as before.
+ - **A server's refusal is a result in every protocol namespace, exit 3.** A Gmail, Graph or JMAP command the server refuses (an HTTP 4xx or 5xx, a JMAP request or method error, a refused write), the `request` commands included, prints `{"refusal":{"status","reason","message","code","retryAfter"}}` and exits 3, where it printed the failure object and exited 1; a typed `sieve` command answered `NO` prints `{status, code, text}` as `sieve raw` does; a refused `smtp send` prints `{"refusals":[{"rcptTo","code","text"}]}`. Exit 1 now means no answer at all (network, TLS, a local error). Read the result of exit 3: `refusal.code` keeps the code the failure carried (`permission-denied`, `rate-limited`).
+ - **A JMAP set applied in part names both halves.** `jmap email delete|update|copy`, `jmap mailbox destroy`, `jmap identity delete` and `jmap submission cancel` print `{ids, errors}`, the objects done and one item error per object refused, exit 3, where they printed a failure naming only the refused ones and exited 1.
+ - **A sent message is never a failure.** A copy the store refuses after the send (`--save`, `message.send.save-copy`, `message add --send`) and a reply's answered flag failing after the send are item errors of the receipt, which now carries `errors` (`message send`, the composers, `message add`), and the command exits 3, where it exited 1 with a failure object (two values on stdout for the reply). Do not send again on exit 3: `sent` says the message went out.
+```
+
+**File**: `cairn/log/2026-11-19-imap-raw-text-base64.md` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++---
++cairn: log
++change: imap-raw-text-base64
++landed: 2026-11-19
++---
++
++# imap raw prints an 8-bit response in base64 in text
++
++Owner ruling 2026-11-19: the text form of `imap raw` no longer decodes a response that is not UTF-8 lossily.
++
++## What landed
++
++- src/imap/raw.rs: `split_reply` pushes the line `undecoded (base64): <base64>` for a response that is not UTF-8, the base64 the one the `undecoded` event carries (its octets, literals and final CRLF included); `ImapRawEvent::Undecoded` displays the same line. No existing text convention for binary output was found (byte writers print raw bytes, `--json` base64), so the prefix is new; no well-formed IMAP response opens with it.
++- Test `the_text_form_prints_an_8bit_response_in_base64` failed against the lossy line (U+FFFD found) before the change.
++- CHANGELOG: the unreleased breaking `imap raw` line amended. MIGRATION: the v2 to v3 `imap raw` line amended.
++
++## Capabilities moved
++
++- [commands](../spec/commands.md): *Raw passthrough is byte-verbatim*, its text form, and the scenario *An 8-bit literal in the text form*.
+```
+
+**File**: `cairn/spec/commands.md` (modified, +6/-1)
+```diff
+@@ -53,13 +53,18 @@ The protocol SHALL live in io-managesieve, so this repository holds a `SieveClie
+ ### Requirement: Raw passthrough is byte-verbatim
+ The `imap raw` and `smtp raw` commands SHALL forward the command bytes to the server verbatim, resolving the argument through the shared `RawCommandArg` (positional or stdin read whole, refused when not valid UTF-8). It decodes literal `\r` / `\n` escapes into real CRLF so a shell-typed command survives intact. `imap raw` sends a batch of caller-tagged commands: it appends a trailing CRLF when missing and delegates tagging, framing and out-of-order completion tracking to io-imap. `smtp raw` stays a single command line: it strips the trailing CRLF (io-smtp appends its own) and rejects a multi-line batch, since the SMTP exchange reads exactly one reply. `sieve raw` sends one command line and reads the complete ManageSieve response; literal-bearing Sieve commands use their typed commands so the response reader remains synchronized.
+ 
+-The reply SHALL be printed split into what himalaya understands of it. Under `--json`, `imap raw` SHALL print each untagged response as an `untagged` event `{kind, number, text}` (`* 3 EXISTS` being kind `EXISTS`, number 3), each continuation request as a `continuation` event `{text}`, a response it cannot parse as an `unparsed` event `{text}`, and a response that is not UTF-8 as an `undecoded` event `{base64}`, its exact octets in the RFC 4648 standard alphabet, padded, a literal kept in the response announcing it, as io-imap frames each response; then the result `{completions: [{tag, status, code, text}]}`, and `sieve raw` each data line as a `data` event `{text}`, then the completion `{status, code, text}`. The text form of `imap raw` and `sieve raw` SHALL print every response line as received, untagged and data lines included, as the result, the events being printed under `--json` only. `smtp raw` SHALL print `{code, text}`, the reply's lines joined, `code` `null` when the reply opens with none. A refused completion (an IMAP `NO` or `BAD`, a ManageSieve `NO` or `BYE`, an SMTP 4xx or 5xx) SHALL exit 3, its result printed. `imap raw` reads the whole reply before printing, so its events come before the result but not as they arrive. It SHALL print each response from the octets io-imap read, never decoding them lossily under `--json`: a UTF-8 one as text, parsed, and one that is not as `undecoded`, a line of a literal never read as a response. A response that is not UTF-8 and opens with neither `*` nor `+`, a tagged completion whose status is left unread, SHALL exit 3. The text form SHALL print a response that is not UTF-8 decoded lossily, a terminal showing no other.
++The reply SHALL be printed split into what himalaya understands of it. Under `--json`, `imap raw` SHALL print each untagged response as an `untagged` event `{kind, number, text}` (`* 3 EXISTS` being kind `EXISTS`, number 3), each continuation request as a `continuation` event `{text}`, a response it cannot parse as an `unparsed` event `{text}`, and a response that is not UTF-8 as an `undecoded` event `{base64}`, its exact octets in the RFC 4648 standard alphabet, padded, a literal kept in the response announcing it, as io-imap frames each response; then the result `{completions: [{tag, status, code, text}]}`, and `sieve raw` each data line as a `data` event `{text}`, then the completion `{status, code, text}`. The text form of `imap raw` and `sieve raw` SHALL print every response line as received, untagged and data lines included, as the result, the events being printed under `--json` only. `smtp raw` SHALL print `{code, text}`, the reply's lines joined, `code` `null` when the reply opens with none. A refused completion (an IMAP `NO` or `BAD`, a ManageSieve `NO` or `BYE`, an SMTP 4xx or 5xx) SHALL exit 3, its result printed. `imap raw` reads the whole reply before printing, so its events come before the result but not as they arrive. It SHALL print each response from the octets io-imap read, never decoding them lossily: a UTF-8 one as text, parsed, and one that is not as `undecoded`, a line of a literal never read as a response. A response that is not UTF-8 and opens with neither `*` nor `+`, a tagged completion whose status is left unread, SHALL exit 3. The text form SHALL print a response that is not UTF-8 as one line, `undecoded (base64): ` then its exact octets as the `undecoded` event carries them, never decoded lossily; no well-formed IMAP response opens that way, `undecoded` being no status a tag may precede.
+ 
+ #### Scenario: An 8-bit literal
+ - GIVEN an IMAP server answering `a1 FETCH 1 BODY[]` with a literal holding the octet 0xE9, then `a1 OK done`
+ - WHEN `himalaya --json imap raw -- 'a1 FETCH 1 BODY[]'` runs
+ - THEN it prints an `undecoded` event whose `base64` decodes to the `FETCH` response's exact octets, then `{"completions":[{"tag":"a1","status":"OK","code":null,"text":"done"}]}`, a line of the literal spelling `a1 NO` never read as a completion, 
+```
+
+**File**: `src/imap/raw.rs` (modified, +31/-9)
+```diff
+@@ -26,9 +26,11 @@ use crate::{
+ /// trailing one is appended when missing. The response is read until
+ /// every tagged completion has arrived, possibly out of order.
+ ///
+-/// The text form prints every response as received. Under `--json`,
+-/// untagged and continuation responses print as events, then the tagged
+-/// completions as the result, each split into its parts. A response that
++/// The text form prints every response as received, one that is not
++/// UTF-8 as a line `undecoded (base64): ` followed by its exact octets
++/// in base64, never decoded lossily. Under `--json`, untagged and
++/// continuation responses print as events, then the tagged completions
++/// as the result, each split into its parts. A response that
+ /// is not UTF-8, such as one carrying an 8-bit literal, prints as an
+ /// event holding its exact octets in base64. A tagged NO or BAD is part
+ /// of the result and exits 3, the server having answered.
+@@ -90,7 +92,8 @@ impl ImapRawCommand {
+ pub(crate) struct ImapRawOutput {
+     /// One per command sent.
+     completions: Vec<ImapCompletion>,
+-    /// Every response as received, for the text form.
++    /// Every response as received, for the text form, one that is not
++    /// UTF-8 as its line in base64.
+     #[serde(skip)]
+     lines: Vec<String>,
+     /// Whether a response that is not UTF-8 opens with a tag, a completion
+@@ -122,10 +125,9 @@ fn split_reply(responses: &[Vec<u8>]) -> (Vec<ImapRawEvent>, ImapRawOutput) {
+ 
+         let Ok(text) = str::from_utf8(bytes) else {
+             unread |= !matches!(bytes.first(), Some(b'*' | b'+'));
+-            lines.push(String::from_utf8_lossy(bytes).into_owned());
+-            events.push(ImapRawEvent::Undecoded {
+-                base64: base64::encode(response),
+-            });
++            let base64 = base64::encode(response);
++            lines.push(format!("undecoded (base64): {base64}"));
++            events.push(ImapRawEvent::Undecoded { base64 });
+             continue;
+         };
+ 
+@@ -205,7 +207,7 @@ impl fmt::Display for ImapRawEvent {
+         match self {
+             Self::Untagged { line, .. } | Self::Continuation { line, .. } => writeln!(f, "{line}"),
+             Self::Unparsed { text } => writeln!(f, "{text}"),
+-            Self::Undecoded { base64 } => writeln!(f, "{base64}"),
++            Self::Undecoded { base64 } => writeln!(f, "undecoded (base64): {base64}"),
+         }
+     }
+ }
+@@ -400,6 +402,26 @@ mod tests {
+         );
+     }
+ 
++    /// The text form prints a response that is not UTF-8 as a line of its
++    /// own in base64, never decoded lossily.
++    #[test]
++    fn the_text_form_prints_an_8bit_response_in_base64() {
++        let fetch = b"* 1 FETCH (BODY[] {4}\r\nab\xe9c)\r\n";
++        let responses = framed(&[fetch, b"A1 OK done\r\n"]);
++        let (_, output) = split_reply(&responses);
++        let text = output.to_string();
++
++        assert!(!text.contains('\u{FFFD}'));
++
++        let mut lines = text.lines();
++        let line = lines.next().unwrap();
++        let data = line.strip_prefix("undecoded (base64): ").unwrap();
++
++        assert_eq!(base64::decode_strict(data).unwrap(), fetch);
++        assert_eq!(lines.next(), Some("A1 OK done"));
++        assert_eq!(lines.next(), None);
++    }
++
+     /// A tagged response that is not UTF-8 prints in base64 and marks the
+     /// outcome partial, its status left unread.
+     #[test]
+```
+
+---
+
+### Incident Patch 3: `a4a5f7d8` (2026-11-19)
+**Commit Message**: fix(pimdir): name the mailbox mailboxId in pimdir status
+
+**File**: `cairn/log/2026-11-19-pimdir-status-names-the-mailbox.md` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++---
++cairn: log
++change: pimdir-status-names-the-mailbox
++landed: 2026-11-19
++---
++
++# pimdir status names the mailbox
++
++The owner's ruling of 2026-11-19: `himalaya pimdir status` names a parked or refused row's mailbox `mailboxId`, as Calendula's and Cardamum's name theirs `calendarId` and `addressbookId`, where it printed `collection`, a pimdir word. The command is unreleased (it landed the same day under pimdir-status-reports-the-store), so no user is broken and no CHANGELOG entry moves.
++
++## What landed
++
++- src/pimdir/status.rs: `PimdirParkedStatus.mailbox_id`, and a status-own `PimdirRefusedStatus` (`mailboxId`, `itemId`, `source`, `reason`, `refusedAt`), so `pimdir queue list` keeps its `collection` key.
++- src/pimdir/backend.rs: `status` maps the queue's refused rows onto it.
++- cairn/spec/backends.md: *pimdir status reports the store*, its row shapes and scenario.
++
++## Checks
++
++The test `a_status_prints_mailboxes_parked_rows_and_refusals` asserts the new keys, and the store test with a parked move reads `mailbox_id`.
++
++## Left
++
++`pimdir queue list`, `queue show` and their refusals still print `collection`, as Calendula's and Cardamum's queue outputs do: aligning the queue outputs is a family question, not this change's.
+```
+
+**File**: `cairn/spec/backends.md` (modified, +2/-2)
+```diff
+@@ -317,12 +317,12 @@ Every pimdir output naming a queue row SHALL print `row`, the row id, an integer
+ - THEN the row is listed as parked with its error, and `pimdir queue cancel` on its id removes it
+ 
+ ### Requirement: pimdir status reports the store
+-`himalaya pimdir status` SHALL report what the pimdir store holds of the account, as Calendula's and Cardamum's `pimdir status` report theirs, and print `{"account", "accounts", "mailboxes", "parked", "refused"}`: `account` the account the store groups this account's mail under (`pimdir.account`, configured or derived), `null` in a store grouping none; `accounts` every account the store groups collections under (`PimdirReader::list_accounts`); `mailboxes` one `{"id", "name", "total", "hydrated", "queued"}` per mailbox of the account, by id, `name` its id when it has none, `total` its live messages (`count_items`), `hydrated` those carrying a local body, read off the summaries with no body opened, `queued` its queued creations and sends, those `pimdir queue list` lists under `messages`; `parked` each row the sync engine parked in those mailboxes, in append order, `{"row", "handle", "collection", "kind", "error"}`, `kind` as the store holds it; `refused` each refusal standing in them (pimdir STORAGE §15.4) in the shape `pimdir queue list` prints under its `refused`, which it keeps. The text SHALL print `Account:` (the account and `(pimdir)`), `Store account:` and `Grouped accounts:` above one line per mailbox (its id, `<hydrated>/<total>`, `<queued> queued`, its name), then a blank line and one line per parked row (its handle, `parked` or `unconfirmed`, its kind, its mailbox, its error), then a blank line and one line per refusal (the message id, `refused`, the source, the mailbox, the reason), each block printed only when it holds a line.
++`himalaya pimdir status` SHALL report what the pimdir store holds of the account, as Calendula's and Cardamum's `pimdir status` report theirs, and print `{"account", "accounts", "mailboxes", "parked", "refused"}`: `account` the account the store groups this account's mail under (`pimdir.account`, configured or derived), `null` in a store grouping none; `accounts` every account the store groups collections under (`PimdirReader::list_accounts`); `mailboxes` one `{"id", "name", "total", "hydrated", "queued"}` per mailbox of the account, by id, `name` its id when it has none, `total` its live messages (`count_items`), `hydrated` those carrying a local body, read off the summaries with no body opened, `queued` its queued creations and sends, those `pimdir queue list` lists under `messages`; `parked` each row the sync engine parked in those mailboxes, in append order, `{"row", "handle", "mailboxId", "kind", "error"}`, `kind` as the store holds it; `refused` each refusal standing in them (pimdir STORAGE §15.4) `{"mailboxId", "itemId", "source", "reason", "refusedAt"}`, the row `pimdir queue list` prints under its `refused` with the mailbox named `mailboxId`, as Calendula and Cardamum name theirs by `calendarId` and `addressbookId`; `pimdir queue list` keeps its own keys. The text SHALL print `Account:` (the account and `(pimdir)`), `Store account:` and `Grouped accounts:` above one line per mailbox (its id, `<hydrated>/<total>`, `<queued> queued`, its name), then a blank line and one line per parked row (its handle, `parked` or `unconfirmed`, its kind, its mailbox, its error), then a blank line and one line per refusal (the message id, `refused`, the source, the mailbox, the reason), each block printed only when it holds a line.
+ 
+ #### Scenario: A parked move in the report
+ - GIVEN a pimdir account holding `imap/Drafts` and `imap/Trash`, and a move of a draft the sync engine parked
+ - WHEN `himalaya --json pimdir status` runs
+-- THEN it prints both mailboxes by id, `imap/Drafts` with its `hydrated` and `total`, and under `parked` the move's `row`, `handle`, `"collection":"imap/Drafts"`, `"kind":"move"` and its error
++- THEN it prints both mailboxes by id, `imap/Drafts` with its `hydrated` and `total`, and under `parked` the move's `row`, `handle`, `"mailboxId":"imap/Drafts"`, `"kind":"move"` and its error
+ 
+ ### Requirement: pimdir creates a mailbox by queueing an intent
+ `pimdir mailbox create <NAME> [--parent <MAILBOX>]` SHALL enqueue one `collection-create` intent (pimdir STORAGE Annex B.2) with the `v: 1` payload `{"v": 1, "source": id, "name": text, "parent": collection?}`, and print `{"row": integer, "handle": string, "name": text, "parent": collection | null, "source": id}`, `parent` `null` at the top, never left out. It SHALL NOT create a collection in the store: the mailbox arrives with the sync that performs the intent.
+```
+
+**File**: `src/pimdir/backend.rs` (modified, +16/-4)
+```diff
+@@ -69,7 +69,9 @@ use crate::{
+     pimdir::{
+         client::{PimdirClient, handle},
+         queue::list::{PimdirQueueRefused, PimdirQueueRow},
+-        status::{PimdirMailboxStatus, PimdirParkedStatus, PimdirStatusOutput},
++        status::{
++            PimdirMailboxStatus, PimdirParkedStatus, PimdirRefusedStatus, PimdirStatusOutput,
++        },
+     },
+ };
+ 
+@@ -1527,7 +1529,17 @@ impl PimdirClient {
+ 
+         for collection in &collections {
+             let id = collection.id.as_str();
+-            refused.extend(self.refused_rows(id)?);
++            refused.extend(
++                self.refused_rows(id)?
++                    .into_iter()
++                    .map(|row| PimdirRefusedStatus {
++                        mailbox_id: row.collection,
++                        item_id: row.item_id,
++                        source: row.source,
++                        reason: row.reason,
++                        refused_at: row.refused_at,
++                    }),
++            );
+ 
+             let total = self
+                 .store
+@@ -1571,7 +1583,7 @@ impl PimdirClient {
+             .map(|parked| PimdirParkedStatus {
+                 row: parked.id,
+                 handle: handle(&identity, parked.id),
+-                collection: parked.collection,
++                mailbox_id: parked.collection,
+                 kind: parked.action,
+                 error: parked.error,
+             })
+@@ -5109,7 +5121,7 @@ mod tests {
+         assert_eq!(status.parked[0].row, row);
+         assert_eq!(status.parked[0].handle, named.to_string());
+         assert_eq!(status.parked[0].kind, "move");
+-        assert_eq!(status.parked[0].collection, "imap/Drafts");
++        assert_eq!(status.parked[0].mailbox_id, "imap/Drafts");
+         let drafts_status = &status.mailboxes[0];
+         assert_eq!(drafts_status.id, "imap/Drafts");
+         assert_eq!((drafts_status.hydrated, drafts_status.total), (1, 1));
+```
+
+**File**: `src/pimdir/status.rs` (modified, +30/-19)
+```diff
+@@ -12,11 +12,7 @@ use pimalaya_cli::{columns::Columns, listing::Listing, printer::Printer, sanitiz
+ use schemars::JsonSchema;
+ use serde::Serialize;
+ 
+-use crate::{
+-    account::context::Account,
+-    backend::Backend,
+-    pimdir::{client::PimdirClient, queue::list::PimdirQueueRefused},
+-};
++use crate::{account::context::Account, backend::Backend, pimdir::client::PimdirClient};
+ 
+ /// Report what the local pimdir store holds of the account.
+ ///
+@@ -37,7 +33,7 @@ use crate::{
+ ///
+ /// JSON output: `{"account", "accounts", "mailboxes": [{"id", "name",
+ /// "total", "hydrated", "queued"}], "parked": [{"row", "handle",
+-/// "collection", "kind", "error"}], "refused": [{"collection", "itemId",
++/// "mailboxId", "kind", "error"}], "refused": [{"mailboxId", "itemId",
+ /// "source", "reason", "refusedAt"}]}`, `kind` as the queue spells it.
+ #[derive(Debug, Parser)]
+ pub struct PimdirStatusCommand;
+@@ -73,9 +69,8 @@ pub struct PimdirStatusOutput {
+     /// Every action the sync engine parked in those mailboxes, in the
+     /// order it was queued.
+     pub parked: Vec<PimdirParkedStatus>,
+-    /// Every refusal standing in those mailboxes, per message and source,
+-    /// as `pimdir queue list` prints it.
+-    pub refused: Vec<PimdirQueueRefused>,
++    /// Every refusal standing in those mailboxes, per message and source.
++    pub refused: Vec<PimdirRefusedStatus>,
+ }
+ 
+ /// One mailbox's row in a [`PimdirStatusOutput`].
+@@ -106,7 +101,7 @@ pub struct PimdirParkedStatus {
+     pub handle: String,
+     /// The mailbox the action is queued on, as `mailbox list` prints its
+     /// id.
+-    pub collection: String,
++    pub mailbox_id: String,
+     /// The action as the queue spells it: `add`, `submit`, `set-flags`,
+     /// `move`, ...
+     pub kind: String,
+@@ -115,6 +110,22 @@ pub struct PimdirParkedStatus {
+     pub error: String,
+ }
+ 
++/// One refused message in a [`PimdirStatusOutput`] (pimdir STORAGE §15.4).
++#[derive(Clone, Debug, Serialize, JsonSchema)]
++#[serde(rename_all = "camelCase")]
++pub struct PimdirRefusedStatus {
++    /// The mailbox holding the message, as `mailbox list` prints its id.
++    pub mailbox_id: String,
++    /// The message, as `envelope list` prints its id.
++    pub item_id: String,
++    /// The source whose server refused the change.
++    pub source: String,
++    /// The text the server gave.
++    pub reason: String,
++    /// When the refusal was recorded, RFC 3339.
++    pub refused_at: String,
++}
++
+ impl fmt::Display for PimdirStatusOutput {
+     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+         let mut listing = Listing::new(&self.name, Some(Backend::Pimdir.as_str()));
+@@ -155,7 +166,7 @@ impl fmt::Display for PimdirStatusOutput {
+                     sanitize::text(&row.handle).into_owned(),
+                     String::from(state),
+                     sanitize::text(&row.kind).into_owned(),
+-                    sanitize::text(&row.collection).into_owned(),
++                    sanitize::text(&row.mailbox_id).into_owned(),
+                     sanitize::text(&row.error).into_owned(),
+                 ]);
+             }
+@@ -171,7 +182,7 @@ impl fmt::Display for PimdirStatusOutput {
+                     sanitize::text(&row.item_id).into_owned(),
+                     String::from("refused"),
+                     sanitize::text(&row.source).into_owned(),
+-                    sanitize::text(&row.collection).into_owned(),
++                    sanitize::text(&row.mailbox_id).into_owned(),
+                     sanitize::text(&row.reason).into_owned(),
+                 ]);
+             }
+@@ -192,8 +203,8 @@ mod tests {
+     const STORE: &str = "e2646df031cd876334410c4df14ebd86";
+ 
+     /// The report prints the twins' keys, a parked row by its row and
+-    /// handle, and the refusals in the shape `pimdir queue list` prints
+-    /// them; the text lists each block after the mailboxes.
++    /// handle, a mailbox under `mailboxId` in parked and refused rows; the
++    /// text lists each block after the mailboxes.
+     #[test]
+     fn a_status_prints_mailboxes_parked_rows_and_refusals() {
+         let output = PimdirStatusOutput {
+@@ -210,12 +221,12 @@ mod tests {
+             parked: vec![PimdirParkedStatus {
+                 row: 3,
+                 handle: format!("{STORE}.1.3"),
+-                collection: "imap/INBOX".into(),
++                mailbox_id: "imap/INBOX".into(),
+                 kind: "move".into(),
+                 error: "conflict".into(),
+             }],
+-            refused: vec![PimdirQueueRefused {
+-                collection: "imap/INBOX".into(),
++            refused: vec![PimdirRefusedStatus {
++                mailbox_id: "imap/INBOX".into(),
+                 item_id: "9".into(),
+                 source: "imap".into(),
+                 reason: "NO [CANNOT] refused".into(),
+@@ -238,12 +249,12 @@ mod tests {
+                 "parked": [{
+                     "row": 3,
+                     "handle": format!("{STORE}.1.3"),
+-                    "coll
 ```
 
 #### Recent Merged Pull Requests:
@@ -1688,28 +2281,25 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deny): ignore the unmaintained chrono advisory
+## X. the family analysis fix-now batch (HIM-1 to HIM-5, HIM-10, HIM-14, HIM-18, HIM-1
 
 **RULE**:
-When implementing operations in `deny.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `edf58f38`: deny): ignore the unmaintained chrono advisory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a04ff103`: the family analysis fix-now batch (HIM-1 to HIM-5, HIM-10, HIM-14, HIM-18, HIM-19, TRI-1). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `deny.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-[advisories]
-# chrono is unmaintained, not vulnerable, with no maintained release to
-# move to. imap-types exposes it in its API (duesee/imap-codec#752), and
-# the family moves its own code to jiff.
-ignore = [
-  { id = "RUSTSEC-2026-0543", reason = "chrono unmaintained, see duesee/imap-codec#752" },
-]
+- Fixed a Gmail search flattening an `and` under an `or`: `from alice and subject invoice or from bob` went out as `{from:alice subject:invoice from:bob}`, which Gmail reads as three alternatives, and a `date` clause beside an `or` matched the whole label. An alternative holding more than one term is now wrapped in parentheses, `{(from:alice subject:invoice) from:bob}`.
+- Fixed `envelope list` and `envelope search` with `--page-size 0` on Gmail reading the first 100 messages and saying the listing was complete: they follow every next page token, 500 messages a page, as Microsoft Graph and IMAP list the whole mailbox.
+- Fixed `pimdir queue show` and `pimdir queue cancel` reaching a row another app of the store queued on an address book or calendar of the same account: such a row reads `unknown` and is refused, as Cardamum and Calendula keep to their own kind.
+- Fixed `himalaya mcp` over an mbox account reading and appending to an mbox outside `mbox.root` given as an absolute mailbox path: the server refuses it, read or write. The command line still opens any mbox by its absolute path.
+- Fixed `imap raw` panicking (exit 101) on a literal holding a byte that is no UTF-8, and splitting
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1719,7 +2309,7 @@ ignore = [
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `edf58f38` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a04ff103` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

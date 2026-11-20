@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T07:23:44.981Z",
+  "last_updated": "2026-11-20T07:36:08.598Z",
   "total_verified_learnings": 9029,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22301,
+  "total_items": 22310,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113949,10 +113949,10 @@
       "relative_path": "08_VERIFICATION/pimalaya-himalaya-verification-protocol-empirical-defect-shield-for-pimalaya-him.md",
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya/himalaya",
       "repository": "pimalaya/himalaya",
-      "source_version": "edf58f38",
-      "content_hash": "ff5d40894f3e370cbbe9f7262436f52985b64d5b96c4919ceac6c9c6dbc22a37",
+      "source_version": "a5623dca",
+      "content_hash": "70425eb6e29cbf931ac0d249763bf8f6394931d9652ead5533b77cdec8957ecd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T19:51:58.929Z"
+      "persisted_at": "2026-11-20T07:35:56.970Z"
     },
     "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731": {
       "item_id": "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731",
@@ -114010,9 +114010,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya-himalaya-learnings",
       "repository": "pimalaya-himalaya-learnings",
       "source_version": "HEAD",
-      "content_hash": "60d6286b0817a10e4a58a476196b67ce143c3617a4081640d0bfdbc752285b50",
+      "content_hash": "3d169050f2a181838efe6e0aba122748b0155c46531a04dd96852d922a9d48cc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T19:52:16.008Z"
+      "persisted_at": "2026-11-20T07:36:06.980Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c",
@@ -214058,8 +214058,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "674d3362",
-      "content_hash": "3b1f6b3510aa4d37979797566c59dd027df54977e4e6460de98dbbbc8ae3e5f6",
+      "source_version": "a4d2f0c0",
+      "content_hash": "c53b7789c2a08892cd93e03a49711aa448965c031b4d4f92d4b8a4bbb49d1693",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -214082,6 +214082,11 @@
           "number": 8990,
           "title": "util/test: don't panic in MakeTempFS when creating files fails",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9542,
+          "title": "Skip repeated rule names when resolving refs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214089,7 +214094,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T04:08:21.321Z",
+      "verified_at": "2026-11-20T07:36:02.829Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214131,10 +214136,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "repository": "open-policy-agent/opa",
-      "source_version": "674d3362",
-      "content_hash": "5459c87ba3e722a7b26863d08437d1523e7822957bc760ee862a6517ca93a44e",
+      "source_version": "a4d2f0c0",
+      "content_hash": "e1a6e146bc4ef245187d0fa8ca5b33c3418d0258c25fd975a967d446804666ef",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T04:08:21.821Z"
+      "persisted_at": "2026-11-20T07:36:03.360Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa",
@@ -214143,10 +214148,10 @@
       "relative_path": "08_VERIFICATION/open-policy-agent-opa-verification-protocol-empirical-defect-shield-for-open-pol.md",
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent/opa",
       "repository": "open-policy-agent/opa",
-      "source_version": "674d3362",
-      "content_hash": "fca58ec0976400c7ff7e1b5d74bad1570e5430a8b0bb4d80760f65f76b2d0bc6",
+      "source_version": "a4d2f0c0",
+      "content_hash": "7290a3136fda369b839a91cd6f6b3beb078549bfc8562468c52df90716df6803",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T04:08:21.958Z"
+      "persisted_at": "2026-11-20T07:36:03.506Z"
     },
     "learn-github-cilium-cilium": {
       "learning_id": "learn-github-cilium-cilium",
@@ -214417,9 +214422,9 @@
       "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
       "repository": "open-policy-agent-opa-learnings",
       "source_version": "HEAD",
-      "content_hash": "f7e91d2bd9a25da60ed27d92dd5aadb3f274f21c08d22f3081d46bb47f292257",
+      "content_hash": "986d96cfcb55f0e0ac5eb3a362131dec407ad638a079a95e6843a3fc740c55e5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T04:13:34.087Z"
+      "persisted_at": "2026-11-20T07:36:08.455Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa-learning",
@@ -214429,9 +214434,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent-opa-learnings",
       "repository": "open-policy-agent-opa-learnings",
       "source_version": "HEAD",
-      "content_hash": "cdc4665cb52ca24dab32a332e8a798bd43b7c6d12e7d13e0461f2a3c774a1893",
+      "content_hash": "ad2b41266f024c460208148492f00ac6481fc02a94dcd3e158d6faaef5d70482",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T04:13:34.241Z"
+      "persisted_at": "2026-11-20T07:36:08.598Z"
     },
     "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
       "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
@@ -247016,8 +247021,8 @@
       "slug": "pimalaya-himalaya",
       "platform": "github",
       "source_url": "https://github.com/pimalaya/himalaya",
-      "source_version": "edf58f38",
-      "content_hash": "92b72d53a46a740e63f9d25bb14694e350495026489d335aca639178d5d90626",
+      "source_version": "a5623dca",
+      "content_hash": "82637fe01b7493f03326b5e828d4108cbfffbed8526a0d728064c6412db6ea89",
       "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "promoted_rules": [
@@ -247035,6 +247040,11 @@
           "number": 9276,
           "title": "ignore the unmaintained chrono advisory",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9540,
+          "title": "the family analysis fix-now batch (HIM-1 to HIM-5, HIM-10, HIM-14, HIM-18, HIM-1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -247042,7 +247052,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T19:51:58.213Z",
+      "verified_at": "2026-11-20T07:35:56.254Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254482,14 +254492,19 @@
       "slug": "juullabs-kable",
       "platform": "github",
       "source_url": "https://github.com/JuulLabs/kable",
-      "source_version": "2a4ea295",
-      "content_hash": "c89e8cabc74d8c50aebc0736afa58094ba9a27132dc0f4f4ac683d6cfc98f198",
+      "source_version": "9836c4e2",
+      "content_hash": "af7bab64cdef4af4aaedb59f591e79af64c07b89c2e925de86351403ef103d35",
       "dossier_path": "07_PROJECT_LEARNING/juullabs-kable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juullabs-kable-learnings.md",
       "promoted_rules": [
         {
           "number": 8708,
           "title": "Add `AndroidPeripheral.refreshGattCache`",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9541,
+          "title": "Configure MTU via peripheral builder",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -254498,7 +254513,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T03:57:17.201Z",
+      "verified_at": "2026-11-20T07:36:00.933Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254540,10 +254555,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juullabs-kable-architecture-intelligence-juullabs-kable-core-invariants.md",
       "title": "Architecture Intelligence: JuulLabs/kable Core Invariants",
       "repository": "JuulLabs/kable",
-      "source_version": "2a4ea295",
-      "content_hash": "49a76f3cd731b835b80ed1b69236c8f97fd3673ec28abbedce384c30a0611fa2",
+      "source_version": "9836c4e2",
+      "content_hash": "3df276b8be7da0b1be52ddc567e1687aecade74b1ad271d8e00cd148c1896db5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T03:57:17.588Z"
+      "persisted_at": "2026-11-20T07:36:01.456Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-juullabs-kable": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-juullabs-kable",
@@ -254552,10 +254567,10 @@
       "relative_path": "08_VERIFICATION/juullabs-kable-verification-protocol-empirical-defect-shield-for-juullabs-kable.md",
       "title": "Verification Protocol: Empirical Defect Shield for JuulLabs/kable",
       "repository": "JuulLabs/kable",
-      "source_version": "2a4ea295",
-      "content_hash": "39a0e2c0ba8f135034c8992228e3fa72c1426bf4d0e9ce027b738c686f25f8f1",
+      "source_version": "9836c4e2",
+      "content_hash": "5765933dbbbced182c26837bbde2969a97e1217fd117e6e42c93ff7303e187a2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T03:57:17.683Z"
+      "persisted_at": "2026-11-20T07:36:01.600Z"
     },
     "rule-8709": {
       "learning_id": "rule-8709",
@@ -254615,9 +254630,9 @@
       "title": "Architecture Intelligence: juullabs-kable-learnings Core Invariants",
       "repository": "juullabs-kable-learnings",
       "source_version": "HEAD",
-      "content_hash": "f557b1a57592de77a205324ea9805c39651ca05d4778237700b4c58db305e491",
+      "content_hash": "a7ff4ec64303ef92b90a041bfc13a7b015ca57b1ec5cb9f236496d4e07b792a5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T03:57:50.567Z"
+      "persisted_at": "2026-11-20T07:36:07.755Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-juullabs-kable-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-juullabs-kable-learnings",
@@ -254627,9 +254642,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for juullabs-kable-learnings",
       "repository": "juullabs-kable-learnings",
       "source_version": "HEAD",
-      "content_hash": "5eaa6c4008d25bce8e9435c570925ee0596584744305c60f90a6c21b6f7e7c67",
+      "content_hash": "7527ad54b5d0f7b502572f4cc7e9cc8e4edec8c8b574782ed354e7b16204d60c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T03:57:50.679Z"
+      "persisted_at": "2026-11-20T07:36:07.897Z"
     },
     "candidate_directive-deps-bump-golang-org-x-crypto-v0-58-0-v0-59-0": {
       "item_id": "candidate_directive-deps-bump-golang-org-x-crypto-v0-58-0-v0-59-0",
@@ -302028,6 +302043,120 @@
       "content_hash": "f5ab76e50bec3872768ed2d9ede25e920a284581f3e8d0ecabdff44c2dca28f8",
       "domain_letter": "H",
       "persisted_at": "2026-11-20T07:15:05.038Z"
+    },
+    "rule-9540": {
+      "learning_id": "rule-9540",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9540,
+      "title": "the family analysis fix-now batch (HIM-1 to HIM-5, HIM-10, HIM-14, HIM-18, HIM-1",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "source_version": "a5623dca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T07:35:56.254Z"
+    },
+    "candidate_directive-the-family-analysis-fix-now-batch-him-1-to-him-5-him-10-him-14-him-18-him-1": {
+      "item_id": "candidate_directive-the-family-analysis-fix-now-batch-him-1-to-him-5-him-10-him-14-him-18-him-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0HLF-the-family-analysis-fix-now-batch-him-1-to-him-5-him-10-him-14-him-18-him-1.md",
+      "title": "the family analysis fix-now batch (HIM-1 to HIM-5, HIM-10, HIM-14, HIM-18, HIM-1",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8bab7e41c5b6a8dc609b36252e88fb39860b982a479a7983e9a48daa461848e4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T07:36:06.679Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pimalaya-himalaya-technical-construction-intelligence-pimalaya-himalaya-core-inv.md",
+      "title": "Technical Construction Intelligence: pimalaya/himalaya Core Invariants",
+      "repository": "pimalaya/himalaya",
+      "source_version": "a5623dca",
+      "content_hash": "5522fac204c7b000637b3d5861342dccffa6a6f543fddba0caaed6a1ff981b79",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T07:35:56.815Z"
+    },
+    "rule-9541": {
+      "learning_id": "rule-9541",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9541,
+      "title": "Configure MTU via peripheral builder",
+      "source_url": "https://github.com/JuulLabs/kable",
+      "source_version": "9836c4e2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T07:36:00.933Z"
+    },
+    "candidate_directive-configure-mtu-via-peripheral-builder": {
+      "item_id": "candidate_directive-configure-mtu-via-peripheral-builder",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0IBF-configure-mtu-via-peripheral-builder.md",
+      "title": "Configure MTU via peripheral builder",
+      "repository": "juullabs-kable-learnings",
+      "source_version": "HEAD",
+      "content_hash": "47b403d2aa4cba83440db2dfdc86427c1205d092d9322e0ce5cc54fa44458630",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T07:36:07.612Z"
+    },
+    "rule-9542": {
+      "learning_id": "rule-9542",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9542,
+      "title": "Skip repeated rule names when resolving refs",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "a4d2f0c0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T07:36:02.829Z"
+    },
+    "candidate_directive-skip-repeated-rule-names-when-resolving-refs": {
+      "item_id": "candidate_directive-skip-repeated-rule-names-when-resolving-refs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0EX8-skip-repeated-rule-names-when-resolving-refs.md",
+      "title": "Skip repeated rule names when resolving refs",
+      "repository": "open-policy-agent/opa",
+      "source_version": "a4d2f0c0",
+      "content_hash": "abc0531cf379005a929cdd69ec2ba21e8deaf2d5f0b68585865c0147f06be816",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T07:36:03.212Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pimalaya-himalaya-learnings-technical-construction-intelligence-pimalaya-himalay.md",
+      "title": "Technical Construction Intelligence: pimalaya-himalaya-learnings Core Invariants",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "19027dd5f4b5b33917259bcf6b286b706b0a8df8d2143d448266559b8569d879",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T07:36:06.823Z"
+    },
+    "candidate_directive-ast-skip-repeated-rule-names-when-resolving-refs": {
+      "item_id": "candidate_directive-ast-skip-repeated-rule-names-when-resolving-refs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0IUR-ast-skip-repeated-rule-names-when-resolving-refs.md",
+      "title": "ast: Skip repeated rule names when resolving refs",
+      "repository": "open-policy-agent-opa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "585f7424b793894c0fefbc80084e33d9cbabe8ad640cf269fc4d919e12a6669a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T07:36:08.307Z"
     }
   },
   "ai-builder-brain": {

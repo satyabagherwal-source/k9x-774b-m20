@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T07:15:00.736Z",
-  "total_cycles_completed": 10957,
-  "total_learnings_persisted": 10957,
-  "total_rules_promoted": 10324,
+  "last_updated": "2026-11-20T07:36:03.024Z",
+  "total_cycles_completed": 10960,
+  "total_learnings_persisted": 10960,
+  "total_rules_promoted": 10327,
   "history": [
-    {
-      "timestamp": "2026-11-19T12:20:08.638Z",
-      "repository": "Phocinae/Phocinae-Largha-150M-v1",
-      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T12:40:26.262Z",
-      "repository": "microsoft/FrogNano-4B-2609",
-      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T12:40:35.397Z",
-      "repository": "flux-iac/tofu-controller",
-      "learningId": "learn-github-flux-iac-tofu-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T13:03:11.903Z",
       "repository": "topoteretes/cognee",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-20T07:15:00.736Z",
       "repository": "ydb-platform/ydb",
       "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T07:35:56.456Z",
+      "repository": "pimalaya/himalaya",
+      "learningId": "learn-github-pimalaya-himalaya",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T07:36:01.125Z",
+      "repository": "JuulLabs/kable",
+      "learningId": "learn-github-juullabs-kable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T07:36:03.024Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
