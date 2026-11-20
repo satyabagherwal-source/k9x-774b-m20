@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T19:25:17.974Z",
+  "updated_at": "2026-11-20T19:45:19.422Z",
   "stats": {
-    "total_discovered": 6682,
-    "approved_pending_harvest": 6323,
+    "total_discovered": 6688,
+    "approved_pending_harvest": 6328,
     "harvested_count": 0,
-    "rejected_count": 359,
+    "rejected_count": 360,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6281,
+      "COMMUNITY_AND_EXPERT": 6287,
       "OFFICIAL_DOCUMENTATION": 230,
       "STANDARDS_AND_SPECIFICATIONS": 119,
       "ENGINEERING_BLOGS": 5,
@@ -144514,6 +144514,131 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
         "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-C4B28A4DB037": {
+      "id": "SRC-C4B28A4DB037",
+      "url": "https://localhost:3000/",
+      "title": "https://localhost:3000/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:44:49.119Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-D905945D4067": {
+      "id": "SRC-D905945D4067",
+      "url": "https://localhost:${front.address(",
+      "title": "https://localhost:${front.address(",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:44:49.164Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-222F91FD1D38": {
+      "id": "SRC-222F91FD1D38",
+      "url": "https://127.0.0.1:${port",
+      "title": "https://127.0.0.1:${port",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:44:49.206Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nodejs-undici-learnings.md",
+        "fileName": "nodejs-undici-learnings.md"
+      }
+    },
+    "SRC-8101702BC81A": {
+      "id": "SRC-8101702BC81A",
+      "url": "https://github.com/authzed/spicedb/pull/3509",
+      "title": "https://github.com/authzed/spicedb/pull/3509",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:45:18.502Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-1DADCE759718": {
+      "id": "SRC-1DADCE759718",
+      "url": "https://github.com/authzed/spicedb/pull/3513",
+      "title": "https://github.com/authzed/spicedb/pull/3513",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:45:18.561Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-8F83D05FEA8F": {
+      "id": "SRC-8F83D05FEA8F",
+      "url": "http://127.0.0.1:47321/",
+      "title": "http://127.0.0.1:47321/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T19:45:19.422Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
+        "fileName": "projectdiscovery-nuclei-learnings.md"
       }
     }
   }

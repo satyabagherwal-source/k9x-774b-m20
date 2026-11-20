@@ -4,24 +4,24 @@
 {
   "source_repository": "projectdiscovery/nuclei",
   "source_url": "https://github.com/projectdiscovery/nuclei",
-  "source_version": "b1d47824",
+  "source_version": "0dca809a",
   "license": "MIT",
-  "timestamp": "2026-11-19T23:15:43.323Z",
+  "timestamp": "2026-11-20T19:44:42.741Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-projectdiscovery-nuclei",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `b1d47824`).  
-> **License**: MIT | **Timestamp**: `2026-11-19T23:15:43.323Z`  
+> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `0dca809a`).  
+> **License**: MIT | **Timestamp**: `2026-11-20T19:44:42.741Z`  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: A (Human & Need Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 84%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), A (Human & Need Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 80%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from projectdiscovery/nuclei:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T23:15:42.551Z  
+> **Harvest Timestamp**: 2026-11-20T19:44:41.509Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 33126 stars
+- **Stars / Engagement**: 33150 stars
 
 ---
 
@@ -720,6 +720,8 @@ package core
 
 import (
 	"context"
+	"slices"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -730,6 +732,7 @@ import (
 	"github.com/projectdiscovery/nuclei/v3/pkg/progress"
 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http" //nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
 	"github.com/projectdiscovery/nuclei/v3/pkg/scan"
 	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
 	"github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
@@ -893,7 +896,10 @@ func (e *Engine) executeTemplateWithTargets(ctx context.Context, template *templ
 		currentInfo.Unlock()
 
 		// Skip if the host has had errors
-		hostDown := inScope && e.executerOpts.HostErrorsCache != nil && e.executerOpts.HostErrorsCache.Check(template.Type().String(), contextargs.NewWithMetaInput(ctx, scannedValue))
+		var hostDown bool
+		if inScope {
+			hostDown, _ = e.hostDown(ctx, template, scannedValue)
+		}
 		// in-scope pairs that never reach executeTemplateOnInput are done here:
 		// those done by the resumed scan and those of an unresponsive host
 		if inScope && (skip || hostDown) {
@@ -916,6 +922,11 @@ func (e *Engine) executeTemplateWithTargets(ctx context.Context, template *templ
 			} else if e.executerOpts.Output != nil {
 				_ = e.executerOpts.Output.Write(skipEvent)
 			}
+			// This target still occupies its resume index. Leaving the index in
+			// place would hand it to the next target, and a resumed scan would
+			// skip that target as already processed.
+			cleanupInFlight(index)
+			index++
 			return true
 		}
 
@@ -943,7 +954,10 @@ func (e *Engine) executeTemplatesOnTarget(ctx context.Context, alltemplates []*t
 	wp := e.GetWorkPool()
 	defer wp.Wait()
 
-	for i, tpl := range alltemplates {
+	// reported is set once a skip event stands for the target's own address
+	var reported bool
+
+	for _, tpl := range alltemplates {
 		select {
 		case <-ctx.Done():
 			return
@@ -954,10 +968,20 @@ func (e *Engine) executeTemplatesOnTarget(ctx context.Context, alltemplates []*t
 			continue
 		}
 
+		// A target whose own address is down gets one event, not one per
+		// template (#7049). That address stays down, so after the event only a
+		// template that may send elsewhere is checked.
+		if reported && !sendsElsewhere(tpl) {
+			e.tasksDone(1)
+
+			continue
+		}
+
 		// Check whether the target has already been marked as permanently
 		// unresponsive by HostErrorsCache before spawning another goroutine.
-		if e.executerOpts.HostErrorsCache != nil &&
-			e.executerOpts.HostErrorsCache.Check(tpl.Type().String(), contextargs.NewWithMetaInput(ctx, target)) {
+		if down, perTemplate := e.hostDown(ctx, tpl, target); down {
+			reported = reported || !perTemplate
+
 			skipEvent := &output.ResultEvent{
 				TemplateID:    tpl.ID,
 				TemplatePath:  tpl.Path,
@@ -973,9 +997,10 @@ func (e *Engine) executeTemplatesOnTarget(ctx context.Context, alltemplates []*t
 			} else if e.executerOpts.Output != nil {
 				_ = e.executerOpts.Output.Write(skipEvent)
 			}
-			// the remaining templates are skipped for this target as well
-			e.tasksDone(int64(getSelectedCount(alltemplates[i:], e.selectionFor(target))))
-			break
+
+			e.tasksDone(1)
+
+			continue
 		}
 
 		// resize check point - nop if there are no changes
@@ -1012,22 +1037,8 @@ func (e *Engine) executeTemplatesOnTarget(ctx context.Context, alltemplates []*t
 	}
 }
 
-// inScope reports whether per-target profiles select template for input.
-func (e *Engine) inScope(template *templates.Template, input *contextargs.MetaInput) bool {
-	selection := e.selectionFor(input)
-	return selection == nil || template.SelectedBy(selection)
-}
-
-// selectionFor returns the templates per-target profiles select for input; nil
-// selects every template.
-func (e *Engine) selectionFor(input *contextargs.MetaInput) protocols.TemplateSelection {
-	if e.executerOpts.TargetScope == nil {
-		return nil
-	}
-	return e.executerOpts.TargetScope.For(input)
-}
-
-// taskTracker returns the progress when it counts ta
+// hostDown reports whether the host errors cache marks value unresponsive for
+// template, and wh
 ```
 
 ### Core Architecture Module: `pkg/core/plan.go`
@@ -1277,7 +1288,8 @@ func (e *Engine) executeWorkflow(ctx *scan.ScanContext, w *workflows.Workflow) b
 	for _, template := range w.Workflows {
 		newCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
 		// Root steps do not own a waitgroup slot.
-		if err := e.runWorkflowStep(template, newCtx, results, swg, &pending, w, nil); err != nil {
+		err := e.runWorkflowStep(template, newCtx, results, swg, &pending, nil)
+		if err != nil {
 			gologger.Warning().Msgf(workflowStepExecutionError, template.Template, err)
 		}
 	}
@@ -1307,7 +1319,12 @@ func slotRelease(swg *syncutil.AdaptiveWaitGroup) func() {
 //
 // pending is incremented for every child step before it starts, and each child
 // calls Done when it returns, so the root can wait for the whole tree.
-func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan.ScanContext, results *atomic.Bool, swg *syncutil.AdaptiveWaitGroup, pending *sync.WaitGroup, w *workflows.Workflow, releaseSlot func()) error {
+//
+//nolint:cyclop,funlen,gocognit // a step's executers, matchers and child steps share its match result and slot
+func (e *Engine) runWorkflowStep(
+	template *workflows.WorkflowTemplate, ctx *scan.ScanContext, results *atomic.Bool,
+	swg *syncutil.AdaptiveWaitGroup, pending *sync.WaitGroup, releaseSlot func(),
+) error {
 	var firstMatched bool
 	var err error
 	var mainErr error
@@ -1339,9 +1356,9 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
 					firstMatched = true
 				}
 			}
-			if w.Options.HostErrorsCache != nil {
-				w.Options.HostErrorsCache.MarkFailedOrRemove(w.Options.ProtocolType.String(), ctx.Input, err)
-			}
+			// Each request records its own result in the host errors cache. A
+			// step can return nil when all its requests failed, and recording
+			// that nil would clear the host after every step (#8177).
 			if err != nil {
 				if len(template.Executers) == 1 {
 					mainErr = err
@@ -1392,8 +1409,10 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
 							// create a new context with the same input but with unset callbacks
 							// clone the Input so that other parallel executions won't overwrite the shared variables when subsequent templates are running
 							subCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
-							if err := e.runWorkflowStep(subtemplate, subCtx, results, swg, pending, w, release); err != nil {
-								gologger.Warning().Msgf(workflowStepExecutionError, subtemplate.Template, err)
+
+							stepErr := e.runWorkflowStep(subtemplate, subCtx, results, swg, pending, release)
+							if stepErr != nil {
+								gologger.Warning().Msgf(workflowStepExecutionError, subtemplate.Template, stepErr)
 							}
 						}(subtemplate)
 					}
@@ -1430,8 +1449,10 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
 
 				// create a new context with the same input but with unset callbacks
 				subCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
-				if err := e.runWorkflowStep(template, subCtx, results, swg, pending, w, release); err != nil {
-					gologger.Warning().Msgf(workflowStepExecutionError, template.Template, err)
+
+				stepErr := e.runWorkflowStep(template, subCtx, results, swg, pending, release)
+				if stepErr != nil {
+					gologger.Warning().Msgf(workflowStepExecutionError, template.Template, stepErr)
 				}
 			}(subtemplate)
 		}
@@ -1620,248 +1641,538 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b1d47824` (2026-11-19)
-**Commit Message**: Merge pull request #8187 from projectdiscovery/fix/8186-project-raw
+### Incident Patch 1: `e026c3a9` (2026-11-19)
+**Commit Message**: fix(http): keep the scan context of requests with @timeout
 
-keep raw responses only for requests reading raw parts
+parseAnnotations moved every raw request of an http block that uses
+@timeout onto context.TODO(): the annotated ones with their custom
+timeout, and the others because such a block's client has no timeout
+of its own. Replacing the context used to let an @timeout outlast a
+default deadline set on it, but executeRequest now starts the
+request's timeout when the request is sent, and the context has no
+deadline before that. The swap only lost what the context carried.
+Canceling ExecuteCallbackWithCtx left such a request waiting until the
+server answered or its timeout ran out, and its match was reported
+after the cancel. The @tls-sni server name and the IP a target is
+pinned to, which the dialer reads from the context, were lost too.
 
-**File**: `pkg/protocols/http/http.go` (modified, +0/-7)
+The annotated request now adds its custom timeout to its own context,
+and the other requests keep theirs.
+
+Fixes: #8178
+Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
+
+**File**: `pkg/protocols/http/request_annotations.go` (modified, +1/-5)
 ```diff
-@@ -622,13 +622,6 @@ func reads(request *Request, flow string, parts ...string) bool {
- 	})
- }
+@@ -168,15 +168,11 @@ func (r *Request) parseAnnotations(rawRequest string, request *retryablehttp.Req
+ 				}
  
--// keepsRawResponse reports whether responses keep their bytes as received.
--// The project file stores those, decoded again when read back, so a cached
--// response serves templates reading raw_body and the others alike.
--func (request *Request) keepsRawResponse() bool {
--	return request.readsRawResponse || request.options.ProjectFile != nil
--}
--
- // RebuildGenerator rebuilds the generator for the request
- func (request *Request) RebuildGenerator() error {
- 	generator, err := generators.New(request.Payloads, request.AttackType.Value, request.options.TemplatePath, request.options.Catalog, request.options.Options.AttackType, request.options.Options)
+ 				overrides.timeout, overrides.timeoutCause = parsedTimeout, ErrTimeoutAnnotationDeadline
+-				// The replaced context drops the input's cancellation (#8178).
+-				ctx := context.TODO()
++				ctx := request.Context()
+ 				// add timeout value to context
+ 				ctx = context.WithValue(ctx, httpclientpool.WithCustomTimeout{}, httpclientpool.WithCustomTimeout{Timeout: parsedTimeout})
+ 				request = request.Clone(ctx)
+ 			}
+-		} else {
+-			// The replaced context drops the input's cancellation (#8178).
+-			request = request.Clone(context.TODO())
+ 		}
+ 	}
+ 
 ```
 
-**File**: `pkg/protocols/http/project_charset_test.go` (added, +80/-0)
+**File**: `pkg/protocols/http/request_annotations_test.go` (modified, +29/-0)
 ```diff
-@@ -0,0 +1,80 @@
-+package http
-+
-+import (
-+	"context"
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
-+
-+	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators/extractors"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/projectfile"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
-+	"github.com/stretchr/testify/require"
-+	"golang.org/x/text/encoding"
-+	"golang.org/x/text/encoding/charmap"
-+	"golang.org/x/text/encoding/simplifiedchinese"
-+)
-+
-+// A plain request under -project must decode a legacy charset once, both when
-+// the response comes from the server and when it is replayed from the cache.
-+func TestProjectCacheReplayDecodesCharsetOnce(t *testing.T) {
-+	cases := []struct {
-+		name    string
-+		charset string
-+		enc     encoding.Encoding
-+		text    string
-+	}{
-+		{name: "windows-1251", charset: "windows-1251", enc: charmap.Windows1251, text: "Привет, мир"},
-+		{name: "gbk", charset: "gbk", enc: simplifiedchinese.GBK, text: "你好，世界"},
-+	}
-+	for _, tc := range cases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			encoded, err := tc.enc.NewEncoder().String(tc.text)
-+			require.NoError(t, err)
-+			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				w.Header().Set("Content-Type", "text/plain; charset="+tc.charset)
-+				_, _ = w.Write([]byte(encoded))
-+			}))
-+			defer ts.Close()
-+
-+			project, err := projectfile.New(&projectfile.Options{Path: t.TempDir(), Cleanup: true})
-+			require.NoError(t, err)
-+			defer project.Close()
-+
-+			execute := func(t *testing.T) string {
-+				options := testutils.DefaultOptions
-+				testutils.Init(options)
+@@ -12,6 +12,7 @@ import (
+ 	"testing"
+ 	"time"
+ 
++	"github.com/projectdiscovery/fastdialer/fastdialer" //nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
+ 	"github.com/projectdiscovery/gologger"
+ 	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/model"
+@@ -210,6 +211,34 @@ func TestRequestParseAnnotationsTimeout(t *testing.T) {
+ 		require.False(t, deadlined, "request deadline started before the request was sent")
+ 	})
+ 
++	// The request keeps the scan's cancellation and the values set before the
++	// timeout, such as the SNI, with or without the annotation (#8178).
++	t.Run("keeps-request-context", func(t *testing.T) { //nolint:paralleltest // like the other subtests
++		annotations := map[string]string{
++			"annotated":       "@tls-sni: github.com\n@timeout: 2s\n",
++			"default-timeout": "@tls-sni: github.com\n",
++		}
++		for name, annotation := range annotations {
++			t.Run(name, func(t *testing.T) { //nolint:paralleltest // like the other subtests
++				//nolint:exhaustruct,exhaustruct_v5 // zero values are the defaults
 +				request := &Request{
-+					ID:   "project-charset",
-+					Path: []string{"{{BaseURL}}"},
-+					Operators: operators.Operators{Extractors: []*extractors.Extractor{{
-+						Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
-+						DSL:  []string{"body"},
-+					}}},
++					options:           getExecuterOptions(t),
++					connConfiguration: &httpclientpool.Configuration{NoTimeout: true},
 +				}
-+				executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
-+					ID:   "project-charset",
-+					Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Info}, Name: "test"},
-+				})
-+				executerOpts.ProjectFile = project
-+				require.NoError(t, request.Compile(executerOpts))
++				scanCtx, cancelScan := context.WithCancel(t.Context())
 +
-+				var event output.InternalEvent
-+				err := request.ExecuteWithResults(contextargs.NewWithInput(context.Background(), ts.URL), output.InternalEvent{}, output.InternalEvent{}, func(e *output.InternalWrappedEvent) {
-+					event = e.InternalEvent
-+				})
-+				require.NoError(t, err)
-+				body, _ := event["body"].(string)
-+				return body
++				httpReq, err := retryablehttp.NewRequestWithContext(scanCtx, http.MethodGet, "https://example.com", nil)
++				require.NoError(t, err, "could not create http request")
++
++				overrides, _ := request.parseAnnotations(annotation+"GET / HTTP/1.1\nHost: {{Hostname}}", httpReq)
++				require.Equal(t, "github.com", overrides.request.Context().Value(fastdialer.SniName))
++
++				cancelScan()
++				require.ErrorIs(t, overrides.request.Context().Err(), context.Canceled)
++			})
++		}
++	})
++
+ 	// A timeout that does not parse or is not positive keeps the default
+ 	// timeout, and the request keeps its context.
+ 	t.Run("invalid", func(t *testing.T) { //nolint:paralleltest // like the other subtests
+```
+
+**File**: `pkg/protocols/http/request_test.go` (modified, +65/-0)
+```diff
+@@ -994,6 +994,71 @@ func TestParallelRequestGetsDefaultTimeoutWithoutClientTimeout(t *testing.T) {
+ 	require.Less(t, time.Since(start), 1500*time.Millisecond, "requests waited out the server's 2s reply")
+ }
+ 
++// Canceling the scan must stop a request of a template that uses @timeout,
++// whether the request has the annotation or takes the default timeout because
++// another request of the template does (#8178).
++//
++//nolint:paralleltest // the cases share the protocol state testutils.Init sets up
++func TestTimeoutAnnotationKeepsScanCancellation(t *testing.T) {
++	const answerAfter = 5 * time.Second
++
++	tests := []struct {
++		name string
++		raw  []string
++	}{
++		{name: "annotated", raw: []string{"@timeout: 30s\nGET / HTTP/1.1\nHost: {{Hostname}}"}},
++		{name: "default timeout", raw: []string{
++			"GET / HTTP/1.1\nHost: {{Hostname}}",
++			"@timeout: 30s\nGET /next HTTP/1.1\nHost: {{Hostname}}",
++		}},
++	}
++	for _, test := range tests {
++		t.Run(test.name, func(t *testing.T) {
++			options := testutils.DefaultOptions.Copy()
++			timeouts := *options.GetTimeouts()
++			timeouts.HttpTimeout = time.Minute
++			options.SetTimeouts(&timeouts)
++			testutils.Init(options)
++			t.Cleanup(func() { testutils.Cleanup(options) })
++
++			server := httptest.NewServer(http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
++				select {
++				case <-req.Context().Done():
++				case <-time.After(answerAfter):
++					_, _ = resp.Write([]byte("done"))
++				}
++			}))
++			t.Cleanup(server.Close)
++
++			//nolint:exhaustruct,exhaustruct_v5 // zero values are the template defaults
++			request := &Request{
++				Raw: test.raw,
++				Matchers: []*matchers.Matcher{{
++					Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
++					Words: []string{"done"},
++				}},
 +			}
++			require.NoError(t, request.Compile(testutils.NewMockExecuterOptions(options, nil)))
 +
-+			require.Equal(t, tc.text, execute(t), "first run decodes the response")
-+			require.Equal(t, tc.text, execute(t), "replayed run must not decode the body again")
++			ctx, cancel := context.WithTimeout(t.Context(), 200*time.Millisecond)
++			defer cancel()
++
++			var matched atomic.Bool
++
++			start := time.Now()
++			_ = request.ExecuteWithResults(contextargs.NewWithInput(ctx, server.URL),
++				make(output.InternalEvent), make(output.InternalEvent), func(event *output.InternalWrappedEvent) {
++					if event.OperatorsResult != nil && event.OperatorsResult.Matched {
++						matched.Store(true)
++					}
++				})
++
++			require.Less(t, time.Since(start), answerAfter/2, "the request outlived the canceled scan")
++			require.False(t, matched.Load(), "a canceled scan reported a match")
 +		})
 +	}
 +}
++
+ // executePacedRequests runs request with a 500ms HTTP timeout and a rate limit
+ // of one token every 800ms, so the second request waits past its timeout. It
+ // returns the paths the server received.
 ```
 
-**File**: `pkg/protocols/http/raw_body_test.go` (modified, +43/-3)
-```diff
-@@ -16,6 +16,7 @@ import (
- 	"github.com/projectdiscovery/nuclei/v3/pkg/operators/extractors"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/operators/matchers"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/projectfile"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
- 	"github.com/stretchr/testify/require"
- )
-@@ -32,7 +33,7 @@ func TestRawBodyKeepsTheBytesAsReceived(t *testing.T) {
- 	}))
- 	defer ts.Close()
- 
--	execute := func(t *testing.T, extractor *extractors.Extractor) output.InternalEvent {
-+	execute := func(t *testing.T, project *projectfile.ProjectFile, extractor *extractors.Extractor) output.InternalEvent {
- 		options := testutils.DefaultOptions
- 		testutils.Init(options)
- 		request := &Request{
-@@ -44,6 +45,7 @@ func TestRawBodyKeepsTheBytesAsReceived(t *testing.T) {
- 			ID:   "raw-body",
- 			Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Info}, Name: "test"},
- 		})
-+		executerOpts.ProjectFile = project
- 		require.NoError(t, request.Compile(executerOpts))
- 
- 		var event output.InternalEvent
-@@ -55,7 +57,7 @@ func TestRawBodyKeepsTheBytesAsReceived(t *testing.T) {
- 	}
- 
- 	t.Run("reading raw_body", func(t *testing.T) {
--		event := execute(t, &extractors.Extractor{
-+		event := execute(t, nil, &extractors.Extractor{
- 			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
- 			DSL:  []string{"to_string(gzip_mtime(raw_body))"},
- 		})
-@@ -64,13 +66,51 @@ func TestRawBodyKeepsTheBytesAsReceived(t *testing.T) {
- 		require.Equal(t, `{"hello":"world"}`, event["body"], "body stays decoded")
- 	})
- 	t.Run("not reading it", func(t *testing.T) {
--		event := execute(t, &extractors.Extractor{
-+		event := execute(t, nil, &extractors.Extractor{
- 			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
- 			DSL:  []string{"body"},
- 		})
- 		require.NotContains(t, event, "raw_body")
- 		require.Equal(t, `{"hello":"world"}`, event["body"])
- 	})
-+	t.Run("not reading it under -project", func(t *testing.T) {
-+		project, err := projectfile.New(&projectfile.Options{Path: t.TempDir(), Cleanup: true})
-+		require.NoError(t, err)
-+		defer project.Close()
-+		event := execute(t, project, &extractors.Extractor{
-+			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
-+			DSL:  []string{"body"},
-+		})
-+		require.NotContains(t, event, "content_encoding", "the transport decodes the response as without -project")
-+		require.EqualValues(t, len(`{"hello":"world"}`), event["content_length"])
-+	})
-+	t.Run("project cache keeps raw and decoded apart", func(t *testing.T) {
-+		project, err := projectfile.New(&projectfile.Options{Path: t.TempDir(), Cleanup: true})
-+		require.NoError(t, err)
-+		defer project.Close()
-+		plain := &extractors.Extractor{
-+			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
-+			DSL:  []string{"body"},
-+		}
-+		raw := &extractors.Extractor{
-+			Type: extractors.ExtractorTypeHolder{ExtractorType: extractors.DSLExtractor},
-+			DSL:  []string{"to_string(gzip_mtime(raw_body))"},
-+		}
-+
-+		first := execute(t, project, plain)
-+		require.Equal(t, `{"hello":"world"}`, first["body"])
-+		second := execute(t, project, raw)
-+		require.Equal(t, compressed.String(), second["raw_body"], "a raw reader must not reuse the decoded cache entry")
-+		require.Equal(t, `{"hello":"world"}`, second["body"])
-+
-+		other, err := projectfile.New(&projectfile.Options{Path: t.TempDir(), Cleanup: true})
-+		require.NoError(t, err)
-+		defer other.Close()
-+		_ = execute(t, other, raw)
-+		third := execute(t, other, plain)
-+		require.Equal(t, `{"hello":"world"}`, third["body"], "a plain reader must not reuse the raw cache entry")
-+		require.EqualValues(t, len(`{"hello":"world"}`), third["content_length"])
-+	})
- }
- 
- func TestReadsRawResponse(t *testing.T) {
-```
+---
 
-**File**: `pkg/protocols/http/request.go` (modified, +9/-2)
+### Incident Patch 2: `d81ad4bc` (2026-11-19)
+**Commit Message**: fix(http): end the stop-at-first-match goroutine on every return
+
+Since a5715288a, executeParallelHTTP builds its stop-at-first-match
+handler on context.Background(), so only Wait ends the handler's
+goroutine. Several returns skip Wait: a canceled scan, a worker
+context canceled by a first match, a failed resize, and a request
+that fails to build. Each left a goroutine in
+StopAtFirstMatchHandler.run, so an SDK process that cancels scans of
+templates with threads and payloads piled them up, and
+stop-at-first-match scans leaked some even when they completed.
+
+The handler now runs on a context that the function cancels when it
+returns, as in the race and pipeline paths. The context still does
+not derive from the input, so with stop-at-first-match a canceled
+input is not reported as a first match. The Wait that aac4d67dc added
+to the unresponsive-host return only stopped this leak there, so it
+is gone.
+
+Fixes: #8181
+Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
+
+**File**: `pkg/protocols/http/request.go` (modified, +9/-3)
 ```diff
-@@ -1189,6 +1189,11 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 			if maxBodylimit := request.getEffectiveReadLimit(); maxBodylimit > 0 {
- 				projectCacheKey = append(projectCacheKey, []byte(fmt.Sprintf(":limit:%d", maxBodylimit))...)
- 			}
-+			// A raw-reading request stores the encoded bytes. A plain request
-+			// stores the decoded body. They must not share a cache entry.
-+			if request.readsRawResponse {
-+				projectCacheKey = append(projectCacheKey, ":raw"...)
-+			}
+@@ -310,7 +310,15 @@ func (request *Request) executeParallelHTTP(input *contextargs.Context, dynamicV
+ 	workerCtx, cancelWorkers := context.WithCancel(input.Context())
+ 	defer cancelWorkers()
+ 
+-	spmHandler := httputils.NewBlockingSPMHandler[error](context.Background(), maxWorkers, maxErrorsWhenParallel, shouldStop)
++	// The handler's goroutine runs until Wait or until the context passed to
++	// it ends; Cancel does not stop it. Some returns skip Wait, so that context
++	// ends with this function (#8181). It does not derive from the input: with
++	// stop-at-first-match, the handler would report the input's cancellation
++	// as a first match.
++	spmCtx, cancelSPM := context.WithCancel(context.Background())
++	defer cancelSPM()
++
++	spmHandler := httputils.NewBlockingSPMHandler[error](spmCtx, maxWorkers, maxErrorsWhenParallel, shouldStop)
+ 	defer spmHandler.Cancel()
+ 
+ 	// wrappedCallback is a callback that wraps the original callback
+@@ -509,8 +517,6 @@ func (request *Request) executeParallelHTTP(input *contextargs.Context, dynamicV
+ 			reservation.done()
+ 			spmHandler.Cancel()
+ 			stopWorkers()
+-			// The handler watches context.Background(), so only Wait ends it.
+-			spmHandler.Wait()
+ 			return nil
  		}
- 
- 		// A truncated dump leaves part of the body out, so check the rest
-@@ -1369,7 +1374,7 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
+ 		select {
+```
+
+**File**: `pkg/protocols/http/request_test.go` (modified, +126/-0)
+```diff
+@@ -10,6 +10,7 @@ import (
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"slices"
++	"strconv"
+ 	"strings"
+ 	"sync"
+ 	"sync/atomic"
+@@ -1930,6 +1931,131 @@ func TestExecuteParallelHTTP_GoroutineLeaks(t *testing.T) {
+ 		require.Error(t, err)
+ 		require.Equal(t, context.Canceled, err)
+ 	})
++
++	// Test Case 4: the context is canceled while payloads still wait for a
++	// worker, so the scan returns before its stop-at-first-match handler is
++	// waited on (#8181).
++	//
++	//nolint:exhaustruct,exhaustruct_v5,paralleltest // zero-value fixtures; goleak and testutils.Init state are shared
++	t.Run("ContextCancellationWhileQueueing", func(t *testing.T) {
++		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, r *http.Request) {
++			select {
++			case <-r.Context().Done():
++			case <-time.After(200 * time.Millisecond):
++			}
++
++			_, _ = fmt.Fprintf(writer, "response")
++		}))
++		defer server.Close()
++
++		req := &Request{
++			ID:      "parallel-context-cancel-queueing",
++			Method:  HTTPMethodTypeHolder{MethodType: HTTPGet},
++			Path:    []string{"{{BaseURL}}/test?param={{payload}}"},
++			Threads: 2,
++			Payloads: map[string]any{
++				"payload": []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
++			},
++			Matchers: []*matchers.Matcher{{
++				Part:  "body",
++				Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
++				Words: []string{"response"},
++			}},
++		}
++
++		executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
++			ID:   "parallel-context-cancel-queueing",
++			Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
++		})
++
++		err := req.Compile(executerOpts)
++		require.NoError(t, err)
++
++		ctx, cancel := context.WithTimeout(t.Context(), 300*time.Millisecond)
++		defer cancel()
++
++		ctxArgs := contextargs.NewWithInput(ctx, server.URL)
++		err = req.ExecuteWithResults(ctxArgs, make(output.InternalEvent), make(output.InternalEvent),
++			func(*output.InternalWrappedEvent) {})
++		require.ErrorIs(t, err, context.DeadlineExceeded)
++	})
++
++	// Test Case 5: only the port the requests go to is unresponsive, not the
++	// target's own, so the scan returns from inside the payload loop.
++	//
++	//nolint:exhaustruct,exhaustruct_v5,paralleltest // zero-value fixtures; goleak and testutils.Init state are shared
++	t.Run("UnresponsiveRequestPort", func(t *testing.T) {
++		req := &Request{
++			ID:       "parallel-unresponsive-request-port",
++			Method:   HTTPMethodTypeHolder{MethodType: HTTPGet},
++			Path:     []string{"{{BaseURL}}/n?x={{v}}"},
++			Threads:  2,
++			Payloads: map[string]any{"v": []string{"1", "2"}},
++		}
++
++		executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
++			ID:   "parallel-unresponsive-request-port",
++			Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
++		})
++		executerOpts.HostErrorsCache = &addressSpyHostErrorsCache{unresponsive: "127.0.0.1:443"}
++
++		err := req.Compile(executerOpts)
++		require.NoError(t, err)
++
++		// A target without a scheme is sent to https, so its own address is
++		// 127.0.0.1:80 while its requests go to 127.0.0.1:443.
++		ctxArgs := contextargs.NewWithInput(t.Context(), "127.0.0.1")
++		err = req.ExecuteWithResults(ctxArgs, make(output.InternalEvent), make(output.InternalEvent),
++			func(*output.InternalWrappedEvent) {})
++		require.NoError(t, err)
++	})
++
++	// Test Case 6: a first match cancels the workers while payloads are still
++	// being queued, and the scan can return before its stop-at-first-match
++	// handler is waited on. Only some scans take that return, so it runs 30
++	// (#8181).
++	//
++	//nolint:exhaustruct,exhaustruct_v5,paralleltest // zero-value fixtures; goleak and testutils.Init state are shared
++	t.Run("StopAtFirstMatchWhileQueueing", func(t *testing.T) {
++		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, _ *http.Request) {
++			_, _ = fmt.Fprintf(writer, "response")
++		}))
++		defer server.Close()
++
++		payloads := make([]string, 2000)
++		for i := range payloads {
++			payloads[i] = strconv.Itoa(i)
++		}
++
++		req := &Request{
++			ID:               "parallel-stop-first-match-queueing",
++			Method:           HTTPMethodTypeHolder{MethodType: HTTPGet},
++			Path:             []string{"{{BaseURL}}/test?param={{payload}}"},
++			Threads:          50,
++			Payloads:         map[string]any{"payload": payloads},
++			StopAtFirstMatch: true,
++			Matchers: []*matchers.Matcher{{
++				Part:  "body",
++				Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
++				Words: []string{"response"},
++			}},
++		}
++
++		executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
++			ID:   "parallel-stop-first-match-queueing",
++			Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
++		})
++
++		err := req.Compile(executerOpts)
++		require.NoError(t, err)
++
++		for range 30 {
++			ctxArgs := contextargs.NewWithInput(t.Context(), server.
+```
+
+---
+
+### Incident Patch 3: `bca311bf` (2026-11-19)
+**Commit Message**: fix(workflow): stop resetting host errors after each step
+
+After each step without matchers, runWorkflowStep recorded the step's
+result in the host errors cache. A step usually returns nil when its
+requests fail, because the generic template engine logs request errors
+instead of returning them, and the cache treats nil as a success that
+clears the host. So every step erased the failures its own requests
+had just recorded, and a workflow kept sending to a host that refused
+every connection or timed out on every request, while -t skips it
+after the first refusal or after -mhe timeouts. The call passed the
+workflow's protocol type, which the cache never counts, so it could
+only clear entries. It has done so since 052fd8b79 made it run on
+every result instead of only on errors.
+
+The requests record their own results, as they do outside workflows,
+so the step no longer records one. That leaves the workflow parameter
+of runWorkflowStep unused, and it is dropped. The signature and its
+call sites are reformatted for the linters.
+
+Fixes: #8177
+Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
+
+**File**: `pkg/core/workflow_execute.go` (modified, +19/-9)
+```diff
+@@ -41,7 +41,8 @@ func (e *Engine) executeWorkflow(ctx *scan.ScanContext, w *workflows.Workflow) b
+ 	for _, template := range w.Workflows {
+ 		newCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
+ 		// Root steps do not own a waitgroup slot.
+-		if err := e.runWorkflowStep(template, newCtx, results, swg, &pending, w, nil); err != nil {
++		err := e.runWorkflowStep(template, newCtx, results, swg, &pending, nil)
++		if err != nil {
+ 			gologger.Warning().Msgf(workflowStepExecutionError, template.Template, err)
+ 		}
+ 	}
+@@ -71,7 +72,12 @@ func slotRelease(swg *syncutil.AdaptiveWaitGroup) func() {
+ //
+ // pending is incremented for every child step before it starts, and each child
+ // calls Done when it returns, so the root can wait for the whole tree.
+-func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan.ScanContext, results *atomic.Bool, swg *syncutil.AdaptiveWaitGroup, pending *sync.WaitGroup, w *workflows.Workflow, releaseSlot func()) error {
++//
++//nolint:cyclop,funlen,gocognit // a step's executers, matchers and child steps share its match result and slot
++func (e *Engine) runWorkflowStep(
++	template *workflows.WorkflowTemplate, ctx *scan.ScanContext, results *atomic.Bool,
++	swg *syncutil.AdaptiveWaitGroup, pending *sync.WaitGroup, releaseSlot func(),
++) error {
+ 	var firstMatched bool
+ 	var err error
+ 	var mainErr error
+@@ -103,9 +109,9 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
+ 					firstMatched = true
  				}
  			}
+-			if w.Options.HostErrorsCache != nil {
+-				w.Options.HostErrorsCache.MarkFailedOrRemove(w.Options.ProtocolType.String(), ctx.Input, err)
+-			}
++			// Each request records its own result in the host errors cache. A
++			// step can return nil when all its requests failed, and recording
++			// that nil would clear the host after every step (#8177).
+ 			if err != nil {
+ 				if len(template.Executers) == 1 {
+ 					mainErr = err
+@@ -156,8 +162,10 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
+ 							// create a new context with the same input but with unset callbacks
+ 							// clone the Input so that other parallel executions won't overwrite the shared variables when subsequent templates are running
+ 							subCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
+-							if err := e.runWorkflowStep(subtemplate, subCtx, results, swg, pending, w, release); err != nil {
+-								gologger.Warning().Msgf(workflowStepExecutionError, subtemplate.Template, err)
++
++							stepErr := e.runWorkflowStep(subtemplate, subCtx, results, swg, pending, release)
++							if stepErr != nil {
++								gologger.Warning().Msgf(workflowStepExecutionError, subtemplate.Template, stepErr)
+ 							}
+ 						}(subtemplate)
+ 					}
+@@ -194,8 +202,10 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
  
--			if request.keepsRawResponse() && generatedRequest.request.Header.Get("Accept-Encoding") == "" &&
-+			if request.readsRawResponse && generatedRequest.request.Header.Get("Accept-Encoding") == "" &&
- 				generatedRequest.request.Header.Get("Range") == "" && generatedRequest.request.Method != http.MethodHead {
- 				// the transport decodes a response to the gzip header it adds
- 				// itself, leaving nothing raw; sending the same header keeps the
-@@ -1546,7 +1551,9 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 	// respChain is http response chain that reads response body
- 	// efficiently by reusing buffers and does all decoding and optimizations
- 	newResponseChain := httpUtils.NewResponseChain
--	if request.keepsRawResponse() {
-+	// The project file stores the bytes as received, because a replay decodes
-+	// them again and a decoded body would be decoded twice.
-+	if request.readsRawResponse || request.options.ProjectFile != nil {
- 		newResponseChain = httpUtils.NewResponseChainWithRaw
- 	}
- 	respChain := newResponseChain(resp, int64(maxBodylimit))
+ 				// create a new context with the same input but with unset callbacks
+ 				subCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
+-				if err := e.runWorkflowStep(template, subCtx, results, swg, pending, w, release); err != nil {
+-					gologger.Warning().Msgf(workflowStepExecutionError, template.Template, err)
++
++				stepErr := e.runWorkflowStep(template, subCtx, results, swg, pending, release)
++				if stepErr != nil {
++					gologger.Warning().Msgf(workflowStepExecutionError, template.Template, stepErr)
+ 				}
+ 			}(subtemplate)
+ 		}
+```
+
+**File**: `pkg/core/workflow_execute_test.go` (modified, +53/-0)
+```diff
+@@ -2,6 +2,7 @@ package core
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"sync/atomic"
+ 	"testing"
+ 	"time"
+@@ -12,6 +13,7 @@ import (
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/progress"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/hosterrorscache" //nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/scan"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/workflows"
+@@ -441,6 +443,57 @@ func TestWorkflowSubtemplatesUnblockCancelledAcquire(t *testing.T) {
+ 	require.False(t, waitingStarted.Load(), "third subtemplate must not start while slots are held")
+ }
+ 
++// errHeaderTimeout is the error of a request to a host that accepts
++// connections and never answers.
++var errHeaderTimeout = errors.New("net/http: timeout awaiting response headers")
++
++// TestWorkflowStepsKeepHostErrors runs steps whose requests time out, as they
++// do against a host that accepts connections and never answers. Each request
++// records its failure, and the step itself returns nil, as a template step can
++// when its requests fail. The step after the last allowed failure must find the
++// host unresponsive (#8177).
++//
++//nolint:exhaustruct,exhaustruct_v5 // fixtures keep zero-value defaults
++func TestWorkflowStepsKeepHostErrors(t *testing.T) {
++	t.Parallel()
++
++	const maxHostError = 3
++
++	cache := hosterrorscache.New(maxHostError, hosterrorscache.DefaultMaxHostsCount, nil)
++	t.Cleanup(cache.Close)
++
++	progressBar, _ := progress.NewStatsTicker(0, false, false, false, 0)
++	stepOptions := &protocols.ExecutorOptions{Progress: progressBar}
++
++	steps := make([]*workflows.WorkflowTemplate, 0, maxHostError+1)
++	for range maxHostError {
++		steps = append(steps, &workflows.WorkflowTemplate{Executers: []*workflows.ProtocolExecuterPair{{
++			Executer: &mockExecuter{executeScanHook: func(ctx *scan.ScanContext) {
++				cache.MarkFailedOrRemove("http", ctx.Input, errHeaderTimeout)
++			}},
++			Options: stepOptions,
++		}}})
++	}
++
++	var unresponsive bool
++
++	steps = append(steps, &workflows.WorkflowTemplate{Executers: []*workflows.ProtocolExecuterPair{{
++		Executer: &mockExecuter{executeScanHook: func(ctx *scan.ScanContext) {
++			unresponsive = cache.Check("http", ctx.Input)
++		}},
++		Options: stepOptions,
++	}}})
++
++	workflow := &workflows.Workflow{
++		Options:   &protocols.ExecutorOptions{Options: &types.Options{TemplateThreads: 1}, HostErrorsCache: cache},
++		Workflows: steps,
++	}
++	input := contextargs.NewWithInput(t.Context(), "http://127.0.0.1:47321")
++	(&Engine{}).executeWorkflow(scan.NewScanContext(t.Context(), input), workflow)
++
++	require.True(t, unresponsive, "the host errors recorded by earlier steps must not be reset")
++}
++
+ type mockExecuter struct {
+ 	result          bool
+ 	executeHook     func(input *contextargs.MetaInput)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8187** (2026-11-19): keep raw responses only for requests reading raw parts (@dogancanbakir)
-- **PR #8184** (2026-11-19): fix(http): start the @timeout deadline when the request is sent (@dwisiswant0)
-- **PR #8183** (2026-11-19): fix(http): key host errors of a scheme-less target by its request port (@dwisiswant0)
-- **PR #8182** (2026-11-19): fix(hostbackoff): give back the slot of a cancelled wait (@dwisiswant0)
-- **PR #8173** (2026-11-18): add raw_body and raw_response http parts (@dogancanbakir)
-- **PR #8171** (2026-11-18): chore: refresh security context (@github-actions[bot])
+- **PR #8210** (2026-11-20): fix(http): count a failed request as one error (@dwisiswant0)
+- **PR #8209** (2026-11-20): fix(http): count a request that stops at its first match once (@dwisiswant0)
+- **PR #8206** (2026-11-20): fix(core): run http templates that send to another port of a down target (@dwisiswant0)
+- **PR #8205** (2026-11-20): fix(http): report requests skipped for an unresponsive address (@dwisiswant0)
+- **PR #8195** (2026-11-20): fix(http): end the stop-at-first-match goroutine on every return (@dwisiswant0)
+- **PR #8194** (2026-11-20): fix(core): check http templates at the port their requests go to (@dwisiswant0)
 
 ---
 
@@ -1875,6 +2186,41 @@ keep raw responses only for requests reading raw parts
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. http): keep the scan context of requests with @timeout
+
+**RULE**:
+When implementing operations in `pkg/protocols/http/request_annotations.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e026c3a9`: http): keep the scan context of requests with @timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/http/request_annotations.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+				ctx := request.Context()
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+				// The replaced context drops the input's cancellation (#8178).
+				ctx := context.TODO()
+		} else {
+			// The replaced context drops the input's cancellation (#8178).
+			request = request.Clone(context.TODO())
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e026c3a9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T19:25:12.544Z",
+  "last_updated": "2026-11-20T19:44:45.721Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3891,14 +3891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-authzed-spicedb",
-      "content_hash": "30ad716224ae04b65a90cb05db485aafa1cd460f31be3f88d8cccdab4d87427f",
-      "verified_at": "2026-11-19T16:33:26.216Z",
+      "content_hash": "52a9825a0ebc28a7bbbdad0565efd97db4541c3f236da99134933c653b4a0296",
+      "verified_at": "2026-11-20T19:44:40.332Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:33:26.216Z"
+      "last_updated": "2026-11-20T19:44:40.332Z"
     },
     "hashicorp/boundary": {
       "repository": "hashicorp/boundary",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "047d377ecf27b8975c2ff6c69e72210a092c6648ae646f4b0670a5b973038fbb",
-      "verified_at": "2026-11-19T23:15:43.141Z",
+      "content_hash": "9abb39bc8549c027dcba17c609e267bacb5647f8e65e166e9c0066ffc35f5861",
+      "verified_at": "2026-11-20T19:44:42.536Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T23:15:43.141Z"
+      "last_updated": "2026-11-20T19:44:42.536Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "9611920fcfd73b22a60ac0575fe627c1aa82f119d871b44916eca154381b0770",
-      "verified_at": "2026-11-19T15:16:43.830Z",
+      "content_hash": "5942268cfa183239f3366376e2275834536a0cead8f9529fa018c0ee012dfe11",
+      "verified_at": "2026-11-20T19:44:45.721Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T15:16:43.830Z"
+      "last_updated": "2026-11-20T19:44:45.721Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",
@@ -14406,14 +14406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nodejs-undici",
-      "content_hash": "beca9c504d3f8df08ae52a1cf2c5103fc1d56814f4cc3117c01cddad8d55aab8",
-      "verified_at": "2026-11-16T22:34:14.019Z",
+      "content_hash": "8bd7834eae9de3adeef2d08c7395861cbc9e344491e0759d177e1a2751123171",
+      "verified_at": "2026-11-20T19:44:35.228Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T22:34:14.019Z"
+      "last_updated": "2026-11-20T19:44:35.228Z"
     },
     "jordansinger/SwiftUI-Kit": {
       "repository": "jordansinger/SwiftUI-Kit",

@@ -4,22 +4,22 @@
 {
   "source_repository": "t8y2/dbx",
   "source_url": "https://github.com/t8y2/dbx",
-  "source_version": "b10159ea",
+  "source_version": "c6df43e3",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T15:16:44.040Z",
+  "timestamp": "2026-11-20T19:44:45.920Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-t8y2-dbx",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `b10159ea`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T15:16:44.040Z`  
+> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `c6df43e3`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T19:44:45.920Z`  
 > **Learning ID**: `learn-github-t8y2-dbx`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `t8y2/dbx` (Commit: `b10159ea`)
+- **Target Repository**: `t8y2/dbx` (Commit: `c6df43e3`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T15:16:42.796Z  
+> **Harvest Timestamp**: 2026-11-20T19:44:44.728Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 30905 stars
+- **Stars / Engagement**: 31055 stars
 
 ---
 
@@ -2002,14 +2002,11 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15245** (2026-11-19): **[Bug] 最新的预览版DBX 0.6.72 Beta 20261118.1在win11 26h2上闪退**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  通用  ### 问题描述 / Problem description  # 软件打不开闪退，无论是否是自带webview2版本的都闪退  ### 支持信息 / Support information  [DBX 0.6.72 Beta 20261118.1](https://github.com/t8y2/dbx/releases/tag/v0.6.72-beta.20261118.1)  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > /claim
-  > ✅ @Ezreal-byte 已认领 #15245，开始处理吧！
+- **Issue #15349** (2026-11-20): **[Bug] Db2 查询结果将 DECIMAL 零显示为 0E-10**
+  *Symptoms*: ### 数据库类型  IBM Db2 LUW，DBX 的原生 Db2 连接。  ### 复现步骤  在查询编辑器中执行以下 SQL。示例只读取 Db2 系统表，不需要业务数据。  ```sql SELECT SUM(DECIMAL(0, 9, 5) * DECIMAL(1, 9, 5)) AS TOTAL FROM SYSIBM.SYSDUMMY1; ```  ### 实际结果  结果列类型为 `DECIMAL`，零显示成 `0E-10`。同样的路径也会把部分很小的非零值转换为指数形式。  ### 预期结果  按十进制小数显示，并保留数据库返回的小数位和精度。例如上面的结果应显示为 `0.0000000000`。  ### 实测环境  Db2 Community Edition 11.5.8.0，IBM JCC 11.5.9.0，通过 DBX Db2 Agent 的 JSON-RPC 验证。修复前运行上述 SQL 返回 `0E-10`，修复后返回 `0.0000000000`。 
 
-- **Issue #15217** (2026-11-18): **[Bug] Snowflake JDBC Internal Error: NoClassDefFoundError While Initializing Apache Arrow RootAllocator**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  Snowflake  ### 问题描述 / Problem description  ## Description  When executing a SQL query against a Snowflake database through DBX, the application encounters an internal Snowflake JDBC driver error during query result creation.  The JDBC driver fails to initialize Apache Arrow's `RootAllocator`, resulting in a `NoClassDefFoundError`. Consequently, DBX is unable to create the result set and retrieve the query results successfully.  The issue was observed with DBX JDBC plugin version `v0.1.53` and Snowflake runtime/agent version `v0.1.95`.  ## Error Message  ``` text Database returned an SQL error (stage: execute).  net.snowflake.client.jdbc.SnowflakeSQLException: JDBC driver internal error: exception creating result java.lang.NoClassDefFoundError: Could not initialize class net.snowflake.client.jdbc.internal.apache.arrow.memory.RootAllocator  at net.snowflake.client.jdbc.SnowflakeResultSetSerializableV1.<init>(     SnowflakeResultSetSerializableV1.java:367 ) ```  ### 支持信息 / Support information  DBX Version: v0.6.71 (0.6.71-beta.20261115.1) Runtime: Desktop Operating System: Windows 11 (10.0.26300.9974) Architecture: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0 Database Types: snowflake, sqlserver Snowflake Runtime/Agent Version  v0.1.95 DBX JDBC Plugin Version v0.1.53  ### 优先级（是否紧急） / Priority (urgency)  🟡 P2 普通 · 按排期处理 / Normal · Schedule
+- **Issue #15313** (2026-11-20): **[Bug] Redis 顶部刷新后，已展开的分组丢失补扫加载的 key**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  Redis 8.8.0（本地单机复现数据）  ### 问题描述 / Problem description  1. 准备超过 DBX 默认首屏大小（1000）的 key，让同一前缀下的两条 key 分布在不同的 `SCAN` 批次。 2. 在树形视图展开该分组，等前缀补扫显示两条 key。 3. 点击 Key 列表顶部的刷新按钮。  **实际结果**：分组保持展开，列表回到首屏数据，分组从 `2+` 变为 `1+`。折叠后重新展开才会重新看到两条 key。  **期望结果**：顶部刷新后，对首屏恢复展开的分组自动执行有预算限制的前缀补扫，直接恢复仍然存在的 key。  **原因**：刷新会重置扫描结果和分组补扫状态，只恢复展开状态。自动恢复展开未触发手动展开时的前缀补扫逻辑。  ### 支持信息 / Support information  DBX `0.6.71`，`t8y2/dbx` 主分支 `d3be7a2751` 上的代码。录屏为桌面端，回归使用 DBX Web 和本地 Redis。  ### 优先级 / Urgency  P2 普通。 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2026,275 +2023,846 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ccd32947` (2026-11-19)
-**Commit Message**: fix(sql-library): distinguish folder and SQL file colors (#15167)
+### Incident Patch 1: `d2d3db02` (2026-11-20)
+**Commit Message**: fix(mcp): explain launch-enforced read-only errors (#15335)
 
-Co-authored-by: ThugKd <[REDACTED_EMAIL]>
+Reviewed exact HEAD `049a4d891e0796952142a9cf4d1cbc34777ab15f`.
 
-**File**: `apps/desktop/src/components/layout/SqlLibraryPanel.vue` (modified, +5/-3)
+Issue #15291 is covered. Exact-head CI passed with no failures, and the isolated regression test passed. Non-blocking documentation feedback remains for the root README wording.
+
+**File**: `crates/dbx-mcp/src/backend.rs` (modified, +1/-1)
 ```diff
-@@ -164,7 +164,7 @@ function getConnectionLabel(connectionId: string) {
-   return conn?.name || t("sqlLibrary.deletedConnection");
+@@ -57,7 +57,7 @@ impl From<&ConnectionConfig> for ConnectionSummary {
+     }
  }
  
--function connectionIconColor(connectionId: string) {
-+function connectionColor(connectionId: string) {
-   return connectionStore.getConfig(connectionId)?.color || undefined;
+-fn legacy_mcp_allow_writes() -> Option<bool> {
++pub(crate) fn legacy_mcp_allow_writes() -> Option<bool> {
+     parse_legacy_mcp_allow_writes(&std::env::var("DBX_MCP_ALLOW_WRITES").ok()?)
  }
  
-@@ -1827,7 +1827,7 @@ defineExpose({
-               >
-                 <div v-if="showDropBefore(row.folder.id)" class="absolute left-2 right-2 top-0 border-t-2 border-primary" />
-                 <div v-if="showDropAfter(row.folder.id)" class="absolute left-2 right-2 bottom-0 border-b-2 border-primary" />
--                <component :is="isFolderExpanded(row.folder) ? FolderOpen : FolderClosed" class="h-4 w-4 text-amber-500 shrink-0" :style="{ color: connectionIconColor(row.folder.connectionId) }" />
-+                <component :is="isFolderExpanded(row.folder) ? FolderOpen : FolderClosed" class="h-4 w-4 text-amber-500 shrink-0" />
-                 <template v-if="isRenamingFolder(row.folder.id)">
-                   <input
-                     :ref="setRenameInputRef"
-@@ -1847,6 +1847,7 @@ defineExpose({
-                   {{ row.folder.name }}
-                   <span class="ml-1 text-muted-foreground">({{ folderFileCount(row.folder.id) }})</span>
-                 </span>
-+                <span v-if="connectionColor(row.folder.connectionId)" data-sql-library-connection-color class="size-1.5 shrink-0 rounded-full" :style="{ backgroundColor: connectionColor(row.folder.connectionId) }" aria-hidden="true" />
-                 <LightTooltip v-if="!isRenamingFolder(row.folder.id)" :text="t('savedSql.newSubfolder')" side="left" :delay="0" :close-delay="0" nowrap>
-                   <button
-                     type="button"
-@@ -1880,7 +1881,7 @@ defineExpose({
-                 >
-                   <div v-if="showDropBefore(row.file.id)" class="absolute left-2 right-2 top-0 border-t-2 border-primary" />
-                   <div v-if="showDropAfter(row.file.id)" class="absolute left-2 right-2 bottom-0 border-b-2 border-primary" />
--                  <FileText class="h-3.5 w-3.5 text-blue-400 shrink-0" :style="{ color: connectionIconColor(row.file.connectionId) }" />
-+                  <FileText class="h-3.5 w-3.5 text-blue-400 shrink-0" />
-                   <span v-if="isFileDirty(row.file)" aria-hidden="true" class="dirty-sql-library-marker">*</span>
-                   <template v-if="isRenamingFile(row.file.id)">
-                     <input
-@@ -1898,6 +1899,7 @@ defineExpose({
-                     />
-                   </template>
-                   <span v-else class="dbx-sql-library-drag-label min-w-0 flex-1 truncate" :title="fileTitleLabel(row.file)" :style="fileTitleStyle(row.file)">{{ row.file.name }}</span>
-+                  <span v-if="connectionColor(row.file.connectionId)" data-sql-library-connection-color class="size-1.5 shrink-0 rounded-full" :style="{ backgroundColor: connectionColor(row.file.connectionId) }" aria-hidden="true" />
-                   <span class="min-w-0 max-w-[45%] shrink truncate text-[13px]" :class="fileMetaClass(row.file.id)" :title="getConnectionLabel(row.file.connectionId)">[{{ getConnectionLabel(row.file.connectionId) }}]</span>
-                 </div>
-                 <SqlLibrarySearchSnippet v-if="contentSearchActive" :file="row.file" :query="searchQuery" :depth="row.depth" @select-match="(match) => handleMatchClick(row.file, match)" />
+```
+
+**File**: `crates/dbx-mcp/src/server.rs` (modified, +8/-1)
+```diff
+@@ -6185,7 +6185,14 @@ fn transaction_failure_result(session_id: &str, failure: TransactionFailure) ->
+ }
+ 
+ fn tool_error(code: &str, message: impl Into<String>) -> CallToolResult {
+-    CallToolResult::error(vec![ContentBlock::text(format!("Error [{code}]: {}", message.into()))])
++    let launch_restriction = if code == "MCP_READ_ONLY" && crate::backend::legacy_mcp_allow_writes() == Some(false) {
++        "This MCP process is forced read-only by the DBX_MCP_ALLOW_WRITES launch setting. \
++         It takes precedence over permissions saved in DBX Settings → MCP. \
++         Check the MCP client's launch configuration.\n"
++    } else {
++        ""
++    };
++    CallToolResult::error(vec![ContentBlock::text(format!("Error [{code}]: {launch_restriction}{}", message.into()))])
+ }
+ 
+ fn backend_tool_error(default_code: &str, error: impl Into<String>) -> CallToolResult {
+```
+
+**File**: `crates/dbx-mcp/tests/local.rs` (modified, +85/-25)
+```diff
+@@ -474,54 +474,114 @@ async fn local_backend_uses_the_installed_duckdb_sidecar() {
+ #[tokio::test]
+ async fn legacy_read_only_config_applies_before_settings_are_opened() {
+     const CHILD_ENV: &str = "DBX_MCP_LEGACY_READ_ONLY_TEST_CHILD";
+-    if std::env::var_os(CHILD_ENV).is_none() {
+-        let status = std::process::Command::new(std::env::current_exe().expect("locate test executable"))
+-            .args(["--exact", "legacy_read_only_config_applies_before_settings_are_opened", "--nocapture"])
+-            .env(CHILD_ENV, "1")
+-            .env("DBX_MCP_ALLOW_WRITES", "0")
+-            .status()
+-            .expect("run legacy read-only test in an isolated process");
+-        assert!(status.success(), "isolated legacy read-only test failed");
++    let Ok(case) = std::env::var(CHILD_ENV) else {
++        for (case, allow_writes) in [
++            ("launch-unconfigured", Some("0")),
++            ("launch-configured", Some("0")),
++            ("launch-false", Some("false")),
++            ("launch-invalid", Some("unexpected")),
++            ("policy-unset", None),
++            ("policy-enabled", Some("1")),
++            ("writable", None),
++        ] {
++            let mut command = std::process::Command::new(std::env::current_exe().expect("locate test executable"));
++            command
++                .args(["--exact", "legacy_read_only_config_applies_before_settings_are_opened", "--nocapture"])
++                .env(CHILD_ENV, case)
++                .env_remove("DBX_MCP_ALLOW_WRITES");
++            if let Some(value) = allow_writes {
++                command.env("DBX_MCP_ALLOW_WRITES", value);
++            }
++            let status = command.status().expect("run legacy read-only test in an isolated process");
++            assert!(status.success(), "isolated legacy read-only test failed: {case}");
++        }
+         return;
+-    }
++    };
+ 
+     let directory = tempdir().expect("temporary data directory");
+     let db_path = directory.path().join("dbx.db");
+-    let storage = Storage::open(&db_path).await.expect("open storage");
++    let storage = dbx_core::persistence::test_storage::open(&db_path).await.expect("open isolated storage");
+     assert!(!storage.load_mcp_global_policy().await.expect("load MCP policy").configured);
++    let launch_read_only = case.starts_with("launch-");
++    let policy_read_only = case.starts_with("policy-");
++    if case != "launch-unconfigured" {
++        storage
++            .save_mcp_global_policy(&dbx_core::storage::McpGlobalPolicy {
++                read_only: policy_read_only,
++                ..Default::default()
++            })
++            .await
++            .expect("save MCP policy");
++    }
++    tokio::fs::write(directory.path().join("legacy.sqlite"), b"").await.expect("create SQLite file");
+     let connection: ConnectionConfig = serde_json::from_value(json!({
+         "id": "legacy-read-only",
+         "name": "legacy-read-only",
+         "db_type": "sqlite",
+-        "host": "",
++        "host": directory.path().join("legacy.sqlite").to_string_lossy(),
+         "port": 0,
+         "username": "",
+         "password": "",
+-        "database": directory.path().join("legacy.sqlite").to_string_lossy(),
++        "database": "main",
+         "ssl": false
+     }))
+     .expect("minimal connection config");
+-    storage.save_connections(&[connection]).await.expect("save connection");
++    storage.save_connections(std::slice::from_ref(&connection)).await.expect("save connection");
+     let backend = Arc::new(LocalBackend::open(&db_path).await.expect("open local backend"));
+-    let server = DbxMcpServer::with_runtime_options(backend, McpScope::default(), false);
++    let database = connection.database.as_deref().expect("SQLite database path");
++    backend
++        .execute_query(&connection, database, "CREATE TABLE items (name TEXT)", None, None)
++        .await
++        .expect("create test table");
++    let server = DbxMcpServer::with_runtime_options(backend.clone(), McpScope::default(), false);
+     let (server_transport, client_transport) = tokio::io::duplex(16 * 1024);
+     let server_task = tokio::spawn(async move { server.serve(server_transport).await });
+     let client = ().serve(client_transport).await.expect("initialize client");
+-    let arguments = json!({
+-        "connection_id": "legacy-read-only",
+-        "sql": "INSERT INTO items (name) VALUES ('blocked')",
+-    })
+-    .as_object()
+-    .cloned()
+-    .unwrap_or_else(Map::<String, Value>::new);
++    for tool in ["dbx_execute_query", "dbx_execute_batch"] {
++        let arguments = json!({
++            "connection_id": "legacy-read-only",
++            "sql": "INSERT INTO items (name) VALUES ('blocked')",
++        })
++        .as_object()
++        .cloned()
++        .unwrap_or_else(Map::<String, Value>::new);
++        let result = client
++            .peer()
++            .call_tool(CallToolRequestParams::new(tool).with_arguments(arguments))
++            .await
++            .expect("execute write q
+```
+
+**File**: `packages/mcp-server/README.md` (modified, +8/-4)
+```diff
+@@ -323,7 +323,9 @@ Use `DBX_MCP_SCOPE_CONNECTION_ID`, comma-separated `DBX_MCP_SCOPE_CONNECTION_IDS
+ 
+ ## Safety
+ 
+-Choose **Read only**, **Data read/write**, or **Full access** in DBX instead of placing permission flags in client configuration. Updated servers do not let `DBX_MCP_ALLOW_WRITES` or `DBX_MCP_ALLOW_DANGEROUS_SQL` widen the DBX policy. For upgrade compatibility, `DBX_MCP_ALLOW_WRITES=0` (or `false`) keeps MCP read-only until a central policy is saved for the first time; the legacy permission variables are ignored afterward.
++Choose **Read only**, **Data read/write**, or **Full access** in DBX instead of placing permission flags in client configuration. Updated servers do not let `DBX_MCP_ALLOW_WRITES` or `DBX_MCP_ALLOW_DANGEROUS_SQL` widen the DBX policy. `DBX_MCP_ALLOW_WRITES=0` (or `false`) forces the current MCP process to be read-only, even when saved group, connection, or database permissions allow writes. This applies to both local and Web backends without modifying saved settings. A value of `1`, `true`, or an unset variable still requires authorization from the DBX policy.
++
++When `MCP_READ_ONLY` identifies `DBX_MCP_ALLOW_WRITES` as the restriction, check the MCP client's launch configuration; changing DBX permissions cannot override it. Otherwise, follow the error's policy context in **DBX Settings → MCP**.
+ 
+ MongoDB update/delete operations require a verifiably effective filter unless Full access is enabled. Aggregation stages such as `$out` and `$merge` are treated as high-risk writes.
+ 
+@@ -355,7 +357,7 @@ SQL text is not included in normal MCP errors or logged by default. Enable tempo
+ | `DBX_MCP_HTTP_ALLOW_REMOTE` | Set to `1` together with `--http-allow-remote` before a non-loopback bind is allowed |
+ | `DBX_MCP_HTTP_ALLOWED_HOSTS` | Required Host authority allowlist for a non-loopback native bind |
+ | `DBX_MCP_HTTP_ALLOWED_ORIGINS` | Required browser Origin allowlist for a non-loopback native bind |
+-| `DBX_MCP_ALLOW_WRITES` | Upgrade compatibility only: `0`/`false` keeps an unconfigured policy read-only |
++| `DBX_MCP_ALLOW_WRITES` | `0`/`false` forces the current run to be read-only; `1`/`true` never widens DBX permissions |
+ | `DBX_MCP_SCOPE_CONNECTION_ID` | Compatibility scope for one connection ID |
+ | `DBX_MCP_SCOPE_CONNECTION_IDS` | Compatibility scope for multiple connection IDs |
+ | `DBX_MCP_SCOPE_CONNECTION_NAME` | Restrict tools to one connection name |
+@@ -688,7 +690,9 @@ DBX 在 **设置 → MCP** 中保存一份权威策略，并在每次请求时
+ 
+ ### SQL 和命令安全
+ 
+-请在 DBX 中选择 **只读**、**数据读写** 或 **完全访问**，不要在客户端配置中放置权限开关。新版 Server 不允许 `DBX_MCP_ALLOW_WRITES` 或 `DBX_MCP_ALLOW_DANGEROUS_SQL` 放宽 DBX 中央策略。为兼容升级，在中央策略首次保存前，`DBX_MCP_ALLOW_WRITES=0`（或 `false`）仍会保持 MCP 只读；策略保存后旧权限变量即被忽略。
++请在 DBX 中选择 **只读**、**数据读写** 或 **完全访问**，不要在客户端配置中放置权限开关。新版 Server 不允许 `DBX_MCP_ALLOW_WRITES` 或 `DBX_MCP_ALLOW_DANGEROUS_SQL` 放宽 DBX 中央策略。`DBX_MCP_ALLOW_WRITES=0`（或 `false`）会强制当前 MCP 进程只读，即使已保存的分组、连接或单库权限允许写入。此限制同时适用于本地和 Web 后端，不修改已保存的设置。设为 `1`、`true` 或不设置时，仍以 DBX 策略授权为准。
++
++当 `MCP_READ_ONLY` 指明限制来自 `DBX_MCP_ALLOW_WRITES` 时，请检查 MCP 客户端的启动配置；修改 DBX 权限无法覆盖此限制。其他情况请根据错误中的策略上下文检查 **DBX 设置 → MCP**。
+ 
+ MongoDB 更新和删除在未启用完全访问时必须提供可验证有效的 filter；`$out`、`$merge` 聚合阶段按高风险写操作处理。
+ 
+@@ -718,7 +722,7 @@ MongoDB 更新和删除在未启用完全访问时必须提供可验证有效的
+ | `DBX_MCP_HTTP_ALLOW_REMOTE` | 与 `--http-allow-remote` 同时设置为允许监听非回环地址 |
+ | `DBX_MCP_HTTP_ALLOWED_HOSTS` | 监听非回环地址时必填的 Host authority 白名单 |
+ | `DBX_MCP_HTTP_ALLOWED_ORIGINS` | 监听非回环地址时必填的浏览器 Origin 白名单 |
+-| `DBX_MCP_ALLOW_WRITES` | 仅用于升级兼容：`0`/`false` 使尚未配置的策略保持只读 |
++| `DBX_MCP_ALLOW_WRITES` | `0`/`false` 强制本次运行只读；`1`/`true` 不会扩大 DBX 权限 |
+ | `DBX_MCP_SCOPE_CONNECTION_ID` | 兼容旧配置：限制到指定连接 ID |
+ | `DBX_MCP_SCOPE_CONNECTION_IDS` | 兼容旧配置：限制到多个连接 ID |
+ | `DBX_MCP_SCOPE_CONNECTION_NAME` | 限制到指定连接名称 |
 ```
 
 ---
 
-### Incident Patch 2: `17fb5362` (2026-11-19)
-**Commit Message**: fix(sqlite): restore verbatim UNC prefixes in network URIs
+### Incident Patch 2: `0c2ffce8` (2026-11-20)
+**Commit Message**: fix(plugin-stats): keep per-plugin rollups in step with versions
 
-**File**: `crates/dbx-drivers/src/db/sqlite.rs` (modified, +32/-0)
+The old aggregator advanced versioned counters in the `counts` phase and the
+`kind:plugin` rollups in a later phase, so every mid-pass failure left the
+rollups behind; dl was about 11% short by 2026-11-10. applyWindow now advances
+both from the same counts entry, and reconcile-rollups.mjs raises the historical
+rollups to max(stored, sum of versions) once, so no counter decreases.
+
+Also pulls the shared OAuth/KV helpers out of migrate-archive.mjs into
+cf-kv-api.mjs and adds unit tests for the document model and the repair.
+
+**File**: `deploy/plugin-stats-worker/README.md` (modified, +9/-2)
 ```diff
-@@ -594,7 +594,24 @@ fn is_network_path(path: &str) -> bool {
-         || normalized.contains("wsl$")
- }
+@@ -62,8 +62,15 @@ into the `plugin_stats_archive` KV namespace — the permanent layer future UI
+ reads:
  
-+/// `\\?\UNC\server\share` (or the `/`-separated spelling, as produced by
-+/// Windows `canonicalize()`) cannot be embedded in a `file:` URI as-is: the
-+/// verbatim `?` would be parsed as the query separator and shred the share
-+/// name. Restore the plain `\\server\share` form first; any other path is
-+/// returned unchanged.
-+fn restore_plain_unc_path(path: &str) -> String {
-+    let is_verbatim_unc =
-+        path.get(..8).is_some_and(|prefix| prefix.replace('/', "\\").eq_ignore_ascii_case("\\\\?\\UNC\\"));
-+    if !is_verbatim_unc {
-+        return path.to_string();
-+    }
-+    let share = path[8..].replace('/', "\\");
-+    format!("\\\\{share}")
+ - `archive:v2` — **one** JSON document holding every counter:
+-  `{v:2, lastSuccess, total:{"kind:pluginId:version": n}, uniqd:{"kind:pluginId:day": n}}`
+-  (plus `kind:pluginId` rollups inside `total`). A pass reads it once, folds in
++  `{v:2, lastSuccess, total:{"kind:pluginId:version": n}, uniqd:{"kind:pluginId:day": n}}`.
++  `total` also holds the `kind:pluginId` rollups, advanced from the same counts
++  entry as the versioned counter, so `sum(versions) == rollup` stays true. (The
++  old aggregator wrote versions in one phase and rollups in a later one, so each
++  mid-pass failure left the rollups behind — `dl` was ~11% short by 2026-11-10.
++  `reconcile-rollups.mjs` reset them to `max(previous, sum of versions)`, which
++  never lowers a counter; four legacy `inst` rollups still sit +1 above their
++  version sum, from an event whose version string failed validation.)
++  A pass reads the document once, folds in
+   the window, writes it back — the number of distinct keys touched per pass is
+   constant (archive + summary + lock) no matter how many plugins exist.
+ - `summary` — one JSON blob `{dl: {pluginId: n}, inst: {...}, updt: {...}}` for
+```
+
+**File**: `deploy/plugin-stats-worker/cf-kv-api.mjs` (added, +119/-0)
+```diff
+@@ -0,0 +1,119 @@
++// Shared Cloudflare KV / OAuth plumbing for the ops scripts in this directory.
++// Only used from a workstation: the token is the wrangler OAuth session (or
++// CLOUDFLARE_API_TOKEN), never something a Worker holds.
++
++import fs from "node:fs";
++import os from "node:os";
++import path from "node:path";
++
++export const API = "https://api.cloudflare.com/client/v4";
++export const BULK_GET_BATCH = 100;
++const WRANGLER_CLIENT_ID = "54d11594-84e4-41aa-b438-e81b8fa78ee7";
++
++function wranglerConfigPath() {
++  if (process.env.WRANGLER_CONFIG) return process.env.WRANGLER_CONFIG;
++  const candidates =
++    process.platform === "win32"
++      ? [path.join(process.env.APPDATA ?? os.homedir(), ".wrangler", "config", "default.toml")]
++      : [
++          path.join(os.homedir(), "Library", "Preferences", ".wrangler", "config", "default.toml"),
++          path.join(os.homedir(), ".wrangler", "config", "default.toml"),
++        ];
++  return candidates.find((candidate) => fs.existsSync(candidate)) ?? null;
 +}
 +
- fn sqlite_network_path_uri(path: &str) -> String {
-+    let restored = restore_plain_unc_path(path);
-+    let path = restored.as_str();
-     let (path_and_query, fragment) =
-         path.split_once('#').map_or((path, None), |(prefix, suffix)| (prefix, Some(suffix)));
-     let (file_path, query) = path_and_query.split_once('?').unwrap_or((path_and_query, ""));
-@@ -996,6 +1013,21 @@ mod tests {
-         assert!(is_network_path(r"//?/UNC/server/share/dbx.db"));
-     }
++function readTomlValue(text, field) {
++  const match = text.match(new RegExp(`^${field} = "(.*)"$`, "m"));
++  return match ? match[1] : null;
++}
++
++/** Wrangler OAuth: refresh the access token and persist the rotated refresh token. */
++async function tokenFromWrangler() {
++  const configPath = wranglerConfigPath();
++  if (!configPath) throw new Error("no CLOUDFLARE_API_TOKEN and no wrangler config found; run `npx wrangler login`");
++  const text = fs.readFileSync(configPath, "utf8");
++  const refreshToken = readTomlValue(text, "refresh_token");
++  if (!refreshToken) throw new Error(`${configPath} has no refresh_token; run \`npx wrangler login\``);
++
++  const response = await fetch("https://dash.cloudflare.com/oauth2/token", {
++    method: "POST",
++    headers: { "Content-Type": "application/x-www-form-urlencoded" },
++    body: new URLSearchParams({ grant_type: "refresh_token", refresh_token: refreshToken, client_id: WRANGLER_CLIENT_ID }),
++  });
++  const payload = await response.json();
++  if (!response.ok || !payload.access_token) {
++    throw new Error(`wrangler token refresh failed (${response.status}): ${JSON.stringify(payload).slice(0, 300)}`);
++  }
++  const expires = new Date(Date.now() + (payload.expires_in ?? 3600) * 1000).toISOString().replace(/\.\d{3}Z$/, ".000Z");
++  const updated = text
++    .replace(/^oauth_token = ".*"$/m, `oauth_token = "${payload.access_token}"`)
++    .replace(/^refresh_token = ".*"$/m, `refresh_token = "${payload.refresh_token ?? refreshToken}"`)
++    .replace(/^expiration_time = ".*"$/m, `expiration_time = "${expires}"`);
++  fs.writeFileSync(configPath, updated, { mode: 0o600 });
++  return payload.access_token;
++}
++
++export async function accessToken() {
++  if (process.env.CLOUDFLARE_API_TOKEN) return process.env.CLOUDFLARE_API_TOKEN;
++  return tokenFromWrangler();
++}
++
++export async function api(token, method, pathname, body, options = {}) {
++  const response = await fetch(`${API}${pathname}`, {
++    method,
++    headers: {
++      Authorization: `Bearer ${token}`,
++      ...(body === undefined ? {} : { "Content-Type": options.raw ? "text/plain" : "application/json" }),
++    },
++    // KV values take the raw text as the body; everything else is JSON.
++    body: body === undefined ? undefined : options.raw ? body : JSON.stringify(body),
++  });
++  const payload = await response.json().catch(() => ({}));
++  if (!response.ok || payload.success === false) {
++    throw new Error(`${method} ${pathname} -> ${response.status}: ${JSON.stringify(payload.errors ?? payload).slice(0, 400)}`);
++  }
++  return payload;
++}
++
++/** KV `values/` responses are the raw value, not a JSON envelope. */
++export async function apiText(token, pathname) {
++  const response = await fetch(`${API}${pathname}`, { headers: { Authorization: `Bearer ${token}` } });
++  if (!response.ok) {
++    const error = new Error(`GET ${pathname} -> ${response.status}: ${(await response.text()).slice(0, 200)}`);
++    error.status = response.status;
++    throw error;
++  }
++  return response.text();
++}
++
++export async function listKeys(token, account, namespace) {
++  const keys = [];
++  let cursor;
++  for (;;) {
++    const query = new URLSearchParams({ limit: "1000", ...(cursor ? { cursor } : {}) });
++    const payload = await api(token, "GET", `/accounts/${account}/storage/kv/namespaces/${namespace}/keys?${query}`);
++    keys.push(...payload.result.map((entry) => entry.name));
++    cursor = payload.result_info?.cursor;
++    if (!cursor || payload.result.length === 0) break;
++  }
++  return keys;
++}
++
++export async function bulkGet(token, account, namespace, keys) {
++  const values = {};
++  for (let index = 0; index < keys.length; index += BULK_GET_BATCH) {
++    const batch = keys.slice(index, index + BULK_GET_BATCH);
++    const payload = await api(token, "POST", `/accounts/${account}/storage/kv/namespaces/${namespace}/bulk/get`, { keys: batch, type: "text" });
++    Object.assign(values, payload.result?.values ?? {}
+```
+
+**File**: `deploy/plugin-stats-worker/migrate-archive.mjs` (modified, +1/-104)
+```diff
+@@ -28,15 +28,13 @@ import os from "node:os";
+ import path from "node:path";
+ import crypto from "node:crypto";
+ import { pathToFileURL } from "node:url";
++import { accessToken, api, apiText, bulkGet, listKeys } from "./cf-kv-api.mjs";
  
-+    #[test]
-+    fn sqlite_network_path_uri_restores_verbatim_unc_prefixes() {
-+        assert_eq!(sqlite_network_path_uri(r"\\?\UNC\server\share\dbx.db"), r"file:\\server\share\dbx.db?nolock=1");
-+        assert_eq!(sqlite_network_path_uri("//?/UNC/server/share/dbx.db"), r"file:\\server\share\dbx.db?nolock=1");
-+        assert_eq!(sqlite_network_path_uri(r"\\?\unc\Server\Share\dbx.db"), r"file:\\Server\Share\dbx.db?nolock=1");
-+    }
+-const API = "https://api.cloudflare.com/client/v4";
+ const ARCHIVE_KEY = "archive:v2";
+ const ARCHIVE_VERSION = 2;
+ const SUMMARY_KEY = "summary";
+ const META_KEY = "meta:last-success";
+ const LEGACY_PREFIXES = ["total:", "uniqd:"];
+-const BULK_GET_BATCH = 100;
+-const WRANGLER_CLIENT_ID = "54d11594-84e4-41aa-b438-e81b8fa78ee7";
+ 
+ function parseArgs(argv) {
+   const args = { apply: false, force: false, out: null, account: "7ad3349ede62c17968a90108d39fd4d0", namespace: "0cc9e49a117f4edeb931464fa0256834" };
+@@ -126,107 +124,6 @@ function sha256(text) {
+   return crypto.createHash("sha256").update(text).digest("hex");
+ }
+ 
+-function wranglerConfigPath() {
+-  if (process.env.WRANGLER_CONFIG) return process.env.WRANGLER_CONFIG;
+-  const candidates =
+-    process.platform === "win32"
+-      ? [path.join(process.env.APPDATA ?? os.homedir(), ".wrangler", "config", "default.toml")]
+-      : [
+-          path.join(os.homedir(), "Library", "Preferences", ".wrangler", "config", "default.toml"),
+-          path.join(os.homedir(), ".wrangler", "config", "default.toml"),
+-        ];
+-  return candidates.find((candidate) => fs.existsSync(candidate)) ?? null;
+-}
+-
+-function readTomlValue(text, field) {
+-  const match = text.match(new RegExp(`^${field} = "(.*)"$`, "m"));
+-  return match ? match[1] : null;
+-}
+-
+-/** Wrangler OAuth: refresh the access token and persist the rotated refresh token. */
+-async function tokenFromWrangler() {
+-  const configPath = wranglerConfigPath();
+-  if (!configPath) throw new Error("no CLOUDFLARE_API_TOKEN and no wrangler config found; run `npx wrangler login`");
+-  const text = fs.readFileSync(configPath, "utf8");
+-  const refreshToken = readTomlValue(text, "refresh_token");
+-  if (!refreshToken) throw new Error(`${configPath} has no refresh_token; run \`npx wrangler login\``);
+-
+-  const response = await fetch("https://dash.cloudflare.com/oauth2/token", {
+-    method: "POST",
+-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+-    body: new URLSearchParams({ grant_type: "refresh_token", refresh_token: refreshToken, client_id: WRANGLER_CLIENT_ID }),
+-  });
+-  const payload = await response.json();
+-  if (!response.ok || !payload.access_token) {
+-    throw new Error(`wrangler token refresh failed (${response.status}): ${JSON.stringify(payload).slice(0, 300)}`);
+-  }
+-  const expires = new Date(Date.now() + (payload.expires_in ?? 3600) * 1000).toISOString().replace(/\.\d{3}Z$/, ".000Z");
+-  const updated = text
+-    .replace(/^oauth_token = ".*"$/m, `oauth_token = "${payload.access_token}"`)
+-    .replace(/^refresh_token = ".*"$/m, `refresh_token = "${payload.refresh_token ?? refreshToken}"`)
+-    .replace(/^expiration_time = ".*"$/m, `expiration_time = "${expires}"`);
+-  fs.writeFileSync(configPath, updated, { mode: 0o600 });
+-  return payload.access_token;
+-}
+-
+-async function accessToken() {
+-  if (process.env.CLOUDFLARE_API_TOKEN) return process.env.CLOUDFLARE_API_TOKEN;
+-  return tokenFromWrangler();
+-}
+-
+-async function api(token, method, pathname, body, options = {}) {
+-  const response = await fetch(`${API}${pathname}`, {
+-    method,
+-    headers: {
+-      Authorization: `Bearer ${token}`,
+-      ...(body === undefined ? {} : { "Content-Type": options.raw ? "text/plain" : "application/json" }),
+-    },
+-    // KV values take the raw text as the body; everything else is JSON.
+-    body: body === undefined ? undefined : options.raw ? body : JSON.stringify(body),
+-  });
+-  const payload = await response.json().catch(() => ({}));
+-  if (!response.ok || payload.success === false) {
+-    throw new Error(`${method} ${pathname} -> ${response.status}: ${JSON.stringify(payload.errors ?? payload).slice(0, 400)}`);
+-  }
+-  return payload;
+-}
+-
+-/** KV `values/` responses are the raw value, not a JSON envelope. */
+-async function apiText(token, pathname) {
+-  const response = await fetch(`${API}${pathname}`, { headers: { Authorization: `Bearer ${token}` } });
+-  if (!response.ok) {
+-    const error = new Error(`GET ${pathname} -> ${response.status}: ${(await response.text()).slice(0, 200)}`);
+-    error.status = response.status;
+-    throw error;
+-  }
+-  return response.text();
+-}
+-
+-async function listKeys(token, account, namespace) {
+-  const keys = [];
+-  let cursor;
+-  for (;;) {
+-    const query = new URLSearchParams({ limit: "1000", ...(cursor ? { cursor } : {}) });
+-    const payload = await api(token, "GET", `/accounts/${account}/storage/kv/namespaces/${namespace}/keys?${query}`);
+-    keys.push(...payload.result.map((entry) => entry.name));
+-    cursor = payload.result_info?.cursor;
+-    if (!cursor || payload.result.length === 0) break;
+-  }
+-  return keys;
+-}
+-
+-async function bulkGet(token, account, namespace, keys) {
+-  const values
+```
+
+**File**: `deploy/plugin-stats-worker/reconcile-rollups.mjs` (added, +155/-0)
+```diff
+@@ -0,0 +1,155 @@
++#!/usr/bin/env node
++// Repair the per-plugin rollups inside `archive:v2`.
++//
++// The old aggregator advanced versioned counters in one phase and the
++// `kind:plugin` rollups in a later one, so every mid-pass failure left the
++// rollups behind (dl was ~11% short by 2026-11-10). The current Worker keeps
++// both in step, but the historical gap has to be closed once.
++//
++// Rule: rollup = max(stored, sum of its versioned counters). A counter never
++// decreases; four legacy `inst` rollups legitimately sit +1 above their version
++// sum (that event's version string failed validation), and they are left alone.
++//
++// Usage:
++//   node reconcile-rollups.mjs            # dry run: report what would change
++//   node reconcile-rollups.mjs --apply    # write archive:v2 and verify read-back
 +
-+    #[test]
-+    fn sqlite_network_path_uri_keeps_query_after_verbatim_unc_restore() {
-+        assert_eq!(
-+            sqlite_network_path_uri(r"\\?\UNC\server\share\dbx.db?mode=ro"),
-+            r"file:\\server\share\dbx.db?mode=ro&nolock=1"
-+        );
-+    }
++import fs from "node:fs";
++import os from "node:os";
++import path from "node:path";
++import { pathToFileURL } from "node:url";
 +
-     #[cfg(target_os = "windows")]
-     #[tokio::test]
-     async fn verbatim_windows_paths_open_as_local_sqlite_files() {
++import { accessToken, api, apiText } from "./cf-kv-api.mjs";
++
++const ARCHIVE_KEY = "archive:v2";
++const DEFAULT_ACCOUNT = "7ad3349ede62c17968a90108d39fd4d0";
++const DEFAULT_NAMESPACE = "0cc9e49a117f4edeb931464fa0256834";
++
++/** Split a counter key into its parts; rollups are 2, versioned counters are 3. */
++export function splitCounterKey(key) {
++  const parts = key.split(":");
++  return { kind: parts[0], plugin: parts[1], version: parts[2], isRollup: parts.length === 2 };
++}
++
++/**
++ * Pure reconcile: raise rollups to at least the sum of their versioned counters.
++ * Returns the new document plus a change report; never lowers a value.
++ */
++export function reconcileRollups(doc) {
++  const sums = new Map();
++  for (const [key, value] of Object.entries(doc.total)) {
++    const parts = key.split(":");
++    if (parts.length !== 3) continue;
++    const rollup = `${parts[0]}:${parts[1]}`;
++    sums.set(rollup, (sums.get(rollup) ?? 0) + value);
++  }
++
++  const changes = [];
++  let created = 0;
++  let unchanged = 0;
++  for (const [rollup, sum] of sums) {
++    const stored = doc.total[rollup];
++    if (stored === undefined) {
++      doc.total[rollup] = sum;
++      created += 1;
++      changes.push({ key: rollup, from: null, to: sum, kind: "created" });
++    } else if (sum > stored) {
++      doc.total[rollup] = sum;
++      changes.push({ key: rollup, from: stored, to: sum, kind: "raised" });
++    } else {
++      unchanged += 1;
++    }
++  }
++  return { doc, changes, created, unchanged };
++}
++
++/** Every rollup must cover its versioned counters after the repair. */
++export function verifyRollups(doc) {
++  const sums = new Map();
++  for (const [key, value] of Object.entries(doc.total)) {
++    const parts = key.split(":");
++    if (parts.length !== 3) continue;
++    const rollup = `${parts[0]}:${parts[1]}`;
++    sums.set(rollup, (sums.get(rollup) ?? 0) + value);
++  }
++  const problems = [];
++  for (const [rollup, sum] of sums) {
++    const stored = doc.total[rollup];
++    if (stored === undefined) problems.push(`${rollup}: no rollup for ${sum} counters`);
++    else if (stored < sum) problems.push(`${rollup}: rollup ${stored} < version sum ${sum}`);
++  }
++  return problems;
++}
++
++function parseArgs(argv) {
++  const args = { apply: false, account: DEFAULT_ACCOUNT, namespace: DEFAULT_NAMESPACE, out: null };
++  for (const arg of argv) {
++    if (arg === "--apply") args.apply = true;
++    else if (arg.startsWith("--account=")) args.account = arg.slice(10);
++    else if (arg.startsWith("--namespace=")) args.namespace = arg.slice(12);
++    else if (arg.startsWith("--out=")) args.out = arg.slice(6);
++    else if (arg === "--help" || arg === "-h") {
++      console.log(fs.readFileSync(new URL(import.meta.url), "utf8").split("\n").slice(1, 20).join("\n"));
++      process.exit(0);
++    } else throw new Error(`unknown argument: ${arg}`);
++  }
++  return args;
++}
++
++async function main() {
++  const args = parseArgs(process.argv.slice(2));
++  const token = await accessToken();
++  const base = `/accounts/${args.account}/storage/kv/namespaces/${args.namespace}`;
++  const valuePath = `${base}/values/${encodeURIComponent(ARCHIVE_KEY)}`;
++
++  const raw = await apiText(token, valuePath);
++  const doc = JSON.parse(raw);
++  const before = JSON.stringify(doc.total).length;
++
++  const { changes, created, unchanged } = reconcileRollups(doc);
++  const problems = verifyRollups(doc);
++  if (problems.length) {
++    console.error(`rollup verification failed (${problems.length}):`);
++    for (const problem of problems.slice(0, 20)) console.error(`  ${problem}`);
++    process.exit(1);
++  }
++
++  const lowered = changes.filter((change) => change.from !== null && change.to < change.from);
++  console.log(
++    `rollups: ${created} created, ${changes.length - created} raised, ${unchanged} already current, ${lowered.length} lowered`,
++  );
++  for (const change of changes.slice(0, 10)) {
++    console.log(`  ${change.key}: ${change.from ?? "(none)"} -> ${change.to}`);
++  }
++  if (changes.length > 10) console.log(`  ... ${changes.
+```
+
+**File**: `deploy/plugin-stats-worker/reconcile-rollups.test.mjs` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
++// Unit tests for the rollup repair.
++// Run: node --test deploy/plugin-stats-worker/reconcile-rollups.test.mjs
++import assert from "node:assert/strict";
++import test from "node:test";
++
++import { reconcileRollups, splitCounterKey, verifyRollups } from "./reconcile-rollups.mjs";
++
++const doc = (total) => ({ v: 2, lastSuccess: "2026-11-17 04:00:42", total, uniqd: {} });
++
++test("splitCounterKey distinguishes rollups from versioned counters", () => {
++  assert.equal(splitCounterKey("dl:foo").isRollup, true);
++  assert.equal(splitCounterKey("dl:foo:1.0.0").isRollup, false);
++});
++
++test("raises a stale rollup to the version sum", () => {
++  const d = doc({ "dl:foo": 10, "dl:foo:1.0.0": 7, "dl:foo:1.1.0": 8 });
++  const { changes } = reconcileRollups(d);
++  assert.equal(d.total["dl:foo"], 15);
++  assert.deepEqual(changes[0], { key: "dl:foo", from: 10, to: 15, kind: "raised" });
++});
++
++test("creates a missing rollup", () => {
++  const d = doc({ "inst:bar:2.0.0": 4 });
++  const { created } = reconcileRollups(d);
++  assert.equal(created, 1);
++  assert.equal(d.total["inst:bar"], 4);
++});
++
++test("never lowers a rollup that is already ahead of its versions", () => {
++  const d = doc({ "inst:foo": 8, "inst:foo:1.0.0": 7 });
++  const { changes } = reconcileRollups(d);
++  assert.equal(d.total["inst:foo"], 8);
++  assert.deepEqual(changes, []);
++});
++
++test("leaves an already-correct rollup untouched", () => {
++  const d = doc({ "dl:foo": 15, "dl:foo:1.0.0": 7, "dl:foo:1.1.0": 8 });
++  const { changes, unchanged } = reconcileRollups(d);
++  assert.deepEqual(changes, []);
++  assert.equal(unchanged, 1);
++});
++
++test("verifyRollups reports a short or missing rollup", () => {
++  const short = doc({ "dl:foo": 3, "dl:foo:1.0.0": 7 });
++  assert.match(verifyRollups(short)[0], /rollup 3 < version sum 7/);
++  const missing = doc({ "dl:foo:1.0.0": 7 });
++  assert.match(verifyRollups(missing)[0], /no rollup/);
++});
++
++test("verifyRollups accepts the repaired document", () => {
++  const d = doc({ "dl:foo": 10, "dl:foo:1.0.0": 7, "dl:foo:1.1.0": 8 });
++  reconcileRollups(d);
++  assert.deepEqual(verifyRollups(d), []);
++});
+```
+
+**File**: `deploy/plugin-stats-worker/worker.test.mjs` (added, +53/-0)
+```diff
+@@ -0,0 +1,53 @@
++// Unit tests for the archive document model in worker.ts.
++// Run: node --test deploy/plugin-stats-worker/worker.test.mjs
++import assert from "node:assert/strict";
++import test from "node:test";
++
++import { applySummary, applyWindow, emptyArchive, parseArchive } from "./worker.ts";
++
++const count = (kind, plugin, version, events) => ({ kind, plugin, version, events });
++const unique = (kind, plugin, day, uniq) => ({ kind, plugin, day, uniq });
++
++test("applyWindow advances the versioned counter and its plugin rollup together", () => {
++  const doc = emptyArchive();
++  applyWindow(doc, [count("inst", "foo", "1.0.0", 3)], []);
++  assert.equal(doc.total["inst:foo:1.0.0"], 3);
++  assert.equal(doc.total["inst:foo"], 3);
++});
++
++test("versions roll up to the plugin total across windows", () => {
++  const doc = emptyArchive();
++  applyWindow(doc, [count("inst", "foo", "1.0.0", 3), count("inst", "foo", "1.1.0", 4)], []);
++  applyWindow(doc, [count("inst", "foo", "1.1.0", 5)], []);
++  assert.equal(doc.total["inst:foo:1.0.0"], 3);
++  assert.equal(doc.total["inst:foo:1.1.0"], 9);
++  assert.equal(doc.total["inst:foo"], 12);
++});
++
++test("kinds stay separate", () => {
++  const doc = emptyArchive();
++  applyWindow(doc, [count("inst", "foo", "1.0.0", 2), count("updt", "foo", "1.0.0", 7)], []);
++  assert.equal(doc.total["inst:foo"], 2);
++  assert.equal(doc.total["updt:foo"], 7);
++});
++
++test("per-day uniques overwrite instead of adding", () => {
++  const doc = emptyArchive();
++  applyWindow(doc, [], [unique("inst", "foo", "2026-11-10", 5)]);
++  applyWindow(doc, [], [unique("inst", "foo", "2026-11-10", 6)]);
++  assert.equal(doc.uniqd["inst:foo:2026-11-10"], 6);
++});
++
++test("applySummary adds the same window per plugin", () => {
++  const summary = { inst: { foo: 2 } };
++  applySummary(summary, [count("inst", "foo", "1.1.0", 3), count("inst", "bar", "2.0.0", 1)]);
++  assert.deepEqual(summary, { inst: { foo: 5, bar: 1 } });
++});
++
++test("parseArchive round-trips and rejects an unknown version", () => {
++  const doc = emptyArchive();
++  applyWindow(doc, [count("inst", "foo", "1.0.0", 1)], []);
++  assert.deepEqual(parseArchive(JSON.stringify(doc)), doc);
++  assert.throws(() => parseArchive(JSON.stringify({ ...doc, v: 3 })), /unsupported version/);
++  assert.throws(() => parseArchive("null"), /not an object/);
++});
+```
+
+**File**: `deploy/plugin-stats-worker/worker.ts` (modified, +6/-0)
+```diff
+@@ -352,6 +352,12 @@ export function applyWindow(doc: ArchiveDoc, counts: WindowCount[], uniques: Dai
+   for (const count of counts) {
+     const key = `${count.kind}:${count.plugin}:${count.version}`;
+     doc.total[key] = (doc.total[key] ?? 0) + count.events;
++    // Keep the per-plugin rollup in step with its versioned counters. The old
++    // aggregator wrote versions first and the rollup in a later phase, so every
++    // mid-pass failure left the rollup behind (dl was ~11% short by 2026-11-10).
++    // Both are now advanced from the same `counts` entry.
++    const rollupKey = `${count.kind}:${count.plugin}`;
++    doc.total[rollupKey] = (doc.total[rollupKey] ?? 0) + count.events;
+   }
+   for (const unique of uniques) {
+     // Overwrite, not add: reruns converge to the full-day value and
 ```
 
 ---
 
-### Incident Patch 3: `96260588` (2026-11-19)
-**Commit Message**: fix(hana): use VIEW when editing view descriptions (#15201)
+### Incident Patch 3: `c6df43e3` (2026-11-20)
+**Commit Message**: fix(editor): group execute script context action
 
-* fix(hana): use VIEW when editing view descriptions
+Follow-up menu refinement for the SQL editor execute-script action.
 
-* test(hana): verify generated view comments against live database
-
-**File**: `apps/desktop/src/components/structure/TableStructureEditor.primaryKey.spec.ts` (modified, +24/-2)
+**File**: `apps/desktop/src/components/editor/QueryEditorContextMenu.vue` (modified, +3/-1)
 ```diff
-@@ -341,9 +341,9 @@ function draftWithColumns(count: number) {
- }
- 
- async function mountEditor(
--  databaseType: "mysql" | "sqlserver" | "postgres" | "sqlite" | "oracle" | "oceanbase-oracle" | "iris" | "dameng" | "duckdb" | "informix" | "clickhouse",
-+  databaseType: "mysql" | "sqlserver" | "postgres" | "sqlite" | "oracle" | "oceanbase-oracle" | "iris" | "dameng" | "duckdb" | "informix" | "clickhouse" | "saphana",
-   isPrimaryKey = false,
--  options: { database?: string; dynamicTypes?: string[]; identity?: { seed: number; increment: number }; tableName?: string; columnName?: string; foreignKeyRefTable?: string; draftOverride?: ReturnType<typeof draft>; onDraftUpdate?: (value: unknown) => void } = {},
-+  options: { database?: string; dynamicTypes?: string[]; identity?: { seed: number; increment: number }; tableName?: string; tableType?: "table" | "view"; columnName?: string; foreignKeyRefTable?: string; draftOverride?: ReturnType<typeof draft>; onDraftUpdate?: (value: unknown) => void } = {},
- ) {
-   mocks.connection.db_type = databaseType;
-   mocks.connection.name = databaseType;
-@@ -359,6 +359,7 @@ async function mountEditor(
-     database: options.database ?? "test",
-     schema: "SYSDBA",
-     tableName: options.tableName ?? "users",
-+    tableType: options.tableType,
-     draft: options.draftOverride ?? draft(isPrimaryKey, options.identity, options.columnName, options.foreignKeyRefTable),
-     "onUpdate:draft": options.onDraftUpdate,
+@@ -180,6 +180,9 @@ const contextMenuItems = computed<ContextMenuItem[]>(() => {
+             icon: Play,
+             shortcut: shortcuts.executeSql,
+           },
++          ...(state.showExecuteScriptFromHere && actions.executeScriptFromContextPosition
++            ? [{ sidebarActionId: "editor.contextMenu.executeScriptFromHere", label: t("editor.contextMenu.executeScriptFromHere"), action: actions.executeScriptFromContextPosition, disabled: !state.canExecuteScriptFromHere, icon: FastForward }]
++            : []),
+           ...(actions.executeAllFromContextMenu
+             ? [
+                 {
+@@ -192,7 +195,6 @@ const contextMenuItems = computed<ContextMenuItem[]>(() => {
+                 },
+               ]
+             : []),
+-          ...(state.showExecuteScriptFromHere && actions.executeScriptFromContextPosition ? [{ label: t("editor.contextMenu.executeScriptFromHere"), action: actions.executeScriptFromContextPosition, disabled: !state.canExecuteScriptFromHere, icon: FastForward }] : []),
+           ...(state.canDebugPlSql && actions.debugPlSqlFromContextMenu ? [{ sidebarActionId: "plDebug.start.title", label: t("plDebug.start.title"), action: actions.debugPlSqlFromContextMenu, icon: Play }] : []),
+           {
+             sidebarActionId: "settings.shortcutExecuteSqlInNewResultTab",
+```
+
+**File**: `apps/desktop/src/components/editor/__tests__/QueryEditorContextMenu.integration.spec.ts` (modified, +33/-0)
+```diff
+@@ -20,6 +20,8 @@ function mountMenu(layout: "full" | "grouped" = "full") {
+   const state = reactive<QueryEditorContextMenuState>({ readOnly: false, hideExecutionControls: false, databaseType: "mysql", selectedSql: "", executableSql: "", previewContextSql: "", contextObjectTarget: null, shortcuts: { ...DEFAULT_SHORTCUT_SETTINGS }, expandSelectStar: undefined });
+   const actions = {
+     executeFromContextMenu: vi.fn(),
++    executeAllFromContextMenu: vi.fn(),
++    executeScriptFromContextPosition: vi.fn(),
+     executeInNewResultTabFromContextMenu: vi.fn(),
+     explainFromContextMenu: vi.fn(),
+     requestPreviewChanges: vi.fn(),
+@@ -128,6 +130,37 @@ describe("QueryEditor extracted context menu", () => {
+     expect(actions.emitContextObjectAction).toHaveBeenCalledExactlyOnceWith("edit-table-structure");
    });
-@@ -449,6 +450,27 @@ afterEach(() => {
- });
  
- describe("TableStructureEditor primary key editing", () => {
-+  it.each(["table", "view"] as const)("passes the HANA %s kind when generating comment SQL", async (tableType) => {
-+    const root = await mountEditor("saphana", false, { database: "", tableName: "V_6200_YGMBBK", tableType });
-+    const input = root.querySelector<HTMLInputElement>("[data-table-comment-input]")!;
-+    expect(input.disabled).toBe(false);
-+    input.value = "员工目标";
-+    input.dispatchEvent(new Event("input", { bubbles: true }));
++  it("places execute-script-from-here in More for the grouped SQL editor menu", async () => {
++    const { state, actions, open } = mountMenu("grouped");
++    state.showExecuteScriptFromHere = true;
++    state.canExecuteScriptFromHere = true;
++    await open();
 +
-+    await vi.waitFor(() =>
-+      expect(mocks.buildTableStructureChangeSql).toHaveBeenLastCalledWith(
-+        expect.objectContaining({
-+          databaseType: "saphana",
-+          schema: "SYSDBA",
-+          tableName: "V_6200_YGMBBK",
-+          tableType,
-+          tableComment: "员工目标",
-+          originalTableComment: "",
-+        }),
-+      ),
-+    );
++    expect([...document.querySelectorAll<HTMLButtonElement>("[data-dbx-context-menu] button")].some((entry) => entry.textContent?.includes("editor.contextMenu.executeScriptFromHere"))).toBe(false);
++    button("common.more").click();
++    await nextTick();
++    const menus = document.querySelectorAll<HTMLElement>("[data-dbx-context-menu]");
++    const submenu = menus[menus.length - 1]!;
++    const labels = [...submenu.querySelectorAll<HTMLButtonElement>("button")].map((entry) => entry.textContent ?? "");
++    expect(labels[labels.length - 2]).toBe("editor.contextMenu.executeScriptFromHere");
++    expect(labels[labels.length - 1]).toContain("toolbar.executeAllSql");
++    button("editor.contextMenu.executeScriptFromHere").click();
++    expect(actions.executeScriptFromContextPosition).toHaveBeenCalledExactlyOnceWith();
 +  });
 +
-   it("allows enabling identity on an existing Dameng integer column", async () => {
-     const root = await mountEditor("dameng");
-     const identity = columnPropertyCheckbox(root, "structureEditor.identity");
++  it("places execute-script-from-here above execute-all in the full SQL editor menu", async () => {
++    const { state, open } = mountMenu("full");
++    state.showExecuteScriptFromHere = true;
++    state.canExecuteScriptFromHere = true;
++    await open();
++
++    const labels = [...document.querySelectorAll<HTMLButtonElement>("[data-dbx-context-menu] button")].map((entry) => entry.textContent ?? "");
++    const executeScriptIndex = labels.findIndex((label) => label.includes("editor.contextMenu.executeScriptFromHere"));
++    const executeAllIndex = labels.findIndex((label) => label.includes("toolbar.executeAllSql"));
++    expect(executeScriptIndex).toBeGreaterThanOrEqual(0);
++    expect(executeAllIndex).toBe(executeScriptIndex + 1);
++  });
++
+   it("updates the open menu when switching layouts without clearing the accepted target", async () => {
+     const { state, open, onClose } = mountMenu("grouped");
+     state.selectedSql = "SELECT * FROM orders";
 ```
 
-**File**: `apps/desktop/src/components/structure/TableStructureEditor.vue` (modified, +1/-0)
+**File**: `apps/desktop/src/composables/useSidebarMenuPresentation.ts` (modified, +13/-0)
 ```diff
-@@ -3484,6 +3484,7 @@ function structureChangeOptions(): BuildTableStructureChangeSqlOptions {
-     }),
-     tableComment: tableComment.value,
-     originalTableComment: isCreateMode.value ? undefined : originalTableComment.value,
-+    tableType: isCreateMode.value ? undefined : props.tableType,
-     mysqlAutoIncrementValue: isCreateMode.value && canEditMysqlAutoIncrement.value ? mysqlAutoIncrementValue.value || undefined : undefined,
-     mysqlEngine: mysqlTableEngineSqlOption({ value: mysqlTableEngine.value, originalValue: originalMysqlTableEngine.value }, isCreateMode.value, supportsMysqlEngine.value && !mysqlTableEngineLoading.value && !mysqlTableEngineLoadError.value),
-     transwarpCreate: isCreateMode.value && databaseType.value === "transwarp" ? buildInceptorCreateOptions(physicalOptions.value, columns.value) : undefined,
+@@ -21,6 +21,19 @@ function collapseSqlEditorMenuGroups(items: ContextMenuItem[], t: (key: string)
+     else secondary.push({ label: "", separator: true });
+     secondary.push(...item.children);
+   }
++
++  const executionActionIds = ["editor.contextMenu.executeScriptFromHere", "toolbar.executeAllSql"];
++  const executionActions = executionActionIds.flatMap((id) => {
++    const action = secondary.find((item) => item.sidebarActionId === id);
++    return action ? [action] : [];
++  });
++  if (executionActions.length > 0) {
++    const executionActionIdSet = new Set(executionActions.map((item) => item.sidebarActionId));
++    const remaining = secondary.filter((item) => !executionActionIdSet.has(item.sidebarActionId));
++    if (remaining.length > 0 && !remaining[remaining.length - 1]?.separator) remaining.push({ label: "", separator: true });
++    secondary.splice(0, secondary.length, ...remaining, ...executionActions);
++  }
++
+   return result;
+ }
+ 
 ```
 
-**File**: `apps/desktop/src/lib/table/tableStructureEditorSql.ts` (modified, +2/-0)
+**File**: `apps/desktop/src/lib/sidebar/sidebarMenuLayout.ts` (modified, +1/-1)
 ```diff
-@@ -170,6 +170,8 @@ export interface BuildTableStructureChangeSqlOptions {
-   driverProfile?: string | null;
-   schema?: string;
-   tableName: string;
-+  /** Object kind used by dialects with distinct table/view comment syntax. */
-+  tableType?: "table" | "view" | "materialized_view";
-   columns: EditableStructureColumn[];
-   indexes: EditableStructureIndex[];
-   foreignKeys?: EditableStructureForeignKey[];
-```
-
-**File**: `crates/dbx-core/src/schema/table_structure_sql/sqlite_rebuild.rs` (modified, +1/-0)
-```diff
-@@ -1526,6 +1526,7 @@ mod tests {
-             transwarp_create: None,
-             partitioned: false,
-             foreign_table: false,
-+            table_type: None,
-             is_gaussdb_m_mode: false,
-             table_collation: None,
-             primary_key_name: None,
-```
-
-**File**: `crates/dbx-core/tests/live_mysql_column_name_whitespace.rs` (modified, +1/-0)
-```diff
-@@ -56,6 +56,7 @@ fn change_options(table_name: &str, columns: Vec<EditableStructureColumn>) -> Ta
-         transwarp_create: None,
-         partitioned: false,
-         foreign_table: false,
-+        table_type: None,
-         is_gaussdb_m_mode: false,
-         table_collation: None,
-         primary_key_name: None,
-```
-
-**File**: `crates/dbx-core/tests/live_mysql_generated_columns.rs` (modified, +1/-0)
-```diff
-@@ -52,6 +52,7 @@ fn change_options(table_name: &str, columns: Vec<EditableStructureColumn>) -> Ta
-         transwarp_create: None,
-         partitioned: false,
-         foreign_table: false,
-+        table_type: None,
-         is_gaussdb_m_mode: false,
-         table_collation: None,
-         primary_key_name: None,
-```
-
-**File**: `crates/dbx-core/tests/live_postgres_concurrent_index.rs` (modified, +2/-0)
-```diff
-@@ -67,6 +67,7 @@ async fn live_postgres_concurrent_index_builds_valid_index() {
-         transwarp_create: None,
-         partitioned: false,
-         foreign_table: false,
-+        table_type: None,
-         is_gaussdb_m_mode: false,
-         table_collation: None,
-         primary_key_name: None,
-@@ -207,6 +208,7 @@ async fn live_postgres_partitioned_parent_concurrent_request_rejected() {
-         transwarp_create: None,
-         partitioned: true,
-         foreign_table: false,
-+        table_type: None,
-         is_gaussdb_m_mode: false,
-         table_collation: None,
-         primary_key_name: None,
-```
-
-**File**: `crates/dbx-core/tests/live_postgres_partitioning.rs` (modified, +1/-0)
-```diff
-@@ -318,6 +318,7 @@ async fn live_postgres_create_partitioned_table_executes() {
-         transwarp_create: None,
-         partitioned: false,
-         foreign_table: false,
-+        table_type: None,
-         is_gaussdb_m_mode: false,
-         table_collation: None,
-         primary_key_name: None,
+@@ -141,7 +141,7 @@ export function sidebarMenuActionGroup(item: ContextMenuItem): MenuGroup {
+   if (id === "plDebug.start.title" || id === "settings.shortcutExecuteSqlInNewResultTab" || id === "toolbar.explainPlan" || id === "editor.previewChanges" || id === "editor.contextMenu.export") return "data";
+   if (id === "editor.contextMenu.copySelectionAsRichText" || id === "editor.contextMenu.screenshotSelection" || id === "editor.contextMenu.pasteRestoringSourceSql") return "copy";
+   if (id === "editor.contextMenu.folding" || id === "editor.contextMenu.addNextSelectionOccurrence" || id === "editor.contextMenu.selectAllSelectionOccurrences" || id === "editor.contextMenu.selectCurrentStatement" || id === "editor.contextMenu.selectAll") return "selection";
+-  if (id?.startsWith("editor.contextMenu.")) return "sql";
++  if (id === "toolbar.executeAllSql" || id?.startsWith("editor.contextMenu.")) return "sql";
+   for (const [group, ids] of Object.entries(groupActions)) if (id && ids.includes(id)) return group as MenuGroup;
+   return item.variant === "destructive" ? "danger" : "other";
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15294** (2026-11-19): chore: remove tracked PR assets (@eryajf)
-- **PR #15278** (closed): feat(plugins): prefill saved connection credentials for review (@Misaka10091)
-- **PR #15262** (closed): fix(sqlite): 修复 Windows Beta 启动时打不开应用数据库 (@CSXFanMeng)
-- **PR #15259** (2026-11-19): fix(sqlite): 修复 Windows verbatim 路径被误判为 UNC 导致的启动闪退 (@Ezreal-byte)
-- **PR #15230** (2026-11-18): fix(snowflake): open java.nio for Arrow result sets (@0xvectr)
-- **PR #15226** (2026-11-19): feat(diagram): 支持增量添加表及折叠字段 (@CSXFanMeng)
+- **PR #15363** (2026-11-20): fix(editor): group execute script context action (@eryajf)
+- **PR #15354** (2026-11-20): fix(web): disable sidebar layout auto-sync for shared Docker sessions (@Mo-Moore)
+- **PR #15350** (2026-11-20): fix(db2): 保留查询结果的十进制小数格式 (@zipg)
+- **PR #15335** (2026-11-20): fix(mcp): 区分启动配置强制只读与权限策略限制 (@SuLea-IT)
+- **PR #15314** (2026-11-20): fix(redis): refill expanded groups after refreshing keys (@zipg)
+- **PR #15309** (2026-11-20): fix(mcp): prove CTE scope through EXPLAIN and INSERT wrappers (#15288) (@xiaou61)
 
 ---
 
@@ -2314,37 +2882,31 @@ Co-authored-by: ThugKd <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sql-library): distinguish folder and SQL file colors
+## X. mcp): explain launch-enforced read-only errors
 
 **RULE**:
-When implementing operations in `apps/desktop/src/components/layout/SqlLibraryPanel.vue`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/dbx-mcp/src/backend.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ccd32947`: sql-library): distinguish folder and SQL file colors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d2d3db02`: mcp): explain launch-enforced read-only errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/components/layout/SqlLibraryPanel.vue`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-mcp/src/backend.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-function connectionColor(connectionId: string) {
-                <component :is="isFolderExpanded(row.folder) ? FolderOpen : FolderClosed" class="h-4 w-4 text-amber-500 shrink-0" />
-                <span v-if="connectionColor(row.folder.connectionId)" data-sql-library-connection-color class="size-1.5 shrink-0 rounded-full" :style="{ backgroundColor: connectionColor(row.folder.connectionId) }" aria-hidden="true" />
-                  <FileText class="h-3.5 w-3.5 text-blue-400 shrink-0" />
-                  <span v-if="connectionColor(row.file.connectionId)" data-sql-library-connection-color class="size-1.5 shrink-0 rounded-full" :style="{ backgroundColor: connectionColor(row.file.connectionId) }" aria-hidden="true" />
+pub(crate) fn legacy_mcp_allow_writes() -> Option<bool> {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-function connectionIconColor(connectionId: string) {
-                <component :is="isFolderExpanded(row.folder) ? FolderOpen : FolderClosed" class="h-4 w-4 text-amber-500 shrink-0" :style="{ color: connectionIconColor(row.folder.connectionId) }" />
-                  <FileText class="h-3.5 w-3.5 text-blue-400 shrink-0" :style="{ color: connectionIconColor(row.file.connectionId) }" />
+fn legacy_mcp_allow_writes() -> Option<bool> {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ccd32947` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d2d3db02` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

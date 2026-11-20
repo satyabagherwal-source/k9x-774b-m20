@@ -11648,3 +11648,8 @@ Every entry in this ledger must capture:
 | `learn-github-sindresorhus-got` | `https://github.com/sindresorhus/got` | `c196ad00` | Multi-dimensional audit evidence | 2026-11-20T19:25:02.521Z |
 | `learn-github-stikdebug-stikdebug` | `https://github.com/StikDebug/StikDebug` | `63713ea2` | Multi-dimensional audit evidence | 2026-11-20T19:25:05.730Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `7e8689ba` | Multi-dimensional audit evidence | 2026-11-20T19:25:12.535Z |
+| `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `322a7eed` | Multi-dimensional audit evidence | 2026-11-20T19:44:35.220Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `65181da3` | Multi-dimensional audit evidence | 2026-11-20T19:44:40.324Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `0dca809a` | Multi-dimensional audit evidence | 2026-11-20T19:44:42.528Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `c6df43e3` | Multi-dimensional audit evidence | 2026-11-20T19:44:45.713Z |
+| `learn-dom-i-9fb3b7eb` | `project://authzed-spicedb` | `65181da3` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md` | 2026-11-20T19:45:18.387Z |

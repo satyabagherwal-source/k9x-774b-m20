@@ -2,9 +2,9 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-20T17:12:56.309Z",
+  "updated_at": "2026-11-20T19:45:18.385Z",
   "statistics": {
-    "total_nodes": 429,
+    "total_nodes": 430,
     "total_edges": 190,
     "domain_distribution": {
       "D": 275,
@@ -17,7 +17,7 @@
       "F": 21,
       "B": 2,
       "E": 2,
-      "I": 7
+      "I": 8
     },
     "relation_distribution": {
       "CONSTRAINED_BY_ARCHITECTURE": 188,
@@ -9590,6 +9590,28 @@
       ],
       "created_at": "2026-11-20T17:12:56.308Z",
       "updated_at": "2026-11-20T17:12:56.308Z"
+    },
+    "DOM-I-9FB3B7EB": {
+      "id": "DOM-I-9FB3B7EB",
+      "domain": "I",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "watch): emit schema Watch events from the unified stored schema in read-new mode",
+      "summary": "Prevents defects observed in production commit `4598c884`: watch): emit schema Watch events from the unified stored schema in read-new modes -> When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/conc",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://authzed-spicedb/authzed-spicedb-learnings.md",
+        "source_version": "65181da3",
+        "observed_at": "2026-11-20T19:44:39.307Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (authzed-spicedb)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "I",
+        "Content & Information Intelligence"
+      ],
+      "created_at": "2026-11-20T19:45:18.384Z",
+      "updated_at": "2026-11-20T19:45:18.384Z"
     }
   },
   "edges": [

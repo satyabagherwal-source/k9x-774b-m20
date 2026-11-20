@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T19:25:18.480Z",
+  "last_updated": "2026-11-20T19:45:19.996Z",
   "total_verified_learnings": 9048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22610,
+  "total_items": 22623,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -214335,8 +214335,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "b10159ea",
-      "content_hash": "9611920fcfd73b22a60ac0575fe627c1aa82f119d871b44916eca154381b0770",
+      "source_version": "c6df43e3",
+      "content_hash": "5942268cfa183239f3366376e2275834536a0cead8f9529fa018c0ee012dfe11",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -214369,6 +214369,11 @@
           "number": 9392,
           "title": "distinguish folder and SQL file colors",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9631,
+          "title": "explain launch-enforced read-only errors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214376,7 +214381,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T15:16:43.590Z",
+      "verified_at": "2026-11-20T19:44:45.520Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214418,10 +214423,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "repository": "t8y2/dbx",
-      "source_version": "b10159ea",
-      "content_hash": "0e8451c21dc3a411d45dc2717a4c56f1d293f63fc12f1336b74fa0e44fb051f8",
+      "source_version": "c6df43e3",
+      "content_hash": "1050e0df6618d03c174399a8d193ad88f2991740fbea2cf8caf0117e50daa19d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T15:16:44.196Z"
+      "persisted_at": "2026-11-20T19:44:46.071Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx",
@@ -214430,10 +214435,10 @@
       "relative_path": "08_VERIFICATION/t8y2-dbx-verification-protocol-empirical-defect-shield-for-t8y2-dbx.md",
       "title": "Verification Protocol: Empirical Defect Shield for t8y2/dbx",
       "repository": "t8y2/dbx",
-      "source_version": "b10159ea",
-      "content_hash": "0a3ccc5d1b4615572ebd21fdb6d331a5753f2b49fbcdd814059a3678c7b9677d",
+      "source_version": "c6df43e3",
+      "content_hash": "ab97fd945fa3e9cd1958762824f18f95805a3ae34aaa365db57e58dbb712603a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T15:16:44.346Z"
+      "persisted_at": "2026-11-20T19:44:46.215Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar",
@@ -224686,8 +224691,8 @@
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "c9e95eba",
-      "content_hash": "30ad716224ae04b65a90cb05db485aafa1cd460f31be3f88d8cccdab4d87427f",
+      "source_version": "65181da3",
+      "content_hash": "52a9825a0ebc28a7bbbdad0565efd97db4541c3f236da99134933c653b4a0296",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "promoted_rules": [
@@ -224720,6 +224725,11 @@
           "number": 9410,
           "title": "fix test panic",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9629,
+          "title": "emit schema Watch events from the unified stored schema in read-new mode",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224727,7 +224737,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T16:33:26.021Z",
+      "verified_at": "2026-11-20T19:44:40.124Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224845,10 +224855,10 @@
       "relative_path": "08_VERIFICATION/authzed-spicedb-verification-protocol-empirical-defect-shield-for-authzed-spiced.md",
       "title": "Verification Protocol: Empirical Defect Shield for authzed/spicedb",
       "repository": "authzed/spicedb",
-      "source_version": "c9e95eba",
-      "content_hash": "be2e1465afd331436208279bdff7a88d74265afca19318f905b62bf7f7528ae2",
+      "source_version": "65181da3",
+      "content_hash": "e3e773c256c505416dc6cb969780f48c1cc9a864c9c2303df7a75723fdb40bac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T16:33:26.682Z"
+      "persisted_at": "2026-11-20T19:44:40.818Z"
     },
     "learn-github-restatedev-restate": {
       "learning_id": "learn-github-restatedev-restate",
@@ -230125,8 +230135,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "b1d47824",
-      "content_hash": "047d377ecf27b8975c2ff6c69e72210a092c6648ae646f4b0670a5b973038fbb",
+      "source_version": "0dca809a",
+      "content_hash": "9abb39bc8549c027dcba17c609e267bacb5647f8e65e166e9c0066ffc35f5861",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -230179,6 +230189,11 @@
           "number": 9403,
           "title": "start the @timeout deadline when the request is sent",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9630,
+          "title": "keep the scan context of requests with @timeout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230186,7 +230201,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T23:15:42.950Z",
+      "verified_at": "2026-11-20T19:44:42.334Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230228,10 +230243,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "b1d47824",
-      "content_hash": "28ef055748c1a4b60496559d1fe5cdd1f85859dd68f76b4775c5f92327f57789",
+      "source_version": "0dca809a",
+      "content_hash": "bd5f6c5af1d296dc7bcd548938e82fb9631b58807cb6b88e1daa13634fba7df4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T23:15:43.326Z"
+      "persisted_at": "2026-11-20T19:44:42.895Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei",
@@ -230240,10 +230255,10 @@
       "relative_path": "08_VERIFICATION/projectdiscovery-nuclei-verification-protocol-empirical-defect-shield-for-projec.md",
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery/nuclei",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "2e587bc5",
-      "content_hash": "397c8d8e4cdc5b44daf6ff90b05ef50f9deab3608a877e4eb36c08f24eb29908",
+      "source_version": "0dca809a",
+      "content_hash": "7a30fb3fffa44ca23247387015ad7f923338e5f70c55f962d17e7346301bef64",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T16:07:24.793Z"
+      "persisted_at": "2026-11-20T19:44:43.048Z"
     },
     "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog": {
       "item_id": "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog",
@@ -243569,9 +243584,9 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae9d86b10c1e4710626235f848ac163a653a82972b349298b83dd8d884910f26",
+      "content_hash": "0f834e5779e93abf6a371e7278bd1ef93da1e3936c6898f940b924bb3c687066",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T23:16:17.232Z"
+      "persisted_at": "2026-11-20T19:45:19.826Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni",
@@ -243581,9 +243596,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery-nuclei-learnings",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "d2011f4f617b539d38251a4ce868a893115a3d201bf5637addbd0fe4132d91d8",
+      "content_hash": "a3569272080ac665082eb7cdc74c2cb5804c26b3c23ee99a124096e640aaeac2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T23:26:30.808Z"
+      "persisted_at": "2026-11-20T19:45:19.996Z"
     },
     "learn-huggingface-liquidai-lfm3-omni-2b": {
       "learning_id": "learn-huggingface-liquidai-lfm3-omni-2b",
@@ -261717,14 +261732,19 @@
       "slug": "nodejs-undici",
       "platform": "github",
       "source_url": "https://github.com/nodejs/undici",
-      "source_version": "02c4f8c6",
-      "content_hash": "beca9c504d3f8df08ae52a1cf2c5103fc1d56814f4cc3117c01cddad8d55aab8",
+      "source_version": "322a7eed",
+      "content_hash": "8bd7834eae9de3adeef2d08c7395861cbc9e344491e0759d177e1a2751123171",
       "dossier_path": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
       "promoted_rules": [
         {
           "number": 8802,
           "title": "do not reuse idle sockets whose keep-alive timeout expired",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9628,
+          "title": "enforce cache-after-redirect composition order",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -261733,7 +261753,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T22:34:13.809Z",
+      "verified_at": "2026-11-20T19:44:35.020Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -261775,10 +261795,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nodejs-undici-technical-construction-intelligence-nodejs-undici-core-invariants.md",
       "title": "Technical Construction Intelligence: nodejs/undici Core Invariants",
       "repository": "nodejs/undici",
-      "source_version": "02c4f8c6",
-      "content_hash": "1069864e785ebb390dbc32a371b8d569f0adfa903adbe90446fad0b30fdf5991",
+      "source_version": "322a7eed",
+      "content_hash": "eebfd7cf08f32b4b924c28fffc8d28ed3830698fa856826625315761fe408196",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T22:34:14.392Z"
+      "persisted_at": "2026-11-20T19:44:35.572Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nodejs-undici": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nodejs-undici",
@@ -261787,10 +261807,10 @@
       "relative_path": "08_VERIFICATION/nodejs-undici-verification-protocol-empirical-defect-shield-for-nodejs-undici.md",
       "title": "Verification Protocol: Empirical Defect Shield for nodejs/undici",
       "repository": "nodejs/undici",
-      "source_version": "02c4f8c6",
-      "content_hash": "4d31090c1a55e91bfbdfd146838e563fdb419eb1c69a61860c42eb6c7d89d462",
+      "source_version": "322a7eed",
+      "content_hash": "e726d4151931bad089dc182d53c84c37cbeb5d881f1e7c37e04116cf87c24a68",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:34:14.559Z"
+      "persisted_at": "2026-11-20T19:44:35.720Z"
     },
     "candidate_directive-h1-do-not-reuse-idle-sockets-whose-keep-alive-timeout-expired": {
       "item_id": "candidate_directive-h1-do-not-reuse-idle-sockets-whose-keep-alive-timeout-expired",
@@ -261812,9 +261832,9 @@
       "title": "Technical Construction Intelligence: nodejs-undici-learnings Core Invariants",
       "repository": "nodejs-undici-learnings",
       "source_version": "HEAD",
-      "content_hash": "b93f7d152cba25850eb21aa0a3337217054dc54640906fd54afa004587237b65",
+      "content_hash": "848739b2aa668040e8545d7cece090a12df5448ae3ce9b177edd95268dcd5e5d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T22:34:20.640Z"
+      "persisted_at": "2026-11-20T19:44:49.585Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nodejs-undici-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nodejs-undici-learnings",
@@ -261824,9 +261844,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nodejs-undici-learnings",
       "repository": "nodejs-undici-learnings",
       "source_version": "HEAD",
-      "content_hash": "a561118d2ad48f410d2fc0672285547927cd50172aa91a9a681658452297e583",
+      "content_hash": "b97de5b43ee4a687d7b038389bab419b02188cce84a6e49f097ad4262d4240f7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:34:20.793Z"
+      "persisted_at": "2026-11-20T19:44:49.745Z"
     },
     "rule-8803": {
       "learning_id": "rule-8803",
@@ -263440,9 +263460,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for authzed-spicedb-learnings",
       "repository": "authzed-spicedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba716035eeb818657b28fb7c6d6bca14088278f8e84ecbda2e77ec43fa090c1b",
+      "content_hash": "788a4548414f4a9e2e6ab6ff531e5be6cafcd276593eff7cd2cf63779918b32c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T00:11:25.505Z"
+      "persisted_at": "2026-11-20T19:45:19.154Z"
     },
     "rule-8823": {
       "learning_id": "rule-8823",
@@ -306648,6 +306668,170 @@
       "content_hash": "bf40dd732fc674411e22b41df83d78ec71452d2964a3c4e1e5275101c7841bbb",
       "domain_letter": "B",
       "persisted_at": "2026-11-20T19:25:18.156Z"
+    },
+    "rule-9628": {
+      "learning_id": "rule-9628",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9628,
+      "title": "enforce cache-after-redirect composition order",
+      "source_url": "https://github.com/nodejs/undici",
+      "source_version": "322a7eed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T19:44:35.020Z"
+    },
+    "candidate_directive-enforce-cache-after-redirect-composition-order": {
+      "item_id": "candidate_directive-enforce-cache-after-redirect-composition-order",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1BH7-enforce-cache-after-redirect-composition-order.md",
+      "title": "enforce cache-after-redirect composition order",
+      "repository": "nodejs/undici",
+      "source_version": "322a7eed",
+      "content_hash": "ab3da3a6f0360921a45fa59f5cd7492027338cb4f92472f8ea4309464f38dfe8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T19:44:35.420Z"
+    },
+    "rule-9629": {
+      "learning_id": "rule-9629",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9629,
+      "title": "emit schema Watch events from the unified stored schema in read-new mode",
+      "source_url": "https://github.com/authzed/spicedb",
+      "source_version": "65181da3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T19:44:40.124Z"
+    },
+    "candidate_directive-emit-schema-watch-events-from-the-unified-stored-schema-in-read-new-mode": {
+      "item_id": "candidate_directive-emit-schema-watch-events-from-the-unified-stored-schema-in-read-new-mode",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1FEU-emit-schema-watch-events-from-the-unified-stored-schema-in-read-new-mode.md",
+      "title": "emit schema Watch events from the unified stored schema in read-new mode",
+      "repository": "authzed/spicedb",
+      "source_version": "65181da3",
+      "content_hash": "447108d74036899fe9b80b4bfe012e9e7865b28aece7639b5c198def2ee88d56",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T19:44:40.519Z"
+    },
+    "domain_intelligence-content-information-intelligence-authzed-spicedb-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-authzed-spicedb-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-authzed-spicedb-content-information-intelligence-authzed-spicedb-core-invariants.md",
+      "title": "Content & Information Intelligence: authzed/spicedb Core Invariants",
+      "repository": "authzed/spicedb",
+      "source_version": "65181da3",
+      "content_hash": "c6b8fac4c8be470e57124d8f188ee2497ba14f934f9baf686d165bf1cd8fdfeb",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T19:44:40.673Z"
+    },
+    "rule-9630": {
+      "learning_id": "rule-9630",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9630,
+      "title": "keep the scan context of requests with @timeout",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "0dca809a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T19:44:42.334Z"
+    },
+    "candidate_directive-keep-the-scan-context-of-requests-with-timeout": {
+      "item_id": "candidate_directive-keep-the-scan-context-of-requests-with-timeout",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1H4K-keep-the-scan-context-of-requests-with-timeout.md",
+      "title": "keep the scan context of requests with @timeout",
+      "repository": "projectdiscovery/nuclei",
+      "source_version": "0dca809a",
+      "content_hash": "25ee3d7031377171546e1c406675221a93e290e0d55e46a6b0c6d91001777473",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T19:44:42.744Z"
+    },
+    "rule-9631": {
+      "learning_id": "rule-9631",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9631,
+      "title": "explain launch-enforced read-only errors",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "c6df43e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T19:44:45.520Z"
+    },
+    "candidate_directive-explain-launch-enforced-read-only-errors": {
+      "item_id": "candidate_directive-explain-launch-enforced-read-only-errors",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1JKT-explain-launch-enforced-read-only-errors.md",
+      "title": "explain launch-enforced read-only errors",
+      "repository": "t8y2/dbx",
+      "source_version": "c6df43e3",
+      "content_hash": "ac8f73d70efe2ea99f5470bb2d64511acbe6fd0ae371c79e3f3347ed6c34a4e1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T19:44:45.921Z"
+    },
+    "candidate_directive-interceptors-enforce-cache-after-redirect-composition-order": {
+      "item_id": "candidate_directive-interceptors-enforce-cache-after-redirect-composition-order",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1M9Z-interceptors-enforce-cache-after-redirect-composition-order.md",
+      "title": "interceptors): enforce cache-after-redirect composition order",
+      "repository": "nodejs-undici-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9422d6528f197ac85403e87ece1702ab83802c9b43edfc5366e336a944e78722",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T19:44:49.419Z"
+    },
+    "candidate_directive-watch-emit-schema-watch-events-from-the-unified-stored-schema-in-read-new-mode": {
+      "item_id": "candidate_directive-watch-emit-schema-watch-events-from-the-unified-stored-schema-in-read-new-mode",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-28YI-watch-emit-schema-watch-events-from-the-unified-stored-schema-in-read-new-mode.md",
+      "title": "watch): emit schema Watch events from the unified stored schema in read-new mode",
+      "repository": "authzed-spicedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fe2d1a00d52351d8a287e9bcfeaf4a1d7ab7b63a05da68f96e46fdb9d9e2c393",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T19:45:18.811Z"
+    },
+    "domain_intelligence-content-information-intelligence-authzed-spicedb-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-authzed-spicedb-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-authzed-spicedb-learnings-content-information-intelligence-authzed-spicedb-learn.md",
+      "title": "Content & Information Intelligence: authzed-spicedb-learnings Core Invariants",
+      "repository": "authzed-spicedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e22e66ae95bee9b35f5d24173d04f9a61cd624677a8f8268779454c5fbc4a399",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T19:45:18.988Z"
+    },
+    "candidate_directive-http-keep-the-scan-context-of-requests-with-timeout": {
+      "item_id": "candidate_directive-http-keep-the-scan-context-of-requests-with-timeout",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-29LP-http-keep-the-scan-context-of-requests-with-timeout.md",
+      "title": "http): keep the scan context of requests with @timeout",
+      "repository": "projectdiscovery-nuclei-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e1d5b2237ec5ae3be82ec37f3c6e4a97c00538729c88ff53bb697a93954972ee",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T19:45:19.657Z"
     }
   },
   "ai-builder-brain": {

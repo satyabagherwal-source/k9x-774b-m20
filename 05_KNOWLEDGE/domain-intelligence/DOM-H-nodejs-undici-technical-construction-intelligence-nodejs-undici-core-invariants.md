@@ -4,23 +4,23 @@
 {
   "source_repository": "nodejs/undici",
   "source_url": "https://github.com/nodejs/undici",
-  "source_version": "02c4f8c6",
+  "source_version": "322a7eed",
   "license": "MIT",
-  "timestamp": "2026-11-16T22:34:14.235Z",
+  "timestamp": "2026-11-20T19:44:35.420Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nodejs-undici",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nodejs/undici](https://github.com/nodejs/undici) (Revision: `02c4f8c6`).  
-> **License**: MIT | **Timestamp**: `2026-11-16T22:34:14.235Z`  
+> **Provenance**: Harvested from [nodejs/undici](https://github.com/nodejs/undici) (Revision: `322a7eed`).  
+> **License**: MIT | **Timestamp**: `2026-11-20T19:44:35.420Z`  
 > **Learning ID**: `learn-github-nodejs-undici`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nodejs-undici-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nodejs/undici](https://github.com/nodejs/undici))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T22:34:12.640Z  
+> **Harvest Timestamp**: 2026-11-20T19:44:34.032Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: An HTTP/1.1 client, written from scratch for Node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 7740 stars
+- **Stars / Engagement**: 7741 stars
 
 ---
 
@@ -696,11 +696,11 @@ await run()
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6054** (2026-11-17): **Pool permanently stalls after synchronous request validation errors**
+  *Symptoms*: ## Bug Description  A synchronous request validation failure can leave a free `Client` permanently marked as needing drain inside a `Pool`. Subsequent valid requests stay queued even though no request is running.  With `connections: 1`, one rejected header value is enough to reproduce this. With a larger finite limit, repeated validation failures can exhaust the available client slots. This reproduces with the stock `Pool` and `request()` APIs; no custom dispatcher, interceptors, or diagnostics subscribers are involved.  ## Reproduction  Install `undici@7.30.1`, save the following as `repro.cjs`, and run:  ```sh npm install --save-exact undici@7.30.1 node --test repro.cjs ```  The test asserts the expected behavior and currently fails.  ```javascript 'use strict'  const { test } = require('node:test') const assert = require('node:assert/strict') const { createServer } = require('node:http') const { once } = require('node:events') const { setImmediate: nextTurn } = require('node:timers/promises') const { Pool } = require('undici')  test('Pool remains usable after a request validation error', { timeout: 5000 }, async (t) => {   let received = 0   const server = createServer((req, res) => {     received++     res.end('ok')   })   server.listen(0, '127.0.0.1')   await once(server, 'listening')    const pool = new Pool(`http://127.0.0.1:${server.address().port}`, { connections: 1 })   t.after(async () => {     await pool.destroy()     server.closeAllConnections()     await new Pro
+
 - **Issue #6048** (2026-10-17): **ConnectTimeoutError: Connect Timeout Error (attempted address: discord.com:443, timeout: 10000ms**
   *Symptoms*: ## Bug Description   ## Reproduction  <!--  IMPORTANT: Provide a standalone reproduction script.  See the Reproduction guide in CONTRIBUTING.md for detailed instructions: https://github.com/nodejs/undici/blob/main/CONTRIBUTING.md#reproduction  Guidelines: - The script must be self-contained (uses only undici and Node.js built-in modules). - Use createServer from node:http to run a local server inside the script. - Run `node --test test/repro-XXXX.js` locally to confirm the bug is reproducible. - Attach the script inline or as a GitHub Gist link below. -->  **Standalone reproduction script:**  ```javascript 'use strict' import { REST } from "@discordjs/rest"; import { ActivityType, Routes } from "discord.js";    const rest = new REST({ version: "10" }).setToken(token);   console.log(`\n\n \t[LDA SYNC] Reloading slash commands /       Recarregando comandos de barra /\n\n`);   await rest.put(Routes.applicationCommands(applicationId), {     body: commands,   });   console.log(`\n\n\t [LDA SYNC] Slash commands reloaded successfully! /       Comandos de barra recarregados com sucesso! \n\n`); ```  **Steps to reproduce (if not using the script above):**  <!-- A step by step list on how the bug can be reproduced for examination. -->  ## Expected Behavior  <!-- A clear and concise description of what you expected to happen. -->  ## Actual Behavior  <!-- What actually happens instead. Include any error messages. -->  ## Logs & Screenshots   [Monitor] Erro ao atualizar o painel: Connect
-
-- **Issue #5995** (2026-10-10): **see the cause **
-  *Symptoms*: ## Bug Description  <!-- A clear and concise description of what the bug is. -->  ## Reproduction  <!--  IMPORTANT: Provide a standalone reproduction script.  See the Reproduction guide in CONTRIBUTING.md for detailed instructions: https://github.com/nodejs/undici/blob/main/CONTRIBUTING.md#reproduction  Guidelines: - The script must be self-contained (uses only undici and Node.js built-in modules). - Use createServer from node:http to run a local server inside the script. - Run `node --test test/repro-XXXX.js` locally to confirm the bug is reproducible. - Attach the script inline or as a GitHub Gist link below. -->  **Standalone reproduction script:**  ```javascript 'use strict'  // Paste your standalone reproduction script here. // Example structure: // // const { test } = require('node:test') // const { createServer } = require('node:http') // const { once } = require('node:events') // const { Client } = require('undici') // // test('bug reproduction', { timeout: 60000 }, async (t) => { //   t.plan(1) // //   const server = createServer(...) //   t.after(() => server.close()) //   ... // }) ```  **Steps to reproduce (if not using the script above):**  <!-- A step by step list on how the bug can be reproduced for examination. -->  ## Expected Behavior  <!-- A clear and concise description of what you expected to happen. -->  ## Actual Behavior  <!-- What actually happens instead. Include any error messages. -->  ## Logs & Screenshots  <!-- If applicable, add screenshots to h
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -717,353 +717,973 @@ await run()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `02c4f8c6` (2026-11-13)
-**Commit Message**: fix(h1): do not reuse idle sockets whose keep-alive timeout expired (#6171)
+### Incident Patch 1: `416f9e32` (2026-11-19)
+**Commit Message**: fix(interceptors): enforce cache-after-redirect composition order (#6220)
 
-The keep-alive timer of an idle socket cannot fire while the event loop
-is blocked. When the next request is dispatched from the poll phase (an
-I/O callback, a server request handler, or a continuation after awaiting
-I/O), the idle socket validation added for GHSA-35p6-xmwp-9g52 completes
-in the check phase of the same loop iteration, before that timer fires
-and before a FIN received during the block is read. The request is then
-written to a socket that the server may already have closed, and fails
-with ECONNRESET.
+When `cache()` is composed before `redirect()`, the cache handler is
+wrapped above the redirect handler in the handler chain, so it never
+observes the redirect history threaded via `context.history`. Every
+history-based guard in the cache handler is then silently disabled:
 
-Record when the keep-alive timer is armed, and destroy the socket with
-an InformationalError instead of reusing it once its keep-alive timeout
-has passed. Nothing is running on the socket, so the pending requests
-are sent on a new connection.
+- cross-origin redirect responses are stored under the trusted origin's
+  key and replayed to unrelated callers (GHSA-75VM-9G8F-99J4,
+  GHSA-MQG3-3V4R-CM32, GHSA-4W7W-5XRC-9H26), and
+- credential-bearing same-origin redirects leak one principal's response
+  to another (GHSA-7XG3-FPHP-28HG).
 
-The check does not depend on kSocketUsed, so it also covers the
-experimental Milo parser, which never sets that symbol.
+The redirect interceptor must be composed before the cache interceptor so
+the cache handler runs below the redirect handler and sees the final
+response plus the full redirect history.
 
-Refs: https://github.com/nodejs/node/pull/67292
+Interceptors are opaque functions, so `compose()` cannot know which ones
+are order-sensitive without metadata. This tags the cache, redirect, and
+deduplicate interceptors with `kInterceptorKind` and makes
+`Dispatcher.compose()` throw an `InvalidArgumentError` when `cache` is
+composed before `redirect`. `deduplicate` participates in the same
+redirect-history contract but
 
-
-Claude-Session: https://claude.ai/code/session_01Sfj4nEWQ4ovycNDjbvXcRs
-
-Signed-off-by: Matteo Collina <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `lib/dispatcher/client-h1.js` (modified, +24/-0)
+**File**: `docs/docs/api/Dispatcher.md` (modified, +20/-0)
 ```diff
-@@ -67,6 +67,7 @@ const removeAllListeners = util.removeAllListeners
- const kIdleSocketValidation = Symbol('kIdleSocketValidation')
- const kIdleSocketValidationTimeout = Symbol('kIdleSocketValidationTimeout')
- const kSocketUsed = Symbol('kSocketUsed')
-+const kIdleSince = Symbol('kIdleSince')
- const kTypeOfService = Symbol('kTypeOfService')
+@@ -705,6 +705,26 @@ The order of the interceptors matters: the last interceptor in the chain is the
+ first to be called. Forking the chain of interceptors can lead to unexpected
+ results.
  
- let extractBody
-@@ -1107,6 +1108,19 @@ function scheduleIdleSocketValidation (client, socket) {
-   })
- }
- 
-+/**
-+ * kIdleSince is recorded when the keep-alive timer is armed, so this never
-+ * expires a socket before that timer is due.
-+ * @param {import('net').Socket} socket
-+ * @returns {boolean}
-+ */
-+function isIdleSocketExpired (socket) {
-+  const parser = socket[kParser]
-+  return parser.timeoutType === TIMEOUT_KEEP_ALIVE &&
-+    parser.timeoutValue > 0 &&
-+    performance.now() - socket[kIdleSince] >= parser.timeoutValue
-+}
++Because interceptors wrap each other, ordering is the end-user's responsibility.
++Certain built-in interceptors are order-sensitive and will throw an
++`InvalidArgumentError` if composed in an unsafe order. In particular, the
++`cache` interceptor must be composed **after** the `redirect` interceptor. When
++`cache` is composed before `redirect`, the cache handler is wrapped *above* the
++redirect handler, so it never observes the redirect history and its
++cross-origin / credential-bearing redirect guards are silently disabled.
++This allows an attacker-controlled or cross-principal redirect response to be
++stored under the trusted origin's cache key and replayed to unrelated callers
++(see GHSA-75VM-9G8F-99J4, GHSA-MQG3-3V4R-CM32, GHSA-4W7W-5XRC-9H26 and
++GHSA-7XG3-FPHP-28HG).
 +
- /**
-  * @param {import('./client.js')} client
-  */
-@@ -1124,6 +1138,15 @@ function resumeH1 (client) {
-       socket[kNoRef] = false
-     }
- 
-+    // The keep-alive timer cannot fire while the event loop is blocked, and a
-+    // request dispatched from the poll phase passes the idle socket validation
-+    // below before that timer or a FIN received during the block is processed.
-+    // Check the clock so that an expired socket is not reused.
-+    if (client[kRunning] === 0 && client[kPending] > 0 && isIdleSocketExpired(socket)) {
-+      util.destroy(socket, new InformationalError('socket idle timeout'))
-+      return
-+    }
++```js
++// Correct: cache is composed after redirect.
++new Agent().compose(interceptors.redirect({ maxRedirections: 5 }), interceptors.cache({}))
 +
-     if (client[kRunning] === 0 && client[kPending] > 0 && socket[kSocketUsed]) {
-       if (socket[kIdleSocketValidation] === 0) {
-         scheduleIdleSocketValidation(client, socket)
-@@ -1152,6 +1175,7 @@ function resumeH1 (client) {
++// Throws an InvalidArgumentError: cache composed before redirect.
++new Agent().compose(interceptors.cache({}), interceptors.redirect({ maxRedirections: 5 }))
++```
++
+ ```text
+ compose([interceptor1, interceptor2, interceptor3])
  
-     if (client[kSize] === 0) {
-       if (socket[kParser].timeoutType !== TIMEOUT_KEEP_ALIVE) {
-+        socket[kIdleSince] = performance.now()
-         socket[kParser].setTimeout(client[kKeepAliveTimeoutValue], TIMEOUT_KEEP_ALIVE)
-       }
-     } else if (client[kRunning] > 0 && socket[kParser].statusCode < 200) {
 ```
 
-**File**: `test/client-keep-alive-blocked-loop.js` (added, +90/-0)
+**File**: `docs/docs/api/Interceptors.md` (modified, +13/-0)
 ```diff
-@@ -0,0 +1,90 @@
+@@ -356,12 +356,25 @@ backing store.
+ 
+ **Returns:** {Dispatcher.DispatcherComposeInterceptor}
+ 
++> **Ordering:** the `cache` interceptor must be composed **after** the
++> `redirect` interceptor. When `cache` is composed before `redirect`, the cache
++> handler is wrapped above the redirect handler, so it never observes the
++> redirect history and its cross-origin / credential-bearing redirect guards are
++> silently disabled, which lets an attacker-controlled or cross-principal
++> redirect response be stored under the trusted origin's cache key and replayed
++> to unrelated callers (GHSA-75VM-9G8F-99J4, GHSA-MQG3-3V4R-CM32,
++> GHSA-4W7W-5XRC-9H26, GHSA-7XG3-FPHP-28HG). `compose()` throws an
++> `InvalidArgumentError` for this unsafe order. The `deduplicate` interceptor
++> participates in the same redirect-history contract and may be placed before or
++> after `redirect`, as long as `cache` follows `redirect`.
++
+ **Example**
+ 
+ ```js
+ import { Agent, interceptors, cacheStores } from 'undici'
+ 
+ const agent = new Agent().compose(
++  interceptors.redirect({ maxRedirections: 5 }),
+   interceptors.cache({ store: new cacheStores.MemoryCacheStore() })
+ )
+ ```
+```
+
+**File**: `lib/core/symbols.js` (modified, +2/-1)
+```diff
+@@ -78,5 +78,6 @@ module.exports = {
+   kNoProxyAgent: Symbol('no proxy agent'),
+   kHttpProxyAgent: Symbol('http proxy agent'),
+   kHttpsProxyAgent: Symbol('https proxy agent'),
+-  kSocks5ProxyAgent: Symbol('socks5 proxy agent')
++  kSocks5ProxyAgent: Symbol('socks5 proxy agent'),
++  kInterceptorKind: Symbol('interceptor kind')
+ }
+```
+
+**File**: `lib/dispatcher/dispatcher.js` (modified, +22/-1)
+```diff
+@@ -1,6 +1,7 @@
+ 'use strict'
+ const EventEmitter = require('node:events')
+-const { kOriginless, kUrl } = require('../core/symbols')
++const { InvalidArgumentError } = require('../core/errors')
++const { kOriginless, kUrl, kInterceptorKind } = require('../core/symbols')
+ 
+ class Dispatcher extends EventEmitter {
+   dispatch () {
+@@ -24,6 +25,8 @@ class Dispatcher extends EventEmitter {
+       : this[kUrl]?.origin
+     let dispatch = this.dispatch.bind(this)
+ 
++    const orderSensitiveKinds = []
++
+     for (const interceptor of interceptors) {
+       if (interceptor == null) {
+         continue
+@@ -33,13 +36,31 @@ class Dispatcher extends EventEmitter {
+         throw new TypeError(`invalid interceptor, expected function received ${typeof interceptor}`)
+       }
+ 
++      if (interceptor[kInterceptorKind] != null) {
++        orderSensitiveKinds.push(interceptor[kInterceptorKind])
++      }
++
+       dispatch = interceptor(dispatch, interceptorOrigin)
+ 
+       if (dispatch == null || typeof dispatch !== 'function' || dispatch.length !== 2) {
+         throw new TypeError('invalid interceptor')
+       }
+     }
+ 
++    // Several shipped interceptors are order-sensitive: they cooperate through
++    // the redirect history threaded on the request context, and the cache
++    // handler only receives it when the redirect interceptor is composed before
++    // the cache interceptor. Composing `cache` before `redirect` silently
++    // disables the cache's redirect-origin guards (cross-origin cache
++    // poisoning, credential-bearing redirect replay), so fail fast instead of
++    // storing an attacker-controlled or cross-principal response under a key
++    // the application trusts.
++    const cacheIndex = orderSensitiveKinds.indexOf('cache')
++    const redirectIndex = orderSensitiveKinds.indexOf('redirect')
++    if (cacheIndex !== -1 && redirectIndex !== -1 && cacheIndex < redirectIndex) {
++      throw new InvalidArgumentError('the cache interceptor must be composed after the redirect interceptor; composing the cache before the redirect disables the cache\'s cross-origin and credential redirect guards (GHSA-75VM-9G8F-99J4, GHSA-MQG3-3V4R-CM32, GHSA-4W7W-5XRC-9H26, GHSA-7XG3-FPHP-28HG)')
++    }
++
+     const originalDispatch = dispatch
+     const self = this
+     dispatch = function (opts, handler) {
+```
+
+**File**: `lib/interceptor/cache.js` (modified, +4/-1)
+```diff
+@@ -20,6 +20,7 @@ const {
+ const { AbortError } = require('../core/errors.js')
+ const { kQueuedAbort } = require('../core/symbols.js')
+ const { parseHttpDate } = require('../util/date.js')
++const { kInterceptorKind } = require('../core/symbols.js')
+ 
+ /**
+  * @param {(string | RegExp)[] | undefined} origins
+@@ -669,7 +670,7 @@ module.exports = (opts = {}) => {
+     }
+   }
+ 
+-  return (dispatch, interceptorOrigin) => {
++  const interceptor = (dispatch, interceptorOrigin) => {
+     return (opts, handler) => {
+       const requestOrigin = getInterceptorOrigin(opts, interceptorOrigin)
+       if (!requestOrigin || arrayIncludes(safeMethodsToNotCache, opts.method)) {
+@@ -772,4 +773,6 @@ module.exports = (opts = {}) => {
+       }
+     }
+   }
++  interceptor[kInterceptorKind] = 'cache'
++  return interceptor
+ }
+```
+
+**File**: `lib/interceptor/deduplicate.js` (modified, +4/-1)
+```diff
+@@ -4,6 +4,7 @@ const diagnosticsChannel = require('node:diagnostics_channel')
+ const util = require('../core/util')
+ const DeduplicationHandler = require('../handler/deduplication-handler')
+ const { getInterceptorOrigin, normalizeHeaders, makeCacheKey, makeDeduplicationKey } = require('../util/cache.js')
++const { kInterceptorKind } = require('../core/symbols.js')
+ 
+ const pendingRequestsChannel = diagnosticsChannel.channel('undici:request:pending-requests')
+ 
+@@ -57,7 +58,7 @@ module.exports = (opts = {}) => {
+    */
+   const pendingRequests = new Map()
+ 
+-  return (dispatch, interceptorOrigin) => {
++  const interceptor = (dispatch, interceptorOrigin) => {
+     return (opts, handler) => {
+       const requestOrigin = getInterceptorOrigin(opts, interceptorOrigin)
+       if (!requestOrigin || opts.upgrade || methods.includes(opts.method) === false) {
+@@ -115,4 +116,6 @@ module.exports = (opts = {}) => {
+       return dispatch(opts, deduplicationHandler)
+     }
+   }
++  interceptor[kInterceptorKind] = 'deduplicate'
++  return interceptor
+ }
+```
+
+**File**: `lib/interceptor/redirect.js` (modified, +4/-1)
+```diff
+@@ -1,9 +1,10 @@
+ 'use strict'
+ 
+ const RedirectHandler = require('../handler/redirect-handler')
++const { kInterceptorKind } = require('../core/symbols.js')
+ 
+ function createRedirectInterceptor ({ maxRedirections: defaultMaxRedirections, throwOnMaxRedirect: defaultThrowOnMaxRedirect, stripHeadersOnRedirect: defaultStripHeadersOnRedirect, stripHeadersOnCrossOriginRedirect: defaultStripHeadersOnCrossOriginRedirect } = {}) {
+-  return (dispatch) => {
++  const interceptor = (dispatch) => {
+     return function Intercept (opts, handler) {
+       const { maxRedirections = defaultMaxRedirections, throwOnMaxRedirect = defaultThrowOnMaxRedirect, stripHeadersOnRedirect = defaultStripHeadersOnRedirect, stripHeadersOnCrossOriginRedirect = defaultStripHeadersOnCrossOriginRedirect, ...rest } = opts
+ 
+@@ -16,6 +17,8 @@ function createRedirectInterceptor ({ maxRedirections: defaultMaxRedirections, t
+       return dispatch(dispatchOpts, redirectHandler)
+     }
+   }
++  interceptor[kInterceptorKind] = 'redirect'
++  return interceptor
+ }
+ 
+ module.exports = createRedirectInterceptor
+```
+
+**File**: `test/interceptors/cache-redirect-origin.js` (modified, +11/-18)
+```diff
+@@ -154,29 +154,22 @@ test('cache does not store a cross-origin redirect response under the original o
+   }
+ })
+ 
+-test('reverse interceptor order (cache outside redirect) still works', async () => {
+-  await withOrigins(async ({ state, trustedOrigin }) => {
+-    const agent = new Agent().compose(
++// Composing the cache interceptor before the redirect interceptor is rejected:
++// the cache handler sits above the redirect handler, so it never receives the
++// redirect history and its cross-origin / credential guards are silently
++// disabled, which allows an attacker-controlled or cross-principal redirect
++// to be stored under the trusted key. See GHSA-75VM-9G8F-99J4.
++test('reverse interceptor order (cache outside redirect) is rejected', () => {
++  assert.throws(
++    () => new Agent().compose(
+       interceptors.cache({
+         store: new cacheStores.MemoryCacheStore(),
+         type: 'shared'
+       }),
+       interceptors.redirect({ maxRedirections: 2 })
+-    )
+-
+-    const mallory = await requestAgent(agent, trustedOrigin, 'mallory')
+-    state.redirectEnabled = false
+-    const alice = await requestAgent(agent, trustedOrigin, 'alice')
+-
+-    try {
+-      assert.equal(mallory, 'attacker-controlled-content')
+-      assert.equal(alice, 'legitimate-content')
+-      assert.equal(state.trustedHits, 2)
+-      assert.equal(state.attackerHits, 1)
+-    } finally {
+-      await agent.close()
+-    }
+-  })
++    ),
++    /must be composed after the redirect interceptor/
++  )
+ })
+ 
+ test('same-origin redirect responses are still cached by the cache interceptor', async () => {
+```
+
+---
+
+### Incident Patch 2: `ffd0bec6` (2026-11-19)
+**Commit Message**: fix: destroy a connection attempt that no request waits for (#6221)
+
+When every request waiting on a connecting Client was aborted, the
+connection attempt kept going. It held the Client, and with it a Pool
+connection slot, until it connected or hit connectTimeout, and forever
+with connectTimeout: 0. Since the aborted requests leave the Client
+queue, the next request could also be handed to that Client and fail
+with the timeout of an attempt it did not start.
+
+The Client now keeps the socket the connector returns while it
+connects. Once the last waiting request is aborted, and a Pool had the
+chance to hand the Client the requests it queued, the Client destroys
+that socket. The next request opens a new connection.
+
+- An attempt that a request still waits for is kept, including a
+  request queued in the Pool or dispatched right after the abort.
+- The cancellation is published on undici:client:connectError, but does
+  not emit 'connectionError': a Pool would retire the client.
+- An attempt started through the internal kConnect is never cancelled.
+- Custom connectors have to return the socket for their attempts to be
+  cancelled. The docs examples now return it.
+
+Refs: #386
+
+
+Claude-Ses
+
+**File**: `docs/docs/api/Client.md` (modified, +1/-1)
+```diff
+@@ -217,7 +217,7 @@ import { Client, buildConnector } from 'undici'
+ const connector = buildConnector({ rejectUnauthorized: false })
+ const client = new Client('https://localhost:3000', {
+   connect (opts, cb) {
+-    connector(opts, (err, socket) => {
++    return connector(opts, (err, socket) => {
+       if (err) {
+         cb(err)
+       } else {
+```
+
+**File**: `docs/docs/api/Connector.md` (modified, +9/-2)
+```diff
+@@ -78,7 +78,7 @@ const connector = buildConnector({ rejectUnauthorized: false })
+ 
+ const client = new Client('https://localhost:3000', {
+   connect (opts, cb) {
+-    connector(opts, (err, socket) => {
++    return connector(opts, (err, socket) => {
+       if (err) {
+         cb(err)
+       } else if (/* assertion */ false) {
+@@ -124,6 +124,13 @@ targets or a [`tls.TLSSocket`][] for `https:` targets, applies TCP keep-alive an
+ the connect timeout, and invokes `callback` once the socket connects or errors.
+ The socket is also returned synchronously.
+ 
++undici uses the returned socket to cancel a connection attempt that no request
++needs any more: once every request waiting for it is aborted, the socket is
++destroyed and the next request opens a new connection instead of waiting for
++it. A connector that wraps another one should return the socket it gets back,
++as the examples on this page do. If it returns nothing, the attempt runs until
++it connects or fails.
++
+ When connecting over TLS, established sessions are cached (subject to
+ `maxCachedSessions`) and reused for subsequent connections to the same
+ `servername` or `hostname`.
+@@ -141,7 +148,7 @@ const connector = buildConnector({ rejectUnauthorized: false })
+ 
+ const client = new Client('https://localhost:3000', {
+   connect (opts, cb) {
+-    connector(opts, (err, socket) => {
++    return connector(opts, (err, socket) => {
+       if (err) {
+         cb(err)
+       } else if (getIssuerCertificate(socket).fingerprint256 !== caFingerprint) {
+```
+
+**File**: `lib/dispatcher/client.js` (modified, +64/-1)
+```diff
+@@ -62,6 +62,7 @@ const connectH1 = require('./client-h1.js')
+ const connectH2 = require('./client-h2.js')
+ 
+ const kClosedResolve = Symbol('kClosedResolve')
++const kCancelConnect = Symbol('kCancelConnect')
+ 
+ const getDefaultNodeMaxHeaderSize = http &&
+   http.maxHeaderSize &&
+@@ -323,6 +324,7 @@ class Client extends DispatcherBase {
+     this[kClosedResolve] = null
+     this[kMaxResponseSize] = maxResponseSize > -1 ? maxResponseSize : -1
+     this[kHTTPContext] = null
++    this[kCancelConnect] = null
+     // h2
+     this[kHTTP2Options] = {
+       pingInterval: h2Options?.pingInterval ?? pingInterval ?? 60e3,
+@@ -403,6 +405,8 @@ class Client extends DispatcherBase {
+ 
+   [kConnect] (cb) {
+     connect(this)
++    // Asked for explicitly: keep it even if no request waits for it.
++    this[kCancelConnect] = null
+     this.once('connect', cb)
+   }
+ 
+@@ -511,6 +515,22 @@ function abortPendingRequest (client, request, reason) {
+ 
+   // The client may no longer be busy: emit 'drain' so a Pool can use it again.
+   client[kResume](true)
++
++  if (client[kCancelConnect] !== null && client[kSize] === 0) {
++    // The drain is emitted in a microtask: check once a Pool had the chance to
++    // hand this client the requests it queued.
++    queueMicrotask(() => cancelUnusedConnect(client))
++  }
++}
++
++// A connection attempt that no request waits for only holds a connection slot,
++// until it connects or times out. Destroy it, so the next request starts a new
++// one instead of waiting for it.
++function cancelUnusedConnect (client) {
++  const cancel = client[kCancelConnect]
++  if (cancel !== null && client[kSize] === 0) {
++    cancel(new InformationalError('no request waits for this connection'))
++  }
+ }
+ 
+ function onError (client, err) {
+@@ -559,6 +579,9 @@ function connect (client) {
+ 
+   client[kConnecting] = true
+ 
++  let calledBack = false
++  let cancelled = false
++
+   if (channels.beforeConnect.hasSubscribers) {
+     channels.beforeConnect.publish({
+       connectParams: {
+@@ -575,14 +598,25 @@ function connect (client) {
+   }
+ 
+   try {
+-    client[kConnector]({
++    const connecting = client[kConnector]({
+       host,
+       hostname,
+       protocol,
+       port,
+       servername: client[kServerName],
+       localAddress: client[kLocalAddress]
+     }, (err, socket) => {
++      calledBack = true
++
++      if (cancelled) {
++        if (socket) {
++          util.destroy(socket.on('error', noop))
++        }
++        return
++      }
++
++      client[kCancelConnect] = null
++
+       if (err) {
+         handleConnectError(client, err, { host, hostname, protocol, port })
+         client[kResume]()
+@@ -634,6 +668,35 @@ function connect (client) {
+       client.emit('connect', client[kUrl], [client])
+       client[kResume]()
+     })
++
++    // The attempt can only be cancelled through the socket the connector
++    // returns. The built-in connector returns it; custom connectors may not.
++    if (!calledBack && util.isStream(connecting)) {
++      client[kCancelConnect] = (err) => {
++        cancelled = true
++        client[kCancelConnect] = null
++        client[kConnecting] = false
++
++        // Not a 'connectionError': that would make a Pool retire this client.
++        if (channels.connectError.hasSubscribers) {
++          channels.connectError.publish({
++            connectParams: {
++              host,
++              hostname,
++              protocol,
++              port,
++              version: client[kHTTPContext]?.version,
++              servername: client[kServerName],
++              localAddress: client[kLocalAddress]
++            },
++            connector: client[kConnector],
++            error: err
++          })
++        }
++
++        util.destroy(connecting.on('error', noop), err)
++      }
++    }
+   } catch (err) {
+     handleConnectError(client, err, { host, hostname, protocol, port })
+     client[kResume]()
+```
+
+**File**: `test/cancel-unused-connect.js` (added, +247/-0)
+```diff
+@@ -0,0 +1,247 @@
 +'use strict'
++
++// A connection attempt whose requests were all aborted must not keep its
++// connection slot until it connects or times out: the Client destroys it, and
++// the next request opens a new connection. An attempt that a request still
++// waits for is kept.
 +
 +const { test } = require('node:test')
 +const assert = require('node:assert')
 +const { once } = require('node:events')
-+const { stat } = require('node:fs')
-+const { createServer } = require('node:http')
-+const { setImmediate: waitImmediate } = require('node:timers/promises')
-+const { Client } = require('..')
++const net = require('node:net')
++const https = require('node:https')
++const http2 = require('node:http2')
++const diagnosticsChannel = require('node:diagnostics_channel')
++const pem = require('@metcoder95/https-pem')
++const { Client, Pool, buildConnector } = require('..')
 +
-+// The keep-alive timer cannot fire while the event loop is blocked. When the
-+// next request is dispatched from the poll phase, the idle socket validation
-+// completes in the check phase of the same iteration, before that timer or a
-+// FIN that arrived during the block is processed. The client must check the
-+// clock instead, or it reuses a socket that the server may already have
-+// closed (ECONNRESET).
-+
-+function sleepSync (ms) {
-+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms)
++// Fails the test instead of hanging it when the promise does not settle.
++function settlesWithin (promise, ms = 2000) {
++  let timer
++  return Promise.race([
++    promise,
++    new Promise((resolve, reject) => {
++      timer = setTimeout(() => reject(new Error(`still pending after ${ms}ms`)), ms)
++    })
++  ]).finally(() => clearTimeout(timer))
 +}
 +
-+async function setup (t, keepAliveTimeout) {
-+  const state = { connections: 0, disconnects: [] }
-+
-+  const server = createServer((req, res) => {
-+    res.end('ok')
-+  })
-+  // No Keep-Alive hint from the server, so the client's keepAliveTimeout
-+  // alone sets the idle timeout. The server never closes the connection
-+  // itself, so the test only passes if the client opens a new one.
-+  server.keepAliveTimeout = 0
-+  server.on('connection', () => {
-+    state.connections++
-+  })
++// A TLS server behind a TCP front. The front holds the first connection: it
++// never forwards it, so its TLS handshake hangs, or forwards it after
++// `delayFirst` ms. Later connections are forwarded at once.
++async function startServer (t, { h2 = false, delayFirst = null } = {}) {
++  const handler = (req, res) => res.end('ok')
++  const server = h2
++    ? http2.createSecureServer({ ...pem, allowHTTP1: true }, handler)
++    : https.createServer(pem, handler)
 +  server.listen(0)
 +  await once(server, 'listening')
 +
-+  const client = new Client(`http://localhost:${server.address().port}`, {
-+    keepAliveTimeout
++  const sockets = []
++  let accepted = 0
++  let first = null
++  let onFirst
++  const firstAccepted = new Promise(resolve => { onFirst = resolve })
++  const front = net.createServer((socket) => {
++    accepted++
++    sockets.push(socket)
++    const forward = () => {
++      const upstream = net.connect(server.address().port)
++      sockets.push(upstream)
++      socket.pipe(upstream).pipe(socket)
++      socket.on('error', () => upstream.destroy())
++      upstream.on('error', () => socket.destroy())
++    }
++
++    if (first !== null) {
++      forward()
++      return
++    }
++
++    first = socket
++    onFirst(socket)
++    if (delayFirst !== null) {
++      setTimeout(forward, delayFirst)
++    } else {
++      // Read and drop the handshake, so the client closing it is seen.
++      socket.resume()
++    }
 +  })
-+  client.on('disconnect', (origin, targets, err) => {
-+    state.disconnects.push(err)
-+  })
-+
-+  t.after(async () => {
-+    await client.close()
-+    server.close()
-+  })
-+
-+  const res = await client.request({ path: '/', method: 'GET' })
-+  assert.strictEqual(await res.body.text(), 'ok')
-+  // Let the socket settle into the idle state.
-+  await waitImmediate()
-+  assert.strictEqual(state.connections, 1)
-+
-+  return { client, state }
-+}
-+
-+// Blocks for `blockMs`, then dispatches a request, from an fs callback, i.e.
-+// from the poll phase.
-+function requestAfterBlockInPollPhase (client, blockMs) {
-+  return new Promise((resolve, reject) => {
-+    stat(__filename, () => {
-+      sleepSync(blockMs)
-+      client.request({ path: '/', method: 'GET' }).then(resolve, reject)
-+    })
-+  })
-+}
-+
-+test('does not reuse an idle socket whose keep-alive timeout passed while the event loop was blocked', async (t) => {
-+  const { client, state } = await setup(t, 200)
-+
-+  const res = await requestAfterBlockInPollPhase(client, 600)
-+  assert.strictEqual(await res.body.text(), 'ok')
-+
-+  assert.strictEqual(state.connections, 2)
-+  assert.strictEqual(state.disconnects.length, 1)
-+  assert.strictEqual(state.disconnects[0].code, 'UND_ERR_INFO')
-+  assert.strictEqual(state.disconnects[0].message, 'socket idle timeout')
-+})
-+
-+test('reuses an idle socket whose keep-alive timeout did not pass while the event loop was blocked', async (t) => {
-+  const { client, state } = await setup(t, 60e3)
-+
-+  const res = await requestAfterBlockInPollPhase(client, 600)
-+  assert.strictEqual(await res.body.text(), 'ok')
-+
-+  assert.strictEqual(state.connections, 1)
-+  assert.strictEqual(state.disconnects.length, 0)
-+})
-```
-
----
-
-### Incident Patch 2: `2ded4054` (2026-11-12)
-**Commit Message**: test: avoid setTimeout in broken gzip body regression test (#6002)
-
-The regression test for #5999 used a wall-clock setTimeout to make the
-invalid gzip body arrive in a later packet than the response headers.
-Wall-clock timers are flaky and add a fixed delay to every run.
-
-Instead, defer the body to a later event-loop tick with setImmediate.
-This deterministically splits the headers and body into separate packets
-without any wall-clock dependency, and the test still hangs on the
-pre-fix code while rejecting fast on the current one.
-
-Refs: https://github.com/nodejs/undici/issues/5999
-
-**File**: `test/fetch/encoding.js` (modified, +33/-0)
-```diff
-@@ -249,3 +249,36 @@ describe('default accept-encoding request header', () => {
-     await response.arrayBuffer()
-   })
- })
-+
-+// https://github.com/nodejs/undici/issues/5999
-+test('invalid compressed body received after the headers rejects instead of hanging', async (t) => {
-+  const server = createServer((req, res) => {
-+    res.writeHead(200, {
-+      'Content-Encoding': 'gzip',
-+      'Content-Length': '16'
-+    })
-+    res.flushHeaders()
-+
-+    // The body must arrive in a later packet than the headers for the
-+    // regression to manifest. Defer it to a later tick rather than using
-+    // a wall-clock setTimeout, which is flaky and adds a fixed delay.
-+    setImmediate(() => setImmediate(() => {
-+      res.end(Buffer.alloc(16))
-+    }))
-+  }).listen(0, '127.0.0.1')
++  front.listen(0)
++  await once(front, 'listening')
 +
 +  t.after(() => {
-+    server.closeAllConnections()
++    for (const socket of sockets) socket.destroy()
++    front.close()
 +    server.close()
 +  })
 +
-+  await once(server, 'listening')
++  return {
++    origin: `https://localhost:${front.address().port}`,
++    accepted: () => accepted,
++    // Resolves once the client closed the first connection.
++    firstClosed: async () => {
++      const socket = await firstAccepted
++      if (!socket.destroyed) {
++        await once(socket, 'close')
++      }
++    }
++  }
++}
 +
-+  const response = await fetch(`http://127.0.0.1:${server.address().port}`, { keepalive: false })
++for (const h2 of [false, true]) {
++  for (const connectTimeout of [undefined, 0]) {
++    test(`${h2 ? 'h2' : 'h1'}, connectTimeout ${connectTimeout}: a connection attempt whose only request was aborted is destroyed`, async (t) => {
++      const server = await startServer(t, { h2 })
++      const pool = new Pool(server.origin, {
++        connections: 1,
++        connectTimeout,
++        allowH2: h2,
++        connect: { rejectUnauthorized: false }
++      })
++      t.after(() => pool.destroy())
 +
-+  await t.assert.rejects(response.text(), (err) => {
-+    t.assert.strictEqual(err.name, 'TypeError')
-+    t.assert.strictEqual(err.cause?.code, 'Z_DATA_ERROR')
-+    return true
-+  })
-+})
++      const connectionErrors = []
++      pool.on('connectionError', (origin, targets, err) => connectionErrors.push(err))
++
++      const ac = new AbortController()
++      const first = pool.request({ path: '/', method: 'GET', signal: ac.signal })
++      await new Promise(resolve => setTimeout(resolve, 50))
++      ac.abort()
++      await assert.rejects(settlesWithin(first), { name: 'AbortError' })
++
++      // The hanging handshake is closed instead of holding the only slot.
++      await settlesWithin(server.firstClosed())
++
++      const { statusCode, body } = await settlesWithin(pool.request({ path: '/', method: 'GET' }))
++      assert.strictEqual(statusCode, 200)
++      assert.strictEqual(await body.text(), 'ok')
++      assert.strictEqual(server.accepted(), 2)
++
++      // Cancelling is not a connection error: the Pool keeps its client.
++      assert.deepStrictEqual(connectionErrors, [])
++    })
++  }
++}
++
++test('a cancelled connection attempt is published as a connect error', async (t) => {
++  const server = await startServer(t)
++  const client = new Client(server.origin, { connect: { rejectUnauthorized: false } })
++  t.after(() => client.destroy())
++
++  const errors = []
++  const onConnectError = ({ error }) => errors.push(error)
++  diagnosticsChannel.subscribe('undici:client:connectError', onConnectError)
++  t.after(() => diagnosticsChannel.unsubscribe('undici:client:connectError', onConnectError))
++
++  const ac = new AbortController()
++  const request = client.request({ path: '/', method: 'GET', signal: ac.signal })
++  await new Promise(resolve => setTimeout(resolve, 50))
++  ac.abort()
++  awa
 ```
 
 ---
 
-### Incident Patch 3: `af829065` (2026-11-12)
-**Commit Message**: docs: align security policy with Node.js (#5987)
+### Incident Patch 3: `6b22aba1` (2026-11-20)
+**Commit Message**: fix: do not send a request on a connection verified for another servername (#6233)
 
-**File**: `SECURITY.md` (modified, +76/-32)
+Since #6219, a request aborted while it waits for a connection leaves the
+queue. When a Client serves several TLS server names and the aborted
+request was the last one for the name it was connecting for, _resume()
+switched client[kServerName] to the next queued request's name while the
+connection was pending. Once connected, that connection, whose certificate
+was verified for the previous name, was used for the next request.
+
+A connection attempt now records the servername it verifies. If the
+Client switched to another name by the time it connects, the socket is
+destroyed and a new connection is opened for the current name. When
+_resume() switches the name, it also cancels the pending attempt, so the
+request does not wait for a connection it cannot use. A certificate name
+error now only fails the requests for the name it was raised for.
+
+Refs: #6219
+
+Signed-off-by: Matteo Collina <[REDACTED_EMAIL]>
+
+**File**: `lib/dispatcher/client.js` (modified, +51/-29)
 ```diff
-@@ -36,6 +36,29 @@ issue.
+@@ -579,9 +579,38 @@ function connect (client) {
  
- Undici is an HTTP client library for Node.js. Its threat model is derived from
- and aligned with the [Node.js threat model](https://github.com/nodejs/node/blob/HEAD/SECURITY.md#the-nodejs-threat-model).
-+The Node.js policy is authoritative for the copy of undici bundled with
-+Node.js. This section applies the same boundaries to the standalone undici
-+package.
+   client[kConnecting] = true
+ 
++  // The name this attempt verifies the server's certificate for. While it
++  // connects, its requests can be aborted and _resume() can switch
++  // client[kServerName] to the name of the next queued request.
++  const servername = client[kServerName]
 +
-+### Security triage dispositions
+   let calledBack = false
+   let cancelled = false
+ 
++  // Ends this attempt without a 'connectionError': no request failed, and a
++  // Pool would retire this client.
++  const abandon = (socket, err) => {
++    client[kConnecting] = false
 +
-+Security reports are classified using the same dispositions as Node.js:
++    if (channels.connectError.hasSubscribers) {
++      channels.connectError.publish({
++        connectParams: {
++          host,
++          hostname,
++          protocol,
++          port,
++          version: client[kHTTPContext]?.version,
++          servername,
++          localAddress: client[kLocalAddress]
++        },
++        connector: client[kConnector],
++        error: err
++      })
++    }
 +
-+* **Vulnerability**: An undici defect that is exploitable across an
-+  undici-owned security boundary and meets the criteria under
-+  [What constitutes a vulnerability](#what-constitutes-a-vulnerability),
-+  including any applicable DoS criteria.
-+* **Security-interest bug**: A real undici defect, or an API behavior likely to
-+  cause security bugs in applications, that is not itself a vulnerability
-+  under this threat model. These are fixed as regular bugs and do not
-+  automatically receive a CVE, but should still be reported privately first
-+  when they affect a common security control such as protocol interpretation,
-+  certificate validation, or TLS decisions.
-+* **Common bug**: A correctness, robustness, or crash issue without an
-+  undici-owned security boundary or a realistic cross-boundary attacker
-+  benefit.
-+* **Invalid / out of scope**: A report that cannot be reproduced, is not an
-+  undici defect, or concerns behavior excluded by this policy.
++    util.destroy(socket.on('error', noop), err)
++  }
++
+   if (channels.beforeConnect.hasSubscribers) {
+     channels.beforeConnect.publish({
+       connectParams: {
+@@ -590,7 +619,7 @@ function connect (client) {
+         protocol,
+         port,
+         version: client[kHTTPContext]?.version,
+-        servername: client[kServerName],
++        servername,
+         localAddress: client[kLocalAddress]
+       },
+       connector: client[kConnector]
+@@ -603,7 +632,7 @@ function connect (client) {
+       hostname,
+       protocol,
+       port,
+-      servername: client[kServerName],
++      servername,
+       localAddress: client[kLocalAddress]
+     }, (err, socket) => {
+       calledBack = true
+@@ -618,7 +647,7 @@ function connect (client) {
+       client[kCancelConnect] = null
  
- ### What constitutes a vulnerability
+       if (err) {
+-        handleConnectError(client, err, { host, hostname, protocol, port })
++        handleConnectError(client, err, { host, hostname, protocol, port, servername })
+         client[kResume]()
+         return
+       }
+@@ -631,13 +660,21 @@ function connect (client) {
  
-@@ -53,35 +76,49 @@ For a behavior to be considered a DoS vulnerability, the proof of concept must
- meet the following criteria:
+       assert(socket)
  
- * The API is being correctly used.
--* The API is public and documented.
--* The behavior is significant enough to cause a denial of service quickly
--  or in a context not controlled by the application developer (for example,
--  HTTP parsing).
-+* The API does not have a warning against its use in production.
-+* The API is public and documented. For standards-based APIs, the behavior
-+  must be well-defined by the applicable specification.
-+* The API is stable. For APIs bundled in Node.js, it must have stable (2.0)
-+  status.
-+* The behavior is significant enough to cause a denial of service quickly or
-+  in a context not controlled by the application developer, such as protocol
-+  parsing.
- * The behavior is directly exploitable by an untrusted source without requiring
-   application mistakes.
- * The behavior cannot be reasonably mitigated through standard operational
--  practices (like process recycling).
-+  practices, such as process recycling.
-+* The behavior occurs deterministically under normal usage patterns rather than
-+  only in edge cases.
-+* The behavior occurs at a rate that would cause practical resource exhaustion
-+  within a practical timeframe under typical workloads.
- * The attack demonstrates
-   [asymmetric resource consumption](https://cwe.mitre.org/data/definitions/405.html),
--  where the attacker expends significantly fewer resources than what is required
--  by the client to process the attack.
-+  where the attacker expends significantly fewer resources than the client
-+  must expend to process the attack. Attacks requiring comparable resources on
-+  the attacker's side, which can be mitigated through practices such as rate
-+  limiting, may not qualify.
++      if (client[kServerName] !== servername) {
++        // The server proved its identity for another name than the one the
++        // queued requests are for: never send them on this connection.
++        abandon(socket, new InformationalError('servername changed'))
++        client[kResume]()
++        return
++      }
++
+       try {
+         client[kHTTPContext] = socket.alpnProtocol === 'h2'
+           ? connectH2(client, socket)
+           : connectH1(client, socket)
+       } catch (err) {
+         socket.destroy().on('error', noop)
+-        handleConnectError(client, err, { host, hostname, protocol, port })
++        handleConnectError(client, err, { host, hostname, protocol, port, servername })
+         client[kResume]()
+         return
+       }
+@@ -657,7 +694,7 @@ function connect (client) {
+             protocol,
+             port,
+             version: client[kHTTPContext]?.version,
+-            servername: client[kServerName],
++            servername,
+             localAddress: client[kLocalAddress]
+           },
+           connector: client[kConnector],
+@@ -675,35 +712,16 @@ function connect (client) {
+       client[kCancelConnect] = (err) => {
+         cancelled = true
+         client[kCancelConnect] = null
+-        client[kConnecting] = false
+-
+-        // Not a 'connectionError': that would make a Pool retire this client.
+-        if (channels.connectError.hasSubscribers) {
+-          channels.connectError.publish({
+-            connectParams: {
+-              host,
+-              hostname,
+-              protocol,
+-              port,
+-              version: client[kHTTPContext]?.version,
+-              servername: client[kServerName],
+-              localAddress: client[kLocalAddress]
+-            },
+-            connector: client[kConnector],
+-            error: err
+-          })
+-        }
+-
+-        util.destroy(connecting.on('error', noop), err)
++        abandon(connecting, err)
+       }
+     }
+   } catch (err) {
+-    handleConnectError(client, err, { host, hostname, protocol, port })
++    handleConnectError(client, err, { host, hostname, protocol, port, servername })
+     client[kResume]()
+   }
+ }
  
- **Undici does NOT trust**:
+-function handleConnectError (client, err, { host, hostname, protocol, port }) {
++function handleConnectError (client, err, { host, hostname, protocol, port, servername }) {
+   if (client.destroyed) {
+     return
+   }
+@@ -718,7 +736,7 @@ function handleConnectError (client, err, { host, hostname, protocol, port }) {
+         protocol,
+         port,
+         version: client[kHTTPContext]?.version,
+-        servername: client[kServerName],
++        servername,
+         localAddress: client[kLocalAddress]
+       },
+       connector: client[kConnector],
+@@ -734,7 +752,8 @@ function handleConnectError (client, err, { host, hostname, protocol, port }) {
+       util.errorRequest(client, running[i], err)
+     }
  
--* Data received from the remote end of HTTP connections (both inbound responses
--  and server-sent data) that is parsed or transformed by undici before being
--  passed to the application. This includes:
-+* Data received from the remote end of outbound network connections created
-+  through undici APIs and transformed or validated by undici before being
-+  passed to the application, **except with respect to payload length**. Undici
-+  trusts applications to make connections and requests that avoid payload
-+  sizes that would result in a denial of service. Subject to that exception,
-+  untrusted data includes:
-   * HTTP response headers and status lines.
--  * HTTP response bodies when processed by undici (e.g., chunked transfer
--    decoding, content-encoding).
-+  * HTTP response bodies processed by undici, such as chunked transfer decoding
-+    and content-encoding.
-   * WebSocket frames received from a server.
-   * Server-Sent Events (EventSource) data received from a server.
- * TLS certificate validation performed by undici on behalf of the application.
- 
- **Undici trusts**:
- 
- * The application code that uses its APIs, including all configuration,
--  options, callbacks, and decisions about which body-consuming APIs to call.
-+  options, callbacks, connection and request decisions, and decisions about
-+  which body-consuming APIs to call.
- * The operating system and its network stack.
- * The Node.js runtime undici is running on.
- * Dependencies installed by the application.
-@@ -99,19 +136,19 @@ meet the following criteria:
-   bypass organizational, regulatory, or legal controls. Untrusted
+-    while (client[kPending] > 0 && client[kQu
+```
+
+**File**: `test/servername-switch-while-connecting.js` (added, +195/-0)
+```diff
+@@ -0,0 +1,195 @@
++'use strict'
++
++// A Client serves requests for several TLS server names, one at a time. A
++// connection attempt verifies the server for one name. If its requests are
++// aborted while it connects and the next queued request is for another name,
++// that request must not be sent on this connection: the server never proved
++// its identity for that name.
++
++const { test } = require('node:test')
++const assert = require('node:assert')
++const { once } = require('node:events')
++const net = require('node:net')
++const https = require('node:https')
++const http2 = require('node:http2')
++const pem = require('@metcoder95/https-pem')
++const { Client, Agent, interceptors, buildConnector } = require('..')
++
++// Fails the test instead of hanging it when the promise does not settle.
++function settlesWithin (promise, ms = 2000) {
++  let timer
++  return Promise.race([
++    promise,
++    new Promise((resolve, reject) => {
++      timer = setTimeout(() => reject(new Error(`still pending after ${ms}ms`)), ms)
++    })
++  ]).finally(() => clearTimeout(timer))
++}
++
++// The certificate is trusted, but valid only for a.test.
++function onlyATest (host) {
++  if (host !== 'a.test') {
++    return Object.assign(new Error(`Hostname/IP does not match certificate's altnames: Host: ${host}`), {
++      code: 'ERR_TLS_CERT_ALTNAME_INVALID'
++    })
++  }
++}
++
++// The certificate is trusted for any name.
++function anyName () {}
++
++// A TLS server behind a TCP front. The front holds the first connection, so
++// its TLS handshake is pending when the request is aborted: it never forwards
++// it, or forwards it after `delayFirst` ms. Later connections are forwarded at
++// once. The server records the Host and the TLS server name of each request.
++async function startServer (t, { h2 = false, delayFirst = null } = {}) {
++  const served = []
++  const handler = (req, res) => {
++    const host = (req.headers[':authority'] ?? req.headers.host).split(':')[0]
++    served.push({ host, servername: req.socket.servername })
++    res.end(host)
++  }
++  const server = h2
++    ? http2.createSecureServer({ ...pem, allowHTTP1: true }, handler)
++    : https.createServer(pem, handler)
++  server.listen(0, '127.0.0.1')
++  await once(server, 'listening')
++
++  const sockets = []
++  let first = null
++  let timer = null
++  const front = net.createServer((socket) => {
++    sockets.push(socket)
++    const forward = () => {
++      if (socket.destroyed) {
++        return
++      }
++      const upstream = net.connect(server.address().port, '127.0.0.1')
++      sockets.push(upstream)
++      socket.pipe(upstream).pipe(socket)
++      socket.on('error', () => upstream.destroy())
++      upstream.on('error', () => socket.destroy())
++    }
++
++    if (first !== null) {
++      forward()
++      return
++    }
++
++    first = socket
++    if (delayFirst !== null) {
++      timer = setTimeout(forward, delayFirst)
++    } else {
++      socket.resume()
++    }
++  })
++  front.listen(0, '127.0.0.1')
++  await once(front, 'listening')
++
++  t.after(() => {
++    clearTimeout(timer)
++    for (const socket of sockets) socket.destroy()
++    front.close()
++    server.close()
++  })
++
++  return { port: front.address().port, served }
++}
++
++// Starts a request for a.test, queues one for b.test, then aborts the first
++// while its connection attempt is pending.
++async function abortFirstWhileConnecting (dispatch) {
++  const ac = new AbortController()
++  const a = dispatch('a.test', ac.signal)
++  const b = dispatch('b.test')
++  await new Promise(resolve => setTimeout(resolve, 50))
++  ac.abort()
++  await assert.rejects(a, { name: 'AbortError' })
++  return b
++}
++
++function clientDispatch (client) {
++  return (host, signal) => client.request({
++    path: '/',
++    method: 'GET',
++    servername: host,
++    headers: { host },
++    signal
++  })
++}
++
++for (const h2 of [false, true]) {
++  const name = h2 ? 'h2' : 'h1'
++
++  test(`${name}: a request is not sent on a connection verified for another servername`, async (t) => {
++    const { port, served } = await startServer(t, { h2, delayFirst: 200 })
++    const client = new Client(`https://127.0.0.1:${port}`, {
++      allowH2: h2,
++      connect: { ca: pem.cert, checkServerIdentity: onlyATest }
++    })
++    t.after(() => client.destroy())
++
++    const b = abortFirstWhileConnecting(clientDispatch(client))
++
++    await assert.rejects(settlesWithin(b), { code: 'ERR_TLS_CERT_ALTNAME_INVALID' })
++    assert.deepStrictEqual(served, [])
++  })
++
++  test(`${name}: the next request connects with its own servername without waiting for the abandoned attempt`, async (t) => {
++    // The first connection never completes its handshake.
++    const { port, served } = await startServer(t, { h2 })
++    const client = new Client(`https://127.0.0.1:${port}`, {
++      allowH2: h2,
++      connect: { ca: pem.cert, checkServerIdentity: anyName }
++    })
++    t.after(() => client.destroy())
++
++    const b = abortFirstWhileConnecting(clientDispatch(client))
++
++    const res = await set
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6199** (2026-11-12): docs: note that SqliteCacheStore stores data unencrypted (@bardrop)
-- **PR #6198** (closed): fix: settle fetch() promise when mainFetch throws internally (@mcollina)
-- **PR #6190** (2026-11-10): build(deps-dev): bump node-forge from 1.4.2 to 1.4.3 (@dependabot[bot])
-- **PR #6189** (2026-11-10): build(deps-dev): bump ws from 8.22.0 to 8.22.1 (@dependabot[bot])
-- **PR #6188** (2026-11-09): build(deps-dev): bump @fastify/busboy from 3.2.4 to 3.2.5 (@dependabot[bot])
-- **PR #6176** (2026-11-07): fix(h2): preserve transport errors and mismatch causes (@styfle)
+- **PR #6233** (2026-11-20): fix: do not send a request on a connection verified for another servername (@mcollina)
+- **PR #6228** (2026-11-20): [Release] v8.13.0 (@github-actions[bot])
+- **PR #6225** (2026-11-20): fix(pipeline): abort request when response body is dropped early (@ferhatelmas)
+- **PR #6221** (2026-11-19): fix: destroy a connection attempt that no request waits for (@mcollina)
+- **PR #6220** (2026-11-19): interceptors: enforce cache-after-redirect composition order (@mcollina)
+- **PR #6219** (2026-11-19): fix: reject requests aborted while waiting for a connection (@mcollina)
 
 ---
 
@@ -1083,44 +1703,40 @@ Refs: https://github.com/nodejs/undici/issues/5999
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. h1): do not reuse idle sockets whose keep-alive timeout expired
+## X. interceptors): enforce cache-after-redirect composition order
 
 **RULE**:
-When implementing operations in `lib/dispatcher/client-h1.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nodejs/undici. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/docs/api/Dispatcher.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nodejs/undici. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `02c4f8c6`: h1): do not reuse idle sockets whose keep-alive timeout expired. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `416f9e32`: interceptors): enforce cache-after-redirect composition order. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/dispatcher/client-h1.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/api/Dispatcher.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-const kIdleSince = Symbol('kIdleSince')
-/**
- * kIdleSince is recorded when the keep-alive timer is armed, so this never
- * expires a socket before that timer is due.
- * @param {import('net').Socket} socket
- * @returns {boolean}
- */
-function isIdleSocketExpired (socket) {
-  const parser = socket[kParser]
-  return parser.timeoutType === TIMEOUT_KEEP_ALIVE &&
-    parser.timeoutValue > 0 &&
-    performance.now() - socket[kIdleSince] >= parser.timeoutValue
-}
+Because interceptors wrap each other, ordering is the end-user's responsibility.
+Certain built-in interceptors are order-sensitive and will throw an
+`InvalidArgumentError` if composed in an unsafe order. In particular, the
+`cache` interceptor must be composed **after** the `redirect` interceptor. When
+`cache` is composed before `redirect`, the cache handler is wrapped *above* the
+redirect handler, so it never observes the redirect history and its
+cross-origin / credential-bearing redirect guards are silently disabled.
+This allows an attacker-controlled or cross-principal redirect response to be
+stored under the trusted origin's cache key and replayed to unrelated callers
+(see GHSA-75VM-9G8F-99J4, GHSA-MQG3-3V4R-CM32, GHSA-4W7W-5XRC-9H26 and
+GHSA-7XG3-FPHP-28HG).
 
-    // The keep-alive timer cannot fire while the event loop is blocked, and a
-    // request dispatched from the poll phase passes the idle socket validation
-    // below before that timer or a FIN received during the block is processed.
-    // Check the clock so that an expired socket is not reused.
-    if (client[kRunning] === 0 && client[kPending] > 0 && isIdleSocketExpired(socket)) {
-      util.destroy(socket, new InformationalError('socket idle timeout'))
-      return
-    }
+```js
+// Correct: cache is composed after redirect.
+new Agent().compose(interceptors.redirect({ maxRedirections: 5 }), interceptors.cache({}))
 
-        socket[kIdleSince] = performance.now()
+// Throws an InvalidArgumentError: cache composed before redirect.
+new Agent().compose(interceptors.cache({}), interceptors.redirect({ maxRedirections: 5 }))
+```
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1130,7 +1746,7 @@ function isIdleSocketExpired (socket) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `02c4f8c6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `416f9e32` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

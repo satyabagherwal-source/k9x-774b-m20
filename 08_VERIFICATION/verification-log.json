@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-LQMK",
-    "timestamp": "2026-11-18T16:41:10.412Z",
-    "repository": "okteto/okteto",
-    "learningId": "learn-github-okteto-okteto",
-    "contentHash": "6db9d0ac83264405f1d1ac1389911a43f29a05dc564168dbf0b31fbaa0bc96eb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-LZJ5",
-    "timestamp": "2026-11-18T16:41:21.953Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "96e52fd9dc045b387d78fb21ae28495340189ec9e2eaa4d32258d7a980d69cb5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-WEOY",
-    "timestamp": "2026-11-18T16:49:28.162Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-cloudflare-clef-flash",
-    "contentHash": "c92520a4b0134e64f4d79bd3b1cf7938ed3842a08e3c1e17b5b77cb221b55f0e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-C3HA",
-    "timestamp": "2026-11-18T17:01:40.126Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-    "contentHash": "450d54a6e9dcb68943d9916cf3464c2049b863477e6f00be396bcc184cc9e3f4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-C974",
     "timestamp": "2026-11-18T17:01:47.536Z",
     "repository": "PeerDB-io/peerdb",
@@ -7490,6 +7430,66 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "e9047d395b25a3f812aa06f8aaf3048e008dcf4e68d9c24be6fd3c0b869d3b5d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-1BBJ",
+    "timestamp": "2026-11-20T19:44:35.215Z",
+    "repository": "nodejs/undici",
+    "learningId": "learn-github-nodejs-undici",
+    "contentHash": "8bd7834eae9de3adeef2d08c7395861cbc9e344491e0759d177e1a2751123171",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-1F9C",
+    "timestamp": "2026-11-20T19:44:40.320Z",
+    "repository": "authzed/spicedb",
+    "learningId": "learn-github-authzed-spicedb",
+    "contentHash": "52a9825a0ebc28a7bbbdad0565efd97db4541c3f236da99134933c653b4a0296",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-1GYK",
+    "timestamp": "2026-11-20T19:44:42.524Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "9abb39bc8549c027dcba17c609e267bacb5647f8e65e166e9c0066ffc35f5861",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-1JF1",
+    "timestamp": "2026-11-20T19:44:45.709Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "5942268cfa183239f3366376e2275834536a0cead8f9529fa018c0ee012dfe11",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

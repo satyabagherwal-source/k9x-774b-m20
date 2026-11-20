@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T00:11:25.169Z",
+  "timestamp": "2026-11-20T19:45:18.705Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-authzed-spicedb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [authzed-spicedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T00:11:25.169Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T19:45:18.705Z`  
 > **Learning ID**: `LEARN-EVO-authzed-spicedb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source**: github ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
-> **Source Version**: `c311f7a7`  
+> **Source Version**: `65181da3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T00:10:51.319Z  
+> **Timestamp**: 2026-11-20T19:44:39.307Z  
 > **Learning ID**: `learn-github-authzed-spicedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T00:10:51.313Z  
+> **Harvest Timestamp**: 2026-11-20T19:44:39.302Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7222 stars
+- **Stars / Engagement**: 7233 stars
 
 ---
 
@@ -1111,13 +1111,11 @@ func inputMessagesForService[S any](
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3499** (2026-11-16): **feat(cmd): add --grpc-max-conn-age-grace**
-  *Symptoms*: ## Why  Without an L7 load balancer, SpiceDB relies on `--grpc-max-connection-age` to send clients a GOAWAY, which nudges them to reconnect and rebalance across pods. By default, the server then waits forever for in-flight requests to finish. A long stream — such as Watch — keeps its connection open indefinitely, keeping its load on one pod.  ## What it adds  - `--grpc-max-conn-age-grace`: how long the server waits after GOAWAY before it closes the connection. 0 keeps the current behavior (wait forever). - `--readonly-grpc-max-conn-age-grace` and `--dispatch-cluster-max-conn-age-grace` for the read-only and dispatch listeners.  ## Test plan  - [x] `TestMaxConnAgeGraceEndsLongStream`: a stream ends within max age + grace. - [x] `TestMaxConnAgeWithoutGraceKeepsLongStream`: a stream stays open past max age when grace is 0. - [x] `TestMaxConnAgeGraceFlag`: the flag parses and defaults to 0.
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/authzed/spicedb/pull/3499?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) Report :white_check_mark: All modified and coverable lines are covered by tests.  :loudspeaker: Thoughts on this report? [Let us know!](https://github.com/codecov/feedback/issues/255)
+- **Issue #3517** (2026-11-20): **feat: batched streaming responses for LookupResources**
+  *Symptoms*: ## What  Adds `optional_response_batch_size` to `LookupResources`: pack multiple resources into a single `LookupResourcesResponse.batched` message (a `LookupResourcesBatch` — repeated results plus one `after_cursor` for the whole batch), instead of one message, and one resume cursor, per resource.  `batch_size == 0` preserves the current one-resource-per-message behavior (backward compatible). The effective batch size is clamped to a new server flag `MaxLookupResourcesResponseBatchSize` (default 1000) rather than a fixed proto cap.  Also defaults `--experimental-lookup-resources-version` to `lr3`.  ## Why  For high-cardinality `LookupResources`, one gRPC message and one cursor token per resource dominates the cost (per-message framing + repeated cursor payload). Batching cuts both — most impactful for large reverse-reachability lookups and the Materialize/accelerated path.  ## Dependency chain  - `authzed/api#176` — proto: `LookupResourcesResponse.batched` + `LookupResourcesRequest.optional_response_batch_size` (merged) - `authzed/authzed-go#436` — regenerated client (merged); pinned here at `380614b`  ## Testing  - Unit tests in `internal/services/v1/permissions_test.go` covering batched streaming. - `go build ./...` passes against the pinned client.  ## Build / toolchain cascade  The pinned `authzed-go@380614b` declares `go 1.27.4`, which raises this module's `go` directive to `1.27.4`. To keep the whole build consistent (CI runs with `GOTOOLCHAIN=local`):  - `Dockerfile` b
 
-- **Issue #3496** (2026-11-16): **chore(deps): bump OpenTelemetry to v1.47.0 for CVE-2026-128085**
-  *Symptoms*: ## Summary  `go.opentelemetry.io/otel/sdk` and `go.opentelemetry.io/otel/trace` v1.46.0 are affected by **CVE-2026-128085** (MEDIUM), fixed in v1.47.0. The Trivy scan (`Analyze Code and Docker Image with Trivvy`) currently fails on every PR because of it.  This PR bumps the OpenTelemetry modules to v1.47.0 in **all three** Go modules that depend on them:  | Module | Change | |---|---| | `go.mod` | `otel`, `otel/sdk`, `otel/sdk/metric`, `otel/trace` → v1.47.0 (`otel/metric` and the new indirect `otel/log` follow) | | `e2e/go.mod` | indirect `otel`, `otel/metric`, `otel/trace` → v1.47.0 | | `magefiles/go.mod` | indirect `otel`, `otel/metric`, `otel/trace` → v1.47.0 |  No other dependency changes.  ## Why not #3494  Dependabot's #3494 makes the same root `go.mod` change, but not the `e2e` and `magefiles` ones. Those modules still pin `otel/trace` v1.46.0 indirectly, so Trivy keeps failing on #3494 too: its scan reports 0 vulnerabilities for `go.mod` and 1 each for `e2e/go.mod` and `magefiles/go.mod`. This PR supersedes #3494, which can be closed once this merges.  ## Testing  - The root module builds; `e2e` and `magefiles` (with `-tags mage`) vet cleanly. - The tests of the 23 packages that import OpenTelemetry pass locally. - No module still references OpenTelemetry v1.46.0.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #3513** (2026-11-20): **fix(watch): emit schema Watch events from the unified stored schema in read-new modes**
+  *Symptoms*: ## Summary  Writing a schema in `--experimental-schema-mode=read-new-write-new` produced no Watch event, so anything watching for schema changes stopped getting them. In `read-new-write-both`, events arrived, but were built from the legacy tables rather than from the storage that mode reads.  Every datastore built schema Watch events from the legacy namespace and caveat tables, whatever the schema mode. This PR makes the shared datastore tests catch that, and fixes it.  ## Fix  - **Datastores** accept a new `WatchStoredSchema` watch content. For it, they report only that the unified stored schema was written at a revision (`RevisionChanges.StoredSchemaChanged`), not what changed. - **`DataLayer.Watch`** asks for `WatchStoredSchema` in place of `WatchSchema` when the schema mode reads from the unified stored schema. It then compares the stored schema at each reported revision with the one before it, and fills in `ChangedDefinitions`, `DeletedNamespaces` and `DeletedCaveats`. Callers see the same events as before. Legacy read modes pass straight through to the datastore, unchanged.  Per datastore:  | Datastore | How a stored schema write is detected | |---|---| | memdb | changes to the schema table are recorded in the changelog | | Postgres | rows of `schema_revision` created in the watched transaction range | | CockroachDB | `schema_revision` is added to the changefeed | | Spanner | `schema_revision` is added to the change stream (new migration) | | MySQL | not supported, as w
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1134,368 +1132,360 @@ func inputMessagesForService[S any](
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7612192d` (2026-11-16)
-**Commit Message**: feat(cmd): add --grpc-max-conn-age-grace (#3499)
+### Incident Patch 1: `4598c884` (2026-11-20)
+**Commit Message**: fix(watch): emit schema Watch events from the unified stored schema in read-new modes (#3513)
 
-* feat(cmd): add --grpc-max-conn-age-grace
+* test: run the shared schema watch tests in all four schema modes
 
-gRPC sends a GOAWAY to a connection that reaches its max age, then
-waits for in-flight requests to finish before it closes the connection.
-By default it waits forever. A long stream — such as Watch — keeps its
-connection and its load on one node behind an L4 load balancer.
+Writing a schema should always produce a Watch event. In read-new-write-new
+mode it produces none: SpiceDB saves the schema in a newer format, but the
+datastores still read only the older one when building Watch events. Anything
+watching for schema changes goes quiet.
 
-The new flag sets how long the server waits after GOAWAY. 0, the
-default, keeps the current behavior.
+The three schema tests in the shared datastore suite couldn't catch this
+because they saved schemas through the old API directly, which never looks at
+the mode setting. They now save schemas the way a running server does, in all
+four modes.
 
-Also adds --dispatch-cluster-max-conn-age-grace and
---readonly-grpc-max-conn-age-grace for the dispatch and read-only
-listeners.
+The old API took one change at a time; the new one takes the whole schema and
+works out what changed. A helper tracks the full schema and rewrites all of it
+on each step. Two things that needed:
 
-* docs: regenerate docs and add changelog entry for --grpc-max-conn-age-grace
+  - one write of the setup schema before the watch starts, or the next write
+    looks like every definition was just created
+  - caveats that actually parse, because the ones the tests used didn't and
+    the new path rejects them
+
+Deletes still behave the same and no assertions changed. One difference:
+deletes no longer remov
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+ - Dispatch: LookupResources cursors are now locked to the dispatcher that produced them when secondary dispatchers are configured. Previously a cursor returned by a secondary was never tagged, and LookupResources3 cursors were never checked at all, so every page raced the primary against the secondaries and a cursor produced by one could be sent to the other, failing the request with an invalid cursor error. A cursor without a secondary tag is now resumed by the primary only.
+ - Dispatch: when a LookupResources continuation locked to a secondary dispatcher fails, the secondary's error is now returned with its gRPC status, instead of a generic "no dispatcher returned results" error with code Unknown. (https://github.com/authzed/spicedb/pull/3468)
+ - LookupResources v3: fixed an issue with concurrent map writes in the caveat runner by giving each producer its own caveat runner. (https://github.com/authzed/spicedb/pull/3509)
++- Watch: with `--experimental-schema-mode` set to `read-new-write-new`, writing a schema now produces a Watch schema event. Schema events were always built from the legacy namespace and caveat tables, which that mode does not write, so schema changes were never reported. With `read-new-write-both` and `read-new-write-new`, schema events are now built from the single-store schema. The default legacy schema mode is unchanged, and MySQL still does not support watching schema. Spanner: a new migration, `add-schema-revision-to-change-stream`, adds the `schema_revision` table to the change stream, and a Watch with checkpoints no longer emits a checkpoint for a transaction that wrote to several tables before that transaction's changes. (https://github.com/authzed/spicedb/pull/3513)
  
- ## [Unreleased]
- ### Added
-+- Server: `--grpc-max-conn-age-grace`, `--readonly-grpc-max-conn-age-grace` and `--dispatch-cluster-max-conn-age-grace` set how long each listener waits after sending a GOAWAY before it closes the connection. Without a grace limit, a connection with a long-running stream such as Watch stays open indefinitely after its max age, keeping its load on one node behind an L4 load balancer. 0, the default, keeps the current behavior. (https://github.com/authzed/spicedb/pull/3499)
- - Tracing: `--otel-ignore-remote-sampling` makes SpiceDB apply `--otel-sample-ratio` to every request, ignoring the sampling decision callers send in their trace headers. Without it, a caller that marks most requests as sampled makes SpiceDB trace most requests, whatever the ratio. The caller's trace ID is still kept, and spans created inside SpiceDB still follow their parent, so traces stay whole. Off by default. (https://github.com/authzed/spicedb/pull/3452)
- - Dispatch: `--experimental-dispatch-secondary-upstream-exprs` expressions can now choose how secondary dispatchers race the primary: `hedged([...])` (the existing behavior, and what a plain list still means), `prefer_secondary([...], duration('50ms'))` to use the primary only as a fallback, or `prefer_primary()` to use the primary only. Existing expressions keep working. The strategies, their options and the new metrics are described in the [secondary dispatch README](https://github.com/authzed/spicedb/blob/main/internal/dispatch/remote/README.md). (https://github.com/authzed/spicedb/pull/3468)
- 
+ ## [1.57.1] - 2026-11-10
+ ### Fixed
 ```
 
-**File**: `docs/spicedb.md` (modified, +4/-0)
+**File**: `internal/datastore/common/changes.go` (modified, +20/-0)
 ```diff
-@@ -596,6 +596,7 @@ spicedb serve [flags]
-       --dispatch-cluster-cache-metrics                                                  enable metrics for the cache for dispatch calls this server receives from other servers (default true)
-       --dispatch-cluster-enabled                                                        enable dispatch gRPC server
-       --dispatch-cluster-max-conn-age duration                                          how long a connection serving dispatch should be able to live (default 30s)
-+      --dispatch-cluster-max-conn-age-grace duration                                    how long a connection serving dispatch stays open after its max age for the in-flight requests it carries. 0 waits for them forever
-       --dispatch-cluster-max-workers uint32                                             set the number of workers for this server (0 value means 1 worker per request)
-       --dispatch-cluster-network string                                                 network type to serve dispatch ("tcp", "tcp4", "tcp6", "unix", "unixpacket") (default "tcp")
-       --dispatch-cluster-tls-cert-path string                                           local path to the TLS certificate used to serve dispatch
-@@ -631,6 +632,7 @@ spicedb serve [flags]
-       --grpc-log-requests-enabled                                                       enable logging of API request payloads
-       --grpc-log-responses-enabled                                                      enable logging of API response payloads
-       --grpc-max-conn-age duration                                                      how long a connection serving gRPC should be able to live (default 30s)
-+      --grpc-max-conn-age-grace duration                                                how long a connection serving gRPC stays open after its max age for the in-flight requests it carries. 0 waits for them forever
-       --grpc-max-workers uint32                                                         set the number of workers for this server (0 value means 1 worker per request)
-       --grpc-network string                                                             network type to serve gRPC ("tcp", "tcp4", "tcp6", "unix", "unixpacket") (default "tcp")
-       --grpc-preshared-key strings                                                      (required) preshared key(s) that must be provided by clients to authenticate requests
-@@ -708,6 +710,7 @@ spicedb serve-testing [flags]
-       --grpc-addr string                                         address to listen on to serve gRPC (default ":50051")
-       --grpc-enabled                                             enable gRPC gRPC server (default true)
-       --grpc-max-conn-age duration                               how long a connection serving gRPC should be able to live (default 30s)
-+      --grpc-max-conn-age-grace duration                         how long a connection serving gRPC stays open after its max age for the in-flight requests it carries. 0 waits for them forever
-       --grpc-max-workers uint32                                  set the number of workers for this server (0 value means 1 worker per request)
-       --grpc-network string                                      network type to serve gRPC ("tcp", "tcp4", "tcp6", "unix", "unixpacket") (default "tcp")
-       --grpc-shutdown-grace-period duration                      time limit given to the server to shutdown gracefully after it receives SIGINT or SIGTERM. A value of zero means no limit (default 5s)
-@@ -729,6 +732,7 @@ spicedb serve-testing [flags]
-       --readonly-grpc-addr string                                address to listen on to serve read-only gRPC (default ":50052")
-       --readonly-grpc-enabled                                    enable read-only gRPC gRPC server (default true)
-       --readonly-grpc-max-conn-age duration                      how long a connection serving read-only gRPC should be able to live (default 30s)
-+      --readonly-grpc-max-conn-age-grace duration                how long a connection serving read-only gRPC stays open after its max age for the in-flight requests it carries. 0 waits for them forever
-       --readonly-grpc-max-workers uint32                         set the number of workers for this server (0 value means 1 worker per request)
-       --readonly-grpc-network string                             network type to serve read-only gRPC ("tcp", "tcp4", "tcp6", "unix", "unixpacket") (default "tcp")
-       --readonly-grpc-tls-cert-path string                       local path to the TLS certificate used to serve read-only gRPC
-```
-
-**File**: `pkg/cmd/util/util.go` (modified, +19/-12)
-```diff
-@@ -32,15 +32,18 @@ import (
- const BufferedNetwork string = "buffnet"
- 
- type GRPCServerConfig struct {
--	Address      string        `debugmap:"visible"`
--	Network      string        `debugmap:"visible" default:"tcp"`
--	TLSCertPath  string        `debugmap:"visible"`
--	TLSKeyPath   string        `debugmap:"visible"`
--	MaxConnAge   time.Duration `debugmap:"visible" default:"30s"`
--	Enabled      bool          `debugmap:"visible"`
--	BufferSize   int           `debugmap:"visible"`
--	ClientCAPath string        `debugmap:"visible"`
--	MaxWorkers   uint32        `debugmap:"visible"`
-+	Address     string        `debugmap:"visible"`
-+	Network     string        `debugmap:"visible" default:"tcp"`
-+	TLSCertPath string        `debugmap:"visible"`
-+	TLSKeyPath  string        `debugmap:"visible"`
-+	MaxConnAge  time.Duration `debugmap:"visible" default:"30s"`
-+	// MaxConnAgeGrace is how long a connection past MaxConnAge stays open for the RPCs it carries.
-+	// 0 waits for them forever.
-+	MaxConnAgeGrace time.Duration `debugmap:"visible"`
-+	Enabled         bool          `debugmap:"visible"`
-+	BufferSize      int           `debugmap:"visible"`
-+	ClientCAPath    string        `debugmap:"visible"`
-+	MaxWorkers      uint32        `debugmap:"visible"`
- 
- 	flagPrefix string
+@@ -42,6 +42,10 @@ type changeRecord[R datastore.Revision] struct {
+ 	namespacesDeleted  map[string]struct{}
+ 	caveatsDeleted     map[string]struct{}
+ 	metadatas          []TransactionMetadata
++
++	// storedSchemaChanged is a pointer so that it can be set through the copies of the
++	// record handed out by recordForRevision, as with the maps above.
++	storedSchemaChanged *bool
  }
-@@ -51,6 +54,7 @@ type GRPCServerConfig struct {
- // - "$PREFIX-tls-cert-path"
- // - "$PREFIX-tls-key-path"
- // - "$PREFIX-max-conn-age"
-+// - "$PREFIX-max-conn-age-grace"
- func RegisterGRPCServerFlags(flags *pflag.FlagSet, config *GRPCServerConfig, flagPrefix, serviceName, defaultAddr string, defaultEnabled bool) {
- 	flagPrefix = cmp.Or(flagPrefix, "grpc")
- 	serviceName = cmp.Or(serviceName, "grpc")
-@@ -62,6 +66,7 @@ func RegisterGRPCServerFlags(flags *pflag.FlagSet, config *GRPCServerConfig, fla
- 	flags.StringVar(&config.TLSCertPath, flagPrefix+"-tls-cert-path", "", "local path to the TLS certificate used to serve "+serviceName)
- 	flags.StringVar(&config.TLSKeyPath, flagPrefix+"-tls-key-path", "", "local path to the TLS key used to serve "+serviceName)
- 	flags.DurationVar(&config.MaxConnAge, flagPrefix+"-max-conn-age", 30*time.Second, "how long a connection serving "+serviceName+" should be able to live")
-+	flags.DurationVar(&config.MaxConnAgeGrace, flagPrefix+"-max-conn-age-grace", 0, "how long a connection serving "+serviceName+" stays open after its max age for the in-flight requests it carries. 0 waits for them forever")
- 	flags.BoolVar(&config.Enabled, flagPrefix+"-enabled", defaultEnabled, "enable "+serviceName+" gRPC server")
- 	flags.Uint32Var(&config.MaxWorkers, flagPrefix+"-max-workers", 0, "set the number of workers for this server (0 value means 1 worker per request)")
- }
-@@ -74,9 +79,11 @@ func (c *GRPCServerConfig) Complete(level zerolog.Level, svcRegistrationFn func(
- 	if c.BufferSize == 0 {
- 		c.BufferSize = 1024 * 1024
+ 
+ // NewChanges creates a new Changes object for change tracking and de-duplication.
+@@ -190,6 +194,7 @@ func (ch *Changes[R, K]) recordForRevision(rev R) changeRecord[R] {
+ 			make(map[string]struct{}),
+ 			make(map[string]struct{}),
+ 			make([]TransactionMetadata, 0),
++			new(bool),
+ 		}
+ 		ch.records[k] = revisionChanges
  	}
--	opts = append(opts, grpc.KeepaliveParams(keepalive.ServerParameters{
--		MaxConnectionAge: c.MaxConnAge,
--	}), grpc.NumStreamWorkers(c.MaxWorkers))
-+	keepaliveParams := keepalive.ServerParameters{MaxConnectionAge: c.MaxConnAge}
-+	if c.MaxConnAgeGrace > 0 {
-+		keepaliveParams.MaxConnectionAgeGrace = c.MaxConnAgeGrace
-+	}
-+	opts = append(opts, grpc.KeepaliveParams(keepaliveParams), grpc.NumStreamWorkers(c.MaxWorkers))
+@@ -303,6 +308,20 @@ func (ch *Changes[R, K]) AddChangedDefinition(
+ 	return nil
+ }
  
- 	tlsOpts, certWatcher, err := c.tlsOpts()
- 	if err != nil {
++// AddStoredSchemaChange adds a change indicating that the unified stored schema was written.
++func (ch *Changes[R, K]) AddStoredSchemaChange(_ context.Context, rev R) error {
++	if ch.content&datastore.WatchStoredSchema != datastore.WatchStoredSchema {
++		return nil
++	}
++
++	ch.recordsMutex.Lock()
++	defer ch.recordsMutex.Unlock()
++
++	record := ch.recordForRevision(rev)
++	*record.storedSchemaChanged = true
++	return nil
++}
++
+ // AsRevisionChanges returns the list of changes processed so far as a datastore watch
+ // compatible, ordered, changelist.
+ func (ch *Changes[R, K]) AsRevisionChanges(lessThanFunc func(lhs, rhs K) bool) iter.Seq2[datastore.RevisionChanges, error] {
+@@ -368,6 +387,7 @@ func (ch *Changes[R, K]) revisionChanges(lessThanFunc func(lhs, rhs K) bool, bou
+ 			change.ChangedDefinitions = slices.Collect(maps.Values(revisionChangeRecord.definitionsChanged))
+ 			change.DeletedNamespaces = slices.Collect(maps.Keys(revisionChangeRecord.namespacesDeleted))
+ 			change.DeletedCaveats = slices.Collect(maps.Keys(revisionChangeRecord.caveatsDeleted))
++			change.StoredSchemaChanged = *revisionChangeRecord.storedSchemaChanged
+ 
+ 			if len(revisionChangeRecord.metadatas) > 0 {
+ 				metadatas := make([]*structpb.Struct, 0, len(revisionChangeRecord.metadatas))
 ```
 
-**File**: `pkg/cmd/util/util_test.go` (modified, +70/-0)
+**File**: `internal/datastore/crdb/watch.go` (modified, +35/-0)
 ```diff
-@@ -1,10 +1,20 @@
- package util
- 
- import (
-+	"context"
-+	"net"
- 	"testing"
-+	"time"
- 
- 	"github.com/rs/zerolog"
-+	"github.com/spf13/pflag"
- 	"github.com/stretchr/testify/require"
-+	"google.golang.org/grpc"
-+	"google.golang.org/grpc/codes"
-+	"google.golang.org/grpc/credentials/insecure"
-+	"google.golang.org/grpc/health"
-+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
-+	"google.golang.org/grpc/status"
+@@ -37,6 +37,9 @@ const (
+ 	queryChangefeedPreV22 = "EXPERIMENTAL CHANGEFEED FOR %s WITH updated, cursor = '%s', resolved = '%s';"
  )
  
- func TestDisabledGRPC(t *testing.T) {
-@@ -33,3 +43,63 @@ func TestValidateTLSConfig(t *testing.T) {
- 		require.ErrorContains(t, (&GRPCServerConfig{TLSCertPath: "some path"}).validateTLSConfig(), "must provide both")
- 	})
- }
++// tableSchemaRevision is the table holding the hash of the unified stored schema.
++const tableSchemaRevision = "schema_revision"
 +
-+// watchHealth opens a health Watch, a stream that never ends, on a buffered server with these limits,
-+// and returns a channel that gets the stream's error once the server ends it.
-+func watchHealth(t *testing.T, age, grace time.Duration) <-chan error {
-+	t.Helper()
-+	c := &GRPCServerConfig{Enabled: true, Network: BufferedNetwork, MaxConnAge: age, MaxConnAgeGrace: grace}
-+	s, err := c.Complete(zerolog.InfoLevel, func(s *grpc.Server) { healthpb.RegisterHealthServer(s, health.NewServer()) })
-+	require.NoError(t, err)
-+	ctx, cancel := context.WithCancel(t.Context())
-+	t.Cleanup(cancel)
-+	go func() { _ = s.Run(ctx) }()
-+	t.Cleanup(s.GracefulStop)
-+
-+	conn, err := grpc.NewClient("passthrough:///buffnet",
-+		grpc.WithContextDialer(func(ctx context.Context, _ string) (net.Conn, error) { return s.BufferedListener().DialContext(ctx) }),
-+		grpc.WithTransportCredentials(insecure.NewCredentials()))
-+	require.NoError(t, err)
-+	t.Cleanup(func() { _ = conn.Close() })
-+	stream, err := healthpb.NewHealthClient(conn).Watch(ctx, &healthpb.HealthCheckRequest{})
-+	require.NoError(t, err)
-+	_, err = stream.Recv()
-+	require.NoError(t, err)
-+
-+	done := make(chan error, 1)
-+	go func() {
-+		_, err := stream.Recv()
-+		done <- err
-+	}()
-+	return done
-+}
-+
-+func TestMaxConnAgeGraceEndsLongStream(t *testing.T) {
-+	t.Parallel()
-+	select {
-+	case err := <-watchHealth(t, 100*time.Millisecond, 200*time.Millisecond):
-+		require.Equal(t, codes.Unavailable, status.Code(err), "%v", err)
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("the stream outlived max age + grace")
-+	}
-+}
-+
-+func TestMaxConnAgeWithoutGraceKeepsLongStream(t *testing.T) {
-+	t.Parallel()
-+	select {
-+	case err := <-watchHealth(t, 100*time.Millisecond, 0):
-+		t.Fatalf("the stream ended: %v", err)
-+	case <-time.After(time.Second):
-+	}
-+}
-+
-+func TestMaxConnAgeGraceFlag(t *testing.T) {
-+	t.Parallel()
-+	c := &GRPCServerConfig{}
-+	fs := pflag.NewFlagSet("test", pflag.ContinueOnError)
-+	RegisterGRPCServerFlags(fs, c, "grpc", "grpc", ":50051", true)
-+	require.NoError(t, fs.Parse(nil))
-+	require.Zero(t, c.MaxConnAgeGrace, "no grace by default: grpc-go waits forever")
-+	require.NoError(t, fs.Parse([]string{"--grpc-max-conn-age-grace=1h"}))
-+	require.Equal(t, time.Hour, c.MaxConnAgeGrace)
-+}
-```
-
-**File**: `pkg/cmd/util/zz_generated.options.go` (modified, +15/-0)
-```diff
-@@ -35,6 +35,7 @@ func (g *GRPCServerConfig) ToOption() GRPCServerConfigOption {
- 		to.TLSCertPath = g.TLSCertPath
- 		to.TLSKeyPath = g.TLSKeyPath
- 		to.MaxConnAge = g.MaxConnAge
-+		to.MaxConnAgeGrace = g.MaxConnAgeGrace
- 		to.Enabled = g.Enabled
- 		to.BufferSize = g.BufferSize
- 		to.ClientCAPath = g.ClientCAPath
-@@ -72,6 +73,13 @@ func (g *GRPCServerConfig) DebugMap() map[string]any {
- 	} else {
- 		debugMap["MaxConnAge"] = g.MaxConnAge
+ type changeDetails struct {
+ 	Resolved string
+ 	Updated  string
+@@ -160,6 +163,9 @@ func (cds *crdbDatastore) watch(
+ 		tableNames = append(tableNames, schema.TableNamespace)
+ 		tableNames = append(tableNames, schema.TableCaveat)
  	}
-+	if dm, ok := any(&g.MaxConnAgeGrace).(interface {
-+		DebugMap() map[string]any
-+	}); ok {
-+		debugMap["MaxConnAgeGrace"] = dm.DebugMap()
-+	} else {
-+		debugMap["MaxConnAgeGrace"] = g.MaxConnAgeGrace
++	if opts.Content&datastore.WatchStoredSchema == datastore.WatchStoredSchema {
++		tableNames = append(tableNames, tableSchemaRevision)
 +	}
- 	debugMap["Enabled"] = g.Enabled
- 	debugMap["BufferSize"] = g.BufferSize
- 	if g.ClientCAPath == "" {
-@@ -155,6 +163,13 @@ func WithMaxConnAge(maxConnAge time.Duration) GRPCServerConfigOption {
- 	}
+ 
+ 	if len(tableNames) == 0 {
+ 		errs <- errors.New("at least relationships or schema must be specified")
+@@ -234,6 +240,7 @@ type changeTracker[R datastore.Revision, K comparable] interface {
+ 	AddChangedDefinition(ctx context.Context, rev R, def datastore.SchemaDefinition) error
+ 	AddDeletedNamespace(ctx context.Context, rev R, namespaceName string) error
+ 	AddDeletedCaveat(ctx context.Context, rev R, caveatName string) error
++	AddStoredSchemaChange(ctx context.Context, rev R) error
+ 	AddRevisionMetadata(ctx context.Context, rev R, metadata common.TransactionMetadata) error
  }
  
-+// WithMaxConnAgeGrace returns an option that can set MaxConnAgeGrace on a GRPCServerConfig
-+func WithMaxConnAgeGrace(maxConnAgeGrace time.Duration) GRPCServerConfigOption {
-+	return func(g *GRPCServerConfig) {
-+		g.MaxConnAgeGrace = maxConnAgeGrace
+@@ -320,6 +327,19 @@ func (s streamingChangeProvider) AddDeletedCaveat(_ context.Context, rev revisio
+ 	return s.sendChange(changes)
+ }
+ 
++func (s streamingChangeProvider) AddStoredSchemaChange(_ context.Context, rev revisions.HLCRevision) error {
++	if s.content&datastore.WatchStoredSchema != datastore.WatchStoredSchema {
++		return nil
 +	}
++
++	changes := datastore.RevisionChanges{
++		Revision:            rev,
++		StoredSchemaChanged: true,
++	}
++
++	return s.sendChange(changes)
 +}
 +
- // WithEnabled returns an option that can set Enabled on a GRPCServerConfig
- func WithEnabled(enabled bool) GRPCServerConfigOption {
- 	return func(g *GRPCServerConfig) {
+ func (s streamingChangeProvider) AddRevisionMetadata(_ context.Context, rev revisions.HLCRevision, metadata common.TransactionMetadata) error {
+ 	if len(metadata) > 0 {
+ 		parsedMetadata, err := structpb.NewStruct(metadata)
+@@ -586,6 +606,21 @@ func (cds *crdbDatastore) processChanges(ctx context.Context, changes pgx.Rows,
+ 				}
+ 			}
+ 
++		case tableSchemaRevision:
++			// The row is upserted by every write of the unified stored schema.
++			if details.After != nil {
++				rev, err := revisions.HLCRevisionFromString(details.Updated)
++				if err != nil {
++					sendError(fmt.Errorf("malformed update timestamp: %w", err))
++					return
++				}
++
++				if err := tracked.AddStoredSchemaChange(ctx, rev); err != nil {
++					sendError(err)
++					return
++				}
++			}
++
+ 		case schema.TableTransactionMetadata:
+ 			if details.After != nil {
+ 				rev, err := revisions.HLCRevisionFromString(details.Updated)
 ```
 
----
-
-### Incident Patch 2: `0b0989b7` (2026-11-09)
-**Commit Message**: style(dispatch): simplify cache-key fixture returns
-
-**File**: `internal/dispatch/keys/computed_test.go` (modified, +20/-10)
+**File**: `internal/datastore/memdb/memdb.go` (modified, +5/-1)
 ```diff
-@@ -466,12 +466,14 @@ var generatorFuncs = map[string]generatorFunc{
- 		subjectRelation *core.RelationReference,
- 		metadata *v1.ResolverMeta,
- 	) (DispatchCacheKey, []string) {
--		return checkRequestToKey(&v1.DispatchCheckRequest{
-+		request := &v1.DispatchCheckRequest{
- 			ResourceRelation: resourceRelation,
- 			ResourceIds:      resourceIds,
- 			Subject:          ONR(subjectRelation.Namespace, subjectIds[0], subjectRelation.Relation),
- 			Metadata:         metadata,
--		}), []string{
+@@ -280,7 +280,7 @@ func (mdb *memdbDatastore) ReadWriteTx(
+ 			return mdb.headRevisionNoLock(), nil
+ 		}
+ 
+-		tracked := common.NewChanges(revisions.TimestampIDKeyFunc, datastore.WatchRelationships|datastore.WatchSchema, 0)
++		tracked := common.NewChanges(revisions.TimestampIDKeyFunc, datastore.WatchRelationships|datastore.WatchSchema|datastore.WatchStoredSchema, 0)
+ 		if config.Metadata != nil && len(config.Metadata.GetFields()) > 0 {
+ 			if err := tracked.AddRevisionMetadata(ctx, newRevision, config.Metadata.AsMap()); err != nil {
+ 				return datastore.NoRevision, err
+@@ -352,6 +352,10 @@ func (mdb *memdbDatastore) ReadWriteTx(
+ 				default:
+ 					return datastore.NoRevision, spiceerrors.MustBugf("unexpected namespace change")
+ 				}
++			case tableSchema:
++				if err := tracked.AddStoredSchemaChange(ctx, newRevision); err != nil {
++					return datastore.NoRevision, err
++				}
+ 			}
+ 		}
+ 
+```
+
+**File**: `internal/datastore/memdb/watch.go` (modified, +24/-3)
+```diff
+@@ -120,13 +120,34 @@ func (mdb *memdbDatastore) loadChanges(_ context.Context, currentTxn int64, opti
+ 	for changeRaw := it.Next(); changeRaw != nil; changeRaw = it.Next() {
+ 		change := changeRaw.(*changelog)
+ 
++		// The changelog holds everything that changed at the revision, so only emit the
++		// content that was requested.
++		filtered := datastore.RevisionChanges{
++			Revision:  change.changes.Revision,
++			Metadatas: change.changes.Metadatas,
++		}
++		hasRequestedContent := false
++
+ 		if options.Content&datastore.WatchRelationships == datastore.WatchRelationships && len(change.changes.RelationshipChanges) > 0 {
+-			changes = append(changes, change.changes)
++			filtered.RelationshipChanges = change.changes.RelationshipChanges
++			hasRequestedContent = true
+ 		}
+ 
+ 		if options.Content&datastore.WatchSchema == datastore.WatchSchema &&
+-			len(change.changes.ChangedDefinitions) > 0 || len(change.changes.DeletedCaveats) > 0 || len(change.changes.DeletedNamespaces) > 0 {
+-			changes = append(changes, change.changes)
++			(len(change.changes.ChangedDefinitions) > 0 || len(change.changes.DeletedCaveats) > 0 || len(change.changes.DeletedNamespaces) > 0) {
++			filtered.ChangedDefinitions = change.changes.ChangedDefinitions
++			filtered.DeletedNamespaces = change.changes.DeletedNamespaces
++			filtered.DeletedCaveats = change.changes.DeletedCaveats
++			hasRequestedContent = true
 +		}
 +
-+		return checkRequestToKey(request), []string{
- 			resourceRelation.Namespace,
- 			resourceRelation.Relation,
- 			subjectRelation.Namespace,
-@@ -535,10 +537,12 @@ var generatorFuncs = map[string]generatorFunc{
- 		subjectRelation *core.RelationReference,
- 		metadata *v1.ResolverMeta,
- 	) (DispatchCacheKey, []string) {
--		return expandRequestToKey(&v1.DispatchExpandRequest{
-+		request := &v1.DispatchExpandRequest{
- 			ResourceAndRelation: ONR(resourceRelation.Namespace, resourceIds[0], resourceRelation.Relation),
- 			Metadata:            metadata,
--		}), []string{
++		if options.Content&datastore.WatchStoredSchema == datastore.WatchStoredSchema && change.changes.StoredSchemaChanged {
++			filtered.StoredSchemaChanged = true
++			hasRequestedContent = true
 +		}
 +
-+		return expandRequestToKey(request), []string{
- 			resourceRelation.Namespace,
- 			resourceIds[0],
- 			resourceRelation.Relation,
-@@ -553,14 +557,16 @@ var generatorFuncs = map[string]generatorFunc{
- 		subjectRelation *core.RelationReference,
- 		metadata *v1.ResolverMeta,
- 	) (DispatchCacheKey, []string) {
--		return planCheckRequestToKey(&v1.DispatchQueryPlanRequest{
-+		request := &v1.DispatchQueryPlanRequest{
- 			Resource: ONR(resourceRelation.Namespace, resourceIds[0], resourceRelation.Relation),
- 			Subject:  ONR(subjectRelation.Namespace, subjectIds[0], subjectRelation.Relation),
- 			PlanContext: &v1.PlanContext{
- 				Revision:       metadata.AtRevision,
- 				InProgressKeys: []string{resourceRelation.Relation},
- 			},
--		}), []string{
++		if hasRequestedContent {
++			changes = append(changes, filtered)
+ 		}
+ 
+ 		if options.Content&datastore.WatchCheckpoints == datastore.WatchCheckpoints && change.revisionNanos > lastRevision {
+```
+
+**File**: `internal/datastore/mysql/watch.go` (modified, +2/-1)
+```diff
+@@ -36,7 +36,8 @@ func (mds *mysqlDatastore) Watch(ctx context.Context, afterRevisionRaw datastore
+ 		return updates, errs
+ 	}
+ 
+-	if options.Content&datastore.WatchSchema == datastore.WatchSchema {
++	if options.Content&datastore.WatchSchema == datastore.WatchSchema ||
++		options.Content&datastore.WatchStoredSchema == datastore.WatchStoredSchema {
+ 		close(updates)
+ 		errs <- errors.New("schema watch unsupported in MySQL")
+ 		return updates, errs
+```
+
+**File**: `internal/datastore/postgres/watch.go` (modified, +47/-0)
+```diff
+@@ -61,6 +61,11 @@ var (
+ 		schema.ColCreatedXid,
+ 		schema.ColDeletedXid,
+ 	).From(schema.TableCaveat)
++
++	// A row is added to schema_revision by every write of the unified stored schema.
++	queryChangedStoredSchema = psql.Select(
++		schema.ColCreatedXid,
++	).From("schema_revision")
+ )
+ 
+ func (pgd *pgDatastore) Watch(
+@@ -302,6 +307,14 @@ func (pgd *pgDatastore) loadChanges(ctx context.Context, revisions []postgresRev
+ 		}
+ 	}
+ 
++	// Load stored schema changes.
++	if options.Content&datastore.WatchStoredSchema == datastore.WatchStoredSchema {
++		err := pgd.loadStoredSchemaChanges(ctx, xmin, xmax, txidToRevision, filter, tracked)
++		if err != nil {
++			return nil, err
++		}
++	}
++
+ 	// Reconcile the changes.
+ 	return tracked.AsRevisionChanges(func(lhs, rhs uint64) bool {
+ 		return filter[lhs] < filter[rhs]
+@@ -519,3 +532,37 @@ func (pgd *pgDatastore) loadCaveatChanges(ctx context.Context, xmin uint64, xmax
+ 	}
+ 	return nil
+ }
++
++func (pgd *pgDatastore) loadStoredSchemaChanges(ctx context.Context, xmin uint64, xmax uint64, txidToRevision map[uint64]postgresRevision, filter map[uint64]int, tracked *common.Changes[postgresRevision, uint64]) error {
++	sql, args, err := queryChangedStoredSchema.Where(sq.And{
++		sq.LtOrEq{schema.ColCreatedXid: xmax},
++		sq.GtOrEq{schema.ColCreatedXid: xmin},
++	}).ToSql()
++	if err != nil {
++		return fmt.Errorf("unable to prepare changes SQL: %w", err)
++	}
++
++	changes, err := pgd.readPool.Query(ctx, sql, args...)
++	if err != nil {
++		return fmt.Errorf("unable to load changes for XID: %w", err)
++	}
++
++	defer changes.Close()
++
++	for changes.Next() {
++		var createdXID xid8
++		if err := changes.Scan(&createdXID); err != nil {
++			return fmt.Errorf("unable to parse changed stored schema: %w", err)
 +		}
 +
-+		return planCheckRequestToKey(request), []string{
- 			resourceRelation.Relation,
- 			resourceRelation.Namespace,
- 			resourceIds[0],
-@@ -578,13 +584,15 @@ var generatorFuncs = map[string]generatorFunc{
- 		subjectRelation *core.RelationReference,
- 		metadata *v1.ResolverMeta,
- 	) (DispatchCacheKey, []string) {
--		return planLookupResourcesRequestToKey(&v1.DispatchQueryPlanRequest{
-+		request := &v1.DispatchQueryPlanRequest{
- 			Subject: ONR(subjectRelation.Namespace, subjectIds[0], subjectRelation.Relation),
- 			PlanContext: &v1.PlanContext{
- 				Revision:       metadata.AtRevision,
- 				InProgressKeys: []string{resourceRelation.Relation},
- 			},
--		}), []string{
++		if _, found := filter[createdXID.Uint64]; found {
++			if err := tracked.AddStoredSchemaChange(ctx, txidToRevision[createdXID.Uint64]); err != nil {
++				return err
++			}
 +		}
++	}
++	if err := changes.Err(); err != nil {
++		return fmt.Errorf("unable to load changes for XID: %w", err)
++	}
++	return nil
++}
+```
+
+**File**: `internal/datastore/spanner/migrations/zz_migration.0014_add_schema_revision_to_change_stream.go` (added, +28/-0)
+```diff
+@@ -0,0 +1,28 @@
++package migrations
 +
-+		return planLookupResourcesRequestToKey(request), []string{
- 			resourceRelation.Relation,
- 			subjectRelation.Namespace,
- 			subjectIds[0],
-@@ -600,13 +608,15 @@ var generatorFuncs = map[string]generatorFunc{
- 		subjectRelation *core.RelationReference,
- 		metadata *v1.ResolverMeta,
- 	) (DispatchCacheKey, []string) {
--		return planLookupSubjectsRequestToKey(&v1.DispatchQueryPlanRequest{
-+		request := &v1.DispatchQueryPlanRequest{
- 			Resource: ONR(resourceRelation.Namespace, resourceIds[0], resourceRelation.Relation),
- 			PlanContext: &v1.PlanContext{
- 				Revision:       metadata.AtRevision,
- 				InProgressKeys: []string{resourceRelation.Relation},
- 			},
--		}), []string{
++import (
++	"context"
++
++	"cloud.google.com/go/spanner/admin/database/apiv1/databasepb"
++)
++
++// schema_revision is written by every write of the unified stored schema, so watching it
++// allows the Watch API to observe schema changes made to the unified stored schema.
++var addSchemaRevisionToChangeStream = `ALTER CHANGE STREAM combined_change_stream SET FOR namespace_config,caveat,relation_tuple,schema_revision`
++
++func init() {
++	if err := SpannerMigrations.Register("add-schema-revision-to-change-stream", "populate-schema-tables", func(ctx context.Context, w Wrapper) error {
++		updateOp, err := w.adminClient.UpdateDatabaseDdl(ctx, &databasepb.UpdateDatabaseDdlRequest{
++			Database: w.client.DatabaseName(),
++			Statements: []string{
++				addSchemaRevisionToChangeStream,
++			},
++		})
++		if err != nil {
++			return err
 +		}
-+
-+		return planLookupSubjectsRequestToKey(request), []string{
- 			resourceRelation.Relation,
- 			resourceRelation.Namespace,
- 			resourceIds[0],
++		return updateOp.Wait(ctx)
++	}, nil); err != nil {
++		panic("failed to register migration: " + err.Error())
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3499** (2026-11-16): feat(cmd): add --grpc-max-conn-age-grace (@ecordell)
-- **PR #3496** (2026-11-16): chore(deps): bump OpenTelemetry to v1.47.0 for CVE-2026-128085 (@ostafen)
-- **PR #3494** (closed): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.46.0 to 1.47.0 in the go-mod-security group across 1 directory (@dependabot[bot])
-- **PR #3486** (2026-11-13): chore(postgres): drop PostgreSQL 14 from the test matrix (@josephschorr)
-- **PR #3485** (2026-11-13): test: speed up the slowest unit tests (@josephschorr)
-- **PR #3480** (2026-11-10): chore: roll changelog (@tstirrat15)
+- **PR #3517** (2026-11-20): feat: batched streaming responses for LookupResources (@ostafen)
+- **PR #3513** (2026-11-20): fix(watch): emit schema Watch events from the unified stored schema in read-new modes (@vroldanbet)
+- **PR #3509** (2026-11-18): fix(graph): give each LookupResources3 producer its own caveat runner (@ostafen)
+- **PR #3508** (2026-11-18): refactor(dispatch): stop recovering panics from external strategies (@ostafen)
+- **PR #3507** (2026-11-18): fix(docker): update grpc_health_probe to v0.4.63 for CVE-2026-97054 (@ostafen)
+- **PR #3506** (2026-11-18): feat(dispatch): let programs that embed SpiceDB add secondary dispatch strategies (@ostafen)
 
 ---
 
@@ -1515,13 +1505,13 @@ listeners.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd): add --grpc-max-conn-age-grace
+## X. watch): emit schema Watch events from the unified stored schema in read-new mode
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7612192d`: cmd): add --grpc-max-conn-age-grace. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4598c884`: watch): emit schema Watch events from the unified stored schema in read-new modes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1529,7 +1519,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Server: `--grpc-max-conn-age-grace`, `--readonly-grpc-max-conn-age-grace` and `--dispatch-cluster-max-conn-age-grace` set how long each listener waits after sending a GOAWAY before it closes the connection. Without a grace limit, a connection with a long-running stream such as Watch stays open indefinitely after its max age, keeping its load on one node behind an L4 load balancer. 0, the default, keeps the current behavior. (https://github.com/authzed/spicedb/pull/3499)
+- Watch: with `--experimental-schema-mode` set to `read-new-write-new`, writing a schema now produces a Watch schema event. Schema events were always built from the legacy namespace and caveat tables, which that mode does not write, so schema changes were never reported. With `read-new-write-both` and `read-new-write-new`, schema events are now built from the single-store schema. The default legacy schema mode is unchanged, and MySQL still does not support watching schema. Spanner: a new migration, `add-schema-revision-to-change-stream`, adds the `schema_revision` table to the change stream, and a Watch with checkpoints no longer emits a checkpoint for a transaction that wrote to several tables before that transaction's changes. (https://github.com/authzed/spicedb/pull/3513)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1539,7 +1529,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7612192d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4598c884` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "c9e95eba",
+    "sourceVersion": "65181da3",
     "license": "Apache-2.0",
-    "contentHash": "30ad716224ae04b65a90cb05db485aafa1cd460f31be3f88d8cccdab4d87427f",
-    "lastHarvestedAt": "2026-11-19T16:33:26.209Z",
+    "contentHash": "52a9825a0ebc28a7bbbdad0565efd97db4541c3f236da99134933c653b4a0296",
+    "lastHarvestedAt": "2026-11-20T19:44:40.324Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "b1d47824",
+    "sourceVersion": "0dca809a",
     "license": "MIT",
-    "contentHash": "047d377ecf27b8975c2ff6c69e72210a092c6648ae646f4b0670a5b973038fbb",
-    "lastHarvestedAt": "2026-11-19T23:15:43.133Z",
+    "contentHash": "9abb39bc8549c027dcba17c609e267bacb5647f8e65e166e9c0066ffc35f5861",
+    "lastHarvestedAt": "2026-11-20T19:44:42.528Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "b10159ea",
+    "sourceVersion": "c6df43e3",
     "license": "Apache-2.0",
-    "contentHash": "9611920fcfd73b22a60ac0575fe627c1aa82f119d871b44916eca154381b0770",
-    "lastHarvestedAt": "2026-11-19T15:16:43.821Z",
+    "contentHash": "5942268cfa183239f3366376e2275834536a0cead8f9529fa018c0ee012dfe11",
+    "lastHarvestedAt": "2026-11-20T19:44:45.713Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
@@ -9573,10 +9573,10 @@
     "repository": "nodejs/undici",
     "platform": "github",
     "sourceUrl": "https://github.com/nodejs/undici",
-    "sourceVersion": "02c4f8c6",
+    "sourceVersion": "322a7eed",
     "license": "MIT",
-    "contentHash": "beca9c504d3f8df08ae52a1cf2c5103fc1d56814f4cc3117c01cddad8d55aab8",
-    "lastHarvestedAt": "2026-11-16T22:34:14.008Z",
+    "contentHash": "8bd7834eae9de3adeef2d08c7395861cbc9e344491e0759d177e1a2751123171",
+    "lastHarvestedAt": "2026-11-20T19:44:35.220Z",
     "learningId": "learn-github-nodejs-undici"
   },
   "jordansinger-swiftui-kit": {

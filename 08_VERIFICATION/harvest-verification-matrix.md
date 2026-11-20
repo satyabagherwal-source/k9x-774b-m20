@@ -11615,3 +11615,8 @@
 | `CYCLE-20261120-C6GL` | `2026-11-20T19:25:02.517Z` | `sindresorhus/got` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9625` | Yes (`a5d3b1a6...`) |
 | `CYCLE-20261120-C8XP` | `2026-11-20T19:25:05.725Z` | `StikDebug/StikDebug` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9626` | Yes (`f2ad2cac...`) |
 | `CYCLE-20261120-CE6R` | `2026-11-20T19:25:12.531Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9627` | Yes (`e9047d39...`) |
+| `CYCLE-20261120-1BBJ` | `2026-11-20T19:44:35.215Z` | `nodejs/undici` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9628` | Yes (`8bd7834e...`) |
+| `CYCLE-20261120-1F9C` | `2026-11-20T19:44:40.320Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9629` | Yes (`52a9825a...`) |
+| `CYCLE-20261120-1GYK` | `2026-11-20T19:44:42.524Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9630` | Yes (`9abb39bc...`) |
+| `CYCLE-20261120-1JF1` | `2026-11-20T19:44:45.709Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9631` | Yes (`5942268c...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T19:45:18.387Z` | `authzed-spicedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-9FB3B7EB` [Domain I] | Yes (`edee7eab...`) |

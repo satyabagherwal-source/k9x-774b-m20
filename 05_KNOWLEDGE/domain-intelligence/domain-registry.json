@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T19:25:18.311Z",
-  "total_records": 2167,
+  "last_updated": "2026-11-20T19:45:19.826Z",
+  "total_records": 2170,
   "domains": {
     "A": {
       "total": 17,
@@ -1912,7 +1912,7 @@
       ]
     },
     "I": {
-      "total": 112,
+      "total": 115,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2025,7 +2025,10 @@
         "domain_intelligence-content-information-intelligence-vcaesar-riot-learnings-core-invariants",
         "DOM-I-74EC8661",
         "domain_intelligence-content-information-intelligence-golutra-golutra-core-invariants",
-        "domain_intelligence-content-information-intelligence-golutra-golutra-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-golutra-golutra-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-authzed-spicedb-core-invariants",
+        "DOM-I-9FB3B7EB",
+        "domain_intelligence-content-information-intelligence-authzed-spicedb-learnings-core-invariants"
       ]
     },
     "J": {
@@ -10208,8 +10211,8 @@
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "repository": "t8y2/dbx",
-      "content_hash": "0e8451c21dc3a411d45dc2717a4c56f1d293f63fc12f1336b74fa0e44fb051f8",
-      "created_at": "2026-11-19T15:16:44.196Z"
+      "content_hash": "1050e0df6618d03c174399a8d193ad88f2991740fbea2cf8caf0117e50daa19d",
+      "created_at": "2026-11-20T19:44:46.071Z"
     },
     "DOM-D-218A5260": {
       "record_id": "DOM-D-218A5260",
@@ -15516,8 +15519,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "28ef055748c1a4b60496559d1fe5cdd1f85859dd68f76b4775c5f92327f57789",
-      "created_at": "2026-11-19T23:15:43.326Z"
+      "content_hash": "bd5f6c5af1d296dc7bcd548938e82fb9631b58807cb6b88e1daa13634fba7df4",
+      "created_at": "2026-11-20T19:44:42.895Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -20065,8 +20068,8 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-learnings-architecture-intelligence-projectdiscovery-nuc.md",
       "repository": "projectdiscovery-nuclei-learnings",
-      "content_hash": "ae9d86b10c1e4710626235f848ac163a653a82972b349298b83dd8d884910f26",
-      "created_at": "2026-11-19T23:16:17.232Z"
+      "content_hash": "0f834e5779e93abf6a371e7278bd1ef93da1e3936c6898f940b924bb3c687066",
+      "created_at": "2026-11-20T19:45:19.826Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants",
@@ -24863,8 +24866,8 @@
       "title": "Technical Construction Intelligence: nodejs/undici Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nodejs-undici-technical-construction-intelligence-nodejs-undici-core-invariants.md",
       "repository": "nodejs/undici",
-      "content_hash": "1069864e785ebb390dbc32a371b8d569f0adfa903adbe90446fad0b30fdf5991",
-      "created_at": "2026-11-16T22:34:14.392Z"
+      "content_hash": "eebfd7cf08f32b4b924c28fffc8d28ed3830698fa856826625315761fe408196",
+      "created_at": "2026-11-20T19:44:35.572Z"
     },
     "domain_intelligence-technical-construction-intelligence-nodejs-undici-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nodejs-undici-learnings-core-invariants",
@@ -24872,8 +24875,8 @@
       "title": "Technical Construction Intelligence: nodejs-undici-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nodejs-undici-learnings-technical-construction-intelligence-nodejs-undici-learni.md",
       "repository": "nodejs-undici-learnings",
-      "content_hash": "b93f7d152cba25850eb21aa0a3337217054dc54640906fd54afa004587237b65",
-      "created_at": "2026-11-16T22:34:20.640Z"
+      "content_hash": "848739b2aa668040e8545d7cece090a12df5448ae3ce9b177edd95268dcd5e5d",
+      "created_at": "2026-11-20T19:44:49.585Z"
     },
     "domain_intelligence-technical-construction-intelligence-axios-axios-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-axios-axios-core-invariants",
@@ -36472,6 +36475,66 @@
       "repository": "stikdebug-stikdebug-learnings",
       "content_hash": "f4cc18270c7bc193b828033ca35cab1706237621e5fdbda7f8c74a1302ce2dfa",
       "created_at": "2026-11-20T19:25:17.609Z"
+    },
+    "domain_intelligence-content-information-intelligence-authzed-spicedb-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-authzed-spicedb-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: authzed/spicedb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-authzed-spicedb-content-information-intelligence-authzed-spicedb-core-invariants.md",
+      "repository": "authzed/spicedb",
+      "content_hash": "c6b8fac4c8be470e57124d8f188ee2497ba14f934f9baf686d165bf1cd8fdfeb",
+      "created_at": "2026-11-20T19:44:40.673Z"
+    },
+    "DOM-I-9FB3B7EB": {
+      "record_id": "DOM-I-9FB3B7EB",
+      "domain_letter": "I",
+      "domain_id": "content_information",
+      "domain_name": "Content & Information Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "I",
+          "id": "content_information",
+          "name": "Content & Information Intelligence"
+        }
+      ],
+      "title": "watch): emit schema Watch events from the unified stored schema in read-new mode",
+      "content": "When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "edee7eab27ca75e7e82bf25abe4738bbdf781f2058e0de15b716f057567b768b",
+      "summary": "Prevents defects observed in production commit `4598c884`: watch): emit schema Watch events from the unified stored schema in read-new modes -> When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/conc",
+      "provenance": {
+        "source_uri": "project://authzed-spicedb/authzed-spicedb-learnings.md",
+        "source_version": "65181da3",
+        "observed_at": "2026-11-20T19:44:39.307Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (authzed-spicedb)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of authzed-spicedb"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "I"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T19:45:18.355Z"
+    },
+    "domain_intelligence-content-information-intelligence-authzed-spicedb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-authzed-spicedb-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: authzed-spicedb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-authzed-spicedb-learnings-content-information-intelligence-authzed-spicedb-learn.md",
+      "repository": "authzed-spicedb-learnings",
+      "content_hash": "e22e66ae95bee9b35f5d24173d04f9a61cd624677a8f8268779454c5fbc4a399",
+      "created_at": "2026-11-20T19:45:18.988Z"
     }
   }
 }

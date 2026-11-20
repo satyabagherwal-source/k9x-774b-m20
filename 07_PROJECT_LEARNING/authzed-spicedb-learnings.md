@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source**: github ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
-> **Source Version**: `c9e95eba`  
+> **Source Version**: `65181da3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T16:33:25.194Z  
+> **Timestamp**: 2026-11-20T19:44:39.307Z  
 > **Learning ID**: `learn-github-authzed-spicedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T16:33:25.189Z  
+> **Harvest Timestamp**: 2026-11-20T19:44:39.302Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7230 stars
+- **Stars / Engagement**: 7233 stars
 
 ---
 
@@ -1086,13 +1086,11 @@ func inputMessagesForService[S any](
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3509** (2026-11-18): **fix(graph): give each LookupResources3 producer its own caveat runner**
-  *Symptoms*: ## Problem  LookupResources3 creates one `CaveatRunner` per request and stores it in `lr3refs`. The producers of `relationshipsIter` run concurrently, and each one calls `RunCaveatExpression` on that shared runner. `CaveatRunner` caches caveat definitions and compiled caveats in plain maps, so it isn't safe for concurrent use.  When a lookup reaches caveated relationships through more than one entrypoint (for example `permission view = viewer + editor` with both relations caveated), those maps are written concurrently. Under load this aborts the process with `fatal error: concurrent map writes`, which can't be recovered. It happens with or without caveat context in the request, because caveats are evaluated either way to compute missing context.  With a dispatch concurrency limit of 1 the producers don't overlap, which is why serial configurations and the existing tests don't show it.  ## Fix  Create the caveat runner inside each producer, as LookupResources2 already does. Compiled caveats are still shared through the schema-tied compiled caveat cache (`CompiledCaveatCacheFor`), so the extra cost is two small maps per producer. The now-unused `caveatRunner` field is removed from `lr3refs`.  ## Testing  - New `TestLookupResources3OverSchemaWithCursors` case, "caveats evaluated by concurrent producers": three relations, each with its own caveat, unioned into one permission.   - Without the fix: 16 `DATA RACE` reports under `go test -race -count=3`.   - With the fix: passes clea
+- **Issue #3517** (2026-11-20): **feat: batched streaming responses for LookupResources**
+  *Symptoms*: ## What  Adds `optional_response_batch_size` to `LookupResources`: pack multiple resources into a single `LookupResourcesResponse.batched` message (a `LookupResourcesBatch` — repeated results plus one `after_cursor` for the whole batch), instead of one message, and one resume cursor, per resource.  `batch_size == 0` preserves the current one-resource-per-message behavior (backward compatible). The effective batch size is clamped to a new server flag `MaxLookupResourcesResponseBatchSize` (default 1000) rather than a fixed proto cap.  Also defaults `--experimental-lookup-resources-version` to `lr3`.  ## Why  For high-cardinality `LookupResources`, one gRPC message and one cursor token per resource dominates the cost (per-message framing + repeated cursor payload). Batching cuts both — most impactful for large reverse-reachability lookups and the Materialize/accelerated path.  ## Dependency chain  - `authzed/api#176` — proto: `LookupResourcesResponse.batched` + `LookupResourcesRequest.optional_response_batch_size` (merged) - `authzed/authzed-go#436` — regenerated client (merged); pinned here at `380614b`  ## Testing  - Unit tests in `internal/services/v1/permissions_test.go` covering batched streaming. - `go build ./...` passes against the pinned client.  ## Build / toolchain cascade  The pinned `authzed-go@380614b` declares `go 1.27.4`, which raises this module's `go` directive to `1.27.4`. To keep the whole build consistent (CI runs with `GOTOOLCHAIN=local`):  - `Dockerfile` b
 
-- **Issue #3508** (2026-11-18): **refactor(dispatch): stop recovering panics from external strategies**
-  *Symptoms*: ## Summary  Follow-up to #3506. It removes the panic recovery around external secondary dispatch strategies, which was raised in review after #3506 merged.  #3506 recovered panics from strategies registered by a program that embeds SpiceDB, logged them, and counted them in `remote_dispatch_external_strategy_panics_total`. That was the only `recover()` in SpiceDB's non-test code under `internal/` and `pkg/`, and the server has no panic-recovery middleware. Everywhere else, including the built-in strategies running in the same goroutines, a panic is a bug and crashes the process. That also avoids carrying on with a policy left half-updated.  The case that motivated the recovery, a `Function` without a `Strategy`, is already rejected at startup by the registration checks from #3506, which stay. An embedder that wants extra protection can still recover inside its own strategy.  ## Changes  - `strategy_external.go`: the adapter calls the external policy directly. This removes `recoverCallback`, `reportExternalPanic` and `primaryOnlyPolicy`. - `metrics.go`: removes `remote_dispatch_external_strategy_panics_total`. It was never released. - `strategy_external_test.go`: removes `TestExternalStrategyPanicsAreContained`. - `pkg/dispatch/secondary`: documents that panics in a `Strategy` or `Policy` are not recovered. The README drops the recovery and the metric.  No CHANGELOG entry: neither the recovery nor the metric has been released.  `go test ./internal/dispatch/... ./pkg/dispatch/..
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/authzed/spicedb/pull/3508?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) Report :white_check_mark: All modified and coverable lines are covered by tests.  :loudspeaker: Thoughts on this report? [Let us know!](https://github.com/codecov/feedback/issues/255)
+- **Issue #3513** (2026-11-20): **fix(watch): emit schema Watch events from the unified stored schema in read-new modes**
+  *Symptoms*: ## Summary  Writing a schema in `--experimental-schema-mode=read-new-write-new` produced no Watch event, so anything watching for schema changes stopped getting them. In `read-new-write-both`, events arrived, but were built from the legacy tables rather than from the storage that mode reads.  Every datastore built schema Watch events from the legacy namespace and caveat tables, whatever the schema mode. This PR makes the shared datastore tests catch that, and fixes it.  ## Fix  - **Datastores** accept a new `WatchStoredSchema` watch content. For it, they report only that the unified stored schema was written at a revision (`RevisionChanges.StoredSchemaChanged`), not what changed. - **`DataLayer.Watch`** asks for `WatchStoredSchema` in place of `WatchSchema` when the schema mode reads from the unified stored schema. It then compares the stored schema at each reported revision with the one before it, and fills in `ChangedDefinitions`, `DeletedNamespaces` and `DeletedCaveats`. Callers see the same events as before. Legacy read modes pass straight through to the datastore, unchanged.  Per datastore:  | Datastore | How a stored schema write is detected | |---|---| | memdb | changes to the schema table are recorded in the changelog | | Postgres | rows of `schema_revision` created in the watched transaction range | | CockroachDB | `schema_revision` is added to the changefeed | | Spanner | `schema_revision` is added to the change stream (new migration) | | MySQL | not supported, as w
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1109,560 +1107,360 @@ func inputMessagesForService[S any](
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9e95eba` (2026-11-18)
-**Commit Message**: chore: fix test panic (#3503)
+### Incident Patch 1: `4598c884` (2026-11-20)
+**Commit Message**: fix(watch): emit schema Watch events from the unified stored schema in read-new modes (#3513)
 
-**File**: `internal/datastore/memdb/memdb.go` (modified, +4/-4)
-```diff
-@@ -134,15 +134,15 @@ func (mdb *memdbDatastore) SnapshotReader(dr datastore.Revision) datastore.Reade
- 	defer mdb.RUnlock()
- 
- 	if err := mdb.checkNotClosed(); err != nil {
--		return &memdbReader{nil, nil, err, time.Now()}
-+		return newErrorReader(err)
- 	}
- 
- 	if len(mdb.revisions) == 0 {
--		return &memdbReader{nil, nil, errors.New("memdb datastore is not ready"), time.Now()}
-+		return newErrorReader(errors.New("memdb datastore is not ready"))
- 	}
- 
- 	if err := mdb.checkRevisionLocalCallerMustLock(dr); err != nil {
--		return &memdbReader{nil, nil, err, time.Now()}
-+		return newErrorReader(err)
- 	}
- 
- 	// sort.Search finds the first snapshot newer than the requested revision,
-@@ -160,7 +160,7 @@ func (mdb *memdbDatastore) SnapshotReader(dr datastore.Revision) datastore.Reade
- 
- 	rev := mdb.revisions[revIndex]
- 	if rev.db == nil {
--		return &memdbReader{nil, nil, errors.New("memdb datastore is already closed"), time.Now()}
-+		return newErrorReader(errors.New("memdb datastore is already closed"))
- 	}
- 
- 	roTxn := rev.db.Txn(false)
-```
+* test: run the shared schema watch tests in all four schema modes
 
-**File**: `internal/datastore/memdb/memdb_test.go` (modified, +68/-3)
-```diff
-@@ -144,7 +144,72 @@ func TestAnythingAfterCloseDoesNotPanic(t *testing.T) {
- 	_, err = ds.OptimizedRevision(t.Context())
- 	require.ErrorIs(err, ErrMemDBIsClosed)
- 
--	reader := ds.SnapshotReader(datastore.NoRevision)
--	_, err = reader.CountRelationships(t.Context(), "blah")
--	require.ErrorIs(err, ErrMemDBIsClosed)
-+	requireAllReaderMethodsFail(t, ds.SnapshotReader(datastore.NoRevision), ErrMemDBIsClosed)
-+}
-+
-+// TestErrorReaderDoesNotPanic covers the readers SnapshotReader returns when it
-+// cannot read the requested revision. Each method must return the error instead
-+// of panicking.
-+func TestErrorReaderDoesNotPanic(t *testing.T) {
-+	sentinel := errors.New("sentinel")
-+	requireAllReaderMethodsFail(t, newErrorReader(sentinel), sentinel)
-+}
-+
-+func requireAllReaderMethodsFail(t *testing.T, reader datastore.Reader, expected error) {
-+	t.Helper()
-+
-+	calls := map[string]func(ctx context.Context) error{
-+		"CountRelationships": func(ctx context.Context) error {
-+			_, err := reader.CountRelationships(ctx, "blah")
-+			return err
-+		},
-+		"LookupCounters": func(ctx context.Context) error {
-+			_, err := reader.LookupCounters(ctx)
-+			return err
-+		},
-+		"ReadStoredSchema": func(ctx context.Context) error {
-+			_, err := reader.ReadStoredSchema(ctx)
-+			return err
-+		},
-+		"QueryRelationships": func(ctx context.Context) error {
-+			_, err := reader.QueryRelationships(ctx, datastore.RelationshipsFilter{OptionalResourceType: "document"})
-+			return err
-+		},
-+		"ReverseQueryRelationships": func(ctx context.Context) error {
-+			_, err := reader.ReverseQueryRelationships(ctx, datastore.SubjectsFilter{SubjectType: "user"})
-+			return err
-+		},
-+		"LegacyReadNamespaceByName": func(ctx context.Context) error {
-+			_, _, err := reader.LegacyReadNamespaceByName(ctx, "document")
-+			return err
-+		},
-+		"LegacyListAllNamespaces": func(ctx context.Context) error {
-+			_, err := reader.LegacyListAllNamespaces(ctx)
-+			return err
-+		},
-+		"LegacyLookupNamespacesWithNames": func(ctx context.Context) error {
-+			_, err := reader.LegacyLookupNamespacesWithNames(ctx, []string{"document"})
-+			return err
-+		},
-+		"LegacyReadCaveatByName": func(ctx context.Context) error {
-+			_, _, err := reader.LegacyReadCaveatByName(ctx, "somecaveat")
-+			return err
-+		},
-+		"LegacyListAllCaveats": func(ctx context.Context) error {
-+			_, err := reader.LegacyListAllCaveats(ctx)
-+			return err
-+		},
-+		"LegacyLookupCaveatsWithNames": func(ctx context.Context) error {
-+			_, err := reader.LegacyLookupCaveatsWithNames(ctx, []string{"somecaveat"})
-+			return err
-+		},
-+	}
-+
-+	for name, call := range calls {
-+		t.Run(name, func(t *testing.T) {
-+			var err error
-+			require.NotPanics(t, func() { err = call(t.Context()) })
-+			require.ErrorIs(t, err, expected)
-+		})
-+	}
- }
-```
+Writing a schema should always produce a Watch event. In read-new-write-new
+mode it produces none: SpiceDB saves the schema in a newer format, but the
+datastores still read only the older one when building Watch events. Anything
+watching for schema changes goes quiet.
 
-**File**: `internal/datastore/memdb/readonly.go` (modified, +12/-0)
-```diff
-@@ -27,6 +27,18 @@ type memdbReader struct {
- 	now      time.Time
- }
- 
-+// newErrorReader returns a reader on which every operation fails with err.
-+// Its txSource returns err and it uses a no-op locker, so a method that skips
-+// its initErr check still returns err instead of panicking on a nil locker.
-+func newErrorReader(err error) *memdbReader {
-+	return &memdbReader{
-+		TryLocker: noopTryLocker{},
-+		txSource:  func() (*memdb.Txn, error) { return nil, err },
-+		initErr:   err,
-+		now:       time.Now(),
-+	}
-+}
-+
- func (r *memdbReader) CountRelationships(ctx context.Context, name string) (int, error) {
- 	counters, err := r.LookupCounters(ctx)
- 	if err != nil {
-```
+The three schema tests in the shared datastore suite couldn't catch this
+because they saved schemas through the old API directly, which never looks at
+the mode setting. They now save schemas the way a running server does, in all
+four modes.
 
----
+The old API took one change at a time; the new one takes the whole schema and
+works out what changed. A helper tracks the full schema and rewrites all of it
+on each step. Two things that needed:
 
-### Incident Patch 2: `14a50ec2` (2026-11-18)
-**Commit Message**: refactor(dispatch): stop recovering panics from external strategies (#3508)
+  - one write of the setup schema before the watch starts, or the next write
+    looks like every definition was just created
+  - caveats that actually parse, because the ones the tests used didn't and
+    the new path rejects them
 
-#3506 recovered panics from strategies registered by a program that
-embeds SpiceDB, logging them and counting them in
-remote_dispatch_external_strategy_panics_total. That was the only
-recover() in SpiceDB's non-test code: everywhere else, built-in
-strategies included, a panic is a bug and crashes the process, which
-also avoids carrying on with a policy left in an inconsistent state.
-
-The concrete case that motivated it, a Function without a Strategy, is
-rejected at startup by the registration checks, which stay. Remove the
-recovery, its metric and test, and document that panics are not
-recovered.
-
-**File**: `internal/dispatch/remote/README.md` (modified, +1/-5)
-```diff
-@@ -122,9 +122,7 @@ Programs that embed SpiceDB add strategies without changing this package, throug
- Registration is checked at startup: a function without a `Strategy`, a name that is not callable
- from CEL (not an identifier, or a reserved word), a name that already names a function (a
- built-in strategy, a CEL function such as `duration`, or another registered one), and a call from
--a request kind not in `Methods` all fail startup. A panic in the strategy's code is recovered,
--logged and counted in `remote_dispatch_external_strategy_panics_total`; it fails that participant
--or race, not the process. External strategies run on the same engine as the
-+a request kind not in `Methods` all fail startup. External strategies run on the same engine as the
- built-in ones, through an adapter ([strategy_external.go](strategy_external.go)) that the
- built-in strategies don't go through. Their races are counted in
- `remote_dispatch_secondary_strategy_total` under the function's name.
-@@ -144,8 +142,6 @@ All are prefixed with `spicedb_dispatch_`:
-   and went to the primary only.
- - `remote_dispatch_hedge_wait_duration_seconds` and `..._hedge_actual_wait_duration_seconds`:
-   computed and actual primary wait, `hedged` only.
--- `remote_dispatch_external_strategy_panics_total{strategy}`: panics recovered from external
--  strategies (see [External strategies](#external-strategies)).
- 
- For example:
- 
-```
-
-**File**: `internal/dispatch/remote/metrics.go` (modified, +0/-10)
-```diff
-@@ -68,17 +68,7 @@ var exprEvalErrorsCounter = prometheus.NewCounterVec(prometheus.CounterOpts{
- 	Help:      "number of dispatches whose secondary dispatch expression failed to evaluate; they are sent to the primary only",
- }, []string{"rpc"})
- 
--// externalStrategyPanicsCounter counts panics recovered from strategies registered by a program
--// that embeds SpiceDB, by the strategy function's name, which comes from configuration.
--var externalStrategyPanicsCounter = prometheus.NewCounterVec(prometheus.CounterOpts{
--	Namespace: "spicedb",
--	Subsystem: "dispatch",
--	Name:      "remote_dispatch_external_strategy_panics_total",
--	Help:      "number of panics recovered from secondary dispatch strategies registered by a program that embeds SpiceDB; each failed one participant or race instead of the process",
--}, []string{"strategy"})
--
- func init() {
--	prometheus.MustRegister(externalStrategyPanicsCounter)
- 	prometheus.MustRegister(dispatchCounter)
- 	prometheus.MustRegister(hedgeWaitHistogram)
- 	prometheus.MustRegister(hedgeActualWaitHistogram)
-```
-
-**File**: `internal/dispatch/remote/strategy_external.go` (modified, +3/-51)
-```diff
-@@ -2,14 +2,12 @@ package remote
- 
- import (
- 	"context"
--	"runtime/debug"
- 	"time"
- 
- 	"github.com/authzed/cel-go/cel"
- 	"github.com/authzed/cel-go/common/types"
- 	"github.com/authzed/cel-go/common/types/ref"
- 
--	log "github.com/authzed/spicedb/internal/logging"
- 	"github.com/authzed/spicedb/pkg/dispatch/secondary"
- )
- 
-@@ -48,22 +46,13 @@ type externalStrategy struct {
- 
- func (s externalStrategy) name() string { return s.function }
- 
--// newPolicy creates the external policy for a race. If the strategy panics, the race runs the
--// primary only.
--func (s externalStrategy) newPolicy(r raceRequest) (policy racePolicy) {
--	defer func() {
--		if recovered := recover(); recovered != nil {
--			reportExternalPanic(s.function, "NewPolicy", recovered)
--			policy = primaryOnlyPolicy{}
--		}
--	}()
--
-+func (s externalStrategy) newPolicy(r raceRequest) racePolicy {
- 	participants := make([]secondary.Participant, len(r.participants))
- 	for i, p := range r.participants {
- 		participants[i] = publicParticipant(p)
- 	}
- 
--	adapted := externalPolicy{function: s.function, policy: s.strategy.NewPolicy(secondary.Race{
-+	adapted := externalPolicy{policy: s.strategy.NewPolicy(secondary.Race{
- 		Method:       r.reqKey,
- 		Request:      r.request,
- 		Participants: participants,
-@@ -81,36 +70,25 @@ func publicParticipant(p participant) secondary.Participant {
- }
- 
- // externalPolicy adapts a secondary.Policy to the engine's racePolicy.
--//
--// The policy is code of the program that embeds SpiceDB, called from participant goroutines that
--// nothing else recovers. So that a bug in it fails a dispatch instead of the process, every call
--// recovers from a panic: it is logged and counted, and the call is taken as the safest answer
--// (the participant does not start, does not claim the race, or the engine's default error is
--// returned).
- type externalPolicy struct {
--	function string
--	policy   secondary.Policy
-+	policy secondary.Policy
- }
- 
- func (e externalPolicy) start(ctx context.Context, p participant) bool {
--	defer e.recoverCallback("Start")
- 	return e.policy.Start(ctx, publicParticipant(p))
- }
- 
- func (e externalPolicy) readyToClaim(ctx context.Context, p participant, received int, complete bool) bool {
--	defer e.recoverCallback("ReadyToClaim")
- 	return e.policy.ReadyToClaim(ctx, publicParticipant(p), received, complete)
- }
- 
- func (externalPolicy) firstResult(participant, time.Duration) {}
- 
- func (e externalPolicy) done(p participant, err error) {
--	defer e.recoverCallback("Done")
- 	e.policy.Done(publicParticipant(p), err)
- }
- 
- func (e externalPolicy) noWinnerError(errs map[string]error) error {
--	defer e.recoverCallback("NoWinnerError")
- 	return e.policy.NoWinnerError(errs)
- }
- 
-@@ -121,31 +99,5 @@ type observingExternalPolicy struct {
- }
- 
- func (o observingExternalPolicy) observe(p participant, result any) {
--	defer o.recoverCallback("ObserveResult")
- 	o.observer.ObserveResult(publicParticipant(p), result)
- }
--
--// recoverCallback recovers from a panic in a policy callback, which then returns its results'
--// zero values. It must be deferred directly.
--func (e externalPolicy) recoverCallback(callback string) {
--	if recovered := recover(); recovered != nil {
--		reportExternalPanic(e.function, callback, recovered)
--	}
--}
--
--func reportExternalPanic(function, callback string, recovered any) {
--	externalStrategyPanicsCounter.WithLabelValues(function).Inc()
--	log.Error().
--		Str("strategy", function).
--		Str("callback", callback).
--		Interface("panic", recovered).
--		Bytes("stack", debug.Stack()).
--		Msg("secondary dispatch strategy panicked; failing the participant instead of the process")
--}
--
--// primaryOnlyPolicy runs the primary only: it replaces a policy the strategy failed to create.
--type primaryOnlyPolicy struct {
--	basePolicy
--}
--
--func (primaryOnlyPolicy) start(_ context.Context, p participant) bool { return p.primary }
-```
-
-**File**: `internal/dispatch/remote/strategy_external_test.go` (modified, +0/-75)
-```diff
-@@ -227,78 +227,3 @@ func TestExternalPolicyDelegatesNoWinnerError(t *testing.T) {
- 	adapted.firstResult(testSecondary, time.Millisecond) // external policies are not told latencies
- 	require.ErrorIs(t, adapted.noWinnerError(map[string]error{primaryDispatcher: errors.New("primary failed")}), want)
- }
--
--// panickingStrategy panics in the callbacks it is told to.
--type panickingStrategy struct {
--	inNewPolicy, inObserve, inPrimaryClaim bool
--}
--
--func (s panickingStrategy) NewPolicy(secondary.Race) secondary.Policy {
--	if s.inNewPolicy {
--		panic("NewPolicy failed")
--	}
--	return panickingPolicy{strategy: s}
--}
--
--type panickingPolicy struct {
--	secondary.BasePolicy
--	strategy panickingStrategy
--}
--
--func (p panickingPolicy) ObserveResult(secondary.Participant, any) {
--	if p.strategy.inObserve {
--		panic("ObserveResult failed")
--	}
--}
--
--func (p panickingPolicy) ReadyToClaim(ctx context.Context, pt secondary.Participant, received int, complete bool) bool {
--	if pt.Primary && p.strategy.inPrimaryClaim {
--		panic("ReadyToClaim failed")
--	}
--	// Only the primary may win, so the outcome does not depend on scheduling.
--	return pt.Primary && p.BasePolicy.ReadyToClaim(ctx, pt, received, complete)
--}
--
--func TestExternalStrategyPanicsAreContained(t *testing.T) {
--	tests := []struct {
--		name     string
--		strategy panickingStrategy
--		wantErr  bool
--	}{
--		{name: "NewPolicy: the race runs the primary only", strategy: panickingStrategy{inNewPolicy: true}},
--		{name: "ObserveResult: the result is still used", strategy: panickingStrategy{inObserve: true}},
--		{name: "ReadyToClaim: the participant does not win", strategy: panickingStrategy{inPrimaryClaim: true}, wantErr: true},
--	}
--
--	for _, tc := range tests {
--		t.Run(tc.name, func(t *testing.T) {
--			synctest.Test(t, func(t *testing.T) {
--				primary := &gatedCheckClient{resp: &v1.DispatchCheckResponse{Metadata: &v1.ResponseMeta{DispatchCount: fromPrimary}}}
--				secondaryClient := &gatedCheckClient{resp: &v1.DispatchCheckResponse{Metadata: &v1.ResponseMeta{DispatchCount: fromSecondary}}}
--				parsed, err := ParseDispatchExpression("check", "panicking(['secondary'])",
--					secondary.Function{Name: "panicking", Strategy: tc.strategy})
--				require.NoError(t, err)
--				d, err := NewClusterDispatcher(primary, nil, ClusterDispatcherConfig{
--					DispatchOverallTimeout: time.Hour,
--					SecondaryDispatch: map[string]SecondaryDispatch{
--						"secondary": {Name: "secondary", Client: secondaryClient, MaximumPrimaryHedgingDelay: time.Millisecond},
--					},
--					SecondaryDispatchExprs:      map[string]*DispatchExpr{"check": parsed},
--					StartingPrimaryHedgingDelay: time.Millisecond,
--				})
--				require.NoError(t, err)
--				panics := testutil.ToFloat64(externalStrategyPanicsCounter.WithLabelValues("panicking"))
--
--				resp, err := d.DispatchCheck(t.Context(), testCheckRequest())
--				synctest.Wait() // a losing participant's callbacks may still be running
--				if tc.wantErr {
--					require.Error(t, err)
--				} else {
--					require.NoError(t, err)
--					require.Equal(t, fromPrimary, resp.Metadata.DispatchCount)
--				}
--				require.Greater(t, testutil.ToFloat64(externalStrategyPanicsCounter.WithLabelValues("panicking")), panics)
--			})
--		})
--	}
--}
-```
-
-**File**: `pkg/dispatch/secondary/secondary.go` (modified, +2/-3)
-```diff
-@@ -74,9 +74,8 @@ type Participant struct {
- // participants' goroutines, so implementations must be safe for concurrent use. Embed BasePolicy
- // to keep the default decisions.
- //
--// A panic in NewPolicy or in a Policy method is recovered, logged and counted in
--// remote_dispatch_external_strategy_panics_total: the race then runs the primary only, or the
--// participant does not start or claim the race, or the engine's default error is returned.
-+// As elsewhere in SpiceDB, a panic in a Strategy or Policy is not recovered: it crashes the
-+// process.
- type Policy interface {
- 	// Start blocks until p may start, and must return promptly once ctx is done. Returning false
- 	// means p never runs.
-```
-
----
-
-### Incident Patch 3: `ec377f15` (2026-11-18)
-**Commit Message**: fix(graph): give each LookupResources3 producer its own caveat runner (#3509)
-
-* fix(graph): give each LookupResources3 producer its own caveat runner
-
-LookupResources3 created one CaveatRunner per request and shared it, via
-lr3refs, with the relationshipsIter producers, which run concurrently.
-CaveatRunner caches caveat definitions and compiled caveats in plain maps,
-so evaluating caveated relationships on several entrypoints at once raced
-on those maps and could abort the process with "concurrent map writes".
-
-Create the runner inside each producer instead, as LookupResources2 does.
-Compiled caveats remain shared through the schema-tied compiled caveat
-cache, so this only costs two small maps per producer.
-
-Add a LookupResources3 case with three caveated relations unioned into one
-permission; under -race it reports the data race without this change.
-
-Fixes DATA-1099
-
-* chore: changelog
-
----------
-
-Co-authored-by: Tanner Stirrat <[REDACTED_EMAIL]>
+Deletes still behave the same and no assertions changed. One difference:
+deletes no longer remov
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
- - Dispatch and telemetry: CA bundles read from disk via `--dispatch-upstream-ca-path` and the telemetry client's CA path are now re-read on every outbound TLS handshake, so a rotated certificate authority is picked up without a process restart. Previously the CA pool was set once at startup and stayed fixed for the life of the process, causing handshakes to fail with "certificate signed by unknown authority" after the old CA was retired. (https://github.com/authzed/spicedb/pull/3296)
+@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  - Dispatch: LookupResources cursors are now locked to the dispatcher that produced them when secondary dispatchers are configured. Previously a cursor returned by a secondary was never tagged, and LookupResources3 cursors were never checked at all, so every page raced the primary against the secondaries and a cursor produced by one could be sent to the other, failing the request with an invalid cursor error. A cursor without a secondary tag is now resumed by the primary only.
  - Dispatch: when a LookupResources continuation locked to a secondary dispatcher fails, the secondary's error is now returned with its gRPC status, instead of a generic "no dispatcher returned results" error with code Unknown. (https://github.com/authzed/spicedb/pull/3468)
-+- LookupResources v3: fixed an issue with concurrent map writes in the caveat runner by giving each producer its own caveat runner. (https://github.com/authzed/spicedb/pull/3509)
+ - LookupResources v3: fixed an issue with concurrent map writes in the caveat runner by giving each producer its own caveat runner. (https://github.com/authzed/spicedb/pull/3509)
++- Watch: with `--experimental-schema-mode` set to `read-new-write-new`, writing a schema now produces a Watch schema event. Schema events were always built from the legacy namespace and caveat tables, which that mode does not write, so schema changes were never reported. With `read-new-write-both` and `read-new-write-new`, schema events are now built from the single-store schema. The default legacy schema mode is unchanged, and MySQL still does not support watching schema. Spanner: a new migration, `add-schema-revision-to-change-stream`, adds the `schema_revision` table to the change stream, and a Watch with checkpoints no longer emits a checkpoint for a transaction that wrote to several tables before that transaction's changes. (https://github.com/authzed/spicedb/pull/3513)
  
  ## [1.57.1] - 2026-11-10
  ### Fixed
 ```
 
-**File**: `internal/dispatch/graph/lookupresources3_test.go` (modified, +33/-0)
+**File**: `internal/datastore/common/changes.go` (modified, +20/-0)
 ```diff
-@@ -426,6 +426,39 @@ func TestLookupResources3OverSchemaWithCursors(t *testing.T) {
- 			genResourceIds("document", 2450),
- 			[]string{"somecondition"},
- 		},
-+		{
-+			"caveats evaluated by concurrent producers",
-+			`definition user {}
+@@ -42,6 +42,10 @@ type changeRecord[R datastore.Revision] struct {
+ 	namespacesDeleted  map[string]struct{}
+ 	caveatsDeleted     map[string]struct{}
+ 	metadatas          []TransactionMetadata
 +
-+			 caveat firstcaveat(first int) {
-+				first == 1
-+			 }
++	// storedSchemaChanged is a pointer so that it can be set through the copies of the
++	// record handed out by recordForRevision, as with the maps above.
++	storedSchemaChanged *bool
+ }
+ 
+ // NewChanges creates a new Changes object for change tracking and de-duplication.
+@@ -190,6 +194,7 @@ func (ch *Changes[R, K]) recordForRevision(rev R) changeRecord[R] {
+ 			make(map[string]struct{}),
+ 			make(map[string]struct{}),
+ 			make([]TransactionMetadata, 0),
++			new(bool),
+ 		}
+ 		ch.records[k] = revisionChanges
+ 	}
+@@ -303,6 +308,20 @@ func (ch *Changes[R, K]) AddChangedDefinition(
+ 	return nil
+ }
+ 
++// AddStoredSchemaChange adds a change indicating that the unified stored schema was written.
++func (ch *Changes[R, K]) AddStoredSchemaChange(_ context.Context, rev R) error {
++	if ch.content&datastore.WatchStoredSchema != datastore.WatchStoredSchema {
++		return nil
++	}
 +
-+			 caveat secondcaveat(second int) {
-+				second == 2
-+			 }
++	ch.recordsMutex.Lock()
++	defer ch.recordsMutex.Unlock()
 +
-+			 caveat thirdcaveat(third int) {
-+				third == 3
-+			 }
++	record := ch.recordForRevision(rev)
++	*record.storedSchemaChanged = true
++	return nil
++}
 +
-+			 definition document {
-+				relation viewer: user with firstcaveat
-+				relation editor: user with secondcaveat
-+				relation owner: user with thirdcaveat
-+				permission view = viewer + editor + owner
-+			 }`,
-+			joinTuples(
-+				genRelsWithCaveat("document", "viewer", "user", "tom", "firstcaveat", map[string]any{"first": 1}, 0, 500),
-+				genRelsWithCaveat("document", "editor", "user", "tom", "secondcaveat", map[string]any{"second": 2}, 500, 500),
-+				genRelsWithCaveat("document", "owner", "user", "tom", "thirdcaveat", map[string]any{"third": 3}, 1000, 500),
-+			),
-+			RR("document", "view"),
-+			ONR("user", "tom", "..."),
-+			nil,
-+			genResourceIds("document", 1500),
-+			nil,
-+		},
- 		{
- 			"larger arrow dispatch",
- 			`definition user {}
+ // AsRevisionChanges returns the list of changes processed so far as a datastore watch
+ // compatible, ordered, changelist.
+ func (ch *Changes[R, K]) AsRevisionChanges(lessThanFunc func(lhs, rhs K) bool) iter.Seq2[datastore.RevisionChanges, error] {
+@@ -368,6 +387,7 @@ func (ch *Changes[R, K]) revisionChanges(lessThanFunc func(lhs, rhs K) bool, bou
+ 			change.ChangedDefinitions = slices.Collect(maps.Values(revisionChangeRecord.definitionsChanged))
+ 			change.DeletedNamespaces = slices.Collect(maps.Keys(revisionChangeRecord.namespacesDeleted))
+ 			change.DeletedCaveats = slices.Collect(maps.Keys(revisionChangeRecord.caveatsDeleted))
++			change.StoredSchemaChanged = *revisionChangeRecord.storedSchemaChanged
+ 
+ 			if len(revisionChangeRecord.metadatas) > 0 {
+ 				metadatas := make([]*structpb.Struct, 0, len(revisionChangeRecord.metadatas))
 ```
 
-**File**: `internal/graph/lookupresources3.go` (modified, +6/-7)
+**File**: `internal/datastore/crdb/watch.go` (modified, +35/-0)
 ```diff
-@@ -273,13 +273,10 @@ func (crr *CursoredLookupResources3) LookupResources3(req ValidatedLookupResourc
- 		return err
- 	}
- 	ts := schema.NewTypeSystem(schema.ResolverFor(sr))
--	caveatRunner := caveats.NewCaveatRunner(crr.caveatTypeSet)
--
- 	refs := lr3refs{
- 		req:              req,
- 		reader:           reader,
- 		ts:               ts,
--		caveatRunner:     caveatRunner,
- 		concurrencyLimit: crr.concurrencyLimit,
- 	}
+@@ -37,6 +37,9 @@ const (
+ 	queryChangefeedPreV22 = "EXPERIMENTAL CHANGEFEED FOR %s WITH updated, cursor = '%s', resolved = '%s';"
+ )
  
-@@ -362,9 +359,6 @@ type lr3refs struct {
- 	// ts is the type system used to resolve types and relations for the lookup resources operation.
- 	ts *schema.TypeSystem
- 
--	// caveatRunner is the caveat runner used to run caveats for the lookup resources operation.
--	caveatRunner *caveats.CaveatRunner
--
- 	// concurrencyLimit is the maximum number of concurrent operations that can be performed.
- 	concurrencyLimit uint16
- }
-@@ -881,6 +875,11 @@ func (crr *CursoredLookupResources3) relationshipsIter(
- 						return
- 					}
- 
-+					// Producers run concurrently and CaveatRunner is not safe for concurrent use,
-+					// so each producer gets its own runner. Compiled caveats are still shared via
-+					// the schema-tied compiled caveat cache.
-+					caveatRunner := caveats.NewCaveatRunner(crr.caveatTypeSet)
++// tableSchemaRevision is the table holding the hash of the unified stored schema.
++const tableSchemaRevision = "schema_revision"
 +
- 					rm := newRelationshipsChunk(int(crr.dispatchChunkSize), dbCursor)
- 					for rel, err := range relationships {
- 						if err != nil {
-@@ -892,7 +891,7 @@ func (crr *CursoredLookupResources3) relationshipsIter(
- 						var missingContextParameters []string
- 						if rel.OptionalCaveat != nil && rel.OptionalCaveat.CaveatName != "" {
- 							caveatExpr := caveats.CaveatAsExpr(rel.OptionalCaveat)
--							runResult, err := refs.caveatRunner.RunCaveatExpression(ctx, caveatExpr, refs.req.Context.AsMap(), caveatSR, caveats.RunCaveatExpressionNoDebugging)
-+							runResult, err := caveatRunner.RunCaveatExpression(ctx, caveatExpr, refs.req.Context.AsMap(), caveatSR, caveats.RunCaveatExpressionNoDebugging)
- 							if err != nil {
- 								yieldError(err)
- 								return
+ type changeDetails struct {
+ 	Resolved string
+ 	Updated  string
+@@ -160,6 +163,9 @@ func (cds *crdbDatastore) watch(
+ 		tableNames = append(tableNames, schema.TableNamespace)
+ 		tableNames = append(tableNames, schema.TableCaveat)
+ 	}
++	if opts.Content&datastore.WatchStoredSchema == datastore.WatchStoredSchema {
++		tableNames = append(tableNames, tableSchemaRevision)
++	}
+ 
+ 	if len(tableNames) == 0 {
+ 		errs <- errors.New("at least relationships or schema must be specified")
+@@ -234,6 +240,7 @@ type changeTracker[R datastore.Revision, K comparable] interface {
+ 	AddChangedDefinition(ctx context.Context, rev R, def datastore.SchemaDefinition) error
+ 	AddDeletedNamespace(ctx context.Context, rev R, namespaceName string) error
+ 	AddDeletedCaveat(ctx context.Context, rev R, caveatName string) error
++	AddStoredSchemaChange(ctx context.Context, rev R) error
+ 	AddRevisionMetadata(ctx context.Context, rev R, metadata common.TransactionMetadata) error
+ }
+ 
+@@ -320,6 +327,19 @@ func (s streamingChangeProvider) AddDeletedCaveat(_ context.Context, rev revisio
+ 	return s.sendChange(changes)
+ }
+ 
++func (s streamingChangeProvider) AddStoredSchemaChange(_ context.Context, rev revisions.HLCRevision) error {
++	if s.content&datastore.WatchStoredSchema != datastore.WatchStoredSchema {
++		return nil
++	}
++
++	changes := datastore.RevisionChanges{
++		Revision:            rev,
++		StoredSchemaChanged: true,
++	}
++
++	return s.sendChange(changes)
++}
++
+ func (s streamingChangeProvider) AddRevisionMetadata(_ context.Context, rev revisions.HLCRevision, metadata common.TransactionMetadata) error {
+ 	if len(metadata) > 0 {
+ 		parsedMetadata, err := structpb.NewStruct(metadata)
+@@ -586,6 +606,21 @@ func (cds *crdbDatastore) processChanges(ctx context.Context, changes pgx.Rows,
+ 				}
+ 			}
+ 
++		case tableSchemaRevision:
++			// The row is upserted by every write of the unified stored schema.
++			if details.After != nil {
++				rev, err := revisions.HLCRevisionFromString(details.Updated)
++				if err != nil {
++					sendError(fmt.Errorf("malformed update timestamp: %w", err))
++					return
++				}
++
++				if err := tracked.AddStoredSchemaChange(ctx, rev); err != nil {
++					sendError(err)
++					return
++				}
++			}
++
+ 		case schema.TableTransactionMetadata:
+ 			if details.After != nil {
+ 				rev, err := revisions.HLCRevisionFromString(details.Updated)
+```
+
+**File**: `internal/datastore/memdb/memdb.go` (modified, +5/-1)
+```diff
+@@ -280,7 +280,7 @@ func (mdb *memdbDatastore) ReadWriteTx(
+ 			return mdb.headRevisionNoLock(), nil
+ 		}
+ 
+-		tracked := common.NewChanges(revisions.TimestampIDKeyFunc, datastore.WatchRelationships|datastore.WatchSchema, 0)
++		tracked := common.NewChanges(revisions.TimestampIDKeyFunc, datastore.WatchRelationships|datastore.WatchSchema|datastore.WatchStoredSchema, 0)
+ 		if config.Metadata != nil && len(config.Metadata.GetFields()) > 0 {
+ 			if err := tracked.AddRevisionMetadata(ctx, newRevision, config.Metadata.AsMap()); err != nil {
+ 				return datastore.NoRevision, err
+@@ -352,6 +352,10 @@ func (mdb *memdbDatastore) ReadWriteTx(
+ 				default:
+ 					return datastore.NoRevision, spiceerrors.MustBugf("unexpected namespace change")
+ 				}
++			case tableSchema:
++				if err := tracked.AddStoredSchemaChange(ctx, newRevision); err != nil {
++					return datastore.NoRevision, err
++				}
+ 			}
+ 		}
+ 
+```
+
+**File**: `internal/datastore/memdb/watch.go` (modified, +24/-3)
+```diff
+@@ -120,13 +120,34 @@ func (mdb *memdbDatastore) loadChanges(_ context.Context, currentTxn int64, opti
+ 	for changeRaw := it.Next(); changeRaw != nil; changeRaw = it.Next() {
+ 		change := changeRaw.(*changelog)
+ 
++		// The changelog holds everything that changed at the revision, so only emit the
++		// content that was requested.
++		filtered := datastore.RevisionChanges{
++			Revision:  change.changes.Revision,
++			Metadatas: change.changes.Metadatas,
++		}
++		hasRequestedContent := false
++
+ 		if options.Content&datastore.WatchRelationships == datastore.WatchRelationships && len(change.changes.RelationshipChanges) > 0 {
+-			changes = append(changes, change.changes)
++			filtered.RelationshipChanges = change.changes.RelationshipChanges
++			hasRequestedContent = true
+ 		}
+ 
+ 		if options.Content&datastore.WatchSchema == datastore.WatchSchema &&
+-			len(change.changes.ChangedDefinitions) > 0 || len(change.changes.DeletedCaveats) > 0 || len(change.changes.DeletedNamespaces) > 0 {
+-			changes = append(changes, change.changes)
++			(len(change.changes.ChangedDefinitions) > 0 || len(change.changes.DeletedCaveats) > 0 || len(change.changes.DeletedNamespaces) > 0) {
++			filtered.ChangedDefinitions = change.changes.ChangedDefinitions
++			filtered.DeletedNamespaces = change.changes.DeletedNamespaces
++			filtered.DeletedCaveats = change.changes.DeletedCaveats
++			hasRequestedContent = true
++		}
++
++		if options.Content&datastore.WatchStoredSchema == datastore.WatchStoredSchema && change.changes.StoredSchemaChanged {
++			filtered.StoredSchemaChanged = true
++			hasRequestedContent = true
++		}
++
++		if hasRequestedContent {
++			changes = append(changes, filtered)
+ 		}
+ 
+ 		if options.Content&datastore.WatchCheckpoints == datastore.WatchCheckpoints && change.revisionNanos > lastRevision {
+```
+
+**File**: `internal/datastore/mysql/watch.go` (modified, +2/-1)
+```diff
+@@ -36,7 +36,8 @@ func (mds *mysqlDatastore) Watch(ctx context.Context, afterRevisionRaw datastore
+ 		return updates, errs
+ 	}
+ 
+-	if options.Content&datastore.WatchSchema == datastore.WatchSchema {
++	if options.Content&datastore.WatchSchema == datastore.WatchSchema ||
++		options.Content&datastore.WatchStoredSchema == datastore.WatchStoredSchema {
+ 		close(updates)
+ 		errs <- errors.New("schema watch unsupported in MySQL")
+ 		return updates, errs
+```
+
+**File**: `internal/datastore/postgres/watch.go` (modified, +47/-0)
+```diff
+@@ -61,6 +61,11 @@ var (
+ 		schema.ColCreatedXid,
+ 		schema.ColDeletedXid,
+ 	).From(schema.TableCaveat)
++
++	// A row is added to schema_revision by every write of the unified stored schema.
++	queryChangedStoredSchema = psql.Select(
++		schema.ColCreatedXid,
++	).From("schema_revision")
+ )
+ 
+ func (pgd *pgDatastore) Watch(
+@@ -302,6 +307,14 @@ func (pgd *pgDatastore) loadChanges(ctx context.Context, revisions []postgresRev
+ 		}
+ 	}
+ 
++	// Load stored schema changes.
++	if options.Content&datastore.WatchStoredSchema == datastore.WatchStoredSchema {
++		err := pgd.loadStoredSchemaChanges(ctx, xmin, xmax, txidToRevision, filter, tracked)
++		if err != nil {
++			return nil, err
++		}
++	}
++
+ 	// Reconcile the changes.
+ 	return tracked.AsRevisionChanges(func(lhs, rhs uint64) bool {
+ 		return filter[lhs] < filter[rhs]
+@@ -519,3 +532,37 @@ func (pgd *pgDatastore) loadCaveatChanges(ctx context.Context, xmin uint64, xmax
+ 	}
+ 	return nil
+ }
++
++func (pgd *pgDatastore) loadStoredSchemaChanges(ctx context.Context, xmin uint64, xmax uint64, txidToRevision map[uint64]postgresRevision, filter map[uint64]int, tracked *common.Changes[postgresRevision, uint64]) error {
++	sql, args, err := queryChangedStoredSchema.Where(sq.And{
++		sq.LtOrEq{schema.ColCreatedXid: xmax},
++		sq.GtOrEq{schema.ColCreatedXid: xmin},
++	}).ToSql()
++	if err != nil {
++		return fmt.Errorf("unable to prepare changes SQL: %w", err)
++	}
++
++	changes, err := pgd.readPool.Query(ctx, sql, args...)
++	if err != nil {
++		return fmt.Errorf("unable to load changes for XID: %w", err)
++	}
++
++	defer changes.Close()
++
++	for changes.Next() {
++		var createdXID xid8
++		if err := changes.Scan(&createdXID); err != nil {
++			return fmt.Errorf("unable to parse changed stored schema: %w", err)
++		}
++
++		if _, found := filter[createdXID.Uint64]; found {
++			if err := tracked.AddStoredSchemaChange(ctx, txidToRevision[createdXID.Uint64]); err != nil {
++				return err
++			}
++		}
++	}
++	if err := changes.Err(); err != nil {
++		return fmt.Errorf("unable to load changes for XID: %w", err)
++	}
++	return nil
++}
+```
+
+**File**: `internal/datastore/spanner/migrations/zz_migration.0014_add_schema_revision_to_change_stream.go` (added, +28/-0)
+```diff
+@@ -0,0 +1,28 @@
++package migrations
++
++import (
++	"context"
++
++	"cloud.google.com/go/spanner/admin/database/apiv1/databasepb"
++)
++
++// schema_revision is written by every write of the unified stored schema, so watching it
++// allows the Watch API to observe schema changes made to the unified stored schema.
++var addSchemaRevisionToChangeStream = `ALTER CHANGE STREAM combined_change_stream SET FOR namespace_config,caveat,relation_tuple,schema_revision`
++
++func init() {
++	if err := SpannerMigrations.Register("add-schema-revision-to-change-stream", "populate-schema-tables", func(ctx context.Context, w Wrapper) error {
++		updateOp, err := w.adminClient.UpdateDatabaseDdl(ctx, &databasepb.UpdateDatabaseDdlRequest{
++			Database: w.client.DatabaseName(),
++			Statements: []string{
++				addSchemaRevisionToChangeStream,
++			},
++		})
++		if err != nil {
++			return err
++		}
++		return updateOp.Wait(ctx)
++	}, nil); err != nil {
++		panic("failed to register migration: " + err.Error())
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3517** (2026-11-20): feat: batched streaming responses for LookupResources (@ostafen)
+- **PR #3513** (2026-11-20): fix(watch): emit schema Watch events from the unified stored schema in read-new modes (@vroldanbet)
 - **PR #3509** (2026-11-18): fix(graph): give each LookupResources3 producer its own caveat runner (@ostafen)
 - **PR #3508** (2026-11-18): refactor(dispatch): stop recovering panics from external strategies (@ostafen)
 - **PR #3507** (2026-11-18): fix(docker): update grpc_health_probe to v0.4.63 for CVE-2026-97054 (@ostafen)
 - **PR #3506** (2026-11-18): feat(dispatch): let programs that embed SpiceDB add secondary dispatch strategies (@ostafen)
-- **PR #3505** (closed): feat(dispatch): add a compare secondary dispatch strategy for Check (@ostafen)
-- **PR #3504** (2026-11-17): chore: fix test flake in race logic (@tstirrat15)
 
 ---
 
@@ -1682,34 +1480,28 @@ Co-authored-by: Tanner Stirrat <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix test panic
+## X. watch): emit schema Watch events from the unified stored schema in read-new mode
 
 **RULE**:
-When implementing operations in `internal/datastore/memdb/memdb.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9e95eba`: fix test panic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4598c884`: watch): emit schema Watch events from the unified stored schema in read-new modes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/datastore/memdb/memdb.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		return newErrorReader(err)
-		return newErrorReader(errors.New("memdb datastore is not ready"))
-		return newErrorReader(err)
-		return newErrorReader(errors.New("memdb datastore is already closed"))
+- Watch: with `--experimental-schema-mode` set to `read-new-write-new`, writing a schema now produces a Watch schema event. Schema events were always built from the legacy namespace and caveat tables, which that mode does not write, so schema changes were never reported. With `read-new-write-both` and `read-new-write-new`, schema events are now built from the single-store schema. The default legacy schema mode is unchanged, and MySQL still does not support watching schema. Spanner: a new migration, `add-schema-revision-to-change-stream`, adds the `schema_revision` table to the change stream, and a Watch with checkpoints no longer emits a checkpoint for a transaction that wrote to several tables before that transaction's changes. (https://github.com/authzed/spicedb/pull/3513)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		return &memdbReader{nil, nil, err, time.Now()}
-		return &memdbReader{nil, nil, errors.New("memdb datastore is not ready"), time.Now()}
-		return &memdbReader{nil, nil, err, time.Now()}
-		return &memdbReader{nil, nil, errors.New("memdb datastore is already closed"), time.Now()}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9e95eba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4598c884` are properly handled with clean fallback behavior.

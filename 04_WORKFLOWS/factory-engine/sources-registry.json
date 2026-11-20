@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T19:25:15.692Z",
-    "lastVerified": "2026-11-20T19:25:15.692Z",
+    "lastChecked": "2026-11-20T19:44:48.864Z",
+    "lastVerified": "2026-11-20T19:44:48.864Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T18:27:25.073Z",
+    "lastChecked": "2026-11-20T19:44:42.059Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T18:27:25.073Z"
+    "lastVerified": "2026-11-20T19:44:42.059Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1378,14 +1378,14 @@
     "officialUrl": "https://github.com/t8y2/dbx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T15:16:42.796Z",
-    "lastVerified": "2026-11-19T15:16:42.796Z",
+    "lastChecked": "2026-11-20T19:44:44.728Z",
+    "lastVerified": "2026-11-20T19:44:44.728Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "9611920fcfd73b22a60ac0575fe627c1aa82f119d871b44916eca154381b0770",
+    "contentHash": "5942268cfa183239f3366376e2275834536a0cead8f9529fa018c0ee012dfe11",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 18,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1905,22 +1905,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "nuclei",
+    "name": "projectdiscovery/nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T12:15:20.462Z",
-    "lastVerified": "2026-11-20T12:15:20.462Z",
+    "lastChecked": "2026-11-20T19:44:41.509Z",
+    "lastVerified": "2026-11-20T19:44:41.509Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "047d377ecf27b8975c2ff6c69e72210a092c6648ae646f4b0670a5b973038fbb",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "contentHash": "9abb39bc8549c027dcba17c609e267bacb5647f8e65e166e9c0066ffc35f5861",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 19,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b1d47824"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -2382,14 +2381,14 @@
     "officialUrl": "https://github.com/authzed/spicedb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T16:33:25.189Z",
-    "lastVerified": "2026-11-19T16:33:25.189Z",
+    "lastChecked": "2026-11-20T19:44:39.302Z",
+    "lastVerified": "2026-11-20T19:44:39.302Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-authzed-spicedb",
-    "contentHash": "30ad716224ae04b65a90cb05db485aafa1cd460f31be3f88d8cccdab4d87427f",
+    "contentHash": "52a9825a0ebc28a7bbbdad0565efd97db4541c3f236da99134933c653b4a0296",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6127,9 +6126,9 @@
   "graykode-abtop": {
     "name": "abtop",
     "officialUrl": "https://github.com/graykode/abtop",
-    "lastChecked": "2026-11-19T02:55:50.275Z",
+    "lastChecked": "2026-11-20T19:44:26.976Z",
     "revisionIdentifier": "4b965686",
-    "lastVerified": "2026-11-19T02:55:50.275Z"
+    "lastVerified": "2026-11-20T19:44:26.976Z"
   },
   "hf-qwen-qwen3-8b": {
     "name": "Qwen/Qwen3-8B",
@@ -10601,5 +10600,29 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nodejs-undici": {
+    "name": "nodejs/undici",
+    "officialUrl": "https://github.com/nodejs/undici",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-20T19:44:34.032Z",
+    "lastVerified": "2026-11-20T19:44:34.032Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nodejs-undici",
+    "contentHash": "8bd7834eae9de3adeef2d08c7395861cbc9e344491e0759d177e1a2751123171",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 15,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "superhighfives-pika": {
+    "name": "pika",
+    "officialUrl": "https://github.com/superhighfives/pika",
+    "lastChecked": "2026-11-20T19:44:31.964Z",
+    "revisionIdentifier": "07698fa2",
+    "lastVerified": "2026-11-20T19:44:31.964Z"
   }
 }
