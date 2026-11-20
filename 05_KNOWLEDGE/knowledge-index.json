@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T13:13:24.675Z",
-  "total_verified_learnings": 9036,
+  "last_updated": "2026-11-20T13:27:16.438Z",
+  "total_verified_learnings": 9038,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22421,
+  "total_items": 22432,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218051,8 +218051,8 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "3077890f",
-      "content_hash": "409b5fda658f372590ba0093661fc651905e659c86372033e9d92d5a5790778b",
+      "source_version": "7e3deaf6",
+      "content_hash": "f90b37eb9dc9fab6f46d7052f786c25f86d0b997e63336d63dfb876bec994bda",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
@@ -218080,6 +218080,11 @@
           "number": 9360,
           "title": "security hardening and minor bug fixes for main",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9575,
+          "title": "[ci] Phase 3 Unify build workflows",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218087,7 +218092,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T08:37:44.381Z",
+      "verified_at": "2026-11-20T13:26:41.428Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218141,10 +218146,10 @@
       "relative_path": "08_VERIFICATION/nginx-kubernetes-ingress-verification-protocol-empirical-defect-shield-for-nginx.md",
       "title": "Verification Protocol: Empirical Defect Shield for nginx/kubernetes-ingress",
       "repository": "nginx/kubernetes-ingress",
-      "source_version": "3077890f",
-      "content_hash": "bbac9c27f3112f9884a518920e3bbd04f9c7a381dbf29bfa56367fbbf695f77a",
+      "source_version": "7e3deaf6",
+      "content_hash": "1ca6d0fcd7219d2c8d2ecd0826d5e7adc69fa953a17636c863a5d723cee1238a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T08:37:45.231Z"
+      "persisted_at": "2026-11-20T13:26:42.141Z"
     },
     "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria",
@@ -218202,9 +218207,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nginx-kubernetes-ingress-learnings",
       "repository": "nginx-kubernetes-ingress-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae9181dc36d925801058ab0085b3115d386bbbe987b42703b6e556f4a0d0e57e",
+      "content_hash": "b9afb008081c2a31c8dad54781febd12b46f18c0a62a06a1973e69493ad30a9d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T08:37:49.565Z"
+      "persisted_at": "2026-11-20T13:27:16.438Z"
     },
     "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k": {
       "learning_id": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
@@ -259012,10 +259017,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-architecture-intelligence-nginx-kubernetes-ingress-core.md",
       "title": "Architecture Intelligence: nginx/kubernetes-ingress Core Invariants",
       "repository": "nginx/kubernetes-ingress",
-      "source_version": "3077890f",
-      "content_hash": "d5d88606a0579e4ee898b48ba3a101aab8c121f2a0e219df7299f5d15f4848a8",
+      "source_version": "7e3deaf6",
+      "content_hash": "3d2cddad0cfc0305dde06bf3df743645b7ec88910e5523532c6ccdedf0bcb588",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T08:37:45.045Z"
+      "persisted_at": "2026-11-20T13:26:41.987Z"
     },
     "learn-github-rustls-rustls": {
       "learning_id": "learn-github-rustls-rustls",
@@ -259151,9 +259156,9 @@
       "title": "Architecture Intelligence: nginx-kubernetes-ingress-learnings Core Invariants",
       "repository": "nginx-kubernetes-ingress-learnings",
       "source_version": "HEAD",
-      "content_hash": "e7ca160053ddb9652464e17547893e0c6e5ecbd42040f70eb6ffe49506b43572",
+      "content_hash": "24f47e3a7d6a2df286825b4362f88b8c8f2867961fce7b2da71a92893e722942",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T08:37:49.386Z"
+      "persisted_at": "2026-11-20T13:27:16.267Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants",
@@ -303816,6 +303821,170 @@
       "content_hash": "80a6d2e5d2bf4c8a5befc62aab35b177d558cadbdce3d4745d4a469bc1de4e80",
       "domain_letter": "G",
       "persisted_at": "2026-11-20T13:13:23.876Z"
+    },
+    "learn-github-itsdecodingai-llm-twin-course": {
+      "learning_id": "learn-github-itsdecodingai-llm-twin-course",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "itsdecodingai/llm-twin-course",
+      "repository": "itsdecodingai/llm-twin-course",
+      "slug": "itsdecodingai-llm-twin-course",
+      "platform": "github",
+      "source_url": "https://github.com/itsdecodingai/llm-twin-course",
+      "source_version": "04e12f37",
+      "content_hash": "88cb5eafc4071c60e9a8ef7d3ef1eb78092e6e89c6624408cd37ac2649486f06",
+      "dossier_path": "07_PROJECT_LEARNING/itsdecodingai-llm-twin-course-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/itsdecodingai-llm-twin-course-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T13:26:28.926Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-none-type-on-cleaning-data": {
+      "item_id": "candidate_directive-none-type-on-cleaning-data",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JF5X-none-type-on-cleaning-data.md",
+      "title": "None type on cleaning data",
+      "repository": "itsdecodingai-llm-twin-course-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3c151fb1198c16aa96ed568efc6da6e572f0c7b86cc26788178c3373bb41a683",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T13:26:45.382Z"
+    },
+    "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-itsdecodingai-llm-twin-course-content-information-intelligence-itsdecodingai-llm.md",
+      "title": "Content & Information Intelligence: itsdecodingai/llm-twin-course Core Invariants",
+      "repository": "itsdecodingai/llm-twin-course",
+      "source_version": "04e12f37",
+      "content_hash": "b26fef88969c8f2f254c4d0d19d6ab8a71fefec7a3e8796234bc80226c804838",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T13:26:29.512Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-itsdecodingai-llm-twin-course": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-itsdecodingai-llm-twin-course",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/itsdecodingai-llm-twin-course-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for itsdecodingai/llm-twin-course",
+      "repository": "itsdecodingai/llm-twin-course",
+      "source_version": "04e12f37",
+      "content_hash": "5fec0485173a641deab49739347107eb19b52927150ca579d282581d897a6f5c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T13:26:29.703Z"
+    },
+    "learn-huggingface-microsoft-aion-1-0-instruct-2-3b": {
+      "learning_id": "learn-huggingface-microsoft-aion-1-0-instruct-2-3b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "microsoft/Aion-1.0-Instruct-2.3B",
+      "repository": "microsoft/Aion-1.0-Instruct-2.3B",
+      "slug": "hf-microsoft-aion-1.0-instruct-2.3b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B",
+      "source_version": "hf-microsoft-aion-1.0-instruct-2.3b",
+      "content_hash": "d9cd20bd3fe9389b573f560c54e0ffbd868081e8d6507e1eb66be747bf2a1e69",
+      "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T13:26:32.492Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-microsoft-aion-1-0-instruct-2-3b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-microsoft-aion-1-0-instruct-2-3b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-aion-1-0-instruct-2-3b-research-knowledge-intelligence-microsoft-ai.md",
+      "title": "Research & Knowledge Intelligence: microsoft/Aion-1.0-Instruct-2.3B Core Invariants",
+      "repository": "microsoft/Aion-1.0-Instruct-2.3B",
+      "source_version": "hf-microsoft-aion-1.0-instruct-2.3b",
+      "content_hash": "c3d2ad454d88b4f2d642d9ec404aeeacccea8148a3bf1efcfe7d899a4933192c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T13:26:32.897Z"
+    },
+    "rule-9575": {
+      "learning_id": "rule-9575",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9575,
+      "title": "[ci] Phase 3 Unify build workflows",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "7e3deaf6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T13:26:41.428Z"
+    },
+    "candidate_directive-ci-phase-3-unify-build-workflows": {
+      "item_id": "candidate_directive-ci-phase-3-unify-build-workflows",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K2US-ci-phase-3-unify-build-workflows.md",
+      "title": "[ci] Phase 3 Unify build workflows",
+      "repository": "nginx-kubernetes-ingress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5c0eae4886225b5db3d7ef50f17f62c6dfab5041b81dbb6ea911764770b01812",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T13:27:16.095Z"
+    },
+    "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-learnings-core-in": {
+      "item_id": "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-learnings-core-in",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-itsdecodingai-llm-twin-course-learnings-content-information-intelligence-itsdeco.md",
+      "title": "Content & Information Intelligence: itsdecodingai-llm-twin-course-learnings Core Invariants",
+      "repository": "itsdecodingai-llm-twin-course-learnings",
+      "source_version": "HEAD",
+      "content_hash": "efee910a8a9f430a74568178187b75c7277046f113a7893f17f82d4c3975480a",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T13:26:45.532Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-itsdecodingai-llm-twin-course-": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-itsdecodingai-llm-twin-course-",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/itsdecodingai-llm-twin-course-learnings-verification-protocol-empirical-defect-s.md",
+      "title": "Verification Protocol: Empirical Defect Shield for itsdecodingai-llm-twin-course-learnings",
+      "repository": "itsdecodingai-llm-twin-course-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e551a867e576b9b2b6688906495a5c75cd89ae33c79630b65af2dc083a596553",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T13:26:45.682Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-microsoft-aion-1-0-instruct-2-3b-learnings-co": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-aion-1-0-instruct-2-3b-learnings-co",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-aion-1-0-instruct-2-3b-learnings-research-knowledge-intelligence-hf.md",
+      "title": "Research & Knowledge Intelligence: hf-microsoft-aion-1.0-instruct-2.3b-learnings Core Invariants",
+      "repository": "hf-microsoft-aion-1.0-instruct-2.3b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "207347064c43f3ccece34ac03b52bda06de3cea6fa46be40ce4fbb288ae7abfb",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T13:27:15.452Z"
     }
   },
   "ai-builder-brain": {

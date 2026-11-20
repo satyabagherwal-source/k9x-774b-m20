@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T13:13:22.226Z",
-    "lastVerified": "2026-11-20T13:13:22.226Z",
+    "lastChecked": "2026-11-20T13:26:44.797Z",
+    "lastVerified": "2026-11-20T13:26:44.797Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -252,9 +252,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T12:07:23.083Z",
+    "lastChecked": "2026-11-20T13:26:44.702Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T12:07:23.083Z"
+    "lastVerified": "2026-11-20T13:26:44.702Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -413,12 +413,12 @@
     "officialUrl": "https://github.com/nginx/kubernetes-ingress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T08:27:41.799Z",
-    "lastVerified": "2026-11-19T08:27:41.799Z",
+    "lastChecked": "2026-11-20T13:26:40.615Z",
+    "lastVerified": "2026-11-20T13:26:40.615Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "409b5fda658f372590ba0093661fc651905e659c86372033e9d92d5a5790778b",
+    "contentHash": "f90b37eb9dc9fab6f46d7052f786c25f86d0b997e63336d63dfb876bec994bda",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -2147,8 +2147,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T05:16:17.187Z",
-    "lastVerified": "2026-11-20T05:16:17.187Z",
+    "lastChecked": "2026-11-20T13:26:39.616Z",
+    "lastVerified": "2026-11-20T13:26:39.616Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -6920,9 +6920,9 @@
   "libsql-libsql": {
     "name": "libsql",
     "officialUrl": "https://github.com/libsql/libsql",
-    "lastChecked": "2026-11-19T06:52:35.877Z",
+    "lastChecked": "2026-11-20T13:26:42.202Z",
     "revisionIdentifier": "a1d031cb",
-    "lastVerified": "2026-11-19T06:52:35.877Z"
+    "lastVerified": "2026-11-20T13:26:42.202Z"
   },
   "domcyrus-rustnet": {
     "name": "domcyrus/rustnet",
@@ -10001,5 +10001,46 @@
     "lastChecked": "2026-11-20T13:08:16.971Z",
     "revisionIdentifier": "10ea2798",
     "lastVerified": "2026-11-20T13:08:16.971Z"
+  },
+  "itsdecodingai-llm-twin-course": {
+    "name": "itsdecodingai/llm-twin-course",
+    "officialUrl": "https://github.com/itsdecodingai/llm-twin-course",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-20T13:26:28.505Z",
+    "lastVerified": "2026-11-20T13:26:28.505Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-itsdecodingai-llm-twin-course",
+    "contentHash": "88cb5eafc4071c60e9a8ef7d3ef1eb78092e6e89c6624408cd37ac2649486f06",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-microsoft-aion-1.0-instruct-2.3b": {
+    "name": "microsoft/Aion-1.0-Instruct-2.3B",
+    "officialUrl": "https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-20T13:26:32.230Z",
+    "lastVerified": "2026-11-20T13:26:32.230Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-microsoft-aion-1-0-instruct-2-3b",
+    "contentHash": "d9cd20bd3fe9389b573f560c54e0ffbd868081e8d6507e1eb66be747bf2a1e69",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "oblador-hush": {
+    "name": "hush",
+    "officialUrl": "https://github.com/oblador/hush",
+    "lastChecked": "2026-11-20T13:26:34.674Z",
+    "revisionIdentifier": "2e96f4f7",
+    "lastVerified": "2026-11-20T13:26:34.674Z"
   }
 }

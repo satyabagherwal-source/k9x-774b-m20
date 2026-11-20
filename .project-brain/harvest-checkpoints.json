@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T13:13:19.047Z",
+  "last_updated": "2026-11-20T13:26:41.631Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "409b5fda658f372590ba0093661fc651905e659c86372033e9d92d5a5790778b",
-      "verified_at": "2026-11-19T08:37:44.628Z",
+      "content_hash": "f90b37eb9dc9fab6f46d7052f786c25f86d0b997e63336d63dfb876bec994bda",
+      "verified_at": "2026-11-20T13:26:41.630Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T08:37:44.628Z"
+      "last_updated": "2026-11-20T13:26:41.630Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",
@@ -19649,6 +19649,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-20T11:31:34.218Z"
+    },
+    "itsdecodingai/llm-twin-course": {
+      "repository": "itsdecodingai/llm-twin-course",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-itsdecodingai-llm-twin-course",
+      "content_hash": "88cb5eafc4071c60e9a8ef7d3ef1eb78092e6e89c6624408cd37ac2649486f06",
+      "verified_at": "2026-11-20T13:26:29.154Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-20T13:26:29.154Z"
+    },
+    "microsoft/Aion-1.0-Instruct-2.3B": {
+      "repository": "microsoft/Aion-1.0-Instruct-2.3B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-microsoft-aion-1-0-instruct-2-3b",
+      "content_hash": "d9cd20bd3fe9389b573f560c54e0ffbd868081e8d6507e1eb66be747bf2a1e69",
+      "verified_at": "2026-11-20T13:26:32.716Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-20T13:26:32.716Z"
     }
   },
   "repos": {

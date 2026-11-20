@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-BJ6E",
-    "timestamp": "2026-11-18T13:17:16.886Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-apple-lensvlm-9b",
-    "contentHash": "59f1f70d4ff446dbe3d91dfd03ae685ae605e194d80d23ce36441d68ebb4e6fe",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-BLGX",
-    "timestamp": "2026-11-18T13:17:19.857Z",
-    "repository": "FalkorDB/FalkorDB",
-    "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "6a2e00087b2819c9f8c39dee4ef5eb0242f412ed85cf7a0c4721f0ccd5ae5675",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-BROB",
-    "timestamp": "2026-11-18T13:17:27.899Z",
-    "repository": "moby/buildkit",
-    "learningId": "learn-github-moby-buildkit",
-    "contentHash": "03ffaaa4d2803d18df5f7b497f690e0a730ce605f48f2d808387b16ee01c27c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-BSWQ",
     "timestamp": "2026-11-18T13:17:29.498Z",
     "repository": "projectdiscovery/nuclei",
@@ -7490,6 +7445,51 @@
     "repository": "embassy-rs/embassy",
     "learningId": "learn-github-embassy-rs-embassy",
     "contentHash": "3aeebfc7d3635449d655fe54e84fa0f1130a6f5dfeeec9f97cfb61908c83f76c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-J2LZ",
+    "timestamp": "2026-11-20T13:26:29.111Z",
+    "repository": "itsdecodingai/llm-twin-course",
+    "learningId": "learn-github-itsdecodingai-llm-twin-course",
+    "contentHash": "88cb5eafc4071c60e9a8ef7d3ef1eb78092e6e89c6624408cd37ac2649486f06",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-J5DS",
+    "timestamp": "2026-11-20T13:26:32.704Z",
+    "repository": "microsoft/Aion-1.0-Instruct-2.3B",
+    "learningId": "learn-huggingface-microsoft-aion-1-0-instruct-2-3b",
+    "contentHash": "d9cd20bd3fe9389b573f560c54e0ffbd868081e8d6507e1eb66be747bf2a1e69",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-JC9E",
+    "timestamp": "2026-11-20T13:26:41.618Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "f90b37eb9dc9fab6f46d7052f786c25f86d0b997e63336d63dfb876bec994bda",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

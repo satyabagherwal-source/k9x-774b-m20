@@ -5250,3 +5250,9 @@ https://github.com/Kianuni/Erosion-CN
 https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted
 # [HUGGINGFACE-AI-MODELS] tencent/Hy4 (899 score) - Verified Hugging Face Model: tencent/Hy4 (81 likes, 89 downloads)
 https://huggingface.co/tencent/Hy4
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-20T13:26:24.089Z] ---
+# [AI-AGENTS] itsdecodingai/llm-twin-course (2691 score) - 🤖 𝗟𝗲𝗮𝗿𝗻 for 𝗳𝗿𝗲𝗲 how to 𝗯𝘂𝗶𝗹𝗱 an end-to-end 𝗽𝗿𝗼𝗱𝘂𝗰𝘁𝗶𝗼𝗻-
+https://github.com/itsdecodingai/llm-twin-course
+# [HUGGINGFACE-AI-MODELS] microsoft/Aion-1.0-Instruct-2.3B (2588 score) - Verified Hugging Face Model: microsoft/Aion-1.0-Instruct-2.3B (101 likes, 1578 d
+https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B

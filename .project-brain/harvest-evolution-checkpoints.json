@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T13:13:24.806Z",
+  "last_updated": "2026-11-20T13:27:16.589Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T12:15:57.033Z",
@@ -1363,7 +1363,7 @@
       "staged_for_review": 1
     },
     "nginx-kubernetes-ingress-learnings.md": {
-      "processed_at": "2026-11-19T08:37:48.598Z",
+      "processed_at": "2026-11-20T13:27:15.670Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3576,9 +3576,19 @@
       "processed_at": "2026-11-20T13:13:23.034Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "itsdecodingai-llm-twin-course-learnings.md": {
+      "processed_at": "2026-11-20T13:26:44.915Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-microsoft-aion-1.0-instruct-2.3b-learnings.md": {
+      "processed_at": "2026-11-20T13:27:15.208Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2520,
-  "total_canonical_promoted": 425,
-  "total_staged_for_review": 1906
+  "total_dossiers_evaluated": 2523,
+  "total_canonical_promoted": 426,
+  "total_staged_for_review": 1908
 }

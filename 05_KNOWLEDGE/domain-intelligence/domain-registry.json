@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T13:13:24.525Z",
-  "total_records": 2128,
+  "last_updated": "2026-11-20T13:27:16.267Z",
+  "total_records": 2133,
   "domains": {
     "A": {
       "total": 17,
@@ -58,7 +58,7 @@
       ]
     },
     "D": {
-      "total": 859,
+      "total": 862,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -918,7 +918,10 @@
         "DOM-D-04A5E986",
         "domain_intelligence-research-knowledge-intelligence-hf-harness-hub-qwen3-8-27b-opencode-adapted-lear",
         "DOM-D-19E80851",
-        "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-microsoft-aion-1-0-instruct-2-3b-core-invariants",
+        "DOM-D-6F9E9680",
+        "domain_intelligence-research-knowledge-intelligence-hf-microsoft-aion-1-0-instruct-2-3b-learnings-co"
       ]
     },
     "E": {
@@ -1884,7 +1887,7 @@
       ]
     },
     "I": {
-      "total": 105,
+      "total": 107,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1990,7 +1993,9 @@
         "domain_intelligence-content-information-intelligence-jellyfin-swiftfin-learnings-core-invariants",
         "DOM-I-9FC28849",
         "domain_intelligence-content-information-intelligence-touchlab-kermit-core-invariants",
-        "domain_intelligence-content-information-intelligence-touchlab-kermit-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-touchlab-kermit-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-core-invariants",
+        "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-learnings-core-in"
       ]
     },
     "J": {
@@ -24377,8 +24382,8 @@
       "title": "Architecture Intelligence: nginx/kubernetes-ingress Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-architecture-intelligence-nginx-kubernetes-ingress-core.md",
       "repository": "nginx/kubernetes-ingress",
-      "content_hash": "d5d88606a0579e4ee898b48ba3a101aab8c121f2a0e219df7299f5d15f4848a8",
-      "created_at": "2026-11-19T08:37:45.045Z"
+      "content_hash": "3d2cddad0cfc0305dde06bf3df743645b7ec88910e5523532c6ccdedf0bcb588",
+      "created_at": "2026-11-20T13:26:41.987Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants",
@@ -24395,8 +24400,8 @@
       "title": "Architecture Intelligence: nginx-kubernetes-ingress-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-learnings-architecture-intelligence-nginx-kubernetes-in.md",
       "repository": "nginx-kubernetes-ingress-learnings",
-      "content_hash": "e7ca160053ddb9652464e17547893e0c6e5ecbd42040f70eb6ffe49506b43572",
-      "created_at": "2026-11-19T08:37:49.386Z"
+      "content_hash": "24f47e3a7d6a2df286825b4362f88b8c8f2867961fce7b2da71a92893e722942",
+      "created_at": "2026-11-20T13:27:16.267Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants",
@@ -35884,6 +35889,84 @@
       "repository": "actions-actions-runner-controller-learnings",
       "content_hash": "80a6d2e5d2bf4c8a5befc62aab35b177d558cadbdce3d4745d4a469bc1de4e80",
       "created_at": "2026-11-20T13:13:23.876Z"
+    },
+    "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: itsdecodingai/llm-twin-course Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-itsdecodingai-llm-twin-course-content-information-intelligence-itsdecodingai-llm.md",
+      "repository": "itsdecodingai/llm-twin-course",
+      "content_hash": "b26fef88969c8f2f254c4d0d19d6ab8a71fefec7a3e8796234bc80226c804838",
+      "created_at": "2026-11-20T13:26:29.512Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-microsoft-aion-1-0-instruct-2-3b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-microsoft-aion-1-0-instruct-2-3b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: microsoft/Aion-1.0-Instruct-2.3B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-aion-1-0-instruct-2-3b-research-knowledge-intelligence-microsoft-ai.md",
+      "repository": "microsoft/Aion-1.0-Instruct-2.3B",
+      "content_hash": "c3d2ad454d88b4f2d642d9ec404aeeacccea8148a3bf1efcfe7d899a4933192c",
+      "created_at": "2026-11-20T13:26:32.897Z"
+    },
+    "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-learnings-core-in": {
+      "record_id": "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-learnings-core-in",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: itsdecodingai-llm-twin-course-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-itsdecodingai-llm-twin-course-learnings-content-information-intelligence-itsdeco.md",
+      "repository": "itsdecodingai-llm-twin-course-learnings",
+      "content_hash": "efee910a8a9f430a74568178187b75c7277046f113a7893f17f82d4c3975480a",
+      "created_at": "2026-11-20T13:26:45.532Z"
+    },
+    "DOM-D-6F9E9680": {
+      "record_id": "DOM-D-6F9E9680",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): microsoft/Aion-1.0-Instruct-2.3B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B](https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B))  \n> **Source Version**: `hf-microsoft`  \n> **Lice",
+      "content_hash": "d7789f7412a3228696bfb14357324ff965edd50ebe762fedb1c0069a58b4ca49",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md`  \n> **Source**: huggingface ([http -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md`  \n> **Source**: huggingface ([http",
+      "provenance": {
+        "source_uri": "project://hf-microsoft-aion-1.0-instruct-2.3b/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T13:26:45.814Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-microsoft-aion-1.0-instruct-2.3b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-microsoft-aion-1.0-instruct-2.3b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T13:27:15.182Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-microsoft-aion-1-0-instruct-2-3b-learnings-co": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-aion-1-0-instruct-2-3b-learnings-co",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-microsoft-aion-1.0-instruct-2.3b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-aion-1-0-instruct-2-3b-learnings-research-knowledge-intelligence-hf.md",
+      "repository": "hf-microsoft-aion-1.0-instruct-2.3b-learnings",
+      "content_hash": "207347064c43f3ccece34ac03b52bda06de3cea6fa46be40ce4fbb288ae7abfb",
+      "created_at": "2026-11-20T13:27:15.452Z"
     }
   }
 }

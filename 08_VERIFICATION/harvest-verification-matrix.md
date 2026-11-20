@@ -11545,3 +11545,7 @@
 | `CYCLE-20261120-VZW3` | `2026-11-20T13:08:32.499Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9573` | Yes (`f49b734d...`) |
 | `CYCLE-20261120-VZXN` | `2026-11-20T13:08:32.555Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9573` | Yes (`157b2e6d...`) |
 | `CYCLE-20261120-24ZE` | `2026-11-20T13:13:19.034Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9574` | Yes (`3aeebfc7...`) |
+| `CYCLE-20261120-J2LZ` | `2026-11-20T13:26:29.111Z` | `itsdecodingai/llm-twin-course` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/itsdecodingai-llm-twin-course-learnings.md` | Yes (`88cb5eaf...`) |
+| `CYCLE-20261120-J5DS` | `2026-11-20T13:26:32.704Z` | `microsoft/Aion-1.0-Instruct-2.3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md` | Yes (`d9cd20bd...`) |
+| `CYCLE-20261120-JC9E` | `2026-11-20T13:26:41.618Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9575` | Yes (`f90b37eb...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T13:27:15.208Z` | `hf-microsoft-aion-1.0-instruct-2.3b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6F9E9680` [Domain D] | Yes (`d7789f74...`) |

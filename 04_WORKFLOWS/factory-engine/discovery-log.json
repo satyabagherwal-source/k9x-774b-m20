@@ -21739,5 +21739,32 @@
     "downloads": 89,
     "qualityScore": 899,
     "discoveredAt": "2026-11-20T11:28:22.056Z"
+  },
+  {
+    "name": "llm-twin-course",
+    "fullName": "itsdecodingai/llm-twin-course",
+    "url": "https://github.com/itsdecodingai/llm-twin-course",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🤖 𝗟𝗲𝗮𝗿𝗻 for 𝗳𝗿𝗲𝗲 how to 𝗯𝘂𝗶𝗹𝗱 an end-to-end 𝗽𝗿𝗼𝗱𝘂𝗰𝘁𝗶𝗼𝗻-𝗿𝗲𝗮𝗱𝘆 𝗟𝗟𝗠 & 𝗥𝗔𝗚 𝘀𝘆𝘀𝘁𝗲𝗺 using 𝗟𝗟𝗠𝗢𝗽𝘀 best practices: ~ 𝘴𝘰𝘶𝘳𝘤𝘦 𝘤𝘰𝘥𝘦 + 12 𝘩𝘢𝘯𝘥𝘴-𝘰𝘯 𝘭𝘦𝘴𝘴𝘰𝘯𝘴",
+    "stars": 4411,
+    "forks": 731,
+    "openIssues": 8,
+    "language": "Python",
+    "qualityScore": 2691,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-20T13:22:48.652Z"
+  },
+  {
+    "name": "microsoft/Aion-1.0-Instruct-2.3B",
+    "fullName": "microsoft/Aion-1.0-Instruct-2.3B",
+    "url": "https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: microsoft/Aion-1.0-Instruct-2.3B (101 likes, 1578 downloads)",
+    "likes": 101,
+    "downloads": 1578,
+    "qualityScore": 2588,
+    "discoveredAt": "2026-11-20T13:24:15.775Z"
   }
 ]

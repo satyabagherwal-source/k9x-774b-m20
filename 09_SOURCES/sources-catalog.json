@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "3077890f",
+    "sourceVersion": "7e3deaf6",
     "license": "Apache-2.0",
-    "contentHash": "409b5fda658f372590ba0093661fc651905e659c86372033e9d92d5a5790778b",
-    "lastHarvestedAt": "2026-11-19T08:37:44.618Z",
+    "contentHash": "f90b37eb9dc9fab6f46d7052f786c25f86d0b997e63336d63dfb876bec994bda",
+    "lastHarvestedAt": "2026-11-20T13:26:41.622Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -13038,5 +13038,25 @@
     "contentHash": "6514316f196ea5c566cc08a600db212144a5f348e358ed36da297a6d2260c6a3",
     "lastHarvestedAt": "2026-11-20T11:31:34.210Z",
     "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted"
+  },
+  "itsdecodingai-llm-twin-course": {
+    "repository": "itsdecodingai/llm-twin-course",
+    "platform": "github",
+    "sourceUrl": "https://github.com/itsdecodingai/llm-twin-course",
+    "sourceVersion": "04e12f37",
+    "license": "MIT",
+    "contentHash": "88cb5eafc4071c60e9a8ef7d3ef1eb78092e6e89c6624408cd37ac2649486f06",
+    "lastHarvestedAt": "2026-11-20T13:26:29.116Z",
+    "learningId": "learn-github-itsdecodingai-llm-twin-course"
+  },
+  "hf-microsoft-aion-1.0-instruct-2.3b": {
+    "repository": "microsoft/Aion-1.0-Instruct-2.3B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B",
+    "sourceVersion": "hf-microsoft-aion-1.0-instruct-2.3b",
+    "license": "Open-Source",
+    "contentHash": "d9cd20bd3fe9389b573f560c54e0ffbd868081e8d6507e1eb66be747bf2a1e69",
+    "lastHarvestedAt": "2026-11-20T13:26:32.708Z",
+    "learningId": "learn-huggingface-microsoft-aion-1-0-instruct-2-3b"
   }
 }

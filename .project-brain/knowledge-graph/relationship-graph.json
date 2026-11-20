@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-20T12:15:56.216Z",
+  "updated_at": "2026-11-20T13:27:15.206Z",
   "statistics": {
-    "total_nodes": 423,
+    "total_nodes": 424,
     "total_edges": 187,
     "domain_distribution": {
-      "D": 270,
+      "D": 271,
       "M": 1,
       "H": 65,
       "J": 22,
@@ -9455,6 +9455,28 @@
       ],
       "created_at": "2026-11-20T12:15:56.215Z",
       "updated_at": "2026-11-20T12:15:56.215Z"
+    },
+    "DOM-D-6F9E9680": {
+      "id": "DOM-D-6F9E9680",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): microsoft/Aion-1.0-Instruct-2.3B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md`  \n> **Source**: huggingface ([http -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md`  \n> **Source**: huggingface ([http",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-microsoft-aion-1.0-instruct-2.3b/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T13:26:45.814Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-microsoft-aion-1.0-instruct-2.3b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-20T13:27:15.205Z",
+      "updated_at": "2026-11-20T13:27:15.205Z"
     }
   },
   "edges": [

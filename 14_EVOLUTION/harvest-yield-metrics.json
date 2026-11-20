@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T13:13:19.044Z",
-  "total_cycles_completed": 10998,
-  "total_learnings_persisted": 10998,
-  "total_rules_promoted": 10361,
+  "last_updated": "2026-11-20T13:26:41.627Z",
+  "total_cycles_completed": 11001,
+  "total_learnings_persisted": 11001,
+  "total_rules_promoted": 10362,
   "history": [
-    {
-      "timestamp": "2026-11-19T15:58:52.083Z",
-      "repository": "meshtastic/Meshtastic-Android",
-      "learningId": "learn-github-meshtastic-meshtastic-android",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T15:58:58.316Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T16:07:10.980Z",
-      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T16:07:13.473Z",
       "repository": "zed-industries/zed",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-20T13:13:19.044Z",
       "repository": "embassy-rs/embassy",
       "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T13:26:29.151Z",
+      "repository": "itsdecodingai/llm-twin-course",
+      "learningId": "learn-github-itsdecodingai-llm-twin-course",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T13:26:32.713Z",
+      "repository": "microsoft/Aion-1.0-Instruct-2.3B",
+      "learningId": "learn-huggingface-microsoft-aion-1-0-instruct-2-3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T13:26:41.627Z",
+      "repository": "nginx/kubernetes-ingress",
+      "learningId": "learn-github-nginx-kubernetes-ingress",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

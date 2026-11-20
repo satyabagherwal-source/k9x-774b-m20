@@ -11578,3 +11578,7 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `25be3e4c` | Multi-dimensional audit evidence | 2026-11-20T13:08:32.504Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `9c89de48` | Multi-dimensional audit evidence | 2026-11-20T13:08:32.560Z |
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `0bf016d3` | Multi-dimensional audit evidence | 2026-11-20T13:13:19.039Z |
+| `learn-github-itsdecodingai-llm-twin-course` | `https://github.com/itsdecodingai/llm-twin-course` | `04e12f37` | Multi-dimensional audit evidence | 2026-11-20T13:26:29.116Z |
+| `learn-huggingface-microsoft-aion-1-0-instruct-2-3b` | `https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-20T13:26:32.708Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `7e3deaf6` | Multi-dimensional audit evidence | 2026-11-20T13:26:41.622Z |
+| `learn-dom-d-6f9e9680` | `project://hf-microsoft-aion-1.0-instruct-2.3b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md` | 2026-11-20T13:27:15.208Z |
