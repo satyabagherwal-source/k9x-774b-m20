@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-5016",
-    "timestamp": "2026-11-18T12:16:12.906Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "f126212ddb31a9101e151198f2881412dca57303f4b3e9617b087a62c7bcad2e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-ESQ4",
-    "timestamp": "2026-11-18T12:23:49.996Z",
-    "repository": "nvidia/Nemotron-3-Diarization",
-    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-    "contentHash": "dc3273c0cd95cd615a9d3f46afbf7eb173580e8c2d523330cb1a2128e9aceeb2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-EVYM",
-    "timestamp": "2026-11-18T12:23:54.190Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "a8f016f40877b6558d68e7c64d0e47e5e4118d961cc751ed9a8297364c032ac0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-EYH2",
-    "timestamp": "2026-11-18T12:23:57.446Z",
-    "repository": "zulip/zulip",
-    "learningId": "learn-github-zulip-zulip",
-    "contentHash": "88e6a4c6052ac1afbae67331489fd8bde75211e7333a6cc81560730a647464b5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-F0XO",
-    "timestamp": "2026-11-18T12:24:00.636Z",
-    "repository": "goharbor/harbor",
-    "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "9813239bcd7d9d9f5a0ab06265c18174fe9ed299449369ebc0e6543163f30dde",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-QN34",
     "timestamp": "2026-11-18T12:33:02.560Z",
     "repository": "Lightricks/LTX-2.5",
@@ -7492,6 +7417,81 @@
     "contentHash": "a59d3298e5d0c8b52cb5c73a78c0c5871b223280228b0e0b5a288387f4aa58d4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-E4IG",
+    "timestamp": "2026-11-20T11:30:39.832Z",
+    "repository": "tencent/Hy4",
+    "learningId": "learn-huggingface-tencent-hy4",
+    "contentHash": "ec25fdd5dc8c74a2901fa277389f13894f3a31812852e84172074fb8b63a41f4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-E8YT",
+    "timestamp": "2026-11-20T11:30:45.605Z",
+    "repository": "touchlab/Kermit",
+    "learningId": "learn-github-touchlab-kermit",
+    "contentHash": "688b612d2e6ae14d071eda6f2095c5c431d04213691815c7cd64fcb64aa4c947",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-EBPK",
+    "timestamp": "2026-11-20T11:30:49.160Z",
+    "repository": "fabio-rovai/open-ontologies",
+    "learningId": "learn-github-fabio-rovai-open-ontologies",
+    "contentHash": "079cb7008f85d94f92e6e9c7d7e939281396da52bed046b0746b08d1c4afd9a2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-EDCX",
+    "timestamp": "2026-11-20T11:30:51.297Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "ae95ee36162a3cdb2963c010dc8ff780afc78f3e2039d5a2d7c0874e3375e954",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-FAGU",
+    "timestamp": "2026-11-20T11:31:34.206Z",
+    "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",
+    "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted",
+    "contentHash": "6514316f196ea5c566cc08a600db212144a5f348e358ed36da297a6d2260c6a3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

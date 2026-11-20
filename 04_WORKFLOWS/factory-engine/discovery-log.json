@@ -21715,5 +21715,29 @@
     "qualityScore": 1753,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-20T11:06:40.000Z"
+  },
+  {
+    "name": "harness-hub/Qwen3.8-27B-opencode-adapted",
+    "fullName": "harness-hub/Qwen3.8-27B-opencode-adapted",
+    "url": "https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: harness-hub/Qwen3.8-27B-opencode-adapted (111 likes, 302 downloads)",
+    "likes": 111,
+    "downloads": 302,
+    "qualityScore": 1412,
+    "discoveredAt": "2026-11-20T11:28:22.056Z"
+  },
+  {
+    "name": "tencent/Hy4",
+    "fullName": "tencent/Hy4",
+    "url": "https://huggingface.co/tencent/Hy4",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: tencent/Hy4 (81 likes, 89 downloads)",
+    "likes": 81,
+    "downloads": 89,
+    "qualityScore": 899,
+    "discoveredAt": "2026-11-20T11:28:22.056Z"
   }
 ]

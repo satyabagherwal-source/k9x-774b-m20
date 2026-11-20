@@ -4,22 +4,22 @@
 {
   "source_repository": "fabio-rovai/open-ontologies",
   "source_url": "https://github.com/fabio-rovai/open-ontologies",
-  "source_version": "1ed99ac1",
+  "source_version": "17ef05b9",
   "license": "MIT",
-  "timestamp": "2026-11-17T04:05:45.095Z",
+  "timestamp": "2026-11-20T11:30:49.375Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-fabio-rovai-open-ontologies",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies) (Revision: `1ed99ac1`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T04:05:45.095Z`  
+> **Provenance**: Harvested from [fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies) (Revision: `17ef05b9`).  
+> **License**: MIT | **Timestamp**: `2026-11-20T11:30:49.375Z`  
 > **Learning ID**: `learn-github-fabio-rovai-open-ontologies`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `fabio-rovai/open-ontologies` (Commit: `1ed99ac1`)
+- **Target Repository**: `fabio-rovai/open-ontologies` (Commit: `17ef05b9`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T04:05:44.018Z  
+> **Harvest Timestamp**: 2026-11-20T11:30:48.136Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Plan, apply and roll back changes to a production ontology, with a blast radius report and a proof an auditor can re-check.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2913 stars
+- **Stars / Engagement**: 2935 stars
 
 ---
 
@@ -1737,11 +1737,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #406** (2026-11-16): **clinical and drift read language-tagged labels as Dog"@en: trim_matches('"') on the N-Triples form**
-  *Symptoms*: ## What happens  Two more places read `rdfs:label` values out of `sparql_select`'s JSON with `trim_matches('"')`. Language-tagged labels come out mangled there, the same defect `src/language.rs` describes for the alignment engine and #404 fixes for `onto_embed`.  - `src/clinical.rs:155`, `ClinicalCrosswalks::validate_clinical` - `src/drift.rs:259`, the label pass of the vocabulary snapshot  Both run:  ```rust label.trim_matches('"').split("^^").next().unwrap_or("").trim_matches('"') ```  on the N-Triples form of the literal. For a tagged literal there is no `^^` to split on, so the tag and the closing quote stay:  | Literal in the store | `sparql_select` renders | After the expression | | --- | --- | --- | | `"Myocardial infarction"@en` | `"Myocardial infarction"@en` | `Myocardial infarction"@en` | | `"Dog"@en-GB` | `"Dog"@en-GB` | `Dog"@en-GB` | | `"A \"quoted\" label"` | `"A \"quoted\" label"` | `A \"quoted\" label` (escapes kept) |  ## Expected  The literal's lexical value: `Myocardial infarction`, `Dog`, `A "quoted" label`.  ## Effect  `validate_clinical` searches the crosswalk for `Myocardial infarction"@en`, finds nothing, and reports every language-tagged class label as unmatched. The drift snapshot records the mangled string as the label, so any label comparison it feeds compares `Dog"@en` with whatever the other version holds.  ## Suggested fix  Parse with `crate::language::parse_literal`, which already handles tags, datatypes and escapes, or read terms rather than s
+- **Issue #425** (2026-11-20): **Studio replay demo: 3D legend says 'ies-core.ttl · 1,083 triples' over a bundle of 28 DCAT-US classes with no warrants**
+  *Symptoms*: ## What happens  The replay (web) build of Studio draws `demo/precomputed/bundle.json`. Its graph is 28 classes (`Address`, `Agent`, `Attribution`, `Author`, `Catalog`, ...), 69 properties and 682 edges, and no edge carries a `warrant`. The 3D legend over it reads:  - "PROOF-CARRYING INFERENCE · ies-core.ttl · 1,083 triples" - ASSERTED: "read from ies-core.ttl. claimed by a person" - CERTIFIED 0 and REJECTED 0, plus the Lean 4 / Isabelle footer  None of that describes the bundle. The replay empty state also points to a "Documents panel" the replay tabs do not have.  #414 kept the replay text unchanged on the premise that replay is built from ies-core; the bundle shows it is not.  ## Where  `studio/src/lib/graph-legend.ts` (the `REPLAY` constant and `legendParts` for `kind: 'replay'`), `studio/src/lib/graph3d-model.ts` / `Graph3D.tsx` (empty-state text).  ## Expected  The replay legend describes the bundle it draws: the corpus it came from and counts taken from the bundle, and the proof-carrying rows and footer only when the bundle carries warrants (the rule live mode now follows). If the replay is meant to show proof-carrying inference, the bundle needs regenerating with warrants instead. 
 
-- **Issue #398** (2026-11-13): **MCP handshake reports serverInfo as rmcp 3.9.0 instead of open-ontologies and its version**
-  *Symptoms*: ## What happens  Over MCP the server introduces itself as `rmcp`, with rmcp's version, instead of as Open Ontologies. `ServerHandler::get_info` in `src/server.rs` builds its `ServerConfig` without setting the server's name and version, so rmcp fills in its own crate name and version.  ## Repro  Start `open-ontologies serve` and send over stdio:  ```json {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"probe","version":"1"}}} ```  ## Expected  `result.serverInfo` names this server and its release, for example `{"name":"open-ontologies","version":"2.1.0"}`.  ## Actual  On `fe1e32b8`, release build, default features:  ```json {"name":"rmcp","version":"3.9.0"} ```  ## Why it matters  Clients show this name in their server lists and logs, and a bug report that quotes the handshake carries the SDK's version, not the engine's. Nothing in `src/` or `tests/` mentions `serverInfo`, so nothing would catch a change either way.  ## Suggested fix  Set the implementation name to `open-ontologies` and the version to `env!("CARGO_PKG_VERSION")` in `get_info`, and add a handshake test that pins both. 
+- **Issue #424** (2026-11-20): **Studio 3D in live mode still shows replay-only legend rows, footer and empty-state text, and tints classes named like tool nodes**
+  *Symptoms*: Follow-up to #414, which makes the legend name the loaded file and its triple count.  ## What happens  `studio/src/components/Graph3D.tsx` was written for the replay demo, and in live mode:  - the legend still lists CERTIFIED and REJECTED rows (always 0 in live mode, which carries no warrants) and the Lean 4 / Isabelle footer; - the empty state reads "Build the knowledge graph first (Documents panel)" (around line 248), but live mode has no Documents panel; - `TOOL_NODES` (around line 54) matches nodes by display name, so a live class whose label or local name is exactly `E`, `Z3`, `Vampire`, `certificate` and so on is pulled out of its component and tinted as a verification-layer tool node.  ## Expected  The proof-carrying parts of the legend render only when the graph carries warrant data, the empty-state text fits the mode, and tool nodes are recognised by something the replay bundle sets (a kind or a namespace) rather than by name. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1758,928 +1758,1007 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `df254aff` (2026-11-16)
-**Commit Message**: fix(shacl): hide provenance from scoped prebound union queries
+### Incident Patch 1: `b639a6c3` (2026-11-18)
+**Commit Message**: fix(reasoning): join newly derived edges during incremental transitivity
 
-Route AllGraphs prebound SELECTs through the existing filtered union
-query path, matching non-prebound scoped reads. A union default graph
-has no explicit graph list for hide_ledger to filter, which let internal
-provenance records reach SHACL-SPARQL constraints in tracked stores.
-Keep explicitly scoped datasets and per-focus variable substitution intact.
+Fix #416 by joining the persisted closure with an in-memory index of
+transitive edges from the current incremental run. Index both directions
+and expose each round's inferred edges to subsequent joins, so subproperty
+and inverse consequences can compose before final materialisation.
 
-Add regressions for tracked and untracked SHACL validation, including
-unscoped and all-versions requests, a ledger probe and a positive control
-on inferred data. Cover default and named graph boundaries, explicit and
-variable GRAPH access to the ledger, and multiple prebound focus terms.
-Update the existing Unreleased changelog entry.
+Keep targeted store queries, scan and iteration limits, dry-run behaviour,
+and the existing transactional publication and durable support capture.
+Deduplicate neighbours shared by the stored and in-memory graphs.
 
-Both new regressions fail before the fix; the SHACL reproduction reports
-16 violations instead of the expected one. After the fix, 529 Rust tests
-and the Python source-citation guard pass. Linux CI and the full optional
-feature matrix were not run locally.
-Clippy --all-targets with warnings denied also passes.
+Add nine regression tests covering tracked and untracked inference, inverse
+rules, multiple rounds, named graphs, batch-size invariance, dry runs,
+alternative supports and withdrawal of ungrounded cycles. Update CHANGELOG.
+All nine new tests fail against the previous implementation and pass after
+the fix.
 
-**File**: `CHANGELOG.md` (modified, +2/-1)
+Validation on the existing Windows GNU toolchain:
+- cargo build --offline --locked
+- Five incremental unit tests and nine related integration suites: 110 tests
+  exercised successfully; one release-provenance test skipped without Git tags.
+- cargo clippy --offline --locked --all-targets -- -D warnings
+
+Linux CI and th
+
+**File**: `CHANGELOG.md` (modified, +9/-0)
 ```diff
-@@ -211,7 +211,8 @@ All notable changes to Open Ontologies are documented here.
-   the Rust `sparql_update_with_retraction` API, or HTTP `/api/update` with
-   `retract_inferences: true` opt in to support-based retraction. Independent
-   proofs survive withdrawal; unsupported cycles do not. The reserved ledger
--  stays outside query datasets, including `GRAPH ?g`. Dataset backups retain
-+  stays outside query datasets, including `GRAPH ?g` and SHACL-SPARQL
-+  constraints evaluated over all graphs. Dataset backups retain
-   it, and old single-literal backups migrate on restore or persistent open.
-   Provenance reports retain evidence, rule versions and withdrawal history;
-   proof forests remain exportable to the existing independent oo-cert checker.
+@@ -165,6 +165,15 @@ All notable changes to Open Ontologies are documented here.
+ 
+ ### Fixed
+ 
++- **Incremental transitivity joins edges derived in the same run** (#416).
++  Subproperty and inverse rules could produce two connected edges without
++  their transitive consequence, while the response reported `complete: true`.
++  Targeted joins now include an in-memory index of the current run's edges
++  alongside the stored closure. Materialisation still happens after inference,
++  and tracked runs retain alternative supports and dependency-based withdrawal.
++  Regression tests cover tracked and untracked runs, multiple rounds, named
++  graphs, dry runs, batching, and withdrawal of alternative or cyclic support.
++
+ - **Clinical validation and drift detection read a tagged label by its text**
+   (#406). Both stripped quotes from the N-Triples form of the literal, so
+   `"Dog"@en` became `Dog"@en`. Clinical validation searched the crosswalk for
 ```
 
-**File**: `src/graph.rs` (modified, +4/-0)
+**File**: `src/reason_incremental.rs` (modified, +58/-5)
 ```diff
-@@ -1621,6 +1621,10 @@ impl GraphStore {
-         terms: &[Term],
-         scope: &ReadScope,
-     ) -> anyhow::Result<Vec<Vec<std::collections::HashMap<String, String>>>> {
-+        if scope.is_all_graphs() {
-+            // Match the non-prebound path: the union must exclude the ledger.
-+            return self.sparql_select_union_prebound(query, var, terms);
+@@ -89,6 +89,36 @@ struct Schema {
+     truncated: bool,
+ }
+ 
++/// Transitive edges from this run, indexed before the next round joins them.
++/// They are published only after inference finishes, with their recorded support.
++#[derive(Default)]
++struct TransitiveEdges {
++    outgoing: HashMap<(String, String), HashSet<String>>,
++    incoming: HashMap<(String, String), HashSet<String>>,
++}
++
++impl TransitiveEdges {
++    fn insert(&mut self, (s, p, o): &Triple) {
++        self.outgoing
++            .entry((p.clone(), s.clone()))
++            .or_default()
++            .insert(o.clone());
++        self.incoming
++            .entry((p.clone(), o.clone()))
++            .or_default()
++            .insert(s.clone());
++    }
++
++    fn neighbours(&self, term: &str, pred: &str, forward: bool) -> Option<&HashSet<String>> {
++        let index = if forward {
++            &self.outgoing
++        } else {
++            &self.incoming
++        };
++        index.get(&(pred.to_owned(), term.to_owned()))
++    }
++}
++
+ /// The row cap on every internally-authored scan here. A scan that returns
+ /// exactly this many rows is reported as possibly truncated rather than assumed
+ /// complete.
+@@ -382,7 +412,11 @@ impl IncrementalReasoner {
+         // that lead into it. Only asked for transitive properties, and only
+         // about terms the delta actually mentions.
+         let neighbours_truncated = std::cell::Cell::new(false);
+-        let neighbours = |term: &str, pred: &str, forward: bool| -> anyhow::Result<Vec<String>> {
++        let neighbours = |term: &str,
++                          pred: &str,
++                          forward: bool,
++                          local: &TransitiveEdges|
++         -> anyhow::Result<HashSet<String>> {
+             let q = if forward {
+                 format!("SELECT ?x WHERE {{ {term} {pred} ?x }} LIMIT 10000")
+             } else {
+@@ -398,15 +432,26 @@ impl IncrementalReasoner {
+             if rows.len() >= 10000 {
+                 neighbours_truncated.set(true);
+             }
+-            rows.iter()
++            let mut found = rows
++                .iter()
+                 .map(|row| {
+                     row["x"].as_str().map(str::to_owned).ok_or_else(|| {
+                         anyhow::anyhow!("incremental neighbour query returned an unbound term")
+                     })
+                 })
+-                .collect()
++                .collect::<anyhow::Result<HashSet<_>>>()?;
++            if let Some(neighbours) = local.neighbours(term, pred, forward) {
++                found.extend(neighbours.iter().cloned());
++            }
++            Ok(found)
+         };
+ 
++        let mut local_edges = TransitiveEdges::default();
++        for triple in delta {
++            if schema.transitive.contains(&triple.1) {
++                local_edges.insert(triple);
++            }
 +        }
-         let store = &self.store;
-         let mut prepared = SparqlEvaluator::new().parse_query(query)?;
-         scope.apply(prepared.dataset_mut())?;
+         let mut derived: HashSet<Triple> = HashSet::new();
+         let mut frontier: Vec<Triple> = delta.to_vec();
+         let mut rounds = 0usize;
+@@ -547,7 +592,7 @@ impl IncrementalReasoner {
+                         }
+                     }
+                     if schema.transitive.contains(p) {
+-                        for far in neighbours(o, p, true)? {
++                        for far in neighbours(o, p, true, &local_edges)? {
+                             emit(
+                                 (s.clone(), p.clone(), far.clone()),
+                                 "prp-trp",
+@@ -563,7 +608,7 @@ impl IncrementalReasoner {
+                                 &mut next,
+                             );
+                         }
+-                        for near in neighbours(s, p, false)? {
++                        for near in neighbours(s, p, false, &local_edges)? {
+                             emit(
+                                 (near.clone(), p.clone(), o.clone()),
+                                 "prp-trp",
+@@ -597,6 +642,14 @@ impl IncrementalReasoner {
+                     // forward chainer that only one of two entry points runs.
+                 }
+             }
++            // Joins must also see edges derived in earlier rounds of THIS run.
++            // Querying only the store misses new-new joins and can falsely
++            // report a complete closure when the frontier becomes empty (#416).
++            for triple in &next {
++                if schema.transitive.contains(&triple.1) {
++                    local_edges.insert(triple);
++                }
++            }
+             frontier = next;
+         }
+ 
 ```
 
-**File**: `tests/shacl_provenance_isolation_test.rs` (added, +161/-0)
+**File**: `tests/incremental_transitive_join_test.rs` (added, +246/-0)
 ```diff
-@@ -0,0 +1,161 @@
-+// SPDX-FileCopyrightText: 2026 Fabio Rovai
+@@ -0,0 +1,246 @@
++// SPDX-FileCopyrightText: 2026 Gqqqqgg
 +// SPDX-License-Identifier: MIT
 +
-+//! SHACL-SPARQL reads user data, including inferred facts, but not the ledger.
++//! Newly inferred edges must participate in the same incremental closure (#416).
 +
-+use open_ontologies::graph::{GraphStore, ReadScope};
-+use open_ontologies::reason::{InferenceTarget, Reasoner};
-+use open_ontologies::shacl::ShaclValidator;
++use open_ontologies::graph::GraphStore;
++use open_ontologies::reason::{InferenceTarget, Reasoner, Spelled};
++use open_ontologies::reason_incremental::IncrementalReasoner;
 +use open_ontologies::temporal::ScopeRequest;
-+use open_ontologies::truth_maintenance::LEDGER_GRAPH;
-+use oxigraph::model::{NamedNode, Term};
++use serde_json::Value;
++use std::collections::BTreeSet;
 +use std::sync::Arc;
 +
-+const DATA: &str = r#"
-+    @prefix ex: <http://example.org/> .
-+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-+    ex:A rdfs:subClassOf ex:B .
-+    ex:x a ex:A ; ex:p ex:y .
-+"#;
++const PREFIXES: &str = "@prefix : <http://example.org/> .
++@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
++@prefix owl: <http://www.w3.org/2002/07/owl#> .";
++const SCHEMA: &str = ":q rdfs:subPropertyOf :p . :p a owl:TransitiveProperty .";
 +
-+const SHAPES: &str = r#"
-+    @prefix sh: <http://www.w3.org/ns/shacl#> .
-+    @prefix ex: <http://example.org/> .
-+    ex:LedgerProbe a sh:NodeShape ; sh:targetClass ex:A ;
-+        sh:sparql [ sh:message "ledger is visible" ;
-+            sh:select """SELECT $this ?p WHERE {
-+                ?s ?p ?o .
-+                FILTER(STRSTARTS(STR(?p), "https://open-ontologies.org/provenance#"))
-+            }""" ] .
-+    ex:Control a sh:NodeShape ; sh:targetClass ex:B ;
-+        sh:sparql [ sh:message "control: ex:p is present" ;
-+            sh:select "SELECT $this WHERE { $this <http://example.org/p> ?o }" ] .
-+"#;
++fn edge(s: &str, p: &str, o: &str) -> Spelled {
++    (
++        format!("<http://example.org/{s}>"),
++        format!("<http://example.org/{p}>"),
++        format!("<http://example.org/{o}>"),
++    )
++}
 +
-+fn store(tracked: bool) -> Arc<GraphStore> {
++fn ntriples(edges: &[Spelled]) -> String {
++    edges
++        .iter()
++        .map(|(s, p, o)| format!("{s} {p} {o} .\n"))
++        .collect()
++}
++
++fn prepared_graph(schema: &str, tracking: bool) -> Arc<GraphStore> {
 +    let graph = Arc::new(GraphStore::new());
-+    graph.load_turtle(DATA, None).unwrap();
++    graph
++        .load_turtle(&format!("{PREFIXES}\n{schema}"), None)
++        .unwrap();
 +    Reasoner::run_scoped_with_tracking(
 +        &graph,
-+        "rdfs",
++        "owl-rl",
 +        true,
 +        InferenceTarget::DefaultGraph,
 +        None,
 +        &ScopeRequest::Unscoped,
-+        tracked,
++        tracking,
 +    )
 +    .unwrap();
-+    assert_eq!(graph.ledger().unwrap().is_some(), tracked);
 +    graph
 +}
 +
-+#[test]
-+fn tracking_does_not_add_shacl_sparql_violations() {
-+    for tracked in [false, true] {
-+        let graph = store(tracked);
-+        for request in [ScopeRequest::Unscoped, ScopeRequest::AllVersions] {
-+            let report: serde_json::Value = serde_json::from_str(
-+                &ShaclValidator::validate_scoped(&graph, SHAPES, &request).unwrap(),
-+            )
-+            .unwrap();
-+            assert_eq!(report["conforms"], false, "tracked={tracked}: {report}");
-+            assert_eq!(report["violation_count"], 1, "tracked={tracked}: {report}");
-+            assert_eq!(
-+                report["violations"][0]["message"],
-+                "control: ex:p is present"
-+            );
-+            assert_eq!(
-+                report["violations"][0]["focus_node"],
-+                "http://example.org/x"
-+            );
-+            assert!(report["skipped_constraints"].is_null(), "{report}");
-+        }
-+    }
-+}
-+
-+#[test]
-+fn scoped_prebinding_hides_metadata_and_keeps_user_graph_boundaries() {
-+    let graph = store(true);
-+    graph
-+        .sparql_update(
-+            "INSERT DATA { GRAPH <http://example.org/source> {
-+                <http://example.org/x> <http://example.org/p> <http://example.org/z>
-+            } }",
-+        )
-+        .unwrap();
-+    let terms: Vec<Term> = ["http://example.org/x", "http://example.org/absent"]
-+        .into_iter()
-+        .map(|iri| NamedNode::new(iri).unwrap().into())
-+        .collect();
-+    let source = "http://example.org/source".to_string();
-+    let scopes = [
-+        (ReadScope::AllGraphs, vec!["y", "z"]),
-+        (
-+            ReadScope::Graphs {
-+                default_graph: true,
-+                named: vec![],
-+            },
-+            vec!["y"],
-+        ),
-+        (
-+            ReadScope::Graphs {
-+                default_graph: false,
-+                named: vec![source.clone()],
-+            },
-+            vec!["z"],
-+        ),
-+        (
-+            ReadScope::Graphs {
-+                default_graph: true,
-+                named: vec![source, LEDGER_GRAPH.into()],
-+            },
-+            vec!["y", "z"],
-+        ),
-+        (
-+            ReadScope::Graphs {
-+                default_graph: false,
-+                named: vec![LEDGER_GRAPH.into()],
-+            },
-+            vec![],
-+        ),
-+    ];
-+    let probes = [
-+        "SELECT $this WHERE { ?s ?p ?o FILTER(STRSTARTS(STR(?p), 'https://open-ontologies.org/provenance#')) }".to_string(),
-+        format!("SELECT $this WHERE {{ GRAPH <{LEDGER_GRAPH}> {{ ?s ?p ?o }} }}"),
-+        format!("SELECT $this WHERE {{ GRAPH ?g {{ ?s ?p ?o }} FILTER(?g = <{LEDGER_GRAPH}>) }}"),
-+    ];
-+    for (scope, expected) in scopes {
-+        let rows = graph
-+            .sparql_select_scoped_prebound(
-+                "SELECT $this ?o WHERE { $this <http://example.org/p> ?o }",
-+                "this",
-+                &terms,
-+                &scope,
-+            )
-+            .unwrap();
-+        assert_eq!(rows.len(), terms.len());
-+        assert!(
-+            rows[1].is_empty(),
-+            "the absent focus node must have no matches"
-+        );
-+        let mut actual: Vec<_> = rows[0].iter().map(|row| row["o"].clone()).collect();
-+    
-```
-
----
-
-### Incident Patch 2: `79ea65fe` (2026-11-16)
-**Commit Message**: Merge origin/main into fix/explicit-provenance-truth-maintenance
-
-Integrate upstream main at 214e948 after syncing the fork. Resolve the
-Unreleased changelog conflict by retaining all upstream fixes and the
-PR's opt-in durable provenance entry.
-
-Apply the existing ledger-free query dataset to the newly introduced
-RDF-term union query API. Preserve upstream label handling and user named
-graphs while preventing internal provenance records from leaking through
-union queries or explicit GRAPH selections. Add regression coverage for
-these cases.
-
-Keep the existing provenance, update and concurrent reasoning fixes.
-
-Validation: cargo check and clippy for all targets (-D warnings); 543 Rust
-tests and 13 Python checks passed using the existing Windows toolchain.
-Linux CI and the full optional-feature matrix were not run locally.
-
-**File**: `CHANGELOG.md` (modified, +31/-4)
-```diff
-@@ -189,6 +189,28 @@ All notable changes to Open Ontologies are documented here.
-   The CLI help and reasoning guide disclose tracking's time and storage costs,
-   including the maintainer's LUBM1 measurements.
- 
-+- **`onto_embed` uses the lexical value of an RDF label** (#404). Language
-+  tags and escaped quotes are no longer passed to the embedding model as part
-+  of the label text.
-+
-+- **Loading an ontology and unloading another by name no longer race**
-+  (#405). `unload_named` checked which ontology was active, released the
-+  lock, then unloaded whatever was active by then, so a load landing in that
-+  gap was cleared from the store while still marked active. Loads,
-+  recompiles, reloads, eviction and unloads now take one lifecycle lock.
-+
-+- **`stats` counts individuals by their type vocabulary, in both engines**
-+  (#399, #395). A node counts when it is typed `owl:NamedIndividual` or
-+  `owl:Thing`, or has a type outside the RDF, RDFS and OWL vocabularies.
-+  Restrictions, property characteristics such as `owl:TransitiveProperty`,
-+  annotation properties, datatypes, `owl:AllDisjointClasses` and `owl:Axiom`
-+  nodes no longer inflate the count. The Rust engine and
-+  `open-ontologies-lite` apply the same rule.
-+
-+- **The MCP `initialize` reply names the server** (#400, #398). `serverInfo`
-+  reported rmcp's crate name and version (`rmcp`, `3.9.0`); it now reports
-+  `open-ontologies` and the release version.
-+
- - **`onto_repo_list` reports cache and active status for the matching file**
-   (#386). Multiple repository directories can contain the same filename stem;
-   status flags now match the cached and active source paths instead of marking
-@@ -241,10 +263,15 @@ All notable changes to Open Ontologies are documented here.
-   Names that were already valid local names, including non-ASCII letters and
-   a leading digit, keep the IRIs they had.
- 
--- **CSV ingestion rejects a repeated header instead of dropping a column**
--  (#382). Each row became a map keyed by header, so a later column with the
--  same header overwrote the earlier one. The error names the header and its
--  column number.
-+- **CSV and XLSX ingestion reject a repeated header instead of dropping a
-+  column** (#382, #402). Each row became a map keyed by header, so a later
-+  column with the same header overwrote the earlier one. The error names the
-+  header and its column number. A blank header names no column, so blank
-+  headers are not duplicates: a file whose lines end in empty columns, as
-+  spreadsheet exports such as `name,,` do, still loads, with the empty
-+  columns skipped and left out of the column list that mapping generation
-+  reads. A value under a blank header has no name to go under and is refused
-+  with its column number.
- 
- - **OWL-DL reports name `owl:NegativePropertyAssertion` as unmodelled**
-   (#376). The tableau never read negative property assertions, so a
-```
-
-**File**: `funding.json` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@
-     {
-       "guid": "open-ontologies",
-       "name": "Open Ontologies",
--      "description": "Open Ontologies is a Rust MCP (Model Context Protocol) server and desktop Studio for AI-native ontology engineering. It exposes 116 tools that let an LLM client build, validate, query, diff, lint, version, reason over, align, plan, certify and govern RDF/OWL ontologies against an in-memory Oxigraph triple store. All 116 ship in a default build, and 8 of them require an optional Cargo feature (embeddings, plugins, postgres or duckdb). It ships as a single binary with no JVM and no Protege dependency, and covers OWL 2 profile checking, SHACL validation, SPARQL, OWL-RL reasoning, ontology diffing, a marketplace of 33 standard ontologies, IES (Information Exchange Standard) support for UK defence and government data, semantic embeddings in builds compiled with the embeddings feature, PDDL planning, and a full lineage audit trail. The design is deliberately MCP-native: the server provides validation, scaffolding and proof, while the connected model supplies the intelligence. There are no embedded LLM clients, no API keys and no provider lock-in, so the same engine runs offline and in air-gapped environments. Open Ontologies is the verification engine behind a public programme of register-integrity audits, where every published finding is re-checked by an independent path before release. Funding supports maintenance, cross-platform release engineering, the reasoning and planner layers, and continued free distribution.",
-+      "description": "Open Ontologies is a Rust MCP (Model Context Protocol) server and desktop Studio for AI-native ontology engineering. It exposes 116 tools that let an LLM client build, validate, query, diff, lint, version, reason over, align, plan, certify and govern RDF/OWL ontologies against an in-memory Oxigraph triple store. All 116 ship in a default build, and a further 8 require an optional Cargo feature (embeddings, plugins, postgres or duckdb). It ships as a single binary with no JVM and no Protege dependency, and covers OWL 2 profile checking, SHACL validation, SPARQL, OWL-RL reasoning, ontology diffing, a marketplace of 33 standard ontologies, IES (Information Exchange Standard) support for UK defence and government data, semantic embeddings in builds compiled with the embeddings feature, PDDL planning, and a full lineage audit trail. The design is deliberately MCP-native: the server provides validation, scaffolding and proof, while the connected model supplies the intelligence. There are no embedded LLM clients, no API keys and no provider lock-in, so the same engine runs offline and in air-gapped environments. Open Ontologies is the verification engine behind a public programme of register-integrity audits, where every published finding is re-checked by an independent path before release. Funding supports maintenance, cross-platform release engineering, the reasoning and planner layers, and continued free distribution.",
-       "webpageUrl": {
-         "url": "https://github.com/fabio-rovai/open-ontologies"
-       },
-```
-
-**File**: `python/src/open_ontologies_lite/engine.py` (modified, +14/-2)
-```diff
-@@ -41,7 +41,18 @@
-     for name in ("ObjectProperty", "DatatypeProperty", "AnnotationProperty")
- )
- _PROPERTY_VALUES = " ".join(f"<{iri}>" for iri in _PROPERTY_TYPES)
--_SCHEMA_TYPES = (OWL_CLASS, RDFS_CLASS) + _PROPERTY_TYPES
-+# An individual has a type outside the RDF, RDFS and OWL vocabularies, or is
-+# declared owl:NamedIndividual or owl:Thing. Everything else typed only from
-+# those vocabularies (restrictions, property characteristics, datatypes, axiom
-+# nodes) is part of the ontology's structure. Same rule as GraphStore::get_stats
-+# in the Rust engine (#395).
-+_INDIVIDUAL_TYPE_FILTER = (
-+    "FILTER(?t IN (<http://www.w3.org/2002/07/owl#NamedIndividual>, "
-+    "<http://www.w3.org/2002/07/owl#Thing>) || ("
-+    '!STRSTARTS(STR(?t), "http://www.w3.org/1999/02/22-rdf-syntax-ns#") && '
-+    '!STRSTARTS(STR(?t), "http://www.w3.org/2000/01/rdf-schema#") && '
-+    '!STRSTARTS(STR(?t), "http://www.w3.org/2002/07/owl#")))'
-+)
- 
- 
- def resolve_format(name: str) -> ox.RdfFormat:
-@@ -122,7 +133,8 @@ def stats(self) -> dict[str, int]:
-             ),
-             "individuals": self._count(
-                 "SELECT (COUNT(DISTINCT ?i) AS ?n) WHERE { ?i a ?t "
--                "FILTER(?t NOT IN (" + ", ".join(f"<{iri}>" for iri in _SCHEMA_TYPES) + ")) }"
-+                + _INDIVIDUAL_TYPE_FILTER
-+                + " }"
-             ),
-         }
- 
-```
-
-**File**: `python/tests/test_engine.py` (modified, +28/-0)
-```diff
-@@ -35,6 +35,34 @@ def test_load_and_stats():
-     assert s["individuals"] == 1      # rex
- 
- 
-+def test_stats_counts_individuals_by_type_vocabulary():
-+    # The Rust engine's regression for #395, same file. Property
-+    # characteristics, annotation properties, datatypes, restrictions and
-+    # axiom nodes are vocabulary, not individuals: only ex:Alice counts.
-+    e = OntologyEngine()
-+    e.load("""
-+        @prefix ex: <https://example.org/> .
-+        @prefix owl: <http://www.w3.org/2002/07/owl#> .
-+        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-+
-+        ex:Person a owl:Class ;
-+            rdfs:subClassOf [ a owl:Restriction ;
-+                owl:onProperty ex:partOf ;
-+                owl:someValuesFrom ex:Org ] .
-+        ex:Org a owl:Class .
-+        ex:partOf a owl:ObjectProperty, owl:TransitiveProperty .
-+        ex:hasId a owl:DatatypeProperty, owl:FunctionalProperty .
-+        ex:note a owl:AnnotationProperty .
-+        ex:Code a rdfs:Datatype .
-+        [] a owl:AllDisjointClasses ; owl:members ( ex:Person ex:Org ) .
-+        [] a owl:Axiom ; owl:annotatedSource ex:Person ;
-+            owl:annotatedProperty rdfs:subClassOf ;
-+            owl:annotatedTarget ex:Org ; rdfs:comment "an annotated axiom" .
-+        ex:Alice a owl:NamedIndividual, ex:Person .
-+    """)
-+    assert e.stats()["individuals"] == 1
-+
-+
- def test_query_select():
-     e = OntologyEngine()
-     e.load(ONT)
-```
-
-**File**: `src/graph.rs` (modified, +42/-1)
-```diff
-@@ -974,6 +974,40 @@ impl GraphStore {
-         self.select_with_dataset(query, true)
-     }
- 
-+    /// Run a SELECT over the union dataset and return its RDF terms without
-+    /// serialising them to display strings. Callers that consume lexical values
-+    /// (for example, labels used as embedding input) must not parse RDF syntax
-+    /// back out of `Term::to_string()`.
-+    pub fn sparql_select_union_terms(
-+        &self,
-+        query: &str,
-+    ) -> anyhow::Result<Vec<std::collections::HashMap<String, Term>>> {
-+        let store = &self.store;
-+        let mut prepared = SparqlEvaluator::new().parse_query(query)?;
-+        self.union_without_ledger(prepared.dataset_mut())?;
-+        let QueryResults::Solutions(solutions) = prepared.on_store(store).execute()? else {
-+            anyhow::bail!("term selection needs a SELECT query");
-+        };
-+
-+        let vars: Vec<String> = solutions
-+            .variables()
-+            .iter()
-+            .map(|v| v.as_str().to_string())
-+            .collect();
-+        let mut rows = Vec::new();
-+        for solution in solutions {
-+            let solution = solution?;
-+            let mut row = std::collections::HashMap::new();
-+            for var in &vars {
-+                if let Some(term) = solution.get(var.as_str()) {
-+                    row.insert(var.clone(), term.clone());
-+                }
-+            }
-+            rows.push(row);
-+        }
-+        Ok(rows)
-+    }
-+
-     /// Run a SELECT once per term, with `var` pre-bound to that term, over the
-     /// union dataset. Returns the solutions per term, in the order given.
-     ///
-@@ -1279,7 +1313,14 @@ impl GraphStore {
-                 && !STRSTARTS(STR(?p), \"http://www.w3.org/2000/01/rdf-schema#\")
-                 && !STRSTARTS(STR(?p), \"http://www.w3.org/2002/07/owl#\"))
-         }";
--        let individual_query = "SELECT (COUNT(DISTINCT ?i) AS ?count) WHERE { ?i a ?c . FILTER(?c != <http://www.w3.org/2002/07/owl#Class> && ?c != <http://www.w3.org/2000/01/rdf-schema#Class> && ?c != <http://www.w3.org/2002/07/owl#ObjectProperty> && ?c != <http://www.w3.org/2002/07/owl#DatatypeProperty> && ?c != <http://www.w3.org/2002/07/owl#Ontology> && ?c != <http://www.w3.org/2002/07/owl#Restriction>) }";
-+        let individual_query = "SELECT (COUNT(DISTINCT ?i) AS ?count) WHERE {
-+            ?i a ?c .
-+            FILTER(?c = <http://www.w3.org/2002/07/owl#NamedIndividual>
-+                || ?c = <http://www.w3.org/2002/07/owl#Thing>
-+                || (!STRSTARTS(STR(?c), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")
-+                    && !STRSTARTS(STR(?c), \"http://www.w3.org/2000/01/rdf-schema#\")
-+                    && !STRSTARTS(STR(?c), \"http://www.w3.org/2002/07/owl#\")))
-+        }";
- 
-         let count_from_query = |q: &str| -> usize {
-             let Ok(prepared) = SparqlEvaluator::new().parse_query(q) else { return 0 };
-```
-
-**File**: `src/ingest.rs` (modified, +56/-14)
-```diff
-@@ -51,28 +51,62 @@ impl DataIngester {
-             .map(|h| h.to_string())
-             .collect();
- 
-+        Self::check_headers("CSV", &headers)?;
-+
-+        let mut rows = Vec::new();
-+        for result in reader.records() {
-+            let record = result.context("Failed to read CSV record")?;
-+            let mut row = HashMap::new();
-+            for (i, value) in record.iter().enumerate() {
-+                Self::put_cell(&mut row, "CSV", &headers, i, value.to_string())?;
-+            }
-+            rows.push(row);
-+        }
-+        Ok(rows)
-+    }
-+
-+    /// A named column may appear once in a header row (#382, #402). A blank
-+    /// header names nothing, so two blank headers are not a duplicate:
-+    /// spreadsheet exports end lines with commas for columns that were
-+    /// formatted but never filled, and those files have to load.
-+    fn check_headers(kind: &str, headers: &[String]) -> Result<()> {
-         let mut unique_headers = HashSet::with_capacity(headers.len());
-         for (index, header) in headers.iter().enumerate() {
-+            if header.trim().is_empty() {
-+                continue;
-+            }
-             if !unique_headers.insert(header) {
-                 anyhow::bail!(
--                    "Duplicate CSV header {header:?} at column {}; CSV columns must be unique",
-+                    "Duplicate {kind} header {header:?} at column {}; {kind} columns must be unique",
-                     index + 1
-                 );
-             }
-         }
-+        Ok(())
-+    }
- 
--        let mut rows = Vec::new();
--        for result in reader.records() {
--            let record = result.context("Failed to read CSV record")?;
--            let mut row = HashMap::new();
--            for (i, value) in record.iter().enumerate() {
--                if let Some(key) = headers.get(i) {
--                    row.insert(key.clone(), value.to_string());
--                }
-+    /// Put one cell into its row under its column's header. An empty cell
-+    /// under a blank header is skipped. A value under a blank header has no
-+    /// name to go under, so it is refused by column rather than stored under
-+    /// an empty key, where a second unnamed column would overwrite it.
-+    fn put_cell(
-+        row: &mut HashMap<String, String>,
-+        kind: &str,
-+        headers: &[String],
-+        index: usize,
-+        value: String,
-+    ) -> Result<()> {
-+        match headers.get(index) {
-+            Some(header) if !header.trim().is_empty() => {
-+                row.insert(header.clone(), value);
-             }
--            rows.push(row);
-+            Some(_) if !value.trim().is_empty() => anyhow::bail!(
-+                "{kind} column {} has a value ({value:?}) but no header; name the column or clear it",
-+                index + 1
-+            ),
-+            _ => {}
-         }
--        Ok(rows)
-+        Ok(())
-     }
- 
-     /// Parse a JSON string. Accepts a JSON array of objects or a single object.
-@@ -300,13 +334,13 @@ impl DataIngester {
-             .map(Self::calamine_cell_to_string)
-             .collect();
- 
-+        Self::check_headers("XLSX", &headers)?;
-+
-         let mut rows = Vec::new();
-         for data_row in row_iter {
-             let mut row = HashMap::new();
-             for (i, cell) in data_row.iter().enumerate() {
--                if let Some(key) = headers.get(i) {
--                    row.insert(key.clone(), Self::calamine_cell_to_string(cell));
--                }
-+                Self::put_cell(&mut row, "XLSX", &headers, i, Self::calamine_cell_to_string(cell))?;
-             }
-             rows.push(row);
-         }
-@@ -536,6 +570,14 @@ impl DataIngester {
-             .ok(),
-             _ => None,
-         };
-+        // A blank header names no column (see check_headers), so it is not a
-+        // column here either; mapping generation would make it a property
-+        // with an empty name.
-+        let ordered = ordered.map(|h| {
-+            h.into_iter()
-+                .filter(|name| !name.trim().is_empty())
-+                .collect::<Vec<_>>()
-+        });
-         match ordered {
-             Some(h) if !h.is_empty() => {
-                 // The file's order for the columns it names, then any key a
-```
-
-**File**: `src/registry.rs` (modified, +29/-8)
-```diff
-@@ -70,8 +70,8 @@ pub struct OntologyRegistry {
-     /// `Mutex<Option<ActiveEntry>>` — at most one entry is "active" at a time
-     /// in this minimal model. Multi-slot extension is future work.
-     active: Mutex<Option<ActiveEntry>>,
--    /// Per-name reload mutex to prevent thundering-herd reloads.
--    reload_lock: Mutex<()>,
-+    /// Serializes graph lifecycle operations with active-slot changes.
-+    lifecycle_lock: Mutex<()>,
- }
- 
- impl OntologyRegistry {
-@@ -83,7 +83,7 @@ impl OntologyRegistry {
-             cache,
-             config,
-             active: Mutex::new(None),
--            reload_lock: Mutex::new(()),
-+            lifecycle_lock: Mutex::new(()),
-         })
-     }
- 
-@@ -97,6 +97,14 @@ impl OntologyRegistry {
- 
-     /// Load an RDF file into the graph, using the compile cache when valid.
-     pub fn load_file(&self, path: &str, opts: LoadOptions) -> Result<LoadResult> {
-+        // Keep graph replacement and the active-slot update atomic with respect
-+        // to unload/reload operations. Otherwise an unload can clear the graph
-+        // while a concurrent load is still waiting to publish its active slot.
-+        let _lifecycle = self.lifecycle_lock.lock().unwrap();
-+        self.load_file_locked(path, opts)
-+    }
-+
-+    fn load_file_locked(&self, path: &str, opts: LoadOptions) -> Result<LoadResult> {
-         let path_obj = Path::new(path);
-         if !path_obj.exists() {
-             return Err(anyhow!("file not found: {}", path));
-@@ -186,8 +194,8 @@ impl OntologyRegistry {
-     /// If the store was evicted, reload from cache (or source on refresh).
-     /// No-op if no active entry exists.
-     pub fn ensure_loaded(&self) -> Result<()> {
--        // Single-flight guard.
--        let _g = self.reload_lock.lock().unwrap();
-+        // Serialize graph reloads with loads, unloads and eviction.
-+        let _lifecycle = self.lifecycle_lock.lock().unwrap();
- 
-         // Snapshot needed fields (avoid holding the active lock across reload).
-         let needs_reload;
-@@ -272,6 +280,7 @@ impl OntologyRegistry {
-     /// Evict the active entry if idle longer than `idle_ttl_secs`.
-     /// Returns `true` when an eviction took place.
-     pub fn evictor_tick(&self) -> Result<bool> {
-+        let _lifecycle = self.lifecycle_lock.lock().unwrap();
-         if !self.config.enabled || self.config.idle_ttl_secs == 0 {
-             return Ok(false);
-         }
-@@ -329,6 +338,11 @@ impl OntologyRegistry {
-     /// Manually unload the active ontology (clear graph + drop active slot).
-     /// The cache file is preserved unless `delete_cache` is true.
-     pub fn unload(&self, delete_cache: bool) -> Result<Option<String>> {
-+        let _lifecycle = self.lifecycle_lock.lock().unwrap();
-+        self.unload_active_locked(delete_cache)
-+    }
-+
-+    fn unload_active_locked(&self, delete_cache: bool) -> Result<Option<String>> {
-         let mut active = self.active.lock().unwrap();
-         let Some(name) = active.as_ref().map(|entry| entry.name.clone()) else {
-             return Ok(None);
-@@ -352,9 +366,10 @@ impl OntologyRegistry {
-     ///
-     /// Returns `Ok(true)` if anything was actually changed.
-     pub fn unload_named(&self, name: &str, delete_cache: bool) -> Result<bool> {
-+        let _lifecycle = self.lifecycle_lock.lock().unwrap();
-         let active_name = self.active.lock().unwrap().as_ref().map(|e| e.name.clone());
-         if active_name.as_deref() == Some(name) {
--            return Ok(self.unload(delete_cache)?.is_some());
-+            return Ok(self.unload_active_locked(delete_cache)?.is_some());
-         }
-         // Not active. The graph isn't holding it, so there's nothing to clear
-         // in memory. Touch the cache only if requested.
-@@ -375,14 +390,19 @@ impl OntologyRegistry {
- 
-     /// Force recompile the active ontology from source (used by `onto_recompile`).
-     pub fn recompile(&self) -> Result<LoadResult> {
-+        let _lifecycle = self.lifecycle_lock.lock().unwrap();
-+        self.recompile_active_locked()
-+    }
-+
-+    fn recompile_active_locked(&self) -> Result<LoadResult> {
-         let (path, name, auto_refresh) = {
-             let active = self.active.lock().unwrap();
-             let entry = active
-                 .as_ref()
-                 .ok_or_else(|| anyhow!("no active ontology to recompile"))?;
-             (entry.source_path.clone(), entry.name.clone(), entry.auto_refresh)
-         };
--        self.load_file(
-+        self.load_file_locked(
-             &path,
-             LoadOptions {
-                 name: Some(name),
-@@ -402,9 +422,10 @@ impl OntologyRegistry {
-     ///   left completely untouched. This makes it safe to refresh background
-     ///   ontologies without disturbing whatever is currently being queried.
-     pub fn recompile_named(&self, name: &str) -> Result<LoadResult> {
-+        let _lifecycle = self.lifecycle_lock.lock().unwrap();
-         let active_name = self.active.lock().unwrap().as_ref().map(|e| e.name.clone());
-  
-```
-
-**File**: `src/server.rs` (modified, +25/-22)
-```diff
-@@ -3,12 +3,14 @@
- 
- use std::sync::Arc;
- 
-+#[cfg(feature = "embeddings")]
-+use oxigraph::model::Term;
- use rmcp::{
-     ServerHandler, tool, tool_handler, tool_router,
-     prompt, prompt_handler, prompt_router,
-     handler::server::{tool::ToolRouter, router::prompt::PromptRouter, wrapper::Parameters},
-     model::{
--        ServerCapabilities, ServerConfig, Tool,
-+        Implementation, ServerCapabilities, ServerConfig, Tool,
-         PromptMessage, Role, GetPromptResult, ProtocolVersion,
-     },
- };
-@@ -3238,31 +3240,28 @@ impl OpenOntologiesServer {
- 
-         // Enumerating the store's classes is a question about the whole store,
-         // so read the union of all graphs, not the default graph alone.
--        let result = match self.graph.sparql_select_union(classes_query) {
--            Ok(r) => r,
--            Err(e) => return Self::err_json(e),
--        };
--
--        let parsed: serde_json::Value = match serde_json::from_str(&result) {
--            Ok(v) => v,
-+        let rows = match self.graph.sparql_select_union_terms(classes_query) {
-+            Ok(rows) => rows,
-             Err(e) => return Self::err_json(e),
-         };
- 
-         let mut class_labels: std::collections::HashMap<String, String> = std::collections::HashMap::new();
--        if let Some(rows) = parsed["results"].as_array() {
--            for row in rows {
--                if let Some(iri) = row["class"].as_str() {
--                    let iri = iri.trim_matches(|c| c == '<' || c == '>').to_string();
--                    let label = row["label"].as_str()
--                        .map(|s| s.trim_matches('"').to_string())
--                        .unwrap_or_else(|| {
--                            iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
--                                .map(|(_, n)| n.to_string())
--                                .unwrap_or_else(|| iri.clone())
--                        });
--                    class_labels.insert(iri, label);
--                }
--            }
-+        for row in rows {
-+            let Some(Term::NamedNode(class)) = row.get("class") else {
-+                continue;
-+            };
-+            let iri = class.as_str().to_string();
-+            let fallback = || {
-+                iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
-+                    .map(|(_, n)| n.to_string())
-+                    .unwrap_or_else(|| iri.clone())
-+            };
-+            let label = match row.get("label") {
-+                Some(Term::Literal(label)) => label.value().to_string(),
-+                Some(other) => other.to_string(),
-+                None => fallback(),
-+            };
-+            class_labels.insert(iri, label);
-         }
- 
-         let trainer = crate::structembed::StructuralTrainer::new(struct_dim, struct_epochs, 0.01);
-@@ -3687,6 +3686,10 @@ impl ServerHandler for OpenOntologiesServer {
-                  {advertised} tools and 6 workflow prompts for ontology engineering, validation, \
-                  comparison, alignment, data ingestion, and exploration.{tail}{profile_tail}"
-             ))
-+            .with_server_info(Implementation::new(
-+                "open-ontologies",
-+                env!("CARGO_PKG_VERSION"),
-+            ))
-     }
- }
- 
-```
-
----
-
-### Incident Patch 3: `1ed99ac1` (2026-11-16)
-**Commit Message**: Merge pull request #365 from Gqqqqgg/fix/explicit-provenance-truth-maintenance
-
-Fix/explicit provenance truth maintenance
-
-**File**: `CHANGELOG.md` (modified, +25/-0)
-```diff
-@@ -194,6 +194,31 @@ All notable changes to Open Ontologies are documented here.
-   reported rmcp's crate name and version (`rmcp`, `3.9.0`); it now reports
-   `open-ontologies` and the release version.
- 
-+- **Durable RDFS/OWL-RL provenance is opt-in** (#365). CLI and batch
-+  `reason --track-derivations`, or MCP `track_derivations: true`, persist
-+  evidence and rule instances in the existing materialisation transaction.
-+  Incremental reasoning accepts the same MCP option. Ordinary reasoning keeps
-+  its previous materialisation behaviour and does not capture derivations.
-+  Evidence, derivations, output locations and changes now use separate RDF
-+  records with dependency indexes, instead of one growing JSON literal.
-+  Loads and updates reconcile the affected dependency component without
-+  scanning or copying the dataset to track changes. Returned counts use actual
-+  data deltas. Stores without a ledger use Oxigraph's native SPARQL UPDATE
-+  executor, avoiding provenance journaling for ordinary bulk updates.
-+  Tracked publication uses a constant-size generation guard; untracked
-+  reasoning retains snapshot materialisation when a concurrent write occurs.
-+  Ordinary SPARQL DELETE retains inferred RDF. Explicit assertion withdrawal,
-+  the Rust `sparql_update_with_retraction` API, or HTTP `/api/update` with
-+  `retract_inferences: true` opt in to support-based retraction. Independent
-+  proofs survive withdrawal; unsupported cycles do not. The reserved ledger
-+  stays outside query datasets, including `GRAPH ?g` and SHACL-SPARQL
-+  constraints evaluated over all graphs. Dataset backups retain
-+  it, and old single-literal backups migrate on restore or persistent open.
-+  Provenance reports retain evidence, rule versions and withdrawal history;
-+  proof forests remain exportable to the existing independent oo-cert checker.
-+  The CLI help and reasoning guide disclose tracking's time and storage costs,
-+  including the maintainer's LUBM1 measurements.
-+
- - **`onto_repo_list` reports cache and active status for the matching file**
-   (#386). Multiple repository directories can contain the same filename stem;
-   status flags now match the cached and active source paths instead of marking
-```
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -2783,6 +2783,7 @@ dependencies = [
-  "serde_json",
-  "serde_yaml",
-  "sha2 0.10.9",
-+ "spargebra",
-  "sqlx",
-  "tempfile",
-  "thiserror",
-```
-
-**File**: `Cargo.toml` (modified, +2/-0)
-```diff
-@@ -49,6 +49,8 @@ tower-http = { version = "0.6", features = ["cors"] }
- tokio-util = "0.7"
- tokio = { version = "1", features = ["full"] }
- oxigraph = "0.5"
-+# Reuse the parser already locked by Oxigraph to journal affected update quads.
-+spargebra = { git = "https://github.com/fabio-rovai/oxigraph.git", rev = "37db8e1522585ed2f9aa994be6c5c716859af5c8" }
- rusqlite = { version = "0.41", features = ["bundled"] }
- reqwest = { version = "0.12", features = ["json"] }
- schemars = "1"
-```
-
-**File**: `docs/reasoning.md` (modified, +22/-0)
-```diff
-@@ -61,6 +61,28 @@ result as a statement about the whole ontology.
- | `owl-rl-ext` | + someValuesFrom, allValuesFrom, hasValue, intersectionOf, unionOf. All 29 |
- | `owl-dl` | SHIQ tableaux: satisfiability, classification, ABox reasoning. Nominals are not implemented and datatype ranges are skipped |
- 
-+## Durable derivation tracking
-+
-+RDFS/OWL-RL materialisation can persist source evidence and rule instances with
-+`reason --track-derivations` (CLI or batch), or `track_derivations: true` on the
-+MCP reasoning tools. Tracking is disabled by default. Recorded dependencies
-+support explicit assertion withdrawal and proof export; ordinary SPARQL DELETE
-+does not automatically retract inferred triples.
-+
-+Tracking has a substantial cost in reasoning time and storage. In the
-+maintainer's [PR #365 benchmark](https://github.com/fabio-rovai/open-ontologies/pull/365),
-+release builds on LUBM1 (100,866 input triples, RDFS) took 4.4 to 6.7 seconds
-+with tracking, compared with 0.41 seconds without it. The tracked store held
-+694,543 metadata quads, about 5.5 per data triple after materialisation; its
-+N-Quads dataset dump was about 328 MB for 126,760 data triples. These are
-+workload-specific measurements, not fixed overhead ratios or performance
-+guarantees. Rule applications and alternative supports determine ledger size.
-+
-+A tracked run rejects publication if a concurrent write changes its source
-+generation. Retry against the current dataset in that case. Untracked runs
-+retain the original snapshot materialisation behaviour, and updates on stores
-+without a ledger use Oxigraph's native SPARQL UPDATE executor.
-+
- ## Tools
- 
- | Tool | Purpose |
-```
-
-**File**: `python/src/open_ontologies_lite/horn/reason.py` (modified, +1/-1)
-```diff
-@@ -248,7 +248,7 @@ def _facts(store, graphs) -> tuple[list[Fact], list[str]]:
-     The default is the DEFAULT GRAPH ALONE, which is where `OntologyEngine.load()`
-     puts everything, so this package's own users lose nothing by it. The Rust
-     engine flattens every named graph here EXCEPT the inferred one
--    (`src/reason.rs:3371`, `graph.triples_in_scope(&scope)`). Before
-+    (`src/reason.rs:3423`, `graph.triples_in_scope(&scope)`). Before
-     15 September 2026 it excepted nothing, which was the defect above: a store
-     holding a prior materialisation turned derived triples into assertions.
-     """
-```
-
-**File**: `python/tests/test_horn_differential.py` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@
- The assertion is SET EQUALITY OF DERIVED TRIPLES against the Rust `run_horn`, over
- the same `builtin_rules.tsv`. Byte identity of the two `horn.tsv` files is NOT a
- goal and must not be asserted: the Rust emitter sorts interned `u32` triples
--(`src/reason.rs:3441`, `all.sort_unstable()` over `Vec<(u32,u32,u32)>`), so its
-+(`src/reason.rs:3493`, `all.sort_unstable()` over `Vec<(u32,u32,u32)>`), so its
- line order is first-appearance order in the store, not lexicographic order.
- Reproducing it from Python would mean reimplementing the interner and betting on
- identical store-iteration order across two bindings, to buy nothing the set
-```
-
-**File**: `python/tests/test_horn_fixpoint_and_scope.py` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@
- ASSERTIONS. The checker could not detect it: the soundness theorem is conditional
- on the assertions, and it is TOLD what they are, so the result was a green
- absolute verdict about a graph nobody asserted. It now reads
--`src/reason.rs:3371`, `graph.triples_in_scope(&scope)`, and the
-+`src/reason.rs:3423`, `graph.triples_in_scope(&scope)`, and the
- inferred graph is out of scope.
- 
- The two engines still differ in HOW, and the difference is deliberate. Rust
-```
-
-**File**: `python/tests/test_horn_three_way_differential.py` (modified, +21/-3)
-```diff
-@@ -148,6 +148,22 @@ def case_files(name):
-     return [str(f) for f in files]
- 
- 
-+def test_relative_iris_resolve_from_an_escaped_file_uri(tmp_path):
-+    import pyoxigraph as ox
-+
-+    folder = tmp_path / "folder with # and %"
-+    folder.mkdir()
-+    source = folder / "source.ttl"
-+    source.write_text("<> <http://example.org/linksTo> <target.ttl> .", encoding="utf-8")
-+    store = ox.Store()
-+    store.load(
-+        path=str(source), format=ox.RdfFormat.TURTLE, base_iri=tool().base_iri_for(source)
++fn incremental(graph: &Arc<GraphStore>, delta: &[Spelled], tracking: bool) -> Value {
++    graph.load_ntriples(&ntriples(delta)).unwrap();
++    let report: Value = serde_json::from_str(
++        &IncrementalReasoner::run_scoped_with_tracking(graph, delta, true, false, tracking)
++            .unwrap(),
 +    )
-+    (quad,) = store
-+    assert quad.subject.value == source.as_uri()
-+    assert quad.object.value == (folder / "target.ttl").as_uri()
++    .unwrap();
++    assert_eq!(report["ok"], true, "{report}");
++    assert_eq!(report["complete"], true, "{report}");
++    report
++}
 +
++fn triples(graph: &GraphStore) -> BTreeSet<Spelled> {
++    graph.all_triples().unwrap().into_iter().collect()
++}
 +
- def run(module, name, patch=None):
-     """One case through all three implementations, optionally with the Python engine
-     sabotaged. The patch is applied to the module attribute rather than to the import in
-@@ -223,7 +239,8 @@ def dropping(store, **kwargs):
-             result = real(store, **kwargs)
-             horn = Path(kwargs["certificate_dir"]) / "horn.tsv"
-             lines = [line for line in horn.read_text("utf-8").split("\n") if line]
--            horn.write_text("\n".join(lines[:-1]) + "\n", "utf-8")
-+            # Remove only the final step; preserve LF bytes on Windows too.
-+            horn.write_text("\n".join(lines[:-1]) + "\n", encoding="utf-8", newline="\n")
-             return result
++fn check_subproperty_join(tracking: bool) {
++    let graph = prepared_graph(SCHEMA, tracking);
++    let report = incremental(
++        &graph,
++        &[edge("a", "q", "b"), edge("b", "q", "c")],
++        tracking,
++    );
++    assert!(
++        triples(&graph).contains(&edge("a", "p", "c")),
++        "a completed incremental run omitted the transitive consequence: {report}"
++    );
++    assert_eq!(report["inferred_count"], 3);
++    if tracking {
++        assert!(
++            graph
++                .ledger()
++                .unwrap()
++                .unwrap()
++                .grounded()
++                .contains(&edge("a", "p", "c"))
++        );
++    }
++}
++
++#[test]
++fn new_subproperty_edges_join_in_one_untracked_run() {
++    check_subproperty_join(false);
++}
++
++#[test]
++fn new_subproperty_edges_join_in_one_tracked_run() {
++    check_subproperty_join(true);
++}
++
++#[test]
++fn new_inverse_edges_join_in_one_run() {
++    for tracking in [false, true] {
++        let graph = prepared_graph(
++            ":q owl:inverseOf :p . :p a owl:TransitiveProperty .",
++            tracking,
++        );
++        incremental(
++            &graph,
++            &[edge("b", "q", "a"), edge("c", "q", "b")],
++            tracking,
++        );
++        assert!(triples(&graph).contains(&edge("a", "p", "c")));
++    }
++}
++
++#[test]
++fn several_rounds_join_new_edges_with_both_sides_of_the_stored_closure() {
++    for tracking in [false, true] {
++        let schema = format!("{SCHEMA} :left :p :a . :e :p :right .");
++        let graph = prepared_graph(&schema, tracking);
++        incremental(
++            &graph,
++            &[
++                edge("a", "q", "b"),
++                edge("b", "q", "c"),
++                edge("c", "q", "d"),
++                edge("d", "q", "e"),
++                edge("right", "other", "unrelated"),
++            ],
++            tracking,
++        );
++        let actual = triples(&graph);
++        assert!(actual.contains(&edge("left", "p", "right")));
++        assert!(!actual.contains(&edge("left", "p", "unrelated")));
++
++        let expected = prepared_graph(&schema, tracking);
++        expected
++            .load_ntriples(&ntriples(&[
++                edge("a", "q", "b"),
++                edge("b", "q", "c"),
++                edge("c", "q", "d"),
++                edge("d", "q", "e"),
++                edge("right", "other", "unrelated"),
++            ]))
++            .unwrap();
++        Reasoner::run(&expected, "owl-rl", true).unwrap();
++        assert_eq!(actual, triples(&expected));
++    }
++}
++
++#[test]
++fn dry_run_reports_the_new_join_without_publishing_data_or_support() {
++    let graph = prepared_graph(SCHEMA, false);
++    let delta = [edge("a", "q", "b"), edge("b", "q", "c")];
++    graph.load_ntriples(&ntriples(&delta)).unwrap();
++    let before = graph.snapshot("nquads").unwrap();
++    let report: Value = serde_json::from_str(
++        
+```
+
+---
+
+### Incident Patch 2: `8ce22770` (2026-11-20)
+**Commit Message**: An error is valid JSON whatever its message contains, so the REST routes no longer answer null (#420)
+
+The serve-http /api routes, several CLI commands and batch built
+{"error": ...} with format!, so a message carrying a double quote, a
+backslash or a newline came out as invalid JSON. The REST routes parsed their
+own output, failed, and answered null with HTTP 200. lint, diff, defects,
+drift and vocab-check printed the broken text and exited 0, because their exit
+code is read from an error key they could no longer parse. batch kept the text
+only under raw. /api/save did the same on success when the path needed
+escaping, which is every Windows path.
+
+open_ontologies::output::error_json now builds the object with serde_json, and
+all 36 sites (26 in main.rs, 10 in batch.rs) use it; /api/save's success body
+is built the same way. tests/api_error_json_test.rs drives a real serve-http
+child and the CLI with a SPARQL query and a Turtle file whose parse errors
+quote a quote and a backslash, a caller-supplied format containing each, and a
+save path that needs escaping. All five tests failed before the change (null
+bodies, unparseable CLI output, lint exit 0) and pass after it.
+
+Co-Authored-
+
+**File**: `CHANGELOG.md` (modified, +12/-0)
+```diff
+@@ -192,6 +192,18 @@ All notable changes to Open Ontologies are documented here.
  
-         return dropping
-@@ -249,7 +266,7 @@ def forging(store, **kwargs):
-             at = 2 + 2 * int(fields[1])
-             fields[at + 2] = "<http://example.org/FORGED>"
-             lines[0] = "\t".join(fields)
--            horn.write_text("\n".join(lines) + "\n", "utf-8")
-+            horn.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
-             return result
+ ### Fixed
  
-         return forging
-@@ -269,7 +286,8 @@ def ghosting(store, **kwargs):
-             asserted.write_text(
-                 asserted.read_text("utf-8")
-                 + "<http://example.org/ghost>\t<http://example.org/p>\t<http://example.org/o>\n",
--                "utf-8",
-+                encoding="utf-8",
-+                newline="\n",
-             )
-             return result
++- **An error is valid JSON whatever its message contains** (#420). The
++  `serve-http` REST routes, several CLI commands and `batch` wrote
++  `{"error": ...}` by string formatting, so a message carrying a double quote,
++  a backslash or a newline (a SPARQL or Turtle parse error quoting the
++  offending character, a format name the caller supplied, any Windows path)
++  was invalid JSON. `/api/query`, `/api/save` and the other `/api` routes
++  then answered `null` with HTTP 200; `lint`, `diff`, `defects`, `drift` and
++  `vocab-check` printed the broken text and exited 0; `batch` kept it only
++  under `raw`. `/api/save` also answered `null` on success when the saved path
++  needed escaping, which is every Windows path. All 36 sites now build the
++  object with `serde_json`.
++
+ - **Studio's 3D legend names the ontology live mode has loaded** (#414). The
+   legend read "ies-core.ttl · 1,083 triples", and its ASSERTED row "read from
+   ies-core.ttl", in both builds. That is true of the replay demo, which is
+```
+
+**File**: `src/batch.rs` (modified, +10/-10)
+```diff
+@@ -312,7 +312,7 @@ impl BatchRunner {
+         match crate::graph::GraphStore::read_as_turtle(input) {
+             Ok(content) => {
+                 let result = OntologyService::lint_with_feedback(&content, Some(&self.db))
+-                    .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
++                    .unwrap_or_else(crate::output::error_json);
+                 serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
+             }
+             Err(e) => json!({"error": e.to_string()}),
+@@ -1067,7 +1067,7 @@ impl BatchRunner {
+         match crate::graph::GraphStore::read_as_turtle(data_path) {
+             Ok(data) => {
+                 let result = crate::vocab_check::check_data_vocab(&self.graph, &data, &extra)
+-                    .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
++                    .unwrap_or_else(crate::output::error_json);
+                 serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
+             }
+             Err(e) => json!({"error": e.to_string()}),
+@@ -1088,7 +1088,7 @@ impl BatchRunner {
+             Err(e) => return json!({"error": format!("reading {}: {}", args[1], e)}),
+         };
+         let result = OntologyService::diff(&old, &new)
+-            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
++            .unwrap_or_else(crate::output::error_json);
+         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
+     }
  
+@@ -1142,7 +1142,7 @@ impl BatchRunner {
+         let pack = args.first().map(|s| s.as_str()).unwrap_or("generic");
+         let enforcer = crate::enforce::Enforcer::new(self.db.clone(), self.graph.clone());
+         let result = enforcer.enforce_with_feedback(pack, Some(&self.db))
+-            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
++            .unwrap_or_else(crate::output::error_json);
+         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
+     }
+ 
+@@ -1207,7 +1207,7 @@ impl BatchRunner {
+                     logic: !args.iter().any(|a| a == "--no-logic-check"),
+                 };
+                 let result = planner.plan_with(&turtle, checks)
+-                    .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
++                    .unwrap_or_else(crate::output::error_json);
+                 serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
+             }
+             Err(e) => json!({"error": e.to_string()}),
+@@ -1223,7 +1223,7 @@ impl BatchRunner {
+             .unwrap_or("safe");
+         let planner = crate::plan::Planner::new(self.db.clone(), self.graph.clone());
+         let result = planner.apply_plan(plan_id.as_deref(), mode)
+-            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
++            .unwrap_or_else(crate::output::error_json);
+         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
+     }
+ 
+@@ -1234,14 +1234,14 @@ impl BatchRunner {
+             None => return json!({"error": "version requires a label"}),
+         };
+         let result = OntologyService::save_version(&self.db, &self.graph, label)
+-            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
++            .unwrap_or_else(crate::output::error_json);
+         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
+     }
+ 
+     fn exec_history(&self) -> Value {
+         use crate::ontology::OntologyService;
+         let result = OntologyService::list_versions(&self.db)
+-            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
++            .unwrap_or_else(crate::output::error_json);
+         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
+     }
+ 
+@@ -1252,7 +1252,7 @@ impl BatchRunner {
+             None => return json!({"error": "rollback requires a label"}),
+         };
+         let result = OntologyService::rollback_version(&self.db, &self.graph, label)
+-            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
++            .unwrap_or_else(crate::output::error_json);
+         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
+     }
+ 
+@@ -1431,7 +1431,7 @@ impl BatchRunner {
+         };
+         let detector = crate::drift::DriftDetector::new(self.db.clone());
+         let result = detector.detect(&v1, &v2)
+-            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
++            .unwrap_or_else(crate::output::error_json);
+         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
+     }
+ 
+```
+
+**File**: `src/main.rs` (modified, +27/-27)
+```diff
+@@ -2563,7 +2563,7 @@ async fn async_main() -> anyhow::Result<()> {
+                     let g = sg_stats.clone();
+                     async move {
+                         axum::Json(serde_json::from_str::<serde_json::Value>(
+-                            &g.get_stats().unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e))
++                            &g.get_stats().unwrap_or_else(open_ontologies::output::error_json)
+                         ).unwrap_or_default())
+                     }
+                 }))
+@@ -2572,7 +2572,7 @@ async fn async_main() -> anyhow::Result<()> {
+                     async move {
+                         let query = body.0["query"].as_str().unwrap_or("").to_string();
+                         axum::Json(serde_json::from_str::<serde_json::Value>(
+-                            &g.sparql_select(&query).unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e))
++                            &g.sparql_select(&query).unwrap_or_else(open_ontologies::output::error_json)
+                         ).unwrap_or_default())
+                     }
+                 }))
+@@ -2583,7 +2583,7 @@ async fn async_main() -> anyhow::Result<()> {
+                         axum::Json(serde_json::from_str::<serde_json::Value>(
+                             &match g.sparql_update_with_retraction(&query, body.0["retract_inferences"].as_bool().unwrap_or(false)) {
+                                 Ok(n)  => format!(r#"{{"ok":true,"affected":{}}}"#, n),
+-                                Err(e) => format!(r#"{{"error":"{}"}}"#, e),
++                                Err(e) => open_ontologies::output::error_json(e),
+                             }
+                         ).unwrap_or_default())
+                     }
+@@ -2596,7 +2596,7 @@ async fn async_main() -> anyhow::Result<()> {
+                         axum::Json(serde_json::from_str::<serde_json::Value>(
+                             &match g.load_file(&path) {
+                                 Ok(n)  => format!(r#"{{"ok":true,"triples_loaded":{}}}"#, n),
+-                                Err(e) => format!(r#"{{"error":"{}"}}"#, e),
++                                Err(e) => open_ontologies::output::error_json(e),
+                             }
+                         ).unwrap_or_default())
+                     }
+@@ -2609,7 +2609,7 @@ async fn async_main() -> anyhow::Result<()> {
+                         axum::Json(serde_json::from_str::<serde_json::Value>(
+                             &match g.load_turtle(&turtle, base.as_deref()) {
+                                 Ok(n)  => format!(r#"{{"ok":true,"triples_loaded":{}}}"#, n),
+-                                Err(e) => format!(r#"{{"error":"{}"}}"#, e),
++                                Err(e) => open_ontologies::output::error_json(e),
+                             }
+                         ).unwrap_or_default())
+                     }
+@@ -2622,8 +2622,8 @@ async fn async_main() -> anyhow::Result<()> {
+                         let path = open_ontologies::config::expand_tilde(&path);
+                         axum::Json(serde_json::from_str::<serde_json::Value>(
+                             &match g.save_file(&path, &format) {
+-                                Ok(_)  => format!(r#"{{"ok":true,"path":"{}"}}"#, path),
+-                                Err(e) => format!(r#"{{"error":"{}"}}"#, e),
++                                Ok(_)  => serde_json::json!({ "ok": true, "path": path }).to_string(),
++                                Err(e) => open_ontologies::output::error_json(e),
+                             }
+                         ).unwrap_or_default())
+                     }
+@@ -2989,7 +2989,7 @@ async fn async_main() -> anyhow::Result<()> {
+             let (_db, graph) = setup(&cli.data_dir)?;
+             let stats_json = graph
+                 .get_stats()
+-                .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
++                .unwrap_or_else(open_ontologies::output::error_json);
+             output_result(&stats_json, cli.pretty);
+         }
+         Commands::Query { query } => {
+@@ -3003,7 +3003,7 @@ async fn async_main() -> anyhow::Result<()> {
+             };
+             let result = graph
+                 .sparql_select(&query_str)
+-                .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
++                .unwrap_or_else(open_ontologies::output::error_json);
+             output_result(&result, cli.pretty);
+         }
+         Commands::Diff { old_path, new_path } => {
+@@ -3025,7 +3025,7 @@ async fn async_main() -> anyhow::Result<()> {
+             let old = read(&old_path);
+             let new = read(&new_path);
+             let result = OntologyService::diff(&old, &new)
+-                .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
++                .unwrap_or_else(open_ontologies::output::error_json);
+             output_result_checked(&result, cli.pretty);
+         }
+         Commands::Defects { input, limit } => {
+@@ -3069,7 +3069,7 @@ async fn async_main() -> anyhow::Re
+```
+
+**File**: `src/output.rs` (modified, +13/-0)
+```diff
+@@ -21,6 +21,19 @@
+ 
+ use serde_json::Value;
+ 
++/// `{"error": "<message>"}` as JSON text, with the message escaped.
++///
++/// Call sites used to write `format!(r#"{{"error":"{}"}}"#, e)`, which is
++/// invalid JSON whenever the message carries a double quote, a backslash or a
++/// newline: a parse error quoting the offending character, a format name the
++/// caller supplied, any Windows path. The REST routes then parsed their own
++/// output, failed and answered `null`; the CLI printed the broken text and,
++/// where the exit code is read from the `error` key, exited 0; batch kept it
++/// only as `{"raw": ...}` (#420).
++pub fn error_json(message: impl std::fmt::Display) -> String {
++    serde_json::json!({ "error": message.to_string() }).to_string()
++}
++
+ /// The whole human-readable text for one command's result.
+ pub type Renderer = fn(&Value) -> String;
+ 
+```
+
+**File**: `tests/api_error_json_test.rs` (added, +190/-0)
+```diff
+@@ -0,0 +1,190 @@
++// SPDX-FileCopyrightText: 2026 Fabio Rovai
++// SPDX-License-Identifier: MIT
++
++//! An error is valid JSON whatever its message contains (#420).
++//!
++//! The REST routes under `serve-http`'s `/api` and several CLI commands built
++//! `{"error": ...}` by string formatting. A message carrying a double quote or
++//! a backslash (a SPARQL or Turtle parse error quoting the offending
++//! character, a format name the caller supplied, any Windows path) produced
++//! invalid JSON. The REST routes then parsed their own output, failed, and
++//! answered `null` with HTTP 200; the CLI printed the broken text and, for the
++//! commands that set their exit code from the `error` key, exited 0.
++
++use serde_json::{Value, json};
++use std::io::{Read, Write};
++use std::net::{SocketAddr, TcpStream};
++use std::process::{Child, Command, Stdio};
++use std::time::{Duration, Instant};
++
++/// A SPARQL query whose parse error quotes `"` and `\` back to the caller.
++const BAD_QUERY: &str = r#"SELECT * WHERE { ?s ?p "\q" }"#;
++
++fn oo(dir: &tempfile::TempDir) -> Command {
++    let mut cmd = Command::new(env!("CARGO_BIN_EXE_open-ontologies"));
++    cmd.arg("--data-dir").arg(dir.path());
++    cmd.env_remove("OPEN_ONTOLOGIES_TOKEN")
++        .env_remove("OPEN_ONTOLOGIES_STORAGE_MODE")
++        .env_remove("GOVERNANCE_WEBHOOK")
++        .env("NO_PROXY", "127.0.0.1,localhost")
++        .env("no_proxy", "127.0.0.1,localhost")
++        .env("RUST_LOG", "warn");
++    cmd
++}
++
++struct Server(Child);
++impl Drop for Server {
++    fn drop(&mut self) {
++        let _ = self.0.kill();
++        let _ = self.0.wait();
++    }
++}
++
++fn start_server(dir: &tempfile::TempDir) -> (Server, SocketAddr) {
++    let config = dir.path().join("config.toml");
++    std::fs::write(&config, "[storage]\nmode = 'memory'\n").unwrap();
++    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
++    let addr = listener.local_addr().unwrap();
++    drop(listener);
++    let mut cmd = oo(dir);
++    cmd.env("OPEN_ONTOLOGIES_STORAGE_MODE", "memory")
++        .arg("serve-http")
++        .arg("--config")
++        .arg(&config)
++        .args(["--host", "127.0.0.1", "--port", &addr.port().to_string()])
++        .stdout(Stdio::null())
++        .stderr(Stdio::null());
++    let mut server = Server(cmd.spawn().unwrap());
++    let deadline = Instant::now() + Duration::from_secs(30);
++    loop {
++        assert!(
++            server.0.try_wait().unwrap().is_none(),
++            "HTTP server exited before binding"
++        );
++        if TcpStream::connect(addr).is_ok() {
++            break;
++        }
++        assert!(Instant::now() < deadline, "HTTP server did not bind");
++        std::thread::sleep(Duration::from_millis(20));
++    }
++    (server, addr)
++}
++
++/// One HTTP/1.1 POST over a plain socket, so the test needs no HTTP client.
++fn post(addr: SocketAddr, path: &str, body: &Value) -> (u16, Value) {
++    let body = body.to_string();
++    let mut stream = TcpStream::connect(addr).unwrap();
++    stream
++        .set_read_timeout(Some(Duration::from_secs(60)))
++        .unwrap();
++    write!(
++        stream,
++        "POST {path} HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Type: application/json\r\n\
++         Content-Length: {}\r\nConnection: close\r\n\r\n{body}",
++        body.len()
++    )
++    .unwrap();
++    let mut response = String::new();
++    stream.read_to_string(&mut response).unwrap();
++    let (head, payload) = response
++        .split_once("\r\n\r\n")
++        .expect("an HTTP response with a header block");
++    let status = head
++        .split_whitespace()
++        .nth(1)
++        .and_then(|s| s.parse().ok())
++        .expect("a status code");
++    let value = serde_json::from_str(payload)
++        .unwrap_or_else(|e| panic!("response body is not JSON ({e}): {payload}"));
++    (status, value)
++}
++
++fn error_text(value: &Value) -> &str {
++    value["error"]
++        .as_str()
++        .unwrap_or_else(|| panic!("expected an error object, got {value}"))
++}
++
++#[test]
++fn api_query_parse_error_quoting_a_quote_and_a_backslash_is_an_error_object() {
++    let dir = tempfile::tempdir().unwrap();
++    let (_server, addr) = start_server(&dir);
++    let (status, body) = post(addr, "/api/query", &json!({ "query": BAD_QUERY }));
++    assert_eq!(status, 200);
++    let message = error_text(&body);
++    assert!(message.contains('"') && message.contains('\\'), "{message}");
++}
++
++#[test]
++fn api_save_reports_a_caller_supplied_format_that_contains_a_quote_or_backslash() {
++    let dir = tempfile::tempdir().unwrap();
++    let (_server, addr) = start_server(&dir);
++    let out = dir.path().join("out.ttl");
++    for format in ["ya\"ml", "ya\\ml"] {
++        let (_, body) = post(
++            addr,
++            "/api/save",
++            &json!({ "path": out.to_str().unwrap(), "format": format }),
++        );
++        let message = error_text(&body);
++        assert!(message.contains(format), "{message}");
++    }
++}
++
++#[test]
++fn api_save_success_names_a_path_
+```
+
+---
+
+### Incident Patch 3: `3d0795c0` (2026-11-18)
+**Commit Message**: fix(shacl): expand SPARQL constraint message templates
+
+Expand {?name} and {$name} in fallback sh:message text using each SELECT
+solution. Render literals by lexical value and preserve RDF notation for
+IRIs and blank nodes. Leave unbound placeholders untouched and never
+rescan inserted values.
+
+Write the expanded message to JSON, Turtle and N-Triples reports while
+preserving the template literal's language tag or datatype. Keep bound
+?message precedence, default messages, result values and query evaluation
+unchanged.
+
+Add regression coverage for the issue example, per-solution bindings,
+repeated placeholders, unbound variables, literal braces, escaping,
+blank-node focus nodes and existing override/default behavior. Record the
+user-facing fix in CHANGELOG.md.
+
+Fixes #411
+
+**File**: `CHANGELOG.md` (modified, +8/-0)
+```diff
+@@ -165,6 +165,14 @@ All notable changes to Open Ontologies are documented here.
+ 
+ ### Fixed
+ 
++- **SHACL-SPARQL message templates substitute solution variables** (#411).
++  Fallback `sh:message` text now expands `{?name}` and `{$name}` for each
++  result, including the pre-bound focus node. Literals use their lexical
++  values, while IRIs and blank nodes retain their RDF form. Unbound variables
++  stay as written, and inserted values are not expanded again. JSON, Turtle
++  and N-Triples reports carry the expanded message; RDF reports preserve its
++  language tag or datatype. A bound `?message` keeps its existing precedence.
++
+ - **Clinical validation and drift detection read a tagged label by its text**
+   (#406). Both stripped quotes from the N-Triples form of the literal, so
+   `"Dog"@en` became `Dog"@en`. Clinical validation searched the crosswalk for
+```
+
+**File**: `src/shacl.rs` (modified, +40/-4)
+```diff
+@@ -4,7 +4,7 @@
+ use crate::graph::{GraphStore, ReadScope};
+ use crate::temporal::{ScopeManifest, ScopeRequest};
+ use oxigraph::io::{RdfFormat, RdfParser};
+-use oxigraph::model::{Term, Variable};
++use oxigraph::model::{Literal, Term, Variable};
+ use oxigraph::sparql::{QueryResults, SparqlEvaluator};
+ use oxigraph::store::Store;
+ use std::collections::{HashMap, HashSet};
+@@ -2118,13 +2118,16 @@ impl ShaclValidator {
+                                     if message.is_empty() {
+                                         "SPARQL constraint violated".to_string()
+                                     } else {
+-                                        message.clone()
++                                        expand_message_template(&message, &row)
+                                     }
+                                 });
+                                 let rdf = RdfTerms::new(
+                                     constraint.get("severity").cloned(),
+                                     bound_message.cloned().or_else(|| {
+-                                        constraint.get("message").cloned().filter(|_| !message.is_empty())
++                                        constraint
++                                            .get("message")
++                                            .filter(|_| !message.is_empty())
++                                            .map(|raw| message_literal_with_text(raw, &msg))
+                                     }),
+                                 );
+                                 let mut v = serde_json::json!({
+@@ -3258,7 +3261,8 @@ fn attribute(
+ /// `core/misc/message-001` declares `"Test message"@en`, and the language tag
+ /// is gone. SHACL 3.6.2 makes `sh:resultSeverity` the shape's
+ /// `sh:severity` and `sh:resultMessage` a copy of its `sh:message`, so the
+-/// writer needs the terms as written. They travel inside each violation under
++/// writer needs the terms as written (with SPARQL message templates expanded).
++/// They travel inside each violation under
+ /// [`crate::shacl_report::RDF_TERMS_KEY`] and the JSON renderer removes them.
+ ///
+ /// `message` is `None` whenever the result carries this engine's default text,
+@@ -3524,6 +3528,38 @@ fn strip_quotes(s: &str) -> String {
+     }
+ }
+ 
++/// SHACL 5.3.2: expand `{?name}` and `{$name}` in a fallback `sh:message`.
++/// Literals use their lexical value; IRIs and blank nodes keep their RDF form.
++/// Unbound names stay as written. Only the template is scanned, so braces in
++/// an inserted value cannot trigger another substitution.
++fn expand_message_template(template: &str, row: &HashMap<String, String>) -> String {
++    let mut expanded = String::with_capacity(template.len());
++    for part in template.split_inclusive('}') {
++        if let Some((prefix, name)) = part.strip_suffix('}').and_then(|s| s.rsplit_once('{'))
++            && let Some(name) = name.strip_prefix('?').or_else(|| name.strip_prefix('$'))
++            && let Some(value) = row.get(name)
++        {
++            expanded.push_str(prefix);
++            expanded.push_str(&strip_quotes(value));
++        } else {
++            expanded.push_str(part);
++        }
++    }
++    expanded
++}
++
++/// Keep the RDF message's language tag or datatype when its text is expanded.
++fn message_literal_with_text(raw: &str, text: &str) -> String {
++    let Ok(Term::Literal(lit)) = raw.parse::<Term>() else {
++        return raw.to_string();
++    };
++    let expanded = match lit.language() {
++        Some(lang) => Literal::new_language_tagged_literal_unchecked(text, lang),
++        None => Literal::new_typed_literal(text, lit.datatype().into_owned()),
++    };
++    expanded.to_string()
++}
++
+ /// Read a cardinality bound (`sh:minCount`, `sh:maxCount` and the qualified
+ /// pair), or record it in `skipped` and return None.
+ ///
+```
+
+**File**: `tests/shacl_sparql_message_template_test.rs` (added, +205/-0)
+```diff
+@@ -0,0 +1,205 @@
++// SPDX-FileCopyrightText: 2026 Fabio Rovai
++// SPDX-License-Identifier: MIT
++
++//! SHACL 5.3.2 message templates are expanded for each solution (#411).
++
++use open_ontologies::graph::GraphStore;
++use open_ontologies::shacl::{ShaclReport, ShaclValidator};
++use open_ontologies::shacl_report::ReportFormat;
++use open_ontologies::temporal::ScopeRequest;
++use oxigraph::io::{RdfFormat, RdfParser};
++use oxigraph::model::{Literal, Term};
++use serde_json::Value;
++use std::io::Cursor;
++use std::sync::Arc;
++
++fn report(data: &str, message: &str, select: &str) -> ShaclReport {
++    let graph = Arc::new(GraphStore::new());
++    graph.load_turtle(data, None).unwrap();
++    let shapes = format!(
++        r#"
++        @prefix ex: <http://example.org/> .
++        @prefix sh: <http://www.w3.org/ns/shacl#> .
++        ex:S a sh:NodeShape ; sh:targetClass ex:Item ;
++            sh:sparql [ {message} sh:select """{select}""" ] .
++        "#
++    );
++    ShaclValidator::report_scoped(&graph, &shapes, &ScopeRequest::Unscoped).unwrap()
++}
++
++fn messages(report: &ShaclReport) -> Vec<String> {
++    let json: Value = serde_json::from_str(&report.to_json_string()).unwrap();
++    assert_eq!(json["conforms"], false, "{json}");
++    assert!(json["skipped_constraints"].is_null(), "{json}");
++    let mut messages: Vec<_> = json["violations"]
++        .as_array()
++        .unwrap()
++        .iter()
++        .map(|v| v["message"].as_str().unwrap().to_string())
++        .collect();
++    messages.sort();
++    messages
++}
++
++const DATA: &str = r#"
++    @prefix ex: <http://example.org/> .
++    ex:a a ex:Item ; ex:v 5 .
++"#;
++
++const SELECT_VALUE: &str =
++    "SELECT $this ?value WHERE { $this <http://example.org/v> ?value . FILTER(?value > 3) }";
++
++fn assert_rdf_message(report: &ShaclReport, expected: Literal) {
++    for (format, parser_format) in [
++        (ReportFormat::Turtle, RdfFormat::Turtle),
++        (ReportFormat::NTriples, RdfFormat::NTriples),
++    ] {
++        let rendered = report.render(format).unwrap();
++        let found: Vec<_> = RdfParser::from_format(parser_format)
++            .for_reader(Cursor::new(rendered.as_bytes()))
++            .map(Result::unwrap)
++            .filter(|q| q.predicate.as_str() == "http://www.w3.org/ns/shacl#resultMessage")
++            .map(|q| q.object)
++            .collect();
++        assert_eq!(found, vec![Term::Literal(expected.clone())], "{rendered}");
++    }
++}
++
++#[test]
++fn the_issue_example_expands_value_and_focus_without_changing_the_result_value() {
++    let r = report(
++        DATA,
++        r#"sh:message "value too big: {?value} (focus {$this})" ;"#,
++        SELECT_VALUE,
++    );
++    assert_eq!(
++        messages(&r),
++        ["value too big: 5 (focus <http://example.org/a>)"]
++    );
++    let json: Value = serde_json::from_str(&r.to_json_string()).unwrap();
++    assert_eq!(json["violation_count"], 1);
++    assert_eq!(
++        json["violations"][0]["value"],
++        "\"5\"^^<http://www.w3.org/2001/XMLSchema#integer>"
++    );
++    assert_rdf_message(
++        &r,
++        Literal::new_simple_literal("value too big: 5 (focus <http://example.org/a>)"),
++    );
++}
++
++#[test]
++fn each_solution_expands_both_variable_markers_and_repeated_names() {
++    let data = r#"
++        @prefix ex: <http://example.org/> .
++        ex:a a ex:Item ; ex:v 5, 9 .
++        ex:b a ex:Item ; ex:v 7 .
++    "#;
++    let r = report(
++        data,
++        r#"sh:message "{?this}: {?value}/{$value}/{?value}; {$label}" ;"#,
++        r#"SELECT $this ?value ("large" AS ?label) WHERE { $this <http://example.org/v> ?value }"#,
++    );
++    assert_eq!(
++        messages(&r),
++        [
++            "<http://example.org/a>: 5/5/5; large",
++            "<http://example.org/a>: 9/9/9; large",
++            "<http://example.org/b>: 7/7/7; large",
++        ]
++    );
++}
++
++#[test]
++fn unbound_variables_and_ordinary_braces_remain_literal_text() {
++    let r = report(
++        DATA,
++        r#"sh:message "{?missing} {$missing} {value} {?} { ?value} {?value!} {ordinary {?value}} {?value" ;"#,
++        "SELECT $this ?value ?missing WHERE { $this <http://example.org/v> ?value }",
++    );
++    assert_eq!(
++        messages(&r),
++        ["{?missing} {$missing} {value} {?} { ?value} {?value!} {ordinary 5} {?value"]
++    );
++}
++
++#[test]
++fn inserted_literal_values_are_not_expanded_again() {
++    let data = r#"
++        @prefix ex: <http://example.org/> .
++        ex:a a ex:Item ; ex:v "{$this} and {?other}" .
++    "#;
++    let r = report(
++        data,
++        r#"sh:message "{?value} / {$other}" ;"#,
++        r#"SELECT $this ?value ("done" AS ?other) WHERE { $this <http://example.org/v> ?value }"#,
++    );
++    assert_eq!(messages(&r), ["{$this} and {?other} / done"]);
++}
++
++#[test]
++fn blank_node_focus_and_iri_values_keep_their_rdf_form() {
++    let data = r#"
++        @prefix ex: <http://example.org/> .
++        _:item a ex:Item ; ex:v ex:value .
++    "#;
++    let r = report(
++        data,
++        r#"sh:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #408** (2026-11-16): Clinical validation and drift read a tagged label by its text (fixes #406) (@fabio-rovai)
-- **PR #407** (2026-11-15): Land #404 and #405 from @dajiaohuang (@fabio-rovai)
-- **PR #405** (2026-11-15): Serialize ontology load and unload transitions (@dajiaohuang)
-- **PR #404** (2026-11-15): Fix embedded label extraction (@dajiaohuang)
-- **PR #403** (2026-11-15): Land #402 from @dajiaohuang; blank headers are not duplicates (@fabio-rovai)
-- **PR #402** (2026-11-15): Reject duplicate XLSX headers (@dajiaohuang)
+- **PR #429** (2026-11-20): The replay's 3D legend is true of its graph: a certified ies-core run three checkers judged (#425) (@fabio-rovai)
+- **PR #426** (2026-11-20): Errors are valid JSON everywhere; Studio refresh, findings, auto-save and live 3D fixes (#420 to #424) (@fabio-rovai)
+- **PR #419** (2026-11-20): Land #410, #412, #415, #417, #418 and the Studio fixes for #413 and #414 (@fabio-rovai)
+- **PR #418** (2026-11-20): Execute every SHACL 2.3.1 property path form (@MatthewYe)
+- **PR #417** (2026-11-20): fix(reasoning): join newly derived edges during incremental transitivity (@Gqqqqgg)
+- **PR #415** (2026-11-20): Studio: 2D Graph view (schema and instance neighbourhood) (@fabio-rovai)
 
 ---
 
@@ -2699,13 +2778,13 @@ Fix/explicit provenance truth maintenance
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. shacl): hide provenance from scoped prebound union queries
+## X. reasoning): join newly derived edges during incremental transitivity
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `df254aff`: shacl): hide provenance from scoped prebound union queries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b639a6c3`: reasoning): join newly derived edges during incremental transitivity. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2713,18 +2792,25 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  stays outside query datasets, including `GRAPH ?g` and SHACL-SPARQL
-  constraints evaluated over all graphs. Dataset backups retain
+- **Incremental transitivity joins edges derived in the same run** (#416).
+  Subproperty and inverse rules could produce two connected edges without
+  their transitive consequence, while the response reported `complete: true`.
+  Targeted joins now include an in-memory index of the current run's edges
+  alongside the stored closure. Materialisation still happens after inference,
+  and tracked runs retain alternative supports and dependency-based withdrawal.
+  Regression tests cover tracked and untracked runs, multiple rounds, named
+  graphs, dry runs, batching, and withdrawal of alternative or cyclic support.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  stays outside query datasets, including `GRAPH ?g`. Dataset backups retain
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `df254aff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b639a6c3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T11:09:07.208Z",
+  "last_updated": "2026-11-20T11:31:34.219Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "2440176c747ad710cc591a8bad0b51243766b8d49c19aeebf37173d28f54b631",
-      "verified_at": "2026-11-19T22:27:45.798Z",
+      "content_hash": "ae95ee36162a3cdb2963c010dc8ff780afc78f3e2039d5a2d7c0874e3375e954",
+      "verified_at": "2026-11-20T11:30:51.309Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T22:27:45.798Z"
+      "last_updated": "2026-11-20T11:30:51.309Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -13416,14 +13416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-touchlab-kermit",
-      "content_hash": "d770c3af6590fe933da96ec7f4952d856c267deca18a459b1d5ef74338cd9f8a",
-      "verified_at": "2026-11-12T23:55:04.634Z",
+      "content_hash": "688b612d2e6ae14d071eda6f2095c5c431d04213691815c7cd64fcb64aa4c947",
+      "verified_at": "2026-11-20T11:30:45.617Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T23:55:04.634Z"
+      "last_updated": "2026-11-20T11:30:45.617Z"
     },
     "GateNLP/ultimate-sitemap-parser": {
       "repository": "GateNLP/ultimate-sitemap-parser",
@@ -17211,14 +17211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fabio-rovai-open-ontologies",
-      "content_hash": "1644f758a7746bb0fdc2f5bf84c270d8eb6c5df89e85eecbeb4dad5efcd251cf",
-      "verified_at": "2026-11-17T04:05:44.918Z",
+      "content_hash": "079cb7008f85d94f92e6e9c7d7e939281396da52bed046b0746b08d1c4afd9a2",
+      "verified_at": "2026-11-20T11:30:49.172Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T04:05:44.918Z"
+      "last_updated": "2026-11-20T11:30:49.172Z"
     },
     "LiquidAI/LFM3-VL-2B": {
       "repository": "LiquidAI/LFM3-VL-2B",
@@ -19619,6 +19619,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-20T11:08:49.883Z"
+    },
+    "tencent/Hy4": {
+      "repository": "tencent/Hy4",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-tencent-hy4",
+      "content_hash": "ec25fdd5dc8c74a2901fa277389f13894f3a31812852e84172074fb8b63a41f4",
+      "verified_at": "2026-11-20T11:30:39.846Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-20T11:30:39.846Z"
+    },
+    "harness-hub/Qwen3.8-27B-opencode-adapted": {
+      "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted",
+      "content_hash": "6514316f196ea5c566cc08a600db212144a5f348e358ed36da297a6d2260c6a3",
+      "verified_at": "2026-11-20T11:31:34.218Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-20T11:31:34.218Z"
     }
   },
   "repos": {

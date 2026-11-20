@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "1352efd8",
+    "sourceVersion": "f8710f06",
     "license": "NOASSERTION",
-    "contentHash": "2440176c747ad710cc591a8bad0b51243766b8d49c19aeebf37173d28f54b631",
-    "lastHarvestedAt": "2026-11-19T22:27:45.790Z",
+    "contentHash": "ae95ee36162a3cdb2963c010dc8ff780afc78f3e2039d5a2d7c0874e3375e954",
+    "lastHarvestedAt": "2026-11-20T11:30:51.301Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -8913,10 +8913,10 @@
     "repository": "touchlab/Kermit",
     "platform": "github",
     "sourceUrl": "https://github.com/touchlab/Kermit",
-    "sourceVersion": "141dc8dd",
+    "sourceVersion": "fb52c4b8",
     "license": "Apache-2.0",
-    "contentHash": "d770c3af6590fe933da96ec7f4952d856c267deca18a459b1d5ef74338cd9f8a",
-    "lastHarvestedAt": "2026-11-12T23:55:04.610Z",
+    "contentHash": "688b612d2e6ae14d071eda6f2095c5c431d04213691815c7cd64fcb64aa4c947",
+    "lastHarvestedAt": "2026-11-20T11:30:45.609Z",
     "learningId": "learn-github-touchlab-kermit"
   },
   "gatenlp-ultimate-sitemap-parser": {
@@ -11443,10 +11443,10 @@
     "repository": "fabio-rovai/open-ontologies",
     "platform": "github",
     "sourceUrl": "https://github.com/fabio-rovai/open-ontologies",
-    "sourceVersion": "1ed99ac1",
+    "sourceVersion": "17ef05b9",
     "license": "MIT",
-    "contentHash": "1644f758a7746bb0fdc2f5bf84c270d8eb6c5df89e85eecbeb4dad5efcd251cf",
-    "lastHarvestedAt": "2026-11-17T04:05:44.911Z",
+    "contentHash": "079cb7008f85d94f92e6e9c7d7e939281396da52bed046b0746b08d1c4afd9a2",
+    "lastHarvestedAt": "2026-11-20T11:30:49.164Z",
     "learningId": "learn-github-fabio-rovai-open-ontologies"
   },
   "hf-liquidai-lfm3-vl-2b": {
@@ -13018,5 +13018,25 @@
     "contentHash": "ee27e1b8eddc1fa87e9521fe0ad563933fb46b89efc342901d8fa15ab068dcc5",
     "lastHarvestedAt": "2026-11-20T11:08:49.873Z",
     "learningId": "learn-github-kianuni-erosion-cn"
+  },
+  "hf-tencent-hy4": {
+    "repository": "tencent/Hy4",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/tencent/Hy4",
+    "sourceVersion": "hf-tencent-hy4",
+    "license": "Open-Source",
+    "contentHash": "ec25fdd5dc8c74a2901fa277389f13894f3a31812852e84172074fb8b63a41f4",
+    "lastHarvestedAt": "2026-11-20T11:30:39.837Z",
+    "learningId": "learn-huggingface-tencent-hy4"
+  },
+  "hf-harness-hub-qwen3.8-27b-opencode-adapted": {
+    "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted",
+    "sourceVersion": "hf-harness-hub-qwen3.8-27b-opencode-adapted",
+    "license": "Open-Source",
+    "contentHash": "6514316f196ea5c566cc08a600db212144a5f348e358ed36da297a6d2260c6a3",
+    "lastHarvestedAt": "2026-11-20T11:31:34.210Z",
+    "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted"
   }
 }

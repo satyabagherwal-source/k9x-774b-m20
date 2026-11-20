@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T11:09:14.513Z",
+  "updated_at": "2026-11-20T11:32:48.749Z",
   "stats": {
-    "total_discovered": 6342,
-    "approved_pending_harvest": 5993,
+    "total_discovered": 6346,
+    "approved_pending_harvest": 5997,
     "harvested_count": 0,
     "rejected_count": 349,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5978,
+      "COMMUNITY_AND_EXPERT": 5982,
       "OFFICIAL_DOCUMENTATION": 199,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
@@ -137104,6 +137104,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
         "fileName": "prometheus-prometheus-learnings.md"
+      }
+    },
+    "SRC-CFAB2A4E9B06": {
+      "id": "SRC-CFAB2A4E9B06",
+      "url": "https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted",
+      "title": "https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:32:07.986Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md",
+        "fileName": "hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md"
+      }
+    },
+    "SRC-F2FA4F4D666A": {
+      "id": "SRC-F2FA4F4D666A",
+      "url": "https://huggingface.co/tencent/Hy4",
+      "title": "https://huggingface.co/tencent/Hy4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:32:48.000Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-hy4-learnings.md",
+        "fileName": "hf-tencent-hy4-learnings.md"
+      }
+    },
+    "SRC-4A3E13EE6275": {
+      "id": "SRC-4A3E13EE6275",
+      "url": "https://kermit.touchlab.co/",
+      "title": "https://kermit.touchlab.co/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:32:48.706Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-0AC014C80CE0": {
+      "id": "SRC-0AC014C80CE0",
+      "url": "https://touchlab.co/kermit-custom-logger",
+      "title": "https://touchlab.co/kermit-custom-logger",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:32:48.749Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
       }
     }
   }

@@ -5244,3 +5244,9 @@ https://huggingface.co/Cloudflare/clairic
 # --- Automatically Discovered by AI Scout Engine [2026-11-20T11:08:37.253Z] ---
 # [MOBILE-CROSS-PLATFORM] Kianuni/Erosion-CN (1753 score) - iOS / iPadOS 国行 Apple 智能、eSIM 与 MobileGestalt 系统配置工具箱（中英双语 · 防白苹果安全加固版） | Bootlo
 https://github.com/Kianuni/Erosion-CN
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-20T11:30:30.638Z] ---
+# [HUGGINGFACE-AI-MODELS] harness-hub/Qwen3.8-27B-opencode-adapted (1412 score) - Verified Hugging Face Model: harness-hub/Qwen3.8-27B-opencode-adapted (111 likes
+https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted
+# [HUGGINGFACE-AI-MODELS] tencent/Hy4 (899 score) - Verified Hugging Face Model: tencent/Hy4 (81 likes, 89 downloads)
+https://huggingface.co/tencent/Hy4

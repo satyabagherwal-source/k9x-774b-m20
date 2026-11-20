@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T11:09:14.948Z",
-  "total_records": 2113,
+  "last_updated": "2026-11-20T11:32:49.178Z",
+  "total_records": 2122,
   "domains": {
     "A": {
       "total": 17,
@@ -58,7 +58,7 @@
       ]
     },
     "D": {
-      "total": 853,
+      "total": 859,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -912,7 +912,13 @@
         "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-cloudflare-clairic-core-invariants",
         "DOM-D-9E529A03",
-        "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clairic-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clairic-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-tencent-hy4-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-harness-hub-qwen3-8-27b-opencode-adapted-core-in",
+        "DOM-D-04A5E986",
+        "domain_intelligence-research-knowledge-intelligence-hf-harness-hub-qwen3-8-27b-opencode-adapted-lear",
+        "DOM-D-19E80851",
+        "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-learnings-core-invariants"
       ]
     },
     "E": {
@@ -1873,7 +1879,7 @@
       ]
     },
     "I": {
-      "total": 103,
+      "total": 105,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1977,7 +1983,9 @@
         "DOM-I-333D4D7A",
         "domain_intelligence-content-information-intelligence-jellyfin-swiftfin-core-invariants",
         "domain_intelligence-content-information-intelligence-jellyfin-swiftfin-learnings-core-invariants",
-        "DOM-I-9FC28849"
+        "DOM-I-9FC28849",
+        "domain_intelligence-content-information-intelligence-touchlab-kermit-core-invariants",
+        "domain_intelligence-content-information-intelligence-touchlab-kermit-learnings-core-invariants"
       ]
     },
     "J": {
@@ -2027,7 +2035,7 @@
       ]
     },
     "K": {
-      "total": 118,
+      "total": 119,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2146,7 +2154,8 @@
         "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva",
         "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-core-invariants",
         "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-learnings-core-invariants",
-        "DOM-K-28C46858"
+        "DOM-K-28C46858",
+        "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-core-invariants"
       ]
     },
     "L": {
@@ -9962,8 +9971,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "cdd89cc5b9c41eaa0ffd1a2b79c5510c8ce04ecee0898437ccb9d13a57e2f282",
-      "created_at": "2026-11-19T22:27:46.106Z"
+      "content_hash": "c4ba3afcd48da2aa012a15cc77880f409ed51b6288c2f5e52457e83297038b7a",
+      "created_at": "2026-11-20T11:30:51.656Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -35635,6 +35644,153 @@
       "repository": "joreilly-confetti-learnings",
       "content_hash": "fbf0ef01e5dbf59759728072d2bb22cdc8d76877146aff3e79c35587f363de77",
       "created_at": "2026-11-20T11:09:13.983Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-tencent-hy4-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy4-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: tencent/Hy4 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy4-research-knowledge-intelligence-tencent-hy4-core-invariants.md",
+      "repository": "tencent/Hy4",
+      "content_hash": "0b11909a32788dbf9feefe33a6b4e8ba59ae9b6bf94d0de87236d36e4e93237e",
+      "created_at": "2026-11-20T11:30:40.036Z"
+    },
+    "domain_intelligence-content-information-intelligence-touchlab-kermit-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-touchlab-kermit-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: touchlab/Kermit Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-touchlab-kermit-content-information-intelligence-touchlab-kermit-core-invariants.md",
+      "repository": "touchlab/Kermit",
+      "content_hash": "fac1578de9a13a35a23af1d9aa42dd832f91a88a126f942ddc16b0f5fd9cff50",
+      "created_at": "2026-11-20T11:30:45.965Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: fabio-rovai/open-ontologies Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fabio-rovai-open-ontologies-quality-verification-intelligence-fabio-rovai-open-o.md",
+      "repository": "fabio-rovai/open-ontologies",
+      "content_hash": "5406f6e5422af41f28aa84a6532846763e10afe73d75c7b5bbb5009806553bb6",
+      "created_at": "2026-11-20T11:30:49.527Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-harness-hub-qwen3-8-27b-opencode-adapted-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-harness-hub-qwen3-8-27b-opencode-adapted-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: harness-hub/Qwen3.8-27B-opencode-adapted Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-harness-hub-qwen3-8-27b-opencode-adapted-research-knowledge-intelligence-harn.md",
+      "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",
+      "content_hash": "5fd6695583c5a5ae80439a99441523f99b3f56beb49e5e537d649ef1ed7552db",
+      "created_at": "2026-11-20T11:31:34.400Z"
+    },
+    "DOM-D-04A5E986": {
+      "record_id": "DOM-D-04A5E986",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): harness-hub/Qwen3.8-27B-opencode-adapted",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted](https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted))  \n> **Source Version**: `",
+      "content_hash": "de2df0fa09471092e58eddd45b2ff77b525eb7cfa1e6eddd7aa9b7437c71352e",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md`  \n> **Source**: huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md`  \n> **Source**: huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-harness-hub-qwen3.8-27b-opencode-adapted/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T11:31:37.210Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-harness-hub-qwen3.8-27b-opencode-adapted)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-harness-hub-qwen3.8-27b-opencode-adapted"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T11:32:07.930Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-harness-hub-qwen3-8-27b-opencode-adapted-lear": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-harness-hub-qwen3-8-27b-opencode-adapted-lear",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-harness-hub-qwen3-8-27b-opencode-adapted-learnings-research-knowledge-intelli.md",
+      "repository": "hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings",
+      "content_hash": "52bd460a7003b1227aeabed3df4a0b3fa8c379f6ab970fb70660451e12ed991c",
+      "created_at": "2026-11-20T11:32:08.219Z"
+    },
+    "DOM-D-19E80851": {
+      "record_id": "DOM-D-19E80851",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): tencent/Hy4",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy4-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/tencent/Hy4](https://huggingface.co/tencent/Hy4))  \n> **Source Version**: `hf-tencent-h`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clone-structura",
+      "content_hash": "6ec6cdfd1046ec65c1e60df0b65954a01275921299fc7ae0e907a482ebb602e6",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy4-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/te -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy4-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/te",
+      "provenance": {
+        "source_uri": "project://hf-tencent-hy4/hf-tencent-hy4-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T11:32:08.403Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-tencent-hy4)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-tencent-hy4"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T11:32:47.936Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-tencent-hy4-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy4-learnings-research-knowledge-intelligence-hf-tencent-hy4-learning.md",
+      "repository": "hf-tencent-hy4-learnings",
+      "content_hash": "0a28a7020096c1dc68d66b2e11dd5da2c90bd028afd36fa97a92cc09735340ea",
+      "created_at": "2026-11-20T11:32:48.235Z"
+    },
+    "domain_intelligence-content-information-intelligence-touchlab-kermit-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-touchlab-kermit-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: touchlab-kermit-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-touchlab-kermit-learnings-content-information-intelligence-touchlab-kermit-learn.md",
+      "repository": "touchlab-kermit-learnings",
+      "content_hash": "21816555453068d512fdd609876e00ba82fb41cf24e7b422522196cfa97b0139",
+      "created_at": "2026-11-20T11:32:49.178Z"
     }
   }
 }

@@ -11556,3 +11556,10 @@ Every entry in this ledger must capture:
 | `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `f7be73d2` | Multi-dimensional audit evidence | 2026-11-20T11:08:55.114Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `2b311b97` | Multi-dimensional audit evidence | 2026-11-20T11:08:57.954Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `a5623114` | Multi-dimensional audit evidence | 2026-11-20T11:09:07.197Z |
+| `learn-huggingface-tencent-hy4` | `https://huggingface.co/tencent/Hy4` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-20T11:30:39.837Z |
+| `learn-github-touchlab-kermit` | `https://github.com/touchlab/Kermit` | `fb52c4b8` | Multi-dimensional audit evidence | 2026-11-20T11:30:45.609Z |
+| `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `17ef05b9` | Multi-dimensional audit evidence | 2026-11-20T11:30:49.164Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `f8710f06` | Multi-dimensional audit evidence | 2026-11-20T11:30:51.301Z |
+| `learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted` | `https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted` | `hf-harness` | Multi-dimensional audit evidence | 2026-11-20T11:31:34.210Z |
+| `learn-dom-d-04a5e986` | `project://hf-harness-hub-qwen3.8-27b-opencode-adapted` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md` | 2026-11-20T11:32:07.964Z |
+| `learn-dom-d-19e80851` | `project://hf-tencent-hy4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-hy4-learnings.md` | 2026-11-20T11:32:47.962Z |

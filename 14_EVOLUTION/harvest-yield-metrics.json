@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T11:09:07.203Z",
-  "total_cycles_completed": 10979,
-  "total_learnings_persisted": 10979,
-  "total_rules_promoted": 10344,
+  "last_updated": "2026-11-20T11:31:34.215Z",
+  "total_cycles_completed": 10984,
+  "total_learnings_persisted": 10984,
+  "total_rules_promoted": 10347,
   "history": [
-    {
-      "timestamp": "2026-11-19T14:28:37.662Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T14:52:38.526Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T14:55:37.275Z",
-      "repository": "autotrust/AutoTrust-Decider-Pro-35B",
-      "learningId": "learn-huggingface-autotrust-jev-35b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T15:03:21.334Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T15:03:30.534Z",
-      "repository": "loft-sh/vcluster",
-      "learningId": "learn-github-loft-sh-vcluster",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T15:16:35.184Z",
       "repository": "mrkai77/Loop",
@@ -1403,6 +1368,41 @@
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T11:30:39.843Z",
+      "repository": "tencent/Hy4",
+      "learningId": "learn-huggingface-tencent-hy4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T11:30:45.614Z",
+      "repository": "touchlab/Kermit",
+      "learningId": "learn-github-touchlab-kermit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T11:30:49.170Z",
+      "repository": "fabio-rovai/open-ontologies",
+      "learningId": "learn-github-fabio-rovai-open-ontologies",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T11:30:51.306Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T11:31:34.215Z",
+      "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",
+      "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

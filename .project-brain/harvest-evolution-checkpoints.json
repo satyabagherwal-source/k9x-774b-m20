@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T11:09:15.322Z",
+  "last_updated": "2026-11-20T11:32:49.515Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T08:04:06.528Z",
@@ -1358,7 +1358,7 @@
       "staged_for_review": 1
     },
     "touchlab-kermit-learnings.md": {
-      "processed_at": "2026-11-12T23:55:11.632Z",
+      "processed_at": "2026-11-20T11:32:48.476Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3561,9 +3561,19 @@
       "processed_at": "2026-11-20T11:09:10.904Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md": {
+      "processed_at": "2026-11-20T11:32:07.964Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "hf-tencent-hy4-learnings.md": {
+      "processed_at": "2026-11-20T11:32:47.962Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2502,
-  "total_canonical_promoted": 422,
-  "total_staged_for_review": 1891
+  "total_dossiers_evaluated": 2505,
+  "total_canonical_promoted": 424,
+  "total_staged_for_review": 1892
 }

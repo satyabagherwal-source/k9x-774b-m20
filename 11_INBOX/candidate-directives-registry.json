@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T11:09:14.758Z",
+  "last_updated": "2026-11-20T11:32:48.999Z",
   "directives": [
     {
       "id": "CD-001",
@@ -37212,6 +37212,48 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-GW6E",
+      "directive_title": "Add agent context docs (CLAUDE.md, AGENT-USAGE.md) and context-generation guide",
+      "source_repo": "touchlab-kermit-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GW6E-add-agent-context-docs-claude-md-agent-usage-md-and-context-generation-guide.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-EBVG",
+      "directive_title": "join newly derived edges during incremental transitivity",
+      "source_repo": "fabio-rovai/open-ontologies",
+      "source_commit": "17ef05b9",
+      "staged_file": "11_INBOX/candidate-directives/CD-EBVG-join-newly-derived-edges-during-incremental-transitivity.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-EDIM",
+      "directive_title": "handle out-of-range and negative scalars in scalar max and min",
+      "source_repo": "zama-ai/tfhe-rs",
+      "source_commit": "f8710f06",
+      "staged_file": "11_INBOX/candidate-directives/CD-EDIM-handle-out-of-range-and-negative-scalars-in-scalar-max-and-min.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-E67914",
+      "directive_title": "Add agent context docs (CLAUDE.md, AGENT-USAGE.md) and context-generation guide",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "touchlab-kermit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E67914-add-agent-context-docs-claude-md-agent-u.md",
+      "staged_date": "2026-11-20"
     }
   ]
 }

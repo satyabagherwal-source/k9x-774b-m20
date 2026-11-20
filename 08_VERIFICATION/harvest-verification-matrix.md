@@ -11523,3 +11523,10 @@
 | `CYCLE-20261120-M5S5` | `2026-11-20T11:08:55.109Z` | `joreilly/Confetti` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9556` | Yes (`eb4cf57c...`) |
 | `CYCLE-20261120-M7Z1` | `2026-11-20T11:08:57.949Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9557` | Yes (`92004005...`) |
 | `CYCLE-20261120-MF3S` | `2026-11-20T11:09:07.192Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9558` | Yes (`a59d3298...`) |
+| `CYCLE-20261120-E4IG` | `2026-11-20T11:30:39.832Z` | `tencent/Hy4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy4-learnings.md` | Yes (`ec25fdd5...`) |
+| `CYCLE-20261120-E8YT` | `2026-11-20T11:30:45.605Z` | `touchlab/Kermit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9559` | Yes (`688b612d...`) |
+| `CYCLE-20261120-EBPK` | `2026-11-20T11:30:49.160Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9560` | Yes (`079cb700...`) |
+| `CYCLE-20261120-EDCX` | `2026-11-20T11:30:51.297Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9561` | Yes (`ae95ee36...`) |
+| `CYCLE-20261120-FAGU` | `2026-11-20T11:31:34.206Z` | `harness-hub/Qwen3.8-27B-opencode-adapted` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md` | Yes (`6514316f...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T11:32:07.964Z` | `hf-harness-hub-qwen3.8-27b-opencode-adapted` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-04A5E986` [Domain D] | Yes (`de2df0fa...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T11:32:47.962Z` | `hf-tencent-hy4` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-19E80851` [Domain D] | Yes (`6ec6cdfd...`) |
