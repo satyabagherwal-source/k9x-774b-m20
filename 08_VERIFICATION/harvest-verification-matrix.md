@@ -11636,3 +11636,5 @@
 | `CYCLE-20261120-NHGK` | `2026-11-20T21:25:48.452Z` | `dalance/procs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9642` | Yes (`d01a5eef...`) |
 | `CYCLE-20261120-4EP0` | `2026-11-20T21:38:58.020Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9643` | Yes (`6b7cdb42...`) |
 | `CYCLE-20261120-EZY3` | `2026-11-20T21:47:12.123Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9644` | Yes (`54610216...`) |
+| `CYCLE-20261120-P61H` | `2026-11-20T21:55:06.581Z` | `digitalbazaar/pyld` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9645` | Yes (`4063d5f7...`) |
+| `CYCLE-20261120-PCXM` | `2026-11-20T21:55:15.514Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md` | Yes (`c0d96992...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T21:47:17.233Z",
+  "last_updated": "2026-11-20T21:55:21.418Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5336,11 +5336,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-F38B",
+      "id": "CD-PHHM",
       "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-F38B-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-PHHM-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -39311,6 +39311,57 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8C8609-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-P67A",
+      "directive_title": "note the remove_dot_segments() slash fix in the changelog",
+      "source_repo": "digitalbazaar/pyld",
+      "source_commit": "b87fa3e3",
+      "staged_file": "11_INBOX/candidate-directives/CD-P67A-note-the-remove_dot_segments-slash-fix-in-the-changelog.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-PGXI",
+      "directive_title": "docs(changelog): require a vector index rebuild on 0.27.0",
+      "source_repo": "paradedb-paradedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PGXI-docs-changelog-require-a-vector-index-rebuild-on-0-27-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-PG4G",
+      "directive_title": "docs: note the remove_dot_segments() slash fix in the changelog",
+      "source_repo": "digitalbazaar-pyld-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PG4G-docs-note-the-remove_dot_segments-slash-fix-in-the-changelog.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-9AAEC6",
+      "directive_title": "docs(changelog): require a vector index rebuild on 0.27.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "paradedb-paradedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9AAEC6-docs-changelog-require-a-vector-index-re.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-ED4110",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-ED4110-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-20"
     }
   ]

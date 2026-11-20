@@ -11669,3 +11669,5 @@ Every entry in this ledger must capture:
 | `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `05000c71` | Multi-dimensional audit evidence | 2026-11-20T21:25:48.457Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `83f304b1` | Multi-dimensional audit evidence | 2026-11-20T21:38:58.025Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `77137bc2` | Multi-dimensional audit evidence | 2026-11-20T21:47:12.127Z |
+| `learn-github-digitalbazaar-pyld` | `https://github.com/digitalbazaar/pyld` | `b87fa3e3` | Multi-dimensional audit evidence | 2026-11-20T21:55:06.585Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `dec61535` | Multi-dimensional audit evidence | 2026-11-20T21:55:15.518Z |

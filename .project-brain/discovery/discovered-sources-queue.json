@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T21:47:15.493Z",
+  "updated_at": "2026-11-20T21:55:20.475Z",
   "stats": {
-    "total_discovered": 6751,
-    "approved_pending_harvest": 6374,
+    "total_discovered": 6756,
+    "approved_pending_harvest": 6377,
     "harvested_count": 0,
-    "rejected_count": 377,
+    "rejected_count": 379,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6347,
+      "COMMUNITY_AND_EXPERT": 6352,
       "OFFICIAL_DOCUMENTATION": 230,
       "STANDARDS_AND_SPECIFICATIONS": 121,
       "ENGINEERING_BLOGS": 5,
@@ -145906,6 +145906,102 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
         "fileName": "databendlabs-databend-learnings.md"
+      }
+    },
+    "SRC-C1C5AB082223": {
+      "id": "SRC-C1C5AB082223",
+      "url": "http://example.org`/",
+      "title": "http://example.org`/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:55:19.263Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-748C022365F9": {
+      "id": "SRC-748C022365F9",
+      "url": "http://example.org//x%60",
+      "title": "http://example.org//x%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:55:19.345Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-6902FD2E025B": {
+      "id": "SRC-6902FD2E025B",
+      "url": "https://github.com/paradedb/paradedb/pull/4956",
+      "title": "https://github.com/paradedb/paradedb/pull/4956",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:55:20.244Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-AA5B60524BBF": {
+      "id": "SRC-AA5B60524BBF",
+      "url": "https://github.com/paradedb/paradedb/issues/7028",
+      "title": "https://github.com/paradedb/paradedb/issues/7028",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:55:20.422Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-978D4D3C4A6D": {
+      "id": "SRC-978D4D3C4A6D",
+      "url": "https://github.com/paradedb/paradedb/issues/4206",
+      "title": "https://github.com/paradedb/paradedb/issues/4206",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:55:20.475Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
       }
     }
   }

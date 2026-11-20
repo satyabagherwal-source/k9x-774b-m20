@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T21:47:17.375Z",
+  "last_updated": "2026-11-20T21:55:21.581Z",
   "total_records": 2180,
   "domains": {
     "A": {
@@ -11571,8 +11571,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "cf362c535944bfa6663c44d69ac5977aec176c9b6639303f6c97d6753a2e41b5",
-      "created_at": "2026-11-20T21:47:16.528Z"
+      "content_hash": "20ebe59fb92179cc75bb0bcff1a1067713c6e99607b8493d0c46ea30c591edf6",
+      "created_at": "2026-11-20T21:55:21.581Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -20996,8 +20996,8 @@
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "repository": "paradedb/paradedb",
-      "content_hash": "c58166ce0dd41af4deaf88d0af0aa790c4010a7407e2c754664833e2cdfa4554",
-      "created_at": "2026-11-18T13:57:03.606Z"
+      "content_hash": "71f164e7257dad7cec396f122a82592751f71036a8347b1320306e45d3339ef6",
+      "created_at": "2026-11-20T21:55:15.981Z"
     },
     "DOM-D-53AB726C": {
       "record_id": "DOM-D-53AB726C",
@@ -24768,8 +24768,8 @@
       "title": "Architecture Intelligence: paradedb-paradedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-learnings-architecture-intelligence-paradedb-paradedb-learning.md",
       "repository": "paradedb-paradedb-learnings",
-      "content_hash": "4d4985a4352737f14fb3e86a1bb09c8bfa119cad1b919608464c624962f8fa03",
-      "created_at": "2026-11-18T13:57:08.815Z"
+      "content_hash": "69de61aadd5a5219aa0d878a0df0fd3d33cb7757302174b621bc30aa64f0bb30",
+      "created_at": "2026-11-20T21:55:20.859Z"
     },
     "domain_intelligence-technical-construction-intelligence-cachix-devenv-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-cachix-devenv-core-invariants",
@@ -25305,8 +25305,8 @@
       "title": "Architecture Intelligence: digitalbazaar/pyld Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-digitalbazaar-pyld-architecture-intelligence-digitalbazaar-pyld-core-invariants.md",
       "repository": "digitalbazaar/pyld",
-      "content_hash": "677c19bac4dbff3a882c9dfa4f4fdc2b4c3b68deccc178a441165759ed2669ff",
-      "created_at": "2026-11-17T01:54:38.527Z"
+      "content_hash": "84f08bb116ebc385caecd3922d86617ceab2fb23555d8e864bb3f0cc2f3caf25",
+      "created_at": "2026-11-20T21:55:06.980Z"
     },
     "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-learnings-core-invariants",
@@ -25314,8 +25314,8 @@
       "title": "Architecture Intelligence: digitalbazaar-pyld-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-digitalbazaar-pyld-learnings-architecture-intelligence-digitalbazaar-pyld-learni.md",
       "repository": "digitalbazaar-pyld-learnings",
-      "content_hash": "baf047dbb1aca79cab97f057a24c1e31d14f3b9510efd14d5e2bd825db29b36f",
-      "created_at": "2026-11-17T01:54:51.752Z"
+      "content_hash": "43799bb6fc0bddf32e6ca66b089d429a22a17861a918d070a36058a516db75d2",
+      "created_at": "2026-11-20T21:55:19.836Z"
     },
     "domain_intelligence-research-knowledge-intelligence-oliviarossi-minimax-h3_singularity-x-10eros-max_": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-oliviarossi-minimax-h3_singularity-x-10eros-max_",

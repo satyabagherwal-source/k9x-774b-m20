@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T21:47:15.260Z",
-    "lastVerified": "2026-11-20T21:47:15.260Z",
+    "lastChecked": "2026-11-20T21:55:18.806Z",
+    "lastVerified": "2026-11-20T21:55:18.806Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T21:06:23.441Z",
-    "lastVerified": "2026-11-20T21:06:23.441Z",
+    "lastChecked": "2026-11-20T21:55:12.730Z",
+    "lastVerified": "2026-11-20T21:55:12.730Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -616,9 +616,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-20T15:43:57.004Z",
+    "lastChecked": "2026-11-20T21:55:07.896Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-20T15:43:57.004Z"
+    "lastVerified": "2026-11-20T21:55:07.896Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -2266,14 +2266,14 @@
     "officialUrl": "https://github.com/paradedb/paradedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T17:38:03.891Z",
-    "lastVerified": "2026-11-19T17:38:03.891Z",
+    "lastChecked": "2026-11-20T21:55:14.968Z",
+    "lastVerified": "2026-11-20T21:55:14.968Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "afa63e0bf85de391fa857cf55773626d6f7baab0f510a7dd7fbd4f3a61c556a7",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 15,
+    "contentHash": "c0d96992f1d9b7149227f8c920ba5576cb066710f7db31bfb6e9d81bccc400ae",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3046,9 +3046,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-11-19T19:31:05.303Z",
+    "lastChecked": "2026-11-20T21:55:05.270Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-11-19T19:31:05.303Z"
+    "lastVerified": "2026-11-20T21:55:05.270Z"
   },
   "lioensky-vcptoolbox": {
     "name": "lioensky/VCPToolBox",
@@ -6833,9 +6833,9 @@
   "sachaos-viddy": {
     "name": "viddy",
     "officialUrl": "https://github.com/sachaos/viddy",
-    "lastChecked": "2026-11-19T06:29:58.894Z",
+    "lastChecked": "2026-11-20T21:54:57.764Z",
     "revisionIdentifier": "b56efe08",
-    "lastVerified": "2026-11-19T06:29:58.894Z"
+    "lastVerified": "2026-11-20T21:54:57.764Z"
   },
   "hf-autotrust-jev-27b-vl": {
     "name": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
@@ -10833,5 +10833,29 @@
     "lastChecked": "2026-11-20T21:46:57.641Z",
     "revisionIdentifier": "b27567bb",
     "lastVerified": "2026-11-20T21:46:57.641Z"
+  },
+  "digitalbazaar-pyld": {
+    "name": "digitalbazaar/pyld",
+    "officialUrl": "https://github.com/digitalbazaar/pyld",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-20T21:55:05.354Z",
+    "lastVerified": "2026-11-20T21:55:05.354Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-digitalbazaar-pyld",
+    "contentHash": "4063d5f746474d0fff13598dd28051cdd27cd65762adeb5189b859a7e61e8c23",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 11,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kartiklabhshetwar-better-shot": {
+    "name": "better-shot",
+    "officialUrl": "https://github.com/KartikLabhshetwar/better-shot",
+    "lastChecked": "2026-11-20T21:55:02.796Z",
+    "revisionIdentifier": "0e005e9c",
+    "lastVerified": "2026-11-20T21:55:02.796Z"
   }
 }

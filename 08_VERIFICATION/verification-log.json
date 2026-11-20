@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-FJ39",
-    "timestamp": "2026-11-18T18:00:19.557Z",
-    "repository": "amazon/chronos-2",
-    "learningId": "learn-huggingface-amazon-chronos-2",
-    "contentHash": "bef1a6bd8077bbe26a5806ca457bde930963dd55c4c4f866013ed00ffcb0516c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-RWL6",
-    "timestamp": "2026-11-18T18:09:56.922Z",
-    "repository": "wcandillon/react-native-skia",
-    "learningId": "learn-github-wcandillon-react-native-skia",
-    "contentHash": "f78b8de1dafdd6c98dcea5a097d61c951b686b64dd133cdf899200d05decd219",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-RZLH",
     "timestamp": "2026-11-18T18:10:00.821Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7492,6 +7462,36 @@
     "contentHash": "54610216c35a5b780cf5a6f66e04fb5a17e3d08f9abd9cb1c4335e432a22914c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-P61H",
+    "timestamp": "2026-11-20T21:55:06.581Z",
+    "repository": "digitalbazaar/pyld",
+    "learningId": "learn-github-digitalbazaar-pyld",
+    "contentHash": "4063d5f746474d0fff13598dd28051cdd27cd65762adeb5189b859a7e61e8c23",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-PCXM",
+    "timestamp": "2026-11-20T21:55:15.514Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "c0d96992f1d9b7149227f8c920ba5576cb066710f7db31bfb6e9d81bccc400ae",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

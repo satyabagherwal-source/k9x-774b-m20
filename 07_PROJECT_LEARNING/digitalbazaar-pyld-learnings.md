@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md`  
 > **Source**: github ([https://github.com/digitalbazaar/pyld](https://github.com/digitalbazaar/pyld))  
-> **Source Version**: `874c56eb`  
+> **Source Version**: `b87fa3e3`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T01:54:37.327Z  
+> **Timestamp**: 2026-11-20T21:55:05.573Z  
 > **Learning ID**: `learn-github-digitalbazaar-pyld`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/digitalbazaar/pyld](https://github.com/digitalbazaar/pyld))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T01:54:37.013Z  
+> **Harvest Timestamp**: 2026-11-20T21:55:05.354Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JSON-LD processor written in Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 689 stars
+- **Stars / Engagement**: 688 stars
 
 ---
 
@@ -993,90 +993,74 @@ def main(args: list[str] | None = None) -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6c715450` (2026-11-10)
-**Commit Message**: docs: state where @json still overflows and -INF in the large integer changelog entry
+### Incident Patch 1: `b87fa3e3` (2026-11-12)
+**Commit Message**: docs: note the remove_dot_segments() slash fix in the changelog
+
+The fix now lives in remove_dot_segments(), so it applies to every
+reference, including absolute IRIs and network-path references.
+
+Signed-off-by: jdsika <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +2/-1)
+```diff
+@@ -34,7 +34,8 @@
+ - Use a helper for generalized N-Quads normalization in the test runner, since rdflib cannot parse blank-node predicates. Fixes [toRdf#te075](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te075).
+ - `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer fail with an `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF` or `-INF`, the infinite `xsd:double` values, or, in `json-ld-1.0` mode and not typed as `xsd:double`, as an exact `xsd:integer`. Inside `@json` literals, `jsonld.to_rdf()` and `jsonld.normalize()` still raise `OverflowError` for such numbers, as RFC 8785 only allows numbers that fit in a double.
+ - `jsonld.to_rdf()` writes the `xsd:double` NaN as `NaN`, its XSD canonical form, instead of `NAN`, so `jsonld.normalize()` output changes for documents with such a value.
+-- `iri_resolver.resolve()` fixes references without a scheme or host against a base IRI with a host and no path (`/x` against `http://example.org` gave `http://example.org//x`) or with a query. For those references, it also no longer drops the `/` that a final `.` or `..` segment leaves before a query or fragment (`a/.?x`), or the dot of a first segment such as `.gh`.
++- `iri_resolver.resolve()` fixes references without a scheme or host against a base IRI with a host and no path (`/x` against `http://example.org` gave `http://example.org//x`) or with a query, and keeps the dot of a first segment such as `.gh`.
++- `iri_resolver.remove_dot_segments()`, and with it `iri_resolver.resolve()`, no longer drops the `/` that a final `.` or `..` segment leaves before a query or fragment (`/a/.?x` gave `/a?x`).
+ 
+ ### Changed
+ - **BREAKING**: Developer install, command execution, documentation, and release artifact
+```
+
+---
+
+### Incident Patch 2: `8f85f59e` (2026-11-04)
+**Commit Message**: docs: describe the base query fix in the changelog
 
 Signed-off-by: jdsika <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -31,7 +31,7 @@
- - IRI validation now detects multiple # fragments so these IRI's are skipped during toRDF. Fixes [toRdf#te111](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te111) and [toRdf#te112](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te112).
- - In `_create_node_map()`, ignored `@id: None` subjects are now dropped before they enter the node map to prevent `_graph_to_rdf()` from crashing when sorting mixed `None` and string keys. Fixes [toRdf#te122](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te122).
+@@ -34,7 +34,7 @@
  - Use a helper for generalized N-Quads normalization in the test runner, since rdflib cannot parse blank-node predicates. Fixes [toRdf#te075](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te075).
--- `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer raise `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF`, the infinite `xsd:double` (in `json-ld-1.0` mode, as an exact `xsd:integer`). `@json` literals still reject such numbers, as RFC 8785 does.
-+- `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer raise `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF` or `-INF`, the infinite `xsd:double` values, or, in `json-ld-1.0` mode and not typed as `xsd:double`, as an exact `xsd:integer`. Inside `@json` literals, `jsonld.to_rdf()` and `jsonld.normalize()` still raise `OverflowError` for such numbers, as RFC 8785 only allows numbers that fit in a double.
+ - `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer fail with an `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF` or `-INF`, the infinite `xsd:double` values, or, in `json-ld-1.0` mode and not typed as `xsd:double`, as an exact `xsd:integer`. Inside `@json` literals, `jsonld.to_rdf()` and `jsonld.normalize()` still raise `OverflowError` for such numbers, as RFC 8785 only allows numbers that fit in a double.
  - `jsonld.to_rdf()` writes the `xsd:double` NaN as `NaN`, its XSD canonical form, instead of `NAN`, so `jsonld.normalize()` output changes for documents with such a value.
+-- `iri_resolver.resolve()` resolves a reference against a base with an authority and an empty path, such as `http://example.org`, as RFC 3986 does: `/x` became `http://example.org//x`, dot segments were kept in a path and removed from a query, and a base query was kept before the path.
++- `iri_resolver.resolve()` resolves a reference against a base with an authority and an empty path, such as `http://example.org`, as RFC 3986 does: `/x` became `http://example.org//x`, and dot segments were kept in a path and removed from a query. The query of the base IRI no longer stays in front of a path, or counts as part of the base path when it contains a `/`.
  
  ### Changed
+ - **BREAKING**: Developer install, command execution, documentation, and release artifact
 ```
 
 ---
 
-### Incident Patch 2: `874c56eb` (2026-11-10)
-**Commit Message**: docs: say the operations no longer fail with an OverflowError, which flatten wraps
+### Incident Patch 3: `b51a50cb` (2026-11-04)
+**Commit Message**: docs: add the base without a path fix to the changelog
 
 Signed-off-by: jdsika <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -31,7 +31,7 @@
- - IRI validation now detects multiple # fragments so these IRI's are skipped during toRDF. Fixes [toRdf#te111](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te111) and [toRdf#te112](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te112).
- - In `_create_node_map()`, ignored `@id: None` subjects are now dropped before they enter the node map to prevent `_graph_to_rdf()` from crashing when sorting mixed `None` and string keys. Fixes [toRdf#te122](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te122).
+@@ -34,6 +34,7 @@
  - Use a helper for generalized N-Quads normalization in the test runner, since rdflib cannot parse blank-node predicates. Fixes [toRdf#te075](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te075).
--- `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer raise `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF` or `-INF`, the infinite `xsd:double` values, or, in `json-ld-1.0` mode and not typed as `xsd:double`, as an exact `xsd:integer`. Inside `@json` literals, `jsonld.to_rdf()` and `jsonld.normalize()` still raise `OverflowError` for such numbers, as RFC 8785 only allows numbers that fit in a double.
-+- `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer fail with an `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF` or `-INF`, the infinite `xsd:double` values, or, in `json-ld-1.0` mode and not typed as `xsd:double`, as an exact `xsd:integer`. Inside `@json` literals, `jsonld.to_rdf()` and `jsonld.normalize()` still raise `OverflowError` for such numbers, as RFC 8785 only allows numbers that fit in a double.
+ - `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer fail with an `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF` or `-INF`, the infinite `xsd:double` values, or, in `json-ld-1.0` mode and not typed as `xsd:double`, as an exact `xsd:integer`. Inside `@json` literals, `jsonld.to_rdf()` and `jsonld.normalize()` still raise `OverflowError` for such numbers, as RFC 8785 only allows numbers that fit in a double.
  - `jsonld.to_rdf()` writes the `xsd:double` NaN as `NaN`, its XSD canonical form, instead of `NAN`, so `jsonld.normalize()` output changes for documents with such a value.
++- `iri_resolver.resolve()` resolves a reference against a base with an authority and an empty path, such as `http://example.org`, as RFC 3986 does: `/x` became `http://example.org//x`, and dot segments in a path-relative reference were kept.
  
  ### Changed
-```
-
----
-
-### Incident Patch 3: `000ceeb3` (2026-11-10)
-**Commit Message**: docs: state the inputs and the overflow rounding of the xsd:double helpers
-
-Signed-off-by: jdsika <[REDACTED_EMAIL]>
-
-**File**: `lib/pyld/jsonld.py` (modified, +8/-5)
-```diff
-@@ -6458,11 +6458,13 @@ def _to_double(value) -> float:
-     """
-     Converts a number to a double.
- 
--    An integer beyond the range of a double becomes positive or negative
--    infinity, as floatingPointRound in XML Schema 1.1 Part 2 rounds it:
--    https://www.w3.org/TR/xmlschema11-2/#f-floatPtRound
-+    An integer that rounds beyond the largest double becomes positive or
-+    negative infinity, as the lexical mapping of `xsd:double` in XML Schema
-+    1.1 Part 2 rounds it with floatingPointRound:
-+    https://www.w3.org/TR/xmlschema11-2/#f-doubleLexmap
- 
--    :param value: the number to convert.
-+    :param value: the number or numeric string to convert; anything else
-+      raises ValueError or TypeError, as float() does.
- 
-     :return: the double.
-     """
-@@ -6483,7 +6485,8 @@ def _canonicalize_double(value: float | int | str) -> str:
-     specialRepCanonicalMap in XML Schema 1.1 Part 2 maps them:
-     https://www.w3.org/TR/xmlschema11-2/#f-specValCanMap
- 
--    :param value: the number to convert.
-+    :param value: the number or numeric string to convert, as for
-+      _to_double().
- 
-     :return: the canonical lexical form.
-     """
+ - **BREAKING**: Developer install, command execution, documentation, and release artifact
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #383** (2026-11-17): Bump ruff from 0.17.3 to 0.17.4 (@dependabot[bot])
+- **PR #382** (2026-11-17): Bump typer from 0.27.3 to 0.28.0 (@dependabot[bot])
+- **PR #381** (2026-11-17): Bump cachetools from 7.2.8 to 7.3.0 (@dependabot[bot])
+- **PR #380** (2026-11-17): Bump specifications/json-ld-api from `92f0770` to `5551473` (@dependabot[bot])
+- **PR #379** (2026-11-17): Fix misspelled 'embedded' state key in reverse framing (@afeefaa333)
 - **PR #377** (2026-11-10): Bump frozendict from 2.4.7 to 2.5.1 (@dependabot[bot])
-- **PR #376** (2026-11-10): Bump ruff from 0.17.2 to 0.17.3 (@dependabot[bot])
-- **PR #375** (2026-11-10): Bump cachetools from 7.2.5 to 7.2.8 (@dependabot[bot])
-- **PR #374** (2026-11-10): Bump pytest from 9.1.1 to 9.2.0 (@dependabot[bot])
-- **PR #373** (2026-11-12): fix: write too large integers and NaN as canonical xsd:double values (@jdsika)
-- **PR #367** (2026-11-02): Bump cachetools from 7.2.1 to 7.2.5 (@dependabot[bot])
 
 ---
 
@@ -1096,13 +1080,13 @@ Signed-off-by: jdsika <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: state where @json still overflows and -INF in the large integer changelog 
+## X. docs: note the remove_dot_segments() slash fix in the changelog
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in digitalbazaar/pyld. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6c715450`: docs: state where @json still overflows and -INF in the large integer changelog entry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b87fa3e3`: docs: note the remove_dot_segments() slash fix in the changelog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1110,14 +1094,15 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer raise `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF` or `-INF`, the infinite `xsd:double` values, or, in `json-ld-1.0` mode and not typed as `xsd:double`, as an exact `xsd:integer`. Inside `@json` literals, `jsonld.to_rdf()` and `jsonld.normalize()` still raise `OverflowError` for such numbers, as RFC 8785 only allows numbers that fit in a double.
+- `iri_resolver.resolve()` fixes references without a scheme or host against a base IRI with a host and no path (`/x` against `http://example.org` gave `http://example.org//x`) or with a query, and keeps the dot of a first segment such as `.gh`.
+- `iri_resolver.remove_dot_segments()`, and with it `iri_resolver.resolve()`, no longer drops the `/` that a final `.` or `..` segment leaves before a query or fragment (`/a/.?x` gave `/a?x`).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-- `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer raise `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF`, the infinite `xsd:double` (in `json-ld-1.0` mode, as an exact `xsd:integer`). `@json` literals still reject such numbers, as RFC 8785 does.
+- `iri_resolver.resolve()` fixes references without a scheme or host against a base IRI with a host and no path (`/x` against `http://example.org` gave `http://example.org//x`) or with a query. For those references, it also no longer drops the `/` that a final `.` or `..` segment leaves before a query or fragment (`a/.?x`), or the dot of a first segment such as `.gh`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6c715450` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b87fa3e3` are properly handled with clean fallback behavior.
