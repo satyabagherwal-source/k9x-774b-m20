@@ -21661,5 +21661,17 @@
     "qualityScore": 1812,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-19T13:00:15.635Z"
+  },
+  {
+    "name": "thejagstudio/tessera-small",
+    "fullName": "thejagstudio/tessera-small",
+    "url": "https://huggingface.co/thejagstudio/tessera-small",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: thejagstudio/tessera-small (94 likes, 0 downloads)",
+    "likes": 94,
+    "downloads": 0,
+    "qualityScore": 940,
+    "discoveredAt": "2026-11-20T06:42:49.853Z"
   }
 ]

@@ -4,22 +4,22 @@
 {
   "source_repository": "prof18/feed-flow",
   "source_url": "https://github.com/prof18/feed-flow",
-  "source_version": "e1979b97",
+  "source_version": "bd4df02a",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T03:03:07.969Z",
+  "timestamp": "2026-11-20T06:45:13.720Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-prof18-feed-flow",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [prof18/feed-flow](https://github.com/prof18/feed-flow) (Revision: `e1979b97`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T03:03:07.969Z`  
+> **Provenance**: Harvested from [prof18/feed-flow](https://github.com/prof18/feed-flow) (Revision: `bd4df02a`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T06:45:13.720Z`  
 > **Learning ID**: `learn-github-prof18-feed-flow`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `prof18/feed-flow` (Commit: `e1979b97`)
+- **Target Repository**: `prof18/feed-flow` (Commit: `bd4df02a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prof18/feed-flow](https://github.com/prof18/feed-flow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T03:03:06.473Z  
+> **Harvest Timestamp**: 2026-11-20T06:45:12.973Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: FeedFlow is a minimalistic RSS Reader available on Android, iOS, macOS, Windows and Linux. Built with Kotlin Multiplatform, Jetpack Compose and SwiftUI.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1349 stars
+- **Stars / Engagement**: 1356 stars
 
 ---
 
@@ -99,6 +99,100 @@ internal fun FeedSource.toEditFeed(): EditFeed {
         isHideImagesEnabled = isHideImagesEnabled,
         fetchFailed = fetchFailed,
     )
+}
+
+```
+
+### Core Architecture Module: `androidApp/src/main/kotlin/com/prof18/feedflow/android/notifications/NotificationPermissionState.kt`
+```
+package com.prof18.feedflow.android.notifications
+
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+
+@Stable
+internal class NotificationPermissionState(
+    val isGranted: Boolean,
+    val request: () -> Unit,
+) {
+    fun requestIfTurnedOn(enabled: Boolean) {
+        if (enabled && !isGranted) request()
+    }
+}
+
+@Composable
+internal fun rememberNotificationPermission(): NotificationPermissionState {
+    val context = LocalContext.current
+    val activity = LocalActivity.current
+    var isGranted by remember { mutableStateOf(areNotificationsEnabled(context)) }
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        isGranted = areNotificationsEnabled(context)
+        if (!granted && !shouldShowPermissionDialog(activity)) {
+            openAppNotificationSettings(context)
+        }
+    }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        isGranted = areNotificationsEnabled(context)
+    }
+    return NotificationPermissionState(isGranted = isGranted) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            !hasRuntimeNotificationPermission(context)
+        ) {
+            launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            openAppNotificationSettings(context)
+        }
+    }
+}
+
+private fun areNotificationsEnabled(context: Context): Boolean =
+    NotificationManagerCompat.from(context).areNotificationsEnabled() &&
+        hasRuntimeNotificationPermission(context)
+
+private fun hasRuntimeNotificationPermission(context: Context): Boolean =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS,
+        ) == PackageManager.PERMISSION_GRANTED
+    } else {
+        true
+    }
+
+private fun shouldShowPermissionDialog(activity: Activity?): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        activity?.shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) ?: false
+    } else {
+        false
+    }
+}
+
+private fun openAppNotificationSettings(context: Context) {
+    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+        context.startActivity(this)
+    }
 }
 
 ```
@@ -574,31 +668,6 @@ private suspend fun revealInterruptibly(scroll: suspend () -> Unit) {
 
 ```
 
-### Core Architecture Module: `androidApp/src/main/kotlin/com/prof18/feedflow/android/util/Localization.kt`
-```
-package com.prof18.feedflow.android.util
-
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
-import androidx.compose.ui.text.intl.Locale
-import cafe.adriel.lyricist.Lyricist
-import com.prof18.feedflow.android.ui.utils.rememberFeedFlowStrings
-import com.prof18.feedflow.i18n.FeedFlowStrings
-import com.prof18.feedflow.shared.data.SettingsRepository
-
-@Composable
-internal fun rememberAndroidFeedFlowStrings(settingsRepository: SettingsRepository): Lyricist<FeedFlowStrings> {
-    val forceEnglishEnabled by settingsRepository.forceEnglishEnabledFlow.collectAsState()
-    val languageTag = if (forceEnglishEnabled) "en" else Locale.current.toLanguageTag()
-    return key(languageTag) {
-        rememberFeedFlowStrings(currentLanguageTag = languageTag)
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -626,107 +695,92 @@ internal fun rememberAndroidFeedFlowStrings(settingsRepository: SettingsReposito
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e1979b97` (2026-11-13)
-**Commit Message**: Remove the desktop move-dialog Tab traversal test that times out on Windows CI
+### Incident Patch 1: `d9eaf5f8` (2026-11-19)
+**Commit Message**: Sign local Android release builds with secrets from 1Password
 
-**File**: `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/ui/components/DialogKeyboardTest.kt` (modified, +1/-42)
+**File**: `AGENTS.md` (modified, +4/-0)
 ```diff
-@@ -63,48 +63,6 @@ class DialogKeyboardTest {
-         rule.runOnIdle { assertEquals(listOf("dismiss"), actions) }
-     }
+@@ -344,6 +344,10 @@ When creating commits:
+ - The `flatpak=true` property in `desktopApp/src/jvmMain/resources/props.properties` is used to disable platform-specific features (e.g., Google Drive sync) in Flatpak builds
+ - HiDPI scaling for the JVM uses `sun.java2d.uiScale` JVM argument. For local testing: `./gradlew --quiet --console=plain desktopApp:run -PjvmArgs="-Dsun.java2d.uiScale=2.0"`
  
--    @Test
--    fun `move dialog starts on the current category and keyboard confirms the intended source and category`() {
--        val library = DesktopLibraryFixture.load()
--        val source = library.sources.first { it.feedSource.category != null }.feedSource
--        val current = library.categories.first { it.id == source.category?.id }
--        val other = library.categories.first { it.id != source.category?.id }
--        val visible = mutableStateOf(true)
--        val actions = mutableListOf<String>()
--        rule.setContent {
--            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
--                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
--                    if (visible.value) {
--                        DesktopFeedMoveDialog(
--                            categories = persistentListOf(current, other),
--                            feedSources = persistentListOf(source),
--                            onMove = { sources, destination ->
--                                actions += "${sources.single().id}:${destination?.id}"
--                                visible.value = false
--                            },
--                            onCreateCategory = { },
--                            validateCategoryName = { _, _ -> CategoryNameValidationResult.VALID },
--                            onDismiss = { actions += "dismiss" },
--                        )
--                    }
--                }
--            }
--        }
--        rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
--        rule.onNodeWithText(current.title).assertIsSelected()
--        val window = dialog(EnFeedFlowStrings.changeCategory)
--        press(window, KeyEvent.VK_DOWN)
--        rule.waitUntilExactlyOneExists(hasText(other.title) and isSelected(), timeoutMillis = 5_000)
--        press(window, KeyEvent.VK_TAB)
--        awaitFocused(EnFeedFlowStrings.desktopNewCategoryMenu)
--        press(window, KeyEvent.VK_TAB)
--        awaitFocused(EnFeedFlowStrings.cancelButton)
--        press(window, KeyEvent.VK_TAB)
--        awaitFocused(EnFeedFlowStrings.confirmButton)
--        press(window, KeyEvent.VK_ENTER)
--        rule.runOnIdle { assertEquals(listOf("${source.id}:${other.id}"), actions) }
--    }
--
-     @Test
-     fun `move dialog Escape dismisses after a keyboard selection without moving`() {
-         val library = DesktopLibraryFixture.load()
-@@ -133,6 +91,7 @@ class DialogKeyboardTest {
-             }
-         }
-         rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.cancelButton), timeoutMillis = 5_000)
-+        rule.onNodeWithText(current.title).assertIsSelected()
-         val window = dialog(EnFeedFlowStrings.changeCategory)
-         press(window, KeyEvent.VK_DOWN)
-         rule.waitUntilExactlyOneExists(hasText(other.title) and isSelected(), timeoutMillis = 5_000)
++### Local Android release build
++- CI signs releases from repository secrets. For a signed release on a local machine, run `tools/signing/build-release.sh [gradle task ...]` (default `:androidApp:bundleGooglePlayRelease`). It reads the signing values from the 1Password item named by `FEEDFLOW_SIGNING_ITEM`, writes a temporary `keystore.properties` for the build and restores the previous one afterwards.
++- Never keep signing values in `keystore.properties` or a keystore in the repo; the local file holds only the debug keys. If `FEEDFLOW_SIGNING_ITEM` is unset in an agent shell, read it with `zsh -ic 'printf %s "$FEEDFLOW_SIGNING_ITEM"'`, and stop and ask if it is still empty. Verify the bundle with `jarsigner -verify` before using it.
++
+ ### CI/CD
+ - CI config: `.github/workflows/code-checks.yaml`
+ - Pipeline: every job starts in parallel. `checks` (macos-26) runs swiftlint, `allTests` without the JVM/Android suites (Kotlin/Native, cloud sync, Swift `CloudSyncTests`), `.scripts/ios-tests.sh` and the macOS desktop tests; `jvm-checks` (Linux) runs detekt and the Android host/unit tests; `tests-desktop` runs `jvmTest` on Linux and Windows; `build-android-app`, `build-desktop-app` and `build-ios-app` build the apps. PR runs cancel when a newer push arrives. macOS runners are the scarce, slow resource (7 GB RAM, few concurrent slots), so keep work that does not need macOS off the `checks` job. The iOS build job and the iOS release job run on GitHub's `xcode-27` runner (a preview image) and select Xcode 27.1 with `maxim-lobanov/setup-xcode`: the iPhone Duo layout uses iOS 27.1 SDK APIs, so Xcode 27.0 cannot build the app.
 ```
 
----
-
-### Incident Patch 2: `64a10913` (2026-11-13)
-**Commit Message**: Adapt desktop menu and code highlighter to the Jewel 0.42 API
-
-**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/reaadermode/ReaderCodeHighlighter.kt` (modified, +2/-0)
+**File**: `tools/signing/build-release.sh` (added, +56/-0)
 ```diff
-@@ -18,6 +18,8 @@ internal fun readerCodeHighlighter(dark: Boolean): CodeHighlighter = PlainTextOn
- private class PlainTextOnOverflowCodeHighlighter(
-     private val delegate: CodeHighlighter,
- ) : CodeHighlighter {
-+    // Deprecated in Jewel 0.42 but still abstract on CodeHighlighter, so it must stay implemented.
-+    @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
-     override fun highlight(code: String, mimeType: MimeType?): Flow<AnnotatedString> =
-         delegate.highlight(code, mimeType).plainTextOnOverflow(code)
- 
-```
-
-**File**: `desktopApp/src/jvmMain/kotlin/com/prof18/feedflow/desktop/ui/components/SelectionStyles.kt` (modified, +0/-1)
-```diff
-@@ -39,7 +39,6 @@ private fun MenuStyle.withRoundedSelectionCorners(): MenuStyle = MenuStyle(
-     icons = icons,
-     metrics = MenuMetrics(
-         cornerSize = metrics.cornerSize,
--        menuMargin = metrics.menuMargin,
-         contentPadding = metrics.contentPadding,
-         offset = metrics.offset,
-         shadowSize = metrics.shadowSize,
+@@ -0,0 +1,56 @@
++#!/usr/bin/env bash
++# Builds a signed release locally with the signing secrets read from 1Password.
++# Usage: FEEDFLOW_SIGNING_ITEM=op://<vault>/<item> tools/signing/build-release.sh [gradle task ...]
++set -euo pipefail
++
++: "${FEEDFLOW_SIGNING_ITEM:?set FEEDFLOW_SIGNING_ITEM to the 1Password item reference}"
++command -v op >/dev/null 2>&1 || { echo "error: the 1Password CLI (op) is not installed." >&2; exit 1; }
++
++REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
++PROPS="$REPO_ROOT/keystore.properties"
++TASKS=("${@:-:androidApp:bundleGooglePlayRelease}")
++
++umask 077
++WORK_DIR="$(mktemp -d)"
++HAD_PROPS=false
++
++cleanup() {
++  if [[ "$HAD_PROPS" == true && -f "$WORK_DIR/backup" ]]; then
++    mv -f "$WORK_DIR/backup" "$PROPS"
++  else
++    rm -f "$PROPS"
++  fi
++  rm -rf "$WORK_DIR"
++}
++trap cleanup EXIT
++trap 'exit 130' INT TERM
++
++if [[ -f "$PROPS" ]]; then
++  cp -p "$PROPS" "$WORK_DIR/backup"
++  HAD_PROPS=true
++fi
++
++read_field() {
++  local value
++  value="$(op read "$FEEDFLOW_SIGNING_ITEM/$1")"
++  printf '%s' "${value//\\/\\\\}"
++}
++
++op read --force --out-file "$WORK_DIR/release.jks" "$FEEDFLOW_SIGNING_ITEM/release.jks" >/dev/null
++KEY_ALIAS="$(read_field key_alias)"
++STORE_PASSWORD="$(read_field store_password)"
++KEY_PASSWORD="$(read_field key_password)"
++DROPBOX_KEY="$(read_field dropbox_key)"
++REVENUECAT_KEY="$(read_field revenuecat_android_api_key)"
++
++cat > "$WORK_DIR/keystore.properties" <<EOF
++storeFile=$WORK_DIR/release.jks
++keyAlias=$KEY_ALIAS
++storePassword=$STORE_PASSWORD
++keyPassword=$KEY_PASSWORD
++dropbox_key=$DROPBOX_KEY
++revenuecat_android_api_key=$REVENUECAT_KEY
++EOF
++mv -f "$WORK_DIR/keystore.properties" "$PROPS"
++
++(umask 022 && cd "$REPO_ROOT" && ./gradlew "${TASKS[@]}")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1710** (2026-11-19): Translations update from Hosted Weblate (@hosted-weblate[bot])
+- **PR #1703** (2026-11-19): Translations update from Hosted Weblate (@hosted-weblate[bot])
+- **PR #1700** (2026-11-16): Translations update from Hosted Weblate (@hosted-weblate[bot])
+- **PR #1699** (2026-11-16): Update dependency SwiftDraw to v0.30.0 (@renovate[bot])
 - **PR #1698** (2026-11-15): Show the database error window instead of crashing when the desktop database stops working at runtime (@prof18)
 - **PR #1697** (2026-11-15): Translations update from Hosted Weblate (@hosted-weblate[bot])
-- **PR #1696** (2026-11-15): Draw the iOS sidebar selection as a rounded highlight on every layout (@prof18)
-- **PR #1695** (2026-11-15): Destroy the Android reader WebView when it leaves the screen so videos stop playing (@prof18)
-- **PR #1694** (2026-11-14): Translations update from Hosted Weblate (@hosted-weblate[bot])
-- **PR #1692** (2026-11-14): Translations update from Hosted Weblate (@hosted-weblate[bot])
 
 ---
 
@@ -746,50 +800,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove the desktop move-dialog Tab traversal test that times out on Windows CI
+## X. Sign local Android release builds with secrets from 1Password
 
 **RULE**:
-When implementing operations in `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/ui/components/DialogKeyboardTest.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prof18/feed-flow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prof18/feed-flow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e1979b97`: Remove the desktop move-dialog Tab traversal test that times out on Windows CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9eaf5f8`: Sign local Android release builds with secrets from 1Password. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/ui/components/DialogKeyboardTest.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        rule.onNodeWithText(current.title).assertIsSelected()
+### Local Android release build
+- CI signs releases from repository secrets. For a signed release on a local machine, run `tools/signing/build-release.sh [gradle task ...]` (default `:androidApp:bundleGooglePlayRelease`). It reads the signing values from the 1Password item named by `FEEDFLOW_SIGNING_ITEM`, writes a temporary `keystore.properties` for the build and restores the previous one afterwards.
+- Never keep signing values in `keystore.properties` or a keystore in the repo; the local file holds only the debug keys. If `FEEDFLOW_SIGNING_ITEM` is unset in an agent shell, read it with `zsh -ic 'printf %s "$FEEDFLOW_SIGNING_ITEM"'`, and stop and ask if it is still empty. Verify the bundle with `jarsigner -verify` before using it.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-    @Test
-    fun `move dialog starts on the current category and keyboard confirms the intended source and category`() {
-        val library = DesktopLibraryFixture.load()
-        val source = library.sources.first { it.feedSource.category != null }.feedSource
-        val current = library.categories.first { it.id == source.category?.id }
-        val other = library.categories.first { it.id != source.category?.id }
-        val visible = mutableStateOf(true)
-        val actions = mutableListOf<String>()
-        rule.setContent {
-            CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
-                FeedFlowTheme(darkTheme = false, useOledTheme = false) {
-                    if (visible.value) {
-                        DesktopFeedMoveDialog(
-                            categories = persistentListOf(current, other),
-                            feedSources = persistentListOf(source),
-                            onMove = { sources, destination ->
-                                actions += "${sources.single().id}:${destination?.id}"
-                                visible.value = false
-                            },
-                            onCreateCa
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e1979b97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9eaf5f8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

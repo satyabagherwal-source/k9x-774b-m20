@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T06:37:30.569Z",
+  "last_updated": "2026-11-20T06:46:04.878Z",
   "directives": [
     {
       "id": "CD-001",
@@ -36574,6 +36574,59 @@
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-254204-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-84JJ",
+      "directive_title": "Sign local Android release builds with secrets from 1Password",
+      "source_repo": "prof18-feed-flow-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-84JJ-sign-local-android-release-builds-with-secrets-from-1password.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-74ZP",
+      "directive_title": "do not change the workflow defaults in MergeTo. Fixes #17384",
+      "source_repo": "argoproj/argo-workflows",
+      "source_commit": "4d269b9a",
+      "staged_file": "11_INBOX/candidate-directives/CD-74ZP-do-not-change-the-workflow-defaults-in-mergeto-fixes-17384.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-7C4M",
+      "directive_title": "[DB-26702] Build: Install redhat-rpm-config only on non-hardened base images",
+      "source_repo": "yugabyte/yugabyte-db",
+      "source_commit": "339366cd",
+      "staged_file": "11_INBOX/candidate-directives/CD-7C4M-db-26702-build-install-redhat-rpm-config-only-on-non-hardened-base-images.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-REV-B15D79",
+      "directive_title": "Sign local Android release builds with secrets from 1Password",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "prof18-feed-flow",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B15D79-sign-local-android-release-builds-with-s.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-85E6",
+      "directive_title": "controller): do not change the workflow defaults in MergeTo. Fixes #17384",
+      "source_repo": "argoproj-argo-workflows-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-85E6-controller-do-not-change-the-workflow-defaults-in-mergeto-fixes-17384.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "A"
     }
   ]
 }

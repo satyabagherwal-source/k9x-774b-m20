@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "64f73406",
+    "sourceVersion": "339366cd",
     "license": "NOASSERTION",
-    "contentHash": "96e0a339bd639f08bb88d1bcf399f6cd23fc8674df202194ff0e6f7c070072b5",
-    "lastHarvestedAt": "2026-11-19T01:18:56.469Z",
+    "contentHash": "28e3e2f274128d2c0934a2a6b8cef170ac85b7e28b5a10e4b4bb4bdebd43f248",
+    "lastHarvestedAt": "2026-11-20T06:45:26.749Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "73d41c0a",
+    "sourceVersion": "4d269b9a",
     "license": "Apache-2.0",
-    "contentHash": "cb051452fb527d8dd8b0edc5feac957a616a89ec75e0c96fee72f9250842e911",
-    "lastHarvestedAt": "2026-11-19T02:56:50.499Z",
+    "contentHash": "da195534629cdcee6c732017d8081af8cb24fd8c6eb0d8828efc35eba1cac2b9",
+    "lastHarvestedAt": "2026-11-20T06:45:17.499Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {
@@ -8663,10 +8663,10 @@
     "repository": "prof18/feed-flow",
     "platform": "github",
     "sourceUrl": "https://github.com/prof18/feed-flow",
-    "sourceVersion": "e1979b97",
+    "sourceVersion": "bd4df02a",
     "license": "Apache-2.0",
-    "contentHash": "977e981285926f4c3dd54e78a58cae2252967bc90c91d47ec0733be0f998e6cc",
-    "lastHarvestedAt": "2026-11-16T03:03:07.750Z",
+    "contentHash": "060ec8bd30d2eb6ba5a357d6df1b69341a2e4b6aee4d49b409986e7c8f7be75d",
+    "lastHarvestedAt": "2026-11-20T06:45:13.488Z",
     "learningId": "learn-github-prof18-feed-flow"
   },
   "michaelbull-kotlin-result": {
@@ -12978,5 +12978,15 @@
     "contentHash": "2ca6466aed64c6c082736ed0dfa292615a55a0903e885c01c2b45cd993a7bc89",
     "lastHarvestedAt": "2026-11-19T13:07:59.538Z",
     "learningId": "learn-github-xevrion-hatchzip"
+  },
+  "hf-thejagstudio-tessera-small": {
+    "repository": "thejagstudio/tessera-small",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/thejagstudio/tessera-small",
+    "sourceVersion": "hf-thejagstudio-tessera-small",
+    "license": "Open-Source",
+    "contentHash": "4c1244eafd21d11eed0c3ea3938ed9e0d9b13b35919f16881c0db516375a2e1f",
+    "lastHarvestedAt": "2026-11-20T06:45:04.517Z",
+    "learningId": "learn-huggingface-thejagstudio-tessera-small"
   }
 }

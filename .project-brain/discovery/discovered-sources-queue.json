@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T06:37:28.607Z",
+  "updated_at": "2026-11-20T06:46:04.616Z",
   "stats": {
-    "total_discovered": 6258,
-    "approved_pending_harvest": 5918,
+    "total_discovered": 6262,
+    "approved_pending_harvest": 5922,
     "harvested_count": 0,
     "rejected_count": 340,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5900,
+      "COMMUNITY_AND_EXPERT": 5904,
       "OFFICIAL_DOCUMENTATION": 195,
       "STANDARDS_AND_SPECIFICATIONS": 115,
       "ENGINEERING_BLOGS": 4,
@@ -135319,6 +135319,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tmolavi-siteprobe-learnings.md",
         "fileName": "tmolavi-siteprobe-learnings.md"
+      }
+    },
+    "SRC-C28AB8FC57F7": {
+      "id": "SRC-C28AB8FC57F7",
+      "url": "https://huggingface.co/thejagstudio/tessera-small",
+      "title": "https://huggingface.co/thejagstudio/tessera-small",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T06:46:03.002Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md",
+        "fileName": "hf-thejagstudio-tessera-small-learnings.md"
+      }
+    },
+    "SRC-0FF18BE24703": {
+      "id": "SRC-0FF18BE24703",
+      "url": "https://github.com/go-git/go-git/pull/613",
+      "title": "https://github.com/go-git/go-git/pull/613",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T06:46:04.511Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-ADBE55686578": {
+      "id": "SRC-ADBE55686578",
+      "url": "https://github.com/argoproj/argo-workflows.git",
+      "title": "https://github.com/argoproj/argo-workflows.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T06:46:04.558Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-F244EAE1C33B": {
+      "id": "SRC-F244EAE1C33B",
+      "url": "https://user@github.com/argoproj/argo-workflows.git",
+      "title": "https://user@github.com/argoproj/argo-workflows.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T06:46:04.616Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
       }
     }
   }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T06:37:30.865Z",
-  "total_verified_learnings": 9027,
+  "last_updated": "2026-11-20T06:46:05.263Z",
+  "total_verified_learnings": 9028,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22263,
+  "total_items": 22273,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -212389,8 +212389,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "73d41c0a",
-      "content_hash": "cb051452fb527d8dd8b0edc5feac957a616a89ec75e0c96fee72f9250842e911",
+      "source_version": "4d269b9a",
+      "content_hash": "da195534629cdcee6c732017d8081af8cb24fd8c6eb0d8828efc35eba1cac2b9",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -212413,6 +212413,11 @@
           "number": 9324,
           "title": "build the OSS Scanner image like release builds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9530,
+          "title": "do not change the workflow defaults in MergeTo. Fixes #17384",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212420,7 +212425,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T02:56:50.271Z",
+      "verified_at": "2026-11-20T06:45:17.286Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212462,10 +212467,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-human-need-intelligence-argoproj-argo-workflows-core-inv.md",
       "title": "Human & Need Intelligence: argoproj/argo-workflows Core Invariants",
       "repository": "argoproj/argo-workflows",
-      "source_version": "8c331dbf",
-      "content_hash": "794cb9360ecfbebe277d431c5d07e3dae02c8922741ff7047f44f0ab673a1290",
+      "source_version": "4d269b9a",
+      "content_hash": "49230b0cc875c7d25edc66c8af73284191dc55c6e27487e6e2b38d30d3dbf979",
       "domain_letter": "A",
-      "persisted_at": "2026-11-17T15:06:24.386Z"
+      "persisted_at": "2026-11-20T06:45:17.864Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows",
@@ -212474,10 +212479,10 @@
       "relative_path": "08_VERIFICATION/argoproj-argo-workflows-verification-protocol-empirical-defect-shield-for-argopr.md",
       "title": "Verification Protocol: Empirical Defect Shield for argoproj/argo-workflows",
       "repository": "argoproj/argo-workflows",
-      "source_version": "73d41c0a",
-      "content_hash": "0f27a15efdbdc7d108a1267461fdfda84879b388541617c4fdfac3feedc2e8eb",
+      "source_version": "4d269b9a",
+      "content_hash": "22d4fee059f60ad82745b96c5ac2c41b8fde8077f2d4e2e5ddde47f659c1c802",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T02:56:51.108Z"
+      "persisted_at": "2026-11-20T06:45:18.022Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants",
@@ -212511,9 +212516,9 @@
       "title": "Human & Need Intelligence: argoproj-argo-workflows-learnings Core Invariants",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "c80ed8f8fe294a53b4d0d6946e8cab6e83462ce520807ebaab39121ae6ffbd39",
+      "content_hash": "c41d26aaeafdbfef239ce348f4d80dc8adc308dfbe5ad4719aa2cf79de5e995a",
       "domain_letter": "A",
-      "persisted_at": "2026-11-17T15:06:29.225Z"
+      "persisted_at": "2026-11-20T06:46:05.081Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni",
@@ -212523,9 +212528,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for argoproj-argo-workflows-learnings",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0440afb0fe03631926fae3fc7ae408b791ce7bd6a7e053121f9554e04db2bc9",
+      "content_hash": "983aab025e7fdecdf8bbe4df71227910bf04915883e9af4c0eeb0d13a93b6fdf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T02:56:55.307Z"
+      "persisted_at": "2026-11-20T06:46:05.263Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
@@ -233975,8 +233980,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "64f73406",
-      "content_hash": "96e0a339bd639f08bb88d1bcf399f6cd23fc8674df202194ff0e6f7c070072b5",
+      "source_version": "339366cd",
+      "content_hash": "28e3e2f274128d2c0934a2a6b8cef170ac85b7e28b5a10e4b4bb4bdebd43f248",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -233999,6 +234004,11 @@
           "number": 9317,
           "title": "[PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected ex",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9531,
+          "title": "[DB-26702] Build: Install redhat-rpm-config only on non-hardened base images",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234006,7 +234016,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T01:18:56.227Z",
+      "verified_at": "2026-11-20T06:45:26.543Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234072,10 +234082,10 @@
       "relative_path": "08_VERIFICATION/yugabyte-yugabyte-db-verification-protocol-empirical-defect-shield-for-yugabyte-.md",
       "title": "Verification Protocol: Empirical Defect Shield for yugabyte/yugabyte-db",
       "repository": "yugabyte/yugabyte-db",
-      "source_version": "64f73406",
-      "content_hash": "1300521271defbc40a6a0c514118bc368a601aeb8466bacd75a2c157dd3f6672",
+      "source_version": "339366cd",
+      "content_hash": "e8b0e550c0407498ce1f97c9931ce00208cfb2c36260dfbf45113426712685be",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T01:18:56.999Z"
+      "persisted_at": "2026-11-20T06:45:27.272Z"
     },
     "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants",
@@ -253589,8 +253599,8 @@
       "slug": "prof18-feed-flow",
       "platform": "github",
       "source_url": "https://github.com/prof18/feed-flow",
-      "source_version": "e1979b97",
-      "content_hash": "977e981285926f4c3dd54e78a58cae2252967bc90c91d47ec0733be0f998e6cc",
+      "source_version": "bd4df02a",
+      "content_hash": "060ec8bd30d2eb6ba5a357d6df1b69341a2e4b6aee4d49b409986e7c8f7be75d",
       "dossier_path": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "promoted_rules": [
@@ -253605,7 +253615,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T03:03:07.555Z",
+      "verified_at": "2026-11-20T06:45:13.236Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253647,10 +253657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-prof18-feed-flow-technical-construction-intelligence-prof18-feed-flow-core-invar.md",
       "title": "Technical Construction Intelligence: prof18/feed-flow Core Invariants",
       "repository": "prof18/feed-flow",
-      "source_version": "e1979b97",
-      "content_hash": "a47ec1bcb3ce2fe8fc98850c469c270bc14c13f0760af3712e1bcc844b75925c",
+      "source_version": "bd4df02a",
+      "content_hash": "b089d5bfb0196b10803ab276be62f4b2b6a041a63bd1001fa80b1f794f727bcf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T03:03:08.112Z"
+      "persisted_at": "2026-11-20T06:45:13.881Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-prof18-feed-flow": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-prof18-feed-flow",
@@ -253659,10 +253669,10 @@
       "relative_path": "08_VERIFICATION/prof18-feed-flow-verification-protocol-empirical-defect-shield-for-prof18-feed-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for prof18/feed-flow",
       "repository": "prof18/feed-flow",
-      "source_version": "e1979b97",
-      "content_hash": "c026568df5d55359ac4718422659adbd1a4a568a27561216203c25a6ca71d15c",
+      "source_version": "bd4df02a",
+      "content_hash": "842fe45f739fce4c54bf7276f0cf4abd00a718c5b2bb062cbd76a8a1fc2b4ad0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T03:03:08.258Z"
+      "persisted_at": "2026-11-20T06:45:14.039Z"
     },
     "rule-8696": {
       "learning_id": "rule-8696",
@@ -253750,9 +253760,9 @@
       "title": "Technical Construction Intelligence: prof18-feed-flow-learnings Core Invariants",
       "repository": "prof18-feed-flow-learnings",
       "source_version": "HEAD",
-      "content_hash": "38d5f139bf6e60f34d43553f80f9cc6b885328480407398c3a191922f6c951b8",
+      "content_hash": "2ef09c66294ba43e4cb97d9db8a56247629237e38a4d3f1e0db3f71bd8a8f182",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T03:06:58.409Z"
+      "persisted_at": "2026-11-20T06:46:03.965Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-prof18-feed-flow-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-prof18-feed-flow-learnings",
@@ -253762,9 +253772,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for prof18-feed-flow-learnings",
       "repository": "prof18-feed-flow-learnings",
       "source_version": "HEAD",
-      "content_hash": "6df63b57016ebe486acd8b17968e814cbf4552e51bcc7e5e76fa8aba94a15abe",
+      "content_hash": "693a9bcff485d3e27e94ca5d5939ed04e80d6c56201869553630865bcfcfaef8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T03:06:58.575Z"
+      "persisted_at": "2026-11-20T06:46:04.144Z"
     },
     "learn-github-crawlcove-robots-txt-tester": {
       "learning_id": "learn-github-crawlcove-robots-txt-tester",
@@ -301471,6 +301481,145 @@
       "content_hash": "700b820c2295e541826791869634a13599e312f6e811c8f6c1a167aedc182d2c",
       "domain_letter": "K",
       "persisted_at": "2026-11-20T06:37:29.566Z"
+    },
+    "learn-huggingface-thejagstudio-tessera-small": {
+      "learning_id": "learn-huggingface-thejagstudio-tessera-small",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "thejagstudio/tessera-small",
+      "repository": "thejagstudio/tessera-small",
+      "slug": "hf-thejagstudio-tessera-small",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/thejagstudio/tessera-small",
+      "source_version": "hf-thejagstudio-tessera-small",
+      "content_hash": "4c1244eafd21d11eed0c3ea3938ed9e0d9b13b35919f16881c0db516375a2e1f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T06:45:04.270Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-thejagstudio-tessera-small-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-thejagstudio-tessera-small-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thejagstudio-tessera-small-research-knowledge-intelligence-thejagstudio-tesse.md",
+      "title": "Research & Knowledge Intelligence: thejagstudio/tessera-small Core Invariants",
+      "repository": "thejagstudio/tessera-small",
+      "source_version": "hf-thejagstudio-tessera-small",
+      "content_hash": "443d185b6d58917e810ba38ae244bce628bde649c36d4a4c20fa64c101a39fb0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T06:45:04.721Z"
+    },
+    "candidate_directive-sign-local-android-release-builds-with-secrets-from-1password": {
+      "item_id": "candidate_directive-sign-local-android-release-builds-with-secrets-from-1password",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-84JJ-sign-local-android-release-builds-with-secrets-from-1password.md",
+      "title": "Sign local Android release builds with secrets from 1Password",
+      "repository": "prof18-feed-flow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3f670e55ae615e839293986941cf0f3803aac5ea6571ee7b704df993fbfe3e22",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T06:46:03.775Z"
+    },
+    "rule-9530": {
+      "learning_id": "rule-9530",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9530,
+      "title": "do not change the workflow defaults in MergeTo. Fixes #17384",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "4d269b9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T06:45:17.286Z"
+    },
+    "candidate_directive-do-not-change-the-workflow-defaults-in-mergeto-fixes-17384": {
+      "item_id": "candidate_directive-do-not-change-the-workflow-defaults-in-mergeto-fixes-17384",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-74ZP-do-not-change-the-workflow-defaults-in-mergeto-fixes-17384.md",
+      "title": "do not change the workflow defaults in MergeTo. Fixes #17384",
+      "repository": "argoproj/argo-workflows",
+      "source_version": "4d269b9a",
+      "content_hash": "da19b17a4f2f5582a8d80ebb77aaa80ca005aa6fd7d0168628edec88accb177c",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-20T06:45:17.702Z"
+    },
+    "rule-9531": {
+      "learning_id": "rule-9531",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9531,
+      "title": "[DB-26702] Build: Install redhat-rpm-config only on non-hardened base images",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "339366cd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T06:45:26.543Z"
+    },
+    "candidate_directive-db-26702-build-install-redhat-rpm-config-only-on-non-hardened-base-images": {
+      "item_id": "candidate_directive-db-26702-build-install-redhat-rpm-config-only-on-non-hardened-base-images",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7C4M-db-26702-build-install-redhat-rpm-config-only-on-non-hardened-base-images.md",
+      "title": "[DB-26702] Build: Install redhat-rpm-config only on non-hardened base images",
+      "repository": "yugabyte/yugabyte-db",
+      "source_version": "339366cd",
+      "content_hash": "d8b715c1bee3512576fe0f084270bef2a486b95b107970232a289acca9d9f586",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-20T06:45:26.954Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-yugabyte-yugabyte-db-core-invariants": {
+      "item_id": "domain_intelligence-deployment-operations-intelligence-yugabyte-yugabyte-db-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-yugabyte-yugabyte-db-deployment-operations-intelligence-yugabyte-yugabyte-db-cor.md",
+      "title": "Deployment & Operations Intelligence: yugabyte/yugabyte-db Core Invariants",
+      "repository": "yugabyte/yugabyte-db",
+      "source_version": "339366cd",
+      "content_hash": "1c94d0e4096d7338920a69f5da23feb1d5a1baaadd30db68bfb3cad2958778ec",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-20T06:45:27.110Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-thejagstudio-tessera-small-learnings-core-inv": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-thejagstudio-tessera-small-learnings-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thejagstudio-tessera-small-learnings-research-knowledge-intelligence-hf-theja.md",
+      "title": "Research & Knowledge Intelligence: hf-thejagstudio-tessera-small-learnings Core Invariants",
+      "repository": "hf-thejagstudio-tessera-small-learnings",
+      "source_version": "HEAD",
+      "content_hash": "22eb51a2490bec5cc4bd4fe1afa641c1296e9a9233057ad2b589338e04a4d74e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T06:46:03.244Z"
+    },
+    "candidate_directive-controller-do-not-change-the-workflow-defaults-in-mergeto-fixes-17384": {
+      "item_id": "candidate_directive-controller-do-not-change-the-workflow-defaults-in-mergeto-fixes-17384",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-85E6-controller-do-not-change-the-workflow-defaults-in-mergeto-fixes-17384.md",
+      "title": "controller): do not change the workflow defaults in MergeTo. Fixes #17384",
+      "repository": "argoproj-argo-workflows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e70bc2c90a20c8282f5ff495d5716b3ce5460959d405a85a9c538c9686de139c",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-20T06:46:04.878Z"
     }
   },
   "ai-builder-brain": {

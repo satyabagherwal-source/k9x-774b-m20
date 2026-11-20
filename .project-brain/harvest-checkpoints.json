@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T06:37:24.769Z",
+  "last_updated": "2026-11-20T06:45:26.758Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "96e0a339bd639f08bb88d1bcf399f6cd23fc8674df202194ff0e6f7c070072b5",
-      "verified_at": "2026-11-19T01:18:56.478Z",
+      "content_hash": "28e3e2f274128d2c0934a2a6b8cef170ac85b7e28b5a10e4b4bb4bdebd43f248",
+      "verified_at": "2026-11-20T06:45:26.758Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T01:18:56.478Z"
+      "last_updated": "2026-11-20T06:45:26.758Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -8991,14 +8991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-workflows",
-      "content_hash": "cb051452fb527d8dd8b0edc5feac957a616a89ec75e0c96fee72f9250842e911",
-      "verified_at": "2026-11-19T02:56:50.509Z",
+      "content_hash": "da195534629cdcee6c732017d8081af8cb24fd8c6eb0d8828efc35eba1cac2b9",
+      "verified_at": "2026-11-20T06:45:17.508Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T02:56:50.509Z"
+      "last_updated": "2026-11-20T06:45:17.508Z"
     },
     "postgresml/postgresml": {
       "repository": "postgresml/postgresml",
@@ -13041,14 +13041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prof18-feed-flow",
-      "content_hash": "977e981285926f4c3dd54e78a58cae2252967bc90c91d47ec0733be0f998e6cc",
-      "verified_at": "2026-11-16T03:03:07.760Z",
+      "content_hash": "060ec8bd30d2eb6ba5a357d6df1b69341a2e4b6aee4d49b409986e7c8f7be75d",
+      "verified_at": "2026-11-20T06:45:13.512Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T03:03:07.760Z"
+      "last_updated": "2026-11-20T06:45:13.513Z"
     },
     "michaelbull/kotlin-result": {
       "repository": "michaelbull/kotlin-result",
@@ -19559,6 +19559,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-19T13:07:59.546Z"
+    },
+    "thejagstudio/tessera-small": {
+      "repository": "thejagstudio/tessera-small",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-thejagstudio-tessera-small",
+      "content_hash": "4c1244eafd21d11eed0c3ea3938ed9e0d9b13b35919f16881c0db516375a2e1f",
+      "verified_at": "2026-11-20T06:45:04.526Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-20T06:45:04.526Z"
     }
   },
   "repos": {

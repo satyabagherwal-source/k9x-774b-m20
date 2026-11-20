@@ -11519,3 +11519,8 @@ Every entry in this ledger must capture:
 | `learn-github-simonschubert-kai` | `https://github.com/SimonSchubert/Kai` | `bc3f0916` | Multi-dimensional audit evidence | 2026-11-20T06:19:28.913Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `b400696f` | Multi-dimensional audit evidence | 2026-11-20T06:19:37.527Z |
 | `learn-github-tmolavi-siteprobe` | `https://github.com/tmolavi/siteprobe` | `4b116b3c` | Multi-dimensional audit evidence | 2026-11-20T06:37:24.735Z |
+| `learn-huggingface-thejagstudio-tessera-small` | `https://huggingface.co/thejagstudio/tessera-small` | `hf-thejags` | Multi-dimensional audit evidence | 2026-11-20T06:45:04.517Z |
+| `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `bd4df02a` | Multi-dimensional audit evidence | 2026-11-20T06:45:13.488Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `4d269b9a` | Multi-dimensional audit evidence | 2026-11-20T06:45:17.499Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `339366cd` | Multi-dimensional audit evidence | 2026-11-20T06:45:26.749Z |
+| `learn-dom-d-55b2e30a` | `project://hf-thejagstudio-tessera-small` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md` | 2026-11-20T06:46:02.979Z |

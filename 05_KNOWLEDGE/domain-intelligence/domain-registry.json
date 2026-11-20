@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T06:37:30.865Z",
-  "total_records": 2088,
+  "last_updated": "2026-11-20T06:46:05.081Z",
+  "total_records": 2092,
   "domains": {
     "A": {
       "total": 17,
@@ -58,7 +58,7 @@
       ]
     },
     "D": {
-      "total": 844,
+      "total": 847,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -903,7 +903,10 @@
         "DOM-D-34CA9B71",
         "DOM-D-5CB7BD90",
         "DOM-D-C031D2B0",
-        "DOM-D-AF6D9DEB"
+        "DOM-D-AF6D9DEB",
+        "domain_intelligence-research-knowledge-intelligence-thejagstudio-tessera-small-core-invariants",
+        "DOM-D-55B2E30A",
+        "domain_intelligence-research-knowledge-intelligence-hf-thejagstudio-tessera-small-learnings-core-inv"
       ]
     },
     "E": {
@@ -2126,7 +2129,7 @@
       ]
     },
     "L": {
-      "total": 21,
+      "total": 22,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
@@ -2148,7 +2151,8 @@
         "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-learnings-core-invariants",
         "DOM-L-453B4D1D",
         "domain_intelligence-deployment-operations-intelligence-vanniktech-gradle-maven-publish-plugin-core-i",
-        "domain_intelligence-deployment-operations-intelligence-vanniktech-gradle-maven-publish-plugin-learni"
+        "domain_intelligence-deployment-operations-intelligence-vanniktech-gradle-maven-publish-plugin-learni",
+        "domain_intelligence-deployment-operations-intelligence-yugabyte-yugabyte-db-core-invariants"
       ]
     },
     "M": {
@@ -9760,8 +9764,8 @@
       "title": "Human & Need Intelligence: argoproj/argo-workflows Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-human-need-intelligence-argoproj-argo-workflows-core-inv.md",
       "repository": "argoproj/argo-workflows",
-      "content_hash": "794cb9360ecfbebe277d431c5d07e3dae02c8922741ff7047f44f0ab673a1290",
-      "created_at": "2026-11-17T15:06:24.386Z"
+      "content_hash": "49230b0cc875c7d25edc66c8af73284191dc55c6e27487e6e2b38d30d3dbf979",
+      "created_at": "2026-11-20T06:45:17.864Z"
     },
     "DOM-D-3A0F1688": {
       "record_id": "DOM-D-3A0F1688",
@@ -9820,8 +9824,8 @@
       "title": "Human & Need Intelligence: argoproj-argo-workflows-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-learnings-human-need-intelligence-argoproj-argo-workflow.md",
       "repository": "argoproj-argo-workflows-learnings",
-      "content_hash": "c80ed8f8fe294a53b4d0d6946e8cab6e83462ce520807ebaab39121ae6ffbd39",
-      "created_at": "2026-11-17T15:06:29.225Z"
+      "content_hash": "c41d26aaeafdbfef239ce348f4d80dc8adc308dfbe5ad4719aa2cf79de5e995a",
+      "created_at": "2026-11-20T06:46:05.081Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-ggu": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-ggu",
@@ -23268,8 +23272,8 @@
       "title": "Technical Construction Intelligence: prof18/feed-flow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-prof18-feed-flow-technical-construction-intelligence-prof18-feed-flow-core-invar.md",
       "repository": "prof18/feed-flow",
-      "content_hash": "a47ec1bcb3ce2fe8fc98850c469c270bc14c13f0760af3712e1bcc844b75925c",
-      "created_at": "2026-11-16T03:03:08.112Z"
+      "content_hash": "b089d5bfb0196b10803ab276be62f4b2b6a041a63bd1001fa80b1f794f727bcf",
+      "created_at": "2026-11-20T06:45:13.881Z"
     },
     "DOM-H-78B796D1": {
       "record_id": "DOM-H-78B796D1",
@@ -23311,8 +23315,8 @@
       "title": "Technical Construction Intelligence: prof18-feed-flow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-prof18-feed-flow-learnings-technical-construction-intelligence-prof18-feed-flow-.md",
       "repository": "prof18-feed-flow-learnings",
-      "content_hash": "38d5f139bf6e60f34d43553f80f9cc6b885328480407398c3a191922f6c951b8",
-      "created_at": "2026-11-16T03:06:58.409Z"
+      "content_hash": "2ef09c66294ba43e4cb97d9db8a56247629237e38a4d3f1e0db3f71bd8a8f182",
+      "created_at": "2026-11-20T06:46:03.965Z"
     },
     "domain_intelligence-search-distribution-intelligence-crawlcove-robots-txt-tester-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-crawlcove-robots-txt-tester-core-invariants",
@@ -35211,6 +35215,75 @@
       "repository": "tmolavi-siteprobe-learnings",
       "content_hash": "3d8f2810dcfc6357b77034879857785278897a5b8e443566559011973944dc0d",
       "created_at": "2026-11-20T06:37:29.274Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-thejagstudio-tessera-small-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-thejagstudio-tessera-small-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: thejagstudio/tessera-small Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thejagstudio-tessera-small-research-knowledge-intelligence-thejagstudio-tesse.md",
+      "repository": "thejagstudio/tessera-small",
+      "content_hash": "443d185b6d58917e810ba38ae244bce628bde649c36d4a4c20fa64c101a39fb0",
+      "created_at": "2026-11-20T06:45:04.721Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-yugabyte-yugabyte-db-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-yugabyte-yugabyte-db-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: yugabyte/yugabyte-db Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-yugabyte-yugabyte-db-deployment-operations-intelligence-yugabyte-yugabyte-db-cor.md",
+      "repository": "yugabyte/yugabyte-db",
+      "content_hash": "1c94d0e4096d7338920a69f5da23feb1d5a1baaadd30db68bfb3cad2958778ec",
+      "created_at": "2026-11-20T06:45:27.110Z"
+    },
+    "DOM-D-55B2E30A": {
+      "record_id": "DOM-D-55B2E30A",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): thejagstudio/tessera-small",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/thejagstudio/tessera-small](https://huggingface.co/thejagstudio/tessera-small))  \n> **Source Version**: `hf-thejagstu`  \n> **License**: Open-Source",
+      "content_hash": "e18616450ff0b3a0dbdf1d0501af97b557882e406ae0a98455410a797c435e97",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md`  \n> **Source**: huggingface ([https://hu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md`  \n> **Source**: huggingface ([https://hu",
+      "provenance": {
+        "source_uri": "project://hf-thejagstudio-tessera-small/hf-thejagstudio-tessera-small-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T06:45:30.067Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-thejagstudio-tessera-small)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-thejagstudio-tessera-small"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T06:46:02.952Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-thejagstudio-tessera-small-learnings-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-thejagstudio-tessera-small-learnings-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-thejagstudio-tessera-small-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thejagstudio-tessera-small-learnings-research-knowledge-intelligence-hf-theja.md",
+      "repository": "hf-thejagstudio-tessera-small-learnings",
+      "content_hash": "22eb51a2490bec5cc4bd4fe1afa641c1296e9a9233057ad2b589338e04a4d74e",
+      "created_at": "2026-11-20T06:46:03.244Z"
     }
   }
 }

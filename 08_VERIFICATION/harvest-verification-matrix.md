@@ -11486,3 +11486,8 @@
 | `CYCLE-20261120-9XXO` | `2026-11-20T06:19:28.908Z` | `SimonSchubert/Kai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3545` | Yes (`fac8a97c...`) |
 | `CYCLE-20261120-A4KZ` | `2026-11-20T06:19:37.523Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9527` | Yes (`5a465d28...`) |
 | `CYCLE-20261120-X01M` | `2026-11-20T06:37:24.730Z` | `tmolavi/siteprobe` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9528, Rule 9529, Rule null` | Yes (`1779af13...`) |
+| `CYCLE-20261120-6UTB` | `2026-11-20T06:45:04.511Z` | `thejagstudio/tessera-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md` | Yes (`4c1244ea...`) |
+| `CYCLE-20261120-71QJ` | `2026-11-20T06:45:13.483Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md` | Yes (`060ec8bd...`) |
+| `CYCLE-20261120-74TY` | `2026-11-20T06:45:17.494Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9530` | Yes (`da195534...`) |
+| `CYCLE-20261120-7BYX` | `2026-11-20T06:45:26.745Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9531` | Yes (`28e3e2f2...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T06:46:02.979Z` | `hf-thejagstudio-tessera-small` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-55B2E30A` [Domain D] | Yes (`e1861645...`) |

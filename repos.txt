@@ -5230,3 +5230,7 @@ https://huggingface.co/RadixArk/DaisyRose-27B
 # --- Automatically Discovered by AI Scout Engine [2026-11-19T13:02:48.389Z] ---
 # [HIGH-PERF-SYSTEMS] xevrion/hatchzip (1812 score) - HatchZip is a free, open-source archive extractor for Windows, macOS and Linux t
 https://github.com/xevrion/hatchzip
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-20T06:44:57.918Z] ---
+# [HUGGINGFACE-AI-MODELS] thejagstudio/tessera-small (940 score) - Verified Hugging Face Model: thejagstudio/tessera-small (94 likes, 0 downloads)
+https://huggingface.co/thejagstudio/tessera-small

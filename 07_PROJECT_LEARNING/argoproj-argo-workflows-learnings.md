@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `73d41c0a`  
+> **Source Version**: `4d269b9a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T02:56:49.304Z  
+> **Timestamp**: 2026-11-20T06:45:16.447Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T02:56:04.368Z  
+> **Harvest Timestamp**: 2026-11-20T06:45:16.442Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17104 stars
+- **Stars / Engagement**: 17107 stars
 
 ---
 
@@ -788,427 +788,288 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `66ce7147` (2026-11-18)
-**Commit Message**: fix: build the OSS Scanner image like release builds (#17540)
+### Incident Patch 1: `4d269b9a` (2026-11-19)
+**Commit Message**: fix(controller): do not change the workflow defaults in MergeTo. Fixes #17384 (#17396)
 
-Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Srinivas Chippagiri <[REDACTED_EMAIL]>
 
-**File**: `.oss-scanner/Dockerfile` (modified, +9/-3)
+**File**: `workflow/util/merge.go` (modified, +9/-8)
 ```diff
-@@ -5,9 +5,13 @@
- FROM docker.io/library/golang:1.27-trixie
+@@ -194,20 +194,21 @@ func MergeTo(patch, target *wfv1.Workflow) error {
+ 		return nil
+ 	}
  
- # Unit tests expect no cluster: KUBECONFIG=/dev/null is what `make test` uses.
-+# GOFLAGS matches what the Makefile exports: without the build tag, k8s.io types lack ProtoMessage() and
-+# pkg/apiclient panics at startup. Keep it in step with the Makefile, since `go build` here does not go through make.
-+# The patched vendor tree (see `make vendor` below) is the other half of how release builds handle this.
- ENV DEBIAN_FRONTEND=noninteractive \
-     CGO_ENABLED=0 \
--    KUBECONFIG=/dev/null
-+    KUBECONFIG=/dev/null \
-+    GOFLAGS=-tags=kubernetes_protomessage_one_more_release
+-	// Temporarily remove hooks and labelsFrom as they don't merge
++	// Hooks and labelsFrom don't merge, so they are left out of the patch that is marshalled and added to the result
++	// afterwards. The patch can be shared between goroutines, e.g. the workflow defaults of the controller, so work on
++	// a shallow copy and never write to the patch itself.
+ 	patchHooks := patch.Spec.Hooks
+-	patch.Spec.Hooks = nil
+ 	var patchLabelsFrom map[string]wfv1.LabelValueFrom
++	patchWithoutUnmergeable := *patch
++	patchWithoutUnmergeable.Spec.Hooks = nil
+ 	if patch.Spec.WorkflowMetadata != nil {
+ 		patchLabelsFrom = patch.Spec.WorkflowMetadata.LabelsFrom
+-		patch.Spec.WorkflowMetadata.LabelsFrom = nil
++		workflowMetadata := *patch.Spec.WorkflowMetadata
++		workflowMetadata.LabelsFrom = nil
++		patchWithoutUnmergeable.Spec.WorkflowMetadata = &workflowMetadata
+ 	}
  
- RUN apt-get update && apt-get install -y --no-install-recommends \
-       ca-certificates curl git make jq procps \
-@@ -25,8 +29,10 @@ COPY . /src
- WORKDIR /src
- 
- # Go dependencies. If go.mod asks for a newer Go than this image has, the toolchain is downloaded here and stays
--# in the module cache for offline use.
--RUN go mod download
-+# in the module cache for offline use. Release builds use the vendor tree that `make vendor` creates and patches
-+# (hack/vendor-patches.sh), so build from the same tree; Go then uses vendor/ automatically.
-+RUN go mod download \
-+    && make vendor
- 
- # The UI is embedded into the argo binary (ui/embed.go), so build it before the Go binaries.
- # yarn.lock pulls argo-ui from git, which is why git is installed above.
+-	patchWfBytes, err := json.Marshal(patch)
+-	patch.Spec.Hooks = patchHooks
+-	if len(patchLabelsFrom) != 0 {
+-		patch.Spec.WorkflowMetadata.LabelsFrom = patchLabelsFrom
+-	}
++	patchWfBytes, err := json.Marshal(&patchWithoutUnmergeable)
+ 	if err != nil {
+ 		return err
+ 	}
 ```
 
-**File**: `.oss-scanner/threat_model.md` (modified, +7/-1)
+**File**: `workflow/util/merge_test.go` (modified, +27/-0)
 ```diff
-@@ -108,6 +108,8 @@ Operator security notes: `docs/security.md`, `docs/workflow-restrictions.md`, `d
- - Executor and artifact plugin code, as above.
- - Vulnerabilities in dependencies (Go modules, npm packages, container images) that are not reachable
-   through Argo Workflows code. Dependency CVEs reported only from a version number are out of scope.
-+  `vendor/` is generated by `make vendor` and is third-party code, apart from the small patches that
-+  `hack/vendor-patches.sh` applies to it.
- - `test/`, `hack/`, `docs/`, `examples/`, `dev/` and `sdks/`.
+@@ -2,6 +2,7 @@ package util
  
- ## Known weak areas
-@@ -139,7 +141,11 @@ Many past advisories were incomplete fixes, so look for siblings of these:
- - There is no Kubernetes cluster, Docker daemon or database in the image. Prefer reproducers as Go unit
-   tests. Tests that start Postgres or MySQL with testcontainers (in `persist/sqldb`, `util/sqldb` and
-   `workflow/sync`) fail there. That is expected and not a finding. The scan has no network access, so
--  tests that fetch remote content also fail.
-+  tests that fetch remote content also fail, for example `TestGitArtifactDriver_Load` in
-+  `workflow/artifacts/git` and `TestHTTPArtifactDriver_Load` and `TestArtifactoryArtifactDriver_Load` in
-+  `workflow/artifacts/http`, which reach github.com.
-+- Builds go through the patched `vendor/` tree and `GOFLAGS=-tags=kubernetes_protomessage_one_more_release`,
-+  both set up in the image as release builds use them. Plain `go build` and `go test` in `/src` pick both up.
+ import (
+ 	"reflect"
++	"sync"
+ 	"testing"
  
- ## How we rate severity
+ 	"github.com/stretchr/testify/assert"
+@@ -196,6 +197,32 @@ func TestMergeLabelsFrom(t *testing.T) {
+ 	})
+ }
  
++// MergeTo is called concurrently with the workflow defaults of the controller as the patch, so it must not write to it.
++func TestMergeToDoesNotChangeThePatch(t *testing.T) {
++	patchWf := wfv1.MustUnmarshalWorkflow("@testdata/merge/patch-hook.yaml")
++	patchWf.Spec.WorkflowMetadata = &wfv1.WorkflowMetadata{LabelsFrom: map[string]wfv1.LabelValueFrom{"foo": {Expression: "PATCH"}}}
++	wantPatch := patchWf.DeepCopy()
++
++	const workers = 32
++	targets := make([]*wfv1.Workflow, workers)
++	errs := make([]error, workers)
++	var wg sync.WaitGroup
++	for i := range workers {
++		targets[i] = wfv1.MustUnmarshalWorkflow("@testdata/merge/base-nil.yaml")
++		wg.Go(func() {
++			errs[i] = MergeTo(patchWf, targets[i])
++		})
++	}
++	wg.Wait()
++
++	assert.Equal(t, wantPatch, patchWf)
++	for i, target := range targets {
++		require.NoError(t, errs[i])
++		assert.Len(t, target.Spec.Hooks, 2)
++		assert.Contains(t, target.Spec.WorkflowMetadata.LabelsFrom, "foo")
++	}
++}
++
+ // blockedUserOverrideFields is used by TestAllWorkflowSpecFieldsAccountedFor
+ // to verify that every WorkflowSpec field is consciously classified as either
+ // allowed or blocked.
 ```
 
 ---
 
-### Incident Patch 2: `27fb6a4e` (2026-11-18)
-**Commit Message**: feat(ui): add dark mode. Fixes #5037 (#17128)
+### Incident Patch 2: `461a7eaa` (2026-11-19)
+**Commit Message**: fix(artifacts): clear error for malformed SSH git repo URLs (#12152) (#17488)
 
-Signed-off-by: zvdy <[REDACTED_EMAIL]>
+Signed-off-by: Riccardo Capraro <[REDACTED_EMAIL]>
 
-**File**: `.features/pending/ui-dark-mode.md` (added, +8/-0)
+**File**: `workflow/artifacts/git/git.go` (modified, +28/-2)
 ```diff
-@@ -0,0 +1,8 @@
-+Description: Add dark mode to the UI
-+Authors: [zvdy](https://github.com/zvdy)
-+Component: UI
-+Issues: 5037
-+
-+The UI starts in your operating system's light or dark mode, and follows it until you pick one.
-+Use the theme button under the version number in the navigation bar to switch between light and dark mode.
-+Your choice is saved in the browser.
-```
-
-**File**: `ui/src/app-router.tsx` (modified, +13/-1)
-```diff
-@@ -3,6 +3,7 @@ import {NotificationsManager} from 'argo-ui/src/components/notifications/notific
- import {Notifications, NotificationType} from 'argo-ui/src/components/notifications/notifications';
- import {Popup, PopupProps} from 'argo-ui/src/components/popup/popup';
- import {PopupManager} from 'argo-ui/src/components/popup/popup-manager';
-+import {Theme, useTheme} from 'argo-ui/v2/shared/context/theme';
- import * as H from 'history';
- import * as React from 'react';
- import {useEffect, useState} from 'react';
-@@ -22,6 +23,7 @@ import sensors from './sensors';
- import {uiUrl} from './shared/base';
- import {ChatButton} from './shared/components/chat-button';
- import ErrorBoundary from './shared/components/error-boundary';
-+import {ThemeToggle} from './shared/components/theme-toggle';
- import {Version} from './shared/models';
- import * as nsUtils from './shared/namespaces';
- import {services} from './shared/services';
-@@ -53,6 +55,10 @@ export function AppRouter({popupManager, history, notificationsManager}: {popupM
-     const [version, setVersion] = useState<Version>();
-     const [namespace, setNamespace] = useState<string>();
-     const [navBarBackgroundColor, setNavBarBackgroundColor] = useState<string>();
-+    const theme = useTheme();
-+    useEffect(() => {
-+        document.body.classList.toggle('theme-dark', theme === Theme.Dark);
-+    }, [theme]);
-     const setError = (error: Error) => {
-         notificationsManager.show({
-             content: 'Failed to load version/info ' + error,
-@@ -95,6 +101,7 @@ export function AppRouter({popupManager, history, notificationsManager}: {popupM
-                     <Route exact={true} strict={true} path={loginUrl} component={login.component} />
-                     <Route path={uiUrl('widgets')} component={Widgets} />
-                     <Layout
-+                        theme={theme}
-                         navBarStyle={{backgroundColor: navBarBackgroundColor}}
-                         navItems={[
-                             {
-@@ -163,7 +170,12 @@ export function AppRouter({popupManager, history, notificationsManager}: {popupM
-                                 iconClassName: 'fa fa-question-circle'
-                             }
-                         ]}
--                        version={() => <>{version ? version.version : 'unknown'}</>}>
-+                        version={() => (
-+                            <>
-+                                {version ? version.version : 'unknown'}
-+                                <ThemeToggle />
-+                            </>
-+                        )}>
-                         <Notifications notifications={notificationsManager.notifications} />
-                         <ErrorBoundary>
-                             <Switch>
-```
-
-**File**: `ui/src/app.tsx` (modified, +7/-3)
-```diff
-@@ -1,10 +1,12 @@
- import {NavigationManager} from 'argo-ui/src/components/navigation';
- import {NotificationsManager} from 'argo-ui/src/components/notifications/notification-manager';
- import {PopupManager} from 'argo-ui/src/components/popup/popup-manager';
-+import {ThemeProvider} from 'argo-ui/v2/shared/context/theme';
- import type {History} from 'history';
- import * as React from 'react';
+@@ -6,6 +6,7 @@ import (
+ 	"fmt"
+ 	"io"
+ 	"os"
++	"os/exec"
+ 	"regexp"
+ 	"strings"
  
- import 'argo-ui/src/styles/main.scss';
-+import './dark-theme.scss';
+@@ -94,6 +95,9 @@ func (g *ArtifactDriver) Delete(ctx context.Context, s *wfv1.Artifact) error {
  
- import {AppRouter} from './app-router';
- import {ContextApis, Provider} from './shared/context';
-@@ -22,8 +24,10 @@ export function App({history}: {history: History}) {
-     };
+ func (g *ArtifactDriver) Load(ctx context.Context, inputArtifact *wfv1.Artifact, path string) error {
+ 	a := inputArtifact.Git
++	if err := ValidateRepoURL(a.Repo); err != nil {
++		return err
++	}
  
-     return (
--        <Provider value={providerContext}>
--            <AppRouter history={history} notificationsManager={notificationsManager} popupManager={popupManager} />
--        </Provider>
-+        <ThemeProvider>
-+            <Provider value={providerContext}>
-+                <AppRouter history={history} notificationsManager={notificationsManager} popupManager={popupManager} />
-+            </Provider>
-+        </ThemeProvider>
-     );
+ 	// Azure DevOps requires multi_ack* capabilities which go-git does not currently support
+ 	// Workaround: removing these from UnsupportedCapabilities allows clones to work (see https://github.com/go-git/go-git/pull/613)
+@@ -130,7 +134,8 @@ func (g *ArtifactDriver) Load(ctx context.Context, inputArtifact *wfv1.Artifact,
+ 	}
+ 
+ 	r, err := git.PlainClone(path, false, cloneOptions)
+-	if errors.Is(err, transport.ErrEmptyRemoteRepository) {
++	switch {
++	case errors.Is(err, transport.ErrEmptyRemoteRepository):
+ 		logging.RequireLoggerFromContext(ctx).Info(ctx, "Cloned an empty repository")
+ 		var initErr error
+ 		r, initErr = git.PlainInit(path, false)
+@@ -148,7 +153,11 @@ func (g *ArtifactDriver) Load(ctx context.Context, inputArtifact *wfv1.Artifact,
+ 			return fmt.Errorf("failed to create branch %q: %w", branchName, err)
+ 		}
+ 		return nil
+-	} else if err != nil {
++	case errors.Is(err, exec.ErrNotFound):
++		// go-git clones local and file:// repos by running the git binary,
++		// which the executor image doesn't include.
++		return fmt.Errorf("failed to clone %q: file:// or local-path URL detected, an executor image with the git binary must be used: %w", a.Repo, err)
++	case err != nil:
+ 		return fmt.Errorf("failed to clone %q: %w", a.Repo, err)
+ 	}
+ 	if len(a.Fetch) > 0 {
+@@ -221,3 +230,20 @@ func (g *ArtifactDriver) ListObjects(ctx context.Context, artifact *wfv1.Artifac
+ func (g *ArtifactDriver) IsDirectory(ctx context.Context, artifact *wfv1.Artifact) (bool, error) {
+ 	return false, argoerrors.New(argoerrors.CodeNotImplemented, "IsDirectory currently unimplemented for Git")
  }
-```
-
-**File**: `ui/src/dark-theme.scss` (added, +113/-0)
-```diff
-@@ -0,0 +1,113 @@
-+@import 'node_modules/argo-ui/src/styles/config';
 +
-+.theme-dark {
-+    color: $argo-color-gray-3;
-+    background-color: $dark-theme-background-1;
-+
-+    .wf-summary-container,
-+    .wf-filters-container,
-+    .workflows-list__filters-container,
-+    .graph-options-panel {
-+        background-color: $dark-theme-background-2;
-+        box-shadow: none;
-+    }
-+
-+    .login__box {
-+        background-color: $dark-theme-background-1;
-+    }
-+
-+    .workflows-list__row-container a,
-+    .wf-summary-container__title {
-+        color: $argo-color-gray-4;
-+    }
-+
-+    .workflow-details__topbar-buttons a {
-+        color: $argo-color-gray-5;
-+
-+        &.active {
-+            color: $argo-color-gray-8;
-+        }
-+    }
-+
-+    .graph-options-panel .active {
-+        background-color: $argo-color-gray-7;
-+        border-color: $argo-color-gray-6;
-+    }
-+
-+    .graph text.node-label,
-+    .graph .edge text {
-+        fill: $argo-color-gray-4;
-+    }
-+
-+    .row.header {
-+        color: $argo-color-gray-3;
-+        background-color: $dark-theme-background-2;
-+    }
-+
-+    .artifact-row,
-+    .workflow-details__attribute-grid {
-+        color: $argo-color-gray-3;
-+    }
-+
-+    .workflow-details__attribute-grid > * {
-+        border-color: $argo-color-gray-7;
-+    }
-+
-+    .artifact-row:hover {
-+        background-color: $argo-color-gray-7;
-+    }
-+
-+    .workflow-timeline {
-+        background-color: $dark-theme-background-1;
-+    }
-+
-+    .workflow-timeline__row {
-+        border-bottom-color: $argo-color-gray-7;
-+    }
-+
-+    .workflow-timeline__row--header {
-+        background-color: $dark-theme-background-2;
-+    }
-+
-+    .workflow-timeline__start-line {
-+        border-right-color: $argo-color-gray-7;
-+    }
-+
-+    .log-box {
-+        color: $argo-color-gray-3;
-+        background-color: $dark-theme-background-1;
-+    }
-+
-+    .workflow-dag-render-options-panel,
-+    .workflows-toolbar,
-+    .workflow-drawer,
-+    .modal-content,
-+    .help-box {
-+        background-color: $dark-theme-background-2;
-+    }
-+
-+    textarea {
-+        color: $argo-color-gray-3;
-+        background-color: $dark-theme-background-1;
-+    }
-+}
-+
-+.theme-toggle {
-+    display: block;
-+    margin: 4px auto 0;
-+    padding: 0;
-+    font-size: 20px;
-+    color: $white-color;
-+    background: none;
-+    border: 0;
-+    cursor: pointer;
-+
-+    &:hover {
-+        color: $argo-color-gray-4;
-+    }
-+
-+    &:focus-visible {
-+        outline: 2px solid $argo-color-teal-5;
-+        outline-offset: 2px;
-+    }
++// ValidateRepoURL rejects an SSH URL written as user@host/path instead of
++// user@host:path. go-git treats that form as a local path, and cloning it
++// fails with an unrelated error (e.g. "git: executable file not found").
++func ValidateRepoURL(repo string) error {
++	// An unparsable URL is left for go-git to report when it clones.
++	if ep, err := transport.NewEndpoint(repo); err != nil || ep.Protocol != "file" {
++		return nil //nolint:nilerr
++	}
++	host, path, found := strings.Cut(repo, "/")
++	if !found || !strings.Contains(host, "@") {
++		return nil
++	}
++	return argoerrors.Errorf(argoerrors.CodeBadRequest,
++		"git repo %q is not a valid SSH URL: use %q or %q",
++		repo, host+":"+path, "ssh://"+repo)
 +}
 ```
 
-**File**: `ui/src/shared/components/suspense-monaco-editor.test.tsx` (added, +40/-0)
+**File**: `workflow/artifacts/git/git_test.go` (modified, +44/-0)
 ```diff
-@@ -0,0 +1,40 @@
-+import {render, screen} from '@testing-library/react';
-+import * as React from 'react';
-+
-+jest.mock('react-monaco-editor', () => ({
-+    __esModule: true,
-+    default: ({theme}: {theme: string}) => <div data-testid='monaco' data-theme={theme} />
-+}));
-+
-+function renderEditor(stored?: string) {
-+    localStorage.clear();
-+    if (stored !== undefined) {
-+        localStorage.setItem('theme', stored);
-+    }
-+    let argo: typeof import('argo-ui/v2/shared/context/theme');
-+    let editor: typeof import('./suspense-monaco-editor');
-+    jest.isolateModules(() => {
-+        argo = require('argo-ui/v2/shared/context/theme');
-+        editor = require('./suspense-monaco-editor');
-+    });
-+    const {ThemeProvider} = argo!;
-+    const {SuspenseMonacoEditor} = editor!;
-+    const ui = (
-+        <ThemeProvider>
-+            <SuspenseMonacoEditor />
-+        </ThemeProvider>
-+    );
-+    return render(ui);
-+}
-+
-+describe('SuspenseMonacoEditor', () => {
-+    it('uses the light editor theme by default', async () => {
-+        renderEditor();
-+        expect((await screen.findByTestId('monaco')).getAttribute('data-theme')).toBe('vs');
-+    });
-+
-+    it('uses the dark editor theme when the app theme is dark', async () => {
-+        renderEditor('"dark"');
-+        expect((await screen.findByTestId('monaco')).getAttribute('data-theme')).toBe('vs-dark');
-+    });
-+});
-```
-
-**File**: `ui/src/shared/components/suspense-monaco-editor.tsx` (modified, +3/-1)
-```diff
-@@ -1,3 +1,4 @@
-+import {Theme, useTheme} from 'argo-ui/v2/shared/context/theme';
- import * as React from 'react';
- import type {MonacoEditorProps} from 'react-monaco-editor';
- import type MonacoEditor from 'react-monaco-editor';
-@@ -14,9 +15,10 @@ const LazyMonacoEditor = React.lazy(() => {
- const noop = () => {}; // tslint:disable-line:no-empty
+@@ -2,6 +2,7 @@ package git
  
- export const SuspenseMonacoEditor = React.forwardRef(function InnerMonacoEditor(props: MonacoEditorProps, ref: React.MutableRefObject<MonacoEditor>) {
-+    const theme = useTheme();
-     return (
-         <React.Suspense fallback={<Loading />}>
--            <LazyMonacoEditor ref={ref} editorWillUnmount={noop} {...props} />
-+            <LazyMonacoEditor ref={ref} editorWillUnmount={noop} theme={theme === Theme.Dark ? 'vs-dark' : 'vs'} {...props} />
-         </React.Suspense>
-     );
- });
-```
-
-**File**: `ui/src/shared/components/theme-toggle.test.tsx` (added, +49/-0)
-```diff
-@@ -0,0 +1,49 @@
-+import * as React from 'react';
-+import type {ReactNode} from 'react';
+ import (
+ 	"os"
++	"os/exec"
+ 	"testing"
+ 
+ 	"github.com/argoproj/argo-workflows/v4/util/logging"
+@@ -204,3 +205,46 @@ func TestGetUser(t *testing.T) {
+ 		})
+ 	}
+ }
 +
-+function load(stored?: string) {
-+    localStorage.clear();
-+    if (stored !== undefined) {
-+        localStorage.setItem('theme', stored);
-+    }
-+    let rtl: typeof import('@testing-library/react');
-+    let argo: typeof import('argo-ui/v2/shared/context/theme');
-+    let toggle: typeof import('./theme-toggle');
-+    jest.isolateModules(() => {
-+        rtl = require('@testing-library/react');
-+        argo = require('argo-ui/v2/shared/context/theme');
-+        toggle = require('./theme-toggle');
-+    });
-+    const {ThemeProvider} = argo!;
-+    const {ThemeToggle} = toggle!;
-+    const wrapper = ({children}: {children?: ReactNode}) => <ThemeProvider>{children}</ThemeProvider>;
-+    return {...rtl!, ui: <ThemeToggle />, wrapper};
++func TestValidateRepoURL(t *testing.T) {
++	for _, tt := range []struct {
++		repo       string
++		wantErr    bool
++		suggestion string
++	}{
++		{repo: "git@github.com/argoproj/argo-workflows.git", wantErr: true, suggestion: `"git@github.com:argoproj/argo-workflows.git"`},
++		{repo: "gitaly@host.example/a/b", wantErr: true, suggestion: `"gitaly@host.example:a/b"`},
++		{repo: "git@github.com:argoproj/argo-workflows.git"},
++		{repo: "ssh://git@github.com/argoproj/argo-workflows.git"},
++		{repo: "https://github.com/argoproj/argo-workflows.git"},
++		{repo: "https://user@github.com/argoproj/argo-workflows.git"},
++		{repo: "/tmp/local-repo"},
++		{repo: "./repo"},
++		{repo: "file:///srv/repo"},
++	} {
++		t.Run(tt.repo, func(t *testing.T) {
++			err := ValidateRepoURL(tt.repo)
++			if !tt.wantErr {
++				require.NoError(t, err)
++				return
++			}
++			require.ErrorContains(t, err, "not a valid SSH URL")
++			require.ErrorContains(t, err, tt.suggestion)
++		})
++	}
 +}
 +
-+describe('ThemeToggle', () => {
-+    it('is a labelled button that offers dark mode while the theme is light', () => {
-+        const {render, ui, wrapper} = load();
-+        const view = render(ui, {wrapper});
-+        const button = view.getByRole('button', {name: 'Switch to dark theme'});
-+        expect(button.querySelector('.fa-moon')).not.toBeNull();
-+        view.unmount();
-+    });
++func TestGitArtifactDriver_Load_MalformedSSHURL(t *testing.T) {
++	driver := &ArtifactDriver{}
++	err := load(t, driver, &wfv1.GitArtifact{Repo: "git@github.com/argoproj/argo-workflows.git"})
++	require.ErrorContains(t, err, "not a valid SSH URL")
++}
 +
-+    it('offers light mode while the theme is dark', () => {
-+        const {render, ui, wrapper} = load('"dark"');
-+        const view = render(ui, {wrapper});
-+        const button = view.getByRole('button', {name: 'Switch to light theme'});
-+        expect(button.querySelector('.fa-sun')).not.toBeNull();
-+        view.unmount();
-+    });
-+
-+    it('switches the theme and saves it when clicked', () => {
-+        const {render, fireEvent, ui, wrapper} = load();
-+        const view = render(ui, {wrapper});
-+        fireEvent.click(view.getByRole('button', {name: 'Switch to dark theme'}));
-+        expect(JSON.parse(localStorage.getItem('theme')!)).toBe('dark');
-+        fireEvent.click(view.getByRole('button', {name: 'Switch to light theme'}));
-+        expect(JSON.parse(localStorage.getItem('theme')!)).toBe('light');
-+        view.unmount();
-+    });
-+});
++func TestGitArtifactDriver_Load_LocalRepoWithoutGitBinary(t *testing.T) {
++	// go-git clones local and file:// repos by running the git binary.
++	t.Setenv("PATH", "")
++	driver := &ArtifactDriver{}
++	err := load(t, driver, &wfv1.GitArtifact{Repo: "file:///srv/repo"})
++	require.ErrorContains(t, err, "file:// or local-path URL detected, an executor image with the git binary must be used")
++	require.ErrorIs(t, err, exec.ErrNotFound)
++}
 ```
 
-**File**: `ui/src/shared/components/theme-toggle.tsx` (added, +13/-0)
+**File**: `workflow/validate/validate.go` (modified, +7/-0)
 ```diff
-@@ -0,0 +1,13 @@
-+import {Theme, ThemeContext} from 'argo-ui/v2/shared/context/theme';
-+import * as React from 'react';
+@@ -27,6 +27,7 @@ import (
+ 	"github.com/argoproj/argo-workflows/v4/util/sorting"
+ 	"github.com/argoproj/argo-workflows/v4/util/template"
+ 	varkeys "github.com/argoproj/argo-workflows/v4/util/variables/keys"
++	"github.com/argoproj/argo-workflows/v4/workflow/artifacts/git"
+ 	"github.com/argoproj/argo-workflows/v4/workflow/artifacts/hdfs"
+ 	"github.com/argoproj/argo-workflows/v4/workflow/common"
+ 	"github.com/argoproj/argo-workflows/v4/workflow/metrics"
+@@ -788,6 +789,12 @@ func validateArtifactLocation(errPrefix string, art wfv1.ArtifactLocation) error
+ 		if art.Git.Repo == "" {
+ 			return errors.Errorf(errors.CodeBadRequest, "%s.git.repo is required", errPrefix)
+ 		}
++		// Skip {{...}} placeholders: the git driver validates the resolved URL while loading the artifact.
++		if !strings.Contains(art.Git.Repo, "{{") {
++			if err := git.ValidateRepoURL(art.Git.Repo); err != nil {
++				return errors.Errorf(errors.CodeBadRequest, "%s.git.repo: %s", errPrefix, err.Error())
++			}
++		}
+ 	}
+ 	if art.HDFS != nil {
+ 		err := hdfs.ValidateArtifact(fmt.Sprintf("%s.hdfs", errPrefix), art.HDFS)
+```
+
+**File**: `workflow/validate/validate_test.go` (modified, +36/-0)
+```diff
+@@ -3985,3 +3985,39 @@ spec:
+ `)
+ 	require.ErrorContains(t, err, "invalid dependency false")
+ }
 +
-+export function ThemeToggle() {
-+    const {theme, set} = React.useContext(ThemeContext);
-+    const dark = theme === Theme.Dark;
-+    const label = dark ? 'Switch to light theme' : 'Switch to dark theme';
-+    return (
-+        <button type='button' className='theme-toggle' title={label} aria-label={label} onClick={() => set(dark ? Theme.Light : Theme.Dark)}>
-+            <i className={`fa ${dark ? 'fa-sun' : 'fa-moon'}`} />
-+        </button>
-+    );
++var malformedGitRepo = `
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  generateName: malformed-git-repo-
++spec:
++  entrypoint: main
++  arguments:
++    parameters:
++    - name: repo
++      value: https://github.com/argoproj/argo-workflows.git
++  templates:
++  - name: main
++    inputs:
++      artifacts:
++      - name: src
++        path: /src
++        git:
++          repo: REPO
++    container:
++      image: alpine:3.23
++`
++
++func TestValidateGitRepoURL(t *testing.T) {
++	ctx := logging.TestContext(t.Context())
++	t.Run("Malformed", func(t *testing.T) {
++		err := validate(ctx, strings.ReplaceAll(malformedGitRepo, "REPO", "git@github.com/argoproj/argo-workflows.git"))
++		require.ErrorContains(t, err, "git.repo")
++		require.ErrorContains(t, err, "not a valid SSH URL")
++	})
++	t.Run("Parameterised", func(t *testing.T) {
++		err := validate(ctx, strings.ReplaceAll(malformedGitRepo, "REPO", `"{{workflow.parameters.repo}}"`))
++		require.NoError(t, err)
++	})
 +}
 ```
 
@@ -1238,38 +1099,43 @@ Signed-off-by: zvdy <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build the OSS Scanner image like release builds
+## X. controller): do not change the workflow defaults in MergeTo. Fixes #17384
 
 **RULE**:
-When implementing operations in `.oss-scanner/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `workflow/util/merge.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `66ce7147`: build the OSS Scanner image like release builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4d269b9a`: controller): do not change the workflow defaults in MergeTo. Fixes #17384. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.oss-scanner/Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `workflow/util/merge.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# GOFLAGS matches what the Makefile exports: without the build tag, k8s.io types lack ProtoMessage() and
-# pkg/apiclient panics at startup. Keep it in step with the Makefile, since `go build` here does not go through make.
-# The patched vendor tree (see `make vendor` below) is the other half of how release builds handle this.
-    KUBECONFIG=/dev/null \
-    GOFLAGS=-tags=kubernetes_protomessage_one_more_release
-# in the module cache for offline use. Release builds use the vendor tree that `make vendor` creates and patches
-# (hack/vendor-patches.sh), so build from the same tree; Go then uses vendor/ automatically.
-RUN go mod download \
-    && make vendor
+	// Hooks and labelsFrom don't merge, so they are left out of the patch that is marshalled and added to the result
+	// afterwards. The patch can be shared between goroutines, e.g. the workflow defaults of the controller, so work on
+	// a shallow copy and never write to the patch itself.
+	patchWithoutUnmergeable := *patch
+	patchWithoutUnmergeable.Spec.Hooks = nil
+		workflowMetadata := *patch.Spec.WorkflowMetadata
+		workflowMetadata.LabelsFrom = nil
+		patchWithoutUnmergeable.Spec.WorkflowMetadata = &workflowMetadata
+	patchWfBytes, err := json.Marshal(&patchWithoutUnmergeable)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    KUBECONFIG=/dev/null
-# in the module cache for offline use.
-RUN go mod download
+	// Temporarily remove hooks and labelsFrom as they don't merge
+	patch.Spec.Hooks = nil
+		patch.Spec.WorkflowMetadata.LabelsFrom = nil
+	patchWfBytes, err := json.Marshal(patch)
+	patch.Spec.Hooks = patchHooks
+	if len(patchLabelsFrom) != 0 {
+		patch.Spec.WorkflowMetadata.LabelsFrom = patchLabelsFrom
+	}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `66ce7147` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4d269b9a` are properly handled with clean fallback behavior.

@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-20T06:11:30.065Z",
+  "updated_at": "2026-11-20T06:46:02.977Z",
   "statistics": {
-    "total_nodes": 414,
-    "total_edges": 183,
+    "total_nodes": 415,
+    "total_edges": 184,
     "domain_distribution": {
-      "D": 265,
+      "D": 266,
       "M": 1,
       "H": 65,
       "J": 20,
@@ -20,7 +20,7 @@
       "I": 5
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 181,
+      "CONSTRAINED_BY_ARCHITECTURE": 182,
       "VERIFIED_BY_TEST": 1,
       "STYLED_BY_DESIGN": 1
     }
@@ -9253,6 +9253,29 @@
       ],
       "created_at": "2026-11-20T06:11:30.065Z",
       "updated_at": "2026-11-20T06:11:30.065Z"
+    },
+    "DOM-D-55B2E30A": {
+      "id": "DOM-D-55B2E30A",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): thejagstudio/tessera-small",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md`  \n> **Source**: huggingface ([https://hu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md`  \n> **Source**: huggingface ([https://hu",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-thejagstudio-tessera-small/hf-thejagstudio-tessera-small-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T06:45:30.067Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-thejagstudio-tessera-small)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-20T06:46:02.976Z",
+      "updated_at": "2026-11-20T06:46:02.976Z"
     }
   },
   "edges": [
@@ -11085,6 +11108,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-J-F8E24CC5 [J] with Domain G",
       "created_at": "2026-11-20T05:54:25.809Z"
+    },
+    {
+      "id": "EDGE-9F9A21F1830E",
+      "sourceId": "DOM-D-55B2E30A",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-55B2E30A [D] with Domain M",
+      "created_at": "2026-11-20T06:46:02.976Z"
     }
   ]
 }
