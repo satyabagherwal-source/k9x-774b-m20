@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T20:41:44.192Z",
-  "total_cycles_completed": 11071,
-  "total_learnings_persisted": 11071,
-  "total_rules_promoted": 10427,
+  "last_updated": "2026-11-20T20:49:46.121Z",
+  "total_cycles_completed": 11073,
+  "total_learnings_persisted": 11073,
+  "total_rules_promoted": 10429,
   "history": [
-    {
-      "timestamp": "2026-11-19T22:06:53.317Z",
-      "repository": "iii-hq/iii",
-      "learningId": "learn-github-iii-hq-iii",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T22:07:06.567Z",
-      "repository": "koderover/zadig",
-      "learningId": "learn-github-koderover-zadig",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T22:19:41.483Z",
       "repository": "Automattic/harper",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-20T20:41:44.192Z",
       "repository": "alibaba/zvec",
       "learningId": "learn-github-alibaba-zvec",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T20:49:36.078Z",
+      "repository": "aio-libs/aiohttp",
+      "learningId": "learn-github-aio-libs-aiohttp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T20:49:46.121Z",
+      "repository": "langchain4j/langchain4j",
+      "learningId": "learn-github-langchain4j-langchain4j",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

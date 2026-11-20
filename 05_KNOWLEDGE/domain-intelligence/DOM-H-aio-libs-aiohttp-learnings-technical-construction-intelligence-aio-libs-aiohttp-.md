@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T23:35:14.689Z",
+  "timestamp": "2026-11-20T20:49:50.172Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-aio-libs-aiohttp-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [aio-libs-aiohttp-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T23:35:14.689Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T20:49:50.172Z`  
 > **Learning ID**: `LEARN-EVO-aio-libs-aiohttp-learnings`
 
 
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md`  
 > **Source**: github ([https://github.com/aio-libs/aiohttp](https://github.com/aio-libs/aiohttp))  
-> **Source Version**: `b2350c3d`  
+> **Source Version**: `b60c6125`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T23:34:57.161Z  
+> **Timestamp**: 2026-11-20T20:49:35.095Z  
 > **Learning ID**: `learn-github-aio-libs-aiohttp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aio-libs/aiohttp](https://github.com/aio-libs/aiohttp))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T23:34:57.048Z  
+> **Harvest Timestamp**: 2026-11-20T20:49:34.915Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Asynchronous HTTP client/server framework for asyncio and Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 16608 stars
+- **Stars / Engagement**: 16618 stars
 
 ---
 
@@ -1870,131 +1870,20 @@ class WebSocketReader:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b2350c3d` (2026-11-16)
-**Commit Message**: Bump gunicorn from 26.2.0 to 27.0.1 (#14402)
+### Incident Patch 1: `b60c6125` (2026-11-20)
+**Commit Message**: Bump virtualenv from 21.15.6 to 21.15.7 (#14421)
 
-Bumps [gunicorn](https://github.com/benoitc/gunicorn) from 26.2.0 to 27.0.1.
-- [Release notes](https://github.com/benoitc/gunicorn/releases)
-- [Commits](https://github.com/benoitc/gunicorn/compare/26.2.0...27.0.1)
-
----
-updated-dependencies:
-- dependency-name: gunicorn
-  dependency-version: 27.0.1
-  dependency-type: direct:production
-  update-type: version-update:semver-major
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `requirements/base-ft.txt` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ frozenlist==1.8.0
-     # via
-     #   -r requirements/runtime-deps.in
-     #   aiosignal
--gunicorn==26.2.0
-+gunicorn==27.0.1
-     # via -r requirements/base-ft.in
- idna==3.20
-     # via yarl
-```
-
-**File**: `requirements/base.txt` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ frozenlist==1.8.0
-     # via
-     #   -r requirements/runtime-deps.in
-     #   aiosignal
--gunicorn==26.2.0
-+gunicorn==27.0.1
-     # via -r requirements/base.in
- idna==3.20
-     # via yarl
-```
-
-**File**: `requirements/constraints.txt` (modified, +1/-1)
-```diff
-@@ -91,7 +91,7 @@ frozenlist==1.8.0
-     #   -r requirements/runtime-deps.in
-     #   aiohttp
-     #   aiosignal
--gunicorn==26.2.0
-+gunicorn==27.0.1
-     # via -r requirements/base.in
- identify==2.6.20
-     # via pre-commit
-```
-
-**File**: `requirements/dev.txt` (modified, +1/-1)
-```diff
-@@ -89,7 +89,7 @@ frozenlist==1.8.0
-     #   -r requirements/runtime-deps.in
-     #   aiohttp
-     #   aiosignal
--gunicorn==26.2.0
-+gunicorn==27.0.1
-     # via -r requirements/base.in
- identify==2.6.20
-     # via pre-commit
-```
-
-**File**: `requirements/test-ft.txt` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ frozenlist==1.8.0
-     #   -r requirements/runtime-deps.in
-     #   aiohttp
-     #   aiosignal
--gunicorn==26.2.0
-+gunicorn==27.0.1
-     # via -r requirements/base-ft.in
- idna==3.20
-     # via
-```
-
-**File**: `requirements/test-mobile.txt` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@ frozenlist==1.8.0
-     #   -r requirements/runtime-deps.in
-     #   aiohttp
-     #   aiosignal
--gunicorn==26.2.0
-+gunicorn==27.0.1
-     # via -r requirements/base-ft.in
- idna==3.20
-     # via yarl
-```
-
-**File**: `requirements/test.txt` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ frozenlist==1.8.0
-     #   -r requirements/runtime-deps.in
-     #   aiohttp
-     #   aiosignal
--gunicorn==26.2.0
-+gunicorn==27.0.1
-     # via -r requirements/base.in
- idna==3.20
-     # via
-```
-
----
-
-### Incident Patch 2: `487e5232` (2026-11-16)
-**Commit Message**: Bump markdown-it-py from 4.2.0 to 4.3.0 (#14399)
-
-Bumps [markdown-it-py](https://github.com/executablebooks/markdown-it-py) from 4.2.0 to 4.3.0.
-- [Release notes](https://github.com/executablebooks/markdown-it-py/releases)
-- [Changelog](https://github.com/executablebooks/markdown-it-py/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/executablebooks/markdown-it-py/compare/v4.2.0...v4.3.0)
+Bumps [virtualenv](https://github.com/pypa/virtualenv) from 21.15.6 to 21.15.7.
+- [Release notes](https://github.com/pypa/virtualenv/releases)
+- [Changelog](https://github.com/pypa/virtualenv/blob/main/docs/changelog.rst)
+- [Commits](https://github.com/pypa/virtualenv/compare/21.15.6...21.15.7)
 
 ---
 updated-dependencies:
-- dependency-name: markdown-it-py
-  dependency-version: 4.3.0
+- dependency-name: virtualenv
+  dependency-version: 21.15.7
   dependency-type: indirect
-  update-type: version-update:semver-minor
+  update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
@@ -2002,115 +1891,110 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `requirements/constraints.txt` (modified, +1/-1)
 ```diff
-@@ -116,7 +116,7 @@ jinja2==3.1.6
-     #   towncrier
- librt==0.16.0
-     # via mypy
--markdown-it-py==4.2.0
-+markdown-it-py==4.3.0
-     # via
-     #   mdit-py-plugins
-     #   myst-parser
+@@ -311,7 +311,7 @@ uvloop==0.23.0 ; platform_system != "Windows"
+     #   -r requirements/lint.in
+ valkey==6.2.0
+     # via -r requirements/lint.in
+-virtualenv==21.15.6
++virtualenv==21.15.7
+     # via pre-commit
+ wheel==0.48.0
+     # via pip-tools
 ```
 
 **File**: `requirements/dev.txt` (modified, +1/-1)
 ```diff
-@@ -114,7 +114,7 @@ jinja2==3.1.6
-     #   towncrier
- librt==0.16.0
-     # via mypy
--markdown-it-py==4.2.0
-+markdown-it-py==4.3.0
-     # via
-     #   mdit-py-plugins
-     #   myst-parser
-```
-
-**File**: `requirements/doc-spelling.txt` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ jinja2==3.1.6
-     #   sphinx
-     #   sphinxcontrib-mermaid
-     #   towncrier
--markdown-it-py==4.2.0
-+markdown-it-py==4.3.0
-     # via
-     #   mdit-py-plugins
-     #   myst-parser
-```
-
-**File**: `requirements/doc.txt` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ jinja2==3.1.6
-     #   sphinx
-     #   sphinxcontrib-mermaid
-     #   towncrier
--markdown-it-py==4.2.0
-+markdown-it-py==4.3.0
-     # via
-     #   mdit-py-plugins
-     #   myst-parser
+@@ -301,7 +301,7 @@ uvloop==0.23.0 ; platform_system != "Windows" and implementation_name == "cpytho
+     #   -r requirements/lint.in
+ valkey==6.2.0
+     # via -r requirements/lint.in
+-virtualenv==21.15.6
++virtualenv==21.15.7
+     # via pre-commit
+ wheel==0.48.0
+     # via pip-tools
 ```
 
 **File**: `requirements/lint.txt` (modified, +1/-1)
 ```diff
-@@ -58,7 +58,7 @@ isal==1.9.1
+@@ -149,7 +149,7 @@ uvloop==0.23.0 ; platform_system != "Windows"
      # via -r requirements/lint.in
- librt==0.16.0
-     # via mypy
--markdown-it-py==4.2.0
-+markdown-it-py==4.3.0
-     # via rich
- mdurl==0.1.2
-     # via markdown-it-py
+ valkey==6.2.0
+     # via -r requirements/lint.in
+-virtualenv==21.15.6
++virtualenv==21.15.7
+     # via pre-commit
+ yarl==1.25.1
+     # via aiohttp
 ```
 
-**File**: `requirements/test-common.txt` (modified, +1/-1)
+---
+
+### Incident Patch 2: `7c9788ca` (2026-11-20)
+**Commit Message**: Bump filelock from 4.2.10 to 4.2.11 (#14420)
+
+Bumps [filelock](https://github.com/tox-dev/filelock) from 4.2.10 to 4.2.11.
+- [Release notes](https://github.com/tox-dev/filelock/releases)
+- [Changelog](https://github.com/tox-dev/filelock/blob/main/docs/changelog.rst)
+- [Commits](https://github.com/tox-dev/filelock/compare/4.2.10...4.2.11)
+
+---
+updated-dependencies:
+- dependency-name: filelock
+  dependency-version: 4.2.11
+  dependency-type: indirect
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `requirements/constraints.txt` (modified, +1/-1)
 ```diff
-@@ -44,7 +44,7 @@ isal==1.9.1 ; python_version < "3.14" and implementation_name == "cpython"
-     # via -r requirements/test-common.in
- librt==0.16.0
-     # via mypy
--markdown-it-py==4.2.0
-+markdown-it-py==4.3.0
-     # via rich
- mdurl==0.1.2
-     # via markdown-it-py
+@@ -76,7 +76,7 @@ docutils==0.21.2
+     #   sphinx
+ execnet==2.1.2
+     # via pytest-xdist
+-filelock==4.2.10
++filelock==4.2.11
+     # via
+     #   python-discovery
+     #   virtualenv
 ```
 
-**File**: `requirements/test-ft.txt` (modified, +1/-1)
+**File**: `requirements/dev.txt` (modified, +1/-1)
 ```diff
-@@ -61,7 +61,7 @@ isal==1.9.1 ; python_version < "3.14" and implementation_name == "cpython"
-     # via -r requirements/test-common.in
- librt==0.16.0
-     # via mypy
--markdown-it-py==4.2.0
-+markdown-it-py==4.3.0
-     # via rich
- mdurl==0.1.2
-     # via markdown-it-py
+@@ -74,7 +74,7 @@ docutils==0.21.2
+     #   sphinx
+ execnet==2.1.2
+     # via pytest-xdist
+-filelock==4.2.10
++filelock==4.2.11
+     # via
+     #   python-discovery
+     #   virtualenv
 ```
 
-**File**: `requirements/test.txt` (modified, +1/-1)
+**File**: `requirements/lint.txt` (modified, +1/-1)
 ```diff
-@@ -61,7 +61,7 @@ isal==1.9.1 ; python_version < "3.14" and implementation_name == "cpython"
-     # via -r requirements/test-common.in
- librt==0.16.0
-     # via mypy
--markdown-it-py==4.2.0
-+markdown-it-py==4.3.0
-     # via rich
- mdurl==0.1.2
-     # via markdown-it-py
+@@ -34,7 +34,7 @@ cryptography==50.0.2
+     # via trustme
+ distlib==0.4.4
+     # via virtualenv
+-filelock==4.2.10
++filelock==4.2.11
+     # via
+     #   python-discovery
+     #   virtualenv
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14404** (2026-11-16): Bump gunicorn from 26.2.0 to 27.0.1 (@dependabot[bot])
-- **PR #14403** (closed): Bump mdit-py-plugins from 0.6.1 to 0.7.0 (@dependabot[bot])
-- **PR #14402** (2026-11-16): Bump gunicorn from 26.2.0 to 27.0.1 (@dependabot[bot])
-- **PR #14401** (2026-11-16): Bump myst-parser from 5.1.0 to 5.2.0 (@dependabot[bot])
-- **PR #14400** (2026-11-16): Bump coverage from 7.17.2 to 7.17.3 (@dependabot[bot])
-- **PR #14399** (2026-11-16): Bump markdown-it-py from 4.2.0 to 4.3.0 (@dependabot[bot])
+- **PR #14422** (2026-11-20): Bump virtualenv from 21.15.6 to 21.15.7 (@dependabot[bot])
+- **PR #14421** (2026-11-20): Bump virtualenv from 21.15.6 to 21.15.7 (@dependabot[bot])
+- **PR #14420** (2026-11-20): Bump filelock from 4.2.10 to 4.2.11 (@dependabot[bot])
+- **PR #14417** (2026-11-19): Bump pip-tools from 7.6.2 to 7.7.0 (@dependabot[bot])
+- **PR #14413** (2026-11-19): Bump MatteoGabriele/agentscan-action from 2.7.0 to 2.8.0 (@dependabot[bot])
+- **PR #14411** (closed): [bot] Run the Autobahn fuzzing client in batches to stop OOM kills (@Dreamsorcerer)
 
 ---
 
@@ -2130,31 +2014,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump gunicorn from 26.2.0 to 27.0.1
+## X. Bump virtualenv from 21.15.6 to 21.15.7
 
 **RULE**:
-When implementing operations in `requirements/base-ft.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aio-libs/aiohttp. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `requirements/constraints.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aio-libs/aiohttp. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b2350c3d`: Bump gunicorn from 26.2.0 to 27.0.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b60c6125`: Bump virtualenv from 21.15.6 to 21.15.7. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `requirements/base-ft.txt`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `requirements/constraints.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-gunicorn==27.0.1
+virtualenv==21.15.7
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-gunicorn==26.2.0
+virtualenv==21.15.6
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b2350c3d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b60c6125` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

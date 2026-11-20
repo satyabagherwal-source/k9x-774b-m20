@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T20:41:44.197Z",
+  "last_updated": "2026-11-20T20:49:46.124Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "0aa6debbd14f964cde53a4339f64815d57e88a06dcf2a1a5546ba926fe5c6a88",
-      "verified_at": "2026-11-19T16:17:02.945Z",
+      "content_hash": "aeea712dcf6c21b63491ce7621df294cc4cdda09cfef1548476d4d153244cc17",
+      "verified_at": "2026-11-20T20:49:46.123Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:17:02.945Z"
+      "last_updated": "2026-11-20T20:49:46.123Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",
@@ -14556,14 +14556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aio-libs-aiohttp",
-      "content_hash": "e1111168cea786fd67d0fafcdfb2de23a0ef3d2defdd6862258a2be80cb6de98",
-      "verified_at": "2026-11-16T23:34:58.091Z",
+      "content_hash": "8098073ae94b9f03bcd02ede1754d892181700ce2eb7fa1e89663c8fe048cf37",
+      "verified_at": "2026-11-20T20:49:36.080Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T23:34:58.091Z"
+      "last_updated": "2026-11-20T20:49:36.080Z"
     },
     "iPlug2/iPlug2": {
       "repository": "iPlug2/iPlug2",

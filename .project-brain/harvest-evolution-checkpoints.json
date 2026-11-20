@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T20:41:51.163Z",
+  "last_updated": "2026-11-20T20:49:52.560Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T20:28:21.559Z",
@@ -13,7 +13,7 @@
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-20T20:28:23.202Z",
+      "processed_at": "2026-11-20T20:49:51.759Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -873,7 +873,7 @@
       "staged_for_review": 1
     },
     "aio-libs-aiohttp-learnings.md": {
-      "processed_at": "2026-11-16T23:35:14.157Z",
+      "processed_at": "2026-11-20T20:49:49.399Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3353,7 +3353,7 @@
       "staged_for_review": 1
     },
     "langchain4j-langchain4j-learnings.md": {
-      "processed_at": "2026-11-18T12:58:38.382Z",
+      "processed_at": "2026-11-20T20:49:50.748Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3623,7 +3623,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2607,
+  "total_dossiers_evaluated": 2610,
   "total_canonical_promoted": 432,
-  "total_staged_for_review": 1986
+  "total_staged_for_review": 1989
 }

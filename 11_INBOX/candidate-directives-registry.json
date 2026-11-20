@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T20:41:50.558Z",
+  "last_updated": "2026-11-20T20:49:51.754Z",
   "directives": [
     {
       "id": "CD-001",
@@ -39051,6 +39051,55 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-7A81FA-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-D87H",
+      "directive_title": "Bump virtualenv from 21.15.6 to 21.15.7",
+      "source_repo": "aio-libs-aiohttp-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-D87H-bump-virtualenv-from-21-15-6-to-21-15-7.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-D8ZT",
+      "directive_title": "Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.4.3 [SECURI",
+      "source_repo": "langchain4j-langchain4j-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-D8ZT-update-dependency-org-apache-httpcomponents-core5-httpcore5-h2-to-v5-4-3-securi.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-13070A",
+      "directive_title": "Bump virtualenv from 21.15.6 to 21.15.7",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aio-libs-aiohttp",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-13070A-bump-virtualenv-from-21-15-6-to-21-15-7.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-2E0C92",
+      "directive_title": "Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.4.3 [SECURI",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "langchain4j-langchain4j",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2E0C92-update-dependency-org-apache-httpcompone.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-AE3D86",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AE3D86-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-20"
     }
   ]

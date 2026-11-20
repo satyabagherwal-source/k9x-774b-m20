@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "802c4d10",
+    "sourceVersion": "9445e92f",
     "license": "Apache-2.0",
-    "contentHash": "0aa6debbd14f964cde53a4339f64815d57e88a06dcf2a1a5546ba926fe5c6a88",
-    "lastHarvestedAt": "2026-11-19T16:17:02.937Z",
+    "contentHash": "aeea712dcf6c21b63491ce7621df294cc4cdda09cfef1548476d4d153244cc17",
+    "lastHarvestedAt": "2026-11-20T20:49:46.115Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {
@@ -9673,10 +9673,10 @@
     "repository": "aio-libs/aiohttp",
     "platform": "github",
     "sourceUrl": "https://github.com/aio-libs/aiohttp",
-    "sourceVersion": "b2350c3d",
+    "sourceVersion": "b60c6125",
     "license": "Apache-2.0",
-    "contentHash": "e1111168cea786fd67d0fafcdfb2de23a0ef3d2defdd6862258a2be80cb6de98",
-    "lastHarvestedAt": "2026-11-16T23:34:58.083Z",
+    "contentHash": "8098073ae94b9f03bcd02ede1754d892181700ce2eb7fa1e89663c8fe048cf37",
+    "lastHarvestedAt": "2026-11-20T20:49:36.072Z",
     "learningId": "learn-github-aio-libs-aiohttp"
   },
   "iplug2-iplug2": {

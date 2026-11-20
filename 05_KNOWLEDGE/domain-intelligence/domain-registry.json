@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T20:41:50.759Z",
+  "last_updated": "2026-11-20T20:49:52.410Z",
   "total_records": 2171,
   "domains": {
     "A": {
@@ -10632,8 +10632,8 @@
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "repository": "langchain4j/langchain4j",
-      "content_hash": "e52e8e42d10e8512922075dc9f5554fa8cb737e065e17e364f212ed421cbbb81",
-      "created_at": "2026-11-19T16:17:03.261Z"
+      "content_hash": "116555eecc4e959c3ac7f5a9dbbfbeb9fbd374de5dd8845d82fdecb588e3fdf0",
+      "created_at": "2026-11-20T20:49:46.470Z"
     },
     "DOM-D-9936936B": {
       "record_id": "DOM-D-9936936B",
@@ -17821,8 +17821,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "b97ead7277c07566e1794e748f5418bb17f894a4661649ce9c31f029f9d29a88",
-      "created_at": "2026-11-20T20:28:23.871Z"
+      "content_hash": "d96b3dc95dd6cacf0bc65703b3fab53e56f9156cdd947b4a69df4ee37ab03695",
+      "created_at": "2026-11-20T20:49:52.410Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -25020,8 +25020,8 @@
       "title": "Technical Construction Intelligence: aio-libs/aiohttp Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aio-libs-aiohttp-technical-construction-intelligence-aio-libs-aiohttp-core-invar.md",
       "repository": "aio-libs/aiohttp",
-      "content_hash": "0631f9ac7ae0f3b2a3dfd0f412c1a1727cbc7307516342fa0040a5ace67b4c8c",
-      "created_at": "2026-11-16T23:34:58.384Z"
+      "content_hash": "b2bb55e0e68633b8865f681035286f2500759baa54797b409509855cc0cc70b8",
+      "created_at": "2026-11-20T20:49:36.426Z"
     },
     "domain_intelligence-architecture-intelligence-wzh4869-appports-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-wzh4869-appports-core-invariants",
@@ -25047,8 +25047,8 @@
       "title": "Technical Construction Intelligence: aio-libs-aiohttp-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aio-libs-aiohttp-learnings-technical-construction-intelligence-aio-libs-aiohttp-.md",
       "repository": "aio-libs-aiohttp-learnings",
-      "content_hash": "37494d9a4d799331ebb6e767b9fc2bc6f9339ed1ef253c3e09488816421139d8",
-      "created_at": "2026-11-16T23:35:14.926Z"
+      "content_hash": "c1782bc12c783981d2ac18cad10c321b62c37ca307fdc7201a8d9f6b3264db07",
+      "created_at": "2026-11-20T20:49:50.450Z"
     },
     "domain_intelligence-architecture-intelligence-wzh4869-appports-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-wzh4869-appports-learnings-core-invariants",
@@ -28713,8 +28713,8 @@
       "title": "Technical Construction Intelligence: langchain4j-langchain4j-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-learnings-technical-construction-intelligence-langchain4.md",
       "repository": "langchain4j-langchain4j-learnings",
-      "content_hash": "6b6a978fbf44529345db8cb2af3c399aa684bf6c69fbe1098894d6b8bd9417bc",
-      "created_at": "2026-11-18T12:58:38.690Z"
+      "content_hash": "95e7c38572d533dd5314fcbd97f85f26857d40ed55ecf71939b5f1318b5a7407",
+      "created_at": "2026-11-20T20:49:51.456Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fastvideo-fasth3-omni-comfy-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fastvideo-fasth3-omni-comfy-core-invariants",

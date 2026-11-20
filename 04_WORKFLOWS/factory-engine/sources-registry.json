@@ -19,9 +19,9 @@
   "gravitl-netmaker": {
     "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-11-20T13:48:15.265Z",
+    "lastChecked": "2026-11-20T20:49:37.945Z",
     "revisionIdentifier": "098d26a7",
-    "lastVerified": "2026-11-20T13:48:15.265Z"
+    "lastVerified": "2026-11-20T20:49:37.945Z"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T20:41:47.599Z",
-    "lastVerified": "2026-11-20T20:41:47.599Z",
+    "lastChecked": "2026-11-20T20:49:49.269Z",
+    "lastVerified": "2026-11-20T20:49:49.269Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -355,8 +355,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T20:02:27.556Z",
-    "lastVerified": "2026-11-20T20:02:27.556Z",
+    "lastChecked": "2026-11-20T20:49:42.814Z",
+    "lastVerified": "2026-11-20T20:49:42.814Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1761,14 +1761,14 @@
     "officialUrl": "https://github.com/langchain4j/langchain4j",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-19T16:17:01.971Z",
-    "lastVerified": "2026-11-19T16:17:01.971Z",
+    "lastChecked": "2026-11-20T20:49:45.112Z",
+    "lastVerified": "2026-11-20T20:49:45.112Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "0aa6debbd14f964cde53a4339f64815d57e88a06dcf2a1a5546ba926fe5c6a88",
+    "contentHash": "aeea712dcf6c21b63491ce7621df294cc4cdda09cfef1548476d4d153244cc17",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2681,12 +2681,12 @@
     "lastVerified": "2026-11-18T14:56:53.131Z"
   },
   "karmada-io-karmada": {
-    "name": "karmada-io/karmada",
+    "name": "karmada",
     "officialUrl": "https://github.com/karmada-io/karmada",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T18:06:23.148Z",
-    "lastVerified": "2026-11-19T18:06:23.148Z",
+    "lastChecked": "2026-11-20T20:49:35.366Z",
+    "lastVerified": "2026-11-20T20:49:35.366Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-karmada-io-karmada",
@@ -2695,7 +2695,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f4c69979"
   },
   "zilliztech-attu": {
     "name": "attu",
@@ -6495,9 +6496,9 @@
   "vercel-labs-opensrc": {
     "name": "opensrc",
     "officialUrl": "https://github.com/vercel-labs/opensrc",
-    "lastChecked": "2026-11-19T04:44:00.211Z",
+    "lastChecked": "2026-11-20T20:49:27.827Z",
     "revisionIdentifier": "b51de608",
-    "lastVerified": "2026-11-19T04:44:00.211Z"
+    "lastVerified": "2026-11-20T20:49:27.827Z"
   },
   "hf-lilylilith-qi_2.1_anyangle": {
     "name": "lilylilith/QI_2.1_AnyAngle",
@@ -10689,5 +10690,29 @@
     "lastChecked": "2026-11-20T20:41:32.101Z",
     "revisionIdentifier": "f4f68049",
     "lastVerified": "2026-11-20T20:41:32.101Z"
+  },
+  "aio-libs-aiohttp": {
+    "name": "aio-libs/aiohttp",
+    "officialUrl": "https://github.com/aio-libs/aiohttp",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-20T20:49:34.915Z",
+    "lastVerified": "2026-11-20T20:49:34.915Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-aio-libs-aiohttp",
+    "contentHash": "8098073ae94b9f03bcd02ede1754d892181700ce2eb7fa1e89663c8fe048cf37",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "simibac-confettiswiftui": {
+    "name": "ConfettiSwiftUI",
+    "officialUrl": "https://github.com/simibac/ConfettiSwiftUI",
+    "lastChecked": "2026-11-20T20:49:32.757Z",
+    "revisionIdentifier": "9ae5bc2c",
+    "lastVerified": "2026-11-20T20:49:32.757Z"
   }
 }

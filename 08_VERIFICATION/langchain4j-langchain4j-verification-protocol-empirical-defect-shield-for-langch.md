@@ -4,22 +4,22 @@
 {
   "source_repository": "langchain4j/langchain4j",
   "source_url": "https://github.com/langchain4j/langchain4j",
-  "source_version": "802c4d10",
+  "source_version": "9445e92f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T16:17:03.117Z",
+  "timestamp": "2026-11-20T20:49:46.315Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-langchain4j-langchain4j",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [langchain4j/langchain4j](https://github.com/langchain4j/langchain4j) (Revision: `802c4d10`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T16:17:03.117Z`  
+> **Provenance**: Harvested from [langchain4j/langchain4j](https://github.com/langchain4j/langchain4j) (Revision: `9445e92f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T20:49:46.315Z`  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `langchain4j/langchain4j` (Commit: `802c4d10`)
+- **Target Repository**: `langchain4j/langchain4j` (Commit: `9445e92f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T16:17:01.971Z  
+> **Harvest Timestamp**: 2026-11-20T20:49:45.112Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13424 stars
+- **Stars / Engagement**: 13426 stars
 
 ---
 
@@ -849,28 +849,8 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `802c4d10` (2026-11-19)
-**Commit Message**: Update dependency org.opensearch.client:opensearch-java to v2.26.0 (#7181)
-
-## Dependency convergence
-
-opensearch-java 2.26.0 brings `commons-logging` 1.3.5 and `httpcore5-h2`
-5.3.4, which fail the `DependencyConvergence` enforcer rule in
-`langchain4j-opensearch` (against `commons-logging` 1.2 from
-`opensearch-rest-client`/`httpclient` 4.5.14, and `httpcore5-h2` 5.3.6
-from `httpclient5` 5.5.2). b8296ba4e pins both in the module's
-`dependencyManagement`: `commons-logging` 1.3.5 and `httpcore5-h2` 5.3.6
-(the version main already resolves). `httpclient5` stays on 5.5.2.
-
-Resolved dependencies compared with main: opensearch-java 2.9.0 →
-2.26.0, commons-logging 1.2 → 1.3.5, parsson 1.1.4 → 1.1.6, new
-jakarta.annotation-api 1.3.5 (runtime).
-
-The OpenSearch integration tests were run locally, because they do not
-run on PRs: 128 run, 0 failures, 2 skipped by design, including the
-AWS/LocalStack IT (9/9). Enforcer and revapi pass.
-
----
+### Incident Patch 1: `a30ea36b` (2026-11-20)
+**Commit Message**: Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.4.3 [SECURITY] (#7192)
 
 This PR contains the following updates:
 
@@ -878,63 +858,12 @@ This PR contains the following updates:
 [Age](https://docs.renovatebot.com/merge-confidence/) |
 [Confidence](https://docs.renovatebot.com/merge-confidence/) |
 |---|---|---|---|
+| [org.apache.httpcomponents.core5:httpcore5-h2](https://hc.apache.org/)
+([source](https://redirect.github.com/apache/httpcomponents-core)) |
+`5.3.6` → `5.4.3` |
+![age](https://developer.mend.io/api/mc/badges/age/maven/org.apache.httpcomponents.core5:httpcore5-h2/5.4.3?slim=true)
 |
-[org.opensearch.client:opensearch-java](https://redirect.
-
-**File**: `langchain4j-opensearch/pom.xml` (modified, +11/-1)
-```diff
-@@ -13,7 +13,7 @@
-     <name>LangChain4j :: Integration :: OpenSearch</name>
- 
-     <properties>
--        <opensearch-java.version>2.9.0</opensearch-java.version>
-+        <opensearch-java.version>2.26.0</opensearch-java.version>
-         <opensearch-containers.version>2.1.4</opensearch-containers.version>
-         <jsonpath.version>2.10.0</jsonpath.version>
-     </properties>
-@@ -25,6 +25,11 @@
-                 <artifactId>commons-codec</artifactId>
-                 <version>1.23.0</version>
-             </dependency>
-+            <dependency>
-+                <groupId>commons-logging</groupId>
-+                <artifactId>commons-logging</artifactId>
-+                <version>1.3.5</version>
-+            </dependency>
-             <dependency>
-                 <groupId>jakarta.json</groupId>
-                 <artifactId>jakarta.json-api</artifactId>
-@@ -45,6 +50,11 @@
-                 <artifactId>httpcore5</artifactId>
-                 <version>5.4.4</version>
-             </dependency>
-+            <dependency>
-+                <groupId>org.apache.httpcomponents.core5</groupId>
-+                <artifactId>httpcore5-h2</artifactId>
-+                <version>5.3.6</version>
-+            </dependency>
-         </dependencies>
-     </dependencyManagement>
- 
-```
-
----
-
-### Incident Patch 2: `41c197df` (2026-11-19)
-**Commit Message**: Update dependency org.jetbrains:annotations to v23.1.0 (#7157)
-
-This PR contains the following updates:
-
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-|
-[org.jetbrains:annotations](https://redirect.github.com/JetBrains/java-annotations)
-| `23.0.0` → `23.1.0` |
-![age](https://developer.mend.io/api/mc/badges/age/maven/org.jetbrains:annotations/23.1.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/org.jetbrains:annotations/23.0.0/23.1.0?slim=true)
+![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/org.apache.httpcomponents.core5:httpcore5-h2/5.3.6/5.4.3?slim=true)
 |
 
 ---
@@ -945,51 +874,475 @@ Dashboard](../issues/2069) for more information.
 
 ---
 
-### Release Notes
+### Apache HttpComponents Core: HPackDecoder Unlimited Header List Size
+Before SETTINGS ACK
+[CVE-2026-54428](https://nvd.nist.gov/vuln/detail/CVE-2026-54428) /
+[GHSA-v3jc-474w-2wm6](https://redirect.github.com/advisories/GHSA-v3jc-474w-2wm6)
 
 <details>
-<summary>JetBrains/java-annotations
-(org.jetbrains:annotations)</summary>
+<summary>More information</summary>
 
-###
-[`v23.1.0`](https://redirect.github.com/JetBrains/java-annotations/blob/HEAD/CHANGELOG.md#Version-2310)
+#### Details
+Allocation of resources without limits or
 
-[Compare
-Source](https://redirect.github.com/JetBrains/java-annotations/compare/23.0.0...23.1.0)
-
-- Added new annotation: `@ApiStatus.Obsolete`.
-
-</details>
-
----
-
-### Configuration
-
-📅 **Schedule**: (in timezone Europe/Berlin)
-
-- Branch creation
- 
-
-**File**: `langchain4j-milvus-v2/pom.xml` (modified, +1/-1)
+**File**: `langchain4j-opensearch/pom.xml` (modified, +1/-1)
 ```diff
-@@ -34,7 +34,7 @@
+@@ -53,7 +53,7 @@
              <dependency>
-                 <groupId>org.jetbrains</groupId>
-                 <artifactId>annotations</artifactId>
--                <version>23.0.0</version>
-+                <version>23.1.0</version>
+                 <groupId>org.apache.httpcomponents.core5</groupId>
+                 <artifactId>httpcore5-h2</artifactId>
+-                <version>5.3.6</version>
++                <version>5.4.3</version>
              </dependency>
          </dependencies>
      </dependencyManagement>
 ```
 
+---
+
+### Incident Patch 2: `c5f5d093` (2026-11-20)
+**Commit Message**: Infinispan: async support for embedding search and chat memory store (#7195)
+
+<!--
+Thank you so much for your contribution!
+
+Please fill in all the sections below.
+Please open the PR as ready for review (not as a draft), with tests and
+documentation already included.
+Please note that PRs with breaking changes, or without tests and
+documentation, will be rejected.
+
+Please note that PRs will be reviewed based on the priority of the
+issues they address.
+We ask for your patience. We are doing our best to review your PR as
+quickly as possible.
+Please refrain from pinging and asking when it will be reviewed. Thank
+you for understanding!
+-->
+
+## Issue
+<!-- Please specify the ID of the issue this PR is addressing. For
+example: "Closes #1234" or "Fixes #1234" -->
+Closes #7194
+
+## Change
+<!-- Please describe the changes you made. -->
+Implements the non-blocking methods in the Infinispan module, using the
+asynchronous API of the Hot Rod client:
+
+- `InfinispanEmbeddingStore.searchAsync`: runs the same vector query as
+`search` with `Query.executeAsync()`. The query building and the result
+mapping are shared with `search`.
+- `InfinispanChatMemoryStore.getMessagesAsync`, `updateMessagesAsync`
+and
+
+**File**: `docs/docs/integrations/embedding-stores/infinispan.md` (modified, +7/-0)
+```diff
+@@ -34,6 +34,13 @@ From 15.2 Infinispan Server and above, metadata filtering is supported.
+ - `InfinispanEmbeddingStore`
+ - `InfinispanChatMemoryStore`
+ 
++Both classes also implement the non-blocking methods of their interfaces: `searchAsync` on
++`InfinispanEmbeddingStore`, and `getMessagesAsync`, `updateMessagesAsync` and `deleteMessagesAsync` on
++`InfinispanChatMemoryStore`. They use the asynchronous API of the Infinispan Hot Rod client, so you can use them
++in asynchronous and reactive AI Services and RAG without blocking a thread.
++The returned futures complete on the I/O threads of the Hot Rod client, so do not block in code that you chain to them.
++See [Non-blocking and Reactive](/tutorials/non-blocking).
++
+ ### InfinispanChatMemoryStore
+ 
+ A `ChatMemoryStore` backed by an Infinispan cache. Messages are serialized to JSON
+```
+
+**File**: `docs/docs/tutorials/non-blocking.md` (modified, +2/-2)
+```diff
+@@ -414,10 +414,10 @@ interaction fails the call the same way. In practice that means:
+ 
+ | Component | What it must implement | Bundled implementations |
+ |---|---|---|
+-| Chat memory | `addAsync` / `messagesAsync` / `setAsync` | `MessageWindowChatMemory` and `InMemoryChatMemoryStore` already do |
++| Chat memory | `addAsync` / `messagesAsync` / `setAsync` | `MessageWindowChatMemory`, `InMemoryChatMemoryStore` and `InfinispanChatMemoryStore` already do |
+ | Guardrails | `validateAsync` | none — a guardrail you write must override it, even if it does no I/O |
+ | Content retriever, query router, aggregator | `retrieveAsync`, `routeAsync`, `aggregateAsync` | opt into offloading instead with `offloadBlocking(true)` |
+-| Embedding store | `searchAsync` | as above, via the retriever's `offloadBlocking(true)` |
++| Embedding store | `searchAsync` | `InMemoryEmbeddingStore` and `InfinispanEmbeddingStore` already do; for other stores, use the retriever's `offloadBlocking(true)` |
+ | Custom `ToolExecutor` | `executeAsync` | `@Tool`-annotated methods are offloaded for you |
+ | Chat model router ([`RoutingChatModel`](/tutorials/model-routing)) | `routeAsync` | `DecisionModelChatModelRouter` does, if its decision model supports `decideAsync` |
+ 
+```
+
+**File**: `langchain4j-infinispan/src/main/java/dev/langchain4j/store/embedding/infinispan/InfinispanEmbeddingStore.java` (modified, +24/-4)
+```diff
+@@ -24,6 +24,7 @@
+ import java.util.Map;
+ import java.util.Objects;
+ import java.util.Set;
++import java.util.concurrent.CompletableFuture;
+ import java.util.stream.Collectors;
+ import org.infinispan.client.hotrod.RemoteCache;
+ import org.infinispan.client.hotrod.RemoteCacheManager;
+@@ -90,7 +91,7 @@ public InfinispanEmbeddingStore(ConfigurationBuilder builder, InfinispanStoreCon
+         // Registers the schema on the client
+         ProtoStreamMarshaller marshaller = new ProtoStreamMarshaller();
+         SerializationContext serializationContext = marshaller.getSerializationContext();
+-        String schemaContent = schema.toString();
++        String schemaContent = schema.getContent();
+         FileDescriptorSource fileDescriptorSource =
+                 FileDescriptorSource.fromString(storeConfiguration.fileName(), schemaContent);
+         serializationContext.registerProtoFiles(fileDescriptorSource);
+@@ -188,6 +189,24 @@ public void removeAll(Collection<String> ids) {
+ 
+     @Override
+     public EmbeddingSearchResult<TextSegment> search(EmbeddingSearchRequest request) {
++        Query<Object[]> query = buildVectorQuery(request);
++        List<Object[]> hits = query.list();
++        return toSearchResult(hits, request.minScore());
++    }
++
++    @Override
++    public CompletableFuture<EmbeddingSearchResult<TextSegment>> searchAsync(EmbeddingSearchRequest request) {
++        try {
++            Query<Object[]> query = buildVectorQuery(request);
++            return query.executeAsync()
++                    .thenApply(queryResult -> toSearchResult(queryResult.list(), request.minScore()))
++                    .toCompletableFuture();
++        } catch (Throwable t) {
++            return CompletableFuture.failedFuture(t);
++        }
++    }
++
++    private Query<Object[]> buildVectorQuery(EmbeddingSearchRequest request) {
+         InfinispanMetadataFilterMapper.FilterResult filteringQuery =
+                 new InfinispanMetadataFilterMapper().map(request.filter());
+         String joinPart = "";
+@@ -206,14 +225,15 @@ public EmbeddingSearchResult<TextSegment> search(EmbeddingSearchRequest request)
+                 + storeConfiguration.distance()
+                 + filteringPart;
+ 
+-        Query<Object[]> query = remoteCache.query(vectorQuery);
+-        List<Object[]> hits = query.maxResults(request.maxResults()).list();
++        return remoteCache.<Object[]>query(vectorQuery).maxResults(request.maxResults());
++    }
+ 
++    private EmbeddingSearchResult<TextSegment> toSearchResult(List<Object[]> hits, double minScore) {
+         List<EmbeddingMatch<TextSegment>> matches = hits.stream()
+                 .map(obj -> {
+                     LangChainInfinispanItem item = (LangChainInfinispanItem) obj[0];
+                     Float score = (Float) obj[1];
+-                    if (score.doubleValue() < request.minScore()) {
++                    if (score.doubleValue() < minScore) {
+                         return null;
+                     }
+ 
+```
+
+**File**: `langchain4j-infinispan/src/main/java/dev/langchain4j/store/memory/chat/infinispan/InfinispanChatMemoryStore.java` (modified, +38/-2)
+```diff
+@@ -9,6 +9,7 @@
+ import dev.langchain4j.store.memory.chat.ChatMemoryStore;
+ import java.util.ArrayList;
+ import java.util.List;
++import java.util.concurrent.CompletableFuture;
+ import org.infinispan.client.hotrod.RemoteCache;
+ import org.infinispan.client.hotrod.RemoteCacheManager;
+ import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
+@@ -93,8 +94,7 @@ private static RemoteCache<String, String> getExistingCache(
+     @Override
+     public List<ChatMessage> getMessages(Object memoryId) {
+         ensureNotNull(memoryId, "memoryId");
+-        String json = remoteCache.get(memoryId.toString());
+-        return json == null ? new ArrayList<>() : ChatMessageDeserializer.messagesFromJson(json);
++        return toMessages(remoteCache.get(memoryId.toString()));
+     }
+ 
+     @Override
+@@ -111,6 +111,42 @@ public void deleteMessages(Object memoryId) {
+         remoteCache.remove(memoryId.toString());
+     }
+ 
++    @Override
++    public CompletableFuture<List<ChatMessage>> getMessagesAsync(Object memoryId) {
++        try {
++            ensureNotNull(memoryId, "memoryId");
++            return remoteCache.getAsync(memoryId.toString()).thenApply(InfinispanChatMemoryStore::toMessages);
++        } catch (Throwable t) {
++            return CompletableFuture.failedFuture(t);
++        }
++    }
++
++    @Override
++    public CompletableFuture<Void> updateMessagesAsync(Object memoryId, List<ChatMessage> messages) {
++        try {
++            ensureNotNull(memoryId, "memoryId");
++            ensureNotNull(messages, "messages");
++            String json = ChatMessageSerializer.messagesToJson(messages);
++            return remoteCache.putAsync(memoryId.toString(), json).thenApply(ignored -> null);
++        } catch (Throwable t) {
++            return CompletableFuture.failedFuture(t);
++        }
++    }
++
++    @Override
++    public CompletableFuture<Void> deleteMessagesAsync(Object memoryId) {
++        try {
++            ensureNotNull(memoryId, "memoryId");
++            return remoteCache.removeAsync(memoryId.toString()).thenApply(ignored -> null);
++        } catch (Throwable t) {
++            return CompletableFuture.failedFuture(t);
++        }
++    }
++
++    private static List<ChatMessage> toMessages(String json) {
++        return json == null ? new ArrayList<>() : ChatMessageDeserializer.messagesFromJson(json);
++    }
++
+     public static Builder builder() {
+         return new Builder();
+     }
+```
+
+**File**: `langchain4j-infinispan/src/test/java/dev/langchain4j/store/embedding/infinispan/InfinispanEmbeddingStoreWithFilterIT.java` (modified, +85/-0)
+```diff
+@@ -1,20 +1,31 @@
+ package dev.langchain4j.store.embedding.infinispan;
+ 
++import static dev.langchain4j.store.embedding.filter.MetadataFilterBuilder.metadataKey;
++import static org.assertj.core.api.Assertions.assertThat;
+ import static org.infinispan.testcontainers.InfinispanContainer.IMAGE_BASENAME;
+ 
++import dev.langchain4j.data.document.Metadata;
++import dev.langchain4j.data.embedding.Embedding;
+ import dev.langchain4j.data.segment.TextSegment;
+ import dev.langchain4j.model.embedding.EmbeddingModel;
+ import dev.langchain4j.model.embedding.onnx.allminilml6v2q.AllMiniLmL6V2QuantizedEmbeddingModel;
++import dev.langchain4j.store.embedding.EmbeddingMatch;
++import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
+ import dev.langchain4j.store.embedding.EmbeddingStore;
+ import dev.langchain4j.store.embedding.EmbeddingStoreWithFilteringIT;
++import java.time.Duration;
++import java.util.List;
+ import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
+ import org.infinispan.commons.util.Version;
+ import org.infinispan.testcontainers.InfinispanContainer;
+ import org.junit.jupiter.api.AfterAll;
+ import org.junit.jupiter.api.BeforeAll;
++import org.junit.jupiter.api.Test;
+ 
+ class InfinispanEmbeddingStoreWithFilterIT extends EmbeddingStoreWithFilteringIT {
+ 
++    private static final Duration TIMEOUT = Duration.ofSeconds(30);
++
+     static InfinispanContainer infinispan = new InfinispanContainer(IMAGE_BASENAME + ":" + Version.getVersion());
+     EmbeddingModel embeddingModel = new AllMiniLmL6V2QuantizedEmbeddingModel();
+     EmbeddingStore<TextSegment> embeddingStore;
+@@ -54,4 +65,78 @@ protected EmbeddingStore<TextSegment> embeddingStore() {
+     protected EmbeddingModel embeddingModel() {
+         return embeddingModel;
+     }
++
++    @Test
++    void should_search_async_with_metadata_filter() {
++        // given
++        List<TextSegment> segments = List.of(
++                TextSegment.from("The sky is blue", new Metadata().put("color", "blue")),
++                TextSegment.from("The grass is green", new Metadata().put("color", "green")),
++                TextSegment.from("Roses are red", new Metadata().put("color", "red")));
++        List<Embedding> embeddings = embeddingModel.embedAll(segments).content();
++        List<String> ids = embeddingStore().addAll(embeddings, segments);
++
++        EmbeddingSearchRequest request = EmbeddingSearchRequest.builder()
++                .queryEmbedding(embeddingModel.embed("What color is the sky?").content())
++                .filter(metadataKey("color").isIn("blue", "green"))
++                .maxResults(1)
++                .build();
++
++        // when-then
++        assertThat(embeddingStore().searchAsync(request))
++                .succeedsWithin(TIMEOUT)
++                .satisfies(result -> {
++                    assertThat(result.matches())
++                            .extracting(EmbeddingMatch::embeddingId)
++                            .containsExactly(ids.get(0));
++                    assertThat(result.matches()).isEqualTo(embeddingStore().search(request).matches());
++                });
++    }
++
++    @Test
++    void should_search_async_with_min_score() {
++        // given
++        List<TextSegment> segments =
++                List.of(TextSegment.from("The sky is blue"), TextSegment.from("Roses are red"));
++        List<Embedding> embeddings = embeddingModel.embedAll(segments).content();
++        List<String> ids = embeddingStore().addAll(embeddings, segments);
++
++        Embedding queryEmbedding = embeddingModel.embed("What color is the sky?").content();
++        List<EmbeddingMatch<TextSegment>> allMatches = embeddingStore()
++                .search(EmbeddingSearchRequest.builder()
++                        .queryEmbedding(queryEmbedding)
++                        .maxResults(2)
++                        .build())
++                .matches();
++        assertThat(allMatches).extracting(EmbeddingMatch::embeddingId).containsExactly(ids.get(0), ids.get(1));
++
++        EmbeddingSearchRequest request = EmbeddingSearchRequest.builder()
++                .queryEmbedding(queryEmbedding)
++                .maxResults(2)
++                .minScore((allMatches.get(0).score() + allMatches.get(1).score()) / 2)
++                .build();
++
++        // when-then
++        assertThat(embeddingStore().searchAsync(request))
++                .succeedsWithin(TIMEOUT)
++                .satisfies(result ->
++                        assertThat(result.matches()).containsExactly(allMatches.get(0)));
++    }
++
++    @Test
++    void should_fail_search_async_through_the_future_when_filter_is_not_supported() {
++        // given
++        EmbeddingSearchRequest request = EmbeddingSearchRequest.builder()
++                .queryEmbedding(embeddingModel.embed("What color is the sky?").content())
++                .filter(metadataKey("color").containsString("blu"))
++                .build();
++
++        // when-then
++        assertThat(embeddingStore().searchAsync(request))
++                .fail
+```
+
+**File**: `langchain4j-infinispan/src/test/java/dev/langchain4j/store/memory/chat/infinispan/InfinispanChatMemoryStoreIT.java` (modified, +101/-0)
+```diff
+@@ -13,10 +13,12 @@
+ import dev.langchain4j.data.message.TextContent;
+ import dev.langchain4j.data.message.ToolExecutionResultMessage;
+ import dev.langchain4j.data.message.UserMessage;
++import java.time.Duration;
+ import java.util.List;
+ import java.util.Map;
+ import org.infinispan.client.hotrod.RemoteCacheManager;
+ import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
++import org.infinispan.client.hotrod.exceptions.RemoteCacheManagerNotStartedException;
+ import org.infinispan.commons.util.Version;
+ import org.infinispan.testcontainers.InfinispanContainer;
+ import org.junit.jupiter.api.AfterAll;
+@@ -26,6 +28,8 @@
+ 
+ class InfinispanChatMemoryStoreIT {
+ 
++    private static final Duration TIMEOUT = Duration.ofSeconds(30);
++
+     static InfinispanContainer infinispan = new InfinispanContainer(IMAGE_BASENAME + ":" + Version.getVersion());
+     InfinispanChatMemoryStore chatMemoryStore;
+ 
+@@ -248,4 +252,101 @@ void should_create_cache_by_default() {
+ 
+         assertThat(remoteCacheManager.getCache("cache-created")).isNotNull();
+     }
++
++    @Test
++    void should_get_messages_async() {
++        List<ChatMessage> messages = List.of(UserMessage.from("Hello async"), AiMessage.from("Hi from async!"));
++
++        chatMemoryStore.updateMessages("async-get", messages);
++
++        assertThat(chatMemoryStore.getMessagesAsync("async-get"))
++                .succeedsWithin(TIMEOUT)
++                .isEqualTo(messages);
++    }
++
++    @Test
++    void should_get_empty_messages_async_for_unknown_id() {
++        assertThat(chatMemoryStore.getMessagesAsync("unknown-async"))
++                .succeedsWithin(TIMEOUT)
++                .isEqualTo(List.of());
++    }
++
++    @Test
++    void should_update_messages_async() {
++        List<ChatMessage> messages = List.of(UserMessage.from("Stored async"));
++
++        assertThat(chatMemoryStore.updateMessagesAsync("async-update", messages))
++                .succeedsWithin(TIMEOUT);
++
++        assertThat(chatMemoryStore.getMessages("async-update")).isEqualTo(messages);
++    }
++
++    @Test
++    void should_delete_messages_async() {
++        chatMemoryStore.updateMessages("async-delete", List.of(UserMessage.from("To be deleted")));
++
++        assertThat(chatMemoryStore.deleteMessagesAsync("async-delete")).succeedsWithin(TIMEOUT);
++
++        assertThat(chatMemoryStore.getMessages("async-delete")).isEmpty();
++    }
++
++    @Test
++    void should_fail_async_methods_through_the_future_when_arguments_are_null() {
++        assertThat(chatMemoryStore.getMessagesAsync(null))
++                .failsWithin(TIMEOUT)
++                .withThrowableThat()
++                .havingCause()
++                .isExactlyInstanceOf(IllegalArgumentException.class)
++                .withMessage("memoryId cannot be null");
++
++        assertThat(chatMemoryStore.updateMessagesAsync(null, List.of()))
++                .failsWithin(TIMEOUT)
++                .withThrowableThat()
++                .havingCause()
++                .isExactlyInstanceOf(IllegalArgumentException.class)
++                .withMessage("memoryId cannot be null");
++
++        assertThat(chatMemoryStore.updateMessagesAsync("async-null-messages", null))
++                .failsWithin(TIMEOUT)
++                .withThrowableThat()
++                .havingCause()
++                .isExactlyInstanceOf(IllegalArgumentException.class)
++                .withMessage("messages cannot be null");
++
++        assertThat(chatMemoryStore.deleteMessagesAsync(null))
++                .failsWithin(TIMEOUT)
++                .withThrowableThat()
++                .havingCause()
++                .isExactlyInstanceOf(IllegalArgumentException.class)
++                .withMessage("memoryId cannot be null");
++    }
++
++    @Test
++    void should_fail_async_methods_through_the_future_when_remote_cache_manager_is_stopped() {
++        ConfigurationBuilder builder = new ConfigurationBuilder();
++        builder.uri(infinispan.getConnectionURI());
++        RemoteCacheManager remoteCacheManager = new RemoteCacheManager(builder.build());
++        InfinispanChatMemoryStore store = InfinispanChatMemoryStore.builder()
++                .remoteCacheManager(remoteCacheManager)
++                .build();
++        remoteCacheManager.stop();
++
++        assertThat(store.getMessagesAsync("stopped"))
++                .failsWithin(TIMEOUT)
++                .withThrowableThat()
++                .havingCause()
++                .isExactlyInstanceOf(RemoteCacheManagerNotStartedException.class);
++
++        assertThat(store.updateMessagesAsync("stopped", List.of(UserMessage.from("Hello"))))
++                .failsWithin(TIMEOUT)
++                .withThrowableThat()
++                .havingCause()
++                .isExactlyInstanceOf(RemoteCacheManagerNotStartedException.class);
++
++        assertThat(store.deleteMessagesAsync("stopped"))
++                .failsWithin(TIMEOUT)
++                .withThrowableThat()
++                .havingCause()
++                .isExactlyInstanceOf(Rem
+```
+
 #### Recent Merged Pull Requests:
+- **PR #7219** (2026-11-20): CI: generate images in the Google ITs only in the JDK 21 nightly and when a Google module changes (@dliubarskyi)
+- **PR #7206** (2026-11-20): Testing: add @deprecated tags to requests() and request() of the old model mocks (@dliubarskyi)
+- **PR #7195** (2026-11-20): Infinispan: async support for embedding search and chat memory store (@karesti)
+- **PR #7193** (2026-11-20): Update dependency commons-logging:commons-logging to v1.4.0 (@renovate[bot])
+- **PR #7192** (2026-11-20): Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.4.3 [SECURITY] (@renovate[bot])
 - **PR #7181** (2026-11-19): Update dependency org.opensearch.client:opensearch-java to v2.26.0 (@renovate[bot])
-- **PR #7167** (2026-11-18): In-process models: warn to load only ONNX model files you trust (@dliubarskyi)
-- **PR #7164** (2026-11-17): Google GenAI TTS IT: transcribe the audio with gemini-3.8-flash (@dliubarskyi)
-- **PR #7163** (2026-11-18): fix(agentic): convert a number to a BigDecimal or BigInteger agent argument (@Ayomipo18)
-- **PR #7159** (2026-11-18): MCP Streamable HTTP: fail on an error status without reading the response body (@dliubarskyi)
-- **PR #7157** (2026-11-19): Update dependency org.jetbrains:annotations to v23.1.0 (@renovate[bot])
 
 ---
 
@@ -1009,13 +1362,13 @@ Source](https://redirect.github.com/JetBrains/java-annotations/compare/23.0.0...
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update dependency org.opensearch.client:opensearch-java to v2.26.0
+## X. Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.4.3 [SECURI
 
 **RULE**:
 When implementing operations in `langchain4j-opensearch/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `802c4d10`: Update dependency org.opensearch.client:opensearch-java to v2.26.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a30ea36b`: Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.4.3 [SECURITY]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-opensearch/pom.xml`.
@@ -1023,27 +1376,17 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        <opensearch-java.version>2.26.0</opensearch-java.version>
-            <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>1.3.5</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents.core5</groupId>
-                <artifactId>httpcore5-h2</artifactId>
-                <version>5.3.6</version>
-            </dependency>
+                <version>5.4.3</version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-        <opensearch-java.version>2.9.0</opensearch-java.version>
+                <version>5.3.6</version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `802c4d10` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a30ea36b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

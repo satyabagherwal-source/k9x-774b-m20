@@ -11658,3 +11658,5 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `262640ff` | Multi-dimensional audit evidence | 2026-11-20T20:15:01.502Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `29eef2ff` | Multi-dimensional audit evidence | 2026-11-20T20:41:41.762Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `8d978b06` | Multi-dimensional audit evidence | 2026-11-20T20:41:44.184Z |
+| `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `b60c6125` | Multi-dimensional audit evidence | 2026-11-20T20:49:36.072Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `9445e92f` | Multi-dimensional audit evidence | 2026-11-20T20:49:46.115Z |

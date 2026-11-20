@@ -11625,3 +11625,5 @@
 | `CYCLE-20261120-4GHM` | `2026-11-20T20:15:01.498Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9634` | Yes (`4e8e8566...`) |
 | `CYCLE-20261120-2R98` | `2026-11-20T20:41:41.756Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9635` | Yes (`c883d286...`) |
 | `CYCLE-20261120-2T4J` | `2026-11-20T20:41:44.179Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9636` | Yes (`c7cc4c5d...`) |
+| `CYCLE-20261120-CX8K` | `2026-11-20T20:49:36.068Z` | `aio-libs/aiohttp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9637` | Yes (`8098073a...`) |
+| `CYCLE-20261120-D4ZJ` | `2026-11-20T20:49:46.111Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9638` | Yes (`aeea712d...`) |

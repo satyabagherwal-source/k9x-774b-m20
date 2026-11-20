@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T20:41:47.932Z",
+  "updated_at": "2026-11-20T20:49:51.117Z",
   "stats": {
-    "total_discovered": 6697,
-    "approved_pending_harvest": 6337,
+    "total_discovered": 6713,
+    "approved_pending_harvest": 6353,
     "harvested_count": 0,
     "rejected_count": 360,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6296,
+      "COMMUNITY_AND_EXPERT": 6311,
       "OFFICIAL_DOCUMENTATION": 230,
       "STANDARDS_AND_SPECIFICATIONS": 119,
       "ENGINEERING_BLOGS": 5,
-      "SECURITY_ADVISORIES": 38,
+      "SECURITY_ADVISORIES": 39,
       "LEGAL_AND_REGULATORY": 2,
       "RESEARCH_AND_ACADEMIA": 7
     }
@@ -144837,6 +144837,358 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
         "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-9BF2DFABC511": {
+      "id": "SRC-9BF2DFABC511",
+      "url": "https://github.com/pypa/virtualenv",
+      "title": "https://github.com/pypa/virtualenv",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:49.566Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-EEB8B4C239C8": {
+      "id": "SRC-EEB8B4C239C8",
+      "url": "https://github.com/pypa/virtualenv/releases",
+      "title": "https://github.com/pypa/virtualenv/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:49.613Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-3193AF611799": {
+      "id": "SRC-3193AF611799",
+      "url": "https://github.com/pypa/virtualenv/blob/main/docs/changelog.rst",
+      "title": "https://github.com/pypa/virtualenv/blob/main/docs/changelog.rst",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:49.658Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-3B97C0B37452": {
+      "id": "SRC-3B97C0B37452",
+      "url": "https://github.com/pypa/virtualenv/compare/21.15.6...21.15.7",
+      "title": "https://github.com/pypa/virtualenv/compare/21.15.6...21.15.7",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:49.701Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-B7A707AC6021": {
+      "id": "SRC-B7A707AC6021",
+      "url": "https://github.com/tox-dev/filelock",
+      "title": "https://github.com/tox-dev/filelock",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:49.744Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-9131AFBDD64E": {
+      "id": "SRC-9131AFBDD64E",
+      "url": "https://github.com/tox-dev/filelock/releases",
+      "title": "https://github.com/tox-dev/filelock/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:49.790Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-D105D00A354A": {
+      "id": "SRC-D105D00A354A",
+      "url": "https://github.com/tox-dev/filelock/blob/main/docs/changelog.rst",
+      "title": "https://github.com/tox-dev/filelock/blob/main/docs/changelog.rst",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:49.833Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-429398E1F924": {
+      "id": "SRC-429398E1F924",
+      "url": "https://github.com/tox-dev/filelock/compare/4.2.10...4.2.11",
+      "title": "https://github.com/tox-dev/filelock/compare/4.2.10...4.2.11",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:49.876Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-737258CE0E87": {
+      "id": "SRC-737258CE0E87",
+      "url": "https://github.com/langchain4j/langchain4j/issues/5918",
+      "title": "https://github.com/langchain4j/langchain4j/issues/5918",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:50.788Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-EF820F735776": {
+      "id": "SRC-EF820F735776",
+      "url": "https://github.com/langchain4j/langchain4j/issues/7121",
+      "title": "https://github.com/langchain4j/langchain4j/issues/7121",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:50.842Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-88B90DA28081": {
+      "id": "SRC-88B90DA28081",
+      "url": "https://hc.apache.org/",
+      "title": "https://hc.apache.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:50.905Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-1A2A49621305": {
+      "id": "SRC-1A2A49621305",
+      "url": "https://redirect.github.com/apache/httpcomponents-core",
+      "title": "https://redirect.github.com/apache/httpcomponents-core",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:50.949Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-8C9E0F2372C9": {
+      "id": "SRC-8C9E0F2372C9",
+      "url": "https://developer.mend.io/api/mc/badges/age/maven/org.apache.httpcomponents.core5:httpcore5-h2/5.4.3?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/maven/org.apache.httpcomponents.core5:httpcore5-h2/5.4.3?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:50.989Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-8A1CAAFCD318": {
+      "id": "SRC-8A1CAAFCD318",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/maven/org.apache.httpcomponents.core5:httpcore5-h2/5.3.6/5.4.3?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/maven/org.apache.httpcomponents.core5:httpcore5-h2/5.3.6/5.4.3?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:51.033Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-482C05DDFDA2": {
+      "id": "SRC-482C05DDFDA2",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-54428",
+      "title": "https://nvd.nist.gov/vuln/detail/CVE-2026-54428",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:51.074Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-834069E73C3F": {
+      "id": "SRC-834069E73C3F",
+      "url": "https://redirect.github.com/advisories/GHSA-v3jc-474w-2wm6",
+      "title": "https://redirect.github.com/advisories/GHSA-v3jc-474w-2wm6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:49:51.117Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
       }
     }
   }

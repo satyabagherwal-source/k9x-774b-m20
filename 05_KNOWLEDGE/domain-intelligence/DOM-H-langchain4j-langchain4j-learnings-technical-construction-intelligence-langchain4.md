@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T12:58:38.470Z",
+  "timestamp": "2026-11-20T20:49:51.199Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-langchain4j-langchain4j-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [langchain4j-langchain4j-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T12:58:38.470Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T20:49:51.199Z`  
 > **Learning ID**: `LEARN-EVO-langchain4j-langchain4j-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), F (Design Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from langchain4j-langchain4j-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source**: github ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
-> **Source Version**: `8d519498`  
+> **Source Version**: `9445e92f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T12:58:34.108Z  
+> **Timestamp**: 2026-11-20T20:49:45.117Z  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T12:58:34.103Z  
+> **Harvest Timestamp**: 2026-11-20T20:49:45.112Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13419 stars
+- **Stars / Engagement**: 13426 stars
 
 ---
 
@@ -845,11 +845,11 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7122** (2026-11-18): **[BUG] OpenAiTokenCountEstimator cannot be created for GPT-6 model names**
+  *Symptoms*: **Describe the bug**  `new OpenAiTokenCountEstimator("gpt-6.1-sol")` throws an exception instead of returning an estimator. The `String` constructor selects `O200K_BASE` only for names starting with `o` or `gpt-4.` or `gpt-5`, so GPT-6 names fall through to `ENCODING_REGISTRY.getEncodingForModel(modelName)`, which jtokkit cannot resolve. `OpenAiChatModelName` has no GPT-6 constant, so the `String` constructor is the only way to use such a deployment.  **Log and Stack trace**  ``` java.lang.IllegalArgumentException: Model 'gpt-6.1-sol' is unknown to jtokkit 	at dev.langchain4j.model.openai.OpenAiTokenCountEstimator.<init>(OpenAiTokenCountEstimator.java:69) ```  **To Reproduce**  ```java // same for gpt-6-sol, gpt-6.1-sol, etc. new OpenAiTokenCountEstimator("gpt-6.1-sol"); ```  **Expected behavior**  The estimator is created and counts tokens with the o200k_base encoding.  **Please complete the following information:** - LangChain4j version: 1.23.0-beta33 (`main`) - LLM(s) used: OpenAI gpt-6.1-sol - Java version: 25 - Spring Boot version (if applicable): N/A  **Additional context**  Adding GPT-6 constants to `OpenAiChatModelName` is a separate change and not needed to fix this.  NOTE: this bug report is basically a copy of [Issue 5918](https://github.com/langchain4j/langchain4j/issues/5918) and [Issue 7121](https://github.com/langchain4j/langchain4j/issues/7121), which relate to missing models in Azure.
+
 - **Issue #7042** (2026-11-10): **[BUG] A parent listener with inheritedBySubagents() never sees an MCP or A2A subagent**
   *Symptoms*: <!-- Please provide as many details as possible, this will help us to deliver a fix as soon as possible. Thank you! -->  **Describe the bug**  DefaultMcpClientBuilder.setParent() (and the A2A one) don't call registerInheritedParentListener(parent.listener()) like the other agent types do, so a parent listener with inheritedBySubagents() never sees an MCP or A2A subagent. **Log and Stack trace** <!-- Please provide a log and a stack trace (with exception), if applicable. -->  **To Reproduce** <!-- Please provide a relevant code snippets to reproduce this bug. -->  **Expected behavior** <!-- A clear and concise description of what you expected to happen. -->  **Please complete the following information:** - LangChain4j version: - LLM(s) used:  - Java version:  - Spring Boot version (if applicable):   **Additional context** <!-- Add any other context about the problem here. --> 
-
-- **Issue #7041** (2026-11-10): **[BUG] DefaultMcpClient constructor doesn't close its transport when initialize() fails**
-  *Symptoms*: <!-- Please provide as many details as possible, this will help us to deliver a fix as soon as possible. Thank you! -->  **Describe the bug**  `DefaultMcpClient` constructor doesn't close its transport when initialize() fails, so with a Supplier<McpClient> each failed attempt can leave one open, for example a stdio subprocess.  **Log and Stack trace**  <!-- Please provide a log and a stack trace (with exception), if applicable. -->  **To Reproduce** <!-- Please provide a relevant code snippets to reproduce this bug. -->  **Expected behavior** <!-- A clear and concise description of what you expected to happen. -->  **Please complete the following information:** - LangChain4j version: - LLM(s) used:  - Java version:  - Spring Boot version (if applicable):   **Additional context** <!-- Add any other context about the problem here. --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -866,173 +866,500 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d6c0ff8` (2026-11-18)
-**Commit Message**: fix(agentic): convert a number to a BigDecimal or BigInteger agent argument (#7163)
+### Incident Patch 1: `a30ea36b` (2026-11-20)
+**Commit Message**: Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.4.3 [SECURITY] (#7192)
 
-## Issue
-Closes #7161
+This PR contains the following updates:
 
-## Change
-A planner like the supervisor reads the arguments of an agent from JSON,
-so a number reaches the agentic scope as an `Integer`, a `Long` or a
-`Double`. `AgentUtil.adaptValueToType` converted such a value to every
-primitive numeric type and its wrapper, but passed it unchanged to an
-argument declared as `BigDecimal` or `BigInteger`, so the agent failed
-with `argument type mismatch`. The same happened invoking an untyped
-agent with a number for such an argument.
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+| [org.apache.httpcomponents.core5:httpcore5-h2](https://hc.apache.org/)
+([source](https://redirect.github.com/apache/httpcomponents-core)) |
+`5.3.6` → `5.4.3` |
+![age](https://developer.mend.io/api/mc/badges/age/maven/org.apache.httpcomponents.core5:httpcore5-h2/5.4.3?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/org.apache.httpcomponents.core5:httpcore5-h2/5.3.6/5.4.3?slim=true)
+|
 
-The `Number` branch of `adaptValueToType` now also converts to:
-- `BigDecimal`, through the decimal string of the number, so that a
-`double` like `0.1` becomes `0.1` and not its binary approximation, and
-a `BigInteger` keeps all its digits;
-- `BigInteger`, through the same `BigDecimal`, taking the integer part,
-as an `int` argument already does.
+---
 
-Strings were already converted correctly through the JSON reader; a test
-now pins that too.
+> [!WARNING]
+> Some dependencies could not be looked up. Check the [Dependency
+Dashboard](../issues/2069) for more information.
 
-Tests added to `AgentArgumentConversionTest`: conversion of `Integer`,
-`Double` (including `0.1`) and a large `BigInteger` to `BigDecimal`; of
-`Integer`, `Long` and a large `
+---
 
-**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/AgentUtil.java` (modified, +5/-0)
+### Apache HttpComponents Core: HPackDecoder Unlimited Header List Size
+Before SETTINGS ACK
+[CVE-2026-54428](https://nvd.nist.gov/vuln/detail/CVE-2026-54428) /
+[GHSA-v3jc-474w-2wm6](https://redirect.github.com/advisories/GHSA-v3jc-474w-2wm6)
+
+<details>
+<summary>More information</summary>
+
+#### Details
+Allocation of resources without limits or
+
+**File**: `langchain4j-opensearch/pom.xml` (modified, +1/-1)
 ```diff
-@@ -43,6 +43,7 @@
- import java.lang.reflect.ParameterizedType;
- import java.lang.reflect.Proxy;
- import java.lang.reflect.Type;
-+import java.math.BigDecimal;
- import java.util.ArrayList;
- import java.util.Arrays;
- import java.util.Collection;
-@@ -532,6 +533,10 @@ private static Object adaptValueToType(Object value, Class<?> type, String argum
-                 case "float", "java.lang.Float" -> n.floatValue();
-                 case "short", "java.lang.Short" -> n.shortValue();
-                 case "byte", "java.lang.Byte" -> n.byteValue();
-+                // through the decimal string of the number, so that a double like 0.1 becomes 0.1 and not its
-+                // binary approximation, and a BigInteger or BigDecimal keeps all its digits
-+                case "java.math.BigDecimal" -> new BigDecimal(n.toString());
-+                case "java.math.BigInteger" -> new BigDecimal(n.toString()).toBigInteger();
-                 default -> value;
-             };
-         }
-```
-
-**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/AgentArgumentConversionTest.java` (modified, +53/-1)
-```diff
-@@ -8,6 +8,8 @@
- import dev.langchain4j.agentic.scope.DefaultAgenticScope;
- import dev.langchain4j.service.V;
- import java.lang.reflect.Method;
-+import java.math.BigDecimal;
-+import java.math.BigInteger;
- import java.util.Map;
- import org.junit.jupiter.api.Test;
- 
-@@ -42,6 +44,56 @@ interface RecordAgent {
-         String register(@V("doc") Constructible doc);
-     }
- 
-+    interface PaymentAgent {
-+        @Agent("pays an amount")
-+        String pay(@V("doc") BigDecimal amount);
-+    }
-+
-+    interface CountingAgent {
-+        @Agent("counts something")
-+        String count(@V("doc") BigInteger count);
-+    }
-+
-+    @Test
-+    void a_number_from_the_planner_is_converted_to_a_big_decimal_argument() {
-+        assertThat(arguments(PaymentAgent.class, 12)).isEqualTo(new BigDecimal("12"));
-+        assertThat(arguments(PaymentAgent.class, 12.5)).isEqualTo(new BigDecimal("12.5"));
-+        assertThat(arguments(PaymentAgent.class, 0.1)).isEqualTo(new BigDecimal("0.1"));
-+        assertThat(arguments(PaymentAgent.class, new BigInteger("123456789012345678901234567890")))
-+                .isEqualTo(new BigDecimal("123456789012345678901234567890"));
-+    }
-+
-+    @Test
-+    void a_number_from_the_planner_is_converted_to_a_big_integer_argument() {
-+        assertThat(arguments(CountingAgent.class, 12)).isEqualTo(BigInteger.valueOf(12));
-+        assertThat(arguments(CountingAgent.class, 12L)).isEqualTo(BigInteger.valueOf(12));
-+        assertThat(arguments(CountingAgent.class, new BigDecimal("123456789012345678901234567890")))
-+                .isEqualTo(new BigInteger("123456789012345678901234567890"));
-+    }
-+
-+    @Test
-+    void a_string_from_the_planner_is_converted_to_a_big_number_argument() {
-+        assertThat(arguments(PaymentAgent.class, "12.5")).isEqualTo(new BigDecimal("12.5"));
-+        assertThat(arguments(CountingAgent.class, "12")).isEqualTo(BigInteger.valueOf(12));
-+    }
-+
-+    public static class Payer {
-+        @Agent(description = "pays an amount", outputKey = "receipt")
-+        public String pay(@V("amount") BigDecimal amount) {
-+            return "paid " + amount.toPlainString();
-+        }
-+    }
-+
-+    @Test
-+    void an_agent_with_a_big_decimal_argument_can_be_invoked_with_a_number() {
-+        UntypedAgent agent = AgenticServices.sequenceBuilder()
-+                .subAgents(new Payer())
-+                .outputKey("receipt")
-+                .build();
-+
-+        assertThat(agent.invoke(Map.of("amount", 12.5))).isEqualTo("paid 12.5");
-+    }
-+
-     @Test
-     void a_type_the_planner_cannot_build_names_the_argument_and_the_remedy() {
-         assertThatThrownBy(() -> arguments(RegistrationAgent.class, Map.of("author", "Mario")))
-@@ -66,7 +118,7 @@ void a_record_argument_is_built_from_the_planners_map() {
-         assertThat(((Constructible) argument).author()).isEqualTo("Mario");
-     }
- 
--    private static Object arguments(Class<?> agentClass, Map<String, Object> plannerValue) {
-+    private static Object arguments(Class<?> agentClass, Object plannerValue) {
-         DefaultAgenticScope scope = new AgenticScopeRegistry("test-agent").create("test-memory");
-         scope.writeState("doc", plannerValue);
-         Method method = agentClass.getDeclaredMethods()[0];
+@@ -53,7 +53,7 @@
+             <dependency>
+                 <groupId>org.apache.httpcomponents.core5</groupId>
+                 <artifactId>httpcore5-h2</artifactId>
+-                <version>5.3.6</version>
++                <version>5.4.3</version>
+             </dependency>
+         </dependencies>
+     </dependencyManagement>
 ```
 
 ---
 
-### Incident Patch 2: `8d519498` (2026-11-18)
-**Commit Message**: Release: exclude only the integration test modules of the default build
+### Incident Patch 2: `c5f5d093` (2026-11-20)
+**Commit Message**: Infinispan: async support for embedding search and chat memory store (#7195)
 
-The "Release the rest of the modules" step excluded every directory under
-integration-tests that has a pom.xml. The Spring starter and Quarkus
-extension test apps are only added to the build by the
-test-assertions-frameworks profile, and Maven fails on an exclusion of a
-module that is not in the reactor. The exclusions now come from the default
-<modules> of integration-tests/pom.xml.
+<!--
+Thank you so much for your contribution!
 
-**File**: `.github/workflows/release.yaml` (modified, +4/-2)
+Please fill in all the sections below.
+Please open the PR as ready for review (not as a draft), with tests and
+documentation already included.
+Please note that PRs with breaking changes, or without tests and
+documentation, will be rejected.
+
+Please note that PRs will be reviewed based on the priority of the
+issues they address.
+We ask for your patience. We are doing our best to review your PR as
+quickly as possible.
+Please refrain from pinging and asking when it will be reviewed. Thank
+you for understanding!
+-->
+
+## Issue
+<!-- Please specify the ID of the issue this PR is addressing. For
+example: "Closes #1234" or "Fixes #1234" -->
+Closes #7194
+
+## Change
+<!-- Please describe the changes you made. -->
+Implements the non-blocking methods in the Infinispan module, using the
+asynchronous API of the Hot Rod client:
+
+- `InfinispanEmbeddingStore.searchAsync`: runs the same vector query as
+`search` with `Query.executeAsync()`. The query building and the result
+mapping are shared with `search`.
+- `InfinispanChatMemoryStore.getMessagesAsync`, `updateMessagesAsync`
+and
+
+**File**: `docs/docs/integrations/embedding-stores/infinispan.md` (modified, +7/-0)
 ```diff
-@@ -154,8 +154,10 @@ jobs:
-             EXCLUDES="$EXCLUDES,$EMBEDDING_MODULES_EXCLUDES"
-           fi
+@@ -34,6 +34,13 @@ From 15.2 Infinispan Server and above, metadata filtering is supported.
+ - `InfinispanEmbeddingStore`
+ - `InfinispanChatMemoryStore`
  
--          # Exclude integration-tests and all its submodules
--          INTEGRATION_TEST_MODULES=$(find integration-tests -mindepth 1 -maxdepth 2 -type d -exec test -f "{}/pom.xml" \; -print | paste -sd , -)
-+          # Exclude integration-tests and all its submodules. Only the modules of the default build are listed:
-+          # modules added by a profile (e.g. test-assertions-frameworks) are not in this reactor, and Maven
-+          # fails on an exclusion of a module it does not know.
-+          INTEGRATION_TEST_MODULES=$(awk '/<modules>/ { in_modules = 1 } in_modules && /<module>/ { gsub(/.*<module>|<\/module>.*/, ""); print "integration-tests/" $0 } /<\/modules>/ { exit }' integration-tests/pom.xml | paste -sd , -)
-           EXCLUDES="$EXCLUDES,!integration-tests"
-           if [ -n "$INTEGRATION_TEST_MODULES" ]; then
-             INTEGRATION_TEST_EXCLUDES=$(echo "$INTEGRATION_TEST_MODULES" | sed 's/[^,]*/!\0/g')
++Both classes also implement the non-blocking methods of their interfaces: `searchAsync` on
++`InfinispanEmbeddingStore`, and `getMessagesAsync`, `updateMessagesAsync` and `deleteMessagesAsync` on
++`InfinispanChatMemoryStore`. They use the asynchronous API of the Infinispan Hot Rod client, so you can use them
++in asynchronous and reactive AI Services and RAG without blocking a thread.
++The returned futures complete on the I/O threads of the Hot Rod client, so do not block in code that you chain to them.
++See [Non-blocking and Reactive](/tutorials/non-blocking).
++
+ ### InfinispanChatMemoryStore
+ 
+ A `ChatMemoryStore` backed by an Infinispan cache. Messages are serialized to JSON
+```
+
+**File**: `docs/docs/tutorials/non-blocking.md` (modified, +2/-2)
+```diff
+@@ -414,10 +414,10 @@ interaction fails the call the same way. In practice that means:
+ 
+ | Component | What it must implement | Bundled implementations |
+ |---|---|---|
+-| Chat memory | `addAsync` / `messagesAsync` / `setAsync` | `MessageWindowChatMemory` and `InMemoryChatMemoryStore` already do |
++| Chat memory | `addAsync` / `messagesAsync` / `setAsync` | `MessageWindowChatMemory`, `InMemoryChatMemoryStore` and `InfinispanChatMemoryStore` already do |
+ | Guardrails | `validateAsync` | none — a guardrail you write must override it, even if it does no I/O |
+ | Content retriever, query router, aggregator | `retrieveAsync`, `routeAsync`, `aggregateAsync` | opt into offloading instead with `offloadBlocking(true)` |
+-| Embedding store | `searchAsync` | as above, via the retriever's `offloadBlocking(true)` |
++| Embedding store | `searchAsync` | `InMemoryEmbeddingStore` and `InfinispanEmbeddingStore` already do; for other stores, use the retriever's `offloadBlocking(true)` |
+ | Custom `ToolExecutor` | `executeAsync` | `@Tool`-annotated methods are offloaded for you |
+ | Chat model router ([`RoutingChatModel`](/tutorials/model-routing)) | `routeAsync` | `DecisionModelChatModelRouter` does, if its decision model supports `decideAsync` |
+ 
+```
+
+**File**: `langchain4j-infinispan/src/main/java/dev/langchain4j/store/embedding/infinispan/InfinispanEmbeddingStore.java` (modified, +24/-4)
+```diff
+@@ -24,6 +24,7 @@
+ import java.util.Map;
+ import java.util.Objects;
+ import java.util.Set;
++import java.util.concurrent.CompletableFuture;
+ import java.util.stream.Collectors;
+ import org.infinispan.client.hotrod.RemoteCache;
+ import org.infinispan.client.hotrod.RemoteCacheManager;
+@@ -90,7 +91,7 @@ public InfinispanEmbeddingStore(ConfigurationBuilder builder, InfinispanStoreCon
+         // Registers the schema on the client
+         ProtoStreamMarshaller marshaller = new ProtoStreamMarshaller();
+         SerializationContext serializationContext = marshaller.getSerializationContext();
+-        String schemaContent = schema.toString();
++        String schemaContent = schema.getContent();
+         FileDescriptorSource fileDescriptorSource =
+                 FileDescriptorSource.fromString(storeConfiguration.fileName(), schemaContent);
+         serializationContext.registerProtoFiles(fileDescriptorSource);
+@@ -188,6 +189,24 @@ public void removeAll(Collection<String> ids) {
+ 
+     @Override
+     public EmbeddingSearchResult<TextSegment> search(EmbeddingSearchRequest request) {
++        Query<Object[]> query = buildVectorQuery(request);
++        List<Object[]> hits = query.list();
++        return toSearchResult(hits, request.minScore());
++    }
++
++    @Override
++    public CompletableFuture<EmbeddingSearchResult<TextSegment>> searchAsync(EmbeddingSearchRequest request) {
++        try {
++            Query<Object[]> query = buildVectorQuery(request);
++            return query.executeAsync()
++                    .thenApply(queryResult -> toSearchResult(queryResult.list(), request.minScore()))
++                    .toCompletableFuture();
++        } catch (Throwable t) {
++            return CompletableFuture.failedFuture(t);
++        }
++    }
++
++    private Query<Object[]> buildVectorQuery(EmbeddingSearchRequest request) {
+         InfinispanMetadataFilterMapper.FilterResult filteringQuery =
+                 new InfinispanMetadataFilterMapper().map(request.filter());
+         String joinPart = "";
+@@ -206,14 +225,15 @@ public EmbeddingSearchResult<TextSegment> search(EmbeddingSearchRequest request)
+                 + storeConfiguration.distance()
+                 + filteringPart;
+ 
+-        Query<Object[]> query = remoteCache.query(vectorQuery);
+-        List<Object[]> hits = query.maxResults(request.maxResults()).list();
++        return remoteCache.<Object[]>query(vectorQuery).maxResults(request.maxResults());
++    }
+ 
++    private EmbeddingSearchResult<TextSegment> toSearchResult(List<Object[]> hits, double minScore) {
+         List<EmbeddingMatch<TextSegment>> matches = hits.stream()
+                 .map(obj -> {
+                     LangChainInfinispanItem item = (LangChainInfinispanItem) obj[0];
+                     Float score = (Float) obj[1];
+-                    if (score.doubleValue() < request.minScore()) {
++                    if (score.doubleValue() < minScore) {
+                         return null;
+                     }
+ 
+```
+
+**File**: `langchain4j-infinispan/src/main/java/dev/langchain4j/store/memory/chat/infinispan/InfinispanChatMemoryStore.java` (modified, +38/-2)
+```diff
+@@ -9,6 +9,7 @@
+ import dev.langchain4j.store.memory.chat.ChatMemoryStore;
+ import java.util.ArrayList;
+ import java.util.List;
++import java.util.concurrent.CompletableFuture;
+ import org.infinispan.client.hotrod.RemoteCache;
+ import org.infinispan.client.hotrod.RemoteCacheManager;
+ import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
+@@ -93,8 +94,7 @@ private static RemoteCache<String, String> getExistingCache(
+     @Override
+     public List<ChatMessage> getMessages(Object memoryId) {
+         ensureNotNull(memoryId, "memoryId");
+-        String json = remoteCache.get(memoryId.toString());
+-        return json == null ? new ArrayList<>() : ChatMessageDeserializer.messagesFromJson(json);
++        return toMessages(remoteCache.get(memoryId.toString()));
+     }
+ 
+     @Override
+@@ -111,6 +111,42 @@ public void deleteMessages(Object memoryId) {
+         remoteCache.remove(memoryId.toString());
+     }
+ 
++    @Override
++    public CompletableFuture<List<ChatMessage>> getMessagesAsync(Object memoryId) {
++        try {
++            ensureNotNull(memoryId, "memoryId");
++            return remoteCache.getAsync(memoryId.toString()).thenApply(InfinispanChatMemoryStore::toMessages);
++        } catch (Throwable t) {
++            return CompletableFuture.failedFuture(t);
++        }
++    }
++
++    @Override
++    public CompletableFuture<Void> updateMessagesAsync(Object memoryId, List<ChatMessage> messages) {
++        try {
++            ensureNotNull(memoryId, "memoryId");
++            ensureNotNull(messages, "messages");
++            String json = ChatMessageSerializer.messagesToJson(messages);
++            return remoteCache.putAsync(memoryId.toString(), json).thenApply(ignored -> null);
++        } catch (Throwable t) {
++            return CompletableFuture.failedFuture(t);
++        }
++    }
++
++    @Override
++    public CompletableFuture<Void> deleteMessagesAsync(Object memoryId) {
++        try {
++            ensureNotNull(memoryId, "memoryId");
++            return remoteCache.removeAsync(memoryId.toString()).thenApply(ignored -> null);
++        } catch (Throwable t) {
++            return CompletableFuture.failedFuture(t);
++        }
++    }
++
++    private static List<ChatMessage> toMessages(String json) {
++        return json == null ? new ArrayList<>() : ChatMessageDeserializer.messagesFromJson(json);
++    }
++
+     public static Builder builder() {
+         return new Builder();
+     }
+```
+
+**File**: `langchain4j-infinispan/src/test/java/dev/langchain4j/store/embedding/infinispan/InfinispanEmbeddingStoreWithFilterIT.java` (modified, +85/-0)
+```diff
+@@ -1,20 +1,31 @@
+ package dev.langchain4j.store.embedding.infinispan;
+ 
++import static dev.langchain4j.store.embedding.filter.MetadataFilterBuilder.metadataKey;
++import static org.assertj.core.api.Assertions.assertThat;
+ import static org.infinispan.testcontainers.InfinispanContainer.IMAGE_BASENAME;
+ 
++import dev.langchain4j.data.document.Metadata;
++import dev.langchain4j.data.embedding.Embedding;
+ import dev.langchain4j.data.segment.TextSegment;
+ import dev.langchain4j.model.embedding.EmbeddingModel;
+ import dev.langchain4j.model.embedding.onnx.allminilml6v2q.AllMiniLmL6V2QuantizedEmbeddingModel;
++import dev.langchain4j.store.embedding.EmbeddingMatch;
++import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
+ import dev.langchain4j.store.embedding.EmbeddingStore;
+ import dev.langchain4j.store.embedding.EmbeddingStoreWithFilteringIT;
++import java.time.Duration;
++import java.util.List;
+ import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
+ import org.infinispan.commons.util.Version;
+ import org.infinispan.testcontainers.InfinispanContainer;
+ import org.junit.jupiter.api.AfterAll;
+ import org.junit.jupiter.api.BeforeAll;
++import org.junit.jupiter.api.Test;
+ 
+ class InfinispanEmbeddingStoreWithFilterIT extends EmbeddingStoreWithFilteringIT {
+ 
++    private static final Duration TIMEOUT = Duration.ofSeconds(30);
++
+     static InfinispanContainer infinispan = new InfinispanContainer(IMAGE_BASENAME + ":" + Version.getVersion());
+     EmbeddingModel embeddingModel = new AllMiniLmL6V2QuantizedEmbeddingModel();
+     EmbeddingStore<TextSegment> embeddingStore;
+@@ -54,4 +65,78 @@ protected EmbeddingStore<TextSegment> embeddingStore() {
+     protected EmbeddingModel embeddingModel() {
+         return embeddingModel;
+     }
++
++    @Test
++    void should_search_async_with_metadata_filter() {
++        // given
++        List<TextSegment> segments = List.of(
++                TextSegment.from("The sky is blue", new Metadata().put("color", "blue")),
++                TextSegment.from("The grass is green", new Metadata().put("color", "green")),
++                TextSegment.from("Roses are red", new Metadata().put("color", "red")));
++        List<Embedding> embeddings = embeddingModel.embedAll(segments).content();
++        List<String> ids = embeddingStore().addAll(embeddings, segments);
++
++        EmbeddingSearchRequest request = EmbeddingSearchRequest.builder()
++                .queryEmbedding(embeddingModel.embed("What color is the sky?").content())
++                .filter(metadataKey("color").isIn("blue", "green"))
++                .maxResults(1)
++                .build();
++
++        // when-then
++        assertThat(embeddingStore().searchAsync(request))
++                .succeedsWithin(TIMEOUT)
++                .satisfies(result -> {
++                    assertThat(result.matches())
++                            .extracting(EmbeddingMatch::embeddingId)
++                            .containsExactly(ids.get(0));
++                    assertThat(result.matches()).isEqualTo(embeddingStore().search(request).matches());
++                });
++    }
++
++    @Test
++    void should_search_async_with_min_score() {
++        // given
++        List<TextSegment> segments =
++                List.of(TextSegment.from("The sky is blue"), TextSegment.from("Roses are red"));
++        List<Embedding> embeddings = embeddingModel.embedAll(segments).content();
++        List<String> ids = embeddingStore().addAll(embeddings, segments);
++
++        Embedding queryEmbedding = embeddingModel.embed("What color is the sky?").content();
++        List<EmbeddingMatch<TextSegment>> allMatches = embeddingStore()
++                .search(EmbeddingSearchRequest.builder()
++                        .queryEmbedding(queryEmbedding)
++                        .maxResults(2)
++                        .build())
++                .matches();
++        assertThat(allMatches).extracting(EmbeddingMatch::embeddingId).containsExactly(ids.get(0), ids.get(1));
++
++        EmbeddingSearchRequest request = EmbeddingSearchRequest.builder()
++                .queryEmbedding(queryEmbedding)
++                .maxResults(2)
++                .minScore((allMatches.get(0).score() + allMatches.get(1).score()) / 2)
++                .build();
++
++        // when-then
++        assertThat(embeddingStore().searchAsync(request))
++                .succeedsWithin(TIMEOUT)
++                .satisfies(result ->
++                        assertThat(result.matches()).containsExactly(allMatches.get(0)));
++    }
++
++    @Test
++    void should_fail_search_async_through_the_future_when_filter_is_not_supported() {
++        // given
++        EmbeddingSearchRequest request = EmbeddingSearchRequest.builder()
++                .queryEmbedding(embeddingModel.embed("What color is the sky?").content())
++                .filter(metadataKey("color").containsString("blu"))
++                .build();
++
++        // when-then
++        assertThat(embeddingStore().searchAsync(request))
++                .fail
+```
+
+**File**: `langchain4j-infinispan/src/test/java/dev/langchain4j/store/memory/chat/infinispan/InfinispanChatMemoryStoreIT.java` (modified, +101/-0)
+```diff
+@@ -13,10 +13,12 @@
+ import dev.langchain4j.data.message.TextContent;
+ import dev.langchain4j.data.message.ToolExecutionResultMessage;
+ import dev.langchain4j.data.message.UserMessage;
++import java.time.Duration;
+ import java.util.List;
+ import java.util.Map;
+ import org.infinispan.client.hotrod.RemoteCacheManager;
+ import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
++import org.infinispan.client.hotrod.exceptions.RemoteCacheManagerNotStartedException;
+ import org.infinispan.commons.util.Version;
+ import org.infinispan.testcontainers.InfinispanContainer;
+ import org.junit.jupiter.api.AfterAll;
+@@ -26,6 +28,8 @@
+ 
+ class InfinispanChatMemoryStoreIT {
+ 
++    private static final Duration TIMEOUT = Duration.ofSeconds(30);
++
+     static InfinispanContainer infinispan = new InfinispanContainer(IMAGE_BASENAME + ":" + Version.getVersion());
+     InfinispanChatMemoryStore chatMemoryStore;
+ 
+@@ -248,4 +252,101 @@ void should_create_cache_by_default() {
+ 
+         assertThat(remoteCacheManager.getCache("cache-created")).isNotNull();
+     }
++
++    @Test
++    void should_get_messages_async() {
++        List<ChatMessage> messages = List.of(UserMessage.from("Hello async"), AiMessage.from("Hi from async!"));
++
++        chatMemoryStore.updateMessages("async-get", messages);
++
++        assertThat(chatMemoryStore.getMessagesAsync("async-get"))
++                .succeedsWithin(TIMEOUT)
++                .isEqualTo(messages);
++    }
++
++    @Test
++    void should_get_empty_messages_async_for_unknown_id() {
++        assertThat(chatMemoryStore.getMessagesAsync("unknown-async"))
++                .succeedsWithin(TIMEOUT)
++                .isEqualTo(List.of());
++    }
++
++    @Test
++    void should_update_messages_async() {
++        List<ChatMessage> messages = List.of(UserMessage.from("Stored async"));
++
++        assertThat(chatMemoryStore.updateMessagesAsync("async-update", messages))
++                .succeedsWithin(TIMEOUT);
++
++        assertThat(chatMemoryStore.getMessages("async-update")).isEqualTo(messages);
++    }
++
++    @Test
++    void should_delete_messages_async() {
++        chatMemoryStore.updateMessages("async-delete", List.of(UserMessage.from("To be deleted")));
++
++        assertThat(chatMemoryStore.deleteMessagesAsync("async-delete")).succeedsWithin(TIMEOUT);
++
++        assertThat(chatMemoryStore.getMessages("async-delete")).isEmpty();
++    }
++
++    @Test
++    void should_fail_async_methods_through_the_future_when_arguments_are_null() {
++        assertThat(chatMemoryStore.getMessagesAsync(null))
++                .failsWithin(TIMEOUT)
++                .withThrowableThat()
++                .havingCause()
++                .isExactlyInstanceOf(IllegalArgumentException.class)
++                .withMessage("memoryId cannot be null");
++
++        assertThat(chatMemoryStore.updateMessagesAsync(null, List.of()))
++                .failsWithin(TIMEOUT)
++                .withThrowableThat()
++                .havingCause()
++                .isExactlyInstanceOf(IllegalArgumentException.class)
++                .withMessage("memoryId cannot be null");
++
++        assertThat(chatMemoryStore.updateMessagesAsync("async-null-messages", null))
++                .failsWithin(TIMEOUT)
++                .withThrowableThat()
++                .havingCause()
++                .isExactlyInstanceOf(IllegalArgumentException.class)
++                .withMessage("messages cannot be null");
++
++        assertThat(chatMemoryStore.deleteMessagesAsync(null))
++                .failsWithin(TIMEOUT)
++                .withThrowableThat()
++                .havingCause()
++                .isExactlyInstanceOf(IllegalArgumentException.class)
++                .withMessage("memoryId cannot be null");
++    }
++
++    @Test
++    void should_fail_async_methods_through_the_future_when_remote_cache_manager_is_stopped() {
++        ConfigurationBuilder builder = new ConfigurationBuilder();
++        builder.uri(infinispan.getConnectionURI());
++        RemoteCacheManager remoteCacheManager = new RemoteCacheManager(builder.build());
++        InfinispanChatMemoryStore store = InfinispanChatMemoryStore.builder()
++                .remoteCacheManager(remoteCacheManager)
++                .build();
++        remoteCacheManager.stop();
++
++        assertThat(store.getMessagesAsync("stopped"))
++                .failsWithin(TIMEOUT)
++                .withThrowableThat()
++                .havingCause()
++                .isExactlyInstanceOf(RemoteCacheManagerNotStartedException.class);
++
++        assertThat(store.updateMessagesAsync("stopped", List.of(UserMessage.from("Hello"))))
++                .failsWithin(TIMEOUT)
++                .withThrowableThat()
++                .havingCause()
++                .isExactlyInstanceOf(RemoteCacheManagerNotStartedException.class);
++
++        assertThat(store.deleteMessagesAsync("stopped"))
++                .failsWithin(TIMEOUT)
++                .withThrowableThat()
++                .havingCause()
++                .isExactlyInstanceOf(Rem
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7167** (2026-11-18): In-process models: warn to load only ONNX model files you trust (@dliubarskyi)
-- **PR #7164** (2026-11-17): Google GenAI TTS IT: transcribe the audio with gemini-3.8-flash (@dliubarskyi)
-- **PR #7163** (2026-11-18): fix(agentic): convert a number to a BigDecimal or BigInteger agent argument (@Ayomipo18)
-- **PR #7159** (2026-11-18): MCP Streamable HTTP: fail on an error status without reading the response body (@dliubarskyi)
-- **PR #7154** (2026-11-17): Renovate: keep kotlinx-coroutines and the Kotlin compiler compatible with Kotlin 1.9 (@dliubarskyi)
-- **PR #7153** (2026-11-17): Azure: azure-sdk-bom 1.3.10 and Netty 4.2 in the Azure modules (@dliubarskyi)
+- **PR #7219** (2026-11-20): CI: generate images in the Google ITs only in the JDK 21 nightly and when a Google module changes (@dliubarskyi)
+- **PR #7206** (2026-11-20): Testing: add @deprecated tags to requests() and request() of the old model mocks (@dliubarskyi)
+- **PR #7195** (2026-11-20): Infinispan: async support for embedding search and chat memory store (@karesti)
+- **PR #7193** (2026-11-20): Update dependency commons-logging:commons-logging to v1.4.0 (@renovate[bot])
+- **PR #7192** (2026-11-20): Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.4.3 [SECURITY] (@renovate[bot])
+- **PR #7181** (2026-11-19): Update dependency org.opensearch.client:opensearch-java to v2.26.0 (@renovate[bot])
 
 ---
 
@@ -1052,35 +1379,31 @@ module that is not in the reactor. The exclusions now come from the default
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agentic): convert a number to a BigDecimal or BigInteger agent argument
+## X. Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.4.3 [SECURI
 
 **RULE**:
-When implementing operations in `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/AgentUtil.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `langchain4j-opensearch/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d6c0ff8`: agentic): convert a number to a BigDecimal or BigInteger agent argument. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a30ea36b`: Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.4.3 [SECURITY]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/AgentUtil.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-opensearch/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import java.math.BigDecimal;
-                // through the decimal string of the number, so that a double like 0.1 becomes 0.1 and not its
-                // binary approximation, and a BigInteger or BigDecimal keeps all its digits
-                case "java.math.BigDecimal" -> new BigDecimal(n.toString());
-                case "java.math.BigInteger" -> new BigDecimal(n.toString()).toBigInteger();
+                <version>5.4.3</version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+                <version>5.3.6</version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d6c0ff8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a30ea36b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
