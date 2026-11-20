@@ -11596,3 +11596,5 @@
 | `CYCLE-20261120-732J` | `2026-11-20T17:29:06.379Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md` | Yes (`74110263...`) |
 | `CYCLE-20261120-74XH` | `2026-11-20T17:29:08.789Z` | `fb55/css-select` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9603` | Yes (`2bf86db4...`) |
 | `CYCLE-20261120-7AZU` | `2026-11-20T17:29:16.650Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9608` | Yes (`2bf92818...`) |
+| `CYCLE-20261120-HJ3S` | `2026-11-20T17:37:13.720Z` | `cheeriojs/dom-serializer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9609` | Yes (`a3545286...`) |
+| `CYCLE-20261120-HQNO` | `2026-11-20T17:37:23.508Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9610` | Yes (`9f60f6f6...`) |

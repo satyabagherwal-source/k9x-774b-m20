@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T15:10:12.535Z",
+  "timestamp": "2026-11-20T17:37:29.271Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-topoteretes-cognee-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [topoteretes-cognee-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T15:10:12.535Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T17:37:29.271Z`  
 > **Learning ID**: `LEARN-EVO-topoteretes-cognee-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source**: github ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
-> **Source Version**: `5870f15d`  
+> **Source Version**: `1961133d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T15:10:07.568Z  
+> **Timestamp**: 2026-11-20T17:37:22.493Z  
 > **Learning ID**: `learn-github-topoteretes-cognee`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T15:10:07.562Z  
+> **Harvest Timestamp**: 2026-11-20T17:37:22.488Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Cognee is the open-source AI memory platform for agents. Give your AI agents persistent long-term memory with small models for free
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 33347 stars
+- **Stars / Engagement**: 33431 stars
 
 ---
 
@@ -228,19 +228,19 @@ __all__ = [
 """Slack request signature verification, on the core webhook verifier.
 
 Copied from cognee.modules.integrations.slack.verify_slack_signature (cognee dev,
-2026-10-27). The HMAC is now :class:`cognee_connectors_core.signatures.HmacVerifier`
+2026-11-12). The HMAC is now :class:`cognee_connectors_core.signatures.HmacVerifier`
 with the ``slack_v0`` scheme, the one ``CONNECTOR`` declares, so the hand-written
 Slack routes and a host serving the generic ``/events`` route verify deliveries the
 same way. The FastAPI dependency that sat next to the check lives in
 :mod:`cognee_connector_slack.cognee_host.verify_slack_signature`.
 
-Every inbound Slack payload — slash commands, Events API, interactivity — is
+Every inbound Slack payload — Events API, interactivity — is
 authenticated by an HMAC over ``v0:{timestamp}:{raw_body}`` keyed with the
 app's signing secret, compared against the ``X-Slack-Signature`` header
 (https://docs.slack.dev/authentication/verifying-requests-from-slack).
 
-The check MUST run over the raw request bytes, before any parsing: slash
-commands arrive form-encoded, and re-serializing a parsed dict changes key
+The check MUST run over the raw request bytes, before any parsing: interactive
+payloads arrive form-encoded, and re-serializing a parsed dict changes key
 order/escaping and breaks the HMAC. Handlers therefore take the verified raw
 body from the host's ``verify_slack_request`` dependency and parse it
 themselves instead of declaring parsed body parameters.
@@ -1550,1008 +1550,89 @@ class DescriptorConnector(Connector):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5870f15d` (2026-11-16)
-**Commit Message**: feat(hermes): Move the Hermes plugin into cognee-integrations/ (SDK-1489) (#6650)
+### Incident Patch 1: `1961133d` (2026-11-20)
+**Commit Message**: docs: Revise the LoCoMo technical report (COG-7552) (#6800)
 
-<!-- .github/pull_request_template.md -->
+Brings the report in line with the GRO-248 review: the answer prompt's
+decline rules and the judge's half-of-the-items rule (and when it
+changed), how the exclusion list was built and what our audit could see,
+both runs of the main configuration by category and with nothing
+excluded, the cognee version behind the runs, and drops claims the
+records don't back, such as the default depth being more economical.
 
-## Description
-
-Moves the Hermes Agent memory plugin (`cognee-integration-hermes-agent`)
-from topoteretes/cognee-integrations into
-`cognee-integrations/integrations/hermes-agent`, the first of the agent
-plugins to move into this repository. The shared conformance case tables
-come along as `cognee-integrations/integrations/conformance/`.
-
-- **Code:** the plugin is the released `hermes-agent-v1.4.3`
-(cognee-integrations@3b2a19b6), byte for byte, except the README (new
-location and release flow), a CHANGELOG note and preamble, `[tool.uv]`
-in its pyproject plus the re-lock, the conformance README's "Copy" note
-and a header comment in `cognee-integrations/pyproject.toml`. Neither
-the cognee sdist nor the wheel includes `cognee-integrations/`.
-- **CI:** `test_integrations.yml` finds plugins by their folders, so a
-moved plugin needs no workflow edit. On a PR it lints, lock-checks and
-tests the changed plugins, and `integrations-tests` is its gate job.
-When dispatched with `live`, it runs each plugin's live round trip
-against a real cognee server and LLM. That tier 
-
-**File**: `.github/workflows/nightly_scheduler.yml` (modified, +75/-0)
+**File**: `cognee/eval_framework/locomo/REPORT.md` (modified, +130/-66)
 ```diff
-@@ -156,3 +156,78 @@ jobs:
-           payload: |
-             channel: ${{ secrets.SLACK_NIGHTLY_CHANNEL_ID }}
-             text: "Nightly Scheduler failed to dispatch Nightly Tests at `${{ steps.pick.outputs.ref }}` — tonight's nightly will not run and will post nothing. ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+@@ -1,118 +1,164 @@
+-# Cognee on LoCoMo - Technical Evaluation Report
++# Benchmarking cognee on LoCoMo - Technical Evaluation Report
 +
-+  # The integrations' live round trip (test_integrations.yml, `live`), every
-+  # evening against dev: plugin fixes land on dev, and main only moves at core
-+  # releases, so main's copy of the plugins would be weeks old. Its own job, so a
-+  # failure here never stops the core nightly above. Skips the Sunday 06:00 cron,
-+  # which would run it a second time that day.
-+  dispatch-integrations:
-+    name: Dispatch the integrations live tier
-+    if: ${{ github.event_name == 'schedule' && github.event.schedule != '0 6 * * 0' }}
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 10
-+    permissions:
-+      contents: read
-+      actions: write
-+    steps:
-+      - name: Note the newest existing integrations run
-+        id: baseline
-+        env:
-+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          GH_REPO: ${{ github.repository }}
-+        run: |
-+          set -euo pipefail
-+          # Before dispatching, so the confirm step below cannot match an older run.
-+          id="$(gh run list --workflow test_integrations.yml --branch dev \
-+                  --event workflow_dispatch --limit 1 \
-+                  --json databaseId --jq '.[0].databaseId // 0')"
-+          echo "id=$id" >> "$GITHUB_OUTPUT"
-+          echo "baseline run id: $id"
-+
-+      - name: Dispatch test_integrations.yml at dev with live
-+        env:
-+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          GH_REPO: ${{ github.repository }}
-+        run: |
-+          set -euo pipefail
-+          # Input values as strings, as the dispatch API documents them; a
-+          # boolean input still arrives as a boolean `inputs.live`.
-+          jq -nc '{ref: "dev", inputs: {live: "true"}}' \
-+          | gh api -X POST \
-+              "repos/$GH_REPO/actions/workflows/test_integrations.yml/dispatches" \
-+              --input -
-+
-+      - name: Confirm a NEW run was created
-+        env:
-+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          GH_REPO: ${{ github.repository }}
-+          BASELINE: ${{ steps.baseline.outputs.id }}
-+        run: |
-+          set -euo pipefail
-+          # The dispatch endpoint answers 204 with no body, so a lost dispatch
-+          # looks like success, and a live tier that never starts posts nothing.
-+          for _ in $(seq 1 12); do
-+            read -r id url <<<"$(gh run list --workflow test_integrations.yml \
-+                  --branch dev --event workflow_dispatch --limit 1 \
-+                  --json databaseId,url --jq '.[0] | "\(.databaseId) \(.url)"' \
-+                  2>/dev/null || echo "0 -")"
-+            if [ "${id:-0}" != "0" ] && [ "${id}" != "${BASELINE}" ]; then
-+              echo "dispatched: $url"
-+              echo "Integrations live tier dispatched at \`dev\`: $url" >> "$GITHUB_STEP_SUMMARY"
-+              exit 0
-+            fi
-+            sleep 5
-+          done
-+          echo "::error::no NEW test_integrations.yml run appeared for dev within 60s"
-+          exit 1
-+
-+      - name: Alert Slack if the dispatch failed
-+        if: ${{ failure() }}
-+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d  # v4.0.0
-+        with:
-+          method: chat.postMessage
-+          token: ${{ secrets.SLACK_BOT_TOKEN }}
-+          payload: |
-+            channel: ${{ secrets.SLACK_INTEGRATIONS_NIGHTLY_CHANNEL_ID }}
-+            text: "Nightly Scheduler failed to dispatch the integrations live tier at `dev` — tonight's live tier will not run and will post nothing. ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-```
-
-**File**: `.github/workflows/pre_test.yml` (modified, +6/-1)
-```diff
-@@ -34,6 +34,11 @@ jobs:
-         if: ${{ !cancelled() }}
-         run: uv sync --extra dev
++*Revised November 19, 2026. This revision describes the answer prompt's decline rules and the judge's partial-credit rule in more detail, including when that rule changed; explains how the exclusion list was built and what our audit could see; reports both runs of the main configuration by category and with nothing excluded; states which cognee version produced the runs; and removes observations we can't back up with hard data, such as the default depth being more economical. Earlier versions are in the repository history.*
  
-+      # The Hermes plugin is excluded: it came from topoteretes/cognee-integrations,
-+      # where these rules did not apply, and catches broad exceptions on purpose so
-+      # a memory failure never crashes the host agent. Each plugin that moves here
-+      # is excluded by its own entry, not by a rule covering all of them.
-+      #
-       # Exception-handling rules are enforced without escape hatch: `--ignore-noqa`
-       # makes a `# noqa` comment on these rules count as a finding, so a silent
-       # `except Exception` has to be fixed (log with traceback, re-raise, or narrow
-@@ -42,7 +47,7 @@ jobs:
-       # Exception raise.
-       - name: Ruff exception-handling rules (strict, noqa ignored)
-         if: ${{ !cancelled() }}
--        run: uv run ruff check . --select BLE001,S110,S112,G201,TRY201,TRY002 --ignore-noqa
-+        run: uv run ruff check . --select BLE001,S110,S112,G201,TRY201,TRY002 --ignore-noqa --extend-exclude cognee-integrations/integrations/hermes-agent
+ ## 1. Introduction
  
-       - name: Ty type check
-         if: ${{ !cancelled() }}
-```
-
-**File**: `.github/workflows/release_hermes_plugin.yml` (added, +146/-0)
-```diff
-@@ -0,0 +1,146 @@
-+name: release_hermes_plugin.yml
-+# Publish the Hermes Agent memory plugin (cognee-integrations/integrations/hermes-agent) to
-+# PyPI as cognee-integration-hermes-agent.
-+#
-+# The plugin versions independently of the cognee library, so, like cognee-mcp,
-+# it has its own workflow and its own tag namespace (hermes-agent-v*). The tag
-+# names are the same as when the plugin lived in topoteretes/cognee-integrations.
-+#
-+# Release flow:
-+#   1. Bump the version in pyproject.toml, plugin.yaml,
-+#      cognee_integration_hermes/_plugin_root/plugin.yaml and the hermes-agent
-+#      entry of cognee-integrations/integrations/inventory.yml (the tests and
-+#      the inventory check verify they match), re-lock, and add a CHANGELOG.md
-+#      section. Merge that to main.
-+#   2. Run this workflow from main. It tests, builds, attests, publishes and
-+#      then tags the released commit hermes-agent-v<version>.
-+#
-+# Auth: PyPI Trusted Publishing only. A PyPI owner of
-+# cognee-integration-hermes-agent has to add a publisher with
-+#   Repository owner: topoteretes
-+#   Repository name:  cognee
-+#   Workflow name:    release_hermes_plugin.yml
-+#   Environment:      (leave blank)
-+# The publisher for topoteretes/cognee-integrations can be removed once the
-+# first release from here is out.
-+on:
-+  workflow_dispatch:
-+
-+# Minimal default permissions (OSSF Scorecard: Token-Permissions). The one job
-+# opts in to exactly what it needs.
-+permissions:
-+  contents: read
-+
-+concurrency:
-+  group: release-hermes-plugin
-+  cancel-in-progress: false
-+
-+jobs:
-+  release-hermes-plugin-pypi:
-+    name: Release cognee-integration-hermes-agent to PyPI from ${{ github.ref_name }}
-+    permissions:
-+      contents: write       # push the hermes-agent-v* tag
-+      id-token: write       # OIDC: Trusted Publishing and signing attestations
-+      attestations: write   # Persist the SLSA build provenance attestation
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 30
-+    env:
-+      TELEMETRY_DISABLED: "1"
-+    defaults:
-+      run:
-+        working-directory: cognee-integrations/integrations/hermes-agent
-+
-+    steps:
-+      - name: Refuse any ref but main
-+        working-directory: .
-+        run: |
-+          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
-+            echo "::error::release_hermes_plugin.yml publishes and tags permanently; run it from main (got ${GITHUB_REF})."
-+            exit 1
-+          fi
-+
-+      - name: Check out ${{ github.ref_name }} at ${{ github.sha }}
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-+        with:
-+          # The commit the run was dispatched on, not the branch head now.
-+          ref: ${{ github.sha }}
-+
-+      - name: Install uv
-+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
-+
-+      - name: Install Python
-+        run: uv python install
-+
-+      - name: Resolve version and tag
-+        id: meta
-+        run: |
-+          VERSION="$(uv version --short)"
-+          TAG="hermes-agent-v${VERSION}"
-+          echo "Releasing cognee-integration-hermes-agent ${VERSION} as ${TAG}"
-+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
-+
-+      - name: Refuse to republish an existing version
-+        env:
-+          VERSION: ${{ steps.meta.outputs.version }}
-+          TAG: ${{ steps.meta.outputs.tag }}
-+        run: |
-+          # PyPI versions are immutable: a second upload of the same version is
-+          # rejected. Fail here, with a message that says what to do, rather
-+          # than at the upload step.
-+          if curl -fsS "https://pypi.org/pypi/cognee-integration-hermes-agent/${VERSION}/json" >/dev/null 2>&1; then
-+            echo "::error::cognee-integration-hermes-agent ${VERSION} is already on PyPI. Bump the version (pyproject.toml, both plugin.yaml files and inventory.yml) and re-lock before releasing."
-+            exit 1
-+          fi
-+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
-+            echo "::error::Tag ${TAG} already exists on origin."
-+            exit 1
-+          fi
-+          echo "${VERSION} is unpublished and ${TAG} is free."
-+
-+      - name: Run the test suite
-+        run: |
-+          uv sync --locked --dev
-+          uv pip install -r local-mode-requirements.txt
-+          uv run --no-sync pytest tests/ -q
-+
-+      - name: Build distributions
-+        run: uv build
-+
-+      - name: Verify distributions were built
-+        run: |
-+          shopt -s nullglob
-+          wheels=(dist/*.whl)
-+          sdists=(dist/*.tar.gz)
-+          if [ "${#wheels[@]}" -ne 1 ] || [ "${#sdists[@]}" -ne 1 ] || \
-+             [ ! -s "${wheels[0]}" ] || [ ! -s "${sdists[0]}" ]; then
-+            echo "::error::Build must produce exactly one nonempty wheel and sdist."
-+            ls -lh dist/ || true
-+            exit 1
-+          fi
-+          ls -lh "${wheels[@]}" "${sdists[@]}"
-+
-+ 
-```
-
-**File**: `.github/workflows/test_integrations.yml` (added, +473/-0)
-```diff
-@@ -0,0 +1,473 @@
-+name: test | integrations
-+# Checks for the agent plugins under cognee-integrations/integrations/: lint, the
-+# lockfile and each plugin's own test suite on every change, and, when dispatched
-+# with `live`, each plugin's live round trip against a real cognee server and LLM.
-+#
-+# Plugins are discovered from their folders (a pyproject.toml makes a Python
-+# plugin), so moving one here needs no edit to this file. A pull request tests
-+# only the plugins it changes, or all of them when it changes something they
-+# share. `integrations-tests` is the one job to require.
-+#
-+# Each plugin declares no cognee dependency (cognee's pins conflict with the
-+# environments the host agents share between plugins). A plugin whose tests
-+# start a local server gets cognee from its local-mode-requirements.txt, the
-+# release its local mode installs: a PyPI release, not this checkout.
-+#
-+# The live tier (tests/test_integration_*.py) needs secrets and spends LLM
-+# tokens, so it runs only on dispatch: nightly_scheduler.yml dispatches it
-+# against dev every evening. It fails when any of those tests skips, so a
-+# missing dependency or key can never pass as green, and `notify` posts every
-+# dispatched run's result, green included, to #nightly-ci-integrations: the
-+# live tier and every other job that run executes, so no failure reports green.
-+#
-+# The case tables in integrations/conformance/ are a copy: the hook plugins in
-+# topoteretes/cognee-integrations generate two of them and test against the
-+# same files there. `conformance-drift` fails when the copy here differs from
-+# upstream main, on pull requests that touch it and on every dispatched run.
-+
-+on:
-+  push:
-+    branches: [ main, dev ]
-+    paths: &paths
-+      - "cognee-integrations/**"
-+      - ".github/workflows/test_integrations.yml"
-+  pull_request:
-+    branches: [ main, dev ]
-+    types: [opened, synchronize, reopened]
-+    paths: *paths
-+  workflow_dispatch:
-+    inputs:
-+      live:
-+        description: "Also run each plugin's live round trip (real cognee server and LLM)"
-+        required: false
-+        type: boolean
-+        default: false
-+
-+permissions:
-+  contents: read
-+
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.live && 'live' || 'checks' }}
-+  # Cancel superseded PR runs, never a push-to-dev or live run.
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-+
-+env:
-+  TELEMETRY_DISABLED: "1"
-+
-+jobs:
-+  detect:
-+    name: Detect integration plugins
-+    runs-on: ubuntu-22.04
-+    outputs:
-+      python: ${{ steps.plugins.outputs.python }}
-+      live: ${{ steps.plugins.outputs.live }}
-+      conformance: ${{ steps.plugins.outputs.conformance }}
-+    steps:
-+      - name: Check out repository
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-+        with:
-+          # The pull request's base commit, to list what it changed.
-+          fetch-depth: 0
-+
-+      - name: List the plugins to test
-+        id: plugins
-+        env:
-+          EVENT: ${{ github.event_name }}
-+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-+        run: |
-+          set -euo pipefail
-+          # On a pull request, test the plugins it changed, or all of them when it
-+          # changed something they share. Everywhere else, test all of them.
-+          # Conformance drift: on pull requests that touch the tables, and on
-+          # dispatched runs (the nightly), never on a push.
-+          all=true
-+          changed=""
-+          conformance=false
-+          if [ "${EVENT}" = "workflow_dispatch" ]; then
-+            conformance=true
-+          fi
-+          if [ "${EVENT}" = "pull_request" ]; then
-+            conformance=true
-+            changed="$(git diff --name-only "${BASE_SHA}...${HEAD_SHA}")"
-+            if ! grep -q -E '^(cognee-integrations/pyproject\.toml|cognee-integrations/integrations/conformance/|\.github/workflows/test_integrations\.yml)' <<<"${changed}"; then
-+              all=false
-+            fi
-+            if ! grep -q '^cognee-integrations/integrations/conformance/' <<<"${changed}"; then
-+              conformance=false
-+            fi
-+          fi
-+
-+          python=()
-+          live=()
-+          cd cognee-integrations/integrations
-+          for dir in */; do
-+            slug="${dir%/}"
-+            case "${slug}" in conformance|tests) continue ;; esac
-+            if [ -f "${slug}/pyproject.toml" ]; then
-+              if [ "${all}" = true ] || grep -q "^cognee-integrations/integrations/${slug}/" <<<"${changed}"; then
-+                python+=("${slug}")
-+              fi
-+              # The live tier runs every plugin that has one, changed or not.
-+              if compgen -G "${slug}/tests/test_integration_*.py" > /dev/null; then
-+                live+=("${slug}")
-+              fi
-+            elif [ -f "${slug}/package.json
-```
-
-**File**: `cognee-integrations/README.md` (added, +94/-0)
-```diff
-@@ -0,0 +1,94 @@
-+# Cognee integrations
-+
-+Plugins that give agent tools persistent memory backed by Cognee. Each plugin
-+is its own package, released on its own schedule.
-+
-+The integrations are moving here from
-+[topoteretes/cognee-integrations](https://github.com/topoteretes/cognee-integrations),
-+one at a time. Until an integration is listed below, its source, docs and
-+releases are still in that repository.
-+
-+## Moved so far
-+
-+<!-- inventory:start -->
-+<!-- Generated by scripts/inventory.py from integrations/inventory.yml; do not edit by hand. -->
-+
-+| Integration | Package | Version | Source | Release |
-+|---|---|---|---|---|
-+| Cognee Memory Plugin for Hermes Agent | [`cognee-integration-hermes-agent`](https://pypi.org/project/cognee-integration-hermes-agent/) | 1.4.3 | [`integrations/hermes-agent`](integrations/hermes-agent) | [`release_hermes_plugin.yml`](../.github/workflows/release_hermes_plugin.yml), tags `hermes-agent-v*` |
-+
-+<!-- inventory:end -->
-+
-+The table is rendered from [`integrations/inventory.yml`](integrations/inventory.yml)
-+by `scripts/inventory.py`, which also checks the inventory against the plugin
-+folders and their manifests.
-+
-+## Layout
-+
-+```
-+cognee-integrations/
-+├── pyproject.toml   Shared lint and test settings for every plugin below
-+├── scripts/         inventory.py: checks the inventory, renders the table above
-+└── integrations/
-+    ├── inventory.yml One entry per plugin below
-+    ├── conformance/ Case tables that every plugin tests against
-+    └── <plugin>/    One folder per plugin, with its own pyproject.toml or
-+                     package.json, tests, README and CHANGELOG
-+```
-+
-+The layout is the same as in topoteretes/cognee-integrations, with this
-+folder in place of that repository's root, so paths inside a plugin keep
-+working when it moves. Everything at that repository's root has a place here:
-+
-+| In topoteretes/cognee-integrations | Here |
-+|---|---|
-+| `integrations/<plugin>/` | `integrations/<plugin>/` |
-+| `integrations/tests/` (the shared hook-plugin suite) | `integrations/tests/` |
-+| `integrations/inventory.yml`, `integrations/CONFIGURATION.md` | `integrations/` |
-+| `scripts/`, `assets/`, `n8n_workflows/` | `scripts/`, `assets/`, `n8n_workflows/` |
-+| `.github/workflows/` | the shared workflows in this repository's `.github/workflows/` |
-+| `reports/` | not moved |
-+| `.claude-plugin/`, `.cursor-plugin/`, `.grok-plugin/`, `.agents/plugins/` | not moved; see [Marketplace plugins](#marketplace-plugins) |
-+
-+`integrations/conformance/` is a copy. Two of its tables are generated from
-+the Claude Code and Codex hook plugins, which are still in
-+topoteretes/cognee-integrations, so that copy is canonical until they move
-+here. `test_integrations.yml` fails when this copy differs from it.
-+
-+## Marketplace plugins
-+
-+The Claude Code, Codex, Cursor and Grok Bot plugins are installed from agent
-+marketplaces, not from a package registry. Their code moves here like the rest.
-+They are distributed through the official listings (the claude.ai Directory,
-+and each agent's own marketplace), pointed at this repository. Nothing is added
-+at this repository's root for them.
-+
-+topoteretes/cognee-integrations keeps only its marketplace manifests, repointed
-+here, for users who added that repository as a marketplace by hand. Once they
-+have moved to the official listings, it is archived.
-+
-+## Moving a plugin
-+
-+1. Copy the plugin folder from topoteretes/cognee-integrations to
-+   `integrations/<plugin>/`, move its entry from that repository's
-+   `integrations/inventory.yml` to `integrations/inventory.yml` here (adding
-+   `path`, `tag_prefix`, `release_workflow` and `moved_from`), and run
-+   `python scripts/inventory.py` to render the table above.
-+2. If it is listed in a marketplace or directory, point that listing at
-+   `topoteretes/cognee` and `cognee-integrations/integrations/<plugin>` first.
-+   The Directory reviews each version, so allow time for that.
-+3. In topoteretes/cognee-integrations, in the same change: replace the plugin
-+   folder with a note pointing here, remove it from that repository's CI and
-+   release workflows, and mark it moved in `integrations/inventory.yml`.
-+4. Triage the CodeQL alerts the move raises on the copied code, and dismiss
-+   the false positives with a reason.
-+
-+## Development and releases
-+
-+Each plugin's README covers its own setup, tests and release steps.
-+`.github/workflows/test_integrations.yml` lints and tests every plugin under
-+`integrations/` that has a `pyproject.toml`, and runs each plugin's live round
-+trip (`tests/test_integration_*.py`) nightly against `dev`, posting every
-+result to `#nightly-ci-integrations` on Slack. It needs no edit when a plugin
-+moves here. Releases are per plugin for now, for example
-+`release_hermes_plugin.yml` for Hermes.
-```
-
-**File**: `cognee-integrations/integrations/conformance/README.md` (added, +173/-0)
-```diff
-@@ -0,0 +1,173 @@
-+> **Copy.** These case tables are shared by every Cognee agent plugin. Only the
-+> Hermes plugin has moved into this repository so far. The canonical tables are
-+> in `integrations/conformance/` of
-+> [topoteretes/cognee-integrations](https://github.com/topoteretes/cognee-integrations):
-+> `recall_text_cases.json` and `capture_policy_cases.json` are generated there
-+> from the hook plugins' `_recall_text.py` and `_capture_policy.py`, and Claude
-+> Code, Codex and OpenClaw test against them there. Change a table there first,
-+> then copy it here; `.github/workflows/test_integrations.yml` fails when the
-+> two differ. The test paths below are paths in that repository, except
-+> hermes-agent's, which are under `cognee-integrations/` here.
-+
-+# Session id sanitization conformance
-+
-+Every Cognee integration turns a native session id into a Cognee session id with
-+the same shape: `{agent}_{native_id}`. Before the native id is used, each
-+integration runs it through a small sanitizer. The rule is:
-+
-+- Keep only the ASCII set `[A-Za-z0-9-_.]`.
-+- Replace every other character with `_`.
-+- Trim leading and trailing `.` and `_`.
-+- Cap the length at 120 characters.
-+
-+`session_id_cases.json` is the single source of truth for that rule. It is a
-+list of `{ "input", "expected", "note" }` cases. Each test loads this file and
-+checks its sanitizer against it. The tests live with the suite that already
-+covers the tree they test, so no integration needs a test project of its own:
-+
-+- claude-code and codex:
-+  `integrations/tests/tests/unit/test_session_id_conformance.py` — the shared
-+  hook-plugin suite, parametrized over both plugin trees.
-+- hermes-agent: `integrations/hermes-agent/tests/test_session_id_conformance.py`
-+- openclaw: `integrations/openclaw/__tests__/unit/test_session_id_conformance.ts`
-+
-+Because every test reads the same file, any implementation that drifts from the
-+rule fails its test. CI runs all of them on every pull request through the
-+existing jobs in `.github/workflows/ci.yml`: the shared suite via `test-python`
-+(`detect-changes` maps a claude-code or codex change onto the `tests` cell) and
-+again under Python 3.9 via `test-hooks-python39`, hermes-agent via `test-python`
-+(it has its own `pyproject.toml`), and openclaw via `test-typescript`, which
-+runs `npm test` as well as the type check.
-+
-+## Note on empty results
-+
-+The table only holds inputs whose sanitized output is not empty. hermes-agent
-+returns `"session"` when the result would be empty, while the others return an
-+empty string. That one case is left out on purpose so the shared table stays
-+identical for all four integrations.
-+
-+# Dataset name sanitization conformance
-+
-+cognee rejects a dataset name that contains a space or a dot
-+(`check_dataset_name`, run on every write: remember, improve, memify and the
-+pipelines). Every integration therefore runs a configured or derived dataset
-+name through a small sanitizer before using it. The rule is deliberately narrow:
-+
-+- Trim surrounding whitespace.
-+- Replace every run of spaces and dots with a single `_`.
-+- If nothing but underscores is left (and the input was not already that),
-+  use the integration's default dataset instead.
-+
-+Nothing else changes. A name the server accepts today (`Foo+Bar`, `héllo`,
-+`_x_`) comes back unchanged, so no user is silently moved to a new, empty
-+dataset. A name that contains a space or a dot never took a write, so rewriting
-+it orphans nothing. The vscode extension's `sanitizeDatasetName` is stricter
-+(`[^A-Za-z0-9_-]` → `_`) because it only cleans names it derives itself.
-+
-+`dataset_name_cases.json` holds `{ "input", "fallback", "expected", "note" }`
-+cases; each test passes `fallback` as the default, so one table serves
-+integrations with different defaults. The tests live next to the session-id ones:
-+
-+- claude-code, codex and antigravity:
-+  `integrations/tests/tests/unit/test_dataset_name_conformance.py`
-+- hermes-agent: `integrations/hermes-agent/tests/test_dataset_name_conformance.py`
-+- openclaw: `integrations/openclaw/__tests__/unit/test_dataset_name_conformance.ts`
-+
-+Where a name is typed explicitly (the dataset-switch commands), an invalid name
-+is refused with the sanitized form as a suggestion instead of being rewritten,
-+so a switch never lands in a dataset the user did not name.
-+
-+# Recall text trimming conformance
-+
-+On cognee 1.6.x a graph recall with `only_context` returns the full prompt the
-+server's own LLM would have received: the conversation history, the question
-+template around the retrieved context, and the `## Active session guidance`
-+block. The hook plugins and openclaw keep only the retrieved context and shrink
-+it the same way, without an LLM:
-+
-+- Find the context by the question marker (`` The question is: `<prompt>` ``)
-+  and the final backtick, or the last `` `\n\n## Active session guidance ``.
-+  Text that does not fit is returned whole and flagged `parsed: false`.
-+- Drop passages w
-```
-
-**File**: `cognee-integrations/integrations/conformance/capture_policy_cases.json` (added, +1568/-0)
-```diff
-@@ -0,0 +1,1568 @@
-+{
-+  "_comment": "Generated by running integrations/claude-code/scripts/_capture_policy.py. tool_cases: expected is true/false, or \"error\" when the policy raises (fail closed). redact_cases: expected output, or error=true when redaction raises.",
-+  "tool_cases": [
-+    {
-+      "note": "default allows any tool",
-+      "env": {},
-+      "tool": "Bash",
-+      "params": {
-+        "command": "ls -la"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "default allows a read of an ordinary file",
-+      "env": {},
-+      "tool": "Read",
-+      "params": {
-+        "file_path": "/project/main.py"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "allow list by name keeps the named tool",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Grep|Glob"
-+      },
-+      "tool": "Grep",
-+      "params": {
-+        "path": "main.py"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "allow list by name drops other tools",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Grep|Glob"
-+      },
-+      "tool": "Read",
-+      "params": {
-+        "path": "main.py"
-+      },
-+      "expected": false
-+    },
-+    {
-+      "note": "allow list glob",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "mcp__*"
-+      },
-+      "tool": "mcp__github__get_issue",
-+      "params": {},
-+      "expected": true
-+    },
-+    {
-+      "note": "allow list glob drops non-matching",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "mcp__*"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "ls"
-+      },
-+      "expected": false
-+    },
-+    {
-+      "note": "allow list as JSON array",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "[\"Read\", \"Bash(git:*)\"]"
-+      },
-+      "tool": "Read",
-+      "params": {
-+        "file_path": "a.py"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "empty JSON array allow list means everything",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "[]"
-+      },
-+      "tool": "Write",
-+      "params": {
-+        "file_path": "a.py"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "an env value starting with [ is read as JSON",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "[RW]*"
-+      },
-+      "tool": "Write",
-+      "params": {
-+        "file_path": "a.py"
-+      },
-+      "expected": "error"
-+    },
-+    {
-+      "note": "glob with character class",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "[\"[RW]*\"]"
-+      },
-+      "tool": "Write",
-+      "params": {
-+        "file_path": "a.py"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "glob with negated character class",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "[\"[!RW]*\"]"
-+      },
-+      "tool": "Write",
-+      "params": {
-+        "file_path": "a.py"
-+      },
-+      "expected": false
-+    },
-+    {
-+      "note": "glob with a range",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "[\"[A-C]*\"]"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "ls"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "glob question mark",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Rea?"
-+      },
-+      "tool": "Read",
-+      "params": {
-+        "file_path": "a.py"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "whitespace around pipe entries is trimmed",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": " Read | Grep "
-+      },
-+      "tool": "Grep",
-+      "params": {},
-+      "expected": true
-+    },
-+    {
-+      "note": "prefix keeps the command",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "git status"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "prefix keeps the bare command",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "git"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "prefix ends on a word boundary",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "gitk --all"
-+      },
-+      "expected": false
-+    },
-+    {
-+      "note": "prefix ignores leading whitespace",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "   git log"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "prefix boundary may be a tab",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "git\tlog"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "compound command counts as its first word",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "cd x && git status"
-+      },
-+      "expected": false
-+    },
-
-```
-
-**File**: `cognee-integrations/integrations/conformance/dataset_name_cases.json` (added, +92/-0)
-```diff
-@@ -0,0 +1,92 @@
-+[
-+  {
-+    "input": "agent_sessions",
-+    "fallback": "agent_sessions",
-+    "expected": "agent_sessions",
-+    "note": "a valid name passes through unchanged"
-+  },
-+  {
-+    "input": "My-Project_2",
-+    "fallback": "agent_sessions",
-+    "expected": "My-Project_2",
-+    "note": "letters, digits, dash and underscore are untouched"
-+  },
-+  {
-+    "input": "Foo+Bar@team",
-+    "fallback": "agent_sessions",
-+    "expected": "Foo+Bar@team",
-+    "note": "characters the server accepts are left alone, so no existing dataset is orphaned"
-+  },
-+  {
-+    "input": "héllo-wörld",
-+    "fallback": "agent_sessions",
-+    "expected": "héllo-wörld",
-+    "note": "non-ASCII letters are accepted by the server and left alone"
-+  },
-+  {
-+    "input": "my project",
-+    "fallback": "agent_sessions",
-+    "expected": "my_project",
-+    "note": "a space becomes an underscore"
-+  },
-+  {
-+    "input": "project-x_2.0",
-+    "fallback": "agent_sessions",
-+    "expected": "project-x_2_0",
-+    "note": "a dot becomes an underscore"
-+  },
-+  {
-+    "input": "team-user-a.b@x.com",
-+    "fallback": "agent_sessions",
-+    "expected": "team-user-a_b@x_com",
-+    "note": "dots inside a derived name (an email user id) are replaced"
-+  },
-+  {
-+    "input": "a . b",
-+    "fallback": "agent_sessions",
-+    "expected": "a_b",
-+    "note": "a run of spaces and dots collapses to one underscore"
-+  },
-+  {
-+    "input": "  padded  ",
-+    "fallback": "agent_sessions",
-+    "expected": "padded",
-+    "note": "surrounding whitespace is trimmed"
-+  },
-+  {
-+    "input": ".hidden",
-+    "fallback": "agent_sessions",
-+    "expected": "_hidden",
-+    "note": "a leading dot becomes an underscore rather than being dropped"
-+  },
-+  {
-+    "input": "_x_",
-+    "fallback": "agent_sessions",
-+    "expected": "_x_",
-+    "note": "existing underscores are not trimmed"
-+  },
-+  {
-+    "input": "___",
-+    "fallback": "agent_sessions",
-+    "expected": "___",
-+    "note": "a valid all-underscore name is kept, not replaced by the fallback"
-+  },
-+  {
-+    "input": "...",
-+    "fallback": "agent_sessions",
-+    "expected": "agent_sessions",
-+    "note": "nothing usable left after replacement falls back to the default"
-+  },
-+  {
-+    "input": "   ",
-+    "fallback": "my-default",
-+    "expected": "my-default",
-+    "note": "a blank name falls back to the integration's own default"
-+  },
-+  {
-+    "input": "",
-+    "fallback": "agent_sessions",
-+    "expected": "agent_sessions",
-+    "note": "an empty name falls back to the default"
-+  }
-+]
+-This report documents our evaluation of Cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used standard Cognee memory components with LoCoMo-specific data formatting, one answer prompt for every question, a fixed retrieval configuration and an LLM judge. The goal was to measure the existing pipeline with a setup that others can inspect and rerun.
++This report documents our evaluation of cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used cognee's existing memory components and built a LoCoMo-specific setup around them: how the conversations are formatted for ingestion, one answer prompt for every question, the retrieval depth and the judge's grading prompt were all developed on the ten conversations we report on. The goal was to measure that pipeline with a setup that others can inspect and rerun.
+ 
+-Cognee answers **91%** of the 1,762 evaluated questions correctly according to the LLM judge, using the hybrid retrieval approach we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and exclude the questions that our audit or an external one found faulty. We also leave out open-domain questions, since this evaluation focuses on memory rather than general knowledge. As is now common for LoCoMo, an LLM judge grades the answers, with a single prompt for all questions; we comment on current judging practices in Section 5.
++cognee answered **~91%** of the 1,762 evaluated questions correctly according to the LLM judge (90.7% and 91.3% in two runs), using the hybrid retriever we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and excluded the questions that our audit or an external one flagged. We also left out open-domain questions, which need knowledge from outside the conversation. As is now common for LoCoMo, an LLM judge grades the answers, with one prompt for all questions; Section 5 compares its rules with those of other published LoCoMo judges.
+ 
+-Section 2 introduces LoCoMo and the parts of Cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses a configuration at the retriever's default depth, how our grading compares with published LoCoMo judges, and the limits of the evaluation. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
++Section 2 introduces LoCoMo and the parts of cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses an additional experiment at the retriever's default depth, how our grading compares with published LoCoMo judges, and what the evaluation doesn't show. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
+ 
+ ## 2. Preliminaries
+ 
+ ### 2.1 LoCoMo
+ 
+-LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) contains 10 conversations between two people, each with 19–32 dated sessions and 369–689 turns, and 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temporal (321), open-domain (96) and adversarial (446). Open-domain questions combine what a speaker said with general knowledge. Adversarial questions cannot be answered from the conversation: the expected response is to say so, and the dataset pairs each with a plausible wrong answer.
++LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) has a public release, `locomo10.json`, with 10 conversations between two people, a subset of the dataset described in the paper. Each conversation has 19–32 dated sessions and 369–689 turns, and the release has 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temp
 ```
 
 ---
 
-### Incident Patch 2: `f5250eab` (2026-11-13)
-**Commit Message**: ci: Report every nightly job to Slack (SDK-1489)
+### Incident Patch 2: `013199f4` (2026-11-19)
+**Commit Message**: docs: Revise the LoCoMo technical report (COG-7552)
 
-A dispatched run also runs the plugin checks, the conformance drift
-check and the inventory check, but the Slack report waited for the live
-tier alone and built its headline from it. A failed drift check or unit
-test posted "green" while the run was red, and since the bot dispatches
-the run, GitHub notified nobody.
+Brings the report in line with the GRO-248 review: the answer prompt's
+decline rules and the judge's half-of-the-items rule (and when it
+changed), how the exclusion list was built and what our audit could see,
+both runs of the main configuration by category and with nothing
+excluded, the cognee version behind the runs, and drops claims the
+records don't back, such as the default depth being more economical.
 
-notify now needs every job of the run, lists each one's result and
-counts it in the headline, so any failure turns the post red.
-
-**File**: `.github/workflows/test_integrations.yml` (modified, +29/-8)
+**File**: `cognee/eval_framework/locomo/REPORT.md` (modified, +130/-66)
 ```diff
-@@ -17,7 +17,8 @@ name: test | integrations
- # tokens, so it runs only on dispatch: nightly_scheduler.yml dispatches it
- # against dev every evening. It fails when any of those tests skips, so a
- # missing dependency or key can never pass as green, and `notify` posts every
--# live run's result, green included, to #nightly-ci-integrations.
-+# dispatched run's result, green included, to #nightly-ci-integrations: the
-+# live tier and every other job that run executes, so no failure reports green.
- #
- # The case tables in integrations/conformance/ are a copy: the hook plugins in
- # topoteretes/cognee-integrations generate two of them and test against the
-@@ -295,9 +296,12 @@ jobs:
-           retention-days: 7
- 
-   notify:
--    name: Slack live report
--    needs: [detect, live]
--    # Every live run, green included: a failure-only report makes a passing
-+    name: Slack nightly report
-+    # Every job a dispatched run executes: a dispatch also runs the plugin checks,
-+    # the conformance drift check and the inventory check, and a report built from
-+    # the live tier alone would post green over any of them failing.
-+    needs: [detect, python-plugin, live, conformance-drift, inventory]
-+    # Every dispatched run, green included: a failure-only report makes a passing
-     # night and a broken notifier look the same. Not on push or PR runs.
-     if: ${{ always() && inputs.live }}
-     runs-on: ubuntu-22.04
-@@ -318,6 +322,9 @@ jobs:
-           PLUGINS: ${{ needs.detect.outputs.live }}
-           DETECT_RESULT: ${{ needs.detect.result }}
-           LIVE_RESULT: ${{ needs.live.result }}
-+          PLUGIN_CHECKS_RESULT: ${{ needs.python-plugin.result }}
-+          CONFORMANCE_RESULT: ${{ needs.conformance-drift.result }}
-+          INVENTORY_RESULT: ${{ needs.inventory.result }}
-           REPORTS: ${{ runner.temp }}/reports
-           REF: ${{ github.ref_name }}
-           TRIGGER: ${{ github.event_name }}
-@@ -333,13 +340,14 @@ jobs:
-           token = os.environ["SLACK_BOT_TOKEN"].strip()
-           channel = os.environ["SLACK_CHANNEL"].strip()
-           if not token or not channel:
--              print("::error::SLACK_BOT_TOKEN / SLACK_INTEGRATIONS_NIGHTLY_CHANNEL_ID are not set; cannot post the live report.")
-+              print("::error::SLACK_BOT_TOKEN / SLACK_INTEGRATIONS_NIGHTLY_CHANNEL_ID are not set; cannot post the nightly report.")
-               sys.exit(1)
- 
-           icons = {
-               "success": ":white_check_mark:",
-               "failure": ":red_circle:",
-               "cancelled": ":octagonal_sign:",
-+              "skipped": ":fast_forward:",
-           }
-           try:
-               plugins = json.loads(os.environ.get("PLUGINS") or "[]")
-@@ -364,14 +372,27 @@ jobs:
-               if status != "success" and not any(t.strip() for t in tests):
-                   lines.append("> no per-test summary — the job likely crashed or timed out; see the run log")
- 
-+          # The other jobs of the run. Skipped means it had nothing to check
-+          # (no plugin, no conformance run) and does not change the headline.
-+          checks = {
-+              "lint and unit tests": os.environ["PLUGIN_CHECKS_RESULT"],
-+              "conformance drift": os.environ["CONFORMANCE_RESULT"],
-+              "inventory": os.environ["INVENTORY_RESULT"],
-+          }
-+          for name, result in checks.items():
-+              result = result or "unknown"
-+              lines.append(f"{icons.get(result, ':white_circle:')} *{name}*: {result}")
-+              if result != "skipped":
-+                  outcomes.add(result)
+@@ -1,118 +1,164 @@
+-# Cognee on LoCoMo - Technical Evaluation Report
++# Benchmarking cognee on LoCoMo - Technical Evaluation Report
 +
-           trigger = os.environ["TRIGGER"]
-           ref = os.environ["REF"]
-           if outcomes == {"success"}:
--              headline = f":large_green_circle: *Integrations live tier green* (`{ref}`, {trigger})"
-+              headline = f":large_green_circle: *Integrations nightly green* (`{ref}`, {trigger})"
-           elif "failure" in outcomes:
--              headline = f":rotating_light: *Integrations live tier failed* (`{ref}`, {trigger})"
-+              headline = f":rotating_light: *Integrations nightly failed* (`{ref}`, {trigger})"
-           else:
--              headline = f":warning: *Integrations live tier incomplete* (`{ref}`, {trigger}) — a plugin was cancelled or not run"
-+              headline = f":warning: *Integrations nightly incomplete* (`{ref}`, {trigger}) — a job was cancelled or not run"
-           text = "\n".join([headline, *lines, f"<{os.environ['RUN_URL']}|Open the run>"])
++*Revised November 19, 2026. This revision describes the answer prompt's decline rules and the judge's partial-credit rule in more detail, including when that rule changed; explains how the exclusion list was built and what our audit could see; reports both runs of the main configuration by category and with nothing excluded; states which cognee version produced the runs; and removes observations we can't back up with hard data, such as the default depth being more economical. Earlier versions are in the repository history.*
  
-           request = urllib.request.Request(
+ ## 1. Introduction
+ 
+-This report documents our evaluation of Cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used standard Cognee memory components with LoCoMo-specific data formatting, one answer prompt for every question, a fixed retrieval configuration and an LLM judge. The goal was to measure the existing pipeline with a setup that others can inspect and rerun.
++This report documents our evaluation of cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used cognee's existing memory components and built a LoCoMo-specific setup around them: how the conversations are formatted for ingestion, one answer prompt for every question, the retrieval depth and the judge's grading prompt were all developed on the ten conversations we report on. The goal was to measure that pipeline with a setup that others can inspect and rerun.
+ 
+-Cognee answers **91%** of the 1,762 evaluated questions correctly according to the LLM judge, using the hybrid retrieval approach we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and exclude the questions that our audit or an external one found faulty. We also leave out open-domain questions, since this evaluation focuses on memory rather than general knowledge. As is now common for LoCoMo, an LLM judge grades the answers, with a single prompt for all questions; we comment on current judging practices in Section 5.
++cognee answered **~91%** of the 1,762 evaluated questions correctly according to the LLM judge (90.7% and 91.3% in two runs), using the hybrid retriever we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and excluded the questions that our audit or an external one flagged. We also left out open-domain questions, which need knowledge from outside the conversation. As is now common for LoCoMo, an LLM judge grades the answers, with one prompt for all questions; Section 5 compares its rules with those of other published LoCoMo judges.
+ 
+-Section 2 introduces LoCoMo and the parts of Cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses a configuration at the retriever's default depth, how our grading compares with published LoCoMo judges, and the limits of the evaluation. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
++Section 2 introduces LoCoMo and the parts of cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses an additional experiment at the retriever's default depth, how our grading compares with published LoCoMo judges, and what the evaluation doesn't show. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
+ 
+ ## 2. Preliminaries
+ 
+ ### 2.1 LoCoMo
+ 
+-LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) contains 10 conversations between two people, each with 19–32 dated sessions and 369–689 turns, and 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temporal (321), open-domain (96) and adversarial (446). Open-domain questions combine what a speaker said with general knowledge. Adversarial questions cannot be answered from the conversation: the expected response is to say so, and the dataset pairs each with a plausible wrong answer.
++LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) has a public release, `locomo10.json`, with 10 conversations between two people, a subset of the dataset described in the paper. Each conversation has 19–32 dated sessions and 369–689 turns, and the release has 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temp
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6737** (closed): dev -> main (@mertzamir)
-- **PR #6718** (closed): feat: resolve issue #5916 - Hackathon [Feature]: Add Polar customer-state, sub (@ademolaaa)
-- **PR #6717** (2026-11-16): docs(guides): rework hybrid decomposition guide, remove dlt column search guide (RES-110) (@ArmagedonFlamer)
-- **PR #6715** (2026-11-13): feat: package standalone Vercel connector (SDK-1568) (@NMZivkovic)
-- **PR #6714** (2026-11-16): perf(pgvector): Store new collections as halfvec, require pgvector 0.7.0 (SDK-651) (@dexters1)
-- **PR #6712** (2026-11-14): perf(pgvector): Build HNSW indexes with 8 links per node (SDK-651) (@dexters1)
+- **PR #6807** (closed): fix(chunks): run the date-hint pass off the event loop (@pazonex)
+- **PR #6806** (2026-11-20): docs(graph): Describe Node neighbours as a copy (SDK-1684) (@dexters1)
+- **PR #6805** (2026-11-20): chore: Change default LLM model to gpt-6-luna (@dexters1)
+- **PR #6801** (2026-11-20): fix(graph): Look up one document's source refs (@dexters1)
+- **PR #6800** (2026-11-20): docs: Revise the LoCoMo technical report (COG-7552) (@goran-radonic)
+- **PR #6799** (closed): docs: Revise the LoCoMo technical report (COG-7552) (@goran-radonic)
 
 ---
 
@@ -2571,58 +1652,38 @@ counts it in the headline, so any failure turns the post red.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hermes): Move the Hermes plugin into cognee-integrations/ (SDK-1489)
+## X. docs: Revise the LoCoMo technical report (COG-7552)
 
 **RULE**:
-When implementing operations in `.github/workflows/nightly_scheduler.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cognee/eval_framework/locomo/REPORT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5870f15d`: hermes): Move the Hermes plugin into cognee-integrations/ (SDK-1489). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1961133d`: docs: Revise the LoCoMo technical report (COG-7552). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nightly_scheduler.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `cognee/eval_framework/locomo/REPORT.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
+# Benchmarking cognee on LoCoMo - Technical Evaluation Report
 
-  # The integrations' live round trip (test_integrations.yml, `live`), every
-  # evening against dev: plugin fixes land on dev, and main only moves at core
-  # releases, so main's copy of the plugins would be weeks old. Its own job, so a
-  # failure here never stops the core nightly above. Skips the Sunday 06:00 cron,
-  # which would run it a second time that day.
-  dispatch-integrations:
-    name: Dispatch the integrations live tier
-    if: ${{ github.event_name == 'schedule' && github.event.schedule != '0 6 * * 0' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: read
-      actions: write
-    steps:
-      - name: Note the newest existing integrations run
-        id: baseline
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          # Before dispatching, so the confirm step below cannot match an older run.
-          id="$(gh run list --workflow test_integrations.yml --branch dev \
-                  --event workflow_dispatch --limit 1 \
-                  --json databaseId --jq '.[0].databaseId // 0')"
-          echo "id=$id" >> "$GITHUB_OUTPUT"
- 
+*Revised November 19, 2026. This revision describes the answer prompt's decline rules and the judge's partial-credit rule in more detail, including when that rule changed; explains how the exclusion list was built and what our audit could see; reports both runs of the main configuration by category and with nothing excluded; states which cognee version produced the runs; and removes observations we can't back up with hard data, such as the default depth being more economical. Earlier versions are in the repository history.*
+This report documents our evaluation of cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used cognee's existing memory components and built a LoCoMo-specific setup around them: how the conversations are formatted for ingestion, one answer prompt for every question, the retrieval depth and the judge's grading prompt were all developed on the ten conversations we report on. The goal was to measure that pipeline with a setup that others can inspect and rerun.
+cognee answered **~91%** of the 1,762 evaluated questions correctly according to the 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+# Cognee on LoCoMo - Technical Evaluation Report
+This report documents our evaluation of Cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used standard Cognee memory components with LoCoMo-specific data formatting, one answer prompt for every question, a fixed retrieval configuration and an LLM judge. The goal was to measure the existing pipeline with a setup that others can inspect and rerun.
+Cognee answers **91%** of the 1,762 evaluated questions correctly according to the LLM judge, using the hybrid retrieval approach we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and exclude the questions that our audit or an external one found faulty. We also leave out open-domain questions, since this evaluation focuses on memory rather than general knowledge. As is now common for LoCoMo, an LLM judge grades the answers, with a single prompt for all questions; we comment on current judging practices in Section 5.
+Section 2 introduces LoCoMo and the parts of Cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5870f15d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1961133d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

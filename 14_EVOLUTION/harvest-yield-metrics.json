@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T17:29:16.660Z",
-  "total_cycles_completed": 11043,
-  "total_learnings_persisted": 11043,
-  "total_rules_promoted": 10399,
+  "last_updated": "2026-11-20T17:37:23.518Z",
+  "total_cycles_completed": 11045,
+  "total_learnings_persisted": 11045,
+  "total_rules_promoted": 10401,
   "history": [
-    {
-      "timestamp": "2026-11-19T18:48:57.550Z",
-      "repository": "openkruise/kruise",
-      "learningId": "learn-github-openkruise-kruise",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T18:49:01.790Z",
-      "repository": "crate/crate",
-      "learningId": "learn-github-crate-crate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T19:11:53.411Z",
       "repository": "datalab-to/indra-ocr",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-20T17:29:16.660Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:37:13.730Z",
+      "repository": "cheeriojs/dom-serializer",
+      "learningId": "learn-github-cheeriojs-dom-serializer",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:37:23.518Z",
+      "repository": "topoteretes/cognee",
+      "learningId": "learn-github-topoteretes-cognee",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

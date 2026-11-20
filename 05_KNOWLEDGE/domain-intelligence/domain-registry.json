@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T17:29:24.459Z",
-  "total_records": 2157,
+  "last_updated": "2026-11-20T17:37:30.515Z",
+  "total_records": 2158,
   "domains": {
     "A": {
       "total": 17,
@@ -1397,7 +1397,7 @@
       ]
     },
     "H": {
-      "total": 503,
+      "total": 504,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1901,7 +1901,8 @@
         "domain_intelligence-technical-construction-intelligence-rocketride-org-rocketride-server-learnings-c",
         "domain_intelligence-technical-construction-intelligence-grpc-grpc-rust-core-invariants",
         "domain_intelligence-technical-construction-intelligence-grpc-grpc-rust-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-defguard-defguard-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-defguard-defguard-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-topoteretes-cognee-learnings-core-invariants"
       ]
     },
     "I": {
@@ -24613,8 +24614,8 @@
       "title": "Technical Construction Intelligence: cheeriojs/dom-serializer Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cheeriojs-dom-serializer-technical-construction-intelligence-cheeriojs-dom-seria.md",
       "repository": "cheeriojs/dom-serializer",
-      "content_hash": "1e5e5473543be88984feb28e68498f92ec00ee02ba8e95e390b1caa85a37cbbc",
-      "created_at": "2026-11-16T20:11:08.238Z"
+      "content_hash": "ba6054cd04ba896982a49bd289cb333a9ba7a894a31e09601261f3d349e20330",
+      "created_at": "2026-11-20T17:37:14.070Z"
     },
     "domain_intelligence-design-intelligence-superhighfives-pika-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-superhighfives-pika-core-invariants",
@@ -24673,8 +24674,8 @@
       "title": "Technical Construction Intelligence: cheeriojs-dom-serializer-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cheeriojs-dom-serializer-learnings-technical-construction-intelligence-cheeriojs.md",
       "repository": "cheeriojs-dom-serializer-learnings",
-      "content_hash": "496bb45b1c0a0216714b49912640ccb3921e6a843ac811c2cda16d289778b3e7",
-      "created_at": "2026-11-16T20:11:47.376Z"
+      "content_hash": "1db0bee422cfbd63eef2ce01479ecfd818cdeac10e5e70cb49102fad8d5219b4",
+      "created_at": "2026-11-20T17:37:28.711Z"
     },
     "domain_intelligence-design-intelligence-superhighfives-pika-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-superhighfives-pika-learnings-core-invariants",
@@ -33287,8 +33288,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "fddc5d1b43bf5e39004659c15556d561af7ba162bef18906fce4af7c55bf240c",
-      "created_at": "2026-11-20T16:42:34.004Z"
+      "content_hash": "f9b521038a5b81b25810f6ad162ba29247f4a002b1aa58946e8bc18efc034c99",
+      "created_at": "2026-11-20T17:37:30.515Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -33383,8 +33384,8 @@
       "title": "Technical Construction Intelligence: topoteretes/cognee Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-topoteretes-cognee-technical-construction-intelligence-topoteretes-cognee-core-i.md",
       "repository": "topoteretes/cognee",
-      "content_hash": "53ce8223ec4fffa0928c6f4652e7b96c18d7587ad6abc289ef579026acc2f8c5",
-      "created_at": "2026-11-19T13:03:12.235Z"
+      "content_hash": "b78b8d198ecde9166e6dfde9a03238b48af4329e868aa05d4f1856d9d2682a59",
+      "created_at": "2026-11-20T17:37:23.864Z"
     },
     "domain_intelligence-technical-construction-intelligence-xevrion-hatchzip-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-xevrion-hatchzip-core-invariants",
@@ -36372,6 +36373,15 @@
       "repository": "provablehq-snarkos-learnings",
       "content_hash": "c006e7885f1a42b71fdedafe43ec17f5ed1fc832e72938e6889414a17ec41e01",
       "created_at": "2026-11-20T17:21:17.992Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-topoteretes-cognee-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-topoteretes-cognee-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: topoteretes-cognee-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-topoteretes-cognee-learnings-technical-construction-intelligence-topoteretes-cog.md",
+      "repository": "topoteretes-cognee-learnings",
+      "content_hash": "e07bf2613b6b91532d4dd2c09d88f2427c3463780f8cb12453e0f9ded8c7160b",
+      "created_at": "2026-11-20T17:37:29.537Z"
     }
   }
 }

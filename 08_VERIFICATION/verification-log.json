@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-8VBW",
-    "timestamp": "2026-11-18T15:35:10.748Z",
-    "repository": "rustls/rustls",
-    "learningId": "learn-github-rustls-rustls",
-    "contentHash": "3fc19016a4a4f609307bae2e9dc6e82e906d8f400aa7eda2e7f49c52df240a39",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-8X2G",
-    "timestamp": "2026-11-18T15:35:13.000Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "495028e18b48be5f87c5ece3bde7d3df281cd238d9d47dda38a1ad6c94e7b38d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-8ZMO",
     "timestamp": "2026-11-18T15:35:16.320Z",
     "repository": "xerj-org/xerj",
@@ -7490,6 +7460,36 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "2bf92818d7692107f1a8d2b9431defae49b4d31397c91e41e5771471ff94341c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-HJ3S",
+    "timestamp": "2026-11-20T17:37:13.720Z",
+    "repository": "cheeriojs/dom-serializer",
+    "learningId": "learn-github-cheeriojs-dom-serializer",
+    "contentHash": "a3545286e341db40da9139574f75f0e3885db410c2cf7c9552ea1a91a138ebe6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-HQNO",
+    "timestamp": "2026-11-20T17:37:23.508Z",
+    "repository": "topoteretes/cognee",
+    "learningId": "learn-github-topoteretes-cognee",
+    "contentHash": "9f60f6f6433828ac7897efce364a147bfa848951c7c02435885a077e48c75d0d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

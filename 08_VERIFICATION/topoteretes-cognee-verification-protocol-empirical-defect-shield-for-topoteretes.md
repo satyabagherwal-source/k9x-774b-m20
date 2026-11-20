@@ -4,22 +4,22 @@
 {
   "source_repository": "topoteretes/cognee",
   "source_url": "https://github.com/topoteretes/cognee",
-  "source_version": "c8a09437",
+  "source_version": "1961133d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T13:03:12.095Z",
+  "timestamp": "2026-11-20T17:37:23.715Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-topoteretes-cognee",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [topoteretes/cognee](https://github.com/topoteretes/cognee) (Revision: `c8a09437`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T13:03:12.095Z`  
+> **Provenance**: Harvested from [topoteretes/cognee](https://github.com/topoteretes/cognee) (Revision: `1961133d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T17:37:23.715Z`  
 > **Learning ID**: `learn-github-topoteretes-cognee`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `topoteretes/cognee` (Commit: `c8a09437`)
+- **Target Repository**: `topoteretes/cognee` (Commit: `1961133d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T13:03:10.804Z  
+> **Harvest Timestamp**: 2026-11-20T17:37:22.488Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Cognee is the open-source AI memory platform for agents. Give your AI agents persistent long-term memory with small models for free
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 33404 stars
+- **Stars / Engagement**: 33431 stars
 
 ---
 
@@ -1536,825 +1536,89 @@ class DescriptorConnector(Connector):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ebd8caba` (2026-11-18)
-**Commit Message**: fix(postgres): Shrink per-dataset pools and bound waits (SDK-1663) (#6787)
+### Incident Patch 1: `1961133d` (2026-11-20)
+**Commit Message**: docs: Revise the LoCoMo technical report (COG-7552) (#6800)
 
-## Description
+Brings the report in line with the GRO-248 review: the answer prompt's
+decline rules and the judge's half-of-the-items rule (and when it
+changed), how the exclusion list was built and what our audit could see,
+both runs of the main configuration by category and with nothing
+excluded, the cognee version behind the runs, and drops claims the
+records don't back, such as the default depth being more economical.
 
-The datasheets nightly on the full Postgres stack failed for the first
-time on main `e6b5b5b9c` (v1.6.9): runs 2 and 3 failed in cognify with
-`TooManyConnectionsError: sorry, too many clients already`
-([job](https://github.com/topoteretes/cognee/actions/runs/44366851571/job/135022793198)).
-
-The pgvector binary write pool from #6672 opens up to `pool_size +
-max_overflow` connections per adapter, next to the adapter's SQLAlchemy
-pool. With the defaults, one dataset's cognify process could open:
-
-| Pool | Before | After |
-|---|---|---|
-| Relational | 40 | 40 |
-| Graph (per dataset) | 22 | 12 |
-| pgvector SQLAlchemy (per dataset) | 22 | 12 |
-| pgvector write pool (per dataset) | 22 | 12 |
-| **Total** | **106** | **76** |
-
-Postgres's default `max_connections` is 100. PR CI's Postgres benchmark
-ingests 20 memories and never gets there; the nightly ingests 164.
-
-Changes:
-- Graph and pgvector per-dataset pool defaults go from 2 + 20 to 2 + 10.
-The write pool follows the pgvector value. `VECTOR_POOL_ARGS` /
-`POOL_ARGS` still override them.
-- Every Postgres pool waits up to 360 s for a free connection
-
-**File**: `.env.template` (modified, +3/-2)
+**File**: `cognee/eval_framework/locomo/REPORT.md` (modified, +130/-66)
 ```diff
-@@ -292,11 +292,12 @@ VECTOR_DATASET_DATABASE_HANDLER="lancedb"
- 
- # Connection pool tuning for PGVector per-dataset engines (JSON).
- # When ENABLE_BACKEND_ACCESS_CONTROL=true each dataset gets its own engine; this controls
--# its pool size independently from POOL_ARGS (default: pool_size=2, max_overflow=20).
-+# its pool size independently from POOL_ARGS (default: pool_size=2, max_overflow=10).
- # Vector writes use a second pool of the same ceiling (pool_size + max_overflow), which
- # opens connections on demand and closes them after 60 s idle, so an adapter can hold
- # up to that many connections twice. Both values must be bounded: pool_size above 0,
--# max_overflow 0 or more.
-+# max_overflow 0 or more. Every Postgres pool, the write pool included, waits up to
-+# pool_timeout seconds for a free connection (default 360) before the call fails.
- #VECTOR_POOL_ARGS='{"pool_size": 2, "max_overflow": 5, "pool_recycle": 1800}'
- 
- # pgvector only: create new collections as this many hash partitions (by id), each
-```
-
-**File**: `cognee/infrastructure/databases/cache/sql/SqlCacheAdapter.py` (modified, +7/-0)
-```diff
-@@ -35,6 +35,9 @@
- )
- from cognee.infrastructure.databases.postgres.deadlock import is_deadlock
- from cognee.infrastructure.databases.relational import get_relational_config
-+from cognee.infrastructure.databases.relational.sqlalchemy.SqlAlchemyAdapter import (
-+    DEFAULT_POOL_TIMEOUT,
-+)
- from cognee.modules.storage.utils import JSONEncoder
- from cognee.shared.logging_utils import get_logger
- 
-@@ -152,6 +155,10 @@ def __init__(
-             # same value must work here — SQLAlchemy itself needs the class.
-             if pool_args.get("poolclass", "").lower() == "nullpool":
-                 pool_args["poolclass"] = NullPool
-+            elif not is_sqlite:
-+                # The Postgres cache waits for a pooled connection as long as cognee's
-+                # other Postgres pools do.
-+                pool_args.setdefault("pool_timeout", DEFAULT_POOL_TIMEOUT)
-             if is_sqlite:
-                 # Concurrency tuning: wait out writer locks instead of failing
-                 # with SQLITE_BUSY when several processes share one cache.db.
-```
-
-**File**: `cognee/infrastructure/databases/graph/postgres_demo/adapter.py` (modified, +6/-3)
-```diff
-@@ -44,6 +44,9 @@
-     get_source_ref_key_from_source_run_ref,
- )
- from cognee.infrastructure.databases.relational import get_relational_config
-+from cognee.infrastructure.databases.relational.sqlalchemy.SqlAlchemyAdapter import (
-+    DEFAULT_POOL_TIMEOUT,
-+)
- from cognee.infrastructure.engine import DataPoint
- from cognee.modules.graph.methods.sanitize_relational_payload import sanitize_relational_payload
- from cognee.modules.storage.utils import JSONEncoder
-@@ -182,17 +185,17 @@ def _select_nodeset_neighbor_ids(
- 
- _DEFAULT_POOL_ARGS = {
-     "pool_size": 2,
--    "max_overflow": 20,  # 22-connection ceiling, PER DATASET
-+    "max_overflow": 10,  # 12-connection ceiling, PER DATASET
-     "pool_pre_ping": True,
-     "pool_recycle": 280,
--    "pool_timeout": 280,
-+    "pool_timeout": DEFAULT_POOL_TIMEOUT,
- }
- 
- 
- def _resolve_engine_args(configured_pool_args) -> dict:
-     """Turn the configured POOL_ARGS into create_async_engine kwargs.
- 
--    Defaults mirror PGVectorAdapter._ACCESS_CONTROL_DEFAULT_POOL_ARGS (2/20),
-+    Defaults mirror PGVectorAdapter._ACCESS_CONTROL_DEFAULT_POOL_ARGS (2/10),
-     NOT SqlAlchemyAdapter's 5/35. Like PGVector's, this engine is created per
-     dataset — the engine-cache key includes graph_database_schema — so its
-     ceiling is multiplied by dataset count, not paid once. dict() handles the
-```
-
-**File**: `cognee/infrastructure/databases/relational/sqlalchemy/SqlAlchemyAdapter.py` (modified, +5/-1)
-```diff
-@@ -31,6 +31,10 @@
- # QueuePool sizing of a server-database engine when POOL_ARGS does not give it.
- DEFAULT_POOL_SIZE = 5
- DEFAULT_MAX_OVERFLOW = 35
-+# Seconds a caller waits for a free connection from any of cognee's Postgres pools
-+# (relational, graph, both pgvector pools, the Postgres session cache) before the
-+# wait raises, when the pool args do not give ``pool_timeout``.
-+DEFAULT_POOL_TIMEOUT = 360
- 
- 
- class SQLAlchemyAdapter:
-@@ -155,7 +159,7 @@ def __init__(
-                 pool_args.setdefault("max_overflow", DEFAULT_MAX_OVERFLOW)
-                 pool_args.setdefault("pool_pre_ping", True)
-                 pool_args.setdefault("pool_recycle", 280)
--                pool_args.setdefault("pool_timeout", 280)
-+                pool_args.setdefault("pool_timeout", DEFAULT_POOL_TIMEOUT)
- 
-             engine_kwargs = {**pool_args}
-             if final_connect_args:
-```
-
-**File**: `cognee/infrastructure/databases/vector/pgvector/PGVectorAdapter.py` (modified, +16/-5)
-```diff
-@@ -48,6 +48,7 @@
- from ...relational.sqlalchemy.SqlAlchemyAdapter import (
-     DEFAULT_MAX_OVERFLOW,
-     DEFAULT_POOL_SIZE,
-+    DEFAULT_POOL_TIMEOUT,
-     SQLAlchemyAdapter,
- )
- from ..embeddings.EmbeddingGateway import EmbeddingGateway
-@@ -64,7 +65,7 @@
- # Lean pool_size limits connection fan-out across datasets (only pool_size connections are
- # retained while idle); the large max_overflow keeps burst headroom, since overflow
- # connections close on release instead of idling.
--_ACCESS_CONTROL_DEFAULT_POOL_ARGS = {"pool_size": 2, "max_overflow": 20}
-+_ACCESS_CONTROL_DEFAULT_POOL_ARGS = {"pool_size": 2, "max_overflow": 10}
- 
- # pgvector builds HNSW indexes on vector up to 2,000 dimensions and on halfvec up to
- # 4,000; a larger embedding stays unindexed and is searched by a full scan.
-@@ -97,7 +98,8 @@
- _PG_MAX_IDENTIFIER_BYTES = 63
- # Vectors reach Postgres in binary through an asyncpg pool of the adapter's own
- # (``_get_write_pool``): connections open on demand and close after this long idle.
--# Its size follows the adapter's pool args (``_write_pool_size``).
-+# Its size follows the adapter's pool args (``_write_pool_size``), and so does how long
-+# a write waits for a free connection (their ``pool_timeout``, as on the SQLAlchemy pool).
- _WRITE_POOL_IDLE_SECONDS = 60.0
- # SQLAlchemy's asyncpg dialect consumes these connect_args itself; asyncpg.connect
- # does not accept them.
-@@ -438,6 +440,9 @@ def __init__(
-         self._write_pool_loop = None
-         self._write_pool_lock = LoopAgnosticLock()
-         self._write_pool_max_size = _write_pool_size(effective_pool_args)
-+        self._write_pool_acquire_timeout = effective_pool_args.get(
-+            "pool_timeout", DEFAULT_POOL_TIMEOUT
-+        )
- 
-         # Reuse engine and sessionmaker if the relational engine is provided and is the same database as the one configured for pgvector
-         db_name1 = make_url(relational_db.db_uri).database
-@@ -672,7 +677,10 @@ async def _write_rows(self, collection_name: str, rows: list[dict], statement_fo
-         statement = statement_for(self._qualified_table(collection_name), collection_name)
-         params = [(row["id"], json.dumps(row["payload"]), row["vector"]) for row in rows]
-         pool = await self._get_write_pool()
--        async with pool.acquire() as connection, connection.transaction():
-+        async with (
-+            pool.acquire(timeout=self._write_pool_acquire_timeout) as connection,
-+            connection.transaction(),
-+        ):
-             await connection.executemany(statement, params)
- 
-     async def embed_data(self, data: list[str]) -> list[list[float]]:
-@@ -1064,7 +1072,7 @@ async def create_data_points(self, collection_name: str, data_points: list[DataP
-         # open across it. A changed row whose text is the same is embedded too, although
-         # the upsert keeps its stored vector.
-         pool = await self._get_write_pool()
--        async with pool.acquire() as connection:
-+        async with pool.acquire(timeout=self._write_pool_acquire_timeout) as connection:
-             missing, changed = await self._classify(connection, collection_name, rows)
-         if not missing and not changed:
-             return
-@@ -1147,7 +1155,10 @@ def params(batch: list[dict]) -> list[tuple]:
- 
-         table = self._qualified_table(collection_name)
-         pool = await self._get_write_pool()
--        async with pool.acquire() as connection, connection.transaction():
-+        async with (
-+            pool.acquire(timeout=self._write_pool_acquire_timeout) as connection,
-+            connection.transaction(),
-+        ):
-             missing, changed = await self._classify(connection, collection_name, rows)
-             # A lost-race row (below) was missing here, so it has a vector too.
-             unembedded = [row for row in missing + changed if str(row["id"]) not in vectors]
-```
-
-**File**: `cognee/tests/unit/infrastructure/databases/graph/test_postgres_adapter.py` (modified, +3/-3)
-```diff
-@@ -254,16 +254,16 @@ async def _probe():
- 
- def test_resolve_engine_args_defaults_match_the_per_dataset_pgvector_sizing():
-     args = _resolve_engine_args({})
--    assert (args["pool_size"], args["max_overflow"]) == (2, 20)
--    assert args["pool_timeout"] == 280  # stock 30s before this change
-+    assert (args["pool_size"], args["max_overflow"]) == (2, 10)
-+    assert args["pool_timeout"] == 360
-     assert args["pool_recycle"] == 280
-     assert args["pool_pre_ping"] is True
-     assert "poolclass" not in args
- 
- 
- def test_resolve_engine_args_honors_configured_pool_args():
-     assert _resolve_engine_args({"pool_size": 7})["pool_size"] == 7
--    assert _resolve_engine_args({"pool_size": 7})["max_overflow"] == 20
-+    assert _resolve_engine_args({"pool_size": 7})["max_overflow"] == 10
- 
- 
- def test_resolve_engine_args_keeps_the_nullpool_escape_hatch():
-```
-
-**File**: `cognee/tests/unit/infrastructure/databases/vector/test_pgvector_pool_lifecycle.py` (modified, +24/-1)
-```diff
-@@ -67,11 +67,34 @@ async def test_close_always_disposes_owned_engine_after_pool_termination(closed)
-         old_loop.close()
- 
- 
-+@pytest.mark.asyncio
-+async def test_write_waits_for_a_connection_only_up_to_the_pool_timeout():
-+    """A write asks the binary write pool for a connection with the adapter's
-+    pool_timeout, so a full pool fails the write instead of waiting forever."""
-+    adapter = object.__new__(PGVectorAdapter)
-+    adapter._write_pool_acquire_timeout = 360
-+    adapter._qualified_table = lambda name: name
-+    connection = SimpleNamespace(transaction=Mock(), executemany=AsyncMock())
-+    connection.transaction.return_value.__aenter__ = AsyncMock()
-+    connection.transaction.return_value.__aexit__ = AsyncMock(return_value=False)
-+    acquired = Mock()
-+    acquired.__aenter__ = AsyncMock(return_value=connection)
-+    acquired.__aexit__ = AsyncMock(return_value=False)
-+    pool = SimpleNamespace(acquire=Mock(return_value=acquired))
-+    adapter._get_write_pool = AsyncMock(return_value=pool)
+@@ -1,118 +1,164 @@
+-# Cognee on LoCoMo - Technical Evaluation Report
++# Benchmarking cognee on LoCoMo - Technical Evaluation Report
 +
-+    await adapter._write_rows(
-+        "c", [{"id": "1", "payload": {}, "vector": [0.0]}], lambda table, name: "SQL"
-+    )
-+
-+    pool.acquire.assert_called_once_with(timeout=360)
-+
-+
- def test_write_pool_ceiling_is_the_sqlalchemy_pools_ceiling():
-     """One setting sizes both pools: pool_size + max_overflow of the adapter's pool args,
-     with the SQLAlchemy adapter's defaults for a key that is not given."""
-     assert _write_pool_size({"pool_size": 3, "max_overflow": 4}) == 7
--    assert _write_pool_size(_ACCESS_CONTROL_DEFAULT_POOL_ARGS) == 22
-+    assert _write_pool_size(_ACCESS_CONTROL_DEFAULT_POOL_ARGS) == 12
-     assert _write_pool_size({}) == 40
-     assert _write_pool_size({"pool_size": 1, "max_overflow": 0, "pool_recycle": 60}) == 1
-     assert _write_pool_size({"poolclass": "nullpool"}) == 40
-```
-
-**File**: `cognee/tests/unit/infrastructure/databases/vector/test_pgvector_write_ordering.py` (modified, +7/-1)
-```diff
-@@ -85,12 +85,17 @@ async def executemany(self, statement, params):
-         self.log.append(("upsert", statement, list(params)))
++*Revised November 19, 2026. This revision describes the answer prompt's decline rules and the judge's partial-credit rule in more detail, including when that rule changed; explains how the exclusion list was built and what our audit could see; reports both runs of the main configuration by category and with nothing excluded; states which cognee version produced the runs; and removes observations we can't back up with hard data, such as the default depth being more economical. Earlier versions are in the repository history.*
  
+ ## 1. Introduction
  
-+_ACQUIRE_TIMEOUT = 360
-+
-+
- class _Pool:
-     def __init__(self, connection):
-         self.connection = connection
+-This report documents our evaluation of Cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used standard Cognee memory components with LoCoMo-specific data formatting, one answer prompt for every question, a fixed retrieval configuration and an LLM judge. The goal was to measure the existing pipeline with a setup that others can inspect and rerun.
++This report documents our evaluation of cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used cognee's existing memory components and built a LoCoMo-specific setup around them: how the conversations are formatted for ingestion, one answer prompt for every question, the retrieval depth and the judge's grading prompt were all developed on the ten conversations we report on. The goal was to measure that pipeline with a setup that others can inspect and rerun.
  
-     @asynccontextmanager
--    async def acquire(self):
-+    async def acquire(self, *, timeout):
-+        # Required: every write must bound its wait for a connection.
-+        assert timeout == _ACQUIRE_TIMEOUT
-         self.connection.events.append("acquire")
-         yield self.connection
-         self.connection.events.append("release")
-@@ -102,6 +107,7 @@ def _adapter(log, schema="", changed=frozenset(), unchanged=frozenset(), events=
-     adapter.schema = schema
-     adapter._write_locks = {}
-     adapter._write_locks_guard = threading.Lock()
-+    adapter._write_pool_acquire_timeout = _ACQUIRE_TIMEOUT
-     adapter.connection = _Connection(log, changed, unchanged, events)
+-Cognee answers **91%** of the 1,762 evaluated questions correctly according to the LLM judge, using the hybrid retrieval approach we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and exclude the questions that our audit or an external one found faulty. We also leave out open-domain questions, since this evaluation focuses on memory rather than general knowledge. As is now common for LoCoMo, an LLM judge grades the answers, with a single prompt for all questions; we comment on current judging practices in Section 5.
++cognee answered **~91%** of the 1,762 evaluated questions correctly according to the LLM judge (90.7% and 91.3% in two runs), using the hybrid retriever we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and excluded the questions that our audit or an external one flagged. We also left out open-domain questions, which need knowledge from outside the conversation. As is now common for LoCoMo, an LLM judge grades the answers, with one prompt for all questions; Section 5 compares its rules with those of other published LoCoMo judges.
  
-     async def has_collection(name):
+-Section 2 introduces LoCoMo and the parts of Cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses a configuration at the retriever's default depth, how our grading compares with published LoCoMo judges, and the limits of the evaluation. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
++Section 2 introduces LoCoMo and the parts of cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses an additional experiment at the retriever's default depth, how our grading compares with published LoCoMo judges, and what the evaluation doesn't show. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
+ 
+ ## 2. Preliminaries
+ 
+ ### 2.1 LoCoMo
+ 
+-LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) contains 10 conversations between two people, each with 19–32 dated sessions and 369–689 turns, and 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temporal (321), open-domain (96) and adversarial (446). Open-domain questions combine what a speaker said with general knowledge. Adversarial questions cannot be answered from the conversation: the expected response is to say so, and the dataset pairs each with a plausible wrong answer.
++LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) has a public release, `locomo10.json`, with 10 conversations between two people, a subset of the dataset described in the paper. Each conversation has 19–32 dated sessions and 369–689 turns, and the release has 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temp
 ```
 
 ---
 
-### Incident Patch 2: `35bab192` (2026-11-18)
-**Commit Message**: fix(postgres): Shrink per-dataset pools and bound waits (SDK-1663)
+### Incident Patch 2: `013199f4` (2026-11-19)
+**Commit Message**: docs: Revise the LoCoMo technical report (COG-7552)
 
-The pgvector binary write pool (#6672) opens up to pool_size +
-max_overflow connections per adapter, next to the adapter's SQLAlchemy
-pool. With the defaults one dataset's cognify could open 106
-connections, past Postgres's default max_connections of 100, and the
-datasheets nightly failed with TooManyConnectionsError.
+Brings the report in line with the GRO-248 review: the answer prompt's
+decline rules and the judge's half-of-the-items rule (and when it
+changed), how the exclusion list was built and what our audit could see,
+both runs of the main configuration by category and with nothing
+excluded, the cognee version behind the runs, and drops claims the
+records don't back, such as the default depth being more economical.
 
-The graph and pgvector per-dataset defaults go from 2 + 20 to 2 + 10
-(worst case 76 for one dataset). Every Postgres pool now waits up to
-360 s for a free connection, the write pool's acquire included, which
-had no timeout and could wait forever.
-
-**File**: `.env.template` (modified, +3/-2)
+**File**: `cognee/eval_framework/locomo/REPORT.md` (modified, +130/-66)
 ```diff
-@@ -292,11 +292,12 @@ VECTOR_DATASET_DATABASE_HANDLER="lancedb"
- 
- # Connection pool tuning for PGVector per-dataset engines (JSON).
- # When ENABLE_BACKEND_ACCESS_CONTROL=true each dataset gets its own engine; this controls
--# its pool size independently from POOL_ARGS (default: pool_size=2, max_overflow=20).
-+# its pool size independently from POOL_ARGS (default: pool_size=2, max_overflow=10).
- # Vector writes use a second pool of the same ceiling (pool_size + max_overflow), which
- # opens connections on demand and closes them after 60 s idle, so an adapter can hold
- # up to that many connections twice. Both values must be bounded: pool_size above 0,
--# max_overflow 0 or more.
-+# max_overflow 0 or more. Every Postgres pool, the write pool included, waits up to
-+# pool_timeout seconds for a free connection (default 360) before the call fails.
- #VECTOR_POOL_ARGS='{"pool_size": 2, "max_overflow": 5, "pool_recycle": 1800}'
- 
- # pgvector only: create new collections as this many hash partitions (by id), each
-```
-
-**File**: `cognee/infrastructure/databases/cache/sql/SqlCacheAdapter.py` (modified, +7/-0)
-```diff
-@@ -35,6 +35,9 @@
- )
- from cognee.infrastructure.databases.postgres.deadlock import is_deadlock
- from cognee.infrastructure.databases.relational import get_relational_config
-+from cognee.infrastructure.databases.relational.sqlalchemy.SqlAlchemyAdapter import (
-+    DEFAULT_POOL_TIMEOUT,
-+)
- from cognee.modules.storage.utils import JSONEncoder
- from cognee.shared.logging_utils import get_logger
- 
-@@ -152,6 +155,10 @@ def __init__(
-             # same value must work here — SQLAlchemy itself needs the class.
-             if pool_args.get("poolclass", "").lower() == "nullpool":
-                 pool_args["poolclass"] = NullPool
-+            elif not is_sqlite:
-+                # The Postgres cache waits for a pooled connection as long as cognee's
-+                # other Postgres pools do.
-+                pool_args.setdefault("pool_timeout", DEFAULT_POOL_TIMEOUT)
-             if is_sqlite:
-                 # Concurrency tuning: wait out writer locks instead of failing
-                 # with SQLITE_BUSY when several processes share one cache.db.
-```
-
-**File**: `cognee/infrastructure/databases/graph/postgres_demo/adapter.py` (modified, +6/-3)
-```diff
-@@ -44,6 +44,9 @@
-     get_source_ref_key_from_source_run_ref,
- )
- from cognee.infrastructure.databases.relational import get_relational_config
-+from cognee.infrastructure.databases.relational.sqlalchemy.SqlAlchemyAdapter import (
-+    DEFAULT_POOL_TIMEOUT,
-+)
- from cognee.infrastructure.engine import DataPoint
- from cognee.modules.graph.methods.sanitize_relational_payload import sanitize_relational_payload
- from cognee.modules.storage.utils import JSONEncoder
-@@ -182,17 +185,17 @@ def _select_nodeset_neighbor_ids(
- 
- _DEFAULT_POOL_ARGS = {
-     "pool_size": 2,
--    "max_overflow": 20,  # 22-connection ceiling, PER DATASET
-+    "max_overflow": 10,  # 12-connection ceiling, PER DATASET
-     "pool_pre_ping": True,
-     "pool_recycle": 280,
--    "pool_timeout": 280,
-+    "pool_timeout": DEFAULT_POOL_TIMEOUT,
- }
- 
- 
- def _resolve_engine_args(configured_pool_args) -> dict:
-     """Turn the configured POOL_ARGS into create_async_engine kwargs.
- 
--    Defaults mirror PGVectorAdapter._ACCESS_CONTROL_DEFAULT_POOL_ARGS (2/20),
-+    Defaults mirror PGVectorAdapter._ACCESS_CONTROL_DEFAULT_POOL_ARGS (2/10),
-     NOT SqlAlchemyAdapter's 5/35. Like PGVector's, this engine is created per
-     dataset — the engine-cache key includes graph_database_schema — so its
-     ceiling is multiplied by dataset count, not paid once. dict() handles the
-```
-
-**File**: `cognee/infrastructure/databases/relational/sqlalchemy/SqlAlchemyAdapter.py` (modified, +5/-1)
-```diff
-@@ -31,6 +31,10 @@
- # QueuePool sizing of a server-database engine when POOL_ARGS does not give it.
- DEFAULT_POOL_SIZE = 5
- DEFAULT_MAX_OVERFLOW = 35
-+# Seconds a caller waits for a free connection from any of cognee's Postgres pools
-+# (relational, graph, both pgvector pools, the Postgres session cache) before the
-+# wait raises, when the pool args do not give ``pool_timeout``.
-+DEFAULT_POOL_TIMEOUT = 360
- 
- 
- class SQLAlchemyAdapter:
-@@ -155,7 +159,7 @@ def __init__(
-                 pool_args.setdefault("max_overflow", DEFAULT_MAX_OVERFLOW)
-                 pool_args.setdefault("pool_pre_ping", True)
-                 pool_args.setdefault("pool_recycle", 280)
--                pool_args.setdefault("pool_timeout", 280)
-+                pool_args.setdefault("pool_timeout", DEFAULT_POOL_TIMEOUT)
- 
-             engine_kwargs = {**pool_args}
-             if final_connect_args:
-```
-
-**File**: `cognee/infrastructure/databases/vector/pgvector/PGVectorAdapter.py` (modified, +16/-5)
-```diff
-@@ -48,6 +48,7 @@
- from ...relational.sqlalchemy.SqlAlchemyAdapter import (
-     DEFAULT_MAX_OVERFLOW,
-     DEFAULT_POOL_SIZE,
-+    DEFAULT_POOL_TIMEOUT,
-     SQLAlchemyAdapter,
- )
- from ..embeddings.EmbeddingGateway import EmbeddingGateway
-@@ -64,7 +65,7 @@
- # Lean pool_size limits connection fan-out across datasets (only pool_size connections are
- # retained while idle); the large max_overflow keeps burst headroom, since overflow
- # connections close on release instead of idling.
--_ACCESS_CONTROL_DEFAULT_POOL_ARGS = {"pool_size": 2, "max_overflow": 20}
-+_ACCESS_CONTROL_DEFAULT_POOL_ARGS = {"pool_size": 2, "max_overflow": 10}
- 
- # pgvector builds HNSW indexes on vector up to 2,000 dimensions and on halfvec up to
- # 4,000; a larger embedding stays unindexed and is searched by a full scan.
-@@ -97,7 +98,8 @@
- _PG_MAX_IDENTIFIER_BYTES = 63
- # Vectors reach Postgres in binary through an asyncpg pool of the adapter's own
- # (``_get_write_pool``): connections open on demand and close after this long idle.
--# Its size follows the adapter's pool args (``_write_pool_size``).
-+# Its size follows the adapter's pool args (``_write_pool_size``), and so does how long
-+# a write waits for a free connection (their ``pool_timeout``, as on the SQLAlchemy pool).
- _WRITE_POOL_IDLE_SECONDS = 60.0
- # SQLAlchemy's asyncpg dialect consumes these connect_args itself; asyncpg.connect
- # does not accept them.
-@@ -438,6 +440,9 @@ def __init__(
-         self._write_pool_loop = None
-         self._write_pool_lock = LoopAgnosticLock()
-         self._write_pool_max_size = _write_pool_size(effective_pool_args)
-+        self._write_pool_acquire_timeout = effective_pool_args.get(
-+            "pool_timeout", DEFAULT_POOL_TIMEOUT
-+        )
- 
-         # Reuse engine and sessionmaker if the relational engine is provided and is the same database as the one configured for pgvector
-         db_name1 = make_url(relational_db.db_uri).database
-@@ -672,7 +677,10 @@ async def _write_rows(self, collection_name: str, rows: list[dict], statement_fo
-         statement = statement_for(self._qualified_table(collection_name), collection_name)
-         params = [(row["id"], json.dumps(row["payload"]), row["vector"]) for row in rows]
-         pool = await self._get_write_pool()
--        async with pool.acquire() as connection, connection.transaction():
-+        async with (
-+            pool.acquire(timeout=self._write_pool_acquire_timeout) as connection,
-+            connection.transaction(),
-+        ):
-             await connection.executemany(statement, params)
- 
-     async def embed_data(self, data: list[str]) -> list[list[float]]:
-@@ -1064,7 +1072,7 @@ async def create_data_points(self, collection_name: str, data_points: list[DataP
-         # open across it. A changed row whose text is the same is embedded too, although
-         # the upsert keeps its stored vector.
-         pool = await self._get_write_pool()
--        async with pool.acquire() as connection:
-+        async with pool.acquire(timeout=self._write_pool_acquire_timeout) as connection:
-             missing, changed = await self._classify(connection, collection_name, rows)
-         if not missing and not changed:
-             return
-@@ -1147,7 +1155,10 @@ def params(batch: list[dict]) -> list[tuple]:
- 
-         table = self._qualified_table(collection_name)
-         pool = await self._get_write_pool()
--        async with pool.acquire() as connection, connection.transaction():
-+        async with (
-+            pool.acquire(timeout=self._write_pool_acquire_timeout) as connection,
-+            connection.transaction(),
-+        ):
-             missing, changed = await self._classify(connection, collection_name, rows)
-             # A lost-race row (below) was missing here, so it has a vector too.
-             unembedded = [row for row in missing + changed if str(row["id"]) not in vectors]
-```
-
-**File**: `cognee/tests/unit/infrastructure/databases/graph/test_postgres_adapter.py` (modified, +3/-3)
-```diff
-@@ -254,16 +254,16 @@ async def _probe():
- 
- def test_resolve_engine_args_defaults_match_the_per_dataset_pgvector_sizing():
-     args = _resolve_engine_args({})
--    assert (args["pool_size"], args["max_overflow"]) == (2, 20)
--    assert args["pool_timeout"] == 280  # stock 30s before this change
-+    assert (args["pool_size"], args["max_overflow"]) == (2, 10)
-+    assert args["pool_timeout"] == 360
-     assert args["pool_recycle"] == 280
-     assert args["pool_pre_ping"] is True
-     assert "poolclass" not in args
- 
- 
- def test_resolve_engine_args_honors_configured_pool_args():
-     assert _resolve_engine_args({"pool_size": 7})["pool_size"] == 7
--    assert _resolve_engine_args({"pool_size": 7})["max_overflow"] == 20
-+    assert _resolve_engine_args({"pool_size": 7})["max_overflow"] == 10
- 
- 
- def test_resolve_engine_args_keeps_the_nullpool_escape_hatch():
-```
-
-**File**: `cognee/tests/unit/infrastructure/databases/vector/test_pgvector_pool_lifecycle.py` (modified, +24/-1)
-```diff
-@@ -67,11 +67,34 @@ async def test_close_always_disposes_owned_engine_after_pool_termination(closed)
-         old_loop.close()
- 
- 
-+@pytest.mark.asyncio
-+async def test_write_waits_for_a_connection_only_up_to_the_pool_timeout():
-+    """A write asks the binary write pool for a connection with the adapter's
-+    pool_timeout, so a full pool fails the write instead of waiting forever."""
-+    adapter = object.__new__(PGVectorAdapter)
-+    adapter._write_pool_acquire_timeout = 360
-+    adapter._qualified_table = lambda name: name
-+    connection = SimpleNamespace(transaction=Mock(), executemany=AsyncMock())
-+    connection.transaction.return_value.__aenter__ = AsyncMock()
-+    connection.transaction.return_value.__aexit__ = AsyncMock(return_value=False)
-+    acquired = Mock()
-+    acquired.__aenter__ = AsyncMock(return_value=connection)
-+    acquired.__aexit__ = AsyncMock(return_value=False)
-+    pool = SimpleNamespace(acquire=Mock(return_value=acquired))
-+    adapter._get_write_pool = AsyncMock(return_value=pool)
+@@ -1,118 +1,164 @@
+-# Cognee on LoCoMo - Technical Evaluation Report
++# Benchmarking cognee on LoCoMo - Technical Evaluation Report
 +
-+    await adapter._write_rows(
-+        "c", [{"id": "1", "payload": {}, "vector": [0.0]}], lambda table, name: "SQL"
-+    )
-+
-+    pool.acquire.assert_called_once_with(timeout=360)
-+
-+
- def test_write_pool_ceiling_is_the_sqlalchemy_pools_ceiling():
-     """One setting sizes both pools: pool_size + max_overflow of the adapter's pool args,
-     with the SQLAlchemy adapter's defaults for a key that is not given."""
-     assert _write_pool_size({"pool_size": 3, "max_overflow": 4}) == 7
--    assert _write_pool_size(_ACCESS_CONTROL_DEFAULT_POOL_ARGS) == 22
-+    assert _write_pool_size(_ACCESS_CONTROL_DEFAULT_POOL_ARGS) == 12
-     assert _write_pool_size({}) == 40
-     assert _write_pool_size({"pool_size": 1, "max_overflow": 0, "pool_recycle": 60}) == 1
-     assert _write_pool_size({"poolclass": "nullpool"}) == 40
-```
-
----
-
-### Incident Patch 3: `11f696cd` (2026-11-18)
-**Commit Message**: fix(chunking): Stamp chunks centrally (SDK-1525) (#6775)
-
-## Description
-Follow-up to #6762. It fixes four review findings on it.
-
-- **A rebuild could leave a document with no graph.** A registered
-chunker that left its id off a chunk failed the run. On `update()`'s
-full-rebuild path that failure came after `forget(memory_only=True)` had
-dropped the document's memory, so the document had no graph until the
-chunker was fixed. Now cognee stamps every chunk a chunker yields
-without an id with that chunker's id (`stamp_chunk`, in
-`extract_chunks_from_documents` and `_chunk_region`), so a forgotten
-stamp no longer fails anything.
-- **The stamp rule depended on registration.** Only registered chunkers
-were checked, so the same class passed per call (`update(chunker=C)`) in
-a process that never registered it could store chunks with no id, which
-`TextChunker` later patched as its own. Stamping now works the same for
-registered and per-call chunkers, and `stamps_every_chunk` no longer
-looks at the registry.
-- **Chunker id checks.** `register_chunker()` now refuses `code_docs`,
-the id the code-docs pipeline stamps on its chunks. The docs now say
-never to reuse the id of a chunker that is no 
-
-**File**: `CLAUDE.md` (modified, +1/-1)
-```diff
-@@ -305,7 +305,7 @@ A stored connection syncs on a schedule when a sync policy covers it (`cognee/mo
++*Revised November 19, 2026. This revision describes the answer prompt's decline rules and the judge's partial-credit rule in more detail, including when that rule changed; explains how the exclusion list was built and what our audit could see; reports both runs of the main configuration by category and with nothing excluded; states which cognee version produced the runs; and removes observations we can't back up with hard data, such as the default depth being more economical. Earlier versions are in the repository history.*
  
- Runs under the per-dataset lock with the dataset-scoped database context (multi-tenant-safe). Falls back to the full delete + re-add + cognify flow when preconditions fail (first ingestion, non-text content, pre-v2 chunk ownership, or an unverified graph adapter — verified: Kuzu/Ladybug, Neo4j and the Postgres demo adapter; Neptune falls back); disable with `update(..., chunk_level_diff=False)` or the same query param on `PATCH /update`. Document metadata follows a PATCH rule on either path: `node_set`, and a `DataItem`'s `label`, `external_metadata` and `node_set`, keep their stored values when not passed, an explicit empty value (`node_set=[]`, `label=""`, `external_metadata={}`) clears them, and a value replaces them (`merge_existing_row_metadata` in `cognee/tasks/ingestion/ingest_data.py`; the call's and the item's node sets count together, as their union). Passing any of them forces the full rebuild, since the chunk-level path never touches the row.
+ ## 1. Introduction
  
--Every call that names no chunker uses the deployment's default: the chunker `DEFAULT_CHUNKER` names (registered with `register_chunker()`), else TextChunker. That holds for `cognify()`, `remember()`, `update()`, the CLI (`--chunker` only overrides it), the API, the dry-run estimator, the task-list builders custom pipelines use (`get_default_tasks`, `get_indexing_tasks`, `get_gliner_demo_tasks`) and cognee's own pipelines (session and trace bridging in `improve()`); every public entry point that takes a chunker defaults to None and resolves it once with `resolve_chunker()`, and the helpers below it take the resolved class; `remember()` resolves it before `add()`, so an unregistered name stores nothing. The dlt route alone pins TextChunker, since its rows are not cut. Register the chunker in every process that reads the setting (API workers, MCP server, CLI, scripts): an unregistered name fails every write. `update()` uses the resolved chunker on both paths. The chunk-level path needs the chunker that cut the stored chunks (compared by `chunker_id`): a document holding any other chunker's id is rebuilt in full with the resolved one (`unsupported_chunker`), so the first update after `DEFAULT_CHUNKER` changes rebuilds that document once and later updates are chunk-level again; `cognify()` alone never re-cuts a document it already processed, and an update with unchanged content does not either. What a chunker needs for the chunk-level path (its own `chunker_id` stamped on every chunk, chunks that join back to the document's text) is in the `cognee/modules/chunking/chunker_registry.py` docstring. `register_chunker()` refuses a class with no `chunker_id`, or with the id of another registered or built-in chunker, and "TextChunker" always names TextChunker; a registered chunker that yields a chunk without its id fails the run with `CogneeConfigurationError` (`require_chunker_stamp`; only chunks being cut are checked, never stored ones). Chunks stored before cognee 1.5.4 carry no `chunker_id`: TextChunker goes on updating those documents chunk-level, and a registered chunker rebuilds such a document once, like any document it did not cut. Example: `examples/guides/custom_chunker.py`; journey: `cognee/tests/journeys/test_default_chunker_update.py`.
-+Every call that names no chunker uses the deployment's default: the chunker `DEFAULT_CHUNKER` names (registered with `register_chunker()`), else TextChunker. That holds for `cognify()`, `remember()`, `update()`, the CLI (`--chunker` only overrides it), the API, the dry-run estimator, the task-list builders custom pipelines use (`get_default_tasks`, `get_indexing_tasks`, `get_gliner_demo_tasks`) and cognee's own pipelines (session and trace bridging in `improve()`); every public entry point that takes a chunker defaults to None and resolves it once with `resolve_chunker()`, and the helpers below it take the resolved class; `remember()` resolves it before `add()`, so an unregistered name stores nothing. The dlt route alone pins TextChunker, since its rows are not cut. Register the chunker in every process that reads the setting (API workers, MCP server, CLI, scripts): an unregistered name fails every write. `update()` uses the resolved chunker on both paths. The chunk-level path needs the chunker that cut the stored chunks (compared by `chunker_id`): a document holding any other chunker's id is rebuilt in full with the resolved one (`unsupported_chunker`), so the first update after `DEFAULT_CHUNKER` changes rebuilds that document once and later updates are chunk-level again; `cognify()` alone never re-cuts a document it already processed, and an update with unchanged content does not either. What a chunker needs for the chunk-level path (its own `chunker_id` stamped on every chunk, chunks that join back to the document's text) is in the `cognee/modules/chunking/chunker_registry.py` docstring. `register_chunker()` refuse
-```
-
-**File**: `cognee/api/v1/update/incremental.py` (modified, +3/-3)
-```diff
-@@ -1035,9 +1035,9 @@ async def _stage_and_plan(
-         # indistinguishable from a document that was never cognified.
-         # Any id other than this chunker's means another chunker cut part of the
-         # document. Chunks with no id were stored before chunks carried one (cognee
--        # before 1.5.4). TextChunker keeps updating those, as it always has. A
--        # chunker the deployment registered stamps every chunk it cuts, so it did
--        # not cut them: patching them with it would leave two cuts in one document.
-+        # before 1.5.4). TextChunker keeps updating those, as it always has. Every
-+        # chunk any other chunker with an id cuts is stamped (``stamp_chunk``), so it
-+        # did not cut them: patching them with it would leave two cuts in one document.
-         # getattr: a chunker passed per call need not subclass Chunker.
-         own_id = getattr(chunker, "chunker_id", "")
-         stored_ids = {node.get("chunker_id") or None for node in stored_chunks}
-```
-
-**File**: `cognee/api/v1/update/update.py` (modified, +1/-1)
-```diff
-@@ -140,7 +140,7 @@ async def update(
-                  so the first update after a deployment changes its default chunker
-                  rebuilds the document once and later updates are chunk-level again.
-                  Chunks stored before cognee 1.5.4 carry no chunker id: TextChunker
--                 still updates them chunk-level, a registered chunker rebuilds them.
-+                 still updates them chunk-level, any other chunker rebuilds them.
-         policy: Decides which chunks exist after the edit and what happens to the old
-                  ones. Replaceable without touching storage or update orchestration.
-                  Chunk-level path only; not exposed on the HTTP route.
-```
-
-**File**: `cognee/cli/commands/cognify_command.py` (modified, +8/-4)
-```diff
-@@ -124,15 +124,19 @@ async def run_cognify():
-                             from cognee.modules.chunking.LangchainChunker import LangchainChunker
+-This report documents our evaluation of Cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used standard Cognee memory components with LoCoMo-specific data formatting, one answer prompt for every question, a fixed retrieval configuration and an LLM judge. The goal was to measure the existing pipeline with a setup that others can inspect and rerun.
++This report documents our evaluation of cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used cognee's existing memory components and built a LoCoMo-specific setup around them: how the conversations are formatted for ingestion, one answer prompt for every question, the retrieval depth and the judge's grading prompt were all developed on the ten conversations we report on. The goal was to measure that pipeline with a setup that others can inspect and rerun.
  
-                             chunker_class = LangchainChunker
--                        except ImportError:
--                            fmt.warning("LangchainChunker not available, using the default chunker")
-+                        except ImportError as error:
-+                            raise CliCommandInnerException(
-+                                "LangchainChunker needs langchain: pip install 'cognee[langchain]'"
-+                            ) from error
-                     elif args.chunker == "CsvChunker":
-                         try:
-                             from cognee.modules.chunking.CsvChunker import CsvChunker
+-Cognee answers **91%** of the 1,762 evaluated questions correctly according to the LLM judge, using the hybrid retrieval approach we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and exclude the questions that our audit or an external one found faulty. We also leave out open-domain questions, since this evaluation focuses on memory rather than general knowledge. As is now common for LoCoMo, an LLM judge grades the answers, with a single prompt for all questions; we comment on current judging practices in Section 5.
++cognee answered **~91%** of the 1,762 evaluated questions correctly according to the LLM judge (90.7% and 91.3% in two runs), using the hybrid retriever we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and excluded the questions that our audit or an external one flagged. We also left out open-domain questions, which need knowledge from outside the conversation. As is now common for LoCoMo, an LLM judge grades the answers, with one prompt for all questions; Section 5 compares its rules with those of other published LoCoMo judges.
  
-                             chunker_class = CsvChunker
--                        except ImportError:
--                            fmt.warning("CsvChunker not available, using the default chunker")
-+                        except ImportError as error:
-+                            raise CliCommandInnerException(
-+                                f"CsvChunker could not be imported: {error}"
-+                            ) from error
+-Section 2 introduces LoCoMo and the parts of Cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses a configuration at the retriever's default depth, how our grading compares with published LoCoMo judges, and the limits of the evaluation. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
++Section 2 introduces LoCoMo and the parts of cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses an additional experiment at the retriever's default depth, how our grading compares with published LoCoMo judges, and what the evaluation doesn't show. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
  
-                     # Translate --ontology-file into the canonical ontology Config
-                     # structure, built with the same factory cognify() uses for
-```
-
-**File**: `cognee/cli/commands/remember_command.py` (modified, +8/-4)
-```diff
-@@ -361,15 +361,19 @@ async def run_remember():
-                             from cognee.modules.chunking.LangchainChunker import LangchainChunker
+ ## 2. Preliminaries
  
-                             chunker_class = LangchainChunker
--                        except ImportError:
--                            fmt.warning("LangchainChunker not available, using the default chunker")
-+                        except ImportError as error:
-+                            raise CliCommandInnerException(
-+                                "LangchainChunker needs langchain: pip install 'cognee[langchain]'"
-+                            ) from error
-                     elif args.chunker == "CsvChunker":
-                         try:
-                             from cognee.modules.chunking.CsvChunker import CsvChunker
+ ### 2.1 LoCoMo
  
-                             chunker_class = CsvChunker
--                        except ImportError:
--                            fmt.warning("CsvChunker not available, using the default chunker")
-+                        except ImportError as error:
-+                            raise CliCommandInnerException(
-+                                f"CsvChunker could not be imported: {error}"
-+                            ) from error
- 
-                     data_to_add = args.data[0] if len(args.data) == 1 else args.data
- 
-```
-
-**File**: `cognee/modules/chunking/chunk_policy.py` (modified, +2/-2)
-```diff
-@@ -30,7 +30,7 @@
- 
- from cognee.modules.chunking.chunk_id import chunk_content_hash, content_chunk_id
- from cognee.modules.chunking.Chunker import Chunker
--from cognee.modules.chunking.chunker_registry import require_chunker_stamp
-+from cognee.modules.chunking.chunker_registry import stamp_chunk
- from cognee.modules.chunking.incremental_chunking import (
-     IncrementalPlan,
-     IncrementalPlanError,
-@@ -91,7 +91,7 @@ async def get_text():
-     chunker = chunker_cls(document, get_text, max_chunk_size)
-     chunks = [chunk async for chunk in chunker.read()]
-     for chunk in chunks:
--        require_chunker_stamp(chunker_cls, chunk)
-+        stamp_chunk(chunker_cls, chunk)
-     return chunks
- 
- 
-```
-
-**File**: `cognee/modules/chunking/chunker_registry.py` (modified, +31/-16)
-```diff
-@@ -12,10 +12,10 @@
- 
- For ``update()`` to replace only the chunks an edit touched, the chunker has to:
- 
--* declare its own ``chunker_id`` and stamp it on every chunk it yields
--  (``DocumentChunk(chunker_id=self.chunker_id, ...)``). ``update()`` compares it with
--  the id on the stored chunks, and rebuilds a document another chunker cut. A chunk
--  yielded without it fails the run (``require_chunker_stamp``);
-+* declare its own ``chunker_id``. cognee stamps it on every chunk the chunker yields
-+  without one (``stamp_chunk``); a chunk yielded with another id fails the run.
-+  ``update()`` compares it with the id on the stored chunks, and rebuilds a document
-+  another chunker cut;
- * cut without overlap or loss: its chunk texts, joined in order, are the document's
-   text. A document whose chunks do not join back to its text is rebuilt in full on
-   every update (``chunks_not_tiling``).
-@@ -40,6 +40,8 @@ def register_chunker(name: str, chunker: type[Chunker]) -> None:
-     The class needs a ``chunker_id`` that no other class uses, registered under any
-     name or built into cognee: it is how ``update()`` tells which chunker cut a stored
-     document. A subclass that cuts differently from its parent declares a new one.
-+    Never reuse an id, not even that of a chunker no longer registered: documents it
-+    cut still carry it, and only ids registered now or built in are checked here.
-     Registering a class again under its name changes nothing; "TextChunker" always
-     names TextChunker.
-     """
-@@ -57,6 +59,14 @@ def register_chunker(name: str, chunker: type[Chunker]) -> None:
-                 f"{chunker.__name__} has the chunker_id of {other.__name__} "
-                 f"({chunker.chunker_id!r}); declare its own."
-             )
-+    # The code-docs pipeline stamps its chunks with an id it has no chunker class for.
-+    from cognee.tasks.code_docs.extract_code_docs import CHUNKER_ID as CODE_DOCS_ID
-+
-+    if chunker.chunker_id == CODE_DOCS_ID:
-+        raise ValueError(
-+            f"{chunker.__name__} has the chunker_id of the code-docs pipeline "
-+            f"({CODE_DOCS_ID!r}); declare its own."
-+        )
-     registered_chunkers[name] = chunker
- 
- 
-@@ -88,25 +98,30 @@ def resolve_chunker(chunker: type[Chunker] | None) -> type[Chunker]:
- def stamps_every_chunk(chunker: type[Chunker]) -> bool:
-     """Whether every chunk ``chunker`` cut is known to carry its ``chunker_id``.
- 
--    True for a chunker a deployment registered, which ``require_chunker_stamp`` holds
--    to it. Not for TextChunker: chunks carry an id since cognee 1.5.4, so documents it
--    cut before then have none, and it keeps updating them. Not for a chunker passed
--    per call either, which may predate the id as well.
-+    True for any chunker with an id, registered or passed per call: ``stamp_chunk``
-+    gives every chunk it cuts that id. Not for TextChunker: chunks carry an id since
-+    cognee 1.5.4, so documents it cut before then have none, and it keeps updating
-+    them.
-     """
--    return chunker is not TextChunker and chunker in registered_chunkers.values()
-+    return chunker is not TextChunker and bool(getattr(chunker, "chunker_id", ""))
- 
- 
--def require_chunker_stamp(chunker: type[Chunker], chunk) -> None:
--    """Raise when a registered chunker yields a chunk that does not carry its id.
-+def stamp_chunk(chunker: type[Chunker], chunk) -> None:
-+    """Give a chunk being cut the id of the chunker that cut it.
- 
--    Only chunks being cut now are checked, never stored ones. Stored without the id,
--    such a chunk could later be updated by another chunker with nothing to tell.
-+    A chunk the chunker left without an id gets ``chunker.chunker_id``, so a chunker
-+    need not stamp its chunks itself. A chunk carrying another id raises: stored
-+    with it, the document would later be updated as if that chunker cut it. Only
-+    chunks being cut are stamped, never stored ones.
-     """
--    if stamps_every_chunk(chunker) and chunk.chunker_id != chunker.chunker_id:
-+    own_id = getattr(chunker, "chunker_id", "") or None
-+    if not chunk.chunker_id:
-+        chunk.chunker_id = own_id
-+    elif chunk.chunker_id != own_id:
-         raise CogneeConfigurationError(
-             message=f"{chunker.__name__} yielded a chunk with chunker_id "
--            f"{chunk.chunker_id!r}, not its own ({chunker.chunker_id!r}).",
--            remediation="Build every chunk with chunker_id=self.chunker_id.",
-+            f"{chunk.chunker_id!r}, not its own ({own_id!r}).",
-+            remediation="Build every chunk with chunker_id=self.chunker_id, or leave it unset.",
-         )
- 
- 
-```
-
-**File**: `cognee/tasks/documents/extract_chunks_from_documents.py` (modified, +2/-2)
-```diff
-@@ -5,7 +5,7 @@
- 
- from cognee.infrastructure.databases.relational import get_relational_engine
- from cognee.modules.chunking.Chunker import Chunker
--from cognee.modules.chunking.chunker_registry import require_chunker_stamp, resolve_chunker
-+from cognee.modules.chunking.chunker_registry import resolve_chunker, stamp_chunk
- from cognee.modules.data.models import Data
- from cognee.modules.data.processing.document_types.Document import Document
- from cognee.modules.engine.utils.temporal_hints import hint_lines
-@@ -65,7 +65,7 @@ async def extract_chunks_from_documents(
-         async for document_chunk in document.read(
-             max_chunk_size=max_chunk_size, chunker_cls=chunker
-         ):
--            require_chunker_stamp(chunker, document_chunk)
-+            stamp_chunk(chunker, document_chunk)
-             document_token_count += document_chunk.chunk_size
-             document_chunk.belongs_to_set = document.belongs_to_set
-             if temporal_hints:
+-LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) contains 10 conversations between two people, each with 19–32 dated sessions and 369–689 turns, and 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temporal (321), open-domain (96) and adversarial (446). Open-domain questions combine what a speaker said with general knowledge. Adversarial questions cannot be answered from the conversation: the expected response is to say so, and the dataset pairs each with a plausible wrong answer.
++LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) has a public release, `locomo10.json`, with 10 conversations between two people, a subset of the dataset described in the paper. Each conversation has 19–32 dated sessions and 369–689 turns, and the release has 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temp
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6790** (2026-11-18): chore: Release v1.6.10 (@dexters1)
-- **PR #6789** (2026-11-18): Release v1.6.10 (@dexters1)
-- **PR #6788** (closed): Release V1.6.10 (@dexters1)
-- **PR #6787** (2026-11-18): fix(postgres): Shrink per-dataset pools and bound waits (SDK-1663) (@dexters1)
-- **PR #6786** (2026-11-18): docs: replace retired claude-3-5-sonnet-20241022 with claude-sonnet-5-5 (@CodeWizard0909)
-- **PR #6781** (2026-11-18): fix(postgres-graph): Fix review issues (SDK-1658) (@uvizhe)
+- **PR #6807** (closed): fix(chunks): run the date-hint pass off the event loop (@pazonex)
+- **PR #6806** (2026-11-20): docs(graph): Describe Node neighbours as a copy (SDK-1684) (@dexters1)
+- **PR #6805** (2026-11-20): chore: Change default LLM model to gpt-6-luna (@dexters1)
+- **PR #6801** (2026-11-20): fix(graph): Look up one document's source refs (@dexters1)
+- **PR #6800** (2026-11-20): docs: Revise the LoCoMo technical report (COG-7552) (@goran-radonic)
+- **PR #6799** (closed): docs: Revise the LoCoMo technical report (COG-7552) (@goran-radonic)
 
 ---
 
@@ -2374,34 +1638,38 @@ never to reuse the id of a chunker that is no
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. postgres): Shrink per-dataset pools and bound waits (SDK-1663)
+## X. docs: Revise the LoCoMo technical report (COG-7552)
 
 **RULE**:
-When implementing operations in `.env.template`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cognee/eval_framework/locomo/REPORT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ebd8caba`: postgres): Shrink per-dataset pools and bound waits (SDK-1663). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1961133d`: docs: Revise the LoCoMo technical report (COG-7552). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.env.template`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `cognee/eval_framework/locomo/REPORT.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-# its pool size independently from POOL_ARGS (default: pool_size=2, max_overflow=10).
-# max_overflow 0 or more. Every Postgres pool, the write pool included, waits up to
-# pool_timeout seconds for a free connection (default 360) before the call fails.
+# Benchmarking cognee on LoCoMo - Technical Evaluation Report
+
+*Revised November 19, 2026. This revision describes the answer prompt's decline rules and the judge's partial-credit rule in more detail, including when that rule changed; explains how the exclusion list was built and what our audit could see; reports both runs of the main configuration by category and with nothing excluded; states which cognee version produced the runs; and removes observations we can't back up with hard data, such as the default depth being more economical. Earlier versions are in the repository history.*
+This report documents our evaluation of cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used cognee's existing memory components and built a LoCoMo-specific setup around them: how the conversations are formatted for ingestion, one answer prompt for every question, the retrieval depth and the judge's grading prompt were all developed on the ten conversations we report on. The goal was to measure that pipeline with a setup that others can inspect and rerun.
+cognee answered **~91%** of the 1,762 evaluated questions correctly according to the 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-# its pool size independently from POOL_ARGS (default: pool_size=2, max_overflow=20).
-# max_overflow 0 or more.
+# Cognee on LoCoMo - Technical Evaluation Report
+This report documents our evaluation of Cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used standard Cognee memory components with LoCoMo-specific data formatting, one answer prompt for every question, a fixed retrieval configuration and an LLM judge. The goal was to measure the existing pipeline with a setup that others can inspect and rerun.
+Cognee answers **91%** of the 1,762 evaluated questions correctly according to the LLM judge, using the hybrid retrieval approach we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and exclude the questions that our audit or an external one found faulty. We also leave out open-domain questions, since this evaluation focuses on memory rather than general knowledge. As is now common for LoCoMo, an LLM judge grades the answers, with a single prompt for all questions; we comment on current judging practices in Section 5.
+Section 2 introduces LoCoMo and the parts of Cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ebd8caba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1961133d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

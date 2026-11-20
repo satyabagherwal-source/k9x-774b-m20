@@ -6803,10 +6803,10 @@
     "repository": "topoteretes/cognee",
     "platform": "github",
     "sourceUrl": "https://github.com/topoteretes/cognee",
-    "sourceVersion": "c8a09437",
+    "sourceVersion": "1961133d",
     "license": "Apache-2.0",
-    "contentHash": "8fb25f5718a01adc4508ad8f85a8a99175347aed83a3a5fa1fe549bd2e48cd5c",
-    "lastHarvestedAt": "2026-11-19T13:03:11.898Z",
+    "contentHash": "9f60f6f6433828ac7897efce364a147bfa848951c7c02435885a077e48c75d0d",
+    "lastHarvestedAt": "2026-11-20T17:37:23.512Z",
     "learningId": "learn-github-topoteretes-cognee"
   },
   "radix-ui-primitives": {
@@ -9413,10 +9413,10 @@
     "repository": "cheeriojs/dom-serializer",
     "platform": "github",
     "sourceUrl": "https://github.com/cheeriojs/dom-serializer",
-    "sourceVersion": "b81732f9",
+    "sourceVersion": "390aa36b",
     "license": "MIT",
-    "contentHash": "a3fc7d176929d5a947dbf0dce11949830fe1172387d3e97043b0457699ed9d54",
-    "lastHarvestedAt": "2026-11-16T20:11:07.976Z",
+    "contentHash": "a3545286e341db40da9139574f75f0e3885db410c2cf7c9552ea1a91a138ebe6",
+    "lastHarvestedAt": "2026-11-20T17:37:13.725Z",
     "learningId": "learn-github-cheeriojs-dom-serializer"
   },
   "paololeonardi-waterfallgrid": {

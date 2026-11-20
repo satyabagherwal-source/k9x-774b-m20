@@ -11629,3 +11629,5 @@ Every entry in this ledger must capture:
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `84dbbbf9` | Multi-dimensional audit evidence | 2026-11-20T17:29:06.384Z |
 | `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `10f516f0` | Multi-dimensional audit evidence | 2026-11-20T17:29:08.794Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `d4845b0c` | Multi-dimensional audit evidence | 2026-11-20T17:29:16.654Z |
+| `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `390aa36b` | Multi-dimensional audit evidence | 2026-11-20T17:37:13.725Z |
+| `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `1961133d` | Multi-dimensional audit evidence | 2026-11-20T17:37:23.512Z |
