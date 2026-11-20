@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T22:49:31.781Z",
-    "lastVerified": "2026-11-20T22:49:31.781Z",
+    "lastChecked": "2026-11-20T22:57:28.692Z",
+    "lastVerified": "2026-11-20T22:57:28.692Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -355,8 +355,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T22:23:06.719Z",
-    "lastVerified": "2026-11-20T22:23:06.719Z",
+    "lastChecked": "2026-11-20T22:57:24.183Z",
+    "lastVerified": "2026-11-20T22:57:24.183Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1113,14 +1113,14 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T17:20:59.154Z",
-    "lastVerified": "2026-11-20T17:20:59.154Z",
+    "lastChecked": "2026-11-20T22:57:24.613Z",
+    "lastVerified": "2026-11-20T22:57:24.613Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "ab265535d132652de9a3cdbd460c8e42612c4d405b7c90b62314abf1a68b3697",
+    "contentHash": "a04e4817c69e7eab9c577802b0e4c36f2581df4f3e684a9167eb41403d4f7995",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2649,9 +2649,9 @@
   "giancarloerra-socraticode": {
     "name": "SocratiCode",
     "officialUrl": "https://github.com/giancarloerra/SocratiCode",
-    "lastChecked": "2026-11-19T19:23:24.294Z",
+    "lastChecked": "2026-11-20T22:57:21.663Z",
     "revisionIdentifier": "401a9202",
-    "lastVerified": "2026-11-19T19:23:24.294Z"
+    "lastVerified": "2026-11-20T22:57:21.663Z"
   },
   "ratatui-ratatui": {
     "name": "ratatui",
@@ -3407,12 +3407,12 @@
     "lastVerified": "2026-11-18T16:49:30.069Z"
   },
   "dragonflyoss-dragonfly": {
-    "name": "dragonflyoss/dragonfly",
+    "name": "dragonfly",
     "officialUrl": "https://github.com/dragonflyoss/dragonfly",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T21:24:04.576Z",
-    "lastVerified": "2026-11-19T21:24:04.576Z",
+    "lastChecked": "2026-11-20T22:57:16.857Z",
+    "lastVerified": "2026-11-20T22:57:16.857Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflyoss-dragonfly",
@@ -3421,7 +3421,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d41be195"
   },
   "featureform-featureform": {
     "name": "featureform",
@@ -7215,11 +7216,21 @@
     "lastVerified": "2026-11-20T14:36:06.757Z"
   },
   "jhspetersson-fselect": {
-    "name": "fselect",
+    "name": "jhspetersson/fselect",
     "officialUrl": "https://github.com/jhspetersson/fselect",
-    "lastChecked": "2026-11-19T08:02:28.079Z",
-    "revisionIdentifier": "fea3c1b1",
-    "lastVerified": "2026-11-19T08:02:28.079Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-20T22:57:13.583Z",
+    "lastVerified": "2026-11-20T22:57:13.583Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-jhspetersson-fselect",
+    "contentHash": "233f776a37987403468addf159b8d0eb51bd2dfab8bbd543de82b21c7239bca8",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-liquidai-d1-3b": {
     "name": "LiquidAI/d1-3B",
@@ -10968,5 +10979,29 @@
     "lastChecked": "2026-11-20T22:49:20.680Z",
     "revisionIdentifier": "8deaa990",
     "lastVerified": "2026-11-20T22:49:20.680Z"
+  },
+  "scrapinghub-dateparser": {
+    "name": "scrapinghub/dateparser",
+    "officialUrl": "https://github.com/scrapinghub/dateparser",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-20T22:57:16.569Z",
+    "lastVerified": "2026-11-20T22:57:16.569Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-scrapinghub-dateparser",
+    "contentHash": "15027ec342508d5739229361153c379c1484ecd48a59e2dca2ce9c26d4b984b6",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jaywcjlove-devhub": {
+    "name": "DevHub",
+    "officialUrl": "https://github.com/jaywcjlove/DevHub",
+    "lastChecked": "2026-11-20T22:57:14.190Z",
+    "revisionIdentifier": "15d258ec",
+    "lastVerified": "2026-11-20T22:57:14.190Z"
   }
 }

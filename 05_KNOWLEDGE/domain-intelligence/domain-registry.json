@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T22:49:34.285Z",
-  "total_records": 2186,
+  "last_updated": "2026-11-20T22:57:30.668Z",
+  "total_records": 2188,
   "domains": {
     "A": {
       "total": 17,
@@ -2097,7 +2097,7 @@
       ]
     },
     "K": {
-      "total": 121,
+      "total": 123,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2219,7 +2219,9 @@
         "DOM-K-28C46858",
         "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-core-invariants",
         "domain_intelligence-quality-verification-intelligence-provablehq-snarkos-learnings-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariant"
+        "domain_intelligence-quality-verification-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariant",
+        "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-learnings-core-invariants"
       ]
     },
     "L": {
@@ -8290,10 +8292,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "e473f7e019b0a7e172790ebb70420017a87860af3d229668a90029d9e54393d0",
-      "created_at": "2026-11-20T20:41:42.293Z"
+      "content_hash": "e5259023cbca7d20721425a9ec041960c0a46247507086bd4150c595527ab15d",
+      "created_at": "2026-11-20T22:57:25.893Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9525,8 +9527,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "7d3dedced7aa77bd53862de0b248073d30090cbadf1378a441a7444242c95024",
-      "created_at": "2026-11-20T08:04:04.990Z"
+      "content_hash": "930791e98c716a32a9e5a5cd4e7d0ebc8d4d4cf5d1187c6d0394d678b16b3b9a",
+      "created_at": "2026-11-20T22:57:30.668Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -25607,8 +25609,8 @@
       "title": "Research & Knowledge Intelligence: scrapinghub/dateparser Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-scrapinghub-dateparser-research-knowledge-intelligence-scrapinghub-dateparser-co.md",
       "repository": "scrapinghub/dateparser",
-      "content_hash": "22d4d95662e404771fec70a5bbe124baa8598bd03d8fcb1081099a12db1f55cb",
-      "created_at": "2026-11-17T03:26:11.966Z"
+      "content_hash": "defedd6e1eedbc1974a9ccd0ef6235dd4b3924441ebdb24929402e0bc0c8f14e",
+      "created_at": "2026-11-20T22:57:17.835Z"
     },
     "domain_intelligence-architecture-intelligence-signerlabs-klee-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-signerlabs-klee-core-invariants",
@@ -25625,8 +25627,8 @@
       "title": "Research & Knowledge Intelligence: scrapinghub-dateparser-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-scrapinghub-dateparser-learnings-research-knowledge-intelligence-scrapinghub-dat.md",
       "repository": "scrapinghub-dateparser-learnings",
-      "content_hash": "b24ac949566e0e05d2ef1694744c9baace3c562da8b10d94c84b4b37cccfe7e6",
-      "created_at": "2026-11-17T03:26:26.215Z"
+      "content_hash": "b03b493f1868339165f85f89e87d6b1af92ed07ec9ec218ea3e7913ebc36b431",
+      "created_at": "2026-11-20T22:57:29.982Z"
     },
     "domain_intelligence-architecture-intelligence-signerlabs-klee-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-signerlabs-klee-learnings-core-invariants",
@@ -36794,6 +36796,24 @@
       "repository": "skyhook-io-radar-learnings",
       "content_hash": "2a9440d9f9e34c5447c34ca2a4e638ee2fc6a1e8d4783860c9c72faea12a61ee",
       "created_at": "2026-11-20T22:42:06.023Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: jhspetersson/fselect Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-jhspetersson-fselect-quality-verification-intelligence-jhspetersson-fselect-core.md",
+      "repository": "jhspetersson/fselect",
+      "content_hash": "314af34891740fd01e93c8abf79186f01d1b3cd936d0ba19436f86f55843067f",
+      "created_at": "2026-11-20T22:57:15.122Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: jhspetersson-fselect-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-jhspetersson-fselect-learnings-quality-verification-intelligence-jhspetersson-fs.md",
+      "repository": "jhspetersson-fselect-learnings",
+      "content_hash": "f3c5068e550af34f58b74882ba72616d8d44bf934dae3af6152fecfb331d1dd2",
+      "created_at": "2026-11-20T22:57:29.302Z"
     }
   }
 }

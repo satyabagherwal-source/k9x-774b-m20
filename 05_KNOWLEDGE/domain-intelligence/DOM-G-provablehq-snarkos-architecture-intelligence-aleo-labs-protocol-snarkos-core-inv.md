@@ -4,24 +4,24 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/ProvableHQ/snarkOS",
-  "source_version": "40d8778b",
+  "source_version": "60e3fed6",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T08:04:00.973Z",
+  "timestamp": "2026-11-20T22:57:25.756Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/ProvableHQ/snarkOS) (Revision: `40d8778b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T08:04:00.973Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/ProvableHQ/snarkOS) (Revision: `60e3fed6`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T22:57:25.756Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), B (Product Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from aleo-labs-protocol/snarkOS:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T08:02:59.729Z  
+> **Harvest Timestamp**: 2026-11-20T22:57:24.613Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1985,11 +1985,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4715** (2026-11-20): **Release a connecting peer however its handshake ends**
+  *Symptoms*: ## Motivation  Under 50% or 70% packet loss, the chain halts. It does not recover after the loss stops: the validators' gateway connections never re-form.  The cause is a handshake that times out. The TCP layer runs each handshake under a 10 s timeout (`Handshake::TIMEOUT_MS`), and enforces it by dropping the handshake future. The handshake marks the peer as connecting in the peer pool, and returns it to the candidates only after the handshake returns. A dropped future never gets there, and nothing else clears the entry. From then on:  - `connect()` to the peer fails with `AlreadyConnecting`. The heartbeats skip that error without a log, so the node never dials the peer again. - Every inbound handshake from the peer fails the same way.  One stuck entry on either side breaks the pair for good. Under heavy loss, many handshakes take longer than 10 s, so many pairs get stuck. The router and the bootstrap client have the same pattern.  This PR makes `add_connecting_peer` return a `ConnectingPeerGuard`. Dropping the guard returns the peer to the candidates, unless the handshake has upgraded it to connected. This covers the timeout, every early error return, and task abort. The gateway, the router and the bootstrap client hold the guard until they upgrade the peer. The rollback after the handshake goes away, and so does the out-parameter that carried the listening address to it.  The router and the bootstrap client recorded the listening address before `add_connecting_peer`. A hand
+
 - **Issue #4713** (2026-11-19): **Fix the storage-service test imports for the memory feature alone**
   *Symptoms*: ## Motivation  The shared storage-service tests in `node/bft/storage-service/src/tests.rs` do not compile with the `memory` feature alone:  ``` cargo test -p snarkos-node-bft-storage-service --features memory error[E0433]: cannot find type `Bytes` in this scope   --> node/bft/storage-service/src/tests.rs:51:44 ```  `sample_transmission` uses `Bytes` for every service. The `use bytes::Bytes;` import is behind `#[cfg(feature = "persistent")]`. So the import is missing when only `memory` is on. The `test` feature turns on `memory` only, so `--features test` also fails.  CI does not see the error. The node job tests the crate with `memory` and `persistent` together. In workspace builds, `snarkos-node-consensus` turns on `persistent` and `snarkos-node-bft` turns on `memory`, so feature unification turns on both.  This PR fixes the imports in `tests.rs`:  - It removes the `cfg` from `use bytes::Bytes;`. `bytes` is a dev-dependency of the crate, so it is always available to the tests. - It puts `StorageMode` behind `#[cfg(feature = "persistent")]`. Only the persistent service uses it. With `memory` alone, the import is unused, and `clippy -D warnings` fails.  ## Test Plan  `cargo clippy -p snarkos-node-bft-storage-service --all-targets -- -D warnings` passes with each of these feature sets: `memory`, `persistent`, `memory,persistent` and `test`. Before this change, the tests do not compile with `memory` or `test`.  `cargo nextest run -p snarkos-node-bft-storage-service` passes with 
-
-- **Issue #4664** (2026-11-16): **Requeue a transmission when the ledger check fails while proposing**
-  *Symptoms*: ## Motivation  Stacked on #4603. Review only the commits after `2a9cd1cbc`.  In `propose_batch`, the drain loop checks each transmission against the ledger with `self.ledger.contains_transmission(&id).unwrap_or(true)`. A ledger read error is treated as "already in the ledger". The loop has already removed the transmission from the worker, so the transmission is lost. The only log is a `trace` line that says "Already in ledger".  This PR:  - Matches on the result. On an error, it requeues the transmission at the back of the worker with `Worker::reinsert`, logs it at `warn`, and stops draining. - Adds `MockLedgerService::with_unreadable_transmission_ids`, which makes `contains_transmission` fail for the given IDs.  The transmission goes to the back, not the front. At the front, a transmission whose read keeps failing would stop every later proposal at the same place. The drain stops after the error, because continuing would cycle through the queue forever if every ledger read fails. If the whole ledger fails, each proposal holds only what was drained before the error, and the node logs a `warn` each round.  `Worker::contains_transmission` defaults the same ledger call to `false` (`unwrap_or(false)`). This PR does not change it.  Commits:  - `3d6f5c375`: Requeue the transmission on a ledger read error, and add the test. - `19397e42a`: Build the mock ledger constructors on `new`. - `91468f5ea`: Requeue at the back of the worker, not the front.  ## Test Plan  - New test `test_prop
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2006,375 +2006,94 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `40d8778b` (2026-11-20)
-**Commit Message**: Merge pull request #4728 from aleo-labs-protocol/breaking/remove-dead-features
+### Incident Patch 1: `60e3fed6` (2026-11-20)
+**Commit Message**: Merge pull request #4742 from aleo-labs-protocol/ci/partial-upgrade-expected-errors
 
-**File**: `Cargo.lock` (modified, +8/-69)
-```diff
-@@ -73,56 +73,6 @@ dependencies = [
-  "memchr",
- ]
- 
--[[package]]
--name = "aleo-std"
--version = "1.0.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d7c26e03c99bac238b3454ec6c654bc066a0e4e7eae00608ec76c2279bc8f2cf"
--dependencies = [
-- "aleo-std-profiler",
-- "aleo-std-time",
-- "aleo-std-timed",
-- "aleo-std-timer",
-- "walkdir",
--]
--
--[[package]]
--name = "aleo-std-profiler"
--version = "1.0.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "64476704cd7d71c43623839197bea87e477cfa03006853328fd5c9e07d8f48cc"
--
--[[package]]
--name = "aleo-std-time"
--version = "1.0.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "61a095fa7b4400ec1de315603c16c1084ece0b7926cbb0333a1ba115732fc35b"
--dependencies = [
-- "proc-macro2",
-- "quote 1.0.47",
-- "syn 1.0.109",
--]
--
--[[package]]
--name = "aleo-std-timed"
--version = "1.0.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a77792a0cf06cc8efdabf5cb355a2f1e9172ae3ab5d30147ff440e1c9e8a03d0"
--dependencies = [
-- "proc-macro2",
-- "quote 1.0.47",
-- "syn 1.0.109",
--]
--
--[[package]]
--name = "aleo-std-timer"
--version = "1.0.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d9fbc20b310af70d896f74cdccc2f12b5d6d9cd7edea5abfd823038279703b30"
--dependencies = [
-- "colored 2.2.0",
--]
--
- [[package]]
- name = "alloca"
- version = "0.4.0"
-@@ -892,16 +842,6 @@ version = "1.0.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570"
- 
--[[package]]
--name = "colored"
--version = "2.2.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "117725a109d387c937a1533ce01b450cbde6b88abceea8473c4d7a85853cda3c"
--dependencies = [
-- "lazy_static",
-- "windows-sys 0.59.0",
--]
--
- [[package]]
- name = "colored"
- version = "3.1.1"
-@@ -4918,7 +4858,7 @@ checksum = "f8b9ba61de2952acfe762d56c3f4743324465be961c685eb26c3ed49ef93d13f"
- dependencies = [
-  "backtrace",
-  "clap",
-- "colored 3.1.1",
-+ "colored",
-  "const-str",
-  "dotenvy",
-  "indexmap 2.14.2",
-@@ -5371,7 +5311,7 @@ dependencies = [
- name = "snarkos-account"
- version = "4.13.1"
- dependencies = [
-- "colored 3.1.1",
-+ "colored",
-  "snarkvm",
- ]
- 
-@@ -5383,7 +5323,7 @@ dependencies = [
-  "anyhow",
-  "base64 0.23.1",
-  "clap",
-- "colored 3.1.1",
-+ "colored",
-  "console-subscriber",
-  "crossterm",
-  "indexmap 2.14.2",
-@@ -5463,12 +5403,11 @@ dependencies = [
- name = "snarkos-node"
- version = "4.13.1"
- dependencies = [
-- "aleo-std",
-  "anyhow",
-  "async-trait",
-  "bytes",
-  "cfg-if",
-- "colored 3.1.1",
-+ "colored",
-  "deadline",
-  "futures-util",
-  "http 1.5.0",
-@@ -6539,7 +6478,7 @@ version = "4.13.1"
- source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=bfbc357ab9b2189eb048d13f8ae62ca5e5824376#bfbc357ab9b2189eb048d13f8ae62ca5e5824376"
- dependencies = [
-  "anyhow",
-- "colored 3.1.1",
-+ "colored",
-  "indexmap 2.14.2",
-  "locktick",
-  "lru 0.19.0",
-@@ -6632,7 +6571,7 @@ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=bfbc357ab9b2
- dependencies = [
-  "anyhow",
-  "cfg-if",
-- "colored 3.1.1",
-+ "colored",
-  "hex",
-  "lazy_static",
-  "locktick",
-@@ -6700,7 +6639,7 @@ name = "snarkvm-synthesizer-process"
- version = "4.13.1"
- source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=bfbc357ab9b2189eb048d13f8ae62ca5e5824376#bfbc357ab9b2189eb048d13f8ae62ca5e5824376"
- dependencies = [
-- "colored 3.1.1",
-+ "colored",
-  "indexmap 2.14.2",
-  "itertools 0.15.0",
-  "locktick",
-@@ -6762,7 +6701,7 @@ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=bfbc357ab9b2
- dependencies = [
-  "anyhow",
-  "bincode",
-- "colored 3.1.1",
-+ "colored",
-  "dirs",
-  "num-bigint",
-  "rand 0.10.3",
-```
+Expect the errors of a consensus upgrade in the partial upgrade test
 
-**File**: `Cargo.toml` (modified, +2/-12)
+**File**: `.ci/test_partial_upgrade.sh` (modified, +18/-1)
 ```diff
-@@ -42,10 +42,6 @@ members = [
-   "utilities",
- ]
+@@ -289,7 +289,24 @@ fi
  
--[workspace.dependencies.aleo-std]
--version = "1.0.4"
--default-features = false
--
- [workspace.dependencies.snarkvm]
- #path = "../snarkVM"
- git = "https://github.com/aleo-labs-protocol/snarkVM.git"
-@@ -281,14 +277,8 @@ name = "snarkos"
- path = "snarkos/main.rs"
+ log "🎉 Test passed! Node synced to new consensus height ($new_consensus_height) after another node was upgraded."
  
- [features]
--default = [ "snarkos-cli/metrics", "dep:snarkos-node-metrics", "snarkos-node/metrics", "snarkos-node-cdn/metrics" ]
--# The compile-time history features no longer select snarkVM code.
--# The names stay so existing build commands keep resolving.
--history = []
--history-staking-rewards = []
--# Deprecated alias for the metrics feature, which now carries the validator telemetry.
--# Retained so that build commands naming this feature keep resolving.
--telemetry = [ "snarkos-node/metrics" ]
-+default = [ "metrics" ]
-+metrics = [ "snarkos-cli/metrics", "dep:snarkos-node-metrics", "snarkos-node/metrics", "snarkos-node-cdn/metrics" ]
- cuda = [
-   "snarkos-account/cuda",
-   "snarkos-cli/cuda",
-```
-
-**File**: `README.md` (modified, +4/-10)
-```diff
-@@ -208,8 +208,7 @@ Once enabled, telemetry metrics are available through:
-     // GET /{network}/validators/participation?metadata={true}
-     ```
- 
--Telemetry is part of the `metrics` feature, which is enabled by default. The `telemetry` feature flag
--is kept as an alias for `metrics`, so commands that name it explicitly still work:
-+Telemetry is part of the `metrics` feature, which is enabled by default:
- 
- #### 1. [Installation](#2.3-installation)
- 
-@@ -617,14 +616,9 @@ cargo run --release -- clean --dev <NODE_ID>
- 
- ## 6.4 Feature Flags
- 
--By default, the metrics feature is turned on for some internal crates. It carries the validator
--telemetry described in [Validator Telemetry Metrics](#321-validator-telemetry-metrics).
--
--* **history** -
--  Enables a /history REST endpoint.
--* **telemetry** -
--  Deprecated alias for **metrics**, kept so that existing build commands keep working.
--  Validator telemetry is part of **metrics**.
-+* **metrics** -
-+  Enabled by default. Adds the `--metrics` flag and the metrics exporter. It carries the validator
-+  telemetry described in [Validator Telemetry Metrics](#321-validator-telemetry-metrics).
- * **cuda** -
-   Allows some operations to run on the (NVidia) GPU, instead of on the CPU. See [CUDA acceleration for provers](#optional-cuda-acceleration-for-provers) for install tips and current puzzle status.
- * **locktick** -
-```
-
-**File**: `cli/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -18,7 +18,6 @@ edition = "2024"
- 
- [features]
- default = [ ]
--async = [ ]
- locktick = [
-   "dep:locktick",
-   "snarkos-display/locktick",
-```
-
-**File**: `node/Cargo.toml` (modified, +0/-9)
-```diff
-@@ -18,7 +18,6 @@ edition = "2024"
- 
- [features]
- default = [ ]
--timer = [ "aleo-std/timer" ]
- locktick = [
-   "dep:locktick",
-   "snarkos-node-bft/locktick",
-@@ -42,10 +41,6 @@ metrics = [
-   "snarkvm/metrics",
-   "snarkvm/rocks"
- ]
--# The compile-time history features no longer select snarkVM code.
--# The names stay so existing build commands keep resolving.
--history = []
--history-staking-rewards = []
- cuda = [
-   "snarkvm/cuda",
-   "snarkos-account/cuda",
-@@ -63,9 +58,6 @@ serial = [
- test-helpers = []
- test_network = [ "snarkos-node-bft/test_network", "snarkos-node-consensus/test_network", "snarkos-utilities/test_network" ]
- 
--[dependencies.aleo-std]
--workspace = true
--
- [dependencies.anyhow]
- workspace = true
- 
-@@ -198,6 +190,5 @@ workspace = true
- 
- [package.metadata.cargo-machete]
- ignored = [
--  "aleo-std", # Only the timer feature uses it
-   "serde_json", # Need to set preserve_order feature
- ]
-```
-
-**File**: `node/rest/Cargo.toml` (modified, +0/-4)
-```diff
-@@ -18,10 +18,6 @@ edition = "2024"
- 
- [features]
- default = [ ]
--# The compile-time history features no longer select snarkVM code.
--# The names stay so existing build commands keep resolving.
--history = []
--history-staking-rewards = []
- metrics = [ "dep:snarkos-node-metrics", "snarkos-node-consensus/metrics" ]
- cuda = [ "snarkvm/cuda", "snarkos-node-consensus/cuda", "snarkos-node-router/cuda" ]
- locktick = [
-```
-
-**File**: `node/src/validator/mod.rs` (modified, +1/-1)
-```diff
-@@ -591,7 +591,7 @@ mod tests {
- 
-     type CurrentNetwork = MainnetV0;
- 
--    /// Use `RUST_MIN_STACK=67108864 cargo test --release profiler --features timer` to run this test.
-+    /// Use `RUST_MIN_STACK=67108864 cargo test --release profiler` to run this test.
-     #[ignore]
-     #[tokio::test]
-     async fn test_profiler() -> Result<()> {
+-if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES"; then
++# Once two validators run the new version, they hold at least a third of the stake, so the
++# release validators shut down. Before that, the last node rejects the blocks of its outdated
++# peers.
++upgrade_stop="Validators holding at least a third of the stake run ConsensusVersion::V[0-9]+ from height [0-9]+, but this build does not schedule it at that height, and must be upgraded"
++outdated_peer="The peer's consensus version for height [0-9]+ is behind ours"
++# The release binary leaves a task running when it shuts down this way.
++surplus_tasks="There are [0-9]+ surplus live tasks"
++expected_errors="$upgrade_stop|$outdated_peer|$surplus_tasks"
++
++# Only the release validators may log the surplus task error.
++for ((node_index = penultimate_index; node_index < total_validators; node_index++)); do
++  if grep -E "ERROR.*$surplus_tasks" "$log_dir/validator-$node_index.log"; then
++    log "❌ Test failed! Upgraded validator #${node_index} left surplus live tasks."
++    exit 1
++  fi
++done
++
++if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "$expected_errors"; then
+   exit 0
+ else
+   exit 1
 ```
 
 ---
 
-### Incident Patch 2: `a4c30de4` (2026-11-20)
-**Commit Message**: Rename the root telemetry feature to metrics
+### Incident Patch 2: `749c1dae` (2026-11-20)
+**Commit Message**: Expect the errors of a consensus upgrade in the partial upgrade test
 
-`metrics` holds the forwards that `default` had, and `default` enables
-it. `--no-default-features --features metrics` now gives the full
-default build. The old `telemetry` alias left out `snarkos-cli/metrics`
-and `snarkos-node-cdn/metrics`.
+The partial upgrade test runs only when the current build has a newer
+consensus version than the latest release. Once two validators run it, the
+release validators shut down, and before that the last validator rejects
+the blocks of its outdated peers. Both log an ERROR, and so does the
+release binary's shutdown, which leaves a task running. Pass these to
+`check_logs` as expected errors, and fail if an upgraded validator logs
+the surplus task error.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmLteo8RJcUAnUrf9qy
+Claude-Session: https://claude.ai/code/session_01UYfmmLGgpejAr8wqRMCv45
 
-**File**: `Cargo.toml` (modified, +2/-4)
+**File**: `.ci/test_partial_upgrade.sh` (modified, +18/-1)
 ```diff
-@@ -277,10 +277,8 @@ name = "snarkos"
- path = "snarkos/main.rs"
+@@ -289,7 +289,24 @@ fi
  
- [features]
--default = [ "snarkos-cli/metrics", "dep:snarkos-node-metrics", "snarkos-node/metrics", "snarkos-node-cdn/metrics" ]
--# Deprecated alias for the metrics feature, which now carries the validator telemetry.
--# Retained so that build commands naming this feature keep resolving.
--telemetry = [ "snarkos-node/metrics" ]
-+default = [ "metrics" ]
-+metrics = [ "snarkos-cli/metrics", "dep:snarkos-node-metrics", "snarkos-node/metrics", "snarkos-node-cdn/metrics" ]
- cuda = [
-   "snarkos-account/cuda",
-   "snarkos-cli/cuda",
-```
-
-**File**: `README.md` (modified, +4/-8)
-```diff
-@@ -208,8 +208,7 @@ Once enabled, telemetry metrics are available through:
-     // GET /{network}/validators/participation?metadata={true}
-     ```
+ log "🎉 Test passed! Node synced to new consensus height ($new_consensus_height) after another node was upgraded."
  
--Telemetry is part of the `metrics` feature, which is enabled by default. The `telemetry` feature flag
--is kept as an alias for `metrics`, so commands that name it explicitly still work:
-+Telemetry is part of the `metrics` feature, which is enabled by default:
- 
- #### 1. [Installation](#2.3-installation)
- 
-@@ -617,12 +616,9 @@ cargo run --release -- clean --dev <NODE_ID>
- 
- ## 6.4 Feature Flags
- 
--By default, the metrics feature is turned on for some internal crates. It carries the validator
--telemetry described in [Validator Telemetry Metrics](#321-validator-telemetry-metrics).
--
--* **telemetry** -
--  Deprecated alias for **metrics**, kept so that existing build commands keep working.
--  Validator telemetry is part of **metrics**.
-+* **metrics** -
-+  Enabled by default. Adds the `--metrics` flag and the metrics exporter. It carries the validator
-+  telemetry described in [Validator Telemetry Metrics](#321-validator-telemetry-metrics).
- * **cuda** -
-   Allows some operations to run on the (NVidia) GPU, instead of on the CPU. See [CUDA acceleration for provers](#optional-cuda-acceleration-for-provers) for install tips and current puzzle status.
- * **locktick** -
+-if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES"; then
++# Once two validators run the new version, they hold at least a third of the stake, so the
++# release validators shut down. Before that, the last node rejects the blocks of its outdated
++# peers.
++upgrade_stop="Validators holding at least a third of the stake run ConsensusVersion::V[0-9]+ from height [0-9]+, but this build does not schedule it at that height, and must be upgraded"
++outdated_peer="The peer's consensus version for height [0-9]+ is behind ours"
++# The release binary leaves a task running when it shuts down this way.
++surplus_tasks="There are [0-9]+ surplus live tasks"
++expected_errors="$upgrade_stop|$outdated_peer|$surplus_tasks"
++
++# Only the release validators may log the surplus task error.
++for ((node_index = penultimate_index; node_index < total_validators; node_index++)); do
++  if grep -E "ERROR.*$surplus_tasks" "$log_dir/validator-$node_index.log"; then
++    log "❌ Test failed! Upgraded validator #${node_index} left surplus live tasks."
++    exit 1
++  fi
++done
++
++if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "$expected_errors"; then
+   exit 0
+ else
+   exit 1
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4728** (2026-11-20): Remove dead features and rename the root telemetry feature to metrics (@cbeck88)
-- **PR #4727** (2026-11-20): Rename test and fuzz-helpers features to test-helpers (@cbeck88)
-- **PR #4726** (2026-11-20): ci: Gauntlet summaries name the check that ran (@cbeck88)
-- **PR #4723** (2026-11-20): Remove structural features from ledger-service; use dep: for optional deps (@cbeck88)
-- **PR #4722** (2026-11-20): Drop the remaining references to the retired branches and old org (@cbeck88)
-- **PR #4721** (2026-11-20): Make Message::VERSIONS a slice and document version growth (@cbeck88)
+- **PR #4742** (2026-11-20): Expect the errors of a consensus upgrade in the partial upgrade test (@cbeck88)
+- **PR #4740** (2026-11-20): Bump snarkVM to aleo-labs-protocol/snarkVM@7ba14e66b (@cbeck88)
+- **PR #4739** (2026-11-20): Bump snarkVM to aleo-labs-protocol/snarkVM@7ba14e66b and remove the serial feature (@cbeck88)
+- **PR #4738** (2026-11-20): release-test: the sync legs run at once (@cbeck88)
+- **PR #4737** (2026-11-20): Give skipped devnet jobs a static name (@cbeck88)
+- **PR #4733** (2026-11-20): Restore the upgrade test's new-version check, and make the test faster (@cbeck88)
 
 ---
 
@@ -2394,83 +2113,48 @@ Claude-Session: https://claude.ai/code/session_01UYfmmLteo8RJcUAnUrf9qy
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.lock
+## X. Empirical Invariant Guard in test_partial_upgrade.sh
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.ci/test_partial_upgrade.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `40d8778b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `60e3fed6`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ci/test_partial_upgrade.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "colored",
- "colored",
- "colored",
- "colored",
- "colored",
- "colored",
- "colored",
- "colored",
+# Once two validators run the new version, they hold at least a third of the stake, so the
+# release validators shut down. Before that, the last node rejects the blocks of its outdated
+# peers.
+upgrade_stop="Validators holding at least a third of the stake run ConsensusVersion::V[0-9]+ from height [0-9]+, but this build does not schedule it at that height, and must be upgraded"
+outdated_peer="The peer's consensus version for height [0-9]+ is behind ours"
+# The release binary leaves a task running when it shuts down this way.
+surplus_tasks="There are [0-9]+ surplus live tasks"
+expected_errors="$upgrade_stop|$outdated_peer|$surplus_tasks"
+
+# Only the release validators may log the surplus task error.
+for ((node_index = penultimate_index; node_index < total_validators; node_index++)); do
+  if grep -E "ERROR.*$surplus_tasks" "$log_dir/validator-$node_index.log"; then
+    log "❌ Test failed! Upgraded validator #${node_index} left surplus live tasks."
+    exit 1
+  fi
+done
+
+if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "$expected_errors"; then
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-[[package]]
-name = "aleo-std"
-version = "1.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7c26e03c99bac238b3454ec6c654bc066a0e4e7eae00608ec76c2279bc8f2cf"
-dependencies = [
- "aleo-std-profiler",
- "aleo-std-time",
- "aleo-std-timed",
- "aleo-std-timer",
- "walkdir",
-]
-
-[[package]]
-name = "aleo-std-profiler"
-version = "1.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64476704cd7d71c43623839197bea87e477cfa03006853328fd5c9e07d8f48cc"
-
-[[package]]
-name = "aleo-std-time"
-version = "1.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61a095fa7b4400ec1de315603c16c1084ece0b7926cbb0333a1ba115732fc35b"
-dependencies = [
- "proc-macro2",
- "quote 1.0.47",
- "syn 1.0.109",
-]
-
-[[package]]
-name = "aleo-std-timed"
-version = "1.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a77792a0cf06cc8efdabf5cb355a2f1e9172ae3ab5d30147ff440e1c9e8a03d0"
-dependencies = [
- "proc-macro2",
- "quote 1.0.47",
- "syn 1.0.109",
-]
-
-[[package]]
-name = "aleo-std-timer"
-version = "1.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d9fbc20b310af70d896f74cdccc2f12b5d6d
+if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES"; then
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `40d8778b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `60e3fed6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

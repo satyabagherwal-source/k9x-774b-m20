@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T22:49:34.419Z",
-  "total_verified_learnings": 9051,
+  "last_updated": "2026-11-20T22:57:30.819Z",
+  "total_verified_learnings": 9052,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22693,
+  "total_items": 22704,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "29eef2ff",
-      "content_hash": "e473f7e019b0a7e172790ebb70420017a87860af3d229668a90029d9e54393d0",
+      "source_version": "60e3fed6",
+      "content_hash": "e5259023cbca7d20721425a9ec041960c0a46247507086bd4150c595527ab15d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T20:41:42.293Z"
+      "persisted_at": "2026-11-20T22:57:25.893Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "29eef2ff",
-      "content_hash": "a65302197f0f66e814b43beeef5689095ce5b362af3d42e536c89cce2395da0d",
+      "source_version": "60e3fed6",
+      "content_hash": "0f39e922a3312e2c17a63dff20a468aa3211376e76b2ce01b59bafc01506e667",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:41:42.677Z"
+      "persisted_at": "2026-11-20T22:57:26.039Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -114598,9 +114598,9 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "7d3dedced7aa77bd53862de0b248073d30090cbadf1378a441a7444242c95024",
+      "content_hash": "930791e98c716a32a9e5a5cd4e7d0ebc8d4d4cf5d1187c6d0394d678b16b3b9a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T08:04:04.990Z"
+      "persisted_at": "2026-11-20T22:57:30.668Z"
     },
     "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
       "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
@@ -215792,13 +215792,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "29eef2ff",
-      "content_hash": "c883d286609e83cfcff414056741988949f601bd032ccd677b1e7c4c52c1cb28",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "60e3fed6",
+      "content_hash": "a04e4817c69e7eab9c577802b0e4c36f2581df4f3e684a9167eb41403d4f7995",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215864,6 +215864,11 @@
           "number": 9635,
           "title": "Empirical Invariant Guard in release-test.yml",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9653,
+          "title": "Empirical Invariant Guard in test_partial_upgrade.sh",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215871,7 +215876,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T20:41:41.497Z",
+      "verified_at": "2026-11-20T22:57:25.393Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219940,9 +219945,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "56641e3fa578cf5b85a6fad69cfaa3b4969ec7f208b7e1ff60be7a61d85694fb",
+      "content_hash": "7bc1e5759142c3c1c40be68d93c280988f3793ca0d6d3d49dd39959b031e519b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:21:18.246Z"
+      "persisted_at": "2026-11-20T22:57:30.819Z"
     },
     "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
       "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
@@ -265306,14 +265311,19 @@
       "slug": "scrapinghub-dateparser",
       "platform": "github",
       "source_url": "https://github.com/scrapinghub/dateparser",
-      "source_version": "ecf380af",
-      "content_hash": "37e6d41ab47065701adb0bbaf203b25ff2b7580a49ec859362d50d10d4ff4546",
+      "source_version": "ce8c4390",
+      "content_hash": "15027ec342508d5739229361153c379c1484ecd48a59e2dca2ce9c26d4b984b6",
       "dossier_path": "07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
       "promoted_rules": [
         {
           "number": 8849,
           "title": "Use the reference year when choosing a month-end day",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9652,
+          "title": "OverflowError localizing dates at the year 1 and 9999 edges",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -265322,7 +265332,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T03:26:11.381Z",
+      "verified_at": "2026-11-20T22:57:17.325Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -265364,10 +265374,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-scrapinghub-dateparser-research-knowledge-intelligence-scrapinghub-dateparser-co.md",
       "title": "Research & Knowledge Intelligence: scrapinghub/dateparser Core Invariants",
       "repository": "scrapinghub/dateparser",
-      "source_version": "ecf380af",
-      "content_hash": "22d4d95662e404771fec70a5bbe124baa8598bd03d8fcb1081099a12db1f55cb",
+      "source_version": "ce8c4390",
+      "content_hash": "defedd6e1eedbc1974a9ccd0ef6235dd4b3924441ebdb24929402e0bc0c8f14e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T03:26:11.966Z"
+      "persisted_at": "2026-11-20T22:57:17.835Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-scrapinghub-dateparser": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-scrapinghub-dateparser",
@@ -265376,10 +265386,10 @@
       "relative_path": "08_VERIFICATION/scrapinghub-dateparser-verification-protocol-empirical-defect-shield-for-scrapin.md",
       "title": "Verification Protocol: Empirical Defect Shield for scrapinghub/dateparser",
       "repository": "scrapinghub/dateparser",
-      "source_version": "ecf380af",
-      "content_hash": "22a602018f74e3c35bfc95be749d7c035471d35667a6b031bcd660a984f3f5e9",
+      "source_version": "ce8c4390",
+      "content_hash": "fd026f4390bd64df38f29b0b2f0607b42bec44eccbb21462a8ac140118a498a6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:26:12.118Z"
+      "persisted_at": "2026-11-20T22:57:17.982Z"
     },
     "learn-github-signerlabs-klee": {
       "learning_id": "learn-github-signerlabs-klee",
@@ -265550,9 +265560,9 @@
       "title": "Research & Knowledge Intelligence: scrapinghub-dateparser-learnings Core Invariants",
       "repository": "scrapinghub-dateparser-learnings",
       "source_version": "HEAD",
-      "content_hash": "b24ac949566e0e05d2ef1694744c9baace3c562da8b10d94c84b4b37cccfe7e6",
+      "content_hash": "b03b493f1868339165f85f89e87d6b1af92ed07ec9ec218ea3e7913ebc36b431",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T03:26:26.215Z"
+      "persisted_at": "2026-11-20T22:57:29.982Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-scrapinghub-dateparser-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-scrapinghub-dateparser-learnin",
@@ -265562,9 +265572,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for scrapinghub-dateparser-learnings",
       "repository": "scrapinghub-dateparser-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f55a15d801d97338b61188c1aca35980eb0921477e41943660a070820d7714c",
+      "content_hash": "2bd942242f53158eaa945140ef8bb2610d98fb32f3be6eddf8fdc0cc8b864c22",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:26:26.367Z"
+      "persisted_at": "2026-11-20T22:57:30.119Z"
     },
     "candidate_directive-docs-banner-linking-to-klee-for-mac-chinese-readme": {
       "item_id": "candidate_directive-docs-banner-linking-to-klee-for-mac-chinese-readme",
@@ -307850,6 +307860,165 @@
       "content_hash": "de614cefcbd6f510f467b40e8461029dcc45f22f46e543bee42d437253010a4e",
       "domain_letter": "I",
       "persisted_at": "2026-11-20T22:49:33.321Z"
+    },
+    "learn-github-jhspetersson-fselect": {
+      "learning_id": "learn-github-jhspetersson-fselect",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "jhspetersson/fselect",
+      "repository": "jhspetersson/fselect",
+      "slug": "jhspetersson-fselect",
+      "platform": "github",
+      "source_url": "https://github.com/jhspetersson/fselect",
+      "source_version": "234f8b7b",
+      "content_hash": "233f776a37987403468addf159b8d0eb51bd2dfab8bbd543de82b21c7239bca8",
+      "dossier_path": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9651,
+          "title": "boolean comparisons and HAVING parsing",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T22:57:14.603Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9651": {
+      "learning_id": "rule-9651",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9651,
+      "title": "boolean comparisons and HAVING parsing",
+      "source_url": "https://github.com/jhspetersson/fselect",
+      "source_version": "234f8b7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T22:57:14.603Z"
+    },
+    "candidate_directive-boolean-comparisons-and-having-parsing": {
+      "item_id": "candidate_directive-boolean-comparisons-and-having-parsing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XDU0-boolean-comparisons-and-having-parsing.md",
+      "title": "boolean comparisons and HAVING parsing",
+      "repository": "jhspetersson-fselect-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d2165db324291389e2399db9f88c842737ee587a290614d5d5c11428a4d17582",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T22:57:29.161Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-jhspetersson-fselect-quality-verification-intelligence-jhspetersson-fselect-core.md",
+      "title": "Quality & Verification Intelligence: jhspetersson/fselect Core Invariants",
+      "repository": "jhspetersson/fselect",
+      "source_version": "234f8b7b",
+      "content_hash": "314af34891740fd01e93c8abf79186f01d1b3cd936d0ba19436f86f55843067f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T22:57:15.122Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-jhspetersson-fselect": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jhspetersson-fselect",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/jhspetersson-fselect-verification-protocol-empirical-defect-shield-for-jhspeters.md",
+      "title": "Verification Protocol: Empirical Defect Shield for jhspetersson/fselect",
+      "repository": "jhspetersson/fselect",
+      "source_version": "234f8b7b",
+      "content_hash": "1593c15a688e11aedf2cda98112935ea9c9d54eb1dad9fe9555b34da0ef7364d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T22:57:15.265Z"
+    },
+    "rule-9652": {
+      "learning_id": "rule-9652",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9652,
+      "title": "OverflowError localizing dates at the year 1 and 9999 edges",
+      "source_url": "https://github.com/scrapinghub/dateparser",
+      "source_version": "ce8c4390",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T22:57:17.325Z"
+    },
+    "candidate_directive-overflowerror-localizing-dates-at-the-year-1-and-9999-edges": {
+      "item_id": "candidate_directive-overflowerror-localizing-dates-at-the-year-1-and-9999-edges",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XECR-overflowerror-localizing-dates-at-the-year-1-and-9999-edges.md",
+      "title": "OverflowError localizing dates at the year 1 and 9999 edges",
+      "repository": "scrapinghub-dateparser-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8924cd575c29f0c9e64c5780b745eb97320c207d37b9c68afe3a15ac9825e474",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T22:57:29.836Z"
+    },
+    "rule-9653": {
+      "learning_id": "rule-9653",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9653,
+      "title": "Empirical Invariant Guard in test_partial_upgrade.sh",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "60e3fed6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T22:57:25.393Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-test_partial_upgrade-sh": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-test_partial_upgrade-sh",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XEW1-empirical-invariant-guard-in-test_partial_upgrade-sh.md",
+      "title": "Empirical Invariant Guard in test_partial_upgrade.sh",
+      "repository": "provablehq-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8d4114ba87f0531616ee965192399779ed1eb8e721bd66af44d4f207f5a222f0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T22:57:30.532Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-jhspetersson-fselect-learnings-quality-verification-intelligence-jhspetersson-fs.md",
+      "title": "Quality & Verification Intelligence: jhspetersson-fselect-learnings Core Invariants",
+      "repository": "jhspetersson-fselect-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f3c5068e550af34f58b74882ba72616d8d44bf934dae3af6152fecfb331d1dd2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T22:57:29.302Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-jhspetersson-fselect-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jhspetersson-fselect-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/jhspetersson-fselect-learnings-verification-protocol-empirical-defect-shield-for.md",
+      "title": "Verification Protocol: Empirical Defect Shield for jhspetersson-fselect-learnings",
+      "repository": "jhspetersson-fselect-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d92b5bf9bb02f1f0f907a71cb6a59857de2ddf27c4e73b43f8d88690b4a783b8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T22:57:29.450Z"
     }
   },
   "ai-builder-brain": {

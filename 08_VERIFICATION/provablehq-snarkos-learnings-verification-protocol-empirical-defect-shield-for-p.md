@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T17:21:17.736Z",
+  "timestamp": "2026-11-20T22:57:30.426Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-provablehq-snarkos-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [provablehq-snarkos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T17:21:17.736Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T22:57:30.426Z`  
 > **Learning ID**: `LEARN-EVO-provablehq-snarkos-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `cfce7f98`  
+> **Source Version**: `60e3fed6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T17:20:59.160Z  
+> **Timestamp**: 2026-11-20T22:57:24.618Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T17:20:59.154Z  
+> **Harvest Timestamp**: 2026-11-20T22:57:24.613Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2017,939 +2017,94 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `97451873` (2026-11-20)
-**Commit Message**: Run the fixed-port gateway test alone, and correct the nextest comment
+### Incident Patch 1: `60e3fed6` (2026-11-20)
+**Commit Message**: Merge pull request #4742 from aleo-labs-protocol/ci/partial-upgrade-expected-errors
 
-gateway::prop_tests::gateway_start asserts that the gateway binds
-127.0.0.1:5000+dev exactly. The bft integration tests bind ports in that
-range and take another port when one is taken, so at 16 threads they can
-make this assertion fail. A nextest override makes the test require
-every thread, so nothing runs beside it. It takes about 1 s.
+Expect the errors of a consensus upgrade in the partial upgrade test
 
-The profile comment named socket use as the reason for two threads, but
-the fleet now runs the same tests 16 at a time. It now states the hosted
-runner size and points to CI.md.
+**File**: `.ci/test_partial_upgrade.sh` (modified, +18/-1)
+```diff
+@@ -289,7 +289,24 @@ fi
+ 
+ log "🎉 Test passed! Node synced to new consensus height ($new_consensus_height) after another node was upgraded."
+ 
+-if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES"; then
++# Once two validators run the new version, they hold at least a third of the stake, so the
++# release validators shut down. Before that, the last node rejects the blocks of its outdated
++# peers.
++upgrade_stop="Validators holding at least a third of the stake run ConsensusVersion::V[0-9]+ from height [0-9]+, but this build does not schedule it at that height, and must be upgraded"
++outdated_peer="The peer's consensus version for height [0-9]+ is behind ours"
++# The release binary leaves a task running when it shuts down this way.
++surplus_tasks="There are [0-9]+ surplus live tasks"
++expected_errors="$upgrade_stop|$outdated_peer|$surplus_tasks"
++
++# Only the release validators may log the surplus task error.
++for ((node_index = penultimate_index; node_index < total_validators; node_index++)); do
++  if grep -E "ERROR.*$surplus_tasks" "$log_dir/validator-$node_index.log"; then
++    log "❌ Test failed! Upgraded validator #${node_index} left surplus live tasks."
++    exit 1
++  fi
++done
++
++if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "$expected_errors"; then
+   exit 0
+ else
+   exit 1
+```
+
+---
+
+### Incident Patch 2: `749c1dae` (2026-11-20)
+**Commit Message**: Expect the errors of a consensus upgrade in the partial upgrade test
+
+The partial upgrade test runs only when the current build has a newer
+consensus version than the latest release. Once two validators run it, the
+release validators shut down, and before that the last validator rejects
+the blocks of its outdated peers. Both log an ERROR, and so does the
+release binary's shutdown, which leaves a task running. Pass these to
+`check_logs` as expected errors, and fail if an upgraded validator logs
+the surplus task error.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmPBwQHC2yRCed8gDf5
+Claude-Session: https://claude.ai/code/session_01UYfmmLGgpejAr8wqRMCv45
 
-**File**: `.config/nextest.toml` (modified, +9/-2)
+**File**: `.ci/test_partial_upgrade.sh` (modified, +18/-1)
 ```diff
-@@ -2,9 +2,16 @@
- fail-fast = false
- slow-timeout = { period = "60s", terminate-after = 5 }
- status-level = "fail"
--# Many tests bind sockets and start nodes, so two run at a time on the hosted
--# runners. The fleet `test` job sets NEXTEST_TEST_THREADS instead; see CI.md.
-+# The hosted runners have 4 vCPUs. The fleet `test` job overrides this with
-+# NEXTEST_TEST_THREADS; see CI.md.
- test-threads = 2
+@@ -289,7 +289,24 @@ fi
  
- [profile.ci.junit]
- path = "junit.xml"
+ log "🎉 Test passed! Node synced to new consensus height ($new_consensus_height) after another node was upgraded."
+ 
+-if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES"; then
++# Once two validators run the new version, they hold at least a third of the stake, so the
++# release validators shut down. Before that, the last node rejects the blocks of its outdated
++# peers.
++upgrade_stop="Validators holding at least a third of the stake run ConsensusVersion::V[0-9]+ from height [0-9]+, but this build does not schedule it at that height, and must be upgraded"
++outdated_peer="The peer's consensus version for height [0-9]+ is behind ours"
++# The release binary leaves a task running when it shuts down this way.
++surplus_tasks="There are [0-9]+ surplus live tasks"
++expected_errors="$upgrade_stop|$outdated_peer|$surplus_tasks"
 +
-+# gateway_start asserts that the gateway binds 127.0.0.1:5000+dev exactly. Other
-+# tests bind ports in that range, and take another port if one is taken, so this
-+# test runs alone.
-+[[profile.default.overrides]]
-+filter = 'package(snarkos-node-bft) and test(=gateway::prop_tests::gateway_start)'
-+threads-required = "num-test-threads"
-```
-
-**File**: `CI.md` (modified, +4/-2)
-```diff
-@@ -90,8 +90,10 @@ checks the crate without `metrics`. The `simple_node` line passes
- [`.config/nextest.toml`](.config/nextest.toml) sets two test threads, which
- the hosted entries use. The fleet entries run 16 tests at a time through
- `NEXTEST_TEST_THREADS`: most of their slow tests wait on timers rather than
--the CPU, and a box runs one job. Each entry uploads nextest's JUnit reports as
--the artifact `junit-<entry>`, one file per line, with the time of each test.
-+the CPU, and a box runs one job. `gateway::prop_tests::gateway_start` runs
-+alone, because it asserts a fixed port that other tests may take. Each entry
-+uploads nextest's JUnit reports as the artifact `junit-<entry>`, one file per
-+line, with the time of each test.
- 
- ## Devnets
- 
-```
-
----
-
-### Incident Patch 2: `4df06d23` (2026-11-20)
-**Commit Message**: Merge pull request #4715 from aleo-labs-protocol/fix/handshake-timeout-leak
-
-**File**: `node/bft/src/gateway.rs` (modified, +81/-116)
-```diff
-@@ -49,6 +49,7 @@ use snarkos_node_bft_events::{
- };
- use snarkos_node_bft_ledger_service::LedgerService;
- use snarkos_node_network::{
-+    ConnectingPeerGuard,
-     ConnectionMode,
-     NodeType,
-     Peer,
-@@ -1630,15 +1631,11 @@ impl<N: Network> Handshake for Gateway<N> {
-         // Make the socket more robust; every other handshake in the node does this too.
-         harden_socket(stream)?;
- 
--        // If this is an inbound connection, we log it, but don't know the listening address yet.
--        // Otherwise, we can immediately register the listening address.
--        let mut listener_addr = if peer_side == ConnectionSide::Initiator {
-+        if peer_side == ConnectionSide::Initiator {
-             debug!("{CONTEXT} Received a connection request from '{peer_addr}'");
--            None
-         } else {
-             debug!("{CONTEXT} Shaking hands with {peer_addr}...");
--            Some(peer_addr)
--        };
-+        }
- 
-         // Retrieve the restrictions ID.
-         let restrictions_id = self.ledger.latest_restrictions_id();
-@@ -1650,8 +1647,6 @@ impl<N: Network> Handshake for Gateway<N> {
-             .and_then(|bytes| bytes.try_into().ok())
-             .ok_or_else(|| ConnectError::other(anyhow!("Failed to encode the genesis hash")))?;
- 
--        // Perform the handshake; we pass on a mutable reference to peer_ip in case the process is broken at any point in time.
--        //
-         // Validators speak only the Noise handshake. A peer that opens with anything else is turned
-         // away before any key is derived.
-         let handshake_result = if peer_side == ConnectionSide::Responder {
-@@ -1660,101 +1655,71 @@ impl<N: Network> Handshake for Gateway<N> {
-         } else {
-             match detect_handshake_protocol(stream).await? {
-                 (HandshakeProtocol::Noise, _) => {
--                    self.handshake_inner_responder_noise(
--                        peer_addr,
--                        &mut listener_addr,
--                        restrictions_id,
--                        genesis_hash,
--                        stream,
--                    )
--                    .await
-+                    self.handshake_inner_responder_noise(peer_addr, restrictions_id, genesis_hash, stream).await
-                 }
-                 (HandshakeProtocol::Legacy, _) => {
-                     Err(ConnectError::other(format!("'{peer_addr}' did not offer the Noise handshake")))
-                 }
-             }
-         };
- 
--        // Register the peer, or roll it back, if the handshake got far enough to learn its listening
--        // address.
--        match (&handshake_result, listener_addr) {
--            (Ok((peer_info, peer_schedule)), Some(addr)) => {
--                let node_type = if bootstrap_peers::<N>(self.is_dev()).contains(&addr) {
--                    NodeType::BootstrapClient
--                } else {
--                    NodeType::Validator
--                };
--                // A block check reads the connected validators before their schedules, so the schedule
--                // is recorded before the validator counts as connected.
--                if node_type == NodeType::Validator {
--                    self.upgrade_monitor.record_schedule(peer_info.address, peer_schedule.as_ref());
--                }
--                let mut peer_pool = self.peer_pool.write();
--
--                // Validators may change their listening address, but not the Aleo address; traverse
--                // the peer pool, and retain previously connected (the prior Aleo address is known)
--                // candidate peers with the same Aleo address only if their listening address is the
--                // same; otherwise, it may be concluded that a known validator has changed their
--                // listening address, and thus the old entry should be removed as outdated.
--                peer_pool.retain(|_, peer| {
--                    if let Peer::Candidate(peer) = peer
--                        && let Some(old_aleo_addr) = peer.last_known_aleo_addr
--                    {
--                        old_aleo_addr != peer_info.address || peer.listener_addr == addr
--                    } else {
--                        true
--                    }
--                });
--
--                let is_connected = match peer_pool.get_mut(&addr) {
--                    Some(peer) => {
--                        self.resolver.write().insert_peer(addr, peer_addr, Some(peer_info.address));
--                        peer.upgrade_to_connected(
--                            peer_addr,
--                            peer_info.listener_port,
--                            peer_info.address,
--                            node_type,
--                            peer_info.version,
--                            peer_info.snarkos_sha,
--                            ConnectionMode::Gateway,
--                        );
--                        true
--                    }
--                    None => false,
--                };
--   
-```
-
-**File**: `node/bft/tests/gateway_noise.rs` (modified, +95/-1)
-```diff
-@@ -41,10 +41,11 @@ use snarkos_node_bft_events::{
-     ValidatorsRequest,
- };
- use snarkos_node_network::{
-+    Peer,
-     PeerPoolHandling,
-     noise::{HandshakeProtocol, NoiseSession, Role, binding_message, detect_handshake_protocol, write_noise_magic},
- };
--use snarkos_node_tcp::P2P;
-+use snarkos_node_tcp::{ConnectError, P2P, protocols::Handshake};
- use snarkvm::{
-     ledger::{narwhal::Data, store::helpers::memory::ConsensusMemory},
-     prelude::{FromBytes, TestRng, ToBytes},
-@@ -701,3 +702,96 @@ async fn an_initiator_rejects_a_responder_with_a_different_genesis() {
-     assert!(!gateway_a.connected_addresses().contains(&accounts[1].address()));
-     assert!(!gateway_b.connected_addresses().contains(&accounts[0].address()));
- }
-+
-+/// How long to wait for a stalled handshake to time out.
-+fn handshake_timeout_with_margin() -> Duration {
-+    Duration::from_millis(<Gateway<CurrentNetwork> as Handshake>::TIMEOUT_MS + 3_000)
-+}
-+
-+/// A responder that accepts the connection and then never answers holds the dialing gateway's
-+/// handshake until it times out. Once it has, the peer must be dialable again; a peer stuck as
-+/// connecting is never dialed by the heartbeat and turns away every inbound handshake.
-+#[tokio::test(flavor = "multi_thread")]
-+async fn a_timed_out_outbound_handshake_does_not_leave_the_peer_connecting() {
-+    let mut rng = TestRng::default();
-+    let (_accounts, gateways) = new_test_gateways(1, &mut rng).await;
-+    let gateway = gateways[0].clone();
-+
-+    // Accept connections and keep them open without ever writing to them.
-+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-+    let silent_addr = listener.local_addr().unwrap();
-+    let _silent = task::spawn(async move {
-+        let mut streams = Vec::new();
-+        while let Ok((stream, _)) = listener.accept().await {
-+            streams.push(stream);
-+        }
-+    });
-+
-+    // A validator was seen at this address before.
-+    let last_known_aleo_addr = Account::<CurrentNetwork>::new(&mut rng).unwrap().address();
-+    let mut candidate = Peer::new_candidate(silent_addr, false);
-+    if let Peer::Candidate(peer) = &mut candidate {
-+        peer.last_known_aleo_addr = Some(last_known_aleo_addr);
-+    }
-+    gateway.peer_pool().write().insert(silent_addr, candidate);
-+
-+    let dial = task::spawn({
-+        let gateway = gateway.clone();
-+        async move { gateway.tcp().connect(silent_addr).await }
-+    });
-+    let g = gateway.clone();
-+    deadline!(Duration::from_secs(5), move || g.is_connecting(silent_addr));
-+
-+    let result = timeout(handshake_timeout_with_margin(), dial).await.expect("the handshake never timed out").unwrap();
-+    assert!(
-+        matches!(&result, Err(ConnectError::IoError(e)) if e.kind() == io::ErrorKind::TimedOut),
-+        "the handshake should have timed out: {result:?}"
-+    );
-+
-+    match gateway.peer_pool().read().get(&silent_addr) {
-+        Some(Peer::Candidate(peer)) => assert_eq!(peer.last_known_aleo_addr, Some(last_known_aleo_addr)),
-+        peer => panic!("the timed-out peer should be a candidate again, found {peer:?}"),
-+    }
-+    match gateway.connect(silent_addr) {
-+        Err(ConnectError::AlreadyConnecting { .. }) => panic!("a timed-out peer can never be dialed again"),
-+        Ok(handle) => handle.abort(),
-+        Err(_) => {}
-+    }
-+}
-+
-+/// An initiator that stalls after its first message holds the responder's handshake until it times
-+/// out. The validator it claimed to be must still be able to connect afterwards, in both directions.
-+#[tokio::test(flavor = "multi_thread")]
-+async fn a_timed_out_inbound_handshake_does_not_block_the_validator() {
-+    let mut rng = TestRng::default();
-+    let (accounts, gateways) = new_test_gateways(2, &mut rng).await;
-+    let (gateway_a, gateway_b) = (gateways[0].clone(), gateways[1].clone());
-+    let addr_b = dial_addr(&gateway_b);
-+
-+    // Open a handshake with gateway A as validator B, then stall after the hint, as a peer does
-+    // whose later messages are lost.
-+    let mut stream = TcpStream::connect(dial_addr(&gateway_a)).await.unwrap();
-+    write_noise_magic(&mut stream).await.unwrap();
-+    let mut noise = NoiseSession::new(stream, Role::Initiator).unwrap();
-+    let version = Event::<CurrentNetwork>::VERSION;
-+    let hint = HandshakeHint { version, listener_port: addr_b.port(), address: accounts[1].address() };
-+    noise.send(&hint.to_bytes_le().unwrap()).await.unwrap();
-+
-+    let a = gateway_a.clone();
-+    deadline!(Duration::from_secs(5), move || a.is_connecting(addr_b));
-+    // Keep the stalled stream open until gateway A gives up on it, so that it is the timeout, and
-+    // not a closed socket, that ends the handshake.
-+    let a = gateway_a.clone();
-+    deadline!(handshake_timeout_with_margin(), move || a.tcp().num_connecting() == 0);
-+    drop(noise);
-+
-+    assert!(!gateway_a.is_connecting(addr_b), "validator B is still marked as connecting");
-+
-+    // The real validator B dials gate
-```
-
-**File**: `node/network/src/peer.rs` (modified, +14/-6)
-```diff
-@@ -25,14 +25,14 @@ pub enum Peer<N: Network> {
-     /// A candidate peer that's currently not connected to.
-     Candidate(CandidatePeer<N>),
-     /// A peer that's currently being connected to (the handshake is in progress).
--    Connecting(ConnectingPeer),
-+    Connecting(ConnectingPeer<N>),
-     /// A fully connected (post-handshake) peer.
-     Connected(ConnectedPeer<N>),
- }
- 
- /// A connecting peer.
- #[derive(Clone, Debug)]
--pub struct ConnectingPeer {
-+pub struct ConnectingPeer<N: Network> {
-     /// The listening address of a connecting peer.
-     pub listener_addr: SocketAddr,
-     /// Indicates whether the peer is considered trusted.
-@@ -41,6 +41,9 @@ pub struct ConnectingPeer {
-     pub last_connection_attempt: Option<Instant>,
-     /// The total number of connection attempts, since the peer was last connected.
-     pub total_connection_attempts: u32,
-+    /// The last known Aleo address of this peer, carried over from the candidate it was promoted
-+    /// from, and back to the candidate if the handshake fails.
-+    pub last_known_aleo_addr: Option<Address<N>>,
- }
- 
- /// A candidate peer.
-@@ -152,6 +155,7 @@ impl<N: Network> Peer<N> {
-             trusted,
-             last_connection_attempt: None,
-             total_connection_attempts: 0,
-+            last_known_aleo_addr: None,
-         })
-     }
- 
-@@ -160,14 +164,16 @@ impl<N: Network> Peer<N> {
-         let listener_addr = self.listener_addr();
-         let trusted = self.is_trusted();
- 
--        let (last_connection_attempt, total_connection_attempts) = match self {
--            Self::Candidate(peer) => (peer.last_connection_attempt, peer.total_connection_attempts),
-+        let (last_connection_attempt, total_connection_attempts, last_known_aleo_addr) = match self {
-+            Self::Candidate(peer) => {
-+                (peer.last_connection_attempt, peer.total_connection_attempts, peer.last_known_aleo_addr)
-+            }
-             Self::Connecting(_) | Self::Connected(_) => {
-                 warn!(
-                     "Peer '{listener_addr}' is being promoted to Connecting, but is {}",
-                     if self.is_connected() { "already Connected" } else { "already Connecting" }
-                 );
--                (None, 0)
-+                (None, 0, None)
-             }
-         };
- 
-@@ -176,6 +182,7 @@ impl<N: Network> Peer<N> {
-             trusted,
-             last_connection_attempt,
-             total_connection_attempts,
-+            last_known_aleo_addr,
-         });
-     }
- 
-@@ -222,8 +229,9 @@ impl<N: Network> Peer<N> {
-     /// Demote a peer to candidate status, marking it as disconnected.
-     pub fn downgrade_to_candidate(&mut self, listener_addr: SocketAddr) {
-         let last_known_aleo_addr = match self {
-+            Self::Candidate(p) => p.last_known_aleo_addr,
-+            Self::Connecting(p) => p.last_known_aleo_addr,
-             Self::Connected(p) => Some(p.aleo_addr),
--            _ => None,
-         };
- 
-         // Preserve the connection attempt info if the handshake didn't succeed.
-```
-
-**File**: `node/network/src/peering.rs` (modified, +86/-13)
-```diff
-@@ -39,6 +39,34 @@ use std::{
- use tokio::task;
- use tracing::*;
- 
-+/// A peer that [`PeerPoolHandling::add_connecting_peer`] marked as connecting.
-+///
-+/// Dropping it returns the peer to the candidates, unless the handshake has upgraded it to
-+/// connected by then. A handshake's timeout drops the handshake future wherever it is waiting, so
-+/// this is the only rollback that runs on every way out of a handshake.
-+#[must_use = "dropping it immediately returns the peer to the candidates"]
-+pub struct ConnectingPeerGuard<'a, N: Network> {
-+    peer_pool: &'a RwLock<HashMap<SocketAddr, Peer<N>>>,
-+    listener_addr: SocketAddr,
-+}
-+
-+impl<N: Network> ConnectingPeerGuard<'_, N> {
-+    /// Returns the listener address of the connecting peer.
-+    pub fn listener_addr(&self) -> SocketAddr {
-+        self.listener_addr
-+    }
-+}
-+
-+impl<N: Network> Drop for ConnectingPeerGuard<'_, N> {
-+    fn drop(&mut self) {
-+        if let Some(peer) = self.peer_pool.write().get_mut(&self.listener_addr)
-+            && peer.is_connecting()
-+        {
-+            peer.downgrade_to_candidate(self.listener_addr);
-+        }
-+    }
-+}
-+
- /// Application-level errors generated by the peering module.
- /// This is never returned directly, but only as the payload for a `ConnectError`.
- #[derive(Debug)]
-@@ -533,27 +561,25 @@ pub trait PeerPoolHandling<N: Network>: P2P {
-         Ok(())
-     }
- 
--    // Introduces a new connecting peer into the peer pool if unknown, or promotes
--    // a known candidate peer to a connecting one. The returned boolean indicates
--    // whether the peer has been added/promoted, or rejected due to already being
--    // shaken hands with or connected.
--    fn add_connecting_peer(&self, listener_addr: SocketAddr) -> Result<(), ConnectError> {
-+    /// Introduces a new connecting peer into the peer pool if unknown, or promotes a known
-+    /// candidate peer to a connecting one. Fails if the peer is already connecting or connected.
-+    ///
-+    /// The peer stays connecting only while the returned [`ConnectingPeerGuard`] is alive, so a
-+    /// handshake holds it until it has upgraded the peer to connected.
-+    fn add_connecting_peer(&self, listener_addr: SocketAddr) -> Result<ConnectingPeerGuard<'_, N>, ConnectError> {
-         match self.peer_pool().write().entry(listener_addr) {
-             Entry::Vacant(entry) => {
-                 entry.insert(Peer::new_connecting(listener_addr, false));
--                Ok(())
-             }
-             Entry::Occupied(mut entry) => match entry.get() {
-                 // Promote in place rather than replacing the entry, so the candidate's
-                 // connection-attempt metadata survives the transition.
--                Peer::Candidate(_) => {
--                    entry.get_mut().promote_to_connecting();
--                    Ok(())
--                }
--                Peer::Connecting(_) => Err(ConnectError::AlreadyConnecting { address: listener_addr }),
--                Peer::Connected(_) => Err(ConnectError::AlreadyConnected { address: listener_addr }),
-+                Peer::Candidate(_) => entry.get_mut().promote_to_connecting(),
-+                Peer::Connecting(_) => return Err(ConnectError::AlreadyConnecting { address: listener_addr }),
-+                Peer::Connected(_) => return Err(ConnectError::AlreadyConnected { address: listener_addr }),
-             },
-         }
-+        Ok(ConnectingPeerGuard { peer_pool: self.peer_pool(), listener_addr })
-     }
- 
-     /// Temporarily IP-ban and disconnect from the peer with the given listener address and an
-@@ -685,7 +711,7 @@ mod tests {
-         assert!(!pool.is_connected(listener_addr));
- 
-         // Step 2: promote to connecting.
--        assert!(pool.add_connecting_peer(listener_addr).is_ok());
-+        let connecting = pool.add_connecting_peer(listener_addr).unwrap();
- 
-         assert_eq!(pool.number_of_candidate_peers(), 0);
-         assert_eq!(pool.number_of_connecting_peers(), Some(1));
-@@ -711,6 +737,10 @@ mod tests {
-         assert!(pool.is_connected(listener_addr));
-         assert_eq!(pool.number_of_connected_validators(), Some(1));
- 
-+        // The handshake is over; a connected peer stays connected.
-+        drop(connecting);
-+        assert!(pool.is_connected(listener_addr));
-+
-         // Verify the connected peer's fields.
-         let connected = pool.get_connected_peer(listener_addr).expect("peer should be connected");
-         assert_eq!(connected.listener_addr, listener_addr);
-@@ -719,6 +749,49 @@ mod tests {
-         assert_eq!(connected.node_type, NodeType::Validator);
-     }
- 
-+    #[test]
-+    fn test_connecting_peer_is_released_on_drop() {
-+        let pool = MockPeerPool::<CurrentNetwork>::new();
-+        let listener_addr = SocketAddr::from(([192, 0, 2, 1], 4000));
-+
-+        let connecting = pool.add_connecting_peer(listener_addr).unwrap();
-+        assert!(pool.is_connecting(listener_addr));
-+        assert!(matches!(pool.add_connecting_peer(listener_addr), Err(ConnectE
-```
-
-**File**: `node/router/src/handshake.rs` (modified, +31/-48)
-```diff
-@@ -20,7 +20,7 @@ use crate::{
-     Router,
-     messages::{ChallengeRequest, ChallengeResponse, DisconnectReason, Message, MessageCodec, MessageTrait},
- };
--use snarkos_node_network::{get_repo_commit_hash, log_repo_sha_comparison};
-+use snarkos_node_network::{ConnectingPeerGuard, get_repo_commit_hash, log_repo_sha_comparison};
- use snarkos_node_tcp::{ConnectError, ConnectionSide, P2P, Tcp};
- use snarkvm::{
-     ledger::narwhal::Data,
-@@ -91,15 +91,11 @@ impl<N: Network> Router<N> {
-         genesis_header: Header<N>,
-         restrictions_id: Field<N>,
-     ) -> Result<ChallengeRequest<N>, ConnectError> {
--        // If this is an inbound connection, we log it, but don't know the listening address yet.
--        // Otherwise, we can immediately register the listening address.
--        let mut listener_addr = if peer_side == ConnectionSide::Initiator {
-+        if peer_side == ConnectionSide::Initiator {
-             debug!("Received a connection request from '{peer_addr}'");
--            None
-         } else {
-             debug!("Shaking hands with '{peer_addr}'...");
--            Some(peer_addr)
--        };
-+        }
- 
-         // Check (or impose) IP-level bans.
-         #[cfg(not(feature = "test-helpers"))]
-@@ -121,48 +117,37 @@ impl<N: Network> Router<N> {
-             }
-         }
- 
--        // Perform the handshake; we pass on a mutable reference to listener_addr in case the process is broken at any point in time.
-         let handshake_result = match peer_side {
-             ConnectionSide::Responder => {
-                 self.handshake_inner_initiator(peer_addr, stream, genesis_header, restrictions_id).await
-             }
-             ConnectionSide::Initiator => {
--                self.handshake_inner_responder(peer_addr, &mut listener_addr, stream, genesis_header, restrictions_id)
--                    .await
-+                self.handshake_inner_responder(peer_addr, stream, genesis_header, restrictions_id).await
-             }
-         };
- 
--        if let Some(addr) = listener_addr {
--            match handshake_result {
--                Ok(ref cr) => {
--                    if let Some(peer) = self.peer_pool.write().get_mut(&addr) {
--                        self.resolver.write().insert_peer(peer.listener_addr(), peer_addr, Some(cr.address));
--                        peer.upgrade_to_connected(
--                            peer_addr,
--                            cr.listener_port,
--                            cr.address,
--                            cr.node_type,
--                            cr.version,
--                            cr.snarkos_sha,
--                            ConnectionMode::Router,
--                        );
--                    }
--
--                    #[cfg(feature = "metrics")]
--                    self.update_metrics();
--                }
--                Err(_) => {
--                    if let Some(peer) = self.peer_pool.write().get_mut(&addr) {
--                        // The peer may only be downgraded if it's a ConnectingPeer.
--                        if peer.is_connecting() {
--                            peer.downgrade_to_candidate(addr);
--                        }
--                    }
--                }
--            }
-+        // On failure, the handshake has already returned any peer it marked as connecting to the
-+        // candidates.
-+        let (peer_request, connecting) = handshake_result?;
-+        if let Some(peer) = self.peer_pool.write().get_mut(&connecting.listener_addr()) {
-+            self.resolver.write().insert_peer(peer.listener_addr(), peer_addr, Some(peer_request.address));
-+            peer.upgrade_to_connected(
-+                peer_addr,
-+                peer_request.listener_port,
-+                peer_request.address,
-+                peer_request.node_type,
-+                peer_request.version,
-+                peer_request.snarkos_sha,
-+                ConnectionMode::Router,
-+            );
-         }
-+        // The connecting peer takes the peer pool's lock when dropped.
-+        drop(connecting);
- 
--        handshake_result
-+        #[cfg(feature = "metrics")]
-+        self.update_metrics();
-+
-+        Ok(peer_request)
-     }
- 
-     /// The connection initiator side of the handshake.
-@@ -172,10 +157,10 @@ impl<N: Network> Router<N> {
-         stream: &'a mut TcpStream,
-         genesis_header: Header<N>,
-         restrictions_id: Field<N>,
--    ) -> Result<ChallengeRequest<N>, ConnectError> {
-+    ) -> Result<(ChallengeRequest<N>, ConnectingPeerGuard<'a, N>), ConnectError> {
-         // Introduce the peer into the peer pool.
-         // If we are connecting, the peer and listener address are identical.
--        self.add_connecting_peer(peer_addr)?;
-+        let connecting = self.add_connecting_peer(peer_addr)?;
- 
-         // Construct the stream.
-         let mut framed = Framed::new(stream, MessageCodec::<N>::handshake());
-@@ -244,18 +229,17 @@ impl<N: Network> Router<N> {
-         };
-         send(&mut framed, peer_addr, Message::C
-```
-
-**File**: `node/src/bootstrap_client/handshake.rs` (modified, +63/-64)
-```diff
-@@ -34,6 +34,7 @@ use crate::{
-     tcp::{ConnectError, Connection, ConnectionSide, protocols::*},
- };
- use snarkos_node_network::{
-+    ConnectingPeerGuard,
-     harden_socket,
-     noise::{
-         HandshakeProtocol,
-@@ -119,15 +120,13 @@ impl<N: Network> Handshake for BootstrapClient<N> {
-         // Make the socket more robust.
-         harden_socket(stream)?;
- 
--        // We don't know the listening address yet, as we don't initiate connections.
--        let mut listener_addr = if peer_side == ConnectionSide::Initiator {
-+        // The bootstrap client only accepts connections.
-+        if peer_side == ConnectionSide::Initiator {
-             debug!("Received a connection request from '{peer_addr}'");
--            None
-         } else {
-             unreachable!("The boostrapper clients don't initiate connections");
--        };
-+        }
- 
--        // Perform the handshake; we pass on a mutable reference to listener_addr in case the process is broken at any point in time.
-         let handshake_result = if peer_side == ConnectionSide::Responder {
-             unreachable!("The boostrapper clients don't initiate connections");
-         } else {
-@@ -136,50 +135,37 @@ impl<N: Network> Handshake for BootstrapClient<N> {
-                 // so the marker settles the connection mode. When the router's handshake is
-                 // converted the two will need telling apart - most likely by giving each
-                 // subprotocol its own marker - and this is the dispatch that has to change.
--                (HandshakeProtocol::Noise, _) => {
--                    self.handshake_inner_responder_noise(peer_addr, &mut listener_addr, stream).await
--                }
--                (HandshakeProtocol::Legacy, prefix) => {
--                    self.handshake_inner_responder(peer_addr, &mut listener_addr, stream, &prefix).await
--                }
-+                (HandshakeProtocol::Noise, _) => self.handshake_inner_responder_noise(peer_addr, stream).await,
-+                (HandshakeProtocol::Legacy, prefix) => self.handshake_inner_responder(peer_addr, stream, &prefix).await,
-             }
-         };
- 
--        if let Some(addr) = listener_addr {
--            match handshake_result {
--                Ok((peer_port, peer_aleo_addr, peer_node_type, peer_version, peer_snarkos_sha, connection_mode)) => {
--                    if let Some(peer) = self.peer_pool.write().get_mut(&addr) {
--                        // Due to only having a single Resolver, the BootstrapClient only adds an Aleo
--                        // address mapping for Gateway-mode connections, as it is only used there, and
--                        // it could otherwise clash with the Router-mode mapping for validators, which
--                        // may connect in both modes at the same time.
--                        let aleo_addr =
--                            if connection_mode == ConnectionMode::Gateway { Some(peer_aleo_addr) } else { None };
--                        self.resolver.write().insert_peer(peer.listener_addr(), peer_addr, aleo_addr);
--                        peer.upgrade_to_connected(
--                            peer_addr,
--                            peer_port,
--                            peer_aleo_addr,
--                            peer_node_type,
--                            peer_version,
--                            peer_snarkos_sha,
--                            connection_mode,
--                        );
--                    }
--                    debug!("Completed the handshake with '{peer_addr}'");
--                }
--                Err(_) => {
--                    if let Some(peer) = self.peer_pool.write().get_mut(&addr) {
--                        // The peer may only be downgraded if it's a ConnectingPeer.
--                        if peer.is_connecting() {
--                            peer.downgrade_to_candidate(addr);
--                        }
--                    }
--                }
--            }
-+        // On failure, the handshake has already returned any peer it marked as connecting to the
-+        // candidates.
-+        let (peer_port, peer_aleo_addr, peer_node_type, peer_version, peer_snarkos_sha, connection_mode, connecting) =
-+            handshake_result?;
-+        if let Some(peer) = self.peer_pool.write().get_mut(&connecting.listener_addr()) {
-+            // Due to only having a single Resolver, the BootstrapClient only adds an Aleo
-+            // address mapping for Gateway-mode connections, as it is only used there, and
-+            // it could otherwise clash with the Router-mode mapping for validators, which
-+            // may connect in both modes at the same time.
-+            let aleo_addr = if connection_mode == ConnectionMode::Gateway { Some(peer_aleo_addr) } else { None };
-+            self.resolver.write().insert_peer(peer.listener_addr(), peer_addr, aleo_addr);
-+            peer.upgrade_to_connected(
-+                peer_addr,
-+                peer_port,
-+                peer_ale
-```
-
-**File**: `node/tests/handshake.rs` (modified, +41/-3)
-```diff
-@@ -21,13 +21,14 @@ use common::{node::*, test_peer::TestPeer};
- 
- use snarkos_node::{Client, Prover, Validator};
- use snarkos_node_network::PeerPoolHandling;
--use snarkos_node_tcp::{ConnectError, P2P};
-+use snarkos_node_tcp::{ConnectError, P2P, protocols::Handshake};
- use snarkvm::prelude::{MainnetV0 as CurrentNetwork, store::helpers::memory::ConsensusMemory};
- 
- use pea2pea::Pea2Pea;
- 
--use std::{net::SocketAddr, time::Duration};
--use tokio::time::sleep;
-+use deadline::deadline;
-+use std::{io, net::SocketAddr, time::Duration};
-+use tokio::time::{sleep, timeout};
- 
- // Trait to unify Pea2Pea and P2P traits.
- #[async_trait::async_trait]
-@@ -288,3 +289,40 @@ async fn duplicate_connection_attempts() {
-     assert_eq!(node1.router().number_of_connected_peers(), 1);
-     assert_eq!(node2.router().number_of_connected_peers(), 1);
- }
-+
-+/// How long to wait for a stalled handshake to time out.
-+fn handshake_timeout_with_margin<H: Handshake>(_node: &H) -> Duration {
-+    Duration::from_millis(H::TIMEOUT_MS + 3_000)
-+}
-+
-+/// A peer that accepts the connection and then never answers holds the router's handshake until it
-+/// times out. Once it has, the peer must be dialable again; a peer stuck as connecting is never
-+/// dialed again and turns away every inbound handshake.
-+#[tokio::test(flavor = "multi_thread")]
-+async fn a_timed_out_handshake_does_not_leave_the_peer_connecting() {
-+    let node = client().await;
-+
-+    // Accept connections and keep them open without ever writing to them.
-+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+    let silent_addr = listener.local_addr().unwrap();
-+    let _silent = tokio::spawn(async move {
-+        let mut streams = Vec::new();
-+        while let Ok((stream, _)) = listener.accept().await {
-+            streams.push(stream);
-+        }
-+    });
-+
-+    let dial = node.router().connect(silent_addr).unwrap();
-+    let router = node.router().clone();
-+    deadline!(Duration::from_secs(5), move || router.is_connecting(silent_addr));
-+
-+    let result =
-+        timeout(handshake_timeout_with_margin(&node), dial).await.expect("the handshake never timed out").unwrap();
-+    assert!(
-+        matches!(&result, Err(ConnectError::IoError(e)) if e.kind() == io::ErrorKind::TimedOut),
-+        "the handshake should have timed out: {result:?}"
-+    );
-+
-+    assert!(!node.router().is_connecting(silent_addr), "the timed-out peer is still marked as connecting");
-+    assert!(!matches!(node.router().connect(silent_addr), Err(ConnectError::AlreadyConnecting { .. })));
-+}
-```
-
----
-
-### Incident Patch 3: `5341d8db` (2026-11-20)
-**Commit Message**: Merge pull request #4732 from aleo-labs-protocol/ci/devnet-fixes
-
-**File**: `.ci/test_db_backup.sh` (modified, +9/-8)
-```diff
-@@ -19,7 +19,7 @@ tmp_dir="${TMPDIR:-/tmp}"
- checkpoint_height=3
- rollback_height=10
- num_checkpoints=0
--remaining_checkpoints=2
-+remaining_checkpoints=1
- 
- # Create log directory
- init_log_dir
-@@ -124,9 +124,10 @@ function create_checkpoints() {
- wait_for_nodes "$total_validators" 0 "$network_name"
- 
- # Check heights periodically with a timeout
--total_wait=0
-+start=$(now)
-+next_report=10
- checkpoint_created=false
--while (( total_wait < 600 )); do  # 10 minutes max
-+while (( $(elapsed_since "$start") < 600 )); do  # 10 minutes max
-   # Apply short-circuiting
-   if [[ $checkpoint_created = true ]] || check_heights  0 "$total_validators" "$checkpoint_height" "$network_name"; then
-     if [[ $checkpoint_created = false ]]; then
-@@ -166,8 +167,6 @@ while (( total_wait < 600 )); do  # 10 minutes max
-           snarkos clean "--network=$network_id" "--dev=$validator_index" --keep-node-data \
-               "--ledger-storage=$(checkpoint_dir "$suffix")"
-         fi
--       # Wait until the cleanup concludes
--        sleep 1
- 
-         # Restart using the checkpoint
-         suffix="${validator_index}_$((num_checkpoints-1))"
-@@ -223,9 +222,11 @@ while (( total_wait < 600 )); do  # 10 minutes max
-   fi
- 
-   # Continue waiting
--  sleep 3
--  total_wait=$((total_wait + 3))
--  log "Waited $total_wait seconds so far..."
-+  sleep 1
-+  if (( $(elapsed_since "$start") >= next_report )); then
-+    log "Waited $(elapsed_since "$start") seconds so far..."
-+    next_report=$((next_report + 10))
++# Only the release validators may log the surplus task error.
++for ((node_index = penultimate_index; node_index < total_validators; node_index++)); do
++  if grep -E "ERROR.*$surplus_tasks" "$log_dir/validator-$node_index.log"; then
++    log "❌ Test failed! Upgraded validator #${node_index} left surplus live tasks."
++    exit 1
 +  fi
- done
- 
- # The main loop has expired by now
-```
-
-**File**: `.ci/test_devnet.sh` (modified, +3/-1)
-```diff
-@@ -25,7 +25,9 @@ MAX_CLIENT_LOG_SIZE_BYTES=$((1 * 1024 * 1024))
- : "${total_validators:=4}"
- : "${total_clients:=4}" # need at least 4 clients, so each validator has at least one client connected to it.
- : "${network_id:=0}"
--: "${min_height:=60}" # To likely go past the 100 round garbage collection limit.
-+# Garbage collection removes certificates 100 rounds below the latest leader round, and block h
-+# has a leader round of at least 2h, so every validator has garbage collected by height 51.
-+: "${min_height:=55}"
- 
- tx_file="${TMPDIR:-/tmp}/transfer_public_tx.txt"
- 
-```
-
-**File**: `.ci/utils.sh` (modified, +59/-28)
-```diff
-@@ -632,16 +632,25 @@ function wait_for_heights() {
-   : "${max_wait:=300}"
-   : "${poll_interval:=5}"
- 
--  local start
--  start=$(now) 
--  
-+  local start elapsed
-+  start=$(now)
-+  # `check_heights` logs progress only for an elapsed time that is a positive multiple of 60.
-+  local logged_minutes=0
-+  local report
++done
 +
-   while (( $(elapsed_since "$start") < max_wait )); do
--    if check_heights "$start_index" "$end_index" "$min_height" "$network_name" "$elapsed"; then
-+    elapsed=$(elapsed_since "$start")
-+    report=0
-+    if (( elapsed / 60 > logged_minutes )); then
-+      logged_minutes=$((elapsed / 60))
-+      report=$((logged_minutes * 60))
-+    fi
-+    if check_heights "$start_index" "$end_index" "$min_height" "$network_name" "$report"; then
-       return 0
-     fi
- 
-     # Continue waiting
--    sleep 5
-+    sleep "$poll_interval"
-   done
-   return 1
- }
-@@ -659,40 +668,62 @@ function print_client_logs() {
- }
- 
- 
--# Function checking that the first node reached the latest (unchanging) consensus version.
-+# Blocks until the node with the given index reaches the activation height of the last version in
-+# the consensus version schedule it serves, and checks that it runs that version there.
- function wait_for_stable_consensus_version() {
-   local node_index=$1
-   local network_name=$2
--  
--  local last_seen_consensus_version=0
--  local last_seen_height=0
- 
--  # Check consensus versions periodically with a timeout
--  log "ℹ️ Waiting for consensus version to stabilize..."
--  local start
-+  local max_wait=300
-+  local port=$((3030 + node_index))
-+  # Versions that are not scheduled have a height of `u32::MAX`, and are never reached.
-+  local filter='[.consensus_heights[] | select(. != 4294967295)] | "\(length) \(last)"'
-+
-+  local schedule="" final_version final_height height consensus_version
-+  local start next_report=10
-   start=$(now)
--  
--  while (( $(elapsed_since "$start") < 300 )); do  # 5 minutes max
--    consensus_version=$(get_consensus_version "$node_index" "$network_name" || echo "0")
--    height=$(get_block_height "$node_index" "$network_name" || echo "0")
--
--    # If the consensus version is greater than the last seen, we update it.
--    if (( consensus_version > last_seen_consensus_version )); then
--      log "✅ Consensus version updated to $consensus_version"
--    # If the consensus version is the same whereas the block height is different and at least 10, we can assume that the consensus version is stable
--    elif (( (height != last_seen_height) && (height >= 10) )); then
-+
-+  log "ℹ️ Waiting for the last scheduled consensus version..."
-+  while (( $(elapsed_since "$start") < max_wait )); do
-+    if [[ -z "$schedule" ]]; then
-+      if schedule=$(curl -s --max-time 5 "http://$localhost:$port/v2/$network_name/version" | jq -er "$filter" 2>/dev/null) &&
-+         [[ "$schedule" =~ ^[0-9]+\ [0-9]+$ ]]; then
-+        read -r final_version final_height <<< "$schedule"
-+        # A devnet makes about one block every 2 s.
-+        if (( final_height * 4 > max_wait )); then
-+          max_wait=$(( final_height * 4 ))
-+        fi
-+        log "Node #${node_index} schedules consensus version $final_version at height $final_height"
-+      else
-+        schedule=""
-+      fi
-+    fi
-+
-+    if [[ -n "$schedule" ]]; then
-+      height=$(get_block_height_by_port "$port" "$network_name" 5)
-+      if (is_integer "$height") && (( height >= final_height )); then
-+        consensus_version=$(get_consensus_version "$node_index" "$network_name" || echo "")
-+        if [[ "$consensus_version" != "$final_version" ]]; then
-+          log "❌ Node #${node_index} is at consensus version ${consensus_version:-<none>} at height $height, expected $final_version"
-+          return 1
-+        fi
-         log "✅ Consensus version is stable at $consensus_version with height $height"
-         return 0
-+      fi
-     fi
- 
--    last_seen_consensus_version=$consensus_version
--    last_seen_height=$height
--
--    # Continue waiting
--    sleep 10
--    log "Waited $(elapsed_since "$start") seconds so far..."
-+    if (( $(elapsed_since "$start") >= next_report )); then
-+      log "Waited $(elapsed_since "$start") seconds so far (height ${height:-<none>})..."
-+      next_report=$((next_report + 10))
-+    fi
-+    sleep 1
-   done
- 
-+  if [[ -z "$schedule" ]]; then
-+    log "❌ Node #${node_index} did not serve its consensus version schedule within ${max_wait}s"
-+  else
-+    log "❌ Node #${node_index} did not reach height $final_height within ${max_wait}s"
-+  fi
-   return 1
- }
- 
++if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "$expected_errors"; then
+   exit 0
+ else
+   exit 1
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4742** (2026-11-20): Expect the errors of a consensus upgrade in the partial upgrade test (@cbeck88)
+- **PR #4740** (2026-11-20): Bump snarkVM to aleo-labs-protocol/snarkVM@7ba14e66b (@cbeck88)
+- **PR #4739** (2026-11-20): Bump snarkVM to aleo-labs-protocol/snarkVM@7ba14e66b and remove the serial feature (@cbeck88)
+- **PR #4738** (2026-11-20): release-test: the sync legs run at once (@cbeck88)
 - **PR #4737** (2026-11-20): Give skipped devnet jobs a static name (@cbeck88)
 - **PR #4733** (2026-11-20): Restore the upgrade test's new-version check, and make the test faster (@cbeck88)
-- **PR #4732** (2026-11-20): Wait for the last scheduled consensus version, and trim the devnet test (@cbeck88)
-- **PR #4731** (2026-11-20): Run the fleet test entries 16 tests at a time (@cbeck88)
-- **PR #4729** (2026-11-20): Remove the memory and persistent features of the storage service (@cbeck88)
-- **PR #4728** (2026-11-20): Remove dead features and rename the root telemetry feature to metrics (@cbeck88)
 
 ---
 
@@ -2969,40 +2124,48 @@ Claude-Session: https://claude.ai/code/session_01UYfmmPBwQHC2yRCed8gDf5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Run the fixed-port gateway test alone, and correct the nextest comment
+## X. Empirical Invariant Guard in test_partial_upgrade.sh
 
 **RULE**:
-When implementing operations in `.config/nextest.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.ci/test_partial_upgrade.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `97451873`: Run the fixed-port gateway test alone, and correct the nextest comment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `60e3fed6`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.config/nextest.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ci/test_partial_upgrade.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# The hosted runners have 4 vCPUs. The fleet `test` job overrides this with
-# NEXTEST_TEST_THREADS; see CI.md.
+# Once two validators run the new version, they hold at least a third of the stake, so the
+# release validators shut down. Before that, the last node rejects the blocks of its outdated
+# peers.
+upgrade_stop="Validators holding at least a third of the stake run ConsensusVersion::V[0-9]+ from height [0-9]+, but this build does not schedule it at that height, and must be upgraded"
+outdated_peer="The peer's consensus version for height [0-9]+ is behind ours"
+# The release binary leaves a task running when it shuts down this way.
+surplus_tasks="There are [0-9]+ surplus live tasks"
+expected_errors="$upgrade_stop|$outdated_peer|$surplus_tasks"
 
-# gateway_start asserts that the gateway binds 127.0.0.1:5000+dev exactly. Other
-# tests bind ports in that range, and take another port if one is taken, so this
-# test runs alone.
-[[profile.default.overrides]]
-filter = 'package(snarkos-node-bft) and test(=gateway::prop_tests::gateway_start)'
-threads-required = "num-test-threads"
+# Only the release validators may log the surplus task error.
+for ((node_index = penultimate_index; node_index < total_validators; node_index++)); do
+  if grep -E "ERROR.*$surplus_tasks" "$log_dir/validator-$node_index.log"; then
+    log "❌ Test failed! Upgraded validator #${node_index} left surplus live tasks."
+    exit 1
+  fi
+done
+
+if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "$expected_errors"; then
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-# Many tests bind sockets and start nodes, so two run at a time on the hosted
-# runners. The fleet `test` job sets NEXTEST_TEST_THREADS instead; see CI.md.
+if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES"; then
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `97451873` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `60e3fed6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

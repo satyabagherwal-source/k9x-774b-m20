@@ -11648,3 +11648,6 @@
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T22:42:05.596Z` | `skyhook-io-radar` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6E87E9F5` [Domain D] | Yes (`97b968de...`) |
 | `CYCLE-20261120-MXT7` | `2026-11-20T22:49:21.835Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9649` | Yes (`d3b520de...`) |
 | `CYCLE-20261120-N32V` | `2026-11-20T22:49:28.663Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9650` | Yes (`b2ee57e0...`) |
+| `CYCLE-20261120-X2QW` | `2026-11-20T22:57:14.792Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9651` | Yes (`233f776a...`) |
+| `CYCLE-20261120-X4U2` | `2026-11-20T22:57:17.498Z` | `scrapinghub/dateparser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9652` | Yes (`15027ec3...`) |
+| `CYCLE-20261120-XB2A` | `2026-11-20T22:57:25.570Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9653` | Yes (`a04e4817...`) |

@@ -4,45 +4,31 @@
 {
   "source_repository": "jhspetersson/fselect",
   "source_url": "https://github.com/jhspetersson/fselect",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "234f8b7b",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-20T22:57:14.976Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-jhspetersson-fselect",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [jhspetersson/fselect](https://github.com/jhspetersson/fselect) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [jhspetersson/fselect](https://github.com/jhspetersson/fselect) (Revision: `234f8b7b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T22:57:14.976Z`  
+> **Learning ID**: `learn-github-jhspetersson-fselect`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `jhspetersson/fselect` (Commit: `historical`)
+- **Target Repository**: `jhspetersson/fselect` (Commit: `234f8b7b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
-> **Source**: github ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
-> **Source Version**: `fea3c1b1`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T01:58:21.191Z  
-> **Learning ID**: `learn-github-jhspetersson-fselect`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): jhspetersson/fselect
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T01:58:20.334Z  
+> **Harvest Timestamp**: 2026-11-20T22:57:13.583Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Find files with SQL-like queries
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 4474 stars
+- **Stars / Engagement**: 4476 stars
 
 ---
 
@@ -898,9 +884,12 @@ mod tests {
 use std::sync::{LazyLock, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use chrono::{DateTime, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, Timelike, Utc};
-use chrono_english::{parse_date_string, Dialect};
+use jiff::civil::{Date, DateTime, Time};
+use jiff::tz::TimeZone;
+use jiff::{SignedDuration, Span, Timestamp, ZonedDateTime};
 use regex::Regex;
+
+use crate::util::english_date::{parse_date_string, Dialect};
 
 static DATE_REGEX: LazyLock<Regex> = LazyLock::new(|| {
     // The date and time parts may be separated by a space or an ISO 8601 `T`
@@ -919,8 +908,34 @@ static TRAILING_TIME_REGEX: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"(?i)^(.*\S)\s+([0-9]{1,2})(?::([0-9]{2})(?::([0-9]{2}))?)?\s*([ap]m)?$").unwrap()
 });
 
-fn trailing_time(caps: &regex::Captures) -> Option<NaiveTime> {
-    let mut hour: u32 = caps[2].parse().ok()?;
+static LOCAL_TIME_ZONE: LazyLock<TimeZone> = LazyLock::new(TimeZone::system);
+
+pub fn local_time_zone() -> &'static TimeZone {
+    &LOCAL_TIME_ZONE
+}
+
+pub fn local_now() -> ZonedDateTime {
+    Timestamp::now().to_zoned_datetime(local_time_zone().clone())
+}
+
+fn floor_seconds(duration: SignedDuration) -> i64 {
+    duration.as_secs() - i64::from(duration.subsec_nanos() < 0)
+}
+
+pub fn timestamp_seconds(timestamp: Timestamp) -> i64 {
+    floor_seconds(timestamp.as_duration())
+}
+
+pub fn naive_seconds(dt: DateTime) -> i64 {
+    floor_seconds(dt.duration_since(DateTime::constant(1970, 1, 1, 0, 0, 0, 0)))
+}
+
+fn whole_day(date: Date) -> (DateTime, DateTime) {
+    (date.at(0, 0, 0, 0), date.at(23, 59, 59, 0))
+}
+
+fn trailing_time(caps: &regex::Captures) -> Option<Time> {
+    let mut hour: i8 = caps[2].parse().ok()?;
     if let Some(meridiem) = caps.get(5) {
         if hour == 0 || hour > 12 {
             return None;
@@ -932,19 +947,19 @@ fn trailing_time(caps: &regex::Captures) -> Option<NaiveTime> {
     }
     let minute = caps.get(3).map_or(Some(0), |m| m.as_str().parse().ok())?;
     let second = caps.get(4).map_or(Some(0), |m| m.as_str().parse().ok())?;
-    NaiveTime::from_hms_opt(hour, minute, second)
+    Time::new(hour, minute, second, 0).ok()
 }
 
-fn parse_natural_datetime(s: &str, dialect: Dialect) -> Option<NaiveDateTime> {
-    let now = Local::now();
+fn parse_natural_datetime(s: &str, dialect: Dialect) -> Option<DateTime> {
+    let now = local_now();
     if let Some(caps) = TRAILING_TIME_REGEX.captures(s)
         && (caps.get(3).is_some() || caps.get(5).is_some())
     {
         let time = trailing_time(&caps)?;
-        let date_time = parse_date_string(&caps[1], now, dialect).ok()?;
-        return Some(date_time.date_naive().and_time(time));
+        let date_time = parse_date_string(&caps[1], &now, dialect)?;
+        return Some(date_time.date().to_datetime(time));
     }
-    parse_date_string(s, now, dialect).ok().map(|date_time| date_time.naive_local())
+    parse_date_string(s, &now, dialect)
 }
 
 fn normalize_twelve_oclock(s: &str) -> std::borrow::Cow<'_, str> {
@@ -975,61 +990,47 @@ pub fn datetime_parses() -> usize {
     DATETIME_PARSES.with(|parses| parses.get())
 }
 
-pub fn parse_datetime(s: &str) -> Result<(NaiveDateTime, NaiveDateTime), String> {
+pub fn parse_datetime(s: &str) -> Result<(DateTime, DateTime), String> {
     #[cfg(test)]
     DATETIME_PARSES.with(|parses| parses.set(parses.get() + 1));
-    if s == "today" {
-        let date = Local::now().date_naive();
-        let start = date.and_hms_opt(0, 0, 0).unwrap();
-        let finish = date.and_hms_opt(23, 59, 59).unwrap();
+    let error = || "Error parsing date/time value: ".to_string() + s;
 
-        return Ok((start, finish));
+    if s == "today" {
+        return Ok(whole_day(local_now().date()));
     }
 
     if s == "yesterday" {
-        let date = Local::now().date_naive() - Duration::try_days(1).unwrap();
-        let start = date.and_hms_opt(0, 0, 0).unwrap();
-        let finish = date.and_hms_opt(23, 59, 59).unwrap();
-
-        return Ok((start, finish));
+        return local_now().date().yesterday().map(whole_day).map_err(|_| error());
     }
 
     match DATE_REGEX.captures(s) {
         Some(cap) => {
             // Ensure consistent separator (both dashes or both colons)
             if cap[2] != cap[4] {
-                return Err("Error parsing date/time value: ".to_string() + s);
+                return Err(error());
             }
-            let part = |index: usize| -> Result<u32, String> {
-                cap[index].parse().map_err(|_| "Error parsing date/time value: ".to_string() + s)
-            };
-            let optional_part = |index: usize, finish_default: u32| -> Result<(u32, u32), String> {
+            let part = |index: usize| -> Result<i8, String> { cap[index].parse().map_err(|_| error()) };
+            let optional_part = |index: usize, finish_default: i8| -> Result<(i8, i8), String> {
                 match cap.get(index) {
                     Some(_) => part(index).map(|value| (value, value)),
                     None => Ok((0, finish_default)),
                 }
             };
-            let year = part(1)? as i32;
+            let year: i16 = cap[1].parse().map_err(|_| error())?;
             let month = part(3)?;
             let day = part(5)?;
             let (hour_start, hour_finish) = optional_part(6, 23)?;
             let (min_start, min_finish) = optional_part(7, 59)?;
             let (sec_start, sec_finish) = optional_part(8, 59)?;
 
-            // Build the naive datetime directly: a Local round-trip would fail on
-            // DST-skipped or ambiguous midnights while adding nothing to the result
-            match NaiveDate::from_ymd_opt(year, month, day) {
-                Some(date) => {
-                    let start = date.and_hms_opt(hour_start, min_start, sec_start);
-                    let finish = date.and_hms_opt(hour_finish, min_finish, sec_finish);
+            // Build the civil datetime directly: a round-trip through the local
+            // time zone would trip on DST-skipped or ambiguous midnights while
+            // adding nothing to the result
+            let date = Date::new(year, month, day).map_err(|_| error())?;
+            let start = Time::new(hour_start, min_start, sec_start, 0).map_err(|_| error())?;
+            let finish = Time::new(hour_finish, min_finish, sec_finish, 0).map_err(|_| error())?;
 
-                    match (start, finish) {
-                        (Some(s), Some(f)) => Ok((s, f)),
-                        _ => Err("Error parsing date/time value: ".to_string() + s),
-                    }
-                }
-                None => Err("Error parsing date/time value: ".to_string() + s),
-            }
+            Ok((date.to_datetime(start), date.to_datetime(finish)))
         }
         None => {
             // Simplified relative-day syntax: any length of `+N`/`-N` counts
@@ -1039,13 +1040,11 @@ pub fn parse_datetime(s: &str) -> Result<(NaiveDateTime, NaiveDateTime), String>
                 && (s.starts_with("+") || s.starts_with("-"))
                 && let Ok(days) = s.parse::<i64>()
             {
-                let date = Duration::try_days(days)
-                    .and_then(|offset| Local::now().date_naive().checked_add_signed(offset))
-                    .ok_or_else(|| "Error parsing date/time value: ".to_string() + s)?;
-                let start = date.and_hms_opt(0, 0, 0).unwrap();
-                let finish = date.and_hms_opt(23, 59, 59).unwrap();
-
-                Ok((start, finish))
+                Span::new()
+                    .try_days(days)
+                    .and_then(|offset| local_now().date().checked_add(offset))
+                    .map(whole_day)
+                    .map_err(|_| error())
             } else if s.len() >= 5 {
                 let dialect = match *US_DATES.lock().unwrap() {
                     true => Dialect::Us,
@@ -1059,23 +1058,17 @@ pub fn parse_datetime(s: &str) -> Result<(NaiveDateTime, NaiveDateTime), String>
                             && date_time.second() == 0
                             && !EXPLICIT_TIME_REGEX.is_match(&normalized)
                         {
-                            date_time
-                                .with_hour(23)
-                                .unwrap()
-                                .with_minute(59)
-                                .unwrap()
-                                .with_second(59)
-                                .unwrap()
+                            date_time.date().at(23, 59, 59, date_time.subsec_nanosecond())
                         } else {
                             date_time
                         };
 
                         Ok((date_time, finish))
                     }
-                    None => Err("Error parsing date/time value: ".to_string() + s),
+                    None => Err(error()),
                 }
             } else {
-                Err("Error parsing date/time value: ".to_string() + s)
+                Err(error())
             }
         }
     }
@@ -1096,46 +1089,49 @@ pub fn system_time_to_unix(sdt: SystemTime) -> Option<(i64, u32)> {
     }
 }
 
-pub fn system_time_to_naive_local(sdt: SystemTime) -> Option<NaiveDateTime> {
+pub fn system_time_to_naive_local(sdt: SystemTime) -> Option<DateTime> {
     let (sec, nsec) = system_time_to_unix(sdt)?;
 
-    DateTime::<Utc>::from_timestamp(sec, nsec)
-        .map(|dt_utc| dt_utc.with_timezone(&Local).naive_local())
+    Timestamp::new(sec, nsec as i32)
+        .ok()
+        .map(|timestamp| local_time_zone().to_datetime(timestamp))
 }
 
-pub fn to_local_datetime(dt: &zip::DateTime) -> NaiveDateTime {
-    let date = NaiveDate::from_ymd_opt(dt.year() as i32, dt.month() as u32, dt.day() as u32)
-        .or_else(|| NaiveDate::from_ymd_opt(dt.year() as i32, 1, 1))
-        .unwrap_or_default();
-    let time = NaiveTime::from_hms_opt(dt.hour() as u32, dt.minute() as u32, dt.second() as u32)
-        .unwrap_or_default();
-    NaiveDateTime::new(date, time)
+pub fn to_local_datetime(dt: &zip::DateTime) -> DateTime {
+    let year = dt.year() as i16;
+    let date = Date::new(year, dt.month() as i8, dt.day() as i8)
+        .or_else(|_| Date::new(year, 1, 1))
+        .unwrap_or(Date::constant(1970, 1, 1));
+    let time = Time::new(dt.hour() as i8, dt.minute() as i8, dt.second() as i8, 0)
+        .unwrap_or(Time::midnight());
+    date.to_datetime(time)
 }
 
-pub fn format_datetime(dt: &NaiveDateTime) -> String {
-    format!("{}", dt.format("%Y-%m-%d %H:%M:%S"))
+pub fn format_datetime(dt: &DateTime) -> String {
+    dt.strftime("%Y-%m-%d %H:%M:%S").to_string()
 }
 
-pub fn format_date(date: &NaiveDate) -> String {
-    format!("{}", date.format("%Y-%m-%d"))
+pub fn format_date(date: &Date) -> String {
+    date.strftime("%Y-%m-%d").to_string()
 }
 
-pub fn format_time(time: &NaiveTime) -> String {
-    format!("{}", time.format("%H:%M:%S"))
+pub fn format_time(time: &Time) -> String {
+    time.strftime("%H:%M:%S").to_string()
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use std::time::Duration as StdDuration;
-    use chrono::{Datelike, Local, NaiveDate};
+    use jiff::civil::date;
+    use jiff::ToSpan;
 
     #[test]
     fn test_parse_today() {
         let result = parse_datetime("today").unwrap();
-        let now = Local::now().date_naive();
-        let start = now.and_hms_opt(0, 0, 0).unwrap();
-        let finish = now.and_hms_opt(23, 59, 59).unwrap();
+        let now = local_now().date();
+        let start = now.at(0, 0, 0, 0);
+        let finish = now.at(23, 59, 59, 0);
 
         assert_eq!(result.0, start);
         assert_eq!(result.1, finish);
@@ -1144,9 +1140,9 @@ mod tests {
     #[test]
     fn test_parse_yesterday() {
         let result = parse_datetime("yesterday").unwrap();
-        let yesterday = Local::now().date_naive() - chrono::Duration::days(1);
-        let start = yesterday.and_hms_opt(0, 0, 0).unwrap();
-        let finish = yesterday.and_hms_opt(23, 59, 59).unwrap();
+        let yesterday = local_now().date() - 1.days();
+        let start = yesterday.at(0, 0, 0, 0);
+        let finish = yesterday.at(23, 59, 59, 0);
 
         assert_eq!(result.0, start);
         assert_eq!(result.1, finish);
@@ -1155,7 +1151,20 @@ mod tests {
     #[test]
     fn test_parse_two_days_ago() {
         let result = parse_datetime("2 days ago 00:00").unwrap();
-        let two_days_ago = Local::now().date_na
+        let two_days_ago = local_now().date() - 2.days();
+        let start = two_days_ago.at(0, 0, 0, 0);
+
+        assert_eq!(result.0, start);
+        assert_eq!(result.1, start);
+    }
+
+    #[test]
+    fn relative_days_keep_an_explicit_trailing_time() {
+        let yesterday = local_now().date() - 1.days();
+        let at = |h, m| yesterday.at(h, m, 0, 0);
+
+        assert_eq!(parse_datetime("yesterday 15:30").unwrap(), (at(15, 30), at(15, 30)));
+        assert_eq!(parse_datetime("yesterday 3pm").unwrap(), (
 ```
 
 ### Core Architecture Module: `src/util/dimensions/image.rs`
@@ -1485,295 +1494,117 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5f214bd3` (2026-11-06)
-**Commit Message**: changelog for subquery parsing fixes
+### Incident Patch 1: `234f8b7b` (2026-11-20)
+**Commit Message**: fix boolean comparisons and HAVING parsing
 
-**File**: `CHANGELOG.md` (modified, +5/-0)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -6,9 +6,14 @@
+@@ -42,6 +42,8 @@
+ - A relative date such as `1 year ago` no longer fails when it lands in January
+ - A date with non-ASCII letters (`2024é`) is rejected instead of crashing
+ - `2 days ago` and similar day offsets keep the time of day across a daylight saving change
++- Comparing a boolean with a number gives the same result in either order (`is_file = size` and `size = is_file`); the boolean counts as 1 or 0
++- `HAVING` reads a computed right-hand operand as a number, date or boolean the same way `WHERE` does
  
- - Matroska and WebM metadata is behind the `mkv` build feature, enabled by default.
- - The `update-notifications` build feature is no longer enabled by default.
-+- Column aliases are no longer accepted after `WHERE` and `HAVING` conditions
- 
- ### Fixed
- 
-+- Unterminated or mismatched subquery parentheses are rejected instead of silently closed
-+- Operators such as `IN` and `BETWEEN` work after a subquery in the `SELECT` list
-+- A correlated subquery in a grouped query may only read grouping columns of the outer row
-+- `INTO` inside a subquery is rejected with a clear message
- - `NOT IN` no longer accepts a row when the list or subquery contains a NULL member and nothing matches
- - Numeric functions such as `ABS`, `GREATEST` and `HEX` read the byte count of `fsize` instead of its formatted text
+ ## [0.10.4] - 2026-10-23
  
 ```
 
----
-
-### Incident Patch 2: `41272962` (2026-11-06)
-**Commit Message**: write missing typed values as JSON null
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `src/searcher.rs` (modified, +34/-2)
 ```diff
-@@ -14,6 +14,7 @@
- - Subquery columns are named after their query in output headers and error messages instead of a hash
- - `DISTINCT` is rejected with a hint instead of being read as a column named "distinct"
- - A doubled quote inside a quoted string (`'it''s'`) is a literal quote
-+- Missing numeric, date and boolean values are written as `null` in JSON output
- 
- ### Fixed
- 
-```
-
-**File**: `src/output/json.rs` (modified, +19/-3)
-```diff
-@@ -9,7 +9,7 @@ pub struct JsonFormatter {
-     /// Column values in the order they were emitted. Stored as a `Vec` rather
-     /// than a map so we preserve the user's SELECT column order and so we can
-     /// disambiguate duplicate column names below.
--    row: Vec<(String, String)>,
-+    row: Vec<(String, Option<String>)>,
- }
- 
- impl ResultsFormatter for JsonFormatter {
-@@ -22,7 +22,12 @@ impl ResultsFormatter for JsonFormatter {
+@@ -3225,8 +3225,10 @@ impl<'a> Searcher<'a> {
      }
  
-     fn format_element(&mut self, name: &str, record: &str, _is_last: bool) -> Option<String> {
--        self.row.push((name.to_owned(), record.to_owned()));
-+        self.row.push((name.to_owned(), Some(record.to_owned())));
-+        None
-+    }
+     fn compare_variants(&mut self, op: &Op, field_value: &Variant, value: &Variant) -> Result<bool, SearchError> {
+-        if *field_value.get_type() == VariantType::String
+-            && *value.get_type() != VariantType::String
++        let numeric_against_bool = *field_value.get_type() == VariantType::Bool
++            && matches!(value.get_type(), VariantType::Int | VariantType::Float);
++        if ((*field_value.get_type() == VariantType::String && *value.get_type() != VariantType::String)
++            || numeric_against_bool)
+             && let Some(mirrored) = op.mirrored()
+         {
+             return self.compare_variants(&mirrored, value, field_value);
+@@ -3422,6 +3424,7 @@ impl<'a> Searcher<'a> {
+                 row, right_expr,
+             )?;
+             let field_value = Self::retype_value(left_expr, right_expr, field_value);
++            let value = if right_expr.is_literal() { value } else { Self::retype_value(left_expr, right_expr, value) };
+             if op.is_relational()
+                 && (Self::is_null_operand(left_expr, &field_value) || Self::is_null_operand(right_expr, &value))
+             {
+@@ -8032,6 +8035,35 @@ mod tests {
+         assert!(searcher.compare_variants(&Op::Gt, &two, &Variant::from_string(&String::from("10"))).unwrap());
+     }
+ 
++    #[test]
++    fn compare_variants_treats_a_boolean_as_a_number_on_either_side() {
++        let mut searcher = create_test_searcher();
++        let yes = Variant::from_bool(true);
++        let no = Variant::from_bool(false);
++        let ops = [Op::Eq, Op::Ne, Op::Eeq, Op::Ene, Op::Gt, Op::Gte, Op::Lt, Op::Lte];
 +
-+    fn format_null(&mut self, name: &str, _is_last: bool) -> Option<String> {
-+        self.row.push((name.to_owned(), None));
-         None
-     }
- 
-@@ -48,7 +53,10 @@ impl ResultsFormatter for JsonFormatter {
-             emitted.insert(resolved.clone());
-             out.push_str(&serde_json::to_string(&resolved).unwrap_or_else(|_| "\"\"".to_string()));
-             out.push(':');
--            out.push_str(&serde_json::to_string(value).unwrap_or_else(|_| "\"\"".to_string()));
-+            match value {
-+                Some(value) => out.push_str(&serde_json::to_string(value).unwrap_or_else(|_| "\"\"".to_string())),
-+                None => out.push_str("null"),
++        for number in [Variant::from_int(0), Variant::from_int(1), Variant::from_int(2), Variant::from_float(1.0), Variant::from_float(0.5)] {
++            for flag in [&yes, &no] {
++                for op in ops {
++                    let mirrored = op.mirrored().unwrap();
++                    assert_eq!(
++                        searcher.compare_variants(&op, flag, &number).unwrap(),
++                        searcher.compare_variants(&mirrored, &number, flag).unwrap(),
++                        "{:?} {:?} {:?}",
++                        flag.to_string(),
++                        op,
++                        number.to_string()
++                    );
++                }
 +            }
-         }
-         out.push('}');
-         self.row.clear();
-@@ -81,6 +89,14 @@ mod test {
-         );
-     }
- 
-+    #[test]
-+    fn null_values_are_emitted_as_json_null() {
-+        let mut f = JsonFormatter::default();
-+        f.format_element("name", "a.txt", false);
-+        f.format_null("width", true);
-+        assert_eq!(f.row_ended().unwrap(), r#"{"name":"a.txt","width":null}"#);
++        }
++        assert!(searcher.compare_variants(&Op::Eq, &yes, &Variant::from_int(1)).unwrap());
++        assert!(!searcher.compare_variants(&Op::Eq, &yes, &Variant::from_int(2)).unwrap());
++        assert!(searcher.compare_variants(&Op::Lt, &yes, &Variant::from_int(2)).unwrap());
++        assert!(searcher.compare_variants(&Op::Eq, &no, &Variant::from_float(0.0)).unwrap());
++        assert!(!searcher.compare_variants(&Op::Eq, &yes, &no).unwrap());
 +    }
 +
      #[test]
-     fn duplicate_column_names_are_suffixed() {
-         // Duplicate column names within one row must produce a *valid* JSON
+     fn outer_fields_used_only_in_an_inner_select_list_are_captured() {
+         use crate::lexer::Lexer;
 ```
 
-**File**: `src/output/mod.rs` (modified, +12/-6)
+**File**: `tests/grouping.rs` (modified, +28/-0)
 ```diff
-@@ -16,6 +16,10 @@ pub trait ResultsFormatter {
-     fn row_started(&mut self) -> Option<String>;
-     fn format_element(&mut self, name: &str, record: &str, is_last: bool) -> Option<String>;
-     fn row_ended(&mut self) -> Option<String>;
+@@ -549,3 +549,31 @@ fn grouping_reuses_compound_alias_values_where_already_evaluated() {
+         assert!(result.1.starts_with("true\t"), "{}", result.1);
+     }
+ }
 +
-+    fn format_null(&mut self, name: &str, is_last: bool) -> Option<String> {
-+        self.format_element(name, "", is_last)
++#[test]
++fn boolean_and_numeric_operands_compare_the_same_in_either_order() {
++    let dir = std::env::temp_dir().join("fselect_it_grouping_boolean_numeric_order");
++    let _ = fs::remove_dir_all(&dir);
++    fs::create_dir_all(&dir).unwrap();
++    for (name, size) in [("a.txt", 2), ("b.txt", 1), ("c.txt", 0)] {
++        fs::write(dir.join(name), "x".repeat(size)).unwrap();
 +    }
-     fn footer(&mut self) -> Option<String>;
- 
-     fn row_separator(&self) -> Option<String> {
-@@ -53,12 +57,12 @@ impl ResultsWriter {
-     pub fn write_row(
-         &mut self,
-         writer: &mut dyn Write,
--        values: Vec<(String, String)>,
-+        values: Vec<(String, Option<String>)>,
-     ) -> std::io::Result<()> {
-         self.write_row_start(writer)?;
-         let len = values.len();
-         for (pos, (name, value)) in values.iter().enumerate() {
--            self.write_row_item(writer, name, value, pos == len - 1)?;
-+            self.write_row_item(writer, name, value.as_deref(), pos == len - 1)?;
-         }
-         self.write_row_end(writer)
-     }
-@@ -78,12 +82,14 @@ impl ResultsWriter {
-         &mut self,
-         writer: &mut dyn Write,
-         name: &str,
--        value: &str,
-+        value: Option<&str>,
-         is_last: bool,
-     ) -> std::io::Result<()> {
--        self.formatter
--            .format_element(name, value, is_last)
--            .map_or(Ok(()), |value| write!(writer, "{}", value))
-+        let formatted = match value {
-+            Some(value) => self.formatter.format_element(name, value, is_last),
-+            None => self.formatter.format_null(name, is_last),
-+        };
-+        formatted.map_or(Ok(()), |value| write!(writer, "{}", value))
-     }
- 
-     fn write_row_end(&mut self, writer: &mut dyn Write) -> std::io::Result<()> {
-```
-
-**File**: `src/searcher.rs` (modified, +22/-18)
-```diff
-@@ -353,7 +353,7 @@ struct PendingRow {
-     root_path: PathBuf,
-     file_info: Option<FileInfo>,
-     follow_symlinks: bool,
--    items: Vec<(String, String)>,
-+    items: Vec<(String, Option<String>)>,
-     values: HashMap<String, Variant>,
-     deferred: Vec<usize>,
-     first_value: Option<Variant>,
-@@ -938,7 +938,7 @@ impl<'a> Searcher<'a> {
-                     })
-                     .collect();
- 
--                let mut grouped_results: TopN<Criteria<String>, (Vec<(String, String)>, Option<Variant>)> =
-+                let mut grouped_results: TopN<Criteria<String>, (Vec<(String, Option<String>)>, Option<Variant>)> =
-                     if self.query.limit > 0 {
-                         TopN::new(self.query.limit.saturating_add(self.query.offset))
-                     } else {
-@@ -967,12 +967,12 @@ impl<'a> Searcher<'a> {
-                         }
-                     }
-                     self.bind_aggregate_aliases(&aliases, &mut row, false)?;
--                    let mut items: Vec<(String, String)> = Vec::new();
-+                    let mut items: Vec<(String, Option<String>)> = Vec::new();
-                     let mut first_value = None;
-                     for (index, column_expr) in self.query.fields.iter().enumerate() {
-                         let value = self.get_column_expr_value(&mut row, column_expr)?;
-                         first_value = first_value.or_else(|| self.first_column_value(index, &value));
--                        items.push((column_expr.column_name(), value.to_string()));
-+                        items.push((column_expr.column_name(), Self::rendered(column_expr, &value)));
-                     }
-                     if self.root_depth_column
-                         && let Some((own_path, root_depth, member_index)) = &group_acc.representative
-@@ -983,7 +983,7 @@ impl<'a> Searcher<'a> {
-                     for (index, ordering_expr) in sorting_indices.iter().zip(self.query.ordering_fields.iter()) {
-                         let value = match index {
-                             Some(index) => row.values.get(&ordering_expr.cache_key()).cloned().unwrap_or_else(|| {
--                                Variant::from_string(&items.get(*index).map(|item| item.1.clone()).unwrap_or_default())
-+                                Variant::from_string(&items.get(*index).and_then(|item| item.1.clone()).unwrap_or_default())
-                             }),
-                             None => self.get_column_expr_value(&mut row, ordering_expr)?,
-                         };
-@@ -1016,7 +1016,7 @@ impl<'a> Searcher<'a> {
-                 drop(stdout);
-             } else {
-                 let mut buf = WritableBuffer::new();
--                let mut items: Vec<(String, String)> = Vec::new();
-+                let mut items: Vec<(String, Option<String>)> = Vec::new();
- 
-                 let accumulators = std::mem::take(&mut self.accumulators);
-                 let empty_acc = function::GroupAccumulator::default();
-@@ -1042,7 +1042,7 @@ impl<'a> Searcher<'a> {
-                     for (index, column_expr) in self.query.fields.iter().enumerate() {
-                         let value = self.get_column_expr_value(&mut row, column_expr)?;
-                         first_value = first_value.or_else(|| self.first_column_value(index, &value));
--                        items.push((column_expr.column_name(), value.to_string()));
-+                        items.push((column_expr.column_name(), Self::rendered(column_expr, &value)));
-                     }
-                     if self.root_depth_column
-                         && let Some((own_path, root_depth, member_index)) = &ungrouped_acc.representative
-@@ -1184,13 +1184,17 @@ impl<'a> Searcher<'a> {
-         (own_path, self.root_depth_of(root_path), member_index)
-     }
- 
--    fn push_subquery_identity(items: &mut Vec<(String, String)>, own_path: &str, root_depth: usize, member_index: Option<usize>) {
--        items.push((String::new(), Self::encode_identity_path(own_path)));
-+    fn push_subquery_identity(items: &mut Vec<(String, Option<String>)>, own_path: &str, root_depth: usize, member_index: Option<usize>) {
-+        items.push((String::new(), Some(Self::encode_identity_path(own_path))));
-         let depth = match member_index {
-             Some(index) => format!("{root_depth}@{index}"),
-             None => root_depth.to_string(),
-         };
--        items.push((String::new(), depth));
-+        items.push((String::new(), Some(depth)));
-+    }
++    let root = dir.display();
 +
-+    fn rendered(column: &Expr, value: &Variant) -> Option<String> {
-+        (!Self::is_null_operand(column, value)).then(|| value.to_string())
-     }
- 
-     /// The canonical root joined with the path beneath it as traversed, so a
-@@ -2287,7 +2291,7 @@ impl<'a> Searcher<'a> {
-         entry: &DirEntry,
-         pending: &PendingRow,
-         values: &mut HashMap<String, Variant>,
--        items: &mut [(String, String)],
-+        items: &mut [(String, Option<String>)],
-     ) -> Result<Option<Varian
-```
-
----
-
-### Incident Patch 3: `4a135356` (2026-11-06)
-**Commit Message**: fix EXISTS with doubly parenthesized subquery
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -14,6 +14,7 @@
- - Operators such as `IN` and `BETWEEN` work after a subquery in the `SELECT` list
- - A correlated subquery in a grouped query may only read grouping columns of the outer row
- - `INTO` inside a subquery is rejected with a clear message
-+- `EXISTS` with a doubly parenthesized subquery evaluates the subquery instead of being always true
- - `NOT IN` no longer accepts a row when the list or subquery contains a NULL member and nothing matches
- - Numeric functions such as `ABS`, `GREATEST` and `HEX` read the byte count of `fsize` instead of its formatted text
- 
-```
-
-**File**: `src/parser.rs` (modified, +17/-1)
-```diff
-@@ -921,11 +921,16 @@ impl <'a> Parser<'a> {
-                 )?))
-             }
-             Some(Lexeme::Operator(s)) if s.as_str() == "in" || s.as_str() == "exists" || s.as_str() == "notin" || s.as_str() == "notexists" => {
--                let list = self.parse_list()?;
-+                let mut list = self.parse_list()?;
-                 // Like SQL: IN requires a single-column subquery, while
-                 // EXISTS accepts any column list.
-                 if s.as_str() == "in" || s.as_str() == "notin" {
-                     Self::ensure_single_column_subquery(&list, "IN")?;
-+                } else if let Some(args) = list.args.as_ref()
-+                    && let [only] = args.as_slice()
-+                    && only.subquery.is_some()
-+                {
-+                    list = only.clone();
-                 }
-                 let op = Op::from_with_not(&s, not)
-                     .ok_or_else(|| format!("Unknown operator: {}", s))?;
-@@ -3340,6 +3345,17 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn doubly_parenthesized_exists_subquery_is_unwrapped() {
-+        let expr = parse_where("select name from /test where exists ((select name from /test2 where size > 1))");
-+        assert_eq!(expr.op, Some(Op::Exists));
-+        let right = expr.right.as_ref().unwrap();
-+        assert!(right.args.is_none() && right.subquery.is_some(), "{right:?}");
-+        let expr = parse_where("select name from /test where not exists ((select name from /test2))");
-+        assert_eq!(expr.op, Some(Op::NotExists));
-+        assert!(expr.right.as_ref().unwrap().subquery.is_some());
-+    }
++    let columns = fselect(&format!("select name, is_file = size, size = is_file from {root} order by name"));
++    let left = fselect(&format!("select name from {root} where is_file = size order by name"));
++    let right = fselect(&format!("select name from {root} where size = is_file order by name"));
++    let having_left = fselect(&format!(
++        "select is_file, count(*) from {root} group by is_file having is_file = coalesce(max(width), '1.0')"
++    ));
++    let having_right = fselect(&format!(
++        "select is_file, count(*) from {root} group by is_file having coalesce(max(width), '1.0') = is_file"
++    ));
++    let _ = fs::remove_dir_all(&dir);
 +
-     #[test]
-     fn implicit_limit_applies_to_constant_select() {
-         let query = "select 123 from /test";
++    assert_eq!(columns.1, "a.txt\tfalse\tfalse\nb.txt\ttrue\ttrue\nc.txt\tfalse\tfalse\n", "{}", columns.2);
++    assert_eq!(left.1, "b.txt\n", "{}", left.2);
++    assert_eq!(right.1, "b.txt\n", "{}", right.2);
++    assert_eq!(having_left.1, "true\t3\n", "{}", having_left.2);
++    assert_eq!(having_right.1, "true\t3\n", "{}", having_right.2);
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1802,13 +1633,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. changelog for subquery parsing fixes
+## X. boolean comparisons and HAVING parsing
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jhspetersson/fselect. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5f214bd3`: changelog for subquery parsing fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `234f8b7b`: boolean comparisons and HAVING parsing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1816,21 +1647,18 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Column aliases are no longer accepted after `WHERE` and `HAVING` conditions
-- Unterminated or mismatched subquery parentheses are rejected instead of silently closed
-- Operators such as `IN` and `BETWEEN` work after a subquery in the `SELECT` list
-- A correlated subquery in a grouped query may only read grouping columns of the outer row
-- `INTO` inside a subquery is rejected with a clear message
+- Comparing a boolean with a number gives the same result in either order (`is_file = size` and `size = is_file`); the boolean counts as 1 or 0
+- `HAVING` reads a computed right-hand operand as a number, date or boolean the same way `WHERE` does
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5f214bd3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `234f8b7b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

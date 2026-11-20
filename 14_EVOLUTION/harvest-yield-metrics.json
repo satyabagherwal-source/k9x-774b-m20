@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T22:49:28.671Z",
-  "total_cycles_completed": 11091,
-  "total_learnings_persisted": 11091,
-  "total_rules_promoted": 10441,
+  "last_updated": "2026-11-20T22:57:25.578Z",
+  "total_cycles_completed": 11094,
+  "total_learnings_persisted": 11094,
+  "total_rules_promoted": 10444,
   "history": [
-    {
-      "timestamp": "2026-11-20T00:06:41.204Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T00:06:43.701Z",
-      "repository": "LLPhant/LLPhant",
-      "learningId": "learn-github-llphant-llphant",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T00:14:38.228Z",
-      "repository": "nsh07/Tomato",
-      "learningId": "learn-github-nsh07-tomato",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T00:33:14.763Z",
       "repository": "FalkorDB/FalkorDB",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-20T22:49:28.671Z",
       "repository": "okteto/okteto",
       "learningId": "learn-github-okteto-okteto",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T22:57:14.801Z",
+      "repository": "jhspetersson/fselect",
+      "learningId": "learn-github-jhspetersson-fselect",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T22:57:17.507Z",
+      "repository": "scrapinghub/dateparser",
+      "learningId": "learn-github-scrapinghub-dateparser",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T22:57:25.578Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

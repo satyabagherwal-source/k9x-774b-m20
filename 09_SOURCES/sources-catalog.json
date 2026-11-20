@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "cfce7f98",
+    "sourceVersion": "60e3fed6",
     "license": "Apache-2.0",
-    "contentHash": "ab265535d132652de9a3cdbd460c8e42612c4d405b7c90b62314abf1a68b3697",
-    "lastHarvestedAt": "2026-11-20T17:20:59.857Z",
+    "contentHash": "a04e4817c69e7eab9c577802b0e4c36f2581df4f3e684a9167eb41403d4f7995",
+    "lastHarvestedAt": "2026-11-20T22:57:25.574Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -7013,10 +7013,10 @@
     "repository": "jhspetersson/fselect",
     "platform": "github",
     "sourceUrl": "https://github.com/jhspetersson/fselect",
-    "sourceVersion": "fea3c1b1",
+    "sourceVersion": "234f8b7b",
     "license": "Apache-2.0",
-    "contentHash": "f2bfad2dbea05e4376b54be15b984f6617e618e3d1c7bb97f44c46e9cae3d0bb",
-    "lastHarvestedAt": "2026-11-10T01:58:22.420Z",
+    "contentHash": "233f776a37987403468addf159b8d0eb51bd2dfab8bbd543de82b21c7239bca8",
+    "lastHarvestedAt": "2026-11-20T22:57:14.796Z",
     "learningId": "learn-github-jhspetersson-fselect"
   },
   "mikepenz-aboutlibraries": {
@@ -9923,10 +9923,10 @@
     "repository": "scrapinghub/dateparser",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapinghub/dateparser",
-    "sourceVersion": "ecf380af",
+    "sourceVersion": "ce8c4390",
     "license": "BSD-3-Clause",
-    "contentHash": "37e6d41ab47065701adb0bbaf203b25ff2b7580a49ec859362d50d10d4ff4546",
-    "lastHarvestedAt": "2026-11-17T03:26:11.597Z",
+    "contentHash": "15027ec342508d5739229361153c379c1484ecd48a59e2dca2ce9c26d4b984b6",
+    "lastHarvestedAt": "2026-11-20T22:57:17.502Z",
     "learningId": "learn-github-scrapinghub-dateparser"
   },
   "google-closure-compiler": {

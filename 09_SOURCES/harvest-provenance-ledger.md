@@ -11681,3 +11681,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-6e87e9f5` | `project://skyhook-io-radar` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md` | 2026-11-20T22:42:05.596Z |
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `7b61a76b` | Multi-dimensional audit evidence | 2026-11-20T22:49:21.839Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `112af098` | Multi-dimensional audit evidence | 2026-11-20T22:49:28.666Z |
+| `learn-github-jhspetersson-fselect` | `https://github.com/jhspetersson/fselect` | `234f8b7b` | Multi-dimensional audit evidence | 2026-11-20T22:57:14.796Z |
+| `learn-github-scrapinghub-dateparser` | `https://github.com/scrapinghub/dateparser` | `ce8c4390` | Multi-dimensional audit evidence | 2026-11-20T22:57:17.502Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `60e3fed6` | Multi-dimensional audit evidence | 2026-11-20T22:57:25.574Z |

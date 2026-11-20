@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T22:49:33.142Z",
+  "updated_at": "2026-11-20T22:57:30.335Z",
   "stats": {
-    "total_discovered": 6779,
-    "approved_pending_harvest": 6400,
+    "total_discovered": 6783,
+    "approved_pending_harvest": 6404,
     "harvested_count": 0,
     "rejected_count": 379,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6375,
+      "COMMUNITY_AND_EXPERT": 6379,
       "OFFICIAL_DOCUMENTATION": 230,
       "STANDARDS_AND_SPECIFICATIONS": 121,
       "ENGINEERING_BLOGS": 5,
@@ -146508,6 +146508,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
         "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-5D5ECC46EBFA": {
+      "id": "SRC-5D5ECC46EBFA",
+      "url": "https://github.com/jhspetersson/fselect",
+      "title": "https://github.com/jhspetersson/fselect",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:57:28.850Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
+        "fileName": "jhspetersson-fselect-learnings.md"
+      }
+    },
+    "SRC-78233B8CE769": {
+      "id": "SRC-78233B8CE769",
+      "url": "https://github.com/studiomoob/llmoobfs/blob/02381fba3f0a908623cac52180a39f24e02e98a6/docs/history/0140-interoperability-test.md",
+      "title": "https://github.com/studiomoob/llmoobfs/blob/02381fba3f0a908623cac52180a39f24e02e98a6/docs/history/0140-interoperability-test.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:57:28.903Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
+        "fileName": "jhspetersson-fselect-learnings.md"
+      }
+    },
+    "SRC-5B71EE40A6D9": {
+      "id": "SRC-5B71EE40A6D9",
+      "url": "https://github.com/studiomoob/llmoobfs/blob/02381fba3f0a908623cac52180a39f24e02e98a6/docs/client-contract.md",
+      "title": "https://github.com/studiomoob/llmoobfs/blob/02381fba3f0a908623cac52180a39f24e02e98a6/docs/client-contract.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:57:28.945Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
+        "fileName": "jhspetersson-fselect-learnings.md"
+      }
+    },
+    "SRC-702C5AF2D728": {
+      "id": "SRC-702C5AF2D728",
+      "url": "https://claude.ai/code/session_01UYfmmLGgpejAr8wqRMCv45",
+      "title": "https://claude.ai/code/session_01UYfmmLGgpejAr8wqRMCv45",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:57:30.335Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+        "fileName": "provablehq-snarkos-learnings.md"
       }
     }
   }
