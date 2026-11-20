@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T20:15:04.622Z",
-    "lastVerified": "2026-11-20T20:15:04.622Z",
+    "lastChecked": "2026-11-20T20:28:21.428Z",
+    "lastVerified": "2026-11-20T20:28:21.428Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T19:25:11.089Z",
-    "lastVerified": "2026-11-20T19:25:11.089Z",
+    "lastChecked": "2026-11-20T20:28:21.421Z",
+    "lastVerified": "2026-11-20T20:28:21.421Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1604,9 +1604,9 @@
   "memvid-memvid": {
     "name": "memvid",
     "officialUrl": "https://github.com/memvid/memvid",
-    "lastChecked": "2026-11-19T15:58:53.179Z",
+    "lastChecked": "2026-11-20T20:28:18.916Z",
     "revisionIdentifier": "e6bd9f7b",
-    "lastVerified": "2026-11-19T15:58:53.179Z"
+    "lastVerified": "2026-11-20T20:28:18.916Z"
   },
   "googleworkspace-cli": {
     "name": "cli",
@@ -2156,8 +2156,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T13:26:39.616Z",
-    "lastVerified": "2026-11-20T13:26:39.616Z",
+    "lastChecked": "2026-11-20T20:28:16.462Z",
+    "lastVerified": "2026-11-20T20:28:16.462Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -2574,9 +2574,9 @@
   "permify-permify": {
     "name": "permify",
     "officialUrl": "https://github.com/Permify/permify",
-    "lastChecked": "2026-11-19T17:23:17.978Z",
+    "lastChecked": "2026-11-20T20:28:13.925Z",
     "revisionIdentifier": "18fcfdda",
-    "lastVerified": "2026-11-19T17:23:17.978Z"
+    "lastVerified": "2026-11-20T20:28:13.925Z"
   },
   "ontos-ai-knowhere": {
     "name": "Ontos-AI/knowhere",
@@ -6375,9 +6375,9 @@
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
     "officialUrl": "https://github.com/SilasMarvin/lsp-ai",
-    "lastChecked": "2026-11-19T04:03:08.806Z",
+    "lastChecked": "2026-11-20T20:28:06.437Z",
     "revisionIdentifier": "1e910a8c",
-    "lastVerified": "2026-11-19T04:03:08.806Z"
+    "lastVerified": "2026-11-20T20:28:06.437Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -10661,5 +10661,19 @@
     "lastChecked": "2026-11-20T20:14:50.273Z",
     "revisionIdentifier": "d1f7b2b4",
     "lastVerified": "2026-11-20T20:14:50.273Z"
+  },
+  "urllib3-urllib3": {
+    "name": "urllib3",
+    "officialUrl": "https://github.com/urllib3/urllib3",
+    "lastChecked": "2026-11-20T20:28:08.954Z",
+    "revisionIdentifier": "d9f9b0ad",
+    "lastVerified": "2026-11-20T20:28:08.954Z"
+  },
+  "jordansinger-swiftui-kit": {
+    "name": "SwiftUI-Kit",
+    "officialUrl": "https://github.com/jordansinger/SwiftUI-Kit",
+    "lastChecked": "2026-11-20T20:28:11.444Z",
+    "revisionIdentifier": "1211aa6b",
+    "lastVerified": "2026-11-20T20:28:11.444Z"
   }
 }
