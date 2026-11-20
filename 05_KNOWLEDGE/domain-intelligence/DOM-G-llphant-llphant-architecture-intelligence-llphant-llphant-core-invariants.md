@@ -4,24 +4,24 @@
 {
   "source_repository": "LLPhant/LLPhant",
   "source_url": "https://github.com/LLPhant/LLPhant",
-  "source_version": "93f05675",
+  "source_version": "9f03e7de",
   "license": "MIT",
-  "timestamp": "2026-11-15T18:47:47.004Z",
+  "timestamp": "2026-11-20T00:06:43.936Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-llphant-llphant",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [LLPhant/LLPhant](https://github.com/LLPhant/LLPhant) (Revision: `93f05675`).  
-> **License**: MIT | **Timestamp**: `2026-11-15T18:47:47.004Z`  
+> **Provenance**: Harvested from [LLPhant/LLPhant](https://github.com/LLPhant/LLPhant) (Revision: `9f03e7de`).  
+> **License**: MIT | **Timestamp**: `2026-11-20T00:06:43.936Z`  
 > **Learning ID**: `learn-github-llphant-llphant`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from LLPhant/LLPhant:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/llphant-llphant-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/LLPhant/LLPhant](https://github.com/LLPhant/LLPhant))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T18:47:45.757Z  
+> **Harvest Timestamp**: 2026-11-20T00:06:42.504Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: LLPhant - A comprehensive PHP Generative AI Framework using OpenAI GPT 4. Inspired by Langchain
 - **Primary Language / Ecosystem**: PHP
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1721 stars
+- **Stars / Engagement**: 1720 stars
 
 ---
 
@@ -250,258 +250,176 @@ export default config
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `50cfe683` (2026-11-15)
-**Commit Message**: Fix system message parameter assignment logic
+### Incident Patch 1: `8eae582f` (2026-11-11)
+**Commit Message**: fix(openai): answer every tool call of a turn when a tool returns nothing
 
-Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
-
-**File**: `src/Chat/AnthropicChat.php` (modified, +1/-1)
+**File**: `src/Chat/OpenAIChat.php` (modified, +6/-23)
 ```diff
-@@ -323,7 +323,7 @@ private function createParams(array $messages, bool $stream): array
-         ];
- 
-         if ($this->systemMessage instanceof Message) {
--            $params['system'] = $this->promptCaching
-+            $params['system'] = $this->promptCaching && $this->systemMessage->content !== ''
-                 ? [[
-                     'type' => 'text',
-                     'text' => $this->systemMessage->content,
-```
-
----
-
-### Incident Patch 2: `ce885c0b` (2026-10-20)
-**Commit Message**: Fix streamed tool calls being dropped in LmStudioChat
-
-generateChatStream() sends the tools in the request but only yielded
-delta.content, so a streamed answer that asked for a tool call produced
-an empty stream and the tool never ran.
-
-Collect the tool calls from the deltas by index (the first delta of a
-call carries the name and id, the next ones argument fragments) and,
-when the turn ends, call them and continue with the non-streamed answer,
-as OpenAIChat does since #532. Like there, any finish reason except
-length and content_filter runs the calls, so servers that end such a
-turn with "stop" work too. The function-calling part of
-generateChatRecursive() moves into messagesAfterCallingFunctions() so
-both paths share it.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/Chat/LmStudioChat.php` (modified, +73/-16)
-```diff
-@@ -97,26 +97,38 @@ private function generateChatRecursive(array $messages): string
-         $result = $this->generateResponse($messages);
- 
-         if (is_array($result)) {
--            $messages[] = $this->assistantAskingFunctions($result);
--            foreach ($result as $functionToCall) {
--                $toolResult = $functionToCall->call();
--                $normalizedToolResult = $toolResult === null ? null : Message::normalizeContent($toolResult);
--                $this->functionsCalled[] = new CalledFunction(
--                    $functionToCall,
--                    json_decode($functionToCall->jsonArgs, true, 512, JSON_THROW_ON_ERROR),
--                    $normalizedToolResult,
--                    $functionToCall->getToolCallId()
--                );
--                $toolResultMessage = Message::toolResult($toolResult, $functionToCall->getToolCallId());
--                $messages[] = $toolResultMessage;
--            }
--
--            return $this->generateChatRecursive($messages);
-+            return $this->generateChatRecursive($this->messagesAfterCallingFunctions($messages, $result));
+@@ -170,16 +170,19 @@ private function getNewMessagesFromTurn(array $messages, array $newFunctionsCall
+     {
+         $toolsCalls = [];
+         $toolsOutput = [];
++        $hasReturn = false;
+         foreach ($newFunctionsCalled as $functionCalled) {
+-            if ($functionCalled->return !== null) {
++            $hasReturn = $hasReturn || $functionCalled->return !== null;
++            // OpenAI rejects the follow-up if a call of the turn is left unanswered, so a tool that returned nothing gets an empty result
++            if ($functionCalled->return !== null || $functionCalled->tool_call_id) {
+                 $toolsOutput[] = $this->createMessageWithToolOutput($functionCalled);
+             }
+             if ($functionCalled->tool_call_id) {
+                 $toolsCalls[] = new ToolCall($functionCalled->tool_call_id, $functionCalled->definition->name, json_encode($functionCalled->arguments, JSON_THROW_ON_ERROR));
+             }
          }
  
-         return $result;
+-        if ($toolsOutput === []) {
++        if (! $hasReturn) {
+             return [];
+         }
+ 
+@@ -545,27 +548,7 @@ protected function shouldCallStreamedTools(?string $finishReason): bool
+      */
+     public function getNewMessagesFromTools(array $messages): array
+     {
+-        $toolsCalls = [];
+-        $toolsOutput = [];
+-        /** @var CalledFunction $functionCalled */
+-        foreach ($this->functionsCalled as $functionCalled) {
+-            if ($functionCalled->return !== null) {
+-                $toolsOutput[] = $this->createMessageWithToolOutput($functionCalled);
+-            }
+-            if ($functionCalled->tool_call_id) {
+-                $toolsCalls[] = new ToolCall($functionCalled->tool_call_id, $functionCalled->definition->name, json_encode($functionCalled->arguments, JSON_THROW_ON_ERROR));
+-            }
+-        }
+-
+-        if ($toolsOutput === []) {
+-            return [];
+-        }
+-
+-        if ($toolsCalls !== [] && $this->shouldAddAssistantToolCallsMessage()) {
+-            $messages[] = Message::assistantAskingTools($toolsCalls);
+-        }
+-
+-        return array_merge($messages, $toolsOutput);
++        return $this->getNewMessagesFromTurn($messages, $this->functionsCalled);
      }
  
-+    /**
-+     * Calls the functions the model asked for and returns the messages extended with the assistant
-+     * request and the tool results.
-+     *
-+     * @param  Message[]  $messages
-+     * @param  FunctionInfo[]  $functionsToCall
-+     * @return Message[]
-+     */
-+    private function messagesAfterCallingFunctions(array $messages, array $functionsToCall): array
-+    {
-+        $messages[] = $this->assistantAskingFunctions($functionsToCall);
-+        foreach ($functionsToCall as $functionToCall) {
-+            $toolResult = $functionToCall->call();
-+            $normalizedToolResult = $toolResult === null ? null : Message::normalizeContent($toolResult);
-+            $this->functionsCalled[] = new CalledFunction(
-+                $functionToCall,
-+                json_decode($functionToCall->jsonArgs, true, 512, JSON_THROW_ON_ERROR),
-+                $normalizedToolResult,
-+                $functionToCall->getToolCallId()
-+            );
-+            $messages[] = Message::toolResult($toolResult, $functionToCall->getToolCallId());
-+        }
-+
-+        return $messages;
-+    }
-+
-     /**
-      * @param  Message[]  $messages
-      * @return string|FunctionInfo[]
-@@ -188,8 +200,10 @@ public function generateChatStream(array $messages): StreamInterface
- 
-         $response = $this->sendRequest('POST', 'v1/chat/completions', $params, $stream);
- 
--        $generator = function (StreamInterface $stream) {
-+        $generator = function (StreamInterface $stream) use ($messages) {
-             $buffer = '';
-+            /** @var array<int, array{name: string, arguments: string, id: ?string}> $toolsToCall */
-+            $toolsToCall = [];
-             while (! $stream->eof()) {
-                 $buffer .= $stream->read(1024);
- 
-@@ -212,6 +226,40 @@ public function generateChatStream(array $messages): StreamInterface
-                         continue;
-                     }
- 
-+                    foreach ($json['choices'][0]['delta']['tool_calls'] ?? [] as $toolCall) {
-+                        $name = $toolCall['function']['name'] ?? null;
-+                        $arguments = $toolCall['function']['arguments'] ?? '';
-+                        // The first delta of a call carries its name and id, the following ones only argument fragments
-+                        if (\is_string($name) && $name !== '') {
-+                            $toolsToCall[$toolCall['index'] ?? \count($toolsToCall)] = [
-+                                'name' => $name,
-+                                'arguments' => $arguments,
-+                                'id' => $toolCall['id'] ?? null,
-+                            ];
-+
-+                            continue;
-+                        }
-+
-+                        $index = $toolCall['index'] ?? \array_key_last($toolsToCall);
-+                        if ($index !== null && isset($toolsToCall[$index])) {
-+                            $toolsToCall[$index]['arguments'] .= $arguments;
-+                        }
-+                    }
-+
-+                    if ($toolsToCall !== [] && $this->shouldCallStreamedTools($json['choices'][0]['finish_reason'] ?? null)) {
-+                        $functionsToCall = [];
-+                        foreach ($toolsToCall as $tool) {
-+                            $functionInfo = $this->getFunctionInfoFromName($tool['name']);
-+                            $functionInfo->jsonArgs = $tool['arguments'];
-+                            $functionInfo->setToolCallId($tool['id']);
-+                            $functionsToCall[] = $functionInfo;
-+                        }
-+                        // We move to a non-streamed answer here, like OpenAIChat does
-+                        yield $this->generateChatRecursive($this->messagesAfterCallingFunctions($messages, $functionsToCall));
-+
-+                        return;
-+      
+     protected function shouldAddAssistantToolCallsMessage(): bool
 ```
 
-**File**: `tests/Unit/Chat/LmStudioChatTest.php` (added, +95/-0)
+**File**: `tests/Unit/Chat/OpenAIChatTest.php` (modified, +94/-0)
 ```diff
-@@ -0,0 +1,95 @@
-+<?php
+@@ -417,6 +417,100 @@ public function getWeather(string $city): string
+         ->not->toHaveKey('name');
+ });
+ 
++it('answers every tool call of a turn when one of the tools returns nothing', function () {
++    $openAIAnswer1 = <<<'JSON'
++    {
++      "id": "chatcmpl-1",
++      "object": "chat.completion",
++      "created": 1677652288,
++      "model": "gpt-4o-mini",
++      "choices": [{
++        "index": 0,
++        "message": {
++          "role": "assistant",
++          "content": null,
++          "tool_calls": [
++            { "id": "call_note", "type": "function", "function": { "name": "saveNote", "arguments": "{\"note\":\"likes rain\"}" } },
++            { "id": "call_weather", "type": "function", "function": { "name": "getWeather", "arguments": "{\"city\":\"Venice\"}" } }
++          ]
++        },
++        "finish_reason": "tool_calls"
++      }]
++    }
++    JSON;
 +
-+declare(strict_types=1);
++    $openAIAnswer2 = <<<'JSON'
++    {
++      "id": "chatcmpl-2",
++      "object": "chat.completion",
++      "created": 1677652289,
++      "model": "gpt-4o-mini",
++      "choices": [{
++        "index": 0,
++        "message": {
++          "role": "assistant",
++          "content": "Noted. It is cloudy in Venice."
++        },
++        "finish_reason": "stop"
++      }]
++    }
++    JSON;
 +
-+namespace Tests\Unit\Chat;
-+
-+use GuzzleHttp\Client;
-+use GuzzleHttp\Handler\MockHandler;
-+use GuzzleHttp\HandlerStack;
-+use GuzzleHttp\Middleware;
-+use GuzzleHttp\Psr7\Response;
-+use LLPhant\Chat\FunctionInfo\FunctionInfo;
-+use LLPhant\Chat\FunctionInfo\Parameter;
-+use LLPhant\Chat\LmStudioChat;
-+use LLPhant\Chat\Message;
-+use LLPhant\LmStudioConfig;
-+use Tests\Integration\Chat\WeatherExample;
-+
-+/**
-+ * @param  list<array<string, mixed>>  $chunks  the JSON payloads of the "data:" lines
-+ */
-+function lmStudioSse(array $chunks): string
-+{
-+    $lines = array_map(fn (array $chunk): string => 'data: '.json_encode($chunk, JSON_THROW_ON_ERROR)."\n\n", $chunks);
-+
-+    return implode('', $lines)."data: [DONE]\n\n";
-+}
-+
-+/**
-+ * @param  Response[]  $responses
-+ * @param  array<int, array<string, mixed>>  $history
-+ */
-+function lmStudioChatWithWeatherTool(array $responses, array &$history, WeatherExample $weather): LmStudioChat
-+{
-+    $stack = HandlerStack::create(new MockHandler($responses));
-+    $stack->push(Middleware::history($history));
-+
-+    $chat = new LmStudioChat(new LmStudioConfig(model: 'test'), client: new Client(['handler' => $stack]));
-+    $chat->addFunction(new FunctionInfo(
-+        'currentWeatherForLocation',
-+        $weather,
-+        'returns the current weather in the given location',
-+        [new Parameter('location', 'string', 'the name of the city')]
-+    ));
-+
-+    return $chat;
-+}
-+
-+it('yields the text of a streamed answer', function () {
-+    $history = [];
-+    $sse = lmStudioSse([
-+        ['choices' => [['index' => 0, 'delta' => ['role' => 'assistant', 'content' => 'Hel'], 'finish_reason' => null]]],
-+        ['choices' => [['index' => 0, 'delta' => ['content' => 'lo'], 'finish_reason' => null]]],
-+        ['choices' => [['index' => 0, 'delta' => [], 'finish_reason' => 'stop']]],
++    $mock = new MockHandler([
++        new Response(200, ['Content-Type' => 'application/json'], $openAIAnswer1),
++        new Response(200, ['Content-Type' => 'application/json'], $openAIAnswer2),
 +    ]);
-+    $chat = lmStudioChatWithWeatherTool([new Response(200, [], $sse)], $history, new WeatherExample());
++    $openAIClient = OpenAI::factory()
++        ->withApiKey('fake-key')
++        ->withHttpClient(new GuzzleClient(['handler' => HandlerStack::create($mock)]))
++        ->make();
 +
-+    expect($chat->generateStreamOfText('hi')->getContents())->toBe('Hello');
++    $config = new OpenAIConfig();
++    $config->model = 'gpt-4o-mini';
++    $config->client = $openAIClient;
++    $chat = new OpenAIChat($config);
++
++    $tool = new class
++    {
++        /** @var string[] */
++        public array $notes = [];
++
++        public function saveNote(string $note): void
++        {
++            $this->notes[] = $note;
++        }
++
++        public function getWeather(string $city): string
++        {
++            return "{$city}: cloudy";
++        }
++    };
++
++    $chat->addTool(new FunctionInfo('saveNote', $tool, 'Saves a note about the user', [new Parameter('note', 'string', 'The note')], [new Parameter('note', 'string', 'The note')]));
++    $chat->addTool(new FunctionInfo('getWeather', $tool, 'Gets the weather', [new Parameter('city', 'string', 'The city')], [new Parameter('city', 'string', 'The city')]));
++
++    $response = $chat->generateChat([Message::user('I like rain. What is the weather in Venice?')]);
++
++    expect($response)->toBe('Noted. It is cloudy in Venice.');
++    expect($tool->notes)->toBe(['likes rain']);
++
++    // OpenAI answers 400 when a tool call of the assistant message has no tool message after it
++    $followUp = json_decode(json_encode($chat->argsLog[1]['messages'], JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
++    $askedIds = [];
++    $answers = [];
++    foreach ($followUp as $message) {
++        foreach ($message['tool_calls'] ?? [] as $toolCall) {
++            $askedIds[] = $toolCall['id'];
++        }
++        if ($message['role'] === 'tool') {
++            $answers[$message['tool_call_id']] = $message['content'];
++        }
++    }
++
++    expect($askedIds)->toBe(['call_note', 'call_weather']);
++    expect($answers)->toBe(['call_note' => '', 'call_weather' => 'Venice: cloudy']);
 +});
 +
-+it('calls the tools of a streamed answer and streams the answer that follows', function (array $chunks) {
-+    $history = [];
-+    $weather = new WeatherExample();
-+    $chat = lmStudioChatWithWeatherTool([
-+        new Response(200, [], lmStudioSse($chunks)),
-+        new Response(200, [], json_encode(['choices' => [['message' => ['content' => 'Wear a scarf.']]]], JSON_THROW_ON_ERROR)),
-+    ], $history, $weather);
-+
-+    $answer = $chat->generateChatStream([Message::user('Should I wear a scarf in Venice?')])->getContents();
-+
-+    expect($weather->lastMessage)->toBe('Weather in Venice is sunny, temperature is 26 Celsius')
-+        ->and($answer)->toBe('Wear a scarf.')
-+        ->and($history)->toHaveCount(2);
-+
-+    $followUp = json_decode((string) $history[1]['request']->getBody(), true, 512, JSON_THROW_ON_ERROR);
-+    $roles = array_column($followUp['messages'], 'role');
-+    expect($roles)->toBe(['user', 'assistant', 'tool'])
-+        ->and($followUp['messages'][1]['tool_calls'][0]['function']['name'])->toBe('currentWeatherForLocation')
-+        ->and($followUp['messages'][2]['tool_call_id'])->toBe('call_1');
-+})->with([
-+    'arguments in fragments, tool_calls finish reason' => [[
-+        ['choices' => [['index' => 0, 'delta' => ['role' => 'assistant', 'tool_calls' => [
-+            ['index' => 0, 'id' => 'call_1', 'type' => 'function', 'function' => ['name' => 'currentWeatherForLocation', 'arguments' => '']],
-+        ]], 'finish_reason' => null]]],
-+        ['choices' => [['index' => 0, 'delta' => ['tool_calls' => [['index' => 0, 'function' => ['arguments' => '{"location":']]]], 'finish_reason' => null]]],
-+        ['choices' => [['index' => 0, 'delta' => ['tool_calls' => [['index' => 0, 'function' => ['arguments' => '"Venice"}']]]], 'finish_reason' => null]]],
-+        ['choices' => [['index' => 0, 'delta' => [], 'finish_reason' => 'tool_calls']]],
-+    ]],
-+    'whole call in one delta without index, stop finish reason' => [[
-+        ['choices' => [['index' => 0, 'delta' => ['role' => 'assistant', 'tool_calls' => [
-+            ['id' => 'call_1', 'type' => 'function', 'function' => ['name' => 'currentWeatherForLocation', 'arguments' => '{"location":"Venice"}']],
-+        ]], 'finish_reason' => null]]],
-+        ['choices' => [['index' => 0, 'delta' => [], 'finish_reason' => 'stop']]],
-+    ]],
-+]);
+ it('passes the arguments streamed across several tool call deltas to the function', function () {
+     $chunk = fn (array $delta, ?string $finishReason = null): string => 'data: '.json_encode([
+         'id' => 'chatcmpl-stream',
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #577** (2026-11-18): Constrain PHPStan for Pest type-coverage compatibility (@f-lombardo)
+- **PR #576** (2026-11-18): Add integration test for PR #569 (@f-lombardo)
+- **PR #574** (closed): Update symfony/cache requirement from ^7.2 to ^7.4 (@dependabot[bot])
 - **PR #573** (2026-11-15): Feat/anthropic prompt caching (@f-lombardo)
 - **PR #571** (closed): feat(anthropic): support prompt caching (@officialasishkumar)
 - **PR #570** (closed): fix(anthropic): count the tokens of tool call rounds (@skybleak333)
-- **PR #568** (2026-11-09): Make Anthropic endpoint and API version configurable (@Copilot)
-- **PR #565** (closed): Update symfony/cache requirement from ^7.2 to ^8.0 (@dependabot[bot])
-- **PR #564** (closed): Update symfony/var-dumper requirement from ^7.2 to ^8.0 (@dependabot[bot])
 
 ---
 
@@ -521,31 +439,58 @@ Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. system message parameter assignment logic
+## X. openai): answer every tool call of a turn when a tool returns nothing
 
 **RULE**:
-When implementing operations in `src/Chat/AnthropicChat.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in LLPhant/LLPhant. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Chat/OpenAIChat.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in LLPhant/LLPhant. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `50cfe683`: system message parameter assignment logic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8eae582f`: openai): answer every tool call of a turn when a tool returns nothing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Chat/AnthropicChat.php`.
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Chat/OpenAIChat.php`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
 // Verified production-grade fix pattern:
-            $params['system'] = $this->promptCaching && $this->systemMessage->content !== ''
+        $hasReturn = false;
+            $hasReturn = $hasReturn || $functionCalled->return !== null;
+            // OpenAI rejects the follow-up if a call of the turn is left unanswered, so a tool that returned nothing gets an empty result
+            if ($functionCalled->return !== null || $functionCalled->tool_call_id) {
+        if (! $hasReturn) {
+        return $this->getNewMessagesFromTurn($messages, $this->functionsCalled);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
 // Induced defect failure mode:
-            $params['system'] = $this->promptCaching
+            if ($functionCalled->return !== null) {
+        if ($toolsOutput === []) {
+        $toolsCalls = [];
+        $toolsOutput = [];
+        /** @var CalledFunction $functionCalled */
+        foreach ($this->functionsCalled as $functionCalled) {
+            if ($functionCalled->return !== null) {
+                $toolsOutput[] = $this->createMessageWithToolOutput($functionCalled);
+            }
+            if ($functionCalled->tool_call_id) {
+                $toolsCalls[] = new ToolCall($functionCalled->tool_call_id, $functionCalled->definition->name, json_encode($functionCalled->arguments, JSON_THROW_ON_ERROR));
+            }
+        }
+
+        if ($toolsOutput === []) {
+            return [];
+        }
+
+        if ($toolsCalls !== [] && $this->shouldAddAssistantToolCallsMessage()) {
+            $messages[] = Message::assistantAskingTools($toolsCalls);
+        }
+
+        return array_merge($messages, $toolsOutput);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `50cfe683` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8eae582f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

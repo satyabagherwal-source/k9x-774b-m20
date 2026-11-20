@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T19:10:13.344Z",
+  "timestamp": "2026-11-20T00:06:48.455Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-agent-field-agentfield-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [agent-field-agentfield-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T19:10:13.344Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T00:06:48.455Z`  
 > **Learning ID**: `LEARN-EVO-agent-field-agentfield-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from agent-field-agentfield-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
-> **Source Version**: `a9ed6a03`  
+> **Source Version**: `d81cedf4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T19:10:07.875Z  
+> **Timestamp**: 2026-11-20T00:06:37.234Z  
 > **Learning ID**: `learn-github-agent-field-agentfield`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T19:10:07.868Z  
+> **Harvest Timestamp**: 2026-11-20T00:06:37.225Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2658 stars
+- **Stars / Engagement**: 2659 stars
 
 ---
 
@@ -1446,72 +1446,174 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36d50b4f` (2026-11-18)
-**Commit Message**: fix(sdk-go): accept SSE data fields without a space in audio generation (#1210)
+### Incident Patch 1: `f404fbf2` (2026-11-19)
+**Commit Message**: fix(sdk-go): honor the Retry-After header on 429 responses
 
-OpenRouterMediaProvider.GenerateAudio only recognised lines starting with "data: ", so a valid SSE "data:{...}" event was skipped and the call returned success with empty audio and text. The SSE field value may follow the colon directly; match "data:" and let the existing TrimSpace drop the optional space, as client.go already does.
+APIError dropped the response headers, so the rate limiter never saw the provider's Retry-After hint. Record the header (seconds or HTTP date) in APIError.RetryAfter and prefer it when computing the backoff.
 
 Signed-off-by: Alex Castillo <[REDACTED_EMAIL]>
 
-**File**: `sdk/go/ai/openrouter_media.go` (modified, +2/-2)
+**File**: `sdk/go/ai/client.go` (modified, +2/-2)
 ```diff
-@@ -678,10 +678,10 @@ func (p *OpenRouterMediaProvider) GenerateAudio(ctx context.Context, req AudioRe
- 	scanner.Buffer(make([]byte, 0, 64*1024), 1024*1024)
- 	for scanner.Scan() {
- 		line := scanner.Text()
--		if !strings.HasPrefix(line, "data: ") {
-+		if !strings.HasPrefix(line, "data:") {
- 			continue
- 		}
--		data := strings.TrimPrefix(line, "data: ")
-+		data := strings.TrimPrefix(line, "data:")
- 		data = strings.TrimSpace(data)
- 		if data == "[DONE]" {
- 			break
+@@ -202,7 +202,7 @@ func (c *Client) sendRequest(ctx context.Context, req *Request, body []byte) (*R
+ 
+ 	// Check for errors
+ 	if httpResp.StatusCode < http.StatusOK || httpResp.StatusCode >= http.StatusMultipleChoices {
+-		return nil, newAPIError(httpResp.StatusCode, respBody)
++		return nil, newAPIErrorFromResponse(httpResp, respBody)
+ 	}
+ 
+ 	// Parse response
+@@ -273,7 +273,7 @@ func (c *Client) openStream(ctx context.Context, req *Request, body []byte) (*ht
+ 		respBody, _ := io.ReadAll(httpResp.Body)
+ 		httpResp.Body.Close()
+ 		cancel()
+-		return nil, nil, newAPIError(httpResp.StatusCode, respBody)
++		return nil, nil, newAPIErrorFromResponse(httpResp, respBody)
+ 	}
+ 	return httpResp, cancel, nil
+ }
 ```
 
-**File**: `sdk/go/ai/openrouter_media_audio_sse_test.go` (added, +30/-0)
+**File**: `sdk/go/ai/errors.go` (modified, +36/-0)
 ```diff
-@@ -0,0 +1,30 @@
-+package ai
-+
-+import (
-+	"context"
-+	"fmt"
+@@ -3,6 +3,10 @@ package ai
+ import (
+ 	"encoding/json"
+ 	"fmt"
 +	"net/http"
-+	"net/http/httptest"
-+	"testing"
-+)
++	"strconv"
++	"strings"
++	"time"
+ )
+ 
+ const maxAPIErrorBody = 4 << 10
+@@ -18,6 +22,9 @@ type APIError struct {
+ 	Type       string
+ 	Code       string
+ 	Body       []byte
++	// RetryAfter is the delay requested by the provider via the Retry-After
++	// response header, or zero when absent or unparseable.
++	RetryAfter time.Duration
+ }
+ 
+ // Error returns a human-readable description including the HTTP status.
+@@ -55,3 +62,32 @@ func newAPIError(statusCode int, body []byte) *APIError {
+ 	apiErr.Body = append([]byte(nil), body...)
+ 	return apiErr
+ }
 +
-+func TestGenerateAudioSSEOptionalSpace(t *testing.T) {
-+	for _, prefix := range []string{"data: ", "data:"} {
-+		t.Run(prefix, func(t *testing.T) {
-+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				w.Header().Set("Content-Type", "text/event-stream")
-+				fmt.Fprintf(w, "%s{\"choices\":[{\"delta\":{\"content\":\"hello\",\"audio\":{\"data\":\"QUJD\"}}}]}\n\n%s[DONE]\n\n", prefix, prefix)
-+			}))
-+			defer srv.Close()
-+			p := &OpenRouterMediaProvider{APIKey: "local", BaseURL: srv.URL, Client: srv.Client()}
-+			p.SeedModelMeta("openai/gpt-audio-mini", []string{"text", "audio"}, []string{"text"})
-+			got, err := p.GenerateAudio(context.Background(), AudioRequest{Text: "hi", Model: "openai/gpt-audio-mini", Format: "pcm16"})
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			if got.Text != "hello" || got.Audio == nil || got.Audio.Data != "QUJD" {
-+				t.Fatalf("lost SSE output: %+v audio=%+v", got, got.Audio)
-+			}
-+		})
++// newAPIErrorFromResponse builds an APIError and records the Retry-After
++// header of resp so rate-limit handling can honor the provider's hint.
++func newAPIErrorFromResponse(resp *http.Response, body []byte) *APIError {
++	apiErr := newAPIError(resp.StatusCode, body)
++	apiErr.RetryAfter = parseRetryAfter(resp.Header.Get("Retry-After"), time.Now())
++	return apiErr
++}
++
++// parseRetryAfter parses a Retry-After header value, which is either a number
++// of seconds or an HTTP date. It returns 0 for empty, invalid, or past values.
++func parseRetryAfter(value string, now time.Time) time.Duration {
++	value = strings.TrimSpace(value)
++	if value == "" {
++		return 0
 +	}
++	if secs, err := strconv.ParseFloat(value, 64); err == nil {
++		if secs > 0 {
++			return time.Duration(secs * float64(time.Second))
++		}
++		return 0
++	}
++	if when, err := http.ParseTime(value); err == nil {
++		if d := when.Sub(now); d > 0 {
++			return d
++		}
++	}
++	return 0
 +}
 ```
 
+**File**: `sdk/go/ai/errors_test.go` (modified, +34/-0)
+```diff
+@@ -2,8 +2,12 @@ package ai
+ 
+ import (
+ 	"bytes"
++	"context"
+ 	"errors"
++	"net/http"
++	"net/http/httptest"
+ 	"testing"
++	"time"
+ 
+ 	"github.com/stretchr/testify/require"
+ )
+@@ -17,3 +21,33 @@ func TestAPIErrorCapsUnparseableBody(t *testing.T) {
+ 	require.Len(t, apiErr.Body, maxAPIErrorBody)
+ 	require.True(t, errors.Is(err, &APIError{StatusCode: 502}))
+ }
++
++func TestAPIErrorCarriesRetryAfterHeader(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("Retry-After", "7")
++		w.WriteHeader(http.StatusTooManyRequests)
++		_, _ = w.Write([]byte(`{"error":{"message":"slow down","type":"rate_limit_error"}}`))
++	}))
++	defer server.Close()
++
++	client, err := NewClient(&Config{APIKey: "k", BaseURL: server.URL, Model: "m"})
++	require.NoError(t, err)
++
++	_, err = client.Complete(context.Background(), "hi")
++	var apiErr *APIError
++	require.ErrorAs(t, err, &apiErr)
++	require.Equal(t, 7*time.Second, apiErr.RetryAfter)
++	require.Equal(t, 7*time.Second, retryAfterFromError(err))
++}
++
++func TestParseRetryAfter(t *testing.T) {
++	now := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
++	require.Equal(t, time.Duration(0), parseRetryAfter("", now))
++	require.Equal(t, time.Duration(0), parseRetryAfter("soon", now))
++	require.Equal(t, time.Duration(0), parseRetryAfter("-3", now))
++	require.Equal(t, 30*time.Second, parseRetryAfter("30", now))
++	require.Equal(t, 90*time.Second,
++		parseRetryAfter(now.Add(90*time.Second).Format(http.TimeFormat), now))
++	require.Equal(t, time.Duration(0),
++		parseRetryAfter(now.Add(-time.Minute).Format(http.TimeFormat), now))
++}
+```
+
+**File**: `sdk/go/ai/rate_limiter.go` (modified, +5/-2)
+```diff
+@@ -367,13 +367,16 @@ func isRateLimitError(err error) bool {
+ 	return false
+ }
+ 
+-// retryAfterFromError extracts a Retry-After hint from an APIError body when the
+-// provider surfaces one. It returns 0 when no usable value is present.
++// retryAfterFromError extracts a Retry-After hint from an APIError: the
++// Retry-After response header when present, else a numeric error code. It returns 0 when no usable value is present.
+ func retryAfterFromError(err error) time.Duration {
+ 	var apiErr *APIError
+ 	if !errors.As(err, &apiErr) {
+ 		return 0
+ 	}
++	if apiErr.RetryAfter > 0 {
++		return apiErr.RetryAfter
++	}
+ 	if apiErr.Code == "" {
+ 		return 0
+ 	}
+```
+
 #### Recent Merged Pull Requests:
+- **PR #1217** (2026-11-19): fix(sdk-go): honor the Retry-After header on 429 responses (@pcbeingused333)
 - **PR #1215** (closed): fix(sdk-go): record watched CodeAF harness usage (#1183) (@ZeroPoint95)
 - **PR #1214** (closed): fix(go-sdk): keep a custom harness binary on the resolved provider, not legacy pin (@ZeroPoint95)
 - **PR #1213** (closed): fix(sdk/go/ai): bound MaxTokens and HTTP timeout for partial AI configs (@ZeroPoint95)
 - **PR #1212** (closed): docs: correct claude-code max_budget_usd bound in fleet docs (@ZeroPoint95)
 - **PR #1210** (2026-11-18): fix(sdk-go): accept SSE data fields without a space in audio generation (@pcbeingused333)
-- **PR #1209** (2026-11-16): fix(did): preserve component identities during concurrent registration (@remote-controlled-man)
 
 ---
 
@@ -1531,33 +1633,33 @@ Signed-off-by: Alex Castillo <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdk-go): accept SSE data fields without a space in audio generation
+## X. sdk-go): honor the Retry-After header on 429 responses
 
 **RULE**:
-When implementing operations in `sdk/go/ai/openrouter_media.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/go/ai/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `36d50b4f`: sdk-go): accept SSE data fields without a space in audio generation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f404fbf2`: sdk-go): honor the Retry-After header on 429 responses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go/ai/openrouter_media.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go/ai/client.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if !strings.HasPrefix(line, "data:") {
-		data := strings.TrimPrefix(line, "data:")
+		return nil, newAPIErrorFromResponse(httpResp, respBody)
+		return nil, nil, newAPIErrorFromResponse(httpResp, respBody)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		if !strings.HasPrefix(line, "data: ") {
-		data := strings.TrimPrefix(line, "data: ")
+		return nil, newAPIError(httpResp.StatusCode, respBody)
+		return nil, nil, newAPIError(httpResp.StatusCode, respBody)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `36d50b4f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f404fbf2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

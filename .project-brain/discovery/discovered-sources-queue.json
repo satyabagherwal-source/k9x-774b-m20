@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T23:43:36.918Z",
+  "updated_at": "2026-11-20T00:06:49.447Z",
   "stats": {
-    "total_discovered": 6073,
-    "approved_pending_harvest": 5740,
+    "total_discovered": 6077,
+    "approved_pending_harvest": 5743,
     "harvested_count": 0,
-    "rejected_count": 333,
+    "rejected_count": 334,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5723,
+      "COMMUNITY_AND_EXPERT": 5727,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 113,
       "ENGINEERING_BLOGS": 4,
@@ -131297,6 +131297,88 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
         "fileName": "tailscale-tailscale-learnings.md"
+      }
+    },
+    "SRC-176266EC89AF": {
+      "id": "SRC-176266EC89AF",
+      "url": "https://github.com/vinceglb/FileKit",
+      "title": "https://github.com/vinceglb/FileKit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T00:06:47.245Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vinceglb-filekit-learnings.md",
+        "fileName": "vinceglb-filekit-learnings.md"
+      }
+    },
+    "SRC-37844E1D35C3": {
+      "id": "SRC-37844E1D35C3",
+      "url": "http://x/",
+      "title": "http://x/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS",
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T00:06:47.324Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vinceglb-filekit-learnings.md",
+        "fileName": "vinceglb-filekit-learnings.md"
+      }
+    },
+    "SRC-645887F8A549": {
+      "id": "SRC-645887F8A549",
+      "url": "https://filekit.mintlify.app/core/setup",
+      "title": "https://filekit.mintlify.app/core/setup",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T00:06:47.406Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vinceglb-filekit-learnings.md",
+        "fileName": "vinceglb-filekit-learnings.md"
+      }
+    },
+    "SRC-72FA7ED74CCA": {
+      "id": "SRC-72FA7ED74CCA",
+      "url": "https://claude.ai/code/session_01UYfmmPBwQHC2yRCed8gDf5",
+      "title": "https://claude.ai/code/session_01UYfmmPBwQHC2yRCed8gDf5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T00:06:49.447Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
       }
     }
   }

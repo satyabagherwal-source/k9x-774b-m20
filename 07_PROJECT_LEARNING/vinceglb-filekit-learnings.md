@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vinceglb-filekit-learnings.md`  
 > **Source**: github ([https://github.com/vinceglb/FileKit](https://github.com/vinceglb/FileKit))  
-> **Source Version**: `5f8ac2e9`  
+> **Source Version**: `b1f3c7f0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T06:12:23.033Z  
+> **Timestamp**: 2026-11-20T00:06:35.315Z  
 > **Learning ID**: `learn-github-vinceglb-filekit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vinceglb-filekit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vinceglb/FileKit](https://github.com/vinceglb/FileKit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T06:12:22.802Z  
+> **Harvest Timestamp**: 2026-11-20T00:06:35.027Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: File operations and native file pickers for Kotlin Multiplatform and Compose Multiplatform: read, write, copy and list files, open and save dialogs, image compression, bookmarks. Android, iOS, macOS, JVM desktop, Linux, Windows, JS, Wasm.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1561 stars
+- **Stars / Engagement**: 1570 stars
 
 ---
 
@@ -1021,6 +1021,9 @@ internal expect fun compress(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #707** (2026-11-17): **FileSaverLauncher does not seem to take into account the "title" param**
+  *Symptoms*: ### FileKit version  0.17.0  ### Modules  - [ ] filekit-core - [ ] filekit-dialogs - [x] filekit-dialogs-compose - [ ] filekit-coil  ### Affected platforms  - [ ] Android - [ ] iOS - [ ] macOS (native) - [ ] watchOS - [x] JVM desktop (Windows) - [ ] JVM desktop (macOS) - [ ] JVM desktop (Linux) - [ ] Linux (native) - [ ] Windows (native) - [ ] JS (browser) - [ ] Wasm (browser)  ### Environment  - OS: Windows 11 - Kotlin: 2.4.21 - Compose Multiplatform: 1.13.0-beta01  ### What happened?  With this setup: ```kotlin rememberFileSaverLauncher(dialogSettings = FileKitDialogSettings(title = "My custom title") ``` The Windows Dialog shows the generic "Save as" title.  ### Steps to reproduce  1. Create a standard Desktop Compose project with the Idea plug-in. 2. In the `shared` module, add in the `build.gradle.kts` file: ```kotlin     implementation("io.github.vinceglb:filekit-dialogs:0.17.0")     implementation("io.github.vinceglb:filekit-dialogs-compose:0.17.0") ``` 3. In the `shared` module, replace the `App.kt` file content with the following: ```kotlin import androidx.compose.material3.Button import androidx.compose.material3.Text import androidx.compose.runtime.Composable import io.github.vinceglb.filekit.dialogs.FileKitDialogSettings import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher  @Composable fun App() {     val launcher = rememberFileSaverLauncher(         dialogSettings = FileKitDialogSettings(title = "My custom title"),         onResult = { }   
+
 - **Issue #46** (2024-06-26): **🐛 Fix AwtFileSaver resumed twice**
   *Symptoms*: 
 
@@ -1039,402 +1042,606 @@ internal expect fun compress(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5f8ac2e9` (2026-11-06)
-**Commit Message**: 🔀 Merge pull request #708 from vinceglb/docs/grant-mention
+### Incident Patch 1: `b1f3c7f0` (2026-11-18)
+**Commit Message**: 🔀 Merge pull request #721 from vinceglb/fix/web-download-revoke-object-url
 
-🎉 Mention the Kotlin Foundation grant in the README and docs
+🐛 Revoke object URLs created by FileKit.download on web
 
-**File**: `README.md` (modified, +7/-0)
+**File**: `filekit-core/src/jsMain/kotlin/io/github/vinceglb/filekit/FileKit.js.kt` (modified, +1/-10)
 ```diff
-@@ -21,6 +21,13 @@
-     &nbsp;·&nbsp;
-     <a href="https://filekit.mintlify.app/roadmap"><b>Roadmap to 1.0</b></a>
-   </p>
-+
-+  <a href="https://kotlinfoundation.org/news/grants-program-winners-26/">
-+    <picture>
-+      <source media="(prefers-color-scheme: dark)" srcset="brand/exports/grant-banner-dark.webp" />
-+      <img src="brand/exports/grant-banner-light.webp" width="960" alt="FileKit is supported by the Kotlin Foundation Grants Program. Read the announcement." />
-+    </picture>
-+  </a>
- </div>
+@@ -1,11 +1,8 @@
+ package io.github.vinceglb.filekit
  
- ## Installation
-```
-
-**File**: `brand/README.md` (modified, +5/-2)
-```diff
-@@ -15,8 +15,9 @@ npm run render -- sample          # only the sample app icons and logos
- npm run preview                   # serve the sources to tweak them live in a browser
- ```
+ import io.github.vinceglb.filekit.utils.toBitsArray
+-import kotlinx.browser.document
+ import kotlinx.coroutines.Dispatchers
+ import kotlinx.coroutines.withContext
+-import org.w3c.dom.HTMLAnchorElement
+-import org.w3c.dom.url.URL
+ import org.w3c.files.File
  
--`npm run preview` prints two URLs: the brand board (every export and the palette on one page) and the live
--hero (`src/hero.html`). The hero fills the browser window, so resizing the window previews other formats.
-+`npm run preview` prints three URLs: the brand board (every export and the palette on one page), the live
-+hero (`src/hero.html`) and the grant banner (`src/banner.html`, configured under `banner` in `palette.json`).
-+The hero fills the browser window, so resizing the window previews other formats.
- Add `?seed=3.6` to the hero URL to try another background composition without editing any file.
+ public actual object FileKit
+@@ -26,11 +23,5 @@ public actual suspend fun FileKit.download(
+         fileName = fileName,
+     )
  
- Rendering runs locally only; CI does not build these assets.
-@@ -28,6 +29,8 @@ Rendering runs locally only; CI does not build these assets.
- | README hero | `brand/exports/readme-hero.webp` | 1920×960, rounded corners |
- | GitHub social preview | `brand/exports/social-preview.jpg` | 1280×640, upload in the repo settings |
- | Docs hero | `docs/brand/hero.webp` | 1920×1080, rounded corners |
-+| README grant banner | `brand/exports/grant-banner-{dark,light}.webp` | 1920×240, rounded corners, with the call to action |
-+| Docs grant banner | `docs/brand/grant-banner-{dark,light}.webp` | 1920×240 |
- | Open Graph image | `docs/brand/og.jpg` | 1200×630 |
- | Logo for light backgrounds | `docs/brand/logo-light.svg` | mark + wordmark, outlined |
- | Logo for dark backgrounds | `docs/brand/logo-dark.svg` | mark + wordmark, outlined |
-```
-
-**File**: `brand/palette.json` (modified, +34/-0)
-```diff
-@@ -62,5 +62,39 @@
-       "grain": 0,
-       "focus": 0.5
-     }
-+  },
-+  "banner": {
-+    "seed": 9.1,
-+    "pieces": 90,
-+    "background": {
-+      "dark": {
-+        "grain": 0.06,
-+        "focus": 0.45
-+      },
-+      "light": {
-+        "grain": 0.05,
-+        "focus": -0.5
-+      }
-+    },
-+    "text": {
-+      "dark": "#FFF1D0",
-+      "light": "#0F5A36"
-+    },
-+    "confetti": {
-+      "dark": [
-+        "#F2D37A",
-+        "#FFF1D0",
-+        "#FFFFFF",
-+        "#3DBA6E",
-+        "#E3C266"
-+      ],
-+      "light": [
-+        "#0F5A36",
-+        "#2E9A5C",
-+        "#E7C25E",
-+        "#FFFFFF",
-+        "#D8B24C"
-+      ]
-+    }
-   }
+-    // Create a element
+-    val a = document.createElement("a") as HTMLAnchorElement
+-    a.href = URL.createObjectURL(file)
+-    a.download = fileName
+-
+-    // Trigger the download
+-    a.click()
++    downloadBlob(blob = file, fileName = fileName)
  }
 ```
 
-**File**: `brand/render.mjs` (modified, +11/-3)
+**File**: `filekit-core/src/wasmJsMain/kotlin/io/github/vinceglb/filekit/FileKit.wasmJs.kt` (modified, +1/-10)
 ```diff
-@@ -5,7 +5,7 @@
- //   npm run render -- sample  # only the sample app icons
- //   npm run preview           # serve the sources to tweak them live in a browser
- //
--// Raster images are screenshots of src/hero.html taken by headless Chromium (Playwright).
-+// Raster images are screenshots of src/hero.html and src/banner.html taken by headless Chromium (Playwright).
- // SVG logos are generated from src/mark.js and the outlines of Inter Bold Italic (opentype.js).
- // App icons are screenshots of src/icon.html; .icns and .ico files are assembled from those PNGs.
+@@ -1,11 +1,8 @@
+ package io.github.vinceglb.filekit
  
-@@ -30,6 +30,12 @@ const HEROES = [
-   { file: 'docs/brand/hero.webp', width: 1920, height: 1080, theme: 'dark', rounded: true },
-   { file: 'docs/brand/og.jpg', width: 1200, height: 630, theme: 'dark' },
- ];
-+
-+// Grant banner (src/banner.html), in both themes. The README one is a link, so it carries its call to action.
-+const BANNERS = ['dark', 'light'].flatMap((theme) => [
-+  { file: `brand/exports/grant-banner-${theme}.webp`, width: 1920, height: 240, theme, rounded: true, cta: true },
-+  { file: `docs/brand/grant-banner-${theme}.webp`, width: 1920, height: 240, theme },
-+]);
- const QUALITY = 0.92;
+ import io.github.vinceglb.filekit.utils.toJsArray
+-import kotlinx.browser.document
+ import kotlinx.coroutines.Dispatchers
+ import kotlinx.coroutines.withContext
+-import org.w3c.dom.HTMLAnchorElement
+-import org.w3c.dom.url.URL
+ import org.w3c.files.File
  
- // ---------------------------------------------------------------------------------------------
-@@ -135,6 +141,7 @@ if (process.argv[2] === '--preview') {
-   const { base } = await serve(4173);
-   console.log(`Brand board:  ${base}/brand/src/board.html`);
-   console.log(`Live hero:    ${base}/brand/src/hero.html  (resize the window to try formats, add ?seed=3.6 to try a composition)`);
-+  console.log(`Grant banner: ${base}/brand/src/banner.html?cta=1  (add &theme=light or &seed=3.6)`);
-   console.log('Ctrl+C to stop.');
- } else {
-   await render(process.argv[2]);
-@@ -149,7 +156,7 @@ async function render(filter) {
-     console.log('wrote', svg.file);
-   }
+ public actual object FileKit
+@@ -27,11 +24,5 @@ public actual suspend fun FileKit.download(
+         fileName = fileName,
+     )
  
--  const heroes = HEROES.filter((h) => wanted(h.file));
-+  const heroes = [...HEROES, ...BANNERS].filter((h) => wanted(h.file));
-   const icons = ICONS.filter((i) => wanted(i.file));
-   if (heroes.length === 0 && icons.length === 0) return;
-   const { server, base } = await serve();
-@@ -158,7 +165,8 @@ async function render(filter) {
-   for (const hero of heroes) {
-     const page = await browser.newPage({ viewport: { width: hero.width, height: hero.height } });
-     page.on('pageerror', (e) => console.error(hero.file, e.message));
--    await page.goto(`${base}/brand/src/hero.html?theme=${hero.theme}&rounded=${hero.rounded ? 1 : 0}`);
-+    const source = BANNERS.includes(hero) ? 'banner' : 'hero';
-+    await page.goto(`${base}/brand/src/${source}.html?theme=${hero.theme}&rounded=${hero.rounded ? 1 : 0}&cta=${hero.cta ? 1 : 0}`);
-     await page.waitForSelector('body[data-ready]');
-     await mkdir(dirname(join(REPO, hero.file)), { recursive: true });
-     if (hero.file.endsWith('.jpg')) {
+-    // Create a element
+-    val a = document.createElement("a") as HTMLAnchorElement
+-    a.href = URL.createObjectURL(file)
+-    a.download = fileName
+-
+-    // Trigger the download
+-    a.click()
++    downloadBlob(blob = file, fileName = fileName)
+ }
 ```
 
-**File**: `brand/src/banner.html` (added, +98/-0)
+**File**: `filekit-core/src/webMain/kotlin/io/github/vinceglb/filekit/BlobDownload.web.kt` (added, +51/-0)
 ```diff
-@@ -0,0 +1,98 @@
-+<!doctype html>
-+<!--
-+  FileKit grant banner: a thin strip on the silk background with a sprinkle of confetti.
-+  Fills the viewport, so the export script picks the size.
-+  URL parameters: theme=dark|light, rounded=1 (transparent rounded corners),
-+  cta=1 (adds the "Read the announcement" line, for the README where the whole image is a link),
-+  seed=<number> (try another background and confetti layout without editing palette.json).
-+  All sizes are in cqw (percent of the image width) so every format keeps the same proportions.
-+-->
-+<html>
-+<head>
-+<meta charset="utf-8">
-+<style>
-+  @font-face { font-family: 'Inter'; font-weight: 400; src: url('../fonts/Inter-Regular.woff2') format('woff2'); }
-+  @font-face { font-family: 'Inter'; font-weight: 500; src: url('../fonts/Inter-Medium.woff2') format('woff2'); }
-+  @font-face { font-family: 'Inter'; font-weight: 700; font-style: italic; src: url('../fonts/Inter-BoldItalic.ttf') format('truetype'); }
+@@ -0,0 +1,51 @@
++package io.github.vinceglb.filekit
 +
-+  * { box-sizing: border-box; margin: 0; }
-+  html, body { width: 100%; height: 100%; background: transparent; overflow: hidden; }
-+  .frame { position: absolute; inset: 0; container-type: size; overflow: hidden; }
-+  .rounded .frame { border-radius: 1.6cqw; }
-+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-+  .confetti { position: absolute; inset: 0; }
-+  .confetti i { position: absolute; display: block; border-radius: .08cqw; }
-+  .text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-+    gap: 2cqw; color: var(--text); text-align: center; white-space: nowrap; }
-+  .line { font: 400 2.7cqw/1 'Inter'; text-box: trim-both cap alphabetic; }
-+  .line b { font: italic 700 2.7cqw/1 'Inter'; letter-spacing: -0.01em; }
-+  .cta { font: 500 1.6cqw/1 'Inter'; opacity: .85; text-decoration: underline; text-underline-offset: .3cqw;
-+    text-decoration-thickness: .1cqw; text-box: trim-both cap alphabetic; }
-+</style>
-+</head>
-+<body>
-+<div class="frame">
-+  <canvas></canvas>
-+  <div class="confetti"></div>
-+  <div class="text">
-+    <div class="line">Supported by the <b>Kotlin Foundation Grants Program</b></div>
-+    <div class="cta" hidden>Read the announcement →</div>
-+  </div>
-+</div>
-+<script type="module">
-+  import { paintBackground } from './background.js';
++import kotlinx.browser.document
++import kotlinx.browser.window
++import org.w3c.dom.HTMLAnchorElement
++import org.w3c.dom.url.URL
++import org.w3c.files.Blob
++import kotlin.time.Duration
++import kotlin.time.Duration.Companion.seconds
 +
-+  const params = new URLSearchParams(location.search);
-+  const theme = params.get('theme') ?? 'dark';
-+  if (params.get('rounded') === '1') document.body.classList.add('rounded');
-+  if (params.get('cta') === '1') document.querySelector('.cta').hidden = false;
++/**
++ * How long the object URL of a download stays alive after the download link is clicked.
++ *
++ * The click only starts the download. Some browsers (Firefox, older Safari) read the blob
++ * asynchronously afterwards, and revoking the URL too early makes the download fail. 40 seconds
++ * matches FileSaver.js, the reference implementation of this pattern. The cost is that the blob
++ * stays in memory for about 40 seconds after each download (longer if the browser throttles
++ * timers, for example in a background tab) instead of until the page unloads.
++ */
++internal val DOWNLOAD_OBJECT_URL_REVOKE_DELAY: Duration = 40.seconds
 +
-+  const palette = await (await fetch('../palette.json')).json();
-+  const look = { ...palette.background[theme], ...palette.banner.background[theme] };
-+  const seed = params.has('seed') ? Number(params.get('seed')) : palette.banner.seed;
-+  const frame = document.querySelector('.frame');
-+  frame.style.setProperty('--text', palette.banner.text[theme]);
-+  await document.fonts.ready;
++/**
++ * Triggers a browser download of [blob] named [fileName] through a temporary object URL.
++ *
++ * The object URL is revoked after [revokeDelay], or right away if triggering the download throws.
++ */
++internal fun downloadBlob(
++    blob: Blob,
++    fileName: String,
++    revokeDelay: Duration = DOWNLOAD_OBJECT_URL_REVOKE_DELAY,
++) {
++    val anchor = document.createElement("a") as HTMLAnchorElement
++    anchor.download = fileName
 +
-+  // Small deterministic PRNG so a seed always gives the same confetti.
-+  function random(s) {
-+    let a = Math.floor(s * 1e6) >>> 0;
-+    return () => {
-+      a = (a + 0x6D2B79F5) >>> 0;
-+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
-+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-+    };
-+  }
-+
-+  function draw() {
-+    paintBackground(document.querySelector('canvas'), { ...look, seed });
-+
-+    // Confetti thins out towards the center so the text stays clean.
-+    const rand = random(seed);
-+    const colors = palette.banner.confetti[theme];
-+    const W = frame.clientWidth, H = frame.clientHeight, cqw = W / 100;
-+    const pieces = [];
-+    while (pieces.length < palette.banner.pieces) {
-+      const x = rand(), y = rand();
-+      const dx = (x - 0.5) / 0.34, dy = (y - 0.5) / 0.62;
-+      if (dx * dx + dy * dy < 1 + 0.6 * rand()) continue;
-+      const round = rand() < 0.3;
-+      const w = round ? 0.45 + 0.25 * rand() : 0.8 + 0.7 * rand();
-+      const h = round ? w : 0.26 + 0.14 * rand();
-+      pieces.push(`<i style="left:${(x * W).toFixed(1)}px;top:${(y * H).toFixed(1)}px;width:${(w * cqw).toFixed(1)}px;` +
-+        `height:${(h * cqw).toFixed(1)}px;background:${colors[Math.floor(rand() * colors.length)]};` +
-+        `opacity:${(0.65 + 0.35 * rand()).toFixed(2)};${round ? 'border-radius:50%;' : ''}` +
-+        `transform:translate(-50%,-50%) rotate(${Math.floor(rand() * 180)}deg)"></i>`);
++    val url = URL.createObjectURL(blob)
++    try {
++        anchor.href = url
++        anchor.click()
++    } catch (e: Throwable) {
++        URL.revokeObjectURL(url)
++        throw e
 +    }
-+    document.querySelector('.confetti').innerHTML = pieces.join('');
-+  }
 +
-+  draw();
-+  // Keep the live preview (npm run preview) accurate when the window is resized.
-+  let pending = 0;
-+  addEventListener('resize', () => { cancelAnimationFrame(pending); pending = requestAnimationFrame(draw); });
-+  document.body.dataset.ready = '1';
-+</script>
-+</body>
-+</html>
++    window.setTimeout(
++        handler = {
++            URL.revokeObjectURL(url)
++            null
++        },
++        timeout = revokeDelay.inWholeMilliseconds.toInt(),
++    )
++}
 ```
 
-**File**: `brand/src/board.html` (modified, +2/-0)
+**File**: `filekit-core/src/webTest/kotlin/io/github/vinceglb/filekit/FileKitDownloadWebTest.kt` (added, +144/-0)
 ```diff
-@@ -25,6 +25,8 @@ <h2>Social preview · brand/exports/social-preview.jpg — OG image · docs/bran
- <div class="two"><img src="../exports/social-preview.jpg" alt=""><img src="../../docs/brand/og.jpg" alt=""></div>
- <h2>Docs hero · docs/brand/hero.webp</h2>
- <img src="../../docs/brand/hero.webp" alt="">
-+<h2>Grant banner · brand/exports/grant-banner-{dark,light}.webp</h2>
-+<div class="two"><img src="../exports/grant-banner-dark.webp" alt=""><img src="../exports/grant-banner-light.webp" alt=""></div>
- <h2>Logos · docs/brand/logo-{light,dark}.svg — favicon · docs/brand/favicon.svg</h2>
- <div class="two">
-   <div class="tile" style="background:#fff"><img src="../../docs/brand/logo-light.svg" style="height:40px" alt=""><img src="../../docs/brand/favicon.svg" style="height:32px" alt=""><img src="../../docs/brand/favicon.svg" style="height:16px" alt=""></div>
-```
-
-**File**: `docs/docs.json` (modified, +4/-0)
-```diff
-@@ -12,6 +12,10 @@
-     "dark": "#1A7F4B"
-   },
-   "favicon": "/brand/favicon.svg",
-+  "banner": {
-+    "content": "🎉 FileKit is supported by the Kotlin Foundation Grants Program. [Read the announcement](https://kotlinfoundation.org/news/grants-program-winners-26/)",
-+    "dismissible": true
-+  },
-   "navigation": {
-     "groups": [
-       {
-```
-
-**File**: `docs/introduction.mdx` (modified, +3/-0)
-```diff
-@@ -5,6 +5,7 @@ description: Pick, save, read, and write files with one Kotlin Multiplatform API
- og:title: FileKit
- ---
- 
-+import { GrantBanner } from '/snippets/grant-banner.jsx'
- import { QuoteGrid, QuoteCard } from '/snippets/quote-card.jsx'
- import { UsedBy } from '/snippets/used-by.jsx'
- 
-@@ -19,6 +20,8 @@ import { UsedBy } from '/snippets/used-by.jsx'
- 
- **FileKit is the file layer for Kotlin Multiplatform.** Open native file, photo, directory, and camera pickers, save and share files, and read or write them through a single `PlatformFile` type. The same code runs on Android, iOS, macOS, desktop JVM (Windows, macOS, Linux), Linux and Windows native, JS, and Wasm, and FileKit Core also runs on watchOS.
- 
-+<GrantBanner />
+@@ -0,0 +1,144 @@
++package io.github.vinceglb.filekit
 +
- ## FileKit in 30 seconds
- 
- Let the user pick a photo, then show it or read its bytes.
++import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.delay
++import kotlinx.coroutines.test.runTest
++import kotlinx.coroutines.withContext
++import org.w3c.files.Blob
++import kotlin.js.ExperimentalWasmJsInterop
++import kotlin.test.AfterTest
++import kotlin.test.BeforeTest
++import kotlin.test.Test
++import kotlin.test.assertEquals
++import kotlin.test.assertFails
++import kotlin.time.Duration
++import kotlin.time.Duration.Companion.milliseconds
++
++class FileKitDownloadWebTest {
++    @BeforeTest
++    fun setUp() {
++        installObjectUrlProbe()
++    }
++
++    @AfterTest
++    fun tearDown() {
++        uninstallObjectUrlProbe()
++    }
++
++    @Test
++    fun downloadBlob_afterRevokeDelay_revokesEveryObjectUrl() = runTest {
++        repeat(3) { index ->
++            downloadBlob(
++                blob = Blob(),
++                fileName = "hello-$index.txt",
++                revokeDelay = 10.milliseconds,
++            )
++        }
++        assertEquals(3, createdObjectUrlCount())
++
++        waitRealTime(200.milliseconds)
++
++        assertEquals(0, activeObjectUrlCount())
++    }
++
++    @Test
++    fun download_afterClick_keepsObjectUrlAlive() = runTest {
++        FileKit.download(
++            bytes = "Hello, World!".encodeToByteArray(),
++            fileName = "hello.txt",
++        )
++        assertEquals(1, createdObjectUrlCount())
++        assertEquals(1, activeObjectUrlCount())
++
++        // Revoking right after the click can cancel the download in some browsers.
++        waitRealTime(200.milliseconds)
++
++        assertEquals(1, activeObjectUrlCount())
++    }
++
++    @Test
++    fun downloadBlob_clickThrows_revokesObjectUrlAndRethrows() {
++        makeAnchorClickThrow()
++        try {
++            assertFails {
++                downloadBlob(blob = Blob(), fileName = "hello.txt")
++            }
++        } finally {
++            restoreAnchorClick()
++        }
++
++        assertEquals(1, createdObjectUrlCount())
++        assertEquals(0, activeObjectUrlCount())
++    }
++}
++
++// runTest skips delays in virtual time, so switch to a real dispatcher to let browser timers run.
++private suspend fun waitRealTime(duration: Duration) {
++    withContext(Dispatchers.Default) { delay(duration) }
++}
++
++// Wraps URL.createObjectURL and URL.revokeObjectURL to record every URL created and revoked.
++@OptIn(ExperimentalWasmJsInterop::class)
++private fun installObjectUrlProbe(): Unit = js(
++    """
++    (() => {
++        const probe = {
++            created: [],
++            revoked: [],
++            originalCreate: URL.createObjectURL,
++            originalRevoke: URL.revokeObjectURL,
++        };
++        URL.createObjectURL = function (obj) {
++            const url = probe.originalCreate.call(URL, obj);
++            probe.created.push(url);
++            return url;
++        };
++        URL.revokeObjectURL = function (url) {
++            probe.revoked.push(url);
++            return probe.originalRevoke.call(URL, url);
++        };
++        globalThis.filekitObjectUrlProbe = probe;
++    })()
++    """,
++)
++
++@OptIn(ExperimentalWasmJsInterop::class)
++private fun uninstallObjectUrlProbe(): Unit = js(
++    """
++    (() => {
++        const probe = globalThis.filekitObjectUrlProbe;
++        if (probe) {
++            URL.createObjectURL = probe.originalCreate;
++            URL.revokeObjectURL = probe.originalRevoke;
++            delete globalThis.filekitObjectUrlProbe;
++        }
++    })()
++    """,
++)
++
++@OptIn(ExperimentalWasmJsInterop::class)
++private fun createdObjectUrlCount(): Int = js("globalThis.filekitObjectUrlProbe.created.length")
++
++@OptIn(ExperimentalWasmJsInterop::class)
++private fun activeObjectUrlCount(): Int = js(
++    """
++    globalThis.filekitObjectUrlProbe.created
++        .filter((url) => !globalThis.filekitObjectUrlProbe.revoked.includes(url))
++        .length
++    """,
++)
++
++// Shadows the inherited HTMLElement.prototype.click for anchors only.
++@OptIn(ExperimentalWasmJsInterop::class)
++private fun makeAnchorClickThrow(): Unit = js(
++    """
++    (() => {
++        HTMLAnchorElement.prototype.click = function () {
++            throw new Error("click failed");
++        };
++    })()
++    """,
++)
++
++@OptIn(ExperimentalWasmJsInterop::class)
++private fun restoreAnchorClick(): Unit = js("(() => { delete HTMLAnchorElement.prototype.click; })()")
 ```
 
 ---
 
-### Incident Patch 2: `07f8a48f` (2026-11-06)
-**Commit Message**: 🔗 Link the grant announcement
+### Incident Patch 2: `40594f11` (2026-11-17)
+**Commit Message**: 🔀 Merge pull request #716 from vinceglb/fix/mimetype-parameter-value
 
-Point the README banner, the docs banner and the docs snippet to the Kotlin Foundation post,
-and use the program's official name (Kotlin Foundation Grants Program), banner images included.
+🐛 Read MIME type parameter values correctly
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `README.md` (modified, +2/-2)
+**File**: `filekit-core/src/commonMain/kotlin/io/github/vinceglb/filekit/mimeType/MimeType.kt` (modified, +3/-3)
 ```diff
-@@ -22,10 +22,10 @@
-     <a href="https://filekit.mintlify.app/roadmap"><b>Roadmap to 1.0</b></a>
-   </p>
+@@ -84,11 +84,11 @@ public class MimeType private constructor(
+                 parts
+                     .drop(1)
+                     .map { part ->
+-                        val nameValuePair = part.split("=")
++                        val nameValuePair = part.split("=", limit = 2)
  
--  <a href="https://kotlinfoundation.org/news/#FILEKIT_GRANT_POST_URL">
-+  <a href="https://kotlinfoundation.org/news/grants-program-winners-26/">
-     <picture>
-       <source media="(prefers-color-scheme: dark)" srcset="brand/exports/grant-banner-dark.webp" />
--      <img src="brand/exports/grant-banner-light.webp" width="960" alt="FileKit is supported by the Kotlin Foundation Grant Program. Read the announcement." />
-+      <img src="brand/exports/grant-banner-light.webp" width="960" alt="FileKit is supported by the Kotlin Foundation Grants Program. Read the announcement." />
-     </picture>
-   </a>
- </div>
+                         if (nameValuePair.size == 2) {
+-                            val name = nameValuePair[0].lowercase()
+-                            val value = nameValuePair[0].lowercase()
++                            val name = nameValuePair[0].trim().lowercase()
++                            val value = nameValuePair[1].trim().lowercase()
+                             MimeTypeParameter(name = name, value = value)
+                         } else {
+                             throw InvalidMimeTypeException("Invalid parameter in MIME type: $part")
 ```
 
-**File**: `brand/src/banner.html` (modified, +1/-1)
+**File**: `filekit-core/src/commonTest/kotlin/io/github/vinceglb/filekit/mimeType/MimeTypeTest.kt` (added, +89/-0)
 ```diff
-@@ -35,7 +35,7 @@
-   <canvas></canvas>
-   <div class="confetti"></div>
-   <div class="text">
--    <div class="line">Supported by the <b>Kotlin Foundation Grant Program</b></div>
-+    <div class="line">Supported by the <b>Kotlin Foundation Grants Program</b></div>
-     <div class="cta" hidden>Read the announcement →</div>
-   </div>
- </div>
+@@ -0,0 +1,89 @@
++@file:Suppress("ktlint:standard:function-naming", "TestFunctionName")
++
++package io.github.vinceglb.filekit.mimeType
++
++import io.github.vinceglb.filekit.exceptions.InvalidMimeTypeException
++import kotlin.test.Test
++import kotlin.test.assertEquals
++import kotlin.test.assertFailsWith
++import kotlin.test.assertNotEquals
++
++class MimeTypeTest {
++    @Test
++    fun MimeType_parse_withParameter_readsValue() {
++        val mimeType = MimeType.parse("text/plain; charset=UTF-8")
++
++        assertEquals(expected = "text", actual = mimeType.primaryType)
++        assertEquals(expected = "plain", actual = mimeType.subtype)
++        assertEquals(
++            expected = setOf(MimeTypeParameter(name = "charset", value = "utf-8")),
++            actual = mimeType.parameters,
++        )
++        assertEquals(expected = mimeType, actual = MimeType.parse("text/plain;charset=utf-8"))
++    }
++
++    @Test
++    fun MimeType_parse_withSpacesAroundEquals_trimsNameAndValue() {
++        val mimeType = MimeType.parse("text/plain; charset = utf-8")
++
++        assertEquals(
++            expected = setOf(MimeTypeParameter(name = "charset", value = "utf-8")),
++            actual = mimeType.parameters,
++        )
++    }
++
++    @Test
++    fun MimeType_parse_withMultipleParameters_readsEachValue() {
++        val mimeType = MimeType.parse("text/plain; Charset=UTF-8; format=flowed")
++
++        assertEquals(
++            expected = setOf(
++                MimeTypeParameter(name = "charset", value = "utf-8"),
++                MimeTypeParameter(name = "format", value = "flowed"),
++            ),
++            actual = mimeType.parameters,
++        )
++    }
++
++    @Test
++    fun MimeType_parse_withEqualsInsideQuotedValue_splitsOnFirstEqualsOnly() {
++        val mimeType = MimeType.parse("application/x-test; name=\"a=b\"")
++
++        // Quotes are kept as-is: quoted-string values are not unquoted yet.
++        assertEquals(
++            expected = setOf(MimeTypeParameter(name = "name", value = "\"a=b\"")),
++            actual = mimeType.parameters,
++        )
++    }
++
++    @Test
++    fun MimeType_parse_withParameterWithoutValue_throws() {
++        assertFailsWith<InvalidMimeTypeException> {
++            MimeType.parse("text/plain; charset")
++        }
++    }
++
++    @Test
++    fun MimeType_toString_withParameter_includesValue() {
++        val mimeType = MimeType.parse("text/plain; charset=UTF-8")
++
++        assertEquals(expected = "text/plain; charset=utf-8", actual = mimeType.toString())
++        assertEquals(expected = mimeType, actual = MimeType.parse(mimeType.toString()))
++    }
++
++    @Test
++    fun MimeType_equals_differentParameterValues_returnsFalse() {
++        assertNotEquals(
++            illegal = MimeType.parse("text/plain; charset=utf-8"),
++            actual = MimeType.parse("text/plain; charset=iso-8859-1"),
++        )
++    }
++
++    @Test
++    fun MimeType_equals_differentCase_returnsTrue() {
++        assertEquals(
++            expected = MimeType.parse("text/plain; charset=utf-8"),
++            actual = MimeType.parse("TEXT/Plain; CHARSET=UTF-8"),
++        )
++    }
++}
 ```
 
-**File**: `docs/docs.json` (modified, +1/-1)
+---
+
+### Incident Patch 3: `b071c689` (2026-11-17)
+**Commit Message**: 🔀 Merge pull request #715 from vinceglb/fix/windows-file-saver-title
+
+🐛 Apply the dialog title to the Windows file saver
+
+**File**: `filekit-dialogs/src/jvmMain/kotlin/io/github/vinceglb/filekit/dialogs/platform/windows/WindowsFilePicker.kt` (modified, +47/-38)
 ```diff
-@@ -13,7 +13,7 @@
-   },
-   "favicon": "/brand/favicon.svg",
-   "banner": {
--    "content": "🎉 FileKit is supported by the Kotlin Foundation Grant Program. [Read the announcement](https://kotlinfoundation.org/news/#FILEKIT_GRANT_POST_URL)",
-+    "content": "🎉 FileKit is supported by the Kotlin Foundation Grants Program. [Read the announcement](https://kotlinfoundation.org/news/grants-program-winners-26/)",
-     "dismissible": true
-   },
-   "navigation": {
+@@ -27,6 +27,7 @@ import io.github.vinceglb.filekit.dialogs.platform.PlatformFilePicker
+ import io.github.vinceglb.filekit.dialogs.platform.windows.jna.FileDialog
+ import io.github.vinceglb.filekit.dialogs.platform.windows.jna.FileOpenDialog
+ import io.github.vinceglb.filekit.dialogs.platform.windows.jna.FileSaveDialog
++import io.github.vinceglb.filekit.dialogs.platform.windows.jna.IFileDialog
+ import io.github.vinceglb.filekit.dialogs.platform.windows.jna.IFileOpenDialog
+ import io.github.vinceglb.filekit.dialogs.platform.windows.jna.IFileSaveDialog
+ import io.github.vinceglb.filekit.dialogs.platform.windows.jna.IShellItem
+@@ -57,11 +58,7 @@ internal class WindowsFilePicker(
+             directory?.let { fileOpenDialog.setDefaultPath(it) }
+ 
+             // Set title
+-            dialogSettings.title?.let {
+-                fileOpenDialog
+-                    .SetTitle(WString(dialogSettings.title))
+-                    .verify("SetTitle failed")
+-            }
++            fileOpenDialog.applyTitle(dialogSettings.title)
+ 
+             // Add filters
+             fileExtensions
+@@ -84,11 +81,7 @@ internal class WindowsFilePicker(
+             directory?.let { fileOpenDialog.setDefaultPath(it) }
+ 
+             // Set title
+-            dialogSettings.title?.let {
+-                fileOpenDialog
+-                    .SetTitle(WString(dialogSettings.title))
+-                    .verify("SetTitle failed")
+-            }
++            fileOpenDialog.applyTitle(dialogSettings.title)
+ 
+             // Add filters
+             fileExtensions
+@@ -113,11 +106,7 @@ internal class WindowsFilePicker(
+             directory?.let { fileOpenDialog.setDefaultPath(it) }
+ 
+             // Set title
+-            dialogSettings.title?.let {
+-                fileOpenDialog
+-                    .SetTitle(WString(dialogSettings.title))
+-                    .verify("SetTitle failed")
+-            }
++            fileOpenDialog.applyTitle(dialogSettings.title)
+ 
+             // Add in FOS_PICKFOLDERS which hides files and only allows selection of folders
+             fileOpenDialog.setFlag(FOS_PICKFOLDERS)
+@@ -144,21 +133,13 @@ internal class WindowsFilePicker(
+             // Set the initial directory
+             directory?.let { fileSaveDialog.setDefaultPath(it) }
+ 
+-            // Set the default file name
+-            fileSaveDialog
+-                .SetFileName(WString(suggestedName))
+-                .verify("SetFileName failed")
+-
+-            // Set the default extension
+-            defaultExtension?.let {
+-                fileSaveDialog
+-                    .SetDefaultExtension(WString(defaultExtension))
+-                    .verify("SetDefaultExtension failed")
+-            }
+-
+-            // Set filters
+-            val filterExtensions = allowedExtensions ?: defaultExtension?.let { setOf(it) }
+-            filterExtensions?.let { fileSaveDialog.addFiltersToDialog(it) }
++            // Set the title, default file name, default extension and filters
++            fileSaveDialog.configureFileSaver(
++                suggestedName = suggestedName,
++                defaultExtension = defaultExtension,
++                allowedExtensions = allowedExtensions,
++                title = dialogSettings.title,
++            )
+ 
+             // Show the dialog to the user
+             fileSaveDialog.show(dialogSettings.resolveWindowsDialogHandle()) {
+@@ -260,10 +241,6 @@ internal class WindowsFilePicker(
+         }
+     }
+ 
+-    private fun FileDialog.addFiltersToDialog(fileExtensions: Set<String>) {
+-        setWindowsFileTypes(fileExtensions, this::SetFileTypes)
+-    }
+-
+     private fun FileDialog.setFlag(flag: Int) {
+         updateOptions { options -> options or flag }
+     }
+@@ -380,9 +357,39 @@ internal class WindowsFilePicker(
+         }
+ }
+ 
++internal fun IFileSaveDialog.configureFileSaver(
++    suggestedName: String,
++    defaultExtension: String?,
++    allowedExtensions: Set<String>?,
++    title: String?,
++) {
++    // Set title
++    applyTitle(title)
++
++    // Set the default file name
++    SetFileName(WString(suggestedName)).verify("SetFileName failed")
++
++    // Set the default extension
++    defaultExtension?.let {
++        SetDefaultExtension(WString(it)).verify("SetDefaultExtension failed")
++    }
++
++    // Set filters
++    val filterExtensions = allowedExtensions ?: defaultExtension?.let { setOf(it) }
++    filterExtensions?.let { addFiltersToDialog(it) }
++}
++
++internal fun IFileDialog.applyTitle(title: String?) {
++    title?.let { SetTitle(WString(it)).verify("SetTitle failed") }
++}
++
++internal fun IFileDialog.addFiltersToDialog(fileExtensions: Set<String>) {
++    setWindowsFileTypes(fileExtensions, this::SetFileTypes)
++}
++
+ internal fun setWindowsFileTypes(
+     fileExtensions: Set<String>,
+-    setFileTypes: (Int, Array<COMDLG_FILTERSPEC?>?) -> HRESULT,
++    setFileTypes: (Int, Array<COMDLG_FILTERSPEC?>?) -> HRESULT?,
+ ) {
+     val filterString = fileExtensions.joinToString(";") { "*.$it" }
+     val filterSpec = COMD
 ```
 
-**File**: `docs/roadmap.mdx` (modified, +1/-1)
+**File**: `filekit-dialogs/src/jvmTest/kotlin/io/github/vinceglb/filekit/dialogs/platform/windows/WindowsFileSaverConfigurationTest.kt` (added, +61/-0)
 ```diff
-@@ -7,7 +7,7 @@ import { grantPostUrl } from '/snippets/grant-banner.jsx'
- 
- FileKit is already used in production on Android, iOS, desktop and the web. The goal of 1.0 is not a big list of new features. It is a **promise**: a reviewed public API, clear compatibility guarantees, predictable behavior across platforms, and documentation that tells you exactly what to expect.
- 
--FileKit is supported by the <a href={grantPostUrl}>Kotlin Foundation Grant Program</a>. The grant supports the work toward 1.0 described on this page.
-+FileKit is supported by the <a href={grantPostUrl}>Kotlin Foundation Grants Program</a>. The grant supports the work toward 1.0 described on this page.
- 
- <Info>
-   **Target: FileKit 1.0 in Q1 2027.** This is a best-effort target, not a fixed date. The order of the steps below matters more than the calendar, and this page is updated as work lands.
-```
-
-**File**: `docs/snippets/grant-banner.jsx` (modified, +3/-3)
-```diff
-@@ -7,10 +7,10 @@
-  *
-  *   <GrantBanner />
-  */
--export const grantPostUrl = "https://kotlinfoundation.org/news/#FILEKIT_GRANT_POST_URL"
-+export const grantPostUrl = "https://kotlinfoundation.org/news/grants-program-winners-26/"
- 
- export const GrantBanner = () => {
--  const alt = "FileKit is supported by the Kotlin Foundation Grant Program"
-+  const alt = "FileKit is supported by the Kotlin Foundation Grants Program"
-   return (
-     <a
-       href={grantPostUrl}
-@@ -20,7 +20,7 @@ export const GrantBanner = () => {
-       <img src="/brand/grant-banner-dark.webp" alt={alt} width="1920" height="240" className="hidden w-full dark:block" />
-       <p className="px-5 py-3 text-sm text-gray-700 dark:text-gray-300">
-         The grant supports the work toward FileKit 1.0.{" "}
--        <span className="font-semibold text-primary group-hover:underline dark:text-primary-light">
-+        <span className="whitespace-nowrap font-semibold text-primary group-hover:underline dark:text-primary-light">
-           Read the announcement →
-         </span>
-       </p>
+@@ -0,0 +1,61 @@
++@file:Suppress("ktlint:standard:function-naming", "FunctionName")
++
++package io.github.vinceglb.filekit.dialogs.platform.windows
++
++import com.sun.jna.platform.win32.WinNT.HRESULT
++import io.github.vinceglb.filekit.dialogs.platform.windows.jna.IFileSaveDialog
++import java.lang.reflect.Proxy
++import kotlin.test.Test
++import kotlin.test.assertEquals
++
++class WindowsFileSaverConfigurationTest {
++    @Test
++    fun WindowsFileSaver_configureWithTitle_setsDialogTitle() {
++        val dialog = RecordingFileSaveDialog()
++
++        dialog.proxy.configureFileSaver(
++            suggestedName = "filename",
++            defaultExtension = "txt",
++            allowedExtensions = null,
++            title = "My custom title",
++        )
++
++        assertEquals(listOf("My custom title"), dialog.stringArgumentsOf("SetTitle"))
++        assertEquals(listOf("filename"), dialog.stringArgumentsOf("SetFileName"))
++        assertEquals(listOf("txt"), dialog.stringArgumentsOf("SetDefaultExtension"))
++    }
++
++    @Test
++    fun WindowsFileSaver_configureWithoutTitle_keepsDefaultTitle() {
++        val dialog = RecordingFileSaveDialog()
++
++        dialog.proxy.configureFileSaver(
++            suggestedName = "filename",
++            defaultExtension = "txt",
++            allowedExtensions = null,
++            title = null,
++        )
++
++        assertEquals(emptyList(), dialog.stringArgumentsOf("SetTitle"))
++    }
++}
++
++private class RecordingFileSaveDialog {
++    private val calls = mutableListOf<Pair<String, List<Any?>>>()
++
++    val proxy: IFileSaveDialog = Proxy.newProxyInstance(
++        IFileSaveDialog::class.java.classLoader,
++        arrayOf(IFileSaveDialog::class.java),
++    ) { proxy, method, args ->
++        when (method.name) {
++            "toString" -> "RecordingFileSaveDialog"
++            "hashCode" -> System.identityHashCode(proxy)
++            "equals" -> proxy === args?.firstOrNull()
++            else -> HRESULT(0).also { calls += method.name to args.orEmpty().toList() }
++        }
++    } as IFileSaveDialog
++
++    fun stringArgumentsOf(methodName: String): List<String> = calls
++        .filter { (name, _) -> name == methodName }
++        .map { (_, args) -> args.single().toString() }
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #708** (2026-11-06): 🎉 Mention the Kotlin Foundation grant in the README and docs (@vinceglb)
-- **PR #702** (2026-10-29): 📝 Add tiered showcase and wall of love community pages (@vinceglb)
-- **PR #701** (2026-10-29): 🔥 Remove unused intro illustration from the docs (@vinceglb)
-- **PR #700** (2026-10-28): 🐛 Fix web serializer message, JVM open fallback, drop unused exception (@vinceglb)
-- **PR #699** (2026-10-28): 🎨 Apply the brand skin to the docs (@vinceglb)
-- **PR #698** (2026-10-28): 🎨 Put the sample apps on the FileKit brand (@vinceglb)
+- **PR #721** (2026-11-18): 🐛 Revoke object URLs created by FileKit.download on web (@vinceglb)
+- **PR #720** (2026-11-18): 📝 Update roadmap for the web file saver (@vinceglb)
+- **PR #718** (2026-11-17): 🔖 Release 0.17.1 (@vinceglb)
+- **PR #717** (2026-11-17): 📝 Document JNA setup for sandboxed Mac App Store builds (@vinceglb)
+- **PR #716** (2026-11-17): 🐛 Read MIME type parameter values correctly (@vinceglb)
+- **PR #715** (2026-11-17): 🐛 Apply the dialog title to the Windows file saver (@vinceglb)
 
 ---
 
@@ -1454,34 +1661,37 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🔀 Merge pull request #708 from vinceglb/docs/grant-mention
+## X. Empirical Invariant Guard in FileKit.js.kt
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vinceglb/FileKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `filekit-core/src/jsMain/kotlin/io/github/vinceglb/filekit/FileKit.js.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vinceglb/FileKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5f8ac2e9`: 🔀 Merge pull request #708 from vinceglb/docs/grant-mention. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b1f3c7f0`: 🔀. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `filekit-core/src/jsMain/kotlin/io/github/vinceglb/filekit/FileKit.js.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-
-  <a href="https://kotlinfoundation.org/news/grants-program-winners-26/">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="brand/exports/grant-banner-dark.webp" />
-      <img src="brand/exports/grant-banner-light.webp" width="960" alt="FileKit is supported by the Kotlin Foundation Grants Program. Read the announcement." />
-    </picture>
-  </a>
+    downloadBlob(blob = file, fileName = fileName)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+import kotlinx.browser.document
+import org.w3c.dom.HTMLAnchorElement
+import org.w3c.dom.url.URL
+    // Create a element
+    val a = document.createElement("a") as HTMLAnchorElement
+    a.href = URL.createObjectURL(file)
+    a.download = fileName
+
+    // Trigger the download
+    a.click()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5f8ac2e9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b1f3c7f0` are properly handled with clean fallback behavior.

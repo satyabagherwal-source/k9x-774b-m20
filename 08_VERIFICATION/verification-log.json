@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-HSA9",
-    "timestamp": "2026-11-18T06:50:14.001Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "40be959b3c633a7efccc512fc51becd1101035b727c5a6a5e3d56ffb9429e4a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-RDM8",
-    "timestamp": "2026-11-18T06:57:41.552Z",
-    "repository": "PrunaAI/P-H3-Image-Comfy",
-    "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
-    "contentHash": "1f4edf17be8a79403fb24dde54bcb375624c127b45e8e803a13c352c59a76d93",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-RFH1",
-    "timestamp": "2026-11-18T06:57:43.957Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "2faef2576996b0422c3309ffc1e5360f2e399cbb057ef2d43612eb6f7ccdd1ac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-ROVO",
-    "timestamp": "2026-11-18T06:57:56.148Z",
-    "repository": "etcd-io/etcd",
-    "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "f57b142b2a97d9ea82d6d62fb98d790c457a2131061646746a930a4b8de09961",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-1JZI",
     "timestamp": "2026-11-18T07:05:36.366Z",
     "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -7490,6 +7430,66 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "00869492f11257255c8c18e102a7e64e9e6eca8d091f1332aa7e5389eef6817e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-YFAF",
+    "timestamp": "2026-11-20T00:06:36.519Z",
+    "repository": "vinceglb/FileKit",
+    "learningId": "learn-github-vinceglb-filekit",
+    "contentHash": "d4a82bbb7641636a59756160cc28e42bb4142daf4076318e261f5574362e07b4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-YGUJ",
+    "timestamp": "2026-11-20T00:06:38.539Z",
+    "repository": "Agent-Field/agentfield",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "3a71a19a88fedcdff863138cb65849f0191e4ea1fe8bafc09e3312e914d42169",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-YIW8",
+    "timestamp": "2026-11-20T00:06:41.192Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "9b906dae46a78961a8dc9ed0045f53e21af3b921d62afa06e5136168b430bf47",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-YKTL",
+    "timestamp": "2026-11-20T00:06:43.689Z",
+    "repository": "LLPhant/LLPhant",
+    "learningId": "learn-github-llphant-llphant",
+    "contentHash": "fdd7ee4c15a8c0a881e5af29002fcf05d3b843856249c79988eec45b2874c367",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

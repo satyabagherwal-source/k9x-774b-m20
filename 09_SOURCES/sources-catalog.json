@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "fefb2cb8",
+    "sourceVersion": "ddd15c3e",
     "license": "Apache-2.0",
-    "contentHash": "6ea93397e4c295ff033df3f3c8de99a95802050e53c887c5cb6d9e6010546d0d",
-    "lastHarvestedAt": "2026-11-19T16:41:06.961Z",
+    "contentHash": "9b906dae46a78961a8dc9ed0045f53e21af3b921d62afa06e5136168b430bf47",
+    "lastHarvestedAt": "2026-11-20T00:06:41.197Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -3533,10 +3533,10 @@
     "repository": "LLPhant/LLPhant",
     "platform": "github",
     "sourceUrl": "https://github.com/LLPhant/LLPhant",
-    "sourceVersion": "93f05675",
+    "sourceVersion": "9f03e7de",
     "license": "MIT",
-    "contentHash": "9b3bdeb97f2803dc7aa1171c92a933c75de8dcd0f4d00bc0948cff71b0c8395f",
-    "lastHarvestedAt": "2026-11-15T18:47:46.831Z",
+    "contentHash": "fdd7ee4c15a8c0a881e5af29002fcf05d3b843856249c79988eec45b2874c367",
+    "lastHarvestedAt": "2026-11-20T00:06:43.694Z",
     "learningId": "learn-github-llphant-llphant"
   },
   "ant-design-pro-components": {
@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "a9ed6a03",
+    "sourceVersion": "d81cedf4",
     "license": "Apache-2.0",
-    "contentHash": "f90e9928a044ecc24d2aabd5026bdb371c41888dac95c846659f648413a34702",
-    "lastHarvestedAt": "2026-11-18T19:10:09.036Z",
+    "contentHash": "3a71a19a88fedcdff863138cb65849f0191e4ea1fe8bafc09e3312e914d42169",
+    "lastHarvestedAt": "2026-11-20T00:06:38.544Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -8183,10 +8183,10 @@
     "repository": "vinceglb/FileKit",
     "platform": "github",
     "sourceUrl": "https://github.com/vinceglb/FileKit",
-    "sourceVersion": "5f8ac2e9",
+    "sourceVersion": "b1f3c7f0",
     "license": "MIT",
-    "contentHash": "5e86c532d6e9bba1058678444053a0693d3bfcad95f1f1a5e2300803a4491fa8",
-    "lastHarvestedAt": "2026-11-08T06:12:24.435Z",
+    "contentHash": "d4a82bbb7641636a59756160cc28e42bb4142daf4076318e261f5574362e07b4",
+    "lastHarvestedAt": "2026-11-20T00:06:36.525Z",
     "learningId": "learn-github-vinceglb-filekit"
   },
   "nsh07-tomato": {

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T23:43:30.213Z",
-  "total_cycles_completed": 10889,
-  "total_learnings_persisted": 10889,
-  "total_rules_promoted": 10245,
+  "last_updated": "2026-11-20T00:06:43.701Z",
+  "total_cycles_completed": 10893,
+  "total_learnings_persisted": 10893,
+  "total_rules_promoted": 10249,
   "history": [
-    {
-      "timestamp": "2026-11-19T03:27:23.286Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T03:39:04.727Z",
-      "repository": "inworld/voice-isolator",
-      "learningId": "learn-huggingface-inworld-voice-isolator",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T03:39:07.233Z",
-      "repository": "google/gemma-4-31B-it",
-      "learningId": "learn-huggingface-google-gemma-4-31b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T03:39:14.579Z",
-      "repository": "sqldelight/sqldelight",
-      "learningId": "learn-github-sqldelight-sqldelight",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T03:39:19.911Z",
       "repository": "freenet/freenet-core",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-19T23:43:30.213Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T00:06:36.532Z",
+      "repository": "vinceglb/FileKit",
+      "learningId": "learn-github-vinceglb-filekit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T00:06:38.551Z",
+      "repository": "Agent-Field/agentfield",
+      "learningId": "learn-github-agent-field-agentfield",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T00:06:41.204Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T00:06:43.701Z",
+      "repository": "LLPhant/LLPhant",
+      "learningId": "learn-github-llphant-llphant",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

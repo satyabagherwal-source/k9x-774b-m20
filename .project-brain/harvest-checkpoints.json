@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T23:43:30.217Z",
+  "last_updated": "2026-11-20T00:06:43.706Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "9caa662250bd70b1eacb6d24713393a12056f0e8266de229bc387cddf67bd1a3",
-      "verified_at": "2026-11-19T20:24:26.537Z",
+      "content_hash": "9b906dae46a78961a8dc9ed0045f53e21af3b921d62afa06e5136168b430bf47",
+      "verified_at": "2026-11-20T00:06:41.208Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T20:24:26.537Z"
+      "last_updated": "2026-11-20T00:06:41.208Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -5421,14 +5421,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-llphant-llphant",
-      "content_hash": "9b3bdeb97f2803dc7aa1171c92a933c75de8dcd0f4d00bc0948cff71b0c8395f",
-      "verified_at": "2026-11-15T18:47:46.839Z",
+      "content_hash": "fdd7ee4c15a8c0a881e5af29002fcf05d3b843856249c79988eec45b2874c367",
+      "verified_at": "2026-11-20T00:06:43.705Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T18:47:46.839Z"
+      "last_updated": "2026-11-20T00:06:43.705Z"
     },
     "ant-design/pro-components": {
       "repository": "ant-design/pro-components",
@@ -6591,14 +6591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-field-agentfield",
-      "content_hash": "f90e9928a044ecc24d2aabd5026bdb371c41888dac95c846659f648413a34702",
-      "verified_at": "2026-11-18T19:10:09.046Z",
+      "content_hash": "3a71a19a88fedcdff863138cb65849f0191e4ea1fe8bafc09e3312e914d42169",
+      "verified_at": "2026-11-20T00:06:38.555Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T19:10:09.046Z"
+      "last_updated": "2026-11-20T00:06:38.555Z"
     },
     "typedb/typedb": {
       "repository": "typedb/typedb",
@@ -12306,14 +12306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vinceglb-filekit",
-      "content_hash": "5e86c532d6e9bba1058678444053a0693d3bfcad95f1f1a5e2300803a4491fa8",
-      "verified_at": "2026-11-08T06:12:24.452Z",
+      "content_hash": "d4a82bbb7641636a59756160cc28e42bb4142daf4076318e261f5574362e07b4",
+      "verified_at": "2026-11-20T00:06:36.536Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T06:12:24.452Z"
+      "last_updated": "2026-11-20T00:06:36.536Z"
     },
     "nsh07/Tomato": {
       "repository": "nsh07/Tomato",

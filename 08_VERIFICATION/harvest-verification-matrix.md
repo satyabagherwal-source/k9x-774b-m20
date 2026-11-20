@@ -11408,3 +11408,7 @@
 | `CYCLE-20261119-4ILH` | `2026-11-19T23:43:21.125Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9393` | Yes (`dbe136b4...`) |
 | `CYCLE-20261119-4N9A` | `2026-11-19T23:43:27.166Z` | `krakend/krakend-ce` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9295` | Yes (`d1f2d02e...`) |
 | `CYCLE-20261119-4PLL` | `2026-11-19T23:43:30.201Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9468` | Yes (`00869492...`) |
+| `CYCLE-20261120-YFAF` | `2026-11-20T00:06:36.519Z` | `vinceglb/FileKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9469` | Yes (`d4a82bbb...`) |
+| `CYCLE-20261120-YGUJ` | `2026-11-20T00:06:38.539Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9470` | Yes (`3a71a19a...`) |
+| `CYCLE-20261120-YIW8` | `2026-11-20T00:06:41.192Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9471` | Yes (`9b906dae...`) |
+| `CYCLE-20261120-YKTL` | `2026-11-20T00:06:43.689Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9472` | Yes (`fdd7ee4c...`) |

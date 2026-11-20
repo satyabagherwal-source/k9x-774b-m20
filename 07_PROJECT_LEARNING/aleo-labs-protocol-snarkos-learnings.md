@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `fefb2cb8`  
+> **Source Version**: `ddd15c3e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T16:41:06.157Z  
+> **Timestamp**: 2026-11-20T00:06:39.973Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T16:41:06.152Z  
+> **Harvest Timestamp**: 2026-11-20T00:06:39.965Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Decentralized Operating System for ZK Applications
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4527 stars
+- **Stars / Engagement**: 4526 stars
 
 ---
 
@@ -1971,11 +1971,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4713** (2026-11-19): **Fix the storage-service test imports for the memory feature alone**
+  *Symptoms*: ## Motivation  The shared storage-service tests in `node/bft/storage-service/src/tests.rs` do not compile with the `memory` feature alone:  ``` cargo test -p snarkos-node-bft-storage-service --features memory error[E0433]: cannot find type `Bytes` in this scope   --> node/bft/storage-service/src/tests.rs:51:44 ```  `sample_transmission` uses `Bytes` for every service. The `use bytes::Bytes;` import is behind `#[cfg(feature = "persistent")]`. So the import is missing when only `memory` is on. The `test` feature turns on `memory` only, so `--features test` also fails.  CI does not see the error. The node job tests the crate with `memory` and `persistent` together. In workspace builds, `snarkos-node-consensus` turns on `persistent` and `snarkos-node-bft` turns on `memory`, so feature unification turns on both.  This PR fixes the imports in `tests.rs`:  - It removes the `cfg` from `use bytes::Bytes;`. `bytes` is a dev-dependency of the crate, so it is always available to the tests. - It puts `StorageMode` behind `#[cfg(feature = "persistent")]`. Only the persistent service uses it. With `memory` alone, the import is unused, and `clippy -D warnings` fails.  ## Test Plan  `cargo clippy -p snarkos-node-bft-storage-service --all-targets -- -D warnings` passes with each of these feature sets: `memory`, `persistent`, `memory,persistent` and `test`. Before this change, the tests do not compile with `memory` or `test`.  `cargo nextest run -p snarkos-node-bft-storage-service` passes with 
+
 - **Issue #4664** (2026-11-16): **Requeue a transmission when the ledger check fails while proposing**
   *Symptoms*: ## Motivation  Stacked on #4603. Review only the commits after `2a9cd1cbc`.  In `propose_batch`, the drain loop checks each transmission against the ledger with `self.ledger.contains_transmission(&id).unwrap_or(true)`. A ledger read error is treated as "already in the ledger". The loop has already removed the transmission from the worker, so the transmission is lost. The only log is a `trace` line that says "Already in ledger".  This PR:  - Matches on the result. On an error, it requeues the transmission at the back of the worker with `Worker::reinsert`, logs it at `warn`, and stops draining. - Adds `MockLedgerService::with_unreadable_transmission_ids`, which makes `contains_transmission` fail for the given IDs.  The transmission goes to the back, not the front. At the front, a transmission whose read keeps failing would stop every later proposal at the same place. The drain stops after the error, because continuing would cycle through the queue forever if every ledger read fails. If the whole ledger fails, each proposal holds only what was drained before the error, and the node logs a `warn` each round.  `Worker::contains_transmission` defaults the same ledger call to `false` (`unwrap_or(false)`). This PR does not change it.  Commits:  - `3d6f5c375`: Requeue the transmission on a ledger read error, and add the test. - `19397e42a`: Build the mock ledger constructors on `new`. - `91468f5ea`: Requeue at the back of the worker, not the front.  ## Test Plan  - New test `test_prop
-
-- **Issue #4615** (2026-11-06): **Gateway handshake has no genesis binding**
-  *Symptoms*: The gateway handshake never checks that a peer shares our genesis, and the first authenticated holder of an address keeps its slot. This requires the committee key; we found no path without it. We have only seen this on a devnet.  The code below is from `staging` at `395f79781`.  **Observed**  Two devnets sharing deterministic dev keys could reach each other, with different genesis blocks: a prover logged `failed (incorrect block header)` against every foreign node. While two of five validators restarted, foreign nodes with those keys connected to the other three. The returning validators were refused with `already connected to the given Aleo address`.  The returning validators then accepted foreign nodes holding the other keys, refusing their real peers too. The chain stopped permanently, while each validator logged `Connected to 4 validators (of 4 bonded validators)`. A rerun of the same commit without the second devnet passed.  The foreign nodes sent no proposals, signatures or primary pings, so no consensus check rejected them. Their traffic kept the connections alive, and the connected-quorum check in `propose_batch` counted them.  **Why**  - `verify_peer_info` in `node/bft/src/gateway.rs` checks version, trusted peers, committee membership, the existing connection and the restrictions ID, but not genesis. - The router handshake does compare genesis headers (`node/router/src/handshake.rs`), which is why only the router side refused these nodes.  **Suggested fix**  Add th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1992,141 +1992,144 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fefb2cb8` (2026-11-19)
-**Commit Message**: Merge pull request #4710 from aleo-labs-protocol/fix/ledger-service-feature-forwards
+### Incident Patch 1: `09710fb9` (2026-11-19)
+**Commit Message**: Run the bft tests with metrics in one build
 
-Forward serial and test_network features from snarkos-node-bft-ledger-service
-
-**File**: `node/bft/ledger-service/Cargo.toml` (modified, +7/-2)
-```diff
-@@ -30,10 +30,15 @@ mock = [ "parking_lot", "tracing" ]
- prover = [ ]
- cuda = [ "snarkvm/cuda" ]
- serial = [
--  "snarkvm/serial"
-+  "snarkvm/serial",
-+  "snarkos-node-metrics?/serial"
- ]
- test = [ "mock", "translucent" ]
--test_network = [ "snarkvm/dev-committee", "snarkvm/dev_genesis_state_root" ]
-+test_network = [
-+  "snarkvm/dev-committee",
-+  "snarkvm/dev_genesis_state_root",
-+  "snarkos-utilities/test_network"
-+]
- translucent = [ "ledger" ]
- 
- [dependencies.anyhow]
-```
-
----
-
-### Incident Patch 2: `a5a95103` (2026-11-19)
-**Commit Message**: Merge pull request #4708 from aleo-labs-protocol/test/fixture-cache-beside-binary
-
-**File**: `utilities/src/test_fixture.rs` (modified, +8/-4)
-```diff
-@@ -16,7 +16,7 @@
- //! An on-disk cache for test fixtures that are expensive to build.
- //!
- //! `cargo nextest` runs every test in a process of its own, so a `static` shares a fixture with no
--//! other test. A file does.
-+//! other test. A file does. The files are kept beside the test binary, so `cargo clean` removes them.
- 
- use std::{
-     fs::{self, File},
-@@ -76,7 +76,7 @@ pub struct Fixture {
- impl Fixture {
-     /// Opens the entry for `name` and `inputs`, once no other test holds it.
-     pub fn open(name: &str, inputs: &[u8]) -> Self {
--        let dir = std::env::temp_dir().join("snarkos-test-fixtures");
-+        let dir = cache_dir();
-         if fs::create_dir_all(&dir).is_err() {
-             return Self { path: None, _lock: None };
-         }
-@@ -129,6 +129,11 @@ fn executable_identity() -> &'static (PathBuf, u64, Option<SystemTime>) {
-     })
- }
- 
-+/// The directory of the cache. [`remove_old_files`] empties it, so it must hold nothing else.
-+fn cache_dir() -> PathBuf {
-+    executable_identity().0.with_file_name("snarkos-test-fixtures")
-+}
-+
- /// Returns `true` if the file was last written more than [`MAX_ENTRY_AGE`] ago.
- fn is_old(metadata: &fs::Metadata) -> bool {
-     metadata.modified().ok().and_then(|at| at.elapsed().ok()).is_some_and(|age| age > MAX_ENTRY_AGE)
-@@ -171,8 +176,7 @@ mod tests {
- 
-     impl Drop for Name {
-         fn drop(&mut self) {
--            let dir = std::env::temp_dir().join("snarkos-test-fixtures");
--            for entry in fs::read_dir(dir).unwrap().flatten() {
-+            for entry in fs::read_dir(cache_dir()).unwrap().flatten() {
-                 if entry.file_name().to_string_lossy().starts_with(&self.0) {
-                     let _ = fs::remove_file(entry.path());
-                 }
-```
-
----
-
-### Incident Patch 3: `0c3ae3ab` (2026-11-19)
-**Commit Message**: Keep the test fixture cache beside the test binary
+The second line rebuilt 15 snarkvm and 11 snarkos crates, 3 min 22 s on
+staging run 44589650148, to run 6 tests in 0.7 s. The snarkos binary
+enables metrics by default, and each-feature checks the crate without it.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmLteo8RJcUAnUrf9qy
+Claude-Session: https://claude.ai/code/session_01UYfmmPBwQHC2yRCed8gDf5
 
-**File**: `utilities/src/test_fixture.rs` (modified, +8/-4)
+**File**: `.github/workflows/ci.yml` (modified, +8/-7)
 ```diff
-@@ -16,7 +16,7 @@
- //! An on-disk cache for test fixtures that are expensive to build.
- //!
- //! `cargo nextest` runs every test in a process of its own, so a `static` shares a fixture with no
--//! other test. A file does.
-+//! other test. A file does. The files are kept beside the test binary, so `cargo clean` removes them.
+@@ -239,15 +239,16 @@ jobs:
+             runs: nextest run -p snarkos-node-consensus -p snarkos-node-rest -p snarkos-cli
+           - name: node
+             runs: nextest run -p snarkos-node -p snarkos-node-bft-storage-service --features snarkos-node-bft-storage-service/memory,snarkos-node-bft-storage-service/persistent
+-          # `helpers::telemetry` compiles only under `metrics`, and nextest
+-          # skips the tests in examples unless a command names one.
+-          # `--no-tests=fail` overrides NEXTEST_NO_TESTS, so a command that
+-          # stops matching any test fails.
++          # Both lines use `metrics`, which the `snarkos` binary enables by
++          # default. `helpers::telemetry` compiles only under it, and a line
++          # without it rebuilds the snarkvm and bft crates. nextest skips the
++          # tests in examples unless a command names one. `--no-tests=fail`
++          # overrides NEXTEST_NO_TESTS, so a command that stops matching any
++          # test fails.
+           - name: bft
+             runs: |
+-              nextest run -p snarkos-node-bft
+-              nextest run -p snarkos-node-bft --lib --features metrics --no-tests=fail -E test(/helpers::telemetry::/)
+-              nextest run -p snarkos-node-bft --example simple_node --no-tests=fail
++              nextest run -p snarkos-node-bft --features metrics
++              nextest run -p snarkos-node-bft --features metrics --example simple_node --no-tests=fail
+           - name: router
+             runs: nextest run -p snarkos-node-router
+           - name: sync
+```
+
+**File**: `CI.md` (modified, +4/-3)
+```diff
+@@ -41,7 +41,7 @@ marked "release" only on the third. The other jobs run on every event.
+ | `test (messages)` | hosted | all | 90 | `snarkos-node-bft-events`, `-node-router-messages`, `-node-bft-ledger-service` |
+ | `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-node-rest`, `-cli` |
+ | `test (node)` | `cpu` | all | 90 | `snarkos-node` with `snarkos-node-bft-storage-service` (features `memory,persistent`) |
+-| `test (bft)` | `cpu` | all | 90 | `snarkos-node-bft`; its `helpers::telemetry` tests with `metrics`, as a second build |
++| `test (bft)` | `cpu` | all | 90 | `snarkos-node-bft` with `metrics` |
+ | `test (router)` | `cpu` | all | 90 | `snarkos-node-router` |
+ | `test (sync)` | `cpu` | all | 90 | `snarkos-node-sync` |
+ | `build-snarkos` | `cpu` | all | 60 | release `snarkos` with `test_network`, as an artifact |
+@@ -81,8 +81,9 @@ compile in its line that would not under `cargo test -p <crate>` alone. Check
+ this before moving a crate between lines, for example by comparing
+ `cargo tree -e features` for the line against each crate alone.
  
- use std::{
-     fs::{self, File},
-@@ -76,7 +76,7 @@ pub struct Fixture {
- impl Fixture {
-     /// Opens the entry for `name` and `inputs`, once no other test holds it.
-     pub fn open(name: &str, inputs: &[u8]) -> Self {
--        let dir = std::env::temp_dir().join("snarkos-test-fixtures");
-+        let dir = cache_dir();
-         if fs::create_dir_all(&dir).is_err() {
-             return Self { path: None, _lock: None };
-         }
-@@ -129,6 +129,11 @@ fn executable_identity() -> &'static (PathBuf, u64, Option<SystemTime>) {
-     })
- }
+-`test (bft)` has a second line for the tests in `helpers::telemetry`, which
+-compile only under `metrics`. That line builds the library alone. It passes
++`test (bft)` runs with `metrics`, which the `snarkos` binary enables by
++default, so the tests in `helpers::telemetry` compile. The `each-feature` job
++checks the crate without `metrics`. The `simple_node` line passes
+ `--no-tests=fail`, because the step otherwise lets a command match no tests.
  
-+/// The directory of the cache. [`remove_old_files`] empties it, so it must hold nothing else.
-+fn cache_dir() -> PathBuf {
-+    executable_identity().0.with_file_name("snarkos-test-fixtures")
-+}
-+
- /// Returns `true` if the file was last written more than [`MAX_ENTRY_AGE`] ago.
- fn is_old(metadata: &fs::Metadata) -> bool {
-     metadata.modified().ok().and_then(|at| at.elapsed().ok()).is_some_and(|age| age > MAX_ENTRY_AGE)
-@@ -171,8 +176,7 @@ mod tests {
+ [`.config/nextest.toml`](.config/nextest.toml) sets two test threads. Each
+```
+
+---
+
+### Incident Patch 2: `0135c8b3` (2026-11-19)
+**Commit Message**: Merge pull request #4713 from aleo-labs-protocol/fix/storage-service-tests-bytes-import
+
+Fix the storage-service test imports for the memory feature alone
+
+**File**: `node/bft/storage-service/src/tests.rs` (modified, +3/-5)
+```diff
+@@ -25,16 +25,14 @@ use crate::StorageService;
+ use crate::memory::BFTMemoryService;
+ #[cfg(feature = "persistent")]
+ use crate::persistent::BFTPersistentStorage;
++#[cfg(feature = "persistent")]
++use snarkvm::ledger::store::StorageMode;
+ use snarkvm::{
+     console::network::MainnetV0,
+-    ledger::{
+-        narwhal::{BatchHeader, Data, Transmission, TransmissionID},
+-        store::StorageMode,
+-    },
++    ledger::narwhal::{BatchHeader, Data, Transmission, TransmissionID},
+     prelude::{Field, Network, PrivateKey, Rng, TestRng, Uniform},
+ };
  
-     impl Drop for Name {
-         fn drop(&mut self) {
--            let dir = std::env::temp_dir().join("snarkos-test-fixtures");
--            for entry in fs::read_dir(dir).unwrap().flatten() {
-+            for entry in fs::read_dir(cache_dir()).unwrap().flatten() {
-                 if entry.file_name().to_string_lossy().starts_with(&self.0) {
-                     let _ = fs::remove_file(entry.path());
-                 }
+-#[cfg(feature = "persistent")]
+ use bytes::Bytes;
+ use indexmap::indexset;
+ 
+```
+
+---
+
+### Incident Patch 3: `de1e69a9` (2026-11-19)
+**Commit Message**: Fix the storage-service test imports for the memory feature alone
+
+tests.rs used Bytes for every service but imported it only with the
+persistent feature, so the tests did not compile with memory alone (or
+with the test feature, which turns on memory only). StorageMode is used
+only by the persistent service, so its import is now behind that feature.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01UYfmmLpEstoRCMNsPhVpwB
+
+**File**: `node/bft/storage-service/src/tests.rs` (modified, +3/-5)
+```diff
+@@ -25,16 +25,14 @@ use crate::StorageService;
+ use crate::memory::BFTMemoryService;
+ #[cfg(feature = "persistent")]
+ use crate::persistent::BFTPersistentStorage;
++#[cfg(feature = "persistent")]
++use snarkvm::ledger::store::StorageMode;
+ use snarkvm::{
+     console::network::MainnetV0,
+-    ledger::{
+-        narwhal::{BatchHeader, Data, Transmission, TransmissionID},
+-        store::StorageMode,
+-    },
++    ledger::narwhal::{BatchHeader, Data, Transmission, TransmissionID},
+     prelude::{Field, Network, PrivateKey, Rng, TestRng, Uniform},
+ };
+ 
+-#[cfg(feature = "persistent")]
+ use bytes::Bytes;
+ use indexmap::indexset;
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4718** (2026-11-19): Run the router and sync tests in one job (@cbeck88)
+- **PR #4717** (2026-11-19): Run the bft tests with metrics in one build (@cbeck88)
+- **PR #4714** (2026-11-19): Check each crate with each feature on its own in CI (@cbeck88)
+- **PR #4713** (2026-11-19): Fix the storage-service test imports for the memory feature alone (@cbeck88)
+- **PR #4712** (2026-11-19): Use private temp dirs in tests and the db_backup bench (@cbeck88)
 - **PR #4710** (2026-11-19): Forward serial and test_network features from snarkos-node-bft-ledger-service (@cbeck88)
-- **PR #4708** (2026-11-19): Keep the test fixture cache beside the test binary (@cbeck88)
-- **PR #4707** (2026-11-19): Stop CI tests that run longer than 5 minutes (@cbeck88)
-- **PR #4703** (2026-11-18): Bump snarkVM to aleo-labs-protocol/snarkVM@cfa4fd8f2 (@aleo-labs-merge-bot[bot])
-- **PR #4701** (2026-11-18): ci: make an old node dial an upgraded node in the full upgrade test (@cbeck88)
-- **PR #4700** (2026-11-18): Drop the per-update is_block_synced trace (@cbeck88)
 
 ---
 
@@ -2146,35 +2149,41 @@ Claude-Session: https://claude.ai/code/session_01UYfmmLteo8RJcUAnUrf9qy
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.toml
+## X. Run the bft tests with metrics in one build
 
 **RULE**:
-When implementing operations in `node/bft/ledger-service/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fefb2cb8`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `09710fb9`: Run the bft tests with metrics in one build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/bft/ledger-service/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  "snarkvm/serial",
-  "snarkos-node-metrics?/serial"
-test_network = [
-  "snarkvm/dev-committee",
-  "snarkvm/dev_genesis_state_root",
-  "snarkos-utilities/test_network"
-]
+          # Both lines use `metrics`, which the `snarkos` binary enables by
+          # default. `helpers::telemetry` compiles only under it, and a line
+          # without it rebuilds the snarkvm and bft crates. nextest skips the
+          # tests in examples unless a command names one. `--no-tests=fail`
+          # overrides NEXTEST_NO_TESTS, so a command that stops matching any
+          # test fails.
+              nextest run -p snarkos-node-bft --features metrics
+              nextest run -p snarkos-node-bft --features metrics --example simple_node --no-tests=fail
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  "snarkvm/serial"
-test_network = [ "snarkvm/dev-committee", "snarkvm/dev_genesis_state_root" ]
+          # `helpers::telemetry` compiles only under `metrics`, and nextest
+          # skips the tests in examples unless a command names one.
+          # `--no-tests=fail` overrides NEXTEST_NO_TESTS, so a command that
+          # stops matching any test fails.
+              nextest run -p snarkos-node-bft
+              nextest run -p snarkos-node-bft --lib --features metrics --no-tests=fail -E test(/helpers::telemetry::/)
+              nextest run -p snarkos-node-bft --example simple_node --no-tests=fail
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fefb2cb8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `09710fb9` are properly handled with clean fallback behavior.

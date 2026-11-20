@@ -11441,3 +11441,7 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `3c8dcd7f` | Multi-dimensional audit evidence | 2026-11-19T23:43:21.131Z |
 | `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `3beb4d3b` | Multi-dimensional audit evidence | 2026-11-19T23:43:27.172Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `2e8f381c` | Multi-dimensional audit evidence | 2026-11-19T23:43:30.206Z |
+| `learn-github-vinceglb-filekit` | `https://github.com/vinceglb/FileKit` | `b1f3c7f0` | Multi-dimensional audit evidence | 2026-11-20T00:06:36.525Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `d81cedf4` | Multi-dimensional audit evidence | 2026-11-20T00:06:38.544Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `ddd15c3e` | Multi-dimensional audit evidence | 2026-11-20T00:06:41.197Z |
+| `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `9f03e7de` | Multi-dimensional audit evidence | 2026-11-20T00:06:43.694Z |

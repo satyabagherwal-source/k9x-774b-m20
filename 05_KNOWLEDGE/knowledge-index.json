@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T23:54:26.598Z",
-  "total_verified_learnings": 9022,
+  "last_updated": "2026-11-20T00:06:50.125Z",
+  "total_verified_learnings": 9023,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22063,
+  "total_items": 22077,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112803,25 +112803,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "590bfc1f",
-      "content_hash": "21f5d7aa762f38d5e47a8220e17cbbaf0cdd958e2804cc1846c1cf42273b4e61",
+      "source_version": "ddd15c3e",
+      "content_hash": "73f5ddbeec45a2b88f69dd3c378c32a3d875082f6f89cbd178a781cc401889d6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T20:24:26.877Z"
+      "persisted_at": "2026-11-20T00:06:41.640Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "590bfc1f",
-      "content_hash": "187a50dd15efbd445f8f4fcbd90a57eaa39bd676d2ac4ee3e260d356b11dbfe2",
+      "source_version": "ddd15c3e",
+      "content_hash": "ef2f20cbf52136ab8c50b1f823639e74a4c4d63454114e43aadd46f464b0a715",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T20:24:27.025Z"
+      "persisted_at": "2026-11-20T00:06:41.833Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -215672,13 +215672,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "590bfc1f",
-      "content_hash": "9caa662250bd70b1eacb6d24713393a12056f0e8266de229bc387cddf67bd1a3",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "ddd15c3e",
+      "content_hash": "9b906dae46a78961a8dc9ed0045f53e21af3b921d62afa06e5136168b430bf47",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215729,6 +215729,11 @@
           "number": 9437,
           "title": "Empirical Invariant Guard in tests.rs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9471,
+          "title": "Run the bft tests with metrics in one build",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215736,7 +215741,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T20:24:26.329Z",
+      "verified_at": "2026-11-20T00:06:40.955Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232084,8 +232089,8 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "a9ed6a03",
-      "content_hash": "f90e9928a044ecc24d2aabd5026bdb371c41888dac95c846659f648413a34702",
+      "source_version": "d81cedf4",
+      "content_hash": "3a71a19a88fedcdff863138cb65849f0191e4ea1fe8bafc09e3312e914d42169",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
@@ -232118,6 +232123,11 @@
           "number": 9274,
           "title": "accept SSE data fields without a space in audio generation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9470,
+          "title": "honor the Retry-After header on 429 responses",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232125,7 +232135,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T19:10:08.809Z",
+      "verified_at": "2026-11-20T00:06:38.295Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232179,10 +232189,10 @@
       "relative_path": "08_VERIFICATION/agent-field-agentfield-verification-protocol-empirical-defect-shield-for-agent-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for Agent-Field/agentfield",
       "repository": "Agent-Field/agentfield",
-      "source_version": "a9ed6a03",
-      "content_hash": "9b7ee545a1de2d994cb31872ccf276a738cdf3d68a39317f07866367fcfe5746",
+      "source_version": "d81cedf4",
+      "content_hash": "0637b09fd8d6f7936c298b59b67b9f80dfe77348139281a48e2f386e17104f42",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T19:10:09.785Z"
+      "persisted_at": "2026-11-20T00:06:39.360Z"
     },
     "learn-github-trinodb-trino": {
       "learning_id": "learn-github-trinodb-trino",
@@ -232377,9 +232387,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for agent-field-agentfield-learnings",
       "repository": "agent-field-agentfield-learnings",
       "source_version": "HEAD",
-      "content_hash": "47786aa875b9accd202649a97c1b6e4607bf8f8f2b2bec987ffc15e4dbbd2503",
+      "content_hash": "3daf860e35585f24ade1583ed68436b275857d9c5a31532c41ee8691878e483e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T19:10:13.999Z"
+      "persisted_at": "2026-11-20T00:06:49.133Z"
     },
     "learn-huggingface-mudler-locate-anything-cpp-gguf": {
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
@@ -248627,14 +248637,19 @@
       "slug": "llphant-llphant",
       "platform": "github",
       "source_url": "https://github.com/LLPhant/LLPhant",
-      "source_version": "93f05675",
-      "content_hash": "9b3bdeb97f2803dc7aa1171c92a933c75de8dcd0f4d00bc0948cff71b0c8395f",
+      "source_version": "9f03e7de",
+      "content_hash": "fdd7ee4c15a8c0a881e5af29002fcf05d3b843856249c79988eec45b2874c367",
       "dossier_path": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
       "promoted_rules": [
         {
           "number": 8641,
           "title": "system message parameter assignment logic",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9472,
+          "title": "answer every tool call of a turn when a tool returns nothing",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -248643,7 +248658,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T18:47:46.656Z",
+      "verified_at": "2026-11-20T00:06:43.448Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -248685,10 +248700,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-llphant-llphant-architecture-intelligence-llphant-llphant-core-invariants.md",
       "title": "Architecture Intelligence: LLPhant/LLPhant Core Invariants",
       "repository": "LLPhant/LLPhant",
-      "source_version": "93f05675",
-      "content_hash": "50ea33e82ed82bb8956173b492b71a82532a71c783b682cbf2afbf3aa374bf03",
+      "source_version": "9f03e7de",
+      "content_hash": "da1abbe738b1fb509f165738dc9517981ea52ba8642ab836750ae3a50a5da3d5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T18:47:47.166Z"
+      "persisted_at": "2026-11-20T00:06:44.131Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-llphant-llphant": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-llphant-llphant",
@@ -248697,10 +248712,10 @@
       "relative_path": "08_VERIFICATION/llphant-llphant-verification-protocol-empirical-defect-shield-for-llphant-llphan.md",
       "title": "Verification Protocol: Empirical Defect Shield for LLPhant/LLPhant",
       "repository": "LLPhant/LLPhant",
-      "source_version": "93f05675",
-      "content_hash": "2892d6fde98580389e207507bc05a76f2aab3bc52f092c88d5287522bf341f41",
+      "source_version": "9f03e7de",
+      "content_hash": "a07ffe081102a1cfad7a3ca6afdf47536073ca0bce5845316ceebf657a543dcd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T18:47:47.278Z"
+      "persisted_at": "2026-11-20T00:06:44.320Z"
     },
     "domain_intelligence-architecture-intelligence-llphant-llphant-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-llphant-llphant-learnings-core-invariants",
@@ -254766,9 +254781,9 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "7491a87cc879febbcbac67bf138eec06c7b6363be07fedae2ca752d66ac87346",
+      "content_hash": "c1fc53f23c18a96a124f961cc44dafc4f21a345ef485d6051abcd8261bfc85fe",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T16:41:11.479Z"
+      "persisted_at": "2026-11-20T00:06:49.911Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea",
@@ -254778,9 +254793,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol-snarkos-learnings",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "69fbd951c8cff539932067929f2ebc561a8e9a3832086333023195bf3221e152",
+      "content_hash": "7f02186b7cef51785ebb07b91398f87066ce0c650959040e1d8d7d9a123be5f0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T16:41:11.592Z"
+      "persisted_at": "2026-11-20T00:06:50.125Z"
     },
     "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and": {
       "item_id": "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and",
@@ -267439,10 +267454,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/agent-field-agentfield-agent-contract-agent-field-agentfield-autonomous-speciali.md",
       "title": "Agent Contract: Agent-Field/agentfield Autonomous Specialist Persona",
       "repository": "Agent-Field/agentfield",
-      "source_version": "a9ed6a03",
-      "content_hash": "676f506727ed1a612bbb4c59c6b13143249eab5de04cf848701e1484f3ae2915",
+      "source_version": "d81cedf4",
+      "content_hash": "2be22a2afc428f421cb9ad824c86502c53c76d3c55e6a4972ab15689612d0d73",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T19:10:09.630Z"
+      "persisted_at": "2026-11-20T00:06:39.188Z"
     },
     "learn-github-vitest-dev-vitest": {
       "learning_id": "learn-github-vitest-dev-vitest",
@@ -267645,9 +267660,9 @@
       "title": "Agent Contract: agent-field-agentfield-learnings Autonomous Specialist Persona",
       "repository": "agent-field-agentfield-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9e822446fde46d2ed08a4537829f5fd6c4bf0cb60984161ba4244f9464a74d8",
+      "content_hash": "11e6f8245ee32a6fcfa84e7dab64db8ae641e688f7c607b033c6c1d4535d9d20",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T19:10:13.842Z"
+      "persisted_at": "2026-11-20T00:06:48.965Z"
     },
     "agent_contract-agent-contract-aleo-labs-protocol-snarkos-learnings-autonomous-specialist-person": {
       "item_id": "agent_contract-agent-contract-aleo-labs-protocol-snarkos-learnings-autonomous-specialist-person",
@@ -290198,10 +290213,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-field-agentfield-architecture-intelligence-agent-field-agentfield-core-inv.md",
       "title": "Architecture Intelligence: Agent-Field/agentfield Core Invariants",
       "repository": "Agent-Field/agentfield",
-      "source_version": "a9ed6a03",
-      "content_hash": "2a8ea76c20c2db0d50f7f55370b815043699f048df8ef11e96889f52892385e2",
+      "source_version": "d81cedf4",
+      "content_hash": "560989e5c53b9fc5e8eb8be724e7d61b4b056aad3d1a7b0e5b194c77cb0447b5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T19:10:09.456Z"
+      "persisted_at": "2026-11-20T00:06:38.998Z"
     },
     "candidate_directive-sdk-go-accept-sse-data-fields-without-a-space-in-audio-generation": {
       "item_id": "candidate_directive-sdk-go-accept-sse-data-fields-without-a-space-in-audio-generation",
@@ -290223,9 +290238,9 @@
       "title": "Architecture Intelligence: agent-field-agentfield-learnings Core Invariants",
       "repository": "agent-field-agentfield-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce5b13f0a3a9bce5fe74477d17928beb405888ac9a971d7bffa10283170d1be9",
+      "content_hash": "3644b2ccd13d12072f0aac7833f485efe63c30a89d3759985f1db138acfd78aa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T19:10:13.645Z"
+      "persisted_at": "2026-11-20T00:06:48.776Z"
     },
     "domain_intelligence-research-knowledge-intelligence-openai-whisper-large-v3-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-openai-whisper-large-v3-core-invariants",
@@ -298543,6 +298558,203 @@
       "content_hash": "5bead43ff9afa793613e323164cae6ca455b68452546df8449f38e482246f4a5",
       "domain_letter": "G",
       "persisted_at": "2026-11-19T23:43:37.154Z"
+    },
+    "learn-github-vinceglb-filekit": {
+      "learning_id": "learn-github-vinceglb-filekit",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "vinceglb/FileKit",
+      "repository": "vinceglb/FileKit",
+      "slug": "vinceglb-filekit",
+      "platform": "github",
+      "source_url": "https://github.com/vinceglb/FileKit",
+      "source_version": "b1f3c7f0",
+      "content_hash": "d4a82bbb7641636a59756160cc28e42bb4142daf4076318e261f5574362e07b4",
+      "dossier_path": "07_PROJECT_LEARNING/vinceglb-filekit-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/vinceglb-filekit-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9469,
+          "title": "Empirical Invariant Guard in FileKit.js.kt",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T00:06:36.285Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9469": {
+      "learning_id": "rule-9469",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9469,
+      "title": "Empirical Invariant Guard in FileKit.js.kt",
+      "source_url": "https://github.com/vinceglb/FileKit",
+      "source_version": "b1f3c7f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T00:06:36.285Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-filekit-js-kt": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-filekit-js-kt",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YNW2-empirical-invariant-guard-in-filekit-js-kt.md",
+      "title": "Empirical Invariant Guard in FileKit.js.kt",
+      "repository": "vinceglb-filekit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7a8a7dae68fa9bb765dcf9e6c5f085affc767600cf47ce5e01c4caeb2b18d84b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T00:06:47.667Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-vinceglb-filekit-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-vinceglb-filekit-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-vinceglb-filekit-quality-verification-intelligence-vinceglb-filekit-core-invaria.md",
+      "title": "Quality & Verification Intelligence: vinceglb/FileKit Core Invariants",
+      "repository": "vinceglb/FileKit",
+      "source_version": "b1f3c7f0",
+      "content_hash": "0c2a8931c3d2c35a844a39ac9a8f7c1db75fc7ca71a75ea888cd2225aff4eaf1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T00:06:36.972Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-vinceglb-filekit": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vinceglb-filekit",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/vinceglb-filekit-verification-protocol-empirical-defect-shield-for-vinceglb-file.md",
+      "title": "Verification Protocol: Empirical Defect Shield for vinceglb/FileKit",
+      "repository": "vinceglb/FileKit",
+      "source_version": "b1f3c7f0",
+      "content_hash": "33ad4f81a88921da17e21938083fe73784e5f66b9f53f8758f20f7d7a13ea639",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T00:06:37.169Z"
+    },
+    "rule-9470": {
+      "learning_id": "rule-9470",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9470,
+      "title": "honor the Retry-After header on 429 responses",
+      "source_url": "https://github.com/Agent-Field/agentfield",
+      "source_version": "d81cedf4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T00:06:38.295Z"
+    },
+    "candidate_directive-honor-the-retry-after-header-on-429-responses": {
+      "item_id": "candidate_directive-honor-the-retry-after-header-on-429-responses",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YH1U-honor-the-retry-after-header-on-429-responses.md",
+      "title": "honor the Retry-After header on 429 responses",
+      "repository": "Agent-Field/agentfield",
+      "source_version": "d81cedf4",
+      "content_hash": "311d8f011a8a895e2d010e5b6f9db75d07f4f02c482caa240c68d427428af960",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T00:06:38.803Z"
+    },
+    "rule-9471": {
+      "learning_id": "rule-9471",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9471,
+      "title": "Run the bft tests with metrics in one build",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "ddd15c3e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T00:06:40.955Z"
+    },
+    "candidate_directive-run-the-bft-tests-with-metrics-in-one-build": {
+      "item_id": "candidate_directive-run-the-bft-tests-with-metrics-in-one-build",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YPH0-run-the-bft-tests-with-metrics-in-one-build.md",
+      "title": "Run the bft tests with metrics in one build",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3f5569b9847f5ff515163b4d4cdff8fa3a0549d817590b7e48c60668877e60ba",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T00:06:49.722Z"
+    },
+    "rule-9472": {
+      "learning_id": "rule-9472",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9472,
+      "title": "answer every tool call of a turn when a tool returns nothing",
+      "source_url": "https://github.com/LLPhant/LLPhant",
+      "source_version": "9f03e7de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T00:06:43.448Z"
+    },
+    "candidate_directive-answer-every-tool-call-of-a-turn-when-a-tool-returns-nothing": {
+      "item_id": "candidate_directive-answer-every-tool-call-of-a-turn-when-a-tool-returns-nothing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YL0G-answer-every-tool-call-of-a-turn-when-a-tool-returns-nothing.md",
+      "title": "answer every tool call of a turn when a tool returns nothing",
+      "repository": "LLPhant/LLPhant",
+      "source_version": "9f03e7de",
+      "content_hash": "b4cacd463dcfe2e01b180431309d553bd1a5e6b63fe707ad7a29b13fbb5400af",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T00:06:43.937Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-vinceglb-filekit-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-vinceglb-filekit-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-vinceglb-filekit-learnings-quality-verification-intelligence-vinceglb-filekit-le.md",
+      "title": "Quality & Verification Intelligence: vinceglb-filekit-learnings Core Invariants",
+      "repository": "vinceglb-filekit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cdcbc485659feee030108b6170a47355d548b45b4b4bea3ff19667256f83e04d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T00:06:47.858Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-vinceglb-filekit-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vinceglb-filekit-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/vinceglb-filekit-learnings-verification-protocol-empirical-defect-shield-for-vin.md",
+      "title": "Verification Protocol: Empirical Defect Shield for vinceglb-filekit-learnings",
+      "repository": "vinceglb-filekit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "62d925eede0658cdd169f2349609e22a48723963caf7d7efa3b7140615340e23",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T00:06:48.067Z"
+    },
+    "candidate_directive-sdk-go-honor-the-retry-after-header-on-429-responses": {
+      "item_id": "candidate_directive-sdk-go-honor-the-retry-after-header-on-429-responses",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YOLH-sdk-go-honor-the-retry-after-header-on-429-responses.md",
+      "title": "sdk-go): honor the Retry-After header on 429 responses",
+      "repository": "agent-field-agentfield-learnings",
+      "source_version": "HEAD",
+      "content_hash": "271fc128a401d08d826b57cd0df198a7d35ef1de11a23c2c61084ae2d74d1001",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T00:06:48.582Z"
     }
   },
   "ai-builder-brain": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T23:54:26.011Z",
+  "last_updated": "2026-11-20T00:06:49.722Z",
   "directives": [
     {
       "id": "CD-001",
@@ -34976,6 +34976,79 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E27C40-build-download-onnx-runtime-archives-fro.md",
       "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-YNW2",
+      "directive_title": "Empirical Invariant Guard in FileKit.js.kt",
+      "source_repo": "vinceglb-filekit-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YNW2-empirical-invariant-guard-in-filekit-js-kt.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-YH1U",
+      "directive_title": "honor the Retry-After header on 429 responses",
+      "source_repo": "Agent-Field/agentfield",
+      "source_commit": "d81cedf4",
+      "staged_file": "11_INBOX/candidate-directives/CD-YH1U-honor-the-retry-after-header-on-429-responses.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-YPH0",
+      "directive_title": "Run the bft tests with metrics in one build",
+      "source_repo": "aleo-labs-protocol-snarkos-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YPH0-run-the-bft-tests-with-metrics-in-one-build.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-YL0G",
+      "directive_title": "answer every tool call of a turn when a tool returns nothing",
+      "source_repo": "LLPhant/LLPhant",
+      "source_commit": "9f03e7de",
+      "staged_file": "11_INBOX/candidate-directives/CD-YL0G-answer-every-tool-call-of-a-turn-when-a-tool-returns-nothing.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-5EBD97",
+      "directive_title": "Empirical Invariant Guard in FileKit.js.kt",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vinceglb-filekit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5EBD97-empirical-invariant-guard-in-filekit-js-.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-YOLH",
+      "directive_title": "sdk-go): honor the Retry-After header on 429 responses",
+      "source_repo": "agent-field-agentfield-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YOLH-sdk-go-honor-the-retry-after-header-on-429-responses.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-BB3E12",
+      "directive_title": "Run the bft tests with metrics in one build",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aleo-labs-protocol-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BB3E12-run-the-bft-tests-with-metrics-in-one-bu.md",
+      "staged_date": "2026-11-20"
     }
   ]
 }

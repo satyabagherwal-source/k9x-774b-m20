@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T23:54:26.765Z",
+  "last_updated": "2026-11-20T00:06:50.294Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T23:54:24.748Z",
@@ -148,7 +148,7 @@
       "staged_for_review": 0
     },
     "aleo-labs-protocol-snarkos-learnings.md": {
-      "processed_at": "2026-11-19T16:41:11.135Z",
+      "processed_at": "2026-11-20T00:06:49.324Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -878,7 +878,7 @@
       "staged_for_review": 1
     },
     "agent-field-agentfield-learnings.md": {
-      "processed_at": "2026-11-18T19:10:13.152Z",
+      "processed_at": "2026-11-20T00:06:48.258Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3526,9 +3526,14 @@
       "processed_at": "2026-11-19T21:24:14.629Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "vinceglb-filekit-learnings.md": {
+      "processed_at": "2026-11-20T00:06:47.206Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2361,
+  "total_dossiers_evaluated": 2364,
   "total_canonical_promoted": 397,
-  "total_staged_for_review": 1767
+  "total_staged_for_review": 1770
 }
