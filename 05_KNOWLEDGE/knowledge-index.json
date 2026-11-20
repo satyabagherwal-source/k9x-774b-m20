@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T01:56:48.278Z",
+  "last_updated": "2026-11-20T02:15:14.792Z",
   "total_verified_learnings": 9023,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22132,
+  "total_items": 22141,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -227293,8 +227293,8 @@
       "slug": "typedb-typedb",
       "platform": "github",
       "source_url": "https://github.com/typedb/typedb",
-      "source_version": "d20b8787",
-      "content_hash": "7417c405d0711e048a72602e710c7f760e9554ddb472119926bbd1546aa0002e",
+      "source_version": "498c9553",
+      "content_hash": "0589e20fdcaae198ed324dfb790bbd4201336a0d035f51c03269100c06564a12",
       "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "promoted_rules": [
@@ -227312,6 +227312,11 @@
           "number": 9280,
           "title": "Sync cargo files",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9495,
+          "title": "Don't count 'is' as a thing constraint when deciding if a query involves only ty",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227319,7 +227324,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T20:37:54.526Z",
+      "verified_at": "2026-11-20T02:15:07.714Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227361,10 +227366,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-typedb-typedb-technical-construction-intelligence-typedb-typedb-core-invariants.md",
       "title": "Technical Construction Intelligence: typedb/typedb Core Invariants",
       "repository": "typedb/typedb",
-      "source_version": "d20b8787",
-      "content_hash": "3bbcc55c11223da163c6b206b30da37747a9a61df90ede52271c4124d7318304",
+      "source_version": "498c9553",
+      "content_hash": "aa5c35d72521e7f7d9df14388144413e760b4db554ea7fd5ae90841eb8d0bcc9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T20:37:55.190Z"
+      "persisted_at": "2026-11-20T02:15:08.432Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb",
@@ -227373,10 +227378,10 @@
       "relative_path": "08_VERIFICATION/typedb-typedb-verification-protocol-empirical-defect-shield-for-typedb-typedb.md",
       "title": "Verification Protocol: Empirical Defect Shield for typedb/typedb",
       "repository": "typedb/typedb",
-      "source_version": "d20b8787",
-      "content_hash": "dab20a7d351e74538366c04de8cf474973cb5056fc3d9b8c63cbb9b6e2155b94",
+      "source_version": "498c9553",
+      "content_hash": "f86f343e1cf543ab1dfaa3071f241e5497662bac9dbde53177dc955fd915cb20",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T20:37:55.371Z"
+      "persisted_at": "2026-11-20T02:15:08.625Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-mpnet-base-v2-learn": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-mpnet-base-v2-learn",
@@ -227410,9 +227415,9 @@
       "title": "Technical Construction Intelligence: typedb-typedb-learnings Core Invariants",
       "repository": "typedb-typedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "e90c4f754bb33e2e8e4f5044617078f1612ac7a4af67a44792781dcf153f11bd",
+      "content_hash": "2fe27f9fbe00ac955efd7ac352d355222e276f8ed015ffd08dd2a893d22b5f20",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T20:38:01.028Z"
+      "persisted_at": "2026-11-20T02:15:14.577Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb-learnings",
@@ -227422,9 +227427,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for typedb-typedb-learnings",
       "repository": "typedb-typedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "e519d04d38fa296fafca32c04136a0e621cdfd169d12b038f7972651ea137e2a",
+      "content_hash": "c61f5d05034a72c6b1b2fe784ea0d4a969bb46077529543f834f1df85b8e68fa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T20:38:01.208Z"
+      "persisted_at": "2026-11-20T02:15:14.792Z"
     },
     "learn-github-wix-react-native-ui-lib": {
       "learning_id": "learn-github-wix-react-native-ui-lib",
@@ -235426,8 +235431,8 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "b12cc963",
-      "content_hash": "11a0b870f5995dd12d8d1eb6b3035d974050c311047516571b4b7094b4b100b9",
+      "source_version": "92f029f9",
+      "content_hash": "ed5a769cbb2e00e72c05d0b4e482611ed5d83265d6efff2e42460c725e6bc456",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
@@ -235455,6 +235460,11 @@
           "number": 9285,
           "title": "use the correct flag name in the --custom-headers warning",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9494,
+          "title": "export by full image ID with the containerd image store",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235462,7 +235472,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T21:42:18.896Z",
+      "verified_at": "2026-11-20T02:15:01.922Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235504,10 +235514,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-technical-construction-intelligence-aquasecurity-trivy-core-i.md",
       "title": "Technical Construction Intelligence: aquasecurity/trivy Core Invariants",
       "repository": "aquasecurity/trivy",
-      "source_version": "b12cc963",
-      "content_hash": "af6e38ccba02964ec5dc4c988c56bf573b6f02b3c7a6be4252c1c9e43d58047b",
+      "source_version": "92f029f9",
+      "content_hash": "2d9c941325598164f9de874898eb236b7f31a3b9235c94c840dbe824948af0ba",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T21:42:19.378Z"
+      "persisted_at": "2026-11-20T02:15:02.663Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy",
@@ -235516,10 +235526,10 @@
       "relative_path": "08_VERIFICATION/aquasecurity-trivy-verification-protocol-empirical-defect-shield-for-aquasecurit.md",
       "title": "Verification Protocol: Empirical Defect Shield for aquasecurity/trivy",
       "repository": "aquasecurity/trivy",
-      "source_version": "b12cc963",
-      "content_hash": "244367cbe21befce77898cfa0c8aecd54695536e545f84c878f546e2e344b5bb",
+      "source_version": "92f029f9",
+      "content_hash": "9336c1557b6608434b1faee5882570ed4e8b72b8e213fbca936050928e81f5ac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T21:42:19.531Z"
+      "persisted_at": "2026-11-20T02:15:02.859Z"
     },
     "rule-8524": {
       "learning_id": "rule-8524",
@@ -235615,9 +235625,9 @@
       "title": "Technical Construction Intelligence: aquasecurity-trivy-learnings Core Invariants",
       "repository": "aquasecurity-trivy-learnings",
       "source_version": "HEAD",
-      "content_hash": "64dba1eed113a7c47219b25ca178d34cd54bf2138b84ff390c44465cd61eabdf",
+      "content_hash": "322b02bbe430c44ddb40b939b9d25bd61dc6f79c12bb9ba4c43abade50ac0f0d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T21:42:31.198Z"
+      "persisted_at": "2026-11-20T02:15:13.693Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy-learnings",
@@ -235627,9 +235637,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aquasecurity-trivy-learnings",
       "repository": "aquasecurity-trivy-learnings",
       "source_version": "HEAD",
-      "content_hash": "404547a7d6e8a922a1965e0191d8601820604a77320aa502644bc1c21f7b434f",
+      "content_hash": "76de3be89c01579c44da90314717264074f8758c2a122cb580b3877b2cf65df1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T21:42:31.337Z"
+      "persisted_at": "2026-11-20T02:15:13.884Z"
     },
     "learn-huggingface-autotrust-gev-26b-decide-nvfp4": {
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
@@ -242071,8 +242081,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "303a7f4e",
-      "content_hash": "a30660a108498097d1b8d6d04a436fb8d9aa37d0cb7ff8c74edf0f1b5d71c2c7",
+      "source_version": "e7405725",
+      "content_hash": "2f1d3a14b7300f742205a28c116ee9b867fa35c7a394f2d606ce3c9952116cd5",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -242085,6 +242095,11 @@
           "number": 9136,
           "title": "Handle nonblocking writes in the native ConPTY keyboard regression",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9493,
+          "title": "Integrate reviewed changes from #1004 with the verified merge queue",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242092,7 +242107,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:07:39.434Z",
+      "verified_at": "2026-11-20T02:14:54.565Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242132,10 +242147,10 @@
       "relative_path": "08_VERIFICATION/kuddev-pebrel-verification-protocol-empirical-defect-shield-for-kuddev-pebrel.md",
       "title": "Verification Protocol: Empirical Defect Shield for Kuddev/pebrel",
       "repository": "Kuddev/pebrel",
-      "source_version": "303a7f4e",
-      "content_hash": "e67b2885083cc0563cf4bb2880e65fb6b931c2540c1619fd14b1a304cf4c861b",
+      "source_version": "e7405725",
+      "content_hash": "32429e6c58d3ed64c5b266c523f17599c54eb28fd23318aa9f9144fe02a530ed",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:07:40.014Z"
+      "persisted_at": "2026-11-20T02:14:55.493Z"
     },
     "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants",
@@ -242157,9 +242172,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kuddev-pebrel-learnings",
       "repository": "kuddev-pebrel-learnings",
       "source_version": "HEAD",
-      "content_hash": "8f551366c46366817d5c86d1d4a14770795721783cb49951a6d1b7bf0fa58098",
+      "content_hash": "c16c71b4dee40d06609744399bad0893485474fa0620bdd08e1ef1987fcf6ce6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:07:48.805Z"
+      "persisted_at": "2026-11-20T02:15:12.878Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-comfy-le": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-comfy-le",
@@ -299565,6 +299580,120 @@
       "content_hash": "a57c7a4e1f5a5aa785ff3b1100e9edae2fef9a6e9de063ae12d5bfe529f3d114",
       "domain_letter": "G",
       "persisted_at": "2026-11-20T01:56:46.486Z"
+    },
+    "rule-9493": {
+      "learning_id": "rule-9493",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9493,
+      "title": "Integrate reviewed changes from #1004 with the verified merge queue",
+      "source_url": "https://github.com/Kuddev/pebrel",
+      "source_version": "e7405725",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T02:14:54.565Z"
+    },
+    "candidate_directive-integrate-reviewed-changes-from-1004-with-the-verified-merge-queue": {
+      "item_id": "candidate_directive-integrate-reviewed-changes-from-1004-with-the-verified-merge-queue",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JSXE-integrate-reviewed-changes-from-1004-with-the-verified-merge-queue.md",
+      "title": "Integrate reviewed changes from #1004 with the verified merge queue",
+      "repository": "kuddev-pebrel-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2538d59c41bbc252039e9821626726175773b89e62fe88af6d71aa1f70473bb3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T02:15:12.441Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kuddev-pebrel-technical-construction-intelligence-kuddev-pebrel-core-invariants.md",
+      "title": "Technical Construction Intelligence: Kuddev/pebrel Core Invariants",
+      "repository": "Kuddev/pebrel",
+      "source_version": "e7405725",
+      "content_hash": "928bfe989c5e3483e785955a47e9a7f7bcbd201f7bb80f0d80b49a282e57b562",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T02:14:55.302Z"
+    },
+    "rule-9494": {
+      "learning_id": "rule-9494",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9494,
+      "title": "export by full image ID with the containerd image store",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "92f029f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T02:15:01.922Z"
+    },
+    "candidate_directive-export-by-full-image-id-with-the-containerd-image-store": {
+      "item_id": "candidate_directive-export-by-full-image-id-with-the-containerd-image-store",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JL88-export-by-full-image-id-with-the-containerd-image-store.md",
+      "title": "export by full image ID with the containerd image store",
+      "repository": "aquasecurity/trivy",
+      "source_version": "92f029f9",
+      "content_hash": "d3f44b4ec1f41d8fc6b88d6e9f384a01d147970110feece4718688db2cc3d5d0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T02:15:02.457Z"
+    },
+    "rule-9495": {
+      "learning_id": "rule-9495",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9495,
+      "title": "Don't count 'is' as a thing constraint when deciding if a query involves only ty",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "498c9553",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T02:15:07.714Z"
+    },
+    "candidate_directive-don-t-count-is-as-a-thing-constraint-when-deciding-if-a-query-involves-only-ty": {
+      "item_id": "candidate_directive-don-t-count-is-as-a-thing-constraint-when-deciding-if-a-query-involves-only-ty",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JUFC-don-t-count-is-as-a-thing-constraint-when-deciding-if-a-query-involves-only-ty.md",
+      "title": "Don't count 'is' as a thing constraint when deciding if a query involves only ty",
+      "repository": "typedb-typedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "87ef948c68ff691843a0c1ef2c95788efe65183f9014ff673baabfa1aba38d2b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T02:15:14.383Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kuddev-pebrel-learnings-technical-construction-intelligence-kuddev-pebrel-learni.md",
+      "title": "Technical Construction Intelligence: kuddev-pebrel-learnings Core Invariants",
+      "repository": "kuddev-pebrel-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1d9c1f62f1da67f01c68d8d9a189373061757fe9d3e4532ad69f5b51bad4c34a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T02:15:12.642Z"
+    },
+    "candidate_directive-image-export-by-full-image-id-with-the-containerd-image-store": {
+      "item_id": "candidate_directive-image-export-by-full-image-id-with-the-containerd-image-store",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JTQT-image-export-by-full-image-id-with-the-containerd-image-store.md",
+      "title": "image): export by full image ID with the containerd image store",
+      "repository": "aquasecurity-trivy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dc905c3783b91d675b6ee86940f5f1d25e08f0d9906b4c0c15c37d7924ad707b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T02:15:13.494Z"
     }
   },
   "ai-builder-brain": {

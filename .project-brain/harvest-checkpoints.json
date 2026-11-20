@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T01:55:34.941Z",
+  "last_updated": "2026-11-20T02:15:07.975Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5181,14 +5181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuddev-pebrel",
-      "content_hash": "a30660a108498097d1b8d6d04a436fb8d9aa37d0cb7ff8c74edf0f1b5d71c2c7",
-      "verified_at": "2026-11-18T06:07:39.603Z",
+      "content_hash": "2f1d3a14b7300f742205a28c116ee9b867fa35c7a394f2d606ce3c9952116cd5",
+      "verified_at": "2026-11-20T02:14:54.830Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T06:07:39.603Z"
+      "last_updated": "2026-11-20T02:14:54.830Z"
     },
     "alibaba/formily": {
       "repository": "alibaba/formily",
@@ -6606,14 +6606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typedb-typedb",
-      "content_hash": "7417c405d0711e048a72602e710c7f760e9554ddb472119926bbd1546aa0002e",
-      "verified_at": "2026-11-18T20:37:54.777Z",
+      "content_hash": "0589e20fdcaae198ed324dfb790bbd4201336a0d035f51c03269100c06564a12",
+      "verified_at": "2026-11-20T02:15:07.974Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T20:37:54.777Z"
+      "last_updated": "2026-11-20T02:15:07.974Z"
     },
     "mfontanini/presenterm": {
       "repository": "mfontanini/presenterm",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "11a0b870f5995dd12d8d1eb6b3035d974050c311047516571b4b7094b4b100b9",
-      "verified_at": "2026-11-18T21:42:19.078Z",
+      "content_hash": "ed5a769cbb2e00e72c05d0b4e482611ed5d83265d6efff2e42460c725e6bc456",
+      "verified_at": "2026-11-20T02:15:02.192Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T21:42:19.078Z"
+      "last_updated": "2026-11-20T02:15:02.192Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",

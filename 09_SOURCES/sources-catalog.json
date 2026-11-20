@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "303a7f4e",
+    "sourceVersion": "e7405725",
     "license": "GPL-3.0",
-    "contentHash": "a30660a108498097d1b8d6d04a436fb8d9aa37d0cb7ff8c74edf0f1b5d71c2c7",
-    "lastHarvestedAt": "2026-11-18T06:07:39.596Z",
+    "contentHash": "2f1d3a14b7300f742205a28c116ee9b867fa35c7a394f2d606ce3c9952116cd5",
+    "lastHarvestedAt": "2026-11-20T02:14:54.819Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -4323,10 +4323,10 @@
     "repository": "typedb/typedb",
     "platform": "github",
     "sourceUrl": "https://github.com/typedb/typedb",
-    "sourceVersion": "d20b8787",
+    "sourceVersion": "498c9553",
     "license": "MPL-2.0",
-    "contentHash": "7417c405d0711e048a72602e710c7f760e9554ddb472119926bbd1546aa0002e",
-    "lastHarvestedAt": "2026-11-18T20:37:54.767Z",
+    "contentHash": "0589e20fdcaae198ed324dfb790bbd4201336a0d035f51c03269100c06564a12",
+    "lastHarvestedAt": "2026-11-20T02:15:07.962Z",
     "learningId": "learn-github-typedb-typedb"
   },
   "mfontanini-presenterm": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "b12cc963",
+    "sourceVersion": "92f029f9",
     "license": "Apache-2.0",
-    "contentHash": "11a0b870f5995dd12d8d1eb6b3035d974050c311047516571b4b7094b4b100b9",
-    "lastHarvestedAt": "2026-11-18T21:42:19.070Z",
+    "contentHash": "ed5a769cbb2e00e72c05d0b4e482611ed5d83265d6efff2e42460c725e6bc456",
+    "lastHarvestedAt": "2026-11-20T02:15:02.178Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {

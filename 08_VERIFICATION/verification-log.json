@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-Y31I",
-    "timestamp": "2026-11-18T07:30:54.054Z",
-    "repository": "apple/foundationdb",
-    "learningId": "learn-github-apple-foundationdb",
-    "contentHash": "c249dbd439d0bf86e0c59e1b94794ea1f1b774cdc47bd75dc7883d319ef88b2f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-8BJ4",
-    "timestamp": "2026-11-18T07:38:51.616Z",
-    "repository": "tencent/Hy4-flash",
-    "learningId": "learn-huggingface-tencent-hy4-flash",
-    "contentHash": "bd9b7ab0567c463c614ca3507bd021c78a271a82057c1d563770ab42ec01a419",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-8DBI",
-    "timestamp": "2026-11-18T07:38:53.934Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-    "contentHash": "4d49da5c404baf9b4a4c46a93df234f4c532be15d559cab70c37006f84921e20",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-8KWX",
     "timestamp": "2026-11-18T07:39:03.777Z",
     "repository": "meshery/meshery",
@@ -7492,6 +7447,51 @@
     "contentHash": "064c95d69542cbab6a58fa0d2a59d6208ea34a1858d1d65b9bd56ba32c2a4bca",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-JFBY",
+    "timestamp": "2026-11-20T02:14:54.814Z",
+    "repository": "Kuddev/pebrel",
+    "learningId": "learn-github-kuddev-pebrel",
+    "contentHash": "2f1d3a14b7300f742205a28c116ee9b867fa35c7a394f2d606ce3c9952116cd5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-JL0D",
+    "timestamp": "2026-11-20T02:15:02.173Z",
+    "repository": "aquasecurity/trivy",
+    "learningId": "learn-github-aquasecurity-trivy",
+    "contentHash": "ed5a769cbb2e00e72c05d0b4e482611ed5d83265d6efff2e42460c725e6bc456",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-JPH1",
+    "timestamp": "2026-11-20T02:15:07.957Z",
+    "repository": "typedb/typedb",
+    "learningId": "learn-github-typedb-typedb",
+    "contentHash": "0589e20fdcaae198ed324dfb790bbd4201336a0d035f51c03269100c06564a12",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

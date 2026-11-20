@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T01:56:47.934Z",
+  "last_updated": "2026-11-20T02:15:14.383Z",
   "directives": [
     {
       "id": "CD-001",
@@ -35503,6 +35503,68 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-7EEF75-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-JSXE",
+      "directive_title": "Integrate reviewed changes from #1004 with the verified merge queue",
+      "source_repo": "kuddev-pebrel-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JSXE-integrate-reviewed-changes-from-1004-with-the-verified-merge-queue.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-JL88",
+      "directive_title": "export by full image ID with the containerd image store",
+      "source_repo": "aquasecurity/trivy",
+      "source_commit": "92f029f9",
+      "staged_file": "11_INBOX/candidate-directives/CD-JL88-export-by-full-image-id-with-the-containerd-image-store.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-JUFC",
+      "directive_title": "Don't count 'is' as a thing constraint when deciding if a query involves only ty",
+      "source_repo": "typedb-typedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JUFC-don-t-count-is-as-a-thing-constraint-when-deciding-if-a-query-involves-only-ty.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-982FC6",
+      "directive_title": "Integrate reviewed changes from #1004 with the verified merge queue",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kuddev-pebrel",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-982FC6-integrate-reviewed-changes-from-1004-wit.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-JTQT",
+      "directive_title": "image): export by full image ID with the containerd image store",
+      "source_repo": "aquasecurity-trivy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JTQT-image-export-by-full-image-id-with-the-containerd-image-store.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-A7FC07",
+      "directive_title": "Don't count 'is' as a thing constraint when deciding if a query involves only ty",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "typedb-typedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A7FC07-don-t-count-is-as-a-thing-constraint-whe.md",
       "staged_date": "2026-11-20"
     }
   ]

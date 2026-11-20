@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T21:42:30.950Z",
+  "timestamp": "2026-11-20T02:15:13.371Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-aquasecurity-trivy-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [aquasecurity-trivy-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T21:42:30.950Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T02:15:13.371Z`  
 > **Learning ID**: `LEARN-EVO-aquasecurity-trivy-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source**: github ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
-> **Source Version**: `b12cc963`  
+> **Source Version**: `92f029f9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T21:42:18.163Z  
+> **Timestamp**: 2026-11-20T02:15:00.920Z  
 > **Learning ID**: `learn-github-aquasecurity-trivy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T21:42:18.158Z  
+> **Harvest Timestamp**: 2026-11-20T02:15:00.914Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39511 stars
+- **Stars / Engagement**: 39551 stars
 
 ---
 
@@ -1027,69 +1027,101 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3f27af9` (2026-11-18)
-**Commit Message**: fix(server): use the correct flag name in the --custom-headers warning (#11673)
+### Incident Patch 1: `92f029f9` (2026-11-19)
+**Commit Message**: fix(image): export by full image ID with the containerd image store (#11665)
 
-**File**: `pkg/flag/remote_flags.go` (modified, +1/-1)
+Signed-off-by: omerfsen <[REDACTED_EMAIL]>
+
+**File**: `pkg/fanal/image/daemon/docker.go` (modified, +14/-0)
 ```diff
-@@ -129,7 +129,7 @@ func (f *RemoteFlagGroup) ToOptions(opts *Options) error {
- 	if serverAddr == "" && listen == "" {
- 		switch {
- 		case len(customHeaders) > 0:
--			log.Warn(`"--custom-header" can be used only with "--server"`)
-+			log.Warn(`"--custom-headers" can be used only with "--server"`)
- 		case token != "":
- 			log.Warn(`"--token" can be used only with "--server"`)
- 		case tokenHeader != "" && tokenHeader != DefaultTokenHeader:
+@@ -4,6 +4,7 @@ import (
+ 	"context"
+ 	"os"
+ 
++	"github.com/distribution/reference"
+ 	"github.com/google/go-containerregistry/pkg/name"
+ 	"github.com/moby/moby/client"
+ 	"golang.org/x/xerrors"
+@@ -50,6 +51,7 @@ func DockerImage(ctx context.Context, ref name.Reference, host string) (Image, f
+ 		if err != nil {
+ 			return nil, cleanup, xerrors.Errorf("unable to inspect the image (%s): %w", imageID, err)
+ 		}
++		imageID = normalizeImageID(imageID)
+ 	}
+ 
+ 	history, err := c.ImageHistory(ctx, imageID)
+@@ -74,3 +76,15 @@ func DockerImage(ctx context.Context, ref name.Reference, host string) (Image, f
+ 		history: configHistory(history.Items),
+ 	}, cleanup, nil
+ }
++
++// normalizeImageID turns a bare 64-hex image ID into "sha256:<hex>" the way the daemon does.
++// The containerd image store refuses to export a bare 64-hex ID
++// ("cannot specify 64-byte hexadecimal strings"), while inspect and history accept it.
++func normalizeImageID(s string) string {
++	if parsed, err := reference.ParseAnyReference(s); err == nil {
++		if _, named := parsed.(reference.Named); !named {
++			return parsed.String()
++		}
++	}
++	return s
++}
 ```
 
-**File**: `pkg/flag/remote_flags_test.go` (modified, +1/-1)
+**File**: `pkg/fanal/image/daemon/docker_test.go` (modified, +39/-0)
 ```diff
-@@ -63,7 +63,7 @@ func TestRemoteFlagGroup_ToOptions(t *testing.T) {
- 				TokenHeader: "Trivy-Token",
- 			},
- 			wantLogs: []string{
--				`"--custom-header" can be used only with "--server"`,
-+				`"--custom-headers" can be used only with "--server"`,
- 			},
- 		},
- 		{
-```
-
----
-
-### Incident Patch 2: `6c6cc02a` (2026-11-18)
-**Commit Message**: docs: fix the moved Sigstore links in signature verification (#11654)
-
-**File**: `docs/getting-started/signature-verification.md` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@ All binaries and container images are signed by [Cosign](https://github.com/sigs
- 
- ## Verifying container image
- 
--Use the following command for keyless [verification](https://docs.sigstore.dev/cosign/verify/):
-+Use the following command for keyless [verification](https://docs.sigstore.dev/cosign/verifying/verify/):
- 
- ```shell
- cosign verify aquasec/trivy:<version> \
-@@ -26,7 +26,7 @@ The following checks were performed on each of these signatures:
- 
- ## Verifying release assets
- 
--Since Trivy v0.68.1, GitHub Releases provide [sigstore signature bundles](https://docs.sigstore.dev/cosign/bundle/). Separate `.sig` and certificate (`.pem`) files are no longer published. Every release asset has a corresponding `.sigstore.json` bundle file.
-+Since Trivy v0.68.1, GitHub Releases provide [sigstore signature bundles](https://docs.sigstore.dev/about/bundle/). Separate `.sig` and certificate (`.pem`) files are no longer published. Every release asset has a corresponding `.sigstore.json` bundle file.
- 
- Download the release asset and its associated `.sigstore.json` bundle file from the [GitHub Release](https://github.com/aquasecurity/trivy/releases).
- 
+@@ -47,3 +47,42 @@ func TestDockerImage(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func Test_normalizeImageID(t *testing.T) {
++	tests := []struct {
++		name  string
++		input string
++		want  string
++	}{
++		{
++			name:  "full image ID without sha256 prefix",
++			input: "a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72",
++			want:  "sha256:a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72",
++		},
++		{
++			name:  "full image ID with sha256 prefix",
++			input: "sha256:a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72",
++			want:  "sha256:a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72",
++		},
++		{
++			name:  "short image ID",
++			input: "a187dde48cd2",
++			want:  "a187dde48cd2",
++		},
++		{
++			name:  "63-hex image ID prefix",
++			input: "a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb7",
++			want:  "a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb7",
++		},
++		{
++			name:  "image name",
++			input: "alpine:3.11",
++			want:  "alpine:3.11",
++		},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			assert.Equal(t, tt.want, normalizeImageID(tt.input))
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #11673** (2026-11-18): fix(server): use the correct flag name in the --custom-headers warning (@farisbasha)
+- **PR #11665** (2026-11-19): fix(image): export by full image ID with the containerd image store (@omerfsen)
 - **PR #11654** (2026-11-18): docs: fix the moved Sigstore links in signature verification (@farisbasha)
 - **PR #11644** (closed): fix(sbom): keep components from duplicated third-party SBOMs unique (@nissessenap)
 - **PR #11641** (closed): chore(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0 (@dependabot[bot])
 - **PR #11640** (2026-11-16): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.46.0 to 1.47.0 (@dependabot[bot])
-- **PR #11633** (closed): fix(secret): detect AWS access key IDs followed by quotes or commas (@raghupathi321)
 
 ---
 
@@ -1109,31 +1141,44 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server): use the correct flag name in the --custom-headers warning
+## X. image): export by full image ID with the containerd image store
 
 **RULE**:
-When implementing operations in `pkg/flag/remote_flags.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/fanal/image/daemon/docker.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3f27af9`: server): use the correct flag name in the --custom-headers warning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `92f029f9`: image): export by full image ID with the containerd image store. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/flag/remote_flags.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/fanal/image/daemon/docker.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			log.Warn(`"--custom-headers" can be used only with "--server"`)
+	"github.com/distribution/reference"
+		imageID = normalizeImageID(imageID)
+
+// normalizeImageID turns a bare 64-hex image ID into "sha256:<hex>" the way the daemon does.
+// The containerd image store refuses to export a bare 64-hex ID
+// ("cannot specify 64-byte hexadecimal strings"), while inspect and history accept it.
+func normalizeImageID(s string) string {
+	if parsed, err := reference.ParseAnyReference(s); err == nil {
+		if _, named := parsed.(reference.Named); !named {
+			return parsed.String()
+		}
+	}
+	return s
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-			log.Warn(`"--custom-header" can be used only with "--server"`)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3f27af9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `92f029f9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

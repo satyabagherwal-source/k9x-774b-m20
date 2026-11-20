@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T01:56:48.116Z",
-  "total_records": 2054,
+  "last_updated": "2026-11-20T02:15:14.577Z",
+  "total_records": 2056,
   "domains": {
     "A": {
       "total": 17,
@@ -1345,7 +1345,7 @@
       ]
     },
     "H": {
-      "total": 485,
+      "total": 487,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1831,7 +1831,9 @@
         "DOM-H-1C8F2877",
         "DOM-H-BD3A2B21",
         "DOM-H-F78059FE",
-        "DOM-H-91C37114"
+        "DOM-H-91C37114",
+        "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-learnings-core-invariants"
       ]
     },
     "I": {
@@ -14516,8 +14518,8 @@
       "title": "Technical Construction Intelligence: typedb/typedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-typedb-typedb-technical-construction-intelligence-typedb-typedb-core-invariants.md",
       "repository": "typedb/typedb",
-      "content_hash": "3bbcc55c11223da163c6b206b30da37747a9a61df90ede52271c4124d7318304",
-      "created_at": "2026-11-18T20:37:55.190Z"
+      "content_hash": "aa5c35d72521e7f7d9df14388144413e760b4db554ea7fd5ae90841eb8d0bcc9",
+      "created_at": "2026-11-20T02:15:08.432Z"
     },
     "DOM-D-6D95F34C": {
       "record_id": "DOM-D-6D95F34C",
@@ -14576,8 +14578,8 @@
       "title": "Technical Construction Intelligence: typedb-typedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-typedb-typedb-learnings-technical-construction-intelligence-typedb-typedb-learni.md",
       "repository": "typedb-typedb-learnings",
-      "content_hash": "e90c4f754bb33e2e8e4f5044617078f1612ac7a4af67a44792781dcf153f11bd",
-      "created_at": "2026-11-18T20:38:01.028Z"
+      "content_hash": "2fe27f9fbe00ac955efd7ac352d355222e276f8ed015ffd08dd2a893d22b5f20",
+      "created_at": "2026-11-20T02:15:14.577Z"
     },
     "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-core-invariants",
@@ -17416,8 +17418,8 @@
       "title": "Technical Construction Intelligence: aquasecurity/trivy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-technical-construction-intelligence-aquasecurity-trivy-core-i.md",
       "repository": "aquasecurity/trivy",
-      "content_hash": "af6e38ccba02964ec5dc4c988c56bf573b6f02b3c7a6be4252c1c9e43d58047b",
-      "created_at": "2026-11-18T21:42:19.378Z"
+      "content_hash": "2d9c941325598164f9de874898eb236b7f31a3b9235c94c840dbe824948af0ba",
+      "created_at": "2026-11-20T02:15:02.663Z"
     },
     "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants",
@@ -17443,8 +17445,8 @@
       "title": "Technical Construction Intelligence: aquasecurity-trivy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-learnings-technical-construction-intelligence-aquasecurity-tr.md",
       "repository": "aquasecurity-trivy-learnings",
-      "content_hash": "64dba1eed113a7c47219b25ca178d34cd54bf2138b84ff390c44465cd61eabdf",
-      "created_at": "2026-11-18T21:42:31.198Z"
+      "content_hash": "322b02bbe430c44ddb40b939b9d25bd61dc6f79c12bb9ba4c43abade50ac0f0d",
+      "created_at": "2026-11-20T02:15:13.693Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants",
@@ -34589,6 +34591,24 @@
       "confidence": 1,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-20T01:56:45.705Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Kuddev/pebrel Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kuddev-pebrel-technical-construction-intelligence-kuddev-pebrel-core-invariants.md",
+      "repository": "Kuddev/pebrel",
+      "content_hash": "928bfe989c5e3483e785955a47e9a7f7bcbd201f7bb80f0d80b49a282e57b562",
+      "created_at": "2026-11-20T02:14:55.302Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: kuddev-pebrel-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kuddev-pebrel-learnings-technical-construction-intelligence-kuddev-pebrel-learni.md",
+      "repository": "kuddev-pebrel-learnings",
+      "content_hash": "1d9c1f62f1da67f01c68d8d9a189373061757fe9d3e4532ad69f5b51bad4c34a",
+      "created_at": "2026-11-20T02:15:12.642Z"
     }
   }
 }

@@ -11467,3 +11467,6 @@ Every entry in this ledger must capture:
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `cefb61b7` | Multi-dimensional audit evidence | 2026-11-20T01:55:34.932Z |
 | `learn-dom-h-91c37114` | `project://hashicorp-terraform` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md` | 2026-11-20T01:56:08.803Z |
 | `learn-dom-k-0b7ebb9f` | `project://hashicorp-terraform` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md` | 2026-11-20T01:56:45.727Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `e7405725` | Multi-dimensional audit evidence | 2026-11-20T02:14:54.819Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `92f029f9` | Multi-dimensional audit evidence | 2026-11-20T02:15:02.178Z |
+| `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `498c9553` | Multi-dimensional audit evidence | 2026-11-20T02:15:07.962Z |

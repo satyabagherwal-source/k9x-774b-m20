@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T20:38:00.699Z",
+  "timestamp": "2026-11-20T02:15:14.254Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-typedb-typedb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [typedb-typedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T20:38:00.699Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T02:15:14.254Z`  
 > **Learning ID**: `LEARN-EVO-typedb-typedb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source**: github ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
-> **Source Version**: `d20b8787`  
+> **Source Version**: `498c9553`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T20:37:53.479Z  
+> **Timestamp**: 2026-11-20T02:15:06.680Z  
 > **Learning ID**: `learn-github-typedb-typedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T20:37:53.471Z  
+> **Harvest Timestamp**: 2026-11-20T02:15:06.673Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: TypeDB: Built for systems, not records
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4518 stars
+- **Stars / Engagement**: 4519 stars
 
 ---
 
@@ -1852,11 +1852,11 @@ impl UserOperator for LocalUserOperator {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8075** (2026-11-19): **Don't count 'is' as a thing constraint when deciding if a query involves only types**
+  *Symptoms*: ## Product change and motivation This allows `is` constraints to be used in type queries, so an unsatisfiable query returns 0 answers instead of throwing a compilation error.  ## Implementation Move is to the type constraint category in check_non_type_constraints
+
 - **Issue #8074** (2026-11-18): **Sync cargo files**
   *Symptoms*: Sync cargo files
-
-- **Issue #8073** (2026-11-18): **Simplify workspace referencing**
-  *Symptoms*: ## Product change and motivation  Each TypeDB dependency's commit or tag is now written once, in its `git_override` in `MODULE.bazel`.   Before, refs were duplicated in `workspace_refs`' commit and tag dicts, with commented-out alternatives for switching between the two.   ## Implementation  Reordered entries to follow the shape of `MODULE.bazel` files from other repositories (the difference was confusing).   Changed `workspace_refs` from ``` workspace_refs(     name = "typedb_workspace_refs",     workspace_commit_dict = { #        "typedb_protocol+": "99e080bd0d599ae235607da4e4e69787e681cbe1", #        "typeql+": "d07e949229b2551d59127d3bc3300cd38bdf33ff",     },     workspace_tag_dict = {         "typedb_protocol+": "3.15.0",         "typeql+": "3.15.0",     }, ) ```  to: ``` workspace_refs(     name = "typedb_workspace_refs",     module_file = "//:MODULE.bazel", ) ```  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1873,536 +1873,62 @@ impl UserOperator for LocalUserOperator {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d20b8787` (2026-11-18)
-**Commit Message**: Sync cargo files (#8074)
+### Incident Patch 1: `498c9553` (2026-11-19)
+**Commit Message**: Don't count 'is' as a thing constraint when deciding if a query involves only types (#8075)
 
-Sync cargo files
+## Product change and motivation
+This allows `is` constraints to be used in type queries, so an unsatisfiable query returns 0 answers instead of throwing a compilation error.
 
-**File**: `Cargo.lock` (modified, +11/-11)
+## Implementation
+Move is to the type constraint category in check_non_type_constraints
+
+**File**: `compiler/annotation/inference/validation.rs` (modified, +2/-2)
 ```diff
-@@ -1999,7 +1999,7 @@ dependencies = [
-  "bstr",
-  "log",
-  "regex-automata",
-- "regex-syntax 0.8.11",
-+ "regex-syntax 0.8.12",
- ]
+@@ -82,7 +82,6 @@ fn check_non_type_constraints_satisfiable(
+     _variable_registry: &VariableRegistry,
+ ) -> Result<(), TypeInferenceError> {
+     let not_only_type_constraints = graph.conjunction.constraints().iter().any(|constraint| match constraint {
+-        Constraint::Is(_)
+         | Constraint::Isa(_)
+         | Constraint::Iid(_)
+         | Constraint::Links(_)
+@@ -94,7 +93,8 @@ fn check_non_type_constraints_satisfiable(
+         | Constraint::DeleteConcepts(_)
+         | Constraint::Comparison(_) => true,
  
- [[package]]
-@@ -4373,25 +4373,25 @@ dependencies = [
- 
- [[package]]
- name = "regex"
--version = "1.13.1"
-+version = "1.13.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
-+checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
- dependencies = [
-  "aho-corasick",
-  "memchr",
-  "regex-automata",
-- "regex-syntax 0.8.11",
-+ "regex-syntax 0.8.12",
- ]
- 
- [[package]]
- name = "regex-automata"
--version = "0.4.18"
-+version = "0.4.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
-+checksum = "41d60ef07df457506a0a1a2073112eb4aae5733dbd2813c3da77d1b0fd441158"
- dependencies = [
-  "aho-corasick",
-  "memchr",
-- "regex-syntax 0.8.11",
-+ "regex-syntax 0.8.12",
- ]
- 
- [[package]]
-@@ -4402,9 +4402,9 @@ checksum = "f162c6dd7b008981e4d40210aca20b4bd0f9b60ca9271061b07f78537722f2e1"
- 
- [[package]]
- name = "regex-syntax"
--version = "0.8.11"
-+version = "0.8.12"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
-+checksum = "d902046e6a28a1e4c3cab97258a0ce11e994903f01c2d97a9447a0b3df85f4f6"
- 
- [[package]]
- name = "remove_dir_all"
-@@ -5214,9 +5214,9 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
- 
- [[package]]
- name = "smallvec"
--version = "1.16.5"
-+version = "1.16.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "149309498a5f7334b12ddae0cad8aba81ce785fe91755068867e017cf98fee46"
-+checksum = "3244542535d5de959d90ec55d1b5ff0fd2bb7b1310223907d5f11932847f7b59"
- 
- [[package]]
- name = "smart-default"
-```
-
-**File**: `Cargo.toml` (modified, +2/-2)
-```diff
-@@ -371,7 +371,7 @@
- 		[workspace.dependencies.regex]
- 			default-features = false
- 			features = ["default", "perf", "perf-backtrack", "perf-cache", "perf-dfa", "perf-inline", "perf-literal", "perf-onepass", "std", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment"]
--			version = "1.13.1"
-+			version = "1.13.2"
- 
- 		[workspace.dependencies.resource]
- 			default-features = false
-@@ -446,7 +446,7 @@
- 		[workspace.dependencies.smallvec]
- 			default-features = false
- 			features = ["const_generics", "const_new"]
--			version = "1.16.5"
-+			version = "1.16.6"
- 
- 		[workspace.dependencies.smol]
- 			default-features = false
+-        Constraint::IsSet(_)
++        Constraint::Is(_) // There will be a different thing constraint which bound the variables.
++        | Constraint::IsSet(_)  // There will be a different thing constraint which bound the variables.
+         | Constraint::Kind(_)
+         | Constraint::Label(_)
+         | Constraint::RoleName(_)
 ```
 
 ---
 
-### Incident Patch 2: `ff881372` (2026-11-18)
-**Commit Message**: Simplify workspace referencing (#8073)
+### Incident Patch 2: `a2da3ff3` (2026-11-19)
+**Commit Message**: Reduce bazel cache size limit to 40G from 100G
 
-## Product change and motivation
-
-Each TypeDB dependency's commit or tag is now written once, in its
-`git_override` in `MODULE.bazel`.
-
-Before, refs were duplicated in `workspace_refs`' commit and tag dicts,
-with commented-out alternatives for switching between the two.
-
-## Implementation
-
-Reordered entries to follow the shape of `MODULE.bazel` files from other
-repositories (the difference was confusing).
-
-Changed `workspace_refs` from
-```
-workspace_refs(
-    name = "typedb_workspace_refs",
-    workspace_commit_dict = {
-#        "typedb_protocol+": "99e080bd0d599ae235607da4e4e69787e681cbe1",
-#        "typeql+": "d07e949229b2551d59127d3bc3300cd38bdf33ff",
-    },
-    workspace_tag_dict = {
-        "typedb_protocol+": "3.15.0",
-        "typeql+": "3.15.0",
-    },
-)
-```
-
-to:
-```
-workspace_refs(
-    name = "typedb_workspace_refs",
-    module_file = "//:MODULE.bazel",
-)
-```
-
-**File**: `Cargo.lock` (modified, +34/-34)
+**File**: `.bazelrc` (modified, +1/-1)
 ```diff
-@@ -401,7 +401,7 @@ checksum = "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.9",
-+ "syn 3.0.10",
- ]
+@@ -28,7 +28,7 @@ common --@rules_rust//:rustfmt.toml=//:rustfmt_config --noincompatible_disallow_
+ # Fix Java runfiles path resolution in Bzlmod mode (required by release note validation)
+ build --legacy_external_runfiles
  
- [[package]]
-@@ -867,9 +867,9 @@ dependencies = [
+-build --incompatible_strict_action_env --remote_download_toplevel --disk_cache=~/.bazel_disk_cache --experimental_disk_cache_gc_max_size=100G --experimental_disk_cache_gc_max_age=60d --java_runtime_version=remotejdk_21
++build --incompatible_strict_action_env --remote_download_toplevel --disk_cache=~/.bazel_disk_cache --experimental_disk_cache_gc_max_size=40G --experimental_disk_cache_gc_max_age=60d --java_runtime_version=remotejdk_21
+ run --incompatible_strict_action_env
+ test --incompatible_strict_action_env --test_env=PATH
  
- [[package]]
- name = "clap"
--version = "4.6.7"
-+version = "4.6.8"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
-+checksum = "ac230478587d0269d8d6998b82ae69ea51509d55df66d9e92edd1f986904cd4a"
- dependencies = [
-  "clap_builder",
-  "clap_derive",
-@@ -890,14 +890,14 @@ dependencies = [
- 
- [[package]]
- name = "clap_derive"
--version = "4.6.7"
-+version = "4.6.8"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0"
-+checksum = "895c9d8d2ac2dd8b8a29f3724a14e72aaaa6debcf8c38c82f97305c6a172767a"
- dependencies = [
-  "heck 0.5.0",
-  "proc-macro2",
-  "quote",
-- "syn 3.0.9",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -1267,7 +1267,7 @@ dependencies = [
-  "proc-macro2",
-  "quote",
-  "strsim",
-- "syn 3.0.9",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -1278,7 +1278,7 @@ checksum = "2ac7135c3ef02b2f7833bbeb1be5ba7f966dcde8a87c6b87f65a778d71a02785"
- dependencies = [
-  "darling_core",
-  "quote",
-- "syn 3.0.9",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -1361,7 +1361,7 @@ dependencies = [
-  "defmt-parser",
-  "proc-macro2",
-  "quote",
-- "syn 3.0.9",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -1454,7 +1454,7 @@ checksum = "c6232dd377dcc64799954cbd3a9bb882e9cdc1308ccd87b1c098f1fb2eaf82a8"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.9",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -1879,7 +1879,7 @@ checksum = "9fb9654ba8355388abeb8dcb4fc62f511300867002afc858860463bdd9fe0c44"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.9",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -3742,7 +3742,7 @@ dependencies = [
-  "pest_meta",
-  "proc-macro2",
-  "quote",
-- "syn 3.0.9",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -4368,7 +4368,7 @@ checksum = "92ecd8964f8453721699a1ed72037b0db49ce2f5a5138486ee89bed6f67cdf3a"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.9",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -4498,9 +4498,9 @@ dependencies = [
- 
- [[package]]
- name = "rpassword"
--version = "7.5.4"
-+version = "7.5.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2da316a15f47e3d053de9cb2c439650bd8fa4aaeb9365f2e5f27f492ff73c196"
-+checksum = "1fa2c5d9304b618df61ff17f3d3485c6e1854a3d94902a49abbb8d43dfbe0464"
- dependencies = [
-  "libc",
-  "rtoolbox",
-@@ -4955,7 +4955,7 @@ checksum = "e7a5d71263a5a7d47b41f6b3f06ba276f10cc18b0931f1799f710578e2309348"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.9",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -5024,7 +5024,7 @@ dependencies = [
-  "darling",
-  "proc-macro2",
-  "quote",
-- "syn 3.0.9",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -5214,9 +5214,9 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
- 
- [[package]]
- name = "smallvec"
--version = "1.16.4"
-+version = "1.16.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d0d5d4b1981b8bbbb7aed204cae5726d683d5d6ac7e74ec54122ea28f315e7c8"
-+checksum = "149309498a5f7334b12ddae0cad8aba81ce785fe91755068867e017cf98fee46"
- 
- [[package]]
- name = "smart-default"
-@@ -5464,9 +5464,9 @@ dependencies = [
- 
- [[package]]
- name = "syn"
--version = "3.0.9"
-+version = "3.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b"
-+checksum = "4ae9ccbea3a7b0b09443036490c8f34a8b1b760fd345e5c0dae0aac718faea79"
- dependencies = [
-  "proc-macro2",
-  "quote",
-@@ -5490,7 +5490,7 @@ checksum = "901704edd0dfe137f1987838ee4f259e4e063c31371bdb423f7ae38ec6f77f02"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.9",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -5736,7 +5736,7 @@ checksum = "fe5197923287db20a58125f0bc85c062f7f2c892de97b18c356f9efb14b28524"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.9",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -5829,7 +5829,7 @@ checksum = "78773a2a397f451582ce068015985c33193cf6dea8b74d2a639fe457b2f07b0e"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.9",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -6158,7 +6158,7 @@ dependencies = [
- [[package]]
- name = "typedb-protocol"
- version = "0.0.0"
--source = "git+https://github.com/typedb/typedb-protocol?tag=3.15.0#9cafb3315ce97ca936fa2e97e768ed74618817b3"
-+source = "git+https://github.com/typedb/typedb-protocol?rev=dd606e1063d7c83781b5e04c1d348b824d3a7428#dd606e1063d7c83781b5e04c1d348b824d3a7428"
- dependencies = [
-  "prost",
-  "tonic",
-@@ -6220,7 +6220,7 @@ checksum = "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
- [[package]]
- name = "typeql"
- version = "0.0.0"
--source = "git+https://github.com/typedb/typeql?tag=3.15.0#7de03ede9d849a793603d9d4406a6268a01ddd67"
-+source = "git+https://github.com/typedb/typeql?rev=4c37fe7d
-```
-
-**File**: `Cargo.toml` (modified, +7/-7)
-```diff
-@@ -151,7 +151,7 @@
- 		[workspace.dependencies.clap]
- 			default-features = false
- 			features = ["color", "default", "derive", "error-context", "help", "std", "suggestions", "usage", "wrap_help"]
--			version = "4.6.7"
-+			version = "4.6.8"
- 
- 		[workspace.dependencies.compiler]
- 			default-features = false
-@@ -386,7 +386,7 @@
- 		[workspace.dependencies.rpassword]
- 			default-features = false
- 			features = []
--			version = "7.5.4"
-+			version = "7.5.5"
- 
- 		[workspace.dependencies.rustls-pemfile]
- 			default-features = false
-@@ -446,7 +446,7 @@
- 		[workspace.dependencies.smallvec]
- 			default-features = false
- 			features = ["const_generics", "const_new"]
--			version = "1.16.4"
-+			version = "1.16.5"
- 
- 		[workspace.dependencies.smol]
- 			default-features = false
-@@ -582,13 +582,13 @@
- 			default-features = false
- 			features = []
- 			git = "https://github.com/typedb/typedb-protocol"
--			tag = "3.15.0"
-+			rev = "dd606e1063d7c83781b5e04c1d348b824d3a7428"
- 
- 		[workspace.dependencies.typeql]
- 			default-features = false
- 			features = []
- 			git = "https://github.com/typedb/typeql"
--			tag = "3.15.0"
-+			rev = "4c37fe7d62a59e54623e5b554f0e11f9d45aa610"
- 
- 		[workspace.dependencies.unicase]
- 			default-features = false
-@@ -608,7 +608,7 @@
- 		[workspace.dependencies.uuid]
- 			default-features = false
- 			features = ["default", "fast-rng", "rng", "serde", "std", "v4"]
--			version = "1.29.0"
-+			version = "1.29.3"
- 
- 		[workspace.dependencies.xoshiro]
- 			default-features = false
-@@ -618,7 +618,7 @@
- 		[workspace.dependencies.xxhash-rust]
- 			default-features = false
- 			features = ["xxh3"]
--			version = "0.8.19"
-+			version = "0.8.21"
- 
- 		[workspace.dependencies.yaml-rust2]
- 			default-features = false
-```
-
-**File**: `MODULE.bazel` (modified, +40/-47)
-```diff
-@@ -105,17 +105,49 @@ oci.pull(
- )
- use_repo(oci, "typedb-ubuntu-x86_64", "typedb-ubuntu-x86_64_linux_amd64", "typedb-ubuntu-arm64", "typedb-ubuntu-arm64_linux_arm64")
- 
-+# ===========================================================
-+# TypeDB repos
-+# ===========================================================
-+
-+bazel_dep(name = "typedb_bazel_distribution", version = "0.0.0")
-+git_override(
-+    module_name = "typedb_bazel_distribution",
-+    remote = "https://github.com/typedb/bazel-distribution",
-+    commit = "890d556f60f6ae496fcfc1b7be4bc8c2b7a47082",
-+)
-+
-+bazel_dep(name = "typedb_dependencies", version = "0.0.0")
-+git_override(
-+    module_name = "typedb_dependencies",
-+    remote = "https://github.com/typedb/dependencies",
-+    commit = "5655182f0d6ac9e7b1a6e767df7f48c511692ce2",
-+)
-+
-+bazel_dep(name = "typeql", version = "0.0.0")
-+git_override(
-+    module_name = "typeql",
-+    remote = "https://github.com/typedb/typeql",
-+    commit = "4c37fe7d62a59e54623e5b554f0e11f9d45aa610",
-+)
-+
-+bazel_dep(name = "typedb_protocol", version = "0.0.0")
-+git_override(
-+    module_name = "typedb_protocol",
-+    remote = "https://github.com/typedb/typedb-protocol",
-+    commit = "dd606e1063d7c83781b5e04c1d348b824d3a7428",
-+)
-+
-+bazel_dep(name = "typedb_behaviour", version = "0.0.0")
-+git_override(
-+    module_name = "typedb_behaviour",
-+    remote = "https://github.com/typedb/typedb-behaviour",
-+    commit = "6cb99621b617372d758fa49652517926183bd90b",
-+)
-+
- workspace_refs = use_repo_rule("@typedb_bazel_distribution//common/workspace_refs:rules.bzl", "_workspace_refs")
- workspace_refs(
-     name = "typedb_workspace_refs",
--    workspace_commit_dict = {
--#        "typedb_protocol+": "99e080bd0d599ae235607da4e4e69787e681cbe1",
--#        "typeql+": "d07e949229b2551d59127d3bc3300cd38bdf33ff",
--    },
--    workspace_tag_dict = {
--        "typedb_protocol+": "3.15.0",
--        "typeql+": "3.15.0",
--    },
-+    module_file = "//:MODULE.bazel",
- )
- 
- # TypeDB Console and Loader artifacts
-@@ -157,45 +189,6 @@ use_repo(
-     "typedb_loader_artifact_windows-x86_64-extracted",
- )
- 
--# ===========================================================
--# TypeDB repos
--# ===========================================================
--
--bazel_dep(name = "typedb_bazel_distribution", version = "0.0.0")
--git_override(
--    module_name = "typedb_bazel_distribution",
--    remote = "https://github.com/typedb/bazel-distribution",
--    commit = "c496caa8603aed28411b806e37ce3ebfe7e2812a",
--)
--
--bazel_dep(name = "typedb_dependencies", version = "0.0.0")
--git_override(
--    module_name = "typedb_dependencies",
--    remote = "https://github.com/typedb/dependencies",
--    commit = "70adfe8c89d8c860c02abda0623c408662ddd295",
--)
--
--bazel_dep(name = "typeql", version = "0.0.0")
--git_override(
--    module_name = "typeql",
--    remote = "https://github.com/typedb/typeql",
--    tag = "3.15.0",
--)
--
--bazel_dep(name = "typedb_protocol", version = "0.0.0")
--git_override(
--    module_name = "typedb_protocol",
--    remote = "https://github.com/typedb/typedb-protocol",
--    tag = "3.15.0",
--)
--
--bazel_dep(name = "typedb_behaviour", version = "0.0.0")
--git_override(
--    module_name = "typedb_behaviour",
--    remote = "https://github.com/typedb/typedb-behaviour",
--    commit = "a07218a2e764386c5ca786f635990e9c1fcb1d26",
--)
--
- http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
- http_file(
-     name = "typedb_developer_id_combined",
-```
-
-**File**: `WORKSPACE.bazel` (modified, +1/-1)
-```diff
-@@ -3,5 +3,5 @@
- # file, You can obtain one at https://mozilla.org/MPL/2.0/.
- 
- # This file intentionally left empty.
--# It serves as a workspace root marker for Bazelisk.
-+# It serves as a workspace root marker for old versions of Bazel.
- # All dependency management is done via MODULE.bazel (Bzlmod).
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8075** (2026-11-19): Don't count 'is' as a thing constraint when deciding if a query involves only types (@krishnangovindraj)
 - **PR #8074** (2026-11-18): Sync cargo files (@genovoselov)
 - **PR #8073** (2026-11-18): Simplify workspace referencing (@genovoselov)
 - **PR #8071** (2026-11-16): Prepare release 3.15.0 (@krishnangovindraj)
 - **PR #8067** (2026-11-13): Prepare for release 3.15.0-rc1 (@genovoselov)
 - **PR #8066** (2026-11-13): Update error messages & a missed warning on usages of try blocks in write stages (@krishnangovindraj)
-- **PR #8064** (2026-11-16): Assign positions to selected variables of unsatisfiable conjunctions (@flyingsilverfin)
 
 ---
 
@@ -2422,51 +1948,33 @@ workspace_refs(
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Sync cargo files
+## X. Don't count 'is' as a thing constraint when deciding if a query involves only ty
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `compiler/annotation/inference/validation.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d20b8787`: Sync cargo files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `498c9553`: Don't count 'is' as a thing constraint when deciding if a query involves only types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `compiler/annotation/inference/validation.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "regex-syntax 0.8.12",
-version = "1.13.2"
-checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
- "regex-syntax 0.8.12",
-version = "0.4.19"
-checksum = "41d60ef07df457506a0a1a2073112eb4aae5733dbd2813c3da77d1b0fd441158"
- "regex-syntax 0.8.12",
-version = "0.8.12"
-checksum = "d902046e6a28a1e4c3cab97258a0ce11e994903f01c2d97a9447a0b3df85f4f6"
-version = "1.16.6"
-checksum = "3244542535d5de959d90ec55d1b5ff0fd2bb7b1310223907d5f11932847f7b59"
+        Constraint::Is(_) // There will be a different thing constraint which bound the variables.
+        | Constraint::IsSet(_)  // There will be a different thing constraint which bound the variables.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "regex-syntax 0.8.11",
-version = "1.13.1"
-checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
- "regex-syntax 0.8.11",
-version = "0.4.18"
-checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
- "regex-syntax 0.8.11",
-version = "0.8.11"
-checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
-version = "1.16.5"
-checksum = "149309498a5f7334b12ddae0cad8aba81ce785fe91755068867e017cf98fee46"
+        Constraint::Is(_)
+        Constraint::IsSet(_)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d20b8787` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `498c9553` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
