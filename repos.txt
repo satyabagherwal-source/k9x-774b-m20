@@ -5256,3 +5256,7 @@ https://huggingface.co/tencent/Hy4
 https://github.com/itsdecodingai/llm-twin-course
 # [HUGGINGFACE-AI-MODELS] microsoft/Aion-1.0-Instruct-2.3B (2588 score) - Verified Hugging Face Model: microsoft/Aion-1.0-Instruct-2.3B (101 likes, 1578 d
 https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-20T14:03:37.846Z] ---
+# [HUGGINGFACE-AI-MODELS] Sentinel7/h3 (1090 score) - Verified Hugging Face Model: Sentinel7/h3 (109 likes, 0 downloads)
+https://huggingface.co/Sentinel7/h3

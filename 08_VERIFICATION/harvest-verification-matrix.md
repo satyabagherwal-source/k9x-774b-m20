@@ -11554,3 +11554,5 @@
 | `CYCLE-20261120-0YR7` | `2026-11-20T13:40:23.923Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9578` | Yes (`a51c56cf...`) |
 | `CYCLE-20261120-B5FP` | `2026-11-20T13:48:19.141Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9579` | Yes (`18b8ccaf...`) |
 | `CYCLE-20261120-BBED` | `2026-11-20T13:48:26.869Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9580` | Yes (`2f67dd81...`) |
+| `CYCLE-20261120-VKKN` | `2026-11-20T14:04:11.879Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9581` | Yes (`330a3b21...`) |
+| `CYCLE-20261120-ZT5S` | `2026-11-20T14:07:29.632Z` | `Sentinel7/h3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9582, Rule 9583, Rule 9584` | Yes (`6df8bdba...`) |

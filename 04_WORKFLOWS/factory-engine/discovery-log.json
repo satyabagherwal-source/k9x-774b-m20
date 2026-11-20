@@ -21766,5 +21766,17 @@
     "downloads": 1578,
     "qualityScore": 2588,
     "discoveredAt": "2026-11-20T13:24:15.775Z"
+  },
+  {
+    "name": "Sentinel7/h3",
+    "fullName": "Sentinel7/h3",
+    "url": "https://huggingface.co/Sentinel7/h3",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Sentinel7/h3 (109 likes, 0 downloads)",
+    "likes": 109,
+    "downloads": 0,
+    "qualityScore": 1090,
+    "discoveredAt": "2026-11-20T14:01:29.301Z"
   }
 ]

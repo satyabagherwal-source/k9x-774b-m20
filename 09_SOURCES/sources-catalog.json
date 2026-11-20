@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "25be3e4c",
+    "sourceVersion": "18803975",
     "license": "NOASSERTION",
-    "contentHash": "f49b734d138436ee8e823f56148ee9589ba29635af1aa32e47580354c75dc91b",
-    "lastHarvestedAt": "2026-11-20T13:08:32.504Z",
+    "contentHash": "330a3b21ce5abbdbf4094c91795e53b83d98b881c10344721157157b0d4bf0b5",
+    "lastHarvestedAt": "2026-11-20T14:04:11.883Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -13058,5 +13058,15 @@
     "contentHash": "d9cd20bd3fe9389b573f560c54e0ffbd868081e8d6507e1eb66be747bf2a1e69",
     "lastHarvestedAt": "2026-11-20T13:26:32.708Z",
     "learningId": "learn-huggingface-microsoft-aion-1-0-instruct-2-3b"
+  },
+  "hf-sentinel7-h3": {
+    "repository": "Sentinel7/h3",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Sentinel7/h3",
+    "sourceVersion": "hf-sentinel7-h3",
+    "license": "Open-Source",
+    "contentHash": "6df8bdba548e4e4a652f923d08b793caf630ae0df1f3c9f8392a8bef44f1b522",
+    "lastHarvestedAt": "2026-11-20T14:07:29.636Z",
+    "learningId": "learn-huggingface-sentinel7-h3"
   }
 }

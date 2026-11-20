@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-MJCJ",
-    "timestamp": "2026-11-18T13:25:50.323Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d98d374004dc259ee1628ff333ab7ea828dbc043c5d786d397a9be2ccd4318f9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-X9F2",
-    "timestamp": "2026-11-18T13:34:10.670Z",
-    "repository": "HemmingwayAI/Hemmingway-1",
-    "learningId": "learn-huggingface-altworld-hemmingway-1",
-    "contentHash": "390893a460e02b6ff744bd5a3705990d4245f20ece55cd6db8a3b5a2b77b8045",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-XEXA",
     "timestamp": "2026-11-18T13:34:17.806Z",
     "repository": "FaridSafi/react-native-gifted-chat",
@@ -7492,6 +7462,36 @@
     "contentHash": "2f67dd81d46d48d5488c3a492ad4aee658186d9d857da7faecf60267b6527665",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-VKKN",
+    "timestamp": "2026-11-20T14:04:11.879Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "330a3b21ce5abbdbf4094c91795e53b83d98b881c10344721157157b0d4bf0b5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-ZT5S",
+    "timestamp": "2026-11-20T14:07:29.632Z",
+    "repository": "Sentinel7/h3",
+    "learningId": "learn-huggingface-sentinel7-h3",
+    "contentHash": "6df8bdba548e4e4a652f923d08b793caf630ae0df1f3c9f8392a8bef44f1b522",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

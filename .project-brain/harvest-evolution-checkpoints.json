@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T13:48:32.830Z",
+  "last_updated": "2026-11-20T14:07:37.822Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T12:15:57.033Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-20T07:23:43.552Z",
+      "processed_at": "2026-11-20T14:07:36.364Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -748,9 +748,9 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-20T00:46:47.878Z",
-      "promoted_canonical": 2,
-      "staged_for_review": 0
+      "processed_at": "2026-11-20T14:07:35.055Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "dragonflyoss-dragonfly-learnings.md": {
       "processed_at": "2026-11-19T21:24:15.601Z",
@@ -3586,9 +3586,14 @@
       "processed_at": "2026-11-20T13:27:15.208Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-sentinel7-h3-learnings.md": {
+      "processed_at": "2026-11-20T14:07:33.642Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2529,
+  "total_dossiers_evaluated": 2532,
   "total_canonical_promoted": 426,
-  "total_staged_for_review": 1914
+  "total_staged_for_review": 1917
 }

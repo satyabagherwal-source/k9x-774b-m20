@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T13:48:32.427Z",
+  "last_updated": "2026-11-20T14:07:37.083Z",
   "directives": [
     {
       "id": "CD-001",
@@ -32758,11 +32758,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-KKSP",
+      "id": "CD-ZYWR",
       "directive_title": "build): download ONNX Runtime archives from npmmirror",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-KKSP-build-download-onnx-runtime-archives-from-npmmirror.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZYWR-build-download-onnx-runtime-archives-from-npmmirror.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -37690,6 +37690,79 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C77A57-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-VKRW",
+      "directive_title": "Float columns keep their source decimal places",
+      "source_repo": "dathere/qsv",
+      "source_commit": "18803975",
+      "staged_file": "11_INBOX/candidate-directives/CD-VKRW-float-columns-keep-their-source-decimal-places.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-5F78C3",
+      "directive_title": "Numerical Instability in Associative Scan Recurrence (BUG-H3-02)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-sentinel7-h3",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5F78C3-numerical-instability-in-associative-sca.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-ZWKY",
+      "directive_title": "Hub Remote Artifact Pre-Flight Verification Invariant",
+      "source_repo": "hf-sentinel7-h3-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZWKY-hub-remote-artifact-pre-flight-verification-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-ZWKZ",
+      "directive_title": "State-Space Shift-Diagonal Invariant in H3 Recurrence",
+      "source_repo": "hf-sentinel7-h3-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZWKZ-state-space-shift-diagonal-invariant-in-h3-recurrence.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-ZWL0",
+      "directive_title": "Hexagonal H3 Spatial Tokenizer Boundary Non-Overlapping Invariant",
+      "source_repo": "hf-sentinel7-h3-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZWL0-hexagonal-h3-spatial-tokenizer-boundary-non-overlapping-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-ZXWU",
+      "directive_title": "synthesize): Float columns keep their source decimal places",
+      "source_repo": "dathere-qsv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZXWU-synthesize-float-columns-keep-their-source-decimal-places.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-949B7C",
+      "directive_title": "build): download ONNX Runtime archives from npmmirror",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-949B7C-build-download-onnx-runtime-archives-fro.md",
       "staged_date": "2026-11-20"
     }
   ]

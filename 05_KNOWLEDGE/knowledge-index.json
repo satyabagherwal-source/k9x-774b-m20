@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T13:48:32.711Z",
-  "total_verified_learnings": 9039,
+  "last_updated": "2026-11-20T14:07:37.654Z",
+  "total_verified_learnings": 9040,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22445,
+  "total_items": 22459,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d44a49b46d3480dde92c2b0f48d276345926d4830cafc0ef04f60cbfa698622",
+      "content_hash": "897c7a20b7c5287973b46f7a1c62d2e87424ca3311c202809448e677bafe9faf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T07:23:44.801Z"
+      "persisted_at": "2026-11-20T14:07:37.491Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc1bf4eb77c678cae077a867e6c0076fd15f15d98ccbeb27147cf47a8fe8af5d",
+      "content_hash": "d6f87a89f0f5e872ce7d931fb484779c8835581854bddefa9b6d651148bafe1b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T07:23:44.981Z"
+      "persisted_at": "2026-11-20T14:07:37.654Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "588d2c40",
-      "content_hash": "f2f0830966ccf4e706a30d44785b0e9c8acd4aa54482fe53f7850e5e43907ffd",
+      "source_version": "18803975",
+      "content_hash": "ffad53b8833449e33be5f45e62141337194bea377d73a43d50f7234855773860",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T00:45:37.613Z"
+      "persisted_at": "2026-11-20T14:04:12.529Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "9ce6d481310b625c7ff2b69c94b2b19060c64b2d60f0e0c1181cc92e5aee9959",
+      "content_hash": "9a84d81291d3a9e59abf2512e88053d2e17e47e878adc18342bb76536dd07e61",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T00:46:48.820Z"
+      "persisted_at": "2026-11-20T14:07:36.175Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -219667,8 +219667,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "588d2c40",
-      "content_hash": "52881fb3acd5c835f0669d582ef767af2a53424e55c1de98d48226e1e64ade2e",
+      "source_version": "18803975",
+      "content_hash": "330a3b21ce5abbdbf4094c91795e53b83d98b881c10344721157157b0d4bf0b5",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -219791,6 +219791,11 @@
           "number": 9480,
           "title": "Asynchronous Concurrency Slot Reservation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9581,
+          "title": "Float columns keep their source decimal places",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219798,7 +219803,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T00:45:36.665Z",
+      "verified_at": "2026-11-20T14:04:11.644Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220749,10 +220754,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "5d6c8155",
-      "content_hash": "c1e31fe72385679d11c780cc2c44db6bbf133870b4e013a94bbb1ad8e4dc1786",
+      "source_version": "18803975",
+      "content_hash": "2c98304a052914de311c397e67d3616428d798bf43b83a06281f6e34fb3a072f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T00:41:14.295Z"
+      "persisted_at": "2026-11-20T14:04:12.339Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -220822,9 +220827,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "63ad935990cf2937bc14a5af9d5cc7e2a3d2b3cbb649a20d80ba2439982f8afa",
+      "content_hash": "b4005f5c9e77357066a0a9418808488f0b099be5c3ec0ddb7b9195fb9abaacef",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T17:28:20.036Z"
+      "persisted_at": "2026-11-20T14:07:35.987Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -294897,13 +294902,13 @@
       "item_id": "candidate_directive-build-download-onnx-runtime-archives-from-npmmirror",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-KKSP-build-download-onnx-runtime-archives-from-npmmirror.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZYWR-build-download-onnx-runtime-archives-from-npmmirror.md",
       "title": "build): download ONNX Runtime archives from npmmirror",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "7058156a14bdc80c52f55b2b93f485b725bee50c5141a28394267704e17df6f8",
+      "content_hash": "07ffb981b95be5a150c5c7ce464e3e0c39cabda46049f9417a665d18189767bf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T07:23:44.330Z"
+      "persisted_at": "2026-11-20T14:07:37.083Z"
     },
     "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -294913,9 +294918,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "72e02de540a9f06a5cb994db518aeff1f38633cc95195bdaa62859677403a6c3",
+      "content_hash": "4fdf52d052bed34f2d365b8f8e85d2f679c49bfa6b97490460c039f7e7c0c790",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T07:23:44.554Z"
+      "persisted_at": "2026-11-20T14:07:37.284Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -304185,6 +304190,213 @@
       "content_hash": "254327d9ea2efbb0bcabb65908479d7b471dd36d0726d9ed5df09c2dff9bb757",
       "domain_letter": "J",
       "persisted_at": "2026-11-20T13:48:31.918Z"
+    },
+    "rule-9581": {
+      "learning_id": "rule-9581",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9581,
+      "title": "Float columns keep their source decimal places",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "18803975",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T14:04:11.644Z"
+    },
+    "candidate_directive-float-columns-keep-their-source-decimal-places": {
+      "item_id": "candidate_directive-float-columns-keep-their-source-decimal-places",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VKRW-float-columns-keep-their-source-decimal-places.md",
+      "title": "Float columns keep their source decimal places",
+      "repository": "dathere/qsv",
+      "source_version": "18803975",
+      "content_hash": "9b13722196da91089a1864abc150d844a1f54bc0c358ec09fb757af172d39769",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T14:04:12.147Z"
+    },
+    "learn-huggingface-sentinel7-h3": {
+      "learning_id": "learn-huggingface-sentinel7-h3",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Sentinel7/h3",
+      "repository": "Sentinel7/h3",
+      "slug": "hf-sentinel7-h3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Sentinel7/h3",
+      "source_version": "hf-sentinel7-h3",
+      "content_hash": "6df8bdba548e4e4a652f923d08b793caf630ae0df1f3c9f8392a8bef44f1b522",
+      "dossier_path": "07_PROJECT_LEARNING/hf-sentinel7-h3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-sentinel7-h3-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9582,
+          "title": "Hub Remote Artifact Pre-Flight Verification Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9583,
+          "title": "State-Space Shift-Diagonal Invariant in H3 Recurrence",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9584,
+          "title": "Hexagonal H3 Spatial Tokenizer Boundary Non-Overlapping Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T14:07:29.396Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9582": {
+      "learning_id": "rule-9582",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9582,
+      "title": "Hub Remote Artifact Pre-Flight Verification Invariant",
+      "source_url": "https://huggingface.co/Sentinel7/h3",
+      "source_version": "hf-sentinel7-h3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T14:07:29.396Z"
+    },
+    "rule-9583": {
+      "learning_id": "rule-9583",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9583,
+      "title": "State-Space Shift-Diagonal Invariant in H3 Recurrence",
+      "source_url": "https://huggingface.co/Sentinel7/h3",
+      "source_version": "hf-sentinel7-h3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T14:07:29.396Z"
+    },
+    "rule-9584": {
+      "learning_id": "rule-9584",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9584,
+      "title": "Hexagonal H3 Spatial Tokenizer Boundary Non-Overlapping Invariant",
+      "source_url": "https://huggingface.co/Sentinel7/h3",
+      "source_version": "hf-sentinel7-h3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T14:07:29.396Z"
+    },
+    "domain_intelligence-architecture-intelligence-sentinel7-h3-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-sentinel7-h3-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hf-sentinel7-h3-architecture-intelligence-sentinel7-h3-core-invariants.md",
+      "title": "Architecture Intelligence: Sentinel7/h3 Core Invariants",
+      "repository": "Sentinel7/h3",
+      "source_version": "hf-sentinel7-h3",
+      "content_hash": "69f6f662dbd4462097c011df9213e60f0dea2cbe183c65bebbe52bc4419c37d1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T14:07:30.187Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sentinel7-h3": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sentinel7-h3",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-sentinel7-h3-verification-protocol-empirical-defect-shield-for-sentinel7-h3.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Sentinel7/h3",
+      "repository": "Sentinel7/h3",
+      "source_version": "hf-sentinel7-h3",
+      "content_hash": "a49d186e737a060acb576614e6080774ef5b8fc6caa06f352463c682e4232111",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T14:07:30.388Z"
+    },
+    "candidate_directive-hub-remote-artifact-pre-flight-verification-invariant": {
+      "item_id": "candidate_directive-hub-remote-artifact-pre-flight-verification-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZWKY-hub-remote-artifact-pre-flight-verification-invariant.md",
+      "title": "Hub Remote Artifact Pre-Flight Verification Invariant",
+      "repository": "hf-sentinel7-h3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8ba07728b047d9ff34ed5f62e968ea6a9cfb407e198a51c4d47360c793c38faa",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T14:07:34.069Z"
+    },
+    "candidate_directive-state-space-shift-diagonal-invariant-in-h3-recurrence": {
+      "item_id": "candidate_directive-state-space-shift-diagonal-invariant-in-h3-recurrence",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZWKZ-state-space-shift-diagonal-invariant-in-h3-recurrence.md",
+      "title": "State-Space Shift-Diagonal Invariant in H3 Recurrence",
+      "repository": "hf-sentinel7-h3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dc8e77a7f7824c2a1b27f19b3de28af0c2084912b7018e338ddcc7306d472d58",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T14:07:34.269Z"
+    },
+    "candidate_directive-hexagonal-h3-spatial-tokenizer-boundary-non-overlapping-invariant": {
+      "item_id": "candidate_directive-hexagonal-h3-spatial-tokenizer-boundary-non-overlapping-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZWL0-hexagonal-h3-spatial-tokenizer-boundary-non-overlapping-invariant.md",
+      "title": "Hexagonal H3 Spatial Tokenizer Boundary Non-Overlapping Invariant",
+      "repository": "hf-sentinel7-h3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a3644f96f3361247b783c79867f5c8c93ece88d58cd77df94305f8a682c7945d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T14:07:34.480Z"
+    },
+    "domain_intelligence-architecture-intelligence-hf-sentinel7-h3-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-hf-sentinel7-h3-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hf-sentinel7-h3-learnings-architecture-intelligence-hf-sentinel7-h3-learnings-co.md",
+      "title": "Architecture Intelligence: hf-sentinel7-h3-learnings Core Invariants",
+      "repository": "hf-sentinel7-h3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "619c24ce9803cb6b6f9e98f9713fdc9e5db7187b9efb9b8bebeb62677d5f5173",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T14:07:34.683Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-sentinel7-h3-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-sentinel7-h3-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-sentinel7-h3-learnings-verification-protocol-empirical-defect-shield-for-hf-s.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-sentinel7-h3-learnings",
+      "repository": "hf-sentinel7-h3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b1e5eee063df50f82e294a664626582940aed5b5f15c1aa9db7e699eac734139",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T14:07:34.868Z"
+    },
+    "candidate_directive-synthesize-float-columns-keep-their-source-decimal-places": {
+      "item_id": "candidate_directive-synthesize-float-columns-keep-their-source-decimal-places",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZXWU-synthesize-float-columns-keep-their-source-decimal-places.md",
+      "title": "synthesize): Float columns keep their source decimal places",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d27d2d5c59c5dbe2c98d92d6a5fdea55d06773a97ac8337a38a29229fe87f536",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T14:07:35.796Z"
     }
   },
   "ai-builder-brain": {

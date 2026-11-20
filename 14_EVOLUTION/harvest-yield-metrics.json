@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T13:48:26.878Z",
-  "total_cycles_completed": 11006,
-  "total_learnings_persisted": 11006,
-  "total_rules_promoted": 10367,
+  "last_updated": "2026-11-20T14:07:29.643Z",
+  "total_cycles_completed": 11008,
+  "total_learnings_persisted": 11008,
+  "total_rules_promoted": 10371,
   "history": [
-    {
-      "timestamp": "2026-11-19T16:16:50.585Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T16:16:58.031Z",
-      "repository": "kubeedge/kubeedge",
-      "learningId": "learn-github-kubeedge-kubeedge",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T16:17:02.942Z",
       "repository": "langchain4j/langchain4j",
@@ -1403,6 +1389,20 @@
       "repository": "Open-Source-Legal/OpenContracts",
       "learningId": "learn-github-open-source-legal-opencontracts",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T14:04:11.890Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T14:07:29.643Z",
+      "repository": "Sentinel7/h3",
+      "learningId": "learn-huggingface-sentinel7-h3",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
