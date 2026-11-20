@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T03:21:56.388Z",
+  "last_updated": "2026-11-20T03:32:43.001Z",
   "total_verified_learnings": 9023,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22169,
+  "total_items": 22174,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XLUP-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-BH38-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "19583898837dcada2ab871ca88b981d9112bb51c9828c4f2dd7bff352c1b9539",
+      "content_hash": "c6c73f4fa719c60a7df2c7e91299afc526a970b1e3f55e2293dcc57b8249f35c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T03:21:55.683Z"
+      "persisted_at": "2026-11-20T03:32:42.696Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9ce7571f5389206ba034bf66e956208f821417ebd46b5018601de61f9ff40e04",
+      "content_hash": "4e69706756b1ed412b407aefd8df6d728c61cb71618f0b065ecc4f046e8e6e8a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T03:21:55.826Z"
+      "persisted_at": "2026-11-20T03:32:42.840Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2c7d9b6010e8adcc4f21e5d7eb40c710c1a99604b225a6129c77e558e7ac8a26",
+      "content_hash": "5498149d39a8eed015d32ccc2ecab49bf3195e0b353a6ac0111d807b8f52b3a2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T03:21:55.974Z"
+      "persisted_at": "2026-11-20T03:32:43.001Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -228858,8 +228858,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "ae4b403e",
-      "content_hash": "71964a4528888b62625ed2f45f250231b415ff49d55ab657a417c0468e74267a",
+      "source_version": "cafb91c4",
+      "content_hash": "3585b2d9260a7de769e5d37798419c48b0e189621e4a70df1e1aa5ecae6a956e",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -228877,6 +228877,11 @@
           "number": 9135,
           "title": "Add `AdminBuilder::with_object_store_max_retries`",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9506,
+          "title": "Fail when an observed boundary object is removed",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228884,7 +228889,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:00:15.716Z",
+      "verified_at": "2026-11-20T03:32:37.282Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228926,10 +228931,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-architecture-intelligence-slatedb-slatedb-core-invariants.md",
       "title": "Architecture Intelligence: slatedb/slatedb Core Invariants",
       "repository": "slatedb/slatedb",
-      "source_version": "ae4b403e",
-      "content_hash": "a00d880c6785a66e0e6a3a02413800616bedd36cac14ecdd6eb8006d93974d4f",
+      "source_version": "cafb91c4",
+      "content_hash": "2318992cce072322154c5226b6edd3b0aba9a83cda37f6899cf71ca102dd3f8d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:00:16.259Z"
+      "persisted_at": "2026-11-20T03:32:37.816Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb",
@@ -228938,10 +228943,10 @@
       "relative_path": "08_VERIFICATION/slatedb-slatedb-verification-protocol-empirical-defect-shield-for-slatedb-slated.md",
       "title": "Verification Protocol: Empirical Defect Shield for slatedb/slatedb",
       "repository": "slatedb/slatedb",
-      "source_version": "ae4b403e",
-      "content_hash": "1140e2c52cf5e051de4f9de47f59cd8c3eebc45f257c637c72a982a7286a9026",
+      "source_version": "cafb91c4",
+      "content_hash": "9d584729a3271ac059b48eaef7628b491faafce6d6fed1cdc915dccd524fa1be",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:00:16.451Z"
+      "persisted_at": "2026-11-20T03:32:37.956Z"
     },
     "learn-github-nucleoidai-nucleoid": {
       "learning_id": "learn-github-nucleoidai-nucleoid",
@@ -243322,8 +243327,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "41a0fa4b",
-      "content_hash": "2faef2576996b0422c3309ffc1e5360f2e399cbb057ef2d43612eb6f7ccdd1ac",
+      "source_version": "05a20823",
+      "content_hash": "e285aa2128a4e61b1a83addcab11b40e1f26cd3fa30d06d3d0553a746213b52a",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -243341,6 +243346,11 @@
           "number": 9146,
           "title": "Install Rust in the update-crate workflow to get the same Rust as build.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9505,
+          "title": "Add age of crate if not updated because too recent.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243348,7 +243358,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:57:43.778Z",
+      "verified_at": "2026-11-20T03:32:26.170Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243402,10 +243412,10 @@
       "relative_path": "08_VERIFICATION/orange-opensource-hurl-verification-protocol-empirical-defect-shield-for-orange-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Orange-OpenSource/hurl",
       "repository": "Orange-OpenSource/hurl",
-      "source_version": "41a0fa4b",
-      "content_hash": "27dd4d64c8fe2eb07d1ffd23e17d0afd94771198a9230d00c9efdb3b38226d6e",
+      "source_version": "05a20823",
+      "content_hash": "02ff39e42abe0e39dd26e6e47662172e2c43346651ed7a40a740f894dbe6610a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:57:44.452Z"
+      "persisted_at": "2026-11-20T03:32:26.864Z"
     },
     "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari",
@@ -243427,9 +243437,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for orange-opensource-hurl-learnings",
       "repository": "orange-opensource-hurl-learnings",
       "source_version": "HEAD",
-      "content_hash": "45090a7d067ab3c4870b8c7bad4ea0bd569f57e7565491606995eb924cb98de5",
+      "content_hash": "7ad8af645ee4a2a3de1bfd530c1a39ce90c2af23706ef8ddf9718ff904ab1497",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:58:00.217Z"
+      "persisted_at": "2026-11-20T03:32:41.478Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian",
@@ -250564,9 +250574,9 @@
       "title": "Architecture Intelligence: slatedb-slatedb-learnings Core Invariants",
       "repository": "slatedb-slatedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ec2b5fd612b0a3e691569fd756794fc832b60f8d66f76569e03f0b51c200517",
+      "content_hash": "2f64264ad2858fda6961d0bd810b224256e3f1462819b1d7ab6ce20e9f41760f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:00:20.049Z"
+      "persisted_at": "2026-11-20T03:32:42.033Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb-learnings",
@@ -250576,9 +250586,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for slatedb-slatedb-learnings",
       "repository": "slatedb-slatedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "c652f58e26b3ab470a5a8fd8db6238c4078e581bac0627b978ac7aeedec71d36",
+      "content_hash": "f95ab63524374a375590abfe50bbada372e6dfc6282f271fa122eb9c119f6193",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:00:20.191Z"
+      "persisted_at": "2026-11-20T03:32:42.175Z"
     },
     "candidate_directive-hook-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci": {
       "item_id": "candidate_directive-hook-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci",
@@ -284461,10 +284471,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-architecture-intelligence-orange-opensource-hurl-core-inv.md",
       "title": "Architecture Intelligence: Orange-OpenSource/hurl Core Invariants",
       "repository": "Orange-OpenSource/hurl",
-      "source_version": "41a0fa4b",
-      "content_hash": "2669839600f3a2af1d648fd9bc406488faf272ba40f44bc9555ecb185596dfd6",
+      "source_version": "05a20823",
+      "content_hash": "1a3f9cd1dd9ddbbfb583233cea8bf8a54c1be7b56ac9217522a547a34b7c781a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:57:44.301Z"
+      "persisted_at": "2026-11-20T03:32:26.722Z"
     },
     "rule-9147": {
       "learning_id": "rule-9147",
@@ -284512,9 +284522,9 @@
       "title": "Architecture Intelligence: orange-opensource-hurl-learnings Core Invariants",
       "repository": "orange-opensource-hurl-learnings",
       "source_version": "HEAD",
-      "content_hash": "a8b489ddaa690784539a3d2338ba228e1e48b83074edb851fa88b6400cfb7fbc",
+      "content_hash": "26e78a2eab161089884fa4d594a026b3694d3765f83b42f3a4216fedf3c8c764",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:58:00.075Z"
+      "persisted_at": "2026-11-20T03:32:41.322Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants",
@@ -300094,6 +300104,70 @@
       "content_hash": "8dae9526bf05bc9a218128f056d1efda06185a2569e9004b21cff40902a9399d",
       "domain_letter": "G",
       "persisted_at": "2026-11-20T03:13:18.064Z"
+    },
+    "rule-9505": {
+      "learning_id": "rule-9505",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9505,
+      "title": "Add age of crate if not updated because too recent.",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "05a20823",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T03:32:26.170Z"
+    },
+    "candidate_directive-add-age-of-crate-if-not-updated-because-too-recent": {
+      "item_id": "candidate_directive-add-age-of-crate-if-not-updated-because-too-recent",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BFX6-add-age-of-crate-if-not-updated-because-too-recent.md",
+      "title": "Add age of crate if not updated because too recent.",
+      "repository": "orange-opensource-hurl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "da7bbdec024725bb784416cf5a4558b611bb6522326182e28c8e5903298ac254",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T03:32:41.181Z"
+    },
+    "rule-9506": {
+      "learning_id": "rule-9506",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9506,
+      "title": "Fail when an observed boundary object is removed",
+      "source_url": "https://github.com/slatedb/slatedb",
+      "source_version": "cafb91c4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T03:32:37.282Z"
+    },
+    "candidate_directive-fail-when-an-observed-boundary-object-is-removed": {
+      "item_id": "candidate_directive-fail-when-an-observed-boundary-object-is-removed",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BD7N-fail-when-an-observed-boundary-object-is-removed.md",
+      "title": "Fail when an observed boundary object is removed",
+      "repository": "slatedb/slatedb",
+      "source_version": "cafb91c4",
+      "content_hash": "1b15ae4d7dfcd5d1ac855ca0ada552db31f18abffe021602dae875cfea4776e9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T03:32:37.671Z"
+    },
+    "candidate_directive-minor-fail-when-an-observed-boundary-object-is-removed": {
+      "item_id": "candidate_directive-minor-fail-when-an-observed-boundary-object-is-removed",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BGGX-minor-fail-when-an-observed-boundary-object-is-removed.md",
+      "title": "minor: Fail when an observed boundary object is removed",
+      "repository": "slatedb-slatedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c0951213ef9eca0c7a77e3c72e121def6eb9a6d6ff0218e5cb82c9c84255d5ab",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T03:32:41.892Z"
     }
   },
   "ai-builder-brain": {

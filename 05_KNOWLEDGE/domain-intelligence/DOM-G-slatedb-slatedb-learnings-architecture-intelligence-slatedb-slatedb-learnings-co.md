@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T06:00:19.800Z",
+  "timestamp": "2026-11-20T03:32:41.779Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-slatedb-slatedb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [slatedb-slatedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T06:00:19.800Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T03:32:41.779Z`  
 > **Learning ID**: `LEARN-EVO-slatedb-slatedb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 59%
+- **Confidence Rating**: 75%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from slatedb-slatedb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source**: github ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
-> **Source Version**: `ae4b403e`  
+> **Source Version**: `cafb91c4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T06:00:14.923Z  
+> **Timestamp**: 2026-11-20T03:32:36.493Z  
 > **Learning ID**: `learn-github-slatedb-slatedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T06:00:14.917Z  
+> **Harvest Timestamp**: 2026-11-20T03:32:36.487Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3657 stars
+- **Stars / Engagement**: 3660 stars
 
 ---
 
@@ -187,22 +187,27 @@ mod tests {
 
 ### Core Architecture Module: `slatedb-dst/src/utils.rs`
 ```
+use std::path::PathBuf;
 use std::str::FromStr;
-use std::sync::Once;
+use std::sync::{Arc, Once};
 use std::time::Duration;
 
+use object_store::ObjectStore;
 use rand::{Rng, RngExt};
 use slatedb::config::{
     CompactionWorkerOptions, CompactorOptions, CompressionCodec, DbReaderOptions, DurabilityLevel,
     GarbageCollectorDirectoryOptions, GarbageCollectorOptions, GarbageCollectorScheduleOptions,
-    ScanOptions, SizeTieredCompactionSchedulerOptions,
+    ReadOptions, ScanOptions, SizeTieredCompactionSchedulerOptions,
 };
-use slatedb::{DbRand, IterationOrder, Settings};
+use slatedb::{DbRand, IterationOrder, Settings, SlateDbMirrorPolicy};
+use slatedb_common::clock::SystemClock;
+use slatedb_mirror::{ObjectStoreMirror, Vfs};
 use tracing_subscriber::fmt::format::FmtSpan;
 use tracing_subscriber::EnvFilter;
 
-use crate::{Operation, StreamDirection, Toxic, ToxicKind};
+use crate::{DeterministicVfs, Operation, StreamDirection, Toxic, ToxicKind};
 
+const KIB_1: usize = 1024;
 const KIB_8: usize = 8 * 1024;
 const MIB_1: usize = 1024 * 1024;
 const MIB_500: usize = 500 * MIB_1;
@@ -278,6 +283,16 @@ pub fn build_reader_options(rand: &DbRand) -> DbReaderOptions {
     }
 }
 
+/// Builds randomized deterministic point-read options for DST scenarios.
+pub fn build_read_options(rand: &DbRand, read_durability: DurabilityLevel) -> ReadOptions {
+    let mut rng = rand.rng();
+    ReadOptions::new()
+        .with_durability_filter(read_durability)
+        .with_cache_blocks(rng.random_bool(0.5))
+        // Cover serial and concurrent reads. Match the scan limit of 4 to bound DST work.
+        .with_max_concurrent_sources(rng.random_range(1..=4))
+}
+
 /// Builds randomized deterministic scan options for DST scenarios.
 pub fn build_scan_options(rand: &DbRand, read_durability: DurabilityLevel) -> ScanOptions {
     let mut rng = rand.rng();
@@ -342,77 +357,62 @@ pub fn build_settings_compactor(rng: &mut impl Rng) -> CompactorOptions {
     }
 }
 
-/// Builds randomized deterministic garbage collector options for DST scenarios.
-pub fn build_settings_gc(rng: &mut impl Rng) -> GarbageCollectorOptions {
-    GarbageCollectorOptions {
-        manifest_options: Some(GarbageCollectorDirectoryOptions {
-            interval: Some(rng.random_range(Duration::from_millis(1)..Duration::from_secs(600))),
-            min_age: rng.random_range(Duration::from_millis(1)..Duration::from_secs(900)),
-            dry_run: false,
-        }),
-        wal_options: Some(GarbageCollectorDirectoryOptions {
-            interval: Some(rng.random_range(Duration::from_millis(1)..Duration::from_secs(600))),
-            min_age: rng.random_range(Duration::from_millis(1)..Duration::from_secs(900)),
-            dry_run: false,
-        }),
-        wal_fence_options: None,
-        compacted_options: Some(GarbageCollectorDirectoryOptions {
-            interval: Some(rng.random_range(Duration::from_millis(1)..Duration::from_secs(600))),
-            min_age: rng.random_range(Duration::from_millis(1)..Duration::from_secs(900)),
-            dry_run: false,
-        }),
-        compactions_options: Some(GarbageCollectorDirectoryOptions {
-            interval: Some(rng.random_range(Duration::from_millis(1)..Duration::from_secs(600))),
-            min_age: rng.random_range(Duration::from_millis(1)..Duration::from_secs(900)),
-            dry_run: false,
-        }),
-        detach_options: Some(GarbageCollectorScheduleOptions {
-            interval: Some(rng.random_range(Duration::from_millis(1)..Duration::from_secs(600))),
-        }),
-        metric_level: None,
-        boundary_files_enabled: true,
-        object_store_max_retries: None,
+/// Enables incremental compaction in `options` and changes the settings that
+/// make incremental commits happen in a short run:
+///
+/// - The worker rolls small output SSTs, so a running compaction stores
+///   output before it finishes.
+/// - The worker heartbeats often. A heartbeat publishes the stored output to
+///   `.compactions`, and the coordinator commits only published output.
+/// - The coordinator polls often, so it sees a running compaction with
+///   published output.
+pub fn enable_incremental_compaction(options: &mut CompactorOptions, rng: &mut impl Rng) {
+    const MAX_INTERVAL: Duration = Duration::from_millis(20);
+    let mut interval = || rng.random_range(Duration::from_millis(1)..=MAX_INTERVAL);
+    options.enable_experimental_incremental_compaction = true;
+    options.poll_interval = interval();
+    options.commit_compacted_interval = interval();
+    if let Some(worker) = options.worker.as_mut() {
+        worker.heartbeat_interval = interval();
+        worker.compactions_poll_interval = interval();
+        worker.max_sst_size = rng.random_range(KIB_1..=KIB_8);
+        // Derive the timeout as `build_settings_compactor` does.
+        let max_worker_heartbeat = worker
+            .heartbeat_interval
+            .max(worker.compactions_poll_interval);
+        options.worker_heartbeat_timeout = max_worker_heartbeat * rng.random_range(3..=10);
     }
 }
 
-/// Builds a deterministic randomized object-store toxic.
-///
-/// Generated toxics may be:
-/// - `Latency`: 1 to 5 ms base latency, 0 to 15 ms jitter, and 0.35 to 0.95
-///   toxicity.
-/// - `Bandwidth`: 16 to 256 KiB/s bandwidth and 0.20 to 0.80 toxicity.
-/// - `SlowClose`: 1 to 10 ms close delay and 0.30 to 0.90 toxicity.
-/// - `ResetPeer`: connection reset failures with 0.005 to 0.035 toxicity.
-///
-/// ## Arguments
-/// - `rand`: The deterministic RNG used to choose each toxic's kind, operation
-///   filter, path filter, direction, and toxicity.
-/// - `root_path`: The object-store root path used by the scenario. When non-empty,
-///   generated path filters may target the root itself or one of SlateDB's standard
-///   subdirectories: `wal`, `manifest`, `compacted`, or `compactions`.
-/// - `index`: The index used in the generated toxic name.
-///
-/// ## Returns
-/// Returns a generated toxic.
-pub fn build_toxic(rand: &DbRand, root_path: &str, index: usize) -> Toxic {
-    let mut rng = rand.rng();
-    let root_path = root_path.trim_matches('/');
+/// Options for the local mirrors of a DST scenario. Pass
+/// [`MirrorOptions::build`] to [`crate::Harness::with_mirror_fn`].
+#[derive(Clone, Debug)]
+pub struct MirrorOptions {
+    /// The local filesystem of the mirrors. It must be deterministic, for
+    /// example [`crate::DeterministicVfs`].
+    pub vfs: Arc<dyn Vfs>,
+    /// The directory in `vfs` that holds one subdirectory for each mirror.
+    pub local_dir: PathBuf,
+    /// The maximum number of concurrent downloads.
+    pub download_concurrency: usize,
+    /// The interval of the remote scan. `None` disables the scan.
+    pub remote_scan_interval: Option<Duration>,
+    /// How often the policy reads `.compactions` to prefetch compaction
+    /// output. `None` disables the prefetch.
+    pub compactions_poll_interval: Option<Duration>,
+}
 
-    let (kind_name, kind, direction, toxicity) = match rng.random_range(0..10) {
-        0..=4 => {
-            let direction = if rng.random_bool(0.5) {
-                StreamDirection::Upstream
-            } else {
-                StreamDirection::Downstream
-            };
-            (
-                "latency",
-                ToxicKind::Latency {
-                    latency: Duration::from_millis(rng.random_range(1_u64..=5)),
-                    jitter: Duration::from_millis(rng.random_range(0_u64..=15)),
-                },
-                direction,
-           
+impl MirrorOptions {
+    /// Builds a mirror over `remote` with a [`SlateDbMirrorPolicy`]. The mirror
+    /// keeps its files in the `name` subdirectory of `local_dir`.
+    pub async fn build(
+        &self,
+        name: &str,
+        remote: Arc<dyn ObjectStore>,
+        system_clock: Arc<dyn SystemClock>,
+    ) -> Arc<dyn ObjectStore> {
+        let policy = SlateDbMirrorPolicy::builder()
+            .with_compact
 ```
 
 ### Core Architecture Module: `slatedb/src/compaction_worker.rs`
@@ -2374,66 +2374,493 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae4b403e` (2026-11-18)
-**Commit Message**: Add `AdminBuilder::with_object_store_max_retries` (#2274)
+### Incident Patch 1: `cafb91c4` (2026-11-19)
+**Commit Message**: minor: Fail when an observed boundary object is removed (#2268)
 
-**File**: `slatedb/src/admin.rs` (modified, +20/-0)
+    `ObjectStoreBoundaryObject::advance` loops forever if something removes the boundary object
+  after this process observed it. The conditional update gets `Precondition`, and `read_boundary`
+  treats `NotFound` as zero without changing the cache. Thus `advance` sends the same update again,
+  with no back-off. `RetryingObjectStore` does not retry these errors, so `max_retries` does not
+  stop the loop.
+  
+  SlateDB never deletes the boundary object. A reset to zero stops fencing stale writes, so fail
+  instead of silently recovering. `read_boundary` now returns `InvalidObjectState` on `NotFound`
+  if the cache held a boundary before the GET. `advance` and `check` both read through
+  `read_boundary`, so both fail. A process that never observed the boundary still reads zero.
+
+**File**: `slatedb-txn-obj/src/object_store.rs` (modified, +56/-5)
 ```diff
-@@ -1482,6 +1482,26 @@ mod tests {
-         assert_eq!(request_count(&recorder, "admin", "main", "list"), Some(2));
+@@ -243,11 +243,23 @@ impl ObjectStoreBoundaryObject {
+                     Err(TransactionalObjectError::InvalidObjectState)
+                 }
+             },
+-            // A missing boundary is treated as zero. Don't use cache because
+-            // a write that occurred before a boundary file exists is valid even if
+-            // we later have a cached boundary above it. Assume the object store is
+-            // infallible here; if the object store loses data, this will return 0
+-            // when it should panic. But object stores should never lose data.
++            // The cache snapshot was taken before the GET. The cache is only set after a
++            // successful GET or put, so the boundary existed before this GET was sent. With
++            // a strongly consistent store, NotFound now means something outside SlateDB
++            // removed it. Fail instead of resetting the boundary to zero, which would stop
++            // fencing stale writes.
++            Err(Error::NotFound { .. }) if cached.is_some() => {
++                error!(
++                    "boundary object removed after it was observed [path={}]",
++                    self.filepath
++                );
++                Err(TransactionalObjectError::InvalidObjectState)
++            }
++            // A missing boundary that this process never observed is treated as zero. Don't
++            // use a cache that was set after the GET was sent, because a write that occurred
++            // before a boundary file exists is valid even if we later have a cached boundary
++            // above it. This arm cannot tell "never created" from "removed before this
++            // process observed it". In the second case, it returns zero and fencing is lost.
+             Err(Error::NotFound { .. }) => Ok((MonotonicId::new(0), None)),
+             Err(e) => Err(TransactionalObjectError::from(e)),
+         }
+@@ -994,6 +1006,45 @@ mod tests {
+         assert!(observed_version.is_none());
      }
  
 +    #[tokio::test]
-+    async fn test_admin_bounded_max_retries_surfaces_transient_failure() {
-+        // With a retry bound, a transient failure that outlasts it is surfaced
-+        // rather than retried forever.
-+        let inner: Arc<dyn ObjectStore> = Arc::new(InMemory::new());
-+        let flaky = Arc::new(FlakyObjectStore::new(inner, 0).with_list_failures(5, 0));
-+        let path = Path::from("/tmp/test_admin_bounded_max_retries_surfaces_transient_failure");
-+        let admin = AdminBuilder::new(path, flaky.clone())
-+            .with_object_store_max_retries(2)
-+            .build();
++    async fn test_boundary_advance_fails_when_observed_boundary_is_removed() {
++        // InMemory returns Precondition for PutMode::Update on a missing object.
++        // S3 behaves the same way through object_store. Before the fix, advance
++        // retried the same update forever.
++        let object_store = Arc::new(InMemory::new());
++        let boundary =
++            ObjectStoreBoundaryObject::new(&Path::from("/root"), object_store.clone(), "manifest");
++        let boundary_path = Path::from("/root/gc/manifest.boundary");
 +
-+        admin
-+            .list_manifests(..)
++        boundary.advance(MonotonicId::new(2)).await.unwrap();
++        object_store.delete(&boundary_path).await.unwrap();
++
++        let err = boundary.advance(MonotonicId::new(4)).await.unwrap_err();
++        assert!(matches!(err, TransactionalObjectError::InvalidObjectState));
++
++        // The removed boundary must not be recreated with a reset value.
++        let err = object_store.get(&boundary_path).await.unwrap_err();
++        assert!(matches!(err, ObjectStoreError::NotFound { .. }));
++    }
++
++    #[tokio::test]
++    async fn test_boundary_check_fails_when_observed_boundary_is_removed() {
++        let object_store = Arc::new(InMemory::new());
++        let boundary =
++            ObjectStoreBoundaryObject::new(&Path::from("/root"), object_store.clone(), "manifest");
++
++        boundary.advance(MonotonicId::new(2)).await.unwrap();
++        object_store
++            .delete(&Path::from("/root/gc/manifest.boundary"))
 +            .await
-+            .expect_err("bounded retries should exhaust and surface the transient failure");
++            .unwrap();
 +
-+        // 1 initial attempt + 2 retries = 3 total attempts.
-+        assert_eq!(flaky.list_attempts(), 3);
++        // An id above the cached boundary passes the cache check, so check reads the
++        // store and finds the boundary gone.
++        let err = boundary.check(MonotonicId::new(3)).await.unwrap_err();
++        assert!(matches!(err, TransactionalObjectError::InvalidObjectState));
 +    }
 +
      #[tokio::test]
-     async fn test_admin_create_detached_checkpoint_retries_transient_put() {
-         // A transient put failure during checkpoint creation should be retried
+     async fn test_list_ranges_sorted() {
+         let store = new_store();
 ```
 
-**File**: `slatedb/src/db/builder.rs` (modified, +8/-0)
+---
+
+### Incident Patch 2: `6d8b3dfc` (2026-11-19)
+**Commit Message**: Add DST to incremental compaction and the mirror  (#2244)
+
+**File**: `.github/workflows/dst-hourly.yaml` (modified, +0/-2)
 ```diff
-@@ -1003,6 +1003,14 @@ impl<P: Into<Path>> AdminBuilder<P> {
+@@ -22,8 +22,6 @@ jobs:
+             test-filter: test_dst_is_deterministic
+           - name: rescaling
+             test-filter: test_dst_rescaling_preserves_data
+-          - name: segments
+-            test-filter: test_dst_segments_is_deterministic
+     # Hard backstop for the whole job. The "Run DST Tests" step below sets a
+     # shorter timeout so an overrun is reported as a step *failure* (which sends
+     # a notification) rather than a job-level cancellation (which does not).
+```
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -3379,6 +3379,7 @@ dependencies = [
+  "rstest",
+  "slatedb",
+  "slatedb-common",
++ "slatedb-mirror",
+  "tempfile",
+  "tokio",
+  "tokio-util",
+```
+
+**File**: `slatedb-dst/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -28,6 +28,7 @@ parking_lot = { workspace = true }
+ rand = { workspace = true }
+ slatedb = { workspace = true, features = ["all"] }
+ slatedb-common = { workspace = true, features = ["test-util"] }
++slatedb-mirror = { workspace = true }
+ tempfile = { workspace = true }
+ tokio = { workspace = true, features = ["macros", "rt", "test-util"] }
+ tokio-util = { workspace = true, default-features = false, features = ["rt"] }
+```
+
+**File**: `slatedb-dst/README.md` (modified, +5/-2)
+```diff
+@@ -26,6 +26,8 @@ internal path dependency rather than from crates.io.
+   compactor, shutdown, and bank-transfer/auditor actors
+ - `DeterministicLocalFilesystem`: filesystem-backed `ObjectStore` with stable
+   metadata, in-memory attribute preservation, and deterministic listing behavior
++- `DeterministicVfs`: in-memory `Vfs` for the RFC 0034 local mirror, because
++  `StdVfs` runs its calls on Tokio's blocking pool
+ - `FailingObjectStore`: harness-installed `ObjectStore` wrapper that injects
+   deterministic latency, bandwidth, reset-peer, slow-close, and synthetic HTTP
+   failures
+@@ -434,7 +436,8 @@ RUSTFLAGS="--cfg dst --cfg tokio_unstable" \
+ cargo test -p slatedb-dst --test determinism
+ ```
+ 
+-The scenario tests (`determinism`, `segments`) run one OS thread per listed
+-seed; the `bank` test runs the listed seeds serially. The variable applies to
++The `determinism` test runs one OS thread per listed seed. The seed also picks
++the features of the run, such as the mirror. The `bank` test runs the listed
++seeds serially. The variable applies to
+ every DST test in the invocation, so target one test binary with
+ `--test <name>` when reproducing a single failure.
+```
+
+**File**: `slatedb-dst/src/actors/compactor.rs` (modified, +1/-1)
+```diff
+@@ -124,7 +124,7 @@ impl CompactorActor {
+     }
+ 
+     fn compactor_builder(&self, ctx: &ActorCtx) -> CompactorBuilder<object_store::path::Path> {
+-        let mut builder = CompactorBuilder::new(ctx.path().clone(), ctx.main_object_store())
++        let mut builder = CompactorBuilder::new(ctx.path().clone(), ctx.compactor_object_store())
+             .with_options(self.actor_options.compactor_options.clone())
+             .with_system_clock(ctx.system_clock())
+             .with_seed(ctx.rand().rng().next_u64());
+```
+
+**File**: `slatedb-dst/src/deterministic_vfs.rs` (added, +351/-0)
+```diff
+@@ -0,0 +1,351 @@
++//! An in-memory [`Vfs`] for the local mirror in DST scenarios.
++//!
++//! `StdVfs` runs filesystem calls on Tokio's blocking pool, outside the seeded
++//! current-thread runtime. This breaks determinism. `DeterministicVfs` keeps
++//! every file in memory. Each call yields once before it runs, so other tasks
++//! can run between two calls, as with a real filesystem.
++
++use std::collections::{BTreeMap, BTreeSet};
++use std::io;
++use std::ops::Range;
++use std::path::{Path, PathBuf};
++use std::sync::Arc;
++
++use async_trait::async_trait;
++use bytes::Bytes;
++use parking_lot::Mutex;
++use slatedb_mirror::{Vfs, VfsEntry, VfsLock, VfsWriter};
++use tokio::task::yield_now;
++
++/// The contents of one file. A writer keeps a reference, so it can write to a
++/// file after a rename or a remove, as on a POSIX filesystem. The mirror does
++/// not rely on this: it closes each writer before it renames or removes the
++/// file.
++type Inode = Arc<Mutex<Vec<u8>>>;
++
++#[derive(Debug, Default)]
++struct State {
++    dirs: BTreeSet<PathBuf>,
++    files: BTreeMap<PathBuf, Inode>,
++    locks: BTreeSet<PathBuf>,
++}
++
++impl State {
++    /// Fails with `NotADirectory` if an ancestor of `path` is a file.
++    fn check_ancestors(&self, path: &Path) -> io::Result<()> {
++        match path
++            .ancestors()
++            .skip(1)
++            .find(|dir| self.files.contains_key(*dir))
++        {
++            Some(file) => Err(fs_error(io::ErrorKind::NotADirectory, file, "is a file")),
++            None => Ok(()),
++        }
++    }
++
++    /// Fails if the parent directory of `path` can't hold a new entry: it is
++    /// missing, or an ancestor of `path` is a file.
++    fn check_parent(&self, path: &Path) -> io::Result<()> {
++        self.check_ancestors(path)?;
++        match path.parent() {
++            Some(parent) if !self.dirs.contains(parent) => Err(not_found(parent)),
++            _ => Ok(()),
++        }
++    }
++
++    /// Fails with `IsADirectory` if `path` is a directory.
++    fn check_not_dir(&self, path: &Path) -> io::Result<()> {
++        if self.dirs.contains(path) {
++            return Err(fs_error(
++                io::ErrorKind::IsADirectory,
++                path,
++                "is a directory",
++            ));
++        }
++        Ok(())
++    }
++}
++
++/// An in-memory [`Vfs`]. Clones share the same files. `list` returns files in
++/// name order.
++#[derive(Debug, Clone, Default)]
++pub struct DeterministicVfs {
++    state: Arc<Mutex<State>>,
++}
++
++impl DeterministicVfs {
++    pub fn new() -> Self {
++        Self::default()
++    }
++
++    fn inode(&self, path: &Path) -> io::Result<Inode> {
++        self.state
++            .lock()
++            .files
++            .get(path)
++            .cloned()
++            .ok_or_else(|| not_found(path))
++    }
++}
++
++#[async_trait]
++impl Vfs for DeterministicVfs {
++    async fn create_dir_all(&self, path: &Path) -> io::Result<()> {
++        yield_now().await;
++        let mut state = self.state.lock();
++        if state.files.contains_key(path) {
++            return Err(fs_error(io::ErrorKind::AlreadyExists, path, "is a file"));
++        }
++        state.check_ancestors(path)?;
++        for dir in path.ancestors() {
++            state.dirs.insert(dir.to_path_buf());
++        }
++        Ok(())
++    }
++
++    async fn lock(&self, path: &Path) -> io::Result<Box<dyn VfsLock>> {
++        yield_now().await;
++        let mut state = self.state.lock();
++        state.check_parent(path)?;
++        state.check_not_dir(path)?;
++        if !state.locks.insert(path.to_path_buf()) {
++            return Err(io::Error::new(
++                io::ErrorKind::WouldBlock,
++                format!("{} is locked", path.display()),
++            ));
++        }
++        state.files.entry(path.to_path_buf()).or_default();
++        Ok(Box::new(DeterministicVfsLock {
++            state: Arc::clone(&self.state),
++            path: path.to_path_buf(),
++        }))
++    }
++
++    async fn list(&self, dir: &Path) -> io::Result<Vec<VfsEntry>> {
++        yield_now().await;
++        let state = self.state.lock();
++        if !state.dirs.contains(dir) {
++            return Err(not_found(dir));
++        }
++        Ok(state
++            .files
++            .iter()
++            .filter(|(path, _)| path.parent() == Some(dir))
++            .filter_map(|(path, inode)| {
++                Some(VfsEntry {
++                    name: path.file_name()?.to_str()?.to_string(),
++                    size: inode.lock().len() as u64,
++                })
++            })
++            .collect())
++    }
++
++    async fn read_range(&self, path: &Path, range: Range<u64>) -> io::Result<Bytes> {
++        yield_now().await;
++        let inode = self.inode(path)?;
++        let contents = inode.lock();
++        let (start, end) = (range.start as usize, range.end as usize);
++        if start > end || end > contents.len() {
++            return Err(io::Error::new(
++                io::ErrorKind::UnexpectedEof,
++                format!("{} 
+```
+
+**File**: `slatedb-dst/src/harness.rs` (modified, +62/-1)
+```diff
+@@ -31,6 +31,12 @@ use crate::failing_object_store::{FailingObjectStore, FailingObjectStoreControll
+ 
+ type DbFactoryFuture = Pin<Box<dyn Future<Output = Result<Arc<Db>, Error>> + Send + 'static>>;
+ type StartupFactory = Box<dyn FnOnce(StartupCtx) -> DbFactoryFuture + Send + 'static>;
++type MirrorFuture = Pin<Box<dyn Future<Output = Arc<dyn ObjectStore>> + Send + 'static>>;
++type MirrorFn = Box<
++    dyn Fn(&'static str, Arc<dyn ObjectStore>, Arc<dyn SystemClock>) -> MirrorFuture
++        + Send
++        + 'static,
++>;
+ 
+ #[async_trait]
+ pub trait Actor: Send + 'static {
+@@ -142,6 +148,12 @@ impl ActorCtx {
+         self.shared.startup_ctx.main_object_store()
+     }
+ 
++    /// Returns the main object store for standalone compactors. See
++    /// [`StartupCtx::compactor_object_store`].
++    pub fn compactor_object_store(&self) -> Arc<dyn ObjectStore> {
++        self.shared.startup_ctx.compactor_object_store()
++    }
++
+     /// Returns the wrapped WAL object store, if one was configured.
+     ///
+     /// ## Returns
+@@ -213,6 +225,7 @@ impl ActorCtx {
+ pub struct StartupCtx {
+     path: Path,
+     main_object_store: Arc<dyn ObjectStore>,
++    compactor_object_store: Arc<dyn ObjectStore>,
+     wal_object_store: Option<Arc<dyn ObjectStore>>,
+     system_clock: Arc<dyn SystemClock>,
+     fp_registry: Arc<FailPointRegistry>,
+@@ -240,6 +253,19 @@ impl StartupCtx {
+         Arc::clone(&self.main_object_store)
+     }
+ 
++    /// Returns the object store for standalone compactors.
++    ///
++    /// With [`Harness::with_mirror_fn`], standalone compactors share a second
++    /// mirror, as if they ran on another node. Then each mirror downloads the
++    /// SSTs that the other side writes. Without a mirror, this is the main
++    /// object store.
++    ///
++    /// ## Returns
++    /// - `Arc<dyn ObjectStore>`: The object store for standalone compactors.
++    pub fn compactor_object_store(&self) -> Arc<dyn ObjectStore> {
++        Arc::clone(&self.compactor_object_store)
++    }
++
+     /// Returns the wrapped WAL object store for database startup, if present.
+     ///
+     /// ## Returns
+@@ -392,6 +418,7 @@ pub struct Harness {
+     clock_advance_ms: RangeInclusive<u64>,
+     merge_operator: Option<Arc<dyn MergeOperator + Send + Sync>>,
+     segment_extractor: Option<Arc<dyn PrefixExtractor>>,
++    mirror_fn: Option<MirrorFn>,
+     startup_factory: StartupFactory,
+     actors: Vec<ActorRegistration>,
+ }
+@@ -424,6 +451,7 @@ impl Harness {
+             clock_advance_ms: 1..=5,
+             merge_operator: None,
+             segment_extractor: None,
++            mirror_fn: None,
+             startup_factory: Box::new(move |ctx| Box::pin(factory(ctx))),
+             actors: Vec::new(),
+         }
+@@ -557,6 +585,30 @@ impl Harness {
          self
      }
  
-+    /// Sets the maximum number of wrapper-level retries for each of this admin's
-+    /// object-store operations, on top of the `object_store` client's own HTTP
-+    /// retries. Without it, transient errors are retried indefinitely.
-+    pub fn with_object_store_max_retries(mut self, max_retries: u32) -> Self {
-+        self.object_store_max_retries = Some(max_retries);
++    /// Puts local mirrors (RFC 0034) in front of the main object store.
++    ///
++    /// The harness calls `mirror_fn` twice: with `"db"` and then `"compactor"`,
++    /// each time with the fault-injecting main store and the harness clock. The
++    /// returned stores replace the main store for the database and for standalone
++    /// compactors. See [`StartupCtx::compactor_object_store`].
++    ///
++    /// ## Arguments
++    /// - `mirror_fn`: Builds a mirror from a name, the store to wrap, and the
++    ///   harness clock.
++    ///
++    /// ## Returns
++    /// - `Harness`: The updated harness builder.
++    pub fn with_mirror_fn<F, Fut>(mut self, mirror_fn: F) -> Self
++    where
++        F: Fn(&'static str, Arc<dyn ObjectStore>, Arc<dyn SystemClock>) -> Fut + Send + 'static,
++        Fut: Future<Output = Arc<dyn ObjectStore>> + Send + 'static,
++    {
++        self.mirror_fn = Some(Box::new(move |name, store, clock| {
++            Box::pin(mirror_fn(name, store, clock))
++        }));
 +        self
 +    }
 +
-     /// Sets the compaction filter supplier for the compactor run by this admin.
+     /// Registers one actor task under a unique logical name.
      ///
-     /// When running a standalone compactor via [`Admin::run_compactor`], ensure it is
+     /// ## Arguments
+@@ -627,6 +679,7 @@ impl Harness {
+             clock_advance_ms,
+             merge_operator,
+             segment_extractor,
++            mirror_fn,
+             startup_factory,
+             actors,
+         } = self;
+@@ -655,6 +708,13 @@ impl Harness {
+             failing_main_object_store,
+             system_clock.clone(),
+         ));
++        let (main_object_store, compactor_object_store) = match mirror_fn {
++            Some(mirror_fn) => (
++                mirror_fn("db", main_object_store.clone(), system_clock.clone()).await,
++                mirror_fn("compactor", main_object_store, system_clock.clone()).await,
++            ),
++            None => (main_object_store.clone(), main_object_store),
++        };
+         let wal_object_store = wal_object_store.map(|store| {
+             let failing_wal_object_store: Arc<dyn ObjectStore> = Arc::new(FailingObjectStore::new(
+                 store.clone(),
+@@ -669,7 +729,8 @@ impl Harness {
+ 
+         let startup_ctx = StartupCtx {
+             path: path.clone(),
+-            main_object_store: Arc::clone(&main_object_store),
+```
+
+**File**: `slatedb-dst/src/lib.rs` (modified, +2/-0)
+```diff
+@@ -11,6 +11,7 @@
+ pub mod actors;
+ mod clocked_object_store;
+ mod deterministic_local_filesystem;
++mod deterministic_vfs;
+ pub mod failing_object_store;
+ mod harness;
+ mod prefix_extractor;
+@@ -19,6 +20,7 @@ mod scenarios;
+ pub mod utils;
+ 
+ pub use self::deterministic_local_filesystem::DeterministicLocalFilesystem;
++pub use self::deterministic_vfs::DeterministicVfs;
+ pub use self::failing_object_store::{
+     FailingObjectStore, FailingObjectStoreController, HttpFailBefore, HttpStatusError, Operation,
+     StreamDirection, Toxic, ToxicKind,
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2275** (2026-11-18): Mark the SlateDB Python package as typed (@criccomini)
 - **PR #2274** (2026-11-18): Add `AdminBuilder::with_object_store_max_retries` (@jrandolf)
+- **PR #2268** (2026-11-19): minor: Fail when an observed boundary object is removed (@hachikuji)
+- **PR #2267** (2026-11-19): Randomize DST point-read cache and source concurrency (@siddontang)
 - **PR #2264** (2026-11-14): Bump uniffi-bindgen-go to v0.7.1+v0.31.0 (@JayJamieson)
 - **PR #2262** (2026-11-14): Add JayJamieson to VOUCHED list (@criccomini)
-- **PR #2256** (2026-11-13): Fix missing SST error spinning forever in the mirror (@nomiero)
-- **PR #2253** (2026-11-11): Fix startup synchronization in writer fencing tests (@criccomini)
 
 ---
 
@@ -2453,50 +2880,53 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add `AdminBuilder::with_object_store_max_retries`
+## X. minor: Fail when an observed boundary object is removed
 
 **RULE**:
-When implementing operations in `slatedb/src/admin.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `slatedb-txn-obj/src/object_store.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae4b403e`: Add `AdminBuilder::with_object_store_max_retries`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cafb91c4`: minor: Fail when an observed boundary object is removed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb/src/admin.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb-txn-obj/src/object_store.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
+            // The cache snapshot was taken before the GET. The cache is only set after a
+            // successful GET or put, so the boundary existed before this GET was sent. With
+            // a strongly consistent store, NotFound now means something outside SlateDB
+            // removed it. Fail instead of resetting the boundary to zero, which would stop
+            // fencing stale writes.
+            Err(Error::NotFound { .. }) if cached.is_some() => {
+                error!(
+                    "boundary object removed after it was observed [path={}]",
+                    self.filepath
+                );
+                Err(TransactionalObjectError::InvalidObjectState)
+            }
+            // A missing boundary that this process never observed is treated as zero. Don't
+            // use a cache that was set after the GET was sent, because a write that occurred
+            // before a boundary file exists is valid even if we later have a cached boundary
+            // above it. This arm cannot tell "never created" from "removed before this
+            // process observed it". In the second case, it returns zero and fencing is lost.
     #[tokio::test]
-    async fn test_admin_bounded_max_retries_surfaces_transient_failure() {
-        // With a retry bound, a transient failure that outlasts it is surfaced
-        // rather than retried forever.
-        let inner: Arc<dyn ObjectStore> = Arc::new(InMemory::new());
-        let flaky = Arc::new(FlakyObjectStore::new(inner, 0).with_list_failures(5, 0));
-        let path = Path::from("/tmp/test_admin_bounded_max_retries_surfaces_transient_failure");
-        let admin = AdminBuilder::new(path, flaky.clone())
-            .with_object_store_max_retries(2)
-            .build();
-
-        admin
-            .list_manifests(..)
-            .await
-            .expect_err("bounded retries should exhaust and surface the transient failure");
-
-        // 1 initial attempt + 2 retries = 3 total attempts.
-        assert_eq!(flaky.list_attempts(), 3);
-    }
-
+    async fn tes
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            // A missing boundary is treated as zero. Don't use cache because
+            // a write that occurred before a boundary file exists is valid even if
+            // we later have a cached boundary above it. Assume the object store is
+            // infallible here; if the object store loses data, this will return 0
+            // when it should panic. But object stores should never lose data.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae4b403e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cafb91c4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

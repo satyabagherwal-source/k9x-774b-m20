@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T03:21:56.388Z",
+  "last_updated": "2026-11-20T03:32:42.840Z",
   "total_records": 2062,
   "domains": {
     "A": {
@@ -8795,8 +8795,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "9ce7571f5389206ba034bf66e956208f821417ebd46b5018601de61f9ff40e04",
-      "created_at": "2026-11-20T03:21:55.826Z"
+      "content_hash": "4e69706756b1ed412b407aefd8df6d728c61cb71618f0b065ecc4f046e8e6e8a",
+      "created_at": "2026-11-20T03:32:42.840Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -15132,8 +15132,8 @@
       "title": "Architecture Intelligence: slatedb/slatedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-architecture-intelligence-slatedb-slatedb-core-invariants.md",
       "repository": "slatedb/slatedb",
-      "content_hash": "a00d880c6785a66e0e6a3a02413800616bedd36cac14ecdd6eb8006d93974d4f",
-      "created_at": "2026-11-18T06:00:16.259Z"
+      "content_hash": "2318992cce072322154c5226b6edd3b0aba9a83cda37f6899cf71ca102dd3f8d",
+      "created_at": "2026-11-20T03:32:37.816Z"
     },
     "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants",
@@ -22502,8 +22502,8 @@
       "title": "Architecture Intelligence: slatedb-slatedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-learnings-architecture-intelligence-slatedb-slatedb-learnings-co.md",
       "repository": "slatedb-slatedb-learnings",
-      "content_hash": "0ec2b5fd612b0a3e691569fd756794fc832b60f8d66f76569e03f0b51c200517",
-      "created_at": "2026-11-18T06:00:20.049Z"
+      "content_hash": "2f64264ad2858fda6961d0bd810b224256e3f1462819b1d7ab6ce20e9f41760f",
+      "created_at": "2026-11-20T03:32:42.033Z"
     },
     "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-": {
       "record_id": "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-",
@@ -30021,8 +30021,8 @@
       "title": "Architecture Intelligence: Orange-OpenSource/hurl Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-architecture-intelligence-orange-opensource-hurl-core-inv.md",
       "repository": "Orange-OpenSource/hurl",
-      "content_hash": "2669839600f3a2af1d648fd9bc406488faf272ba40f44bc9555ecb185596dfd6",
-      "created_at": "2026-11-18T06:57:44.301Z"
+      "content_hash": "1a3f9cd1dd9ddbbfb583233cea8bf8a54c1be7b56ac9217522a547a34b7c781a",
+      "created_at": "2026-11-20T03:32:26.722Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants",
@@ -30039,8 +30039,8 @@
       "title": "Architecture Intelligence: orange-opensource-hurl-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-learnings-architecture-intelligence-orange-opensource-hur.md",
       "repository": "orange-opensource-hurl-learnings",
-      "content_hash": "a8b489ddaa690784539a3d2338ba228e1e48b83074edb851fa88b6400cfb7fbc",
-      "created_at": "2026-11-18T06:58:00.075Z"
+      "content_hash": "26e78a2eab161089884fa4d594a026b3694d3765f83b42f3a4216fedf3c8c764",
+      "created_at": "2026-11-20T03:32:41.322Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants",

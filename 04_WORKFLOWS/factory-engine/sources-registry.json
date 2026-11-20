@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T03:21:54.454Z",
-    "lastVerified": "2026-11-20T03:21:54.454Z",
+    "lastChecked": "2026-11-20T03:32:40.601Z",
+    "lastVerified": "2026-11-20T03:32:40.601Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T02:39:00.385Z",
+    "lastChecked": "2026-11-20T03:32:34.259Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T02:39:00.385Z"
+    "lastVerified": "2026-11-20T03:32:34.259Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1443,9 +1443,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-19T21:43:44.404Z",
+    "lastChecked": "2026-11-20T03:32:29.443Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-19T21:43:44.404Z"
+    "lastVerified": "2026-11-20T03:32:29.443Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2796,11 +2796,21 @@
     "lastVerified": "2026-11-19T20:00:25.791Z"
   },
   "orange-opensource-hurl": {
-    "name": "hurl",
+    "name": "Orange-OpenSource/hurl",
     "officialUrl": "https://github.com/Orange-OpenSource/hurl",
-    "lastChecked": "2026-11-18T15:22:05.820Z",
-    "revisionIdentifier": "41a0fa4b",
-    "lastVerified": "2026-11-18T15:22:05.820Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-20T03:32:25.162Z",
+    "lastVerified": "2026-11-20T03:32:25.162Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-orange-opensource-hurl",
+    "contentHash": "e285aa2128a4e61b1a83addcab11b40e1f26cd3fa30d06d3d0553a746213b52a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
     "name": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -4621,11 +4631,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "slatedb-slatedb": {
-    "name": "slatedb",
+    "name": "slatedb/slatedb",
     "officialUrl": "https://github.com/slatedb/slatedb",
-    "lastChecked": "2026-11-18T21:42:18.009Z",
-    "revisionIdentifier": "ae4b403e",
-    "lastVerified": "2026-11-18T21:42:18.009Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-20T03:32:36.487Z",
+    "lastVerified": "2026-11-20T03:32:36.487Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-slatedb-slatedb",
+    "contentHash": "3585b2d9260a7de769e5d37798419c48b0e189621e4a70df1e1aa5ecae6a956e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "grpc-grpc-rust": {
     "name": "grpc/grpc-rust",
@@ -4954,12 +4974,12 @@
     "lastVerified": "2026-11-18T22:57:49.201Z"
   },
   "crossplane-crossplane": {
-    "name": "crossplane/crossplane",
+    "name": "crossplane",
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T22:57:55.803Z",
-    "lastVerified": "2026-11-18T22:57:55.803Z",
+    "lastChecked": "2026-11-20T03:32:26.894Z",
+    "lastVerified": "2026-11-20T03:32:26.894Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
@@ -4968,7 +4988,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "45007a31"
   },
   "sqlpage-sqlpage": {
     "name": "SQLPage",
@@ -9122,5 +9143,19 @@
     "lastChecked": "2026-11-20T03:21:44.447Z",
     "revisionIdentifier": "f8769ffd",
     "lastVerified": "2026-11-20T03:21:44.447Z"
+  },
+  "ilamaaa-hreflang-checker": {
+    "name": "hreflang-checker",
+    "officialUrl": "https://github.com/ilamaaa/hreflang-checker",
+    "lastChecked": "2026-11-20T03:32:21.778Z",
+    "revisionIdentifier": "f146b56172",
+    "lastVerified": "2026-11-20T03:32:21.778Z"
+  },
+  "sayaka-sh-spmp": {
+    "name": "spmp",
+    "officialUrl": "https://github.com/sayaka-sh/spmp",
+    "lastChecked": "2026-11-20T03:32:24.223Z",
+    "revisionIdentifier": "2fb03e84",
+    "lastVerified": "2026-11-20T03:32:24.223Z"
   }
 }

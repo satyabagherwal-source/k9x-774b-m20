@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T03:13:07.877Z",
-  "total_cycles_completed": 10917,
-  "total_learnings_persisted": 10917,
-  "total_rules_promoted": 10284,
+  "last_updated": "2026-11-20T03:32:37.474Z",
+  "total_cycles_completed": 10919,
+  "total_learnings_persisted": 10919,
+  "total_rules_promoted": 10286,
   "history": [
-    {
-      "timestamp": "2026-11-19T06:52:24.190Z",
-      "repository": "Reson8/Rumble-2-Flash",
-      "learningId": "learn-huggingface-reson8-rumble-2-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T06:52:26.480Z",
-      "repository": "autotrust/GEV-26B-Decide",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T07:06:20.522Z",
       "repository": "google/embeddinggemma-2",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-20T03:13:07.877Z",
       "repository": "1jehuang/jcode",
       "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T03:32:26.364Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T03:32:37.474Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

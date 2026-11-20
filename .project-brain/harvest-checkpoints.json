@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T03:13:07.882Z",
+  "last_updated": "2026-11-20T03:32:37.477Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5721,14 +5721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "2faef2576996b0422c3309ffc1e5360f2e399cbb057ef2d43612eb6f7ccdd1ac",
-      "verified_at": "2026-11-18T06:57:43.970Z",
+      "content_hash": "e285aa2128a4e61b1a83addcab11b40e1f26cd3fa30d06d3d0553a746213b52a",
+      "verified_at": "2026-11-20T03:32:26.367Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T06:57:43.970Z"
+      "last_updated": "2026-11-20T03:32:26.367Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",
@@ -6981,14 +6981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-slatedb-slatedb",
-      "content_hash": "71964a4528888b62625ed2f45f250231b415ff49d55ab657a417c0468e74267a",
-      "verified_at": "2026-11-18T06:00:15.911Z",
+      "content_hash": "3585b2d9260a7de769e5d37798419c48b0e189621e4a70df1e1aa5ecae6a956e",
+      "verified_at": "2026-11-20T03:32:37.477Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T06:00:15.911Z"
+      "last_updated": "2026-11-20T03:32:37.477Z"
     },
     "react-component/slider": {
       "repository": "react-component/slider",

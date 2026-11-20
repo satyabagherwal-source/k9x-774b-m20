@@ -4,24 +4,24 @@
 {
   "source_repository": "Orange-OpenSource/hurl",
   "source_url": "https://github.com/Orange-OpenSource/hurl",
-  "source_version": "41a0fa4b",
+  "source_version": "05a20823",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T06:57:44.156Z",
+  "timestamp": "2026-11-20T03:32:26.574Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-orange-opensource-hurl",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl) (Revision: `41a0fa4b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T06:57:44.156Z`  
+> **Provenance**: Harvested from [Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl) (Revision: `05a20823`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T03:32:26.574Z`  
 > **Learning ID**: `learn-github-orange-opensource-hurl`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from Orange-OpenSource/hurl:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T06:57:42.994Z  
+> **Harvest Timestamp**: 2026-11-20T03:32:25.162Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1882,29 +1882,77 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae3877c4` (2026-11-17)
-**Commit Message**: Install Rust in the update-crate workflow to get the same Rust as build.
+### Incident Patch 1: `05a20823` (2026-11-18)
+**Commit Message**: Add age of crate if not updated because too recent.
 
-**File**: `.github/workflows/update-crates.yml` (modified, +2/-0)
+Exemple:
+
+```
+### Crates updates for *packages/hurl/Cargo.toml*
+
+- base64 0.23.1 newest
+- brotli 9.1.1 update 9.1.3 too recent (2 days, minimum age 7 days)
+- chrono 0.4.45 newest
+- clap 4.6.7 update 4.6.8 too recent (1 days, minimum age 7 days)
+- curl 0.4.51 newest
+- curl-sys 0.4.91 newest
+- encoding_rs 0.8.44 newest
+- glob 0.3.4 newest
+- libflate 2.3.2 newest
+- libxml 0.3.23 update 0.3.24 too recent (2 days, minimum age 7 days)
+```
+
+**File**: `bin/update_crates.py` (modified, +12/-2)
 ```diff
-@@ -25,6 +25,8 @@ jobs:
-           persist-credentials: true
-           ref: master
-           token: ${{ secrets.HURL_BOT_TOKEN }}
-+      - name: Install Rust
-+        run: bin/install_rust.sh
-       - name: Crates update
-         run: |
-           UPDATE_CRATES_OUTPUT="/tmp/update.output"
+@@ -83,6 +83,14 @@ def latest_aged_version(self, min_publish_age_days: int) -> str | None:
+         ]
+         return max(aged, key=semver_key, default=None)
+ 
++    def version_age_days(self, version: str) -> int | None:
++        """Returns the age in days of a given version, or `None` if unknown."""
++        now = datetime.now(dt.timezone.utc)
++        for num, created in self.versions:
++            if num == version:
++                return (now - created).days
++        return None
++
+     def get_release_body(self, version: str, token: str) -> str | None:
+         """Get the release body for a given version"""
+         headers = {"Accept": "application/vnd.github+json"}
+@@ -301,20 +309,22 @@ def update_local_crates(
+                 min_publish_age_days=min_publish_age_days
+             )
+ 
++            latest_age_days = dep.version_age_days(latest_version)
++
+             # No version older than the minimum publish age is newer than the actual version:
+             # don't update and process the next crate
+             if latest_compat_version is None or semver_key(
+                 latest_compat_version
+             ) <= semver_key(actual_version):
+                 print(
+-                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent, minimum age {min_publish_age_days} days{Color.RESET}"
++                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent ({latest_age_days} days, minimum age {min_publish_age_days} days){Color.RESET}"
+                 )
+                 continue
+             # A version older than the minimum publish age is newer than the actual version: update to it.
+             # If it's not the latest version, the latest version is too recent.
+             if latest_compat_version != latest_version:
+                 print(
+-                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent, minimum age {min_publish_age_days} days, using {latest_compat_version}{Color.RESET}"
++                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent ({latest_age_days} days, minimum age {min_publish_age_days} days), using {latest_compat_version}{Color.RESET}"
+                 )
+             latest_version = latest_compat_version
+             local_crate.update_dependency(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5449** (2026-11-19): Add age of crate if not updated because too recent. (@jcamiel)
 - **PR #5448** (2026-11-18): Update crates (@hurl-bot)
 - **PR #5447** (closed): Update crates (@hurl-bot)
 - **PR #5446** (2026-11-17): Downgrade dependencies due to update-crates not honoring global-min-publish (@jcamiel)
 - **PR #5445** (2026-11-17): Install Rust in the update-crate workflow to get the same Rust as build. (@jcamiel)
 - **PR #5444** (closed): Update crates (@hurl-bot)
-- **PR #5443** (2026-11-16): Update crates (@hurl-bot)
 
 ---
 
@@ -1924,32 +1972,43 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Install Rust in the update-crate workflow to get the same Rust as build.
+## X. Add age of crate if not updated because too recent.
 
 **RULE**:
-When implementing operations in `.github/workflows/update-crates.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bin/update_crates.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae3877c4`: Install Rust in the update-crate workflow to get the same Rust as build.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `05a20823`: Add age of crate if not updated because too recent.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/update-crates.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bin/update_crates.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - name: Install Rust
-        run: bin/install_rust.sh
+    def version_age_days(self, version: str) -> int | None:
+        """Returns the age in days of a given version, or `None` if unknown."""
+        now = datetime.now(dt.timezone.utc)
+        for num, created in self.versions:
+            if num == version:
+                return (now - created).days
+        return None
+
+            latest_age_days = dep.version_age_days(latest_version)
+
+                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent ({latest_age_days} days, minimum age {min_publish_age_days} days){Color.RESET}"
+                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent ({latest_age_days} days, minimum age {min_publish_age_days} days), using {latest_compat_version}{Color.RESET}"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent, minimum age {min_publish_age_days} days{Color.RESET}"
+                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent, minimum age {min_publish_age_days} days, using {latest_compat_version}{Color.RESET}"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae3877c4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `05a20823` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

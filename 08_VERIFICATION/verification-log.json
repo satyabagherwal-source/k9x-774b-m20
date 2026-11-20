@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-V2WA",
-    "timestamp": "2026-11-18T07:56:33.514Z",
-    "repository": "apache/zookeeper",
-    "learningId": "learn-github-apache-zookeeper",
-    "contentHash": "246e519da959ede035fbeb271b08918714ce6f0ba3e7c6ef1245984ba38851e8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-77YK",
-    "timestamp": "2026-11-18T08:05:59.948Z",
-    "repository": "GitoxideLabs/gitoxide",
-    "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "4ee7ecf6e97927b550e19cbf7fd4c1ef970e9002dc945180af3665b64c2c0488",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-7999",
     "timestamp": "2026-11-18T08:06:01.629Z",
     "repository": "CrossPaste/crosspaste-desktop",
@@ -7490,6 +7460,36 @@
     "repository": "1jehuang/jcode",
     "learningId": "learn-github-1jehuang-jcode",
     "contentHash": "30d3e1860ecd607709e31066a9f83f90ed8acbbf8d3a69b7b53e772c219c842f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-B4HD",
+    "timestamp": "2026-11-20T03:32:26.353Z",
+    "repository": "Orange-OpenSource/hurl",
+    "learningId": "learn-github-orange-opensource-hurl",
+    "contentHash": "e285aa2128a4e61b1a83addcab11b40e1f26cd3fa30d06d3d0553a746213b52a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-BD21",
+    "timestamp": "2026-11-20T03:32:37.465Z",
+    "repository": "slatedb/slatedb",
+    "learningId": "learn-github-slatedb-slatedb",
+    "contentHash": "3585b2d9260a7de769e5d37798419c48b0e189621e4a70df1e1aa5ecae6a956e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

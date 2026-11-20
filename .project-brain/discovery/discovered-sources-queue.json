@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T03:02:47.273Z",
+  "updated_at": "2026-11-20T03:32:41.691Z",
   "stats": {
-    "total_discovered": 6149,
-    "approved_pending_harvest": 5812,
+    "total_discovered": 6150,
+    "approved_pending_harvest": 5813,
     "harvested_count": 0,
     "rejected_count": 337,
     "category_distribution": {
       "COMMUNITY_AND_EXPERT": 5795,
       "OFFICIAL_DOCUMENTATION": 193,
-      "STANDARDS_AND_SPECIFICATIONS": 113,
+      "STANDARDS_AND_SPECIFICATIONS": 114,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 36,
       "LEGAL_AND_REGULATORY": 2,
@@ -132942,6 +132942,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
         "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-D3A631854B5F": {
+      "id": "SRC-D3A631854B5F",
+      "url": "https://www.rfc-editor.org/rfc/rfc0034",
+      "title": "IETF RFC 0034",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:32:41.691Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
       }
     }
   }

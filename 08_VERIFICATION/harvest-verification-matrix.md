@@ -11447,3 +11447,5 @@
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T03:02:15.618Z` | `searchsolved-search-solved-public-seo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-705CF17F` [Domain J] | Yes (`de85276f...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T03:02:44.738Z` | `searchsolved-search-solved-public-seo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-8BEE39B8` [Domain F] | Yes (`d3fa8157...`) |
 | `CYCLE-20261120-MAL4` | `2026-11-20T03:13:07.864Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9504` | Yes (`30d3e186...`) |
+| `CYCLE-20261120-B4HD` | `2026-11-20T03:32:26.353Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9505` | Yes (`e285aa21...`) |
+| `CYCLE-20261120-BD21` | `2026-11-20T03:32:37.465Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9506` | Yes (`3585b2d9...`) |

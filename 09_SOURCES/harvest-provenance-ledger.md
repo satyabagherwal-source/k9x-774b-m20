@@ -11480,3 +11480,5 @@ Every entry in this ledger must capture:
 | `learn-dom-j-705cf17f` | `project://searchsolved-search-solved-public-seo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md` | 2026-11-20T03:02:15.618Z |
 | `learn-dom-f-8bee39b8` | `project://searchsolved-search-solved-public-seo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md` | 2026-11-20T03:02:44.738Z |
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `90595b24` | Multi-dimensional audit evidence | 2026-11-20T03:13:07.869Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `05a20823` | Multi-dimensional audit evidence | 2026-11-20T03:32:26.358Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `cafb91c4` | Multi-dimensional audit evidence | 2026-11-20T03:32:37.469Z |
