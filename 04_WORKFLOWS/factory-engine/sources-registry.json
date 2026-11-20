@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T04:02:41.959Z",
-    "lastVerified": "2026-11-20T04:02:41.959Z",
+    "lastChecked": "2026-11-20T04:14:25.880Z",
+    "lastVerified": "2026-11-20T04:14:25.880Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T03:21:54.446Z",
-    "lastVerified": "2026-11-20T03:21:54.446Z",
+    "lastChecked": "2026-11-20T04:14:25.872Z",
+    "lastVerified": "2026-11-20T04:14:25.872Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1638,12 +1638,12 @@
     "lastVerified": "2026-11-19T14:52:26.112Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "zama-ai/tfhe-rs",
+    "name": "tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T22:27:44.885Z",
-    "lastVerified": "2026-11-19T22:27:44.885Z",
+    "lastChecked": "2026-11-20T04:14:20.875Z",
+    "lastVerified": "2026-11-20T04:14:20.875Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1652,7 +1652,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1352efd8"
   },
   "alibaba-zvec": {
     "name": "zvec",
@@ -2981,11 +2982,21 @@
     "lastVerified": "2026-11-19T21:08:17.420Z"
   },
   "clementtsang-bottom": {
-    "name": "bottom",
+    "name": "ClementTsang/bottom",
     "officialUrl": "https://github.com/ClementTsang/bottom",
-    "lastChecked": "2026-11-18T15:51:29.712Z",
-    "revisionIdentifier": "6e1c1385",
-    "lastVerified": "2026-11-18T15:51:29.712Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-20T04:14:14.167Z",
+    "lastVerified": "2026-11-20T04:14:14.167Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-clementtsang-bottom",
+    "contentHash": "b710dcb6d1e47113bdd20e80378a960d8c90472ab3c4fcf9d83fe46c4e7c40ed",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-psrben-visionhope": {
     "name": "PSRben/VisionHOPE",
@@ -4848,9 +4859,9 @@
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
     "officialUrl": "https://github.com/orbitinghail/sqlsync",
-    "lastChecked": "2026-11-18T22:14:37.744Z",
+    "lastChecked": "2026-11-20T04:14:23.334Z",
     "revisionIdentifier": "7dc1af6b",
-    "lastVerified": "2026-11-18T22:14:37.744Z"
+    "lastVerified": "2026-11-20T04:14:23.334Z"
   },
   "webrtc-rs-webrtc": {
     "name": "webrtc",
@@ -5152,9 +5163,9 @@
   "orange-cyberdefense-goad": {
     "name": "GOAD",
     "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
-    "lastChecked": "2026-11-18T23:26:06.967Z",
+    "lastChecked": "2026-11-20T04:14:18.388Z",
     "revisionIdentifier": "74af01eb",
-    "lastVerified": "2026-11-18T23:26:06.967Z"
+    "lastVerified": "2026-11-20T04:14:18.388Z"
   },
   "apache-shardingsphere": {
     "name": "apache/shardingsphere",
@@ -9195,5 +9206,19 @@
     "lastChecked": "2026-11-20T04:02:26.337Z",
     "revisionIdentifier": "25bb2b91",
     "lastVerified": "2026-11-20T04:02:26.337Z"
+  },
+  "alfa546-crawler": {
+    "name": "Crawler",
+    "officialUrl": "https://github.com/alfa546/Crawler",
+    "lastChecked": "2026-11-20T04:14:13.356Z",
+    "revisionIdentifier": "8d10a017",
+    "lastVerified": "2026-11-20T04:14:13.356Z"
+  },
+  "dimillian-redditos": {
+    "name": "RedditOS",
+    "officialUrl": "https://github.com/Dimillian/RedditOS",
+    "lastChecked": "2026-11-20T04:14:16.106Z",
+    "revisionIdentifier": "525cd241",
+    "lastVerified": "2026-11-20T04:14:16.106Z"
   }
 }

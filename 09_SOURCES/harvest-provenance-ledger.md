@@ -11486,3 +11486,4 @@ Every entry in this ledger must capture:
 | `learn-dom-h-45d5e4e3` | `project://meshery-meshery` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md` | 2026-11-20T03:49:20.559Z |
 | `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `28694608` | Multi-dimensional audit evidence | 2026-11-20T04:02:33.943Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `bb30d6be` | Multi-dimensional audit evidence | 2026-11-20T04:02:38.607Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `829779a0` | Multi-dimensional audit evidence | 2026-11-20T04:14:15.296Z |

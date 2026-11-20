@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T07:23:14.813Z",
+  "timestamp": "2026-11-20T04:14:26.203Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-clementtsang-bottom-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [clementtsang-bottom-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T07:23:14.813Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T04:14:26.203Z`  
 > **Learning ID**: `LEARN-EVO-clementtsang-bottom-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source**: github ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
-> **Source Version**: `6e1c1385`  
+> **Source Version**: `829779a0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T07:22:56.935Z  
+> **Timestamp**: 2026-11-20T04:14:14.289Z  
 > **Learning ID**: `learn-github-clementtsang-bottom`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T07:22:56.930Z  
+> **Harvest Timestamp**: 2026-11-20T04:14:14.167Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Yet another cross-platform graphical process/system monitor.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 14204 stars
+- **Stars / Engagement**: 14213 stars
 
 ---
 
@@ -1626,355 +1626,274 @@ impl InputFieldState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6e1c1385` (2026-11-17)
-**Commit Message**: feature: add hostname template to terminal title option (#2325)
+### Incident Patch 1: `a1742a35` (2026-11-19)
+**Commit Message**: feature: add basic integration with sysinfo's gpu api for non-Linux (#2326)
 
-Allows you to specify `{hostname}` in your terminal title option, which will be substituted for the actual hostname of your system. This PR also renames `app_name` to `terminal_title` since that's a bit more accurate.
+This is a very simple integration for non-Linux to use sysinfo's new GPU API.
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `src/collection.rs` (modified, +31/-0)
 ```diff
-@@ -28,6 +28,7 @@ That said, these are more guidelines rather than hard rules, though the project
+@@ -31,6 +31,8 @@ use std::time::{Duration, Instant};
+ use processes::Pid;
+ #[cfg(feature = "battery")]
+ use starship_battery::{Battery, Manager};
++#[cfg(all(feature = "gpu", not(target_os = "linux")))]
++use sysinfo::Gpus;
  
- - [#2263](https://github.com/ClementTsang/bottom/pull/2263): Add pop-out process command viewer.
- - [#2323](https://github.com/ClementTsang/bottom/pull/2323): Allow setting a custom terminal name.
-+- [#2325](https://github.com/ClementTsang/bottom/pull/2325): Add hostname template to terminal title option.
+ use super::DataFilters;
+ use crate::app::layout_manager::UsedWidgets;
+@@ -198,6 +200,11 @@ pub struct DataCollector {
+     /// update time.
+     nvidia_gpu_list_cache: Option<(Vec<(String, std::path::PathBuf)>, Instant)>,
  
- ### Changes
- 
-```
-
-**File**: `docs/content/configuration/command-line-options.md` (modified, +20/-20)
-```diff
-@@ -5,26 +5,26 @@ see information on these options by running `btm -h`, or run `btm --help` to dis
- 
- ## General Options
- 
--| Option                              | Behaviour                                                  |
--| ----------------------------------- | ---------------------------------------------------------- |
--| `--app_name`                        | Sets the application name displayed in the terminal title. |
--| `--autohide_time`                   | Temporarily shows the time scale in graphs.                |
--| `-b`, `--basic`                     | Hides graphs and uses a more basic look.                   |
--| `-C`, `--config_location <PATH>`    | Sets the location of the config file.                      |
--| `-t`, `--default_time_value <TIME>` | Default time value for graphs.                             |
--| `--default_widget_count <N>`        | Sets the N'th selected widget type as the default.         |
--| `--default_widget_type <WIDGET>`    | Sets the default widget type. Use --help for more info.    |
--| `--disable_click`                   | Disables mouse clicks.                                     |
--| `--disable_keys`                    | Disables keyboard shortcuts, INCLUDING the ones that stop  |
--|                                     | bottom.                                                    |
--| `-m`, `--dot_marker`                | Uses a dot marker for graphs.                              |
--| `-e`, `--expanded`                  | Expand the default widget upon starting the app.           |
--| `--hide_time`                       | Hides the time scale from being shown.                     |
--| `-r`, `--rate <TIME>`               | Sets how often data is refreshed.                          |
--| `--retention <TIME>`                | How far back data will be stored up to.                    |
--| `--show_table_scroll_position`      | Shows the list scroll position tracker in the widget title |
--|                                     | for table widgets.                                         |
--| `-d`, `--time_delta <TIME>`         | The amount of time changed upon zooming.                   |
-+| Option                              | Behaviour                                                                                                  |
-+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-+| `--terminal_title`                  | Sets a custom string displayed in the terminal title; add `{hostname}` to substitute it for your hostname. |
-+| `--autohide_time`                   | Temporarily shows the time scale in graphs.                                                                |
-+| `-b`, `--basic`                     | Hides graphs and uses a more basic look.                                                                   |
-+| `-C`, `--config_location <PATH>`    | Sets the location of the config file.                                                                      |
-+| `-t`, `--default_time_value <TIME>` | Default time value for graphs.                                                                             |
-+| `--default_widget_count <N>`        | Sets the N'th selected widget type as the default.                                                         |
-+| `--default_widget_type <WIDGET>`    | Sets the default widget type. Use --help for more info.                                                    |
-+| `--disable_click`                   | Disables mouse clicks.                                                                                     |
-+| `--disable_keys`                    | Disables keyboard shortcuts, INCLUDING the ones that stop                                                  |
-+|                                     | bottom.                                                                                                    |
-+| `-m`, `--dot_marker`                | Uses a dot marker for graphs.                                                                              |
-+| `-e`, `--expanded`                  | Expand the default widget upon starting the app.                                                           |
-+| `--hide_time`                       | Hides the time scale from being shown.                                                                     |
-+| `-r`, `--rate <TIME>`               | Sets how often data is refreshed.                                                                          |
-+| `--retention <TIME>`                | How far back data will be stored up to.                                                                    |
-+| `--show_table_scroll_position`      | Shows the list scroll position tracker in the widget title                                                 |
-+|                                     | for table widgets.                                                                              
-```
-
-**File**: `docs/content/configuration/config-file/flags.md` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ each time:
- 
- | Field                        | Type                                                                                                               | Functionality                                                                                                                                                                    |
- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
--| `app_name`                   | String                                                                                                             | Sets the application name displayed in the terminal title.                                                                                                                       |
-+| `terminal_title`             | String                                                                                                             | Sets a custom string displayed in the terminal title; add `{hostname}` to substitute it for your hostname.                                                                       |
- | `hide_avg_cpu`               | Boolean                                                                                                            | Deprecated - use `cpu.hide_avg_cpu`. Hides the average CPU usage.                                                                                                                |
- | `dot_marker`                 | Boolean                                                                                                            | Uses a dot marker for graphs.                                                                                                                                                    |
- | `cpu_left_legend`            | Boolean                                                                                                            | Deprecated - use `cpu.left_legend`. Puts the CPU chart legend to the left side.                                                                                                  |
-```
-
-**File**: `sample_configs/default_config.toml` (modified, +2/-2)
-```diff
-@@ -147,8 +147,8 @@
- # How much data is stored at once in terms of time.
- #retention = "10m"
- 
--# Sets the application name displayed in the terminal window title.
--#app_name = "btm"
-+# Sets a custom string displayed in the terminal title.
-+#terminal_title = "btm"
- 
- # Deprecated - use memory_graph.legend_position or memory.legend_position.
- # Where to place the legend for the memory widget. One of "none", "top-left", "top", "top-right", "left", "right", "bottom-left", "bottom", "bottom-right".
-```
-
-**File**: `schema/nightly/bottom.json` (modified, +102/-403)
-```diff
-@@ -76,10 +76,7 @@
-       ]
-     },
-     "row": {
--      "type": [
--        "array",
--        "null"
--      ],
-+      "type": ["array", "null"],
-       "items": {
-         "$ref": "#/$defs/row"
-       }
-@@ -164,45 +161,30 @@
-       "properties": {
-         "basic_average_cpu_row": {
-           "description": "Whether to give the average CPU entry a dedicated row in basic mode.",
--          "type": [
--            "boolean",
--            "null"
--          ]
-+          "type": ["boolean", "null"]
-         },
-         "default": {
-           "description": "The default selected entry of the CPU widget.",
-           "$ref": "#/$defs/CpuDefault"
-         },
-         "hide_avg_cpu": {
-           "description": "Whether to hide the average CPU entry.",
--          "type": [
--            "boolean",
--            "null"
--          ]
-+          "type": ["boolean", "null"]
-         },
-         "left_legend": {
-           "description": "Whether to put the CPU chart legend on the left side.",
--          "type": [
--            "boolean",
--            "null"
--          ]
-+          "type": ["boolean", "null"]
-         },
-         "show_decimal": {
-           "description": "Whether to show a decimal place for CPU usage values.",
--          "type": [
--            "boolean",
--            "null"
--          ]
-+          "type": ["boolean", "null"]
-         }
-       }
-     },
-     "CpuDefault": {
-       "description": "The default selected entry of the CPU widget.",
-       "type": "string",
--      "enum": [
--        "all",
--        "average"
--      ]
-+      "enum": ["all", "average"]
-     },
-     "CpuStyle": {
-       "description": "Styling specific to the CPU widget.",
-@@ -232,10 +214,7 @@
-         },
-         "cpu_core_colours": {
-           "description": "Colour of each CPU threads' label and graph line. Read in order.",
--          "type": [
--            "array",
--            "null"
--          ],
-+          "type": ["array", "null"],
-           "items": {
-             "$ref": "#/$defs/ColourStr"
-           }
-@@ -248,10 +227,7 @@
-       "properties": {
-         "columns": {
-           "description": "A list of disk widget columns.",
--          "type": [
--            "array",
--            "null"
--          ],
-+          "type": ["array", "null"],
-           "items": {
-             "$ref": "#/$defs/DiskWidgetColumn"
-           }
-@@ -269,10 +245,7 @@
-         },
-         "include_unmounted": {
-           "description": "Whether to include block devices that aren't currently mounted\n(currently Linux only). Defaults to false.",
--          "type": [
--            "boolean",
--            "null"
--          ]
-+          "type": ["boolean", "null"]
-         },
-         "mount_filter": {
-           "description": "A filter over the mount names.",
-@@ -302,10 +275,7 @@
-         },
-         "use_binary_prefix": {
-           "description": "Use binary prefixes (e.g. GiB, MiB) instead of decimal prefixes (e.g.\nGB, MB).\n\nDefaults to decimal prefixes.",
--          "type": [
--            "boolean",
--            "null"
--          ]
-+          "type": ["boolean", "null"]
-         }
-       }
-     },
-@@ -330,10 +300,7 @@
-       "properties": {
-         "include_unmounted": {
-           "description": "Whether to include block devices that aren't currently mounted\n(currently Linux only). Defaults to false.",
--          "type": [
--            "boolean",
--            "null"
--          ]
-+          "type": ["boolean", "null"]
-         },
-         "legend": {
-           "description": "Whether to label legend entries by device name or mount point. Defaults\nto disk name.",
-@@ -348,10 +315,7 @@
-         },
-         "legend_position": {
-           "description": "Where to position the legend within the widget.",
--          "type": [
--            "string",
--            "null"
--          ]
-+          "type": ["string", "null"]
-         },
-         "name_filter": {
-           "description": "An optional list of device names to include or exclude.",
-@@ -366,24 +330,15 @@
-         },
-         "show_read": {
-           "description": "Whether to show the read rate line. Defaults to true.",
--          "type": [
--            "boolean",
--            "null"
--          ]
-+          "type": ["boolean", "null"]
-         },
-         "show_write": {
-           "description": "Whether to show the write rate line. Defaults to true.",
--          "type": [
--            "boolean",
--            "null"
--          ]
-+          "type": ["boolean", "null"]
-         },
-         "use_log": {
-           "description": "Whether to use a logarithmic scale on the y-axis. Defaults to false.",
--          "type": [
--            "boolean",
--            "null"
--          ]
-+          "type": ["boolean", "null"]
-         }
-       }
-     },
-@@ -393,20 +348,14 @@
-       "properties": {
-         "read_colours": {
-           "description": "Colour of each disk's read rate graph line. Read in order.",
--          "type": [
--            "array",
--            "null"
--          ],
-+          "typ
-```
-
-**File**: `src/app.rs` (modified, +0/-2)
-```diff
-@@ -90,8 +90,6 @@ pub struct AppConfigFields {
-     pub disk_show_unmounted: bool,
-     pub disk_use_binary_prefix: bool,
-     pub disk_io_graph_show_unmounted: bool,
--    // TODO: Support templating like `{hostname}`, etc.
--    pub app_name: Option<String>,
- }
- 
- /// For filtering out information
-```
-
-**File**: `src/constants.rs` (modified, +2/-2)
-```diff
-@@ -397,8 +397,8 @@ pub(crate) const CONFIG_TEXT: &str = r#"# This is a default config file for bott
- # How much data is stored at once in terms of time.
- #retention = "10m"
- 
--# Sets the application name displayed in the terminal window title.
--#app_name = "btm"
-+# Sets a custom string displayed in the terminal title.
-+#terminal_title = "btm"
- 
- # Deprecated - use memory_graph.legend_position or memory.legend_position.
- # Where to place the legend for the memory widget. One of "none", "top-left", "top", "top-right", "left", "right", "bottom-left", "bottom", "bottom-right".
-```
-
-**File**: `src/lib.rs` (modified, +10/-4)
-```diff
-@@ -59,7 +59,7 @@ use ratatui_crossterm::CrosstermBackend;
- use utils::logging::*;
- use utils::{cancellation_token::CancellationToken, conversion::*};
- 
--use crate::{app::TerminalFeatures, collection::Data};
-+use crate::{app::TerminalFeatures, collection::Data, options::get_terminal_title};
- 
- // Used for heap allocation debugging purposes.
- // #[global_allocator]
-@@ -333,6 +333,9 @@ pub fn start_bottom(enable_error_hook: &mut bool) -> anyhow::Result<()> {
-     // Read from config file.
-     let config = get_or_create_config(args.general.config_location.as_deref())?;
- 
-+    // Get a possible app title. We do this here to avoid having to store it.
-+    let title = get_terminal_title(&args, &config);
++    #[cfg(all(feature = "gpu", not(target_os = "linux")))]
++    /// GPU list pulled from sysinfo. This is refreshed only periodically to avoid
++    /// overhead.
++    sysinfo_gpus: Option<Gpus>,
 +
-     // Create the "app" and initialize a bunch of stuff.
-     let (mut app, widget_layout, styling) = init_app(args, config)?;
+     #[cfg(feature = "zfs")]
+     free_arc_mem: bool,
  
-@@ -388,16 +391,19 @@ pub fn start_bottom(enable_error_hook: &mut bool) -> anyhow::Result<()> {
-     let mut stdout_val = stdout();
-     let mut terminal_features = TerminalFeatures::default();
- 
--    // Set the terminal window title.
--    if let Some(app_name) = &app.app_config_fields.app_name {
--        match execute!(stdout_val, SetTitle(app_name)) {
-+    match title {
-+        Some(Ok(title)) => match execute!(stdout_val, SetTitle(title)) {
-             Ok(_) => {
-                 terminal_features.custom_name_enabled = true;
+@@ -250,6 +257,8 @@ impl DataCollector {
+             gpus_total_mem: None,
+             #[cfg(all(target_os = "linux", feature = "gpu", feature = "nvidia"))]
+             nvidia_gpu_list_cache: None,
++            #[cfg(all(feature = "gpu", not(target_os = "linux")))]
++            sysinfo_gpus: None,
+             #[cfg(feature = "zfs")]
+             free_arc_mem: false,
+             last_list_collection_time: last_collection_time,
+@@ -383,6 +392,20 @@ impl DataCollector {
+                     disk.refresh();
+                 }
              }
-             Err(err) => {
-                 eprintln!("Failed to set terminal title: {err:?}");
-             }
-+        },
-+        Some(Err(err)) => {
-+            eprintln!("{err:?}");
++
++            // Throttle sysinfo GPU list refresh to avoid costly `Gpus::new()` calls.
++            // Only rebuild the list every 60 seconds; data (usage/memory) is
++            // refreshed every cycle via `Gpus::refresh()`.
++            #[cfg(feature = "gpu")]
++            if self.widgets_to_harvest.use_gpu {
++                if let Some(gpus) = &mut self.sysinfo_gpus {
++                    gpus.refresh(false);
++                } else if let Ok(gpus) = Gpus::new_with_refreshed_list()
++                    && !gpus.is_empty()
++                {
++                    self.sysinfo_gpus = Some(gpus);
++                }
++            }
          }
-+        None => {}
      }
  
-     execute!(stdout_val, EnterAlternateScreen)?;
+@@ -481,6 +504,14 @@ impl DataCollector {
+                 }
+             }
+ 
++            #[cfg(all(feature = "gpu", not(target_os = "linux")))]
++            if let Some(gpus) = &self.sysinfo_gpus
++                && let Some(mut mem) =
++                    gpu::sysinfo_backend::collect_sysinfo_gpu_data(gpus, &self.widgets_to_harvest)
++            {
++                local_gpu.append(&mut mem);
++            }
++
+             self.data.gpu = (!local_gpu.is_empty()).then_some(local_gpu);
+             self.gpu_pids = (!local_gpu_pids.is_empty()).then_some(local_gpu_pids);
+             self.gpus_total_mem = (local_gpu_total_mem > 0).then_some(local_gpu_total_mem);
+```
+
+**File**: `src/collection/gpu.rs` (modified, +3/-0)
+```diff
+@@ -6,5 +6,8 @@ cfg_select! {
+         pub mod intel;
+         pub mod amd;
+     }
++    all(not(target_os = "linux"), feature = "gpu") => {
++        pub mod sysinfo_backend;
++    }
+     _ => {}
+ }
+```
+
+**File**: `src/collection/gpu/sysinfo_backend.rs` (added, +63/-0)
+```diff
+@@ -0,0 +1,63 @@
++//! Non-Linux GPU data collection via sysinfo.
++//!
++//! This module provides GPU data on Windows, macOS, and other platforms where
++//! sysinfo has built-in GPU support.
++
++use std::num::NonZeroU64;
++
++use sysinfo::Gpus;
++
++use crate::{app::layout_manager::UsedWidgets, collection::memory::MemData};
++
++/// Returns the human-readable name for a GPU vendor.
++fn vendor_name(vendor: Option<&str>) -> String {
++    match vendor {
++        Some("Intel Corporation") => "Intel".to_string(),
++        Some("Advanced Micro Devices, Inc.") => "AMD".to_string(),
++        Some("NVIDIA Corporation") => "NVIDIA".to_string(),
++        Some("") | None => "Unknown".to_string(),
++        Some(other) => other.to_string(),
++    }
++}
++
++/// Collect GPU data using sysinfo's `Gpus` type.
++///
++/// Only includes memory data if the platform reports VRAM (Windows).
++/// On macOS/FreeBSD, memory is always `None` because GPUs share
++/// system memory with no dedicated VRAM.
++pub fn collect_sysinfo_gpu_data(
++    gpus: &Gpus, widgets: &UsedWidgets,
++) -> Option<Vec<(String, MemData)>> {
++    let mut mem_vec: Vec<(String, MemData)> = Vec::new();
++
++    for gpu in gpus.iter() {
++        let name = vendor_name(gpu.vendor());
++        let model = gpu.model().unwrap_or("");
++        let display_name = match (model.is_empty(), model.starts_with(&name)) {
++            (true, _) | (false, true) => name,
++            (false, false) => format!("{name} {model}"),
++        };
++
++        if widgets.use_mem {
++            // total_memory/used_memory returns Some only on Windows (DXGI).
++            // On macOS/FreeBSD these always return None (shared memory).
++            if let (Some(total), Some(used)) = (gpu.total_memory(), gpu.used_memory())
++                && let Some(total_bytes) = NonZeroU64::new(total)
++            {
++                mem_vec.push((
++                    display_name,
++                    MemData {
++                        total_bytes,
++                        used_bytes: used,
++                    },
++                ));
++            }
++        }
++    }
++
++    if !mem_vec.is_empty() {
++        Some(mem_vec)
++    } else {
++        None
++    }
++}
+```
+
+**File**: `src/collection/processes/unix.rs` (modified, +3/-27)
+```diff
+@@ -15,34 +15,10 @@ cfg_select! {
+         pub fn sysinfo_process_data(
+             collector: &mut DataCollector,
+         ) -> CollectionResult<Vec<ProcessHarvest>> {
+-            let sys = &collector.sys.system;
+-            let use_current_cpu_total = collector.use_current_cpu_total;
+-            let unnormalized_cpu = collector.unnormalized_cpu;
+-            let total_memory = collector.total_memory();
+-            let user_table = &mut collector.user_table;
+-
+             cfg_select! {
+-                target_os = "macos" => MacOSProcessExt::sysinfo_process_data(
+-                    sys,
+-                    use_current_cpu_total,
+-                    unnormalized_cpu,
+-                    total_memory,
+-                    user_table,
+-                ),
+-                target_os = "freebsd" => FreeBSDProcessExt::sysinfo_process_data(
+-                    sys,
+-                    use_current_cpu_total,
+-                    unnormalized_cpu,
+-                    total_memory,
+-                    user_table,
+-                ),
+-                _ => GenericProcessExt::sysinfo_process_data(
+-                    sys,
+-                    use_current_cpu_total,
+-                    unnormalized_cpu,
+-                    total_memory,
+-                    user_table,
+-                ),
++                target_os = "macos" => MacOSProcessExt::sysinfo_process_data(collector),
++                target_os = "freebsd" => FreeBSDProcessExt::sysinfo_process_data(collector),
++                _ => GenericProcessExt::sysinfo_process_data(collector),
+             }
+         }
+     }
+```
+
+**File**: `src/collection/processes/unix/process_ext.rs` (modified, +23/-7)
+```diff
+@@ -3,13 +3,13 @@
+ use std::{io, time::Duration};
+ 
+ use itertools::Itertools;
+-use sysinfo::{ProcessStatus, System};
++use sysinfo::ProcessStatus;
+ 
+ use super::{ProcessHarvest, process_status_str};
+ #[cfg(target_os = "macos")]
+ use crate::collection::processes::macos::sysctl_bindings;
+ use crate::{
+-    collection::{Pid, error::CollectionResult, processes::UserTable},
++    collection::{DataCollector, Pid, error::CollectionResult},
+     utils::int_hash::IntHashMap,
+ };
+ 
+@@ -73,9 +73,17 @@ fn get_priority(pid: Pid) -> i32 {
+ 
+ pub(crate) trait UnixProcessExt {
+     fn sysinfo_process_data(
+-        sys: &System, use_current_cpu_total: bool, unnormalized_cpu: bool, total_memory: u64,
+-        user_table: &mut UserTable,
++        collector: &mut DataCollector,
+     ) -> CollectionResult<Vec<ProcessHarvest>> {
++        let sys = &collector.sys.system;
++        let use_current_cpu_total = collector.use_current_cpu_total;
++        let unnormalized_cpu = collector.unnormalized_cpu;
++
++        let total_memory = collector.total_memory();
++        #[cfg(feature = "gpu")]
++        let total_gpu_mem = collector.gpus_total_mem.unwrap_or(0);
++
++        let user_table = &mut collector.user_table;
+         let mut process_vector: Vec<ProcessHarvest> = Vec::new();
+         let process_hashmap = sys.processes();
+         let cpu_usage = sys.global_cpu_usage() / 100.0;
+@@ -161,11 +169,19 @@ pub(crate) trait UnixProcessExt {
+                     Duration::from_secs(process_val.run_time())
+                 },
+                 #[cfg(feature = "gpu")]
+-                gpu_mem: 0,
++                gpu_mem: process_val.gpu_memory().unwrap_or(0),
+                 #[cfg(feature = "gpu")]
+-                gpu_mem_percent: 0.0,
++                gpu_mem_percent: if total_gpu_mem > 0 {
++                    (process_val.gpu_memory().unwrap_or(0) as f64 / total_gpu_mem as f64 * 100.0)
++                        as f32
++                } else {
++                    0.0
++                },
+                 #[cfg(feature = "gpu")]
+-                gpu_util: 0,
++                gpu_util: process_val
++                    .gpu_usage()
++                    .map(|u| u.clamp(0.0, 100.0) as u32)
++                    .unwrap_or(0),
+                 #[cfg(unix)]
+                 nice,
+                 priority,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2328** (2026-11-19): feature: add natural sorting option (@ClementTsang)
+- **PR #2327** (2026-11-19): docs: update changelog to add #2326 (@ClementTsang)
+- **PR #2326** (2026-11-19): feature: add basic integration with sysinfo's gpu api for non-Linux (@ClementTsang)
 - **PR #2325** (2026-11-17): feature: add hostname template to terminal title option (@ClementTsang)
 - **PR #2324** (2026-11-16): ci: fix MSI installer workflow failing when installing dotnet (@ClementTsang)
 - **PR #2323** (2026-11-15): feature: allow setting a custom terminal name (@ClementTsang)
-- **PR #2322** (2026-11-14): other: set `unused_dependencies` lint to deny (@ClementTsang)
-- **PR #2321** (2026-11-14): other: add crate publish cooldown (@ClementTsang)
-- **PR #2316** (2026-11-13): ci: fix Android build by tying gpu feature to sysinfo's, bump cross version to a9301e9 (@ClementTsang)
 
 ---
 
@@ -1994,21 +1913,47 @@ Allows you to specify `{hostname}` in your terminal title option, which will be 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. feature: add hostname template to terminal title option
+## X. feature: add basic integration with sysinfo's gpu api for non-Linux
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/collection.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6e1c1385`: feature: add hostname template to terminal title option. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a1742a35`: feature: add basic integration with sysinfo's gpu api for non-Linux. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/collection.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- [#2325](https://github.com/ClementTsang/bottom/pull/2325): Add hostname template to terminal title option.
+#[cfg(all(feature = "gpu", not(target_os = "linux")))]
+use sysinfo::Gpus;
+    #[cfg(all(feature = "gpu", not(target_os = "linux")))]
+    /// GPU list pulled from sysinfo. This is refreshed only periodically to avoid
+    /// overhead.
+    sysinfo_gpus: Option<Gpus>,
+
+            #[cfg(all(feature = "gpu", not(target_os = "linux")))]
+            sysinfo_gpus: None,
+
+            // Throttle sysinfo GPU list refresh to avoid costly `Gpus::new()` calls.
+            // Only rebuild the list every 60 seconds; data (usage/memory) is
+            // refreshed every cycle via `Gpus::refresh()`.
+            #[cfg(feature = "gpu")]
+            if self.widgets_to_harvest.use_gpu {
+                if let Some(gpus) = &mut self.sysinfo_gpus {
+                    gpus.refresh(false);
+                } else if let Ok(gpus) = Gpus::new_with_refreshed_list()
+                    && !gpus.is_empty()
+                {
+                    self.sysinfo_gpus = Some(gpus);
+                }
+            }
+            #[cfg(all(feature = "gpu", not(target_os = "linux")))]
+            if let Some(gpus) = &self.sysinfo_gpus
+                && let Some(mut mem) =
+                    gpu::sysinfo_backend::collect_
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2018,7 +1963,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6e1c1385` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a1742a35` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

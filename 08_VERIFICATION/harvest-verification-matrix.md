@@ -11453,3 +11453,4 @@
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T03:49:20.559Z` | `meshery-meshery` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-45D5E4E3` [Domain H] | Yes (`c6f5c995...`) |
 | `CYCLE-20261120-DV82` | `2026-11-20T04:02:33.938Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9509` | Yes (`0072a4b4...`) |
 | `CYCLE-20261120-DYTM` | `2026-11-20T04:02:38.602Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9510` | Yes (`ce1967ee...`) |
+| `CYCLE-20261120-SWE4` | `2026-11-20T04:14:15.292Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9511` | Yes (`b710dcb6...`) |

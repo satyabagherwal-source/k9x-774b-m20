@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T04:02:38.618Z",
+  "last_updated": "2026-11-20T04:14:15.305Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5961,14 +5961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clementtsang-bottom",
-      "content_hash": "fb50796a66131237acca548e640c58c9b840a7ab36d125b936a5001494172364",
-      "verified_at": "2026-11-18T07:22:57.831Z",
+      "content_hash": "b710dcb6d1e47113bdd20e80378a960d8c90472ab3c4fcf9d83fe46c4e7c40ed",
+      "verified_at": "2026-11-20T04:14:15.304Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:22:57.831Z"
+      "last_updated": "2026-11-20T04:14:15.304Z"
     },
     "jhen0409/react-native-debugger": {
       "repository": "jhen0409/react-native-debugger",

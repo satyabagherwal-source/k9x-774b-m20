@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T04:02:38.613Z",
-  "total_cycles_completed": 10922,
-  "total_learnings_persisted": 10922,
-  "total_rules_promoted": 10290,
+  "last_updated": "2026-11-20T04:14:15.302Z",
+  "total_cycles_completed": 10923,
+  "total_learnings_persisted": 10923,
+  "total_rules_promoted": 10291,
   "history": [
-    {
-      "timestamp": "2026-11-19T07:14:13.284Z",
-      "repository": "canberkkkkkk/ema-lightning",
-      "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T07:14:19.144Z",
       "repository": "necolas/react-native-web",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-20T04:02:38.613Z",
       "repository": "gluesql/gluesql",
       "learningId": "learn-github-gluesql-gluesql",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T04:14:15.302Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

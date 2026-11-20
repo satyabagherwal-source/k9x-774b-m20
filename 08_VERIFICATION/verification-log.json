@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-PU3K",
-    "timestamp": "2026-11-18T08:20:28.448Z",
-    "repository": "Qwen/Qwen3-0.6B",
-    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-    "contentHash": "9a0ff4516f74a029b5139525566ba93187eb56ed5112246c0986ccdd53c47a95",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-R9OB",
     "timestamp": "2026-11-18T08:21:35.291Z",
     "repository": "StarRocks/starrocks",
@@ -7490,6 +7475,21 @@
     "repository": "gluesql/gluesql",
     "learningId": "learn-github-gluesql-gluesql",
     "contentHash": "ce1967ee01adea9cd70a51d564ba68eda76deb00c468f2b3ff31f018bbf84551",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-SWE4",
+    "timestamp": "2026-11-20T04:14:15.292Z",
+    "repository": "ClementTsang/bottom",
+    "learningId": "learn-github-clementtsang-bottom",
+    "contentHash": "b710dcb6d1e47113bdd20e80378a960d8c90472ab3c4fcf9d83fe46c4e7c40ed",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
