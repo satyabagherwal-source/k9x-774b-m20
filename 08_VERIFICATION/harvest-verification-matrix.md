@@ -11441,3 +11441,8 @@
 | `CYCLE-20261120-01NZ` | `2026-11-20T02:27:50.255Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9497` | Yes (`a85ab319...`) |
 | `CYCLE-20261120-EEAR` | `2026-11-20T02:38:59.811Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9498` | Yes (`fd478bea...`) |
 | `CYCLE-20261120-EFOS` | `2026-11-20T02:39:01.612Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9471` | Yes (`1cbd04c8...`) |
+| `CYCLE-20261120-3GOV` | `2026-11-20T02:58:29.311Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9499` | Yes (`d4c51acd...`) |
+| `CYCLE-20261120-3J41` | `2026-11-20T02:58:32.449Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9500` | Yes (`8fe2834f...`) |
+| `CYCLE-20261120-7PY0` | `2026-11-20T03:01:47.928Z` | `searchsolved/search-solved-public-seo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9501, Rule 9502, Rule 9503` | Yes (`875b1074...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T03:02:15.618Z` | `searchsolved-search-solved-public-seo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-705CF17F` [Domain J] | Yes (`de85276f...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T03:02:44.738Z` | `searchsolved-search-solved-public-seo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-8BEE39B8` [Domain F] | Yes (`d3fa8157...`) |

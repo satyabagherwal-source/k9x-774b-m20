@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T02:39:06.712Z",
+  "last_updated": "2026-11-20T03:02:47.508Z",
   "directives": [
     {
       "id": "CD-001",
@@ -35655,6 +35655,81 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E5029F-splash-screen-staying-visible-after-warm.md",
       "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-8Z7J",
+      "directive_title": "iOS Video Screenshot",
+      "source_repo": "jellyfin-swiftfin-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8Z7J-ios-video-screenshot.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-3J98",
+      "directive_title": "asset hashing and symlink contract is not documented",
+      "source_repo": "aws/aws-cdk",
+      "source_commit": "66801507",
+      "staged_file": "11_INBOX/candidate-directives/CD-3J98-asset-hashing-and-symlink-contract-is-not-documented.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-8Y7X",
+      "directive_title": "Decoupled State-Machine Persistence for Asynchronous Polling APIs",
+      "source_repo": "searchsolved-search-solved-public-seo-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8Y7X-decoupled-state-machine-persistence-for-asynchronous-polling-apis.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-8Y8G",
+      "directive_title": "Resilient Multi-Script Unicode Normalization for Input Token Sanitization",
+      "source_repo": "searchsolved-search-solved-public-seo-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8Y8G-resilient-multi-script-unicode-normalization-for-input-token-sanitization.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-8Y8G",
+      "directive_title": "Disjoint Parameter Protocol for Dual Architecture LLM Integrations",
+      "source_repo": "searchsolved-search-solved-public-seo-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8Y8G-disjoint-parameter-protocol-for-dual-architecture-llm-integrations.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-4F1DF2",
+      "directive_title": "iOS Video Screenshot",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "jellyfin-swiftfin",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4F1DF2-ios-video-screenshot.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-8ZWI",
+      "directive_title": "core): asset hashing and symlink contract is not documented",
+      "source_repo": "aws-aws-cdk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8ZWI-core-asset-hashing-and-symlink-contract-is-not-documented.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
     }
   ]
 }

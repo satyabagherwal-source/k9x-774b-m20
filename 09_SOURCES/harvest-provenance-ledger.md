@@ -11474,3 +11474,8 @@ Every entry in this ledger must capture:
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `146e1e67` | Multi-dimensional audit evidence | 2026-11-20T02:27:50.259Z |
 | `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `22149587` | Multi-dimensional audit evidence | 2026-11-20T02:38:59.815Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ddd15c3e` | Multi-dimensional audit evidence | 2026-11-20T02:39:01.617Z |
+| `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `6f8c16de` | Multi-dimensional audit evidence | 2026-11-20T02:58:29.314Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `66801507` | Multi-dimensional audit evidence | 2026-11-20T02:58:32.453Z |
+| `learn-github-searchsolved-search-solved-public-seo` | `https://github.com/searchsolved/search-solved-public-seo` | `591fa023` | Multi-dimensional audit evidence | 2026-11-20T03:01:47.932Z |
+| `learn-dom-j-705cf17f` | `project://searchsolved-search-solved-public-seo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md` | 2026-11-20T03:02:15.618Z |
+| `learn-dom-f-8bee39b8` | `project://searchsolved-search-solved-public-seo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md` | 2026-11-20T03:02:44.738Z |

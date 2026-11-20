@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T02:39:05.108Z",
+  "updated_at": "2026-11-20T03:02:47.273Z",
   "stats": {
-    "total_discovered": 6129,
-    "approved_pending_harvest": 5792,
+    "total_discovered": 6149,
+    "approved_pending_harvest": 5812,
     "harvested_count": 0,
     "rejected_count": 337,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5776,
-      "OFFICIAL_DOCUMENTATION": 192,
+      "COMMUNITY_AND_EXPERT": 5795,
+      "OFFICIAL_DOCUMENTATION": 193,
       "STANDARDS_AND_SPECIFICATIONS": 113,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 36,
@@ -132502,6 +132502,446 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
         "fileName": "saltstack-salt-learnings.md"
+      }
+    },
+    "SRC-70D4C53642FC": {
+      "id": "SRC-70D4C53642FC",
+      "url": "https://api.vendor.com/live",
+      "title": "https://api.vendor.com/live",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:44.789Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-0634DB8DFBD8": {
+      "id": "SRC-0634DB8DFBD8",
+      "url": "https://api.test.com/task/123",
+      "title": "https://api.test.com/task/123",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:44.825Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-D69DF6C7F3EF": {
+      "id": "SRC-D69DF6C7F3EF",
+      "url": "https://api.test.com/task",
+      "title": "https://api.test.com/task",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:44.859Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-C49384141B3F": {
+      "id": "SRC-C49384141B3F",
+      "url": "https://example.com/shoes%60",
+      "title": "https://example.com/shoes%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:44.909Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-8AF384BEEF74": {
+      "id": "SRC-8AF384BEEF74",
+      "url": "https://via.placeholder.com/600x400.png?text=Sample+Product+Preview",
+      "title": "https://via.placeholder.com/600x400.png?text=Sample+Product+Preview",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:44.980Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-DFB4615AC36C": {
+      "id": "SRC-DFB4615AC36C",
+      "url": "https://colab.research.google.com/assets/colab-badge.svg",
+      "title": "https://colab.research.google.com/assets/colab-badge.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:45.013Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-DFC190699081": {
+      "id": "SRC-DFC190699081",
+      "url": "https://colab.research.google.com/github/searchsolved/search-solved-public-seo/blob/main/top-traffic-pages.ipynb",
+      "title": "https://colab.research.google.com/github/searchsolved/search-solved-public-seo/blob/main/top-traffic-pages.ipynb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:45.045Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-FBD189A430D0": {
+      "id": "SRC-FBD189A430D0",
+      "url": "https://colab.research.google.com/github/searchsolved/search-solved-public-seo/blob/main/reporting/top-traffic-pages/top-traffic-pages.ipynb",
+      "title": "https://colab.research.google.com/github/searchsolved/search-solved-public-seo/blob/main/reporting/top-traffic-pages/top-traffic-pages.ipynb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:45.094Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-231725209671": {
+      "id": "SRC-231725209671",
+      "url": "https://jellyfin.org/contact",
+      "title": "https://jellyfin.org/contact",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:46.142Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-C57837A379B8": {
+      "id": "SRC-C57837A379B8",
+      "url": "https://github.com/jellyfin/Swiftfin/issues?q=is%3Aopen+is%3Aissue",
+      "title": "https://github.com/jellyfin/Swiftfin/issues?q=is%3Aopen+is%3Aissue",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:46.174Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-6D10230411B1": {
+      "id": "SRC-6D10230411B1",
+      "url": "https://github.com/jellyfin/Swiftfin/blob/main/Documentation/common_issues.md",
+      "title": "https://github.com/jellyfin/Swiftfin/blob/main/Documentation/common_issues.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:46.222Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-4D48710F99F9": {
+      "id": "SRC-4D48710F99F9",
+      "url": "https://jellyfin.org/docs/general/community-standards.html",
+      "title": "https://jellyfin.org/docs/general/community-standards.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:46.255Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-9553C570741D": {
+      "id": "SRC-9553C570741D",
+      "url": "https://github.com/user-attachments/assets/bee30a1d-04f0-40b2-8654-c75711d60138",
+      "title": "https://github.com/user-attachments/assets/bee30a1d-04f0-40b2-8654-c75711d60138",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:46.287Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-BCB15DAF15AA": {
+      "id": "SRC-BCB15DAF15AA",
+      "url": "https://github.com/user-attachments/assets/a9f08931-ebd3-4e2c-95ec-bd27e1453eac",
+      "title": "https://github.com/user-attachments/assets/a9f08931-ebd3-4e2c-95ec-bd27e1453eac",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:46.338Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-3BF05ED7ECE0": {
+      "id": "SRC-3BF05ED7ECE0",
+      "url": "https://github.com/jellyfin/Swiftfin/pull/2425",
+      "title": "https://github.com/jellyfin/Swiftfin/pull/2425",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:46.371Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-9780007C6BAF": {
+      "id": "SRC-9780007C6BAF",
+      "url": "https://github.com/aws/aws-cdk/issues/1716",
+      "title": "https://github.com/aws/aws-cdk/issues/1716",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:47.129Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-62F2077C7AF5": {
+      "id": "SRC-62F2077C7AF5",
+      "url": "https://github.com/aws-cloudformation/cloudformation-validate/compare/1.14.0...1.17.0",
+      "title": "https://github.com/aws-cloudformation/cloudformation-validate/compare/1.14.0...1.17.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:47.161Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-51FFC263DFF1": {
+      "id": "SRC-51FFC263DFF1",
+      "url": "https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html",
+      "title": "https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:47.210Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-EB6C31D98293": {
+      "id": "SRC-EB6C31D98293",
+      "url": "https://registry.npmjs.org/@aws/cloudformation-validate/-/cloudformation-validate-1.14.0.tgz",
+      "title": "https://registry.npmjs.org/@aws/cloudformation-validate/-/cloudformation-validate-1.14.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:47.242Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-E00A7F917EAE": {
+      "id": "SRC-E00A7F917EAE",
+      "url": "https://registry.npmjs.org/@aws/cloudformation-validate/-/cloudformation-validate-1.17.1.tgz",
+      "title": "https://registry.npmjs.org/@aws/cloudformation-validate/-/cloudformation-validate-1.17.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T03:02:47.273Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
       }
     }
   }

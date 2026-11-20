@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T02:39:06.858Z",
-  "total_records": 2056,
+  "last_updated": "2026-11-20T03:02:47.649Z",
+  "total_records": 2062,
   "domains": {
     "A": {
       "total": 17,
@@ -911,7 +911,7 @@
       ]
     },
     "F": {
-      "total": 68,
+      "total": 69,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -980,7 +980,8 @@
         "domain_intelligence-design-intelligence-biomejs-biome-learnings-core-invariants",
         "domain_intelligence-design-intelligence-herdrdev-herdr-core-invariants",
         "domain_intelligence-design-intelligence-herdrdev-herdr-learnings-core-invariants",
-        "DOM-F-D7FA7771"
+        "DOM-F-D7FA7771",
+        "DOM-F-8BEE39B8"
       ]
     },
     "G": {
@@ -1345,7 +1346,7 @@
       ]
     },
     "H": {
-      "total": 487,
+      "total": 489,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1833,11 +1834,13 @@
         "DOM-H-F78059FE",
         "DOM-H-91C37114",
         "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-searchsolved-search-solved-public-seo-core-i",
+        "domain_intelligence-technical-construction-intelligence-searchsolved-search-solved-public-seo-learni"
       ]
     },
     "I": {
-      "total": 100,
+      "total": 102,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1938,11 +1941,13 @@
         "domain_intelligence-content-information-intelligence-gluesql-gluesql-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-core-invariants",
         "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-learnings-core-invarian",
-        "DOM-I-333D4D7A"
+        "DOM-I-333D4D7A",
+        "domain_intelligence-content-information-intelligence-jellyfin-swiftfin-core-invariants",
+        "domain_intelligence-content-information-intelligence-jellyfin-swiftfin-learnings-core-invariants"
       ]
     },
     "J": {
-      "total": 29,
+      "total": 30,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -1972,7 +1977,8 @@
         "DOM-J-3CA866B9",
         "domain_intelligence-search-distribution-intelligence-melnixdev-seo-crawl-audit-core-invariants",
         "domain_intelligence-search-distribution-intelligence-melnixdev-seo-crawl-audit-learnings-core-invari",
-        "DOM-J-E0C204D8"
+        "DOM-J-E0C204D8",
+        "DOM-J-705CF17F"
       ]
     },
     "K": {
@@ -17568,8 +17574,8 @@
       "title": "Technical Construction Intelligence: aws/aws-cdk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-technical-construction-intelligence-aws-aws-cdk-core-invariants.md",
       "repository": "aws/aws-cdk",
-      "content_hash": "b9a6e184de8b58bee8d188382e5d6119124301d9c49cb0eee5f90ecbb9fdf323",
-      "created_at": "2026-11-18T22:14:39.562Z"
+      "content_hash": "b741dff403fdf9f24c59c96e928ecd2633554f600671eaa6e67c2f94b4da4e76",
+      "created_at": "2026-11-20T02:58:32.796Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants",
@@ -17637,8 +17643,8 @@
       "title": "Technical Construction Intelligence: aws-aws-cdk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-learnings-technical-construction-intelligence-aws-aws-cdk-learnings-.md",
       "repository": "aws-aws-cdk-learnings",
-      "content_hash": "02e2eabcafd9ee40533db8d77d491755d790b53405196da0d5f8499248827264",
-      "created_at": "2026-11-18T22:14:43.903Z"
+      "content_hash": "1dd44d0240fc54aabc970339facfacf6c5c47c575b4c59a3ecfb0ba57e2be095",
+      "created_at": "2026-11-20T03:02:47.649Z"
     },
     "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-saluki-27b-1-0-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-saluki-27b-1-0-core-inva",
@@ -34609,6 +34615,110 @@
       "repository": "kuddev-pebrel-learnings",
       "content_hash": "1d9c1f62f1da67f01c68d8d9a189373061757fe9d3e4532ad69f5b51bad4c34a",
       "created_at": "2026-11-20T02:15:12.642Z"
+    },
+    "domain_intelligence-content-information-intelligence-jellyfin-swiftfin-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-jellyfin-swiftfin-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: jellyfin/Swiftfin Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-jellyfin-swiftfin-content-information-intelligence-jellyfin-swiftfin-core-invari.md",
+      "repository": "jellyfin/Swiftfin",
+      "content_hash": "03c4fcbf6c242edc8ca17d5a967e9a4f4beb9368ef2356017775b288f13a3045",
+      "created_at": "2026-11-20T02:58:29.631Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-searchsolved-search-solved-public-seo-core-i": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-searchsolved-search-solved-public-seo-core-i",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: searchsolved/search-solved-public-seo Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-searchsolved-search-solved-public-seo-technical-construction-intelligence-search.md",
+      "repository": "searchsolved/search-solved-public-seo",
+      "content_hash": "e89ce5979a11cbc816a67f197acc6456accf28bc839901f51c1c65703398ef20",
+      "created_at": "2026-11-20T03:01:48.467Z"
+    },
+    "DOM-J-705CF17F": {
+      "record_id": "DOM-J-705CF17F",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [],
+      "title": "Unresolved Google Redirects Poisoning SERP Clustering (BUG-SERP-01)",
+      "content": "Data acquisition pipelines depending on third-party scrapers must never assume output links are canonical. All scraping consumers must enforce redirect-filtration guards and employ asynchronous reconciliation queues when search engine routing architectures change.",
+      "content_hash": "de85276f77ec1ec9c8f6900cf84c0421f910165c97428af7c0f3173522b564b6",
+      "summary": "The DataForSEO \"Live\" API immediately parses SERP DOM without following downstream HTTP redirects due to strict SLA response times ($<3\\text -> Data acquisition pipelines depending on third-party scrapers must never assume output links are canonical. All scraping consumers must enfor",
+      "provenance": {
+        "source_uri": "project://searchsolved-search-solved-public-seo/searchsolved-search-solved-public-seo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T03:01:51.366Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (searchsolved-search-solved-public-seo)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `f4fcda7e` (\"SERP Clustering API README: build the CSV from the DataForSEO Standard queue\")."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T03:02:15.589Z"
+    },
+    "DOM-F-8BEE39B8": {
+      "record_id": "DOM-F-8BEE39B8",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Third-Party Placeholder Service Outage Breaking Streamlit UIs (BUG-UI-02)",
+      "content": "Production UI tools must achieve total network isolation regarding their core visual presentation. External demo image dependencies must be committed locally to prevent layout breakage when third-party utility domains expire.",
+      "content_hash": "d3fa8157a4fb2aa30fd315faf8df54f9f4641262e120c12b31d887c3e11084a8",
+      "summary": "Relying on external third-party CDN domains for static UI assets instead of bundling local application fixtures. -> Production UI tools must achieve total network isolation regarding their core visual presentation. External demo image dependencies must be ",
+      "provenance": {
+        "source_uri": "project://searchsolved-search-solved-public-seo/searchsolved-search-solved-public-seo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T03:01:51.366Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (searchsolved-search-solved-public-seo)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Issue #20 (\"Fix image centering tool placeholder previews\")."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T03:02:44.720Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-searchsolved-search-solved-public-seo-learni": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-searchsolved-search-solved-public-seo-learni",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: searchsolved-search-solved-public-seo-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-searchsolved-search-solved-public-seo-learnings-technical-construction-intellige.md",
+      "repository": "searchsolved-search-solved-public-seo-learnings",
+      "content_hash": "1b8aaabcec9f404c9852a92fbeef63a1b0bfad13f9f86bdc05ad7c2564ef384a",
+      "created_at": "2026-11-20T03:02:45.768Z"
+    },
+    "domain_intelligence-content-information-intelligence-jellyfin-swiftfin-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-jellyfin-swiftfin-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: jellyfin-swiftfin-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-jellyfin-swiftfin-learnings-content-information-intelligence-jellyfin-swiftfin-l.md",
+      "repository": "jellyfin-swiftfin-learnings",
+      "content_hash": "52e8d22e2f823ac33f7affa567a5f4f2e80a72e082de683c0c0d943f67bf58b8",
+      "created_at": "2026-11-20T03:02:46.753Z"
     }
   }
 }

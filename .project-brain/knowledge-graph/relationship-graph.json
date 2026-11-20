@@ -2,19 +2,19 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-20T01:56:45.725Z",
+  "updated_at": "2026-11-20T03:02:44.736Z",
   "statistics": {
-    "total_nodes": 404,
+    "total_nodes": 406,
     "total_edges": 182,
     "domain_distribution": {
       "D": 262,
       "M": 1,
       "H": 64,
-      "J": 15,
+      "J": 16,
       "K": 24,
       "L": 8,
       "G": 1,
-      "F": 20,
+      "F": 21,
       "B": 2,
       "E": 2,
       "I": 5
@@ -9032,6 +9032,50 @@
       ],
       "created_at": "2026-11-20T01:56:45.725Z",
       "updated_at": "2026-11-20T01:56:45.725Z"
+    },
+    "DOM-J-705CF17F": {
+      "id": "DOM-J-705CF17F",
+      "domain": "J",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Unresolved Google Redirects Poisoning SERP Clustering (BUG-SERP-01)",
+      "summary": "The DataForSEO \"Live\" API immediately parses SERP DOM without following downstream HTTP redirects due to strict SLA response times ($<3\\text -> Data acquisition pipelines depending on third-party scrapers must never assume output links are canonical. All scraping consumers must enfor",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://searchsolved-search-solved-public-seo/searchsolved-search-solved-public-seo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T03:01:51.366Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (searchsolved-search-solved-public-seo)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "J",
+        "Search & Distribution Intelligence"
+      ],
+      "created_at": "2026-11-20T03:02:15.616Z",
+      "updated_at": "2026-11-20T03:02:15.616Z"
+    },
+    "DOM-F-8BEE39B8": {
+      "id": "DOM-F-8BEE39B8",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Third-Party Placeholder Service Outage Breaking Streamlit UIs (BUG-UI-02)",
+      "summary": "Relying on external third-party CDN domains for static UI assets instead of bundling local application fixtures. -> Production UI tools must achieve total network isolation regarding their core visual presentation. External demo image dependencies must be ",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://searchsolved-search-solved-public-seo/searchsolved-search-solved-public-seo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T03:01:51.366Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (searchsolved-search-solved-public-seo)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence"
+      ],
+      "created_at": "2026-11-20T03:02:44.736Z",
+      "updated_at": "2026-11-20T03:02:44.736Z"
     }
   },
   "edges": [

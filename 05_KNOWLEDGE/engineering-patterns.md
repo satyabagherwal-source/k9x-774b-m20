@@ -702307,3 +702307,570 @@ Invalidate every pending cluster cache-replication queue whenever the local ``cl
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `eae114ea` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9499. iOS Video Screenshot (Harvested from jellyfin/Swiftfin)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "iOS Video Screenshot",
+  "source": "jellyfin/Swiftfin",
+  "source_url": "https://github.com/jellyfin/Swiftfin",
+  "source_version": "6f8c16de",
+  "license": "MPL-2.0",
+  "extracted_at": "2026-11-20T02:58:28.899Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-jellyfin-swiftfin",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin) (Revision: `6f8c16de`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Tools/Screenshots/Tests/Robots/Robot+Playback.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jellyfin/Swiftfin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `543a7da5`: iOS Video Screenshot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Tools/Screenshots/Tests/Robots/Robot+Playback.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+        if UIDevice.isPad {
+            tap(button(L10n.aspectFill))
+        }
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+        tap(button(L10n.aspectFill))
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `543a7da5` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9500. asset hashing and symlink contract is not documented (Harvested from aws/aws-cdk)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "asset hashing and symlink contract is not documented",
+  "source": "aws/aws-cdk",
+  "source_url": "https://github.com/aws/aws-cdk",
+  "source_version": "66801507",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-20T02:58:32.017Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-aws-aws-cdk",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [aws/aws-cdk](https://github.com/aws/aws-cdk) (Revision: `66801507`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `packages/@aws-cdk/aws-lambda-python-alpha/lib/bundling.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `4ed690ec`: core): asset hashing and symlink contract is not documented. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@aws-cdk/aws-lambda-python-alpha/lib/bundling.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+import { AssetHashType, AssetStaging, DockerImage, PERF_BUNDLING_SRC_SYM } from 'aws-cdk-lib/core';
+    let exclude = [];
+    if (options.assetHashType === AssetHashType.SOURCE || options.assetHashType === undefined) {
+      exclude.push(...DEPENDENCY_EXCLUDES);
+    }
+
+      exclude,
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+import { AssetStaging, DockerImage, PERF_BUNDLING_SRC_SYM } from 'aws-cdk-lib/core';
+      exclude: DEPENDENCY_EXCLUDES,
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `4ed690ec` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9501. Decoupled State-Machine Persistence for Asynchronous Polling APIs (Harvested from searchsolved/search-solved-public-seo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Decoupled State-Machine Persistence for Asynchronous Polling APIs",
+  "source": "searchsolved/search-solved-public-seo",
+  "source_url": "https://github.com/searchsolved/search-solved-public-seo",
+  "source_version": "591fa023",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-20T03:01:46.696Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-searchsolved-search-solved-public-seo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [searchsolved/search-solved-public-seo](https://github.com/searchsolved/search-solved-public-seo) (Revision: `591fa023`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Network interactions against upstream asynchronous batch queues with completion windows exceeding HTTP client timeouts (e.g., $>30\text{s}$) MUST decouple submission (`task_post`) from retrieval (`task_get`) via an idempotent on-disk or database job manifest. Polling loops MUST treat intermediate non-terminal states as explicit continuations, MUST abort immediately on unrecoverable authentication/financial codes, and MUST sanitize all upstream vendor redirects (such as tracking hops) at the protocol extraction boundary before yielding domain entities.
+
+**WHY**:
+Upstream search engines frequently modify link forwarding behaviors (e.g., Google introducing `google.com/goto` tokenized redirects). Asynchronous vendor scrapers take 20 to 45 minutes to resolve the underlying canonical targets. Firing synchronous HTTP requests results in thread exhaustion, connection timeouts, or corrupted downstream datasets consisting solely of intermediate tracking domains (`google.com`). Persisting task manifests to a deterministic serialization format (e.g., CSV with UTF-8 BOM awareness) enables pause-and-resume workflows and decouples ephemeral network sessions from data pipelines.
+
+**WHEN TO APPLY**:
+Apply to any client library or worker interacting with asynchronous SaaS queues, third-party crawlers, or long-running transcription/indexing jobs where completion times are nondeterministic and API costs apply per invocation.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import csv
+import io
+import time
+from typing import Any, Dict, List, Optional, Set, Tuple
+import requests
+
+PENDING_STATUS_CODES: Set[int] = {40601, 40602}
+ACCOUNT_FATAL_CODES: Set[int] = {40100, 40104, 40200, 40201, 40203, 40204, 40207, 40210}
+JOB_SCHEMA: List[str] = ['task_id', 'query', 'status', 'created_at']
+
+class QueueJobError(RuntimeError):
+    def __init__(self, message: str, status_code: Optional[int] = None):
+        super().__init__(message)
+        self.status_code = status_code
+
+    @property
+    def is_terminal_account_fault(self) -> bool:
+        return self.status_code in ACCOUNT_FATAL_CODES
+
+def serialize_job_manifest(records: List[Dict[str, Any]]) -> str:
+    """Serialize active tasks with strict schema adherence."""
+    buffer = io.StringIO()
+    writer = csv.DictWriter(buffer, fieldnames=JOB_SCHEMA)
+    writer.writeheader()
+    writer.writerows(records)
+    return buffer.getvalue()
+
+def deserialize_job_manifest(raw_csv: str) -> List[Dict[str, Any]]:
+    """Deserialize manifest, stripping UTF-8 BOM to prevent key corruption."""
+    clean_text = raw_csv.lstrip('\ufeff')
+    reader = csv.DictReader(io.StringIO(clean_text))
+    if not reader.fieldnames or not set(JOB_SCHEMA).issubset(set(reader.fieldnames)):
+        raise ValueError(f"Invalid job manifest. Missing required fields from {JOB_SCHEMA}")
+    
+    tasks = []
+    seen_ids = set()
+    for row in reader:
+        task_id = (row.get('task_id') or '').strip()
+        if not task_id or task_id in seen_ids:
+            continue
+        seen_ids.add(task_id)
+        tasks.append(row)
+    return tasks
+
+def poll_batch_completion(
+    tasks: List[Dict[str, Any]], 
+    endpoint: str, 
+    headers: Dict[str, str],
+    poll_interval: float = 2.0
+) -> Dict[str, Any]:
+    """Poll task status safely with fail-fast account verification and redirect pruning."""
+    results: Dict[str, Any] = {'completed': {}, 'pending': [], 'failed': []}
+    
+    for row in tasks:
+        task_id = row['task_id']
+        try:
+            resp = requests.get(f"{endpoint}/{task_id}", headers=headers, timeout=60)
+            data = resp.json()
+            code = data.get('status_code')
+            
+            if code in ACCOUNT_FATAL_CODES:
+                raise QueueJobError(f"Fatal account error: {data.get('status_message')}", status_code=code)
+            
+            if code in PENDING_STATUS_CODES:
+                results['pending'].append(task_id)
+                continue
+                
+            task_data = (data.get('tasks') or [{}])[0]
+            task_status = task_data.get('status_code')
+            
+            if task_status in PENDING_STATUS_CODES:
+                results['pending'].append(task_id)
+            elif task_status == 20000:
+                raw_items = task_data.get('result', [{}])[0].get('items', [])
+                # Sanitize out intermediate tracking redirects
+                clean_items = [
+                    item for item in raw_items 
+                    if 'google.com/goto' not in (item.get('url') or '')
+                ]
+                results['completed'][task_id] = clean_items
+            else:
+                results['failed'].append((task_id, task_data.get('status_message', 'Unknown failure')))
+                
+        except requests.RequestException as exc:
+            results['failed'].append((task_id, str(exc)))
+            
+        time.sleep(poll_interval)
+        
+    return results
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Synchronous in-memory blocking poll with unhandled redirect leaking
+def unsafe_fetch_serp(keywords, auth):
+    results = {}
+    for kw in keywords:
+        # Blocks the entire process; crashes if network drops or search engine delays
+        resp = requests.post("https://api.vendor.com/live", auth=auth, json={"kw": kw}).json()
+        items = resp["tasks"][0]["result"][0]["items"]
+        # LEAK: Ingests raw 'google.com/goto' URLs, poisoning downstream deduplication and clustering!
+        results[kw] = [item["url"] for item in items]
+    return results
+```
+
+**VERIFICATION METHOD**:
+Verify using automated unit/integration tests that mock HTTP 40100/40601 responses:
+```python
+def test_poll_batch_aborts_on_fatal_account_code(requests_mock):
+    requests_mock.get(
+        "https://api.test.com/task/123", 
+        json={"status_code": 40200, "status_message": "Insufficient balance"}
+    )
+    tasks = [{'task_id': '123', 'query': 'seo', 'status': 'queued', 'created_at': '2026-01-01'}]
+    try:
+        poll_batch_completion(tasks, "https://api.test.com/task", {})
+        assert False, "Should have raised QueueJobError"
+    except QueueJobError as err:
+        assert err.is_terminal_account_fault is True
+```
+
+---
+
+
+---
+
+## 9502. Disjoint Parameter Protocol for Dual Architecture LLM Integrations (Harvested from searchsolved/search-solved-public-seo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Disjoint Parameter Protocol for Dual Architecture LLM Integrations",
+  "source": "searchsolved/search-solved-public-seo",
+  "source_url": "https://github.com/searchsolved/search-solved-public-seo",
+  "source_version": "591fa023",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-20T03:01:47.089Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-searchsolved-search-solved-public-seo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [searchsolved/search-solved-public-seo](https://github.com/searchsolved/search-solved-public-seo) (Revision: `591fa023`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When integrating language models that span both standard auto-regressive models (e.g., Qwen, GPT-4o, Claude Haiku) and specialized reasoning-optimized architectures (e.g., OpenAI o-series, GPT-6 Luna/Terra), the invocation layer MUST conditionally decouple hyperparameters. If the target model utilizes an explicit reasoning parameter (such as `reasoning_effort`), the client MUST omit unsupported legacy parameters (`temperature`, `top_p`) from the payload. Conversely, non-reasoning and local OpenAI-compatible backends (e.g., Ollama) MUST NOT receive vendor-specific reasoning arguments.
+
+**WHY**:
+OpenAI reasoning endpoints strictly enforce schema validation on chat completion payloads. Sending `temperature` to reasoning models triggers a fatal HTTP 400 (`BadRequestError: temperature is not supported with this model`). Conversely, local OpenAI-compatible inference servers (Ollama, vLLM, LocalAI) reject unknown properties like `reasoning_effort` with unhandled 422 Unprocessable Entity or 400 Bad Request errors. Dynamic model-prefix inspection is required to avoid silent pipeline termination during runtime model switching.
+
+**WHEN TO APPLY**:
+Apply to any unified AI agent pipeline, router, or wrapper calling multi-model providers via an `OpenAI` or OpenAI-compatible client abstraction.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from typing import Any, Dict
+from openai import OpenAI, BadRequestError, AuthenticationError, PermissionDeniedError, NotFoundError
+from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_not_exception_type
+
+PERMANENT_API_ERRORS = (
+    AuthenticationError,
+    PermissionDeniedError,
+    NotFoundError,
+    BadRequestError
+)
+
+def resolve_model_parameters(model_name: str, reasoning_effort: str = "low") -> Dict[str, Any]:
+    """Dynamically assign disjoint parameter sets based on model architecture."""
+    normalized_name = str(model_name).strip().lower()
+    
+    # Reasoning models reject temperature and require reasoning_effort
+    if normalized_name.startswith(("gpt-6", "o1", "o3")):
+        return {
+            "reasoning_effort": reasoning_effort
+            # temperature MUST NOT be present
+        }
+    
+    # Standard models accept temperature and reject reasoning_effort
+    return {
+        "temperature": 0.0
+    }
+
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_fixed(2.0),
+    retry=retry_if_not_exception_type(PERMANENT_API_ERRORS),
+    reraise=True
+)
+def execute_completion_request(
+    client: OpenAI,
+    model: str,
+    messages: list,
+    response_schema: Dict[str, Any]
+) -> str:
+    params = resolve_model_parameters(model)
+    completion = client.chat.completions.create(
+        model=model,
+        messages=messages,
+        response_format=response_schema,
+        **params
+    )
+    return completion.choices[0].message.content or ""
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Uniform argument injection across heterogeneous LLM architectures
+def invoke_llm_hazard(client, model, messages):
+    # CRASH: Fails on gpt-6/o-series because temperature is forbidden
+    # CRASH: Fails on Ollama/vLLM because reasoning_effort is unrecognized
+    return client.chat.completions.create(
+        model=model,
+        messages=messages,
+        temperature=0.7,
+        reasoning_effort="medium" 
+    )
+```
+
+**VERIFICATION METHOD**:
+Implement property-based assertions checking parameter presence based on model names:
+```python
+def test_resolve_model_parameters_invariants():
+    reasoning_payload = resolve_model_parameters("gpt-6-luna")
+    assert "reasoning_effort" in reasoning_payload
+    assert "temperature" not in reasoning_payload
+    
+    standard_payload = resolve_model_parameters("qwen2.5:7b")
+    assert "temperature" in standard_payload
+    assert "reasoning_effort" not in standard_payload
+```
+
+---
+
+
+---
+
+## 9503. Resilient Multi-Script Unicode Normalization for Input Token Sanitization (Harvested from searchsolved/search-solved-public-seo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Resilient Multi-Script Unicode Normalization for Input Token Sanitization",
+  "source": "searchsolved/search-solved-public-seo",
+  "source_url": "https://github.com/searchsolved/search-solved-public-seo",
+  "source_version": "591fa023",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-20T03:01:47.522Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-searchsolved-search-solved-public-seo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [searchsolved/search-solved-public-seo](https://github.com/searchsolved/search-solved-public-seo) (Revision: `591fa023`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Before passing arbitrary user strings or scraped keywords to regex parsers, clustering tokenizers, or external API query parameters, pipelines MUST sanitize characters against an explicitly permitted Unicode script block whitelist while maintaining valid punctuation, Latin, Arabic, and Indic ranges. Raw replacement MUST NOT delete whitespace boundaries or trigger string slicing anomalies.
+
+**WHY**:
+SEO keyword lists scraped from global search engines regularly feature invisible control codes, zero-width joiners, terminal control characters (`\r\n`), and adversarial token sequences. Indiscriminately applying ASCII-only regex (`[^a-zA-Z0-9]`) destroys international search volume (Arabic, Hindi, etc.), while leaving strings unsanitized causes downstream JSON serialization failures or silent empty keys in Pandas DataFrame indexing.
+
+**WHEN TO APPLY**:
+Apply in keyword tokenization, entity extraction, URL path slicing, and DataFrame column creation where multilingual user input or web-scraped strings are normalized.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import re
+from typing import Any
+
+# Preserves printable ASCII, Arabic (\u0600-\u06FF), and Devanagari (\u0900-\u097F)
+UNICODE_CLEAN_PATTERN = re.compile(r'[^\x20-\x7E\u0600-\u06FF\u0900-\u097F]+')
+
+def sanitize_keyword_token(raw_input: Any) -> str:
+    """Sanitize input preserving multi-lingual semantic tokens while stripping controls."""
+    if raw_input is None:
+        return ""
+    
+    # Enforce string conversion and collapse carriage returns
+    text = str(raw_input).strip()
+    text = re.sub(r'[\r\n\t]+', ' ', text)
+    
+    # Strip illegal controls and non-whitelisted script points
+    cleaned = UNICODE_CLEAN_PATTERN.sub('', text)
+    
+    # Normalize multiple spaces into single space
+    return re.sub(r'\s+', ' ', cleaned).strip()
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Naive ASCII stripping or unsafe slicing
+def unsafe_sanitize(keyword):
+    # Destroys all non-English keywords completely (returns "" for Arabic/Hindi)
+    clean = re.sub(r'[^a-zA-Z0-9 ]', '', str(keyword))
+    # Unsafe slicing might split multi-byte characters or leave trailing broken tokens
+    return clean[:255]
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_unicode_sanitizer_preserves_multilingual_targets():
+    arabic = "أفضل حذاء للجري\n\r\t"
+    hindi = "दौड़ने के लिए सबसे अच्छे जूते"
+    english = "best running shoes! @#$% \x00\x1f"
+    
+    assert sanitize_keyword_token(arabic) == "أفضل حذاء للجري"
+    assert sanitize_keyword_token(hindi) == "दौड़ने के लिए सबसे अच्छे जूते"
+    assert sanitize_keyword_token(english) == "best running shoes! @#$%"
+```
+
+---

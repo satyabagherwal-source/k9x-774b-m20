@@ -4,22 +4,22 @@
 {
   "source_repository": "aws/aws-cdk",
   "source_url": "https://github.com/aws/aws-cdk",
-  "source_version": "0561d668",
+  "source_version": "66801507",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T22:14:39.425Z",
+  "timestamp": "2026-11-20T02:58:32.641Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aws-aws-cdk",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aws/aws-cdk](https://github.com/aws/aws-cdk) (Revision: `0561d668`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T22:14:39.425Z`  
+> **Provenance**: Harvested from [aws/aws-cdk](https://github.com/aws/aws-cdk) (Revision: `66801507`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T02:58:32.641Z`  
 > **Learning ID**: `learn-github-aws-aws-cdk`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `aws/aws-cdk` (Commit: `0561d668`)
+- **Target Repository**: `aws/aws-cdk` (Commit: `66801507`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T22:14:38.321Z  
+> **Harvest Timestamp**: 2026-11-20T02:58:31.603Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12986 stars
+- **Stars / Engagement**: 12987 stars
 
 ---
 
@@ -1211,469 +1211,664 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8b2487e6` (2026-11-18)
-**Commit Message**: feat(core): build bundling images only when an asset is bundled (#39778)
+### Incident Patch 1: `4ed690ec` (2026-11-19)
+**Commit Message**: fix(core): asset hashing and symlink contract is not documented (#39779)
 
-### Issue # (if applicable)
+We didn't clearly explain how all the various options of `AssetStaging` interacted with each other. This led to multiple security researchers thinking they found a problem in our contract, whereas the actual contract never intended to guarantee what they thought they found.
 
-Closes #27991.
+It's also not very helpful to users if it's not clear what `exclude` applies to in the case of bundling (source, output? both, neither?)
 
-### Reason for this change
+This change more clearly defines the contract, and cleans up the implementation of the asset staging flow that have accreted over time (mostly with respect to bundling) to also make the intended flow more clear.
 
-`DockerImage.fromBuild()` builds the image as soon as it is called, which for PythonFunction means when the construct is created. The build happens even when the image is never used: when bundling is skipped, when the bundled output already exists in `cdk.out` from an earlier synth, or when the same asset was already staged in this app. Unit tests that create a stack with a PythonFunction pay for a Docker build on every run, and so does every synth on a CI runner without a warm Docker cache. Our synth telemetry shows the PythonFunction image build costing a median of 69 s in CI.
+The contract
+=============
 
-Every PythonFunction also runs its own `docker image inspect` (or build) for the same image tag, even though the tag is content-addressed from the build context and options.
+WITHOUT BUNDLING
 
-### Description of changes
+Without the `bundling` property the asset is just a regular file copy operation.
 
-- New `DockerImage.fromBuildOnDemand()`. It computes the same tag and hash as `fromBuild()`, so switching between the two doesn't change asset hashes, but it doesn't build yet. It keeps a copy of the build options it hashed, so later changes to the caller's objec
+- `exclude` and `ignoreMode` control which files are excluded from the copy operation.
+- `follow` controls how symlinks are handled during the copy operation: the symlink can be copied, the file the symlink points to can be copied, or symlinks pointing outside the source tree can be blocked.
+- The asset hash is calculated based on the files that are copied into the ass
 
-**File**: `packages/@aws-cdk/aws-lambda-go-alpha/test/bundling.test.ts` (modified, +1/-0)
+**File**: `packages/@aws-cdk/aws-lambda-python-alpha/lib/bundling.ts` (modified, +7/-2)
 ```diff
-@@ -18,6 +18,7 @@ beforeEach(() => {
- 
-   jest.spyOn(DockerImage, 'fromBuild').mockReturnValue({
-     image: 'built-image',
-+    buildImage: () => { },
-     cp: () => 'built-image',
-     run: () => { },
-     toJSON: () => 'build-image',
-```
-
-**File**: `packages/@aws-cdk/aws-lambda-python-alpha/lib/bundling.ts` (modified, +3/-6)
-```diff
-@@ -4,7 +4,7 @@ import { Architecture, Code } from 'aws-cdk-lib/aws-lambda';
+@@ -2,7 +2,7 @@ import * as path from 'path';
+ import type { AssetCode, Runtime } from 'aws-cdk-lib/aws-lambda';
+ import { Architecture, Code } from 'aws-cdk-lib/aws-lambda';
  import type { BundlingFileAccess, BundlingOptions as CdkBundlingOptions, DockerVolume } from 'aws-cdk-lib/core';
- import { AssetStaging, DockerImage, PERF_BUNDLING_SRC_SYM } from 'aws-cdk-lib/core';
+-import { AssetStaging, DockerImage, PERF_BUNDLING_SRC_SYM } from 'aws-cdk-lib/core';
++import { AssetHashType, AssetStaging, DockerImage, PERF_BUNDLING_SRC_SYM } from 'aws-cdk-lib/core';
  import { UnscopedValidationError } from 'aws-cdk-lib/core/lib/errors';
--import { lit, posixShellEscape, profileSpan } from 'aws-cdk-lib/core/lib/helpers-internal';
-+import { lit, posixShellEscape } from 'aws-cdk-lib/core/lib/helpers-internal';
+ import { lit, posixShellEscape } from 'aws-cdk-lib/core/lib/helpers-internal';
  import { Packaging, DependenciesFile } from './packaging';
- import type { BundlingOptions, ICommandHooks } from './types';
+@@ -60,10 +60,15 @@ export class Bundling implements CdkBundlingOptions {
+   public static bundle(options: BundlingProps): AssetCode {
+     validateOutputPathSuffix(options.outputPathSuffix ?? '');
  
-@@ -110,11 +110,8 @@ export class Bundling implements CdkBundlingOptions {
-       // Use the user's image
-       this.image = image;
-     } else {
--      // Build our own image to do the build in in. We do some counter trickery here: we do want to count
--      // the time spent here as part of 'bundle:PythonFunction', but by default only the RUNNING of the Docker
--      // image would count as that. So we add an additional timer span just for the building of the runner image.
--      using _span = profileSpan(`bundle:${this[PERF_BUNDLING_SRC_SYM]}`, { telemetry: true, skipCount: true });
--      this.image = DockerImage.fromBuild(path.join(__dirname, 'docker'), {
-+      // Build our own image to do the build in, but only if and when the asset actually needs bundling.
-+      this.image = DockerImage.fromBuildV2(path.join(__dirname, 'docker'), {
-         buildArgs: {
-           ...props.buildArgs,
-           IMAGE: runtime.bundlingImage.image,
++    let exclude = [];
++    if (options.assetHashType === AssetHashType.SOURCE || options.assetHashType === undefined) {
++      exclude.push(...DEPENDENCY_EXCLUDES);
++    }
++
+     return Code.fromAsset(options.entry, {
+       assetHash: options.assetHash,
+       assetHashType: options.assetHashType,
+-      exclude: DEPENDENCY_EXCLUDES,
++      exclude,
+       bundling: options.skip ? undefined : new Bundling(options),
+     });
+   }
 ```
 
-**File**: `packages/@aws-cdk/aws-lambda-python-alpha/test/bundling.test.ts` (modified, +33/-9)
+**File**: `packages/aws-cdk-lib/core/lib/asset-staging.ts` (modified, +310/-192)
 ```diff
-@@ -1,15 +1,18 @@
- 
- import * as fs from 'fs';
+@@ -2,13 +2,14 @@ import * as crypto from 'crypto';
  import * as path from 'path';
--import { BundlingFileAccess, DockerImage } from 'aws-cdk-lib';
-+import { AssetStaging, BundlingFileAccess, DockerImage, Stack } from 'aws-cdk-lib';
- import { Architecture, Code, Runtime } from 'aws-cdk-lib/aws-lambda';
- import { Bundling } from '../lib/bundling';
+ import { Construct } from 'constructs';
+ import * as fs from 'fs-extra';
++import { Annotations } from './annotations';
+ import type { AssetOptions } from './assets';
+ import { AssetHashType, FileAssetPackaging } from './assets';
+ import type { BundlingOptions } from './bundling';
+ import { BundlingFileAccess, BundlingOutput, PERF_BUNDLING_SRC_SYM } from './bundling';
+ import { AssumptionError, ValidationError } from './errors';
+ import type { FingerprintOptions } from './fs';
+-import { FileSystem, SymlinkFollowMode, IgnoreStrategy } from './fs';
++import { FileSystem, IgnoreStrategy, SymlinkFollowMode } from './fs';
+ import { clearLargeFileFingerprintCache } from './fs/fingerprint';
+ import { Names } from './names';
+ import { AssetBundlingVolumeCopy, AssetBundlingBindMount } from './private/asset-staging';
+@@ -45,7 +46,10 @@ interface StagedAsset {
+   readonly packaging: FileAssetPackaging;
  
- jest.spyOn(Code, 'fromAsset');
--// Stub `DockerImage.fromBuild` so these unit tests never run a real `docker build`.
--// (The `child_process` mock below is bypassed intermittently in CI.) The spy still
--// records calls, so the argument/call-count assertions below are unaffected.
-+// Stub `DockerImage.fromBuild` for the tests that build a custom bundling image with it, and
-+// `buildImage()` for the bundling image that PythonFunction builds on demand, so these unit
-+// tests never run a real `docker build`. (The `child_process` mock below is bypassed
-+// intermittently in CI.) The spies still record calls, so the assertions below are unaffected.
- jest.spyOn(DockerImage, 'fromBuild').mockReturnValue(new DockerImage('cdk-bundling-image-stub'));
-+jest.spyOn(DockerImage, 'fromBuildV2');
-+const buildImage = jest.spyOn(DockerImage.prototype, 'buildImage').mockImplementation(() => {});
+   /**
+-   * Whether this asset is an archive
++   * Whether this asset will ultimately end up in S3 as an archive
++   *
++   * It will end up as an archive either if it's a directory (which
++   * the CDK will ZIP) or if it's a file that's an archive.
+    */
+   readonly isArchive: boolean;
+ }
+@@ -64,11 +68,59 @@ export interface AssetStagingProps extends FingerprintOptions, AssetOptions {
+  * Stages a file or directory from a location on the file system into a staging
+  * directory.
+  *
+- * This is controlled by the context key 'aws:cdk:asset-staging' and enabled
+- * by the CLI by default in order to ensure that when the CDK app exists, all
+- * assets are available for deployment. Otherwise, if an app references assets
+- * in temporary locations, those will not be available when it exists (see
+- * https://github.com/aws/aws-cdk/issues/1716).
++ * This construct can operate in two modes: without and with "bundling". Bundling
++ * means that an additional command is run to transform the source files into
++ * a final asset that will be used for deployment.
++ *
++ * ## Without bundling
++ *
++ * Without the `bundling` property, the asset is just a regular file copy
++ * operation.
++ *
++ * - `exclude` and `ignoreMode` control which files are excluded from the copy operation.
++ * - `follow` controls how symlinks are handled during the copy operation:
++ *   the symlink can be copied, the file the symlink points to can be copied,
++ *   or symlinks pointing outside the source tree can be blocked.
++ * - The asset hash is calculated based on the files that are copied into the asset,
++ *   unless the hash is overridden entirely by the `assetHash` property.
++ *
++ * The copy-staging operation can be disabled by setting the context
++ * key `'aws:cdk:asset-staging': false`. This can be useful for local
++ * development tools like SAM CLI, so that you can update the source files
++ * directly and immediately see the result in a local emulator without needing
++ * to run `cdk synth` every time to stage the assets. Note that in this mode,
++ * since there is no copying, `exclude` and `follow` settings have no effect,
++ * including `BLOCK_EXTERNAL` which will not be applied.
++ *
++ * ## With bundling
++ *
++ * With the `bundling` property, the transformation of source files to a final asset
++ * is done through bundling operation specified in the `bundling` property.
++ *
++ * The behavior of the construct depends on the `assetHashType` selected:
++ *
++ * - `AssetHashType.SOURCE`: the asset hash will be based on the source files
++ *   after applying the `exclude`, `ignoreMode` and `follow` settings. That hash
++ *   will be used to skip the bundling command entirely if an asset with the given
++ *   hash already exists in the assembly directory. This requires that those
++ *   settings accurately model the dependencies used by the bundling operation to
++ *   produce the final asset.
++ * - `AssetHashType.OUTPUT`: the asset hash will be based on the output of the
++ *   bundling operation. `exclude`/`ignoreMode` are not used, and no attempt
++ *   is made to materialize any symlinks that bundling may have written.
++ * - `AssetHashType.CUSTOM`: the asset hash will be taken from the `assetHash`
++ *   property. `exclude`/`ignoreMode` are not used, and no attempt is made to
++ *   materialize any symlinks that bundling may have written.
++ *
++ * For all three modes, if `follow` is set to `SymlinkFollowMode.BLOCK_EXTERNAL`,
++ * any symlinks written by bundling that point outside the output directory
++ * will be blocked.
++ *
++ * For bundled assets, staging can not be disabled for the benefit of local
++ * development. If you are iterating against a local emulator, you will need to
++ * run `cdk synth` for every asset change.
++ *
++ * ## Other behavior
+  *
+  * The `stagedPath` property is a stringified token that represents the location
+  * of the file or directory after staging. It will be resolved only during the
+@@ -77,6 +129,15 @@ export interface AssetStagingProps extends FingerprintOption
+```
+
+**File**: `packages/aws-cdk-lib/core/lib/assets.ts` (modified, +39/-7)
+```diff
+@@ -66,30 +66,62 @@ export interface AssetOptions {
+  */
+ export enum AssetHashType {
+   /**
+-   * Based on the content of the source path
++   * Base the asset hash on the contents of the source path
+    *
+-   * When bundling, use `SOURCE` when the content of the bundling output is not
+-   * stable across repeated bundling operations.
++   * ## Without bundling
++   *
++   * When used without the `bundling` property, and the asset is just a regular file
++   * copy operation: the hash will be based on the files in the source path
++   * respecting the `exclude` patterns given (i.e., excluded files will not be
++   * included in the hash). This matches the files that are actually copied by the
++   * copy operation.
++   *
++   * ## With bundling
++   *
++   * When used with the `bundling` property, and the asset is produced by a
++   * bundling operation: the hash will still be based on the files in the source
++   * path while respecting the `exclude` patterns given. If those given files
++   * did not change since the last bundling operation, the hash will remain the same
++   * and the bundling operation itself will be skipped. However, do note the following
++   * important caveat:
++   *
++   * - The bundling operation has access to all files in the source path, regardless
++   *   of the `exclude` pattern you configure. It is your responsibility to ensure
++   *   the `exclude` pattern accurately matches the files the bundling operation
++   *   will *actually* access and base its final output on.
++   *
++   * It is always safe to fingerprint more files than strictly necessary. This will
++   * potentially reduce the efficiency of cache hits, but not affect correctness.
+    */
+   SOURCE = 'source',
  
- jest.mock('child_process', () => ({
-   spawnSync: jest.fn(() => {
-@@ -47,7 +50,7 @@ test('Bundling a function without dependencies', () => {
-     }),
-   }));
+   /**
+-   * Based on the content of the bundled path
++   * Base the asset hash on the contents of the bundled path
+    *
+    * @deprecated use `OUTPUT` instead
+    */
+   BUNDLE = 'bundle',
  
--  expect(DockerImage.fromBuild).toHaveBeenCalledWith(expect.stringMatching(path.join(__dirname, '..', 'lib')), expect.objectContaining({
-+  expect(DockerImage.fromBuildV2).toHaveBeenCalledWith(expect.stringMatching(path.join(__dirname, '..', 'lib')), expect.objectContaining({
-     buildArgs: expect.objectContaining({
-       IMAGE: expect.stringMatching(/build-python/),
-     }),
-@@ -477,7 +480,7 @@ test('Bundling with custom build args', () => {
-     buildArgs: { PIP_INDEX_URL: testPypi },
-   });
+   /**
+-   * Based on the content of the bundling output
++   * Base the asset hash on the contents of the bundling output
++   *
++   * Use `OUTPUT` when it is hard to isolate the full set of source files that
++   * contribute to the final asset. Instead, the files produced by the `bundling` step
++   * will be fingerprinted to produce the asset hash.
+    *
+-   * Use `OUTPUT` when the source of the asset is a top level folder containing
+-   * code and/or dependencies that are not directly linked to the asset.
++   * Use of this value precludes caching of the transform operation: since the
++   * asset hash can only be calculated *after* the asset is bundled, the asset must
++   * be bundled on every synthesis.
++   *
++   * This option can only be used in combination with the `bundling` property.
+    */
+   OUTPUT = 'output',
  
--  expect(DockerImage.fromBuild).toHaveBeenCalledWith(expect.stringMatching(path.join(__dirname, '..', 'lib')), expect.objectContaining({
-+  expect(DockerImage.fromBuildV2).toHaveBeenCalledWith(expect.stringMatching(path.join(__dirname, '..', 'lib')), expect.objectContaining({
-     buildArgs: expect.objectContaining({
-       PIP_INDEX_URL: testPypi,
-     }),
-@@ -617,18 +620,39 @@ test('Do not build docker image when skipping bundling', () => {
-     skip: true,
-   });
+   /**
+    * Use a custom hash
++   *
++   * The `AssetStaging` construct will not calculate the asset hash; instead, it
++   * will use the asset hash given in the `assetHash` property.
+    */
+   CUSTOM = 'custom',
+ }
+```
+
+**File**: `packages/aws-cdk-lib/core/lib/fs/ignore.ts` (modified, +15/-0)
+```diff
+@@ -46,6 +46,21 @@ export abstract class IgnoreStrategy {
+     return new DockerIgnoreStrategy(absoluteRootPath, patterns);
+   }
  
--  expect(DockerImage.fromBuild).not.toHaveBeenCalled();
-+  expect(DockerImage.fromBuildV2).not.toHaveBeenCalled();
- });
++  /**
++   * Return an IgnoreStrategy that does not ignore any files.
++   */
++  public static none(): IgnoreStrategy {
++    return new class extends IgnoreStrategy {
++      public add(): void {
++        // no-op
++      }
++
++      public ignores(): boolean {
++        return false;
++      }
++    };
++  }
++
+   /**
+    * Creates an IgnoreStrategy based on the `ignoreMode` and `exclude` in a `CopyOptions`.
+    *
+```
+
+**File**: `packages/aws-cdk-lib/core/lib/fs/index.ts` (modified, +22/-0)
+```diff
+@@ -16,6 +16,7 @@ export * from './options';
+ export class FileSystem {
+   /**
+    * Copies an entire directory structure.
++   *
+    * @param srcDir Source directory
+    * @param destDir Destination directory
+    * @param options options
+@@ -25,6 +26,27 @@ export class FileSystem {
+     return copyDirectory(srcDir, destDir, options, rootDir);
+   }
  
--test('Build docker image when bundling is not skipped', () => {
-+test('Does not build the docker image when the bundling options are created', () => {
-   const entry = path.join(__dirname, 'lambda-handler');
-   Bundling.bundle({
-     entry: entry,
-     runtime: Runtime.PYTHON_3_12,
-     skip: false,
-   });
++  /**
++   * Copies an entire directory structure.
++   *
++   * Protects against interruption by copying to a temporary directory first and then renaming the directory into place.
++   * Both the target directory and the temporary directory will be overwritten if they already exist.
++   *
++   * The temporary directory is deleted if an error occurs.
++   */
++  public static copyDirectoryAtomic(srcDir: string, destDir: string, options: CopyOptions = { }) {
++    const tmpDest = `${destDir}.tmp`;
++    FileSystem.rmrf(tmpDest);
++    try {
++      fs.mkdirSync(tmpDest, { recursive: true });
++      copyDirectory(srcDir, tmpDest, options);
++      FileSystem.rmrf(destDir);
++      fs.renameSync(tmpDest, destDir);
++    } finally {
++      FileSystem.rmrf(tmpDest);
++    }
++  }
++
+   /**
+    * Produces fingerprint based on the contents of a single file or an entire directory tree.
+    *
+```
+
+**File**: `packages/aws-cdk-lib/core/lib/fs/options.ts` (modified, +81/-6)
+```diff
+@@ -74,16 +74,38 @@ export enum IgnoreMode {
+ interface FileOptions {
+   /**
+    * File paths matching the patterns will be excluded. See `ignoreMode` to set the matching behavior.
+-   * Has no effect on Assets bundled using the `bundling` property.
++   *
++   * ## Without bundling
++   *
++   * When used without the `bundling` property, the asset is just a regular file
++   * copy operation. In that case, this controls the files that will be included
++   * in the copy. Files matching the `exclude` patterns will not be included in
++   * the copy.
++   *
++   * ## With bundling
++   *
++   * When used with the `bundling` property, the asset is produced by a
++   * bundling operation. In that case, the value of `exclude` is only meaningful
++   * if the `assetHashType` is set to `AssetHashType.SOURCE`, and ignored for
++   * other asset hash types. The `exclude` patterns will be used to determine
++   * which files contribute to the asset, and the bundling command is skipped
++   * if the source files have not changed since the last bundling operation.
++   *
++   * **NOTE:** The bundling operation still has access to all files in the source path,
++   * regardless of the `exclude` patterns. It is your responsibility to ensure
++   * the `exclude` pattern accurately matches the files the bundling operation
++   * will *actually* access and base its final output on.
++   *
++   * For `OUTPUT` or `CUSTOM` asset hash types, the `exclude` pattern is ignored.
+    *
+    * @default - nothing is excluded
+    */
+   readonly exclude?: string[];
  
--  expect(DockerImage.fromBuild).toHaveBeenCalled();
-+  expect(DockerImage.fromBuildV2).toHaveBeenCalled();
-+  expect(buildImage).not.toHaveBeenCalled();
+   /**
+-   * The ignore behavior to use for `exclude` patterns.
++   * What syntax the `exclude` patterns are written in.
+    *
+-   * @default IgnoreMode.GLOB
++   * @default - IgnoreMode.GLOB for file assets, `IgnoreMode.DOCKER` for image assets (requires that the `@aws-cdk/aws-ecr-assets:dockerIgnoreSupport` feature flag is set, which is recommended)
+    */
+   readonly ignoreMode?: IgnoreMode;
+ }
+@@ -95,7 +117,34 @@ export interface CopyOptions extends FileOptions {
+   /**
+    * A strategy for how to handle symlinks.
+    *
+-   * @default SymlinkFollowMode.NEVER
++   * Symlinks may be copied, materialized or rejected. Note that if symlinks are
++   * copied they should be relative; absolute symlinks will lose their
++   * meaning if the cloud assembly is moved to another machine.
++   *
++   * ## Without bundling
++   *
++   * When used without the `bundling` property, the asset is just a regular file
++   * copy operation. In that case, symlinks are materialized or blocked with respect
++   * to the source path root as they are being copied.
++   *
++   * ## With bundling
++   *
++   * When used with the `bundling` property, the asset is produced by a
++   * bundling operation. In that case, the bundling command is fully
++   * in charge of producing a set of files in an output directory, and
++   * the `AssetStaging` construct will never affect symlink materialization.
++   *
++   * If the `assetHashType` is `AssetHashType.SOURCE`, this flag affects what
++   * the source hash is based on, and the recommended value is one of
++   * `SymlinkFollowMode.EXTERNAL` or `SymlinkFollowMode.BLOCK_EXTERNAL`.
++   *
++   * If the `SymlinkFollowMode.BLOCK_EXTERNAL` mode is used:
++   *
++   * - Symlinks pointing outside the source tree will be blocked, but only
++   *   if using `AssetHashType.SOURCE` (not for any of the other asset hash types).
++   * - Symlinks pointing outside the bundle output will be blocked.
++   *
++   * @default SymlinkFollowMode.EXTERNAL
+    */
+   readonly follow?: SymlinkFollowMode;
+ }
+@@ -107,7 +156,32 @@ export interface FileCopyOptions extends FileOptions {
+   /**
+    * A strategy for how to handle symlinks.
+    *
+-   * @default SymlinkFollowMode.NEVER
++   * Symlinks may be copied, materialized or rejected. Note that if symlinks are
++   * copied they should be relative; absolute symlinks will lose their
++   * meaning if the cloud assembly is moved to another machine.
++   *
++   * ## Without bundling
++   *
++   * When used without the `bundling` property, the asset is just a regular file
++   * copy operation. In that case, symlinks are materialized or blocked with respect
++   * to the `sourcePath` directory as they are being copied.
++   *
++   * ## With bundling
++   *
++   * When used with the `bundling` property, the asset is produced by a
++   * bundling operation. In that case, the bundling command is fully
++   * in charge of producing a set of files in an output directory, and
++   * the `AssetStaging` construct will never affect symlink materialization.
++   *
++   * If the `assetHashType` is `AssetHashType.SOURCE`, this flag affects what
++   * the source hash is based on, and the recommended value is one of
++   * `SymlinkFollowMode.EXTERNAL` or `SymlinkFollowMode.BLOCK_EXTERNAL`.
++   *
++   * If the `SymlinkFollowMode.BLOCK_EXTERNAL` mode is used:
++   * - symlinks pointing outside the source tree will be blocked if using `AssetHashType.SOURCE`.
++   * - symlinks pointing outside the bundle output will be block
+```
+
+**File**: `packages/aws-cdk-lib/core/lib/fs/utils.ts` (modified, +8/-2)
+```diff
+@@ -2,6 +2,8 @@ import * as fs from 'fs';
+ import * as path from 'path';
+ import type { IgnoreStrategy } from './ignore';
+ import { SymlinkFollowMode } from './options';
++import { UnscopedValidationError } from '../errors';
++import { lit } from '../private/literal-string';
+ 
+ export function isInternalPath(rootPath: string, targetPath: string): boolean {
+   return rootPath === targetPath || targetPath.startsWith(rootPath + path.sep);
+@@ -221,6 +223,12 @@ export function walkDirectory(directory: string, options: WalkOptions, visitor:
+ 
+     if (!targetStats) {
+       if (!ignoreStrategy.ignores(symbolicPath)) {
++        if (follow === SymlinkFollowMode.BLOCK_EXTERNAL && !internal) {
++          throw new UnscopedValidationError(
++            lit`ExternalSymlink`,
++            `BLOCK_EXTERNAL forbids the symbolic link ${realPath} from pointing outside the directory tree (to ${linkTarget}). Set \`follow\` to a mode that will follow symlinks (ALWAYS or EXTERNAL) or emit a regular file`,
++          );
++        }
+         visitor.onSymlink?.({ path: symbolicPath, realPath, linkTarget, resolvedLinkTarget, internal });
+       }
+       return;
+@@ -247,9 +255,7 @@ export function walkDirectory(directory: string, options: WalkOptions, visitor:
+       case SymlinkFollowMode.EXTERNAL:
+         return !internal;
+       case SymlinkFollowMode.BLOCK_EXTERNAL:
+-        return internal;
+       case SymlinkFollowMode.NEVER:
+-      default:
+         return false;
+     }
+   }
+```
+
+**File**: `packages/aws-cdk-lib/core/test/app-that-is-interrupted-during-copy.ts` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++/**
++ * This is a CDK app that is guaranteed to kill itself while copying an asset into the cloud assembly
++ */
++import fs from 'fs';
++import * as path from 'path';
++import { App, AssetStaging, Stack } from '../lib';
++
++// Die right after the first file has been copied, so the copy is left half-done
++const copyFileSync = fs.copyFileSync;
++fs.copyFileSync = (...args: Parameters<typeof fs.copyFileSync>) => {
++  copyFileSync(...args);
++  process.kill(process.pid, 'SIGTERM');
++  // Signal delivery is asynchronous; make sure we don't get to copy anything else in the meantime
++  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 10_000);
++};
++
++const app = new App();
++const stack = new Stack(app, 'stack');
++
++new AssetStaging(stack, 'Asset', {
++  sourcePath: path.join(__dirname, 'fs', 'fixtures', 'test1'),
 +});
 +
-+test('Builds the docker image when the asset is bundled', () => {
-+  const run = jest.spyOn(DockerImage.prototype, 'run').mockImplementation((options) => {
-+    const output = options?.volumes?.find(v => v.containerPath === AssetStaging.BUNDLING_OUTPUT_DIR);
-+    if (!output) {
-+      throw new Error('Expected an output volume');
-+    }
-+    fs.writeFileSync(path.join(output.hostPath, 'index.py'), '');
-+  });
-+
-+  const code = Bundling.bundle({
-+    entry: path.join(__dirname, 'lambda-handler'),
-+    runtime: Runtime.PYTHON_3_12,
-+    skip: false,
-+  });
-+  code.bind(new Stack());
-+
-+  expect(buildImage).toHaveBeenCalled();
-+  run.mockRestore();
- });
- 
- test('with command hooks', () => {
-```
-
-**File**: `packages/aws-cdk-lib/aws-lambda-nodejs/test/bundling.test.ts` (modified, +1/-0)
-```diff
-@@ -37,6 +37,7 @@ beforeEach(() => {
- 
-   jest.spyOn(DockerImage, 'fromBuild').mockReturnValue({
-     image: 'built-image',
-+    buildImage: () => { },
-     cp: () => 'dest-path',
-     run: () => { },
-     toJSON: () => 'built-image',
-```
-
-**File**: `packages/aws-cdk-lib/aws-lambda/README.md` (modified, +37/-35)
-```diff
-@@ -273,12 +273,12 @@ To use `applicationLogLevelV2` and/or `systemLogLevelV2` you must set `loggingFo
- 
- ### Log Group Creation Methods
- 
--| Method | Description | Tag Propagation | Prop Injection | Aspects | Notes |
--|--------|-------------|-----------------|----------------|---------|-------|
--| **logRetention prop** | Legacy approach using Custom Resource | False | False | False | Does not support TPA |
--| **logGroup prop** | Explicitly supplied by user in CDK app | True | True | True | Full support for TPA |
--| **Lazy creation** | Lambda service creates logGroup on first invocation | False | False | False | Occurs when both logRetention and logGroup are undefined and USE_CDK_MANAGED_LAMBDA_LOGGROUP is false |
--| **USE_CDK_MANAGED_LAMBDA_LOGGROUP** | CDK Lambda function construct creates log group with default props | True | True | True | Feature flag must be enabled |
-+| Method                              | Description                                                        | Tag Propagation | Prop Injection | Aspects | Notes                                                                                                 |
-+| ----------------------------------- | ------------------------------------------------------------------ | --------------- | -------------- | ------- | ----------------------------------------------------------------------------------------------------- |
-+| **logRetention prop**               | Legacy approach using Custom Resource                              | False           | False          | False   | Does not support TPA                                                                                  |
-+| **logGroup prop**                   | Explicitly supplied by user in CDK app                             | True            | True           | True    | Full support for TPA                                                                                  |
-+| **Lazy creation**                   | Lambda service creates logGroup on first invocation                | False           | False          | False   | Occurs when both logRetention and logGroup are undefined and USE_CDK_MANAGED_LAMBDA_LOGGROUP is false |
-+| **USE_CDK_MANAGED_LAMBDA_LOGGROUP** | CDK Lambda function construct creates log group with default props | True            | True           | True    | Feature flag must be enabled                                                                          |
- 
- *TPA: Tag propagation, Prop Injection, Aspects*
- 
-@@ -925,19 +925,19 @@ Note that once you use a capacity provider in a function, it cannot be removed,
- 
- #### CapacityProviderFunctionOptions (addFunction method)
- 
--| Name | Type | Required | Description |
--|------|------|----------|-------------|
--| perExecutionEnvironmentMaxConcurrency | number | No | Maximum concurrent invokes per execution environment. |
--| executionEnvironmentMemoryGiBPerVCpu | number | No | Memory per VCPU in GiB. |
--| publishToLatestPublished | boolean | No | Whether to automatically publish to $LATEST.PUBLISHED version. |
--| latestPublishedScalingConfig | LatestPublishedScalingConfig | No | Scaling configuration for $LATEST.PUBLISHED version. |
-+| Name                                  | Type                         | Required | Description                                                    |
-+| ------------------------------------- | ---------------------------- | -------- | -------------------------------------------------------------- |
-+| perExecutionEnvironmentMaxConcurrency | number                       | No       | Maximum concurrent invokes per execution environment.          |
-+| executionEnvironmentMemoryGiBPerVCpu  | number                       | No       | Memory per VCPU in GiB.                                        |
-+| publishToLatestPublished              | boolean                      | No       | Whether to automatically publish to $LATEST.PUBLISHED version. |
-+| latestPublishedScalingConfig          | LatestPublishedScalingConfig | No       | Scaling configuration for $LATEST.PUBLISHED version.           |
- 
- #### LatestPublishedScalingConfig
- 
--| Name | Type | Required | Description |
--|------|------|----------|-------------|
--| minExecutionEnvironments | number | No | Minimum execution environments for $LATEST.PUBLISHED version. |
--| maxExecutionEnvironments | number | No | Maximum execution environments for $LATEST.PUBLISHED version. |
-+| Name                     | Type   | Required | Description                                                   |
-+| ------------------------ | ------ | -------- | ------------------------------------------------------------- |
-+| minExecutionEnvironments | number | No       | Minimum execution environments for $LATEST.PUBLISHED version. |
-+| maxExecutionEnvironments | number | No       | Maximum execution environments for $LATEST.PUBLISHED version. |
- 
- ### Capacity Provider Versions
- 
-@@ -976,10 +976,10 @@ capacityProvider.addFunction(fn, {
- 
- #### VersionOptions (Capacity Provide
-```
-
-**File**: `packages/aws-cdk-lib/aws-lambda/lib/code.ts` (modified, +2/-0)
-```diff
-@@ -10,6 +10,7 @@ import * as s3_assets from '../../aws-s3-assets';
- import * as cdk from '../../core';
- import { UnscopedValidationError, ValidationError } from '../../core/lib/errors';
- import { lit } from '../../core/lib/private/literal-string';
-+import { profileFn } from '../../core/lib/private/perf';
- 
- /**
-  * How Lambda manages the storage of your code package.
-@@ -153,6 +154,7 @@ export abstract class Code {
-    * @param path The path to the directory containing the Docker file
-    * @param options Docker build options
-    */
-+  @profileFn('Code.fromDockerBuild', { telemetry: true })
-   public static fromDockerBuild(path: string, options: DockerBuildAssetOptions = {}): AssetCode {
-     let imagePath = options.imagePath ?? '/asset/.';
- 
-```
-
-**File**: `packages/aws-cdk-lib/aws-lambda/test/code.test.ts` (modified, +1/-0)
-```diff
-@@ -547,6 +547,7 @@ describe('code', () => {
-     beforeEach(() => {
-       cpMock = jest.fn().mockReturnValue(path.join(__dirname, 'docker-build-lambda'));
-       fromBuildMock = jest.spyOn(cdk.DockerImage, 'fromBuild').mockImplementation(() => ({
-+        buildImage: jest.fn(),
-         cp: cpMock,
-         image: 'tag',
-         run: jest.fn(),
-```
-
-**File**: `packages/aws-cdk-lib/aws-s3-assets/README.md` (modified, +7/-1)
-```diff
-@@ -75,7 +75,13 @@ The following example uses custom asset bundling to convert a markdown file to h
- [Example of using asset bundling](./test/integ.assets.bundling.lit.ts).
- 
- The bundling docker image (`image`) can either come from a registry (`DockerImage.fromRegistry`)
--or it can be built from a `Dockerfile` located inside your project (`DockerImage.fromBuild`).
-+or it can be built from a `Dockerfile` located inside your project.
-+
-+We recommend to use `DockerImage.fromBuildV2` for images you build yourself.
-+The image is only built when an asset actually needs bundling. This way, a synth
-+that reuses existing bundling output, or skips bundling altogether, doesn't wait
-+for a Docker build. If you need the image right away, for example to run your own
-+`docker` commands with it, call `buildImage()` on it first.
- 
- You can set the `CDK_DOCKER` environment variable in order to provide a custom
- docker program to execute. This may sometime be needed when building in
++app.synth();
 ```
 
 ---
 
-### Incident Patch 2: `205ff79a` (2026-11-18)
-**Commit Message**: chore: build logs on GitHub Actions are too long to be useful (#39821)
+### Incident Patch 2: `b7476c8a` (2026-11-19)
+**Commit Message**: chore: release build runs out of memory in jsii-pacmak (#39840)
 
 ### Issue # (if applicable)
 
-N/A
+None.
 
 ### Reason for this change
 
-The build logs on GitHub Actions are very long, because the output of every package is printed in one stream, interleaved with other packages running at the same time. Finding a failure means scrolling through thousands of lines, and test failures don't show up on the PR itself.
+The release build fails in `pack.sh` when `jsii-pacmak` runs out of heap:
+
+```
+[jsii-pacmak] [INFO] Packaging 'python' for 44 modules
+FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+./pack.sh: line 49: Aborted   $PACMAK --verbose $(cat $TMPDIR/jsii.txt)
+```
+
+`pack.sh` packages all jsii modules in one `jsii-pacmak` process with the 8 GB heap it sets at the top of the script. The service spec update in #39788 grew `@aws-cdk/mixins-preview` from about 2,000 to about 28,000 types, almost all of them EventBridge event types, and the release build's Rosetta step now handles 68,160 examples instead of about 42,000. The pacmak step no longer fits in 8 GB. The build host has 144 GB.
+
+This failure showed up after #39836 fixed the Rosetta errors that stopped the build earlier in `pack.sh`.
 
 ### Description of changes
 
-`build.sh` no longer passes `--stream` to `lerna run` in CI. Without it, nx prints each task's output as one collapsible group when the task finishes, so the log shows one line per package and failures are easy to find. The downside is that a long task like the `aws-cdk-lib` build shows no output until it's done.
+Give the `jsii-pacmak` step in `pack.sh` a 32 GB heap. The other steps in `pack.sh` keep the 8 GB heap.
 
-The shared jest config in `cdk-build-tools` adds the `github-actions` reporter when `GITHUB_ACTIONS` is set, so test failures show up as annotations on the PR. It runs with `silent: true`, so it doesn't print its own per-file groups: GitHub can't nest groups inside the ones nx creates. The `default` and `jest-junit` reporters are unchanged. Previously the reporter wasn't active at all, because jest only adds it automatically when `report
+A later `--max-old-space-size` in `NODE_OPTIONS` overrides the earlier one, so the change 
 
-**File**: `build.sh` (modified, +1/-1)
+**File**: `pack.sh` (modified, +3/-1)
 ```diff
-@@ -114,7 +114,7 @@ fi
+@@ -43,8 +43,10 @@ echo "Running aws-cdk-lib pre-package"
+ npx lerna run --scope aws-cdk-lib package -- --pre-only
  
- flags=""
- if [ "$ci" == "true" ]; then
--  flags="--stream --no-progress --skip-nx-cache"
-+  flags="--no-progress --skip-nx-cache"
-   export FORCE_COLOR=false
- fi
+ # Jsii packaging (all at once using jsii-pacmak)
++# jsii-pacmak loads every assembly and its translations into one process. With about 28,000 types
++# in @aws-cdk/mixins-preview, that needs more than the 8 GB set above.
+ echo "Packaging jsii modules" >&2
+-$PACMAK \
++NODE_OPTIONS="${NODE_OPTIONS} --max-old-space-size=32768" $PACMAK \
+   --verbose \
+   $(cat $TMPDIR/jsii.txt)
  
-```
-
-**File**: `tools/@aws-cdk/cdk-build-tools/config/jest.config.js` (modified, +7/-1)
-```diff
-@@ -19,6 +19,8 @@ process.env.CDK_CONTEXT_JSON = JSON.stringify({
- // so we can more easily attach the debugger to the subprocesses.
- const isVsCodeDebugTerminal = process.env.NODE_OPTIONS?.includes('ms-vscode.js-debug') ?? false;
- 
-+const jestJunitReporter = ['jest-junit', { suiteName: 'jest tests', outputDirectory: 'coverage', suiteNameTemplate: '{filepath}', classNameTemplate: '{classname}', titleTemplate: '{title}' }];
-+
- /** @type {import('ts-jest').JestConfigWithTsJest} */
- module.exports = {
-   // The preset deals with preferring TS over JS
-@@ -58,7 +60,11 @@ module.exports = {
-   coveragePathIgnorePatterns: ['\\.generated\\.[jt]s$', '<rootDir>/test/', '.warnings.jsii.js$', '/node_modules/', '/analytics-data-source/'],
-   reporters: [
-     'default',
--    ['jest-junit', { suiteName: 'jest tests', outputDirectory: 'coverage', suiteNameTemplate: '{filepath}', classNameTemplate: '{classname}', titleTemplate: '{title}' }]],
-+    // Failure annotations on the PR. Not grouped per test file, because nx
-+    // already groups each package's output and GitHub can't nest groups.
-+    ...(process.env.GITHUB_ACTIONS ? [['github-actions', { silent: true }]] : []),
-+    jestJunitReporter,
-+  ],
- 
-   setupFilesAfterEnv,
- };
 ```
 
 ---
 
-### Incident Patch 3: `5fafec90` (2026-11-18)
-**Commit Message**: chore(workflows): docker image cache fills the cache budget without speeding up builds (#39831)
+### Incident Patch 3: `2f790a31` (2026-11-18)
+**Commit Message**: fix(core): upgrade CloudFormation validation to latest version (#39643)
 
-### Issue # (if applicable)
+### Description
+This upgrades `@aws/cloudformation-validate` to [1.17.0](https://github.com/aws-cloudformation/cloudformation-validate/compare/1.14.0...1.17.0) in order to get the latest fixes and improvements, and allows compatible 1.17.x patch releases to be picked up automatically.
 
-N/A
+Changes:
+* Fixes the `E1152` false positive for `resolve:ssm:` values on `AWS::EC2::Instance.ImageId`, including templates produced by `MachineImage.resolveSsmParameterAtLaunch`
+* Replaces the hard-coded `E3511` IAM role check with schema-backed `E1156` and `E1165` validation, removing duplicate diagnostics and accepting valid bare and path-prefixed role names for AWS Batch compute environments
+* Fixes conditional schema evaluation for nested `allOf` constraints and reachable `Fn::If` scenarios, including RDS KMS encryption checks and EC2 IPv6 mutual-exclusion checks
+* Honors CloudFormation `$uppercase` property transforms during enum validation, preventing `W3030` false positives for accepted case variants
+* Improves diagnostic locations for malformed condition operands and missing or empty `Resources` sections
+* Includes the l
 
-### Reason for this change
-
-The Docker image cache (`docker-cache-Linux`) has grown to 10.8 GB, which is more than the repo's whole cache budget, so it evicts every other cache. Restoring it costs time on every PR build, and saving it on main took about 22 minutes on the [last run](https://github.com/aws/aws-cdk/actions/runs/44296115102). It doesn't help the builds either.
-
-The cache was added in #34841 to avoid the public ECR rate limit for unauthenticated pulls, by loading base images from the cache instead of pulling them. That doesn't work with how our builds run. `setup-buildx-action` creates a `docker-container` builder and makes it the default, so every `docker build`, including the ones CDK runs during tests, runs in that builder. The builder can't see the Docker image store, so `FROM public.ecr.aws/...` always resolves and downloads from the registry, and the builder starts empty on every run. The images that do end up in the image store are the ones the build produces, and each of them includes the layers of its base image, which is where the 
-
-**File**: `.github/workflows/codebuild-pr-build.yml` (modified, +0/-24)
+**File**: `packages/@aws-cdk/aws-apprunner-alpha/test/auto-scaling-configuration.test.ts` (modified, +4/-0)
 ```diff
-@@ -53,18 +53,6 @@ jobs:
-       - name: Set up Docker
-         uses: docker/setup-buildx-action@v4
+@@ -5,6 +5,10 @@ import { AutoScalingConfiguration } from '../lib';
+ let stack: cdk.Stack;
+ beforeEach(() => {
+   stack = new cdk.Stack();
++  cdk.Validations.of(stack).acknowledge({
++    id: 'CloudFormation-Validate::W3697',
++    reason: 'App Runner is in maintenance mode and is intentionally exercised by this unit test',
++  });
+ });
  
--      - name: Load Docker images
--        id: docker-cache
--        uses: actions/cache/restore@v6
--        with:
--          path: |
--            ~/.docker-images.tar
--          key: docker-cache-${{ runner.os }}
--
--      - name: Restore Docker images
--        if: ${{ steps.docker-cache.outputs.cache-hit }}
--        run: docker image load --input ~/.docker-images.tar
--
-       - name: Restore build artifacts
-         id: s3buildcache
-         uses: actions/cache/restore@v6
-@@ -102,18 +90,6 @@ jobs:
-             ~/.s3buildcache
-           key: s3buildcache-${{ runner.os }}
- 
--      - name: Export Docker images
--        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
--        run: docker image save --output ~/.docker-images.tar $(docker image list --format '{{ if ne .Repository "<none>" }}{{ .Repository }}{{ if ne .Tag "<none>" }}:{{ .Tag }}{{ end }}{{ else }}{{ .ID }}{{ end }}')
--
--      - name: Cache Docker images
--        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
--        uses: actions/cache/save@v6
--        with:
--          path: |
--            ~/.docker-images.tar
--          key: docker-cache-${{ runner.os }}
--
-       - name: Save PR info for PR Linter
-         if: github.event_name == 'pull_request'
-         env:
+ test.each([
 ```
 
-**File**: `.github/workflows/integration-test-deployment.yml` (modified, +0/-24)
+**File**: `packages/@aws-cdk/aws-apprunner-alpha/test/obserbability-configuration.test.ts` (modified, +4/-0)
 ```diff
-@@ -67,18 +67,6 @@ jobs:
-       - name: Set up Docker
-         uses: docker/setup-buildx-action@v4
+@@ -5,6 +5,10 @@ import { ObservabilityConfiguration, TraceConfigurationVendor } from '../lib';
+ let stack: cdk.Stack;
+ beforeEach(() => {
+   stack = new cdk.Stack();
++  cdk.Validations.of(stack).acknowledge({
++    id: 'CloudFormation-Validate::W3697',
++    reason: 'App Runner is in maintenance mode and is intentionally exercised by this unit test',
++  });
+ });
  
--      - name: Load Docker images
--        id: docker-cache
--        uses: actions/cache/restore@v6
--        with:
--          path: |
--            ~/.docker-images.tar
--          key: docker-cache-${{ runner.os }}
--
--      - name: Restore Docker images
--        if: ${{ steps.docker-cache.outputs.cache-hit }}
--        run: docker image load --input ~/.docker-images.tar
--
-       - name: Restore build artifacts
-         uses: actions/cache/restore@v6
-         with:
-@@ -113,15 +101,3 @@ jobs:
-           CDK_ATMOSPHERE_BATCH_SIZE: ${{ vars.CDK_ATMOSPHERE_BATCH_SIZE }}
-           TARGET_BRANCH_COMMIT: ${{ github.event.pull_request.base.sha }}
-           SOURCE_BRANCH_COMMIT: ${{ github.event.pull_request.head.sha }}
--          
--      - name: Export Docker images
--        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
--        run: docker image save --output ~/.docker-images.tar $(docker image list --format '{{ if ne .Repository "<none>" }}{{ .Repository }}{{ if ne .Tag "<none>" }}:{{ .Tag }}{{ end }}{{ else }}{{ .ID }}{{ end }}')
--
--      - name: Cache Docker images
--        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
--        uses: actions/cache/save@v6
--        with:
--          path: |
--            ~/.docker-images.tar
--          key: docker-cache-${{ runner.os }}
+ test.each([
 ```
 
-**File**: `.github/workflows/pr-build.yml` (modified, +0/-24)
+**File**: `packages/@aws-cdk/aws-s3objectlambda-alpha/test/s3objectlambda.test.ts` (modified, +4/-0)
 ```diff
-@@ -55,18 +55,6 @@ jobs:
-       - name: Set up Docker
-         uses: docker/setup-buildx-action@v4
+@@ -10,6 +10,10 @@ let handler: lambda.Function;
  
--      - name: Load Docker images
--        id: docker-cache
--        uses: actions/cache/restore@v6
--        with:
--          path: |
--            ~/.docker-images.tar
--          key: docker-cache-${{ runner.os }}
--
--      - name: Restore Docker images
--        if: ${{ steps.docker-cache.outputs.cache-hit }}
--        run: docker image load --input ~/.docker-images.tar
--
-       - name: Restore build artifacts
-         id: s3buildcache
-         uses: actions/cache/restore@v6
-@@ -103,15 +91,3 @@ jobs:
-           path: |
-             ~/.s3buildcache
-           key: s3buildcache-${{ runner.os }}
--
--      - name: Export Docker images
--        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
--        run: docker image save --output ~/.docker-images.tar $(docker image list --format '{{ if ne .Repository "<none>" }}{{ .Repository }}{{ if ne .Tag "<none>" }}:{{ .Tag }}{{ end }}{{ else }}{{ .ID }}{{ end }}')
--
--      - name: Cache Docker images
--        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
--        uses: actions/cache/save@v6
--        with:
--          path: |
--            ~/.docker-images.tar
--          key: docker-cache-${{ runner.os }}
+ beforeEach(() => {
+   stack = new cdk.Stack();
++  cdk.Validations.of(stack).acknowledge({
++    id: 'CloudFormation-Validate::W3697',
++    reason: 'S3 Object Lambda is in maintenance mode and is intentionally exercised by this unit test',
++  });
+   bucket = new s3.Bucket(stack, 'MyBucket');
+   handler = new lambda.Function(stack, 'MyFunction', {
+     runtime: lambda.Runtime.NODEJS_LATEST,
+```
+
+**File**: `packages/aws-cdk-lib/aws-cloudwatch-actions/test/ssm.test.ts` (modified, +4/-0)
+```diff
+@@ -133,6 +133,10 @@ test('SSM Incident alarm action with full stack including replication set and re
+ 
+   // GIVEN
+   const stack = new Stack();
++  cdk.Validations.of(stack).acknowledge({
++    id: 'CloudFormation-Validate::W3697',
++    reason: 'SSM Incident Manager is in maintenance mode and is intentionally exercised by this unit test',
++  });
+   const responsePlanName = 'test-response-plan';
+ 
+   const key = new kms.Key(stack, 'Key', {
+```
+
+**File**: `packages/aws-cdk-lib/aws-lambda/test/function.test.ts` (modified, +2/-2)
+```diff
+@@ -5632,7 +5632,7 @@ describe('L1 Relationships', () => {
+     const bucket = new s3.Bucket(stack, 'MyBucket');
+ 
+     const codeToken = cdk.Token.asAny({
+-      resolve: () => ({ s3Bucket: bucket.bucketName }),
++      resolve: () => ({ s3Bucket: bucket.bucketName, s3Key: 'code.zip' }),
+     });
+ 
+     const fsConfigToken = cdk.Token.asAny({
+@@ -5647,7 +5647,7 @@ describe('L1 Relationships', () => {
+     Template.fromStack(stack).hasResource('AWS::Lambda::Function', {
+       Properties: {
+         Role: { 'Fn::GetAtt': ['SomeRole6DDC54DD', 'Arn'] },
+-        Code: { S3Bucket: { Ref: 'MyBucketF68F3FF0' } },
++        Code: { S3Bucket: { Ref: 'MyBucketF68F3FF0' }, S3Key: 'code.zip' },
+         FileSystemConfigs: [{ Arn: 'TestArn', LocalMountPath: '/mnt' }],
+       },
+     });
+```
+
+**File**: `packages/aws-cdk-lib/package.json` (modified, +1/-1)
+```diff
+@@ -122,7 +122,7 @@
+     "@aws-cdk/asset-node-proxy-agent-v6": "^2.1.3",
+     "@aws-cdk/cloud-assembly-api": "^2.5.0",
+     "@aws-cdk/cloud-assembly-schema": "^55.6.0",
+-    "@aws/cloudformation-validate": "1.14.0",
++    "@aws/cloudformation-validate": "~1.17.0",
+     "@balena/dockerignore": "^1.0.2",
+     "case": "1.6.3",
+     "fs-extra": "^11.4.1",
+```
+
+**File**: `packages/aws-cdk-lib/testhelpers/jest-global-app-testhook.ts` (modified, +1/-0)
+```diff
+@@ -25,6 +25,7 @@ const APP_INIT_HOOK_SYMBOL = Symbol.for('@aws-cdk/core.App#initHook');
+     { id: 'CloudFormation-Validate::W7001', reason: 'Tests do not always reference mappings' },
+     { id: 'CloudFormation-Validate::W9008', reason: 'Do not care about storage encryption of RDS instances in tests' },
+     { id: 'CloudFormation-Validate::W3696', reason: 'Service is about to get shut down, no reason not to test' },
++    { id: 'CloudFormation-Validate::W3697', reason: 'Services in maintenance mode are intentionally exercised in unit tests' },
+     { id: 'CloudFormation-Validate::F3031', reason: 'Some test value does not match the expected regex' },
+     { id: 'CloudFormation-Validate::F3017', reason: 'Many tests use placeholder KMS key identifiers; valid forms are documented at https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-id' },
+     { id: 'CloudFormation-Validate::E1151', reason: 'vpc-12345 is not a valid VPC ID' },
+```
+
+**File**: `yarn.lock` (modified, +4/-4)
+```diff
+@@ -2367,10 +2367,10 @@
+     "@smithy/types" "^4.20.0"
+     tslib "^2.6.2"
+ 
+-"@aws/cloudformation-validate@1.14.0":
+-  version "1.14.0"
+-  resolved "https://registry.npmjs.org/@aws/cloudformation-validate/-/cloudformation-validate-1.14.0.tgz#618e5b0709f702cb07eb670a665137fd63a61678"
+-  integrity sha512-KIgS+l0XB890RT7zWcrnULexkxkA7vaIf2DllOGOU47iNQNgitlMndqBHGERgx9VXxxb3EpVXCD8PlpHbJZ+uQ==
++"@aws/cloudformation-validate@~1.17.0":
++  version "1.17.1"
++  resolved "https://registry.npmjs.org/@aws/cloudformation-validate/-/cloudformation-validate-1.17.1.tgz#d7e27705e2131626651967d27291bad88a203f6e"
++  integrity sha512-Rf3ISGZYfXq1c0fOSYYt33UvF5lSmphnl8JpCvlFMyAa5qc7GECXc8kPq1HL5+62leUQWMIiWceYjkuQhhJmZw==
+ 
+ "@aws/lambda-invoke-store@^0.3.0":
+   version "0.3.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39847** (2026-11-19): feat: update L1 CloudFormation resource definitions (@aws-cdk-automation)
+- **PR #39840** (2026-11-19): chore: release build runs out of memory in jsii-pacmak (@alvazjor)
+- **PR #39836** (2026-11-19): chore: synthetic examples for types named Export and Interface do not compile (@alvazjor)
+- **PR #39834** (2026-11-18): feat(lambda): add FunctionRuntimeConfig mixin for customer-managed runtimes (@kumvprat)
+- **PR #39832** (2026-11-19): chore(skills): rate, attribute and report review findings more precisely (@ozelalisen)
 - **PR #39831** (2026-11-18): chore(workflows): docker image cache fills the cache budget without speeding up builds (@mrgrain)
-- **PR #39830** (2026-11-18): chore: npm-check-updates && yarn upgrade (@aws-cdk-automation)
-- **PR #39829** (2026-11-18): chore(eslint-config): @cdklabs/eslint-plugin peer dependencies don't match eslint 9 (@mrgrain)
-- **PR #39827** (2026-11-18): chore(workflows): codeql overlay caches take up cache space for little gain (@mrgrain)
-- **PR #39826** (2026-11-18): chore: yarn install warns about unmet constructs peer dependencies (@mrgrain)
-- **PR #39825** (2026-11-18): chore(core): extracting test fixture tarballs prints tar header warnings (@mrgrain)
 
 ---
 
@@ -1693,31 +1888,38 @@ The cache was added in #34841 to avoid the public ECR rate limit for unauthentic
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): build bundling images only when an asset is bundled
+## X. core): asset hashing and symlink contract is not documented
 
 **RULE**:
-When implementing operations in `packages/@aws-cdk/aws-lambda-go-alpha/test/bundling.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/@aws-cdk/aws-lambda-python-alpha/lib/bundling.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8b2487e6`: core): build bundling images only when an asset is bundled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4ed690ec`: core): asset hashing and symlink contract is not documented. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@aws-cdk/aws-lambda-go-alpha/test/bundling.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@aws-cdk/aws-lambda-python-alpha/lib/bundling.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    buildImage: () => { },
+import { AssetHashType, AssetStaging, DockerImage, PERF_BUNDLING_SRC_SYM } from 'aws-cdk-lib/core';
+    let exclude = [];
+    if (options.assetHashType === AssetHashType.SOURCE || options.assetHashType === undefined) {
+      exclude.push(...DEPENDENCY_EXCLUDES);
+    }
+
+      exclude,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+import { AssetStaging, DockerImage, PERF_BUNDLING_SRC_SYM } from 'aws-cdk-lib/core';
+      exclude: DEPENDENCY_EXCLUDES,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8b2487e6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4ed690ec` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

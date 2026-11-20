@@ -4,22 +4,22 @@
 {
   "source_repository": "jellyfin/Swiftfin",
   "source_url": "https://github.com/jellyfin/Swiftfin",
-  "source_version": "e956be4a",
+  "source_version": "6f8c16de",
   "license": "MPL-2.0",
-  "timestamp": "2026-11-15T22:58:41.403Z",
+  "timestamp": "2026-11-20T02:58:29.501Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-jellyfin-swiftfin",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin) (Revision: `e956be4a`).  
-> **License**: MPL-2.0 | **Timestamp**: `2026-11-15T22:58:41.403Z`  
+> **Provenance**: Harvested from [jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin) (Revision: `6f8c16de`).  
+> **License**: MPL-2.0 | **Timestamp**: `2026-11-20T02:58:29.501Z`  
 > **Learning ID**: `learn-github-jellyfin-swiftfin`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `jellyfin/Swiftfin` (Commit: `e956be4a`)
+- **Target Repository**: `jellyfin/Swiftfin` (Commit: `6f8c16de`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T22:58:40.420Z  
+> **Harvest Timestamp**: 2026-11-20T02:58:28.286Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Native Jellyfin Client for iOS and tvOS 
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4285 stars
+- **Stars / Engagement**: 4292 stars
 
 ---
 
@@ -48,7 +48,7 @@ PROVENANCE_END -->
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `Shared/Components/EPG/Body/Components/EPGScrollState.swift`
+### Core Architecture Module: `Shared/Components/EPG/Views/Components/EPGScrollState.swift`
 ```
 //
 // Swiftfin is subject to the terms of the Mozilla Public
@@ -593,8 +593,6 @@ struct VideoPlaybackState: Equatable, Sendable {
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Observation
-
 enum MediaPlayerQueueState {
 
     case initial
@@ -649,11 +647,13 @@ extension MediaPlayerQueue {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2437** (2026-11-14): **Map mpv tracks past external Jellyfin streams**
-  *Symptoms*: ## Summary  Fixes mpv playing the wrong audio/subtitle track when an item has external subtitles.  ## Problem  Jellyfin lists external subtitles before the embedded streams, so every embedded stream's `Index` is shifted by the number of external subtitles. The mpv track map matched that `Index` directly against mpv's `ff-index` (`sourceStreamIndex`), which is the stream's position in the container.  Example, a movie with one external subtitle and two audio tracks:  | Stream | Jellyfin `Index` | ff-index | |---|---|---| | external subtitle | 0 | – | | video | 1 | 0 | | audio: main | 2 | 1 | | audio: commentary | 3 | 2 |  Selecting the main audio (`Index` 2) plays the commentary (ff-index 2).  This only happens on direct play. When the server remuxes, it maps the selected stream itself, so the player receives the right track.  ## Change  Before matching, subtract the number of external streams whose `Index` is lower than the stream's own. This is the mapping jellyfin/jellyfin#18523 describes as expected ("14 minus the 4 external subtitles").  Only external streams *before* the stream are counted, so this also holds if Jellyfin adopts stable numbering as proposed in jellyfin/jellyfin#17681, where new external subtitles are appended after the embedded streams. Without external subtitles nothing changes.  ## Testing  Built in fork here: https://github.com/Miista/Swiftfin/actions/runs/43617798420  ~Will test on Apple TV later tonight. May als
+- **Issue #2455** (2026-11-19): **Update collections**
+  *Symptoms*: Update collections packages with RTL fixes and proxies updates.  Closes #2453
 
-- **Issue #2425** (2026-11-12): **tvOS Various Fixes**
-  *Symptoms*: ### Summary  This is a small grab bag of new items I noticed:  ### Search the filter bar would move to the center while suggestions were loading in. This anchors it to the top for tvOS since the filter bar is inside the view instead of in the toolbar.  #### Before  <img width="1920" height="1080" alt="Screenshot Apple TV 4K (3rd generation) (at 1080p) 11-11-2026 at 15 40 08" src="https://github.com/user-attachments/assets/8bc44098-f313-4e30-8558-94219369b334" />  #### After  <img width="1920" height="1080" alt="Screenshot Apple TV 4K (3rd generation) (at 1080p) 11-11-2026 at 11 08 47" src="https://github.com/user-attachments/assets/3f0a01b6-b8f4-44f3-800b-122d931acc59" />  ### Capsules are skinny on tvOS. This just increases the padding on tvOS. Most notable for the seasons capsules:  #### Before  <img width="1056" height="258" alt="Pasted 2026-11-11 at 10 14 32" src="https://github.com/user-attachments/assets/1c95e14f-712e-402f-ac76-31c44a4af9a2" />  #### After  <img width="1920" height="1080" alt="Screenshot Apple TV 4K (3rd generation) (at 1080p) 11-11-2026 at 10 12 25" src="https://github.com/user-attachments/assets/cfe86af2-2609-4dcc-906b-8230d307a999" />  ### ItemView and Home scrolling back to the top doesn't move focus up with it. This was a weird one where it was just the CollectionHStackFocusScope needed to sit around the scrollview instead or the parent to resolve this.  **Claude Code was used to diagnose this issue**  #### Before  htt
+- **Issue #2446** (2026-11-17): **Season text needs padding**
+  *Symptoms*: ### This issue respects the following points:  - [x] This is a **bug**, not a question or a configuration issue; Please visit our [forum or chat rooms](https://jellyfin.org/contact/) first to troubleshoot with volunteers, before creating a report. - [x] This issue is **not** already reported on [GitHub](https://github.com/jellyfin/Swiftfin/issues?q=is%3Aopen+is%3Aissue). - [x] I have read the [Common Issues](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/common_issues.md) documentation and this issue was not mentioned there. - [x] I'm using an up to date version of Swiftfin; We generally do not support previous older versions. If possible, please update to the latest version before opening an issue. - [x] I agree to follow Jellyfin's [Code of Conduct](https://jellyfin.org/docs/general/community-standards.html#code-of-conduct).  ### Description of the bug  The text on the season number buttons is the same size as the button. This makes it look strange.   <img width="4032" height="3024" alt="IMG_5441" src="https://github.com/user-attachments/assets/bee30a1d-04f0-40b2-8654-c75711d60138" />  <img width="790" height="371" alt="IMG_5441" src="https://github.com/user-attachments/assets/a9f08931-ebd3-4e2c-95ec-bd27e1453eac" />  ### Reproduction steps  Open swiftfin, select a tv show. In the series view the season buttons are like this.  ### Platform  tvOS  ### Application version  1.7.1  ### Where did you install the app from?  None  ### Device information  Apple TV 4k 
+  **Post-Mortem & Fix Analysis**:
+  > This is resolved via: https://github.com/jellyfin/Swiftfin/pull/2425 and will be included in our next release.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -670,682 +670,419 @@ extension MediaPlayerQueue {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e956be4a` (2026-11-15)
-**Commit Message**: `ActiveSessions` Fully Utilize `PagingLibrary` (#2423)
+### Incident Patch 1: `543a7da5` (2026-11-18)
+**Commit Message**: Fix iOS Video Screenshot (#2454)
 
-**File**: `Shared/Extensions/JellyfinAPI/SessionInfoDto+Poster.swift` (added, +210/-0)
+**File**: `Tools/Screenshots/Tests/Robots/Robot+Playback.swift` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,210 @@
-+//
-+// Swiftfin is subject to the terms of the Mozilla Public
-+// License, v2.0. If a copy of the MPL was not distributed with this
-+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-+//
-+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-+//
-+
-+import FactoryKit
-+import JellyfinAPI
-+import SwiftUI
-+
-+extension SessionInfoDto: Poster {
-+
-+    typealias Environment = BaseItemDto.Environment
-+
-+    var displayTitle: String {
-+        userName ?? L10n.unknown
-+    }
-+
-+    var subtitle: String? {
-+        nowPlayingItem?.displayTitle ?? deviceName
-+    }
-+
-+    var preferredPosterDisplayType: PosterDisplayType {
-+        .landscape
-+    }
-+
-+    var systemImage: String {
-+        nowPlayingItem?.systemImage ?? "person.fill"
-+    }
-+
-+    func resolveEnvironment(_ environment: EnvironmentValues) -> Environment {
-+        nowPlayingItem?.resolveEnvironment(environment) ?? .default
-+    }
-+
-+    func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
-+        var details: [String?] = [client, deviceName]
-+
-+        if let nowPlayingItem, let playState {
-+            details.append(playState.isPaused == true ? L10n.pause : L10n.play)
-+
-+            let position = PosterAccessibility.duration(playState.position ?? .zero)
-+
-+            if let runtime = nowPlayingItem.runtime {
-+                details.append(L10n.playbackPositionOfTotal(position, PosterAccessibility.duration(runtime)))
-+            } else {
-+                details.append(position)
-+            }
-+
-+            details.append(playMethodDisplayTitle)
-+
-+            if playState.playMethod == .transcode {
-+                details.append(contentsOf: transcodingInfo?.transcodeReasons?.map(\.displayTitle) ?? [])
-+            }
+@@ -67,7 +67,9 @@ extension Robot {
+             sleep(1)
+         }
+ 
+-        tap(button(L10n.aspectFill))
++        if UIDevice.isPad {
++            tap(button(L10n.aspectFill))
 +        }
-+
-+        return PosterAccessibility(
-+            label: PosterAccessibility.joined([displayTitle, nowPlayingItem?.displayTitle]),
-+            value: PosterAccessibility.joined(details)
-+        )
-+    }
-+
-+    @ContentBuilder
-+    var posterLabel: some View {
-+        VStack(alignment: .leading, spacing: 2) {
-+            Text(displayTitle)
-+                .font(.footnote)
-+                .lineLimit(1, reservesSpace: true)
-+
-+            Text(subtitle ?? .emptyDash)
-+                .font(.caption)
-+                .fontWeight(.medium)
-+                .foregroundStyle(.secondary)
-+                .lineLimit(1, reservesSpace: true)
-+        }
-+        .frame(maxWidth: .infinity, alignment: .leading)
-+    }
-+
-+    @ContentBuilder
-+    var posterContextMenu: some View {
-+        SessionPosterContextMenu(session: self)
-+    }
-+
-+    @ContentBuilder
-+    func posterOverlay(for displayType: PosterDisplayType) -> some View {
-+        SessionPosterOverlay(session: self, displayType: displayType)
-+    }
-+
-+    func imageSources(
-+        for displayType: PosterDisplayType,
-+        environment: Environment
-+    ) -> [ImageSource] {
-+        nowPlayingItem?.imageSources(for: displayType, environment: environment) ?? []
-+    }
-+
-+    @ContentBuilder
-+    func transform(image: Image, displayType: PosterDisplayType) -> some View {
-+        if let nowPlayingItem {
-+            nowPlayingItem.transform(image: image, displayType: displayType)
-+        } else {
-+            image
-+        }
-+    }
-+}
-+
-+private struct SessionPosterContextMenu: View {
-+
-+    @Router
-+    private var router
-+
-+    let session: SessionInfoDto
-+
-+    private var isPaused: Bool {
-+        session.playState?.isPaused == true
-+    }
-+
-+    @ContentBuilder
-+    var body: some View {
-+        if let itemID = session.nowPlayingItem?.id {
-+            Button(L10n.goToItem, systemImage: "info.circle") {
-+                router.route(to: .item(id: itemID))
-+            }
-+        }
-+
-+        if session.canControlPlayback(by: Container.shared.currentUserSession()?.userData) {
-+            Button(isPaused ? L10n.play : L10n.pause, systemImage: isPaused ? "play.fill" : "pause.fill") {
-+                Task {
-+                    await sendPlaystateCommand(isPaused ? .unpause : .pause)
-+                }
-+            }
-+
-+            Button(L10n.stop, systemImage: "stop.fill", role: .destructive) {
-+                Task {
-+                    await sendPlaystateCommand(.stop)
-+                }
-+            }
-+        }
-+    }
-+
-+    @MainActor
-+    private func sendPlaystateCommand(_ command: PlaystateCommand) async {
-+        guard let userSession = Container.shared.currentUserSession(), let id = session.id else { return }
-+
-+        do {
-+            try await userSession.client.send(Paths.sendPlaystateCommand(sessionID: id, command: command.rawValue))
-+        } catch {
-+            userSession.itemActionErrors.send(error)
-+        }
-+    }
-+}
-+
-+private struct SessionPosterOverlay: View {
-+
-+    @AppTheme
-+    private var theme
-+
-+    let session: SessionInfoDto
-+    let displayType: PosterDisplayType
-+
-+    private var playbackProgress: Double {
-+        guard let runtime = session.nowPlayingI
+ 
+         let remaining = waitFor(app.staticTexts["playbackRemainingTime"])
+         let right = remaining.frame.maxX
 ```
 
-**File**: `Shared/Extensions/JellyfinAPI/SessionInfoDto.swift` (modified, +9/-0)
+**File**: `Tools/Screenshots/Tests/ScreenshotTests.swift` (modified, +0/-13)
 ```diff
-@@ -41,6 +41,15 @@ extension SessionInfoDto: @retroactive Comparable {
+@@ -43,25 +43,12 @@ final class ScreenshotTests: XCTestCase {
+ 
+         guard !robot.isDuo else { return }
+ 
+-        setPhoneLandscape(true)
+-
+         robot.play()
+             .preparePlayback(at: 0.5)
+             .screenshot("Playback", waitForIdle: false)
+ 
+-        setPhoneLandscape(false)
+-
+         app.terminate()
+         app.launch()
+         robot.switchUser().screenshot("UserSelection")
+     }
+-
+-    @MainActor
+-    private func setPhoneLandscape(_ isLandscape: Bool) {
+-        #if os(iOS)
+-        if UIDevice.isPhone {
+-            XCUIDevice.shared.orientation = isLandscape ? .landscapeLeft : .portrait
+-        }
+-        #endif
+-    }
+ }
+```
+
+---
+
+### Incident Patch 2: `8d5db759` (2026-11-17)
+**Commit Message**: Fix search and layout (#2444)
+
+**File**: `Shared/Coordinators/Navigation/NavigationRoute/NavigationRoute+Settings.swift` (modified, +2/-3)
+```diff
+@@ -248,9 +248,8 @@ extension NavigationRoute {
+         NavigationRoute(
+             id: "localUserSecurity"
+         ) {
+-            WithLocalUserAuthentication {
+-                LocalUserSecurityView()
+-            }
++            LocalUserSecurityView()
++                .modifier(LocalUserAuthenticationModifier())
          }
      }
  
-+    func canControlPlayback(by user: UserDto?) -> Bool {
-+        guard let user, isSupportsMediaControl == true, nowPlayingItem != nil else { return false }
-+
-+        return user.policy?.enableRemoteControlOfOtherUsers == true
-+            || userID == nil
-+            || userID == user.id
-+            || additionalUsers?.contains { $0.userID == user.id } == true
-+    }
-+
-     /// Orders by:
-     /// - Now playing status
-     /// - Username
 ```
 
-**File**: `Shared/Objects/PagingLibrary/PagingLibraryView/Components/LibraryStyleSection.swift` (modified, +55/-53)
+**File**: `Shared/Coordinators/Navigation/NavigationRoute/NavigationRoute+User.swift` (modified, +2/-3)
 ```diff
-@@ -8,70 +8,72 @@
- 
- import SwiftUI
- 
--extension PagingLibraryView {
-+struct LibraryStyleSection: View {
- 
--    struct LibraryStyleSection: View {
-+    @StateOrBinding
-+    private var libraryStyle: LibraryStyle
- 
--        @StateOrBinding
--        private var libraryStyle: LibraryStyle
-+    private let options: LibraryStyleOptions
-+    private let canAdjustListColumns: Bool
- 
--        private let options: LibraryStyleOptions
--        private let canAdjustListColumns: Bool
--
--        init(
--            libraryStyle: Binding<LibraryStyle>,
--            options: LibraryStyleOptions,
--            canAdjustListColumns: Bool
--        ) {
--            self._libraryStyle = .init(libraryStyle)
--            self.options = options
--            self.canAdjustListColumns = canAdjustListColumns
--        }
--
--        @ContentBuilder
--        var body: some View {
--            if options.displayTypes.count > 1 {
--                Picker(selection: $libraryStyle.displayType) {
--                    ForEach(options.displayTypes, id: \.self) { displayType in
--                        Label(
--                            displayType.displayTitle,
--                            systemImage: displayType.systemImage
--                        )
--                        .tag(displayType)
--                    }
--                } label: {
--                    Text(L10n.layout)
--
--                    Text(libraryStyle.displayType.displayTitle)
-+    init(
-+        libraryStyle: Binding<LibraryStyle>,
-+        options: LibraryStyleOptions,
-+        canAdjustListColumns: Bool
-+    ) {
-+        self._libraryStyle = .init(libraryStyle)
-+        self.options = options
-+        self.canAdjustListColumns = canAdjustListColumns
-+    }
- 
--                    Image(systemName: libraryStyle.displayType.systemImage)
-+    @ContentBuilder
-+    var body: some View {
-+        if options.displayTypes.count > 1 {
-+            Picker(selection: $libraryStyle.displayType) {
-+                ForEach(options.displayTypes, id: \.self) { displayType in
-+                    Label(
-+                        displayType.displayTitle,
-+                        systemImage: displayType.systemImage
-+                    )
-+                    .tag(displayType)
-                 }
--                .pickerStyle(.menu)
+@@ -49,9 +49,8 @@ extension NavigationRoute {
+             id: "userSignIn",
+             style: .sheet
+         ) {
+-            WithLocalUserAuthentication {
+-                UserSignInView(server: server, user: user)
 -            }
-+            } label: {
-+                Text(L10n.layout)
- 
--            if libraryStyle.displayType == .list,
--               options.displayTypes.contains(.list),
--               canAdjustListColumns {
--                Stepper(
--                    L10n.columnsWithCount(libraryStyle.listColumnCount),
--                    value: $libraryStyle.listColumnCount,
--                    in: 1 ... 3
--                )
-+                Text(libraryStyle.displayType.displayTitle)
-+
-+                Image(systemName: libraryStyle.displayType.systemImage)
-             }
-+            .pickerStyle(.menu)
-+        }
- 
--            if options.posterDisplayTypes.count > 1 {
--                Picker(selection: $libraryStyle.posterDisplayType) {
--                    ForEach(options.posterDisplayTypes, id: \.self) { displayType in
--                        Text(displayType.displayTitle)
--                            .tag(displayType)
--                    }
--                } label: {
--                    Text(L10n.posters)
-+        if libraryStyle.displayType == .list,
-+           options.displayTypes.contains(.list),
-+           canAdjustListColumns {
-+            Stepper(
-+                L10n.columnsWithCount(libraryStyle.listColumnCount),
-+                value: $libraryStyle.listColumnCount,
-+                in: 1 ... 3
-+            )
-+        }
- 
--                    Text(libraryStyle.posterDisplayType.displayTitle)
-+        if options.posterDisplayTypes.count > 1 {
-+            Picker(selection: $libraryStyle.posterDisplayType) {
-+                ForEach(options.posterDisplayTypes, id: \.self) { displayType in
-+                    Label(
-+                        displayType.displayTitle,
-+                        systemImage: displayType.systemImage
-+                    )
-+                    .tag(displayType)
-                 }
--                .pickerStyle(.menu)
-+            } label: {
-+                Text(L10n.posters)
-+
-+                Text(libraryStyle.posterDisplayType.displayTitle)
-+
-+                Image(systemName: libraryStyle.posterDisplayType.systemImage)
-             }
-+            .pickerStyle(.menu)
++            UserSignInView(server: server, user: user)
++                .modifier(LocalUserAuthenticationModifier())
          }
      }
  }
 ```
 
-**File**: `Swiftfin/Views/AdminDashboardView/ActiveSessions/ActiveSessionDetailsView/ActiveSessionDetailsView.swift` (modified, +1/-12)
+**File**: `Shared/Coordinators/Root/RootView.swift` (modified, +25/-1)
 ```diff
-@@ -31,19 +31,8 @@ struct ActiveSessionDetailsView: View {
-         viewModel.session.playState?.isPaused == true
-     }
+@@ -6,7 +6,6 @@
+ // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
+ //
  
--    private var canControl: Bool {
--        guard let user = viewModel.userSession?.userData else { return false }
--
--        let session = viewModel.session
--
--        return user.policy?.enableRemoteControlOfOtherUsers == true
--            || session.userID == nil
--            || session.userID == user.id
--            || session.additionalUsers?.contains { $0.userID == user.id } == true
--    }
--
-     private var hasPlaybackControls: Bool {
--        canControl && viewModel.session.isSupportsMediaControl == true && viewModel.session.nowPlayingItem != nil
-+        viewModel.session.canControlPlayback(by: viewModel.userSession?.userData)
-     }
+-import FactoryKit
+ import SwiftUI
  
-     private var hasMessageControl: Bool {
-```
-
-**File**: `Swiftfin/Views/AdminDashboardView/ActiveSessions/ActiveSessionsView/ActiveSessionsView.swift` (modified, +47/-10)
-```diff
-@@ -12,12 +12,20 @@ import SwiftUI
- 
- struct ActiveSessionsView: View {
- 
-+    @AdaptiveLayout
-+    private var viewLayout
-+
-     @Router
-     private var router
- 
-+    @StateObject
-+    private var gridProxy = CollectionVGridProxy()
-     @StateObject
-     private var viewModel = ActiveSessionsViewModel()
- 
-+    @StoredValue(.User.libraryStyle(id: "active-sessions"))
-+    private var libraryStyle: LibraryStyle
-+
-     @ContentBuilder
-     private var activeWithinFilterButton: some View {
-         Picker(selection: $viewModel.environment.activeWithinSeconds) {
-@@ -90,17 +98,33 @@ struct ActiveSessionsView: View {
-                 systemImage: "waveform.path.ecg"
-             )
-         } else {
--            CollectionVGrid(
--                uniqueElements: viewModel.sessions.values,
--                layout: .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
--            ) { session in
--                ActiveSessionRow(viewModel: session) {
--                    router.route(
--                        to: .activeSessionDetails(viewModel: session)
-+            GeometryReader { geometry in
-+                let horizontalSpacing = libraryStyle.displayType == .list ? 0 : viewLayout.itemSpacing
-+
-+                CollectionVGrid(
-+                    uniqueElements: viewModel.sessions.values,
-+                    layout: SessionViewModel.layout(
-+                        for: libraryStyle,
-+                        options: SessionViewModel.supportedLibraryStyleOptions,
-+                        insets: EdgeInsets(
-+                            top: geometry.safeAreaInsets.top + viewLayout.itemSpacing,
-+                            leading: horizontalSpacing,
-+                            bottom: geometry.safeAreaInsets.bottom + viewLayout.itemSpacing,
-+                            trailing: horizontalSpacing
-+                        ),
-+                        viewLayout: viewLayout.resolving(size: geometry.size)
-                     )
-+                ) { session in
-+                    session.makeBody(libraryStyle: libraryStyle) {
-+                        router.route(
-+                            to: .activeSessionDetails(viewModel: session)
-+                        )
-+                    }
-                 }
-+                .proxy(gridProxy)
-+                .contentInsetAdjustmentBehavior(.never)
-+                .ignoresSafeArea(edges: .vertical)
-             }
--            .ignoresSafeArea(edges: .vertical)
+ struct RootView: View {
+@@ -30,5 +29,30 @@ struct RootView: View {
+         .task {
+             rootCoordinator.start()
          }
-     }
- 
-@@ -126,6 +150,9 @@ struct ActiveSessionsView: View {
-         .refreshable {
-             viewModel.refresh()
-         }
-+        .onChange(of: libraryStyle) {
-+            gridProxy.redraw()
-+        }
-         .onFirstAppear {
-             viewModel.refresh()
-         }
-@@ -144,8 +171,18 @@ struct ActiveSessionsView: View {
-                 L10n.filters,
-                 systemImage: systemImage
-             ) {
--                activeWithinFilterButton
--                showInactiveSessionsButton
-+                Section {
-+                    LibraryStyleSection(
-+                        libraryStyle: $libraryStyle,
-+                        options: SessionViewModel.supportedLibraryStyleOptions,
-+                        canAdjustListColumns: viewLayout.canAdjustLibraryListColumns
-+                    )
-+                }
-+
-+                Section(L10n.filters) {
-+                    activeWithinFilterButton
-+                    showInactiveSessionsButton
-+                }
-             }
-             .menuStyle(.button)
-             .buttonStyle(.isPressed { isPressed in
-```
-
-**File**: `Swiftfin/Views/AdminDashboardView/ActiveSessions/ActiveSessionsView/Components/ActiveSessionRow.swift` (modified, +51/-40)
-```diff
-@@ -20,9 +20,13 @@ extension ActiveSessionsView {
-         @CurrentDate
-         private var currentDate: Date
- 
-+        @Environment(\.viewContext)
-+        private var viewContext
-+
-         @ObservedObject
-         var viewModel: SessionViewModel
- 
-+        let posterDisplayType: PosterDisplayType
-         let action: () -> Void
- 
-         private var session: SessionInfoDto {
-@@ -35,28 +39,20 @@ extension ActiveSessionsView {
- 
-         @ContentBuilder
-         private var rowLeading: some View {
--            if let nowPlayingItem = session.nowPlayingItem {
--                PosterImage(
--                    item: nowPlayingItem,
--                    type: nowPlayingItem.posterDisplayType(for: .compact),
--                    contentMode: .fit
--                )
--                .frame(width: 60)
--                .frame(minHeight: 90)
--                .subtleShadow()
--            } else {
--                ZStack {
--                    session.device.clientColor
--
--                    Image(session.device.image)
--                        .resizable()
--                        .aspectRatio(contentMode: .fit)
--                        .padding(8)
-+            PosterImage(
-+                item: session,
-+                type: posterDisplayType,
-+                size: .extraSmall
-+            )
-+            .id(session.nowPlayingItem?.id)
-+            .overlay {
-+                if session.nowPlayingItem == nil {
-+                    session.posterOverlay(for: posterDisplayType)
-+                        .posterStyle(posterDisplayType)
-                 }
--                .posterStyle(.square)
--                .frame(width: 60, height: 60)
--                .subtleShadow()
-             }
-+            .subtleShadow()
-+            .frame(width: posterDisplayType == .landscape ? 110 : 60)
-         }
- 
-         @ContentBuilder
-@@ -68,7 +64,7 @@ extension ActiveSessionsView {
- 
-                 Text(nowPlayingItem.name ?? L10n.unknown)
-                     .multilineTextAlignment(.leading)
--                    .lineLimit(2)
-+                    .lineLimit(1)
- 
-                 ProgressSection(
-                     item: nowPlayingItem,
-@@ -86,28 +82,21 @@ extension ActiveSessionsView {
-                 Text(session.userName ?? L10n.unknown)
-                     .font(.headline)
- 
--                if let client = session.client {
--                    LabeledContent(
--                        L10n.client,
--                        value: client
--                    )
--                }
-+                DotHStack {
-+                    if let client = session.client {
-+                        Text(client)
-+                    }
- 
--                if let device = session.deviceName {
--                    LabeledContent(
--                        L10n.device,
--                        value: device
--                    )
-+                    if let device = session.deviceName {
-+                        Text(device)
-+                    }
-                 }
-+                .lineLimit(1)
- 
--                if let lastActivityDate = session.lastActivityDate {
--                    LabeledContent(
--                        L10n.lastSeen,
--                        value: lastActivityDate,
--                        format: .lastSeen
--                    )
--                    .id(currentDate)
--                    .monospacedDigit()
-+                LabeledContent(L10n.lastSeen) {
-+                    Text(session.lastActivityDate, format: .lastSeen)
-+                        .id(currentDate)
-+                        .monospacedDigit()
-                 }
-             }
-             .font(.subheadline)
-@@ -126,6 +115,28 @@ extension ActiveSessionsView {
-             } action: {
-                 action()
-             }
-+            .posterContextMenu(for: session) {
-+                VStack(alignment: .leading) {
-+                    PosterImage(
-+                        item: session,
-+                        type: posterDisplayType,
-+                        size: .small
-+                    )
-+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-+                    .subtleShadow()
-+
-+                    session.posterLabel
-+                        .allowsHitTesting(false)
-+                }
-+                .environment(\.posterDisplayType, posterDisplayType)
-+                .foregroundStyle(.primary, .secondary)
-+                .posterAccessibility(for: session)
-+                .frame(width: viewLayout.posterMinimumWidth(for: posterDisplayType))
-+                .padding(20)
-+                .backport
-+                .glassEffect(in: .rect(cornerRadius: 10))
-+                .withViewContext(viewContext)
-+            }
-             .withViewContext(.isListRowSeparatorVisible)
-         }
-     }
-```
-
-**File**: `Swiftfin/Views/AdminDashboardView/ActiveSessions/ActiveSessionsView/Components/SessionViewModel+LibraryElement.swift` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+//
-+// Swiftfin is subject to the terms of the Mozilla Public
-+// License, v2.0. If a copy of the MPL was not distributed with this
-+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-+//
-+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-+//
-+
-+import SwiftUI
-+
-+extension SessionViewModel: @MainActor LibraryElement {
-+
-+    nonisolated static func == (lhs: SessionViewModel, rhs: SessionViewModel) -> Bool {
-+        lhs === rhs
-+    }
-+
-+    nonisolated func hash(into hasher: inout Hasher) {
-+        hasher.combine(ObjectIdentifier(self))
-+    }
-+
-+    var displayTitle: String {
-+        session.displayTitle
-+    }
-+
-+    static var supportedLibraryStyleOptions: LibraryStyleOptions {
-+        .default
-+    }
-+
-+    @ContentBuilder
-+    func makeBody(
-+        libraryStyle: LibraryStyle,
-+        action: (() -> Void)?
-+    ) -> some View {
-+        switch libraryStyle.displayType {
-+        case .grid:
-+            SessionGridElement(
-+                viewModel: self,
-+                displayType: libraryStyle.posterDisplayType,
-+                action: action
-+            )
-+
-+        case .list:
-+            ActiveSessionsView.ActiveSessionRow(
-+                viewModel: self,
-+                posterDisplayType: libraryStyle.posterDisplayType
-+            ) {
-+                action?()
-+            }
-+        }
++        .modifier(RootContainerModifier())
 +    }
 +}
 +
-+private struct SessionGridElement: View {
++private struct RootContainerModifier: ViewModifier {
 +
-+    @ObservedObject
-+    var viewModel: SessionViewModel
-+
-+    let displayType: PosterDisplayType
-+    let action: (() -> Void)?
++    @ContentBuilder
++    func body(content: Content) -> some View {
++        Group {
++            #if os(iOS)
++            PreferencesView {
++                content
++                    .supportedOrientations(UIDevice.isPhone ? .portrait : .all)
++                    .modifier(LocalUserAuthenticationModifier())
++            }
++            .ignoresSafeArea()
++            .modifier(OverlayToastModifier())
++            .trackingFrame(for: .layoutContainer)
++            #else
++            content
++                .modifier(LocalUserAuthenticationModifier())
++                .modifier(OverlayToastModifier())
++            #endif
++        }
++        .modifier(ThemePreferencesModifier())
+     }
+ }
+```
+
+**File**: `Shared/Coordinators/Tabs/MainTabView.swift` (modified, +1/-4)
+```diff
+@@ -91,10 +91,7 @@ struct MainTabView: View {
+     private func tabView() -> some View {
+         TabView(selection: $tabCoordinator.selectedTabID) {
+             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
+-                Tab(
+-                    value: tab.item.id,
+-                    role: tab.item.id == TabItem.search.id ? .search : nil
+-                ) {
++                Tab(value: tab.item.id) {
+                     #if os(tvOS)
+                     GeometryReader { _ in
+                         tabRoot(tab)
+```
+
+**File**: `Shared/Extensions/ViewExtensions/Modifiers/LocalUserAuthenticationModifier.swift` (renamed, +2/-8)
+```diff
+@@ -30,7 +30,7 @@ extension EnvironmentValues {
+     var localUserAuthenticationAction: LocalUserAuthenticationAction? = nil
+ }
+ 
+-struct WithLocalUserAuthentication<Content: View>: View {
++struct LocalUserAuthenticationModifier: ViewModifier {
+ 
+     private struct PinRequest: Identifiable {
+ 
+@@ -42,12 +42,6 @@ struct WithLocalUserAuthentication<Content: View>: View {
+     @State
+     private var pinRequest: PinRequest?
+ 
+-    private let content: Content
+-
+-    init(@ContentBuilder content: () -> Content) {
+-        self.content = content()
+-    }
+-
+     private func handlePinAuthentication(reason: String?) async throws -> String {
+         try Task.checkCancellation()
+         let requestID = UUID()
+@@ -110,7 +104,7 @@ struct WithLocalUserAuthentication<Content: View>: View {
+     }
+ 
+     @ContentBuilder
+-    var body: some View {
++    func body(content: Content) -> some View {
+         content
+             .environment(
+                 \.localUserAuthenticationAction,
+```
+
+**File**: `Shared/Extensions/ViewExtensions/Modifiers/OverlayToastModifier.swift` (renamed, +4/-15)
+```diff
+@@ -17,39 +17,28 @@ import SwiftUI
+ // TODO: fix rapid fire animations
+ //       - have one that's presentation based, one just basic overlay?
+ 
+-/// A basic toasting container view that will present
+-/// given toasts on top of the given content.
+-struct OverlayToastView<Content: View>: View {
++struct OverlayToastModifier: ViewModifier {
+ 
+     @AdaptiveLayout
+     private var viewLayout
+ 
+     @StateObject
+     private var toastProxy: ToastProxy
+ 
+-    private let content: Content
+-
+     private var topPadding: CGFloat {
+         viewLayout.value(standard: 10, large: 60)
+     }
+ 
+-    init(
+-        @ContentBuilder content: () -> Content
+-    ) {
++    init() {
+         self._toastProxy = StateObject(wrappedValue: .init())
+-        self.content = content()
+     }
+ 
+-    init(
+-        proxy: ToastProxy,
+-        @ContentBuilder content: () -> Content
+-    ) {
++    init(proxy: ToastProxy) {
+         self._toastProxy = StateObject(wrappedValue: proxy)
+-        self.content = content()
+     }
+ 
+     @ContentBuilder
+-    var body: some View {
++    func body(content: Content) -> some View {
+         ZStack(alignment: .top) {
+             content
+                 .environmentObject(toastProxy)
+```
+
+**File**: `Shared/Extensions/ViewExtensions/Modifiers/ThemePreferencesModifier.swift` (renamed, +2/-8)
+```diff
+@@ -10,19 +10,13 @@ import Defaults
+ import FactoryKit
+ import SwiftUI
+ 
+-struct ThemePreferencesEnvironment<Content: View>: View {
++struct ThemePreferencesModifier: ViewModifier {
+ 
+     @InjectedObject(\.userSessionManager)
+     private var userSessionManager
+ 
+-    private let content: Content
+-
+-    init(@ContentBuilder content: () -> Content) {
+-        self.content = content()
+-    }
+-
+     @ContentBuilder
+-    var body: some View {
++    func body(content: Content) -> some View {
+         content
+             .modifier(StoredThemePreferencesModifier(userID: userSessionManager.currentSession?.user.id))
+     }
+```
+
+**File**: `Shared/Views/SearchView.swift` (modified, +28/-20)
+```diff
+@@ -53,7 +53,7 @@ struct SearchView: View {
+     }
+ 
+     @ContentBuilder
+-    var body: some View {
++    private var contentView: some View {
+         ScrollView {
+             VStack(spacing: 0) {
+                 #if os(tvOS)
+@@ -78,26 +78,17 @@ struct SearchView: View {
+                 }
+                 #endif
+ 
+-                ZStack {
+-                    switch viewModel.state {
+-                    case .error:
+-                        viewModel.error.map(ErrorView.init)
+-
+-                    case .initial:
+-                        if viewModel.canSearch {
+-                            if viewModel.isEmpty {
+-                                Text(L10n.noResults)
+-                            } else {
+-                                ContentGroupVStack(
+-                                    groups: viewModel.itemContentGroupViewModel.groups
+-                                )
+-                            }
++                Group {
++                    if viewModel.canSearch {
++                        if viewModel.isEmpty {
++                            Text(L10n.noResults)
+                         } else {
+-                            suggestionsView
++                            ContentGroupVStack(
++                                groups: viewModel.itemContentGroupViewModel.groups
++                            )
+                         }
+-
+-                    case .searching:
+-                        ProgressView()
++                    } else {
++                        suggestionsView
+                     }
+                 }
+                 .frame(maxWidth: .infinity)
+@@ -107,11 +98,27 @@ struct SearchView: View {
+         .ignoresSafeArea(edges: viewLayout.scrollContentEdges(extendsTop: false))
+         .defaultScrollAnchor(viewLayout.isLarge || viewModel.canSearch ? .top : .center, for: .alignment)
+         .scrollIndicators(.hidden)
++    }
 +
 +    @ContentBuilder
 +    var body: some View {
-+        PosterButton(
-+            item: viewModel.session,
-+            displayType: displayType
-+        ) { _ in
-+            action?()
++        ZStack {
++            switch viewModel.state {
++            case .error:
++                viewModel.error.map(ErrorView.init)
++
++            case .initial:
++                contentView
++
++            case .searching:
++                ProgressView()
++            }
 +        }
-+        .id(viewModel.session.nowPlayingItem?.id)
-+    }
-+}
++        .frame(maxWidth: .infinity, maxHeight: .infinity)
+         .animation(.linear(duration: 0.2), value: viewModel.state)
+         .ignoresSafeArea(.keyboard)
+         .navigationTitle(L10n.search)
+         .toolbarTitleDisplayMode(.inline)
+-        .searchFocused($isSearchFocused)
+         .onReceive(tabItemSelected) { event in
+             if event.isRepeat, event.isRoot {
+                 isSearchFocused = true
+@@ -127,6 +134,7 @@ struct SearchView: View {
+             text: $searchQuery,
+             prompt: L10n.search
+         )
++        .searchFocused($isSearchFocused)
+         .environmentObject(focusCoordinator)
+         #if os(tvOS)
+         .modifier(SearchSafeAreaModifier())
 ```
 
 ---
 
-### Incident Patch 2: `b5bfb8d1` (2026-11-15)
-**Commit Message**: Translated using Weblate (Polish)
+### Incident Patch 3: `5816f3db` (2026-11-16)
+**Commit Message**: Fix `Always` subtitle selection (#2440)
 
-Currently translated at 100.0% (1023 of 1023 strings)
+**File**: `Documentation/players.md` (modified, +21/-4)
+```diff
+@@ -143,12 +143,29 @@ Swiftfin offers two player engines: **MPV** and **AVPlayer**. MPV is the default
+ 
+ ## Captions & Accessibility
+ 
+-Both players follow your system caption and audible-media preferences (system *Settings > Accessibility*):
++Jellyfin chooses subtitles first. Your device's caption settings can adjust that choice. Manual choices, including Off, take priority.
++
++On iOS, find **Closed Captions + SDH** and **Automatic Subtitles → When Languages Don’t Match** under **Settings → Accessibility → Subtitles & Captioning**.
++
++These examples assume English language preferences, available tracks, and no remembered or manual choice. Full subtitles cover all dialogue and forced subtitles usually translate short sections.
++
++| Jellyfin account setting  | Both options off                       | When Languages Don’t Match      | Closed Captions + SDH    |
++| ------------------------- | -------------------------------------- | ------------------------------- | ------------------------ |
++| **Always**                | Full English subtitles                 | Full English subtitles          | Full English captions    |
++| **None**                  | Off                                    | Off                             | Full English captions    |
++| **Only Forced**           | English forced subtitles               | English forced subtitles        | Full English captions    |
++| **Smart**, English audio  | English forced subtitles               | English forced subtitles        | Full English captions    |
++| **Smart**, Japanese audio | English subtitles                      | English subtitles               | Full English captions    |
++| **Default**               | Jellyfin's choice based on track flags | Same Jellyfin choice            | Full English captions    |
++
++- Jellyfin **Always** prefers full subtitles in your account's language, then suitable forced subtitles, then Off.
++- With **Closed Captions + SDH** on, Swiftfin prefers your caption languages and captions with sound descriptions. If no full subtitles exist, tries forced subtitles matching the audio language, then Off.
++- With **Closed Captions + SDH** off, Swiftfin keeps Jellyfin's choice, including Off.
++- **When Languages Don’t Match** only tries another suitable track when Jellyfin's chosen track is unavailable.
+ 
+-- **Captions** can be set to *Always On*, *Forced Only*, or *Automatic*. Swiftfin prefers captions in your system's preferred languages, favoring SDH captions when available.
+ - **Audio Descriptions** are selected automatically when a track is clearly labeled as described audio.
+-- **Caption style** (font, size, and color) comes from your system caption styles.
+-- **Show on Skip Back** follows the system setting. When captions are off, skipping or scrubbing back briefly turns captions on so you can catch missed dialogue, then turns them off again. This works with text subtitles in MPV and with captions AVPlayer can switch locally. It is unavailable if your OS version doesn't provide the setting.
++- **Caption styles** come from your device's caption styles.
++- **Show on Skip Back** briefly shows compatible captions after you skip backward, then turns them off again.
+ 
+ ---
+ 
+```
 
-Translation: Swiftfin/Swiftfin
-Translate-URL: https://translate.jellyfin.org/projects/swiftfin/swiftfin/pl/
-
-
+**File**: `Shared/Objects/MediaPlayerManager/MediaPlaybackPreferences.swift` (modified, +4/-3)
+```diff
+@@ -86,15 +86,16 @@ struct MediaPlaybackPreferences {
+ 
+         switch captions.displayType {
+         case .forcedOnly:
+-            return forcedIndex
++            return defaultIndex
+ 
+         case .alwaysOn:
+             return best(in: streams.filter { $0.isForced != true }, languages: preferredLanguages, defaultIndex: defaultIndex)?.index
+                 ?? forcedIndex
+ 
+         case .automatic:
+-            // Honor the account's subtitle mode and remembered selections when it provides a track.
+-            if let defaultIndex, streams.contains(where: { $0.index == defaultIndex }) {
++            guard let defaultIndex else { return nil }
++
++            if defaultIndex == -1 || streams.contains(where: { $0.index == defaultIndex }) {
+                 return defaultIndex
+             }
+ 
+```
 
 #### Recent Merged Pull Requests:
+- **PR #2455** (2026-11-19): Update collections (@LePips)
+- **PR #2454** (2026-11-18): Fix iOS Video Screenshot (@JPKribs)
+- **PR #2452** (2026-11-18): Some `Observable` migration (@LePips)
+- **PR #2444** (2026-11-17): Fix search and layout (@LePips)
+- **PR #2440** (2026-11-16): Fix `Always` subtitle selection (@LePips)
 - **PR #2437** (2026-11-14): Map mpv tracks past external Jellyfin streams (@Miista)
-- **PR #2436** (2026-11-15): tvOS player: don't strand the supplement panel without focus (@alex-hall)
-- **PR #2432** (2026-11-13): Show PhotoAlbum folders in Folders grouping view (@lzgh0102)
-- **PR #2428** (2026-11-14): Sleep timer (@JPKribs)
-- **PR #2426** (2026-11-12): Hide Empty Filters (@JPKribs)
-- **PR #2425** (2026-11-12): tvOS Various Fixes (@JPKribs)
 
 ---
 
@@ -1365,73 +1102,33 @@ Translate-URL: https://translate.jellyfin.org/projects/swiftfin/swiftfin/pl/
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. `ActiveSessions` Fully Utilize `PagingLibrary`
+## X. iOS Video Screenshot
 
 **RULE**:
-When implementing operations in `Shared/Extensions/JellyfinAPI/SessionInfoDto+Poster.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jellyfin/Swiftfin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Tools/Screenshots/Tests/Robots/Robot+Playback.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jellyfin/Swiftfin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e956be4a`: `ActiveSessions` Fully Utilize `PagingLibrary`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `543a7da5`: iOS Video Screenshot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Shared/Extensions/JellyfinAPI/SessionInfoDto+Poster.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Tools/Screenshots/Tests/Robots/Robot+Playback.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-//
-// Swiftfin is subject to the terms of the Mozilla Public
-// License, v2.0. If a copy of the MPL was not distributed with this
-// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-//
-// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-//
-
-import FactoryKit
-import JellyfinAPI
-import SwiftUI
-
-extension SessionInfoDto: Poster {
-
-    typealias Environment = BaseItemDto.Environment
-
-    var displayTitle: String {
-        userName ?? L10n.unknown
-    }
-
-    var subtitle: String? {
-        nowPlayingItem?.displayTitle ?? deviceName
-    }
-
-    var preferredPosterDisplayType: PosterDisplayType {
-        .landscape
-    }
-
-    var systemImage: String {
-        nowPlayingItem?.systemImage ?? "person.fill"
-    }
-
-    func resolveEnvironment(_ environment: EnvironmentValues) -> Environment {
-        nowPlayingItem?.resolveEnvironment(environment) ?? .default
-    }
-
-    func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
-        var details: [String?] = [client, deviceName]
-
-        if let nowPlayingItem, let playState {
-            details.append(playState.isPaused == true ? L10n.pause : L10n.play)
-
-            let position = PosterAccessibility.du
+        if UIDevice.isPad {
+            tap(button(L10n.aspectFill))
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        tap(button(L10n.aspectFill))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e956be4a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `543a7da5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

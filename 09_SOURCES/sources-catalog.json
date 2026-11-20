@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "0561d668",
+    "sourceVersion": "66801507",
     "license": "Apache-2.0",
-    "contentHash": "5deac58d031a921fdb1e07055030d2496be7e0055db9bbe533ec5a9bdf420f81",
-    "lastHarvestedAt": "2026-11-18T22:14:39.242Z",
+    "contentHash": "8fe2834fa7f79996da2bb4bf3f192532a449afe3c029d77f634a2cf634418a92",
+    "lastHarvestedAt": "2026-11-20T02:58:32.453Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
@@ -8333,10 +8333,10 @@
     "repository": "jellyfin/Swiftfin",
     "platform": "github",
     "sourceUrl": "https://github.com/jellyfin/Swiftfin",
-    "sourceVersion": "e956be4a",
+    "sourceVersion": "6f8c16de",
     "license": "MPL-2.0",
-    "contentHash": "5b8c45813fff41ceeab4b9638d834ec0114fef90488a8449fa71ac0f489a203a",
-    "lastHarvestedAt": "2026-11-15T22:58:41.239Z",
+    "contentHash": "d4c51acd66ca6bfa6c4d6b7ed0dba072f5448eb09867472cdf033768d0496f62",
+    "lastHarvestedAt": "2026-11-20T02:58:29.314Z",
     "learningId": "learn-github-jellyfin-swiftfin"
   },
   "sergdort-moderncleanarchitectureswiftui": {
@@ -12653,10 +12653,10 @@
     "repository": "searchsolved/search-solved-public-seo",
     "platform": "github",
     "sourceUrl": "https://github.com/searchsolved/search-solved-public-seo",
-    "sourceVersion": "6d8d30b4",
+    "sourceVersion": "591fa023",
     "license": "NOASSERTION",
-    "contentHash": "facdea82f8b15e166cb99a5d7ee5689f3e3caa29aeee367cf53b0da04184b1d8",
-    "lastHarvestedAt": "2026-11-15T23:26:01.140Z",
+    "contentHash": "875b1074ab2df9cae0834709d5f73f6c77ea0d1e002b67c0512dd94d5f095421",
+    "lastHarvestedAt": "2026-11-20T03:01:47.932Z",
     "learningId": "learn-github-searchsolved-search-solved-public-seo"
   },
   "metrolistgroup-metrolist": {

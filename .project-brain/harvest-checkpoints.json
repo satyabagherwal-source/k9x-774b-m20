@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T02:39:01.625Z",
+  "last_updated": "2026-11-20T03:01:47.939Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "5deac58d031a921fdb1e07055030d2496be7e0055db9bbe533ec5a9bdf420f81",
-      "verified_at": "2026-11-18T22:14:39.250Z",
+      "content_hash": "8fe2834fa7f79996da2bb4bf3f192532a449afe3c029d77f634a2cf634418a92",
+      "verified_at": "2026-11-20T02:58:32.460Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T22:14:39.250Z"
+      "last_updated": "2026-11-20T02:58:32.460Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",
@@ -12531,14 +12531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jellyfin-swiftfin",
-      "content_hash": "5b8c45813fff41ceeab4b9638d834ec0114fef90488a8449fa71ac0f489a203a",
-      "verified_at": "2026-11-15T22:58:41.246Z",
+      "content_hash": "d4c51acd66ca6bfa6c4d6b7ed0dba072f5448eb09867472cdf033768d0496f62",
+      "verified_at": "2026-11-20T02:58:29.322Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T22:58:41.246Z"
+      "last_updated": "2026-11-20T02:58:29.322Z"
     },
     "sergdort/ModernCleanArchitectureSwiftUI": {
       "repository": "sergdort/ModernCleanArchitectureSwiftUI",
@@ -19071,14 +19071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-searchsolved-search-solved-public-seo",
-      "content_hash": "facdea82f8b15e166cb99a5d7ee5689f3e3caa29aeee367cf53b0da04184b1d8",
-      "verified_at": "2026-11-15T23:26:01.148Z",
+      "content_hash": "875b1074ab2df9cae0834709d5f73f6c77ea0d1e002b67c0512dd94d5f095421",
+      "verified_at": "2026-11-20T03:01:47.939Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T23:26:01.148Z"
+      "last_updated": "2026-11-20T03:01:47.939Z"
     },
     "MetrolistGroup/Metrolist": {
       "repository": "MetrolistGroup/Metrolist",

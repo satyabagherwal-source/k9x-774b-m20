@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-K9CP",
-    "timestamp": "2026-11-18T07:48:08.665Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "5c6100d4e4b9daf6ef60c257029905aa9c5d1abf601662799b87114c2753722c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-URCJ",
-    "timestamp": "2026-11-18T07:56:18.547Z",
-    "repository": "google-bert/bert-base-uncased",
-    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-    "contentHash": "957c07b0a00649cbd918fb2f2c4be7f6a487feb5f1c6a491a24e3433a7e69182",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-UU8R",
-    "timestamp": "2026-11-18T07:56:22.299Z",
-    "repository": "tuist/tuist",
-    "learningId": "learn-github-tuist-tuist",
-    "contentHash": "032144885ad79350bfa186548a539df3869fd7cf025483784e8da003b1c06c7a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-UWZ0",
     "timestamp": "2026-11-18T07:56:25.836Z",
     "repository": "microsoft/react-native-windows",
@@ -7492,6 +7447,51 @@
     "contentHash": "1cbd04c8e15e938124780e7a44ee82366770f3b7b72e01187e6b8bc70e76d490",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-3GOV",
+    "timestamp": "2026-11-20T02:58:29.311Z",
+    "repository": "jellyfin/Swiftfin",
+    "learningId": "learn-github-jellyfin-swiftfin",
+    "contentHash": "d4c51acd66ca6bfa6c4d6b7ed0dba072f5448eb09867472cdf033768d0496f62",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-3J41",
+    "timestamp": "2026-11-20T02:58:32.449Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "8fe2834fa7f79996da2bb4bf3f192532a449afe3c029d77f634a2cf634418a92",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-7PY0",
+    "timestamp": "2026-11-20T03:01:47.928Z",
+    "repository": "searchsolved/search-solved-public-seo",
+    "learningId": "learn-github-searchsolved-search-solved-public-seo",
+    "contentHash": "875b1074ab2df9cae0834709d5f73f6c77ea0d1e002b67c0512dd94d5f095421",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
