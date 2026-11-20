@@ -11610,3 +11610,5 @@ Every entry in this ledger must capture:
 | `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `7732bdb3` | Multi-dimensional audit evidence | 2026-11-20T16:28:26.088Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `d3a10d86` | Multi-dimensional audit evidence | 2026-11-20T16:28:32.999Z |
 | `learn-dom-d-e91f893c` | `project://lxml-lxml` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md` | 2026-11-20T16:29:07.431Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `8046b9e9` | Multi-dimensional audit evidence | 2026-11-20T16:42:13.827Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `82819859` | Multi-dimensional audit evidence | 2026-11-20T16:42:28.420Z |

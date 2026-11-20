@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T16:28:33.008Z",
+  "last_updated": "2026-11-20T16:42:28.428Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "330a3b21ce5abbdbf4094c91795e53b83d98b881c10344721157157b0d4bf0b5",
-      "verified_at": "2026-11-20T14:04:11.894Z",
+      "content_hash": "eca5b78ccc20fea74de7bbbe8f5b7424843e7aadafba546e6a9d7027b5a855b1",
+      "verified_at": "2026-11-20T16:42:28.428Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T14:04:11.894Z"
+      "last_updated": "2026-11-20T16:42:28.428Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "80e1d8a83bc0cd86982bc456dc335337553032f16c4822a1d5e0627246dfcbc0",
-      "verified_at": "2026-11-19T00:00:13.036Z",
+      "content_hash": "5c81b653e6752b84c72040e23e8e67cec960a226bcc84716e5fcf62907b326dd",
+      "verified_at": "2026-11-20T16:42:13.835Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T00:00:13.036Z"
+      "last_updated": "2026-11-20T16:42:13.835Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `18803975`  
+> **Source Version**: `82819859`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T14:04:10.674Z  
+> **Timestamp**: 2026-11-20T16:42:27.446Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T14:04:03.738Z  
+> **Harvest Timestamp**: 2026-11-20T16:42:27.441Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3834 stars
+- **Stars / Engagement**: 3835 stars
 
 ---
 
@@ -1529,7 +1529,7 @@ use std::{
 };
 
 use foldhash::{HashMap, HashMapExt};
-use polars::{prelude::*, sql::SQLContext};
+use polars::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use crate::{CliResult, cmd::joinp::path_delim, config::Delimiter, util};
@@ -1697,7 +1697,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
     }
     args.arg_input = inputs;
 
-    if args.ar
+    if args.arg_input.is_empty() 
 ```
 
 ### Core Architecture Module: `src/llmutil.rs`
@@ -2201,631 +2201,240 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18803975` (2026-11-20)
-**Commit Message**: feat(synthesize): Float columns keep their source decimal places (#5080)
+### Incident Patch 1: `82819859` (2026-11-20)
+**Commit Message**: deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes (#5081)
 
-* feat(synthesize): Float columns keep their source decimal places
+* deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes
 
-Synthetic Float values are rounded to the most decimal places the column
-shows in the input (stats max_precision) and printed in shortest form,
-instead of full f64 digits. Applies to independent columns and to
-ordered and correlated relationship members. In an ordered chain each
-member is rounded to its own grid, moved up a step rather than print
-below its predecessor, and its cap is floored to that grid, so order
-and trimmed ranges hold. max_precision above 15 (binary-float noise) is
-left unrounded.
+Polars main is 91 commits past 2d9938d (crates stay 0.55.1).
 
-Random draws are unchanged: against master with the same seed, only
-Float cells differ, each equal to the old value rounded. The model now
-records per-column decimals, so FORMAT_VERSION is 3.
+- #30887 changed DataFrame/Series::slice to take one impl Into<Slice>.
+  Pass (offset, len) tuples in pivotp and readstat, and patch
+  polars-readstat-rs 0.27.0 to a dathere fork with the same 6-line fix
+  (upstream builds on crates.io polars 0.55.1 and can't take it yet).
+- New SQL: PIVOT/UNPIVOT, COPY ... TO, CREATE MACRO, SELECT alias reuse,
+  CAST AS CATEGORICAL, E'' strings, MAKE_DATE/CHR/DATE_DIFF/TYPEOF/
+  TO_CHAR/PRINTF/FORMAT and more. Enable polars' rolling_window_by for
+  RANGE frames with an offset (#30849).
+- Result changes: DELETE affects later statements (#30869), NULL length
+  makes LEFT/SUBSTRING NULL (#30934), SPLIT_PART(NULL) is NULL (#30936),
+  DESCRIBE reports SQL type names, repeated expressions get a :1 suffix
+  (#30949).
+- COPY (query) TO '<file>' (#30834) writes files by default. New
+  QSV_SQL_DISABLE_FILE_WRITES turns it off in sqlp, joinp --sql-filter,
+  profile and scoresql (util::new_sql_context). The MCP server sets it in
+  plugin mode (Cowork, C
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(synthesize): cite #5080 in CHANGELOG [skip ci]
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(synthesize): only round decimals exactly representable on the grid
-
-At 13-15 places a value near 2^53 steps could scale onto a half and
-round a step away (4.000000000000005 at 15 places became
-
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.claude/skills/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `synthesize`: a column with any null was never treated as fully enumerated, because frequency's `(NULL)` row parses to rank 0, the same as an "Other" bucket. Such columns fell back to fakers, filler or the min/max range instead of sampling their real values by frequency, which also let them bypass `--min-count`. Nulls are still reproduced through the null ratio. **Behavior change:** columns with blank cells now emit their real values (those seen at least `--min-count` times), like every other enumerated column. With a Data Dictionary but without `--consistent-fakes`, a name, email or address column that has blanks goes from generated fakes to real values; pass `--consistent-fakes` to keep fakes. ([#5066](https://github.com/dathere/qsv/pull/5066))
+@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ## [Unreleased]
  
- ### Changed
-+- `synthesize`: Float columns now keep their source's decimal places. A synthetic value is rounded to the most places any value of the column shows in the input (`stats` `max_precision`), so a 2-place price column prints `106.86` instead of `106.85678552041723`. Values print in their shortest form, so trailing zeros are dropped (`12.50` prints as `12.5`). This applies to independent columns and to `ordered` and `correlated` relationship members; in an `ordered` chain each member is rounded to its own places and still never prints below its predecessor or outside its range. A column whose `max_precision` is above 15 (binary-float noise such as `0.30000000000000004`) is left unrounded, as is a value too large to round exactly at its column's places (at 15 places, values from about 1.1 up; at 2 places, above about 10^13). Rounded floats can land exactly on real values, which `--report` counts as exact matches. The random draws are the same, so outside `ordered` relationships a seeded run gives the same rows as before with only Float cells rounded; in an `ordered` chain each member builds on the rounded value before it, so later members, Integer ones included, can differ by a step. Saved models now record each column's decimal places, so the model format is version 3 and models saved before this change must be fitted again. ([#5080](https://github.com/dathere/qsv/pull/5080))
- - `synthesize`: rows are now generated in parallel, in fixed blocks of 8,192 rows. Each block draws from its own random stream, worked out from `--seed` and the block's position, so a seeded run gives the same output at any `--jobs` setting. `--jobs` now also sets the threads used to generate rows, not only those of the internal `stats` and `frequency` runs. On a 16-core machine, 1M rows from a 10k-row source took 142 ms instead of 475 ms, and `--jobs 1` is as fast as before. Blocks are written in order, and the output held in memory at once is capped at about 256 MiB, so memory does not grow with `-n` or with core count (1M rows of a 100-column file peaked at 302 MiB on 16 cores, against 104 MiB before). Seeded output is the same at any `--jobs` while `stats` computes exact statistics; approximate ones can differ, whether requested through `--stats-options` (e.g. `--quantile-method approx`) or switched on by `stats` itself, with a warning, when the input won't fit in memory. **Behavior change:** a given `--seed` now produces different rows than in 29.0.0. The values follow the same distributions, but they come out in a different sequence, so seeded outputs saved from 29.0.0 or earlier will not be reproduced. ([#5069](https://github.com/dathere/qsv/pull/5069))
- - `synthesize`: the help now warns that synthetic output is not anonymized. It can copy real values and value combinations from the source: fully enumerated columns, enumerated structured-faker columns without `--consistent-fakes`, `joint` relationship tuples, and outliers at the edge of numeric/date ranges. ([#5064](https://github.com/dathere/qsv/pull/5064))
- - `sqlp`: the `--try-parsedates` help now warns that Polars reads slash, dash and dot dates as day-first, so `01/05/2024` becomes `2024-05-01`, and that `CAST(col AS DATE)` does the same. For month-first (US) dates, leave `--try-parsedates` off and use `STRPTIME(col, '%m/%d/%Y')` ([#5062](https://github.com/dathere/qsv/pull/5062)).
+ ### Added
++- **SQL file writes are off in plugin mode (Cowork, Claude Code plugin).** Polars SQL now has `COPY (<query>) TO '<file>'`, where the query rather than `output_file` picks the target. In plugin mode the server sets `QSV_SQL_DISABLE_FILE_WRITES=1` for qsv, and `qsv_sqlp` never sends SQL that may contain `COPY ... TO` or `EXPORT DATABASE` to DuckDB: it runs on Polars `sqlp`, which refuses a real `COPY ... TO`. A `.env` file can't lift the switch, for qsv or the qsv subprocesses it spawns. Other MCP clients and the Desktop extension keep them. New `QSV_MCP_SQL_FILE_WRITES` overrides the default either way. `qsv-sqlp` skill regenerated from the USAGE text. ([#5081](https://github.com/dathere/qsv/pull/5081))
+ - **`qsv-synthesize --quantiles <n>`**: 2, 4, 5, 10, 20, 25, 50 or 100 equal-share buckets for numeric/date columns and `ordered` gaps (default 4, the quartiles, unchanged output); more buckets keep long tails. Skill regenerated from the USAGE text. ([#5078](https://github.com/dathere/qsv/pull/5078))
+ - **`qsv-synthesize`: `--rows-per-file` is CLI-only for now.** The new `synthesize --rows-per-file` option and its USAGE example are left out of the skill: the MCP server checks only the literal `{}` output template against its allowed directories and would report the template as the written file. The generator's per-command skip list now also drops examples that use a skipped option. ([#5077](https://github.com/dathere/qsv/pull/5077))
+ - **`qsv-synthesize --format csv|jsonl|parquet`**: typed JSONL and Parquet output (integers, floats, Parquet dates, nulls; booleans when `--stats-options=--infer-boolean` types the column Boolean and its values are `true`/`false`); zero-padded codes stay text. Parquet needs `--output`. Skill regenerated from the USAGE text. ([#5075](https://github.com/dathere/qsv/pull/5075))
 ```
 
-**File**: `docs/help/synthesize.md` (modified, +5/-2)
+**File**: `.claude/skills/README-MCP.md` (modified, +1/-0)
 ```diff
-@@ -22,7 +22,9 @@ structure are preserved, minus values rarer than the --min-count.
- * Numeric and date/datetime columns are reproduced with quantile buckets
- (quartiles by default, see --quantiles), so the shape of the distribution
- (not just its [min,max] range) is preserved.
--The range ends are trimmed by the --min-count (see below).
-+The range ends are trimmed by the --min-count (see below). Float values
-+are rounded to the most decimal places the column shows in <input>
-+(unrounded when that is float noise, more than 15 places).
- * Null ratios are reproduced per column.
- 
- When a Data Dictionary is supplied (via --dictionary, or generated on the fly
-@@ -91,7 +93,8 @@ city/zip/age combination) seen at least --min-count times.
- lie at or beyond each end (the k-th smallest and k-th largest values),
- so a lone outlier no longer sets the range. The ends are themselves real
- values, and values inside the range are drawn uniformly per bucket, so
--integers and dates can still land exactly on real values. With
-+integers, dates and floats (rounded to their source decimals) can still
-+land exactly on real values. With
- the --min-count at 1 the range is the real min and max, and an outlier
- can reappear at or near its real value.
- 
+@@ -176,6 +176,7 @@ This script will:
+ | `QSV_MCP_MAX_OUTPUT_SIZE` | `52428800` | Maximum output size in bytes (50MB) |
+ | `QSV_MCP_MAX_EXAMPLES` | `5` | Maximum examples in tool descriptions (0-20) |
+ | `QSV_MCP_PLUGIN_MODE` | unset | Force plugin mode (for Gemini CLI etc.) |
++| `QSV_MCP_SQL_FILE_WRITES` | `false` in plugin mode, else `true` | Allow SQL that writes files itself (`COPY ... TO '<file>'`, DuckDB `EXPORT DATABASE`). When `false`, qsv gets `QSV_SQL_DISABLE_FILE_WRITES=1` and SQL that may contain them runs on Polars `sqlp` (which refuses them) instead of DuckDB; use `output_file` instead. |
+ | `QSV_MCP_ENABLE_APPS` | `true` | Enable MCP Apps UI tools. When `true` and the client supports MCP Apps, exposes the app-only `qsv_browse_directory` interactive directory browser. Set to `false` to disable. |
+ | `QSV_MCP_EXPOSE_ALL_TOOLS` | unset | Controls tool exposure mode. `true`: expose all 57 tools immediately (no deferred loading). `false`: use only 10 core utility tools (+1 app-only tool when Apps enabled; no deferred additions). Unset (default): deferred loading — 23 tools at startup (10 core + 13 commonly-used commands), +1 app-only when Apps enabled, plus tools discovered via search |
+ | `QSV_MCP_SANITIZE_ERRORS` | `true` | Strip absolute paths from qsv error messages (and the command line echoed alongside them) before they reach the MCP client. Protects usernames and directory layout in hosted/shared deployments. Set to `false` to keep full paths for local debugging. |
 ```
 
-**File**: `src/cmd/synthesize/generator.rs` (modified, +151/-8)
+**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +4/-0)
 ```diff
-@@ -162,6 +162,9 @@ pub(crate) enum ColumnGenerator {
-     NumericQuantile {
-         buckets:    Vec<(f64, f64)>,
-         is_int:     bool,
-+        /// Float columns only: decimal places to round to (the source's
-+        /// `max_precision`); `None` leaves values unrounded.
-+        decimals:   Option<u32>,
-         null_ratio: f64,
+@@ -280,6 +280,10 @@
+       "description": "generate_series(start, stop[, step]) and range(start, stop[, step]) generate a column of integers. generate_series includes stop; range does not.",
+       "command": "qsv sqlp SKIP_INPUT \"SELECT * FROM generate_series(1, 10, 2)\""
      },
-     /// Date / `DateTime` column reproduced via quantile buckets over epoch seconds.
-@@ -389,6 +392,7 @@ impl ColumnGenerator {
-             ColumnGenerator::NumericQuantile {
-                 buckets,
-                 is_int,
-+                decimals,
-                 null_ratio,
-             } => {
-                 if draw_null(*null_ratio, rng) {
-@@ -400,14 +404,7 @@ impl ColumnGenerator {
-                 } else {
-                     lo
-                 };
--                if *is_int {
--                    #[allow(clippy::cast_possible_truncation)]
--                    {
--                        (value.round() as i64).to_string()
--                    }
--                } else {
--                    value.to_string()
--                }
-+                format_number(value, *is_int, *decimals)
-             },
- 
-             ColumnGenerator::DateQuantile {
-@@ -744,12 +741,111 @@ fn build_numeric(stats: &StatsRecord, is_int: bool, null_ratio: f64) -> ColumnGe
-         Some(buckets) => ColumnGenerator::NumericQuantile {
-             buckets,
-             is_int,
-+            decimals: if is_int { None } else { float_decimals(stats) },
-             null_ratio,
-         },
-         None => ColumnGenerator::Empty,
-     }
++    {
++      "description": "COPY writes a query's result to a file itself, in the format its extension or a FORMAT option names. Set QSV_SQL_DISABLE_FILE_WRITES to turn this off; the qsv MCP server does so in plugin mode (Cowork and the Claude Code plugin).",
++      "command": "qsv sqlp data.csv \"COPY (SELECT * FROM data WHERE col1 > 10) TO 'result.parquet'\""
++    },
+     {
+       "description": "use stdin as input",
+       "command": "cat data.csv | qsv sqlp - 'select * from stdin'"
+```
+
+**File**: `.claude/skills/src/config.ts` (modified, +25/-0)
+```diff
+@@ -666,6 +666,22 @@ export function isPluginMode(): boolean {
+   return hasPluginRoot && !inExtensionMode;
  }
  
-+/// Above this many decimal places a column's `max_precision` reflects binary
-+/// float noise (`0.30000000000000004` counts 17), not how the source was
-+/// written, so its values are left unrounded.
-+const MAX_ROUNDED_DECIMALS: u32 = 15;
-+
-+/// The decimal places a Float column's synthetic values are rounded to: the
-+/// most any source value shows (`stats` `max_precision`), or `None` when that
-+/// is unknown or float noise.
-+pub(crate) fn float_decimals(stats: &StatsRecord) -> Option<u32> {
-+    stats
-+        .addl_cols
-+        .get("max_precision")?
-+        .parse::<u32>()
-+        .ok()
-+        .filter(|&d| d <= MAX_ROUNDED_DECIMALS)
++/**
++ * Pass the SQL file-write policy on to qsv child processes, which inherit process.env.
++ * qsv's Polars SQL contexts (sqlp, joinp --sql-filter, profile, scoresql) honor
++ * QSV_SQL_DISABLE_FILE_WRITES. When writes are allowed, the environment is left as is.
++ */
++export function applySqlFileWritePolicy(
++  allowWrites: boolean,
++  env: NodeJS.ProcessEnv = process.env,
++): void {
++  // Authoritative when off: an inherited QSV_SQL_DISABLE_FILE_WRITES=0 must not keep
++  // writes on while the server reports them disabled (QSV_MCP_SQL_FILE_WRITES is the knob).
++  if (!allowWrites) {
++    env.QSV_SQL_DISABLE_FILE_WRITES = "1";
++  }
 +}
 +
-+/// `value` on the grid of `decimals` places, as `(steps, scale)` with
-+/// `value ≈ steps / scale`; `None` when it can't be rounded exactly (no
-+/// decimals, or too large for the grid to be finer than an f64's spacing).
-+/// Working in whole steps keeps clear of noise like `1.1 * 100 =
-+/// 110.00000000000001`: `steps / scale` is the f64 nearest the decimal, so it
-+/// prints as that decimal.
-+pub(crate) fn decimal_steps(value: f64, decimals: Option<u32>) -> Option<(f64, f64)> {
-+    // Below 2^50 the error in `value * scale` is under a quarter step, so a
-+    // value already on the grid rounds to itself; nearer 2^53 it can land on
-+    // a half and round a step away (4.000000000000005 at 15 places). Whole
-+    // numbers aren't scaled, so they round exactly up to 2^53, beyond which
-+    // every f64 is already whole.
-+    const EXACT_STEPS: f64 = 1_125_899_906_842_624.0;
-+    const EXACT_WHOLE: f64 = 9_007_199_254_740_992.0;
-+    let decimals = decimals?;
-+    let scale = 10_f64.powi(i32::try_from(decimals).ok()?);
-+    let scaled = value * scale;
-+    let limit = if decimals == 0 {
-+        EXACT_WHOLE
-+    } else {
-+        EXACT_STEPS
-+    };
-+    (scaled.abs() < limit).then(|| (scaled.round(), scale))
-+}
+ /**
+  * Initialize qsv binary path with auto-detection
+  */
+@@ -879,6 +895,15 @@ export const config = {
+    */
+   isPluginMode: isPluginMode(),
+ 
++  /**
++   * Whether SQL may write files itself (`COPY ... TO '<file>'`, DuckDB `EXPORT DATABASE`).
++   * The query, not output_file, picks the target, so this is off in plugin mode
++   * (Cowork / Claude Code plugin) and on elsewhere. Override with QSV_MCP_SQL_FILE_WRITES.
++   * When off, qsv children get QSV_SQL_DISABLE_FILE_WRITES=1 (see applySqlFileWritePolicy)
++   * and the DuckDB route hands SQL that may contain them to sqlp instead.
++   */
++  sqlFileWrites: getOptionalBooleanEnv("QSV_MCP_SQL_FILE_WRITES") ?? !isPluginMode(),
 +
-+/// Round `value` to `decimals` places (no-op for `None`), never returning
-+/// negative zero.
-+pub(crate) fn round_to(value: f64, decimals: Option<u32>) -> f64 {
-+    match decimal_steps(value, decimals) {
-+        Some((steps, scale)) => steps / scale + 0.0,
-+        None => value,
-+    }
-+}
-+
-+/// The largest value on the `decimals` grid that is <= `value` (no-op for
-+/// `None`).
-+pub(crate) fn floor_to(value: f64, decimals: Option<u32>) -> f64 {
-+    match decimal_steps(value, decimals) {
-+        Some((steps, scale)) => {
-+            let rounded = steps / scale;
-+            (if rounded > value {
-+                (steps - 1.0) / scale
-+            } else {
-+                rounded
-+            }) + 0.0
-+        },
-+        None => value,
-+    }
-+}
-+
-+/// `value` rounded to the `decimals` grid, moved up one step if rounding took
-+/// it below `floor` (no-op for `None`). With `value >= floor`, the result is
-+/// the smallest grid value >= `floor` in that case, so it stays in order
-+/// after a predecessor and no higher than any grid value >= `floor`.
-+pub(crate) fn round_at_least(value: f64, floor: f64, decimals: Option<u32>) -> f64 {
-+    match decimal_steps(value, decimals) {
-+        Some((steps, scale)) => {
-+            let rounded = steps / scale;
-+            (if rounded < floor {
-+                (steps + 1.0) / scale
-+            } else {
-+                rounded
-+            }) + 0.0
-+        },
-+        None => value,
-+    }
-+}
-+
-+/// Render a numeric value as an Integer c
+   /**
+    * Expose all tools mode
+    *
 ```
 
-**File**: `src/cmd/synthesize/group_generator.rs` (modified, +46/-30)
+**File**: `.claude/skills/src/duckdb.ts` (modified, +15/-0)
 ```diff
-@@ -9,7 +9,7 @@
- use rand::{RngExt, rngs::StdRng};
- use serde::{Deserialize, Serialize};
- 
--use super::generator::draw_null;
-+use super::generator::{draw_null, format_number, round_at_least};
- 
- /// The value domain an `ordered` relationship group is generated in. Date
- /// values are carried as whole days since the UNIX epoch, datetimes as seconds
-@@ -55,6 +55,9 @@ pub(crate) enum GroupGenerator {
-         /// integer when true, a float when false. Lets a mixed Integer/Float
-         /// group keep each column's declared type. Ignored for Date/DateTime.
-         is_int:         Vec<bool>,
-+        /// Per-member decimal places a Float member is rounded to (its source
-+        /// `max_precision`); `None` for Integer, unrounded and date members.
-+        decimals:       Vec<Option<u32>>,
-         /// describegpt-inferred chrono strftime format for date members.
-         date_format:    Option<String>,
-         /// Anchor quantile buckets, in the numeric domain.
-@@ -87,6 +90,9 @@ pub(crate) enum GroupGenerator {
-         marginals:   Vec<Vec<(f64, f64)>>,
-         /// Per-member flag: round the emitted value to an integer.
-         is_int:      Vec<bool>,
-+        /// Per-member decimal places a Float member is rounded to; `None`
-+        /// for Integer and unrounded members.
-+        decimals:    Vec<Option<u32>>,
-         /// Per-member null ratio. Each member draws null independently, so its
-         /// marginal null ratio is preserved and nulls do not all co-occur.
-         null_ratios: Vec<f64>,
-@@ -129,6 +135,7 @@ impl GroupGenerator {
-                 member_cols,
-                 kind,
-                 is_int,
-+                decimals,
-                 date_format,
-                 anchor_buckets,
-                 gap_buckets,
-@@ -144,25 +151,22 @@ impl GroupGenerator {
-                 // The anchor's upper bound is capped by every follower's (see
-                 // `resolve_ordered`), so the chain can always stay in range.
-                 let mut value = sample_bucket(anchor_buckets, rng).min(member_ranges[0].1);
--                // Chain from the value actually emitted: an Integer member is
--                // printed rounded, so the next member must build on the
--                // rounded value or a Float follower can print below it. An
--                // Integer follower rounds no lower than ceil(floor), or it can
--                // print below a Float predecessor. ceil(floor) stays within
--                // range: the predecessor's cap is at most this member's
--                // integer-floored cap.
-+                // Chain from the value actually emitted: a member is printed
-+                // rounded to its grid (whole numbers for Integer, its source
-+                // decimals for Float), so the next member must build on the
-+                // rounded value or it can print below it. A follower rounds no
-+                // lower than its predecessor, or a coarser grid can print it
-+                // below a finer one (1.24 at one decimal is 1.2). That stays
-+                // within range: the predecessor's cap is at most this
-+                // member's grid-floored cap.
-                 let quantize = |v: f64, i: usize, floor: f64| {
--                    if *kind == OrderedKind::Numeric && is_int[i] {
--                        v.round().max(floor.ceil())
--                    } else {
--                        v
--                    }
-+                    round_at_least(v, floor, member_grid(*kind, is_int[i], decimals[i]))
-                 };
-                 value = quantize(value, 0, f64::NEG_INFINITY);
-                 let mut out = Vec::with_capacity(member_cols.len());
-                 out.push((
-                     member_cols[0],
--                    format_ordered(value, *kind, is_int[0], date_format.as_ref()),
-+                    format_ordered(value, *kind, is_int[0], decimals[0], date_format.as_ref()),
-                 ));
-                 for (i, gaps) in gap_buckets.iter().enumerate() {
-                     // Gap buckets are clamped to >= 0, and the clamp into the
-@@ -177,7 +181,13 @@ impl GroupGenerator {
-                     );
-                     out.push((
-                         member_cols[i + 1],
--                        format_ordered(value, *kind, is_int[i + 1], date_format.as_ref()),
-+                        format_ordered(
-+                            value,
-+                            *kind,
-+                            is_int[i + 1],
-+                            decimals[i + 1],
-+                            date_format.as_ref(),
-+                        ),
-                     ));
-                 }
-                 out
-@@ -188,6 +198,7 @@ impl GroupGenerator {
-                 cholesky_l,
-                 marginals,
-                 is_int,
-+                decimals,
-                 null_ratios,
-             } => {
-                 let k = col_indices.len();
-@@ -209,13 +220,8 @@ impl GroupGenerator {
-                     // all co-occur.
-    
-```
-
-**File**: `src/cmd/synthesize/mod.rs` (modified, +5/-2)
-```diff
-@@ -10,7 +10,9 @@ fake data that reproduce the source's per-column attributes:
-   * Numeric and date/datetime columns are reproduced with quantile buckets
-     (quartiles by default, see --quantiles), so the shape of the distribution
-     (not just its [min,max] range) is preserved.
--    The range ends are trimmed by the --min-count (see below).
-+    The range ends are trimmed by the --min-count (see below). Float values
-+    are rounded to the most decimal places the column shows in <input>
-+    (unrounded when that is float noise, more than 15 places).
-   * Null ratios are reproduced per column.
- 
- When a Data Dictionary is supplied (via --dictionary, or generated on the fly
-@@ -79,7 +81,8 @@ not stop it:
-     lie at or beyond each end (the k-th smallest and k-th largest values),
-     so a lone outlier no longer sets the range. The ends are themselves real
-     values, and values inside the range are drawn uniformly per bucket, so
--    integers and dates can still land exactly on real values. With
-+    integers, dates and floats (rounded to their source decimals) can still
-+    land exactly on real values. With
-     the --min-count at 1 the range is the real min and max, and an outlier
-     can reappear at or near its real value.
- 
-```
-
-**File**: `src/cmd/synthesize/model.rs` (modified, +5/-1)
-```diff
-@@ -13,7 +13,7 @@ use super::{
- };
- use crate::{CliError, CliResult, cmd::describegpt::dictionary::is_valid_strftime};
- 
--const FORMAT_VERSION: u32 = 2;
-+const FORMAT_VERSION: u32 = 3;
- 
- #[derive(Serialize, Deserialize)]
- pub(crate) struct Model {
-@@ -198,6 +198,7 @@ fn check_group(group: &GroupGenerator) -> Result<(), String> {
-         GroupGenerator::Ordered {
-             member_cols,
-             is_int,
-+            decimals,
-             date_format,
-             anchor_buckets,
-             gap_buckets,
-@@ -207,6 +208,7 @@ fn check_group(group: &GroupGenerator) -> Result<(), String> {
-             let n = member_cols.len();
-             if n == 0
-                 || is_int.len() != n
-+                || decimals.len() != n
-                 || member_ranges.len() != n
-                 || gap_buckets.len() != n - 1
-                 || anchor_buckets.is_empty()
-@@ -224,6 +226,7 @@ fn check_group(group: &GroupGenerator) -> Result<(), String> {
-             cholesky_l,
-             marginals,
-             is_int,
-+            decimals,
-             null_ratios,
-         } => {
-             let k = col_indices.len();
-@@ -232,6 +235,7 @@ fn check_group(group: &GroupGenerator) -> Result<(), String> {
-                 || marginals.len() != k
-                 || marginals.iter().any(Vec::is_empty)
-                 || is_int.len() != k
-+                || decimals.len() != k
-                 || null_ratios.len() != k
-             {
-                 return bad("a correlated group with inconsistent members");
-```
-
-**File**: `src/cmd/synthesize/relationships.rs` (modified, +27/-14)
-```diff
-@@ -26,10 +26,10 @@ use super::{
-     dictionary::SynthRelationship,
-     faker_map::{self, Locale},
-     generator::{
--        ColumnGenerator, compute_null_ratio, date_buckets, effective_quantiles, numeric_buckets,
--        parse_epoch, parse_f64,
-+        ColumnGenerator, compute_null_ratio, date_buckets, effective_quantiles, float_decimals,
-+        floor_to, numeric_buckets, parse_epoch, parse_f64,
-     },
--    group_generator::{GroupGenerator, OrderedKind},
-+    group_generator::{GroupGenerator, OrderedKind, member_grid},
-     report::Suppression,
- };
- use crate::{
-@@ -481,6 +481,10 @@ fn resolve_ordered(
-     // Per-member integer formatting — keeps an Integer column emitting integers
-     // even in a mixed Integer/Float ordered group.
-     let is_int: Vec<bool> = types.iter().map(|t| *t == "Integer").collect();
-+    let decimals: Vec<Option<u32>> = member_cols
-+        .iter()
-+        .map(|&c| member_decimals(&stats[c]))
-+        .collect();
- 
-     // Every member, not just the anchor, needs a usable range. A member whose
-     // range `--min-count` emptied must stay empty, which only independent
-@@ -509,20 +513,15 @@ fn resolve_ordered(
-     // Members are non-decreasing, so no member may exceed any later member's
-     // upper bound. Cap each upper bound by the ones after it; otherwise the
-     // order floor (`max(prev)`) would push a follower past its trimmed range.
--    // Integer members are emitted rounded, so their caps are floored (in the
--    // Numeric domain) to keep the rounded value within range and in order.
--    let floor_int = |i: usize, v: f64| {
--        if kind == OrderedKind::Numeric && is_int[i] {
--            v.floor()
--        } else {
--            v
--        }
--    };
-+    // Members are emitted rounded to their grid (whole numbers for Integer,
-+    // source decimals for Float), so their caps are floored to that grid to
-+    // keep the rounded value within range and in order.
-+    let floor_grid = |i: usize, v: f64| floor_to(v, member_grid(kind, is_int[i], decimals[i]));
-     if let Some(last) = member_ranges.len().checked_sub(1) {
--        member_ranges[last].1 = floor_int(last, member_ranges[last].1);
-+        member_ranges[last].1 = floor_grid(last, member_ranges[last].1);
-     }
-     for i in (0..member_ranges.len().saturating_sub(1)).rev() {
--        member_ranges[i].1 = floor_int(i, member_ranges[i].1.min(member_ranges[i + 1].1));
-+        member_ranges[i].1 = floor_grid(i, member_ranges[i].1.min(member_ranges[i + 1].1));
-     }
-     if let Some(i) = member_ranges.iter().position(|&(lo, hi)| hi < lo) {
-         let msg = format!(
-@@ -645,6 +644,7 @@ fn resolve_ordered(
-         member_cols,
-         kind,
-         is_int,
-+        decimals,
-         date_format,
-         anchor_buckets,
-         gap_buckets,
-@@ -653,6 +653,16 @@ fn resolve_ordered(
-     }))
+@@ -387,6 +387,21 @@ export function translateSql(
+   return translated;
  }
  
-+/// The decimals a numeric group member's values are rounded to: its source
-+/// `max_precision` for a Float column, `None` otherwise.
-+fn member_decimals(stats: &StatsRecord) -> Option<u32> {
-+    if stats.r#type == "Float" {
-+        float_decimals(stats)
-+    } else {
-+        None
-+    }
++/**
++ * Find a statement that makes DuckDB write files itself: `COPY ... TO` or
++ * `EXPORT DATABASE`. Returns its kind, or null. `COPY <table> FROM` (a read) is allowed.
++ */
++export function findFileWritingStatement(sql: string): string | null {
++  // Deliberately scans the raw text, strings and comments included. Blanking them first
++  // needs DuckDB's own lexer (nested block comments, $tag$ strings, E'' escapes), and any
++  // mismatch would hide a real statement. These keywords can't be spelled any other way,
++  // so a raw match can only err toward refusing; a refused query can drop the word from
++  // its literals or comments, or the server can be run with QSV_MCP_SQL_FILE_WRITES=true.
++  if (/\bEXPORT\b/i.test(sql)) return "EXPORT DATABASE";
++  if (/\bCOPY\b/i.test(sql) && /\bTO\b/i.test(sql)) return "COPY ... TO";
++  return null;
 +}
 +
- /// Classify the shared domain of an ordered group's member columns. Numeric
- /// members (Integer and/or Float) share the `Numeric` domain — per-member
- /// integer formatting is tracked separately. Returns `None` for a mixed or
-@@ -868,6 +878,7 @@ fn resolve_correlated(
-     // non-null values without forcing nulls to co-occur.
-     let mut marginals = Vec::with_capacity(kept_cols.len());
-     let mut is_int = Vec::with_capacity(kept_cols.len());
-+    let mut decimals = Vec::with_capacity(kept_cols.len());
-     let mut null_ratios = Vec::with_capacity(kept_cols.len());
-     for &col in &kept_cols {
-         let sr = &stats[col];
-@@ -881,6 +892,7 @@ fn resolve_correlated(
-         };
-         marginals.push(buckets);
-         is_int.push(sr.r#type == "Integer");
-+        decimals.push(member_decimals(sr));
-         null_ratios.push(compute_null_ratio(sr.nullcount, params.total_rows));
-     }
- 
-@@ -893,6 +905,7 @@ fn resolve_correlated(
-         cholesky_l,
-         marginals,
-         is_int,
-+        decimals,
-         null_ratios,
-     }))
- }
+ /**
+  * Execute a SQL query using DuckDB.
+  *
 ```
 
-**File**: `tests/test_synthesize.rs` (modified, +206/-0)
+**File**: `.claude/skills/src/mcp-server.ts` (modified, +7/-1)
 ```diff
-@@ -3482,6 +3482,12 @@ fn synthesize_model_rejects_other_versions_and_broken_models() {
-     v1["qsv_synthesize_model"] = 1.into();
-     expect_error("v1.json", &v1, "model format version 1");
+@@ -26,7 +26,7 @@ import { homedir } from "node:os";
+ import { SkillLoader } from "./loader.js";
+ import { SkillExecutor, runQsvSimple } from "./executor.js";
+ import { FilesystemResourceProvider } from "./mcp-filesystem.js";
+-import { config, revalidateQsvBinary } from "./config.js";
++import { applySqlFileWritePolicy, config, revalidateQsvBinary } from "./config.js";
+ import {
+   COMMON_COMMANDS,
+   createToolDefinition,
+@@ -1238,6 +1238,12 @@ class QsvMcpServer {
  
-+    // A version 2 model has no decimal places, so Float columns would print
-+    // unrounded.
-+    let mut v2 = model.clone();
-+    v2["qsv_synthesize_model"] = 2.into();
-+    expect_error("v2.json", &v2, "model format version 2");
-+
-     let mut untyped = model.clone();
-     untyped["types"].as_array_mut().unwrap().pop();
-     expect_error(
-@@ -4308,3 +4314,203 @@ fn synthesize_quantiles_keep_small_float_precision() {
-         "median {median} should be near 5e-6"
-     );
- }
-+
-+/// Decimal places of a numeric cell as written (`12.5` has 1, `3` has 0).
-+fn written_decimals(cell: &str) -> usize {
-+    cell.split_once('.').map_or(0, |(_, frac)| frac.len())
-+}
-+
-+/// `price` has 2 places, `ratio` 3, `noise` binary-float noise (stats counts
-+/// 17 places, so it stays unrounded) and `whole` 1 (`stats` counts `12.0` as
-+/// 1 place, so whole-number draws print as `12`).
-+fn float_decimals_fixture(wrk: &Workdir) {
-+    let mut csv = String::from("price,ratio,noise,whole\n");
-+    for i in 1..=60 {
-+        let f = f64::from(i);
-+        csv.push_str(&format!(
-+            "{:.2},{:.3},{},{f:.1}\n",
-+            f * 1.37,
-+            f / 7.0,
-+            f * 0.1 + 0.2
-+        ));
-+    }
-+    wrk.create_from_string("data.csv", &csv);
-+}
-+
-+#[test]
-+fn synthesize_floats_keep_source_decimals() {
-+    let wrk = Workdir::new("synthesize_float_decimals");
-+    float_decimals_fixture(&wrk);
-+
-+    let mut cmd = wrk.command("synthesize");
-+    cmd.args(["-n", "2000", "--seed", "3", "--freq-limit", "1", "data.csv"]);
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    let max_places = |col: usize| {
-+        got[1..]
-+            .iter()
-+            .filter(|r| !r[col].is_empty())
-+            .map(|r| written_decimals(&r[col]))
-+            .max()
-+            .unwrap()
-+    };
-+    assert_eq!(max_places(0), 2, "price");
-+    assert_eq!(max_places(1), 3, "ratio");
-+    assert!(max_places(2) > 10, "noise should stay unrounded");
-+    assert_eq!(max_places(3), 1, "whole");
-+    assert!(
-+        got[1..].iter().any(|r| !r[3].contains('.')),
-+        "some whole-number draws should print without a point"
-+    );
-+    for r in &got[1..] {
-+        assert!(!r[0].starts_with("-0"), "negative zero: {r:?}");
+     console.error("Starting QSV MCP Server...");
+ 
++    // Before any qsv child is spawned: they inherit process.env.
++    applySqlFileWritePolicy(config.sqlFileWrites);
++    if (!config.sqlFileWrites) {
++      console.error("  SQL file writes (COPY ... TO): disabled");
 +    }
 +
-+    // A Float value printed without a point is still typed as a float.
-+    let mut cmd = wrk.command("synthesize");
-+    cmd.args(["-n", "50", "--seed", "3", "--freq-limit", "1"])
-+        .args(["--format", "jsonl", "data.csv"]);
-+    for row in jsonl_rows(&wrk.stdout::<String>(&mut cmd)) {
-+        assert!(row["whole"].is_f64(), "whole should be a float: {row:?}");
+     await this.server.connect(transport);
+     console.error("QSV MCP Server running on stdio");
+ 
+```
+
+**File**: `.claude/skills/src/parquet-bridge.ts` (modified, +15/-0)
+```diff
+@@ -10,6 +10,7 @@ import {
+   detectDuckDb,
+   markDuckDbUnavailable,
+   translateSql,
++  findFileWritingStatement,
+   executeDuckDbQuery,
+   CSV_LIKE_EXTENSIONS,
+ } from "./duckdb.js";
+@@ -816,6 +817,20 @@ export async function tryDuckDbExecution(
+     return null; // Fall through to sqlp
+   }
+ 
++  // With SQL file writes off (plugin mode), SQL that may write files never reaches DuckDB.
++  // The check over-matches (a column named "export" trips it), so fall back to sqlp rather
++  // than fail: Polars runs under QSV_SQL_DISABLE_FILE_WRITES=1 and refuses a real COPY TO.
++  if (!config.sqlFileWrites) {
++    const kind = findFileWritingStatement(sql);
++    if (kind) {
++      console.error(
++        `[MCP Tools] DuckDB: SQL file writes are disabled and the query may contain ${kind}; ` +
++        `running it with sqlp instead`,
++      );
++      return null;
 +    }
-+}
++  }
 +
-+#[test]
-+fn synthesize_ordered_mixed_decimals_keep_order_and_range() {
-+    let wrk = Workdir::new("synthesize_ordered_mixed_decimals");
-+    // A 2-place Float, a 1-place Float and an Integer, in order, with gaps
-+    // smaller than the coarser grids: rounding `b` to 1 place can take it
-+    // below `a` (10.42 -> 10.4) unless it is moved up a step.
-+    let mut rows = vec![svec!["a", "b", "c"]];
-+    for i in 10..50 {
-+        rows.push(vec![
-+            format!("{i}.37"),
-+            format!("{i}.4"),
-+            format!("{}", i + 1),
-+        ]);
-+    }
-+    wrk.create("data.csv", rows.clone());
-+    wrk.create_from_string(
-+        "dict.json",
-+        r#"{
-+            "fields": [
-+                {"name": "a", "type": "Float"},
-+                {"name": "b", "type": "Float"},
-+                {"name": "c", "type": "Integer"}
-+            ],
-+            "relationships": [{"kind": "ordered", "members": ["a", "b", "c"]}]
-+        }"#,
-+    );
+   const format = String(params.format ?? "csv").toLowerCase();
+ 
+   // Unsupported formats fall back to sqlp
+```
+
+**File**: `.claude/skills/tests/config.test.ts` (modified, +21/-0)
+```diff
+@@ -13,6 +13,7 @@ import {
+   parseQsvCommandList,
+   expandTemplateVars,
+   isPluginMode,
++  applySqlFileWritePolicy,
+ } from '../src/config.js';
+ import { QSV_AVAILABLE } from './test-helpers.js';
+ 
+@@ -589,3 +590,23 @@ test('QSV_MCP_PLUGIN_MODE with invalid value falls back to auto-detection', () =
+     else delete process.env['QSV_MCP_PLUGIN_MODE'];
+   }
+ });
 +
-+    let mut cmd = wrk.command("synthesize");
-+    cmd.args(["-n", "3000", "--seed", "8", "--dictionary"])
-+        .arg(wrk.path("dict.json"))
-+        .arg("data.csv");
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    // `--min-count 5` trims each range to its 5th smallest and largest values.
-+    let trimmed: Vec<(f64, f64)> = (0..3)
-+        .map(|c| {
-+            let mut v: Vec<f64> = rows[1..].iter().map(|r| r[c].parse().unwrap()).collect();
-+            v.sort_by(f64::total_cmp);
-+            (v[4], v[v.len() - 5])
-+        })
-+        .collect();
-+    for r in &got[1..] {
-+        let v: Vec<f64> = r.iter().map(|s| s.parse().unwrap()).collect();
-+        assert!(v[0] <= v[1] && v[1] <= v[2], "order broken: {r:?}");
-+        for (c, &(lo, hi)) in trimmed.iter().enumerate() {
-+            assert!(
-+                lo <= v[c] && v[c] <= hi,
-+                "column {c} out of {lo}..={hi}: {r:?}"
-+            );
-+        }
-+        assert!(written_decimals(&r[0]) <= 2, "{r:?}");
-+        assert!(written_decimals(&r[1]) <= 1, "{r:?}");
-+        assert_eq!(written_decimals(&r[2]), 0, "{r:?}");
-+    }
-+}
++test('applySqlFileWritePolicy sets QSV_SQL_DISABLE_FILE_WRITES only when writes are off', () => {
++  const off: NodeJS.ProcessEnv = {};
++  applySqlFileWritePolicy(false, off);
++  assert.strictEqual(off.QSV_SQL_DISABLE_FILE_WRITES, '1');
 +
-+#[test]
-+fn synthesize_correlat
++  const on: NodeJS.ProcessEnv = {};
++  applySqlFileWritePolicy(true, on);
++  assert.strictEqual(on.QSV_SQL_DISABLE_FILE_WRITES, undefined);
++
++  // when off, the server's value wins over an inherited one
++  const inherited: NodeJS.ProcessEnv = { QSV_SQL_DISABLE_FILE_WRITES: '0' };
++  applySqlFileWritePolicy(false, inherited);
++  assert.strictEqual(inherited.QSV_SQL_DISABLE_FILE_WRITES, '1');
++
++  // when on, a user's own setting is left alone
++  const userSet: NodeJS.ProcessEnv = { QSV_SQL_DISABLE_FILE_WRITES: '1' };
++  applySqlFileWritePolicy(true, userSet);
++  assert.strictEqual(userSet.QSV_SQL_DISABLE_FILE_WRITES, '1');
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5081** (2026-11-20): deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes (@jqnatividad)
 - **PR #5080** (2026-11-20): feat(synthesize): Float columns keep their source decimal places (@jqnatividad)
 - **PR #5078** (2026-11-20): feat(synthesize): --quantiles <n> for finer numeric/date marginals (@jqnatividad)
 - **PR #5077** (2026-11-20): feat(synthesize): --rows-per-file <n> splits the output into files (@jqnatividad)
 - **PR #5075** (2026-11-19): feat(synthesize): --format csv|jsonl|parquet with typed columns (@jqnatividad)
 - **PR #5074** (2026-11-19): feat(synthesize): --save-model / --model to fit once and generate from the model (@jqnatividad)
-- **PR #5073** (2026-11-18): feat(synthesize): add --shard k/N to generate one slice of a seeded dataset (@jqnatividad)
 
 ---
 
@@ -2845,21 +2454,21 @@ round a step away (4.000000000000005 at 15 places became
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. synthesize): Float columns keep their source decimal places
+## X. deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18803975`: synthesize): Float columns keep their source decimal places. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `82819859`: deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `synthesize`: Float columns now keep their source's decimal places. A synthetic value is rounded to the most places any value of the column shows in the input (`stats` `max_precision`), so a 2-place price column prints `106.86` instead of `106.85678552041723`. Values print in their shortest form, so trailing zeros are dropped (`12.50` prints as `12.5`). This applies to independent columns and to `ordered` and `correlated` relationship members; in an `ordered` chain each member is rounded to its own places and still never prints below its predecessor or outside its range. A column whose `max_precision` is above 15 (binary-float noise such as `0.30000000000000004`) is left unrounded, as is a value too large to round exactly at its column's places (at 15 places, values from about 1.1 up; at 2 places, above about 10^13). Rounded floats can land exactly on real values, which `--report` counts as exact matches. The random draws are the same, so outside `ordered` relationships a seeded run gives the same rows as before with only Float cells rounded; in an `ordered` chain each member builds on the rounded value before it, so later members, Integer ones included, can differ by a step. Sav
+- **SQL file writes are off in plugin mode (Cowork, Claude Code plugin).** Polars SQL now has `COPY (<query>) TO '<file>'`, where the query rather than `output_file` picks the target. In plugin mode the server sets `QSV_SQL_DISABLE_FILE_WRITES=1` for qsv, and `qsv_sqlp` never sends SQL that may contain `COPY ... TO` or `EXPORT DATABASE` to DuckDB: it runs on Polars `sqlp`, which refuses a real `COPY ... TO`. A `.env` file can't lift the switch, for qsv or the qsv subprocesses it spawns. Other MCP clients and the Desktop extension keep them. New `QSV_MCP_SQL_FILE_WRITES` overrides the default either way. `qsv-sqlp` skill regenerated from the USAGE text. ([#5081](https://github.com/dathere/qsv/pull/5081))
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2869,4 +2478,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18803975` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `82819859` are properly handled with clean fallback behavior.

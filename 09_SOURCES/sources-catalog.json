@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "18803975",
+    "sourceVersion": "82819859",
     "license": "NOASSERTION",
-    "contentHash": "330a3b21ce5abbdbf4094c91795e53b83d98b881c10344721157157b0d4bf0b5",
-    "lastHarvestedAt": "2026-11-20T14:04:11.883Z",
+    "contentHash": "eca5b78ccc20fea74de7bbbe8f5b7424843e7aadafba546e6a9d7027b5a855b1",
+    "lastHarvestedAt": "2026-11-20T16:42:28.420Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "85ddf6c2",
+    "sourceVersion": "8046b9e9",
     "license": "Apache-2.0",
-    "contentHash": "80e1d8a83bc0cd86982bc456dc335337553032f16c4822a1d5e0627246dfcbc0",
-    "lastHarvestedAt": "2026-11-19T00:00:13.025Z",
+    "contentHash": "5c81b653e6752b84c72040e23e8e67cec960a226bcc84716e5fcf62907b326dd",
+    "lastHarvestedAt": "2026-11-20T16:42:13.827Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {

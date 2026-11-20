@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T16:29:09.939Z",
+  "last_updated": "2026-11-20T16:42:34.260Z",
   "total_verified_learnings": 9042,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22505,
+  "total_items": 22511,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "897c7a20b7c5287973b46f7a1c62d2e87424ca3311c202809448e677bafe9faf",
+      "content_hash": "d8aa8c4c038c678028ba9cc5b6b09bc21c484dab37b7b9762e9c71cba96baf73",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T14:07:37.491Z"
+      "persisted_at": "2026-11-20T16:42:34.143Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d6f87a89f0f5e872ce7d931fb484779c8835581854bddefa9b6d651148bafe1b",
+      "content_hash": "e84264619351c8df2f2abf2586980b4194b90799227715b79ab985670a34bd6a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T14:07:37.654Z"
+      "persisted_at": "2026-11-20T16:42:34.260Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112125,10 +112125,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dathere-qsv-content-information-intelligence-dathere-qsv-core-invariants.md",
       "title": "Content & Information Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "ce4f6857",
-      "content_hash": "b468d613a2aebd56dcc4100cdc10f47492b3bd6de73a3e5250dc889eb9f6e352",
+      "source_version": "82819859",
+      "content_hash": "a80b29d921ca027c4f5547f423b67ce37a596bb35ac033f94e7357798201ff48",
       "domain_letter": "I",
-      "persisted_at": "2026-11-13T15:04:01.539Z"
+      "persisted_at": "2026-11-20T16:42:28.759Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dathere-qsv": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dathere-qsv",
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "18803975",
-      "content_hash": "ffad53b8833449e33be5f45e62141337194bea377d73a43d50f7234855773860",
+      "source_version": "82819859",
+      "content_hash": "f78b3e961b7ef712d19d2242b2338a8701f3ba5d5b25464c8f9ac154709c8265",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T14:04:12.529Z"
+      "persisted_at": "2026-11-20T16:42:28.898Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112162,9 +112162,9 @@
       "title": "Content & Information Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "42179528ea8d345fe01bdba0e01ae540b8907b796903c313d367aefa15744b54",
+      "content_hash": "782666e0bf0ecdb32a39992b7f34ac5ea31caae55a69005da850e92979c39082",
       "domain_letter": "I",
-      "persisted_at": "2026-11-13T15:04:05.365Z"
+      "persisted_at": "2026-11-20T16:42:33.088Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dathere-qsv-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dathere-qsv-learnings",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a84d81291d3a9e59abf2512e88053d2e17e47e878adc18342bb76536dd07e61",
+      "content_hash": "92d4419f788bf2dac26d4c3bad6e9594ce4fe8253d3475322d0f87172d755ba3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T14:07:36.175Z"
+      "persisted_at": "2026-11-20T16:42:33.224Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -216406,8 +216406,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "85ddf6c2",
-      "content_hash": "80e1d8a83bc0cd86982bc456dc335337553032f16c4822a1d5e0627246dfcbc0",
+      "source_version": "8046b9e9",
+      "content_hash": "5c81b653e6752b84c72040e23e8e67cec960a226bcc84716e5fcf62907b326dd",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -216430,6 +216430,11 @@
           "number": 9303,
           "title": "add strided prefill and improve FP16 GEMM",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9599,
+          "title": "pointer operands for foreign tile-library calls",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216437,7 +216442,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T00:00:12.787Z",
+      "verified_at": "2026-11-20T16:42:13.646Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216479,10 +216484,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
       "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
       "repository": "NVIDIA/cuda-rust",
-      "source_version": "85ddf6c2",
-      "content_hash": "aad3d007de7df17fa14367943cd5b772733d5aadb5890d3a28904ed5d9c85477",
+      "source_version": "8046b9e9",
+      "content_hash": "031ab8ba63cdfba64864c598a23876ab2262b6bd21dfc1a5121bc08572cbd617",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T00:00:13.472Z"
+      "persisted_at": "2026-11-20T16:42:14.167Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust",
@@ -216491,10 +216496,10 @@
       "relative_path": "08_VERIFICATION/nvidia-cuda-rust-verification-protocol-empirical-defect-shield-for-nvidia-cuda-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for NVIDIA/cuda-rust",
       "repository": "NVIDIA/cuda-rust",
-      "source_version": "85ddf6c2",
-      "content_hash": "07f4fa34bc987d9e75ee54d36f15861d0d63cda1ce0b285ff82ceb96adc01e47",
+      "source_version": "8046b9e9",
+      "content_hash": "b8ca70291482d0a60faadcbb24d4313bd65da54ac7b6b643ff43e912aecabd4f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:00:13.659Z"
+      "persisted_at": "2026-11-20T16:42:14.305Z"
     },
     "learn-github-infinitered-reactotron": {
       "learning_id": "learn-github-infinitered-reactotron",
@@ -216813,9 +216818,9 @@
       "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
       "repository": "nvidia-cuda-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "8fc9e6324e5710f97b588204cbd5f833dad967afc7fb08102ccae751394a47da",
+      "content_hash": "65c3e46c2b7622615a84ab0f6b58cc5a744504713a5435311a457bcce328e050",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T00:00:28.829Z"
+      "persisted_at": "2026-11-20T16:42:32.074Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust-learnings",
@@ -216825,9 +216830,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nvidia-cuda-rust-learnings",
       "repository": "nvidia-cuda-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "46452b82d7844063922ba8fd27c6b770ab09ef7751f18adb3fb4caa61f35d7ba",
+      "content_hash": "37b3f7984efdf714cffcb5af7a53535555f60cf6e9eaea8614e13d479d1f4364",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:00:29.028Z"
+      "persisted_at": "2026-11-20T16:42:32.247Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants",
@@ -219672,8 +219677,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "18803975",
-      "content_hash": "330a3b21ce5abbdbf4094c91795e53b83d98b881c10344721157157b0d4bf0b5",
+      "source_version": "82819859",
+      "content_hash": "eca5b78ccc20fea74de7bbbe8f5b7424843e7aadafba546e6a9d7027b5a855b1",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -219801,6 +219806,11 @@
           "number": 9581,
           "title": "Float columns keep their source decimal places",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9600,
+          "title": "bump Polars to upstream 93d31f0; gate SQL COPY TO file writes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219808,7 +219818,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T14:04:11.644Z",
+      "verified_at": "2026-11-20T16:42:28.239Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -294972,13 +294982,13 @@
       "item_id": "candidate_directive-build-download-onnx-runtime-archives-from-npmmirror",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZYWR-build-download-onnx-runtime-archives-from-npmmirror.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-J8CL-build-download-onnx-runtime-archives-from-npmmirror.md",
       "title": "build): download ONNX Runtime archives from npmmirror",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "07ffb981b95be5a150c5c7ce464e3e0c39cabda46049f9417a665d18189767bf",
+      "content_hash": "f65bf0556a69653795c57ee5753949532a31b65f1f2b00f975f394bb7beb6ff7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T14:07:37.083Z"
+      "persisted_at": "2026-11-20T16:42:33.862Z"
     },
     "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -294988,9 +294998,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4fdf52d052bed34f2d365b8f8e85d2f679c49bfa6b97490460c039f7e7c0c790",
+      "content_hash": "fddc5d1b43bf5e39004659c15556d561af7ba162bef18906fce4af7c55bf240c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T14:07:37.284Z"
+      "persisted_at": "2026-11-20T16:42:34.004Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -305085,6 +305095,82 @@
       "content_hash": "b500338971e0162838b49d17db7d3431287aa16b0045beda2f932093a7fa5846",
       "domain_letter": "I",
       "persisted_at": "2026-11-20T16:29:08.639Z"
+    },
+    "rule-9599": {
+      "learning_id": "rule-9599",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9599,
+      "title": "pointer operands for foreign tile-library calls",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "8046b9e9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T16:42:13.646Z"
+    },
+    "candidate_directive-pointer-operands-for-foreign-tile-library-calls": {
+      "item_id": "candidate_directive-pointer-operands-for-foreign-tile-library-calls",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IT1L-pointer-operands-for-foreign-tile-library-calls.md",
+      "title": "pointer operands for foreign tile-library calls",
+      "repository": "NVIDIA/cuda-rust",
+      "source_version": "8046b9e9",
+      "content_hash": "ead28c6ee943f58981af011a8aefeb90f735083d869dffdcfd4e49aa5eed2154",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T16:42:14.028Z"
+    },
+    "rule-9600": {
+      "learning_id": "rule-9600",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9600,
+      "title": "bump Polars to upstream 93d31f0; gate SQL COPY TO file writes",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "82819859",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T16:42:28.239Z"
+    },
+    "candidate_directive-bump-polars-to-upstream-93d31f0-gate-sql-copy-to-file-writes": {
+      "item_id": "candidate_directive-bump-polars-to-upstream-93d31f0-gate-sql-copy-to-file-writes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J4AX-bump-polars-to-upstream-93d31f0-gate-sql-copy-to-file-writes.md",
+      "title": "bump Polars to upstream 93d31f0; gate SQL COPY TO file writes",
+      "repository": "dathere/qsv",
+      "source_version": "82819859",
+      "content_hash": "872f06c8f7a703c0d014a221b67e6a4c4257e53d157e07023f12a2e4ea156a86",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T16:42:28.620Z"
+    },
+    "candidate_directive-cutile-pointer-operands-for-foreign-tile-library-calls": {
+      "item_id": "candidate_directive-cutile-pointer-operands-for-foreign-tile-library-calls",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J6UG-cutile-pointer-operands-for-foreign-tile-library-calls.md",
+      "title": "cutile): pointer operands for foreign tile-library calls",
+      "repository": "nvidia-cuda-rust-learnings",
+      "source_version": "HEAD",
+      "content_hash": "70d1b8f5625c208916d7c339d565c8276c320c1240f4db9022a06a720b2e015d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T16:42:31.916Z"
+    },
+    "candidate_directive-deps-bump-polars-to-upstream-93d31f0-gate-sql-copy-to-file-writes": {
+      "item_id": "candidate_directive-deps-bump-polars-to-upstream-93d31f0-gate-sql-copy-to-file-writes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J7N4-deps-bump-polars-to-upstream-93d31f0-gate-sql-copy-to-file-writes.md",
+      "title": "deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "00ad2b6f0a618ce29b1866e819054ae2ebf34af8de8516b3bfc7a92f575bbc6d",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T16:42:32.947Z"
     }
   },
   "ai-builder-brain": {

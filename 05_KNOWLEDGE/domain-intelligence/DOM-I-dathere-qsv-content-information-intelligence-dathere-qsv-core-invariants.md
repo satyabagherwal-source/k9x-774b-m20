@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "ce4f6857",
+  "source_version": "82819859",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-13T15:04:01.435Z",
+  "timestamp": "2026-11-20T16:42:28.617Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `ce4f6857`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-13T15:04:01.435Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `82819859`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-20T16:42:28.617Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
 - **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 88%
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T15:04:00.591Z  
+> **Harvest Timestamp**: 2026-11-20T16:42:27.441Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3847 stars
+- **Stars / Engagement**: 3835 stars
 
 ---
 
@@ -1543,7 +1543,7 @@ use std::{
 };
 
 use foldhash::{HashMap, HashMapExt};
-use polars::{prelude::*, sql::SQLContext};
+use polars::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use crate::{CliResult, cmd::joinp::path_delim, config::Delimiter, util};
@@ -1711,7 +1711,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
     }
     args.arg_input = inputs;
 
-    if args.ar
+    if args.arg_input.is_empty() 
 ```
 
 ### Core Architecture Module: `src/llmutil.rs`
@@ -2215,158 +2215,240 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce4f6857` (2026-11-13)
-**Commit Message**: docs: fix sqlp `<=>` and Polars schema file name in USAGE (#5046)
+### Incident Patch 1: `82819859` (2026-11-20)
+**Commit Message**: deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes (#5081)
 
-* docs: fix sqlp `<=>` and Polars schema file name in USAGE
+* deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes
 
-- sqlp: `<=>` is NULL-safe equality (IS NOT DISTINCT FROM), not a
-  -1/0/1 spaceship comparison; it returns true/false, never NULL.
-- sqlp, joinp, schema: a Polars schema file is named after the full
-  input file name (data.csv -> data.csv.pschema.json), per
-  util::pschema_path.
+Polars main is 91 commits past 2d9938d (crates stay 0.55.1).
 
-Help markdown and MCP skill JSONs regenerated.
+- #30887 changed DataFrame/Series::slice to take one impl Into<Slice>.
+  Pass (offset, len) tuples in pivotp and readstat, and patch
+  polars-readstat-rs 0.27.0 to a dathere fork with the same 6-line fix
+  (upstream builds on crates.io polars 0.55.1 and can't take it yet).
+- New SQL: PIVOT/UNPIVOT, COPY ... TO, CREATE MACRO, SELECT alias reuse,
+  CAST AS CATEGORICAL, E'' strings, MAKE_DATE/CHR/DATE_DIFF/TYPEOF/
+  TO_CHAR/PRINTF/FORMAT and more. Enable polars' rolling_window_by for
+  RANGE frames with an offset (#30849).
+- Result changes: DELETE affects later statements (#30869), NULL length
+  makes LEFT/SUBSTRING NULL (#30934), SPLIT_PART(NULL) is NULL (#30936),
+  DESCRIBE reports SQL type names, repeated expressions get a :1 suffix
+  (#30949).
+- COPY (query) TO '<file>' (#30834) writes files by default. New
+  QSV_SQL_DISABLE_FILE_WRITES turns it off in sqlp, joinp --sql-filter,
+  profile and scoresql (util::new_sql_context). The MCP server sets it in
+  plugin mode (Cowork, C
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: CHANGELOG entry for #5046
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.claude/skills/qsv/qsv-joinp.json` (modified, +1/-1)
+**File**: `.claude/skills/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -45,7 +45,7 @@
-       {
-         "flag": "--cache-schema",
-         "type": "number",
--        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
-+        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
-         "default": 0
-       },
-       {
+@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ## [Unreleased]
+ 
+ ### Added
++- **SQL file writes are off in plugin mode (Cowork, Claude Code plugin).** Polars SQL now has `COPY (<query>) TO '<file>'`, where the query rather than `output_file` picks the target. In plugin mode the server sets `QSV_SQL_DISABLE_FILE_WRITES=1` for qsv, and `qsv_sqlp` never sends SQL that may contain `COPY ... TO` or `EXPORT DATABASE` to DuckDB: it runs on Polars `sqlp`, which refuses a real `COPY ... TO`. A `.env` file can't lift the switch, for qsv or the qsv subprocesses it spawns. Other MCP clients and the Desktop extension keep them. New `QSV_MCP_SQL_FILE_WRITES` overrides the default either way. `qsv-sqlp` skill regenerated from the USAGE text. ([#5081](https://github.com/dathere/qsv/pull/5081))
+ - **`qsv-synthesize --quantiles <n>`**: 2, 4, 5, 10, 20, 25, 50 or 100 equal-share buckets for numeric/date columns and `ordered` gaps (default 4, the quartiles, unchanged output); more buckets keep long tails. Skill regenerated from the USAGE text. ([#5078](https://github.com/dathere/qsv/pull/5078))
+ - **`qsv-synthesize`: `--rows-per-file` is CLI-only for now.** The new `synthesize --rows-per-file` option and its USAGE example are left out of the skill: the MCP server checks only the literal `{}` output template against its allowed directories and would report the template as the written file. The generator's per-command skip list now also drops examples that use a skipped option. ([#5077](https://github.com/dathere/qsv/pull/5077))
+ - **`qsv-synthesize --format csv|jsonl|parquet`**: typed JSONL and Parquet output (integers, floats, Parquet dates, nulls; booleans when `--stats-options=--infer-boolean` types the column Boolean and its values are `true`/`false`); zero-padded codes stay text. Parquet needs `--output`. Skill regenerated from the USAGE text. ([#5075](https://github.com/dathere/qsv/pull/5075))
 ```
 
-**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +2/-2)
+**File**: `.claude/skills/README-MCP.md` (modified, +1/-0)
 ```diff
-@@ -23,7 +23,7 @@
-       {
-         "flag": "--cache-schema",
-         "type": "flag",
--        "description": "Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars \"table\" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file will have the same file stem as the corresponding input file, with the extension \".pschema.json\" (data.csv's Polars schema file will be data.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its \"Float64\" type to \"Float32\" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of \"Float64\", use {\"Decimal\": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`."
-+        "description": "Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars \"table\" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with \".pschema.json\" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its \"Float64\" type to \"Float32\" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of \"Float64\", use {\"Decimal\": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`."
-       },
-       {
-         "flag": "--compress-level",
-@@ -177,7 +177,7 @@
-       "command": "qsv sqlp data.csv \"select CASE col*5 WHEN 10 THEN 'foo' WHEN 5 THEN 'bar' ELSE 'baz' END from _t_1\""
+@@ -176,6 +176,7 @@ This script will:
+ | `QSV_MCP_MAX_OUTPUT_SIZE` | `52428800` | Maximum output size in bytes (50MB) |
+ | `QSV_MCP_MAX_EXAMPLES` | `5` | Maximum examples in tool descriptions (0-20) |
+ | `QSV_MCP_PLUGIN_MODE` | unset | Force plugin mode (for Gemini CLI etc.) |
++| `QSV_MCP_SQL_FILE_WRITES` | `false` in plugin mode, else `true` | Allow SQL that writes files itself (`COPY ... TO '<file>'`, DuckDB `EXPORT DATABASE`). When `false`, qsv gets `QSV_SQL_DISABLE_FILE_WRITES=1` and SQL that may contain them runs on Polars `sqlp` (which refuses them) instead of DuckDB; use `output_file` instead. |
+ | `QSV_MCP_ENABLE_APPS` | `true` | Enable MCP Apps UI tools. When `true` and the client supports MCP Apps, exposes the app-only `qsv_browse_directory` interactive directory browser. Set to `false` to disable. |
+ | `QSV_MCP_EXPOSE_ALL_TOOLS` | unset | Controls tool exposure mode. `true`: expose all 57 tools immediately (no deferred loading). `false`: use only 10 core utility tools (+1 app-only tool when Apps enabled; no deferred additions). Unset (default): deferred loading — 23 tools at startup (10 core + 13 commonly-used commands), +1 app-only when Apps enabled, plus tools discovered via search |
+ | `QSV_MCP_SANITIZE_ERRORS` | `true` | Strip absolute paths from qsv error messages (and the command line echoed alongside them) before they reach the MCP client. Protects usernames and directory layout in hosted/shared deployments. Set to `false` to keep full paths for local debugging. |
+```
+
+**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +4/-0)
+```diff
+@@ -280,6 +280,10 @@
+       "description": "generate_series(start, stop[, step]) and range(start, stop[, step]) generate a column of integers. generate_series includes stop; range does not.",
+       "command": "qsv sqlp SKIP_INPUT \"SELECT * FROM generate_series(1, 10, 2)\""
      },
++    {
++      "description": "COPY writes a query's result to a file itself, in the format its extension or a FORMAT option names. Set QSV_SQL_DISABLE_FILE_WRITES to turn this off; the qsv MCP server does so in plugin mode (Cowork and the Claude Code plugin).",
++      "command": "qsv sqlp data.csv \"COPY (SELECT * FROM data WHERE col1 > 10) TO 'result.parquet'\""
++    },
      {
--      "description": "spaceship operator: \"<=>\" (three-way comparison operator) returns -1 if left < right, 0 if left == right, 1 if left > right https://en.wikipedia.org/wiki/Three-way_comparison#Spaceship_operator",
-+      "description": "NULL-safe equality operator: \"<=>\" (same as IS NOT DISTINCT FROM) returns true if both sides are equal or both are NULL, false otherwise (never NULL)",
-       "command": "qsv sqlp data.csv data2.csv \"select data.c2 <=> data2.c2 from data join data2 on data.c1 = data2.c1\""
-     },
-     {
+       "description": "use stdin as input",
+       "command": "cat data.csv | qsv sqlp - 'select * from stdin'"
 ```
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.claude/skills/src/config.ts` (modified, +25/-0)
 ```diff
-@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
+@@ -666,6 +666,22 @@ export function isPluginMode(): boolean {
+   return hasPluginRoot && !inExtensionMode;
+ }
  
- ### Fixed
-+- **docs: `sqlp`, `joinp` and `schema` USAGE corrections** ([#5046](https://github.com/dathere/qsv/pull/5046)). `sqlp`'s `<=>` is NULL-safe equality (the same as `IS NOT DISTINCT FROM`: true when both sides are equal or both are NULL, never NULL), not a -1/0/1 "spaceship" comparison. A Polars schema file is named after the full input file name, so `data.csv`'s is `data.csv.pschema.json`, not `data.pschema.json`.
- - **`luau`: fixes from a review of `luau.rs`** ([#5036](https://github.com/dathere/qsv/pull/5036)):
-   - **An existing `./date.lua` is no longer overwritten and deleted.** A script using `require "./date"` made qsv write the bundled LuaDate over any `date.lua` in the current directory, then delete it at exit. An existing file is now used as-is and left alone. The bundled copy is also removed when the run fails; before, a failed run left it behind.
-   - **`luau filter` no longer keeps every row after the first error.** The keep check looked at the running error count, so after one row errored, every later row was kept whatever it returned. An errored row is still kept.
++/**
++ * Pass the SQL file-write policy on to qsv child processes, which inherit process.env.
++ * qsv's Polars SQL contexts (sqlp, joinp --sql-filter, profile, scoresql) honor
++ * QSV_SQL_DISABLE_FILE_WRITES. When writes are allowed, the environment is left as is.
++ */
++export function applySqlFileWritePolicy(
++  allowWrites: boolean,
++  env: NodeJS.ProcessEnv = process.env,
++): void {
++  // Authoritative when off: an inherited QSV_SQL_DISABLE_FILE_WRITES=0 must not keep
++  // writes on while the server reports them disabled (QSV_MCP_SQL_FILE_WRITES is the knob).
++  if (!allowWrites) {
++    env.QSV_SQL_DISABLE_FILE_WRITES = "1";
++  }
++}
++
+ /**
+  * Initialize qsv binary path with auto-detection
+  */
+@@ -879,6 +895,15 @@ export const config = {
+    */
+   isPluginMode: isPluginMode(),
+ 
++  /**
++   * Whether SQL may write files itself (`COPY ... TO '<file>'`, DuckDB `EXPORT DATABASE`).
++   * The query, not output_file, picks the target, so this is off in plugin mode
++   * (Cowork / Claude Code plugin) and on elsewhere. Override with QSV_MCP_SQL_FILE_WRITES.
++   * When off, qsv children get QSV_SQL_DISABLE_FILE_WRITES=1 (see applySqlFileWritePolicy)
++   * and the DuckDB route hands SQL that may contain them to sqlp instead.
++   */
++  sqlFileWrites: getOptionalBooleanEnv("QSV_MCP_SQL_FILE_WRITES") ?? !isPluginMode(),
++
+   /**
+    * Expose all tools mode
+    *
 ```
 
-**File**: `docs/help/joinp.md` (modified, +1/-1)
+**File**: `.claude/skills/src/duckdb.ts` (modified, +15/-0)
 ```diff
-@@ -75,7 +75,7 @@ qsv joinp --help
- |--------|------|-------------|--------|
- | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | When set, will attempt to parse the columns as dates. If the parse fails, columns remain as strings. This is useful when the join keys are formatted as dates with differing date formats, as the date formats will be normalized. Note that this will be automatically enabled when using asof joins. |  |
- | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: very slow). Only used when --cache-schema is 0 or 1 and no cached schema exists or when --infer-len is 0. | `10000` |
--| &nbsp;`‑‑cache‑schema`&nbsp; | integer | Create and cache Polars schema JSON files. Ignored when --infer-len is 0.<br>-2: treat all columns as String. A Polars schema file is created & cached.<br>-1: treat all columns as String. No Polars schema file is created.<br>0: do not cache Polars schema. Uses --infer-len to infer schema.<br>1: cache Polars schema with the following behavior:<ul><li>If schema file exists and is newer than input: use cached schema</li><li>If schema file missing/outdated and stats cache exists: derive schema from stats and cache it</li><li>If no schema or stats cache: infer schema using --infer-len and cache the result</li></ul> Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json).<br>NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0. | `0` |
-+| &nbsp;`‑‑cache‑schema`&nbsp; | integer | Create and cache Polars schema JSON files. Ignored when --infer-len is 0.<br>-2: treat all columns as String. A Polars schema file is created & cached.<br>-1: treat all columns as String. No Polars schema file is created.<br>0: do not cache Polars schema. Uses --infer-len to infer schema.<br>1: cache Polars schema with the following behavior:<ul><li>If schema file exists and is newer than input: use cached schema</li><li>If schema file missing/outdated and stats cache exists: derive schema from stats and cache it</li><li>If no schema or stats cache: infer schema using --infer-len and cache the result</li></ul> Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json).<br>NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0. | `0` |
- | &nbsp;`‑‑no‑optimizations`&nbsp; | flag | Disable non-default join optimizations. This will make joins slower. Only use this when you get join errors. |  |
- | &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join. |  |
- | &nbsp;`‑‑decimal‑comma`&nbsp; | flag | Use comma as the decimal separator when parsing & writing CSVs. Otherwise, use period as the decimal separator. Note that you'll need to set --delimiter to an alternate delimiter other than the default comma if you are using this option. |  |
+@@ -387,6 +387,21 @@ export function translateSql(
+   return translated;
+ }
+ 
++/**
++ * Find a statement that makes DuckDB write files itself: `COPY ... TO` or
++ * `EXPORT DATABASE`. Returns its kind, or null. `COPY <table> FROM` (a read) is allowed.
++ */
++export function findFileWritingStatement(sql: string): string | null {
++  // Deliberately scans the raw text, strings and comments included. Blanking them first
++  // needs DuckDB's own lexer (nested block comments, $tag$ strings, E'' escapes), and any
++  // mismatch would hide a real statement. These keywords can't be spelled any other way,
++  // so a raw match can only err toward refusing; a refused query can drop the word from
++  // its literals or comments, or the server can be run with QSV_MCP_SQL_FILE_WRITES=true.
++  if (/\bEXPORT\b/i.test(sql)) return "EXPORT DATABASE";
++  if (/\bCOPY\b/i.test(sql) && /\bTO\b/i.test(sql)) return "COPY ... TO";
++  return null;
++}
++
+ /**
+  * Execute a SQL query using DuckDB.
+  *
 ```
 
-**File**: `docs/help/schema.md` (modified, +1/-1)
+**File**: `.claude/skills/src/mcp-server.ts` (modified, +7/-1)
 ```diff
-@@ -53,7 +53,7 @@ and then use that to generate the schema file.
+@@ -26,7 +26,7 @@ import { homedir } from "node:os";
+ import { SkillLoader } from "./loader.js";
+ import { SkillExecutor, runQsvSimple } from "./executor.js";
+ import { FilesystemResourceProvider } from "./mcp-filesystem.js";
+-import { config, revalidateQsvBinary } from "./config.js";
++import { applySqlFileWritePolicy, config, revalidateQsvBinary } from "./config.js";
+ import {
+   COMMON_COMMANDS,
+   createToolDefinition,
+@@ -1238,6 +1238,12 @@ class QsvMcpServer {
  
- When the "polars" feature is enabled, the `--polars` option will generate a Polars schema
- instead of a JSON Schema. The generated Polars schema will be written to a file with the
--`.pschema.json` suffix appended to the input file stem.
-+`.pschema.json` suffix appended to the full input file name (data.csv -> data.csv.pschema.json).
+     console.error("Starting QSV MCP Server...");
  
- The Polars schema is a JSON object that describes the schema of a CSV file. When present,
- the `sqlp`, `joinp`, and `pivotp` commands will use the Polars schema to read the CSV file
++    // Before any qsv child is spawned: they inherit process.env.
++    applySqlFileWritePolicy(config.sqlFileWrites);
++    if (!config.sqlFileWrites) {
++      console.error("  SQL file writes (COPY ... TO): disabled");
++    }
++
+     await this.server.connect(transport);
+     console.error("QSV MCP Server running on stdio");
+ 
 ```
 
-**File**: `docs/help/sqlp.md` (modified, +3/-4)
+**File**: `.claude/skills/src/parquet-bridge.ts` (modified, +15/-0)
 ```diff
-@@ -149,9 +149,8 @@ qsv sqlp data.csv "select CASE WHEN col1 > 10 THEN 'foo' WHEN col1 > 5 THEN 'bar
- qsv sqlp data.csv "select CASE col*5 WHEN 10 THEN 'foo' WHEN 5 THEN 'bar' ELSE 'baz' END from _t_1"
- ```
+@@ -10,6 +10,7 @@ import {
+   detectDuckDb,
+   markDuckDbUnavailable,
+   translateSql,
++  findFileWritingStatement,
+   executeDuckDbQuery,
+   CSV_LIKE_EXTENSIONS,
+ } from "./duckdb.js";
+@@ -816,6 +817,20 @@ export async function tryDuckDbExecution(
+     return null; // Fall through to sqlp
+   }
  
--> spaceship operator: "<=>" (three-way comparison operator)
--> returns -1 if left < right, 0 if left == right, 1 if left > right
--> <https://en.wikipedia.org/wiki/Three-way_comparison#Spaceship_operator>
-+> NULL-safe equality operator: "<=>" (same as IS NOT DISTINCT FROM)
-+> returns true if both sides are equal or both are NULL, false otherwise (never NULL)
++  // With SQL file writes off (plugin mode), SQL that may write files never reaches DuckDB.
++  // The check over-matches (a column named "export" trips it), so fall back to sqlp rather
++  // than fail: Polars runs under QSV_SQL_DISABLE_FILE_WRITES=1 and refuses a real COPY TO.
++  if (!config.sqlFileWrites) {
++    const kind = findFileWritingStatement(sql);
++    if (kind) {
++      console.error(
++        `[MCP Tools] DuckDB: SQL file writes are disabled and the query may contain ${kind}; ` +
++        `running it with sqlp instead`,
++      );
++      return null;
++    }
++  }
++
+   const format = String(params.format ?? "csv").toLowerCase();
  
- ```console
- qsv sqlp data.csv data2.csv "select data.c2 <=> data2.c2 from data join data2 on data.c1 = data2.c1"
-@@ -360,7 +359,7 @@ qsv sqlp --help
- |--------|------|-------------|--------|
- | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. |  |
- | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow). | `10000` |
--| &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file will have the same file stem as the corresponding input file, with the extension ".pschema.json" (data.csv's Polars schema file will be data.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
-+| &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with ".pschema.json" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
- | &nbsp;`‑‑streaming`&nbsp; | flag | Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's e
+   // Unsupported formats fall back to sqlp
 ```
 
-**File**: `src/cmd/joinp.rs` (modified, +1/-1)
+**File**: `.claude/skills/tests/config.test.ts` (modified, +21/-0)
 ```diff
-@@ -145,7 +145,7 @@ joinp options:
-                                 * If no schema or stats cache: infer schema using --infer-len 
-                                   and cache the result
-                                 Schema files use the same name as input with .pschema.json extension
--                                (e.g., data.csv -> data.pschema.json).
-+                                (e.g., data.csv -> data.csv.pschema.json).
-                            ‎NOTE: If the input files have pschema.json files that are newer or created
-                            at the same time as the input files, they will be used to inform the join
-                            operation regardless of the value of --cache-schema unless --infer-len is 0.
-```
-
-**File**: `src/cmd/schema.rs` (modified, +1/-1)
-```diff
-@@ -38,7 +38,7 @@ Polars Schema:
- ==============
- When the "polars" feature is enabled, the `--polars` option will generate a Polars schema
- instead of a JSON Schema. The generated Polars schema will be written to a file with the
--`.pschema.json` suffix appended to the input file stem.
-+`.pschema.json` suffix appended to the full input file name (data.csv -> data.csv.pschema.json).
+@@ -13,6 +13,7 @@ import {
+   parseQsvCommandList,
+   expandTemplateVars,
+   isPluginMode,
++  applySqlFileWritePolicy,
+ } from '../src/config.js';
+ import { QSV_AVAILABLE } from './test-helpers.js';
  
- The Polars schema is a JSON object that describes the schema of a CSV file. When present,
- the `sqlp`, `joinp`, and `pivotp` commands will use the Polars schema to read the CSV file
+@@ -589,3 +590,23 @@ test('QSV_MCP_PLUGIN_MODE with invalid value falls back to auto-detection', () =
+     else delete process.env['QSV_MCP_PLUGIN_MODE'];
+   }
+ });
++
++test('applySqlFileWritePolicy sets QSV_SQL_DISABLE_FILE_WRITES only when writes are off', () => {
++  const off: NodeJS.ProcessEnv = {};
++  applySqlFileWritePolicy(false, off);
++  assert.strictEqual(off.QSV_SQL_DISABLE_FILE_WRITES, '1');
++
++  const on: NodeJS.ProcessEnv = {};
++  applySqlFileWritePolicy(true, on);
++  assert.strictEqual(on.QSV_SQL_DISABLE_FILE_WRITES, undefined);
++
++  // when off, the server's value wins over an inherited one
++  const inherited: NodeJS.ProcessEnv = { QSV_SQL_DISABLE_FILE_WRITES: '0' };
++  applySqlFileWritePolicy(false, inherited);
++  assert.strictEqual(inherited.QSV_SQL_DISABLE_FILE_WRITES, '1');
++
++  // when on, a user's own setting is left alone
++  const userSet: NodeJS.ProcessEnv = { QSV_SQL_DISABLE_FILE_WRITES: '1' };
++  applySqlFileWritePolicy(true, userSet);
++  assert.strictEqual(userSet.QSV_SQL_DISABLE_FILE_WRITES, '1');
++});
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5046** (2026-11-13): docs: fix sqlp `<=>` and Polars schema file name in USAGE (@jqnatividad)
-- **PR #5045** (2026-11-13): deps: bump Polars to upstream 61fdb30 (@jqnatividad)
-- **PR #5044** (2026-11-13): build(deps): bump anthropics/claude-code-action from 1.0.270 to 1.0.271 (@dependabot[bot])
-- **PR #5043** (2026-11-13): build(deps): bump hono from 4.13.13 to 4.13.18 in /.claude/skills (@dependabot[bot])
-- **PR #5042** (2026-11-12): build(deps): bump @hono/node-server from 2.1.5 to 2.1.8 in /.claude/skills (@dependabot[bot])
-- **PR #5041** (2026-11-12): deps: bump Polars to upstream 8ecd1ca (@jqnatividad)
+- **PR #5081** (2026-11-20): deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes (@jqnatividad)
+- **PR #5080** (2026-11-20): feat(synthesize): Float columns keep their source decimal places (@jqnatividad)
+- **PR #5078** (2026-11-20): feat(synthesize): --quantiles <n> for finer numeric/date marginals (@jqnatividad)
+- **PR #5077** (2026-11-20): feat(synthesize): --rows-per-file <n> splits the output into files (@jqnatividad)
+- **PR #5075** (2026-11-19): feat(synthesize): --format csv|jsonl|parquet with typed columns (@jqnatividad)
+- **PR #5074** (2026-11-19): feat(synthesize): --save-model / --model to fit once and generate from the model (@jqnatividad)
 
 ---
 
@@ -2386,31 +2468,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix sqlp `<=>` and Polars schema file name in USAGE (#5046)
+## X. deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes
 
 **RULE**:
-When implementing operations in `.claude/skills/qsv/qsv-joinp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce4f6857`: docs: fix sqlp `<=>` and Polars schema file name in USAGE (#5046). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `82819859`: deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-joinp.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
+- **SQL file writes are off in plugin mode (Cowork, Claude Code plugin).** Polars SQL now has `COPY (<query>) TO '<file>'`, where the query rather than `output_file` picks the target. In plugin mode the server sets `QSV_SQL_DISABLE_FILE_WRITES=1` for qsv, and `qsv_sqlp` never sends SQL that may contain `COPY ... TO` or `EXPORT DATABASE` to DuckDB: it runs on Polars `sqlp`, which refuses a real `COPY ... TO`. A `.env` file can't lift the switch, for qsv or the qsv subprocesses it spawns. Other MCP clients and the Desktop extension keep them. New `QSV_MCP_SQL_FILE_WRITES` overrides the default either way. `qsv-sqlp` skill regenerated from the USAGE text. ([#5081](https://github.com/dathere/qsv/pull/5081))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce4f6857` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `82819859` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

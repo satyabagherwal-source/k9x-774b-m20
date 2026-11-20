@@ -11577,3 +11577,5 @@
 | `CYCLE-20261120-1278` | `2026-11-20T16:28:26.084Z` | `lxml/lxml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lxml-lxml-learnings.md` | Yes (`a8f6f1c2...`) |
 | `CYCLE-20261120-17J6` | `2026-11-20T16:28:32.994Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9598` | Yes (`53c70c0b...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T16:29:07.431Z` | `lxml-lxml` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E91F893C` [Domain D] | Yes (`a65a5e89...`) |
+| `CYCLE-20261120-ISVZ` | `2026-11-20T16:42:13.824Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9599` | Yes (`5c81b653...`) |
+| `CYCLE-20261120-J45C` | `2026-11-20T16:42:28.416Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9600` | Yes (`eca5b78c...`) |

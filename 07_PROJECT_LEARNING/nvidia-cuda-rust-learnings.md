@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `85ddf6c2`  
+> **Source Version**: `8046b9e9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T00:00:11.771Z  
+> **Timestamp**: 2026-11-20T16:42:12.888Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T00:00:11.763Z  
+> **Harvest Timestamp**: 2026-11-20T16:42:12.740Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4067 stars
+- **Stars / Engagement**: 4077 stars
 
 ---
 
@@ -2255,11 +2255,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1838** (2026-11-19): **[BUG]: Tierras JIT compilation is stuck and memory usage continues to grow to 42GB.**
+  *Symptoms*: ### Description  The kernel code can pass Rust compilation normally, but during the JIT phase at first launch, the tileiras process does not exit, and CPU/memory usage continues to rise, peaking at about 42 GB, yet compilation ultimately never completes.  The Tile IR output by print_ir = true is relatively long, and I will paste it below.  #### Comparison - `ALL_VALID = 1`: The same kernel skips the score mask and compiles normally. - `ALL_VALID = 0`: Enabling the score mask causes the `tileiras` behavior above.   I observed this with both `select` and an arithmetic 0/1 mask. - Rewriting the computation to group query heads into three groups and use   `mma` instead of the `reduce_sum` QK path allows compilation to finish,   but runtime performance is significantly worse than the `ALL_VALID = 1`   path. This is a workaround, not an equivalent performance result.    ### Error / actual behavior <details> <summary>IR 和 kernel  code here</summary>  ```text NVIDIA GeForce RTX 5080 GENERATED ENTRY POINT: sca_module::sca #[cutile::entry(print_ir = true)] fn sca_entry<     const DV: i32,     const DK: i32,     const TQ: i32,     const TOPK: i32,     const HQ: i32,     const H: i32,     const BLOCK_SIZE: i32,     const BN: i32,     const BNT: i32,     const TAIL_BLOCKS: i32,     const TAIL: i32,     const OPENTAIL: i32,     const CAUSUAL: i32,     const ALL_VALID: i32, >(     out_ptr: PointerTile<*mut f32, { [] }>,     out_dim_0: i32,     out_dim_1: i32,     out_stride_0: i32,     out_
+
 - **Issue #1830** (2026-11-17): **fix(cuda-oxide): let blackwell-mma smoketest honor detected sm_121a target**
   *Symptoms*: ## What This PR Does  Fixes `scripts/smoketest.sh` on **GB10 (`sm_121`)** for the `blackwell-mma` category (`mma_mxf8f6f4`), resolving **NVBug 7101256**:  ```text BEFORE (in `scripts/smoketest.sh` on GB10, compute capability 12.1):   smoketest.sh ──► cargo oxide run mma_mxf8f6f4 --arch=sm_120a                      └─► sets CUDA_OXIDE_TARGET=sm_120a (overrides hint sm_121a)                      └─► emits .target sm_120a ──► DriverError(218) on sm_121 [X]  AFTER (matches `tcgen05` and `wgmma`):   smoketest.sh ──► cargo oxide run mma_mxf8f6f4                      ├─► on sm_121 (GB10): hint sm_121a ──► .target sm_121a ──► executes & passes [OK]                      ├─► on sm_120 (50xx): hint sm_120a ──► .target sm_120a ──► executes & passes [OK]                      └─► elsewhere / build:             ──► .target sm_120a ──► PTX check & passes [OK] ```  ---  ### 1. Drop Forced `--arch=sm_120a` Override in `smoketest.sh`  * `cuda-oxide-codegen` (`v1:i0876` in `intrinsics/catalog.json`: `sm_120a|sm_120f|sm_121a|sm_121f`) and `cargo-oxide` (`format_sm_arch((12, 1)) == "sm_121a"`) already select `sm_121a` from `CUDA_OXIDE_DEVICE_ARCH` on GB10, `sm_120a` on `sm_120`, and fall back to `sm_120a` on every other GPU and in `cargo oxide build`. * Appending `--arch=sm_120a` in `smoketest.sh` promoted that fallback to an explicit `CUDA_OXIDE_TARGET=sm_120a` override; because the `a` suffix is architecture-locked to exact `sm_120`, loading `.target sm_120a` PTX on `sm_121` failed PTX JIT with 
-
-- **Issue #1789** (2026-11-12): **fix(cuda-oxide): omit NVVM-only --arch on compile-only code-shape prebuild**
-  *Symptoms*: ## What This PR Does  Fixes `scripts/smoketest.sh --compile-only` on **Rubin (`R100`, `sm_107`)** for the two `NVVM_VERIFY_EXAMPLES` that also ship a `verify-code-shape.sh` gate (`kernel_reference_validity` and `promoted_ref_return`), resolving **NVBug 7084024**:  ```text BEFORE (in `scripts/smoketest.sh --compile-only` on R100, where nvvm_arch = sm_107):   ├──► Step 1 (NVPTX): cargo oxide build <ex> --arch=sm_107       [X] fails (NVPTX lacks sm_107)   └──► Step 2 (NVVM):  cargo oxide emit-ltoir <ex> --arch=sm_107  (never reached)  AFTER:   ├──► Step 1 (NVPTX): cargo oxide build <ex>                     [OK] NVPTX emits forward-compatible PTX   │                    bash verify-code-shape.sh                  [OK] validates .ll and .ptx code shape   └──► Step 2 (NVVM):  cargo oxide emit-ltoir <ex> --arch=sm_107  [OK] libNVVM compiles natively for sm_107 ```  ---  ### 1. Keep `--arch=sm_107` Scoped to the NVVM (`emit-ltoir`) Step  `cuda-oxide` has two device compilation routes: * **NVPTX (`llc` / LLVM 23)** (`cargo oxide build` / `run`): does not have a processor entry for Rubin (`sm_107`). When invoked without an explicit `--arch` on R100, the compiler sees `sm_107a` only as an advisory device hint, ignores it, and emits forward-compatible `sm_80` PTX. * **NVVM (`libNVVM` / `nvJitLink`)** (`cargo oxide emit-ltoir`): supports `sm_107` natively.  In PR #1726, `smoketest.sh --compile-only` added a `cargo oxide build` pre-step before `emit-ltoir` so `verify-code-shape.sh` could ins
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2276,852 +2276,788 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `85ddf6c2` (2026-11-18)
-**Commit Message**: fix(cutile-kernels): add strided prefill and improve FP16 GEMM (#1833)
+### Incident Patch 1: `8046b9e9` (2026-11-19)
+**Commit Message**: feat(cutile): pointer operands for foreign tile-library calls (#1749)
 
-## Summary
+## Why
 
-Add prefill attention entry points that accept independent physical K/V
-head strides, supporting caches whose reserved capacity exceeds their
-active sequence length. Keep FP16 operands in the FP16-output GEMM while
-retaining FP32 accumulation.
+Some tile-library functions work on global memory directly. They read
+input from it, write output to it, or take a scratch buffer. Their Tile
+IR declarations take a rank-0 `tile<ptr<T>>` operand.
+`#[cutile::foreign]` accepted only tiles and scalars, so cuTile Rust
+could not declare or call these functions. cuTile Python supports them
+through `Array.foreign_pointer`, and Tile C++ through `ct::tile<T*,
+ct::shape<>>`.
 
-## Changes
+## What
 
-- Add ordinary and split-K strided prefill entries. Existing contiguous
-entry signatures remain compatible through shared device
-implementations.
-- Document element strides, alignment, buffer extents and split/merge
-requirements.
-- Extend GPU regressions to cover unequal K/V capacities, contiguous
-compatibility, cached prefixes, query/KV tails, four schedules and empty
-splits.
-- Remove FP32 operand conversions before GEMM MMA and cover FP16 output
-on aligned and partial-row shapes.
-- Add a concise kernel source index and clarify precision, layout and
-complete-pipeline measurement. Correct tensor-shape formatting in
-rustdoc.
+- **Declarations take raw pointers.** In a `#[cutile::foreign]`
+declaration, a `*const E` or `*mut E` parameter lowers to a rank-0
+`tile<ptr<E>>` operand of `preview$call`. This follows the usual Rust
+FFI split: an `extern` declaration takes raw pointers, and a wrapper
+takes tensors and states the remaining obligations.
+  - A pointer operand is always `in`, as in Tile IR.
+- `*mut` documents that the library writes through the pointer. rustc
+rejects a `*const` where `*mut` is declared.
+- These are errors: `#[inout]` pointers, pointer results, and pointers
+to non-element types.
+- **`subtensor_mut_ptr()` on a mutable tensor (ranks 1–3) returns the
+address of the current tile block's wri
 
-## Testing
-
-Passed with public CUDA 13.5 tooling on RTX 5090:
-
-- `cargo test -p cutile-kernels --test smoke` (11 tests).
-- `cargo test -p cutile-kernels --test gpu -- --ignored
---test-threads=1` (2 tests).
-- `cargo test -p cut
-
-**File**: `cutile-rs/CHANGELOG.md` (modified, +4/-0)
+**File**: `cutile-rs/CHANGELOG.md` (modified, +12/-0)
 ```diff
-@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
+@@ -51,6 +51,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
+ - Add a reusable fused QKV projection, Q/K RMSNorm, FP8 conversion and paged
+   KV-scatter kernel, with a correctness example and opt-in CUDA graph benchmark
+   sweep. The initial schedule is not B200-tuned (#1746).
++- Foreign functions take global-memory pointer operands: a `*const E` or
++  `*mut E` parameter is a rank-0 `tile<ptr<E>>` operand. `subtensor_mut_ptr`
++  on a mutable tensor gives the address of the current tile block's writable
++  sub-tensor, as `load` and `store` see it, with an `i64` offset. Getting it
++  is safe; unlike `load` and `store`, a write through it is not masked to the
++  tensor's bounds, so the writing function's `# Safety` contract states the
++  bounds (#1749).
  
- ### Added
+ ### Changed
  
-+- Add strided long-prefill attention entries with independent K/V head strides,
-+  including split-K prefill. Existing contiguous entry signatures are unchanged.
- - Add experimental FP16 GEMM, causal attention and routed MoE variants with
-   shared host examples, correctness coverage and optimization guidance.
+@@ -76,6 +83,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
+ - Update the optional `cuda-tile-rs` bindings and `cuda-tile-translate` build
+   from CUDA Tile IR 13.2 to the public 13.5 release, including SIMT preview
+   support and translator round-trip tests.
++- A kernel's in-memory cache key no longer holds the tile-library list as
++  written, only the digest of the resolved, de-duplicated libraries. A launch
++  that names a default library again, or names a library through another
++  path, used to compile the kernel a second time and load a second module,
++  with its own copy of every `Global` (#1749).
  
-@@ -65,6 +67,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
+ ## [0.5.0] - 2026-11-04
  
- ### Fixed
- 
-+- Keep FP16 operands in the experimental FP16-output GEMM instead of widening
-+  them before MMA; retain FP32 accumulation and a final FP16 conversion.
- - Fix scalar padding broadcasts for multidimensional masked pointer loads.
- 
- - Keep masked QKV tail-row slot pointers in bounds, retaining the original
 ```
 
-**File**: `cutile-rs/cutile-kernels/README.md` (modified, +43/-5)
+**File**: `cutile-rs/cutile-book/guide/tile-libraries.md` (modified, +138/-6)
 ```diff
-@@ -21,15 +21,32 @@ NVFP4 MoE requires block-scaled MMA support: Tile IR 13.3 or newer and SM100+
- Select the 13.5 `tileiras` binary, for example via `CUTILE_TILEIRAS_PATH`;
- the kernels can use the existing supported bytecode formats.
+@@ -115,6 +115,9 @@ pub mod solver {
+ - **Every other parameter is an operand the caller passes**, in the
+   declaration's order: read-only by default, read-write with `#[inout]`. Scalars are rank-0
+   tiles.
++  A raw pointer, `*const E` or `*mut E`, is a rank-0 `tile<ptr<E>>` operand:
++  a global-memory address the library reads or writes through (see [Pointer
++  operands](#pointer-operands)).
+ - **The results** start with the updated `#[inout]` operands. Every further
+   result is an output-only operand (`info` above): it is not a parameter,
+   and the call passes it zero-filled after the parameters. This is the form
+@@ -140,10 +143,11 @@ the ones below. The caller of a foreign function guarantees that:
+   `#[inout]`, and the results. `tileiras` rejects some mismatches, not all.
+ - The library implements the function for the target architecture and for
+   the constant arguments of the call.
+-- The function reads and writes only its operands and results. Foreign
+-  functions take tiles, which are values, so this holds for every library
+-  today. It becomes an obligation on the library once pointer operands are
+-  supported.
++- The function reads and writes only its operands and results, and the
++  memory its pointer operands are documented to reach. For a pointer
++  operand, the caller also guarantees what the library documents for it:
++  that the memory is valid, large enough and aligned, and that no other
++  thread accesses it while the call runs, unless the library allows it.
  
-+## Choosing a starting point
+ A wrapper that upholds these obligations for every input it accepts can be
+ a safe device function that calls the declaration in an `unsafe` block.
+@@ -185,6 +189,7 @@ that function's module.
+ | Read-write operands | `[[cutile::experimental_inout]]` | positional `inputs` | `#[inout]` |
+ | Output-only operands | implicit, from `multi_outputs` | passed explicitly | implicit: results after the `#[inout]` operands |
+ | Scalars | rank-0 tiles | rank-0 tiles | rank-0 tiles |
++| Pointers | `ct::tile<T*, ct::shape<>>` | `array.foreign_pointer` | `*const T` / `*mut T` |
+ | Library | `-Xtileiras -l=path` | `Tilelib(path, version)` | `TileLibrarySpec::new(path)`, on the host |
+ 
+ ## Calling a foreign function
+@@ -212,6 +217,132 @@ the call's result, and the caller's tile is unchanged, as with any value.
+ Two modules can each declare a foreign function with the same Rust name;
+ each call reaches the one it names.
+ 
++## Pointer operands
 +
-+| Operation | Source | What to check before reuse |
-+| --- | --- | --- |
-+| Prefill and decode attention | [`attention`](src/attention.rs), [`experimental::attention`](src/experimental/attention.rs) | Causal masking, query groups, tensor layout, active KV length versus reserved capacity, and split/merge scratch |
-+| GEMM and short causal attention | [`gemm`](src/experimental/gemm.rs), [`gemm_variants`](src/experimental/gemm_variants.rs), [`attention_f16`](src/experimental/attention_f16.rs) | Input/output precision, row alignment, masked tails, and tile working set; see the variant table below |
-+| Expert computation | [`moe_f16`](src/experimental/moe_f16.rs), [`nvfp4_moe`](src/experimental/nvfp4_moe.rs), [`moe`](src/experimental/moe.rs) | FP16 versus block-scaled FP4, routing layout, quantization, and all stages needed for the final weighted output |
-+| Normalization and fused epilogues | [`norms`](src/norms.rs), [`experimental::norms`](src/experimental/norms.rs), [`fused_transformer`](src/experimental/fused_transformer.rs) | Single-token versus multi-row work, in-place/aliasing rules, and whether fusion eliminates an intermediate |
-+| Embeddings, RoPE and KV movement | [`embeddings`](src/embeddings.rs), [`positional`](src/positional.rs), [`kv_cache`](src/kv_cache.rs), [`kvbm`](src/experimental/kvbm.rs) | Physical strides, position source, and cache/block layout; convenience variants have different calling contracts |
-+| Pointwise operations and selection | [`pointwise`](src/pointwise.rs), [`argmax`](src/argmax.rs) | Vector versus matrix layout, output type, and any required reduction launch |
-+| Fused QKV projection | [`qkv`](src/experimental/qkv.rs) | Head layout, quantization scales, slot bounds and schedule compatibility; use the host guide below |
++Some library functions work on global memory directly: they read their
++input from global memory, write their output there, or take a scratch
++buffer. Their Tile IR declarations take a rank-0 tile of pointers, which a
++foreign declaration writes as a raw pointer:
 +
-+Start with an entry that matches the operation and buffer contract, then tune
-+its configuration. Neither inclusion here nor the `experimental` label is a
-+performance ranking. Compare with the appropriate library baseline on the
-+target workload; the validation commands below check correctness, not optimality.
++```text
++preview$func extern @store_to(
++    %x: tile<32xf32> {cuda_tile.preview$access = #cuda_tile<preview$access<in>>},
++    %dst: tile<ptr<f32>> {cuda_tile.preview$access = #cuda_tile<preview$access<in>>}
++  ) -> ()
++preview$func extern @load_from(
++    %src: tile<ptr<f32>> {cuda_tile.preview$access = #cuda_tile<preview$access<in>>},
++    %out: tile<32xf32> {cuda_tile.preview$access = #cuda_tile<preview$access<out>>}
++  ) -> (tile<32xf32>)
++```
 +
- ## Grout kernels
- 
- The corpus includes the kernels from
- [Grout `23ae5a3`](https://github.com/elibol/grout/blob/23ae5a3e78dc39e242918824839ba8a35e4adce9/src/kernels.rs),
- organized into separate modules. The current cuTile API adaptations are retained,
- including guarded blocks in place of early returns in the LPT attention kernels.
- The refresh adds vector operations, single-token embedding/RoPE/cache updates,
--head-major attention, baseline GEMM, split-K prefill and merge, and persistent
--RMSNorm. The baseline GEMM and persistent RMSNorm variants are experimental;
-+head-major attention, mixed-precision GEMM, split-K prefill and merge, and persistent
-+RMSNorm. The GEMM and persistent RMSNorm variants are experimental;
- their presence does not imply they are Grout's default dispatch choices.
- 
- Kernel implementations belong here; runnable host-side examples in
-@@ -45,10 +62,22 @@ scheduling parameters. With `M_EFF = BM * GROUP` and
- `[q_len, num_head_groups * GROUP, D]`. See the entry-point safety contracts for
- alignment, grid, and dimension requirements.
- 
-+The raw-pointer `fmha_prefill_gqa_lpt` and `fmha_prefill_gqa_lpt_split` entries
-+retain their contiguous K/V contract: physical head stride `kv_len * D`.
-+For caches with reserved capacity, use `fmha_prefill_gqa_lpt_strided` or
-+`fmha_prefill_gqa_lpt_split_strided`. Immediately after `kv_len`, these take
-+`k_head_stride` and `v_head_stride`, independently, **in elements**. For example,
-+K/V storage `[kv_heads, capacity, D]` has head stride `capacity * D`, while
-+`kv_len` remains the active length. Token rows must still be contiguous with
-+stride `D`; this interface does not support arbitrary layouts. Split scratch
-+and the merge call are unchanged. The tensor-view attention entries are another
-+option when the existing view already carries the required strides.
++```rust
++/// Writes `x` to the 32 contiguous `f32` at `dst`.
++///
++/// # Safety
++///
++/// - `dst` is valid for writes of 32 contiguous `f32`: all 32 lie inside
++///   one allocation, such as one tensor. The library does not check bounds.
++/// - No other tile block or thread reads or writes those 32 elements
++///   during the call.
++#[cutile::foreign]
++pub unsafe fn store_to(x: Tile<f32, { [32] }>, dst: *mut f32);
 +
- ## GEMM, causal attention and FP16 MoE variants
- 
- | Module | Choices and output |
- | --- | --- |
-+| `experimental::gemm` | FP16 operands and output, FP32 accumulation; K must be divisible by the K tile size |
- | `experimental::gemm_variants` | FP16 inputs, FP32 output; TMA/non-TMA access, transposed MMA, masked gathers for contiguous matrices with unaligned row strides |
- | `experimental::attention_f16` | FP16 causal attention with FP32 output; single-tile, narrow-tail and streaming paths |
- | `experimental::moe_f16` | Routed FP16 ReLU-squared MoE; direct gathers or packed input, FP32 weighted atomic combine |
-@@ -60,6 +89,14 @@ The FP16 MoE path is separate from the block-scaled NVFP4 pipeline below.
- It requires Tile IR 13.4 or newer for explicit inbounds TMA lo
++/// Reads the 32 contiguous `f32` at `src`.
++///
++/// # Safety
++///
++/// - `src` is valid for reads of 32 contiguous `f32`: all 32 lie inside one
++///   allocation, such as one tensor. The library does not check bounds.
++/// - No other tile block or thread writes those 32 elements during the
++///   call.
++#[cutile::foreign]
++pub unsafe fn load_from(src: *const f32) -> Tile<f32, { [32] }>;
++```
++
++- A pointer operand is always `in`: the call passes the address, never
++  gets one back. `*mut` states that the library writes through it, `*const`
++  that it only reads; both lower to the same `tile<ptr<E>>`, and rustc
++  rejects a `*const` where a `*mut` is declared. `#[inout]` pointers and
++  pointer results are errors.
++- `u8` and `i8` pointees are both `ptr<i8>`, as for tiles.
++- Get the address from a tensor, or take a raw pointer kernel parameter:
++  - `y.subtensor_mut_ptr()` (`*mut E`, needs `&mut`) is the address of the
++    current tile block's writable sub-tensor of a mutable tensor: the
++    element `y.load()` returns first. Like `load` and `store`, it is relative to the block, for ranks 1
++    to 3, and needs a static tile shape. Unlike them, it does not mask the
++    out-of-bounds part of a partial tile (see below).
++  - `x.as_ptr()` (`*const E`) is the base of the whole view; offset it
++    with `PointerTile::offset` to reach a chunk.
++
++  Getting either pointer is safe; it does
 ```
 
-**File**: `cutile-rs/cutile-kernels/examples/support/variants.rs` (modified, +24/-1)
+**File**: `cutile-rs/cutile-compiler/src/compiler/compile_foreign.rs` (modified, +14/-3)
 ```diff
-@@ -36,7 +36,7 @@ fn compare(actual: &[f32], reference: &[f32], atol: f32, rtol: f32) -> Result {
- pub fn gemm() -> Result {
-     use gemm_variants::kernels as k;
-     let stream = Context::new(0)?.new_stream()?;
--    for (m, n, inner) in [(48usize, 80usize, 96usize), (35, 53, 71)] {
-+    for (m, n, inner) in [(48usize, 80usize, 96usize), (35, 53, 71), (35, 80, 96)] {
-         let av = values(m * inner, 3);
-         let bv = values(inner * n, 7);
-         let mut reference = vec![0.0; m * n];
-@@ -85,6 +85,29 @@ pub fn gemm() -> Result {
-             compare(&actual, &reference, 0.002, 0.002)?;
-             println!("GEMM {m}x{n}x{inner} {mode}: PASS");
-         }
-+        if inner % 32 == 0 && n % 8 == 0 {
-+            let out = api::full(f16::NAN, &[m, n]).sync_on(&stream)?;
-+            // SAFETY: K is divisible by BK, row strides are TMA aligned,
-+            // and the output is disjoint. Partial M/N tiles are masked.
-+            let result = unsafe {
-+                cutile_kernels::experimental::gemm_f16(
-+                    out.partition([32, 32]),
-+                    a.clone(),
-+                    b.clone(),
-+                )
+@@ -151,11 +151,22 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+                     let ir_ty = ir_ty.clone();
+                     Ok((rust_ty, ir_ty))
+                 }
++                // `*const E` / `*mut E`: a rank-0 `tile<ptr<E>>`.
++                Some(
++                    ir_ty @ TileIrType::Tile(TileType {
++                        element_type: TileElementType::Pointer(_),
++                        shape,
++                    }),
++                ) if shape.is_empty() => {
++                    let ir_ty = ir_ty.clone();
++                    Ok((rust_ty, ir_ty))
++                }
+                 _ => self.jit_error_result(
+                     &call.span(),
+                     &format!(
+-                        "{what} of type `{}` is not a tile or scalar; foreign tile functions \
+-                         take and return tiles and scalars only",
++                        "{what} of type `{}` is not a tile, scalar or pointer; foreign tile \
++                         functions take tiles, scalars and pointers, and return tiles and \
++                         scalars",
+                         ty.to_token_stream()
+                     ),
+                 ),
+@@ -447,7 +458,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+                 return self.jit_error_result(
+                     &arg_expr.span(),
+                     &format!(
+-                        "argument `{}` of a foreign call must be a tile or scalar value",
++                        "argument `{}` of a foreign call must be a tile, scalar or pointer value",
+                         crate::syn_utils::user_expr_tokens(arg_expr)
+                     ),
+                 );
+```
+
+**File**: `cutile-rs/cutile-compiler/src/compiler/compile_intrinsic.rs` (modified, +141/-0)
+```diff
+@@ -1962,6 +1962,14 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+                         }
+                     }
+                     "tile_to_pointer" => {
++                        // The value's Rust type can still name the caller's
++                        // generic parameters (`PointerTile<*mut E, {[]}>`
++                        // from a generic helper); its instance names the
++                        // concrete element type.
++                        let old_type = match &new_value.ty.type_instance {
++                            TypeInstance::StructuredType(inst) => inst.instance_ty.clone(),
++                            _ => old_type,
++                        };
+                         let Some(element_type) =
+                             get_element_type_structured(&old_type, self.modules.primitives())
+                         else {
+@@ -2230,6 +2238,139 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+                     ),
+                 }
+             }
++            "tensor_layout" => {
++                // `get_static_extent(shape, axis)`: the static extent of
++                // `axis` of a `Shape<S>` type (the tile a mutable tensor's
++                // `load` and `store` reach). `get_tensor_stride(tensor, axis)`:
++                // the stride of `axis`, in elements, a constant when the
++                // view's type fixes it and else the dynamic stride the view
++                // carries.
++                if call_expr.args.len() != 2 {
++                    return self.jit_error_result(
++                        &call_expr.span(),
++                        &format!("`{ident}` expects a value and an axis"),
++                    );
++                }
++                let axis = self
++                    .compile_expression(
++                        module,
++                        block_id,
++                        &call_expr.args[1],
++                        generic_vars,
++                        ctx,
++                        None,
++                    )?
++                    .and_then(|v| v.bounds)
++                    .filter(|b| b.is_exact() && b.start >= 0)
++                    .map(|b| b.start as usize)
++                    .ok_or_else(|| {
++                        self.jit_error(
++                            &call_expr.args[1].span(),
++                            "the axis must be a non-negative compile-time constant",
++                        )
++                    })?;
++                let Some(tensor) = self.compile_expression(
++                    module,
++                    block_id,
++                    &call_expr.args[0],
++                    generic_vars,
++                    ctx,
++                    None,
++                )?
++                else {
++                    return self
++                        .jit_error_result(&call_expr.args[0].span(), "failed to compile value");
++                };
++                match ident.to_string().as_str() {
++                    "get_static_extent" => {
++                        let shape = match &tensor.ty.type_instance {
++                            TypeInstance::StructuredType(inst) => Some(inst.shape.clone()),
++                            _ => get_cga_from_type(&tensor.ty.rust_ty, generic_vars),
++                        };
++                        let Some(shape) = shape else {
++                            return self.jit_error_result(
++                                &call_expr.args[0].span(),
++                                &format!(
++                                    "`{}` is not a shape with a known rank",
++                                    tensor.ty.rust_ty.to_token_stream()
++                                ),
++                            );
++                        };
++                        match shape.get(axis) {
++                            Some(&extent) if extent > 0 => self
++                                .compile_constant(module, block_id, generic_vars, extent)
++                                .map(Some),
++                            Some(_) => self.jit_error_result(
++                                &call_expr.args[0].span(),
++                                &format!(
++                                    "axis {axis} of `{}` has no static extent",
++                                    tensor.ty.rust_ty.to_token_stream()
++                                ),
++                            ),
++                            None => self.jit_error_result(
++                                &call_expr.args[1].span(),
++                                &format!(
++                                    "axis {axis} is out of range for a rank-{} shape",
++                                    shape.len()
++                                ),
++                            ),
++                        }
++                    }
++                    "get_tensor_stride" => {
++                        let Some(Type::TensorView(view)) = &tensor.ty.tile_ir_ty else {
++                            return self.jit_error_result(
++                                
+```
+
+**File**: `cutile-rs/cutile-compiler/src/foreign_decl.rs` (modified, +105/-21)
+```diff
+@@ -31,6 +31,10 @@
+ //!   `const_args = "Function, FillMode, Batch, M, T"` gives another order.
+ //! - Every other parameter is an operand the caller passes: read-only by
+ //!   default, read-write with `#[inout]`. Scalars are rank-0 tiles.
++//! - A raw pointer parameter (`*const E`, `*mut E`) is a rank-0
++//!   `tile<ptr<E>>` operand: a global-memory address the callee may read or
++//!   write through. It is always an `in` operand; `*mut` only states that
++//!   the callee writes through it.
+ //! - The results start with the updated `#[inout]` operands. Every further
+ //!   result is an output-only operand the caller does not pass: the call
+ //!   appends a zero-filled operand of each, as a Tile C++
+@@ -174,7 +178,13 @@ impl ForeignFnDecl {
+             },
+         };
+         for ty in &results {
+-            check_operand_type(ty, "result")?;
++            if check_operand_type(ty, "result")? == OperandKind::Pointer {
++                return Err(syn::Error::new(
++                    ty.span(),
++                    "a foreign function cannot return a pointer; pass the memory as a \
++                     pointer parameter instead",
++                ));
 +            }
-+            .generics(vec![
-+                "32".into(),
-+                "32".into(),
-+                "32".into(),
-+                inner.to_string(),
-+            ])
-+            .sync_on(&stream)?;
-+            let actual = result.0.unpartition().to_host_vec().sync_on(&stream)?;
-+            let actual = actual.iter().map(|x| x.to_f32()).collect::<Vec<_>>();
-+            compare(&actual, &reference, 0.002, 0.002)?;
-+            println!("GEMM {m}x{n}x{inner} f16 output: PASS");
-+        }
-     }
-     Ok(())
- }
-```
-
-**File**: `cutile-rs/cutile-kernels/src/experimental/attention.rs` (modified, +323/-10)
-```diff
-@@ -13,6 +13,19 @@ pub mod fmha_prefill_gqa_lpt_module {
-     use cutile::core::*;
- 
-     /// Raw-pointer long-prefill GQA attention with LPT/swizzled scheduling. Experimental TileGym-style path for long transformer prefill cells.
-+    ///
-+    /// # Safety
-+    /// Q/output are contiguous [q_len, q_heads, D]; K/V are contiguous
-+    /// [kv_heads, kv_len, D]. In particular, the physical K/V head stride
-+    /// must equal kv_len * D. For a cache with a larger reserved sequence
-+    /// stride, use [`fmha_prefill_gqa_lpt_strided`]. Pointers must be
-+    /// 16-byte aligned and outputs must not alias inputs or concurrent writes.
-+    /// M_EFF = BM * GROUP; GROUP divides query_group_size, which divides
-+    /// q_heads = num_head_groups * GROUP. Dimensions and scheduling divisors
-+    /// are positive; num_q_blocks = ceil(q_len / BM). EVEN_K = 1 requires
-+    /// kv_len divisible by BN. Use a matching schedule/swizzle and a 1-D grid
-+    /// covering num_q_blocks * num_head_groups. Padded indices must fit i32.
-+    /// query_start must be nonnegative and query_start + q_len <= kv_len.
-     #[cutile::entry(print_ir=false,
-                        unchecked_accesses=true,
-                        optimization_hints = (
-@@ -45,6 +58,147 @@ pub mod fmha_prefill_gqa_lpt_module {
-         swizzle: i32,
-         num_hb_quotient: i32,
-         num_hb_remainder: i32,
-+    ) {
-+        unsafe {
-+            fmha_prefill_gqa_lpt_impl::<
-+                BM,
-+                BN,
-+                D,
-+                GROUP,
-+                M_EFF,
-+                CAUSAL,
-+                EVEN_K,
-+                LATENCY,
-+                SCHED,
-+                MASK_SPLIT,
-+            >(
-+                q_ptr,
-+                k_ptr,
-+                v_ptr,
-+                out_ptr,
-+                qk_scale,
-+                query_group_size,
-+                q_len,
-+                kv_len,
-+                kv_len * D,
-+                kv_len * D,
-+                query_start,
-+                num_q_blocks,
-+                num_head_groups,
-+                swizzle,
-+                num_hb_quotient,
-+                num_hb_remainder,
-+            );
-+        }
-+    }
-+
-+    /// Prefill with independent physical K/V head strides, in elements.
-+    /// Token rows remain contiguous with stride D; only kv_len active rows
-+    /// per head are read, even when storage reserves a longer sequence.
-+    ///
-+    /// # Safety
-+    /// All requirements of [`fmha_prefill_gqa_lpt`] apply except its K/V head
-+    /// layout: k_head_stride and v_head_stride must each be at least kv_len * D
-+    /// elements and a multiple of 8 (16 bytes for f16). Strides and padded
-+    /// indices must fit i32.
-+    /// Each allocation must cover (kv_heads - 1) * head_stride + kv_len * D
-+    /// elements. Q/output retain their contiguous layouts.
-+    #[cutile::entry(print_ir=false,
-+                       unchecked_accesses=true,
-+                       optimization_hints = (
-+                         sm_100 = (occupancy=2, max_divisibility=16,),
-+                         sm_120 = (occupancy=2, max_divisibility=16,),
-+                       ))]
-+    unsafe fn fmha_prefill_gqa_lpt_strided<
-+        const BM: i32,
-+        const BN: i32,
-+        const D: i32,
-+        const GROUP: i32,
-+        const M_EFF: i32, // caller MUST pass BM * GROUP
-+        const CAUSAL: i32,
-+        const EVEN_K: i32,
-+        const LATENCY: i32,
-+        const SCHED: i32,
-+        const MASK_SPLIT: i32,
-+    >(
-+        q_ptr: *mut f16,   // [q_len, q_heads, D]
-+        k_ptr: *mut f16,   // [kv_heads, kv_len, D]
-+        v_ptr: *mut f16,   // [kv_heads, kv_len, D]
-+        out_ptr: *mut f16, // [q_len, q_heads, D]
-+        qk_scale: f32,
-+        query_group_size: i32,
-+        q_len: i32,
-+        kv_len: i32,
-+        k_head_stride: i32,
-+        v_head_stride: i32,
-+        query_start: i32,
-+        num_q_blocks: i32,
-+        num_head_groups: i32,
-+        swizzle: i32,
-+        num_hb_quotient: i32,
-+        num_hb_remainder: i32,
-+    ) {
-+        unsafe {
-+            fmha_prefill_gqa_lpt_impl::<
-+                BM,
-+                BN,
-+                D,
-+                GROUP,
-+                M_EFF,
-+                CAUSAL,
-+                EVEN_K,
-+                LATENCY,
-+                SCHED,
-+                MASK_SPLIT,
-+            >(
-+                q_ptr,
-+                k_ptr,
-+                v_ptr,
-+                out_ptr,
-+                qk_scale,
-+                query_group_size,
-+                q_len,
-+                kv_len,
-+                k_head_stride,
-+                v_head_stride,
-+                query_start,
-+                num_q_blocks,
-+                num_head_groups,
-+                swizzle,
-+                num_hb_quotient,
-+                num_hb_remainder,
-+            );
-+        }
-+    }
-+
-+    unsafe fn fmha_prefill_gqa_lpt_impl<
-+        const BM: i32,
-+        const BN: i32,
-+        const D: i32,
-+        cons
-```
-
-**File**: `cutile-rs/cutile-kernels/src/experimental/gemm.rs` (modified, +11/-7)
-```diff
-@@ -3,17 +3,24 @@
-  * SPDX-License-Identifier: Apache-2.0
-  */
- 
--//! Experimental baseline GEMM kernels.
-+//! Experimental mixed-precision GEMM kernels.
- 
- #[cutile::module]
- pub mod gemm_f16_module {
-     use cutile::core::*;
- 
--    /// Baseline f16 GEMM with f32 MMA operands.
-+    /// GEMM with f16 operands, f32 accumulation, and f16 output.
-+    ///
-+    /// Keep the operands in f16 for MMA; widening them before multiplication
-+    /// changes the operation selected by the compiler. Only the accumulator
-+    /// needs f32 precision. The output is rounded to f16 once after the K loop.
-     ///
-     /// # Safety
--    /// K must be divisible by BK. Inputs must cover every tile addressed by the
--    /// output partition/grid, and output must not alias inputs or other writers.
-+    /// X[M,K], Y[K,N], and Z[M,N] must have matching positive dimensions and
-+    /// TMA-compatible strides. K must be divisible by BK. Use supported MMA
-+    /// tile sizes, output partitions [BM,BN], and grid (ceil(M/BM),ceil(N/BN),1).
-+    /// Partial M/N tiles are masked. Output must not alias inputs or other
-+    /// writers, and padded indices must fit i32.
-     #[cutile::entry(print_ir=false,
-                        unchecked_accesses=true,
-                        optimization_hints = (
-@@ -31,10 +38,7 @@ pub mod gemm_f16_module {
-         for i in 0i32..(K / BK) {
-             let tile_x: Tile<f16, { [BM, BK] }> = part_x.load([pid.0, i]);
-             let tile_y: Tile<f16, { [BK, BN] }> = part_y.load([i, pid.1]);
--            let tile_x: Tile<f32, { [BM, BK] }> = convert_tile(tile_x);
--            let tile_y: Tile<f32, { [BK, BN] }> = convert_tile(tile_y);
-             tile_z = mma(tile_x, tile_y, tile_z);
--            continue;
          }
-         let tile_z: Tile<f16, { [BM, BN] }> = convert_tile(tile_z);
-         z.store(tile_z);
-```
-
-**File**: `cutile-rs/cutile-kernels/src/experimental/gemm_variants.rs` (modified, +2/-2)
-```diff
-@@ -5,7 +5,7 @@
+         let decl = Self {
+             ident,
+@@ -490,7 +500,17 @@ fn foreign_param(input: &FnArg, arg_index: usize) -> syn::Result<Param> {
+         }
+         return Ok(Param::Str(name));
+     }
+-    check_operand_type(&pat_type.ty, "parameter")?;
++    if check_operand_type(&pat_type.ty, "parameter")? == OperandKind::Pointer
++        && access == Access::InOut
++    {
++        return Err(syn::Error::new(
++            pat_type.span(),
++            format!(
++                "pointer parameter `{name}` cannot be `#[inout]`: the callee reads and writes \
++                 the memory it points to, and the pointer itself is never returned"
++            ),
++        ));
++    }
+     Ok(Param::Operand(ForeignParam {
+         name,
+         ty: pat_type.ty.as_ref().clone(),
+@@ -499,31 +519,55 @@ fn foreign_param(input: &FnArg, arg_index: usize) -> syn::Result<Param> {
+     }))
+ }
  
- //! FP16-input, FP32-output GEMM with selectable memory and MMA schedules.
- //!
--//! Tensors represent A[M,K], B[K,N] and C[M,N]. Use an output partition [BM,BN]
-+//! Tensors represent `A[M,K]`, `B[K,N]` and `C[M,N]`. Use an output partition `[BM,BN]`
- //! and grid (ceil(M/BM), ceil(N/BN), 1), with target-supported MMA tile sizes.
- //! L is a load-latency hint. MODE=0 uses TMA loads/stores, MODE=1 disables TMA
- //! stores, and MODE=2 disables TMA loads and stores.
-@@ -102,7 +102,7 @@ pub mod kernels {
-     /// Gather GEMM for contiguous row-major inputs with masked tails.
-     ///
-     /// # Safety
--    /// A/B must have strides [K,1]/[N,1] and matching K. C has shape [M,N]
-+    /// A/B must have strides `[K,1]`/`[N,1]` and matching K. C has shape `[M,N]`
-     /// and does not alias inputs. Use the documented grid and partition.
-     /// Padded coordinates must fit i32; AEL=BM*BK and BEL=BK*BN.
-     /// Pointer offsets are computed in i64 before multiplication.
-```
-
-**File**: `cutile-rs/cutile-kernels/src/experimental/mod.rs` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ pub mod qkv;
++/// What an operand or result type is, by its syntax.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++enum OperandKind {
++    /// `Tile<E, S>` or a scalar element type name.
++    Value,
++    /// `*const E` or `*mut E`: a rank-0 `tile<ptr<E>>`.
++    Pointer,
++}
++
+ /// Operands and results are tiles (`Tile<E, S>`) or scalars (an element type
+-/// name). Views, tensors, references and pointers are not supported.
+-fn check_operand_type(ty: &Type, what: &str) -> syn::Result<()> {
+-    let ok = match ty {
++/// name); parameters can also be raw pointers to an element type
++/// (`*const E`, `*mut E`). Views, tensors and references are not supported.
++fn check_operand_type(ty: &Type, what: &str) -> syn::Result<OperandKind> {
++    let is_element_name = |ty: &Type| {
++        matches!(ty, Type::Path(p) if p.qself.is_none()
++            && p.path.segments.len() == 1
++            && matches!(p.path.segments[0].arguments, syn::PathArguments::None))
++    };
++    let kind = match ty {
+         Type::Path(p) if p.qself.is_none() => match p.path.segments.last() {
+-            Some(last) if last.ident == "Tile" => true,
+-            Some(last) => {
+-                p.path.segments.len() == 1 && matches!(last.arguments, syn::PathArguments::None)
+-            }
+-            None => false,
++            Some(last) if last.ident == "Tile" => Some(OperandKind::Value),
++            Some(_) if is_element_name(ty) => Some(OperandKind::Value),
++            _ => None,
+         },
++        Type::Ptr(ptr) => {
++            if !is_element_name(&ptr.elem) {
++                return Err(syn::Error::new(
++                    ptr.elem.span(),
++                    format!(
++                        "a pointer {what} of a foreign function must point to an element \
++                         type (`*const E` or `*mut E`)"
++                    ),
++                ));
++            }
++            Some(OperandKind::Pointer)
++        }
+         Type::Paren(inner) => return check_operand_type(&inner.elem, what),
+-        _ => false,
++        _ => None,
+     };
+-    if ok {
+-        Ok(())
+-    } else {
+-        Err(syn::Error::new(
++    kind.ok_or_else(|| {
++        syn::Error::new(
+             ty.span(),
+             format!(
+-                "a foreign function {what} must be a tile (`Tile<E, S>`) or a scalar; \
+-                 views, tensors, references and pointers are not supported"
++                "a foreign function {what} must be a tile (`Tile<E, S>`), a scalar or a \
++                 pointer (`*const E`, `*mut E`); views, tensors and references are not \
++                 supported"
+             ),
+-        ))
+-    }
++        )
++    })
+ }
  
- pub use attention::{
-     attention_decode_kernel_grouped, fmha_prefill_gqa_lpt, fmha_prefill_gqa_lpt_split,
--    prefill_splitk_reduce_merge,
-+    fmha_prefill_gqa_lpt_split_strided, fmha_prefill_gqa_lpt_strided, prefill_splitk_reduce_merge,
- };
- pub use fused_transformer::{qk_norm_rope_kv_decode_raw_f16, qk_norm_rope_kv_prefill_raw_f16};
- pub use gemm::gemm_f16;
+ #[cfg(test)]
+@@ -631,6 +675,26 @@ mod tests {
+         assert_eq!(decl.implicit_out_results().len(), 1);
+     }
+ 
++    #[test]
++    fn pointer_parameters_are_in_operands() {
++        let decl = parse(quote! {
++            #[cutile::foreign]
++            unsafe 
 ```
 
-**File**: `cutile-rs/cutile-kernels/src/experimental/moe_f16.rs` (modified, +4/-4)
+**File**: `cutile-rs/cutile/src/_core.rs` (modified, +157/-1)
 ```diff
-@@ -20,10 +20,10 @@
- //! two >= ceil(NR/BM). CAP >= ceil(NR/BM)+E. All sizes, padded indices and
- //! intermediate integer products must fit i32. FK=BM*BK, FN=BM*BN.
- //!
--//! Required element capacities: input[T,H], up[E,I,H], down[E,H,I],
--//! expert_ids[NR] (each in [0,E)), route_weights[NR], map[E,NR], counts[E],
--//! tasks[CAP,2], total[1], output[T,H]. With PACKED, packed[CAP*BM,H] and
--//! activation[CAP*BM,I]; otherwise activation[NR,I]. A route identifies
-+//! Required element capacities: `input[T,H]`, `up[E,I,H]`, `down[E,H,I]`,
-+//! `expert_ids[NR]` (each in `[0,E)`), `route_weights[NR]`, `map[E,NR]`, `counts[E]`,
-+//! `tasks[CAP,2]`, `total[1]`, `output[T,H]`. With PACKED, `packed[CAP*BM,H]` and
-+//! `activation[CAP*BM,I]`; otherwise `activation[NR,I]`. A route identifies
- //! token=floor(route/R); repeated expert IDs are allowed.
- //!
- //! prepare_small requires NR <= 2*BM and a nonempty 1-D grid. prepare_large
+@@ -882,7 +882,11 @@ pub mod core {
+             get_tensor_shape_meta(self)
+         }
+ 
+-        /// The base device address of this tensor view.
++        /// The base device address of this tensor view: its element at index
++        /// zero. For a mutable kernel tensor, whose `load` and `store` reach
++        /// the current tile block's tile, this is still the base of the
++        /// whole view; [`SubtensorMutPtr::subtensor_mut_ptr`] is the
++        /// address of the block's tile.
+         ///
+         /// Safe, mirroring `<[T]>::as_ptr`: obtaining the address never
+         /// touches memory. Dereferencing it — a gather load, or building a
+@@ -2255,6 +2259,24 @@ pub mod core {
+         unreachable!()
+     }
+ 
++    /// The static extent of `axis` of a shape type, e.g. the tile shape `S`
++    /// a mutable tensor's `load` and `store` reach.
++    #[cuda_tile::variadic_op(N = 6)]
++    #[cuda_tile::compiler_op(name = "tensor_layout")]
++    pub fn get_static_extent<const S: [i32; N]>(shape: Shape<S>, axis: i32) -> i32 {
++        unreachable!()
++    }
++
++    /// The stride of `axis` of a tensor view, in elements.
++    #[cuda_tile::variadic_op(N = 6)]
++    #[cuda_tile::compiler_op(name = "tensor_layout")]
++    pub fn get_tensor_stride<E: ElementType, const S: [i32; N]>(
++        tensor: &Tensor<E, S>,
++        axis: i32,
++    ) -> i32 {
++        unreachable!()
++    }
++
+     /// Extract a `Tensor`'s ordering token.
+     #[cuda_tile::variadic_op(N = 6)]
+     #[cuda_tile::compiler_op(name = "return_type_meta_field", type_meta_field = "token")]
+@@ -4075,6 +4097,140 @@ pub mod core {
+         new_token
+     }
+ 
++    /// Sign-extends an `i32` to a rank-0 `i64` tile.
++    fn widen_to_i64(x: i32) -> Tile<i64, { [] }> {
++        let x: Tile<i32, { [] }> = scalar_to_tile(x);
++        let x: Tile<i64, { [] }> = exti(x);
++        x
++    }
++
++    /// The element offset of the current tile block's tile along one axis:
++    /// `block id × tile extent × stride`. Each factor is widened to `i64`
++    /// before the product, so a tensor of more than `i32::MAX` elements gets
++    /// its offset instead of a wrapped `i32` one.
++    fn block_tile_axis_offset(block_id: i32, extent: i32, stride: i32) -> Tile<i64, { [] }> {
++        widen_to_i64(block_id) * widen_to_i64(extent) * widen_to_i64(stride)
++    }
++
++    /// The address of the first element of the current tile block's tile of
++    /// `y`: the element `y.load()` returns first. Each axis adds
++    /// `block id × tile extent × stride` to the tensor's base, computed in
++    /// `i64`.
++    fn subtensor_mut_ptr_1d<E: ElementType, const S: [i32; 1]>(y: &mut Tensor<E, S>) -> *mut E {
++        let pid: (i32, i32, i32) = get_tile_block_id();
++        let tile_shape: Shape<S> = Shape::<S> { dims: &[] };
++        let offset: Tile<i64, { [] }> = block_tile_axis_offset(
++            pid.0,
++            get_static_extent(tile_shape, 0),
++            get_tensor_stride(y, 0),
++        );
++        let base: PointerTile<*mut E, { [] }> = get_tensor_base(y);
++        let tile: PointerTile<*mut E, { [] }> = base.offset_tile(offset);
++        let ptr: *mut E = tile_to_pointer(tile);
++        ptr
++    }
++
++    fn subtensor_mut_ptr_2d<E: ElementType, const S: [i32; 2]>(y: &mut Tensor<E, S>) -> *mut E {
++        let pid: (i32, i32, i32) = get_tile_block_id();
++        let tile_shape: Shape<S> = Shape::<S> { dims: &[] };
++        let offset: Tile<i64, { [] }> = block_tile_axis_offset(
++            pid.0,
++            get_static_extent(tile_shape, 0),
++            get_tensor_stride(y, 0),
++        ) + block_tile_axis_offset(
++            pid.1,
++            get_static_extent(tile_shape, 1),
++            get_tensor_stride(y, 1),
++        );
++        let base: PointerTile<*mut E, { [] }> = get_tensor_base(y);
++        let tile: PointerTile<*mut E, { [] }> = base.offset_tile(offset);
++        let ptr: *mut E = tile_to_pointer(tile);
++        ptr
++    }
++
++    fn subtensor_mut_ptr_3d<E: ElementType, const S: [i32; 3]>(y: &mut Tensor<E, S>) -> *mut E {
++        let pid: (i32, i32, i32) = get_tile_block_id();
++        let tile_shape: Shape<S> = Shape::<S> { dims: &[] };
++        let offset: Tile<i64, { [] }> = block_tile_axis_offset(
++            pid.0,
++            get_static_extent(tile_shape, 0),
++            get_tensor_stride(y, 0),
++        ) + block_tile_axis_offset(
++            pid.1,
++            get_static_extent(tile_shape, 1),
++            get_tensor_stride(y, 1),
++        ) + block_tile_axis_offset(
++            pid.2,
++            get_static_extent(tile_shape, 2),
++            get_tensor_stride(y, 2),
++        );
++        let base: PointerTile<*mut E, { [] }> = get_tensor_base(y);
++        let tile: PointerTile<*mut E, { [] }> = base.offset_tile(offset);
++        let ptr: *mut E = tile_to_pointer(tile);
++        ptr
++    }
++
++    /// The writable address of a mutable tensor's sub-tensor at the current
++    /// tile block, for ranks 1 to 3.
++    pub trait SubtensorMutPtr {
++        /// 
+```
+
+**File**: `cutile-rs/cutile/src/tile_kernel.rs` (modified, +20/-3)
+```diff
+@@ -129,6 +129,12 @@ pub struct TileFunctionKey {
+     pub spec_args: Vec<(String, SpecializationBits)>,
+     pub scalar_hints: Vec<(String, DivHint)>,
+     pub grid: Option<(u32, u32, u32)>,
++    /// The options the kernel compiles with, except the tile libraries:
++    /// `tile_libraries` is empty here, and [`Self::tile_libraries_digest`]
++    /// identifies the libraries instead. Every spelling of one set of
++    /// libraries (a default the launch names again, a path given relative
++    /// or absolute) links the same files, so it must compile once and
++    /// share one loaded module, with one copy of each `Global`.
+     pub compile_options: CompileOptions,
+     source_hash: String,
+     device_id: usize,
+@@ -304,6 +310,9 @@ impl FunctionKey for TileFunctionKey {}
+ pub struct Specialization<F: Fn() -> Module> {
+     module_ast_fn: F,
+     key: TileFunctionKey,
++    /// The options the kernel compiles with, the default tile libraries
++    /// included. The key holds them without the libraries.
++    compile_options: CompileOptions,
+     /// The tile libraries the key's digest was taken from, which the
+     /// compile links.
+     tile_libraries: TileLibrarySnapshot,
+@@ -354,7 +363,7 @@ impl<F: Fn() -> Module> Specialization<F> {
+         .strides(&stride_refs)
+         .spec_args(&spec_refs)
+         .scalar_hints(&scalar_hint_refs)
+-        .options(self.key.compile_options.clone());
++        .options(self.compile_options.clone());
+         if let Some(grid) = self.key.grid {
+             compiler = compiler.grid(grid);
+         }
+@@ -394,12 +403,18 @@ pub fn _specialization_from_context<F: Fn() -> Module>(
+     let compile_options = compile_options.with_default_tile_libraries();
+     let tile_libraries =
+         TileLibrarySnapshot::new(tile_library_generation, &compile_options.tile_libraries);
++    // The digest identifies the libraries by their resolved, de-duplicated
++    // set; the list as written would key the same libraries differently.
++    let key_options = CompileOptions {
++        tile_libraries: Vec::new(),
++        ..compile_options.clone()
++    };
+     let mut key_builder = TileFunctionKey::builder(module_name, function_name)
+         .generics(function_generics)
+         .stride_args(stride_args)
+         .spec_args(spec_args)
+         .scalar_hints(scalar_hints)
+-        .compile_options(compile_options)
++        .compile_options(key_options)
+         .source_hash(source_hash)
+         .device_id(device_id)
+         .gpu_name(gpu_name)
+@@ -412,6 +427,7 @@ pub fn _specialization_from_context<F: Fn() -> Module>(
+     Specialization {
+         module_ast_fn,
+         key: key_builder.build(),
++        compile_options,
+         tile_libraries,
+     }
+ }
+@@ -1163,7 +1179,7 @@ fn compile_for_launch_site<F: Fn() -> Module>(
+                 &key.scalar_hints,
+                 const_grid,
+                 &gpu_name,
+-                &key.compile_options,
++                &specialization.compile_options,
+                 &specialization.tile_libraries,
+                 ToolkitCapabilities::for_device(device_id)?,
+                 &key.display_hash(),
+@@ -2350,6 +2366,7 @@ mod tests {
+         let specialization = Specialization {
+             module_ast_fn: unexpected_ast_provider as ModuleAstFn,
+             key: expected.clone(),
++            compile_options: CompileOptions::default(),
+             tile_libraries: TileLibrarySnapshot::new(0, &[]),
+         };
+ 
+```
+
+**File**: `cutile-rs/cutile/src/tile_kernel/preparation.rs` (modified, +8/-2)
+```diff
+@@ -50,7 +50,7 @@ impl<F: Fn() -> Module> Specialization<F> {
+                 anyhow::anyhow!("toolchain changed while resolving compilation job").into(),
+             );
+         }
+-        let effective_options = self.key.compile_options.with_jit_env_overrides()?;
++        let effective_options = self.compile_options.with_jit_env_overrides()?;
+         Ok(KernelCompileJob {
+             specialization: self,
+             capabilities,
+@@ -205,9 +205,15 @@ impl PreparedKernel {
+ }
+ 
+ fn check_environment(key: &TileFunctionKey, effective: &CompileOptions) -> Result<(), Error> {
++    // The key holds the options without the tile libraries; the snapshot
++    // checks those.
++    let effective_without_libraries = CompileOptions {
++        tile_libraries: Vec::new(),
++        ..effective.clone()
++    };
+     if bytecode_override() != key.bytecode_override
+         || tileiras_fingerprint() != key.tileiras_fingerprint
+-        || key.compile_options.with_jit_env_overrides()? != *effective
++        || key.compile_options.with_jit_env_overrides()? != effective_without_libraries
+     {
+         return Err(
+             anyhow::anyhow!("compiler configuration changed during kernel preparation").into(),
 ```
 
 ---
 
-### Incident Patch 2: `860375a1` (2026-11-17)
-**Commit Message**: feat(cuda-core): make Function::set_max_dynamic_shared_memory_bytes public (#1817)
+### Incident Patch 2: `186317f0` (2026-11-19)
+**Commit Message**: ci: move the cutile-rs setup action to the root .github/actions (#1835)
 
 ## Summary
 
-Makes `Function::set_max_dynamic_shared_memory_bytes` public, so a
-function launched without a typed launch contract can opt into more than
-the portable dynamic shared-memory limit. An example is a function
-loaded from PTX with `load_module_from_ptx_src` / `load_function`. Until
-now only typed launch preparation could call the setter, while the
-matching getter (`max_dynamic_shared_memory_bytes`) and the device limit
-(`Context::max_opt_in_shared_memory_per_block`) were already public.
-Closes #1816.
+Move the `cutile-rs` setup composite action next to the other root
+actions, as `.github/actions/setup-cutile-rs`.
 
 ## Changes
 
-- `cuda-core/src/module.rs`: `pub(crate)` → `pub`. The function body is
-unchanged. Its doc comment now explains when to call it: typed launches
-do it on their own, untyped ones have to call it before the first launch
-that needs the memory. It also states that the value is a persistent
-attribute of the loaded function, and which errors to expect.
-- `cuda-core/tests/function_dynamic_shared_memory.rs` (new): on a
-function loaded from PTX, the full opt-in budget
-(`max_opt_in_shared_memory_per_block` minus static shared memory)
-round-trips through `max_dynamic_shared_memory_bytes`. Sett
+- `cutile-rs/.github/actions/setup/action.yml` moves to
+`.github/actions/setup-cutile-rs/action.yml`.
+- The "Install Rust" step now starts in `cutile-rs` explicitly
+(`working-directory: ${{ github.action_path }}/../../../cutile-rs`), so
+rustup still picks `cutile-rs/rust-toolchain.toml` and not the git-root
+pin.
+- The six `uses:` lines in `.github/workflows/cutile-rs.yml` are
+updated. The `build` and `cuda-tile-translate` jobs run before
+`actions/checkout`, so they keep the `$/` form; the other four use `./`.
+- `cutile-rs/.github/actionlint.yaml` and `dependabot.yml` are left
+where they are.
 
-**File**: `cuda-core/src/module.rs` (modified, +22/-7)
+---------
+
+Signed-off-by: Roman Ivanov <[REDACTED_EMAIL]>
+
+**File**: `.github/actions/setup-cutile-rs/action.yml` (renamed, +2/-2)
 ```diff
-@@ -331,14 +331,29 @@ impl Function {
-         }
-     }
- 
--    /// Opts this function into a larger dynamic shared-memory allocation.
-+    /// Opts this function into a dynamic shared-memory allocation of up to
-+    /// `bytes` per block.
-     ///
--    /// Typed launch preparation calls this at most once, and only after
--    /// checking static plus dynamic memory against the device opt-in limit.
--    pub(crate) fn set_max_dynamic_shared_memory_bytes(
--        &self,
--        bytes: u32,
--    ) -> Result<(), DriverError> {
-+    /// A launch whose static plus dynamic shared memory exceeds the portable
-+    /// per-block limit needs this first, up to
-+    /// [`Context::max_opt_in_shared_memory_per_block`](crate::Context::max_opt_in_shared_memory_per_block)
-+    /// in total. Typed launch preparation calls it on its own, after checking
-+    /// the contract against that limit. A function launched without a typed
-+    /// contract, for example one loaded from PTX or a cubin, has to call it
-+    /// before its first launch that needs the memory.
-+    ///
-+    /// The value is an attribute of the loaded function
-+    /// (`CU_FUNC_ATTRIBUTE_MAX_DYNAMIC_SHARED_SIZE_BYTES`): it applies to every
-+    /// later launch of this function in this context, whichever handle
-+    /// launches it. Read it back with
-+    /// [`max_dynamic_shared_memory_bytes`](Self::max_dynamic_shared_memory_bytes).
-+    ///
-+    /// # Errors
-+    ///
-+    /// `CUDA_ERROR_INVALID_VALUE` if `bytes` does not fit in an `i32`, or if
-+    /// the driver rejects it, for example when the function's static shared
-+    /// memory plus `bytes` exceeds the device's opt-in limit.
-+    pub fn set_max_dynamic_shared_memory_bytes(&self, bytes: u32) -> Result<(), DriverError> {
-         self.context().bind_to_thread()?;
-         let bytes = i32::try_from(bytes)
-             .map_err(|_| DriverError(cuda_bindings::cudaError_enum_CUDA_ERROR_INVALID_VALUE))?;
+@@ -53,8 +53,8 @@ runs:
+     # nightly lives in cuda-oxide/rust-toolchain.toml.
+     - name: Install Rust
+       shell: bash
+-      # relative path to land at the rust-toolchain.toml regardless of use of $ or ./ syntax
+-      working-directory: ${{ github.action_path }}/../../..
++      # relative path to land at cutile-rs/rust-toolchain.toml regardless of use of $ or ./ syntax
++      working-directory: ${{ github.action_path }}/../../../cutile-rs
+       env:
+         RUST_COMPONENTS: ${{ inputs.components }}
+       run: |
 ```
 
-**File**: `cuda-core/tests/function_dynamic_shared_memory.rs` (added, +71/-0)
+**File**: `.github/workflows/cutile-rs.yml` (modified, +7/-6)
 ```diff
-@@ -0,0 +1,71 @@
-+/*
-+ * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-+ * SPDX-License-Identifier: Apache-2.0
-+ */
-+
-+//! `Function::set_max_dynamic_shared_memory_bytes` on a function loaded from
-+//! PTX, the untyped case that cannot rely on typed launch preparation: the
-+//! value round-trips through `max_dynamic_shared_memory_bytes`, and a request
-+//! past the device's opt-in limit is refused by the driver.
-+
-+use cuda_core::Context;
-+
-+const NOOP_PTX: &str = "\
-+.version 7.0
-+.target sm_52
-+.address_size 64
-+
-+.visible .entry noop()
-+{
-+    ret;
-+}
-+";
-+
-+const INVALID_VALUE: cuda_core::sys::CUresult =
-+    cuda_core::sys::cudaError_enum_CUDA_ERROR_INVALID_VALUE;
-+
-+fn has_gpu() -> bool {
-+    Context::device_count().map(|n| n > 0).unwrap_or(false)
-+}
-+
-+#[test]
-+fn dynamic_shared_memory_opt_in_round_trips_and_respects_the_device_limit() {
-+    if !has_gpu() {
-+        return;
-+    }
-+    let ctx = Context::new(0).expect("failed to create CUDA context");
-+    let module = ctx
-+        .load_module_from_ptx_src(NOOP_PTX)
-+        .expect("failed to load the PTX module");
-+    let function = module.load_function("noop").expect("missing `noop`");
-+
-+    let opt_in = ctx
-+        .max_opt_in_shared_memory_per_block()
-+        .expect("opt-in shared-memory limit");
-+    let static_bytes = function
-+        .static_shared_memory_bytes()
-+        .expect("static shared memory");
-+    let allowed = opt_in - static_bytes;
-+
-+    // The whole opt-in budget is accepted and observable.
-+    function
-+        .set_max_dynamic_shared_memory_bytes(allowed)
-+        .expect("setting the opt-in maximum must succeed");
-+    assert_eq!(function.max_dynamic_shared_memory_bytes().unwrap(), allowed);
-+
-+    // Lowering it again is also a plain round trip.
-+    function.set_max_dynamic_shared_memory_bytes(0).unwrap();
-+    assert_eq!(function.max_dynamic_shared_memory_bytes().unwrap(), 0);
-+
-+    // One byte past the budget is the driver's to refuse.
-+    let err = function
-+        .set_max_dynamic_shared_memory_bytes(allowed + 1)
-+        .expect_err("a request past the opt-in limit must fail");
-+    assert_eq!(err.0, INVALID_VALUE);
-+
-+    // Values that do not fit the driver's `int` are rejected before the call.
-+    let err = function
-+        .set_max_dynamic_shared_memory_bytes(u32::MAX)
-+        .expect_err("u32::MAX does not fit in an i32");
-+    assert_eq!(err.0, INVALID_VALUE);
-+}
-```
-
----
-
-### Incident Patch 3: `367cd5a9` (2026-11-17)
-**Commit Message**: fix(cuda-oxide): let blackwell-mma smoketest honor detected sm_121a target (#1830)
-
-## What This PR Does
-
-Fixes `scripts/smoketest.sh` on **GB10 (`sm_121`)** for the
-`blackwell-mma` category (`mma_mxf8f6f4`), resolving **NVBug 7101256**:
-
-```text
-BEFORE (in `scripts/smoketest.sh` on GB10, compute capability 12.1):
-  smoketest.sh ──► cargo oxide run mma_mxf8f6f4 --arch=sm_120a
-                     └─► sets CUDA_OXIDE_TARGET=sm_120a (overrides hint sm_121a)
-                     └─► emits .target sm_120a ──► DriverError(218) on sm_121 [X]
-
-AFTER (matches `tcgen05` and `wgmma`):
-  smoketest.sh ──► cargo oxide run mma_mxf8f6f4
-                     ├─► on sm_121 (GB10): hint sm_121a ──► .target sm_121a ──► executes & passes [OK]
-                     ├─► on sm_120 (50xx): hint sm_120a ──► .target sm_120a ──► executes & passes [OK]
-                     └─► elsewhere / build:             ──► .target sm_120a ──► PTX check & passes [OK]
-```
-
----
-
-### 1. Drop Forced `--arch=sm_120a` Override in `smoketest.sh`
-
-* `cuda-oxide-codegen` (`v1:i0876` in `intrinsics/catalog.json`:
-`sm_120a|sm_120f|sm_121a|sm_121f`) and `cargo-oxide`
-(`format_sm_arch((12, 1)) == "sm_121a"`) already select `sm_121a` fr
-
-**File**: `cuda-oxide/crates/cargo-oxide/src/commands/tests.rs` (modified, +6/-0)
-```diff
-@@ -4079,18 +4079,24 @@ fn format_sm_arch_uses_cuda_target_spelling() {
-     assert_eq!(format_sm_arch((10, 1)), "sm_101a");
-     assert_eq!(format_sm_arch((10, 3)), "sm_103a");
-     assert_eq!(format_sm_arch((12, 0)), "sm_120a"); // consumer Blackwell
-+    assert_eq!(format_sm_arch((12, 1)), "sm_121a"); // GB10 / DGX Spark
- }
+@@ -73,6 +73,7 @@ jobs:
+               - 'Cargo.lock'
+               - 'rust-toolchain.toml'
+               - '.github/workflows/cutile-rs.yml'
++              - '.github/actions/setup-cutile-rs/**'
+               - '.github/copy-pr-bot.yaml'
+             # `*` covers a root file such as AGENTS.md. `**` covers every nested path.
+             any_changed:
+@@ -137,7 +138,7 @@ jobs:
+     steps:
+       - uses: actions/checkout@v7
+       # The lanes share github.job, so the lane name keeps their caches apart.
+-      - uses: ./cutile-rs/.github/actions/setup
++      - uses: ./.github/actions/setup-cutile-rs
+         with:
+           cache-key: ${{ matrix.lane.name }}
+       # The tests test whether CUTILE_TILEIRAS_PATH is set, so only the base lane
+@@ -199,7 +200,7 @@ jobs:
+           command -v tileiras
+           tileiras --help | grep -q "sm_120"
  
- #[test]
- fn parse_compute_cap_accepts_real_nvidia_smi_output() {
-     assert_eq!(parse_compute_cap("12.0\n"), Some((12, 0)));
-+    assert_eq!(parse_compute_cap("12.1\n"), Some((12, 1)));
-     assert_eq!(parse_compute_cap("7.5\n"), Some((7, 5)));
-     assert_eq!(parse_compute_cap("10.3"), Some((10, 3)));
-     // End-to-end with format_sm_arch: the values the backend sees.
-     assert_eq!(
-         format_sm_arch(parse_compute_cap("12.0\n").unwrap()),
-         "sm_120a"
-     );
-+    assert_eq!(
-+        format_sm_arch(parse_compute_cap("12.1\n").unwrap()),
-+        "sm_121a"
-+    );
-     assert_eq!(format_sm_arch(parse_compute_cap("7.5\n").unwrap()), "sm_75");
- }
+-      - uses: $/cutile-rs/.github/actions/setup
++      - uses: $/.github/actions/setup-cutile-rs
+       - uses: actions/checkout@v7
  
-```
-
-**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/target/tests/generated_floors.rs` (modified, +55/-0)
-```diff
-@@ -932,3 +932,58 @@ fn generated_scalar_math_floors_admit_turing() {
-         "sm_75"
-     );
- }
-+
-+/// Regression guard for NVBug 7101256: `mma_m16n8k32_mxf8f6f4_f32_e4m3_e4m3`
-+/// (`v1:i0876`) honors the detected GPU hint on both `sm_120a` and `sm_121a`
-+/// (GB10), and falls back to `sm_120a` when no compatible GPU hint is present.
-+#[test]
-+fn generated_mxf8f6f4_mma_honors_sm121a_hint_and_falls_back_to_sm120a() {
-+    use crate::generated_intrinsic_targets::{
-+        GeneratedIntrinsicBackend, generated_intrinsic_target_by_marker,
-+    };
-+
-+    let mma = generated_intrinsic_target_by_marker("v1:i0876").unwrap();
-+    assert_eq!(mma.id, "mma_m16n8k32_mxf8f6f4_f32_e4m3_e4m3");
-+    let llvm = GeneratedModuleRequirements::from_targets(vec![mma])
-+        .for_backend(GeneratedIntrinsicBackend::LlvmNvptx);
-+
-+    for supported_hint in ["sm_120a", "sm_121a"] {
-+        let hint = supported_hint
-+            .parse::<cuda_target_spec::DeviceArch>()
-+            .unwrap();
-+        assert_eq!(
-+            resolve_ptx_target_with_generated(
-+                None,
-+                "CUDA_OXIDE_TARGET",
-+                Some(&hint),
-+                DetectedFeatures::Basic,
-+                &llvm,
-+            )
-+            .unwrap(),
-+            (supported_hint.parse().unwrap(), "detected GPU"),
-+            "{supported_hint}"
-+        );
-+    }
-+
-+    for fallback_hint in [
-+        None,
-+        Some("sm_80"),
-+        Some("sm_90a"),
-+        Some("sm_100a"),
-+        Some("sm_107a"),
-+    ] {
-+        let hint = fallback_hint.map(|h| h.parse::<cuda_target_spec::DeviceArch>().unwrap());
-+        assert_eq!(
-+            resolve_ptx_target_with_generated(
-+                None,
-+                "CUDA_OXIDE_TARGET",
-+                hint.as_ref(),
-+                DetectedFeatures::Basic,
-+                &llvm,
-+            )
-+            .unwrap(),
-+            ("sm_120a".parse().unwrap(), "feature requirement"),
-+            "{fallback_hint:?}"
-+        );
-+    }
-+}
-```
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/mma_mxf8f6f4/src/main.rs` (modified, +18/-8)
-```diff
-@@ -18,20 +18,24 @@
- //!   byte, so scale selection cannot mask a data-path error, but the
- //!   scale *selector* logic is only trivially exercised.
- //!
--//! The instruction only exists on Blackwell consumer parts (sm_120a/f,
--//! sm_121a/f), so the device code is always compiled for sm_120a
--//! (smoketest passes `--arch=sm_120a`). On any other GPU the example
--//! verifies the generated PTX instead of executing and exits cleanly.
-+//! The instruction only exists on Blackwell consumer parts (`sm_120a`/`f`,
-+//! `sm_121a`/`f`). `cargo oxide run` selects the detected GPU target on
-+//! `sm_120`/`sm_121` and falls back to `sm_120a` elsewhere; on any other GPU
-+//! the example verifies the generated PTX instead of executing and exits
-+//! cleanly.
- //!
- //! Build and run with:
--//!   cargo oxide run mma_mxf8f6f4 --arch sm_120a
-+//!   cargo oxide run mma_mxf8f6f4
+       - name: Mark checkout as safe
+@@ -294,7 +295,7 @@ jobs:
+       # Before checkout, so that checkout finds git and makes a repository, which
+       # the submodule step needs. The Rust cache is off: the target directory of
+       # this job holds the LLVM build tree.
+-      - uses: $/cutile-rs/.github/actions/setup
++      - uses: $/.github/actions/setup-cutile-rs
+         with:
+           cache: "false"
+       - uses: actions/checkout@v7
+@@ -427,7 +428,7 @@ jobs:
+     timeout-minutes: 30
+     steps:
+       - uses: actions/checkout@v7
+-      - uses: ./cutile-rs/.github/actions/setup
++      - uses: ./.github/actions/setup-cutile-rs
  
- use cuda_core::LaunchConfig;
- use cuda_core::{CudaContext, DeviceBuffer};
- use cuda_device::{DisjointSlice, cuda_module, kernel, thread, wmma};
+       # Prebuilt binary instead of `cargo install` (which compiled the tool
+       # from source on every run).
+@@ -466,7 +467,7 @@ jobs:
+     timeout-minutes: 30
+     steps:
+       - uses: actions/checkout@v7
+-      - uses: ./cutile-rs/.github/actions/setup
++      - uses: ./.github/actions/setup-cutile-rs
  
-+/// Output matrix row count for the `m16n8k32` warp MMA shape.
- const M: usize = 16;
-+/// Output matrix column count for the `m16n8k32` warp MMA shape.
- const N: usize = 8;
-+/// Inner reduction dimension for the `m16n8k32` warp MMA shape.
- const K: usize = 32;
- /// Every selectable ue8m0 byte = 127 -> scale factor 2^0 = 1.0.
- const SCALES_ONE: u32 = 0x7F7F_7F7F;
-@@ -80,16 +84,20 @@ fn encode_e4m3(v: i32) -> u8 {
-     }
- }
+       - name: Check shared crates against CUDA 13.0
+         working-directory: ${{ github.workspace }}
+@@ -502,7 +503,7 @@ jobs:
+       - uses: actions/checkout@v7
  
-+/// Deterministic small integer (`-3..=3`) at `(row, k)` in operand matrix `A`.
-+/// Every value in this range is exact in OCP `e4m3`.
- fn a_value(row: usize, k: usize) -> i32 {
-     ((row + k) % 7) as i32 - 3
- }
+       # This nightly must ship clippy, miri, and rust-src on x86_64.
+-      - uses: ./cutile-rs/.github/actions/setup
++      - uses: ./.github/actions/setup-cutile-rs
+         with:
+           components: clippy miri rust-src
  
-+/// Deterministic small integer (`-2..=2`) at `(k, col)` in operand matrix `B`.
-+/// Every value in this range is exact in OCP `e4m3`.
- fn b_value(k: usize, col: usize) -> i32 {
-     ((k * 2 + col) % 5) as i32 - 2
- }
- 
--/// Non-Blackwell-consumer fallback: confirm the sm_120a PTX was generated
--/// and actually contains the block-scaled MMA instruction.
-+/// Non-Blackwell-consumer fallback: confirm the generated PTX contains the
-+/// block-scaled `kind::mxf8f6f4` MMA instruction.
- fn verify_ptx_only() -> Result<(), Box<dyn std::error::Error>> {
-     let ptx_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("mma_mxf8f6f4.ptx");
-     let ptx = std::fs::read_to_string(&ptx_path)?;
-@@ -103,14 +111,16 @@ fn verify_ptx_only() -> Result<(), Box<dyn std::error::Error>> {
-     Ok(())
- }
- 
-+/// Executes the `m16n8k32` `kind::mxf8f6f4` numeric check on `sm_120`/`sm_121`
-+/// or verifies PTX emission on other GPUs.
- fn main() -> Result<(), Box<dyn std::error::Error>> {
-     println!("=== mxf8f6f4 block-scale MMA numeric check (e4m3 x e4m3 -> f32) ===");
-     let ctx = CudaContext::new(0)?;
- 
-     // kind::mxf8f6f4 exists only on sm_120/sm_121 (Blackwell consumer).
-     let (major, minor) = ctx.compute_capability()?;
-     println!("GPU Compute Capability: sm_{major}{minor}");
--    if major != 12 {
-+    if !matches!((major, minor), (12, 0 | 1)) {
-         println!("WARNING: mxf8f6f4 block-scale MMA requires sm_120/sm_121 (Blackwell consumer)");
-         println!("         detected sm_{major}{minor}; verifying generated PTX only");
-         return verify_ptx_only();
-```
-
-**File**: `cuda-oxide/scripts/check-example-smoketest-contract.sh` (modified, +43/-0)
-```diff
-@@ -228,6 +228,49 @@ esac
-                  f"{r100_result.returncode}, {r100_result.stdout!r}, {r100_result.stderr!r}")
-     print("OK: R100 (sm_107) compile-only NVVM code-shape prebuild omits --arch on build and passes --arch=sm_107 to emit-ltoir.")
- 
-+    # On GB10 (compute capability 12.1), blackwell-mma examples must run via
-+    # `cargo oxide run <ex>` without forcing `--arch=sm_120a`, so cargo-oxide's
-+    # detected `sm_121a` hint reaches the backend and the module JIT-loads on
-+    # `sm_121` instead of failing with DriverError 218 (NVBug 7101256).
-+    gb10_ex = simt / "crates/rustc-codegen-cuda/examples/mma_mxf8f6f4"
-+    gb10_ex.mkdir(parents=True, exist_ok=True)
-+    (gb10_ex / "Cargo.toml").touch()
-+    (bin_dir / "nvidia-smi").write_text('#!/usr/bin/env bash\necho "NVIDIA GB10, 12.1"\n')
-+    (bin_dir / "cargo").write_text('''#!/usr/bin/env bash
-+case "$*" in
-+    "oxide --help"|"oxide setup") exit 0 ;;
-+    "oxide __debug-policy") echo unset; exit 0 ;;
-+    "oxide run mma_mxf8f6f4")
-+        echo "GPU Compute Capability: sm_121"
-+        echo "SUCCESS"
-+        exit 0 ;;
-+    "oxide build mma_mxf8f6f4")
-+        printf '.version 8.7\n.target sm_120a\n.address_size 64\n' > "crates/rustc-codegen-cuda/examples/mma_mxf8f6f4/mma_mxf8f6f4.ptx"
-+        exit 0 ;;
-+    *)
-+        echo "unexpected cargo invocation: $*" >&2
-+        exit 99 ;;
-+esac
-+''')
-+    gb10_assembler = root / "ptxas-gb10"
-+    gb10_assembler.write_text('''#!/usr/bin/env bash
-+[[ "$*" == "-arch=sm_120a crates/rustc-codegen-cuda/examples/mma_mxf8f6f4/mma_mxf8f6f4.ptx -o /dev/null" ]] || exit 99
-+exit 0
-+''')
-+    gb10_assembler.chmod(0o755)
-+    gb10_env = dict(env, CUDA_OXIDE_PTXAS=str(gb10_assembler))
-+    for extra_flags, mode_label in (([], "runtime"), (["--compile-only"], "compile-only")):
-+        gb10_result = subprocess.run(
-+            ["bash", str(script), *extra_flags, "--only", "^mma_mxf8f6f4$", "--no-color"],
-+            cwd=root, env=gb10_env, capture_output=True, text=True,
-+        )
-+        if (gb10_result.returncode != 0
-+                or not re.search(r"^Pass:\s+1 / 1$", gb10_result.stdout, re.M)
-+                or not re.search(r"^Fail:\s+0 / 1$", gb10_result.stdout, re.M)):
-+            sys.exit(f"GB10 {mode_label} blackwell-mma smoketest failed: "
-+                     f"{gb10_result.returncode}, {gb10_result.stdout!r}, {gb10_result.stderr!r}")
-+    print("OK: GB10 (sm_121) blackwell-mma runtime and compile-only smoketest omit forced --arch=sm_120a.")
-+
- # Exercise the actual CLI/preflight without building or launching an example.
- # The Rust parser owns aliases and normalization; this checks that the shell
- # trusts its token, honors explicit mode, and refuses a failed/malformed reply.
-```
-
-**File**: `cuda-oxide/scripts/smoketest.sh` (modified, +5/-11)
-```diff
-@@ -22,11 +22,11 @@
- #                   elsewhere PTX compilation is sufficient (plus the
- #                   ptxas gate).
- #   blackwell-mma -- Blackwell-consumer-only MMA (kind::mxf8f6f4 exists on
--#                   sm_120/sm_121 alone), always compiled with
--#                   `--arch=sm_120a` because the generated target gating
--#                   rejects every other architecture at compile time. On an
--#                   sm_120/121 host require full execution; elsewhere the
--#                   example verifies the generated PTX and exits 0.
-+#                   sm_120/sm_121 alone). Target selection uses the detected
-+#                   host arch on sm_120/sm_121 (sm_120a / sm_121a) and falls
-+#                   back to sm_120a elsewhere. On an sm_120/121 host require
-+#                   full execution; elsewhere the example verifies the
-+#                   generated PTX and exits 0 (plus the ptxas gate).
- #   ltoir        -- runs with `--emit-nvvm-ir --arch=<host>`; the host
- #                   compute capability is detected via `nvidia-smi` so the
- #                   resulting cubin actually loads. Execution must succeed
-@@ -2288,12 +2288,6 @@ run_cargo() {
-         # here too, so this lane exercises the full native-artifact path.
-         args+=("--arch=sm_90")
-     fi
--    # kind::mxf8f6f4 admits only sm_120/sm_121 in the generated target
--    # gating, so the device build must always pin sm_120a; the example
--    # itself decides at runtime whether the host GPU can execute it.
--    if [[ "${cat}" == "blackwell-mma" ]]; then
--        args+=("--arch=sm_120a")
--    fi
-     if [[ "${cat}" == "ltoir" || ( "${cat}" == "auto-nvvm" && ${COMPILE_ONLY} -eq 1 ) ]]; then
-         args+=("--emit-nvvm-ir" "--arch=${LTOIR_ARCH}")
-     fi
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1835** (2026-11-19): ci: move the cutile-rs setup action to the root .github/actions (@roivanov)
 - **PR #1833** (2026-11-18): fix(cutile-kernels): add strided prefill and improve FP16 GEMM (@elibol)
 - **PR #1830** (2026-11-17): fix(cuda-oxide): let blackwell-mma smoketest honor detected sm_121a target (@nihalpasham)
 - **PR #1829** (2026-11-17): fix(cutile): correct masked padding and add FP16 kernel variants (@elibol)
 - **PR #1817** (2026-11-17): feat(cuda-core): make Function::set_max_dynamic_shared_memory_bytes public (@Code4me2)
 - **PR #1813** (2026-11-16): ci: test against CUDA 13.5.0 as well as the baseline toolkit (@roivanov)
-- **PR #1807** (closed): docs(cuda-core): link nvls_all_reduce example in tests (@Code4me2)
 
 ---
 
@@ -3141,13 +3077,13 @@ AFTER (matches `tcgen05` and `wgmma`):
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cutile-kernels): add strided prefill and improve FP16 GEMM
+## X. cutile): pointer operands for foreign tile-library calls
 
 **RULE**:
 When implementing operations in `cutile-rs/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `85ddf6c2`: cutile-kernels): add strided prefill and improve FP16 GEMM. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8046b9e9`: cutile): pointer operands for foreign tile-library calls. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cutile-rs/CHANGELOG.md`.
@@ -3155,10 +3091,18 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Add strided long-prefill attention entries with independent K/V head strides,
-  including split-K prefill. Existing contiguous entry signatures are unchanged.
-- Keep FP16 operands in the experimental FP16-output GEMM instead of widening
-  them before MMA; retain FP32 accumulation and a final FP16 conversion.
+- Foreign functions take global-memory pointer operands: a `*const E` or
+  `*mut E` parameter is a rank-0 `tile<ptr<E>>` operand. `subtensor_mut_ptr`
+  on a mutable tensor gives the address of the current tile block's writable
+  sub-tensor, as `load` and `store` see it, with an `i64` offset. Getting it
+  is safe; unlike `load` and `store`, a write through it is not masked to the
+  tensor's bounds, so the writing function's `# Safety` contract states the
+  bounds (#1749).
+- A kernel's in-memory cache key no longer holds the tile-library list as
+  written, only the digest of the resolved, de-duplicated libraries. A launch
+  that names a default library again, or names a library through another
+  path, used to compile the kernel a second time and load a second module,
+  with its own copy of every `Global` (#1749).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3168,4 +3112,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `85ddf6c2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8046b9e9` are properly handled with clean fallback behavior.

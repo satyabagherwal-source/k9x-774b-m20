@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T16:29:09.939Z",
+  "last_updated": "2026-11-20T16:42:34.004Z",
   "total_records": 2149,
   "domains": {
     "A": {
@@ -7937,8 +7937,8 @@
       "title": "Content & Information Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dathere-qsv-content-information-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "b468d613a2aebd56dcc4100cdc10f47492b3bd6de73a3e5250dc889eb9f6e352",
-      "created_at": "2026-11-13T15:04:01.539Z"
+      "content_hash": "a80b29d921ca027c4f5547f423b67ce37a596bb35ac033f94e7357798201ff48",
+      "created_at": "2026-11-20T16:42:28.759Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -7955,8 +7955,8 @@
       "title": "Content & Information Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dathere-qsv-learnings-content-information-intelligence-dathere-qsv-learnings-cor.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "42179528ea8d345fe01bdba0e01ae540b8907b796903c313d367aefa15744b54",
-      "created_at": "2026-11-13T15:04:05.365Z"
+      "content_hash": "782666e0bf0ecdb32a39992b7f34ac5ea31caae55a69005da850e92979c39082",
+      "created_at": "2026-11-20T16:42:33.088Z"
     },
     "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -10877,8 +10877,8 @@
       "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
       "repository": "NVIDIA/cuda-rust",
-      "content_hash": "aad3d007de7df17fa14367943cd5b772733d5aadb5890d3a28904ed5d9c85477",
-      "created_at": "2026-11-19T00:00:13.472Z"
+      "content_hash": "031ab8ba63cdfba64864c598a23876ab2262b6bd21dfc1a5121bc08572cbd617",
+      "created_at": "2026-11-20T16:42:14.167Z"
     },
     "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants",
@@ -10913,8 +10913,8 @@
       "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-learnings-technical-construction-intelligence-nvidia-cuda-rust-.md",
       "repository": "nvidia-cuda-rust-learnings",
-      "content_hash": "8fc9e6324e5710f97b588204cbd5f833dad967afc7fb08102ccae751394a47da",
-      "created_at": "2026-11-19T00:00:28.829Z"
+      "content_hash": "65c3e46c2b7622615a84ab0f6b58cc5a744504713a5435311a457bcce328e050",
+      "created_at": "2026-11-20T16:42:32.074Z"
     },
     "DOM-D-86956AB2": {
       "record_id": "DOM-D-86956AB2",
@@ -33279,8 +33279,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "4fdf52d052bed34f2d365b8f8e85d2f679c49bfa6b97490460c039f7e7c0c790",
-      "created_at": "2026-11-20T14:07:37.284Z"
+      "content_hash": "fddc5d1b43bf5e39004659c15556d561af7ba162bef18906fce4af7c55bf240c",
+      "created_at": "2026-11-20T16:42:34.004Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
