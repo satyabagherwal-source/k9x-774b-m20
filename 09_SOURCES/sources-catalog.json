@@ -6633,10 +6633,10 @@
     "repository": "dalance/procs",
     "platform": "github",
     "sourceUrl": "https://github.com/dalance/procs",
-    "sourceVersion": "939caf9b",
+    "sourceVersion": "05000c71",
     "license": "MIT",
-    "contentHash": "1ad464a89124a54078e854c4d7f091abbd4d8af2991b9a6292c4ea68c9637e00",
-    "lastHarvestedAt": "2026-11-17T15:43:37.986Z",
+    "contentHash": "d01a5eef5292a4f0836798ff62e1e6578db0c95246f016bde3bada31b01d6964",
+    "lastHarvestedAt": "2026-11-20T21:25:48.457Z",
     "learningId": "learn-github-dalance-procs"
   },
   "ionic-team-ionic-framework": {
@@ -9683,10 +9683,10 @@
     "repository": "iPlug2/iPlug2",
     "platform": "github",
     "sourceUrl": "https://github.com/iPlug2/iPlug2",
-    "sourceVersion": "985d63a1",
+    "sourceVersion": "e67ca638",
     "license": "NOASSERTION",
-    "contentHash": "805246a871aed266af460fa26ecb88d58aefe77bc026cae5b2cdd9f031263439",
-    "lastHarvestedAt": "2026-11-16T22:19:24.904Z",
+    "contentHash": "5c394fe65dc0fae067058f90934a4b44258490ea48632dc6cfab3d0adb8fde47",
+    "lastHarvestedAt": "2026-11-20T21:25:44.293Z",
     "learningId": "learn-github-iplug2-iplug2"
   },
   "digitalbazaar-jsonld.js": {
@@ -9733,10 +9733,10 @@
     "repository": "RDFLib/rdflib",
     "platform": "github",
     "sourceUrl": "https://github.com/RDFLib/rdflib",
-    "sourceVersion": "114dd59d",
+    "sourceVersion": "a0a00f55",
     "license": "BSD-3-Clause",
-    "contentHash": "720e416310b8bec96002b9ca3410be56db6ebbdccf28ffa2ae6e369c8d8c7f28",
-    "lastHarvestedAt": "2026-11-04T00:46:25.418Z",
+    "contentHash": "ee1b98357eb134bb439032bfa5865e2c26bace460967884eb45843c1fe9b7170",
+    "lastHarvestedAt": "2026-11-20T21:25:45.142Z",
     "learningId": "learn-github-rdflib-rdflib"
   },
   "kartiklabhshetwar-better-shot": {

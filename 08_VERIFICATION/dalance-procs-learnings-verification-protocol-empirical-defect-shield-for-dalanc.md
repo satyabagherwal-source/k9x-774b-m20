@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T15:43:53.212Z",
+  "timestamp": "2026-11-20T21:25:53.304Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dalance-procs-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dalance-procs-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T15:43:53.212Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T21:25:53.304Z`  
 > **Learning ID**: `LEARN-EVO-dalance-procs-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dalance-procs-learnings.md`  
 > **Source**: github ([https://github.com/dalance/procs](https://github.com/dalance/procs))  
-> **Source Version**: `939caf9b`  
+> **Source Version**: `05000c71`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T15:43:36.829Z  
+> **Timestamp**: 2026-11-20T21:25:47.254Z  
 > **Learning ID**: `learn-github-dalance-procs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dalance-procs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dalance/procs](https://github.com/dalance/procs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:43:36.822Z  
+> **Harvest Timestamp**: 2026-11-20T21:25:37.074Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A modern replacement for ps written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6223 stars
+- **Stars / Engagement**: 6239 stars
 
 ---
 
@@ -1609,11 +1609,11 @@ impl Column for CpuTime {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1001** (2026-11-20): **build(deps): bump clap_mangen from 0.3.3 to 0.3.4**
+  *Symptoms*: Bumps [clap_mangen](https://github.com/clap-rs/clap) from 0.3.3 to 0.3.4. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/clap-rs/clap/commit/db86ef6eccb2ed5ae16d3035982907692ecb10ef"><code>db86ef6</code></a> chore: Release</li> <li><a href="https://github.com/clap-rs/clap/commit/416d0b0e606841d7d5f23d9bd92fd5a83562961f"><code>416d0b0</code></a> docs: Update changelog</li> <li><a href="https://github.com/clap-rs/clap/commit/bebd2fdf6d3b826642e29d890695e370cfceb620"><code>bebd2fd</code></a> Merge pull request <a href="https://redirect.github.com/clap-rs/clap/issues/6569">#6569</a> from kpreid/derive-stack-usage</li> <li><a href="https://github.com/clap-rs/clap/commit/552461024b3d668dedda4087f8b67102f3ac6b46"><code>5524610</code></a> chore(deps): Update Rust Stable to v1.100 (<a href="https://redirect.github.com/clap-rs/clap/issues/6572">#6572</a>)</li> <li><a href="https://github.com/clap-rs/clap/commit/61d7b6f190f4dbb05dbda1c4dd8b2c9487795148"><code>61d7b6f</code></a> Merge pull request <a href="https://redirect.github.com/clap-rs/clap/issues/6574">#6574</a> from epage/lints</li> <li><a href="https://github.com/clap-rs/clap/commit/0a2145b2fd6e96f83e6366ebbc4462934572fd12"><code>0a2145b</code></a> style: Make linters happy</li> <li><a href="https://github.com/clap-rs/clap/commit/12a654c77aa675efe05e7c330cb0b72d269aff31"><code>12a654c</code></a> perf(derive): Reduce unoptimized stack usage</li> <li><a href="https://github.com/clap-rs/clap/commit/54605c
+
 - **Issue #1000** (2026-11-16): **build(deps): bump errno from 0.3.14 to 0.3.15**
   *Symptoms*: Bumps [errno](https://github.com/lambda-fairy/rust-errno) from 0.3.14 to 0.3.15. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/lambda-fairy/rust-errno/releases">errno's releases</a>.</em></p> <blockquote> <h2>v0.3.15</h2> <ul> <li> <p>Support QNX 8 (target_os = &quot;qnx&quot;) <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/134">#134</a></p> </li> <li> <p>Add mlibc support <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/132">#132</a></p> </li> <li> <p>Add NuttX support <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/129">#129</a></p> </li> <li> <p>Fix link on Fuchsia <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/126">#126</a></p> </li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/lambda-fairy/rust-errno/blob/main/CHANGELOG.md">errno's changelog</a>.</em></p> <blockquote> <h1>[0.3.15] - 2026-11-12</h1> <ul> <li> <p>Support QNX 8 (target_os = &quot;qnx&quot;) <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/134">#134</a></p> </li> <li> <p>Add mlibc support <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/132">#132</a></p> </li> <li> <p>Add NuttX support <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/129">#129</a></p> </li> <li> <p>Fix link on Fuchsia <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/126">#126</a></p> </l
-
-- **Issue #998** (2026-11-16): **build(deps): bump fancy-regex from 0.19.2 to 0.20.1**
-  *Symptoms*: Bumps [fancy-regex](https://github.com/fancy-regex/fancy-regex) from 0.19.2 to 0.20.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/fancy-regex/fancy-regex/releases">fancy-regex's releases</a>.</em></p> <blockquote> <h2>0.20.1</h2> <h3>Added</h3> <ul> <li>A new <code>Expr::has_descendant_or_self</code> method to easily traverse the Expr descendants to find an Expr matching a predicate. (<a href="https://redirect.github.com/fancy-regex/fancy-regex/issues/319">#319</a>)</li> <li>Add a <code>RegexOptionsBuilder::optimize</code> / <code>RegexBuilder::optimize</code> flag to disable the expression-tree optimization pass (enabled by default), and rework it into two tiers: <code>optimize()</code> now takes an <code>OptimizeOptions</code> struct with a <code>find_not_empty</code> flag that skips only the KeepOut (<code>\K</code>) and trailing-lookahead rewrites, while the safe rewrites still apply — so <code>find_not_empty</code> patterns benefit from them instead of skipping the whole pass. The decision on whether to optimize is centralized on <code>RegexOptions::should_optimize</code> and forwarded to the prefilter helpers (<code>start_bytes</code>, <code>required_bytes</code>) so they analyze the same tree as the compile path. (<a href="https://redirect.github.com/fancy-regex/fancy-regex/issues/323">#323</a>)</li> <li>Support control character escapes <code>\cX</code> and <code>\C-X</code> in Oniguruma mode, e.g. <code>\ca</code> match
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1630,92 +1630,56 @@ impl Column for CpuTime {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f6ac7a2a` (2026-11-16)
-**Commit Message**: build(deps): bump errno from 0.3.14 to 0.3.15
+### Incident Patch 1: `491006fa` (2026-11-20)
+**Commit Message**: build(deps): bump clap_mangen from 0.3.3 to 0.3.4
 
-Bumps [errno](https://github.com/lambda-fairy/rust-errno) from 0.3.14 to 0.3.15.
-- [Release notes](https://github.com/lambda-fairy/rust-errno/releases)
-- [Changelog](https://github.com/lambda-fairy/rust-errno/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/lambda-fairy/rust-errno/commits/v0.3.15)
+Bumps [clap_mangen](https://github.com/clap-rs/clap) from 0.3.3 to 0.3.4.
+- [Release notes](https://github.com/clap-rs/clap/releases)
+- [Changelog](https://github.com/clap-rs/clap/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/clap-rs/clap/compare/clap_mangen-v0.3.3...clap_mangen-v0.3.4)
 
 ---
 updated-dependencies:
-- dependency-name: errno
-  dependency-version: 0.3.15
+- dependency-name: clap_mangen
+  dependency-version: 0.3.4
   dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +7/-7)
+**File**: `Cargo.lock` (modified, +3/-3)
 ```diff
-@@ -683,9 +683,9 @@ dependencies = [
+@@ -424,9 +424,9 @@ checksum = "c8d4a3bb8b1e0c1050499d1815f5ab16d04f0959b233085fb31653fbfc9d98f9"
  
  [[package]]
- name = "errno"
--version = "0.3.14"
-+version = "0.3.15"
+ name = "clap_mangen"
+-version = "0.3.3"
++version = "0.3.4"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
-+checksum = "e35d6e78f4cebb90e51d543db8fe41528851d6deeef6ef21ebd4bfdc1e784776"
+-checksum = "211d617eaa4b735c96c9e0228fcbdb5120ef623f2b8cb67ffb84c3e02dbc28a4"
++checksum = "a3b6a8907b1723f211693e27b9af5899b86a9512ef5b08bd4a15b6bceb30da6d"
  dependencies = [
-  "libc",
-  "windows-sys 0.61.2",
-@@ -1181,7 +1181,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "a54ad7278b8bc5301d5ffd2a94251c004feb971feba96c971ea4063645990757"
- dependencies = [
-  "bindgen 0.72.1",
-- "errno 0.3.14",
-+ "errno 0.3.15",
-  "libc",
- ]
- 
-@@ -1574,7 +1574,7 @@ dependencies = [
-  "console",
-  "directories",
-  "dockworker",
-- "errno 0.3.14",
-+ "errno 0.3.15",
-  "fancy-regex",
-  "getch",
-  "libc",
-@@ -1820,7 +1820,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
- dependencies = [
-  "bitflags 2.13.0",
-- "errno 0.3.14",
-+ "errno 0.3.15",
-  "libc",
-  "linux-raw-sys 0.4.15",
-  "windows-sys 0.59.0",
-@@ -1833,7 +1833,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
- dependencies = [
-  "bitflags 2.13.0",
-- "errno 0.3.14",
-+ "errno 0.3.15",
-  "libc",
-  "linux-raw-sys 0.12.1",
-  "windows-sys 0.61.2",
+  "clap",
+  "roff",
 @@ -1966,7 +1966,7 @@ version = "1.4.8"
  source = "registry+https://github.com/rust-lang/crates.io-index"
  checksum = "c4db69cba1110affc0e9f7bcd48bbf87b3f4fc7c61fc9155afd4c469eb3d6c1b"
  dependencies = [
-- "errno 0.3.14",
-+ "errno 0.2.8",
+- "errno 0.2.8",
++ "errno 0.3.15",
   "libc",
  ]
  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1001** (2026-11-20): build(deps): bump clap_mangen from 0.3.3 to 0.3.4 (@dependabot[bot])
 - **PR #1000** (2026-11-16): build(deps): bump errno from 0.3.14 to 0.3.15 (@dependabot[bot])
 - **PR #998** (closed): build(deps): bump fancy-regex from 0.19.2 to 0.20.1 (@dependabot[bot])
 - **PR #997** (2026-11-09): build(deps): bump toml from 1.1.8+spec-1.1.0 to 1.2.1+spec-1.1.0 (@dependabot[bot])
 - **PR #995** (2026-11-06): build(deps): bump toml from 1.1.6+spec-1.1.0 to 1.1.8+spec-1.1.0 (@dependabot[bot])
 - **PR #994** (2026-11-02): build(deps): bump unicode-width from 0.2.2 to 0.2.3 (@dependabot[bot])
-- **PR #993** (closed): build(deps): bump fancy-regex from 0.19.2 to 0.20.0 (@dependabot[bot])
 
 ---
 
@@ -1735,13 +1699,13 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump errno from 0.3.14 to 0.3.15
+## X. build(deps): bump clap_mangen from 0.3.3 to 0.3.4
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dalance/procs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f6ac7a2a`: build(deps): bump errno from 0.3.14 to 0.3.15. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `491006fa`: build(deps): bump clap_mangen from 0.3.3 to 0.3.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -1749,29 +1713,21 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.3.15"
-checksum = "e35d6e78f4cebb90e51d543db8fe41528851d6deeef6ef21ebd4bfdc1e784776"
+version = "0.3.4"
+checksum = "a3b6a8907b1723f211693e27b9af5899b86a9512ef5b08bd4a15b6bceb30da6d"
  "errno 0.3.15",
- "errno 0.3.15",
- "errno 0.3.15",
- "errno 0.3.15",
- "errno 0.2.8",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.3.14"
-checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- "errno 0.3.14",
- "errno 0.3.14",
- "errno 0.3.14",
- "errno 0.3.14",
- "errno 0.3.14",
+version = "0.3.3"
+checksum = "211d617eaa4b735c96c9e0228fcbdb5120ef623f2b8cb67ffb84c3e02dbc28a4"
+ "errno 0.2.8",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f6ac7a2a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `491006fa` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

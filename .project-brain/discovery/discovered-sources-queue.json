@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T20:58:24.105Z",
+  "updated_at": "2026-11-20T21:25:55.230Z",
   "stats": {
-    "total_discovered": 6714,
-    "approved_pending_harvest": 6354,
+    "total_discovered": 6750,
+    "approved_pending_harvest": 6373,
     "harvested_count": 0,
-    "rejected_count": 360,
+    "rejected_count": 377,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6312,
+      "COMMUNITY_AND_EXPERT": 6346,
       "OFFICIAL_DOCUMENTATION": 230,
-      "STANDARDS_AND_SPECIFICATIONS": 119,
+      "STANDARDS_AND_SPECIFICATIONS": 121,
       "ENGINEERING_BLOGS": 5,
       "SECURITY_ADVISORIES": 39,
       "LEGAL_AND_REGULATORY": 2,
@@ -145211,6 +145211,679 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md",
         "fileName": "hf-thinkingmachines-inkling-2-mini-learnings.md"
+      }
+    },
+    "SRC-DB36E3331F38": {
+      "id": "SRC-DB36E3331F38",
+      "url": "https://github.com/clap-rs/clap",
+      "title": "https://github.com/clap-rs/clap",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:52.091Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-3789C8FC56DF": {
+      "id": "SRC-3789C8FC56DF",
+      "url": "https://github.com/clap-rs/clap/commit/db86ef6eccb2ed5ae16d3035982907692ecb10ef",
+      "title": "https://github.com/clap-rs/clap/commit/db86ef6eccb2ed5ae16d3035982907692ecb10ef",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:52.146Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-BEE7A64E59B0": {
+      "id": "SRC-BEE7A64E59B0",
+      "url": "https://github.com/clap-rs/clap/commit/416d0b0e606841d7d5f23d9bd92fd5a83562961f",
+      "title": "https://github.com/clap-rs/clap/commit/416d0b0e606841d7d5f23d9bd92fd5a83562961f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:52.205Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-343521864AB2": {
+      "id": "SRC-343521864AB2",
+      "url": "https://github.com/clap-rs/clap/commit/bebd2fdf6d3b826642e29d890695e370cfceb620",
+      "title": "https://github.com/clap-rs/clap/commit/bebd2fdf6d3b826642e29d890695e370cfceb620",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:52.280Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-040F71C90344": {
+      "id": "SRC-040F71C90344",
+      "url": "https://redirect.github.com/clap-rs/clap/issues/6569",
+      "title": "https://redirect.github.com/clap-rs/clap/issues/6569",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:52.334Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-0741DED25EDE": {
+      "id": "SRC-0741DED25EDE",
+      "url": "https://github.com/clap-rs/clap/commit/552461024b3d668dedda4087f8b67102f3ac6b46",
+      "title": "https://github.com/clap-rs/clap/commit/552461024b3d668dedda4087f8b67102f3ac6b46",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:52.397Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-BE3410297707": {
+      "id": "SRC-BE3410297707",
+      "url": "https://redirect.github.com/clap-rs/clap/issues/6572",
+      "title": "https://redirect.github.com/clap-rs/clap/issues/6572",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:52.456Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-01DF5331D52B": {
+      "id": "SRC-01DF5331D52B",
+      "url": "https://github.com/clap-rs/clap/commit/61d7b6f190f4dbb05dbda1c4dd8b2c9487795148",
+      "title": "https://github.com/clap-rs/clap/commit/61d7b6f190f4dbb05dbda1c4dd8b2c9487795148",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:52.515Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-FFDF3DF5697B": {
+      "id": "SRC-FFDF3DF5697B",
+      "url": "https://redirect.github.com/clap-rs/clap/issues/6574",
+      "title": "https://redirect.github.com/clap-rs/clap/issues/6574",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:52.573Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-0B459FA8C152": {
+      "id": "SRC-0B459FA8C152",
+      "url": "https://github.com/clap-rs/clap/commit/0a2145b2fd6e96f83e6366ebbc4462934572fd12",
+      "title": "https://github.com/clap-rs/clap/commit/0a2145b2fd6e96f83e6366ebbc4462934572fd12",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:52.633Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-6B7ED6871601": {
+      "id": "SRC-6B7ED6871601",
+      "url": "https://github.com/clap-rs/clap/commit/12a654c77aa675efe05e7c330cb0b72d269aff31",
+      "title": "https://github.com/clap-rs/clap/commit/12a654c77aa675efe05e7c330cb0b72d269aff31",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:52.707Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-DEE79552C435": {
+      "id": "SRC-DEE79552C435",
+      "url": "https://github.com/clap-rs/clap/commit/54605c",
+      "title": "https://github.com/clap-rs/clap/commit/54605c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:52.773Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-6EE7C05943F8": {
+      "id": "SRC-6EE7C05943F8",
+      "url": "https://github.com/clap-rs/clap/releases",
+      "title": "https://github.com/clap-rs/clap/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:53.021Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-41BE3C2C6B49": {
+      "id": "SRC-41BE3C2C6B49",
+      "url": "https://github.com/clap-rs/clap/blob/main/CHANGELOG.md",
+      "title": "https://github.com/clap-rs/clap/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:53.076Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-86F60C141882": {
+      "id": "SRC-86F60C141882",
+      "url": "https://github.com/clap-rs/clap/compare/clap_mangen-v0.3.3...clap_mangen-v0.3.4",
+      "title": "https://github.com/clap-rs/clap/compare/clap_mangen-v0.3.3...clap_mangen-v0.3.4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:53.131Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-49FCEBACC84F": {
+      "id": "SRC-49FCEBACC84F",
+      "url": "https://github.com/RDFLib/rdflib",
+      "title": "https://github.com/RDFLib/rdflib",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:54.033Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-932EAAFB6A30": {
+      "id": "SRC-932EAAFB6A30",
+      "url": "https://github.com/RDFLib/rdflib-jsonld/blob/feature/json-ld-1.1/rdflib_jsonld/util.py",
+      "title": "https://github.com/RDFLib/rdflib-jsonld/blob/feature/json-ld-1.1/rdflib_jsonld/util.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:54.086Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-411E4AAB4A84": {
+      "id": "SRC-411E4AAB4A84",
+      "url": "http://host/path%60",
+      "title": "http://host/path%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:25:54.145Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-FD73C78FFCBC": {
+      "id": "SRC-FD73C78FFCBC",
+      "url": "http://example.org/one",
+      "title": "http://example.org/one",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:25:54.230Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-BD3535317465": {
+      "id": "SRC-BD3535317465",
+      "url": "http://example.org/two",
+      "title": "http://example.org/two",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:25:54.292Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-49275A25FCD7": {
+      "id": "SRC-49275A25FCD7",
+      "url": "http://example.org/one/two",
+      "title": "http://example.org/one/two",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:25:54.346Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-2C99CA888F34": {
+      "id": "SRC-2C99CA888F34",
+      "url": "http://example.net/one",
+      "title": "http://example.net/one",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:25:54.403Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-B5F55CA8FA2B": {
+      "id": "SRC-B5F55CA8FA2B",
+      "url": "http://example.org//one",
+      "title": "http://example.org//one",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:25:54.455Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-1C1ABAFA12AF": {
+      "id": "SRC-1C1ABAFA12AF",
+      "url": "http://example.net/",
+      "title": "http://example.net/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:25:54.513Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-54491D37B21F": {
+      "id": "SRC-54491D37B21F",
+      "url": "http://example.org/?q=",
+      "title": "http://example.org/?q=",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:25:54.566Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-55679D050E0D": {
+      "id": "SRC-55679D050E0D",
+      "url": "http://ex.com/foo",
+      "title": "http://ex.com/foo",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:25:54.623Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-643008FD1893": {
+      "id": "SRC-643008FD1893",
+      "url": "http://dbpedia.org/resource",
+      "title": "http://dbpedia.org/resource",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:25:54.676Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-97D61AA88F61": {
+      "id": "SRC-97D61AA88F61",
+      "url": "http://dbpedia.org/resource/Berlin",
+      "title": "http://dbpedia.org/resource/Berlin",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:25:54.733Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-5AA4338ACAC9": {
+      "id": "SRC-5AA4338ACAC9",
+      "url": "http://www.w3.org/TR/2011/WD-turtle-20110809",
+      "title": "http://www.w3.org/TR/2011/WD-turtle-20110809",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "discovered_at": "2026-11-20T21:25:54.787Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-46683E08F60C": {
+      "id": "SRC-46683E08F60C",
+      "url": "http://www.w3.org/TR/NOTE-datetime",
+      "title": "http://www.w3.org/TR/NOTE-datetime",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "discovered_at": "2026-11-20T21:25:54.843Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-B11A8BB51518": {
+      "id": "SRC-B11A8BB51518",
+      "url": "https://api.github.com/search/issues?q=repo%3Ardflib%2Frdflib+is%3Apr+merged%3A%3E%3D2023-08-02&per_page=300&page=1",
+      "title": "https://api.github.com/search/issues?q=repo%3Ardflib%2Frdflib+is%3Apr+merged%3A%3E%3D2023-08-02&per_page=300&page=1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:54.896Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-F244336DCCE8": {
+      "id": "SRC-F244336DCCE8",
+      "url": "https://api.github.com/search/issues",
+      "title": "https://api.github.com/search/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:25:54.954Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-161BDACA1E73": {
+      "id": "SRC-161BDACA1E73",
+      "url": "http://id.loc.gov/ontologies/bibframe",
+      "title": "http://id.loc.gov/ontologies/bibframe",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:25:55.007Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-6E991DB3E262": {
+      "id": "SRC-6E991DB3E262",
+      "url": "http://example.org/s",
+      "title": "http://example.org/s",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:25:55.065Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-5810C16CA95B": {
+      "id": "SRC-5810C16CA95B",
+      "url": "http://example.org/instances/3526_HIGH_ST",
+      "title": "http://example.org/instances/3526_HIGH_ST",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:25:55.149Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-69B0B5B1B04C": {
+      "id": "SRC-69B0B5B1B04C",
+      "url": "http://example.org/props/postcode",
+      "title": "http://example.org/props/postcode",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T21:25:55.230Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
+        "fileName": "rdflib-rdflib-learnings.md"
       }
     }
   }

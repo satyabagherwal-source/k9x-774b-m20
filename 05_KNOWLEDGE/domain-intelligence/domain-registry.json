@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T21:06:31.872Z",
-  "total_records": 2178,
+  "last_updated": "2026-11-20T21:25:56.741Z",
+  "total_records": 2180,
   "domains": {
     "A": {
       "total": 17,
@@ -58,7 +58,7 @@
       ]
     },
     "D": {
-      "total": 876,
+      "total": 878,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -935,7 +935,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-ovhaillm-olala-v1-0-mini-7a1b-learnings-core-",
         "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-mini-core-invariants",
         "DOM-D-F66E1D4B",
-        "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-mini-learnings-cor"
+        "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-mini-learnings-cor",
+        "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-learnings-core-invariants"
       ]
     },
     "E": {
@@ -24829,8 +24831,8 @@
       "title": "Architecture Intelligence: iPlug2/iPlug2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iplug2-iplug2-architecture-intelligence-iplug2-iplug2-core-invariants.md",
       "repository": "iPlug2/iPlug2",
-      "content_hash": "82640a512908f53532d9829af44b235bee6501f94fd946dd8d93fee35a844107",
-      "created_at": "2026-11-16T22:19:25.295Z"
+      "content_hash": "ba781000d2b061d6bdbb689aa33e130cf018fce11f5243baf48e7cbcd7989da3",
+      "created_at": "2026-11-20T21:25:44.851Z"
     },
     "domain_intelligence-quality-verification-intelligence-crate-crate-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-crate-crate-core-invariants",
@@ -24865,8 +24867,8 @@
       "title": "Architecture Intelligence: iplug2-iplug2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iplug2-iplug2-learnings-architecture-intelligence-iplug2-iplug2-learnings-core-i.md",
       "repository": "iplug2-iplug2-learnings",
-      "content_hash": "aec68484d0a0963e6287d231d4b4c39a773b7d8fad1a29e89dcddf0f43d2df8e",
-      "created_at": "2026-11-16T22:19:35.563Z"
+      "content_hash": "8b369896c7ea1f7f49da81cded0cf2ebf0663ebbf7467a94fd0af2147692cd6d",
+      "created_at": "2026-11-20T21:25:56.741Z"
     },
     "domain_intelligence-technical-construction-intelligence-nodejs-undici-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nodejs-undici-core-invariants",
@@ -27987,8 +27989,8 @@
       "title": "Architecture Intelligence: dalance/procs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dalance-procs-architecture-intelligence-dalance-procs-core-invariants.md",
       "repository": "dalance/procs",
-      "content_hash": "e1e6ae0be9f73f4fe31f80eef08b87ee257bd7c640e946074a7e7ef139dc93e7",
-      "created_at": "2026-11-17T15:43:38.387Z"
+      "content_hash": "3e094f6d7c65ce562549c1b436916e363e317b443310b028982aeb3385102a93",
+      "created_at": "2026-11-20T21:25:48.916Z"
     },
     "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-cor": {
       "record_id": "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-cor",
@@ -28005,8 +28007,8 @@
       "title": "Architecture Intelligence: dalance-procs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dalance-procs-learnings-architecture-intelligence-dalance-procs-learnings-core-i.md",
       "repository": "dalance-procs-learnings",
-      "content_hash": "0e8a8878eb021344ef9cceddf7ffdafbe75c857b98611237f3d20b4d0114de88",
-      "created_at": "2026-11-17T15:43:53.493Z"
+      "content_hash": "c0b9b786b1fa87e0c349ce34d776cb8ea7181ce69719795fca6304b5ef34c6a4",
+      "created_at": "2026-11-20T21:25:53.627Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-",
@@ -36648,6 +36650,24 @@
       "repository": "lancedb-lancedb-learnings",
       "content_hash": "4857acf4b2f4b6dd4fb893b93d238c8bb3c2608d6caeade7d6a51de00c95a4d8",
       "created_at": "2026-11-20T21:06:30.449Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: RDFLib/rdflib Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-rdflib-rdflib-research-knowledge-intelligence-rdflib-rdflib-core-invariants.md",
+      "repository": "RDFLib/rdflib",
+      "content_hash": "f773b09bb43672b7e8ec5a9dacbc2b2d9bfd0bdf82c29a7f886c4ea37ca7134f",
+      "created_at": "2026-11-20T21:25:45.657Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: rdflib-rdflib-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-rdflib-rdflib-learnings-research-knowledge-intelligence-rdflib-rdflib-learnings-.md",
+      "repository": "rdflib-rdflib-learnings",
+      "content_hash": "3f1633e0eed3cf94737ae848927ba27a8ea7aee31c146a459d2b5c21b077c666",
+      "created_at": "2026-11-20T21:25:55.771Z"
     }
   }
 }

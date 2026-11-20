@@ -11631,3 +11631,6 @@
 | `CYCLE-20261120-NL04` | `2026-11-20T20:57:53.428Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9639` | Yes (`a0550e5e...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T20:58:24.077Z` | `hf-thinkingmachines-inkling-2-mini` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F66E1D4B` [Domain D] | Yes (`8a1fd019...`) |
 | `CYCLE-20261120-YL66` | `2026-11-20T21:06:26.862Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9640` | Yes (`930310eb...`) |
+| `CYCLE-20261120-NE8W` | `2026-11-20T21:25:44.288Z` | `iPlug2/iPlug2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9641` | Yes (`5c394fe6...`) |
+| `CYCLE-20261120-NEWH` | `2026-11-20T21:25:45.137Z` | `RDFLib/rdflib` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rdflib-rdflib-learnings.md` | Yes (`ee1b9835...`) |
+| `CYCLE-20261120-NHGK` | `2026-11-20T21:25:48.452Z` | `dalance/procs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9642` | Yes (`d01a5eef...`) |

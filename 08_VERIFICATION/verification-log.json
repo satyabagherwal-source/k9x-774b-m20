@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-L0OG",
-    "timestamp": "2026-11-18T17:36:36.016Z",
-    "repository": "BuilderIO/builder",
-    "learningId": "learn-github-builderio-builder",
-    "contentHash": "e91cb66231a5e62979643d56394d0723d1141428e42c982615745c00918461f2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-RAK8",
-    "timestamp": "2026-11-18T17:41:28.760Z",
-    "repository": "Qwen/Qwen3-0.6B",
-    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-    "contentHash": "046a7b1aa17796f25d841665bbc6a9499c5d00b65676154661a94246cf62e10d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-3O0A",
-    "timestamp": "2026-11-18T17:51:06.058Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-google-t5-t5-small",
-    "contentHash": "0cf0b8b7b5a82bc133ab563a1a70ae74b92392367b66b8bb49f1703feecf4c92",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-3XKP",
     "timestamp": "2026-11-18T17:51:18.457Z",
     "repository": "tailscale/tailscale",
@@ -7490,6 +7445,51 @@
     "repository": "lancedb/lancedb",
     "learningId": "learn-github-lancedb-lancedb",
     "contentHash": "930310ebb278215e07459257d75a38983d53de9644d3bbb754e6e0190ac7e0fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-NE8W",
+    "timestamp": "2026-11-20T21:25:44.288Z",
+    "repository": "iPlug2/iPlug2",
+    "learningId": "learn-github-iplug2-iplug2",
+    "contentHash": "5c394fe65dc0fae067058f90934a4b44258490ea48632dc6cfab3d0adb8fde47",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-NEWH",
+    "timestamp": "2026-11-20T21:25:45.137Z",
+    "repository": "RDFLib/rdflib",
+    "learningId": "learn-github-rdflib-rdflib",
+    "contentHash": "ee1b98357eb134bb439032bfa5865e2c26bace460967884eb45843c1fe9b7170",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-NHGK",
+    "timestamp": "2026-11-20T21:25:48.452Z",
+    "repository": "dalance/procs",
+    "learningId": "learn-github-dalance-procs",
+    "contentHash": "d01a5eef5292a4f0836798ff62e1e6578db0c95246f016bde3bada31b01d6964",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

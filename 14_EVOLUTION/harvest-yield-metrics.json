@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T21:06:26.870Z",
-  "total_cycles_completed": 11076,
-  "total_learnings_persisted": 11076,
-  "total_rules_promoted": 10431,
+  "last_updated": "2026-11-20T21:25:48.463Z",
+  "total_cycles_completed": 11079,
+  "total_learnings_persisted": 11079,
+  "total_rules_promoted": 10433,
   "history": [
-    {
-      "timestamp": "2026-11-19T22:27:38.498Z",
-      "repository": "seo-skills/seo-audit-skill",
-      "learningId": "learn-github-seo-skills-seo-audit-skill",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T22:27:45.795Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T22:36:09.016Z",
-      "repository": "vanniktech/gradle-maven-publish-plugin",
-      "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T22:36:14.508Z",
       "repository": "sigstore/cosign",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-20T21:06:26.870Z",
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T21:25:44.301Z",
+      "repository": "iPlug2/iPlug2",
+      "learningId": "learn-github-iplug2-iplug2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T21:25:45.185Z",
+      "repository": "RDFLib/rdflib",
+      "learningId": "learn-github-rdflib-rdflib",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T21:25:48.463Z",
+      "repository": "dalance/procs",
+      "learningId": "learn-github-dalance-procs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

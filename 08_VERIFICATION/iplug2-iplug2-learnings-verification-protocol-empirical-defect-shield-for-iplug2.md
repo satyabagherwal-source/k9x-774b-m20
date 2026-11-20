@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T22:19:35.315Z",
+  "timestamp": "2026-11-20T21:25:56.426Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-iplug2-iplug2-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [iplug2-iplug2-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T22:19:35.315Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T21:25:56.426Z`  
 > **Learning ID**: `LEARN-EVO-iplug2-iplug2-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source**: github ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
-> **Source Version**: `985d63a1`  
+> **Source Version**: `e67ca638`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T22:19:23.831Z  
+> **Timestamp**: 2026-11-20T21:25:43.094Z  
 > **Learning ID**: `learn-github-iplug2-iplug2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T22:19:23.825Z  
+> **Harvest Timestamp**: 2026-11-20T21:25:42.854Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: C++ Audio Plug-in Framework for desktop, mobile, xr and web
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2450 stars
+- **Stars / Engagement**: 2452 stars
 
 ---
 
@@ -1477,100 +1477,1269 @@ if __name__ == '__main__':
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `651ed754` (2026-11-15)
-**Commit Message**: Merge pull request #1460 from iPlug2/fix/cmake-ci-comment-concurrency
+### Incident Patch 1: `2fc55a78` (2026-11-18)
+**Commit Message**: WebView: add a WebKitGTK editor for CLAP and VST3 on Linux
 
-CMake CI: stop PR comments cancelling master builds
+IWebView is implemented with WebKitGTK 4.1 in a GtkPlug, which embeds
+into the host's X11 window with XEmbed. GDK is restricted to its X11
+backend, since GtkPlug does not exist on Wayland, and GTK is told not to
+change the process locale.
 
-**File**: `.github/workflows/cmake-ci.yml` (modified, +6/-2)
+In the standalone app the parent window belongs to the process's own
+GDK, which GtkPlug cannot embed into, so a plain X11 child window is
+interposed below the menu bar. The view honours IPLUG2_SCREEN_SCALE
+there by zooming the difference from GDK's integer scale.
+
+GTK's main context is pumped from the plug-in's main-thread idle
+callback: a coalesced on_main_thread request in CLAP, the IRunLoop idle
+timer in VST3 and the SWELL timer in the standalone app.
+
+WEB_RESOURCES are staged in <name>.clap.resources/web for CLAP and in
+the bundle's Resources/web for VST3, and deployed with the binary.
+The WebView examples are built on Linux when
+IPLUG_LINUX_WEBVIEW_EXAMPLES is set. IWebViewControl and the REAPER
+WebView extension are not supported on Linux.
+
+Co-authored-by: Benjamin Reed <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `Examples/CMakeLists.txt` (modified, +3/-3)
 ```diff
-@@ -62,9 +62,13 @@ on:
-         type: boolean
-         default: false
+@@ -22,12 +22,12 @@ add_subdirectory(IPlugVisualizer)
  
--# Cancel in-progress runs for the same PR/branch
-+# Cancel in-progress runs for the same PR/branch.
-+# issue_comment events run on the default branch ref and the concurrency group
-+# is evaluated before the job-level /ci filter, so comments need their own keys:
-+#  - "/ci" comments: per-PR group, so a newer /ci supersedes an older one
-+#  - any other comment: unique per run, so it can never cancel a real build
- concurrency:
--  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-+  group: ${{ github.workflow }}-${{ github.event_name == 'issue_comment' && (startsWith(github.event.comment.body, '/ci') && format('ci-comment-{0}', github.event.issue.number) || github.run_id) || github.event.pull_request.number || github.ref }}
-   cancel-in-progress: true
+ # WebView examples
+ set(CMAKE_FOLDER "Examples/WebView")
+-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+-  message(STATUS "Skipping IPlugWebUI, IPlugP5js and IPlugSvelteUI: WebView is not implemented on Linux.")
+-else()
++if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux" OR IPLUG_LINUX_WEBVIEW_EXAMPLES)
+   add_subdirectory(IPlugWebUI)
+   add_subdirectory(IPlugP5js)
+   add_subdirectory(IPlugSvelteUI)
++elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
++  message(STATUS "Skipping WebView examples (enable IPLUG_LINUX_WEBVIEW_EXAMPLES and install WebKitGTK 4.1 to build).")
+ endif()
  
- jobs:
+ # Swift/Cocoa examples (requires Xcode generator)
 ```
 
----
-
-### Incident Patch 2: `dac1c85c` (2026-11-15)
-**Commit Message**: CMake CI: stop PR comments cancelling master and PR builds
-
-issue_comment events have no pull_request payload and run against the
-default branch ref, so every PR comment landed in the
-'CMake CI-refs/heads/master' concurrency group and cancelled any
-in-flight master push build (e.g. run 43715822742). The concurrency
-group is evaluated before the job-level /ci filter, so even comments
-that are skipped still cancel.
-
-Give comment-triggered runs their own keys: /ci comments use a per-PR
-'ci-comment-N' group so a newer /ci supersedes an older one, and all
-other comments use github.run_id so they can never cancel a build.
-
-**File**: `.github/workflows/cmake-ci.yml` (modified, +6/-2)
+**File**: `IPlug/APP/IPlugAPP.cpp` (modified, +6/-0)
 ```diff
-@@ -62,9 +62,13 @@ on:
-         type: boolean
-         default: false
+@@ -15,6 +15,9 @@
  
--# Cancel in-progress runs for the same PR/branch
-+# Cancel in-progress runs for the same PR/branch.
-+# issue_comment events run on the default branch ref and the concurrency group
-+# is evaluated before the job-level /ci filter, so comments need their own keys:
-+#  - "/ci" comments: per-PR group, so a newer /ci supersedes an older one
-+#  - any other comment: unique per run, so it can never cancel a real build
- concurrency:
--  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-+  group: ${{ github.workflow }}-${{ github.event_name == 'issue_comment' && (startsWith(github.event.comment.body, '/ci') && format('ci-comment-{0}', github.event.issue.number) || github.run_id) || github.event.pull_request.number || github.ref }}
-   cancel-in-progress: true
+ #ifdef OS_LINUX
+ #include "IPlugSWELLTimer.h"
++#if defined WEBVIEW_EDITOR_DELEGATE
++extern "C" void IPlugLinuxWebViewPump();
++#endif
+ #endif
  
- jobs:
+ #if defined OS_MAC || defined OS_LINUX
+@@ -46,6 +49,9 @@ IPlugAPP::IPlugAPP(const InstanceInfo& info, const Config& config)
+     CloseWindowIfRequested();
+ #endif
+     OnTimer();
++#if defined WEBVIEW_EDITOR_DELEGATE
++    IPlugLinuxWebViewPump();
++#endif
+   }, IDLE_TIMER_RATE));
+ #else
+   CreateTimer();
 ```
 
----
-
-### Incident Patch 3: `1d08b9ab` (2026-11-15)
-**Commit Message**: IPlugCocoaUI: bundle macOS storyboard in CMake builds
-
-The plugin constructor loads IPlugCocoaUI-macOS-MainInterface via
-NSStoryboard, but the CMake targets never copied it into the bundle,
-so every CMake-built macOS format threw an ObjC exception on
-instantiation (e.g. 12 clap-validator tests crashed with SIGABRT).
-
-**File**: `Examples/IPlugCocoaUI/CMakeLists.txt` (modified, +5/-0)
+**File**: `IPlug/CLAP/IPlugCLAP.cpp` (modified, +32/-1)
 ```diff
-@@ -57,6 +57,11 @@ iplug_add_target(_${PROJECT_NAME}-base INTERFACE
- # macOS targets (not iOS)
- # ============================================================================
- if(NOT IOS)
-+  # Storyboard is loaded by name in the plugin constructor, so it must be in every bundle
-+  set(MACOS_STORYBOARD UI/IPlugCocoaUI-macOS-MainInterface.storyboard)
-+  set_source_files_properties(${MACOS_STORYBOARD} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-+  list(APPEND SOURCE_FILES ${MACOS_STORYBOARD})
+@@ -15,6 +15,9 @@
+ #include "IPlugPluginBase.h"
+ #include "plugin.hxx"
+ #include "host-proxy.hxx"
++#if defined OS_LINUX && defined WEBVIEW_EDITOR_DELEGATE
++extern "C" void IPlugLinuxWebViewPump();
++#endif
+ #if defined OS_LINUX && !defined NO_IGRAPHICS
+ #include "IGraphicsLinux.h"
+ #endif
+@@ -64,6 +67,9 @@ IPlugCLAP::IPlugCLAP(const InstanceInfo& info, const Config& config)
+ IPlugCLAP::~IPlugCLAP()
+ {
+ #ifdef OS_LINUX
++#if defined WEBVIEW_EDITOR_DELEGATE
++  mWebViewTimer.reset();
++#endif
+   mTimer.reset();
+ #ifndef NO_IGRAPHICS
+   mLinuxGuiTimer.reset();
+@@ -942,6 +948,10 @@ bool IPlugCLAP::guiCreate(const char* api, bool isFloating) noexcept
+ 
+ void IPlugCLAP::guiDestroy() noexcept
+ {
++#if defined OS_LINUX && defined WEBVIEW_EDITOR_DELEGATE
++  mWebViewTimer.reset();
++  mWebViewPending = false;
++#endif
+ #if defined OS_LINUX && !defined NO_IGRAPHICS
+   UnregisterLinuxHostCallbacks();
+ #endif
+@@ -952,7 +962,7 @@ void IPlugCLAP::guiDestroy() noexcept
+ 
+ bool IPlugCLAP::guiShow() noexcept
+ {
+-#if defined OS_LINUX && !defined NO_IGRAPHICS
++#if defined OS_LINUX && (defined WEBVIEW_EDITOR_DELEGATE || !defined NO_IGRAPHICS)
+   return HasUI() && (mGUIOpen || (mWindow && GUIWindowAttach(mWindow)));
+ #else
+   if (HasUI() && !mGUIOpen)
+@@ -978,6 +988,10 @@ bool IPlugCLAP::guiShow() noexcept
+ 
+ bool IPlugCLAP::guiHide() noexcept
+ {
++#if defined OS_LINUX && defined WEBVIEW_EDITOR_DELEGATE
++  mWebViewTimer.reset();
++  mWebViewPending = false;
++#endif
+ #if defined OS_LINUX && !defined NO_IGRAPHICS
+   UnregisterLinuxHostCallbacks();
+ #endif
+@@ -1052,6 +1066,18 @@ bool IPlugCLAP::GUIWindowAttach(void* pWindow) noexcept
+ #endif
+     mWindow = pWindow;
+     mGUIOpen = true;
++#if defined OS_LINUX && defined WEBVIEW_EDITOR_DELEGATE
++    mWebViewTimer.reset(Timer::Create([this](Timer&) {
++      if (!mWebViewPending.exchange(true))
++        _host.requestCallback();
++    }, 16));
++    if (!mWebViewTimer)
++    {
++      CloseWindow();
++      mGUIOpen = false;
++      return false;
++    }
++#endif
+ #if defined OS_LINUX && !defined NO_IGRAPHICS
+     // Switch to host-driven mode: stops the internal timer thread
+     // and lets the host drive rendering via onTimer / onPosixFd.
+@@ -1255,6 +1281,11 @@ void IPlugCLAP::onPosixFd(int fd, clap_posix_fd_flags_t flags) noexcept
+ #if defined OS_LINUX
+ void IPlugCLAP::onMainThread() noexcept
+ {
++#if defined WEBVIEW_EDITOR_DELEGATE
++  mWebViewPending = false;
++  if (mGUIOpen)
++    IPlugLinuxWebViewPump();
++#endif
+   if (mLinuxIdlePending.exchange(false))
+     OnTimer();
+ #ifndef NO_IGRAPHICS
+```
+
+**File**: `IPlug/CLAP/IPlugCLAP.h` (modified, +4/-0)
+```diff
+@@ -185,6 +185,10 @@ class IPlugCLAP : public IPlugAPIBase
+ #if defined OS_LINUX
+   void onMainThread() noexcept override;
+   std::atomic<bool> mLinuxIdlePending{false};
++#if defined WEBVIEW_EDITOR_DELEGATE
++  std::unique_ptr<Timer> mWebViewTimer;
++  std::atomic<bool> mWebViewPending{false};
++#endif
+ #endif
+ 
+ #if defined OS_LINUX && !defined NO_IGRAPHICS
+```
+
+**File**: `IPlug/Extras/WebView/IPlugWebViewEditorDelegate.h` (modified, +1/-1)
+```diff
+@@ -225,7 +225,7 @@ class WebViewEditorDelegate : public IEditorDelegate
+    */
+   void LoadIndexHtml(const char* pathOfPluginSrc, const char* bundleid)
+   {
+-#if !defined OS_IOS && defined _DEBUG
++#if !defined OS_IOS && defined _DEBUG && !defined OS_LINUX
+     namespace fs = std::filesystem;
+     
+     fs::path mainPath(pathOfPluginSrc);
+```
+
+**File**: `IPlug/Extras/WebView/IPlugWebView_linux.cpp` (added, +405/-0)
+```diff
+@@ -0,0 +1,405 @@
++/*
++ ==============================================================================
 +
-   # ============================================================================
-   # APP Target (Standalone Application) - with Cocoa UI
-   # ============================================================================
++ This file is part of the iPlug 2 library. Copyright (C) the iPlug 2 developers.
++
++ See LICENSE.txt for  more info.
++
++ ==============================================================================
++*/
++
++#include "IPlugWebView.h"
++#include "IPlugPaths.h"
++#include <gtk/gtkx.h>
++#include <gdk/gdkx.h>
++#include <webkit2/webkit2.h>
++#include <dlfcn.h>
++#include <cmath>
++#include <filesystem>
++#include <algorithm>
++#include <cstdint>
++#include <memory>
++#include <utility>
++#include <cstring>
++#include <cstdlib>
++
++// GTK is process-global. Host callbacks must run on the GUI/main thread.
++extern "C" void IPlugLinuxWebViewPump()
++{
++  for (int i = 0; i < 32 && g_main_context_pending(nullptr); ++i)
++    g_main_context_iteration(nullptr, FALSE);
++}
++
++// dladdr needs an address inside this module to resolve the module's path
++static void IPlugLinuxWebViewModuleAnchor() {}
++
++BEGIN_IPLUG_NAMESPACE
++
++class IWebViewImpl
++{
++public:
++  explicit IWebViewImpl(IWebView* pOwner)
++    : mOwner(pOwner)
++  {
++  }
++
++  ~IWebViewImpl() { CloseWebView(); }
++
++  void* OpenWebView(void* pParent, float x, float y, float w, float h, float scale)
++  {
++    CloseWebView();
++
++    if (!pParent)
++      return nullptr;
++
++    // GtkPlug is X11-only. In a Wayland session GDK would otherwise prefer the
++    // Wayland backend even though the host window is an (XWayland) X11 window.
++    // No effect if the process has already opened a GDK display.
++    gdk_set_allowed_backends("x11");
++
++    // gtk_init_check() would otherwise call setlocale(LC_ALL, ""), changing
++    // e.g. the decimal separator for the host and every other plugin.
++    gtk_disable_setlocale();
++
++    if (!gtk_init_check(nullptr, nullptr))
++      return nullptr;
++
++    // Reject stale/invalid XIDs before gtk_plug_new issues X requests. GDK's
++    // own connection may otherwise turn a BadWindow into a process abort.
++    GdkDisplay* pDisplay = gdk_display_get_default();
++
++    if (!GDK_IS_X11_DISPLAY(pDisplay))
++      return nullptr;
++
++    Window parentXID = static_cast<Window>(reinterpret_cast<uintptr_t>(pParent));
++    GdkWindow* pOwnWindow = gdk_x11_window_lookup_for_display(pDisplay, parentXID);
++
++    // GDK also caches foreign wrappers for host windows from earlier opens.
++    if (pOwnWindow && gdk_window_get_window_type(pOwnWindow) != GDK_WINDOW_FOREIGN)
++    {
++      // The parent belongs to this process's GDK (standalone app). GtkPlug can
++      // only embed into a foreign window, so interpose a plain X11 child that
++      // GDK does not track, placed below the container's menu bar.
++      const char* menuOffset = getenv("IPLUG2_MENU_OFFSET");
++      mHostScale = std::max(1, gdk_window_get_scale_factor(pOwnWindow));
++      Display* pXDisplay = gdk_x11_display_get_xdisplay(pDisplay);
++      mHostChild = XCreateSimpleWindow(pXDisplay, parentXID, 0, menuOffset ? std::clamp(atoi(menuOffset), 0, 100) : 0, std::max(1, static_cast<int>(std::ceil(w * scale))) * mHostScale,
++                                       std::max(1, static_cast<int>(std::ceil(h * scale))) * mHostScale, 0, 0, 0);
++      XMapWindow(pXDisplay, mHostChild);
++      XSync(pXDisplay, False);
++      parentXID = mHostChild;
++    }
++
++    GdkWindow* pHostWindow = gdk_x11_window_foreign_new_for_display(pDisplay, parentXID);
++
++    if (!pHostWindow)
++    {
++      CloseWebView();
++      return nullptr;
++    }
++
++    g_object_unref(pHostWindow);
++    mPlug = gtk_plug_new(parentXID);
++
++    if (!mPlug)
++    {
++      CloseWebView();
++      return nullptr;
++    }
++
++    // GTK destroys the plug itself if the host destroys the parent window first
++    g_signal_connect(mPlug, "destroy", G_CALLBACK(OnPlugDestroyed), this);
++
++    mView = webkit_web_view_new();
++    auto* pManager = webkit_web_view_get_user_content_manager(WEBKIT_WEB_VIEW(mView));
++    webkit_user_content_manager_register_script_message_handler(pManager, "iplug");
++    g_signal_connect(pManager, "script-message-received::iplug", G_CALLBACK(OnScriptMessage), this);
++
++    auto* pBridge = webkit_user_script_new("window.IPlugSendMsg = function(msg) { window.webkit.messageHandlers.iplug.postMessage(JSON.stringify(msg)); };", WEBKIT_USER_CONTENT_INJECT_TOP_FRAME,
++                                           WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_START, nullptr, nullptr);
++    webkit_user_content_manager_add_script(pManager, pBridge);
++    webkit_user_script_unref(pBridge);
++
++    g_signal_connect(mView, "decide-policy", G_CALLBACK(OnDecidePolicy), this);
++    g_signal_connect(mView, "load-changed", G_CALLBACK(OnLoadChanged), this);
++    g_signal_connect(mView, "load-failed", G_CALLBACK(OnLoadFailed), this);
++
++    if (mHostChild)
++    {
++      // The standalone exports its effective UI scale (which may be fractional,
++      // e.g. 1.5); GDK only renders at integer factors, so zoom the difference.
++      const char* str = getenv("IPLUG2_SCREEN_S
+```
+
+**File**: `IPlug/VST3/IPlugVST3.cpp` (modified, +9/-1)
+```diff
+@@ -17,6 +17,9 @@
+ #include "pluginterfaces/vst/ivstmidicontrollers.h"
+ 
+ #include "IPlugVST3.h"
++#if defined OS_LINUX && defined WEBVIEW_EDITOR_DELEGATE
++extern "C" void IPlugLinuxWebViewPump();
++#endif
+ 
+ using namespace iplug;
+ using namespace Steinberg;
+@@ -49,7 +52,12 @@ IPlugVST3::~IPlugVST3()
+ bool IPlugVST3::EnsureLinuxIdleTimer(FUnknown* context)
+ {
+   if (!mLinuxIdleTimer)
+-    mLinuxIdleTimer = owned(new IPlugVST3Timer([this] { OnTimer(); }));
++    mLinuxIdleTimer = owned(new IPlugVST3Timer([this] {
++      OnTimer();
++#if defined WEBVIEW_EDITOR_DELEGATE
++      IPlugLinuxWebViewPump();
++#endif
++    }));
+   return mLinuxIdleTimer->Start(context);
+ }
+ #endif
+```
+
+**File**: `Scripts/cmake/Deploy.cmake` (modified, +18/-0)
+```diff
+@@ -292,6 +292,24 @@ function(iplug_deploy_target target format project_name)
+     # Default to SYMLINK
+     _iplug_create_plugin_link(${target} "${source_path}" "${deploy_path}" "${plugin_name}")
+   endif()
++  if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND format STREQUAL "CLAP")
++    get_target_property(_has_web_resources ${target} IPLUG_LINUX_WEB_RESOURCES)
++    if(_has_web_resources)
++      set(_web_source "$<TARGET_FILE:${target}>.resources")
++      set(_web_dest "${deploy_path}/${plugin_name}.resources")
++      if(IPLUG_DEPLOY_METHOD STREQUAL "COPY")
++        add_custom_command(TARGET ${target} POST_BUILD
++          COMMAND ${CMAKE_COMMAND} -E rm -rf "${_web_dest}"
++          COMMAND ${CMAKE_COMMAND} -E copy_directory "${_web_source}" "${_web_dest}"
++          VERBATIM)
++      else()
++        add_custom_command(TARGET ${target} POST_BUILD
++          COMMAND ${CMAKE_COMMAND} -E rm -rf "${_web_dest}"
++          COMMAND ${CMAKE_COMMAND} -E create_symlink "${_web_source}" "${_web_dest}"
++          VERBATIM)
++      endif()
++    endif()
++  endif()
+ endfunction()
+ 
+ #------------------------------------------------------------------------
+```
+
+---
+
+### Incident Patch 2: `cdace167` (2026-11-18)
+**Commit Message**: IGraphics: prepare shared code for a Linux platform
+
+- Select glad and the NanoVG GL2/GL3 implementation on Linux, and
+  create IGraphicsLinux from MakeGraphics().
+- IGEditorDelegate gains a recursive graphics mutex on Linux, since
+  hosts call into the delegate from threads other than the one that
+  draws. PrepareGraphics() and SetHostScreenScale() let a host query
+  the editor size and set its scale before the window is attached, and
+  CloseWindowIfRequested() completes a close that was requested from
+  inside graphics dispatch. Other platforms are unchanged (the lock
+  macro expands to nothing).
+- IGraphics does not ask the host to resize while no window is open on
+  Linux, defaults to EUIResizerMode::Size there and does not attach the
+  corner resizer, because the host or window manager provides the
+  resize handle.
+- IGraphicsNanoVG tolerates a missing main framebuffer by drawing
+  directly to the window, and on Linux clears stale GL errors before
+  creating it (needed with llvmpipe).
+
+Co-authored-by: Benjamin Reed <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `IGraphics/Drawing/IGraphicsNanoVG.cpp` (modified, +33/-3)
+```diff
+@@ -47,7 +47,13 @@
+       #error Define either IGRAPHICS_GL2 or IGRAPHICS_GL3 when using IGRAPHICS_GL and IGRAPHICS_NANOVG with OS_WIN
+     #endif
+   #elif defined OS_LINUX
+-    #error NOT IMPLEMENTED
++    #if defined IGRAPHICS_GL2
++      #define NANOVG_GL2_IMPLEMENTATION
++    #elif defined IGRAPHICS_GL3
++      #define NANOVG_GL3_IMPLEMENTATION
++    #else
++      #error "Define either IGRAPHICS_GL2 or IGRAPHICS_GL3 when using IGRAPHICS_NANOVG with OS_LINUX"
++    #endif
+   #elif defined OS_WEB
+     #if defined IGRAPHICS_GLES2
+       #define NANOVG_GLES2_IMPLEMENTATION
+@@ -488,14 +494,27 @@ void IGraphicsNanoVG::DrawResize()
+   ScopedGLContext scopedGLCtx {this};
+ 
+   if (mMainFrameBuffer != nullptr)
++  {
+     nvgDeleteFramebuffer(mMainFrameBuffer);
++    mMainFrameBuffer = nullptr;
++  }
+   
+   if (mVG)
+   {
+-    mMainFrameBuffer = nvgCreateFramebuffer(mVG, WindowWidth() * GetScreenScale(), WindowHeight() * GetScreenScale(), 0);
++#if defined OS_LINUX && defined IGRAPHICS_GL
++    // Flush and sync all pending GL commands, and drain any accumulated GL
++    // errors, before creating the FBO. On llvmpipe/Xwayland, NanoVG shader
++    // setup and font loading leave stale GL error state that causes
++    // glCheckFramebufferStatus to fail unless cleared first.
++    glFinish();
++    while (glGetError() != GL_NO_ERROR) {}
++#endif
++    int w = (int)(WindowWidth() * GetScreenScale());
++    int h = (int)(WindowHeight() * GetScreenScale());
++    mMainFrameBuffer = nvgCreateFramebuffer(mVG, w, h, 0);
+   
+     if (mMainFrameBuffer == nullptr)
+-      DBGMSG("Could not init FBO.\n");
++      DBGMSG("Could not init FBO (w=%d h=%d).\n", w, h);
+   }
+ }
+ 
+@@ -520,6 +539,17 @@ void IGraphicsNanoVG::BeginFrame()
+ void IGraphicsNanoVG::EndFrame()
+ {
+   nvgEndFrame(mVG); // end main frame buffer update
++
++  // When the FBO is unavailable (e.g. llvmpipe/Xwayland software renderer),
++  // BeginFrame rendered directly to the window framebuffer, so no compositing
++  // pass is needed.  Skip the second nvgBeginFrame/EndFrame entirely.
++  if (mMainFrameBuffer == nullptr)
++  {
++    mInDraw = false;
++    ClearFBOStack();
++    return;
++  }
++
+   nvgBindFramebuffer(nullptr);
+   nvgBeginFrame(mVG, WindowWidth(), WindowHeight(), GetScreenScale());
+   
+```
+
+**File**: `IGraphics/IGraphics.cpp` (modified, +26/-7)
+```diff
+@@ -80,7 +80,13 @@ void IGraphics::SetScreenScale(float scale)
+   
+   assert(windowWidth > 0 && windowHeight > 0 && "Window dimensions invalid");
+ 
+-  bool parentResized = GetDelegate()->EditorResizeFromUI(windowWidth, windowHeight, true);
++  bool parentResized = false;
++#ifdef OS_LINUX
++  if (!WindowIsOpen())
++    GetDelegate()->SetEditorSize(windowWidth, windowHeight);
++  else
++#endif
++    parentResized = GetDelegate()->EditorResizeFromUI(windowWidth, windowHeight, true);
+   PlatformResize(parentResized);
+   ForAllControls(&IControl::OnRescale);
+   SetAllControlsDirty();
+@@ -91,11 +97,10 @@ void IGraphics::Resize(int w, int h, float scale, bool needsPlatformResize)
+ {
+   GetDelegate()->ConstrainEditorResize(w, h);
+   
+-  scale = Clip(scale, mMinScale, mMaxScale);
++  scale = ConstrainDrawScale(scale);
+   
+   if (w == Width() && h == Height() && scale == GetDrawScale()) return;
+   
+-  //DBGMSG("resize %i, resize %i, scale %f\n", w, h, scale);
+   ReleaseMouseCapture();
+ 
+   mDrawScale = scale;
+@@ -108,7 +113,13 @@ void IGraphics::Resize(int w, int h, float scale, bool needsPlatformResize)
+   int windowWidth = WindowWidth() * GetPlatformWindowScale();
+   int windowHeight = WindowHeight() * GetPlatformWindowScale();
+ 
+-  bool parentResized = GetDelegate()->EditorResizeFromUI(windowWidth, windowHeight, needsPlatformResize);
++  bool parentResized = false;
++#ifdef OS_LINUX
++  if (!WindowIsOpen())
++    GetDelegate()->SetEditorSize(windowWidth, windowHeight);
++  else
++#endif
++    parentResized = GetDelegate()->EditorResizeFromUI(windowWidth, windowHeight, needsPlatformResize);
+   PlatformResize(parentResized);
+   ForAllControls(&IControl::OnResize);
+   SetAllControlsDirty();
+@@ -334,7 +345,17 @@ void IGraphics::AttachCornerResizer(EUIResizerMode sizeMode, bool layoutOnResize
+ 
+ void IGraphics::AttachCornerResizer(ICornerResizerControl* pControl, EUIResizerMode sizeMode, bool layoutOnResize)
+ {
+-#ifndef AUv3_API
++#if defined(AUv3_API)
++  DBGMSG("AttachCornerResizer() is disabled for AUv3");
++#elif defined(OS_LINUX)
++  // On Linux, the host (or window manager for standalone) provides
++  // its own resize handle. The corner resizer conflicts because both
++  // catch mouse events in the same region, causing feedback loops.
++  // Still set the resize mode so Scale/Size mode works correctly.
++  mGUISizeMode = sizeMode;
++  mLayoutOnResize = layoutOnResize;
++  delete pControl;
++#else
+   assert(!mCornerResizer); // only want one corner resizer
+ 
+   std::unique_ptr<ICornerResizerControl> control(pControl);
+@@ -346,8 +367,6 @@ void IGraphics::AttachCornerResizer(ICornerResizerControl* pControl, EUIResizerM
+     mLayoutOnResize = layoutOnResize;
+     mCornerResizer->SetDelegate(*GetDelegate());
+   }
+-#else
+-DBGMSG("AttachCornerResizer() is disabled for AUv3");
+ #endif
+ }
+ 
+```
+
+**File**: `IGraphics/IGraphics.h` (modified, +9/-0)
+```diff
+@@ -1718,6 +1718,9 @@ class IGraphics
+   void ClearGestureRegions();
+ 
+ protected:
++  /** Apply the configured drawing-scale limits. */
++  float ConstrainDrawScale(float scale) const { return Clip(scale, mMinScale, mMaxScale); }
++
+   /** Drawing API method to load a bitmap, called internally
+    * @param fileNameOrResID A CString absolute path or resource ID
+    * @param scale Integer to identify the scale of the resource, for multi-scale bitmaps
+@@ -1871,7 +1874,13 @@ class IGraphics
+   bool mResizingInProcess = false;
+   bool mLayoutOnResize = false;
+   bool mEnableMultiTouch = false;
++  // Native Linux host windows resize the layout unless a mode is explicitly
++  // selected with AttachCornerResizer(), including for docked REAPER editors.
++#ifdef OS_LINUX
++  EUIResizerMode mGUISizeMode = EUIResizerMode::Size;
++#else
+   EUIResizerMode mGUISizeMode = EUIResizerMode::Scale;
++#endif
+   double mPrevTimestamp = 0.;
+   IKeyHandlerFunc mKeyHandlerFunc = nullptr;
+   IDisplayTickFunc mDisplayTickFunc = nullptr;
+```
+
+**File**: `IGraphics/IGraphicsEditorDelegate.cpp` (modified, +111/-1)
+```diff
+@@ -11,6 +11,16 @@
+ #include "IGraphicsEditorDelegate.h"
+ #include "IGraphics.h"
+ #include "IControl.h"
++#include <algorithm>
++#include <cmath>
++#include <climits>
++
++#ifdef OS_LINUX
++#include "IGraphicsLinux.h"
++#define IPLUG_GFX_LOCK std::lock_guard<std::recursive_mutex> gfxLock(mGfxMutex)
++#else
++#define IPLUG_GFX_LOCK ((void)0)
++#endif
+ 
+ using namespace iplug;
+ using namespace igraphics;
+@@ -26,25 +36,61 @@ IGEditorDelegate::~IGEditorDelegate()
+ 
+ void* IGEditorDelegate::OpenWindow(void* pParent)
+ {
++  IPLUG_GFX_LOCK;
++#ifdef OS_LINUX
++  if (mGraphics && static_cast<IGraphicsLinux*>(mGraphics.get())->IsInPlatformCallback())
++  {
++    fprintf(stderr, "Cannot reopen the Linux editor during graphics dispatch\n");
++    return nullptr;
++  }
++#endif
++#ifdef OS_LINUX
++  if (!PrepareGraphics())
++    return nullptr;
++#else
+   if(!mGraphics)
+   {
+     mGraphics = std::unique_ptr<IGraphics>(CreateGraphics());
+     if (mLastWidth && mLastHeight && mLastScale)
+       GetUI()->Resize(mLastWidth, mLastHeight, mLastScale);
+   }
++#endif
+   
+   if(mGraphics)
+-    return mGraphics->OpenWindow(pParent);
++  {
++    void* window = mGraphics->OpenWindow(pParent);
++#ifdef OS_LINUX
++    if (!window)
++      CloseWindow();
++#endif
++    return window;
++  }
+   else
+     return nullptr;
+ }
+ 
+ void IGEditorDelegate::CloseWindow()
+ {
++  IPLUG_GFX_LOCK;
++#ifdef OS_LINUX
++  if (!mGraphics)
++    return;
++  auto* graphics = static_cast<IGraphicsLinux*>(mGraphics.get());
++  if (graphics->IsInPlatformCallback())
++  {
++    graphics->RequestWindowClose();
++    return;
++  }
++#endif
+   if (!mClosing)
+   {
+     mClosing = true;
++#ifdef OS_LINUX
++    if (mGraphics->WindowIsOpen())
++      IEditorDelegate::CloseWindow();
++#else
+     IEditorDelegate::CloseWindow();
++#endif
+   
+     if (mGraphics)
+     {
+@@ -59,23 +105,80 @@ void IGEditorDelegate::CloseWindow()
+   }
+ }
+ 
++#ifdef OS_LINUX
++bool IGEditorDelegate::PrepareGraphics()
++{
++  IPLUG_GFX_LOCK;
++  if (!mGraphics)
++  {
++    mGraphics.reset(CreateGraphics());
++    if (!mGraphics)
++      return false;
++    if (mLastWidth && mLastHeight && mLastScale)
++      mGraphics->Resize(mLastWidth, mLastHeight, mLastScale);
++    if (mHostScreenScale > 0.f)
++      mGraphics->SetScreenScale(mHostScreenScale);
++    SetEditorSize(mGraphics->WindowWidth() * mGraphics->GetScreenScale(),
++                  mGraphics->WindowHeight() * mGraphics->GetScreenScale());
++  }
++  return true;
++}
++
++bool IGEditorDelegate::SetHostScreenScale(float scale)
++{
++  IPLUG_GFX_LOCK;
++  if (!std::isfinite(scale) || scale <= 0.f || !PrepareGraphics())
++    return false;
++  const double width = mGraphics->WindowWidth() * static_cast<double>(scale);
++  const double height = mGraphics->WindowHeight() * static_cast<double>(scale);
++  if (width < 1. || height < 1. || width >= INT_MAX || height >= INT_MAX)
++    return false;
++  mHostScreenScale = scale;
++  static_cast<IGraphicsLinux*>(mGraphics.get())->SetScreenScaleFromHost(scale);
++  return true;
++}
++
++bool IGEditorDelegate::CloseWindowIfRequested()
++{
++  IPLUG_GFX_LOCK;
++  if (mGraphics && !static_cast<IGraphicsLinux*>(mGraphics.get())->IsInPlatformCallback() &&
++      static_cast<IGraphicsLinux*>(mGraphics.get())->WindowCloseRequested())
++  {
++    CloseWindow();
++    return true;
++  }
++  return false;
++}
++#endif
++
+ void IGEditorDelegate::OnParentWindowResize(int width, int height)
+ {
++  IPLUG_GFX_LOCK;
+   if (auto* pGraphics = GetUI()) 
+   {
++#ifdef OS_LINUX
++    static_cast<IGraphicsLinux*>(pGraphics)->ResizeFromHost(width, height);
++#else
+     const auto scale = pGraphics->GetPlatformWindowScale();
+     pGraphics->Resize(static_cast<int>(width / scale), static_cast<int>(height / scale), 1.0f, false);
++#endif
+   }
+ }
+ 
+ void IGEditorDelegate::SetScreenScale(float scale)
+ {
++  IPLUG_GFX_LOCK;
++#ifdef OS_LINUX
++  SetHostScreenScale(scale);
++#else
+   if (GetUI())
+     mGraphics->SetScreenScale(scale);
++#endif
+ }
+ 
+ void IGEditorDelegate::SendControlValueFromDelegate(int ctrlTag, double normalizedValue)
+ {
++  IPLUG_GFX_LOCK;
+   if(!mGraphics)
+     return;
+ 
+@@ -91,6 +194,7 @@ void IGEditorDelegate::SendControlValueFromDelegate(int ctrlTag, double normaliz
+ 
+ void IGEditorDelegate::SendControlMsgFromDelegate(int ctrlTag, int msgTag, int dataSize, const void* pData)
+ {
++  IPLUG_GFX_LOCK;
+   if(!mGraphics)
+     return;
+   
+@@ -106,6 +210,7 @@ void IGEditorDelegate::SendControlMsgFromDelegate(int ctrlTag, int msgTag, int d
+ 
+ void IGEditorDelegate::SendParameterValueFromDelegate(int paramIdx, double value, bool normalized)
+ {
++  IPLUG_GFX_LOCK;
+   if(mGraphics)
+   {
+     if (!normalized)
+@@ -134,6 +239,7 @@ void IGEditorDelegate::SendParameterValueFromDelegate(int paramIdx, double value
+ 
+ void IGEditorDelegate::SendMidiMsgFromDelegate(const IMidiMsg& msg)
+ {
++  IPLUG_GFX_LOCK;
+   if(mGraphics)
+   {
+     for (auto c = 0; c < mGraphics->NControls(); c++) // TODO: could keep a map
+@@ -152,6 +258,7 @@ void IGEditorDelegate::SendMidiMsgFromDelegate(const IMidiMsg& msg)
+ 
+ bool IGEditorDelegate::Ser
+```
+
+**File**: `IGraphics/IGraphicsEditorDelegate.h` (modified, +26/-0)
+```diff
+@@ -11,6 +11,9 @@
+ #pragma once
+ 
+ #include <memory>
++#ifdef OS_LINUX
++#include <mutex>
++#endif
+ 
+ #include "IPlugEditorDelegate.h"
+ 
+@@ -90,15 +93,38 @@ class IGEditorDelegate : public IEditorDelegate
+    * @return The new chunk position (endPos) */
+   int UnserializeEditorSize(const IByteChunk& chunk, int startPos);
+     
++#ifdef OS_LINUX
++  /** Create the editor model before a host asks for its size, without opening a window. */
++  bool PrepareGraphics();
++  /** Apply and remember an explicit host scale, including before attachment. */
++  bool SetHostScreenScale(float scale);
++  bool HasHostScreenScale() const { return mHostScreenScale > 0.f; }
++
++  /** Complete a pending native close on the owner's main thread, outside graphics dispatch. */
++  bool CloseWindowIfRequested();
++
++  /** Mutex protecting mGraphics access from concurrent threads on Linux.
++   *  The host may call SendParameterValueFromDelegate, CloseWindow, etc.
++   *  from any thread while the timer/draw thread is running. Recursive
++   *  because resize and close paths re-enter (e.g. OnParentWindowResize
++   *  and DrawResize may be called while the lock is held). */
++  std::recursive_mutex& GfxMutex() { return mGfxMutex; }
++#endif
++
+ protected:
+   std::function<IGraphics*()> mMakeGraphicsFunc = nullptr;
+   std::function<void(IGraphics* pGraphics)> mLayoutFunc = nullptr;
++
+ private:
+   std::unique_ptr<IGraphics> mGraphics;
+   int mLastWidth = 0;
+   int mLastHeight = 0;
+   float mLastScale = 0.f;
+   bool mClosing = false; // used to prevent re-entrancy on closing
++#ifdef OS_LINUX
++  mutable std::recursive_mutex mGfxMutex;
++  float mHostScreenScale = 0.f;
++#endif
+ };
+ 
+ END_IGRAPHICS_NAMESPACE
+```
+
+**File**: `IGraphics/IGraphicsPrivate.h` (modified, +3/-0)
+```diff
+@@ -73,6 +73,9 @@
+ #elif defined OS_WIN
+   #include "wingdi.h"
+   #define FONT_DESCRIPTOR_TYPE HFONT
++#elif defined OS_LINUX
++  // Linux uses a path string to locate fonts (resolved via Fontconfig)
++  #define FONT_DESCRIPTOR_TYPE WDL_String*
+ #elif defined OS_WEB
+   #define FONT_DESCRIPTOR_TYPE std::pair<WDL_String, WDL_String>*
+ #else 
+```
+
+**File**: `IGraphics/IGraphics_include_in_plug_hdr.h` (modified, +2/-2)
+```diff
+@@ -42,8 +42,8 @@
+     #elif defined IGRAPHICS_GL3
+       #include <OpenGL/gl3.h>
+     #endif
+-  #else
+-    #include <OpenGL/gl.h>
++  #elif defined OS_LINUX
++    #include <glad/glad.h>
+   #endif
+ #endif
+ 
+```
+
+**File**: `IGraphics/IGraphics_include_in_plug_src.h` (modified, +5/-0)
+```diff
+@@ -88,6 +88,11 @@
+     RegisterGraphicsInstance(pGraphics);
+     return pGraphics;
+   }
++  #elif defined OS_LINUX
++  IGraphics* MakeGraphics(IGEditorDelegate& dlg, int w, int h, int fps = 0, float scale = 1.)
++  {
++    return new IGraphicsLinux(dlg, w, h, fps, scale);
++  }
+   #else
+     #error "No OS defined!"
+   #endif
+```
+
+---
+
+### Incident Patch 3: `dc5464cf` (2026-11-19)
+**Commit Message**: IGraphics: remove the Linux graphics mutex and timer thread
+
+Every supported Linux format draws and idles on the host's main thread:
+VST3 through IRunLoop, CLAP through the host timer, posix-fd and
+main-thread callbacks, and the standalone app and REAPER extensions
+through a SWELL main-loop timer. The pthread display timer could only
+start in a build that was neither host-driven nor APP/ReaperExt, which
+no format is, so the recursive mutex in IGEditorDelegate had nothing to
+guard.
+
+Remove the mutex and its lock sites, the pthread timer fallback, and the
+IGraphicsLinux::DrawResize() override that only took the lock.
+StartTimer() now fails with a logged error if the editor is neither
+host-driven nor on a main-loop timer.
+
+Checked with IPlugControls in REAPER 7.59 (VST3, CLAP) and Ardour 9.8
+(VST3): every lock site was reached only from the main thread.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `IGraphics/IGraphicsEditorDelegate.cpp` (modified, +0/-18)
+```diff
+@@ -17,9 +17,6 @@
+ 
+ #ifdef OS_LINUX
+ #include "IGraphicsLinux.h"
+-#define IPLUG_GFX_LOCK std::lock_guard<std::recursive_mutex> gfxLock(mGfxMutex)
+-#else
+-#define IPLUG_GFX_LOCK ((void)0)
+ #endif
+ 
+ using namespace iplug;
+@@ -36,7 +33,6 @@ IGEditorDelegate::~IGEditorDelegate()
+ 
+ void* IGEditorDelegate::OpenWindow(void* pParent)
+ {
+-  IPLUG_GFX_LOCK;
+ #ifdef OS_LINUX
+   if (mGraphics && static_cast<IGraphicsLinux*>(mGraphics.get())->IsInPlatformCallback())
+   {
+@@ -71,7 +67,6 @@ void* IGEditorDelegate::OpenWindow(void* pParent)
+ 
+ void IGEditorDelegate::CloseWindow()
+ {
+-  IPLUG_GFX_LOCK;
+ #ifdef OS_LINUX
+   if (!mGraphics)
+     return;
+@@ -108,7 +103,6 @@ void IGEditorDelegate::CloseWindow()
+ #ifdef OS_LINUX
+ bool IGEditorDelegate::PrepareGraphics()
+ {
+-  IPLUG_GFX_LOCK;
+   if (!mGraphics)
+   {
+     mGraphics.reset(CreateGraphics());
+@@ -126,7 +120,6 @@ bool IGEditorDelegate::PrepareGraphics()
+ 
+ bool IGEditorDelegate::SetHostScreenScale(float scale)
+ {
+-  IPLUG_GFX_LOCK;
+   if (!std::isfinite(scale) || scale <= 0.f || !PrepareGraphics())
+     return false;
+   const double width = mGraphics->WindowWidth() * static_cast<double>(scale);
+@@ -140,7 +133,6 @@ bool IGEditorDelegate::SetHostScreenScale(float scale)
+ 
+ bool IGEditorDelegate::CloseWindowIfRequested()
+ {
+-  IPLUG_GFX_LOCK;
+   if (mGraphics && !static_cast<IGraphicsLinux*>(mGraphics.get())->IsInPlatformCallback() &&
+       static_cast<IGraphicsLinux*>(mGraphics.get())->WindowCloseRequested())
+   {
+@@ -153,7 +145,6 @@ bool IGEditorDelegate::CloseWindowIfRequested()
+ 
+ void IGEditorDelegate::OnParentWindowResize(int width, int height)
+ {
+-  IPLUG_GFX_LOCK;
+   if (auto* pGraphics = GetUI()) 
+   {
+ #ifdef OS_LINUX
+@@ -167,7 +158,6 @@ void IGEditorDelegate::OnParentWindowResize(int width, int height)
+ 
+ void IGEditorDelegate::SetScreenScale(float scale)
+ {
+-  IPLUG_GFX_LOCK;
+ #ifdef OS_LINUX
+   SetHostScreenScale(scale);
+ #else
+@@ -178,7 +168,6 @@ void IGEditorDelegate::SetScreenScale(float scale)
+ 
+ void IGEditorDelegate::SendControlValueFromDelegate(int ctrlTag, double normalizedValue)
+ {
+-  IPLUG_GFX_LOCK;
+   if(!mGraphics)
+     return;
+ 
+@@ -194,7 +183,6 @@ void IGEditorDelegate::SendControlValueFromDelegate(int ctrlTag, double normaliz
+ 
+ void IGEditorDelegate::SendControlMsgFromDelegate(int ctrlTag, int msgTag, int dataSize, const void* pData)
+ {
+-  IPLUG_GFX_LOCK;
+   if(!mGraphics)
+     return;
+   
+@@ -210,7 +198,6 @@ void IGEditorDelegate::SendControlMsgFromDelegate(int ctrlTag, int msgTag, int d
+ 
+ void IGEditorDelegate::SendParameterValueFromDelegate(int paramIdx, double value, bool normalized)
+ {
+-  IPLUG_GFX_LOCK;
+   if(mGraphics)
+   {
+     if (!normalized)
+@@ -239,7 +226,6 @@ void IGEditorDelegate::SendParameterValueFromDelegate(int paramIdx, double value
+ 
+ void IGEditorDelegate::SendMidiMsgFromDelegate(const IMidiMsg& msg)
+ {
+-  IPLUG_GFX_LOCK;
+   if(mGraphics)
+   {
+     for (auto c = 0; c < mGraphics->NControls(); c++) // TODO: could keep a map
+@@ -258,7 +244,6 @@ void IGEditorDelegate::SendMidiMsgFromDelegate(const IMidiMsg& msg)
+ 
+ bool IGEditorDelegate::SerializeEditorSize(IByteChunk& data) const
+ {
+-  IPLUG_GFX_LOCK;
+   bool savedOK = true;
+     
+   int width = mGraphics ? mGraphics->Width() : mLastWidth;
+@@ -274,7 +259,6 @@ bool IGEditorDelegate::SerializeEditorSize(IByteChunk& data) const
+ 
+ int IGEditorDelegate::UnserializeEditorSize(const IByteChunk& data, int startPos)
+ {
+-  IPLUG_GFX_LOCK;
+   int width = 0;
+   int height = 0;
+   float scale = 0.f;
+@@ -310,7 +294,6 @@ int IGEditorDelegate::UnserializeEditorState(const IByteChunk& chunk, int startP
+ 
+ bool IGEditorDelegate::OnKeyDown(const IKeyPress& key)
+ {
+-  IPLUG_GFX_LOCK;
+   IGraphics* pGraphics = GetUI();
+   
+   if (pGraphics)
+@@ -325,7 +308,6 @@ bool IGEditorDelegate::OnKeyDown(const IKeyPress& key)
+ 
+ bool IGEditorDelegate::OnKeyUp(const IKeyPress& key)
+ {
+-  IPLUG_GFX_LOCK;
+   IGraphics* pGraphics = GetUI();
+ 
+   if (pGraphics)
+```
+
+**File**: `IGraphics/IGraphicsEditorDelegate.h` (modified, +0/-11)
+```diff
+@@ -11,9 +11,6 @@
+ #pragma once
+ 
+ #include <memory>
+-#ifdef OS_LINUX
+-#include <mutex>
+-#endif
+ 
+ #include "IPlugEditorDelegate.h"
+ 
+@@ -102,13 +99,6 @@ class IGEditorDelegate : public IEditorDelegate
+ 
+   /** Complete a pending native close on the owner's main thread, outside graphics dispatch. */
+   bool CloseWindowIfRequested();
+-
+-  /** Mutex protecting mGraphics access from concurrent threads on Linux.
+-   *  The host may call SendParameterValueFromDelegate, CloseWindow, etc.
+-   *  from any thread while the timer/draw thread is running. Recursive
+-   *  because resize and close paths re-enter (e.g. OnParentWindowResize
+-   *  and DrawResize may be called while the lock is held). */
+-  std::recursive_mutex& GfxMutex() { return mGfxMutex; }
+ #endif
+ 
+ protected:
+@@ -122,7 +112,6 @@ class IGEditorDelegate : public IEditorDelegate
+   float mLastScale = 0.f;
+   bool mClosing = false; // used to prevent re-entrancy on closing
+ #ifdef OS_LINUX
+-  mutable std::recursive_mutex mGfxMutex;
+   float mHostScreenScale = 0.f;
+ #endif
+ };
+```
+
+**File**: `IGraphics/Platforms/IGraphicsLinux.cpp` (modified, +3/-45)
+```diff
+@@ -62,9 +62,6 @@
+ using namespace iplug;
+ using namespace igraphics;
+ 
+-// Timer interval in microseconds (60 fps = ~16667 us)
+-static constexpr int TIMER_INTERVAL_US = 16667;
+-
+ namespace
+ {
+ // Match WindowWidth()/WindowHeight() followed by the X11/display-scale conversion.
+@@ -1224,15 +1221,8 @@ void IGraphicsLinux::SetScreenScaleFromHost(float scale)
+   SetScreenScale(scale);
+ }
+ 
+-void IGraphicsLinux::DrawResize()
+-{
+-  std::lock_guard<std::recursive_mutex> lock(GetDelegate()->GfxMutex());
+-  IGRAPHICS_DRAW_CLASS::DrawResize();
+-}
+-
+ void IGraphicsLinux::ResizeFromHost(int width, int height)
+ {
+-  std::lock_guard<std::recursive_mutex> lock(GetDelegate()->GfxMutex());
+   if (width <= 0 || height <= 0)
+     return;
+ 
+@@ -1305,7 +1295,6 @@ void IGraphicsLinux::CalculateHostResize(int width, int height, int& designWidth
+ 
+ void IGraphicsLinux::ConstrainHostResize(int& width, int& height)
+ {
+-  std::lock_guard<std::recursive_mutex> lock(GetDelegate()->GfxMutex());
+   int designWidth, designHeight;
+   float scale;
+   CalculateHostResize(width, height, designWidth, designHeight, scale);
+@@ -1699,7 +1688,6 @@ bool IGraphicsLinux::OpenURL(const char* url, const char* msgWindowTitle, const
+ 
+ bool IGraphicsLinux::GetTextFromClipboard(WDL_String& str)
+ {
+-  std::lock_guard<std::recursive_mutex> lock(GetDelegate()->GfxMutex());
+   if (!mDisplay || !mPlugWnd || !mClipboardAtom)
+     return false;
+ 
+@@ -1762,7 +1750,6 @@ bool IGraphicsLinux::GetTextFromClipboard(WDL_String& str)
+ 
+ bool IGraphicsLinux::SetTextInClipboard(const char* str)
+ {
+-  std::lock_guard<std::recursive_mutex> lock(GetDelegate()->GfxMutex());
+   if (!mDisplay || !mPlugWnd || !mClipboardAtom)
+     return false;
+ 
+@@ -2713,18 +2700,6 @@ void IGraphicsLinux::DispatchX11Events()
+   }
+ }
+ 
+-void* IGraphicsLinux::TimerThreadProc(void* pParam)
+-{
+-  IGraphicsLinux* pGraphics = reinterpret_cast<IGraphicsLinux*>(pParam);
+-  while (pGraphics->mTimerRunning)
+-  {
+-    usleep(TIMER_INTERVAL_US);
+-    if (pGraphics->mTimerRunning)
+-      pGraphics->OnDisplayTimer();
+-  }
+-  return nullptr;
+-}
+-
+ bool IGraphicsLinux::StartTimer()
+ {
+   if (mHostDriven || mTimerRunning)
+@@ -2740,40 +2715,23 @@ bool IGraphicsLinux::StartTimer()
+   mTimerRunning = true;
+   return true;
+ #else
+-  mTimerRunning = true;
+-  const int error = pthread_create(&mTimerThread, nullptr, TimerThreadProc, this);
+-  if (error)
+-  {
+-    mTimerRunning = false;
+-    mTimerThread = 0;
+-    fprintf(stderr, "Could not start Linux graphics timer: %s\n", strerror(error));
+-    return false;
+-  }
+-
+-  return true;
++  // Plug-in editors are drawn from the host's run loop (see SetHostDriven).
++  fprintf(stderr, "The Linux editor needs a host-driven display timer\n");
++  return false;
+ #endif
+ }
+ 
+ void IGraphicsLinux::StopTimer()
+ {
+   mTimerRunning = false;
+   mMainLoopTimer.reset();
+-  if (mTimerThread && !pthread_equal(mTimerThread, pthread_self()))
+-  {
+-    pthread_join(mTimerThread, nullptr);
+-    mTimerThread = 0;
+-  }
+ }
+ 
+ void IGraphicsLinux::OnDisplayTimer()
+ {
+   if (IsInPlatformCallback())
+     return;
+   DispatchScope dispatch(mDispatchDepth);
+-  // Teardown joins this timer while holding GfxMutex; skip busy frames instead of waiting.
+-  std::unique_lock<std::recursive_mutex> lock(GetDelegate()->GfxMutex(), std::try_to_lock);
+-  if (!lock.owns_lock())
+-    return;
+   if (!mDisplay || !mPlugWnd || mCloseRequested)
+     return;
+ 
+```
+
+**File**: `IGraphics/Platforms/IGraphicsLinux.h` (modified, +1/-5)
+```diff
+@@ -105,7 +105,6 @@ class IGraphicsLinux final : public IGRAPHICS_DRAW_CLASS
+   bool IsInPlatformCallback() const { return mDispatchDepth != 0; }
+ 
+   void PlatformResize(bool parentHasResized) override;
+-  void DrawResize() override;
+   /** Apply a new host scale without interpreting older native sizes at the new scale. */
+   void SetScreenScaleFromHost(float scale);
+   /** Apply a host/X11 size in physical pixels, preserving the configured resize mode. */
+@@ -206,13 +205,12 @@ class IGraphicsLinux final : public IGRAPHICS_DRAW_CLASS
+   float mTooltipX = 0.f, mTooltipY = 0.f;
+   unsigned long mTooltipHoverTime = 0;
+   bool mInputMethodDisconnected = false;
+-  std::atomic<bool> mTimerRunning{false};
++  bool mTimerRunning = false;
+ 
+   float mHiddenCursorX = 0.f;
+   float mHiddenCursorY = 0.f;
+   Cursor mBlankCursor = 0; // cached invisible cursor for HideMouseCursor
+   bool mNeedsRedraw = false;
+-  // Read by host threads while the display timer thread dispatches
+   std::atomic<bool> mCloseRequested{false};
+   std::atomic<int> mDispatchDepth{0};
+   unsigned long mLastLeftClickTime = 0; // X11 server timestamp of last left-button press
+@@ -230,8 +228,6 @@ class IGraphicsLinux final : public IGRAPHICS_DRAW_CLASS
+   bool StartTimer();
+   void StopTimer();
+ 
+-  static void* TimerThreadProc(void* pParam);
+-  pthread_t mTimerThread = 0;
+   std::unique_ptr<Timer> mMainLoopTimer;
+ };
+ 
+```
+
+**File**: `IPlug/CLAP/IPlugCLAP.cpp` (modified, +1/-3)
+```diff
+@@ -1079,8 +1079,7 @@ bool IPlugCLAP::GUIWindowAttach(void* pWindow) noexcept
+     }
+ #endif
+ #if defined OS_LINUX && !defined NO_IGRAPHICS
+-    // Switch to host-driven mode: stops the internal timer thread
+-    // and lets the host drive rendering via onTimer / onPosixFd.
++    // Host-driven mode: the host drives rendering via onTimer / onPosixFd.
+     static_cast<IGraphicsLinux*>(GetUI())->SetHostDriven(true);
+     if (!RegisterLinuxHostCallbacks())
+     {
+@@ -1269,7 +1268,6 @@ void IPlugCLAP::onPosixFd(int fd, clap_posix_fd_flags_t flags) noexcept
+ {
+   if (mGUIOpen && fd == mLinuxFd && (flags & CLAP_POSIX_FD_READ))
+   {
+-    std::lock_guard<std::recursive_mutex> lock(GfxMutex());
+     if (auto* pGraphics = static_cast<IGraphicsLinux*>(GetUI()))
+       pGraphics->ProcessX11Events();
+     CheckLinuxGuiClosed();
+```
+
+**File**: `IPlug/IPlugAPIBase.cpp` (modified, +0/-3)
+```diff
+@@ -146,9 +146,6 @@ void IPlugAPIBase::SendParameterValueFromAPI(int paramIdx, double value, bool no
+ 
+ void IPlugAPIBase::OnTimer()
+ {
+-#if defined OS_LINUX && IPLUG_EDITOR && !defined NO_IGRAPHICS
+-  std::lock_guard<std::recursive_mutex> gfxLock(GfxMutex());
+-#endif
+ // VST3 ********************************************************************************
+ #if defined VST3P_API || defined VST3_API
+   while (mMidiMsgsFromProcessor.ElementsAvailable())
+```
+
+**File**: `IPlug/VST3/IPlugVST3_View.h` (modified, +0/-1)
+```diff
+@@ -308,7 +308,6 @@ class IPlugVST3View : public Steinberg::CPluginView
+     if (fd == mLinuxFd && fd >= 0)
+     {
+       Steinberg::IPtr<IPlugVST3View> keepAlive(this);
+-      std::lock_guard<std::recursive_mutex> lock(mOwner.GfxMutex());
+       if (auto* pGraphics = static_cast<iplug::igraphics::IGraphicsLinux*>(mOwner.GetUI()))
+       {
+         pGraphics->ProcessX11Events();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1460** (2026-11-15): CMake CI: stop PR comments cancelling master builds (@olilarkin)
-- **PR #1459** (2026-11-15): CMake: sign deployed plugin copies with the Xcode generator (@olilarkin)
-- **PR #1458** (2026-11-15): IPlugCocoaUI: bundle macOS storyboard in CMake builds (@olilarkin)
-- **PR #1457** (closed): Preserve VST3 MIDI values and controller points (@yasuyuki-baba)
-- **PR #1453** (closed): CLAP: publish latency changes during activation (@yasuyuki-baba)
-- **PR #1452** (2026-11-10): IVTabbedPagesControl: keep tabs in declaration order (@olilarkin)
+- **PR #1479** (2026-11-20): MetalNanoVG: give textures made from a handle a sampler (@olilarkin)
+- **PR #1476** (2026-11-19): Update vendored Metal NanoVG (@olilarkin)
+- **PR #1475** (2026-11-18): VST3/CLAP: do not request an editor resize without a host frame (@olilarkin)
+- **PR #1474** (2026-11-18): APP: catch exceptions by const reference and report them (@olilarkin)
+- **PR #1473** (2026-11-18): NChanDelay: clear the allocated buffer size in ClearBuffer() (@olilarkin)
+- **PR #1472** (2026-11-18): IPluginBase: check file size and read result when loading FXP/FXB (@olilarkin)
 
 ---
 
@@ -1590,37 +2759,35 @@ instantiation (e.g. 12 clap-validator tests crashed with SIGABRT).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in cmake-ci.yml
+## X. WebView: add a WebKitGTK editor for CLAP and VST3 on Linux
 
 **RULE**:
-When implementing operations in `.github/workflows/cmake-ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iPlug2/iPlug2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Examples/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iPlug2/iPlug2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `651ed754`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2fc55a78`: WebView: add a WebKitGTK editor for CLAP and VST3 on Linux. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/cmake-ci.yml`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `Examples/CMakeLists.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-# Cancel in-progress runs for the same PR/branch.
-# issue_comment events run on the default branch ref and the concurrency group
-# is evaluated before the job-level /ci filter, so comments need their own keys:
-#  - "/ci" comments: per-PR group, so a newer /ci supersedes an older one
-#  - any other comment: unique per run, so it can never cancel a real build
-  group: ${{ github.workflow }}-${{ github.event_name == 'issue_comment' && (startsWith(github.event.comment.body, '/ci') && format('ci-comment-{0}', github.event.issue.number) || github.run_id) || github.event.pull_request.number || github.ref }}
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux" OR IPLUG_LINUX_WEBVIEW_EXAMPLES)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  message(STATUS "Skipping WebView examples (enable IPLUG_LINUX_WEBVIEW_EXAMPLES and install WebKitGTK 4.1 to build).")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-# Cancel in-progress runs for the same PR/branch
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  message(STATUS "Skipping IPlugWebUI, IPlugP5js and IPlugSvelteUI: WebView is not implemented on Linux.")
+else()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `651ed754` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2fc55a78` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

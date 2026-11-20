@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T21:06:26.873Z",
+  "last_updated": "2026-11-20T21:25:48.468Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10011,14 +10011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dalance-procs",
-      "content_hash": "1ad464a89124a54078e854c4d7f091abbd4d8af2991b9a6292c4ea68c9637e00",
-      "verified_at": "2026-11-17T15:43:37.996Z",
+      "content_hash": "d01a5eef5292a4f0836798ff62e1e6578db0c95246f016bde3bada31b01d6964",
+      "verified_at": "2026-11-20T21:25:48.468Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:43:37.996Z"
+      "last_updated": "2026-11-20T21:25:48.468Z"
     },
     "ionic-team/ionic-framework": {
       "repository": "ionic-team/ionic-framework",
@@ -14571,14 +14571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iplug2-iplug2",
-      "content_hash": "805246a871aed266af460fa26ecb88d58aefe77bc026cae5b2cdd9f031263439",
-      "verified_at": "2026-11-16T22:19:24.914Z",
+      "content_hash": "5c394fe65dc0fae067058f90934a4b44258490ea48632dc6cfab3d0adb8fde47",
+      "verified_at": "2026-11-20T21:25:44.305Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T22:19:24.914Z"
+      "last_updated": "2026-11-20T21:25:44.305Z"
     },
     "digitalbazaar/jsonld.js": {
       "repository": "digitalbazaar/jsonld.js",
@@ -14646,14 +14646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rdflib-rdflib",
-      "content_hash": "720e416310b8bec96002b9ca3410be56db6ebbdccf28ffa2ae6e369c8d8c7f28",
-      "verified_at": "2026-11-04T00:46:25.432Z",
+      "content_hash": "ee1b98357eb134bb439032bfa5865e2c26bace460967884eb45843c1fe9b7170",
+      "verified_at": "2026-11-20T21:25:45.189Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:46:25.432Z"
+      "last_updated": "2026-11-20T21:25:45.189Z"
     },
     "KartikLabhshetwar/better-shot": {
       "repository": "KartikLabhshetwar/better-shot",

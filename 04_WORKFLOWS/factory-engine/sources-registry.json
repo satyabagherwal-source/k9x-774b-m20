@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T21:06:29.963Z",
-    "lastVerified": "2026-11-20T21:06:29.963Z",
+    "lastChecked": "2026-11-20T21:25:51.831Z",
+    "lastVerified": "2026-11-20T21:25:51.831Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T20:41:42.286Z",
+    "lastChecked": "2026-11-20T21:25:47.287Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T20:41:42.286Z"
+    "lastVerified": "2026-11-20T21:25:47.287Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -330,8 +330,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T14:52:41.247Z",
-    "lastVerified": "2026-11-20T14:52:41.247Z",
+    "lastChecked": "2026-11-20T21:25:42.179Z",
+    "lastVerified": "2026-11-20T21:25:42.179Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -2016,9 +2016,9 @@
   "oramasearch-orama": {
     "name": "orama",
     "officialUrl": "https://github.com/oramasearch/orama",
-    "lastChecked": "2026-11-19T16:41:03.356Z",
+    "lastChecked": "2026-11-20T21:25:44.906Z",
     "revisionIdentifier": "b030e1bd",
-    "lastVerified": "2026-11-19T16:41:03.356Z"
+    "lastVerified": "2026-11-20T21:25:44.906Z"
   },
   "metalbear-co-mirrord": {
     "name": "metalbear-co/mirrord",
@@ -2867,12 +2867,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "openkruise-kruise": {
-    "name": "openkruise/kruise",
+    "name": "kruise",
     "officialUrl": "https://github.com/openkruise/kruise",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T18:48:56.403Z",
-    "lastVerified": "2026-11-19T18:48:56.403Z",
+    "lastChecked": "2026-11-20T21:25:39.742Z",
+    "lastVerified": "2026-11-20T21:25:39.742Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openkruise-kruise",
@@ -2881,7 +2881,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "859efa1c"
   },
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
@@ -6614,11 +6615,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dalance-procs": {
-    "name": "procs",
+    "name": "dalance/procs",
     "officialUrl": "https://github.com/dalance/procs",
-    "lastChecked": "2026-11-19T05:24:17.125Z",
-    "revisionIdentifier": "939caf9b",
-    "lastVerified": "2026-11-19T05:24:17.125Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-20T21:25:37.074Z",
+    "lastVerified": "2026-11-20T21:25:37.074Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-dalance-procs",
+    "contentHash": "d01a5eef5292a4f0836798ff62e1e6578db0c95246f016bde3bada31b01d6964",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-zai-org-glm-5.3": {
     "name": "zai-org/GLM-5.3",
@@ -10759,5 +10770,39 @@
     "lastChecked": "2026-11-20T21:06:13.371Z",
     "revisionIdentifier": "76a1c179",
     "lastVerified": "2026-11-20T21:06:13.371Z"
+  },
+  "rdflib-rdflib": {
+    "name": "RDFLib/rdflib",
+    "officialUrl": "https://github.com/RDFLib/rdflib",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-20T21:25:40.127Z",
+    "lastVerified": "2026-11-20T21:25:40.127Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-rdflib-rdflib",
+    "contentHash": "ee1b98357eb134bb439032bfa5865e2c26bace460967884eb45843c1fe9b7170",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 27,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "iplug2-iplug2": {
+    "name": "iPlug2/iPlug2",
+    "officialUrl": "https://github.com/iPlug2/iPlug2",
+    "sourceType": "github",
+    "technology": "C",
+    "lastChecked": "2026-11-20T21:25:42.854Z",
+    "lastVerified": "2026-11-20T21:25:42.854Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-iplug2-iplug2",
+    "contentHash": "5c394fe65dc0fae067058f90934a4b44258490ea48632dc6cfab3d0adb8fde47",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 26,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

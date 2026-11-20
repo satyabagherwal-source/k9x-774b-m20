@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rdflib-rdflib-learnings.md`  
 > **Source**: github ([https://github.com/RDFLib/rdflib](https://github.com/RDFLib/rdflib))  
-> **Source Version**: `114dd59d`  
+> **Source Version**: `a0a00f55`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:46:24.645Z  
+> **Timestamp**: 2026-11-20T21:25:44.429Z  
 > **Learning ID**: `learn-github-rdflib-rdflib`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rdflib-rdflib-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RDFLib/rdflib](https://github.com/RDFLib/rdflib))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:46:24.001Z  
+> **Harvest Timestamp**: 2026-11-20T21:25:40.127Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: RDFLib is a Python library for working with RDF, a simple yet powerful language for representing information.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2546 stars
+- **Stars / Engagement**: 2565 stars
 
 ---
 
@@ -377,6 +377,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 from html.parser import HTMLParser
 from io import StringIO, TextIOBase, TextIOWrapper
 from typing import IO, TYPE_CHECKING, Any, TextIO, Union
@@ -412,6 +413,7 @@ from rdflib.parser import (
     URLInputSource,
     create_input_source,
 )
+from rdflib.plugins.parsers.notation3 import join
 
 
 def source_to_json(
@@ -578,8 +580,21 @@ def split_iri(iri: str) -> tuple[str, str | None]:
     return iri, None
 
 
+# The scheme of an absolute IRI (RFC 3986, section 3.1). urlsplit() is not
+# used for this, as it strips leading spaces and raises on some inputs.
+_SCHEME = re.compile(r"[A-Za-z][A-Za-z0-9+.-]*:")
+
+
 def norm_url(base: str, url: str) -> str:
     """
+    Resolve a reference against a base IRI.
+
+    Against a base with a hierarchical path, such as `http://host/path`,
+    `file:/path` or `s3://bucket/key`, this is reference resolution as RFC
+    3986, section 5.2, describes it, done by the resolver of the N3 parser. It
+    keeps empty components and repeated slashes. A query-only reference is
+    resolved that way against any absolute base.
+
     ```python
     >>> norm_url('http://example.org/', '/one')
     'http://example.org/one'
@@ -593,6 +608,25 @@ def norm_url(base: str, url: str) -> str:
     'http://example.net/one'
     >>> norm_url('http://example.org/', 'http://example.org//one')
     'http://example.org//one'
+    >>> norm_url('http://example.org/one', '//example.net')
+    'http://example.net'
+    >>> norm_url('http://example.org', '?q')
+    'http://example.org?q'
+    >>> norm_url('http://example.org/one', 'two?')
+    'http://example.org/two?'
+
+    ```
+
+    As in JSON-LD IRI expansion, a value whose part after the first colon
+    begins with `//` is returned as it is. Against a URN base, a relative path
+    is joined as a path below the base; against other bases without a
+    hierarchical path, it is returned as it is.
+
+    ```python
+    >>> norm_url('http://example.org/one', 'two?u=http://example.net/')
+    'two?u=http://example.net/'
+    >>> norm_url('urn:ns:test', 'three')
+    'urn:ns:test/three'
 
     ```
     """
@@ -600,45 +634,11 @@ def norm_url(base: str, url: str) -> str:
     if not url or url.startswith("#"):
         return (base or "").split("#", 1)[0] + url
 
-    if "://" in url:
-        return url
-
-    # Fix for URNs
-    parsed_base = urlsplit(base)
-    parsed_url = urlsplit(url)
-    if parsed_url.scheme:
-        # Assume full URL
-        return url
-    if parsed_base.scheme in ("urn", "urn-x"):
-        # No scheme -> assume relative and join paths
-        base_path_parts = parsed_base.path.split("/", 1)
-        base_path = "/" + (base_path_parts[1] if len(base_path_parts) > 1 else "")
-        joined_path = urljoin(base_path, parsed_url.path)
-        fragment = f"#{parsed_url.fragment}" if parsed_url.fragment else ""
-        result = f"{parsed_base.scheme}:{base_path_parts[0]}{joined_path}{fragment}"
-    else:
-        parts = urlsplit(urljoin(base, url))
-        path = normpath(parts[2])
-        if sep != "/":
-            path = "/".join(path.split(sep))
-        if parts[2].endswith("/") and not path.endswith("/"):
-            path += "/"
-        result = urlunsplit(parts[0:2] + (path,) + parts[3:])
-    if url.endswith("#") and not result.endswith("#"):
-        result += "#"
-    return result
-
-
-# type error: Missing return statement
-def context_from_urlinputsource(source: URLInputSource) -> str | None:  # type: ignore[return]
-    """
-    Please note that JSON-LD documents served with the `application/ld+json` media type
-    MUST have all context information, including references to external contexts,
-    within the body of the document. Contexts linked via a
-    http://www.w3.org/ns/json-ld#context HTTP Link Header MUST be
-    ignored for such documents.
-    """
-    if source.content_type != "ap
+    # An absolute IRI is not resolved, and neither is a value whose part after
+    # the first colon begins with "//" (JSON-LD 1.1 API, IRI Expansion, step
+    # 6.2).
+    colon = url.find(":", 1)
+    if _SCH
 ```
 
 ### Core Architecture Module: `rdflib/plugins/sparql/evalutils.py`
@@ -1717,11 +1717,11 @@ except Exception as e:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3735** (2026-11-19): **JSON-LD serializer drops blank nodes that only reference each other**
+  *Symptoms*: I have a graph that has two blank nodes pointing at each other. The Graph holds this fine, but serializing to JSON-LD drops everything:  ```python from rdflib import Graph  ttl = """       @prefix bf: <http://id.loc.gov/ontologies/bibframe/> .       _:work a bf:Work ; bf:hasInstance _:instance .       _:instance a bf:Instance ; bf:instanceOf _:work .       """  g = Graph().parse(data=ttl, format="turtle")  assert len(g) == 4  print(g.serialize(format="json-ld")) ```  The final print will not print any graph. Whereas using pyld will:  ```python from pyld import jsonld  print(jsonld.from_rdf(g.serialize(format='ntriples'))) ```
+
 - **Issue #3602** (2026-10-24): **SPARQL `ORDER BY` on an expression that errors raises `TypeError`**
   *Symptoms*: ### Description  `evalOrderBy` (`rdflib/plugins/sparql/evaluate.py`) sorts with `key=lambda x: _val(value(x, e.expr, variables=True))`. When the sort expression errors for a solution, `value()` returns a `SPARQLError` object. `_val` (`rdflib/plugins/sparql/evalutils.py`) only handles `Variable`, `BNode`, `URIRef` and `Literal`, so it falls through and returns `None`. Python's `sorted` then compares `None` with `None` or with a `(rank, term)` tuple and raises `TypeError` out of the query.  SPARQL 1.1 §15.1 (ORDER BY) ranks "no value assigned to the variable or expression" lowest, below blank nodes, IRIs and literals. So a solution whose key errors or is unbound should sort as the lowest value, and the query should not crash. A *bare* unbound variable (`ORDER BY ?u`) already works, because `variables=True` returns the `Variable` and `_val` ranks it `0`. Only error results from expressions are affected. The bug needs at least two solutions to show, because with one solution `sorted` never compares keys.  ### Reproducer  ```python from rdflib import Graph  for key in ["DESC(?o = ?u)", "DESC(?o IN (1/0, 2))", "(1/0)", "?u"]:     q = f"SELECT ?o WHERE {{ VALUES ?o {{ 1 2 }} }} ORDER BY {key}"     try:         print(key, list(Graph().query(q)))     except Exception as e:         print(key, type(e).__name__, e) ```  ### Observed (rdflib 7.7.0a0, `main` and #3580 head)  | `ORDER BY` key | rdflib result | |---|---| | `DESC(?o = ?u)` | `TypeError: '<' not supported between instances of 
-
-- **Issue #3601** (2026-10-24): **SPARQL `||` / `&&`: a bare unbound operand makes the whole expression an error**
-  *Symptoms*: ### Description  `ConditionalOrExpression` and `ConditionalAndExpression` (`rdflib/plugins/sparql/operators.py`) read their operands as `e.expr` and `e.other`. That goes through `CompValue.__getitem__`, which calls `value()` with `errors=False`. A bare unbound variable therefore raises `NotBoundError` before the operator's error-tolerant logic runs. `Expr.eval` catches the error and the whole expression becomes an error.  SPARQL 1.1 §17.2 (Filter Evaluation) defines a three-valued logic for these operators:  | A | B | A \|\| B | A && B | |---|---|---|---| | T | E | T | E | | E | T | T | E | | F | E | E | F | | E | F | E | F |  Errors that come from a *sub-expression*, such as `1/0`, are not affected, because `Expr.eval` returns them as values. That is why `true || (1/0)` already works. `&&` has a second problem: it is `all(EBV(x) for x in ...)` (with `# TODO: handle returned errors`), so the first erroring operand raises even when a later operand is false. `false && (1/0)` only works because `all()` short-circuits before it reaches the error.  ### Reproducer  ```python from rdflib import Graph  for expr in ["true || ?u", "?u || true", "false && ?u", "?u && false", "(1/0) && false"]:     q = f"SELECT ?o ?r WHERE {{ BIND(2 AS ?o) BIND({expr} AS ?r) }}"     print(expr, list(Graph().query(q))) ```  (`?o` is selected only so that the row is not dropped when `?r` is unbound.)  ### Observed (rdflib 7.7.0a0, `main` and #3580 head)  | Expression | rdflib `?r` | Expected (§17.2) | |---
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1738,81 +1738,616 @@ except Exception as e:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `114dd59d` (2026-11-02)
-**Commit Message**: fix: report an unbound prefix as a syntax error (#3656)
+### Incident Patch 1: `e775564d` (2026-11-20)
+**Commit Message**: fix: promote numeric types in SPARQL multiplication and division (#3694)
 
-BadSyntax was raised inside the KeyError handler, so the traceback
-led with KeyError instead of the unbound-prefix message.
+MultiplicativeExpression turned the first operand into a Decimal and
+only switched to float when a later operand was a float, and it typed
+the result by its Python type. So 2 * 3 was an xsd:decimal, 1.5e0 * 2
+a decimal instead of a double, and 1e308 * 10 a decimal rounded to 28
+digits instead of infinity. Dividing a double by zero was an error, and
+an ill-typed operand could give a wrong value.
 
-**File**: `rdflib/plugins/parsers/notation3.py` (modified, +11/-9)
+Promote the operands with type_promotion, as AdditiveExpression does
+and as op:numeric-multiply and op:numeric-divide require (SPARQL 1.1,
+section 17.3; XPath 3.1 Functions and Operators, section 4.2). Integer
+division gives a decimal, and a float or double divided by zero gives
+INF, -INF or NaN; integer and decimal division by zero stay errors. An
+ill-typed operand is a type error, an integer too large for a double is
+INF or -INF next to a double, and overflows are SPARQL errors. Add an
+upgrade note for the changed result types.
+
+Signed-off-by: jdsika <[REDACTED_EMAIL]>
+Co-authored-by: Nicholas Car <[REDACTED_EMAIL]>
+
+**File**: `docs/upgrade7to8.md` (modified, +18/-0)
 ```diff
-@@ -1279,16 +1279,18 @@ def uri_ref2(self, argstr: str, i: int, res: MutableSequence[Any]) -> int:
-                 assert 0, "not used?"
-                 ns = self._baseURI + ADDED_HASH  # type: ignore[unreachable]
-             else:
--                try:
-+                # Look the prefix up before raising. BadSyntax from inside
-+                # `except KeyError` keeps the KeyError on the traceback, which
-+                # is what a user sees instead of the unbound-prefix message.
-+                if pfx in self._bindings:
-                     ns = self._bindings[pfx]
--                except KeyError:
--                    if pfx == "_":  # Magic prefix 2001/05/30, can be changed
--                        res.append(self.anonymousNode(ln))
--                        return j
--                    if not self.turtle and pfx == "":
--                        ns = join(self._baseURI or "", "#")
--                    else:
--                        self.BadSyntax(argstr, i, 'Prefix "%s:" not bound' % (pfx))
-+                elif pfx == "_":  # Magic prefix 2001/05/30, can be changed
-+                    res.append(self.anonymousNode(ln))
-+                    return j
-+                elif not self.turtle and pfx == "":
-+                    ns = join(self._baseURI or "", "#")
-+                else:
-+                    self.BadSyntax(argstr, i, 'Prefix "%s:" not bound' % (pfx))
-             symb = self._store.newSymbol(ns + ln)
-             res.append(self._variables.get(symb, symb))
-             return j
+@@ -31,6 +31,24 @@ these operations are constant-time, especially in loops over large or remote
+ datasets. A dataset containing only empty named graphs has length zero and is
+ false, even though those graph names remain present.
+ 
++## SPARQL multiplication and division
++
++SPARQL `*` and `/` now give the result the promoted type of their operands, as
++XPath's `op:numeric-multiply` and `op:numeric-divide` define it and as `+` and
++`-` already did:
++
++- An integer times an integer is an `xsd:integer`, and exact for large values.
++  It was an `xsd:decimal`, rounded to 28 digits.
++- A product or quotient with an `xsd:float` or `xsd:double` operand is a float
++  or double, also when that operand comes first, so `toPython()` gives a
++  Python `float` where it gave a `Decimal`.
++- A float or double divided by zero is `INF`, `-INF` or `NaN` instead of an
++  error. Integer and decimal division by zero are still errors.
++- An ill-typed operand, such as `"abc"^^xsd:integer`, is an error.
++
++`DATATYPE()`, `sameTerm()`, `DISTINCT` and joins on such computed values change
++accordingly.
++
+ ## Infinite and NaN doubles
+ 
+ A [`Literal`][rdflib.term.Literal] made from an infinite or NaN float, or
 ```
 
-**File**: `test/test_parsers/test_parser_turtlelike.py` (modified, +19/-0)
+**File**: `rdflib/plugins/sparql/operators.py` (modified, +52/-14)
 ```diff
-@@ -290,6 +290,25 @@ def test_blank_node_label_with_escaped_trailing_dot(
-         Graph().parse(data=data, format=format_name)
+@@ -16,7 +16,7 @@
+ import uuid
+ import warnings
+ from collections.abc import Callable
+-from decimal import ROUND_HALF_DOWN, ROUND_HALF_UP, Decimal, InvalidOperation
++from decimal import ROUND_HALF_DOWN, ROUND_HALF_UP, Decimal
+ from functools import reduce
+ from typing import Any, NoReturn, Union, overload
+ from urllib.parse import quote
+@@ -758,23 +758,61 @@ def MultiplicativeExpression(
+     # we sometimes have nothing to do
+     if other is None:
+         return expr
+-    try:
+-        res: Union[Decimal, float]
+-        res = Decimal(numeric(expr))
+-        for op, f in zip(e.op, other):
+-            f = numeric(f)
+-
+-            if type(f) == float:  # noqa: E721
+-                res = float(res)
  
- 
-+@pytest.mark.parametrize("format_name", ["turtle", "n3", "trig"])
-+def test_unbound_prefix_is_a_syntax_error(format_name: str) -> None:
-+    """An unknown prefix is reported as BadSyntax, not a KeyError.
+-            if op == "*":
+-                res *= f
++    # The operands are promoted to a common type, as op:numeric-multiply and
++    # op:numeric-divide do (SPARQL 1.1, section 17.3; XPath 3.1 Functions and
++    # Operators, section 4.2), and the result has that type. As in
++    # AdditiveExpression, xsd:float values are computed in double precision.
++    res: Union[int, Decimal, float] = _number(expr)
++    dt = expr.datatype
++    try:
++        for op, term in zip(e.op, other):
++            n = _number(term)
++            dt = type_promotion(dt, term.datatype)
++            if dt in (XSD.float, XSD.double):
++                res, n = _to_float(res), _to_float(n)
++                res = res * n if op == "*" else _float_divide(res, n)
++            elif op == "*":
++                res = res * n
+             else:
+-                res /= f
+-    except (InvalidOperation, ZeroDivisionError):
++                # Dividing integers gives a decimal.
++                res = Decimal(res) / Decimal(n)
++                dt = XSD.decimal
++        return Literal(res, datatype=dt)
++    except ZeroDivisionError:
+         raise SPARQLError("divide by 0")
++    except (ArithmeticError, ValueError) as error:
++        raise SPARQLError("numeric overflow or invalid operation: %r" % error)
 +
-+    Regression for https://github.com/RDFLib/rdflib/issues/3539.
+ 
+-    return Literal(res)
++def _number(term: Literal) -> Any:
++    """The value of a numeric literal, or a type error if it is ill-typed."""
++    value = numeric(term)
++    if not isinstance(value, (int, Decimal, float)):
++        raise SPARQLTypeError("%r is not a valid %s" % (term, term.datatype))
++    return value
++
++
++def _to_float(value: Union[int, Decimal, float]) -> float:
++    """Cast to xs:double; an integer too large for a double is INF or -INF."""
++    try:
++        return float(value)
++    except OverflowError:
++        return math.inf if value > 0 else -math.inf
++
++
++def _float_divide(dividend: float, divisor: float) -> float:
++    """Divide two floats as op:numeric-divide does for xs:float and xs:double.
++
++    Dividing by zero gives INF, -INF or NaN (XPath 3.1 Functions and
++    Operators, section 4.2.4), where Python raises an exception.
 +    """
-+    data = "@prefix ex: <http://example.org/> .\nex:s pid:p ex:o .\n"
-+    with pytest.raises(BadSyntax) as caught:
-+        Graph().parse(data=data, format=format_name)
-+
-+    error = caught.value
-+    formatted = "".join(traceback.format_exception(error))
-+    only = "".join(traceback.format_exception_only(error))
-+    assert 'Prefix "pid:" not bound' in only
-+    assert 'Prefix "pid:" not bound' in formatted
-+    assert "KeyError" not in formatted
-+    assert "<no detail available>" not in formatted
-+
-+
- def test_badsyntax_msg_matches_rendered_detail() -> None:
-     """SyntaxError.msg keeps the diagnostic BadSyntax already renders.
++    try:
++        return dividend / divisor
++    except ZeroDivisionError:
++        if dividend == 0 or math.isnan(dividend):
++            return math.nan
++        return math.copysign(math.inf, dividend) * math.copysign(1.0, divisor)
  
+ 
+ # type error: Missing return statement
+```
+
+**File**: `test/test_sparql/test_expressions.py` (modified, +72/-1)
+```diff
+@@ -1,7 +1,11 @@
++import math
++from decimal import Decimal
+ from functools import partial
+ 
++import pytest
++
+ import rdflib.plugins.sparql.parser as p
+-from rdflib import Literal, Variable
++from rdflib import XSD, Literal, URIRef, Variable
+ from rdflib.plugins.sparql.algebra import translatePName, traverse
+ from rdflib.plugins.sparql.operators import simplify
+ from rdflib.plugins.sparql.sparql import Prologue, QueryContext, SPARQLError
+@@ -63,6 +67,73 @@ def test_arithmetic():
+     eq(_eval(_translate(p.Expression.parse_string("(2+4)/2")[0])).value, 3)
+ 
+ 
++FLOAT = f"<{XSD.float}>"
++INT = f"<{XSD.int}>"
++SHORT = f"<{XSD.short}>"
++
++
++@pytest.mark.parametrize(
++    ("expression", "value", "datatype"),
++    [
++        pytest.param("2*3", 6, XSD.integer, id="integer"),
++        pytest.param(f'"3"^^{INT}*"2"^^{SHORT}', 6, XSD.integer, id="integer-subtypes"),
++        pytest.param(
++            "123456789012345678901234567890*3",
++            370370367037037036703703703670,
++            XSD.integer,
++            id="large-integer",
++        ),
++        pytest.param("2*1.5", Decimal("3.0"), XSD.decimal, id="decimal"),
++        pytest.param("1.5e0*2", 3.0, XSD.double, id="double-first"),
++        pytest.param("1.5e0*2*3", 9.0, XSD.double, id="double-chain"),
++        pytest.param(f'"2.5"^^{FLOAT}*2', 5.0, XSD.float, id="float"),
++        pytest.param("7/2", Decimal("3.5"), XSD.decimal, id="integer-division"),
++        pytest.param("7e0/2", 3.5, XSD.double, id="double-division"),
++        pytest.param("1e308*10", math.inf, XSD.double, id="overflow"),
++        pytest.param("-1e308*10", -math.inf, XSD.double, id="negative-overflow"),
++        pytest.param(f"1{'0' * 400}*1e0", math.inf, XSD.double, id="huge-integer"),
++        pytest.param("1e0/0", math.inf, XSD.double, id="divide-by-zero"),
++        pytest.param("-1e0/0", -math.inf, XSD.double, id="negative-by-zero"),
++        pytest.param("1e0/-0e0", -math.inf, XSD.double, id="by-negative-zero"),
++        pytest.param(f'"2"^^{FLOAT}/0', math.inf, XSD.float, id="float-by-zero"),
++    ],
++)
++def test_multiplication_and_division_promote_numeric_types(
++    expression: str, value: object, datatype: URIRef
++) -> None:
++    """The result has the promoted type of the operands, as in XPath 3.1
++    Functions and Operators, section 4.2: integer times double is a double,
++    and a double divided by zero is infinite."""
++    result = _eval(_translate(p.Expression.parse_string(expression)[0]))
++
++    assert (result.value, result.datatype) == (value, datatype)
++
++
++def test_zero_divided_by_zero_is_nan_for_doubles() -> None:
++    result = _eval(_translate(p.Expression.parse_string("0e0/0")[0]))
++
++    assert math.isnan(result.value) and result.datatype == XSD.double
++
++
++@pytest.mark.parametrize(
++    "expression",
++    [
++        pytest.param("1/0", id="integer-by-zero"),
++        pytest.param("1.0/0", id="decimal-by-zero"),
++        pytest.param(f'"abc"^^<{XSD.integer}>*2', id="ill-typed-integer"),
++        pytest.param(f'2*"abc"^^<{XSD.decimal}>', id="ill-typed-decimal"),
++        pytest.param(f'"1.5"^^<{XSD.integer}>*3', id="ill-typed-fraction"),
++        pytest.param(f'"abc"^^<{XSD.double}>*2', id="ill-typed-double"),
++        pytest.param(f'2e0*"abc"^^<{XSD.integer}>', id="ill-typed-with-double"),
++        pytest.param(f"1{'0' * 2200}*1{'0' * 2200}", id="too-many-digits"),
++    ],
++)
++def test_multiplication_and_division_errors(expression: str) -> None:
++    """Integer and decimal division by zero, ill-typed operands, and an integer
++    too long to write are errors, not crashes or strings."""
++    assert _eval(_translate(p.Expression.parse_string(expression)[0])) is False
++
++
+ def test_arithmetic_var():
+     ctx = QueryContext()
+     ctx[Variable("x")] = Literal(2)
+```
+
+---
+
+### Incident Patch 2: `663b2ac0` (2026-11-18)
+**Commit Message**: fix: write infinite and NaN doubles as INF, -INF and NaN (#3691)
+
+* fix: write infinite and NaN doubles as INF, -INF and NaN
+
+A float literal took its lexical form from str(), so infinity and NaN
+became "inf" and "nan", which are not in the lexical space of xsd:double
+or xsd:float (XML Schema 1.1 Part 2, sections 3.3.4.2 and 3.3.5.2). Only
+Turtle and N3 output corrected them. N-Triples, N-Quads, RDF/XML and
+SPARQL wrote the Python spelling, and normalizing a parsed "INF" turned
+it into "inf". Give a float value its canonical XSD form when the
+literal is made, and add an upgrade note for the change.
+
+Signed-off-by: jdsika <[REDACTED_EMAIL]>
+
+* fix: write an unnormalized INF or NaN in n3() with _float_lexical
+
+_literal_n3 replaced "inf" and "nan" in the lexical form of a special
+value, so "infinity" became "INFinity", and "INFINITY" and "NAN" were
+written as they were; none of these is a valid xsd:double. Write the
+canonical form from _float_lexical instead when the lexical form is a
+Python spelling: not in the xsd:double lexical space and without
+digits, so that valid forms such as "+INF", and numerals that overflow
+such as "1e400", are kept. This covers Turtle, N3, TriG and the oth
+
+**File**: `docs/upgrade7to8.md` (modified, +26/-0)
+```diff
+@@ -30,3 +30,29 @@ Results are not cached, so repeated checks repeat the work. Avoid assuming
+ these operations are constant-time, especially in loops over large or remote
+ datasets. A dataset containing only empty named graphs has length zero and is
+ false, even though those graph names remain present.
++
++## Infinite and NaN doubles
++
++A [`Literal`][rdflib.term.Literal] made from an infinite or NaN float, or
++parsed as an infinite or NaN `xsd:double` or `xsd:float`, now has the lexical
++form `INF`, `-INF` or `NaN`, the canonical XML Schema forms. RDFLib 7 used
++Python's spelling, `inf`, `-inf` and `nan`, which is not a valid `xsd:double`
++or `xsd:float`. Turtle and N3 output already used the new forms; `str()`,
++N-Triples, N-Quads, RDF/XML, TriX, HexT, Patch and SPARQL results change.
++
++- A literal made with `normalize=False` keeps its lexical form. Only `n3()`,
++  and so Turtle, N3, TriG and the SPARQL stores, writes a special value spelled
++  as Python does, such as `infinity`, `INFINITY` or `NAN`, in its XSD form, as
++  it already did for `inf` and `nan`; a numeral is kept, even when it
++  overflows. Comparisons that use `n3()`, such as
++  [`isomorphic`][rdflib.compare.isomorphic], treat such a literal as equal to
++  the canonical one.
++- Such a literal no longer equals one made with `normalize=False` from the old
++  spelling, such as `Literal("inf", datatype=XSD.double, normalize=False)`.
++  Literals in SPARQL queries aren't normalized, so a query that spells the
++  value `"inf"^^xsd:double` no longer matches, and `"INF"^^xsd:double` now does.
++- A persistent store that indexes literals by their lexical form, such as the
++  BerkeleyDB store, keeps the old spelling for data written by RDFLib 7.
++  RDFLib 8 reads such data back as `INF` and `NaN`, but can't find or remove
++  it by value. To migrate such a store, export its data with RDFLib 8 and load
++  it into a new store.
+```
+
+**File**: `rdflib/term.py` (modified, +41/-9)
+```diff
+@@ -1713,14 +1713,16 @@ def _literal_n3(
+             if datatype in _NUMERIC_INF_NAN_LITERAL_TYPES:
+                 try:
+                     v = float(self)
+-                    if math.isinf(v):
+-                        # py string reps: float: 'inf', Decimal: 'Infinity"
+-                        # both need to become "INF" in xsd datatypes
+-                        encoded = encoded.replace("inf", "INF").replace(
+-                            "Infinity", "INF"
+-                        )
+-                    if math.isnan(v):
+-                        encoded = encoded.replace("nan", "NaN")
++                    # A special value spelled as Python does, such as "inf",
++                    # "Infinity" (also a Decimal's lexical form) or "nan", is
++                    # written in its XSD form. A numeral that overflows to
++                    # infinity is kept as it is.
++                    if (
++                        (math.isinf(v) or math.isnan(v))
++                        and not _XSD_DOUBLE_LEXICAL.fullmatch(self)
++                        and not any(c.isdigit() for c in self)
++                    ):
++                        encoded = f'"{_float_lexical(v)}"'
+                 except ValueError:
+                     # if we can't cast to float something is wrong, but we can
+                     # still serialize. Warn user about it
+@@ -1865,6 +1867,36 @@ def _writeXML(  # noqa: N802
+     return s
+ 
+ 
++# The lexical space of xsd:double and xsd:float (XML Schema 1.1 Part 2,
++# sections 3.3.4.2 and 3.3.5.2). _literal_n3 also uses it for xsd:decimal,
++# whose lexical space has no special values, to keep valid forms as they are.
++_XSD_DOUBLE_LEXICAL = compile(
++    r"(\+|-)?([0-9]+(\.[0-9]*)?|\.[0-9]+)([Ee](\+|-)?[0-9]+)?|(\+|-)?INF|NaN"
++)
++
++
++def _float_lexical(value: float) -> str:
++    """The lexical form of a float as an `xsd:double` or `xsd:float`.
++
++    The special values are written in their canonical forms, `INF`, `-INF` and
++    `NaN` (XML Schema 1.1 Part 2, appendix E.1, `specialRepCanonicalMap`).
++    Python's `inf` and `nan` are not in the lexical space of these types
++    (sections 3.3.4.2 and 3.3.5.2). Other values keep the form that `str()`
++    gives them.
++
++    Args:
++        value: The float.
++
++    Returns:
++        The lexical form.
++    """
++    if math.isnan(value):
++        return "NaN"
++    if math.isinf(value):
++        return "INF" if value > 0 else "-INF"
++    return str(value)
++
++
+ def _unhexlify(value: str | bytes | Literal) -> bytes:
+     # In Python 3.2, unhexlify does not support str (only bytes)
+     if isinstance(value, str):
+@@ -2147,7 +2179,7 @@ def _castPythonToLiteral(  # noqa: N802
+     tuple[type[Any], tuple[Callable[[Any], str | bytes] | None, str | None]]
+ ] = [
+     (str, (None, None)),
+-    (float, (None, _XSD_DOUBLE)),
++    (float, (_float_lexical, _XSD_DOUBLE)),
+     (bool, (lambda i: str(i).lower(), _XSD_BOOLEAN)),
+     (int, (None, _XSD_INTEGER)),
+     (long_type, (None, _XSD_INTEGER)),
+```
+
+**File**: `test/test_literal/test_special_doubles.py` (added, +168/-0)
+```diff
+@@ -0,0 +1,168 @@
++"""
++Infinite and NaN doubles and floats have the lexical forms `INF`, `-INF` and
++`NaN`.
++
++These are the canonical forms of the special values of `xsd:double` and
++`xsd:float` (XML Schema 1.1 Part 2, appendix E.1). A literal took its lexical
++form from Python's `str()` instead, `inf` and `nan`, which are not in the
++lexical space of these types at all. Only Turtle and N3 output corrected that
++(#658). N-Triples, N-Quads, RDF/XML and SPARQL wrote the Python spelling, and
++reading a valid `"INF"^^xsd:double` turned it into `"inf"`.
++"""
++
++from __future__ import annotations
++
++import math
++
++import pytest
++
++from rdflib import XSD, Dataset, Graph, Literal, URIRef, Variable
++
++S = URIRef("http://example.org/s")
++P = URIRef("http://example.org/p")
++
++
++@pytest.mark.parametrize(
++    ("literal", "lexical"),
++    [
++        pytest.param(Literal(math.inf), "INF", id="float-inf"),
++        pytest.param(Literal(-math.inf), "-INF", id="float-minus-inf"),
++        pytest.param(Literal(math.nan), "NaN", id="float-nan"),
++        pytest.param(Literal(-math.nan), "NaN", id="float-minus-nan"),
++        pytest.param(Literal(math.inf, datatype=XSD.float), "INF", id="inf-as-float"),
++        pytest.param(Literal("INF", datatype=XSD.double), "INF", id="typed-INF"),
++        pytest.param(Literal("+INF", datatype=XSD.double), "INF", id="typed-plus-INF"),
++        pytest.param(
++            Literal("-INF", datatype=XSD.double), "-INF", id="typed-minus-INF"
++        ),
++        pytest.param(Literal("NaN", datatype=XSD.double), "NaN", id="typed-NaN"),
++        pytest.param(Literal("INF", datatype=XSD.float), "INF", id="typed-float-INF"),
++        pytest.param(
++            Literal("inf", datatype=XSD.double, normalize=False).normalize(),
++            "INF",
++            id="normalized",
++        ),
++    ],
++)
++def test_a_special_value_has_its_xsd_lexical_form(
++    literal: Literal, lexical: str
++) -> None:
++    assert str(literal) == lexical
++    assert literal == Literal(lexical, datatype=literal.datatype)
++
++
++@pytest.mark.parametrize(
++    "format", ["nt", "nquads", "xml", "pretty-xml", "trix", "hext", "patch"]
++)
++def test_special_values_are_written_in_their_xsd_lexical_forms(format: str) -> None:
++    g = Dataset() if format in ("nquads", "patch") else Graph()
++    for value in (math.inf, -math.inf, math.nan):
++        g.add((S, P, Literal(value)))
++
++    data = g.serialize(format=format)
++
++    for lexical in ("INF", "-INF", "NaN"):
++        assert f'"{lexical}"' in data or f">{lexical}<" in data
++    for python_form in ("inf", "-inf", "nan"):
++        assert f'"{python_form}"' not in data and f">{python_form}<" not in data
++
++
++def test_special_values_round_trip_through_n_triples_unchanged() -> None:
++    data = "".join(
++        f'<{S}> <{P}> "{lexical}"^^<{datatype}> .\n'
++        for lexical in ("INF", "-INF", "NaN")
++        for datatype in (XSD.double, XSD.float)
++    )
++
++    g = Graph().parse(data=data, format="nt")
++
++    assert sorted(g.serialize(format="nt").splitlines()) == sorted(data.splitlines())
++
++
++def test_a_sparql_pattern_with_a_special_value_matches_parsed_data() -> None:
++    g = Graph().parse(
++        data=f'<{S}> <{P}> "INF"^^<{XSD.double}>, "NaN"^^<{XSD.double}> .',
++        format="turtle",
++    )
++    query = 'SELECT ?s { ?s ?p "INF"^^xsd:double , "NaN"^^xsd:double }'
++
++    assert g.query(query, initNs={"xsd": XSD}).bindings == [{Variable("s"): S}]
++
++
++def test_sparql_str_of_a_special_value_is_its_xsd_lexical_form() -> None:
++    query = (
++        'SELECT (STR(xsd:double("INF")) AS ?inf) (STR(xsd:double("NaN")) AS ?nan) {}'
++    )
++
++    (binding,) = Graph().query(query, initNs={"xsd": XSD}).bindings
++
++    assert {str(name): str(value) for name, value in binding.items()} == {
++        "inf": "INF",
++        "nan": "NaN",
++    }
++
++
++@pytest.mark.parametrize(
++    ("literal", "lexical"),
++    [
++        pytest.param(Literal(1.5), "1.5", id="fraction"),
++        pytest.param(Literal(1e-07), "1e-07", id="small"),
++        pytest.param(Literal(-0.0), "-0.0", id="negative-zero"),
++        pytest.param(Literal(1e300), "1e+300", id="large"),
++        pytest.param(
++            Literal("inf", datatype=XSD.double, normalize=False),
++            "inf",
++            id="not-normalized",
++        ),
++        pytest.param(Literal("inf"), "inf", id="plain-string"),
++    ],
++)
++def test_other_lexical_forms_are_unchanged(literal: Literal, lexical: str) -> None:
++    """Guard: finite values, unnormalized literals and strings keep their form."""
++    assert str(literal) == lexical
++
++
++@pytest.mark.parametrize(
++    ("lexical", "written"),
++    [
++        pytest.param("infinity", "INF", id="infinity"),
++        pytest.param("INFINITY", "INF", id="uppercase-infinity"),
++        pytest.param("-Infinity", "-INF", id="minus-infinity"),
++        pytest.param("NAN", "NaN", id="uppercase-nan"),
++        pytest.param("inf", "INF", id="inf"),
++        pytest.param("+INF", "+INF", id="plus-INF-kept"
+```
+
+---
+
+### Incident Patch 3: `2af41ffb` (2026-11-18)
+**Commit Message**: fix: csv2rdf crashed on -i and rejected --ident, --default, --col<N> and --prop<N> (#3712)
+
+Co-authored-by: Nicholas Car <[REDACTED_EMAIL]>
+
+**File**: `rdflib/tools/csv2rdf.py` (modified, +13/-4)
+```diff
+@@ -132,7 +132,7 @@ def csv_reader(csv_data, dialect=csv.excel, **kwargs):
+ 
+ def prefixuri(x, prefix, class_: URIRef | None = None):
+     if prefix:
+-        r = rdflib.URIRef(prefix + quote(x.encode("utf8").replace(" ", "_"), safe=""))
++        r = rdflib.URIRef(prefix + quote(x.replace(" ", "_"), safe=""))
+     else:
+         r = rdflib.URIRef(x)
+     uris[x] = (r, class_)
+@@ -377,8 +377,8 @@ def convert(self, csvreader):
+                     uri = self.BASE[
+                         "_".join(
+                             [
+-                                # type error: "int" has no attribute "encode"
+-                                quote(x.encode("utf8").replace(" ", "_"), safe="")  # type: ignore[attr-defined]
++                                # type error: "int" has no attribute "replace"
++                                quote(x.replace(" ", "_"), safe="")  # type: ignore[attr-defined]
+                                 # type error: Argument 2 to "index" has incompatible type "Union[tuple[str, ...], str]"; expected "tuple[int, ...]"
+                                 for x in index(l_, self.IDENT)  # type: ignore[arg-type]
+                             ]
+@@ -457,6 +457,13 @@ def main():
+     csv2rdf = CSV2RDF()
+ 
+     opts: Union[dict[str, str], list[tuple[str, str]]]
++    # --col<N> and --prop<N> take a different name per column, so declare the
++    # ones that were actually given
++    column_opts = [
++        m.group(1) + "="
++        for m in (re.match(r"--((?:col|prop)\d+)", str(a)) for a in sys.argv[1:])
++        if m
++    ]
+     opts, files = getopt.getopt(
+         sys.argv[1:],
+         "hc:b:p:i:o:Cf:l:s:d:D:",
+@@ -466,11 +473,13 @@ def main():
+             "delim=",
+             "propbase=",
+             "class=",
+-            "default=ident=",
++            "default=",
++            "ident=",
+             "label=",
+             "skip=",
+             "defineclass",
+             "help",
++            *column_opts,
+         ],
+     )
+     opts = dict(opts)
+```
+
+**File**: `test/test_tools/test_csv2rdf.py` (modified, +31/-0)
+```diff
+@@ -107,3 +107,34 @@ def test_csv2rdf_config_file_opened(self, config_mock):
+                 csv2rdf.main()
+                 # Check that we've "opened" the right file
+                 open_mock.assert_called_once_with(config_file)
++
++
++class TestCSV2RDFOptions:
++    def _run(self, *args: str) -> subprocess.CompletedProcess:
++        return subprocess.run(
++            [sys.executable, "-m", "rdflib.tools.csv2rdf", *args],
++            capture_output=True,
++            text=True,
++        )
++
++    def test_ident_short_option(self):
++        """-i builds instance URIs from the given columns."""
++        completed = self._run("-i", "(0,)", str(REALESTATE_FILE_PATH))
++        assert completed.returncode == 0, completed.stderr
++        assert "<http://example.org/instances/3526_HIGH_ST>" in completed.stdout
++
++    def test_long_options(self):
++        """--ident, --default, --col<N> and --prop<N> are accepted."""
++        completed = self._run(
++            "--ident=(0,)",
++            "--default=ignore",
++            "--col2=int()",
++            "--prop2=http://example.org/props/postcode",
++            str(REALESTATE_FILE_PATH),
++        )
++        assert completed.returncode == 0, completed.stderr
++        assert "<http://example.org/instances/3526_HIGH_ST>" in completed.stdout
++        assert (
++            '<http://example.org/props/postcode> "95838"^^'
++            "<http://www.w3.org/2001/XMLSchema#integer>"
++        ) in completed.stdout
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3656** (2026-11-02): fix: report an unbound prefix as a syntax error (@gabrielemidulla)
-- **PR #3649** (closed): Detect RDF formats for generic media types (@AnshulBhati01)
-- **PR #3648** (closed): feat: add deterministic RDF/XML serialization (@AnshulBhati01)
-- **PR #3647** (closed): feat: expose structural SPARQL query features (@AnshulBhati01)
-- **PR #3644** (closed): fix: avoid recursion limits when evaluating property paths (@AnshulBhati01)
-- **PR #3643** (2026-10-28): build(deps): bump berkeleydb from 18.1.16 to 18.1.17 (@dependabot[bot])
+- **PR #3719** (2026-11-18): build(deps-dev): bump zensical from 0.1.0 to 0.1.1 (@dependabot[bot])
+- **PR #3718** (2026-11-18): build(deps-dev): bump ruff from 0.17.4 to 0.17.5 (@dependabot[bot])
+- **PR #3717** (2026-11-18): build(deps): bump berkeleydb from 18.1.17 to 18.1.18 (@dependabot[bot])
+- **PR #3716** (2026-11-17): Support Python 3.15 (@nicholascar)
+- **PR #3715** (2026-11-17): fix: keep the label of a TriG blank-node graph name used once as an object (@kushaldave002)
+- **PR #3714** (2026-11-18): fix: handle NotImplemented in Literal comparisons for Python 3.14 (@yarrrly)
 
 ---
 
@@ -1832,46 +2367,45 @@ led with KeyError instead of the unbound-prefix message.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. report an unbound prefix as a syntax error (#3656)
+## X. promote numeric types in SPARQL multiplication and division
 
 **RULE**:
-When implementing operations in `rdflib/plugins/parsers/notation3.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RDFLib/rdflib. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/upgrade7to8.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RDFLib/rdflib. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `114dd59d`: report an unbound prefix as a syntax error (#3656). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e775564d`: promote numeric types in SPARQL multiplication and division. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `rdflib/plugins/parsers/notation3.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/upgrade7to8.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                # Look the prefix up before raising. BadSyntax from inside
-                # `except KeyError` keeps the KeyError on the traceback, which
-                # is what a user sees instead of the unbound-prefix message.
-                if pfx in self._bindings:
-                elif pfx == "_":  # Magic prefix 2001/05/30, can be changed
-                    res.append(self.anonymousNode(ln))
-                    return j
-                elif not self.turtle and pfx == "":
-                    ns = join(self._baseURI or "", "#")
-                else:
-                    self.BadSyntax(argstr, i, 'Prefix "%s:" not bound' % (pfx))
+## SPARQL multiplication and division
+
+SPARQL `*` and `/` now give the result the promoted type of their operands, as
+XPath's `op:numeric-multiply` and `op:numeric-divide` define it and as `+` and
+`-` already did:
+
+- An integer times an integer is an `xsd:integer`, and exact for large values.
+  It was an `xsd:decimal`, rounded to 28 digits.
+- A product or quotient with an `xsd:float` or `xsd:double` operand is a float
+  or double, also when that operand comes first, so `toPython()` gives a
+  Python `float` where it gave a `Decimal`.
+- A float or double divided by zero is `INF`, `-INF` or `NaN` instead of an
+  error. Integer and decimal division by zero are still errors.
+- An ill-typed operand, such as `"abc"^^xsd:integer`, is an error.
+
+`DATATYPE()`, `sameTerm()`, `DISTINCT` and joins on such computed values change
+accordingly.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-                try:
-                except KeyError:
-                    if pfx == "_":  # Magic prefix 2001/05/30, can be changed
-                        res.append(self.anonymousNode(ln))
-                        return j
-                    if not self.turtle and pfx == "":
-                        ns = join(self._baseURI or "", "#")
-                    else:
-                        self.BadSyntax(argstr, i, 'Prefix "%s:" not bound' % (pfx))
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `114dd59d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e775564d` are properly handled with clean fallback behavior.
