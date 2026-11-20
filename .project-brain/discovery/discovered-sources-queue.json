@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T23:13:42.669Z",
+  "updated_at": "2026-11-20T23:22:00.145Z",
   "stats": {
-    "total_discovered": 6801,
-    "approved_pending_harvest": 6421,
+    "total_discovered": 6807,
+    "approved_pending_harvest": 6427,
     "harvested_count": 0,
     "rejected_count": 380,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6393,
+      "COMMUNITY_AND_EXPERT": 6399,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 121,
       "ENGINEERING_BLOGS": 5,
@@ -146985,6 +146985,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/koderover-zadig-learnings.md",
         "fileName": "koderover-zadig-learnings.md"
+      }
+    },
+    "SRC-6A97CDD8B47E": {
+      "id": "SRC-6A97CDD8B47E",
+      "url": "https://untrusted.example/trace.html",
+      "title": "https://untrusted.example/trace.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:21:30.176Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-8B53AD538F82": {
+      "id": "SRC-8B53AD538F82",
+      "url": "https://untrusted.example/report.html",
+      "title": "https://untrusted.example/report.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:21:30.223Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-A6C69002FFEB": {
+      "id": "SRC-A6C69002FFEB",
+      "url": "https://untrusted.example/",
+      "title": "https://untrusted.example/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:21:30.267Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-C4780A9F90E1": {
+      "id": "SRC-C4780A9F90E1",
+      "url": "https://github.com/Cuiyus/zvec-grep/actions/runs/35206585943",
+      "title": "https://github.com/Cuiyus/zvec-grep/actions/runs/35206585943",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:21:30.311Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-9EBDB3524F15": {
+      "id": "SRC-9EBDB3524F15",
+      "url": "https://claude.ai/code/session_0117BoWPYxt1bEM9zZ5G6dPL",
+      "title": "https://claude.ai/code/session_0117BoWPYxt1bEM9zZ5G6dPL",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:22:00.098Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/solidjs-solid-learnings.md",
+        "fileName": "solidjs-solid-learnings.md"
+      }
+    },
+    "SRC-3E348B068306": {
+      "id": "SRC-3E348B068306",
+      "url": "https://claude.ai/code/session_0117BoWKDYxhpjoT3aFUwrQv",
+      "title": "https://claude.ai/code/session_0117BoWKDYxhpjoT3aFUwrQv",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:22:00.145Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/solidjs-solid-learnings.md",
+        "fileName": "solidjs-solid-learnings.md"
       }
     }
   }

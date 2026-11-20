@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T22:23:10.153Z",
+  "timestamp": "2026-11-20T23:21:30.410Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zvec-ai-zvec-grep-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zvec-ai-zvec-grep-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T22:23:10.153Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T23:21:30.410Z`  
 > **Learning ID**: `LEARN-EVO-zvec-ai-zvec-grep-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source**: github ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
-> **Source Version**: `cc3ff0fe`  
+> **Source Version**: `ad737d20`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T10:47:10.186Z  
+> **Timestamp**: 2026-11-20T23:21:18.304Z  
 > **Learning ID**: `learn-github-zvec-ai-zvec-grep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T10:47:10.181Z  
+> **Harvest Timestamp**: 2026-11-20T23:21:18.126Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Local-first search across your workspace, built for humans and AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4364 stars
+- **Stars / Engagement**: 4367 stars
 
 ---
 
@@ -1143,58 +1143,567 @@ def render_report(report: dict[str, Any]) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `975a4777` (2026-11-18)
-**Commit Message**: fix(build): download ONNX Runtime archives from npmmirror (#437)
+### Incident Patch 1: `ad737d20` (2026-11-20)
+**Commit Message**: feat(benchmarks): report Gold coverage across retrieval stages (#417)
 
-Co-authored-by: feihongxu0824 <[REDACTED_EMAIL]>
-
-**File**: `rust/scripts/onnxruntime-distributions.json` (modified, +5/-5)
+**File**: `.github/scripts/retrieval-pr-comment.mjs` (modified, +40/-7)
 ```diff
-@@ -4,7 +4,7 @@
-   "artifacts": {
-     "linux-x64": {
-       "archive": "onnxruntime-linux-x64-1.21.0.tgz",
--      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-x64-1.21.0.tgz",
-+      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-x64-1.21.0.tgz",
-       "sha256": "7485c7e7aac6501b27e353dcbe068e45c61ab51fbaf598d13970dfae669d20bf",
-       "files": {
-         "onnxruntime-linux-x64-1.21.0/lib/libonnxruntime.so.1.21.0": "libonnxruntime.so.1",
-@@ -14,7 +14,7 @@
+@@ -390,7 +390,14 @@ export function validateComparison(report, request) {
+   };
+ }
+ 
+-export function commentBody({ run, request, report, serverUrl, repository }) {
++export function commentBody({
++  run,
++  request,
++  report,
++  serverUrl,
++  repository,
++  traceArtifactId,
++}) {
+   const runUrl = `${serverUrl}/${repository}/actions/runs/${run.id}/attempts/${run.run_attempt}`;
+   let result;
+   if (run.conclusion === "success") {
+@@ -403,11 +410,14 @@ export function commentBody({ run, request, report, serverUrl, repository }) {
+   const body = [marker, versionMarker(run), "## ZG Retrieval Benchmark", ""];
+   if (result) {
+     body.push(
+-      markdownVersionComparison({
+-        ...result,
+-        server_url: serverUrl,
+-        run_url: runUrl,
+-      }),
++      markdownVersionComparison(
++        { ...result, server_url: serverUrl, run_url: runUrl },
++        {
++          traceUrl: positiveInteger(traceArtifactId)
++            ? `${serverUrl}/${repository}/actions/runs/${run.id}/artifacts/${traceArtifactId}`
++            : undefined,
++        },
++      ),
+     );
+   } else {
+     const version = (side) => {
+@@ -438,7 +448,7 @@ export function commentBody({ run, request, report, serverUrl, repository }) {
+ async function readJson(path) {
+   try {
+     const info = await lstat(path);
+-    if (!info.isFile() || info.size > 128 * 1024) return null;
++    if (!info.isFile() || info.size > 256 * 1024) return null;
+     return JSON.parse(await readFile(path, "utf8"));
+   } catch {
+     return null;
+@@ -522,12 +532,35 @@ export async function publish({ github, context, core, directory }) {
+     core.info("A newer run already published this PR's results.");
+     return;
+   }
++  let traceArtifactId;
++  if (run.conclusion === "success") {
++    try {
++      const artifacts = await github.paginate(
++        github.rest.actions.listWorkflowRunArtifacts,
++        { ...context.repo, run_id: run.id, per_page: 100 },
++      );
++      // Build the URL from GitHub metadata, never artifact-provided Markdown or URLs.
++      traceArtifactId = artifacts.find(
++        (artifact) =>
++          artifact.name === "retrieval-trace.html" &&
++          artifact.expired === false &&
++          positiveInteger(artifact.id) &&
++          artifact.workflow_run?.id === run.id &&
++          artifact.workflow_run?.head_sha === run.head_sha,
++      )?.id;
++    } catch {
++      core.info(
++        "Stage trace artifact unavailable; omitting its download link.",
++      );
++    }
++  }
+   const body = commentBody({
+     run,
+     request,
+     report: await readJson(join(directory, "comparison/summary.json")),
+     serverUrl: context.serverUrl,
+     repository,
++    traceArtifactId,
+   });
+   // Recheck after reading artifacts/comments so a push during publication
+   // cannot knowingly replace the current PR's result with an older version.
+```
+
+**File**: `.github/scripts/retrieval-pr-comment.test.mjs` (modified, +98/-3)
+```diff
+@@ -134,12 +134,14 @@ async function fixture(t) {
+   };
+   const calls = [],
+     comments = [],
++    artifacts = [],
+     info = [];
+   let prReads = 0;
+-  const x = { context, directory, run, pr, calls, comments, info };
++  const x = { context, directory, run, pr, calls, comments, artifacts, info };
+   x.github = {
+     rest: {
+       actions: {
++        listWorkflowRunArtifacts() {},
+         async getWorkflowRun(input) {
+           assert.equal(input.run_id, 123);
+           return { data: run };
+@@ -173,8 +175,16 @@ async function fixture(t) {
+         },
+       },
      },
-     "linux-aarch64": {
-       "archive": "onnxruntime-linux-aarch64-1.21.0.tgz",
--      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-aarch64-1.21.0.tgz",
-+      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-aarch64-1.21.0.tgz",
-       "sha256": "4508084bde1232ee1ab4b6fad2155be0ea2ccab1c1aae9910ddb3fb68a60805e",
-       "files": {
-         "onnxruntime-linux-aarch64-1.21.0/lib/libonnxruntime.so.1.21.0": "libonnxruntime.so.1",
-@@ -24,7 +24,7 @@
+-    async paginate(_method, input) {
++    async paginate(method, input) {
+       calls.push(["list", input]);
++      if (method === x.github.rest.actions.listWorkflowRunArtifacts) {
++        assert.equal(input.run_id, run.id);
++        assert.equal(input.owner, context.repo.owner);
++        assert.equal(input.repo, context.repo.repo);
++        if (x.artifactError) throw x.artifactError;
++        return artifacts;
++      }
++      assert.equal(method, x.github.rest.issues.listComments);
+       return comments;
      },
-     "linux-x64-gpu": {
-       "archive": "onnxruntime-linux-x64-gpu-1.21.0.tgz",
--      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-x64-gpu-1.21.0.tgz",
-+      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-x64-gpu-1.21.0.tgz",
-       "sha256": "ef37a33ba75e457aebfd0d7b342ab20424aa6126bc5f565d247f1201b66996cf",
-       "files": {
-         "onnxruntime-linux-x64-gpu-1.21.0/lib/libonnxruntime.so.1.21.0": "libonnxruntime.so.1",
-@@ -36,7 +36,7 @@
-     },
-     "osx-arm64": {
-       "archive": "onnxruntime-osx-arm64-1.21.0.tgz",
--      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-osx-arm64-1.21.0.tgz",
-+      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-osx-arm64-1.21.0.tgz",
-       "sha256": "5c3f2064ee97eb7774e87f396735c8eada7287734f1bb7847467ad30d4036115",
-       "files": {
-         "onnxruntime-osx-arm64-1.21.0/lib/libonnxruntime.1.21.0.dylib": "libonnxruntime.1.dylib",
-@@ -46,7 +46,7 @@
-     },
-     "osx-x86_64": {
-       "archive": "onnxruntime-osx-x86_64-1.21.0.tgz",
--      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-osx-x86_64-1.21.0.tgz",
-+      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-osx-x86_64-1.21.0.tgz",
-       "sha256": "8305afd2d75ee5702844a23b099d41885af30ad3d1b4cf3d8d795e3d8c1f9396",
-       "files": {
-         "onnxruntime-osx-x86_64-1.21.0/lib/libonnxruntime.1.21.0.dylib": "libonnxruntime.1.dylib",
+   };
+@@ -246,6 +256,79 @@ test("the publisher labels validated full preview without relabeling historical
+     );
+ });
+ 
++const traceArtifact = {
++  id: 456,
++  name: "retrieval-trace.html",
++  expired: false,
++  workflow_run: { id: 123, head_sha: head },
++};
++
++test("the publisher links the triggering run's HTML artifact using only GitHub metadata", async (t) => {
++  const x = await fixture(t);
++  // Older runs uploaded a ZIP under this name; never select it as direct HTML.
++  x.artifacts.push({
++    ...traceArtifact,
++    id: 455,
++    name: "retrieval-stage-trace",
++  });
++  x.artifacts.push({
++    ...traceArtifact,
++    archive_download_url: "https://untrusted.example/trace.html",
++  });
++  await x.write("comparison/summary.json", {
++    ...report,
++    trace_url: "https://untrusted.example/report.html",
++    traceArtifactId: "[untrusted](https://untrusted.example)",
++    baseline_gold_stages: "untrusted baseline <script>",
++    candidate_gold_stages: { warning: "untrusted candidate <script>" },
++  });
++  await publish(x);
++  const { body } = x.messages()[0][1];
++  assert.match(
++    body,
++    /\[Download stage trace \(HTML\)\]\(https:\/\/github\.com\/Cuiyus\/zvec-grep\/actions\/runs\/123\/artifacts\/456\)/,
++  );
++  assert.doesNotMatch(
++    body,
++    /untrusted|<script>|Gold coverage by stage|Stage capture incomplete/,
++  );
++  assert.doesNotMatch(body, /\/artifacts\/455/);
++});
++
++test("missing, expired, unrelated or invalid trace artifacts never produce a download link", async (t) => {
++  for (const artifact of [
++    null,
++    { ...traceArtifact, expired: true },
++    { ...traceArtifact, name: "retrieval-comparison" },
++    { ...traceArtifact, name: "retrieval-stage-trace" },
++    { ...traceArtifact, id: "456" },
++    { ...traceArtifact, id: 0 },
++    { ...traceArtifact, id: 1.5 },
++    { ...traceArtifact, id: Number.MAX_SAFE_INTEGER + 1 },
++    { ...traceArtifact, workflow_run: { id: 122, head_sha: head } },
++    { ...traceArtifact, workflow_run: { id: 123, head_sha: base } },
++    { ...traceArtifact, workflow_run: undefined },
++  ]) {
++    const x = await fixture(t);
++    if (artifact) x.artifacts.push(artifact);
++    await publish(x);
++    const { body } = x.messages()[0][1];
++    assert.match(body, /✅ Complete/);
++    assert.doesNotMatch(body, /Download stage trace|\/artifacts\/456/);
++  }
++});
++
++test("an unavailable artifact listing preserves the validated quality comment", async (t) => {
++  const x = await fixture(t);
++  x.artifactError = new Error("artifact API unavailable");
++  await publish(x);
++  assert.match(x.messages()[0][1].body, /✅ Complete/);
++  assert.doesNotMatch(x.messages()[0][1].body, /Download stage trace/);
++  assert.ok(
++    x.info.some((message) => message.includes("omitting its download link")),
++  );
++});
++
+ test("the publisher validates corpus totals and renders each suite once", async (t) => {
+   const x = await fixture(t);
+   const counts = countsFor("beir");
+@@ -643,11 +726,23 @@ test("missing, malformed or invalid comparison artifacts publish incomplete with
+   assert.match(x.messages()[0][1].body, /Failed \/ incomplete/);
+ });
+ 
++test("a valid comparison report above 128 KiB can publish within the 256 KiB limit", async (t) => {
++  const x = await fixture(t);
++  // JSON whitespace exercises the byte limit without pretending to be run evidence.
++  const contents = JSON.stringify(report).padEnd(128 * 1024 + 1, " ");
++  assert.ok(Buffer.byteLength(contents) > 128 * 1024);
++  assert.ok(Buffer.byteLength(contents) < 256 * 1024);
++  await writeFile(join(x.directory, "comparison/summary.json"), contents);
++  await publish(x);
++  const { body } = x.messages()[0][1];
++  assert.match(body, /✅ Complete/);
++});
++
+ test("oversized report data is withheld instead of being loaded into a PR comment", async (t) => {
+   const x = await fixture(t);
+   await writeFile(
+     join(x.directory, "co
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +4/-0)
+```diff
+@@ -23,6 +23,10 @@ on:
+ 
+ permissions: {}
+ 
++env:
++  # Hosted jobs exercise CPU inference; do not fetch optional CUDA binaries.
++  ONNXRUNTIME_NODE_INSTALL_CUDA: skip
++
+ concurrency:
+   group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.sha }}
+   cancel-in-progress: true
+```
+
+**File**: `.github/workflows/retrieval-comparison.yml` (modified, +15/-1)
+```diff
+@@ -27,6 +27,7 @@ jobs:
+       candidate_repository: ${{ inputs.baseline_repository }}
+       embedding: local
+       artifact_prefix: retrieval-base
++      gold_stages: true
+ 
+   candidate:
+     uses: ./.github/workflows/retrieval-only.yml
+@@ -35,6 +36,7 @@ jobs:
+       candidate_repository: ${{ inputs.candidate_repository }}
+       embedding: local
+       artifact_prefix: retrieval-head
++      gold_stages: true
+ 
+   compare:
+     needs: [baseline, candidate]
+@@ -80,7 +82,19 @@ jobs:
+         uses: actions/upload-artifact@v7
+         with:
+           name: retrieval-comparison
+-          path: ${{ runner.temp }}/retrieval-comparison/
++          path: |
++            ${{ runner.temp }}/retrieval-comparison/summary.json
++            ${{ runner.temp }}/retrieval-comparison/summary.md
+           if-no-files-found: error
+           overwrite: true
+           retention-days: 14
++      - name: Preserve stage trace HTML
++        if: always()
++        uses: actions/upload-artifact@v7
++        with:
++          name: retrieval-trace.html
++          path: ${{ runner.temp }}/retrieval-comparison/retrieval-trace.html
++          archive: false
++          if-no-files-found: warn
++          overwrite: true
++          retention-days: 14
+```
+
+**File**: `.github/workflows/retrieval-only.yml` (modified, +19/-4)
+```diff
+@@ -17,6 +17,9 @@ on:
+       artifact_prefix:
+         default: retrieval
+         type: string
++      gold_stages:
++        default: false
++        type: boolean
+     secrets:
+       QWEN_EMBEDDING_API_KEY:
+         required: false
+@@ -35,6 +38,10 @@ on:
+         options:
+           - local
+           - remote
++      gold_stages:
++        description: Capture Gold coverage at search stages in all four suites
++        type: boolean
++        default: false
+ 
+ permissions:
+   contents: read
+@@ -157,7 +164,8 @@ jobs:
+             --output "$RUNNER_TEMP/sweqa" \
+             --corpus "$RUNNER_TEMP/corpus" \
+             --model-cache "$RUNNER_TEMP/model-cache" \
+-            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}"
++            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}" \
++            ${{ inputs.gold_stages && '--gold-stages' || '' }}
+       - name: Build the SWE-QA20 conclusion report
+         if: ${{ always() && steps.access.outcome == 'success' }}
+         run: |
+@@ -183,6 +191,7 @@ jobs:
+             ${{ runner.temp }}/sweqa/summary.json
+             ${{ runner.temp }}/sweqa/summary.md
+             ${{ runner.temp }}/sweqa/scores.jsonl
++            ${{ runner.temp }}/sweqa/gold-stages.json
+           if-no-files-found: warn
+           retention-days: 14
+       - name: Preserve SWE-QA20 public evidence
+@@ -243,7 +252,8 @@ jobs:
+             --package "$RUNNER_TEMP/package/candidate.tgz" \
+             --output "$RUNNER_TEMP/beir" \
+             --model-cache "$RUNNER_TEMP/beir-model-cache" \
+-            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}"
++            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}" \
++            ${{ inputs.gold_stages && '--gold-stages' || '' }}
+       - name: Publish BEIR results for this job
+         if: ${{ always() && steps.access.outcome == 'success' }}
+         run: |
+@@ -260,6 +270,7 @@ jobs:
+           path: |
+             ${{ runner.temp }}/beir/report.json
+             ${{ runner.temp }}/beir/report.md
++            ${{ runner.temp }}/beir/gold-stages.json
+           if-no-files-found: warn
+           retention-days: 14
+       - name: Preserve BEIR public evidence
+@@ -319,7 +330,8 @@ jobs:
+             --package "$RUNNER_TEMP/package/candidate.tgz" \
+             --output "$RUNNER_TEMP/duretrieval" \
+             --model-cache "$RUNNER_TEMP/duretrieval-model-cache" \
+-            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}"
++            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}" \
++            ${{ inputs.gold_stages && '--gold-stages' || '' }}
+       - name: Publish DuRetrieval results for this job
+         if: ${{ always() && steps.access.outcome == 'success' }}
+         run: |
+@@ -336,6 +348,7 @@ jobs:
+           path: |
+             ${{ runner.temp }}/duretrieval/report.json
+             ${{ runner.temp }}/duretrieval/report.md
++            ${{ runner.temp }}/duretrieval/gold-stages.json
+           if-no-files-found: warn
+           retention-days: 14
+       - name: Preserve DuRetrieval public evidence
+@@ -388,7 +401,8 @@ jobs:
+             --package "$RUNNER_TEMP/package/candidate.tgz" \
+             --output "$RUNNER_TEMP/quarry" \
+             --model-cache "$RUNNER_TEMP/quarry-model-cache" \
+-            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}"
++            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}" \
++            ${{ inputs.gold_stages && '--gold-stages' || '' }}
+       - name: Publish Quarry results for this job
+         if: ${{ always() && steps.access.outcome == 'success' }}
+         run: |
+@@ -405,6 +419,7 @@ jobs:
+           path: |
+             ${{ runner.temp }}/quarry/report.json
+             ${{ runner.temp }}/quarry/report.md
++            ${{ runner.temp }}/quarry/gold-stages.json
+           if-no-files-found: warn
+           retention-days: 14
+       - name: Preserve Quarry public evidence
+```
+
+**File**: `benchmarks/zg-retrieval/README.md` (modified, +100/-185)
+```diff
+@@ -1,177 +1,98 @@
+ # ZG Retrieval-only benchmark
+ 
+-The workflow measures **zg-hybrid, zg-fts and zg-vector** on four independent suites. The original SWE-QA20 suite uses 20 unchanged questions and 11 pinned repositories from [Actions run 35206585943](https://github.com/Cuiyus/zvec-grep/actions/runs/35206585943). The exploratory suites contain 20 original BEIR queries across four datasets, ten DuRetrieval queries and 20 original Quarry queries across eight languages; see the [pilot design](expansion/README.md). Each mode calls the Rust public MCP search endpoint directly with `preview: "full"`. No answering agent, query rewriting, subquery generation or LLM judge participates. See the [SWE-QA20 design](./zg-retrieval-only-sweqa20-design.md) for its frozen protocol and scoring details.
++Compare FTS, Vector and Hybrid search on four frozen suites. Each request uses the original question through the Rust public MCP search interface; there is no answering agent, query rewriting or LLM judge.
+ 
+-## Run CI and read the result
++## Run
+ 
+-The [Retrieval-only workflow](../../.github/workflows/retrieval-only.yml) supports manual runs and reuse by the [PR version comparison](../../.github/workflows/retrieval-comparison.yml). For a manual single-version run, select **Retrieval-only → Run workflow**. Use GitHub's workflow-ref selector to choose the benchmark harness (`main` for the latest merged harness), then set `candidate_ref` to the branch, tag or commit containing the `rust/` workspace to compile. It defaults to `main`. The `embedding` choice defaults to `local`, which preserves each suite's configured local model. Select `remote` to run every suite with `qwen/qwen3.7-text-embedding`; this requires the repository secret `QWEN_EMBEDDING_API_KEY` and variable `QWEN_EMBEDDING_ENDPOINT`. Every run includes all three modes.
++| Entry point | What to select |
++| --- | --- |
++| PR comparison | Opening, reopening or updating a PR compares its pinned base and head automatically. An authorized `@zg-bench` comment also requests a comparison. |
++| [Manual single-version run](../../.github/workflows/retrieval-only.yml) | **Retrieval-only → Run workflow**. The workflow ref selects the harness; `candidate_ref` selects the Rust candidate and defaults to `main`. Enable `gold_stages` for traces. |
++| [Manual paired comparison](../../.github/workflows/retrieval-pr.yml) | **Retrieval-only PR → Run workflow**. Supply full `baseline_sha` / `candidate_sha` and `baseline_repository` / `candidate_repository` (`owner/name`). This does not post a PR comment. |
++
++All runs include all three modes. Paired runs use the same harness and configured local models, build separate fresh indexes, and enable stage capture on both versions. They do not run answering-agent E2E tests or receive remote model credentials.
++
++Manual and comment runs require maintain/admin access for both the original actor and the re-run actor. See [benchmark setup](../README.md) for repository configuration. The [PR result publisher](../../.github/workflows/retrieval-pr-comment.yml) must be merged into the default branch before it can update comments; it ignores cancelled or outdated runs.
++
++## Read the results
+ 
+-PR creation, reopening and new commits automatically compare the frozen PR base and head through all four suites. An authorized `@zg-bench` PR comment requests the same comparison and posts its table. Both versions use the same harness and local models, with separate fresh indexes; neither receives remote embedding credentials. e2e is skipped by default. Comparison cells show percentages: identical baseline/candidate values appear once; differences use baseline → candidate. The JSON retains exact scores and deltas. Missing or invalid results make the comparison incomplete rather than zero. The default-branch [result publisher](../../.github/workflows/retrieval-pr-comment.yml) creates or updates one English PR comment with the table and run link, including for fork PRs. It skips cancelled or outdated runs, keeps benchmark execution read-only, and becomes active after its workflow is merged into the default branch. The `retrieval-comparison` artifact and Actions summary also retain the result; `retrieval-base-*` and `retrieval-head-*` retain the underlying reports. See [benchmark setup](../README.md).
++The PR comment shows File/Entity quality tables and a **download link to `retrieval-trace.html`**. Download the HTML and open it locally: it is a single file, not a ZIP, and needs no server or external resources. It contains suite summaries, original questions, per-question FTS/Vector/Hybrid Recall, Gold IDs and stage ranks.
+ 
+-For a manual paired comparison without a PR comment, select **Retrieval-only PR → Run workflow** and supply full `baseline_sha` / `candidate_sha` commit identities and their `baseline_repository` / `candidate_repository` (`owner/name`). This uses the same local-only comparison and does not run e2e. Manual runs require maintain/admin access.
++*
+```
+
+**File**: `benchmarks/zg-retrieval/core/gold-stage-capture.mjs` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++export const goldPaths = (pair) => [
++  ...new Set(
++    [...pair.file_targets, ...pair.entity_targets].map(({ path }) => path),
++  ),
++];
++
++// Set these before starting the isolated daemon. Only paths are sent to ZG;
++// targets, matching rules and metric computation belong to the benchmark.
++export function stageTraceEnvironment(enabled, pairs = []) {
++  return {
++    ZG_TRACE_STAGES: enabled ? "1" : "0",
++    ZG_TRACE_PATHS: JSON.stringify(
++      enabled ? [...new Set(pairs.flatMap(goldPaths))].sort() : [],
++    ),
++  };
++}
++
++// MCP already binds this metadata to its request. No control files, sequence
++// numbers or separate capture files are needed. Frozen suites use one group.
++// Return malformed metadata as an Error value for the diagnostic scorer; do not
++// throw here and invalidate an otherwise valid public search response.
++export function readStageTrace(response) {
++  if (response?.isError) return null;
++  const metadata = response?._meta;
++  if (!metadata || !Object.hasOwn(metadata, "zg_stage_trace")) return null;
++  const traces = metadata.zg_stage_trace;
++  if (!Array.isArray(traces))
++    return new Error("stage metadata must be an array");
++  if (traces.length !== 1)
++    return new Error("expected one stage capture for Q1");
++  if (traces[0]?.group_id !== "Q1")
++    return new Error("unexpected stage capture group; expected Q1");
++  return traces[0];
++}
+```
+
+**File**: `benchmarks/zg-retrieval/engines/zg/report.mjs` (modified, +57/-0)
+```diff
+@@ -28,10 +28,14 @@ import {
+   summarizeRepeatedQuality,
+ } from "../../metrics/repetitions.mjs";
+ import { markdownReport } from "../../reports/zg.mjs";
++import { readStageTrace } from "../../core/gold-stage-capture.mjs";
++import { scoreGoldStages } from "../../metrics/gold-stages.mjs";
++import { writeGoldStages } from "../../reports/gold-stages.mjs";
+ import { summarizeIndexCounts } from "../../core/index-counts.mjs";
+ import { summarizeIndexSettings } from "../../core/index-settings.mjs";
+ import {
+   publicQaItems,
++  qaEligibility,
+   scoreQaRetrieval,
+   summarizeRepeatedQaRetrieval,
+   summarizeQaRetrieval,
+@@ -72,6 +76,11 @@ function invalidate(score, reason) {
+   };
+ }
+ 
++function goldStageQualification(pair) {
++  const { status } = qaEligibility(pair);
++  return status === "scored" ? "formal" : status;
++}
++
+ export async function aggregate(directory, { expectedTasks } = {}) {
+   directory = resolve(directory);
+   const suite = await loadSuite();
+@@ -80,6 +89,7 @@ export async function aggregate(directory, { expectedTasks } = {}) {
+   const errors = [],
+     observations = [],
+     manifests = [];
++  const goldStageCalls = new Map();
+   const runDirectories = await findRuns(directory);
+   const seen = new Set();
+   for (const runDirectory of runDirectories) {
+@@ -352,6 +362,7 @@ export async function aggregate(directory, { expectedTasks } = {}) {
+         callInvalid.push("incorrect quality repetition");
+       if (call.harness_error) callInvalid.push(call.harness_error);
+       let score;
++      let stageCapture = null;
+       let visibleOutputBytes = null;
+       try {
+         assert.equal(
+@@ -367,6 +378,7 @@ export async function aggregate(directory, { expectedTasks } = {}) {
+           "raw response changed since capture",
+         );
+         const response = await readJson(path);
++        stageCapture = readStageTrace(response);
+         if (
+           Array.isArray(response?.content) &&
+           response.content.every(
+@@ -390,6 +402,23 @@ export async function aggregate(directory, { expectedTasks } = {}) {
+         callInvalid.push(error.message);
+       }
+       if (callInvalid.length) score = invalidate(score, callInvalid.join("; "));
++      if (manifest.gold_stages) {
++        const pair = suite.qa_pairs[call.task_id];
++        const capture =
++          score.execution_status === "success" ? stageCapture : null;
++        goldStageCalls.set(
++          `${call.task_id}/${call.mode}/${call.repetition}`,
++          scoreGoldStages({
++            capture,
++            pair,
++            items: score.items ?? [],
++            taskId: call.task_id,
++            mode: call.mode,
++            repetition: call.repetition,
++            qualification: goldStageQualification(pair),
++          }),
++        );
++      }
+       observations.push({
+         ...call,
+         ...score,
+@@ -625,6 +654,34 @@ export async function aggregate(directory, { expectedTasks } = {}) {
+     repositories: manifests,
+     tasks: quality,
+   };
++  if (manifests.some(({ gold_stages }) => gold_stages)) {
++    const calls = [];
++    for (const taskId of expected) {
++      const pair = suite.qa_pairs[taskId];
++      const qualification = goldStageQualification(pair);
++      for (const mode of suite.protocol.modes) {
++        for (
++          let repetition = 1;
++          repetition <= suite.protocol.repetitions;
++          repetition++
++        ) {
++          calls.push(
++            goldStageCalls.get(`${taskId}/${mode}/${repetition}`) ??
++              scoreGoldStages({
++                capture: null,
++                pair,
++                items: [],
++                taskId,
++                mode,
++                repetition,
++                qualification,
++              }),
++          );
++        }
++      }
++    }
++    report.gold_stages = await writeGoldStages(directory, calls);
++  }
+   await writeFile(
+     join(directory, "scores.jsonl"),
+     observations.map((row) => JSON.stringify(row)).join("\n") + "\n",
 ```
 
 #### Recent Merged Pull Requests:
@@ -1202,8 +1711,8 @@ Co-authored-by: feihongxu0824 <[REDACTED_EMAIL]>
 - **PR #427** (2026-11-17): fix(rust): address the remaining issues in #418 (@lnfjpt)
 - **PR #424** (2026-11-17): fix(ort): release environment before CUDA provider destructors (@feihongxu0824)
 - **PR #419** (2026-11-16): chore(rust): prepare 0.3.1 release (@egolearner)
+- **PR #417** (2026-11-20): feat(benchmarks): report Gold coverage across retrieval stages (@Cuiyus)
 - **PR #409** (2026-11-16): fix(storage): upgrade zvec-rust to 0.8.1 with WAL recovery (@egolearner)
-- **PR #407** (2026-11-13): fix(engine): preserve v2 indexes and validate workspace recovery (@zhourrr)
 
 ---
 
@@ -1223,39 +1732,72 @@ Co-authored-by: feihongxu0824 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build): download ONNX Runtime archives from npmmirror
+## X. benchmarks): report Gold coverage across retrieval stages
 
 **RULE**:
-When implementing operations in `rust/scripts/onnxruntime-distributions.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/retrieval-pr-comment.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `975a4777`: build): download ONNX Runtime archives from npmmirror. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad737d20`: benchmarks): report Gold coverage across retrieval stages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/scripts/onnxruntime-distributions.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/retrieval-pr-comment.mjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-x64-1.21.0.tgz",
-      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-aarch64-1.21.0.tgz",
-      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-x64-gpu-1.21.0.tgz",
-      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-osx-arm64-1.21.0.tgz",
-      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-osx-x86_64-1.21.0.tgz",
+export function commentBody({
+  run,
+  request,
+  report,
+  serverUrl,
+  repository,
+  traceArtifactId,
+}) {
+      markdownVersionComparison(
+        { ...result, server_url: serverUrl, run_url: runUrl },
+        {
+          traceUrl: positiveInteger(traceArtifactId)
+            ? `${serverUrl}/${repository}/actions/runs/${run.id}/artifacts/${traceArtifactId}`
+            : undefined,
+        },
+      ),
+    if (!info.isFile() || info.size > 256 * 1024) return null;
+  let traceArtifactId;
+  if (run.conclusion === "success") {
+    try {
+      const artifacts = await github.paginate(
+        github.rest.actions.listWorkflowRunArtifacts,
+        { ...context.repo, run_id: run.id, per_page: 100 },
+      );
+      // Build the URL from GitHub metadata, never artifact-provided Markdown or URLs.
+      traceArtifactId = artifacts.find(
+        (artifact) =>
+          artifact.name === "retrieval-trace.html" &&
+          artifact.expired === false &&
+          positiveInteger(artifact.id) &&
+          artifact.workflow_run?.id === run.id &&
+          artifact.workflow_run?.head_sha === run.head_sha,
+      )?.id;
+    } catch {
+      core.info(
+        "Stage trace artifact unavailable; omitti
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-x64-1.21.0.tgz",
-      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-aarch64-1.21.0.tgz",
-      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-x64-gpu-1.21.0.tgz",
-      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-osx-arm64-1.21.0.tgz",
-      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-osx-x86_64-1.21.0.tgz",
+export function commentBody({ run, request, report, serverUrl, repository }) {
+      markdownVersionComparison({
+        ...result,
+        server_url: serverUrl,
+        run_url: runUrl,
+      }),
+    if (!info.isFile() || info.size > 128 * 1024) return null;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `975a4777` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad737d20` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

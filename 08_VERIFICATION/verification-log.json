@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-82G6",
-    "timestamp": "2026-11-18T20:14:29.478Z",
-    "repository": "malisper/pgrust",
-    "learningId": "learn-github-malisper-pgrust",
-    "contentHash": "7311c61161a7de858946dde48e959b265c38ee9be9707dd3aa834e4ed7de3588",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-84IP",
-    "timestamp": "2026-11-18T20:14:32.161Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "ccb24fadce8d5879391a5fbd11292c95f3306445aeec933e3bf312b544f32689",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-1RCX",
-    "timestamp": "2026-11-18T20:37:34.785Z",
-    "repository": "deepseek-ai/DeepSeek-V4-Pro",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-    "contentHash": "d99a261f436e5b77354862918b8cfc0a61b20e09cd402fb6cc1e3700a27b2ab4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-1TRS",
     "timestamp": "2026-11-18T20:37:37.912Z",
     "repository": "aome510/spotify-player",
@@ -7490,6 +7445,51 @@
     "repository": "koderover/zadig",
     "learningId": "learn-github-koderover-zadig",
     "contentHash": "ee50bf31586c85e02e108b0a98ac15a2e8dcc7b894fe7444c6299aa1a839b931",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-S1CX",
+    "timestamp": "2026-11-20T23:21:19.329Z",
+    "repository": "zvec-ai/zvec-grep",
+    "learningId": "learn-github-zvec-ai-zvec-grep",
+    "contentHash": "c341c2348112e098a2d012da0b958524f492efe09c8689eb3138e4e81c326238",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-S3KF",
+    "timestamp": "2026-11-20T23:21:22.191Z",
+    "repository": "solidjs/solid",
+    "learningId": "learn-github-solidjs-solid",
+    "contentHash": "017ff61b810542e7bbc8f70c0c9e63f56a1efe399732fee78abd35860c1f2c7d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-S70J",
+    "timestamp": "2026-11-20T23:21:26.659Z",
+    "repository": "dosco/graphjin",
+    "learningId": "learn-github-dosco-graphjin",
+    "contentHash": "4fa73f756952120a75fe9e26a97954c4fa536a93217ab9216030095912a05382",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

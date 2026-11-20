@@ -11689,3 +11689,7 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `32cd9498` | Multi-dimensional audit evidence | 2026-11-20T23:05:35.739Z |
 | `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `04c5d8da` | Multi-dimensional audit evidence | 2026-11-20T23:13:30.171Z |
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `2076e082` | Multi-dimensional audit evidence | 2026-11-20T23:13:37.655Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `ad737d20` | Multi-dimensional audit evidence | 2026-11-20T23:21:19.333Z |
+| `learn-github-solidjs-solid` | `https://github.com/solidjs/solid` | `5a43d6f8` | Multi-dimensional audit evidence | 2026-11-20T23:21:22.195Z |
+| `learn-github-dosco-graphjin` | `https://github.com/dosco/graphjin` | `ba272634` | Multi-dimensional audit evidence | 2026-11-20T23:21:26.663Z |
+| `learn-dom-k-b3be81e5` | `project://solidjs-solid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/solidjs-solid-learnings.md` | 2026-11-20T23:22:00.043Z |

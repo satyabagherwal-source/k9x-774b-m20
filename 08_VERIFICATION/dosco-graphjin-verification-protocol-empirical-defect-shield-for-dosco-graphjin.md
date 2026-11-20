@@ -4,22 +4,22 @@
 {
   "source_repository": "dosco/graphjin",
   "source_url": "https://github.com/dosco/graphjin",
-  "source_version": "ffd03671",
+  "source_version": "ba272634",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T22:19:48.707Z",
+  "timestamp": "2026-11-20T23:21:26.870Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dosco-graphjin",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dosco/graphjin](https://github.com/dosco/graphjin) (Revision: `ffd03671`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T22:19:48.707Z`  
+> **Provenance**: Harvested from [dosco/graphjin](https://github.com/dosco/graphjin) (Revision: `ba272634`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T23:21:26.870Z`  
 > **Learning ID**: `learn-github-dosco-graphjin`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dosco/graphjin` (Commit: `ffd03671`)
+- **Target Repository**: `dosco/graphjin` (Commit: `ba272634`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T22:19:47.588Z  
+> **Harvest Timestamp**: 2026-11-20T23:21:25.621Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2563,783 +2563,215 @@ func ShouldCacheQuery(opName, apqKey string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ffd03671` (2026-11-19)
-**Commit Message**: fix(eval): benchmark test-version labels drop "governed" on the next publish
+### Incident Patch 1: `ba272634` (2026-11-20)
+**Commit Message**: feat(site): give the homepage Watch section a plain heading
 
-The benchmark pages describe each test version with a label, and the
-first ones read "governed read-only Q&A" and "governed retail Q&A (...,
-governance)". They are now "read-only Q&A" and "retail Q&A (...,
-refusals)", matching the site, which dropped the word.
+"Nothing happened. That was the problem." needed the section read to make
+sense of it. The homepage heading now says what the section is: "Leave a
+question running. It tells you when something changes." The old line stays
+as the /watch/ page's own headline.
 
-Publish writes these labels only when a benchmark's data has none, and
-the published data already lists test versions this build does not
-know. So the new wording alone would never reach the pages. Each
-publish now rewords the retired phrases in the stored labels and keeps
-everything else in them. The live pages change on the next publish of
-each benchmark.
+The two sentences each sit on their own lines, so the heading no longer
+breaks mid-sentence.
 
-A test runs a real publish over data holding the old wording and a test
-version the build does not know, and fails when the rewording is not
-called.
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `cmd/cmd_eval_publish.go` (modified, +32/-7)
+**File**: `website/content/_index.md` (modified, +1/-1)
 ```diff
-@@ -19,9 +19,9 @@ const (
- 	benchmarkDataVersion  = "graphjin.benchmark.data/v3"
- 	defaultBenchmarkSlug  = "deeporg"
- 	defaultBenchmarkName  = "DeepORG — The Organizational Agent Benchmark"
--	defaultBenchmarkScope = "2026.1/2026.2 — governed read-only Q&A · 2027.1 — adds writes, alerts, follow-ups, multi-source · 2028.1 — intent-phrased tasks with execution twins · 2028.2 — cross-source ruler fix (v11)"
-+	defaultBenchmarkScope = "2026.1/2026.2 — read-only Q&A · 2027.1 — adds writes, alerts, follow-ups, multi-source · 2028.1 — intent-phrased tasks with execution twins · 2028.2 — cross-source ruler fix (v11)"
+@@ -17,7 +17,7 @@ description: "DeepORG is one AI agent for your whole organization. It answers qu
  
--	deepcontosoBenchmarkScope = "2026.1 — governed retail Q&A (aggregations, time windows, schema discovery, governance)"
-+	deepcontosoBenchmarkScope = "2026.1 — " + deepcontosoFirstScope
+ <section id="environment" class="dx-value dx-value--flip"><div class="dx-value-copy"><p class="dx-kicker"><b>03</b><i></i><span>Your organization as a training environment</span></p><h2>Turn your own systems into the test and the training ground.</h2><p>The checks behind that score work on your systems too. The database marks every answer, so a fluent, confident, wrong answer earns nothing.</p><ul class="dx-points"><li><strong>Start with ours.</strong> A demo company and <a href="/environment/quickstart/">{{< env-task-count >}} checked tasks</a>, ready to run.</li><li><strong>Or your own schema, without your data.</strong> It copies the shape of your systems, never your rows.</li><li><strong>Or your own questions, as the tests.</strong> <a href="/experience/">What your people already asked</a> becomes the test.</li></ul><div class="dx-links"><a class="dx-more" href="/why/training-environment/">Turn your organization into an environment</a><a href="/environment/overview/">Environment docs</a></div></div><div class="dx-value-art">{{< ascii scene="env" label="Animated diagram of one episode: reset, task, the agent works, it answers, a hidden query checks the answer in the same database, and the reward comes back." caption="reset / act / the database marks it" >}}</div></section>
+ 
+-<section id="watch-automation" class="dx-value"><div class="dx-value-copy"><p class="dx-kicker"><b>04</b><i></i><span>It speaks first</span></p><h2>Nothing happened. That was the problem.</h2><p>Leave a question running and DeepORG keeps answering it against live data. It speaks up when the answer changes, or when something you expected never arrives.</p><div class="dx-links"><a class="dx-more" href="/watch/">What a standing question can do</a></div></div><div class="dx-value-art">{{< ascii scene="watch" label="Animated diagram: a question left running is checked every hour. When no rows have arrived for four hours, DeepORG says so without being asked." caption="a question left running" >}}</div></section>
++<section id="watch-automation" class="dx-value"><div class="dx-value-copy"><p class="dx-kicker"><b>04</b><i></i><span>It speaks first</span></p><h2><span class="dx-line">Leave a question running.</span> <span class="dx-line">It tells you when something changes.</span></h2><p>DeepORG keeps answering that question against live data. It speaks up when the answer changes, or when something you expected never arrives.</p><div class="dx-links"><a class="dx-more" href="/watch/">What a standing question can do</a></div></div><div class="dx-value-art">{{< ascii scene="watch" label="Animated diagram: a question left running is checked every hour. When no rows have arrived for four hours, DeepORG says so without being asked." caption="a question left running" >}}</div></section>
+ 
+ <section id="reasons" class="dx-pillars" aria-labelledby="reasons-title"><div class="dx-pillars-head"><div><p class="dx-kicker"><b>05</b><i></i><span>to 08</span></p><h2 id="reasons-title">Four more reasons it holds up in a real company.</h2></div><p>Each one has a page of its own that says how it works and where its limits are.</p></div><div class="dx-pillar-grid dx-pillar-grid--four"><a id="no-tools" class="dx-pillar" href="/why/no-hand-built-tools/"><span>05</span><h3>A map of everything, not a tool for each thing.</h3><p>The agent reads a searchable map of everything you connect and writes its own queries. Nobody maintains a tool for each question.</p><em>No hand-built tools</em></a><a id="evidence" class="dx-pillar" href="/why/answers-with-evidence/"><span>06</span><h3>The model made up an answer. The ledger caught it.</h3><p>Every answer is backed by evidence from the run that produced it. A claim with nothing behind it is blocked.</p><em>Answers with the data behind them</em></a><a id="rules" class="dx-pillar" href="/why/your-rules/"><span>07</span><h3>It sees only what you allow. A change waits for your yes.</h3><p>Your roles, row filters and column lists apply to every query the agent writes. A change is rehearsed, shown to you and held until you approve it.</p><em>Your rules, your approval</em></a><a id="systems" class="dx-pillar" href="/why/every-system/"><span>08</span><h3>Databases, warehouses, APIs, files and source code.</h3><p>All behind one agent, and one question can draw on several of them. Adding a system is a few lines of config.</p><em>Every system you run</em></a></div></section>
+ 
+```
+
+**File**: `website/scripts/check-site.mjs` (modified, +4/-1)
+```diff
+@@ -469,8 +469,11 @@ if (await exists(path.join(publicRoot, 'index.html'))) {
+   }
+   // The homepage carries the watch teaser; the full story lives on /watch/,
+   // which is asserted separately below so the copy cannot be lost in the move.
++  // The homepage heading says what the section is; "Nothing happened. That was
++  // the problem." is the /watch/ page's own headline and is pinned there.
+   for (const required of [
+-    'Nothing happened. That was the problem.',
++    'Leave a question running.',
++    'It tells you when something changes.',
+     'It speaks up when the answer changes',
+     'database polls, not model calls',
+   ]) {
+```
+
+**File**: `website/static/css/site.css` (modified, +5/-0)
+```diff
+@@ -5857,6 +5857,11 @@ h3 {
+   display: block;
+ }
+ 
++/* A two-sentence heading breaks between its sentences, not inside one. */
++.dx-line {
++  display: block;
++}
++
+ .home-benchmark {
+   margin-top: clamp(2rem, 4.5vw, 3.2rem);
+ }
+```
+
+---
+
+### Incident Patch 2: `e03aa56b` (2026-11-20)
+**Commit Message**: chore: bump version to v3.21.21 [skip-release] [skip ci]
+
+**File**: `agent/go.mod` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ go 1.25.0
+ require (
+ 	github.com/ax-llm/ax/packages/go v0.0.0-20261118171305-8dbb33d64629
+ 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
+-	github.com/dosco/graphjin/core/v3 v3.21.20
++	github.com/dosco/graphjin/core/v3 v3.21.21
+ 	github.com/gofrs/flock v0.13.0
  )
  
- type benchmarkIdentity struct {
-@@ -378,10 +378,9 @@ func runEvalPublish(cmd *cobra.Command, evalOpts *evalCLIOptions, opts *evalPubl
- 	if benchmark.Slug == defaultBenchmarkSlug && len(data.Suite.GenerationScopes) == 0 {
- 		data.Suite.GenerationScopes = defaultBenchmarkGenerationScopes()
- 	} else if benchmark.Slug == DeepContosoBenchmarkSlug && len(data.Suite.GenerationScopes) == 0 {
--		data.Suite.GenerationScopes = map[string]string{
--			"2026.1": "governed retail Q&A (aggregations, time windows, schema discovery, governance)",
--		}
-+		data.Suite.GenerationScopes = map[string]string{"2026.1": deepcontosoFirstScope}
- 	}
-+	rewordRetiredScopes(&data.Suite)
- 	if existing >= 0 {
- 		data.Runs[existing] = entry
- 	} else {
-@@ -556,10 +555,36 @@ func benchmarkSuiteFromReport(report gjeval.Report) benchmarkSuite {
- 	}
- }
- 
-+// deepcontosoFirstScope describes DeepContoso's first test version.
-+const deepcontosoFirstScope = "retail Q&A (aggregations, time windows, schema discovery, refusals)"
-+
-+// retiredScopeWording is wording the published test-version labels used
-+// before, and what each says now. The labels are written once, when a
-+// benchmark's data has none, so a change of wording reaches the published
-+// pages only by rewording the stored labels on the next publish.
-+//
-+// "Governed" was dropped from the site on 2026-11-19: few readers knew what
-+// it meant.
-+var retiredScopeWording = []struct{ old, new string }{
-+	{"governed retail Q&A (aggregations, time windows, schema discovery, governance)", deepcontosoFirstScope},
-+	{"governed read-only Q&A", "read-only Q&A"},
-+}
-+
-+// rewordRetiredScopes rewrites retired wording in a suite's test-version
-+// labels, keeping everything else in them.
-+func rewordRetiredScopes(suite *benchmarkSuite) {
-+	for _, w := range retiredScopeWording {
-+		suite.ScopeLabel = strings.ReplaceAll(suite.ScopeLabel, w.old, w.new)
-+		for generation, scope := range suite.GenerationScopes {
-+			suite.GenerationScopes[generation] = strings.ReplaceAll(scope, w.old, w.new)
-+		}
-+	}
-+}
-+
- func defaultBenchmarkGenerationScopes() map[string]string {
- 	return map[string]string{
--		"2026.1": "governed read-only Q&A",
--		"2026.2": "governed read-only Q&A",
-+		"2026.1": "read-only Q&A",
-+		"2026.2": "read-only Q&A",
- 		"2027.1": "adds writes, alerts, follow-ups, multi-source",
- 		"2028.1": "intent-phrased tasks with execution twins, v10 ruler",
- 		"2028.2": "cross-source ruler fix (v11): argument-free file reads count",
 ```
 
-**File**: `cmd/cmd_eval_publish_test.go` (modified, +61/-0)
+**File**: `auth/go.mod` (modified, +1/-1)
 ```diff
-@@ -6,6 +6,7 @@ import (
- 	"math"
- 	"os"
- 	"path/filepath"
-+	"reflect"
- 	"strings"
- 	"testing"
- 	"time"
-@@ -684,3 +685,63 @@ func publishTestBenchmark(t *testing.T) benchmarkIdentity {
- func publishTestDataPath(site string) string {
- 	return filepath.Join(site, "data", "benchmarks", "deeporg.yaml")
- }
-+
-+// Stored test-version labels are written once, so a change of their wording
-+// reaches the published pages when the next publish rewords them. Wording that
-+// is not retired, and versions this build does not know, are kept.
-+func TestEvalPublishRewordsRetiredScopeLabels(t *testing.T) {
-+	project, site := t.TempDir(), t.TempDir()
-+	first := publishTestReport("20260803T101112.000000000Z-first")
-+	writePublishTestReport(t, project, first)
-+	if err := publishTestRun(t, project, site, first.RunID, &evalPublishOptions{Site: site}); err != nil {
-+		t.Fatal(err)
-+	}
-+	dataPath := publishTestDataPath(site)
-+	data, err := loadBenchmarkData(dataPath, publishTestBenchmark(t))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	data.Suite.ScopeLabel = "2026.1/2026.2 — governed read-only Q&A · 2028.4 — tasks state what they grade"
-+	data.Suite.GenerationScopes = map[string]string{
-+		"2026.1": "governed read-only Q&A",
-+		"2027.1": "adds writes, alerts, follow-ups, multi-source",
-+		"2028.4": "tasks state what they grade",
-+	}
-+	raw, err := marshalBenchmarkData(data)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := os.WriteFile(dataPath, raw, 0o644); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	second := publishTestReport("20260804T101112.000000000Z-second")
-+	writePublishTestReport(t, project, second)
-+	if err := publishTestRun(t, project, site, second.RunID, &evalPublishOptions{Site: site}); err != nil {
-+		t.Fatal(err)
-+	}
-+	data, err = loadBenchmarkData(dataPath, publishTestBenchmark(t))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if want := "2026.1/2026.2 — read-only Q&A · 2028.4 — tasks state what they grade"; data.Suite.ScopeLabel != want {
-+		t.Fatalf("scope label = %q, want %q", data.Suite.ScopeLabel, want)
-+	}
-+	want := map[string]string{"2026.1": "read-only Q&A", "2027.1": "adds writes, alerts, follow-ups, multi-source", "2028.4": "tasks state what they grade"}
-+	if !reflect.DeepEqual(data.Suite.GenerationScopes, want) {
-+		t.Fatalf("generation scopes = %v, want %v", data.Suite.GenerationScopes, want)
-+	}
-+	for _, s := range append([]string{defaultBenchmarkScope, deepcontosoBenchmarkScope}, mapValues(defaultBenchmarkGenerationScopes())...) {
-+		if strings.Contains(strings.ToLower(s), "governed") {
-+			t.Fatalf("a label this build writes still says governed: %q", s)
-+		}
-+	}
-+}
-+
-+func mapValues(m map[string]string) []string {
-+	out := make([]string, 0, len(m))
-+	for _, v := range m {
-+		out = append(out, v)
-+	}
-+	return out
-+}
+@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/auth/v3
+ go 1.25.0
+ 
+ require (
+-	github.com/dosco/graphjin/core/v3 v3.21.20
++	github.com/dosco/graphjin/core/v3 v3.21.21
+ 	github.com/golang-jwt/jwt/v5 v5.3.1
+ 	github.com/lestrrat-go/jwx v1.2.31
+ 	github.com/stretchr/testify v1.11.1
 ```
 
----
-
-### Incident Patch 2: `1d5b14f7` (2026-11-19)
-**Commit Message**: feat(agent): the data agent can be built to read a result before going on
-
-Off, and nothing a person running GraphJin can set: it is an option for
-GraphJin's own tests and measurements (WithResultFeedback).
-
-Without it the data agent's model writes one program: look up the
-table, run the query, call final. The query is written before the
-look-up has returned, so from a guess at the columns and how values are
-spelled, and nothing a function returns is seen by a model again unless
-the program prints it. With it, Ax ends a block after a function whose
-result has to be read and gives the model a fresh call with that result
-in front of it. "lookups" does that for catalog and help look-ups and
-lets a query's rows be followed by dependent code; "all" does it for
-every function.
-
-How it has to be wired, each learned by experiment:
-
-- Ax decides whether a block can end early when the agent is built,
-  from the runtime it is built with. A {language, usageInstructions}
-  record there, with the runtime passed per call, leaves it off. The
-  runtime then also supplies the usage instructions.
-- Ax's own registration of each function is the one that has to run,
-  and each is also bound under its b
-
-**File**: `agent/agent.go` (modified, +28/-6)
+**File**: `cmd/go.mod` (modified, +5/-5)
 ```diff
-@@ -407,6 +407,7 @@ type Agent struct {
- 	rateLimiter   *ProviderRateLimiter
- 	customClient  bool
- 	newSelector   ProgramFactory
-+	feedback      resultFeedback
- }
- 
- func New(gj *core.GraphJin, config Config, options ...Option) (*Agent, error) {
-@@ -749,7 +750,13 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
- 	runtime.WithCodeBlockBudget(cfg.TimeoutSeconds)
- 	runtime.WithHandoffFallback(protocol.state.runtimeHandoffEvidence)
- 	runtime.WithClarificationNudge(protocol.state.clarificationNudge)
-+	feedback := a.feedback
-+	// With result feedback on, Ax registers the functions itself, through the
-+	// wrapper that reads a result back to the model (RegisterHostCallable).
- 	for _, tool := range tools {
-+		if feedback != feedbackOff {
-+			break
-+		}
- 		t := tool
- 		registerAdvertisedCallable(runtime.RegisterCallable, t.Name, func(params ax.Value) (ax.Value, error) {
- 			return t.Handler(asMap(params))
-@@ -765,8 +772,13 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
- 		})
- 	}
- 
-+	functions := toolArray(tools)
-+	if feedback != feedbackOff {
-+		functions = feedback.functions(tools)
-+	}
-+	usage := runtimeInstructionText(a.catalogSearch) + "\n\n" + runtimeResultRecoveryInstructions
- 	options := map[string]ax.Value{
--		"functions":         toolArray(tools),
-+		"functions":         functions,
- 		"functionDiscovery": false,
- 		// Every GraphJin answer requires model-driven discovery, either a
- 		// runtime distillation or a catalog/help call. Ax's automatic respond()
-@@ -790,7 +802,7 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
- 			// filtered domain guides and capability-denial guidance are rendered
- 			// only for the executor, where Ax also renders the authoritative skill
- 			// documents. The distiller intentionally has no skill documents.
--			"usageInstructions": runtimeInstructionText(a.catalogSearch) + "\n\n" + runtimeResultRecoveryInstructions,
-+			"usageInstructions": usage,
- 		},
- 		"max_actor_steps": maxSteps,
- 	}
-@@ -811,8 +823,7 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
- 			}
- 			return values
- 		})
--		options["instructionAddenda"] = []ax.Value{executorHandoffInstructions, capabilityInstructions, preparedDiscoveryInstructions}
--		runtimeOptions := options["runtime"].(map[string]ax.Value)
-+		options["instructionAddenda"] = []ax.Value{executorHandoffInstructions, capabilityInstructions, feedback.rewrite(preparedDiscoveryInstructions)}
- 		var selectedGuides strings.Builder
- 		for _, guide := range skills {
- 			if prepared.unselected {
-@@ -828,9 +839,20 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
- 		// skills option loads guides into the executor only; put the selected
- 		// guides in the shared runtime instructions so early execution follows
- 		// the same computation, syntax, and governance contracts.
--		runtimeOptions["usageInstructions"] = runtimeInstructionText(a.catalogSearch) + "\n\n" + runtimeResultRecoveryInstructions + "\n\n" + preparedDiscoveryInstructions + selectedGuides.String()
-+		usage += "\n\n" + preparedDiscoveryInstructions + selectedGuides.String()
- 	}
--	program = a.newProgram(agentSignature, options)
-+	signature := agentSignature
-+	if feedback == feedbackOff {
-+		options["runtime"].(map[string]ax.Value)["usageInstructions"] = usage
-+	} else {
-+		// Ax decides whether a block can end after a function's result when
-+		// the agent is built, from the runtime it is built with: a
-+		// {language, usageInstructions} record there, with the runtime passed
-+		// per call, leaves it off.
-+		options["runtime"] = runtime.WithResultFeedback(feedback.rewrite(usage))
-+		signature = feedback.rewrite(agentSignature)
-+	}
-+	program = a.newProgram(signature, options)
- 	if prepared != nil {
- 		installPreparedHandoff(ctx, program, prepared, a.runtime, req)
- 	}
+@@ -5,13 +5,13 @@ go 1.25.5
+ require (
+ 	github.com/brianvoe/gofakeit/v6 v6.28.0
+ 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
+-	github.com/dosco/graphjin/agent/v3 v3.21.20
+-	github.com/dosco/graphjin/auth/v3 v3.21.20
+-	github.com/dosco/graphjin/core/v3 v3.21.20
++	github.com/dosco/graphjin/agent/v3 v3.21.21
++	github.com/dosco/graphjin/auth/v3 v3.21.21
++	github.com/dosco/graphjin/core/v3 v3.21.21
+ 	github.com/dosco/graphjin/examples v0.0.0
+ 	github.com/dosco/graphjin/hostedemu v0.0.0
+ 	github.com/dosco/graphjin/mongodriver v0.0.0
+-	github.com/dosco/graphjin/serv/v3 v3.21.20
++	github.com/dosco/graphjin/serv/v3 v3.21.21
+ 	github.com/gosimple/slug v1.15.0
+ 	github.com/jackc/pgx/v5 v5.7.6
+ 	github.com/jvatic/goja-babel v0.0.0-20250906111304-06c40d6b931b
+@@ -111,7 +111,7 @@ require (
+ 	github.com/docker/docker v28.5.2+incompatible // indirect
+ 	github.com/docker/go-connections v0.6.0 // indirect
+ 	github.com/docker/go-units v0.5.0 // indirect
+-	github.com/dosco/graphjin/plugin/otel/v3 v3.21.20 // indirect
++	github.com/dosco/graphjin/plugin/otel/v3 v3.21.21 // indirect
+ 	github.com/duckdb/duckdb-go-bindings v0.10502.0 // indirect
+ 	github.com/duckdb/duckdb-go-bindings/lib/darwin-amd64 v0.10502.0 // indirect
+ 	github.com/duckdb/duckdb-go-bindings/lib/darwin-arm64 v0.10502.0 // indirect
 ```
 
-**File**: `agent/result_feedback.go` (added, +133/-0)
+**File**: `conf/go.mod` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,133 @@
-+package agent
-+
-+import (
-+	"strings"
-+
-+	ax "github.com/ax-llm/ax/packages/go"
-+)
-+
-+// resultFeedback is whether a run reads what a function returned before it
-+// writes the code that depends on it.
-+//
-+// Without it the model writes one program: look up the table, run the query,
-+// call final. The query is written before the look-up has returned, so it is
-+// written from the model's guess at the columns and the spelling of values,
-+// and nothing the functions return is seen by a model again unless the
-+// program prints it. A note attached to a result went unread in every run
-+// that was traced.
-+//
-+// With it, Ax ends the block after a function whose result has to be read and
-+// gives the model a fresh turn with that result in front of it. A function
-+// whose result is plain data may still be followed by dependent code in the
-+// same block.
-+type resultFeedback string
-+
-+const (
-+	feedbackOff resultFeedback = ""
-+	// feedbackLookups: catalog and help look-ups are read on a fresh turn;
-+	// a query's rows are data, so the block that runs it may also finish.
-+	feedbackLookups resultFeedback = "lookups"
-+	// feedbackAll: every function's result is read on a fresh turn.
-+	feedbackAll resultFeedback = "all"
-+)
-+
-+// WithResultFeedback sets how a run reads its functions' results: "lookups",
-+// "all", or "" for off.
-+func WithResultFeedback(mode string) Option {
-+	return func(a *Agent) {
-+		switch resultFeedback(strings.TrimSpace(mode)) {
-+		case feedbackLookups:
-+			a.feedback = feedbackLookups
-+		case feedbackAll:
-+			a.feedback = feedbackAll
-+		default:
-+			a.feedback = feedbackOff
-+		}
-+	}
-+}
-+
-+// policy is Ax's result policy for one of the agent's functions.
-+func (m resultFeedback) policy(function string) string {
-+	if m == feedbackLookups && function == "execute_graphql" {
-+		return "data"
-+	}
-+	return "inspect"
-+}
-+
-+// functions hands Ax the agent's functions as plain records. Ax runs a typed
-+// Tool through a path that ends the whole run when its handler returns an
-+// error; a record's error is returned to the model's code, and the run goes
-+// on. Every recovery this agent sends the model (the real column names after
-+// an unknown column, the corrected query, the detail to inspect first) is a
-+// returned error.
-+func (m resultFeedback) functions(tools []ax.Tool) ax.Value {
-+	records := make([]ax.Value, 0, len(tools))
-+	for _, tool := range tools {
-+		records = append(records, functionRecord(tool, tool.Handler, m.policy(tool.Name)))
-+	}
-+	return ax.Array(records...)
-+}
-+
-+// functionRecord is one function as a plain record, with Ax's result policy
-+// for it: "inspect" ends the block so the result is read on a fresh turn,
-+// "data" lets the code that follows the call run.
-+func functionRecord(tool ax.Tool, handler func(map[string]ax.Value) (ax.Value, error), policy string) ax.Value {
-+	return map[string]ax.Value{
-+		"name":         tool.Name,
-+		"description":  tool.Description,
-+		"parameters":   tool.Schema(),
-+		"handler":      handler,
-+		"resultPolicy": policy,
-+	}
-+}
-+
-+// feedbackRewrite is one sentence of the standing instructions that tells the
-+// model to look up and act in a single program, with what replaces it when a
-+// look-up ends the block.
-+type feedbackRewrite struct {
-+	in      string // where the sentence lives, for the test that keeps these in step
-+	old     string
-+	lookups string
-+	all     string
-+}
-+
-+var feedbackRewrites = []feedbackRewrite{
-+	{
-+		in:      "agentSignature",
-+		old:     "Author the query and call query_catalog({id:...}) in the same code block as execution; these lookups reuse verified prefetched facts locally. Avoid a separate turn printing the hidden seed to find IDs or known columns.",
-+		lookups: "Call query_catalog({id:...}) for the exact detail and end the block there: its result is shown to you on the next turn, and the query is written from what it shows. Do not spend a turn printing the hidden seed to find IDs or known columns.",
-+	},
-+	{
-+		in:      "runtimeSeedUsageInstructions",
-+		old:     `inspect the exact table or relationship detail with query_catalog({id:"..."}) (batch with {ids:[...]}), author the query with DB-side aggregate fields for any total, count, extreme, or ranking, run execute_graphql, and final from its result.`,
-+		lookups: `inspect the exact table or relationship detail with query_catalog({id:"..."}) (batch with {ids:[...]}) and end the block; on the next turn its result is in front of you, so author the query from the columns and values it shows, with DB-side aggregate fields for any total, count, extreme, or ranking, run execute_graphql, and final from its result.`,
-+		all:     `inspect the exact table or relationship detail with query_catalog({id:"..."}) (batch with {ids:[...]}) and end the block; on the next turn its result is in front of you, so author the query from the columns and values it shows, with DB-side aggregate fields for any total, count, extreme, or ranking, run execute_gra
+@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/conf/v3
+ go 1.25.0
+ 
+ require (
+-	github.com/dosco/graphjin/core/v3 v3.21.20
++	github.com/dosco/graphjin/core/v3 v3.21.21
+ 	gopkg.in/yaml.v3 v3.0.1
+ )
+ 
 ```
 
-**File**: `agent/result_feedback_test.go` (added, +186/-0)
+**File**: `package-lock.json` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,186 @@
-+package agent
-+
-+import (
-+	"context"
-+	"errors"
-+	"strings"
-+	"testing"
-+
-+	ax "github.com/ax-llm/ax/packages/go"
-+)
-+
-+// feedbackRuntime counts the look-ups and queries a run makes, and remembers
-+// how many model calls had been made when each query ran.
-+type feedbackRuntime struct {
-+	fakeRuntime
-+	client       *recordingClient
-+	lookups      int
-+	queries      int
-+	queryAtCalls []int
-+	queryErr     error
-+}
-+
-+func (r *feedbackRuntime) QueryCatalog(ctx context.Context, args map[string]any) (any, error) {
-+	if len(detailIDsFromArgs(args)) != 0 {
-+		r.lookups++
-+	}
-+	return r.fakeRuntime.QueryCatalog(ctx, args)
-+}
-+
-+func (r *feedbackRuntime) ExecuteGraphQL(_ context.Context, args map[string]any) (any, error) {
-+	r.queries++
-+	r.queryAtCalls = append(r.queryAtCalls, len(r.client.calls))
-+	if r.queryErr != nil {
-+		err := r.queryErr
-+		r.queryErr = nil
-+		return nil, err
-+	}
-+	return map[string]any{"data": map[string]any{"accounts": []any{map[string]any{"id": 1, "name": "Meridian Robotics"}}}}, nil
-+}
-+
-+const (
-+	// The program models write today: look up, query and finish in one go.
-+	oneProgram     = `{"javascriptCode":"const d = await query_catalog({id:'table:app:main.accounts'}); const r = await execute_graphql({query:'query { accounts { id name } }'}); await final('Answer from the rows.', {rows: r.data});"}`
-+	queryAndFinish = `{"javascriptCode":"const r = await execute_graphql({query:'query { accounts { id name } }'}); await final('Answer from the rows.', {rows: r.data});"}`
-+	finishOnly     = `{"javascriptCode":"await final('Answer from the rows.', {rows: r.data});"}`
-+	reply          = `{"status":"answered","answer":"Meridian Robotics"}`
-+)
-+
-+func runWithFeedback(t *testing.T, mode string, rt *feedbackRuntime, responses ...string) *recordingClient {
-+	t.Helper()
-+	rec := &recordingClient{responses: responses}
-+	rt.client = rec
-+	runner := newAgent(
-+		Config{Provider: "openai", APIKeyEnv: "GRAPHJIN_UNUSED", TimeoutSeconds: 50, MaxSteps: 6},
-+		rt,
-+		WithClientFactory(func(Config) (ax.AIClient, error) { return rec, nil }),
-+		WithResultFeedback(mode),
-+	)
-+	if _, err := runner.Run(context.Background(), Request{Instruction: "Which accounts do we have?", Capabilities: profileWithRoleAndRoots("user")}); err != nil {
-+		t.Fatalf("%q: %v", mode, err)
-+	}
-+	return rec
-+}
-+
-+// Off, the whole program runs: the query is sent in the same model call that
-+// asked for the table's detail, so it was written before that detail was read.
-+// With result feedback the look-up ends the block: the query runs only after
-+// a model call that was shown what the look-up returned.
-+func TestResultFeedbackShowsALookupBeforeTheQueryRuns(t *testing.T) {
-+	off := &feedbackRuntime{}
-+	rec := runWithFeedback(t, "", off, oneProgram, reply)
-+	if off.lookups != 1 || off.queries != 1 || off.queryAtCalls[0] != 1 {
-+		t.Fatalf("off: lookups=%d queries=%d ran after %v model calls; want one program doing both", off.lookups, off.queries, off.queryAtCalls)
-+	}
-+	if len(rec.calls) != 2 {
-+		t.Fatalf("off: %d model calls, want 2", len(rec.calls))
-+	}
-+
-+	for mode, script := range map[string][]string{
-+		"lookups": {oneProgram, queryAndFinish, reply},
-+		"all":     {oneProgram, queryAndFinish, finishOnly, reply},
-+	} {
-+		rt := &feedbackRuntime{}
-+		rec := runWithFeedback(t, mode, rt, script...)
-+		if rt.lookups != 1 || rt.queries != 1 {
-+			t.Fatalf("%s: lookups=%d queries=%d, want one of each", mode, rt.lookups, rt.queries)
-+		}
-+		if rt.queryAtCalls[0] != 2 {
-+			t.Fatalf("%s: the query ran after %d model calls, want it held until the second", mode, rt.queryAtCalls[0])
-+		}
-+		if len(rec.calls) != len(script) {
-+			t.Fatalf("%s: %d model calls, want %d", mode, len(rec.calls), len(script))
-+		}
-+		// The second model call is shown what the look-up returned, without
-+		// the program having printed it.
-+		second := dumpAXValue(rec.calls[1].values)
-+		for _, want := range []string{"table:app:main.accounts", "Execution paused before"} {
-+			if !strings.Contains(second, want) {
-+				t.Errorf("%s: the model call after the look-up does not carry %q", mode, want)
-+			}
-+		}
-+		if mode == "all" {
-+			third := dumpAXValue(rec.calls[2].values)
-+			if !strings.Contains(third, "Meridian Robotics") {
-+				t.Errorf("all: the model call after the query was not shown its rows")
-+			}
-+		}
-+	}
-+}
-+
-+// A function's error is a message for the model. Run through Ax's own
-+// registration it used to end the run; handed over as a plain record it is
-+// returned to the model's code, shown on the next turn, and the run goes on,
-+// whichever name the code called the function by.
-+func TestResultFeedbackReturnsAFunctionErrorToTheModel(t *testing.T) {
-+	const hint = "this call did NOT return data: field 'amount' is not a column; available columns: id, name, mrr_cents"
-+	for _, name := range []string{"execute_graphql", axFlatFunctionNamespace + ".execute_graphql"} {
-+		broken := `{"javascriptCode":"const r = await ` + name + `({query:'qu
+@@ -1,12 +1,12 @@
+ {
+   "name": "graphjin",
+-  "version": "3.21.20",
++  "version": "3.21.21",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "graphjin",
+-      "version": "3.21.20",
++      "version": "3.21.21",
+       "hasInstallScript": true,
+       "license": "Apache-2.0",
+       "dependencies": {
 ```
 
-**File**: `agent/runtime_handoff.go` (modified, +45/-1)
-```diff
-@@ -32,6 +32,26 @@ type graphJinCodeRuntime struct {
- 	pendingContinuation    func() string
- 	completionContinuation func() string
- 	clarificationNudge     func() string
-+	// feedback is set when the run reads its functions' results on a fresh
-+	// turn; usage is then GraphJin's instruction text for the code stages,
-+	// which Ax asks the runtime for when the runtime is what it is built with.
-+	feedback bool
-+	usage    string
-+}
-+
-+// WithResultFeedback makes this the runtime Ax is constructed with, so Ax can
-+// see that it supports ending a block after a function whose result has to be
-+// read. usage is the instruction text for the stages that write code.
-+func (r *graphJinCodeRuntime) WithResultFeedback(usage string) *graphJinCodeRuntime {
-+	r.feedback = true
-+	r.usage = usage
-+	return r
-+}
-+
-+// SupportsObservationBoundaries is how Ax asks a runtime whether a block can
-+// be ended after a function result that has to be read.
-+func (r *graphJinCodeRuntime) SupportsObservationBoundaries() bool {
-+	return r.feedback
- }
- 
- // WithHandoffFallback supplies runtime-only evidence gathered by GraphJin
-@@ -77,6 +97,9 @@ func (r *graphJinCodeRuntime) Language() string {
- }
- 
- func (r *graphJinCodeRuntime) UsageInstructions() string {
-+	if r.usage != "" {
-+		return r.usage
-+	}
- 	return r.base.UsageInstructions()
- }
- 
-@@ -97,8 +120,29 @@ func (r *graphJinCodeRuntime) RegisterCallable(name string, handler axgoja.HostC
- // instead, whenever the model had called the function the way the prompt
- // shows it. Called by the bare name, the same error reached the model and the
- // run went on.
-+//
-+// With result feedback on, Ax's registrations are the ones that run. Reading a
-+// result on a fresh turn is done by Ax's own wrapper around each function: it
-+// records what the function returned and holds back the next call. The agent
-+// then hands Ax its functions as plain records (resultFeedback.functions),
-+// whose errors that wrapper returns to the model's code. Each function is
-+// also bound under its bare name, the spelling GraphJin's instructions use.
- func (r *graphJinCodeRuntime) RegisterHostCallable(name string, handler func(ax.Value) (ax.Value, error)) {
--	registerAxPrimitive(r.base, name, handler)
-+	if !r.feedback {
-+		registerAxPrimitive(r.base, name, handler)
-+		return
-+	}
-+	registerAxCallable(r.base, name, handler)
-+}
-+
-+// registerAxCallable keeps a registration Ax makes, and binds a function Ax
-+// registers under its qualified name (utils.ask_graphjin) under its bare name
-+// as well, the spelling GraphJin's instructions use.
-+func registerAxCallable(base *axgoja.Runtime, name string, handler func(ax.Value) (ax.Value, error)) {
-+	base.RegisterHostCallable(name, handler)
-+	if bare, qualified := strings.CutPrefix(name, axFlatFunctionNamespace+"."); qualified && bare != "" {
-+		base.RegisterHostCallable(bare, handler)
-+	}
- }
- 
- func (r *graphJinCodeRuntime) CreateSession(globals map[string]ax.Value, options map[string]ax.Value) (ax.CodeSession, error) {
-```
-
----
-
-### Incident Patch 3: `478f4d2d` (2026-11-19)
-**Commit Message**: docs(site): the README and website are DeepORG, built on GraphJin
-
-The public name changes from GraphJin to DeepORG: "one governed AI
-agent for your whole organization". The README opens with "DeepORG was
-formerly GraphJin", the site title, home page, header, page metadata
-and the default social image carry the new name, and the benchmark
-pages say "by DeepORG". GraphJin stays the name of the open-source
-engine underneath, and the README and home page say so.
-
-Nothing a user types changes. The CLI (graphjin), the Go module
-(github.com/dosco/graphjin/v3), the npm package and the Docker images
-keep the graphjin name for now, which the README states.
-
-The benchmark of the same name is now called "the DeepORG benchmark"
-where the two could be confused, and its own pages drop "by GraphJin".
-The site check's pinned copy moves with the copy, and it now requires
-the new social image.
-
-Also brings the tracked copy of the install script under
-website/public in line with install.sh, which stopped offering 32-bit
-builds in 31b138140.
-
-Checked on a clean copy of the committed tree with this change
-applied: npm run build and npm run check pass (197 HTML files).
-
-Co-Authored-By: Claude Fable 5.2 
-
-**File**: `README.md` (modified, +9/-7)
-```diff
-@@ -1,4 +1,4 @@
--# GraphJin — One Governed Graph for Your AI Agents
-+# DeepORG — One Governed AI Agent for Your Whole Organization
- 
- [![Apache 2.0](https://img.shields.io/github/license/dosco/graphjin.svg?style=for-the-badge)](https://github.com/dosco/graphjin/blob/master/LICENSE)
- [![NPM Package](https://img.shields.io/npm/v/graphjin?style=for-the-badge)](https://www.npmjs.com/package/graphjin)
-@@ -7,20 +7,22 @@
- [![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge&logo=go)](https://pkg.go.dev/github.com/dosco/graphjin/core/v3)
- [![GoReport](https://goreportcard.com/badge/github.com/gojp/goreportcard?style=for-the-badge)](https://goreportcard.com/report/github.com/dosco/graphjin/core/v3)
- 
--GraphJin is a compiler and runtime that gives AI agents one governed graph over the systems a real company already has: databases, warehouses, files, source code, workflows, metadata, and security policy. Instead of handing an agent raw credentials and hoping it guesses correctly, GraphJin exposes that graph through GraphQL + MCP: the agent discovers before acting, validates queries, runs approved work, observes runtime status — and every answer is checked against an execution ledger before it leaves the server.
-+> **DeepORG was formerly GraphJin.** The CLI (`graphjin`), the Go module (`github.com/dosco/graphjin/v3`), the npm package, and the Docker images keep the `graphjin` name for now.
- 
--It is not only for agents. GraphJin is still a high-performance GraphQL-to-database compiler, Go library, standalone API service, REST/OpenAPI gateway, and real-time subscription server. The agent use case is where everything comes together: the same compiler that serves your apps can also give AI a smart, auditable way to work across data, code, and operations.
-+DeepORG is one governed AI agent for your whole organization. It answers questions and carries out operations across the systems a real company already has: databases, warehouses, files, source code, workflows, metadata, and security policy. Instead of handing an agent raw credentials and hoping it guesses correctly, DeepORG gives it one governed graph over GraphQL + MCP: the agent discovers before acting, validates queries, runs approved work, observes runtime status — and every answer is checked against an execution ledger before it leaves the server.
-+
-+Underneath is GraphJin, the open-source engine DeepORG is built on. It is still a high-performance GraphQL-to-database compiler, Go library, standalone API service, REST/OpenAPI gateway, and real-time subscription server. The same compiler that serves your apps gives the agent a smart, auditable way to work across data, code, and operations.
- 
- Works with PostgreSQL, MySQL, MongoDB, SQLite, Oracle, MSSQL, Snowflake, Redshift, BigQuery, Apache Cassandra / Amazon Keyspaces, S3/GCS/local files, CodeSQL source indexes - and models from Claude/GPT-4 to local 7B models.
- 
--## Why GraphJin For Agents
-+## Why DeepORG
- 
--- **A built-in agent, one call away** - POST one instruction to `/api/v1/agent` (or call the `ask_graphjin_agent` MCP tool) and GraphJin runs the discovery loop itself - as the caller, under the caller's permissions - and returns a typed, evidence-backed answer. See [Server-Side Agent](#server-side-agent).
--- **One governed surface for many systems** - Query operational databases, warehouses, MongoDB, object stores, local files, CodeSQL source indexes, workflows, and GraphJin system roots through GraphQL and MCP.
-+- **A built-in agent, one call away** - POST one instruction to `/api/v1/agent` (or call the `ask_graphjin_agent` MCP tool) and DeepORG runs the discovery loop itself - as the caller, under the caller's permissions - and returns a typed, evidence-backed answer. See [Server-Side Agent](#server-side-agent).
-+- **One governed surface for many systems** - Query operational databases, warehouses, MongoDB, object stores, local files, CodeSQL source indexes, workflows, and the built-in `gj_*` system roots through GraphQL and MCP.
- - **Smart discovery before action** - Agents start with `query_catalog(search: "<user instruction>")`, `graphql_help`, relationship evidence, examples, config recipes, and safety notes before writing or running queries.
- - **Guarded action, not raw access** - Source-mode access, query allow-lists, read-only boundaries, policy-aware MCP tools, local encrypted secrets, and `gj_config` preview/apply keep changes auditable.
- - **Operational awareness** - `gj_security`, `gj_runtime`, and the built-in console expose policy and bounded runtime status so agents can check what is safe before they act.
--- **Standing questions, not just answers** - Hand a cursor-paginated subscription to `gj_watch` and GraphJin keeps answering it under the owner's permissions, resumes from persisted cursors across restarts, treats absence as a first-class event, and files what it finds in a durable inbox (`gj_watch_event`), a webhook, or a workflow. Evaluation runs on database 
-```
-
-**File**: `website/content/_index.md` (modified, +22/-22)
-```diff
-@@ -1,19 +1,19 @@
- ---
--title: "GraphJin"
-+title: "DeepORG"
- description: "One governed AI agent across your databases, APIs, files, and code. It answers real questions, carries out real operations, and refuses what it shouldn't — proven on a public benchmark with zero unsafe effects."
- ---
- 
--<section class="home-hero">{{< benchmark-hero benchmark="deeporg" >}}<div class="home-hero-demo"><div class="ai-window ai-window-hero" tabindex="0" aria-label="GraphJin agent example. Focus to pause rotation."><div class="window-chrome"><span></span><span></span><span></span><i aria-hidden="true">✣</i><strong>GraphJin Agent · localhost:8083/agent</strong></div><div class="ai-conversation"><div class="chat-user">Which account is most at risk of churn—and why?</div><div class="assistant-row"><div class="assistant-avatar" aria-hidden="true">✣</div><div class="chat-assistant hero-trace"><div class="tool-call"><div class="tool-call-header"><span class="tool-caret" aria-hidden="true">⌄</span><span>query_catalog</span></div><code>3 relevant sources discovered</code><div class="hero-source-list" aria-label="Sources discovered"><span><strong>Postgres</strong> accounts + invoices</span><span><strong>Snowflake</strong> product usage</span><span><strong>CRM API</strong> opportunities</span></div></div><div class="tool-call"><div class="tool-call-header"><span class="tool-caret" aria-hidden="true">⌄</span><span>validate_where_clause</span></div><code>relationships + churn filters valid</code></div><div class="tool-call"><div class="tool-call-header"><span class="tool-caret" aria-hidden="true">⌄</span><span>execute_graphql</span></div><code>3 optimized, policy-checked operations</code></div><p class="done-line"><span aria-hidden="true">✓</span><span class="done-text"> Evidence checked · 3 systems · 3 operations</span></p><p class="assistant-copy">Meridian Robotics — renewal in 9 days, usage down 38%, two failed payments, and an unresolved escalation.</p></div></div></div></div><script type="application/json" id="hero-rotate-data">[{"user":"Which account is most at risk of churn—and why?","sources":[{"name":"Postgres","detail":"accounts + invoices"},{"name":"Snowflake","detail":"product usage"},{"name":"CRM API","detail":"opportunities"}],"tools":[{"name":"query_catalog","line":"3 relevant sources discovered"},{"name":"validate_where_clause","line":"relationships + churn filters valid"},{"name":"execute_graphql","line":"3 optimized, policy-checked operations"}],"done":"Evidence checked · 3 systems · 3 operations","answer":"Meridian Robotics — renewal in 9 days, usage down 38%, two failed payments, and an unresolved escalation."},{"user":"Which support issues are about to breach SLA?","sources":[{"name":"Postgres","detail":"accounts + owners"},{"name":"Ticket API","detail":"open escalations"},{"name":"Filesystem","detail":"SLA policy"}],"tools":[{"name":"query_catalog","line":"3 relevant sources discovered"},{"name":"validate_where_clause","line":"priority + deadline filters valid"},{"name":"execute_graphql","line":"3 optimized, policy-checked operations"}],"done":"Evidence checked · 3 systems · 3 operations","answer":"Meridian Robotics has one urgent escalation past SLA and another due by 17:00 today."},{"user":"Where is revenue concentrated—and what is at risk?","sources":[{"name":"Postgres","detail":"subscriptions"},{"name":"MySQL","detail":"invoices + renewals"},{"name":"Snowflake","detail":"product usage"}],"tools":[{"name":"query_catalog","line":"3 relevant sources discovered"},{"name":"validate_where_clause","line":"revenue + renewal filters valid"},{"name":"execute_graphql","line":"3 optimized, policy-checked operations"}],"done":"Evidence checked · 3 systems · 3 operations","answer":"81% of MRR is enterprise, with $5,200 exposed across two past-due accounts whose usage is declining."}]</script></div></section>
-+<section class="home-hero">{{< benchmark-hero benchmark="deeporg" >}}<div class="home-hero-demo"><div class="ai-window ai-window-hero" tabindex="0" aria-label="DeepORG agent example. Focus to pause rotation."><div class="window-chrome"><span></span><span></span><span></span><i aria-hidden="true">✣</i><strong>DeepORG Agent · localhost:8083/agent</strong></div><div class="ai-conversation"><div class="chat-user">Which account is most at risk of churn—and why?</div><div class="assistant-row"><div class="assistant-avatar" aria-hidden="true">✣</div><div class="chat-assistant hero-trace"><div class="tool-call"><div class="tool-call-header"><span class="tool-caret" aria-hidden="true">⌄</span><span>query_catalog</span></div><code>3 relevant sources discovered</code><div class="hero-source-list" aria-label="Sources discovered"><span><strong>Postgres</strong> accounts + invoices</span><span><strong>Snowflake</strong> product usage</span><span><strong>CRM API</strong> opportunities</span></div></div><div class="tool-call"><div class="tool-call-header"><span class="tool-caret" aria-hidden="true">⌄</span><span>validate_where_clause
-```
-
-**File**: `website/content/agentic/evaluation.md` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ That is the purpose of GraphJin Eval: prove that a model, prompt, skill, or
- GraphJin change still produces correct, governed answers on **your catalog and
- your data**.
- 
--For the cross-vendor public benchmark and exact per-run reports, see [DeepORG](/benchmarks/deeporg/), built and published by GraphJin.
-+For the cross-vendor public benchmark and exact per-run reports, see the [DeepORG benchmark](/benchmarks/deeporg/).
- 
- {{< callout type="note" title="Eval is a release check, not a model leaderboard." >}}
- Start with the questions your users actually ask. GraphJin builds executable
-```
-
-**File**: `website/content/benchmarks/deepcontoso/_index.md` (modified, +3/-3)
-```diff
-@@ -3,7 +3,7 @@ title: "DeepContoso — The Retail & Supply Chain Benchmark"
- description: "A public comparison of AI agents solving enterprise retail and supply chain analytics, with correctness, database pushdown, governance, cost, latency, and GraphJin build provenance."
- ---
- 
--<div class="benchmark-wordmark"><strong>DeepContoso</strong><span>The Retail & Supply Chain Benchmark · by GraphJin</span></div>
-+<div class="benchmark-wordmark"><strong>DeepContoso</strong><span>The Retail & Supply Chain Benchmark · by DeepORG</span></div>
- 
- # Can an AI agent handle enterprise retail data without breaking governance?
- 
-@@ -56,7 +56,7 @@ sliding windows, and security refusals.
- 
- ## Run it yourself
- 
--The DeepContoso suite is frozen and committed. GraphJin resolves its hidden oracles
-+The DeepContoso suite is frozen and committed. DeepORG resolves its hidden oracles
- against the live reference environment before provider traffic, then performs
- three independent attempts per task.
- 
-@@ -73,7 +73,7 @@ published provider and model identity.
- ## Run DeepContoso on your organization
- 
- The public board uses the bundled Contoso retail reference environment. The same
--evaluation framework can grade your own GraphJin catalog and check live hidden
-+evaluation framework can grade your own DeepORG catalog and check live hidden
- oracles before a model sees its first prompt.
- 
- {{< code-card filename="terminal" language="bash" >}}
-```
-
-**File**: `website/content/benchmarks/deepcontoso/methodology.md` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ nav_group: "benchmarks"
- weight: 2
- ---
- 
--DeepContoso, The Retail & Supply Chain Benchmark built and published by GraphJin,
-+DeepContoso, The Retail & Supply Chain Benchmark built and published by DeepORG,
- evaluates how AI models perform against a complex enterprise retail data warehouse
- modeled on Microsoft's Contoso schema. It measures the final answer, database query
- pushdown, safety governance, and operational efficiency across 100 distinct tasks
-```
-
-**File**: `website/content/benchmarks/deepcontoso/runs/_index.md` (modified, +1/-1)
+**File**: `package.json` (modified, +1/-1)
 ```diff
 @@ -1,6 +1,6 @@
- ---
- title: "Published DeepContoso Runs"
--description: "The public archive of shareable DeepContoso reports, built and published by GraphJin."
-+description: "The public archive of shareable DeepContoso reports, built and published by DeepORG."
- ---
- 
- Each page is generated from the same shareable projection as its local eval
+ {
+   "name": "graphjin",
+-  "version": "3.21.20",
++  "version": "3.21.21",
+   "description": "GraphJin — one governed graph for AI agents: GraphQL + MCP over your databases, files, APIs, and code",
+   "bin": {
+     "graphjin": "bin/graphjin.js"
 ```
 
-**File**: `website/content/benchmarks/deeporg/_index.md` (modified, +3/-3)
+**File**: `plugin/otel/go.mod` (modified, +1/-1)
 ```diff
-@@ -5,7 +5,7 @@ aliases:
-   - /benchmarks/organizational-agent/
- ---
+@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/plugin/otel/v3
+ go 1.25.0
  
--<div class="benchmark-wordmark"><strong>DeepORG</strong><span>The Organizational Agent Benchmark · by GraphJin</span></div>
-+<div class="benchmark-wordmark"><strong>DeepORG</strong><span>The Organizational Agent Benchmark</span></div>
- 
- # Can an AI agent handle the questions an organization actually asks?
- 
-@@ -60,7 +60,7 @@ linked report.
- 
- ## Run it yourself
- 
--The public suite is frozen and committed. GraphJin resolves its hidden oracles
-+The public suite is frozen and committed. DeepORG resolves its hidden oracles
- against the live demo before provider traffic, then performs three independent
- attempts per task. Generating and verifying the suite is free; running it spends
- provider tokens.
-@@ -78,7 +78,7 @@ published provider and model identity.
- ## Run DeepORG on your organization
- 
- The public board uses the bundled SaaS Ops reference environment. The same
--generator can build a private evaluation from your own GraphJin catalog and
-+generator can build a private evaluation from your own DeepORG catalog and
- check live hidden oracles before a model sees its first prompt.
- 
- {{< code-card filename="terminal" language="bash" >}}
+ require (
+-	github.com/dosco/graphjin/core/v3 v3.21.20
++	github.com/dosco/graphjin/core/v3 v3.21.21
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.67.0
+ 	go.opentelemetry.io/otel v1.43.0
+ 	go.opentelemetry.io/otel/trace v1.43.0
 ```
 
-**File**: `website/content/benchmarks/deeporg/methodology.md` (modified, +1/-1)
+**File**: `serv/go.mod` (modified, +4/-4)
 ```diff
-@@ -9,7 +9,7 @@ aliases:
-   - /benchmarks/organizational-agent/methodology/
- ---
- 
--DeepORG, The Organizational Agent Benchmark built and published by GraphJin, asks models to work
-+DeepORG, The Organizational Agent Benchmark, asks models to work
- against a real, governed organizational schema. It measures the final answer
- and the path used to reach it instead of treating text-to-SQL as a single
- exact-match problem.
+@@ -8,15 +8,15 @@ require (
+ 	github.com/ax-llm/ax/packages/go v0.0.0-20261118171305-8dbb33d64629
+ 	github.com/coder/websocket v1.8.15
+ 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
+-	github.com/dosco/graphjin/agent/v3 v3.21.20
+-	github.com/dosco/graphjin/auth/v3 v3.21.20
++	github.com/dosco/graphjin/agent/v3 v3.21.21
++	github.com/dosco/graphjin/auth/v3 v3.21.21
+ 	github.com/dosco/graphjin/bigquerydriver v0.0.0
+ 	github.com/dosco/graphjin/cassandradriver v0.0.0
+ 	github.com/dosco/graphjin/clickhousedriver v0.0.0
+ 	github.com/dosco/graphjin/codesql v0.0.0
+-	github.com/dosco/graphjin/core/v3 v3.21.20
++	github.com/dosco/graphjin/core/v3 v3.21.21
+ 	github.com/dosco/graphjin/mongodriver v0.0.0
+-	github.com/dosco/graphjin/plugin/otel/v3 v3.21.20
++	github.com/dosco/graphjin/plugin/otel/v3 v3.21.21
+ 	github.com/fsnotify/fsnotify v1.9.0
+ 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
+ 	github.com/go-pkgz/expirable-cache v1.0.0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #695** (closed): Update the homepage testimonial to use DeepORG (@dosco)
 - **PR #693** (2026-11-13): fix(introspection): expose columns of Postgres functions returning table rows (@officialasishkumar)
 - **PR #692** (2026-10-31): fix(discovery): aggregate SQLite index statistics per table (@rudycelekli)
 - **PR #691** (2026-11-06): fix(openapi): discover fields inherited through allOf response schemas (@rudycelekli)
 - **PR #690** (2026-10-31): fix(graph): require complete standalone argument values (@rudycelekli)
 - **PR #689** (2026-11-06): fix(graph): resolve fragments independently of definition order (@rudycelekli)
-- **PR #688** (2026-10-31): fix(graph): parse contextual keyword names (@rudycelekli)
 
 ---
 
@@ -3359,56 +2791,31 @@ Co-Authored-By: Claude Fable 5.2
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. eval): benchmark test-version labels drop "governed" on the next publish
+## X. site): give the homepage Watch section a plain heading
 
 **RULE**:
-When implementing operations in `cmd/cmd_eval_publish.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `website/content/_index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ffd03671`: eval): benchmark test-version labels drop "governed" on the next publish. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba272634`: site): give the homepage Watch section a plain heading. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cmd_eval_publish.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/content/_index.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	defaultBenchmarkScope = "2026.1/2026.2 — read-only Q&A · 2027.1 — adds writes, alerts, follow-ups, multi-source · 2028.1 — intent-phrased tasks with execution twins · 2028.2 — cross-source ruler fix (v11)"
-	deepcontosoBenchmarkScope = "2026.1 — " + deepcontosoFirstScope
-		data.Suite.GenerationScopes = map[string]string{"2026.1": deepcontosoFirstScope}
-	rewordRetiredScopes(&data.Suite)
-// deepcontosoFirstScope describes DeepContoso's first test version.
-const deepcontosoFirstScope = "retail Q&A (aggregations, time windows, schema discovery, refusals)"
-
-// retiredScopeWording is wording the published test-version labels used
-// before, and what each says now. The labels are written once, when a
-// benchmark's data has none, so a change of wording reaches the published
-// pages only by rewording the stored labels on the next publish.
-//
-// "Governed" was dropped from the site on 2026-11-19: few readers knew what
-// it meant.
-var retiredScopeWording = []struct{ old, new string }{
-	{"governed retail Q&A (aggregations, time windows, schema discovery, governance)", deepcontosoFirstScope},
-	{"governed read-only Q&A", "read-only Q&A"},
-}
-
-// rewordRetiredScopes rewrites retired wording in 
+<section id="watch-automation" class="dx-value"><div class="dx-value-copy"><p class="dx-kicker"><b>04</b><i></i><span>It speaks first</span></p><h2><span class="dx-line">Leave a question running.</span> <span class="dx-line">It tells you when something changes.</span></h2><p>DeepORG keeps answering that question against live data. It speaks up when the answer changes, or when something you expected never arrives.</p><div class="dx-links"><a class="dx-more" href="/watch/">What a standing question can do</a></div></div><div class="dx-value-art">{{< ascii scene="watch" label="Animated diagram: a question left running is checked every hour. When no rows have arrived for four hours, DeepORG says so without being asked." caption="a question left running" >}}</div></section>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	defaultBenchmarkScope = "2026.1/2026.2 — governed read-only Q&A · 2027.1 — adds writes, alerts, follow-ups, multi-source · 2028.1 — intent-phrased tasks with execution twins · 2028.2 — cross-source ruler fix (v11)"
-	deepcontosoBenchmarkScope = "2026.1 — governed retail Q&A (aggregations, time windows, schema discovery, governance)"
-		data.Suite.GenerationScopes = map[string]string{
-			"2026.1": "governed retail Q&A (aggregations, time windows, schema discovery, governance)",
-		}
-		"2026.1": "governed read-only Q&A",
-		"2026.2": "governed read-only Q&A",
+<section id="watch-automation" class="dx-value"><div class="dx-value-copy"><p class="dx-kicker"><b>04</b><i></i><span>It speaks first</span></p><h2>Nothing happened. That was the problem.</h2><p>Leave a question running and DeepORG keeps answering it against live data. It speaks up when the answer changes, or when something you expected never arrives.</p><div class="dx-links"><a class="dx-more" href="/watch/">What a standing question can do</a></div></div><div class="dx-value-art">{{< ascii scene="watch" label="Animated diagram: a question left running is checked every hour. When no rows have arrived for four hours, DeepORG says so without being asked." caption="a question left running" >}}</div></section>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ffd03671` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba272634` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

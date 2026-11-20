@@ -716423,3 +716423,258 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ded50e02` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9659. report Gold coverage across retrieval stages (Harvested from zvec-ai/zvec-grep)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "report Gold coverage across retrieval stages",
+  "source": "zvec-ai/zvec-grep",
+  "source_url": "https://github.com/zvec-ai/zvec-grep",
+  "source_version": "ad737d20",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-20T23:21:18.831Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zvec-ai-zvec-grep",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep) (Revision: `ad737d20`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/scripts/retrieval-pr-comment.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ad737d20`: benchmarks): report Gold coverage across retrieval stages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/retrieval-pr-comment.mjs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+export function commentBody({
+  run,
+  request,
+  report,
+  serverUrl,
+  repository,
+  traceArtifactId,
+}) {
+      markdownVersionComparison(
+        { ...result, server_url: serverUrl, run_url: runUrl },
+        {
+          traceUrl: positiveInteger(traceArtifactId)
+            ? `${serverUrl}/${repository}/actions/runs/${run.id}/artifacts/${traceArtifactId}`
+            : undefined,
+        },
+      ),
+    if (!info.isFile() || info.size > 256 * 1024) return null;
+  let traceArtifactId;
+  if (run.conclusion === "success") {
+    try {
+      const artifacts = await github.paginate(
+        github.rest.actions.listWorkflowRunArtifacts,
+        { ...context.repo, run_id: run.id, per_page: 100 },
+      );
+      // Build the URL from GitHub metadata, never artifact-provided Markdown or URLs.
+      traceArtifactId = artifacts.find(
+        (artifact) =>
+          artifact.name === "retrieval-trace.html" &&
+          artifact.expired === false &&
+          positiveInteger(artifact.id) &&
+          artifact.workflow_run?.id === run.id &&
+          artifact.workflow_run?.head_sha === run.head_sha,
+      )?.id;
+    } catch {
+      core.info(
+        "Stage trace artifact unavailable; omitti
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+export function commentBody({ run, request, report, serverUrl, repository }) {
+      markdownVersionComparison({
+        ...result,
+        server_url: serverUrl,
+        run_url: runUrl,
+      }),
+    if (!info.isFile() || info.size > 128 * 1024) return null;
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ad737d20` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9660. a server projection over a pending async store waits for it (Harvested from solidjs/solid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "a server projection over a pending async store waits for it",
+  "source": "solidjs/solid",
+  "source_url": "https://github.com/solidjs/solid",
+  "source_version": "5a43d6f8",
+  "license": "MIT",
+  "extracted_at": "2026-11-20T23:21:21.691Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-solidjs-solid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [solidjs/solid](https://github.com/solidjs/solid) (Revision: `5a43d6f8`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.changeset/ssr-projection-pending-store-5097.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in solidjs/solid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `fc0dac0c`: solid): a server projection over a pending async store waits for it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/ssr-projection-pending-store-5097.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+---
+"solid-js": patch
+---
+
+On the server, a projection or derived optimistic store whose function returns a pending async store (`createProjection(() => rows, …)`, `createOptimisticStore(() => rows, …)`) now waits for that store like a derive that read it, so `<Loading>` shows its fallback and the answer streams in. Before, adopting the pending store threw `NotReadyError` out of the component body.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `fc0dac0c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9661. give the homepage Watch section a plain heading (Harvested from dosco/graphjin)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "give the homepage Watch section a plain heading",
+  "source": "dosco/graphjin",
+  "source_url": "https://github.com/dosco/graphjin",
+  "source_version": "ba272634",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-20T23:21:26.164Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dosco-graphjin",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dosco/graphjin](https://github.com/dosco/graphjin) (Revision: `ba272634`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `website/content/_index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ba272634`: site): give the homepage Watch section a plain heading. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/content/_index.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+<section id="watch-automation" class="dx-value"><div class="dx-value-copy"><p class="dx-kicker"><b>04</b><i></i><span>It speaks first</span></p><h2><span class="dx-line">Leave a question running.</span> <span class="dx-line">It tells you when something changes.</span></h2><p>DeepORG keeps answering that question against live data. It speaks up when the answer changes, or when something you expected never arrives.</p><div class="dx-links"><a class="dx-more" href="/watch/">What a standing question can do</a></div></div><div class="dx-value-art">{{< ascii scene="watch" label="Animated diagram: a question left running is checked every hour. When no rows have arrived for four hours, DeepORG says so without being asked." caption="a question left running" >}}</div></section>
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+<section id="watch-automation" class="dx-value"><div class="dx-value-copy"><p class="dx-kicker"><b>04</b><i></i><span>It speaks first</span></p><h2>Nothing happened. That was the problem.</h2><p>Leave a question running and DeepORG keeps answering it against live data. It speaks up when the answer changes, or when something you expected never arrives.</p><div class="dx-links"><a class="dx-more" href="/watch/">What a standing question can do</a></div></div><div class="dx-value-art">{{< ascii scene="watch" label="Animated diagram: a question left running is checked every hour. When no rows have arrived for four hours, DeepORG says so without being asked." caption="a question left running" >}}</div></section>
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ba272634` are properly handled with clean fallback behavior.

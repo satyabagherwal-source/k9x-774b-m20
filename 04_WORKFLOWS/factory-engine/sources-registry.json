@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T23:13:40.823Z",
-    "lastVerified": "2026-11-20T23:13:40.823Z",
+    "lastChecked": "2026-11-20T23:21:29.831Z",
+    "lastVerified": "2026-11-20T23:21:29.831Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T22:49:30.808Z",
+    "lastChecked": "2026-11-20T23:21:28.970Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T22:49:30.808Z"
+    "lastVerified": "2026-11-20T23:21:28.970Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1361,8 +1361,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T17:45:20.850Z",
-    "lastVerified": "2026-11-20T17:45:20.850Z",
+    "lastChecked": "2026-11-20T23:21:23.959Z",
+    "lastVerified": "2026-11-20T23:21:23.959Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -2815,9 +2815,9 @@
   "pingcap-autoflow": {
     "name": "autoflow",
     "officialUrl": "https://github.com/pingcap/autoflow",
-    "lastChecked": "2026-11-19T20:00:25.791Z",
+    "lastChecked": "2026-11-20T23:21:26.379Z",
     "revisionIdentifier": "01cdf88f",
-    "lastVerified": "2026-11-19T20:00:25.791Z"
+    "lastVerified": "2026-11-20T23:21:26.379Z"
   },
   "orange-opensource-hurl": {
     "name": "Orange-OpenSource/hurl",
@@ -3587,14 +3587,14 @@
     "officialUrl": "https://github.com/dosco/graphjin",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T22:19:47.588Z",
-    "lastVerified": "2026-11-19T22:19:47.588Z",
+    "lastChecked": "2026-11-20T23:21:25.621Z",
+    "lastVerified": "2026-11-20T23:21:25.621Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dosco-graphjin",
-    "contentHash": "239e1951270f4c30bbf6c456f98a3ee5fd5f8b83ac3e60d48c390a516fd8e763",
+    "contentHash": "4fa73f756952120a75fe9e26a97954c4fa536a93217ab9216030095912a05382",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7459,14 +7459,14 @@
     "officialUrl": "https://github.com/zvec-ai/zvec-grep",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T10:47:10.181Z",
-    "lastVerified": "2026-11-19T10:47:10.181Z",
+    "lastChecked": "2026-11-20T23:21:18.126Z",
+    "lastVerified": "2026-11-20T23:21:18.126Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "742844ebbc8fbba702c0eacb1c8dbfafe6d55c0d04feb051f622d35cdb54a226",
+    "contentHash": "c341c2348112e098a2d012da0b958524f492efe09c8689eb3138e4e81c326238",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11051,5 +11051,29 @@
     "lastChecked": "2026-11-20T23:13:25.506Z",
     "revisionIdentifier": "e7884cce",
     "lastVerified": "2026-11-20T23:13:25.506Z"
+  },
+  "solidjs-solid": {
+    "name": "solidjs/solid",
+    "officialUrl": "https://github.com/solidjs/solid",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-20T23:21:21.165Z",
+    "lastVerified": "2026-11-20T23:21:21.165Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-solidjs-solid",
+    "contentHash": "017ff61b810542e7bbc8f70c0c9e63f56a1efe399732fee78abd35860c1f2c7d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 25,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pointfreeco-sqlite-data": {
+    "name": "sqlite-data",
+    "officialUrl": "https://github.com/pointfreeco/sqlite-data",
+    "lastChecked": "2026-11-20T23:21:18.883Z",
+    "revisionIdentifier": "e72164ce",
+    "lastVerified": "2026-11-20T23:21:18.883Z"
   }
 }

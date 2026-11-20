@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T23:13:37.660Z",
-  "total_cycles_completed": 11099,
-  "total_learnings_persisted": 11099,
-  "total_rules_promoted": 10449,
+  "last_updated": "2026-11-20T23:21:26.668Z",
+  "total_cycles_completed": 11102,
+  "total_learnings_persisted": 11102,
+  "total_rules_promoted": 10452,
   "history": [
-    {
-      "timestamp": "2026-11-20T01:00:31.605Z",
-      "repository": "metalbear-co/mirrord",
-      "learningId": "learn-github-metalbear-co-mirrord",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T01:01:06.206Z",
-      "repository": "maziyarpanahi/openmed",
-      "learningId": "learn-github-maziyarpanahi-openmed",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T01:12:44.895Z",
-      "repository": "clastix/kamaji",
-      "learningId": "learn-github-clastix-kamaji",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T01:20:34.306Z",
       "repository": "MaterializeInc/materialize",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-20T23:13:37.660Z",
       "repository": "koderover/zadig",
       "learningId": "learn-github-koderover-zadig",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T23:21:19.339Z",
+      "repository": "zvec-ai/zvec-grep",
+      "learningId": "learn-github-zvec-ai-zvec-grep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T23:21:22.201Z",
+      "repository": "solidjs/solid",
+      "learningId": "learn-github-solidjs-solid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T23:21:26.668Z",
+      "repository": "dosco/graphjin",
+      "learningId": "learn-github-dosco-graphjin",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

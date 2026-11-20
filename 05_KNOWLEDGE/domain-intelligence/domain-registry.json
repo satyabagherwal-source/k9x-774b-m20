@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T23:13:43.918Z",
-  "total_records": 2188,
+  "last_updated": "2026-11-20T23:22:01.298Z",
+  "total_records": 2191,
   "domains": {
     "A": {
       "total": 17,
@@ -2097,7 +2097,7 @@
       ]
     },
     "K": {
-      "total": 123,
+      "total": 126,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2221,7 +2221,10 @@
         "domain_intelligence-quality-verification-intelligence-provablehq-snarkos-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariant",
         "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-solidjs-solid-core-invariants",
+        "DOM-K-B3BE81E5",
+        "domain_intelligence-quality-verification-intelligence-solidjs-solid-learnings-core-invariants"
       ]
     },
     "L": {
@@ -7958,8 +7961,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "04210feb7577c650d08e26924f38ac5830a9be43068258e1c675b08322346224",
-      "created_at": "2026-11-16T02:26:04.488Z"
+      "content_hash": "4de161e28dfe4b2e3595863c79ea9bb395f25effe9ebf8ceec32403df6323368",
+      "created_at": "2026-11-20T23:21:30.677Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -14061,8 +14064,8 @@
       "title": "Technical Construction Intelligence: zvec-ai/zvec-grep Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-technical-construction-intelligence-zvec-ai-zvec-grep-core-inv.md",
       "repository": "zvec-ai/zvec-grep",
-      "content_hash": "ce1ef56ee1d783e7269212d90119d3ffe7bd66e3b7ef4f198ba3c21dc36459a4",
-      "created_at": "2026-11-14T06:23:36.293Z"
+      "content_hash": "573bb96380bf6c2fcdba975f719cae514bab2e049bace263181ff2f7cd52cd4a",
+      "created_at": "2026-11-20T23:21:19.702Z"
     },
     "domain_intelligence-architecture-intelligence-openbmb-minicpm-ocr-1-0-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-openbmb-minicpm-ocr-1-0-core-invariants",
@@ -15735,8 +15738,8 @@
       "title": "Research & Knowledge Intelligence: dosco/graphjin Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-graphjin-core-invariants.md",
       "repository": "dosco/graphjin",
-      "content_hash": "d5ccd157b1372ce8e74b023dd8a230c435b8e2bb330750ca94ba588bb88a357a",
-      "created_at": "2026-11-19T22:19:48.838Z"
+      "content_hash": "53b85e6ba5efc0ec094957b40027e4bf797c41cc00c6d24794a600ef56582480",
+      "created_at": "2026-11-20T23:21:27.021Z"
     },
     "DOM-D-33F233D7": {
       "record_id": "DOM-D-33F233D7",
@@ -15795,8 +15798,8 @@
       "title": "Research & Knowledge Intelligence: dosco-graphjin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-learnings-research-knowledge-intelligence-dosco-graphjin-learning.md",
       "repository": "dosco-graphjin-learnings",
-      "content_hash": "46a81ed94a9a80de63bc379a3728882d0bab2456336e0c95d1cf5bbce11223f0",
-      "created_at": "2026-11-19T22:19:53.169Z"
+      "content_hash": "9d86a42883e2a5f763efac7d3fe26b6fb25a7c110122ac17c6d313f1478de565",
+      "created_at": "2026-11-20T23:22:01.298Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants",
@@ -36814,6 +36817,66 @@
       "repository": "jhspetersson-fselect-learnings",
       "content_hash": "f3c5068e550af34f58b74882ba72616d8d44bf934dae3af6152fecfb331d1dd2",
       "created_at": "2026-11-20T22:57:29.302Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-solidjs-solid-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-solidjs-solid-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: solidjs/solid Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-solidjs-solid-quality-verification-intelligence-solidjs-solid-core-invariants.md",
+      "repository": "solidjs/solid",
+      "content_hash": "f6086c74489ba8d93c0f0ab51c78cea1d2935ec1c37aa0ca3615a264335e81c8",
+      "created_at": "2026-11-20T23:21:22.553Z"
+    },
+    "DOM-K-B3BE81E5": {
+      "record_id": "DOM-K-B3BE81E5",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "`docs/RULES-FUNDAMENTALS.md:85`: async-reads-ahead-edgestestts1 async-reads-ahead-matrixtestts2 async-reads",
+      "content": "async-reads-ahead-edges.test.ts×1 async-reads-ahead-matrix.test.ts×2 async-reads-ahead-second-write.test.ts×1 derived-store-lane-derive.test.ts×1 error-is-an-answer.test.ts×1 gc.test.ts×1 ispending-async-derivation-4677.test.ts×3 ispending-memo-parked-seam-4439.test.ts×1 ispending-memo-wrapped-asker-4778.test.ts×2 latest-beside-staged-read-4365.test.ts×1 latest-derived-held-error-4106.test.ts×1 latest-derived-sync-error-4377.test.ts×1 latest-first-one-pass-4402.test.ts×1 latest-memo-inline-parity.test.ts×3 latest-stale-branch-hold-4661.test.ts×2 latest-two-readers-one-ask-4393.test.ts×5 loading-on-latest-fallback-4337.test.ts×1 optimistic-guess-beside-reask-4824.test.ts×1 optimistic-held-write-leak.test.ts×1 optimistic-layered-filter-4336.test.ts×1 optimistic-outside-reask-4690.test.ts×2 optimistic-question-change-4336.test.ts×6 optimistic-second-guess-reask-4629.test.ts×1 optimistic-second-log-guess-4666.test.ts×1 projection-lane-length-4631.test.ts×1 projection-second-guess-4629.test.ts×1 rejection-beside-ispending-3957.test.ts×1 derived-latest-confirmed-key.test.ts×1 derived-store-heal-4451.test.ts×1 unread-derive-midflight-mount-4491.test.ts×2 verdict-memo-after-staged-read.test.ts×1 verdict-memo-flight-no-reask.test.ts×7 verdict-memo-held-branch-4544.test.ts×3 verdict-memo-under-held-memo-4050.test.ts×1 verdict-read-order.test.ts×1",
+      "content_hash": "c1811a679cddc090f98ffd2260c8ef786b92d98670fe29aa80ea1cb2ca5e58b2",
+      "summary": "boundaries.ts×1 constants.ts×2 core.ts×5 effect.ts×1 lanes.ts×10 scheduler.ts×4 seat.ts×2 verdict.ts×2 optimistic.ts×4 projection.ts×1 store -> async-reads-ahead-edges.test.ts×1 async-reads-ahead-matrix.test.ts×2 async-reads-ahead-second-write.test.ts×1 derived-store-lane-derive.test",
+      "provenance": {
+        "source_uri": "project://solidjs-solid/solidjs-solid-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "F-6",
+        "author_or_entity": "AI-Builder-Brain Project Learning (solidjs-solid)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of solidjs-solid"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T23:22:00.016Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-solidjs-solid-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-solidjs-solid-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: solidjs-solid-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-solidjs-solid-learnings-quality-verification-intelligence-solidjs-solid-learning.md",
+      "repository": "solidjs-solid-learnings",
+      "content_hash": "cfc45de5592cf8da5c996f68b75a91c693df13147845da5ae1736028adb3fff8",
+      "created_at": "2026-11-20T23:22:00.541Z"
     }
   }
 }

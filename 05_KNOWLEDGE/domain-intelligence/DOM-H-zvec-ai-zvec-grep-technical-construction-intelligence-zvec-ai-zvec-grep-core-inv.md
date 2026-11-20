@@ -4,24 +4,24 @@
 {
   "source_repository": "zvec-ai/zvec-grep",
   "source_url": "https://github.com/zvec-ai/zvec-grep",
-  "source_version": "2825dcfa",
+  "source_version": "ad737d20",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T06:23:36.175Z",
+  "timestamp": "2026-11-20T23:21:19.540Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zvec-ai-zvec-grep",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep) (Revision: `2825dcfa`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T06:23:36.175Z`  
+> **Provenance**: Harvested from [zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep) (Revision: `ad737d20`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T23:21:19.540Z`  
 > **Learning ID**: `learn-github-zvec-ai-zvec-grep`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zvec-ai/zvec-grep:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T06:23:34.808Z  
+> **Harvest Timestamp**: 2026-11-20T23:21:18.126Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Local-first search across your workspace, built for humans and AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4312 stars
+- **Stars / Engagement**: 4367 stars
 
 ---
 
@@ -1111,11 +1111,11 @@ def render_report(report: dict[str, Any]) -> str:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #397** (2026-11-12): **[Bug]: Strict rustdoc build fails on private links in GraphEdgeKind**
-  *Symptoms*: ### Description  `zg-engine` fails to build its public API documentation when rustdoc warnings are treated as errors. The public `GraphEdgeKind` docs link to `PendingRef` and `FileEdge`, which are both `pub(crate)` and omitted from the public docs.  Source: [`domain/graph.rs:28`](https://github.com/zvec-ai/zvec-grep/blob/074dc96967480ce7353b5cb8d8961a6d8d3c66bc/rust/crates/zg-engine/src/domain/graph.rs#L28).  ### Steps to Reproduce  From the repository root:  ```sh cd rust RUSTDOCFLAGS='-D warnings' cargo doc -p zg-engine --no-deps ```  **Actual:** Rustdoc reports `private_intra_doc_links`, and the strict build exits with an error.  **Expected:** The public API docs build without warnings.  ### Suggested Fix  Render `PendingRef` and `FileEdge` as inline code in the comment, preserving the explanation and the types' visibility.  ### Version and Diagnostics  - `zg-engine` 0.3.0, built from source - Rust 1.98.0 on macOS 15.7.5 (Apple Silicon) - Affected area: Rust API documentation
+- **Issue #442** (2026-11-19): **[Bug]: Python call graph leaves imported class constructor calls pending**
+  *Symptoms*: ### Description  In SQLFluff, `Rule_LT09._eval` calls the imported class `FunctionalContext` as `FunctionalContext(context).segment`. A fresh graph index finds the class definition, but the constructor call remains pending and is absent from callers/callees navigation. When the name binds to that class, the call should produce a resolved `Calls` edge to the class definition. [Import](https://github.com/sqlfluff/sqlfluff/blob/db9801b7eb7fd014e765117f63ee1b0675fa9f87/src/sqlfluff/rules/layout/LT09.py#L9) · [Call site](https://github.com/sqlfluff/sqlfluff/blob/db9801b7eb7fd014e765117f63ee1b0675fa9f87/src/sqlfluff/rules/layout/LT09.py#L86-L91) · [Class definition](https://github.com/sqlfluff/sqlfluff/blob/db9801b7eb7fd014e765117f63ee1b0675fa9f87/src/sqlfluff/utils/functional/context.py#L7-L54)  ### Steps to reproduce  Set `ZG_BIN` to the absolute path of a release-built `zg` binary and run in a fresh checkout.  ```sh git clone https://github.com/sqlfluff/sqlfluff.git cd sqlfluff git checkout --detach db9801b7eb7fd014e765117f63ee1b0675fa9f87  "$ZG_BIN" --index --mode direct --graph --iglob '*.py' \   --embedding local/potion-code-16m-v2 --device cpu "$ZG_BIN" --status --check-ready --mode direct "$ZG_BIN" --callers FunctionalContext --mode direct \   --glob 'src/sqlfluff/utils/functional/context.py' ```  ### Version and diagnostics  Reproduced from a fresh Python-only graph index on macOS 27.0 arm64 with a `zg 0.3.1` release source build based on [cc3ff0fe](https://github.com/zvec
 
-- **Issue #382** (2026-11-10): **[Bug]: --preview full returns only the matched fragment for chunked Markdown/code entities**
-  *Symptoms*: ### Description  When an indexed Markdown/code entity is split into retrieval fragments, `--preview full` can display only the matched fragment, even though the result header identifies the complete entity.  The expected behavior is to show the entire matched **entity**, regardless of its internal fragment boundaries. This does not mean returning the entire file.  ### Steps to Reproduce  Observed in a local indexed Markdown workspace containing `katoann.md`, using `local/all-minilm-l6-v2`:  ```sh zg "How does KatoANN reduce memory traffic?" -t markdown --preview full --limit 1 --mode direct --refresh off ```  The result header is:  ```text #1 katoann.md:17-47 heading: 1 INTRODUCTION heading_level: 1 ```  However, the source body contains only lines **21–26**. Lines 17–20 and 27–47 from the same stored entity are absent. There is no error.  The reproduction requires an entity whose selected retrieval fragment covers only part of its content. An entity represented by a `Range::Full` fragment does not expose this issue. The concrete runtime reproduction above is Markdown; code entities share the same affected branch.  ### Expected Behavior  - `--preview full` returns all of the matched entity's stored content; in the observed case, lines **17–47**. - Fragment coordinates remain available as match evidence or a preview anchor, but do not cap the content available to full preview. - `none` and `short` remain bounded presentation modes. Their output should be selected by preview ru
+- **Issue #434** (2026-11-19): **[Bug]: Rust callers attributes a module-local save call to the top-level save**
+  *Symptoms*: ## Description  With the official `@zvec/zvec-grep@0.3.1` Linux x64 release, querying callers of the top-level `::save` correctly selects its definition, but also returns `storage::flush`, which calls the different function `storage::save`.  The call-site coordinates are accurate; **the call target is incorrectly attributed**. This is a false-positive relationship, separate from the argument-parsing problem in #426.  ## Reproduction case  Index the following complete `lib.rs` in a clean workspace. The observed workspace root was `/app`.  ```rust /// Normalize a value before storing it. pub fn normalize(value: i32) -> i32 { value.max(0) }  pub fn save(value: i32) -> i32 { normalize(value) }  pub fn import_record(value: i32) -> i32 { save(value) }  pub fn export_record(value: i32) -> i32 { save(value) }  /// A leaf with no resolved callers in this workspace. pub fn orphan_leaf(value: i32) -> i32 { value }  pub mod storage {     pub fn save(value: i32) -> i32 { super::normalize(value) }      pub fn flush(value: i32) -> i32 { save(value) } } ```  After indexing and initializing the published Rust HTTP `/mcp` endpoint, invoke `zvec_grep_callers` with:  ```json {"root":"/app","symbol":"::save"} ```  Use the actual workspace path if different. The complete [fixture](https://github.com/zhanglei1949/zvec-grep/blob/740f2a25715b4e1bc10c0cef59626022625e799e/benchmarks/swe-qa-bench/fixtures/caller-callee-dev/lib.rs) and [integration check](https://github.com/zhanglei1949/zvec-grep/blob/74
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1132,644 +1132,576 @@ def render_report(report: dict[str, Any]) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `63433cc6` (2026-11-13)
-**Commit Message**: fix(watcher): filter access events before queueing (#396)
+### Incident Patch 1: `ad737d20` (2026-11-20)
+**Commit Message**: feat(benchmarks): report Gold coverage across retrieval stages (#417)
 
-Prevent directory enumeration from overflowing the raw event queue and triggering repeated rescans. Preserve backend errors and explicit rescan flags, with queue and Linux watcher regression coverage.
-
-Fixes #375
-
-**File**: `rust/crates/zg-host-native/src/watcher.rs` (modified, +92/-8)
+**File**: `.github/scripts/retrieval-pr-comment.mjs` (modified, +40/-7)
 ```diff
-@@ -597,10 +597,7 @@ fn create_watcher(
-     let overflowed = Arc::clone(overflowed);
-     let overflow_notify = Arc::clone(overflow_notify);
-     let handler = move |event| {
--        if sender.try_send(event).is_err() {
--            overflowed.store(true, Ordering::Release);
--            overflow_notify.notify_one();
--        }
-+        enqueue_event(event, &sender, &overflowed, &overflow_notify);
-     };
-     let backend = if let Some(interval) = poll_interval {
-         WatchBackend::Poll(
-@@ -630,6 +627,24 @@ fn create_watcher(
-     Ok(watcher)
+@@ -390,7 +390,14 @@ export function validateComparison(report, request) {
+   };
  }
  
-+fn enqueue_event(
-+    event: notify::Result<Event>,
-+    sender: &mpsc::Sender<notify::Result<Event>>,
-+    overflowed: &AtomicBool,
-+    overflow_notify: &Notify,
-+) {
-+    // Directory enumeration itself produces access events on Linux. Drop them
-+    // before they can overflow the queue and trigger another enumeration.
-+    if matches!(&event, Ok(event) if matches!(event.kind, EventKind::Access(_)) && !event.need_rescan())
-+    {
-+        return;
-+    }
-+    if sender.try_send(event).is_err() {
-+        overflowed.store(true, Ordering::Release);
-+        overflow_notify.notify_one();
-+    }
-+}
-+
- fn watcher_error(error: impl std::fmt::Display) -> HostError {
-     HostError::storage_failure("native-watcher", error.to_string())
- }
-@@ -1081,15 +1096,15 @@ fn normalize_event(
-     event: &Event,
- ) -> Result<NormalizedEvent, HostError> {
-     let mut normalized = NormalizedEvent::default();
--    if matches!(event.kind, EventKind::Access(_)) {
--        return Ok(normalized);
--    }
-     if event.need_rescan() || matches!(event.kind, EventKind::Any | EventKind::Other) {
-         root.policy.invalidate()?;
-         normalized.changes.push(WorkspaceChange::Rescan);
-         normalized.refresh_registration = true;
-         return Ok(normalized);
-     }
-+    if matches!(event.kind, EventKind::Access(_)) {
-+        return Ok(normalized);
-+    }
-     let topology_event = is_topology_event(event.kind);
-     let control_paths = root.policy.control_paths();
-     for (index, path) in event.paths.iter().enumerate() {
-@@ -1295,9 +1310,78 @@ fn lock_task(
- mod tests {
-     use super::*;
-     use crate::PathPolicy;
--    use notify::event::CreateKind;
-+    use notify::event::{AccessKind, AccessMode, CreateKind, Flag};
-     use std::sync::atomic::AtomicUsize;
- 
-+    #[test]
-+    fn access_events_do_not_displace_changes_or_report_overflow() {
-+        let (sender, mut receiver) = mpsc::channel(1);
-+        let overflowed = AtomicBool::new(false);
-+        let overflow_notify = Notify::new();
-+        for kind in [
-+            AccessKind::Read,
-+            AccessKind::Open(AccessMode::Any),
-+            AccessKind::Close(AccessMode::Read),
-+            AccessKind::Close(AccessMode::Write),
-+        ] {
-+            for _ in 0..DEFAULT_RAW_EVENT_CAPACITY {
-+                enqueue_event(
-+                    Ok(Event::new(EventKind::Access(kind))),
-+                    &sender,
-+                    &overflowed,
-+                    &overflow_notify,
-+                );
-+            }
-+        }
-+        let change =
-+            Event::new(EventKind::Create(CreateKind::File)).add_path(PathBuf::from("tracked.rs"));
-+        enqueue_event(Ok(change.clone()), &sender, &overflowed, &overflow_notify);
-+        assert!(!overflowed.load(Ordering::Acquire));
-+        assert_eq!(receiver.try_recv().expect("change").expect("event"), change);
-+        assert!(receiver.try_recv().is_err());
-+    }
-+
-+    #[test]
-+    fn raw_queue_preserves_rescan_flags_and_backend_errors() {
-+        let (sender, mut receiver) = mpsc::channel(2);
-+        let overflowed = AtomicBool::new(false);
-+        let overflow_notify = Notify::new();
-+        let event =
-+            Event::new(EventKind::Access(AccessKind::Open(AccessMode::Any))).set_flag(Flag::Rescan);
-+        enqueue_event(Ok(event.clone()), &sender, &overflowed, &overflow_notify);
-+        enqueue_event(
-+            Err(notify::Error::generic("watcher interrupted")),
-+            &sender,
-+            &overflowed,
-+            &overflow_notify,
-+        );
-+        assert_eq!(receiver.try_recv().expect("rescan").expect("event"), event);
-+        assert!(receiver.try_recv().expect("backend error").is_err());
-+        assert!(!overflowed.load(Ordering::Acquire));
-+
-+        let temporary = tempfile::tempdir().expect("fixture");
-+        let root = test_root(temporary.path(), temporary.path().join(".rules"));
-+        let normalized = normalize_event(&root, false, &event).expect("rescan event");
-+        assert_eq!(normalized.changes, vec![WorkspaceChange::Rescan]);
-+        assert!(normalized.refresh_registration);
-+    }
-+
-+    #[test]
-+    fn actionable_events_still_report_raw_queue_overflow() {
-+        let (sender, _receiver) = mpsc::channel(1);
-+        let overflowed = AtomicBool::new(false);
-+        let overflow_notify = Notify::new();
-+        for _ in 0..2 {
-+            enqueue_event(
-+                Ok(Event::new(EventKind::Crea
-```
-
-**File**: `rust/crates/zg-host-native/tests/watcher_compat.rs` (modified, +34/-0)
-```diff
-@@ -15,6 +15,40 @@ use zg_host_native::{
- 
- type TestResult<T = ()> = Result<T, Box<dyn Error>>;
- 
-+#[cfg(target_os = "linux")]
-+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-+async fn directory_reads_do_not_starve_watcher_reconciliation() -> TestResult {
-+    let temporary = tempfile::tempdir()?;
-+    let root = temporary.path().canonicalize()?;
-+    for number in 0..128 {
-+        fs::create_dir(root.join(format!("directory-{number}")))?;
-+    }
-+    let factory = NativeWatcherFactory::default().with_config(NativeWatcherConfig {
-+        // Registration reads generate more IN_OPEN events than this queue holds.
-+        raw_event_capacity: 64,
-+        reconcile_interval: None,
-+        resume_check_interval: None,
-+        ..NativeWatcherConfig::default()
-+    });
-+    let control = TaskControl::new(CancellationToken::new());
-+    let session = factory
-+        .watch(
-+            &WatchRequest {
-+                root: RootSpec::new(root, Arc::new(AllowAllPaths)),
-+            },
-+            &control,
-+        )
-+        .await?;
-+    let result = tokio::time::timeout(Duration::from_secs(5), async {
-+        session.flush().await?;
-+        session.next_changes(&control).await
-+    })
-+    .await;
-+    session.close().await?;
-+    assert!(result??.changes.contains(&WorkspaceChange::Rescan));
-+    Ok(())
-+}
-+
- #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
- async fn watcher_debounces_changes_and_obeys_injected_selection_policy() -> TestResult {
-     let temporary = tempdir_in(std::env::current_dir()?)?;
-```
-
----
-
-### Incident Patch 2: `2825dcfa` (2026-11-13)
-**Commit Message**: fix(engine): preserve v2 indexes and validate workspace recovery (#407)
-
-**File**: `rust/crates/zg-engine/src/api/info.rs` (modified, +1/-1)
-```diff
-@@ -261,7 +261,7 @@ impl result::WorkspaceIndexInfo {
-                 .index()
-                 .descriptor()
-                 .map(|index| (&index.fts()).into()),
--            index_version: workspace.index_version(),
-+            index_version: Some(workspace.index_version()),
-             created_epoch_ms: workspace.created_epoch_ms(),
-             updated_epoch_ms: workspace.updated_epoch_ms(),
-         }
-```
-
-**File**: `rust/crates/zg-engine/src/authorization.rs` (modified, +1/-1)
-```diff
-@@ -1222,7 +1222,7 @@ mod tests {
-             &source_root,
-             layout,
-             crate::domain::ScanRules::default(),
--            Some(crate::workspace::CURRENT_INDEX_VERSION),
-+            crate::workspace::CURRENT_INDEX_VERSION,
-             Some(uuid::Uuid::new_v4().to_string()),
-             1,
-             1,
-```
-
-**File**: `rust/crates/zg-engine/src/domain/index.rs` (modified, +13/-3)
-```diff
-@@ -61,6 +61,8 @@ impl<'de> Deserialize<'de> for IndexDescriptor {
-             embedding_routes: BTreeMap<ContentKind, EmbeddingModelInfo>,
-             #[serde(default, deserialize_with = "deserialize_unique_map")]
-             embedding_configs: BTreeMap<String, ModelConfig<EncryptedApiKey>>,
-+            // Released v2 indexes predate the optional code graph.
-+            #[serde(default)]
-             graph_indexing: bool,
-         }
- 
-@@ -368,16 +370,24 @@ mod tests {
-     }
- 
-     #[test]
--    fn descriptor_requires_the_graph_setting() {
-+    fn legacy_descriptor_defaults_to_indexing_without_a_graph() {
-         let encoded =
-             serde_json::to_string(&IndexState::Enabled(Box::new(descriptor()))).expect("encode");
-         assert!(encoded.contains("\"graphIndexing\":false"));
- 
-         let incomplete = encoded.replace(",\"graphIndexing\":false", "");
-         assert_ne!(incomplete, encoded);
-+        let restored = serde_json::from_str::<IndexState>(&incomplete).expect("v2 descriptor");
-+        let restored = restored.descriptor().expect("enabled index");
-+        assert!(!restored.graph_indexing());
-+        restored
-+            .ensure_index_compatible(&descriptor())
-+            .expect("existing v2 index remains compatible");
-         assert!(
--            serde_json::from_str::<IndexState>(&incomplete).is_err(),
--            "a descriptor must state whether the build carries a graph"
-+            serde_json::from_str::<IndexState>(
-+                &encoded.replace("\"graphIndexing\":false", "\"graphIndexing\":null")
-+            )
-+            .is_err()
-         );
-     }
- 
-```
-
-**File**: `rust/crates/zg-engine/src/domain/workspace.rs` (modified, +8/-14)
-```diff
-@@ -16,8 +16,8 @@ pub(crate) struct Workspace {
-     #[serde(skip)]
-     layout: WorkspaceLayout,
-     scan: ScanRules,
--    /// Storage format version used by the index.
--    index_version: Option<u32>,
-+    /// Compatibility version of the persisted index metadata and storage.
-+    index_version: u32,
-     /// Identifies an index build for publication, recovery, and caching.
-     storage_generation: Option<String>,
-     #[serde(rename = "createdTime")]
-@@ -33,7 +33,7 @@ impl Workspace {
-         source_root: &Path,
-         layout: WorkspaceLayout,
-         scan: ScanRules,
--        index_version: Option<u32>,
-+        index_version: u32,
-         storage_generation: Option<String>,
-         created_epoch_ms: u64,
-         updated_epoch_ms: u64,
-@@ -59,7 +59,7 @@ impl Workspace {
-         source_root: SourceRoot,
-         layout: WorkspaceLayout,
-         scan: ScanRules,
--        index_version: Option<u32>,
-+        index_version: u32,
-         storage_generation: Option<String>,
-         created_epoch_ms: u64,
-         updated_epoch_ms: u64,
-@@ -91,12 +91,6 @@ impl Workspace {
-             )));
-         }
-         if self.index_enabled() {
--            if self.index_version.is_none() {
--                return Err(EngineError::invalid_argument(format!(
--                    "workspace {}: index is enabled but indexVersion is missing",
--                    self.source_root().display(),
--                )));
--            }
-             let generation = self.storage_generation.as_deref().ok_or_else(|| {
-                 EngineError::invalid_argument(format!(
-                     "workspace {}: index is enabled but storageGeneration is missing",
-@@ -109,9 +103,9 @@ impl Workspace {
-                     self.source_root().display(),
-                 ))
-             })?;
--        } else if self.index_version.is_some() || self.storage_generation.is_some() {
-+        } else if self.storage_generation.is_some() {
-             return Err(EngineError::invalid_argument(format!(
--                "workspace {}: an unbuilt index cannot have indexVersion or storageGeneration",
-+                "workspace {}: an unbuilt index cannot have storageGeneration",
-                 self.source_root().display(),
-             )));
-         }
-@@ -130,7 +124,7 @@ impl Workspace {
-         &self.scan
-     }
- 
--    pub(crate) fn index_version(&self) -> Option<u32> {
-+    pub(crate) fn index_version(&self) -> u32 {
-         self.index_version
-     }
- 
-@@ -559,7 +553,7 @@ mod tests {
-             root,
-             WorkspaceLayout::new(root.join(".zvec-grep")).expect("layout"),
-             scan,
--            Some(2),
-+            crate::workspace::CURRENT_INDEX_VERSION,
-             Some(uuid::Uuid::new_v4().to_string()),
-             10,
-             20,
-```
-
-**File**: `rust/crates/zg-engine/src/pipelines/indexed_search/context.rs` (modified, +1/-1)
-```diff
-@@ -915,7 +915,7 @@ mod tests {
-                 root,
-                 WorkspaceLayout::new(root.join(".zvec-grep")).expect("layout"),
-                 crate::domain::ScanRules::default(),
--                Some(crate::workspace::CURRENT_INDEX_VERSION),
-+                crate::workspace::CURRENT_INDEX_VERSION,
-                 Some(generation.clone()),
-                 0,
-                 0,
-```
-
-**File**: `rust/crates/zg-engine/src/pipelines/indexing/pipeline.rs` (modified, +2/-8)
-```diff
-@@ -3252,7 +3252,7 @@ mod tests {
-             root,
-             crate::domain::WorkspaceLayout::new(root.join(".zvec-grep")).expect("layout"),
-             crate::domain::ScanRules::default(),
--            Some(crate::workspace::CURRENT_INDEX_VERSION),
-+            crate::workspace::CURRENT_INDEX_VERSION,
-             Some(uuid::Uuid::new_v4().to_string()),
-             1,
-             1,
-@@ -3930,13 +3930,7 @@ mod tests {
-                     workspace.source_root(),
-                     workspace.layout().clone(),
-                     workspace.scan().clone(),
--                    if matches!(index, crate::domain::IndexState::Enabled(_)) {
--                        workspace
--                            .index_version()
--                            .or(Some(crate::workspace::CURRENT_INDEX_VERSION))
--                    } else {
--                        None
--                    },
-+                    workspace.index_version(),
-                     if matches!(index, crate::domain::IndexState::Enabled(_)) {
-                         workspace.storage_generation().map(str::to_owned)
-                     } else {
-```
-
-**File**: `rust/crates/zg-engine/src/pipelines/indexing/service.rs` (modified, +44/-21)
-```diff
-@@ -156,7 +156,11 @@ impl WorkspaceIndexService {
-             previous
-                 .ensure_index_compatible(&descriptor)
-                 .map_err(|error| {
--                    error.with_help("Rebuild the index with `zg --index --rebuild`.")
-+                    error.with_help(if descriptor.graph_indexing() {
-+                        "Rebuild the index with `zg --index --rebuild --graph`."
-+                    } else {
-+                        "Rebuild the index with `zg --index --rebuild`."
-+                    })
-                 })?;
-         }
-         let mut workspace = index_workspace_state(
-@@ -223,6 +227,16 @@ impl WorkspaceIndexService {
-                 .is_some_and(IndexDescriptor::graph_indexing),
-             storage_path: storage_path.to_path_buf(),
-             embeddings: models.iter().map(|model| model.info().clone()).collect(),
-+        })
-+        .map_err(|mut error| {
-+            if let Some(help) = error.help() {
-+                let help = format!(
-+                    "{help} Run this command in workspace '{}'.",
-+                    workspace.source_root().display()
-+                );
-+                error = error.with_help(help);
-+            }
-+            error.with_workspace_root(workspace.source_root())
-         })?;
-         let writer = self.writers.register(
-             crate::pipelines::indexed_search::writer::WriterSession::new(
-@@ -567,7 +581,7 @@ fn index_workspace_state(
-         source_root,
-         layout.clone(),
-         scan,
--        Some(CURRENT_INDEX_VERSION),
-+        CURRENT_INDEX_VERSION,
-         Some(generation),
-         active.map_or(now, Workspace::created_epoch_ms),
-         now,
-@@ -1072,7 +1086,7 @@ mod tests {
-             previous.source_root(),
-             previous.layout().clone(),
-             previous.scan().clone(),
--            Some(super::CURRENT_INDEX_VERSION - 1),
-+            super::CURRENT_INDEX_VERSION - 1,
-             previous.storage_generation().map(str::to_owned),
-             previous.created_epoch_ms(),
-             previous.updated_epoch_ms(),
-@@ -1163,14 +1177,17 @@ mod tests {
- 
-     #[test]
-     fn rejects_incompatible_index_versions() {
--        crate::workspace::manifest::require_current_index_version(Some(
--            super::CURRENT_INDEX_VERSION,
--        ))
--        .expect("current index");
--        for version in [None, Some(0), Some(1), Some(2), Some(5), Some(u32::MAX)] {
-+        crate::workspace::manifest::require_current_index_version(super::CURRENT_INDEX_VERSION)
-+            .expect("current index");
-+        for version in [
-+            0,
-+            super::CURRENT_INDEX_VERSION - 1,
-+            super::CURRENT_INDEX_VERSION + 1,
-+            u32::MAX,
-+        ] {
-             assert_ne!(
-                 version,
--                Some(super::CURRENT_INDEX_VERSION),
-+                super::CURRENT_INDEX_VERSION,
-                 "samples must stay incompatible with the current version"
-             );
-             let error = crate::workspace::manifest::require_current_index_version(version)
-@@ -1199,7 +1216,7 @@ mod tests {
-             }
-             .apply(&crate::domain::ScanRules::default())
-             .expect("scan rules"),
--            None,
-+            super::CURRENT_INDEX_VERSION,
-             None,
-             0,
-             0,
-@@ -1984,11 +2001,16 @@ mod tests {
-                         )
-                         .await;
-                     if graph_enabled {
--                        assert!(result.expect("enabled graph read").matches.is_empty());
-+                        let result = result.expect("enabled graph read");
-+                        assert!(result.matches.is_empty());
-+                        assert!(result.suggestions.is_empty());
-                     } else {
--                        assert_eq!(
--                            result.expect_err("disabled graph read").code(),
--                            crate::EngineError::UNSUPPORTED
-+                        let error = result.expect_err("disabled graph read");
-+                        assert_eq!(error.code(), crate::EngineError::UNSUPPORTED);
-+                        assert!(
-+                            error
-+                                .help()
-+                                .is_some_and(|help| help.contains("zg --index --rebuild --graph"))
-                         );
-                     }
-                 }
-@@ -2461,12 +2483,9 @@ mod tests {
-             "{}",
-             error.message()
-         );
--        assert!(
--            error
--                .help()
--                .is_some_and(|help| help.contains("zg --index --rebuild")),
--            "{:?}",
--            error.help()
-+        assert_eq!(
-+            error.help(),
-+            Some("Rebuild the index with `zg --index --rebuild --graph`.")
-         );
-         let rejected = published(&layout);
-         assert!(
-@@ -2518,6 +2537,10 @@ mod tests {
-             "{}",
-             error.message()
-         );
-+        assert_eq!(
-+          
-```
-
-**File**: `rust/crates/zg-engine/src/pipelines/path_search.rs` (modified, +1/-1)
-```diff
-@@ -307,7 +307,7 @@ mod tests {
-             &root,
-             layout,
-             scan,
--            None,
-+            crate::workspace::CURRENT_INDEX_VERSION,
-             None,
-             0,
-             0,
-```
-
----
-
-### Incident Patch 3: `0bf9e4e3` (2026-11-13)
-**Commit Message**: fix(models): add Bekko ModelScope download fallback (#388)
-
-**File**: `rust/README.md` (modified, +4/-8)
-```diff
-@@ -7,13 +7,10 @@ everyday use. This page covers implementation behavior, native builds, and
- packaging. The repository root retains the legacy TypeScript implementation and
- its separate checks.
- 
--The Rust catalog includes `local/bekko-256-int8`, using the pinned
--[Bekko static ONNX weights](https://huggingface.co/hotchpotch/bekko-static-embedding-v1/tree/c18167b8f244c1bc6de21ce9b710bac8a29c4615/onnx).
-+The Rust catalog includes `local/bekko-256-int8`.
- Select it with `zg --index --embedding local/bekko-256-int8 --device cpu`.
--It downloads 52,000,965 bytes of INT8 weights plus a 5,104,874-byte tokenizer,
--verified by SHA-256. Mean pooling and the 256-dimensional normalized output
--remain FP32. Queries and documents have no prefix or special tokens, with a
--32,768-token limit. Only Hugging Face is configured for this model.
-+Mean pooling and the 256-dimensional normalized output remain FP32.
-+Queries and documents have no prefix or special tokens, with a 32,768-token limit.
- The Rust Bekko backend (`bekko`) reads the quantized table and per-token scales
- directly from the pinned ONNX file; inference runs on the shared CPU pool
- without an ONNX session or padded batches. It retains unknown tokens and
-@@ -262,8 +259,7 @@ cargo test --locked -p zg-engine --lib models::artifacts::downloader::tests::liv
- Each suite dynamically enumerates every local catalog model and fully downloads
- its pinned artifacts when configured for the selected source (Hugging Face or
- ModelScope), using a fresh temporary cache for every model/source pair and
--verifying artifact integrity. Remote API models are excluded. Bekko is checked
--only from Hugging Face because it has no configured ModelScope mirror.
-+verifying artifact integrity. Remote API models are excluded.
- The suites require live network access, never fall back to the other source, and
- do not run inference. They emit a catalog manifest and a JSON result for every
- configured model/source pair. The normal Linux CPU CI job runs both suites using
-```
-
-**File**: `rust/crates/zg-engine/src/models/artifacts/downloader/tests/live_sources.rs` (modified, +16/-14)
-```diff
-@@ -334,28 +334,30 @@ fn live_sources_follow_each_models_configured_sources() {
-         if model == "local/bekko-256-int8" {
-             assert_eq!(
-                 request.sources.len(),
--                1,
--                "Bekko only has a Hugging Face source"
-+                2,
-+                "Bekko includes a ModelScope fallback"
-             );
--            assert!(!supports_source(download, ArtifactSourceKind::ModelScope));
-+            assert!(supports_source(download, ArtifactSourceKind::ModelScope));
-         }
-         assert_eq!(std::fs::read_dir(root.path()).expect("cache").count(), 0);
-     }
- }
- 
- #[tokio::test]
- async fn unconfigured_source_is_rejected_before_downloading() {
--    let (model, download) = local_models()
--        .into_iter()
--        .find(|(model, _)| *model == "local/bekko-256-int8")
--        .expect("Bekko is included in the live-source catalog");
--    let error = download_local_model_from(model, download, ArtifactSourceKind::ModelScope)
--        .await
--        .expect_err("Bekko has no ModelScope mirror");
--    assert_eq!(
--        error,
--        "modelscope is not configured for local/bekko-256-int8"
--    );
-+    const HF_ONLY_DOWNLOAD: ArtifactDownloadConfig = ArtifactDownloadConfig {
-+        hugging_face: super::HF,
-+        model_scope: None,
-+        artifacts: super::ARTIFACTS,
-+    };
-+    let error = download_local_model_from(
-+        "local/test-model",
-+        &HF_ONLY_DOWNLOAD,
-+        ArtifactSourceKind::ModelScope,
-+    )
-+    .await
-+    .expect_err("unconfigured ModelScope source must be rejected");
-+    assert_eq!(error, "modelscope is not configured for local/test-model");
- }
- 
- fn has_extension(path: &str, extension: &str) -> bool {
-```
-
-**File**: `rust/crates/zg-engine/src/models/backends/bekko/model/tests.rs` (modified, +7/-1)
-```diff
-@@ -104,7 +104,13 @@ fn bekko_catalog_preserves_pinned_assets_and_public_limits() {
-         entry.download.hugging_face.revision,
-         "c18167b8f244c1bc6de21ce9b710bac8a29c4615"
+-export function commentBody({ run, request, report, serverUrl, repository }) {
++export function commentBody({
++  run,
++  request,
++  report,
++  serverUrl,
++  repository,
++  traceArtifactId,
++}) {
+   const runUrl = `${serverUrl}/${repository}/actions/runs/${run.id}/attempts/${run.run_attempt}`;
+   let result;
+   if (run.conclusion === "success") {
+@@ -403,11 +410,14 @@ export function commentBody({ run, request, report, serverUrl, repository }) {
+   const body = [marker, versionMarker(run), "## ZG Retrieval Benchmark", ""];
+   if (result) {
+     body.push(
+-      markdownVersionComparison({
+-        ...result,
+-        server_url: serverUrl,
+-        run_url: runUrl,
+-      }),
++      markdownVersionComparison(
++        { ...result, server_url: serverUrl, run_url: runUrl },
++        {
++          traceUrl: positiveInteger(traceArtifactId)
++            ? `${serverUrl}/${repository}/actions/runs/${run.id}/artifacts/${traceArtifactId}`
++            : undefined,
++        },
++      ),
      );
--    assert!(entry.download.model_scope.is_none());
-+    assert_eq!(
-+        entry.download.model_scope,
-+        Some(ArtifactSourceConfig {
-+            repo: "egolearner/bekko-static-embedding-v1",
-+            revision: "cf6eaf4c1e7483e73cf331cd42593e6a698fb3f5",
-+        })
-+    );
-     let model =
-         BekkoEmbeddingModel::new(entry, ModelConfig::default(), ModelComputeRuntime::shared());
-     assert_eq!(model.concurrency_defaults().initial, 1);
+   } else {
+     const version = (side) => {
+@@ -438,7 +448,7 @@ export function commentBody({ run, request, report, serverUrl, repository }) {
+ async function readJson(path) {
+   try {
+     const info = await lstat(path);
+-    if (!info.isFile() || info.size > 128 * 1024) return null;
++    if (!info.isFile() || info.size > 256 * 1024) return null;
+     return JSON.parse(await readFile(path, "utf8"));
+   } catch {
+     return null;
+@@ -522,12 +532,35 @@ export async function publish({ github, context, core, directory }) {
+     core.info("A newer run already published this PR's results.");
+     return;
+   }
++  let traceArtifactId;
++  if (run.conclusion === "success") {
++    try {
++      const artifacts = await github.paginate(
++        github.rest.actions.listWorkflowRunArtifacts,
++        { ...context.repo, run_id: run.id, per_page: 100 },
++      );
++      // Build the URL from GitHub metadata, never artifact-provided Markdown or URLs.
++      traceArtifactId = artifacts.find(
++        (artifact) =>
++          artifact.name === "retrieval-trace.html" &&
++          artifact.expired === false &&
++          positiveInteger(artifact.id) &&
++          artifact.workflow_run?.id === run.id &&
++          artifact.workflow_run?.head_sha === run.head_sha,
++      )?.id;
++    } catch {
++      core.info(
++        "Stage trace artifact unavailable; omitting its download link.",
++      );
++    }
++  }
+   const body = commentBody({
+     run,
+     request,
+     report: await readJson(join(directory, "comparison/summary.json")),
+     serverUrl: context.serverUrl,
+     repository,
++    traceArtifactId,
+   });
+   // Recheck after reading artifacts/comments so a push during publication
+   // cannot knowingly replace the current PR's result with an older version.
 ```
 
-**File**: `rust/crates/zg-engine/src/models/catalog/entries.rs` (modified, +4/-1)
+**File**: `.github/scripts/retrieval-pr-comment.test.mjs` (modified, +98/-3)
 ```diff
-@@ -569,7 +569,10 @@ const CATALOG: [EmbeddingCatalogEntry; 15] = [
-                 repo: "hotchpotch/bekko-static-embedding-v1",
-                 revision: "c18167b8f244c1bc6de21ce9b710bac8a29c4615",
-             },
--            model_scope: None,
-+            model_scope: Some(ArtifactSourceConfig {
-+                repo: "egolearner/bekko-static-embedding-v1",
-+                revision: "cf6eaf4c1e7483e73cf331cd42593e6a698fb3f5",
-+            }),
-             artifacts: BEKKO_256_INT8_ARTIFACTS,
+@@ -134,12 +134,14 @@ async function fixture(t) {
+   };
+   const calls = [],
+     comments = [],
++    artifacts = [],
+     info = [];
+   let prReads = 0;
+-  const x = { context, directory, run, pr, calls, comments, info };
++  const x = { context, directory, run, pr, calls, comments, artifacts, info };
+   x.github = {
+     rest: {
+       actions: {
++        listWorkflowRunArtifacts() {},
+         async getWorkflowRun(input) {
+           assert.equal(input.run_id, 123);
+           return { data: run };
+@@ -173,8 +175,16 @@ async function fixture(t) {
          },
-         model_file: "onnx/model_int8_dim256.onnx",
+       },
+     },
+-    async paginate(_method, input) {
++    async paginate(method, input) {
+       calls.push(["list", input]);
++      if (method === x.github.rest.actions.listWorkflowRunArtifacts) {
++        assert.equal(input.run_id, run.id);
++        assert.equal(input.owner, context.repo.owner);
++        assert.equal(input.repo, context.repo.repo);
++        if (x.artifactError) throw x.artifactError;
++        return artifacts;
++      }
++      assert.equal(method, x.github.rest.issues.listComments);
+       return comments;
+     },
+   };
+@@ -246,6 +256,79 @@ test("the publisher labels validated full preview without relabeling historical
+     );
+ });
+ 
++const traceArtifact = {
++  id: 456,
++  name: "retrieval-trace.html",
++  expired: false,
++  workflow_run: { id: 123, head_sha: head },
++};
++
++test("the publisher links the triggering run's HTML artifact using only GitHub metadata", async (t) => {
++  const x = await fixture(t);
++  // Older runs uploaded a ZIP under this name; never select it as direct HTML.
++  x.artifacts.push({
++    ...traceArtifact,
++    id: 455,
++    name: "retrieval-stage-trace",
++  });
++  x.artifacts.push({
++    ...traceArtifact,
++    archive_download_url: "https://untrusted.example/trace.html",
++  });
++  await x.write("comparison/summary.json", {
++    ...report,
++    trace_url: "https://untrusted.example/report.html",
++    traceArtifactId: "[untrusted](https://untrusted.example)",
++    baseline_gold_stages: "untrusted baseline <script>",
++    candidate_gold_stages: { warning: "untrusted candidate <script>" },
++  });
++  await publish(x);
++  const { body } = x.messages()[0][1];
++  assert.match(
++    body,
++    /\[Download stage trace \(HTML\)\]\(https:\/\/github\.com\/Cuiyus\/zvec-grep\/actions\/runs\/123\/artifacts\/456\)/,
++  );
++  assert.doesNotMatch(
++    body,
++    /untrusted|<script>|Gold coverage by stage|Stage capture incomplete/,
++  );
++  assert.doesNotMatch(body, /\/artifacts\/455/);
++});
++
++test("missing, expired, unrelated or invalid trace artifacts never produce a download link", async (t) => {
++  for (const artifact of [
++    null,
++    { ...traceArtifact, expired: true },
++    { ...traceArtifact, name: "retrieval-comparison" },
++    { ...traceArtifact, name: "retrieval-stage-trace" },
++    { ...traceArtifact, id: "456" },
++    { ...traceArtifact, id: 0 },
++    { ...traceArtifact, id: 1.5 },
++    { ...traceArtifact, id: Number.MAX_SAFE_INTEGER + 1 },
++    { ...traceArtifact, workflow_run: { id: 122, head_sha: head } },
++    { ...traceArtifact, workflow_run: { id: 123, head_sha: base } },
++    { ...traceArtifact, workflow_run: undefined },
++  ]) {
++    const x = await fixture(t);
++    if (artifact) x.artifacts.push(artifact);
++    await publish(x);
++    const { body } = x.messages()[0][1];
++    assert.match(body, /✅ Complete/);
++    assert.doesNotMatch(body, /Download stage trace|\/artifacts\/456/);
++  }
++});
++
++test("an unavailable artifact listing preserves the validated quality comment", async (t) => {
++  const x = await fixture(t);
++  x.artifactError = new Error("artifact API unavailable");
++  await publish(x);
++  assert.match(x.messages()[0][1].body, /✅ Complete/);
++  assert.doesNotMatch(x.messages()[0][1].body, /Download stage trace/);
++  assert.ok(
++    x.info.some((message) => message.includes("omitting its download link")),
++  );
++});
++
+ test("the publisher validates corpus totals and renders each suite once", async (t) => {
+   const x = await fixture(t);
+   const counts = countsFor("beir");
+@@ -643,11 +726,23 @@ test("missing, malformed or invalid comparison artifacts publish incomplete with
+   assert.match(x.messages()[0][1].body, /Failed \/ incomplete/);
+ });
+ 
++test("a valid comparison report above 128 KiB can publish within the 256 KiB limit", async (t) => {
++  const x = await fixture(t);
++  // JSON whitespace exercises the byte limit without pretending to be run evidence.
++  const contents = JSON.stringify(report).padEnd(128 * 1024 + 1, " ");
++  assert.ok(Buffer.byteLength(contents) > 128 * 1024);
++  assert.ok(Buffer.byteLength(contents) < 256 * 1024);
++  await writeFile(join(x.directory, "comparison/summary.json"), contents);
++  await publish(x);
++  const { body } = x.messages()[0][1];
++  assert.match(body, /✅ Complete/);
++});
++
+ test("oversized report data is withheld instead of being loaded into a PR comment", async (t) => {
+   const x = await fixture(t);
+   await writeFile(
+     join(x.directory, "co
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +4/-0)
+```diff
+@@ -23,6 +23,10 @@ on:
+ 
+ permissions: {}
+ 
++env:
++  # Hosted jobs exercise CPU inference; do not fetch optional CUDA binaries.
++  ONNXRUNTIME_NODE_INSTALL_CUDA: skip
++
+ concurrency:
+   group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.sha }}
+   cancel-in-progress: true
+```
+
+**File**: `.github/workflows/retrieval-comparison.yml` (modified, +15/-1)
+```diff
+@@ -27,6 +27,7 @@ jobs:
+       candidate_repository: ${{ inputs.baseline_repository }}
+       embedding: local
+       artifact_prefix: retrieval-base
++      gold_stages: true
+ 
+   candidate:
+     uses: ./.github/workflows/retrieval-only.yml
+@@ -35,6 +36,7 @@ jobs:
+       candidate_repository: ${{ inputs.candidate_repository }}
+       embedding: local
+       artifact_prefix: retrieval-head
++      gold_stages: true
+ 
+   compare:
+     needs: [baseline, candidate]
+@@ -80,7 +82,19 @@ jobs:
+         uses: actions/upload-artifact@v7
+         with:
+           name: retrieval-comparison
+-          path: ${{ runner.temp }}/retrieval-comparison/
++          path: |
++            ${{ runner.temp }}/retrieval-comparison/summary.json
++            ${{ runner.temp }}/retrieval-comparison/summary.md
+           if-no-files-found: error
+           overwrite: true
+           retention-days: 14
++      - name: Preserve stage trace HTML
++        if: always()
++        uses: actions/upload-artifact@v7
++        with:
++          name: retrieval-trace.html
++          path: ${{ runner.temp }}/retrieval-comparison/retrieval-trace.html
++          archive: false
++          if-no-files-found: warn
++          overwrite: true
++          retention-days: 14
+```
+
+**File**: `.github/workflows/retrieval-only.yml` (modified, +19/-4)
+```diff
+@@ -17,6 +17,9 @@ on:
+       artifact_prefix:
+         default: retrieval
+         type: string
++      gold_stages:
++        default: false
++        type: boolean
+     secrets:
+       QWEN_EMBEDDING_API_KEY:
+         required: false
+@@ -35,6 +38,10 @@ on:
+         options:
+           - local
+           - remote
++      gold_stages:
++        description: Capture Gold coverage at search stages in all four suites
++        type: boolean
++        default: false
+ 
+ permissions:
+   contents: read
+@@ -157,7 +164,8 @@ jobs:
+             --output "$RUNNER_TEMP/sweqa" \
+             --corpus "$RUNNER_TEMP/corpus" \
+             --model-cache "$RUNNER_TEMP/model-cache" \
+-            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}"
++            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}" \
++            ${{ inputs.gold_stages && '--gold-stages' || '' }}
+       - name: Build the SWE-QA20 conclusion report
+         if: ${{ always() && steps.access.outcome == 'success' }}
+         run: |
+@@ -183,6 +191,7 @@ jobs:
+             ${{ runner.temp }}/sweqa/summary.json
+             ${{ runner.temp }}/sweqa/summary.md
+             ${{ runner.temp }}/sweqa/scores.jsonl
++            ${{ runner.temp }}/sweqa/gold-stages.json
+           if-no-files-found: warn
+           retention-days: 14
+       - name: Preserve SWE-QA20 public evidence
+@@ -243,7 +252,8 @@ jobs:
+             --package "$RUNNER_TEMP/package/candidate.tgz" \
+             --output "$RUNNER_TEMP/beir" \
+             --model-cache "$RUNNER_TEMP/beir-model-cache" \
+-            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}"
++            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}" \
++            ${{ inputs.gold_stages && '--gold-stages' || '' }}
+       - name: Publish BEIR results for this job
+         if: ${{ always() && steps.access.outcome == 'success' }}
+         run: |
+@@ -260,6 +270,7 @@ jobs:
+           path: |
+             ${{ runner.temp }}/beir/report.json
+             ${{ runner.temp }}/beir/report.md
++            ${{ runner.temp }}/beir/gold-stages.json
+           if-no-files-found: warn
+           retention-days: 14
+       - name: Preserve BEIR public evidence
+@@ -319,7 +330,8 @@ jobs:
+             --package "$RUNNER_TEMP/package/candidate.tgz" \
+             --output "$RUNNER_TEMP/duretrieval" \
+             --model-cache "$RUNNER_TEMP/duretrieval-model-cache" \
+-            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}"
++            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}" \
++            ${{ inputs.gold_stages && '--gold-stages' || '' }}
+       - name: Publish DuRetrieval results for this job
+         if: ${{ always() && steps.access.outcome == 'success' }}
+         run: |
+@@ -336,6 +348,7 @@ jobs:
+           path: |
+             ${{ runner.temp }}/duretrieval/report.json
+             ${{ runner.temp }}/duretrieval/report.md
++            ${{ runner.temp }}/duretrieval/gold-stages.json
+           if-no-files-found: warn
+           retention-days: 14
+       - name: Preserve DuRetrieval public evidence
+@@ -388,7 +401,8 @@ jobs:
+             --package "$RUNNER_TEMP/package/candidate.tgz" \
+             --output "$RUNNER_TEMP/quarry" \
+             --model-cache "$RUNNER_TEMP/quarry-model-cache" \
+-            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}"
++            --candidate-commit "${{ needs.package-candidate.outputs.candidate-commit }}" \
++            ${{ inputs.gold_stages && '--gold-stages' || '' }}
+       - name: Publish Quarry results for this job
+         if: ${{ always() && steps.access.outcome == 'success' }}
+         run: |
+@@ -405,6 +419,7 @@ jobs:
+           path: |
+             ${{ runner.temp }}/quarry/report.json
+             ${{ runner.temp }}/quarry/report.md
++            ${{ runner.temp }}/quarry/gold-stages.json
+           if-no-files-found: warn
+           retention-days: 14
+       - name: Preserve Quarry public evidence
+```
+
+**File**: `benchmarks/zg-retrieval/README.md` (modified, +100/-185)
+```diff
+@@ -1,177 +1,98 @@
+ # ZG Retrieval-only benchmark
+ 
+-The workflow measures **zg-hybrid, zg-fts and zg-vector** on four independent suites. The original SWE-QA20 suite uses 20 unchanged questions and 11 pinned repositories from [Actions run 35206585943](https://github.com/Cuiyus/zvec-grep/actions/runs/35206585943). The exploratory suites contain 20 original BEIR queries across four datasets, ten DuRetrieval queries and 20 original Quarry queries across eight languages; see the [pilot design](expansion/README.md). Each mode calls the Rust public MCP search endpoint directly with `preview: "full"`. No answering agent, query rewriting, subquery generation or LLM judge participates. See the [SWE-QA20 design](./zg-retrieval-only-sweqa20-design.md) for its frozen protocol and scoring details.
++Compare FTS, Vector and Hybrid search on four frozen suites. Each request uses the original question through the Rust public MCP search interface; there is no answering agent, query rewriting or LLM judge.
+ 
+-## Run CI and read the result
++## Run
+ 
+-The [Retrieval-only workflow](../../.github/workflows/retrieval-only.yml) supports manual runs and reuse by the [PR version comparison](../../.github/workflows/retrieval-comparison.yml). For a manual single-version run, select **Retrieval-only → Run workflow**. Use GitHub's workflow-ref selector to choose the benchmark harness (`main` for the latest merged harness), then set `candidate_ref` to the branch, tag or commit containing the `rust/` workspace to compile. It defaults to `main`. The `embedding` choice defaults to `local`, which preserves each suite's configured local model. Select `remote` to run every suite with `qwen/qwen3.7-text-embedding`; this requires the repository secret `QWEN_EMBEDDING_API_KEY` and variable `QWEN_EMBEDDING_ENDPOINT`. Every run includes all three modes.
++| Entry point | What to select |
++| --- | --- |
++| PR comparison | Opening, reopening or updating a PR compares its pinned base and head automatically. An authorized `@zg-bench` comment also requests a comparison. |
++| [Manual single-version run](../../.github/workflows/retrieval-only.yml) | **Retrieval-only → Run workflow**. The workflow ref selects the harness; `candidate_ref` selects the Rust candidate and defaults to `main`. Enable `gold_stages` for traces. |
++| [Manual paired comparison](../../.github/workflows/retrieval-pr.yml) | **Retrieval-only PR → Run workflow**. Supply full `baseline_sha` / `candidate_sha` and `baseline_repository` / `candidate_repository` (`owner/name`). This does not post a PR comment. |
++
++All runs include all three modes. Paired runs use the same harness and configured local models, build separate fresh indexes, and enable stage capture on both versions. They do not run answering-agent E2E tests or receive remote model credentials.
++
++Manual and comment runs require maintain/admin access for both the original actor and the re-run actor. See [benchmark setup](../README.md) for repository configuration. The [PR result publisher](../../.github/workflows/retrieval-pr-comment.yml) must be merged into the default branch before it can update comments; it ignores cancelled or outdated runs.
++
++## Read the results
+ 
+-PR creation, reopening and new commits automatically compare the frozen PR base and head through all four suites. An authorized `@zg-bench` PR comment requests the same comparison and posts its table. Both versions use the same harness and local models, with separate fresh indexes; neither receives remote embedding credentials. e2e is skipped by default. Comparison cells show percentages: identical baseline/candidate values appear once; differences use baseline → candidate. The JSON retains exact scores and deltas. Missing or invalid results make the comparison incomplete rather than zero. The default-branch [result publisher](../../.github/workflows/retrieval-pr-comment.yml) creates or updates one English PR comment with the table and run link, including for fork PRs. It skips cancelled or outdated runs, keeps benchmark execution read-only, and becomes active after its workflow is merged into the default branch. The `retrieval-comparison` artifact and Actions summary also retain the result; `retrieval-base-*` and `retrieval-head-*` retain the underlying reports. See [benchmark setup](../README.md).
++The PR comment shows File/Entity quality tables and a **download link to `retrieval-trace.html`**. Download the HTML and open it locally: it is a single file, not a ZIP, and needs no server or external resources. It contains suite summaries, original questions, per-question FTS/Vector/Hybrid Recall, Gold IDs and stage ranks.
+ 
+-For a manual paired comparison without a PR comment, select **Retrieval-only PR → Run workflow** and supply full `baseline_sha` / `candidate_sha` commit identities and their `baseline_repository` / `candidate_repository` (`owner/name`). This uses the same local-only comparison and does not run e2e. Manual runs require maintain/admin access.
++*
+```
+
+**File**: `benchmarks/zg-retrieval/core/gold-stage-capture.mjs` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++export const goldPaths = (pair) => [
++  ...new Set(
++    [...pair.file_targets, ...pair.entity_targets].map(({ path }) => path),
++  ),
++];
++
++// Set these before starting the isolated daemon. Only paths are sent to ZG;
++// targets, matching rules and metric computation belong to the benchmark.
++export function stageTraceEnvironment(enabled, pairs = []) {
++  return {
++    ZG_TRACE_STAGES: enabled ? "1" : "0",
++    ZG_TRACE_PATHS: JSON.stringify(
++      enabled ? [...new Set(pairs.flatMap(goldPaths))].sort() : [],
++    ),
++  };
++}
++
++// MCP already binds this metadata to its request. No control files, sequence
++// numbers or separate capture files are needed. Frozen suites use one group.
++// Return malformed metadata as an Error value for the diagnostic scorer; do not
++// throw here and invalidate an otherwise valid public search response.
++export function readStageTrace(response) {
++  if (response?.isError) return null;
++  const metadata = response?._meta;
++  if (!metadata || !Object.hasOwn(metadata, "zg_stage_trace")) return null;
++  const traces = metadata.zg_stage_trace;
++  if (!Array.isArray(traces))
++    return new Error("stage metadata must be an array");
++  if (traces.length !== 1)
++    return new Error("expected one stage capture for Q1");
++  if (traces[0]?.group_id !== "Q1")
++    return new Error("unexpected stage capture group; expected Q1");
++  return traces[0];
++}
+```
+
+**File**: `benchmarks/zg-retrieval/engines/zg/report.mjs` (modified, +57/-0)
+```diff
+@@ -28,10 +28,14 @@ import {
+   summarizeRepeatedQuality,
+ } from "../../metrics/repetitions.mjs";
+ import { markdownReport } from "../../reports/zg.mjs";
++import { readStageTrace } from "../../core/gold-stage-capture.mjs";
++import { scoreGoldStages } from "../../metrics/gold-stages.mjs";
++import { writeGoldStages } from "../../reports/gold-stages.mjs";
+ import { summarizeIndexCounts } from "../../core/index-counts.mjs";
+ import { summarizeIndexSettings } from "../../core/index-settings.mjs";
+ import {
+   publicQaItems,
++  qaEligibility,
+   scoreQaRetrieval,
+   summarizeRepeatedQaRetrieval,
+   summarizeQaRetrieval,
+@@ -72,6 +76,11 @@ function invalidate(score, reason) {
+   };
+ }
+ 
++function goldStageQualification(pair) {
++  const { status } = qaEligibility(pair);
++  return status === "scored" ? "formal" : status;
++}
++
+ export async function aggregate(directory, { expectedTasks } = {}) {
+   directory = resolve(directory);
+   const suite = await loadSuite();
+@@ -80,6 +89,7 @@ export async function aggregate(directory, { expectedTasks } = {}) {
+   const errors = [],
+     observations = [],
+     manifests = [];
++  const goldStageCalls = new Map();
+   const runDirectories = await findRuns(directory);
+   const seen = new Set();
+   for (const runDirectory of runDirectories) {
+@@ -352,6 +362,7 @@ export async function aggregate(directory, { expectedTasks } = {}) {
+         callInvalid.push("incorrect quality repetition");
+       if (call.harness_error) callInvalid.push(call.harness_error);
+       let score;
++      let stageCapture = null;
+       let visibleOutputBytes = null;
+       try {
+         assert.equal(
+@@ -367,6 +378,7 @@ export async function aggregate(directory, { expectedTasks } = {}) {
+           "raw response changed since capture",
+         );
+         const response = await readJson(path);
++        stageCapture = readStageTrace(response);
+         if (
+           Array.isArray(response?.content) &&
+           response.content.every(
+@@ -390,6 +402,23 @@ export async function aggregate(directory, { expectedTasks } = {}) {
+         callInvalid.push(error.message);
+       }
+       if (callInvalid.length) score = invalidate(score, callInvalid.join("; "));
++      if (manifest.gold_stages) {
++        const pair = suite.qa_pairs[call.task_id];
++        const capture =
++          score.execution_status === "success" ? stageCapture : null;
++        goldStageCalls.set(
++          `${call.task_id}/${call.mode}/${call.repetition}`,
++          scoreGoldStages({
++            capture,
++            pair,
++            items: score.items ?? [],
++            taskId: call.task_id,
++            mode: call.mode,
++            repetition: call.repetition,
++            qualification: goldStageQualification(pair),
++          }),
++        );
++      }
+       observations.push({
+         ...call,
+         ...score,
+@@ -625,6 +654,34 @@ export async function aggregate(directory, { expectedTasks } = {}) {
+     repositories: manifests,
+     tasks: quality,
+   };
++  if (manifests.some(({ gold_stages }) => gold_stages)) {
++    const calls = [];
++    for (const taskId of expected) {
++      const pair = suite.qa_pairs[taskId];
++      const qualification = goldStageQualification(pair);
++      for (const mode of suite.protocol.modes) {
++        for (
++          let repetition = 1;
++          repetition <= suite.protocol.repetitions;
++          repetition++
++        ) {
++          calls.push(
++            goldStageCalls.get(`${taskId}/${mode}/${repetition}`) ??
++              scoreGoldStages({
++                capture: null,
++                pair,
++                items: [],
++                taskId,
++                mode,
++                repetition,
++                qualification,
++              }),
++          );
++        }
++      }
++    }
++    report.gold_stages = await writeGoldStages(directory, calls);
++  }
+   await writeFile(
+     join(directory, "scores.jsonl"),
+     observations.map((row) => JSON.stringify(row)).join("\n") + "\n",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #407** (2026-11-13): fix(engine): preserve v2 indexes and validate workspace recovery (@zhourrr)
-- **PR #404** (2026-11-13): perf(engine): reduce graph resolution sweep overhead (@luoxiaojian)
-- **PR #402** (2026-11-13): fix(mcp): scope compact Rust guidance to Claude Code (@egolearner)
-- **PR #401** (2026-11-13): docs: add Japanese README (@eltociear)
-- **PR #400** (2026-11-12): fix(docs): avoid private links in GraphEdgeKind rustdoc (@liulx20)
-- **PR #396** (2026-11-13): fix(watcher): prevent access events from triggering rescan loops (@egolearner)
+- **PR #437** (2026-11-18): fix(build): restore ONNX Runtime downloads via npmmirror (@feihongxu0824)
+- **PR #427** (2026-11-17): fix(rust): address the remaining issues in #418 (@lnfjpt)
+- **PR #424** (2026-11-17): fix(ort): release environment before CUDA provider destructors (@feihongxu0824)
+- **PR #419** (2026-11-16): chore(rust): prepare 0.3.1 release (@egolearner)
+- **PR #417** (2026-11-20): feat(benchmarks): report Gold coverage across retrieval stages (@Cuiyus)
+- **PR #409** (2026-11-16): fix(storage): upgrade zvec-rust to 0.8.1 with WAL recovery (@egolearner)
 
 ---
 
@@ -1789,70 +1721,72 @@ Fixes #375
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. watcher): filter access events before queueing
+## X. benchmarks): report Gold coverage across retrieval stages
 
 **RULE**:
-When implementing operations in `rust/crates/zg-host-native/src/watcher.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/retrieval-pr-comment.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `63433cc6`: watcher): filter access events before queueing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad737d20`: benchmarks): report Gold coverage across retrieval stages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-host-native/src/watcher.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/retrieval-pr-comment.mjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        enqueue_event(event, &sender, &overflowed, &overflow_notify);
-fn enqueue_event(
-    event: notify::Result<Event>,
-    sender: &mpsc::Sender<notify::Result<Event>>,
-    overflowed: &AtomicBool,
-    overflow_notify: &Notify,
-) {
-    // Directory enumeration itself produces access events on Linux. Drop them
-    // before they can overflow the queue and trigger another enumeration.
-    if matches!(&event, Ok(event) if matches!(event.kind, EventKind::Access(_)) && !event.need_rescan())
-    {
-        return;
-    }
-    if sender.try_send(event).is_err() {
-        overflowed.store(true, Ordering::Release);
-        overflow_notify.notify_one();
-    }
-}
-
-    if matches!(event.kind, EventKind::Access(_)) {
-        return Ok(normalized);
-    }
-    use notify::event::{AccessKind, AccessMode, CreateKind, Flag};
-    #[test]
-    fn access_events_do_not_displace_changes_or_report_overflow() {
-        let (sender, mut receiver) = mpsc::channel(1);
-        let overflowed = AtomicBool::new(false);
-        let overflow_notify = Notify::new();
-        for kind in [
-            AccessKind::Read,
-            AccessKind::Open(AccessMode::Any),
-            AccessKind::Close(AccessMode::Read),
-      
+export function commentBody({
+  run,
+  request,
+  report,
+  serverUrl,
+  repository,
+  traceArtifactId,
+}) {
+      markdownVersionComparison(
+        { ...result, server_url: serverUrl, run_url: runUrl },
+        {
+          traceUrl: positiveInteger(traceArtifactId)
+            ? `${serverUrl}/${repository}/actions/runs/${run.id}/artifacts/${traceArtifactId}`
+            : undefined,
+        },
+      ),
+    if (!info.isFile() || info.size > 256 * 1024) return null;
+  let traceArtifactId;
+  if (run.conclusion === "success") {
+    try {
+      const artifacts = await github.paginate(
+        github.rest.actions.listWorkflowRunArtifacts,
+        { ...context.repo, run_id: run.id, per_page: 100 },
+      );
+      // Build the URL from GitHub metadata, never artifact-provided Markdown or URLs.
+      traceArtifactId = artifacts.find(
+        (artifact) =>
+          artifact.name === "retrieval-trace.html" &&
+          artifact.expired === false &&
+          positiveInteger(artifact.id) &&
+          artifact.workflow_run?.id === run.id &&
+          artifact.workflow_run?.head_sha === run.head_sha,
+      )?.id;
+    } catch {
+      core.info(
+        "Stage trace artifact unavailable; omitti
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        if sender.try_send(event).is_err() {
-            overflowed.store(true, Ordering::Release);
-            overflow_notify.notify_one();
-        }
-    if matches!(event.kind, EventKind::Access(_)) {
-        return Ok(normalized);
-    }
-    use notify::event::CreateKind;
+export function commentBody({ run, request, report, serverUrl, repository }) {
+      markdownVersionComparison({
+        ...result,
+        server_url: serverUrl,
+        run_url: runUrl,
+      }),
+    if (!info.isFile() || info.size > 128 * 1024) return null;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `63433cc6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad737d20` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

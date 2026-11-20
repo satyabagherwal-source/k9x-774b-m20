@@ -3693,10 +3693,10 @@
     "repository": "dosco/graphjin",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/graphjin",
-    "sourceVersion": "ffd03671",
+    "sourceVersion": "ba272634",
     "license": "Apache-2.0",
-    "contentHash": "239e1951270f4c30bbf6c456f98a3ee5fd5f8b83ac3e60d48c390a516fd8e763",
-    "lastHarvestedAt": "2026-11-19T22:19:48.513Z",
+    "contentHash": "4fa73f756952120a75fe9e26a97954c4fa536a93217ab9216030095912a05382",
+    "lastHarvestedAt": "2026-11-20T23:21:26.663Z",
     "learningId": "learn-github-dosco-graphjin"
   },
   "gravitl-netmaker": {
@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "cc3ff0fe",
+    "sourceVersion": "ad737d20",
     "license": "Apache-2.0",
-    "contentHash": "742844ebbc8fbba702c0eacb1c8dbfafe6d55c0d04feb051f622d35cdb54a226",
-    "lastHarvestedAt": "2026-11-19T10:47:11.218Z",
+    "contentHash": "c341c2348112e098a2d012da0b958524f492efe09c8689eb3138e4e81c326238",
+    "lastHarvestedAt": "2026-11-20T23:21:19.333Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {
@@ -9973,10 +9973,10 @@
     "repository": "solidjs/solid",
     "platform": "github",
     "sourceUrl": "https://github.com/solidjs/solid",
-    "sourceVersion": "f8138641",
+    "sourceVersion": "5a43d6f8",
     "license": "MIT",
-    "contentHash": "6246d426bca1e65ce4e1ea35b7b3d423b428be4f9c006a8d14d7d72f2fe53c4a",
-    "lastHarvestedAt": "2026-11-17T03:57:51.064Z",
+    "contentHash": "017ff61b810542e7bbc8f70c0c9e63f56a1efe399732fee78abd35860c1f2c7d",
+    "lastHarvestedAt": "2026-11-20T23:21:22.195Z",
     "learningId": "learn-github-solidjs-solid"
   },
   "zekunyan-ttgtagcollectionview": {

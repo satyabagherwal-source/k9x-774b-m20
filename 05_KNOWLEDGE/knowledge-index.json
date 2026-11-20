@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T23:13:44.068Z",
+  "last_updated": "2026-11-20T23:22:01.459Z",
   "total_verified_learnings": 9052,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22716,
+  "total_items": 22727,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "04210feb7577c650d08e26924f38ac5830a9be43068258e1c675b08322346224",
+      "content_hash": "4de161e28dfe4b2e3595863c79ea9bb395f25effe9ebf8ceec32403df6323368",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T02:26:04.488Z"
+      "persisted_at": "2026-11-20T23:21:30.677Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "7c329ad0022faa83e30a84972ee6aa44256e181fc765ee7a6af4f8476fbf3d52",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-20T22:23:10.680Z"
+      "content_hash": "5d4802465bdc62264edd57a3271107440d910f65f8dc23ad7577573e7939edc3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:21:30.843Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e9a9c2630dc067e770269827349740f30facb925d00dcb81f7e7301922a1d4e1",
+      "content_hash": "27588cb2620fb2663b049c8f455077b1e77392bcd9969d52b0279b90387e5bee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T22:23:10.853Z"
+      "persisted_at": "2026-11-20T23:21:30.971Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -225878,8 +225878,8 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "cc3ff0fe",
-      "content_hash": "742844ebbc8fbba702c0eacb1c8dbfafe6d55c0d04feb051f622d35cdb54a226",
+      "source_version": "ad737d20",
+      "content_hash": "c341c2348112e098a2d012da0b958524f492efe09c8689eb3138e4e81c326238",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
@@ -225902,6 +225902,11 @@
           "number": 9369,
           "title": "download ONNX Runtime archives from npmmirror",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9659,
+          "title": "report Gold coverage across retrieval stages",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -225909,7 +225914,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T10:47:11.017Z",
+      "verified_at": "2026-11-20T23:21:19.122Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225951,10 +225956,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-technical-construction-intelligence-zvec-ai-zvec-grep-core-inv.md",
       "title": "Technical Construction Intelligence: zvec-ai/zvec-grep Core Invariants",
       "repository": "zvec-ai/zvec-grep",
-      "source_version": "2825dcfa",
-      "content_hash": "ce1ef56ee1d783e7269212d90119d3ffe7bd66e3b7ef4f198ba3c21dc36459a4",
+      "source_version": "ad737d20",
+      "content_hash": "573bb96380bf6c2fcdba975f719cae514bab2e049bace263181ff2f7cd52cd4a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T06:23:36.293Z"
+      "persisted_at": "2026-11-20T23:21:19.702Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-autonomous-specialist-persona",
@@ -225963,10 +225968,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/zvec-ai-zvec-grep-agent-contract-zvec-ai-zvec-grep-autonomous-specialist-persona.md",
       "title": "Agent Contract: zvec-ai/zvec-grep Autonomous Specialist Persona",
       "repository": "zvec-ai/zvec-grep",
-      "source_version": "cc3ff0fe",
-      "content_hash": "226c18e2d57dab0027da431c6085ce459fda5a01770ad4de2b0a91685d050c28",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-19T10:47:11.719Z"
+      "source_version": "ad737d20",
+      "content_hash": "8e114da899c023ce72233f121dbcededcff453ffab08a5855adcaa2860c29e04",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:21:19.858Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep",
@@ -225975,10 +225980,10 @@
       "relative_path": "08_VERIFICATION/zvec-ai-zvec-grep-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec.md",
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai/zvec-grep",
       "repository": "zvec-ai/zvec-grep",
-      "source_version": "cc3ff0fe",
-      "content_hash": "e5e3af8216b1e6262cef8ad4d8b50c2cf7534965a9467b56f71f4779b848a71c",
+      "source_version": "ad737d20",
+      "content_hash": "84a6da327ef3915bd8e7ce33e453ab3281b528f09a78bcdc6595981fcf2c9bdf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T10:47:11.845Z"
+      "persisted_at": "2026-11-20T23:21:19.993Z"
     },
     "learn-huggingface-openbmb-minicpm-ocr-1-0": {
       "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0",
@@ -230575,8 +230580,8 @@
       "slug": "dosco-graphjin",
       "platform": "github",
       "source_url": "https://github.com/dosco/graphjin",
-      "source_version": "ffd03671",
-      "content_hash": "239e1951270f4c30bbf6c456f98a3ee5fd5f8b83ac3e60d48c390a516fd8e763",
+      "source_version": "ba272634",
+      "content_hash": "4fa73f756952120a75fe9e26a97954c4fa536a93217ab9216030095912a05382",
       "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "promoted_rules": [
@@ -230589,6 +230594,11 @@
           "number": 9457,
           "title": "benchmark test-version labels drop \"governed\" on the next publish",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9661,
+          "title": "give the homepage Watch section a plain heading",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230596,7 +230606,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T22:19:48.342Z",
+      "verified_at": "2026-11-20T23:21:26.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230638,10 +230648,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-graphjin-core-invariants.md",
       "title": "Research & Knowledge Intelligence: dosco/graphjin Core Invariants",
       "repository": "dosco/graphjin",
-      "source_version": "ffd03671",
-      "content_hash": "d5ccd157b1372ce8e74b023dd8a230c435b8e2bb330750ca94ba588bb88a357a",
+      "source_version": "ba272634",
+      "content_hash": "53b85e6ba5efc0ec094957b40027e4bf797c41cc00c6d24794a600ef56582480",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T22:19:48.838Z"
+      "persisted_at": "2026-11-20T23:21:27.021Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin",
@@ -230650,10 +230660,10 @@
       "relative_path": "08_VERIFICATION/dosco-graphjin-verification-protocol-empirical-defect-shield-for-dosco-graphjin.md",
       "title": "Verification Protocol: Empirical Defect Shield for dosco/graphjin",
       "repository": "dosco/graphjin",
-      "source_version": "ffd03671",
-      "content_hash": "589cd05ece8327d825057f7cc01981f861c7e9892c6bd4e1a6f8c2b040b94f9d",
+      "source_version": "ba272634",
+      "content_hash": "ecae864b50aaad5680f8f3b99978959c1b5b93087750480fb671227fcd63ec5a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T22:19:48.965Z"
+      "persisted_at": "2026-11-20T23:21:27.172Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8b-learnings-core-invariants",
@@ -230687,9 +230697,9 @@
       "title": "Research & Knowledge Intelligence: dosco-graphjin-learnings Core Invariants",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "46a81ed94a9a80de63bc379a3728882d0bab2456336e0c95d1cf5bbce11223f0",
+      "content_hash": "9d86a42883e2a5f763efac7d3fe26b6fb25a7c110122ac17c6d313f1478de565",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T22:19:53.169Z"
+      "persisted_at": "2026-11-20T23:22:01.298Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings",
@@ -230699,9 +230709,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dosco-graphjin-learnings",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "1a40748dbea7d689bcde900261b38f62cf6e53a35f4679de60967e82ab56faa4",
+      "content_hash": "06664bce872165ae153ada6366d5af0047ae57ccddfda7bed7f69aafcbc6ff68",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T22:19:53.302Z"
+      "persisted_at": "2026-11-20T23:22:01.459Z"
     },
     "learn-github-react-metro": {
       "learning_id": "learn-github-react-metro",
@@ -266310,14 +266320,19 @@
       "slug": "solidjs-solid",
       "platform": "github",
       "source_url": "https://github.com/solidjs/solid",
-      "source_version": "f8138641",
-      "content_hash": "6246d426bca1e65ce4e1ea35b7b3d423b428be4f9c006a8d14d7d72f2fe53c4a",
+      "source_version": "5a43d6f8",
+      "content_hash": "017ff61b810542e7bbc8f70c0c9e63f56a1efe399732fee78abd35860c1f2c7d",
       "dossier_path": "07_PROJECT_LEARNING/solidjs-solid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/solidjs-solid-learnings.md",
       "promoted_rules": [
         {
           "number": 8861,
           "title": "publish solid-js 1.x to the v1-latest dist-tag",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9660,
+          "title": "a server projection over a pending async store waits for it",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -266326,7 +266341,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T03:57:50.851Z",
+      "verified_at": "2026-11-20T23:21:21.991Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -266380,10 +266395,10 @@
       "relative_path": "08_VERIFICATION/solidjs-solid-verification-protocol-empirical-defect-shield-for-solidjs-solid.md",
       "title": "Verification Protocol: Empirical Defect Shield for solidjs/solid",
       "repository": "solidjs/solid",
-      "source_version": "f8138641",
-      "content_hash": "4bb6a21486f0be038cc2fd23a59cf355bb6b753ad02cef895df1de6d29a920c0",
+      "source_version": "5a43d6f8",
+      "content_hash": "35ba90f11b53b713deadc33d9d3288194829b5496e408815142e59db02b07d24",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:57:51.509Z"
+      "persisted_at": "2026-11-20T23:21:22.715Z"
     },
     "learn-github-software-mansion-react-native-screens": {
       "learning_id": "learn-github-software-mansion-react-native-screens",
@@ -266514,9 +266529,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for solidjs-solid-learnings",
       "repository": "solidjs-solid-learnings",
       "source_version": "HEAD",
-      "content_hash": "90c2dbc239d3d23a0fd829c462721c957a439f4911607f37dbf25d7d75c9b497",
+      "content_hash": "da8c1e6715165fc9502a77c0482af6aa486b6e773b440c6f67b93a4c3ba4904f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:58:07.006Z"
+      "persisted_at": "2026-11-20T23:22:00.706Z"
     },
     "candidate_directive-ios-follow-the-gesture-in-interactive-fade-and-fade_from_bottom-pops": {
       "item_id": "candidate_directive-ios-follow-the-gesture-in-interactive-fade-and-fade_from_bottom-pops",
@@ -308198,6 +308213,144 @@
       "content_hash": "e72d5ba46f2ec96a217593752c800c300cb519268b04a44b756f6419971f4179",
       "domain_letter": "H",
       "persisted_at": "2026-11-20T23:13:42.858Z"
+    },
+    "rule-9659": {
+      "learning_id": "rule-9659",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9659,
+      "title": "report Gold coverage across retrieval stages",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "ad737d20",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T23:21:19.122Z"
+    },
+    "candidate_directive-report-gold-coverage-across-retrieval-stages": {
+      "item_id": "candidate_directive-report-gold-coverage-across-retrieval-stages",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S1IS-report-gold-coverage-across-retrieval-stages.md",
+      "title": "report Gold coverage across retrieval stages",
+      "repository": "zvec-ai/zvec-grep",
+      "source_version": "ad737d20",
+      "content_hash": "6ac04fa296b422b0274ed39dffc8c1f0d251b5bef39710cf00ffa53ce4e508a1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:21:19.544Z"
+    },
+    "rule-9660": {
+      "learning_id": "rule-9660",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9660,
+      "title": "a server projection over a pending async store waits for it",
+      "source_url": "https://github.com/solidjs/solid",
+      "source_version": "5a43d6f8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T23:21:21.991Z"
+    },
+    "candidate_directive-a-server-projection-over-a-pending-async-store-waits-for-it": {
+      "item_id": "candidate_directive-a-server-projection-over-a-pending-async-store-waits-for-it",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S3Q3-a-server-projection-over-a-pending-async-store-waits-for-it.md",
+      "title": "a server projection over a pending async store waits for it",
+      "repository": "solidjs/solid",
+      "source_version": "5a43d6f8",
+      "content_hash": "303198c6ed1b63ce2171aa482971f6d72a4eb1ea7a1eb2bff97f857e647d7cf0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:21:22.396Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-solidjs-solid-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-solidjs-solid-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-solidjs-solid-quality-verification-intelligence-solidjs-solid-core-invariants.md",
+      "title": "Quality & Verification Intelligence: solidjs/solid Core Invariants",
+      "repository": "solidjs/solid",
+      "source_version": "5a43d6f8",
+      "content_hash": "f6086c74489ba8d93c0f0ab51c78cea1d2935ec1c37aa0ca3615a264335e81c8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T23:21:22.553Z"
+    },
+    "rule-9661": {
+      "learning_id": "rule-9661",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9661,
+      "title": "give the homepage Watch section a plain heading",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "ba272634",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T23:21:26.461Z"
+    },
+    "candidate_directive-give-the-homepage-watch-section-a-plain-heading": {
+      "item_id": "candidate_directive-give-the-homepage-watch-section-a-plain-heading",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S76B-give-the-homepage-watch-section-a-plain-heading.md",
+      "title": "give the homepage Watch section a plain heading",
+      "repository": "dosco/graphjin",
+      "source_version": "ba272634",
+      "content_hash": "11614deca3c0a834bf4600133664f315a0ed17879d1fde91895001d5cf338422",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T23:21:26.870Z"
+    },
+    "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages": {
+      "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S9ZV-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "title": "benchmarks): report Gold coverage across retrieval stages",
+      "repository": "zvec-ai-zvec-grep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6a790577547b0fb9d291b42df3b41424d1497dd88a5d9e93826c94a48f46c9eb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:21:30.527Z"
+    },
+    "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
+      "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SX0W-solid-a-server-projection-over-a-pending-async-store-waits-for-it.md",
+      "title": "solid): a server projection over a pending async store waits for it",
+      "repository": "solidjs-solid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4d55d3ad6aab5e84a1ec0a23abb80dbbc551b836acbe39847dffde6ef1449c2d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:22:00.368Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-solidjs-solid-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-solidjs-solid-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-solidjs-solid-learnings-quality-verification-intelligence-solidjs-solid-learning.md",
+      "title": "Quality & Verification Intelligence: solidjs-solid-learnings Core Invariants",
+      "repository": "solidjs-solid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cfc45de5592cf8da5c996f68b75a91c693df13147845da5ae1736028adb3fff8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T23:22:00.541Z"
+    },
+    "candidate_directive-site-give-the-homepage-watch-section-a-plain-heading": {
+      "item_id": "candidate_directive-site-give-the-homepage-watch-section-a-plain-heading",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SXLT-site-give-the-homepage-watch-section-a-plain-heading.md",
+      "title": "site): give the homepage Watch section a plain heading",
+      "repository": "dosco-graphjin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cc86b3f4f46da88781acfab71bf3fa6d69ae1e69b55efd8ff1afc5d4031b5993",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T23:22:01.134Z"
     }
   },
   "ai-builder-brain": {

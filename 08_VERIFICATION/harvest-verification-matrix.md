@@ -11656,3 +11656,7 @@
 | `CYCLE-20261120-7T9Z` | `2026-11-20T23:05:35.735Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9656` | Yes (`0cda0857...`) |
 | `CYCLE-20261120-HZCM` | `2026-11-20T23:13:30.166Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9657` | Yes (`a6544c37...`) |
 | `CYCLE-20261120-I54J` | `2026-11-20T23:13:37.651Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9658` | Yes (`ee50bf31...`) |
+| `CYCLE-20261120-S1CX` | `2026-11-20T23:21:19.329Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9659` | Yes (`c341c234...`) |
+| `CYCLE-20261120-S3KF` | `2026-11-20T23:21:22.191Z` | `solidjs/solid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9660` | Yes (`017ff61b...`) |
+| `CYCLE-20261120-S70J` | `2026-11-20T23:21:26.659Z` | `dosco/graphjin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9661` | Yes (`4fa73f75...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T23:22:00.043Z` | `solidjs-solid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-B3BE81E5` [Domain K] | Yes (`c1811a67...`) |

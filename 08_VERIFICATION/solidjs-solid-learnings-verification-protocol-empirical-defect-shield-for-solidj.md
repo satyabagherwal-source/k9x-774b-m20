@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T03:58:06.651Z",
+  "timestamp": "2026-11-20T23:22:00.262Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-solidjs-solid-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [solidjs-solid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T03:58:06.651Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T23:22:00.262Z`  
 > **Learning ID**: `LEARN-EVO-solidjs-solid-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/solidjs-solid-learnings.md`  
 > **Source**: github ([https://github.com/solidjs/solid](https://github.com/solidjs/solid))  
-> **Source Version**: `f8138641`  
+> **Source Version**: `5a43d6f8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T03:57:50.083Z  
+> **Timestamp**: 2026-11-20T23:21:21.170Z  
 > **Learning ID**: `learn-github-solidjs-solid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/solidjs-solid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/solidjs/solid](https://github.com/solidjs/solid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T03:57:49.794Z  
+> **Harvest Timestamp**: 2026-11-20T23:21:21.165Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A declarative, efficient, and flexible JavaScript library for building user interfaces.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 36274 stars
+- **Stars / Engagement**: 36881 stars
 
 ---
 
@@ -62,1431 +62,509 @@ PROVENANCE_END -->
 - Entry configurations inspected via direct stream: package.json, README.md.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `packages/solid/src/render/Suspense.ts`
+### Core Architecture Module: `examples/rendering/csr/client.tsx`
 ```
-import { createComponent } from "./component.js";
-import {
-  createRoot,
-  createSignal,
-  createContext,
-  useContext,
-  getSuspenseContext,
-  resumeEffects,
-  createMemo,
-  Accessor,
-  onCleanup,
-  getOwner
-} from "../reactive/signal.js";
-import { HydrationContext, setHydrateContext, sharedConfig } from "./hydration.js";
-import type { JSX } from "../jsx.js";
+import { render } from "@solidjs/web";
+import App from "../shared/src/components/App";
 
-type SuspenseListContextType = {
-  register: (inFallback: Accessor<boolean>) => Accessor<SuspenseListRegisteredState>;
-};
-
-type SuspenseListRegisteredState = { showContent: boolean; showFallback: boolean };
-interface SuspenseListState extends Array<SuspenseListRegisteredState> {
-  inFallback: boolean;
-}
-
-const suspenseListEquals = (a: SuspenseListRegisteredState, b: SuspenseListRegisteredState) =>
-  a.showContent === b.showContent && a.showFallback === b.showFallback;
-const SuspenseListContext = /* #__PURE__ */ createContext<SuspenseListContextType>();
-
-/**
- * **[experimental]** Controls the order in which suspended content is rendered
- *
- * @description https://docs.solidjs.com/reference/components/suspense-list
- */
-export function SuspenseList(props: {
-  children: JSX.Element;
-  revealOrder: "forwards" | "backwards" | "together";
-  tail?: "collapsed" | "hidden";
-}) {
-  let [wrapper, setWrapper] = createSignal(() => ({ inFallback: false })),
-    show: Accessor<{ showContent: boolean; showFallback: boolean }>;
-
-  // Nested SuspenseList support
-  const listContext = useContext(SuspenseListContext);
-  const [registry, setRegistry] = createSignal<Accessor<boolean>[]>([]);
-  if (listContext) {
-    show = listContext.register(createMemo(() => wrapper()().inFallback));
-  }
-  const resolved = createMemo<SuspenseListState>(
-    (prev: Partial<SuspenseListState>) => {
-      const reveal = props.revealOrder,
-        tail = props.tail,
-        { showContent = true, showFallback = true } = show ? show() : {},
-        reg = registry(),
-        reverse = reveal === "backwards";
-
-      if (reveal === "together") {
-        const all = reg.every(inFallback => !inFallback());
-        const res: SuspenseListState = reg.map(() => ({
-          showContent: all && showContent,
-          showFallback
-        })) as SuspenseListState;
-        res.inFallback = !all;
-        return res;
-      }
-
-      let stop = false;
-      let inFallback = prev.inFallback as boolean;
-      const res: SuspenseListState = [] as any;
-      for (let i = 0, len = reg.length; i < len; i++) {
-        const n = reverse ? len - i - 1 : i,
-          s = reg[n]();
-        if (!stop && !s) {
-          res[n] = { showContent, showFallback };
-        } else {
-          const next = !stop;
-          if (next) inFallback = true;
-          res[n] = {
-            showContent: next,
-            showFallback: !tail || (next && tail === "collapsed") ? showFallback : false
-          };
-          stop = true;
-        }
-      }
-      if (!stop) inFallback = false;
-      res.inFallback = inFallback;
-      return res;
-    },
-    { inFallback: false } as unknown as SuspenseListState
-  );
-  setWrapper(() => resolved);
-
-  return createComponent(SuspenseListContext.Provider, {
-    value: {
-      register: (inFallback: Accessor<boolean>) => {
-        let index: number;
-        setRegistry(registry => {
-          index = registry.length;
-          return [...registry, inFallback];
-        });
-        return createMemo(() => resolved()[index], undefined, {
-          equals: suspenseListEquals
-        });
-      }
-    },
-    get children() {
-      return props.children;
-    }
-  });
-}
-
-/**
- * Tracks all resources inside a component and renders a fallback until they are all resolved
- * ```typescript
- * const AsyncComponent = lazy(() => import('./component'));
- *
- * <Suspense fallback={<LoadingIndicator />}>
- *   <AsyncComponent />
- * </Suspense>
- * ```
- * @description https://docs.solidjs.com/reference/components/suspense
- */
-export function Suspense(props: { fallback?: JSX.Element; children: JSX.Element }) {
-  let counter = 0,
-    show: Accessor<SuspenseListRegisteredState>,
-    ctx: HydrationContext | undefined,
-    p: Promise<any> | any,
-    flicker: Accessor<void> | undefined,
-    error: any;
-  const [inFallback, setFallback] = createSignal<boolean>(false),
-    SuspenseContext = getSuspenseContext(),
-    store = {
-      increment: () => {
-        if (++counter === 1) setFallback(true);
-      },
-      decrement: () => {
-        if (--counter === 0) setFallback(false);
-      },
-      inFallback,
-      effects: [],
-      resolved: false
-    },
-    owner = getOwner();
-  if (sharedConfig.context && sharedConfig.load) {
-    const key = sharedConfig.getContextId();
-    let ref = sharedConfig.load(key);
-    if (ref) {
-      if (typeof ref !== "object" || ref.s !== 1) p = ref;
-      else sharedConfig.gather!(key);
-    }
-    if (p && p !== "$$f") {
-      const [s, set] = createSignal(undefined, { equals: false });
-      flicker = s;
-      p.then(
-        () => {
-          if (sharedConfig.done) return set();
-          sharedConfig.gather!(key);
-          setHydrateContext(ctx);
-          set();
-          setHydrateContext();
-        },
-        (err: any) => {
-          error = err;
-          set();
-        }
-      );
-    }
-  }
-
-  // SuspenseList support
-  const listContext = useContext(SuspenseListContext);
-  if (listContext) show = listContext.register(store.inFallback);
-  let dispose: undefined | (() => void);
-  onCleanup(() => dispose && dispose());
-
-  return createComponent(SuspenseContext.Provider, {
-    value: store,
-    get children() {
-      return createMemo(() => {
-        if (error) throw error;
-        ctx = sharedConfig.context!;
-        if (flicker) {
-          flicker();
-          return (flicker = undefined);
-        }
-        if (ctx && p === "$$f") setHydrateContext();
-        const rendered = createMemo(() => props.children);
-        return createMemo((prev: JSX.Element) => {
-          const inFallback = store.inFallback(),
-            { showContent = true, showFallback = true } = show ? show() : {};
-          if ((!inFallback || (p && p !== "$$f")) && showContent) {
-            store.resolved = true;
-            dispose && dispose();
-            dispose = ctx = p = undefined;
-            resumeEffects(store.effects);
-            return rendered();
-          }
-          if (!showFallback) return;
-          if (dispose) return prev;
-          return createRoot(disposer => {
-            dispose = disposer;
-            if (ctx) {
-              setHydrateContext({ id: ctx.id + "F", count: 0 });
-              ctx = undefined;
-            }
-            return props.fallback;
-          }, owner!);
-        });
-      }) as unknown as JSX.Element;
-    }
-  });
-}
+render(() => <App />, document.getElementById("app")!);
 
 ```
 
-### Core Architecture Module: `packages/solid/src/render/component.ts`
+### Core Architecture Module: `examples/rendering/csr/vite.config.mjs`
 ```
-import {
-  untrack,
-  createSignal,
-  createResource,
-  createMemo,
-  onCleanup,
-  devComponent,
-  $PROXY,
-  SUPPORTS_PROXY,
-  $DEVCOMP,
-  EffectFunction,
-  IS_DEV
-} from "../reactive/signal.js";
-import { sharedConfig, nextHydrateContext, setHydrateContext } from "./hydration.js";
-import type { JSX } from "../jsx.js";
-
-let hydrationEnabled = false;
-export function enableHydration() {
-  hydrationEnabled = true;
-}
-
-/**
- * A general `Component` has no implicit `children` prop.  If desired, you can
- * specify one as in `Component<{name: String, children: JSX.Element}>`.
- */
-export type Component<P extends Record<string, any> = {}> = (props: P) => JSX.Element;
-
-/**
- * Extend props to forbid the `children` prop.
- * Use this to prevent accidentally passing `children` to components that
- * would silently throw them away.
- */
-export type VoidProps<P extends Record<string, any> = {}> = P & { children?: never };
-/**
- * `VoidComponent` forbids the `children` prop.
- * Use this to prevent accidentally passing `children` to components that
- * would silently throw them away.
- */
-export type VoidComponent<P extends Record<string, any> = {}> = Component<VoidProps<P>>;
-
-/**
- * Extend props to allow an optional `children` prop with the usual
- * type in JSX, `JSX.Element` (which allows elements, arrays, strings, etc.).
- * Use this for components that you want to accept children.
- */
-export type ParentProps<P extends Record<string, any> = {}> = P & { children?: JSX.Element };
-/**
- * `ParentComponent` allows an optional `children` prop with the usual
- * type in JSX, `JSX.Element` (which allows elements, arrays, strings, etc.).
- * Use this for components that you want to accept children.
- */
-export type ParentComponent<P extends Record<string, any> = {}> = Component<ParentProps<P>>;
-
-/**
- * Extend props to require a `children` prop with the specified type.
- * Use this for components where you need a specific child type,
- * typically a function that receives specific argument types.
- * Note that all JSX <Elements> are of the type `JSX.Element`.
- */
-export type FlowProps<P extends Record<string, any> = {}, C = JSX.Element> = P & { children: C };
-/**
- * `FlowComponent` requires a `children` prop with the specified type.
- * Use this for components where you need a specific child type,
- * typically a function that receives specific argument types.
- * Note that all JSX <Elements> are of the type `JSX.Element`.
- */
-export type FlowComponent<P extends Record<string, any> = {}, C = JSX.Element> = Component<
-  FlowProps<P, C>
->;
-
-/** @deprecated: use `ParentProps` instead */
-export type PropsWithChildren<P extends Record<string, any> = {}> = ParentProps<P>;
-
-export type ValidComponent = keyof JSX.IntrinsicElements | Component<any> | (string & {});
-
-/**
- * Takes the props of the passed component and returns its type
- *
- * @example
- * ComponentProps<typeof Portal> // { mount?: Node; useShadow?: boolean; children: JSX.Element }
- * ComponentProps<'div'> // JSX.HTMLAttributes<HTMLDivElement>
- */
-export type ComponentProps<T extends ValidComponent> =
-  T extends Component<infer P>
-    ? P
-    : T extends keyof JSX.IntrinsicElements
-      ? JSX.IntrinsicElements[T]
-      : Record<string, unknown>;
-
-/**
- * Type of `props.ref`, for use in `Component` or `props` typing.
- *
- * @example Component<{ref: Ref<Element>}>
- */
-export type Ref<T> = T | ((val: T) => void);
-
-export function createComponent<T extends Record<string, any>>(
-  Comp: Component<T>,
-  props: T
-): JSX.Element {
-  if (hydrationEnabled) {
-    if (sharedConfig.context) {
-      const c = sharedConfig.context;
-      setHydrateContext(nextHydrateContext());
-      const r = IS_DEV
-        ? devComponent(Comp, props || ({} as T))
-        : untrack(() => Comp(props || ({} as T)));
-      setHydrateContext(c);
-      return r;
-    }
-  }
-  if (IS_DEV) return devComponent(Comp, props || ({} as T));
-  return untrack(() => Comp(props || ({} as T)));
-}
-
-function trueFn() {
-  return true;
-}
-
-const propTraps: ProxyHandler<{
-  get: (k: string | number | symbol) => any;
-  has: (k: string | number | symbol) => boolean;
-  keys: () => string[];
-}> = {
-  get(_, property, receiver) {
-    if (property === $PROXY) return receiver;
-    return _.get(property);
-  },
-  has(_, property) {
-    if (property === $PROXY) return true;
-    return _.has(property);
-  },
-  set: trueFn,
-  deleteProperty: trueFn,
-  getOwnPropertyDescriptor(_, property) {
-    return {
-      configurable: true,
-      enumerable: true,
-      get() {
-        return _.get(property);
-      },
-      set: trueFn,
-      deleteProperty: trueFn
-    };
-  },
-  ownKeys(_) {
-    return _.keys();
-  }
-};
-
-type DistributeOverride<T, F> = T extends undefined ? F : T;
-type Override<T, U> = T extends any
-  ? U extends any
-    ? {
-        [K in keyof T]: K extends keyof U ? DistributeOverride<U[K], T[K]> : T[K];
-      } & {
-        [K in keyof U]: K extends keyof T ? DistributeOverride<U[K], T[K]> : U[K];
-      }
-    : T & U
-  : T & U;
-type OverrideSpread<T, U> = T extends any
-  ? {
-      [K in keyof ({ [K in keyof T]: any } & { [K in keyof U]?: any } & {
-        [K in U extends any ? keyof U : keyof U]?: any;
-      })]: K extends keyof T
-        ? Exclude<U extends any ? U[K & keyof U] : never, undefined> | T[K]
-        : U extends any
-          ? U[K & keyof U]
-          : never;
-    }
-  : T & U;
-type Simplify<T> = T extends any ? { [K in keyof T]: T[K] } : T;
-type _MergeProps<T extends unknown[], Curr = {}> = T extends [
-  infer Next | (() => infer Next),
-  ...infer Rest
-]
-  ? _MergeProps<Rest, Override<Curr, Next>>
-  : T extends [...infer Rest, infer Next | (() => infer Next)]
-    ? Override<_MergeProps<Rest, Curr>, Next>
-    : T extends []
-      ? Curr
-      : T extends (infer I | (() => infer I))[]
-        ? OverrideSpread<Curr, I>
-        : Curr;
-
-export type MergeProps<T extends unknown[]> = Simplify<_MergeProps<T>>;
-
-function resolveSource(s: any) {
-  return !(s = typeof s === "function" ? s() : s) ? {} : s;
-}
-
-function resolveSources(this: (() => any)[]) {
-  for (let i = 0, length = this.length; i < length; ++i) {
-    const v = this[i]();
-    if (v !== undefined) return v;
-  }
-}
-
-export function mergeProps<T extends unknown[]>(...sources: T): MergeProps<T> {
-  // [breaking && performance]
-  //if (sources.length === 1) return sources[0] as any;
-  let proxy = false;
-  for (let i = 0; i < sources.length; i++) {
-    const s = sources[i];
-    proxy = proxy || (!!s && $PROXY in (s as object));
-    sources[i] =
-      typeof s === "function" ? ((proxy = true), createMemo(s as EffectFunction<unknown>)) : s;
-  }
-  if (SUPPORTS_PROXY && proxy) {
-    return new Proxy(
-      {
-        get(property: string | number | symbol) {
-          for (let i = sources.length - 1; i >= 0; i--) {
-            const v = resolveSource(sources[i])[property];
-            if (v !== undefined) return v;
-          }
-        },
-        has(property: string | number | symbol) {
-          for (let i = sources.length - 1; i >= 0; i--) {
-            if (property in resolveSource(sources[i])) return true;
-          }
-          return false;
-        },
-        keys() {
-          const keys = [];
-          for (let i = 0; i < sources.length; i++)
-            keys.push(...Object.keys(resolveSource(sources[i])));
-          return [...new Set(keys)];
-        }
-      },
-      propTraps
-    ) as unknown as MergeProps<T>;
-  }
-  const sourcesMap: Record<string, any[]> = {};
-  const defined: Record<string, PropertyDescriptor | undefined> = Object.create(null);
-  //let someNonTargetKey = false;
-
-  for (let i = sources.length - 1; i >= 0; i--) {
-    const source = sources[i] as Record<string, any>;
-    if (!source) continue;
-    const sourceKeys = Object.getOwnPropertyNames(source);
-    //someNonTargetKey = someNonTargetKey || (i !== 0 && !!sourceKeys.length);
-    for (let i = sourceKeys.length - 1; i >= 0; i--) {
-      const key = sourceKeys[i];
-      if (key === "__proto__" || key === "constructor") continue;
-      const desc = Object.getOwnPropertyDescriptor(source, key)!;
-      if (!defined[key]) {
-        defined[key] = desc.get
-          ? {
-              enumerable: true,
-              configurable: true,
-              get: resolveSources.bind((sourcesMap[key] = [desc.get.bind(source)]))
-            }
-          : desc.value !== undefined
-            ? desc
-            : undefined;
-      } else {
-        const sources = sourcesMap[key];
-        if (sources) {
-          if (desc.get) sources.push(desc.get.bind(source));
-          else if (desc.value !== undefined) sources.push(() => desc.value);
-        }
-      }
-    }
-  }
-  const target: Record<string, any> = {};
-  const definedKeys = Object.keys(defined);
-  for (let i = definedKeys.length - 1; i >= 0; i--) {
-    const key = definedKeys[i],
-      desc = defined[key];
-    if (desc && desc.get) Object.defineProperty(target, key, desc);
-    else target[key] = desc ? desc.value : undefined;
-  }
-  // [breaking && performance]
-  //return (someNonTargetKey ? target : sources[0]) as any;
-  return target as any;
-}
-
-export type SplitProps<T, K extends (readonly (keyof T)[])[]> = [
-  ...{
-    [P in keyof K]: P extends `${number}`
-      ? Pick<T, Extract<K[P], readonly (keyof T)[]>[number]>
-      : never;
-  },
-  { [P in keyof T as Exclude<P, K[number][number]>]: T[P] }
-];
-
-export function splitProps<
-  T extends Record<any, any>,
-  K extends [readonly (keyof T)[], ...(readonly (keyof T)[])[]]
->(props: T, ...keys: K): SplitProps<T, K> {
-  const len = keys.length;
-
-  if (SUPPORTS_PROXY && $PROXY in props) {
-    const blocked = len > 1 ? keys.flat() : keys[0];
-    const claimed = new Set<PropertyKey>();
-    const res = keys.map(k => {
-      // a key belongs to the first group that lists it (matches non-proxy path)
-      const owned = k.filter(property => !claimed.has(property) && (claimed.add(property), true));
-      return new Proxy(
-        {
-          get(property) {
-            return owned.includes(property) ? props[property as any] : undefined;
-          },
-      
-```
-
-### Core Architecture Module: `packages/solid/src/render/flow.ts`
-```
-import {
-  createMemo,
-  untrack,
-  createSignal,
-  catchError,
-  children,
-  Accessor,
-  Setter,
-  onCleanup,
-  IS_DEV
-} from "../reactive/signal.js";
-import { mapArray, indexArray } from "../reactive/array.js";
-import { sharedConfig } from "./hydration.js";
-import type { JSX } from "../jsx.js";
-
-const narrowedError = (name: string) =>
-  IS_DEV
-    ? `Attempting to access a stale value from <${name}> that could possibly be undefined. This may occur because you are reading the accessor returned from the component at a time where it has already been unmounted. We recommend cleaning up any stale timers or async, or reading from the initial condition.`
-    : `Stale read from <${name}>.`;
-
-/**
- * Creates a list elements from a list
- *
- * it receives a map function as its child that receives a list element and an accessor with the index and returns a JSX-Element; if the list is empty, an optional fallback is returned:
- * ```typescript
- * <For each={items} fallback={<div>No items</div>}>
- *   {(item, index) => <div data-index={index()}>{item}</div>}
- * </For>
- * ```
- * If you have a list with fixed indices and changing values, consider using `<Index>` instead.
- *
- * @description https://docs.solidjs.com/reference/components/for
- */
-export function For<T extends readonly any[], U extends JSX.Element>(props: {
-  each: T | undefined | null | false;
-  fallback?: JSX.Element;
-  children: (item: T[number], index: Accessor<number>) => U;
-}) {
-  const fallback = "fallback" in props && { fallback: () => props.fallback };
-  return (IS_DEV
-    ? createMemo(
-        mapArray(() => props.each, props.children, fallback || undefined),
-        undefined,
-        { name: "value" }
-      )
-    : createMemo(
-        mapArray(() => props.each, props.children, fallback || undefined)
-      )) as unknown as JSX.Element;
-}
-
-/**
- * Non-keyed iteration over a list creating elements from its items
- *
- * To be used if you have a list with fixed indices, but changing values.
- * ```typescript
- * <Index each={items} fallback={<div>No items</div>}>
- *   {(item, index) => <div data-index={index}>{item()}</div>}
- * </Index>
- * ```
- * If you have a list with changing indices, better use `<For>`.
- *
- * @description https://docs.solidjs.com/reference/components/index-component
- */
-export function Index<T extends readonly any[], U extends JSX.Element>(props: {
-  each: T | undefined | null | false;
-  fallback?: JSX.Element;
-  children: (item: Accessor<T[number]>, index: number) => U;
-}) {
-  const fallback = "fallback" in props && { fallback: () => props.fallback };
-  return (IS_DEV
-    ? createMemo(
-        indexArray(() => props.each, props.children, fallback || undefined),
-        undefined,
-        { name: "value" }
-      )
-    : createMemo(
-        indexArray(() => props.each, props.children, fallback || undefined)
-      )) as unknown as JSX.Element;
-}
-
-type RequiredParameter<T> = T extends () => unknown ? never : T;
-/**
- * Conditionally render its children or an optional fallback component
- * @description https://docs.solidjs.com/reference/components/show
- */
-export function Show<
-  T,
-  TRenderFunction extends (item: Accessor<NonNullable<T>>) => JSX.Element
->(props: {
-  when: T | undefined | null | false;
-  keyed?: false;
-  fallback?: JSX.Element;
-  children: JSX.Element | RequiredParameter<TRenderFunction>;
-}): JSX.Element;
-export function Show<T, TRenderFunction extends (item: NonNullable<T>) => JSX.Element>(props: {
-  when: T | undefined | null | false;
-  keyed: true;
-  fallback?: JSX.Element;
-  children: JSX.Element | RequiredParameter<TRenderFunction>;
-}): JSX.Element;
-export function Show<T>(props: {
-  when: T | undefined | null | false;
-  keyed?: boolean;
-  fallback?: JSX.Element;
-  children: JSX.Element | ((item: NonNullable<T> | Accessor<NonNullable<T>>) => JSX.Element);
-}): JSX.Element {
-  const keyed = props.keyed;
-  const conditionValue = createMemo<T | undefined | null | boolean>(
-    () => props.when,
-    undefined,
-    IS_DEV ? { name: "condition value" } : undefined
-  );
-  const condition = keyed
-    ? conditionValue
-    : createMemo(
-        conditionValue,
-        undefined,
-        IS_DEV
-          ? {
-              equals: (a, b) => !a === !b,
-              name: "condition"
-            }
-          : { equals: (a, b) => !a === !b }
-      );
-  return createMemo(
-    () => {
-      const c = condition();
-      if (c) {
-        const child = props.children;
-        const fn = typeof child === "function" && child.length > 0;
-        return fn
-          ? untrack(() =>
-              (child as any)(
-                keyed
-                  ? (c as T)
-                  : () => {
-                      if (!untrack(condition)) throw narrowedError("Show");
-                      return conditionValue();
-                    }
-              )
-            )
-          : child;
-      }
-      return props.fallback;
-    },
-    undefined,
-    IS_DEV ? { name: "value" } : undefined
-  ) as unknown as JSX.Element;
-}
-
-type EvalConditions = readonly [number, Accessor<unknown>, MatchProps<unknown>];
-
-/**
- * Switches between content based on mutually exclusive conditions
- * ```typescript
- * <Switch fallback={<FourOhFour />}>
- *   <Match when={state.route === 'home'}>
- *     <Home />
- *   </Match>
- *   <Match when={state.route === 'settings'}>
- *     <Settings />
- *   </Match>
- * </Switch>
- * ```
- * @description https://docs.solidjs.com/reference/components/switch-and-match
- */
-export function Switch(props: { fallback?: JSX.Element; children: JSX.Element }): JSX.Element {
-  const chs = children(() => props.children);
-  const switchFunc = createMemo(() => {
-    const ch = chs() as unknown as MatchProps<unknown> | MatchProps<unknown>[];
-    const mps = Array.isArray(ch) ? ch : [ch];
-    let func: Accessor<EvalConditions | undefined> = () => undefined;
-    for (let i = 0; i < mps.length; i++) {
-      const index = i;
-      const mp = mps[i];
-      const prevFunc = func;
-      const conditionValue = createMemo(
-        () => (prevFunc() ? undefined : mp.when),
-        undefined,
-        IS_DEV ? { name: "condition value" } : undefined
-      );
-      const condition = mp.keyed
-        ? conditionValue
-        : createMemo(
-            conditionValue,
-            undefined,
-            IS_DEV
-              ? {
-                  equals: (a, b) => !a === !b,
-                  name: "condition"
-                }
-              : { equals: (a, b) => !a === !b }
-          );
-      func = () => prevFunc() || (condition() ? [index, conditionValue, mp] : undefined);
-    }
-    return func;
-  });
-  return createMemo(
-    () => {
-      const sel = switchFunc()();
-      if (!sel) return props.fallback;
-      const [index, conditionValue, mp] = sel;
-      const child = mp.children;
-      const fn = typeof child === "function" && child.length > 0;
-      return fn
-        ? untrack(() =>
-            (child as any)(
-              mp.keyed
-                ? (conditionValue() as any)
-                : () => {
-                    if (untrack(switchFunc)()?.[0] !== index) throw narrowedError("Match");
-                    return conditionValue();
-                  }
-            )
-          )
-        : child;
-    },
-    undefined,
-    IS_DEV ? { name: "eval conditions" } : undefined
-  ) as unknown as JSX.Element;
-}
-
-export type MatchProps<T> = {
-  when: T | undefined | null | false;
-  keyed?: boolean;
-  children: JSX.Element | ((item: NonNullable<T> | Accessor<NonNullable<T>>) => JSX.Element);
-};
-/**
- * Selects a content based on condition when inside a `<Switch>` control flow
- * ```typescript
- * <Match when={condition()}>
- *   <Content/>
- * </Match>
- * ```
- * @description https://docs.solidjs.com/reference/components/switch-and-match
- */
-export function Match<
-  T,
-  TRenderFunction extends (item: Accessor<NonNullable<T>>) => JSX.Element
->(props: {
-  when: T | undefined | null | false;
-  keyed?: false;
-  children: JSX.Element | RequiredParameter<TRenderFunction>;
-}): JSX.Element;
-export function Match<T, TRenderFunction extends (item: NonNullable<T>) => JSX.Element>(props: {
-  when: T | undefined | null | false;
-  keyed: true;
-  children: JSX.Element | RequiredParameter<TRenderFunction>;
-}): JSX.Element;
-export function Match<T>(props: MatchProps<T>) {
-  return props as unknown as JSX.Element;
-}
-
-let Errors: Set<Setter<any>>;
-export function resetErrorBoundaries() {
-  Errors && [...Errors].forEach(fn => fn());
-}
-/**
- * Catches uncaught errors inside components and renders a fallback content
- *
- * Also supports a callback form that passes the error and a reset function:
- * ```typescript
- * <ErrorBoundary fallback={
- *   (err, reset) => <div onClick={reset}>Error: {err.toString()}</div>
- * }>
- *   <MyComp />
- * </ErrorBoundary>
- * ```
- * Errors thrown from the fallback can be caught by a parent ErrorBoundary
- *
- * @description https://docs.solidjs.com/reference/components/error-boundary
- */
-export function ErrorBoundary(props: {
-  fallback: JSX.Element | ((err: any, reset: () => void) => JSX.Element);
-  children: JSX.Element;
-}): JSX.Element {
-  let err;
-  if (sharedConfig!.context && sharedConfig!.load)
-    err = sharedConfig.load(sharedConfig.getContextId());
-  const [errored, setErrored] = createSignal<any>(err, IS_DEV ? { name: "errored" } : undefined);
-  Errors || (Errors = new Set());
-  Errors.add(setErrored);
-  onCleanup(() => Errors.delete(setErrored));
-  return createMemo(
-    () => {
-      let e: any;
-      if ((e = errored())) {
-        const f = props.fallback;
-        if (IS_DEV && (typeof f !== "function" || f.length == 0)) console.error(e);
-        return typeof f === "function" && f.length ? untrack(() => f(e, () => setErrored())) : f;
-      }
-      return catchError(() => props.children, setErrored);
-    },
-    undefined,
-    IS_DEV ? { name: "value" } : undefined
-  ) as unknown as JSX.Element;
-}
-
-```
-
-### Core Architecture Module: `packages/solid/src/render/hydration.ts`
-```
-import { Computation } from "../reactive/signal.js";
-
-export type HydrationContext = { id: string; count: number };
-
-type SharedConfig = {
-  context?: HydrationContext;
-  resources?: { [key: string]: any };
-  load?: (id: string) => Promise<any> | any;
-  has?: (id: string) => boolean;
-  gather?: (key: string) => void;
-  registry?: Map<string, Element>;
-  done?: boolean;
-  count?: number;
-  effects?: Computation<any, any>[];
-  getContextId(): string;
-  getNextContextId(): string;
-};
-
-export const sharedConfig: SharedConfig = {
-  context: undefined,
-  registry: undefined,
-  effects: undefined,
-  done: false,
-  getContextId() {
-    return getContextId(this.context!.count);
-  },
-  getNextContextId() {
-    return getContextId(this.context!.count++);
-  }
-};
-
-function getContextId(count: number) {
-  const num = String(count),
-    len = num.length - 1;
-  return sharedConfig.context!.id + (len ? String.fromCharCode(96 + len) : "") + num;
-}
-
-export function setHydrateContext(context?: HydrationContext): void {
-  sharedConfig.context = context;
-}
-
-export function nextHydrateContext(): HydrationContext | undefined {
-  return {
-    ...sharedConfig.context,
-    id: sharedConfig.getNextContextId(),
-    count: 0
-  };
-}
-
-```
-
-### Core Architecture Module: `packages/solid/src/render/index.ts`
-```
-export * from "./component.js";
-export * from "./flow.js";
-export * from "./Suspense.js";
-export { sharedConfig } from "./hydration.js";
-
-```
-
-### Core Architecture Module: `packages/solid/src/server/rendering.ts`
-```
-import {
-  Accessor,
-  castError,
-  catchError,
-  cleanNode,
-  createContext,
-  createMemo,
-  createOwner,
-  Owner,
-  resolveChildren,
-  runWithOwner,
-  Setter,
-  Signal,
-  useContext
-} from "./reactive.js";
-import type { JSX } from "../jsx.js";
-
-export type Component<P = {}> = (props: P) => JSX.Element;
-export type VoidProps<P = {}> = P & { children?: never };
-export type VoidComponent<P = {}> = Component<VoidProps<P>>;
-export type ParentProps<P = {}> = P & { children?: JSX.Element };
-export type ParentComponent<P = {}> = Component<ParentProps<P>>;
-export type FlowProps<P = {}, C = JSX.Element> = P & { children: C };
-export type FlowComponent<P = {}, C = JSX.Element> = Component<FlowProps<P, C>>;
-export type Ref<T> = T | ((val: T) => void);
-export type ValidComponent = keyof JSX.IntrinsicElements | Component<any> | (string & {});
-export type ComponentProps<T extends ValidComponent> =
-  T extends Component<infer P>
-    ? P
-    : T extends keyof JSX.IntrinsicElements
-      ? JSX.IntrinsicElements[T]
-      : Record<string, unknown>;
-
-// these methods are duplicates from solid-js/web
-// we need a better solution for this in the future
-function escape(s: any, attr?: boolean) {
-  const t = typeof s;
-  if (t !== "string") {
-    if (!attr && t === "function") return escape(s());
-    if (!attr && Array.isArray(s)) {
-      for (let i = 0; i < s.length; i++) s[i] = escape(s[i]);
-      return s;
-    }
-    if (attr && t === "boolean") return String(s);
-    return s;
-  }
-  const delim = attr ? '"' : "<";
-  const escDelim = attr ? "&quot;" : "&lt;";
-  let iDelim = s.indexOf(delim);
-  let iAmp = s.indexOf("&");
-
-  if (iDelim < 0 && iAmp < 0) return s;
-
-  let left = 0,
-    out = "";
-
-  while (iDelim >= 0 && iAmp >= 0) {
-    if (iDelim < iAmp) {
-      if (left < iDelim) out += s.substring(left, iDelim);
-      out += escDelim;
-      left = iDelim + 1;
-      iDelim = s.indexOf(delim, left);
-    } else {
-      if (left < iAmp) out += s.substring(left, iAmp);
-      out += "&amp;";
-      left = iAmp + 1;
-      iAmp = s.indexOf("&", left);
-    }
-  }
-
-  if (iDelim >= 0) {
-    do {
-      if (left < iDelim) out += s.substring(left, iDelim);
-      out += escDelim;
-      left = iDelim + 1;
-      iDelim = s.indexOf(delim, left);
-    } while (iDelim >= 0);
-  } else
-    while (iAmp >= 0) {
-      if (left < iAmp) out += s.substring(left, iAmp);
-      out += "&amp;";
-      left = iAmp + 1;
-      iAmp = s.indexOf("&", left);
-    }
-
-  return left < s.length ? out + s.substring(left) : out;
-}
-
-function resolveSSRNode(node: any): string {
-  const t = typeof node;
-  if (t === "string") return node;
-  if (node == null || t === "boolean") return "";
-  if (Array.isArray(node)) {
-    let prev = {};
-    let mapped = "";
-    for (let i = 0, len = node.length; i < len; i++) {
-      if (typeof prev !== "object" && typeof node[i] !== "object") mapped += `<!--!$-->`;
-      mapped += resolveSSRNode((prev = node[i]));
-    }
-    return mapped;
-  }
-  if (t === "object") return node.t;
-  if (t === "function") return resolveSSRNode(node());
-  return String(node);
-}
-
-type SharedConfig = {
-  context?: HydrationContext;
-  getContextId(): string;
-  getNextContextId(): string;
-};
-export const sharedConfig: SharedConfig = {
-  context: undefined,
-  getContextId() {
-    if (!this.context) throw new Error(`getContextId cannot be used under non-hydrating context`);
-    return getContextId(this.context.count);
-  },
-  getNextContextId() {
-    if (!this.context)
-      throw new Error(`getNextContextId cannot be used under non-hydrating context`);
-    return getContextId(this.context.count++);
-  }
-};
-
-function getContextId(count: number) {
-  const num = String(count),
-    len = num.length - 1;
-  return sharedConfig.context!.id + (len ? String.fromCharCode(96 + len) : "") + num;
-}
-
-function setHydrateContext(context?: HydrationContext): void {
-  sharedConfig.context = context;
-}
-
-function nextHydrateContext(): HydrationContext | undefined {
-  return sharedConfig.context
-    ? {
-        ...sharedConfig.context,
-        id: sharedConfig.getNextContextId(),
-        count: 0
-      }
-    : undefined;
-}
-
-export function createUniqueId(): string {
-  return sharedConfig.getNextContextId();
-}
-
-export function createComponent<T>(Comp: (props: T) => JSX.Element, props: T): JSX.Element {
-  if (sharedConfig.context && !sharedConfig.context.noHydrate) {
-    const c = sharedConfig.context;
-    setHydrateContext(nextHydrateContext());
-    const r = Comp(props || ({} as T));
-    setHydrateContext(c);
-    return r;
-  }
-  return Comp(props || ({} as T));
-}
-
-export function mergeProps<T>(source: T): T;
-export function mergeProps<T, U>(source: T, source1: U): T & U;
-export function mergeProps<T, U, V>(source: T, source1: U, source2: V): T & U & V;
-export function mergeProps<T, U, V, W>(
-  source: T,
-  source1: U,
-  source2: V,
-  source3: W
-): T & U & V & W;
-export function mergeProps(...sources: any): any {
-  const target = {};
-  for (let i = 0; i < sources.length; i++) {
-    let source = sources[i];
-    if (typeof source === "function") source = source();
-    if (source) {
-      const descriptors = Object.getOwnPropertyDescriptors(source);
-      for (const key in descriptors) {
-        if (
-          key === "__proto__" ||
-          key === "constructor" ||
-          Object.prototype.hasOwnProperty.call(target, key)
-        )
-          continue;
-        Object.defineProperty(target, key, {
-          enumerable: true,
-          get() {
-            for (let i = sources.length - 1; i >= 0; i--) {
-              let v,
-                s = sources[i];
-              if (typeof s === "function") s = s();
-              v = (s || {})[key];
-              if (v !== undefined) return v;
-            }
-          }
-        });
-      }
-    }
-  }
-  return target;
-}
-
-export function splitProps<T extends object, K1 extends keyof T>(
-  props: T,
-  ...keys: [K1[]]
-): [Pick<T, K1>, Omit<T, K1>];
-export function splitProps<T extends object, K1 extends keyof T, K2 extends keyof T>(
-  props: T,
-  ...keys: [K1[], K2[]]
-): [Pick<T, K1>, Pick<T, K2>, Omit<T, K1 | K2>];
-export function splitProps<
-  T extends object,
-  K1 extends keyof T,
-  K2 extends keyof T,
-  K3 extends keyof T
->(
-  props: T,
-  ...keys: [K1[], K2[], K3[]]
-): [Pick<T, K1>, Pick<T, K2>, Pick<T, K3>, Omit<T, K1 | K2 | K3>];
-export function splitProps<
-  T extends object,
-  K1 extends keyof T,
-  K2 extends keyof T,
-  K3 extends keyof T,
-  K4 extends keyof T
->(
-  props: T,
-  ...keys: [K1[], K2[], K3[], K4[]]
-): [Pick<T, K1>, Pick<T, K2>, Pick<T, K3>, Pick<T, K4>, Omit<T, K1 | K2 | K3 | K4>];
-export function splitProps<
-  T extends object,
-  K1 extends keyof T,
-  K2 extends keyof T,
-  K3 extends keyof T,
-  K4 extends keyof T,
-  K5 extends keyof T
->(
-  props: T,
-  ...keys: [K1[], K2[], K3[], K4[], K5[]]
-): [
-  Pick<T, K1>,
-  Pick<T, K2>,
-  Pick<T, K3>,
-  Pick<T, K4>,
-  Pick<T, K5>,
-  Omit<T, K1 | K2 | K3 | K4 | K5>
-];
-export function splitProps<T>(props: T, ...keys: [(keyof T)[]]) {
-  const descriptors = Object.getOwnPropertyDescriptors(props),
-    split = (k: (keyof T)[]) => {
-      const clone: Partial<T> = {};
-      for (let i = 0; i < k.length; i++) {
-        const key = k[i];
-        if (descriptors[key]) {
-          Object.defineProperty(clone, key, descriptors[key]);
-          delete descriptors[key];
-        }
-      }
-      return clone;
-    };
-  return keys.map(split).concat(split(Object.keys(descriptors) as (keyof T)[]));
-}
-
-function simpleMap(
-  props: { each: any[]; children: Function; fallback?: string },
-  wrap: (fn: Function, item: any, i: number) => string
-) {
-  const list = props.each || [],
-    len = list.length,
-    fn = props.children;
-  if (len) {
-    let mapped = Array(len);
-    for (let i = 0; i < len; i++) mapped[i] = wrap(fn, list[i], i);
-    return mapped;
-  }
-  return props.fallback;
-}
-
-export function For<T>(props: {
-  each: T[];
-  fallback?: string;
-  children: (item: T, index: () => number) => string;
-}) {
-  return simpleMap(props, (fn, item, i) => fn(item, () => i));
-}
-
-// non-keyed
-export function Index<T>(props: {
-  each: T[];
-  fallback?: string;
-  children: (item: () => T, index: number) => string;
-}) {
-  return simpleMap(props, (fn, item, i) => fn(() => item, i));
-}
-
-type RequiredParameter<T> = T extends () => unknown ? never : T;
-/**
- * Conditionally render its children or an optional fallback component
- * @description https://docs.solidjs.com/reference/components/show
- */
-export function Show<T>(props: {
-  when: T | undefined | null | false;
-  keyed?: boolean;
-  fallback?: string;
-  children: string | ((item: NonNullable<T> | Accessor<NonNullable<T>>) => string);
-}): string {
-  let c: string | ((item: NonNullable<T> | Accessor<NonNullable<T>>) => string);
-  const w = props.when;
-  return w
-    ? typeof (c = props.children) === "function" && c.length > 0
-      ? c(props.keyed ? w! : () => w as any)
-      : (c as string)
-    : props.fallback || "";
-}
-
-export function Switch(props: {
-  fallback?: string;
-  children: MatchProps<unknown> | MatchProps<unknown>[];
-}) {
-  let conditions = resolveChildren(props.children) as MatchProps<unknown> | MatchProps<unknown>[];
-  Array.isArray(conditions) || (conditions = [conditions]);
-
-  for (let i = 0; i < conditions.length; i++) {
-    const w = conditions[i].when;
-    if (w) {
-      const c = conditions[i].children;
-      return typeof c === "function" && c.length > 0
-        ? c(conditions[i].keyed ? w : () => w)
-        : (c as string);
-    }
-  }
-  return props.fallback || "";
-}
-
-type MatchProps<T> = {
-  when: T | false;
-  keyed?: boolean;
-  children: string | ((item: NonNullable<T> | Accessor<NonNullable<T>>) => string);
-};
-export function Match<T>(props: MatchProps<T>) {
-  return props;
-}
-
-export function resetErrorBoundaries() {}
-export function ErrorBoundary(props: {
-  fallback: string | ((err: any, reset: () => void) => string);
-  children: string;
-}) {
-  let error: any,
-    res: any,
-    clean: any,
-    sync = true;
-  const ctx = sharedConfig.context!;
-  const id = sharedConfig.getC
-```
-
-### Core Architecture Module: `packages/solid/web/src/core.ts`
-```
-//@ts-nocheck
-import { createMemo } from "solid-js";
-export {
-  getOwner,
-  createComponent,
-  createRoot as root,
-  createRenderEffect as effect,
-  sharedConfig,
-  untrack,
-  mergeProps
-} from "solid-js";
-
-export const memo = fn => createMemo(() => fn());
-
-```
-
-### Core Architecture Module: `packages/babel-preset-solid/index.js`
-```
-const jsxTransform = require("babel-plugin-jsx-dom-expressions");
-
-module.exports = function (context, options = {}) {
-  const plugins = [
-    [
-      jsxTransform,
-      Object.assign(
-        {
-          moduleName: "solid-js/web",
-          builtIns: [
-            "For",
-            "Show",
-            "Switch",
-            "Match",
-            "Suspense",
-            "SuspenseList",
-            "Portal",
-            "Index",
-            "Dynamic",
-            "ErrorBoundary"
-          ],
-          contextToCustomElements: true,
-          wrapConditionals: true,
-          generate: "dom"
-        },
-        options
-      )
-    ]
-  ];
-
-  return {
-    plugins
-  };
-};
-
-```
-
-### Core Architecture Module: `packages/solid-element/sample.jsx`
-```
-import { createSignal } from "solid-js";
-import { customElement } from "solid-element";
-
-const style = `div * {
-          font-size: 200%;
-        }
-
-        span {
-          width: 4rem;
-          display: inline-block;
-          text-align: center;
-        }
-
-        button {
-          width: 4rem;
-          height: 4rem;
-          border: none;
-          border-radius: 10px;
-          background-color: seagreen;
-          color: white;
-        }`;
-
-customElement("my-counter", () => {
-  const [count, setCount] = createSignal(0);
-  return (
-    <div>
-      <style>{style}</style>
-      <button onClick={() => setCount(count() - 1)}>-</button>
-      <span>{count}</span>
-      <button onClick={() => setCount(count() + 1)}>+</button>
-    </div>
-  );
+import { defineConfig } from "vite";
+// Exercises the current @solidjs/vite-plugin pipeline: native JSX compiler by
+// default, native lazy/refresh passes, solid-js/refresh HMR runtime.
+import solid from "@solidjs/vite-plugin";
+
+export default defineConfig({
+  root: import.meta.dirname,
+  publicDir: "../shared/static",
+  plugins: [solid()],
+  server: { port: 3000 },
+  preview: { port: 3000 }
 });
 
 ```
 
-### Core Architecture Module: `packages/solid-element/src/index.ts`
+### Core Architecture Module: `examples/rendering/shared/src/components/App.tsx`
 ```
-import {
-  register,
-  ComponentType as mComponentType,
-  ICustomElement,
-  FunctionComponent,
-  ComponentOptions,
-  PropsDefinitionInput
-} from "component-register";
-export { hot, getCurrentElement, noShadowDOM } from "component-register";
-export type ComponentType<T> = mComponentType<T>;
-import { createRoot, createSignal } from "solid-js";
-import { insert } from "solid-js/web";
+import { isPending, lazy, Match, Switch } from "solid-js";
+import { Link, RouteHOC, useRouter } from "../router";
+import Profile from "./Profile";
 
-function createProps<T extends object>(raw: T) {
-  const keys = Object.keys(raw) as (keyof T)[];
-  const props = {};
-  for (let i = 0; i < keys.length; i++) {
-    const [get, set] = createSignal(raw[keys[i]]);
-    Object.defineProperty(props, keys[i], {
-      get,
-      set(v) {
-        set(() => v);
+// @solidjs/vite-plugin's lazy() module-URL pass keys these against the client
+// manifest automatically — no hand-written module keys needed.
+const Home = lazy(() => import("./Home"));
+const Settings = lazy(() => import("./Settings"));
+const Stream = lazy(() => import("./Stream"));
+const ErrorStream = lazy(() => import("./ErrorStream"));
+const RevealPage = lazy(() => import("./Reveal"));
+const Skeleton = lazy(() => import("./Skeleton"));
+
+const App = RouteHOC(() => {
+  const [location, { matches }] = useRouter();
+
+  return (
+    <>
+      <ul class="inline">
+        <li class={{ selected: matches("index") }}>
+          <Link path="">Home</Link>
+        </li>
+        <li class={{ selected: matches("profile") }}>
+          <Link path="profile">Profile</Link>
+        </li>
+        <li class={{ selected: matches("settings") }}>
+          <Link path="settings">Settings</Link>
+        </li>
+        <li class={{ selected: matches("stream") }}>
+          <Link path="stream">Stream</Link>
+        </li>
+        <li class={{ selected: matches("error-stream") }}>
+          <Link path="error-stream">Error Stream</Link>
+        </li>
+        <li class={{ selected: matches("reveal") }}>
+          <Link path="reveal">Reveal</Link>
+        </li>
+        <li class={{ selected: matches("skeleton") }}>
+          <Link path="skeleton">Skeleton</Link>
+        </li>
+      </ul>
+      <div class={["tab", { pending: isPending(location) }]}>
+        <Switch>
+          <Match when={matches("index")}>
+            <Home />
+          </Match>
+          <Match when={matches("profile")}>
+            <Profile />
+          </Match>
+          <Match when={matches("settings")}>
+            <Settings />
+          </Match>
+          <Match when={matches("stream")}>
+            <Stream />
+          </Match>
+          <Match when={matches("error-stream")}>
+            <ErrorStream />
+          </Match>
+          <Match when={matches("reveal")}>
+            <RevealPage />
+          </Match>
+          <Match when={matches("skeleton")}>
+            <Skeleton />
+          </Match>
+        </Switch>
+      </div>
+    </>
+  );
+});
+
+export default App;
+
+```
+
+### Core Architecture Module: `examples/rendering/shared/src/components/ErrorStream.tsx`
+```
+import { createMemo, createSignal, Errored, Loading } from "solid-js";
+
+interface Item {
+  title: string;
+}
+
+function loadItem(id: string): Promise<Item> {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (id !== "1") {
+        reject(new Error(`Item ${id} not found`));
+        return;
       }
-    });
-  }
-  return props as T;
+
+      resolve({ title: "Test Item" });
+    }, 1500);
+  });
 }
 
-function lookupContext(el: ICustomElement & { _$owner?: any }) {
-  if (el.assignedSlot && el.assignedSlot._$owner) return el.assignedSlot._$owner;
-  let next: Element & { _$owner?: any } = el.parentNode;
-  while (next) {
-    if (next._$owner) return next._$owner;
-    if (next.assignedSlot && (next.assignedSlot as Element & { _$owner?: any })._$owner)
-      return (next.assignedSlot as Element & { _$owner?: any })._$owner;
-    next = next.parentNode as Element;
-  }
-  return el._$owner;
+function InnerBoundaryItem(props: { id: string }) {
+  const [id, setId] = createSignal(props.id);
+  const item = createMemo<Item>(async () => loadItem(id()));
+
+  return (
+    <Loading fallback={<div>Item Loading...</div>}>
+      <Errored
+        fallback={(error, reset) => (
+          <div>
+            <div>ItemError: {String(error())}</div>
+            <button
+              onClick={() => {
+                setId("1");
+                reset();
+              }}
+            >
+              Reset to valid item
+            </button>
+          </div>
+        )}
+      >
+        <div>{item().title}</div>
+      </Errored>
+    </Loading>
+  );
 }
 
-function withSolid<T extends object>(ComponentType: ComponentType<T>): ComponentType<T> {
-  return (rawProps: T, options: ComponentOptions) => {
-    const { element } = options as {
-      element: ICustomElement & { _$owner?: any };
+function OuterBoundaryItem(props: { id: string }) {
+  const [id, setId] = createSignal(props.id);
+  const item = createMemo<Item>(async () => loadItem(id()));
+
+  return (
+    <Errored
+      fallback={(error, reset) => (
+        <div>
+          <div>ItemError: {String(error())}</div>
+          <button
+            onClick={() => {
+              setId("1");
+              reset();
+            }}
+          >
+            Reset to valid item
+          </button>
+        </div>
+      )}
+    >
+      <Loading fallback={<div>Item Loading...</div>}>
+        <div>{item().title}</div>
+      </Loading>
+    </Errored>
+  );
+}
+
+const ErrorStream = () => {
+  return (
+    <>
+      <h1>Loading + Errored Streaming</h1>
+      <p>
+        Reproduces both boundary shapes for streamed SSR + hydration, with reset buttons to confirm
+        recovery after hydration.
+      </p>
+      <h2>Errored inside Loading</h2>
+      <div>
+        <InnerBoundaryItem id="1" />
+        <InnerBoundaryItem id="bad-item" />
+      </div>
+      <h2>Errored outside Loading</h2>
+      <div>
+        <OuterBoundaryItem id="1" />
+        <OuterBoundaryItem id="bad-item" />
+      </div>
+    </>
+  );
+};
+
+export default ErrorStream;
+
+```
+
+### Core Architecture Module: `examples/rendering/shared/src/components/Home.tsx`
+```
+import { createSignal, onSettled } from "solid-js";
+
+const Home = () => {
+  const [s, set] = createSignal(0);
+
+  onSettled(() => {
+    const t = setInterval(() => {
+      set(s() + 1);
+    }, 100);
+
+    return () => {
+      clearInterval(t);
     };
-    return createRoot((dispose: Function) => {
-      const props = createProps<T>(rawProps);
+  });
 
-      element.addPropertyChangedCallback((key: string, val: any) => (props[key as keyof T] = val));
-      element.addReleaseCallback(() => {
-        element.renderRoot.textContent = "";
-        dispose();
-      });
+  return (
+    <>
+      <h1>Welcome to this Simple Routing Example</h1>
+      <p>Click the links in the Navigation above to load different routes.</p>
+      <span>{s()}</span>
+    </>
+  );
+};
 
-      const comp = (ComponentType as FunctionComponent<T>)(props as T, options);
-      return insert(element.renderRoot, comp);
-    }, lookupContext(element));
-  };
+export default Home;
+
+```
+
+### Core Architecture Module: `examples/rendering/shared/src/components/Profile/Profile.tsx`
+```
+import { For, Loading } from "solid-js";
+
+export interface User {
+  firstName: string;
+  lastName: string;
 }
 
-function customElement<T extends object>(
-  tag: string,
-  ComponentType: ComponentType<T>
-): CustomElementConstructor;
-function customElement<T extends object>(
-  tag: string,
-  props: PropsDefinitionInput<T>,
-  ComponentType: ComponentType<T>
-): CustomElementConstructor;
-function customElement<T extends object>(
-  tag: string,
-  props: PropsDefinitionInput<T> | ComponentType<T>,
-  ComponentType?: ComponentType<T>
-): CustomElementConstructor {
-  if (arguments.length === 2) {
-    ComponentType = props as ComponentType<T>;
-    props = {} as PropsDefinitionInput<T>;
-  }
-  return register<T>(tag, props as PropsDefinitionInput<T>)(withSolid(ComponentType!));
+function Profile(props: { info: string[]; user: User }) {
+  return (
+    <>
+      <h1>{props.user.firstName}'s Profile</h1>
+      <p>This section could be about you.</p>
+      <Loading fallback={<span class="loader">Loading Info...</span>}>
+        <ul>
+          <For each={props.info}>{fact => <li>{fact}</li>}</For>
+        </ul>
+      </Loading>
+    </>
+  );
 }
 
-export { withSolid, customElement };
+export default Profile;
+
+```
+
+### Core Architecture Module: `examples/rendering/shared/src/components/Profile/index.tsx`
+```
+import { createMemo, lazy } from "solid-js";
+import type { User } from "./Profile";
+
+const Profile = lazy(() => import("./Profile"));
+
+// this component lazy loads data and code in parallel
+export default () => {
+  const user = createMemo<User>(() => {
+    // simulate data loading
+    console.log("LOAD USER");
+    return new Promise<User>(resolve => {
+      setTimeout(() => resolve({ firstName: "Jon", lastName: "Snow" }), 400);
+    });
+  });
+
+  const info = createMemo<string[]>(() => {
+    user();
+    // simulate cascading data loading
+    console.log("LOAD INFO");
+    return new Promise<string[]>(resolve => {
+      setTimeout(
+        () =>
+          resolve(["Something Interesting", "Something else you might care about", "Or maybe not"]),
+        400
+      );
+    });
+  });
+
+  return <Profile user={user()} info={info()} />;
+};
+
+```
+
+### Core Architecture Module: `examples/rendering/shared/src/components/Reveal.tsx`
+```
+import { createMemo, createSignal, Loading, Reveal, Show, type RevealOrder } from "solid-js";
+
+function delayedValue<T>(ms: number, value: T): Promise<T> {
+  return new Promise(resolve => setTimeout(() => resolve(value), ms));
+}
+
+function AsyncCard(props: { delay: number; title: string }) {
+  const value = createMemo(() =>
+    delayedValue(props.delay, `${props.title} resolved in ${props.delay}ms`)
+  );
+
+  return (
+    <Loading fallback={<div class="loader">{props.title} loading...</div>}>
+      <div class="reveal-card">
+        <strong>{props.title}</strong>
+        <div>{value()}</div>
+      </div>
+    </Loading>
+  );
+}
+
+const RevealPage = () => {
+  const [order, setOrder] = createSignal<RevealOrder>("sequential");
+  const [collapsed, setCollapsed] = createSignal(true);
+  const [seed, setSeed] = createSignal(1);
+
+  return (
+    <>
+      <h1>Reveal</h1>
+      <p>
+        Compare reveal ordering with different <code>order</code> modes and watch the nested group
+        behave as a single composite slot inside its parent. Restart the run to replay SSR and
+        hydration timings.
+      </p>
+      <p>
+        <strong>Run:</strong> {seed()}
+      </p>
+      <div
+        style={{
+          display: "flex",
+          gap: "1rem",
+          "align-items": "center",
+          "margin-bottom": "1rem",
+          "flex-wrap": "wrap"
+        }}
+      >
+        <fieldset style={{ display: "flex", gap: "0.75rem", "align-items": "center" }}>
+          <legend>order</legend>
+          <label>
+            <input
+              type="radio"
+              name="order"
+              value="sequential"
+              checked={order() === "sequential"}
+              onInput={() => setOrder("sequential")}
+            />{" "}
+            sequential
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="order"
+              value="together"
+              checked={order() === "together"}
+              onInput={() => setOrder("together")}
+            />{" "}
+            together
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="order"
+              value="natural"
+              checked={order() === "natural"}
+              onInput={() => setOrder("natural")}
+            />{" "}
+            natural
+          </label>
+        </fieldset>
+        <label title="Only applies when order is sequential">
+          <input
+            type="checkbox"
+            checked={collapsed()}
+            disabled={order() !== "sequential"}
+            onInput={e => setCollapsed(e.currentTarget.checked)}
+          />{" "}
+          collapsed <em>(sequential only)</em>
+        </label>
+        <button onClick={() => setSeed(s => s + 1)}>Restart run</button>
+      </div>
+
+      <Show when={seed()} keyed>
+        <h2>Primary Group</h2>
+        <p>
+          Three siblings under a single <code>{`<Reveal order="${order()}">`}</code>. Compare how
+          they swap in as each resolves.
+        </p>
+        <Reveal order={order()} collapsed={collapsed()}>
+          <div class="reveal-grid">
+            <AsyncCard title="A" delay={500} />
+            <AsyncCard title="B" delay={1100} />
+            <AsyncCard title="C" delay={1700} />
+          </div>
+        </Reveal>
+
+        <h2>Nested Group</h2>
+        <p>
+          The outer group uses <code>order="{order()}"</code>. The inner group is always{" "}
+          <code>order="natural"</code> — it registers as a single composite slot to the outer group
+          and, once the outer releases it, each inner card reveals on its own.
+        </p>
+        <Reveal order={order()} collapsed={collapsed()}>
+          <div class="reveal-grid">
+            <AsyncCard title="Outer-1" delay={700} />
+            <Reveal order="natural">
+              <div class="reveal-grid">
+                <AsyncCard title="Inner-1" delay={900} />
+                <AsyncCard title="Inner-2" delay={1300} />
+              </div>
+            </Reveal>
+            <AsyncCard title="Outer-2" delay={1500} />
+          </div>
+        </Reveal>
+      </Show>
+    </>
+  );
+};
+
+export default RevealPage;
+
+```
+
+### Core Architecture Module: `examples/rendering/shared/src/components/Settings.tsx`
+```
+import { createSignal, createUniqueId } from "solid-js";
+import { Portal } from "@solidjs/web";
+
+const Settings = () => {
+  const [text, setText] = createSignal("Hi");
+  const [modalOpen, setModalOpen] = createSignal(true);
+  const [modalClicks, setModalClicks] = createSignal(0);
+  const id = createUniqueId();
+
+  return (
+    <section onClick={() => modalOpen() && setModalClicks(c => c + 1)}>
+      <h1>Settings</h1>
+      <p>All that configuration you never really ever want to look at.</p>
+      <label for={id}>Write:</label>
+      <input type="text" id={id} value={text()} onInput={e => setText(e.currentTarget.value)} />
+      <p>{text()}</p>
+      <button type="button" onClick={() => setModalOpen(true)}>
+        Open body portal
+      </button>
+      <p>Portal logical clicks: {modalClicks()}</p>
+      {modalOpen() && (
+        <Portal>
+          <div class="modal-backdrop">
+            <div class="modal-card" role="dialog" aria-modal="true" aria-label="Settings portal">
+              <h2>Body Portal</h2>
+              <p>This modal is portaled to document.body.</p>
+              <button type="button" onClick={() => setModalOpen(false)}>
+                Close portal
+              </button>
+            </div>
+          </div>
+        </Portal>
+      )}
+    </section>
+  );
+};
+
+export default Settings;
+
+```
+
+### Core Architecture Module: `examples/rendering/shared/src/components/Shell.tsx`
+```
+import type { ParentProps } from "solid-js";
+import { HydrationScript } from "@solidjs/web";
+
+/**
+ * SSR-only shell. Wraps the shared `<App />` content in an `<html>` document
+ * with hydration script, stylesheet, and the client entry module. The CSR
+ * variant serves its own static `index.html` and does not use this.
+ *
+ * `clientEntry` is the dev module path of the mode's client entry (e.g.
+ * `/client.tsx`); in production builds the server harness rewrites it to the
+ * hashed asset from the Vite client manifest.
+ */
+export default function Shell(props: ParentProps<{ clientEntry: string }>) {
+  return (
+    <html lang="en">
+      <head>
+        <title>🔥 Solid Rendering 🔥</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/styles.css" />
+        <HydrationScript />
+      </head>
+      <body>
+        <div id="app">{props.children}</div>
+      </body>
+      <script type="module" src={props.clientEntry} async></script>
+    </html>
+  );
+}
 
 ```
 
@@ -1517,115 +595,780 @@ export { withSolid, customElement };
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f8138641` (2026-11-16)
-**Commit Message**: chore: publish solid-js 1.x to the v1-latest dist-tag (#4955)
+### Incident Patch 1: `fc0dac0c` (2026-11-20)
+**Commit Message**: fix(solid): a server projection over a pending async store waits for it (#5097) (#5105)
 
-changeset publish always passes --tag latest, which overrides
-publishConfig.tag, so publish solid-js first with pnpm (which honors
-publishConfig) and let changeset publish skip it and tag it.
+* fix(solid): a server projection over a pending async store waits for it (#5097)
 
+The sync result of a projection's fn was adopted after the NotReady
+retry's try block, so returning a pending store (() => rows) threw out
+of the component body. Adopt it inside the try, so it takes the same
+retry as a derive that reads the store.
 
-Claude-Session: https://claude.ai/code/session_0117BoWNjuf3jry41gysax1f
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_0117BoWPYxt1bEM9zZ5G6dPL
+
+* test(web): type the #5097 spec's function-form projection as the issue writes it
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_0117BoWPYxt1bEM9zZ5G6dPL
+
+---------
 
 Co-authored-by: Claude <[REDACTED_EMAIL]>
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `.changeset/ssr-projection-pending-store-5097.md` (added, +5/-0)
 ```diff
-@@ -18,7 +18,7 @@
-     "types": "turbo run types",
-     "publish": "pnpm run build && pnpm run types && pnpm run release:only",
-     "bump": "changeset add",
--    "release:only": "changeset publish",
-+    "release:only": "node scripts/publish-solid-js.mjs && changeset publish",
-     "format": "prettier --write --cache \"**/*.[tj]s?(x)\""
-   },
-   "devDependencies": {
+@@ -0,0 +1,5 @@
++---
++"solid-js": patch
++---
++
++On the server, a projection or derived optimistic store whose function returns a pending async store (`createProjection(() => rows, …)`, `createOptimisticStore(() => rows, …)`) now waits for that store like a derive that read it, so `<Loading>` shows its fallback and the answer streams in. Before, adopting the pending store threw `NotReadyError` out of the component body.
 ```
 
-**File**: `packages/solid/package.json` (modified, +3/-0)
+**File**: `packages/solid/src/server/signals.ts` (modified, +11/-4)
 ```diff
-@@ -9,6 +9,9 @@
-     "type": "git",
-     "url": "https://github.com/solidjs/solid"
-   },
-+  "publishConfig": {
-+    "tag": "v1-latest"
-+  },
-   "main": "./dist/server.cjs",
-   "module": "./dist/server.js",
-   "unpkg": "./dist/solid.cjs",
+@@ -3181,6 +3181,17 @@ export function createProjection<T extends object = {}>(
+   let result: void | T | Promise<void | T> | AsyncIterable<void | T>;
+   try {
+     result = runProjection();
++    // Synchronous: fn either mutated state directly (void) or returned a new
++    // value. Adopted here, a pending store it returns (`() => rows`) takes
++    // the NotReady retry below like a derive that read it (#5097).
++    if (
++      result !== undefined &&
++      result !== state &&
++      result !== draft &&
++      !isThenable(result) &&
++      typeof (result as any)[Symbol.asyncIterator] !== "function"
++    )
++      replaceState(state, result as T);
+   } catch (error) {
+     if (!(error instanceof NotReadyError)) throw error;
+     // The derive read a client hole synchronously: FINAL at discovery, the
+@@ -3411,10 +3422,6 @@ export function createProjection<T extends object = {}>(
+     return recordSlot(pending);
+   }
+ 
+-  // Synchronous: fn either mutated state directly (void) or returned a new value
+-  if (result !== undefined && result !== state && result !== draft) {
+-    replaceState(state, result as T);
+-  }
+   return state;
+ }
+ 
 ```
 
-**File**: `scripts/publish-solid-js.mjs` (added, +25/-0)
+**File**: `packages/web/test/server/projection-over-pending-store-5097.spec.tsx` (added, +62/-0)
 ```diff
-@@ -0,0 +1,25 @@
-+// solid-js 1.x publishes to the `v1-latest` dist-tag (see publishConfig in
-+// packages/solid/package.json) so it never takes `latest` from 2.x.
-+// `changeset publish` always passes `--tag latest`, which overrides
-+// publishConfig, so solid-js is published here first. `changeset publish`
-+// then sees the version on npm, skips it, and still creates its git tag.
-+import { execFileSync } from "node:child_process";
-+import { readFileSync } from "node:fs";
+@@ -0,0 +1,62 @@
++/**
++ * @jsxImportSource @solidjs/web
++ */
++// #5097: on the server, a projection whose fn returns a pending async store
++// (`createProjection(() => rows, …)`, and `createOptimisticStore(() => rows,
++// …)` through the same path) adopted it at creation, outside the NotReady
++// retry, so the pending proxy's read escaped the component body. It now
++// waits for the store like a derive that read it, as on the client.
++import { describe, expect, test } from "vitest";
++import { renderToStream } from "@solidjs/web";
++import { createOptimisticStore, createProjection, createStore, Loading } from "solid-js";
 +
-+const dir = new URL("../packages/solid/", import.meta.url);
-+const { name, version } = JSON.parse(readFileSync(new URL("package.json", dir), "utf8"));
++const render = (App: () => any) =>
++  new Promise<string>((resolve, reject) => {
++    let out = "";
++    renderToStream(() => <App />, { onError: reject }).pipe({
++      write: (c: string) => {
++        out += c;
++      },
++      end: () => resolve(out)
++    });
++  });
 +
-+let published = "";
-+try {
-+  published = execFileSync("npm", ["view", `${name}@${version}`, "version", "--prefer-online"], {
-+    encoding: "utf8"
-+  }).trim();
-+} catch (e) {
-+  if (!String(e.stderr).includes("E404")) throw e;
-+}
++const rowsStore = () =>
++  createStore(
++    async () => {
++      await new Promise(r => setTimeout(r, 10));
++      return [{ id: 1, t: "A" }];
++    },
++    [] as { id: number; t: string }[],
++    { key: "id" } as any
++  )[0];
 +
-+if (published) {
-+  console.log(`${name}@${version} is already on npm, skipping`);
-+} else {
-+  execFileSync("pnpm", ["publish", "--no-git-checks"], { cwd: dir, stdio: "inherit" });
-+}
++describe("#5097: a projection over a pending async store on the server", () => {
++  test("createProjection(() => store) waits for the store", async () => {
++    function App() {
++      const rows = rowsStore();
++      const view = createProjection((() => rows) as any, [] as any[], { key: "id" } as any);
++      return (
++        <Loading fallback="loading">
++          <p>{view.map((r: any) => r.t).join(",")}</p>
++        </Loading>
++      );
++    }
++    const html = await render(App);
++    expect(html).toMatch(/loading.*<p[^>]*>A<\/p>/s);
++  });
++
++  test("createOptimisticStore(() => store) waits for the store", async () => {
++    function App() {
++      const rows = rowsStore();
++      const [view] = createOptimisticStore((() => rows) as any, [] as any[], { key: "id" } as any);
++      return (
++        <Loading fallback="loading">
++          <p>{view.map((r: any) => r.t).join(",")}</p>
++        </Loading>
++      );
++    }
++    const html = await render(App);
++    expect(html).toMatch(/loading.*<p[^>]*>A<\/p>/s);
++  });
++});
 ```
 
 ---
 
-### Incident Patch 2: `6ea2b895` (2026-11-16)
-**Commit Message**: docs(solid): match the createReaction and createDeferred JSDoc to their signatures (#4951)
+### Incident Patch 2: `83d42bae` (2026-11-20)
+**Commit Message**: fix(signals): a removed row's cleanup can call an action during teardown (#5123) (#5124)
 
-**File**: `packages/solid/src/reactive/signal.ts` (modified, +4/-4)
+#4168 let a cleanup write during teardown by standing the owned-scope write
+guard down while disposalDepth is raised. The action() guard, which its
+comment calls the same scope test as setSignal, did not get the exemption, so
+a keyed row whose cleanup invokes an action threw ACTION_CALLED_IN_OWNED_SCOPE
+in development while production ran it.
+
+Co-authored-by: Chris Gaafary <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.changeset/cleanup-action-during-teardown.md` (added, +5/-0)
 ```diff
-@@ -385,7 +385,7 @@ export function createEffect<Next, Init>(
-  *   options?: { name?: string }
-  * ): (fn: () => void) => void;
-  * ```
-- * @param invalidated a function that is called when tracked function is invalidated.
-+ * @param onInvalidate a function that is called when tracked function is invalidated.
-  * @param options allows to set a name in dev mode for debugging purposes
+@@ -0,0 +1,5 @@
++---
++"@solidjs/signals": patch
++---
++
++Allow calling an action from a cleanup during teardown, as #4165 allowed writes. Removing a keyed row ran its cleanups inside the list's pass, so an action invoked from an `onCleanup` or an effect's returned cleanup threw `ACTION_CALLED_IN_OWNED_SCOPE` in development, while the same cleanup under a branch switching away ran. The dev-only action guard now stands down while cleanups run, like the owned-scope write guard. Production builds are unchanged.
+```
+
+**File**: `packages/signals/src/core/action.ts` (modified, +10/-3)
+```diff
+@@ -1,6 +1,6 @@
+ import { CONFIG_CHILDREN_FORBIDDEN } from "./constants.js";
+ import { isThenable } from "./async.js";
+-import { enterCallback, exitCallback, inRefCallback } from "./core.js";
++import { disposalDepth, enterCallback, exitCallback, inRefCallback } from "./core.js";
+ import { getOwner } from "./owner.js";
+ import type { Owner } from "./types.js";
+ import { emitDiagnostic } from "./dev.js";
+@@ -136,10 +136,17 @@ export function action<Args extends any[], Y, R>(
+     // and a computation tracking what its action writes livelocks (every
+     // write retriggers the compute, which fires a fresh invocation). Same
+     // scope test as setSignal: leaf imperative scopes (tracked effects,
+-    // onSettled) stay legal.
++    // onSettled) stay legal, and so do cleanups during teardown — a cleanup
++    // is not part of the computation disposing its owner (a list pass
++    // removing a row), so invoking an action there is imperative (#4165).
+     if (__DEV__) {
+       const owner = getOwner();
+-      if (owner && !(owner._config & CONFIG_CHILDREN_FORBIDDEN) && !inRefCallback()) {
++      if (
++        owner &&
++        !(owner._config & CONFIG_CHILDREN_FORBIDDEN) &&
++        !disposalDepth &&
++        !inRefCallback()
++      ) {
+         emitDiagnostic({
+           code: "ACTION_CALLED_IN_OWNED_SCOPE",
+           kind: "write",
+```
+
+**File**: `packages/signals/tests/for-row-cleanup-action.test.ts` (added, +118/-0)
+```diff
+@@ -0,0 +1,118 @@
++/**
++ * #4165 let a cleanup write during teardown: a cleanup is teardown, not part
++ * of whichever computation is disposing its owner. Invoking an action from a
++ * cleanup is the same imperative act, so the action guard stands down there
++ * too. Without it, removing a keyed row whose cleanup calls an action threw
++ * ACTION_CALLED_IN_OWNED_SCOPE in development, while the same cleanup under a
++ * branch switching away ran.
++ */
++import { afterEach, expect, it } from "vitest";
++import {
++  action,
++  createEffect,
++  createMemo,
++  createRenderEffect,
++  createRoot,
++  createSignal,
++  flush,
++  mapArray,
++  onCleanup,
++  untrack
++} from "../src/index.js";
++
++afterEach(() => flush());
++
++it("a removed row's onCleanup can call an action", async () => {
++  const [rows, setRows] = createSignal([1, 2]);
++  const [count, setCount] = createSignal(0);
++  const release = action(function* () {
++    setCount(n => n + 1);
++  });
++  const seen: unknown[] = [];
++  createRoot(() => {
++    const mapped = mapArray(rows, r => {
++      onCleanup(() => void release());
++      return r;
++    });
++    createRenderEffect(
++      () => mapped(),
++      v => void seen.push([...v])
++    );
++  });
++  flush();
++  setRows([2]);
++  flush();
++  await Promise.resolve();
++  flush();
++  setRows([2, 3]);
++  flush();
++  expect(seen).toEqual([[1, 2], [2], [2, 3]]);
++  expect(count()).toBe(1);
++});
++
++it("a removed row's effect-returned cleanup can call an action", async () => {
++  const [rows, setRows] = createSignal([1, 2]);
++  const [count, setCount] = createSignal(0);
++  const release = action(function* () {
++    setCount(n => n + 1);
++  });
++  createRoot(() => {
++    const mapped = mapArray(rows, r => {
++      createEffect(
++        () => r,
++        () => () => void release()
++      );
++      return r;
++    });
++    createRenderEffect(mapped, () => {});
++  });
++  flush();
++  setRows([2]);
++  flush();
++  await Promise.resolve();
++  flush();
++  expect(count()).toBe(1);
++});
++
++it("a branch's cleanup can call an action when the branch switches away", async () => {
++  const [on, setOn] = createSignal(true);
++  const [count, setCount] = createSignal(0);
++  const release = action(function* () {
++    setCount(n => n + 1);
++  });
++  createRoot(() => {
++    const branch = createMemo(() => {
++      if (!on()) return null;
++      return untrack(() => {
++        onCleanup(() => void release());
++        return 1;
++      });
++    });
++    createRenderEffect(branch, () => {});
++  });
++  flush();
++  setOn(false);
++  flush();
++  await Promise.resolve();
++  flush();
++  expect(count()).toBe(1);
++});
++
++it("still rejects an action called in a row's mapping body", () => {
++  const [rows] = createSignal([1]);
++  const noop = action(function* () {});
++  let caught: unknown;
++  createRoot(() => {
++    const mapped = mapArray(rows, r => {
++      try {
++        noop();
++      } catch (e) {
++        caught = e;
++      }
++      return r;
++    });
++    createRenderEffect(mapped, () => {});
++  });
++  flush();
++  expect(String(caught)).toMatch(/ACTION_CALLED_IN_OWNED_SCOPE/);
++});
+```
+
+**File**: `packages/web/test/for-row-cleanup-action.spec.tsx` (added, +44/-0)
+```diff
+@@ -0,0 +1,44 @@
++/**
++ * @jsxImportSource @solidjs/web
++ * @vitest-environment jsdom
++ */
++// #4165 let a removed <For> row's cleanup write; invoking an action from the
++// same cleanup is the same imperative act and must not be rejected as a call
++// in the list's owned scope.
++import { afterEach, expect, test } from "vitest";
++import { action, createSignal, flush, For, onCleanup, onSettled, resetErrorHalt } from "solid-js";
++import { render } from "../src/index.js";
++
++afterEach(() => resetErrorHalt());
++
++for (const [label, register] of [
++  ["onSettled cleanup", (fn: () => void) => onSettled(() => fn)],
++  ["onCleanup", (fn: () => void) => onCleanup(fn)]
++] as const)
++  test(`a row's ${label} can call an action when the row is removed`, async () => {
++    const [rows, setRows] = createSignal([1, 2]);
++    const [released, setReleased] = createSignal<number[]>([]);
++    const release = action(function* (n: number) {
++      yield Promise.resolve();
++      setReleased(r => [...r, n]);
++    });
++    function Row(props: { n: number }) {
++      register(() => void release(props.n));
++      return <i>{props.n}</i>;
++    }
++    const div = document.createElement("div");
++    const dispose = render(() => <For each={rows()}>{n => <Row n={n} />}</For>, div);
++    flush();
++    expect(div.textContent).toBe("12");
++    setRows([2]);
++    flush();
++    await Promise.resolve();
++    await Promise.resolve();
++    flush();
++    expect(div.textContent).toBe("2");
++    expect(released()).toEqual([1]);
++    setRows([2, 3]);
++    flush();
++    expect(div.textContent).toBe("23");
++    dispose();
++  });
+```
+
+---
+
+### Incident Patch 3: `99db9bce` (2026-11-20)
+**Commit Message**: fix(signals): refresh() while its answer is out waits for it, then re-asks once (#5094) (#5101)
+
+A refresh() re-asks the same question (D-34, F-9), so the answer already
+in flight is a valid value. Superseding it, a poll faster than the
+response never landed an answer, and a hold that read the polled node
+never settled.
+
+Outside an action, a refresh() made while the node's promise flight is
+pending now marks after that answer lands (a microtask after its flush).
+Calls made meanwhile share one re-ask, and their waiters deliver its
+answer. An action's refresh() still re-asks in its hold at once (D-31).
+The change lives in refresh() alone: bundles without refresh() are
+unchanged.
+
+
+Claude-Session: https://claude.ai/code/session_0117BoWKDYxhpjoT3aFUwrQv
+
+Co-authored-by: Claude <[REDACTED_EMAIL]>
+
+**File**: `.changeset/refresh-overlapping-poll-5094.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++"@solidjs/signals": patch
++---
++
++`refresh()` called while the same question's answer is still out no longer drops that answer (#5094). It waits for the answer to land, then re-asks once, however many times it was called meanwhile. Polling on an interval shorter than the response time now shows each answer, and other changes no longer wait behind the poll. A `refresh()` inside an action still re-asks at once in the action's hold.
+```
+
+**File**: `packages/signals/docs/RULES-INDEX.md` (modified, +3/-3)
+```diff
+@@ -58,7 +58,7 @@ Status legend: **live** stated and standing · **ruled** carries an explicit rul
+ | F-5 | live | `docs/RULES-FUNDAMENTALS.md:77` | boundaries.ts×1 | lean.test.ts×1 loading-on-errorboundary-sibling-4638.test.ts×1 loading-on-held-change-4605.test.ts×2 loading-reveal-held-outside-4593.test.ts×1 | A disarmed boundary forwards: it keeps its content and holds like any reader, until `on` arms it again |
+ | F-6 | live | `docs/RULES-FUNDAMENTALS.md:85` | boundaries.ts×1 constants.ts×2 core.ts×5 effect.ts×1 lanes.ts×10 scheduler.ts×4 seat.ts×2 verdict.ts×2 optimistic.ts×4 projection.ts×1 store.ts×3 | async-reads-ahead-edges.test.ts×1 async-reads-ahead-matrix.test.ts×2 async-reads-ahead-second-write.test.ts×1 derived-store-lane-derive.test.ts×1 error-is-an-answer.test.ts×1 gc.test.ts×1 ispending-async-derivation-4677.test.ts×3 ispending-memo-parked-seam-4439.test.ts×1 ispending-memo-wrapped-asker-4778.test.ts×2 latest-beside-staged-read-4365.test.ts×1 latest-derived-held-error-4106.test.ts×1 latest-derived-sync-error-4377.test.ts×1 latest-first-one-pass-4402.test.ts×1 latest-memo-inline-parity.test.ts×3 latest-stale-branch-hold-4661.test.ts×2 latest-two-readers-one-ask-4393.test.ts×5 loading-on-latest-fallback-4337.test.ts×1 optimistic-guess-beside-reask-4824.test.ts×1 optimistic-held-write-leak.test.ts×1 optimistic-layered-filter-4336.test.ts×1 optimistic-outside-reask-4690.test.ts×2 optimistic-question-change-4336.test.ts×6 optimistic-second-guess-reask-4629.test.ts×1 optimistic-second-log-guess-4666.test.ts×1 projection-lane-length-4631.test.ts×1 projection-second-guess-4629.test.ts×1 rejection-beside-ispending-3957.test.ts×1 derived-latest-confirmed-key.test.ts×1 derived-store-heal-4451.test.ts×1 unread-derive-midflight-mount-4491.test.ts×2 verdict-memo-after-staged-read.test.ts×1 verdict-memo-flight-no-reask.test.ts×7 verdict-memo-held-branch-4544.test.ts×3 verdict-memo-under-held-memo-4050.test.ts×1 verdict-read-order.test.ts×1 | Display-ahead readers show now and never hold the change they read ahead of; their own async holds them, in their own lane |
+ | F-7 | live | `docs/RULES-FUNDAMENTALS.md:93` | boundaries.ts×2 action.ts×1 constants.ts×1 core.ts×8 effect.ts×2 lanes.ts×2 signals.ts×1 | error-staged-recovery.test.ts×1 ispending-async-derivation-4677.test.ts×1 loading-reveal-held-outside-4593.test.ts×1 optimistic-held-write-leak.test.ts×1 optimistic-lane-seam-loop-4643.test.ts×4 ref-born-held-staged-4767.test.ts×2 verdict-memo-after-staged-read.test.ts×2 | Nothing else reveals ahead of the hold it belongs to |
+-| F-9 | live | `docs/RULES-FUNDAMENTALS.md:101` | boundaries.ts×2 async.ts×6 constants.ts×1 core.ts×10 effect.ts×1 lanes.ts×1 scheduler.ts×1 seat.ts×4 types.ts×4 verdict.ts×17 deferred.ts×2 projection.ts×1 store.ts×1 | action-refresh-ispending-loop-4349.test.ts×1 answered-then-reasked-released-reader.test.ts×1 answered-then-reasked-same-tick.test.ts×2 async-reads-ahead-second-write.test.ts×1 derived-store-derive-settle.test.ts×2 derived-store-first-landing-verdict.test.ts×1 first-load-superseded-answer-4569.test.ts×1 latest-first-one-pass-4402.test.ts×2 latest-ispending-refetch-loop.test.ts×1 loading-on-held-filter-refresh-4379.test.ts×1 midflight-memo-over-reask-4504.test.ts×1 optimistic-question-change-4336.test.ts×2 settle-diamond-revisit.test.ts×1 staged-error-netted-write.test.ts×1 staged-error-through-async-memo-4640.test.ts×1 two-sources-answered-reasked-4495.test.ts×2 verdict-memo-flight-no-reask.test.ts×9 verdict-probe-committed-4648.test.ts×2 | `isPending` is about a new question; a re-ask is quiet; a first load is loading, not pending |
++| F-9 | live | `docs/RULES-FUNDAMENTALS.md:101` | boundaries.ts×2 async.ts×6 constants.ts×1 core.ts×10 effect.ts×1 lanes.ts×1 scheduler.ts×1 seat.ts×4 types.ts×4 verdict.ts×17 deferred.ts×2 signals.ts×1 projection.ts×1 store.ts×1 | action-refresh-ispending-loop-4349.test.ts×1 answered-then-reasked-released-reader.test.ts×1 answered-then-reasked-same-tick.test.ts×2 async-reads-ahead-second-write.test.ts×1 derived-store-derive-settle.test.ts×2 derived-store-first-landing-verdict.test.ts×1 first-load-superseded-answer-4569.test.ts×1 latest-first-one-pass-4402.test.ts×2 latest-ispending-refetch-loop.test.ts×1 loading-on-held-filter-refresh-4379.test.ts×1 midflight-memo-over-reask-4504.test.ts×1 optimistic-question-change-4336.test.ts×2 refresh-overlapping-poll-5094.test.ts×1 settle-diamond-revisit.test.ts×1 staged-error-netted-write.test.ts×1 staged-error-through-async-memo-4640.test.ts×1 two-sources-answered-reasked-4495.test.ts×2 verdict-memo-flight-no-reask.test.ts×9 verdict-probe-committed-4648.test.ts×2 | `isPending` is about a new question; a re-ask is quiet; a first load is loading, not pending |
+ | F-10 | live | `docs/RULES-FUNDAMENTALS.md:109` | async.ts×1 constants.ts×1 core.ts×8 guesses.ts×1 scheduler.ts×1 seat.ts×6 types.ts×1 verdict.ts×4 | latest-memo-inline-parity.test.ts×1 optimistic-lane-seam-loop-4643.test.ts×1 proto-key-removal
+```
+
+**File**: `packages/signals/src/core/core.ts` (modified, +4/-3)
+```diff
+@@ -2470,8 +2470,9 @@ export function staleValues<T>(fn: () => T, set = true): T {
+ }
+ 
+ /** Core half of `refresh()` (signals.ts): marks the next recompute a quiet
+- * re-ask and schedules it. */
+-export function markRefresh(node: Computed<any>): void {
++ * re-ask and schedules it. `check`: the owned-scope check alone, the mark
++ * coming after the answer out lands (#5094). */
++export function markRefresh(node: Computed<any>, check?: boolean): void {
+   if (
+     __DEV__ &&
+     context &&
+@@ -2492,7 +2493,7 @@ export function markRefresh(node: Computed<any>): void {
+     });
+     throw new Error(REACTIVE_WRITE_IN_OWNED_SCOPE_REFRESH_MESSAGE);
+   }
+-  if (typeof node._fn === "function" && !(node._flags & REACTIVE_DISPOSED)) {
++  if (!check && typeof node._fn === "function" && !(node._flags & REACTIVE_DISPOSED)) {
+     // A refresh in a manual write's frame re-asks with the write as `prev`
+     // (D-8, #3026). The next pass's flight is a quiet re-ask (F-9), unless an
+     // input changed this tick.
+```
+
+**File**: `packages/signals/src/signals.ts` (modified, +35/-7)
+```diff
+@@ -42,7 +42,13 @@ import {
+   staleReader,
+   type Transaction
+ } from "./core/scheduler.js";
+-import { REACTIVE_JOINED, STATUS_ERROR, STATUS_PENDING } from "./core/constants.js";
++import {
++  REACTIVE_CHECK,
++  REACTIVE_DIRTY,
++  REACTIVE_JOINED,
++  STATUS_ERROR,
++  STATUS_PENDING
++} from "./core/constants.js";
+ import { unwrapStatusError } from "./core/error.js";
+ import { optimisticWrite } from "./core/guesses.js";
+ import { truthConfirmed, truthRead } from "./core/truth.js";
+@@ -900,9 +906,12 @@ export function resolve<T>(fn: () => T): Promise<T> {
+  * - Accessor targets resolve with the settled value; store targets resolve
+  *   with the store node passed (reads through it are fresh after the await).
+  * - A failed re-ask rejects with the error.
+- * - Semantics are quiescence, not flight identity: if another refresh (or
+- *   any invalidation) supersedes this one mid-flight, the promise waits for
+- *   — and delivers — whatever finally lands.
++ * - Semantics are quiescence, not flight identity: if an invalidation
++ *   supersedes this one mid-flight, the promise waits for — and delivers —
++ *   whatever finally lands.
++ * - Called while the target's previous answer is still out (outside an
++ *   action), it waits for that answer to land, then re-asks once; calls made
++ *   meanwhile share that re-ask, and the promise delivers its answer.
   *
-  * @description https://docs.solidjs.com/reference/secondary-primitives/create-reaction
-@@ -785,11 +785,11 @@ export interface DeferredOptions<T> {
-  * Creates a reactive computation that only runs and notifies the reactive context when the browser is idle
-  * ```typescript
-  * export function createDeferred<T>(
-- *   fn: (v: T) => T,
-+ *   source: () => T,
-  *   options?: { timeoutMs?: number, name?: string, equals?: false | ((prev: T, next: T) => boolean) }
-- * ): () => T);
-+ * ): () => T;
-  * ```
-- * @param fn a function that receives its previous or the initial value, if set, and returns a new value used to react on a computation
-+ * @param source the accessor whose value is deferred until the browser is idle
-  * @param options allows to set the timeout in milliseconds, use a custom comparison function and set a name in dev mode for debugging purposes
-  *
-  * @description https://docs.solidjs.com/reference/secondary-primitives/create-deferred
+  * @example
+  * ```ts
+@@ -949,12 +958,27 @@ export function refresh<T>(
+   // answer. resolve()'s own eager compute is untouched: created after a
+   // refresh it still settles stale-while-revalidate (#2930) — its contract is
+   // "first settled value", not "next quiescent state".
+-  markRefresh(node);
+   // The transaction `refresh()` is called in (an action's slice): the
+   // waiter, created on the microtask below, is its reader (`watch`).
+   const own = flushTransaction;
++  // A re-ask while the same question's answer is out waits for that answer,
++  // then re-asks once: the answer is a valid value (D-34, F-9). Superseding
++  // it, a poll faster than the response never landed one, and a hold that
++  // read the polled node never settled (#5094). The calls made meanwhile mark
++  // after the landing's flush, so they coalesce as same-tick calls do, and
++  // their waiters deliver the re-ask's answer. An action's `refresh()`
++  // re-asks in its hold at once (D-31).
++  const flight = node._x?._inFlight as PromiseLike<unknown> | null | undefined;
++  const later = !!(
++    own === null &&
++    node._statusFlags & STATUS_PENDING &&
++    !(node._flags & (REACTIVE_CHECK | REACTIVE_DIRTY)) &&
++    typeof (flight as any)?.then === "function"
++  );
++  markRefresh(node, later);
+   const promise = new Promise<any>((res, rej) => {
+-    queueMicrotask(() => {
++    const run = () => {
++      if (later && node._x?._inFlight === flight) markRefresh(node);
+       // The root is load-bearing: an ownerless computed is auto-disposing,
+       // and the settle walk releases an unobserved one instead of re-running
+       // it, so the waiter would never see the refetch land (#3888). Settle
+@@ -990,7 +1014,11 @@ export function refresh<T>(
+           own
+         );
+       createRoot(make);
+-    });
++    };
++    if (later) {
++      const re = () => queueMicrotask(run);
++      flight!.then(re, re);
++    } else queueMicrotask(run);
+   });
+   // Fire-and-forget refresh must not turn a failed refetch into an unhandled
+   // rejection; awaiting callers attach their own handlers to `promise`.
+```
+
+**File**: `packages/signals/tests/optimistic-lane-seam-loop-4643.test.ts` (modified, +5/-2)
+```diff
+@@ -346,7 +346,8 @@ for (const withMemo of [true, false])
+         "a list lands=read:",
+         "filter all=all:[2][4]",
+         ...rest,
+-        "land list=all:[2][4]",
++        // The second poll, made while the first's answer was out, waited for
++        // it and re-asked once (#5094): one list request fewer.
+         "land list=all:[1][2][4]",
+         "poll=all:[1][2][4]",
+         "land list=all:[1][2][4]"
+@@ -471,8 +472,10 @@ it("#4643: a toggle beside a held poll answer shows the screen's other rows, who
+     "land poll=[1o][2o][3o] 3 left",
+     "t3=[1o][2o][3x] 2 left",
+     "land toggle:1=[1o][2o][3x] 2 left",
+-    "land list=[1o][2o][3x] 2 left",
++    // A refresh made while the poll's answer was out re-asks after it lands
++    // (#5094), so its list request comes after the add's.
+     "land add:3=[1o][2o][3x] 2 left",
++    "land list=[1o][2o][3x] 2 left",
+     "land toggle:3=[1o][2o][3x] 2 left",
+     "land list=[1o][2o][3x] 2 left",
+     "land list=[1o][2o][3x] 2 left",
+```
+
+**File**: `packages/signals/tests/refresh-await.test.ts` (modified, +12/-7)
+```diff
+@@ -4,8 +4,9 @@
+  * Contract under test:
+  * - Accessor targets resolve with the settled value; store targets resolve
+  *   with the store node passed (root or nested — the family re-asks as one).
+- * - Quiescence, not flight identity: a superseding refresh (or any newer
+- *   invalidation) folds every waiter onto whatever finally lands.
++ * - Quiescence, not flight identity: a newer invalidation (an input change)
++ *   folds every waiter onto whatever finally lands. A refresh made while a
++ *   re-ask's answer is out waits for it and re-asks once (#5094).
+  * - The seam is the landing itself, not graph notification: an equal-value
+  *   landing (completely silent to subscribers) still settles the promise.
+  * - A failed re-ask rejects with the error; `yield refresh(x)` in an action
+@@ -191,7 +192,7 @@ test("fire-and-forget refresh with a failing re-ask surfaces no unhandled reject
+   dispose();
+ });
+ 
+-test("supersession: waiters from both refreshes deliver the final landing", async () => {
++test("overlapping refreshes: the answer out lands, then one re-ask (#5094)", async () => {
+   const gates: ReturnType<typeof deferred<string>>[] = [];
+   let m!: SourceAccessor<string>;
+   let dispose!: () => void;
+@@ -212,18 +213,22 @@ test("supersession: waiters from both refreshes deliver the final landing", asyn
+   const p1 = refresh(m);
+   flush();
+   await tick();
+-  const p2 = refresh(m); // supersedes flight 2 with flight 3
++  // Flight 2 is out: this re-ask waits for its answer, then asks once.
++  const p2 = refresh(m);
+   flush();
+   await tick();
++  expect(gates.length).toBe(2);
+ 
+-  // The superseded flight landing is ignored — not delivered to anyone.
+-  gates[1].resolve("stale");
++  // Flight 2's answer is a valid value of the same question (D-34): it lands
++  // and settles p1; p2's re-ask goes up after it.
++  gates[1].resolve("second");
+   await tick();
+   flush();
++  await expect(p1).resolves.toBe("second");
++  expect(gates.length).toBe(3);
+   gates[2].resolve("final");
+   await tick();
+   flush();
+-  await expect(p1).resolves.toBe("final");
+   await expect(p2).resolves.toBe("final");
+   expect(m()).toBe("final");
+   dispose();
+```
+
+**File**: `packages/signals/tests/refresh-overlapping-poll-5094.test.ts` (added, +178/-0)
+```diff
+@@ -0,0 +1,178 @@
++/**
++ * #5094: `refresh()` while the same question's answer is still out waits for
++ * that answer and re-asks once after it lands. A re-ask asks the same
++ * question (D-34, F-9), so the answer in flight is a valid value: superseding
++ * it, a poll faster than the response never showed a new value, and an
++ * unrelated write that read the polled memo waited behind the poll forever.
++ */
++import { expect, test } from "vitest";
++import {
++  action,
++  createMemo,
++  createRenderEffect,
++  createRoot,
++  createSignal,
++  flush,
++  isPending,
++  refresh
++} from "../src/index.js";
++
++const tick = () => new Promise<void>(r => setTimeout(r, 0));
++
++function setup() {
++  const answers: ((v: number) => void)[] = [];
++  let asked = 0;
++  const seen: number[] = [];
++  let stats!: () => number;
++  createRoot(() => {
++    stats = createMemo(() => {
++      const n = ++asked;
++      return new Promise<number>(r => answers.push(() => r(n)));
++    });
++    createRenderEffect(stats, v => {
++      seen.push(v);
++    });
++  });
++  flush();
++  const answer = async () => {
++    answers.shift()!(0);
++    await tick();
++    await tick();
++  };
++  return { answers, seen, stats: () => stats, asked: () => asked, answer };
++}
++
++test("refreshes while an answer is out coalesce into one re-ask after it lands", async () => {
++  const { seen, stats, asked, answer } = setup();
++  await answer();
++  expect(seen).toEqual([1]);
++
++  refresh(stats());
++  await tick();
++  expect(asked()).toBe(2);
++
++  // Two more polls while #2 is out: no new request yet.
++  refresh(stats());
++  refresh(stats());
++  await tick();
++  expect(asked()).toBe(2);
++
++  // #2 lands and shows; the polls owe one re-ask.
++  await answer();
++  expect(seen).toEqual([1, 2]);
++  expect(asked()).toBe(3);
++
++  await answer();
++  expect(seen).toEqual([1, 2, 3]);
++  // Nothing was owed after #3.
++  expect(asked()).toBe(3);
++});
++
++test("a poll faster than the response shows every answer", async () => {
++  const { seen, stats, asked, answer } = setup();
++  await answer();
++  for (let i = 0; i < 4; i++) {
++    refresh(stats());
++    await tick();
++    refresh(stats());
++    await tick();
++    await answer();
++  }
++  expect(seen).toEqual([1, 2, 3, 4, 5]);
++  expect(asked()).toBe(6);
++});
++
++test("the awaited refresh() settles at the answer that lands", async () => {
++  const { stats, answer } = setup();
++  await answer();
++  refresh(stats());
++  await tick();
++  const p = refresh(stats());
++  await answer();
++  await answer();
++  expect(await p).toBeGreaterThanOrEqual(2);
++});
++
++test("a write that reads the polled memo is not held behind the poll", async () => {
++  const answers: ((v: string) => void)[] = [];
++  const seen: string[] = [];
++  let stats!: () => string;
++  let setRange!: (v: number) => void;
++  createRoot(() => {
++    const [range, set] = createSignal(1);
++    setRange = set;
++    stats = createMemo(() => {
++      const r = range();
++      return new Promise<string>(res => answers.push(() => res("range " + r)));
++    });
++    createRenderEffect(stats, v => {
++      seen.push(v);
++    });
++  });
++  flush();
++  answers.shift()!("");
++  await tick();
++  expect(seen).toEqual(["range 1"]);
++
++  refresh(stats);
++  await tick();
++  setRange(2);
++  flush();
++  // Polls keep coming while the range's answer is out.
++  refresh(stats);
++  await tick();
++  while (answers.length) {
++    answers.shift()!("");
++    await tick();
++    await tick();
++  }
++  expect(seen[seen.length - 1]).toBe("range 2");
++});
++
++test("refresh() with nothing out re-asks at once", async () => {
++  const { stats, asked, answer } = setup();
++  await answer();
++  refresh(stats());
++  await tick();
++  expect(asked()).toBe(2);
++  await answer();
++  refresh(stats());
++  await tick();
++  expect(asked()).toBe(3);
++});
++
++test("the coalesced re-ask stays quiet", async () => {
++  const { stats, answer } = setup();
++  await answer();
++  refresh(stats());
++  await tick();
++  refresh(stats());
++  let pending: boolean | undefined;
++  createRoot(() =>
++    createRenderEffect(
++      () => isPending(stats()),
++      v => void (pending = v)
++    )
++  );
++  flush();
++  expect(pending).toBe(false);
++  await answer();
++  expect(pending).toBe(false);
++});
++
++test("an action's refresh() still re-asks inside its hold", async () => {
++  const { stats, asked, answer } = setup();
++  await answer();
++  refresh(stats());
++  await tick();
++  expect(asked()).toBe(2);
++  const run = action(function* () {
++    yield refresh(stats());
++  });
++  const done = run();
++  await tick();
++  expect(asked()).toBe(3);
++  await answer();
++  await answer();
++  await done;
++});
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4956** (2026-11-16): chore: keep examples and test-integration out of the version PR (@ryansolid)
-- **PR #4955** (2026-11-16): chore: publish solid-js 1.x to the v1-latest dist-tag (@ryansolid)
-- **PR #4954** (2026-11-16): chore: publish 2.0.0 to latest, exit pre mode, drop RC wording (@ryansolid)
-- **PR #4952** (2026-11-16): chore: point docs links at docs.solidjs.com (@ryansolid)
-- **PR #4951** (2026-11-16): docs(solid): match the createReaction and createDeferred JSDoc to their signatures (@farisbasha)
-- **PR #4949** (2026-11-16): chore(size): batch re-record after the 2026-11-16 fix batch (@ryansolid)
+- **PR #5138** (2026-11-20): docs(signals): a pass stops at its first throw; read order decides a rejection's first screen (#5114) (@ryansolid)
+- **PR #5137** (2026-11-20): refactor(signals): a guessed node stores two values; its lane holds the waiting guess (@ryansolid)
+- **PR #5135** (2026-11-20): docs: optimistic writes always revert; examples keep the truth (#5129) (@devagrawal09)
+- **PR #5134** (2026-11-20): test(babel-plugin): accept @babel/generator 8.1.3's NaN output (fixes red babel-8 job) (@ryansolid)
+- **PR #5133** (2026-11-20): docs: state the engine's value model in AGENTS.md (@ryansolid)
+- **PR #5132** (closed): fix(compiler): keep JSX setup of a later declarator in place (#5102) (@devagrawal09)
 
 ---
 
@@ -1645,31 +1388,35 @@ Co-authored-by: Claude <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. publish solid-js 1.x to the v1-latest dist-tag
+## X. solid): a server projection over a pending async store waits for it
 
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in solidjs/solid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/ssr-projection-pending-store-5097.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in solidjs/solid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f8138641`: publish solid-js 1.x to the v1-latest dist-tag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fc0dac0c`: solid): a server projection over a pending async store waits for it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/ssr-projection-pending-store-5097.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "release:only": "node scripts/publish-solid-js.mjs && changeset publish",
+---
+"solid-js": patch
+---
+
+On the server, a projection or derived optimistic store whose function returns a pending async store (`createProjection(() => rows, …)`, `createOptimisticStore(() => rows, …)`) now waits for that store like a derive that read it, so `<Loading>` shows its fallback and the answer streams in. Before, adopting the pending store threw `NotReadyError` out of the component body.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    "release:only": "changeset publish",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f8138641` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fc0dac0c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
