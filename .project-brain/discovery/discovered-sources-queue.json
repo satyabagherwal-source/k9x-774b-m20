@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T04:58:14.518Z",
+  "updated_at": "2026-11-20T05:08:24.912Z",
   "stats": {
-    "total_discovered": 6187,
-    "approved_pending_harvest": 5850,
+    "total_discovered": 6193,
+    "approved_pending_harvest": 5856,
     "harvested_count": 0,
     "rejected_count": 337,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5831,
+      "COMMUNITY_AND_EXPERT": 5837,
       "OFFICIAL_DOCUMENTATION": 194,
       "STANDARDS_AND_SPECIFICATIONS": 114,
       "ENGINEERING_BLOGS": 4,
@@ -133778,6 +133778,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
         "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-C5990779B421": {
+      "id": "SRC-C5990779B421",
+      "url": "https://github.com/CrawlCove/seo-test-site",
+      "title": "https://github.com/CrawlCove/seo-test-site",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:08:24.583Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
+        "fileName": "crawlcove-crawlcove-hreflang-checker-learnings.md"
+      }
+    },
+    "SRC-9A19A5A19E0D": {
+      "id": "SRC-9A19A5A19E0D",
+      "url": "https://crawlcove.github.io/seo-test-site/intl/en",
+      "title": "https://crawlcove.github.io/seo-test-site/intl/en",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:08:24.654Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
+        "fileName": "crawlcove-crawlcove-hreflang-checker-learnings.md"
+      }
+    },
+    "SRC-92CE7C99D419": {
+      "id": "SRC-92CE7C99D419",
+      "url": "https://crawlcove.github.io/seo-test-site/intl/fr",
+      "title": "https://crawlcove.github.io/seo-test-site/intl/fr",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:08:24.706Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
+        "fileName": "crawlcove-crawlcove-hreflang-checker-learnings.md"
+      }
+    },
+    "SRC-34ACA47B54B5": {
+      "id": "SRC-34ACA47B54B5",
+      "url": "https://crawlcove.github.io/seo-test-site/intl/de",
+      "title": "https://crawlcove.github.io/seo-test-site/intl/de",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:08:24.769Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
+        "fileName": "crawlcove-crawlcove-hreflang-checker-learnings.md"
+      }
+    },
+    "SRC-6D1A04AD73EF": {
+      "id": "SRC-6D1A04AD73EF",
+      "url": "https://www.example.com/en-gb",
+      "title": "https://www.example.com/en-gb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:08:24.822Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
+        "fileName": "crawlcove-crawlcove-hreflang-checker-learnings.md"
+      }
+    },
+    "SRC-79CE038B4130": {
+      "id": "SRC-79CE038B4130",
+      "url": "https://crawlcove.gi/",
+      "title": "https://crawlcove.gi/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:08:24.912Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
+        "fileName": "crawlcove-crawlcove-hreflang-checker-learnings.md"
       }
     }
   }

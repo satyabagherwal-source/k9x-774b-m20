@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-NIB3",
-    "timestamp": "2026-11-18T09:14:39.087Z",
-    "repository": "Nasiko-Labs/nasiko",
-    "learningId": "learn-github-nasiko-labs-nasiko",
-    "contentHash": "b237999d893a00f25cb84836d4464383ea5704a24c2d0da1e64ddcee1570a329",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-NODI",
     "timestamp": "2026-11-18T09:14:46.950Z",
     "repository": "DNSControl/dnscontrol",
@@ -7492,6 +7477,21 @@
     "contentHash": "b84711d3d8d4219e8cded5da8a4e6b9fdd8eaa6bae2c6b7a824b772486871a74",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-PO0L",
+    "timestamp": "2026-11-20T05:07:43.701Z",
+    "repository": "CrawlCove/hreflang-checker",
+    "learningId": "learn-github-crawlcove-hreflang-checker",
+    "contentHash": "f1e63dd159add14564ae0660b1d4fac600bd2f2104fbfff7cc5b9239981b9e6c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

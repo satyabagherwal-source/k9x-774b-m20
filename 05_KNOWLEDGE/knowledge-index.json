@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T04:58:15.600Z",
+  "last_updated": "2026-11-20T05:08:27.464Z",
   "total_verified_learnings": 9024,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22199,
+  "total_items": 22203,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-NZW8-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-QKZ7-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "5ee5f7af90976b18353954b78fd9783f3338c382d4135ced43fd26f5d006ee91",
+      "content_hash": "221f4bbc8809586cbdc37b35b6e1407dccc54ac79671d3374468d971abcdab99",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:38:26.177Z"
+      "persisted_at": "2026-11-20T05:08:26.432Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "cd21b65906ba972407b1f3aa3d9204c4f9211acfa5eafbb4abceb3cc63eb63fe",
+      "content_hash": "c3ecdb08c3e85025c08e3249ebf75f46e7beff235194306f29db85ffe24b5f4f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:38:26.329Z"
+      "persisted_at": "2026-11-20T05:08:26.636Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9ae5a00790cbd95fe2e46c325c5c97f953039e7229ed6415e4783877ae2515e3",
+      "content_hash": "1033d710f318303daf1de48b260e913691a16993116cd09980055e168189417d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:38:26.479Z"
+      "persisted_at": "2026-11-20T05:08:26.837Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -253073,8 +253073,8 @@
       "slug": "crawlcove-crawlcove-hreflang-checker",
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
-      "source_version": "a05c6bc3",
-      "content_hash": "84963a5a4bd7d4e60fd8646ae5859c4e55d529fd2c319dc2fbf6893621d41761",
+      "source_version": "e5c444d2",
+      "content_hash": "f1e63dd159add14564ae0660b1d4fac600bd2f2104fbfff7cc5b9239981b9e6c",
       "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
       "promoted_rules": [
@@ -253089,7 +253089,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T02:06:33.073Z",
+      "verified_at": "2026-11-20T05:07:43.472Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253143,10 +253143,10 @@
       "relative_path": "08_VERIFICATION/crawlcove-crawlcove-hreflang-checker-verification-protocol-empirical-defect-shie.md",
       "title": "Verification Protocol: Empirical Defect Shield for CrawlCove/hreflang-checker",
       "repository": "CrawlCove/hreflang-checker",
-      "source_version": "a05c6bc3",
-      "content_hash": "b2d2ecb141c25be92969a934f8ac96df026a05490ad5b9cf0831313ee1ebcfaf",
+      "source_version": "e5c444d2",
+      "content_hash": "7561ceccc633d9295ae62b8b2fa09b22bf93e25baeb1a729f8b45d79c9309ad0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T02:06:33.606Z"
+      "persisted_at": "2026-11-20T05:07:44.402Z"
     },
     "candidate_directive-readme-crawl-cove-banner": {
       "item_id": "candidate_directive-readme-crawl-cove-banner",
@@ -253180,9 +253180,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for crawlcove-crawlcove-hreflang-checker-learnings",
       "repository": "crawlcove-crawlcove-hreflang-checker-learnings",
       "source_version": "HEAD",
-      "content_hash": "7e3103a15641fcecf7d9988489d707d0916b14e500c7bcd083776a27cda22a05",
+      "content_hash": "131929c59295789b8836f26ea7e3258ac24e8b9e2eb3605cb2f513316e2bf619",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T02:06:36.835Z"
+      "persisted_at": "2026-11-20T05:08:25.591Z"
     },
     "learn-github-crate-ci-typos": {
       "learning_id": "learn-github-crate-ci-typos",
@@ -287805,9 +287805,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "636979f5d4274e58b14b81b228de3f350f5f844a4ae955e75d59f90e908014a6",
+      "content_hash": "bb1b9a76e26a0f733d7d963d9aedbc48958fb63a30501c5579d8309d7a3da085",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:14:27.902Z"
+      "persisted_at": "2026-11-20T05:08:27.464Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -300540,6 +300540,54 @@
       "content_hash": "2327896305160bd822a1e5be61f7e714cdba4d0164f683e4aff053afbc6f31a1",
       "domain_letter": "H",
       "persisted_at": "2026-11-20T04:58:13.997Z"
+    },
+    "candidate_directive-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site": {
+      "item_id": "candidate_directive-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PO8R-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site.md",
+      "title": "keyword-led first screen, animated demo recorded against seo-test-site,",
+      "repository": "CrawlCove/hreflang-checker",
+      "source_version": "e5c444d2",
+      "content_hash": "0aaef111dd50619eb51fe213dc006b33ca13071e1f913c3203b06f290023929e",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-20T05:07:43.997Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-crawlcove-hreflang-checker-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-crawlcove-hreflang-checker-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-crawlcove-crawlcove-hreflang-checker-search-distribution-intelligence-crawlcove-.md",
+      "title": "Search & Distribution Intelligence: CrawlCove/hreflang-checker Core Invariants",
+      "repository": "CrawlCove/hreflang-checker",
+      "source_version": "e5c444d2",
+      "content_hash": "79698588d8e90c8a0db6159a05beee6074209be0e972096a95df9fedc555df5c",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-20T05:07:44.190Z"
+    },
+    "candidate_directive-readme-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site": {
+      "item_id": "candidate_directive-readme-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QK0U-readme-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site.md",
+      "title": "README: keyword-led first screen, animated demo recorded against seo-test-site,",
+      "repository": "crawlcove-crawlcove-hreflang-checker-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b42addf91c3226b99034d7bf6c8af7f174ecba7a799a738640780586faf296b8",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T05:08:25.183Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-hreflang-checker-learnings-": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-hreflang-checker-learnings-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-crawlcove-crawlcove-hreflang-checker-learnings-search-distribution-intelligence-.md",
+      "title": "Search & Distribution Intelligence: crawlcove-crawlcove-hreflang-checker-learnings Core Invariants",
+      "repository": "crawlcove-crawlcove-hreflang-checker-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8cee0cd05bd9b946b1d2a943445a5bd7196e1aa055a8f6646bd77478402ff66c",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-20T05:08:25.392Z"
     }
   },
   "ai-builder-brain": {

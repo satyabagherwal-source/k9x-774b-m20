@@ -1873,10 +1873,10 @@
     "repository": "CrawlCove/hreflang-checker",
     "platform": "github",
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
-    "sourceVersion": "a05c6bc3",
+    "sourceVersion": "e5c444d2",
     "license": "MIT",
-    "contentHash": "84963a5a4bd7d4e60fd8646ae5859c4e55d529fd2c319dc2fbf6893621d41761",
-    "lastHarvestedAt": "2026-11-16T02:06:33.227Z",
+    "contentHash": "f1e63dd159add14564ae0660b1d4fac600bd2f2104fbfff7cc5b9239981b9e6c",
+    "lastHarvestedAt": "2026-11-20T05:07:43.706Z",
     "learningId": "learn-github-crawlcove-hreflang-checker"
   },
   "alecxe-scrapy-fake-useragent": {

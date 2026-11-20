@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T04:58:10.361Z",
-  "total_cycles_completed": 10930,
-  "total_learnings_persisted": 10930,
+  "last_updated": "2026-11-20T05:07:43.744Z",
+  "total_cycles_completed": 10931,
+  "total_learnings_persisted": 10931,
   "total_rules_promoted": 10296,
   "history": [
-    {
-      "timestamp": "2026-11-19T07:51:10.378Z",
-      "repository": "Tencent-TDS/KuiklyUI",
-      "learningId": "learn-github-tencent-tds-kuiklyui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T08:03:00.385Z",
       "repository": "LiquidAI/d1-3B",
@@ -1403,6 +1396,13 @@
       "repository": "etcd-io/etcd",
       "learningId": "learn-github-etcd-io-etcd",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T05:07:43.744Z",
+      "repository": "CrawlCove/hreflang-checker",
+      "learningId": "learn-github-crawlcove-hreflang-checker",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

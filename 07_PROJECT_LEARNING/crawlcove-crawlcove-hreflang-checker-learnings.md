@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md`  
 > **Source**: github ([https://github.com/CrawlCove/crawlcove-hreflang-checker](https://github.com/CrawlCove/crawlcove-hreflang-checker))  
-> **Source Version**: `a05c6bc3`  
+> **Source Version**: `e5c444d2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T02:06:32.333Z  
+> **Timestamp**: 2026-11-20T05:07:43.126Z  
 > **Learning ID**: `learn-github-crawlcove-hreflang-checker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/CrawlCove/crawlcove-hreflang-checker](https://github.com/CrawlCove/crawlcove-hreflang-checker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T02:06:13.585Z  
+> **Harvest Timestamp**: 2026-11-20T05:07:42.863Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -419,17 +419,184 @@ export * from './hreflang.js'
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a05c6bc3` (2026-11-15)
-**Commit Message**: README: Crawl Cove banner
+### Incident Patch 1: `0de802a3` (2026-11-20)
+**Commit Message**: README: keyword-led first screen, animated demo recorded against seo-test-site, quick start with real output, shared Related tools table
 
-**File**: `README.md` (modified, +2/-0)
+**File**: `README.md` (modified, +51/-18)
 ```diff
-@@ -1,3 +1,5 @@
-+<a href="https://crawlcove.com/download?utm_source=github&utm_medium=readme&utm_campaign=hreflang-checker"><img src="https://raw.githubusercontent.com/CrawlCove/.github/main/banners/hreflang-checker.svg" width="1200" alt="hreflang-checker: Validate the hreflang tags on a page or across a whole XML sitemap, including self-reference, x-default and return tags." /></a>
-+
- # crawlcove-hreflang-checker
+@@ -1,11 +1,37 @@
+ <a href="https://crawlcove.com/download?utm_source=github&utm_medium=readme&utm_campaign=hreflang-checker"><img src="https://raw.githubusercontent.com/CrawlCove/.github/main/banners/hreflang-checker.svg" width="1200" alt="hreflang-checker: Validate the hreflang tags on a page or across a whole XML sitemap, including self-reference, x-default and return tags." /></a>
  
- An hreflang checker for the command line: read a page's hreflang annotations from both places Google looks (the `<link rel="alternate" hreflang>` tags in its `<head>` and the HTTP `Link` response header), or every `<xhtml:link>` annotation in an XML sitemap, then validate the language and region codes, confirm a self-referencing tag and `x-default`, fetch each alternate to confirm its return tag, and flag the two things that make a correct set get ignored anyway: a `noindex` on the page and a canonical pointing somewhere else. Non-zero exit code for CI.
+-# crawlcove-hreflang-checker
++# hreflang-checker
+ 
+-An hreflang checker for the command line: read a page's hreflang annotations from both places Google looks (the `<link rel="alternate" hreflang>` tags in its `<head>` and the HTTP `Link` response header), or every `<xhtml:link>` annotation in an XML sitemap, then validate the language and region codes, confirm a self-referencing tag and `x-default`, fetch each alternate to confirm its return tag, and flag the two things that make a correct set get ignored anyway: a `noindex` on the page and a canonical pointing somewhere else. Non-zero exit code for CI.
++An **hreflang checker** CLI: read a page's hreflang annotations from both places Google looks (the `<link rel="alternate" hreflang>` tags in its `<head>` and the HTTP `Link` response header), or every `<xhtml:link>` annotation in an XML sitemap, then validate the language and region codes, confirm a self-referencing tag and `x-default`, fetch each alternate to confirm its return tag, and flag the two things that make a correct set get ignored anyway: a `noindex` on the page and a canonical pointing somewhere else. Non-zero exit code for CI.
+ 
+ Prefer a form? The same check runs in the browser at [crawlcove.com/tools/hreflang-checker](https://crawlcove.com/tools/hreflang-checker?utm_source=github&utm_medium=hreflang-checker).
+ 
++<img src="docs/demo.svg" width="980" alt="Terminal recording: checking the English page of the SEO test site finds the French alternate does not link back and no x-default">
++
++*Recorded from a real run against [seo-test-site](https://github.com/CrawlCove/seo-test-site), a public site with 54 planted SEO problems that you can test against too.*
++
++## Quick start
++
++```sh
++npx github:CrawlCove/hreflang-checker https://crawlcove.github.io/seo-test-site/intl/en/
++```
++
++```
++https://crawlcove.github.io/seo-test-site/intl/en/
++  HTTP 200, 3 hreflang tag(s)
++  ✓ en         https://crawlcove.github.io/seo-test-site/intl/en/  [html]
++  ✓ fr         https://crawlcove.github.io/seo-test-site/intl/fr/  [html]
++  ✓ de         https://crawlcove.github.io/seo-test-site/intl/de/  [html]
++  self-referencing: yes   x-default: no   return tags checked: 2/2
++  ✗ NO RETURN   fr         https://crawlcove.github.io/seo-test-site/intl/fr/  (its own hreflang tags do not list this page)
++  ✓ links back  de         https://crawlcove.github.io/seo-test-site/intl/de/
++
++  ! missing-x-default: No x-default tag. Without one, visitors whose language matches nothing in the set get whatever Google picks.
++  ✗ missing-return-tag: https://crawlcove.github.io/seo-test-site/intl/fr/ (hreflang="fr") does not link back to https://crawlcove.github.io/seo-test-site/intl/en/. Both pages must reference each other or Google ignores the pair.
++
++1 error(s), 1 warning(s).
++```
++
+ ## Install
+ 
+ ```sh
+@@ -35,7 +61,7 @@ hreflang-checker <url> [options]
+ 
+ Page mode fetches the URL, reads its tags, then fetches each distinct alternate (capped, 4 at a time) and looks for a tag pointing back. Sitemap mode needs no per-page fetch: sitemap hreflang must declare the whole cluster on every entry, so return tags are checked by cross-referencing the entries against each other. A sitemap index is followed into its first 5 children.
+ 
+-Example — a localised page whose German version was moved without updating the German page's own tags:
++Example: a localised page whose German version was moved without updating the German page's own tags:
+ 
+ ```
+ $ hreflang-checker https://www.example.com/en-gb/
+@@ -64,7 +90,7 @@ Exit codes: `0` clean (or only warnings with the default `--fail-on error`), `1`
+ | `fetch-error` | error | The page or sitemap could not be read (DNS, TLS, timeout, 4xx/5xx). | Make the URL reachable; the same failure hides the tags from Google. |
+ | `no-hreflang` | warning (page) / error (sitemap) | No annotations found in the head, the Link header, or any `<url>` entry. | If the page is localised, add the tags; if not, nothing to do. |
+ | `invalid-code` | error | A code Google cannot parse is ignored: `en_US` (underscore), `en-uk` (no such region; the UK is `gb`), `english`, `zz`. | Use ISO 639-1 language + optional ISO 3166-1 region, hyphenated: `en-gb`, `fr-ca`, `zh-Hant-TW`. |
+-| `suspicious-code` | warning | Valid but probably not what was meant — `uk` is Ukrainian, not the United Kingdom. | Check the intent; British English is `en-gb`. |
++| `suspicious-code` | warning | Valid but probably not what was meant. `uk` is Ukrainian, not the United Kingdom. | Check the intent; British English is `en-gb`. |
+ | `relative-href` | error | Google requir
+```
+
+**File**: `docs/demo.cast.json` (added, +64/-0)
+```diff
+@@ -0,0 +1,64 @@
++{
++ "recorded": "2026-11-20T00:05:07.839Z",
++ "steps": [
++  {
++   "show": "npx github:CrawlCove/hreflang-checker https://crawlcove.github.io/seo-test-site/intl/en/",
++   "exit": 1,
++   "ms": 232,
++   "lines": [
++    {
++     "t": 223,
++     "text": "https://crawlcove.github.io/seo-test-site/intl/en/"
++    },
++    {
++     "t": 223,
++     "text": "  HTTP 200, 3 hreflang tag(s)"
++    },
++    {
++     "t": 223,
++     "text": "  ✓ en         https://crawlcove.github.io/seo-test-site/intl/en/  [html]"
++    },
++    {
++     "t": 223,
++     "text": "  ✓ fr         https://crawlcove.github.io/seo-test-site/intl/fr/  [html]"
++    },
++    {
++     "t": 223,
++     "text": "  ✓ de         https://crawlcove.github.io/seo-test-site/intl/de/  [html]"
++    },
++    {
++     "t": 223,
++     "text": "  self-referencing: yes   x-default: no   return tags checked: 2/2"
++    },
++    {
++     "t": 223,
++     "text": "  ✗ NO RETURN   fr         https://crawlcove.github.io/seo-test-site/intl/fr/  (its own hreflang tags do not list this page)"
++    },
++    {
++     "t": 223,
++     "text": "  ✓ links back  de         https://crawlcove.github.io/seo-test-site/intl/de/"
++    },
++    {
++     "t": 223,
++     "text": ""
++    },
++    {
++     "t": 223,
++     "text": "  ! missing-x-default: No x-default tag. Without one, visitors whose language matches nothing in the set get whatever Google picks."
++    },
++    {
++     "t": 223,
++     "text": "  ✗ missing-return-tag: https://crawlcove.github.io/seo-test-site/intl/fr/ (hreflang=\"fr\") does not link back to https://crawlcove.github.io/seo-test-site/intl/en/. Both pages must reference each other or Google ignores the pair."
++    },
++    {
++     "t": 223,
++     "text": ""
++    },
++    {
++     "t": 223,
++     "text": "1 error(s), 1 warning(s)."
++    }
++   ]
++  }
++ ]
++}
+```
+
+**File**: `docs/demo.svg` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++<svg xmlns="http://www.w3.org/2000/svg" width="980" height="450" viewBox="0 0 980 450" role="img" aria-label="hreflang-checker: terminal recording of npx github:CrawlCove/hreflang-checker https://crawlcove.github.io/seo-test-site/intl/en/">
++<title>hreflang-checker: npx github:CrawlCove/hreflang-checker https://crawlcove.github.io/seo-test-site/intl/en/</title>
++<style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;font-size:14px;white-space:pre}
++.ln{opacity:0}
++@keyframes k0{0%,4.97%{opacity:0}4.98%,99.5%{opacity:1}100%{opacity:0}}.l0{animation:k0 8053ms linear infinite}
++@keyframes t0{0%,4.97%{width:0}24.84%,99.5%{width:744px}100%{width:0}}#c0{animation:t0 8053ms steps(88,end) infinite}
++@keyframes k1{0%,32.20%{opacity:0}32.21%,99.5%{opacity:1}100%{opacity:0}}.l1{animation:k1 8053ms linear infinite}
++@keyframes k2{0%,32.94%{opacity:0}32.95%,99.5%{opacity:1}100%{opacity:0}}.l2{animation:k2 8053ms linear infinite}
++@keyframes k3{0%,33.69%{opacity:0}33.70%,99.5%{opacity:1}100%{opacity:0}}.l3{animation:k3 8053ms linear infinite}
++@keyframes k4{0%,34.43%{opacity:0}34.44%,99.5%{opacity:1}100%{opacity:0}}.l4{animation:k4 8053ms linear infinite}
++@keyframes k5{0%,35.18%{opacity:0}35.19%,99.5%{opacity:1}100%{opacity:0}}.l5{animation:k5 8053ms linear infinite}
++@keyframes k6{0%,35.92%{opacity:0}35.93%,99.5%{opacity:1}100%{opacity:0}}.l6{animation:k6 8053ms linear infinite}
++@keyframes k7{0%,36.67%{opacity:0}36.68%,99.5%{opacity:1}100%{opacity:0}}.l7{animation:k7 8053ms linear infinite}
++@keyframes k8{0%,37.41%{opacity:0}37.42%,99.5%{opacity:1}100%{opacity:0}}.l8{animation:k8 8053ms linear infinite}
++@keyframes k9{0%,38.16%{opacity:0}38.17%,99.5%{opacity:1}100%{opacity:0}}.l9{animation:k9 8053ms linear infinite}
++@keyframes k10{0%,38.90%{opacity:0}38.91%,99.5%{opacity:1}100%{opacity:0}}.l10{animation:k10 8053ms linear infinite}
++@keyframes k11{0%,39.65%{opacity:0}39.66%,99.5%{opacity:1}100%{opacity:0}}.l11{animation:k11 8053ms linear infinite}
++@keyframes k12{0%,40.39%{opacity:0}40.40%,99.5%{opacity:1}100%{opacity:0}}.l12{animation:k12 8053ms linear infinite}
++@keyframes k13{0%,41.14%{opacity:0}41.15%,99.5%{opacity:1}100%{opacity:0}}.l13{animation:k13 8053ms linear infinite}
++@keyframes k14{0%,41.89%{opacity:0}41.90%,99.5%{opacity:1}100%{opacity:0}}.l14{animation:k14 8053ms linear infinite}
++@keyframes k15{0%,42.63%{opacity:0}42.64%,99.5%{opacity:1}100%{opacity:0}}.l15{animation:k15 8053ms linear infinite}
++@keyframes k16{0%,43.38%{opacity:0}43.39%,99.5%{opacity:1}100%{opacity:0}}.l16{animation:k16 8053ms linear infinite}
++@keyframes k17{0%,44.12%{opacity:0}44.13%,99.5%{opacity:1}100%{opacity:0}}.l17{animation:k17 8053ms linear infinite}
++</style>
++<defs><clipPath id="p0"><rect id="c0" x="39" y="68" height="20" width="0"/></clipPath></defs>
++<rect width="980" height="450" rx="12" fill="#0B0E16" stroke="#1E2533"/>
++<rect width="980" height="36" rx="12" fill="#121723"/><rect y="24" width="980" height="12" fill="#121723"/>
++<circle cx="22" cy="18" r="6" fill="#FF5C7A"/><circle cx="42" cy="18" r="6" fill="#FFB020"/><circle cx="62" cy="18" r="6" fill="#34F5C5"/>
++<text x="490" y="23" fill="#8A93A6" text-anchor="middle" style="font-size:13px">hreflang-checker</text>
++<g class="ln l0"><text x="22" y="83" fill="#22D3EE">$</text><g clip-path="url(#p0)"><text x="39" y="83" fill="#F2F5FA">npx github:CrawlCove/hreflang-checker https://crawlcove.github.io/seo-test-site/intl/en/</text></g></g>
++<text class="ln l1" x="22" y="103" fill="#C7CEDB">https://crawlcove.github.io/seo-test-site/intl/en/</text>
++<text class="ln l2" x="22" y="123" fill="#34F5C5">  HTTP 200, 3 hreflang tag(s)</text>
++<text class="ln l3" x="22" y="143" fill="#34F5C5">  ✓ en         https://crawlcove.github.io/seo-test-site/intl/en/  [html]</text>
++<text class="ln l4" x="22" y="163" fill="#34F5C5">  ✓ fr         https://crawlcove.github.io/seo-test-site/intl/fr/  [html]</text>
++<text class="ln l5" x="22" y="183" fill="#34F5C5">  ✓ de         https://crawlcove.github.io/seo-test-site/intl/de/  [html]</text>
++<text class="ln l6" x="22" y="203" fill="#C7CEDB">  self-referencing: yes   x-default: no   return tags checked: 2/2</text>
++<text class="ln l7" x="22" y="223" fill="#FF5C7A">  ✗ NO RETURN   fr         https://crawlcove.github.io/seo-test-site/intl/fr/  (its own hreflang tags do not</text>
++<text class="ln l8" x="22" y="243" fill="#FF5C7A">  list this page)</text>
++<text class="ln l9" x="22" y="263" fill="#34F5C5">  ✓ links back  de         https://crawlcove.github.io/seo-test-site/intl/de/</text>
++<text class="ln l10" x="22" y="283" fill="#C7CEDB"> </text>
++<text class="ln l11" x="22" y="303" fill="#C7CEDB">  ! missing-x-default: No x-default tag. Without one, visitors whose language matches nothing in the set get</text>
++<text class="ln l12" x="22" y="323" fill="#C7CEDB">  whatever Google picks.</text>
++<text class="ln l13" x="22" y="343" fill="#FF5C7A">  ✗ missing-return-tag: https://crawlcove.gi
 ```
 
 #### Recent Merged Pull Requests:
@@ -453,13 +620,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. README: Crawl Cove banner
+## X. README: keyword-led first screen, animated demo recorded against seo-test-site, 
 
 **RULE**:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrawlCove/hreflang-checker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a05c6bc3`: README: Crawl Cove banner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0de802a3`: README: keyword-led first screen, animated demo recorded against seo-test-site, quick start with real output, shared Related tools table. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -467,15 +634,33 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-<a href="https://crawlcove.com/download?utm_source=github&utm_medium=readme&utm_campaign=hreflang-checker"><img src="https://raw.githubusercontent.com/CrawlCove/.github/main/banners/hreflang-checker.svg" width="1200" alt="hreflang-checker: Validate the hreflang tags on a page or across a whole XML sitemap, including self-reference, x-default and return tags." /></a>
+# hreflang-checker
+An **hreflang checker** CLI: read a page's hreflang annotations from both places Google looks (the `<link rel="alternate" hreflang>` tags in its `<head>` and the HTTP `Link` response header), or every `<xhtml:link>` annotation in an XML sitemap, then validate the language and region codes, confirm a self-referencing tag and `x-default`, fetch each alternate to confirm its return tag, and flag the two things that make a correct set get ignored anyway: a `noindex` on the page and a canonical pointing somewhere else. Non-zero exit code for CI.
+<img src="docs/demo.svg" width="980" alt="Terminal recording: checking the English page of the SEO test site finds the French alternate does not link back and no x-default">
 
+*Recorded from a real run against [seo-test-site](https://github.com/CrawlCove/seo-test-site), a public site with 54 planted SEO problems that you can test against too.*
+
+## Quick start
+
+```sh
+npx github:CrawlCove/hreflang-checker https://crawlcove.github.io/seo-test-site/intl/en/
+```
+
+```
+https://crawlcove.github.io/seo-test-site/intl/en/
+  HTTP 200, 3 hreflang tag(s)
+  ✓ en         https://crawlcove.github.io/seo-test-site/intl/en/  [html]
+  ✓ fr       
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+# crawlcove-hreflang-checker
+An hreflang checker for the command line: read a page's hreflang annotations from both places Google looks (the `<link rel="alternate" hreflang>` tags in its `<head>` and the HTTP `Link` response header), or every `<xhtml:link>` annotation in an XML sitemap, then validate the language and region codes, confirm a self-referencing tag and `x-default`, fetch each alternate to confirm its return tag, and flag the two things that make a correct set get ignored anyway: a `noindex` on the page and a canonical pointing somewhere else. Non-zero exit code for CI.
+Example — a localised page whose German version was moved without updating the German page's own tags:
+| `suspicious-code` | warning | Valid but probably not what was meant — `uk` is Ukrainian, not the United Kingdom. | Check the intent; British English is `en-gb`. |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a05c6bc3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0de802a3` are properly handled with clean fallback behavior.

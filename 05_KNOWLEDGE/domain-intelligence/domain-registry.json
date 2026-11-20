@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T04:58:15.443Z",
-  "total_records": 2067,
+  "last_updated": "2026-11-20T05:08:27.464Z",
+  "total_records": 2070,
   "domains": {
     "A": {
       "total": 17,
@@ -1952,7 +1952,7 @@
       ]
     },
     "J": {
-      "total": 30,
+      "total": 33,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -1983,7 +1983,10 @@
         "domain_intelligence-search-distribution-intelligence-melnixdev-seo-crawl-audit-core-invariants",
         "domain_intelligence-search-distribution-intelligence-melnixdev-seo-crawl-audit-learnings-core-invari",
         "DOM-J-E0C204D8",
-        "DOM-J-705CF17F"
+        "DOM-J-705CF17F",
+        "domain_intelligence-search-distribution-intelligence-crawlcove-hreflang-checker-core-invariants",
+        "DOM-J-AD18FD9E",
+        "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-hreflang-checker-learnings-"
       ]
     },
     "K": {
@@ -8800,8 +8803,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "cd21b65906ba972407b1f3aa3d9204c4f9211acfa5eafbb4abceb3cc63eb63fe",
-      "created_at": "2026-11-20T04:38:26.329Z"
+      "content_hash": "c3ecdb08c3e85025c08e3249ebf75f46e7beff235194306f29db85ffe24b5f4f",
+      "created_at": "2026-11-20T05:08:26.636Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -31163,8 +31166,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "636979f5d4274e58b14b81b228de3f350f5f844a4ae955e75d59f90e908014a6",
-      "created_at": "2026-11-20T04:14:27.902Z"
+      "content_hash": "bb1b9a76e26a0f733d7d963d9aedbc48958fb63a30501c5579d8309d7a3da085",
+      "created_at": "2026-11-20T05:08:27.464Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -34860,6 +34863,58 @@
       "repository": "rainbow-me-rainbow-learnings",
       "content_hash": "2327896305160bd822a1e5be61f7e714cdba4d0164f683e4aff053afbc6f31a1",
       "created_at": "2026-11-20T04:58:13.997Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-crawlcove-hreflang-checker-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-crawlcove-hreflang-checker-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: CrawlCove/hreflang-checker Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-crawlcove-crawlcove-hreflang-checker-search-distribution-intelligence-crawlcove-.md",
+      "repository": "CrawlCove/hreflang-checker",
+      "content_hash": "79698588d8e90c8a0db6159a05beee6074209be0e972096a95df9fedc555df5c",
+      "created_at": "2026-11-20T05:07:44.190Z"
+    },
+    "DOM-J-AD18FD9E": {
+      "record_id": "DOM-J-AD18FD9E",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [],
+      "title": "The page or sitemap could not be read (DNS, TLS, timeout, 4xx/5xx).: Make the URL reachable the same failure hides the tags from Google",
+      "content": "Make the URL reachable; the same failure hides the tags from Google.",
+      "content_hash": "93e334ae81c6c026ab682e26732a5f7a15b2a300790aab32015cbaf5efb9f231",
+      "summary": "Make the URL reachable; the same failure hides the tags from Google. -> Make the URL reachable; the same failure hides the tags from Google.",
+      "provenance": {
+        "source_uri": "project://crawlcove-crawlcove-hreflang-checker/crawlcove-crawlcove-hreflang-checker-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`fetch-error`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (crawlcove-crawlcove-hreflang-checker)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of crawlcove-crawlcove-hreflang-checker"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T05:08:24.400Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-hreflang-checker-learnings-": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-hreflang-checker-learnings-",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: crawlcove-crawlcove-hreflang-checker-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-crawlcove-crawlcove-hreflang-checker-learnings-search-distribution-intelligence-.md",
+      "repository": "crawlcove-crawlcove-hreflang-checker-learnings",
+      "content_hash": "8cee0cd05bd9b946b1d2a943445a5bd7196e1aa055a8f6646bd77478402ff66c",
+      "created_at": "2026-11-20T05:08:25.392Z"
     }
   }
 }

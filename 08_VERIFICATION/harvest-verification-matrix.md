@@ -11463,3 +11463,5 @@
 | `CYCLE-20261120-13D3` | `2026-11-20T04:48:37.191Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9513` | Yes (`382485af...`) |
 | `CYCLE-20261120-D8F7` | `2026-11-20T04:58:03.619Z` | `rainbow-me/rainbow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9514` | Yes (`dcd83c5a...`) |
 | `CYCLE-20261120-DDM9` | `2026-11-20T04:58:10.353Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9295` | Yes (`b84711d3...`) |
+| `CYCLE-20261120-PO0L` | `2026-11-20T05:07:43.701Z` | `CrawlCove/hreflang-checker` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md` | Yes (`f1e63dd1...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T05:08:24.441Z` | `crawlcove-crawlcove-hreflang-checker` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-AD18FD9E` [Domain J] | Yes (`93e334ae...`) |

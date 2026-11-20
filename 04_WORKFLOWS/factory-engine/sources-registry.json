@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T04:58:13.442Z",
-    "lastVerified": "2026-11-20T04:58:13.442Z",
+    "lastChecked": "2026-11-20T05:07:50.929Z",
+    "lastVerified": "2026-11-20T05:07:50.929Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T04:29:25.968Z",
+    "lastChecked": "2026-11-20T05:07:50.919Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T04:29:25.968Z"
+    "lastVerified": "2026-11-20T05:07:50.919Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -2064,12 +2064,12 @@
     "lastVerified": "2026-11-19T15:58:47.959Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale/tailscale",
+    "name": "tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T23:43:28.842Z",
-    "lastVerified": "2026-11-19T23:43:28.842Z",
+    "lastChecked": "2026-11-20T05:07:46.100Z",
+    "lastVerified": "2026-11-20T05:07:46.100Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -2078,7 +2078,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2e8f381c"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -3402,9 +3403,9 @@
   "ekzhang-bore": {
     "name": "bore",
     "officialUrl": "https://github.com/ekzhang/bore",
-    "lastChecked": "2026-11-18T17:01:33.319Z",
+    "lastChecked": "2026-11-20T05:07:35.884Z",
     "revisionIdentifier": "00a735a8",
-    "lastVerified": "2026-11-18T17:01:33.319Z"
+    "lastVerified": "2026-11-20T05:07:35.884Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -5138,9 +5139,9 @@
   "cockroachdb-cockroach": {
     "name": "cockroach",
     "officialUrl": "https://github.com/cockroachdb/cockroach",
-    "lastChecked": "2026-11-18T23:18:19.222Z",
+    "lastChecked": "2026-11-20T05:07:48.851Z",
     "revisionIdentifier": "d30c905f",
-    "lastVerified": "2026-11-18T23:18:19.222Z"
+    "lastVerified": "2026-11-20T05:07:48.851Z"
   },
   "async-rs-async-std": {
     "name": "async-std",
@@ -5491,9 +5492,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-11-19T00:41:02.389Z",
+    "lastChecked": "2026-11-20T05:07:43.451Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-11-19T00:41:02.389Z"
+    "lastVerified": "2026-11-20T05:07:43.451Z"
   },
   "apache-zookeeper": {
     "name": "apache/zookeeper",
@@ -9299,5 +9300,29 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "crawlcove-crawlcove-hreflang-checker": {
+    "name": "CrawlCove/hreflang-checker",
+    "officialUrl": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-20T05:07:42.863Z",
+    "lastVerified": "2026-11-20T05:07:42.863Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-crawlcove-hreflang-checker",
+    "contentHash": "f1e63dd159add14564ae0660b1d4fac600bd2f2104fbfff7cc5b9239981b9e6c",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zoontek-react-native-permissions": {
+    "name": "react-native-permissions",
+    "officialUrl": "https://github.com/zoontek/react-native-permissions",
+    "lastChecked": "2026-11-20T05:07:40.892Z",
+    "revisionIdentifier": "4f9f820e",
+    "lastVerified": "2026-11-20T05:07:40.892Z"
   }
 }

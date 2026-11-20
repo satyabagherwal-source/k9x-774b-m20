@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T04:58:10.365Z",
+  "last_updated": "2026-11-20T05:07:43.749Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2946,14 +2946,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlcove-hreflang-checker",
-      "content_hash": "84963a5a4bd7d4e60fd8646ae5859c4e55d529fd2c319dc2fbf6893621d41761",
-      "verified_at": "2026-11-16T02:06:33.235Z",
+      "content_hash": "f1e63dd159add14564ae0660b1d4fac600bd2f2104fbfff7cc5b9239981b9e6c",
+      "verified_at": "2026-11-20T05:07:43.748Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T02:06:33.235Z"
+      "last_updated": "2026-11-20T05:07:43.748Z"
     },
     "alecxe/scrapy-fake-useragent": {
       "repository": "alecxe/scrapy-fake-useragent",

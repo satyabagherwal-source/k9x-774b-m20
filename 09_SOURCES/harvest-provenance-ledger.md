@@ -11496,3 +11496,5 @@ Every entry in this ledger must capture:
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `c88c005c` | Multi-dimensional audit evidence | 2026-11-20T04:48:37.194Z |
 | `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `38757729` | Multi-dimensional audit evidence | 2026-11-20T04:58:03.622Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `e4cf2bb0` | Multi-dimensional audit evidence | 2026-11-20T04:58:10.357Z |
+| `learn-github-crawlcove-hreflang-checker` | `https://github.com/CrawlCove/crawlcove-hreflang-checker` | `e5c444d2` | Multi-dimensional audit evidence | 2026-11-20T05:07:43.706Z |
+| `learn-dom-j-ad18fd9e` | `project://crawlcove-crawlcove-hreflang-checker` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md` | 2026-11-20T05:08:24.441Z |
