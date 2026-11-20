@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "6d870913",
+    "sourceVersion": "205e84d0",
     "license": "Apache-2.0",
-    "contentHash": "a66f6eaa3dd3b4e14ac565715bb233fa833facd19ba0550efab04d5cb3bb6058",
-    "lastHarvestedAt": "2026-11-19T05:42:23.067Z",
+    "contentHash": "449e090d0167cf85ce9e9101f3d90347646744a04ed0713f0df03dc24db09f94",
+    "lastHarvestedAt": "2026-11-20T09:59:10.586Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -8873,10 +8873,10 @@
     "repository": "chrisbanes/skills",
     "platform": "github",
     "sourceUrl": "https://github.com/chrisbanes/skills",
-    "sourceVersion": "a7962de2",
+    "sourceVersion": "50b5d4cf",
     "license": "Apache-2.0",
-    "contentHash": "afe23c2005e11afd7b4fdd15076c6114289c1ab5a291b87e6a4a5a8803f28cc1",
-    "lastHarvestedAt": "2026-11-16T05:17:39.663Z",
+    "contentHash": "f2ef466a784148d647e22c372d98af24293d73e8c54f90d2068bf7b12756a2f4",
+    "lastHarvestedAt": "2026-11-20T09:59:07.801Z",
     "learningId": "learn-github-chrisbanes-skills"
   },
   "joreilly-confetti": {
@@ -12988,5 +12988,25 @@
     "contentHash": "4c1244eafd21d11eed0c3ea3938ed9e0d9b13b35919f16881c0db516375a2e1f",
     "lastHarvestedAt": "2026-11-20T06:45:04.517Z",
     "learningId": "learn-huggingface-thejagstudio-tessera-small"
+  },
+  "rocketride-org-rocketride-server": {
+    "repository": "rocketride-org/rocketride-server",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rocketride-org/rocketride-server",
+    "sourceVersion": "8b5785c8",
+    "license": "MIT",
+    "contentHash": "c4776516fbbaf7eae58ed6d320461fa4d477caaa76265d1706e3573709010eda",
+    "lastHarvestedAt": "2026-11-20T09:59:06.496Z",
+    "learningId": "learn-github-rocketride-org-rocketride-server"
+  },
+  "hf-cloudflare-clairic": {
+    "repository": "Cloudflare/clairic",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Cloudflare/clairic",
+    "sourceVersion": "hf-cloudflare-clairic",
+    "license": "Open-Source",
+    "contentHash": "447506975d4a78d5923dc765d85f72a12ca3a00314f5d3961aad7562a405b030",
+    "lastHarvestedAt": "2026-11-20T09:59:06.627Z",
+    "learningId": "learn-huggingface-cloudflare-clairic"
   }
 }

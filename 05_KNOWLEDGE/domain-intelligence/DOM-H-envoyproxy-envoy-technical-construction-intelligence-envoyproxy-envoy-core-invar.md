@@ -4,24 +4,24 @@
 {
   "source_repository": "envoyproxy/envoy",
   "source_url": "https://github.com/envoyproxy/envoy",
-  "source_version": "6d870913",
+  "source_version": "205e84d0",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T05:42:23.274Z",
+  "timestamp": "2026-11-20T09:59:10.843Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-envoyproxy-envoy",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `6d870913`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T05:42:23.274Z`  
+> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `205e84d0`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T09:59:10.843Z`  
 > **Learning ID**: `learn-github-envoyproxy-envoy`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from envoyproxy/envoy:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T05:42:21.661Z  
+> **Harvest Timestamp**: 2026-11-20T09:59:09.362Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29260 stars
+- **Stars / Engagement**: 29271 stars
 
 ---
 
@@ -1061,367 +1061,564 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `85f81a08` (2026-11-18)
-**Commit Message**: deps/ci: Fix release dates when a module is updated (#49408)
+### Incident Patch 1: `86f73b92` (2026-11-20)
+**Commit Message**: docs: fix the description of --reject-unknown-dynamic-fields (#49484)
 
-The dependency bot (`ci/dependency/update.sh`) bumps a `bazel_dep` and
-leaves the `release_date` of the dependency in `deps.yaml` as it was.
-The hook that updated it for the WORKSPACE updater went with WORKSPACE
-(#47217), so every bump since has had a stale date (#49388 needed six
-fixed by hand), and now that the release dates check is back (#48705)
-the `deps` precheck of a bump fails on it.
+<!--
+!!!ATTENTION!!!
 
-This adds `//tools/dependency:release_dates` (`release_date_updater`,
-envoyproxy/toolshed#5626 and envoyproxy/toolshed#5630), which fixes the
-dates in `bazel/deps.yaml` and `api/bazel/deps.yaml` with the ones that
-the checker (`//tools/dependency:check`) looks up:
+If you are fixing **any** crash or **any** potential security issue,
+**do not
+open a pull request**.
 
-```console
-$ bazel run //tools/dependency:release_dates -- gperftools
-Checking the release dates of: gperftools
-bazel/deps.yaml: gperftools 2026-03-06 -> 2026-10-21
-```
+Instead, please
+[open a GitHub Security
+Advisory](https://github.com/envoyproxy/envoy/security/advisories/new)
+(preferred). Alternatively, you may email
+[REDACTED_EMAIL].
 
-`deps.update` (the bot's `bazel` task) and `registry` with named modules
-(its `registry` task) now run it for the modules they update. Only those
-are looked up, as each is a request to GitHub, a module can be named as
-the module (`msgpack-c`) where its metadata key differs (`msgpack-cxx`),
-and a module wi
+Thank you in advance for helping to keep Envoy secure.
 
-**File**: `ci/README.md` (modified, +1/-1)
+!!!ATTENTION!!!
+
+For an explanation of how to fill out the fields, please see the
+relevant section
+in
+[PULL_REQUESTS.md](https://github.com/envoyproxy/envoy/blob/main/PULL_REQUESTS.md)
+
+!!!ATTENTION!!!
+
+Please check the [use of generative AI
+policy](https://github.com/envoyproxy/envoy/blob/main/CONTRIBUTING.md?plain=1#L41).
+
+You may use generative AI only if you fully understand the code. You
+need to disclose
+this usage in the PR description to ensure transparency.
+-->
+
+Commit Message: docs: fix the description of
+--reject-unknown-dynamic-fields
+Additional Description: The first sentence of the
+`--reject-unknown-dynamic-fields` entry in
+`docs/root/operations/cli.rst` said the flag disables validation of
+unknown fields in dynamic configuration. It enables it: `server.
+
+**File**: `docs/root/operations/cli.rst` (modified, +1/-1)
 ```diff
-@@ -223,7 +223,7 @@ The `./ci/run_envoy_docker.sh './ci/do_ci.sh <TARGET>'` targets are:
- * `modules.version` &mdash; set the `module()` version, and the `bazel_dep` versions of in-repo modules (`envoy`, `envoy_api`, `envoy-docs`, `envoy_mobile`, `envoy_build_config`), in all `MODULE.bazel` files to match `VERSION.txt`, then regenerate the lockfiles as `lockfiles` does.
- * `deps` &mdash; validate dependency metadata ordering, reachability, graph structure, the pinned bazel-registry commit, lockfile sync, release dates/releases (requires `GITHUB_TOKEN`), and dependabot configuration.
- * `deps.report` &mdash; run the per-workspace bzlmod dependency report targets and print the current/latest version status for each workspace.
--* `deps.update <name[=version]>` &mdash; run the per-workspace bzlmod dependency updater for the requested module, skipping workspaces where that dependency is not declared, then regenerate the lockfiles as `lockfiles` does.
-+* `deps.update <name[=version]>` &mdash; run the per-workspace bzlmod dependency updater for the requested module, skipping workspaces where that dependency is not declared, then regenerate the lockfiles as `lockfiles` does, and fix the release date of the module in the dependency metadata (requires `GITHUB_TOKEN`).
- * `registry` &mdash; run the per-workspace Bazel registry updater targets for `.bazelrc`, `api/.bazelrc`, and `bazel/tests/external/.bazelrc`, then regenerate the lockfiles as `lockfiles` does. Set `ENVOY_REGISTRY_HASH` to request a specific hash, and set `ENVOY_REGISTRY_ALLOW_UNSAFE` to allow non-ancestor pins for testing.
- * `registry.check` &mdash; run the per-workspace Bazel registry status targets, verify they all report the same pinned hash, and require a tagged registry pin for non-`-dev` releases.
- * `docs`&mdash; build documentation tree in `generated/docs`.
-```
-
-**File**: `ci/bazel_fun.sh` (modified, +14/-0)
-```diff
-@@ -331,6 +331,16 @@ deps_update() {
-         run_in_nested_mods _deps_update_mod "$dep"
-     done
-     lockfiles_generate
-+    deps_release_dates "$@"
-+}
-+
-+# Fix the release dates in the dependency metadata (`deps.yaml`) of the given `name[=version]`
-+# modules, which the module updater does not touch. Only these are looked up (it is a request to
-+# GitHub for each), and a module with no metadata is skipped.
-+deps_release_dates() {
-+    echo "Update release dates ..."
-+    bazel run "${BAZEL_BUILD_OPTIONS[@]}" //tools/dependency:release_dates \
-+          -- --skip-unknown "${@%%=*}"
- }
+@@ -345,7 +345,7 @@ following are the command line options that Envoy supports.
  
- _deps_update_mod() {
-@@ -388,6 +398,10 @@ registry_update() {
-         registry_modules_update "${updates[@]}"
-     fi
-     lockfiles_generate
-+    # With `all` the updated modules are not known here: their dates are left to the `deps` check.
-+    if (( ${#updates[@]} )) && [[ "${updates[0]}" != "all" && "${updates[0]}" != "*" ]]; then
-+        deps_release_dates "${updates[@]}"
-+    fi
- }
+ .. option:: --reject-unknown-dynamic-fields
  
- registry_modules_update() {
-```
-
-**File**: `tools/dependency/BUILD` (modified, +14/-0)
-```diff
-@@ -2,6 +2,7 @@ load("@base_pip3//:requirements.bzl", "requirement")
- load("@bazel_skylib//rules:build_test.bzl", "build_test")
- load("@envoy_repo//:path.bzl", "PATH")
- load("@envoy_toolshed//:utils.bzl", "json_merge")
-+load("@envoy_toolshed//dependency:macros.bzl", "release_date_updater")
- load("@envoy_toolshed//dependency:reachability.bzl", "dependency_reachability")
- load("@envoy_toolshed//dependency/cve:macros.bzl", "cve_scan")
- load("@rules_python//python:defs.bzl", "py_test")
-@@ -98,6 +99,19 @@ py_console_script_binary(
-     deps = [requirement("orjson")],
- )
- 
-+# Fix the release dates of dependencies in the metadata (`bazel/deps.yaml`, `api/bazel/deps.yaml`),
-+# with the dates that `:check` looks up for them. Requires `GITHUB_TOKEN`.
-+#   bazel run //tools/dependency:release_dates -- <name>...
-+release_date_updater(
-+    name = "release_dates",
-+    check = ":check",
-+    dependencies = ":check-dependencies",
-+    metadata = [
-+        "//bazel:deps.yaml",
-+        "@envoy_api//bazel:deps.yaml",
-+    ],
-+)
-+
- py_console_script_binary(
-     name = "dependatool",
-     args = ["--path=%s" % PATH],
+-  *(optional)* This flag disables validation of protobuf configuration for unknown fields in
++  *(optional)* This flag enables validation of protobuf configuration for unknown fields in
+   dynamic configuration. By default, this flag is set false, disabling validation for fields beyond
+   bootstrap. This allows newer xDS configurations to be delivered to older Envoys. This can be set
+   true for strict dynamic checking when this behavior is not wanted but the default should be
 ```
 
 ---
 
-### Incident Patch 2: `0403b537` (2026-11-19)
-**Commit Message**: windows: fix compile failure in stderr_writer (#49340)
+### Incident Patch 2: `ca615748` (2026-11-19)
+**Commit Message**: opentelemetry: Add traceparent parse/serialize methods to SpanContextExtractor (#48449)
 
-#49207 introduced a unix write to stderr_writer. This adds a win32
-branch to fix compilation on it
+<!--
+!!!ATTENTION!!!
 
-Example failure:
-https://github.com/curioswitch/py-envoy-server/actions/runs/43867024431/job/133298099621
+If you are fixing **any** crash or **any** potential security issue,
+**do not
+open a pull request**.
 
-@yanavlasov BTW will you add daily sync / builds to envoy-windows repo?
+Instead, please
+[open a GitHub Security
+Advisory](https://github.com/envoyproxy/envoy/security/advisories/new)
+(preferred). Alternatively, you may email
+[REDACTED_EMAIL].
 
-Risk Level: low
-Testing: none
-Docs Changes: 
-Release Notes:
-Platform Specific Features:
-[Optional Runtime guard:]
-[Optional Fixes #Issue]
-[Optional Fixes commit #PR or SHA]
-[Optional Deprecated:]
-[Optional [API
-Considerations](https://github.com/envoyproxy/envoy/blob/main/api/review_checklist.md):]
+Thank you in advance for helping to keep Envoy secure.
 
-Signed-off-by: Anuraag Agrawal <[REDACTED_EMAIL]>
+!!!ATTENTION!!!
 
-**File**: `source/common/common/stderr_writer.h` (modified, +19/-1)
+For an explanation of how to fill out the fields, please see the
+relevant section
+in
+[PULL_REQUESTS.md](https://github.com/envoyproxy/envoy/blob/main/PULL_REQUESTS.md)
+
+!!!ATTENTION!!!
+
+Please check the [use of generative AI
+policy](https://github.com/envoyproxy/envoy/blob/main/CONTRIBUTING.md?plain=1#L41).
+
+You may use generative AI only if you fully understand the code. You
+need to disclose
+this usage in the PR description to ensure transparency.
+-->
+
+Commit Message: opentelemetry: Add traceparent parse/serialize methods
+to SpanContextExtractor
+
+This new override will be used by McpFilter in PR #48038.
+
+Additional Description: This PR was created with help from generative AI
+(Gemini). I fully understand the code.
+
+For reference, h
+
+**File**: `source/extensions/tracers/opentelemetry/span_context.h` (modified, +6/-0)
 ```diff
-@@ -1,6 +1,10 @@
- #pragma once
+@@ -60,6 +60,12 @@ class SpanContext {
+    */
+   bool isRemote() const { return is_remote_; }
  
-+#ifdef WIN32
-+#include <io.h>
-+#else
- #include <unistd.h>
-+#endif
++  /**
++   * Sets the span ID.
++   * @param span_id a hex-encoded span ID.
++   */
++  void setSpanId(std::string span_id) { span_id_ = std::move(span_id); }
++
+ private:
+   std::string version_;
+   std::string trace_id_;
+```
+
+**File**: `source/extensions/tracers/opentelemetry/span_context_extractor.cc` (modified, +43/-13)
+```diff
+@@ -1,12 +1,21 @@
+ #include "source/extensions/tracers/opentelemetry/span_context_extractor.h"
  
- #include <algorithm>
- #include <cerrno>
-@@ -10,6 +14,20 @@
++#include <cstdint>
++#include <string>
++#include <utility>
++
+ #include "envoy/tracing/tracer.h"
+ 
+ #include "source/common/http/header_map_impl.h"
+ #include "source/common/tracing/trace_context_impl.h"
+ #include "source/extensions/tracers/opentelemetry/span_context.h"
+ 
++#include "absl/status/status.h"
+ #include "absl/strings/escaping.h"
++#include "absl/strings/str_format.h"
++#include "absl/strings/str_join.h"
++#include "absl/strings/str_split.h"
++#include "absl/strings/string_view.h"
  
  namespace Envoy {
+ namespace Extensions {
+@@ -21,6 +30,8 @@ constexpr int kTraceIdHexSize = 32;
+ constexpr int kParentIdHexSize = 16;
+ constexpr int kTraceFlagsHexSize = 2;
  
-+namespace StderrWriterInternal {
++constexpr int kFlagMaskSampled = 1;
 +
-+// Raw write to the stderr file descriptor, bypassing stdio buffering.
-+inline ptrdiff_t writeRaw(const char* data, size_t size) {
-+#ifdef WIN32
-+  // `size` never exceeds the stack buffer in `writeStderr()`, so it fits in an unsigned int.
-+  return ::_write(2, data, static_cast<unsigned int>(size));
-+#else
-+  return ::write(STDERR_FILENO, data, size);
-+#endif
+ bool isValidHex(const absl::string_view& input) {
+   return std::all_of(input.begin(), input.end(),
+                      [](const char& c) { return absl::ascii_isxdigit(c); });
+@@ -35,6 +46,9 @@ bool isAllZeros(const absl::string_view& input) {
+ SpanContextExtractor::SpanContextExtractor(Tracing::TraceContext& trace_context)
+     : trace_context_(trace_context) {}
+ 
++SpanContextExtractor::SpanContextExtractor(const Tracing::TraceContext& trace_context)
++    : trace_context_(trace_context) {}
++
+ SpanContextExtractor::~SpanContextExtractor() = default;
+ 
+ bool SpanContextExtractor::propagationHeaderPresent() {
+@@ -50,12 +64,24 @@ absl::StatusOr<SpanContext> SpanContextExtractor::extractSpanContext() {
+   }
+   auto header_value_string = propagation_header.value();
+ 
+-  if (header_value_string.size() != kTraceparentHeaderSize) {
++  // If a tracestate header is received without an accompanying traceparent
++  // header, it is invalid and MUST be discarded. Because we're already checking
++  // for the traceparent header above, we don't need to check here. See
++  // https://www.w3.org/TR/trace-context/#processing-model-for-working-with-trace-context
++  const auto tracestate_values = OpenTelemetryConstants::get().TRACE_STATE.getAll(trace_context_);
++
++  return parseTraceparent(header_value_string, /*tracestate=*/
++                          absl::StrJoin(tracestate_values, ","));
 +}
 +
-+} // namespace StderrWriterInternal
++absl::StatusOr<SpanContext> SpanContextExtractor::parseTraceparent(absl::string_view traceparent,
++                                                                   std::string tracestate) {
++  if (traceparent.size() != kTraceparentHeaderSize) {
+     return absl::InvalidArgumentError("Invalid traceparent header length");
+   }
+   // Try to split it into its component parts:
+   std::vector<absl::string_view> propagation_header_components =
+-      absl::StrSplit(header_value_string, '-', absl::SkipEmpty());
++      absl::StrSplit(traceparent, '-', absl::SkipEmpty());
+   if (propagation_header_components.size() != 4) {
+     return absl::InvalidArgumentError("Invalid traceparent hyphenation");
+   }
+@@ -71,8 +97,8 @@ absl::StatusOr<SpanContext> SpanContextExtractor::extractSpanContext() {
+       !isValidHex(trace_flags)) {
+     return absl::InvalidArgumentError("Invalid header hex");
+   }
+-  // As per the traceparent header definition, if the trace-id or parent-id are all zeros, they are
+-  // invalid and must be ignored.
++  // As per the traceparent header definition, if the trace-id or parent-id are
++  // all zeros, they are invalid and must be ignored.
+   if (isAllZeros(trace_id)) {
+     return absl::InvalidArgumentError("Invalid trace id");
+   }
+@@ -83,19 +109,23 @@ absl::StatusOr<SpanContext> SpanContextExtractor::extractSpanContext() {
+   // Set whether or not the span is sampled from the trace flags.
+   // See https://w3c.github.io/trace-context/#trace-flags.
+   char decoded_trace_flags = absl::HexStringToBytes(trace_flags).front();
+-  bool sampled = (decoded_trace_flags & 1);
+-
+-  // If a tracestate header is received without an accompanying traceparent header,
+-  // it is invalid and MUST be discarded. Because we're already checking for the
+-  // traceparent header above, we don't need to check here.
+-  // See https://www.w3.org/TR/trace-context/#processing-model-for-working-with-trace-context
+-  const auto tracestate_values = OpenTelemetryConstants::get().TRACE_STATE.getAll(trace_context_);
++  bool sampled = (decoded_trace_flags & kFlagMaskSampled);
+ 
+-  SpanContext parent_context(version, trace_id, span_id, sampled,
+-                             absl::StrJoin(tracestate_values, ","), /*is_remote=*/true);
++  SpanContext parent_context(version, trace_id, span_id, sampled, std::move(tracestate),
++                             /*is_remote=*/true);
+   return parent_context;
+ }
+ 
++std::string SpanContextExtractor::serializeTraceparent(const SpanContext& span_context) {
++  uint16_t flags = 0;
++  if (span_context.sampled()) {
++    flags |= kFlagMaskSampled;
++  }
++  return absl::StrJoin({span_context.version(), span_context.traceId(), span_context.spanId(),
++                        absl::StrFormat("%02x", flags)},
++                       "-");
++}
 +
+ 
+```
+
+**File**: `source/extensions/tracers/opentelemetry/span_context_extractor.h` (modified, +17/-2)
+```diff
+@@ -1,5 +1,7 @@
+ #pragma once
+ 
++#include <string>
++
+ #include "envoy/common/exception.h"
+ #include "envoy/tracing/tracer.h"
+ 
+@@ -8,6 +10,9 @@
+ #include "source/common/tracing/trace_context_impl.h"
+ #include "source/extensions/tracers/opentelemetry/span_context.h"
+ 
++#include "absl/status/statusor.h"
++#include "absl/strings/string_view.h"
++
+ namespace Envoy {
+ namespace Extensions {
+ namespace Tracers {
+@@ -22,16 +27,26 @@ class OpenTelemetryConstantValues {
+ using OpenTelemetryConstants = ConstSingleton<OpenTelemetryConstantValues>;
+ 
  /**
-  * Format into a buffer on the stack and write it to stderr with write(2), for use where
-  * neither the logger nor C++ streams can be relied on, in particular in a fatal signal handler.
-@@ -24,7 +42,7 @@ void writeStderr(const absl::FormatSpec<Args...>& format, const Args&... args) {
-   size_t remaining = size > 0 ? std::min<size_t>(size, sizeof(buffer) - 1) : 0;
-   // Short and interrupted writes are continued. There is nowhere to report any other failure.
-   while (remaining > 0) {
--    const ssize_t rc = ::write(STDERR_FILENO, data, remaining);
-+    const ptrdiff_t rc = StderrWriterInternal::writeRaw(data, remaining);
-     if (rc > 0) {
-       data += rc;
-       remaining -= static_cast<size_t>(rc);
+- * This class is used to SpanContext extracted from the HTTP traceparent header
+- * See https://www.w3.org/TR/trace-context/#traceparent-header.
++ * This class is used to extract a SpanContext from the HTTP traceparent header
++ * or MCP body. See https://www.w3.org/TR/trace-context/#traceparent-header.
+  */
+ class SpanContextExtractor {
+ public:
+   SpanContextExtractor(Tracing::TraceContext& trace_context);
++  SpanContextExtractor(const Tracing::TraceContext& trace_context);
+   ~SpanContextExtractor();
+   absl::StatusOr<SpanContext> extractSpanContext();
+   bool propagationHeaderPresent();
+ 
++  // Parse the given `traceparent` to `SpanContext`, forwarding the given
++  // `tracestate` to its constructor.
++  static absl::StatusOr<SpanContext> parseTraceparent(absl::string_view traceparent,
++                                                      std::string tracestate);
++  // Serialize the given `span_context` to a traceparent string. This omits any
++  // tracestate that may be present on the `span_context. Performs no
++  // validation `span_context`.
++  static std::string serializeTraceparent(const SpanContext& span_context);
++
+ private:
+   const Tracing::TraceContext& trace_context_;
+ };
+```
+
+**File**: `test/extensions/tracers/opentelemetry/BUILD` (modified, +2/-0)
+```diff
+@@ -98,6 +98,8 @@ envoy_extension_cc_test(
+         "//source/extensions/tracers/opentelemetry:opentelemetry_tracer_lib",
+         "//test/test_common:status_utility_lib",
+         "//test/test_common:utility_lib",
++        "@abseil-cpp//absl/status:statusor",
++        "@abseil-cpp//absl/strings:string_view",
+     ],
+ )
+ 
+```
+
+**File**: `test/extensions/tracers/opentelemetry/span_context_extractor_test.cc` (modified, +30/-0)
+```diff
+@@ -1,9 +1,14 @@
++#include <string>
++
+ #include "source/common/tracing/http_tracer_impl.h"
++#include "source/extensions/tracers/opentelemetry/span_context.h"
+ #include "source/extensions/tracers/opentelemetry/span_context_extractor.h"
+ 
+ #include "test/test_common/status_utility.h"
+ #include "test/test_common/utility.h"
+ 
++#include "absl/status/statusor.h"
++#include "absl/strings/string_view.h"
+ #include "gmock/gmock.h"
+ #include "gtest/gtest.h"
+ 
+@@ -191,6 +196,31 @@ TEST(SpanContextExtractorTest, ExtractSpanContextWithMultipleTracestateEntries)
+   EXPECT_EQ(span_context->tracestate(), "sample-tracestate,sample-tracestate-2");
+ }
+ 
++TEST(SpanContextExtractorTest, SerializeTraceparent) {
++  static constexpr absl::string_view kOtherParentId = "feedf00dfeedf00d";
++  static constexpr absl::string_view kOtherTraceId = "facefacefacefacefacefacefaceface";
++
++  static_assert(kOtherParentId.size() == parent_id.size());
++  static_assert(kOtherTraceId.size() == trace_id.size());
++
++  for (bool sampled : {false, true}) {
++    SCOPED_TRACE(testing::Message() << "sampled: " << sampled);
++
++    absl::string_view want_flags = sampled ? "01" : "00";
++
++    SpanContext span_context{version, trace_id, parent_id, sampled,
++                             /*tracestate=*/""};
++    std::string serialized_traceparent = SpanContextExtractor::serializeTraceparent(span_context);
++    EXPECT_EQ(serialized_traceparent,
++              fmt::format("{}-{}-{}-{}", version, trace_id, parent_id, want_flags));
++
++    span_context.setSpanId(std::string(kOtherParentId));
++    serialized_traceparent = SpanContextExtractor::serializeTraceparent(span_context);
++    EXPECT_EQ(serialized_traceparent,
++              fmt::format("{}-{}-{}-{}", version, trace_id, kOtherParentId, want_flags));
++  }
++}
++
+ } // namespace
+ } // namespace OpenTelemetry
+ } // namespace Tracers
 ```
 
 ---
 
-### Incident Patch 3: `1375fe7a` (2026-11-18)
-**Commit Message**: release/ci: Remove the Docker and signing builds the release build replaced (#49356)
+### Incident Patch 3: `dd8be587` (2026-11-19)
+**Commit Message**: mobile/ci: Stop using, and remove, the mobile build image (#49462)
 
-The release container images and packages are built with Bazel, and the
-release is signed, in the release build
-(`release.publish`/`release.multiarch`, #49259, #49331). The builds that
-did those before only run for the release branches without
-`release-publish`, with those branches' own `ci/do_ci.sh`, so the
-workflows are unchanged.
+Stops using the mobile build image, and removes it from the repo's
+configuration.
 
-Removed:
+**Run the remote actions in the worker image**
 
-- `distribution/docker/Dockerfile-envoy` and
-`distribution/docker/build.sh`, and the `docker` and `distribution`
-targets of `ci/do_ci.sh` (the Docker OCI and Packages jobs)
-- `ENVOY_OCI_DIR`, `ENVOY_DOCKER_SAVE_IMAGE` and `ENVOY_TARBALL_DIR`
-from the environment `ci/docker-compose.yml` passes through, which only
-those targets read
-- the `release.signed` target (the Sign packages job), and the signing
-of the packages tarballs it did: the `x64-packages`/`arm64-packages` and
-`signing-inputs` flags of `//distribution`, `multi_arch_debs_tarballs`,
-the extraction of the `.changes` from the tarballs
-(`distribution/changes.bzl`), and the `distribution/custom` files the
-job staged. `release.multiarch` signs the `.deb`s and `.changes` built
-in the same invocation, whi
+The mobile RBE platforms (`//bazel/platforms/rbe:linux_x64` and
+`linux_arm64` in `mobile/`) still named the mobile build image as their
+remote execution container. Its extras over the default image (JDK,
+Android cmdline tools, NDK, platform and build-tools) are not used by
+the build: the Android SDK and NDK come from the
+hermetic-android-toolchains module, the Android tools from the remote
+`android_tools` extension, and the Java toolchains are hermetic. The
+jobs' local container already moved to the default build image in
+#49134; this does the same for where the remote actions run.
 
-**File**: `.agents/threat_model/THREAT_MODEL.md` (modified, +2/-2)
+Mobile CI passes with it (Mobile/CC needed one retest, for an unrelated
+test flake: #49464).
+
+**Remove the mobile build image**
+
+Nothing else uses the image, so this removes `image_mobile()`, the
+`mobile` variant of `ci/envoy_build_sha.sh`, `sha-mobile` and
+`mobile-sha`, their update in the build image workflow, and the unused
+`build-image-mobile` outputs of `_load.yml` and `_load_env.yml`.
+Lockfiles are reg
+
+**File**: `.github/config.yml` (modified, +0/-3)
 ```diff
-@@ -56,7 +56,7 @@ The codebase is ~3k C++ source files plus ~113 vendored dependencies (BoringSSL,
- | Envoy Mobile upstream ingest | Envoy Mobile (iOS/Android client library) parses responses from arbitrary servers; trust model inverted — server is the attacker (`mobile/library/common/`) | malicious origin server → mobile app process | Mobile app process & on-device user data, Proxied request/response data |
- | Bazel dependency fetch | ~113 deps resolved via the Envoy Bazel registry, integrity-pinned in `MODULE.bazel.lock` (registry pinned at `.bazelrc`) | upstream maintainer / mirror → compiled binary | Release artifact integrity, Process & host integrity |
- | GitHub Actions CI pipeline | `pull_request_target` → `workflow_run` chain executes PR code; `trusted` flag computed in `_load.yml` gates secrets (`.github/workflows/_run.yml`) | external contributor → CI runner with org secrets | CI/release secrets, Release artifact integrity |
--| Release artifact publish | Docker push (no cosign, `--provenance=false`), GPG-signed tarballs, Sonatype/PyPI upload; PyPI action branch-pinned (`distribution/docker/build.sh`, `.github/workflows/mobile-release.yml`) | CI runner → public registries | Release artifact integrity |
-+| Release artifact publish | OCI images built with rules_oci (`//distribution/docker:images`) and pushed from CI; release and `.changes` GPG-signed in the release build (`ci/do_ci.sh release.multiarch`, `//distribution:signed`); Sonatype/PyPI upload; PyPI action branch-pinned (`.github/workflows/mobile-release.yml`) | CI runner → public registries | Release artifact integrity |
+@@ -8,10 +8,7 @@ build-image:
+   sha-ci: 8fdf16ea0d40cb0e4726b13f97df8b73e80e331b206b62b224ceb2498149a1d5
+   sha-devtools: 5914ff8694b377cbd137317acb4a0f91c9496e08a17e867743f942e15f4deb83
+   sha-docker: 75bc814bc49ea2c4fe8807bd487fdb513b4b1ce9b6cce19bb1781ae9d28f80cf
+-  sha-mobile: b4351554fbf60ecf5b69ae17434a1503802473118388361543a3c695040f8859
+   sha-worker: 58abaea3f29aae5340f32dc99fc66c97a6c2fec0902345d03cf6d47684606a1d
+-  # TODO: remove this dupe (currently used by ci request handler)
+-  mobile-sha: b4351554fbf60ecf5b69ae17434a1503802473118388361543a3c695040f8859
+   tag: v0.2.5
  
- ## 4. Threats
- 
-@@ -81,7 +81,7 @@ The codebase is ~3k C++ source files plus ~113 vendored dependencies (BoringSSL,
- | T18 | Request/response tampering and auth-verdict forgery via untrusted ext_proc / ext_authz side-call | adjacent_network | ext_proc / ext_authz responses | Proxied request/response data, AuthN/AuthZ verdicts, Internal trust headers | high | likely | partially_mitigated | `mutation_rules` allowlist (opt-in); `allowed_headers`/`disallowed_headers` on ext_authz (opt-in) | |
- | T27 | Resource exhaustion via unbounded ext_proc body mutation, header-set size, or stream hold-open | adjacent_network | ext_proc / ext_authz responses | Service availability | high | likely | partially_mitigated | `message_timeout`; per-message size limits (partial) | |
- | T16 | Fleet-wide crash or resource exhaustion via malformed / pathological xDS configuration | insider | xDS control-plane ingestion, Route matching & regex | Service availability, xDS configuration integrity | high | likely | partially_mitigated | PGV proto validation; config-rejection stats; RE2 (linear-time) for regex | a20c0ab8dd, 2bcebccc0d, CVE-2019-15225, CVE-2019-15226 |
--| T17 | Downstream consumer compromise via tampered OCI image (no signature / no SLSA provenance) | supply_chain | Release artifact publish | Release artifact integrity | high | possible | unmitigated | GPG on tarballs only; `--sbom=false --provenance=false` set; no cosign | |
-+| T17 | Downstream consumer compromise via tampered OCI image (no signature / no SLSA provenance) | supply_chain | Release artifact publish | Release artifact integrity | high | possible | unmitigated | GPG on tarballs only; images pushed with no signature or provenance attestation (no cosign) | |
- | T19 | Traffic redirection or filter-chain injection via compromised xDS management server | insider | xDS control-plane ingestion | xDS configuration integrity, Proxied request/response data, Internal upstream services | high | possible | risk_accepted | upstream threat model declares xDS transport trusted; mTLS to control plane | |
- | T20 | Build-time code injection via compromised upstream dependency tarball | supply_chain | Bazel dependency fetch | Release artifact integrity, Process & host integrity | high | rare | mitigated | all 113 deps SHA256-pinned; `tools/dependency/` validators; CPE tracking | |
- | T21 | Log injection / SIEM poisoning via unescaped attacker-controlled fields in access-log output | remote_unauth | Access-log formatter | Access logs & telemetry | medium | likely | partially_mitigated | `json_format` escaping; `JsonEscaper` (itself patched for OOB) | CVE-2024-45808, CVE-2026-26309 |
+ config:
 ```
 
-**File**: `.github/dependabot.yml` (modified, +0/-7)
+**File**: `.github/workflows/_load.yml` (modified, +0/-3)
 ```diff
-@@ -47,13 +47,6 @@ updates:
-     interval: daily
-     time: "06:00"
- 
--- package-ecosystem: "docker"
--  directory: "/distribution/docker"
--  assignees: ["phlax"]
--  schedule:
--    interval: daily
--    time: "06:00"
--
- - package-ecosystem: "github-actions"
-   directory: "/"
-   assignees: ["phlax"]
+@@ -47,8 +47,6 @@ on:
+     outputs:
+       build-image:
+         value: ${{ jobs.request.outputs.build-image }}
+-      build-image-mobile:
+-        value: ${{ jobs.request.outputs.build-image-mobile }}
+       check-id:
+         value: ${{ jobs.request.outputs.check-id }}
+       check-name:
+@@ -82,7 +80,6 @@ jobs:
+       pull-requests: read
+     outputs:
+       build-image: ${{ toJSON(fromJSON(steps.request-output.outputs.value).request.build-image) }}
+-      build-image-mobile: ${{ fromJSON(steps.request-output.outputs.value).request.build-image-mobile }}
+       check-id: ${{ fromJSON(steps.request-output.outputs.value).check.check-id }}
+       request: ${{ steps.request-output.outputs.value }}
+       trusted: ${{ fromJSON(steps.request-output.outputs.value).request.trusted }}
 ```
 
-**File**: `.gitignore` (modified, +0/-1)
+**File**: `.github/workflows/_load_env.yml` (modified, +0/-3)
 ```diff
-@@ -113,7 +113,6 @@ yarn-error.log*
- /devcontainer/devcontainer.env
- /docs/landing_source/.bundle
- /linux
--distribution/custom
- examples/single-page-app/xds/lds.yml
- examples/websocket/certs
- tools/dev/src
+@@ -31,8 +31,6 @@ on:
+     outputs:
+       build-image:
+         value: ${{ jobs.request.outputs.build-image }}
+-      build-image-mobile:
+-        value: ${{ jobs.request.outputs.build-image-mobile }}
+       request:
+         value: ${{ jobs.request.outputs.request }}
+       trusted:
+@@ -55,7 +53,6 @@ jobs:
+     runs-on: ubuntu-24.04
+     outputs:
+       build-image: ${{ toJSON(fromJSON(steps.env.outputs.data).request.build-image) }}
+-      build-image-mobile: ${{ fromJSON(steps.env.outputs.data).request.build-image-mobile }}
+       request: ${{ steps.env.outputs.data }}
+       trusted: true
+     steps:
 ```
 
-**File**: `MODULE.bazel` (modified, +4/-1)
+**File**: `.github/workflows/envoy-dependency.yml` (modified, +0/-5)
 ```diff
-@@ -638,10 +638,12 @@ use_repo(envoy_build_config_ext, "envoy_build_config")
- envoy_module_graph_ext = use_extension("//bazel:extensions.bzl", "envoy_module_graph_extension")
- use_repo(envoy_module_graph_ext, "envoy_mod_graph")
+@@ -250,9 +250,7 @@ jobs:
+             sha-ci
+             sha-devtools
+             sha-docker
+-            sha-mobile
+             sha-worker
+-            mobile-sha
+             tag)
+         for sha in "${shas[@]}"; do
+             current_sha=$(bazel run --config=ci //tools/dependency:build-image-sha "$sha")
+@@ -298,7 +296,6 @@ jobs:
+            sha-ci: docker.io/envoyproxy/envoy-build:ci-${{ steps.build-tools.outputs.tag }}
+            sha-devtools: docker.io/envoyproxy/envoy-build:devtools-${{ steps.build-tools.outputs.tag }}
+            sha-docker: docker.io/envoyproxy/envoy-build:docker-${{ steps.build-tools.outputs.tag }}
+-           sha-mobile: docker.io/envoyproxy/envoy-build:mobile-${{ steps.build-tools.outputs.tag }}
+            sha-worker: docker.io/envoyproxy/envoy-build:worker-${{ steps.build-tools.outputs.tag }}
  
--# Base images for the container images (`//distribution/docker`).
-+# Base images for the container images (`//distribution/docker`). Each digest is that of the tag in
-+# its `# tag:` comment, and is updated from it by `ci/dependency/release_images.sh`.
- oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
- oci.pull(
-     name = "distroless_base_nossl",
-+    # tag: nonroot
-     digest = "sha256:e6b0f82595aa1edde72c8054de7a9dca30f0f8f54820c37a167c0ddfc21c5c67",
-     image = "gcr.io/distroless/base-nossl-debian13",
-     platforms = [
-@@ -651,6 +653,7 @@ oci.pull(
- )
- oci.pull(
-     name = "ubuntu_base",
-+    # tag: 22.04
-     digest = "sha256:076e7bf82319619f28dd0aa9c02ab34b055ad37100395b4f49a2ffba04fb5e11",
-     image = "mirror.gcr.io/library/ubuntu",
-     platforms = [
+     - run: |
+@@ -307,7 +304,6 @@ jobs:
+             "$CURRENT_ENVOY_SHA_CI:${{ fromJSON(steps.build-images.outputs.shas).sha-ci }}"
+             "$CURRENT_ENVOY_SHA_DEVTOOLS:${{ fromJSON(steps.build-images.outputs.shas).sha-devtools }}"
+             "$CURRENT_ENVOY_SHA_DOCKER:${{ fromJSON(steps.build-images.outputs.shas).sha-docker }}"
+-            "$CURRENT_ENVOY_SHA_MOBILE:${{ fromJSON(steps.build-images.outputs.shas).sha-mobile }}"
+             "$CURRENT_ENVOY_SHA_WORKER:${{ fromJSON(steps.build-images.outputs.shas).sha-worker }}")
+         echo "replace=${SHA_REPLACE[*]}" >> "$GITHUB_OUTPUT"
+       name: Find SHAs to replace
+@@ -318,7 +314,6 @@ jobs:
+         CURRENT_ENVOY_SHA_CI: ${{ steps.current.outputs.sha-ci }}
+         CURRENT_ENVOY_SHA_DEVTOOLS: ${{ steps.current.outputs.sha-devtools }}
+         CURRENT_ENVOY_SHA_DOCKER: ${{ steps.current.outputs.sha-docker }}
+-        CURRENT_ENVOY_SHA_MOBILE: ${{ steps.current.outputs.sha-mobile }}
+         CURRENT_ENVOY_SHA_WORKER: ${{ steps.current.outputs.sha-worker }}
+     - run: |
+         echo "${SHA_REPLACE}" | xargs bazel run --config=ci @envoy_toolshed//sha:replace "${PWD}"
 ```
 
 **File**: `MODULE.bazel.lock` (modified, +3/-3)
 ```diff
-@@ -931,7 +931,7 @@
+@@ -932,7 +932,7 @@
    "moduleExtensions": {
      "//bazel:extensions.bzl%envoy_build_config_ext": {
        "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+-        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
++        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
          "usagesDigest": "eA9F7Sp3VWzMPr64I4OqdYTS7aJ/vD1NCUzz0/uIPRU=",
          "recordedInputs": [
            "REPO_MAPPING:,bazel_skylib bazel_skylib+",
-@@ -951,7 +951,7 @@
+@@ -952,7 +952,7 @@
      },
      "//bazel:extensions.bzl%envoy_module_graph_extension": {
        "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+-        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
++        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
          "usagesDigest": "a20U+l72r//DsxddmI97juCc5OVovDKHTOodwyV6/14=",
          "recordedInputs": [
            "REPO_MAPPING:,bazel_skylib bazel_skylib+",
-@@ -973,7 +973,7 @@
+@@ -974,7 +974,7 @@
      },
      "//bazel:extensions.bzl%envoy_repo_extension": {
        "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+-        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
++        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
          "usagesDigest": "qNXh2UFb6L5FDqCDmXlJCEwkQwnTEu3pouMvLd9F+7c=",
          "recordedInputs": [
            "REPO_MAPPING:,bazel_skylib bazel_skylib+",
 ```
 
-**File**: `bazel/repo.bzl` (modified, +0/-11)
+**File**: `bazel/repo.bzl` (modified, +0/-6)
 ```diff
-@@ -265,17 +265,6 @@ py_console_script_binary(
-     data = [":envoy_repo.py"],
- )
+@@ -5,14 +5,9 @@ CONTAINERS = """
+ REPO = "{repo}"
+ REPO_GCR = "{repo_gcr}"
+ SHA = "{sha}"
+-SHA_MOBILE = "{sha_mobile}"
+ SHA_WORKER = "{sha_worker}"
+ TAG = "{tag}"
  
--py_console_script_binary(
--    name = "trigger",
--    args = [
--        "trigger",
--        PATH,
--    ],
--    pkg = "@base_pip3//envoy_base_utils",
--    script = "envoy.project",
--    data = [":envoy_repo.py"],
--)
+-def image_mobile():
+-    return "%s@sha256:%s" % (
+-        REPO, SHA_MOBILE)
 -
- ''' % local_sysroot)
- 
- _envoy_repo = repository_rule(
+ def image_worker():
+     return "%s@sha256:%s" % (
+         REPO_GCR, SHA_WORKER)
+@@ -80,7 +75,6 @@ def _envoy_repo_impl(repository_ctx):
+         repo = build_image["repo"],
+         repo_gcr = build_image["repo-gcr"],
+         sha = build_image["sha"],
+-        sha_mobile = build_image["sha-mobile"],
+         sha_worker = build_image["sha-worker"],
+         tag = build_image["tag"],
+     ))
 ```
 
 **File**: `bazel/tests/codeql/MODULE.bazel.lock` (modified, +3/-3)
 ```diff
-@@ -1268,7 +1268,7 @@
+@@ -1269,7 +1269,7 @@
      },
      "@@envoy+//bazel:extensions.bzl%envoy_build_config_ext": {
        "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+-        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
++        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
          "usagesDigest": "Er3syu+vTabKf6QNCuq+iOq29PoF5QEwbaOozyFkqt8=",
          "recordedInputs": [
            "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-@@ -1288,7 +1288,7 @@
+@@ -1289,7 +1289,7 @@
      },
      "@@envoy+//bazel:extensions.bzl%envoy_module_graph_extension": {
        "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+-        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
++        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
          "usagesDigest": "ymD/bnZhvue8QBxkA+Ac/m/a7viCmw83gRqefjG+JBc=",
          "recordedInputs": [
            "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-@@ -1310,7 +1310,7 @@
+@@ -1311,7 +1311,7 @@
      },
      "@@envoy+//bazel:extensions.bzl%envoy_repo_extension": {
        "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+-        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
++        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
          "usagesDigest": "FAw8Y3mQshR9sd1RHlAiDwpIEJGM2+PMZQFujBl5IUQ=",
          "recordedInputs": [
            "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
@@ -1429,51 +1626,51 @@ in the same invocation, whi
 
 **File**: `bazel/tests/external/MODULE.bazel.lock` (modified, +4/-4)
 ```diff
-@@ -1281,7 +1281,7 @@
+@@ -1282,7 +1282,7 @@
      },
      "@@envoy+//bazel:extensions.bzl%envoy_build_config_ext": {
        "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+-        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
++        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
          "usagesDigest": "iA1seCCxL1JoTeQEGHUPSEc93vO3JA4pM8sK4sMMan4=",
          "recordedInputs": [
            "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-@@ -1301,7 +1301,7 @@
+@@ -1302,7 +1302,7 @@
      },
      "@@envoy+//bazel:extensions.bzl%envoy_module_graph_extension": {
        "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+-        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
++        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
          "usagesDigest": "ymD/bnZhvue8QBxkA+Ac/m/a7viCmw83gRqefjG+JBc=",
          "recordedInputs": [
            "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-@@ -1323,7 +1323,7 @@
+@@ -1324,7 +1324,7 @@
      },
      "@@envoy+//bazel:extensions.bzl%envoy_repo_extension": {
        "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+-        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
++        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
          "usagesDigest": "FAw8Y3mQshR9sd1RHlAiDwpIEJGM2+PMZQFujBl5IUQ=",
          "recordedInputs": [
            "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-@@ -1343,7 +1343,7 @@
+@@ -1344,7 +1344,7 @@
      },
      "@@envoy+//bazel:extensions.bzl%envoy_toolchains_extension": {
        "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+-        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
++        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
          "usagesDigest": "PAKPVvO8cX+q6rOc94CBj2PuUR0CHcNuCfqfSSrj7Vs=",
          "recordedInputs": [
            "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49485** (2026-11-20): http: record the stop-all filter data parks at as the latest data filter (@wbpcode)
+- **PR #49484** (2026-11-20): docs: fix the description of --reject-unknown-dynamic-fields (@rawsun007)
+- **PR #49482** (2026-11-20): Removes slop doc from dynamic_modules.rst (@mathetake)
+- **PR #49469** (2026-11-19): deps: Bump toolshed actions -> actions-v0.4.33 (@dependency-envoy[bot])
+- **PR #49462** (2026-11-19): mobile/ci: Stop using, and remove, the mobile build image (@phlax)
 - **PR #49411** (2026-11-18): deps: Bump `bazel-registry` -> d7b2089 (+envoy_toolshed) (@dependency-envoy[bot])
-- **PR #49408** (2026-11-18): deps/ci: Fix release dates when a module is updated (@phlax)
-- **PR #49407** (closed): deps: Bump `bazel-registry` -> 2d6df3f (+envoy_toolshed) (@dependency-envoy[bot])
-- **PR #49406** (2026-11-18): [bp/v1.39] Adding adding injectHeadersToFilterChain() API to send headers (#47475) (@jwendell)
-- **PR #49405** (2026-11-18): [bp/v1.38] Adding adding injectHeadersToFilterChain() API to send headers (#47475) (@jwendell)
-- **PR #49404** (2026-11-18): [bp/v1.37] Adding adding injectHeadersToFilterChain() API to send headers (#47475) (@jwendell)
 
 ---
 
@@ -1493,31 +1690,31 @@ in the same invocation, whi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps/ci: Fix release dates when a module is updated
+## X. docs: fix the description of --reject-unknown-dynamic-fields
 
 **RULE**:
-When implementing operations in `ci/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/root/operations/cli.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `85f81a08`: deps/ci: Fix release dates when a module is updated. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `86f73b92`: docs: fix the description of --reject-unknown-dynamic-fields. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/README.md`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/root/operations/cli.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-* `deps.update <name[=version]>` &mdash; run the per-workspace bzlmod dependency updater for the requested module, skipping workspaces where that dependency is not declared, then regenerate the lockfiles as `lockfiles` does, and fix the release date of the module in the dependency metadata (requires `GITHUB_TOKEN`).
+  *(optional)* This flag enables validation of protobuf configuration for unknown fields in
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-* `deps.update <name[=version]>` &mdash; run the per-workspace bzlmod dependency updater for the requested module, skipping workspaces where that dependency is not declared, then regenerate the lockfiles as `lockfiles` does.
+  *(optional)* This flag disables validation of protobuf configuration for unknown fields in
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `85f81a08` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `86f73b92` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

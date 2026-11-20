@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T09:34:55.492Z",
-  "total_records": 2102,
+  "last_updated": "2026-11-20T09:59:51.007Z",
+  "total_records": 2107,
   "domains": {
     "A": {
       "total": 17,
@@ -58,7 +58,7 @@
       ]
     },
     "D": {
-      "total": 850,
+      "total": 853,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -909,7 +909,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-thejagstudio-tessera-small-learnings-core-inv",
         "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-core-invariants",
         "DOM-D-1971CBB0",
-        "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-cloudflare-clairic-core-invariants",
+        "DOM-D-9E529A03",
+        "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clairic-learnings-core-invariants"
       ]
     },
     "E": {
@@ -1359,7 +1362,7 @@
       ]
     },
     "H": {
-      "total": 498,
+      "total": 500,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1858,7 +1861,9 @@
         "domain_intelligence-technical-construction-intelligence-crawlcove-robots-txt-tester-core-invariants",
         "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-robots-txt-tester-learni",
         "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-rocketride-org-rocketride-server-core-invari",
+        "domain_intelligence-technical-construction-intelligence-rocketride-org-rocketride-server-learnings-c"
       ]
     },
     "I": {
@@ -10554,8 +10559,8 @@
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "repository": "envoyproxy/envoy",
-      "content_hash": "fccdac557aac28b4e34b326d39367b4064f4b93c953338a76f70bf50d20c8ee3",
-      "created_at": "2026-11-19T05:42:23.428Z"
+      "content_hash": "c7771ba83c754e2224caec3106041df6177dacb5c5870969332a32ea7ed3517e",
+      "created_at": "2026-11-20T09:59:11.035Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants",
@@ -23633,8 +23638,8 @@
       "title": "Technical Construction Intelligence: chrisbanes/skills Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chrisbanes-skills-technical-construction-intelligence-chrisbanes-skills-core-inv.md",
       "repository": "chrisbanes/skills",
-      "content_hash": "5fd875a423e85c3ebfbe9b84652a6944fee8ce63bf5df630644233907ac5306e",
-      "created_at": "2026-11-16T05:17:39.882Z"
+      "content_hash": "a8b7534bc1d5da78656d668a6a9b6fe3ade0a39ac776e2be716091f7747e8293",
+      "created_at": "2026-11-20T09:59:08.243Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-learnings-core-invariants",
@@ -23642,8 +23647,8 @@
       "title": "Technical Construction Intelligence: chrisbanes-skills-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chrisbanes-skills-learnings-technical-construction-intelligence-chrisbanes-skill.md",
       "repository": "chrisbanes-skills-learnings",
-      "content_hash": "3ed5ff0b0d8aefdadd3822b7b40343d0bc825f61d1743dea597c0e31f542dad3",
-      "created_at": "2026-11-16T05:17:45.420Z"
+      "content_hash": "dcbd6bdfddf1adc93a76ff9ba81552fadfbeaaf775b58683ddcd90c67714072b",
+      "created_at": "2026-11-20T09:59:51.007Z"
     },
     "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-core-invariants",
@@ -35492,6 +35497,84 @@
       "repository": "pimalaya-himalaya-learnings",
       "content_hash": "19027dd5f4b5b33917259bcf6b286b706b0a8df8d2143d448266559b8569d879",
       "created_at": "2026-11-20T07:36:06.823Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-cloudflare-clairic-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-cloudflare-clairic-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Cloudflare/clairic Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clairic-research-knowledge-intelligence-cloudflare-clairic-core-in.md",
+      "repository": "Cloudflare/clairic",
+      "content_hash": "bad36edb8db22ae6eec4ec26b4a1ad7e8adad9b1f42fa6324f25b792330600e9",
+      "created_at": "2026-11-20T09:59:07.092Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rocketride-org-rocketride-server-core-invari": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rocketride-org-rocketride-server-core-invari",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: rocketride-org/rocketride-server Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rocketride-org-rocketride-server-technical-construction-intelligence-rocketride-.md",
+      "repository": "rocketride-org/rocketride-server",
+      "content_hash": "a10da494a0f87c0cc5f41fb7f07a65f8cfa435552fa9b4ae7a1efd1fd1f68522",
+      "created_at": "2026-11-20T09:59:07.242Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rocketride-org-rocketride-server-learnings-c": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rocketride-org-rocketride-server-learnings-c",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: rocketride-org-rocketride-server-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rocketride-org-rocketride-server-learnings-technical-construction-intelligence-r.md",
+      "repository": "rocketride-org-rocketride-server-learnings",
+      "content_hash": "f0e5720774d4d8f2cb96d6102e519156fcf2f1aa5ad05b28fe6bdb2a5cccc150",
+      "created_at": "2026-11-20T09:59:15.385Z"
+    },
+    "DOM-D-9E529A03": {
+      "record_id": "DOM-D-9E529A03",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Cloudflare/clairic",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clairic-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Cloudflare/clairic](https://huggingface.co/Cloudflare/clairic))  \n> **Source Version**: `hf-cloudflar`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "756b7c641b88eb24c2157d03d7c1ce8bd8ccce3ed748e336eb34f47ad4717c8d",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clairic-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clairic-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-cloudflare-clairic/hf-cloudflare-clairic-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T09:59:15.743Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-cloudflare-clairic)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-cloudflare-clairic"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T09:59:48.896Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clairic-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clairic-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-cloudflare-clairic-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clairic-learnings-research-knowledge-intelligence-hf-cloudflare-cl.md",
+      "repository": "hf-cloudflare-clairic-learnings",
+      "content_hash": "385aabbafec9707ca95fa17f05d95ecf760bd324c1e682b9c68e6b56033b790b",
+      "created_at": "2026-11-20T09:59:49.249Z"
     }
   }
 }

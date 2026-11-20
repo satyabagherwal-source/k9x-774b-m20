@@ -11544,3 +11544,8 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ba512866` | Multi-dimensional audit evidence | 2026-11-20T09:10:36.355Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `2c8ae4e8` | Multi-dimensional audit evidence | 2026-11-20T09:34:48.772Z |
 | `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `5235a29d` | Multi-dimensional audit evidence | 2026-11-20T09:34:50.577Z |
+| `learn-github-rocketride-org-rocketride-server` | `https://github.com/rocketride-org/rocketride-server` | `8b5785c8` | Multi-dimensional audit evidence | 2026-11-20T09:59:06.496Z |
+| `learn-huggingface-cloudflare-clairic` | `https://huggingface.co/Cloudflare/clairic` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-20T09:59:06.627Z |
+| `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `50b5d4cf` | Multi-dimensional audit evidence | 2026-11-20T09:59:07.801Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `205e84d0` | Multi-dimensional audit evidence | 2026-11-20T09:59:10.586Z |
+| `learn-dom-d-9e529a03` | `project://hf-cloudflare-clairic` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cloudflare-clairic-learnings.md` | 2026-11-20T09:59:48.929Z |

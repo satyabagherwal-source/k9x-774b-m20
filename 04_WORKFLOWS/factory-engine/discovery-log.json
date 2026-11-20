@@ -21673,5 +21673,32 @@
     "downloads": 0,
     "qualityScore": 940,
     "discoveredAt": "2026-11-20T06:42:49.853Z"
+  },
+  {
+    "name": "rocketride-server",
+    "fullName": "rocketride-org/rocketride-server",
+    "url": "https://github.com/rocketride-org/rocketride-server",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "RocketRide is an open source AI meta-harness with the only enterprise-grade runtime built on C++. Build, test and publish durable agents that scale in production.",
+    "stars": 20008,
+    "forks": 8680,
+    "openIssues": 587,
+    "language": "Python",
+    "qualityScore": 13058,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-20T09:55:11.305Z"
+  },
+  {
+    "name": "Cloudflare/clairic",
+    "fullName": "Cloudflare/clairic",
+    "url": "https://huggingface.co/Cloudflare/clairic",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Cloudflare/clairic (88 likes, 34 downloads)",
+    "likes": 88,
+    "downloads": 34,
+    "qualityScore": 914,
+    "discoveredAt": "2026-11-20T09:56:43.144Z"
   }
 ]

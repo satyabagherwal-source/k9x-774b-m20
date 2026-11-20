@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-0VBD",
-    "timestamp": "2026-11-18T11:45:00.553Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-    "contentHash": "09adff2d5b60d198b13ace486367b7efbfb210a39f126723833e1a6f5e000a18",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-127K",
-    "timestamp": "2026-11-18T11:45:09.488Z",
-    "repository": "NervJS/taro",
-    "learningId": "learn-github-nervjs-taro",
-    "contentHash": "c892a62cb9f9c21d53e37cc9169cd899b20081bb0774bc2004644b5b7ba301c5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-174F",
-    "timestamp": "2026-11-18T11:45:15.855Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "0b7d29fa6e40c61310fce08c56891233a37c2bfbb9de50d7ec72c5f33aab211d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-DID6",
-    "timestamp": "2026-11-18T11:54:50.298Z",
-    "repository": "KORMo-VL/KORMo-Web-11B",
-    "learningId": "learn-huggingface-kormo-vl-kormo-web-11b",
-    "contentHash": "746c30cf258690d2188ce80395fb273a6209bf56a5d42df6d2e6a69acb7f4698",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-DKB1",
     "timestamp": "2026-11-18T11:54:52.813Z",
     "repository": "XingChen-AGI/TeleOCR",
@@ -7490,6 +7430,66 @@
     "repository": "StarTrail-org/LEANN",
     "learningId": "learn-github-startrail-org-leann",
     "contentHash": "84d5cccb2531fa0aabed7cf8a82bce71d7046ee8c682d257dd2aefd3476075d5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-4DTL",
+    "timestamp": "2026-11-20T09:59:06.489Z",
+    "repository": "rocketride-org/rocketride-server",
+    "learningId": "learn-github-rocketride-org-rocketride-server",
+    "contentHash": "c4776516fbbaf7eae58ed6d320461fa4d477caaa76265d1706e3573709010eda",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-4DX8",
+    "timestamp": "2026-11-20T09:59:06.620Z",
+    "repository": "Cloudflare/clairic",
+    "learningId": "learn-huggingface-cloudflare-clairic",
+    "contentHash": "447506975d4a78d5923dc765d85f72a12ca3a00314f5d3961aad7562a405b030",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-4ETW",
+    "timestamp": "2026-11-20T09:59:07.796Z",
+    "repository": "chrisbanes/skills",
+    "learningId": "learn-github-chrisbanes-skills",
+    "contentHash": "f2ef466a784148d647e22c372d98af24293d73e8c54f90d2068bf7b12756a2f4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-4GZ9",
+    "timestamp": "2026-11-20T09:59:10.581Z",
+    "repository": "envoyproxy/envoy",
+    "learningId": "learn-github-envoyproxy-envoy",
+    "contentHash": "449e090d0167cf85ce9e9101f3d90347646744a04ed0713f0df03dc24db09f94",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

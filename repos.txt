@@ -5234,3 +5234,9 @@ https://github.com/xevrion/hatchzip
 # --- Automatically Discovered by AI Scout Engine [2026-11-20T06:44:57.918Z] ---
 # [HUGGINGFACE-AI-MODELS] thejagstudio/tessera-small (940 score) - Verified Hugging Face Model: thejagstudio/tessera-small (94 likes, 0 downloads)
 https://huggingface.co/thejagstudio/tessera-small
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-20T09:58:51.346Z] ---
+# [AI-AGENTS] rocketride-org/rocketride-server (13058 score) - RocketRide is an open source AI meta-harness with the only enterprise-grade runt
+https://github.com/rocketride-org/rocketride-server
+# [HUGGINGFACE-AI-MODELS] Cloudflare/clairic (914 score) - Verified Hugging Face Model: Cloudflare/clairic (88 likes, 34 downloads)
+https://huggingface.co/Cloudflare/clairic

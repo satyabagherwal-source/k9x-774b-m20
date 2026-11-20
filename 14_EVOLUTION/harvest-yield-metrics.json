@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T09:34:50.581Z",
-  "total_cycles_completed": 10968,
-  "total_learnings_persisted": 10968,
-  "total_rules_promoted": 10334,
+  "last_updated": "2026-11-20T09:59:10.592Z",
+  "total_cycles_completed": 10972,
+  "total_learnings_persisted": 10972,
+  "total_rules_promoted": 10337,
   "history": [
-    {
-      "timestamp": "2026-11-19T13:35:15.573Z",
-      "repository": "facebook/sam3",
-      "learningId": "learn-huggingface-facebook-sam3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T13:35:26.202Z",
-      "repository": "zeromicro/go-zero",
-      "learningId": "learn-github-zeromicro-go-zero",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T14:03:26.933Z",
-      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-      "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T14:03:29.967Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T14:03:30.999Z",
       "repository": "bahdotsh/wrkflw",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-20T09:34:50.581Z",
       "repository": "StarTrail-org/LEANN",
       "learningId": "learn-github-startrail-org-leann",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T09:59:06.505Z",
+      "repository": "rocketride-org/rocketride-server",
+      "learningId": "learn-github-rocketride-org-rocketride-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T09:59:06.637Z",
+      "repository": "Cloudflare/clairic",
+      "learningId": "learn-huggingface-cloudflare-clairic",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T09:59:07.807Z",
+      "repository": "chrisbanes/skills",
+      "learningId": "learn-github-chrisbanes-skills",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T09:59:10.592Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

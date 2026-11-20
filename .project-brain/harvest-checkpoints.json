@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T09:34:50.584Z",
+  "last_updated": "2026-11-20T09:59:10.597Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "a66f6eaa3dd3b4e14ac565715bb233fa833facd19ba0550efab04d5cb3bb6058",
-      "verified_at": "2026-11-19T05:42:23.075Z",
+      "content_hash": "449e090d0167cf85ce9e9101f3d90347646744a04ed0713f0df03dc24db09f94",
+      "verified_at": "2026-11-20T09:59:10.596Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T05:42:23.075Z"
+      "last_updated": "2026-11-20T09:59:10.596Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -13356,14 +13356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chrisbanes-skills",
-      "content_hash": "afe23c2005e11afd7b4fdd15076c6114289c1ab5a291b87e6a4a5a8803f28cc1",
-      "verified_at": "2026-11-16T05:17:39.670Z",
+      "content_hash": "f2ef466a784148d647e22c372d98af24293d73e8c54f90d2068bf7b12756a2f4",
+      "verified_at": "2026-11-20T09:59:07.811Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T05:17:39.670Z"
+      "last_updated": "2026-11-20T09:59:07.811Z"
     },
     "joreilly/Confetti": {
       "repository": "joreilly/Confetti",
@@ -19574,6 +19574,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-20T06:45:04.526Z"
+    },
+    "rocketride-org/rocketride-server": {
+      "repository": "rocketride-org/rocketride-server",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rocketride-org-rocketride-server",
+      "content_hash": "c4776516fbbaf7eae58ed6d320461fa4d477caaa76265d1706e3573709010eda",
+      "verified_at": "2026-11-20T09:59:06.510Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-20T09:59:06.510Z"
+    },
+    "Cloudflare/clairic": {
+      "repository": "Cloudflare/clairic",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-cloudflare-clairic",
+      "content_hash": "447506975d4a78d5923dc765d85f72a12ca3a00314f5d3961aad7562a405b030",
+      "verified_at": "2026-11-20T09:59:06.642Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-20T09:59:06.642Z"
     }
   },
   "repos": {

@@ -11511,3 +11511,8 @@
 | `CYCLE-20261120-E0CG` | `2026-11-20T09:10:36.352Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9546` | Yes (`3b94e5dc...`) |
 | `CYCLE-20261120-951D` | `2026-11-20T09:34:48.769Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9547` | Yes (`cc019eca...`) |
 | `CYCLE-20261120-96FI` | `2026-11-20T09:34:50.574Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9548` | Yes (`84d5cccb...`) |
+| `CYCLE-20261120-4DTL` | `2026-11-20T09:59:06.489Z` | `rocketride-org/rocketride-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9549` | Yes (`c4776516...`) |
+| `CYCLE-20261120-4DX8` | `2026-11-20T09:59:06.620Z` | `Cloudflare/clairic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clairic-learnings.md` | Yes (`44750697...`) |
+| `CYCLE-20261120-4ETW` | `2026-11-20T09:59:07.796Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9550` | Yes (`f2ef466a...`) |
+| `CYCLE-20261120-4GZ9` | `2026-11-20T09:59:10.581Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9551` | Yes (`449e090d...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T09:59:48.929Z` | `hf-cloudflare-clairic` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9E529A03` [Domain D] | Yes (`756b7c64...`) |
