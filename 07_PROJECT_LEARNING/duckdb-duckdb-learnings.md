@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `aa87a115`  
+> **Source Version**: `522f213e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T05:54:57.246Z  
+> **Timestamp**: 2026-11-20T12:50:27.021Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T05:54:57.241Z  
+> **Harvest Timestamp**: 2026-11-20T12:50:27.015Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 43168 stars
+- **Stars / Engagement**: 43202 stars
 
 ---
 
@@ -1964,11 +1964,11 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29042** (2026-11-18): **Preserve LIKE predicates for scan-level pruning**
-  *Symptoms*: Preserve leading-wildcard LIKE/ILIKE expressions as partial scan filters so table scans can use them for conservative substring pruning while DuckDB retains the original residual filter for correctness.   Wildcard-free ILIKE is also exposed as case-insensitive equality, including non-ASCII patterns where ordered prefix bounds cannot be derived. The pushed expressions are rebound to their scan columns, with focused planner tests covering wildcard, ASCII, non-ASCII, and column-binding behavior.
+- **Issue #29134** (2026-11-20): **Skip plan-cost regression checks for identical plans**
+  *Symptoms*: Adaptive join filters can produce different intermediate row counts for identical plans, causing spurious CI failures.  Compare physical `EXPLAIN` plans without estimated cardinalities and skip cost and timing comparisons when they match. Keep the existing checks for changed plans.
 
-- **Issue #29040** (2026-11-18): **capi: const char ** is now const char * const * for readonly api calls**
-  *Symptoms*: This pr changes `const char **` into `const char *const *` for readonly api calls. This improves the output of bindgen for Rust bindings, going from `*mut *const i8` to `*const *const i8`.  Also updated `arrow_importer_create` to take `const struct ArrowSchema *` instead.
+- **Issue #29131** (2026-11-20): **Register a sort temporary memory state on its first sink**
+  *Symptoms*: With the following query: ```sql SET threads = 16; SET memory_limit = '24GiB'; CREATE TABLE t_win AS SELECT (range % 50000)::BIGINT AS k, range::BIGINT AS v FROM range(3000000); CREATE TABLE t_agg AS SELECT (hash(range) % 2000000)::BIGINT AS g, range::BIGINT AS x FROM range(100000000);  SELECT count(*), sum(coalesce(w.s, 0) + coalesce(a.s, 0)) FROM 	(SELECT k, sum(v) OVER (PARTITION BY k ORDER BY v ROWS UNBOUNDED PRECEDING) AS s FROM t_win) w 	FULL JOIN (SELECT g, sum(x) AS s FROM t_agg GROUP BY g) a ON w.k = a.g; ```  This takes ~1.4 s on main because the `GROUP BY` finalizes on a single thread:  1. The window (probe side) sinks first and creates one `Sort` per hash group, 64 here. Each `Sort` registers with the `TemporaryMemoryManager` in its constructor and books the default minimum, 1.35 GiB: ~86 GiB booked against a 21.6 GiB budget. 2. The groups are only sorted in the window's source phase, which waits for the join build, so they sit idle and booked. 3. The `GROUP BY` (build side) then asks for memory in `MaxThreads`. The manager is over-committed and grants only the aggregate's minimum, so `partitions_fit` becomes 1.  TPC-DS Q51 can hit the same pattern, depending on the order in which the scheduler runs the two sides of its FULL join.  **Changes**: a `Sort` now registers with the `TemporaryMemoryManager` at its first `Sink`, not in the `SortGlobalSinkState` constructor. Idle hash groups, and groups that skip sorting, book nothing. A registered `Sor
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1985,887 +1985,720 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7b270526` (2026-11-18)
-**Commit Message**: Fix RTTI-sensitive tests and extension CI failures (#29013)
+### Incident Patch 1: `abbad801` (2026-11-20)
+**Commit Message**: Fix min/max for INTERVAL type (#29104)
 
-### Run-Time Type Information is not stable
-
-Tests that assert DuckDB exception types can fail when exceptions cross
-a shared-library boundary.
-
-We can match stable error messages and classify serialized IO/HTTP
-errors through `ErrorData`, preserving HTTP retry behavior and
-async-write diagnostics. Regression tests cover serialized errors
-without relying on DuckDB exception RTTI.
-
-Also reduce memory-heavy fixtures for Win32 and carry the existing
-DuckLake, Quack, and Lance extension patches. The DuckLake timeout
-patches retain their existing unconditional skips; Quack and DuckLake
-platform guards retain their current scope. Lance reads the thread count
-through the settings API instead of the removed `maximum_threads` field.
-
-Important: RTTI is _already_
-[rejected](https://github.com/duckdb/duckdb/pull/24858) for production
-code in duckdb core. (Enabling `-fno-rtti` for all duckdb core code and
-tests is a follow-up
-[task](https://github.com/duckdblabs/duckdb-internal/issues/12087).)
-
-### Prepare for replacing "unittest binary" with a "test extension"
-
-#28403 allows running tests without re-compiling the unittest binary in
-
-
-**File**: `.github/patches/extensions/ducklake/0028-skip-failing-extension-ci-tests.patch` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+diff --git a/test/sql/autoloading/autoload_sqlite_catalog.test b/test/sql/autoloading/autoload_sqlite_catalog.test
-+index 0b979595..004c8392 100644
-+--- a/test/sql/autoloading/autoload_sqlite_catalog.test
-++++ b/test/sql/autoloading/autoload_sqlite_catalog.test
-+@@ -2,6 +2,8 @@
-+ # description: A SQLite catalog can be attached when the sqlite extension is only loaded by the attach
-+ # group: [autoloading]
-+ 
-++mode skip SQLite catalog autoloading leaves the catalog unattached
-++
-+ require ducklake
-+ 
-+ require parquet
-+diff --git a/test/sql/initialize/new_ducklake_requires_data_path.test b/test/sql/initialize/new_ducklake_requires_data_path.test
-+index 1c9cb402..5f0d2f9c 100644
-+--- a/test/sql/initialize/new_ducklake_requires_data_path.test
-++++ b/test/sql/initialize/new_ducklake_requires_data_path.test
-+@@ -2,6 +2,9 @@
-+ # description: Creating a DuckLake in a catalog that is not a DuckDB database requires a DATA_PATH
-+ # group: [initialize]
-+ 
-++# SQLite catalog paths derived from BASE_TEST_NAME are invalid on Windows.
-++require notwindows
-++
-+ require ducklake
-+ 
-+ require parquet
-+diff --git a/test/sql/migration/inlined_column_rename_dev_conflict.test b/test/sql/migration/inlined_column_rename_dev_conflict.test
-+index 25af2c96..7c663f82 100644
-+--- a/test/sql/migration/inlined_column_rename_dev_conflict.test
-++++ b/test/sql/migration/inlined_column_rename_dev_conflict.test
-+@@ -2,6 +2,9 @@
-+ # description: dev migration must not partially rename the inlined table on a column conflict
-+ # group: [migration]
-+ 
-++# Automatic migration can hang while handling the column rename conflict on musl.
-++require notmusl
-++
-+ require ducklake
-+ 
-+ require parquet
-```
-
-**File**: `.github/patches/extensions/ducklake/0029-skip-extension-ci-timeouts.patch` (added, +39/-0)
-```diff
-@@ -0,0 +1,39 @@
-+diff --git a/test/sql/alter/many_schema_versions_low_memory.test_slow b/test/sql/alter/many_schema_versions_low_memory.test_slow
-+index a14ed19..79f2208 100644
-+--- a/test/sql/alter/many_schema_versions_low_memory.test_slow
-++++ b/test/sql/alter/many_schema_versions_low_memory.test_slow
-+@@ -2,6 +2,8 @@
-+ # description: test that many DDL operations work under a low memory limit with schema cache eviction
-+ # group: [alter]
-+ 
-++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
-++
-+ require ducklake
-+ 
-+ require notmusl
-+diff --git a/test/sql/compaction/merge_adjacent_tiered.test_slow b/test/sql/compaction/merge_adjacent_tiered.test_slow
-+index 762f0c6..9ec24c5 100644
-+--- a/test/sql/compaction/merge_adjacent_tiered.test_slow
-++++ b/test/sql/compaction/merge_adjacent_tiered.test_slow
-+@@ -2,6 +2,8 @@
-+ # description: test tiered/lucene-like compaction using min_file_size, max_file_size and target_file_size
-+ # group: [compaction]
-+ 
-++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
-++
-+ require ducklake
-+ 
-+ require parquet
-+diff --git a/test/sql/insert/insert_wide_table_low_memory.test_slow b/test/sql/insert/insert_wide_table_low_memory.test_slow
-+index 157cbd3..f484227 100644
-+--- a/test/sql/insert/insert_wide_table_low_memory.test_slow
-++++ b/test/sql/insert/insert_wide_table_low_memory.test_slow
-+@@ -2,6 +2,8 @@
-+ # description: test that many small inserts into a wide table work under low memory limit
-+ # group: [insert]
-+ 
-++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
-++
-+ require ducklake
-+ 
-+ require notmusl
-```
-
-**File**: `.github/patches/extensions/ducklake/0030-skip-arm64-extension-ci-timeouts.patch` (added, +598/-0)
-```diff
-@@ -0,0 +1,598 @@
-+diff --git a/test/sql/alter/alter_drops_empty_inlined_tables.test b/test/sql/alter/alter_drops_empty_inlined_tables.test
-+index aff0c8b..f7dacd6 100644
-+--- a/test/sql/alter/alter_drops_empty_inlined_tables.test
-++++ b/test/sql/alter/alter_drops_empty_inlined_tables.test
-+@@ -2,6 +2,8 @@
-+ # description: An ALTER drops the empty inlined data tables of the table that its new inlined data table supersedes
-+ # group: [alter]
-+ 
-++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
-++
-+ require ducklake
-+ 
-+ require parquet
-+diff --git a/test/sql/alter/promote_type_all.test b/test/sql/alter/promote_type_all.test
-+index 058b18d..2805fc2 100644
-+--- a/test/sql/alter/promote_type_all.test
-++++ b/test/sql/alter/promote_type_all.test
-+@@ -2,6 +2,8 @@
-+ # description: test ducklake type promotion rules (widening casts)
-+ # group: [alter]
-+ 
-++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
-++
-+ require ducklake
-+ 
-+ require parquet
-+diff --git a/test/sql/alter/rename_column_with_case_insensitive_name.test b/test/sql/alter/rename_column_with_case_insensitive_name.test
-+index e6381cd..0b643d3 100644
-+--- a/test/sql/alter/rename_column_with_case_insensitive_name.test
-++++ b/test/sql/alter/rename_column_with_case_insensitive_name.test
-+@@ -2,6 +2,8 @@
-+ # description: test ducklake column rename with case insensitive name
-+ # group: [alter]
-+ 
-++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
-++
-+ require ducklake
-+ 
-+ require parquet
-+diff --git a/test/sql/alter/struct_evolution_reorder.test b/test/sql/alter/struct_evolution_reorder.test
-+index 251d7b9..8a8b137 100644
-+--- a/test/sql/alter/struct_evolution_reorder.test
-++++ b/test/sql/alter/struct_evolution_reorder.test
-+@@ -2,6 +2,8 @@
-+ # description: a type change that lists the fields of a struct in another order keeps the order of the catalog
-+ # group: [alter]
-+ 
-++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
-++
-+ require ducklake
-+ 
-+ require parquet
-+diff --git a/test/sql/alter/struct_evolution_reuse.test b/test/sql/alter/struct_evolution_reuse.test
-+index b532797..e1af3a3 100644
-+--- a/test/sql/alter/struct_evolution_reuse.test
-++++ b/test/sql/alter/struct_evolution_reuse.test
-+@@ -2,6 +2,8 @@
-+ # description: test ducklake struct field evolution re-use
-+ # group: [alter]
-+ 
-++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
-++
-+ require ducklake
-+ 
-+ require parquet
-+diff --git a/test/sql/benchmark/wide_table_insert_commits.test b/test/sql/benchmark/wide_table_insert_commits.test
-+index ec28a12..956597d 100644
-+--- a/test/sql/benchmark/wide_table_insert_commits.test
-++++ b/test/sql/benchmark/wide_table_insert_commits.test
-+@@ -2,6 +2,8 @@
-+ # description: Wide Parquet commit fixture preserves its schema, commit boundaries and reset invariants
-+ # group: [benchmark]
-+ 
-++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
-++
-+ require ducklake
-+ 
-+ require parquet
-+diff --git a/test/sql/catalog/nested_schema/nested_conflicts.test b/test/sql/catalog/nested_schema/nested_conflicts.test
-+index 63d8729..efe850f 100644
-+--- a/test/sql/catalog/nested_schema/nested_conflicts.test
-++++ b/test/sql/catalog/nested_schema/nested_conflicts.test
-+@@ -2,6 +2,8 @@
-+ # description: Transaction conflict detection with nested schemas
-+ # group: [nested_schema]
-+ 
-++mode skip Batch exceeds the 300-second extension CI timeout on Linux ARM64
-++
-+ require ducklake
-+ 
-+ require parquet
-+diff --git a/test/sql/catalog/nested_schema/nested_functions.test b/test/sql/catalog/nested_schema/nested_functions.test
-+index eb3afbf..eccacdf 100644
-+--- a/test/sql/catalog/nested_schema/nested_functions.test
-++++ b/test/sql/catalog/nested_schema/nested_functions.test
-+@@ -2,6 +2,8 @@
-+ # description: DuckLake table functions, built-in macros and options with nested schemas
-+ # group: [nested_schema]
-+ 
-++mode skip Batch exceeds the 300-second extension CI timeout on Linux ARM64
-++
-+ require ducklake
-+ 
-+ require parquet
-+diff --git a/test/sql/catalog/nested_schema/nested_orphan_entries.test b/test/sql/catalog/nested_schema/nested_orphan_entries.test
-+index 9f0cc12..95197e1 100644
-+--- a/test/sql/catalog/nested_schema/nested_orphan_entries.test
-++++ b/test/sql/catalog/nested_schema/nested_orphan_entries.test
-+@@ -2,6 +2,8 @@
-+ # description: Views, macros, partitions, sorts and child schemas of an orphaned schema are skipped when loading
-+ # group: [nested_schema]
-+ 
-++mode skip Batch exceeds the 300-second extension CI timeout on Linux ARM64
-++
-+ require ducklake
-+ 
-+ require parquet
-+diff --git a/test/sql/catalog/nested_schema/nested_orphan_subtree.test b/test/sql/catalog/nested_schema/nested_orphan_subtree.test
-+index 459ce32..ef107c2 100644
-+--- a/test/sql/catalog/nested_schema/nested_orphan_subtree.test
-++++ b/test/sql/catalog/nested_schema/nested_orphan_subtree.test
-+@@ -2,6 +2,8 @@
-+ # description: Orphaned or cyclic schema rows do not make the entire lake
-```
-
-**File**: `.github/patches/extensions/lance/0004-threads-setting-api.patch` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+diff --git a/src/lance_scan.cpp b/src/lance_scan.cpp
-+index 26b983a..0b30ef3 100644
-+--- a/src/lance_scan.cpp
-++++ b/src/lance_scan.cpp
-+@@ -10,6 +10,7 @@
-+ #include "duckdb/function/table_function.hpp"
-+ #include "duckdb/main/config.hpp"
-+ #include "duckdb/main/extension/extension_loader.hpp"
-++#include "duckdb/main/settings.hpp"
-+ #include "duckdb/optimizer/optimizer.hpp"
-+ #include "duckdb/optimizer/optimizer_extension.hpp"
-+ #include "duckdb/parser/parsed_data/create_table_function_info.hpp"
-+@@ -3280,7 +3281,7 @@ LanceExecLocalInit(ExecutionContext &context, TableFunctionInitInput &input,
-+   result->global_state = &global;
-+   LanceExecContext exec_ctx;
-+   exec_ctx.threads = NumericCast<uint32_t>(
-+-      DBConfig::GetConfig(context.client).options.maximum_threads);
-++      Settings::Get<ThreadsSetting>(context.client));
-+   result->stream = lance_create_dataset_exec_stream_ir(
-+       bind_data.dataset,
-+       bind_data.exec_ir.empty()
-```
-
-**File**: `.github/patches/extensions/quack/0003-skip-unstable-platform-tests.patch` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+diff --git a/test/sql/fetch_cancel_insert.test b/test/sql/fetch_cancel_insert.test
-+index e0f319d..ed2358b 100644
-+--- a/test/sql/fetch_cancel_insert.test
-++++ b/test/sql/fetch_cancel_insert.test
-+@@ -2,6 +2,9 @@
-+ # description: cancelling a scan whose producer is parked on the fetch buffer frees the connection for later INSERTs
-+ # group: [sql]
-+ 
-++# Cancelling a buffered scan can hang on musl.
-++require notmusl
-++
-+ include test/template/quack_setup.test_template
-+ 
-+ # The client stops the scan. The producer then fills the small buffer and parks, and it holds the
-+diff --git a/test/sql/result_ttl_releases_query.test b/test/sql/result_ttl_releases_query.test
-+index 800135d..fe43e45 100644
-+--- a/test/sql/result_ttl_releases_query.test
-++++ b/test/sql/result_ttl_releases_query.test
-+@@ -2,6 +2,9 @@
-+ # description: expiring a cache must release the abandoned server-side query too, not just the rows it retained
-+ # group: [sql]
-+ 
-++# Sort memory accounting is unstable on Windows ARM64.
-++require notwindows
-++
-+ include test/template/quack_setup.test_template
-+ 
-+ statement ok quack_db:quack_server_con
-+diff --git a/test/sql/serve_ssl.test b/test/sql/serve_ssl.test
-+index 63165eb..f753a4d 100644
-+--- a/test/sql/serve_ssl.test
-++++ b/test/sql/serve_ssl.test
-+@@ -2,6 +2,9 @@
-+ # description: quack_serve over HTTPS: generated self-signed keys, and clients pinning the server certificate
-+ # group: [sql]
-+ 
-++# SSL serving can crash on Windows ARM64.
-++require notwindows
-++
-+ require quack
-+ 
-+ require httpfs
-```
-
-**File**: `src/common/serializer/async_write_queue.cpp` (modified, +10/-5)
-```diff
-@@ -359,11 +359,16 @@ void AsyncWriteQueue::WriteBuffer(data_ptr_t buffer, idx_t size, idx_t offset) {
- 	}
- 	try {
- 		target.Write(buffer, size, offset);
--	} catch (const IOException &ex) {
--		throw IOException("Async write failed for range [offset=%llu, size=%llu]: %s", offset, size, ex.what());
--	} catch (const HTTPException &ex) {
--		throw HTTPException(Exception::ConstructMessage("Async write failed for range [offset=%llu, size=%llu]: %s",
--		                                                offset, size, ex.what()));
-+	} catch (const std::exception &ex) {
-+		ErrorData error(ex);
-+		if (error.Type() == ExceptionType::IO) {
-+			throw IOException("Async write failed for range [offset=%llu, size=%llu]: %s", offset, size, ex.what());
-+		}
-+		if (error.Type() == ExceptionType::HTTP) {
-+			throw HTTPException(Exception::ConstructMessage("Async write failed for range [offset=%llu, size=%llu]: %s",
-+			                                                offset, size, ex.what()));
-+		}
-+		throw;
- 	}
- }
- 
-```
-
-**File**: `src/main/http/http_util.cpp` (modified, +7/-6)
-```diff
-@@ -481,15 +481,16 @@ HTTPUtil::RunRequestWithRetry(const std::function<unique_ptr<HTTPResponse>(void)
- 			    if (response) {
- 				    response->url = request.url;
- 			    }
--		    } catch (IOException &e) {
--			    exception_error = e.what();
--			    caught_e = std::current_exception();
-+		    } catch (const std::exception &e) {
- 			    caught_error = ErrorData(e);
--		    } catch (HTTPException &e) {
-+			    if (caught_error.Type() != ExceptionType::IO && caught_error.Type() != ExceptionType::HTTP) {
-+				    throw;
-+			    }
- 			    exception_error = e.what();
- 			    caught_e = std::current_exception();
--			    caught_error = ErrorData(e);
--			    caught_response = ResponseFromError(caught_error);
-+			    if (caught_error.Type() == ExceptionType::HTTP) {
-+				    caught_response = ResponseFromError(caught_error);
-+			    }
- 		    }
- 
- 		    if (response) {
-```
-
-**File**: `test/api/test_block_allocator_tls.cpp` (modified, +8/-5)
-```diff
-@@ -1050,7 +1050,7 @@ TEST_CASE("BufferAllocator accounts for ordinary and huge backing operations", "
- 
- 	SECTION("Ordinary reallocation") {
- 		control.fail_allocate = true;
--		REQUIRE_THROWS_AS(allocator.Allocate(SIZE), OutOfMemoryException);
-+		REQUIRE_THROWS_WITH(allocator.Allocate(SIZE), Catch::Matchers::Contains("Failed to allocate block"));
- 		REQUIRE(manager.GetUsedMemory() == initial_memory);
- 		control.fail_allocate = false;
- 		auto owned = allocator.Allocate(SIZE);
-@@ -1060,7 +1060,8 @@ TEST_CASE("BufferAllocator accounts for ordinary and huge backing operations", "
- 		pointer[SIZE - 1] = 84;
- 		control.fail_reallocate = true;
- 		for (auto new_size : {SIZE / 2, SIZE * 2}) {
--			REQUIRE_THROWS_AS(owner.ReallocateData(pointer, SIZE, new_size), OutOfMemoryException);
-+			REQUIRE_THROWS_WITH(owner.ReallocateData(pointer, SIZE, new_size),
-+			                    Catch::Matchers::Contains("Failed to re-allocate block"));
- 			REQUIRE(manager.GetUsedMemory() == initial_memory + SIZE);
- 			REQUIRE(owned.get() == pointer);
- 			REQUIRE(owned.GetAllocator().get() == &owner);
-@@ -1097,7 +1098,7 @@ TEST_CASE("BufferAllocator accounts for ordinary and huge backing operations", "
- 	}
- 	SECTION("Huge replacement") {
- 		control.fail_allocate = true;
--		REQUIRE_THROWS_AS(allocator.AllocateHuge(SIZE), OutOfMemoryException);
-+		REQUIRE_THROWS_WITH(allocator.AllocateHuge(SIZE), Catch::Matchers::Contains("Failed to allocate block"));
- 		REQUIRE(manager.GetUsedMemory() == initial_memory);
- 		REQUIRE(live_bytes.load() == 0);
- 		control.fail_allocate = false;
-@@ -1107,7 +1108,8 @@ TEST_CASE("BufferAllocator accounts for ordinary and huge backing operations", "
- 		pointer[SIZE - 1] = 84;
- 		control.fail_allocate = true;
- 		for (auto new_size : {SIZE / 2, SIZE * 2}) {
--			REQUIRE_THROWS_AS(owned = allocator.AllocateHuge(new_size), OutOfMemoryException);
-+			REQUIRE_THROWS_WITH(owned = allocator.AllocateHuge(new_size),
-+			                    Catch::Matchers::Contains("Failed to allocate block"));
- 			REQUIRE(manager.GetUsedMemory() == initial_memory + SIZE);
- 			REQUIRE(live_bytes.load() == SIZE);
- 			REQUIRE(owned.GetSize() == SIZE);
-@@ -1117,7 +1119,8 @@ TEST_CASE("BufferAllocator accounts for ordinary and huge backing operations", "
- 		}
- 		control.fail_allocate = false;
- 		REQUIRE_NO_FAIL(connection.Query("SET memory_limit='12MiB'"));
--		REQUIRE_THROWS_AS(owned = allocator.AllocateHuge(2 * SIZE), OutOfMemoryException);
-+		REQUIRE_THROWS_WITH(owned = allocator.AllocateHuge(2 * SIZE),
-+		                    Catch::Matchers::Contains("failed to allocate data"));
- 		REQUIRE(manager.GetUsedMemory() == initial_memory + SIZE);
- 		REQUIRE(live_bytes.load() == SIZE);
- 		REQUIRE(owned.get() == pointer);
-```
-
----
-
-### Incident Patch 2: `6712265d` (2026-11-18)
-**Commit Message**: Pass a ClientContext to CreateOnColumns and fix verification failures
-
-CreateOnColumns now takes a ClientContext, so comparisons can later be resolved
-per type (e.g. overloading = for custom types). To make one available:
-- BoundBetweenExpression::Create and the legacy BETWEEN deserializer take it
-- the NLJ, IEJoin, PWMJ, TopN and Window operators take it after the
-  PhysicalPlan, as PhysicalHashAggregate does
-- CreateTailPredicate, the naive window aggregator and the partitioned COPY
-  sort input take it
-
-Fixes CI:
-- window_naive_aggregator.cpp used ClientContext without its header (Tidy)
-- PhysicalWindow ComputeMasks resized the order prefix with
-  SetChildCardinality, shrinking buffers shared with the scanned chunk that
-  backs curr's dictionary; the executor now verifies its input, so this broke
-  internal_vector_serialization. Slice the prefix instead.
-- PartitionKeyTracker::Reset left the bins without a key as valid,
-  uninitialized values; slicing the representatives exposed them to vector
-  verification, which crashed on garbage strings (Windows, or jemalloc
-  junk:true). Mark those bins NULL.
-
-**File**: `src/common/sort/hashed_sort.cpp` (modified, +1/-1)
-```diff
-@@ -663,7 +663,7 @@ HashedSort::HashedSort(ClientContext &client, const vector<unique_ptr<Expression
- 		for (idx_t key_idx = 0; key_idx < partition_key_count; key_idx++) {
- 			auto &type = partition_key_types[key_idx];
- 			key_mismatches.push_back(BoundComparisonExpression::CreateOnColumns(
--			    ExpressionType::COMPARE_DISTINCT_FROM, type, key_idx, type, partition_key_count + key_idx));
-+			    client, ExpressionType::COMPARE_DISTINCT_FROM, type, key_idx, type, partition_key_count + key_idx));
- 		}
- 		partition_key_mismatch =
- 		    BoundConjunctionExpression::Create(ExpressionType::CONJUNCTION_OR, std::move(key_mismatches));
-```
-
-**File**: `src/common/sort/partition_key_tracker.cpp` (modified, +6/-0)
-```diff
-@@ -40,6 +40,12 @@ void PartitionKeyTracker::Reset(idx_t radix_bits_p) {
- 	hashes.resize(partition_count);
- 	representatives.Reset();
- 	representatives.SetChildCardinality(partition_count);
-+	// the comparisons slice the representatives, so the bins without a key must hold valid (NULL) values
-+	for (auto &representative : representatives.data) {
-+		for (idx_t bin_idx = 0; bin_idx < partition_count; bin_idx++) {
-+			FlatVector::SetNull(representative, bin_idx, true);
-+		}
-+	}
- }
- 
- bool PartitionKeyTracker::CanBypass(idx_t hash_bin) const {
-```
-
-**File**: `src/execution/operator/aggregate/physical_window.cpp` (modified, +10/-5)
-```diff
-@@ -267,7 +267,7 @@ class WindowLocalSinkState : public LocalSinkState {
- };
- 
- // this implements a sorted window functions variant
--PhysicalWindow::PhysicalWindow(PhysicalPlan &physical_plan, vector<LogicalType> types,
-+PhysicalWindow::PhysicalWindow(PhysicalPlan &physical_plan, ClientContext &context, vector<LogicalType> types,
-                                vector<unique_ptr<Expression>> select_list_p, idx_t estimated_cardinality,
-                                vector<column_t> partitions)
-     : PhysicalOperator(physical_plan, TYPE, std::move(types), estimated_cardinality),
-@@ -302,7 +302,8 @@ PhysicalWindow::PhysicalWindow(PhysicalPlan &physical_plan, vector<LogicalType>
- 	}
- 	auto create_distinct_from = [&](idx_t end, idx_t begin) {
- 		auto type = WindowCollectionChunkScanner::PrefixStructType(key_types, end, begin);
--		return BoundComparisonExpression::CreateOnColumns(ExpressionType::COMPARE_DISTINCT_FROM, type, 0, type, 1);
-+		return BoundComparisonExpression::CreateOnColumns(context, ExpressionType::COMPARE_DISTINCT_FROM, type, 0, type,
-+		                                                  1);
- 	};
- 	partition_distinct_from = create_distinct_from(order_begin, 0);
- 	for (auto &expr : select_list) {
-@@ -313,9 +314,9 @@ PhysicalWindow::PhysicalWindow(PhysicalPlan &physical_plan, vector<LogicalType>
- 	}
- }
- 
--PhysicalWindow::PhysicalWindow(PhysicalPlan &physical_plan, vector<LogicalType> types,
-+PhysicalWindow::PhysicalWindow(PhysicalPlan &physical_plan, ClientContext &context, vector<LogicalType> types,
-                                vector<unique_ptr<Expression>> select_list, idx_t estimated_cardinality)
--    : PhysicalWindow(physical_plan, std::move(types), std::move(select_list), estimated_cardinality,
-+    : PhysicalWindow(physical_plan, context, std::move(types), std::move(select_list), estimated_cardinality,
-                      vector<column_t>()) {
- }
- 
-@@ -710,7 +711,11 @@ void WindowHashGroup::ComputeMasks(const idx_t block_begin, const idx_t block_en
- 			                   if (ndistinct) {
- 				                   prefix.Slice(matching, nmatch);
- 			                   } else {
--				                   prefix.SetChildCardinality(nmatch);
-+				                   // Slice instead of resizing: the vectors share their buffers with prev and curr
-+				                   for (auto &vec : prefix.data) {
-+					                   vec.Slice(Vector::Ref(vec), 0, nmatch);
-+				                   }
-+				                   prefix.CheckCardinality(nmatch);
- 			                   }
- 			                   const auto m = distinct_from[order_mask.first]->SelectExpression(
- 			                       prefix, &distinct, nullptr, nullptr, nmatch);
-```
-
-**File**: `src/execution/operator/join/physical_iejoin.cpp` (modified, +10/-8)
-```diff
-@@ -21,9 +21,10 @@
- 
- namespace duckdb {
- 
--PhysicalIEJoin::PhysicalIEJoin(PhysicalPlan &physical_plan, LogicalComparisonJoin &op, PhysicalOperator &left,
--                               PhysicalOperator &right, vector<JoinCondition> cond, JoinType join_type,
--                               idx_t estimated_cardinality, unique_ptr<JoinFilterPushdownInfo> pushdown_info)
-+PhysicalIEJoin::PhysicalIEJoin(PhysicalPlan &physical_plan, ClientContext &context, LogicalComparisonJoin &op,
-+                               PhysicalOperator &left, PhysicalOperator &right, vector<JoinCondition> cond,
-+                               JoinType join_type, idx_t estimated_cardinality,
-+                               unique_ptr<JoinFilterPushdownInfo> pushdown_info)
-     : PhysicalRangeJoin(physical_plan, op, PhysicalOperatorType::IE_JOIN, left, right, std::move(cond), join_type,
-                         estimated_cardinality, std::move(pushdown_info)) {
- 	// 1. let L1 (resp. L2) be the array of column X (resp. Y)
-@@ -63,13 +64,14 @@ PhysicalIEJoin::PhysicalIEJoin(PhysicalPlan &physical_plan, LogicalComparisonJoi
- 		D_ASSERT(cond.GetLHS().GetReturnType() == cond.GetRHS().GetReturnType());
- 		join_key_types.push_back(cond.GetLHS().GetReturnType());
- 	}
--	tail_predicate = CreateTailPredicate(conditions, 2);
-+	tail_predicate = CreateTailPredicate(context, conditions, 2);
- }
- 
--PhysicalIEJoin::PhysicalIEJoin(PhysicalPlan &physical_plan, LogicalComparisonJoin &op, PhysicalOperator &left,
--                               PhysicalOperator &right, vector<JoinCondition> cond, JoinType join_type,
--                               idx_t estimated_cardinality)
--    : PhysicalIEJoin(physical_plan, op, left, right, std::move(cond), join_type, estimated_cardinality, nullptr) {
-+PhysicalIEJoin::PhysicalIEJoin(PhysicalPlan &physical_plan, ClientContext &context, LogicalComparisonJoin &op,
-+                               PhysicalOperator &left, PhysicalOperator &right, vector<JoinCondition> cond,
-+                               JoinType join_type, idx_t estimated_cardinality)
-+    : PhysicalIEJoin(physical_plan, context, op, left, right, std::move(cond), join_type, estimated_cardinality,
-+                     nullptr) {
- }
- 
- //===--------------------------------------------------------------------===//
-```
-
-**File**: `src/execution/operator/join/physical_nested_loop_join.cpp` (modified, +8/-8)
-```diff
-@@ -11,9 +11,9 @@
- 
- namespace duckdb {
- 
--PhysicalNestedLoopJoin::PhysicalNestedLoopJoin(PhysicalPlan &physical_plan, LogicalComparisonJoin &op,
--                                               PhysicalOperator &left, PhysicalOperator &right,
--                                               vector<JoinCondition> conds, JoinType join_type,
-+PhysicalNestedLoopJoin::PhysicalNestedLoopJoin(PhysicalPlan &physical_plan, ClientContext &context,
-+                                               LogicalComparisonJoin &op, PhysicalOperator &left,
-+                                               PhysicalOperator &right, vector<JoinCondition> conds, JoinType join_type,
-                                                idx_t estimated_cardinality,
-                                                unique_ptr<JoinFilterPushdownInfo> pushdown_info_p)
-     : PhysicalComparisonJoin(physical_plan, op, PhysicalOperatorType::NESTED_LOOP_JOIN, std::move(conds), join_type,
-@@ -30,17 +30,17 @@ PhysicalNestedLoopJoin::PhysicalNestedLoopJoin(PhysicalPlan &physical_plan, Logi
- 	}
- 	if (predicate && conditions.size() == 1) {
- 		auto &condition = conditions[0];
--		condition_comparison = BoundComparisonExpression::CreateOnColumns(condition.GetComparisonType(),
-+		condition_comparison = BoundComparisonExpression::CreateOnColumns(context, condition.GetComparisonType(),
- 		                                                                  condition.GetLHS().GetReturnType(), 0,
- 		                                                                  condition.GetRHS().GetReturnType(), 1);
- 	}
- }
- 
--PhysicalNestedLoopJoin::PhysicalNestedLoopJoin(PhysicalPlan &physical_plan, LogicalComparisonJoin &op,
--                                               PhysicalOperator &left, PhysicalOperator &right,
--                                               vector<JoinCondition> cond, JoinType join_type,
-+PhysicalNestedLoopJoin::PhysicalNestedLoopJoin(PhysicalPlan &physical_plan, ClientContext &context,
-+                                               LogicalComparisonJoin &op, PhysicalOperator &left,
-+                                               PhysicalOperator &right, vector<JoinCondition> cond, JoinType join_type,
-                                                idx_t estimated_cardinality)
--    : PhysicalNestedLoopJoin(physical_plan, op, left, right, std::move(cond), join_type, estimated_cardinality,
-+    : PhysicalNestedLoopJoin(physical_plan, context, op, left, right, std::move(cond), join_type, estimated_cardinality,
-                              nullptr) {
- }
- 
-```
-
-**File**: `src/execution/operator/join/physical_piecewise_merge_join.cpp` (modified, +5/-5)
-```diff
-@@ -14,10 +14,10 @@
- 
- namespace duckdb {
- 
--PhysicalPiecewiseMergeJoin::PhysicalPiecewiseMergeJoin(PhysicalPlan &physical_plan, LogicalComparisonJoin &op,
--                                                       PhysicalOperator &left, PhysicalOperator &right,
--                                                       vector<JoinCondition> cond, JoinType join_type,
--                                                       idx_t estimated_cardinality,
-+PhysicalPiecewiseMergeJoin::PhysicalPiecewiseMergeJoin(PhysicalPlan &physical_plan, ClientContext &context,
-+                                                       LogicalComparisonJoin &op, PhysicalOperator &left,
-+                                                       PhysicalOperator &right, vector<JoinCondition> cond,
-+                                                       JoinType join_type, idx_t estimated_cardinality,
-                                                        unique_ptr<JoinFilterPushdownInfo> pushdown_info_p)
-     : PhysicalRangeJoin(physical_plan, op, PhysicalOperatorType::PIECEWISE_MERGE_JOIN, left, right, std::move(cond),
-                         join_type, estimated_cardinality, std::move(pushdown_info_p)) {
-@@ -52,7 +52,7 @@ PhysicalPiecewiseMergeJoin::PhysicalPiecewiseMergeJoin(PhysicalPlan &physical_pl
- 			throw NotImplementedException("Unimplemented join type for merge join");
- 		}
- 	}
--	tail_predicate = CreateTailPredicate(conditions, 1);
-+	tail_predicate = CreateTailPredicate(context, conditions, 1);
- }
- 
- //===--------------------------------------------------------------------===//
-```
-
-**File**: `src/execution/operator/join/physical_range_join.cpp` (modified, +3/-2)
-```diff
-@@ -520,7 +520,8 @@ void PhysicalRangeJoin::SliceSortedPayload(DataChunk &chunk, GlobalSortedTable &
- 	}
- }
- 
--unique_ptr<Expression> PhysicalRangeJoin::CreateTailPredicate(const vector<JoinCondition> &conditions,
-+unique_ptr<Expression> PhysicalRangeJoin::CreateTailPredicate(ClientContext &context,
-+                                                              const vector<JoinCondition> &conditions,
-                                                               idx_t tail_begin) {
- 	if (tail_begin >= conditions.size()) {
- 		return nullptr;
-@@ -530,7 +531,7 @@ unique_ptr<Expression> PhysicalRangeJoin::CreateTailPredicate(const vector<JoinC
- 	for (idx_t tail_idx = 0; tail_idx < tail_count; tail_idx++) {
- 		auto &condition = conditions[tail_begin + tail_idx];
- 		comparisons.push_back(BoundComparisonExpression::CreateOnColumns(
--		    condition.GetComparisonType(), condition.GetLHS().GetReturnType(), tail_idx,
-+		    context, condition.GetComparisonType(), condition.GetLHS().GetReturnType(), tail_idx,
- 		    condition.GetRHS().GetReturnType(), tail_count + tail_idx));
- 	}
- 	return BoundConjunctionExpression::Create(ExpressionType::CONJUNCTION_AND, std::move(comparisons));
-```
-
-**File**: `src/execution/operator/order/physical_top_n.cpp` (modified, +4/-4)
-```diff
-@@ -13,16 +13,16 @@
- 
- namespace duckdb {
- 
--PhysicalTopN::PhysicalTopN(PhysicalPlan &physical_plan, vector<LogicalType> types, vector<BoundOrderByNode> orders,
--                           idx_t limit, idx_t offset, shared_ptr<DynamicFilterData> dynamic_filter_p,
--                           idx_t estimated_cardinality)
-+PhysicalTopN::PhysicalTopN(PhysicalPlan &physical_plan, ClientContext &context, vector<LogicalType> types,
-+                           vector<BoundOrderByNode> orders, idx_t limit, idx_t offset,
-+                           shared_ptr<DynamicFilterData> dynamic_filter_p, idx_t estimated_cardinality)
-     : PhysicalOperator(physical_plan, PhysicalOperatorType::TOP_N, std::move(types), estimated_cardinality),
-       orders(std::move(orders)), limit(limit), offset(offset), dynamic_filter(std::move(dynamic_filter_p)) {
- 	const auto order_count = this->orders.size();
- 	for (idx_t order_idx = 0; order_idx < order_count; order_idx++) {
- 		auto &type = this->orders[order_idx].expression->GetReturnType();
- 		not_distinct_from.push_back(BoundComparisonExpression::CreateOnColumns(
--		    ExpressionType::COMPARE_NOT_DISTINCT_FROM, type, order_idx, type, order_count + order_idx));
-+		    context, ExpressionType::COMPARE_NOT_DISTINCT_FROM, type, order_idx, type, order_count + order_idx));
- 	}
- }
- 
-```
-
----
-
-### Incident Patch 3: `01b205ac` (2026-11-18)
-**Commit Message**: Reject statistics that count NULL values for a Parquet column that cannot hold NULL values (#28956)
-
-A Parquet column that cannot be NULL loses its values when the
-statistics of its column chunk count NULL values:
-
+Hi team, I found min/max stats for INTERVAL type seems to be incorrect,
+for example
 ```sql
--- 6001 rows, x is a REQUIRED BIGINT column, all values are 1; the statistics of its chunk say null_count = 6001
-SELECT count(*), count(x), sum(x) FROM read_parquet('required_column_all_null_statistics.parquet');
--- 6001, 0, NULL            (the values are 6001, 6001, 6001)
-SELECT count(*) FROM read_parquet('required_column_all_null_statistics.parquet') WHERE x = 1;
--- 0
+memory D SELECT max(x, 1), min(x, 1) FROM (VALUES (INTERVAL 25 HOUR), (INTERVAL 1 DAY)) v(x);
+┌────────────┬──────────────┐
+│ max(x, 1)  │  min(x, 1)   │
+│ interval[] │  interval[]  │
+├────────────┼──────────────┤
+│ [1 day]    │ ['25:00:00'] │
+└────────────┴──────────────┘
 ```
 
-A column with a maximum definition level of 0 has no definition levels,
-so its values cannot be NULL and a null count above 0 in its statistics
-is a contradiction in the footer. The reader trusted the null count in
-two places: a chunk with `null_count = num_values` is produced as
-constant NULLs without reading its pages, and the row group statistics
-mark the column as having no valid values, so a filter on it prunes the
-row group.
+In the current implementation, min(x, n) and max(x, n) handled INTERVAL
+by comparing sort keys, which order values field by field over the raw
+(months, days, micros) without normalizing them, so max(x, 1) over {31
+days, 1 month} returned [1 month].
+In this PR specializes INTERVAL to `MinMaxFixedValue<interval_t>`, so
+values are compared with the normalized interval_t comparison,
+consistent with ORDER BY and plain min/max.
 
-Such a file is now reported as corrupt:
-
-```
-Data Corruption Error: Failed to read file "...": metadata is corrupt. Column "x" cannot hold NULL values but its stat
-
-**File**: `extension/parquet/column_reader.cpp` (modified, +1/-0)
+**File**: `src/function/aggregate/distributive/minmax.cpp` (modified, +4/-0)
 ```diff
-@@ -447,6 +447,7 @@ void ColumnReader::InitializeRead(idx_t row_group_idx_p, idx_t row_group_num_row
- 		chunk_read_offset = NumericCast<idx_t>(chunk->meta_data.dictionary_page_offset);
- 	}
- 	ValidateColumnMetadata(row_group_num_rows, *chunk);
-+	Schema().ValidateNullCount(*chunk, Reader().GetFileName().c_str());
- 	group_rows_available = NumericCast<idx_t>(chunk->meta_data.num_values);
- }
- 
+@@ -549,6 +549,10 @@ void SpecializeMinMaxNFunction(PhysicalType arg_type, BoundAggregateFunction &fu
+ 	case PhysicalType::DOUBLE:
+ 		SpecializeMinMaxNFunction<MinMaxFixedValue<double>, COMPARATOR>(function);
+ 		break;
++	case PhysicalType::INTERVAL:
++		// sort keys do not normalize intervals, so compare them as interval_t
++		SpecializeMinMaxNFunction<MinMaxFixedValue<interval_t>, COMPARATOR>(function);
++		break;
+ 	default:
+ 		SpecializeMinMaxNFunction<MinMaxFallbackValue, COMPARATOR>(function);
+ 		break;
 ```
 
-**File**: `extension/parquet/include/parquet_column_schema.hpp` (modified, +2/-0)
+**File**: `test/configs/verify_aggregate_state_export.json` (modified, +1/-0)
 ```diff
-@@ -127,6 +127,8 @@ struct ParquetColumnSchema {
- 	                                 idx_t row_group_idx_p, const duckdb_parquet::ColumnChunkList &columns) const;
- 	void ValidateColumnMetadata(const duckdb_parquet::ColumnChunk &column, int64_t row_group_num_rows,
- 	                            bool validate_row_count, const char *file_name = nullptr) const;
-+	//! Validates the null count of the statistics of the column chunk that this schema reads its values from
-+	void ValidateNullCount(const duckdb_parquet::ColumnChunk &column, const char *file_name = nullptr) const;
- 
- public:
- 	optional_idx GetChildIndexByName(const string &name) const;
+@@ -102,6 +102,7 @@
+         "test/sql/aggregate/aggregates/arg_min_max_n_tpch.test",
+         "test/sql/aggregate/aggregates/arg_min_max_nulls_last.test",
+         "test/sql/aggregate/aggregates/minmax_n_fallible.test",
++        "test/sql/aggregate/aggregates/minmax_n_interval.test",
+         "test/sql/aggregate/aggregates/bitstring_agg_empty.test",
+         "test/sql/aggregate/aggregates/bitstring_agg_memory_limit.test",
+         "test/sql/aggregate/aggregates/first_last_alloc_reuse.test",
 ```
 
-**File**: `extension/parquet/parquet_column_schema.cpp` (modified, +19/-0)
+**File**: `test/sql/aggregate/aggregates/minmax_n_interval.test` (added, +15/-0)
 ```diff
-@@ -71,6 +71,25 @@ void ParquetColumnSchema::ValidateColumnMetadata(const ColumnChunk &column, int6
- 	}
- }
- 
-+void ParquetColumnSchema::ValidateNullCount(const ColumnChunk &column, const char *file_name) const {
-+	if (max_define != 0 || !column.__isset.meta_data || !column.meta_data.__isset.statistics) {
-+		return;
-+	}
-+	auto &statistics = column.meta_data.statistics;
-+	if (!statistics.__isset.null_count || statistics.null_count <= 0) {
-+		return;
-+	}
-+	// the column has no definition levels, so its values cannot be NULL
-+	if (file_name) {
-+		throw DataCorruptionException("Failed to read file \"%s\": metadata is corrupt. Column \"%s\" cannot hold "
-+		                              "NULL values but its statistics count %lld NULL values",
-+		                              file_name, name, statistics.null_count);
-+	}
-+	throw DataCorruptionException("Parquet metadata is corrupt. Column \"%s\" cannot hold NULL values but its "
-+	                              "statistics count %lld NULL values",
-+	                              name, statistics.null_count);
-+}
+@@ -0,0 +1,15 @@
++# name: test/sql/aggregate/aggregates/minmax_n_interval.test
++# description: N-variant min/max on INTERVAL follow the normalized INTERVAL order
++# group: [aggregates]
 +
- //! Writer constructors
- 
- ParquetColumnSchema ParquetColumnSchema::FromLogicalType(const Identifier &name, const LogicalType &type,
-```
-
-**File**: `extension/parquet/parquet_statistics.cpp` (modified, +2/-0)
-```diff
-@@ -770,6 +770,8 @@ ParquetStatisticsUtils::TransformColumnStatistics(const ParquetColumnSchema &sch
- 		// no stats present for row group
- 		return nullptr;
- 	}
-+	// every column whose chunk statistics become statistics of the scan gets here, whatever it is nested in
-+	schema.ValidateNullCount(column_chunk);
- 	auto &parquet_stats = column_chunk.meta_data.statistics;
- 	row_group_stats = TransformParquetStatistics(type, schema, parquet_stats, parquet_options,
- 	                                             parquet_options.can_have_nan, &column_chunk);
-```
-
-**File**: `test/parquet/corrupt/required_column_all_null_statistics.test` (added, +78/-0)
-```diff
-@@ -0,0 +1,78 @@
-+# name: test/parquet/corrupt/required_column_all_null_statistics.test
-+# description: Reject statistics that count NULL values for a column that cannot hold NULL values
-+# group: [corrupt]
-+
-+require parquet
-+
-+# The file is data/parquet-testing/required_dictionary_single_page.parquet (6001 rows of a REQUIRED BIGINT column,
-+# all 1) with statistics added to the column chunk in the footer: null_count = 6001.
-+# The column was read as 6001 NULL values, and a filter on it pruned the row group.
-+statement error
-+SELECT count(*), count(x), sum(x)
-+FROM read_parquet('{DATA_DIR}/parquet-testing/corrupt/required_column_all_null_statistics.parquet');
-+----
-+Column "x" cannot hold NULL values but its statistics count 6001 NULL values
-+
-+statement error
-+SELECT count(*)
-+FROM read_parquet('{DATA_DIR}/parquet-testing/corrupt/required_column_all_null_statistics.parquet')
-+WHERE x = 1;
-+----
-+Column "x" cannot hold NULL values but its statistics count 6001 NULL values
-+
-+# The same for a REQUIRED column in a REQUIRED struct: the statistics of the struct are built from those of the
-+# column, and a filter on it pruned the row group (6001 rows with s.x = 1).
-+statement error
-+SELECT count(*)
-+FROM read_parquet('{DATA_DIR}/parquet-testing/corrupt/required_nested_column_all_null_statistics.parquet')
-+WHERE s.x = 1;
-+----
-+Column "x" cannot hold NULL values but its statistics count 6001 NULL values
-+
-+statement error
-+SELECT count(s.x), sum(s.x)
-+FROM read_parquet('{DATA_DIR}/parquet-testing/corrupt/required_nested_column_all_null_statistics.parquet');
-+----
-+Column "x" cannot hold NULL values but its statistics count 6001 NULL values
-+
-+# A REQUIRED GEOMETRY column (10 rows) with null_count = 10: the schema of the column wraps its BLOB column.
-+statement error
-+SELECT count(*)
-+FROM read_parquet('{DATA_DIR}/parquet-testing/corrupt/required_geometry_column_all_null_statistics.parquet')
-+WHERE g IS NOT NULL;
-+----
-+Column "g" cannot hold NULL values but its statistics count 10 NULL values
-+
-+statement error
-+SELECT count(g)
-+FROM read_parquet('{DATA_DIR}/parquet-testing/corrupt/required_geometry_column_all_null_statistics.parquet');
-+----
-+Column "g" cannot hold NULL values but its statistics count 10 NULL values
-+
-+# The REQUIRED 'metadata' column of a REQUIRED shredded VARIANT with null_count = 10.
-+statement error
-+SELECT count(var)
-+FROM read_parquet('{DATA_DIR}/parquet-testing/corrupt/required_variant_metadata_null_count.parquet');
-+----
-+Column "metadata" cannot hold NULL values but its statistics count 10 NULL values
-+
-+# A REQUIRED column below an OPTIONAL group has definition levels: the null count of the 'metadata' column of this
-+# OPTIONAL VARIANT (1 of 7) is left alone.
++# 1 month is 30 days
 +query II
-+SELECT count(*), count(PAYLOAD) FROM read_parquet('{DATA_DIR}/parquet-testing/snowflake_variant.parquet');
++SELECT max(x, 2), min(x, 2) FROM (VALUES (INTERVAL 1 MONTH), (INTERVAL 31 DAY), (NULL)) v(x)
 +----
-+7	6
++[31 days, 1 month]	[1 month, 31 days]
 +
-+# So has a REQUIRED column below a REPEATED group: the keys of this MAP have a null count of 18.
-+query III
-+SELECT count(*), count(raw_header), sum(cardinality(raw_header))
-+FROM read_parquet('{DATA_DIR}/parquet-testing/map.parquet');
++# 1 day is 24 hours
++query II
++SELECT max(x, 1), min(x, 1) FROM (VALUES (INTERVAL 25 HOUR), (INTERVAL 1 DAY)) v(x)
 +----
-+1127	1109	14396
-+
-+# the unchanged file
-+query III
-+SELECT count(*), count(x), sum(x)
-+FROM read_parquet('{DATA_DIR}/parquet-testing/required_dictionary_single_page.parquet');
-+----
-+6001	6001	6001
++['25:00:00']	[1 day]
 ```
 
-**File**: `test/sql/copy/parquet/test_parquet_scan.test` (modified, +1/-1)
+---
+
+### Incident Patch 2: `0d9dfc12` (2026-11-20)
+**Commit Message**: Merge remote-tracking branch 'upstream/main' into hjiang/fix-minmax-interval
+
+**File**: `.github/config/extensions/sqlite_scanner.cmake` (modified, +1/-1)
 ```diff
-@@ -245,4 +245,4 @@ SELECT FIRST(comments) OVER w, LAST(comments) OVER w FROM userdata1 WINDOW w AS
- statement error
- SELECT * FROM parquet_scan('{DATA_DIR}/parquet-testing/broken-arrow.parquet')
- ----
--<REGEX>:.*Invalid Error:.*
-\ No newline at end of file
-+<REGEX>:.*Data Corruption Error:.*cannot hold NULL values.*
-\ No newline at end of file
+@@ -2,7 +2,7 @@
+ duckdb_extension_load(sqlite_scanner
+         LOAD_TESTS
+         GIT_URL https://github.com/duckdb/duckdb-sqlite
+-        GIT_TAG ce0987fda4f6393231c6783ee32f72ab873a6d3e
++        GIT_TAG 4072b28f8ded96acf1fc7c31c2ad9a552eaf0f77
+         APPLY_PATCHES
+         SUBMODULES database-connector
+         )
+```
+
+**File**: `.github/patches/extensions/delta/0004-transaction-takes-context.patch` (added, +256/-0)
+```diff
+@@ -0,0 +1,256 @@
++diff --git a/src/include/storage/delta_transaction.hpp b/src/include/storage/delta_transaction.hpp
++index db31d77..b7aaefa 100644
++--- a/src/include/storage/delta_transaction.hpp
+++++ b/src/include/storage/delta_transaction.hpp
++@@ -12,6 +12,7 @@
++ #include "duckdb/common/optional_idx.hpp"
++ #include "duckdb/common/types/timestamp.hpp"
++ #include "duckdb/transaction/transaction.hpp"
+++#include "duckdb/main/context.hpp"
++ 
++ namespace duckdb {
++ class DeltaCatalog;
++@@ -24,14 +25,30 @@ struct DeltaMultiFileColumnDefinition;
++ 
++ enum class DeltaTransactionState { TRANSACTION_NOT_YET_STARTED, TRANSACTION_STARTED, TRANSACTION_FINISHED };
++ 
+++class DeltaTransaction;
+++
+++//! Makes the client context available to CommitCallback for the duration of a kernel commit call
+++class CommitContextScope {
+++public:
+++	CommitContextScope(DeltaTransaction &transaction, ClientContext &context);
+++	~CommitContextScope();
+++	CommitContextScope(const CommitContextScope &) = delete;
+++	CommitContextScope &operator=(const CommitContextScope &) = delete;
+++
+++private:
+++	DeltaTransaction &transaction;
+++};
+++
++ class DeltaTransaction : public Transaction {
+++	friend class CommitContextScope;
+++
++ public:
++-	DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, ClientContext &context);
+++	DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, Context &context);
++ 	~DeltaTransaction() override;
++ 
++ 	void Start();
++ 	void Commit(ClientContext &context);
++-	void Rollback();
+++	void Rollback(ClientContext &context);
++ 
++ 	void Append(ClientContext &context, const vector<DeltaDataFile> &append_files);
++ 
++@@ -52,7 +69,7 @@ public:
++ 	vector<DeltaMultiFileColumnDefinition> GetWriteSchema(ClientContext &context);
++ 
++ 	//! Removes all outstanding appends and removes the files if possible
++-	void CleanUpFiles();
+++	void CleanUpFiles(ClientContext &context);
++ 
++ 	//! CGetCommits callback for Unity Catalog managed commits
++ 	//! CCommit callback for Unity Catalog managed commits - returns None on success, Some(error) on failure
++@@ -111,7 +128,8 @@ private:
++ 	// string parent_catalog_schema;
++ 	optional_ptr<TableFunctionCatalogEntry> commit_function;
++ 	string unity_table_id;
++-	weak_ptr<ClientContext> current_context;
+++	//! Only set while a kernel commit call is running (see CommitContextScope), read by CommitCallback
+++	optional_ptr<ClientContext> commit_context;
++ 	optional_ptr<TableCatalogEntry> parent_table_entry;
++ 
++ 	ErrorData active_error;
++diff --git a/src/include/storage/delta_transaction_manager.hpp b/src/include/storage/delta_transaction_manager.hpp
++index 3957982..aaf5fd9 100644
++--- a/src/include/storage/delta_transaction_manager.hpp
+++++ b/src/include/storage/delta_transaction_manager.hpp
++@@ -18,9 +18,9 @@ class DeltaTransactionManager : public TransactionManager {
++ public:
++ 	DeltaTransactionManager(AttachedDatabase &db_p, DeltaCatalog &delta_catalog);
++ 
++-	Transaction &StartTransaction(ClientContext &context) override;
+++	Transaction &StartTransaction(Context &context, MetaTransaction &meta_transaction) override;
++ 	ErrorData CommitTransaction(ClientContext &context, Transaction &transaction) override;
++-	void RollbackTransaction(Transaction &transaction) override;
+++	void RollbackTransaction(ClientContext &context, Transaction &transaction) override;
++ 
++ 	void Checkpoint(ClientContext &context, bool force = false) override;
++ 
++diff --git a/src/storage/delta_schema_entry.cpp b/src/storage/delta_schema_entry.cpp
++index 0d453d9..9d6241d 100644
++--- a/src/storage/delta_schema_entry.cpp
+++++ b/src/storage/delta_schema_entry.cpp
++@@ -327,8 +327,12 @@ optional_ptr<CatalogEntry> DeltaSchemaEntry::CreateTable(CatalogTransaction tran
++ 	}
++ 
++ 	ffi::ExclusiveCommittedTransaction *committed;
++-	auto commit_res =
++-	    KernelUtils::TryUnpackResult(ffi::create_table_commit(create_transaction, engine.get()), committed);
+++	ErrorData commit_res;
+++	{
+++		CommitContextScope commit_scope(GetDeltaTransaction(transaction), context);
+++		commit_res =
+++		    KernelUtils::TryUnpackResult(ffi::create_table_commit(create_transaction, engine.get()), committed);
+++	}
++ 	if (commit_res.HasError()) {
++ 		commit_res.Throw();
++ 	}
++diff --git a/src/storage/delta_transaction.cpp b/src/storage/delta_transaction.cpp
++index 4c8961e..7ec33f8 100644
++--- a/src/storage/delta_transaction.cpp
+++++ b/src/storage/delta_transaction.cpp
++@@ -29,7 +29,7 @@
++ 
++ namespace duckdb {
++ 
++-DeltaTransaction::DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, ClientContext &context)
+++DeltaTransaction::DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, Context &context)
++     : Transaction(manager, context), access_mode(delta_catalog.access_mode), parent_commit(delta_catalog.parent_commit),
++       parent_catalog_name(delta_catalog.parent_catalog_name), unity_table_id(delta_catalog.unity_table_id) {
++ 	commit_function = delta_catalog.commit_function;
++@@
+```
+
+**File**: `.github/patches/extensions/ducklake/0029-transaction-takes-context.patch` (added, +1154/-0)
+```diff
+@@ -0,0 +1,1154 @@
++diff --git a/src/common/ducklake_util.cpp b/src/common/ducklake_util.cpp
++index f65438a3..96de1ab6 100644
++--- a/src/common/ducklake_util.cpp
+++++ b/src/common/ducklake_util.cpp
++@@ -591,21 +591,22 @@ string DuckLakeUtil::InlinedStorageExpression(DuckLakeMetadataManager &metadata_
++ 	return expression;
++ }
++ 
++-vector<string> DuckLakeUtil::InlinedDataToSQL(DuckLakeTransaction &transaction, ColumnDataCollection &data) {
+++vector<string> DuckLakeUtil::InlinedDataToSQL(ClientContext &context, DuckLakeTransaction &transaction,
+++                                              ColumnDataCollection &data) {
++ 	auto &metadata_manager = transaction.GetMetadataManager();
++-	auto context = transaction.context.lock();
++ 	vector<string> rows;
++ 	rows.reserve(data.Count());
++ 	for (auto &chunk : data.Chunks()) {
++ 		for (idx_t r = 0; r < chunk.size(); r++) {
++-			rows.push_back(ChunkRowToSQL(metadata_manager, *context, chunk, r));
+++			rows.push_back(ChunkRowToSQL(metadata_manager, context, chunk, r));
++ 		}
++ 	}
++ 	return rows;
++ }
++ 
++-void DuckLakeUtil::CopyExtensionSettings(ClientContext &from, ClientContext &to) {
++-	auto &db_config = DBConfig::GetConfig(from);
+++vector<pair<idx_t, Value>> DuckLakeUtil::GetExtensionSettings(Context &from) {
+++	vector<pair<idx_t, Value>> result;
+++	auto &db_config = DBConfig::GetConfig(from.GetDatabase());
++ 	for (auto &entry : db_config.GetExtensionSettings()) {
++ 		auto &option = entry.second;
++ 		if (!option.setting_index.IsValid()) {
++@@ -616,18 +617,30 @@ void DuckLakeUtil::CopyExtensionSettings(ClientContext &from, ClientContext &to)
++ 		auto setting_index = option.setting_index.GetIndex();
++ 		// these change the types read from the metadata and data files
++ 		if (entry.first == "sqlite_all_varchar" || entry.first == "binary_as_string") {
++-			ClientConfig::GetConfig(to).user_settings.SetUserSetting(setting_index, Value::BOOLEAN(false));
+++			result.emplace_back(setting_index, Value::BOOLEAN(false));
++ 			continue;
++ 		}
++-		if (!ClientConfig::GetConfig(from).user_settings.IsSet(setting_index)) {
+++		auto client_config = from.TryGetClientConfig();
+++		if (!client_config || !client_config->user_settings.IsSet(setting_index)) {
++ 			continue;
++ 		}
++ 		Value value;
++ 		from.TryGetCurrentUserSetting(setting_index, value);
++-		ClientConfig::GetConfig(to).user_settings.SetUserSetting(setting_index, std::move(value));
+++		result.emplace_back(setting_index, std::move(value));
+++	}
+++	return result;
+++}
+++
+++void DuckLakeUtil::ApplyExtensionSettings(const vector<pair<idx_t, Value>> &settings, ClientContext &to) {
+++	for (auto &entry : settings) {
+++		ClientConfig::GetConfig(to).user_settings.SetUserSetting(entry.first, entry.second);
++ 	}
++ }
++ 
+++void DuckLakeUtil::CopyExtensionSettings(ClientContext &from, ClientContext &to) {
+++	ApplyExtensionSettings(GetExtensionSettings(from.GetContext()), to);
+++}
+++
++ void DuckLakeUtil::SetExtensionSetting(ClientContext &context, const string &name, const Value &value) {
++ 	ExtensionOption option;
++ 	if (!DBConfig::GetConfig(context).TryGetExtensionOption(Identifier(name), option)) {
++diff --git a/src/functions/ducklake_cleanup_files.cpp b/src/functions/ducklake_cleanup_files.cpp
++index a79438d7..0337d542 100644
++--- a/src/functions/ducklake_cleanup_files.cpp
+++++ b/src/functions/ducklake_cleanup_files.cpp
++@@ -86,7 +86,7 @@ static unique_ptr<FunctionData> CleanupBind(ClientContext &context, TableFunctio
++ 	if (!skip_cleanup) {
++ 		auto &transaction = DuckLakeTransaction::Get(context, ducklake_catalog);
++ 		auto &metadata_manager = transaction.GetMetadataManager();
++-		result->files = metadata_manager.GetFilesForCleanup(result->GetFilter(), type);
+++		result->files = metadata_manager.GetFilesForCleanup(context, result->GetFilter(), type);
++ 		for (auto &file : result->files) {
++ 			result->rows.push_back({Value(file.path)});
++ 		}
++diff --git a/src/functions/ducklake_expire_snapshots.cpp b/src/functions/ducklake_expire_snapshots.cpp
++index 01c645fc..d56a8255 100644
++--- a/src/functions/ducklake_expire_snapshots.cpp
+++++ b/src/functions/ducklake_expire_snapshots.cpp
++@@ -72,7 +72,7 @@ static unique_ptr<FunctionData> DuckLakeExpireSnapshotsBind(ClientContext &conte
++ 	}
++ 	auto &transaction = DuckLakeTransaction::Get(context, ducklake_catalog);
++ 	auto &metadata_manager = transaction.GetMetadataManager();
++-	result->snapshots = metadata_manager.GetAllSnapshots(filter);
+++	result->snapshots = metadata_manager.GetAllSnapshots(context, filter);
++ 	for (auto &snapshot : result->snapshots) {
++ 		result->rows.push_back(DuckLakeSnapshotsFunction::GetSnapshotValues(snapshot));
++ 	}
++diff --git a/src/functions/ducklake_flush_inlined_data.cpp b/src/functions/ducklake_flush_inlined_data.cpp
++index 49f07791..9a9bdd99 100644
++--- a/src/functions/ducklake_flush_inlined_data.cpp
+++++ b/src/functions/ducklake_flush_inlined_data.cpp
++@@ -498,7 +498,7 @@ WHERE del.begin_snapshot <= {SNAPSHOT_ID}
++ 	}
++ 
++ 	// Register the delete files
++-	transac
+```
+
+**File**: `.github/patches/extensions/fts/0004-indexing-result-order.patch` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++diff --git a/test/sql/fts/test_indexing.test_slow b/test/sql/fts/test_indexing.test_slow
++index 4643b87..a1f283e 100644
++--- a/test/sql/fts/test_indexing.test_slow
+++++ b/test/sql/fts/test_indexing.test_slow
++@@ -62,7 +62,7 @@ one
++ two
++ three
++ 
++-query III
+++query III rowsort
++ SELECT termid, docid, fieldid FROM fts_main_documents.terms
++ ----
++ 0	0	0
++@@ -100,7 +100,7 @@ SELECT * FROM qtermids
++ 0
++ 1
++ 
++-query II
+++query II rowsort
++ WITH ppterms AS (SELECT stem(unnest(string_split_regex(regexp_replace(lower(strip_accents('QUÁCKED BÁRKED')), '[^a-z]', ' ', 'g'), '\s+')), 'porter') AS term),
++ qtermids AS (SELECT termid FROM fts_main_documents.dict AS dict, ppterms WHERE dict.term = ppterms.term),
++ qterms AS (SELECT termid, docid FROM fts_main_documents.terms AS terms WHERE termid IN (SELECT qtermids.termid FROM qtermids))
+```
+
+**File**: `.github/patches/extensions/glue/0005-transaction-takes-context.patch` (added, +85/-0)
+```diff
+@@ -0,0 +1,85 @@
++diff --git a/src/catalog/glue_transaction.cpp b/src/catalog/glue_transaction.cpp
++index 09f8369..5deb6d3 100644
++--- a/src/catalog/glue_transaction.cpp
+++++ b/src/catalog/glue_transaction.cpp
++@@ -5,13 +5,14 @@
++ #include "duckdb/logging/logger.hpp"
++ #include "duckdb/main/attached_database.hpp"
++ #include "duckdb/main/client_context.hpp"
+++#include "duckdb/main/context.hpp"
++ #include "duckdb/transaction/transaction_manager.hpp"
++ 
++ namespace duckdb {
++ 
++ namespace {
++ 
++-bool ConnectionScopedMetadataCache(ClientContext &context) {
+++bool ConnectionScopedMetadataCache(Context &context) {
++ 	Value scope;
++ 	if (context.TryGetCurrentSetting("glue_metadata_cache_scope", scope) && !scope.IsNull()) {
++ 		return StringUtil::Lower(StringValue::Get(scope)) == "connection";
++@@ -22,11 +23,11 @@ bool ConnectionScopedMetadataCache(ClientContext &context) {
++ 
++ } // namespace
++ 
++-GlueTransaction::GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, ClientContext &context)
+++GlueTransaction::GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, Context &context)
++     : Transaction(manager, context), glue_catalog(glue_catalog),
++       transaction_state(GlueTransactionState::TRANSACTION_NOT_YET_STARTED) {
++ 	if (ConnectionScopedMetadataCache(context)) {
++-		auto state = context.GetContext().GetRegisteredState().GetOrCreate<GlueMetadataCacheState>("glue_metadata_cache");
+++		auto state = context.GetRegisteredState().GetOrCreate<GlueMetadataCacheState>("glue_metadata_cache");
++ 		cache = state->GetCache(glue_catalog.GetName().GetIdentifierName(), glue_catalog.GetAttached().oid);
++ 	} else {
++ 		cache = make_shared_ptr<GlueTransactionCache>();
++diff --git a/src/catalog/glue_transaction_manager.cpp b/src/catalog/glue_transaction_manager.cpp
++index 9f53af1..b5b6778 100644
++--- a/src/catalog/glue_transaction_manager.cpp
+++++ b/src/catalog/glue_transaction_manager.cpp
++@@ -11,7 +11,7 @@ GlueTransactionManager::GlueTransactionManager(AttachedDatabase &db_p, GlueCatal
++     : TransactionManager(db_p), glue_catalog(glue_catalog) {
++ }
++ 
++-Transaction &GlueTransactionManager::StartTransaction(ClientContext &context) {
+++Transaction &GlueTransactionManager::StartTransaction(Context &context, MetaTransaction &) {
++ 	auto transaction = make_uniq<GlueTransaction>(glue_catalog, *this, context);
++ 	transaction->Start();
++ 	auto &result = *transaction;
++@@ -31,7 +31,7 @@ ErrorData GlueTransactionManager::CommitTransaction(ClientContext &context, Tran
++ 	return ErrorData();
++ }
++ 
++-void GlueTransactionManager::RollbackTransaction(Transaction &transaction) {
+++void GlueTransactionManager::RollbackTransaction(ClientContext &context, Transaction &transaction) {
++ 	auto &glue_transaction = transaction.Cast<GlueTransaction>();
++ 	glue_transaction.Rollback();
++ 	lock_guard<mutex> l(transaction_lock);
++diff --git a/src/include/catalog/glue_transaction.hpp b/src/include/catalog/glue_transaction.hpp
++index 68bb793..db37941 100644
++--- a/src/include/catalog/glue_transaction.hpp
+++++ b/src/include/catalog/glue_transaction.hpp
++@@ -146,7 +146,7 @@ private:
++ //! immediately. The transaction exists because every attached database needs one, and carries the metadata cache.
++ class GlueTransaction : public Transaction {
++ public:
++-	GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, ClientContext &context);
+++	GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, Context &context);
++ 	~GlueTransaction() override;
++ 
++ 	void Start();
++diff --git a/src/include/catalog/glue_transaction_manager.hpp b/src/include/catalog/glue_transaction_manager.hpp
++index e37e655..bc17782 100644
++--- a/src/include/catalog/glue_transaction_manager.hpp
+++++ b/src/include/catalog/glue_transaction_manager.hpp
++@@ -12,9 +12,9 @@ class GlueTransactionManager : public TransactionManager {
++ public:
++ 	GlueTransactionManager(AttachedDatabase &db_p, GlueCatalog &glue_catalog);
++ 
++-	Transaction &StartTransaction(ClientContext &context) override;
+++	Transaction &StartTransaction(Context &context, MetaTransaction &) override;
++ 	ErrorData CommitTransaction(ClientContext &context, Transaction &transaction) override;
++-	void RollbackTransaction(Transaction &transaction) override;
+++	void RollbackTransaction(ClientContext &context, Transaction &transaction) override;
++ 
++ 	void Checkpoint(ClientContext &context, bool force = false) override;
++ 
+```
+
+**File**: `.github/patches/extensions/iceberg/0005-transaction-takes-context.patch` (added, +678/-0)
+```diff
+@@ -0,0 +1,678 @@
++diff --git a/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp b/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp
++index e30b8dfc8..e16d07a22 100644
++--- a/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp
+++++ b/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp
++@@ -505,13 +505,13 @@ void IcebergSchemaEntry::Alter(CatalogTransaction transaction, AlterInfo &info)
++ 				}
++ 				D_ASSERT(state && state->IsDroppedOrRenamed());
++ 			}
++-			irc_transaction.RenameTable(catalog_table_info, new_name.GetIdentifierName());
+++			irc_transaction.RenameTable(context, catalog_table_info, new_name.GetIdentifierName());
++ 			return;
++ 		}
++ 	}
++ 
++ 	auto &alter = irc_transaction.GetOrCreateAlter();
++-	auto &updated_table = alter.GetOrInitializeTable(catalog_table_info);
+++	auto &updated_table = alter.GetOrInitializeTable(context, catalog_table_info);
++ 	auto &transaction_data = updated_table.GetOrCreateTransactionData(irc_transaction);
++ 	auto &current_schema = updated_table.table_metadata.GetLatestSchema();
++ 
++@@ -565,7 +565,7 @@ void IcebergSchemaEntry::Alter(CatalogTransaction transaction, AlterInfo &info)
++ 		// Ensure last assigned partition field id is up to date
++ 		transaction_data.TableAddAssertLastAssignedPartitionId();
++ 
++-		updated_table.SetSortedBy(irc_transaction, sort_info.orders, current_schema);
+++		updated_table.SetSortedBy(context, irc_transaction, sort_info.orders, current_schema);
++ 		return;
++ 	}
++ 	case AlterTableType::ADD_COLUMN: {
++diff --git a/src/catalog/rest/catalog_entry/table/iceberg_table.cpp b/src/catalog/rest/catalog_entry/table/iceberg_table.cpp
++index 4d4a83c43..4034fda70 100644
++--- a/src/catalog/rest/catalog_entry/table/iceberg_table.cpp
+++++ b/src/catalog/rest/catalog_entry/table/iceberg_table.cpp
++@@ -551,15 +551,15 @@ void IcebergTable::SetPartitionedBy(IcebergTransaction &transaction,
++ 	transaction_data.TableSetDefaultSpec();
++ }
++ 
++-void IcebergTable::SetSortedBy(IcebergTransaction &transaction, const vector<OrderByNode> &orders,
++-                               const IcebergTableSchema &schema, bool first_sort_spec) {
+++void IcebergTable::SetSortedBy(ClientContext &context, IcebergTransaction &transaction,
+++                               const vector<OrderByNode> &orders, const IcebergTableSchema &schema,
+++                               bool first_sort_spec) {
++ 	idx_t new_sort_order_id = UNSORTED_SORT_ORDER_ID;
++ 	if (!first_sort_spec && !orders.empty()) {
++ 		new_sort_order_id = GetNextSortOrderId();
++ 	}
++ 
++-	auto context = transaction.context.lock();
++-	auto new_sort_order = BuildSortOrder(*context, orders, schema, static_cast<int32_t>(new_sort_order_id));
+++	auto new_sort_order = BuildSortOrder(context, orders, schema, static_cast<int32_t>(new_sort_order_id));
++ 
++ 	// if spec definition already exists in a previous spec definition, set it to that spec id
++ 	// (some catalog may allow duplicate definitions, others not)
++@@ -824,10 +824,7 @@ IcebergTableMetadata IcebergTable::CreateMetadataFromLog(ClientContext &context,
++ 	return IcebergTableMetadata::FromTableMetadata(parsed_metadata);
++ }
++ 
++-IcebergTable IcebergTable::Copy(IcebergTransaction &iceberg_transaction) const {
++-	auto locked_context = iceberg_transaction.context.lock();
++-	auto &context = *locked_context;
++-
+++IcebergTable IcebergTable::Copy(ClientContext &context) const {
++ 	auto ret = Copy();
++ 	auto transaction_start_ms = IcebergUtils::GetTransactionStartTimeMS(context);
++ 	auto clock_skew_ms = DEFAULT_METADATA_LOG_CLOCK_SKEW_MS;
++@@ -891,8 +888,7 @@ shared_ptr<IcebergTable> IcebergTable::CreatePlaceholder(IcebergCatalog &catalog
++ IcebergTransactionData &IcebergTable::GetOrCreateTransactionData(IcebergTransaction &transaction) {
++ 	lock_guard<mutex> guard(transaction.lock);
++ 	if (!transaction_data) {
++-		auto context = transaction.context.lock();
++-		transaction_data = make_uniq<IcebergTransactionData>(*context, transaction, *this);
+++		transaction_data = make_uniq<IcebergTransactionData>(transaction, *this);
++ 	}
++ 	return *transaction_data;
++ }
++diff --git a/src/catalog/rest/iceberg_table_set.cpp b/src/catalog/rest/iceberg_table_set.cpp
++index d6efdf664..43cea7fe7 100644
++--- a/src/catalog/rest/iceberg_table_set.cpp
+++++ b/src/catalog/rest/iceberg_table_set.cpp
++@@ -252,7 +252,7 @@ void IcebergTableSet::DropEntry(ClientContext &context, DropInfo &info, bool del
++ 
++ 	// Add the table to the transaction's deleted tables.
++ 	auto &transaction = IcebergTransaction::Get(context, catalog).Cast<IcebergTransaction>();
++-	auto &table = transaction.DeleteTable(*entry->second);
+++	auto &table = transaction.DeleteTable(context, *entry->second);
++ 	//! FIXME: Schema versions point back to their IcebergTable and must be reinitialized after the copy.
++ 	table.InitSchemaVersions();
++ }
++@@ -521,8 +521,8 @@ optional_ptr<CatalogEntry> IcebergTableSet::GetEntry(ClientContext &context, con
++ 	}
++ 	iceberg_transaction.tables[table_key] = new_vers
+```
+
+**File**: `.github/patches/extensions/mysql_scanner/0003-transaction-takes-context.patch` (added, +817/-0)
+```diff
+@@ -0,0 +1,817 @@
++diff --git a/src/include/mysql_types.hpp b/src/include/mysql_types.hpp
++index bacb77d..06ac6f4 100644
++--- a/src/include/mysql_types.hpp
+++++ b/src/include/mysql_types.hpp
++@@ -12,6 +12,7 @@
++ 
++ #include "duckdb.hpp"
++ #include "duckdb/main/client_context.hpp"
+++#include "duckdb/main/context.hpp"
++ #include "duckdb/parser/expression/type_expression.hpp"
++ #include "duckdb/parser/parsed_expression.hpp"
++ 
++@@ -39,6 +40,7 @@ struct MySQLTypeConfig {
++ 	bool incomplete_dates_as_nulls = false;
++ 
++ 	MySQLTypeConfig();
+++	MySQLTypeConfig(Context &context);
++ 	MySQLTypeConfig(ClientContext &context);
++ };
++ 
++diff --git a/src/include/storage/mysql_catalog_set.hpp b/src/include/storage/mysql_catalog_set.hpp
++index 096686b..b676f4a 100644
++--- a/src/include/storage/mysql_catalog_set.hpp
+++++ b/src/include/storage/mysql_catalog_set.hpp
++@@ -24,16 +24,17 @@ class MySQLCatalogSet {
++ public:
++ 	MySQLCatalogSet(Catalog &catalog);
++ 
++-	optional_ptr<CatalogEntry> GetEntry(MySQLTransaction &transaction, const string &name);
++-	virtual void DropEntry(MySQLTransaction &transaction, DropInfo &info);
++-	void Scan(MySQLTransaction &transaction, const std::function<void(CatalogEntry &)> &callback);
+++	optional_ptr<CatalogEntry> GetEntry(ClientContext &context, MySQLTransaction &transaction, const string &name);
+++	virtual void DropEntry(ClientContext &context, MySQLTransaction &transaction, DropInfo &info);
+++	void Scan(ClientContext &context, MySQLTransaction &transaction,
+++	          const std::function<void(CatalogEntry &)> &callback);
++ 	virtual optional_ptr<CatalogEntry> CreateEntry(MySQLTransaction &transaction, shared_ptr<CatalogEntry> entry);
++ 	void ClearEntries();
++ 
++ protected:
++-	virtual void LoadEntries(MySQLTransaction &transaction) = 0;
+++	virtual void LoadEntries(ClientContext &context, MySQLTransaction &transaction) = 0;
++ 
++-	void TryLoadEntries(MySQLTransaction &transaction);
+++	void TryLoadEntries(ClientContext &context, MySQLTransaction &transaction);
++ 
++ 	void EraseEntryInternal(const string &name);
++ 
++diff --git a/src/include/storage/mysql_index_set.hpp b/src/include/storage/mysql_index_set.hpp
++index 122a00b..415af85 100644
++--- a/src/include/storage/mysql_index_set.hpp
+++++ b/src/include/storage/mysql_index_set.hpp
++@@ -17,10 +17,10 @@ class MySQLIndexSet : public MySQLInSchemaSet {
++ public:
++ 	MySQLIndexSet(MySQLSchemaEntry &schema);
++ 
++-	void DropEntry(MySQLTransaction &transaction, DropInfo &info) override;
+++	void DropEntry(ClientContext &context, MySQLTransaction &transaction, DropInfo &info) override;
++ 
++ protected:
++-	void LoadEntries(MySQLTransaction &transaction) override;
+++	void LoadEntries(ClientContext &context, MySQLTransaction &transaction) override;
++ };
++ 
++ } // namespace duckdb
++diff --git a/src/include/storage/mysql_schema_set.hpp b/src/include/storage/mysql_schema_set.hpp
++index a0762ad..8ceff1e 100644
++--- a/src/include/storage/mysql_schema_set.hpp
+++++ b/src/include/storage/mysql_schema_set.hpp
++@@ -23,10 +23,11 @@ public:
++ 	explicit MySQLSchemaSet(Catalog &catalog, vector<string> schemas_to_load);
++ 
++ public:
++-	optional_ptr<CatalogEntry> CreateSchema(MySQLTransaction &transaction, CreateSchemaInfo &info);
+++	optional_ptr<CatalogEntry> CreateSchema(ClientContext &context, MySQLTransaction &transaction,
+++	                                        CreateSchemaInfo &info);
++ 
++ protected:
++-	void LoadEntries(MySQLTransaction &transaction) override;
+++	void LoadEntries(ClientContext &context, MySQLTransaction &transaction) override;
++ 
++ 	vector<string> schemas_to_load;
++ };
++diff --git a/src/include/storage/mysql_table_set.hpp b/src/include/storage/mysql_table_set.hpp
++index 7e01552..96b69fe 100644
++--- a/src/include/storage/mysql_table_set.hpp
+++++ b/src/include/storage/mysql_table_set.hpp
++@@ -25,21 +25,23 @@ public:
++ 	explicit MySQLTableSet(MySQLSchemaEntry &schema);
++ 
++ public:
++-	optional_ptr<CatalogEntry> CreateTable(MySQLTransaction &transaction, BoundCreateTableInfo &info);
+++	optional_ptr<CatalogEntry> CreateTable(ClientContext &context, MySQLTransaction &transaction,
+++	                                       BoundCreateTableInfo &info);
++ 
++-	static unique_ptr<MySQLTableInfo> GetTableInfo(MySQLTransaction &transaction, MySQLSchemaEntry &schema,
++-	                                               const string &table_name);
++-	optional_ptr<CatalogEntry> RefreshTable(MySQLTransaction &transaction, const string &table_name);
+++	static unique_ptr<MySQLTableInfo> GetTableInfo(ClientContext &context, MySQLTransaction &transaction,
+++	                                               MySQLSchemaEntry &schema, const string &table_name);
+++	optional_ptr<CatalogEntry> RefreshTable(ClientContext &context, MySQLTransaction &transaction,
+++	                                        const string &table_name);
++ 
++-	void AlterTable(MySQLTransaction &transaction, AlterTableInfo &info);
+++	void AlterTable(ClientContext &context, MySQLTransaction &transaction, AlterTa
+```
+
+**File**: `.github/patches/extensions/mysql_scanner/0004-database-connector-transaction-manager-takes-context.patch` (added, +51/-0)
+```diff
+@@ -0,0 +1,51 @@
++--- a/database-connector/src/include/dbconnector/storage/transaction_manager.hpp
+++++ b/database-connector/src/include/dbconnector/storage/transaction_manager.hpp
++@@ -5,6 +5,8 @@
++ #include "duckdb/common/reference_map.hpp"
++ #include "duckdb/main/attached_database.hpp"
++ #include "duckdb/main/client_context.hpp"
+++#include "duckdb/main/context.hpp"
+++#include "duckdb/transaction/meta_transaction.hpp"
++ #include "duckdb/transaction/transaction_manager.hpp"
++ 
++ namespace dbconnector {
++@@ -17,7 +19,7 @@
++ 	    : duckdb::TransactionManager(db_p), catalog(catalog_p) {
++ 	}
++ 
++-	duckdb::Transaction &StartTransaction(duckdb::ClientContext &context) override {
+++	duckdb::Transaction &StartTransaction(duckdb::Context &context, duckdb::MetaTransaction &) override {
++ 		auto transaction = duckdb::make_uniq<TransactionT>(catalog, *this, context);
++ 		transaction->Start();
++ 		auto &result = *transaction;
++@@ -30,7 +32,7 @@
++ 		auto &db_transaction = transaction.Cast<TransactionT>();
++ 		duckdb::ErrorData error;
++ 		try {
++-			db_transaction.Commit();
+++			db_transaction.Commit(context);
++ 		} catch (const std::exception &ex) {
++ 			error = duckdb::ErrorData(ex);
++ 		} catch (...) {
++@@ -40,10 +42,10 @@
++ 		return error;
++ 	}
++ 
++-	void RollbackTransaction(duckdb::Transaction &transaction) override {
+++	void RollbackTransaction(duckdb::ClientContext &context, duckdb::Transaction &transaction) override {
++ 		auto &db_transaction = transaction.Cast<TransactionT>();
++ 		try {
++-			db_transaction.Rollback();
+++			db_transaction.Rollback(context);
++ 		} catch (...) {
++ 			DestroyTransaction(transaction);
++ 			throw;
++@@ -53,7 +55,7 @@
++ 
++ 	void Checkpoint(duckdb::ClientContext &context, bool force = false) override {
++ 		auto &transaction = TransactionT::Get(context, db.GetCatalog());
++-		auto &conn = transaction.GetConnection();
+++		auto &conn = transaction.GetConnection(context);
++ 		conn.Execute(context, "CHECKPOINT");
++ 	}
++ 
+```
+
+---
+
+### Incident Patch 3: `8c17d8c3` (2026-11-20)
+**Commit Message**: fix ci
+
+**File**: `test/configs/force_storage_restart.json` (modified, +1/-0)
+```diff
+@@ -55,6 +55,7 @@
+       "paths": [
+         "test/sql/copy/parquet/bloom_filter_coalesced_memory.test_slow",
+         "test/sql/copy/parquet/bloom_filter_coalesced_reads.test",
++        "test/sql/copy/parquet/bloom_filter_or_reads.test",
+         "test/sql/storage/compression/zstd/zstd_compression_ratio.test_slow",
+         "test/sql/logging/logging_memory_after_truncate.test",
+         "test/sql/logging/logging_deprecated_names.test",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29042** (closed): Preserve LIKE predicates for scan-level pruning (@mcusack-floe)
-- **PR #29040** (2026-11-18): capi: const char ** is now const char * const * for readonly api calls (@okruitho)
-- **PR #29038** (closed): [v2.0-cyanoptera] Bump aws to 1963bfa (@autograaf)
-- **PR #29035** (2026-11-18): Improve ALP, ALPRD, DICT_FSST and Parquet scan decoding (@lnkuiper)
-- **PR #29028** (2026-11-18): [v2.0] Bump mysql to e04d8eef94c94e70c5d5663895610b1bb475d506 (@carlopi)
-- **PR #29026** (2026-11-18): [v2.0] Bump aws, remove patch, fix external resources naming (@carlopi)
+- **PR #29134** (closed): Skip plan-cost regression checks for identical plans (@lnkuiper)
+- **PR #29131** (closed): Register a sort temporary memory state on its first sink (@anhphanmd)
+- **PR #29126** (2026-11-20): Remove duplicate Unity Catalog test patch (@lnkuiper)
+- **PR #29122** (2026-11-20): [v2.0-cyanoptera] Skip async_task_synchronous_batch under storage_compatibility and v1_storage_block_size_16kB (@Robinho-MR)
+- **PR #29118** (2026-11-20): Scan validity segments into ValidityMask (@lnkuiper)
+- **PR #29105** (2026-11-20): Avoid unnecessary bloom filter IO (@dentiny)
 
 ---
 
@@ -2885,49 +2718,24 @@ Data Corruption Error: Failed to read file "...": metadata is corrupt. Column "x
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. RTTI-sensitive tests and extension CI failures
+## X. min/max for INTERVAL type
 
 **RULE**:
-When implementing operations in `.github/patches/extensions/ducklake/0028-skip-failing-extension-ci-tests.patch`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/function/aggregate/distributive/minmax.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7b270526`: RTTI-sensitive tests and extension CI failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `abbad801`: min/max for INTERVAL type. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/patches/extensions/ducklake/0028-skip-failing-extension-ci-tests.patch`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/function/aggregate/distributive/minmax.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-diff --git a/test/sql/autoloading/autoload_sqlite_catalog.test b/test/sql/autoloading/autoload_sqlite_catalog.test
-index 0b979595..004c8392 100644
---- a/test/sql/autoloading/autoload_sqlite_catalog.test
-@@ -2,6 +2,8 @@
- # description: A SQLite catalog can be attached when the sqlite extension is only loaded by the attach
- # group: [autoloading]
- 
-+mode skip SQLite catalog autoloading leaves the catalog unattached
-+
- require ducklake
- 
- require parquet
-diff --git a/test/sql/initialize/new_ducklake_requires_data_path.test b/test/sql/initialize/new_ducklake_requires_data_path.test
-index 1c9cb402..5f0d2f9c 100644
---- a/test/sql/initialize/new_ducklake_requires_data_path.test
-@@ -2,6 +2,9 @@
- # description: Creating a DuckLake in a catalog that is not a DuckDB database requires a DATA_PATH
- # group: [initialize]
- 
-+# SQLite catalog paths derived from BASE_TEST_NAME are invalid on Windows.
-+require notwindows
-+
- require ducklake
- 
- require parquet
-diff --git a/test/sql/migration/inlined_column_rename_dev_conflict.test b/test/sql/migration/inlined_column_rename_dev_conflict.test
-index 25af2c96..7c663f82 100644
---- a/test/sql/migration/inlined_column_rename_dev_conflict.test
-@@ -2,6 +2,9 @
+	case PhysicalType::INTERVAL:
+		// sort keys do not normalize intervals, so compare them as interval_t
+		SpecializeMinMaxNFunction<MinMaxFixedValue<interval_t>, COMPARATOR>(function);
+		break;
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2937,4 +2745,4 @@ index 25af2c96..7c663f82 100644
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7b270526` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `abbad801` are properly handled with clean fallback behavior.

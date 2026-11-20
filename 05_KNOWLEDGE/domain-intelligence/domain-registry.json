@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T12:15:57.347Z",
-  "total_records": 2124,
+  "last_updated": "2026-11-20T12:50:33.397Z",
+  "total_records": 2126,
   "domains": {
     "A": {
       "total": 17,
@@ -1375,7 +1375,7 @@
       ]
     },
     "H": {
-      "total": 500,
+      "total": 502,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1876,7 +1876,9 @@
         "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-core-invariants",
         "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-rocketride-org-rocketride-server-core-invari",
-        "domain_intelligence-technical-construction-intelligence-rocketride-org-rocketride-server-learnings-c"
+        "domain_intelligence-technical-construction-intelligence-rocketride-org-rocketride-server-learnings-c",
+        "domain_intelligence-technical-construction-intelligence-grpc-grpc-rust-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-grpc-grpc-rust-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8020,8 +8022,8 @@
       "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
       "repository": "duckdb/duckdb",
-      "content_hash": "54dd0c018e04df657776b8727544740dce245aee52344906f2417edcf6d34ae4",
-      "created_at": "2026-11-17T14:50:06.149Z"
+      "content_hash": "24d9a4be95d4a5477fc8ff63a1c6f591c875842d839ec91b4ba8827d689d4f59",
+      "created_at": "2026-11-20T12:50:28.413Z"
     },
     "DOM-D-A827EB1D": {
       "record_id": "DOM-D-A827EB1D",
@@ -18297,8 +18299,8 @@
       "title": "Architecture Intelligence: duckdb-duckdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-learnings-architecture-intelligence-duckdb-duckdb-learnings-core-i.md",
       "repository": "duckdb-duckdb-learnings",
-      "content_hash": "a2d99df08b493566d2750947adf2945b7e50030a0c803965a01cc5c548333369",
-      "created_at": "2026-11-17T14:50:10.427Z"
+      "content_hash": "6d1c612f8f33cb35f819be07065719f8f88a4b6701bf5a8cfe84de1d240b9894",
+      "created_at": "2026-11-20T12:50:33.397Z"
     },
     "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants",
@@ -23886,8 +23888,8 @@
       "title": "Technical Construction Intelligence: scrapy/scrapy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-scrapy-scrapy-technical-construction-intelligence-scrapy-scrapy-core-invariants.md",
       "repository": "scrapy/scrapy",
-      "content_hash": "e32166bd80406c403fa0f4b5ba4ba022852fd4417c909f2682491de7ee0ef214",
-      "created_at": "2026-11-16T13:22:54.658Z"
+      "content_hash": "d085be08c4cfcf21d8069bb5fa574cac4ec7719a678e88cc7bb9c1cb3d00e502",
+      "created_at": "2026-11-20T12:50:18.238Z"
     },
     "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-learnings-core-invariants",
@@ -23895,8 +23897,8 @@
       "title": "Technical Construction Intelligence: scrapy-scrapy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-scrapy-scrapy-learnings-technical-construction-intelligence-scrapy-scrapy-learni.md",
       "repository": "scrapy-scrapy-learnings",
-      "content_hash": "24331f9f14b3f33818046e07d59ceba519418fb8d5364ddef4a316a8d577d807",
-      "created_at": "2026-11-16T13:22:59.710Z"
+      "content_hash": "9b14734ca6c2eb73580ef19c55ddec1dc5851e15b4e59556d016619c68ff7c06",
+      "created_at": "2026-11-20T12:50:32.673Z"
     },
     "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-core-invariants",
@@ -35844,6 +35846,24 @@
       "confidence": 0.64,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-20T12:15:56.186Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-grpc-grpc-rust-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-grpc-grpc-rust-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: grpc/grpc-rust Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-grpc-grpc-rust-technical-construction-intelligence-grpc-grpc-rust-core-invariant.md",
+      "repository": "grpc/grpc-rust",
+      "content_hash": "7106483c93b4dc88e9582d8a6630eb30985448cb50c43b05eebf7a599d9f927b",
+      "created_at": "2026-11-20T12:50:15.516Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-grpc-grpc-rust-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-grpc-grpc-rust-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: grpc-grpc-rust-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-grpc-grpc-rust-learnings-technical-construction-intelligence-grpc-grpc-rust-lear.md",
+      "repository": "grpc-grpc-rust-learnings",
+      "content_hash": "948f542ab615c9dee18a188f0f9d988ae867d55e926855055a45c85635684629",
+      "created_at": "2026-11-20T12:50:31.733Z"
     }
   }
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/scrapy-scrapy-learnings.md`  
 > **Source**: github ([https://github.com/scrapy/scrapy](https://github.com/scrapy/scrapy))  
-> **Source Version**: `953a7f42`  
+> **Source Version**: `00acf3f3`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T13:22:53.232Z  
+> **Timestamp**: 2026-11-20T12:50:16.871Z  
 > **Learning ID**: `learn-github-scrapy-scrapy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/scrapy-scrapy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/scrapy/scrapy](https://github.com/scrapy/scrapy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T13:22:53.224Z  
+> **Harvest Timestamp**: 2026-11-20T12:50:16.866Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Scrapy, a fast high-level web crawling & scraping framework for Python.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 65429 stars
+- **Stars / Engagement**: 65508 stars
 
 ---
 
@@ -766,8 +766,7 @@ class Stream:
         if b"Content-Length" not in self._request.headers:
             headers.append((b"Content-Length", str(len(self._request.body)).encode()))
 
-        for name, values in self._request.headers.items():
-            headers.extend((name, value) for value in values)
+        headers.extend(self._request.headers.raw)
 
         return headers
 
@@ -775,7 +774,541 @@ class Stream:
         if self.check_request_url():
             headers = self._get_request_headers()
             self._protocol.conn.send_headers(self.stream_id, headers, end_stream=False)
-            self.metadata[
+            self.metadata["request_sent"] = True
+            self.send_data()
+        else:
+     
+```
+
+### Core Architecture Module: `scrapy/core/_scraper.py`
+```
+from __future__ import annotations
+
+import logging
+import warnings
+from collections import deque
+from collections.abc import AsyncIterator
+from inspect import iscoroutine
+from traceback import clear_frames
+from typing import TYPE_CHECKING, Any, TypeAlias, TypeVar, cast
+
+from twisted.internet.defer import Deferred, inlineCallbacks
+from twisted.python.failure import Failure
+
+from scrapy import Spider, signals
+from scrapy.core._spidermw import SpiderMiddlewareManager
+from scrapy.exceptions import (
+    CloseSpider,
+    DropItem,
+    IgnoreRequest,
+    ScrapyDeprecationWarning,
+)
+from scrapy.http import Request, Response
+from scrapy.http.request import _active_crawler_scope
+from scrapy.pipelines import ItemPipelineManager
+from scrapy.utils.asyncio import _parallel_asyncio, is_asyncio_available
+from scrapy.utils.defer import (
+    _aiter_errback,
+    _parallel_async,
+    _process_pending_io_before_callback,
+    _schedule_coro,
+    deferred_from_coro,
+    ensure_awaitable,
+    maybe_deferred_to_future,
+)
+from scrapy.utils.deprecate import method_is_overridden
+from scrapy.utils.log import failure_to_exc_info, logformatter_adapter
+from scrapy.utils.misc import (
+    build_from_crawler,
+    load_object,
+    warn_on_generator_with_return_value,
+)
+from scrapy.utils.python import _as_async_generator, global_object_name
+from scrapy.utils.spider import iterate_spider_output
+
+if TYPE_CHECKING:
+    from collections.abc import Generator, Iterable
+
+    from scrapy.crawler import Crawler
+    from scrapy.logformatter import LogFormatter
+    from scrapy.signalmanager import SignalManager
+    from scrapy.utils.defer import FailureWithRequest
+
+
+logger = logging.getLogger(__name__)
+
+
+_T = TypeVar("_T")
+QueueTuple: TypeAlias = tuple[Response | Failure, Request, Deferred[None]]
+
+
+def _set_parent_id(output: Iterable[_T], parent_id: int) -> Iterable[_T]:
+    for o in output:
+        if isinstance(o, Request) and o.parent_id is None:
+            o.parent_id = parent_id
+        yield o
+
+
+async def _aset_parent_id(
+    output: AsyncIterator[_T], parent_id: int
+) -> AsyncIterator[_T]:
+    async for o in output:
+        if isinstance(o, Request) and o.parent_id is None:
+            o.parent_id = parent_id
+        yield o
+
+
+class _Slot:
+    """Scraper slot (one per running spider)"""
+
+    def __init__(self, crawler: Crawler) -> None:
+        self._crawler = crawler
+        self.queue: deque[QueueTuple] = deque()
+        self.active: set[Request] = set()
+        self.itemproc_size: int = 0
+        self.closing: Deferred[Spider] | None = None
+
+    def add_response_request(
+        self, result: Response | Failure, request: Request
+    ) -> Deferred[None]:
+        # this Deferred will be awaited in enqueue_scrape()
+        deferred: Deferred[None] = Deferred()
+        self.queue.append((result, request, deferred))
+        return deferred
+
+    def next_response_request_deferred(self) -> QueueTuple:
+        result, request, deferred = self.queue.popleft()
+        self.active.add(request)
+        return result, request, deferred
+
+    def finish_response(self, request: Request) -> None:
+        self.active.remove(request)
+
+    def is_idle(self) -> bool:
+        return not (self.queue or self.active or self.itemproc_size)
+
+    @property
+    def active_size(self) -> int:
+        assert self._crawler.engine is not None
+        return self._crawler.engine.response_active_size
+
+    @property
+    def max_active_size(self) -> int:
+        assert self._crawler.engine is not None
+        return self._crawler.engine.downloader.middleware._max_active_size
+
+    def needs_backout(self) -> bool:
+        assert self._crawler.engine is not None
+        return self._crawler.engine.downloader._exceeds_max_active_size()
+
+
+class Scraper:
+    def __init__(self, crawler: Crawler) -> None:
+        self.slot: _Slot | None = None
+        self.spidermw: SpiderMiddlewareManager = build_from_crawler(
+            SpiderMiddlewareManager, crawler
+        )
+        itemproc_cls: type[ItemPipelineManager] = load_object(
+            crawler.settings["ITEM_PROCESSOR"]
+        )
+        self.itemproc: ItemPipelineManager = build_from_crawler(itemproc_cls, crawler)
+        self._itemproc_has_async: dict[str, bool] = {}
+        for method in [
+            "open_spider",
+            "close_spider",
+            "process_item",
+        ]:
+            self._check_deprecated_itemproc_method(method)
+
+        self.concurrent_items: int = max(1, crawler.settings.getint("CONCURRENT_ITEMS"))
+        self.crawler: Crawler = crawler
+        self.signals: SignalManager = crawler.signals
+        self.logformatter: LogFormatter = crawler.logformatter
+
+    def _check_deprecated_itemproc_method(self, method: str) -> None:
+        itemproc_cls = type(self.itemproc)
+        if not hasattr(self.itemproc, f"{method}_async"):
+            warnings.warn(
+                f"{global_object_name(itemproc_cls)} doesn't define a {method}_async() method,"
+                f" this is deprecated and the method will be required in future Scrapy versions.",
+                ScrapyDeprecationWarning,
+                stacklevel=2,
+            )
+            self._itemproc_has_async[method] = False
+        elif (
+            issubclass(itemproc_cls, ItemPipelineManager)
+            and method_is_overridden(itemproc_cls, ItemPipelineManager, method)
+            and not method_is_overridden(
+                itemproc_cls, ItemPipelineManager, f"{method}_async"
+            )
+        ):
+            warnings.warn(
+                f"{global_object_name(itemproc_cls)} overrides {method}() but doesn't override {method}_async()."
+                f" This is deprecated. {method}() will be used, but in future Scrapy versions {method}_async() will be used instead.",
+                ScrapyDeprecationWarning,
+                stacklevel=2,
+            )
+            self._itemproc_has_async[method] = False
+        else:
+            self._itemproc_has_async[method] = True
+
+    def open_spider(
+        self, spider: Spider | None = None
+    ) -> Deferred[None]:  # pragma: no cover
+        return deferred_from_coro(self.open_spider_async())
+
+    async def open_spider_async(self) -> None:
+        """Open the spider for scraping and allocate resources for it.
+
+        .. versionadded:: 2.14
+        """
+        self.slot = _Slot(self.crawler)
+        if not self.crawler.spider:
+            raise RuntimeError(
+                "Scraper.open_spider() called before Crawler.spider is set."
+            )
+        if self._itemproc_has_async["open_spider"]:
+            await self.itemproc.open_spider_async()
+        else:
+            await maybe_deferred_to_future(
+                self.itemproc.open_spider(self.crawler.spider)
+            )
+
+    def close_spider(self) -> Deferred[None]:  # pragma: no cover
+        return deferred_from_coro(self.close_spider_async())
+
+    async def close_spider_async(self) -> None:
+        """Close the spider being scraped and release its resources.
+
+        .. versionadded:: 2.14
+        """
+        if self.slot is None:
+            raise RuntimeError("Scraper slot not assigned")
+        self.slot.closing = Deferred()
+        self._check_if_closing()
+        await maybe_deferred_to_future(self.slot.closing)
+        if self._itemproc_has_async["close_spider"]:
+            await self.itemproc.close_spider_async()
+        else:
+            assert self.crawler.spider
+            await maybe_deferred_to_future(
+                self.itemproc.close_spider(self.crawler.spider)
+            )
+
+    def is_idle(self) -> bool:  # pragma: no cover
+        return not self.slot
+
+    def _check_if_closing(self) -> None:
+        assert self.slot is not None  # typing
+        if self.slot.closing and self.slot.is_idle():
+            assert self.crawler.spider
+            self.slot.closing.callback(self.crawler.spider)
+
+    @inlineCallbacks
+    def enqueue_scrape(
+        self, result: Response | Failure, request: Request
+    ) -> Generator[Deferred[Any], Any, None]:
+        if self.slot is None:
+            raise RuntimeError("Scraper slot not assigned")
+        dfd = self.slot.add_response_request(result, request)
+        self._scrape_next()
+        try:
+            yield dfd  # fired in _wait_for_processing()
+        except Exception:
+            logger.exception(
+                "Scraper bug processing %(request)s",
+                {"request": request},
+                extra={"spider": self.crawler.spider},
+            )
+        finally:
+            self.slot.finish_response(request)
+            self._check_if_closing()
+            self._scrape_next()
+
+    def _scrape_next(self) -> None:
+        assert self.slot is not None  # typing
+        while self.slot.queue:
+            result, request, queue_dfd = self.slot.next_response_request_deferred()
+            _schedule_coro(self._wait_for_processing(result, request, queue_dfd))
+
+    async def _scrape(self, result: Response | Failure, request: Request) -> None:
+        """Handle the downloaded response or failure through the spider callback/errback."""
+        if not isinstance(result, (Response, Failure)):
+            raise TypeError(
+                f"Incorrect type: expected Response or Failure, got {type(result)}: {result!r}"
+            )
+
+        # Lets Request.__await__() find this crawler for as long as the
+        # callback, its spider middlewares and its item pipelines run.
+        with _active_crawler_scope(self.crawler):
+            output: Iterable[Any] | AsyncIterator[Any]
+            if isinstance(result, Response):
+                try:
+                    # call the spider middlewares and the request callback with the response
+                    output = await self.spidermw.scrape_response_async(
+                        self.call_spider_async, result, request
+                    )
+                except Exception as spider_exc:
+                    self._handle_spider_error(spider_exc, request, result)
+                else:
+                    await self.handle_spider_output
+```
+
+### Core Architecture Module: `scrapy/core/_spidermw.py`
+```
+from __future__ import annotations
+
+import logging
+from collections.abc import AsyncIterator, Callable, Coroutine, Iterable
+from contextlib import suppress
+from functools import wraps
+from inspect import isasyncgenfunction, iscoroutine
+from itertools import islice
+from typing import TYPE_CHECKING, Any, TypeAlias, TypeVar
+from warnings import warn
+
+from twisted.python.failure import Failure
+
+from scrapy import Request, Spider
+from scrapy._middleware import MiddlewareManager
+from scrapy.exceptions import ScrapyDeprecationWarning, _InvalidOutput
+from scrapy.http import Response
+from scrapy.utils.conf import build_component_list
+from scrapy.utils.defer import (
+    _process_pending_io,
+    deferred_from_coro,
+    maybe_deferred_to_future,
+)
+from scrapy.utils.python import (
+    _as_async_generator,
+    _MutableAsyncChain,
+    global_object_name,
+)
+
+if TYPE_CHECKING:
+    from twisted.internet.defer import Deferred
+
+    from scrapy.settings import BaseSettings
+
+
+logger = logging.getLogger(__name__)
+
+
+_T = TypeVar("_T")
+_ScrapeFunc: TypeAlias = Callable[
+    [Response | Failure, Request],
+    Coroutine[Any, Any, Iterable[_T] | AsyncIterator[_T]],
+]
+
+
+class SpiderMiddlewareManager(MiddlewareManager):  # pylint: disable=abstract-method
+    component_name = "spider middleware"
+
+    @classmethod
+    def _get_mwlist_from_settings(cls, settings: BaseSettings) -> list[Any]:
+        return build_component_list(
+            settings.get_component_priority_dict_with_base("SPIDER_MIDDLEWARES")
+        )
+
+    def _add_middleware(self, mw: Any) -> None:
+        if hasattr(mw, "process_spider_input"):
+            self.methods["process_spider_input"].append(mw.process_spider_input)
+            self._check_mw_method_spider_arg(mw.process_spider_input)
+
+        if hasattr(mw, "process_start"):
+            self.methods["process_start"].appendleft(mw.process_start)
+
+        process_spider_output = self._get_process_spider_output(mw)
+        self.methods["process_spider_output"].appendleft(process_spider_output)
+        if process_spider_output is not None:
+            self._check_mw_method_spider_arg(process_spider_output)
+
+        process_spider_exception = getattr(mw, "process_spider_exception", None)
+        self.methods["process_spider_exception"].appendleft(process_spider_exception)
+        if process_spider_exception is not None:
+            self._check_mw_method_spider_arg(process_spider_exception)
+
+    async def _process_spider_input(
+        self,
+        scrape_func: _ScrapeFunc[_T],
+        response: Response,
+        request: Request,
+    ) -> Iterable[_T] | AsyncIterator[_T]:
+        for method in self.methods["process_spider_input"]:
+            assert method is not None
+            try:
+                if method in self._mw_methods_requiring_spider:
+                    result = method(response=response, spider=self._spider)
+                else:
+                    result = method(response=response)
+                if result is not None:
+                    msg = (
+                        f"{global_object_name(method)} must return None "
+                        f"or raise an exception, got {type(result)}"
+                    )
+                    raise _InvalidOutput(msg)
+            except _InvalidOutput:
+                raise
+            except Exception:
+                return await scrape_func(Failure(), request)
+        return await scrape_func(response, request)
+
+    async def _evaluate_iterable(
+        self,
+        response: Response | None,
+        iterable: AsyncIterator[_T],
+        exception_processor_index: int,
+        recover_to: _MutableAsyncChain[_T],
+    ) -> AsyncIterator[_T]:
+        try:
+            async for r in iterable:
+                yield r
+        except Exception as ex:
+            if getattr(ex, "_spidermw_unhandled", False):
+                raise
+            exception_result: _MutableAsyncChain[_T] = self._process_spider_exception(
+                response, ex, exception_processor_index
+            )
+            recover_to.extend(exception_result)
+
+    def _process_spider_exception(
+        self,
+        response: Response | None,
+        exception: Exception,
+        start_index: int = 0,
+    ) -> _MutableAsyncChain[_T]:
+        # don't handle _InvalidOutput exception
+        if isinstance(exception, _InvalidOutput):
+            raise exception
+        method_list = islice(
+            self.methods["process_spider_exception"], start_index, None
+        )
+        for method_index, method in enumerate(method_list, start=start_index):
+            if method is None:
+                continue
+            if method in self._mw_methods_requiring_spider:
+                result = method(
+                    response=response, exception=exception, spider=self._spider
+                )
+            else:
+                result = method(response=response, exception=exception)
+            if isinstance(result, (Iterable, AsyncIterator)):
+                # stop exception handling by handing control over to the
+                # process_spider_output chain if an iterable has been returned
+                if isinstance(result, Iterable):
+                    result = _as_async_generator(result)
+                return self._process_spider_output(response, result, method_index + 1)
+            if result is None:
+                continue
+            msg = (
+                f"{global_object_name(method)} must return None "
+                f"or an iterable, got {type(result)}"
+            )
+            raise _InvalidOutput(msg)
+        # Every remaining middleware declined to handle the exception, so the
+        # outer process_spider_output layers must let it through instead of
+        # offering it to those middlewares again.
+        with suppress(AttributeError):
+            exception._spidermw_unhandled = True  # type: ignore[attr-defined]
+        # The traceback of the exception includes this frame, so this local
+        # variable would keep them in a reference cycle, and with them the
+        # response.
+        try:
+            raise exception
+        finally:
+            del exception
+
+    def _process_spider_output(
+        self,
+        response: Response | None,
+        result: AsyncIterator[_T],
+        start_index: int = 0,
+    ) -> _MutableAsyncChain[_T]:
+        # items in this iterable do not need to go through the process_spider_output
+        # chain, they went through it already from the process_spider_exception method
+        recovered: _MutableAsyncChain[_T] = _MutableAsyncChain()
+        method_list = islice(self.methods["process_spider_output"], start_index, None)
+        for method_index, method in enumerate(method_list, start=start_index):
+            if method is None:
+                continue
+            if method in self._mw_methods_requiring_spider:
+                result = method(response=response, result=result, spider=self._spider)
+            else:
+                result = method(response=response, result=result)
+            result = self._evaluate_iterable(
+                response, result, method_index + 1, recovered
+            )
+        return _MutableAsyncChain(result, recovered)
+
+    async def _process_callback_output(
+        self, response: Response | None, result: AsyncIterator[_T]
+    ) -> _MutableAsyncChain[_T]:
+        recovered: _MutableAsyncChain[_T] = _MutableAsyncChain()
+        result = self._evaluate_iterable(response, result, 0, recovered)
+        result = self._process_spider_output(response, result)
+        return _MutableAsyncChain(result, recovered)
+
+    def scrape_response(
+        self,
+        scrape_func: Callable[
+            [Response | Failure, Request],
+            Deferred[Iterable[_T] | AsyncIterator[_T]],
+        ],
+        response: Response,
+        request: Request,
+        spider: Spider,
+    ) -> Deferred[_MutableAsyncChain[_T]]:  # pragma: no cover
+        warn(
+            "SpiderMiddlewareManager.scrape_response() is deprecated, use scrape_response_async() instead",
+            ScrapyDeprecationWarning,
+            stacklevel=2,
+        )
+
+        @wraps(scrape_func)
+        async def scrape_func_wrapped(
+            response: Response | Failure, request: Request
+        ) -> Iterable[_T] | AsyncIterator[_T]:
+            return await maybe_deferred_to_future(scrape_func(response, request))
+
+        self._set_compat_spider(spider)
+        return deferred_from_coro(
+            self.scrape_response_async(scrape_func_wrapped, response, request)
+        )
+
+    async def scrape_response_async(
+        self,
+        scrape_func: _ScrapeFunc[_T],
+        response: Response,
+        request: Request,
+    ) -> _MutableAsyncChain[_T]:
+        if not self.crawler:
+            raise RuntimeError(
+                "scrape_response_async() called on a SpiderMiddlewareManager"
+                " instance created without a crawler."
+            )
+        try:
+            it: Iterable[_T] | AsyncIterator[_T] = await self._process_spider_input(
+                scrape_func, response, request
+            )
+            ait = it if isinstance(it, AsyncIterator) else _as_async_generator(it)
+            return await self._process_callback_output(response, ait)
+        except Exception as ex:
+            await _process_pending_io()
+            return self._process_spider_exception(response, ex)
+
+    async def _scrape_failure_async(
+        self,
+        scrape_func: _ScrapeFunc[_T],
+        failure: Failure,
+        request: Request,
+    ) -> _MutableAsyncChain[_T]:
+        # There is no response to run the process_spider_input chain on, so the
+        # errback output enters the process_spider_output chain with None as the
+        # response. Exceptions from the errback itself are left to the caller,
+        # which tells apart the download error from a different one.
+        it: Iterable[_T] | AsyncIterator[_T] = await scrape_func(failure, request)
+        ait = it if isinstance(it, AsyncIterator) else _as_async_generator(it)
+        return await self._process
 ```
 
 ### Core Architecture Module: `scrapy/core/downloader/__init__.py`
@@ -796,8 +1329,8 @@ from typing import TYPE_CHECKING, Any
 from twisted.internet.defer import Deferred, DeferredList, inlineCallbacks
 
 from scrapy import Request, Spider, signals
+from scrapy.core.downloader._middleware import DownloaderMiddlewareManager
 from scrapy.core.downloader.handlers import DownloadHandlers
-from scrapy.core.downloader.middleware import DownloaderMiddlewareManager
 from scrapy.exceptions import DownloadCancelledError, ScrapyDeprecationWarning
 from scrapy.resolver import dnscache
 from scrapy.settings import SETTINGS_PRIORITIES
@@ -1034,7 +1567,7 @@ class Downloader:
         self._slot_gc_loop: AsyncioLoopingCall[..., None] | LoopingCall | None = None
         self._accepting_requests: bool = True
         self._download_tasks: dict[Request, Deferred[None]] = {}
-        self.per_slot_settings: dict[str, dict[str
+        self.per_slot_settings: dict[str, dict[st
 ```
 
 ### Core Architecture Module: `scrapy/core/downloader/_idna_patch.py`
@@ -1119,795 +1652,253 @@ def _install_twisted_idna_fallbacks() -> None:
 
 ```
 
-### Core Architecture Module: `scrapy/core/downloader/contextfactory.py`
+### Core Architecture Module: `scrapy/core/downloader/_middleware.py`
 ```
 from __future__ import annotations
 
 import warnings
-from typing import TYPE_CHECKING, Any, Protocol, Self, cast
+from functools import partial, wraps
+from itertools import islice
+from typing import TYPE_CHECKING, Any
+from weakref import WeakSet, finalize
 
-from formerly import deprecated_class
-from OpenSSL import SSL
-from twisted.internet.ssl import (
-    AcceptableCiphers,
-    CertificateOptions,
-    TLSVersion,
-    optionsForClientTLS,
-)
-from twisted.web.client import BrowserLikePolicyForHTTPS
-from twisted.web.iweb import IPolicyForHTTPS
-from zope.interface.declarations import implementer
-
-from scrapy.core.downloader.tls import (
-    _TWISTED_VERSION_MAP,
-    _openssl_methods,
-    _ScrapyClientTLSOptions,
-    _ScrapyClientTLSOptions26,
-)
-from scrapy.exceptions import ScrapyDeprecationWarning
-from scrapy.utils._deps_compat import TWISTED_TLS_NEW_IMPL
-from scrapy.utils._ssl import (
-    _get_cert_options_version_kwargs,
-    _get_keylog_filename,
-    _get_tls_version_limits,
-    _set_keylog_callback,
-)
-from scrapy.utils.misc import build_from_crawler, load_object
-
-if TYPE_CHECKING:
-    from twisted.internet._sslverify import ClientTLSOptions
-    from twisted.internet.interfaces import IOpenSSLClientConnectionCreator
-
-    from scrapy.crawler import Crawler
-    from scrapy.settings import BaseSettings
-
-
-class _PolicyForHTTPS(Protocol):
-    """:class:`~twisted.web.iweb.IPolicyForHTTPS` for type checkers."""
-
-    def creatorForNetloc(
-        self, hostname: bytes, port: int
-    ) -> IOpenSSLClientConnectionCreator: ...
-
-
-@implementer(IPolicyForHTTPS)
-class _ScrapyClientContextFactory(BrowserLikePolicyForHTTPS):
-    """Non-peer-certificate verifying HTTPS context factory.
-
-    Uses :setting:`DOWNLOADER_CLIENT_TLS_CIPHERS`,
-    :setting:`DOWNLOAD_TLS_MIN_VERSION` and :setting:`DOWNLOAD_TLS_MAX_VERSION`
-    to configure the :class:`~twisted.internet.ssl.CertificateOptions`
-    instance.
-
-    The purpose of this custom class is to provide a ``creatorForNetloc()``
-    method that returns:
-
-    - a ``_ScrapyClientTLSOptions26`` or ``_ScrapyClientTLSOptions`` instance
-      configured based on TLS settings provided to the factory (when the
-      certificate verification is disabled);
-    - a result of ``optionsForClientTLS()`` called with those TLS settings
-      (when the certificate verification is enabled).
-    """
-
-    def __init__(
-        self,
-        method: int | None = SSL.SSLv23_METHOD,  # noqa: S503
-        tls_verbose_logging: bool = False,
-        tls_ciphers: str | None = None,
-        *args: Any,
-        verify_certificates: bool = False,
-        tls_min_version: TLSVersion | None = None,
-        tls_max_version: TLSVersion | None = None,
-        **kwargs: Any,
-    ):
-        super().__init__(*args, **kwargs)  # type: ignore[no-untyped-call]
-        self._ssl_method: int | None = method
-        self.tls_min_version: TLSVersion | None = tls_min_version
-        self.tls_max_version: TLSVersion | None = tls_max_version
-        self.tls_verbose_logging: bool = tls_verbose_logging  # unused
-        self.tls_ciphers: AcceptableCiphers | None = (
-            AcceptableCiphers.fromOpenSSLCipherString(tls_ciphers)
-            if tls_ciphers
-            else None
-        )
-        self._verify_certificates = verify_certificates
-
-    @classmethod
-    def from_crawler(
-        cls,
-        crawler: Crawler,
-        method: int | None = SSL.SSLv23_METHOD,  # noqa: S503
-        *args: Any,
-        **kwargs: Any,
-    ) -> Self:
-        tls_verbose_logging: bool = crawler.settings.getbool(
-            "DOWNLOADER_CLIENT_TLS_VERBOSE_LOGGING"
-        )
-        tls_ciphers: str | None = crawler.settings["DOWNLOADER_CLIENT_TLS_CIPHERS"]
-        # DOWNLOADER_CLIENT_TLS_METHOD reading and handling should be also moved here
-        # when the deprecated load_context_factory_from_settings() is removed
-        tls_min_ver, tls_max_ver = _get_tls_version_limits(
-            crawler.settings, _TWISTED_VERSION_MAP.__getitem__
-        )
-        if tls_min_ver or tls_max_ver:
-            method = None
-        verify_certificates = crawler.settings.getbool("DOWNLOAD_VERIFY_CERTIFICATES")
-        return cls(  # type: ignore[misc]
-            *args,
-            method=method,
-            tls_verbose_logging=tls_verbose_logging,
-            tls_ciphers=tls_ciphers,
-            tls_min_version=tls_min_ver,
-            tls_max_version=tls_max_ver,
-            verify_certificates=verify_certificates,
-            **kwargs,
-        )
-
-    # should be removed together with ScrapyClientContextFactory
-    def getCertificateOptions(self) -> CertificateOptions:  # pragma: no cover
-        return self._get_cert_options()
-
-    def _get_cert_options(self) -> CertificateOptions:
-        return _ScrapyCertificateOptions(**self._get_cert_options_kwargs())
-
-    def _get_cert_options_kwargs(self) -> dict[str, Any]:
-        kwargs: dict[str, Any] = {
-            "fixBrokenPeers": True,
-            "acceptableCiphers": self.tls_ciphers,
-        }
-        if self.tls_min_version or self.tls_max_version:
-            kwargs.update(
-                _get_cert_options_version_kwargs(
-                    self.tls_min_version, self.tls_max_version
-                )
-            )
-        # when ScrapyClientContextFactory is removed self._ssl_method can just be None by default
-        elif self._ssl_method != SSL.SSLv23_METHOD:
-            kwargs["method"] = self._ssl_method
-        return kwargs
-
-    # should be removed together with ScrapyClientContextFactory
-    def getContext(
-        self, hostname: Any = None, port: Any = None
-    ) -> SSL.Context:  # pragma: no cover
-        return self._get_context()
-
-    def _get_context(self) -> SSL.Context:
-        return self._get_cert_options().getContext()
-
-    def creatorForNetloc(self, hostname: bytes, port: int) -> ClientTLSOptions:
-        if not self._verify_certificates:
-            # Our options class is needed to skip verification errors
-            if TWISTED_TLS_NEW_IMPL:
-                return _ScrapyClientTLSOptions26(
-                    self._get_cert_options()._makeTLSConnection,
-                    hostname.decode("ascii"),
-                )
-            return _ScrapyClientTLSOptions(
-                hostname.decode("ascii"),  # type: ignore[arg-type]
-                self._get_context(),  # type: ignore[arg-type]
-            )
-        # Otherwise use the normal Twisted function.
-        creator = optionsForClientTLS(
-            hostname=hostname.decode("ascii"),
-            extraCertificateOptions=self._get_cert_options_kwargs(),
-        )
-        if _get_keylog_filename():
-            # This creator builds its own certificate options, so its context
-            # doesn't come from _ScrapyCertificateOptions.
-            _set_keylog_callback(_get_creator_context(creator))
-        return cast("ClientTLSOptions", creator)
-
-
-def _get_creator_context(creator: Any) -> SSL.Context:
-    """Return the context that *creator* uses for its connections."""
-    if TWISTED_TLS_NEW_IMPL:
-        return cast("SSL.Context", creator._createConnection.__self__.getContext())
-    return cast("SSL.Context", creator._ctx)
-
-
-ScrapyClientContextFactory = deprecated_class(
-    "ScrapyClientContextFactory",
-    _ScrapyClientContextFactory,
-    category=ScrapyDeprecationWarning,
-    subclass_message="{old} is deprecated.",
-    instance_message="{cls} is deprecated.",
-)
-
-
-@implementer(IPolicyForHTTPS)
-class BrowserLikeContextFactory(_ScrapyClientContextFactory):
-    """
-    Twisted-recommended context factory for web clients.
-
-    Quoting the documentation of the :class:`~twisted.web.client.Agent` class:
-
-        The default is to use a
-        :class:`~twisted.web.client.BrowserLikePolicyForHTTPS`, so unless you
-        have special requirements you can leave this as-is.
-
-    :meth:`creatorForNetloc` is the same as
-    :class:`~twisted.web.client.BrowserLikePolicyForHTTPS` except this context
-    factory allows setting the TLS/SSL method to use.
-    """
-
-    def __init__(self, *args: Any, **kwargs: Any):
-        warnings.warn(
-            "BrowserLikeContextFactory is deprecated."
-            " You can set DOWNLOAD_VERIFY_CERTIFICATES=True to enable"
-            " certificate verification instead of using it.",
-            category=ScrapyDeprecationWarning,
-            stacklevel=2,
-        )
-        super().__init__(*args, **kwargs)
-
-    def creatorForNetloc(self, hostname: bytes, port: int) -> ClientTLSOptions:
-        return optionsForClientTLS(  # type: ignore[no-any-return]
-            hostname=hostname.decode("ascii"),
-            extraCertificateOptions=self._get_cert_options_kwargs(),
-        )
-
-
-@implementer(IPolicyForHTTPS)
-class _AcceptableProtocolsContextFactory:
-    """Context factory to used to override the acceptable protocols
-    to set up the :class:`OpenSSL.SSL.Context` for doing ALPN negotiation.
-    It's a private class for :class:`~.H2DownloadHandler`.
-
-    This class wraps ``creatorForNetloc()`` of another factory class, setting
-    the acceptable protocols on the :class:`.ClientTLSOptions` instance
-    returned by it. It's only needed because we support custom factories via
-    :setting:`DOWNLOADER_CLIENTCONTEXTFACTORY`.
-
-    It's a no-op on Twisted 26.4.0+, though using it with custom
-    factories on those Twisted versions may be not enough for HTTP/2 support.
-    """
-
-    # Something needs to call set_alpn_protos() for ALPN to work.
-    #
-    # Twisted < 26.4.0 does it in OpenSSLCertificateOptions._makeContext()
-    # (requires passing acceptableProtocols from the factory to
-    # OpenSSLCertificateOptions) and in TLSMemoryBIOFactory._createConnection()
-    # based on H2ClientFactory.acceptableProtocols (too late, it seems).
-    #
-    # Newer Twisted does it in OpenSSLCertificateOptions._makeContext() as
-    # well, and in OpenSSLCertificateOptions._makeTLSConnection() based on
-    # H2ClientFactory.acceptableProtocols (which now works).
-    #
-    # When we drop DOWNLOADER_CLIENTCONTEXTFACTORY it looks like we can replace
-    # all of this with _ScrapyClientContextFactory.acceptableProtocols.
-
-    def __init__(
-        self, context_factory: _Poli
-```
-
-### Core Architecture Module: `scrapy/core/downloader/handlers/__init__.py`
-```
-"""Download handlers for different schemes"""
-
-from __future__ import annotations
-
-import inspect
-import logging
-import os
-import warnings
-from pathlib import Path
-from tempfile import mkstemp
-from typing import TYPE_CHECKING, Any, Protocol, cast
-
-from scrapy import Request, Spider, signals
-from scrapy.exceptions import (
-    NotConfigured,
-    NotSupported,
-    ScrapyDeprecationWarning,
-    StopDownload,
-)
-from scrapy.http import BodyFileResponse
-from scrapy.http.request import _in_download_handler_scope
+from scrapy._middleware import MiddlewareManager
+from scrapy.exceptions import CloseSpider, ScrapyDeprecationWarning, _InvalidOutput
+from scrapy.http import BodyFileResponse, Request, Response
+from scrapy.utils.conf import build_component_list
 from scrapy.utils.defer import (
+    _process_pending_io,
     deferred_from_coro,
     ensure_awaitable,
     maybe_deferred_to_future,
 )
-from scrapy.utils.httpobj import urlparse_cached
-from scrapy.utils.misc import build_from_crawler, load_object
-from scrapy.utils.python import global_object_name, without_none_values
+from scrapy.utils.python import global_object_name
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
+    from collections.abc import Callable, Coroutine
 
     from twisted.internet.defer import Deferred
 
+    from scrapy import Spider
     from scrapy.crawler import Crawler
-    from scrapy.http import Response
+    from scrapy.settings import BaseSettings
 
 
-logger = logging.getLogger(__name__)
-
-
-# This is the official API but we temporarily support the old deprecated one:
-# * lazy is not mandatory (defaults to True).
-# * download_request() can return a Deferred[Response] instead of a coroutine,
-# and takes a spider argument in this case.
-# * close() can return None or Deferred[None] instead of a coroutine.
-# * close() is not mandatory.
-
-
-class DownloadHandlerProtocol(Protocol):
-    """Interface that :ref:`download handlers <topics-download-handlers>` must
-    implement.
-
-    Besides implementing this protocol, the contract of a download handler
-    includes **never** calling :meth:`crawler.engine.download_async()
-    <scrapy.core.engine.ExecutionEngine.download_async>`, including
-    indirectly by awaiting a :class:`~scrapy.Request` object.
-    """
-
-    lazy: bool
-    """Whether to delay instantiation of the handler; see :ref:`lazy
-    <lazy-download-handlers>`."""
-
-    async def download_request(self, request: Request) -> Response:
-        """Download *request* and return a response."""
-
-    async def close(self) -> None:
-        """Clean up any resources used by the handler."""
-
-
-class DownloadHandlers:
-    def __init__(self, crawler: Crawler):
-        self._crawler: Crawler = crawler
-        # stores class paths by handler ID
-        self._paths: dict[str, str | Callable[..., Any]] = {}
-        # handler IDs that are also acceptable URL schemes
-        self._schemes: set[str] = set()
-        # stores instanced handlers by handler ID
-        self._handlers: dict[str, DownloadHandlerProtocol] = {}
-        # remembers failed handlers
-        self._notconfigured: dict[str, str] = {}
-        # remembers handlers with Deferred-based download_request()
-        self._old_style_handlers: set[str] = set()
-        self._closed: bool = False
-        scheme_handlers: dict[str, str | Callable[..., Any]] = without_none_values(
-            cast(
-                "dict[str, str | Callable[..., Any]]",
-                crawler.settings.getwithbase("DOWNLOAD_HANDLERS"),
-            )
-        )
-        named_handlers: dict[str, str | Callable[..., Any]] = without_none_values(
-            cast(
-                "dict[str, str | Callable[..., Any]]",
-                crawler.settings.getdict("DOWNLOAD_HANDLERS_BY_NAME"),
-            )
-        )
-        if clashes := scheme_handlers.keys() & named_handlers.keys():
-            raise ValueError(
-                f"The following download handler IDs are defined both in "
-                f"DOWNLOAD_HANDLERS and in DOWNLOAD_HANDLERS_BY_NAME: "
-                f"{', '.join(sorted(clashes))}."
-            )
-        self._schemes.update(scheme_handlers)
-        for handler_id, clspath in (scheme_handlers | named_handlers).items():
-            self._paths[handler_id] = clspath
-            self._load_handler(handler_id, skip_lazy=True)
-
-        # Downloader closes the handlers when the engine closes it. This signal
-        # handler closes them for custom downloaders that don't subclass the
-        # default one.
-        crawler.signals.connect(self._close, signals.engine_stopped)
-
-    def _get_handler(self, handler_id: str) -> DownloadHandlerProtocol | None:
-        """Lazy-load the download handler with the given ID only on its first
-        request.
-        """
-        if handler_id in self._handlers:
-            return self._handlers[handler_id]
-        if handler_id in self._notconfigured:
-            return None
-        if handler_id not in self._paths:
-            self._notconfigured[handler_id] = "no handler with that ID"
-            return None
-
-        return self._load_handler(handler_id)
-
-    def _load_handler(
-        self, handler_id: str, skip_lazy: bool = False
-    ) -> DownloadHandlerProtocol | None:
-        path = self._paths[handler_id]
-        try:
-            dhcls: type[DownloadHandlerProtocol] = load_object(path)
-            if skip_lazy:
-                if not hasattr(dhcls, "lazy"):
-                    warnings.warn(
-                        f"{global_object_name(dhcls)} doesn't define a 'lazy' attribute."
-                        f" This is deprecated, please add 'lazy = True' (which is the current"
-                        f" default value) to the class definition.",
-                        category=ScrapyDeprecationWarning,
-                        stacklevel=1,
-                    )
-                if getattr(dhcls, "lazy", True):
-                    return None
-            dh = build_from_crawler(
-                dhcls,
-                self._crawler,
-            )
-        except NotConfigured as ex:
-            self._notconfigured[handler_id] = str(ex)
-            return None
-        except Exception as ex:
-            logger.exception(
-                'Loading "%(clspath)s" for handler ID "%(handler_id)s"',
-                {"clspath": path, "handler_id": handler_id},
-                extra={"crawler": self._crawler},
-            )
-            self._notconfigured[handler_id] = str(ex)
-            return None
-        self._handlers[handler_id] = dh
-        if not inspect.iscoroutinefunction(dh.download_request):  # pragma: no cover
-            warnings.warn(
-                f"{global_object_name(dh.download_request)} is not a coroutine function."
-                f" This is deprecated, please rewrite it to return a coroutine and remove"
-                f" the 'spider' argument.",
-                category=ScrapyDeprecationWarning,
-                stacklevel=1,
-            )
-            self._old_style_handlers.add(handler_id)
-        return dh
-
-    def download_request(
-        self, request: Request, spider: Spider | None = None
-    ) -> Deferred[Response]:  # pragma: no cover
+def _get_max_active_size(settings: BaseSettings) -> int:
+    deprecated_priority = settings.getpriority("SCRAPER_SLOT_MAX_ACTIVE_SIZE")
+    priority = settings.getpriority("RESPONSE_MAX_ACTIVE_SIZE")
+    assert deprecated_priority is not None
+    assert priority is not None
+    if deprecated_priority <= 0:
+        return settings.getint("RESPONSE_MAX_ACTIVE_SIZE")
+    if priority >= deprecated_priority:
         warnings.warn(
-            "DownloadHandlers.download_request() is deprecated, use download_request_async() instead",
-            category=ScrapyDeprecationWarning,
+            "The SCRAPER_SLOT_MAX_ACTIVE_SIZE setting is deprecated and is "
+            "being ignored because RESPONSE_MAX_ACTIVE_SIZE is set with an "
+            "equal or higher priority. Remove SCRAPER_SLOT_MAX_ACTIVE_SIZE "
+            "from your settings.",
+            ScrapyDeprecationWarning,
             stacklevel=2,
         )
-        return deferred_from_coro(self.download_request_async(request))
-
-    async def download_request_async(self, request: Request) -> Response:
-        handler_id = request.meta.get("download_handler")
-        if handler_id is None:
-            scheme = urlparse_cached(request).scheme
-            # Handler IDs from DOWNLOAD_HANDLERS_BY_NAME are only reachable
-            # through the download_handler request metadata key, so that
-            # registering one does not make a new URL scheme downloadable.
-            if scheme in self._schemes:
-                handler = self._get_handler(scheme)
-            else:
-                handler = None
-                self._notconfigured.setdefault(
-                    scheme, "no handler available for that scheme"
-                )
-            if not handler:
-                raise NotSupported(
-                    f"Unsupported URL scheme '{scheme}': {self._notconfigured[scheme]}"
-                )
-            handler_id = scheme
-        else:
-            handler = self._get_handler(handler_id)
-            if not handler:
-                raise NotSupported(
-                    f"Unusable download handler {handler_id!r}: "
-                    f"{self._notconfigured[handler_id]}"
-                )
-        if not request.meta.get("body_file"):
-            return await self._download(handler_id, handler, request)
-        return await self._download_to_file(handler_id, handler, request)
-
-    async def _download(
-        self, handler_id: str, handler: DownloadHandlerProtocol, request: Request
-    ) -> Response:
-        assert self._crawler.spider
-        with _in_download_handler_scope():
-            if handler_id in self._old_style_handlers:  # pragma: no cover
-                return await maybe_deferred_to_future(
-                    cast(
-                        "Deferred[Response]",
-                        handler.download_request(request, self._crawler.spider),  # type: ignore[call-arg]
-                    )
-                )
-            return await handler.download_request(request)
-
-    async def _download_to_file(
-        self, handler_id: str, handler: DownloadHandlerProtocol, request: Request
-    ) -> Response:
-        temporary = request.meta["body_file"] is True
-        if temporary:
-            fd, request.meta["body_file"] = mkstemp()
-            os.close(fd)
-        try:
-            response = await self._download(handler_id, handler, request)
-            if not isinstance(response, BodyFileResponse):
-                raise NotSupported(
-                    f"{global_object_name(type(handler))} does not support the "
-                    f"body_file request meta key."
-                )
-        except StopDownload:
-            # Its response, which points to the body file, reaches errbacks.
-            raise
-        except BaseException:
-            if temporary:
-                Path(request.meta["body_file"]).unlink()  # noqa: ASYNC240
-                # Retries of the request get a new temporary file.
-                request.meta["body_file"] = True
-            raise
-        return response
-
-    async def _close(self) ->
-```
-
-### Core Architecture Module: `scrapy/core/downloader/handlers/_aioftp.py`
-```
-from __future__ import annotations
-
-import asyncio
-import ipaddress
-import logging
-import socket
-import ssl
-from contextlib import asynccontextmanager
-from pathlib import Path
-from typing import TYPE_CHECKING, Any, BinaryIO, ClassVar, NamedTuple
-from urllib.parse import unquote, urlsplit
-
-import aioftp
-from aioftp.common import SSLSessionBoundContext
-
-from scrapy.exceptions import (
-    CannotResolveHostError,
-    DownloadConnectionRefusedError,
-    DownloadFailedError,
-    DownloadTimeoutError,
-    NotConfigured,
-)
-from scrapy.http import BodyFileResponse, Headers
-from scrapy.utils._ssl import _log_sslobj_debug_info, _make_ssl_context
-from scrapy.utils.httpobj import urlparse_cached
-
-from ._base_streaming import BaseStreamingDownloadHandler, _BaseResponseArgs
-
-if TYPE_CHECKING:
-    from collections.abc import AsyncGenerator, AsyncIterator
-
-    from scrapy.crawler import Crawler
-    from scrapy.http import Response
-    from scrapy.http.request import Request
-
-
-logger = logging.getLogger(__name__)
-
-_TIMEOUT_EXCEPTIONS: tuple[type[Exception], ...] = (TimeoutError,)
-_CONNECTION_REFUSED_EXCEPTIONS: tuple[type[Exception], ...] = (ConnectionRefusedError,)
-_DOWNLOAD_FAILED_EXCEPTIONS: tuple[type[Exception], ...] = (
-    aioftp.AIOFTPException,
-    ConnectionResetError,
-)
-_HAS_SOCKS = False
-try:
-    from python_socks import (
-        ProxyConnectionError,
-        ProxyError,
-        ProxyTimeoutError,
-        ProxyType,
+        return settings.getint("RESPONSE_MAX_ACTIVE_SIZE")
+    warnings.warn(
+        "The SCRAPER_SLOT_MAX_ACTIVE_SIZE setting is deprecated, use "
+        "RESPONSE_MAX_ACTIVE_SIZE instead.",
+        ScrapyDeprecationWarning,
+        stacklevel=2,
     )
-    from python_socks.async_.asyncio import Proxy
-
-    _HAS_SOCKS = True
-    _TIMEOUT_EXCEPTIONS += (ProxyTimeoutError,)
-    _CONNECTION_REFUSED_EXCEPTIONS += (ProxyConnectionError,)
-    _DOWNLOAD_FAILED_EXCEPTIONS += (ProxyError,)
-except ImportError:  # pragma: no cover
-    pass
+    return settings.getint("SCRAPER_SLOT_MAX_ACTIVE_SIZE")
 
 
-class _ProxyClient(aioftp.Client):
-    """An :class:`aioftp.Client` that opens its connections through
-    *proxy*."""
+def _get_response_rough_size(settings: BaseSettings, max_active_size: int) -> int:
+    if settings.get("RESPONSE_ROUGH_SIZE") is not None:
+        return settings.getint("RESPONSE_ROUGH_SIZE")
+    concurrency = settings.getint("CONCURRENT_REQUESTS")
+    if not concurrency:
+        # Unlimited concurrency: there is no bound on the number of in-flight
+        # requests to spread a share of the limit over.
+        return 0
+    # Requests being downloaded, whose response size is unknown, may take up to
+    # a quarter of the limit; the rest is for responses already in memory.
+    return max_active_size // (4 * concurrency)
 
-    def __init__(self, proxy: Proxy, **kwargs: Any):
-        super().__init__(**kwargs)
-        self._proxy = proxy
 
-    async def _open_connection(
-        self, host: str, port: int
-    ) -> tuple[asyncio.StreamReader, asyncio.StreamWriter]:
-        ssl_context = self.ssl
-        if self._stream is not None and (
-            ssl_object := self._stream.writer.get_extra_info("ssl_object")
-        ):
-            # data connections reuse the TLS session of the control connection
-            ssl_context = SSLSessionBoundContext(
-                ssl.PROTOCOL_TLS_CLIENT,
-                context=ssl_object.context,
-                session=ssl_object.session,
-            )
-        sock = await self._proxy.connect(host, port, timeout=self.connection_timeout)
-        return await asyncio.open_connection(
-            sock=sock,
-            ssl=ssl_context or None,
-            server_hostname=host if ssl_context else None,
+class DownloaderMiddlewareManager(MiddlewareManager):  # pylint: disable=abstract-method
+    component_name = "downloader middleware"
+
+    def __init__(self, *middlewares: Any, crawler: Crawler | None = None) -> None:
+        super().__init__(*middlewares, crawler=crawler)
+        assert crawler is not None
+        settings = crawler.settings
+        self._max_active_size: int = _get_max_active_size(settings)
+        self._response_rough_size: int = _get_response_rough_size(
+            settings, self._max_active_size
+        )
+        self._response_active_size = 0
+        self._tracked_responses: WeakSet[Response] = WeakSet()
+        self._rough_active_size = 0
+        self._rough_sizes: dict[Request, int] = {}
+        # Requests sent with ExecutionEngine.download_async(), and the
+        # responses to them, which the downloader limits separately.
+        self._unscheduled_requests: WeakSet[Request] = WeakSet()
+        self._unscheduled_responses: WeakSet[Response] = WeakSet()
+        self._unscheduled_response_active_size = 0
+        self._on_unscheduled_response_release: Callable[[int], object] | None = None
+        self._response_exceptions = settings.getbool(
+            "DOWNLOADER_MIDDLEWARE_RESPONSE_EXCEPTIONS"
         )
 
+    @classmethod
+    def _get_mwlist_from_settings(cls, settings: BaseSettings) -> list[Any]:
+        return build_component_list(
+            settings.get_component_priority_dict_with_base("DOWNLOADER_MIDDLEWARES")
+        )
 
-class _AioftpResponse(NamedTuple):
-    status: int  # mapped to common HTTP status codes
-    control: aioftp.ThrottleStreamIO
-    data: aioftp.DataConnectionThrottleStreamIO | None
+    def _add_middleware(self, mw: Any) -> None:
+        if hasattr(mw, "process_request"):
+            self.methods["process_request"].append(mw.process_request)
+            self._check_mw_method_spider_arg(mw.process_request)
+        process_response = getattr(mw, "process_response", None)
+        self.methods["process_response"].appendleft(process_response)
+        if process_response is not None:
+            self._check_mw_method_spider_arg(process_response)
+        process_exception = getattr(mw, "process_exception", None)
+        self.methods["process_exception"].appendleft(process_exception)
+        if process_exception is not None:
+            self._check_mw_method_spider_arg(process_exception)
 
+    @property
+    def _total_active_size(self) -> int:
+        return self._response_active_size + self._rough_active_size
 
-class AioftpDownloadHandler(BaseStreamingDownloadHandler[_AioftpResponse]):
-    lazy = True
-    experimental: ClassVar[bool] = True
+    def _rough_size(self, request: Request) -> int:
+        # The body of these responses is written to a file.
+        if request.meta.get("body_file"):
+            return 0
+        return self._response_rough_size
 
-    def __init__(self, crawler: Crawler):
-        super().__init__(crawler)
-        # aioftp only supports passive mode
-        if not crawler.settings.getbool("FTP_PASSIVE_MODE"):
-            raise NotConfigured(
-                f"{type(self).__name__} does not support disabling FTP_PASSIVE_MODE."
+    def _count_rough_size(self, request: Request) -> None:
+        # Counting the same request twice, which concurrent downloads of the
+        # same request object would do, would leak its rough size, since only
+        # one discount call can find it.
+        if request in self._rough_sizes:
+            return
+        size = self._rough_sizes[request] = self._rough_size(request)
+        self._rough_active_size += size
+
+    def _discount_rough_size(self, request: Request) -> None:
+        self._rough_active_size -= self._rough_sizes.pop(request, 0)
+
+    def _count_response_size(self, response: Response, request: Request) -> None:
+        # The actual response size replaces the rough size estimate of its
+        # request.
+        self._discount_rough_size(request)
+        if (
+            isinstance(response, BodyFileResponse)
+            or response in self._tracked_responses
+        ):
+            return
+        self._tracked_responses.add(response)
+        size = len(response.body)
+        self._response_active_size += size
+        unscheduled = request in self._unscheduled_requests
+        if unscheduled:
+            self._unscheduled_responses.add(response)
+            self._unscheduled_response_active_size += size
+        finalize(
+            response,
+            partial(self._discount_response_size, size, unscheduled=unscheduled),
+        )
+
+    def _discount_response_size(self, size: int, *, unscheduled: bool) -> None:
+        self._response_active_size -= size
+        if unscheduled and self._on_unscheduled_response_release is not None:
+            self._on_unscheduled_response_release(size)
+
+    def download(
+        self,
+        download_func: Callable[[Request, Spider], Deferred[Response]],
+        request: Request,
+        spider: Spider,
+    ) -> Deferred[Response | Request]:
+        warnings.warn(
+            "DownloaderMiddlewareManager.download() is deprecated, use download_async() instead",
+            ScrapyDeprecationWarning,
+            stacklevel=2,
+        )
+
+        @wraps(download_func)
+        async def download_func_wrapped(request: Request) -> Response:
+            return await maybe_deferred_to_future(download_func(request, spider))
+
+        self._set_compat_spider(spider)
+        return deferred_from_coro(self.download_async(download_func_wrapped, request))
+
+    async def download_async(
+        self,
+        download_func: Callable[[Request], Coroutine[Any, Any, Response]],
+        request: Request,
+    ) -> Response | Request:
+
+        try:
+            result: Response | Request = await self._process_request(
+                request, download_func
             )
-        self._user: str = crawler.settings["FTP_USER"]
-        self._password: str = crawler.settings.getsecret("FTP_PASSWORD") or ""
-        self._ssl_context: ssl.SSLContext = _make_ssl_context(crawler.settings)
+        except Exception as ex:
+            await _process_pending_io()
+            # either returns a request or response (which we pass to process_response())
+            # or reraises the exception
+            result, _ = await self._process_exception(ex, request)
+        return await self._process_response(result, request)
 
-    @asynccontextmanager
-    async def _make_request(
+    def _handle_mw_method(self, method: Callable[..., Any], **kwargs: Any) -> Any:
+        if method in self._mw_methods_requiring_spider:
+            kwargs["spider"] = self._spider
+
+        return method(**kwargs)
+
+    async def _process_request(
         self,
         request: Request,
-        timeout: float,  # noqa: ASYNC109
-    ) -> AsyncGenerator[_AioftpResponse]:
-        url = urlparse_cached(request)
-        assert url.hostname
-        if not request.meta.get("ftp_passive", True):
-            logger.error(
-                f"{type(self).__name__} does not support active mode, so the"
-                f" 'ftp_passive' request meta key will be ignored for {request}."
+        download_func: Callable[[Request], Coroutine[Any, Any, Response]],
+    ) -> Response | Request:
+        for method in self.methods["process_request"]:
+            assert method is not None
+            response = await ensure_awaitable(
+                self._handle_mw_method(method, request=request),
+                _warn=global_object_name(method),
             )
+            if response is not None and not isinstance(response, (Response, Request)):
+                raise _InvalidOutput(
+                    f"Middleware {method.__qualname__} must return None, Response or "
+                    f"Request, got {response.__class__.__name__}"
+                )
+            if response:
+                if isinstance(response, Response):
+                    self._count_response_size(response, request)
+                return response
+        response = await download_func(request)
+        if response is not None:
+            self._count_response_size(response, request)
+        return response
 
-        implicit_tls = url.scheme == "ftps" and url.port == 990
-        client_kwargs: dict[str, Any] = {
-            "socket_timeout": timeout,
-            "connection_timeout": timeout,
-            "ssl": self._ssl_context if implicit_tls else None,
-        }
-        proxy = self._get_proxy(request)
-        client = (
-            _ProxyClient(proxy, **client_kwargs)
-            if proxy
-            else aioftp.Client(**client_kwargs)
-        )
-        try:
-            await client.connect(url.hostname, url.port or 21)
-            if url.scheme == "ftps" and not implicit_tls:
-                await client.upgrade_to_tls(self._ssl_context)
-            await client.login(
-                request.meta.get("ftp_user", self._user),
-                request.meta.get("ftp_password", self._password),
-            )
-            reader, writer = await client.get_passive_connection()
-            data = aioftp.DataConnectionThrottleStreamIO(
-                client, reader, writer, throttles={}, timeout=timeout
-            )
+    async def _process_response(
+        self, response: Response | Request, request: Request, index: int = 0
+    ) -> Response | Request:
+        if response is None:
+            raise TypeError("Received None in process_response")
+
+        methods = self.methods["process_response"]
+        while index < len(methods):
+            if isinstance(response, Request):
+                return response
+            method = methods[index]
+            index += 1
+            if method is None:
+                continue
             try:
-                path = unquote(url.path)
-                command = "NLST" if not path or path.endswith("/") else "RETR"
-                await client.command(f"{command} {path}".rstrip(), "1xx")
-            except aioftp.StatusCodeError as e:
-                data.close()
-                status = 404 if e.received_codes[-1].matches("550") else 503
-                yield _AioftpResponse(status, client.stream, None)
-            else:
-                try:
-                    yield _AioftpResponse(200, client.stream, data)
-                finally:
-                    data.close()
-        except _TIMEOUT_EXCEPTIONS as e:
-            raise DownloadTimeoutError(
-                f"Getting {request.url} took longer than {timeout} seconds."
-            ) from e
-        except _CONNECTION_REFUSED_EXCEPTIONS as e:
-            raise DownloadConnectionRefusedError(str(e)) from e
-        except socket.gaierror as e:
-            raise CannotResolveHostError(str(e)) from e
-        except _DOWNLOAD_FAILED_EXCEPTIONS as e:
-            raise DownloadFailedError(str(e)) from e
-        finally:
-            client.close()
-
-    def _get_proxy(self, request: Request) -> Proxy | None:
-        proxy_url = self._extract_proxy_url_with_creds(request)
-        if not proxy_url:
-            return None
-        parts = urlsplit(proxy_url)
-        if parts.scheme not in ("socks4", "socks5"):
-            raise NotImplementedError(
-                f"{type(self).__name__} only supports SOCKS proxies, got {proxy_url!r}."
-            )
-        if not _HAS_SOCKS:  # pragma: no cover
-            raise ValueError(
-                f"SOCKS proxy support in {type(self).__name__} requires the"
-                f" 'socks' extra to be installed."
-            )
-        assert parts.hostname
-        return Proxy(
-            ProxyType.SOCKS4 if parts.scheme == "socks4" else ProxyType.SOCKS5,
-            parts.hostname,
-            parts.port or 1080,
-            unquote(parts.username) if parts.username else None,
-            unquote(parts.password) if parts.password else None,
-        )
-
-    @staticmethod
-    def _local_filename(response: _AioftpResponse, request: Request) -> bytes | None:
-        if response.data is None or request.meta.get("body_file"):
-            return None
-        return request.meta.get("ftp_local_filename")
-
-    def _open_body_buffer(
-        self, response: _AioftpResponse, request: Request
-    ) -> BinaryIO:
-        if local_filename := self._local_filename(response, request):
-            return Path(local_filename.decode()).open("wb")
-        return super()._open_body_buffer(response, request)
-
-    def _get_body(
-        self, buffer: BinaryIO, response: _AioftpResponse, request: Request
-    ) -> bytes:
-        if local_filename := self._local_filename(response, request):
-            return local_filename
-        return super()._get_body(buffer, response, request)
-
-    async def _read_response(
-        self, response: _AioftpResponse, request: Request, deadline: float
-    ) -> Response:
-        result = await super()._read_response(response, request, deadline)
-        if response.data is not None:
-            self._add_ftp_headers(result, response, request)
-        return result
-
-    def _add_ftp_headers(
-        self, result: Response, response: _AioftpResponse, request: Request
-    ) -> None:
-        if local_filename := self._local_filename(response, request):
-            size = Path(local_filename.decode()).stat().st_size
-        elif isinstance(result, BodyFileResponse):
-            size = Path(result.body_file).stat().st_size
-        else:
-            size = len(result.body)
-        result.headers.update({"Local Filename": local_filename or b"", "Size": size})
-
-    @staticmethod
-    def _extract_headers(response: _AioftpResponse) -> Headers:
-        return Headers()
-
-    @staticmethod
-    def _build_base_response_args(
-        response: _AioftpResponse,
-        request: Request,
-        headers: Headers,
-    ) -> _BaseResponseArgs:
-        peername = response.control.writer.get_extra_info("peername")
-        ssl_object = response.control.writer.get_extra_info("ssl_object")
-        cert = ssl_object.getpeercert(binary_form=True) if ssl_object else None
-        return {
-            "status": response.status,
-            "url": request.url,
-            "certificate": cert,
-            "protocol": "FTP",
-            "ip_address": ipaddress.ip_address(peername[0]),
-            "headers": headers,
-        }
-
-    @staticmethod
-    async def _iter_body_chunks(response: _AioftpResponse) -> AsyncIterator[bytes]:
-        if response.data is None:
-            return
-        async for chunk in response.data.iter_by_block():
-            yield chunk
-        # raises StatusCodeError if the server reports a failed transfer
-        await response.data.finish()
-
-    @staticmet
+                result = await ensure_awaitable(
+                    self._handle_mw_met
 ```
 
 
@@ -1942,486 +1933,296 @@ class AioftpDownloadHandler(BaseStreamingDownloadHandler[_AioftpResponse]):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aeaec6a5` (2026-11-12)
-**Commit Message**: Force download timeouts in BaseStreamingDownloadHandler. (#8481)
+### Incident Patch 1: `6609a421` (2026-11-18)
+**Commit Message**: Use a private loop in the reactorless mode. (#8510)
 
-**File**: `docs/topics/settings.rst` (modified, +4/-1)
+**File**: `docs/topics/settings.rst` (modified, +5/-5)
 ```diff
-@@ -1248,9 +1248,12 @@ Default: ``180``
+@@ -509,11 +509,11 @@ class to be used.
  
- The amount of time (in secs) that the downloader will wait before timing out.
+ Note that the event loop class must inherit from :class:`asyncio.AbstractEventLoop`.
  
-+A value of ``0`` or ``None`` doesn't mean a timeout of 0 or infinity: a
-+non-zero handler-specific value will be used instead.
+-.. caution:: Please be aware that, when using a non-default event loop
+-    (either defined via :setting:`ASYNCIO_EVENT_LOOP` or installed with
+-    :func:`~scrapy.utils.reactor.install_reactor`), Scrapy will call
+-    :func:`asyncio.set_event_loop`, which will set the specified event loop
+-    as the current loop for the current OS thread.
++.. caution:: Please be aware that, when using a Twisted reactor with a
++    non-default event loop (either defined via :setting:`ASYNCIO_EVENT_LOOP` or
++    installed with :func:`~scrapy.utils.reactor.install_reactor`), Scrapy will
++    call :func:`asyncio.set_event_loop`, which will set the specified event
++    loop as the current loop for the current OS thread.
+ 
+ .. note:: This is a :ref:`reactor setting <reactor-settings>`.
+ 
+```
+
+**File**: `scrapy/crawler.py` (modified, +18/-8)
+```diff
+@@ -40,7 +40,6 @@
+     _is_asyncio_reactor_installed,
+     install_reactor,
+     is_reactor_installed,
+-    set_asyncio_event_loop,
+     verify_installed_asyncio_event_loop,
+     verify_installed_reactor,
+ )
+@@ -1088,7 +1087,7 @@ class AsyncCrawlerProcess(CrawlerProcessBase, AsyncCrawlerRunner):
+ 
+     When the :setting:`TWISTED_REACTOR_ENABLED` setting is set to ``True``,
+     this class installs a reactor and uses it, otherwise it requires a reactor
+-    to not be installed but installs an asyncio event loop and uses it.
++    to not be installed and creates its own asyncio event loop.
+ 
+     :param install_root_handler: whether to install root logging handler
+         (default: the :setting:`LOG_INSTALL_ROOT_HANDLER` setting)
+@@ -1111,9 +1110,8 @@ def __init__(
+         logger.debug("Using AsyncCrawlerProcess")
+         self._reactorless_loop: asyncio.AbstractEventLoop | None = None
+         self._reactor_import_hook: ReactorImportHook | None = None
+-        # We want the asyncio event loop to be installed early, so that it's
+-        # always the correct one. And as we do that, we can also install the
+-        # reactor here.
++        # The event loop, or the reactor with its event loop, is set up here
++        # and not in start(), because crawl() needs it to create tasks.
+         # The ASYNCIO_EVENT_LOOP setting cannot be overridden by add-ons and
+         # spiders when using AsyncCrawlerProcess.
+         loop_path = self.settings["ASYNCIO_EVENT_LOOP"]
+@@ -1122,7 +1120,13 @@ def __init__(
+                 raise RuntimeError(
+                     "TWISTED_REACTOR_ENABLED is False but a Twisted reactor is installed."
+                 )
+-            self._reactorless_loop = set_asyncio_event_loop(loop_path)
++            # This loop is not set as the current loop of the thread, so that
++            # it doesn't affect other code, and each AsyncCrawlerProcess
++            # instance has its own loop. User code will still receive it from
++            # get_running_loop().
++            self._reactorless_loop = (
++                load_object(loop_path)() if loop_path else asyncio.new_event_loop()
++            )
+             self._reactor_import_hook = install_reactor_import_hook()
+         elif is_reactor_installed():
+             # The user could install a reactor before this class is instantiated.
+@@ -1137,7 +1141,7 @@ def __init__(
+         self._reactorless_main_task: asyncio.Future[None] | None = None
+ 
+     def _get_event_loop(self) -> asyncio.AbstractEventLoop:
+-        # crawl() can be called before start() runs the loop installed by
++        # crawl() can be called before start() runs the loop created by
+         # __init__().
+         if self._reactorless_loop is not None:
+             return self._reactorless_loop
+@@ -1240,6 +1244,13 @@ def _start_asyncio(
+         # 7. _close_loop() cancels all pending tasks (including
+         #    _shutdown_graceful_reactorless()), does finalization and calls loop.close()
+ 
++        if _has_running_loop():
++            raise RuntimeError(
++                "AsyncCrawlerProcess.start() cannot be called while an asyncio"
++                " event loop is running in the same thread. You can use"
++                " AsyncCrawlerRunner to run spiders in that loop."
++            )
 +
- .. note::
+         loop = self._reactorless_loop
+         assert loop
  
--    This timeout can be per-request using the :reqmeta:`download_timeout`
-+    This timeout can be set per-request using the :reqmeta:`download_timeout`
-     :attr:`.Request.meta` key.
+@@ -1278,7 +1289,6 @@ def _close_loop(self) -> None:
+                 uninstall_reactor_import_hook(self._reactor_import_hook)
+                 self._reactor_import_hook = None
+             self._reactorless_main_task = None
+-            asyncio.set_event_loop(None)
+             loop.close()
+             self._reactorless_loop = None
  
- .. note::
 ```
 
-**File**: `scrapy/core/downloader/handlers/_aioftp.py` (modified, +2/-2)
+**File**: `scrapy/shell.py` (modified, +3/-3)
 ```diff
-@@ -218,9 +218,9 @@ def _get_body(
-         return super()._get_body(buffer, response, request)
+@@ -74,9 +74,9 @@
+ #
+ # Other architecture problems:
+ # * scrapy.cmdline.execute() creates an AsyncCrawlerProcess instance which
+-#   immediately installs a reactor (which is maybe not thread-specific?) or an
+-#   event loop (which *is* thread-specific, so the main thread will always have
+-#   a (not running) loop installed.
++#   immediately installs a reactor (which is maybe not thread-specific?) or
++#   creates an event loop, which is not set as the current loop of any thread
++#   and only runs in the secondary thread.
+ # * The shell uses several private members of Crawler (_create_engine(),
+ #   _create_spider()) and of AsyncCrawlerProcess (_reactorless_loop).
  
-     async def _read_response(
--        self, response: _AioftpResponse, request: Request
-+        self, response: _AioftpResponse, request: Request, deadline: float
-     ) -> Response:
--        result = await super()._read_response(response, request)
-+        result = await super()._read_response(response, request, deadline)
-         if response.data is not None:
-             self._add_ftp_headers(result, response, request)
-         return result
 ```
 
-**File**: `scrapy/core/downloader/handlers/_base_streaming.py` (modified, +56/-35)
+**File**: `tests/AsyncCrawlerProcess/reactorless_current_loop.py` (added, +28/-0)
 ```diff
-@@ -1,9 +1,11 @@
- from __future__ import annotations
- 
+@@ -0,0 +1,28 @@
 +import asyncio
- import base64
- import logging
- import time
- from abc import abstractmethod
-+from contextlib import AsyncExitStack
- from io import BytesIO
- from pathlib import Path
- from typing import (
-@@ -24,6 +26,7 @@
- from scrapy import Request, signals
- from scrapy.exceptions import (
-     DownloadCancelledError,
-+    DownloadTimeoutError,
-     NotConfigured,
-     ResponseDataLossError,
- )
-@@ -72,13 +75,12 @@ class BaseStreamingDownloadHandler(BaseHttpDownloadHandler, Generic[_ResponseT])
- 
-     _DEFAULT_CONNECT_TIMEOUT: ClassVar[float] = 10
-     experimental: ClassVar[bool] = False
--    requires_asyncio: ClassVar[bool] = True
-     # require subclasses to disable proxies explicitly with an explanation
-     supports_proxies: ClassVar[bool] = True
-     supports_per_request_bindaddress: ClassVar[bool] = False
- 
-     def __init__(self, crawler: Crawler):
--        if self.requires_asyncio and not is_asyncio_available():  # pragma: no cover
-+        if not is_asyncio_available():  # pragma: no cover
-             raise NotConfigured(f"{type(self).__name__} requires the asyncio support.")
-         self._check_deps_installed()
-         super().__init__(crawler)
-@@ -167,15 +169,27 @@ async def download_request(self, request: Request) -> Response:
-                 f"The 'bindaddress' request meta key is not supported by"
-                 f" {type(self).__name__} and will be ignored."
-             )
--        timeout: float = request.meta.get(
--            "download_timeout", self._DEFAULT_CONNECT_TIMEOUT
-+        timeout: float = (
-+            request.meta.get("download_timeout") or self._DEFAULT_CONNECT_TIMEOUT
-         )
-+        deadline = asyncio.get_running_loop().time() + timeout
-         start_time = time.monotonic()
--        async with self._make_request(request, timeout) as response:
--            request.meta["download_latency"] = time.monotonic() - start_time
--            return await self._read_response(response, request)
--
--    async def _read_response(self, response: _ResponseT, request: Request) -> Response:
-+        try:
-+            async with AsyncExitStack() as stack:
-+                async with asyncio.timeout_at(deadline):
-+                    response = await stack.enter_async_context(
-+                        self._make_request(request, timeout)
-+                    )
-+                request.meta["download_latency"] = time.monotonic() - start_time
-+                return await self._read_response(response, request, deadline)
-+        except TimeoutError as e:
-+            raise DownloadTimeoutError(
-+                f"Getting {request.url} took longer than {timeout} seconds."
-+            ) from e
++import logging
 +
-+    async def _read_response(
-+        self, response: _ResponseT, request: Request, deadline: float
-+    ) -> Response:
-         maxsize: int = request.meta.get("download_maxsize", self._default_maxsize)
-         warnsize = get_warnsize(request.meta, self._default_warnsize)
- 
-@@ -215,32 +229,37 @@ async def _read_response(self, response: _ResponseT, request: Request) -> Respon
- 
-             bytes_received = 0
-             try:
--                async for chunk in self._iter_body_chunks(response):
--                    response_body.write(chunk)
--                    bytes_received += len(chunk)
--
--                    if stop_download := check_stop_download(
--                        signals.bytes_received, self.crawler, request, data=chunk
--                    ):
--                        return make_response(
--                            **make_response_base_args,
--                            body=self._get_body(response_body, response, request),
--                            stop_download=stop_download,
--                        )
--
--                    if maxsize and bytes_received > maxsize:
--                        response_body.truncate(0)
--                        self._cancel_maxsize(
--                            bytes_received, maxsize, request, expected=False
--                        )
--
--                    if warnsize and bytes_received > warnsize and not reached_warnsize:
--                        reached_warnsize = True
--                        logger.warning(
--                            get_warnsize_msg(
--                                bytes_received, warnsize, request, expected=False
-+                async with asyncio.timeout_at(deadline):
-+                    async for chunk in self._iter_body_chunks(response):
-+                        response_body.write(chunk)
-+                        bytes_received += len(chunk)
++import scrapy
++from scrapy.crawler import AsyncCrawlerProcess
 +
-+                        if stop_download := check_stop_download(
-+                            signals.bytes_received, self.crawler, request, data=chunk
-+                        ):
-+                            return make_response(
-+                                **make_response_base_args,
-+                                body=self._get_body(response_body, response, request),
-+                                stop_
-```
-
-**File**: `scrapy/core/downloader/handlers/_httpx.py` (modified, +3/-1)
-```diff
-@@ -202,7 +202,9 @@ async def _make_request(
-                 timeout=timeout,
-             ) as response:
-                 yield response
--        except httpx.TimeoutException as e:
-+        except httpx.TimeoutException as e:  # pragma: no cover
-+            # this can only fire with a low-res loop clock, as the timer starts
-+            # later than the BaseStreamingDownloadHandler one
-             raise DownloadTimeoutError(
-                 f"Getting {request.url} took longer than {timeout} seconds."
-             ) from e
-```
-
-**File**: `tests/mockserver/http.py` (modified, +2/-0)
-```diff
-@@ -45,6 +45,7 @@
-     ResponseHeadersResource,
-     SetCookie,
-     Status,
-+    Trickle,
-     UriResource,
-     put_child,
- )
-@@ -97,6 +98,7 @@ def __init__(self) -> None:
-         put_child(self, b"numbers", Data(b"".join(numbers), "text/plain"))
-         put_child(self, b"wait", ForeverTakingResource())
-         put_child(self, b"hang-after-headers", ForeverTakingResource(write=True))
-+        put_child(self, b"trickle", Trickle())
-         put_child(self, b"host", HostHeaderResource())
-         put_child(self, b"client-ip", ClientIPResource())
-         put_child(self, b"broken", BrokenDownloadResource())
-```
-
-**File**: `tests/mockserver/http_resources.py` (modified, +20/-0)
-```diff
-@@ -211,6 +211,26 @@ def _delayedRender(self, request: Request, n: float) -> None:
-         request.finish()
- 
- 
-+class Trickle(LeafResource):
-+    """Send a body of *n* bytes one byte at a time, one every *interval*
-+    seconds."""
++logger = logging.getLogger(__name__)
 +
-+    def render_GET(self, request: Request) -> int:
-+        n = getarg(request, b"n", 10, type_=int)
-+        interval = getarg(request, b"interval", 0.1, type_=float)
-+        self._write(request, n, interval)
-+        return NOT_DONE_YET
 +
-+    def _write(self, request: Request, remaining: int, interval: float) -> None:
-+        request.write(b"x")
-+        if remaining == 1:
-+            request.finish()
-+            return
-+        self.deferRequest(
-+            request, interval, self._write, request, remaining - 1, interval
++class NoRequestsSpider(scrapy.Spider):
++    name = "no_request"
++
++    async def start(self):
++        self.logger.info(
++            f"Running in the current loop: {asyncio.get_running_loop() is loop}"
 +        )
++        return
++        yield
 +
 +
- class Status(LeafResource):
-     def render_GET(self, request: Request) -> bytes:
-         n = getarg(request, b"n", 200, type_=int)
++loop = asyncio.new_event_loop()
++asyncio.set_event_loop(loop)
++process = AsyncCrawlerProcess(settings={"TWISTED_REACTOR_ENABLED": False})
++process.crawl(NoRequestsSpider)
++process.start()
++logger.info(f"Current loop kept: {asyncio.get_event_loop() is loop}")
++logger.info(f"Current loop closed: {loop.is_closed()}")
++loop.close()
 ```
 
-**File**: `tests/test_downloader_handler_aioftp.py` (modified, +31/-3)
+**File**: `tests/AsyncCrawlerProcess/reactorless_custom_loop.py` (added, +22/-0)
 ```diff
-@@ -231,12 +231,28 @@ async def test_connection_lost() -> None:
-             await _download(Request(url))
- 
- 
-+async def _write_slowly(
-+    writer: asyncio.StreamWriter, data: bytes, interval: float
-+) -> None:
-+    """Write *data* one byte every *interval* seconds, until *writer* is
-+    closed."""
-+    for i in range(len(data)):
-+        if writer.is_closing():
-+            return
-+        writer.write(data[i : i + 1])
-+        await asyncio.sleep(interval)
+@@ -0,0 +1,22 @@
++import asyncio
++
++import scrapy
++from scrapy.crawler import AsyncCrawlerProcess
++from scrapy.utils.python import global_object_name
 +
 +
- def _fake_ftp(
--    retr_reply: bytes | None, data: bytes = b""
-+    retr_reply: bytes | None, data: bytes = b"", interval: float = 0
- ) -> Callable[[asyncio.StreamReader, asyncio.StreamWriter], Any]:
-     """Return a minimal FTP server connection handler that sends *data*, if
-     any, and then answers RETR with *retr_reply*, or hangs if *retr_reply* is
--    ``None``."""
-+    ``None``.
++class NoRequestsSpider(scrapy.Spider):
++    name = "no_request"
 +
-+    If *interval* is set, *data* is sent one byte every *interval* seconds,
-+    until the client closes the data connection.
-+    """
- 
-     async def handle(
-         reader: asyncio.StreamReader, writer: asyncio.StreamWriter
-@@ -267,7 +283,10 @@ def on_data_connection(
-                 w = await data_writer
-                 if data:
-                     writer.write(b"150 Sending\r\n")
--                    w.write(data)
-+                    if interval:
-+                        await _write_slowly(w, data, interval)
-+                    else:
-+                        w.write(data)
-                 if retr_reply is None:
-                     await reader.read()
-                 w.close()
-@@ -334,6 +353,15 @@ async def test_timeout_partial_response() -> None:
-     assert response.flags == ["dataloss"]
- 
- 
-+@coroutine_test
-+async def test_timeout_slow_transfer() -> None:
-+    # the server sends data bytes well within the timeout of each other, but
-+    # the whole transfer takes longer than the timeout
-+    async with _serve(_fake_ftp(b"226 Done\r\n", b"x" * 20, interval=0.1)) as url:
-+        with pytest.raises(DownloadTimeoutError):
-+            await _download(Request(url, meta={"download_timeout": 0.5}))
++    async def start(self):
++        loop_class = type(asyncio.get_running_loop())
++        self.logger.info(f"Running loop: {global_object_name(loop_class)}")
++        return
++        yield
 +
 +
- @coroutine_test
- async def test_local_filename(ftp_server: MockFTPServer, tmp_path: Path) -> None:
-     local_filename = str(tmp_path / "file.txt").encode()
++process = AsyncCrawlerProcess(
++    settings={"TWISTED_REACTOR_ENABLED": False, "ASYNCIO_EVENT_LOOP": "uvloop.Loop"}
++)
++process.crawl(NoRequestsSpider)
++process.start()
 ```
 
-**File**: `tests/utils/bases/download_handlers_http.py` (modified, +32/-0)
+**File**: `tests/AsyncCrawlerProcess/reactorless_start_running_loop.py` (added, +31/-0)
 ```diff
-@@ -638,6 +638,38 @@ async def test_timeout_download_from_spider_server_hangs_partial_response(
-         assert response.body == b"some bytes"
-         assert response.flags == ["dataloss"]
- 
-+    @coroutine_test
-+    async def test_timeout_download_from_spider_slow_body(
-+        self, mockserver: MockServer
-+    ) -> None:
-+        # the server sends body bytes well within the timeout of each other,
-+        # but the whole body takes longer than the timeout
-+        meta = {"download_timeout": 0.5}
-+        request = Request(
-+            mockserver.url("/trickle?n=20&interval=0.1", is_secure=self.is_secure),
-+            meta=meta,
-+        )
-+        async with self.get_dh() as download_handler:
-+            with pytest.raises(DownloadTimeoutError):
-+                await download_handler.download_request(request)
+@@ -0,0 +1,31 @@
++import asyncio
++import logging
 +
-+    @coroutine_test
-+    async def test_timeout_download_from_spider_slow_body_partial_response(
-+        self, mockserver: MockServer
-+    ) -> None:
-+        if not self.handler_supports_partial_response_on_timeout:
-+            pytest.skip("This handler doesn't support partial responses on timeout")
-+        meta = {"download_timeout": 0.5, "download_fail_on_dataloss": False}
-+        request = Request(
-+            mockserver.url("/trickle?n=20&interval=0.1", is_secure=self.is_secure),
-+            meta=meta,
-+        )
-+        async with self.get_dh() as download_handler:
-+            response = await download_handler.download_request(request)
-+        assert response.status == 200
-+        assert 0 < len(response.body) < 20
-+        assert response.flags == ["dataloss"]
++import scrapy
++from scrapy.crawler import AsyncCrawlerProcess
 +
-     @pytest.mark.parametrize("send_header", [True, False])
-     @coroutine_test
-     async def test_host_header(self, send_header: bool, mockserver: MockServer) -> None:
++logger = logging.getLogger(__name__)
++
++
++class NoRequestsSpider(scrapy.Spider):
++    name = "no_request"
++
++    async def start(self):
++        return
++        yield
++
++
++async def main() -> AsyncCrawlerProcess:
++    process = AsyncCrawlerProcess(settings={"TWISTED_REACTOR_ENABLED": False})
++    process.crawl(NoRequestsSpider)
++    try:
++        process.start()
++    except RuntimeError as e:
++        logger.info(f"start() failed: {e}")
++    await asyncio.sleep(0)
++    logger.info("The running loop still works")
++    return process
++
++
++process = asyncio.run(main())
++process.start()
 ```
 
----
-
-### Incident Patch 2: `953a7f42` (2026-11-16)
-**Commit Message**: Fix a merge error. (#8495)
-
-**File**: `scrapy/spiders/sitemap.py` (modified, +1/-0)
+**File**: `tests/AsyncCrawlerProcess/reactorless_two_processes.py` (added, +18/-0)
 ```diff
-@@ -20,6 +20,7 @@
-     gzip_magic_number,
- )
- from scrapy.utils._sitemap import Sitemap, sitemap_urls_from_robots
-+from scrapy.utils.httpobj import urlparse_cached
- from scrapy.utils.url import _origin
- 
- if TYPE_CHECKING:
-```
-
-**File**: `tests/test_spider_sitemap.py` (modified, +1/-1)
-```diff
-@@ -1066,7 +1066,7 @@ def test_sitemap_schemes_robots_parsed_signal(self):
-         crawler = get_crawler(self.spider_class, settings_dict={"ROBOTSTXT_OBEY": True})
-         spider = self.spider_class.from_crawler(crawler, "example.com")
-         crawler.engine = mock.MagicMock()
--        spider._signal_only_netlocs.add("www.example.com")
-+        spider._signal_only_origins.add(("http", "www.example.com"))
- 
-         class FakeRobotParser:
-             def sitemaps(self):
-```
-
----
-
-### Incident Patch 3: `0eb447b3` (2026-11-16)
-**Commit Message**: Return True from is_asyncio_available() before a reactor or loop exists. (#8494)
-
-**File**: `scrapy/extensions/remote_control.py` (modified, +1/-4)
-```diff
-@@ -99,10 +99,7 @@ class RemoteControl:
-     def __init__(self, crawler: Crawler):
-         if not crawler.settings.getbool("REMOTE_CONTROL_ENABLED"):
-             raise NotConfigured
--        if (
--            crawler.settings.getbool("TWISTED_REACTOR_ENABLED")
--            and not is_asyncio_available()
--        ):
-+        if not is_asyncio_available():
-             raise NotConfigured(
-                 f"{type(self).__name__} requires the asyncio support."
-                 f" You can set the REMOTE_CONTROL_ENABLED setting to False to remove this warning."
-```
-
-**File**: `scrapy/utils/asyncio.py` (modified, +19/-20)
-```diff
-@@ -57,40 +57,39 @@ def is_asyncio_available() -> bool:
- 
-     .. versionadded:: 2.14
- 
-+    .. versionchanged:: 2.15.0
-+        This function now also returns ``True`` if there is a running asyncio
-+        loop, even if no Twisted reactor is installed.
-+
-+    .. versionchanged:: VERSION
-+        This function now returns ``True`` instead of raising
-+        :exc:`RuntimeError` if there is neither a running asyncio loop nor an
-+        installed Twisted reactor.
-+
-     This function returns ``True`` if there is a running asyncio event loop. If
-     there is no such loop, it returns ``True`` if the Twisted reactor that is
-     installed is
--    :class:`~twisted.internet.asyncioreactor.AsyncioSelectorReactor`, returns
--    ``False`` if a different reactor is installed, and raises a
--    :exc:`RuntimeError` if no reactor is installed.
-+    :class:`~twisted.internet.asyncioreactor.AsyncioSelectorReactor` or if no
-+    reactor is installed, and ``False`` if a different reactor is installed.
- 
-     The case when this function returns ``False`` is deprecated, and in a
-     future Scrapy version this function will always return ``True``. Use it
-     only if you need to support non-asyncio reactors or if you want to provide
-     a better error message on those.
--
--    .. note:: As this function uses :func:`asyncio.get_running_loop()`, it will
--        only detect the event loop if called in the same thread and from the
--        code that runs inside that loop (this shouldn't be a problem when
--        calling it from code such as spiders and Scrapy components, if Scrapy
--        is run using one of the supported ways).
--
--    .. versionchanged:: 2.15.0
--        This function now also returns ``True`` if there is a running asyncio
--        loop, even if no Twisted reactor is installed.
-     """
- 
--    if _has_running_loop():
-+    # (not _has_running_loop() and not is_reactor_installed()) means that
-+    # either this is very early code (before the reactor/loop are set up) or a
-+    # different thread of a reactorless crawl. In either case, returning False
-+    # here is only wrong if a non-asyncio reactor will installed later, which
-+    # is deprecated.
-+    # Doing this is a trade-off, see #7812.
-+
-+    if _has_running_loop() or not is_reactor_installed():
-         return True
- 
-     # Check if there is an installed asyncio reactor (it doesn't need to be
-     # running).
--    if not is_reactor_installed():
--        raise RuntimeError(
--            "is_asyncio_available() called without an installed reactor"
--            " or running asyncio loop."
--        )
--
-     return _is_asyncio_reactor_installed()
- 
- 
-```
-
-**File**: `tests/CrawlerProcess/asyncio_enabled_reactor.py` (modified, +2/-6)
-```diff
-@@ -19,12 +19,8 @@
- else:
-     raise RuntimeError("_is_asyncio_reactor_installed() did not raise RuntimeError.")
- 
--try:
--    is_asyncio_available()
--except RuntimeError:
--    pass
--else:
--    raise RuntimeError("is_asyncio_available() did not raise RuntimeError.")
-+if not is_asyncio_available():
-+    raise RuntimeError("is_asyncio_available() returned False without a reactor.")
- 
- if is_reactor_installed():
-     raise RuntimeError(
-```
-
-**File**: `tests/test_utils_asyncio.py` (modified, +5/-0)
-```diff
-@@ -32,6 +32,11 @@ async def test_is_asyncio_available(reactor_pytest: str) -> None:
-     assert is_asyncio_available() == (reactor_pytest != "default")
- 
- 
-+def test_is_asyncio_available_without_running_loop(reactor_pytest: str) -> None:
-+    # with --reactor=none there is neither a reactor nor a running loop here
-+    assert is_asyncio_available() == (reactor_pytest != "default")
+@@ -0,0 +1,18 @@
++import scrapy
++from scrapy.crawler import AsyncCrawlerProcess
 +
 +
- _context_var: contextvars.ContextVar[str | None] = contextvars.ContextVar(
-     "_context_var", default=None
- )
++class NoRequestsSpider(scrapy.Spider):
++    name = "no_request"
++
++    async def start(self):
++        return
++        yield
++
++
++process1 = AsyncCrawlerProcess(settings={"TWISTED_REACTOR_ENABLED": False})
++process2 = AsyncCrawlerProcess(settings={"TWISTED_REACTOR_ENABLED": False})
++process1.crawl(NoRequestsSpider)
++process2.crawl(NoRequestsSpider)
++process1.start()
++process2.start()
+```
+
+**File**: `tests/test_crawler_subprocess.py` (modified, +33/-0)
+```diff
+@@ -503,6 +503,39 @@ def test_reactorless_then_reactor(self) -> None:
+         assert "ImportError" not in log
+         assert "ERROR: " not in log
+ 
++    def test_reactorless_start_running_loop(self) -> None:
++        """start() raises inside a running event loop without breaking that
++        loop or the process, which can still be started later."""
++        log = self.run_script("reactorless_start_running_loop.py")
++        assert (
++            "start() failed: AsyncCrawlerProcess.start() cannot be called while"
++            " an asyncio event loop is running in the same thread."
++        ) in log
++        assert "The running loop still works" in log
++        assert "Spider closed (finished)" in log
++        assert "Traceback" not in log
++
++    def test_reactorless_two_processes(self) -> None:
++        """Processes created before either of them starts use separate event
++        loops."""
++        log = self.run_script("reactorless_two_processes.py")
++        assert log.count("Spider closed (finished)") == 2
++        assert "Traceback" not in log
++
++    def test_reactorless_current_loop(self) -> None:
++        """The process doesn't use or change the current event loop of the
++        thread."""
++        log = self.run_script("reactorless_current_loop.py")
++        assert "Running in the current loop: False" in log
++        assert "Current loop kept: True" in log
++        assert "Current loop closed: False" in log
++
++    @pytest.mark.requires_uvloop
++    def test_reactorless_custom_loop(self) -> None:
++        log = self.run_script("reactorless_custom_loop.py")
++        assert "Running loop: uvloop.Loop" in log
++        assert "Spider closed (finished)" in log
++
+     def test_reactorless_telnetconsole_default(self) -> None:
+         """By default TWISTED_REACTOR_ENABLED=False silently sets TELNETCONSOLE_ENABLED=False."""
+         log = self.run_script("reactorless_simple.py")  # no need for a separate script
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8507** (closed): Restore the urlparse_cached import in SitemapSpider (@poojithparchuri-iiitk)
-- **PR #8506** (closed): Fix JsonRequest.replace ignoring replacement dumps_kwargs (@EnesKartal)
-- **PR #8505** (closed): Add a contract_failed signal (@DeviousCardi)
-- **PR #8504** (closed): Support common curl options in Request.from_curl (-A, -e, -x, -G, --data-binary, --json) (@tony1233200)
-- **PR #8503** (closed): Stream file contents when persisting to filesystem and GCS stores (@tony1233200)
-- **PR #8502** (closed): Encode JSON feeds consistently (@sanidhyasaluja)
+- **PR #8519** (2026-11-19): Return exceptions instead of Failures from send_catch_log(). (@wRAR)
+- **PR #8517** (closed): Serialise replacement data with the replacement dumps_kwargs (@Raed2180416)
+- **PR #8516** (closed): Preserve async signal receiver results on cancellation (@charan-rathore)
+- **PR #8515** (2026-11-18): Keep CSV columns aligned when include_headers_line is False (@hygorcluz)
+- **PR #8514** (2026-11-18): Match allowed_domains case-insensitively in OffsiteMiddleware (@hygorcluz)
+- **PR #8513** (closed): Fix the NSS key log format link (@farisbasha)
 
 ---
 
@@ -2441,13 +2242,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Force download timeouts in BaseStreamingDownloadHandler.
+## X. Use a private loop in the reactorless mode.
 
 **RULE**:
 When implementing operations in `docs/topics/settings.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy/scrapy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aeaec6a5`: Force download timeouts in BaseStreamingDownloadHandler.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6609a421`: Use a private loop in the reactorless mode.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/topics/settings.rst`.
@@ -2455,17 +2256,22 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-A value of ``0`` or ``None`` doesn't mean a timeout of 0 or infinity: a
-non-zero handler-specific value will be used instead.
-
-    This timeout can be set per-request using the :reqmeta:`download_timeout`
+.. caution:: Please be aware that, when using a Twisted reactor with a
+    non-default event loop (either defined via :setting:`ASYNCIO_EVENT_LOOP` or
+    installed with :func:`~scrapy.utils.reactor.install_reactor`), Scrapy will
+    call :func:`asyncio.set_event_loop`, which will set the specified event
+    loop as the current loop for the current OS thread.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-    This timeout can be per-request using the :reqmeta:`download_timeout`
+.. caution:: Please be aware that, when using a non-default event loop
+    (either defined via :setting:`ASYNCIO_EVENT_LOOP` or installed with
+    :func:`~scrapy.utils.reactor.install_reactor`), Scrapy will call
+    :func:`asyncio.set_event_loop`, which will set the specified event loop
+    as the current loop for the current OS thread.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aeaec6a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6609a421` are properly handled with clean fallback behavior.

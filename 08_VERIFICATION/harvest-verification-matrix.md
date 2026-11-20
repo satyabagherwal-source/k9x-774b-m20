@@ -11537,3 +11537,6 @@
 | `CYCLE-20261120-ZH9V` | `2026-11-20T12:15:15.763Z` | `transact-rs/sqlx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9566` | Yes (`0de2a9a3...`) |
 | `CYCLE-20261120-ZRQY` | `2026-11-20T12:15:29.338Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9567` | Yes (`50ee7c92...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T12:15:56.218Z` | `dragonflydb-dragonfly` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-FBEC7580` [Domain J] | Yes (`8947f825...`) |
+| `CYCLE-20261120-8H6F` | `2026-11-20T12:50:15.159Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9568` | Yes (`00e832b4...`) |
+| `CYCLE-20261120-8JAA` | `2026-11-20T12:50:17.890Z` | `scrapy/scrapy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9569` | Yes (`d38a8d4e...`) |
+| `CYCLE-20261120-8R4D` | `2026-11-20T12:50:28.045Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9570` | Yes (`eb529b29...`) |

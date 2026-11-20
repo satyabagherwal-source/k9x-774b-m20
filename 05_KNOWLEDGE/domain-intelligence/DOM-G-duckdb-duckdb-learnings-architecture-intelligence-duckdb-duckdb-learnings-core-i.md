@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T14:50:10.203Z",
+  "timestamp": "2026-11-20T12:50:33.122Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-duckdb-duckdb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [duckdb-duckdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T14:50:10.203Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T12:50:33.122Z`  
 > **Learning ID**: `LEARN-EVO-duckdb-duckdb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 80%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from duckdb-duckdb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `8a5afae5`  
+> **Source Version**: `522f213e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T14:50:04.965Z  
+> **Timestamp**: 2026-11-20T12:50:27.021Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T14:50:04.959Z  
+> **Harvest Timestamp**: 2026-11-20T12:50:27.015Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 43126 stars
+- **Stars / Engagement**: 43202 stars
 
 ---
 
@@ -327,7 +327,7 @@ struct AverageSetOperation {
 };
 
 template <class T>
-static T GetAverageDivident(uint64_t count, optional_ptr<FunctionData> bind_data) {
+static T GetAverageDivident(uint64_t count, optional_ptr<const FunctionData> bind_data) {
 	T divident = T(count);
 	if (bind_data) {
 		auto &avg_bind_data = bind_data->Cast<AverageDecimalBindData>();
@@ -517,7 +517,7 @@ struct TimestampNSAverageOperation : public DiscreteAverageOperation {
 	static void RepeatedCombine(const STATE &source, STATE &target, AggregateInputData &input, idx_t count) {
 		if (source.count == INFINITE_COUNT) {
 			if (count > 0) {
-				AddInfinities(target, sou
+				AddInfinities(targe
 ```
 
 ### Core Architecture Module: `extension/core_functions/aggregate/algebraic/corr.cpp`
@@ -623,6 +623,7 @@ AggregateFunction StandardErrorOfTheMeanFun::GetFunction() {
 #include "duckdb/common/vector/struct_vector.hpp"
 #include "core_functions/aggregate/histogram_helpers.hpp"
 #include "core_functions/aggregate/holistic_functions.hpp"
+#include "duckdb/common/arena_containers/arena_vector.hpp"
 
 namespace duckdb {
 
@@ -639,21 +640,6 @@ struct ApproxTopKString {
 	string_t str;
 	hash_t hash;
 };
-
-struct ApproxTopKHash {
-	std::size_t operator()(const ApproxTopKString &k) const {
-		return k.hash;
-	}
-};
-
-struct ApproxTopKEquality {
-	bool operator()(const ApproxTopKString &a, const ApproxTopKString &b) const {
-		return Equals::Operation(a.str, b.str);
-	}
-};
-
-template <typename T>
-using approx_topk_map_t = unordered_map<ApproxTopKString, T, ApproxTopKHash, ApproxTopKEquality>;
 
 // approx top k algorithm based on "A parallel space saving algorithm for frequent items and the Hurwitz zeta
 // distribution" arxiv link -  https://arxiv.org/pdf/1401.0702
@@ -672,35 +658,109 @@ struct ApproxTopKValue {
 };
 
 struct InternalApproxTopKState {
+	explicit InternalApproxTopKState(ArenaAllocator &allocator) : values(allocator), filter(allocator) {
+	}
+
 	// the top-k data structure has two components
 	// a list of k values sorted on "count" (i.e. values[0] has the lowest count)
-	// a lookup map: string_t -> idx in "values" array
-	unsafe_unique_array<ApproxTopKValue> stored_values;
-	unsafe_vector<reference<ApproxTopKValue>> values;
-	approx_topk_map_t<reference<ApproxTopKValue>> lookup_map;
-	unsafe_vector<idx_t> filter;
+	// a lookup table: open addressing over the stored values, 0 = empty, otherwise the stored_values index + 1
+	ApproxTopKValue *stored_values = nullptr;
+	unsafe_arena_vector<reference<ApproxTopKValue>> values;
+	unsafe_arena_vector<idx_t> filter;
+	uint32_t *lookup = nullptr;
+	idx_t lookup_mask = 0;
+	idx_t lookup_count = 0;
 	idx_t k = 0;
 	idx_t capacity = 0;
-	idx_t filter_mask;
+	idx_t filter_mask = 0;
 
-	void Initialize(idx_t kval) {
+	void Initialize(ArenaAllocator &allocator, idx_t kval) {
 		static constexpr idx_t MONITORED_VALUES_RATIO = 3;
 		static constexpr idx_t FILTER_RATIO = 8;
 
 		D_ASSERT(values.empty());
-		D_ASSERT(lookup_map.empty());
 		k = kval;
 		if (k > MAX_APPROX_K) {
 			throw InvalidInputException("Requested 'k' (%d) is bigger than accepted max (%d)", kval, MAX_APPROX_K);
 		}
 		capacity = kval * MONITORED_VALUES_RATIO;
-		stored_values = make_unsafe_uniq_array_uninitialized<ApproxTopKValue>(capacity);
+		// the stored values are constructed when they are first used
+		stored_values = reinterpret_cast<ApproxTopKValue *>(
+		    allocator.AllocateAligned(MaxValue<idx_t>(capacity, 1) * sizeof(ApproxTopKValue)));
 		values.reserve(capacity);
+
+		// at most half of the lookup table is ever used, so probing always ends at an empty slot
+		const idx_t lookup_size = NextPowerOfTwo(capacity * 2);
+		lookup_mask = lookup_size - 1;
+		lookup = reinterpret_cast<uint32_t *>(allocator.AllocateAligned(lookup_size * sizeof(uint32_t)));
+		memset(lookup, 0, lookup_size * sizeof(uint32_t));
 
 		// we scale the filter based on the amount of values we are monitoring
 		idx_t filter_size = NextPowerOfTwo(capacity * FILTER_RATIO);
 		filter_mask = filter_size - 1;
 		filter.resize(filter_size);
+	}
+
+	uint32_t SlotId(const ApproxTopKValue &value) const {
+		D_ASSERT(&value >= stored_values && &value < stored_values + capacity);
+		return UnsafeNumericCast<uint32_t>(&value - stored_values);
+	}
+
+	ApproxTopKValue *Find(const ApproxTopKString &key) const {
+		for (idx_t pos = key.hash & lookup_mask; lookup[pos] != 0; pos = (pos + 1) & lookup_mask) {
+			auto &entry = stored_values[lookup[pos] - 1];
+			if (entry.str_val.hash == key.hash && Equals::Operation(entry.str_val.str, key.str)) {
+				return &entry;
+			}
+		}
+		return nullptr;
+	}
+
+	//! Insert a value whose key is known to be absent
+	void Insert(ApproxTopKValue &value) {
+		D_ASSERT(lookup_count < capacity);
+		idx_t pos = value.str_val.hash & lookup_mask;
+		while (lookup[pos] != 0) {
+			pos = (pos + 1) & lookup_mask;
+		}
+		lookup[pos] = SlotId(value) + 1;
+		lookup_count++;
+	}
+
+	//! Insert a value, returns false if its key is already present
+	bool TryInsert(ApproxTopKValue &value) {
+		idx_t pos = value.str_val.hash & lookup_mask;
+		for (; lookup[pos] != 0; pos = (pos + 1) & lookup_mask) {
+			auto &entry = stored_values[lookup[pos] - 1];
+			if (entry.str_val.hash == value.str_val.hash && Equals::Operation(entry.str_val.str, value.str_val.str)) {
+				return false;
+			}
+		}
+		lookup[pos] = SlotId(value) + 1;
+		lookup_count++;
+		return true;
+	}
+
+	//! Remove a value (by identity) from the lookup table, backward-shifting the entries after it
+	void Erase(const ApproxTopKValue &value) {
+		const auto id = SlotId(value) + 1;
+		idx_t pos = value.str_val.hash & lookup_mask;
+		while (lookup[pos] != id) {
+			if (lookup[pos] == 0) {
+				throw InternalException("approx_top_k: erased value is not in the lookup table");
+			}
+			pos = (pos + 1) & lookup_mask;
+		}
+		lookup[pos] = 0;
+		lookup_count--;
+		for (idx_t next = (pos + 1) & lookup_mask; lookup[next] != 0; next = (next + 1) & lookup_mask) {
+			const idx_t home = stored_values[lookup[next] - 1].str_val.hash & lookup_mask;
+			if (((next - home) & lookup_mask) >= ((next - pos) & lookup_mask)) {
+				lookup[pos] = lookup[next];
+				lookup[next] = 0;
+				pos = next;
+			}
+		}
 	}
 
 	static void CopyValue(ApproxTopKValue &value, const ApproxTopKString &input, ArenaAllocator &allocator) {
@@ -725,7 +785,7 @@ struct InternalApproxTopKState {
 		if (values.size() < capacity) {
 			D_ASSERT(increment > 0);
 			// we can always add this entry
-			auto &val = stored_values[values.size()];
+			auto &val = *new (stored_values + values.size()) ApproxTopKValue();
 			val.index = values.size();
 			values.push_back(val);
 		}
@@ -746,13 +806,13 @@ struct InternalApproxTopKState {
 				return;
 			}
 			// the filter exceeds the min value - start monitoring this value
-			// erase the existing entry from the map
+			// erase the existing entry from the lookup table (before CopyValue overwrites its hash and data)
 			// and set the filter for the minimum value back to the current minimum value
 			filter[value.str_val.hash & filter_mask] = value.count;
-			lookup_map.erase(value.str_val);
+			Erase(value);
 		}
 		CopyValue(value, input, aggr_input.allocator);
-		lookup_map.insert(make_pair(value.str_val, reference<ApproxTopKValue>(value)));
+		Insert(value);
 		IncrementCount(value, increment);
 	}
 
@@ -771,17 +831,13 @@ struct InternalApproxTopKState {
 
 	void Verify() const {
 #ifdef DEBUG
-		if (values.empty()) {
-			D_ASSERT(lookup_map.empty());
-			return;
-		}
+		D_ASSERT(lookup_count == values.size());
 		D_ASSERT(values.size() <= capacity);
 		for (idx_t k = 0; k < values.size(); k++) {
 			auto &val = values[k].get();
 			D_ASSERT(val.count > 0);
-			// verify map exists
-			auto entry = lookup_map.find(val.str_val);
-			D_ASSERT(entry != lookup_map.end());
+			// verify the lookup table finds exactly this value
+			D_ASSERT(Find(val.str_val) == &val);
 			// verify the index is correct
 			D_ASSERT(val.index == k);
 			if (k > 0) {
@@ -789,35 +845,20 @@ struct InternalApproxTopKState {
 				D_ASSERT(val.count <= values[k - 1].get().count);
 			}
 		}
-		D_ASSERT(lookup_map.size() == values.size());
 #endif
 	}
 };
 
 struct ApproxTopKState {
+	//! nullptr if no value has been added yet
 	InternalApproxTopKState *state;
-
-	InternalApproxTopKState &GetState() {
-		if (!state) {
-			state = new InternalApproxTopKState();
-		}
-		return *state;
-	}
-
-	const InternalApproxTopKState &GetState() const {
-		if (!state) {
-			throw InternalException("No state available");
-		}
-		return *state;
-	}
 };
 
 struct ApproxTopKOperation {
 	template <class TYPE, class STATE>
 	static void Operation(STATE &aggr_state, const TYPE &input, AggregateInputData &aggr_input,
 	                      const Vector &top_k_vector, idx_t offset, idx_t count) {
-		auto &state = aggr_state.GetState();
-		if (state.values.empty()) {
+		if (!aggr_state.state || aggr_state.state->values.empty()) {
 			static constexpr int64_t MAX_APPROX_K = 1000000;
 			// not initialized yet - initialize the K value and set all counters to 0
 			auto top_k_format = top_k_vector.Values<int64_t>();
@@ -832,77 +873,20 @@ struct ApproxTopKOperation {
 			if (kval >= MAX_APPROX_K) {
 				throw InvalidInputException("Invalid input for approx_top_k: k value must be < %d", MAX_APPROX_K);
 			}
-			state.Initialize(UnsafeNumericCast<idx_t>(kval));
+			// an existing empty state is only reused if its k matches
+			if (!aggr_state.state || aggr_state.state->k != UnsafeNumericCast<idx_t>(kval)) {
+				aggr_state.state = aggr_input.allocator.Make<InternalApproxTopKState>(aggr_input.allocator);
+				aggr_state.state->Initialize(aggr_input.allocator, UnsafeNumericCast<idx_t>(kval));
+			}
 		}
+		auto &state = *aggr_state.state;
 		ApproxTopKString topk_string(input, Hash(input));
-		auto entry = state.lookup_map.find(topk_string);
-		if (entry != state.lookup_map.end()) {
+		auto entry = state.Find(topk_string);
+		if (entry) {
 			// the input is monitored - increment the count
-			state.IncrementCount(entry->second.get());
+			state.IncrementCount(*entry);
 		} else {
-			// the input is not monitored - replace the first entry with the current entry and increment
-			state.InsertOrReplaceEntry(topk_string, aggr_input);
-		}
-	}
-
-	template <class STATE, class OP>
-	static void Combine(const STATE &aggr_source, STATE &aggr_target, AggregateInputData &aggr_input) {
-		if (!aggr_source.state) {
-			// source state is empty
-			return;
-		}
-		auto &source = aggr_source.GetState();
-		auto &target = aggr_target.GetState();
-		if (source.values.empty()) {
-			// source is empty
-			return;
-		}
-		source.Verify();
-		auto min_source = source.values.size() < source.capacity ? 0 : source.values.back().get().count;
-		idx_t min_target;
-		if (target.values.empty()) {
-			min_target = 0;
-			target.Initialize(source.k);
-		} else {
-			if (source.k != target.k) {
-				throw NotImplementedException("Approx Top K - cannot combine approx_top_K with different k values. "
-				                              "K values must be the same for all entries within the same group");
-			}
-			min_target = target.values.size() < target.capacity ? 0 : target.values.back().get().count;
-		}
-		// for all entries in target
-		// check if they are tracked in source
-		//     if they do - add the tracked count
-		//     if they do not - add the minimum count
-		for (idx_t target_idx = 0; target_idx < target.values.size(); target_idx++) {
-			auto &val = target.values[target_idx].get();
-			auto source_entry = source.lookup_map.find(val.str_val);
-			idx_t increment = min_source;
-			if (source_entry != source.lookup_map.end()) {
-				increment = source_entry->second.get().count;
-			}
-			if (increment == 0) {
-				continue;
-			}
-			target.IncrementCount(val, increment);
-		}
-		// now for each entry in source, if it is not tracked by the target, at the target minimum
-		for (auto &source_entry : source.values) {
-			auto &source_val = source_entry.get();
-			auto target_entry = target.lookup_map.find(source_val.str_val);
-			if (target_entry != target.lookup_map.end()) {
-				// already tracked - no need to add anything
-				continue;
-			}
-			auto new_count = source_val.count + min_target;
-			idx_t increment;
-			if (target.values.size() >= target.capacity) {
-				idx_t current_min = target.values.empty() ? 0 : target.values.back().get().count;
-				D_ASSERT(target.values.size() == target.capacity);
-				// target already has capacity values
-				// check if we should insert this entry
-				if (new_count <= current_min) {
-					// if we do not we can skip this en
+			// the input is not monitored - replace the first entry with the current entry and increm
 ```
 
 ### Core Architecture Module: `extension/core_functions/aggregate/holistic/approximate_quantile.cpp`
@@ -1050,7 +1034,7 @@ struct ApproximateQuantileBindData : public FunctionData {
 		return true;
 	}
 
-	static void Serialize(Serializer &serializer, const optional_ptr<FunctionData> bind_data_p,
+	static void Serialize(Serializer &serializer, const optional_ptr<const FunctionData> bind_data_p,
 	                      const BoundAggregateFunction &function) {
 		auto &bind_data = bind_data_p->Cast<ApproximateQuantileBindData>();
 		serializer.WriteProperty(100, "quantiles", bind_data.quantiles);
@@ -1179,7 +1163,7 @@ AggregateStateLayout ApproxQuantileGetStateType(AggregateLayoutInput &input) {
 
 //! The shape of the exported state: STRUCT(count, min, max, centroids LIST(STRUCT(mean, weight)))
 using APPROX_QUANTILE_EXPORT_TYPE =
-    Vecto
+   
 ```
 
 ### Core Architecture Module: `extension/core_functions/aggregate/holistic/lttb.cpp`
@@ -1724,6 +1708,7 @@ struct MedianAbsoluteDeviationOperation : QuantileOperation {
 #include "core_functions/aggregate/holistic_functions.hpp"
 #include "duckdb/catalog/catalog.hpp"
 #include "duckdb/catalog/catalog_entry/aggregate_function_catalog_entry.hpp"
+#include "duckdb/common/arena_containers/arena_sql_value_map.hpp"
 #include "duckdb/common/exception.hpp"
 #include "duckdb/common/operator/comparison_operators.hpp"
 #include "duckdb/common/owning_string_map.hpp"
@@ -1827,13 +1812,10 @@ struct ModeAttr {
 
 template <class T>
 struct ModeStandard {
-	using MAP_TYPE = sql_value_map_t<T, ModeAttr>;
+	using MAP_TYPE = arena_sql_value_map_t<T, ModeAttr>;
 
-	static MAP_TYPE *CreateEmpty(ArenaAllocator &) {
-		return new MAP_TYPE();
-	}
-	static MAP_TYPE *CreateEmpty(Allocator &) {
-		return new MAP_TYPE();
+	static MAP_TYPE *CreateEmpty(ArenaAllocator &allocator) {
+		return allocator.Make<MAP_TYPE>(typename MAP_TYPE::allocator_type(allocator));
 	}
 
 	static ModeAttr &GetOrCreate(MAP_TYPE &map, const T &key, ArenaAllocator &) {
@@ -1849,9 +1831,9 @@ struct ModeStandard {
 		return Equals::Operation(left, right);
 	}
 
-	static T *Update(T *mode, idx_t &, const T &key, AggregateInputData &) {
+	static T *Update(T *mode, idx_t &, const T &key, AggregateInputData &aggr_input_data) {
 		if (!mode) {
-			mode = new T(key);
+			mode = aggr_input_data.allocator.Make<T>(key);
 		}
 		*mode = key;
 
@@ -1860,13 +1842,10 @@ struct ModeStandard {
 };
 
 struct ModeString {
-	using MAP_TYPE = OwningStringMap<ModeAttr>;
+	using MAP_TYPE = ArenaOwningStringMap<ModeAttr>;
 
-	static MAP_TYPE *CreateEmpty(ArenaAllocator &) {
-		return new MAP_TYPE();
-	}
-	static MAP_TYPE *CreateEmpty(Allocator &allocator) {
-		return new MAP_TYPE(allocator);
+	static MAP_TYPE *CreateEmpty(ArenaAllocator &allocator) {
+		return allocator.Make<MAP_TYPE>(allocator);
 	}
 
 	static ModeAttr &GetOrCreate(MAP_TYPE &map, const string_t &key, ArenaAllocator &allocator) {
@@ -1886,7 +1865,7 @@ struct ModeString {
 	                        AggregateInputData &aggr_input_data) {
 		if (key.IsInlined()) {
 			if (!mode) {
-				mode = new string_t(nullptr, 0);
+				mode = aggr_input_data.allocator.Make<string_t>(nullptr, 0);
 			}
 			*mode = key;
 			alloc_size = 0;
@@ -1904,7 +1883,7 @@ struct ModeString {
 			alloc_size = NextPowerOfTwo(len);
 			ptr = char_ptr_cast(aggr_input_data.allocator.Allocate(alloc_size));
 			if (!mode) {
-				mode = new string_t(nullptr, 0);
+				mode = aggr_input_data.allocator.Make<string_t>(nullptr, 0);
 			}
 		}
 		memcpy(ptr, key.GetData(), len);
@@ -1932,25 +1911,17 @@ struct ModeState {
 	//! The collection being read
 	const ColumnDataCollection *inputs;
 	//! The state used for reading the collection on this thread
-	ColumnDataScanState *scan = nullptr;
+	unique_ptr<ColumnDataScanState> scan;
+	//! The arena of the frequency map in the window path, reset when the frames are recomputed
+	unique_ptr<ArenaAllocator> window_arena;
 	//! The data chunk paged into into
 	DataChunk page;
 	//! Cell access into the page, rebuilt per page load - scans can return constant and dictionary vectors
 	unique_ptr<VectorIterator<KEY_TYPE>> values;
 
-	~ModeState() {
-		if (frequency_map) {
-			delete frequency_map;
-		}
-		delete mode;
-		if (scan) {
-			delete scan;
-		}
-	}
-
 	void InitializePage(const WindowPartitionInput &partition) {
 		if (!scan) {
-			scan = new ColumnDataScanState();
+			scan = make_uniq<ColumnDataScanState>();
 		}
 		if (page.ColumnCount() == 0) {
 			D_ASSERT(partition.inputs);
@@ -1991,7 +1962,12 @@ struct ModeState {
 
 	void Reset() {
 		if (frequency_map) {
-			frequency_map->clear();
+			// rebuild the map instead of clearing it, the arena would retain the erased nodes
+			D_ASSERT(window_arena);
+			const auto previous_size = frequency_map->size();
+			window_arena->Reset();
+			frequency_map = TYPE_OP::CreateEmpty(*window_arena);
+			frequency_map->reserve(previous_size);
 		}
 		nonzero = 0;
 		count = 0;
@@ -2000,32 +1976,14 @@ struct ModeState {
 
 	void ModeAdd(idx_t row, AggregateInputData &aggr_input_data) {
 		const auto &key = GetCell(row);
-		auto &attr = (*frequency_map)[key];
+		auto &attr = TYPE_OP::GetOrCreate(*frequency_map, key, *window_arena);
 		auto new_count = (attr.count += 1);
 		nonzero += size_t(new_count == 1);
 		if (new_count > count) {
 			valid = true;
 			count = new_count;
 			Update(key, aggr_input_data);
-		} else if (new_count == count) {
-			// The key now ties the mode, so the tie must be broken by frame position
-			valid = false;
-		}
-	}
-
-	void ModeRm(idx_t frame) {
-		const auto &key = GetCell(frame);
-		auto &attr = (*frequency_map)[key];
-		auto old_count = attr.count;
-		nonzero -= size_t(old_count == 1);
-
-		attr.count -= 1;
-		if (count == old_count && TYPE_OP::IsEqual(key, *mode)) {
-			valid = false;
-		}
-	}
-
-	void Update(c
+	
 ```
 
 
@@ -2034,11 +1992,11 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28960** (2026-11-17): **Fix: mark unshredded VARIANT stats as NOT_SHREDDED**
-  *Symptoms*: Statistics of unshredded VARIANT data were not marked as unshredded for row groups that could not be shredded (at checkpoint and after reloading the database) and for VARIANT constants. When merged with shredded statistics, these values were ignored, so the shredded min/max was wrong, leading to wrong filter results and crashes e.g. with the perfect hash aggregate.    Repro: Small last row group is not shredded (below `variant_minimum_shredding_size`):  ```sql CREATE TABLE t AS SELECT {'b': 100}::VARIANT AS v FROM range(122880); INSERT INTO t VALUES ({'b': 1}::VARIANT); CHECKPOINT; SELECT v.b::INTEGER AS b FROM t GROUP BY b ORDER BY b; ```  VARIANT constant merged with a shredded column: ```sql SET variant_minimum_shredding_size = 0; CREATE TABLE t AS SELECT i, {'b': 100}::VARIANT AS v FROM range(10) r(i); CHECKPOINT; SELECT (CASE WHEN i = 0 THEN {'b': 1}::VARIANT ELSE v END).b::INTEGER AS b FROM t GROUP BY b ORDER BY b; ``` Both fail with  ``` Data Corruption Error: Perfect hash aggregate: aggregate group 18446744073709551518 exceeded total groups 4. ```   
+- **Issue #29134** (2026-11-20): **Skip plan-cost regression checks for identical plans**
+  *Symptoms*: Adaptive join filters can produce different intermediate row counts for identical plans, causing spurious CI failures.  Compare physical `EXPLAIN` plans without estimated cardinalities and skip cost and timing comparisons when they match. Keep the existing checks for changed plans.
 
-- **Issue #28952** (2026-11-17): **Resolve-types callback: allow setting argument types in the C API V2**
-  *Symptoms*: Adds `duckdb_v2_scalar_function_resolve_types_set_arg_type(info, arg_idx, arg_type, err)`, so a scalar function's resolve-types callback can ask the engine to cast an argument instead of registering extra overloads.  - Sets the argument type of the bound function; the existing `CastToFunctionArguments` step inserts the cast after the callback returns, so the bind callback sees the cast type. - Errors with `INPUT_INVALID` for an out-of-range index or an incomplete type (e.g. `ANY`). - Unstable API, scalar functions only (aggregates have no resolve-types callback yet). - Test: `V2 scalar: resolve types sets an argument type and the engine casts to it`.  Needed by json (legacy `path` argument cast to BIGINT) and spatial. Fixes duckdblabs/duckdb-internal#12045.  
+- **Issue #29131** (2026-11-20): **Register a sort temporary memory state on its first sink**
+  *Symptoms*: With the following query: ```sql SET threads = 16; SET memory_limit = '24GiB'; CREATE TABLE t_win AS SELECT (range % 50000)::BIGINT AS k, range::BIGINT AS v FROM range(3000000); CREATE TABLE t_agg AS SELECT (hash(range) % 2000000)::BIGINT AS g, range::BIGINT AS x FROM range(100000000);  SELECT count(*), sum(coalesce(w.s, 0) + coalesce(a.s, 0)) FROM 	(SELECT k, sum(v) OVER (PARTITION BY k ORDER BY v ROWS UNBOUNDED PRECEDING) AS s FROM t_win) w 	FULL JOIN (SELECT g, sum(x) AS s FROM t_agg GROUP BY g) a ON w.k = a.g; ```  This takes ~1.4 s on main because the `GROUP BY` finalizes on a single thread:  1. The window (probe side) sinks first and creates one `Sort` per hash group, 64 here. Each `Sort` registers with the `TemporaryMemoryManager` in its constructor and books the default minimum, 1.35 GiB: ~86 GiB booked against a 21.6 GiB budget. 2. The groups are only sorted in the window's source phase, which waits for the join build, so they sit idle and booked. 3. The `GROUP BY` (build side) then asks for memory in `MaxThreads`. The manager is over-committed and grants only the aggregate's minimum, so `partitions_fit` becomes 1.  TPC-DS Q51 can hit the same pattern, depending on the order in which the scheduler runs the two sides of its FULL join.  **Changes**: a `Sort` now registers with the `TemporaryMemoryManager` at its first `Sink`, not in the `SortGlobalSinkState` constructor. Idle hash groups, and groups that skip sorting, book nothing. A registered `Sor
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2055,229 +2013,720 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `069eb90c` (2026-11-17)
-**Commit Message**: Fix INTERNAL error in batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE (#28904)
+### Incident Patch 1: `abbad801` (2026-11-20)
+**Commit Message**: Fix min/max for INTERVAL type (#29104)
 
-A batched `COPY ... TO` given `ROW_GROUP_SIZE_BYTES` without
-`ROW_GROUP_SIZE` fails:
-
+Hi team, I found min/max stats for INTERVAL type seems to be incorrect,
+for example
 ```sql
-SET threads=2;
-CREATE TABLE t AS FROM range(1000000);
-COPY t TO 'out.csv' (ROW_GROUP_SIZE_BYTES '256KB');
--- INTERNAL Error: Attempting to get the index of an optional_idx that is not set
+memory D SELECT max(x, 1), min(x, 1) FROM (VALUES (INTERVAL 25 HOUR), (INTERVAL 1 DAY)) v(x);
+┌────────────┬──────────────┐
+│ max(x, 1)  │  min(x, 1)   │
+│ interval[] │  interval[]  │
+├────────────┼──────────────┤
+│ [1 day]    │ ['25:00:00'] │
+└────────────┴──────────────┘
 ```
 
-`CorrectSizeForBatch` calls `batch_size.GetIndex()` without checking
-that a row target is set. It is
-reached for the leftover batch of a non-final repartition, so the error
-depends on timing: the
-query above failed on every run at 2 threads here (tested on Linux
-x86_64; Apple ARM64).
+In the current implementation, min(x, n) and max(x, n) handled INTERVAL
+by comparing sort keys, which order values field by field over the raw
+(months, days, micros) without normalizing them, so max(x, 1) over {31
+days, 1 month} returned [1 month].
+In this PR specializes INTERVAL to `MinMaxFixedValue<interval_t>`, so
+values are compared with the normalized interval_t comparison,
+consistent with ORDER BY and plain min/max.
 
-With no row target, the byte target now decides, through
-`CopyFunctionBatchAnalyzer::IsAcceptable()`,
-as it does elsewhere. The new test
-(`test/sql/copy/csv/batched_write/batch_csv_row_group_size_bytes.test`)
-fails before the fix and
-passes after.
-
-## Demonstration
-
-OSX using a fresh install of v2.0:
-
-```bash
-(base) 13:01:00 (dtmcdonald@when):~$ md5 /Users/dtmcdonald/.duckdb/cli/latest/duckdb
-MD5 (/Users/dtmcdonald/.duckdb/cli/latest/duckdb) = b2fdfbcc753c7ad59e812516b4bb0c8a
-(base) 13:01:03 (dtmcdonald@when):~$ /Users/dtmcdonald
-
-**File**: `src/execution/operator/persistent/physical_batch_copy_to_file.cpp` (modified, +4/-0)
+**File**: `src/function/aggregate/distributive/minmax.cpp` (modified, +4/-0)
 ```diff
-@@ -422,6 +422,10 @@ void PhysicalBatchCopyToFile::AddRawBatchData(ClientContext &context, GlobalSink
- 
- static bool CorrectSizeForBatch(const ColumnDataCollection &batch, const optional_idx &batch_size,
-                                 const optional_idx &batch_size_bytes) {
-+	if (!batch_size.IsValid()) {
-+		// no row target (only ROW_GROUP_SIZE_BYTES): the byte target alone decides
-+		return CopyFunctionBatchAnalyzer(batch, batch_size, batch_size_bytes).IsAcceptable();
-+	}
- 	if (batch_size.GetIndex() == 0) {
- 		// a batch size of 0 indicates we are happy with any batch size
- 		return true;
+@@ -549,6 +549,10 @@ void SpecializeMinMaxNFunction(PhysicalType arg_type, BoundAggregateFunction &fu
+ 	case PhysicalType::DOUBLE:
+ 		SpecializeMinMaxNFunction<MinMaxFixedValue<double>, COMPARATOR>(function);
+ 		break;
++	case PhysicalType::INTERVAL:
++		// sort keys do not normalize intervals, so compare them as interval_t
++		SpecializeMinMaxNFunction<MinMaxFixedValue<interval_t>, COMPARATOR>(function);
++		break;
+ 	default:
+ 		SpecializeMinMaxNFunction<MinMaxFallbackValue, COMPARATOR>(function);
+ 		break;
 ```
 
-**File**: `test/sql/copy/csv/batched_write/batch_csv_row_group_size_bytes.test` (added, +29/-0)
+**File**: `test/configs/verify_aggregate_state_export.json` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,29 @@
-+# name: test/sql/copy/csv/batched_write/batch_csv_row_group_size_bytes.test
-+# description: Batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE has no row target to compare against
-+# group: [batched_write]
+@@ -102,6 +102,7 @@
+         "test/sql/aggregate/aggregates/arg_min_max_n_tpch.test",
+         "test/sql/aggregate/aggregates/arg_min_max_nulls_last.test",
+         "test/sql/aggregate/aggregates/minmax_n_fallible.test",
++        "test/sql/aggregate/aggregates/minmax_n_interval.test",
+         "test/sql/aggregate/aggregates/bitstring_agg_empty.test",
+         "test/sql/aggregate/aggregates/bitstring_agg_memory_limit.test",
+         "test/sql/aggregate/aggregates/first_last_alloc_reuse.test",
+```
+
+**File**: `test/sql/aggregate/aggregates/minmax_n_interval.test` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++# name: test/sql/aggregate/aggregates/minmax_n_interval.test
++# description: N-variant min/max on INTERVAL follow the normalized INTERVAL order
++# group: [aggregates]
 +
-+# two threads keep a merged tail batch pending across repartitions, which is what consults the row target
-+statement ok
-+SET threads=2
-+
-+statement ok
-+CREATE TABLE integers AS FROM range(1000000) t(i)
-+
-+statement ok
-+COPY integers TO '{TEST_DIR}/batched_bytes_only.csv' (ROW_GROUP_SIZE_BYTES '256KB')
-+
-+statement ok
-+CREATE TABLE integers_copied AS FROM '{TEST_DIR}/batched_bytes_only.csv'
-+
++# 1 month is 30 days
 +query II
-+SELECT COUNT(*), SUM(i) FROM integers_copied
++SELECT max(x, 2), min(x, 2) FROM (VALUES (INTERVAL 1 MONTH), (INTERVAL 31 DAY), (NULL)) v(x)
 +----
-+1000000	499999500000
++[31 days, 1 month]	[1 month, 31 days]
 +
-+# the batched copy keeps insertion order
-+query I
-+SELECT * FROM integers_copied LIMIT 3 OFFSET 500000
++# 1 day is 24 hours
++query II
++SELECT max(x, 1), min(x, 1) FROM (VALUES (INTERVAL 25 HOUR), (INTERVAL 1 DAY)) v(x)
 +----
-+500000
-+500001
-+500002
++['25:00:00']	[1 day]
 ```
 
 ---
 
-### Incident Patch 2: `18161521` (2026-11-17)
-**Commit Message**: Shrink partitioned_full_outer_hash_join test to avoid CI timeouts (#28944)
+### Incident Patch 2: `0d9dfc12` (2026-11-20)
+**Commit Message**: Merge remote-tracking branch 'upstream/main' into hjiang/fix-minmax-interval
 
-`test/sql/copy/partitioned/partitioned_full_outer_hash_join.test` joins
-two 2M-row tables and regularly hits the 300s per-test timeout in `Linux
-Config (Execution)` (`force_external`), including on unrelated PRs. It
-needed a retry even in a passing run.
-
-Reduces the tables to 500k rows each (expected counts updated to
-750000/500000/500000). The early `partitioned_write_flush_threshold`
-that the test relies on is unchanged. I could not measure the new
-runtime or confirm the original deadlock still reproduces at this size
-locally, so CI on this PR is the check.
-
-**File**: `test/sql/copy/partitioned/partitioned_full_outer_hash_join.test` (modified, +3/-3)
+**File**: `.github/config/extensions/sqlite_scanner.cmake` (modified, +1/-1)
 ```diff
-@@ -12,10 +12,10 @@ statement ok
- SET partitioned_write_flush_threshold=4096;
- 
- statement ok
--CREATE TABLE a AS SELECT i AS k, i % 1000 AS v FROM range(2000000) t(i);
-+CREATE TABLE a AS SELECT i AS k, i % 1000 AS v FROM range(500000) t(i);
- 
- statement ok
--CREATE TABLE b AS SELECT i * 2 AS k, i % 7 AS w FROM range(2000000) t(i);
-+CREATE TABLE b AS SELECT i * 2 AS k, i % 7 AS w FROM range(500000) t(i);
- 
- statement ok
- COPY (
-@@ -27,4 +27,4 @@ query III
- SELECT count(*), count(ak), count(bk)
- FROM read_parquet('{TEST_DIR}/partitioned_full_outer_hash_join/**/*.parquet')
- ----
--3000000	2000000	2000000
-+750000	500000	500000
+@@ -2,7 +2,7 @@
+ duckdb_extension_load(sqlite_scanner
+         LOAD_TESTS
+         GIT_URL https://github.com/duckdb/duckdb-sqlite
+-        GIT_TAG ce0987fda4f6393231c6783ee32f72ab873a6d3e
++        GIT_TAG 4072b28f8ded96acf1fc7c31c2ad9a552eaf0f77
+         APPLY_PATCHES
+         SUBMODULES database-connector
+         )
+```
+
+**File**: `.github/patches/extensions/delta/0004-transaction-takes-context.patch` (added, +256/-0)
+```diff
+@@ -0,0 +1,256 @@
++diff --git a/src/include/storage/delta_transaction.hpp b/src/include/storage/delta_transaction.hpp
++index db31d77..b7aaefa 100644
++--- a/src/include/storage/delta_transaction.hpp
+++++ b/src/include/storage/delta_transaction.hpp
++@@ -12,6 +12,7 @@
++ #include "duckdb/common/optional_idx.hpp"
++ #include "duckdb/common/types/timestamp.hpp"
++ #include "duckdb/transaction/transaction.hpp"
+++#include "duckdb/main/context.hpp"
++ 
++ namespace duckdb {
++ class DeltaCatalog;
++@@ -24,14 +25,30 @@ struct DeltaMultiFileColumnDefinition;
++ 
++ enum class DeltaTransactionState { TRANSACTION_NOT_YET_STARTED, TRANSACTION_STARTED, TRANSACTION_FINISHED };
++ 
+++class DeltaTransaction;
+++
+++//! Makes the client context available to CommitCallback for the duration of a kernel commit call
+++class CommitContextScope {
+++public:
+++	CommitContextScope(DeltaTransaction &transaction, ClientContext &context);
+++	~CommitContextScope();
+++	CommitContextScope(const CommitContextScope &) = delete;
+++	CommitContextScope &operator=(const CommitContextScope &) = delete;
+++
+++private:
+++	DeltaTransaction &transaction;
+++};
+++
++ class DeltaTransaction : public Transaction {
+++	friend class CommitContextScope;
+++
++ public:
++-	DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, ClientContext &context);
+++	DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, Context &context);
++ 	~DeltaTransaction() override;
++ 
++ 	void Start();
++ 	void Commit(ClientContext &context);
++-	void Rollback();
+++	void Rollback(ClientContext &context);
++ 
++ 	void Append(ClientContext &context, const vector<DeltaDataFile> &append_files);
++ 
++@@ -52,7 +69,7 @@ public:
++ 	vector<DeltaMultiFileColumnDefinition> GetWriteSchema(ClientContext &context);
++ 
++ 	//! Removes all outstanding appends and removes the files if possible
++-	void CleanUpFiles();
+++	void CleanUpFiles(ClientContext &context);
++ 
++ 	//! CGetCommits callback for Unity Catalog managed commits
++ 	//! CCommit callback for Unity Catalog managed commits - returns None on success, Some(error) on failure
++@@ -111,7 +128,8 @@ private:
++ 	// string parent_catalog_schema;
++ 	optional_ptr<TableFunctionCatalogEntry> commit_function;
++ 	string unity_table_id;
++-	weak_ptr<ClientContext> current_context;
+++	//! Only set while a kernel commit call is running (see CommitContextScope), read by CommitCallback
+++	optional_ptr<ClientContext> commit_context;
++ 	optional_ptr<TableCatalogEntry> parent_table_entry;
++ 
++ 	ErrorData active_error;
++diff --git a/src/include/storage/delta_transaction_manager.hpp b/src/include/storage/delta_transaction_manager.hpp
++index 3957982..aaf5fd9 100644
++--- a/src/include/storage/delta_transaction_manager.hpp
+++++ b/src/include/storage/delta_transaction_manager.hpp
++@@ -18,9 +18,9 @@ class DeltaTransactionManager : public TransactionManager {
++ public:
++ 	DeltaTransactionManager(AttachedDatabase &db_p, DeltaCatalog &delta_catalog);
++ 
++-	Transaction &StartTransaction(ClientContext &context) override;
+++	Transaction &StartTransaction(Context &context, MetaTransaction &meta_transaction) override;
++ 	ErrorData CommitTransaction(ClientContext &context, Transaction &transaction) override;
++-	void RollbackTransaction(Transaction &transaction) override;
+++	void RollbackTransaction(ClientContext &context, Transaction &transaction) override;
++ 
++ 	void Checkpoint(ClientContext &context, bool force = false) override;
++ 
++diff --git a/src/storage/delta_schema_entry.cpp b/src/storage/delta_schema_entry.cpp
++index 0d453d9..9d6241d 100644
++--- a/src/storage/delta_schema_entry.cpp
+++++ b/src/storage/delta_schema_entry.cpp
++@@ -327,8 +327,12 @@ optional_ptr<CatalogEntry> DeltaSchemaEntry::CreateTable(CatalogTransaction tran
++ 	}
++ 
++ 	ffi::ExclusiveCommittedTransaction *committed;
++-	auto commit_res =
++-	    KernelUtils::TryUnpackResult(ffi::create_table_commit(create_transaction, engine.get()), committed);
+++	ErrorData commit_res;
+++	{
+++		CommitContextScope commit_scope(GetDeltaTransaction(transaction), context);
+++		commit_res =
+++		    KernelUtils::TryUnpackResult(ffi::create_table_commit(create_transaction, engine.get()), committed);
+++	}
++ 	if (commit_res.HasError()) {
++ 		commit_res.Throw();
++ 	}
++diff --git a/src/storage/delta_transaction.cpp b/src/storage/delta_transaction.cpp
++index 4c8961e..7ec33f8 100644
++--- a/src/storage/delta_transaction.cpp
+++++ b/src/storage/delta_transaction.cpp
++@@ -29,7 +29,7 @@
++ 
++ namespace duckdb {
++ 
++-DeltaTransaction::DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, ClientContext &context)
+++DeltaTransaction::DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, Context &context)
++     : Transaction(manager, context), access_mode(delta_catalog.access_mode), parent_commit(delta_catalog.parent_commit),
++       parent_catalog_name(delta_catalog.parent_catalog_name), unity_table_id(delta_catalog.unity_table_id) {
++ 	commit_function = delta_catalog.commit_function;
++@@
+```
+
+**File**: `.github/patches/extensions/ducklake/0029-transaction-takes-context.patch` (added, +1154/-0)
+```diff
+@@ -0,0 +1,1154 @@
++diff --git a/src/common/ducklake_util.cpp b/src/common/ducklake_util.cpp
++index f65438a3..96de1ab6 100644
++--- a/src/common/ducklake_util.cpp
+++++ b/src/common/ducklake_util.cpp
++@@ -591,21 +591,22 @@ string DuckLakeUtil::InlinedStorageExpression(DuckLakeMetadataManager &metadata_
++ 	return expression;
++ }
++ 
++-vector<string> DuckLakeUtil::InlinedDataToSQL(DuckLakeTransaction &transaction, ColumnDataCollection &data) {
+++vector<string> DuckLakeUtil::InlinedDataToSQL(ClientContext &context, DuckLakeTransaction &transaction,
+++                                              ColumnDataCollection &data) {
++ 	auto &metadata_manager = transaction.GetMetadataManager();
++-	auto context = transaction.context.lock();
++ 	vector<string> rows;
++ 	rows.reserve(data.Count());
++ 	for (auto &chunk : data.Chunks()) {
++ 		for (idx_t r = 0; r < chunk.size(); r++) {
++-			rows.push_back(ChunkRowToSQL(metadata_manager, *context, chunk, r));
+++			rows.push_back(ChunkRowToSQL(metadata_manager, context, chunk, r));
++ 		}
++ 	}
++ 	return rows;
++ }
++ 
++-void DuckLakeUtil::CopyExtensionSettings(ClientContext &from, ClientContext &to) {
++-	auto &db_config = DBConfig::GetConfig(from);
+++vector<pair<idx_t, Value>> DuckLakeUtil::GetExtensionSettings(Context &from) {
+++	vector<pair<idx_t, Value>> result;
+++	auto &db_config = DBConfig::GetConfig(from.GetDatabase());
++ 	for (auto &entry : db_config.GetExtensionSettings()) {
++ 		auto &option = entry.second;
++ 		if (!option.setting_index.IsValid()) {
++@@ -616,18 +617,30 @@ void DuckLakeUtil::CopyExtensionSettings(ClientContext &from, ClientContext &to)
++ 		auto setting_index = option.setting_index.GetIndex();
++ 		// these change the types read from the metadata and data files
++ 		if (entry.first == "sqlite_all_varchar" || entry.first == "binary_as_string") {
++-			ClientConfig::GetConfig(to).user_settings.SetUserSetting(setting_index, Value::BOOLEAN(false));
+++			result.emplace_back(setting_index, Value::BOOLEAN(false));
++ 			continue;
++ 		}
++-		if (!ClientConfig::GetConfig(from).user_settings.IsSet(setting_index)) {
+++		auto client_config = from.TryGetClientConfig();
+++		if (!client_config || !client_config->user_settings.IsSet(setting_index)) {
++ 			continue;
++ 		}
++ 		Value value;
++ 		from.TryGetCurrentUserSetting(setting_index, value);
++-		ClientConfig::GetConfig(to).user_settings.SetUserSetting(setting_index, std::move(value));
+++		result.emplace_back(setting_index, std::move(value));
+++	}
+++	return result;
+++}
+++
+++void DuckLakeUtil::ApplyExtensionSettings(const vector<pair<idx_t, Value>> &settings, ClientContext &to) {
+++	for (auto &entry : settings) {
+++		ClientConfig::GetConfig(to).user_settings.SetUserSetting(entry.first, entry.second);
++ 	}
++ }
++ 
+++void DuckLakeUtil::CopyExtensionSettings(ClientContext &from, ClientContext &to) {
+++	ApplyExtensionSettings(GetExtensionSettings(from.GetContext()), to);
+++}
+++
++ void DuckLakeUtil::SetExtensionSetting(ClientContext &context, const string &name, const Value &value) {
++ 	ExtensionOption option;
++ 	if (!DBConfig::GetConfig(context).TryGetExtensionOption(Identifier(name), option)) {
++diff --git a/src/functions/ducklake_cleanup_files.cpp b/src/functions/ducklake_cleanup_files.cpp
++index a79438d7..0337d542 100644
++--- a/src/functions/ducklake_cleanup_files.cpp
+++++ b/src/functions/ducklake_cleanup_files.cpp
++@@ -86,7 +86,7 @@ static unique_ptr<FunctionData> CleanupBind(ClientContext &context, TableFunctio
++ 	if (!skip_cleanup) {
++ 		auto &transaction = DuckLakeTransaction::Get(context, ducklake_catalog);
++ 		auto &metadata_manager = transaction.GetMetadataManager();
++-		result->files = metadata_manager.GetFilesForCleanup(result->GetFilter(), type);
+++		result->files = metadata_manager.GetFilesForCleanup(context, result->GetFilter(), type);
++ 		for (auto &file : result->files) {
++ 			result->rows.push_back({Value(file.path)});
++ 		}
++diff --git a/src/functions/ducklake_expire_snapshots.cpp b/src/functions/ducklake_expire_snapshots.cpp
++index 01c645fc..d56a8255 100644
++--- a/src/functions/ducklake_expire_snapshots.cpp
+++++ b/src/functions/ducklake_expire_snapshots.cpp
++@@ -72,7 +72,7 @@ static unique_ptr<FunctionData> DuckLakeExpireSnapshotsBind(ClientContext &conte
++ 	}
++ 	auto &transaction = DuckLakeTransaction::Get(context, ducklake_catalog);
++ 	auto &metadata_manager = transaction.GetMetadataManager();
++-	result->snapshots = metadata_manager.GetAllSnapshots(filter);
+++	result->snapshots = metadata_manager.GetAllSnapshots(context, filter);
++ 	for (auto &snapshot : result->snapshots) {
++ 		result->rows.push_back(DuckLakeSnapshotsFunction::GetSnapshotValues(snapshot));
++ 	}
++diff --git a/src/functions/ducklake_flush_inlined_data.cpp b/src/functions/ducklake_flush_inlined_data.cpp
++index 49f07791..9a9bdd99 100644
++--- a/src/functions/ducklake_flush_inlined_data.cpp
+++++ b/src/functions/ducklake_flush_inlined_data.cpp
++@@ -498,7 +498,7 @@ WHERE del.begin_snapshot <= {SNAPSHOT_ID}
++ 	}
++ 
++ 	// Register the delete files
++-	transac
+```
+
+**File**: `.github/patches/extensions/fts/0004-indexing-result-order.patch` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++diff --git a/test/sql/fts/test_indexing.test_slow b/test/sql/fts/test_indexing.test_slow
++index 4643b87..a1f283e 100644
++--- a/test/sql/fts/test_indexing.test_slow
+++++ b/test/sql/fts/test_indexing.test_slow
++@@ -62,7 +62,7 @@ one
++ two
++ three
++ 
++-query III
+++query III rowsort
++ SELECT termid, docid, fieldid FROM fts_main_documents.terms
++ ----
++ 0	0	0
++@@ -100,7 +100,7 @@ SELECT * FROM qtermids
++ 0
++ 1
++ 
++-query II
+++query II rowsort
++ WITH ppterms AS (SELECT stem(unnest(string_split_regex(regexp_replace(lower(strip_accents('QUÁCKED BÁRKED')), '[^a-z]', ' ', 'g'), '\s+')), 'porter') AS term),
++ qtermids AS (SELECT termid FROM fts_main_documents.dict AS dict, ppterms WHERE dict.term = ppterms.term),
++ qterms AS (SELECT termid, docid FROM fts_main_documents.terms AS terms WHERE termid IN (SELECT qtermids.termid FROM qtermids))
+```
+
+**File**: `.github/patches/extensions/glue/0005-transaction-takes-context.patch` (added, +85/-0)
+```diff
+@@ -0,0 +1,85 @@
++diff --git a/src/catalog/glue_transaction.cpp b/src/catalog/glue_transaction.cpp
++index 09f8369..5deb6d3 100644
++--- a/src/catalog/glue_transaction.cpp
+++++ b/src/catalog/glue_transaction.cpp
++@@ -5,13 +5,14 @@
++ #include "duckdb/logging/logger.hpp"
++ #include "duckdb/main/attached_database.hpp"
++ #include "duckdb/main/client_context.hpp"
+++#include "duckdb/main/context.hpp"
++ #include "duckdb/transaction/transaction_manager.hpp"
++ 
++ namespace duckdb {
++ 
++ namespace {
++ 
++-bool ConnectionScopedMetadataCache(ClientContext &context) {
+++bool ConnectionScopedMetadataCache(Context &context) {
++ 	Value scope;
++ 	if (context.TryGetCurrentSetting("glue_metadata_cache_scope", scope) && !scope.IsNull()) {
++ 		return StringUtil::Lower(StringValue::Get(scope)) == "connection";
++@@ -22,11 +23,11 @@ bool ConnectionScopedMetadataCache(ClientContext &context) {
++ 
++ } // namespace
++ 
++-GlueTransaction::GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, ClientContext &context)
+++GlueTransaction::GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, Context &context)
++     : Transaction(manager, context), glue_catalog(glue_catalog),
++       transaction_state(GlueTransactionState::TRANSACTION_NOT_YET_STARTED) {
++ 	if (ConnectionScopedMetadataCache(context)) {
++-		auto state = context.GetContext().GetRegisteredState().GetOrCreate<GlueMetadataCacheState>("glue_metadata_cache");
+++		auto state = context.GetRegisteredState().GetOrCreate<GlueMetadataCacheState>("glue_metadata_cache");
++ 		cache = state->GetCache(glue_catalog.GetName().GetIdentifierName(), glue_catalog.GetAttached().oid);
++ 	} else {
++ 		cache = make_shared_ptr<GlueTransactionCache>();
++diff --git a/src/catalog/glue_transaction_manager.cpp b/src/catalog/glue_transaction_manager.cpp
++index 9f53af1..b5b6778 100644
++--- a/src/catalog/glue_transaction_manager.cpp
+++++ b/src/catalog/glue_transaction_manager.cpp
++@@ -11,7 +11,7 @@ GlueTransactionManager::GlueTransactionManager(AttachedDatabase &db_p, GlueCatal
++     : TransactionManager(db_p), glue_catalog(glue_catalog) {
++ }
++ 
++-Transaction &GlueTransactionManager::StartTransaction(ClientContext &context) {
+++Transaction &GlueTransactionManager::StartTransaction(Context &context, MetaTransaction &) {
++ 	auto transaction = make_uniq<GlueTransaction>(glue_catalog, *this, context);
++ 	transaction->Start();
++ 	auto &result = *transaction;
++@@ -31,7 +31,7 @@ ErrorData GlueTransactionManager::CommitTransaction(ClientContext &context, Tran
++ 	return ErrorData();
++ }
++ 
++-void GlueTransactionManager::RollbackTransaction(Transaction &transaction) {
+++void GlueTransactionManager::RollbackTransaction(ClientContext &context, Transaction &transaction) {
++ 	auto &glue_transaction = transaction.Cast<GlueTransaction>();
++ 	glue_transaction.Rollback();
++ 	lock_guard<mutex> l(transaction_lock);
++diff --git a/src/include/catalog/glue_transaction.hpp b/src/include/catalog/glue_transaction.hpp
++index 68bb793..db37941 100644
++--- a/src/include/catalog/glue_transaction.hpp
+++++ b/src/include/catalog/glue_transaction.hpp
++@@ -146,7 +146,7 @@ private:
++ //! immediately. The transaction exists because every attached database needs one, and carries the metadata cache.
++ class GlueTransaction : public Transaction {
++ public:
++-	GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, ClientContext &context);
+++	GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, Context &context);
++ 	~GlueTransaction() override;
++ 
++ 	void Start();
++diff --git a/src/include/catalog/glue_transaction_manager.hpp b/src/include/catalog/glue_transaction_manager.hpp
++index e37e655..bc17782 100644
++--- a/src/include/catalog/glue_transaction_manager.hpp
+++++ b/src/include/catalog/glue_transaction_manager.hpp
++@@ -12,9 +12,9 @@ class GlueTransactionManager : public TransactionManager {
++ public:
++ 	GlueTransactionManager(AttachedDatabase &db_p, GlueCatalog &glue_catalog);
++ 
++-	Transaction &StartTransaction(ClientContext &context) override;
+++	Transaction &StartTransaction(Context &context, MetaTransaction &) override;
++ 	ErrorData CommitTransaction(ClientContext &context, Transaction &transaction) override;
++-	void RollbackTransaction(Transaction &transaction) override;
+++	void RollbackTransaction(ClientContext &context, Transaction &transaction) override;
++ 
++ 	void Checkpoint(ClientContext &context, bool force = false) override;
++ 
+```
+
+**File**: `.github/patches/extensions/iceberg/0005-transaction-takes-context.patch` (added, +678/-0)
+```diff
+@@ -0,0 +1,678 @@
++diff --git a/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp b/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp
++index e30b8dfc8..e16d07a22 100644
++--- a/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp
+++++ b/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp
++@@ -505,13 +505,13 @@ void IcebergSchemaEntry::Alter(CatalogTransaction transaction, AlterInfo &info)
++ 				}
++ 				D_ASSERT(state && state->IsDroppedOrRenamed());
++ 			}
++-			irc_transaction.RenameTable(catalog_table_info, new_name.GetIdentifierName());
+++			irc_transaction.RenameTable(context, catalog_table_info, new_name.GetIdentifierName());
++ 			return;
++ 		}
++ 	}
++ 
++ 	auto &alter = irc_transaction.GetOrCreateAlter();
++-	auto &updated_table = alter.GetOrInitializeTable(catalog_table_info);
+++	auto &updated_table = alter.GetOrInitializeTable(context, catalog_table_info);
++ 	auto &transaction_data = updated_table.GetOrCreateTransactionData(irc_transaction);
++ 	auto &current_schema = updated_table.table_metadata.GetLatestSchema();
++ 
++@@ -565,7 +565,7 @@ void IcebergSchemaEntry::Alter(CatalogTransaction transaction, AlterInfo &info)
++ 		// Ensure last assigned partition field id is up to date
++ 		transaction_data.TableAddAssertLastAssignedPartitionId();
++ 
++-		updated_table.SetSortedBy(irc_transaction, sort_info.orders, current_schema);
+++		updated_table.SetSortedBy(context, irc_transaction, sort_info.orders, current_schema);
++ 		return;
++ 	}
++ 	case AlterTableType::ADD_COLUMN: {
++diff --git a/src/catalog/rest/catalog_entry/table/iceberg_table.cpp b/src/catalog/rest/catalog_entry/table/iceberg_table.cpp
++index 4d4a83c43..4034fda70 100644
++--- a/src/catalog/rest/catalog_entry/table/iceberg_table.cpp
+++++ b/src/catalog/rest/catalog_entry/table/iceberg_table.cpp
++@@ -551,15 +551,15 @@ void IcebergTable::SetPartitionedBy(IcebergTransaction &transaction,
++ 	transaction_data.TableSetDefaultSpec();
++ }
++ 
++-void IcebergTable::SetSortedBy(IcebergTransaction &transaction, const vector<OrderByNode> &orders,
++-                               const IcebergTableSchema &schema, bool first_sort_spec) {
+++void IcebergTable::SetSortedBy(ClientContext &context, IcebergTransaction &transaction,
+++                               const vector<OrderByNode> &orders, const IcebergTableSchema &schema,
+++                               bool first_sort_spec) {
++ 	idx_t new_sort_order_id = UNSORTED_SORT_ORDER_ID;
++ 	if (!first_sort_spec && !orders.empty()) {
++ 		new_sort_order_id = GetNextSortOrderId();
++ 	}
++ 
++-	auto context = transaction.context.lock();
++-	auto new_sort_order = BuildSortOrder(*context, orders, schema, static_cast<int32_t>(new_sort_order_id));
+++	auto new_sort_order = BuildSortOrder(context, orders, schema, static_cast<int32_t>(new_sort_order_id));
++ 
++ 	// if spec definition already exists in a previous spec definition, set it to that spec id
++ 	// (some catalog may allow duplicate definitions, others not)
++@@ -824,10 +824,7 @@ IcebergTableMetadata IcebergTable::CreateMetadataFromLog(ClientContext &context,
++ 	return IcebergTableMetadata::FromTableMetadata(parsed_metadata);
++ }
++ 
++-IcebergTable IcebergTable::Copy(IcebergTransaction &iceberg_transaction) const {
++-	auto locked_context = iceberg_transaction.context.lock();
++-	auto &context = *locked_context;
++-
+++IcebergTable IcebergTable::Copy(ClientContext &context) const {
++ 	auto ret = Copy();
++ 	auto transaction_start_ms = IcebergUtils::GetTransactionStartTimeMS(context);
++ 	auto clock_skew_ms = DEFAULT_METADATA_LOG_CLOCK_SKEW_MS;
++@@ -891,8 +888,7 @@ shared_ptr<IcebergTable> IcebergTable::CreatePlaceholder(IcebergCatalog &catalog
++ IcebergTransactionData &IcebergTable::GetOrCreateTransactionData(IcebergTransaction &transaction) {
++ 	lock_guard<mutex> guard(transaction.lock);
++ 	if (!transaction_data) {
++-		auto context = transaction.context.lock();
++-		transaction_data = make_uniq<IcebergTransactionData>(*context, transaction, *this);
+++		transaction_data = make_uniq<IcebergTransactionData>(transaction, *this);
++ 	}
++ 	return *transaction_data;
++ }
++diff --git a/src/catalog/rest/iceberg_table_set.cpp b/src/catalog/rest/iceberg_table_set.cpp
++index d6efdf664..43cea7fe7 100644
++--- a/src/catalog/rest/iceberg_table_set.cpp
+++++ b/src/catalog/rest/iceberg_table_set.cpp
++@@ -252,7 +252,7 @@ void IcebergTableSet::DropEntry(ClientContext &context, DropInfo &info, bool del
++ 
++ 	// Add the table to the transaction's deleted tables.
++ 	auto &transaction = IcebergTransaction::Get(context, catalog).Cast<IcebergTransaction>();
++-	auto &table = transaction.DeleteTable(*entry->second);
+++	auto &table = transaction.DeleteTable(context, *entry->second);
++ 	//! FIXME: Schema versions point back to their IcebergTable and must be reinitialized after the copy.
++ 	table.InitSchemaVersions();
++ }
++@@ -521,8 +521,8 @@ optional_ptr<CatalogEntry> IcebergTableSet::GetEntry(ClientContext &context, con
++ 	}
++ 	iceberg_transaction.tables[table_key] = new_vers
+```
+
+**File**: `.github/patches/extensions/mysql_scanner/0003-transaction-takes-context.patch` (added, +817/-0)
+```diff
+@@ -0,0 +1,817 @@
++diff --git a/src/include/mysql_types.hpp b/src/include/mysql_types.hpp
++index bacb77d..06ac6f4 100644
++--- a/src/include/mysql_types.hpp
+++++ b/src/include/mysql_types.hpp
++@@ -12,6 +12,7 @@
++ 
++ #include "duckdb.hpp"
++ #include "duckdb/main/client_context.hpp"
+++#include "duckdb/main/context.hpp"
++ #include "duckdb/parser/expression/type_expression.hpp"
++ #include "duckdb/parser/parsed_expression.hpp"
++ 
++@@ -39,6 +40,7 @@ struct MySQLTypeConfig {
++ 	bool incomplete_dates_as_nulls = false;
++ 
++ 	MySQLTypeConfig();
+++	MySQLTypeConfig(Context &context);
++ 	MySQLTypeConfig(ClientContext &context);
++ };
++ 
++diff --git a/src/include/storage/mysql_catalog_set.hpp b/src/include/storage/mysql_catalog_set.hpp
++index 096686b..b676f4a 100644
++--- a/src/include/storage/mysql_catalog_set.hpp
+++++ b/src/include/storage/mysql_catalog_set.hpp
++@@ -24,16 +24,17 @@ class MySQLCatalogSet {
++ public:
++ 	MySQLCatalogSet(Catalog &catalog);
++ 
++-	optional_ptr<CatalogEntry> GetEntry(MySQLTransaction &transaction, const string &name);
++-	virtual void DropEntry(MySQLTransaction &transaction, DropInfo &info);
++-	void Scan(MySQLTransaction &transaction, const std::function<void(CatalogEntry &)> &callback);
+++	optional_ptr<CatalogEntry> GetEntry(ClientContext &context, MySQLTransaction &transaction, const string &name);
+++	virtual void DropEntry(ClientContext &context, MySQLTransaction &transaction, DropInfo &info);
+++	void Scan(ClientContext &context, MySQLTransaction &transaction,
+++	          const std::function<void(CatalogEntry &)> &callback);
++ 	virtual optional_ptr<CatalogEntry> CreateEntry(MySQLTransaction &transaction, shared_ptr<CatalogEntry> entry);
++ 	void ClearEntries();
++ 
++ protected:
++-	virtual void LoadEntries(MySQLTransaction &transaction) = 0;
+++	virtual void LoadEntries(ClientContext &context, MySQLTransaction &transaction) = 0;
++ 
++-	void TryLoadEntries(MySQLTransaction &transaction);
+++	void TryLoadEntries(ClientContext &context, MySQLTransaction &transaction);
++ 
++ 	void EraseEntryInternal(const string &name);
++ 
++diff --git a/src/include/storage/mysql_index_set.hpp b/src/include/storage/mysql_index_set.hpp
++index 122a00b..415af85 100644
++--- a/src/include/storage/mysql_index_set.hpp
+++++ b/src/include/storage/mysql_index_set.hpp
++@@ -17,10 +17,10 @@ class MySQLIndexSet : public MySQLInSchemaSet {
++ public:
++ 	MySQLIndexSet(MySQLSchemaEntry &schema);
++ 
++-	void DropEntry(MySQLTransaction &transaction, DropInfo &info) override;
+++	void DropEntry(ClientContext &context, MySQLTransaction &transaction, DropInfo &info) override;
++ 
++ protected:
++-	void LoadEntries(MySQLTransaction &transaction) override;
+++	void LoadEntries(ClientContext &context, MySQLTransaction &transaction) override;
++ };
++ 
++ } // namespace duckdb
++diff --git a/src/include/storage/mysql_schema_set.hpp b/src/include/storage/mysql_schema_set.hpp
++index a0762ad..8ceff1e 100644
++--- a/src/include/storage/mysql_schema_set.hpp
+++++ b/src/include/storage/mysql_schema_set.hpp
++@@ -23,10 +23,11 @@ public:
++ 	explicit MySQLSchemaSet(Catalog &catalog, vector<string> schemas_to_load);
++ 
++ public:
++-	optional_ptr<CatalogEntry> CreateSchema(MySQLTransaction &transaction, CreateSchemaInfo &info);
+++	optional_ptr<CatalogEntry> CreateSchema(ClientContext &context, MySQLTransaction &transaction,
+++	                                        CreateSchemaInfo &info);
++ 
++ protected:
++-	void LoadEntries(MySQLTransaction &transaction) override;
+++	void LoadEntries(ClientContext &context, MySQLTransaction &transaction) override;
++ 
++ 	vector<string> schemas_to_load;
++ };
++diff --git a/src/include/storage/mysql_table_set.hpp b/src/include/storage/mysql_table_set.hpp
++index 7e01552..96b69fe 100644
++--- a/src/include/storage/mysql_table_set.hpp
+++++ b/src/include/storage/mysql_table_set.hpp
++@@ -25,21 +25,23 @@ public:
++ 	explicit MySQLTableSet(MySQLSchemaEntry &schema);
++ 
++ public:
++-	optional_ptr<CatalogEntry> CreateTable(MySQLTransaction &transaction, BoundCreateTableInfo &info);
+++	optional_ptr<CatalogEntry> CreateTable(ClientContext &context, MySQLTransaction &transaction,
+++	                                       BoundCreateTableInfo &info);
++ 
++-	static unique_ptr<MySQLTableInfo> GetTableInfo(MySQLTransaction &transaction, MySQLSchemaEntry &schema,
++-	                                               const string &table_name);
++-	optional_ptr<CatalogEntry> RefreshTable(MySQLTransaction &transaction, const string &table_name);
+++	static unique_ptr<MySQLTableInfo> GetTableInfo(ClientContext &context, MySQLTransaction &transaction,
+++	                                               MySQLSchemaEntry &schema, const string &table_name);
+++	optional_ptr<CatalogEntry> RefreshTable(ClientContext &context, MySQLTransaction &transaction,
+++	                                        const string &table_name);
++ 
++-	void AlterTable(MySQLTransaction &transaction, AlterTableInfo &info);
+++	void AlterTable(ClientContext &context, MySQLTransaction &transaction, AlterTa
+```
+
+**File**: `.github/patches/extensions/mysql_scanner/0004-database-connector-transaction-manager-takes-context.patch` (added, +51/-0)
+```diff
+@@ -0,0 +1,51 @@
++--- a/database-connector/src/include/dbconnector/storage/transaction_manager.hpp
+++++ b/database-connector/src/include/dbconnector/storage/transaction_manager.hpp
++@@ -5,6 +5,8 @@
++ #include "duckdb/common/reference_map.hpp"
++ #include "duckdb/main/attached_database.hpp"
++ #include "duckdb/main/client_context.hpp"
+++#include "duckdb/main/context.hpp"
+++#include "duckdb/transaction/meta_transaction.hpp"
++ #include "duckdb/transaction/transaction_manager.hpp"
++ 
++ namespace dbconnector {
++@@ -17,7 +19,7 @@
++ 	    : duckdb::TransactionManager(db_p), catalog(catalog_p) {
++ 	}
++ 
++-	duckdb::Transaction &StartTransaction(duckdb::ClientContext &context) override {
+++	duckdb::Transaction &StartTransaction(duckdb::Context &context, duckdb::MetaTransaction &) override {
++ 		auto transaction = duckdb::make_uniq<TransactionT>(catalog, *this, context);
++ 		transaction->Start();
++ 		auto &result = *transaction;
++@@ -30,7 +32,7 @@
++ 		auto &db_transaction = transaction.Cast<TransactionT>();
++ 		duckdb::ErrorData error;
++ 		try {
++-			db_transaction.Commit();
+++			db_transaction.Commit(context);
++ 		} catch (const std::exception &ex) {
++ 			error = duckdb::ErrorData(ex);
++ 		} catch (...) {
++@@ -40,10 +42,10 @@
++ 		return error;
++ 	}
++ 
++-	void RollbackTransaction(duckdb::Transaction &transaction) override {
+++	void RollbackTransaction(duckdb::ClientContext &context, duckdb::Transaction &transaction) override {
++ 		auto &db_transaction = transaction.Cast<TransactionT>();
++ 		try {
++-			db_transaction.Rollback();
+++			db_transaction.Rollback(context);
++ 		} catch (...) {
++ 			DestroyTransaction(transaction);
++ 			throw;
++@@ -53,7 +55,7 @@
++ 
++ 	void Checkpoint(duckdb::ClientContext &context, bool force = false) override {
++ 		auto &transaction = TransactionT::Get(context, db.GetCatalog());
++-		auto &conn = transaction.GetConnection();
+++		auto &conn = transaction.GetConnection(context);
++ 		conn.Execute(context, "CHECKPOINT");
++ 	}
++ 
 ```
 
 ---
 
-### Incident Patch 3: `8e057bab` (2026-11-17)
-**Commit Message**: Fix CI (#28914)
+### Incident Patch 3: `8c17d8c3` (2026-11-20)
+**Commit Message**: fix ci
 
-Disclaimer: this PR is analyzed and completed by opus-5.5
-
-Follow-up to https://github.com/duckdb/duckdb/pull/28791, which added
-`test/optimizer/pushdown/join_filter_pushdown_right_anti.test`. The test
-fails in the **Vector Sizes** CI job, which builds with
-`STANDARD_VECTOR_SIZE=2`. That job is skipped in the merge queue, so the
-failure only showed up after merge. It now fails on `main` and on every
-open PR.
-
-The two `EXPLAIN ANALYZE` checks at the end of the test expect the scan
-of `big` to emit exactly 40 rows: the 40 rows with `k = 42`.
-The join filter on `big` is `optional: k IN PRF(k)`. Like the other
-optional runtime filters, it tracks its own selectivity over a window of
-6 vectors and pauses itself when at least 50% of the rows pass.
-- With 2048-row vectors the filter stays active and the scan emits
-exactly 40 rows.
-- With 2-row vectors the window is only 12 rows, so the filter pauses.
-The row next to each matching row (`k = 45`) gets through, and the scan
-emits 80 rows.
-
-The query results are correct either way. Only the exact row count in
-the plan changes.
-
-**File**: `.github/patches/extensions/quack/0004-exclude-geography-from-all-types-test.patch` (added, +13/-0)
+**File**: `test/configs/force_storage_restart.json` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,13 @@
-+diff --git a/test/sql/rpc.test b/test/sql/rpc.test
-+index 68433cc..da84c05 100644
-+--- a/test/sql/rpc.test
-++++ b/test/sql/rpc.test
-+@@ -83,7 +83,7 @@ select max(range) from quack_query({server}, 'from range(100000)')
-+ 99999
-+ 
-+ statement ok
-+-from quack_query({server}, 'from test_all_types()')
-++from quack_query({server}, 'select * exclude (geography) from test_all_types()')
-+ 
-+ 
-+ statement ok
-```
-
-**File**: `test/optimizer/pushdown/join_filter_pushdown_right_anti.test` (modified, +4/-3)
-```diff
-@@ -350,7 +350,8 @@ statement ok
- RESET disabled_optimizers;
- 
- # the probe side is an aggregate over a scan in a pipeline of its own: that scan waits for the filter of the
--# RIGHT ANTI join like it does for a RIGHT SEMI join, also if the build side turns out to be empty
-+# RIGHT ANTI join like it does for a RIGHT SEMI join, also if the build side turns out to be empty.
-+# 40 rows match, but the optional filter can pause itself on small vectors and let some non-matching rows through
- statement ok
- CREATE TABLE keys(k BIGINT);
- 
-@@ -365,12 +366,12 @@ SET threads={threads};
- query II
- EXPLAIN (ANALYZE, FORMAT JSON) SELECT b.k FROM keys b ANTI JOIN (SELECT k, sum(v) AS v FROM big GROUP BY k) p ON p.k = b.k;
- ----
--analyzed_plan	<REGEX>:(?s).*"Join Type": "RIGHT_ANTI".*"Table": "[^"]*[.]big"[^}]*},\s*"intermediate_rows": 40,.*
-+analyzed_plan	<REGEX>:(?s).*"Join Type": "RIGHT_ANTI".*"Table": "[^"]*[.]big"[^}]*},\s*"intermediate_rows": [0-9]{2,3},.*
- 
- query II
- EXPLAIN (ANALYZE, FORMAT JSON) SELECT b.k FROM keys b SEMI JOIN (SELECT k, sum(v) AS v FROM big GROUP BY k) p ON p.k = b.k;
- ----
--analyzed_plan	<REGEX>:(?s).*"Join Type": "RIGHT_SEMI".*"Table": "[^"]*[.]big"[^}]*},\s*"intermediate_rows": 40,.*
-+analyzed_plan	<REGEX>:(?s).*"Join Type": "RIGHT_SEMI".*"Table": "[^"]*[.]big"[^}]*},\s*"intermediate_rows": [0-9]{2,3},.*
- 
- query I
- SELECT b.k FROM keys b ANTI JOIN (SELECT k, sum(v) AS v FROM big GROUP BY k) p ON p.k = b.k ORDER BY ALL;
-```
-
-**File**: `test/sql/join/hash_join/perfect_hash_join_memory.test` (modified, +3/-1)
-```diff
-@@ -2,9 +2,11 @@
- # description: Cost direct lookup before spilling and reserve optional dictionary output separately
- # group: [hash_join]
- 
--# The fixed memory budgets below assume default-sized vectors.
-+# The fixed memory budgets below assume default-sized vectors and 64-bit memory usage.
- require vector_size 2048
- 
-+require 64bit
-+
- require skip_reload
- 
- load {TEST_DIR}/perfect_hash_join_memory.db
+@@ -55,6 +55,7 @@
+       "paths": [
+         "test/sql/copy/parquet/bloom_filter_coalesced_memory.test_slow",
+         "test/sql/copy/parquet/bloom_filter_coalesced_reads.test",
++        "test/sql/copy/parquet/bloom_filter_or_reads.test",
+         "test/sql/storage/compression/zstd/zstd_compression_ratio.test_slow",
+         "test/sql/logging/logging_memory_after_truncate.test",
+         "test/sql/logging/logging_deprecated_names.test",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28960** (closed): Fix: mark unshredded VARIANT stats as NOT_SHREDDED (@gropaul)
-- **PR #28952** (closed): Resolve-types callback: allow setting argument types in the C API V2 (@Robinho-MR)
-- **PR #28948** (2026-11-17): Skip Windows extension builds on PRs that do not change extensions (@Robinho-MR)
-- **PR #28946** (2026-11-17): Ignore stalled ORDER_BY progress in test_transaction_local_parallelism (@Robinho-MR)
-- **PR #28945** (2026-11-17): Shrink hash_join_dict_surviving_computed_build test to avoid CI timeouts (@Robinho-MR)
-- **PR #28944** (2026-11-17): Shrink partitioned_full_outer_hash_join test to avoid CI timeouts (@Robinho-MR)
+- **PR #29134** (closed): Skip plan-cost regression checks for identical plans (@lnkuiper)
+- **PR #29131** (closed): Register a sort temporary memory state on its first sink (@anhphanmd)
+- **PR #29126** (2026-11-20): Remove duplicate Unity Catalog test patch (@lnkuiper)
+- **PR #29122** (2026-11-20): [v2.0-cyanoptera] Skip async_task_synchronous_batch under storage_compatibility and v1_storage_block_size_16kB (@Robinho-MR)
+- **PR #29118** (2026-11-20): Scan validity segments into ValidityMask (@lnkuiper)
+- **PR #29105** (2026-11-20): Avoid unnecessary bloom filter IO (@dentiny)
 
 ---
 
@@ -2297,24 +2746,24 @@ the plan changes.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. INTERNAL error in batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE
+## X. min/max for INTERVAL type
 
 **RULE**:
-When implementing operations in `src/execution/operator/persistent/physical_batch_copy_to_file.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/function/aggregate/distributive/minmax.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `069eb90c`: INTERNAL error in batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `abbad801`: min/max for INTERVAL type. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/execution/operator/persistent/physical_batch_copy_to_file.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/function/aggregate/distributive/minmax.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	if (!batch_size.IsValid()) {
-		// no row target (only ROW_GROUP_SIZE_BYTES): the byte target alone decides
-		return CopyFunctionBatchAnalyzer(batch, batch_size, batch_size_bytes).IsAcceptable();
-	}
+	case PhysicalType::INTERVAL:
+		// sort keys do not normalize intervals, so compare them as interval_t
+		SpecializeMinMaxNFunction<MinMaxFixedValue<interval_t>, COMPARATOR>(function);
+		break;
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2324,7 +2773,7 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `069eb90c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `abbad801` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

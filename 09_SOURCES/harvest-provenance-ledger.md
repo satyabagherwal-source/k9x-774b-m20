@@ -11570,3 +11570,6 @@ Every entry in this ledger must capture:
 | `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `e8acd6bd` | Multi-dimensional audit evidence | 2026-11-20T12:15:15.766Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `db656d41` | Multi-dimensional audit evidence | 2026-11-20T12:15:29.342Z |
 | `learn-dom-j-fbec7580` | `project://dragonflydb-dragonfly` | `db656d41` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md` | 2026-11-20T12:15:56.218Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `78a8aa87` | Multi-dimensional audit evidence | 2026-11-20T12:50:15.164Z |
+| `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `00acf3f3` | Multi-dimensional audit evidence | 2026-11-20T12:50:17.894Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `522f213e` | Multi-dimensional audit evidence | 2026-11-20T12:50:28.049Z |

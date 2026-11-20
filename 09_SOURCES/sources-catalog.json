@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "9205207e",
+    "sourceVersion": "78a8aa87",
     "license": "MIT",
-    "contentHash": "9f8fa370cbee3b0c7e46dcc359b8b6d1f61eb43684af3fdc6fd40203755bc1c0",
-    "lastHarvestedAt": "2026-11-18T21:50:09.756Z",
+    "contentHash": "00e832b487fe833b2b8833c5de785b6b3bc2046fcec78a75336ff80d42cdb497",
+    "lastHarvestedAt": "2026-11-20T12:50:15.164Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "aa87a115",
+    "sourceVersion": "522f213e",
     "license": "MIT",
-    "contentHash": "a9273eea696a6f56b8fed80d445d16a342ffcb892fc783abd9d48ed70621fe4d",
-    "lastHarvestedAt": "2026-11-19T05:54:58.169Z",
+    "contentHash": "eb529b2976ebb20ce838d5abbae88425507097f63b57f26cd067c9aa983b383c",
+    "lastHarvestedAt": "2026-11-20T12:50:28.049Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -9083,10 +9083,10 @@
     "repository": "scrapy/scrapy",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapy/scrapy",
-    "sourceVersion": "953a7f42",
+    "sourceVersion": "00acf3f3",
     "license": "BSD-3-Clause",
-    "contentHash": "d7f4ffa83df09fdcefa3706bf74e41392558d17c5d4e04bee9576bd33ef3af3a",
-    "lastHarvestedAt": "2026-11-16T13:22:54.303Z",
+    "contentHash": "d38a8d4ecd879da9fb60d3bd29f9aff35327d68915ee786a2497a85c595b1acb",
+    "lastHarvestedAt": "2026-11-20T12:50:17.894Z",
     "learningId": "learn-github-scrapy-scrapy"
   },
   "krzysztofzablocki-inject": {

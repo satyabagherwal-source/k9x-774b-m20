@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T12:07:30.080Z",
+  "updated_at": "2026-11-20T12:50:33.031Z",
   "stats": {
-    "total_discovered": 6348,
-    "approved_pending_harvest": 5999,
+    "total_discovered": 6349,
+    "approved_pending_harvest": 6000,
     "harvested_count": 0,
     "rejected_count": 349,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5984,
+      "COMMUNITY_AND_EXPERT": 5985,
       "OFFICIAL_DOCUMENTATION": 199,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
@@ -137236,6 +137236,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
         "fileName": "redisearch-redisearch-learnings.md"
+      }
+    },
+    "SRC-9687EE8296A5": {
+      "id": "SRC-9687EE8296A5",
+      "url": "https://github.com/duckdb/duckdb-sqlite",
+      "title": "https://github.com/duckdb/duckdb-sqlite",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T12:50:33.031Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
+        "fileName": "duckdb-duckdb-learnings.md"
       }
     }
   }
