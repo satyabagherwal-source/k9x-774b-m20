@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T17:45:37.779Z",
+  "last_updated": "2026-11-20T17:58:52.525Z",
   "total_records": 2158,
   "domains": {
     "A": {
@@ -9692,8 +9692,8 @@
       "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
       "repository": "weaviate/weaviate",
-      "content_hash": "d30ff1a4c9b3a44bdd182ca085ea94f98af463a75a32e51bfafb90a426cd590e",
-      "created_at": "2026-11-18T11:06:54.500Z"
+      "content_hash": "0aecd301b0933fe7169b080a40692c6b6de1bf9a227d8bba2d256c1e1a542405",
+      "created_at": "2026-11-20T17:53:57.831Z"
     },
     "DOM-K-199063A7": {
       "record_id": "DOM-K-199063A7",
@@ -13003,8 +13003,8 @@
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "repository": "moby/buildkit",
-      "content_hash": "37d5d4de40f1408c342715ffaeb2225f4237656d7682b6f2f39c5c6d0de29d45",
-      "created_at": "2026-11-18T13:17:28.376Z"
+      "content_hash": "f9c1ec45ca1ae76d9dab6cde8dae95a996172d154ab6cfa4068f1de5669f4727",
+      "created_at": "2026-11-20T17:53:52.931Z"
     },
     "DOM-D-F2B017DF": {
       "record_id": "DOM-D-F2B017DF",
@@ -13063,8 +13063,8 @@
       "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-learnings-architecture-intelligence-moby-buildkit-learnings-core-i.md",
       "repository": "moby-buildkit-learnings",
-      "content_hash": "2c642512219f370baee1388b4f034b51f41a88c18e8013485f42b3dd95f5cb38",
-      "created_at": "2026-11-18T13:17:37.821Z"
+      "content_hash": "8c1c35497a4c775a9676c3a709555c658975b74253ae92eb12c9b031a059e8a2",
+      "created_at": "2026-11-20T17:58:51.552Z"
     },
     "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
@@ -28378,8 +28378,8 @@
       "title": "Architecture Intelligence: weaviate-weaviate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-learnings-architecture-intelligence-weaviate-weaviate-learning.md",
       "repository": "weaviate-weaviate-learnings",
-      "content_hash": "5d67c03566e359c252627d45d7bc50b3d60b4d484053fa075c5fd5daeb40fee9",
-      "created_at": "2026-11-17T17:28:12.918Z"
+      "content_hash": "4c1fa8bb4f27c3cd02b8d2f987e6216602fe996a9299efcfe2e2a015478db581",
+      "created_at": "2026-11-20T17:58:52.525Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-fibo-2-0-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-fibo-2-0-core-invariants",
@@ -32565,8 +32565,8 @@
       "title": "Architecture Intelligence: nezhahq/nezha Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nezhahq-nezha-architecture-intelligence-nezhahq-nezha-core-invariants.md",
       "repository": "nezhahq/nezha",
-      "content_hash": "b3568c385af6f5f6bc1db3e19a085c37223862d16b45586246f53baf12874bf4",
-      "created_at": "2026-11-19T01:06:03.114Z"
+      "content_hash": "80bc5643d7079c5b92694b63f03b9157c8886f269d289a22f83aa69d9d89be88",
+      "created_at": "2026-11-20T17:58:46.886Z"
     },
     "domain_intelligence-architecture-intelligence-nezhahq-nezha-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nezhahq-nezha-learnings-core-invariants",
@@ -32574,8 +32574,8 @@
       "title": "Architecture Intelligence: nezhahq-nezha-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nezhahq-nezha-learnings-architecture-intelligence-nezhahq-nezha-learnings-core-i.md",
       "repository": "nezhahq-nezha-learnings",
-      "content_hash": "912833117d079d5bfa9e361031cc8deb1b9bc6551ceb7ac67c00c40eeedd6f70",
-      "created_at": "2026-11-19T01:06:11.773Z"
+      "content_hash": "e47e6e86a4d132b1f045fdfda7258ec2595bbc069f349a4324076642979ba0a6",
+      "created_at": "2026-11-20T17:58:50.322Z"
     },
     "DOM-L-03EC8831": {
       "record_id": "DOM-L-03EC8831",

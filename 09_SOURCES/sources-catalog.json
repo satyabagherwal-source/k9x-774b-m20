@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "a02a51ac",
+    "sourceVersion": "8a930b79",
     "license": "Apache-2.0",
-    "contentHash": "2af2b9aebc60f1a4449e04d3d665a63d13c160a51efaeaaf6c65a60f1912a692",
-    "lastHarvestedAt": "2026-11-19T15:42:32.997Z",
+    "contentHash": "882d473009a7752e975266ac9b9cbd0be193ffd7fda497e9be0c6ab1d7322ac0",
+    "lastHarvestedAt": "2026-11-20T17:53:52.627Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -5993,10 +5993,10 @@
     "repository": "nezhahq/nezha",
     "platform": "github",
     "sourceUrl": "https://github.com/nezhahq/nezha",
-    "sourceVersion": "8bcaf092",
+    "sourceVersion": "76b07b58",
     "license": "WTFPL",
-    "contentHash": "c3c62b0885ed92beab3d1adc404fb934156a76623ba412d4bb12dc65174b4a90",
-    "lastHarvestedAt": "2026-11-19T01:06:02.806Z",
+    "contentHash": "38064cb0a824d555303785e2422c3c03ece44fd89906d6c9b190db5cc86d54e8",
+    "lastHarvestedAt": "2026-11-20T17:58:46.575Z",
     "learningId": "learn-github-nezhahq-nezha"
   },
   "tiajinsha-jkvideo": {
@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "3507945a",
+    "sourceVersion": "cf81225f",
     "license": "NOASSERTION",
-    "contentHash": "30d4a51ef048dd8e2e6ea0eb2741a14bb54636fff2bdada73ee00b3290c7b964",
-    "lastHarvestedAt": "2026-11-18T11:06:54.202Z",
+    "contentHash": "a9979bc4eda7de3512298ca032c0758ed1cd6743fb7f6b92b870389e76c318ce",
+    "lastHarvestedAt": "2026-11-20T17:53:57.532Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T17:45:37.096Z",
+  "last_updated": "2026-11-20T17:58:52.388Z",
   "directives": [
     {
       "id": "CD-001",
@@ -38467,6 +38467,70 @@
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E53B17-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-9CF1",
+      "directive_title": "build(deps): bump actions/setup-go from 7.0.0 to 7.1.0",
+      "source_repo": "moby-buildkit-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9CF1-build-deps-bump-actions-setup-go-from-7-0-0-to-7-1-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-31S9",
+      "directive_title": "review fixes for header-host errors, the error object and tests",
+      "source_repo": "weaviate/weaviate",
+      "source_commit": "cf81225f",
+      "staged_file": "11_INBOX/candidate-directives/CD-31S9-review-fixes-for-header-host-errors-the-error-object-and-tests.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-98TB",
+      "directive_title": "MCP OAuth grant cap counts a member's API tokens under SQLite write lo",
+      "source_repo": "nezhahq/nezha",
+      "source_commit": "76b07b58",
+      "staged_file": "11_INBOX/candidate-directives/CD-98TB-mcp-oauth-grant-cap-counts-a-member-s-api-tokens-under-sqlite-write-lo.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-9BFU",
+      "directive_title": "security: MCP OAuth grant cap counts a member's API tokens under SQLite write lo",
+      "source_repo": "nezhahq-nezha-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9BFU-security-mcp-oauth-grant-cap-counts-a-member-s-api-tokens-under-sqlite-write-lo.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-REV-CE7682",
+      "directive_title": "build(deps): bump actions/setup-go from 7.0.0 to 7.1.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "moby-buildkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CE7682-build-deps-bump-actions-setup-go-from-7-.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-9D5Q",
+      "directive_title": "reranker-openai: review fixes for header-host errors, the error object and tests",
+      "source_repo": "weaviate-weaviate-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9D5Q-reranker-openai-review-fixes-for-header-host-errors-the-error-object-and-tests.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
     }
   ]
 }

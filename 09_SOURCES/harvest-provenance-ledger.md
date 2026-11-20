@@ -11633,3 +11633,6 @@ Every entry in this ledger must capture:
 | `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `1961133d` | Multi-dimensional audit evidence | 2026-11-20T17:37:23.512Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `f180b83d` | Multi-dimensional audit evidence | 2026-11-20T17:45:24.735Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `aa069366` | Multi-dimensional audit evidence | 2026-11-20T17:45:32.099Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `8a930b79` | Multi-dimensional audit evidence | 2026-11-20T17:53:52.627Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `cf81225f` | Multi-dimensional audit evidence | 2026-11-20T17:53:57.532Z |
+| `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `76b07b58` | Multi-dimensional audit evidence | 2026-11-20T17:58:46.575Z |

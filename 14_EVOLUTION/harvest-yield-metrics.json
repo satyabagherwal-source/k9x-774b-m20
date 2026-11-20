@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T17:45:32.104Z",
-  "total_cycles_completed": 11047,
-  "total_learnings_persisted": 11047,
-  "total_rules_promoted": 10403,
+  "last_updated": "2026-11-20T17:58:46.580Z",
+  "total_cycles_completed": 11050,
+  "total_learnings_persisted": 11050,
+  "total_rules_promoted": 10406,
   "history": [
-    {
-      "timestamp": "2026-11-19T19:12:05.388Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T19:12:06.360Z",
-      "repository": "DefGuard/defguard",
-      "learningId": "learn-github-defguard-defguard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T19:12:09.053Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T19:23:15.070Z",
       "repository": "tencent/Hy-Memory-30B-A3B",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-20T17:45:32.104Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:53:52.632Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:53:57.537Z",
+      "repository": "weaviate/weaviate",
+      "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:58:46.580Z",
+      "repository": "nezhahq/nezha",
+      "learningId": "learn-github-nezhahq-nezha",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

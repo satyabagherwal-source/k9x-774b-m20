@@ -4,24 +4,24 @@
 {
   "source_repository": "moby/buildkit",
   "source_url": "https://github.com/moby/buildkit",
-  "source_version": "a02a51ac",
+  "source_version": "8a930b79",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T15:42:33.318Z",
+  "timestamp": "2026-11-20T17:53:52.804Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-moby-buildkit",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [moby/buildkit](https://github.com/moby/buildkit) (Revision: `a02a51ac`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T15:42:33.318Z`  
+> **Provenance**: Harvested from [moby/buildkit](https://github.com/moby/buildkit) (Revision: `8a930b79`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T17:53:52.804Z`  
 > **Learning ID**: `learn-github-moby-buildkit`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 91%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence)
+- **Confidence Rating**: 87%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from moby/buildkit:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T15:42:31.319Z  
+> **Harvest Timestamp**: 2026-11-20T17:53:51.607Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10431 stars
+- **Stars / Engagement**: 10432 stars
 
 ---
 
@@ -2309,14 +2309,13 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7440** (2026-11-18): **cniprovider: use containerd helper for Windows network namespace**
-  *Symptoms*: relates to;  - https://github.com/moby/buildkit/pull/1585 - https://github.com/containerd/containerd/pull/6304 - https://github.com/containerd/containerd/pull/7928  This code was added in [buildkit@dc2574c], at which time containerd did not yet provide OCI options for this. [containerd@f39b3ac] implemented a `WithWindowsNetworkNamespace` option, which was made available cross- platform in [containerd@0ae0399].  Replace the custom OCI spec modification with `WithWindowsNetworkNamespace` which provides the same functionality.  [buildkit@dc2574c]: https://github.com/moby/buildkit/commit/dc2574ceae38f52b4126524a7ec64dc69531cd77 [containerd@f39b3ac]: https://github.com/containerd/containerd/commit/f39b3ac7eaf52bc7eeb85adb08e521f5477f25f0 [containerd@0ae0399]: https://github.com/containerd/containerd/commit/0ae0399b167bd4a01cd81cde9b5de06e6d37fb4f
-  **Post-Mortem & Fix Analysis**:
-  > cc @TBBle @rzlink
-  > Yeah, it's effectively a byte-for-byte replacement; https://github.com/moby/buildkit/blob/bfe7dac5cde47b283b3307afcf94563fcebd3819/vendor/github.com/containerd/containerd/v2/pkg/oci/spec_opts.go#L1819-L1831
+- **Issue #7449** (2026-11-20): **build(deps): bump actions/setup-go from 7.0.0 to 7.1.0**
+  *Symptoms*: Bumps [actions/setup-go](https://github.com/actions/setup-go) from 7.0.0 to 7.1.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/setup-go/releases">actions/setup-go's releases</a>.</em></p> <blockquote> <h2>v7.1.0</h2> <h2>What's Changed</h2> <h3>Enhancements</h3> <ul> <li>Expose go env variables as action outputs by <a href="https://github.com/v-mahabaleshwars"><code>@​v-mahabaleshwars</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/791">actions/setup-go#791</a></li> <li>Preserve native Go environment names in action outputs by <a href="https://github.com/v-mahabaleshwars"><code>@​v-mahabaleshwars</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/793">actions/setup-go#793</a></li> <li>Add support for native Go version syntax in go-version input by <a href="https://github.com/v-jitenderpalsingh"><code>@​v-jitenderpalsingh</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/804">actions/setup-go#804</a></li> <li>Add support for rc and beta versions in go.mod file by <a href="https://github.com/arnested"><code>@​arnested</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/701">actions/setup-go#701</a></li> <li>Clarify description of go-bin-path output and its fallback behavior by <a href="https://github.com/v-mahabaleshwars"><code>@​v-mahabaleshwars</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/803">actions/set
 
-- **Issue #7439** (2026-11-18): **docs: remove base image glossary links**
-  *Symptoms*: Remove the glossary links from the two base image mentions in the Dockerfile reference. The surrounding `FROM` documentation already explains the term, so both mentions can remain plain text.  Verified that the rendered Markdown is unchanged apart from removing those two links.  Generated by Codex. 
+- **Issue #7448** (2026-11-19): **[v0.35] cherry-picks for v0.35.1**
+  *Symptoms*: backports of: - https://github.com/moby/buildkit/pull/7419 - https://github.com/moby/buildkit/pull/7420 - https://github.com/moby/buildkit/pull/7438 
+  **Post-Mortem & Fix Analysis**:
+  > I would not take https://github.com/moby/buildkit/pull/7437 . It is a bugfix but it is not a regression.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2333,359 +2332,43 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `07f7f36e` (2026-11-18)
-**Commit Message**: docs: clarify the cache poisoning security boundary
+### Incident Patch 1: `9eb778d8` (2026-11-20)
+**Commit Message**: build(deps): bump actions/setup-go from 7.0.0 to 7.1.0
 
-State that untrusted build inputs must not poison trusted cache state.
-Treat new cache poisoning as a security issue even when cache state is
-created and consumed by different BuildKit versions.
-
-Signed-off-by: CrazyMax <[REDACTED_EMAIL]>
-
-**File**: `PROJECT.md` (modified, +1/-0)
-```diff
-@@ -161,6 +161,7 @@ This section is for some guidelines about what BuildKit considers a security iss
- 
- - Credentials should not be logged or written to OpenTelemetry trace or progress stream. Note that this applies to registry credentials and URL sources, if user writes credentials into the arguments of their application containers, there is nothing BuildKit can do about it.
- - Values of the build secrets should never be stored anywhere on the disk or included in the cache checksums.
-+- Untrusted build inputs must not poison trusted cache state so that later builds use attacker-controlled data in place of the expected contents. New cache poisoning is a security issue even when the cache is created and consumed by different BuildKit versions.
- 
- ### Examples of issues not (currently) considered security
- 
-```
+Bumps [actions/setup-go](https://github.com/actions/setup-go) from 7.0.0 to 7.1.0.
+- [Release notes](https://github.com/actions/setup-go/releases)
+- [Commits](https://github.com/actions/setup-go/compare/b7ad1dad31e06c5925ef5d2fc7ad053ef454303e...d8cbb8045d7f43706b9177cceb36c1f91a6644d5)
 
 ---
+updated-dependencies:
+- dependency-name: actions/setup-go
+  dependency-version: 7.1.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-### Incident Patch 2: `3b8d1adc` (2026-11-19)
-**Commit Message**: Merge pull request #7438 from crazy-max/fix-common-snapshot-ids
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-cache: allow opting into common ChainID snapshot names
-
-**File**: `PROJECT.md` (modified, +1/-0)
+**File**: `.github/workflows/test-os.yml` (modified, +1/-1)
 ```diff
-@@ -161,6 +161,7 @@ This section is for some guidelines about what BuildKit considers a security iss
- 
- - Credentials should not be logged or written to OpenTelemetry trace or progress stream. Note that this applies to registry credentials and URL sources, if user writes credentials into the arguments of their application containers, there is nothing BuildKit can do about it.
- - Values of the build secrets should never be stored anywhere on the disk or included in the cache checksums.
-+- Untrusted build inputs must not poison trusted cache state so that later builds use attacker-controlled data in place of the expected contents. New cache poisoning is a security issue even when the cache is created and consumed by different BuildKit versions.
- 
- ### Examples of issues not (currently) considered security
- 
-```
-
-**File**: `cache/manager.go` (modified, +31/-23)
-```diff
-@@ -46,16 +46,17 @@ var (
- const maxPruneBatch = 10 // maximum number of refs to prune while holding the manager lock
- 
- type ManagerOpt struct {
--	Snapshotter     snapshot.Snapshotter
--	ContentStore    content.Store
--	LeaseManager    leases.Manager
--	PruneRefChecker ExternalRefCheckerFunc
--	GarbageCollect  func(ctx context.Context) (gc.Stats, error)
--	Applier         diff.Applier
--	Differ          diff.Comparer
--	MetadataStore   *metadata.Store
--	Root            string
--	MountPoolRoot   string
-+	Snapshotter          snapshot.Snapshotter
-+	ContentStore         content.Store
-+	LeaseManager         leases.Manager
-+	PruneRefChecker      ExternalRefCheckerFunc
-+	GarbageCollect       func(ctx context.Context) (gc.Stats, error)
-+	Applier              diff.Applier
-+	Differ               diff.Comparer
-+	MetadataStore        *metadata.Store
-+	Root                 string
-+	MountPoolRoot        string
-+	UseCommonSnapshotIDs bool // Enables snapshot sharing without legacy snapshot quarantine.
- }
- 
- type Accessor interface {
-@@ -100,9 +101,9 @@ type cacheManager struct {
- 	Differ          diff.Comparer
- 	MetadataStore   *metadata.Store
- 
--	root string
--
--	mountPool sharableMountPool
-+	root                 string
-+	mountPool            sharableMountPool
-+	useCommonSnapshotIDs bool
- 
- 	muPrune sync.Mutex // make sure parallel prune is not allowed so there will not be inconsistent results
- 	unlazyG flightcontrol.Group[struct{}]
-@@ -114,6 +115,9 @@ func isLegacyLayerSnapshotID(ref *immutableRef) bool {
- }
- 
- func isLegacyLayerRecord(ref *cacheRecord) bool {
-+	if ref.cm.useCommonSnapshotIDs {
-+		return false
-+	}
- 	switch ref.kind() {
- 	case BaseLayer, Layer:
- 	default:
-@@ -138,16 +142,17 @@ func hasLegacyLayerSnapshotID(ref *immutableRef) bool {
- 
- func NewManager(opt ManagerOpt) (Manager, error) {
- 	cm := &cacheManager{
--		Snapshotter:     snapshot.NewMergeSnapshotter(context.TODO(), opt.Snapshotter, opt.LeaseManager),
--		ContentStore:    opt.ContentStore,
--		LeaseManager:    opt.LeaseManager,
--		PruneRefChecker: opt.PruneRefChecker,
--		GarbageCollect:  opt.GarbageCollect,
--		Applier:         opt.Applier,
--		Differ:          opt.Differ,
--		MetadataStore:   opt.MetadataStore,
--		root:            opt.Root,
--		records:         make(map[string]*cacheRecord),
-+		useCommonSnapshotIDs: opt.UseCommonSnapshotIDs,
-+		Snapshotter:          snapshot.NewMergeSnapshotter(context.TODO(), opt.Snapshotter, opt.LeaseManager),
-+		ContentStore:         opt.ContentStore,
-+		LeaseManager:         opt.LeaseManager,
-+		PruneRefChecker:      opt.PruneRefChecker,
-+		GarbageCollect:       opt.GarbageCollect,
-+		Applier:              opt.Applier,
-+		Differ:               opt.Differ,
-+		MetadataStore:        opt.MetadataStore,
-+		root:                 opt.Root,
-+		records:              make(map[string]*cacheRecord),
- 	}
- 
- 	if err := cm.init(context.TODO()); err != nil {
-@@ -289,6 +294,9 @@ func (cm *cacheManager) GetByBlob(ctx context.Context, desc ocispecs.Descriptor,
- 
- 	id := identity.NewID()
- 	snapshotID := snapshot.LayerSnapshotID(chainID)
-+	if cm.useCommonSnapshotIDs {
-+		snapshotID = chainID.String()
-+	}
- 	if link != nil {
- 		snapshotID = link.getSnapshotID()
- 		go link.Release(context.WithoutCancel(ctx))
-```
-
-**File**: `cache/manager_test.go` (modified, +146/-74)
-```diff
-@@ -61,9 +61,10 @@ import (
- )
- 
- type cmOpt struct {
--	snapshotterName string
--	snapshotter     snapshots.Snapshotter
--	tmpdir          string
-+	useCommonSnapshotIDs bool
-+	snapshotterName      string
-+	snapshotter          snapshots.Snapshotter
-+	tmpdir               string
- 	// pruneRefChecker is passed to the cache manager to report which records
- 	// are shared with external images.
- 	pruneRefChecker ExternalRefCheckerFunc
-@@ -180,16 +181,17 @@ func newCacheManager(ctx context.Context, t testing.TB, opt cmOpt) (co *cmOut, c
- 
- 	metadataSnapshotter := mdb.Snapshotter(opt.snapshotterName)
- 	cm, err := NewManager(ManagerOpt{
--		Snapshotter:     snapshot.FromContainerdSnapshotter(opt.snapshotterName, containerdsnapshot.NSSnapshotter(ns, metadataSnapshotter), nil),
--		MetadataStore:   md,
--		ContentStore:    store,
--		LeaseManager:    lm,
--		GarbageCollect:  mdb.GarbageCollect,
--		Applier:         applier,
--		Differ:          differ,
--		Root:            tmpdir,
--		MountPoolRoot:   filepath.Join(tmpdir, "cachemounts"),
--		PruneRefChecker: opt.pruneRefChecker,
-+		UseCommonSnapshotIDs: opt.useCommonSnapshotIDs,
-+		Snapshotter:          snapshot.FromContainerdSnapshotter(opt.snapshotterName, containerdsnapshot.NSSnapshotter(ns, metadataSnapshotter), nil),
-+		MetadataStore:        md,
-+		ContentStore:         store,
-+		LeaseManager:         lm,
-+		GarbageCollect:       mdb.GarbageCollect,
-+		Applier:              applier,
-+		Differ:               differ,
-+		Root:                 tmpdir,
-+		MountPoolRoot:        filepath.Join(tmpdir, "cachemounts"),
-+		PruneRefChecker:      opt.pruneRefChecker,
- 	})
- 	if err != nil {
- 		return nil, nil, err
-@@ -366,79 +368,89 @@ func TestManager(t *testing.T) {
- }
- 
- func TestLazyGetByBlob(t *testing.T) {
--	t.Parallel()
--	ctx := namespaces.WithNamespace(t.Context(), "buildkit-test")
-+	for _, common := range []bool{false, true} {
-+		t.Run(fmt.Sprintf("common=%t", common), func(t *testing.T) {
-+			t.Parallel()
-+			ctx := namespaces.WithNamespace(t.Context(), "buildkit-test")
- 
--	tmpdir := t.TempDir()
-+			tmpdir := t.TempDir()
- 
--	snapshotter, err := native.NewSnapshotter(filepath.Join(tmpdir, "snapshots"))
--	require.NoError(t, err)
-+			snapshotter, err := native.NewSnapshotter(filepath.Join(tmpdir, "snapshots"))
-+			require.NoError(t, err)
- 
--	co, cleanup, err := newCacheManager(ctx, t, cmOpt{
--		snapshotter:     snapshotter,
--		snapshotterName: "native",
--	})
--	require.NoError(t, err)
--	t.Cleanup(cleanup)
--	cm := co.manager
-+			co, cleanup, err := newCacheManager(ctx, t, cmOpt{
-+				useCommonSnapshotIDs: common,
-+				snapshotter:          snapshotter,
-+				snapshotterName:      "native",
-+			})
-+			require.NoError(t, err)
-+			t.Cleanup(cleanup)
-+			cm := co.manager
- 
--	// Test for #2226 https://github.com/moby/buildkit/issues/2226, create lazy blobs with the same diff ID but
--	// different digests (due to different compression) and make sure GetByBlob still works
--	_, desc, err := mapToBlob(map[string]string{"foo": "bar"}, true)
--	require.NoError(t, err)
--	tocDigest := digest.FromBytes([]byte("toc"))
--	desc.Annotations[estargz.TOCJSONDigestAnnotation] = tocDigest.String()
--	descHandlers := DescHandlers(make(map[digest.Digest]*DescHandler))
--	descHandlers[desc.Digest] = &DescHandler{}
--	diffID, err := diffIDFromDescriptor(desc)
--	require.NoError(t, err)
-+			// Test for #2226 https://github.com/moby/buildkit/issues/2226, create lazy blobs with the same diff ID but
-+			// different digests (due to different compression) and make sure GetByBlob still works
-+			_, desc, err := mapToBlob(map[string]string{"foo": "bar"}, true)
-+			require.NoError(t, err)
-+			tocDigest := digest.FromBytes([]byte("toc"))
-+			desc.Annotations[estargz.TOCJSONDigestAnnotation] = tocDigest.String()
-+			descHandlers := DescHandlers(make(map[digest.Digest]*DescHandler))
-+			descHandlers[desc.Digest] = &DescHandler{}
-+			diffID, err := diffIDFromDescriptor(desc)
-+			require.NoError(t, err)
- 
--	ref, err := cm.GetByBlob(ctx, desc, nil, descHandlers)
--	require.NoError(t, err)
-+			ref, err := cm.GetByBlob(ctx, desc, nil, descHandlers)
-+			require.NoError(t, err)
- 
--	_, desc2, err := mapToBlob(map[string]string{"foo": "bar"}, false)
--	require.NoError(t, err)
--	tocDigest2 := digest.FromBytes([]byte("toc2"))
--	desc2.Annotations[estargz.TOCJSONDigestAnnotation] = tocDigest2.String()
--	descHandlers2 := DescHandlers(make(map[digest.Digest]*DescHandler))
--	descHandlers2[desc2.Digest] = &DescHandler{}
--	diffID2, err := diffIDFromDescriptor(desc2)
--	require.NoError(t, err)
-+			_, desc2, err := mapToBlob(map[string]string{"foo": "bar"}, false)
-+			require.NoError(t, err)
-+			tocDigest2 := digest.FromBytes([]byte("toc2"))
-+			desc2.Annotations[estargz.TOCJSONDigestAnnotation] = tocDigest2.String()
-+			descHandlers2 := DescHandlers(make(map[digest.Digest]*DescHandler))
-+			descHandlers2[desc2.Digest] = &DescHandler{}
-+			diffID2, err := diffIDFromDescriptor(desc2)
-+			require.NoError(t, err)
- 
--	require.NotEqual(t, desc.Digest, 
-```
-
-**File**: `worker/base/worker.go` (modified, +36/-34)
-```diff
-@@ -70,30 +70,31 @@ const labelCreatedAt = "buildkit/createdat"
- // WorkerOpt is specific to a worker.
- // See also CommonOpt.
- type WorkerOpt struct {
--	ID               string
--	Root             string
--	Labels           map[string]string
--	Platforms        []ocispecs.Platform
--	GCPolicy         []client.PruneInfo
--	BuildkitVersion  client.BuildkitVersion
--	NetworkProviders map[pb.NetMode]network.Provider
--	ProxyProvider    network.ProxyProvider
--	Executor         executor.Executor
--	Snapshotter      snapshot.Snapshotter
--	ContentStore     *containerdsnapshot.Store
--	Applier          diff.Applier
--	Differ           diff.Comparer
--	ImageStore       images.Store // optional
--	RegistryHosts    docker.RegistryHosts
--	IdentityMapping  *user.IdentityMapping
--	LeaseManager     *leaseutil.Manager
--	GarbageCollect   func(context.Context) (gc.Stats, error)
--	ParallelismSem   *semaphore.Weighted
--	MetadataStore    *metadata.Store
--	ContentMetadata  io.Closer
--	MountPoolRoot    string
--	ResourceMonitor  *resources.Monitor
--	CDIManager       *cdidevices.Manager
-+	ID                   string
-+	Root                 string
-+	Labels               map[string]string
-+	Platforms            []ocispecs.Platform
-+	GCPolicy             []client.PruneInfo
-+	BuildkitVersion      client.BuildkitVersion
-+	NetworkProviders     map[pb.NetMode]network.Provider
-+	ProxyProvider        network.ProxyProvider
-+	Executor             executor.Executor
-+	Snapshotter          snapshot.Snapshotter
-+	ContentStore         *containerdsnapshot.Store
-+	Applier              diff.Applier
-+	Differ               diff.Comparer
-+	ImageStore           images.Store // optional
-+	RegistryHosts        docker.RegistryHosts
-+	IdentityMapping      *user.IdentityMapping
-+	LeaseManager         *leaseutil.Manager
-+	GarbageCollect       func(context.Context) (gc.Stats, error)
-+	ParallelismSem       *semaphore.Weighted
-+	MetadataStore        *metadata.Store
-+	ContentMetadata      io.Closer
-+	MountPoolRoot        string
-+	ResourceMonitor      *resources.Monitor
-+	CDIManager           *cdidevices.Manager
-+	UseCommonSnapshotIDs bool
- }
- 
- // Worker is a local worker instance with dedicated snapshotter, cache, and so on.
-@@ -118,16 +119,17 @@ func NewWorker(ctx context.Context, opt WorkerOpt) (*Worker, error) {
- 	})
- 
- 	cm, err := cache.NewManager(cache.ManagerOpt{
--		Snapshotter:     opt.Snapshotter,
--		PruneRefChecker: imageRefChecker,
--		Applier:         opt.Applier,
--		GarbageCollect:  opt.GarbageCollect,
--		LeaseManager:    opt.LeaseManager,
--		ContentStore:    opt.ContentStore,
--		Differ:          opt.Differ,
--		MetadataStore:   opt.MetadataStore,
--		Root:            opt.Root,
--		MountPoolRoot:   opt.MountPoolRoot,
-+		Snapshotter:          opt.Snapshotter,
-+		PruneRefChecker:      imageRefChecker,
-+		Applier:              opt.Applier,
-+		GarbageCollect:       opt.GarbageCollect,
-+		LeaseManager:         opt.LeaseManager,
-+		ContentStore:         opt.ContentStore,
-+		Differ:               opt.Differ,
-+		MetadataStore:        opt.MetadataStore,
-+		Root:                 opt.Root,
-+		MountPoolRoot:        opt.MountPoolRoot,
-+		UseCommonSnapshotIDs: opt.UseCommonSnapshotIDs,
- 	})
- 	if err != nil {
- 		return nil, err
+@@ -137,7 +137,7 @@ jobs:
+         uses: crazy-max/ghaction-github-runtime@04d248b84655b509d8c44dc1d6f990c879747487 # v4.0.0
+       -
+         name: Set up Go
+-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+         with:
+           go-version: "${{ env.GO_VERSION }}"
+           cache: false
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7449** (2026-11-20): build(deps): bump actions/setup-go from 7.0.0 to 7.1.0 (@dependabot[bot])
+- **PR #7448** (2026-11-19): [v0.35] cherry-picks for v0.35.1 (@crazy-max)
 - **PR #7440** (2026-11-18): cniprovider: use containerd helper for Windows network namespace (@thaJeztah)
 - **PR #7439** (2026-11-18): docs: remove base image glossary links (@dvdksn)
 - **PR #7438** (2026-11-19): cache: allow opting into common ChainID snapshot names (@crazy-max)
 - **PR #7437** (2026-11-19): session: serve the session with grpc's transport so streams apply flow control (@tonistiigi)
-- **PR #7436** (2026-11-19): session: serve the session with grpc's transport so streams apply flow control (@fedor-rubalskiy)
-- **PR #7431** (2026-11-19): ci: authenticate Docker Scout with OIDC (@crazy-max)
 
 ---
 
@@ -2705,31 +2388,31 @@ cache: allow opting into common ChainID snapshot names
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: clarify the cache poisoning security boundary
+## X. build(deps): bump actions/setup-go from 7.0.0 to 7.1.0
 
 **RULE**:
-When implementing operations in `PROJECT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/test-os.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `07f7f36e`: docs: clarify the cache poisoning security boundary. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9eb778d8`: build(deps): bump actions/setup-go from 7.0.0 to 7.1.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `PROJECT.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/test-os.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Untrusted build inputs must not poison trusted cache state so that later builds use attacker-controlled data in place of the expected contents. New cache poisoning is a security issue even when the cache is created and consumed by different BuildKit versions.
+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `07f7f36e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9eb778d8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

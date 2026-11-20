@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T17:45:35.555Z",
+  "updated_at": "2026-11-20T17:58:52.164Z",
   "stats": {
-    "total_discovered": 6550,
-    "approved_pending_harvest": 6192,
+    "total_discovered": 6566,
+    "approved_pending_harvest": 6207,
     "harvested_count": 0,
-    "rejected_count": 358,
+    "rejected_count": 359,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6155,
+      "COMMUNITY_AND_EXPERT": 6171,
       "OFFICIAL_DOCUMENTATION": 227,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
@@ -141617,6 +141617,351 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
         "fileName": "siderolabs-talos-learnings.md"
+      }
+    },
+    "SRC-7CFBA3E287E7": {
+      "id": "SRC-7CFBA3E287E7",
+      "url": "https://github.com/actions/setup-go",
+      "title": "https://github.com/actions/setup-go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:58:50.709Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-41BA037C0A76": {
+      "id": "SRC-41BA037C0A76",
+      "url": "https://github.com/actions/setup-go/releases",
+      "title": "https://github.com/actions/setup-go/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:58:50.747Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-25D8E59BDABF": {
+      "id": "SRC-25D8E59BDABF",
+      "url": "https://github.com/v-mahabaleshwars",
+      "title": "https://github.com/v-mahabaleshwars",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:58:50.790Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-CFDB81658052": {
+      "id": "SRC-CFDB81658052",
+      "url": "https://redirect.github.com/actions/setup-go/pull/791",
+      "title": "https://redirect.github.com/actions/setup-go/pull/791",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:58:50.830Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-934E8EA812A0": {
+      "id": "SRC-934E8EA812A0",
+      "url": "https://redirect.github.com/actions/setup-go/pull/793",
+      "title": "https://redirect.github.com/actions/setup-go/pull/793",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:58:50.866Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-DAE62C028E80": {
+      "id": "SRC-DAE62C028E80",
+      "url": "https://github.com/v-jitenderpalsingh",
+      "title": "https://github.com/v-jitenderpalsingh",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:58:50.907Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-46D15D8CE3C0": {
+      "id": "SRC-46D15D8CE3C0",
+      "url": "https://redirect.github.com/actions/setup-go/pull/804",
+      "title": "https://redirect.github.com/actions/setup-go/pull/804",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:58:50.943Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-89A17DDB6936": {
+      "id": "SRC-89A17DDB6936",
+      "url": "https://github.com/arnested",
+      "title": "https://github.com/arnested",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:58:50.982Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-C1F067EDB42A": {
+      "id": "SRC-C1F067EDB42A",
+      "url": "https://redirect.github.com/actions/setup-go/pull/701",
+      "title": "https://redirect.github.com/actions/setup-go/pull/701",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:58:51.017Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-6F7640D09D8C": {
+      "id": "SRC-6F7640D09D8C",
+      "url": "https://redirect.github.com/actions/setup-go/pull/803",
+      "title": "https://redirect.github.com/actions/setup-go/pull/803",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:58:51.054Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-3453CDF01455": {
+      "id": "SRC-3453CDF01455",
+      "url": "https://github.com/moby/buildkit/pull/7419",
+      "title": "https://github.com/moby/buildkit/pull/7419",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:58:51.095Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-26F5DDCB17AA": {
+      "id": "SRC-26F5DDCB17AA",
+      "url": "https://github.com/moby/buildkit/pull/7420",
+      "title": "https://github.com/moby/buildkit/pull/7420",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:58:51.132Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-F4EBD0B5DD8D": {
+      "id": "SRC-F4EBD0B5DD8D",
+      "url": "https://github.com/moby/buildkit/pull/7438",
+      "title": "https://github.com/moby/buildkit/pull/7438",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:58:51.168Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-F23389587F94": {
+      "id": "SRC-F23389587F94",
+      "url": "https://github.com/moby/buildkit/pull/7437",
+      "title": "https://github.com/moby/buildkit/pull/7437",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:58:51.206Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-D0FB9934003B": {
+      "id": "SRC-D0FB9934003B",
+      "url": "https://github.com/actions/setup-go/compare/b7ad1dad31e06c5925ef5d2fc7ad053ef454303e...d8cbb8045d7f43706b9177cceb36c1f91a6644d5",
+      "title": "https://github.com/actions/setup-go/compare/b7ad1dad31e06c5925ef5d2fc7ad053ef454303e...d8cbb8045d7f43706b9177cceb36c1f91a6644d5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:58:51.242Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-6C45D6D122AA": {
+      "id": "SRC-6C45D6D122AA",
+      "url": "http://class-base-url.invalid/",
+      "title": "http://class-base-url.invalid/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T17:58:52.164Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
+        "fileName": "weaviate-weaviate-learnings.md"
       }
     }
   }

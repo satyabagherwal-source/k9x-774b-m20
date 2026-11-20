@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T17:45:37.935Z",
+  "last_updated": "2026-11-20T17:58:52.776Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T12:15:57.033Z",
@@ -493,7 +493,7 @@
       "staged_for_review": 1
     },
     "moby-buildkit-learnings.md": {
-      "processed_at": "2026-11-18T13:17:37.270Z",
+      "processed_at": "2026-11-20T17:58:50.637Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1158,7 +1158,7 @@
       "staged_for_review": 1
     },
     "weaviate-weaviate-learnings.md": {
-      "processed_at": "2026-11-17T17:28:12.593Z",
+      "processed_at": "2026-11-20T17:58:52.120Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3473,7 +3473,7 @@
       "staged_for_review": 1
     },
     "nezhahq-nezha-learnings.md": {
-      "processed_at": "2026-11-19T01:06:11.300Z",
+      "processed_at": "2026-11-20T17:58:49.876Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3608,7 +3608,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2574,
+  "total_dossiers_evaluated": 2577,
   "total_canonical_promoted": 431,
-  "total_staged_for_review": 1954
+  "total_staged_for_review": 1957
 }

@@ -4,22 +4,22 @@
 {
   "source_repository": "weaviate/weaviate",
   "source_url": "https://github.com/weaviate/weaviate",
-  "source_version": "3507945a",
+  "source_version": "cf81225f",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-18T11:06:54.378Z",
+  "timestamp": "2026-11-20T17:53:57.709Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-weaviate-weaviate",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [weaviate/weaviate](https://github.com/weaviate/weaviate) (Revision: `3507945a`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-18T11:06:54.378Z`  
+> **Provenance**: Harvested from [weaviate/weaviate](https://github.com/weaviate/weaviate) (Revision: `cf81225f`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-20T17:53:57.709Z`  
 > **Learning ID**: `learn-github-weaviate-weaviate`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `weaviate/weaviate` (Commit: `3507945a`)
+- **Target Repository**: `weaviate/weaviate` (Commit: `cf81225f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T11:06:53.326Z  
+> **Harvest Timestamp**: 2026-11-20T17:53:56.705Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16954 stars
+- **Stars / Engagement**: 16956 stars
 
 ---
 
@@ -1724,11 +1724,11 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #13618** (2026-10-28): **gRPC health check rejected when OPERATIONAL_MODE=ReadOnly, so clients fail to connect**
-  *Symptoms*: ### How to reproduce this bug?  1. Start Weaviate 1.39.12 with `OPERATIONAL_MODE: ReadOnly` 2. Connect with the Python client 4.23.1 using defaults (`skip_init_checks=False`):    `weaviate.connect_to_custom(http_host="localhost", http_port=8080, grpc_host="localhost", grpc_port=50051, ...)` 3. The connection fails during the gRPC health check.  ### What is the expected behavior?  The client connects. Health checks (`/grpc.health.v1.Health/*`) should skip the operational mode check and work in all modes (ReadWrite, ReadOnly, WriteOnly, ScaleOut). ReadOnly should block writes only.  ### What is the actual behavior?  The gRPC health check is rejected as a write operation:  ``` StatusCode.UNAVAILABLE read-only mode is enabled temporally at the config level: write operations are not allowed during this time ```  The Python client then raises `WeaviateGRPCUnavailableError`. The only workaround is `skip_init_checks=True`.  ### Supporting information  Root cause:  - `usecases/config/operational_mode.go:69-77`: only `Search`, `Aggregate` and `TenantsGet` count as reads. `IsGRPCWrite` is `!IsGRPCRead`, so every other method, including ones that aren't on the list, counts as a write. - `adapters/handlers/grpc/server.go:302-305`: in `ReadOnly` and `ScaleOut`, any "write" method is rejected with `codes.Unavailable`. - `adapters/handlers/grpc/server.go:142`: the standard `grpc_health_v1` service is registered. It's not on the read list, so its calls are treated as writes and blocked.  `Wri
+- **Issue #13975** (2026-11-20): **Pre-1.19 fallbackToSearchable mode is lost on shard reload, races the reindex clear, and has related missing-filterable reindex gaps**
+  *Symptoms*: ## Summary  Classes created before v1.19 can leave the startup filterable→searchable migration with text properties that have no filterable bucket. At every startup `Migrator.AdjustFilterablePropSettings` → `filterableToSearchableMigrator.switchShardsToFallbackMode` reads the migration state file (`MissingFilterableClass2Props`) and calls `setFallbackToSearchable(true)` on each shard of those classes, so filters on those properties use the searchable bucket. The flag is a plain `bool` on the in-memory `*Shard`, set only by that startup pass. It is cleared only by the opt-in `INDEX_MISSING_TEXT_FILTERABLE_AT_STARTUP` reindex (`shardInvertedReindexTaskMissingTextFilterable.OnPostResumeStore`). Without that env var, fallback is meant to be permanent.  Several paths lose or misapply that flag, giving wrong or empty filter results with no error. All of them reproduce on current main with deterministic unit tests.  ## Bugs  1. **Fallback lost on shard reload.** A shard rebuilt after startup comes back with `fallbackToSearchable = false`. Equal/Like filters on the affected properties then read the missing filterable bucket until the next restart. Reproduced on these paths:    - tenant COLD→HOT    - tenant COLD at startup (absent from `index.shards`, so the startup pass skips it), activated later    - `IncomingReinitShard`    - `UnloadLocalShard` followed by a write-path reinit     Any future path that unloads and reloads shards automatically hits this routinely. 2. **Data race on th
 
-- **Issue #13605** (2026-10-28): **len(array)==0 omits missing array properties when length index is enabled**
-  *Symptoms*: ### How to reproduce this bug?  Run [reproduce.py](https://github.com/user-attachments/files/33944592/reproduce.py).   Triggered by MR testing. - **MR:** An absent array and an explicit empty array both have length zero - **Input:** length index enabled; rows with [alpha], [], [beta,gamma], and missing tags; len(tags)==0  ### What is the expected behavior?  Both [] and missing rows.  ### What is the actual behavior?  Only explicit [] row.  ### Supporting information  _No response_  ### Server Version  1.40.2  ### Weaviate Setup  Single Node  ### Nodes count  _No response_  ### Code of Conduct  - [x] I have read and agree to the Weaviate's [Contributor Guide](https://docs.weaviate.io/contributor-guide) and [Code of Conduct](https://weaviate.io/service/code-of-conduct)
+- **Issue #13946** (2026-11-19): **GraphQL Get/Aggregate through a collection alias fails when a where filter is present**
+  *Symptoms*: ### How to reproduce this bug?  Weaviate 1.39.13 (also 1.33 to 1.36), single node. Collection Docs_v7 with an int[] property categories, alias Docs  Docs_v7. Get { Docs(limit: 5) { ... } } works. Get { Docs(limit: 5, where: {path: ["categories"], operator: Equal, valueInt: 7}) { ... } } fails with invalid 'where' filter: class "Docs" does not exist in schema. The same query against Docs_v7 works. Aggregate { Docs { meta { count } } } works, Aggregate { Docs(where: {...}) { meta { count } } } fails with the same error. Reproduced with raw POST /v1/graphql, so it is server side. gRPC search with the same filter through the alias works (go client v6.0.0 and v5.7.4).  ### What is the expected behavior?  aliases are documented for queries including filters and aggregations, so a where filter through an alias should behave like the target collection.  ### What is the actual behavior?  the filter validator rejects the alias as a non-existent class.  ### Supporting information  Traverser.validateFilters (usecases/traverser/traverser_get.go) calls schemaGetter.ReadOnlyClass(name) with the filter’s root class, which is the alias, and ReadOnlyClass does not resolve aliases (cluster/schema/schema.go, unsafeResolveClass). entities/filters/sort_validator.go has the same lookup. The traverser’s resolveAliasIfPresent is only used for nearObject authorization. The gRPC handler resolves the alias before building filters, which explains why gRPC works.  ### Server Version  1.39.13  ### Weaviate
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1745,897 +1745,995 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `362d2908` (2026-11-06)
-**Commit Message**: fix(grpc-web): bound Search and Aggregate requests by the server write timeout
+### Incident Patch 1: `4ffbd0c7` (2026-11-18)
+**Commit Message**: reranker-openai: review fixes for header-host errors, the error object and tests [api]
 
-**File**: `adapters/handlers/grpc/grpcweb/deadline_test.go` (added, +118/-0)
+No error from a host named by X-Openai-Baseurl names an object. Before,
+some of its errors carried "object <id>:" and others did not, which told
+the caller what the host replied.
+
+The error object decodes an error that is a string, and keeps param and
+code when the message is not a string. Before, either case dropped the
+whole object.
+
+Quoted text of 512 bytes or less is cleaned of bytes that are not UTF-8,
+as longer text already was.
+
+The image magics are named constants in the block at the top of
+image.go. The comment on hostFromHeader matches the code.
+
+Tests: the acceptance test sends the key and the base URL in the request
+headers to the fake provider, records the score margins of the real API
+and names the one-object subtest after what it asserts. Unit rows cover
+the two error shapes and truncate.
+
+**File**: `modules/reranker-openai/clients/image.go` (modified, +13/-5)
 ```diff
-@@ -0,0 +1,118 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package grpcweb
-+
-+import (
-+	"context"
-+	"net/http"
-+	"net/http/httptest"
-+	"strconv"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"google.golang.org/grpc"
-+
-+	"github.com/weaviate/weaviate/adapters/handlers/rest/state"
-+	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
-+	"github.com/weaviate/weaviate/usecases/config"
-+)
-+
-+// deadlineRecorder records the deadline of the last call it served.
-+type deadlineRecorder struct {
-+	pb.UnimplementedWeaviateServer
-+	deadline    time.Time
-+	hasDeadline bool
+@@ -28,6 +28,15 @@ const (
+ 	inputRoleUser  = "user"
+ 	inputImageType = "input_image"
+ 
++	// pngMagic, jpegMagic and gifMagic are the first bytes of those formats.
++	// A WebP image is a RIFF container with webpMagic at webpMagicOffset; a
++	// WAVE file shares the RIFF header.
++	pngMagic        = "\x89PNG"
++	jpegMagic       = "\xff\xd8\xff"
++	gifMagic        = "GIF8"
++	riffMagic       = "RIFF"
++	webpMagic       = "WEBP"
++	webpMagicOffset = 8
+ 	// magicChars is 16 base64 characters: the first 12 bytes of an image.
+ 	magicChars = 16
+ 	// maxImageBytes is 20 MiB (20,971,520 bytes). The API rejects a larger
+@@ -45,15 +54,14 @@ type inputPart struct {
+ 	ImageURL string `json:"image_url,omitempty"`
+ }
+ 
+-// WebP is a RIFF container with "WEBP" at offset 8; a WAVE file shares the RIFF header.
+ var imageTypes = []struct {
+ 	mime   string
+ 	magics []magic
+ }{
+-	{"image/png", []magic{{0, []byte("\x89PNG")}}},
+-	{"image/jpeg", []magic{{0, []byte("\xff\xd8\xff")}}},
+-	{"image/gif", []magic{{0, []byte("GIF8")}}},
+-	{"image/webp", []magic{{0, []byte("RIFF")}, {8, []byte("WEBP")}}},
++	{"image/png", []magic{{0, []byte(pngMagic)}}},
++	{"image/jpeg", []magic{{0, []byte(jpegMagic)}}},
++	{"image/gif", []magic{{0, []byte(gifMagic)}}},
++	{"image/webp", []magic{{0, []byte(riffMagic)}, {webpMagicOffset, []byte(webpMagic)}}},
+ }
+ 
+ type magic struct {
+```
+
+**File**: `modules/reranker-openai/clients/ranker.go` (modified, +38/-14)
+```diff
+@@ -226,16 +226,17 @@ type judgeRequest struct {
+ 	apiKey       string
+ 	organization string
+ 	// hostFromHeader says the request header named the host. Anyone who may
+-	// query can name one, so status errors quote no reply body for it. A wrong
+-	// answer name or type is quoted (cut to 512 bytes) for every host.
++	// query can name one, so an error quotes nothing of its replies and names
++	// no object.
+ 	hostFromHeader bool
+ 	model          string
+ 	query          string
+ 	image          bool
+ }
+ 
+ // judge names the document's object in a 400 about the document and in a
+-// rejected answer.
++// rejected answer. It names no object for a host the request header named:
++// which errors carry the name would tell what that host replied.
+ func (c *client) judge(ctx context.Context, r judgeRequest, document ent.Document) (float64, int64, error) {
+ 	response, err := c.send(ctx, r, document.Value)
+ 	if err != nil {
+@@ -247,7 +248,10 @@ func (c *client) judge(ctx context.Context, r judgeRequest, document ent.Documen
+ 	}
+ 	score, err := response.score(questionName)
+ 	if err != nil {
+-		return 0, 0, fmt.Errorf("object %s: %w", document.ID, c.replyError(err, r.hostFromHeader))
++		if r.hostFromHeader {
++			return 0, 0, c.replyError(err, true)
++		}
++		return 0, 0, fmt.Errorf("object %s: %w", document.ID, err)
+ 	}
+ 	return score, response.inputTokens(), nil
+ }
+@@ -362,12 +366,33 @@ func (c *client) readResponse(ctx context.Context, res *http.Response, hostFromH
+ }
+ 
+ // Param and Code are any: OpenAI sends a string or null, and other servers
+-// send a number as the code. A value of another type must not fail the decode
+-// of the message.
++// send a number as the code.
+ type apiError struct {
+-	Message string `json:"message"`
+-	Param   any    `json:"param"`
+-	Code    any    `json:"code"`
++	Message string
++	Param   any
++	Code    any
 +}
 +
-+func (d *deadlineRecorder) record(ctx context.Context) {
-+	d.deadline, d.hasDeadline = ctx.Deadline()
-+}
-+
-+func (d *deadlineRecorder) Search(ctx context.Context, _ *pb.SearchRequest) (*pb.SearchReply, error) {
-+	d.record(ctx)
-+	return &pb.SearchReply{}, nil
-+}
-+
-+func (d *deadlineRecorder) Aggregate(ctx context.Context, _ *pb.AggregateRequest) (*pb.AggregateReply, error) {
-+	d.record(ctx)
-+	return &pb.AggregateReply{}, nil
-+}
-+
-+func (d *deadlineRecorder) TenantsGet(ctx context.Context, _ *pb.TenantsGetRequest) (*pb.TenantsGetReply, error) {
-+	d.record(ctx)
-+	return &pb.TenantsGetReply{}, nil
-+}
-+
-+// TestGrpcWebQueryDeadline pins that a grpc-web Search or Aggregate call
-+// reaches the gRPC service with the write timeout of the server that accepted
-+// it as its deadline, unless the client asks for a shorter one, and that other
-+// calls, and calls to a server without a write timeout, keep the client's.
-+func TestGrpcWebQueryDeadline(t *testing.T) {
-+	const writeTimeout = time.Hour
-+
-+	tests := []struct {
-+		name          string
-+		method        string
-+		writeTimeout  time.Duration
-+		clientTimeout time.Duration
-+		wantTimeout   time.Duration // 0 for no deadline
-+	}{
-+		{name: "aggregate", method: pb.Weaviate_Aggregate_FullMethodName, writeTimeout: writeTimeout, wantTimeout: writeTimeout},
-+		{name: "search", method: pb.Weaviate_Search_FullMethodName, writeTimeout: writeTimeout, wantTimeout: writeTimeout},
-+		{
-+			name: "aggregate with a shorter client timeout", method: pb.Weaviate_Aggregate_FullMethodName,
-+			writeTimeout: writeTimeout, clientTimeout: time.Minute, wantTimeout: time.Minute,
-+		},
-+		{name: "other call", method: pb.Weaviate_TenantsGet_FullMethodName, writeTimeout: writeTimeout},
-+		{name: "aggregate without a write timeout", method: pb.Weaviate_Aggregate_FullMethodName},
++// UnmarshalJSON takes the error object of OpenAI and an error that is a
++// string, which some OpenAI-compatible servers send. A message that is not a
++// string reads as no message, so that param and code are still decoded.
++func (e *apiError) UnmarshalJSON(data []byte) error {
++	var message string
++	if json.Unmarshal(data, &message) == nil {
++		e.Message = message
++		return nil
 +	}
-+
++	var fields struct {
++		Message any `json:"message"`
++		Param   any `json:"param"`
++		Code    any `json:"code"`
++	}
++	if err := json.Unmarshal(data, &fields); err != nil {
++		return err
++	}
++	e.Message, _ = fields.Message.(string)
++	e.Param, e.Code = fields.Param, fields.Code
++	return nil
+ }
+ 
+ func (e apiError) message() string {
+@@ -415,7 +440,7 @@ func (c *client) statusError(res *http.Response, hostFromHeader bool) error {
+ 	return rejectedError{
+ 		status:        res.StatusCode,
+ 		message:       apiErr.message(),
+-		aboutDocument: apiErr.aboutDocument(res.StatusCode),
++		aboutDocument: !hostFromHeader && apiErr.aboutDocument(res.StatusCode),
+ 	}
+ }
+ 
+@@ -446,11 +471,10 @@ func (e rejectedError) Error() string {
+ 	return fmt.Sprintf("connection to OpenAI API failed with status %d: %s", e.status, e.message)
+ }
+ 
++// truncate cuts s to maxErrorMessageBytes and drops the bytes that are not
++// valid UTF-8, such as those of a character the cut splits.
+ func truncate(s string) string {
+-	if len(s) <= maxErrorMessageBytes {
+-		return s
+-	}
+-	return strings.ToValidUTF8(s[:maxErrorMessageBytes], "")
++	return strings.ToValidUTF8(s[:min(len(s), maxErrorMessageBytes)], "")
+ }
+ 
+ // The server's organization never goes to a host the request header named, as
+```
+
+**File**: `modules/reranker-openai/clients/ranker_test.go` (modified, +52/-6)
+```diff
+@@ -635,6 +635,22 @@ func TestRankFailsAtOnceOnProviderErrors(t *testing.T) {
+ 			},
+ 			wantErr: "object " + secondID + ": connection to OpenAI API failed with status 400: Invalid input",
+ 		},
++		{
++			name: "400 with a message that is not a string keeps the param and names no object",
++			reply: fakeReply{
++				status: http.StatusBadRequest,
++				body:   `{"error":{"message":["Unsupported model"],"param":"model","code":"invalid_value"}}`,
++			},
++			wantErr: "connection to OpenAI API failed with status 400",
++		},
++		{
++			name: "400 with an error that is a string names the object and quotes it",
++			reply: fakeReply{
++				status: http.StatusBadRequest,
++				body:   `{"error":"Invalid input"}`,
++			},
++			wantErr: "object " + secondID + ": connection to OpenAI API failed with status 400: Invalid input",
++		},
+ 		{
+ 			name: "400 with a param in the questions names no object",
+ 			reply: fakeReply{
+@@ -791,6 +807,11 @@ func TestRankReportsAnErrorObjectInA200(t *testing.T) {
+ 			body:    `{"error":{"message":"The model is overloaded","type":"server_error"}}`,
+ 			wantErr: "OpenAI API returned an error: The model is overloaded",
+ 		},
++		{
++			name:    "an error that is a string",
++			body:    `{"error":"The model is overloaded"}`,
++			wantErr: "OpenAI API returned an error: The model is overloaded",
++		},
+ 		{
+ 			name:    "an error object next to an answer",
+ 			body:    `{"answers":[{"type":"predicate","name":"condition","probability":0.5}],"error":{"message":"The model is overloaded"}}`,
+@@ -1129,7 +1150,7 @@ func TestRankQuotesNoBodyOfAHostTheRequestNames(t *testing.T) {
+ 			name:       "a 400 from the header base URL",
+ 			reply:      fakeReply{status: http.StatusBadRequest, body: banner},
+ 			fromHeader: true,
+-			wantErr:    "object " + firstID + ": connection to OpenAI API failed with status 400",
++			wantErr:    "connection to OpenAI API failed with status 400",
+ 		},
+ 		{
+ 			name:       "a 500 from the header base URL",
+@@ -1180,25 +1201,25 @@ func TestRankQuotesNoBodyOfAHostTheRequestNames(t *testing.T) {
+ 			name:       "a wrong answer name from the header base URL",
+ 			reply:      fakeReply{status: http.StatusOK, body: `{"answers":[{"type":"predicate","name":"internal banner","probability":0.5}]}`},
+ 			fromHeader: true,
+-			wantErr:    "object " + firstID + ": " + unexpectedHeaderHostReply,
++			wantErr:    unexpectedHeaderHostReply,
+ 		},
+ 		{
+ 			name:       "an answer of another type from the header base URL",
+ 			reply:      fakeReply{status: http.StatusOK, body: `{"answers":[{"type":"internal banner","name":"condition","probability":0.5}]}`},
+ 			fromHeader: true,
+-			wantErr:    "object " + firstID + ": " + unexpectedHeaderHostReply,
++			wantErr:    unexpectedHeaderHostReply,
+ 		},
+ 		{
+ 			name:       "a probability outside 0 to 1 from the header base URL",
+ 			reply:      fakeReply{status: http.StatusOK, body: `{"answers":[{"type":"predicate","name":"condition","probability":7.25}]}`},
+ 			fromHeader: true,
+-			wantErr:    "object " + firstID + ": " + unexpectedHeaderHostReply,
++			wantErr:    unexpectedHeaderHostReply,
+ 		},
+ 		{
+ 			name:       "two answers from the header base URL",
+ 			reply:      fakeReply{status: http.StatusOK, body: `{"answers":[{"type":"predicate","name":"condition","probability":0.5},{"type":"predicate","name":"condition","probability":0.5}]}`},
+ 			fromHeader: true,
+-			wantErr:    "object " + firstID + ": " + unexpectedHeaderHostReply,
++			wantErr:    unexpectedHeaderHostReply,
+ 		},
+ 	}
+ 	for _, tt := range tests {
+@@ -1242,7 +1263,7 @@ func TestRankDoesNotReadAnErrorBodyItDoesNotQuote(t *testing.T) {
+ 			name:       "a 400 from the header base URL",
+ 			status:     http.StatusBadRequest,
+ 			fromHeader: true,
+-			wantErr:    "object " + firstID + ": connection to OpenAI API failed with status 400",
++			wantErr:    "connection to OpenAI API failed with status 400",
+ 		},
+ 		{
+ 			name:       "a 401 from the header base URL",
+@@ -1494,6 +1515,31 @@ func closedPort(t *testing.T) string {
+ 	return listener.Addr().String()
+ }
+ 
++func TestTruncate(t *testing.T) {
++	tests := []struct {
++		name string
++		in   string
++		want string
++	}{
++		{name: "empty", in: "", want: ""},
++		{name: "short", in: "a 400", want: "a 400"},
++		{name: "at the limit", in: strings.Repeat("a", maxErrorMessageBytes), want: strings.Repeat("a", maxErrorMessageBytes)},
++		{name: "above the limit", in: strings.Repeat("a", maxErrorMessageBytes+1), want: strings.Repeat("a", maxErrorMessageBytes)},
++		{
++			name: "the limit splits a character",
++			in:   strings.Repeat("a", maxErrorMessageBytes-1) + "é",
++			want: strings.Repeat("a", maxErrorMessageBytes-1),
++		},
++		{name: "a short text that ends inside a character", in: "caf\xc3", want: "caf"},
++		{name: "a short text with bytes that are not UTF-8", in: "\xff\xfe not json", want: " not json"},
++	}
 +	for _, tt := range tests {
 +		t.Run(tt.name, func(t *testing.T) {
-+			svc := &deadlineRecorder{}
-+			grpcServer := grpc.NewServer()
-+			pb.RegisterWeaviateServer(grpcServer, svc)
-+			handler, err := NewHandler(grpcServer, &state.State{
-+				ServerConfig: &config.WeaviateConfig{Config: config.Config{}},
-+			}, &Tracker{})
-+			require.NoError(t, err)
-+
-+			srv := httptest.NewUnstartedServer(Mount("/v1/grpc-web", handler, http.NotFoundHandler(), func() bool { return true }))
-+			srv.Config.WriteTimeout = tt.writeTimeout
-+			srv.Start()
-+			t.Cleanup(srv.Close)
-+
-+			req, err := http.NewRequest(http.MethodPost, srv.URL+"/v1/grpc-web"+tt.method, strings.NewReader("{}"))
-+			require.NoError(t, err)
-+			req.Header.Set("Content-Type", "application/json")
-+			req.Header.Set("Connect-Protocol-Version", "1")
-+			if tt.clientTimeout > 0 {
-+				req.Header.Set("Connect-Timeout-Ms", strconv.FormatInt(tt.clientTimeout.Milliseconds(), 10))
-+			}
-+			sent := time.Now()
-+			res, err := srv.Client().Do(req)
-+			require.NoError(t, err)
-+			res.Body.Close()
-+			require.Equal(t, http.StatusOK, res.StatusCode)
-+
-+			if tt.wantTimeout == 0 {
-+				require.False(t, svc.hasDeadline)
-+				return
-+			}
-+			require.True(t, svc.hasDeadline)
-+			assert.WithinRange(t, svc.deadline, sent.Add(tt.wantTimeout), time.Now().Add(tt.wantTimeout))
++			assert.Equal(t, tt.want, truncate(tt.in))
 +		})
 +	}
 +}
++
+ func TestRankCuts
 ```
 
-**File**: `adapters/handlers/grpc/grpcweb/server.go` (modified, +28/-2)
+**File**: `test/modules/reranker-openai/reranker_openai_test.go` (modified, +28/-1)
 ```diff
-@@ -16,6 +16,7 @@
- package grpcweb
+@@ -27,6 +27,7 @@ import (
+ 	"github.com/go-openapi/strfmt"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
++	"google.golang.org/grpc/metadata"
  
- import (
-+	"context"
- 	"fmt"
- 	"math"
- 	"net/http"
-@@ -27,22 +28,47 @@ import (
- 	"google.golang.org/grpc"
+ 	"github.com/weaviate/weaviate/entities/models"
+ 	"github.com/weaviate/weaviate/entities/schema"
+@@ -80,6 +81,9 @@ func testRerankerOpenAI(restURI, grpcURI string) func(t *testing.T) {
  
- 	"github.com/weaviate/weaviate/adapters/handlers/rest/state"
-+	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
- 	"github.com/weaviate/weaviate/usecases/config"
+ 		white := grayPNG(t, 400, 0xff)
+ 		cross := crossPNG(t, 400)
++		// The scores come from the model, so the assertions on their order
++		// need a wide margin. Three runs on 2026-11-18 with gpt-6-luna gave
++		// 0.84, 0.78 and 0.05 for the tickets, and 0.95 and 0 for the images.
+ 		tests := []struct {
+ 			name       string
+ 			tickets    []ticket
+@@ -132,7 +136,7 @@ func testRerankerOpenAI(restURI, grpcURI string) func(t *testing.T) {
+ 			})
+ 		}
+ 
+-		t.Run("a page of one is a request of one document", func(t *testing.T) {
++		t.Run("a page of one object has a score between 0 and 1", func(t *testing.T) {
+ 			createTickets(t, map[string]any{}, tickets())
+ 			request := rerankRequest("text", new(churn))
+ 			request.Limit = 1
+@@ -343,6 +347,29 @@ func testRerankerOpenAIAgainstAFakeProvider(fake *fakeProvider, restURI, grpcURI
+ 			assert.Empty(t, reply.Results)
+ 			assert.Empty(t, fake.received())
+ 		})
++
++		// The class base URL resolves to no host, so the requests reach the
++		// fake only through the base URL header. The server's organization
++		// does not go to a host the request names.
++		t.Run("the base URL and the key of the request headers are used", func(t *testing.T) {
++			const headerKey = "header-key"
++			fake.reset(allProbabilities, nil, nil)
++			createTickets(t, map[string]any{"baseURL": "http://class-base-url.invalid"}, tickets())
++			ctx := metadata.AppendToOutgoingContext(context.Background(),
++				"X-Openai-Api-Key", headerKey, "X-Openai-Baseurl", fake.baseURL())
++
++			reply, err := grpcClient.Search(ctx, rerankRequest("text", new(churn)))
++
++			require.NoError(t, err)
++			assert.Equal(t, []string{noRefundID, chargedTwiceID, changeEmailID}, resultIDs(reply.Results))
++			requests := fake.received()
++			require.Len(t, requests, 3)
++			for _, r := range requests {
++				assert.Equal(t, "/v1/decisions", r.path)
++				assert.Equal(t, "Bearer "+headerKey, r.authorization)
++				assert.Empty(t, r.organization)
++			}
++		})
+ 	}
+ }
+ 
+```
+
+---
+
+### Incident Patch 2: `cb0efc16` (2026-11-17)
+**Commit Message**: reranker-openai: fixed limits, the core rerank check, helpers as methods [api]
+
+RERANKER_OPENAI_MAX_CONCURRENT_REQUESTS and
+RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY are removed. Each pool has 32
+slots and a query takes at most 1,000 documents, the former defaults. A
+class setting is the place for an override if one is needed later.
+
+The module no longer implements RerankPropertyDataTypes and
+RerankQueryValidator, which the core PR removed. On gRPC the core check
+rejects a blank query and a property that is not text or blob before the
+search. The rank call keeps the same rules for GraphQL, and now also
+rejects a query of whitespace: the API answers it with a probability and
+bills the request.
+
+A query above 100,000 bytes fails in the rank call only, so a search
+without objects no longer fails for it.
+
+Functions whose logic belongs to one struct are methods of it:
+validateQuery, propertyInput, transportError, readResponse, statusError,
+readAPIError and checkImages on the client, input on judgeRequest,
+aboutDocument on apiError, inputTokens on the response.
+
+**File**: `modules/reranker-openai/clients/image.go` (modified, +3/-3)
+```diff
+@@ -98,7 +98,7 @@ func imageDataURL(encoded string) (string, error) {
+ }
+ 
+ // checkImages runs before any request is sent and billed.
+-func checkImages(documents []ent.Document, positions []int) error {
++func (c *client) checkImages(documents []ent.Document, positions []int) error {
+ 	for _, position := range positions {
+ 		if _, err := imageMIME(documents[position].Value); err != nil {
+ 			return fmt.Errorf("object %s: image: %w", documents[position].ID, err)
+@@ -107,8 +107,8 @@ func checkImages(documents []ent.Document, positions []int) error {
+ 	return nil
+ }
+ 
+-func newInput(document string, image bool) (any, error) {
+-	if !image {
++func (r judgeRequest) input(document string) (any, error) {
++	if !r.image {
+ 		return document, nil
+ 	}
+ 	url, err := imageDataURL(document)
+```
+
+**File**: `modules/reranker-openai/clients/image_test.go` (modified, +2/-2)
+```diff
+@@ -82,8 +82,8 @@ func TestImageDataURL(t *testing.T) {
+ func TestCheckImages(t *testing.T) {
+ 	documents := documentsOf(pngBase64, textBase64, "", jpegBase64)
+ 
+-	assert.NoError(t, checkImages(documents, []int{0, 3}))
+-	assert.EqualError(t, checkImages(documents, []int{0, 1, 3}),
++	assert.NoError(t, (&client{}).checkImages(documents, []int{0, 3}))
++	assert.EqualError(t, (&client{}).checkImages(documents, []int{0, 1, 3}),
+ 		"object 00000000-0000-0000-0000-000000000001: image: not a PNG, JPEG, GIF or WebP image")
+ }
+ 
+```
+
+**File**: `modules/reranker-openai/clients/ranker.go` (modified, +36/-38)
+```diff
+@@ -34,18 +34,14 @@ import (
  )
  
- // NewHandler transcodes grpc-web/Connect requests into calls against the
- // existing gRPC server. It carries its own CORS layer (grpc-web is routed
- // outside the REST middleware chain; see Mount) and exposes the gRPC trailer
- // headers so browsers can read the RPC status. tracker sits under the CORS
--// layer, so the 503 it returns while draining carries CORS headers.
-+// layer, so the 503 it returns while draining carries CORS headers. A query is
-+// bounded by the server's write timeout; see withQueryDeadline.
- func NewHandler(grpcServer *grpc.Server, state *state.State, tracker *Tracker) (http.Handler, error) {
- 	opts := []vanguard.ServiceOption{}
- 	opts = append(opts, vanguard.WithMaxMessageBufferBytes(msgBufferLimit(state.ServerConfig.Config.GRPC.MaxMsgSize)))
- 	transcoder, err := vanguardgrpc.NewTranscoder(grpcServer, vanguard.WithDefaultServiceOptions(opts...))
+ const (
+-	// DefaultMaxConcurrentRequests is 32: the default size of each of the two
+-	// pools of the client, set by RERANKER_OPENAI_MAX_CONCURRENT_REQUESTS. Up
+-	// to twice the value can be in flight per process. A request for an image
+-	// holds about three copies of its base64 while it holds a slot (80 MiB for
+-	// a 20 MiB image).
+-	DefaultMaxConcurrentRequests = 32
+-	// MaxConcurrentRequestsLimit is 256: the largest value the setting takes.
+-	MaxConcurrentRequestsLimit = 256
+-	// DefaultMaxDocumentsPerQuery is 1,000 documents. A query sends one billed
++	// MaxConcurrentRequests is 32: the size of each of the two pools of the
++	// client, so a process has up to 64 requests in flight. A request for an
++	// image holds about three copies of its base64 while it holds a slot
++	// (80 MiB for a 20 MiB image).
++	MaxConcurrentRequests = 32
++	// MaxDocumentsPerQuery is 1,000 documents. A query sends one billed
+ 	// request per object.
+-	DefaultMaxDocumentsPerQuery = 1000
+-	MaxDocumentsPerQueryEnv     = "RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY"
++	MaxDocumentsPerQuery = 1000
+ 
+ 	apiPath            = "/v1/decisions"
+ 	predicateType      = "predicate"
+@@ -101,10 +97,12 @@ func New(apiKey, organization string, timeout time.Duration, maxConcurrentReques
+ 	}
+ }
+ 
+-// ValidateQuery returns the error of a rerank.query the module does not rank
+-// with: an empty one, and one above maxQueryBytes.
+-func ValidateQuery(query string) error {
+-	if query == "" {
++// validateQuery returns the error of a rerank.query the module does not rank
++// with: a blank one, and one above maxQueryBytes. The gRPC search rejects a
++// blank query before the search; GraphQL reaches this check only. The API
++// answers a blank query with a probability and bills the request.
++func (c *client) validateQuery(query string) error {
++	if strings.TrimSpace(query) == "" {
+ 		return errors.New("rerank.query is required by reranker-openai: the query is the condition the model judges")
+ 	}
+ 	if len(query) > maxQueryBytes {
+@@ -124,10 +122,10 @@ func ValidateQuery(query string) error {
+ func (c *client) RankProperty(ctx context.Context, query, property string, documents []ent.Document,
+ 	cfg moduletools.ClassConfig,
+ ) (*ent.RankResult, error) {
+-	if err := ValidateQuery(query); err != nil {
++	if err := c.validateQuery(query); err != nil {
+ 		return nil, err
+ 	}
+-	image, err := propertyInput(cfg, property)
++	image, err := c.propertyInput(cfg, property)
  	if err != nil {
- 		return nil, fmt.Errorf("build grpc-web transcoder: %w", err)
+ 		return nil, err
  	}
--	return cors.New(corsOptions(state.ServerConfig.Config.CORS)).Handler(tracker.wrap(transcoder)), nil
-+	return cors.New(corsOptions(state.ServerConfig.Config.CORS)).Handler(tracker.wrap(withQueryDeadline(transcoder))), nil
-+}
-+
-+// withQueryDeadline bounds a Search or Aggregate request by the write timeout
-+// of the server that accepted it, as a response that takes longer cannot be
-+// written. A browser client often sets no timeout of its own, and a remote
-+// aggregation without a deadline is cut off by the cluster's per-request query
-+// timeout instead; under a deadline it can use all the time the response has.
-+// A client timeout shorter than the write timeout still applies.
-+func withQueryDeadline(next http.Handler) http.Handler {
-+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		srv, ok := r.Context().Value(http.ServerContextKey).(*http.Server)
-+		if !ok || srv.WriteTimeout <= 0 || !isQueryMethod(r.URL.Path) {
-+			next.ServeHTTP(w, r)
-+			return
-+		}
-+		ctx, cancel := context.WithTimeout(r.Context(), srv.WriteTimeout)
-+		defer cancel()
-+		next.ServeHTTP(w, r.WithContext(ctx))
-+	})
-+}
-+
-+func isQueryMethod(urlPath string) bool {
-+	return urlPath == pb.Weaviate_Search_FullMethodName || urlPath == pb.Weaviate_Aggregate_FullMethodName
- }
- 
- // corsOptions builds the CORS config for the grpc-web handler: the
-```
-
----
-
-### Incident Patch 2: `baebb6d7` (2026-11-17)
-**Commit Message**: fix(hfresh): preserve pending task claims across enqueue failures
-
-Signed-off-by: Perfloop Agent <[REDACTED_EMAIL]>
-
-**File**: `adapters/repos/db/vector/hfresh/merge.go` (modified, +1/-2)
-```diff
-@@ -22,8 +22,6 @@ func (h *HFresh) doMerge(ctx context.Context, postingID uint64) error {
- 	start := time.Now()
- 	defer h.metrics.MergeDuration(start)
- 
--	defer h.taskQueue.MergeDone(postingID)
--
- 	h.logger.WithField("postingID", postingID).Debug("merging posting")
- 
- 	var markedAsDone bool
-@@ -33,6 +31,7 @@ func (h *HFresh) doMerge(ctx context.Context, postingID uint64) error {
- 		h.taskQueue.MergeDone(postingID) // remove from the in-progress list
- 		return h.taskQueue.EnqueueMerge(postingID)
+@@ -153,12 +151,12 @@ func (c *client) RankProperty(ctx context.Context, query, property string, docum
+ 		pending = append(pending, i)
  	}
-+	defer h.taskQueue.MergeDone(postingID)
- 	defer func() {
- 		if !markedAsDone {
- 			h.postingLocks.Unlock(postingID)
-```
-
-**File**: `adapters/repos/db/vector/hfresh/task_queue.go` (modified, +3/-0)
-```diff
-@@ -246,6 +246,7 @@ func (tq *TaskQueue) EnqueueAnalyze(postingID uint64) error {
+ 	if len(pending) > c.maxDocumentsPerQuery {
+-		return nil, fmt.Errorf("rerank of %d objects: reranker-openai sends one request per object and takes at most %d per query (%s)",
+-			len(pending), c.maxDocumentsPerQuery, MaxDocumentsPerQueryEnv)
++		return nil, fmt.Errorf("rerank of %d objects: reranker-openai sends one request per object and takes at most %d per query",
++			len(pending), c.maxDocumentsPerQuery)
  	}
  
- 	if err := tq.analyzeQueue.Push(encodeTask(postingID, taskQueueAnalyzeOp)); err != nil {
-+		tq.analyzeList.Delete(postingID)
- 		return errors.Wrap(err, "failed to push analyze operation to queue")
- 	}
- 
-@@ -260,6 +261,7 @@ func (tq *TaskQueue) EnqueueSplit(postingID uint64) error {
- 	}
- 
- 	if err := tq.splitQueue.Push(encodeTask(postingID, taskQueueSplitOp)); err != nil {
-+		tq.splitList.Delete(postingID)
- 		return errors.Wrap(err, "failed to push split operation to queue")
- 	}
- 
-@@ -275,6 +277,7 @@ func (tq *TaskQueue) EnqueueMerge(postingID uint64) error {
- 	}
- 
- 	if err := tq.mergeQueue.Push(encodeTask(postingID, taskQueueMergeOp)); err != nil {
-+		tq.mergeList.Delete(postingID)
- 		return errors.Wrap(err, "failed to push merge operation to queue")
- 	}
- 
-```
-
----
-
-### Incident Patch 3: `fdd09ee6` (2026-11-05)
-**Commit Message**: fix(aggregator): fail over within the read plan, keep read admission checks, spread shards optimally
-
-**File**: `adapters/repos/db/index.go` (modified, +55/-25)
-```diff
-@@ -3747,13 +3747,17 @@ func (i *Index) aggregate(ctx context.Context, replProps *additional.Replication
- 	// a different node where the replicas allow: the query then takes as long as
- 	// its slowest shard, not all of them in turn on one node.
- 	replicas := readPlan.SpreadReplicas()
-+	replicasOf := make(map[string][]routerTypes.Replica, len(replicas))
-+	for _, r := range readPlan.Replicas() {
-+		replicasOf[r.ShardName] = append(replicasOf[r.ShardName], r)
-+	}
- 	results := make([]*aggregation.Result, len(replicas))
- 	eg, ctx := enterrors.NewErrorGroupWithContextWrapper(i.logger, ctx)
- 	// at least 3, so that a single-tenant rf=3 query is not serialized on 1 CPU
- 	eg.SetLimit(_NUMCPU*2 + 1)
- 	for j, replica := range replicas {
- 		eg.Go(func() error {
--			res, err := i.aggregateShard(ctx, readPlan.LocalHostname, replica, params, modules)
-+			res, err := i.aggregateShard(ctx, readPlan.LocalHostname, replica, replicasOf[replica.ShardName], params, modules)
- 			if err != nil {
- 				return errors.Wrapf(err, "shard %s", replica.ShardName)
- 			}
-@@ -3768,36 +3772,62 @@ func (i *Index) aggregate(ctx context.Context, replProps *additional.Replication
- 	return aggregator.NewShardCombiner().Do(results)
- }
- 
--// aggregateShard aggregates the shard on the given replica: here when it is the
--// local one, otherwise on its node first and on the shard's other replicas after.
--func (i *Index) aggregateShard(ctx context.Context, localNode string, replica routerTypes.Replica,
-+// aggregateShard aggregates the shard on the picked replica and, if that fails,
-+// on the shard's other read replicas in plan order, the local one first.
-+func (i *Index) aggregateShard(ctx context.Context, localNode string, picked routerTypes.Replica,
-+	replicas []routerTypes.Replica, params aggregation.Params, modules *modules.Provider,
-+) (*aggregation.Result, error) {
-+	others := slices.DeleteFunc(slices.Clone(replicas), func(r routerTypes.Replica) bool {
-+		return r.NodeName == picked.NodeName
-+	})
-+	var err error
-+	for _, replica := range append([]routerTypes.Replica{picked}, others...) {
-+		if ctxErr := ctx.Err(); ctxErr != nil {
-+			return nil, ctxErr
-+		}
-+		var res *aggregation.Result
-+		if res, err = i.aggregateOnReplica(ctx, localNode, replica, params, modules); err == nil {
-+			return res, nil
-+		}
-+		err = fmt.Errorf("node %s: %w", replica.NodeName, err)
-+	}
-+	return nil, err
-+}
-+
-+func (i *Index) aggregateOnReplica(ctx context.Context, localNode string, replica routerTypes.Replica,
- 	params aggregation.Params, modules *modules.Provider,
- ) (*aggregation.Result, error) {
--	remote := func(preferredNode string) (*aggregation.Result, error) {
--		res, err := i.remote.Aggregate(ctx, replica.ShardName, preferredNode, params)
--		if err != nil || res == nil {
--			return res, err
-+	if replica.NodeName == localNode {
-+		shard, release, err := i.getShardForDirectLocalOperation(ctx, params.Tenant, replica.ShardName, localShardOperationRead, 0)
-+		defer release()
-+		if err != nil {
-+			return nil, err
+ 	if image {
+-		if err := checkImages(documents, pending); err != nil {
++		if err := c.checkImages(documents, pending); err != nil {
+ 			return nil, err
  		}
--		// restore wire state here so a malformed payload error still names the shard
--		return res, aggregator.NewShardCombiner().RestoreSerializedAggregators(res)
-+		if shard == nil {
-+			return nil, fmt.Errorf("shard %s is not loaded here", replica.ShardName)
-+		}
-+		return shard.Aggregate(ctx, params, modules)
-+	}
-+
-+	if err := i.admitRemoteRead(); err != nil {
-+		return nil, err
  	}
--	if replica.NodeName != localNode {
--		return remote(replica.NodeName)
-+	res, err := i.remote.Aggregate(ctx, replica.NodeName, replica.ShardName, params)
-+	if err != nil || res == nil {
-+		return res, err
- 	}
-+	// restore wire state here so a malformed payload error still names the shard
-+	return res, aggregator.NewShardCombiner().RestoreSerializedAggregators(res)
-+}
- 
--	var res *aggregation.Result
--	err := i.withShardOrRemote(ctx, params.Tenant, replica.ShardName, localShardOperationRead, 0,
--		func(shard ShardLike) error {
--			var err error
--			res, err = shard.Aggregate(ctx, params, modules)
--			return err
--		},
--		func() error {
--			var err error
--			res, err = remote("")
--			return err
--		})
--	return res, err
-+// admitRemoteRead refuses a read sent to a peer whenever a local shard read would
-+// be refused: on a closed index or in a namespace that does not allow reads.
-+func (i *Index) admitRemoteRead() error {
-+	if err := i.enterRead(); err != nil {
-+		return err
-+	}
-+	defer i.exitRead()
-+	return i.requireNamespaceAllowsShardLoad(callerUserRequest)
+@@ -208,7 +206,7 @@ func (c *client) RankProperty(ctx context.Context, query, property string, docum
  }
  
- // aggregateCount counts every shard in readPlan against that plan's replicas,
+ // The gRPC parser runs the same check before the search; GraphQL has none.
+-func propertyInput(cfg moduletools.ClassConfig, property string) (image bool, err error) {
++func (c *client) propertyInput(cfg moduletools.ClassConfig, property string) (image bool, err error) {
+ 	if cfg == nil {
+ 		return false, errors.New("no class config")
+ 	}
+@@ -251,7 +249,7 @@ func (c *client) judge(ctx context.Context, r judgeRequest, document ent.Documen
+ 	if err != nil {
+ 		return 0, 0, fmt.Errorf("object %s: %w", document.ID, err)
+ 	}
+-	return score, inputTokens(response.Usage), nil
++	return score, response.inputTokens(), nil
+ }
+ 
+ func (c *client) slotsFor(hostFromHeader bool) chan struct{} {
+@@ -277,7 +275,7 @@ func (c *client) send(ctx context.Context, r judgeRequest, document string) (dec
+ 		return decisionResponse{}, ctx.Err()
+ 	}
+ 
+-	input, err := newInput(document, r.image)
++	input, err := r.input(document)
+ 	if err != nil {
+ 		return decisionResponse{}, fmt.Errorf("image: %w", err)
+ 	}
+@@ -301,17 +299,17 @@ func (c *client) send(ctx context.Context, r judgeRequest, document string) (dec
+ 
+ 	res, err := c.httpClient.Do(req)
+ 	if err != nil {
+-		return decisionResponse{}, transportError(ctx, "send OpenAI request", "no HTTP response from", err, r.hostFromHeader)
++		return decisionResponse{}, c.transportError(ctx, "send OpenAI request", "no HTTP response from", err, r.hostFromHeader)
+ 	}
+ 	defer res.Body.Close()
+-	return readResponse(ctx, res, r.hostFromHeader)
++	return c.readResponse(ctx, res, r.hostFromHeader)
+ }
+ 
+ // transportError keeps the transport's error for the class or default host.
+ // For a host the request header name
 ```
 
-**File**: `adapters/repos/db/index_aggregate_test.go` (modified, +165/-5)
+**File**: `modules/reranker-openai/clients/ranker_test.go` (modified, +39/-30)
 ```diff
-@@ -13,6 +13,7 @@ package db
+@@ -238,7 +238,7 @@ func TestRankSkipsEmptyAndDuplicateDocuments(t *testing.T) {
+ 	f := newFake(t)
+ 	f.probabilities = map[string]float64{"a": 0.8, "b": 0.2}
+ 	logger, hook := debugLogger()
+-	c := New(defaultFakeKey, "", testTimeout, DefaultMaxConcurrentRequests, DefaultMaxDocumentsPerQuery, logger)
++	c := New(defaultFakeKey, "", testTimeout, MaxConcurrentRequests, MaxDocumentsPerQuery, logger)
+ 
+ 	res, err := c.RankProperty(context.Background(), churn, "text", documentsOf("", "a", "a", "b"), classConfig(f.url(), nil))
+ 
+@@ -282,13 +282,25 @@ func TestRankWithEveryDocumentEmpty(t *testing.T) {
+ }
+ 
+ func TestRankRequiresAQuery(t *testing.T) {
+-	f := newFake(t)
++	tests := []struct {
++		name  string
++		query string
++	}{
++		{name: "no query", query: ""},
++		{name: "a space", query: " "},
++		{name: "whitespace", query: " \t\n"},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			f := newFake(t)
+ 
+-	_, err := newTestClient(defaultFakeKey).RankProperty(context.Background(), "", "text",
+-		documentsOf(noRefund), classConfig(f.url(), nil))
++			_, err := newTestClient(defaultFakeKey).RankProperty(context.Background(), tt.query, "text",
++				documentsOf(noRefund), classConfig(f.url(), nil))
+ 
+-	require.EqualError(t, err, "rerank.query is required by reranker-openai: the query is the condition the model judges")
+-	assert.Empty(t, f.received())
++			require.EqualError(t, err, "rerank.query is required by reranker-openai: the query is the condition the model judges")
++			assert.Empty(t, f.received())
++		})
++	}
+ }
+ 
+ func TestRankLimitsTheQuerySize(t *testing.T) {
+@@ -343,8 +355,7 @@ func TestRankCapsTheDocumentsOfAQuery(t *testing.T) {
+ 			cap:       3,
+ 			property:  "text",
+ 			documents: []string{"a", "b", "c", "d"},
+-			wantErr: "rerank of 4 objects: reranker-openai sends one request per object and takes at most 3 per query " +
+-				"(RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY)",
++			wantErr:   "rerank of 4 objects: reranker-openai sends one request per object and takes at most 3 per query",
+ 		},
+ 		{
+ 			name:      "blank and duplicate documents do not count",
+@@ -358,8 +369,7 @@ func TestRankCapsTheDocumentsOfAQuery(t *testing.T) {
+ 			cap:       1,
+ 			property:  "photo",
+ 			documents: []string{pngBase64, "%%%%"},
+-			wantErr: "rerank of 2 objects: reranker-openai sends one request per object and takes at most 1 per query " +
+-				"(RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY)",
++			wantErr:   "rerank of 2 objects: reranker-openai sends one request per object and takes at most 1 per query",
+ 		},
+ 		{
+ 			name:      "a cap below one is one",
+@@ -373,14 +383,13 @@ func TestRankCapsTheDocumentsOfAQuery(t *testing.T) {
+ 			cap:       -2,
+ 			property:  "text",
+ 			documents: []string{"a", "b"},
+-			wantErr: "rerank of 2 objects: reranker-openai sends one request per object and takes at most 1 per query " +
+-				"(RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY)",
++			wantErr:   "rerank of 2 objects: reranker-openai sends one request per object and takes at most 1 per query",
+ 		},
+ 	}
+ 	for _, tt := range tests {
+ 		t.Run(tt.name, func(t *testing.T) {
+ 			f := newFake(t)
+-			c := New(defaultFakeKey, "", testTimeout, DefaultMaxConcurrentRequests, tt.cap, nullLogger())
++			c := New(defaultFakeKey, "", testTimeout, MaxConcurrentRequests, tt.cap, nullLogger())
+ 
+ 			res, err := c.RankProperty(context.Background(), churn, tt.property, documentsOf(tt.documents...),
+ 				classConfig(f.url(), nil))
+@@ -677,7 +686,7 @@ func TestRankStopsAfterTheFirstProviderError(t *testing.T) {
+ 	f := newFake(t)
+ 	f.replies = map[int]fakeReply{0: {status: http.StatusTooManyRequests, body: `{"error":{"message":"slow down"}}`}}
+ 
+-	res, err := New(defaultFakeKey, "", testTimeout, 1, DefaultMaxDocumentsPerQuery, nullLogger()).RankProperty(context.Background(), churn, "text",
++	res, err := New(defaultFakeKey, "", testTimeout, 1, MaxDocumentsPerQuery, nullLogger()).RankProperty(context.Background(), churn, "text",
+ 		documentsOf("first", "second", "third"), classConfig(f.url(), nil))
+ 
+ 	require.EqualError(t, err, "connection to OpenAI API failed with status 429: slow down")
+@@ -751,7 +760,7 @@ func TestRankReportsA401AndA403WithoutTheBody(t *testing.T) {
+ 			f := newFake(t)
+ 			f.replies = map[int]fakeReply{0: {status: tt.status, body: tt.body}}
+ 			logger, hook := debugLogger()
+-			c := New(secret, "", testTimeout, DefaultMaxConcurrentRequests, DefaultMaxDocumentsPerQuery, logger)
++			c := New(secret, "", testTimeout, MaxConcurrentRequests, MaxDocumentsPerQuery, logger)
+ 
+ 			_, err := c.RankProperty(context.Background(), churn, "text", documentsOf(noRefund), classConfig(f.url(), nil))
+ 
+@@ -919,7 +928,7 @@ func TestRankHeaders(t *testing.T) {
+ 			if tt.headerBaseURL {
+ 				ctx = context.WithValue(ctx, "X-Openai-Baseurl", []string{headerServer.url()})
+ 			}
+-			c := New(tt.serverKey, tt.serverOrganization, testTimeout, DefaultMaxConcurrentRequests, DefaultMaxDocumentsPerQuery, nullLogger())
++			c := New(tt.serverKey, tt.serverOrgani
+```
+
+**File**: `modules/reranker-openai/module.go` (modified, +3/-59)
+```diff
+@@ -13,27 +13,17 @@ package modrerankeropenai
  
  import (
  	"context"
-+	"errors"
+-	"fmt"
+ 	"os"
+-	"strconv"
+-
+-	"github.com/pkg/errors"
+ 
+ 	"github.com/weaviate/weaviate/entities/modulecapabilities"
+ 	"github.com/weaviate/weaviate/entities/moduletools"
+-	"github.com/weaviate/weaviate/entities/schema"
+ 	"github.com/weaviate/weaviate/modules/reranker-openai/clients"
+ 	"github.com/weaviate/weaviate/modules/reranker-openai/config"
+ 	rerankeradditional "github.com/weaviate/weaviate/usecases/modulecomponents/additional"
+ 	"github.com/weaviate/weaviate/usecases/modulecomponents/ent"
+ )
+ 
+-const (
+-	Name = config.ModuleName
+-
+-	maxConcurrentRequestsEnv = "RERANKER_OPENAI_MAX_CONCURRENT_REQUESTS"
+-	maxDocumentsPerQueryEnv  = clients.MaxDocumentsPerQueryEnv
+-)
++const Name = config.ModuleName
+ 
+ func New() *ReRankerOpenAIModule {
+ 	return &ReRankerOpenAIModule{}
+@@ -57,62 +47,18 @@ func (m *ReRankerOpenAIModule) Type() modulecapabilities.ModuleType {
+ 	return modulecapabilities.Text2TextReranker
+ }
+ 
+-func (m *ReRankerOpenAIModule) RerankPropertyDataTypes() []schema.DataType {
+-	return []schema.DataType{schema.DataTypeText, schema.DataTypeBlob}
+-}
+-
+-// ValidateRerankQuery applies the rule of the rank call, which the GraphQL
+-// search reaches without this check.
+-func (m *ReRankerOpenAIModule) ValidateRerankQuery(query string) error {
+-	return clients.ValidateQuery(query)
+-}
+-
+ func (m *ReRankerOpenAIModule) Init(ctx context.Context,
+ 	params moduletools.ModuleInitParams,
+ ) error {
+-	maxConcurrentRequests, err := maxConcurrentRequestsFromEnv()
+-	if err != nil {
+-		return errors.Wrap(err, "init reranker")
+-	}
+-	maxDocumentsPerQuery, err := maxDocumentsPerQueryFromEnv()
+-	if err != nil {
+-		return errors.Wrap(err, "init reranker")
+-	}
+-
+ 	apiKey := os.Getenv("OPENAI_APIKEY")
+ 	organization := os.Getenv("OPENAI_ORGANIZATION")
+-	client := clients.New(apiKey, organization, params.GetConfig().ModuleHttpClientTimeout, maxConcurrentRequests,
+-		maxDocumentsPerQuery, params.GetLogger())
++	client := clients.New(apiKey, organization, params.GetConfig().ModuleHttpClientTimeout, clients.MaxConcurrentRequests,
++		clients.MaxDocumentsPerQuery, params.GetLogger())
+ 	m.reranker = client
+ 	m.additionalPropertiesProvider = rerankeradditional.NewPropertyRankerProvider(client)
+ 	return nil
+ }
+ 
+-func maxConcurrentRequestsFromEnv() (int, error) {
+-	v := os.Getenv(maxConcurrentRequestsEnv)
+-	if v == "" {
+-		return clients.DefaultMaxConcurrentRequests, nil
+-	}
+-	n, err := strconv.Atoi(v)
+-	if err != nil || n < 1 || n > clients.MaxConcurrentRequestsLimit {
+-		return 0, fmt.Errorf("%s must be a whole number between 1 and %d, got %q",
+-			maxConcurrentRequestsEnv, clients.MaxConcurrentRequestsLimit, v)
+-	}
+-	return n, nil
+-}
+-
+-func maxDocumentsPerQueryFromEnv() (int, error) {
+-	v := os.Getenv(maxDocumentsPerQueryEnv)
+-	if v == "" {
+-		return clients.DefaultMaxDocumentsPerQuery, nil
+-	}
+-	n, err := strconv.Atoi(v)
+-	if err != nil || n < 1 {
+-		return 0, fmt.Errorf("%s must be a whole number of at least 1, got %q", maxDocumentsPerQueryEnv, v)
+-	}
+-	return n, nil
+-}
+-
+ func (m *ReRankerOpenAIModule) MetaInfo() (map[string]any, error) {
+ 	return m.reranker.MetaInfo()
+ }
+@@ -126,6 +72,4 @@ var (
+ 	_ = modulecapabilities.Module(New())
+ 	_ = modulecapabilities.AdditionalProperties(New())
+ 	_ = modulecapabilities.MetaProvider(New())
+-	_ = modulecapabilities.RerankPropertyDataTypes(New())
+-	_ = modulecapabilities.RerankQueryValidator(New())
+ )
+```
+
+**File**: `modules/reranker-openai/module_test.go` (modified, +8/-173)
+```diff
+@@ -15,12 +15,13 @@ import (
+ 	"context"
+ 	"net/http"
+ 	"net/http/httptest"
+-	"strings"
++	"strconv"
  	"sync"
  	"sync/atomic"
  	"testing"
-@@ -21,9 +22,11 @@ import (
- 	"github.com/stretchr/testify/mock"
- 	"github.com/stretchr/testify/require"
+ 	"time"
  
-+	"github.com/weaviate/weaviate/cluster/proto/api"
- 	"github.com/weaviate/weaviate/cluster/router/types"
- 	"github.com/weaviate/weaviate/entities/aggregation"
- 	"github.com/weaviate/weaviate/usecases/cluster"
-+	"github.com/weaviate/weaviate/usecases/namespaces"
- 	"github.com/weaviate/weaviate/usecases/sharding"
++	"github.com/go-openapi/strfmt"
+ 	"github.com/sirupsen/logrus/hooks/test"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+@@ -33,101 +34,6 @@ import (
+ 	"github.com/weaviate/weaviate/usecases/modules"
  )
  
-@@ -84,7 +87,7 @@ func TestIndexAggregate_SpreadsShardsOverReplicas(t *testing.T) {
- 	nodeResolver := cluster.NewMockNodeResolver(t)
- 	nodeResolver.EXPECT().NodeHostname("node2").Return("127.0.0.2", true).Maybe()
- 	nodeResolver.EXPECT().NodeHostname("node3").Return("127.0.0.3", true).Maybe()
--	client := &recordingAggregateClient{hosts: map[string]string{}}
-+	client := newRecordingAggregateClient()
- 	idx.remote = sharding.NewRemoteIndex(className, remoteShardsOnNode2{}, nodeResolver, client)
- 
- 	res, err := idx.aggregate(t.Context(), nil, aggregation.Params{ClassName: className}, nil)
-@@ -94,23 +97,180 @@ func TestIndexAggregate_SpreadsShardsOverReplicas(t *testing.T) {
- 		[]string{client.hosts["shard-a"], client.hosts["shard-b"]})
- }
- 
--// recordingAggregateClient answers every aggregation and records the host each
--// shard was sent to.
-+// recordingAggregateClient answers every aggregation except those sent to a
-+// failing host, and records every host asked and where each shard was answered.
- type recordingAggregateClient struct {
- 	FakeRemoteClient
--	mu    sync.Mutex
--	hosts map[string]string
-+	failing map[string]bool
-+	mu      sync.Mutex
-+	asked   []string
-+	hosts   map[string]string
-+}
-+
-+func newRecordingAggregateClient(failing ...string) *recordingAggregateClient {
-+	c := &recordingAggregateClient{failing: map[string]bool{}, hosts: map[string]string{}}
-+	for _, host := range failing {
-+		c.failing[host] = true
-+	}
-+	return c
- }
- 
- func (c *recordingAggregateClient) Aggregate(_ context.Context, host, _, shard string,
- 	_ aggregation.Params,
- ) (*aggregation.Result, error) {
- 	c.mu.Lock()
- 	defer c.mu.Unlock()
-+	c.asked = append(c.asked, host)
-+	if c.failing[host] {
-+		return nil, errors.New("replica unavailable")
-+	}
- 	c.hosts[shard] = host
- 	return &aggregation.Result{Groups: []aggregation.Group{{Count: 1}}}, nil
- }
- 
-+// aggregateTestIndex returns an index whose read plan is replicas, with node1 as
-+// the local node and every remote call going to client.
-+func aggregateTestIndex(t *testing.T, client *recordingAggregateClient, replicas ...types.Replica) *Index {
-+	t.Helper()
-+	const className = "AggregateReplicas"
-+	idx, _ := refCountTestIndex(t, className)
-+	// replicated, so a local read never creates a missing shard
-+	idx.Config.ReplicationFactor = 2
-+
-+	router := types.NewMockRouter(t)
-+	router.EXPECT().BuildReadRoutingPlan(mock.Anything).Return(types.ReadRoutingPlan{
-+		LocalHostname: "node1",
-+		ReplicaSet:    types.ReadReplicaSet{Replicas: replicas},
-+	}, nil).Maybe()
-+	router.EXPECT().GetReadReplicasLocation(className, mock.Anything, mock.Anything).Return(
-+		types.ReadReplicaSet{Replicas: replicas}, nil,
-+	).Maybe()
-+	idx.router = router
-+
-+	nodeResolver := cluster.NewMockNodeResolver(t)
-+	for _, node := range []string{"node2", "node3", "node4"} {
-+		nodeResolver.EXPECT().NodeHostname(node).Return(node+"-host", true).Maybe()
-+	}
-+	// the cluster state lists node4, which the read plan leaves out
-+	idx.remote = sharding.NewRemoteIndex(className, shardReplicasOn{"node4"}, nodeResolver, client)
-+	return idx
-+}
-+
-+func replicasOf(shard string, nodes ...string) []types.Replica {
-+	out := make([]types.Replica, 0, len(nodes))
-+	for _, node := range nodes {
-+		out = append(out, types.Replica{NodeName: node, ShardName: shard, HostAddr: node + "-host"})
-+	}
-+	return out
-+}
-+
-+// A shard falls over only to the read plan's other replicas, never to a node the
-+// plan leaves out, and asks each at most once.
-+func TestIndexAggregate_FailsOverWithinReadPlan(t *testing.T) {
-+	tests := []struct {
-+		name      string
-+		replicas  []types.Replica
-+		failing   []string
-+		wantErr   bool
-+		wantAsked []string
-+		answered  string
-+	}{
-+		{
-+			name:      "a failing replica falls over to the other",
-+			replicas:  replicasOf("shard-a", "node2", "node3"),
-+			failing:   []string{"node2-host"},
-+			wantAsked: []string{"node2-host", "node3-host"},
-+			answered:  "node3-host",
-+		},
-+		{
-+			name:      "with every read replica failing, the shard fails",
-+			replicas:  replicasOf("shard-a", "node2", "node3"),
-+			failing:   []string{"node2-host", "node3-host"},
-+			wantErr:   true,
-+			wantAsked: []string{"node2-host", "node3-host"},
-+		},
-+		{
-+			name:      "a local replica that is not loaded falls over to a remote one",
-+			replicas:  replicasOf("shard-a", "node1", "node2"),
-+			wantAsked: []string{"node2-host"},
-+			answered:  "node2-host",
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, f
-```
-
-**File**: `cluster/router/types/router_plan.go` (modified, +74/-25)
-```diff
-@@ -12,7 +12,6 @@
- package types
- 
- import (
--	"cmp"
- 	"fmt"
- 	"math/rand/v2"
- 	"slices"
-@@ -191,35 +190,85 @@ func (p ReadRoutingPlan) ShardPlans(cl ConsistencyLevel) []ReadRoutingPlan {
- 	return plans
- }
- 
--// SpreadReplicas picks one replica of each shard in p, spreading the shards over
--// as many nodes as their replicas allow: each shard goes to the replica node
--// with the fewest shards picked so far. Shards with fewer replicas pick first,
--// as they have fewer nodes to choose from. On a tie the local node wins, as it
--// needs no network hop; other ties break at random, so concurrent reads do not
--// all land on the same node. p must hold every read replica of each shard.
-+// SpreadReplicas picks one replica of each shard in p so that the busiest node
-+// gets as few shards as the replicas allow. The local node is tried first, as it
-+// needs no network hop, and the others in random order, so concurrent reads do
-+// not all land on the same nodes. p must hold every read replica of each shard.
- func (p ReadRoutingPlan) SpreadReplicas() []Replica {
- 	plans := p.ShardPlans(ConsistencyLevelOne)
--	slices.SortStableFunc(plans, func(a, b ReadRoutingPlan) int {
--		return cmp.Compare(len(a.ReplicaSet.Replicas), len(b.ReplicaSet.Replicas))
--	})
--
--	picked := make([]Replica, 0, len(plans))
--	load := make(map[string]int)
--	for _, plan := range plans {
--		replicas := plan.ReplicaSet.Replicas
--		offset := rand.IntN(len(replicas))
--		best := replicas[offset]
--		for k := 1; k < len(replicas); k++ {
--			r := replicas[(offset+k)%len(replicas)]
--			if load[r.NodeName] < load[best.NodeName] ||
--				(load[r.NodeName] == load[best.NodeName] && r.NodeName == p.LocalHostname) {
--				best = r
-+	s := replicaSpread{
-+		candidates: make([][]Replica, len(plans)),
-+		picked:     make([]Replica, len(plans)),
-+		onNode:     map[string][]int{},
-+	}
-+	for i, plan := range plans {
-+		s.candidates[i] = p.localFirstThenShuffled(plan.ReplicaSet.Replicas)
-+	}
-+	// every shard fits once a node may hold all of them
-+	for s.capacity = 1; !s.placeAll(); s.capacity++ {
-+		clear(s.onNode)
-+		clear(s.picked)
-+	}
-+	return s.picked
-+}
-+
-+func (p ReadRoutingPlan) localFirstThenShuffled(replicas []Replica) []Replica {
-+	out := slices.Clone(replicas)
-+	rand.Shuffle(len(out), func(i, j int) { out[i], out[j] = out[j], out[i] })
-+	if i := slices.IndexFunc(out, func(r Replica) bool { return r.NodeName == p.LocalHostname }); i > 0 {
-+		out[0], out[i] = out[i], out[0]
-+	}
-+	return out
-+}
-+
-+// replicaSpread assigns shards to replica nodes holding at most capacity shards
-+// each, moving earlier shards to other replicas when that makes room (bipartite
-+// matching with augmenting paths).
-+type replicaSpread struct {
-+	candidates [][]Replica
-+	capacity   int
-+	picked     []Replica
-+	onNode     map[string][]int
-+}
-+
-+func (s *replicaSpread) placeAll() bool {
-+	for shard := range s.candidates {
-+		if !s.place(shard, map[string]bool{}) {
-+			return false
-+		}
-+	}
-+	return true
-+}
-+
-+// place puts shard on one of its replicas, moving shards already there to their
-+// other replicas if needed. visited stops it from trying a node twice.
-+func (s *replicaSpread) place(shard int, visited map[string]bool) bool {
-+	for _, r := range s.candidates[shard] {
-+		if visited[r.NodeName] {
-+			continue
-+		}
-+		visited[r.NodeName] = true
-+		if len(s.onNode[r.NodeName]) < s.capacity {
-+			s.assign(shard, r)
-+			return true
-+		}
-+		for _, other := range slices.Clone(s.onNode[r.NodeName]) {
-+			if s.place(other, visited) {
-+				s.assign(shard, r)
-+				return true
- 			}
- 		}
--		load[best.NodeName]++
--		picked = append(picked, best)
- 	}
--	return picked
-+	return false
-+}
-+
-+// assign moves shard to r, off the node it was on, if any.
-+func (s *replicaSpread) assign(shard int, r Replica) {
-+	if old := s.picked[shard].NodeName; old != "" {
-+		s.onNode[old] = slices.DeleteFunc(s.onNode[old], func(o int) bool { return o == shard })
-+	}
-+	s.picked[shard] = r
-+	s.onNode[r.NodeName] = append(s.onNode[r.NodeName], shard)
- }
- 
- // HostNames returns the hostnames of the primary write Replicas
-```
-
-**File**: `cluster/router/types/router_plan_test.go` (modified, +58/-1)
-```diff
-@@ -12,6 +12,8 @@
- package types_test
- 
- import (
-+	"fmt"
-+	"math/rand/v2"
- 	"testing"
- 
- 	"github.com/stretchr/testify/require"
-@@ -186,12 +188,18 @@ func TestReadRoutingPlan_SpreadReplicas(t *testing.T) {
- 			maxLoad:  1,
- 		},
- 		{
--			name:     "a shard with fewer replicas picks first",
-+			name:     "a shard with a single replica keeps its node",
- 			local:    "n9",
- 			replicas: [][]types.Replica{replicas("A", "n1", "n2"), replicas("B", "n2")},
- 			want:     map[string]string{"A": "n1", "B": "n2"},
- 			maxLoad:  1,
- 		},
-+		{
-+			name:     "an earlier pick moves off the local node to make room",
-+			local:    "n1",
-+			replicas: [][]types.Replica{replicas("A", "n1", "n2"), replicas("B", "n1", "n3"), replicas("C", "n1", "n3")},
-+			maxLoad:  1,
-+		},
- 		{
- 			name:  "four shards at rf 3 on five nodes land on four nodes",
- 			local: "n1",
-@@ -231,3 +239,52 @@ func TestReadRoutingPlan_SpreadReplicas(t *testing.T) {
- 		})
- 	}
- }
-+
-+// SpreadReplicas must reach the smallest busiest-node load any assignment can,
-+// checked against every assignment of small random layouts.
-+func TestReadRoutingPlan_SpreadReplicasIsOptimal(t *testing.T) {
-+	r := rand.New(rand.NewPCG(1, 2))
-+	for run := range 500 {
-+		nodes := 1 + r.IntN(5)
-+		var shards [][]string
-+		var all []types.Replica
-+		for s := range 1 + r.IntN(6) {
-+			perm := r.Perm(nodes)[:1+r.IntN(min(3, nodes))]
-+			var names []string
-+			for _, n := range perm {
-+				node := fmt.Sprintf("n%d", n)
-+				names = append(names, node)
-+				all = append(all, types.Replica{ShardName: fmt.Sprintf("s%d", s), NodeName: node})
-+			}
-+			shards = append(shards, names)
-+		}
-+		plan := types.ReadRoutingPlan{LocalHostname: "n0", ReplicaSet: types.ReadReplicaSet{Replicas: all}}
-+
-+		load := map[string]int{}
-+		for _, rep := range plan.SpreadReplicas() {
-+			load[rep.NodeName]++
-+		}
-+		require.Equal(t, bestMaxLoad(shards, map[string]int{}), maxOf(load), "run %d: %v", run, shards)
-+	}
-+}
-+
-+func bestMaxLoad(shards [][]string, load map[string]int) int {
-+	if len(shards) == 0 {
-+		return maxOf(load)
-+	}
-+	best := len(shards) + maxOf(load)
-+	for _, node := range shards[0] {
-+		load[node]++
-+		best = min(best, bestMaxLoad(shards[1:], load))
-+		load[node]--
-+	}
-+	return best
-+}
-+
-+func maxOf(load map[string]int) int {
-+	m := 0
-+	for _, n := range load {
-+		m = max(m, n)
-+	}
-+	return m
-+}
-```
-
-**File**: `usecases/sharding/remote_index.go` (modified, +25/-41)
-```diff
-@@ -317,33 +317,25 @@ func (ri *RemoteIndex) SearchShard(ctx context.Context, shard string,
- 		}
- 		return result{objs, scores, queryProfiles}, err
- 	}
--	rr, node, err := ri.queryReplicas(ctx, shard, "", f)
-+	rr, node, err := ri.queryReplicas(ctx, shard, f)
- 	if err != nil {
- 		return nil, nil, nil, node, err
- 	}
- 	r := rr.(result)
- 	return r.objects, r.scores, r.queryProfiles, node, err
- }
- 
--// Aggregate asks the replica on preferredNode first, when set, and the shard's
--// other replicas after it.
-+// Aggregate aggregates the shard on the given node, without trying any other.
- func (ri *RemoteIndex) Aggregate(
- 	ctx context.Context,
--	shard, preferredNode string,
-+	node, shard string,
- 	params aggregation.Params,
- ) (*aggregation.Result, error) {
--	f := func(_, host string) (interface{}, error) {
--		r, err := ri.client.Aggregate(ctx, host, ri.class, shard, params)
--		if err != nil {
--			return nil, err
--		}
--		return r, nil
--	}
--	rr, _, err := ri.queryReplicas(ctx, shard, preferredNode, f)
--	if err != nil {
--		return nil, err
-+	host, ok := ri.nodeResolver.NodeHostname(node)
-+	if !ok || host == "" {
-+		return nil, fmt.Errorf("resolve node name %q to host", node)
- 	}
--	return rr.(*aggregation.Result), err
-+	return ri.client.Aggregate(ctx, host, ri.class, shard, params)
- }
- 
- func (ri *RemoteIndex) FindUUIDs(ctx context.Context, shardName string,
-@@ -499,11 +491,9 @@ func (ri *RemoteIndex) queryAllReplicas(
- 	return queryAll(replicas)
- }
- 
--// queryReplicas asks the shard's replicas one by one until one answers: preferred
--// first, when set, then the others starting from a random one.
- func (ri *RemoteIndex) queryReplicas(
- 	ctx context.Context,
--	shard, preferred string,
-+	shard string,
- 	do func(nodeName, host string) (interface{}, error),
- ) (resp interface{}, node string, err error) {
- 	replicas, err := ri.stateGetter.ShardReplicas(ri.class, shard)
-@@ -513,34 +503,28 @@ func (ri *RemoteIndex) queryReplicas(
- 			fmt.Errorf("class %q has no physical shard %q: %w", ri.class, shard, err)
- 	}
- 
--	for _, node = range ri.replicaOrder(replicas, preferred) {
--		if errC := ctx.Err(); errC != nil {
--			return nil, node, errC
--		}
--		host, ok := ri.nodeResolver.NodeHostname(node)
-+	queryOne := func(replica string) (interface{}, error) {
-+		host, ok := ri.nodeResolver.NodeHostname(replica)
- 		if !ok || host == "" {
--			err = fmt.Errorf("resolve node name %q to host", node)
--			continue
--		}
--		if resp, err = do(node, host); err == nil {
--			return resp, node, nil
-+			return nil, fmt.Errorf("resolve node name %q to host", replica)
- 		}
-+		return do(replica, host)
- 	}
--	return resp, node, err
--}
- 
--// replicaOrder lists replicas from a random one onwards, wrapping around, with
--// preferred, when set, in front.
--func (ri *RemoteIndex) replicaOrder(replicas []string, preferred string) []string {
--	order := make([]string, 0, len(replicas)+1)
--	if preferred != "" {
--		order = append(order, preferred)
-+	queryUntil := func(replicas []string) (resp interface{}, node string, err error) {
-+		for _, node = range replicas {
-+			if errC := ctx.Err(); errC != nil {
-+				return nil, node, errC
-+			}
-+			if resp, err = queryOne(node); err == nil {
-+				return resp, node, nil
-+			}
-+		}
-+		return resp, node, err
- 	}
- 	first := rand.Intn(len(replicas))
--	for k := range replicas {
--		if r := replicas[(first+k)%len(replicas)]; r != preferred {
--			order = append(order, r)
--		}
-+	if resp, node, err = queryUntil(replicas[first:]); err != nil && first != 0 {
-+		return queryUntil(replicas[:first])
- 	}
--	return order
-+	return resp, node, err
- }
-```
-
-**File**: `usecases/sharding/remote_index_test.go` (modified, +1/-46)
-```diff
-@@ -61,7 +61,7 @@ func TestQueryReplica(t *testing.T) {
- 
- 	for _, test := range tests {
- 		rindex := RemoteIndex{"C", &test.schema, nil, &test.resolver}
--		got, lastNode, err := rindex.queryReplicas(test.ctx, "S", "", doIf(test.targetNode))
-+		got, lastNode, err := rindex.queryReplicas(test.ctx, "S", doIf(test.targetNode))
- 		if !test.success {
- 			if got != nil {
- 				t.Errorf("%s: want: nil, got: %v", test.name, got)
-@@ -76,51 +76,6 @@ func TestQueryReplica(t *testing.T) {
- 	}
- }
- 
--func TestQueryReplicaPreferred(t *testing.T) {
+-func TestMaxConcurrentRequestsFromEnv(t *testing.T) {
 -	tests := []struct {
--		name      string
--		replicas  fakeSchema
--		preferred string
--		answering string
--		wantFirst string
+-		name    string
+-		value   string
+-		want    int
+-		wantErr string
 -	}{
--		{name: "preferred replica asked first", replicas: newFakeSchema(0, 9), preferred: "N5", answering: "N5", wantFirst: "N5"},
--		{name: "preferred node outside the shard's replicas asked first", replicas: newFakeSchema(0, 3), preferred: "N7", answering: "N7", wantFirst: "N7"},
--		{name: "failing preferred replica falls back to the others", replicas: newFakeSchema(0, 9), preferred: "N5", answering: "N2", wantFirst: "N5"},
+-		{name: "unset or empty", value: "", want: 32},
+-		{name: "lower bound", value: "1", want: 1},
+-		{name: "upper bound", value: "256", want: 256},
+-		{name: "zero", value: "0", wantErr: `RERANKER_OPENAI_MAX_CONCURRENT_REQUESTS must be a whole number between 1 and 256, got "0"`},
+-		{name: "above the limit", value: "257", wantErr: `RERANKER_OPENAI_MAX_CONCURRENT_REQUESTS must be a whole number between 1 and 256, got "257"`},
+-		{name: "negative", value: "-4", wantErr: `RERANKER_OPENAI_MAX_CONCURRENT_REQUESTS must be a whole number between 1 and 256, got "-4"`},
+-		{name: "not a number", value: "many", wantErr: `RERANKER_OPENAI_MAX_CONCURRENT_REQUESTS must be a whole number between 1 and 256, got "many"`},
 -	}
 -	for _, tt := range tests {
 -		t.Run(tt.name, func(t *testing.T) {
--			resolver := newFakeResolver(0, 10)
--			rindex := RemoteIndex{"C", &tt.replicas, nil, &resolver}
--			var asked []string
--			got, node, err := rindex.queryReplicas(context.Background(), "S", tt.preferred,
--				func(node, host string) (interface{}, error) {
--					asked = append(asked, node)
--					if node != tt.answering {
--						return nil, errAny
--					}
--					return node, nil
--				})
--			if err != nil {
--				t.Fatalf("unexpected error: %v", err)
+-			t.Setenv(maxConcurrentRequestsEnv, tt.value)
+-			got, err := maxConcurrentRequestsFromEnv()
+-			if tt.wantErr != "" {
+-				require.EqualError(t, err, tt.wantErr)
+-				return
 -			}
--			if got != tt.answering || node != tt.answering {
--				t.Fatalf("answer want %s, got %v from %s", tt.answering, got, node)
--			}
--			if asked[0] != tt.wantFirst {
--				t.Fatalf("first asked want %s, got %v", tt.wantFirst, asked)
--			}
--			seen := map[string]bool{}
--			for _, n := range asked {
--				if seen[n] {
--					t.Fatalf("%s asked twice: %v", n, asked)
--				}
--				seen[n] = true
--			}
+-			require.NoError(t, err)
+-			assert.Equal(t, tt.want, got)
 -		})
 -	}
 -}
 -
- func newFakeResolver(fromNode, toNode int) fakeNodeResolver {
- 	m := make(map[string]string, toNode-fromNode)
- 	for i := fromNode; i < toNode; i++ {
+-func TestMaxDocumentsPerQueryFromEnv(t *testing.T) {
+-	tests := []struct {
+-		name    string
+-		value   string
+-		want    int
+-		wantErr string
+-	}{
+-		{name: "unset or empty", value: "", want: 1000},
+-		{name: "lower bound", value: "1", want: 1},
+-		{name: "above the default", value: "5000", want: 5000},
+-		{name: "zero", value: "0", wantErr: `RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY must be a whole number of at least 1, got "0"`},
+-		{name: "negative", value: "-4", wantErr: `RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY must be a whole number of at least 1, got "-4"`},
+-		{name: "not a number", value: "many", wantErr: `RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY must be a whole number of at least 1, got "many"`},
+-		{name: "a fraction", value: "1.5", wantErr: `RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY must be a whole number of at least 1, got "1.5"`},
+-		{
+-			name:    "above the int range",
+-			value:   "99999999999999999999",
+-			wantErr: `RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY must be a whole number of at least 1, got "99999999999999999999"`,
+-		},
+-	}
+-	for _, tt := range tests {
+-		t.Run(tt.name, func(t *testing.T) {
+-			t.Setenv(maxDocumentsPerQueryEnv, tt.value)
+-			got, err := maxDocumentsPerQueryFromEnv()
+-			if tt.wantErr != "" {
+-				require.EqualError(t, err, tt.wantErr)
+-				return
+-			}
+-			require.NoError(t, err)
+-			assert.Equal(t, tt.want, got)
+-		})
+-	}
+-}
+-
+-func TestRerankPropertyDataTypes(t *testing.T) {
+-	assert.Equal(t, []schema.DataType{schema.DataTypeText, schema.DataTypeBlob}, New().RerankPropertyDataTypes())
+-}
+-
+-func TestValidateRerankQuery(t *testing.T) {
+-	tests := []struct {
+-		name    string
+-		query   string
+-		wantErr string
+-	}{
+-		{name: "a query", query: "The customer is about to churn"},
+-		{name: "a blank query is a query", query: " "},
+-		{name: "no query", wantErr: "rerank.query is required by reranker-openai: the query is the condition the model judges"},
+-		{name: "the longest query", query: strings.Repeat("q", 100_000)},
+-		{
+-			name:    "a query one byte above the limit",
+-			query:   strings.Repeat("q", 100_001),
+-			wantErr: "rerank.query is 100001 bytes; reranker-openai sends it with every document and takes at most 100000 bytes",
+-		},
+-	}
+-	for _, tt := range tests {
+-		t.Run(tt.name, func(t *testing.T) {
+-			err := New().ValidateRerankQuery(tt.query)
+-			if tt.wantErr != "" {
+-				require.EqualError(t, err, tt.wantErr)
+-				return
+-			}
+-			require.NoError(t, err)
+-		})
+-	}
+-}
+-
+ func TestValidateClassRejectsAWrongSetting(t *testing.T) {
+ 	class := &models.Class{
+ 		Class: "Doc",
+@@ -142,79 +48,7 @@ func TestValidateClassRejectsAWrongSetting(t *testing.T) {
+ 	assert.Contains(t, err.Error(), "model")
+ }
+ 
+-func TestInitReadsTheConcurrencyEnv(t *testing.T) {
+-	tests := []struct {
+-		name    string
+-		value   string
+-		set     bool
+-		wantErr bool
+-	}{
+-		{name: "unset"},
+-		{name: "a valid value", value: "8", set: true},
+-		{name: "zero", value: "0", set: true, wantErr: true},
+-		{name: "not a number", value: "abc", set: true, wantErr: true},
+-		{name: "above the limit", value: "257", set: true, wantErr: true},
+-	}
+-	for _, tt := range tests {
+-		t.Run(tt.name, func(t *testing.T) {
+-			t.Setenv(maxConcurrentRequestsEnv, "")
+-			if tt.set {
+-				t.Setenv(maxConcurrentRequestsEnv, tt.value)
+-			}
+-			logger, _ := test.NewNullLogger()
+-			m := New()
+-
+-			err := m.Init(context.Background(), moduletools.NewInitParam
+```
+
+**File**: `test/modules/reranker-openai/reranker_openai_test.go` (modified, +14/-10)
+```diff
+@@ -251,7 +251,15 @@ func testRerankerOpenAIAgainstAFakeProvider(fake *fakeProvider, restURI, grpcURI
+ 			{
+ 				name:        "a missing query fails before any request",
+ 				property:    "text",
+-				wantErr:     []string{"rerank.query is required by reranker-openai"},
++				wantErr:     []string{"rerank: query is required"},
++				minRequests: 0,
++				maxRequests: 0,
++			},
++			{
++				name:        "a query above the limit fails before any request",
++				property:    "text",
++				query:       new(strings.Repeat("q", 100_001)),
++				wantErr:     []string{"rerank.query is 100001 bytes"},
+ 				minRequests: 0,
+ 				maxRequests: 0,
+ 			},
+@@ -302,20 +310,16 @@ func testRerankerOpenAIAgainstAFakeProvider(fake *fakeProvider, restURI, grpcURI
+ 			})
+ 		}
+ 
+-		// The rank call does not run for a search without objects, so the
+-		// query is checked before the search.
++		// The rank call does not run for a search without objects. The gRPC
++		// search rejects a blank query before the search.
+ 		rejectedQueries := []struct {
+ 			name    string
+ 			query   *string
+ 			wantErr string
+ 		}{
+-			{name: "a missing query", wantErr: "rerank.query is required by reranker-openai"},
+-			{name: "an empty query", query: new(""), wantErr: "rerank.query is required by reranker-openai"},
+-			{
+-				name:    "a query above the limit",
+-				query:   new(strings.Repeat("q", 100_001)),
+-				wantErr: "rerank.query is 100001 bytes",
+-			},
++			{name: "a missing query", wantErr: "rerank: query is required"},
++			{name: "an empty query", query: new(""), wantErr: "rerank: query is required"},
++			{name: "a query of whitespace", query: new("  "), wantErr: "rerank: query is required"},
+ 		}
+ 		for _, tt := range rejectedQueries {
+ 			t.Run(tt.name+" fails a search without objects", func(t *testing.T) {
+```
+
+---
+
+### Incident Patch 3: `e580c541` (2026-11-17)
+**Commit Message**: reranker-openai: fixed error also for an oversized reply and an error object of a header-named host [api]
+
+A reply above 1 MiB and a 200 with an error object from a host named by
+X-Openai-Baseurl each had a message of their own, which told the caller
+which of the two the host sent. Both now return the same fixed message
+as every other 200 reply the client cannot use.
+
+**File**: `modules/reranker-openai/clients/ranker.go` (modified, +2/-2)
+```diff
+@@ -336,7 +336,7 @@ func (c *client) readResponse(ctx context.Context, res *http.Response, hostFromH
+ 		return decisionResponse{}, c.transportError(ctx, "read OpenAI response", "no complete body from", err, hostFromHeader)
+ 	}
+ 	if len(body) > maxResponseBodyBytes {
+-		return decisionResponse{}, fmt.Errorf("OpenAI response exceeds %d bytes", maxResponseBodyBytes)
++		return decisionResponse{}, c.replyError(fmt.Errorf("OpenAI response exceeds %d bytes", maxResponseBodyBytes), hostFromHeader)
+ 	}
+ 	var response decisionResponse
+ 	if err := json.Unmarshal(body, &response); err != nil {
+@@ -354,7 +354,7 @@ func (c *client) readResponse(ctx context.Context, res *http.Response, hostFromH
+ 	if response.Error != nil {
+ 		message := response.Error.message()
+ 		if hostFromHeader || message == "" {
+-			return decisionResponse{}, errors.New("OpenAI API returned an error")
++			return decisionResponse{}, c.replyError(errors.New("OpenAI API returned an error"), hostFromHeader)
+ 		}
+ 		return decisionResponse{}, fmt.Errorf("OpenAI API returned an error: %s", message)
+ 	}
+```
+
+**File**: `modules/reranker-openai/clients/ranker_test.go` (modified, +12/-1)
+```diff
+@@ -1152,7 +1152,18 @@ func TestRankQuotesNoBodyOfAHostTheRequestNames(t *testing.T) {
+ 			name:       "a 200 with an error object from the header base URL",
+ 			reply:      fakeReply{status: http.StatusOK, body: banner},
+ 			fromHeader: true,
+-			wantErr:    "OpenAI API returned an error",
++			wantErr:    unexpectedHeaderHostReply,
++		},
++		{
++			name:    "a 200 above 1 MiB from the class base URL",
++			reply:   fakeReply{status: http.StatusOK, body: strings.Repeat(" ", maxResponseBodyBytes+1)},
++			wantErr: "OpenAI response exceeds 1048576 bytes",
++		},
++		{
++			name:       "a 200 above 1 MiB from the header base URL",
++			reply:      fakeReply{status: http.StatusOK, body: strings.Repeat(" ", maxResponseBodyBytes+1)},
++			fromHeader: true,
++			wantErr:    unexpectedHeaderHostReply,
+ 		},
+ 		{
+ 			name:    "a 200 that is not JSON from the class base URL",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13943** (2026-11-18): dynamic: fix flaky TestUpgrade_InProgressUntilCompressed (@asdine)
-- **PR #13941** (2026-11-18): Speed up the slowest vector integration tests (@trengrj)
-- **PR #13940** (2026-11-18): fix(hfresh): allow retrying rejected maintenance enqueues (@perfloop-agent)
-- **PR #13937** (2026-11-18): Merge stable/v1.40 into main (@antas-marcin)
-- **PR #13935** (2026-11-17): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
-- **PR #13932** (closed): fix(lsmkv): preserve segments on WAL replay retry (@perfloop-agent)
+- **PR #13974** (2026-11-20): prepare release v1.41.0-rc.1 (@jfrancoa)
+- **PR #13973** (2026-11-20): Merge stable/v1.40 into main (@antas-marcin)
+- **PR #13970** (2026-11-20): prepare release v1.40.7 (@databyjp)
+- **PR #13968** (2026-11-20): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
+- **PR #13967** (2026-11-20): Deprecate remaining classless endpoints (@dirkkul)
+- **PR #13962** (2026-11-19): Merge stable140 into main (@dirkkul)
 
 ---
 
@@ -2655,78 +2753,47 @@ Signed-off-by: Perfloop Agent <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. grpc-web): bound Search and Aggregate requests by the server write timeout
+## X. reranker-openai: review fixes for header-host errors, the error object and tests
 
 **RULE**:
-When implementing operations in `adapters/handlers/grpc/grpcweb/deadline_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `modules/reranker-openai/clients/image.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `362d2908`: grpc-web): bound Search and Aggregate requests by the server write timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4ffbd0c7`: reranker-openai: review fixes for header-host errors, the error object and tests [api]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/handlers/grpc/grpcweb/deadline_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `modules/reranker-openai/clients/image.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-//                           _       _
-// __      _____  __ ___   ___  __ _| |_ ___
-// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-//
-//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-//
-//  CONTACT: hello@weaviate.io
-//
-
-package grpcweb
-
-import (
-	"context"
-	"net/http"
-	"net/http/httptest"
-	"strconv"
-	"strings"
-	"testing"
-	"time"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"google.golang.org/grpc"
-
-	"github.com/weaviate/weaviate/adapters/handlers/rest/state"
-	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
-	"github.com/weaviate/weaviate/usecases/config"
-)
-
-// deadlineRecorder records the deadline of the last call it served.
-type deadlineRecorder struct {
-	pb.UnimplementedWeaviateServer
-	deadline    time.Time
-	hasDeadline bool
-}
-
-func (d *deadlineRecorder) record(ctx context.Context) {
-	d.deadline, d.hasDeadline = ctx.Deadline()
-}
-
-func (d *deadlineRecorder) Search(ctx context.Context, _ *pb.SearchRequest) (*pb.SearchReply, error) {
-	d.record(ctx)
-	return &pb.SearchReply{}, nil
-}
-
-func (d *deadlineRecorder) Aggregate(ctx context.Con
+	// pngMagic, jpegMagic and gifMagic are the first bytes of those formats.
+	// A WebP image is a RIFF container with webpMagic at webpMagicOffset; a
+	// WAVE file shares the RIFF header.
+	pngMagic        = "\x89PNG"
+	jpegMagic       = "\xff\xd8\xff"
+	gifMagic        = "GIF8"
+	riffMagic       = "RIFF"
+	webpMagic       = "WEBP"
+	webpMagicOffset = 8
+	{"image/png", []magic{{0, []byte(pngMagic)}}},
+	{"image/jpeg", []magic{{0, []byte(jpegMagic)}}},
+	{"image/gif", []magic{{0, []byte(gifMagic)}}},
+	{"image/webp", []magic{{0, []byte(riffMagic)}, {webpMagicOffset, []byte(webpMagic)}}},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+// WebP is a RIFF container with "WEBP" at offset 8; a WAVE file shares the RIFF header.
+	{"image/png", []magic{{0, []byte("\x89PNG")}}},
+	{"image/jpeg", []magic{{0, []byte("\xff\xd8\xff")}}},
+	{"image/gif", []magic{{0, []byte("GIF8")}}},
+	{"image/webp", []magic{{0, []byte("RIFF")}, {8, []byte("WEBP")}}},
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `362d2908` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4ffbd0c7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

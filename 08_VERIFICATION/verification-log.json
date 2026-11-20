@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-TXCV",
-    "timestamp": "2026-11-18T15:51:33.151Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-psrben-visionhope",
-    "contentHash": "fcbb1b569efa98453447a808e60630a2fa8a72c6fb71113178d600916cd6577c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-U9AQ",
-    "timestamp": "2026-11-18T15:51:48.626Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "527f0642aaa0c1d3597cda468a0238c875e18e0c22f2d01bfe16c1dc20afd30b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-UB5U",
-    "timestamp": "2026-11-18T15:51:51.042Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "5de0fd7a43dd29a63ad39deff50fcba7ef3716cf9a3f953a6f3563927e996d84",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-4CTQ",
     "timestamp": "2026-11-18T15:59:39.758Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "64d10ae7a2b1df2f8530a9c7e8ed5eab3f765f9e147618e51613f437076debe8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-2XV4",
+    "timestamp": "2026-11-20T17:53:52.624Z",
+    "repository": "moby/buildkit",
+    "learningId": "learn-github-moby-buildkit",
+    "contentHash": "882d473009a7752e975266ac9b9cbd0be193ffd7fda497e9be0c6ab1d7322ac0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-31ND",
+    "timestamp": "2026-11-20T17:53:57.529Z",
+    "repository": "weaviate/weaviate",
+    "learningId": "learn-github-weaviate-weaviate",
+    "contentHash": "a9979bc4eda7de3512298ca032c0758ed1cd6743fb7f6b92b870389e76c318ce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-98OC",
+    "timestamp": "2026-11-20T17:58:46.572Z",
+    "repository": "nezhahq/nezha",
+    "learningId": "learn-github-nezhahq-nezha",
+    "contentHash": "38064cb0a824d555303785e2422c3c03ece44fd89906d6c9b190db5cc86d54e8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

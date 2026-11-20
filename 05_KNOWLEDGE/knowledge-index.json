@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T17:45:37.779Z",
+  "last_updated": "2026-11-20T17:58:52.663Z",
   "total_verified_learnings": 9044,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22550,
+  "total_items": 22558,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -115017,10 +115017,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
       "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
       "repository": "weaviate/weaviate",
-      "source_version": "3507945a",
-      "content_hash": "d30ff1a4c9b3a44bdd182ca085ea94f98af463a75a32e51bfafb90a426cd590e",
+      "source_version": "cf81225f",
+      "content_hash": "0aecd301b0933fe7169b080a40692c6b6de1bf9a227d8bba2d256c1e1a542405",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T11:06:54.500Z"
+      "persisted_at": "2026-11-20T17:53:57.831Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate",
@@ -115029,10 +115029,10 @@
       "relative_path": "08_VERIFICATION/weaviate-weaviate-verification-protocol-empirical-defect-shield-for-weaviate-wea.md",
       "title": "Verification Protocol: Empirical Defect Shield for weaviate/weaviate",
       "repository": "weaviate/weaviate",
-      "source_version": "3507945a",
-      "content_hash": "314d0facc5bf303d89488690ede924023cf53fa667fbda1ec654109d6495afc4",
+      "source_version": "cf81225f",
+      "content_hash": "f5cb60eee8af85f09af8333a81a53cee879aa1e0faa97bb7bd2771b1395421f1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T11:06:54.623Z"
+      "persisted_at": "2026-11-20T17:53:57.953Z"
     },
     "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants",
@@ -222888,8 +222888,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "bfe7dac5",
-      "content_hash": "03ffaaa4d2803d18df5f7b497f690e0a730ce605f48f2d808387b16ee01c27c0",
+      "source_version": "8a930b79",
+      "content_hash": "882d473009a7752e975266ac9b9cbd0be193ffd7fda497e9be0c6ab1d7322ac0",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -222912,6 +222912,11 @@
           "number": 9228,
           "title": "Empirical Invariant Guard in reference.md",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9613,
+          "title": "build(deps): bump actions/setup-go from 7.0.0 to 7.1.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222919,7 +222924,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T13:17:27.661Z",
+      "verified_at": "2026-11-20T17:53:52.462Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222961,10 +222966,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "repository": "moby/buildkit",
-      "source_version": "bfe7dac5",
-      "content_hash": "37d5d4de40f1408c342715ffaeb2225f4237656d7682b6f2f39c5c6d0de29d45",
+      "source_version": "8a930b79",
+      "content_hash": "f9c1ec45ca1ae76d9dab6cde8dae95a996172d154ab6cfa4068f1de5669f4727",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T13:17:28.376Z"
+      "persisted_at": "2026-11-20T17:53:52.931Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit",
@@ -222973,10 +222978,10 @@
       "relative_path": "08_VERIFICATION/moby-buildkit-verification-protocol-empirical-defect-shield-for-moby-buildkit.md",
       "title": "Verification Protocol: Empirical Defect Shield for moby/buildkit",
       "repository": "moby/buildkit",
-      "source_version": "bfe7dac5",
-      "content_hash": "09aa9e49e9b9cf7777e47e720a95cfea4665361c821820bc85f3a6e1674b2e35",
+      "source_version": "8a930b79",
+      "content_hash": "ca72df9143f4f4c856f5d51aaddf4ca8128b67328659213c3577f11649637e4c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T13:17:28.556Z"
+      "persisted_at": "2026-11-20T17:53:53.053Z"
     },
     "learn-github-tailscale-tailscale": {
       "learning_id": "learn-github-tailscale-tailscale",
@@ -223139,9 +223144,9 @@
       "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
       "repository": "moby-buildkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "2c642512219f370baee1388b4f034b51f41a88c18e8013485f42b3dd95f5cb38",
+      "content_hash": "8c1c35497a4c775a9676c3a709555c658975b74253ae92eb12c9b031a059e8a2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T13:17:37.821Z"
+      "persisted_at": "2026-11-20T17:58:51.552Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings",
@@ -223151,9 +223156,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for moby-buildkit-learnings",
       "repository": "moby-buildkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "cbbfdbc7b3c35acb789a7cc331d3b28d738531f7d2de52f379d9b3bf686d8edf",
+      "content_hash": "e406fe15fc87db4af2adb2fbfa80f56f21e10c7e4f5ee046d8e64e5556cb9655",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T13:17:38.002Z"
+      "persisted_at": "2026-11-20T17:58:51.991Z"
     },
     "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
@@ -258013,8 +258018,8 @@
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "3507945a",
-      "content_hash": "30d4a51ef048dd8e2e6ea0eb2741a14bb54636fff2bdada73ee00b3290c7b964",
+      "source_version": "cf81225f",
+      "content_hash": "a9979bc4eda7de3512298ca032c0758ed1cd6743fb7f6b92b870389e76c318ce",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "promoted_rules": [
@@ -258032,6 +258037,11 @@
           "number": 9207,
           "title": "bound Search and Aggregate requests by the server write timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9614,
+          "title": "review fixes for header-host errors, the error object and tests",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -258039,7 +258049,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T11:06:54.043Z",
+      "verified_at": "2026-11-20T17:53:57.374Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -276855,9 +276865,9 @@
       "title": "Architecture Intelligence: weaviate-weaviate-learnings Core Invariants",
       "repository": "weaviate-weaviate-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d67c03566e359c252627d45d7bc50b3d60b4d484053fa075c5fd5daeb40fee9",
+      "content_hash": "4c1fa8bb4f27c3cd02b8d2f987e6216602fe996a9299efcfe2e2a015478db581",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T17:28:12.918Z"
+      "persisted_at": "2026-11-20T17:58:52.525Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate-learnings",
@@ -276867,9 +276877,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for weaviate-weaviate-learnings",
       "repository": "weaviate-weaviate-learnings",
       "source_version": "HEAD",
-      "content_hash": "e82c04dc7dffdffaef503a14b393fef247aa9192a376c5d3334253d18857cf58",
+      "content_hash": "8c5f866e52f354a1f26b20c192c8ff11f7ddcf28a4f07a907a58c20edce572c7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T17:28:13.042Z"
+      "persisted_at": "2026-11-20T17:58:52.663Z"
     },
     "learn-huggingface-comfy-org-fibo-2-0": {
       "learning_id": "learn-huggingface-comfy-org-fibo-2-0",
@@ -292640,14 +292650,19 @@
       "slug": "nezhahq-nezha",
       "platform": "github",
       "source_url": "https://github.com/nezhahq/nezha",
-      "source_version": "8bcaf092",
-      "content_hash": "c3c62b0885ed92beab3d1adc404fb934156a76623ba412d4bb12dc65174b4a90",
+      "source_version": "76b07b58",
+      "content_hash": "38064cb0a824d555303785e2422c3c03ece44fd89906d6c9b190db5cc86d54e8",
       "dossier_path": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
       "promoted_rules": [
         {
           "number": 9315,
           "title": "bound persisted resource reference collections",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9615,
+          "title": "MCP OAuth grant cap counts a member's API tokens under SQLite write lo",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -292656,7 +292671,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T01:06:02.637Z",
+      "verified_at": "2026-11-20T17:58:46.346Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -292698,10 +292713,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nezhahq-nezha-architecture-intelligence-nezhahq-nezha-core-invariants.md",
       "title": "Architecture Intelligence: nezhahq/nezha Core Invariants",
       "repository": "nezhahq/nezha",
-      "source_version": "8bcaf092",
-      "content_hash": "b3568c385af6f5f6bc1db3e19a085c37223862d16b45586246f53baf12874bf4",
+      "source_version": "76b07b58",
+      "content_hash": "80bc5643d7079c5b92694b63f03b9157c8886f269d289a22f83aa69d9d89be88",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T01:06:03.114Z"
+      "persisted_at": "2026-11-20T17:58:46.886Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nezhahq-nezha": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nezhahq-nezha",
@@ -292710,10 +292725,10 @@
       "relative_path": "08_VERIFICATION/nezhahq-nezha-verification-protocol-empirical-defect-shield-for-nezhahq-nezha.md",
       "title": "Verification Protocol: Empirical Defect Shield for nezhahq/nezha",
       "repository": "nezhahq/nezha",
-      "source_version": "8bcaf092",
-      "content_hash": "1898c509dff36c504f1ab38154abcdc64ac124648d32920c674568926921e8a5",
+      "source_version": "76b07b58",
+      "content_hash": "364ac306ef8745eba26b290abb3c7e34a6efa311753abf7581a26953391e1441",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T01:06:03.249Z"
+      "persisted_at": "2026-11-20T17:58:47.017Z"
     },
     "candidate_directive-security-bound-persisted-resource-reference-collections": {
       "item_id": "candidate_directive-security-bound-persisted-resource-reference-collections",
@@ -292735,9 +292750,9 @@
       "title": "Architecture Intelligence: nezhahq-nezha-learnings Core Invariants",
       "repository": "nezhahq-nezha-learnings",
       "source_version": "HEAD",
-      "content_hash": "912833117d079d5bfa9e361031cc8deb1b9bc6551ceb7ac67c00c40eeedd6f70",
+      "content_hash": "e47e6e86a4d132b1f045fdfda7258ec2595bbc069f349a4324076642979ba0a6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T01:06:11.773Z"
+      "persisted_at": "2026-11-20T17:58:50.322Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nezhahq-nezha-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nezhahq-nezha-learnings",
@@ -292747,9 +292762,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nezhahq-nezha-learnings",
       "repository": "nezhahq-nezha-learnings",
       "source_version": "HEAD",
-      "content_hash": "3c1fee649a320cfad9b24b39e12c7966723837f50325213095dedecb71906341",
+      "content_hash": "f2d29adb037f78332927824e7186f9e90c394c12f4e084d8129ccb579739059c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T01:06:11.913Z"
+      "persisted_at": "2026-11-20T17:58:50.505Z"
     },
     "rule-9316": {
       "learning_id": "rule-9316",
@@ -305759,6 +305774,108 @@
       "content_hash": "fd4b904a25f7d232cf9389cab3f76344fd31e67444fa6b7d1ea33f88b27ad57f",
       "domain_letter": "G",
       "persisted_at": "2026-11-20T17:45:36.648Z"
+    },
+    "rule-9613": {
+      "learning_id": "rule-9613",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9613,
+      "title": "build(deps): bump actions/setup-go from 7.0.0 to 7.1.0",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "8a930b79",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T17:53:52.462Z"
+    },
+    "candidate_directive-build-deps-bump-actions-setup-go-from-7-0-0-to-7-1-0": {
+      "item_id": "candidate_directive-build-deps-bump-actions-setup-go-from-7-0-0-to-7-1-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9CF1-build-deps-bump-actions-setup-go-from-7-0-0-to-7-1-0.md",
+      "title": "build(deps): bump actions/setup-go from 7.0.0 to 7.1.0",
+      "repository": "moby-buildkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2ea678307df8634e7c122c164bdfdd39528b5f2ad8729257fc54554fff5481c3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T17:58:51.426Z"
+    },
+    "rule-9614": {
+      "learning_id": "rule-9614",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9614,
+      "title": "review fixes for header-host errors, the error object and tests",
+      "source_url": "https://github.com/weaviate/weaviate",
+      "source_version": "cf81225f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T17:53:57.374Z"
+    },
+    "candidate_directive-review-fixes-for-header-host-errors-the-error-object-and-tests": {
+      "item_id": "candidate_directive-review-fixes-for-header-host-errors-the-error-object-and-tests",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-31S9-review-fixes-for-header-host-errors-the-error-object-and-tests.md",
+      "title": "review fixes for header-host errors, the error object and tests",
+      "repository": "weaviate/weaviate",
+      "source_version": "cf81225f",
+      "content_hash": "70aa7464f8829289840f6b8a22e14be08fa552f940492aa09eb2515a70d1d4d7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T17:53:57.710Z"
+    },
+    "rule-9615": {
+      "learning_id": "rule-9615",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9615,
+      "title": "MCP OAuth grant cap counts a member's API tokens under SQLite write lo",
+      "source_url": "https://github.com/nezhahq/nezha",
+      "source_version": "76b07b58",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T17:58:46.346Z"
+    },
+    "candidate_directive-mcp-oauth-grant-cap-counts-a-member-s-api-tokens-under-sqlite-write-lo": {
+      "item_id": "candidate_directive-mcp-oauth-grant-cap-counts-a-member-s-api-tokens-under-sqlite-write-lo",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-98TB-mcp-oauth-grant-cap-counts-a-member-s-api-tokens-under-sqlite-write-lo.md",
+      "title": "MCP OAuth grant cap counts a member's API tokens under SQLite write lo",
+      "repository": "nezhahq/nezha",
+      "source_version": "76b07b58",
+      "content_hash": "110e3cb6172f9bb054f1f453929d6a5a3bc5c61b66536c10da7ec08d572a3566",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-20T17:58:46.756Z"
+    },
+    "candidate_directive-security-mcp-oauth-grant-cap-counts-a-member-s-api-tokens-under-sqlite-write-lo": {
+      "item_id": "candidate_directive-security-mcp-oauth-grant-cap-counts-a-member-s-api-tokens-under-sqlite-write-lo",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9BFU-security-mcp-oauth-grant-cap-counts-a-member-s-api-tokens-under-sqlite-write-lo.md",
+      "title": "security: MCP OAuth grant cap counts a member's API tokens under SQLite write lo",
+      "repository": "nezhahq-nezha-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d4e230a66890e47f86e731d0624c65affcf08851cf9481bef5b7948ffd0d7d11",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-20T17:58:50.159Z"
+    },
+    "candidate_directive-reranker-openai-review-fixes-for-header-host-errors-the-error-object-and-tests": {
+      "item_id": "candidate_directive-reranker-openai-review-fixes-for-header-host-errors-the-error-object-and-tests",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9D5Q-reranker-openai-review-fixes-for-header-host-errors-the-error-object-and-tests.md",
+      "title": "reranker-openai: review fixes for header-host errors, the error object and tests",
+      "repository": "weaviate-weaviate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cff3a8f1924685867da90cccb8c75717efbbd8463b5caca5a31c6bd7909906da",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T17:58:52.388Z"
     }
   },
   "ai-builder-brain": {

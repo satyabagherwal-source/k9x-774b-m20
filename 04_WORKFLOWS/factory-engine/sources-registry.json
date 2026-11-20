@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T17:20:57.697Z",
-    "lastVerified": "2026-11-20T17:20:57.697Z",
+    "lastChecked": "2026-11-20T17:53:53.761Z",
+    "lastVerified": "2026-11-20T17:53:53.761Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T17:45:35.251Z",
-    "lastVerified": "2026-11-20T17:45:35.251Z",
+    "lastChecked": "2026-11-20T17:58:49.732Z",
+    "lastVerified": "2026-11-20T17:58:49.732Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -876,22 +876,21 @@
     "lastVerified": "2026-11-20T16:42:17.673Z"
   },
   "weaviate-weaviate": {
-    "name": "weaviate",
+    "name": "weaviate/weaviate",
     "officialUrl": "https://github.com/weaviate/weaviate",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T13:35:24.858Z",
-    "lastVerified": "2026-11-19T13:35:24.858Z",
+    "lastChecked": "2026-11-20T17:53:56.705Z",
+    "lastVerified": "2026-11-20T17:53:56.705Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "30d4a51ef048dd8e2e6ea0eb2741a14bb54636fff2bdada73ee00b3290c7b964",
+    "contentHash": "a9979bc4eda7de3512298ca032c0758ed1cd6743fb7f6b92b870389e76c318ce",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "3507945a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ducaale-xh": {
     "name": "xh",
@@ -1462,9 +1461,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-20T09:59:07.474Z",
+    "lastChecked": "2026-11-20T17:53:48.802Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-20T09:59:07.474Z"
+    "lastVerified": "2026-11-20T17:53:48.802Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -1893,14 +1892,14 @@
     "officialUrl": "https://github.com/moby/buildkit",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T15:42:31.319Z",
-    "lastVerified": "2026-11-19T15:42:31.319Z",
+    "lastChecked": "2026-11-20T17:53:51.607Z",
+    "lastVerified": "2026-11-20T17:53:51.607Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-moby-buildkit",
-    "contentHash": "2af2b9aebc60f1a4449e04d3d665a63d13c160a51efaeaaf6c65a60f1912a692",
+    "contentHash": "882d473009a7752e975266ac9b9cbd0be193ffd7fda497e9be0c6ab1d7322ac0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5703,14 +5702,14 @@
     "officialUrl": "https://github.com/nezhahq/nezha",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T01:06:01.885Z",
-    "lastVerified": "2026-11-19T01:06:01.885Z",
+    "lastChecked": "2026-11-20T17:53:45.042Z",
+    "lastVerified": "2026-11-20T17:53:45.042Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nezhahq-nezha",
-    "contentHash": "c3c62b0885ed92beab3d1adc404fb934156a76623ba412d4bb12dc65174b4a90",
+    "contentHash": "38064cb0a824d555303785e2422c3c03ece44fd89906d6c9b190db5cc86d54e8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 27,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10476,5 +10475,19 @@
     "lastChecked": "2026-11-20T17:45:15.835Z",
     "revisionIdentifier": "3e300721",
     "lastVerified": "2026-11-20T17:45:15.835Z"
+  },
+  "rehypejs-rehype": {
+    "name": "rehype",
+    "officialUrl": "https://github.com/rehypejs/rehype",
+    "lastChecked": "2026-11-20T17:53:41.116Z",
+    "revisionIdentifier": "cae74c7f",
+    "lastVerified": "2026-11-20T17:53:41.116Z"
+  },
+  "sindresorhus-keyboardshortcuts": {
+    "name": "KeyboardShortcuts",
+    "officialUrl": "https://github.com/sindresorhus/KeyboardShortcuts",
+    "lastChecked": "2026-11-20T17:53:43.618Z",
+    "revisionIdentifier": "772133d9",
+    "lastVerified": "2026-11-20T17:53:43.618Z"
   }
 }

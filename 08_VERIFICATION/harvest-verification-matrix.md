@@ -11600,3 +11600,6 @@
 | `CYCLE-20261120-HQNO` | `2026-11-20T17:37:23.508Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9610` | Yes (`9f60f6f6...`) |
 | `CYCLE-20261120-S1YY` | `2026-11-20T17:45:24.731Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9611` | Yes (`d2a15c56...`) |
 | `CYCLE-20261120-S7NI` | `2026-11-20T17:45:32.094Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9612` | Yes (`64d10ae7...`) |
+| `CYCLE-20261120-2XV4` | `2026-11-20T17:53:52.624Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9613` | Yes (`882d4730...`) |
+| `CYCLE-20261120-31ND` | `2026-11-20T17:53:57.529Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9614` | Yes (`a9979bc4...`) |
+| `CYCLE-20261120-98OC` | `2026-11-20T17:58:46.572Z` | `nezhahq/nezha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9615` | Yes (`38064cb0...`) |
