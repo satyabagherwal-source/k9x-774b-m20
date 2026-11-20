@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T16:42:34.004Z",
-  "total_records": 2149,
+  "last_updated": "2026-11-20T16:58:12.719Z",
+  "total_records": 2155,
   "domains": {
     "A": {
       "total": 17,
@@ -58,7 +58,7 @@
       ]
     },
     "D": {
-      "total": 867,
+      "total": 873,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -926,7 +926,13 @@
         "DOM-D-981F2664",
         "domain_intelligence-research-knowledge-intelligence-hf-angelslim-hy4-flash-gguf-learnings-core-invar",
         "domain_intelligence-research-knowledge-intelligence-lxml-lxml-core-invariants",
-        "DOM-D-E91F893C"
+        "DOM-D-E91F893C",
+        "domain_intelligence-research-knowledge-intelligence-apple-depthpro2-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-ovhaillm-olala-v1-0-mini-7a1b-core-invariants",
+        "DOM-D-F2660B55",
+        "domain_intelligence-research-knowledge-intelligence-hf-apple-depthpro2-learnings-core-invariants",
+        "DOM-D-FE8131E1",
+        "domain_intelligence-research-knowledge-intelligence-hf-ovhaillm-olala-v1-0-mini-7a1b-learnings-core-"
       ]
     },
     "E": {
@@ -24115,8 +24121,8 @@
       "title": "Technical Construction Intelligence: 0xCUB3/wBlock Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-0xcub3-wblock-technical-construction-intelligence-0xcub3-wblock-core-invariants.md",
       "repository": "0xCUB3/wBlock",
-      "content_hash": "03b8c23fa4ea214d1e381d47b5f55821bfb5b57e357debe0c4b1426b6698ecdc",
-      "created_at": "2026-11-16T15:51:08.790Z"
+      "content_hash": "4695598c6e1af0bce774d8f08f25d38855fbc266b24bd3dac0fcfdd8cac451a2",
+      "created_at": "2026-11-20T16:56:35.754Z"
     },
     "DOM-L-497D3321": {
       "record_id": "DOM-L-497D3321",
@@ -24167,8 +24173,8 @@
       "title": "Technical Construction Intelligence: 0xcub3-wblock-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-0xcub3-wblock-learnings-technical-construction-intelligence-0xcub3-wblock-learni.md",
       "repository": "0xcub3-wblock-learnings",
-      "content_hash": "ba3bf6cf64d2d2cfebc9a2b1c3fd76ffe319ff8966e3576f3b2b1bb6f96146f0",
-      "created_at": "2026-11-16T15:51:48.370Z"
+      "content_hash": "73df7387f5baa6a1812f164cecaec7c1e71b2cfd46c7b294976bde2cf8210b9c",
+      "created_at": "2026-11-20T16:58:12.719Z"
     },
     "domain_intelligence-architecture-intelligence-louis-cfm-coucou-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-louis-cfm-coucou-core-invariants",
@@ -33288,8 +33294,8 @@
       "title": "Architecture Intelligence: milvus-io/milvus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-milvus-io-milvus-architecture-intelligence-milvus-io-milvus-core-invariants.md",
       "repository": "milvus-io/milvus",
-      "content_hash": "8faee44375fad3ebc02c487ce36c372ff01056aea27ffb7b4c088b54d2649557",
-      "created_at": "2026-11-19T11:08:11.961Z"
+      "content_hash": "df4db74e6e3f21a6e91d54ca8f197984ff82c29122aff2355db62af7b863e5ab",
+      "created_at": "2026-11-20T16:56:44.454Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-learnings-core-invariants",
@@ -36193,6 +36199,126 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-20T16:29:07.404Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-apple-depthpro2-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-apple-depthpro2-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: apple/DepthPro2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-depthpro2-research-knowledge-intelligence-apple-depthpro2-core-invarian.md",
+      "repository": "apple/DepthPro2",
+      "content_hash": "f0789654999d5a366319fc9ce015d3c9d56f26d6f7cf0289c16288a414793d7f",
+      "created_at": "2026-11-20T16:56:25.190Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ovhaillm-olala-v1-0-mini-7a1b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-ovhaillm-olala-v1-0-mini-7a1b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: OVHaiLLM/Olala-v1.0-mini-7A1B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ovhaillm-olala-v1-0-mini-7a1b-research-knowledge-intelligence-ovhaillm-olala-.md",
+      "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
+      "content_hash": "a4775f328eae7d7f2d925257c1967e254d95f62e43610dd86b6744affa1dff38",
+      "created_at": "2026-11-20T16:56:27.604Z"
+    },
+    "DOM-D-F2660B55": {
+      "record_id": "DOM-D-F2660B55",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): apple/DepthPro2",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/apple/DepthPro2](https://huggingface.co/apple/DepthPro2))  \n> **Source Version**: `hf-apple-dep`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clo",
+      "content_hash": "b2ffd8a2510a80c60aa23a6b314abb79d1dd5b2656b94ae83eea383b8e4acdf4",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c",
+      "provenance": {
+        "source_uri": "project://hf-apple-depthpro2/hf-apple-depthpro2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T16:56:47.531Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-apple-depthpro2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-apple-depthpro2"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T16:57:24.742Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-apple-depthpro2-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-apple-depthpro2-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-apple-depthpro2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-depthpro2-learnings-research-knowledge-intelligence-hf-apple-depthpro2-.md",
+      "repository": "hf-apple-depthpro2-learnings",
+      "content_hash": "1b64b74da2099773f509ae3e7f95c8f930816b96c859e2456df4c99279dc8bd4",
+      "created_at": "2026-11-20T16:57:25.123Z"
+    },
+    "DOM-D-FE8131E1": {
+      "record_id": "DOM-D-FE8131E1",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): OVHaiLLM/Olala-v1.0-mini-7A1B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B](https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B))  \n> **Source Version**: `hf-ovhaillm-`  \n> **License**: Op",
+      "content_hash": "5a063c5b56e506073576ff97cc94b60344e53806207ad96a1e87ac841aa493bb",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md`  \n> **Source**: huggingface ([https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md`  \n> **Source**: huggingface ([https:/",
+      "provenance": {
+        "source_uri": "project://hf-ovhaillm-olala-v1.0-mini-7a1b/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T16:57:25.358Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ovhaillm-olala-v1.0-mini-7a1b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-ovhaillm-olala-v1.0-mini-7a1b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T16:58:11.234Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ovhaillm-olala-v1-0-mini-7a1b-learnings-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ovhaillm-olala-v1-0-mini-7a1b-learnings-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-ovhaillm-olala-v1.0-mini-7a1b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ovhaillm-olala-v1-0-mini-7a1b-learnings-research-knowledge-intelligence-hf-ov.md",
+      "repository": "hf-ovhaillm-olala-v1.0-mini-7a1b-learnings",
+      "content_hash": "bab20c95a7a60d051795fced80045cdcdbc071c7e5ed87e88ecc28e531442883",
+      "created_at": "2026-11-20T16:58:11.587Z"
     }
   }
 }

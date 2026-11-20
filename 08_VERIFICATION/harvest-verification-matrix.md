@@ -11579,3 +11579,9 @@
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T16:29:07.431Z` | `lxml-lxml` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E91F893C` [Domain D] | Yes (`a65a5e89...`) |
 | `CYCLE-20261120-ISVZ` | `2026-11-20T16:42:13.824Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9599` | Yes (`5c81b653...`) |
 | `CYCLE-20261120-J45C` | `2026-11-20T16:42:28.416Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9600` | Yes (`eca5b78c...`) |
+| `CYCLE-20261120-11LK` | `2026-11-20T16:56:24.920Z` | `apple/DepthPro2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md` | Yes (`edefcf3c...`) |
+| `CYCLE-20261120-13GR` | `2026-11-20T16:56:27.339Z` | `OVHaiLLM/Olala-v1.0-mini-7A1B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md` | Yes (`7e8f55c0...`) |
+| `CYCLE-20261120-19KV` | `2026-11-20T16:56:35.263Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9601` | Yes (`dc663124...`) |
+| `CYCLE-20261120-1GAW` | `2026-11-20T16:56:43.976Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9602` | Yes (`74eb72d9...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T16:57:24.788Z` | `hf-apple-depthpro2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F2660B55` [Domain D] | Yes (`b2ffd8a2...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T16:58:11.265Z` | `hf-ovhaillm-olala-v1.0-mini-7a1b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-FE8131E1` [Domain D] | Yes (`5a063c5b...`) |

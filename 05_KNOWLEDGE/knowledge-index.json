@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T16:42:34.260Z",
-  "total_verified_learnings": 9042,
+  "last_updated": "2026-11-20T16:58:12.937Z",
+  "total_verified_learnings": 9044,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22511,
+  "total_items": 22522,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114189,10 +114189,10 @@
       "relative_path": "08_VERIFICATION/milvus-io-milvus-verification-protocol-empirical-defect-shield-for-milvus-io-mil.md",
       "title": "Verification Protocol: Empirical Defect Shield for milvus-io/milvus",
       "repository": "milvus-io/milvus",
-      "source_version": "20746425",
-      "content_hash": "172fcbf96ec43f7f14429e7bbbbaacac813f3508d47aa60b757e75fd76a9ea19",
+      "source_version": "19ed1d67",
+      "content_hash": "517a2cb5a3df6689be0c543bcea5fbad29bcf01031fe1b773bd60b03cca8fedb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T11:08:12.306Z"
+      "persisted_at": "2026-11-20T16:56:44.648Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l",
@@ -241165,8 +241165,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "20746425",
-      "content_hash": "51c8048745b426e0fa6fbd910779db761c3fbbe508ce51b48780691e16ab47a8",
+      "source_version": "19ed1d67",
+      "content_hash": "74eb72d9f2de95d346a8e4d42f2d97cc61d15d081dcedac98d83f21376937396",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -241194,6 +241194,11 @@
           "number": 9372,
           "title": "release cold collections under QueryNode memory pressure",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9602,
+          "title": "read external refresh task state from response properties",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241201,7 +241206,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T11:08:11.287Z",
+      "verified_at": "2026-11-20T16:56:43.733Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257878,14 +257883,19 @@
       "slug": "0xcub3-wblock",
       "platform": "github",
       "source_url": "https://github.com/0xCUB3/wBlock",
-      "source_version": "03e46e4a",
-      "content_hash": "528710f73deb94446f1c6aa4751d938d9f1340055bd28b458d3d6ef3cc897768",
+      "source_version": "71f06abb",
+      "content_hash": "dc663124afd300bf015d31a59c555823bc79a34c99eee3211f663c24193f0151",
       "dossier_path": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "promoted_rules": [
         {
           "number": 8755,
           "title": "Respect Spotify music exceptions across blockers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9601,
+          "title": "Remove the allowlists and rerun the 4.0 upgrade once",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -257894,7 +257904,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T15:51:08.330Z",
+      "verified_at": "2026-11-20T16:56:35.017Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257936,10 +257946,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-0xcub3-wblock-technical-construction-intelligence-0xcub3-wblock-core-invariants.md",
       "title": "Technical Construction Intelligence: 0xCUB3/wBlock Core Invariants",
       "repository": "0xCUB3/wBlock",
-      "source_version": "03e46e4a",
-      "content_hash": "03b8c23fa4ea214d1e381d47b5f55821bfb5b57e357debe0c4b1426b6698ecdc",
+      "source_version": "71f06abb",
+      "content_hash": "4695598c6e1af0bce774d8f08f25d38855fbc266b24bd3dac0fcfdd8cac451a2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T15:51:08.790Z"
+      "persisted_at": "2026-11-20T16:56:35.754Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-0xcub3-wblock": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-0xcub3-wblock",
@@ -257948,10 +257958,10 @@
       "relative_path": "08_VERIFICATION/0xcub3-wblock-verification-protocol-empirical-defect-shield-for-0xcub3-wblock.md",
       "title": "Verification Protocol: Empirical Defect Shield for 0xCUB3/wBlock",
       "repository": "0xCUB3/wBlock",
-      "source_version": "03e46e4a",
-      "content_hash": "95806d85f7d106eab4ace9801b48b0b5ba5b572fbff09f73cd7bee51fae864ac",
+      "source_version": "71f06abb",
+      "content_hash": "e6a44d0b73f72d9107d57b6cf2ab533c306a722a362bd455bcda57d6089d07bc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T15:51:08.899Z"
+      "persisted_at": "2026-11-20T16:56:35.949Z"
     },
     "candidate_directive-update-cilium-runtime-builder": {
       "item_id": "candidate_directive-update-cilium-runtime-builder",
@@ -258078,9 +258088,9 @@
       "title": "Technical Construction Intelligence: 0xcub3-wblock-learnings Core Invariants",
       "repository": "0xcub3-wblock-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba3bf6cf64d2d2cfebc9a2b1c3fd76ffe319ff8966e3576f3b2b1bb6f96146f0",
+      "content_hash": "73df7387f5baa6a1812f164cecaec7c1e71b2cfd46c7b294976bde2cf8210b9c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T15:51:48.370Z"
+      "persisted_at": "2026-11-20T16:58:12.719Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-0xcub3-wblock-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-0xcub3-wblock-learnings",
@@ -258090,9 +258100,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for 0xcub3-wblock-learnings",
       "repository": "0xcub3-wblock-learnings",
       "source_version": "HEAD",
-      "content_hash": "927b7da8004de9b235bf635524ff377c65bae13dee11b33a8011c635b378ea21",
+      "content_hash": "30987f4b6d22301d19080a7fe13a8688d3f6981b19103cc181d1960a4c650879",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T15:51:48.505Z"
+      "persisted_at": "2026-11-20T16:58:12.937Z"
     },
     "learn-github-louis-cfm-coucou": {
       "learning_id": "learn-github-louis-cfm-coucou",
@@ -295073,10 +295083,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-milvus-io-milvus-architecture-intelligence-milvus-io-milvus-core-invariants.md",
       "title": "Architecture Intelligence: milvus-io/milvus Core Invariants",
       "repository": "milvus-io/milvus",
-      "source_version": "20746425",
-      "content_hash": "8faee44375fad3ebc02c487ce36c372ff01056aea27ffb7b4c088b54d2649557",
+      "source_version": "19ed1d67",
+      "content_hash": "df4db74e6e3f21a6e91d54ca8f197984ff82c29122aff2355db62af7b863e5ab",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T11:08:11.961Z"
+      "persisted_at": "2026-11-20T16:56:44.454Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-milvus-io-milvus": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-milvus-io-milvus",
@@ -305171,6 +305181,172 @@
       "content_hash": "00ad2b6f0a618ce29b1866e819054ae2ebf34af8de8516b3bfc7a92f575bbc6d",
       "domain_letter": "I",
       "persisted_at": "2026-11-20T16:42:32.947Z"
+    },
+    "learn-huggingface-apple-depthpro2": {
+      "learning_id": "learn-huggingface-apple-depthpro2",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "apple/DepthPro2",
+      "repository": "apple/DepthPro2",
+      "slug": "hf-apple-depthpro2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/apple/DepthPro2",
+      "source_version": "hf-apple-depthpro2",
+      "content_hash": "edefcf3c29a003281773a44060df529c9fa874dbd81ce872ba6d558b21106e5f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T16:56:24.650Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-apple-depthpro2-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-apple-depthpro2-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-depthpro2-research-knowledge-intelligence-apple-depthpro2-core-invarian.md",
+      "title": "Research & Knowledge Intelligence: apple/DepthPro2 Core Invariants",
+      "repository": "apple/DepthPro2",
+      "source_version": "hf-apple-depthpro2",
+      "content_hash": "f0789654999d5a366319fc9ce015d3c9d56f26d6f7cf0289c16288a414793d7f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T16:56:25.190Z"
+    },
+    "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b": {
+      "learning_id": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "OVHaiLLM/Olala-v1.0-mini-7A1B",
+      "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
+      "slug": "hf-ovhaillm-olala-v1.0-mini-7a1b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B",
+      "source_version": "hf-ovhaillm-olala-v1.0-mini-7a1b",
+      "content_hash": "7e8f55c0e8766dce5e7d51145608d4f0bc63b9b780187a413837aadf44abd3b5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T16:56:27.069Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-ovhaillm-olala-v1-0-mini-7a1b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-ovhaillm-olala-v1-0-mini-7a1b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ovhaillm-olala-v1-0-mini-7a1b-research-knowledge-intelligence-ovhaillm-olala-.md",
+      "title": "Research & Knowledge Intelligence: OVHaiLLM/Olala-v1.0-mini-7A1B Core Invariants",
+      "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
+      "source_version": "hf-ovhaillm-olala-v1.0-mini-7a1b",
+      "content_hash": "a4775f328eae7d7f2d925257c1967e254d95f62e43610dd86b6744affa1dff38",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T16:56:27.604Z"
+    },
+    "rule-9601": {
+      "learning_id": "rule-9601",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9601,
+      "title": "Remove the allowlists and rerun the 4.0 upgrade once",
+      "source_url": "https://github.com/0xCUB3/wBlock",
+      "source_version": "71f06abb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T16:56:35.017Z"
+    },
+    "candidate_directive-remove-the-allowlists-and-rerun-the-4-0-upgrade-once": {
+      "item_id": "candidate_directive-remove-the-allowlists-and-rerun-the-4-0-upgrade-once",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-19SW-remove-the-allowlists-and-rerun-the-4-0-upgrade-once.md",
+      "title": "Remove the allowlists and rerun the 4.0 upgrade once",
+      "repository": "0xCUB3/wBlock",
+      "source_version": "71f06abb",
+      "content_hash": "83c4f9116a7eb73c1bdebea2aa33e5833941b71f57f29d743d40c07add2b7350",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T16:56:35.558Z"
+    },
+    "rule-9602": {
+      "learning_id": "rule-9602",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9602,
+      "title": "read external refresh task state from response properties",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "19ed1d67",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T16:56:43.733Z"
+    },
+    "candidate_directive-read-external-refresh-task-state-from-response-properties": {
+      "item_id": "candidate_directive-read-external-refresh-task-state-from-response-properties",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1GII-read-external-refresh-task-state-from-response-properties.md",
+      "title": "read external refresh task state from response properties",
+      "repository": "milvus-io/milvus",
+      "source_version": "19ed1d67",
+      "content_hash": "ac3b66daacae8eff28dcce0ec53910cf8f171f13f99b32d25d83c0734103c024",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T16:56:44.257Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-apple-depthpro2-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-apple-depthpro2-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-depthpro2-learnings-research-knowledge-intelligence-hf-apple-depthpro2-.md",
+      "title": "Research & Knowledge Intelligence: hf-apple-depthpro2-learnings Core Invariants",
+      "repository": "hf-apple-depthpro2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1b64b74da2099773f509ae3e7f95c8f930816b96c859e2456df4c99279dc8bd4",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T16:57:25.123Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ovhaillm-olala-v1-0-mini-7a1b-learnings-core-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ovhaillm-olala-v1-0-mini-7a1b-learnings-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ovhaillm-olala-v1-0-mini-7a1b-learnings-research-knowledge-intelligence-hf-ov.md",
+      "title": "Research & Knowledge Intelligence: hf-ovhaillm-olala-v1.0-mini-7a1b-learnings Core Invariants",
+      "repository": "hf-ovhaillm-olala-v1.0-mini-7a1b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bab20c95a7a60d051795fced80045cdcdbc071c7e5ed87e88ecc28e531442883",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T16:58:11.587Z"
+    },
+    "candidate_directive-filters-remove-the-allowlists-and-rerun-the-4-0-upgrade-once": {
+      "item_id": "candidate_directive-filters-remove-the-allowlists-and-rerun-the-4-0-upgrade-once",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3CLF-filters-remove-the-allowlists-and-rerun-the-4-0-upgrade-once.md",
+      "title": "filters): Remove the allowlists and rerun the 4.0 upgrade once",
+      "repository": "0xcub3-wblock-learnings",
+      "source_version": "HEAD",
+      "content_hash": "95f15fff78443cf87ae71d77ac166bb0907803f3f196a9571349d6e63320e009",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T16:58:12.503Z"
     }
   },
   "ai-builder-brain": {

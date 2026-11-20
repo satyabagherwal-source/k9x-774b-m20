@@ -4,22 +4,22 @@
 {
   "source_repository": "0xCUB3/wBlock",
   "source_url": "https://github.com/0xCUB3/wBlock",
-  "source_version": "03e46e4a",
+  "source_version": "71f06abb",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-16T15:51:08.677Z",
+  "timestamp": "2026-11-20T16:56:35.557Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-0xcub3-wblock",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [0xCUB3/wBlock](https://github.com/0xCUB3/wBlock) (Revision: `03e46e4a`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-16T15:51:08.677Z`  
+> **Provenance**: Harvested from [0xCUB3/wBlock](https://github.com/0xCUB3/wBlock) (Revision: `71f06abb`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-20T16:56:35.557Z`  
 > **Learning ID**: `learn-github-0xcub3-wblock`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `0xCUB3/wBlock` (Commit: `03e46e4a`)
+- **Target Repository**: `0xCUB3/wBlock` (Commit: `71f06abb`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/0xcub3-wblock-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/0xCUB3/wBlock](https://github.com/0xCUB3/wBlock))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T15:51:07.585Z  
+> **Harvest Timestamp**: 2026-11-20T16:56:33.964Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Free, open-source Safari ad blocker for macOS, iOS, iPadOS and visionOS. Up to 750,000 rules, custom filter lists, userscripts and userstyles. No subscription.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3241 stars
+- **Stars / Engagement**: 3247 stars
 
 ---
 
@@ -76,6 +76,9 @@ import WBE
 public enum WBEngine {
     public struct EngineError: LocalizedError {
         public let errorDescription: String?
+        public init(errorDescription: String?) {
+            self.errorDescription = errorDescription
+        }
         static func last() -> EngineError {
             EngineError(errorDescription: wbe_last_error().map { String(cString: $0) } ?? "wbe failed")
         }
@@ -114,12 +117,36 @@ public enum WBEngine {
         wbe_clear_parse_cache()
     }
 
+    /// A packing that exceeds the limits. `slots` are in target order.
+    public struct Capacity: Decodable {
+        public let rules: Int
+        public let bytes: Int
+        public let slots: [Slot]
+
+        public struct Slot: Decodable {
+            public let rules: Int
+            public let bytes: Int
+        }
+    }
+
     public final class Plan: @unchecked Sendable {
         private let handle: OpaquePointer
+        /// Nil when the packing fits. An over-capacity plan still compiles its
+        /// targets for measurement, but its output must not be shipped.
+        public let capacity: Capacity?
+        /// The engine's message for `capacity`, nil when the plan fits.
+        public let capacityMessage: String?
 
         public init(requestJSON: String) throws {
             guard let handle = wbe_plan_new(requestJSON) else { throw EngineError.last() }
             self.handle = handle
+            if let json = wbe_plan_capacity_json(handle) {
+                capacity = try JSONDecoder().decode(Capacity.self, from: Data(String(cString: json).utf8))
+                capacityMessage = wbe_plan_capacity_message(handle).map { String(cString: $0) }
+            } else {
+                capacity = nil
+                capacityMessage = nil
+            }
         }
 
         deinit { wbe_plan_free(handle) }
@@ -241,6 +268,13 @@ uint32_t wbe_output_version(void);
 /* PlanRequest JSON contains safari, lists, targets, and optional cosmetics.
  * Each list may provide text or a UTF-8 file path. The plan owns its inputs. */
 WbePlan *wbe_plan_new(const char *request_json);
+/* When the packing exceeds the limits, these return the capacity JSON
+ * {"rules":L,"bytes":B,"slots":[{"rules":r,"bytes":b},..]} (slots in target
+ * order) and the message for it; otherwise NULL. An over-capacity plan still
+ * compiles targets for measurement, so its output must not be shipped. Owned
+ * by the plan. */
+const char *wbe_plan_capacity_json(const WbePlan *plan);
+const char *wbe_plan_capacity_message(const WbePlan *plan);
 /* extras_json is an array of {"text":..., "trusted":...}. The result's
  * stats JSON additionally contains admitted counts keyed by list ID. */
 /* Compiles blocker `target` unless has_known_fingerprint and its fingerprint is
@@ -312,6 +346,7 @@ use crate::compile::{
     surviving, NetworkContext, Others, Stats,
 };
 use crate::compile::prune::Seen;
+use crate::compile::regex::domain_top_url;
 use crate::parse::{cosmetic::with_domains, restate};
 use crate::webkit::{SafariVersion, WebkitJson, WkAction, WkRule, WkTrigger};
 use serde::{Deserialize, Serialize};
@@ -587,25 +622,27 @@ pub struct Plan {
     text_hashes: Vec<u64>,
     /// Where the blocks exceptions can reach go, when they go to one blocker.
     wide: Option<Wide>,
-    capacity_error: Option<String>,
+    capacity: Option<Capacity>,
 }
 
-/// What one blocker may hold. The wide blocker gains rules from every list,
-/// so a plan has one only while its measured output stays within these.
-#[derive(Debug, Clone, Copy, Deserialize)]
-#[serde(default)]
-pub struct Limits {
-    /// Safari's rule limit per content blocker. 0 for a blocker built outside
-    /// the shared plan: every blocker then keeps its own lists' blocks.
+/// A packing that exceeds the limits: the budgets, and each slot's measured
+/// size in target order.
+#[derive(Clone, Debug, PartialEq, Serialize)]
+pub struct Capacity {
     pub rules: usize,
-    /// The app's budget for a blocker's JSON.
+    pub bytes: usize,
+    pub slots: Vec<Slot>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Serialize)]
+pub struct Slot {
+    pub rules: usize,
     pub bytes: usize,
 }
 
-impl Default for Limits {
-    fn default() -> Self {
-        Limits { rules: 150_000, bytes: 19_000_000 }
-
+impl Capacity {
+    pub fn message(&self) -> String {
+        format!("selection exceeds content blocker budgets after bounded repacking ({} rules, {} bytes per slot); measured slots:
 ```
 
 ### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/ast.rs`
@@ -2209,11 +2246,11 @@ impl Seen {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1115** (2026-11-16): **[BUG] wBlock alpha breaks Spotify**
-  *Symptoms*: ### Describe the bug  When opening open.spotify.com, playback does not work, it just skips around songs and puts up the message Spotify can’t play this now. I was hoping the new alpha might fix this and be better than uBOL in this way, since it can run more scriptlets from my understanding.  ### To reproduce  Steps to reproduce the behavior: 1. Go to 'open.spotify.com’ 2. Play a song or album. 3. See it skip around and error out.   ### Expected behavior  It would allow playback and skip audio ads in the player like uBO. Thanks for all the great work! You’re amazing!  ### Screenshot or video  _No response_  ### Environment  - OS: [iPadOS 27.3 beta] - wBlock Version: [4.0.0 alpha]   ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [x] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [x] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [x] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  Logs attached  [wBlock_logs_11-15-2026.txt](https://github.com/user-attachments/files/34896152/wBlo
+- **Issue #1125** (2026-11-19): **[BUG] Can’t pause filters after importing new list**
+  *Symptoms*: ### Describe the bug  After importing a custom filter list via URL, the options to pause filtering are greyed out.  ### To reproduce  Steps to reproduce the behavior: 1. Import a new filter list via URL 2. Hit apply and wait for it to finish 3. Go to settings 4. Hit pause button 5. Pause options are greyed out   ### Expected behavior  Pause options are available once filters have been applied  ### Screenshot or video  https://github.com/user-attachments/assets/8df6b4ff-402f-4391-aca6-94bc2fac4810  ### Environment  - OS: iOS 26.6.1 - wBlock Version: 3.2.3  ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [x] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [x] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [ ] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  _No response_
 
-- **Issue #1114** (2026-11-14): **[BUG] [iOS - wBlock] Bypass Paywalls Clean fails on Télérama and Courrier International (works on Le Monde)**
-  *Symptoms*: ### Describe the bug  ### Describe the bug The **Bypass Paywalls Clean** userscript fails to bypass paywalls on certain French news websites—specifically **Télérama** and **Courrier International**—when running through the **wBlock** app on iOS.   However, the paywall bypass works properly on **Le Monde** (`lemonde.fr`) with the exact same setup.  ### Active wBlock Configuration - **Filter enabled:** `Bypass Paywalls Clean Filter` - **Userscripts enabled:**    - `Bypass Paywalls Clean`   - `Bypass Paywalls Clean - fr`  ### Context & Comparison - **App/Extension:** wBlock (iOS) - **Affected websites (not working):**    - https://www.telerama.fr   - https://www.courrierinternational.com - **Working website:**    - https://www.lemonde.fr (works as expected) - **Browser/App Comparison:** This issue does **not** occur when using *Stay for Safari* on the same iOS device with the exact same userscripts. Both Télérama and Courrier International are bypassed properly in Safari via Stay.    ### To reproduce  Steps to reproduce the behavior: 1. In wBlock on iOS, enable the `Bypass Paywalls Clean Filter` as well as both `Bypass Paywalls Clean` and `Bypass Paywalls Clean - fr` userscripts. 2. Open a paywalled article on `lemonde.fr` and observe that it unlocks properly. 3. Navigate to a paywalled article on `telerama.fr` or `courrierinternational.com`. 4. Observe that the paywall remains active and the full article content stays locked/hidden.   ### Expected behavior  _No response_  ### S
+- **Issue #1123** (2026-11-19): **[BUG] Closing View Rules when View menu is open causes flash**
+  *Symptoms*: ### Describe the bug  When you open the View menu in the View Rules popover, and then press the x while it is open, it flashes before finally closing.  ### To reproduce  Steps to reproduce the behavior: 1. Go to '...' 2. Click on '....' 3. Scroll down to '....' 4. See error   ### Expected behavior  _No response_  ### Screenshot or video  _No response_  ### Environment  - OS: [e.g. iOS 26.5, macOS 26.5] - wBlock Version: [e.g. 2.0.4] - Intel or Apple Silicon (macOS only): [e.g. Apple M2]   ### Troubleshooting checklist  - [ ] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [ ] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [ ] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [ ] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [ ] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2230,880 +2267,266 @@ impl Seen {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `03e46e4a` (2026-11-16)
-**Commit Message**: fix(engine): Respect Spotify music exceptions across blockers
+### Incident Patch 1: `0612d643` (2026-11-18)
+**Commit Message**: fix(filters): Remove the allowlists and rerun the 4.0 upgrade once
 
-**File**: `extension-src/background.js` (modified, +4/-2)
+AdGuard Allowlist and HaGeZi Referral Allowlist undo blocking on purpose,
+yet a selected one stayed on as a custom list after the upgrade. Purge
+them with any kept copy, skip them on backup restore, and run the 3.2.3
+to 4.0 handover and changed defaults once more on 4.0.0 installs.
+
+**File**: `scripts/test_filter_catalog_migrations.swift` (modified, +10/-7)
 ```diff
-@@ -2000,7 +2000,8 @@
-   // supported dynamic DNR but did not expose their quota, so keep a
-   // conservative compatibility ceiling only for that legacy tier.
-   const REMOVE_PARAM_DNR_OLD_SAFARI_FALLBACK_LIMIT = 5000;
--  const REDIRECT_DNR_STATUS_REPORT_KEY = "wblockRedirectDNRStatusReport";
-+  // Old entries could claim success after native rejected the report.
-+  const REDIRECT_DNR_STATUS_REPORT_KEY = "wblockRedirectDNRStatusReportV2";
-   const REDIRECT_DNR_STATUS_REPORT_THROTTLE_MS = 6 * 60 * 60 * 1000;
-   let removeParamDNRInstallPromise = null;
-   let removeParamDNRRulesCache = null;
-@@ -2163,12 +2164,13 @@
-       if (shouldReport) {
-         // Priority path: a slow queued request (script updates wait up to
-         // two minutes) must not hold this report until the page suspends.
--        await sendPriorityNativeMessage({
-+        const response = await sendPriorityNativeMessage({
-           action: "reportRedirectDNRStatus",
-           installedRedirects,
-           hostAccess,
-           privateAccess
-         });
-+        if (response?.ok !== true) throw new Error("Native host did not save redirect status");
-         await browser.storage.local.set({ [REDIRECT_DNR_STATUS_REPORT_KEY]: status });
-       }
-     } catch (error) {
+@@ -306,9 +306,6 @@ private final class TestLoader: FilterListLoader {
+         // Retired built-ins leave the catalog and are recognized by address, so they go without errors.
+         let retired = [
+             ("\(registry)/extension/safari/filters/207_optimized.txt", "Adblock Warning Removal List"),
+-            ("\(registry)/extension/safari/filters/10_optimized.txt", "AdGuard Allowlist"),
+-            ("\(registry)/extension/safari/filters/10.txt", "AdGuard Allowlist"),
+-            ("https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/whitelist-referral.txt", "HaGeZi Referral Allowlist"),
+             // #1088: every address the list was ever stored under.
+             ("https://filters.adtidy.org/extension/ublock/filters/25.txt", "AdGuard Mail Tracking Protection Filter"),
+             ("\(registry)/extension/safari/filters/25_optimized.txt", "AdGuard Mail Tracking Protection Filter"),
+@@ -324,12 +321,18 @@ private final class TestLoader: FilterListLoader {
+             precondition(!FilterListLoader.isRetiredBuiltIn(custom), "a custom copy of \(name) must stay")
+         }
+ 
+-        // Online Malicious URL Blocklist goes even when on, with the custom copy 3.2.3 kept (#1088).
+-        for url in ["https://curbengh.github.io/malware-filter/urlhaus-filter-vivaldi-online.txt",
+-                    "\(registry)/extension/safari/filters/208_optimized.txt"] {
++        // Online Malicious URL Blocklist and the two allowlists go even when on, with the custom copies earlier
++        // releases kept (#1088).
++        for (url, name) in [
++            ("https://curbengh.github.io/malware-filter/urlhaus-filter-vivaldi-online.txt", "Online Malicious URL Blocklist"),
++            ("\(registry)/extension/safari/filters/208_optimized.txt", "Online Malicious URL Blocklist"),
++            ("\(registry)/extension/safari/filters/10_optimized.txt", "AdGuard Allowlist"),
++            ("\(registry)/extension/safari/filters/10.txt", "AdGuard Allowlist"),
++            ("https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/whitelist-referral.txt", "HaGeZi Referral Allowlist"),
++        ] {
+             precondition(!defaults.contains { $0.url.absoluteString == url }, "\(url) is still in the catalog")
+             for isCustom in [false, true] {
+-                let filter = FilterList(name: "Online Malicious URL Blocklist", url: URL(string: url)!, category: .security,
++                let filter = FilterList(name: name, url: URL(string: url)!, category: .security,
+                                         isCustom: isCustom, isSelected: true)
+                 precondition(FilterListLoader.isRetiredBuiltIn(filter) && FilterListLoader.isPurgedBuiltIn(filter),
+                              "\(url) custom:\(isCustom) is not purged")
 ```
 
-**File**: `scripts/test_redirect_dnr_rules.swift` (modified, +145/-0)
+**File**: `wBlock/AppFilterManager.swift` (modified, +5/-2)
 ```diff
-@@ -73,9 +73,154 @@ struct RedirectDNRRuleTests {
-         expect(!RemoveParamDNRRuleGenerator.carveOutsAllowed(status: bad, redirectCount: 4, now: now), "fewer installed than planned")
-         expect(!RemoveParamDNRRuleGenerator.carveOutsAllowed(status: good, redirectCount: 4, now: now.addingTimeInterval(4 * 86_400)), "stale report")
-         expect(!RemoveParamDNRRuleGenerator.carveOutsAllowed(status: nil, redirectCount: 4, now: now), "never reported")
-+
-+        plainExceptions()
-+        try savedRules()
-         print("redirect DNR rule tests passed")
+@@ -236,7 +236,9 @@ class AppFilterManager: ObservableObject {
+     /// handover and have not handed over yet (completeAdGuardHandover).
+     /// Device-local and recorded once, so a list turned on later, here or on a
+     /// synced device, stays on.
+-    private static let adGuardHandoverPendingKey = "wBlock.adGuardHandoverPending.3"
++    /// `.4` runs the 3.2.3 to 4.0 handover once more on 4.0.0 installs, so AdGuard
++    /// lists turned on after the first run hand over as an upgrade from 3.2.3 does.
++    private static let adGuardHandoverPendingKey = "wBlock.adGuardHandoverPending.4"
+ 
+     var adGuardHandoverPending: Set<UUID> {
+         get {
+@@ -255,7 +257,8 @@ class AppFilterManager: ObservableObject {
+         adGuardHandoverPending = Set(lists.filter { $0.isSelected && FilterListLoader.isReplacedList($0) }.map(\.id))
      }
  
-+    typealias Rule = RemoveParamDNRRuleGenerator.DeclarativeRule
-+
-+    /// Redirect rules resolved from `lists`, each extracted as its own list, by URL filter.
-+    static func redirects(_ lists: String...) -> [String: Rule] {
-+        let sources = lists.map { RemoveParamDNRRuleGenerator.extractRedirectLines(from: $0) }
-+        let rules = RemoveParamDNRRuleGenerator.generateRules(from: "", redirectSources: sources).rules
-+        return Dictionary(
-+            rules.filter { $0.action.redirect?.extensionPath != nil }.map { ($0.condition.urlFilter ?? "", $0) },
-+            uniquingKeysWith: { first, _ in first }
-+        )
-+    }
-+
-+    /// A blocking exception stops the redirect of the requests it covers, and nothing else.
-+    static func plainExceptions() {
-+        let directives = """
-+        ||cdn.example/lib.js$script,redirect=noopjs
-+        ||media.example/audio/$media,redirect=noop-1s.mp4,domain=player.example
-+        ||media.example/audio/$script,redirect=noopjs,domain=player.example
-+        ||media.example/mp3/$media,redirect=noop-1s.mp4,domain=player.example
-+        ||ads.media.example^$media,redirect=noop-1s.mp4,domain=player.example
-+        ||tags.example/gpt.js$script,redirect=noopjs
-+        ||typeless.example/a.js$redirect=noopjs
-+        ||party.example/t.js$script,redirect=noopjs
-+        ||adhost.example/tag.js$script,redirect=noopjs
-+        ||static.site.example/app.js$script,redirect=noopjs
-+        ||firm.example/x.js$script,redirect=noopjs,important
-+        ||firmer.example/x.js$script,redirect=noopjs,important
-+        ||revived.example/x.js$script,redirect=noopjs
-+        ||cosmetic.example/x.js$script,redirect=noopjs
-+        ||wide.example^$script,redirect=noopjs
-+        ||wild.example/v2/sdk.js$script,redirect=noopjs
-+        ||wild.example/v2/other.js$script,redirect=noopjs
-+        ||hit.metrics.example/g.js$script,redirect=noopjs
-+        """
-+        let exceptions = """
-+        @@||cdn.example^
-+        @@||media.example/audio/$media,domain=player.example
-+        @@||tags.example/gpt.js$script,domain=news.example
-+        @@||typeless.example/a.js$script
-+        @@||party.example/t.js$third-party
-+        @@*$script,1p,domain=site.example
-+        @@*$script,domain=entity.*
-+        @@||firm.example^$script
-+        @@||firmer.example^$script,important
-+        @@||revived.example^$script
-+        @@||cosmetic.example^$elemhide
-+        @@||cosmetic.example^$document
-+        @@||cosmetic.example^$csp=script-src 'self'
-+        @@||wide.example/keep.js$script
-+        @@||wild.example/*/sdk.js$script
-+        @@||metrics.example/g.js
-+        """
-+        let kept = RemoveParamDNRRuleGenerator.extractRedirectLines(from: exceptions)
-+        expect(kept.contains("@@||cdn.example^\n"), "extraction keeps an exception from a list with no redirect")
-+        expect(!kept.contains("elemhide") && !kept.contains("csp"), "extraction drops exceptions from other than blocking")
-+
-+        let rules = redirects(directives, exceptions, "@@||revived.example^$script,badfilter")
-+        expectEqual(Set(rules.keys), [
-+            "||media.example/audio/", "||media.example/mp3/", "||ads.media.example^", "||tags.example/gpt.js",
-+            "||typeless.example/a.js", "||party.example/t.js", "||adhost.example/tag.js",
-+            "||static.site.example/app.js", "||firm.example/x.js", "||revived.example/x.js",
-+            "||cosmetic.example/x.js", "||wide.example^", "||wild.example/v2/other.js",
-+        ], "exceptions drop only the directives they cover")
-+        expectEqual(redirects(directives).count, 17, "every directive resolves without the exceptions")
-+        expectEqual(redirects(directives)["||media.example/audio/"]!.condition.resourceTypes, ["media"], "the media directive resolves without its exception")
-+        expectEqual(rules["||media.example/audio/"]!.condition.resourceTypes, ["script"], "a media exception leaves the script directive")
-+
-+        let tags = rules["||tags.example/gpt.js"]!
-+        expectEqual(tags.condition.excludedDomains, ["news.example"], "a scoped exception is subtracted")
-+        expectEqual(RemoveParamDNRRuleGenerator.carveOutLine(for: tags), "@@||tags.example/gpt.js$script,domain=~news.example,important", "the carve-out leaves the excepted site blocked")
-+        expectEqual(rules["||typeless.example/a.js"]!.condition.resourceTypes, ["xmlhttprequest"], "an excepted t
+-    private static let changedDefaultsKey = "wBlock.changedDefaults.4.0"
++    /// `.2` applies the changed defaults once more on 4.0.0 installs, with the handover above.
++    private static let changedDefaultsKey = "wBlock.changedDefaults.4.0.2"
+ 
+     /// Gives an existing install the defaults 4.0 changed after its first
+     /// builds, once per device. New installs start from the current defaults.
 ```
 
-**File**: `scripts/test_redirect_dnr_status_report.mjs` (modified, +40/-4)
+**File**: `wBlock/BackupManager.swift` (modified, +2/-0)
 ```diff
-@@ -125,6 +125,7 @@ const loadBackground = ({
-           { id: 1500001, priority: 15100, action: { type: "redirect", redirect: { extensionPath: "/redirects/noop.html" } }, condition: {} }
-         ], ruleIdBase: 1500000, ruleIdLimit: 1650000 };
-       }
-+      if (message?.action === "reportRedirectDNRStatus") return { ok: true };
-       return { payload: { css: [], procedural: [], scriptlets: [], engineTimestamp: 1 } };
-     },
-     permissions: { '{\"origins\":[\"*://*/*\"]}': true },
-@@ -139,7 +140,7 @@ const loadBackground = ({
-   check("report has correct installedRedirects count", statusReport && statusReport.installedRedirects === 2);
-   check("report has correct hostAccess", statusReport && statusReport.hostAccess === true);
-   check("report has correct privateAccess", statusReport && statusReport.privateAccess === false);
--  check("status is persisted in storage", state.storage.wblockRedirectDNRStatusReport && state.storage.wblockRedirectDNRStatusReport.installedRedirects === 2);
-+  check("status is persisted in storage", state.storage.wblockRedirectDNRStatusReportV2 && state.storage.wblockRedirectDNRStatusReportV2.installedRedirects === 2);
- }
- 
- // Scenario B: second run within 6 hours with unchanged values sends nothing
-@@ -148,7 +149,7 @@ const loadBackground = ({
-   const state = loadBackground({
-     storage: {
-       wblockRemoveParamDNRVersion: { version: "test", count: 2 },
--      wblockRedirectDNRStatusReport: previousReport
-+      wblockRedirectDNRStatusReportV2: previousReport
-     },
-     nativeHandler: message => {
-       if (message && message.action === "getRemoveParamDNRRules") {
-@@ -157,6 +158,7 @@ const loadBackground = ({
-           { id: 1500001, priority: 15100, action: { type: "redirect", redirect: { extensionPath: "/redirects/noop.html" } }, condition: {} }
-         ], ruleIdBase: 1500000, ruleIdLimit: 1650000 };
-       }
-+      if (message?.action === "reportRedirectDNRStatus") return { ok: true };
-       return { payload: { css: [], procedural: [], scriptlets: [], engineTimestamp: 1 } };
-     },
-     permissions: { '{\"origins\":[\"*://*/*\"]}': true },
-@@ -179,7 +181,7 @@ const loadBackground = ({
-   const state = loadBackground({
-     storage: {
-       wblockRemoveParamDNRVersion: { version: "test", count: 2 },
--      wblockRedirectDNRStatusReport: previousReport
-+      wblockRedirectDNRStatusReportV2: previousReport
-     },
-     nativeHandler: message => {
-       if (message && message.action === "getRemoveParamDNRRules") {
-@@ -188,6 +190,7 @@ const loadBackground = ({
-           { id: 1500001, priority: 15100, action: { type: "redirect", redirect: { extensionPath: "/redirects/noop.html" } }, condition: {} }
-         ], ruleIdBase: 1500000, ruleIdLimit: 1650000 };
-       }
-+      if (message?.action === "reportRedirectDNRStatus") return { ok: true };
-       return { payload: { css: [], procedural: [], scriptlets: [], engineTimestamp: 1 } };
-     },
-     permissions: { '{\"origins\":[\"*://*/*\"]}': false },
-@@ -214,6 +217,7 @@ const loadBackground = ({
-           { id: 1500000, priority: 15000, action: { type: "redirect", redirect: { extensionPath: "/redirects/noopjs.js" } }, condition: {} }
-         ], ruleIdBase: 1500000, ruleIdLimit: 1650000 };
-       }
-+      if (message?.action === "reportRedirectDNRStatus") return { ok: true };
-       return { payload: { css: [], procedural: [], scriptlets: [], engineTimestamp: 1 } };
-     },
-     permissions: { '{\"origins\":[\"*://*/*\"]}': true },
-@@ -240,7 +244,8 @@ const loadBackground = ({
-             { id: 1500000, priority: 15000, action: { type: "redirect", redirect: { extensionPath: "/redirects/noopjs.js" } }, condition: {} }
-           ], ruleIdBase: 1500000, ruleIdLimit: 1650000 };
-         }
--        return { payload: { css: [], procedural: [], scriptlets: [], engineTimestamp: 1 } };
-+        if (message?.action === "reportRedirectDNRStatus") return { ok: true };
-+      return { payload: { css: [], procedural: [], scriptlets: [], engineTimestamp: 1 } };
-       },
-       onMessage: { addListener: () => {} },
-       connectNative: () => ({ onMessage: { addListener: () => {} }, onDisconnect: { addListener: () => {} } }),
-@@ -305,6 +310,7 @@ const loadBackground = ({
-           { id: 1500003, priority: 1, action: { type: "allow" }, condition: {} }
-         ], ruleIdBase: 1500000, ruleIdLimit: 1650000 };
-       }
-+      if (message?.action === "reportRedirectDNRStatus") return { ok: true };
-       return { payload: { css: [], procedural: [], scriptlets: [], engineTimestamp: 1 } };
-     },
-     permissions: { '{\"origins\":[\"*://*/*\"]}': true },
-@@ -318,6 +324,36 @@ const loadBackground = ({
-   check("counts only extension path redirects", statusReport && statusReport.installedRedirects === 2);
- }
- 
-+// A rejected or missing acknowledgement must not throttle the next attempt.
-+for (const acknowledgement of [{ ok: false }, undefined]) {
-+  let response = acknowledgement;
-+  const redirect = { id: 1500000, priority: 15000,
+@@ -438,6 +438,8 @@ enum BackupCustomFilterRestorer {
+                 }
+                 inlineID = nil
+                 url = remoteURL
++                // A list wBlock purges stays gone; loading would delete it again anyway.
++                if PurgedFilterLists.contains(remoteURL, isCustom: true) { continue }
+                 // A custom copy of a built-in list is that list, as loading folds
+                 // it (FilterListSetup.hydrate); restoring it must not add it again.
+                 let address = currentAddress(remoteURL)
 ```
 
-**File**: `wBlock Scripts (iOS)/Resources/background.js` (modified, +41/-41)
+**File**: `wBlock/FilterListLoader.swift` (modified, +0/-3)
 ```diff
-@@ -5,12 +5,12 @@ const i=o.slice(Me.length);if(i==="js")return z({target:t,world:"MAIN",injectImm
- AIN",injectImmediately:!0,func:Tt,args:[o]}))n.push(o);else for(const l of new Set(o.map(([p])=>p))){const p=await z({target:t,world:"MAIN",injectImmediately:!0,files:[`scriptlets/${l}.js`]});n.push(p?[]:o.filter(u=>u[0]===l))}return(await Promise.all(n)).flat()},Pt=t=>{if(t instanceof Error)return t.stack||t.message||String(t);if(typeof t=="string")return t;try{return JSON.stringify(t)}catch{return String(t)}},B=(...t)=>console.error(t.map(Pt).join(" ")),Ft=["permission","not allowed","denied",
- "cannot access","not granted","not permitted","does not have access","not found"],ge=t=>{const e=String(t&&t.message||t||"").toLowerCase();return Ft.some(r=>e.includes(r))},z=async t=>{let e;try{e=await s.scripting.executeScript(t)}catch(r){ge(r)||B("[wBlock] Failed to execute script in target",t.target,"error",r);return}if(e?.[0]?.error){ge(e[0].error)||B("[wBlock] Failed to execute script in target",t.target,"error",e[0].error);return}return e?.[0]},xt=(t,e,r)=>{const o={tabId:t,frameIds:[e]},
- n=r.css||[],i=r.procedural||[],l=[Ve(o,r.scriptlets||[])],p=[...r.styles||[],...n.map(u=>`${u} { display: none !important; }`)];for(let u=0;u<p.length;u+=je)l.push(s.scripting.insertCSS({target:o,origin:"USER",css:p.slice(u,u+je).join(`
--`)}));for(const u of["ISOLATED","MAIN"]){const g=i.filter(m=>/"type"\s*:\s*"matches-(?:prop|property)"/.test(m)===(u==="MAIN"));g.length&&l.push((async()=>{(await z({target:o,world:u,func:y=>globalThis.wbeProcedural?(globalThis.wbeProcedural.apply(y),!0):!1,args:[g]}))?.result||(await z({target:o,world:u,files:["procedural.js"],injectImmediately:!0}),await z({target:o,world:u,func:y=>wbeProcedural.apply(y),args:[g]}))})())}return Promise.allSettled(l).then(u=>{for(const g of u)g.status==="reject\
--ed"&&!ge(g.reason)&&B("[wBlock] Failed to apply configuration in target",o,"error",g.reason);return u[0].status==="fulfilled"?u[0].value:r.scriptlets||[]})},k=new Map,Bt=128,ye="wblockConfigCacheV2",Ke=40,Ut=1e3;let K=null;const Lt=()=>{if(K!==null)return;const t=G;K=setTimeout(async()=>{if(K=null,t===G)try{const e=[];for(const[r,o]of k)r.endsWith("#")&&e.push([r,o]);await s.storage.local.set({[ye]:{engineTimestamp:V,entries:e.slice(-Ke)}})}catch(e){console.warn("[wBlock] Failed to persist confi\
--g cache:",e)}},Ut)},qt=()=>(K!==null&&(clearTimeout(K),K=null),s.storage.local.remove(ye).catch(t=>{console.warn("[wBlock] Failed to clear persisted config cache:",t)})),We=(async()=>{const t=G;try{const e=await s.storage.local.get(ye);if(t!==G)return;const r=e&&e[ye];if(!r||typeof r.engineTimestamp!="number"||!Array.isArray(r.entries)||k.size>0||V!==0)return;V=r.engineTimestamp;for(const o of r.entries.slice(-Ke))Array.isArray(o)&&typeof o[0]=="string"&&o[1]&&typeof o[1]=="object"&&k.set(o[0],o[1])}catch(e){
-+`)}));for(const u of["ISOLATED","MAIN"]){const g=i.filter(m=>/"type"\s*:\s*"matches-(?:prop|property)"/.test(m)===(u==="MAIN"));g.length&&l.push((async()=>{(await z({target:o,world:u,func:h=>globalThis.wbeProcedural?(globalThis.wbeProcedural.apply(h),!0):!1,args:[g]}))?.result||(await z({target:o,world:u,files:["procedural.js"],injectImmediately:!0}),await z({target:o,world:u,func:h=>wbeProcedural.apply(h),args:[g]}))})())}return Promise.allSettled(l).then(u=>{for(const g of u)g.status==="reject\
-+ed"&&!ge(g.reason)&&B("[wBlock] Failed to apply configuration in target",o,"error",g.reason);return u[0].status==="fulfilled"?u[0].value:r.scriptlets||[]})},k=new Map,Bt=128,he="wblockConfigCacheV2",Ke=40,Ut=1e3;let K=null;const Lt=()=>{if(K!==null)return;const t=G;K=setTimeout(async()=>{if(K=null,t===G)try{const e=[];for(const[r,o]of k)r.endsWith("#")&&e.push([r,o]);await s.storage.local.set({[he]:{engineTimestamp:V,entries:e.slice(-Ke)}})}catch(e){console.warn("[wBlock] Failed to persist confi\
-+g cache:",e)}},Ut)},qt=()=>(K!==null&&(clearTimeout(K),K=null),s.storage.local.remove(he).catch(t=>{console.warn("[wBlock] Failed to clear persisted config cache:",t)})),We=(async()=>{const t=G;try{const e=await s.storage.local.get(he);if(t!==G)return;const r=e&&e[he];if(!r||typeof r.engineTimestamp!="number"||!Array.isArray(r.entries)||k.size>0||V!==0)return;V=r.engineTimestamp;for(const o of r.entries.slice(-Ke))Array.isArray(o)&&typeof o[0]=="string"&&o[1]&&typeof o[1]=="object"&&k.set(o[0],o[1])}catch(e){
- console.warn("[wBlock] Failed to hydrate config cache:",e)}})(),te=async()=>{if(!(!s.tabs||typeof s.tabs.query!="function"))try{const t=await s.tabs.query({});await Promise.all(t.map(e=>!e||typeof e.id!="number"?Promise.resolve():s.tabs.sendMessage(e.id,{type:"wblock:clearDocumentStartSessionCache"}).catch(()=>{})))}catch{}};let Ze=Promise.resolve();const Xe=t=>{const e=t&&typeof t.action=="string"?t.action:"";return e==="syncZapperRules"||e==="getZapperRules"?3500:e==="startFilterUpdate"||e==="\
--getFilterUpdateStatus"?1e4:e==="maybeUpdateUserScripts"||e==="maybeStageFilterUpdates"?12e4:e==="getBlockingSta
+@@ -305,9 +305,6 @@ class FilterListLoader {
+         "d3ward/toolz",
+         "platforms/extension/safari/filters/122_optimized.txt",  // Fanboy's Annoyances Filter (#877)
+         "platforms/extension/safari/filters/207_optimized.txt",  // Adblock Warning Removal List
+-        "platforms/extension/safari/filters/10_optimized.txt",  // AdGuard Allowlist
+-        "platforms/extension/safari/filters/10.txt",  // AdGuard Allowlist, older address
+-        "adblock/whitelist-referral.txt",  // HaGeZi Referral Allowlist
+         "raw.githubusercontent.com/cjx82630/cjxlist/master/cjx-annoyance.txt",  // CJX's Annoyances List (#882)
+         "raw.githubusercontent.com/easylist/easylistchina/master/easylistchina.txt",  // EasyList China (#882)
+         "easylist-downloads.adblockplus.org/easylistdutch.txt",  // EasyList Dutch (#882)
 ```
 
-**File**: `wBlockCoreService/RedirectDNRRules.swift` (modified, +312/-91)
+**File**: `wBlockCoreService/FilterListValidation.swift` (modified, +7/-1)
 ```diff
-@@ -1,4 +1,5 @@
- import Foundation
-+internal import WBEngine
- 
- // `$redirect` support: a matching request is served a bundled stand-in from
- // wBlock Scripts instead of failing. Safari content blockers cannot redirect,
-@@ -9,7 +10,17 @@ import Foundation
- // pattern, domains, or resource are not exactly representable. `$redirect-rule`
- // (replace only if something else blocks) has no DNR form; it is used only when
- // the same list blocks the request's whole host and excepts nothing there.
-+//
-+// A blocking exception (`@@||host/path$script`) from any list also stops a
-+// redirect of the requests it covers, as it stops the block they stand in for.
- extension RemoveParamDNRRuleGenerator {
-+    /// Bump when `extractRedirectLines` changes, so cached lists rescan.
-+    static let redirectExtractionFormat = 2
-+    /// The built-in compatibility rules reach every content blocker, so their
-+    /// exceptions are weighed against every list's redirects too.
-+    static let compatibilityRedirectLines = extractRedirectLines(
-+        from: ContentBlockerService.embeddedCompatibilityRules
-+    )
-     static let redirectPriority = 15_000
-     static let importantRedirectPriority = 15_100
-     public static let redirectCarveOutsFilename = "redirect_carveouts.txt"
-@@ -37,6 +48,19 @@ extension RemoveParamDNRRuleGenerator {
-         "gif": ["image"], "png": ["image"], "mp3": ["media"], "mp4": ["media"],
+@@ -23,10 +23,16 @@ public enum PurgedFilterLists {
+         "hagezi/dns-blocklists@latest/adblock/pro.mini.txt",  // HaGeZi Multi Pro Mini, a DNS list (docs/HAGEZI.md)
      ]
  
-+    /// DNR type of a resource-type option, including types no stand-in serves.
-+    private static func requestType(_ option: String) -> String? {
-+        redirectTypeMap[option] ?? resourceTypeMap[option]?.first
-+    }
-+
-+    private static func domainType(_ option: String) -> String? {
-+        switch option {
-+        case "third-party", "3p", "~first-party", "~1p": return "thirdParty"
-+        case "~third-party", "~3p", "first-party", "1p": return "firstParty"
-+        default: return nil
-+        }
-+    }
-+
-     struct RedirectLine {
-         var isException: Bool
-         var pattern: String
-@@ -47,22 +71,26 @@ extension RemoveParamDNRRuleGenerator {
-         var token: String?
-         var isConditional: Bool
-         var isBadfilter: Bool
-+        /// A blocking exception with no redirect option, such as `@@||host^$script`.
-+        var isPlain: Bool
+-    /// Online Malicious URL Blocklist: 24k rules Safe Browsing covers (#864, #1088). 3.2.3 kept the registry copy.
++    /// Lists an earlier release left on as custom copies.
+     private static let keptCopyFragments = [
++        // Online Malicious URL Blocklist: 24k rules Safe Browsing covers (#864, #1088). 3.2.3 kept the registry copy.
+         "malware-filter/urlhaus-filter-vivaldi-online.txt",
+         "filters/208_optimized.txt",
++        // AdGuard Allowlist and HaGeZi Referral Allowlist undo blocking on purpose: search ads, self-promotion,
++        // and referral links. 4.0 builds kept a selected one as a custom list instead of turning it off.
++        "platforms/extension/safari/filters/10_optimized.txt",
++        "platforms/extension/safari/filters/10.txt",
++        "adblock/whitelist-referral.txt",
+     ]
  
-         init?(_ rawLine: Substring) {
--            var line = rawLine.trimmingCharacters(in: .whitespaces)
-+            let line = rawLine.trimmingCharacters(in: .whitespaces)
-+            // The byte check spares the five searches: few network rules have a `#`.
-             guard !line.isEmpty, !line.hasPrefix("!"), !line.hasPrefix("["),
--                  !line.contains("##"), !line.contains("#@#"), !line.contains("#%#"),
--                  !line.contains("#$#"), !line.contains("#?#"),
--                  let dollar = line.lastIndex(of: "$")
-+                  !line.utf8.contains(UInt8(ascii: "#"))
-+                    || !["##", "#@#", "#%#", "#$#", "#?#"].contains(where: line.contains)
-             else { return nil }
-             isException = line.hasPrefix("@@")
--            pattern = String(line[..<dollar])
-+            let dollar = line.lastIndex(of: "$")
-+            pattern = String(line[..<(dollar ?? line.endIndex)])
-             if isException { pattern.removeFirst(2) }
--            line = String(line[line.index(after: dollar)...])
-             var token: String?
-             var kind: String?
-             var rest: [(name: String, value: String?)] = []
--            for option in RemoveParamDNRRuleGenerator.splitOptions(line) {
-+            for option in RemoveParamDNRRuleGenerator.splitOptions(
-+                dollar.map { String(line[line.index(after: $0)...]) } ?? ""
-+            ) {
-                 let pair = RemoveParamDNRRuleGenerator.optionNameAndValue(option)
-                 if pair.name == "redirect" || pair.name == "redirect-rule" {
-                     guard kind == nil else { return nil }
-@@ -79,17 +107,34 @@ extension RemoveParamDNRRuleGenerator {
-                     rest.append(pair)
-                 }
-             }
--            guard let kind else { return nil }
-+            isPlain = kind == nil
-             isConditional = kind == "redirect-rule"
-             isBadfilter = rest.contains { $0.name == "badfilter" }
-             options = rest.filter { $0.name != "badfilter" }
-             self.token = token.flatMap { $0.isEmpty ? nil : $0 }
-+            // Any other option makes it an exception from something other than
-+            // blocking (`$elemhide`, `$csp`), or narrows it in a way not modelled
-+            // here (`$to`). A regex pattern cannot be compared with a directive.
-+            if isPlain {
-+                guard isException, !(pattern.hasPrefix("/") && pattern.hasSuffix("/") && pattern.count > 1),
-+                      options.allSatisfy({ option in
-+                          switch option.name {
-+                          case "domain": return option.value != nil
-+                          case "
-```
-
-**File**: `wBlockCoreService/RemoveParamDNRRuleGenerator.swift` (modified, +17/-7)
-```diff
-@@ -213,9 +213,10 @@ public enum RemoveParamDNRRuleGenerator {
-     public static func generateRules(
-         from rulesText: String,
-         redirectSources: [String] = [],
-+        scopedRedirectSources: Set<Int> = [],
-         disabledSites: [String] = []
-     ) -> (rules: [DeclarativeRule], summary: Summary) {
--        let resolvedRedirects = resourceRedirectRules(fromSources: redirectSources)
-+        let resolvedRedirects = resourceRedirectRules(fromSources: redirectSources, scopedSources: scopedRedirectSources)
-         let disabledRules = makeDisabledSiteAllowRules(
-             disabledSites,
-             startingID: ruleIDBase,
-@@ -357,6 +358,7 @@ public enum RemoveParamDNRRuleGenerator {
-         let generated = generateRules(
-             from: extracted.removeParam,
-             redirectSources: extracted.redirectSources,
-+            scopedRedirectSources: extracted.scopedRedirectSources,
-             disabledSites: disabledSites
-         )
-         try? FileManager.default.removeItem(at: containerURL.appendingPathComponent(generationStateFilename))
-@@ -411,7 +413,7 @@ public enum RemoveParamDNRRuleGenerator {
-     }
- 
-     /// Bump when the generator's output changes for the same inputs.
--    private static let generationSchema = 8
-+    private static let generationSchema = 9
-     private static let generationStateFilename = "dnr-generation-state.json"
- 
-     private final class BuildMarker {}
-@@ -427,6 +429,7 @@ public enum RemoveParamDNRRuleGenerator {
-         var canonical = "schema=\(generationSchema)\nbuild=\(bundle.infoDictionary?["CFBundleShortVersionString"] ?? "")"
-         canonical += "|\(bundle.infoDictionary?["CFBundleVersion"] ?? "")\n"
-         canonical += "blocked=\(blockedCount ? blockedCountExtractionFormat : 0)\n"
-+        canonical += "redirect=\(redirectExtractionFormat)|\(compatibilityRedirectLines)\n"
-         canonical += "disabled=\(disabledSites.joined(separator: "\n"))\n"
-         for filter in filters {
-             guard let sourceURL = ContentBlockerIncrementalCache.existingLocalFileURL(
-@@ -470,6 +473,8 @@ public enum RemoveParamDNRRuleGenerator {
-         var fingerprint: String
-         var lines: String
-         var redirectLines: String
-+        /// Missing in caches written before plain exceptions were kept.
-+        var redirectFormat: Int?
-         /// Missing in caches written before the blocked-request count.
-         var blockedCountLines: String?
-         var blockedCountFormat: Int?
-@@ -482,7 +487,7 @@ public enum RemoveParamDNRRuleGenerator {
-         for filters: [FilterList],
-         containerURL: URL,
-         includeBlockedCount: Bool
--    ) -> (removeParam: String, redirectSources: [String], blockedCount: String, pageRules: [PageRule]) {
-+    ) -> (removeParam: String, redirectSources: [String], scopedRedirectSources: Set<Int>, blockedCount: String, pageRules: [PageRule]) {
-         try? FileManager.default.removeItem(
-             at: containerURL.appendingPathComponent(legacyExtractionCacheFilename)
-         )
-@@ -504,7 +509,7 @@ public enum RemoveParamDNRRuleGenerator {
-             let key = sourceURL.lastPathComponent
-             let fingerprint = fileFingerprint(at: sourceURL) ?? "missing"
-             let cached = cache[key].flatMap { entry in
--                entry.fingerprint == fingerprint
-+                entry.fingerprint == fingerprint && entry.redirectFormat == redirectExtractionFormat
-                     && (!includeBlockedCount || entry.blockedCountFormat == blockedCountExtractionFormat)
-                     ? entry : nil
-             }
-@@ -518,6 +523,7 @@ public enum RemoveParamDNRRuleGenerator {
-                     fingerprint: sources[index].fingerprint,
-                     lines: extractRemoveParamLines(from: contents),
-                     redirectLines: extractRedirectLines(from: contents),
-+                    redirectFormat: redirectExtractionFormat,
-                     blockedCountLines: includeBlockedCount ? extractBlockedCountLines(from: contents) : nil,
-                     blockedCountFormat: includeBlockedCount ? blockedCountExtractionFormat : nil
-                 )
-@@ -529,7 +535,8 @@ public enum RemoveParamDNRRuleGenerator {
-         var pageRules: [PageRule] = []
-         var scopedExceptions = Set<String>()
-         var blockedCount = ""
--        var redirectSources: [String] = []
-+        var redirectSources = [compatibilityRedirectLines].filter { !$0.isEmpty }
-+        var scopedRedirectSources = Set<Int>()
-         var updated: [String: ExtractionEntry] = [:]
-         var cacheChanged = false
-         for (index, source) in sources.enumerated() {
-@@ -548,7 +555,10 @@ public enum RemoveParamDNRRuleGenerator {
-                 return page
-             }
-             if includeBlockedCount { blockedCount.append(entry.blockedCountLines ?? "") }
--            if !entry.redirectLines.isEmpty { redirectSources.append(entry.redirectLines) }
-+            if !entry.redirectLines.isEmpty {
-+                if 
-```
-
-**File**: `wBlockCoreService/wBlockCoreService.swift` (modified, +9/-2)
-```diff
-@@ -152,7 +152,8 @@ private struct StoredTargetSourceRuleProvenance: Codable {
-     // 11: collapse Pornhub's mobile top ad slot, whose padding outlives a hidden ad.
-     // 12: hide Pornhub's ad boxes, from AdGuard Base and Mobile Ads.
-     // 13: restore mobile YouTube request timing and guard initial backoff recovery.
--    public static let embeddedCompatibilityRulesVersion = "13"
-+    // 14: keep Spotify FairPlay song segments out of media ad replacements.
-+    public static let embeddedCompatibilityRulesVersion = "14"
-     /// The engine and Safari level outputs are compiled for; see SafariVersionDetection.
-     public static var compilerIdentity: String { SafariVersionDetection.compilerIdentity }
-     public static var upgradeSignature: String {
-@@ -184,7 +185,13 @@ private struct StoredTargetSourceRuleProvenance: Codable {
-     ///
-     /// Diagnostic-site rules are scoped to their hostnames so they do not affect
-     /// normal browsing.
--    private static let embeddedCompatibilityRules = """
-+    static let embeddedCompatibilityRules = """
-+! Spotify FairPlay uses native HLS media for songs, unlike Chromium's fetch/MSE path.
-+! These audio paths carry music in Safari and must not become silent ad replacements.
-+@@||scdn.co/audio/$media,domain=open.spotify.com
-+@@||spotifycdn.com/audio/$media,domain=open.spotify.com
-+@@||akamaized.net/audio/$media,domain=open.spotify.com
-+
- ! Common synthetic ad bait paths
- /js/widget/ads.js$script
- /js/pagead.js$script
+     /// A custom list matches only the kept copies, so a user's own custom list at a purged built-in address stays.
 ```
 
 ---
 
-### Incident Patch 2: `56856362` (2026-11-14)
-**Commit Message**: fix(extension): Retry scriptlets after failed Safari injections
+### Incident Patch 2: `1a2c9576` (2026-11-20)
+**Commit Message**: fix(annoyances): Stop turning on General by default
 
-**File**: `extension-src/background.js` (modified, +38/-26)
-```diff
-@@ -33,7 +33,10 @@
-   // page script element. Runs as a function, so it must not close over anything.
-   const queueScriptletCalls = calls => {
-     const queue = globalThis.__wbeScriptletCalls || (globalThis.__wbeScriptletCalls = {});
--    for (const [name, ...args] of calls) (queue[name] || (queue[name] = [])).push(args);
-+    for (const [name, ...args] of calls) {
-+      const pending = queue[name] || (queue[name] = []);
-+      if (!pending.some(call => call.length === args.length && call.every((value, i) => value === args[i]))) pending.push(args);
-+    }
-   };
-   // AdGuard-syntax rules with no uBO equivalent arrive as `adg:<name>` calls,
-   // raw `#%#` scripts as `adg:js`; both run the way AdGuard runs them.
-@@ -63,7 +66,7 @@
-   };
-   const runAdguardCalls = async (target, calls) => {
-     const library = calls.some(([name]) => name !== 'adg:js') ? await loadAdguardScriptlets() : null;
--    await Promise.all(calls.map(([prefixed, ...args]) => {
-+    return Promise.all(calls.map(([prefixed, ...args]) => {
-       const name = prefixed.slice(ADGUARD_PREFIX.length);
-       if (name === 'js') return executeInFrame({ target, world: 'MAIN', injectImmediately: true, func: runPageScript, args });
-       const func = library && library.getScriptletFunction(name);
-@@ -75,16 +78,19 @@
-   const runScriptlets = async (target, calls) => {
-     const adguard = calls.filter(([name]) => name.startsWith(ADGUARD_PREFIX));
-     const ubo = adguard.length > 0 ? calls.filter(([name]) => !name.startsWith(ADGUARD_PREFIX)) : calls;
--    const pending = [];
--    if (adguard.length > 0) pending.push(runAdguardCalls(target, adguard));
-+    const pending = adguard.map(async call => {
-+      const [result] = await runAdguardCalls(target, [call]);
-+      return result ? [] : [call];
-+    });
-     if (ubo.length > 0) {
--      pending.push((async () => {
--        await executeInFrame({ target, world: 'MAIN', injectImmediately: true, func: queueScriptletCalls, args: [ubo] });
--        const files = [...new Set(ubo.map(([name]) => `scriptlets/${name}.js`))];
--        await executeInFrame({ target, world: 'MAIN', injectImmediately: true, files });
--      })());
-+      const queued = await executeInFrame({ target, world: 'MAIN', injectImmediately: true, func: queueScriptletCalls, args: [ubo] });
-+      if (!queued) pending.push(ubo);
-+      else for (const name of new Set(ubo.map(([name]) => name))) {
-+        const result = await executeInFrame({ target, world: 'MAIN', injectImmediately: true, files: [`scriptlets/${name}.js`] });
-+        pending.push(result ? [] : ubo.filter(call => call[0] === name));
-+      }
-     }
--    await Promise.all(pending);
-+    return (await Promise.all(pending)).flat();
-   };
-   // Safari's extension error summary shows only the first console argument, so
-   // each line is one string with its details folded in.
-@@ -115,10 +121,13 @@
-       }
-       return;
-     }
--    if (results && results.length > 0 && results[0].error) {
--      logError('[wBlock] Failed to execute script in target', injection.target, 'error', results[0].error);
-+    if (results?.[0]?.error) {
-+      if (!isSkippedTarget(results[0].error)) {
-+        logError('[wBlock] Failed to execute script in target', injection.target, 'error', results[0].error);
-+      }
-+      return;
-     }
--    return results && results.length > 0 ? results[0].result : undefined;
-+    return results?.[0];
-   };
-   /**
-    * Applies a per-page payload to one frame. Scriptlets are queued first so
-@@ -127,17 +136,13 @@
-    * @param tabId ID of the tab to apply the configuration to.
-    * @param frameId ID of the frame to apply the configuration to.
-    * @param configuration Payload from the native handler.
--   * @returns Promise that resolves when the injections have settled.
-+   * @returns Promise resolving to the scriptlets that still need injection.
-    */
-   const applyConfiguration = (tabId, frameId, configuration) => {
-     const target = { tabId, frameIds: [frameId] };
-     const selectors = configuration.css || [];
-     const procedural = configuration.procedural || [];
--    const pending = [];
--    const scriptlets = configuration.scriptlets || [];
--    if (scriptlets.length > 0) {
--      pending.push(runScriptlets(target, scriptlets));
--    }
-+    const pending = [runScriptlets(target, configuration.scriptlets || [])];
-     // One stylesheet for the page's styles and hides, which include the hides
-     // scoped to its site. One rule per selector: a selector the engine
-     // rejects drops only itself.
-@@ -154,12 +159,19 @@
-           globalThis.wbeProcedural.apply(filters);
-           return true;
-         }, args: [filters] });
--        if (applied) return;
-+        if (applied?.result) return;
-         await executeInFrame({ target, world, files: ['procedural.js'], injectImmediately: true });
-         await executeInFrame({ target, world, func: filters => wbeProcedural.apply(filters), args: [filters] });
-       })());
-     }
--    return Promise.all(pen
-```
+AdGuard Other Annoyances hides Google's AI Overview (Dalsu, Discord). Onboarding now preselects only Cookie Notices, like 3.2.3. 4.0 installs with every General list on get it turned off once. A 3.2.3 install that ran AdGuard Other Annoyances keeps it because uBlock filters – Annoyances is new in 4.0.
 
-**File**: `extension-src/content.js` (modified, +2/-1)
+**File**: `scripts/test_filter_catalog_migrations.swift` (modified, +12/-0)
 ```diff
-@@ -124,7 +124,8 @@
-     for (const delay of SCRIPTLET_RETRY_DELAYS_MS) {
-       if (delay) await new Promise(resolve => setTimeout(resolve, delay));
-       const response = await browser.runtime.sendMessage({ action: 'wblock:injectScriptlets', scriptlets }).catch(() => null);
--      if (response && response.injected) return;
-+      if (response?.injected) return;
-+      if (Array.isArray(response?.failedScriptlets)) scriptlets = response.failedScriptlets;
-     }
-   };
-   const applyConfiguration = configuration => {
-```
-
-**File**: `scripts/test_background_config_cache.mjs` (modified, +59/-3)
-```diff
-@@ -9,6 +9,7 @@
- import { readFileSync } from "node:fs";
- import { runtimeMessageListener } from "./helpers/runtime-message.mjs";
- import assert from "node:assert/strict";
-+import vm from "node:vm";
- import path from "node:path";
- import { fileURLToPath } from "node:url";
- 
-@@ -551,20 +552,22 @@ const runScriptInjectionScenario = async executeScript => {
-   const errors = [];
-   const originalConsoleError = console.error;
-   let rejected = false;
-+  let response;
-   console.error = (...args) => { errors.push(args); };
-   try {
--    await state.onMessage({ type: "InitContentScript" }, topFrameSender(pageUrl));
-+    response = await state.onMessage({ type: "InitContentScript" }, topFrameSender(pageUrl));
-   } catch {
-     rejected = true;
-   } finally {
-     console.error = originalConsoleError;
-   }
--  return { errors, rejected };
-+  return { errors, rejected, response };
- };
- 
- {
-   const outcome = await runScriptInjectionScenario(async () => []);
-   check("empty executeScript results are skipped without an error", !outcome.rejected && outcome.errors.length === 0);
-+  check("empty execution results keep scriptlets pending", outcome.response?.payload?.scriptlets.length === 1);
- }
- 
- for (const message of [
-@@ -575,6 +578,9 @@ for (const message of [
-     throw new Error(message);
-   });
-   check(`executeScript rejection "${message}" is skipped without an error`, !outcome.rejected && outcome.errors.length === 0);
-+  check(`executeScript rejection "${message}" keeps scriptlets pending`, outcome.response?.payload?.scriptlets.length === 1);
-+  const result = await runScriptInjectionScenario(async () => [{ error: message }]);
-+  check(`executeScript result "${message}" stays pending without an error log`, !result.rejected && result.errors.length === 0 && result.response?.payload?.scriptlets.length === 1);
- }
- 
- {
-@@ -599,6 +605,56 @@ for (const message of [
-   );
- }
- 
-+// A failed file must remain retryable without replaying completed scriptlets.
-+{
-+  const scriptlets = [["set-constant", "probe", "1"], ["prevent-fetch", "adsbygoogle"]];
-+  const page = vm.createContext({});
-+  const installed = [];
-+  let firstCompleted = false;
-+  let secondStartedAfterFirst;
-+  let unavailable = true;
-+  const state = loadBackground({
-+    nativeHandler: () => ({ payload: makeConfig([], 19, [], scriptlets) }),
-+    executeScript: async injection => {
-+      if (injection.func) vm.runInContext(`(${injection.func})(...${JSON.stringify(injection.args)})`, page);
-+      if (injection.files?.includes("scriptlets/set-constant.js")) {
-+        await sleep(5);
-+        firstCompleted = true;
-+      }
-+      if (injection.files?.includes("scriptlets/prevent-fetch.js")) secondStartedAfterFirst ??= firstCompleted;
-+      if (unavailable && injection.files?.includes("scriptlets/prevent-fetch.js")) {
-+        return [{ error: "Script execution target not found" }];
-+      }
-+      for (const file of injection.files || []) {
-+        const name = file.slice("scriptlets/".length, -3);
-+        for (const args of page.__wbeScriptletCalls?.[name] || []) installed.push([name, ...args]);
-+        delete page.__wbeScriptletCalls?.[name];
-+      }
-+      return [{}];
-+    }
-+  });
-+  const sender = topFrameSender("https://injection.example/");
-+  const response = await state.onMessage({ type: "InitContentScript" }, sender);
-+  check("scriptlet files retain their execution order", secondStartedAfterFirst === true);
-+  check("normal frame hands back only failed scriptlets", JSON.stringify(response?.payload?.scriptlets) === JSON.stringify([scriptlets[1]]));
-+  const failed = await state.onMessage({ action: "wblock:injectScriptlets", scriptlets: [scriptlets[1]] }, sender);
-+  check("failed scriptlet execution is not acknowledged", failed?.injected === false && JSON.stringify(failed.failedScriptlets) === JSON.stringify([scriptlets[1]]));
-+  unavailable = false;
-+  const recovered = await state.onMessage({ action: "wblock:injectScriptlets", scriptlets: [scriptlets[1]] }, sender);
-+  check("scriptlet injection recovers when its target becomes available", recovered?.injected === true);
-+  check("retries neither duplicate pending arguments nor replay successful files", JSON.stringify(installed) === JSON.stringify(scriptlets));
-+}
-+
-+{
-+  const calls = [["adg:js", "window.first = true"], ["adg:js", "window.second = true"]];
-+  const state = loadBackground({
-+    nativeHandler: () => ({ payload: makeConfig([], 19) }),
-+    executeScript: async injection => injection.args?.[0] === calls[1][1] ? [] : [{}]
-+  });
-+  const response = await state.onMessage({ action: "wblock:injectScriptlets", scriptlets: calls }, topFrameSender("https://injection.example/"));
-+  check("AdGuard calls report only failed injections", response?.injected === false && JSON.stringify(response.failedScriptlets) === JSON.stringify([calls[1]]));
-+}
-+
- // Scenario I: blank frames receive the payload back so the content script can
- // apply it; normal HTTP frames are applied by the backgroun
-```
-
-**File**: `scripts/test_content_scriptlet_injection.mjs` (modified, +27/-2)
-```diff
-@@ -109,7 +109,7 @@ const frameGlobals = document => ({
-   MutationObserver: class { observe() {} disconnect() {} },
-   getComputedStyle: () => ({}),
-   navigator: { userAgent: "test" },
--  location: { href: "about:blank", hostname: "" },
-+  location: { href: "about:blank", hostname: "", protocol: "about:" },
-   Event: class Event { constructor(name) { this.name = name; } },
-   CustomEvent: class CustomEvent { constructor(name) { this.name = name; } },
-   CSS: { supports: () => false },
-@@ -124,7 +124,7 @@ const runBlankFrameWithPayload = async payload => {
-     addEventListener() {},
-     removeEventListener() {},
-     dispatchEvent() { return true; },
--    location: { href: "about:blank", hostname: "" },
-+    location: { href: "about:blank", hostname: "", protocol: "about:" },
-     wbeProcedural: { apply: filters => applied.push(filters) },
-   };
-   const browserPayload = {
-@@ -596,6 +596,31 @@ try {
-   console.error(error);
- }
- 
-+// Retry only the scriptlets that the background could not execute.
-+{
-+  const calls = [["set-constant", "probe", "1"], ["prevent-fetch", "adsbygoogle"]];
-+  const requests = [];
-+  const location = { href: "https://example.com/", hostname: "example.com", protocol: "https:" };
-+  const win = { ...windowStub, location };
-+  win.top = win;
-+  await withGlobals({ ...frameGlobals(documentStub), location }, async () => {
-+    new Function("browser", "window", "self", source)({ runtime: {
-+      onMessage: { addListener() {} },
-+      sendMessage: async message => {
-+        if (message.type === "InitContentScript") return { disabled: false, paused: false, payload: { scriptlets: calls } };
-+        if (message.action === "wblock:injectScriptlets") {
-+          requests.push(message.scriptlets);
-+          return requests.length === 1 ? { injected: false, failedScriptlets: [calls[1]] } : { injected: true };
+@@ -204,6 +204,18 @@ private final class TestLoader: FilterListLoader {
+                      && !alphaByName["AdGuard Cookie Notices"]!.updatesAutomatically, "settings move with the swap")
+         precondition(FilterListLoader.swappingToAdGuardAnnoyances(alpha) == alpha, "the swap leaves AdGuard users alone")
+         precondition(Set(FilterListLoader.adGuardAnnoyanceSwaps.flatMap { [$0.key, $0.value] }).isSubset(of: Set(defaults.map(\.name))))
++        // General goes off for 4.0 alphas; a 3.2.3 AdGuard Other Annoyances user keeps it.
++        let general = Set(AnnoyanceChoice.general.filterNames)
++        let withGeneral = defaults.map { list -> FilterList in
++            var list = list; list.isSelected = general.contains(list.name) || list.name == "AdGuard Cookie Notices"; return list
 +        }
-+        return {};
-+      }
-+    } }, win, win);
-+    await sleep(100);
-+  });
-+  check("failed scriptlet handoff retries until acknowledged", requests.length === 2);
-+  check("scriptlet retry excludes already successful calls", JSON.stringify(requests[1]) === JSON.stringify([calls[1]]));
-+}
-+
- if (failures > 0) {
-   console.error(`\n${failures} content scriptlet injection check(s) failed`);
-   process.exit(1);
-```
-
-**File**: `wBlock Scripts (iOS)/Resources/background.js` (modified, +94/-94)
-```diff
-@@ -1,96 +1,96 @@
- /*! Generated artifact — do not edit. Edit extension-src/background.js and run scripts/minify-extension-js.sh */
--(function(s){"use strict";var x;(function(t){t.InitContentScript="InitContentScript"})(x||(x={}));let V=0,O=0;const $e=1e3,Tt=t=>{const e=globalThis.__wbeScriptletCalls||(globalThis.__wbeScriptletCalls={});for(const[r,...o]of t)(e[r]||(e[r]=[])).push(o)},Ee="adg:";let je;const Dt=()=>je||(je=import("./scriptlets/adguard.js").then(()=>globalThis.wbeAdguardScriptlets||null).catch(t=>(G("[wBlock] Failed to load AdGuard scriptlets",t),null))),Et=t=>{const e=Symbol.for("wBlock.pageScriptPolicy");let r=window[e];
--if(r===void 0){try{r=window.trustedTypes?window.trustedTypes.createPolicy("wblock-scripts",{createScript:n=>n}):null}catch{r=null}Object.defineProperty(window,e,{value:r})}const o=document.createElement("script");o.textContent=r?r.createScript(t):t,(document.head||document.documentElement).appendChild(o),o.remove()},Mt=async(t,e)=>{const r=e.some(([o])=>o!=="adg:js")?await Dt():null;await Promise.all(e.map(([o,...n])=>{const c=o.slice(Ee.length);if(c==="js")return z({target:t,world:"MAIN",injectImmediately:!0,
--func:Et,args:n});const l=r&&r.getScriptletFunction(c);return l?z({target:t,world:"MAIN",injectImmediately:!0,func:l,args:[{name:c,args:n,engine:"extension",version:"",verbose:!1},n]}):void 0}))},He=async(t,e)=>{const r=e.filter(([c])=>c.startsWith(Ee)),o=r.length>0?e.filter(([c])=>!c.startsWith(Ee)):e,n=[];r.length>0&&n.push(Mt(t,r)),o.length>0&&n.push((async()=>{await z({target:t,world:"MAIN",injectImmediately:!0,func:Tt,args:[o]});const c=[...new Set(o.map(([l])=>`scriptlets/${l}.js`))];await z(
--{target:t,world:"MAIN",injectImmediately:!0,files:c})})()),await Promise.all(n)},Pt=t=>{if(t instanceof Error)return t.stack||t.message||String(t);if(typeof t=="string")return t;try{return JSON.stringify(t)}catch{return String(t)}},G=(...t)=>console.error(t.map(Pt).join(" ")),Ft=["permission","not allowed","denied","cannot access","not granted","not permitted","does not have access","not found"],Ve=t=>{const e=String(t&&t.message||t||"").toLowerCase();return Ft.some(r=>e.includes(r))},z=async t=>{
--let e;try{e=await s.scripting.executeScript(t)}catch(r){Ve(r)||G("[wBlock] Failed to execute script in target",t.target,"error",r);return}return e&&e.length>0&&e[0].error&&G("[wBlock] Failed to execute script in target",t.target,"error",e[0].error),e&&e.length>0?e[0].result:void 0},xt=(t,e,r)=>{const o={tabId:t,frameIds:[e]},n=r.css||[],c=r.procedural||[],l=[],f=r.scriptlets||[];f.length>0&&l.push(He(o,f));const d=[...r.styles||[],...n.map(g=>`${g} { display: none !important; }`)];for(let g=0;g<
--d.length;g+=$e)l.push(s.scripting.insertCSS({target:o,origin:"USER",css:d.slice(g,g+$e).join(`
--`)}));for(const g of["ISOLATED","MAIN"]){const m=c.filter(h=>/"type"\s*:\s*"matches-(?:prop|property)"/.test(h)===(g==="MAIN"));m.length&&l.push((async()=>{await z({target:o,world:g,func:R=>globalThis.wbeProcedural?(globalThis.wbeProcedural.apply(R),!0):!1,args:[m]})||(await z({target:o,world:g,files:["procedural.js"],injectImmediately:!0}),await z({target:o,world:g,func:R=>wbeProcedural.apply(R),args:[m]}))})())}return Promise.all(l)},v=new Map,Bt=128,ge="wblockConfigCacheV2",Ke=40,Ut=1e3;let K=null;
--const Lt=()=>{if(K!==null)return;const t=O;K=setTimeout(async()=>{if(K=null,t===O)try{const e=[];for(const[r,o]of v)r.endsWith("#")&&e.push([r,o]);await s.storage.local.set({[ge]:{engineTimestamp:V,entries:e.slice(-Ke)}})}catch(e){console.warn("[wBlock] Failed to persist config cache:",e)}},Ut)},qt=()=>(K!==null&&(clearTimeout(K),K=null),s.storage.local.remove(ge).catch(t=>{console.warn("[wBlock] Failed to clear persisted config cache:",t)})),We=(async()=>{const t=O;try{const e=await s.storage.local.
--get(ge);if(t!==O)return;const r=e&&e[ge];if(!r||typeof r.engineTimestamp!="number"||!Array.isArray(r.entries)||v.size>0||V!==0)return;V=r.engineTimestamp;for(const o of r.entries.slice(-Ke))Array.isArray(o)&&typeof o[0]=="string"&&o[1]&&typeof o[1]=="object"&&v.set(o[0],o[1])}catch(e){console.warn("[wBlock] Failed to hydrate config cache:",e)}})(),ee=async()=>{if(!(!s.tabs||typeof s.tabs.query!="function"))try{const t=await s.tabs.query({});await Promise.all(t.map(e=>!e||typeof e.id!="number"?Promise.
--resolve():s.tabs.sendMessage(e.id,{type:"wblock:clearDocumentStartSessionCache"}).catch(()=>{})))}catch{}};let Ze=Promise.resolve();const Xe=t=>{const e=t&&typeof t.action=="string"?t.action:"";return e==="syncZapperRules"||e==="getZapperRules"?3500:e==="startFilterUpdate"||e==="getFilterUpdateStatus"?1e4:e==="maybeUpdateUserScripts"||e==="maybeStageFilterUpdates"?12e4:e==="getBlockingState"?1e4:3e4},Ye=(t,e,r)=>{let o=null;return Promise.race([Promise.resolve(t).finally(()=>{o!==null&&clearTimeout(
--o)}),new Promise((n,c)=>{o=setTimeout(()=>c(new Error(`Native message timed out: ${r||"unknown"}`)),e)})])},he=5e3,te=new Map,D=new Map,Ot=t=>Date.now()-(te.get(t)||0)<he;let ne=0;const $=()=>{ne+=1,te
-```
-
-**File**: `wBlock Scripts (iOS)/Resources/content.js` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- (function(s){"use strict";const h=e=>{const{MutationObserver:t}=window;if(!t)return;new t(r=>{for(let o=0;o<r.length;o+=1){const i=r[o];if(e.hasAttribute("mod")&&e.getAttribute("mod")==="inner"){e.removeAttribute("mod");break}e.setAttribute("mod","inner");let a=!1;if(i.removedNodes.length>0)for(let f=0;f<i.removedNodes.length;f+=1)a=!0,e.appendChild(i.removedNodes[f]);else i.oldValue&&(a=!0,e.textContent=i.oldValue);a||e.removeAttribute("mod")}}).observe(e,{childList:!0,characterData:!0,subtree:!0,
- characterDataOldValue:!0})};var c;if((function(e){e.InitContentScript="InitContentScript"})(c||(c={})),!s||!s.runtime||!s.runtime.sendMessage)return;let d=!1;const m=/just a moment|verifying you are human|attention required|enable cookies/i,w=e=>m.test(e||""),g=()=>{d||(d=!0,console.info("[wBlock] Cloudflare challenge context detected \u2014 skipping content script."))},y=()=>{try{const e=window.location&&typeof window.location.hostname=="string"?window.location.hostname:"",t=window.location&&typeof window.
- location.pathname=="string"?window.location.pathname:"";if(e==="challenges.cloudflare.com"||t.startsWith("/cdn-cgi/challenge-platform")||t.startsWith("/cdn-cgi/challenge"))return!0}catch{}return!1},l=(e=!1)=>(!d&&(y()||w(document.title)||e&&document.querySelector('script[src^="/cdn-cgi/challenge-platform"],script[src*="challenges.cloudflare.com"],#challenge-form,#challenge-stage,#challenge-runner'))&&g(),d),C=[0,50,150,400,1e3,2500],b=async e=>{for(const t of C){t&&await new Promise(r=>setTimeout(
--r,t));const n=await s.runtime.sendMessage({action:"wblock:injectScriptlets",scriptlets:e}).catch(()=>null);if(n&&n.injected)return}},k=e=>{try{const t=e.css||[],n=e.styles||[];if(t.length>0||n.length>0){const o=document.createElement("style");o.setAttribute("type","text/css"),o.textContent=[...n,...t.map(i=>`${i} { display: none !important; }`)].join(`
-+r,t));const n=await s.runtime.sendMessage({action:"wblock:injectScriptlets",scriptlets:e}).catch(()=>null);if(n?.injected)return;Array.isArray(n?.failedScriptlets)&&(e=n.failedScriptlets)}},k=e=>{try{const t=e.css||[],n=e.styles||[];if(t.length>0||n.length>0){const o=document.createElement("style");o.setAttribute("type","text/css"),o.textContent=[...n,...t.map(i=>`${i} { display: none !important; }`)].join(`
- `),(document.head||document.documentElement).appendChild(o),h(o)}e.procedural&&e.procedural.length>0&&window.wbeProcedural.apply(e.procedural.filter(o=>!/"type"\s*:\s*"matches-(?:prop|property)"/.test(o)));const r=e.scriptlets||[];r.length>0&&location.protocol.startsWith("http")&&b(r)}catch(t){console.error(`[wBlock] Failed to apply configuration in content script: ${t&&t.stack||t}`)}};let u;const p=[250,1e3,3e3],v=e=>e&&e.state==="error"?Promise.resolve(!0):Promise.resolve(!(e&&typeof e.disabled==
- "boolean"&&typeof e.paused=="boolean")||e.disabled||e.paused);(async()=>{if(l())return;const e={type:c.InitContentScript,includeUserScripts:window.top!==window&&/^https?:$/.test(location.protocol)},n=(async()=>{for(let o=0;;o+=1){const i=await s.runtime.sendMessage(e).catch(a=>({type:c.InitContentScript,state:"error",error:String(a&&a.message?a.message:a)}));if(!(i&&i.state==="error")||o>=p.length||l())return i;await new Promise(a=>setTimeout(a,p[o]))}})();e.includeUserScripts&&(globalThis.__wblockFrameInitialization=
- n,globalThis.__wblockZapperInitialization=n.then(o=>o?.zapper)),u=n.then(v);const r=await n;await u||r?.payload&&!l(!0)&&k(r.payload)})().catch(e=>{console.error(`[wBlock] Error in content script: ${e&&e.stack||e}`)}),(async()=>{try{if(window.top!==window||await(u||Promise.resolve(!1))||l()||!/^https?:/i.test(window.location.href)||typeof s>"u"||!s.runtime||!s.runtime.sendMessage)return;const e=window.location.href,t=await s.runtime.sendMessage({action:"wblock:getCleanURL",url:e}),n=t&&typeof t.
-```
-
----
-
-### Incident Patch 3: `2fe4eb87` (2026-11-14)
-**Commit Message**: fix(userscripts): let GM requests reach the page's own site (#1114)
-
-Bypass Paywalls Clean - fr fetches Télérama and Courrier International
-articles from apps.<site> APIs it never lists in @connect, so wBlock
-blocked them while Stay, which ignores @connect, let them through. A
-script that declares any @connect may now also reach the page's
-registrable domain and its subdomains. Empty declarations still fail
-closed, and IP or public suffix pages keep the exact-host self.
-
-**File**: `scripts/test_userscript_matching_and_payload.swift` (modified, +19/-4)
-```diff
-@@ -226,23 +226,38 @@ struct UserScriptMatchingAndPayloadTests {
-             (["example.org"], "https://evil-example.org/x", false),
-             (["example.org"], "https://example.org.evil/x", false),
-             (["self"], "https://page.invalid:8443/x", true),
--            (["self"], "https://sub.page.invalid/x", false),
-+            (["self"], "https://sub.page.invalid/x", true),
-+            (["mediafin.be"], "https://apps.page.invalid/x", true),
-+            (["mediafin.be"], "https://otherpage.invalid/x", false),
-+            (["mediafin.be"], "https://invalid/x", false),
-             (["localhost"], "http://localhost:8080/x", true),
-             (["*"], "file:///etc/passwd", false),
-             (["*"], "https://user:secret@example.org/", false),
-             (["*"], "https://anywhere.invalid/", true),
-             (["https://example.org"], "https://example.org/", false),
-             ([String](), "https://page.invalid/", false)
-         ] {
--            expectEqual(UserScriptConnectPolicy(entries: entries, pageURL: page).allows(URL(string: target)!), allowed, "connect policy for \(target) with \(entries)")
-+            expectEqual(UserScriptConnectPolicy(entries: entries, pageURL: page, pageSite: "page.invalid").allows(URL(string: target)!), allowed, "connect policy for \(target) with \(entries)")
++        precondition(Set(AnnoyanceChoice.turningOffGeneral(withGeneral).filter(\.isSelected).map(\.name))
++                     == ["AdGuard Cookie Notices"], "General goes off")
++        let upgraded = defaults.map { list -> FilterList in
++            var list = list; list.isSelected = list.name == "AdGuard Other Annoyances"; return list
 +        }
-+        // Sites as WBEngine.registrableDomain resolves them; nil is a public suffix.
-+        for (pageURL, site, target, allowed) in [
-+            ("https://www.telerama.fr/a", "telerama.fr", "https://apps.telerama.fr/tlr/v1", true),
-+            ("https://news.bbc.co.uk/", "bbc.co.uk", "https://www.bbc.co.uk/", true),
-+            ("https://news.bbc.co.uk/", "bbc.co.uk", "https://evil.co.uk/", false),
-+            ("https://github.io/", nil, "https://me.github.io/", false),
-+            ("https://github.io/", nil, "https://github.io/x", true),
-+            ("http://10.0.1.1/", "1.1", "http://10.0.1.1/x", true),
-+            ("http://10.0.1.1/", "1.1", "http://192.168.1.1/x", false)
-+        ] as [(String, String?, String, Bool)] {
-+            expectEqual(UserScriptConnectPolicy(entries: ["mediafin.be"], pageURL: URL(string: pageURL)!, pageSite: site).allows(URL(string: target)!), allowed, "same-site connect for \(target) from \(pageURL)")
++        precondition(AnnoyanceChoice.turningOffGeneral(upgraded) == upgraded, "3.2.3 choice stays")
++        precondition(general.isSubset(of: Set(defaults.map(\.name))), "General names in catalog")
+ 
+         // A renamed annoyance list would silently fall into Other.
+         let topical = defaults.filter { $0.category == .annoyances && AnnoyanceTopic.topic(for: $0) != .other }
+```
+
+**File**: `wBlock/AnnoyanceTopic.swift` (modified, +17/-2)
+```diff
+@@ -56,8 +56,9 @@ enum AnnoyanceChoice: String, CaseIterable, Identifiable, Sendable {
+ 
+     var id: String { rawValue }
+ 
+-    /// What onboarding preselects (#1091).
+-    static let recommended: Set<AnnoyanceChoice> = [.cookies, .general]
++    /// What onboarding preselects (#1091). Cookie Notices only, as in 3.2.3:
++    /// AdGuard Other Annoyances hides Google's AI Overview (Dalsu, Discord).
++    static let recommended: Set<AnnoyanceChoice> = [.cookies]
+ 
+     /// A localization key.
+     var title: String {
+@@ -99,6 +100,20 @@ enum AnnoyanceChoice: String, CaseIterable, Identifiable, Sendable {
+         return filters.filter { !$0.isCustom && names.contains($0.name) }
+     }
+ 
++    /// General was on by default in the 4.0 alphas. It goes off once where
++    /// all its lists are on (AppFilterManager.applyOnce). uBlock filters –
++    /// Annoyances is new in 4.0, so a 3.2.3 install that ran AdGuard Other
++    /// Annoyances keeps it.
++    static func turningOffGeneral(_ lists: [FilterList]) -> [FilterList] {
++        guard choices(enabledIn: lists).contains(.general) else { return lists }
++        let names = Set(general.filterNames)
++        return lists.map { list in
++            var list = list
++            if !list.isCustom && names.contains(list.name) { list.isSelected = false }
++            return list
++        }
++    }
++
+     /// Choices whose lists are all on.
+     static func choices(enabledIn filters: [FilterList]) -> Set<AnnoyanceChoice> {
+         let enabled = Set(filters.filter { !$0.isCustom && $0.isSelected }.map(\.name))
+```
+
+**File**: `wBlock/AppFilterManager.swift` (modified, +5/-2)
+```diff
+@@ -261,6 +261,7 @@ class AppFilterManager: ObservableObject {
+     private static let changedDefaultsKey = "wBlock.changedDefaults.4.0.2"
+     /// Its own key, so the defaults above don't come back on for people who turned them off.
+     private static let adGuardAnnoyancesKey = "wBlock.adGuardAnnoyances.4"
++    private static let generalAnnoyancesOffKey = "wBlock.generalAnnoyancesOff.4"
+ 
+     /// Gives an existing install the defaults 4.0 changed after its first
+     /// builds, once per device and `key`. New installs start from the current
+@@ -823,6 +824,8 @@ class AppFilterManager: ObservableObject {
+         let changedDefaults = applyOnce(Self.changedDefaultsKey, FilterListLoader.applyingChangedDefaults, to: &migratedFilterLists)
+         let swappedAnnoyances = applyOnce(Self.adGuardAnnoyancesKey, FilterListLoader.swappingToAdGuardAnnoyances,
+                                           to: &migratedFilterLists)
++        let generalOff = applyOnce(Self.generalAnnoyancesOffKey, AnnoyanceChoice.turningOffGeneral, to: &migratedFilterLists)
++        let migratedAnnoyances = swappedAnnoyances || generalOff
+         let foldedCustomCopies = migratedFilterLists.filter(\.isCustom).count < customCountBeforeHydrate
+         migratedFilterLists = deduplicateFilterIDs(migratedFilterLists)
+         validatorClearIDs = migratedFilterLists.compactMap { filter in
+@@ -840,7 +843,7 @@ class AppFilterManager: ObservableObject {
+             return originalURL != filter.url
+         }
+         if hasURLMigrations || addedDefaultFilters || selectedDeprecatedListWasRemoved || foldedCustomCopies || !offAdGuard.removed.isEmpty
+-            || changedDefaults || swappedAnnoyances {
++            || changedDefaults || migratedAnnoyances {
+             Task { await self.saveFilterLists() }
          }
  
-         let session = URLSession(configuration: .ephemeral)
-         defer { session.invalidateAndCancel() }
-         let redirectResponse = HTTPURLResponse(url: page, statusCode: 302, httpVersion: nil, headerFields: nil)!
-         for (mode, target, allowed) in [("follow", page, true), ("follow", URL(string: "https://outside.invalid/")!, false), ("manual", page, false), ("error", page, false)] {
-             let task = session.dataTask(with: page)
--            let delegate = GMRedirectPolicyDelegate(policy: UserScriptConnectPolicy(entries: ["self"], pageURL: page), redirect: mode)
-+            let delegate = GMRedirectPolicyDelegate(policy: UserScriptConnectPolicy(entries: ["self"], pageURL: page, pageSite: "page.invalid"), redirect: mode)
-             var called = false
-             delegate.urlSession(session, task: task, willPerformHTTPRedirection: redirectResponse, newRequest: URLRequest(url: target)) { request in
-                 called = true
-@@ -257,7 +272,7 @@ struct UserScriptMatchingAndPayloadTests {
-         authenticated.setValue("secret", forHTTPHeaderField: "Authorization")
-         authenticated.setValue("session=secret", forHTTPHeaderField: "Cookie")
-         let redirectTask = session.dataTask(with: page)
--        GMRedirectPolicyDelegate(policy: UserScriptConnectPolicy(entries: ["*"], pageURL: page), redirect: "follow")
-+        GMRedirectPolicyDelegate(policy: UserScriptConnectPolicy(entries: ["*"], pageURL: page, pageSite: "page.invalid"), redirect: "follow")
-             .urlSession(session, task: redirectTask, willPerformHTTPRedirection: redirectResponse, newRequest: authenticated) { request in
-                 expectEqual(request?.url, crossHost, "approved cross-host redirect may proceed")
-                 expect(request?.value(forHTTPHeaderField: "Authorization") == nil, "native redirect strips cross-host authorization")
+@@ -869,7 +872,7 @@ class AppFilterManager: ObservableObject {
+         let signatureMismatch = storedSignature != currentSignature
+         let needsRebuild = dataManager.hasCompletedOnboarding
+             && (hasURLMigrations || selectedDeprecatedListWasRemoved || foldedCustomCopies || handedOverSelections || changedDefaults
+-                || swappedAnnoyances || signatureMismatch)
++                || migratedAnnoyances || signatureMismatch)
+         if needsRebuild {
+             markNonSelectionChangesPending()
+             if let delay = ContentBlockerService.automaticRebuildDelay(
 ```
 
-**File**: `wBlockCoreService/UserScript.swift` (modified, +11/-2)
-```diff
-@@ -267,8 +267,17 @@ public struct UserScriptConnectPolicy: Sendable {
-     public let entries: [String]
-     public let pageURL: URL
- 
--    public init(entries: [String], pageURL: URL) {
--        self.entries = entries
-+    /// A script that declares any `@connect` may also reach the page's own
-+    /// site (`pageSite`, its registrable domain, and subdomains), so `self`
-+    /// covers the whole site. Paywall scripts fetch `apps.<site>` APIs they
-+    /// don't declare, and Stay allows them (#1114). An empty declaration still fails closed, and IP
-+    /// or public suffix pages (nil `pageSite`) keep the exact-host `self`.
-+    public init(entries: [String], pageURL: URL, pageSite: String?) {
-+        let declared = entries.filter { $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() != "self" }
-+        let host = pageURL.host ?? ""
-+        let isIP = host.contains(":") || host.allSatisfy { $0.isNumber || $0 == "." }
-+        let site = isIP ? nil : pageSite?.lowercased()
-+        self.entries = entries.isEmpty ? [] : declared + [site ?? "self"]
-         self.pageURL = pageURL
-     }
- 
-```
+---
 
-**File**: `wBlockCoreService/WebExtensionRequestHandler.swift` (modified, +5/-1)
+### Incident Patch 3: `3a1125b6` (2026-11-20)
+**Commit Message**: fix(search): Stop matching catalog lists by their URL
+
+Most catalog lists download from AdGuard's uBlock builds or uBlock's CDN. Searching "ublock" listed nearly every filter (Dalsu, Discord). Only custom lists match by URL now.
+
+**File**: `wBlock/LocalizationHelpers.swift` (modified, +4/-2)
 ```diff
-@@ -6,6 +6,7 @@
- //
- 
- import Foundation
-+internal import WBEngine
- #if os(macOS)
- import AppKit
- #endif
-@@ -1518,7 +1519,10 @@ public enum WebExtensionRequestHandler {
-         guard let script = manager.userScript(withId: scriptID),
-               !script.isUserStyle, script.allowsGMXMLHttpRequest,
-               scriptAllowsFrame(script, message: message, manager: manager) else { return nil }
--        return UserScriptConnectPolicy(entries: script.connect, pageURL: page)
-+        return UserScriptConnectPolicy(
-+            entries: script.connect, pageURL: page,
-+            pageSite: page.host.flatMap { WBEngine.registrableDomain(of: $0) }
-+        )
+@@ -284,12 +284,14 @@ extension FilterList {
+         languages.contains { RegionalLanguageOption(code: $0.lowercased(), locale: locale).matches(query) }
      }
  
-     private static func handleUserScriptRequestPolicy(message: [String: Any?], context: NSExtensionContext) {
+-    /// The filter search: name, description, URL, or a language it covers.
++    /// The filter search: name, description, a language it covers, or a custom
++    /// list's URL. Catalog URLs stay out: most are uBlock-flavored builds or
++    /// mirrors, so "ublock" matched nearly every list (Dalsu, Discord).
+     func matchesSearch(_ query: String, locale: Locale) -> Bool {
+         query.isEmpty
+             || localizedDisplayName.localizedCaseInsensitiveContains(query)
+             || localizedDisplayDescription.localizedCaseInsensitiveContains(query)
+-            || url.absoluteString.localizedCaseInsensitiveContains(query)
++            || (isCustom && url.absoluteString.localizedCaseInsensitiveContains(query))
+             || matchesLanguage(query, locale: locale)
+     }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1124** (2026-11-19): fix(filters): Keep enabled regional lists visible when collapsed (@huseyinbal05)
+- **PR #1120** (2026-11-18): Improve Japanese translation (@Lark8037)
+- **PR #1118** (2026-11-17): Align UI with the HIG and move policy tests to proofs (@0xCUB3)
 - **PR #1076** (2026-11-03): ci: build only wBlockCoreService for the native tests (@0xCUB3)
 - **PR #1075** (2026-11-03): [ImgBot] Optimize images (@imgbot[bot])
 - **PR #1072** (2026-11-03): feat: replace AdGuard's converter with a uBO-semantics engine (@0xCUB3)
-- **PR #1063** (2026-11-01): [ImgBot] Optimize images (@imgbot[bot])
-- **PR #1055** (2026-10-29): Fix spacing in localization string for extensions (@daywalk3r666)
-- **PR #1054** (2026-10-29): Update Localizable.strings for Important notes regarding the Montenegrin language (@so-5699)
 
 ---
 
@@ -3123,35 +2546,46 @@ closed, and IP or public suffix pages keep the exact-host self.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. engine): Respect Spotify music exceptions across blockers
+## X. filters): Remove the allowlists and rerun the 4.0 upgrade once
 
 **RULE**:
-When implementing operations in `extension-src/background.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/test_filter_catalog_migrations.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `03e46e4a`: engine): Respect Spotify music exceptions across blockers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0612d643`: filters): Remove the allowlists and rerun the 4.0 upgrade once. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `extension-src/background.js`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/test_filter_catalog_migrations.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-  // Old entries could claim success after native rejected the report.
-  const REDIRECT_DNR_STATUS_REPORT_KEY = "wblockRedirectDNRStatusReportV2";
-        const response = await sendPriorityNativeMessage({
-        if (response?.ok !== true) throw new Error("Native host did not save redirect status");
+        // Online Malicious URL Blocklist and the two allowlists go even when on, with the custom copies earlier
+        // releases kept (#1088).
+        for (url, name) in [
+            ("https://curbengh.github.io/malware-filter/urlhaus-filter-vivaldi-online.txt", "Online Malicious URL Blocklist"),
+            ("\(registry)/extension/safari/filters/208_optimized.txt", "Online Malicious URL Blocklist"),
+            ("\(registry)/extension/safari/filters/10_optimized.txt", "AdGuard Allowlist"),
+            ("\(registry)/extension/safari/filters/10.txt", "AdGuard Allowlist"),
+            ("https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/whitelist-referral.txt", "HaGeZi Referral Allowlist"),
+        ] {
+                let filter = FilterList(name: name, url: URL(string: url)!, category: .security,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-  const REDIRECT_DNR_STATUS_REPORT_KEY = "wblockRedirectDNRStatusReport";
-        await sendPriorityNativeMessage({
+            ("\(registry)/extension/safari/filters/10_optimized.txt", "AdGuard Allowlist"),
+            ("\(registry)/extension/safari/filters/10.txt", "AdGuard Allowlist"),
+            ("https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/whitelist-referral.txt", "HaGeZi Referral Allowlist"),
+        // Online Malicious URL Blocklist goes even when on, with the custom copy 3.2.3 kept (#1088).
+        for url in ["https://curbengh.github.io/malware-filter/urlhaus-filter-vivaldi-online.txt",
+                    "\(registry)/extension/safari/filters/208_optimized.txt"] {
+                let filter = FilterList(name: "Online Malicious URL Blocklist", url: URL(string: url)!, category: .security,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `03e46e4a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0612d643` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

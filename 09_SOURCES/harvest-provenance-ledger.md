@@ -11612,3 +11612,9 @@ Every entry in this ledger must capture:
 | `learn-dom-d-e91f893c` | `project://lxml-lxml` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md` | 2026-11-20T16:29:07.431Z |
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `8046b9e9` | Multi-dimensional audit evidence | 2026-11-20T16:42:13.827Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `82819859` | Multi-dimensional audit evidence | 2026-11-20T16:42:28.420Z |
+| `learn-huggingface-apple-depthpro2` | `https://huggingface.co/apple/DepthPro2` | `hf-apple-d` | Multi-dimensional audit evidence | 2026-11-20T16:56:24.925Z |
+| `learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b` | `https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B` | `hf-ovhaill` | Multi-dimensional audit evidence | 2026-11-20T16:56:27.344Z |
+| `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `71f06abb` | Multi-dimensional audit evidence | 2026-11-20T16:56:35.268Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `19ed1d67` | Multi-dimensional audit evidence | 2026-11-20T16:56:43.980Z |
+| `learn-dom-d-f2660b55` | `project://hf-apple-depthpro2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md` | 2026-11-20T16:57:24.788Z |
+| `learn-dom-d-fe8131e1` | `project://hf-ovhaillm-olala-v1.0-mini-7a1b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md` | 2026-11-20T16:58:11.265Z |

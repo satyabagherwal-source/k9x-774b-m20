@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T16:42:34.376Z",
+  "last_updated": "2026-11-20T16:58:13.129Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T12:15:57.033Z",
@@ -1503,7 +1503,7 @@
       "staged_for_review": 1
     },
     "0xcub3-wblock-learnings.md": {
-      "processed_at": "2026-11-16T15:51:47.203Z",
+      "processed_at": "2026-11-20T16:58:11.865Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3596,9 +3596,19 @@
       "processed_at": "2026-11-20T16:14:33.248Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-apple-depthpro2-learnings.md": {
+      "processed_at": "2026-11-20T16:57:24.788Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md": {
+      "processed_at": "2026-11-20T16:58:11.265Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2556,
-  "total_canonical_promoted": 428,
-  "total_staged_for_review": 1939
+  "total_dossiers_evaluated": 2559,
+  "total_canonical_promoted": 430,
+  "total_staged_for_review": 1940
 }

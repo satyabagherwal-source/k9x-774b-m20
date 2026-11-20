@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T16:42:28.428Z",
+  "last_updated": "2026-11-20T16:56:43.992Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "51c8048745b426e0fa6fbd910779db761c3fbbe508ce51b48780691e16ab47a8",
-      "verified_at": "2026-11-19T11:08:11.526Z",
+      "content_hash": "74eb72d9f2de95d346a8e4d42f2d97cc61d15d081dcedac98d83f21376937396",
+      "verified_at": "2026-11-20T16:56:43.991Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T11:08:11.526Z"
+      "last_updated": "2026-11-20T16:56:43.991Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",
@@ -13956,14 +13956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-0xcub3-wblock",
-      "content_hash": "528710f73deb94446f1c6aa4751d938d9f1340055bd28b458d3d6ef3cc897768",
-      "verified_at": "2026-11-16T15:51:08.510Z",
+      "content_hash": "dc663124afd300bf015d31a59c555823bc79a34c99eee3211f663c24193f0151",
+      "verified_at": "2026-11-20T16:56:35.280Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T15:51:08.510Z"
+      "last_updated": "2026-11-20T16:56:35.280Z"
     },
     "ArchiveBox/ArchiveBox": {
       "repository": "ArchiveBox/ArchiveBox",
@@ -19709,6 +19709,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-20T16:13:59.927Z"
+    },
+    "apple/DepthPro2": {
+      "repository": "apple/DepthPro2",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-apple-depthpro2",
+      "content_hash": "edefcf3c29a003281773a44060df529c9fa874dbd81ce872ba6d558b21106e5f",
+      "verified_at": "2026-11-20T16:56:24.937Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-20T16:56:24.937Z"
+    },
+    "OVHaiLLM/Olala-v1.0-mini-7A1B": {
+      "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b",
+      "content_hash": "7e8f55c0e8766dce5e7d51145608d4f0bc63b9b780187a413837aadf44abd3b5",
+      "verified_at": "2026-11-20T16:56:27.356Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-20T16:56:27.356Z"
     }
   },
   "repos": {

@@ -21790,5 +21790,29 @@
     "downloads": 75614,
     "qualityScore": 3010,
     "discoveredAt": "2026-11-20T16:10:35.643Z"
+  },
+  {
+    "name": "apple/DepthPro2",
+    "fullName": "apple/DepthPro2",
+    "url": "https://huggingface.co/apple/DepthPro2",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: apple/DepthPro2 (76 likes, 0 downloads)",
+    "likes": 76,
+    "downloads": 0,
+    "qualityScore": 760,
+    "discoveredAt": "2026-11-20T16:54:09.819Z"
+  },
+  {
+    "name": "OVHaiLLM/Olala-v1.0-mini-7A1B",
+    "fullName": "OVHaiLLM/Olala-v1.0-mini-7A1B",
+    "url": "https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: OVHaiLLM/Olala-v1.0-mini-7A1B (99 likes, 1021 downloads)",
+    "likes": 99,
+    "downloads": 1021,
+    "qualityScore": 2011,
+    "discoveredAt": "2026-11-20T16:54:09.819Z"
   }
 ]

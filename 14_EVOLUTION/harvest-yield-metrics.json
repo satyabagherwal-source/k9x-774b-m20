@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T16:42:28.425Z",
-  "total_cycles_completed": 11029,
-  "total_learnings_persisted": 11029,
-  "total_rules_promoted": 10389,
+  "last_updated": "2026-11-20T16:56:43.987Z",
+  "total_cycles_completed": 11033,
+  "total_learnings_persisted": 11033,
+  "total_rules_promoted": 10391,
   "history": [
-    {
-      "timestamp": "2026-11-19T17:38:09.212Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T17:42:49.266Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T18:06:13.558Z",
-      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T18:06:15.519Z",
-      "repository": "google/tcmalloc",
-      "learningId": "learn-github-google-tcmalloc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T18:06:24.101Z",
       "repository": "karmada-io/karmada",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-20T16:42:28.425Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T16:56:24.932Z",
+      "repository": "apple/DepthPro2",
+      "learningId": "learn-huggingface-apple-depthpro2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T16:56:27.352Z",
+      "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
+      "learningId": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T16:56:35.276Z",
+      "repository": "0xCUB3/wBlock",
+      "learningId": "learn-github-0xcub3-wblock",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T16:56:43.987Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

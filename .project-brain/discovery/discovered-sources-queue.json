@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T16:42:32.757Z",
+  "updated_at": "2026-11-20T16:58:12.162Z",
   "stats": {
-    "total_discovered": 6432,
-    "approved_pending_harvest": 6074,
+    "total_discovered": 6438,
+    "approved_pending_harvest": 6080,
     "harvested_count": 0,
     "rejected_count": 358,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6064,
+      "COMMUNITY_AND_EXPERT": 6070,
       "OFFICIAL_DOCUMENTATION": 201,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
@@ -139021,6 +139021,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-1376E40B20C3": {
+      "id": "SRC-1376E40B20C3",
+      "url": "https://huggingface.co/apple/DepthPro2",
+      "title": "https://huggingface.co/apple/DepthPro2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T16:57:24.820Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md",
+        "fileName": "hf-apple-depthpro2-learnings.md"
+      }
+    },
+    "SRC-EE45F885586D": {
+      "id": "SRC-EE45F885586D",
+      "url": "https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B",
+      "title": "https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T16:58:11.295Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md",
+        "fileName": "hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md"
+      }
+    },
+    "SRC-53C3A7E73427": {
+      "id": "SRC-53C3A7E73427",
+      "url": "https://github.com/user-attachments/assets/8df6b4ff-402f-4391-aca6-94bc2fac4810",
+      "title": "https://github.com/user-attachments/assets/8df6b4ff-402f-4391-aca6-94bc2fac4810",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T16:58:11.969Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
+      }
+    },
+    "SRC-DA8500F6949C": {
+      "id": "SRC-DA8500F6949C",
+      "url": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/whitelist-referral.txt",
+      "title": "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/whitelist-referral.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T16:58:12.026Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
+      }
+    },
+    "SRC-F74ECD75F3A5": {
+      "id": "SRC-F74ECD75F3A5",
+      "url": "https://filters.adtidy.org/extension/ublock/filters/25.txt",
+      "title": "https://filters.adtidy.org/extension/ublock/filters/25.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T16:58:12.100Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
+      }
+    },
+    "SRC-589DF104F165": {
+      "id": "SRC-589DF104F165",
+      "url": "https://curbengh.github.io/malware-filter/urlhaus-filter-vivaldi-online.txt",
+      "title": "https://curbengh.github.io/malware-filter/urlhaus-filter-vivaldi-online.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T16:58:12.162Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
       }
     }
   }

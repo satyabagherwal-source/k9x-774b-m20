@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-AMUB",
-    "timestamp": "2026-11-18T14:40:33.827Z",
-    "repository": "zeronsh/zeron",
-    "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "2c669ceee8a8e1996a51e83af491694a9b6ddfd96e08bc981cfdc2dc61bdbe81",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-ATIG",
-    "timestamp": "2026-11-18T14:40:42.472Z",
-    "repository": "smallstep/cli",
-    "learningId": "learn-github-smallstep-cli",
-    "contentHash": "f75b8123630faff29b2817e7c0bcb2a9095e18a4bbd2ddaa2033c0cfa8ee5e60",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-AVLH",
-    "timestamp": "2026-11-18T14:40:45.173Z",
-    "repository": "Ontos-AI/knowhere",
-    "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "fee643031259c875c5e2d89294c6a19bb2f4d5b005b47562e5d78efc7ca9e815",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-KU9H",
-    "timestamp": "2026-11-18T14:48:30.005Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-    "contentHash": "6ad69861f0aa451f0eebc9b1a7de1d696cd9a2e1215d35c1a751f16ef3cae024",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-L0OG",
     "timestamp": "2026-11-18T14:48:38.320Z",
     "repository": "invertase/react-native-firebase",
@@ -7490,6 +7430,66 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "eca5b78ccc20fea74de7bbbe8f5b7424843e7aadafba546e6a9d7027b5a855b1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-11LK",
+    "timestamp": "2026-11-20T16:56:24.920Z",
+    "repository": "apple/DepthPro2",
+    "learningId": "learn-huggingface-apple-depthpro2",
+    "contentHash": "edefcf3c29a003281773a44060df529c9fa874dbd81ce872ba6d558b21106e5f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-13GR",
+    "timestamp": "2026-11-20T16:56:27.339Z",
+    "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
+    "learningId": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b",
+    "contentHash": "7e8f55c0e8766dce5e7d51145608d4f0bc63b9b780187a413837aadf44abd3b5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-19KV",
+    "timestamp": "2026-11-20T16:56:35.263Z",
+    "repository": "0xCUB3/wBlock",
+    "learningId": "learn-github-0xcub3-wblock",
+    "contentHash": "dc663124afd300bf015d31a59c555823bc79a34c99eee3211f663c24193f0151",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-1GAW",
+    "timestamp": "2026-11-20T16:56:43.976Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "74eb72d9f2de95d346a8e4d42f2d97cc61d15d081dcedac98d83f21376937396",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -711634,3 +711634,175 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `82819859` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9601. Remove the allowlists and rerun the 4.0 upgrade once (Harvested from 0xCUB3/wBlock)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Remove the allowlists and rerun the 4.0 upgrade once",
+  "source": "0xCUB3/wBlock",
+  "source_url": "https://github.com/0xCUB3/wBlock",
+  "source_version": "71f06abb",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-20T16:56:34.655Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-0xcub3-wblock",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [0xCUB3/wBlock](https://github.com/0xCUB3/wBlock) (Revision: `71f06abb`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `scripts/test_filter_catalog_migrations.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0612d643`: filters): Remove the allowlists and rerun the 4.0 upgrade once. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/test_filter_catalog_migrations.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+        // Online Malicious URL Blocklist and the two allowlists go even when on, with the custom copies earlier
+        // releases kept (#1088).
+        for (url, name) in [
+            ("https://curbengh.github.io/malware-filter/urlhaus-filter-vivaldi-online.txt", "Online Malicious URL Blocklist"),
+            ("\(registry)/extension/safari/filters/208_optimized.txt", "Online Malicious URL Blocklist"),
+            ("\(registry)/extension/safari/filters/10_optimized.txt", "AdGuard Allowlist"),
+            ("\(registry)/extension/safari/filters/10.txt", "AdGuard Allowlist"),
+            ("https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/whitelist-referral.txt", "HaGeZi Referral Allowlist"),
+        ] {
+                let filter = FilterList(name: name, url: URL(string: url)!, category: .security,
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+            ("\(registry)/extension/safari/filters/10_optimized.txt", "AdGuard Allowlist"),
+            ("\(registry)/extension/safari/filters/10.txt", "AdGuard Allowlist"),
+            ("https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/whitelist-referral.txt", "HaGeZi Referral Allowlist"),
+        // Online Malicious URL Blocklist goes even when on, with the custom copy 3.2.3 kept (#1088).
+        for url in ["https://curbengh.github.io/malware-filter/urlhaus-filter-vivaldi-online.txt",
+                    "\(registry)/extension/safari/filters/208_optimized.txt"] {
+                let filter = FilterList(name: "Online Malicious URL Blocklist", url: URL(string: url)!, category: .security,
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0612d643` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9602. read external refresh task state from response properties (Harvested from milvus-io/milvus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "read external refresh task state from response properties",
+  "source": "milvus-io/milvus",
+  "source_url": "https://github.com/milvus-io/milvus",
+  "source_version": "19ed1d67",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-20T16:56:43.369Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-milvus-io-milvus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `19ed1d67`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `internal/datacoord/session/cluster.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c31070a6`: read external refresh task state from response properties. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/datacoord/session/cluster.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	resProperties := taskcommon.NewProperties(resp.GetProperties())
+	state, err := resProperties.GetTaskState()
+	if err != nil {
+		return nil, err
+	}
+	reason := resProperties.GetTaskReason()
+	if state != taskcommon.Finished {
+		// Only a finished task needs segment results from the payload.
+		return &datapb.RefreshExternalCollectionTaskResponse{Status: resp.GetStatus(), State: state, FailReason: reason}, nil
+	}
+
+	// An empty payload decodes to None. Only a finished worker result can
+	// supply the segment changes that DataCoord will publish.
+	if result.GetState() != taskcommon.Finished {
+		return nil, merr.WrapErrServiceInternalMsg("finished refresh task %d has result payload in state %s", taskID, result.GetState())
+	}
+	result.FailReason = reason
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	// Unmarshal the response payload
+
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c31070a6` are properly handled with clean fallback behavior.

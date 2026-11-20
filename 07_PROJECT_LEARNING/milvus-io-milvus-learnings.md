@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `20746425`  
+> **Source Version**: `19ed1d67`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T11:08:10.340Z  
+> **Timestamp**: 2026-11-20T16:56:42.712Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T11:08:10.333Z  
+> **Harvest Timestamp**: 2026-11-20T16:56:42.705Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46696 stars
+- **Stars / Engagement**: 46707 stars
 
 ---
 
@@ -1238,7 +1238,7 @@ func IsReplicationRemovedByAlterReplicateConfigMessage(msg message.ImmutableMess
 
 ```
 
-### Core Architecture Module: `internal/core/benchmark/BitmapRangeBenchmark.cpp`
+### Core Architecture Module: `internal/core/benchmark/BitSlicedIndexBenchmark.cpp`
 ```
 // Licensed to the LF AI & Data foundation under one
 // or more contributor license agreements. See the NOTICE file
@@ -1256,91 +1256,289 @@ func IsReplicationRemovedByAlterReplicateConfigMessage(msg message.ImmutableMess
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Times BitmapIndexReader::Range over heap Roaring postings. Built with the
-// unit tests; run before and after a change to compare.
+// Standalone component benchmark for the Int32 bit-sliced index kernel
+// (issue #53831). Reports build time, index size and query latency, and
+// compares each query with the path Milvus uses for an unindexed int32 field,
+// ANDed with the validity bitmap:
+// - comparisons and ranges: a SIMD scan of the raw column
+//   (TargetBitmap::inplace_compare_val / inplace_within_range_val, as in
+//   UnaryExpr / BinaryRangeExpr);
+// - IN / NOT IN: the dispatch of TermExpr::ExecVisitorImplForData, which runs
+//   the SIMD batch filter (exec::simdFilterChunk, as SimdBatchElement) for
+//   lists of at most simdLaneCount<int32_t>() * 8 keys and a per-row
+//   ankerl::unordered_dense set probe (as SetElement) for longer lists. The
+//   limit depends on the CPU, so the CSV says which one ran.
+// Every query result is checked against that baseline before it is timed; a
+// mismatch aborts the run. Index and scan are timed in interleaved trials,
+// median of 7 each.
+//
+// Usage: bit_sliced_index_benchmark [--rows=N] [--quick]
+//   default rows: 1048576 and 8388608; --quick: 65536 only.
+// Output: CSV on stdout, one row per (dataset, query).
+
 #include <algorithm>
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
+#include <cstring>
+#include <functional>
+#include <iostream>
+#include <limits>
 #include <memory>
 #include <random>
+#include <span>
+#include <string>
 #include <utility>
 #include <vector>
 
-#include <benchmark/benchmark.h>
-#include <roaring/roaring.hh>
-
+#include "ankerl/unordered_dense.h"
 #include "common/Types.h"
-#include "index/contracts/query/IScalarPredicateReader.h"
-#include "index/scalar/bitmap/BitmapIndexReader.h"
+#include "common/ValidityView.h"
+#include "exec/expression/SimdFilter.h"
+#include "index/contracts/build/ScalarBuildInput.h"
+#include "index/scalar/bsi/BitSlicedIndex.h"
 
-namespace milvus::index {
 namespace {
 
-constexpr size_t kRows = 1'000'000;
-constexpr size_t kNullEvery = 10;
+using milvus::TargetBitmap;
+using milvus::index::BitSlicedIndexInt32;
+using milvus::index::CompareOp;
+using milvus::index::ScalarBuildBatch;
+using milvus::index::ScalarBuildInput;
+using Clock = std::chrono::steady_clock;
 
-struct Fixture {
-    std::unique_ptr<BitmapIndexReader<int64_t>> reader;
-    // Values of the valid rows, sorted, for selectivity thresholds.
-    std::vector<int64_t> sorted;
+volatile size_t sink = 0;
+
+// Mean time per call over one trial of at least 30 ms.
+template <typename F>
+double
+TrialMicros(F& fn) {
+    const auto start = Clock::now();
+    size_t calls = 0;
+    double elapsed_us = 0;
+    do {
+        sink = sink + fn().size();
+        ++calls;
+        elapsed_us =
+            std::chrono::duration<double, std::micro>(Clock::now() - start)
+                .count();
+    } while (elapsed_us < 30000);
+    return elapsed_us / static_cast<double>(calls);
+}
+
+// Times the index and the scan for one query with interleaved trials
+// (index, scan, index, scan, ...), so a transient slowdown of the machine
+// lands on both sides rather than on one, and returns the median of 7 trials
+// per side. Each side is warmed up with one call first.
+template <typename A, typename B>
+std::pair<double, double>
+InterleavedMedianMicros(A index_fn, B scan_fn) {
+    sink = sink + index_fn().size() + scan_fn().size();
+    std::vector<double> index_us, scan_us;
+    for (int t = 0; t < 7; ++t) {
+        index_us.push_back(TrialMicros(index_fn));
+        scan_us.push_back(TrialMicros(scan_fn));
+    }
+    std::sort(index_us.begin(), index_us.end());
+    std::sort(scan_us.begin(), scan_us.end());
+    return {index_us[index_us.size() / 2], scan_us[scan_us.size() / 2]};
+}
+
+struct Dataset {
+    std::string name;
+    std::vector<int32_t> values;
+    std::unique_ptr<bool[]> valid;
+    size_t rows = 0;
+    double null_rate = 0;
 };
 
-// distribution 0: uniform keys. 1: rows concentrated on the high keys, so
-// `<` ranges start in sparse postings and reach the heavy ones only when broad.
-Fixture
-MakeFixture(int64_t keys, int64_t distribution) {
-    std::mt19937_64 rng(42);
-    std::uniform_real_distribution<double> unit(0.0, 1.0);
-    BitmapRoaringPostingMap<int64_t> postings;
-    TargetBitmap valid(kRows, true);
-    Fixture fixture;
-    fixture.sorted.reserve(kRows);
-    for (size_t row = 0; row < kRows; ++row) {
-        if (row % kNullEvery == 0) {
-            valid.reset(row);
-            continue;
+Dataset
+MakeDataset(const std::string& shape,
+            size_t rows,
+            double null_rate,
+            uint64_t seed) {
+    Dataset d;
+    d.name = shape;
+    d.rows = rows;
+    d.null_rate = null_rate;
+    d.values.resize(rows);
+    d.valid = std::make_unique<bool[]>(rows);
+    std::mt19937_64 rng(seed);
+    std::bernoulli_distribution is_null(null_rate);
+    for (size_t i = 0; i < rows; ++i) {
+        if (shape == "narrow") {
+            // 1000 distinct values -> 10 slices.
+            d.values[i] = static_cast<int32_t>(rng() % 1000);
+        } else {
+            // Full int32 range -> 32 slices.
+            d.values[i] = static_cast<int32_t>(static_cast<uint32_t>(rng()));
         }
-        const double u = unit(rng);
-        const auto bucket =
-            std::min(static_cast<int64_t>((distribution == 0 ? u : u * u) *
-                                          static_cast<double>(keys)),
-                     keys - 1);
-        const auto key = distribution == 0 ? bucket : keys - 1 - bucket;
-        postings[key].add(static_cast<uint32_t>(row));
-        fixture.sorted.push_back(key);
+        d.valid[i] = !is_null(rng);
     }
-    std::sort(fixture.sorted.begin(), fixture.sorted.end());
-    fixture.reader = CreateBitmapIndexReader<int64_t>(
-        std::move(postings),
-        BitmapStorageOptions{.valid_bitset = std::move(valid),
-                             .total_num_rows = kRows});
-    return fixture;
+    return d;
 }
 
-// Arguments: distinct keys, distribution, percent of valid rows matched.
+TargetBitmap
+ValidBitmap(const Dataset& d) {
+    TargetBitmap valid(d.rows, false);
+    for (size_t i = 0; i < d.rows; ++i) {
+        if (d.valid[i]) {
+            valid.set(i);
+        }
+    }
+    return valid;
+}
+
+// Baselines: the unindexed raw-column paths.
+TargetBitmap
+ScanCompare(const Dataset& d,
+            const TargetBitmap& valid,
+            int32_t c,
+            milvus::bitset::CompareOpType op) {
+    TargetBitmap res(d.rows, false);
+    res.inplace_compare_val(d.values.data(), d.rows, c, op);
+    res &= valid;
+    return res;
+}
+
+TargetBitmap
+ScanRange(const Dataset& d, const TargetBitmap& valid, int32_t lo, int32_t hi) {
+    TargetBitmap res(d.rows, false);
+    res.inplace_within_range_val(
+        lo, hi, d.values.data(), d.rows, milvus::bitset::RangeType::IncInc);
+    res &= valid;
+    return res;
+}
+
+// IN baseline. TermExpr::ExecVisitorImplForData evaluates a numeric IN list
+// with the SIMD batch filter (SimdBatchElement) when it has at most
+// simdLaneCount<T>() * 8 keys, and with a per-row hash set probe (SetElement,
+// load factor 0.5) otherwise. Milvus sorts and deduplicates the keys and
+// builds the set once per plan, so that preparation happens in the
+// constructor, outside the timed call.
+class InBaseline {
+ public:
+    explicit InBaseline(std::vector<int32_t> keys) : keys_(std::move(keys)) {
+        std::sort(keys_.begin(), keys_.end());
+        keys_.erase(std::unique(keys_.begin(), keys_.end()), keys_.end());
+        if (!UsesSimd()) {
+            set_.max_load_factor(0.5f);
+            set_.insert(keys_.begin(), keys_.end());
+        }
+    }
+
+    static size_t
+    SimdKeyLimit() {
+        return static_cast<size_t>(milvus::exec::simdLaneCount<int32_t>()) * 8;
+    }
+
+    bool
+    UsesSimd() const {
+        return keys_.size() <= SimdKeyLimit();
+    }
+
+    const char*
+    Name() const {
+        return UsesSimd() ? "simd" : "hash";
+    }
+
+    // Sorted and unique, as the Go rewriter hands them to TermExpr.
+    const std::vector<int32_t>&
+    Keys() const {
+        return keys_;
+    }
+
+    // Valid rows whose value is in the key list, or not in it when `negate`.
+    TargetBitmap
+    Run(const Dataset& d, const TargetBitmap& valid, bool negate) const {
+        TargetBitmap res(d.rows, false);
+        if (UsesSimd()) {
+            // ORs the matching rows into a byte-aligned bitmap; a fresh
+            // TargetBitmap starts on a word boundary.
+            milvus::exec::simdFilterChunk<int32_t>(
+                d.values.data(),
+                static_cast<int>(d.rows),
+                reinterpret_cast<uint8_t*>(res.data()),
+                keys_.data(),
+                static_cast<int>(keys_.size()));
+        } else {
+            for (size_t i = 0; i < d.rows; ++i) {
+                res[i] = set_.contains(d.values[i]);
+            }
+        }
+        if (negate) {
+            res.flip();
+        }
+        res &= valid;
+        return res;
+    }
+
+ private:
+    std::vector<int32_t> keys_;
+    ankerl::unordered_dense::set<int32_t> set_;
+};
+
 void
-RangeLessThan(benchmark::State& state) {
-    const auto fixture = MakeFixture(state.range(0), state.range(1));
-    const auto percent = static_cast<size_t>(state.range(2));
-    const auto threshold =
-        fixture.sorted[fixture.sorted.size() * percent / 100];
-    state.counters["matched"] = static_cast<double>(
-        fixture.reader->Range(threshold, CompareOp::LessThan).count());
-    for (auto _ : state) {
-        auto result = fixture.reader->Range(threshold, CompareOp::LessThan);
-        benchmark::DoNotOptimize(result);
+Verify(const std::string& what, TargetBitmap a, TargetBitmap b) {
+    if (a.size() != b.size() || !(a == b)) {
+        std::cerr << "MISMATCH between index and scan for " << what << '\n';
+        std::exit(1);
     }
 }
 
-}  // namespace
-}  // namespace milvus::index
+void
+RunDataset(const Dataset& d) {
+    const ScalarBuildBatch<int32_t> batch{
+        std::span<const int32_t>(d.values),
+        d.null_rate > 0 ? milvus::ValidityView::FromExpanded(d.valid.get())
+                        : milvus::ValidityView{}};
+    const ScalarBuildInput<int32_t> input{
+        std::span<const ScalarBuildBatch<int32_t>>(&batch, 1)};
 
-BENCHMARK(milvus::index::RangeLessThan)
-    ->ArgsProduct({{1000, 10000, 100000}, {0, 1}, {1, 10, 50, 90, 99}})
-    ->Unit(benchmark::kMicrosecond);
+    // Build time: median of 5 builds.
+    std::vector<double> build_ms;
+    for (int t = 0; t < 5; ++t) {
+        const auto start = Clock::now();
+        BitSlicedIndexInt32 tmp(input);
+        build_ms.push_back(
+            std::chrono::duration<double, std::milli>(Clock::now() - start)
+                .count());
+        sink = sink + tmp.Count();
+    }
+    std::sort(build_ms.begin(), build_ms.end());
+    const BitSlicedIndexInt32 index(input);
+    const auto valid = ValidBitmap(d);
 
-BENCHMARK_MAIN();
+    // Query constants from percentiles of the valid values.
+    std::vector<int32_t> sorted;
+    for (size_t i = 0; i < d.rows; ++i) {
+        if (d.valid[i]) {
+            sorted.push_back(d.values[i]);
+        }
+    }
+    std::sort(sorted.begin(), sorted.end());
+    if (sorted.empty()) {
+        std::cerr << "skipping dataset " << d.name << " with " << d.rows
+                  << " rows: no valid values\n";
+        return;
+    }
+    const auto pct = [&](double p) {
+        return sorted[std::min(sorted.size() - 1,
+                               static_cast<size_t>(p * sorted.size()))];
+    };
+    // n keys spread evenly over the value distribution (scattered runs).
+    const auto spread_keys = [&](int n) {
+        std::vector<int32_t> keys;
+        for (int i = 0; i < n; ++i) {
+            keys.push_back(pct((i + 0.5) / n));
+        }
+        return keys;
+    };
+    const InBaseline in8(spread_keys(8)), in32(spread_keys(32)),
+        in128(spread_keys(128)), in512(spread_keys(512));
 
+    struc
 ```
 
 
@@ -1349,14 +1547,14 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55695** (2026-11-19): **fix: restore the original QuerySlot protocol**
-  *Symptoms*: Remove the segment-rooted index capability from `QuerySlot` and the associated checks before v2 index builds and snapshot restores. Keep the four original response fields and reserve protobuf field number 5. Snapshot restore retains its existing shared-index negotiation.  Deployment must ensure that workers eligible for v2 tasks support segment-rooted paths. When upgrading from a DataCoord that checks the removed field, upgrade DataCoord before workers that omit it.  Regenerated the protobuf bindings and passed focused DataCoord session, index, and copysegment tests and DataNode slot tests in the Milvus development container. The rolling-upgrade behavior was traced in source.  issue: #53047  Related PR #54412
-  **Post-Mortem & Fix Analysis**:
-  > [ci-v2-notice] Notice: New ci-v2 system is enabled for this PR.  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check  // for ci-v2/code-check - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build  // for ci-v2/build - /ci-rerun-build-all  // for ci-v2/build-all (multi-arch builds) - /ci-rerun-buildenv  // for ci-v2/build-env (build milvus-env builder images; update .env after the new tag is ready) - /ci-rerun-ut-integration  // for ci-v2/ut-integration, will rerun ci-v2/build - /ci-rerun-ut-go  // for ci-v2/ut-go, will rerun ci-v2/build - /ci-rerun-ut-cpp  // for ci-v2/ut-cpp - /ci-rerun-ut  // for all ci-v2/ut-integration, ci-v2/ut-go, ci-v2/ut-cpp, will rerun ci-v2/build - /ci-rerun-e2e-default  // for ci-v2/e2e-default - /ci-rerun-e2e-pulsar-wp  // for ci-v2/e2e-pulsar-wp (GCP branch-equivalent Pulsar + Woodpecker Python E2E) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e pool dispatcher) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp 
-  > <!-- ciloop-result-5824 --> ### :white_check_mark: CI Loop Results  `0ad34e9`  | Stage | Result | Duration | Tests | |-------|--------|----------|-------| | :white_check_mark: Build | SUCCESS | 8.4min | - | | :white_check_mark: Code-Check | SUCCESS | 5.4min | - | | :white_check_mark: UT-Integration | SUCCESS | 23.4min | - | | :white_check_mark: UT-GO | SUCCESS | 26.0min | - | | :white_check_mark: UT-CPP-Cov | SUCCESS | 28.1min | 23253 total, 23253 passed, 0 failed |  **Total:** 49min | [Pipeline](https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline-for-tcus/5824/pipeline-overview/) | [Artifacts](https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline-for-tcus/5824/artifact) **C++ coverage phases:** Compile 4.7min · UT 19.5min · LCOV 3.7min  **Overall Coverage:** 79.5% **Diff Coverage:** Go 100.0% (2 hit, 0 miss, 2 measurable lines, 2 unmeasured) **Diff Coverage HTML:** [view changed lines](ht
+- **Issue #55758** (2026-11-20): **fix: [cp3.0] read external refresh task state from response properties**
+  *Symptoms*: pr: #55708 issue: #55707  Cherry-pick `a0e4df5387` to `3.0`.  DataCoord reads `task_state` and `task_reason` from the worker's refresh query response properties. A failed task now reports its state and reason even when the payload is empty or contains a stale result. DataCoord reads segment changes from the payload only when the worker reports `Finished` and the payload confirms that state.  The regression test covers failed and retry responses with empty or stale payloads, in-progress responses with stale segment results, and validation of finished results.  On the unpatched 3.0 implementation, the two failure cases reproduced the bug: an empty payload returned `None` and a stale finished payload returned `Finished`. With this change, the full `internal/datacoord/session`, `internal/datacoord/externalrefresh`, and `internal/datacoord/task` unit test suites passed locally. 
 
-- **Issue #55694** (2026-11-19): **test: fix exact-distance controls in Struct Array range search**
-  *Symptoms*: The Struct Array element range-search tests compare returned HNSW distances with distances computed from the original vectors. On Cardinal, default HNSW refinement can quantize those vectors. In the bounded L2 case, row 2852 at offset 1 returned 0.7787581086 for an expected 0.7777038217.  Set refine_quant_type to NONE on the HNSW index for the struct embedding used by this range-search fixture. This supplies an exact-distance control while preserving the existing range boundaries, recall thresholds and ground-truth assertions.  Validation on Cardinal server a0e4aa319a1 with PyMilvus 3.1.0rc106:  - Untouched test checkout d4fdc11768 reproduced both the bounded L2 and multiple-query failures. - The same two cases passed with the change. The complete TestMilvusClientStructArrayElementRangeSearch class passed all 12 cases. - Ruff 0.15.11 lint and formatting checks passed for the changed file. The repository's license-header checker selects internal Go files. 
+- **Issue #55754** (2026-11-20): **enhance: [2.6] backport reliability, performance, and Azure CMEK updates**
+  *Symptoms*: ## Summary - Backport fixes and enhancements for CDC partition loading, WAL coordination, segment loading, import cancellation, and query execution. - Improve storage and indexing performance, sparse index configuration, autoscale load checks, and resource handling. - Align the Azure Key Vault cipher plugin SDK and refresh build, CI, and dependency configuration.  ## Testing - Added and updated unit and integration coverage for CDC partition loading, CMEK, and related fixes. - Not run: no test results were provided.
+  **Post-Mortem & Fix Analysis**:
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please assign **foxspy** after the PR has been reviewed. You can assign the PR to them by writing `/assign @foxspy` in a comment when ready.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/milvus-io/milvus/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["foxspy"]} -->
+  > @XuanYang-cn Thanks for your contribution. Please submit with DCO, see the contributing guide https://github.com/milvus-io/milvus/blob/master/CONTRIBUTING.md#developer-certificate-of-origin-dco. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1373,1035 +1571,719 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7c51197b` (2026-11-18)
-**Commit Message**: enhance: release cold collections under QueryNode memory pressure (#55682)
+### Incident Patch 1: `c31070a6` (2026-11-20)
+**Commit Message**: fix: read external refresh task state from response properties (#55708)
 
-## Summary
+Fixes #55707
 
-With automatic loading enabled, a burst of queries can leave many
-collections loaded until their idle timers expire. QueryCoord now
-releases cold collections under Worker QueryNode memory pressure in the
-existing background scan.
+Read `task_state` and `task_reason` from the worker's refresh query
+response properties. A failure with an empty payload now reaches the
+refresh task handler with its original reason. A stale payload can no
+longer hide that failure.
 
-- Compute pressure per resource group from the sum of worker memory
-usage divided by the sum of worker capacity. If any eligible worker is
-missing a reading, skip pressure-based selection for that group for the
-scan.
-- Scan every 10 seconds by default. Start selecting at 85% and stop at
-80%. Each scan can select up to 64 least recently accessed collections
-across pressured groups. Only collections with all expected shards ready
-are eligible for pressure-based release. Expired idle collections are
-released independently. The scan interval, watermarks and LRU batch
-limit are runtime settings.
-- Log the collection ID, database name, collection name and reason for
-each successful automatic release. Operators can use these fields with
-Proxy access logs to measure return visits.
+For a finished task, DataCoord still needs the segment results from the
+payload. It validates that the payload contains a finished result before
+passing those results to the handler.
 
-## Scope and tradeoffs
+## Tests
 
-Memory-pressure LRU is a fallback for uncommon cases in multi-tenant
-dep
+- Added regression cases for empty and stale payloads, including a
+reported failure with a stale finished result.
+- Ran the DataCoord session, external refresh, and task scheduler
+package tests.
 
-**File**: `configs/milvus.yaml` (modified, +7/-4)
+Signed-off-by: cai.zhang <[REDACTED_EMAIL]>
+
+**File**: `internal/datacoord/session/cluster.go` (modified, +17/-2)
 ```diff
-@@ -632,10 +632,13 @@ queryCoord:
-   heartbeatAvailableInterval: 10000 # 10s, Only QueryNodes which fetched heartbeats within the duration are available
-   loadTimeoutSeconds: 600
-   autoRelease:
--    enabled: false # whether QueryCoord releases collections after an idle TTL; effective only when proxy.enableAutoLoad is true
--    idleTTLSeconds: 600
--    checkIntervalSeconds: 30
--    releaseConcurrency: 16 # maximum concurrent automatic collection releases in one scan; changes apply to the next release batch
-+    enabled: false # whether QueryCoord releases collections after the configured time to idle (TTI) or under Worker QN memory pressure; effective only when proxy.enableAutoLoad is true
-+    ttiSeconds: 3600
-+    checkIntervalSeconds: 10
-+    releaseConcurrency: 16 # maximum concurrent automatic collection releases per scan; runtime updates take effect on the next scan
-+    lruHighWatermarkPercentage: 85 # Worker QueryNode pool anonymous resident memory percentage that starts collection LRU release; takes effect on the next scan
-+    lruLowWatermarkPercentage: 80 # Worker QueryNode pool anonymous resident memory percentage that stops selecting collection LRU releases; must be below the high watermark
-+    lruMaxEvictionsPerScan: 64 # maximum collection LRU releases selected per scan, independent of releaseConcurrency
-   distRequestTimeout: 5000 # the request timeout for querycoord fetching data distribution from querynodes, in milliseconds
-   heatbeatWarningLag: 5000 # the lag value for querycoord report warning when last heatbeat is too old, in milliseconds
-   enableDataDistributionDelta: true # whether querycoord requests delta data distribution reports from querynodes
-```
-
-**File**: `internal/coordinator/mix_coord_test.go` (modified, +1/-1)
-```diff
-@@ -84,7 +84,7 @@ func TestMixCoordGetCollectionProperties(t *testing.T) {
- 	mockey.PatchConvey("collection properties use the in-process metadata reader", t, func() {
- 		core := &rootcoord.Core{}
- 		ctx := context.Background()
--		properties := []*commonpb.KeyValuePair{{Key: "collection.autorelease.ttl.seconds", Value: "20"}}
-+		properties := []*commonpb.KeyValuePair{{Key: "collection.autorelease.tti.seconds", Value: "20"}}
- 		mockey.Mock((*rootcoord.Core).GetCollectionProperties).To(func(receiver *rootcoord.Core, actualCtx context.Context, id int64) ([]*commonpb.KeyValuePair, error) {
- 			require.Same(t, core, receiver)
- 			require.Equal(t, ctx, actualCtx)
-```
-
-**File**: `internal/querycoordv2/collection_readiness.go` (modified, +1/-1)
-```diff
-@@ -88,7 +88,7 @@ func (s *Server) ensureCollectionReady(ctx context.Context, req *querypb.EnsureC
- 			return context.Cause(ctx)
- 		}
- 		if r.Err == nil {
--			// A long load gets a fresh idle TTL immediately before query execution.
-+			// A long load gets a fresh TTI interval immediately before query execution.
- 			s.collectionUsage.touch(collectionID)
- 		}
- 		return r.Err
-```
-
-**File**: `internal/querycoordv2/collection_readiness_test.go` (modified, +10/-2)
-```diff
-@@ -94,6 +94,13 @@ func newReadinessTestServerWithConfig(t *testing.T, info *querypb.CollectionLoad
- 	catalog.EXPECT().GetReplicas(mock.Anything).Return([]*querypb.Replica{{ID: 1000, CollectionID: 100}}, nil).Once()
- 	store, err := loadmgr.RecoverLoadConfigStore(ctx, loadmgrtest.FromLegacyCatalog(t, catalog))
- 	require.NoError(t, err)
-+	s, syncer := newReadinessTestServerWithStore(t, store, views...)
-+	return s, catalog, syncer
-+}
-+
-+func newReadinessTestServerWithStore(t *testing.T, store *loadmgr.LoadConfigStore, views ...*viewpb.QueryViewOfShard) (*Server, *readinessSyncer) {
-+	t.Helper()
-+	ctx := context.Background()
- 	// Seed Up views with the recovered configuration identity; an update below
- 	// must still wait for a new matching Up acknowledgement.
- 	for _, view := range views {
-@@ -107,10 +114,11 @@ func newReadinessTestServerWithConfig(t *testing.T, info *querypb.CollectionLoad
- 	s := &Server{ctx: ctx, qviewsRuntime: runtime}
- 	usageBroker := meta.NewMockBroker(t)
- 	usageBroker.EXPECT().GetCollectionProperties(mock.Anything, mock.Anything).Return(nil, nil).Maybe()
--	s.collectionUsage = newCollectionUsageManager(store, usageBroker, nil)
-+	s.broker = usageBroker
-+	s.collectionUsage = newCollectionUsageManager(s)
- 	t.Cleanup(s.collectionUsage.close)
- 	s.UpdateStateCode(commonpb.StateCode_Healthy)
--	return s, catalog, syncer
-+	return s, syncer
- }
- 
- func readinessRequest(channels ...string) *querypb.EnsureCollectionReadyRequest {
-```
-
-**File**: `internal/querycoordv2/collection_usage.go` (modified, +242/-54)
-```diff
-@@ -24,65 +24,84 @@ import (
- 
- 	"golang.org/x/sync/errgroup"
- 
--	"github.com/milvus-io/milvus/internal/querycoordv2/meta"
-+	walbalance "github.com/milvus-io/milvus/internal/streamingcoord/server/balancer/balance"
- 	"github.com/milvus-io/milvus/internal/views/coord/loadmgr"
-+	"github.com/milvus-io/milvus/internal/views/coord/loadstatus"
- 	"github.com/milvus-io/milvus/pkg/v3/common"
- 	"github.com/milvus-io/milvus/pkg/v3/config"
- 	"github.com/milvus-io/milvus/pkg/v3/mlog"
- 	"github.com/milvus-io/milvus/pkg/v3/proto/querypb"
-+	"github.com/milvus-io/milvus/pkg/v3/util/merr"
-+	"github.com/milvus-io/milvus/pkg/v3/util/metricsinfo"
- 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
-+	"github.com/milvus-io/milvus/pkg/v3/util/replicateutil"
-+	"github.com/milvus-io/milvus/pkg/v3/util/retry"
-+	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
- )
- 
-+type collectionReleaseReason string
-+
-+const (
-+	releaseReasonTTI            collectionReleaseReason = "tti"
-+	releaseReasonMemoryPressure collectionReleaseReason = "memory_pressure"
-+)
-+
-+type releaseCandidate struct {
-+	collectionID int64
-+	lastActiveAt time.Time
-+	reason       collectionReleaseReason
-+}
-+
-+type collectionMemoryUsage struct {
-+	used, total uint64
-+}
-+
- type collectionUsageManager struct {
-+	s  *Server
- 	mu sync.Mutex
- 
- 	enabled       bool
- 	lastActiveAt  map[int64]time.Time
- 	configWatcher config.EventHandler
- 	configChanged chan struct{}
- 
--	loadConfigs *loadmgr.LoadConfigStore
--	broker      meta.Broker
--	release     func(context.Context, int64) error
-+	// Pressure is retained between the low and high watermarks, per pool.
-+	memoryPressure map[string]bool
- 
- 	stop context.CancelFunc
- 	wg   sync.WaitGroup
- }
- 
--func newCollectionUsageManager(
--	loadConfigs *loadmgr.LoadConfigStore,
--	broker meta.Broker,
--	release func(context.Context, int64) error,
--) *collectionUsageManager {
-+func newCollectionUsageManager(s *Server) *collectionUsageManager {
-+	params := paramtable.Get()
- 	m := &collectionUsageManager{
--		lastActiveAt:  make(map[int64]time.Time),
--		loadConfigs:   loadConfigs,
--		broker:        broker,
--		release:       release,
--		configChanged: make(chan struct{}, 1),
-+		s:              s,
-+		lastActiveAt:   make(map[int64]time.Time),
-+		memoryPressure: make(map[string]bool),
-+		configChanged:  make(chan struct{}, 1),
- 	}
--	loadConfigs.RegisterObserver(m.handleLoadConfigChange)
-+	s.qviewsRuntime.loadConfigStore.RegisterObserver(m.handleLoadConfigChange)
- 	m.configWatcher = config.NewHandler(fmt.Sprintf("collection-usage-config-%p", m), func(*config.Event) {
--		m.refreshEnabled()
-+		m.refreshConfig()
- 	})
--	params := paramtable.Get()
- 	params.Watch(params.QueryCoordCfg.AutoReleaseEnabled.Key, m.configWatcher)
- 	params.Watch(params.ProxyCfg.EnableAutoLoad.Key, m.configWatcher)
- 	// Read after subscribing so an update during construction cannot be missed.
--	m.refreshEnabled()
-+	m.refreshConfig()
- 	return m
- }
- 
--func (m *collectionUsageManager) refreshEnabled() {
-+func (m *collectionUsageManager) refreshConfig() {
- 	params := paramtable.Get()
-+	m.mu.Lock()
- 	autoReleaseEnabled := params.QueryCoordCfg.AutoReleaseEnabled.GetAsBool()
- 	autoLoadEnabled := params.ProxyCfg.EnableAutoLoad.GetAsBool()
- 	misconfigured := autoReleaseEnabled && !autoLoadEnabled
- 
--	m.mu.Lock()
- 	m.enabled = autoReleaseEnabled && autoLoadEnabled
- 	if !m.enabled {
- 		clear(m.lastActiveAt)
-+		clear(m.memoryPressure)
- 	}
- 	m.mu.Unlock()
- 	if misconfigured {
-@@ -158,6 +177,11 @@ func (m *collectionUsageManager) close() {
- 	params := paramtable.Get()
- 	params.Unwatch(params.QueryCoordCfg.AutoReleaseEnabled.Key, m.configWatcher)
- 	params.Unwatch(params.ProxyCfg.EnableAutoLoad.Key, m.configWatcher)
-+	m.mu.Lock()
-+	m.enabled = false
-+	clear(m.lastActiveAt)
-+	clear(m.memoryPressure)
-+	m.mu.Unlock()
- 	if m.stop != nil {
- 		m.stop()
- 	}
-@@ -166,7 +190,7 @@ func (m *collectionUsageManager) close() {
- 
- // touch records a DQL attempt once the scanner has initialized this load's
- // idle timer from its load config.
--// Requests are not tracked individually; even a running query can outlive TTL.
-+// Requests are not tracked individually; even a running query can outlive TTI.
- func (m *collectionUsageManager) touch(collectionID int64) {
- 	m.mu.Lock()
- 	defer m.mu.Unlock()
-@@ -195,55 +219,149 @@ func (m *collectionUsageManager) scan(ctx context.Context) {
- 		return
+@@ -941,12 +941,27 @@ func (c *cluster) QueryRefreshExternalCollectionTask(nodeID int64, taskID int64)
+ 		return nil, err
  	}
  
--	snapshot := m.loadConfigs.Snapshot()
--	candidates := make([]int64, 0)
--	for collectionID := range snapshot.ConfigsMap() {
-+	roleCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
-+	b, err := walbalance.GetWithContext(roleCtx)
-+	cancel()
+-	// Unmarshal the response payload
++	resProperties := taskcommon.NewProperties(resp.GetProperties())
++	state, err := resProperties.GetTaskState()
 +	if err != nil {
-+		mlog.RatedWarn(ctx, 1.0, "failed to get cluster replication role, skip auto release scan", mlog.Err(err))
-+		return
++		return nil, err
 +	}
-+	if b.ReplicateRole() != replicateutil.RolePrimary {
-+		return
++	reason := resProperties.GetTaskReason()
++	if state != taskcommon.Finished {
++		// Only a finished task needs segment results from the payload.
++		return &datapb.RefreshExternalCollectionTaskResponse{Status: resp.GetStatus(), State: state, FailReason: reason}, nil
 +	}
 +
-+	snapshot := m.s.qviewsRuntime.loadConfigStore.Snapshot()
-+	pressure := m.pressuredPools(ctx)
-+	limit := paramtable.Get().QueryCoordCfg.AutoReleaseLRUMaxEvictions.GetAsInt()
-+	lr
+ 	result := &datapb.RefreshExternalCollectionTaskResponse{}
+ 	if err := proto.Unmarshal(resp.GetPayload(), result); err != nil {
+ 		return nil, err
+ 	}
+-
++	// An empty payload decodes to None. Only a finished worker result can
++	// supply the segment changes that DataCoord will publish.
++	if result.GetState() != taskcommon.Finished {
++		return nil, merr.WrapErrServiceInternalMsg("finished refresh task %d has result payload in state %s", taskID, result.GetState())
++	}
++	result.FailReason = reason
+ 	return result, nil
+ }
+ 
 ```
 
-**File**: `internal/querycoordv2/collection_usage_test.go` (modified, +638/-81)
+**File**: `internal/datacoord/session/cluster_test.go` (modified, +57/-0)
 ```diff
-@@ -18,52 +18,84 @@ package querycoordv2
- 
- import (
- 	"context"
-+	"fmt"
-+	"strings"
- 	"sync"
- 	"sync/atomic"
- 	"testing"
-+	"testing/synctest"
- 	"time"
- 
-+	"github.com/bytedance/mockey"
- 	"github.com/stretchr/testify/mock"
- 	"github.com/stretchr/testify/require"
- 
- 	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
-+	"github.com/milvus-io/milvus-proto/go-api/v3/milvuspb"
-+	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
-+	"github.com/milvus-io/milvus/internal/metacache"
- 	metastoremocks "github.com/milvus-io/milvus/internal/metastore/mocks"
-+	"github.com/milvus-io/milvus/internal/mocks/streamingcoord/server/mock_balancer"
-+	"github.com/milvus-io/milvus/internal/mocks/streamingcoord/server/mock_broadcaster"
- 	"github.com/milvus-io/milvus/internal/querycoordv2/meta"
-+	"github.com/milvus-io/milvus/internal/querycoordv2/session"
-+	walbalance "github.com/milvus-io/milvus/internal/streamingcoord/server/balancer/balance"
-+	"github.com/milvus-io/milvus/internal/util/sessionutil"
-+	"github.com/milvus-io/milvus/internal/views/coord/loadmgr"
-+	"github.com/milvus-io/milvus/internal/views/coord/loadmgr/loadmgrtest"
- 	"github.com/milvus-io/milvus/internal/views/qviews"
- 	"github.com/milvus-io/milvus/pkg/v3/common"
-+	"github.com/milvus-io/milvus/pkg/v3/mlog"
- 	"github.com/milvus-io/milvus/pkg/v3/proto/viewpb"
- 	"github.com/milvus-io/milvus/pkg/v3/util/merr"
-+	"github.com/milvus-io/milvus/pkg/v3/util/metricsinfo"
- 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
-+	"github.com/milvus-io/milvus/pkg/v3/util/replicateutil"
- )
- 
- const usageTestVChannel = "by-dev-rootcoord-dml_100v0"
- 
--func enableAutoReleaseForTest(t *testing.T) {
-+func enableAutoReleaseForTest(t *testing.T, scanRoles ...replicateutil.Role) {
- 	t.Helper()
-+	b := mock_balancer.NewMockBalancer(t)
-+	if len(scanRoles) == 0 {
-+		b.EXPECT().ReplicateRole().Return(replicateutil.RolePrimary).Maybe()
-+	}
-+	for _, role := range scanRoles {
-+		b.EXPECT().ReplicateRole().Return(role).Once()
-+	}
-+	getBalancer := mockey.Mock(walbalance.GetWithContext).Return(b, nil).Build()
-+	t.Cleanup(func() { getBalancer.UnPatch() })
-+
- 	params := paramtable.Get()
--	require.NoError(t, params.Save(params.QueryCoordCfg.AutoReleaseIdleTTLSeconds.Key, "10"))
-+	require.NoError(t, params.Save(params.QueryCoordCfg.AutoReleaseTTISeconds.Key, "10"))
- 	require.NoError(t, params.Save(params.ProxyCfg.EnableAutoLoad.Key, "true"))
- 	require.NoError(t, params.Save(params.QueryCoordCfg.AutoReleaseEnabled.Key, "true"))
- 	t.Cleanup(func() {
--		require.NoError(t, params.Reset(params.QueryCoordCfg.AutoReleaseIdleTTLSeconds.Key))
-+		require.NoError(t, params.Reset(params.QueryCoordCfg.AutoReleaseTTISeconds.Key))
- 		require.NoError(t, params.Reset(params.QueryCoordCfg.AutoReleaseEnabled.Key))
- 		require.NoError(t, params.Reset(params.ProxyCfg.EnableAutoLoad.Key))
+@@ -539,6 +539,63 @@ func TestCluster_QueryReshard(t *testing.T) {
  	})
  }
  
--func newUsageTestManager(t *testing.T) (*Server, *collectionUsageManager, *metastoremocks.QueryCoordCatalog, *int) {
-+func newUsageTestManager(t *testing.T) (*Server, *collectionUsageManager, *mockey.Mocker) {
- 	t.Helper()
--	s, catalog, _ := newReadinessTestServer(t, testPersistedQueryView(100, qviews.ShardID{
-+	s, _, _ := newReadinessTestServer(t, testPersistedQueryView(100, qviews.ShardID{
- 		ReplicaID: 1000,
- 		VChannel:  usageTestVChannel,
- 	}))
--	releaseCount := 0
- 	manager := s.collectionUsage
--	manager.release = func(context.Context, int64) error {
--		releaseCount++
--		return nil
--	}
--	return s, manager, catalog, &releaseCount
-+	return s, manager, mockAutoRelease(t, manager)
-+}
-+
-+func mockAutoRelease(t *testing.T, manager *collectionUsageManager) *mockey.Mocker {
-+	t.Helper()
-+	releaseMock := mockey.Mock((*collectionUsageManager).autoReleaseCollection).Return(nil).Build()
-+	t.Cleanup(func() {
-+		manager.close()
-+		releaseMock.UnPatch()
++func TestCluster_QueryRefreshExternalCollectionTask(t *testing.T) {
++	finished, err := proto.Marshal(&datapb.RefreshExternalCollectionTaskResponse{
++		State: taskcommon.Finished, KeptSegments: []int64{23},
++		UpdatedSegments: []*datapb.SegmentInfo{{ID: 42}},
 +	})
-+	return releaseMock
- }
- 
- func activityTime(manager *collectionUsageManager, collectionID int64) (time.Time, bool) {
-@@ -79,9 +111,107 @@ func setActivityTime(manager *collectionUsageManager, collectionID int64, at tim
- 	manager.mu.Unlock()
- }
- 
-+// startReleaseBatch returns a channel closed when all releases finish.
-+func startReleaseBatch(manager *collectionUsageManager, collectionIDs ...int64) <-chan struct{} {
-+	candidates := make([]releaseCandidate, 0, len(collectionIDs))
-+	for _, collectionID := range collectionIDs {
-+		candidates = append(candidates, releaseCandidate{collectionID: collectionID, reason: releaseReasonTTI})
++	require.NoError(t, err)
++	stale, err := proto.Marshal(&datapb.RefreshExternalCollectionTaskResponse{State: taskcommon.InProgress})
++	require.NoError(t, err)
++
++	for _, tc := range []struct {
++		name    string
++		state   string
++		reason  string
++		payload []byte
++		wantErr bool
++	}{
++		{"worker gone", taskcommon.Retry.String(), "worker is not exist", nil, false},
++		{"retry with stale payload", taskcommon.Retry.String(), "worker is not exist", stale, false},
++		{"failure without payload", taskcommon.Failed.String(), "invalid manifest", nil, false},
++		{"failure overrides stale result", taskcommon.Failed.String(), "invalid manifest", finished, false},
++		{"in progress with stale result", taskcommon.InProgress.String(), "", finished, false},
++		{"finished", taskcommon.Finished.String(), "", finished, false},
++		{"finished without result", taskcommon.Finished.String(), "", nil, true},
++		{"finished with invalid result", taskcommon.Finished.String(), "", []byte{0xff}, true},
++		{"finished with stale result", taskcommon.Finished.String(), "", stale, true},
++		{"unknown state", "unknown", "", finished, true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			nm := NewMockNodeManager(t)
++			client := mocks.NewMockDataNodeClient(t)
++			nm.EXPECT().GetClient(int64(1)).Return(client, nil)
++			client.EXPECT().QueryTask(mock.Anything, mock.Anything).Return(&workerpb.QueryTaskResponse{
++				Status:     merr.Success(),
++				Properties: map[string]string{taskcommon.StateKey: tc.state, taskcommon.ReasonKey: tc.reason},
++				Payload:    tc.payload,
++			}, nil)
++			result, err := NewCluster(nm).QueryRefreshExternalCollectionTask(1, 1001)
++			if tc.wantErr {
++				require.Error(t, err)
++				require.Nil(t, result)
++				return
++			}
++			require.NoError(t, err)
++			require.Equal(t, tc.state, result.GetState().String())
++			require.Equal(t, tc.reason, result.GetFailReason())
++			if result.GetState() == taskcommon.Finished {
++				require.Equal(t, []int64{23}, result.GetKeptSegments())
++				require.Len(t, result.GetUpdatedSegments(), 1)
++				require.EqualValues(t, 42, result.GetUpdatedSegments()[0].GetID())
++			} else {
++				require.Empty(t, result.GetKeptSegments())
++				require.Empty(t, result.GetUpdatedSegments())
++			}
++		})
 +	}
-+	completed := make(chan struct{})
-+	go func() {
-+		manager.releaseCollections(context.Background(), candidates)
-+		close(completed)
-+	}()
-+	return completed
 +}
 +
-+func waitForReleaseBatch(t *testing.T, completed <-chan struct{}) {
-+	t.Helper()
-+	select {
-+	case <-completed:
-+	case <-time.After(time.Second):
-+		t.Fatal("release batch did not finish")
-+	}
-+}
-+
-+func setUsageParameter(t *testing.T, item *paramtable.ParamItem, value string) {
-+	t.Helper()
-+	params := paramtable.Get()
-+	require.NoError(t, params.Save(item.Key, value))
-+	t.Cleanup(func() {
-```
-
-**File**: `internal/querycoordv2/ddl_callbacks_load_config_qviews_test.go` (modified, +10/-10)
-```diff
-@@ -189,16 +189,16 @@ func newLoadConfigQViewsServer(t *testing.T, configure ...func(*loadmgr.LoadConf
- 	m.HandleNodeUp(context.Background(), 1)
- 
- 	broker := meta.NewMockBroker(t)
--	usage := newCollectionUsageManager(runtime.loadConfigStore, broker, nil)
--	t.Cleanup(usage.close)
--	return &Server{
--		meta:            m,
--		metaView:        store,
--		idAllocator:     allocateID,
--		broker:          broker,
--		qviewsRuntime:   runtime,
--		collectionUsage: usage,
--	}, catalog, broker
-+	s := &Server{
-+		meta:          m,
-+		metaView:      store,
-+		idAllocator:   allocateID,
-+		broker:        broker,
-+		qviewsRuntime: runtime,
-+	}
-+	s.collectionUsage = newCollectionUsageManager(s)
-+	t.Cleanup(s.collectionUsage.close)
-+	return s, catalog, broker
- }
- 
- func registerCaptureBroadcast(t *testing.T, capture func(message.BroadcastMutableMessage)) {
-```
-
-**File**: `internal/querycoordv2/meta/coordinator_broker_test.go` (modified, +1/-1)
-```diff
-@@ -56,7 +56,7 @@ func (m *collectionPropertiesMixCoord) GetCollectionProperties(ctx context.Conte
- 
- func TestCoordinatorBrokerGetCollectionProperties(t *testing.T) {
- 	ctx := context.Background()
--	properties := []*commonpb.KeyValuePair{{Key: common.CollectionAutoReleaseIdleTTLKey, Value: "20"}}
-+	properties := []*commonpb.KeyValuePair{{Key: common.CollectionAutoReleaseTTIKey, Value: "20"}}
- 	for _, tc := range []struct {
- 		name       string
- 		properties []*commonpb.KeyValuePair
+ func TestCluster_QueryImportV3(t *testing.T) {
+ 	t.Run("retry verdict overrides stale in-progress payload", func(t *testing.T) {
+ 		mockNodeManager := NewMockNodeManager(t)
 ```
 
 ---
 
-### Incident Patch 2: `836301ac` (2026-11-18)
-**Commit Message**: fix: apply minElapsedMs without overflow and answer a repeated request id once (#55660)
+### Incident Patch 2: `15fc0773` (2026-11-20)
+**Commit Message**: fix: Remove PyUDF supervisor thread-count assertions (#55456)
 
-issue: #55640
+Remove Python and OS thread-count assertions from the supervisor test
+probe while retaining pre-fork gRPC/PyArrow import checks. Update the
+design documentation and comments to match.
 
-Two fixes to the running-request list and cancel calls (#54276).
+Verified all 12 supervisor tests with jemalloc background threads
+enabled locally; product-image validation remains pending.
 
-### 1. `minElapsedMs` overflowed (#55640)
+Fixes #55336  #55335
 
-`ListLocalRunningRequests` built the filter with
-`time.Duration(request.GetMinElapsedMs()) * time.Millisecond`. A
-`time.Duration` counts nanoseconds in an int64, so any threshold above
-about 9.22e12 ms (292 years) overflowed:
+Signed-off-by: junjie.jiang <[REDACTED_EMAIL]>
 
-| `minElapsedMs` | as nanoseconds | effect |
-|---|---|---|
-| `9223372036854775807` | -1 ms | negative, read as "no filter": every
-request returned |
-| `9223372036855` (first value past the limit) | negative | same |
-| `18446744073710` | 0.45 ms | a wrong positive threshold: requests a
-millisecond old returned |
-
-The filter now stays in milliseconds (`Filter.MinElapsedMs`) and is
-compared with `now.Sub(start).Milliseconds()`. That is a division, so no
-value of the field overflows, and a threshold larger than any request's
-age returns an empty list.
-
-For thresholds that did not overflow the result is unchanged: for an
-integer threshold `T`, `floor(elapsed in ms) < T` and `elapsed < T ms`
-are the same condition. A negative threshold is still no constrai
-
-**File**: `internal/proxy/reqregistry/registry.go` (modified, +14/-3)
+**File**: `docs/design-docs/design_docs/20260722-pyudf-function-chain.md` (modified, +16/-5)
 ```diff
-@@ -102,7 +102,11 @@ type Filter struct {
- 	DBName         string
- 	CollectionName string
- 	User           string
--	MinElapsed     time.Duration
-+	// MinElapsedMs keeps a request only if it has been running for at least
-+	// this many milliseconds. It is compared in milliseconds, the unit of the
-+	// API field: converting it to a time.Duration would overflow for values
-+	// above about 292 years and silently drop the filter.
-+	MinElapsedMs int64
- }
+@@ -137,9 +137,12 @@ is checked before creation; cancellation after creation does not stop Python.
  
- func (f Filter) matches(info *Info, now time.Time) bool {
-@@ -115,7 +119,7 @@ func (f Filter) matches(info *Info, now time.Time) bool {
- 	if f.User != "" && info.User != f.User {
- 		return false
- 	}
--	if f.MinElapsed > 0 && now.Sub(info.StartTime) < f.MinElapsed {
-+	if f.MinElapsedMs > 0 && now.Sub(info.StartTime).Milliseconds() < f.MinElapsedMs {
- 		return false
- 	}
- 	return true
-@@ -421,13 +425,20 @@ func (r *Registry) List(filter Filter, now time.Time) []Info {
- // registry does not hold, including ids issued by another proxy, strings
- // that are not ids at all and requests that finished before this call (see
- // Entry.Finish). The id in canceled and repeated is the one the
--// caller gave.
-+// caller gave. An id given more than once is handled once: without that, its
-+// request would come back both in canceled and, for every repetition, in
-+// repeated.
- //
- // A non-empty owner restricts the cancel to requests issued by that user: the
- // id of another user's request is reported as not held, so a caller limited
- // to their own requests learns nothing about anyone else's.
- func (r *Registry) Cancel(requestIDs []string, owner, operator, reason string, now time.Time) (canceled, repeated []Info, notFound []string) {
-+	seen := make(map[string]struct{}, len(requestIDs))
- 	for _, id := range requestIDs {
-+		if _, dup := seen[id]; dup {
-+			continue
-+		}
-+		seen[id] = struct{}{}
- 		e := r.Get(id)
- 		if e == nil || (owner != "" && e.User() != owner) {
- 			notFound = append(notFound, id)
+ ### Python supervisor
+ 
+-The supervisor stays single-threaded and does not import gRPC, PyArrow, or user
+-models before `fork`. Runtime package exports are lazy so importing the
+-supervisor does not initialize worker dependencies.
++The supervisor keeps a single Python thread and does not import gRPC, PyArrow,
++or user models before `fork`. Runtime package exports are lazy so importing the
++supervisor does not initialize worker dependencies. This does not require the
++whole process to have exactly one native OS thread: the product image's jemalloc
++allocator may create background threads. Its fork handling must be validated
++with worker startup, replacement, and shutdown tests in the image configuration.
+ 
+ During fork, the supervisor blocks TERM/INT. Each child restores default signal
+ handling and the previous signal mask, then imports and starts its worker.
+@@ -173,7 +176,10 @@ Go process.
+ Linux and macOS are the target platforms. macOS fork safety and port-reuse
+ behavior require native validation; Linux test results do not establish macOS
+ traffic distribution or throughput. The supervisor must remain free of
+-background threads and worker-library initialization before every fork.
++additional Python threads and worker-library initialization before every fork.
++Tests check `threading.active_count() == 1`, dependency imports, and worker
++lifecycle behavior without imposing an OS thread-count limit. This does not
++establish fork safety for arbitrary threaded libraries.
+ 
+ ## 4. Go client and connection reuse
+ 
+@@ -755,7 +761,10 @@ The worker needs the runtime wheel and compatible user dependencies installed
+ in that environment. Core CMake does not select this interpreter.
+ 
+ The package currently pins PyArrow 23.0.1, grpcio and grpcio-health-checking
+-1.74.0, and protobuf 6.31.1. The codegen extra pins grpcio-tools 1.74.0. Generated
++1.74.0, and protobuf 6.33.5. See
++[`pyproject.toml`](../../../internal/util/function/pyudf/python/pyproject.toml)
++for the authoritative runtime dependencies. The codegen extra pins
++grpcio-tools 1.74.0. Generated
+ Python files ship in the runtime wheel; deployment needs no protoc or codegen
+ extra. The user UDF wheel is a separate FileResource artifact loaded at Execute.
+ 
+@@ -943,6 +952,8 @@ These are single-run local measurements, not a production capacity guarantee.
+ The load generators and server ran on the same Linux host, with 48 logical CPUs
+ visible to the benchmark. The environment used Python 3.12.13, grpcio 1.74.0,
+ PyArrow 23.0.1, and protobuf 6.31.1.
++These versions describe the historical benchmark environment. For current
++runtime dependencies, see [Packaging and generated files](#13-packaging-and-generated-files).
+ 
+ Both runs used the same workload and client settings:
+ 
 ```
 
-**File**: `internal/proxy/reqregistry/registry_test.go` (modified, +36/-2)
+**File**: `internal/util/function/pyudf/python/milvus_pyudf_runtime/supervisor.py` (modified, +1/-1)
 ```diff
-@@ -18,6 +18,7 @@ package reqregistry
+@@ -14,7 +14,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
  
- import (
- 	"context"
-+	"math"
- 	"strings"
- 	"sync"
- 	"testing"
-@@ -114,6 +115,30 @@ func TestCancel(t *testing.T) {
- 	assert.ErrorIs(t, CancelCause(ctx), merr.ErrRequestCanceled)
+-"""Linux/macOS process supervision. Never import gRPC/PyArrow or start threads here."""
++"""Linux/macOS process supervision. Never import gRPC/PyArrow or start Python threads here."""
+ 
+ from __future__ import annotations
+ 
+```
+
+**File**: `internal/util/function/pyudf/testdata/supervisor_probe.py` (modified, +0/-2)
+```diff
+@@ -46,8 +46,6 @@ class ProbeSupervisor(Supervisor):
+     def _spawn(self, index, now):
+         assert "grpc" not in sys.modules and "pyarrow" not in sys.modules
+         assert threading.active_count() == 1
+-        if sys.platform == "linux":
+-            assert len(list(Path("/proc/self/task").iterdir())) == 1
+         if mode == "partial_fork" and index == 1:
+             raise OSError("injected fork failure")
+         if (
+```
+
+---
+
+### Incident Patch 3: `e7fa3979` (2026-11-20)
+**Commit Message**: fix: count search nq before the rate limiter and the request registry read it (#55744)
+
+issue: #55743, #55691
+
+## What is wrong
+
+The `nq` field of a search request is optional. The RESTful v2 handlers
+and older clients leave it at 0, and the search task derives the real
+value from the placeholder group later. Everything that read the field
+before the task ran saw 0 for those requests:
+
+- **Rate limiter** (#55743). `GetRequestInfo` charges a search `nq`
+tokens and both callers skip a request that costs 0, so REST search and
+hybrid search were never charged against
+`quotaAndLimits.dql.searchRate`. A gRPC client could get the same result
+by not declaring `nq`.
+- **ListRunningRequests** (#55691) listed them with `nq: 0`.
+- **`milvus_proxy_received_nq`** counted 0 for them.
+
+## What changes
+
+- `funcutil.CountPlaceholderGroupValues` counts the rows of a serialized
+`PlaceholderGroup` by walking its wire format. It does not copy the
+query vectors and does not allocate (about 7 ns per row, independent of
+dimension; unmarshalling 10000 x 1536-dim float vectors takes about 9 ms
+and 62 MB).
+- `searchRequestNq` / `hybridSearchRequestNq` return the declared `nq`,
+or, when it is 0, the rows of th
+
+**File**: `internal/distributed/proxy/httpserver/utils_test.go` (modified, +21/-1)
+```diff
+@@ -138,6 +138,20 @@ func TestCheckLimiter_ChargedRequestsRemainRateLimited(t *testing.T) {
+ 	defer getPartition.UnPatch()
+ 
+ 	insert := &milvuspb.InsertRequest{DbName: "target", CollectionName: "collection", PartitionName: "partition"}
++	// The handlers build search requests without nq; they are charged by the
++	// rows of their placeholder group.
++	placeholder, err := proto.Marshal(&commonpb.PlaceholderGroup{Placeholders: []*commonpb.PlaceholderValue{
++		{Tag: "$0", Type: commonpb.PlaceholderType_FloatVector, Values: [][]byte{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}},
++	}})
++	require.NoError(t, err)
++	search := &milvuspb.SearchRequest{
++		DbName: "target", CollectionName: "collection",
++		SearchInput: &milvuspb.SearchRequest_PlaceholderGroup{PlaceholderGroup: placeholder},
++	}
++	hybridSearch := &milvuspb.HybridSearchRequest{
++		DbName: "target", CollectionName: "collection",
++		Requests: []*milvuspb.SearchRequest{search, search},
++	}
+ 	testCases := []struct {
+ 		name     string
+ 		request  proto.Message
+@@ -146,6 +160,8 @@ func TestCheckLimiter_ChargedRequestsRemainRateLimited(t *testing.T) {
+ 	}{
+ 		{"create collection", &milvuspb.CreateCollectionRequest{DbName: "target", CollectionName: "collection"}, internalpb.RateType_DDLCollection, 1},
+ 		{"insert", insert, internalpb.RateType_DMLInsert, proto.Size(insert)},
++		{"search", search, internalpb.RateType_DQLSearch, 3},
++		{"hybrid search", hybridSearch, internalpb.RateType_DQLSearch, 6},
+ 	}
+ 	for _, tc := range testCases {
+ 		t.Run(tc.name, func(t *testing.T) {
+@@ -174,7 +190,11 @@ func TestCheckLimiter_ChargedRequestsRemainRateLimited(t *testing.T) {
+ 					assert.Equal(t, totalBefore+1, testutil.ToFloat64(total))
+ 					if rejected {
+ 						require.ErrorIs(t, err, merr.ErrServiceQuotaExceeded)
+-						assert.NotNil(t, resp)
++						// GetFailedResponse has no response type for a hybrid
++						// search; the error alone carries the rejection.
++						if _, hybrid := tc.request.(*milvuspb.HybridSearchRequest); !hybrid {
++							assert.NotNil(t, resp)
++						}
+ 						assert.Equal(t, successBefore, testutil.ToFloat64(success))
+ 						assert.Equal(t, failBefore+1, testutil.ToFloat64(fail))
+ 					} else {
+```
+
+**File**: `internal/proxy/dql/search_util.go` (modified, +32/-25)
+```diff
+@@ -694,37 +694,44 @@ func getOutputFieldIDs(schema *schemaInfo, outputFields []string) (outputFieldID
  }
  
-+// An id given more than once in one call is answered once, in the result it
-+// belongs to, instead of once per repetition.
-+func TestCancelHandlesARepeatedIDOnce(t *testing.T) {
-+	r := New()
-+	_, e := r.Register(context.Background(), Info{Type: TypeSearch})
-+	defer r.Unregister(e)
-+	id, missing := e.RequestID(), e.RequestID()+"0"
-+	now := time.Now()
-+
-+	canceled, repeated, notFound := r.Cancel([]string{id, missing, id, id, missing}, "", "root", "", now)
-+	require.Len(t, canceled, 1)
-+	assert.Equal(t, id, canceled[0].RequestID)
-+	assert.Equal(t, StateQueued, canceled[0].State)
-+	assert.Empty(t, repeated)
-+	assert.Equal(t, []string{missing}, notFound)
-+
-+	// a later call still reports the request as already canceled, once
-+	canceled, repeated, notFound = r.Cancel([]string{id, id}, "", "root", "", now)
-+	assert.Empty(t, canceled)
-+	assert.Empty(t, notFound)
-+	require.Len(t, repeated, 1)
-+	assert.Equal(t, StateCanceling, repeated[0].State)
+ func getNqFromSubSearch(req *milvuspb.SubSearchRequest) (int64, error) {
+-	if req.GetNq() == 0 {
+-		// keep compatible with older client version.
+-		x := &commonpb.PlaceholderGroup{}
+-		err := proto.Unmarshal(req.GetPlaceholderGroup(), x)
+-		if err != nil {
+-			return 0, merr.WrapErrParameterInvalidErr(err, "failed to unmarshal placeholder group for sub search")
+-		}
+-		total := int64(0)
+-		for _, h := range x.GetPlaceholders() {
+-			total += int64(len(h.Values))
+-		}
+-		return total, nil
+-	}
+-	return req.GetNq(), nil
++	return resolveNq(req.GetNq(), req.GetPlaceholderGroup(), "failed to unmarshal placeholder group for sub search")
+ }
+ 
+ func getNq(req *milvuspb.SearchRequest) (int64, error) {
+-	if req.GetNq() == 0 {
+-		// keep compatible with older client version.
+-		x := &commonpb.PlaceholderGroup{}
+-		err := proto.Unmarshal(req.GetPlaceholderGroup(), x)
+-		if err != nil {
+-			return 0, merr.WrapErrParameterInvalidErr(err, "failed to unmarshal placeholder group")
++	return resolveNq(req.GetNq(), req.GetPlaceholderGroup(), "failed to unmarshal placeholder group")
 +}
 +
- func TestCancelCauseIgnoresClientCancellation(t *testing.T) {
- 	r := New()
- 	parent, parentCancel := context.WithCancel(context.Background())
-@@ -151,11 +176,20 @@ func TestListFilters(t *testing.T) {
- 	assert.Empty(t, ids(r.List(Filter{DBName: "db2", User: "bob"}, now)))
- 
- 	// elapsed is measured against the time passed to List
--	assert.Empty(t, ids(r.List(Filter{MinElapsed: time.Hour}, now)))
--	assert.ElementsMatch(t, []string{id1, id2, id3}, ids(r.List(Filter{MinElapsed: time.Hour}, now.Add(2*time.Hour))))
-+	assert.Empty(t, ids(r.List(Filter{MinElapsedMs: time.Hour.Milliseconds()}, now)))
-+	assert.ElementsMatch(t, []string{id1, id2, id3}, ids(r.List(Filter{MinElapsedMs: time.Hour.Milliseconds()}, now.Add(2*time.Hour))))
- 	for _, info := range r.List(Filter{}, now.Add(time.Second)) {
- 		assert.GreaterOrEqual(t, info.ElapsedMS, int64(1000))
- 	}
-+
-+	// A threshold too large to be held in a time.Duration still filters. As
-+	// nanoseconds the first two wrap to a negative value and the third to
-+	// less than a millisecond, either of which would let every request through.
-+	for _, ms := range []int64{math.MaxInt64, math.MaxInt64/int64(time.Millisecond) + 1, 18446744073710} {
-+		assert.Empty(t, ids(r.List(Filter{MinElapsedMs: ms}, now.Add(2*time.Hour))), "minElapsedMs %d", ms)
++// resolveNq returns the number of query rows of a search. The placeholder
++// group is what the query nodes execute, so its row count is the answer; the
++// nq a client declares is optional (older clients and the RESTful API leave it
++// at 0) and has to agree with that count when both are present. A request
++// whose nq disagreed used to be forwarded and fail on a query node while
++// reducing results.
++//
++// A declared nq with no placeholder group at all is passed through unchanged:
++// that request carries nothing to search with and the query nodes refuse it.
++func resolveNq(declared int64, placeholderGroup []byte, malformedMsg string) (int64, error) {
++	if declared != 0 && len(placeholderGroup) == 0 {
++		return declared, nil
 +	}
-+	// a negative threshold is no constraint, as before
-+	assert.Len(t, r.List(Filter{MinElapsedMs: -1}, now), 3)
++	rows, err := funcutil.CountPlaceholderGroupValues(placeholderGroup)
++	if err != nil {
++		// Let the decoder name what is wrong with the bytes. Should it accept
++		// them after all, its count stands.
++		group := &commonpb.PlaceholderGroup{}
++		if err := proto.Unmarshal(placeholderGroup, group); err != nil {
++			return 0, merr.WrapErrParameterInvalidErr(err, "%s", malformedMsg)
+ 		}
+-		total := int64(0)
+-		for _, h := range x.GetPlaceholders() {
+-			total += int64(len(h.Values))
++		rows = 0
++		for _, placeholder := range group.GetPlaceholders() {
++			rows += int64(len(placeholder.GetValues()))
+ 		}
+-		return total, nil
+ 	}
+-	return req.GetNq(), nil
++	if declared != 0 && declared != rows {
++		return 0, merr.WrapErrParameterInvalidMsg(
++			"nq %d does not match the %d query rows in the placeholder group", declared, rows)
++	}
++	return rows, nil
  }
  
- func TestExprPrefixIsBounded(t *testing.T) {
+ func GetPartitionIDs(ctx context.Context, metaCache Cache, dbName string, collectionName string, partitionNames []string) (partitionIDs []UniqueID, err error) {
 ```
 
-**File**: `internal/proxy/request_registry.go` (modified, +1/-1)
+**File**: `internal/proxy/dql/search_util_test.go` (modified, +45/-0)
 ```diff
-@@ -354,7 +354,7 @@ func (node *Proxy) ListLocalRunningRequests(ctx context.Context, request *milvus
+@@ -103,6 +103,51 @@ func TestSearchTaskCheckNqCompatibility(t *testing.T) {
+ 	}
+ }
+ 
++// A declared nq that disagrees with the placeholder group is refused by the
++// Proxy; it used to be forwarded and fail on a query node.
++func TestSearchTaskCheckNqMismatch(t *testing.T) {
++	placeholder, err := proto.Marshal(&commonpb.PlaceholderGroup{
++		Placeholders: []*commonpb.PlaceholderValue{
++			{Tag: "$0", Type: commonpb.PlaceholderType_FloatVector, Values: [][]byte{{0, 0, 0, 0}, {0, 0, 0, 0}}},
++		},
++	})
++	require.NoError(t, err)
++	for _, advanced := range []bool{false, true} {
++		for _, nq := range []int64{1, 3} {
++			request := &milvuspb.SearchRequest{
++				Nq:          nq,
++				SearchInput: &milvuspb.SearchRequest_PlaceholderGroup{PlaceholderGroup: placeholder},
++			}
++			if advanced {
++				request = ConvertHybridSearchToSearch(&milvuspb.HybridSearchRequest{
++					Requests: []*milvuspb.SearchRequest{request},
++				})
++			}
++			task := &SearchTask{
++				SearchRequest: &internalpb.SearchRequest{IsAdvanced: advanced},
++				request:       request,
++			}
++			_, err := task.checkNq(context.Background())
++			require.ErrorIs(t, err, merr.ErrParameterInvalid, "advanced=%v nq=%d", advanced, nq)
++			assert.Contains(t, err.Error(), "does not match the 2 query rows")
++		}
++	}
++
++	// A group the row counter refuses is judged by proto.Unmarshal, with its
++	// error: the counter alone never turns a request away.
++	invalidTag := []byte{0x0a, 0x03, 0x0a, 0x01, 0xff}
++	_, err = resolveNq(1, invalidTag, "failed to unmarshal placeholder group")
++	require.ErrorIs(t, err, merr.ErrParameterInvalid)
++	require.ErrorIs(t, err, proto.Error)
++	_, _, convertErr := ConvertPlaceholderGroup(invalidTag, &schemapb.FieldSchema{DataType: schemapb.DataType_FloatVector})
++	require.Error(t, convertErr, "the pre-existing decode refuses the same bytes")
++
++	// Nothing to compare a declared nq with: left to the query nodes, as before.
++	nq, err := resolveNq(4, nil, "unused")
++	require.NoError(t, err)
++	assert.Equal(t, int64(4), nq)
++}
++
+ func TestConvertHybridSearchToSearchKeepsNamespace(t *testing.T) {
+ 	namespace := "tenant_a"
+ 
+```
+
+**File**: `internal/proxy/impl.go` (modified, +1/-1)
+```diff
+@@ -2712,7 +2712,7 @@ func (node *Proxy) search(ctx context.Context, request *milvuspb.SearchRequest,
+ 		metrics.SearchLabel,
+ 		request.GetDbName(),
+ 		request.GetCollectionName(),
+-	).Add(float64(request.GetNq()))
++	).Add(float64(searchRequestNq(request)))
+ 
+ 	if err := merr.CheckHealthy(node.GetStateCode()); err != nil {
+ 		return &milvuspb.SearchResults{
+```
+
+**File**: `internal/proxy/request_registry.go` (modified, +2/-2)
+```diff
+@@ -159,7 +159,7 @@ func searchRequestInfo(request *milvuspb.SearchRequest) reqregistry.Info {
+ 		Type:           reqregistry.TypeSearch,
  		DBName:         request.GetDbName(),
  		CollectionName: request.GetCollectionName(),
- 		User:           request.GetUser(),
--		MinElapsed:     time.Duration(request.GetMinElapsedMs()) * time.Millisecond,
-+		MinElapsedMs:   request.GetMinElapsedMs(),
- 	})
- 	return &milvuspb.ListRunningRequestsResponse{
- 		Status:   merr.Success(),
-```
-
-**File**: `internal/proxy/request_registry_test.go` (modified, +9/-1)
-```diff
-@@ -18,6 +18,7 @@ package proxy
- 
- import (
- 	"context"
-+	"math"
- 	"net"
- 	"strconv"
- 	"strings"
-@@ -305,6 +306,12 @@ func TestListLocalRunningRequests(t *testing.T) {
- 	resp, err = node.ListLocalRunningRequests(context.Background(), &milvuspb.ListRunningRequestsRequest{MinElapsedMs: 1 << 40})
- 	require.NoError(t, err)
- 	assert.Empty(t, resp.GetRequests())
-+
-+	// the largest threshold the field can carry excludes every request
-+	resp, err = node.ListLocalRunningRequests(context.Background(), &milvuspb.ListRunningRequestsRequest{MinElapsedMs: math.MaxInt64})
-+	require.NoError(t, err)
-+	require.True(t, merr.Ok(resp.GetStatus()))
-+	assert.Empty(t, resp.GetRequests())
- }
- 
- func TestCancelLocalRequests(t *testing.T) {
-@@ -315,7 +322,8 @@ func TestCancelLocalRequests(t *testing.T) {
- 	defer node.unregisterRequest(entry)
- 
- 	resp, err := node.CancelLocalRequests(context.Background(), &milvuspb.CancelRequestsRequest{
--		RequestIds: []string{testReqID(1), testReqID(2)},
-+		// a repeated id does not repeat its row in the answer
-+		RequestIds: []string{testReqID(1), testReqID(2), testReqID(1), testReqID(2)},
- 		Reason:     "too heavy",
- 	})
- 	require.NoError(t, err)
-```
-
----
-
-### Incident Patch 3: `222342c1` (2026-11-18)
-**Commit Message**: fix: stop external collection refresh from blocking the DataCoord task scheduler (#55381)
-
-issue: #55380
-
-### Problem
-
-When a refresh task reaches a terminal state, `QueryTaskOnWorker` runs
-the job processing synchronously on `globalTaskScheduler.check()`. That
-processing publishes the refreshed schema through `AlterCollection`,
-which waits for the broadcast resource locks.
-
-A schema-changing ALTER holds the database read lock in its ack callback
-while it waits for a schema-bump compaction. If a database-exclusive DDL
-such as `CreateAlias` is queued at that moment, the publish blocks
-behind it. `check()` waits for all of its futures, so it stops running,
-and the compaction it should observe can never complete. The ALTER then
-never releases the lock. Every DDL on that database and all DataCoord
-task polling hang until a restart. #55380 has the full analysis.
-
-### Fix
-
-Move the job processing off the scheduler. `processFinishedJob` is now
-wired to `requestJobProcessing`, which records the job ID and wakes the
-refresh checker's own goroutine without blocking. The checker runs the
-same `processJob` as before, so a publish can still wait for a lock, but
-it no longer stops the scheduler.
-
-**File**: `internal/datacoord/externalrefresh/checker.go` (modified, +62/-24)
-```diff
-@@ -19,6 +19,7 @@ package externalrefresh
- import (
- 	"context"
- 	"fmt"
-+	"sync"
- 	"time"
- 
- 	"github.com/samber/lo"
-@@ -68,8 +69,7 @@ type externalCollectionRefreshChecker struct {
- 	// onJobFinished is the manager-side callback that pushes the refreshed
- 	// schema (ExternalSource/ExternalSpec) into RootCoord via the WAL
- 	// broadcast. The manager holds a notifiedJobs dedup map so this callback
--	// is delivered exactly once per jobID even when called concurrently
--	// from the eager task path and the periodic checker tick.
-+	// is delivered exactly once per jobID, however many passes reach it.
- 	onJobFinished func(ctx context.Context, job *datapb.ExternalCollectionRefreshJob)
- 	// applyJobInfo is invoked exactly before a job is persisted as Finished.
- 	// It performs the collection-global segment update from all finished task
-@@ -80,8 +80,8 @@ type externalCollectionRefreshChecker struct {
- 	// transitions into Failed state (via aggregateJobState or tryTimeoutJob).
- 	// Used to reclaim per-job resources (e.g. the explore temp directory)
- 	// without waiting for the retention-gated GC path. The callback itself
--	// is idempotent — the manager dedups on its own cleanup key so concurrent
--	// eager and periodic paths only fire one cleanup per jobID. That key is
-+	// is idempotent — the manager dedups on its own cleanup key so repeated
-+	// passes only fire one cleanup per jobID. That key is
- 	// deliberately NOT the schema-publish key: a job that applied its
- 	// segments and then failed still owes the publish.
- 	onJobFailed func(jobID int64)
-@@ -98,6 +98,12 @@ type externalCollectionRefreshChecker struct {
- 	// MUST be non-blocking — the manager's implementation dedups concurrent
- 	// invocations and runs the actual work in a background goroutine.
- 	onInitJobPending func(jobID int64)
-+
-+	// requestedJobs holds the jobs handed over by requestJobProcessing until
-+	// the checker goroutine picks them up. requestNotify wakes that goroutine.
-+	requestedJobsMu sync.Mutex
-+	requestedJobs   map[int64]struct{}
-+	requestNotify   chan struct{}
- }
- 
- func NewRefreshChecker(
-@@ -123,14 +129,16 @@ func NewRefreshChecker(
- 		onJobFailed:      onJobFailed,
- 		onJobGC:          onJobGC,
- 		onInitJobPending: onInitJobPending,
-+		requestedJobs:    make(map[int64]struct{}),
-+		requestNotify:    make(chan struct{}, 1),
+-		NQ:             request.GetNq(),
++		NQ:             searchRequestNq(request),
+ 		TopK:           kvInt64(request.GetSearchParams(), common.TopKKey, LimitKey),
+ 		Expr:           request.GetDsl(),
  	}
- }
- 
- // run starts the checker loop. The checker periodically scans every refresh
--// job and runs the same per-job processing function (processJob) that the
--// eager task path invokes via processJobByID. The periodic pass acts as a
--// safety net for any state transition the eager path missed (e.g., DataCoord
--// restart between task completion and the eager call).
-+// job and runs the same per-job processing function (processJob) for the jobs
-+// the task path hands over through requestJobProcessing. The periodic pass
-+// acts as a safety net for any state transition the task path missed (e.g.,
-+// DataCoord restart between task completion and the request).
- func (c *externalCollectionRefreshChecker) run() {
- 	checkInterval := Params.DataCoordCfg.ExternalCollectionCheckInterval.GetAsDuration(time.Second)
- 	mlog.Info(c.ctx, "start external collection checker", mlog.Duration("checkInterval", checkInterval))
-@@ -144,6 +152,8 @@ func (c *externalCollectionRefreshChecker) run() {
- 			return
- 		case <-ticker.C:
- 			c.processJobs()
-+		case <-c.requestNotify:
-+			c.processRequestedJobs()
+@@ -169,7 +169,7 @@ func hybridSearchRequestInfo(request *milvuspb.HybridSearchRequest) reqregistry.
+ 	var nq, topk int64
+ 	expr := ""
+ 	for _, sub := range request.GetRequests() {
+-		nq += sub.GetNq()
++		nq += searchRequestNq(sub)
+ 		if k := kvInt64(sub.GetSearchParams(), common.TopKKey, LimitKey); k > topk {
+ 			topk = k
  		}
- 	}
- }
-@@ -164,10 +174,10 @@ func (c *externalCollectionRefreshChecker) processJobs() {
- }
- 
- // processJob runs one inspection pass for a single job: state aggregation,
--// timeout check, finished-callback firing, and GC. Both the periodic loop
--// and the eager task path call this so the same code drives every job
--// state transition. Idempotent — repeated calls short-circuit on terminal
--// state and source/spec equality.
-+// timeout check, finished-callback firing, and GC. The periodic loop and the
-+// passes requested by the task path both call this, on the checker goroutine,
-+// so the same code drives every job state transition. Idempotent — repeated
-+// calls short-circuit on terminal state and source/spec equality.
- func (c *externalCollectionRefreshChecker) processJob(job *datapb.ExternalCollectionRefreshJob) {
- 	// Retry Phase B task creation for jobs that are still in Init with no
- 	// tasks (i.e. the async submission attempt did not land tasks yet).
-@@ -214,10 +224,7 @@ func (c *externalCollectionRefreshChecker) processJob(job *datapb.ExternalCollec
- }
- 
- // processJobByID looks up a job and runs one inspection pass for it
--// synchronously. Used by the eager task path after a task transitions to
--// a terminal state, so the schemaUpdater fires before the task call returns
--// and progress polls observe a consistent state. Returns silently if the
--// job is missing (e.g., already GC'd).
-+// synchronously. Returns silently if the job is missing (e.g., already GC'd).
- func (c *externalCollectionRefreshChecker) 
 ```
 
-**File**: `internal/datacoord/externalrefresh/checker_test.go` (modified, +1/-1)
+**File**: `internal/proxy/request_registry_test.go` (modified, +60/-0)
 ```diff
-@@ -1816,7 +1816,7 @@ func TestExternalCollectionRefreshChecker_IndexWait(t *testing.T) {
- 	})
+@@ -31,12 +31,15 @@ import (
+ 	"github.com/stretchr/testify/mock"
+ 	"github.com/stretchr/testify/require"
+ 	"google.golang.org/grpc/peer"
++	"google.golang.org/protobuf/proto"
  
- 	t.Run("a refresh whose segments are all already indexed finishes in the entry pass", func(t *testing.T) {
--		// The eager task path calls this synchronously when the last task
-+		// The task path requests this pass when the last task
- 		// finishes, so evaluating the debt only on the next periodic tick
- 		// would put a whole externalCollectionCheckInterval on every refresh -
- 		// including a re-scan that changed nothing, which is the case a
-```
-
-**File**: `internal/datacoord/externalrefresh/inspector.go` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ type externalCollectionRefreshInspector struct {
- 	scheduler   task.GlobalScheduler
- 	closeChan   chan struct{}
- 	// wrapTask builds a scheduler-facing task wrapper with all callbacks
--	// wired (processFinishedJob → checker.processJobByID). The manager owns
-+	// wired (processFinishedJob → checker.requestJobProcessing). The manager owns
- 	// the wiring logic and injects this factory so the inspector doesn't
- 	// need a direct reference to the checker (avoids construction-order
- 	// circular dependency).
-```
-
-**File**: `internal/datacoord/externalrefresh/manager.go` (modified, +19/-19)
-```diff
-@@ -187,11 +187,11 @@ type Manager struct {
- 	wg        sync.WaitGroup
- 
- 	// notifiedJobs tracks jobs whose schema-update callback has already been
--	// delivered. It guards against concurrent invocations of handleJobFinished
--	// from the eager task path and the periodic checker tick — both paths read
--	// collection.Schema before calling schemaUpdater, so without this dedup
--	// they could both observe a stale snapshot (before the WAL broadcast
--	// propagates back into the DataCoord cache) and both broadcast.
-+	// delivered. It guards against repeated invocations of handleJobFinished:
-+	// each pass reads collection.Schema before calling schemaUpdater, so
-+	// without this dedup a later pass could observe a stale snapshot (before
-+	// the WAL broadcast propagates back into the DataCoord cache) and
-+	// broadcast again.
- 	// forgetJob on GC prevents unbounded growth.
- 	//
- 	// cleanedJobs is the same shape for the OTHER one-time side effect, the
-@@ -256,11 +256,11 @@ func NewExternalCollectionRefreshManager(
- 
- 	// Create internal components with shared refreshMeta. The checker owns
- 	// the per-job processing function that drives state aggregation, finish
--	// notification, timeout, and GC. Tasks wired by the inspector call the
--	// checker's per-job entry point synchronously when they reach a terminal
--	// state, so the schema-update callback fires before the task method
--	// returns. The checker still runs the same per-job function periodically
--	// as a safety net for missed events (e.g., after a DataCoord restart).
-+	// notification, timeout, and GC. Tasks wired by the inspector ask the
-+	// checker to process their job when they reach a terminal state, and the
-+	// schema-update callback runs on the checker goroutine. The checker still
-+	// runs the same per-job function periodically as a safety net for missed
-+	// events (e.g., after a DataCoord restart).
- 	// forgetJob releases the per-job dedup entries when the checker GC's
- 	// a job, preventing unbounded growth.
- 	m.inspector = newRefreshInspector(ctx, refreshMeta, scheduler, closeChan)
-@@ -581,13 +581,13 @@ func (m *Manager) publishRefreshJob(ctx context.Context, job *datapb.ExternalCol
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/milvuspb"
++	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
+ 	"github.com/milvus-io/milvus/internal/mocks"
+ 	"github.com/milvus-io/milvus/internal/proxy/reqregistry"
+ 	"github.com/milvus-io/milvus/pkg/v3/metrics"
++	"github.com/milvus-io/milvus/pkg/v3/proto/internalpb"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/merr"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
+ )
+@@ -45,6 +48,63 @@ func kv(key, value string) *commonpb.KeyValuePair {
+ 	return &commonpb.KeyValuePair{Key: key, Value: value}
  }
  
- // wrapTask builds a scheduler-facing task wrapper around a persisted proto
--// task, wiring the processFinishedJob callback so terminal transitions drive
--// per-job processing synchronously. Single source of truth for task wiring;
-+// task, wiring the processFinishedJob callback so terminal transitions wake
-+// the checker for that job. Single source of truth for task wiring;
- // used by both createTasksForJob (initial submission) and the inspector
- // (reload/re-enqueue paths).
- func (m *Manager) wrapTask(t *datapb.ExternalCollectionRefreshTask) *refreshExternalCollectionTask {
- 	taskWrapper := newRefreshExternalCollectionTask(t, m.refreshMeta, m.mt, m.allocator)
--	taskWrapper.processFinishedJob = m.checker.processJobByID
-+	taskWrapper.processFinishedJob = m.checker.requestJobProcessing
- 	return taskWrapper
- }
- 
-@@ -619,12 +619,12 @@ func (m *Manager) Stop() {
- }
- 
- // handleJobFinished publishes the refreshed external source/spec for a job
--// whose segments are applied. It is called both eagerly (synchronously from
--// the task path via processJobByID) and from the periodic checker tick. The
-+// whose segments are applied. It runs on the checker goroutine, both for jobs
-+// the task path requested and from the periodic checker tick. The
- // notifiedJobs dedup map below admits at most ONE schemaUpdater call in
--// flight per jobID, and none at all once one has delivered: concurrent calls
--// from the two paths race on the mutex, the loser sees the jobID already
--// present and short-circuits. The source/spec equality check is a cheap
-+// flight per jobID, and none at all once one has delivered: a later call
-+// sees the jobID already present and short-circuits. The source/spec
-+// equality check is a cheap
- // secondary guard (e.g., for jobs that finished with the same schema as the
- // current collection).
- //
-@@ -643,7 +643,7 @@ func (m *Manager) handleJobFinished(ctx context.Context, job *datapb.ExternalCol
- 		return
- 	}
- 
--	// Exactly-once dedup across concurrent eager + periodic paths.
-+	// Exactly-once dedup across the requested and periodic passes.
- 	m.notifiedMu.Lock()
- 	if _, already := m.notifiedJobs[job.GetJobId()]; already {
- 		m.notifiedMu.Unlock()
-```
-
-**File**: `internal/datacoord/externalrefresh/manager_test.go` (modified, +67/-0)
-```diff
-@@ -52,6 +52,73 @@ import (
- 
- // ==================== Helper Functions for Manager Tests ====================
- 
-+// A refresh task reports its terminal state from the global task scheduler,
-+// while the job processing publishes the schema through DDL. That DDL can wait
-+// for a broadcast lock held by an ack callback which is itself waiting for a
-+// compaction that only the scheduler can finish, so the task path must return
-+// while the publish is still blocked.
-+func TestRefreshTaskTerminalStateDoesNotWaitForJobProcessing(t *testing.T) {
-+	paramtable.Init()
-+	protoTask := &datapb.ExternalCollectionRefreshTask{
-+		TaskId:         1001,
-+		JobId:          1,
-+		CollectionId:   100,
-+		NodeId:         1,
-+		State:          indexpb.JobState_JobStateInProgress,
-+		ExternalSource: "s3://bucket/path",
-+		ExternalSpec:   "iceberg",
++// A search that does not declare nq is counted by what it carries, both for the
++// registry and for the rate limiter.
++func TestSearchRequestNq(t *testing.T) {
++	placeholder := func(rows int) *milvuspb.SearchRequest_PlaceholderGroup {
++		values := make([][]byte, rows)
++		for i := range values {
++			values[i] = []byte{0, 0, 0, 0}
++		}
++		blob, err := proto.Marshal(&commonpb.PlaceholderGroup{Placeholders: []*commonpb.PlaceholderValue{
++			{Tag: "$0", Type: commonpb.PlaceholderType_FloatVector, Values: values},
++		}})
++		require.NoError(t, err)
++		return &milvuspb.SearchRequest_PlaceholderGroup{PlaceholderGroup: blob}
 +	}
-+	job := &datapb.ExternalCollectionRefreshJob{
-+		JobId:          1,
-+		CollectionId:   100,
-+		State:          indexpb.JobState_JobStateInProgress,
-+		ExternalSource: "s3://bucket/path",
-+		ExternalSpec:   "iceberg",
-+	}
-+	refreshMeta := createTestRefreshMetaWithJobs(t, []*datapb.ExternalCollectionRefreshJob{job}, []*datapb.ExternalCollectionRefreshTask{protoTask})
-+	mgr := NewExternalCollectionRefreshManager(t.Context(), nil, nil, newStubScheduler(), &stubAllocator{nextID: 1000},
-+		refreshMeta, nil, nil, nil, nil, nil).(*Manager)
++	intIDs := &milvuspb.SearchRequest_Ids{Ids: &schemapb.IDs{
++		IdField: &schemapb.IDs_IntId{IntId: &schemapb.LongArray{Data: []int64{1, 2, 3, 4}}},
++	}}
 +
-+	publishing := make(chan struct{})
-+	release := make(chan struct{})
-+	var publishOnce, releaseOnce sync.Once
-+	unblock := func() { releaseOnce.Do(func() { close(release) }) }
-+	mgr.checker.applyJobInfo = nil
-+	mgr.checker.onJobFinished = func(context.Context, *datapb.ExternalCollectionRefreshJob) {
-+		publishOnce.Do(func() { close(publishing) })
-+		<-release
-+	}
++	assert.Equal(t, int64(0), searchRequestNq(&milvuspb.SearchRequest{}))
++	assert.Equal(t, int64(3), searchRequestNq(&milvuspb.SearchRequest{SearchInput: placeholder(3)}))
++	assert.Equal(t, int64(4), searchRequestNq(&milvuspb.SearchRequest{SearchInput: intIDs}))
++	// a declared nq is taken as it is; the search task checks it
++	assert.Equal(t, int64(7), searchRequestNq(&milvuspb.SearchRequest{Nq: 7, SearchInput: placeholder(3)}))
++	// a malformed group is the search task's to refuse
++	assert.Equal(t, int64(0), searchRequestNq(&milvuspb.SearchRequest{
++		SearchInput: &milvuspb.SearchRequest_PlaceholderGroup{PlaceholderGroup: []byte{0xff}},
++	}))
 +
-+	checkerDone := make(chan struct{})
-+	go func() {
-+		defer close(checkerDone)
-+		mgr.checker.run()
-+	}()
-+	defer func() {
-+		unblock()
-+		mgr.Stop()
-+		<-checkerDone
-+	}()
++	hybrid := &milvuspb.HybridSearchRequest{Requests: []*milvuspb.SearchRequest{
++		{SearchInput: placeholder(2)},
++		{Nq: 5, SearchInput: placeholder(5)},
++	}}
++	assert.Equal(t, int64(7), hybridSearchRequestNq(hybrid))
 +
-+	returned := make(chan error, 1)
-+	go func() {
-+		returned <- mgr.wrapTask(protoTask).UpdateStateWithMeta(indexpb.JobState_JobStateFinished, "")
-+	}()
++	assert.Equal(t, int64(3), searchRequestInfo(&milvuspb.SearchRequest{SearchInput: placeholder(3)}).NQ)
++	assert.Equal(t, int64(4), searchRequestInfo(&milvuspb.SearchRequest{SearchInput: intIDs}).NQ)
++	assert.Equal(t, int64(7), hybridSearchRequestInfo(hybrid).NQ)
 +
-+	select {
-+	case err := <-returned:
-+		assert.NoError(t, err)
-+	case <-time.After(10 * time.Second):
-+		t.Fatal("task path is blocked by the schema publish; the global task scheduler would stop")
-+	}
-+	select {
-+	case <-publishing:
-+	case <-time.After(10 * time.Second):
-+		t.Fatal("checker did not process the job after the task reached a terminal state")
-+	}
-+	assert.Equal(t, indexpb.JobState_JobStateFinished, refreshMeta.GetJob(1).GetState())
++	// The limiter skips a request that costs 0 tokens, so these have to cost
++	// their rows.
++	cache := NewMockCache(t)
++	cache.EXPECT().GetDatabaseInfo(mock.Anything, mock.Anything).Return(&databaseInfo{DBID: 100}, nil)
++	cache.EXPECT().GetCollectionID(mock.Anything, mock.Anything, mock.Anything).Return(int64(1), nil)
++	_, _, rt, tokens, err := GetRequestInfo(context.Background(), cache, &milvuspb.SearchRequest{
++		DbName: "db", CollectionName: "c", SearchInput: placeholder(3),
++	})
++	require.NoError(t, err)
++	assert.Equal(t, internalpb.RateType_DQLSearch, rt)
++	assert.Equal(t, 3, tokens)
++	_, _, rt, tokens, err = GetRequestInfo(context.Background(), cache, &milvuspb.HybridSearchRequest{
++		DbName: "db", CollectionName: "c", Requests: hybrid.GetRequests(),
++	})
++	require.NoError(t, err)
++	assert.Equal(t, internalpb.RateType_DQLSearch, rt)
++	assert.Equal(t, 7, tokens)
 +}
 +
- func createTestRefreshMeta(t *testing.T) *ExternalCollectionRefreshMeta {
- 	catalog := &StubCatalog{}
- 	mt, err := NewExternalCollectionRefreshMeta(context.Background(), catalog)
+ func TestRequestInfoExtraction(t *testing.T) {
+ 	t.Run("search", func(t *testing.T) {
+ 		info := searchRequestInfo(&milvuspb.SearchRequest{
 ```
 
-**File**: `internal/datacoord/externalrefresh/task.go` (modified, +10/-15)
+**File**: `internal/proxy/util.go` (modified, +34/-6)
 ```diff
-@@ -50,13 +50,11 @@ type refreshExternalCollectionTask struct {
- 	refreshMeta *ExternalCollectionRefreshMeta
- 	mt          *meta.Meta
- 	allocator   allocator.Allocator
--	// processFinishedJob is the per-job entry point on the refresh checker.
--	// The task calls it synchronously after transitioning to a terminal state
--	// so the finished-callback (schema update + WAL broadcast) fires before
--	// the task method returns and progress polls observe a consistent state.
--	// The checker still runs the same logic on its periodic tick as a safety
--	// net for missed events. Set by the manager during task wrapping; nil in
--	// unit tests.
-+	// processFinishedJob tells the refresh checker that a task reached a
-+	// terminal state, so the job does not wait for the next periodic tick. It
-+	// must not block: the task methods run on the global task scheduler, and
-+	// the job processing publishes the schema through DDL. Set by the manager
-+	// during task wrapping; nil in unit tests.
- 	processFinishedJob func(jobID int64)
+@@ -2305,6 +2305,38 @@ func GetStorageCost(status *commonpb.Status) (int64, int64, float64, bool) {
+ 	return scannedRemoteBytes, scannedTotalBytes, cacheHitRatio, true
  }
  
-@@ -153,14 +151,11 @@ func (t *refreshExternalCollectionTask) UpdateStateWithMeta(state indexpb.JobSta
- 	}
- 	t.SetState(state, failReason)
- 
--	// When the task reaches a terminal state, synchronously drive per-job
--	// processing on the checker. processJob is the single aggregation point
--	// — it re-reads tasks, transitions job state, and fires the finish
--	// callback + schema update + WAL broadcast before this method returns.
--	// This guarantees that callers polling GetRefreshExternalCollectionProgress
--	// observe a consistent state: when the job appears Finished, the schema
--	// update has already been applied. The checker's periodic tick runs the
--	// same logic as a safety net for missed events (e.g., DataCoord restart).
-+	// When the task reaches a terminal state, ask the checker to process the
-+	// job. processJob is the single aggregation point — it re-reads tasks,
-+	// transitions job state, and fires the finish callback + schema update +
-+	// WAL broadcast on the checker goroutine. The checker's periodic tick runs
-+	// the same logic as a safety net for missed events (e.g., DataCoord restart).
- 	if state == indexpb.JobState_JobStateFinished || state == indexpb.JobState_JobStateFailed {
- 		if t.processFinishedJob != nil {
- 			t.processFinishedJob(t.GetJobId())
++// searchRequestNq returns the number of query rows of a search request as it
++// arrives, before any task has looked at it. The nq field is optional -- older
++// clients and the RESTful API leave it at 0 -- so a request that does not
++// declare it is counted by what it carries: the rows of its placeholder group,
++// or its primary keys when it searches by primary key. Reading the field alone
++// lets such a request through the rate limiter uncharged and lists it with
++// nq 0.
++//
++// A malformed placeholder group counts as 0 here; the search task rejects it.
++func searchRequestNq(req *milvuspb.SearchRequest) int64 {
++	if nq := req.GetNq(); nq != 0 {
++		return nq
++	}
++	if ids := req.GetIds(); ids != nil {
++		return int64(typeutil.GetSizeOfIDs(ids))
++	}
++	rows, err := funcutil.CountPlaceholderGroupValues(req.GetPlaceholderGroup())
++	if err != nil {
++		return 0
++	}
++	return rows
++}
++
++// hybridSearchRequestNq is searchRequestNq summed over the sub-requests.
++func hybridSearchRequestNq(req *milvuspb.HybridSearchRequest) int64 {
++	var nq int64
++	for _, sub := range req.GetRequests() {
++		nq += searchRequestNq(sub)
++	}
++	return nq
++}
++
+ // GetRequestInfo returns the quota scope, rate type, and tokens needed by a request.
+ // Zero tokens bypass rate limiting and its metrics; the rate type is unused in that case.
+ func GetRequestInfo(ctx context.Context, metaCache Cache, req proto.Message) (int64, map[int64][]int64, internalpb.RateType, int, error) {
+@@ -2326,14 +2358,10 @@ func GetRequestInfo(ctx context.Context, metaCache Cache, req proto.Message) (in
+ 		return dbID, collToPartIDs, internalpb.RateType_DMLBulkLoad, proto.Size(r), err
+ 	case *milvuspb.SearchRequest:
+ 		dbID, collToPartIDs, err := getCollectionAndPartitionIDs(ctx, metaCache, req.(reqPartNames))
+-		return dbID, collToPartIDs, internalpb.RateType_DQLSearch, int(r.GetNq()), err
++		return dbID, collToPartIDs, internalpb.RateType_DQLSearch, int(searchRequestNq(r)), err
+ 	case *milvuspb.HybridSearchRequest:
+ 		dbID, collToPartIDs, err := getCollectionAndPartitionIDs(ctx, metaCache, req.(reqPartNames))
+-		nq := 0
+-		for _, subReq := range r.GetRequests() {
+-			nq += int(subReq.GetNq())
+-		}
+-		return dbID, collToPartIDs, internalpb.RateType_DQLSearch, nq, err
++		return dbID, collToPartIDs, internalpb.RateType_DQLSearch, int(hybridSearchRequestNq(r)), err
+ 	case *milvuspb.QueryRequest:
+ 		dbID, collToPartIDs, err := getCollectionAndPartitionIDs(ctx, metaCache, req.(reqPartNames))
+ 		return dbID, collToPartIDs, internalpb.RateType_DQLQuery, 1, err // think of the query request's nq as 1
 ```
 
-**File**: `internal/datacoord/externalrefresh/task_test.go` (modified, +6/-6)
+**File**: `pkg/util/funcutil/placeholdergroup_count.go` (added, +93/-0)
 ```diff
-@@ -314,11 +314,11 @@ func TestRefreshExternalCollectionTask_UpdateStateWithMeta(t *testing.T) {
- 		assert.Error(t, err)
- 	})
- 
--	// Eager synchronous contract: when the task transitions to a terminal
--	// state, processFinishedJob must fire BEFORE UpdateStateWithMeta returns,
--	// with the correct jobID. This guarantees callers polling progress see a
--	// consistent state (schema update has already been applied).
--	t.Run("terminal_finished_fires_process_finished_job_synchronously", func(t *testing.T) {
-+	// When the task transitions to a terminal state, processFinishedJob must
-+	// fire with the correct jobID, so the checker processes the job without
-+	// waiting for its periodic tick. The callback itself must not block; see
-+	// TestRefreshTaskTerminalStateDoesNotWaitForJobProcessing.
-+	t.Run("terminal_finished_fires_process_finished_job", func(t *testing.T) {
- 		task, refreshMeta := createTestRefreshTaskWithStubs(t, 1001, 42, 100)
- 		err := refreshMeta.AddTask(task.ExternalCollectionRefreshTask)
- 		assert.NoError(t, err)
-@@ -333,7 +333,7 @@ func TestRefreshExternalCollectionTask_UpdateStateWithMeta(t *testing.T) {
- 		err = task.UpdateStateWithMeta(indexpb.JobState_JobStateFinished, "")
- 		assert.NoError(t, err)
- 
--		// Callback fired exactly once, with correct jobID, before return.
-+		// Callback fired exactly once, with correct jobID.
- 		assert.Equal(t, 1, callbackCount, "processFinishedJob must fire exactly once")
- 		assert.Equal(t, int64(42), callbackJobID, "processFinishedJob must receive the task's jobID")
- 	})
+@@ -0,0 +1,93 @@
++package funcutil
++
++import (
++	"unicode/utf8"
++
++	"google.golang.org/protobuf/encoding/protowire"
++
++	"github.com/milvus-io/milvus/pkg/v3/util/merr"
++)
++
++// Field numbers of commonpb.PlaceholderGroup and commonpb.PlaceholderValue.
++const (
++	placeholderGroupPlaceholdersField protowire.Number = 1
++	placeholderValueTagField          protowire.Number = 1
++	placeholderValueValuesField       protowire.Number = 3
++)
++
++// CountPlaceholderGroupValues returns the number of query rows carried by a
++// serialized commonpb.PlaceholderGroup, summed over its placeholders. It is
++// the same number as unmarshalling the group and adding up len(Values), but it
++// walks the wire format and never copies a row, so it costs a few nanoseconds
++// per row and does not allocate.
++//
++// It rejects every input proto.Unmarshal rejects, so it can stand in for the
++// unmarshal as the first check on a group that came from a client.
++func CountPlaceholderGroupValues(blob []byte) (int64, error) {
++	var total int64
++	for len(blob) > 0 {
++		num, typ, n := protowire.ConsumeTag(blob)
++		if n < 0 || num > protowire.MaxValidNumber {
++			return 0, errMalformedPlaceholderGroup()
++		}
++		blob = blob[n:]
++		if num != placeholderGroupPlaceholdersField || typ != protowire.BytesType {
++			if n = protowire.ConsumeFieldValue(num, typ, blob); n < 0 {
++				return 0, errMalformedPlaceholderGroup()
++			}
++			blob = blob[n:]
++			continue
++		}
++		placeholder, n := protowire.ConsumeBytes(blob)
++		if n < 0 {
++			return 0, errMalformedPlaceholderGroup()
++		}
++		blob = blob[n:]
++		count, err := countPlaceholderValues(placeholder)
++		if err != nil {
++			return 0, err
++		}
++		total += count
++	}
++	return total, nil
++}
++
++func countPlaceholderValues(placeholder []byte) (int64, error) {
++	var count int64
++	for len(placeholder) > 0 {
++		num, typ, n := protowire.ConsumeTag(placeholder)
++		if n < 0 || num > protowire.MaxValidNumber {
++			return 0, errMalformedPlaceholderGroup()
++		}
++		placeholder = placeholder[n:]
++		if typ != protowire.BytesType || (num != placeholderValueTagField && num != placeholderValueValuesField) {
++			if n = protowire.ConsumeFieldValue(num, typ, placeholder); n < 0 {
++				return 0, errMalformedPlaceholderGroup()
++			}
++			placeholder = placeholder[n:]
++			continue
++		}
++		value, n := protowire.ConsumeBytes(placeholder)
++		if n < 0 {
++			return 0, errMalformedPlaceholderGroup()
++		}
++		placeholder = placeholder[n:]
++		if num == placeholderValueValuesField {
++			count++
++		} else if !utf8.Valid(value) {
++			// tag is a proto3 string, and proto.Unmarshal refuses one that is
++			// not valid UTF-8. This check only keeps the two in agreement; it
++			// does not turn away a search that used to run. The Proxy has
++			// always unmarshalled the group of every search
++			// (ConvertPlaceholderGroup), so such a request was already
++			// refused there, and the search task falls back to
++			// proto.Unmarshal whenever this function reports an error.
++			return 0, errMalformedPlaceholderGroup()
++		}
++	}
++	return count, nil
++}
++
++func errMalformedPlaceholderGroup() error {
++	return merr.WrapErrParameterInvalidMsg("malformed placeholder group")
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55695** (2026-11-19): fix: restore the original QuerySlot protocol (@somfornot)
-- **PR #55694** (2026-11-19): test: fix exact-distance controls in Struct Array range search (@zhuwenxing)
-- **PR #55682** (2026-11-18): enhance: release cold collections under QueryNode memory pressure (@sijie-ni-0214)
-- **PR #55679** (2026-11-19): test: [cp3.0] Cover nullable struct-array DISKANN searches (@yanliang567)
-- **PR #55676** (2026-11-18): test: [3.0] fix depguard violation in FMINDEX e2e test (@huanghaoyuanhhy)
-- **PR #55675** (2026-11-19): enhance: [GoSDK] add DQL cluster session routing (@congqixia)
+- **PR #55758** (2026-11-20): fix: [cp3.0] read external refresh task state from response properties (@xiaocai2333)
+- **PR #55754** (closed): enhance: [2.6] backport reliability, performance, and Azure CMEK updates (@XuanYang-cn)
+- **PR #55752** (closed): build: update documented compiler requirements for macOS LLVM 14-21 (@yhmo)
+- **PR #55751** (2026-11-20): enhance: [cp3.0] simplify external import storage validation and share per-task source clients (@xaxys)
+- **PR #55744** (2026-11-20): fix: count search nq before the rate limiter and the request registry read it (@czs007)
+- **PR #55708** (2026-11-20): fix: read external refresh task state from response properties (@xiaocai2333)
 
 ---
 
@@ -2421,37 +2303,45 @@ it no longer stops the scheduler.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. enhance: release cold collections under QueryNode memory pressure
+## X. read external refresh task state from response properties
 
 **RULE**:
-When implementing operations in `configs/milvus.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/datacoord/session/cluster.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7c51197b`: enhance: release cold collections under QueryNode memory pressure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c31070a6`: read external refresh task state from response properties. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `configs/milvus.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/datacoord/session/cluster.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    enabled: false # whether QueryCoord releases collections after the configured time to idle (TTI) or under Worker QN memory pressure; effective only when proxy.enableAutoLoad is true
-    ttiSeconds: 3600
-    checkIntervalSeconds: 10
-    releaseConcurrency: 16 # maximum concurrent automatic collection releases per scan; runtime updates take effect on the next scan
-    lruHighWatermarkPercentage: 85 # Worker QueryNode pool anonymous resident memory percentage that starts collection LRU release; takes effect on the next scan
-    lruLowWatermarkPercentage: 80 # Worker QueryNode pool anonymous resident memory percentage that stops selecting collection LRU releases; must be below the high watermark
-    lruMaxEvictionsPerScan: 64 # maximum collection LRU releases selected per scan, independent of releaseConcurrency
+	resProperties := taskcommon.NewProperties(resp.GetProperties())
+	state, err := resProperties.GetTaskState()
+	if err != nil {
+		return nil, err
+	}
+	reason := resProperties.GetTaskReason()
+	if state != taskcommon.Finished {
+		// Only a finished task needs segment results from the payload.
+		return &datapb.RefreshExternalCollectionTaskResponse{Status: resp.GetStatus(), State: state, FailReason: reason}, nil
+	}
+
+	// An empty payload decodes to None. Only a finished worker result can
+	// supply the segment changes that DataCoord will publish.
+	if result.GetState() != taskcommon.Finished {
+		return nil, merr.WrapErrServiceInternalMsg("finished refresh task %d has result payload in state %s", taskID, result.GetState())
+	}
+	result.FailReason = reason
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    enabled: false # whether QueryCoord releases collections after an idle TTL; effective only when proxy.enableAutoLoad is true
-    idleTTLSeconds: 600
-    checkIntervalSeconds: 30
-    releaseConcurrency: 16 # maximum concurrent automatic collection releases in one scan; changes apply to the next release batch
+	// Unmarshal the response payload
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7c51197b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c31070a6` are properly handled with clean fallback behavior.

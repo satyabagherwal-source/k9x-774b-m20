@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "20746425",
+    "sourceVersion": "19ed1d67",
     "license": "Apache-2.0",
-    "contentHash": "51c8048745b426e0fa6fbd910779db761c3fbbe508ce51b48780691e16ab47a8",
-    "lastHarvestedAt": "2026-11-19T11:08:11.516Z",
+    "contentHash": "74eb72d9f2de95d346a8e4d42f2d97cc61d15d081dcedac98d83f21376937396",
+    "lastHarvestedAt": "2026-11-20T16:56:43.980Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -9273,10 +9273,10 @@
     "repository": "0xCUB3/wBlock",
     "platform": "github",
     "sourceUrl": "https://github.com/0xCUB3/wBlock",
-    "sourceVersion": "03e46e4a",
+    "sourceVersion": "71f06abb",
     "license": "GPL-3.0",
-    "contentHash": "528710f73deb94446f1c6aa4751d938d9f1340055bd28b458d3d6ef3cc897768",
-    "lastHarvestedAt": "2026-11-16T15:51:08.503Z",
+    "contentHash": "dc663124afd300bf015d31a59c555823bc79a34c99eee3211f663c24193f0151",
+    "lastHarvestedAt": "2026-11-20T16:56:35.268Z",
     "learningId": "learn-github-0xcub3-wblock"
   },
   "archivebox-archivebox": {
@@ -13078,5 +13078,25 @@
     "contentHash": "9605a5b4cc1edb37f43d288f8fe159c5f08c0d09d7b1ed2e5525a20fce37827e",
     "lastHarvestedAt": "2026-11-20T16:13:59.919Z",
     "learningId": "learn-huggingface-angelslim-hy4-flash-gguf"
+  },
+  "hf-apple-depthpro2": {
+    "repository": "apple/DepthPro2",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/apple/DepthPro2",
+    "sourceVersion": "hf-apple-depthpro2",
+    "license": "Open-Source",
+    "contentHash": "edefcf3c29a003281773a44060df529c9fa874dbd81ce872ba6d558b21106e5f",
+    "lastHarvestedAt": "2026-11-20T16:56:24.925Z",
+    "learningId": "learn-huggingface-apple-depthpro2"
+  },
+  "hf-ovhaillm-olala-v1.0-mini-7a1b": {
+    "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B",
+    "sourceVersion": "hf-ovhaillm-olala-v1.0-mini-7a1b",
+    "license": "Open-Source",
+    "contentHash": "7e8f55c0e8766dce5e7d51145608d4f0bc63b9b780187a413837aadf44abd3b5",
+    "lastHarvestedAt": "2026-11-20T16:56:27.344Z",
+    "learningId": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b"
   }
 }
