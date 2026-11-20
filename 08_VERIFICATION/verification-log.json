@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-RZLH",
-    "timestamp": "2026-11-18T18:10:00.821Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "472e72c44eee914e8404f908c5d5117c8238a50c1bac0e950985a02345cdb026",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-S28F",
     "timestamp": "2026-11-18T18:10:04.239Z",
     "repository": "pixeltable/pixeltable",
@@ -7490,6 +7475,21 @@
     "repository": "paradedb/paradedb",
     "learningId": "learn-github-paradedb-paradedb",
     "contentHash": "c0d96992f1d9b7149227f8c920ba5576cb066710f7db31bfb6e9d81bccc400ae",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-4PA5",
+    "timestamp": "2026-11-20T22:07:11.357Z",
+    "repository": "unsloth/Inkling-2-Mini-GGUF",
+    "learningId": "learn-huggingface-unsloth-inkling-2-mini-gguf",
+    "contentHash": "8ee2c18698a3a21cc7f859e43efa6cfd1b62c8910a13c822ea9460066f32ebe1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

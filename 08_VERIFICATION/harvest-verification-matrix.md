@@ -11638,3 +11638,5 @@
 | `CYCLE-20261120-EZY3` | `2026-11-20T21:47:12.123Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9644` | Yes (`54610216...`) |
 | `CYCLE-20261120-P61H` | `2026-11-20T21:55:06.581Z` | `digitalbazaar/pyld` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9645` | Yes (`4063d5f7...`) |
 | `CYCLE-20261120-PCXM` | `2026-11-20T21:55:15.514Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md` | Yes (`c0d96992...`) |
+| `CYCLE-20261120-4PA5` | `2026-11-20T22:07:11.357Z` | `unsloth/Inkling-2-Mini-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-inkling-2-mini-gguf-learnings.md` | Yes (`8ee2c186...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T22:08:02.116Z` | `hf-unsloth-inkling-2-mini-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0EAB1E60` [Domain D] | Yes (`1232ff78...`) |

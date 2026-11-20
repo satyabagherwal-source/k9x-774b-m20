@@ -21826,5 +21826,17 @@
     "downloads": 136,
     "qualityScore": 996,
     "discoveredAt": "2026-11-20T20:55:25.690Z"
+  },
+  {
+    "name": "unsloth/Inkling-2-Mini-GGUF",
+    "fullName": "unsloth/Inkling-2-Mini-GGUF",
+    "url": "https://huggingface.co/unsloth/Inkling-2-Mini-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: unsloth/Inkling-2-Mini-GGUF (91 likes, 0 downloads)",
+    "likes": 91,
+    "downloads": 0,
+    "qualityScore": 910,
+    "discoveredAt": "2026-11-20T22:04:56.183Z"
   }
 ]

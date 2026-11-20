@@ -11671,3 +11671,5 @@ Every entry in this ledger must capture:
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `77137bc2` | Multi-dimensional audit evidence | 2026-11-20T21:47:12.127Z |
 | `learn-github-digitalbazaar-pyld` | `https://github.com/digitalbazaar/pyld` | `b87fa3e3` | Multi-dimensional audit evidence | 2026-11-20T21:55:06.585Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `dec61535` | Multi-dimensional audit evidence | 2026-11-20T21:55:15.518Z |
+| `learn-huggingface-unsloth-inkling-2-mini-gguf` | `https://huggingface.co/unsloth/Inkling-2-Mini-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-20T22:07:11.362Z |
+| `learn-dom-d-0eab1e60` | `project://hf-unsloth-inkling-2-mini-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-inkling-2-mini-gguf-learnings.md` | 2026-11-20T22:08:02.116Z |

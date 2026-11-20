@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T21:55:21.894Z",
+  "last_updated": "2026-11-20T22:08:05.075Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-20T21:39:02.682Z",
+      "processed_at": "2026-11-20T22:08:02.701Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-20T21:39:03.368Z",
+      "processed_at": "2026-11-20T22:08:03.412Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3631,9 +3631,14 @@
       "processed_at": "2026-11-20T21:25:54.005Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-unsloth-inkling-2-mini-gguf-learnings.md": {
+      "processed_at": "2026-11-20T22:08:02.116Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2628,
-  "total_canonical_promoted": 433,
-  "total_staged_for_review": 2006
+  "total_dossiers_evaluated": 2631,
+  "total_canonical_promoted": 434,
+  "total_staged_for_review": 2008
 }

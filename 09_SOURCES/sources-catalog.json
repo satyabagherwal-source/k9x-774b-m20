@@ -13108,5 +13108,15 @@
     "contentHash": "eb53e52bf4dc18b9ebccce33741cedafe833339e36f17c44b8bf75b20abf498e",
     "lastHarvestedAt": "2026-11-20T20:57:40.770Z",
     "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini"
+  },
+  "hf-unsloth-inkling-2-mini-gguf": {
+    "repository": "unsloth/Inkling-2-Mini-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/unsloth/Inkling-2-Mini-GGUF",
+    "sourceVersion": "hf-unsloth-inkling-2-mini-gguf",
+    "license": "Open-Source",
+    "contentHash": "8ee2c18698a3a21cc7f859e43efa6cfd1b62c8910a13c822ea9460066f32ebe1",
+    "lastHarvestedAt": "2026-11-20T22:07:11.362Z",
+    "learningId": "learn-huggingface-unsloth-inkling-2-mini-gguf"
   }
 }

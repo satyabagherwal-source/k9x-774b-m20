@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T21:55:21.581Z",
-  "total_records": 2180,
+  "last_updated": "2026-11-20T22:08:04.500Z",
+  "total_records": 2183,
   "domains": {
     "A": {
       "total": 17,
@@ -58,7 +58,7 @@
       ]
     },
     "D": {
-      "total": 878,
+      "total": 881,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -937,7 +937,10 @@
         "DOM-D-F66E1D4B",
         "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-mini-learnings-cor",
         "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-unsloth-inkling-2-mini-gguf-core-invariants",
+        "DOM-D-0EAB1E60",
+        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-inkling-2-mini-gguf-learnings-core-in"
       ]
     },
     "E": {
@@ -31276,8 +31279,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "0fa85c8b522718a9cc93524426400c82b84ecc9a97cac6777b9e24722fc4a654",
-      "created_at": "2026-11-20T21:39:03.121Z"
+      "content_hash": "f29cec3f4f44b1bdc739f97980a5f2ee871950b57980bcf866913b4ca0336116",
+      "created_at": "2026-11-20T22:08:03.168Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -33310,8 +33313,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "c22ebc42e00c6e8d692266f9469d6a0d9ae405c8fd1139f9e8b521bfa5c4f16e",
-      "created_at": "2026-11-20T21:39:04.429Z"
+      "content_hash": "5b84058a6a2e84f9b44f1009259921e24fbb60b0fb57045c8cfb63ba41d9eb4d",
+      "created_at": "2026-11-20T22:08:04.500Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -36668,6 +36671,66 @@
       "repository": "rdflib-rdflib-learnings",
       "content_hash": "3f1633e0eed3cf94737ae848927ba27a8ea7aee31c146a459d2b5c21b077c666",
       "created_at": "2026-11-20T21:25:55.771Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-unsloth-inkling-2-mini-gguf-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-inkling-2-mini-gguf-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: unsloth/Inkling-2-Mini-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-inkling-2-mini-gguf-research-knowledge-intelligence-unsloth-inkling-2.md",
+      "repository": "unsloth/Inkling-2-Mini-GGUF",
+      "content_hash": "625a5532e392562dba2ac0bacc8d651d932afa5ad23440dd150f1504d5808537",
+      "created_at": "2026-11-20T22:07:11.609Z"
+    },
+    "DOM-D-0EAB1E60": {
+      "record_id": "DOM-D-0EAB1E60",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): unsloth/Inkling-2-Mini-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-inkling-2-mini-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/unsloth/Inkling-2-Mini-GGUF](https://huggingface.co/unsloth/Inkling-2-Mini-GGUF))  \n> **Source Version**: `hf-unsloth-i`  \n> **License**: Open-Sou",
+      "content_hash": "1232ff78e31634c4beab1e7cb3c4a6b90d055646bb30ab80164374ce2411978c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-inkling-2-mini-gguf-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-inkling-2-mini-gguf-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "provenance": {
+        "source_uri": "project://hf-unsloth-inkling-2-mini-gguf/hf-unsloth-inkling-2-mini-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T22:07:25.462Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-unsloth-inkling-2-mini-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-unsloth-inkling-2-mini-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T22:08:02.079Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-unsloth-inkling-2-mini-gguf-learnings-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-inkling-2-mini-gguf-learnings-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-unsloth-inkling-2-mini-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-inkling-2-mini-gguf-learnings-research-knowledge-intelligence-hf-unsl.md",
+      "repository": "hf-unsloth-inkling-2-mini-gguf-learnings",
+      "content_hash": "7d2b756e906617a72efe860f2d08fe1f9dcd2bf27573deea81fc55cd759cf702",
+      "created_at": "2026-11-20T22:08:02.453Z"
     }
   }
 }

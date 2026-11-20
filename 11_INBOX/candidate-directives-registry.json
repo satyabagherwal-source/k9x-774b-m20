@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T21:55:21.418Z",
+  "last_updated": "2026-11-20T22:08:04.291Z",
   "directives": [
     {
       "id": "CD-001",
@@ -32758,11 +32758,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-4JH4",
+      "id": "CD-5U4A",
       "directive_title": "build): download ONNX Runtime archives from npmmirror",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-4JH4-build-download-onnx-runtime-archives-from-npmmirror.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-5U4A-build-download-onnx-runtime-archives-from-npmmirror.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -39362,6 +39362,24 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-ED4110-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-73AC7C",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-73AC7C-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-8AFEA8",
+      "directive_title": "build): download ONNX Runtime archives from npmmirror",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8AFEA8-build-download-onnx-runtime-archives-fro.md",
       "staged_date": "2026-11-20"
     }
   ]

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T21:55:15.553Z",
-  "total_cycles_completed": 11083,
-  "total_learnings_persisted": 11083,
+  "last_updated": "2026-11-20T22:07:11.369Z",
+  "total_cycles_completed": 11084,
+  "total_learnings_persisted": 11084,
   "total_rules_promoted": 10436,
   "history": [
-    {
-      "timestamp": "2026-11-19T23:15:43.138Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T23:15:46.577Z",
       "repository": "doobidoo/mcp-memory-service",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-20T21:55:15.553Z",
       "repository": "paradedb/paradedb",
       "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T22:07:11.369Z",
+      "repository": "unsloth/Inkling-2-Mini-GGUF",
+      "learningId": "learn-huggingface-unsloth-inkling-2-mini-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

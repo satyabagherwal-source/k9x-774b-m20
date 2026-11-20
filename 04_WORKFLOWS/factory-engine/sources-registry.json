@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T21:55:18.806Z",
-    "lastVerified": "2026-11-20T21:55:18.806Z",
+    "lastChecked": "2026-11-20T22:07:25.300Z",
+    "lastVerified": "2026-11-20T22:07:25.300Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T21:25:47.287Z",
+    "lastChecked": "2026-11-20T22:07:25.291Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T21:25:47.287Z"
+    "lastVerified": "2026-11-20T22:07:25.291Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -697,12 +697,12 @@
     "revisionIdentifier": "5344f432"
   },
   "defguard-defguard": {
-    "name": "DefGuard/defguard",
+    "name": "defguard",
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T16:13:03.399Z",
-    "lastVerified": "2026-11-20T16:13:03.399Z",
+    "lastChecked": "2026-11-20T22:07:20.438Z",
+    "lastVerified": "2026-11-20T22:07:20.438Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -711,7 +711,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "05bc57ba"
   },
   "topoteretes-cognee": {
     "name": "topoteretes/cognee",
@@ -2319,9 +2320,9 @@
   "volcengine-minecontext": {
     "name": "MineContext",
     "officialUrl": "https://github.com/volcengine/MineContext",
-    "lastChecked": "2026-11-19T18:06:22.954Z",
+    "lastChecked": "2026-11-20T22:07:22.844Z",
     "revisionIdentifier": "171c7a9e",
-    "lastVerified": "2026-11-19T18:06:22.954Z"
+    "lastVerified": "2026-11-20T22:07:22.844Z"
   },
   "flox-flox": {
     "name": "flox",
@@ -3094,9 +3095,9 @@
   "cdk-team-cdk": {
     "name": "CDK",
     "officialUrl": "https://github.com/cdk-team/CDK",
-    "lastChecked": "2026-11-19T19:39:01.600Z",
+    "lastChecked": "2026-11-20T22:07:17.786Z",
     "revisionIdentifier": "69da22ad",
-    "lastVerified": "2026-11-19T19:39:01.600Z"
+    "lastVerified": "2026-11-20T22:07:17.786Z"
   },
   "vearch-vearch": {
     "name": "vearch",
@@ -10857,5 +10858,36 @@
     "lastChecked": "2026-11-20T21:55:02.796Z",
     "revisionIdentifier": "0e005e9c",
     "lastVerified": "2026-11-20T21:55:02.796Z"
+  },
+  "hf-unsloth-inkling-2-mini-gguf": {
+    "name": "unsloth/Inkling-2-Mini-GGUF",
+    "officialUrl": "https://huggingface.co/unsloth/Inkling-2-Mini-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-20T22:07:10.487Z",
+    "lastVerified": "2026-11-20T22:07:10.487Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-unsloth-inkling-2-mini-gguf",
+    "contentHash": "8ee2c18698a3a21cc7f859e43efa6cfd1b62c8910a13c822ea9460066f32ebe1",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rdfjs-namespace": {
+    "name": "namespace",
+    "officialUrl": "https://github.com/rdfjs/namespace",
+    "lastChecked": "2026-11-20T22:07:12.940Z",
+    "revisionIdentifier": "b7efbf00",
+    "lastVerified": "2026-11-20T22:07:12.940Z"
+  },
+  "sozercan-kaset": {
+    "name": "kaset",
+    "officialUrl": "https://github.com/sozercan/kaset",
+    "lastChecked": "2026-11-20T22:07:15.327Z",
+    "revisionIdentifier": "ebaa1858",
+    "lastVerified": "2026-11-20T22:07:15.327Z"
   }
 }
