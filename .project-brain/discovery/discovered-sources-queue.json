@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T23:47:53.360Z",
+  "updated_at": "2026-11-20T23:57:53.738Z",
   "stats": {
-    "total_discovered": 6811,
-    "approved_pending_harvest": 6431,
+    "total_discovered": 6816,
+    "approved_pending_harvest": 6435,
     "harvested_count": 0,
-    "rejected_count": 380,
+    "rejected_count": 381,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6403,
+      "COMMUNITY_AND_EXPERT": 6408,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 121,
       "ENGINEERING_BLOGS": 5,
@@ -147205,6 +147205,109 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
         "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-0F693D004A95": {
+      "id": "SRC-0F693D004A95",
+      "url": "https://github.com/rafsoh/dimeApp",
+      "title": "https://github.com/rafsoh/dimeApp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:57:52.183Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
+        "fileName": "rafsoh-dimeapp-learnings.md"
+      }
+    },
+    "SRC-4F4B1C168EC7": {
+      "id": "SRC-4F4B1C168EC7",
+      "url": "http://127.0.0.1/demo.mp4",
+      "title": "http://127.0.0.1/demo.mp4",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T23:57:53.561Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
+        "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-2E72116AE167": {
+      "id": "SRC-2E72116AE167",
+      "url": "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js",
+      "title": "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:57:53.620Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
+        "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-03D3789CD5E1": {
+      "id": "SRC-03D3789CD5E1",
+      "url": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js",
+      "title": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:57:53.681Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
+        "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-A014513D2CFE": {
+      "id": "SRC-A014513D2CFE",
+      "url": "https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js",
+      "title": "https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:57:53.738Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
+        "fileName": "lioensky-vcptoolbox-learnings.md"
       }
     }
   }

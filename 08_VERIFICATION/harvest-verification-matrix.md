@@ -11664,3 +11664,5 @@
 | `CYCLE-20261120-FSQI` | `2026-11-20T23:39:47.898Z` | `webpack/webpack` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9663` | Yes (`4cc59355...`) |
 | `CYCLE-20261120-FZ8I` | `2026-11-20T23:39:56.322Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9664` | Yes (`54ec977f...`) |
 | `CYCLE-20261120-Q27Q` | `2026-11-20T23:47:46.742Z` | `rollup/rollup` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rollup-rollup-learnings.md` | Yes (`952d94f0...`) |
+| `CYCLE-20261120-176W` | `2026-11-20T23:56:26.408Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9665` | Yes (`c9c965d1...`) |
+| `CYCLE-20261120-2YAO` | `2026-11-20T23:57:48.192Z` | `rafsoh/dimeApp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9666, Rule 9667, Rule 9668` | Yes (`41d3ae60...`) |

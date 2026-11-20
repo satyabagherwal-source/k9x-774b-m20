@@ -4,24 +4,24 @@
 {
   "source_repository": "lioensky/VCPToolBox",
   "source_url": "https://github.com/lioensky/VCPToolBox",
-  "source_version": "4eaca06a",
+  "source_version": "09a25ded",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T23:17:40.830Z",
+  "timestamp": "2026-11-20T23:56:26.682Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lioensky-vcptoolbox",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `4eaca06a`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T23:17:40.830Z`  
+> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `09a25ded`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-20T23:56:26.682Z`  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), C (Market & Business Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from lioensky/VCPToolBox:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T23:17:39.322Z  
+> **Harvest Timestamp**: 2026-11-20T23:56:25.063Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2448 stars
+- **Stars / Engagement**: 2450 stars
 
 ---
 
@@ -1799,11 +1799,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #609** (2026-11-17): **feat(memory): 完整接入 RiverMemo V5 双曲生产检索与 AB 旧轨隔离**
-  *Symptoms*: ## 概要  将 RiverMemo V5 双曲检索完整接入生产记忆入口，包含双曲导航内核、Tag／Chunk 场、快照与训练生命周期、RAGDiary／LightMemo 接线、AB 对照、回归与技术文档。  ### 生产入口  - RAGDiary 原生被动检索默认使用双曲 Chunk 候选、双曲 Tag 观测和 RiverMemo V5 读出；观测初始化不可用时兜底双曲 ANN。 - LightMemo 普通检索默认同一 V5 链路，纯 ANN 模式使用双曲 Chunk 检索。 - 普通生产查询不加载旧全库 TDB-SM 候选载荷或预加载旧分库索引；旧 TDB ANN、余弦 Tag／RiverMemo V3/4 对照在 LightMemo AB 中按需启用，下一次生产查询释放旧候选载荷。 - RAG 提示词及 LightMemo 回执区分 V5 与双曲 ANN，负双曲距离不显示为相关性百分比。 - V5 是检索链路名称，保留现有原生读出器及 Topology V3 连续评分架构。  ### 原生资产与训练  - 全局 Chunk 共享训练代均值轴、经验分位半径、量化图及方向目录，范围过滤复用全局坐标。 - SQL 实时同步成员及范围元数据；新增／向量更新的 Chunk 在冻结几何上精确评分，删除立即影响结果。 - 日常事实前移不重建全场；手动全训及既有 1% Tag 阈值任务统一重建生产 Tag 与 Chunk 双曲场。 - 包含快照恢复、完整性校验、受控强制重建、冷加载及代际一致性。 - 增加残差能量半径、强语义场继承与 Hop-0 意图覆盖。 - 已删除阶段实验工具和旧固定曲率原型，保留生产共用编码、搜索预算、连通性修复与正式回归；原有基准工程编译通过。  ## 验证  - 原生主项目 Release：254 通过，0 失败，0 忽略。 - 索引内核 Release：124 通过，0 失败，3 项既有基准／诊断忽略。 - 相关 JS：87 通过，0 失败。 - 真实 N-API 合成集成通过，覆盖 V5、双曲 ANN、AB 载荷启用／释放、范围、增量、重启及训练；撤回 V5.1 后再次通过。 - Windows x64 MSVC 生产构建及原有检索基准编译检查通过。 - 原生构建与测试禁用 AVX-512。 - 与当前远端主分支合并预检无文本冲突。未执行实际合并。 - 用户计划的服务器 50 组跑分尚未提供结果，不计入已通过验证。  ## V5.1 母锚探针实验：不采用  既有 64 个已观察文件完成七组主对照及 0.66 反例。重点分离模式 0.22 没有净增准入层，开发／已观察验证收益不一致；0.66 明显退化。实验源码已撤回，仅保留[实验结论](docs/RIVERMEMO_V51_PARENT_TETHER_EXPERIMENT.md)，本 PR 不含母锚系绳算子或开关。  ## 部署  后端、插件与匹配平台原生模块一并更新并重启。此 PR 只更新 Windows x64 MSVC 模块；Linux/macOS 在目标平台构建。  Windows 模块大小为 15,917,056 字节，SHA-256： a50d8fe5fe782281cde1179567615f0e41bebef083a1c606e0587fa76b903413  旧 Chunk 快照继续使用其保存的径向规则；执行现有全量训练才发布新训练几何。数据库同目录需旁路快照写权限。
+- **Issue #621** (2026-11-20): **fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题**
+  *Symptoms*: ## 概述  在对 VCPToolBox 各 Agent 提示词、插件清单（Manifest）及 TVStxt 工具调用模板的审查中，发现若干由于手滑、转义字符误用、复制遗漏等导致的纯文本笔误问题。这些问题会导致占位符无法展开（宏死链）、JSON 参数名解析错误（如制表符导致参数识别失败）、或者模型生成工具请求时缺少必需的 `tool_name`。  本次 PR 针对上述 8 处纯文本问题进行了精准修复，未引入任何逻辑改动与格式抖动。  ## 修改明细  1. **宏占位符拼写修正**：    - `Agent/DeepSeekOfficial.txt`：修正第 20 行用户宏 `{{VarUse}}` -> `{{VarUser}}`（原先漏写末尾字母 `r`，导致宏无法展开）。 2. **JSON 转义符手滑修正**：    - `Plugin/TavilySearch/plugin-manifest.json`：修正示例中的 `\\time_range` -> `\\ntime_range`（原先手滑打成制表符转义 `\\t`，导致 JSON 解析后参数名损坏为 `\\t` + `ime_range`）。 3. **插件示例与说明残缺修复**：    - `Plugin/MediaRenderer/plugin-manifest.json`：补全两处命令描述中因脚本迁移误删的 `<<<[TOOL_REQUEST]>>> 到 <<<[END_TOOL_REQUEST]>>>` 标签文字。    - `Plugin/ZImageGen2/plugin-manifest.json.block`：修正示例中的工具名 `ZImageGen` -> `ZImageGen2`（漏写末尾数字 `2`）。 4. **工具调用示例规范化与笔误清除**：    - `TVStxt/toollite.txt` & `TVStxt/SearchToolBox.txt`：为 B 站视频检索（`search`）与 UP 主投稿检索（`get_up_videos`）子命令示例首行补充缺失的 `tool_name:「始」BilibiliFetch「末」,`，避免模型直接调用时因缺失工具名报错。    - `TVStxt/JevToolCall.txt`：移除第 43 行普通指令末尾多余遗留的孤立 `「末」` 字符。    - `TVStxt/supertool.txt`：为说明文案中的 `<<<[TOOL_REQUEST]>>>` 与 `<<<[END_TOOL_REQUEST]>>>` 增加行内代码反引号包裹，防止说明文字被正则解析器误提取为空工具请求。  ## 验证与审查  - 所有 JSON 文件语法经 `python3 -m json.tool` 校验 100% 合法，且严格保持原有的换行格式（如 TavilySearch 的 CRLF）； - 经独立代码审查子代理核验：全量界定符「始」「末」严格配对，无任何代码与格式抖动； - 自动化测试全部通过（18/18 项测试全部 PASS，追加回归测试 39/39 全部 PASS）。
 
-- **Issue #608** (2026-11-17): **fix(chat,bridge): 仅按 NativeToolIsolationModels 选择性剥离出站原生工具调用并支持桥接模型列表透传**
-  *Symptoms*: ## 动机与背景  1. **出站原生工具调用被无差别剥离**：此前引入环境变量 `NativeToolIsolationModels`（默认 `hydrogen`）旨在针对原生工具调用异常的特定模型（如 `4h`）移除请求侧的 `tools` 与 `tool_calls` 字段。但在 `6d7cefe0` 提交中，`modules/handlers/streamHandler.js` 的 `transformParsedDataForClient` 对所有模型无条件执行了 `delete payload.tool_calls`、`delete payload.function_call` 并将工具类 `finish_reason` 置为 `null`，且在未命中 VCP 文本工具循环时统一补发 `finish_reason: "stop"`；同时 `modules/handlers/nonStreamHandler.js` 在结尾硬编码将 `finish_reason` 覆写为 `"stop"`。这导致所有常规模型通过 `/v1/chat/completions`（以及内部依赖该端点的 `routes/protocolBridge.js` `/v1/responses` 流式接口、外部 IDE/CLI 客户端与酒馆前端脚本）发起的原生 Function Calling 丢失工具载荷与终止信号。 2. **多轮工具回执字面量保护缺口**：当下游客户端在多轮原生工具调用中回传 `role: "tool"` 或 `"function"` 消息时，若工具读取的源码片段恰好包含 `{{...}}` 占位符字面量，经过 `chatCompletionHandler.js` 变量展开循环时存在被误替换的风险。 3. **VCPBridgeServer 模型列表未透传上游**：`Plugin/VCPBridgeServer/bridgeserver.js` 的 `GET /v1/models`（及 `/v1/:profile/models`）仅返回本地配置的静态模型项，下游客户端无法动态获取主服务端与上游渠道的完整可用模型列表。  ## 架构与解决方案  不新增任何环境变量，直接复用既有 `NativeToolIsolationModels`（`matchesNativeToolIsolation`）实现入站与出站的双向对称门控：  1. **流式出站对称门控（`modules/handlers/streamHandler.js`）**：    - 仅当实际响应模型或请求模型命中 `matchesNativeToolIsolation` 时剥离 `delta.tool_calls`、`function_call` 并重置工具终止原因（保持 `hydrogen` 等隔离模型的畸形工具恢复防重语义不变）；    - 对非隔离模型完整保留原生工具增量块，记录 `sawNativeToolCall` 与原始 `finish_reason`；在本轮无 VCP 文本工具且已产出原生工具调用时，跳过追加覆盖性的 `finish_reason: "stop"` 帧（若上游未携带工具终止原因则补齐 `"tool_calls"` 终态帧），并将有效原生工具轮纳入 `completed: true` 结算。 2. **非流式出站终态保留（`modules/handlers/nonStreamHandler.js`）**：    - 对命中隔离配置的模型清理残余 `tool_call
+- **Issue #620** (2026-11-20): **fix(plugins): 修正多处插件 Manifest 示例工具名、参数大小写及格式错误**
+  *Symptoms*: ## 概述  在对 VCPToolBox 插件清单及工具调用机制的排查中，发现部分服务端插件的 `plugin-manifest.json` 在由前端版本迁移或复制时，调用示例（`example` / `description`）中的 `tool_name` 残留了无 `Server` 前缀的旧名称或错误名称。由于 VCP 工具调度器严格按 `manifest.name` 查找插件，大模型依据占位符展开的示例发起调用时，会在服务端必现 `未找到名为 \"xxx\" 的插件` 报错。  本次提交针对上述问题进行了系统性修复，并完善了相关参数大小写容错与格式排版。  ## 修改明细  1. **修正 5 个插件 Manifest 示例中的 `tool_name` 不匹配问题**：    - `Plugin/PluginSourceViewer`: `tool_name` 示例由 `PluginSourceViewer` 修正为声明的 `ServerPluginSourceViewer`。    - `Plugin/FileOperator`: 全部 21 个子命令调用示例中的 `tool_name` 统一由 `FileOperator` 修正为声明的 `ServerFileOperator`。    - `Plugin/PowerShellExecutor`: 全部 3 处模式示例中的 `tool_name` 统一由 `PowerShellExecutor` 修正为声明的 `ServerPowerShellExecutor`。    - `Plugin/VCPEverything`: 示例中的 `tool_name` 由未注册的 `LocalSearchController` 修正为声明的 `ServerSearchController`（消除与 JEV 描述的冲突）。    - `Plugin/DMXDoubaoGen`: 全部 3 处命令示例中的 `tool_name` 由复制残留的 `DoubaoGen` 修正为声明的 `DMXDoubaoGen`，避免错误路由至原生官方插件。  2. **`Plugin/AgentMessage` 规范化与参数双向兼容**：    - 运行时 `AgentMessage.js`：由仅读 `params.Maid` 升级为 `params.maid || params.Maid || params.valet`，向下兼容大写同时支持标准小写与中性词。    - Manifest：参数示例规范化为小写 `maid:`，并移除了示例外层冗余的 ```text 代码块围栏（防止大模型生成受代码块字面量保护的无效调用）。  3. **`Plugin/DailyNote` 日期参数大小写容错**：    - `handleCreateCommand` 中解析逻辑补充支持小写 `date`：`args.dateString || args.Date || args.date`，避免模型传入全小写 `date:` 时被误忽略并静默回退至当前日期。  4. **`Plugin/LightMemo` 换行符双重转义修复**：    - 将 `SearchRAG` 与 `MemoryAB` 示例中的 `\\\\n` 修正为真实的换行符 `\\n`，确保占位符解析后多行排版整洁。  ## 验证与回归测试  - 运行 `node validate-plugin-json.js`：全库 98 个插件清单 JSON 语法与 UTF-8 校
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1820,1171 +1820,369 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4eaca06a` (2026-11-17)
-**Commit Message**: 内存fix
+### Incident Patch 1: `09a25ded` (2026-11-20)
+**Commit Message**: fix
 
-**File**: `KnowledgeBaseManager.js` (modified, +2/-1)
+**File**: `Plugin/ImageFileServer/image-file-server.js` (modified, +6/-13)
 ```diff
-@@ -491,7 +491,8 @@ class KnowledgeBaseManager {
-                 dbPath,
-                 path.join(this.config.storePath, 'index_global_tags_a.vec'),
-                 this.config.modelSig,
--                tagCapacity
-+                tagCapacity,
-+                true
-             );
-             const parsed = typeof restored === 'string'
-                 ? JSON.parse(restored)
-```
-
-**File**: `docs/双曲Vexus合龙交付说明.md` (modified, +56/-1)
-```diff
-@@ -550,4 +550,59 @@ LightMemo AB 按需加载旧全局候选载荷；下一次生产查询会释放
- - SHA-256：a50d8fe5fe782281cde1179567615f0e41bebef083a1c606e0587fa76b903413。
- - Linux/macOS 使用相同源码在目标平台构建。
- 
--本地工程验证已完成。服务器由用户执行 50 组跑分检查检索与性能退行；完成该验收前暂停提交、推送和创建 PR。本轮未操作生产数据库或执行生产训练。
-\ No newline at end of file
-+本地工程验证已完成。服务器由用户执行 50 组跑分检查检索与性能退行；完成该验收前暂停提交、推送和创建 PR。本轮未操作生产数据库或执行生产训练。
-+
-+## 17. 内存一期：旧 Tag 路由休眠与 Chunk 范围缓存冷热切换
-+
-+### 17.1 原因与本轮范围
-+
-+V5 的双曲 Tag 场不会自动替代并释放旧余弦 Tag 路由。旧流程在启动恢复、摄取差分维护和快照发布后仍可能持有旧载荷；与此同时，生产请求还会激活双曲 Tag 场、全局 Chunk 双曲图及实时范围元数据。因此“采用量化双曲索引”不能直接推导整个进程 RSS 一定低于 V4。
-+
-+本轮定位到上述重复驻留机制，但未在生产进程中分解用户观察到的 100–200 MB 增量，也未证明检索卡顿的根因。受管载荷、线程工作区、SQL 页缓存和分配器保留量不能混同为 RSS。
-+
-+### 17.2 Tag 行为
-+
-+- 生产启动显式选择旧路由懒加载，校验 SQL 有效向量并保留逻辑计数，不创建完整旧检索载荷。
-+- 显式余弦搜索、旧轨观测以及既有双曲初始化余弦回退，在需要时从当前 SQL 读事务恢复旧路由。
-+- 生产双曲 Tag 命中时释放旧路由，不清空共享数学资产和在途观测。旧轨最后一次使用后若没有后续双曲请求，本轮没有新增独立定时回收器。
-+- 冷态摄取不保留旧路由增量向量；现阶段通过流式扫描 SQL 有效向量刷新逻辑计数，会产生随 Tag 总数增长的读取成本，不宣称该步骤恒定耗时。
-+- 快照发布保留原冷热状态；后台压缩发布前检查驻留状态，避免把已休眠载荷重新放回。
-+- SQL 原始向量、向量版本、累计差异、A/B 基线及既有发布门禁保留。双曲场不是事实数据库，也不能替代这些持久化信息。
-+- 兼容恢复接口新增可选懒加载参数；省略时仍使用既有热恢复行为。
-+
-+Tag 双曲仍遵循原训练代际，没有加入新 Tag 实时感应，没有修改 1% 自动训练门槛。十万级 Tag 双曲预计算降本及提高训练频率属于二期。
-+
-+### 17.3 Chunk 行为与限制
-+
-+当前实现是范围元数据缓存优化，不是新增或卸载一套分区向量索引：
-+
-+- 全局有效成员头、向量版本、文件身份及目录名仍保留；全局双曲图和冻结训练代不因目录切换重建。
-+- 首行文本及日期按当前请求涉及的目录集合加载；切换范围时释放不再使用的目录文本缓存。多目录请求同时保留所需目录，全库请求可能加载全部范围文本。
-+- LightMemo 与原生联合检索均在现有 SQL 快照和全局表锁内完成激活及检索；不会在请求使用中卸载缓存。
-+- 新增和变更 Chunk 仍在冻结几何下精确评分并合并；删除与权限、时间、女仆首行条件不放宽。
-+- 旧 AB 全局量化载荷仍按需启用；返回生产查询后释放。原闲置全局表淘汰机制保留。
-+- 运行时统计新增分区数量和首行文本容量；此容量不含全局成员头、图载荷、分配器或 RSS。
-+- 当前没有独立分区 LRU、容量预算或分区 TTL；采用当前请求工作集切换策略。频繁交替目录存在重新读取文本的成本，尚未进行真实规模性能验收。
-+
-+### 17.4 验证与模块身份
-+
-+本轮仅操作临时合成夹具，未启动生产服务、操作生产库或执行生产训练。
-+
-+| 范围 | 结果 |
-+| --- | --- |
-+| 原生主项目 Release 全量回归 | 258 通过、0 失败、0 忽略 |
-+| 最终 Windows 模块真实 N-API 集成 | 通过；覆盖冷态摄取、余弦按需恢复、双曲释放、观测保留、分区切换、实时增量与持久化 |
-+| 生产路由、Tag 基线、一致性及维度兼容 JS 回归 | 9 通过、0 失败 |
-+| Windows x64 MSVC 生产构建 | 成功 |
-+| 差异空白检查 | 通过；生成声明存在行尾提示 |
-+
-+本轮未修改索引内核，未将历史内核测试冒充重新运行。测试和构建设置禁用 AVX-512 的运行时条件。
-+
-+Windows 模块大小：15,967,744 字节。
-+SHA-256：e696d70557d3a5773cc7f3adf0825aea1b455e61bdf2cdb6449bb8dd9212bfe3。
-+
-+部署必须同时更新后端及匹配原生模块并重启。Linux/macOS 需要在对应平台重新构建。无需为了回收旧路由执行全量训练或删除历史快照。
-+
-+生产验收应分别采集：启动后、首次普通双曲查询后、AB 后、再次普通双曲查询后、切换目录后和闲置回收后的进程 RSS、旧 Tag 热载荷、分区首行容量及双曲场统计；同时比较相同查询集合的结果与延迟。载荷释放不保证分配器立即归还 RSS，合成回归也不能替代实际内存与性能测量。
-+
-+未执行 Git 提交、推送或暂存。
-\ No newline at end of file
-```
-
-**File**: `rust-vexus-lite/index.d.ts` (modified, +1/-1)
-```diff
-@@ -307,7 +307,7 @@ export declare class NativeKnowledgeRuntime {
-    */
-   restoreDiaryIndex(dbPath: string, diaryName: string, indexPath: string, modelSig: string, capacity: number, diaryIndex: VexusIndex): Promise<unknown>
-   /** 在 Rust 后台线程恢复全局 Tag 索引。 */
--  restoreGlobalTagIndex(dbPath: string, indexPath: string, modelSig: string, capacity: number): Promise<unknown>
-+  restoreGlobalTagIndex(dbPath: string, indexPath: string, modelSig: string, capacity: number, lazyRouting?: boolean | undefined | null): Promise<unknown>
-   /** 在 Rust 后台线程执行日记索引双槽代际 checkpoint。 */
-   checkpointDiaryIndex(dbPath: string, diaryName: string, indexPath: string, modelSig: string, threshold: number, force?: boolean | undefined | null, allowInitial?: boolean | undefined | null): Promise<unknown>
-   /** 在 Rust 后台线程执行全局 Tag 索引双槽代际 checkpoint。 */
-```
-
-**File**: `rust-vexus-lite/src/global_chunks.rs` (modified, +108/-2)
-```diff
-@@ -45,6 +45,9 @@ pub(crate) struct GlobalChunks {
-     model: String,
-     facts: String,
-     pub last_used: Instant,
-+    // Only production scope metadata is cold-loaded. Global membership and
-+    // trained geometry remain independent of this request working set.
-+    hot_partitions: HashSet<String>,
+@@ -567,25 +567,18 @@ function registerRoutes(app, pluginConfig, projectBasePath) {
+     console.log(`  - 允许的文件格式: ${SECURITY_CONFIG.ALLOWED_FILE_EXTENSIONS.join(', ')}`);
  }
  
- fn facts(connection: &Connection) -> Result<String, String> {
-@@ -76,6 +79,7 @@ impl GlobalChunks {
-             warped: None,
-             dimension, model: model.into(), facts: String::new(),
-             last_used: Instant::now(),
-+            hot_partitions: HashSet::new(),
-         })
-     }
- 
-@@ -92,6 +96,11 @@ impl GlobalChunks {
-         if self.legacy_enabled {
-             self.routing = CorrectedSmIndex::empty_flat(self.dimension).map_err(|e| e.to_string())?;
-             self.legacy_enabled = false;
-+            self.hot_partitions.clear();
-+            for row in self.rows.values_mut() {
-+                row.first_line = String::new();
-+                row.date = 0;
-+            }
-         }
-         Ok(())
-     }
-@@ -177,10 +186,13 @@ impl GlobalChunks {
-             let (file_id, content, diary): (i64, String, String) =
-                 metadata.query_row([id], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)))
-                     .map_err(|e| e.to_string())?;
-+            let hot = self.legacy_enabled || self.hot_partitions.contains(&diary);
-             self.rows.insert(id, ChunkHeader {
-                 id, file_id, diary,
--                first_line: content.split('\n').next().unwrap_or_default().trim().into(),
--                date: chunk_date(&content),
-+                first_line: if hot {
-+                    content.split('\n').next().unwrap_or_default().trim().into()
-+                } else { String::new() },
-+                date: if hot { chunk_date(&content) } else { 0 },
-                 vector_version: vv, metadata_version: mv, file_version: fv, slot,
-             });
-             changed += 1;
-@@ -189,6 +201,53 @@ impl GlobalChunks {
-         Ok(changed)
-     }
- 
-+    /// Activate exactly the partitions required by this frozen request. The
-+    /// caller holds the table mutex until scope filtering and retrieval finish.
-+    /// No vector payload, file publication, or geometry rebuild is involved.
-+    pub fn activate_partitions(
-+        &mut self, connection: &Connection, diaries: &HashSet<String>,
-+    ) -> Result<(), String> {
-+        if self.legacy_enabled { return Ok(()); }
-+        if connection.is_autocommit() {
-+            return Err("Chunk partition activation requires a read transaction".into());
-+        }
-+        // Publish readiness only after all reads succeed. Partial text loads on
-+        // error are not marked ready and are retried; no result escapes that request.
-+        let missing: HashSet<_> = diaries.difference(&self.hot_partitions).cloned().collect();
-+        let mut statement = connection.prepare(
-+            "SELECT c.id,c.content FROM chunks c JOIN files f ON f.id=c.file_id
-+             WHERE f.diary_name=?1 AND c.vector IS NOT NULL",
-+        ).map_err(|error| error.to_string())?;
-+        for diary in &missing {
-+            let mut rows = statement.query([diary]).map_err(|error| error.to_string())?;
-+            while let Some(row) = rows.next().map_err(|error| error.to_string())? {
-+                let id: i64 = row.get(0).map_err(|error| error.to_string())?;
-+                if let Some(header) = self.rows.get_mut(&id) {
-+                    let content: String = row.get(1).map_err(|error| error.to_string())?;
-+                    header.first_line = content.split('\n').next().unwrap_or_default().trim().into();
-+                    header.date = chunk_date(&content);
-+                }
-+            }
-+        }
-+        for row in self.rows.values_mut().filter(|row| !diaries.contains(&row.diary)) {
-+            row.first_line = String::new();
-+            row.date = 0;
-+        }
-+        self.hot_partitions = diaries.clone();
-+        Ok(())
-+    }
-+
-+    pub fn partition_stats(&self) -> serde_json::Value {
-+        let first_line_bytes: usize = self.rows.values().map(|row| row.first_line.capacity()).sum();
-+        serde_json::json!({
-+            "mode":if self.legacy_enabled {"legacy-global"} else {"request-partitions"},
-+            "hotPartitions":self.hot_partitions.len(),
-+            "globalMembers":self.rows.len(),
-+            "firstLineBytes":first_line_bytes,
-+            "note":"Managed text capacity only; excludes global member headers, geometry and RSS"
-+        })
-+    }
-+
-     /// `admits` is called exactly once per live row, at that row's current slot,
-     /// when `limit > 0` and the scan completes (an empty search returns early).
-     #[cfg(test)]
-@@ -270,6 +329,7 @@ impl GlobalChunks {
-                 rows: snapshot.rows.into_iter().map(|row| (row.id, row)).collect(),
-                 routing, legacy_enabled: true, warped: None, dimension, model: model.into(), facts: snapshot.facts,
-                 last
-```
-
-**File**: `rust-vexus-lite/src/index_handle.rs` (modified, +3/-0)
-```diff
-@@ -7,6 +7,8 @@ use crate::retrieval_index::RetrievalIndex as Index;
- pub(crate) struct IndexHandle {
-     inner: RwLock<Index>,
-     pub(crate) maintenance: std::sync::Mutex<()>,
-+    /// Production may keep SQL-owned Tag routing cold; standalone defaults stay eager.
-+    pub(crate) lazy_tag_routing: std::sync::atomic::AtomicBool,
-     count: AtomicU64,
-     capacity: AtomicU64,
-     memory: AtomicU64,
-@@ -24,6 +26,7 @@ impl IndexHandle {
-             tombstones: AtomicU64::new(index.tombstones() as u64),
-             inner: RwLock::new(index),
-             maintenance: std::sync::Mutex::new(()),
-+            lazy_tag_routing: std::sync::atomic::AtomicBool::new(false),
-         }
-     }
- 
-```
-
-**File**: `rust-vexus-lite/src/index_lifecycle.rs` (modified, +133/-1)
-```diff
-@@ -842,7 +842,13 @@ impl Task for IndexCheckpointTask {
-             Error::from_reason(format!("Rebase checkpoint index failed: {}", error))
-         })?;
-         if self.content_revision.load(Ordering::Acquire) == revision_before_save {
--            *active = Index::from_sql(build);
-+            let was_cold = !active.routing_resident();
-+            let mut replacement = Index::from_sql(build);
-+            if was_cold {
-+                replacement.sleep_routing()
-+                    .map_err(|error| Error::from_reason(error.to_string()))?;
-+            }
-+            *active = replacement;
-         }
-         drop(active);
- 
-@@ -990,6 +996,51 @@ impl Task for IndexRestoreTask {
-         if Path::new(&self.index_path).extension().and_then(|value| value.to_str()) != Some("vec") {
-             return Err(Error::from_reason("Runtime index paths must use the .vec format"));
-         }
-+        let (generation, slot, replayed, rebuilt, skipped_invalid_vectors, target) =
-+        if self.scope == IndexScope::GlobalTags
-+            && self.index.lazy_tag_routing.load(Ordering::Acquire)
-+        {
-+            let mut target = Index::empty(dimension).map_err(|error|
-+                Error::from_reason(error.to_string()))?;
-+            target.release_originals();
-+            target.sleep_routing().map_err(|error|
-+                Error::from_reason(error.to_string()))?;
-+            let (generation, slot, skipped) = with_registered_read_transaction(&self.db_path, |connection| {
-+                target.refresh_cold_tag_count(connection)?;
-+                let total: i64 = connection.query_row(
-+                    "SELECT COUNT(*) FROM tags WHERE vector IS NOT NULL",
-+                    [], |row| row.get(0),
-+                ).map_err(|error| error.to_string())?;
-+                let active: Option<String> = connection.query_row(
-+                    "SELECT value FROM kv_store WHERE key='tag_index_active_baseline'",
-+                    [], |row| row.get(0),
-+                ).optional().map_err(|error| error.to_string())?;
-+                let mut generation = 0;
-+                let mut slot = String::new();
-+                if let Some(raw) = active {
-+                    let pointer: serde_json::Value = serde_json::from_str(&raw)
-+                        .map_err(|error| format!("Decode Tag baseline pointer failed: {error}"))?;
-+                    let candidate = pointer["generation"].as_i64().unwrap_or(0);
-+                    let candidate_slot = pointer["slot"].as_str().unwrap_or_default();
-+                    let manifest: Option<(i64, String)> = connection.query_row(
-+                        "SELECT dimension,model_sig FROM tag_index_baselines
-+                         WHERE generation=?1 AND slot=?2 AND status='ready'",
-+                        rusqlite::params![candidate, candidate_slot],
-+                        |row| Ok((row.get(0)?, row.get(1)?)),
-+                    ).optional().map_err(|error| error.to_string())?;
-+                    if candidate > 0 && matches!(candidate_slot, "a" | "b")
-+                        && manifest == Some((dimension as i64, self.model_sig.clone()))
-+                    {
-+                        generation = candidate;
-+                        slot = candidate_slot.to_string();
-+                    }
-+                }
-+                Ok((generation, slot, (total.max(0) as u64).saturating_sub(target.size() as u64)))
-+            }).map_err(Error::from_reason)?;
-+            // No legacy payload is restored. Its SQL endorsement remains visible
-+            // in diagnostics, without opening or rewriting the endorsed asset.
-+            (generation, slot, false, false, skipped, target)
-+        } else {
-         let db_path = self.db_path.clone();
-         let diary_name = self.diary_name.clone();
-         let model_sig = self.model_sig.clone();
-@@ -1297,6 +1348,8 @@ impl Task for IndexRestoreTask {
-         target.reserve(self.capacity as usize).map_err(|error| {
-             Error::from_reason(format!("Reserve restored index capacity failed: {}", error))
-         })?;
-+        (generation, slot, replayed, rebuilt, skipped_invalid_vectors, target)
-+        };
-         let vector_count = target.size() as u64;
-         let mut active = self
-             .index
-@@ -1814,4 +1867,83 @@ mod failed_endorsement_tests {
-         storage.shutdown().unwrap();
-         std::fs::remove_dir_all(root).unwrap();
-     }
+-// 优雅关闭处理
+-process.on('SIGINT', () => {
+-    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
++// 进程信号由宿主处理；插件只释放自身资源。
++function shutdown() {
+     securityManager.stopCleanupTimer();
+-    process.exit(0);
+-});
+-
+-process.on('SIGTERM', () => {
+-    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
+-    securityManager.stopCleanupTimer();
+-    process.exit(0);
+-});
 +}
-+
-+#[cfg(test)]
-+mod lazy_tag_routing_tests {
-+    use super::*;
-+
-+    #[test]
-+    fn lazy_restore_checkpoint_and_reload_preserve_sql_baseline_without_resident_routing() {
-+        let root = std::env::temp_dir().join(format!(
-+            "kbm-lazy-tags-{}-{}", std::process::id(),
-+            std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH)
-+                .unwrap().as_nanos()
-+        ));
-+        std::fs::create_dir_all(&root).unwrap();
-+        let db = root.join("test.sqlite").to_string_lossy().into_owned();
-+        let baseline
-```
-
-**File**: `rust-vexus-lite/src/index_maintenance.rs` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@ pub(crate) fn maintain(
-         crate::storage::ensure_generation(connection, generation)
-     })?;
-     let mut active = index.write().map_err(|error| error.to_string())?;
--    if revision.load(Ordering::Acquire) != revision_before {
-+    if revision.load(Ordering::Acquire) != revision_before || !active.routing_resident() {
-         return Ok(false);
-     }
-     *active = RetrievalIndex::from_sql(build);
-```
-
-**File**: `rust-vexus-lite/src/ingestion.rs` (modified, +16/-0)
-```diff
-@@ -974,6 +974,22 @@ fn apply_scope_index_deltas(
-     }
  
-     if !tag_updates.is_empty() {
-+        let cold = !global_tag_index.read()
-+            .map_err(|_| "Global Tag index read lock poisoned".to_string())?
-+            .routing_resident();
-+        if cold {
-+            // The caller owns the exclusive publication gate. SQL facts have
-+            // committed; no cosine consumer can race this cold refresh.
-+            with_registered_read(db_path, |connection| {
-+                let mut guard = global_tag_index.write()
-+                    .map_err(|_| "Global Tag index write lock poisoned".to_string())?;
-+                if guard.dimensions() != plan.dimension {
-+                    return Err("Global Tag retrieval dimension mismatch".into());
-+                }
-+                guard.refresh_cold_tag_count(connection)
-+            })?;
-+            return Ok(ready);
-+        }
-         let mut ids = Vec::new();
-         let mut vectors = Vec::new();
-         for (id, slot) in tag_updates {
+ module.exports = {
+     registerRoutes,
+     // 导出纯路径判定函数，供安全回归测试复用
+     containsParentDirectorySegment,
+-    // 供测试或宿主优雅卸载时停止定时器，避免模块句柄阻止进程退出
+-    stopSecurityManager: () => securityManager.stopCleanupTimer(),
++    shutdown,
++    // 保留既有清理入口，供调用方和测试使用。
++    stopSecurityManager: shutdown,
+     // 导出安全管理器供外部查询（可选）
+     getSecurityStats: () => securityManager.getAccessStats(),
+     // 手动触发锁定（紧急情况下使用）
 ```
 
----
-
-### Incident Patch 2: `274622eb` (2026-11-17)
-**Commit Message**: Merge pull request #608 from infinite-vector/fix/selective-native-tool-isolation
-
-fix(chat,bridge): 仅按 NativeToolIsolationModels 选择性剥离出站原生工具调用并支持桥接模型列表透传
-
-**File**: `Plugin/VCPBridgeServer/bridgeserver.js` (modified, +48/-6)
+**File**: `tests/imageFileServerShutdown.test.js` (added, +67/-0)
 ```diff
-@@ -1006,25 +1006,67 @@ function startServer() {
-         });
-     });
- 
--    // 模型列表探活（支持 OpenAI 根端点与 Profile 前缀端点，兼容客户端连通性检查）
--    app.get(['/v1/models', '/v1/:profile/models'], (req, res, next) => {
-+    // 模型列表动态透传与探活（支持 OpenAI 根端点与 Profile 前缀端点，上游不可达时平滑回退本地配置）
-+    app.get(['/v1/models', '/v1/:profile/models'], async (req, res, next) => {
-         const profile = req.params?.profile;
-         if (profile && ['chat', 'responses', 'messages', 'beta'].includes(profile)) {
-             return next();
-         }
--        const configuredModels = new Set([
-+        const matchedProfile = profile ? readProfileCached(profile) : resolveProfileForRequest(req, '');
-+        const localModelIds = new Set([
-+            matchedProfile?.modelOverride,
-             runtimeConfig.defaultModel,
-             ...Object.keys(runtimeConfig.modelMap || {}),
-             ...Object.values(runtimeConfig.modelMap || {})
-         ].filter(Boolean));
--        if (configuredModels.size === 0) configuredModels.add('gpt-5.6-sol');
--        const data = Array.from(configuredModels).map(id => ({
-+        if (localModelIds.size === 0) localModelIds.add('gpt-5.6-sol');
+@@ -0,0 +1,67 @@
++const assert = require('node:assert/strict');
++const { spawnSync } = require('node:child_process');
++const fs = require('node:fs');
++const os = require('node:os');
++const path = require('node:path');
++const test = require('node:test');
 +
-+        const buildFallbackList = () => Array.from(localModelIds).map(id => ({
-             id,
-             object: 'model',
-             created: 1700000000,
-             owned_by: 'vcp-bridge'
-         }));
--        res.json({ object: 'list', data });
++const imageModule = require.resolve('../Plugin/ImageFileServer/image-file-server.js');
++const storeModule = require.resolve('../Plugin/VTrade/core/store.cjs');
 +
-+        const base = String(runtimeConfig.upstreamUrl || '').replace(/\/+$/, '');
-+        if (base) {
-+            try {
-+                const requestToken = extractBearerToken(req.headers.authorization);
-+                const upstreamKey = runtimeConfig.upstreamKey || requestToken;
-+                const headers = { Accept: 'application/json' };
-+                if (upstreamKey) headers.Authorization = `Bearer ${upstreamKey}`;
-+                const upstreamRes = await fetch(`${base}/v1/models`, {
-+                    method: 'GET',
-+                    headers,
-+                    signal: AbortSignal.timeout(5000)
++for (const signal of ['SIGINT', 'SIGTERM']) {
++    test(`ImageFileServer leaves ${signal} shutdown to the host`, (t) => {
++        const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'vcp-shutdown-'));
++        t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
++
++        const child = spawnSync(process.execPath, ['-e', `
++            const assert = require('node:assert/strict');
++            const fs = require('node:fs/promises');
++            const path = require('node:path');
++            const [imageModule, storeModule, directory, signal] = process.argv.slice(1);
++            const { Store } = require(storeModule);
++
++            async function run() {
++                const store = new Store(directory);
++                await store.open();
++                const lockFile = path.join(directory, 'writer.lock');
++                assert.equal(await fs.readFile(lockFile, 'utf8'), String(process.pid));
++
++                // Mirror the host contract, without booting a real server or touching its data.
++                let hostShutdown;
++                let image;
++                process.once(signal, () => {
++                    hostShutdown = (async () => {
++                        await new Promise(resolve => setImmediate(resolve));
++                        await image.shutdown();
++                        await store.close();
++                    })();
 +                });
-+                if (upstreamRes.ok) {
-+                    const parsed = safeJsonParse(await upstreamRes.text());
-+                    if (parsed && Array.isArray(parsed.data)) {
-+                        const seen = new Set();
-+                        const merged = [];
-+                        for (const item of parsed.data) {
-+                            if (!item || typeof item.id !== 'string' || !item.id || seen.has(item.id)) continue;
-+                            seen.add(item.id);
-+                            merged.push(item);
-+                        }
-+                        for (const localId of localModelIds) {
-+                            if (!seen.has(localId)) {
-+                                seen.add(localId);
-+                                merged.push({ id: localId, object: 'model', created: 1700000000, owned_by: 'vcp-bridge' });
-+                            }
-+                        }
-+                        return res.json({ ...parsed, object: parsed.object || 'list', data: merged });
-+                    }
-+                }
-+            } catch (err) {
-+                if (runtimeConfig.debugMode) {
-+                    console.warn(`[VCPBridgeServer] Upstream /v1/models fetch fallback to local list: ${err.message}`);
-+                }
++                const signals = ['SIGINT', 'SIGTERM'];
++                const before = signals.map(name => process.listeners(name));
++                image = require(imageModule);
++                assert.deepEqual(signals.map(name => process.listeners(name)), before);
++                assert.equal(image.shutdown, image.stopSecurityManager);
++
++                // Emitting in-process works on Windows too; no OS signal is sent.
++                process.emit(signal);
++                assert.ok(hostShutdown);
++                await hostShutdown;
++                await assert.rejects(fs.access(lockFile), { code: 'ENOENT' });
++                const reopened = new Store(directory);
++                await reopened.open();
++                await reopened.close();
++                console.log('host shutdown completed');
 +            }
-+        }
 +
-+        res.json({ object: 'list', data: buildFallbackList() });
-     });
- 
-     // ─── Profile-prefixed routes ─────────────────────────────────────────
-```
-
-**File**: `modules/chatCompletionHandler.js` (modified, +4/-0)
-```diff
-@@ -1072,6 +1072,10 @@ class ChatCompletionHandler {
-       let processedMessages = [];
-       for (const msg of tavernProcessedMessages) {
-         throwIfRequestAborted();
-+        if (msg && (msg.role === 'tool' || msg.role === 'function')) {
-+          processedMessages.push(JSON.parse(JSON.stringify(msg)));
-+          continue;
-+        }
-         const newMessage = JSON.parse(JSON.stringify(msg));
-         if (newMessage.content && typeof newMessage.content === 'string') {
-           newMessage.content = await messageProcessor.replaceAgentVariables(
-```
-
-**File**: `modules/handlers/nonStreamHandler.js` (modified, +44/-10)
-```diff
-@@ -2,6 +2,7 @@
- const vcpInfoHandler = require('../../vcpInfoHandler.js');
- const roleDivider = require('../roleDivider.js');
- const { formatToolResultBatch, projectToolBatchForUpstream } = require('../toolResultBatch.js');
-+const { matchesNativeToolIsolation } = require('../nativeToolIsolation.js');
- const {
-   buildClientVisibleContent,
-   removeReasoningFields,
-@@ -57,11 +58,23 @@ function parseNonStreamResponse(rawResponseText) {
-   }
- }
- 
--function isCompleteNonStreamResponse(readResult) {
-+function hasNativeToolCallPayload(message) {
-+  return (
-+    (Array.isArray(message?.tool_calls) && message.tool_calls.length > 0) ||
-+    Boolean(message?.function_call && typeof message.function_call === 'object')
-+  );
-+}
++            run().catch(error => {
++                console.error(error);
++                process.exit(1);
++            });
++        `, imageModule, storeModule, directory, signal], { encoding: 'utf8', timeout: 8000 });
 +
-+function isCompleteNonStreamResponse(readResult, stripNativeTools = false) {
-   const { parsedJson, message, choice } = parseNonStreamResponse(readResult.text);
--  return readResult.response.ok && !readResult.semanticRetryExhausted &&
--    !!parsedJson && !parsedJson.error && !!message &&
--    hasVisibleContent(message.content) && choice?.finish_reason === 'stop';
-+  if (!readResult.response.ok || readResult.semanticRetryExhausted || !parsedJson || parsedJson.error || !message) {
-+    return false;
-+  }
-+  if (!stripNativeTools && hasNativeToolCallPayload(message) &&
-+      ['tool_calls', 'function_call', 'stop'].includes(choice?.finish_reason)) {
-+    return true;
-+  }
-+  return hasVisibleContent(message.content) && choice?.finish_reason === 'stop';
- }
- 
- function isReasoningOnlyNonStreamResponse(rawResponseText) {
-@@ -254,8 +267,9 @@ class NonStreamHandler {
-     firstAiAPIResponse = firstReadResult.response;
-     const aiResponseText = firstReadResult.text;
-     let chatLogs = [];
-+    const stripInitialNativeTools = matchesNativeToolIsolation(originalBody?.model);
-     let oneRingAssistantTurnParts = [];
--    let validUpstreamTurns = isCompleteNonStreamResponse(firstReadResult);
-+    let validUpstreamTurns = isCompleteNonStreamResponse(firstReadResult, stripInitialNativeTools);
-     let completed = false;
- 
-     let fullContentFromAI = '';
-@@ -542,16 +556,36 @@ class NonStreamHandler {
-     let finalJsonResponse;
-     try {
-       finalJsonResponse = JSON.parse(aiResponseText);
--      if (!finalJsonResponse.choices?.[0]?.message) {
-+      const stripTools = matchesNativeToolIsolation(finalJsonResponse?.model || originalBody?.model);
-+      const choice0 = finalJsonResponse.choices?.[0];
-+      const msg0 = choice0?.message;
-+      const preserveNativeToolTurn = !stripTools && recursionDepth === 0 && hasNativeToolCallPayload(msg0);
-+
-+      if (!msg0) {
-         finalJsonResponse.choices = [{ message: { content: finalContentForClient } }];
-+        finalJsonResponse.choices[0].finish_reason = recursionDepth >= maxRecursion ? 'length' : 'stop';
-       } else {
--        finalJsonResponse.choices[0].message.content = finalContentForClient;
-+        if (stripTools) {
-+          delete msg0.tool_calls;
-+          delete msg0.function_call;
-+        }
-+        if (!preserveNativeToolTurn || finalContentForClient.length > 0 || msg0.content !== null) {
-+          msg0.content = finalContentForClient;
-+        }
-         if (reasoningToContentEnabled) {
--          removeReasoningFields(finalJsonResponse.choices[0].message);
--          removeReasoningFields(finalJsonResponse.choices[0]);
-+          removeReasoningFields(msg0);
-+          removeReasoningFields(choice0);
-+        }
-+        if (recursionDepth >= maxRecursion) {
-+          choice0.finish_reason = 'length';
-+        } else if (preserveNativeToolTurn && ['tool_calls', 'function_call'].includes(choice0.finish_reason)) {
-+          // Keep native tool termination reason intact for downstream tool-calling clients.
-+        } else if (preserveNativeToolTurn) {
-+          choice0.finish_reason = msg0.function_call && !msg0.tool_calls ? 'function_call' : 'tool_calls';
-+        } else {
-+          choice0.finish_reason = 'stop';
-         }
-       }
--      finalJsonResponse.choices[0].finish_reason = recursionDepth >= maxRecursion ? 'length' : 'stop';
-     } catch (e) {
-       finalJsonResponse = {
-         choices: [{ index: 0, message: { role: 'assistant', content: finalContentForClient }, finish_reason: recursionDepth >= maxRecursion ? 'length' : 'stop' }]
-```
-
-**File**: `modules/handlers/streamHandler.js` (modified, +66/-21)
-```diff
-@@ -3,6 +3,7 @@ const { StringDecoder } = require('string_decoder');
- const vcpInfoHandler = require('../../vcpInfoHandler.js');
- const roleDivider = require('../roleDivider.js');
- const { formatToolResultBatch, projectToolBatchForUpstream } = require('../toolResultBatch.js');
-+const { matchesNativeToolIsolation } = require('../nativeToolIsolation.js');
- const {
-   extractReasoningText,
-   removeReasoningFields,
-@@ -203,15 +204,24 @@ class StreamHandler {
-         let invalidPayload = false;
-         let hasPayloadError = false;
-         let upstreamEnded = false;
-+        let sawNativeToolCall = false;
-+        const shouldStripNativeTools = (payloadModel) =>
-+          matchesNativeToolIsolation(payloadModel || originalBody?.model);
-         const result = () => {
-           streamSettled = true;
-           if (toolTailTimer) clearTimeout(toolTailTimer);
-+          const hasNativeToolCompletion = sawNativeToolCall && (
-+            ['tool_calls', 'function_call', 'stop'].includes(finishReason) ||
-+            (!finishReason && sawDone)
-+          );
-           return {
-             content: collectedContentThisTurn, message, malformedFunctionCall,
--            streamAborted, hasPayloadError,
--            completed: !streamAborted && !invalidPayload && aiResponse.ok &&
--              collectedContentThisTurn.trim().length > 0 &&
--              (finishReason === 'stop' || (!finishReason && sawDone))
-+            streamAborted, hasPayloadError, sawNativeToolCall, finishReason,
-+            completed: !streamAborted && !invalidPayload && aiResponse.ok && (
-+              (collectedContentThisTurn.trim().length > 0 &&
-+                (finishReason === 'stop' || (!finishReason && sawDone))) ||
-+              hasNativeToolCompletion
-+            )
-           };
-         };
-         const observePayload = (parsedData) => {
-@@ -225,6 +235,19 @@ class StreamHandler {
-             malformedFunctionCall = true;
-             invalidPayload = true;
-           }
-+          if (!shouldStripNativeTools(parsedData?.model)) {
-+            const delta = choice?.delta;
-+            const msg = choice?.message;
-+            if (
-+              (Array.isArray(delta?.tool_calls) && delta.tool_calls.length > 0) ||
-+              delta?.function_call ||
-+              (Array.isArray(msg?.tool_calls) && msg.tool_calls.length > 0) ||
-+              msg?.function_call ||
-+              ['tool_calls', 'function_call'].includes(choice?.finish_reason)
-+            ) {
-+              sawNativeToolCall = true;
-+            }
-+          }
-           const reason = parsedData?.choices?.[0]?.finish_reason;
-           if (reason) finishReason = reason;
-         };
-@@ -247,16 +270,21 @@ class StreamHandler {
-         const transformParsedDataForClient = (parsedData) => {
-           if (!parsedData || typeof parsedData !== 'object') return parsedData;
- 
-+          const stripTools = shouldStripNativeTools(parsedData.model);
-+          if (!stripTools && !reasoningToContentEnabled) return parsedData;
-+
-           const transformed = JSON.parse(JSON.stringify(parsedData));
--          for (const item of transformed.choices || []) {
--            for (const payload of [item.delta, item.message]) {
--              if (!payload || typeof payload !== 'object') continue;
--              delete payload.tool_calls;
--              delete payload.function_call;
--            }
--            // Native FC is not a frontend termination or execution channel in VCP.
--            for (const key of ['finish_reason', 'native_finish_reason']) {
--              if (['tool_calls', 'function_call'].includes(item[key])) item[key] = null;
-+          if (stripTools) {
-+            for (const item of transformed.choices || []) {
-+              for (const payload of [item.delta, item.message]) {
-+                if (!payload || typeof payload !== 'object') continue;
-+                delete payload.tool_calls;
-+                delete payload.function_call;
-+              }
-+              // Strip hallucinated native FC only for models matched by NativeToolIsolationModels.
-+              for (const key of ['finish_reason', 'native_finish_reason']) {
-+                if (['tool_calls', 'function_call'].includes(item[key])) item[key] = null;
-+              }
-             }
-           }
-           if (!reasoningToContentEnabled) return transformed;
-@@ -632,6 +660,8 @@ class StreamHandler {
-     // --- 初始 AI 调用 ---
-     if (DEBUG_MODE) console.log('[VCP Stream Loop] Processing initial AI call.');
-     let initialAIResponseData = await processAIResponseStreamHelper(firstAiAPIResponse, true);
-+    let lastTurnSawNativeToolCall = Boolean(initialAIResponseData.sawNativeToolCall);
-+    let lastTurnFinishReason = initialAIResponseData.finishReason || null;
-     validUpstreamTurns = initialAIResponseData.completed;
-     currentAIContentForLoop = initialAIResponseData.content;
-     if (writeChatLog) chatLogs.push({ request: originalBody, response: initialAIResponseData.message });
-@@ -663,15
-```
-
-**File**: `tests/nativeToolIsolation.test.js` (modified, +91/-1)
-```diff
-@@ -123,4 +123,94 @@ for (const stream of [false, true]) {
-         assert.ok(sent[2].messages[0].tool_calls);
-         assert.equal(options.body, before);
-     });
--}
-\ No newline at end of file
-+}
-+
-+const { Readable } = require('node:stream');
-+const { EventEmitter } = require('node:events');
-+const StreamHandler = require('../modules/handlers/streamHandler');
-+const NonStreamHandler = require('../modules/handlers/nonStreamHandler');
-+
-+test('StreamHandler strips outbound tool_calls ONLY for NativeToolIsolationModels and preserves them for normal models', async () => {
-+    const ssePayload = [
-+        `data: ${JSON.stringify({ model: undefined, choices: [{ index: 0, delta: { role: 'assistant', content: '' }, finish_reason: null }] })}\n\n`,
-+        `data: ${JSON.stringify({ choices: [{ index: 0, delta: { tool_calls: [{ index: 0, id: 'call_pf_1', type: 'function', function: { name: 'pf_list_workspaces', arguments: '{}' } }] }, finish_reason: 'tool_calls' }] })}\n\n`,
-+        'data: [DONE]\n\n'
-+    ].join('');
-+
-+    const runStreamForModel = async (model) => {
-+        const res = {
-+            writableEnded: false,
-+            destroyed: false,
-+            output: '',
-+            write(chunk, cb) { this.output += chunk; if (cb) cb(); return true; },
-+            end() { this.writableEnded = true; }
-+        };
-+        const handler = new StreamHandler({
-+            originalBody: { model, messages: [{ role: 'user', content: 'list' }] },
-+            abortController: new AbortController(),
-+            ToolCallParser: { parse: () => [] },
-+            maxVCPLoopStream: 3
-+        });
-+        const outcome = await handler.handle({}, res, { ok: true, status: 200, body: Readable.from([Buffer.from(ssePayload)]) });
-+        return { outcome, output: res.output };
-+    };
-+
-+    const isolated = await runStreamForModel('gemini-4-hydrogen');
-+    assert.doesNotMatch(isolated.output, /call_pf_1|pf_list_workspaces|"finish_reason":"tool_calls"/);
-+    assert.equal(isolated.outcome.completed, false);
-+
-+    const normal = await runStreamForModel('gemini-3.8-flash-high');
-+    assert.match(normal.output, /"id":"call_pf_1"/);
-+    assert.match(normal.output, /"name":"pf_list_workspaces"/);
-+    assert.match(normal.output, /"finish_reason":"tool_calls"/);
-+    assert.doesNotMatch(normal.output, /"finish_reason":"stop"/);
-+    assert.equal((normal.output.match(/data: \[DONE\]/g) || []).length, 1);
-+    assert.equal(normal.outcome.completed, true);
-+});
-+
-+test('NonStreamHandler strips outbound tool_calls for isolated models and preserves tool_calls + finish_reason for normal models', async () => {
-+    const makeUpstreamJson = (model) => JSON.stringify({
-+        id: 'chatcmpl-nonstream-tool',
-+        model,
-+        choices: [{
-+            index: 0,
-+            message: {
-+                role: 'assistant',
-+                content: null,
-+                tool_calls: [{ id: 'call_ns_1', type: 'function', function: { name: 'pf_list_workspaces', arguments: '{}' } }]
-+            },
-+            finish_reason: 'tool_calls'
-+        }]
++        assert.ifError(child.error);
++        assert.equal(child.status, 0, child.stderr);
++        assert.match(child.stdout, /host shutdown completed/);
++        assert.equal(fs.existsSync(path.join(directory, 'writer.lock')), false);
 +    });
-+
-+    const runNonStreamForModel = async (model) => {
-+        const res = new EventEmitter();
-+        res.writableEnded = false;
-+        res.destroyed = false;
-+        res.bodyText = '';
-+        res.send = (buf) => { res.bodyText = Buffer.from(buf).toString('utf8'); res.writableEnded = true; };
-+        const handler = new NonStreamHandler({
-+            originalBody: { model, messages: [{ role: 'user', content: 'list' }] },
-+            pluginManager: { messagePreprocessors: new Map() },
-+            abortController: new AbortController(),
-+            ToolCallParser: { parse: () => [] },
-+            apiRetries: 1,
-+            apiRetryDelay: 0,
-+            maxVCPLoopNonStream: 3
-+        });
-+        const raw = makeUpstreamJson(model);
-+        const outcome = await handler.handle({}, res, { ok: true, arrayBuffer: async () => Buffer.from(raw) });
-+        return { outcome, json: JSON.parse(res.bodyText) };
-+    };
-+
-+    const isolated = await runNonStreamForModel('gemini-4-hydrogen');
-+    assert.equal(isolated.json.choices[0].message.tool_calls, undefined);
-+    assert.equal(isolated.json.choices[0].finish_reason, 'stop');
-+    assert.equal(isolated.outcome.completed, false);
-+
-+    const normal = await runNonStreamForModel('gemini-3.8-flash-high');
-+    assert.equal(normal.json.choices[0].message.content, null);
-+    assert.equal(normal.json.choices[0].message.tool_calls[0].id, 'call_ns_1');
-+    assert.equal(normal.json.choices[0].finish_reason, 'tool_calls');
-+    assert.equal(normal.outcome.completed, true);
-+});
++}
 \ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 3: `34358711` (2026-11-17)
-**Commit Message**: fix(chat,bridge): 仅按 NativeToolIsolationModels 选择性剥离出站原生工具调用并支持桥接模型列表透传
+### Incident Patch 2: `cbe119cc` (2026-11-20)
+**Commit Message**: Merge pull request #621 from InSciTech/fix/prompt-and-manifest-typos
 
-**File**: `Plugin/VCPBridgeServer/bridgeserver.js` (modified, +48/-6)
+fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题
+
+**File**: `Agent/DeepSeekOfficial.txt` (modified, +1/-1)
 ```diff
-@@ -1006,25 +1006,67 @@ function startServer() {
-         });
-     });
+@@ -17,7 +17,7 @@
  
--    // 模型列表探活（支持 OpenAI 根端点与 Profile 前缀端点，兼容客户端连通性检查）
--    app.get(['/v1/models', '/v1/:profile/models'], (req, res, next) => {
-+    // 模型列表动态透传与探活（支持 OpenAI 根端点与 Profile 前缀端点，上游不可达时平滑回退本地配置）
-+    app.get(['/v1/models', '/v1/:profile/models'], async (req, res, next) => {
-         const profile = req.params?.profile;
-         if (profile && ['chat', 'responses', 'messages', 'beta'].includes(profile)) {
-             return next();
-         }
--        const configuredModels = new Set([
-+        const matchedProfile = profile ? readProfileCached(profile) : resolveProfileForRequest(req, '');
-+        const localModelIds = new Set([
-+            matchedProfile?.modelOverride,
-             runtimeConfig.defaultModel,
-             ...Object.keys(runtimeConfig.modelMap || {}),
-             ...Object.values(runtimeConfig.modelMap || {})
-         ].filter(Boolean));
--        if (configuredModels.size === 0) configuredModels.add('gpt-5.6-sol');
--        const data = Array.from(configuredModels).map(id => ({
-+        if (localModelIds.size === 0) localModelIds.add('gpt-5.6-sol');
-+
-+        const buildFallbackList = () => Array.from(localModelIds).map(id => ({
-             id,
-             object: 'model',
-             created: 1700000000,
-             owned_by: 'vcp-bridge'
-         }));
--        res.json({ object: 'list', data });
-+
-+        const base = String(runtimeConfig.upstreamUrl || '').replace(/\/+$/, '');
-+        if (base) {
-+            try {
-+                const requestToken = extractBearerToken(req.headers.authorization);
-+                const upstreamKey = runtimeConfig.upstreamKey || requestToken;
-+                const headers = { Accept: 'application/json' };
-+                if (upstreamKey) headers.Authorization = `Bearer ${upstreamKey}`;
-+                const upstreamRes = await fetch(`${base}/v1/models`, {
-+                    method: 'GET',
-+                    headers,
-+                    signal: AbortSignal.timeout(5000)
-+                });
-+                if (upstreamRes.ok) {
-+                    const parsed = safeJsonParse(await upstreamRes.text());
-+                    if (parsed && Array.isArray(parsed.data)) {
-+                        const seen = new Set();
-+                        const merged = [];
-+                        for (const item of parsed.data) {
-+                            if (!item || typeof item.id !== 'string' || !item.id || seen.has(item.id)) continue;
-+                            seen.add(item.id);
-+                            merged.push(item);
-+                        }
-+                        for (const localId of localModelIds) {
-+                            if (!seen.has(localId)) {
-+                                seen.add(localId);
-+                                merged.push({ id: localId, object: 'model', created: 1700000000, owned_by: 'vcp-bridge' });
-+                            }
-+                        }
-+                        return res.json({ ...parsed, object: parsed.object || 'list', data: merged });
-+                    }
-+                }
-+            } catch (err) {
-+                if (runtimeConfig.debugMode) {
-+                    console.warn(`[VCPBridgeServer] Upstream /v1/models fetch fallback to local list: ${err.message}`);
-+                }
-+            }
-+        }
-+
-+        res.json({ object: 'list', data: buildFallbackList() });
-     });
+ 当前工作环境VCPToolbox，一个强大的AGI-Runtime工作运行时环境。
+ 今天是{{Date}},{{Today}},{{Festival}}。当前天气{{VCPWeatherInfoNow}}。
+-用户是{{VarUse}}，你的主人。
++用户是{{VarUser}}，你的主人。
  
-     // ─── Profile-prefixed routes ─────────────────────────────────────────
+ 核心指令
+ {{VarToolList}}
 ```
 
-**File**: `modules/chatCompletionHandler.js` (modified, +4/-0)
+**File**: `Plugin/MediaRenderer/plugin-manifest.json` (modified, +2/-2)
 ```diff
-@@ -1072,6 +1072,10 @@ class ChatCompletionHandler {
-       let processedMessages = [];
-       for (const msg of tavernProcessedMessages) {
-         throwIfRequestAborted();
-+        if (msg && (msg.role === 'tool' || msg.role === 'function')) {
-+          processedMessages.push(JSON.parse(JSON.stringify(msg)));
-+          continue;
-+        }
-         const newMessage = JSON.parse(JSON.stringify(msg));
-         if (newMessage.content && typeof newMessage.content === 'string') {
-           newMessage.content = await messageProcessor.replaceAgentVariables(
+@@ -46,13 +46,13 @@
+       {
+         "command": "RenderImage",
+         "commandIdentifier": "RenderImage",
+-        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的  工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
++        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的 <<<[TOOL_REQUEST]>>> 到 <<<[END_TOOL_REQUEST]>>> 工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
+         "example": "<<<[TOOL_REQUEST]>>>\ntool_name:「始」MediaRenderer「末」,\ncommand:「始」RenderImage「末」,\nhtml:「始」<!doctype html><style>@font-face{font-family:Title;src:url('file:///D:/fonts/title.woff2')}html,body{margin:0;width:100%;height:100%;background:#08111f}.card{height:100%;display:grid;
 ```
 
-**File**: `modules/handlers/nonStreamHandler.js` (modified, +44/-10)
+**File**: `Plugin/TavilySearch/plugin-manifest.json` (modified, +1/-1)
 ```diff
-@@ -2,6 +2,7 @@
- const vcpInfoHandler = require('../../vcpInfoHandler.js');
- const roleDivider = require('../roleDivider.js');
- const { formatToolResultBatch, projectToolBatchForUpstream } = require('../toolResultBatch.js');
-+const { matchesNativeToolIsolation } = require('../nativeToolIsolation.js');
- const {
-   buildClientVisibleContent,
-   removeReasoningFields,
-@@ -57,11 +58,23 @@ function parseNonStreamResponse(rawResponseText) {
-   }
- }
- 
--function isCompleteNonStreamResponse(readResult) {
-+function hasNativeToolCallPayload(message) {
-+  return (
-+    (Array.isArray(message?.tool_calls) && message.tool_calls.length > 0) ||
-+    Boolean(message?.function_call && typeof message.function_call === 'object')
-+  );
-+}
-+
-+function isCompleteNonStreamResponse(readResult, stripNativeTools = false) {
-   const { parsedJson, message, choice } = parseNonStreamResponse(readResult.text);
--  return readResult.response.ok && !readResult.semanticRetryExhausted &&
--    !!parsedJson && !parsedJson.error && !!message &&
--    hasVisibleContent(message.content) && choice?.finish_reason === 'stop';
-+  if (!readResult.response.ok || readResult.semanticRetryExhausted || !parsedJson || parsedJson.error || !message) {
-+    return false;
-+  }
-+  if (!stripNativeTools && hasNativeToolCallPayload(message) &&
-+      ['tool_calls', 'function_call', 'stop'].includes(choice?.finish_reason)) {
-+    return true;
-+  }
-+  return hasVisibleContent(message.content) && choice?.finish_reason === 'stop';
- }
- 
- function isReasoningOnlyNonStreamResponse(rawResponseText) {
-@@ -254,8 +267,9 @@ class NonStreamHandler {
-     firstAiAPIResponse = firstReadResult.response;
-     const aiResponseText = firstReadResult.text;
-     let chatLogs = [];
-+    const stripInitialNativeTools = matchesNativeToolIsolation(originalBody?.model);
-     let oneRingAssistantTurnParts = [];
--    let validUpstreamTurns = isCompleteNonStreamResponse(firstReadResult);
-+    let validUpstreamTurns = isCompleteNonStreamResponse(firstReadResult, stripInitialNativeTools);
-     let completed = false;
- 
-     let fullContentFromAI = '';
-@@ -542,16 +556,36 @@ class NonStreamHandler {
-     let finalJsonResponse;
-     try {
-       finalJsonResponse = JSON.parse(aiResponseText);
--      if (!finalJsonResponse.choices?.[0]?.message) {
-+      const stripTools = matchesNativeToolIsolation(finalJsonResponse?.model || originalBody?.model);
-+      const choice0 = finalJsonResponse.choices?.[0];
-+      const msg0 = choice0?.message;
-+      const preserveNativeToolTurn = !stripTools && recursionDepth === 0 && hasNativeToolCallPayload(msg0);
-+
-+      if (!msg0) {
-         finalJsonResponse.choices = [{ message: { content: finalContentForClient } }];
-+        finalJsonResponse.choices[0].finish_reason = recursionDepth >= maxRecursion ? 'length' : 'stop';
-       } else {
--        finalJsonResponse.choices[0].message.content = finalContentForClient;
-+        if (stripTools) {
-+          delete msg0.tool_calls;
-+          delete msg0.function_call;
-+        }
-+        if (!preserveNativeToolTurn || finalContentForClient.length > 0 || msg0.content !== null) {
-+          msg0.content = finalContentForClient;
-+        }
-         if (reasoningToContentEnabled) {
--          removeReasoningFields(finalJsonResponse.choices[0].message);
--          removeReasoningFields(finalJsonResponse.choices[0]);
-+          removeReasoningFields(msg0);
-+          removeReasoningFields(choice0);
-+        }
-+        if (recursionDepth >= maxRecursion) {
-+          choice0.finish_reason = 'length';
-+        } else if (preserveNativeToolTurn && ['tool_calls', 'function_call'].includes(choice0.finish_reason)) {
-+          // Keep native tool termination reason intact for downstream tool-calling clients.
-+        } else if (preserveNativeToolTurn) {
-+          choice0.finish_reason = msg0.function_call && !msg0.tool_calls ? 'function_call' : 'tool_calls';
-+        } else {
-+          choice0.finish_reason = 'stop';
-         }
+@@ -22,7 +22,7 @@
+       {
+         "commandIdentifier": "TavilySearch",
+         "description": "调用此工具使用 Tavily API 进行高级网络搜索。默认启用高级搜索模式并返回图片链接。重要提示：请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。请在您的回复中，使用以下精确格式来请求搜索，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含搜索结果的JSON对象。请基于这些结果回答用户的问题或完成相关任务。\n请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。",
+-        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\time_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
++        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\ntime_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
        }
--      finalJsonResponse.choices[0].finish_reason = recursionDepth >= maxRecursion ? 'length' : 'stop';
-     } catch (e) {
-       finalJsonResponse = {
-         choices: [{ index: 0, message: { role: 'assistant', content: finalContentForClient }, finish_reason: recursionDepth >= maxRecursion ? 'length' : 'stop' }]
+     ]
+   }
 ```
 
-**File**: `modules/handlers/streamHandler.js` (modified, +66/-21)
+**File**: `Plugin/ZImageGen2/plugin-manifest.json.block` (modified, +1/-1)
 ```diff
-@@ -3,6 +3,7 @@ const { StringDecoder } = require('string_decoder');
- const vcpInfoHandler = require('../../vcpInfoHandler.js');
- const roleDivider = require('../roleDivider.js');
- const { formatToolResultBatch, projectToolBatchForUpstream } = require('../toolResultBatch.js');
-+const { matchesNativeToolIsolation } = require('../nativeToolIsolation.js');
- const {
-   extractReasoningText,
-   removeReasoningFields,
-@@ -203,15 +204,24 @@ class StreamHandler {
-         let invalidPayload = false;
-         let hasPayloadError = false;
-         let upstreamEnded = false;
-+        let sawNativeToolCall = false;
-+        const shouldStripNativeTools = (payloadModel) =>
-+          matchesNativeToolIsolation(payloadModel || originalBody?.model);
-         const result = () => {
-           streamSettled = true;
-           if (toolTailTimer) clearTimeout(toolTailTimer);
-+          const hasNativeToolCompletion = sawNativeToolCall && (
-+            ['tool_calls', 'function_call', 'stop'].includes(finishReason) ||
-+            (!finishReason && sawDone)
-+          );
-           return {
-             content: collectedContentThisTurn, message, malformedFunctionCall,
--            streamAborted, hasPayloadError,
--            completed: !streamAborted && !invalidPayload && aiResponse.ok &&
--              collectedContentThisTurn.trim().length > 0 &&
--              (finishReason === 'stop' || (!finishReason && sawDone))
-+            streamAborted, hasPayloadError, sawNativeToolCall, finishReason,
-+            completed: !streamAborted && !invalidPayload && aiResponse.ok && (
-+              (collectedContentThisTurn.trim().length > 0 &&
-+                (finishReason === 'stop' || (!finishReason && sawDone))) ||
-+              hasNativeToolCompletion
-+            )
-           };
-         };
-         const observePayload = (parsedData) => {
-@@ -225,6 +235,19 @@ class StreamHandler {
-             malformedFunctionCall = true;
-             invalidPayload = true;
-           }
-+          if (!shouldStripNativeTools(parsedData?.model)) {
-+            const delta = choice?.delta;
-+            const msg = choice?.message;
-+            if (
-+              (Array.isArray(delta?.tool_calls) && delta.tool_calls.length > 0) ||
-+              delta?.function_call ||
-+              (Array.isArray(msg?.tool_calls) && msg.tool_calls.length > 0) ||
-+              msg?.function_call ||
-+              ['tool_calls', 'function_call'].includes(choice?.finish_reason)
-+            ) {
-+              sawNativeToolCall = true;
-+            }
-+          }
-           const reason = parsedData?.choices?.[0]?.finish_reason;
-           if (reason) finishReason = reason;
-         };
-@@ -247,16 +270,21 @@ class StreamHandler {
-         const transformParsedDataForClient = (parsedData) => {
-           if (!parsedData || typeof parsedData !== 'object') return parsedData;
+@@ -22,7 +22,7 @@
+       {
+         "commandIdentifier": "ZImageGenerate",
+         "description": "调用此工具通过 Z-Image-Base 模型生成高质量图片。支持中英文提示词。请在您的回复中，使用以下精确格式来请求图片生成，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含以下信息的结果：\n1. 生成图片的公开访问URL。\n2. 图片在服务器上的存储相对路径 (例如：image/zimage/图片名.png)。\n3. 图片的文件名和使用的Seed。\n4. 如果showbase64设置为true，还会包含base64格式的图片数据供AI查看。\n请在您的最终回复中，使用返回的【图片URL】为用户生成一个HTML的 `<img>` 标签来直接展示图片，例如：`<img src=\"[此处填写图片URL]\" alt=\"[此处可填写部分prompt作为描述]\" width=\"300\">`。请确保替换占位符，并可调整 `width` 属性（建议200-500像素）。",
+-        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
++        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen2「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
+       }
+     ]
+   }
+```
+
+**File**: `TVStxt/JevToolCall.txt` (modified, +1/-1)
+```diff
+@@ -40,7 +40,7 @@ B站截图默认仅获取画面；需要组合内容时，在句子或 [] 中明
+ 联络[Grok]，告诉它【我是Nova，我想问问2026年10月推特上的ai热点新闻】，并使用[临时通讯]。
+ 睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。
+ 请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。
+-请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
++请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。
+ 请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。
+ 请使用 {物联网控制} 中的 `TableLampRemote`，执行【打开台灯】
+ 读取[file://{{VarVCPToolBoxPath}}\Plugin\DailyHot\dailyhot_cache.md]获得每日热点新闻。
+```
+
+**File**: `TVStxt/SearchToolBox.txt` (modified, +2/-0)
+```diff
+@@ -34,11 +34,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
+ need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
  
-+          const stripTools = shouldStripNativeTools(parsedData.model);
-+          if (!stripTools && !reasoningToContentEnabled) return parsedData;
-+
-           const transformed = JSON.parse(JSON.stringify(parsedData));
--          for (const item of transformed.choices || []) {
--            for (const payload of [item.delta, item.message]) {
--              if (!payload || typeof payload !== 'object') continue;
--              delete payload.tool_calls;
--              delete payload.function_call;
--            }
--            // Native FC is not a frontend termination or execution channel in VCP.
--            for (const key of ['finish_reason', 'native_finish_reason']) {
--              if (['tool_calls', 'function_call'].includes(item[key])) item[key] = null;
-+          if (stripTools) {
-+            for (const item of transformed.choices || []) {
-+              for (const payload of [item.delta, item.message]) {
-+                if (!payload || typeof payload !== 'object') continue;
-+                delete payload.tool_calls;
-+                delete payload.function_call;
-+              }
-+              // Strip hallucinated native FC only for models matched by NativeToolIsolationModels.
-+              for (const key of ['finish_reason', 'native_finish_reason']) {
-+                if (['tool_calls', 'function_call'].includes(item[key])) item[key] = null;
-+              }
-             }
-           }
-           if (!reasoningToContentEnabled) return transformed;
-@@ -632,6 +660,8 @@ class StreamHandler {
-     // --- 初始 AI 调用 ---
-     if (DEBUG_MODE) console.log('[VCP Stream Loop] Processing initial AI call.');
-     let initialAIResponseData = await processAIResponseStreamHelper(firstAiAPIResponse, true);
-+    let lastTurnSawNativeToolCall = Boolean(initialAIResponseData.sawNativeToolCall);
-+    let lastTurnFinishReason = initialAIResponseData.finishReason || null;
-     validUpstreamTurns = initialAIResponseData.completed;
-     currentAIContentForLoop = initialAIResponseData.content;
-     if (writeChatLog) chatLogs.push({ request: originalBody, response: initialAIResponseData.message });
-@@ -663,15
+ ### 检索 B 站视频/UP主
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」search「末」,
+ keyword:「始」搜索词「末」,
+ search_type:「始」'video' 或 'bili_user'「末」
+ 
+ ### 调查 UP 主投稿列表
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」get_up_videos「末」,
+ mid:「始」用户 ID「末」,
+ pn:「始」1「末」
 ```
 
-**File**: `tests/nativeToolIsolation.test.js` (modified, +91/-1)
+**File**: `TVStxt/supertool.txt` (modified, +1/-1)
 ```diff
-@@ -123,4 +123,94 @@ for (const stream of [false, true]) {
-         assert.ok(sent[2].messages[0].tool_calls);
-         assert.equal(options.body, before);
-     });
--}
-\ No newline at end of file
-+}
-+
-+const { Readable } = require('node:stream');
-+const { EventEmitter } = require('node:events');
-+const StreamHandler = require('../modules/handlers/streamHandler');
-+const NonStreamHandler = require('../modules/handlers/nonStreamHandler');
-+
-+test('StreamHandler strips outbound tool_calls ONLY for NativeToolIsolationModels and preserves them for normal models', async () => {
-+    const ssePayload = [
-+        `data: ${JSON.stringify({ model: undefined, choices: [{ index: 0, delta: { role: 'assistant', content: '' }, finish_reason: null }] })}\n\n`,
-+        `data: ${JSON.stringify({ choices: [{ index: 0, delta: { tool_calls: [{ index: 0, id: 'call_pf_1', type: 'function', function: { name: 'pf_list_workspaces', arguments: '{}' } }] }, finish_reason: 'tool_calls' }] })}\n\n`,
-+        'data: [DONE]\n\n'
-+    ].join('');
-+
-+    const runStreamForModel = async (model) => {
-+        const res = {
-+            writableEnded: false,
-+            destroyed: false,
-+            output: '',
-+            write(chunk, cb) { this.output += chunk; if (cb) cb(); return true; },
-+            end() { this.writableEnded = true; }
-+        };
-+        const handler = new StreamHandler({
-+            originalBody: { model, messages: [{ role: 'user', content: 'list' }] },
-+            abortController: new AbortController(),
-+            ToolCallParser: { parse: () => [] },
-+            maxVCPLoopStream: 3
-+        });
-+        const outcome = await handler.handle({}, res, { ok: true, status: 200, body: Readable.from([Buffer.from(ssePayload)]) });
-+        return { outcome, output: res.output };
-+    };
-+
-+    const isolated = await runStreamForModel('gemini-4-hydrogen');
-+    assert.doesNotMatch(isolated.output, /call_pf_1|pf_list_workspaces|"finish_reason":"tool_calls"/);
-+    assert.equal(isolated.outcome.completed, false);
-+
-+    const normal = await runStreamForModel('gemini-3.8-flash-high');
-+    assert.match(normal.output, /"id":"call_pf_1"/);
-+    assert.match(normal.output, /"name":"pf_list_workspaces"/);
-+    assert.match(normal.output, /"finish_reason":"tool_calls"/);
-+    assert.doesNotMatch(normal.output, /"finish_reason":"stop"/);
-+    assert.equal((normal.output.match(/data: \[DONE\]/g) || []).length, 1);
-+    assert.equal(normal.outcome.completed, true);
-+});
-+
-+test('NonStreamHandler strips outbound tool_calls for isolated models and preserves tool_calls + finish_reason for normal models', async () => {
-+    const makeUpstreamJson = (model) => JSON.stringify({
-+        id: 'chatcmpl-nonstream-tool',
-+        model,
-+        choices: [{
-+            index: 0,
-+            message: {
-+                role: 'assistant',
-+                content: null,
-+                tool_calls: [{ id: 'call_ns_1', type: 'function', function: { name: 'pf_list_workspaces', arguments: '{}' } }]
-+            },
-+            finish_reason: 'tool_calls'
-+        }]
-+    });
-+
-+    const runNonStreamForModel = async (model) => {
-+        const res = new EventEmitter();
-+        res.writableEnded = false;
-+        res.destroyed = false;
-+        res.bodyText = '';
-+        res.send = (buf) => { res.bodyText = Buffer.from(buf).toString('utf8'); res.writableEnded = true; };
-+        const handler = new NonStreamHandler({
-+            originalBody: { model, messages: [{ role: 'user', content: 'list' }] },
-+            pluginManager: { messagePreprocessors: new Map() },
-+            abortController: new AbortController(),
-+            ToolCallParser: { parse: () => [] },
-+            apiRetries: 1,
-+            apiRetryDelay: 0,
-+            maxVCPLoopNonStream: 3
-+        });
-+        const raw = makeUpstreamJson(model);
-+        const outcome = await handler.handle({}, res, { ok: true, arrayBuffer: async () => Buffer.from(raw) });
-+        return { outcome, json: JSON.parse(res.bodyText) };
-+    };
-+
-+    const isolated = await runNonStreamForModel('gemini-4-hydrogen');
-+    assert.equal(isolated.json.choices[0].message.tool_calls, undefined);
-+    assert.equal(isolated.json.choices[0].finish_reason, 'stop');
-+    assert.equal(isolated.outcome.completed, false);
-+
-+    const normal = await runNonStreamForModel('gemini-3.8-flash-high');
-+    assert.equal(normal.json.choices[0].message.content, null);
-+    assert.equal(normal.json.choices[0].message.tool_calls[0].id, 'call_ns_1');
-+    assert.equal(normal.json.choices[0].finish_reason, 'tool_calls');
-+    assert.equal(normal.outcome.completed, true);
-+});
-\ No newline at end of file
+@@ -7,7 +7,7 @@ command:「始」工具参数「末」, //具体视不同工具需求而定
+ content:「始ESCAPE」这是一个优先正则保护字段，内部可以输入<<<[TOOL_REQUEST]>>>和「始」从而不会被破坏解析器「末ESCAPE」, // 任意字段都可以使用「始ESCAPE」来传递内部的vcp解析字段
+ <<<[END_TOOL_REQUEST]>>>
+ 
+-<<<[TOOL_REQUEST]>>>到<<<[END_TOOL_REQUEST]>>>来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
++`<<<[TOOL_REQUEST]>>>` 到 `<<<[END_TOOL_REQUEST]>>>` 来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
+ 主动判断当前需求，灵活使用各类工具调用，服务器支持一次调用多个工具和连续调用。
+ 
+ —— VCP 全局高级修饰字段 (支持所有工具与JevCall，正交可组合) ——
+```
+
+**File**: `TVStxt/toollite.txt` (modified, +2/-0)
+```diff
+@@ -97,11 +97,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
+ need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
+ 
+ ### 检索 B 站视频/UP主
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」search「末」,
+ keyword:「始」搜索词「末」,
+ search_type:「始」'video' 或 'bili_user'「末」
+ 
+ ### 调查 UP 主投稿列表
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」get_up_videos「末」,
+ mid:「始」用户 ID「末」,
+ pn:「始」1「末」
+```
+
+---
+
+### Incident Patch 3: `19552763` (2026-11-20)
+**Commit Message**: fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题
+
+- Agent/DeepSeekOfficial.txt: 修正用户宏占位符 {{VarUse}} -> {{VarUser}}
+- Plugin/TavilySearch: 修正示例 JSON 中的换行转义字符 \time_range -> \ntime_range
+- TVStxt/toollite.txt, SearchToolBox.txt: 为 B 站子检索示例补充缺失的 tool_name:「始」BilibiliFetch「末」
+- TVStxt/JevToolCall.txt: 移除末尾孤立的「末」字符
+- TVStxt/supertool.txt: 为说明文本中的 TOOL_REQUEST 标签添加反引号避免解析器误匹配
+- Plugin/MediaRenderer: 补全说明文字中被误删的 <<<[TOOL_REQUEST]>>> 标签描述
+- Plugin/ZImageGen2: 修正示例中的工具名 ZImageGen -> ZImageGen2
+
+**File**: `Agent/DeepSeekOfficial.txt` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@
+ 
+ 当前工作环境VCPToolbox，一个强大的AGI-Runtime工作运行时环境。
+ 今天是{{Date}},{{Today}},{{Festival}}。当前天气{{VCPWeatherInfoNow}}。
+-用户是{{VarUse}}，你的主人。
++用户是{{VarUser}}，你的主人。
+ 
+ 核心指令
+ {{VarToolList}}
+```
+
+**File**: `Plugin/MediaRenderer/plugin-manifest.json` (modified, +2/-2)
+```diff
+@@ -46,13 +46,13 @@
+       {
+         "command": "RenderImage",
+         "commandIdentifier": "RenderImage",
+-        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的  工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
++        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的 <<<[TOOL_REQUEST]>>> 到 <<<[END_TOOL_REQUEST]>>> 工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
+         "example": "<<<[TOOL_REQUEST]>>>\ntool_name:「始」MediaRenderer「末」,\ncommand:「始」RenderImage「末」,\nhtml:「始」<!doctype html><style>@font-face{font-family:Title;src:url('file:///D:/fonts/title.woff2')}html,body{margin:0;width:100%;height:100%;background:#08111f}.card{height:100%;display:grid;
+```
+
+**File**: `Plugin/TavilySearch/plugin-manifest.json` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+       {
+         "commandIdentifier": "TavilySearch",
+         "description": "调用此工具使用 Tavily API 进行高级网络搜索。默认启用高级搜索模式并返回图片链接。重要提示：请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。请在您的回复中，使用以下精确格式来请求搜索，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含搜索结果的JSON对象。请基于这些结果回答用户的问题或完成相关任务。\n请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。",
+-        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\time_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
++        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\ntime_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
+       }
+     ]
+   }
+```
+
+**File**: `Plugin/ZImageGen2/plugin-manifest.json.block` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+       {
+         "commandIdentifier": "ZImageGenerate",
+         "description": "调用此工具通过 Z-Image-Base 模型生成高质量图片。支持中英文提示词。请在您的回复中，使用以下精确格式来请求图片生成，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含以下信息的结果：\n1. 生成图片的公开访问URL。\n2. 图片在服务器上的存储相对路径 (例如：image/zimage/图片名.png)。\n3. 图片的文件名和使用的Seed。\n4. 如果showbase64设置为true，还会包含base64格式的图片数据供AI查看。\n请在您的最终回复中，使用返回的【图片URL】为用户生成一个HTML的 `<img>` 标签来直接展示图片，例如：`<img src=\"[此处填写图片URL]\" alt=\"[此处可填写部分prompt作为描述]\" width=\"300\">`。请确保替换占位符，并可调整 `width` 属性（建议200-500像素）。",
+-        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
++        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen2「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
+       }
+     ]
+   }
+```
+
+**File**: `TVStxt/JevToolCall.txt` (modified, +1/-1)
+```diff
+@@ -40,7 +40,7 @@ B站截图默认仅获取画面；需要组合内容时，在句子或 [] 中明
+ 联络[Grok]，告诉它【我是Nova，我想问问2026年10月推特上的ai热点新闻】，并使用[临时通讯]。
+ 睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。
+ 请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。
+-请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
++请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。
+ 请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。
+ 请使用 {物联网控制} 中的 `TableLampRemote`，执行【打开台灯】
+ 读取[file://{{VarVCPToolBoxPath}}\Plugin\DailyHot\dailyhot_cache.md]获得每日热点新闻。
+```
+
+**File**: `TVStxt/SearchToolBox.txt` (modified, +2/-0)
+```diff
+@@ -34,11 +34,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
+ need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
+ 
+ ### 检索 B 站视频/UP主
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」search「末」,
+ keyword:「始」搜索词「末」,
+ search_type:「始」'video' 或 'bili_user'「末」
+ 
+ ### 调查 UP 主投稿列表
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」get_up_videos「末」,
+ mid:「始」用户 ID「末」,
+ pn:「始」1「末」
+```
+
+**File**: `TVStxt/supertool.txt` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@ command:「始」工具参数「末」, //具体视不同工具需求而定
+ content:「始ESCAPE」这是一个优先正则保护字段，内部可以输入<<<[TOOL_REQUEST]>>>和「始」从而不会被破坏解析器「末ESCAPE」, // 任意字段都可以使用「始ESCAPE」来传递内部的vcp解析字段
+ <<<[END_TOOL_REQUEST]>>>
+ 
+-<<<[TOOL_REQUEST]>>>到<<<[END_TOOL_REQUEST]>>>来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
++`<<<[TOOL_REQUEST]>>>` 到 `<<<[END_TOOL_REQUEST]>>>` 来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
+ 主动判断当前需求，灵活使用各类工具调用，服务器支持一次调用多个工具和连续调用。
+ 
+ —— VCP 全局高级修饰字段 (支持所有工具与JevCall，正交可组合) ——
+```
+
+**File**: `TVStxt/toollite.txt` (modified, +2/-0)
+```diff
+@@ -97,11 +97,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
+ need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
+ 
+ ### 检索 B 站视频/UP主
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」search「末」,
+ keyword:「始」搜索词「末」,
+ search_type:「始」'video' 或 'bili_user'「末」
+ 
+ ### 调查 UP 主投稿列表
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」get_up_videos「末」,
+ mid:「始」用户 ID「末」,
+ pn:「始」1「末」
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #609** (2026-11-17): feat(memory): 完整接入 RiverMemo V5 双曲生产检索与 AB 旧轨隔离 (@lioensky)
-- **PR #608** (2026-11-17): fix(chat,bridge): 仅按 NativeToolIsolationModels 选择性剥离出站原生工具调用并支持桥接模型列表透传 (@infinite-vector)
-- **PR #607** (2026-11-17): fix(roleDivider,vcpLoop): 修复多模态数组角色切分丢失及模糊匹配 ESCAPE 大小写问题 (@InSciTech)
-- **PR #606** (2026-11-17): fix(rag): 修复 ContextVectorManager 未排除虚拟系统 User 消息导致的向量污染 (@InSciTech)
-- **PR #605** (2026-11-16): fix(UserAuth): 增加 code.bin 缺失即时自愈生成机制并从版本控制中移除 (@InSciTech)
-- **PR #604** (2026-11-16): feat(Plugin): 新增可选的 KeenableSearch 联网搜索插件（默认禁用） (@KGKallasmaa)
+- **PR #621** (2026-11-20): fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题 (@InSciTech)
+- **PR #620** (2026-11-20): fix(plugins): 修正多处插件 Manifest 示例工具名、参数大小写及格式错误 (@InSciTech)
+- **PR #619** (2026-11-19): fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发死锁，并修复关机Phase2/Phase8阻塞 (@infinite-vector)
+- **PR #618** (2026-11-18): # feat(WarpedFieldAtlas): 读取 Tag 和 Chunk 双曲场训练快照，支持按节点或对话消息查询近邻 (@CI-IISATO)
+- **PR #617** (2026-11-18): fix: 出站请求中降级无法投递的 Markdown data: 图片（避免上游 415/500） (@RoxyAsahi)
+- **PR #616** (2026-11-18): feat(memo): 1% 阈值训练对纯追加窗口按依赖复用 Tag 局部残差 (@CI-IISATO)
 
 ---
 
@@ -3004,32 +2202,48 @@ fix(chat,bridge): 仅按 NativeToolIsolationModels 选择性剥离出站原生�
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in KnowledgeBaseManager.js
+## X. Empirical Invariant Guard in image-file-server.js
 
 **RULE**:
-When implementing operations in `KnowledgeBaseManager.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Plugin/ImageFileServer/image-file-server.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4eaca06a`: 内存fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `09a25ded`: fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `KnowledgeBaseManager.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/ImageFileServer/image-file-server.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-                tagCapacity,
-                true
+// 进程信号由宿主处理；插件只释放自身资源。
+function shutdown() {
+}
+    shutdown,
+    // 保留既有清理入口，供调用方和测试使用。
+    stopSecurityManager: shutdown,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-                tagCapacity
+// 优雅关闭处理
+process.on('SIGINT', () => {
+    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
+    process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
+    securityManager.stopCleanupTimer();
+    process.exit(0);
+});
+    // 供测试或宿主优雅卸载时停止定时器，避免模块句柄阻止进程退出
+    stopSecurityManager: () => securityManager.stopCleanupTimer(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4eaca06a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `09a25ded` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

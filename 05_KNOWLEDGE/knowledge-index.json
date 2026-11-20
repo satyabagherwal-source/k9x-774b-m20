@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T23:47:55.201Z",
-  "total_verified_learnings": 9052,
+  "last_updated": "2026-11-20T23:57:55.789Z",
+  "total_verified_learnings": 9053,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22742,
+  "total_items": 22755,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4de161e28dfe4b2e3595863c79ea9bb395f25effe9ebf8ceec32403df6323368",
+      "content_hash": "44024884ca48d326629cdb8a35242ee1b59f50a4f56e05304becf8378c4e1663",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:21:30.677Z"
+      "persisted_at": "2026-11-20T23:57:55.429Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d4802465bdc62264edd57a3271107440d910f65f8dc23ad7577573e7939edc3",
+      "content_hash": "35247da86a29636bcb00b3ad924ad357d24460e7afd87a3364ed83ec399bee65",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:21:30.843Z"
+      "persisted_at": "2026-11-20T23:57:55.620Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "27588cb2620fb2663b049c8f455077b1e77392bcd9969d52b0279b90387e5bee",
+      "content_hash": "5d868c16d00f9e1160ab1c8598a2924e1f33c53faaf5da886d1d82268e10a275",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:21:30.971Z"
+      "persisted_at": "2026-11-20T23:57:55.789Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -221446,8 +221446,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "a2c33d06",
-      "content_hash": "57c36e57f7e7d10c815fbe2b94996191e91c2c5fca58c8f0649c1dd2e3004b4b",
+      "source_version": "09a25ded",
+      "content_hash": "c9c965d1ff4d95851120f0593160151e8ecd999ffad6540b8f013ae471c23688",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -221480,6 +221480,11 @@
           "number": 9448,
           "title": "Empirical Invariant Guard in global_chunks.rs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9665,
+          "title": "Empirical Invariant Guard in image-file-server.js",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221487,7 +221492,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T21:24:11.061Z",
+      "verified_at": "2026-11-20T23:56:26.158Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221529,10 +221534,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "4eaca06a",
-      "content_hash": "e1d881b43ab620862047d7cec2b24b44172f097e0a5cfb78936ccdab2f047ece",
+      "source_version": "09a25ded",
+      "content_hash": "184fbbf422900f77ba9323947e6f7b4e8c7d83135d2772b74c9fc01ecf376f6c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T23:17:41.011Z"
+      "persisted_at": "2026-11-20T23:56:26.888Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox",
@@ -221541,10 +221546,10 @@
       "relative_path": "08_VERIFICATION/lioensky-vcptoolbox-verification-protocol-empirical-defect-shield-for-lioensky-v.md",
       "title": "Verification Protocol: Empirical Defect Shield for lioensky/VCPToolBox",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "a2c33d06",
-      "content_hash": "873f1722dbc9d41d930a493b3125535fe964abdc4d9908601a29122759b6203f",
+      "source_version": "09a25ded",
+      "content_hash": "920ce779a73063ceb308403235433d3aad738e3722f88abd80b91cced7c1800e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T21:24:11.815Z"
+      "persisted_at": "2026-11-20T23:56:27.087Z"
     },
     "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false": {
       "item_id": "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false",
@@ -247697,9 +247702,9 @@
       "title": "Technical Construction Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
       "repository": "lioensky-vcptoolbox-learnings",
       "source_version": "HEAD",
-      "content_hash": "7fa2bd27886bf25ea90c0a4257d9daaf110efa4203340e7e239fcada7e92998a",
+      "content_hash": "c4e90c0b7042e8ac4478f96cd16adfbc199e10bb718ed63084e11e9f2b95ad9b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T15:47:57.645Z"
+      "persisted_at": "2026-11-20T23:57:54.203Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox-learnings",
@@ -247709,9 +247714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lioensky-vcptoolbox-learnings",
       "repository": "lioensky-vcptoolbox-learnings",
       "source_version": "HEAD",
-      "content_hash": "777ecf87459ba2dc7ba053895f80dda257fcb6ef0825b9e734336f06193624ba",
+      "content_hash": "a80485f8871a9343aef4133b254c80e01680df9a4e0690bc6673dbf126017d60",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T21:24:16.987Z"
+      "persisted_at": "2026-11-20T23:57:54.427Z"
     },
     "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf": {
       "learning_id": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
@@ -308323,13 +308328,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-S9ZV-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-33Q2-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a790577547b0fb9d291b42df3b41424d1497dd88a5d9e93826c94a48f46c9eb",
+      "content_hash": "4c41f54a5ce4f52c1d4d2e7aa9b571a1cb899d5bdad369a8f7ed8295fa1fc93e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:21:30.527Z"
+      "persisted_at": "2026-11-20T23:57:55.232Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -308552,6 +308557,201 @@
       "content_hash": "47c753c48fb652e58d794363e114d975900947e07f05f78d40a11f46f95d57ee",
       "domain_letter": "H",
       "persisted_at": "2026-11-20T23:47:53.569Z"
+    },
+    "rule-9665": {
+      "learning_id": "rule-9665",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9665,
+      "title": "Empirical Invariant Guard in image-file-server.js",
+      "source_url": "https://github.com/lioensky/VCPToolBox",
+      "source_version": "09a25ded",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T23:56:26.158Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-image-file-server-js": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-image-file-server-js",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-32RZ-empirical-invariant-guard-in-image-file-server-js.md",
+      "title": "Empirical Invariant Guard in image-file-server.js",
+      "repository": "lioensky-vcptoolbox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3b4c833a3afb61f3c0df7d07534e5fd3f443a594d2dd9900e3f6901d2817f56e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T23:57:54.005Z"
+    },
+    "learn-github-rafsoh-dimeapp": {
+      "learning_id": "learn-github-rafsoh-dimeapp",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "rafsoh/dimeApp",
+      "repository": "rafsoh/dimeApp",
+      "slug": "rafsoh-dimeapp",
+      "platform": "github",
+      "source_url": "https://github.com/rafsoh/dimeApp",
+      "source_version": "6dead5de",
+      "content_hash": "41d3ae6037e6c4e2ce946cf83dac073e61f11f645399b1bbcbf82026c1382182",
+      "dossier_path": "07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9666,
+          "title": "Isolated Multi-Process CloudKit Sync Disjointness",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9667,
+          "title": "Temporal State-Gating on Remote-Synchronized Generators",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9668,
+          "title": "Non-Destructive In-Memory Snapshotting for Undo Actions",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T23:57:47.951Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9666": {
+      "learning_id": "rule-9666",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9666,
+      "title": "Isolated Multi-Process CloudKit Sync Disjointness",
+      "source_url": "https://github.com/rafsoh/dimeApp",
+      "source_version": "6dead5de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T23:57:47.951Z"
+    },
+    "rule-9667": {
+      "learning_id": "rule-9667",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9667,
+      "title": "Temporal State-Gating on Remote-Synchronized Generators",
+      "source_url": "https://github.com/rafsoh/dimeApp",
+      "source_version": "6dead5de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T23:57:47.951Z"
+    },
+    "rule-9668": {
+      "learning_id": "rule-9668",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9668,
+      "title": "Non-Destructive In-Memory Snapshotting for Undo Actions",
+      "source_url": "https://github.com/rafsoh/dimeApp",
+      "source_version": "6dead5de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T23:57:47.951Z"
+    },
+    "candidate_directive-isolated-multi-process-cloudkit-sync-disjointness": {
+      "item_id": "candidate_directive-isolated-multi-process-cloudkit-sync-disjointness",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-31LK-isolated-multi-process-cloudkit-sync-disjointness.md",
+      "title": "Isolated Multi-Process CloudKit Sync Disjointness",
+      "repository": "rafsoh-dimeapp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "07db1f08766f639416e190d1d43521fd2c6f2f40b793d186e7e9d1a86041ef36",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:57:52.475Z"
+    },
+    "candidate_directive-temporal-state-gating-on-remote-synchronized-generators": {
+      "item_id": "candidate_directive-temporal-state-gating-on-remote-synchronized-generators",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-31LL-temporal-state-gating-on-remote-synchronized-generators.md",
+      "title": "Temporal State-Gating on Remote-Synchronized Generators",
+      "repository": "rafsoh-dimeapp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ed8017e8f294f7d788ae8d5f3bdafae1986ad854bca8fd87d14eed5f7893e86c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:57:52.671Z"
+    },
+    "candidate_directive-non-destructive-in-memory-snapshotting-for-undo-actions": {
+      "item_id": "candidate_directive-non-destructive-in-memory-snapshotting-for-undo-actions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-31LL-non-destructive-in-memory-snapshotting-for-undo-actions.md",
+      "title": "Non-Destructive In-Memory Snapshotting for Undo Actions",
+      "repository": "rafsoh-dimeapp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4d031cc7963d982a180f12fa7b5a8250224a69f4d17211c0e37f102326cfbeff",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:57:52.885Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rafsoh-dimeapp-technical-construction-intelligence-rafsoh-dimeapp-core-invariant.md",
+      "title": "Technical Construction Intelligence: rafsoh/dimeApp Core Invariants",
+      "repository": "rafsoh/dimeApp",
+      "source_version": "6dead5de",
+      "content_hash": "6c944d88bb5a9773a4d6f53b66fcee6f296e0f8c20f48f8b07a5466040c65f2f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:57:49.034Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rafsoh-dimeapp": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rafsoh-dimeapp",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rafsoh-dimeapp-verification-protocol-empirical-defect-shield-for-rafsoh-dimeapp.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rafsoh/dimeApp",
+      "repository": "rafsoh/dimeApp",
+      "source_version": "6dead5de",
+      "content_hash": "9dd83a43be1606cf3ee975f89439369fbb34427416b9942cf7ad8194ca594593",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T23:57:49.230Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rafsoh-dimeapp-learnings-technical-construction-intelligence-rafsoh-dimeapp-lear.md",
+      "title": "Technical Construction Intelligence: rafsoh-dimeapp-learnings Core Invariants",
+      "repository": "rafsoh-dimeapp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "06aeb63acea436a78cd44040db7c9a6412e65f1653c7ce2d50ef9ee2756a3905",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:57:53.084Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rafsoh-dimeapp-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rafsoh-dimeapp-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rafsoh-dimeapp-learnings-verification-protocol-empirical-defect-shield-for-rafso.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rafsoh-dimeapp-learnings",
+      "repository": "rafsoh-dimeapp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7c2ed2595982ea28bd8a2e962d87df521de93fdbd8bd61287f07d2065cc3cac8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T23:57:53.277Z"
     }
   },
   "ai-builder-brain": {

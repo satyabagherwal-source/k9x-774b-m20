@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T15:47:57.336Z",
+  "timestamp": "2026-11-20T23:57:53.877Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-lioensky-vcptoolbox-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [lioensky-vcptoolbox-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T15:47:57.336Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T23:57:53.877Z`  
 > **Learning ID**: `LEARN-EVO-lioensky-vcptoolbox-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), C (Market & Business Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from lioensky-vcptoolbox-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `a2a3b8b8`  
+> **Source Version**: `09a25ded`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T15:47:52.692Z  
+> **Timestamp**: 2026-11-20T23:56:25.189Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T15:47:52.546Z  
+> **Harvest Timestamp**: 2026-11-20T23:56:25.063Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2449 stars
+- **Stars / Engagement**: 2450 stars
 
 ---
 
@@ -1813,11 +1813,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #602** (2026-11-15): **fix(Plugin): 插件子进程自动继承父进程 Node 运行时以防止原生模块 ABI 冲突**
-  *Symptoms*: ### 解决的问题 在多 Node.js 版本共存或使用 NVM/系统预装 Node 的环境下（例如系统全局预装老版本 Node，而 VCP 主服务使用 NVM/更高版本 Node 启动）： 虽然 `ecosystem.config.js` 显式指定了解释器避免了 PM2 启动主服务时的 ABI 错位，但在 `PluginManager` 中使用 `spawn(command, args, { shell: true })` 启动独立进程插件（如 `ToolCallRecordQuery` 等）时，系统 shell 会从默认 PATH 中解析 `node` 命令，导致以系统老版本 Node 启动插件。  这会导致依赖原生 C++ 二进制扩展（如 `better-sqlite3`）的插件抛出 ABI 不匹配崩溃： ```text The module better_sqlite3.node was compiled against a different Node.js version using NODE_MODULE_VERSION 127. This version of Node.js requires NODE_MODULE_VERSION 93. ```  ### 改进方案 在 `Plugin.js` 的 `executeStaticPlugin` 与 `executePlugin` 构造子进程环境变量时，将当前父进程正在运行的解释器所在目录 (`path.dirname(process.execPath)`) 优先注入到 `PATH` 的最前端：  ```javascript // 无论系统默认 PATH 是什么，子进程优先继承运行当前 VCP 主服务的同一个 Node.js 运行时 const currentNodeBinDir = path.dirname(process.execPath); envForProcess.PATH = `${currentNodeBinDir}${path.delimiter}${envForProcess.PATH || process.env.PATH || ""}`; ```  ### 优势 1. **零侵入**：插件清单无需硬编码绝对路径，继续保留自然的 `"command": "node xxx.js"`。 2. **跨平台自适应**：使用 `path.delimiter` 兼容 Windows/Linux/macOS；未来主服务切换至任何 Node 版本，所有插件子进程均会自动继承并对齐 ABI，彻底杜绝此类崩溃。
+- **Issue #621** (2026-11-20): **fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题**
+  *Symptoms*: ## 概述  在对 VCPToolBox 各 Agent 提示词、插件清单（Manifest）及 TVStxt 工具调用模板的审查中，发现若干由于手滑、转义字符误用、复制遗漏等导致的纯文本笔误问题。这些问题会导致占位符无法展开（宏死链）、JSON 参数名解析错误（如制表符导致参数识别失败）、或者模型生成工具请求时缺少必需的 `tool_name`。  本次 PR 针对上述 8 处纯文本问题进行了精准修复，未引入任何逻辑改动与格式抖动。  ## 修改明细  1. **宏占位符拼写修正**：    - `Agent/DeepSeekOfficial.txt`：修正第 20 行用户宏 `{{VarUse}}` -> `{{VarUser}}`（原先漏写末尾字母 `r`，导致宏无法展开）。 2. **JSON 转义符手滑修正**：    - `Plugin/TavilySearch/plugin-manifest.json`：修正示例中的 `\\time_range` -> `\\ntime_range`（原先手滑打成制表符转义 `\\t`，导致 JSON 解析后参数名损坏为 `\\t` + `ime_range`）。 3. **插件示例与说明残缺修复**：    - `Plugin/MediaRenderer/plugin-manifest.json`：补全两处命令描述中因脚本迁移误删的 `<<<[TOOL_REQUEST]>>> 到 <<<[END_TOOL_REQUEST]>>>` 标签文字。    - `Plugin/ZImageGen2/plugin-manifest.json.block`：修正示例中的工具名 `ZImageGen` -> `ZImageGen2`（漏写末尾数字 `2`）。 4. **工具调用示例规范化与笔误清除**：    - `TVStxt/toollite.txt` & `TVStxt/SearchToolBox.txt`：为 B 站视频检索（`search`）与 UP 主投稿检索（`get_up_videos`）子命令示例首行补充缺失的 `tool_name:「始」BilibiliFetch「末」,`，避免模型直接调用时因缺失工具名报错。    - `TVStxt/JevToolCall.txt`：移除第 43 行普通指令末尾多余遗留的孤立 `「末」` 字符。    - `TVStxt/supertool.txt`：为说明文案中的 `<<<[TOOL_REQUEST]>>>` 与 `<<<[END_TOOL_REQUEST]>>>` 增加行内代码反引号包裹，防止说明文字被正则解析器误提取为空工具请求。  ## 验证与审查  - 所有 JSON 文件语法经 `python3 -m json.tool` 校验 100% 合法，且严格保持原有的换行格式（如 TavilySearch 的 CRLF）； - 经独立代码审查子代理核验：全量界定符「始」「末」严格配对，无任何代码与格式抖动； - 自动化测试全部通过（18/18 项测试全部 PASS，追加回归测试 39/39 全部 PASS）。
 
-- **Issue #600** (2026-11-15): **fix(roleDivider): 保护记忆包络与代码字面量免受角色误切分并保留多模态缓存断点**
-  *Symptoms*: ### 动机与背景  1. **思忆托盘搬移后的跨模块误切分**：未开启 `MemoryThinkingTray` 时，第 0 条 `system` 消息受 `chatCompletionHandler` 中 `roleDivider.process(..., { skipCount: 1 })` 豁免保护；开启 `MemoryThinkingTray` 后，记忆思维区被搬移至对话尾部生成 `user` 角色承载消息（`index >= 1`），不再处于 `skipCount: 1` 豁免范围内。当 RAG 记忆、冷知识库或技术讨论正文中以行内代码（如 `` `<<<[END_ROLE_DIVIDE_USER]>>>` ``）或代码块形式引用角色分割符字面量时，会触发 `roleDivider` 的孤立结束标签鲁棒性分支，导致单条消息被从反引号中间错误劈裂为多个 `user` 消息块并吞噬标签文本。 2. **多模态分片属性丢失隐患**：`processArrayMessage` 在处理未发生角色拆分的文本分片时，重新构造了纯 `{ type: 'text', text: ... }` 字面量对象，导致上游预处理器（如 `MemoryThinkingTray` 开启 `MEMORY_THINKING_TRAY_CACHE_BREAKPOINT` 时）挂载在文本分片上的 `cache_control` 等扩展属性被意外剥落。  ### 架构与解决方案  在完全不改变合法角色分割语义与预处理器管线顺序的前提下，将 `modules/roleDivider.js` 中的 `protectToolContent` 升级为双阶段可组合的 Unicode 私用区（PUA）隐身护盾：  1. **`O(1)` 特征子串门禁直通**：扫描前快速检测消息是否包含 `ROLE_DIVIDE_` 子串，确保 99.9% 不含分割标记的常规消息零额外解析开销直接放行。 2. **第一阶段：结构化数据包络遮蔽（`findEnvelopeRanges`）**：在原有 `TOOL_REQUEST`（同步兼容 `TOOL_REQUEST_ESCAPE`）与工具结果汇总块保护基础上，增补对闭合 `<!-- VCP_RAG_BLOCK_START ... <!-- VCP_RAG_BLOCK_END -->` 与 `[--- TDB 冷知识库检索 ... [--- 知识库检索结束 ---]` 记忆包络的区间遮蔽，跨越上游多次对象浅拷贝依然稳定生效。 3. **第二阶段：带外层作用域上界的单遍代码词法护盾（`findCodeLiteralRanges`）**：    - **CommonMark 围栏与行内代码解析**：支持 3 字符及以上变长反引号/波浪线围栏（含 `>` 引用块前缀）、HTML `<pre>` / 单行 `<code>` 标签，以及遵循单行约束与前置反斜杠转义识别的等长行内反引号代码段；普通代码块通过统一游标整体跨过，防止代码块内奇数个孤立反引号泄露至外部引发错位配对。    - **外层角色作用域上界守卫（`isBrokenAcrossOuterRole`）**：当合法的未加引号 `ROLE_DIVIDE` 开启标签位于代码块外部时，严格校验内部围栏不得跨越并破坏外层配对的 `END` 标签；未闭合的孤立反引号或半截残缺代码围栏自动退化为普通字符推进，绝不吞噬真实的分割指令。 4. **多模态文本分片元数据保真**：在 `processArrayMessage`
+- **Issue #620** (2026-11-20): **fix(plugins): 修正多处插件 Manifest 示例工具名、参数大小写及格式错误**
+  *Symptoms*: ## 概述  在对 VCPToolBox 插件清单及工具调用机制的排查中，发现部分服务端插件的 `plugin-manifest.json` 在由前端版本迁移或复制时，调用示例（`example` / `description`）中的 `tool_name` 残留了无 `Server` 前缀的旧名称或错误名称。由于 VCP 工具调度器严格按 `manifest.name` 查找插件，大模型依据占位符展开的示例发起调用时，会在服务端必现 `未找到名为 \"xxx\" 的插件` 报错。  本次提交针对上述问题进行了系统性修复，并完善了相关参数大小写容错与格式排版。  ## 修改明细  1. **修正 5 个插件 Manifest 示例中的 `tool_name` 不匹配问题**：    - `Plugin/PluginSourceViewer`: `tool_name` 示例由 `PluginSourceViewer` 修正为声明的 `ServerPluginSourceViewer`。    - `Plugin/FileOperator`: 全部 21 个子命令调用示例中的 `tool_name` 统一由 `FileOperator` 修正为声明的 `ServerFileOperator`。    - `Plugin/PowerShellExecutor`: 全部 3 处模式示例中的 `tool_name` 统一由 `PowerShellExecutor` 修正为声明的 `ServerPowerShellExecutor`。    - `Plugin/VCPEverything`: 示例中的 `tool_name` 由未注册的 `LocalSearchController` 修正为声明的 `ServerSearchController`（消除与 JEV 描述的冲突）。    - `Plugin/DMXDoubaoGen`: 全部 3 处命令示例中的 `tool_name` 由复制残留的 `DoubaoGen` 修正为声明的 `DMXDoubaoGen`，避免错误路由至原生官方插件。  2. **`Plugin/AgentMessage` 规范化与参数双向兼容**：    - 运行时 `AgentMessage.js`：由仅读 `params.Maid` 升级为 `params.maid || params.Maid || params.valet`，向下兼容大写同时支持标准小写与中性词。    - Manifest：参数示例规范化为小写 `maid:`，并移除了示例外层冗余的 ```text 代码块围栏（防止大模型生成受代码块字面量保护的无效调用）。  3. **`Plugin/DailyNote` 日期参数大小写容错**：    - `handleCreateCommand` 中解析逻辑补充支持小写 `date`：`args.dateString || args.Date || args.date`，避免模型传入全小写 `date:` 时被误忽略并静默回退至当前日期。  4. **`Plugin/LightMemo` 换行符双重转义修复**：    - 将 `SearchRAG` 与 `MemoryAB` 示例中的 `\\\\n` 修正为真实的换行符 `\\n`，确保占位符解析后多行排版整洁。  ## 验证与回归测试  - 运行 `node validate-plugin-json.js`：全库 98 个插件清单 JSON 语法与 UTF-8 校
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1834,174 +1834,369 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c515e6c4` (2026-11-12)
-**Commit Message**: fix(native-rerank): keep the specific error code when a Rerank batch fails
+### Incident Patch 1: `09a25ded` (2026-11-20)
+**Commit Message**: fix
 
-Every traditional Rerank batch failure was reported as
-RERANK_BATCH_FAILED, so a wrong key (RERANK_HTTP_401), rate limiting
-(RERANK_HTTP_429), an oversized response or an invalid response all
-looked the same in diagnostics.nativeRerank.error. The codes returned by
-post and parse_rerank are static and contain no URL, key or document
-text, and the Jev path already passes them through. They are now passed
-through for Rerank too; a task that panicked or was cancelled still
-reports RERANK_BATCH_FAILED. Successful rankings are unchanged.
-
-**File**: `rust-vexus-lite/src/native_rerank.rs` (modified, +28/-1)
+**File**: `Plugin/ImageFileServer/image-file-server.js` (modified, +6/-13)
 ```diff
-@@ -229,7 +229,9 @@ impl Ranker {
-             while let Some(result) = pending.join_next().await {
-                 match result {
-                     Ok(Ok(mut scores)) => output.append(&mut scores),
--                    _ => return Err("RERANK_BATCH_FAILED".into()),
-+                    // post/parse_rerank codes are already sanitized; keep them.
-+                    Ok(Err(error)) => return Err(error),
-+                    Err(_) => return Err("RERANK_BATCH_FAILED".into()),
-                 }
-             }
-         }
-@@ -430,6 +432,31 @@ mod tests {
-         }
-     }
+@@ -567,25 +567,18 @@ function registerRoutes(app, pluginConfig, projectBasePath) {
+     console.log(`  - 允许的文件格式: ${SECURITY_CONFIG.ALLOWED_FILE_EXTENSIONS.join(', ')}`);
+ }
  
-+    #[tokio::test]
-+    async fn traditional_batch_failure_keeps_sanitized_error_code() {
-+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
-+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let address = listener.local_addr().unwrap();
-+        let server = tokio::spawn(async move {
-+            let (mut socket, _) = listener.accept().await.unwrap();
-+            let mut bytes = [0; 4096];
-+            let _ = socket.read(&mut bytes).await;
-+            socket.write_all(b"HTTP/1.1 429 Too Many Requests\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
-+                .await.unwrap();
-+        });
-+        let values = HashMap::from([
-+            ("RerankUrl".into(), format!("http://{address}/")),
-+            ("RerankApi".into(), "fixture".into()),
-+            ("RerankModel".into(), "fixture".into()),
-+            ("NativeRerankTimeoutMs".into(), "5000".into()),
-+        ]);
-+        let ranker = Ranker::from_values(&values, Some(false)).unwrap();
-+        let error = ranker.rank("query", &[json!({"id":1,"text":"one"}), json!({"id":2,"text":"two"})])
-+            .await.unwrap_err();
-+        assert_eq!(error, "RERANK_HTTP_429");
-+        server.abort();
-+    }
-+
-     #[test]
-     fn prompt_override_is_local_and_preserves_legacy_default() {
-         let values = HashMap::from([
-```
-
----
-
-### Incident Patch 2: `c1e9c4a9` (2026-11-14)
-**Commit Message**: perf(wormhole): build unified-bonus trace objects only when a trace is requested
-
-V4 retired the RRF fusion to a test-only reference, so the earlier change to its trace is reverted to upstream and the same gating moves to apply_unified_bonus: every numeric field is computed as before and only the JSON trace is skipped when includeTrace is off. Scores are bit-identical (test unified_trace_is_optional_and_preserves_score_bits).
-
-**File**: `rust-vexus-lite/src/rivermemo_wormhole.rs` (modified, +46/-1)
-```diff
-@@ -541,6 +541,9 @@ pub(super) fn apply_unified_bonus(
-         item.final_score = clamp01(item.pure_score + item.path_bonus
-             + item.gated_bonus + item.anchor_bonus);
-         item.ranking_score = item.final_score;
-+        // Only the optional topology trace consumes this JSON; score clipping
-+        // and ranking use the numeric fields above directly.
-+        if !input.include_trace { continue; }
-         traces.insert(item.curve.id, serde_json::json!({
-             "mode":"continuous-shared-topology-budget", "active": xw.eligible || proxy > 0.0,
-             "wormhole":xw, "proxyEvidence":proxy, "proxyEdge":proxy_edge,
-@@ -720,6 +723,48 @@ mod score_contract_fixture_tests {
-         assert_eq!(work[1].final_score,0.9);
-     }
- 
-+    #[test]
-+    fn unified_trace_is_optional_and_preserves_score_bits() {
-+        let mut input: NativeInput = serde_json::from_value(json!({
-+            "query":{"vector":[1,0]}, "queryState":{
-+                "completeObservation":true,
-+                "fieldProvenance":[{"id":1,"hop":0,"sourceType":"core"}],
-+                "riverNodes":[{"id":1,"hop":0},{"id":2,"hop":1}],
-+                "riverEdges":[{"sourceId":1,"targetId":2,"flow":0.1}]
-+            }
-+        })).unwrap();
-+        let omega = compute_omega(&input);
-+        let graph = NativeArtifact {
-+            node_ids:vec![1,2], node_index:HashMap::from([(1,0),(2,1)]),
-+            row_offsets:vec![0,1,1], targets:vec![1], weights:vec![0.4],
-+            ..NativeArtifact::default()
-+        };
-+        let model = Model { eligible_routes:1, routes:vec![Route {
-+            source_id:1,target_id:2,flow:1.0,relative_flow:0.625,
-+            vector:Arc::from(vec![1.0_f32,0.0]),
-+        }] };
-+        let mut expected = None;
-+        for trace in [true, false] {
-+            input.include_trace = trace;
-+            let mut work = vec![candidate(1,0.5,true),candidate(2,0.5,false)];
-+            work[0].v2_bonus = 0.013;
-+            let traces = apply_unified_bonus(&mut work,&model,&input,&omega,&graph);
-+            assert_eq!(traces.len(), if trace { work.len() } else { 0 });
-+            let bits = work.iter().map(|item| (item.curve.id,
-+                item.gated_bonus.to_bits(), item.final_score.to_bits(), item.ranking_score.to_bits()))
-+                .collect::<Vec<_>>();
-+            if trace {
-+                for item in &work {
-+                    assert_eq!(traces[&item.curve.id]["finalScore"].as_f64().unwrap().to_bits(),
-+                        item.final_score.to_bits());
-+                }
-+                expected = Some(bits);
-+            } else {
-+                assert_eq!(&bits, expected.as_ref().unwrap());
-+            }
-+        }
-+    }
-+
-     #[test]
-     fn complementary_graph_and_transport_are_bounded_and_idempotent() {
-         let input: NativeInput = serde_json::from_value(json!({
-@@ -803,4 +848,4 @@ mod score_contract_fixture_tests {
-         items.sort_by(|a,b| b.ranking_score.total_cmp(&a.ranking_score));
-         assert_eq!(items.iter().map(|c|c.curve.id).collect::<Vec<_>>(),vec![30,10,20]);
-     }
--}
-\ No newline at end of file
+-// 优雅关闭处理
+-process.on('SIGINT', () => {
+-    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
++// 进程信号由宿主处理；插件只释放自身资源。
++function shutdown() {
+     securityManager.stopCleanupTimer();
+-    process.exit(0);
+-});
+-
+-process.on('SIGTERM', () => {
+-    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
+-    securityManager.stopCleanupTimer();
+-    process.exit(0);
+-});
 +}
+ 
+ module.exports = {
+     registerRoutes,
+     // 导出纯路径判定函数，供安全回归测试复用
+     containsParentDirectorySegment,
+-    // 供测试或宿主优雅卸载时停止定时器，避免模块句柄阻止进程退出
+-    stopSecurityManager: () => securityManager.stopCleanupTimer(),
++    shutdown,
++    // 保留既有清理入口，供调用方和测试使用。
++    stopSecurityManager: shutdown,
+     // 导出安全管理器供外部查询（可选）
+     getSecurityStats: () => securityManager.getAccessStats(),
+     // 手动触发锁定（紧急情况下使用）
+```
+
+**File**: `tests/imageFileServerShutdown.test.js` (added, +67/-0)
+```diff
+@@ -0,0 +1,67 @@
++const assert = require('node:assert/strict');
++const { spawnSync } = require('node:child_process');
++const fs = require('node:fs');
++const os = require('node:os');
++const path = require('node:path');
++const test = require('node:test');
++
++const imageModule = require.resolve('../Plugin/ImageFileServer/image-file-server.js');
++const storeModule = require.resolve('../Plugin/VTrade/core/store.cjs');
++
++for (const signal of ['SIGINT', 'SIGTERM']) {
++    test(`ImageFileServer leaves ${signal} shutdown to the host`, (t) => {
++        const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'vcp-shutdown-'));
++        t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
++
++        const child = spawnSync(process.execPath, ['-e', `
++            const assert = require('node:assert/strict');
++            const fs = require('node:fs/promises');
++            const path = require('node:path');
++            const [imageModule, storeModule, directory, signal] = process.argv.slice(1);
++            const { Store } = require(storeModule);
++
++            async function run() {
++                const store = new Store(directory);
++                await store.open();
++                const lockFile = path.join(directory, 'writer.lock');
++                assert.equal(await fs.readFile(lockFile, 'utf8'), String(process.pid));
++
++                // Mirror the host contract, without booting a real server or touching its data.
++                let hostShutdown;
++                let image;
++                process.once(signal, () => {
++                    hostShutdown = (async () => {
++                        await new Promise(resolve => setImmediate(resolve));
++                        await image.shutdown();
++                        await store.close();
++                    })();
++                });
++                const signals = ['SIGINT', 'SIGTERM'];
++                const before = signals.map(name => process.listeners(name));
++                image = require(imageModule);
++                assert.deepEqual(signals.map(name => process.listeners(name)), before);
++                assert.equal(image.shutdown, image.stopSecurityManager);
++
++                // Emitting in-process works on Windows too; no OS signal is sent.
++                process.emit(signal);
++                assert.ok(hostShutdown);
++                await hostShutdown;
++                await assert.rejects(fs.access(lockFile), { code: 'ENOENT' });
++                const reopened = new Store(directory);
++                await reopened.open();
++                await reopened.close();
++                console.log('host shutdown completed');
++            }
++
++            run().catch(error => {
++                console.error(error);
++                process.exit(1);
++            });
++        `, imageModule, storeModule, directory, signal], { encoding: 'utf8', timeout: 8000 });
++
++        assert.ifError(child.error);
++        assert.equal(child.status, 0, child.stderr);
++        assert.match(child.stdout, /host shutdown completed/);
++        assert.equal(fs.existsSync(path.join(directory, 'writer.lock')), false);
++    });
++}
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 3: `f73945c2` (2026-11-12)
-**Commit Message**: refactor(index): use RetrievalIndex::model_hash for the SQL build identity
+### Incident Patch 2: `cbe119cc` (2026-11-20)
+**Commit Message**: Merge pull request #621 from InSciTech/fix/prompt-and-manifest-typos
 
-index_source.rs hashed the model signature with its own
-Sha256::digest(model_sig.as_bytes()), while retrieval_index.rs and
-index_lifecycle.rs use RetrievalIndex::model_hash for the same identity
-field. Same input to the same SHA-256, so the identity is unchanged;
-the existing sql_owned_asset_is_removed_after_host_mapping_is_released
-test asserts this equality.
+fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题
 
-**File**: `rust-vexus-lite/src/index_source.rs` (modified, +1/-1)
+**File**: `Agent/DeepSeekOfficial.txt` (modified, +1/-1)
 ```diff
-@@ -161,7 +161,7 @@ fn build_with_source(
-     let identity = AssetIdentity {
-         dimension,
-         scope: u8::from(diary.is_none()),
--        model_hash: Sha256::digest(model_sig.as_bytes()).into(),
-+        model_hash: crate::retrieval_index::RetrievalIndex::model_hash(model_sig),
-         content_digest: digest.finalize().into(),
-     };
-     let lookup = if diary.is_some() {
+@@ -17,7 +17,7 @@
+ 
+ 当前工作环境VCPToolbox，一个强大的AGI-Runtime工作运行时环境。
+ 今天是{{Date}},{{Today}},{{Festival}}。当前天气{{VCPWeatherInfoNow}}。
+-用户是{{VarUse}}，你的主人。
++用户是{{VarUser}}，你的主人。
+ 
+ 核心指令
+ {{VarToolList}}
+```
+
+**File**: `Plugin/MediaRenderer/plugin-manifest.json` (modified, +2/-2)
+```diff
+@@ -46,13 +46,13 @@
+       {
+         "command": "RenderImage",
+         "commandIdentifier": "RenderImage",
+-        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的  工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
++        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的 <<<[TOOL_REQUEST]>>> 到 <<<[END_TOOL_REQUEST]>>> 工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
+         "example": "<<<[TOOL_REQUEST]>>>\ntool_name:「始」MediaRenderer「末」,\ncommand:「始」RenderImage「末」,\nhtml:「始」<!doctype html><style>@font-face{font-family:Title;src:url('file:///D:/fonts/title.woff2')}html,body{margin:0;width:100%;height:100%;background:#08111f}.card{height:100%;display:grid;
+```
+
+**File**: `Plugin/TavilySearch/plugin-manifest.json` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+       {
+         "commandIdentifier": "TavilySearch",
+         "description": "调用此工具使用 Tavily API 进行高级网络搜索。默认启用高级搜索模式并返回图片链接。重要提示：请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。请在您的回复中，使用以下精确格式来请求搜索，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含搜索结果的JSON对象。请基于这些结果回答用户的问题或完成相关任务。\n请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。",
+-        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\time_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
++        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\ntime_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
+       }
+     ]
+   }
+```
+
+**File**: `Plugin/ZImageGen2/plugin-manifest.json.block` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+       {
+         "commandIdentifier": "ZImageGenerate",
+         "description": "调用此工具通过 Z-Image-Base 模型生成高质量图片。支持中英文提示词。请在您的回复中，使用以下精确格式来请求图片生成，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含以下信息的结果：\n1. 生成图片的公开访问URL。\n2. 图片在服务器上的存储相对路径 (例如：image/zimage/图片名.png)。\n3. 图片的文件名和使用的Seed。\n4. 如果showbase64设置为true，还会包含base64格式的图片数据供AI查看。\n请在您的最终回复中，使用返回的【图片URL】为用户生成一个HTML的 `<img>` 标签来直接展示图片，例如：`<img src=\"[此处填写图片URL]\" alt=\"[此处可填写部分prompt作为描述]\" width=\"300\">`。请确保替换占位符，并可调整 `width` 属性（建议200-500像素）。",
+-        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
++        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen2「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
+       }
+     ]
+   }
+```
+
+**File**: `TVStxt/JevToolCall.txt` (modified, +1/-1)
+```diff
+@@ -40,7 +40,7 @@ B站截图默认仅获取画面；需要组合内容时，在句子或 [] 中明
+ 联络[Grok]，告诉它【我是Nova，我想问问2026年10月推特上的ai热点新闻】，并使用[临时通讯]。
+ 睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。
+ 请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。
+-请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
++请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。
+ 请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。
+ 请使用 {物联网控制} 中的 `TableLampRemote`，执行【打开台灯】
+ 读取[file://{{VarVCPToolBoxPath}}\Plugin\DailyHot\dailyhot_cache.md]获得每日热点新闻。
+```
+
+**File**: `TVStxt/SearchToolBox.txt` (modified, +2/-0)
+```diff
+@@ -34,11 +34,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
+ need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
+ 
+ ### 检索 B 站视频/UP主
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」search「末」,
+ keyword:「始」搜索词「末」,
+ search_type:「始」'video' 或 'bili_user'「末」
+ 
+ ### 调查 UP 主投稿列表
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」get_up_videos「末」,
+ mid:「始」用户 ID「末」,
+ pn:「始」1「末」
+```
+
+**File**: `TVStxt/supertool.txt` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@ command:「始」工具参数「末」, //具体视不同工具需求而定
+ content:「始ESCAPE」这是一个优先正则保护字段，内部可以输入<<<[TOOL_REQUEST]>>>和「始」从而不会被破坏解析器「末ESCAPE」, // 任意字段都可以使用「始ESCAPE」来传递内部的vcp解析字段
+ <<<[END_TOOL_REQUEST]>>>
+ 
+-<<<[TOOL_REQUEST]>>>到<<<[END_TOOL_REQUEST]>>>来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
++`<<<[TOOL_REQUEST]>>>` 到 `<<<[END_TOOL_REQUEST]>>>` 来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
+ 主动判断当前需求，灵活使用各类工具调用，服务器支持一次调用多个工具和连续调用。
+ 
+ —— VCP 全局高级修饰字段 (支持所有工具与JevCall，正交可组合) ——
+```
+
+**File**: `TVStxt/toollite.txt` (modified, +2/-0)
+```diff
+@@ -97,11 +97,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
+ need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
+ 
+ ### 检索 B 站视频/UP主
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」search「末」,
+ keyword:「始」搜索词「末」,
+ search_type:「始」'video' 或 'bili_user'「末」
+ 
+ ### 调查 UP 主投稿列表
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」get_up_videos「末」,
+ mid:「始」用户 ID「末」,
+ pn:「始」1「末」
+```
+
+---
+
+### Incident Patch 3: `19552763` (2026-11-20)
+**Commit Message**: fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题
+
+- Agent/DeepSeekOfficial.txt: 修正用户宏占位符 {{VarUse}} -> {{VarUser}}
+- Plugin/TavilySearch: 修正示例 JSON 中的换行转义字符 \time_range -> \ntime_range
+- TVStxt/toollite.txt, SearchToolBox.txt: 为 B 站子检索示例补充缺失的 tool_name:「始」BilibiliFetch「末」
+- TVStxt/JevToolCall.txt: 移除末尾孤立的「末」字符
+- TVStxt/supertool.txt: 为说明文本中的 TOOL_REQUEST 标签添加反引号避免解析器误匹配
+- Plugin/MediaRenderer: 补全说明文字中被误删的 <<<[TOOL_REQUEST]>>> 标签描述
+- Plugin/ZImageGen2: 修正示例中的工具名 ZImageGen -> ZImageGen2
+
+**File**: `Agent/DeepSeekOfficial.txt` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@
+ 
+ 当前工作环境VCPToolbox，一个强大的AGI-Runtime工作运行时环境。
+ 今天是{{Date}},{{Today}},{{Festival}}。当前天气{{VCPWeatherInfoNow}}。
+-用户是{{VarUse}}，你的主人。
++用户是{{VarUser}}，你的主人。
+ 
+ 核心指令
+ {{VarToolList}}
+```
+
+**File**: `Plugin/MediaRenderer/plugin-manifest.json` (modified, +2/-2)
+```diff
+@@ -46,13 +46,13 @@
+       {
+         "command": "RenderImage",
+         "commandIdentifier": "RenderImage",
+-        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的  工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
++        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的 <<<[TOOL_REQUEST]>>> 到 <<<[END_TOOL_REQUEST]>>> 工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
+         "example": "<<<[TOOL_REQUEST]>>>\ntool_name:「始」MediaRenderer「末」,\ncommand:「始」RenderImage「末」,\nhtml:「始」<!doctype html><style>@font-face{font-family:Title;src:url('file:///D:/fonts/title.woff2')}html,body{margin:0;width:100%;height:100%;background:#08111f}.card{height:100%;display:grid;
+```
+
+**File**: `Plugin/TavilySearch/plugin-manifest.json` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+       {
+         "commandIdentifier": "TavilySearch",
+         "description": "调用此工具使用 Tavily API 进行高级网络搜索。默认启用高级搜索模式并返回图片链接。重要提示：请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。请在您的回复中，使用以下精确格式来请求搜索，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含搜索结果的JSON对象。请基于这些结果回答用户的问题或完成相关任务。\n请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。",
+-        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\time_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
++        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\ntime_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
+       }
+     ]
+   }
+```
+
+**File**: `Plugin/ZImageGen2/plugin-manifest.json.block` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+       {
+         "commandIdentifier": "ZImageGenerate",
+         "description": "调用此工具通过 Z-Image-Base 模型生成高质量图片。支持中英文提示词。请在您的回复中，使用以下精确格式来请求图片生成，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含以下信息的结果：\n1. 生成图片的公开访问URL。\n2. 图片在服务器上的存储相对路径 (例如：image/zimage/图片名.png)。\n3. 图片的文件名和使用的Seed。\n4. 如果showbase64设置为true，还会包含base64格式的图片数据供AI查看。\n请在您的最终回复中，使用返回的【图片URL】为用户生成一个HTML的 `<img>` 标签来直接展示图片，例如：`<img src=\"[此处填写图片URL]\" alt=\"[此处可填写部分prompt作为描述]\" width=\"300\">`。请确保替换占位符，并可调整 `width` 属性（建议200-500像素）。",
+-        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
++        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen2「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
+       }
+     ]
+   }
+```
+
+**File**: `TVStxt/JevToolCall.txt` (modified, +1/-1)
+```diff
+@@ -40,7 +40,7 @@ B站截图默认仅获取画面；需要组合内容时，在句子或 [] 中明
+ 联络[Grok]，告诉它【我是Nova，我想问问2026年10月推特上的ai热点新闻】，并使用[临时通讯]。
+ 睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。
+ 请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。
+-请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
++请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。
+ 请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。
+ 请使用 {物联网控制} 中的 `TableLampRemote`，执行【打开台灯】
+ 读取[file://{{VarVCPToolBoxPath}}\Plugin\DailyHot\dailyhot_cache.md]获得每日热点新闻。
+```
+
+**File**: `TVStxt/SearchToolBox.txt` (modified, +2/-0)
+```diff
+@@ -34,11 +34,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
+ need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
+ 
+ ### 检索 B 站视频/UP主
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」search「末」,
+ keyword:「始」搜索词「末」,
+ search_type:「始」'video' 或 'bili_user'「末」
+ 
+ ### 调查 UP 主投稿列表
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」get_up_videos「末」,
+ mid:「始」用户 ID「末」,
+ pn:「始」1「末」
+```
+
+**File**: `TVStxt/supertool.txt` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@ command:「始」工具参数「末」, //具体视不同工具需求而定
+ content:「始ESCAPE」这是一个优先正则保护字段，内部可以输入<<<[TOOL_REQUEST]>>>和「始」从而不会被破坏解析器「末ESCAPE」, // 任意字段都可以使用「始ESCAPE」来传递内部的vcp解析字段
+ <<<[END_TOOL_REQUEST]>>>
+ 
+-<<<[TOOL_REQUEST]>>>到<<<[END_TOOL_REQUEST]>>>来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
++`<<<[TOOL_REQUEST]>>>` 到 `<<<[END_TOOL_REQUEST]>>>` 来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
+ 主动判断当前需求，灵活使用各类工具调用，服务器支持一次调用多个工具和连续调用。
+ 
+ —— VCP 全局高级修饰字段 (支持所有工具与JevCall，正交可组合) ——
+```
+
+**File**: `TVStxt/toollite.txt` (modified, +2/-0)
+```diff
+@@ -97,11 +97,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
+ need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
+ 
+ ### 检索 B 站视频/UP主
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」search「末」,
+ keyword:「始」搜索词「末」,
+ search_type:「始」'video' 或 'bili_user'「末」
+ 
+ ### 调查 UP 主投稿列表
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」get_up_videos「末」,
+ mid:「始」用户 ID「末」,
+ pn:「始」1「末」
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #602** (2026-11-15): fix(Plugin): 插件子进程自动继承父进程 Node 运行时以防止原生模块 ABI 冲突 (@InSciTech)
-- **PR #600** (2026-11-15): fix(roleDivider): 保护记忆包络与代码字面量免受角色误切分并保留多模态缓存断点 (@infinite-vector)
-- **PR #599** (2026-11-14): perf(rust-vexus-lite): 去重、NNLS、索引、存储、入库、Spike、元思考、LightMemo 的一批逐位不变改进 (@CI-IISATO)
-- **PR #598** (2026-11-14): fix(RAGDiary): ContextVectorManager 向量表加上限，分段排除当前这一轮，复用清洗缓存 (@CI-IISATO)
-- **PR #597** (2026-11-14): fix(RAGDiary): ::TimeDecay 中文标签、::Time 名额、时间表头时区、联合日记本补三篇、时间片段日期 (@CI-IISATO)
-- **PR #596** (2026-11-13): feat(memo): deliver Cone-AGS NNLS and unified continuous topology scoring (@lioensky)
+- **PR #621** (2026-11-20): fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题 (@InSciTech)
+- **PR #620** (2026-11-20): fix(plugins): 修正多处插件 Manifest 示例工具名、参数大小写及格式错误 (@InSciTech)
+- **PR #619** (2026-11-19): fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发死锁，并修复关机Phase2/Phase8阻塞 (@infinite-vector)
+- **PR #618** (2026-11-18): # feat(WarpedFieldAtlas): 读取 Tag 和 Chunk 双曲场训练快照，支持按节点或对话消息查询近邻 (@CI-IISATO)
+- **PR #617** (2026-11-18): fix: 出站请求中降级无法投递的 Markdown data: 图片（避免上游 415/500） (@RoxyAsahi)
+- **PR #616** (2026-11-18): feat(memo): 1% 阈值训练对纯追加窗口按依赖复用 Tag 局部残差 (@CI-IISATO)
 
 ---
 
@@ -2021,52 +2216,48 @@ test asserts this equality.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. native-rerank): keep the specific error code when a Rerank batch fails
+## X. Empirical Invariant Guard in image-file-server.js
 
 **RULE**:
-When implementing operations in `rust-vexus-lite/src/native_rerank.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Plugin/ImageFileServer/image-file-server.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c515e6c4`: native-rerank): keep the specific error code when a Rerank batch fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `09a25ded`: fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust-vexus-lite/src/native_rerank.rs`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/ImageFileServer/image-file-server.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-                    // post/parse_rerank codes are already sanitized; keep them.
-                    Ok(Err(error)) => return Err(error),
-                    Err(_) => return Err("RERANK_BATCH_FAILED".into()),
-    #[tokio::test]
-    async fn traditional_batch_failure_keeps_sanitized_error_code() {
-        use tokio::io::{AsyncReadExt, AsyncWriteExt};
-        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-        let address = listener.local_addr().unwrap();
-        let server = tokio::spawn(async move {
-            let (mut socket, _) = listener.accept().await.unwrap();
-            let mut bytes = [0; 4096];
-            let _ = socket.read(&mut bytes).await;
-            socket.write_all(b"HTTP/1.1 429 Too Many Requests\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
-                .await.unwrap();
-        });
-        let values = HashMap::from([
-            ("RerankUrl".into(), format!("http://{address}/")),
-            ("RerankApi".into(), "fixture".into()),
-            ("RerankModel".into(), "fixture".into()),
-            ("NativeRerankTimeoutMs".into(), "5000".into()),
-        ]);
-        let ranker = Ranker::from_values(&values, Some(false)).un
+// 进程信号由宿主处理；插件只释放自身资源。
+function shutdown() {
+}
+    shutdown,
+    // 保留既有清理入口，供调用方和测试使用。
+    stopSecurityManager: shutdown,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-                    _ => return Err("RERANK_BATCH_FAILED".into()),
+// 优雅关闭处理
+process.on('SIGINT', () => {
+    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
+    process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
+    securityManager.stopCleanupTimer();
+    process.exit(0);
+});
+    // 供测试或宿主优雅卸载时停止定时器，避免模块句柄阻止进程退出
+    stopSecurityManager: () => securityManager.stopCleanupTimer(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c515e6c4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `09a25ded` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

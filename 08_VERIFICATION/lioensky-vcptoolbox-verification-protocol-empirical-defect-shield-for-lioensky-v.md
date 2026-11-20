@@ -4,22 +4,22 @@
 {
   "source_repository": "lioensky/VCPToolBox",
   "source_url": "https://github.com/lioensky/VCPToolBox",
-  "source_version": "a2c33d06",
+  "source_version": "09a25ded",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-19T21:24:11.471Z",
+  "timestamp": "2026-11-20T23:56:26.687Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lioensky-vcptoolbox",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `a2c33d06`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-19T21:24:11.471Z`  
+> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `09a25ded`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-20T23:56:26.687Z`  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `lioensky/VCPToolBox` (Commit: `a2c33d06`)
+- **Target Repository**: `lioensky/VCPToolBox` (Commit: `09a25ded`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T21:24:10.231Z  
+> **Harvest Timestamp**: 2026-11-20T23:56:25.063Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2453 stars
+- **Stars / Engagement**: 2450 stars
 
 ---
 
@@ -1796,11 +1796,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #619** (2026-11-19): **fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发死锁，并修复关机Phase2/Phase8阻塞**
-  *Symptoms*: ## 一、动机与背景（问题现象）  在升级至 RiverMemo V5 原生双曲检索链路后，高并发会话场景下偶发两类相互关联的严重阻塞现象： 1. **RAG 浪潮召回静默挂起**：`RAGDiaryPlugin` 在完成外部 BM25 预筛并打印 `[RAGDiaryPlugin] BM25 file plan: mode=body, files=...`（标志进入 `canUseNativeRiverFullPath` 原生分支）后，后续检索无响应、无报错日志输出，且后台预设的 30 分钟超时清理器未触发。 2. **管理面板（AdminPanel）触发重启时卡死在 Phase 2 或 Phase 8**：    - 若在请求挂起期间直接点击网页端重启，主进程日志停留在 `Phase 2/10 - Preparing to close HTTP server. trackedSockets=10, activeHttpRequests=5`（`activeRequests=0`），等待满 60 秒后才触发 `forceShutdownTimer` 强制退出；    - 若先在前端点击停止（调用 `/v1/interrupt` 断开 SSE 流）再点击重启，则关机流程可越过 Phase 2，但会挂起在 `Phase 8/10 - pluginManager.shutdownAllPlugins start` 之后，且进程调用 `process.exit(1)` 后仍可能因底层原生线程锁死而驻留。  ---  ## 二、全链路排障与根因溯源过程（Root-Cause Trace）  为在不破坏现场的前提下定位本质原因，我们通过静态源码审计与非侵入式线程级 Lease 飞行记录仪（追踪每个线程持有的 `ReadPoolConn`、`GlobalChunksLock`、`PublicationGate` 与 `NapiTask` 时间戳）还原了 **25 毫秒内形成的跨线程池死锁现场**：  ### 1. 核心根因：`LightMemo` 与 `RiverMemo V5` 的锁序反转（Lock Order Inversion Deadlock） 在同一个 `NativeKnowledgeRuntime` 实例中，全局块表 `self.global_chunks`（`Arc<Mutex<Option<GlobalChunks>>>`）与容量为 `4` 的 SQLite 只读连接池 `read_pool` 被两类检索路径以**相反顺序**获取： - **正向路径（`NativeRiverQueryTask` 及 `execute_parallel_rerank`）**：   在 `knowledge_runtime.rs:2437, 2913` 中，先调用 `with_registered_read_transaction_napi` **从 `read_pool` 借出 1 条 SQLite 读连接（Level 2）**，开启读事务固定 WAL 快照后，再在 `knowledge_runtime.rs:648` 申请 **`source.table.lock()` 全局块表互斥锁（Level 3）**。 - **反向路径（`light_memo.rs` 中的 `LightMemoTask`、`GlobalChunkCheckpointTask`、`WarpedChunkPreparationTask`）**：   在 `light_memo.rs:21
+- **Issue #621** (2026-11-20): **fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题**
+  *Symptoms*: ## 概述  在对 VCPToolBox 各 Agent 提示词、插件清单（Manifest）及 TVStxt 工具调用模板的审查中，发现若干由于手滑、转义字符误用、复制遗漏等导致的纯文本笔误问题。这些问题会导致占位符无法展开（宏死链）、JSON 参数名解析错误（如制表符导致参数识别失败）、或者模型生成工具请求时缺少必需的 `tool_name`。  本次 PR 针对上述 8 处纯文本问题进行了精准修复，未引入任何逻辑改动与格式抖动。  ## 修改明细  1. **宏占位符拼写修正**：    - `Agent/DeepSeekOfficial.txt`：修正第 20 行用户宏 `{{VarUse}}` -> `{{VarUser}}`（原先漏写末尾字母 `r`，导致宏无法展开）。 2. **JSON 转义符手滑修正**：    - `Plugin/TavilySearch/plugin-manifest.json`：修正示例中的 `\\time_range` -> `\\ntime_range`（原先手滑打成制表符转义 `\\t`，导致 JSON 解析后参数名损坏为 `\\t` + `ime_range`）。 3. **插件示例与说明残缺修复**：    - `Plugin/MediaRenderer/plugin-manifest.json`：补全两处命令描述中因脚本迁移误删的 `<<<[TOOL_REQUEST]>>> 到 <<<[END_TOOL_REQUEST]>>>` 标签文字。    - `Plugin/ZImageGen2/plugin-manifest.json.block`：修正示例中的工具名 `ZImageGen` -> `ZImageGen2`（漏写末尾数字 `2`）。 4. **工具调用示例规范化与笔误清除**：    - `TVStxt/toollite.txt` & `TVStxt/SearchToolBox.txt`：为 B 站视频检索（`search`）与 UP 主投稿检索（`get_up_videos`）子命令示例首行补充缺失的 `tool_name:「始」BilibiliFetch「末」,`，避免模型直接调用时因缺失工具名报错。    - `TVStxt/JevToolCall.txt`：移除第 43 行普通指令末尾多余遗留的孤立 `「末」` 字符。    - `TVStxt/supertool.txt`：为说明文案中的 `<<<[TOOL_REQUEST]>>>` 与 `<<<[END_TOOL_REQUEST]>>>` 增加行内代码反引号包裹，防止说明文字被正则解析器误提取为空工具请求。  ## 验证与审查  - 所有 JSON 文件语法经 `python3 -m json.tool` 校验 100% 合法，且严格保持原有的换行格式（如 TavilySearch 的 CRLF）； - 经独立代码审查子代理核验：全量界定符「始」「末」严格配对，无任何代码与格式抖动； - 自动化测试全部通过（18/18 项测试全部 PASS，追加回归测试 39/39 全部 PASS）。
 
-- **Issue #618** (2026-11-18): **# feat(WarpedFieldAtlas): 读取 Tag 和 Chunk 双曲场训练快照，支持按节点或对话消息查询近邻**
-  *Symptoms*:   ## 变更内容  - 新增 `Plugin/WarpedFieldAtlas/`。从知识库目录读取 Tag 训练快照 `.vcpwf`、Chunk（文本片段）训练快照 `.vcpwc` 和 SQLite 数据，返回场图、节点详情和查询结果。 - `/api/plugins/WarpedFieldAtlas/` 下的 `/status` 返回可用场和节点数，`/field/tag`、`/field/chunk` 返回场图。可从已有节点查询近邻，也可选取已有消息向量，查看同一条消息在两个场中的结果。 - 加载快照时，用快照自带的距离表逐项核对 JS 距离函数；不一致时停用查询视图。计算在工作线程中执行，十分钟无请求后释放。  ## 对现有功能的影响  新增 18 个文件，不修改后端核心文件、训练流程或原生检索。接口沿用后端认证，不调用模型或嵌入服务，不写知识库；布局等缓存只写入插件自己的 `state/`。  ## 验证  - 基于 `e22aeded` 运行 `node --test Plugin/WarpedFieldAtlas/geometry.test.js Plugin/WarpedFieldAtlas/layout.test.js Plugin/WarpedFieldAtlas/compact.test.js`，10 项通过。 - 在此前的上游基线 `5adb12bb` 上实际启动后端：无密钥请求返回 401；带密钥读取到 4292 个 Tag 节点、407 个片段节点，并完成查询。 - 同一基线上，用真实库副本中的 40 条消息对照原生检索。Tag 结果的先后次序检查通过 40/40，候选重合率 99.5%；打乱半径后的反向对照为 0/40。Chunk 场比较了 400 个分数，最大绝对差为 8.9e-16。更新基线后未在新的原生二进制上重跑这组对照。  ## 不在本次范围  多份快照并存时，插件选取的 Tag 预设或 Chunk 模型可能与原生检索不同。目前只展示训练快照，不读取训练后追加节点的 `.vcpwi` 文件，因此场图不是实时索引的完整视图。该限制不影响原生检索。
+- **Issue #620** (2026-11-20): **fix(plugins): 修正多处插件 Manifest 示例工具名、参数大小写及格式错误**
+  *Symptoms*: ## 概述  在对 VCPToolBox 插件清单及工具调用机制的排查中，发现部分服务端插件的 `plugin-manifest.json` 在由前端版本迁移或复制时，调用示例（`example` / `description`）中的 `tool_name` 残留了无 `Server` 前缀的旧名称或错误名称。由于 VCP 工具调度器严格按 `manifest.name` 查找插件，大模型依据占位符展开的示例发起调用时，会在服务端必现 `未找到名为 \"xxx\" 的插件` 报错。  本次提交针对上述问题进行了系统性修复，并完善了相关参数大小写容错与格式排版。  ## 修改明细  1. **修正 5 个插件 Manifest 示例中的 `tool_name` 不匹配问题**：    - `Plugin/PluginSourceViewer`: `tool_name` 示例由 `PluginSourceViewer` 修正为声明的 `ServerPluginSourceViewer`。    - `Plugin/FileOperator`: 全部 21 个子命令调用示例中的 `tool_name` 统一由 `FileOperator` 修正为声明的 `ServerFileOperator`。    - `Plugin/PowerShellExecutor`: 全部 3 处模式示例中的 `tool_name` 统一由 `PowerShellExecutor` 修正为声明的 `ServerPowerShellExecutor`。    - `Plugin/VCPEverything`: 示例中的 `tool_name` 由未注册的 `LocalSearchController` 修正为声明的 `ServerSearchController`（消除与 JEV 描述的冲突）。    - `Plugin/DMXDoubaoGen`: 全部 3 处命令示例中的 `tool_name` 由复制残留的 `DoubaoGen` 修正为声明的 `DMXDoubaoGen`，避免错误路由至原生官方插件。  2. **`Plugin/AgentMessage` 规范化与参数双向兼容**：    - 运行时 `AgentMessage.js`：由仅读 `params.Maid` 升级为 `params.maid || params.Maid || params.valet`，向下兼容大写同时支持标准小写与中性词。    - Manifest：参数示例规范化为小写 `maid:`，并移除了示例外层冗余的 ```text 代码块围栏（防止大模型生成受代码块字面量保护的无效调用）。  3. **`Plugin/DailyNote` 日期参数大小写容错**：    - `handleCreateCommand` 中解析逻辑补充支持小写 `date`：`args.dateString || args.Date || args.date`，避免模型传入全小写 `date:` 时被误忽略并静默回退至当前日期。  4. **`Plugin/LightMemo` 换行符双重转义修复**：    - 将 `SearchRAG` 与 `MemoryAB` 示例中的 `\\\\n` 修正为真实的换行符 `\\n`，确保占位符解析后多行排版整洁。  ## 验证与回归测试  - 运行 `node validate-plugin-json.js`：全库 98 个插件清单 JSON 语法与 UTF-8 校
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1817,547 +1817,369 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a2c33d06` (2026-11-19)
-**Commit Message**: Merge pull request #619 from infinite-vector/fix/vexus-lite-lock-order-dag-and-shutdown-drain
+### Incident Patch 1: `09a25ded` (2026-11-20)
+**Commit Message**: fix
 
-fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发死锁，并修复关机Phase2/Phase8阻塞
-
-**File**: `rust-vexus-lite/src/global_chunks.rs` (modified, +103/-59)
+**File**: `Plugin/ImageFileServer/image-file-server.js` (modified, +6/-13)
 ```diff
-@@ -341,71 +341,92 @@ impl GlobalChunks {
-         }
-     }
- 
--    /// Caller holds the Runtime table mutex and shared facts gate. Publication
--    /// is separate from queries; SQL member versions survive eviction/restart.
--    pub fn checkpoint(&mut self, db_path: &str, directory: &Path, database_generation: u64,
--        threshold: f64, allow_initial: bool) -> Result<bool, String> {
--        if !self.legacy_enabled { return Ok(false); }
-+    pub(crate) fn prepare_checkpoint_in_tx(
-+        &self,
-+        connection: &Connection,
-+        directory: &Path,
-+        threshold: f64,
-+        allow_initial: bool,
-+    ) -> Result<Option<(i64, &'static str, Vec<u8>, String, Vec<ChunkHeader>)>, String> {
-+        if !self.legacy_enabled { return Ok(None); }
-         if !threshold.is_finite() || !(0.0..=1.0).contains(&threshold) {
-             return Err("Invalid global Chunk checkpoint threshold".into());
-         }
--        let (generation, active, allowed) =
--            crate::storage::with_registered_read_transaction(db_path, |connection| {
--                if facts(connection)? != self.facts {
--                    return Err("LIGHTMEMO_CHECKPOINT_GENERATION_CONFLICT".into());
--                }
--                let manifest: Option<(i64, String, i64, String, i64)> = connection.query_row(
--                    "SELECT generation,slot,dimension,model_sig,member_versions
--                     FROM global_chunk_index_baselines ORDER BY generation DESC LIMIT 1", [],
--                    |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?)),
--                ).optional().map_err(|e| e.to_string())?;
--                let Some((generation, slot, dimension, model, versions)) = manifest else {
--                    let mut has_file = false;
--                    for slot in ["a", "b"] {
--                        match std::fs::metadata(slot_path(directory, slot)) {
--                            Ok(_) => has_file = true,
--                            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
--                            Err(error) => return Err(error.to_string()),
--                        }
-+        let (generation, active, allowed) = (|| -> Result<(i64, String, bool), String> {
-+            if facts(connection)? != self.facts {
-+                return Err("LIGHTMEMO_CHECKPOINT_GENERATION_CONFLICT".into());
-+            }
-+            let manifest: Option<(i64, String, i64, String, i64)> = connection.query_row(
-+                "SELECT generation,slot,dimension,model_sig,member_versions
-+                 FROM global_chunk_index_baselines ORDER BY generation DESC LIMIT 1", [],
-+                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?)),
-+            ).optional().map_err(|e| e.to_string())?;
-+            let Some((generation, slot, dimension, model, versions)) = manifest else {
-+                let mut has_file = false;
-+                for slot in ["a", "b"] {
-+                    match std::fs::metadata(slot_path(directory, slot)) {
-+                        Ok(_) => has_file = true,
-+                        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-+                        Err(error) => return Err(error.to_string()),
-                     }
--                    return Ok((0, String::new(), allow_initial && !has_file));
--                };
--                if dimension != self.dimension as i64 || model != self.model {
--                    return Err("Global Chunk baseline model/dimension mismatch".into());
-                 }
--                if !matches!(slot.as_str(), "a" | "b") {
--                    return Err("Invalid global Chunk baseline slot".into());
--                }
--                if versions != 1 {
--                    eprintln!("[LightMemo] Legacy Chunk baseline has no member versions; publication skipped");
--                    return Ok((generation, slot, false));
--                }
--                let mut statement = connection.prepare(
--                    "SELECT chunk_id,vector_version,metadata_version,file_version
--                     FROM global_chunk_index_baseline_entries WHERE generation=?1"
--                ).map_err(|e| e.to_string())?;
--                let baseline = statement.query_map([generation], |row| Ok((
--                    row.get::<_, i64>(0)?,
--                    (row.get::<_, i64>(1)?,row.get::<_, i64>(2)?,row.get::<_, i64>(3)?),
--                ))).map_err(|e| e.to_string())?
--                    .collect::<rusqlite::Result<HashMap<_,_>>>().map_err(|e| e.to_string())?;
--                let removed = baseline.keys().filter(|id| !self.rows.contains_key(id)).count();
--                let upserts = self.rows.values().filter(|row|
--                    baseline.get(&row.id) != Some(&(
--                        row.vector_version, row.metadata_version, row.file_version
--                    ))
--                ).count();
--                let delta = removed + upserts;
--                le
-```
-
-**File**: `rust-vexus-lite/src/light_memo.rs` (modified, +158/-31)
-```diff
-@@ -207,12 +207,14 @@ impl Task for LightMemoTask {
-         }
-         let _gate = crate::publication_gate::acquire_read(&self.db_path, &["*".into()])
-             .map_err(Error::from_reason)?;
--        let mut resident = self.table.lock()
--            .map_err(|_| Error::from_reason("Global Chunk table lock poisoned"))?;
-         let directory = std::path::Path::new(&self.db_path).parent().unwrap();
-+        // Strictly enforce L1 (PublicationGate) -> L2 (ReadPoolConn) -> L3 (GlobalChunksLock)
-+        // so LightMemo and RiverMemo V5 never invert lock acquisition order.
-         let mut output = crate::storage::with_registered_read_transaction(
-             &self.db_path, |connection| {
-                 let generation = crate::storage::read_generation(connection)?;
-+                let mut resident = self.table.lock()
-+                    .map_err(|_| "Global Chunk table lock poisoned".to_string())?;
-                 if resident.as_ref().is_some_and(|table|
-                     !table.matches_model(self.dimension, &plan.model_sig)) {
-                     *resident = None;
-@@ -427,7 +429,7 @@ impl Task for LightMemoTask {
-                 let results = if plan.engine_mode == "rivermemo" && !degraded {
-                     river["results"].as_array().cloned().unwrap_or_default()
-                 } else if plan.ab_mode { tdb.clone() } else { warped_top_k.clone() };
--                Ok(json!({
-+                let out = json!({
-                     "schema":"vcp-lightmemo-result-v1","results":results,
-                     "tdbTopK":tdb,"river":river,
-                     "warpedTopK":warped_top_k,"warpedRiver":warped_river,
-@@ -454,12 +456,13 @@ impl Task for LightMemoTask {
-                             "sketchRejected":routing_stats.sketch_rejected,
-                             "peakPool":routing_stats.peak_pool,
-                             "statisticalSketchFilter":plan.pelorus_sketch_margin.is_some()}}
--                }))
-+                });
-+                // TDB snapshot publication remains independently scheduled and policy-gated.
-+                // Explicit warped AB may publish its separate rebuildable derived sidecar.
-+                table.last_used = std::time::Instant::now();
-+                Ok(out)
-             },
-         ).map_err(Error::from_reason)?;
--        // TDB snapshot publication remains independently scheduled and policy-gated.
--        // Explicit warped AB may publish its separate rebuildable derived sidecar.
--        resident.as_mut().unwrap().last_used = std::time::Instant::now();
-         output["diagnostics"]["totalMs"] = json!(started.elapsed().as_secs_f64()*1000.);
-         Ok(output.to_string())
-     }
-@@ -483,30 +486,61 @@ impl Task for GlobalChunkCheckpointTask {
-     fn compute(&mut self) -> Result<String> {
-         let _gate = crate::publication_gate::acquire_read(&self.db_path, &["*".into()])
-             .map_err(Error::from_reason)?;
--        let mut resident = self.table.lock()
--            .map_err(|_| Error::from_reason("Global Chunk table lock poisoned"))?;
--        // Do not rebuild an evicted table just to persist it.
--        let Some(table) = resident.as_mut() else {
--            return Ok(json!({"published":false,"factsCommitted":false}).to_string());
--        };
--        if !table.matches_model(self.dimension, &self.model) {
--            return Err(Error::from_reason("Global Chunk checkpoint model mismatch"));
--        }
--        let last_used = table.last_used;
--        let synchronized = crate::storage::with_registered_read_transaction(&self.db_path, |connection| {
--            let generation = crate::storage::read_generation(connection)?;
--            table.synchronize(connection)?;
--            table.compact_if_needed(connection)?;
--            Ok(generation)
--        });
--        // Background checkpoint work is not retrieval activity, including
--        // failed synchronization and memory compaction.
--        table.last_used = last_used;
--        let generation = synchronized.map_err(Error::from_reason)?;
-         let directory = std::path::Path::new(&self.db_path).parent()
-             .ok_or_else(|| Error::from_reason("Invalid global Chunk database directory"))?;
--        let published = table.checkpoint(&self.db_path, directory, generation,
--            self.threshold, self.allow_initial).map_err(Error::from_reason)?;
-+        // Acquire L2 (ReadPoolConn) before L3 (GlobalChunksLock), and complete
-+        // baseline delta inspection on the same connection without re-entering read_pool.
-+        let prepared = crate::storage::with_registered_read_transaction(&self.db_path, |connection| {
-+            let mut resident = self.table.lock()
-+                .map_err(|_| "Global Chunk table lock poisoned".to_string())?;
-+            // Do not rebuild an evicted table just to persist it.
-+            let Some(table) = resident.as_mut() else {
-+                return Ok(None);
-+            };
-+            if !table.matches_model(self.dimension, &
-```
-
-**File**: `server.js` (modified, +42/-4)
-```diff
-@@ -249,7 +249,7 @@ function destroyIdleSockets() {
-     console.log(`[Server] Destroyed ${destroyedCount} idle socket(s).`);
+@@ -567,25 +567,18 @@ function registerRoutes(app, pluginConfig, projectBasePath) {
+     console.log(`  - 允许的文件格式: ${SECURITY_CONFIG.ALLOWED_FILE_EXTENSIONS.join(', ')}`);
  }
  
--async function closeHttpServerGracefully() {
-+async function closeHttpServerGracefully(maxWaitMs = 5000) {
-     if (!server || typeof server.close !== 'function') {
-         return;
-     }
-@@ -259,18 +259,31 @@ async function closeHttpServerGracefully() {
-     destroyIdleSockets();
+-// 优雅关闭处理
+-process.on('SIGINT', () => {
+-    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
++// 进程信号由宿主处理；插件只释放自身资源。
++function shutdown() {
+     securityManager.stopCleanupTimer();
+-    process.exit(0);
+-});
+-
+-process.on('SIGTERM', () => {
+-    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
+-    securityManager.stopCleanupTimer();
+-    process.exit(0);
+-});
++}
  
-     await new Promise((resolve) => {
-+        let settled = false;
-+        const finish = () => {
-+            if (settled) return;
-+            settled = true;
-+            clearTimeout(timer);
-+            resolve();
-+        };
-+        const timer = setTimeout(() => {
-+            console.warn(`[Server] server.close() still waiting on ${activeHttpRequests.size} active HTTP socket(s) after ${maxWaitMs}ms; proceeding to request drain/abort phase.`);
-+            finish();
-+        }, maxWaitMs);
-+        if (typeof timer.unref === 'function') timer.unref();
+ module.exports = {
+     registerRoutes,
+     // 导出纯路径判定函数，供安全回归测试复用
+     containsParentDirectorySegment,
+-    // 供测试或宿主优雅卸载时停止定时器，避免模块句柄阻止进程退出
+-    stopSecurityManager: () => securityManager.stopCleanupTimer(),
++    shutdown,
++    // 保留既有清理入口，供调用方和测试使用。
++    stopSecurityManager: shutdown,
+     // 导出安全管理器供外部查询（可选）
+     getSecurityStats: () => securityManager.getAccessStats(),
+     // 手动触发锁定（紧急情况下使用）
+```
+
+**File**: `tests/imageFileServerShutdown.test.js` (added, +67/-0)
+```diff
+@@ -0,0 +1,67 @@
++const assert = require('node:assert/strict');
++const { spawnSync } = require('node:child_process');
++const fs = require('node:fs');
++const os = require('node:os');
++const path = require('node:path');
++const test = require('node:test');
 +
-         try {
-             server.close((error) => {
-                 if (error) {
-                     console.error('[Server] Error while closing HTTP server:', error);
-                 } else {
-                     console.log('[Server] HTTP server stopped accepting new connections.');
-                 }
--                resolve();
-+                finish();
-             });
-         } catch (error) {
-             console.error('[Server] Failed to invoke server.close():', error);
--            resolve();
-+            finish();
-         }
-     });
- }
-@@ -1645,6 +1658,19 @@ async function gracefulShutdown(exitCode = 0, reason = 'signal') {
-                 console.log(`[Server][ShutdownTrace] Phase 4/10 - abort skipped, no remaining active requests`);
-             }
- 
-+            if (activeHttpRequests.size > 0) {
-+                console.warn(`[Server] Destroying ${activeHttpRequests.size} remaining active HTTP socket(s) after drain phase.`);
-+                for (const socket of activeHttpRequests) {
-+                    try {
-+                        if (!socket.destroyed) socket.destroy();
-+                    } catch (err) {
-+                        console.error('[Server] Failed to destroy remaining socket:', err.message);
-+                    }
-+                }
-+                activeHttpRequests.clear();
-+            }
-+            destroyIdleSockets();
++const imageModule = require.resolve('../Plugin/ImageFileServer/image-file-server.js');
++const storeModule = require.resolve('../Plugin/VTrade/core/store.cjs');
 +
-             serverLifecycleState = SERVER_LIFECYCLE.SHUTTING_DOWN;
-             console.log(`[Server][ShutdownTrace] Phase 5/10 - lifecycle switched to SHUTTING_DOWN`);
- 
-@@ -1667,7 +1693,19 @@ async function gracefulShutdown(exitCode = 0, reason = 'signal') {
- 
-             if (pluginManager) {
-                 console.log(`[Server][ShutdownTrace] Phase 8/10 - pluginManager.shutdownAllPlugins start`);
--                await pluginManager.shutdownAllPlugins();
-+                let pluginShutdownTimer = null;
-+                await Promise.race([
-+                    pluginManager.shutdownAllPlugins(),
-+                    new Promise((resolve) => {
-+                        pluginShutdownTimer = setTimeout(() => {
-+                            console.warn('[Server] pluginManager.shutdownAllPlugins timed out after 10000ms; continuing to Phase 9.');
-+                            resolve();
-+                        }, 10000);
-+                        if (typeof pluginShutdownTimer.unref === 'function') pluginShutdownTimer.unref();
-+                    })
-+                ]).finally(() => {
-+                    if (pluginShutdownTimer) clearTimeout(pluginShutdownTimer);
++for (const signal of ['SIGINT', 'SIGTERM']) {
++    test(`ImageFileServer leaves ${signal} shutdown to the host`, (t) => {
++        const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'vcp-shutdown-'));
++        t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
++
++        const child = spawnSync(process.execPath, ['-e', `
++            const assert = require('node:assert/strict');
++            const fs = require('node:fs/promises');
++            const path = require('node:path');
++            const [imageModule, storeModule, directory, signal] = process.argv.slice(1);
++            const { Store } = require(storeModule);
++
++            async function run() {
++                const store = new Store(directory);
++                await store.open();
++                const lockFile = path.join(directory, 'writer.lock');
++                assert.equal(await fs.readFile(lockFile, 'utf8'), String(process.pid));
++
++                // Mirror the host contract, without booting a real server or touching its data.
++                let hostShutdown;
++                let image;
++                process.once(signal, () => {
++                    hostShutdown = (async () => {
++                        await new Promise(resolve => setImmediate(resolve));
++                        await image.shutdown();
++                        await store.close();
++                    })();
 +                });
-                 console.log(`[Server][ShutdownTrace] Phase 8/10 - pluginManager.shutdownAllPlugins done`);
-             } else {
-                 console.log(`[Server][ShutdownTrace] Phase 8/10 - pluginManager shutdown skipped`);
++                const signals = ['SIGINT', 'SIGTERM'];
++                const before = signals.map(name => process.listeners(name));
++                image = require(imageModule);
++                assert.deepEqual(signals.map(name => process.listeners(name)), before);
++                assert.equal(image.shutdown, image.stopSecurityManager);
++
++                // Emitting in-process works on Windows too; no OS signal is sent.
++                process.emit(signal);
++                assert.ok(hostShutdown);
++                await hostShutdown;
++                await assert.rejects(fs.access(lockFile), { code: 'ENOENT' });
++                const reopened = new Store(directory);
++                await reopened.open();
++                await reopened.close();
++                console.log('host shutdown completed');
++            }
++
++            run().catch(error => {
++                console.error(error);
++                process.exit(1);
++            });
++        `, imageModule, storeModule, directory, signal], { encoding: 'utf8', timeout: 8000 });
++
++        assert.ifError(child.error);
++        assert.equal(child.status, 0, child.stderr);
++        assert.match(child.stdout, /host shutdown completed/);
++        assert.equal(fs.existsSync(path.join(directory, 'writer.lock')), false);
++    });
++}
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 2: `448ec0e4` (2026-11-19)
-**Commit Message**: fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发死锁，并修复关机Phase2/Phase8阻塞
+### Incident Patch 2: `cbe119cc` (2026-11-20)
+**Commit Message**: Merge pull request #621 from InSciTech/fix/prompt-and-manifest-typos
 
-**File**: `rust-vexus-lite/src/global_chunks.rs` (modified, +103/-59)
+fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题
+
+**File**: `Agent/DeepSeekOfficial.txt` (modified, +1/-1)
 ```diff
-@@ -341,71 +341,92 @@ impl GlobalChunks {
-         }
-     }
+@@ -17,7 +17,7 @@
  
--    /// Caller holds the Runtime table mutex and shared facts gate. Publication
--    /// is separate from queries; SQL member versions survive eviction/restart.
--    pub fn checkpoint(&mut self, db_path: &str, directory: &Path, database_generation: u64,
--        threshold: f64, allow_initial: bool) -> Result<bool, String> {
--        if !self.legacy_enabled { return Ok(false); }
-+    pub(crate) fn prepare_checkpoint_in_tx(
-+        &self,
-+        connection: &Connection,
-+        directory: &Path,
-+        threshold: f64,
-+        allow_initial: bool,
-+    ) -> Result<Option<(i64, &'static str, Vec<u8>, String, Vec<ChunkHeader>)>, String> {
-+        if !self.legacy_enabled { return Ok(None); }
-         if !threshold.is_finite() || !(0.0..=1.0).contains(&threshold) {
-             return Err("Invalid global Chunk checkpoint threshold".into());
-         }
--        let (generation, active, allowed) =
--            crate::storage::with_registered_read_transaction(db_path, |connection| {
--                if facts(connection)? != self.facts {
--                    return Err("LIGHTMEMO_CHECKPOINT_GENERATION_CONFLICT".into());
--                }
--                let manifest: Option<(i64, String, i64, String, i64)> = connection.query_row(
--                    "SELECT generation,slot,dimension,model_sig,member_versions
--                     FROM global_chunk_index_baselines ORDER BY generation DESC LIMIT 1", [],
--                    |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?)),
--                ).optional().map_err(|e| e.to_string())?;
--                let Some((generation, slot, dimension, model, versions)) = manifest else {
--                    let mut has_file = false;
--                    for slot in ["a", "b"] {
--                        match std::fs::metadata(slot_path(directory, slot)) {
--                            Ok(_) => has_file = true,
--                            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
--                            Err(error) => return Err(error.to_string()),
--                        }
-+        let (generation, active, allowed) = (|| -> Result<(i64, String, bool), String> {
-+            if facts(connection)? != self.facts {
-+                return Err("LIGHTMEMO_CHECKPOINT_GENERATION_CONFLICT".into());
-+            }
-+            let manifest: Option<(i64, String, i64, String, i64)> = connection.query_row(
-+                "SELECT generation,slot,dimension,model_sig,member_versions
-+                 FROM global_chunk_index_baselines ORDER BY generation DESC LIMIT 1", [],
-+                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?)),
-+            ).optional().map_err(|e| e.to_string())?;
-+            let Some((generation, slot, dimension, model, versions)) = manifest else {
-+                let mut has_file = false;
-+                for slot in ["a", "b"] {
-+                    match std::fs::metadata(slot_path(directory, slot)) {
-+                        Ok(_) => has_file = true,
-+                        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-+                        Err(error) => return Err(error.to_string()),
-                     }
--                    return Ok((0, String::new(), allow_initial && !has_file));
--                };
--                if dimension != self.dimension as i64 || model != self.model {
--                    return Err("Global Chunk baseline model/dimension mismatch".into());
-                 }
--                if !matches!(slot.as_str(), "a" | "b") {
--                    return Err("Invalid global Chunk baseline slot".into());
--                }
--                if versions != 1 {
--                    eprintln!("[LightMemo] Legacy Chunk baseline has no member versions; publication skipped");
--                    return Ok((generation, slot, false));
--                }
--                let mut statement = connection.prepare(
--                    "SELECT chunk_id,vector_version,metadata_version,file_version
--                     FROM global_chunk_index_baseline_entries WHERE generation=?1"
--                ).map_err(|e| e.to_string())?;
--                let baseline = statement.query_map([generation], |row| Ok((
--                    row.get::<_, i64>(0)?,
--                    (row.get::<_, i64>(1)?,row.get::<_, i64>(2)?,row.get::<_, i64>(3)?),
--                ))).map_err(|e| e.to_string())?
--                    .collect::<rusqlite::Result<HashMap<_,_>>>().map_err(|e| e.to_string())?;
--                let removed = baseline.keys().filter(|id| !self.rows.contains_key(id)).count();
--                let upserts = self.rows.values().filter(|row|
--                    baseline.get(&row.id) != Some(&(
--                        row.vector_version, row.metadata_version, row.file_version
--                    ))
--                ).count();
--                let delta = removed + upserts;
--                le
+ 当前工作环境VCPToolbox，一个强大的AGI-Runtime工作运行时环境。
+ 今天是{{Date}},{{Today}},{{Festival}}。当前天气{{VCPWeatherInfoNow}}。
+-用户是{{VarUse}}，你的主人。
++用户是{{VarUser}}，你的主人。
+ 
+ 核心指令
+ {{VarToolList}}
 ```
 
-**File**: `rust-vexus-lite/src/light_memo.rs` (modified, +158/-31)
+**File**: `Plugin/MediaRenderer/plugin-manifest.json` (modified, +2/-2)
 ```diff
-@@ -207,12 +207,14 @@ impl Task for LightMemoTask {
-         }
-         let _gate = crate::publication_gate::acquire_read(&self.db_path, &["*".into()])
-             .map_err(Error::from_reason)?;
--        let mut resident = self.table.lock()
--            .map_err(|_| Error::from_reason("Global Chunk table lock poisoned"))?;
-         let directory = std::path::Path::new(&self.db_path).parent().unwrap();
-+        // Strictly enforce L1 (PublicationGate) -> L2 (ReadPoolConn) -> L3 (GlobalChunksLock)
-+        // so LightMemo and RiverMemo V5 never invert lock acquisition order.
-         let mut output = crate::storage::with_registered_read_transaction(
-             &self.db_path, |connection| {
-                 let generation = crate::storage::read_generation(connection)?;
-+                let mut resident = self.table.lock()
-+                    .map_err(|_| "Global Chunk table lock poisoned".to_string())?;
-                 if resident.as_ref().is_some_and(|table|
-                     !table.matches_model(self.dimension, &plan.model_sig)) {
-                     *resident = None;
-@@ -427,7 +429,7 @@ impl Task for LightMemoTask {
-                 let results = if plan.engine_mode == "rivermemo" && !degraded {
-                     river["results"].as_array().cloned().unwrap_or_default()
-                 } else if plan.ab_mode { tdb.clone() } else { warped_top_k.clone() };
--                Ok(json!({
-+                let out = json!({
-                     "schema":"vcp-lightmemo-result-v1","results":results,
-                     "tdbTopK":tdb,"river":river,
-                     "warpedTopK":warped_top_k,"warpedRiver":warped_river,
-@@ -454,12 +456,13 @@ impl Task for LightMemoTask {
-                             "sketchRejected":routing_stats.sketch_rejected,
-                             "peakPool":routing_stats.peak_pool,
-                             "statisticalSketchFilter":plan.pelorus_sketch_margin.is_some()}}
--                }))
-+                });
-+                // TDB snapshot publication remains independently scheduled and policy-gated.
-+                // Explicit warped AB may publish its separate rebuildable derived sidecar.
-+                table.last_used = std::time::Instant::now();
-+                Ok(out)
-             },
-         ).map_err(Error::from_reason)?;
--        // TDB snapshot publication remains independently scheduled and policy-gated.
--        // Explicit warped AB may publish its separate rebuildable derived sidecar.
--        resident.as_mut().unwrap().last_used = std::time::Instant::now();
-         output["diagnostics"]["totalMs"] = json!(started.elapsed().as_secs_f64()*1000.);
-         Ok(output.to_string())
-     }
-@@ -483,30 +486,61 @@ impl Task for GlobalChunkCheckpointTask {
-     fn compute(&mut self) -> Result<String> {
-         let _gate = crate::publication_gate::acquire_read(&self.db_path, &["*".into()])
-             .map_err(Error::from_reason)?;
--        let mut resident = self.table.lock()
--            .map_err(|_| Error::from_reason("Global Chunk table lock poisoned"))?;
--        // Do not rebuild an evicted table just to persist it.
--        let Some(table) = resident.as_mut() else {
--            return Ok(json!({"published":false,"factsCommitted":false}).to_string());
--        };
--        if !table.matches_model(self.dimension, &self.model) {
--            return Err(Error::from_reason("Global Chunk checkpoint model mismatch"));
--        }
--        let last_used = table.last_used;
--        let synchronized = crate::storage::with_registered_read_transaction(&self.db_path, |connection| {
--            let generation = crate::storage::read_generation(connection)?;
--            table.synchronize(connection)?;
--            table.compact_if_needed(connection)?;
--            Ok(generation)
--        });
--        // Background checkpoint work is not retrieval activity, including
--        // failed synchronization and memory compaction.
--        table.last_used = last_used;
--        let generation = synchronized.map_err(Error::from_reason)?;
-         let directory = std::path::Path::new(&self.db_path).parent()
-             .ok_or_else(|| Error::from_reason("Invalid global Chunk database directory"))?;
--        let published = table.checkpoint(&self.db_path, directory, generation,
--            self.threshold, self.allow_initial).map_err(Error::from_reason)?;
-+        // Acquire L2 (ReadPoolConn) before L3 (GlobalChunksLock), and complete
-+        // baseline delta inspection on the same connection without re-entering read_pool.
-+        let prepared = crate::storage::with_registered_read_transaction(&self.db_path, |connection| {
-+            let mut resident = self.table.lock()
-+                .map_err(|_| "Global Chunk table lock poisoned".to_string())?;
-+            // Do not rebuild an evicted table just to persist it.
-+            let Some(table) = resident.as_mut() else {
-+                return Ok(None);
-+            };
-+            if !table.matches_model(self.dimension, &
+@@ -46,13 +46,13 @@
+       {
+         "command": "RenderImage",
+         "commandIdentifier": "RenderImage",
+-        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的  工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
++        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的 <<<[TOOL_REQUEST]>>> 到 <<<[END_TOOL_REQUEST]>>> 工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
+         "example": "<<<[TOOL_REQUEST]>>>\ntool_name:「始」MediaRenderer「末」,\ncommand:「始」RenderImage「末」,\nhtml:「始」<!doctype html><style>@font-face{font-family:Title;src:url('file:///D:/fonts/title.woff2')}html,body{margin:0;width:100%;height:100%;background:#08111f}.card{height:100%;display:grid;
 ```
 
-**File**: `server.js` (modified, +42/-4)
+**File**: `Plugin/TavilySearch/plugin-manifest.json` (modified, +1/-1)
 ```diff
-@@ -249,7 +249,7 @@ function destroyIdleSockets() {
-     console.log(`[Server] Destroyed ${destroyedCount} idle socket(s).`);
- }
+@@ -22,7 +22,7 @@
+       {
+         "commandIdentifier": "TavilySearch",
+         "description": "调用此工具使用 Tavily API 进行高级网络搜索。默认启用高级搜索模式并返回图片链接。重要提示：请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。请在您的回复中，使用以下精确格式来请求搜索，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含搜索结果的JSON对象。请基于这些结果回答用户的问题或完成相关任务。\n请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。",
+-        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\time_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
++        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\ntime_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
+       }
+     ]
+   }
+```
+
+**File**: `Plugin/ZImageGen2/plugin-manifest.json.block` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+       {
+         "commandIdentifier": "ZImageGenerate",
+         "description": "调用此工具通过 Z-Image-Base 模型生成高质量图片。支持中英文提示词。请在您的回复中，使用以下精确格式来请求图片生成，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含以下信息的结果：\n1. 生成图片的公开访问URL。\n2. 图片在服务器上的存储相对路径 (例如：image/zimage/图片名.png)。\n3. 图片的文件名和使用的Seed。\n4. 如果showbase64设置为true，还会包含base64格式的图片数据供AI查看。\n请在您的最终回复中，使用返回的【图片URL】为用户生成一个HTML的 `<img>` 标签来直接展示图片，例如：`<img src=\"[此处填写图片URL]\" alt=\"[此处可填写部分prompt作为描述]\" width=\"300\">`。请确保替换占位符，并可调整 `width` 属性（建议200-500像素）。",
+-        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
++        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen2「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
+       }
+     ]
+   }
+```
+
+**File**: `TVStxt/JevToolCall.txt` (modified, +1/-1)
+```diff
+@@ -40,7 +40,7 @@ B站截图默认仅获取画面；需要组合内容时，在句子或 [] 中明
+ 联络[Grok]，告诉它【我是Nova，我想问问2026年10月推特上的ai热点新闻】，并使用[临时通讯]。
+ 睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。
+ 请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。
+-请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
++请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。
+ 请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。
+ 请使用 {物联网控制} 中的 `TableLampRemote`，执行【打开台灯】
+ 读取[file://{{VarVCPToolBoxPath}}\Plugin\DailyHot\dailyhot_cache.md]获得每日热点新闻。
+```
+
+**File**: `TVStxt/SearchToolBox.txt` (modified, +2/-0)
+```diff
+@@ -34,11 +34,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
+ need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
  
--async function closeHttpServerGracefully() {
-+async function closeHttpServerGracefully(maxWaitMs = 5000) {
-     if (!server || typeof server.close !== 'function') {
-         return;
-     }
-@@ -259,18 +259,31 @@ async function closeHttpServerGracefully() {
-     destroyIdleSockets();
+ ### 检索 B 站视频/UP主
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」search「末」,
+ keyword:「始」搜索词「末」,
+ search_type:「始」'video' 或 'bili_user'「末」
  
-     await new Promise((resolve) => {
-+        let settled = false;
-+        const finish = () => {
-+            if (settled) return;
-+            settled = true;
-+            clearTimeout(timer);
-+            resolve();
-+        };
-+        const timer = setTimeout(() => {
-+            console.warn(`[Server] server.close() still waiting on ${activeHttpRequests.size} active HTTP socket(s) after ${maxWaitMs}ms; proceeding to request drain/abort phase.`);
-+            finish();
-+        }, maxWaitMs);
-+        if (typeof timer.unref === 'function') timer.unref();
-+
-         try {
-             server.close((error) => {
-                 if (error) {
-                     console.error('[Server] Error while closing HTTP server:', error);
-                 } else {
-                     console.log('[Server] HTTP server stopped accepting new connections.');
-                 }
--                resolve();
-+                finish();
-             });
-         } catch (error) {
-             console.error('[Server] Failed to invoke server.close():', error);
--            resolve();
-+            finish();
-         }
-     });
- }
-@@ -1645,6 +1658,19 @@ async function gracefulShutdown(exitCode = 0, reason = 'signal') {
-                 console.log(`[Server][ShutdownTrace] Phase 4/10 - abort skipped, no remaining active requests`);
-             }
+ ### 调查 UP 主投稿列表
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」get_up_videos「末」,
+ mid:「始」用户 ID「末」,
+ pn:「始」1「末」
+```
+
+**File**: `TVStxt/supertool.txt` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@ command:「始」工具参数「末」, //具体视不同工具需求而定
+ content:「始ESCAPE」这是一个优先正则保护字段，内部可以输入<<<[TOOL_REQUEST]>>>和「始」从而不会被破坏解析器「末ESCAPE」, // 任意字段都可以使用「始ESCAPE」来传递内部的vcp解析字段
+ <<<[END_TOOL_REQUEST]>>>
  
-+            if (activeHttpRequests.size > 0) {
-+                console.warn(`[Server] Destroying ${activeHttpRequests.size} remaining active HTTP socket(s) after drain phase.`);
-+                for (const socket of activeHttpRequests) {
-+                    try {
-+                        if (!socket.destroyed) socket.destroy();
-+                    } catch (err) {
-+                        console.error('[Server] Failed to destroy remaining socket:', err.message);
-+                    }
-+                }
-+                activeHttpRequests.clear();
-+            }
-+            destroyIdleSockets();
-+
-             serverLifecycleState = SERVER_LIFECYCLE.SHUTTING_DOWN;
-             console.log(`[Server][ShutdownTrace] Phase 5/10 - lifecycle switched to SHUTTING_DOWN`);
+-<<<[TOOL_REQUEST]>>>到<<<[END_TOOL_REQUEST]>>>来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
++`<<<[TOOL_REQUEST]>>>` 到 `<<<[END_TOOL_REQUEST]>>>` 来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
+ 主动判断当前需求，灵活使用各类工具调用，服务器支持一次调用多个工具和连续调用。
  
-@@ -1667,7 +1693,19 @@ async function gracefulShutdown(exitCode = 0, reason = 'signal') {
+ —— VCP 全局高级修饰字段 (支持所有工具与JevCall，正交可组合) ——
+```
+
+**File**: `TVStxt/toollite.txt` (modified, +2/-0)
+```diff
+@@ -97,11 +97,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
+ need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
  
-             if (pluginManager) {
-                 console.log(`[Server][ShutdownTrace] Phase 8/10 - pluginManager.shutdownAllPlugins start`);
--                await pluginManager.shutdownAllPlugins();
-+                let pluginShutdownTimer = null;
-+                await Promise.race([
-+                    pluginManager.shutdownAllPlugins(),
-+                    new Promise((resolve) => {
-+                        pluginShutdownTimer = setTimeout(() => {
-+                            console.warn('[Server] pluginManager.shutdownAllPlugins timed out after 10000ms; continuing to Phase 9.');
-+                            resolve();
-+                        }, 10000);
-+                        if (typeof pluginShutdownTimer.unref === 'function') pluginShutdownTimer.unref();
-+                    })
-+                ]).finally(() => {
-+                    if (pluginShutdownTimer) clearTimeout(pluginShutdownTimer);
-+                });
-                 console.log(`[Server][ShutdownTrace] Phase 8/10 - pluginManager.shutdownAllPlugins done`);
-             } else {
-                 console.log(`[Server][ShutdownTrace] Phase 8/10 - pluginManager shutdown skipped`);
+ ### 检索 B 站视频/UP主
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」search「末」,
+ keyword:「始」搜索词「末」,
+ search_type:「始」'video' 或 'bili_user'「末」
+ 
+ ### 调查 UP 主投稿列表
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」get_up_videos「末」,
+ mid:「始」用户 ID「末」,
+ pn:「始」1「末」
+```
+
+---
+
+### Incident Patch 3: `19552763` (2026-11-20)
+**Commit Message**: fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题
+
+- Agent/DeepSeekOfficial.txt: 修正用户宏占位符 {{VarUse}} -> {{VarUser}}
+- Plugin/TavilySearch: 修正示例 JSON 中的换行转义字符 \time_range -> \ntime_range
+- TVStxt/toollite.txt, SearchToolBox.txt: 为 B 站子检索示例补充缺失的 tool_name:「始」BilibiliFetch「末」
+- TVStxt/JevToolCall.txt: 移除末尾孤立的「末」字符
+- TVStxt/supertool.txt: 为说明文本中的 TOOL_REQUEST 标签添加反引号避免解析器误匹配
+- Plugin/MediaRenderer: 补全说明文字中被误删的 <<<[TOOL_REQUEST]>>> 标签描述
+- Plugin/ZImageGen2: 修正示例中的工具名 ZImageGen -> ZImageGen2
+
+**File**: `Agent/DeepSeekOfficial.txt` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@
+ 
+ 当前工作环境VCPToolbox，一个强大的AGI-Runtime工作运行时环境。
+ 今天是{{Date}},{{Today}},{{Festival}}。当前天气{{VCPWeatherInfoNow}}。
+-用户是{{VarUse}}，你的主人。
++用户是{{VarUser}}，你的主人。
+ 
+ 核心指令
+ {{VarToolList}}
+```
+
+**File**: `Plugin/MediaRenderer/plugin-manifest.json` (modified, +2/-2)
+```diff
+@@ -46,13 +46,13 @@
+       {
+         "command": "RenderImage",
+         "commandIdentifier": "RenderImage",
+-        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的  工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
++        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的 <<<[TOOL_REQUEST]>>> 到 <<<[END_TOOL_REQUEST]>>> 工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
+         "example": "<<<[TOOL_REQUEST]>>>\ntool_name:「始」MediaRenderer「末」,\ncommand:「始」RenderImage「末」,\nhtml:「始」<!doctype html><style>@font-face{font-family:Title;src:url('file:///D:/fonts/title.woff2')}html,body{margin:0;width:100%;height:100%;background:#08111f}.card{height:100%;display:grid;
+```
+
+**File**: `Plugin/TavilySearch/plugin-manifest.json` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+       {
+         "commandIdentifier": "TavilySearch",
+         "description": "调用此工具使用 Tavily API 进行高级网络搜索。默认启用高级搜索模式并返回图片链接。重要提示：请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。请在您的回复中，使用以下精确格式来请求搜索，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含搜索结果的JSON对象。请基于这些结果回答用户的问题或完成相关任务。\n请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。",
+-        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\time_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
++        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\ntime_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
+       }
+     ]
+   }
+```
+
+**File**: `Plugin/ZImageGen2/plugin-manifest.json.block` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+       {
+         "commandIdentifier": "ZImageGenerate",
+         "description": "调用此工具通过 Z-Image-Base 模型生成高质量图片。支持中英文提示词。请在您的回复中，使用以下精确格式来请求图片生成，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含以下信息的结果：\n1. 生成图片的公开访问URL。\n2. 图片在服务器上的存储相对路径 (例如：image/zimage/图片名.png)。\n3. 图片的文件名和使用的Seed。\n4. 如果showbase64设置为true，还会包含base64格式的图片数据供AI查看。\n请在您的最终回复中，使用返回的【图片URL】为用户生成一个HTML的 `<img>` 标签来直接展示图片，例如：`<img src=\"[此处填写图片URL]\" alt=\"[此处可填写部分prompt作为描述]\" width=\"300\">`。请确保替换占位符，并可调整 `width` 属性（建议200-500像素）。",
+-        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
++        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen2「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
+       }
+     ]
+   }
+```
+
+**File**: `TVStxt/JevToolCall.txt` (modified, +1/-1)
+```diff
+@@ -40,7 +40,7 @@ B站截图默认仅获取画面；需要组合内容时，在句子或 [] 中明
+ 联络[Grok]，告诉它【我是Nova，我想问问2026年10月推特上的ai热点新闻】，并使用[临时通讯]。
+ 睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。
+ 请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。
+-请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
++请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。
+ 请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。
+ 请使用 {物联网控制} 中的 `TableLampRemote`，执行【打开台灯】
+ 读取[file://{{VarVCPToolBoxPath}}\Plugin\DailyHot\dailyhot_cache.md]获得每日热点新闻。
+```
+
+**File**: `TVStxt/SearchToolBox.txt` (modified, +2/-0)
+```diff
+@@ -34,11 +34,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
+ need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
+ 
+ ### 检索 B 站视频/UP主
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」search「末」,
+ keyword:「始」搜索词「末」,
+ search_type:「始」'video' 或 'bili_user'「末」
+ 
+ ### 调查 UP 主投稿列表
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」get_up_videos「末」,
+ mid:「始」用户 ID「末」,
+ pn:「始」1「末」
+```
+
+**File**: `TVStxt/supertool.txt` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@ command:「始」工具参数「末」, //具体视不同工具需求而定
+ content:「始ESCAPE」这是一个优先正则保护字段，内部可以输入<<<[TOOL_REQUEST]>>>和「始」从而不会被破坏解析器「末ESCAPE」, // 任意字段都可以使用「始ESCAPE」来传递内部的vcp解析字段
+ <<<[END_TOOL_REQUEST]>>>
+ 
+-<<<[TOOL_REQUEST]>>>到<<<[END_TOOL_REQUEST]>>>来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
++`<<<[TOOL_REQUEST]>>>` 到 `<<<[END_TOOL_REQUEST]>>>` 来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
+ 主动判断当前需求，灵活使用各类工具调用，服务器支持一次调用多个工具和连续调用。
+ 
+ —— VCP 全局高级修饰字段 (支持所有工具与JevCall，正交可组合) ——
+```
+
+**File**: `TVStxt/toollite.txt` (modified, +2/-0)
+```diff
+@@ -97,11 +97,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
+ need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
+ 
+ ### 检索 B 站视频/UP主
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」search「末」,
+ keyword:「始」搜索词「末」,
+ search_type:「始」'video' 或 'bili_user'「末」
+ 
+ ### 调查 UP 主投稿列表
++tool_name:「始」BilibiliFetch「末」,
+ action:「始」get_up_videos「末」,
+ mid:「始」用户 ID「末」,
+ pn:「始」1「末」
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #621** (2026-11-20): fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题 (@InSciTech)
+- **PR #620** (2026-11-20): fix(plugins): 修正多处插件 Manifest 示例工具名、参数大小写及格式错误 (@InSciTech)
 - **PR #619** (2026-11-19): fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发死锁，并修复关机Phase2/Phase8阻塞 (@infinite-vector)
 - **PR #618** (2026-11-18): # feat(WarpedFieldAtlas): 读取 Tag 和 Chunk 双曲场训练快照，支持按节点或对话消息查询近邻 (@CI-IISATO)
 - **PR #617** (2026-11-18): fix: 出站请求中降级无法投递的 Markdown data: 图片（避免上游 415/500） (@RoxyAsahi)
 - **PR #616** (2026-11-18): feat(memo): 1% 阈值训练对纯追加窗口按依赖复用 Tag 局部残差 (@CI-IISATO)
-- **PR #615** (closed): 驱动兼容性版本更新 (@TaoCultivator)
-- **PR #614** (2026-11-18): RiverMemo V5.2：以属概念门控校准种差，移除独立直锚加分 (@lioensky)
 
 ---
 
@@ -2377,68 +2199,48 @@ fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in global_chunks.rs
+## X. Empirical Invariant Guard in image-file-server.js
 
 **RULE**:
-When implementing operations in `rust-vexus-lite/src/global_chunks.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Plugin/ImageFileServer/image-file-server.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a2c33d06`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `09a25ded`: fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust-vexus-lite/src/global_chunks.rs`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/ImageFileServer/image-file-server.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    pub(crate) fn prepare_checkpoint_in_tx(
-        &self,
-        connection: &Connection,
-        directory: &Path,
-        threshold: f64,
-        allow_initial: bool,
-    ) -> Result<Option<(i64, &'static str, Vec<u8>, String, Vec<ChunkHeader>)>, String> {
-        if !self.legacy_enabled { return Ok(None); }
-        let (generation, active, allowed) = (|| -> Result<(i64, String, bool), String> {
-            if facts(connection)? != self.facts {
-                return Err("LIGHTMEMO_CHECKPOINT_GENERATION_CONFLICT".into());
-            }
-            let manifest: Option<(i64, String, i64, String, i64)> = connection.query_row(
-                "SELECT generation,slot,dimension,model_sig,member_versions
-                 FROM global_chunk_index_baselines ORDER BY generation DESC LIMIT 1", [],
-                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?)),
-            ).optional().map_err(|e| e.to_string())?;
-            let Some((generation, slot, dimension, model, versions)) = manifest else {
-                let mut has_file = false;
-                for slot in ["a", "b"] {
-                    match std::fs::metadata(slot_path(directory, slot)) {
-       
+// 进程信号由宿主处理；插件只释放自身资源。
+function shutdown() {
+}
+    shutdown,
+    // 保留既有清理入口，供调用方和测试使用。
+    stopSecurityManager: shutdown,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-    /// Caller holds the Runtime table mutex and shared facts gate. Publication
-    /// is separate from queries; SQL member versions survive eviction/restart.
-    pub fn checkpoint(&mut self, db_path: &str, directory: &Path, database_generation: u64,
-        threshold: f64, allow_initial: bool) -> Result<bool, String> {
-        if !self.legacy_enabled { return Ok(false); }
-        let (generation, active, allowed) =
-            crate::storage::with_registered_read_transaction(db_path, |connection| {
-                if facts(connection)? != self.facts {
-                    return Err("LIGHTMEMO_CHECKPOINT_GENERATION_CONFLICT".into());
-                }
-                let manifest: Option<(i64, String, i64, String, i64)> = connection.query_row(
-                    "SELECT generation,slot,dimension,model_sig,member_versions
-                     FROM global_chunk_index_baselines ORDER BY generation DESC LIMIT 1", [],
-                    |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?)),
-                ).optional().map_err(|e| e.to_string())?;
-                let Some((generation, slot, dimension, model, versions)) = manifest else {
-                    let m
+// 优雅关闭处理
+process.on('SIGINT', () => {
+    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
+    process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
+    securityManager.stopCleanupTimer();
+    process.exit(0);
+});
+    // 供测试或宿主优雅卸载时停止定时器，避免模块句柄阻止进程退出
+    stopSecurityManager: () => securityManager.stopCleanupTimer(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a2c33d06` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `09a25ded` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

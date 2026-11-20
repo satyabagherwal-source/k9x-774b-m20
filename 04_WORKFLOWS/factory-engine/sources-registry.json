@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T23:47:53.090Z",
-    "lastVerified": "2026-11-20T23:47:53.090Z",
+    "lastChecked": "2026-11-20T23:57:51.974Z",
+    "lastVerified": "2026-11-20T23:57:51.974Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T23:21:28.970Z",
+    "lastChecked": "2026-11-20T23:56:23.126Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T23:21:28.970Z"
+    "lastVerified": "2026-11-20T23:56:23.126Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1658,12 +1658,12 @@
     "lastVerified": "2026-11-20T17:29:07.456Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "zama-ai/tfhe-rs",
+    "name": "tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T18:41:41.010Z",
-    "lastVerified": "2026-11-20T18:41:41.010Z",
+    "lastChecked": "2026-11-20T23:56:18.161Z",
+    "lastVerified": "2026-11-20T23:56:18.161Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1672,7 +1672,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "dcfe7e6d"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -3058,14 +3059,14 @@
     "officialUrl": "https://github.com/lioensky/VCPToolBox",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-19T21:24:10.231Z",
-    "lastVerified": "2026-11-19T21:24:10.231Z",
+    "lastChecked": "2026-11-20T23:56:25.063Z",
+    "lastVerified": "2026-11-20T23:56:25.063Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "57c36e57f7e7d10c815fbe2b94996191e91c2c5fca58c8f0649c1dd2e3004b4b",
+    "contentHash": "c9c965d1ff4d95851120f0593160151e8ecd999ffad6540b8f013ae471c23688",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3806,9 +3807,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-11-19T23:15:36.843Z",
+    "lastChecked": "2026-11-20T23:56:15.629Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-11-19T23:15:36.843Z"
+    "lastVerified": "2026-11-20T23:56:15.629Z"
   },
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
@@ -7591,9 +7592,9 @@
   "railwayapp-nixpacks": {
     "name": "nixpacks",
     "officialUrl": "https://github.com/railwayapp/nixpacks",
-    "lastChecked": "2026-11-19T12:40:23.172Z",
+    "lastChecked": "2026-11-20T23:56:08.148Z",
     "revisionIdentifier": "144b4f9a",
-    "lastVerified": "2026-11-19T12:40:23.172Z"
+    "lastVerified": "2026-11-20T23:56:08.148Z"
   },
   "hf-microsoft-frognano-4b-2609": {
     "name": "microsoft/FrogNano-4B-2609",
@@ -11147,5 +11148,29 @@
     "lastChecked": "2026-11-20T23:47:43.049Z",
     "revisionIdentifier": "7e58c7d7",
     "lastVerified": "2026-11-20T23:47:43.049Z"
+  },
+  "evanw-esbuild": {
+    "name": "esbuild",
+    "officialUrl": "https://github.com/evanw/esbuild",
+    "lastChecked": "2026-11-20T23:56:10.620Z",
+    "revisionIdentifier": "f6058f83",
+    "lastVerified": "2026-11-20T23:56:10.620Z"
+  },
+  "rafsoh-dimeapp": {
+    "name": "rafsoh/dimeApp",
+    "officialUrl": "https://github.com/rafsoh/dimeApp",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-20T23:56:17.410Z",
+    "lastVerified": "2026-11-20T23:56:17.410Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-rafsoh-dimeapp",
+    "contentHash": "41d3ae6037e6c4e2ce946cf83dac073e61f11f645399b1bbcbf82026c1382182",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

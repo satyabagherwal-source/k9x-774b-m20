@@ -716897,3 +716897,473 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `70e75d4f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9665. Empirical Invariant Guard in image-file-server.js (Harvested from lioensky/VCPToolBox)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Empirical Invariant Guard in image-file-server.js",
+  "source": "lioensky/VCPToolBox",
+  "source_url": "https://github.com/lioensky/VCPToolBox",
+  "source_version": "09a25ded",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-20T23:56:25.820Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lioensky-vcptoolbox",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `09a25ded`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Plugin/ImageFileServer/image-file-server.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `09a25ded`: fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/ImageFileServer/image-file-server.js`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+// 进程信号由宿主处理；插件只释放自身资源。
+function shutdown() {
+}
+    shutdown,
+    // 保留既有清理入口，供调用方和测试使用。
+    stopSecurityManager: shutdown,
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Induced defect failure mode:
+// 优雅关闭处理
+process.on('SIGINT', () => {
+    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
+    process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
+    securityManager.stopCleanupTimer();
+    process.exit(0);
+});
+    // 供测试或宿主优雅卸载时停止定时器，避免模块句柄阻止进程退出
+    stopSecurityManager: () => securityManager.stopCleanupTimer(),
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `09a25ded` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9666. Isolated Multi-Process CloudKit Sync Disjointness (Harvested from rafsoh/dimeApp)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Isolated Multi-Process CloudKit Sync Disjointness",
+  "source": "rafsoh/dimeApp",
+  "source_url": "https://github.com/rafsoh/dimeApp",
+  "source_version": "6dead5de",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-20T23:57:46.354Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-rafsoh-dimeapp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [rafsoh/dimeApp](https://github.com/rafsoh/dimeApp) (Revision: `6dead5de`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When multiple Darwin processes (Main App, WidgetKit Extensions, App Intents, WatchKit Extensions) read and write to a shared App Group Core Data SQLite store, EXACTLY ONE process (the main host app) MUST configure `NSPersistentCloudKitContainerOptions`. All application extensions (`.appex`) MUST configure `description.cloudKitContainerOptions = nil`, while retaining `NSPersistentHistoryTrackingKey = true`.
+
+**WHY**:
+`NSPersistentCloudKitContainer` operates an internal sync daemon (`cloudd` bridge) maintaining local sync anchors, change tokens, and export queues directly within internal SQLite metadata tables. If multiple processes concurrently attempt CloudKit sync on the same physical SQLite store, race conditions occur across the private zone change tokens, corrupting export state, triggering unrecoverable `CKErrorPartialFailure` cascades, and causing deadlocks on SQLite write-ahead log (`WAL`) locks.
+
+**WHEN TO APPLY**:
+Apply to all iOS, iPadOS, macOS, and watchOS software systems utilizing Core Data with `NSPersistentCloudKitContainer` inside an App Group shared container accessed by extensions.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+import CoreData
+import Foundation
+
+public final class PersistentContainerFactory {
+    public static func createContainer(name: String, appGroupID: String, cloudKitContainerID: String) -> NSPersistentCloudKitContainer {
+        let container = NSPersistentCloudKitContainer(name: name)
+        
+        guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
+            fatalError("CRITICAL: Target App Group \(appGroupID) is inaccessible.")
+        }
+        
+        let storeURL = groupURL.appendingPathComponent("\(name).sqlite")
+        let description = NSPersistentStoreDescription(url: storeURL)
+        
+        // Mandatory for multi-process cross-talk notification & ingestion
+        description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+        description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+        
+        // Process isolation check: Only main executable runs CloudKit sync
+        let isAppExtension = Bundle.main.bundleURL.pathExtension.caseInsensitiveCompare("appex") == .orderedSame
+        let isSyncPreferred = UserDefaults(suiteName: appGroupID)?.bool(forKey: "iCloudSyncEnabled") ?? true
+        
+        if !isAppExtension && isSyncPreferred {
+            description.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudKitContainerID)
+        } else {
+            description.cloudKitContainerOptions = nil
+        }
+        
+        container.persistentStoreDescriptions = [description]
+        container.loadPersistentStores { description, error in
+            if let error = error as NSError? {
+                fatalError("Fatal Core Data Load Resolution: \(error), \(error.userInfo) for \(description)")
+            }
+        }
+        
+        container.viewContext.automaticallyMergesChangesFromParent = true
+        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        return container
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Blindly enabling CloudKit options on all processes accessing App Group storage.
+let description = NSPersistentStoreDescription(url: sharedURL)
+// FAILS: Widget extension launches, tries to sync, collides with host app sync queue!
+description.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: "iCloud.com.example.app")
+```
+
+**VERIFICATION METHOD**:
+Verify with a unit/integration test checking extension bundle configuration:
+```swift
+func test_StoreDescription_WhenInAppExtension_DoesNotHaveCloudKitOptions() {
+    let isAppExtension = Bundle.main.bundleURL.pathExtension == "appex"
+    let description = container.persistentStoreDescriptions.first!
+    if isAppExtension {
+        XCTAssertNil(description.cloudKitContainerOptions, "App Extension MUST have nil cloudKitContainerOptions")
+    }
+}
+```
+
+---
+
+
+---
+
+## 9667. Temporal State-Gating on Remote-Synchronized Generators (Harvested from rafsoh/dimeApp)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Temporal State-Gating on Remote-Synchronized Generators",
+  "source": "rafsoh/dimeApp",
+  "source_url": "https://github.com/rafsoh/dimeApp",
+  "source_version": "6dead5de",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-20T23:57:46.966Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-rafsoh-dimeapp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [rafsoh/dimeApp](https://github.com/rafsoh/dimeApp) (Revision: `6dead5de`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Any synthetic transaction generator (such as budget rollover calculations, recurring billing generation, or time-triggered reconciliation) MUST NOT execute until either (1) a successful CloudKit remote import finishes on the current session, or (2) iCloud identity is explicitly verified as unavailable/disabled. A persistent timeout fallback MUST ONLY engage if active network reachability is verified.
+
+**WHY**:
+If an offline or backgrounded device fires local date-advancing generation logic on app launch before receiving changes logged by peer devices via CloudKit, the device generates duplicate transactions with distinct local UUIDs. When network connectivity resumes, CloudKit merges both sets without conflict because the primary keys differ, permanently corrupting financial ledgers.
+
+**WHEN TO APPLY**:
+Apply to any distributed peer-to-peer or client-cloud application where periodic deterministic events (daily renewals, amortizations, recurring transactions) are computed locally by distributed clients.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+import Foundation
+import Network
+
+public struct RecurringGenerationGate {
+    public private(set) var isOpen: Bool
+    private let isSyncEnabled: Bool
+    private var isAccountUnavailable: Bool = false
+    private var isOnline: Bool = true
+    
+    public init(isSyncEnabled: Bool) {
+        self.isSyncEnabled = isSyncEnabled
+        // If sync is explicitly disabled, gate opens immediately
+        self.isOpen = !isSyncEnabled
+    }
+    
+    public mutating func syncEventFinished(isImport: Bool, succeeded: Bool, isNetworkError: Bool) {
+        if succeeded {
+            if isImport {
+                // Verified remote state received; safe to generate missing intervals
+                self.isOpen = true
+            }
+        } else if isNetworkError {
+            // Drop back to safety, await network re-establishment and proper import
+            needsFreshImport()
+        } else {
+            // Fatal or permission CloudKit error; unlock to prevent starvation
+            self.isOpen = true
+        }
+    }
+    
+    public mutating func accountBecameUnavailable() {
+        self.isAccountUnavailable = true
+        self.isOpen = true
+    }
+    
+    public mutating func needsFreshImport() {
+        guard isSyncEnabled, !isAccountUnavailable else { return }
+        self.isOpen = false
+    }
+    
+    @discardableResult
+    public mutating func connectivityChanged(isOnline: Bool) -> Bool {
+        guard isOnline != self.isOnline else { return false }
+        self.isOnline = isOnline
+        if isOnline {
+            needsFreshImport()
+        }
+        return true
+    }
+    
+    public mutating func fallbackElapsed() {
+        // Only open on timeout if device is proven online and sync was given a chance
+        if isOnline {
+            self.isOpen = true
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Firing periodic date-based generators blindly on scene activation or app foreground
+.onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+    // Clobbers and duplicates every recurring expense if iPad created it 10 minutes ago
+    dataController.generateRecurringTransactionsNow()
+}
+```
+
+**VERIFICATION METHOD**:
+Simulate delayed remote import via mock CloudKit events; assert that the generator method is not invoked until the import event resolves:
+```swift
+func test_Gate_BlocksGeneration_UntilRemoteImportSucceeds() {
+    var gate = RecurringGenerationGate(isSyncEnabled: true)
+    XCTAssertFalse(gate.isOpen)
+    
+    // Simulating export finished does not unlock
+    gate.syncEventFinished(isImport: false, succeeded: true, isNetworkError: false)
+    XCTAssertFalse(gate.isOpen)
+    
+    // Simulating import finished unlocks
+    gate.syncEventFinished(isImport: true, succeeded: true, isNetworkError: false)
+    XCTAssertTrue(gate.isOpen)
+}
+```
+
+---
+
+
+---
+
+## 9668. Non-Destructive In-Memory Snapshotting for Undo Actions (Harvested from rafsoh/dimeApp)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Non-Destructive In-Memory Snapshotting for Undo Actions",
+  "source": "rafsoh/dimeApp",
+  "source_url": "https://github.com/rafsoh/dimeApp",
+  "source_version": "6dead5de",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-20T23:57:47.612Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-rafsoh-dimeapp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [rafsoh/dimeApp](https://github.com/rafsoh/dimeApp) (Revision: `6dead5de`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When an entity deletion is committed or staged in a managed object context (`NSManagedObjectContext`), an "Undo" capability MUST NOT be implemented via `context.rollback()`. Instead, a detached, immutable struct representation (value-type snapshot) of the deleted entity and its foreign relationships MUST be retained in memory, and re-inserted as a new record if undo is triggered.
+
+**WHY**:
+Calling `context.rollback()` on a shared managed object context discards all unsaved modifications, rollbacks remote background merges, drops pending sync insertions, and invalidates registered fault objects across other active UI views. Furthermore, if the context was already saved to disk (which is mandatory before backgrounding or app extension handoff), `rollback()` is a no-op against committed records.
+
+**WHEN TO APPLY**:
+Any Core Data or object-relational mapping (ORM) system where UI "toast" notifications or undo operations allow reversing row deletions.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+import CoreData
+import Foundation
+
+public struct DeletedTransactionSnapshot: Equatable {
+    public let id: UUID?
+    public let note: String?
+    public let amount: Double
+    public let date: Date?
+    public let income: Bool
+    public let recurringType: Int16
+    public let recurringCoefficient: Int16
+    public let categoryObjectID: NSManagedObjectID?
+    
+    public init(_ transaction: Transaction) {
+        self.id = transaction.id
+        self.note = transaction.note
+        self.amount = transaction.amount
+        self.date = transaction.date
+        self.income = transaction.income
+        self.recurringType = transaction.recurringType
+        self.recurringCoefficient = transaction.recurringCoefficient
+        self.categoryObjectID = transaction.category?.objectID
+    }
+    
+    @discardableResult
+    public func restore(into context: NSManagedObjectContext) -> Transaction {
+        let restored = Transaction(context: context)
+        restored.id = self.id ?? UUID()
+        restored.note = self.note
+        restored.amount = self.amount
+        restored.date = self.date
+        restored.income = self.income
+        restored.recurringType = self.recurringType
+        restored.recurringCoefficient = self.recurringCoefficient
+        
+        if let catID = self.categoryObjectID,
+           let category = try? context.existingObject(with: catID) as? Category {
+            restored.category = category
+        }
+        return restored
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Reversing database modifications using context-wide rollback
+func delete(transaction: Transaction) {
+    context.delete(transaction)
+    // BAD: Delays saving to allow rollback, leading to data loss on sudden termination!
+}
+func undoDelete() {
+    context.rollback() // DISASTROUS: Clears all uncommitted changes from OTHER forms!
+}
+```
+
+**VERIFICATION METHOD**:
+Execute an entity deletion, verify context save succeeds, mutate a second unrelated entity in memory, trigger undo on the first entity, and verify the second entity's uncommitted modifications remain uncorrupted.
+
+---

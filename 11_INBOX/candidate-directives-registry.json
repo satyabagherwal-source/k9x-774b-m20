@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T23:47:54.904Z",
+  "last_updated": "2026-11-20T23:57:55.232Z",
   "directives": [
     {
       "id": "CD-001",
@@ -39760,11 +39760,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-S9ZV",
+      "id": "CD-33Q2",
       "directive_title": "benchmarks): report Gold coverage across retrieval stages",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-S9ZV-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-33Q2-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -39921,6 +39921,68 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C9A43F-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-32RZ",
+      "directive_title": "Empirical Invariant Guard in image-file-server.js",
+      "source_repo": "lioensky-vcptoolbox-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-32RZ-empirical-invariant-guard-in-image-file-server-js.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-31LK",
+      "directive_title": "Isolated Multi-Process CloudKit Sync Disjointness",
+      "source_repo": "rafsoh-dimeapp-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-31LK-isolated-multi-process-cloudkit-sync-disjointness.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-31LL",
+      "directive_title": "Non-Destructive In-Memory Snapshotting for Undo Actions",
+      "source_repo": "rafsoh-dimeapp-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-31LL-non-destructive-in-memory-snapshotting-for-undo-actions.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-2YHT",
+      "directive_title": "Non-Destructive In-Memory Snapshotting for Undo Actions",
+      "source_repo": "rafsoh/dimeApp",
+      "source_commit": "6dead5de",
+      "staged_file": "11_INBOX/candidate-directives/CD-2YHT-non-destructive-in-memory-snapshotting-for-undo-actions.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-C3132F",
+      "directive_title": "Empirical Invariant Guard in image-file-server.js",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "lioensky-vcptoolbox",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C3132F-empirical-invariant-guard-in-image-file-.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-33EF4D",
+      "directive_title": "benchmarks): report Gold coverage across retrieval stages",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-33EF4D-benchmarks-report-gold-coverage-across-r.md",
       "staged_date": "2026-11-20"
     }
   ]

@@ -11697,3 +11697,5 @@ Every entry in this ledger must capture:
 | `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `a393e82c` | Multi-dimensional audit evidence | 2026-11-20T23:39:47.903Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `4b90a220` | Multi-dimensional audit evidence | 2026-11-20T23:39:56.327Z |
 | `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `657bba5a` | Multi-dimensional audit evidence | 2026-11-20T23:47:46.746Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `09a25ded` | Multi-dimensional audit evidence | 2026-11-20T23:56:26.413Z |
+| `learn-github-rafsoh-dimeapp` | `https://github.com/rafsoh/dimeApp` | `6dead5de` | Multi-dimensional audit evidence | 2026-11-20T23:57:48.197Z |

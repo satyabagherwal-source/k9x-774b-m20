@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T23:47:55.201Z",
-  "total_records": 2194,
+  "last_updated": "2026-11-20T23:57:55.429Z",
+  "total_records": 2196,
   "domains": {
     "A": {
       "total": 17,
@@ -1412,7 +1412,7 @@
       ]
     },
     "H": {
-      "total": 512,
+      "total": 514,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1925,7 +1925,9 @@
         "domain_intelligence-technical-construction-intelligence-alibaba-zvec-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-core-invariants",
         "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-learnings-core-invaria",
-        "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-learnings-core-invariants"
       ]
     },
     "I": {
@@ -7964,8 +7966,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "4de161e28dfe4b2e3595863c79ea9bb395f25effe9ebf8ceec32403df6323368",
-      "created_at": "2026-11-20T23:21:30.677Z"
+      "content_hash": "44024884ca48d326629cdb8a35242ee1b59f50a4f56e05304becf8378c4e1663",
+      "created_at": "2026-11-20T23:57:55.429Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -12452,8 +12454,8 @@
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "repository": "lioensky/VCPToolBox",
-      "content_hash": "e1d881b43ab620862047d7cec2b24b44172f097e0a5cfb78936ccdab2f047ece",
-      "created_at": "2026-11-17T23:17:41.011Z"
+      "content_hash": "184fbbf422900f77ba9323947e6f7b4e8c7d83135d2772b74c9fc01ecf376f6c",
+      "created_at": "2026-11-20T23:56:26.888Z"
     },
     "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar",
@@ -21572,8 +21574,8 @@
       "title": "Technical Construction Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-learnings-technical-construction-intelligence-lioensky-vcpto.md",
       "repository": "lioensky-vcptoolbox-learnings",
-      "content_hash": "7fa2bd27886bf25ea90c0a4257d9daaf110efa4203340e7e239fcada7e92998a",
-      "created_at": "2026-11-15T15:47:57.645Z"
+      "content_hash": "c4e90c0b7042e8ac4478f96cd16adfbc199e10bb718ed63084e11e9f2b95ad9b",
+      "created_at": "2026-11-20T23:57:54.203Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-core-i",
@@ -36907,6 +36909,24 @@
       "repository": "xerj-org-xerj-learnings",
       "content_hash": "55c31832832f1f3bbea3718fc415b720a499e28e28e0a2a74a2551b6df7dea35",
       "created_at": "2026-11-20T23:40:01.952Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: rafsoh/dimeApp Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rafsoh-dimeapp-technical-construction-intelligence-rafsoh-dimeapp-core-invariant.md",
+      "repository": "rafsoh/dimeApp",
+      "content_hash": "6c944d88bb5a9773a4d6f53b66fcee6f296e0f8c20f48f8b07a5466040c65f2f",
+      "created_at": "2026-11-20T23:57:49.034Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: rafsoh-dimeapp-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rafsoh-dimeapp-learnings-technical-construction-intelligence-rafsoh-dimeapp-lear.md",
+      "repository": "rafsoh-dimeapp-learnings",
+      "content_hash": "06aeb63acea436a78cd44040db7c9a6412e65f1653c7ce2d50ef9ee2756a3905",
+      "created_at": "2026-11-20T23:57:53.084Z"
     }
   }
 }

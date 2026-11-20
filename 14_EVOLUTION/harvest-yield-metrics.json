@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T23:47:46.776Z",
-  "total_cycles_completed": 11106,
-  "total_learnings_persisted": 11106,
-  "total_rules_promoted": 10455,
+  "last_updated": "2026-11-20T23:57:48.204Z",
+  "total_cycles_completed": 11108,
+  "total_learnings_persisted": 11108,
+  "total_rules_promoted": 10459,
   "history": [
-    {
-      "timestamp": "2026-11-20T02:14:54.826Z",
-      "repository": "Kuddev/pebrel",
-      "learningId": "learn-github-kuddev-pebrel",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T02:15:02.186Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T02:15:07.969Z",
       "repository": "typedb/typedb",
@@ -1403,6 +1389,20 @@
       "repository": "rollup/rollup",
       "learningId": "learn-github-rollup-rollup",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T23:56:26.420Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T23:57:48.204Z",
+      "repository": "rafsoh/dimeApp",
+      "learningId": "learn-github-rafsoh-dimeapp",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
