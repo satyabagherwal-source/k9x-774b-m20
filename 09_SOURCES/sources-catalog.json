@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "87101a35",
+    "sourceVersion": "e4cf2bb0",
     "license": "Apache-2.0",
-    "contentHash": "d6562afddb983ccf1da679a4b113d46562df8a4b494b8147f12aade08a85fe14",
-    "lastHarvestedAt": "2026-11-18T23:10:32.870Z",
+    "contentHash": "b84711d3d8d4219e8cded5da8a4e6b9fdd8eaa6bae2c6b7a824b772486871a74",
+    "lastHarvestedAt": "2026-11-20T04:58:10.357Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -8503,10 +8503,10 @@
     "repository": "rainbow-me/rainbow",
     "platform": "github",
     "sourceUrl": "https://github.com/rainbow-me/rainbow",
-    "sourceVersion": "f9797f7f",
+    "sourceVersion": "38757729",
     "license": "GPL-3.0",
-    "contentHash": "8cd413f82579552a67da1ae7a49015be1ab615599dfb26cdb9a44ef98dfc4cfb",
-    "lastHarvestedAt": "2026-11-16T00:45:15.251Z",
+    "contentHash": "dcd83c5a8489032f20f9f19b354b8548e1bf339dabc1a3baaf2568c0f4400112",
+    "lastHarvestedAt": "2026-11-20T04:58:03.622Z",
     "learningId": "learn-github-rainbow-me-rainbow"
   },
   "zoontek-react-native-permissions": {

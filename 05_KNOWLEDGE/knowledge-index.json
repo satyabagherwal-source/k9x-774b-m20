@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T04:48:42.486Z",
+  "last_updated": "2026-11-20T04:58:15.600Z",
   "total_verified_learnings": 9024,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22194,
+  "total_items": 22199,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218619,13 +218619,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-NZ6V-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DHFS-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f51f2d76540d53eeeff8f8acdf95a776c1134921e7179800a9519d7a63d163c",
+      "content_hash": "c87e80f022431fd74f97ef5a614a784ddb7fdcba95d664bd8368fbb8f03224f2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:38:25.256Z"
+      "persisted_at": "2026-11-20T04:58:15.304Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218635,9 +218635,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4445ff92b81066512d67dc735074aca0de6562c5a54306f0e80beb166a8dd07",
+      "content_hash": "28b3f085f9eea0045848d0a6f202554c5e285bf73cbce4d5b8c30ea4aa8d0dc6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:38:25.413Z"
+      "persisted_at": "2026-11-20T04:58:15.443Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218647,9 +218647,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "39f205264681c8abca80c7489e7d6239747f0b0bc30133e3da5581f56479ddb7",
+      "content_hash": "b31208f13fe047f2597218db617052c5b5e9255e9e0cb3ab86e425bef9788416",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:38:25.564Z"
+      "persisted_at": "2026-11-20T04:58:15.600Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -251319,8 +251319,8 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "87101a35",
-      "content_hash": "d6562afddb983ccf1da679a4b113d46562df8a4b494b8147f12aade08a85fe14",
+      "source_version": "e4cf2bb0",
+      "content_hash": "b84711d3d8d4219e8cded5da8a4e6b9fdd8eaa6bae2c6b7a824b772486871a74",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
@@ -251345,7 +251345,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T23:10:32.680Z",
+      "verified_at": "2026-11-20T04:58:10.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251373,10 +251373,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-content-information-intelligence-etcd-io-etcd-core-invariants.md",
       "title": "Content & Information Intelligence: etcd-io/etcd Core Invariants",
       "repository": "etcd-io/etcd",
-      "source_version": "87101a35",
-      "content_hash": "afdb86035f450c5de0a43567d4111dffc9929e37612c77dcd1d3372aff0f18bc",
+      "source_version": "e4cf2bb0",
+      "content_hash": "d31fad227ade3911e5ac86e7958dca7935e791000a5acfcc01e9a61dec370140",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T23:10:33.254Z"
+      "persisted_at": "2026-11-20T04:58:10.679Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd",
@@ -251385,10 +251385,10 @@
       "relative_path": "08_VERIFICATION/etcd-io-etcd-verification-protocol-empirical-defect-shield-for-etcd-io-etcd.md",
       "title": "Verification Protocol: Empirical Defect Shield for etcd-io/etcd",
       "repository": "etcd-io/etcd",
-      "source_version": "87101a35",
-      "content_hash": "e4d7b910e49dc88b77f1d9b8c5e846ecaa0afc0e3d5985d4a7bd411daa1445d8",
+      "source_version": "e4cf2bb0",
+      "content_hash": "9e696b01ac7468a39056037c8516d5405ded91524da54957f60191d71ab542ea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T23:10:33.403Z"
+      "persisted_at": "2026-11-20T04:58:10.808Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria",
@@ -251422,9 +251422,9 @@
       "title": "Content & Information Intelligence: etcd-io-etcd-learnings Core Invariants",
       "repository": "etcd-io-etcd-learnings",
       "source_version": "HEAD",
-      "content_hash": "62e91b85d02faea91360e7ac69d62387d01e224a100f9097d5cf3e6de8464b41",
+      "content_hash": "7cefc7da3ba4add49a077adb3f2dd87550f17100135d95d7f3ab70cf020f013e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T23:10:38.702Z"
+      "persisted_at": "2026-11-20T04:58:14.836Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd-learnings",
@@ -251434,9 +251434,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for etcd-io-etcd-learnings",
       "repository": "etcd-io-etcd-learnings",
       "source_version": "HEAD",
-      "content_hash": "5e6f32f9a7c24a1f3a315f3cac5e9082a160d0eee1a70c2b935d60604e755ea1",
+      "content_hash": "9a0904bc174b23c270d570e6b977a4e628143410da0af03feea56196b0b6c6ac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T23:10:38.849Z"
+      "persisted_at": "2026-11-20T04:58:14.969Z"
     },
     "learn-github-metrolistgroup-metrolist": {
       "learning_id": "learn-github-metrolistgroup-metrolist",
@@ -252117,14 +252117,19 @@
       "slug": "rainbow-me-rainbow",
       "platform": "github",
       "source_url": "https://github.com/rainbow-me/rainbow",
-      "source_version": "f9797f7f",
-      "content_hash": "8cd413f82579552a67da1ae7a49015be1ab615599dfb26cdb9a44ef98dfc4cfb",
+      "source_version": "38757729",
+      "content_hash": "dcd83c5a8489032f20f9f19b354b8548e1bf339dabc1a3baaf2568c0f4400112",
       "dossier_path": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "promoted_rules": [
         {
           "number": 8677,
           "title": "read the exit fee in its own store",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9514,
+          "title": "show Simulation Unavailable when the backend simulation fails",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -252133,7 +252138,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T00:45:15.078Z",
+      "verified_at": "2026-11-20T04:58:03.444Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252187,10 +252192,10 @@
       "relative_path": "08_VERIFICATION/rainbow-me-rainbow-verification-protocol-empirical-defect-shield-for-rainbow-me-.md",
       "title": "Verification Protocol: Empirical Defect Shield for rainbow-me/rainbow",
       "repository": "rainbow-me/rainbow",
-      "source_version": "f9797f7f",
-      "content_hash": "c94b3e2883d73746db726d11d9e2d3cfc3b582628fe955fe80e41ba2b89c53b5",
+      "source_version": "38757729",
+      "content_hash": "ed37d44fa5fb06d0394ae8604a7f23ef54a97266b0bb4290d04c5d9981059362",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:45:15.663Z"
+      "persisted_at": "2026-11-20T04:58:04.092Z"
     },
     "candidate_directive-rnbw-staking-read-the-exit-fee-in-its-own-store": {
       "item_id": "candidate_directive-rnbw-staking-read-the-exit-fee-in-its-own-store",
@@ -252224,9 +252229,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rainbow-me-rainbow-learnings",
       "repository": "rainbow-me-rainbow-learnings",
       "source_version": "HEAD",
-      "content_hash": "734fd1be43fb2782c290c5309c40d62ac74294653c899896708d61dbf6503d2f",
+      "content_hash": "21923441a33b3ddb0e12fd552f7b74437d05bcdadac82badadd700a5812fc4f5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:45:21.010Z"
+      "persisted_at": "2026-11-20T04:58:14.153Z"
     },
     "rule-8678": {
       "learning_id": "rule-8678",
@@ -291446,26 +291451,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9295,
       "title": "Empirical Invariant Guard in Makefile",
-      "source_url": "https://github.com/krakend/krakend-ce",
-      "source_version": "3beb4d3b",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "e4cf2bb0",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-19T23:43:26.900Z"
+      "verified_at": "2026-11-20T04:58:10.178Z"
     },
     "candidate_directive-empirical-invariant-guard-in-makefile": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-makefile",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-4U5O-empirical-invariant-guard-in-makefile.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DGYY-empirical-invariant-guard-in-makefile.md",
       "title": "Empirical Invariant Guard in Makefile",
-      "repository": "krakend-krakend-ce-learnings",
+      "repository": "etcd-io-etcd-learnings",
       "source_version": "HEAD",
-      "content_hash": "cdc1bd581af36f58af863eed67f50f721242062e8524d9d1677f6a2b30cf4022",
+      "content_hash": "cb553b9f29f85b5160bc2914a46c3075a1000d21ca61c70629a7bae910b475c7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T23:43:36.109Z"
+      "persisted_at": "2026-11-20T04:58:14.699Z"
     },
     "rule-9296": {
       "learning_id": "rule-9296",
@@ -300473,6 +300478,68 @@
       "content_hash": "0977a193ee3da6fe805870645d0196b5c5a23b8fe095758ab608acb5a431b96c",
       "domain_letter": "G",
       "persisted_at": "2026-11-20T04:48:40.611Z"
+    },
+    "rule-9514": {
+      "learning_id": "rule-9514",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9514,
+      "title": "show Simulation Unavailable when the backend simulation fails",
+      "source_url": "https://github.com/rainbow-me/rainbow",
+      "source_version": "38757729",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T04:58:03.444Z"
+    },
+    "candidate_directive-show-simulation-unavailable-when-the-backend-simulation-fails": {
+      "item_id": "candidate_directive-show-simulation-unavailable-when-the-backend-simulation-fails",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D8KO-show-simulation-unavailable-when-the-backend-simulation-fails.md",
+      "title": "show Simulation Unavailable when the backend simulation fails",
+      "repository": "rainbow-me/rainbow",
+      "source_version": "38757729",
+      "content_hash": "fe355bc9f0a4d1229e746f05f83e031649d9ea410880480c8ad2d4d2c1f0d0e1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T04:58:03.817Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rainbow-me-rainbow-technical-construction-intelligence-rainbow-me-rainbow-core-i.md",
+      "title": "Technical Construction Intelligence: rainbow-me/rainbow Core Invariants",
+      "repository": "rainbow-me/rainbow",
+      "source_version": "38757729",
+      "content_hash": "45cb126b4efa5c13772c51eb680282277cd16f3e09a975bf26c7274fe57d7f93",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T04:58:03.957Z"
+    },
+    "candidate_directive-dapp-request-show-simulation-unavailable-when-the-backend-simulation-fails": {
+      "item_id": "candidate_directive-dapp-request-show-simulation-unavailable-when-the-backend-simulation-fails",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DGBH-dapp-request-show-simulation-unavailable-when-the-backend-simulation-fails.md",
+      "title": "dapp-request): show Simulation Unavailable when the backend simulation fails",
+      "repository": "rainbow-me-rainbow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "efb9389c07ecd50d6e56e9d56a2fb50e7956496ea4b46d5a6af5de4005773655",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T04:58:13.856Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rainbow-me-rainbow-learnings-technical-construction-intelligence-rainbow-me-rain.md",
+      "title": "Technical Construction Intelligence: rainbow-me-rainbow-learnings Core Invariants",
+      "repository": "rainbow-me-rainbow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2327896305160bd822a1e5be61f7e714cdba4d0164f683e4aff053afbc6f31a1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T04:58:13.997Z"
     }
   },
   "ai-builder-brain": {

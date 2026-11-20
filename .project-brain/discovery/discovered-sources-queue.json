@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T04:48:41.370Z",
+  "updated_at": "2026-11-20T04:58:14.518Z",
   "stats": {
-    "total_discovered": 6182,
-    "approved_pending_harvest": 5845,
+    "total_discovered": 6187,
+    "approved_pending_harvest": 5850,
     "harvested_count": 0,
     "rejected_count": 337,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5826,
+      "COMMUNITY_AND_EXPERT": 5831,
       "OFFICIAL_DOCUMENTATION": 194,
       "STANDARDS_AND_SPECIFICATIONS": 114,
       "ENGINEERING_BLOGS": 4,
@@ -133668,6 +133668,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
         "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-D52125A151BC": {
+      "id": "SRC-D52125A151BC",
+      "url": "https://rainbow-me.sentry.io/issues/RAINBOW-WALLET-3XBC",
+      "title": "https://rainbow-me.sentry.io/issues/RAINBOW-WALLET-3XBC",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:58:13.607Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
+        "fileName": "rainbow-me-rainbow-learnings.md"
+      }
+    },
+    "SRC-890B70C11537": {
+      "id": "SRC-890B70C11537",
+      "url": "https://example.com/graph",
+      "title": "https://example.com/graph",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:58:13.650Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
+        "fileName": "rainbow-me-rainbow-learnings.md"
+      }
+    },
+    "SRC-796575FFCB77": {
+      "id": "SRC-796575FFCB77",
+      "url": "https://github.com/etcd-io/etcd/pull/22858",
+      "title": "https://github.com/etcd-io/etcd/pull/22858",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:58:14.402Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-650746205936": {
+      "id": "SRC-650746205936",
+      "url": "https://github.com/serathius",
+      "title": "https://github.com/serathius",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:58:14.442Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-2F3546D09C7F": {
+      "id": "SRC-2F3546D09C7F",
+      "url": "https://github.com/etcd-io/etcd/blob/release-3.5/OWNERS",
+      "title": "https://github.com/etcd-io/etcd/blob/release-3.5/OWNERS",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:58:14.518Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
       }
     }
   }

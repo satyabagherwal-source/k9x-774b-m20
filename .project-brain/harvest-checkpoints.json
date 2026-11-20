@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T04:48:37.202Z",
+  "last_updated": "2026-11-20T04:58:10.365Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7281,14 +7281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-etcd-io-etcd",
-      "content_hash": "d6562afddb983ccf1da679a4b113d46562df8a4b494b8147f12aade08a85fe14",
-      "verified_at": "2026-11-18T23:10:32.879Z",
+      "content_hash": "b84711d3d8d4219e8cded5da8a4e6b9fdd8eaa6bae2c6b7a824b772486871a74",
+      "verified_at": "2026-11-20T04:58:10.364Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T23:10:32.879Z"
+      "last_updated": "2026-11-20T04:58:10.364Z"
     },
     "wasm-bindgen/wasm-pack": {
       "repository": "wasm-bindgen/wasm-pack",
@@ -12801,14 +12801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rainbow-me-rainbow",
-      "content_hash": "8cd413f82579552a67da1ae7a49015be1ab615599dfb26cdb9a44ef98dfc4cfb",
-      "verified_at": "2026-11-16T00:45:15.259Z",
+      "content_hash": "dcd83c5a8489032f20f9f19b354b8548e1bf339dabc1a3baaf2568c0f4400112",
+      "verified_at": "2026-11-20T04:58:03.630Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T00:45:15.259Z"
+      "last_updated": "2026-11-20T04:58:03.630Z"
     },
     "zoontek/react-native-permissions": {
       "repository": "zoontek/react-native-permissions",

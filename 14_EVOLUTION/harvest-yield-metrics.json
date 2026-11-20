@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T04:48:37.199Z",
-  "total_cycles_completed": 10928,
-  "total_learnings_persisted": 10928,
-  "total_rules_promoted": 10294,
+  "last_updated": "2026-11-20T04:58:10.361Z",
+  "total_cycles_completed": 10930,
+  "total_learnings_persisted": 10930,
+  "total_rules_promoted": 10296,
   "history": [
-    {
-      "timestamp": "2026-11-19T07:51:02.044Z",
-      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T07:51:05.000Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T07:51:10.378Z",
       "repository": "Tencent-TDS/KuiklyUI",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-20T04:48:37.199Z",
       "repository": "sqlpage/SQLPage",
       "learningId": "learn-github-sqlpage-sqlpage",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T04:58:03.627Z",
+      "repository": "rainbow-me/rainbow",
+      "learningId": "learn-github-rainbow-me-rainbow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T04:58:10.361Z",
+      "repository": "etcd-io/etcd",
+      "learningId": "learn-github-etcd-io-etcd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T04:48:42.360Z",
-  "total_records": 2065,
+  "last_updated": "2026-11-20T04:58:15.443Z",
+  "total_records": 2067,
   "domains": {
     "A": {
       "total": 17,
@@ -1348,7 +1348,7 @@
       ]
     },
     "H": {
-      "total": 490,
+      "total": 492,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1839,7 +1839,9 @@
         "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-searchsolved-search-solved-public-seo-core-i",
         "domain_intelligence-technical-construction-intelligence-searchsolved-search-solved-public-seo-learni",
-        "DOM-H-45D5E4E3"
+        "DOM-H-45D5E4E3",
+        "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-learnings-core-invariants"
       ]
     },
     "I": {
@@ -11456,8 +11458,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "f4445ff92b81066512d67dc735074aca0de6562c5a54306f0e80beb166a8dd07",
-      "created_at": "2026-11-20T04:38:25.413Z"
+      "content_hash": "28b3f085f9eea0045848d0a6f202554c5e285bf73cbce4d5b8c30ea4aa8d0dc6",
+      "created_at": "2026-11-20T04:58:15.443Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -22699,8 +22701,8 @@
       "title": "Content & Information Intelligence: etcd-io/etcd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-content-information-intelligence-etcd-io-etcd-core-invariants.md",
       "repository": "etcd-io/etcd",
-      "content_hash": "afdb86035f450c5de0a43567d4111dffc9929e37612c77dcd1d3372aff0f18bc",
-      "created_at": "2026-11-18T23:10:33.254Z"
+      "content_hash": "d31fad227ade3911e5ac86e7958dca7935e791000a5acfcc01e9a61dec370140",
+      "created_at": "2026-11-20T04:58:10.679Z"
     },
     "DOM-D-CB5F7DEE": {
       "record_id": "DOM-D-CB5F7DEE",
@@ -22801,8 +22803,8 @@
       "title": "Content & Information Intelligence: etcd-io-etcd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-learnings-content-information-intelligence-etcd-io-etcd-learnings-c.md",
       "repository": "etcd-io-etcd-learnings",
-      "content_hash": "62e91b85d02faea91360e7ac69d62387d01e224a100f9097d5cf3e6de8464b41",
-      "created_at": "2026-11-18T23:10:38.702Z"
+      "content_hash": "7cefc7da3ba4add49a077adb3f2dd87550f17100135d95d7f3ab70cf020f013e",
+      "created_at": "2026-11-20T04:58:14.836Z"
     },
     "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants",
@@ -34840,6 +34842,24 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-20T04:38:24.539Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: rainbow-me/rainbow Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rainbow-me-rainbow-technical-construction-intelligence-rainbow-me-rainbow-core-i.md",
+      "repository": "rainbow-me/rainbow",
+      "content_hash": "45cb126b4efa5c13772c51eb680282277cd16f3e09a975bf26c7274fe57d7f93",
+      "created_at": "2026-11-20T04:58:03.957Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: rainbow-me-rainbow-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rainbow-me-rainbow-learnings-technical-construction-intelligence-rainbow-me-rain.md",
+      "repository": "rainbow-me-rainbow-learnings",
+      "content_hash": "2327896305160bd822a1e5be61f7e714cdba4d0164f683e4aff053afbc6f31a1",
+      "created_at": "2026-11-20T04:58:13.997Z"
     }
   }
 }

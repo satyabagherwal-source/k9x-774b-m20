@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md`  
 > **Source**: github ([https://github.com/rainbow-me/rainbow](https://github.com/rainbow-me/rainbow))  
-> **Source Version**: `f9797f7f`  
+> **Source Version**: `38757729`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T00:45:14.392Z  
+> **Timestamp**: 2026-11-20T04:58:02.695Z  
 > **Learning ID**: `learn-github-rainbow-me-rainbow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rainbow-me/rainbow](https://github.com/rainbow-me/rainbow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T00:45:14.240Z  
+> **Harvest Timestamp**: 2026-11-20T04:58:02.480Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🌈‒ the Ethereum wallet that lives in your pocket 
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4402 stars
+- **Stars / Engagement**: 4404 stars
 
 ---
 
@@ -620,11 +620,11 @@ export function useSwapEstimatedGasFee(overrideGasSettings?: GasSettings) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7946** (2026-11-13): **fix(fonts): remove bundled SF Mono from the iOS app**
-  *Symptoms*: Fixes APP-4193  ## What changed (plus any additional context for devs)  App Store Connect flags `SF-Mono-Semibold.otf` and `SF-Mono-Bold.otf` in the iOS bundle as disallowed Apple fonts (ITMS-91182). Uploads that still contain them will be rejected from October 1, 2027. This removes both files from the iOS bundle and renders monospaced text with the system monospaced font that ships with iOS.  - The design-system `SFMono` tokens now use the `ui-monospace` family on iOS. The only consumer is the `code` style of `MarkdownText` (inline code, code blocks and fences). - iOS still runs the old renderer (Paper), which ignores `ui-monospace` and falls back to the proportional system font. The React Native patch teaches Paper's `RCTFont` to resolve `ui-monospace` to the system font at the requested weight with the monospaced design, the same mapping Fabric already does. Remove that hunk once iOS moves to Fabric. - Code text on iOS now renders at true Medium, the weight the token asks for and the weight Android already uses. Before, the token fell back to Semibold because Semibold and Bold were the only weights bundled. Line heights, wrapping and alignment are unchanged. - Android is unchanged and keeps its own bundled SF Mono files.  This is Christian's #7918, rebased on develop.  Additional cleanup: removes the unused legacy `SFMono` entry from `src/styles/fonts.js` and the unreferenced copies of the two fonts under `ios/`.  <!-- ship-visuals:start --> ## Screen recordings / screensh
+- **Issue #7955** (2026-11-19): **fix(dapp-request): show Simulation Unavailable when the backend simulation fails**
+  *Symptoms*: Fixes APP-4204  ## What changed (plus any additional context for devs)  When the backend can't simulate a dApp request, the signing sheet looked like a normal, unremarkable result. The metadata backend reports a failed simulation as HTTP 200 with a null `simulateTransactions` / `simulateMessage` and a GraphQL error. The app ignored the error, so the sheet showed a collapsed "Simulated Result" card with no balance changes and no security scan, and nothing was logged.   Now a failed backend simulation reaches the sheet as an error, and the sheet shows its existing "Simulation Unavailable" state with the "Proceed with caution" explanation, for both transaction and typed-data requests: - `simulateTransactions` and `simulateMessage` always ask the GraphQL requester to throw when the response has errors and no data. Responses with partial data are returned as before. Gas estimation for swaps, which already opted in, now gets this from the same place instead of passing the option itself; its behavior is unchanged. - The requester throws a `GraphQLResponseError`. The simulation query doesn't retry it, since a backend failure (scanner rejection, unsupported chain) mostly repeats, so the sheet shows the unavailable state right away and the existing "Error while simulating" log fires once per request, with the backend's message as the cause. Network errors still retry 3 times. - The "Simulation Unavailable" card now expands so its explanation is visible (it used to stay collapsed, with 
 
-- **Issue #7944** (2026-11-13): **feat(sports): add matchup title and hide the empty scoreboard in game sheets**
-  *Symptoms*: Fixes APP-4166  ## What changed (plus any additional context for devs)  The expanded sheet for a sports game now matches the Figma spec in two places:  - **The team box only shows once there is a score.** Before kickoff the sheet used to show an empty bordered box with the two team names. The box now appears only when the Sports API returns at least one score column. The status line above it stays in every state: start time before kickoff, then Live with period and clock, Final, Postponed, and so on. Any game without a score has no box, whatever its status: for example, a live game whose score feed is missing, or a game postponed before kickoff. - **Every game has a large matchup title,** such as "Vikings vs Packers", between the league row and the volume. When the competition is unknown, the sheet still falls back to Polymarket's event title, as before. The status line stays centered, as in the Figma frame.  **Why the title is built from team names with the game-card rule.** Each team uses its short name when the full name ends with it ("Minnesota Vikings" → "Vikings"), otherwise its full name. The two names are joined with the existing translated "vs" string. A sample of 110 live and upcoming games from the Sports API (NHL, ATP/WTA, UFC, CS2, Dota 2, UEFA Nations League) ruled out the alternatives:  | Source | Example | Problem | | --- | --- | --- | | Polymarket event title | "UFC 334: Amanda Nunes vs. Kayla Harrison (Women's Bantamweight, Main Card)" | Tennis, UFC and espo
+- **Issue #7954** (2026-11-19): **fix(gas): skip swap gas simulation on chains where the backend can't simulate**
+  *Symptoms*: Fixes APP-4203  ## What changed (plus any additional context for devs)  Before a swap that needs an approval, the app estimates gas by simulating the approval and the swap together in one `simulateTransactions` request. The claim + swap flow does the same. The backend rejects that request on chains without Blockaid bulk support, such as Unichain, Linea, Scroll, Ink and zkSync. On chains without Blockaid at all, it rejects any simulation. The app waited for the rejection, logged "Simulation result count mismatch" ([RAINBOW-WALLET-3XBC](https://rainbow-me.sentry.io/issues/RAINBOW-WALLET-3XBC), ~78k events), and then used its fallback.  The `networks` query now asks for `enabledServices.simulation { enabled bulk }`, added in rainbow-me/metadata#626. Gas estimation skips the simulation request when the chain can't simulate, or when it would send more than one transaction to a chain without bulk support. It returns no estimate, which is what callers already got when the simulation failed: - **Swaps:** fall back to the approval and swap estimates, as before, minus the wasted request. - **Claim + swap:** has no fallback, so its gas state ends as it does today. That's an existing problem and out of scope here.  If `simulation` is missing for a chain, for example in networks data saved by an older build, the app tries the simulation as before.  Simulation requests that still fail are now logged with the `chainId` and the backend's error message. The GraphQL requester gets an opt-in `t
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -641,552 +641,686 @@ export function useSwapEstimatedGasFee(overrideGasSettings?: GasSettings) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00de51f5` (2026-11-13)
-**Commit Message**: fix(rnbw-staking): read the exit fee in its own store (#7941)
+### Incident Patch 1: `38757729` (2026-11-19)
+**Commit Message**: fix(dapp-request): show Simulation Unavailable when the backend simulation fails (#7955)
 
-Fixes https://rainbow-me.sentry.io/issues/RAINBOW-WALLET-3YQF/
+Fixes APP-4204
 
 ## What changed (plus any additional context for devs)
 
-The staking position fetch ran the platform `GetStakingPosition` request
-and the on-chain `exitFeeBps()` read on Base in one `Promise.all`. When
-the Base RPC call failed (in Sentry the failures are `missing response`
-and `timeout` transport errors, which ethers reports as
-`CALL_EXCEPTION`), the whole fetch rejected and the platform data was
-dropped with it. Users lost their membership tier, staked balance and
-earnings on the membership screen, and the Add Cash fee fell back to the
-lowest tier. Sentry shows about 14.8k affected users.
+When the backend can't simulate a dApp request, the signing sheet looked
+like a normal, unremarkable result. The metadata backend reports a
+failed simulation as HTTP 200 with a null `simulateTransactions` /
+`simulateMessage` and a GraphQL error. The app ignored the error, so the
+sheet showed a collapsed "Simulated Result" card with no balance changes
+and no security scan, and nothing was logged.
 
-The exit fee now lives in its own query store. It is one contract-wide
-value, so the store has no params and doesn't refetch on wallet or
-currency changes. The position store depends only on the platform, so a
-failed RPC read no longer affects the tier, balance or earnings.
+Now a failed backend simulation reaches the sheet as an error, and the
+sheet shows its existing "Simulation Unavailable" state with the
+"Proceed with caution" explanation, for both transaction and typed-data
+requests:
+- `simulateTransactions` and `simulateMessage` always ask the GraphQL
+requester to throw when the response has errors and no data. Responses
+with partial data are returned as before. Gas estimation for swaps,
+which already opted in, now gets this from the same place instead of
+passing the option itself; its behavior is unchanged.
+- The requester throws a `GraphQLResponseError`. The simulation query
+doesn't retry it, 
 
-- The staking learn screen and the unstake sheet read the fee from the
-new store and keep their existing loading state until it arrives.
-- The unstake PnL values stay empty until the fee is loaded.
-- 
-
-**File**: `src/features/rnbw-staking/screens/rnbw-staking-learn-screen/RnbwStakingLearnScreen.tsx` (modified, +2/-2)
+**File**: `src/features/dapp-request/components/RequestSimulationCard.tsx` (modified, +8/-4)
 ```diff
-@@ -12,7 +12,7 @@ import { opacity } from '@/design-system/utils/opacity';
- import { ProgressMeter } from '@/features/rnbw-membership/components/ProgressMeter';
- import { RnbwButton } from '@/features/rnbw-membership/components/RnbwButton/RnbwButton';
- import { UnstakePenaltySign } from '@/features/rnbw-staking/components/UnstakePenaltySign';
--import { useStakingPositionStore } from '@/features/rnbw-staking/stores/rnbwStakingPositionStore';
-+import { useStakingExitFeeStore } from '@/features/rnbw-staking/stores/rnbwStakingExitFeeStore';
- import { LoadingSpinner } from '@/framework/ui/components/LoadingSpinner';
- import * as i18n from '@/languages';
- import Navigation from '@/navigation/Navigation';
-@@ -25,7 +25,7 @@ const PROGRESS_LABEL_HEIGHT = 24;
- const ARROW_SIZE = 7;
+@@ -196,9 +196,10 @@ export const RequestSimulationCard = ({
+     if (isLoading || isPersonalSignRequest) {
+       return false;
+     }
+-    const shouldExpandOnLoad = isBalanceEnough === false || (!isEmpty(simulation) && !noChanges) || !!simulationError;
++    const shouldExpandOnLoad =
++      isBalanceEnough === false || (!isEmpty(simulation) && !noChanges) || !!simulationError || !!txSimulationApiError;
+     return shouldExpandOnLoad;
+-  }, [isBalanceEnough, isLoading, isPersonalSignRequest, noChanges, simulation, simulationError]);
++  }, [isBalanceEnough, isLoading, isPersonalSignRequest, noChanges, simulation, simulationError, txSimulationApiError]);
  
- export const RnbwStakingLearnScreen = memo(function RnbwStakingLearnScreen() {
--  const exitFeePercentage = useStakingPositionStore(s => s.getExitFeePercentage());
-+  const exitFeePercentage = useStakingExitFeeStore(s => s.getData());
-   const { top: safeAreaTop, bottom: safeAreaBottom } = useSafeAreaInsets();
-   const labelSecondaryColor = useForegroundColor('labelSecondary');
-   const { isDarkMode } = useColorMode();
+   return (
+     <FadedScrollCard
+@@ -211,7 +212,10 @@ export const RequestSimulationCard = ({
+       <Stack space={simulationError || isBalanceEnough === false ? '16px' : '24px'}>
+         <Box alignItems="center" flexDirection="row" justifyContent="space-between" height={{ custom: CARD_ROW_HEIGHT }}>
+           <Inline alignVertical="center" space="12px">
+-            {!isLoading && (simulationError || isBalanceEnough === false || simulationScanResult !== TransactionScanResultType.Ok) ? (
++            {!isLoading &&
++            (simulationError ||
++              isBalanceEnough === false ||
++              (!txSimulationApiError && simulationScanResult !== TransactionScanResultType.Ok)) ? (
+               <EventIcon
+                 eventType={
+                   simulationScanResult && simulationScanResult !== TransactionScanResultType.Ok
+@@ -232,7 +236,7 @@ export const RequestSimulationCard = ({
+                   <Animated.View style={spinnerStyle}>
+                     <Text
+                       align="center"
+-                      color={isLoading ? 'label' : isPersonalSignRequest ? 'labelQuaternary' : 'label'}
++                      color={isLoading ? 'label' : isPersonalSignRequest || txSimulationApiError ? 'labelQuaternary' : 'label'}
+                       size="icon 15px"
+                       weight="bold"
+                     >
 ```
 
-**File**: `src/features/rnbw-staking/screens/rnbw-unstake-sheet/RnbwUnstakeSheet.tsx` (modified, +3/-3)
+**File**: `src/graphql/utils/getFetchRequester.ts` (modified, +6/-1)
 ```diff
-@@ -32,7 +32,7 @@ import { useAccountAddress } from '@/state/wallets/walletsStore';
- import { STAKING_CHAIN_ID } from '../../constants';
- import { useRnbwStakingBalance } from '../../stores/derived/useRnbwStakingBalance';
- import { useRnbwStakingPositionPnl } from '../../stores/derived/useRnbwStakingPositionPnl';
--import { useStakingPositionStore } from '../../stores/rnbwStakingPositionStore';
-+import { useStakingExitFeeStore } from '../../stores/rnbwStakingExitFeeStore';
- import { prepareUnstakeRnbw, type PreparedUnstakeRnbw, type UnstakeRnbwPreparationParams } from '../../utils/prepareUnstakeRnbw';
- import { unstakeRnbw } from '../../utils/unstakeRnbw';
+@@ -11,6 +11,11 @@ type Options = Pick<RainbowFetchRequestOpts, 'abortController' | 'timeout' | 'he
+   throwOnErrorsWithoutData?: boolean;
+ };
  
-@@ -47,8 +47,8 @@ const LAYOUT_ANIMATION = LinearTransition.springify()
- export const RnbwUnstakeSheet = memo(function RnbwUnstakeSheet() {
-   const labelSecondaryColor = useForegroundColor('labelSecondary');
-   const [step, setStep] = useState<'warning' | 'unstake'>('warning');
--  const exitFeePercentage = useStakingPositionStore(s => s.getExitFeePercentage());
--  const showSkeleton = exitFeePercentage === undefined;
-+  const exitFeePercentage = useStakingExitFeeStore(s => s.getData());
-+  const showSkeleton = exitFeePercentage == null;
-   const unstakePreparationStore = useStableValue(() => createPreparedCallsStore(prepareUnstakeRnbw));
- 
-   useCleanup(() => {
-```
-
-**File**: `src/features/rnbw-staking/stores/derived/useRnbwStakingPositionPnl.ts` (modified, +4/-2)
-```diff
-@@ -4,6 +4,7 @@ import { divWorklet, isPositive, mulWorklet, subWorklet, toFixedWorklet, toPerce
- import { formatNumber } from '@/helpers/strings';
- import { convertRawAmountToDecimalFormatWorklet, isZero } from '@/helpers/utilities';
- 
-+import { useStakingExitFeeStore } from '../rnbwStakingExitFeeStore';
- import { useStakingPositionStore } from '../rnbwStakingPositionStore';
- 
- type StakingPositionPnl = {
-@@ -27,10 +28,11 @@ const EMPTY_VALUE: StakingPositionPnl = {
- export const useRnbwStakingPositionPnl = createDerivedStore<StakingPositionPnl>(
-   $ => {
-     const data = $(useStakingPositionStore, state => state.getData());
-+    const exitFeePercentage = $(useStakingExitFeeStore, state => state.getData());
- 
--    if (!data || data?.stakedRnbw === '0') return EMPTY_VALUE;
-+    if (!data || data?.stakedRnbw === '0' || exitFeePercentage == null) return EMPTY_VALUE;
- 
--    const { stakedRnbw, sessionPnl, decimals, exitFeePercentage } = data;
-+    const { stakedRnbw, sessionPnl, decimals } = data;
- 
-     const exchangeRateGain = sessionPnl?.exchangeRateGain ?? '0';
-     const exitFee = mulWorklet(stakedRnbw, exitFeePercentage / 100);
-```
-
-**File**: `src/features/rnbw-staking/stores/rnbwStakingExitFeeStore.ts` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+import { createQueryStore } from '@storesjs/stores';
-+import { decodeFunctionResult, encodeFunctionData, type Hex } from 'viem';
-+
-+import { getProvider } from '@/handlers/web3';
-+import { logger, RainbowError } from '@/logger';
-+
-+import { STAKING_ABI, STAKING_CHAIN_ID, STAKING_CONTRACT_ADDRESS } from '../constants';
-+
-+export const useStakingExitFeeStore = createQueryStore<number>({ fetcher: readExitFeePercentage }, { storageKey: 'rnbwStakingExitFee' });
-+
-+async function readExitFeePercentage(): Promise<number> {
-+  try {
-+    const provider = getProvider({ chainId: STAKING_CHAIN_ID });
-+    const data = encodeFunctionData({ abi: STAKING_ABI, functionName: 'exitFeeBps' });
-+    const result = await provider.call({ to: STAKING_CONTRACT_ADDRESS, data });
-+    const exitFeeBps = decodeFunctionResult({ abi: STAKING_ABI, functionName: 'exitFeeBps', data: result as Hex });
-+    return Number(exitFeeBps) / 100;
-+  } catch (e) {
-+    logger.error(new RainbowError('[readExitFeePercentage]: Failed to read exit fee percentage', e));
-+    throw e;
-+  }
++/** The server answered with GraphQL `errors` and no data. */
++export class GraphQLResponseError extends Error {
++  name = 'GraphQLResponseError';
 +}
-```
-
-**File**: `src/features/rnbw-staking/stores/rnbwStakingPositionStore.ts` (modified, +11/-36)
-```diff
-@@ -1,19 +1,15 @@
- import { createQueryStore } from '@storesjs/stores';
--import { decodeFunctionResult, encodeFunctionData, type Address, type Hex } from 'viem';
-+import { type Address } from 'viem';
- 
- import { type NativeCurrencyKey } from '@/features/currency/types';
- import { ChainId } from '@/features/network/types/backendNetworks';
- import { rnbwMembershipAnalyticsActions } from '@/features/rnbw-membership/stores/rnbwMembershipAnalyticsStore';
- import type { Tier } from '@/features/rnbw-membership/types';
--import { getProvider } from '@/handlers/web3';
--import { logger, RainbowError } from '@/logger';
- import { getPlatformClient } from '@/resources/platform/client';
- import { type PlatformResponse } from '@/resources/platform/types';
- import { userAssetsStoreManager } from '@/state/assets/userAssetsStoreManager';
- import { useWalletsStore } from '@/state/wallets/walletsStore';
- 
--import { STAKING_ABI, STAKING_CHAIN_ID, STAKING_CONTRACT_ADDRESS } from '../constants';
--
- type StakingPnl = {
-   netProfit: string;
-   totalCashbackReceived: string;
-@@ -26,7 +22,6 @@ type StakingPnl = {
- export type StakingPositionData = {
-   allTiers: Tier[];
-   decimals: number;
--  exitFeePercentage: number;
-   hasPosition: boolean;
-   lastUpdateTime: string;
-   pnl: StakingPnl;
-@@ -44,7 +39,6 @@ type StakingPositionParams = {
- };
- 
- type StakingPositionStore = {
--  getExitFeePercentage: () => number | undefined;
-   hasPosition: () => boolean;
- };
- 
-@@ -69,9 +63,6 @@ export const useStakingPositionStore = createQueryStore<StakingPositionData, Sta
-     },
-   },
-   (_, get) => ({
--    getExitFeePercentage: () => {
--      return get().getData()?.exitFeePercentage;
--    },
-     hasPosition: () => {
-       const data = get().getData();
-       return data?.hasPosition ?? false;
-@@ -80,33 +71,17 @@ export const useStakingPositionStore = createQueryStore<StakingPositionData, Sta
-   { storageKey: 'rnbwStakingPosition' }
- );
- 
--type StakingPositionResponse = PlatformResponse<Omit<StakingPositionData, 'exitFeePercentage'>>;
-+type StakingPositionResponse = PlatformResponse<StakingPositionData>;
- 
- async function fetchStakingPosition({ currency, address }: StakingPositionParams): Promise<StakingPositionData> {
--  const [response, exitFeePercentage] = await Promise.all([
--    getPlatformClient().get<StakingPositionResponse>('/staking/GetStakingPosition', {
--      params: {
--        walletAddress: address,
--        chainId: String(ChainId.base),
--        currency,
--        includeTiers: String(true),
--      },
--    }),
--    readExitFeePercentage(),
--  ]);
--
--  return { ...response.data.result, exitFeePercentage };
--}
-+  const response = await getPlatformClient().get<StakingPositionResponse>('/staking/GetStakingPosition', {
-+    params: {
-+      walletAddress: address,
-+      chainId: String(ChainId.base),
-+      currency,
-+      includeTiers: String(true),
-+    },
-+  });
- 
--async function readExitFeePercentage(): Promise<number> {
--  try {
--    const provider = getProvider({ chainId: STAKING_CHAIN_ID });
--    const data = encodeFunctionData({ abi: STAKING_ABI, functionName: 'exitFeeBps' });
--    const result = await provider.call({ to: STAKING_CONTRACT_ADDRESS, data });
--    const exitFeeBps = decodeFunctionResult({ abi: STAKING_ABI, functionName: 'exitFeeBps', data: result as Hex });
--    return Number(exitFeeBps) / 100;
--  } catch (e) {
--    logger.error(new RainbowError('[readExitFeePercentage]: Failed to read exit fee percentage', e));
--    throw e;
--  }
-+  return response.data.result;
- }
-```
-
-**File**: `src/features/rnbw-staking/utils/prefetchRnbwStakingPosition.ts` (modified, +5/-1)
-```diff
-@@ -2,12 +2,16 @@ import { RNBW_MEMBERSHIP } from '@/features/config/constants/experimental';
- import { getExperimentalFlag } from '@/features/config/stores/experimentalConfigStore';
- import { getRemoteConfig } from '@/features/config/stores/remoteConfig';
- 
-+import { useStakingExitFeeStore } from '../stores/rnbwStakingExitFeeStore';
- import { useStakingPositionStore } from '../stores/rnbwStakingPositionStore';
- 
- export async function prefetchRnbwStakingPosition() {
-   if (!isRnbwMembershipEnabled()) return;
- 
--  await useStakingPositionStore.getState().fetch(undefined, { force: true });
-+  await Promise.all([
-+    useStakingPositionStore.getState().fetch(undefined, { force: true }),
-+    useStakingExitFeeStore.getState().fetch(undefined, { force: true }),
-+  ]);
- }
- 
- function isRnbwMembershipEnabled(): boolean {
-```
-
-**File**: `src/features/rnbw-staking/utils/unstakeRnbw.test.ts` (modified, +54/-17)
-```diff
-@@ -10,8 +10,10 @@ import { unstakeRnbw } from './unstakeRnbw';
- 
- const mockGetProvider = vi.fn();
- const mockLoadWallet = vi.fn<(...args: [unknown]) => Promise<unknown>>();
--const mockFetch = vi.fn<(...args: [undefined, { force: boolean } | undefined]) => Promise<void>>();
--const mockGetData = vi.fn<(...args: []) => StakingPositionData | undefined>();
-+const mockFetchPosition = vi.fn<(...args: [undefined, { force: boolean } | undefined]) => Promise<void>>();
-+const mockGetPosition = vi.fn<(...args: []) => StakingPositionData | null>();
-+const mockFetchExitFee = vi.fn<(...args: [undefined, { force: boolean } | undefined]) => Promise<void>>();
-+const mockGetExitFee = vi.fn<(...args: []) => number | null>();
- const mockExecuteUnstakeRnbw = vi.fn<(...args: [unknown]) => Promise<RnbwStakingExecution>>();
- const mockPollForStakingUpdate = vi.fn<(...args: [string]) => Promise<boolean>>();
- const mockTrack = vi.fn();
-@@ -37,8 +39,17 @@ vi.mock('@/features/wallet/data/loadWallet', () => ({
- vi.mock('../stores/rnbwStakingPositionStore', () => ({
-   useStakingPositionStore: {
-     getState: () => ({
--      fetch: (params: undefined, options?: { force: boolean }) => mockFetch(params, options),
--      getData: () => mockGetData(),
-+      fetch: (params: undefined, options?: { force: boolean }) => mockFetchPosition(params, options),
-+      getData: () => mockGetPosition(),
-+    }),
-+  },
-+}));
 +
-+vi.mock('../stores/rnbwStakingExitFeeStore', () => ({
-+  useStakingExitFeeStore: {
-+    getState: () => ({
-+      fetch: (params: undefined, options?: { force: boolean }) => mockFetchExitFee(params, options),
-+      getData: () => mockGetExitFee(),
-     }),
-   },
- }));
-@@ -68,10 +79,11 @@ const PREPARED_CALLS = {
-   },
- } as unknown as PreparedUnstakeRnbw;
+ type Config = {
+   __name: string;
+   schema: {
+@@ -100,7 +105,7 @@ export function getFetchRequester(config: Config) {
+     // A response with errors can still carry partial data (a failing nullable subfield nulls only itself),
+     // which callers may use, so only a response where every root field is null counts as failed.
+     if (throwOnErrorsWithoutData && data.errors?.length && Object.values(data.data ?? {}).every(value => value == null)) {
+-      throw new Error(data.errors.map(error => error.message).join('; '));
++      throw new GraphQLResponseError(data.errors.map(error => error.message).join('; '));
+     }
  
-+const EXIT_FEE_PERCENTAGE = 5;
-+
- const POSITION: StakingPositionData = {
-   allTiers: [],
-   decimals: 18,
--  exitFeePercentage: 5,
-   hasPosition: true,
-   lastUpdateTime: '0',
-   pnl: {
-@@ -128,25 +140,38 @@ describe('unstakeRnbw', () => {
-     vi.clearAllMocks();
-     mockGetProvider.mockReturnValue(PROVIDER);
-     mockLoadWallet.mockResolvedValue(new Wallet(PRIVATE_KEY));
--    mockGetData.mockReturnValue(POSITION);
--    mockFetch.mockResolvedValue(undefined);
-+    mockGetPosition.mockReturnValue(POSITION);
-+    mockFetchPosition.mockResolvedValue(undefined);
-+    mockGetExitFee.mockReturnValue(EXIT_FEE_PERCENTAGE);
-+    mockFetchExitFee.mockResolvedValue(undefined);
-     mockExecuteUnstakeRnbw.mockResolvedValue(manualExecution());
-     mockPollForStakingUpdate.mockResolvedValue(true);
-   });
- 
--  it('refreshes the staking position before submission and delegates to executeUnstakeRnbw', async () => {
-+  it('refreshes the staking position and exit fee together before submission and delegates to executeUnstakeRnbw', async () => {
-     const { order, record } = recordCallOrder();
--    mockFetch.mockImplementation(async () => {
--      record('fetch');
-+    let resolvePositionFetch: (() => void) | undefined;
-+    mockFetchPosition.mockImplementation(() => {
-+      record('fetch position');
-+      return new Promise<void>(resolve => {
-+        resolvePositionFetch = resolve;
-+      });
-+    });
-+    mockFetchExitFee.mockImplementation(async () => {
-+      record('fetch exit fee');
-     });
-     mockExecuteUnstakeRnbw.mockImplementation(async () => {
-       record('execute');
-       return manualExecution();
-     });
- 
--    await unstakeRnbw({ address: ACCOUNT, gasParams: GAS_PARAMS, preparedCalls: Promise.resolve(null) });
-+    const unstakePromise = unstakeRnbw({ address: ACCOUNT, gasParams: GAS_PARAMS, preparedCalls: Promise.resolve(null) });
-+    await vi.waitFor(() => expect(order).toEqual(['fetch position', 'fetch exit fee']));
-+    resolvePositionFetch?.();
-+    await unstakePromise;
- 
--    expect(mockFetch).toHaveBeenCalledWith(undefined, { force: true });
-+    expect(mockFetchPosition).toHaveBeenCalledWith(undefined, { force: true });
-+    expect(mockFetchExitFee).toHaveBeenCalledWith(undefined, { force: true });
-     expect(mockGetProvider).toHaveBeenCalled();
-     expect(mockLoadWallet).toHaveBeenCalledWith({ address: ACCOUNT, provider: PROVIDER });
-     expect(mockExecuteUnstakeRnbw).toHaveBeenCalledWith(
-@@ -158,7 +183,7 @@ describe('unstakeRnbw', () => {
-         provider: PROVIDER,
-       })
-     );
--    expect(order).toEqual(['fetch', 'execute']);
-+    expect(order).toEqual(['fetch position', 'fetch exit fee', 'execute']);
-   });
- 
-   it('returns after submitting the unstake execution', async () => {
-@@ -187,16 +212,28 @@ describe('unstakeRnbw', () => {
-   });
- 
-   it('throws when refreshed position data is missing', async () => {
--    mockGetData.mockReturnValueOnce(POSITION).mockReturnValueOnce(undefined);
-+    mockGetPosition.mockReturnValue(null);
- 
-     await expect(unstakeRnbw({ address: ACCOUNT, gasParams: GAS_PARAMS, preparedCalls: Promise.resolve(null) })).rejects.toThrow(
-       '[unstakeRnbw]: Position data missing'
-     );
-     expect(mockExecuteU
+     return data.data;
 ```
 
-**File**: `src/features/rnbw-staking/utils/unstakeRnbw.ts` (modified, +20/-12)
+**File**: `src/raps/utils.test.ts` (modified, +1/-1)
 ```diff
-@@ -11,6 +11,7 @@ import { convertRawAmountToDecimalFormat } from '@/helpers/utilities';
- import { RainbowError } from '@/logger';
+@@ -90,7 +90,7 @@ describe('estimateTransactionsGasLimit', () => {
  
- import { STAKING_CHAIN_ID } from '../constants';
-+import { useStakingExitFeeStore } from '../stores/rnbwStakingExitFeeStore';
- import { useStakingPositionStore, type StakingPositionData } from '../stores/rnbwStakingPositionStore';
- import { type RnbwStakingExecution, type RnbwStakingExecutionMode } from './executeRnbwStakingCalls';
- import { executeUnstakeRnbw } from './executeUnstakeRnbw';
-@@ -40,8 +41,8 @@ export async function unstakeRnbw({
-   gasParams: LegacyTransactionGasParamAmounts | TransactionGasParamAmounts;
-   preparedCalls: Promise<PreparedUnstakeRnbw | null>;
- }): Promise<UnstakeRnbwResult> {
--  const positionData = await refreshAndValidatePosition();
--  const { receiveRaw, ...analyticsSnapshot } = snapshotUnstakeAnalytics(positionData);
-+  const { positionData, exitFeePercentage } = await refreshAndValidateUnstakeInputs();
-+  const { receiveRaw, ...analyticsSnapshot } = snapshotUnstakeAnalytics(positionData, exitFeePercentage);
+     await expect(estimateTransactionsGasLimit({ chainId: ChainId.linea, steps })).resolves.toBe(expected);
  
-   let executionMode: RnbwStakingExecutionMode | undefined;
+-    expect(simulateTransactions).toHaveBeenCalledWith({ chainId: ChainId.linea, transactions }, { throwOnErrorsWithoutData: true });
++    expect(simulateTransactions).toHaveBeenCalledWith({ chainId: ChainId.linea, transactions });
+   });
+ 
+   it('warns with the backend error when the simulation request fails', async () => {
+```
+
+**File**: `src/raps/utils.ts` (modified, +1/-1)
+```diff
+@@ -257,7 +257,7 @@ export async function estimateTransactionsGasLimit({
+ 
+   let results: Awaited<ReturnType<typeof simulateTransactions>>;
    try {
-@@ -80,20 +81,28 @@ export async function unstakeRnbw({
-   }
- }
- 
--async function refreshAndValidatePosition(): Promise<StakingPositionData> {
--  const initialExitFeePercentage = useStakingPositionStore.getState().getData()?.exitFeePercentage;
--  await useStakingPositionStore.getState().fetch(undefined, { force: true });
-+async function refreshAndValidateUnstakeInputs(): Promise<{ positionData: StakingPositionData; exitFeePercentage: number }> {
-+  const initialExitFeePercentage = useStakingExitFeeStore.getState().getData();
-+  await Promise.all([
-+    useStakingPositionStore.getState().fetch(undefined, { force: true }),
-+    useStakingExitFeeStore.getState().fetch(undefined, { force: true }),
-+  ]);
-   const positionData = useStakingPositionStore.getState().getData();
-+  const exitFeePercentage = useStakingExitFeeStore.getState().getData();
- 
--  if (!positionData || positionData.exitFeePercentage === undefined) {
-+  if (!positionData) {
-     throw new RainbowError('[unstakeRnbw]: Position data missing');
-   }
- 
--  if (initialExitFeePercentage !== positionData.exitFeePercentage) {
-+  if (exitFeePercentage == null) {
-+    throw new RainbowError('[unstakeRnbw]: Exit fee missing');
-+  }
+-    results = await simulateTransactions({ chainId, transactions }, { throwOnErrorsWithoutData: true });
++    results = await simulateTransactions({ chainId, transactions });
+   } catch (e) {
+     logger.warn('[estimateTransactionsGasLimit]: Simulation request failed', {
+       chainId,
+```
+
+**File**: `src/resources/transactions/transactionSimulation.test.ts` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++import { beforeEach, describe, expect, it, vi } from 'vitest';
 +
-+  if (initialExitFeePercentage !== exitFeePercentage) {
-     throw new RainbowError('[unstakeRnbw]: Exit fee percentage changed');
-   }
++import { rainbowFetch } from '@/framework/data/http/rainbowFetch';
++import { GraphQLResponseError } from '@/graphql/utils/getFetchRequester';
++
++import { simulateMessage, simulateTransaction } from './transactionSimulation';
++
++vi.mock('@/framework/data/http/rainbowFetch', () => ({ rainbowFetch: vi.fn() }));
++
++const blockaidError = 'failed to scan transactions: blockaid returned status code 403';
++const result = { simulation: { in: [], out: [], approvals: [] } };
++
++function respondWith(body: { data: unknown; errors?: { message: string }[] }) {
++  vi.mocked(rainbowFetch).mockResolvedValue({ data: body } as Awaited<ReturnType<typeof rainbowFetch>>);
++}
++
++const callers = [
++  {
++    name: 'simulateTransaction',
++    field: 'simulateTransactions',
++    wrap: (value: unknown) => (value == null ? value : [value]),
++    call: () => simulateTransaction({ chainId: 1, transactions: [{ from: '0xa', to: '0xb', data: '0x', value: '0x0' }] }),
++  },
++  {
++    name: 'simulateMessage',
++    field: 'simulateMessage',
++    wrap: (value: unknown) => value,
++    call: () => simulateMessage({ address: '0xa', chainId: 1, message: { method: 'eth_signTypedData_v4', params: ['{}'] }, domain: '' }),
++  },
++];
++
++describe.each(callers)('$name', ({ field, wrap, call }) => {
++  beforeEach(() => {
++    vi.mocked(rainbowFetch).mockReset();
++  });
++
++  it('rejects with the backend error when the simulation failed', async () => {
++    respondWith({ data: { [field]: null }, errors: [{ message: blockaidError }] });
++
++    await expect(call()).rejects.toThrow(blockaidError);
++    await expect(call()).rejects.toBeInstanceOf(GraphQLResponseError);
++  });
++
++  it('returns the result when the response also carries errors', async () => {
++    respondWith({ data: { [field]: wrap(result) }, errors: [{ message: 'a nested field failed' }] });
++
++    await expect(call()).resolves.toEqual(result);
++  });
++});
+```
+
+**File**: `src/resources/transactions/transactionSimulation.ts` (modified, +9/-7)
+```diff
+@@ -14,6 +14,7 @@ import type {
+   TransactionScanResultType,
+   TransactionSimulationResult,
+ } from '@/graphql/__generated__/metadataPOST';
++import { GraphQLResponseError } from '@/graphql/utils/getFetchRequester';
+ import { logger, RainbowError } from '@/logger';
+ import { createQueryKey, type QueryConfig, type QueryFunctionArgs } from '@/react-query';
  
--  return positionData;
-+  return { positionData, exitFeePercentage };
- }
+@@ -40,12 +41,11 @@ type SimulationResult = {
+ // ///////////////////////////////////////////////
+ // Simulations
  
- async function finalizeSubmittedUnstake({
-@@ -126,9 +135,9 @@ async function finalizeSubmittedUnstake({
-   }
- }
+-export const simulateTransactions = async (
+-  args: SimulateTransactionsQueryVariables,
+-  options?: Parameters<typeof metadataPOSTClient.simulateTransactions>[1]
+-) => {
++// The backend reports a failed simulation (e.g. its scanner rejecting the request) as GraphQL errors with a
++// null result, which must not read as an empty simulation, so both calls throw on it.
++export const simulateTransactions = async (args: SimulateTransactionsQueryVariables) => {
+   if (!args.transactions) return [];
+-  const response = await metadataPOSTClient.simulateTransactions(args, options);
++  const response = await metadataPOSTClient.simulateTransactions(args, { throwOnErrorsWithoutData: true });
+   return response?.simulateTransactions ?? [];
+ };
  
--function snapshotUnstakeAnalytics(positionData: StakingPositionData): UnstakeAnalyticsSnapshot {
-+function snapshotUnstakeAnalytics(positionData: StakingPositionData, exitFeePercentage: number): UnstakeAnalyticsSnapshot {
-   const { stakedRnbw: stakedRnbwRaw, decimals, sessionPnl } = positionData;
--  const { receiveRaw, exitFeeRaw } = computeUnstakeAmounts(positionData);
-+  const { receiveRaw, exitFeeRaw } = computeUnstakeAmounts(stakedRnbwRaw, exitFeePercentage);
+@@ -55,7 +55,7 @@ export const simulateTransaction = async (args: SimulateTransactionsQueryVariabl
+ };
  
-   return {
-     stakedAmount: convertRawAmountToDecimalFormat(stakedRnbwRaw, decimals),
-@@ -139,8 +148,7 @@ function snapshotUnstakeAnalytics(positionData: StakingPositionData): UnstakeAna
-   };
- }
+ export const simulateMessage = async (args: SimulateMessageQueryVariables): Promise<Partial<MessageResult>> => {
+-  const response = await metadataPOSTClient.simulateMessage(args);
++  const response = await metadataPOSTClient.simulateMessage(args, { throwOnErrorsWithoutData: true });
+   return response?.simulateMessage ?? {};
+ };
  
--function computeUnstakeAmounts(positionData: StakingPositionData): { exitFeeRaw: string; receiveRaw: string } {
--  const { stakedRnbw, exitFeePercentage } = positionData;
-+function computeUnstakeAmounts(stakedRnbw: string, exitFeePercentage: number): { exitFeeRaw: string; receiveRaw: string } {
-   const exitFeeRaw = mulWorklet(stakedRnbw, exitFeePercentage / 100);
-   return { exitFeeRaw, receiveRaw: subWorklet(stakedRnbw, exitFeeRaw) };
- }
+@@ -178,7 +178,9 @@ export const useSimulation = (
+ ) => {
+   return useQuery(simulationQueryKey(args), fetchSimulation, {
+     enabled: !!args.address && !!args.chainId,
+-    retry: 3,
++    // A backend failure (scanner rejection, unsupported chain) mostly repeats on retry, and retrying keeps the sheet
++    // on "Simulating" for seconds, so only network failures are retried.
++    retry: (failureCount, error) => !(error instanceof GraphQLResponseError) && failureCount < 3,
+     refetchOnWindowFocus: false,
+     staleTime: Infinity,
+     ...config,
 ```
 
 ---
 
-### Incident Patch 2: `8994fb72` (2026-11-13)
-**Commit Message**: chore(ci): require review for token identity changes and auto-approve version bumps in Cubic (#7943)
+### Incident Patch 2: `cf22f6cd` (2026-11-19)
+**Commit Message**: fix(gas): skip swap gas simulation on chains where the backend can't simulate (#7954)
+
+Fixes APP-4203
 
 ## What changed (plus any additional context for devs)
 
-Two changes to Cubic's auto-approval in `cubic.yaml`.
+Before a swap that needs an approval, the app estimates gas by
+simulating the approval and the swap together in one
+`simulateTransactions` request. The claim + swap flow does the same. The
+backend rejects that request on chains without Blockaid bulk support,
+such as Unichain, Linea, Scroll, Ink and zkSync. On chains without
+Blockaid at all, it rejects any simulation. The app waited for the
+rejection, logged "Simulation result count mismatch"
+([RAINBOW-WALLET-3XBC](https://rainbow-me.sentry.io/issues/RAINBOW-WALLET-3XBC),
+~78k events), and then used its fallback.
 
-**Token identity needs a human.** A new High item in the approval prompt
-covers which contract address and chain a token the user picks resolves
-to (search, lists, defaults, deep links), token decimals, verified, scam
-or spoof classification and filtering, and any added or changed
-hardcoded token or contract address. Changing these can make a familiar
-ticker with a verified badge buy a different contract, and the
-confirmation screen would show that wrong token faithfully, so no
-existing High item caught it. #7931 changed the swap search that picks
-these contracts and was auto-approved as "search UI/data".
+The `networks` query now asks for `enabledServices.simulation { enabled
+bulk }`, added in rainbow-me/metadata#626. Gas estimation skips the
+simulation request when the chain can't simulate, or when it would send
+more than one transaction to a chain without bulk support. It returns no
+estimate, which is what callers already got when the simulation failed:
+- **Swaps:** fall back to the approval and swap estimates, as before,
+minus the wasted request.
+- **Claim + swap:*
 
-**Release version bumps are auto-approvable**, as the approval policy
-intended. The prompt no longer lists them as High, and approves a PR
-that changes only `version` in package.json, `versionName`/`versionCode`
-in android/app/build.gradle and
-`MARKETING_VERSION`/`CURRENT_PROJECT_VERSION` in project.pbxproj, plus
-CHANGELOG.md. Any other change to those three files keeps 
-
-**File**: `cubic.yaml` (modified, +33/-5)
+**File**: `src/features/network/api/backendNetworksQuery.js` (modified, +4/-0)
 ```diff
-@@ -33,19 +33,22 @@ reviews:
-     - Gas, fee, slippage, amount or price-impact calculations; the amounts, addresses or recipients shown on confirmation and signing screens; token approvals and allowances
-     - WalletConnect, dapp browser provider injection, deep links and universal links
-     - Money-movement and identity flows (such as Cash): authentication, passkeys, sessions and tokens, order submission, KYC, and compliance or eligibility decisions
-+    - Token identity: which contract address and chain a token the user picks resolves to (search, lists, defaults, deep links); token decimals; verified, scam or spoof classification and filtering; any added or changed hardcoded token or contract address
+@@ -91,6 +91,10 @@ const BACKEND_NETWORKS_QUERY = `
+         sponsorship {
+           enabled
+         }
++        simulation {
++          enabled
++          bulk
++        }
+         launcher {
+           v1 {
+             enabled
+```
+
+**File**: `src/features/network/stores/backendNetworksStore.ts` (modified, +4/-0)
+```diff
+@@ -60,6 +60,7 @@ export interface BackendNetworksState {
+   getSponsorshipEligibleChainIds: () => ChainId[];
  
-     Security and data
-     - Authentication or authorization anywhere; secrets, API keys, environment config
-     - Sending user data (addresses, balances, identifiers, device info) to a new party or endpoint; analytics SDK changes; new analytics events that carry user-identifying data
-     - Any dependency change: adding, removing or upgrading a dependency (package.json, yarn.lock)
+   getChainGasUnits: (chainId?: ChainId) => BackendNetwork['gasUnits'];
++  getChainSimulationSupport: (chainId: ChainId) => BackendNetworkServices['simulation'];
+   getChainDefaultRpc: (chainId: ChainId) => string;
+   disableSponsorshipUntilNextFetch: (chainId: ChainId) => void;
+   isSponsorshipEligible: (chainId: ChainId) => boolean;
+@@ -361,6 +362,9 @@ export const useBackendNetworksStore = createQueryStore<BackendNetworksResponse,
+       return (chainId ? chainsGasUnits[chainId] : undefined) || chainsGasUnits[ChainId.mainnet];
+     }),
  
-     Platform and hard to reverse
--    - Native code: ios/, android/, and patches that change native code; permissions, entitlements, Info.plist, AndroidManifest; release version bumps
-+    - Native code: ios/, android/, and patches that change native code; permissions, entitlements, Info.plist, AndroidManifest
-     - Persisted-state migrations: store version or migrate changes, renamed or removed storage keys
-     - Build, CI, release and code-signing config (babel and metro config, .github/workflows, bitrise, fastlane, signing, install and CI scripts), and review or approval config (cubic.yaml)
- 
-     Everything else is approvable, including new features, new screens, new stores and network calls to existing backends, changed calculations outside the list above, removed features, refactors and performance work. Touching business logic, size, or the theoretical chance of a bug are not reasons to decline; Cubic has already reviewed the implementation.
- 
-+    A release version bump is approvable when it changes only the app version and build number: `version` in package.json, `versionName` and `versionCode` in android/app/build.gradle, `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in ios/Rainbow.xcodeproj/project.pbxproj, plus CHANGELOG.md. Any other change to those files keeps its High item.
++    getChainSimulationSupport: (chainId: ChainId) =>
++      get().backendNetworks.find(network => toChainId(network.id) === chainId)?.enabledServices.simulation,
 +
-     When you require human review, name the High item and the file where the diff hits it. A generic reason doesn't count.
-   auto_approve_rules:
-     exclude_external_contributors: true
-@@ -57,9 +60,35 @@ reviews:
-     # Amount, fee and slippage math in feature files is left to the prompt's High list: path-blocking
-     # it would send most feature work to a human.
-     exclude:
--      # Native, platform and patched dependencies
--      - 'ios/**'
--      - 'android/**'
-+      # Native, platform and patched dependencies. The three files a release version bump changes
-+      # (ios/Rainbow.xcodeproj/project.pbxproj, android/app/build.gradle, package.json) are left to the
-+      # prompt, as an exclude can't be overridden; a new ios/ folder or android/app/ file needs a glob here.
-+      - 'ios/*'
-+      - 'ios/.*'
-+      - 'ios/AppIcons/**'
-+      - 'ios/Config/**'
-+      - 'ios/fastlane/**'
-+      - 'ios/Frameworks/**'
-+      - 'ios/ImageNotification/**'
-+      - 'ios/Images.xcassets/**'
-+      - 'ios/Internals/**'
-+      - 'ios/OpenInRainbow/**'
-+      - 'ios/PriceWidget/**'
-+      - 'ios/Rainbow/**'
-+      - 'ios/Rainbow Stickers/**'
-+      - 'ios/Rainbow.xcodeproj/xcshareddata/**'
-+      - 'ios/Rainbow.xcworkspace/**'
-+      - 'ios/RainbowTests/**'
-+      - 'ios/SelectTokenIntent/**'
-+      - 'ios/ShareWithRainbow/**'
-+      - 'android/*'
-+      - 'android/.*'
-+      - 'android/.settings/**'
-+      - 'android/gradle/**'
-+      - 'android/keystores/**'
-+      - 'android/app/src/**'
-+      - 'android/app/debug.keystore'
-+      - 'android/app/proguard-rules.pro'
-       - 'patches/**'
-       - 'app.json'
-       - 'app.config.ts'
-@@ -82,7 +111,6 @@ reviews:
-       - 'audit-ci.jsonc'
-       - '.yarnrc.yml'
-       - '.yarn/**'
--      - 'package.json'
-       - 'yarn.lock'
-       - 'src/graphql/package.json'
-       - 'src/graphql/yarn.lock'
+     getChainDefaultRpc: createParameterizedSelector(() => chainId => {
+       const defaultChains = get().getDefaultChains();
+       switch (chainId) {
+```
+
+**File**: `src/features/network/types/backendNetworks.ts` (modified, +5/-0)
+```diff
+@@ -171,6 +171,11 @@ export interface BackendNetworkServices {
+   sponsorship?: {
+     enabled: boolean;
+   };
++  /** Missing from networks persisted by builds that didn't request it. */
++  simulation?: {
++    enabled: boolean;
++    bulk: boolean;
++  };
+   launcher: {
+     v1: {
+       enabled: boolean;
+```
+
+**File**: `src/graphql/utils/getFetchRequester.test.ts` (added, +44/-0)
+```diff
+@@ -0,0 +1,44 @@
++import { parse } from 'graphql';
++import { beforeEach, describe, expect, it, vi } from 'vitest';
++
++import { rainbowFetch } from '@/framework/data/http/rainbowFetch';
++
++import { getFetchRequester } from './getFetchRequester';
++
++vi.mock('@/framework/data/http/rainbowFetch', () => ({ rainbowFetch: vi.fn() }));
++
++const document = parse('query simulateTransactions { simulateTransactions { gas { estimate } } }');
++const requester = getFetchRequester({ __name: 'metadataPOST', schema: { url: 'https://example.com/graph' } });
++const errors = [{ message: 'Bulk transactions are currently not supported for this chain: 1' }, { message: 'second' }];
++
++function respondWith(body: { data: unknown; errors?: { message: string }[] }) {
++  vi.mocked(rainbowFetch).mockResolvedValue({ data: body } as Awaited<ReturnType<typeof rainbowFetch>>);
++}
++
++describe('getFetchRequester', () => {
++  beforeEach(() => {
++    vi.mocked(rainbowFetch).mockReset();
++  });
++
++  it('returns data alongside GraphQL errors by default', async () => {
++    respondWith({ data: { simulateTransactions: null }, errors });
++
++    await expect(requester(document)).resolves.toEqual({ simulateTransactions: null });
++  });
++
++  it('throws the GraphQL error messages when throwOnErrorsWithoutData is set and no root field has data', async () => {
++    respondWith({ data: { simulateTransactions: null }, errors });
++
++    await expect(requester(document, undefined, { throwOnErrorsWithoutData: true })).rejects.toThrow(
++      'Bulk transactions are currently not supported for this chain: 1; second'
++    );
++    expect(vi.mocked(rainbowFetch).mock.lastCall?.[1]).not.toHaveProperty('throwOnErrorsWithoutData');
++  });
++
++  it('keeps partial data alongside GraphQL errors when throwOnErrorsWithoutData is set', async () => {
++    const partial = { simulateTransactions: [{ gas: { estimate: '0x5208' } }, null] };
++    respondWith({ data: partial, errors });
++
++    await expect(requester(document, undefined, { throwOnErrorsWithoutData: true })).resolves.toEqual(partial);
++  });
++});
+```
+
+**File**: `src/graphql/utils/getFetchRequester.ts` (modified, +11/-3)
+```diff
+@@ -7,7 +7,9 @@ import { buildGetQueryParams } from '@/graphql/utils/buildGetQueryParams';
+ 
+ const allowedOperations = ['mutation', 'query'];
+ 
+-type Options = Pick<RainbowFetchRequestOpts, 'abortController' | 'timeout' | 'headers'>;
++type Options = Pick<RainbowFetchRequestOpts, 'abortController' | 'timeout' | 'headers'> & {
++  throwOnErrorsWithoutData?: boolean;
++};
+ 
+ type Config = {
+   __name: string;
+@@ -59,7 +61,7 @@ export function getFetchRequester(config: Config) {
+   return async function requester<TResponse = unknown, TVariables = Record<string, unknown>>(
+     node: DocumentNode,
+     variables?: TVariables,
+-    options?: Options
++    { throwOnErrorsWithoutData, ...options }: Options = {}
+   ): Promise<TResponse> {
+     const definitions = node.definitions.filter(
+       definition => definition.kind === 'OperationDefinition' && allowedOperations.includes(definition.operation)
+@@ -93,7 +95,13 @@ export function getFetchRequester(config: Config) {
+         operationName,
+       });
+     }
+-    const { data } = await rainbowFetch<{ data: TResponse }>(requestUrl, requestOptions);
++    const { data } = await rainbowFetch<{ data: TResponse; errors?: { message: string }[] }>(requestUrl, requestOptions);
++
++    // A response with errors can still carry partial data (a failing nullable subfield nulls only itself),
++    // which callers may use, so only a response where every root field is null counts as failed.
++    if (throwOnErrorsWithoutData && data.errors?.length && Object.values(data.data ?? {}).every(value => value == null)) {
++      throw new Error(data.errors.map(error => error.message).join('; '));
++    }
+ 
+     return data.data;
+   };
+```
+
+**File**: `src/raps/utils.test.ts` (modified, +84/-3)
+```diff
+@@ -1,12 +1,17 @@
+-import { describe, expect, it, vi } from 'vitest';
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+ 
+-import { getFallbackGasLimitForTrade } from './utils';
++import { ChainId } from '@/features/network/types/backendNetworks';
++import { logger } from '@/logger';
++import { simulateTransactions } from '@/resources/transactions/transactionSimulation';
++
++import { estimateTransactionsGasLimit, getFallbackGasLimitForTrade } from './utils';
+ 
+ const mockGetChainGasUnits = vi.fn();
++const mockGetChainSimulationSupport = vi.fn();
+ 
+ vi.mock('@/features/network/stores/backendNetworksStore', () => ({
+   useBackendNetworksStore: {
+-    getState: () => ({ getChainGasUnits: mockGetChainGasUnits }),
++    getState: () => ({ getChainGasUnits: mockGetChainGasUnits, getChainSimulationSupport: mockGetChainSimulationSupport }),
+   },
+ }));
+ 
+@@ -25,3 +30,79 @@ describe('getFallbackGasLimitForTrade', () => {
+     expect(getFallbackGasLimitForTrade(4663)).toBe('525000');
+   });
+ });
++
++describe('estimateTransactionsGasLimit', () => {
++  const approve = { to: '0xtoken', data: '0xapprove', from: '0xuser', value: '0x0' };
++  const swap = { to: '0xrouter', data: '0xswap', from: '0xuser', value: '0x0' };
++  const approveAndSwap = [
++    { transaction: approve, label: 'approve' },
++    { transaction: swap, label: 'swap' },
++  ];
++
++  beforeEach(() => {
++    mockGetChainSimulationSupport.mockReset();
++    vi.mocked(simulateTransactions).mockReset();
++    vi.spyOn(logger, 'warn').mockImplementation(() => undefined);
++  });
++
++  afterEach(() => {
++    vi.restoreAllMocks();
++  });
++
++  it.each([
++    { name: 'simulation is unsupported', support: { enabled: false, bulk: false }, steps: [approveAndSwap[1]] },
++    { name: 'bulk is unsupported for several transactions', support: { enabled: true, bulk: false }, steps: approveAndSwap },
++  ])('skips the request without warning when $name', async ({ support, steps }) => {
++    mockGetChainSimulationSupport.mockReturnValue(support);
++
++    await expect(estimateTransactionsGasLimit({ chainId: ChainId.linea, steps })).resolves.toBeUndefined();
++
++    expect(mockGetChainSimulationSupport).toHaveBeenCalledWith(ChainId.linea);
++    expect(simulateTransactions).not.toHaveBeenCalled();
++    expect(logger.warn).not.toHaveBeenCalled();
++  });
++
++  it.each([
++    {
++      name: 'support is unknown',
++      support: undefined,
++      steps: approveAndSwap,
++      transactions: [approve, swap],
++      expected: '300',
++    },
++    {
++      name: 'bulk is supported',
++      support: { enabled: true, bulk: true },
++      steps: approveAndSwap,
++      transactions: [approve, swap],
++      expected: '300',
++    },
++    {
++      name: 'only one step has a transaction on a chain without bulk',
++      support: { enabled: true, bulk: false },
++      steps: [{ transaction: null, label: 'approve' }, approveAndSwap[1]],
++      transactions: [swap],
++      expected: '100',
++    },
++  ])('simulates and sums the estimates when $name', async ({ support, steps, transactions, expected }) => {
++    mockGetChainSimulationSupport.mockReturnValue(support);
++    vi.mocked(simulateTransactions).mockResolvedValue(transactions.map((_, index) => ({ gas: { used: '0', estimate: `${index + 1}00` } })));
++
++    await expect(estimateTransactionsGasLimit({ chainId: ChainId.linea, steps })).resolves.toBe(expected);
++
++    expect(simulateTransactions).toHaveBeenCalledWith({ chainId: ChainId.linea, transactions }, { throwOnErrorsWithoutData: true });
++  });
++
++  it('warns with the backend error when the simulation request fails', async () => {
++    mockGetChainSimulationSupport.mockReturnValue(undefined);
++    vi.mocked(simulateTransactions).mockRejectedValue(new Error('Bulk transactions are currently not supported for this chain: 59144'));
++
++    await expect(estimateTransactionsGasLimit({ chainId: ChainId.linea, steps: approveAndSwap })).resolves.toBeUndefined();
++
++    expect(logger.warn).toHaveBeenCalledWith('[estimateTransactionsGasLimit]: Simulation request failed', {
++      chainId: ChainId.linea,
++      transactionCount: 2,
++      message: 'Bulk transactions are currently not supported for this chain: 59144',
++    });
++  });
++});
+```
+
+**File**: `src/raps/utils.ts` (modified, +16/-2)
+```diff
+@@ -247,16 +247,30 @@ export async function estimateTransactionsGasLimit({
+     return undefined;
+   }
+ 
++  // Unknown support (networks persisted before the field existed) still tries the simulation.
++  const simulationSupport = useBackendNetworksStore.getState().getChainSimulationSupport(chainId);
++  if (simulationSupport && (!simulationSupport.enabled || (activeSteps.length > 1 && !simulationSupport.bulk))) {
++    return undefined;
++  }
++
+   const transactions = activeSteps.map(step => step.transaction);
+ 
++  let results: Awaited<ReturnType<typeof simulateTransactions>>;
+   try {
+-    const results = await simulateTransactions({
++    results = await simulateTransactions({ chainId, transactions }, { throwOnErrorsWithoutData: true });
++  } catch (e) {
++    logger.warn('[estimateTransactionsGasLimit]: Simulation request failed', {
+       chainId,
+-      transactions,
++      transactionCount: transactions.length,
++      message: ensureError(e).message,
+     });
++    return undefined;
++  }
+ 
++  try {
+     if (results.length !== activeSteps.length) {
+       logger.warn('[estimateTransactionsGasLimit]: Simulation result count mismatch', {
++        chainId,
+         expected: activeSteps.length,
+         received: results.length,
+       });
+```
+
+**File**: `src/resources/transactions/transactionSimulation.ts` (modified, +5/-2)
+```diff
+@@ -40,9 +40,12 @@ type SimulationResult = {
+ // ///////////////////////////////////////////////
+ // Simulations
+ 
+-export const simulateTransactions = async (args: SimulateTransactionsQueryVariables) => {
++export const simulateTransactions = async (
++  args: SimulateTransactionsQueryVariables,
++  options?: Parameters<typeof metadataPOSTClient.simulateTransactions>[1]
++) => {
+   if (!args.transactions) return [];
+-  const response = await metadataPOSTClient.simulateTransactions(args);
++  const response = await metadataPOSTClient.simulateTransactions(args, options);
+   return response?.simulateTransactions ?? [];
+ };
+ 
+```
+
+---
+
+### Incident Patch 3: `314b7a05` (2026-11-18)
+**Commit Message**: fix(sports): remove the grey band inside light game cards on Android (#7950)
+
+Fixes APP-4199
+
+## What changed (plus any additional context for devs)
+
+In light mode, Sports game cards had a grey band just inside their edges
+on Android. The small badges inside the card had the same grey fill: the
+period badge on live games ("Set 2", "Game 2 of 3") and the draw-odds
+badge on three-way games ("27% 3.8x · Chance of Draw").
+
+The light card and these badges had no opaque background, only a
+translucent white gradient, but still set an Android `elevation`.
+Android draws the elevation shadow under the whole view outline, so it
+showed through the translucent fill.
+
+The light card and its badges now have an opaque white background, and
+the translucent gradients are removed. Android keeps its elevation
+shadow outside the card, and nothing shows through. On iOS the card
+already rendered white over the Sports background, so it looks the same.
+On the Predictions host (`#F5F5F7` background), the card was faintly
+grey at the top through the gradient and is now flat white on both
+platforms. Dark mode is unchanged.
+
+<!-- ship-visuals:start -->
+## Screen recordings / screenshots
+
+| State | Before | Aft
+
+**File**: `src/features/sports/ui/GameCard.tsx` (modified, +9/-26)
+```diff
+@@ -26,7 +26,6 @@ import {
+ } from '@/features/sports/core/generated/external/sports/payload';
+ import { getParticipantDisplayName } from '@/features/sports/core/participants';
+ import { useSportsStore } from '@/features/sports/data/sportsStore';
+-import { SPORTS_BACKGROUND_COLOR_LIGHT } from '@/features/sports/ui/colors';
+ import { GameScore } from '@/features/sports/ui/GameScore';
+ import { sportsIcons } from '@/features/sports/ui/sportsIcons';
+ import { SportsBadge, SportsImage } from '@/features/sports/ui/SportsImage';
+@@ -61,9 +60,6 @@ const STATUS_LABELS: Partial<
+   [GameStatus.GAME_STATUS_POSTPONED]: i18n.l.sports.postponed,
+ };
+ 
+-const LIGHT_CARD_FILL = [white(0.68), white(0.96)] as const;
+-const LIGHT_BADGE_FILL = [white(0.54), white(0.81)] as const;
+-
+ // ============ GameCard ======================================================= //
+ 
+ /**
+@@ -173,36 +169,32 @@ function GameCardSurface({
+     2 * (styles.row.height + styles.divider.height) +
+     (threeWay ? styles.divider.height + styles.drawRow.height : CARD_BOTTOM_PADDING);
+ 
+-  const backgroundColor = isDarkMode ? globalColors.grey100 : undefined;
+-  const backdropColor = backgroundColor ?? SPORTS_BACKGROUND_COLOR_LIGHT;
++  const backgroundColor = isDarkMode ? globalColors.grey100 : globalColors.white100;
+ 
+   return (
+     <View style={[styles.surface, { width, height, backgroundColor }]} testID={testID}>
+       <SurfaceShadow
+-        backdropColor={backdropColor}
++        backdropColor={backgroundColor}
+         borderRadius={CARD_BORDER_RADIUS}
+         color={globalColors.grey100}
+         opacity={0.06}
+         radius={12}
+         y={isDarkMode ? 4 : 2}
+       />
+-      {isDarkMode ? null : (
++      {isDarkMode ? (
++        <View pointerEvents="none" style={styles.cardBackground}>
++          <CardInnerShadow width={width} height={height} />
++        </View>
++      ) : (
+         <SurfaceShadow
+-          backdropColor={backdropColor}
++          backdropColor={backgroundColor}
+           borderRadius={CARD_BORDER_RADIUS}
+           color={globalColors.grey100}
+           opacity={0.02}
+           radius={3}
+           y={2}
+         />
+       )}
+-      <View pointerEvents="none" style={styles.cardBackground}>
+-        {isDarkMode ? (
+-          <CardInnerShadow width={width} height={height} />
+-        ) : (
+-          <LinearGradient colors={LIGHT_CARD_FILL} style={StyleSheet.absoluteFill} />
+-        )}
+-      </View>
+       {children}
+       <Border borderRadius={CARD_BORDER_RADIUS} borderWidth={2} borderColor={{ custom: white(isDarkMode ? 0.03 : 1) }} enableInLightMode />
+     </View>
+@@ -309,9 +301,6 @@ function GameBadge({ children, isDarkMode }: { children: ReactNode; isDarkMode:
+             radius={3}
+             y={2}
+           />
+-          <View pointerEvents="none" style={styles.badgeBackground}>
+-            <LinearGradient colors={LIGHT_BADGE_FILL} style={StyleSheet.absoluteFill} />
+-          </View>
+         </>
+       )}
+ 
+@@ -575,14 +564,8 @@ const styles = StyleSheet.create({
+     borderRadius: 8,
+     borderCurve: 'continuous',
+   },
+-  badgeBackground: {
+-    ...StyleSheet.absoluteFillObject,
+-    borderRadius: 8,
+-    borderCurve: 'continuous',
+-    overflow: 'hidden',
+-  },
+   darkBadge: { backgroundColor: white(0.07) },
+-  lightBadge: { elevation: 4 },
++  lightBadge: { backgroundColor: globalColors.white100, elevation: 4 },
+   dot: { opacity: 0.7 },
+   row: {
+     height: 52,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7946** (closed): fix(fonts): remove bundled SF Mono from the iOS app (@i1skn)
-- **PR #7944** (2026-11-13): feat(sports): add matchup title and hide the empty scoreboard in game sheets (@i1skn)
-- **PR #7943** (2026-11-13): chore(ci): require review for token identity changes and auto-approve version bumps in Cubic (@i1skn)
-- **PR #7942** (2026-11-12): Bump iOS and Android to v2.0.50 (@i1skn)
-- **PR #7941** (2026-11-13): fix(rnbw-staking): read the exit fee in its own store (@i1skn)
-- **PR #7940** (2026-11-11): fix(assets): handle user assets without a networks map (@i1skn)
+- **PR #7955** (2026-11-19): fix(dapp-request): show Simulation Unavailable when the backend simulation fails (@i1skn)
+- **PR #7954** (2026-11-19): fix(gas): skip swap gas simulation on chains where the backend can't simulate (@i1skn)
+- **PR #7953** (2026-11-19): feat(perps): label perp markets and show platform and deployer in About (@i1skn)
+- **PR #7952** (2026-11-19): fix(predictions): open the Predictions sheet directly on the requested tab (@i1skn)
+- **PR #7950** (2026-11-18): fix(sports): remove the grey band inside light game cards on Android (@i1skn)
+- **PR #7949** (2026-11-17): fix(sports): show the matchup title for games outside the sports catalog (@i1skn)
 
 ---
 
@@ -1206,30 +1340,38 @@ CHANGELOG.md. Any other change to those three files keeps
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rnbw-staking): read the exit fee in its own store
+## X. dapp-request): show Simulation Unavailable when the backend simulation fails
 
 **RULE**:
-When implementing operations in `src/features/rnbw-staking/screens/rnbw-staking-learn-screen/RnbwStakingLearnScreen.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rainbow-me/rainbow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/features/dapp-request/components/RequestSimulationCard.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rainbow-me/rainbow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00de51f5`: rnbw-staking): read the exit fee in its own store. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `38757729`: dapp-request): show Simulation Unavailable when the backend simulation fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/features/rnbw-staking/screens/rnbw-staking-learn-screen/RnbwStakingLearnScreen.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/features/dapp-request/components/RequestSimulationCard.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { useStakingExitFeeStore } from '@/features/rnbw-staking/stores/rnbwStakingExitFeeStore';
-  const exitFeePercentage = useStakingExitFeeStore(s => s.getData());
+    const shouldExpandOnLoad =
+      isBalanceEnough === false || (!isEmpty(simulation) && !noChanges) || !!simulationError || !!txSimulationApiError;
+  }, [isBalanceEnough, isLoading, isPersonalSignRequest, noChanges, simulation, simulationError, txSimulationApiError]);
+            {!isLoading &&
+            (simulationError ||
+              isBalanceEnough === false ||
+              (!txSimulationApiError && simulationScanResult !== TransactionScanResultType.Ok)) ? (
+                      color={isLoading ? 'label' : isPersonalSignRequest || txSimulationApiError ? 'labelQuaternary' : 'label'}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-import { useStakingPositionStore } from '@/features/rnbw-staking/stores/rnbwStakingPositionStore';
-  const exitFeePercentage = useStakingPositionStore(s => s.getExitFeePercentage());
+    const shouldExpandOnLoad = isBalanceEnough === false || (!isEmpty(simulation) && !noChanges) || !!simulationError;
+  }, [isBalanceEnough, isLoading, isPersonalSignRequest, noChanges, simulation, simulationError]);
+            {!isLoading && (simulationError || isBalanceEnough === false || simulationScanResult !== TransactionScanResultType.Ok) ? (
+                      color={isLoading ? 'label' : isPersonalSignRequest ? 'labelQuaternary' : 'label'}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00de51f5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `38757729` are properly handled with clean fallback behavior.

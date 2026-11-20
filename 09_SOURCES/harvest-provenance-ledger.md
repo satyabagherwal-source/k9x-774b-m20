@@ -11494,3 +11494,5 @@ Every entry in this ledger must capture:
 | `learn-dom-d-c031d2b0` | `project://o2sh-onefetch` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/o2sh-onefetch-learnings.md` | 2026-11-20T04:38:24.569Z |
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `3599c4e9` | Multi-dimensional audit evidence | 2026-11-20T04:48:27.214Z |
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `c88c005c` | Multi-dimensional audit evidence | 2026-11-20T04:48:37.194Z |
+| `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `38757729` | Multi-dimensional audit evidence | 2026-11-20T04:58:03.622Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `e4cf2bb0` | Multi-dimensional audit evidence | 2026-11-20T04:58:10.357Z |
