@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-O620",
-    "timestamp": "2026-11-18T07:23:11.400Z",
-    "repository": "rqlite/rqlite",
-    "learningId": "learn-github-rqlite-rqlite",
-    "contentHash": "b09352c56b2dbec2c1fa5fd4804241750333422cc0cb63f50718b8d83d9acce8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-XSI0",
-    "timestamp": "2026-11-18T07:30:40.392Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-cloudflare-clef-flash",
-    "contentHash": "774a386e1a62f5d715df26ececb12325aa4a901dac566e8dbd8a6db2dd950d40",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-Y01V",
     "timestamp": "2026-11-18T07:30:50.179Z",
     "repository": "crossplane/crossplane",
@@ -7492,6 +7462,36 @@
     "contentHash": "f545839ce6ce632ab4ec39e30214ba8fd0174a14b9ad02d2a2f5a50b72294903",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-LJI1",
+    "timestamp": "2026-11-20T01:20:34.298Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "7c3ca3769baecac319375c69b100fa80fcacc9342690841985652f21095e1101",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-OMSL",
+    "timestamp": "2026-11-20T01:22:58.533Z",
+    "repository": "fallow-rs/fallow",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "d69e3c87f05979e8a2fc7dd75f6463057c69f5c636f791755be1e8be8817bf57",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

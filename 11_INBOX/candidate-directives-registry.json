@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T01:12:49.593Z",
+  "last_updated": "2026-11-20T01:23:31.987Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,14 +4835,14 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-IQ77",
+      "id": "CD-PCLN",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-IQ77-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-PCLN-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-19",
+      "date_staged": "2026-11-20",
       "domain_letter": "H"
     },
     {
@@ -35334,6 +35334,70 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-DCFF77-build-download-onnx-runtime-archives-fro.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-LJNC",
+      "directive_title": "Confirm performance regressions",
+      "source_repo": "MaterializeInc/materialize",
+      "source_commit": "116bffc3",
+      "staged_file": "11_INBOX/candidate-directives/CD-LJNC-confirm-performance-regressions.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-PANP",
+      "directive_title": "Pre-Tokenization Guarding of External Untrusted Parsers",
+      "source_repo": "fallow-rs-fallow-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PANP-pre-tokenization-guarding-of-external-untrusted-parsers.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-PANQ",
+      "directive_title": "Cascading Clean-up Invariants for Automated Refactoring Edits",
+      "source_repo": "fallow-rs-fallow-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PANQ-cascading-clean-up-invariants-for-automated-refactoring-edits.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-OMY8",
+      "directive_title": "Cascading Clean-up Invariants for Automated Refactoring Edits",
+      "source_repo": "fallow-rs/fallow",
+      "source_commit": "202f6188",
+      "staged_file": "11_INBOX/candidate-directives/CD-OMY8-cascading-clean-up-invariants-for-automated-refactoring-edits.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-PBS3",
+      "directive_title": "workload-replay: Confirm performance regressions",
+      "source_repo": "materializeinc-materialize-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PBS3-workload-replay-confirm-performance-regressions.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-CF592E",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CF592E-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-20"
     }
   ]

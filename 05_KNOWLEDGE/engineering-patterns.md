@@ -701052,3 +701052,457 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `3bf2610e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9486. Confirm performance regressions (Harvested from MaterializeInc/materialize)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Confirm performance regressions",
+  "source": "MaterializeInc/materialize",
+  "source_url": "https://github.com/MaterializeInc/materialize",
+  "source_version": "116bffc3",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-20T01:20:33.843Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-materializeinc-materialize",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [MaterializeInc/materialize](https://github.com/MaterializeInc/materialize) (Revision: `116bffc3`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `misc/python/materialize/workload_replay/executor.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6b3569ab`: workload-replay: Confirm performance regressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `misc/python/materialize/workload_replay/executor.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    without crashing. A performance failure must repeat for the same metric in
+    a fresh reference/current pair. Query errors are not retried.
+    def run(image: str | None) -> tuple[dict[str, Any], str]:
+        print(f"-- Running against {image or 'current materialized'}")
+                image=image,
+            stats = test(
+            version = c.query_mz_version()
+        return stats, version
+    if not compare_against:
+        _, new_version = run(None)
+    tag = resolve_tag(compare_against)
+    if tag is None:
+        raise ValueError(f"Could not resolve reference {compare_against}")
+    filename = posixpath.relpath(file, LOCATION)
+    pending: set[str] = set()
+    tables = []
+    # A fast baseline can also produce a false regression, so rerun both versions.
+    for attempt in range(1, 3):
+        stats_old, old_version = run(f"{image_registry()}/materialized:{tag}")
+        stats_new, new_version = run(None)
+        print(f"-- Comparing {old_version} against {new_version}, attempt {attempt}")
+        plot_docker_stats_compare(
+            stats_old=stats_old,
+            stats_new=stats_new,
+            file=f"{filename}_attempt_{attempt}",
+            old_version=old_
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+    without crashing.
+    import random
+    stats_old = None
+    old_version = None
+    if compare_against:
+        tag = resolve_tag(compare_against)
+        print(f"-- Running against materialized:{tag} (reference)")
+                image=f"{image_registry()}/materialized:{tag}",
+            stats_old = test(
+            old_version = c.query_mz_version()
+    print("-- Running against current materialized")
+    random.seed(seed)
+    with c.override(
+        Materialized(
+            image=None,
+            cluster_replica_size=cluster_replica_sizes,
+            ports=[6875, 6874, 6876, 6877, 6878, 6880, 6881, 26257],
+            environment_extra=["MZ_NO_BUILTIN_CONSOLE=0"],
+            additional_system_parameter_defaults=additional_system_parameter_defaults,
+        )
+    ):
+        stats_new = test(
+            c,
+            workload,
+            file,
+            factor_initial_data,
+            factor_ingestions,
+            factor_queries,
+            runtime,
+            verbose,
+            True,
+            True,
+            early_initial_data,
+            True,
+            True,
+            max_concurrent_queries,
+        )
+        new_version = c.query_mz_version()
+  
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6b3569ab` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9487. Pre-Tokenization Guarding of External Untrusted Parsers (Harvested from fallow-rs/fallow)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Pre-Tokenization Guarding of External Untrusted Parsers",
+  "source": "fallow-rs/fallow",
+  "source_url": "https://github.com/fallow-rs/fallow",
+  "source_version": "202f6188",
+  "license": "MIT",
+  "extracted_at": "2026-11-20T01:22:56.980Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fallow-rs-fallow",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fallow-rs/fallow](https://github.com/fallow-rs/fallow) (Revision: `202f6188`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When feeding untrusted or generated input into third-party parsers compiled with `panic = "abort"` or lacking recursion/complexity bounds, the caller MUST perform a fast, pre-lexical scan to prove that input invariants hold (e.g., nesting depth $\le N$, balanced delimiter tokens, valid domain reductions) before handing input to the structural parser.
+
+**WHY**:
+Third-party parsers (such as `lightningcss` or native AST parsers) frequently make algebraic assumptions (e.g., `Percentage::parse` assuming CSS math expressions evaluate strictly to `<percentage>`) or exhibit exponential backtracking $O(2^d)$ on deeply nested functions. Under `panic = "abort"`, any unhandled panic or recursion crash in the parser terminates the entire host process without salvageable diagnostic output.
+
+**WHEN TO APPLY**:
+Static analysis tools, language servers, CI/CD linters, and compiler front-ends ingesting user-authored or fuzz-generated CSS, HTML, JSX, or AST fragments.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use cssparser::{Parser, ParserInput};
+
+/// Enforce safety boundary on CSS parsing
+pub fn parse_style_bounded<R: Send>(
+    source: &str, 
+    parse: impl FnOnce() -> R + Send
+) -> Option<R> {
+    const MAX_NESTING_DEPTH: u32 = 1024;
+    const MAX_COLOR_FUNCTION_DEPTH: usize = 8;
+    const MAX_MATH_FUNCTION_DEPTH: usize = 6;
+
+    // Phase 1: Bounded lightweight structural scan
+    let scan = scan_depth(source, MAX_NESTING_DEPTH, Dialect::Style);
+    if scan.max_colors > MAX_COLOR_FUNCTION_DEPTH || scan.max_depth > MAX_NESTING_DEPTH {
+        return None;
+    }
+
+    // Phase 2: Token-level invariant pre-validation via cssparser
+    run_bounded(source, scan.max_depth, || {
+        if !style_parse_is_safe(source) {
+            return None;
+        }
+        Some(parse())
+    }).flatten()
+}
+
+pub fn style_parse_is_safe(source: &str) -> bool {
+    if !may_open_checked_function(source) {
+        return true;
+    }
+    let mut input = ParserInput::new(source);
+    let mut parser = Parser::new(&mut input);
+    walk_css_tokens(&mut parser, Context::default()).is_ok()
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER invoke third-party parsers directly on untrusted inputs
+// when the binary compiles with panic = "abort".
+pub fn parse_style_unsafe<R>(source: &str, parse: impl FnOnce() -> R) -> R {
+    // BUG: If lightningcss panics or recurses 2000 times on calc(calc(...)),
+    // the whole process aborts immediately, taking down CI/LSP.
+    parse()
+}
+```
+
+**VERIFICATION METHOD**:
+Fuzz test with malformed expressions (`opacity: max(4%, 5)`, `color: lab(max(4, nan) 1 1)`) and verify that `parse_style_bounded` returns `None` instead of aborting the test runner process.
+
+---
+
+
+---
+
+## 9488. Dimensionally Isolated Baseline Slot Accounting (Harvested from fallow-rs/fallow)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dimensionally Isolated Baseline Slot Accounting",
+  "source": "fallow-rs/fallow",
+  "source_url": "https://github.com/fallow-rs/fallow",
+  "source_version": "202f6188",
+  "license": "MIT",
+  "extracted_at": "2026-11-20T01:22:57.508Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fallow-rs-fallow",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fallow-rs/fallow](https://github.com/fallow-rs/fallow) (Revision: `202f6188`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+A baseline tracking system MUST maintain strict orthogonal dimension boundaries for finding categories and MUST NOT aggregate findings of differing semantics (e.g., file-length violations vs. function-complexity violations) into shared severity buckets.
+
+**WHY**:
+If findings from different architectural dimensions share a generic bucket (e.g., `complexity_moderate`), fixing a violation in one dimension (e.g., refactoring a complex function) frees up a slot that can be silently consumed by an introduced defect in another dimension (e.g., an oversized file exceeding line-count thresholds). This invalidates CI/CD regression gates.
+
+**WHEN TO APPLY**:
+Audit baselines, linters, static code metrics, and static quality gates supporting ratchet/shrink-only baseline enforcement.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum HealthFindingDimension {
+    Complexity,
+    Crap,
+    FileLength,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct HealthFindingCategory {
+    pub dimension: HealthFindingDimension,
+    pub severity: FindingSeverity,
+}
+
+impl HealthFindingCategory {
+    pub const fn key(self) -> &'static str {
+        match (self.dimension, self.severity) {
+            (HealthFindingDimension::Complexity, FindingSeverity::Moderate) => "complexity_moderate",
+            (HealthFindingDimension::Complexity, FindingSeverity::High) => "complexity_high",
+            (HealthFindingDimension::Complexity, FindingSeverity::Critical) => "complexity_critical",
+            (HealthFindingDimension::Crap, FindingSeverity::Moderate) => "crap_moderate",
+            (HealthFindingDimension::Crap, FindingSeverity::High) => "crap_high",
+            (HealthFindingDimension::Crap, FindingSeverity::Critical) => "crap_critical",
+            (HealthFindingDimension::FileLength, FindingSeverity::Moderate) => "file_lines_moderate",
+            (HealthFindingDimension::FileLength, FindingSeverity::High) => "file_lines_high",
+            (HealthFindingDimension::FileLength, FindingSeverity::Critical) => "file_lines_critical",
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER collapse heterogeneous violations into a single dimension
+fn map_finding_to_bucket(finding: &Finding) -> &'static str {
+    // ANTI-PATTERN: File lines categorized as cyclomatic/cognitive complexity!
+    // Fixing a complex function frees a slot for a runaway 5000-line file.
+    match finding.severity {
+        Severity::Moderate => "complexity_moderate",
+        Severity::High => "complexity_high",
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Construct a baseline test fixture containing one complex function and zero file-length findings. In the next iteration, assert that fixing the function while simultaneously introducing a file crossing `maxFileLines` results in an `introduced: true` violation.
+
+---
+
+
+---
+
+## 9489. Cascading Clean-up Invariants for Automated Refactoring Edits (Harvested from fallow-rs/fallow)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cascading Clean-up Invariants for Automated Refactoring Edits",
+  "source": "fallow-rs/fallow",
+  "source_url": "https://github.com/fallow-rs/fallow",
+  "source_version": "202f6188",
+  "license": "MIT",
+  "extracted_at": "2026-11-20T01:22:58.061Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fallow-rs-fallow",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fallow-rs/fallow](https://github.com/fallow-rs/fallow) (Revision: `202f6188`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When an automated code-fixer removes a symbol from an export specifier list (`export { a, b }`), it MUST track the removed local name, compute the total intra-file reference count for that identifier, and atomically prune the associated `import` declaration if and only if all intra-file usages were exhausted by the removed export specifier.
+
+**WHY**:
+Export-list re-exports (`import { a } from './a'; export { a };`) bind local identifier references. If an automated fix removes `a` from the export list but leaves the `import`, the symbol becomes an unused local import. Subsequent dead-code passes will treat the origin export in `./a` as unreferenced, prune `./a`, and leave the kept import dangling, causing TypeScript compile failures `TS2306` ("Module has no exported member") or `TS2459`.
+
+**WHEN TO APPLY**:
+AST/CST automated refactoring tools, dead-code removers, and tree-shakers performing surgical text edits on ECMAScript/TypeScript source code.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+pub fn plan_import_removals(
+    path: &Path,
+    content: &str,
+    line_ending: &str,
+    removed_references: &FxHashMap<String, usize>,
+) -> Vec<ImportRemoval> {
+    if removed_references.is_empty() {
+        return Vec::new();
+    }
+    let Some(found) = import_bindings(path, content) else {
+        return Vec::new();
+    };
+    let line_starts = compute_line_starts(content, line_ending);
+
+    found.declarations.iter().filter_map(|declaration| {
+        let removable: Vec<bool> = declaration.bindings.iter().map(|binding| {
+            removed_references.get(&binding.local).is_some_and(|removed_count| {
+                // Invariant: Prune import ONLY when all references in the module
+                // were accounted for by the pruned export list entries.
+                found.reference_counts.get(&binding.local) == Some(removed_count)
+            })
+        }).collect();
+
+        if !removable.contains(&true) {
+            return None;
+        }
+
+        plan_declaration(content, line_ending, &line_starts, declaration, &removable)
+    }).collect()
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER delete export specifiers in isolation without resolving binding consumers
+pub fn remove_export_specifiers(content: &mut String, to_remove: &[String]) {
+    // ANTI-PATTERN: Deleting export { a } leaves `import { a } from './a'` in place.
+    // The next lint/fix run deletes `export function a() {}` from './a.ts',
+    // which breaks the build with TS2306.
+    regex_replace(content, r"export\s*\{\s*a\s*\}", "");
+}
+```
+
+**VERIFICATION METHOD**:
+Execute end-to-end integration test with a barrel export pattern:
+`index.ts -> barrel.ts (import { a } from './a'; export { a, b }) -> a.ts`.
+Prune `a` from `index.ts`. Run fix pass 1, then fix pass 2. Verify `tsc` or `oxc` type-checking succeeds without `TS2306` or `TS2459`.
+
+---

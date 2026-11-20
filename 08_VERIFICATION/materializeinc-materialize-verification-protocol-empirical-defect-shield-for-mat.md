@@ -4,22 +4,22 @@
 {
   "source_repository": "MaterializeInc/materialize",
   "source_url": "https://github.com/MaterializeInc/materialize",
-  "source_version": "fdc9d4be",
+  "source_version": "116bffc3",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-18T19:34:30.536Z",
+  "timestamp": "2026-11-20T01:20:34.488Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-materializeinc-materialize",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [MaterializeInc/materialize](https://github.com/MaterializeInc/materialize) (Revision: `fdc9d4be`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-18T19:34:30.536Z`  
+> **Provenance**: Harvested from [MaterializeInc/materialize](https://github.com/MaterializeInc/materialize) (Revision: `116bffc3`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-20T01:20:34.488Z`  
 > **Learning ID**: `learn-github-materializeinc-materialize`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `MaterializeInc/materialize` (Commit: `fdc9d4be`)
+- **Target Repository**: `MaterializeInc/materialize` (Commit: `116bffc3`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T19:34:29.336Z  
+> **Harvest Timestamp**: 2026-11-20T01:20:33.181Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1092,11 +1092,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40902** (2026-11-18): **test: Accept schema change error in SQL Server resumption test**
-  *Symptoms*: When a CDC poll returns the ALTER TABLE without the following INSERT, the source reports "Incompatible schema change" and ignores later rows, so the expected decode error never shows up. Accept either error.  Seen in nightly builds [18780](https://buildkite.com/materialize/nightly/builds/18780), [18657](https://buildkite.com/materialize/nightly/builds/18657), [18508](https://buildkite.com/materialize/nightly/builds/18508), [18208](https://buildkite.com/materialize/nightly/builds/18208), [17093](https://buildkite.com/materialize/nightly/builds/17093), [16974](https://buildkite.com/materialize/nightly/builds/16974)  Test run: https://buildkite.com/materialize/nightly/builds/18787 (edit: green)
+- **Issue #40933** (2026-11-19): **ci: Nightly fixes (2026-11-19)**
+  *Symptoms*: Based on https://buildkite.com/materialize/nightly/builds/18794  Exposed by https://github.com/MaterializeInc/materialize/pull/40890  Test run: https://buildkite.com/materialize/nightly/builds/18800 (edit: green)
 
-- **Issue #40892** (2026-11-18): **chore(deps): update dependency zizmorcore/zizmor to v1.32.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [zizmorcore/zizmor](https://redirect.github.com/zizmorcore/zizmor) | minor | `1.30.1` → `1.32.0` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the Dependency Dashboard for more information.  ---  ### Release Notes  <details> <summary>zizmorcore/zizmor</summary>  ### [`v1.32.0`](https://redirect.github.com/zizmorcore/zizmor/releases/tag/v1.32.0)  [Compare Source](https://redirect.github.com/zizmorcore/zizmor/compare/v1.31.1...v1.32.0)  [Sponsorship is appreciated!](https://redirect.github.com/sponsors/woodruffw/)  #### New Features 🌈[🔗](https://docs.zizmor.sh/release-notes/#new-features)  - zizmor now has experimental support for GitHub Actions workflow lockfiles. Please see [the limitations documentation](https://docs.zizmor.sh/usage/#workflow-lockfiles) for more information about the current implementation and its limitations ([#&#8203;2463](https://redirect.github.com/zizmorcore/zizmor/issues/2463))  #### Enhancements 🌱[🔗](https://docs.zizmor.sh/release-notes/#enhancements)  - zizmor's input collection is now "root-aware" by default, meaning that invocations like zizmor . will no longer collect inputs unless they would actually be used by GitHub Actions, etc. This should eliminate spurious findings from (e.g.) workflow definitions in vendored directories. See the [input collection](https://docs.zizmor.sh/usage/#input-collection) documentation for more informat
+- **Issue #40932** (2026-11-19): **workload-anonymize: rename query policy names in cluster options**
+  *Symptoms*: SHOW CREATE CLUSTER renders a managed cluster's attached query policy as a string literal (QUERY POLICY = '<name>'). CREATE/ALTER CLUSTER literals are preserved as configuration, so the policy name survived bin/mz-workload-anonymize verbatim, and the verification pass did not notice because it blanks string literals before scanning for identifiers.  Treat the option value as an object reference: the helper collects and renames it consistently with query policy names in captured statements, and the verification pass checks it like an identifier.  Follow-up to #38762  Closes: [QAR-294](https://linear.app/materializeinc/issue/QAR-294)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1113,343 +1113,416 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d470564` (2026-11-18)
-**Commit Message**: chore(deps): update dependency trufflesecurity/trufflehog to v3.99.9 (#40890)
+### Incident Patch 1: `6b3569ab` (2026-11-19)
+**Commit Message**: workload-replay: Confirm performance regressions (#40841)
 
-> [!NOTE]
-> This PR body was truncated due to platform limits.
+Require the same metric to regress in two fresh reference/current pairs.
+Alternative to https://github.com/MaterializeInc/materialize/pull/38712
 
-This PR contains the following updates:
+Closes: [QAR-153](https://linear.app/materializeinc/issue/QAR-153)
 
-| Package | Update | Change |
-|---|---|---|
-|
-[trufflesecurity/trufflehog](https://redirect.github.com/trufflesecurity/trufflehog)
-| minor | `v3.91.0` → `v3.99.9` |
+Test run: https://buildkite.com/materialize/nightly/builds/18765
 
----
-
-> [!WARNING]
-> Some dependencies could not be looked up. Check the Dependency
-Dashboard for more information.
-
----
-
-### Release Notes
-
-<details>
-<summary>trufflesecurity/trufflehog</summary>
-
-###
-[`v3.99.9`](https://redirect.github.com/trufflesecurity/trufflehog/releases/tag/v3.99.9)
-
-[Compare
-Source](https://redirect.github.com/trufflesecurity/trufflehog/compare/v3.99.8...v3.99.9)
-
-#### What's Changed
-
-- Update module github.com/go-jose/go-jose/v4 to v4.1.6 \[SECURITY] by
-[@&#8203;renovate](https://redirect.github.com/renovate)\[bot] in
-[#&#8203;5490](https://redirect.github.com/trufflesecurity/trufflehog/pull/5490)
-- Update module golang.org/x/net to v0.62.0 \[SECURITY] by
-[@&#8203;renovate](https://redirect.github.com/renovate)\[bot] in
-[#&#8203;5492](https://redirect.github.com/trufflesecurity/trufflehog/pull/5492)
-- Add Interrup
-
-**File**: `ci/builder/Dockerfile` (modified, +2/-2)
+**File**: `misc/python/materialize/workload_replay/executor.py` (modified, +59/-72)
 ```diff
-@@ -70,9 +70,9 @@ RUN apt-get update --fix-missing && TZ=UTC DEBIAN_FRONTEND=noninteractive apt-ge
-     && sed -i 's/^UID_MIN.*/UID_MIN\t500/' /etc/login.defs
- 
- # renovate: datasource=github-release-attachments depName=trufflesecurity/trufflehog
--ARG TRUFFLEHOG_AMD64=v3.91.0@694c5c8791c9a30d8ee295cbe991fc6e7c5f4bd8f5dbe8ada100dfe2ece9a628
-+ARG TRUFFLEHOG_AMD64=v3.99.9@12050095c8063bf4d34f9f6cbce6ba9fa8d0deea9d503d0570364feba093658e
- # renovate: datasource=github-release-attachments depName=trufflesecurity/trufflehog
--ARG TRUFFLEHOG_ARM64=v3.91.0@58f627f07e7b94c5269db2958c57209f190a7f15c01d8126eac9b3b1d7ae23b3
-+ARG TRUFFLEHOG_ARM64=v3.99.9@778b1913196dc9b9234e8fd366f64387efeb08c01930a1d2110dcb2ffd07e68b
- 
- RUN TRUFFLEHOG_VERSION=${TRUFFLEHOG_AMD64%@*} \
-     && curl -fsSL https://github.com/trufflesecurity/trufflehog/releases/download/${TRUFFLEHOG_VERSION}/trufflehog_${TRUFFLEHOG_VERSION#v}_linux_$ARCH_GO.tar.gz > trufflehog.tar.gz \
-```
-
-**File**: `test/orchestratord/mzcompose.py` (modified, +54/-45)
-```diff
-@@ -12,11 +12,13 @@
- """
- 
- import argparse
-+import base64
- import copy
- import datetime
- import json
- import os
- import random
-+import re
- import shutil
- import signal
- import subprocess
-@@ -55,7 +57,7 @@
-     upgrade_downtime_result_storage,
- )
- from materialize.test_analytics.test_analytics_db import TestAnalyticsDb
--from materialize.util import PropagatingThread, all_subclasses
-+from materialize.util import PropagatingThread, all_subclasses, redact_secrets
- from materialize.version_list import (
-     get_all_self_managed_versions,
-     get_self_managed_versions,
-@@ -2736,11 +2738,8 @@ def workflow_documentation_defaults(
-                 "environmentId"
-             ] = "12345678-1234-1234-1234-123456789013"
- 
--        with open(os.path.join(dir, "sample-materialize.yaml"), "w") as f:
--            yaml.dump_all(materialize_setup, f, default_flow_style=False)
--
--        spawn.runv(
--            ["kubectl", "apply", "-f", os.path.join(dir, "sample-materialize.yaml")]
-+        kubectl_apply_retrying_webhook(
-+            ["kubectl", "apply", "-f", "-"], materialize_setup
-         )
- 
-         # This should finish quickly, see https://github.com/MaterializeInc/database-issues/issues/10099
-@@ -3376,34 +3375,66 @@ def check_rollout_complete():
- WEBHOOK_READY_TIMEOUT_SECS = 300
- 
- 
--def kubectl_apply_retrying_webhook(cmd: list[str], yaml_str: str) -> None:
--    """Run a `kubectl apply` that reads `yaml_str` from stdin, retrying while a
-+def kubectl_apply_retrying_webhook(
-+    cmd: list[str], resources: list[dict[str, Any]]
-+) -> None:
-+    """Run a `kubectl apply` that reads resources from stdin, retrying while a
-     webhook is still coming up.
- 
-     Raises `subprocess.CalledProcessError` for any other failure, and for a
-     webhook failure that outlives `WEBHOOK_READY_TIMEOUT_SECS`.
+@@ -314,9 +314,9 @@ def benchmark(
+     When `compare_against` is set, an older reference version is run first and
+     its stats are compared against the current version. Otherwise only the
+     current version is run, which still exercises that the workload replays
+-    without crashing.
++    without crashing. A performance failure must repeat for the same metric in
++    a fresh reference/current pair. Query errors are not retried.
      """
-+    manifest = yaml.dump_all(resources).encode()
-+    secret_values = set()
-+    for secret in (resource for resource in resources if resource["kind"] == "Secret"):
-+        strings = secret.get("stringData", {}).values()
-+        secret_values.update(secret.get("data", {}).values(), strings)
-+        secret_values.update(
-+            base64.b64encode(value.encode()).decode() for value in strings
-+        )
-+
-+    # Client-side apply can nest the manifest inside a JSON string, in which
-+    # kubectl also escapes `&`, `<` and `>`.
-+    html_escapes = str.maketrans({c: f"\\u{ord(c):04x}" for c in "&<>"})
-+    for _ in range(2):
-+        secret_values.update(
-+            {json.dumps(v)[1:-1].translate(html_escapes) for v in secret_values}
-+        )
-+    secret_pattern = "|".join(
-+        re.escape(value)
-+        for value in sorted(filter(None, secret_values), key=len, reverse=True)
-+    )
-+
-+    def redact_output(text: str) -> str:
-+        if secret_pattern:
-+            text = re.sub(secret_pattern, "[REDACTED]", text)
-+        return redact_secrets(text)
-+
-     deadline = time.monotonic() + WEBHOOK_READY_TIMEOUT_SECS
-     attempt = 0
-     while True:
-         attempt += 1
--        result = subprocess.run(cmd, input=yaml_str.encode(), capture_output=True)
-+        result = subprocess.run(cmd, input=manifest, capture_output=True)
-         if result.returncode == 0:
-             return
--        stderr_str = result.stderr.decode(errors="replace")
-+        stderr = result.stderr.decode(errors="replace")
-         if (
--            any(marker in stderr_str for marker in WEBHOOK_FAILURE_MARKERS)
-+            any(marker in stderr for marker in WEBHOOK_FAILURE_MARKERS)
-             and time.monotonic() < deadline
+-    import random
+ 
+     services = [
+         "materialized",
+@@ -348,22 +348,19 @@ def benchmark(
+ 
+     print_workload_stats(file, workload)
+ 
+-    stats_old = None
+-    old_version = None
+-    if compare_against:
+-        tag = resolve_tag(compare_against)
+-        print(f"-- Running against materialized:{tag} (reference)")
++    def run(image: str | None) -> tuple[dict[str, Any], str]:
++        print(f"-- Running against {image or 'current materialized'}")
+         random.seed(seed)
+         with c.override(
+             Materialized(
+-                image=f"{image_registry()}/materialized:{tag}",
++                image=image,
+                 cluster_replica_size=cluster_replica_sizes,
+                 ports=[6875, 6874, 6876, 6877, 6878, 6880, 6881, 26257],
+                 environment_extra=["MZ_NO_BUILTIN_CONSOLE=0"],
+                 additional_system_parameter_defaults=additional_system_parameter_defaults,
+             )
          ):
--            print(f"Webhook not yet ready (attempt {attempt}), retrying: {stderr_str}")
-+            print(
-+                f"Webhook not yet ready (attempt {attempt}), retrying: {redact_output(stderr)}"
-+            )
-             time.sleep(2)
-             continue
--        print(f"Failed to apply: {result.stdout}\nSTDERR:{result.stderr}")
-+        stdout = redact_output(result.stdout.decode(errors="replace"))
-+        stderr = redact_output(stderr)
-+        print(f"Failed to apply: {stdout}\nSTDERR:{stderr}")
-         raise subprocess.CalledProcessError(
-             result.returncode,
-             result.args,
--            output=result.stdout,
--            stderr=result.stderr,
-+            output=stdout.encode(),
-+            stderr=stderr.encode(),
+-            stats_old = test(
++            stats = test(
+                 c,
+                 workload,
+                 file,
+@@ -379,82 +376,72 @@ def benchmark(
+                 True,
+                 max_concurrent_queries,
+             )
+-            old_version = c.query_mz_version()
++            version = c.query_mz_version()
+         try:
+             c.kill(*services)
+         except:
+             pass
+         c.rm(*services, destroy_volumes=True)
+         c.rm_volumes("mzdata")
+-    print("-- Running against current materialized")
+-    random.seed(seed)
+-    with c.override(
+-        Materialized(
+-            image=None,
+-            cluster_replica_size=cluster_replica_sizes,
+-            ports=[6875, 6874, 6876, 6877, 6878, 6880, 6881, 26257],
+-            environment_extra=["MZ_NO_BUILTIN_CONSOLE=0"],
+-            additional_system_parameter_defaults=additional_system_parameter_defaults,
+-        )
+-    ):
+-        stats_new = test(
+-            c,
+-            workload,
+-            file,
+-            factor_initial_data,
+-            factor_ingestions,
+-            factor_queries,
+-            runtime,
+-            verbose,
+-            True,
+-            True,
+-            early_initial_data,
+-            True,
+-            True,
+-            max_concurrent_queries,
+-        )
+-        new_version = c.query_mz_version()
+-    try:
+-        c.kill(*services)
+-    except:
+-        pass
+-    c.rm(*services, destroy_volumes=True)
+-    c.rm_volumes("mzdata")
+-    filename = posixpath.relpath(file, LOCATION)
++        return stats, version
+ 
+-    if stats_old is None or old_version is None:
++    if not compare_against:
++        _, new_version = run(None)
+         print(f"-- Ran {new_version} without a reference version to compare against")
+         return
+ 
+-    print(f"-- Comparing {old_version} against {new_version}")
+-    plot_docker_stats_compare(
+-        stats_old=stats_old,
+-        stats_new=stats_new,
+-        file=filename,
+-        old_version=old_version,
+-        new_version=new_version,
+-    )
+-    failures: list[TestFailureDetails] = []
+-    failures.extend(compare_table(filename, stats_old, stats_new))
+-
+-    if "errors" in stats_old["queries"]:
+-        new_errors = []
+-        for error, occurrences in stats_new["queries"]["errors"].items():
+-            if error in stats_old["queries"]["errors"]:
+-                continue
++    tag = resolve_tag(compare_against)
++    if tag is None:
++        raise ValueError(f"Could not resolve reference {compare_against}")
++    filename = posixpath.relpath(file, LOCATION)
++    pending: set[str] = set()
++    tables = []
++    # A fast baseline can also produce a false regression, so rerun both versions.
++    for attempt in range(1, 3):
++        stats_old, old_version = run(f"{image_registry()}/materialized:{tag}")
++        stats_new, new_version = run(None)
++        print(f"-- Comparing {old_version} against {new_version}, attempt {attempt}")
++        plot_docker_stats_compare(
++            stats_old=stats_old,
++            stats_new=stats_new,
++            file=f"{filename}_attempt_{attempt}",
++            old_version=old_version,
++            new_version=new_version,
++        )
++        table, regressions = compare_table(stats_old, stats_new)
++        tables.append(f"Attempt {attempt}\n{table}")
++        details = "\n\n".join(tables)
++
++        new_errors = [
++            f"{error} in queries: {occurrences}"
++            for error, occurrences in stats_new["queries"].get("errors", {}).items()
++            if error not in stats_old["queries"].get("errors", {})
+      
+```
+
+**File**: `misc/python/materialize/workload_replay/stats.py` (modified, +6/-19)
+```diff
+@@ -26,7 +26,6 @@
+ import numpy
+ 
+ from materialize import MZ_ROOT, buildkite
+-from materialize.mzcompose.test_result import TestFailureDetails
+ 
+ # Byte parsing utilities
+ 
+@@ -391,9 +390,9 @@ def fmt_pct(delta: float) -> str:
+ 
+ 
+ def compare_table(
+-    filename: str, stats_old: dict[str, Any], stats_new: dict[str, Any]
+-) -> list[TestFailureDetails]:
+-    """Generate a comparison table and check for regressions."""
++    stats_old: dict[str, Any], stats_new: dict[str, Any]
++) -> tuple[str, set[str]]:
++    """Return a comparison table and the metrics exceeding their thresholds."""
+     rows = []
+     if "object_creation" in stats_old:
+         rows.append(
+@@ -480,21 +479,19 @@ def compare_table(
+             ]
          )
  
+-    failures: list[TestFailureDetails] = []
+-
+     output_lines = [
+         f"{'METRIC':<24} | {'OLD':^12} | {'NEW':^12} | {'CHANGE':^9} | {'THRESHOLD':^9} | {'REGRESSION?':^12}",
+         "-" * 92,
+     ]
  
-@@ -3419,9 +3450,7 @@ def apply_server_side(
-         cmd.append("--force-conflicts")
-     if field_manager:
-         cmd.append(f"--field-manager={field_manager}")
--    yaml_str = yaml.dump(obj)
--    print(f"Attempting to apply server-side:\n{yaml_str}")
--    kubectl_apply_retrying_webhook(cmd, yaml_str)
-+    kubectl_apply_retrying_webhook(cmd, [obj])
+-    regressed = False
++    regressions = set()
+     for name, old, new, threshold in rows:
+         delta = pct_change(old, new)
  
- 
- def workflow_server_side_apply(
-@@ -4113,9 +4142,7 @@ def apply_materialize(definition: dict[str, Any]) -> None:
-         defs.append(definition["system_params_configmap"])
-     if "balancerd_configmap" in definition:
-         defs.append(definition["balancerd_configmap"])
--    
+         if threshold is None:
+             flag = ""
+         elif new > old * threshold:
+-            regressed = True
++            regressions.add(name)
+             flag = "!!YES!!"
+         else:
+             flag = "no"
+@@ -509,14 +506,4 @@ def compare_table(
+             f"{threshold_field:>9} | "
+             f"{flag:^12}"
+         )
+-    if regressed:
+-        failures.append(
+-            TestFailureDetails(
+-                message=f"Workload {filename} regressed",
+-                details="\n".join(output_lines),
+-                test_class_name_override=filename,
+-            )
+-        )
+-
+-    print("\n".join(output_lines))
+-    return failures
++    return "\n".join(output_lines), regressions
 ```
 
 ---
 
-### Incident Patch 2: `c94b62a9` (2026-11-18)
-**Commit Message**: chore(deps): update dependency docker/buildx to v0.39.0 (#40883)
+### Incident Patch 2: `b097a5f4` (2026-11-19)
+**Commit Message**: ci: Nightly fixes (2026-11-19) (#40933)
 
-> [!NOTE]
-> This PR body was truncated due to platform limits.
+Based on https://buildkite.com/materialize/nightly/builds/18794
 
-This PR contains the following updates:
+Exposed by https://github.com/MaterializeInc/materialize/pull/40890
 
-| Package | Update | Change |
-|---|---|---|
-| [docker/buildx](https://redirect.github.com/docker/buildx) | minor |
-`v0.30.1` → `v0.39.0` |
+Test run: https://buildkite.com/materialize/nightly/builds/18800 (edit:
+green)
 
----
-
-> [!WARNING]
-> Some dependencies could not be looked up. Check the Dependency
-Dashboard for more information.
-
----
-
-### Release Notes
-
-<details>
-<summary>docker/buildx</summary>
-
-###
-[`v0.39.0`](https://redirect.github.com/docker/buildx/releases/tag/v0.39.0)
-
-[Compare
-Source](https://redirect.github.com/docker/buildx/compare/v0.38.2...v0.39.0)
-
-buildx 0.39.0
-
-Welcome to the v0.39.0 release of buildx!
-
-Please try out the release binaries and report any issues at
-<https://github.com/docker/buildx/issues>.
-
-##### Contributors
-
-- CrazyMax
-- Tõnis Tiigi
-- Sebastiaan van Stijn
-- Eshan05
-- Ihor Urazov
-- Kevin Mingtarja
-- SaiPisey2
-
-##### Notable Changes
-
-- Build history exports from remote builders are now faster by reading
-blobs in larger chunks.
-[#&#8203;4137](https://redirect.github.com/docker/buildx/issues/4137)
-- Kubernetes builders now use a startup probe to become ready s
-
-**File**: `ci/builder/Dockerfile` (modified, +2/-2)
+**File**: `test/terraform/mzcompose.py` (modified, +11/-19)
 ```diff
-@@ -106,7 +106,7 @@ ARG DOCKER_COMPOSE_VERSION=v5.0.1
- # renovate: datasource=github-releases depName=christian-korneck/docker-pushrm
- ARG DOCKER_PUSHRM_VERSION=v1.9.0
- # renovate: datasource=github-releases depName=docker/buildx
--ARG DOCKER_BUILDX_VERSION=v0.30.1
-+ARG DOCKER_BUILDX_VERSION=v0.39.0
+@@ -23,7 +23,7 @@
+ import tempfile
+ import threading
+ import time
+-from collections.abc import Sequence
++from collections.abc import MutableMapping, Sequence
+ from pathlib import Path
+ from textwrap import dedent
+ from typing import IO
+@@ -205,6 +205,13 @@ def testdrive(no_reset: bool, use_https: bool = True) -> Testdrive:
+     )
  
- RUN \
-     # 1. autouseradd
-@@ -622,7 +622,7 @@ RUN curl -fsSL https://github.com/MaterializeInc/autouseradd/releases/download/$
- # renovate: datasource=github-releases depName=docker/compose
- ARG DOCKER_COMPOSE_VERSION=v5.0.1
- # renovate: datasource=github-releases depName=docker/buildx
--ARG DOCKER_BUILDX_VERSION=v0.30.1
-+ARG DOCKER_BUILDX_VERSION=v0.39.0
  
- RUN mkdir -p /usr/local/lib/docker/cli-plugins \
-     && curl -fsSL https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-$ARCH_GCC > /usr/local/lib/docker/cli-plugins/docker-compose \
++def pass_license_key(env: MutableMapping[str, str]) -> None:
++    """Hands the CI license key to the Terraform invocations run with `env`."""
++    license_key = os.getenv("MZ_CI_LICENSE_KEY", "")
++    if license_key:
++        env["TF_VAR_license_key"] = license_key
++
++
+ def get_tag(tag: str | None) -> str:
+     return tag or ci_util.dev_docker_tag()
+ 
+@@ -810,12 +817,7 @@ def setup(
+                 f"orchestratord_version={get_tag(orchestratord_tag or tag)}",
+             ]
+ 
+-        license_key = os.getenv("MZ_CI_LICENSE_KEY", "")
+-        if license_key:
+-            self.base_vars += [
+-                "-var",
+-                f"license_key={license_key}",
+-            ]
++        pass_license_key(os.environ)
+ 
+         if prefix == PREFIX_AWS_PERSISTENT:
+             delete_after = "2099-12-31T00:00:00Z"
+@@ -1453,12 +1455,7 @@ def workflow_gcp_temporary(c: Composition, parser: WorkflowArgumentParser) -> No
+                 f"orchestratord_version={get_tag(tag)}",
+             ]
+ 
+-        license_key = os.getenv("MZ_CI_LICENSE_KEY", "")
+-        if license_key:
+-            vars += [
+-                "-var",
+-                f"license_key={license_key}",
+-            ]
++        pass_license_key(os.environ)
+ 
+         vars += [
+             "-var",
+@@ -1679,12 +1676,7 @@ def workflow_azure_temporary(c: Composition, parser: WorkflowArgumentParser) ->
+                 f"orchestratord_version={get_tag(tag)}",
+             ]
+ 
+-        license_key = os.getenv("MZ_CI_LICENSE_KEY", "")
+-        if license_key:
+-            vars += [
+-                "-var",
+-                f"license_key={license_key}",
+-            ]
++        pass_license_key(venv_env)
+ 
+         vars += [
+             "-var",
 ```
 
 ---
 
-### Incident Patch 3: `9f5dbe11` (2026-11-18)
-**Commit Message**: chore(deps): update dependency bufbuild/buf to v1.75.0 (#40879)
+### Incident Patch 3: `71e76bb8` (2026-11-19)
+**Commit Message**: ci: Nightly fixes (2026-11-18) (#40893)
 
-This PR contains the following updates:
+Based on https://buildkite.com/materialize/nightly/builds/18771
 
-| Package | Update | Change |
-|---|---|---|
-| [bufbuild/buf](https://redirect.github.com/bufbuild/buf) | minor |
-`v1.60.0` → `v1.75.0` |
+SLT: Follow-up to #38762
 
----
+mz-deploy: Merge skew between #38762 & #38834
 
-> [!WARNING]
-> Some dependencies could not be looked up. Check the Dependency
-Dashboard for more information.
+Test run: https://buildkite.com/materialize/nightly/builds/18785 (edit:
+green)
 
----
-
-### Release Notes
-
-<details>
-<summary>bufbuild/buf</summary>
-
-###
-[`v1.75.0`](https://redirect.github.com/bufbuild/buf/blob/HEAD/CHANGELOG.md#v1750---2026-10-21)
-
-[Compare
-Source](https://redirect.github.com/bufbuild/buf/compare/v1.74.0...v1.75.0)
-
-- Fix `buf build` dropping `message_set_wire_format`, `weak` field
-options, and MessageSet
-extensions, and truncating MessageSet extension ranges, when a file has
-an unused import.
-- Fix LSP crash when hovering on a CEL string literal containing a byte
-that is not valid UTF-8,
-  such as `'\x95'` in a protovalidate rule.
-- Add `BUF_DEBUG`, `BUF_LOG_FORMAT`, and `BUF_TIMEOUT` environment
-variables as defaults for the
-`--debug`, `--log-format`, and `--timeout` global flags. Flags take
-precedence when set.
-- Add support to images for option dependencies declared with the
-`import opti
-
-**File**: `ci/builder/Dockerfile` (modified, +1/-1)
+**File**: `deny.toml` (modified, +6/-0)
 ```diff
-@@ -225,7 +225,7 @@ RUN ln -s ../lib/node_modules/corepack/dist/corepack.js /usr/local/bin/corepack
- # renovate: datasource=github-releases depName=koalaman/shellcheck
- ARG SHELLCHECK_VERSION=v0.11.0
- # renovate: datasource=github-releases depName=bufbuild/buf
--ARG BUF_VERSION=v1.60.0
-+ARG BUF_VERSION=v1.75.0
- # renovate: datasource=github-releases depName=boz/kail
- ARG KAIL_VERSION=v0.17.4
- # renovate: datasource=github-releases depName=parca-dev/parca-debuginfo
+@@ -309,6 +309,12 @@ ignore = [
+     "RUSTSEC-2024-0436",
+     # Bincode is unmaintained, the team considers version 1.3.3 a complete version of bincode that is not in need of any updates.
+     "RUSTSEC-2025-0141",
++    # chrono is unmaintained with no patched release. Arrow and postgres-types
++    # still depend on it.
++    "RUSTSEC-2026-0543",
++    # humantime is unmaintained with no patched release. console-subscriber
++    # still depends on it.
++    "RUSTSEC-2026-0542",
+     # Allows private key leakage through timing information
+     # rsa is required through iceberg-storage-opendal
+     "RUSTSEC-2023-0071",
+```
+
+**File**: `misc/python/materialize/cli/ci_annotate_errors.py` (modified, +20/-1)
+```diff
+@@ -133,6 +133,8 @@
+     | Assertion\ `.*'\ failed\.
+     | Invalid\ data\ in\ source\ errors,\ saw\ retractions
+     | \+\+\+\ Expected\ builds\ to\ be\ available,\ the\ build\ probably\ failed
++    # cargo-deny advisories
++    | ^error\[(?:vulnerability|unmaintained|unsound|notice|yanked)\]:[^\n]*(?:\n(?!error\[|warning\[)[^\n]+)*
+     )
+     .* $
+     """,
+@@ -491,7 +493,24 @@ def main() -> int:
+ 
+     if args.buildkite_log_until:
+         # Unlike output the caller captures, Buildkite's log has secrets redacted.
+-        args.log_files.insert(0, write_buildkite_log(args.buildkite_log_until))
++        try:
++            args.log_files.insert(0, write_buildkite_log(args.buildkite_log_until))
++        except Exception as e:
++            if not args.test_result:
++                raise
++            print(f"Could not retrieve the Buildkite job log: {e}", file=sys.stderr)
++            add_annotation_raw(
++                style="error",
++                markdown=(
++                    f'<a href="#{html.escape(os.environ["BUILDKITE_JOB_ID"])}">'
++                    f"{html.escape(get_suite_name())}</a> failed "
++                    f"(exit status {args.test_result}).\n\n"
++                    "Could not retrieve the job log for error analysis:\n"
++                    f"<pre>{html.escape(str(e))}</pre>\n"
++                    "See the linked job for the command output."
++                ),
++            )
++            return args.test_result
+ 
+     test_analytics_config = create_test_analytics_config_with_hostname(
+         args.cloud_hostname
+```
+
+**File**: `test/mz-deploy/mzcompose.py` (modified, +0/-2)
+```diff
+@@ -1336,8 +1336,6 @@ def workflow_avro_record_type(c: Composition, parser: WorkflowArgumentParser) ->
+         # What a version 1 lock file holds for this column: the pseudo-type
+         # token, with no way to rebuild the record. It has to load, and
+         # reconstruction has to say what to do about it.
+-        # The container-created file can be owned by root, so replace it.
+-        types_lock.unlink()
+         types_lock.write_text(
+             'version = 1\n\n[[table]]\nname = "app.ingest.ledger_entry"\ncolumns = [\n'
+             '    { name = "record", type = "record", nullable = true },\n]\n'
+```
+
+**File**: `test/sqllogictest/query_policy.slt` (modified, +6/-0)
+```diff
+@@ -223,12 +223,18 @@ DETAIL: Query policy "no_dataflows" rule "fast_only" applies to this query on cl
+ HINT: Run EXPLAIN to inspect the query plan. Create an index that serves the query on this cluster, or use a cluster whose query policy permits this plan.
+ 
+ # Diagnostics remain available even when their introspection queries need dataflows.
++statement ok
++SET cluster_replica = r1;
++
+ statement ok
+ EXPLAIN ANALYZE CLUSTER MEMORY;
+ 
+ statement ok
+ EXPLAIN ANALYZE MEMORY FOR MATERIALIZED VIEW unindexed;
+ 
++statement ok
++RESET cluster_replica;
++
+ # A persist fast-path read does not build a temporary dataflow.
+ query II rowsort
+ SELECT * FROM unindexed LIMIT 10;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40902** (2026-11-18): test: Accept schema change error in SQL Server resumption test (@def-)
-- **PR #40892** (2026-11-18): chore(deps): update dependency zizmorcore/zizmor to v1.32.0 (@renovate[bot])
-- **PR #40891** (2026-11-18): chore(deps): update dependency wasm-pack to v0.15.1 (@renovate[bot])
-- **PR #40890** (2026-11-18): chore(deps): update dependency trufflesecurity/trufflehog to v3.99.9 (@renovate[bot])
-- **PR #40889** (2026-11-18): chore(deps): update dependency parca-dev/parca-debuginfo to v0.13.0 (@renovate[bot])
-- **PR #40888** (2026-11-18): chore(deps): update dependency openssh/openssh-portable to v_10_6_p2 (@renovate[bot])
+- **PR #40933** (2026-11-19): ci: Nightly fixes (2026-11-19) (@def-)
+- **PR #40932** (2026-11-19): workload-anonymize: rename query policy names in cluster options (@def-)
+- **PR #40930** (2026-11-19): storage: Decode bzip2 with libbz2-rs-sys instead of C libbz2 (@jasonhernandez)
+- **PR #40929** (2026-11-19): docs: release notes for v26.50.2, v26.49.2, v26.44.2 and v26.41.3 (@bosconi)
+- **PR #40924** (2026-11-19): release: mark v26.51, v26.50 as released (@materialize-bot)
+- **PR #40922** (2026-11-19): compute: give MV sink correction chunks their own compression floor (@DAlperin)
 
 ---
 
@@ -1469,33 +1542,94 @@ precedence when set.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency trufflesecurity/trufflehog to v3.99.9
+## X. workload-replay: Confirm performance regressions
 
 **RULE**:
-When implementing operations in `ci/builder/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `misc/python/materialize/workload_replay/executor.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d470564`: deps): update dependency trufflesecurity/trufflehog to v3.99.9. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6b3569ab`: workload-replay: Confirm performance regressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/builder/Dockerfile`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `misc/python/materialize/workload_replay/executor.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-ARG TRUFFLEHOG_AMD64=v3.99.9@12050095c8063bf4d34f9f6cbce6ba9fa8d0deea9d503d0570364feba093658e
-ARG TRUFFLEHOG_ARM64=v3.99.9@778b1913196dc9b9234e8fd366f64387efeb08c01930a1d2110dcb2ffd07e68b
+    without crashing. A performance failure must repeat for the same metric in
+    a fresh reference/current pair. Query errors are not retried.
+    def run(image: str | None) -> tuple[dict[str, Any], str]:
+        print(f"-- Running against {image or 'current materialized'}")
+                image=image,
+            stats = test(
+            version = c.query_mz_version()
+        return stats, version
+    if not compare_against:
+        _, new_version = run(None)
+    tag = resolve_tag(compare_against)
+    if tag is None:
+        raise ValueError(f"Could not resolve reference {compare_against}")
+    filename = posixpath.relpath(file, LOCATION)
+    pending: set[str] = set()
+    tables = []
+    # A fast baseline can also produce a false regression, so rerun both versions.
+    for attempt in range(1, 3):
+        stats_old, old_version = run(f"{image_registry()}/materialized:{tag}")
+        stats_new, new_version = run(None)
+        print(f"-- Comparing {old_version} against {new_version}, attempt {attempt}")
+        plot_docker_stats_compare(
+            stats_old=stats_old,
+            stats_new=stats_new,
+            file=f"{filename}_attempt_{attempt}",
+            old_version=old_
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-ARG TRUFFLEHOG_AMD64=v3.91.0@694c5c8791c9a30d8ee295cbe991fc6e7c5f4bd8f5dbe8ada100dfe2ece9a628
-ARG TRUFFLEHOG_ARM64=v3.91.0@58f627f07e7b94c5269db2958c57209f190a7f15c01d8126eac9b3b1d7ae23b3
+    without crashing.
+    import random
+    stats_old = None
+    old_version = None
+    if compare_against:
+        tag = resolve_tag(compare_against)
+        print(f"-- Running against materialized:{tag} (reference)")
+                image=f"{image_registry()}/materialized:{tag}",
+            stats_old = test(
+            old_version = c.query_mz_version()
+    print("-- Running against current materialized")
+    random.seed(seed)
+    with c.override(
+        Materialized(
+            image=None,
+            cluster_replica_size=cluster_replica_sizes,
+            ports=[6875, 6874, 6876, 6877, 6878, 6880, 6881, 26257],
+            environment_extra=["MZ_NO_BUILTIN_CONSOLE=0"],
+            additional_system_parameter_defaults=additional_system_parameter_defaults,
+        )
+    ):
+        stats_new = test(
+            c,
+            workload,
+            file,
+            factor_initial_data,
+            factor_ingestions,
+            factor_queries,
+            runtime,
+            verbose,
+            True,
+            True,
+            early_initial_data,
+            True,
+            True,
+            max_concurrent_queries,
+        )
+        new_version = c.query_mz_version()
+  
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d470564` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6b3569ab` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T01:12:50.003Z",
+  "last_updated": "2026-11-20T01:23:32.295Z",
   "total_verified_learnings": 9023,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22115,
+  "total_items": 22124,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113691,13 +113691,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-IQ77-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PCLN-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c58c876ca95e21ca8d2193e210e8ab8e7d4d37532d3e40986142d59dbad076ce",
+      "content_hash": "94edd1776fe9115961b7049d45a9f78aa2299df8aa426dd73c1314ae28094a8b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T23:54:24.169Z"
+      "persisted_at": "2026-11-20T01:23:31.987Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113707,9 +113707,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c7c29208475cff4d7157892fc9314d5c443c16e89ba7b0e1e46cc85c2cb22550",
+      "content_hash": "66f6ad76817395387526935c1793820689c3a213e5621806ea35c37c31f73c4c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T23:54:24.352Z"
+      "persisted_at": "2026-11-20T01:23:32.142Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113719,9 +113719,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "060c49f0cf74a9675133c0f704231665f787fa395fbf685a7a316f333e8a519e",
+      "content_hash": "1bae5bc46cd24ebd7146b6efa7634aa2510a3515a61b5a22e048f48d0100d4e8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T23:54:24.558Z"
+      "persisted_at": "2026-11-20T01:23:32.295Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -226375,8 +226375,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "fdc9d4be",
-      "content_hash": "3d36fd7601b31d792958c2f796d1bcabe0c0c5f85d9f79f5c9e49b804e227459",
+      "source_version": "116bffc3",
+      "content_hash": "7c3ca3769baecac319375c69b100fa80fcacc9342690841985652f21095e1101",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -226404,6 +226404,11 @@
           "number": 9275,
           "title": "update dependency trufflesecurity/trufflehog to v3.99.9",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9486,
+          "title": "Confirm performance regressions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -226411,7 +226416,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T19:34:30.147Z",
+      "verified_at": "2026-11-20T01:20:34.119Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226465,10 +226470,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/materializeinc-materialize-agent-contract-materializeinc-materialize-autonomous-.md",
       "title": "Agent Contract: MaterializeInc/materialize Autonomous Specialist Persona",
       "repository": "MaterializeInc/materialize",
-      "source_version": "fdc9d4be",
-      "content_hash": "2b0425143cbfc8a4f1dab8b9fc56dcd4e3d2ea23d075c84630a9be11f5b06cd4",
+      "source_version": "116bffc3",
+      "content_hash": "480d734d0339192608083eb76c64c03fb51106deb0d2fafcdb163edee45cb248",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T19:34:30.838Z"
+      "persisted_at": "2026-11-20T01:20:34.755Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize",
@@ -226477,10 +226482,10 @@
       "relative_path": "08_VERIFICATION/materializeinc-materialize-verification-protocol-empirical-defect-shield-for-mat.md",
       "title": "Verification Protocol: Empirical Defect Shield for MaterializeInc/materialize",
       "repository": "MaterializeInc/materialize",
-      "source_version": "fdc9d4be",
-      "content_hash": "858380a51291c58709055c1a7c5bda42db609ff88fbc8d0a0889ed5ba68a76d6",
+      "source_version": "116bffc3",
+      "content_hash": "56bdeb1e7436d4eb801ca5fe854f92bf47c4ae49372b288ce3df46af8e20d116",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T19:34:30.968Z"
+      "persisted_at": "2026-11-20T01:20:34.867Z"
     },
     "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100": {
       "item_id": "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100",
@@ -240951,8 +240956,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "bf272e19",
-      "content_hash": "750d1c8526e6aef003daab8e44542b6fee6fe204b848d7943f018be9f53d64e0",
+      "source_version": "202f6188",
+      "content_hash": "d69e3c87f05979e8a2fc7dd75f6463057c69f5c636f791755be1e8be8817bf57",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -240975,6 +240980,21 @@
           "number": 9236,
           "title": "detector fixes for flags, security, dupes and suppression markers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9487,
+          "title": "Pre-Tokenization Guarding of External Untrusted Parsers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9488,
+          "title": "Dimensionally Isolated Baseline Slot Accounting",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9489,
+          "title": "Cascading Clean-up Invariants for Automated Refactoring Edits",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240982,7 +241002,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T13:56:51.174Z",
+      "verified_at": "2026-11-20T01:22:58.346Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241010,10 +241030,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fallow-rs-fallow-technical-construction-intelligence-fallow-rs-fallow-core-invar.md",
       "title": "Technical Construction Intelligence: fallow-rs/fallow Core Invariants",
       "repository": "fallow-rs/fallow",
-      "source_version": "548aba6d",
-      "content_hash": "903fcaa6bc7fe1554869d12f6836304497f885bbf152450824ef08e7a62a6025",
+      "source_version": "202f6188",
+      "content_hash": "4cb7ea57f2eca2f8aca0a875da01f5b181c284c695d5269b90046cdc5a03b030",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T05:35:27.248Z"
+      "persisted_at": "2026-11-20T01:22:59.169Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow",
@@ -241022,10 +241042,10 @@
       "relative_path": "08_VERIFICATION/fallow-rs-fallow-verification-protocol-empirical-defect-shield-for-fallow-rs-fal.md",
       "title": "Verification Protocol: Empirical Defect Shield for fallow-rs/fallow",
       "repository": "fallow-rs/fallow",
-      "source_version": "bf272e19",
-      "content_hash": "7e89bd5c708494c5cd18c0d34bd01de12e512df39f1d6f5ca384a56a32293125",
+      "source_version": "202f6188",
+      "content_hash": "74b23fa23c2701a0b705ba3bd3801310c29eb26db984073d6335497a52cfbb70",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T13:56:52.035Z"
+      "persisted_at": "2026-11-20T01:22:59.312Z"
     },
     "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf": {
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
@@ -241137,9 +241157,9 @@
       "title": "Technical Construction Intelligence: fallow-rs-fallow-learnings Core Invariants",
       "repository": "fallow-rs-fallow-learnings",
       "source_version": "HEAD",
-      "content_hash": "45ccf1f3cc0f2589929e16c1dba82d0f0e606ab18afb4cdbc4b65dc84a16f7d9",
+      "content_hash": "e5a9d60b81cea03cd1436bed1bac325e2d62cdffc9a9e2721f67c4e1b3fb5abc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T05:36:03.351Z"
+      "persisted_at": "2026-11-20T01:23:29.949Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow-learnings",
@@ -241149,9 +241169,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fallow-rs-fallow-learnings",
       "repository": "fallow-rs-fallow-learnings",
       "source_version": "HEAD",
-      "content_hash": "bcd179f9f07e7c7d88e475513c29e7a754ee7af0361ac1d69186823f65742bcf",
+      "content_hash": "d4c84e5a4ea3980bc132e44f6f7bf6a4024dedd23de9add0af8272039f11634b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T13:57:07.587Z"
+      "persisted_at": "2026-11-20T01:23:30.104Z"
     },
     "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment": {
       "item_id": "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment",
@@ -249417,9 +249437,9 @@
       "title": "Agent Contract: materializeinc-materialize-learnings Autonomous Specialist Persona",
       "repository": "materializeinc-materialize-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc2a790d77f4a1fbc4cb2d569232a31b45a1831db196398214c3f9df2e334f1a",
+      "content_hash": "a727baa5192991272c3fbb5882538e60e8ab89b3cdd19e58172f65bd036296a6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T19:35:06.458Z"
+      "persisted_at": "2026-11-20T01:23:31.235Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize-lea",
@@ -249429,9 +249449,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for materializeinc-materialize-learnings",
       "repository": "materializeinc-materialize-learnings",
       "source_version": "HEAD",
-      "content_hash": "415aa04b2fb9d6457b1becee8980f70df7013ffe91fa50c73d7c993c00f390af",
+      "content_hash": "53256dff78f6e7b83f490044c0600dbb07770911a7a55f2270e81ad5045bf5d3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T19:35:06.600Z"
+      "persisted_at": "2026-11-20T01:23:31.372Z"
     },
     "learn-github-mlua-rs-mlua": {
       "learning_id": "learn-github-mlua-rs-mlua",
@@ -265491,10 +265511,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-research-knowledge-intelligence-materializeinc-materi.md",
       "title": "Research & Knowledge Intelligence: MaterializeInc/materialize Core Invariants",
       "repository": "MaterializeInc/materialize",
-      "source_version": "fdc9d4be",
-      "content_hash": "298fffd72facc2000022261de303735f6010950769672f8e2b37f40e429bc665",
+      "source_version": "116bffc3",
+      "content_hash": "a9f8acefbd0ef82206c564e93f8b2488b6e6769cad2785ad6b34c33d832ccb0c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T19:34:30.685Z"
+      "persisted_at": "2026-11-20T01:20:34.625Z"
     },
     "candidate_directive-docs-document-the-use-of-merman-for-mermaid-graphs": {
       "item_id": "candidate_directive-docs-document-the-use-of-merman-for-mermaid-graphs",
@@ -265576,9 +265596,9 @@
       "title": "Research & Knowledge Intelligence: materializeinc-materialize-learnings Core Invariants",
       "repository": "materializeinc-materialize-learnings",
       "source_version": "HEAD",
-      "content_hash": "bb306f1ce57dd9a668ecdd8aafb476c01e09f7f1dd9d13ea66f0efcd64cea4e8",
+      "content_hash": "1f066cdcfd190987e396a1a14e721eec82ba2c424f568dfc7e3e67628515b286",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T19:35:06.299Z"
+      "persisted_at": "2026-11-20T01:23:31.079Z"
     },
     "learn-github-solidjs-solid": {
       "learning_id": "learn-github-solidjs-solid",
@@ -299312,6 +299332,122 @@
       "content_hash": "343ec033babf1b3a5cb949cc5b619d3e737d70d0971a2d13c58523bbbbafe5ea",
       "domain_letter": "G",
       "persisted_at": "2026-11-20T01:12:48.279Z"
+    },
+    "rule-9486": {
+      "learning_id": "rule-9486",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9486,
+      "title": "Confirm performance regressions",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "116bffc3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T01:20:34.119Z"
+    },
+    "candidate_directive-confirm-performance-regressions": {
+      "item_id": "candidate_directive-confirm-performance-regressions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LJNC-confirm-performance-regressions.md",
+      "title": "Confirm performance regressions",
+      "repository": "MaterializeInc/materialize",
+      "source_version": "116bffc3",
+      "content_hash": "d8e2a2ef5651f276044dedb6f3d47a9165775ba0da246dc4cec402a9ff0b7b8b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T01:20:34.489Z"
+    },
+    "rule-9487": {
+      "learning_id": "rule-9487",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9487,
+      "title": "Pre-Tokenization Guarding of External Untrusted Parsers",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "202f6188",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T01:22:58.346Z"
+    },
+    "rule-9488": {
+      "learning_id": "rule-9488",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9488,
+      "title": "Dimensionally Isolated Baseline Slot Accounting",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "202f6188",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T01:22:58.346Z"
+    },
+    "rule-9489": {
+      "learning_id": "rule-9489",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9489,
+      "title": "Cascading Clean-up Invariants for Automated Refactoring Edits",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "202f6188",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T01:22:58.346Z"
+    },
+    "candidate_directive-pre-tokenization-guarding-of-external-untrusted-parsers": {
+      "item_id": "candidate_directive-pre-tokenization-guarding-of-external-untrusted-parsers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PANP-pre-tokenization-guarding-of-external-untrusted-parsers.md",
+      "title": "Pre-Tokenization Guarding of External Untrusted Parsers",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "317a68f8f48dc2d748afdfeccfe02cdd7f14a4162ead4562668ad3856a71aa58",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T01:23:29.463Z"
+    },
+    "candidate_directive-dimensionally-isolated-baseline-slot-accounting": {
+      "item_id": "candidate_directive-dimensionally-isolated-baseline-slot-accounting",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PANQ-dimensionally-isolated-baseline-slot-accounting.md",
+      "title": "Dimensionally Isolated Baseline Slot Accounting",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "736dbc06885c1f4ff9bdfc8550c974b4d8a6542bd96e38aeb0211adbcb8cc978",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T01:23:29.631Z"
+    },
+    "candidate_directive-cascading-clean-up-invariants-for-automated-refactoring-edits": {
+      "item_id": "candidate_directive-cascading-clean-up-invariants-for-automated-refactoring-edits",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PANQ-cascading-clean-up-invariants-for-automated-refactoring-edits.md",
+      "title": "Cascading Clean-up Invariants for Automated Refactoring Edits",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "61394287c6b958d8016da32ffbcf9f074d5b7ea6463f282aa27bd889c7e2b069",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T01:23:29.783Z"
+    },
+    "candidate_directive-workload-replay-confirm-performance-regressions": {
+      "item_id": "candidate_directive-workload-replay-confirm-performance-regressions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PBS3-workload-replay-confirm-performance-regressions.md",
+      "title": "workload-replay: Confirm performance regressions",
+      "repository": "materializeinc-materialize-learnings",
+      "source_version": "HEAD",
+      "content_hash": "deda514c12f82ab7560f2b58d7f9d80e71f0afb3607ef3ae3b335db8b2b71390",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T01:23:30.916Z"
     }
   },
   "ai-builder-brain": {

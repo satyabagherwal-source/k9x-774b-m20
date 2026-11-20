@@ -11427,3 +11427,6 @@
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T01:03:02.492Z` | `maziyarpanahi-openmed` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-BD3A2B21` [Domain H] | Yes (`099bd0f1...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T01:04:00.140Z` | `maziyarpanahi-openmed` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-2B1D449B` [Domain K] | Yes (`02c34552...`) |
 | `CYCLE-20261120-BHAU` | `2026-11-20T01:12:44.886Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9485` | Yes (`f545839c...`) |
+| `CYCLE-20261120-LJI1` | `2026-11-20T01:20:34.298Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9486` | Yes (`7c3ca376...`) |
+| `CYCLE-20261120-OMSL` | `2026-11-20T01:22:58.533Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9487, Rule 9488, Rule 9489` | Yes (`d69e3c87...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T01:23:29.245Z` | `fallow-rs-fallow` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F78059FE` [Domain H] | Yes (`4e10d831...`) |

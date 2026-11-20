@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T01:12:44.898Z",
+  "last_updated": "2026-11-20T01:22:58.545Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "750d1c8526e6aef003daab8e44542b6fee6fe204b848d7943f018be9f53d64e0",
-      "verified_at": "2026-11-18T13:56:51.409Z",
+      "content_hash": "d69e3c87f05979e8a2fc7dd75f6463057c69f5c636f791755be1e8be8817bf57",
+      "verified_at": "2026-11-20T01:22:58.544Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:56:51.409Z"
+      "last_updated": "2026-11-20T01:22:58.544Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "3d36fd7601b31d792958c2f796d1bcabe0c0c5f85d9f79f5c9e49b804e227459",
-      "verified_at": "2026-11-18T19:34:30.358Z",
+      "content_hash": "7c3ca3769baecac319375c69b100fa80fcacc9342690841985652f21095e1101",
+      "verified_at": "2026-11-20T01:20:34.308Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T19:34:30.358Z"
+      "last_updated": "2026-11-20T01:20:34.309Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",

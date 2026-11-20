@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T01:12:49.731Z",
-  "total_records": 2051,
+  "last_updated": "2026-11-20T01:23:32.142Z",
+  "total_records": 2052,
   "domains": {
     "A": {
       "total": 17,
@@ -1345,7 +1345,7 @@
       ]
     },
     "H": {
-      "total": 483,
+      "total": 484,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1829,7 +1829,8 @@
         "domain_intelligence-technical-construction-intelligence-lapce-lapce-learnings-core-invariants",
         "DOM-H-52039FE3",
         "DOM-H-1C8F2877",
-        "DOM-H-BD3A2B21"
+        "DOM-H-BD3A2B21",
+        "DOM-H-F78059FE"
       ]
     },
     "I": {
@@ -8784,8 +8785,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "c7c29208475cff4d7157892fc9314d5c443c16e89ba7b0e1e46cc85c2cb22550",
-      "created_at": "2026-11-19T23:54:24.352Z"
+      "content_hash": "66f6ad76817395387526935c1793820689c3a213e5621806ea35c37c31f73c4c",
+      "created_at": "2026-11-20T01:23:32.142Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -19187,8 +19188,8 @@
       "title": "Technical Construction Intelligence: fallow-rs/fallow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fallow-rs-fallow-technical-construction-intelligence-fallow-rs-fallow-core-invar.md",
       "repository": "fallow-rs/fallow",
-      "content_hash": "903fcaa6bc7fe1554869d12f6836304497f885bbf152450824ef08e7a62a6025",
-      "created_at": "2026-11-18T05:35:27.248Z"
+      "content_hash": "4cb7ea57f2eca2f8aca0a875da01f5b181c284c695d5269b90046cdc5a03b030",
+      "created_at": "2026-11-20T01:22:59.169Z"
     },
     "domain_intelligence-technical-construction-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants",
@@ -19205,8 +19206,8 @@
       "title": "Technical Construction Intelligence: fallow-rs-fallow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fallow-rs-fallow-learnings-technical-construction-intelligence-fallow-rs-fallow-.md",
       "repository": "fallow-rs-fallow-learnings",
-      "content_hash": "45ccf1f3cc0f2589929e16c1dba82d0f0e606ab18afb4cdbc4b65dc84a16f7d9",
-      "created_at": "2026-11-18T05:36:03.351Z"
+      "content_hash": "e5a9d60b81cea03cd1436bed1bac325e2d62cdffc9a9e2721f67c4e1b3fb5abc",
+      "created_at": "2026-11-20T01:23:29.949Z"
     },
     "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co": {
       "record_id": "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co",
@@ -25631,8 +25632,8 @@
       "title": "Research & Knowledge Intelligence: MaterializeInc/materialize Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-research-knowledge-intelligence-materializeinc-materi.md",
       "repository": "MaterializeInc/materialize",
-      "content_hash": "298fffd72facc2000022261de303735f6010950769672f8e2b37f40e429bc665",
-      "created_at": "2026-11-18T19:34:30.685Z"
+      "content_hash": "a9f8acefbd0ef82206c564e93f8b2488b6e6769cad2785ad6b34c33d832ccb0c",
+      "created_at": "2026-11-20T01:20:34.625Z"
     },
     "domain_intelligence-market-business-intelligence-mfontanini-presenterm-learnings-core-invariants": {
       "record_id": "domain_intelligence-market-business-intelligence-mfontanini-presenterm-learnings-core-invariants",
@@ -25658,8 +25659,8 @@
       "title": "Research & Knowledge Intelligence: materializeinc-materialize-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-learnings-research-knowledge-intelligence-materialize.md",
       "repository": "materializeinc-materialize-learnings",
-      "content_hash": "bb306f1ce57dd9a668ecdd8aafb476c01e09f7f1dd9d13ea66f0efcd64cea4e8",
-      "created_at": "2026-11-18T19:35:06.299Z"
+      "content_hash": "1f066cdcfd190987e396a1a14e721eec82ba2c424f568dfc7e3e67628515b286",
+      "created_at": "2026-11-20T01:23:31.079Z"
     },
     "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants",
@@ -34476,6 +34477,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-20T01:04:00.114Z"
+    },
+    "DOM-H-F78059FE": {
+      "record_id": "DOM-H-F78059FE",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "F",
+          "id": "design",
+          "name": "Design Intelligence"
+        }
+      ],
+      "title": "Parser Panic on Unreduced CSS Math in Percentage Contexts (BUG-FAL-01)",
+      "content": "Parsers compiled with `panic = \"abort\"` must be guarded by a token-level pre-validation phase that mirrors the parser's tokenizer (`cssparser`) to detect panic triggers before invoking AST construction.",
+      "content_hash": "4e10d8314aeaaa4d20baf8f89c850fb6a1523efc8875727014cbae716bbfb8f0",
+      "summary": "`lightningcss` makes an invariant assumption during AST construction that math expressions inside properties expecting `<percentage>` are re -> Parsers compiled with `panic = \"abort\"` must be guarded by a token-level pre-validation phase that mirrors the parser's tokenizer (`cssparse",
+      "provenance": {
+        "source_uri": "project://fallow-rs-fallow/fallow-rs-fallow-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T01:23:02.094Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (fallow-rs-fallow)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `c8202504`, PR `#4804`, unit test `a_math_function_that_panics_the_css_parser_skips_it`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "F"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T01:23:29.214Z"
     }
   }
 }
