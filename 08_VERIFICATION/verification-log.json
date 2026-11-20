@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-LPDY",
-    "timestamp": "2026-11-18T11:33:13.030Z",
-    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-    "contentHash": "82d20587c9cc6137deee8ab5aa1eac57ad5a7d18fa554cb7c1406541a5cfdf63",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-LV5E",
-    "timestamp": "2026-11-18T11:33:20.498Z",
-    "repository": "mattermost/mattermost",
-    "learningId": "learn-github-mattermost-mattermost",
-    "contentHash": "97d693fb4ebfe7f2d913dfeb6b69cbde1ce033ff53ef15ab7c8c06c972f8cbd1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-0VBD",
     "timestamp": "2026-11-18T11:45:00.553Z",
     "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "3b94e5dc820425cbc38a39c0c755bad56ca3fdd6a67c248b63c29c661533b641",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-951D",
+    "timestamp": "2026-11-20T09:34:48.769Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "cc019eca902a59378d40b518e50c664f7fe6be82ed5c4b679783d81b23e6d46a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-96FI",
+    "timestamp": "2026-11-20T09:34:50.574Z",
+    "repository": "StarTrail-org/LEANN",
+    "learningId": "learn-github-startrail-org-leann",
+    "contentHash": "84d5cccb2531fa0aabed7cf8a82bce71d7046ee8c682d257dd2aefd3476075d5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

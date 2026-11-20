@@ -11542,3 +11542,5 @@ Every entry in this ledger must capture:
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `1b712cf0` | Multi-dimensional audit evidence | 2026-11-20T08:38:43.460Z |
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `1e528630` | Multi-dimensional audit evidence | 2026-11-20T09:10:03.729Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ba512866` | Multi-dimensional audit evidence | 2026-11-20T09:10:36.355Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `2c8ae4e8` | Multi-dimensional audit evidence | 2026-11-20T09:34:48.772Z |
+| `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `5235a29d` | Multi-dimensional audit evidence | 2026-11-20T09:34:50.577Z |

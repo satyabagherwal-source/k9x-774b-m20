@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T09:10:41.739Z",
+  "last_updated": "2026-11-20T09:34:55.492Z",
   "total_records": 2102,
   "domains": {
     "A": {
@@ -17752,8 +17752,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "9f423d558d5c38a7cab563c562a034acdb1f04a0824c9d3492846ff4f08ad597",
-      "created_at": "2026-11-20T09:10:41.739Z"
+      "content_hash": "207e6edda1a9698888aca21f434ea39dbcf29ac7abcc74645a6b407f3f695b4b",
+      "created_at": "2026-11-20T09:34:55.492Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -19931,8 +19931,8 @@
       "title": "Architecture Intelligence: temporalio/temporal Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-temporalio-temporal-architecture-intelligence-temporalio-temporal-core-invariant.md",
       "repository": "temporalio/temporal",
-      "content_hash": "06711348c928ce700cc3d4d254970d47950d8aa747b12c0c52c033d50851eadb",
-      "created_at": "2026-11-19T05:24:31.924Z"
+      "content_hash": "d7fb6dafa3cd28e11772acdaed8542011b6538814a4b38ce3d35d6b6fb2f30e9",
+      "created_at": "2026-11-20T09:34:49.061Z"
     },
     "DOM-D-3FA9CA89": {
       "record_id": "DOM-D-3FA9CA89",
@@ -19991,8 +19991,8 @@
       "title": "Architecture Intelligence: temporalio-temporal-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-temporalio-temporal-learnings-architecture-intelligence-temporalio-temporal-lear.md",
       "repository": "temporalio-temporal-learnings",
-      "content_hash": "4a7934cbf7f8000c74fa41786c44209c571d0f521581c6ab02289ab1413caa31",
-      "created_at": "2026-11-19T05:24:40.169Z"
+      "content_hash": "4054d8fba16d532841b039e46d77f664817f1a5d21d5e4f193729db620895090",
+      "created_at": "2026-11-20T09:34:54.108Z"
     },
     "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants",
@@ -27521,8 +27521,8 @@
       "title": "Technical Construction Intelligence: StarTrail-org/LEANN Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-startrail-org-leann-technical-construction-intelligence-startrail-org-leann-core.md",
       "repository": "StarTrail-org/LEANN",
-      "content_hash": "6747720a3c178fb0c79286eb076ad122589644ac0750f2f05f3dc430161ae152",
-      "created_at": "2026-11-17T13:05:54.589Z"
+      "content_hash": "7416375023b1486b8fd20520cadc6e58bc7eb56e95441c1dd3dac5411693834a",
+      "created_at": "2026-11-20T09:34:50.859Z"
     },
     "domain_intelligence-technical-construction-intelligence-startrail-org-leann-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-startrail-org-leann-learnings-core-invariant",
@@ -27530,8 +27530,8 @@
       "title": "Technical Construction Intelligence: startrail-org-leann-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-startrail-org-leann-learnings-technical-construction-intelligence-startrail-org-.md",
       "repository": "startrail-org-leann-learnings",
-      "content_hash": "5980dc2c0b8782e1471c5fbcd61368f89cf54a9f3e4b0445269c84a78bd57e69",
-      "created_at": "2026-11-17T13:05:59.409Z"
+      "content_hash": "78c9fe697445c0ab7cd29a2e20691cd6d6a5974e47c9ba07d71e363ea48e8df8",
+      "created_at": "2026-11-20T09:34:54.733Z"
     },
     "domain_intelligence-technical-construction-intelligence-nitrojs-nitro-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nitrojs-nitro-core-invariants",

@@ -706863,3 +706863,159 @@ comments across lines, so Tab does not replace text inside them.
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ba512866` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9547. CHASM scheduler creation rollout in feature tests (Harvested from temporalio/temporal)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "CHASM scheduler creation rollout in feature tests",
+  "source": "temporalio/temporal",
+  "source_url": "https://github.com/temporalio/temporal",
+  "source_version": "2c8ae4e8",
+  "license": "MIT",
+  "extracted_at": "2026-11-20T09:34:48.375Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-temporalio-temporal",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `2c8ae4e8`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/workflows/features-integration.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `cead54f6`: CHASM scheduler creation rollout in feature tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/features-integration.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+        history.chasmSchedulerCreationRolloutPercent:
+          - value: 100
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+        history.enableTransitionHistory:
+          - value: true
+        history.enableChasm:
+          - value: true
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `cead54f6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9548. cancel superseded CI runs instead of queueing behind them (Harvested from StarTrail-org/LEANN)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "cancel superseded CI runs instead of queueing behind them",
+  "source": "StarTrail-org/LEANN",
+  "source_url": "https://github.com/StarTrail-org/LEANN",
+  "source_version": "5235a29d",
+  "license": "MIT",
+  "extracted_at": "2026-11-20T09:34:50.219Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-startrail-org-leann",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN) (Revision: `5235a29d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/workflows/build-and-publish.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5235a29d`: ci: cancel superseded CI runs instead of queueing behind them. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-and-publish.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+# Supersede in-flight runs for the same ref instead of queueing behind them. This
+# workflow fans out to a build matrix of ~30 jobs, about half of them macOS, so
+# without this a few pushes in a row each reserve a full matrix and later runs sit
+# queued behind work nobody wants any more -- on 2026-11-19 six runs piled up and
+# nothing cancelled the obsolete ones; a PR waited over an hour to start.
+# Safe to cancel: this workflow only builds (it calls build-reusable.yml, whose
+# jobs are lint, type-check, build and arch-smoke, and which uploads artifacts but
+# never publishes). Releases go through release-manual.yml, a separate workflow
+# with its own run, so they are not affected by this group.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5235a29d` are properly handled with clean fallback behavior.

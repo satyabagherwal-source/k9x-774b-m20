@@ -11509,3 +11509,5 @@
 | `CYCLE-20261120-90CG` | `2026-11-20T08:38:43.456Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9544` | Yes (`a384e31d...`) |
 | `CYCLE-20261120-DB64` | `2026-11-20T09:10:03.724Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9545` | Yes (`533fff1c...`) |
 | `CYCLE-20261120-E0CG` | `2026-11-20T09:10:36.352Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9546` | Yes (`3b94e5dc...`) |
+| `CYCLE-20261120-951D` | `2026-11-20T09:34:48.769Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9547` | Yes (`cc019eca...`) |
+| `CYCLE-20261120-96FI` | `2026-11-20T09:34:50.574Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9548` | Yes (`84d5cccb...`) |

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T13:05:59.186Z",
+  "timestamp": "2026-11-20T09:34:54.531Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-startrail-org-leann-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [startrail-org-leann-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T13:05:59.186Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T09:34:54.531Z`  
 > **Learning ID**: `LEARN-EVO-startrail-org-leann-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: F (Design Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence)
-- **Confidence Rating**: 65%
+- **Secondary Corroborating Domains**: F (Design Intelligence), J (Search & Distribution Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from startrail-org-leann-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source**: github ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
-> **Source Version**: `2ec581fc`  
+> **Source Version**: `5235a29d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T13:05:53.818Z  
+> **Timestamp**: 2026-11-20T09:34:49.813Z  
 > **Learning ID**: `learn-github-startrail-org-leann`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T13:05:53.811Z  
+> **Harvest Timestamp**: 2026-11-20T09:34:49.666Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: [MLsys2026 Best Paper]: https://arxiv.org/abs/2506.08276. RAG on Everything with LEANN. Enjoy 97% storage savings while running a fast, accurate, and 100% private RAG application on your personal device.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 13802 stars
+- **Stars / Engagement**: 13806 stars
 
 ---
 
@@ -2246,679 +2246,207 @@ class EmbeddingServerManager:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `60597ba5` (2026-11-17)
-**Commit Message**: fix: harden index artifact deserialization (#455)
+### Incident Patch 1: `5235a29d` (2026-11-20)
+**Commit Message**: ci: cancel superseded CI runs instead of queueing behind them (#470)
 
-* fix: restrict passage offset map deserialization
+No workflow in the repo declares a concurrency group, so an obsolete run
+keeps its place in the queue and keeps its runner reservation. Because
+this workflow fans out to a build matrix of ~30 jobs with about half on
+macOS, a few pushes in a row reserve several full matrices.
 
-* fix: harden remaining deserialization paths
+On 2026-11-19 that produced six queued CI runs -- two superseded main
+runs, a run on a branch whose PR had already merged, and a PR's own
+earlier run testing an approach that had been force-pushed away. A PR
+opened at 22:09 still had not started its build jobs an hour later,
+while the obsolete matrices worked through macOS runners.
 
-* fix: repair the three test breaks the hardening introduced
+Grouping on workflow+ref with cancel-in-progress fixes that: a new push
+to a ref cancels the run it replaces.
 
-Every build job on this PR failed. Three separate causes:
+Safe to cancel, which is why cancel-in-progress is unconditional rather
+than gated to pull_request: this workflow only builds. It calls
+build-reusable.yml, whose jobs are lint, type-check, build and
+arch-smoke; that workflow uploads artifacts but has no publish step.
+Releases run through release-manual.yml, a separate workflow with its own
+run, so this group does not touch them.
 
-- test_metadata_filtering mocks `builtins.open` and `pickle.load` to construct
-  a PassageManager without touching disk. Hardening moved offset loading to
-  `Path(path).open` and a custom Unpickler, so neither mock applied any more:
-  the real filesystem was hit, and `Path("")` normalizes to ".", so a missing
-  index raised IsADirectoryError where callers expect FileNotFoundError. The
-  tests now mock `leann.api.load_offset_map`, the seam that replaced
-  `pickle.load`, and `load_offset_map` uses builtin `open` so the empty-path
-  behaviour matches what it replaced.
+Co-authored-by: Claude O
 
-- test_flashlib_ivf_security imported `leann_backend_flashlib_ivf`
-  unconditionally. That backend needs CUDA/FlashLib and is not installed in
-  CI, so both new tests errored on import rather than skipping, as the
-  neighbouring torch guard already does.
-
-Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Aakash Suresh <[REDACTE
-
-**File**: `docs/CHANGELOG.md` (modified, +8/-0)
+**File**: `.github/workflows/build-and-publish.yml` (modified, +13/-0)
 ```diff
-@@ -89,6 +89,14 @@ fixes). Newest entries at the bottom.
- - `create_text_chunks(max_tokens_per_chunk=...)` now only shrinks `chunk_size`; it previously replaced it, growing 256-token chunks to ~1700 for unknown models.
- - Existing indexes are unchanged; rebuild with `--force` to re-chunk with the new sizes.
+@@ -7,6 +7,19 @@ on:
+     branches: [ main ]
+   workflow_dispatch:
  
-+## 2026-10-22: Harden passage offset loading
++# Supersede in-flight runs for the same ref instead of queueing behind them. This
++# workflow fans out to a build matrix of ~30 jobs, about half of them macOS, so
++# without this a few pushes in a row each reserve a full matrix and later runs sit
++# queued behind work nobody wants any more -- on 2026-11-19 six runs piled up and
++# nothing cancelled the obsolete ones; a PR waited over an hour to start.
++# Safe to cancel: this workflow only builds (it calls build-reusable.yml, whose
++# jobs are lint, type-check, build and arch-smoke, and which uploads artifacts but
++# never publishes). Releases go through release-manual.yml, a separate workflow
++# with its own run, so they are not affected by this group.
++concurrency:
++  group: ${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: true
 +
-+- Restricted passage offset-map unpickling to the primitive dictionary shape LEANN writes.
-+- Rejected crafted `.passages.idx` files before a searcher or incremental update can continue.
-+- Added regression coverage for the searcher entry point, primitive compatibility, and malformed input.
-+- Restricted sync snapshots and embeddings pickles to their expected object graphs.
-+- Loaded FlashLib IVF state dictionaries with PyTorch's safe weights-only loader.
-+
- ## 2026-10-23: Refuse to load a custom encoder as a vanilla BertModel
- 
- - `jinaai/jina-embeddings-v2-base-code` (and any encoder that declares its
-```
-
-**File**: `packages/leann-backend-flashlib-ivf/leann_backend_flashlib_ivf/flashlib_ivf_backend.py` (modified, +1/-1)
-```diff
-@@ -111,7 +111,7 @@ def _load_index(path: Path, device: str = "cuda"):
-     import torch
- 
-     IvfFlatIndex, _, _ = _import_flashlib()
--    state = torch.load(str(path), map_location=device, weights_only=False)
-+    state = torch.load(str(path), map_location=device, weights_only=True)
-     kwargs: dict[str, Any] = {f: state[f].to(device) for f in _TENSOR_FIELDS}
-     for f in _SCALAR_FIELDS:
-         kwargs[f] = state[f]
-```
-
-**File**: `packages/leann-core/src/leann/api.py` (modified, +48/-21)
-```diff
-@@ -23,12 +23,54 @@
- 
- from .chat import get_llm
- from .embedding_server_manager import EmbeddingServerManager
-+from .index_offsets import load_offset_map
- from .interface import LeannBackendFactoryInterface
- from .metadata_filter import MetadataFilterEngine
- from .registry import BACKEND_REGISTRY, autodiscover_backends
- 
- logger = logging.getLogger(__name__)
- 
-+_EMBEDDINGS_PICKLE_GLOBALS = {
-+    ("numpy", "dtype"),
-+    ("numpy", "ndarray"),
-+    ("numpy.core.multiarray", "_reconstruct"),
-+    ("numpy.core.multiarray", "scalar"),
-+    ("numpy.core.numeric", "_frombuffer"),
-+    ("numpy._core.multiarray", "_reconstruct"),
-+    ("numpy._core.multiarray", "scalar"),
-+    ("numpy._core.numeric", "_frombuffer"),
-+}
-+
-+
-+class _EmbeddingsUnpickler(pickle.Unpickler):
-+    def find_class(self, module: str, name: str):
-+        if (module, name) in _EMBEDDINGS_PICKLE_GLOBALS:
-+            return super().find_class(module, name)
-+        raise pickle.UnpicklingError(
-+            f"Global object {module}.{name} is not allowed in an embeddings file"
-+        )
-+
-+    def persistent_load(self, pid):
-+        raise pickle.UnpicklingError("Persistent references are not allowed in an embeddings file")
-+
-+
-+def _load_embeddings_pickle(path: str) -> tuple[Any, np.ndarray]:
-+    with open(path, "rb") as handle:
-+        data = _EmbeddingsUnpickler(handle).load()
-+
-+    if not isinstance(data, tuple) or len(data) != 2:
-+        raise ValueError(
-+            f"Invalid embeddings file format. Expected tuple with 2 elements, got {type(data)}"
-+        )
-+
-+    ids, embeddings = data
-+    if not isinstance(embeddings, np.ndarray):
-+        raise ValueError(f"Expected embeddings to be numpy array, got {type(embeddings)}")
-+    if embeddings.dtype.kind in {"O", "V"}:
-+        raise ValueError("Embeddings must use a numeric dtype")
-+    return ids, embeddings
-+
-+
- # Passage ID schemes recorded in <index>.meta.json["passage_id_scheme"].
- # - "sequential": today's default; IDs are str(insertion_index) (api.py:add_text).
- # - "content-hash": planned in #329; IDs are sha256(text)[:16], stable across
-@@ -238,11 +280,10 @@ def _pick_existing(cands: list[Path]) -> str:
-             if not Path(index_file).exists():
-                 raise FileNotFoundError(f"Passage index file not found: {index_file}")
- 
--            with open(index_file, "rb") as f:
--                offset_map: dict[str, int] = pickle.load(f)
--                self.offset_maps[passage_file] = offset_map
--                self.passage_files[passage_file] = passage_file
--                self._total_count += len(offset_map)
-+            offset_map = load_offset_map(index_file)
-+            self.offset_maps[passage_file] = offset_map
-+            self.passage_files[passage_file] = passage_file
-+            self._total_count += len(offset_map)
- 
-     def get_passage(self, passage_id: str) -> dict[str, Any]:
-         # Fast path: check each shard map (there are typically few shards).
-@@ -849,20 +890,7 @@ def build_index_from_embeddings(self, index_path: str, embeddings_file: str):
-             index_path: Path where the index will be saved
-             embeddings_file: Path to pickle file containing (ids, embeddings) tuple
-         """
--        # Load pre-computed embeddings
--        with open(embeddings_file, "rb") as f:
--            data = pickle.load(f)
--
--        if not isinstance(data, tuple) or len(data) != 2:
--            raise ValueError(
--                f"Invalid embeddings file format. Expected tuple with 2 elements, got {type(data)}"
--            )
--
--        ids, embeddings = data
--
--        if not isinstance(embeddings, np.ndarray):
--            raise ValueError(f"Expected embeddings to be numpy array, got {type(embeddings)}")
--
-+        ids, embeddings = _load_embeddings_pickle(embeddings_file)
-         self.build_index_from_arrays(index_path, ids, embeddings)
- 
-     @staticmethod
-@@ -920,8 +948,7 @@ def update_index(self, index_path: str, remove_passage_ids: Optional[list[str]]
-                 f"Index was built with backend '{backend_name}', cannot update with '{self.backend_name}'."
-             )
- 
--        with open(offset_file, "rb") as f:
--            offset_map: dict[str, int] = pickle.load(f)
-+        offset_map = load_offset_map(offset_file)
-         existing_ids = set(offset_map.keys())
- 
-         # IVF: optional delete (for reindex / file-change: remove then re-insert)
-```
-
-**File**: `packages/leann-core/src/leann/cli.py` (modified, +3/-4)
-```diff
-@@ -19,6 +19,7 @@
- 
- from .api import Fts5BM25Index, LeannBuilder, LeannChat, LeannSearcher
- from .embedding_server_manager import EmbeddingServerManager
-+from .index_offsets import load_offset_map
- from .interactive_utils import create_cli_session
- from .registry import DEFAULT_INDEX_SCAN_DEPTH, iter_index_meta_files, register_project_directory
- from .settings import (
-@@ -2260,8 +2261,7 @@ def _incremental_ivf_remove_only(
-         offset_file = index_dir / "documents.leann.passages.idx"
-         live_ids: set[str] | None = None
-         if offset_file.exists():
--            with open(offset_file, "rb") as f:
--                live_ids = set(pickle.load(f).keys())
-+            live_ids = set(load_offset_map(offset_file))
-         chunk_ids_by_file = self._load_chunk_ids_by_file(passages_file, live_ids=live_ids)
-         roots = self._load_sync_roots(index_dir)
-         ids_to_remove: list[str] = []
-@@ -2307,8 +2307,7 @@ def _incremental_ivf_update(
-         offset_file = index_dir / "documents.leann.passages.idx"
-         live_ids: set[str] | None = None
-         if offset_file.exists():
--            with open(offset_file, "rb") as f:
--                live_ids = set(pickle.load(f).keys())
-+            live_ids = set(load_offset_map(offset_file))
-         chunk_ids_by_file = (
-             self._load_chunk_ids_by_file(passages_file, live_ids=live_ids)
-             if passages_file.exists()
-```
-
-**File**: `packages/leann-core/src/leann/index_offsets.py` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+import pickle
-+from pathlib import Path
-+
-+
-+class _OffsetMapUnpickler(pickle.Unpickler):
-+    """Deserialize only the primitive container used by legacy offset maps."""
-+
-+    def find_class(self, module: str, name: str):
-+        raise pickle.UnpicklingError(
-+            f"Global object {module}.{name} is not allowed in a passage offset map"
-+        )
-+
-+    def persistent_load(self, pid):
-+        raise pickle.UnpicklingError(
-+            "Persistent references are not allowed in a passage offset map"
-+        )
-+
-+
-+def load_offset_map(path: str | Path) -> dict[str, int]:
-+    # Builtin open, not Path.open: Path("") normalizes to ".", which would turn the
-+    # FileNotFoundError callers rely on for a missing index into IsADirectoryError.
-+    with open(path, "rb") as handle:
-+        data = _OffsetMapUnpickler(handle).load()
-+
-+    if not isinstance(data, dict):
-+        raise pickle.UnpicklingError("Passage offset map must be a dictionary")
-+
-+    offsets: dict[str, int] = {}
-+    for key, offset in data.items():
-+        if isinstance(key, bool) or not isinstance(key, (str, int)):
-+            raise pickle.UnpicklingError("Passage offset map keys must be strings or integers")
-+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
-+            raise pickle.UnpicklingError("Passage offset map values must be non-negative integers")
-+        normalized_key = str(key)
-+        if normalized_key in offsets:
-+            raise pickle.UnpicklingError("Passage offset map contains duplicate passage IDs")
-+        offsets[normalized_key] = offset
-+    return offsets
-```
-
-**File**: `packages/leann-core/src/leann/sync.py` (modified, +21/-1)
-```diff
-@@ -175,6 +175,23 @@ def compare_with(self, other: "MerkleTree"):
-         return added, removed, modified
- 
- 
-+class _SnapshotUnpickler(pickle.Unpickler):
-+    _ALLOWED = {
-+        ("leann.sync", "MerkleTree"),
-+        ("leann.sync", "MerkleTreeNode"),
-+    }
-+
-+    def find_class(self, module: str, name: str):
-+        if (module, name) in self._ALLOWED:
-+            return super().find_class(module, name)
-+        raise pickle.UnpicklingError(
-+            f"Global object {module}.{name} is not allowed in a sync snapshot"
-+        )
-+
-+    def persistent_load(self, pid):
-+        raise pickle.UnpicklingError("Persistent references are not allowed in a sync snapshot")
-+
-+
- class FileSynchronizer:
-     def __init__(
-         self,
-@@ -298,7 +315,10 @@ def save_snapshot(self):
-     def load_snapshot(self):
-         try:
-             with open(self.snapshot_path, "rb") as f:
--                self.tree = pickle.load(f)
-+                tree = _SnapshotUnpickler(f).load()
-+            if not isinstance(tree, MerkleTree):
-+                raise pickle.UnpicklingError("Sync snapshot must contain a MerkleTree")
-+            self.tree = tree
-         except FileNotFoundError:
-             self.tree = None
-         except (
-```
-
-**File**: `tests/test_flashlib_ivf_security.py` (added, +48/-0)
-```diff
-@@ -0,0 +1,48 @@
-+import pickle
-+from pathlib import Path
-+
-+import pytest
-+
-+torch = pytest.importorskip("torch")
-+pytest.importorskip("leann_backend_flashlib_ivf")
-+
-+
-+class _MarkerPayload:
-+    def __init__(self, marker: Path):
-+        self.marker = marker
-+
-+    def __reduce__(self):
-+        return Path.write_text, (self.marker, "executed")
-+
-+
-+def test_flashlib_index_load_rejects_pickled_callable(tmp_path: Path, monkeypatch) -> None:
-+    from leann_backend_flashlib_ivf import flashlib_ivf_backend
-+
-+    marker = tmp_path / "executed"
-+    archive = tmp_path / "crafted.flashlib_ivf.pt"
-+    torch.save(_MarkerPayload(marker), archive)
-+    monkeypatch.setattr(flashlib_ivf_backend, "_import_flashlib", lambda: (dict, None, None))
-+
-+    with pytest.raises(pickle.UnpicklingError):
-+        flashlib_ivf_backend._load_index(archive, device="cpu")
-+
-+    assert not marker.exists()
-+
-+
-+def test_flashlib_index_load_accepts_state_dict(tmp_path: Path, monkeypatch) -> None:
-+    from leann_backend_flashlib_ivf import flashlib_ivf_backend
-+
-+    class StubIndex:
-+        def __init__(self, **kwargs):
-+            self.__dict__.update(kwargs)
-+
-+    state = {field: torch.zeros(1) for field in flashlib_ivf_backend._TENSOR_FIELDS}
-+    state.update(dict.fromkeys(flashlib_ivf_backend._SCALAR_FIELDS, 1))
-+    archive = tmp_path / "valid.flashlib_ivf.pt"
-+    torch.save(state, archive)
-+    monkeypatch.setattr(flashlib_ivf_backend, "_import_flashlib", lambda: (StubIndex, None, None))
-+
-+    index = flashlib_ivf_backend._load_index(archive, device="cpu")
-+
-+    assert isinstance(index, StubIndex)
-+    assert index.nlist == 1
-```
-
-**File**: `tests/test_metadata_filtering.py` (modified, +3/-3)
-```diff
-@@ -312,7 +312,7 @@ def test_search_result_filtering(self):
-         """Test filtering SearchResult objects."""
-         # Create a real PassageManager instance just for the filtering method
-         # We'll mock the file operations
--        with patch("builtins.open"), patch("json.loads"), patch("pickle.load"):
-+        with patch("builtins.open"), patch("json.loads"), patch("leann.api.load_offset_map"):
-             pm = PassageManager([{"type": "jsonl", "path": "test.jsonl"}])
- 
-             filters = {"chapter": {"<=": 5}}
-@@ -324,15 +324,15 @@ def test_search_result_filtering(self):
- 
-     def test_filter_search_results_no_filters(self):
-         """Test that None filters return all results."""
--        with patch("builtins.open"), patch("json.loads"), patch("pickle.load"):
-+        with patch("builtins.open"), patch("json.loads"), patch("leann.api.load_offset_map"):
-             pm = PassageManager([{"type": "jsonl", "path": "test.jsonl"}])
- 
-             result = pm.filter_search_results(self.search_results, None)
-             assert len(result) == len(self.search_results)
- 
-     def test_filter_maintains_search_result_type(self):
-         """Test that filtering returns SearchResult objects."""
--        with patch("builtins.open"), patch("json.loads"), patch("pickle.load"):
-+        with patch("builtins.open"), patch("json.loads"), patch("leann.api.load_offset_map"):
-             pm = PassageManager([{"type": "jsonl", "path": "test.jsonl"}])
- 
-             filters = {"character": {"==": "Alice"}}
+ jobs:
+   build:
+     uses: ./.github/workflows/build-reusable.yml
 ```
 
 ---
 
-### Incident Patch 2: `e0e6b24e` (2026-11-17)
-**Commit Message**: fix(hnsw): honor graph_degree, complexity and num_threads build options (#450)
+### Incident Patch 2: `fcc12b75` (2026-11-19)
+**Commit Message**: ci: drop the retired macos-14 runner, and move the wheel floor with it (#468)
 
-`leann build --graph-degree/--complexity/--num-threads` and the RAG
-apps pass graph_degree, complexity and num_threads to LeannBuilder, but
-HNSWBuilder only read M and efConstruction, so on the default backend
-the options did nothing: --graph-degree 8 still produced an M=32 graph.
+GitHub retired the macos-14 runner image, so those five build jobs stopped
+being scheduled. They were cancelled rather than failed, which
+`gh pr checks` reports as a failure -- every pull request showed five red
+jobs whose code was fine. macos-14 last passed 2026-11-03.
 
-HNSWBuilder now maps graph_degree to M and complexity to
-efConstruction (explicit M/efConstruction still win), and builds the
-graph with num_threads OpenMP threads, restoring the previous setting
-afterwards. Without num_threads it uses every core on Linux: leann pins
-OpenMP to one thread there so that recompute searches don't hang
-(#208), but graph construction makes no ZMQ calls, and the pin made
-builds single-threaded whenever no CPU embedding had raised torch's
-shared thread count first (GPU embedding, build_index_from_arrays).
+The 14.0 deployment target cannot simply move to another runner. On a
+macos-15 runner the Homebrew bottles carry a 15.0 minimum themselves, and
+delocate refuses to mislabel the wheel:
 
-The CLI no longer sends its own defaults (32/64/1) when the flags are
-omitted, so each backend keeps its defaults: HNSW stays at M=32 /
-efConstruction=200, DiskANN at 32/64 as before, and DiskANN builds get
-its default of 8 threads instead of the CLI's 1.
+  DelocationError: Library dependencies do not satisfy target MacOS
+  version 14.0:
+    libomp.dylib has a minimum target of 15.0
+    libzmq.5.dylib has a minimum target of 15.0
+    libsodium.26.dylib has a minimum target of 15.0
 
-**File**: `README.md` (modified, +3/-2)
+That is the same constraint the matrix already recorded for
+macos-15-intel ("system libraries require it"). Preserving the 14.0 floor
+would mean building those three dependencies from source on every macOS
+job, so the floor moves instead.
+
+This is a breaking change for macOS 14 on Apple Silicon: releases after
+0.3.9 ship no macosx_14_0_arm64 wheel. Announced in the README next to
+the existing Linux note, and in docs/CHANGELOG.md,
+
+**File**: `.github/workflows/build-reusable.yml` (modified, +6/-19)
 ```diff
-@@ -1158,8 +1158,9 @@ leann build INDEX_NAME --docs DIRECTORY|FILE [DIRECTORY|FILE ...] [OPTIONS]
- Options:
-   --backend {hnsw,diskann}     Backend to use (default: hnsw)
-   --embedding-model MODEL      Embedding model (default: facebook/contriever)
--  --graph-degree N             Graph degree (default: 32)
--  --complexity N               Build complexity (default: 64)
-+  --graph-degree N             Graph degree (default: backend's own; HNSW M=32, DiskANN 32)
-+  --complexity N               Build complexity (default: backend's own; HNSW efConstruction=200, DiskANN 64)
-+  --num-threads N              Build threads (default: backend's own; HNSW all cores on Linux, DiskANN 8)
-   --force                      Force rebuild existing index
-   --compact / --no-compact     Use compact storage (default: true). Must be `no-compact` for `no-recompute` build.
-   --recompute / --no-recompute Enable recomputation (default: true)
+@@ -96,16 +96,12 @@ jobs:
+             python: '3.13'
+           - os: ubuntu-22.04-arm
+             python: '3.14'
+-          - os: macos-14
+-            python: '3.10'
+-          - os: macos-14
+-            python: '3.11'
+-          - os: macos-14
+-            python: '3.12'
+-          - os: macos-14
+-            python: '3.13'
+-          - os: macos-14
+-            python: '3.14'
++          # macos-14 removed: GitHub retired the runner image. Its jobs were cancelled
++          # rather than scheduled, which `gh pr checks` reports as a failure on every PR.
++          # A 14.0 deployment target is not reachable from a macos-15 runner either --
++          # the Homebrew bottles there (libomp, libzmq, libsodium) have a 15.0 minimum, so
++          # delocate refuses to tag the wheel 14.0. The prebuilt arm64 floor is therefore
++          # macOS 15; macOS 14 users build from source or pin leann==0.3.9.
+           - os: macos-15
+             python: '3.10'
+           - os: macos-15
+@@ -391,8 +387,6 @@ jobs:
+             # macos-15-intel runs macOS 15, so target 15.0 (system libraries require it)
+             if [[ "${{ matrix.os }}" == "macos-15-intel" ]]; then
+               export MACOSX_DEPLOYMENT_TARGET=15.0
+-            elif [[ "${{ matrix.os }}" == macos-14* ]]; then
+-              export MACOSX_DEPLOYMENT_TARGET=14.0
+             elif [[ "${{ matrix.os }}" == macos-15* ]]; then
+               export MACOSX_DEPLOYMENT_TARGET=15.0
+             elif [[ "${{ matrix.os }}" == macos-26* ]]; then
+@@ -414,8 +408,6 @@ jobs:
+             # macos-15-intel runs macOS 15, so target 15.0 (system libraries require it)
+             if [[ "${{ matrix.os }}" == "macos-15-intel" ]]; then
+               export MACOSX_DEPLOYMENT_TARGET=15.0
+-            elif [[ "${{ matrix.os }}" == macos-14* ]]; then
+-              export MACOSX_DEPLOYMENT_TARGET=14.0
+             elif [[ "${{ matrix.os }}" == macos-15* ]]; then
+               export MACOSX_DEPLOYMENT_TARGET=15.0
+             elif [[ "${{ matrix.os }}" == macos-26* ]]; then
+@@ -476,9 +468,6 @@ jobs:
+           if [[ "${{ matrix.os }}" == "macos-15-intel" ]]; then
+             HNSW_TARGET="15.0"
+             DISKANN_TARGET="15.0"
+-          elif [[ "${{ matrix.os }}" == macos-14* ]]; then
+-            HNSW_TARGET="14.0"
+-            DISKANN_TARGET="14.0"
+           elif [[ "${{ matrix.os }}" == macos-15* ]]; then
+             HNSW_TARGET="15.0"
+             DISKANN_TARGET="15.0"
+@@ -605,8 +594,6 @@ jobs:
+             # macos-15-intel runs macOS 15, so target 15.0 (system libraries require it)
+             if [[ "${{ matrix.os }}" == "macos-15-intel" ]]; then
+               export MACOSX_DEPLOYMENT_TARGET=15.0
+-            elif [[ "${{ matrix.os }}" == macos-14* ]]; then
+-              export MACOSX_DEPLOYMENT_TARGET=14.0
+             elif [[ "${{ matrix.os }}" == macos-15* ]]; then
+               export MACOSX_DEPLOYMENT_TARGET=15.0
+             elif [[ "${{ matrix.os }}" == macos-26* ]]; then
 ```
 
-**File**: `packages/leann-backend-hnsw/leann_backend_hnsw/hnsw_backend.py` (modified, +20/-3)
+**File**: `README.md` (modified, +2/-0)
 ```diff
-@@ -1,5 +1,6 @@
- import logging
- import os
-+import platform
- import shutil
- import time
- from pathlib import Path
-@@ -51,8 +52,18 @@ def __init__(self, **kwargs):
-         self.build_params = kwargs.copy()
-         self.is_compact = self.build_params.setdefault("is_compact", True)
-         self.is_recompute = self.build_params.setdefault("is_recompute", True)
--        self.M = self.build_params.setdefault("M", 32)
--        self.efConstruction = self.build_params.setdefault("efConstruction", 200)
-+        # graph_degree/complexity are the backend-neutral names that `leann build` and the
-+        # apps pass; FAISS's own M/efConstruction take precedence when given explicitly.
-+        self.M = self.build_params.setdefault("M", self.build_params.get("graph_degree", 32))
-+        self.efConstruction = self.build_params.setdefault(
-+            "efConstruction", self.build_params.get("complexity", 200)
-+        )
-+        # Graph construction makes no ZMQ calls, so on Linux it uses every core by default
-+        # even though leann pins OpenMP to one thread there for recompute searches (#208).
-+        # Elsewhere the process-wide OpenMP setting applies unless num_threads is given.
-+        self.num_threads = self.build_params.get("num_threads") or (
-+            os.cpu_count() if platform.system() == "Linux" else None
-+        )
-         self.distance_metric = self.build_params.setdefault("distance_metric", "mips")
-         self.dimensions = self.build_params.get("dimensions")
-         if not self.is_recompute and self.is_compact:
-@@ -86,7 +97,13 @@ def build(self, data: np.ndarray, ids: list[str], index_path: str, **kwargs):
-         if self.distance_metric.lower() == "cosine":
-             data = normalize_l2(data)
+@@ -118,6 +118,8 @@ uv pip install leann
+ # CPU-only (Linux): use the `cpu` extra (e.g. `leann[cpu]`)
+ ```
  
--        index.add(data.shape[0], faiss.swig_ptr(data))
-+        omp_threads = faiss.omp_get_max_threads()
-+        if self.num_threads:
-+            faiss.omp_set_num_threads(int(self.num_threads))
-+        try:
-+            index.add(data.shape[0], faiss.swig_ptr(data))
-+        finally:
-+            faiss.omp_set_num_threads(omp_threads)
-         index_file = index_dir / f"{index_prefix}.index"
-         faiss.write_index(index, str(index_file))
++> **macOS note:** prebuilt wheels require **macOS 15 or later** on Apple Silicon (`macosx_15_0_arm64`), and macOS 15 or later on Intel. Releases after `0.3.9` no longer ship a `macosx_14_0_arm64` wheel, because GitHub retired the macOS 14 runner and the replacement runner's system libraries (`libomp`, `libzmq`, `libsodium`) carry a 15.0 minimum, so a 14.0-tagged wheel cannot honestly be produced. On macOS 14, either pin the last release that ships one, `uv pip install 'leann==0.3.9'`, or build from source (below). `0.3.9` has `macosx_14_0_arm64` wheels for Python 3.10 through 3.14.
++
+ > **Linux note:** if a later `leann build` fails with `Security Violation [pathsec.open]: refusing multiply-linked file`, reinstall with `UV_LINK_MODE=copy uv pip install --reinstall ...` (or `UV_LINK_MODE=copy uv tool install --reinstall ...`) - uv's default hardlink installs trip nltk's hardened file loader bundled with llama-index. If it instead fails with `Resource 'stopwords' not found` after `NLTK will not read data from ...` warnings, the environment is group-writable: `export NLTK_DATA=` a private directory (`mkdir -m 700`). Details in the [FAQ](docs/faq.md).
  
+ <!--
 ```
 
-**File**: `packages/leann-core/src/leann/cli.py` (modified, +29/-12)
+**File**: `docs/CHANGELOG.md` (modified, +28/-2)
 ```diff
-@@ -400,12 +400,23 @@ def add_embedding_args(target_parser: argparse.ArgumentParser) -> None:
-             help="Force full rebuild of existing index (without this, build does incremental update: add new files only)",
-         )
-         build_parser.add_argument(
--            "--graph-degree", type=int, default=32, help="Graph degree (default: 32)"
-+            "--graph-degree",
-+            type=int,
-+            default=None,
-+            help="Graph degree (default: backend's own; HNSW M=32, DiskANN 32)",
-         )
-         build_parser.add_argument(
--            "--complexity", type=int, default=64, help="Build complexity (default: 64)"
-+            "--complexity",
-+            type=int,
-+            default=None,
-+            help="Build complexity (default: backend's own; HNSW efConstruction=200, DiskANN 64)",
-+        )
-+        build_parser.add_argument(
-+            "--num-threads",
-+            type=int,
-+            default=None,
-+            help="Build threads (default: backend's own; HNSW all cores on Linux, DiskANN 8)",
-         )
--        build_parser.add_argument("--num-threads", type=int, default=1)
-         build_parser.add_argument(
-             "--compact",
-             action=argparse.BooleanOptionalAction,
-@@ -2032,9 +2043,9 @@ def _build_config_from_args(
-             "ast_chunk_size": int(args.ast_chunk_size),
-             "ast_chunk_overlap": int(args.ast_chunk_overlap),
-             "ast_fallback_traditional": bool(args.ast_fallback_traditional),
--            "graph_degree": int(args.graph_degree),
--            "complexity": int(args.complexity),
--            "num_threads": int(args.num_threads),
-+            "graph_degree": args.graph_degree,
-+            "complexity": args.complexity,
-+            "num_threads": args.num_threads,
-             "compact": bool(args.compact),
-             "recompute": bool(args.recompute),
-         }
-@@ -2186,6 +2197,16 @@ def _existing_index_id_scheme(self, index_path: str) -> Optional[str]:
-         except Exception:
-             return None
- 
-+    @staticmethod
-+    def _backend_build_options(args) -> dict[str, Any]:
-+        """--graph-degree/--complexity/--num-threads when given; otherwise each backend keeps
-+        its own default."""
-+        return {
-+            key: value
-+            for key in ("graph_degree", "complexity", "num_threads")
-+            if (value := getattr(args, key)) is not None
-+        }
+@@ -238,5 +238,31 @@ Triage pass over the open PR queue. Entries for merges that did not carry their
+ `Build macos-14 Python 3.10`-`3.14` is cancelled on every pull request, because GitHub has
+ retired the `macos-14` runner image. The jobs are cancelled rather than failed — three of
+ them one second after starting — so `gh pr checks` reports them as failures on PRs whose
+-code is fine. macos-14 last passed on 3 November (#460). `build-reusable.yml:99-107` still
+-requests it; the matrix needs to drop macos-14 or move to a supported image.
++code is fine. macos-14 last passed on 3 November (#460). Resolved below on 2026-11-19;
++moving the target to another runner turned out not to be possible, so the runner was
++dropped and the wheel floor moved with it.
 +
-     def _make_incremental_builder(self, args) -> "LeannBuilder":
-         # For incremental updates, the existing index's scheme wins. Otherwise
-         # IDs would mix schemes within one index, which breaks lookups.
-@@ -2201,11 +2222,9 @@ def _make_incremental_builder(self, args) -> "LeannBuilder":
-             embedding_model=args.embedding_model,
-             embedding_mode=args.embedding_mode,
-             embedding_options=self._build_embedding_options(args) or None,
--            graph_degree=args.graph_degree,
--            complexity=args.complexity,
-+            **self._backend_build_options(args),
-             is_compact=args.compact,
-             is_recompute=args.recompute,
--            num_threads=args.num_threads,
-             passage_id_scheme=scheme,
-         )
- 
-@@ -2803,11 +2822,9 @@ def _normalize_model_name(name: str) -> str:
-             embedding_model=args.embedding_model,
-             embedding_mode=args.embedding_mode,
-             embedding_options=self._build_embedding_options(args) or None,
--            graph_degree=args.graph_degree,
--            complexity=args.complexity,
-+            **self._backend_build_options(args),
-             is_compact=args.compact,
-             is_recompute=args.recompute,
--            num_threads=args.num_threads,
-             passage_id_scheme=getattr(args, "id_scheme", "sequential"),
-         )
- 
-```
-
-**File**: `tests/test_hnsw_build_params.py` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+"""`leann build --graph-degree/--complexity/--num-threads` must reach the HNSW builder too."""
++## 2026-11-19: Prebuilt macOS wheels now require macOS 15 (breaking)
 +
-+import os
-+import platform
++- **Releases after `0.3.9` do not ship a `macosx_14_0_arm64` wheel.** The prebuilt Apple
++  Silicon floor is macOS 15. On macOS 14, pin `leann==0.3.9` — which does ship that wheel for
++  Python 3.10 through 3.14 — or build from source.
++- Why: GitHub retired the `macos-14` runner image, so those five build jobs stopped being
++  scheduled. They were *cancelled* rather than failed, which `gh pr checks` reports as a
++  failure, so every pull request showed five red jobs whose code was fine.
++- Why the target could not simply move to another runner: a 14.0 deployment target is not
++  reachable from a `macos-15` runner, because the Homebrew bottles installed there carry a
++  15.0 minimum themselves. `delocate` refuses the wheel rather than mislabel it:
 +
-+import numpy as np
-+import pytest
-+from leann.cli import LeannCLI
++  ```
++  DelocationError: Library dependencies do not satisfy target MacOS version 14.0:
++    libomp.dylib has a minimum target of 15.0
++    libzmq.5.dylib has a minimum target of 15.0
++    libsodium.26.dylib has a minimum target of 15.0
++  ```
 +
-+
-+def _build_and_read_params(tmp_path, **build_kwargs) -> tuple[int, int]:
-+    """Build a small HNSW index and return the (M, efConstruction) stored in it."""
-+    pytest.importorskip("leann_backend_hnsw")
-+    from leann_backend_hnsw import faiss
-+    from leann_backend_hnsw.hnsw_backend import HNSWBuilder
-+
-+    data = np.random.default_rng(0).standard_normal((64, 8)).astype(np.float32)
-+    builder = HNSWBuilder(is_recompute=False, is_compact=False, **build_kwargs)
-+    builder.build(data, [str(i) for i in range(len(data))], str(tmp_path / "params.leann"))
-+    index = faiss.read_index(str(tmp_path / "params.index"))
-+    # FAISS gives level 0 of an HNSW graph 2*M neighbor slots.
-+    return index.hnsw.nb_neighbors(0) // 2, index.hnsw.efConstruction
-+
-+
-+@pytest.mark.parametrize(
-+    ("build_kwargs", "expected"),
-+    [
-+        ({}, (32, 200)),
-+        ({"graph_degree": 8, "complexity": 16}, (8, 16)),
-+        ({"graph_degree": 8, "complexity": 16, "M": 12, "efConstruction": 40}, (12, 40)),
-+    ],
-+)
-+def test_hnsw_builder_honors_graph_build_options(tmp_path, build_kwargs, expected):
-+    assert _build_and_read_params(tmp_path, **build_kwargs) == expected
-+
-+
-+@pytest.mark.parametrize(
-+    ("build_kwargs", "expected"),
-+    [({"num_threads": 3}, 3), ({}, os.cpu_count() if platform.system() == "Linux" else None)],
-+)
-+def test_hnsw_builder_builds_with_num_threads(tmp_path, monkeypatch, build_kwargs, expected):
-+    pytest.importorskip("leann_backend_hnsw")
-+    from leann_backend_hnsw import faiss
-+
-+    class RecordingIndex(faiss.IndexHNSWFlat):
-+        def add(self, n, x):
-+            threads.append(faiss.omp_get_max_threads())
-+            return super().add(n, x)
-+
-+    threads: list[int] = []
-+    monkeypatch.setattr(faiss, "IndexHNSWFlat", RecordingIndex)
-+    original_threads = faiss.omp_get_max_threads()
-+    _build_and_read_params(tmp_path, **build_kwargs)
-+
-+    assert threads == [expected or original_threads]
-+    assert faiss.omp_get_max_threads() == original_threads
-+
-+
-+def test_build_cli_forwards_backend_options_only_when_given():
-+    parser = LeannCLI().create_parser()
-+
-+    defaults = parser.parse_args(["build", "idx", "--docs", "."])
-+    assert LeannCLI._backend_build_options(defaults) == {}
-+
-+    flags = ["--graph-degree", "8", "--complexity", "16", "--num-threads", "4"]
-+    explicit = parser.parse_args(["build", "idx", "--docs", ".", *flags])
-+    assert LeannCLI._backend_build_options(explicit) == {
-+        "graph_degree": 8,
-+        "complexity": 16,
-+        "num_threads": 4,
-+    }
-```
-
----
-
-### Incident Patch 3: `8610c835` (2026-11-17)
-**Commit Message**: fix(deps): exclude tree-sitter 0.26.0 (#453)
-
-* fix(deps): exclude tree-sitter 0.26.0
-
-py-tree-sitter 0.26.0 has a Point refcount bug that segfaults AST
-chunking on large files. The fix is on upstream master, not released;
-!= keeps a fixed 0.26.1 installable.
-
-* test: stop pinning release versions in install tests
-
-The v0.3.9 release bumped the leann-core and backend lower bounds, and these
-tests still expected >=0.1.0, so they failed on main. Check the package and
-that a bound exists, so the next release bump doesn't break them.
-
----------
-
-Co-authored-by: Aakash Suresh <[REDACTED_EMAIL]>
-
-**File**: `pyproject.toml` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ dependencies = [
-     "gitignore-parser>=0.1.12",
-     # AST-aware code chunking dependencies
-     "astchunk>=0.1.0",
--    "tree-sitter>=0.20.0",
-+    "tree-sitter>=0.20.0,!=0.26.0",
-     "tree-sitter-python>=0.20.0",
-     "tree-sitter-java>=0.20.0",
-     "tree-sitter-c-sharp>=0.20.0",
-```
-
-**File**: `uv.lock` (modified, +1/-1)
-```diff
-@@ -2252,7 +2252,7 @@ requires-dist = [
-     { name = "tqdm" },
-     { name = "transformers", marker = "python_full_version < '3.10'", specifier = "<4.46" },
-     { name = "transformers", marker = "python_full_version >= '3.10'", specifier = ">=4.53.1,<4.58" },
--    { name = "tree-sitter", specifier = ">=0.20.0" },
-+    { name = "tree-sitter", specifier = ">=0.20.0,!=0.26.0" },
-     { name = "tree-sitter-c-sharp", specifier = ">=0.20.0" },
-     { name = "tree-sitter-java", specifier = ">=0.20.0" },
-     { name = "tree-sitter-python", specifier = ">=0.20.0" },
++  This is the same constraint the matrix already recorded for `macos-15-intel` ("system
++  libraries require it"). Preserving the 14.0 floor would mean building those three
++  dependencies from source on every macOS job.
++- Coverage is otherwise unchanged: `macos-15` and `macos-26` for Apple Silicon,
++  `macos-15-intel` for x86_64. The build matrix goes from 32 jobs to 27.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #470** (2026-11-20): ci: cancel superseded CI runs instead of queueing behind them (@ASuresh0524)
+- **PR #469** (2026-11-19): feat(benchmarks): score OCR on olmOCR-Bench with its own tests (rebase of #457) (@ASuresh0524)
+- **PR #468** (2026-11-19): ci: drop the retired macos-14 runner, and move the wheel floor with it (@ASuresh0524)
+- **PR #466** (2026-11-19): docs(changelog): record the 2026-11-17 PR triage pass (@ASuresh0524)
 - **PR #465** (2026-11-17): fix(readers): stop WeChatHistoryReader stripping message text at the first colon (@rtmalikian)
 - **PR #463** (2026-11-17): fix(apps): stop forced OCR from silently indexing nothing (@ASuresh0524)
-- **PR #462** (closed): feat: add UberLLM LLM provider (@PSA-Team-source)
-- **PR #461** (2026-11-17): fix: count literal special-token spellings in chunk text (@jackiectl2)
-- **PR #460** (2026-11-17): test: read document RAG output as UTF-8 (@burntcookiedough)
-- **PR #459** (2026-11-17): fix(core): stop embedding daemons holding the caller's stdio (@ska2704)
 
 ---
 
@@ -2938,27 +2466,32 @@ Co-authored-by: Aakash Suresh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. harden index artifact deserialization
+## X. ci: cancel superseded CI runs instead of queueing behind them
 
 **RULE**:
-When implementing operations in `docs/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build-and-publish.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `60597ba5`: harden index artifact deserialization. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5235a29d`: ci: cancel superseded CI runs instead of queueing behind them. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-and-publish.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-## 2026-10-22: Harden passage offset loading
-
-- Restricted passage offset-map unpickling to the primitive dictionary shape LEANN writes.
-- Rejected crafted `.passages.idx` files before a searcher or incremental update can continue.
-- Added regression coverage for the searcher entry point, primitive compatibility, and malformed input.
-- Restricted sync snapshots and embeddings pickles to their expected object graphs.
-- Loaded FlashLib IVF state dictionaries with PyTorch's safe weights-only loader.
+# Supersede in-flight runs for the same ref instead of queueing behind them. This
+# workflow fans out to a build matrix of ~30 jobs, about half of them macOS, so
+# without this a few pushes in a row each reserve a full matrix and later runs sit
+# queued behind work nobody wants any more -- on 2026-11-19 six runs piled up and
+# nothing cancelled the obsolete ones; a PR waited over an hour to start.
+# Safe to cancel: this workflow only builds (it calls build-reusable.yml, whose
+# jobs are lint, type-check, build and arch-smoke, and which uploads artifacts but
+# never publishes). Releases go through release-manual.yml, a separate workflow
+# with its own run, so they are not affected by this group.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 ```
 
@@ -2969,7 +2502,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `60597ba5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5235a29d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

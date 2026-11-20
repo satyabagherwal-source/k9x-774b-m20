@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T09:10:36.360Z",
-  "total_cycles_completed": 10966,
-  "total_learnings_persisted": 10966,
-  "total_rules_promoted": 10332,
+  "last_updated": "2026-11-20T09:34:50.581Z",
+  "total_cycles_completed": 10968,
+  "total_learnings_persisted": 10968,
+  "total_rules_promoted": 10334,
   "history": [
-    {
-      "timestamp": "2026-11-19T13:21:55.647Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T13:22:01.443Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T13:35:15.573Z",
       "repository": "facebook/sam3",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-20T09:10:36.360Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T09:34:48.775Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T09:34:50.581Z",
+      "repository": "StarTrail-org/LEANN",
+      "learningId": "learn-github-startrail-org-leann",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
