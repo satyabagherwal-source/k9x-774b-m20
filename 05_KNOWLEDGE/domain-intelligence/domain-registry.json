@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T03:32:42.840Z",
-  "total_records": 2062,
+  "last_updated": "2026-11-20T03:49:22.786Z",
+  "total_records": 2063,
   "domains": {
     "A": {
       "total": 17,
@@ -1346,7 +1346,7 @@
       ]
     },
     "H": {
-      "total": 489,
+      "total": 490,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1836,7 +1836,8 @@
         "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-core-invariants",
         "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-searchsolved-search-solved-public-seo-core-i",
-        "domain_intelligence-technical-construction-intelligence-searchsolved-search-solved-public-seo-learni"
+        "domain_intelligence-technical-construction-intelligence-searchsolved-search-solved-public-seo-learni",
+        "DOM-H-45D5E4E3"
       ]
     },
     "I": {
@@ -8159,8 +8160,8 @@
       "title": "Technical Construction Intelligence: meshery/meshery Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-technical-construction-intelligence-meshery-meshery-core-invaria.md",
       "repository": "meshery/meshery",
-      "content_hash": "230b76935bbb6d16d979547155d98f37d6e58ea81f3844c3a1bb9be55b3253d2",
-      "created_at": "2026-11-18T23:10:28.579Z"
+      "content_hash": "cde6a4ab2a9c67403c484ae98c47f2309e278d34b8e4359709b39027975cabdf",
+      "created_at": "2026-11-20T03:48:48.177Z"
     },
     "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
@@ -8237,8 +8238,8 @@
       "title": "Technical Construction Intelligence: meshery-meshery-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-learnings-technical-construction-intelligence-meshery-meshery-le.md",
       "repository": "meshery-meshery-learnings",
-      "content_hash": "bc5f0dd7d615ade71ab251cdda91e72106b16ff9db3c7c41a39ba7bb254fdc9b",
-      "created_at": "2026-11-18T23:10:37.083Z"
+      "content_hash": "6661932083774be3adb2fd682088b1d04720b57e2eb0dd4e3bd891af482b6c1b",
+      "created_at": "2026-11-20T03:49:21.088Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
@@ -8795,8 +8796,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "4e69706756b1ed412b407aefd8df6d728c61cb71618f0b065ecc4f046e8e6e8a",
-      "created_at": "2026-11-20T03:32:42.840Z"
+      "content_hash": "6830239b0ef600c31b4364a82913368bcaa5d08dd0845da6e17be5f49ae8a0a7",
+      "created_at": "2026-11-20T03:49:22.161Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -31158,8 +31159,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "7edbba0d5240e7b4b5cee62722a4524425cb55e1312c936ab338aebcc140a374",
-      "created_at": "2026-11-20T03:21:56.388Z"
+      "content_hash": "ab652cf0d5a1af66a20f9ee5aaafd6fa7a64189adbd8f586eb0f85f5f7b156e8",
+      "created_at": "2026-11-20T03:49:22.786Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -34719,6 +34720,40 @@
       "repository": "jellyfin-swiftfin-learnings",
       "content_hash": "52e8d22e2f823ac33f7affa567a5f4f2e80a72e082de683c0c0d943f67bf58b8",
       "created_at": "2026-11-20T03:02:46.753Z"
+    },
+    "DOM-H-45D5E4E3": {
+      "record_id": "DOM-H-45D5E4E3",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "HTTP Truncated Body Masking and Header Desynchronization (BUG-MESHERY-02)",
+      "content": "Recovering an HTTP handler that has already committed bytes requires re-panicking with `http.ErrAbortHandler` to abruptly terminate the socket, preventing client-side parser corruption.",
+      "content_hash": "c6f5c99586875038f4f9c2206fa50760ea766be3445f4b8a4390506dac23e7bd",
+      "summary": "The custom `ResponseWriter` wrapper did not track `wroteHeader` transitions accurately (misclassifying 1xx interim headers as final headers) -> Recovering an HTTP handler that has already committed bytes requires re-panicking with `http.ErrAbortHandler` to abruptly terminate the sock",
+      "provenance": {
+        "source_uri": "project://meshery-meshery/meshery-meshery-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T03:48:51.211Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (meshery-meshery)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `9f2a10e8`, file `server/router/recovery.go`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T03:49:20.537Z"
     }
   }
 }

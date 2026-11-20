@@ -703157,3 +703157,330 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `cafb91c4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9507. Granular Panic Containment with Error Sanitization and Abort Signaling (Harvested from meshery/meshery)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Granular Panic Containment with Error Sanitization and Abort Signaling",
+  "source": "meshery/meshery",
+  "source_url": "https://github.com/meshery/meshery",
+  "source_version": "c5d506a5",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-20T03:48:46.803Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-meshery-meshery",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [meshery/meshery](https://github.com/meshery/meshery) (Revision: `c5d506a5`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**: 
+In concurrent servers handling untrusted inputs, any panic-containment boundary MUST:
+1. Isolate panics to the single iteration or request scope using function wrapping (`Guard`/`SafeGo`), while allowing deliberate process-level worker panics to crash loudly.
+2. Prevent information leakage by redacting raw panic values and stack traces from network responses, retaining them exclusively in server logs.
+3. Remove stale HTTP transport headers (`Content-Length`, `Content-Encoding`) set prior to the panic before writing structured error payloads.
+4. If response headers or bytes were already committed to the wire (`wroteHeader == true`), it MUST abort the connection using `panic(http.ErrAbortHandler)` rather than returning a truncated 200/202 body to the client.
+
+**WHY**: 
+Default Go behavior terminates the entire operating system process on an unrecovered panic in any spawned goroutine. Conversely, naïve HTTP middleware recovery that simply writes a `500 Internal Server Error` after a handler panics introduces two severe defects:
+- If a handler called `w.WriteHeader(200)` or started streaming, writing an error payload produces an invalid HTTP message with mixed status codes and corrupt bodies.
+- If a handler set `Content-Length: 1024` or `Content-Encoding: gzip` and panicked before emitting the full compressed payload, sending a plain JSON error body breaks client protocol parsers due to length mismatches or decompression failures. Furthermore, leaking raw panic strings exposes memory layout, database queries, and environment details.
+
+**WHEN TO APPLY**: 
+Apply to all Go, Rust (with `catch_unwind`), Node.js, and Python HTTP servers, background stream consumers, and broker event loops processing dynamic serialization models (Kubernetes CRDs, JSON payloads, external webhooks).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package containment
+
+import (
+	"fmt"
+	"net/http"
+	"runtime/debug"
+	"sync"
+)
+
+type RecoveredPanic struct {
+	Name  string
+	Value any
+	Stack []byte
+}
+
+type PanicHook func(RecoveredPanic)
+
+var (
+	hooksMu  sync.RWMutex
+	hooks    []PanicHook
+	countsMu sync.Mutex
+	counts   = make(map[string]int64)
+)
+
+func OnRecoveredPanic(h PanicHook) {
+	if h == nil {
+		return
+	}
+	hooksMu.Lock()
+	defer hooksMu.Unlock()
+	hooks = append(hooks, h)
+}
+
+func ReportRecoveredPanic(name string, recovered any) {
+	p := RecoveredPanic{
+		Name:  name,
+		Value: recovered,
+		Stack: debug.Stack(),
+	}
+
+	countsMu.Lock()
+	counts[name]++
+	countsMu.Unlock()
+
+	// Snapshot hooks under RLock to prevent deadlocks during execution
+	hooksMu.RLock()
+	snapshot := append([]PanicHook(nil), hooks...)
+	hooksMu.RUnlock()
+
+	for _, h := range snapshot {
+		runHookSafely(h, p)
+	}
+}
+
+func runHookSafely(h PanicHook, p RecoveredPanic) {
+	defer func() {
+		if rec := recover(); rec != nil {
+			countsMu.Lock()
+			counts["hook-panic:"+p.Name]++
+			countsMu.Unlock()
+		}
+	}()
+	h(p)
+}
+
+func Guard(name string, fn func()) (panicked bool) {
+	defer func() {
+		if rec := recover(); rec != nil {
+			panicked = true
+			ReportRecoveredPanic(name, rec)
+		}
+	}()
+	fn()
+	return false
+}
+
+func SafeGo(name string, fn func()) {
+	go Guard(name, fn)
+}
+
+type RecoveryWriter struct {
+	http.ResponseWriter
+	WroteHeader bool
+	Hijacked    bool
+}
+
+func (rw *RecoveryWriter) WriteHeader(code int) {
+	// 1xx status codes (100 Continue, 103 Early Hints) are interim.
+	// 101 Switching Protocols is final (WebSockets).
+	if code >= http.StatusOK || code == http.StatusSwitchingProtocols {
+		rw.WroteHeader = true
+	}
+	rw.ResponseWriter.WriteHeader(code)
+}
+
+func RecoveryMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		rw := &RecoveryWriter{ResponseWriter: w}
+		defer func() {
+			rec := recover();
+			if rec == nil {
+				return
+			}
+			
+			ReportRecoveredPanic(r.Method+" "+r.URL.Path, rec)
+
+			if rw.Hijacked {
+				return
+			}
+
+			// If headers were already committed, abort the stream cleanly
+			if rw.WroteHeader {
+				panic(http.ErrAbortHandler)
+			}
+
+			// Clear transport metadata set by the failing handler
+			header := w.Header()
+			header.Del("Content-Length")
+			header.Del("Content-Encoding")
+			header.Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = w.Write([]byte(`{"code":"ERR_INTERNAL_PANIC","message":"Internal server error occurred."}`))
+		}()
+		next.ServeHTTP(rw, r)
+	})
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Blindly catching panics, swallowing stacks, leaking raw panic strings, 
+// and trying to write standard error responses over broken HTTP streams.
+func BadRecoveryMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if r := recover(); r != nil {
+				// FAILS: Leaks raw runtime pointers/internal variables to the HTTP response
+				// FAILS: Does not check if headers/partial body were already written
+				// FAILS: Retains previous Content-Length, causing client socket read hangs
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte(fmt.Sprintf("Panic caught: %v", r)))
+			}
+		}()
+		next.ServeHTTP(w, r)
+	})
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using automated unit and integration tests under `-race`:
+1. Execute a test handler that calls `w.Header().Set("Content-Length", "50")` and then triggers `panic("corrupt")`. Assert HTTP status is 500, response parses as valid JSON, and `Content-Length` matches the JSON error length.
+2. Execute a test handler that calls `w.WriteHeader(202)` followed by `panic("crash")`. Assert that the recovery middleware triggers `panic(http.ErrAbortHandler)`.
+
+---
+
+
+---
+
+## 9508. Defensive CLI Output Schema Separation (Null vs Empty Invariant) (Harvested from meshery/meshery)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Defensive CLI Output Schema Separation (Null vs Empty Invariant)",
+  "source": "meshery/meshery",
+  "source_url": "https://github.com/meshery/meshery",
+  "source_version": "c5d506a5",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-20T03:48:47.226Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-meshery-meshery",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [meshery/meshery](https://github.com/meshery/meshery) (Revision: `c5d506a5`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**: 
+Machine-readable CLI tools and autonomous agent inspection scripts MUST maintain distinct states between an **empty result set** (`[]` or `{}`) and a **failed execution/lookup** (`null`). Output contracts emitted on standard output MUST ALWAYS provide a deterministic status descriptor (`status: "ok" | "error"`), and set target data collections strictly to `null` on failure.
+
+**WHY**: 
+When an AI agent or automated orchestration loop checks CI statuses or PR feedback via subprocess execution, shell scripts often exit with status 0 or partial stdout upon encountering network timeouts, API rate limits, or auth degradation. If the script converts a network drop or null response into an empty array `[]`, the supervisor agent treats "zero errors found" as a clean green build, initiating deployment of defective code.
+
+**WHEN TO APPLY**: 
+Applies to all automation pipelines, agent tooling (`fetch_pr_checks.py`, `fetch_pr_feedback.py`), GitHub CLI wrappers, and monitoring probes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import json
+import sys
+from typing import Any, NoReturn
+
+def fail(message: str) -> NoReturn:
+    """Explicitly emit null for data fields so downstream parsers 
+    never mistake a runtime failure for zero findings."""
+    payload = {
+        "status": "error",
+        "error": message,
+        "data": None,  # NEVER [] or {}
+        "summary": None,
+        "action_required": f"HALT: Execution interrupted. Invariant unmet: {message}"
+    }
+    print(json.dumps(payload, indent=2))
+    sys.exit(1)
+
+def run_verified_query(query_func) -> None:
+    try:
+        raw_result = query_func()
+        if raw_result is None:
+            fail("Subprocess exited without payload; state indeterminate.")
+        
+        # Valid green state with 0 elements
+        output = {
+            "status": "ok",
+            "error": None,
+            "data": raw_result, # list[Any]
+            "summary": {"count": len(raw_result)}
+        }
+        print(json.dumps(output, indent=2))
+        sys.exit(0)
+    except Exception as exc:
+        fail(f"Execution failed: {str(exc)}")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Swallowing subprocess errors or returning empty structures on error
+def get_checks_unsafe() -> list:
+    res = subprocess.run(["gh", "pr", "checks"], capture_output=True, text=True)
+    if res.returncode != 0:
+        # FATAL FLAW: Returning empty list makes agent think CI passed with 0 failures!
+        return []
+    return json.loads(res.stdout or "[]")
+```
+
+**VERIFICATION METHOD**:
+Execute negative property tests intercepting GitHub API calls with mocked 500s and network resets. Assert that stdout parses to JSON with `"status": "error"`, `"data": null`, and process exit code is non-zero.
+
+---

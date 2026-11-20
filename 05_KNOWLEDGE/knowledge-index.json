@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T03:32:43.001Z",
+  "last_updated": "2026-11-20T03:49:22.786Z",
   "total_verified_learnings": 9023,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22174,
+  "total_items": 22180,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112882,9 +112882,9 @@
       "title": "Technical Construction Intelligence: meshery-meshery-learnings Core Invariants",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc5f0dd7d615ade71ab251cdda91e72106b16ff9db3c7c41a39ba7bb254fdc9b",
+      "content_hash": "6661932083774be3adb2fd682088b1d04720b57e2eb0dd4e3bd891af482b6c1b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T23:10:37.083Z"
+      "persisted_at": "2026-11-20T03:49:21.088Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-meshery-meshery-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meshery-meshery-learnings",
@@ -112894,9 +112894,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for meshery-meshery-learnings",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "8bd0ba592ed0873712db16935f991fe6517e3c62779fd8d41b31a616d32e0397",
+      "content_hash": "e3ceaabe6e603c446a0f8e74f7809c7dc3d62ae002a98e97d9a251e6dde0e6a3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T23:10:37.267Z"
+      "persisted_at": "2026-11-20T03:49:21.374Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-BH38-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WW5W-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c6c73f4fa719c60a7df2c7e91299afc526a970b1e3f55e2293dcc57b8249f35c",
+      "content_hash": "847367902a6d28f4bec0b5b3d9f0ee39527f30b941028267409d4748896a8820",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T03:32:42.696Z"
+      "persisted_at": "2026-11-20T03:49:22.018Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e69706756b1ed412b407aefd8df6d728c61cb71618f0b065ecc4f046e8e6e8a",
+      "content_hash": "6830239b0ef600c31b4364a82913368bcaa5d08dd0845da6e17be5f49ae8a0a7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T03:32:42.840Z"
+      "persisted_at": "2026-11-20T03:49:22.161Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "5498149d39a8eed015d32ccc2ecab49bf3195e0b353a6ac0111d807b8f52b3a2",
+      "content_hash": "834396a9c4a6722a69786bba63be665a4b9c5d2d792e2b28417c3e1579c90aab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T03:32:43.001Z"
+      "persisted_at": "2026-11-20T03:49:22.305Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -236905,8 +236905,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "208e516e",
-      "content_hash": "46504042afddbd1b9dac41f3b8630e3c2ee60312613c5691bd03b1de3a2a6496",
+      "source_version": "c5d506a5",
+      "content_hash": "7f90d73fb1008c30c084ff7d0f72ac184bf1c5ad4ffd40e5968f9aae8975f23d",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -236934,6 +236934,16 @@
           "number": 9295,
           "title": "Empirical Invariant Guard in Makefile",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9507,
+          "title": "Granular Panic Containment with Error Sanitization and Abort Signaling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9508,
+          "title": "Defensive CLI Output Schema Separation (Null vs Empty Invariant)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236941,7 +236951,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T23:10:27.977Z",
+      "verified_at": "2026-11-20T03:48:47.497Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236983,10 +236993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-technical-construction-intelligence-meshery-meshery-core-invaria.md",
       "title": "Technical Construction Intelligence: meshery/meshery Core Invariants",
       "repository": "meshery/meshery",
-      "source_version": "208e516e",
-      "content_hash": "230b76935bbb6d16d979547155d98f37d6e58ea81f3844c3a1bb9be55b3253d2",
+      "source_version": "c5d506a5",
+      "content_hash": "cde6a4ab2a9c67403c484ae98c47f2309e278d34b8e4359709b39027975cabdf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T23:10:28.579Z"
+      "persisted_at": "2026-11-20T03:48:48.177Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-meshery-meshery": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meshery-meshery",
@@ -236995,10 +237005,10 @@
       "relative_path": "08_VERIFICATION/meshery-meshery-verification-protocol-empirical-defect-shield-for-meshery-mesher.md",
       "title": "Verification Protocol: Empirical Defect Shield for meshery/meshery",
       "repository": "meshery/meshery",
-      "source_version": "208e516e",
-      "content_hash": "ad48b1972781d27a32b5c774cf589e2688dea8295e78e490d605d9bf84facb1c",
+      "source_version": "c5d506a5",
+      "content_hash": "bbeefdbeca91939e4cf73515eae16bfee132b11a041fbaee7a7c1f6d1e253204",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T23:10:28.729Z"
+      "persisted_at": "2026-11-20T03:48:48.425Z"
     },
     "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker": {
       "item_id": "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker",
@@ -287770,9 +287780,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "7edbba0d5240e7b4b5cee62722a4524425cb55e1312c936ab338aebcc140a374",
+      "content_hash": "ab652cf0d5a1af66a20f9ee5aaafd6fa7a64189adbd8f586eb0f85f5f7b156e8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T03:21:56.388Z"
+      "persisted_at": "2026-11-20T03:49:22.786Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -300168,6 +300178,82 @@
       "content_hash": "c0951213ef9eca0c7a77e3c72e121def6eb9a6d6ff0218e5cb82c9c84255d5ab",
       "domain_letter": "G",
       "persisted_at": "2026-11-20T03:32:41.892Z"
+    },
+    "rule-9507": {
+      "learning_id": "rule-9507",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9507,
+      "title": "Granular Panic Containment with Error Sanitization and Abort Signaling",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "c5d506a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T03:48:47.497Z"
+    },
+    "rule-9508": {
+      "learning_id": "rule-9508",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9508,
+      "title": "Defensive CLI Output Schema Separation (Null vs Empty Invariant)",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "c5d506a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T03:48:47.497Z"
+    },
+    "candidate_directive-granular-panic-containment-with-error-sanitization-and-abort-signaling": {
+      "item_id": "candidate_directive-granular-panic-containment-with-error-sanitization-and-abort-signaling",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WV7U-granular-panic-containment-with-error-sanitization-and-abort-signaling.md",
+      "title": "Granular Panic Containment with Error Sanitization and Abort Signaling",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1dd18051e73c725ede6ee4a066f14a16bf1e2bacc15ecf802421b76628ffb70a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T03:49:20.779Z"
+    },
+    "candidate_directive-defensive-cli-output-schema-separation-null-vs-empty-invariant": {
+      "item_id": "candidate_directive-defensive-cli-output-schema-separation-null-vs-empty-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WV7U-defensive-cli-output-schema-separation-null-vs-empty-invariant.md",
+      "title": "Defensive CLI Output Schema Separation (Null vs Empty Invariant)",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d22570f877c20b2226036352e714a95d9297cef83c50cfadb53b59239db612e9",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T03:49:20.948Z"
+    },
+    "agent_contract-agent-contract-meshery-meshery-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-meshery-meshery-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/meshery-meshery-agent-contract-meshery-meshery-autonomous-specialist-persona.md",
+      "title": "Agent Contract: meshery/meshery Autonomous Specialist Persona",
+      "repository": "meshery/meshery",
+      "source_version": "c5d506a5",
+      "content_hash": "6d41da2c4c94696d7bda3b3eead7f34ecc775b2953169c5da440f813004fe6bb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T03:48:48.310Z"
+    },
+    "agent_contract-agent-contract-meshery-meshery-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-meshery-meshery-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/meshery-meshery-learnings-agent-contract-meshery-meshery-learnings-autonomous-sp.md",
+      "title": "Agent Contract: meshery-meshery-learnings Autonomous Specialist Persona",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "495ca604102e19c84c1174667294031cd14a2f0ad9e98fd6cac59257ed74d27b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T03:49:21.245Z"
     }
   },
   "ai-builder-brain": {

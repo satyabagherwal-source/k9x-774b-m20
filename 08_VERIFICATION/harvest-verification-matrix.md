@@ -11449,3 +11449,5 @@
 | `CYCLE-20261120-MAL4` | `2026-11-20T03:13:07.864Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9504` | Yes (`30d3e186...`) |
 | `CYCLE-20261120-B4HD` | `2026-11-20T03:32:26.353Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9505` | Yes (`e285aa21...`) |
 | `CYCLE-20261120-BD21` | `2026-11-20T03:32:37.465Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9506` | Yes (`3585b2d9...`) |
+| `CYCLE-20261120-W5P8` | `2026-11-20T03:48:47.708Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9507, Rule 9508` | Yes (`7f90d73f...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T03:49:20.559Z` | `meshery-meshery` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-45D5E4E3` [Domain H] | Yes (`c6f5c995...`) |

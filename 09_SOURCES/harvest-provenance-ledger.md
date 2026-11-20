@@ -11482,3 +11482,5 @@ Every entry in this ledger must capture:
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `90595b24` | Multi-dimensional audit evidence | 2026-11-20T03:13:07.869Z |
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `05a20823` | Multi-dimensional audit evidence | 2026-11-20T03:32:26.358Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `cafb91c4` | Multi-dimensional audit evidence | 2026-11-20T03:32:37.469Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `c5d506a5` | Multi-dimensional audit evidence | 2026-11-20T03:48:47.711Z |
+| `learn-dom-h-45d5e4e3` | `project://meshery-meshery` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md` | 2026-11-20T03:49:20.559Z |
