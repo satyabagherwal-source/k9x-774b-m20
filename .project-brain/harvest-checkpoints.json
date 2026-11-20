@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T05:16:25.942Z",
+  "last_updated": "2026-11-20T05:21:11.535Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "1cbd04c8e15e938124780e7a44ee82366770f3b7b72e01187e6b8bc70e76d490",
-      "verified_at": "2026-11-20T02:39:01.624Z",
+      "content_hash": "6872a2489c86f10688f4b1497d837aadafe4f7052424de50690dc6213ae46817",
+      "verified_at": "2026-11-20T05:21:08.961Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T02:39:01.624Z"
+      "last_updated": "2026-11-20T05:21:08.961Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -7491,14 +7491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "8e22db0e69dadad1c892de1dfbad69af8744d3c96369a7c04336f33d19910e3d",
-      "verified_at": "2026-11-18T23:34:55.621Z",
+      "content_hash": "9efc30c4bf160dbeb468cecada8f1c9fd77c476598b651dc6d16b71c00b900ca",
+      "verified_at": "2026-11-20T05:21:11.534Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T23:34:55.621Z"
+      "last_updated": "2026-11-20T05:21:11.534Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",

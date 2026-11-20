@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T05:16:25.938Z",
-  "total_cycles_completed": 10933,
-  "total_learnings_persisted": 10933,
-  "total_rules_promoted": 10298,
+  "last_updated": "2026-11-20T05:21:11.532Z",
+  "total_cycles_completed": 10935,
+  "total_learnings_persisted": 10935,
+  "total_rules_promoted": 10299,
   "history": [
-    {
-      "timestamp": "2026-11-19T08:28:38.994Z",
-      "repository": "Cactus-Compute/whistle",
-      "learningId": "learn-huggingface-cactus-compute-whistle",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T08:29:01.273Z",
-      "repository": "apache/pinot",
-      "learningId": "learn-github-apache-pinot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T08:37:44.624Z",
       "repository": "nginx/kubernetes-ingress",
@@ -1403,6 +1389,20 @@
       "repository": "apache/shardingsphere",
       "learningId": "learn-github-apache-shardingsphere",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T05:21:08.959Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T05:21:11.532Z",
+      "repository": "rqlite/rqlite",
+      "learningId": "learn-github-rqlite-rqlite",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

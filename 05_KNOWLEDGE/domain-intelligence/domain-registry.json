@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T05:16:32.470Z",
-  "total_records": 2071,
+  "last_updated": "2026-11-20T05:21:16.954Z",
+  "total_records": 2073,
   "domains": {
     "A": {
       "total": 17,
@@ -1991,7 +1991,7 @@
       ]
     },
     "K": {
-      "total": 113,
+      "total": 115,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2105,7 +2105,9 @@
         "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-core-invariants",
         "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-learnings-core-invar",
         "DOM-K-2B1D449B",
-        "DOM-K-0B7EBB9F"
+        "DOM-K-0B7EBB9F",
+        "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva"
       ]
     },
     "L": {
@@ -8804,8 +8806,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "c3ecdb08c3e85025c08e3249ebf75f46e7beff235194306f29db85ffe24b5f4f",
-      "created_at": "2026-11-20T05:08:26.636Z"
+      "content_hash": "295a2aee748f4050e3954e908ac950eedf68be624b4b81fc92bfd1d68f818951",
+      "created_at": "2026-11-20T05:21:16.954Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -15948,8 +15950,8 @@
       "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
       "repository": "rqlite/rqlite",
-      "content_hash": "37de53125192ff1d602ea613c286aea31df02f061e0d17d02cf2c8f607b2364a",
-      "created_at": "2026-11-18T23:34:55.984Z"
+      "content_hash": "b335fea65c63ddb8e99f268a3e3216dd0fa5c205e9f107936c2686d69844a04b",
+      "created_at": "2026-11-20T05:21:11.863Z"
     },
     "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants",
@@ -22948,8 +22950,8 @@
       "title": "Architecture Intelligence: rqlite-rqlite-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-learnings-architecture-intelligence-rqlite-rqlite-learnings-core-i.md",
       "repository": "rqlite-rqlite-learnings",
-      "content_hash": "91ea47f0d8b92a08cce9277f2e065c6def7c2b4de06e6c5568988fa94a0e5f32",
-      "created_at": "2026-11-18T07:23:15.974Z"
+      "content_hash": "4483689e05f44783c49bf4bc1a069440522898ad93f827550a50cd50edc2bb9e",
+      "created_at": "2026-11-20T05:21:16.183Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-flash-next-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-flash-next-gguf-core-invariants",
@@ -34925,6 +34927,24 @@
       "repository": "octodns-octodns-learnings",
       "content_hash": "56404652890444f7603b1319379764ccda8c381e19a3c613d088136cfa29b22a",
       "created_at": "2026-11-20T05:16:29.869Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-aleo-labs-protocol-snarkos-quality-verification-intelligence-aleo-labs-protocol-.md",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "content_hash": "7704a34ffdba2af953b9155f7cffde7ea87f047e723b70c5adf6c2e31f342581",
+      "created_at": "2026-11-20T05:21:09.285Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-aleo-labs-protocol-snarkos-learnings-quality-verification-intelligence-aleo-labs.md",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "content_hash": "f2207d066193c4fff881860fe6020b1cab81f334bbe7ebe8c29457219dc90f00",
+      "created_at": "2026-11-20T05:21:15.268Z"
     }
   }
 }

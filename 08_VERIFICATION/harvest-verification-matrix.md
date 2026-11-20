@@ -11467,3 +11467,5 @@
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T05:08:24.441Z` | `crawlcove-crawlcove-hreflang-checker` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-AD18FD9E` [Domain J] | Yes (`93e334ae...`) |
 | `CYCLE-20261120-0QK4` | `2026-11-20T05:16:20.212Z` | `octodns/octodns` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9515` | Yes (`1eccfec5...`) |
 | `CYCLE-20261120-0UYW` | `2026-11-20T05:16:25.928Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9516` | Yes (`44ffd2ec...`) |
+| `CYCLE-20261120-6XCM` | `2026-11-20T05:21:08.950Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`6872a248...`) |
+| `CYCLE-20261120-6ZBF` | `2026-11-20T05:21:11.499Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md` | Yes (`9efc30c4...`) |

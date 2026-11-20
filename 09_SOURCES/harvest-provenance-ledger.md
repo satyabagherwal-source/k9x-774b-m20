@@ -11500,3 +11500,5 @@ Every entry in this ledger must capture:
 | `learn-dom-j-ad18fd9e` | `project://crawlcove-crawlcove-hreflang-checker` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md` | 2026-11-20T05:08:24.441Z |
 | `learn-github-octodns-octodns` | `https://github.com/octodns/octodns` | `420f2bab` | Multi-dimensional audit evidence | 2026-11-20T05:16:20.215Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `eac4d896` | Multi-dimensional audit evidence | 2026-11-20T05:16:25.932Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `811fe8b4` | Multi-dimensional audit evidence | 2026-11-20T05:21:08.954Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `4452a98a` | Multi-dimensional audit evidence | 2026-11-20T05:21:11.503Z |

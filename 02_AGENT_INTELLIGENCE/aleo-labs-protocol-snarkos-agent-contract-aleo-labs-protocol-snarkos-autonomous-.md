@@ -4,17 +4,17 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-  "source_version": "a33d49c4",
+  "source_version": "811fe8b4",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T06:19:39.507Z",
+  "timestamp": "2026-11-20T05:21:09.152Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `a33d49c4`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T06:19:39.507Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `811fe8b4`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T05:21:09.152Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T06:19:38.430Z  
+> **Harvest Timestamp**: 2026-11-20T05:21:08.171Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -116,7 +116,7 @@ impl<N: Network> FromBytes for WorkerPing<N> {
     }
 }
 
-#[cfg(any(test, feature = "fuzz-helpers"))]
+#[cfg(any(test, feature = "test-helpers"))]
 pub mod prop_tests {
     #![cfg_attr(not(test), allow(unused_imports))]
     use crate::{WorkerPing, prop_tests::any_transmission_id};
@@ -817,6 +817,8 @@ impl SyncState {
                 Ordering::Greater => warn!("Greatest peer height reduced from {old_height} to {peer_height}"),
                 Ordering::Less => trace!("Greatest peer height increased from {old_height} to {peer_height}"),
             }
+        } else {
+            trace!("Greatest peer height set to {peer_height}");
         }
 
         self.greatest_peer_height = Some(peer_height);
@@ -836,13 +838,6 @@ impl SyncState {
 
     /// Updates the state of `is_block_synced` for the sync module.
     fn update_is_block_synced(&mut self) {
-        trace!(
-            "Updating is_block_synced: greatest_peer_height={greatest_peer:?}, current_height={current}, status={status:?}",
-            greatest_peer = self.greatest_peer_height,
-            current = self.sync_height,
-            status = self.status,
-        );
-
         let num_blocks_behind = self.num_blocks_behind();
         let old_status = self.status;
 
@@ -932,7 +927,13 @@ mod tests {
         assert_eq!(state.num_blocks_behind(), None);
 
         state.set_greatest_peer_height(15);
-        as
+        assert_eq!(state.num_blocks_behind(), Some(5));
+    }
+
+    #[test]
+    fn num_blocks_behind_saturates_when_the_node_leads_every_peer() {
+        let mut state = SyncState::new_with_height(100);
+        
 ```
 
 ### Core Architecture Module: `utilities/src/callback_handle.rs`
@@ -1109,6 +1110,9 @@ pub use node_data::*;
 
 mod callback_handle;
 pub use callback_handle::CallbackHandle;
+
+#[cfg(any(test, feature = "test-helpers"))]
+pub mod test_fixture;
 
 /// Seed used for deterministic RNG in development mode.
 pub const DEVELOPMENT_MODE_RNG_SEED: u64 = 1234567890u64;
@@ -1979,11 +1983,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4713** (2026-11-19): **Fix the storage-service test imports for the memory feature alone**
+  *Symptoms*: ## Motivation  The shared storage-service tests in `node/bft/storage-service/src/tests.rs` do not compile with the `memory` feature alone:  ``` cargo test -p snarkos-node-bft-storage-service --features memory error[E0433]: cannot find type `Bytes` in this scope   --> node/bft/storage-service/src/tests.rs:51:44 ```  `sample_transmission` uses `Bytes` for every service. The `use bytes::Bytes;` import is behind `#[cfg(feature = "persistent")]`. So the import is missing when only `memory` is on. The `test` feature turns on `memory` only, so `--features test` also fails.  CI does not see the error. The node job tests the crate with `memory` and `persistent` together. In workspace builds, `snarkos-node-consensus` turns on `persistent` and `snarkos-node-bft` turns on `memory`, so feature unification turns on both.  This PR fixes the imports in `tests.rs`:  - It removes the `cfg` from `use bytes::Bytes;`. `bytes` is a dev-dependency of the crate, so it is always available to the tests. - It puts `StorageMode` behind `#[cfg(feature = "persistent")]`. Only the persistent service uses it. With `memory` alone, the import is unused, and `clippy -D warnings` fails.  ## Test Plan  `cargo clippy -p snarkos-node-bft-storage-service --all-targets -- -D warnings` passes with each of these feature sets: `memory`, `persistent`, `memory,persistent` and `test`. Before this change, the tests do not compile with `memory` or `test`.  `cargo nextest run -p snarkos-node-bft-storage-service` passes with 
+
 - **Issue #4664** (2026-11-16): **Requeue a transmission when the ledger check fails while proposing**
   *Symptoms*: ## Motivation  Stacked on #4603. Review only the commits after `2a9cd1cbc`.  In `propose_batch`, the drain loop checks each transmission against the ledger with `self.ledger.contains_transmission(&id).unwrap_or(true)`. A ledger read error is treated as "already in the ledger". The loop has already removed the transmission from the worker, so the transmission is lost. The only log is a `trace` line that says "Already in ledger".  This PR:  - Matches on the result. On an error, it requeues the transmission at the back of the worker with `Worker::reinsert`, logs it at `warn`, and stops draining. - Adds `MockLedgerService::with_unreadable_transmission_ids`, which makes `contains_transmission` fail for the given IDs.  The transmission goes to the back, not the front. At the front, a transmission whose read keeps failing would stop every later proposal at the same place. The drain stops after the error, because continuing would cycle through the queue forever if every ledger read fails. If the whole ledger fails, each proposal holds only what was drained before the error, and the node logs a `warn` each round.  `Worker::contains_transmission` defaults the same ledger call to `false` (`unwrap_or(false)`). This PR does not change it.  Commits:  - `3d6f5c375`: Requeue the transmission on a ledger read error, and add the test. - `19397e42a`: Build the mock ledger constructors on `new`. - `91468f5ea`: Requeue at the back of the worker, not the front.  ## Test Plan  - New test `test_prop
-
-- **Issue #4615** (2026-11-06): **Gateway handshake has no genesis binding**
-  *Symptoms*: The gateway handshake never checks that a peer shares our genesis, and the first authenticated holder of an address keeps its slot. This requires the committee key; we found no path without it. We have only seen this on a devnet.  The code below is from `staging` at `395f79781`.  **Observed**  Two devnets sharing deterministic dev keys could reach each other, with different genesis blocks: a prover logged `failed (incorrect block header)` against every foreign node. While two of five validators restarted, foreign nodes with those keys connected to the other three. The returning validators were refused with `already connected to the given Aleo address`.  The returning validators then accepted foreign nodes holding the other keys, refusing their real peers too. The chain stopped permanently, while each validator logged `Connected to 4 validators (of 4 bonded validators)`. A rerun of the same commit without the second devnet passed.  The foreign nodes sent no proposals, signatures or primary pings, so no consensus check rejected them. Their traffic kept the connections alive, and the connected-quorum check in `propose_batch` counted them.  **Why**  - `verify_peer_info` in `node/bft/src/gateway.rs` checks version, trusted peers, committee membership, the existing connection and the restrictions ID, but not genesis. - The router handshake does compare genesis headers (`node/router/src/handshake.rs`), which is why only the router side refused these nodes.  **Suggested fix**  Add th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2000,244 +2004,640 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c81c424a` (2026-11-17)
-**Commit Message**: Merge pull request #4682 from aleo-labs-protocol/build/drop-feature-config-checks
+### Incident Patch 1: `811fe8b4` (2026-11-20)
+**Commit Message**: Merge pull request #4727 from aleo-labs-protocol/breaking/test-helpers-rename
 
-**File**: `Cargo.lock` (modified, +1/-32)
+**File**: `.github/workflows/ci.yml` (modified, +17/-13)
 ```diff
-@@ -4753,7 +4753,7 @@ dependencies = [
-  "ci_info",
-  "getopts",
-  "nias",
-- "toml 0.5.11",
-+ "toml",
- ]
+@@ -133,19 +133,19 @@ jobs:
+       # features, so it misses a feature one of them fails to declare.
+       - run: cargo check -p snarkos-node-metrics --all-features
+       - run: cargo check -p snarkos-display --all-features
+-      # The fuzzing harness builds these two alone with `fuzz-helpers`, which
++      # The fuzzing harness builds these two alone with `test-helpers`, which
+       # the workspace pass above only sees unified with everything else.
+-      - run: cargo check -p snarkos-node-router-messages --features fuzz-helpers
+-      - run: cargo check -p snarkos-node-bft-events --features fuzz-helpers
++      - run: cargo check -p snarkos-node-router-messages --features test-helpers
++      - run: cargo check -p snarkos-node-bft-events --features test-helpers
  
- [[package]]
-@@ -5117,15 +5117,6 @@ dependencies = [
-  "serde_core",
- ]
+   # Each line of `runs` is one build. `cargo test -p a -p b` unifies the
+   # features of a and b, and several crates enable features on their
+   # dependencies that change what those dependencies do:
+-  # `snarkos-node-router/test`, `snarkos-node-network/test` and
++  # `snarkos-node-router/test-helpers`, `snarkos-node-network/test-helpers` and
+   # `snarkvm-ledger-block/test` skip checks, and `rocks` and `metrics` select
+   # other code paths. Crates share a line only where that unification enables
+-  # none of these on any crate. Helper features such as `test-helpers` and
+-  # `mock` can still be unified.
++  # none of these on any crate. Other helper features, such as `mock` and the
++  # other crates' `test-helpers`, can still be unified.
+   #
+   # Cheap entries run on free hosted runners and do not wait for the fleet.
+   test-hosted:
+@@ -241,7 +241,9 @@ jobs:
+       matrix:
+         include:
+           - name: services
+-            runs: nextest run -p snarkos-node-consensus -p snarkos-node-rest -p snarkos-cli
++            runs: |
++              nextest run -p snarkos-node-consensus -p snarkos-cli
++              nextest run -p snarkos-node-rest
+           - name: node
+             runs: nextest run -p snarkos-node -p snarkos-node-bft-storage-service --features snarkos-node-bft-storage-service/memory,snarkos-node-bft-storage-service/persistent
+           # Both lines use `metrics`, which the `snarkos` binary enables by
+@@ -254,8 +256,9 @@ jobs:
+             runs: |
+               nextest run -p snarkos-node-bft --features metrics
+               nextest run -p snarkos-node-bft --features metrics --example simple_node --no-tests=fail
+-          # One line for both would turn on `test` in `snarkos-node-sync` for
+-          # its own tests. The two lines build the same snarkvm crates.
++          # One line for both would turn on `test-helpers` in
++          # `snarkos-node-sync` for its own tests. The two lines build the same
++          # snarkvm crates.
+           - name: router-sync
+             runs: |
+               nextest run -p snarkos-node-router
+@@ -420,17 +423,18 @@ jobs:
+     name: devnet (${{ matrix.name }})
+     steps: *devnet-steps
  
--[[package]]
--name = "serde_spanned"
--version = "1.1.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6662b5879511e06e8999a8a235d848113e942c9124f211511b16466ee2995f26"
--dependencies = [
-- "serde_core",
--]
--
- [[package]]
- name = "serde_urlencoded"
- version = "0.7.1"
-@@ -5373,7 +5364,6 @@ dependencies = [
-  "snarkos-node-tcp",
-  "snarkvm",
-  "tikv-jemallocator",
-- "toml 1.1.6+spec-1.1.0",
-  "tracing",
- ]
- 
-@@ -7451,21 +7441,6 @@ dependencies = [
-  "serde",
- ]
- 
--[[package]]
--name = "toml"
--version = "1.1.6+spec-1.1.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "920602543f0911ab71da12c50d59701da54c196d1a2bf5cb4b75667f137a406a"
--dependencies = [
-- "indexmap 2.14.2",
-- "serde_core",
-- "serde_spanned",
-- "toml_datetime",
-- "toml_parser",
-- "toml_writer",
-- "winnow",
--]
--
- [[package]]
- name = "toml_datetime"
- version = "1.1.1+spec-1.1.0"
-@@ -7496,12 +7471,6 @@ dependencies = [
-  "winnow",
- ]
- 
--[[package]]
--name = "toml_writer"
--version = "1.1.2+spec-1.1.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7d56353a2a665ad0f41a421187180aab746c8c325620617ad883a99a1cbe66d2"
--
- [[package]]
- name = "tonic"
- version = "0.14.6"
+-  # The release binary must compile in no test-only code. `fuzz-helpers` turns on
+-  # proptest and snarkVM's `test-helpers`, and feature unification would carry
+-  # them into the binary if any crate on its path ever enabled it.
++  # The release binary must compile in no test-only code. `test-helpers` in the
++  # event and message crates turns on proptest and snarkVM's `test-helpers`, and
++  # feature unification would carry them into the binary if any crate on its
++  # path ever enabled it.
+   release-graph:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+         with: { persist-credentials: false }
+       - run: |
+           cargo tree -p snarkos -e normal,build,features --prefix none --locked > graph.txt
+-          hits=$(grep -E '^[a-z0-9_-]+ feature "(fuzz-helpers|test-helpers|test)"$|^proptest ' graph.txt | sort -u || true)
++          hits=$(grep -E '^[a-z0-9_-]+ feature "(test-helpers|test)"$|^proptest ' graph.txt | sort -u || true)
+           if [ -n "$hits" ]; then
+             printf '%s\n' "$hits"
+             echo "::error::the snarkos release build enables test-only code (above)"
 ```
 
-**File**: `Cargo.toml` (modified, +0/-11)
+**File**: `CI.md` (modified, +5/-4)
 ```diff
-@@ -382,19 +382,8 @@ version = "0.11.2"
- [build-dependencies.built]
+@@ -41,7 +41,7 @@ a job marked "release" only on the third. The other jobs run on every event.
+ | `test (light)` | hosted | all | 90 | `snarkos-account`, `-utilities`, `-node-tcp`, `-node-sync-locators`, `-node-network` |
+ | `test (cdn)` | hosted | all | 90 | `snarkos-node-cdn` |
+ | `test (messages)` | hosted | all | 90 | `snarkos-node-bft-events`, `-node-router-messages`, `-node-bft-ledger-service` |
+-| `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-node-rest`, `-cli` |
++| `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-cli`; then `-node-rest` |
+ | `test (node)` | `cpu` | all | 90 | `snarkos-node` with `snarkos-node-bft-storage-service` (features `memory,persistent`) |
+ | `test (bft)` | `cpu` | all | 90 | `snarkos-node-bft` with `metrics` |
+ | `test (router-sync)` | `cpu` | all | 90 | `snarkos-node-router`; then `-node-sync` |
+@@ -74,9 +74,10 @@ such a pull request cannot merge until a workflow reports that check for it.
+ Each line of a `test` entry is one cargo build. `cargo test -p a -p b` unifies
+ the features of `a` and `b`, and several crates enable features on their
+ dependencies that change what those dependencies do, such as
+-`snarkos-node-router/test` and `snarkvm-ledger-block/test`. So crates share a
+-line only where that unification enables no such feature on any crate. Helper
+-features such as `test-helpers` and `mock` can still be unified, so a test may
++`snarkos-node-router/test-helpers` and `snarkvm-ledger-block/test`. So crates
++share a line only where that unification enables no such feature on any crate.
++Other helper features, such as `mock` and the other crates' `test-helpers`, can
++still be unified, so a test may
+ compile in its line that would not under `cargo test -p <crate>` alone. Check
+ this before moving a crate between lines, for example by comparing
+ `cargo tree -e features` for the line against each crate alone.
+```
+
+**File**: `node/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -60,7 +60,7 @@ serial = [
+   "snarkvm/serial",
+   "snarkos-node-bft/serial"
+ ]
+-test = []
++test-helpers = []
+ test_network = [ "snarkos-node-bft/test_network", "snarkos-node-consensus/test_network", "snarkos-utilities/test_network" ]
+ 
+ [dependencies.aleo-std]
+@@ -180,7 +180,7 @@ workspace = true
+ 
+ [dev-dependencies.snarkos-node-router]
  workspace = true
+-features = [ "test" ]
++features = [ "test-helpers" ]
  
--[build-dependencies.toml]
--version = "1"
--
- [profile.release]
- lto = "thin"
--# uncomment the 2 lines below when building with the locktick feature or use the `release-locktick` profile
--# debug = "line-tables-only"
--# strip = "none"
--
--[profile.release-locktick]
--inherits = "release"
--debug = "line-tables-only"
--strip = "none"
- 
- [profile.dev]
- debug = "line-tables-only"
+ [dev-dependencies.snarkvm]
+ workspace = true
 ```
 
-**File**: `build.rs` (modified, +1/-115)
+**File**: `node/bft/Cargo.toml` (modified, +5/-5)
 ```diff
-@@ -13,116 +13,7 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
+@@ -40,11 +40,11 @@ cuda = [
+   "snarkos-node-bft-ledger-service/cuda",
+   "snarkos-node-sync/cuda"
+ ]
+-test = [
++test-helpers = [
+   # "snarkvm/test" this breaks some of the tests
+   "snarkvm/test-helpers",
+-  "snarkos-node-bft-ledger-service/test",
+-  "snarkos-node-bft-storage-service/test"
++  "snarkos-node-bft-ledger-service/test-helpers",
++  "snarkos-node-bft-storage-service/test-helpers"
+ ]
+ test_network = [
+   "snarkos-node-bft-ledger-service/test_network",
+@@ -195,11 +195,11 @@ workspace = true
  
--use std::{env, fs, path::Path, process};
--use toml::Value;
--
--fn check_locktick_profile() {
--    let locktick_enabled = env::var("CARGO_FEATURE_LOCKTICK").is_ok();
--    if locktick_enabled {
--        // First check the env variables that can override the TOML values.
--        let (mut valid_debug_override, mut valid_strip_override) = (false, false);
--
--        if let Ok(val) = env::var("CARGO_PROFILE_RELEASE_DEBUG") {
--            if val != "line-tables-only" {
--                eprintln!(
--                    "🔴 When enabling the locktick feature, CARGO_PROFILE_RELEASE_DEBUG may only be set to `line-tables-only`."
--                );
--                process::exit(1);
--            } else {
--                valid_debug_override = true;
--            }
--        }
--        if let Ok(val) = env::var("CARGO_PROFILE_RELEASE_STRIP") {
--            if val != "none" {
--                eprintln!(
--                    "🔴 When enabling the locktick feature, CARGO_PROFILE_RELEASE_STRIP may only be set to `none`."
--                );
--                process::exit(1);
--            } else {
--                valid_strip_override = true;
--            }
--        }
--
--        if valid_debug_override && valid_strip_override {
--            // Both overrides are compatible with locktick, no need to check the TOML.
--            return;
--        }
--
--        // If the relevant overrides were either invalid or not present, check the TOML.
--        let profile = env::var("PROFILE").unwrap_or_else(|_| "".to_string());
--        let manifest = Path::new(&env::var("CARGO_MANIFEST_DIR").unwrap()).join("Cargo.toml");
--        let contents = fs::read_to_string(&manifest).expect("failed to read Cargo.toml");
--        let doc: Value = toml::from_str(&contents).expect("invalid TOML in Cargo.toml");
--
--        let profile_table = doc.get("profile").and_then(|p| p.get(profile));
--        if let Some(Value::Table(profile_settings)) = profile_table {
--            if let Some(debug) = profile_settings.get("debug") {
--                match debug {
--                    Value::String(s) if s == "line-tables-only" => {
--                        println!("cargo:info=manifest has debuginfo=line-tables-only");
--                    }
--                    _ => {
--                        eprintln!(
--                            "🔴 When enabling the locktick feature, the profile must have debug set to `line-tables-only`. Uncomment the relevant lines in Cargo.toml."
--                        );
--                        process::exit(1);
--                    }
--                }
--            } else {
--                eprintln!(
--                    "🔴 When enabling the locktick feature, the profile must have `debug` set to `line-tables-only`. Uncomment the relevant lines in Cargo.toml."
--                );
--                process::exit(1);
--            }
--            if let Some(debug) = profile_settings.get("strip") {
--                match debug {
--                    Value::String(s) if s == "none" => {
--                        println!("cargo:info=manifest has strip=none");
--                    }
--                    _ => {
--                        eprintln!(
--                            "🔴 When enabling the locktick feature, the profile must have `strip` set to `none`. Uncomment the relevant lines in Cargo.toml."
--                        );
--                        process::exit(1);
--                    }
--                }
--            }
--        }
--    }
--}
--
--fn is_clippy() -> bool {
--    env::var("RUSTC_WORKSPACE_WRAPPER").is_ok_and(|var| var.contains("clippy"))
--}
--
--fn check_tokio_console_flags() {
--    // Don't run this check under clippy, otherwise it will cause issues with --all-features.
--    if is_clippy() {
--        return;
--    }
--
--    // Skip if the feature is not used.
--    let feature_enabled = env::var("CARGO_FEATURE_TOKIO_CONSOLE").is_ok();
--    if !feature_enabled {
--        return;
--    }
--
--    // Check for the presence of RUSTFLAGS.
--    let Ok(rustflags) = env::var("CARGO_ENCODED_RUSTFLAGS") else {
--        eprintln!(
--            "🔴 When enabling the tokio_console feature, you must run with `RUSTFLAGS=\"--cfg tokio_unstable\"`."
--        );
--        process::exit(1);
--    };
--
--    // Check for the presence of `tokio_unstable` within RUSTFLAGS.
--    if !rustflags.contains("tokio_unstable") {
--        eprintln!(
--            "🔴 When enabling the tokio_console feature, you must run with `RUSTFLAGS=\"--cfg tokio_unstable\"`."
--        );
--        process::exit(1);
--    }
--}
-+use std::{env, fs, path::Path};
+ [dev-dependencies.snarkos-node-bft]
+ path = "."
+-features = [ "test" ]
++features = [ "test-helpers" ]
  
- // The build script.
+ [dev-dependencies.snarkos-node-sync]
+ workspace = true
+-features = [ "test" ]
++features = [ "test-helpers" ]
  
-@@ -150,11 +41,6 @@ fn emit_version_env() {
+ [dev-dependencies.snarkos-utilities]
+ workspace = true
+```
+
+**File**: `node/bft/events/Cargo.toml` (modified, +14/-13)
+```diff
+@@ -21,18 +21,19 @@ default = [ ]
+ metrics = [ "snarkvm/metrics" ]
+ # Keep the [dev-dependencies] in sync with this list, and gate code with
+ # `cfg(any(test, feature = "test-helpers"))`: the unit tests build without this feature.
+-test-helpers = [ "dep:rand_chacha", "dep:rand", "dep:proptest" ]
+-# Exposes the `prop_tests` modules -- the `any_*` generators -- to callers
+-# outside this crate's own test build. They are the only practical way to seed a
+-# fuzzing corpus with structurally valid events: without them a mutator spends
+-# most of its executions failing the version byte at the head of every reader.
+-#
+-# Named for what it is rather than folded into `test-helpers`, which already
+-# means something narrower here (it pulls the rng and proptest dependencies and
+-# un-gates only `committee_prop_tests`). Enabling this in a production build would
+-# compile the generators into the binary, so it is deliberately not implied by
+-# anything.
+-fuzz-helpers = [ "test-helpers", "dep:snarkos-utilities", "dep:test-strategy", "dep:time", "snarkos-node-sync-locators/test", "snarkvm/test-helpers", "snarkvm/algorithms" ]
++# Also exposes the `prop_tests` generators, which seed a fuzzing corpus with
++# structurally valid events. A production build must not enable this feature.
++test-helpers = [
++  "dep:proptest",
++  "dep:rand",
++  "dep:rand_chacha",
++  "dep:snarkos-utilities",
++  "dep:test-strategy",
++  "dep:time",
++  "snarkos-node-sync-locators/test-helpers",
++  "snarkvm/test-helpers",
++  "snarkvm/algorithms"
++]
+ 
+ [dependencies.anyhow]
+ workspace = true
+@@ -111,7 +112,7 @@ workspace = true
+ 
+ [dev-dependencies.snarkos-node-sync-locators]
+ workspace = true
+-features = [ "test" ]
++features = [ "test-helpers" ]
+ 
+ [dev-dependencies.snarkos-utilities]
+ workspace = true
+```
+
+**File**: `node/bft/events/src/batch_certified.rs` (modified, +1/-1)
+```diff
+@@ -57,7 +57,7 @@ impl<N: Network> FromBytes for BatchCertified<N> {
+     }
  }
  
- fn main() {
--    // Check if locktick feature is correctly enabled.
--    check_locktick_profile();
--    // Check if the tokio_console feature is correctly enabled.
--    check_tokio_console_flags();
--
-     // Register the rele
+-#[cfg(any(test, feature = "fuzz-helpers"))]
++#[cfg(any(test, feature = "test-helpers"))]
+ pub mod prop_tests {
+     #![cfg_attr(not(test), allow(unused_imports))]
+     use crate::{BatchCertified, certificate_response::prop_tests::any_batch_certificate};
+```
+
+**File**: `node/bft/events/src/batch_propose.rs` (modified, +1/-1)
+```diff
+@@ -60,7 +60,7 @@ impl<N: Network> FromBytes for BatchPropose<N> {
+     }
+ }
+ 
+-#[cfg(any(test, feature = "fuzz-helpers"))]
++#[cfg(any(test, feature = "test-helpers"))]
+ pub mod prop_tests {
+     #![cfg_attr(not(test), allow(unused_imports))]
+     use crate::{
+```
+
+**File**: `node/bft/events/src/batch_signature.rs` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@ impl<N: Network> FromBytes for BatchSignature<N> {
+     }
+ }
+ 
+-#[cfg(any(test, feature = "fuzz-helpers"))]
++#[cfg(any(test, feature = "test-helpers"))]
+ pub mod prop_tests {
+     #![cfg_attr(not(test), allow(unused_imports))]
+     use crate::{
+```
+
+---
+
+### Incident Patch 2: `52a02124` (2026-11-20)
+**Commit Message**: Merge staging into breaking/test-helpers-rename
+
+Apply the rename to what #4720 and #4723 changed: the events and network
+features keep their `cfg(any(test, ...))` gates under the name
+`test-helpers`, and ledger-service gates `TranslucentLedgerService` on
+`test-helpers`.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01UYfmmLteo8RJcUAnUrf9qy
+
+**File**: `.github/ISSUE_TEMPLATE.md` (modified, +1/-1)
+```diff
+@@ -1,3 +1,3 @@
+-## 👉 [Please follow one of these issue templates](https://github.com/ProvableHQ/snarkOS/issues/new/choose) 👈
++## 👉 [Please follow one of these issue templates](https://github.com/aleo-labs-protocol/snarkOS/issues/new/choose) 👈
+ 
+ Note: to keep the backlog clean and actionable, issues may be immediately closed if they do not follow one of the above issue templates.
+```
+
+**File**: `.github/workflows/benchmarks.yml` (modified, +4/-5)
+```diff
+@@ -3,8 +3,7 @@ name: Run snarkOS Benchmarks
+ on:
+   push:
+     branches:
+-      - 'testnet'
+-      - 'mainnet'
++      - 'release/**'
+   workflow_dispatch:
+ 
+ jobs:
+@@ -112,7 +111,7 @@ jobs:
+         uses: benchmark-action/github-action-benchmark@4322e5726e6334590d251fc4f92bec0efafc45dc # v1.22.2
+         with:
+           name: snarkOS Benchmarks
+-          # testnet and mainnet keep separate gh-pages histories.
++          # Each release branch keeps its own gh-pages history.
+           benchmark-data-dir-path: dev/bench/${{ github.ref_name }}
+           alert-threshold: '150%'
+           comment-on-alert: true
+@@ -125,14 +124,14 @@ jobs:
+           tool: 'customBiggerIsBetter'
+           output-file-path: results.json
+           alert-comment-cc-users: '@vicsn,@snarkworld,@cbeck88'
+-          # The next step pushes stored results for testnet and mainnet.
++          # The next step pushes stored results for release branches.
+           auto-push: false
+           # Enable Job Summary for PRs
+           summary-always: true
+ 
+       - name: Push benchmark result
+         # Manual runs on other branches keep the job summary and do not update gh-pages.
+-        if: github.ref_name == 'testnet' || github.ref_name == 'mainnet'
++        if: startsWith(github.ref, 'refs/heads/release/')
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         run: git push origin gh-pages
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +34/-24)
+```diff
+@@ -6,7 +6,7 @@ on:
+     paths-ignore:
+       - '**.md'
+   push:
+-    branches: [staging, canary, testnet, mainnet]
++    branches: [staging, 'release/**']
+   workflow_dispatch:
+ 
+ permissions:
+@@ -173,6 +173,11 @@ jobs:
+       # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
+       - uses: aleo-labs-protocol/gh-actions/.github/actions/runner-job-setup@v2
+       - uses: ./.github/actions/job-home
++      # rust-cache hashes every installed toolchain into its key, and the
++      # image's `stable` differs between the runner images GitHub rolls out.
++      # Hosted only: on a box, other jobs use these toolchains.
++      - if: runner.environment == 'github-hosted'
++        run: rustup toolchain uninstall stable
+       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+         if: runner.environment == 'github-hosted'
+         with:
+@@ -353,12 +358,17 @@ jobs:
+         if: always()
+         run: *stop-nodes
+ 
+-  # Slower devnets. On every push to a release branch, and on demand.
++  # Slower devnets. On every push, on pull requests into a release branch, and
++  # on demand.
+   devnet-merge:
+     needs: [start-cpu-runners, build-snarkos]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+-    if: github.event_name != 'pull_request'
++    if: >-
++      !cancelled() && needs.build-snarkos.result == 'success' &&
++      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
++      github.repository == 'aleo-labs-protocol/snarkOS' &&
++      (github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/'))
+     strategy:
+       fail-fast: false
+       matrix:
+@@ -386,18 +396,19 @@ jobs:
+     name: devnet (${{ matrix.name }})
+     steps: *devnet-steps
+ 
+-  # Devnets for releases only. On every push to `canary`, `testnet` or
+-  # `mainnet`, and on demand.
++  # Devnets for releases only. On every push to a release branch, on pull
++  # requests into one, and on demand.
+   devnet-release:
+     needs: [start-cpu-runners, build-snarkos]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+     if: >-
+-      github.event_name == 'workflow_dispatch' ||
+-      (github.event_name == 'push' &&
+-       (github.ref == 'refs/heads/canary' ||
+-        github.ref == 'refs/heads/testnet' ||
+-        github.ref == 'refs/heads/mainnet'))
++      !cancelled() && needs.build-snarkos.result == 'success' &&
++      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
++      github.repository == 'aleo-labs-protocol/snarkOS' &&
++      (github.event_name == 'workflow_dispatch' ||
++      startsWith(github.ref, 'refs/heads/release/') ||
++      startsWith(github.base_ref, 'release/'))
+     strategy:
+       fail-fast: false
+       matrix:
+@@ -439,10 +450,11 @@ jobs:
+         with: { tool: cargo-machete@0.7.0 }
+       - run: cargo machete
+ 
++  # Builds cold: the four caches would take about half of the repository's
++  # 10 GB and evict the entries the hosted test jobs restore from.
+   windows:
+     runs-on: windows-latest
+-    permissions: { contents: read, actions: write }
+-    if: github.event_name != 'pull_request'
++    if: github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/')
+     env:
+       CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+     strategy:
+@@ -452,13 +464,6 @@ jobs:
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with: { persist-credentials: false }
+-      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+-        with:
+-          key: ${{ matrix.dir }}
+-          save-if: ${{ github.ref == 'refs/heads/staging' }}
+-      - uses: ./.github/actions/rust-cache-prune
+-        if: github.ref == 'refs/heads/staging'
+-        with: { key: '${{ matrix.dir }}' }
+       - run: cargo check --examples --benches --tests
+         working-directory: ${{ matrix.dir }}
+ 
+@@ -486,14 +491,19 @@ jobs:
+       - run: cargo hack clippy --workspace --each-feature --exclude-features cuda --locked -- -D warnings
+ 
+   # The one job to require on protected branches. A skipped job counts as passed
+-  # for a required check, so each job a pull request runs must succeed here.
++  # for a required check, so every job must succeed here. The exception is a
++  # merge or release job skipped outside a release branch, where it is not meant
++  # to run.
+   ci-ok:
+     if: always()
+-    needs: [check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, test-hosted, test, build-snarkos, devnet]
++    needs: [check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, test-hosted, test, build-snarkos, devnet, devnet-merge, devnet-release, windows]
+     runs-on: ubuntu-latest
+     steps:
+       - env:
+-          RESULTS: ${{ join(needs.*.result, ' ') }}
++          NEEDS: ${{ toJSON(needs) }}
++          RELEASE: >
+```
+
+**File**: `.github/workflows/merge-into-staging.yml` (modified, +4/-4)
+```diff
+@@ -1,7 +1,7 @@
+-name: Merge testnet and mainnet into staging
++name: Merge release branches into staging
+ 
+-# Keeps one pull request open for each of testnet and mainnet while it has
+-# commits that staging lacks. Promotion in the other direction stays manual.
++# Keeps one pull request open for each release branch while it has commits
++# that staging lacks. Promotion in the other direction stays manual.
+ on:
+   schedule:
+     - cron: '17 2,14 * * *'
+@@ -18,7 +18,7 @@ jobs:
+     permissions: { contents: read, pull-requests: read }
+     with:
+       target: staging
+-      sources: testnet mainnet
++      sources: release/*
+       post-merge: .github/merge-fixup.sh
+     # Lives in the merge-bot environment, which admits only staging. The called
+     # workflow's merge job sets that environment and receives the value.
+```
+
+**File**: `.github/workflows/release.yml` (modified, +5/-0)
+```diff
+@@ -3,6 +3,8 @@ on:
+   push:
+     tags:
+       - 'v*.*.*'
++      # A release candidate gets no binaries: `snarkos update` in older releases would install them.
++      - '!v*-rc.*'
+ 
+ env:
+   RUST_BACKTRACE: 1
+@@ -46,6 +48,7 @@ jobs:
+         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+         if: startsWith(github.ref, 'refs/tags/')
+         with:
++          make_latest: legacy
+           files: |
+             aleo-${{ steps.get_version.outputs.version }}-x86_64-unknown-linux-gnu.zip
+         env:
+@@ -95,6 +98,7 @@ jobs:
+         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+         if: startsWith(github.ref, 'refs/tags/')
+         with:
++          make_latest: legacy
+           files: |
+             aleo-${{ steps.get_version.outputs.version }}-aarch64-apple-darwin.zip
+         env:
+@@ -140,6 +144,7 @@ jobs:
+         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+         if: startsWith(github.ref, 'refs/tags/')
+         with:
++          make_latest: legacy
+           files: |
+             aleo-${{ steps.get_version.outputs.version }}-x86_64-pc-windows-msvc.zip
+         env:
+```
+
+**File**: `.github/workflows/stress-test.yml` (modified, +3/-1)
+```diff
+@@ -200,11 +200,13 @@ jobs:
+ 
+       - name: Report a rejection or an orchestration failure
+         if: failure() && steps.req.outcome == 'success'
++        env:
++          CHECK: ${{ steps.req.outputs.check }}
+         run: |
+           if [[ -f no-capacity ]]; then
+             echo "**No capacity for the Gauntlet host**: EC2 had none to start it, so no run started and nothing was tested. Run the workflow again later." >> "$GITHUB_STEP_SUMMARY"
+           elif [[ -s rejected.txt ]]; then
+             echo "**Request rejected**: the Gauntlet host started no run: $(cat rejected.txt)" >> "$GITHUB_STEP_SUMMARY"
+           else
+-            echo "**Orchestration interrupted**: GitHub could not queue this run. The Gauntlet host may still be running it: look for its stress-test check before retrying." >> "$GITHUB_STEP_SUMMARY"
++            echo "**Orchestration interrupted**: GitHub could not queue this run. The Gauntlet host may still be running it: look for its $CHECK check before retrying." >> "$GITHUB_STEP_SUMMARY"
+           fi
+```
+
+**File**: `.github/workflows/sync-test.yml` (modified, +3/-1)
+```diff
+@@ -229,11 +229,13 @@ jobs:
+ 
+       - name: Report a rejection or an orchestration failure
+         if: failure() && steps.req.outcome == 'success'
++        env:
++          CHECK: ${{ steps.req.outputs.check }}
+         run: |
+           if [[ -f no-capacity ]]; then
+             echo "**No capacity for the sync host**: EC2 had none to start it, so no run started and nothing was tested. Run the workflow again later." >> "$GITHUB_STEP_SUMMARY"
+           elif [[ -s rejected.txt ]]; then
+             echo "**Request rejected**: the sync host started no run: $(cat rejected.txt)" >> "$GITHUB_STEP_SUMMARY"
+           else
+-            echo "**Orchestration interrupted**: GitHub could not queue this run. The sync host may still be running it: look for its sync-test check before retrying." >> "$GITHUB_STEP_SUMMARY"
++            echo "**Orchestration interrupted**: GitHub could not queue this run. The sync host may still be running it: look for its $CHECK check before retrying." >> "$GITHUB_STEP_SUMMARY"
+           fi
+```
+
+**File**: `BRANCHING_AND_RELEASING.md` (added, +113/-0)
+```diff
+@@ -0,0 +1,113 @@
++# Branching and Releasing
++
++snarkOS uses trunk-based development, like [snarkVM](https://github.com/aleo-labs-protocol/snarkVM/blob/staging/BRANCHING_AND_RELEASING.md). `staging` is the trunk. Each release is made on its own release branch, cut from `staging`.
++
++## Branches
++
++| Branch | Purpose |
++| :- | :- |
++| `staging` | The trunk. All feature work targets it. |
++| `release/vX.Y` | One branch for each minor release, for example `release/v5.0`. Patch releases (`v5.0.1`) come from the same branch. |
++
++The `mainnet`, `testnet` and `canary` branches are no longer updated. The network is a runtime flag (`--network`), not a branch: one release commit runs on testnet first, then on mainnet.
++
++## Tags and releases
++
++| Tag | GitHub | Network |
++| :- | :- | :- |
++| `vX.Y.Z-rc.N` | Pre-release | testnet |
++| `vX.Y.Z` | Release | mainnet |
++
++- Release tags are made only on release branches.
++- A final tag `vX.Y.Z` goes on the accepted release candidate's commit, or on one that differs from it only in Cargo manifests, when the final pins snarkVM's published release. mainnet runs the code that testnet accepted.
++- Never move or delete a release tag.
++- Tags of the form `testnet-vX.Y.Z` come from the old process.
++
++## Running a release
++
++To build what runs on a network, check out its latest release tag:
++
++```bash
++./scripts/checkout-latest-release.sh mainnet
++./scripts/checkout-latest-release.sh testnet
++```
++
++This replaces `git checkout mainnet` and `git pull`. The script asks GitHub for the newest release, checks out its tag, and prints the commit. It leaves git on a detached HEAD, so rerun it to update. The `scripts/run-*.sh` scripts run what is checked out and no longer pull. It needs `curl` and `jq`.
++
++## CI
++
++Pull requests that target a `release/**` branch, and pushes to a `release/**` branch, run the merge and release jobs in addition to the normal CI, and `ci-ok` fails if one is skipped. See [CI.md](CI.md).
++
++## Release process
++
++The example below makes the `v5.0` release.
++
++1. **Cut the release branch.** Create `release/v5.0` at the current `staging` commit:
++
++   ```bash
++   git fetch origin
++   git push origin origin/staging:refs/heads/release/v5.0
++   ```
++
++2. **Bump the version and pin snarkVM.** Open a pull request against `release/v5.0` that sets every crate version and `.cargo/release-version` to `5.0.0` and pins snarkVM to its release candidate. The pin is moved by hand. Push fixes to the same pull request until CI passes. Work on `staging` continues as usual.
++
++3. **Tag a release candidate.** When no more changes are planned, tag the head of `release/v5.0` as `v5.0.0-rc.1` and make a GitHub pre-release from the tag. Operators take it to testnet. If testnet finds a problem, fix it with a pull request against `release/v5.0`, and tag `v5.0.0-rc.2`. Repeat until a release candidate is accepted.
++
++4. **Release.** When testnet accepts a release candidate, tag the same commit as `v5.0.0` and make a GitHub release from the tag. Operators take it to mainnet.
++
++5. **Merge the release branch into staging.** A bot does this after each change to the release branch. See [Merging a release branch](#merging-a-release-branch).
++
++6. **Patch releases.** Open pull requests against `release/v5.0`. One of them bumps the version to `5.0.1`. Tag `v5.0.1-rc.1` and so on until testnet accepts one, then tag it `v5.0.1`.
++
++```mermaid
++%%{init: {'gitGraph': {'mainBranchName': 'staging'}}}%%
++gitGraph
++  commit id: "A"
++  commit id: "B"
++  branch release/v5.0
++  checkout staging
++  commit id: "C"
++  checkout release/v5.0
++  commit id: "bump 5.0.0" tag: "v5.0.0-rc.1"
++  checkout staging
++  commit id: "D"
++  checkout release/v5.0
++  commit id: "fix" tag: "v5.0.0-rc.2" tag: "v5.0.0"
++  checkout staging
++  merge release/v5.0
++  commit id: "E"
++  checkout release/v5.0
++  commit id: "bump 5.0.1" tag: "v5.0.1-rc.1" tag: "v5.0.1"
++  checkout staging
++  merge release/v5.0
++```
++
++The next minor release, `v5.1`, gets a new branch `release/v5.1` from `staging`.
++
++## Making changes
++
++Before you open a pull request, decide where the change goes:
++
++- **The release in progress needs it**, for example a bug fix: target the release branch. It reaches `staging` when the release branch merges into `staging`.
++- **Otherwise**: target `staging`.
++
++Do not open the same change against both branches. If a change on `staging` is later needed in a release, cherry-pick it onto the release branch. Expect a conflict when the release branch next merges into `staging`, because git treats the cherry-picked commit as a separate commit.
++
++## Merging a release branch
++
++A bot opens the pull request that merges a release branch into `staging`. Do not open one yourself. [merge-into-staging.yml](.github/workflows/merge-into-staging.yml) keeps one pull request open from `ci/merge-release/vX.Y-into-staging` for each `release/*` branch with commits that `staging` lacks. It requests review from the authors and reviewers of the
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4690** (2026-11-17): [Release] Testnet v4.13.1 (@snarkworld)
-- **PR #4689** (2026-11-17): Scan every top-level use statement for lock imports (@cbeck88-ai-dev)
-- **PR #4685** (closed): [Release] Use published snarkVM 4.13.0 crates for mainnet (@snarkworld)
-- **PR #4684** (2026-11-17): Run fleet CI for approved fork pull requests (@cbeck88)
-- **PR #4683** (2026-11-17): Merge mainnet into staging (@aleo-labs-merge-bot[bot])
-- **PR #4682** (2026-11-17): Remove the locktick profile and tokio_console flag checks from build.rs (@cbeck88-ai-dev)
+- **PR #4727** (2026-11-20): Rename test and fuzz-helpers features to test-helpers (@cbeck88)
+- **PR #4726** (2026-11-20): ci: Gauntlet summaries name the check that ran (@cbeck88)
+- **PR #4723** (2026-11-20): Remove structural features from ledger-service; use dep: for optional deps (@cbeck88)
+- **PR #4722** (2026-11-20): Drop the remaining references to the retired branches and old org (@cbeck88)
+- **PR #4721** (2026-11-20): Make Message::VERSIONS a slice and document version growth (@cbeck88)
+- **PR #4720** (2026-11-20): Remove the self dev-dependencies of the events and network crates (@cbeck88)
 
 ---
 
@@ -2257,62 +2657,59 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.lock
+## X. Empirical Invariant Guard in ci.yml
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c81c424a`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `811fe8b4`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "toml",
+      # The fuzzing harness builds these two alone with `test-helpers`, which
+      - run: cargo check -p snarkos-node-router-messages --features test-helpers
+      - run: cargo check -p snarkos-node-bft-events --features test-helpers
+  # `snarkos-node-router/test-helpers`, `snarkos-node-network/test-helpers` and
+  # none of these on any crate. Other helper features, such as `mock` and the
+  # other crates' `test-helpers`, can still be unified.
+            runs: |
+              nextest run -p snarkos-node-consensus -p snarkos-cli
+              nextest run -p snarkos-node-rest
+          # One line for both would turn on `test-helpers` in
+          # `snarkos-node-sync` for its own tests. The two lines build the same
+          # snarkvm crates.
+  # The release binary must compile in no test-only code. `test-helpers` in the
+  # event and message crates turns on proptest and snarkVM's `test-helpers`, and
+  # feature unification would carry them into the binary if any crate on its
+  # path ever enabled it.
+          hits=$(grep -E '^[a-z0-9_-]+ feature "(test-helpers|test)"$|^proptest ' graph.txt | sort -u || true)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "toml 0.5.11",
-[[package]]
-name = "serde_spanned"
-version = "1.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6662b5879511e06e8999a8a235d848113e942c9124f211511b16466ee2995f26"
-dependencies = [
- "serde_core",
-]
-
- "toml 1.1.6+spec-1.1.0",
-[[package]]
-name = "toml"
-version = "1.1.6+spec-1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "920602543f0911ab71da12c50d59701da54c196d1a2bf5cb4b75667f137a406a"
-dependencies = [
- "indexmap 2.14.2",
- "serde_core",
- "serde_spanned",
- "toml_datetime",
- "toml_parser",
- "toml_writer",
- "winnow",
-]
-
-[[package]]
-name = "toml_writer"
-version = "1.1.2+spec-1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7d56353a2a665ad0f41a421187180aab746c8c325620617ad883a99a1cbe66d2"
-
+      # The fuzzing harness builds these two alone with `fuzz-helpers`, which
+      - run: cargo check -p snarkos-node-router-messages --features fuzz-helpers
+      - run: cargo check -p snarkos-node-bft-events --features fuzz-helpers
+  # `snarkos-node-router/test`, `snarkos-node-network/test` and
+  # none of these on any crate. Helper features such as `test-helpers` and
+  # `mock` can still be unified.
+            runs: nextest run -p snarkos-node-consensus -p snarkos-node-rest -p snarkos-cli
+          # One line for both would turn on `test` in `snarkos-node-sync` for
+          # its own tests. The two lines build the same snarkvm crates.
+  # The release binary must compile in no test-only code. `fuzz-helpers` turns on
+  # proptest and snarkVM's `test-helpers`, and feature unification would carry
+  # them into the binary if any crate on its path ever enabled it.
+          hits=$(grep -E '^[a-z0-9_-]+ feature "(fuzz-helpers|test-helpers|test)"$|^proptest ' graph.txt | sort -u || true)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c81c424a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `811fe8b4` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

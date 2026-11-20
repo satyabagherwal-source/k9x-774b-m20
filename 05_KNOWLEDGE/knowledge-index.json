@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T05:16:32.470Z",
+  "last_updated": "2026-11-20T05:21:17.078Z",
   "total_verified_learnings": 9024,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22209,
+  "total_items": 22211,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112830,13 +112830,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "ddd15c3e",
-      "content_hash": "99b7d3e501ef359a7f8a2e03741473c69d54e7c687dd92a0689fdc35e77cd511",
+      "source_version": "811fe8b4",
+      "content_hash": "c5181066fe6ab5f19ab5d0eddcefe4f5d25bf84ff3d9283f02e28cc0cba48ef7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T02:39:02.112Z"
+      "persisted_at": "2026-11-20T05:21:09.538Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QKZ7-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-73FD-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "221f4bbc8809586cbdc37b35b6e1407dccc54ac79671d3374468d971abcdab99",
+      "content_hash": "3efa4ea35699ece67f03d522a8823676a340337cb8b77c465660c535367505e2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T05:08:26.432Z"
+      "persisted_at": "2026-11-20T05:21:16.828Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c3ecdb08c3e85025c08e3249ebf75f46e7beff235194306f29db85ffe24b5f4f",
+      "content_hash": "295a2aee748f4050e3954e908ac950eedf68be624b4b81fc92bfd1d68f818951",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T05:08:26.636Z"
+      "persisted_at": "2026-11-20T05:21:16.954Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1033d710f318303daf1de48b260e913691a16993116cd09980055e168189417d",
+      "content_hash": "e556055e875c51672c080a06a6da9b6ac69f98338bfa49a230bdbe7e717aaec2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T05:08:26.837Z"
+      "persisted_at": "2026-11-20T05:21:17.078Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -215687,13 +215687,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "ddd15c3e",
-      "content_hash": "1cbd04c8e15e938124780e7a44ee82366770f3b7b72e01187e6b8bc70e76d490",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "811fe8b4",
+      "content_hash": "6872a2489c86f10688f4b1497d837aadafe4f7052424de50690dc6213ae46817",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215713,7 +215713,7 @@
         {
           "number": 8826,
           "title": "Empirical Invariant Guard in ci.yml",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 8852,
@@ -215756,7 +215756,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T02:39:01.426Z",
+      "verified_at": "2026-11-20T05:21:08.773Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231131,8 +231131,8 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "5db0619d",
-      "content_hash": "8e22db0e69dadad1c892de1dfbad69af8744d3c96369a7c04336f33d19910e3d",
+      "source_version": "4452a98a",
+      "content_hash": "9efc30c4bf160dbeb468cecada8f1c9fd77c476598b651dc6d16b71c00b900ca",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
@@ -231177,7 +231177,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T23:34:55.351Z",
+      "verified_at": "2026-11-20T05:21:11.317Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231219,10 +231219,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
       "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
       "repository": "rqlite/rqlite",
-      "source_version": "5db0619d",
-      "content_hash": "37de53125192ff1d602ea613c286aea31df02f061e0d17d02cf2c8f607b2364a",
+      "source_version": "4452a98a",
+      "content_hash": "b335fea65c63ddb8e99f268a3e3216dd0fa5c205e9f107936c2686d69844a04b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T23:34:55.984Z"
+      "persisted_at": "2026-11-20T05:21:11.863Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite",
@@ -231231,10 +231231,10 @@
       "relative_path": "08_VERIFICATION/rqlite-rqlite-verification-protocol-empirical-defect-shield-for-rqlite-rqlite.md",
       "title": "Verification Protocol: Empirical Defect Shield for rqlite/rqlite",
       "repository": "rqlite/rqlite",
-      "source_version": "5db0619d",
-      "content_hash": "64b267c05666a72ef3ce00e5be6d5e3fc4fe3c29e7b98a61fa23d9c8b69cb144",
+      "source_version": "4452a98a",
+      "content_hash": "d12ccc6975e36fed58284101845cc9756626381e55a1a4c8f5b429aebadb3f78",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T23:34:56.136Z"
+      "persisted_at": "2026-11-20T05:21:11.997Z"
     },
     "rule-8495": {
       "learning_id": "rule-8495",
@@ -248583,13 +248583,13 @@
       "item_id": "candidate_directive-update-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DU1F-update-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-72TY-update-changelog-md.md",
       "title": "Update CHANGELOG.md",
-      "repository": "rqlite/rqlite",
-      "source_version": "5db0619d",
-      "content_hash": "35c6da34b7d7051fe86a561728418e0fb14f40a42f5d6dab166c6c1032366215",
+      "repository": "rqlite-rqlite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "54db07f1f803568b38d45965e5f71dbc2c03fc4c68d5d355f69f43bd493949e1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T23:34:55.832Z"
+      "persisted_at": "2026-11-20T05:21:16.057Z"
     },
     "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants",
@@ -251995,9 +251995,9 @@
       "title": "Architecture Intelligence: rqlite-rqlite-learnings Core Invariants",
       "repository": "rqlite-rqlite-learnings",
       "source_version": "HEAD",
-      "content_hash": "91ea47f0d8b92a08cce9277f2e065c6def7c2b4de06e6c5568988fa94a0e5f32",
+      "content_hash": "4483689e05f44783c49bf4bc1a069440522898ad93f827550a50cd50edc2bb9e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T07:23:15.974Z"
+      "persisted_at": "2026-11-20T05:21:16.183Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite-learnings",
@@ -252007,9 +252007,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rqlite-rqlite-learnings",
       "repository": "rqlite-rqlite-learnings",
       "source_version": "HEAD",
-      "content_hash": "ff803974379803d904570d7865f309747240fac11ee66b2cdcbf86e0b138babe",
+      "content_hash": "76479dfe52133352c06bd0b02b24c42f96d85bb6604fe115602b771961da8bd9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T07:23:16.122Z"
+      "persisted_at": "2026-11-20T05:21:16.309Z"
     },
     "learn-huggingface-unsloth-qwen3-8-flash-next-gguf": {
       "learning_id": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
@@ -254999,9 +254999,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol-snarkos-learnings",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f02186b7cef51785ebb07b91398f87066ce0c650959040e1d8d7d9a123be5f0",
+      "content_hash": "d131534f4c4f31d3db2c55754b4c5d8d994739295268054757375a690f57ae1d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T00:06:50.125Z"
+      "persisted_at": "2026-11-20T05:21:15.525Z"
     },
     "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and": {
       "item_id": "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and",
@@ -263234,37 +263234,37 @@
       "rule_number": 8826,
       "title": "Empirical Invariant Guard in ci.yml",
       "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "bec6d69e",
+      "source_version": "811fe8b4",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-17T00:38:41.327Z"
+      "verified_at": "2026-11-20T05:21:08.773Z"
     },
     "candidate_directive-empirical-invariant-guard-in-ci-yml": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-ci-yml",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-S4TS-empirical-invariant-guard-in-ci-yml.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-724E-empirical-invariant-guard-in-ci-yml.md",
       "title": "Empirical Invariant Guard in ci.yml",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "bec6d69e",
-      "content_hash": "34bd8a8134bb70726a20119107a2f6331fbe4a6935f61f715403a8f080875e6e",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "35e4becb8662bc4b476a94e6b574534454932db2d1c3f986e912acbb1a62f5b7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T00:38:41.780Z"
+      "persisted_at": "2026-11-20T05:21:15.138Z"
     },
     "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/provablehq-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-speciali.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/aleo-labs-protocol-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-.md",
       "title": "Agent Contract: aleo-labs-protocol/snarkOS Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "3707bf02",
-      "content_hash": "279d8d045f9159776c300d4b9faf56878a237f0abbfd925113de61599ded092a",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-17T15:43:49.481Z"
+      "source_version": "811fe8b4",
+      "content_hash": "d00109b497b8fce4bcda51051917b78bf1e5e6dd110e8a6e21d691cd947c2e0b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T05:21:09.419Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -267878,9 +267878,9 @@
       "title": "Agent Contract: aleo-labs-protocol-snarkos-learnings Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "b6a02014d1c1b3d0c53a827b9200cc1ecb8e7bca10c7f150b7de7e1fc166d80e",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-17T06:20:47.030Z"
+      "content_hash": "799d447ca070b7d598f89b450893ce2fc2becbc896681f4e0a47af48974618e5",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T05:21:15.416Z"
     },
     "learn-github-cypress-io-cypress": {
       "learning_id": "learn-github-cypress-io-cypress",
@@ -300674,6 +300674,30 @@
       "content_hash": "25f55a5536212bc9665b1e5ae8aead098843971a5b6539a3377c15f876d83f61",
       "domain_letter": "K",
       "persisted_at": "2026-11-20T05:16:30.023Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-aleo-labs-protocol-snarkos-quality-verification-intelligence-aleo-labs-protocol-.md",
+      "title": "Quality & Verification Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "source_version": "811fe8b4",
+      "content_hash": "7704a34ffdba2af953b9155f7cffde7ea87f047e723b70c5adf6c2e31f342581",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T05:21:09.285Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-aleo-labs-protocol-snarkos-learnings-quality-verification-intelligence-aleo-labs.md",
+      "title": "Quality & Verification Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f2207d066193c4fff881860fe6020b1cab81f334bbe7ebe8c29457219dc90f00",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T05:21:15.268Z"
     }
   },
   "ai-builder-brain": {

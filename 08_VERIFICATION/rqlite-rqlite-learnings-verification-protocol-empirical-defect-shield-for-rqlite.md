@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T07:23:15.743Z",
+  "timestamp": "2026-11-20T05:21:15.954Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rqlite-rqlite-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rqlite-rqlite-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T07:23:15.743Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T05:21:15.954Z`  
 > **Learning ID**: `LEARN-EVO-rqlite-rqlite-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
-> **Source Version**: `338a824d`  
+> **Source Version**: `4452a98a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T07:23:10.511Z  
+> **Timestamp**: 2026-11-20T05:21:11.074Z  
 > **Learning ID**: `learn-github-rqlite-rqlite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T07:23:10.505Z  
+> **Harvest Timestamp**: 2026-11-20T05:21:11.070Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17959 stars
+- **Stars / Engagement**: 17961 stars
 
 ---
 
@@ -2094,11 +2094,11 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3066** (2026-11-18): **Upgrade dependencies via `go get`**
+  *Symptoms*: 
+
 - **Issue #3065** (2026-11-18): **Fix flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout**
   *Symptoms*: The read-only half of the test relied on a 1ns database timeout expiring before a trivial SELECT completed. On a machine with a coarse clock, such as the AppVeyor Windows workers, the read can finish before the timeout is noticed, so the request succeeds and the test fails.  Stall the read until the timeout expires instead, and assert that the result carries the query timeout error. 
-
-- **Issue #3064** (2026-11-18): **Shorten e2e test timeouts**
-  *Symptoms*: This testing takes place on localhost. 200 ms should be sufficient for testing.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2115,130 +2115,28 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `20470c69` (2026-11-18)
-**Commit Message**: Fix flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout
+### Incident Patch 1: `4452a98a` (2026-11-19)
+**Commit Message**: Update CHANGELOG.md
 
-The read-only half of the test relied on a 1ns database timeout expiring
-before a trivial SELECT completed. On a machine with a coarse clock, such
-as the AppVeyor Windows workers, the read can finish before the timeout
-is noticed, so the request succeeds and the test fails.
-
-Stall the read until the timeout expires instead, and assert that the
-result carries the query timeout error.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `store/store_test.go` (modified, +11/-4)
+**File**: `CHANGELOG.md` (modified, +3/-1)
 ```diff
-@@ -814,11 +814,18 @@ func Test_SingleNodeRequest_WriteIgnoresDBTimeout(t *testing.T) {
- 		t.Fatalf("unexpected results for request\nexp: %s\ngot: %s", exp, got)
- 	}
- 
--	// The timeout does apply to a request which only reads.
-+	// The timeout does apply to a request which only reads. The read is
-+	// stalled until the timeout expires, so the outcome does not depend on
-+	// the timeout expiring before a fast read completes.
- 	eqr = executeQueryRequestFromString(`SELECT * FROM foo`, proto.ConsistencyLevel_WEAK, false, false, false)
--	eqr.Request.DbTimeout = 1
--	if _, _, _, err := s.Request(context.Background(), eqr); err == nil {
--		t.Fatalf("expected read-only request to time out")
-+	eqr.Request.Statements[0].ForceStall = true
-+	eqr.Request.DbTimeout = int64(20 * time.Millisecond)
-+	r, _, _, err = s.Request(context.Background(), eqr)
-+	if err != nil {
-+		t.Fatalf("failed to execute read-only request on single node: %s", err.Error())
-+	}
-+	if len(r) != 1 || r[0].GetQ().GetError() != db.ErrQueryTimeout.Error() {
-+		t.Fatalf("expected read-only request to time out, got %s", asJSON(r))
- 	}
- }
- 
-```
-
----
-
-### Incident Patch 2: `338a824d` (2026-11-18)
-**Commit Message**: Merge pull request #3065 from rqlite/fix-flaky-write-ignores-db-timeout-test
-
-Fix flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout
-
-**File**: `store/store_test.go` (modified, +11/-4)
-```diff
-@@ -814,11 +814,18 @@ func Test_SingleNodeRequest_WriteIgnoresDBTimeout(t *testing.T) {
- 		t.Fatalf("unexpected results for request\nexp: %s\ngot: %s", exp, got)
- 	}
- 
--	// The timeout does apply to a request which only reads.
-+	// The timeout does apply to a request which only reads. The read is
-+	// stalled until the timeout expires, so the outcome does not depend on
-+	// the timeout expiring before a fast read completes.
- 	eqr = executeQueryRequestFromString(`SELECT * FROM foo`, proto.ConsistencyLevel_WEAK, false, false, false)
--	eqr.Request.DbTimeout = 1
--	if _, _, _, err := s.Request(context.Background(), eqr); err == nil {
--		t.Fatalf("expected read-only request to time out")
-+	eqr.Request.Statements[0].ForceStall = true
-+	eqr.Request.DbTimeout = int64(20 * time.Millisecond)
-+	r, _, _, err = s.Request(context.Background(), eqr)
-+	if err != nil {
-+		t.Fatalf("failed to execute read-only request on single node: %s", err.Error())
-+	}
-+	if len(r) != 1 || r[0].GetQ().GetError() != db.ErrQueryTimeout.Error() {
-+		t.Fatalf("expected read-only request to time out, got %s", asJSON(r))
- 	}
- }
- 
-```
-
----
-
-### Incident Patch 3: `aedcce1d` (2026-11-18)
-**Commit Message**: Merge pull request #3064 from rqlite/e2e-shorten-timeouts
-
-Shorten e2e test timeouts
-
-**File**: `system_test/e2e/helpers.py` (modified, +10/-1)
-```diff
-@@ -17,6 +17,9 @@
- import string
- 
- TIMEOUT=10
-+RAFT_HEARTBEAT_TIMEOUT="200ms"
-+RAFT_ELECTION_TIMEOUT="200ms"
-+RAFT_LEADER_LEASE_TIMEOUT="200ms"
- 
- seqRe = re.compile(r"^{'results': \[\], 'sequence_number': \d+}$")
- 
-@@ -129,6 +132,9 @@ def __init__(self, exe_path, node_id, extensions_path=None,
-     self.raft_snap_threshold = raft_snap_threshold
-     self.raft_snap_int = raft_snap_int
-     self.raft_cluster_remove_shutdown = raft_cluster_remove_shutdown
-+    self.raft_election_timeout = RAFT_ELECTION_TIMEOUT
-+    self.raft_heartbeat_timeout = RAFT_HEARTBEAT_TIMEOUT
-+    self.raft_leader_lease_timeout = RAFT_LEADER_LEASE_TIMEOUT
-     self.http_cert = http_cert
-     self.http_key = http_key
-     self.http_no_verify = http_no_verify
-@@ -197,7 +203,10 @@ def start(self, join=None, join_attempts=None, join_interval="1s", join_as=None,
-                '-raft-snap', str(self.raft_snap_threshold),
-                '-raft-snap-int', self.raft_snap_int,
-                '-raft-cluster-remove-shutdown=%s' % str(self.raft_cluster_remove_shutdown).lower(),
--               '-raft-non-voter=%s' % str(not self.raft_voter).lower()]
-+               '-raft-non-voter=%s' % str(not self.raft_voter).lower(),
-+               '-raft-election-timeout=%s' % self.raft_election_timeout,
-+               '-raft-heartbeat-timeout=%s' % self.raft_heartbeat_timeout,
-+               '-raft-leader-lease-timeout=%s' % self.raft_leader_lease_timeout]
-     if self.cdc_config is not None:
-       command += ['-cdc-config', self.cdc_config]
-     if self.extensions_path is not None:
+@@ -1,4 +1,6 @@
+-## v10.7.4 (unreleased)
++## v10.7.4 (November 19th 2026)
++This release addresses a bug related to [rewriting of time-related functions](https://rqlite.io/docs/api/non-deterministic/) when each node is in a different timezone. Dependencies also upgraded.
++
+ ### Implementation changes and bug fixes
+ - [PR #3062](https://github.com/rqlite/rqlite/pull/3062): When rewriting time capture the value once per statement, to match SQLite.
+ - [PR #3063](https://github.com/rqlite/rqlite/pull/3063): Normalize timezone for _Julian Day_ calculations. Fixes issue [#3061](https://github.com/rqlite/rqlite/issues/3061). Thanks @clarkmcc
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3066** (2026-11-18): Upgrade dependencies via `go get` (@otoolep)
 - **PR #3065** (2026-11-18): Fix flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout (@otoolep)
 - **PR #3064** (2026-11-18): Shorten e2e test timeouts (@otoolep)
 - **PR #3063** (2026-11-18): Normalize timezone for JulianDay calculations (@otoolep)
 - **PR #3062** (2026-11-18): Capture 'now' once per statement when rewriting (@otoolep)
 - **PR #3060** (2026-11-17): Don't enforce timeouts for writes (@otoolep)
-- **PR #3056** (2026-11-17): Fix non-deterministic time rewrite when "now" is missing (@otoolep)
 
 ---
 
@@ -2258,44 +2156,33 @@ Shorten e2e test timeouts
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout
+## X. Update CHANGELOG.md
 
 **RULE**:
-When implementing operations in `store/store_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `20470c69`: flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4452a98a`: Update CHANGELOG.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `store/store_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// The timeout does apply to a request which only reads. The read is
-	// stalled until the timeout expires, so the outcome does not depend on
-	// the timeout expiring before a fast read completes.
-	eqr.Request.Statements[0].ForceStall = true
-	eqr.Request.DbTimeout = int64(20 * time.Millisecond)
-	r, _, _, err = s.Request(context.Background(), eqr)
-	if err != nil {
-		t.Fatalf("failed to execute read-only request on single node: %s", err.Error())
-	}
-	if len(r) != 1 || r[0].GetQ().GetError() != db.ErrQueryTimeout.Error() {
-		t.Fatalf("expected read-only request to time out, got %s", asJSON(r))
+## v10.7.4 (November 19th 2026)
+This release addresses a bug related to [rewriting of time-related functions](https://rqlite.io/docs/api/non-deterministic/) when each node is in a different timezone. Dependencies also upgraded.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	// The timeout does apply to a request which only reads.
-	eqr.Request.DbTimeout = 1
-	if _, _, _, err := s.Request(context.Background(), eqr); err == nil {
-		t.Fatalf("expected read-only request to time out")
+## v10.7.4 (unreleased)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `20470c69` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4452a98a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
