@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T03:02:47.649Z",
+  "last_updated": "2026-11-20T03:13:20.519Z",
   "total_records": 2062,
   "domains": {
     "A": {
@@ -8795,8 +8795,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "38480aacd3a84e248f170b3368e933fbc89edff8a3bd134f26b107c43c3e6b09",
-      "created_at": "2026-11-20T02:27:56.027Z"
+      "content_hash": "cedbb7eda85edb5578bc752aab9099fbb9357ae6afb2eb67495a6f75c43e3025",
+      "created_at": "2026-11-20T03:13:20.519Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -11453,8 +11453,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "0f289f89b56c5dc027ddb58174863870fdea20c8a672fac65d965bb8bb94eeac",
-      "created_at": "2026-11-20T01:56:48.116Z"
+      "content_hash": "6081b161ec8e72a8b76ba62592a8824a3cca54f5c67907c4ada9065eabc5cc49",
+      "created_at": "2026-11-20T03:13:19.366Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -29967,8 +29967,8 @@
       "title": "Architecture Intelligence: 1jehuang/jcode Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-architecture-intelligence-1jehuang-jcode-core-invariants.md",
       "repository": "1jehuang/jcode",
-      "content_hash": "1ae143d0afa030f7a5498835bf4e79f11a84e69eff953f11e251e689f6bea4c5",
-      "created_at": "2026-11-18T15:06:04.623Z"
+      "content_hash": "0b29bc5c515bfed617096958fc5457dcb67879121aa9b97f0384844db80db6cc",
+      "created_at": "2026-11-20T03:13:08.345Z"
     },
     "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants",
@@ -29976,8 +29976,8 @@
       "title": "Architecture Intelligence: 1jehuang-jcode-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-learnings-architecture-intelligence-1jehuang-jcode-learnings-core.md",
       "repository": "1jehuang-jcode-learnings",
-      "content_hash": "29dbe0caa0c7fcbb1a0adccd91225965cf7f1ff62ee130c17311c4464cb3d72c",
-      "created_at": "2026-11-18T15:06:14.566Z"
+      "content_hash": "3f5116e969e6eba3a2b2f88594e57c436292e129833eb5f0117cdf3862eeeea6",
+      "created_at": "2026-11-20T03:13:18.260Z"
     },
     "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants",

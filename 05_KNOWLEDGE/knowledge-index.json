@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T03:02:47.791Z",
+  "last_updated": "2026-11-20T03:13:20.740Z",
   "total_verified_learnings": 9023,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22167,
+  "total_items": 22169,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0600-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MK6V-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "631e1cc16de54824848d08775d45c7d30dfcd22109e0d588b291a8572cda34ed",
+      "content_hash": "65220331bb8fdfc904f70a8827bdc4670c291b86234d47261d5905e83dc723a3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T02:27:55.875Z"
+      "persisted_at": "2026-11-20T03:13:20.318Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "38480aacd3a84e248f170b3368e933fbc89edff8a3bd134f26b107c43c3e6b09",
+      "content_hash": "cedbb7eda85edb5578bc752aab9099fbb9357ae6afb2eb67495a6f75c43e3025",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T02:27:56.027Z"
+      "persisted_at": "2026-11-20T03:13:20.519Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ddd39cea362c6dce40cca8f4f2c2bac28d598f2954d01327393d0f7a65880c9f",
+      "content_hash": "f1124175049a5f6bbd253efad0b61ce61e65141b0bc363a2b41249125b929f57",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T02:27:56.177Z"
+      "persisted_at": "2026-11-20T03:13:20.740Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -218619,13 +218619,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-W4OU-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MJAW-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "000ed397ee74305c356c57d1d8a70c92d456385cd5209585c0a7fdb9061609bf",
+      "content_hash": "5750426ab53f32f093e421ed7b401a0c477579d940c3db5ac7d23803c01ba143",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T01:56:47.934Z"
+      "persisted_at": "2026-11-20T03:13:19.161Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218635,9 +218635,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f289f89b56c5dc027ddb58174863870fdea20c8a672fac65d965bb8bb94eeac",
+      "content_hash": "6081b161ec8e72a8b76ba62592a8824a3cca54f5c67907c4ada9065eabc5cc49",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T01:56:48.116Z"
+      "persisted_at": "2026-11-20T03:13:19.366Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218647,9 +218647,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d5720a269ab6f1dfdfc844557a9b3e5be978698e8c2fe1e4a91aee83cd7ee3de",
+      "content_hash": "4220977f58b5e82c69a0ff17ab326ce2f8aa7ce3af6e65ef63e6e31d2afd52e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T01:56:48.278Z"
+      "persisted_at": "2026-11-20T03:13:19.559Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -242899,8 +242899,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "f3fc98fb",
-      "content_hash": "a3b13afedd3805f26e955e69fa02958887f546b7f5c1d3b4dc34567b91c7e8b0",
+      "source_version": "90595b24",
+      "content_hash": "30d3e1860ecd607709e31066a9f83f90ed8acbbf8d3a69b7b53e772c219c842f",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -242918,6 +242918,11 @@
           "number": 9249,
           "title": "test(provider): clarify serialized uplink fixture locking",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9504,
+          "title": "Integrate recorder quiet-window guard with explicit retry and stale speech clean",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242925,7 +242930,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T15:06:04.118Z",
+      "verified_at": "2026-11-20T03:13:07.597Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242979,10 +242984,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/1jehuang-jcode-agent-contract-1jehuang-jcode-autonomous-specialist-persona.md",
       "title": "Agent Contract: 1jehuang/jcode Autonomous Specialist Persona",
       "repository": "1jehuang/jcode",
-      "source_version": "f3fc98fb",
-      "content_hash": "145cd87ec5e3d1f76a70c87883a501114a57e85a121f45efc43095b0d5b8fe82",
+      "source_version": "90595b24",
+      "content_hash": "da192b0682a08fd7e5b893e4c8d5a7aba35f440bb4521a4f82aa7ad43402904d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T15:06:04.877Z"
+      "persisted_at": "2026-11-20T03:13:08.546Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode",
@@ -242991,10 +242996,10 @@
       "relative_path": "08_VERIFICATION/1jehuang-jcode-verification-protocol-empirical-defect-shield-for-1jehuang-jcode.md",
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang/jcode",
       "repository": "1jehuang/jcode",
-      "source_version": "f3fc98fb",
-      "content_hash": "57304cdec212d42a6eca54be868a7e460e85d63a40c16e1687af53b1407dcbed",
+      "source_version": "90595b24",
+      "content_hash": "34472c825e5d3cf066f094e5af9aea3c5438c5e6682a2a70c13308b8dc54da1c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T15:06:04.992Z"
+      "persisted_at": "2026-11-20T03:13:08.722Z"
     },
     "candidate_directive-update-all-go-dependencies-main": {
       "item_id": "candidate_directive-update-all-go-dependencies-main",
@@ -243079,9 +243084,9 @@
       "title": "Agent Contract: 1jehuang-jcode-learnings Autonomous Specialist Persona",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e78de65fc725c31f822a63325e86221177676f3a475b4e9b5e2067a318411a0",
+      "content_hash": "8b383fb4d0fbb3116b6148570251bb3bc1f2d979fa8233a6d460d78a36e07671",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T15:06:14.839Z"
+      "persisted_at": "2026-11-20T03:13:18.480Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings",
@@ -243091,9 +243096,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang-jcode-learnings",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "7fafa69e0d639713e9de2526fea2c417b1581713ad6a0d5ca40bcf948eb613ce",
+      "content_hash": "b213af5bec10c985f9ac45332248cc0262456a60da08f8dcfc9df9bf7b13ff14",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T15:06:14.957Z"
+      "persisted_at": "2026-11-20T03:13:18.652Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i",
@@ -284149,10 +284154,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-architecture-intelligence-1jehuang-jcode-core-invariants.md",
       "title": "Architecture Intelligence: 1jehuang/jcode Core Invariants",
       "repository": "1jehuang/jcode",
-      "source_version": "f3fc98fb",
-      "content_hash": "1ae143d0afa030f7a5498835bf4e79f11a84e69eff953f11e251e689f6bea4c5",
+      "source_version": "90595b24",
+      "content_hash": "0b29bc5c515bfed617096958fc5457dcb67879121aa9b97f0384844db80db6cc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T15:06:04.623Z"
+      "persisted_at": "2026-11-20T03:13:08.345Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode",
@@ -284174,9 +284179,9 @@
       "title": "Architecture Intelligence: 1jehuang-jcode-learnings Core Invariants",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "29dbe0caa0c7fcbb1a0adccd91225965cf7f1ff62ee130c17311c4464cb3d72c",
+      "content_hash": "3f5116e969e6eba3a2b2f88594e57c436292e129833eb5f0117cdf3862eeeea6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T15:06:14.566Z"
+      "persisted_at": "2026-11-20T03:13:18.260Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode-learnings",
@@ -300063,6 +300068,32 @@
       "content_hash": "a3002350cc8e1df7b12f6281331942977b13cd641234ed40bdac422b88a30d7f",
       "domain_letter": "G",
       "persisted_at": "2026-11-20T03:02:47.508Z"
+    },
+    "rule-9504": {
+      "learning_id": "rule-9504",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9504,
+      "title": "Integrate recorder quiet-window guard with explicit retry and stale speech clean",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "90595b24",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T03:13:07.597Z"
+    },
+    "candidate_directive-integrate-recorder-quiet-window-guard-with-explicit-retry-and-stale-speech-clean": {
+      "item_id": "candidate_directive-integrate-recorder-quiet-window-guard-with-explicit-retry-and-stale-speech-clean",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MIG8-integrate-recorder-quiet-window-guard-with-explicit-retry-and-stale-speech-clean.md",
+      "title": "Integrate recorder quiet-window guard with explicit retry and stale speech clean",
+      "repository": "1jehuang-jcode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8dae9526bf05bc9a218128f056d1efda06185a2569e9004b21cff40902a9399d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T03:13:18.064Z"
     }
   },
   "ai-builder-brain": {

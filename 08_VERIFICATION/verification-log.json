@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-UWZ0",
-    "timestamp": "2026-11-18T07:56:25.836Z",
-    "repository": "microsoft/react-native-windows",
-    "learningId": "learn-github-microsoft-react-native-windows",
-    "contentHash": "ca3c84c83e33f9b8c52c0c7436566a30ee2b34b41e11c232fa33e19f879e1d10",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-V2WA",
     "timestamp": "2026-11-18T07:56:33.514Z",
     "repository": "apache/zookeeper",
@@ -7492,6 +7477,21 @@
     "contentHash": "875b1074ab2df9cae0834709d5f73f6c77ea0d1e002b67c0512dd94d5f095421",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-MAL4",
+    "timestamp": "2026-11-20T03:13:07.864Z",
+    "repository": "1jehuang/jcode",
+    "learningId": "learn-github-1jehuang-jcode",
+    "contentHash": "30d3e1860ecd607709e31066a9f83f90ed8acbbf8d3a69b7b53e772c219c842f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

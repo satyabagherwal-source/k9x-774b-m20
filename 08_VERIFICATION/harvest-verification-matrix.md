@@ -11446,3 +11446,4 @@
 | `CYCLE-20261120-7PY0` | `2026-11-20T03:01:47.928Z` | `searchsolved/search-solved-public-seo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9501, Rule 9502, Rule 9503` | Yes (`875b1074...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T03:02:15.618Z` | `searchsolved-search-solved-public-seo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-705CF17F` [Domain J] | Yes (`de85276f...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T03:02:44.738Z` | `searchsolved-search-solved-public-seo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-8BEE39B8` [Domain F] | Yes (`d3fa8157...`) |
+| `CYCLE-20261120-MAL4` | `2026-11-20T03:13:07.864Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9504` | Yes (`30d3e186...`) |
