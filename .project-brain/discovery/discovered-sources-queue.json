@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T04:02:44.411Z",
+  "updated_at": "2026-11-20T04:29:29.508Z",
   "stats": {
-    "total_discovered": 6169,
-    "approved_pending_harvest": 5832,
+    "total_discovered": 6180,
+    "approved_pending_harvest": 5843,
     "harvested_count": 0,
     "rejected_count": 337,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5814,
+      "COMMUNITY_AND_EXPERT": 5825,
       "OFFICIAL_DOCUMENTATION": 193,
       "STANDARDS_AND_SPECIFICATIONS": 114,
       "ENGINEERING_BLOGS": 4,
@@ -133382,6 +133382,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
         "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-14639BA22637": {
+      "id": "SRC-14639BA22637",
+      "url": "https://github.com/avoidwork/filesize.js",
+      "title": "https://github.com/avoidwork/filesize.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:29:28.944Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-79A069B6791C": {
+      "id": "SRC-79A069B6791C",
+      "url": "https://github.com/avoidwork/filesize.js/blob/master/CHANGELOG.md",
+      "title": "https://github.com/avoidwork/filesize.js/blob/master/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:29:28.999Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-2D3897284F92": {
+      "id": "SRC-2D3897284F92",
+      "url": "https://github.com/avoidwork/filesize.js/compare/11.0.32...11.0.33",
+      "title": "https://github.com/avoidwork/filesize.js/compare/11.0.32...11.0.33",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:29:29.054Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-32920B9A5C37": {
+      "id": "SRC-32920B9A5C37",
+      "url": "https://github.com/oshi/oshi",
+      "title": "https://github.com/oshi/oshi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:29:29.124Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-F760FCFF0B06": {
+      "id": "SRC-F760FCFF0B06",
+      "url": "https://github.com/oshi/oshi/releases",
+      "title": "https://github.com/oshi/oshi/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:29:29.175Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-9E181E2F745E": {
+      "id": "SRC-9E181E2F745E",
+      "url": "https://github.com/oshi/oshi/blob/master/CHANGELOG.md",
+      "title": "https://github.com/oshi/oshi/blob/master/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:29:29.229Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-B439EF7C7A49": {
+      "id": "SRC-B439EF7C7A49",
+      "url": "https://github.com/oshi/oshi/compare/oshi-parent-7.7.3...oshi-parent-7.8.0",
+      "title": "https://github.com/oshi/oshi/compare/oshi-parent-7.7.3...oshi-parent-7.8.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:29:29.284Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-8AC16A2C1863": {
+      "id": "SRC-8AC16A2C1863",
+      "url": "https://github.com/TypeStrong/fork-ts-checker-webpack-plugin",
+      "title": "https://github.com/TypeStrong/fork-ts-checker-webpack-plugin",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:29:29.339Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-C8EADD4D1DBA": {
+      "id": "SRC-C8EADD4D1DBA",
+      "url": "https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/releases",
+      "title": "https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:29:29.393Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-21E640C96F94": {
+      "id": "SRC-21E640C96F94",
+      "url": "https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/blob/main/CHANGELOG.md",
+      "title": "https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:29:29.448Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-90CB42EEE46F": {
+      "id": "SRC-90CB42EEE46F",
+      "url": "https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/compare/v9.1.0...v9.1.1",
+      "title": "https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/compare/v9.1.0...v9.1.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:29:29.508Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
       }
     }
   }

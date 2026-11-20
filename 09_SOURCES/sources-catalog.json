@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "6e895879",
+    "sourceVersion": "339a3ca8",
     "license": "Apache-2.0",
-    "contentHash": "359c49b767d085bdf91b335d31694c1d119b1e30c1852d079f8158911e6aeea4",
-    "lastHarvestedAt": "2026-11-19T22:36:14.503Z",
+    "contentHash": "eff5544d79d225f9b12bc4a02c146573237015c07ee879d68b2d699a45faf41e",
+    "lastHarvestedAt": "2026-11-20T04:29:25.566Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "f1b08976",
+    "sourceVersion": "d0652eba",
     "license": "Apache-2.0",
-    "contentHash": "5373ada2c7049c951ab50a46336e08720e5f308378ff15fd186d2ab7021eed3e",
-    "lastHarvestedAt": "2026-11-18T23:34:51.254Z",
+    "contentHash": "3bc738b0cda0f12e8ea19f218aee7af8e5648925a989448ae39feb7f1a12cbfc",
+    "lastHarvestedAt": "2026-11-20T04:29:24.028Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {

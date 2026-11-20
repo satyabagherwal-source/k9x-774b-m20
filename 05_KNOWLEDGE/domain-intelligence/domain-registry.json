@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T04:14:27.902Z",
-  "total_records": 2063,
+  "last_updated": "2026-11-20T04:30:05.956Z",
+  "total_records": 2064,
   "domains": {
     "A": {
       "total": 17,
@@ -57,7 +57,7 @@
       ]
     },
     "D": {
-      "total": 841,
+      "total": 842,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -899,7 +899,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-",
         "DOM-D-2BF9F19D",
         "DOM-D-9D38D4A5",
-        "DOM-D-34CA9B71"
+        "DOM-D-34CA9B71",
+        "DOM-D-5CB7BD90"
       ]
     },
     "E": {
@@ -8457,8 +8458,8 @@
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "repository": "gocd/gocd",
-      "content_hash": "a129e68f5cc219689ae05a7c557e77e05d5e13e2d37896642e8a7df60f2d6e1b",
-      "created_at": "2026-11-18T23:34:51.654Z"
+      "content_hash": "86790230e035293d0afdd5b0195a664d17cfe35ac34204be5a6865e207e541cd",
+      "created_at": "2026-11-20T04:29:24.473Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -8535,8 +8536,8 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-learnings-technical-construction-intelligence-gocd-gocd-learnings-core.md",
       "repository": "gocd-gocd-learnings",
-      "content_hash": "9eefaf1be380eb3f50f3f9c9dcf671c3bcafe1591d0b05840ab53b02e2d64e3b",
-      "created_at": "2026-11-18T23:35:00.202Z"
+      "content_hash": "03c817383f0de71956eeab206cd4003e33e16b33f17920babfa134a03500edb0",
+      "created_at": "2026-11-20T04:29:29.967Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -14854,8 +14855,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "d221b4f2391e7f8f65faa0d91e95d40141996fc5a7bab329d40afc6636fd3479",
-      "created_at": "2026-11-20T04:02:45.810Z"
+      "content_hash": "92e59b86efbba537d124c7c4129a481b74ea55eba90d4ad7d48f59d5323fe187",
+      "created_at": "2026-11-20T04:30:05.956Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -34168,8 +34169,8 @@
       "title": "Quality & Verification Intelligence: sigstore/cosign Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sigstore-cosign-quality-verification-intelligence-sigstore-cosign-core-invariant.md",
       "repository": "sigstore/cosign",
-      "content_hash": "be376c1d4b181abe4ed79b916402f7352ebfd3c7b22924da763801e8cd51a8e1",
-      "created_at": "2026-11-19T22:36:14.880Z"
+      "content_hash": "99b4327ead2135d25767618dbc72de8d5a449aba4973abbf9fe732c82b75d9af",
+      "created_at": "2026-11-20T04:29:25.855Z"
     },
     "domain_intelligence-deployment-operations-intelligence-vanniktech-gradle-maven-publish-plugin-learni": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-vanniktech-gradle-maven-publish-plugin-learni",
@@ -34186,8 +34187,8 @@
       "title": "Quality & Verification Intelligence: sigstore-cosign-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sigstore-cosign-learnings-quality-verification-intelligence-sigstore-cosign-lear.md",
       "repository": "sigstore-cosign-learnings",
-      "content_hash": "5abb356b77f8ab08752c07c4c5f01982333bf3bbafeb64914791c336069d7d5c",
-      "created_at": "2026-11-19T22:36:22.842Z"
+      "content_hash": "f4ebc0fcb1c399ae79a87bf8e24fb2a5fd2fc09e9a7edbbb358ab92b5270303c",
+      "created_at": "2026-11-20T04:30:05.107Z"
     },
     "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-core-invariants",
@@ -34754,6 +34755,48 @@
       "confidence": 1,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-20T03:49:20.537Z"
+    },
+    "DOM-D-5CB7BD90": {
+      "record_id": "DOM-D-5CB7BD90",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): sigstore/cosign",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  \n> **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  \n> **Source Version**: `339a3ca8`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthes",
+      "content_hash": "968ce4831afbce7f18b0181a2fc811bf8b42b047d3a2cafcaed7c8046406c613",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  \n> **Source**: github ([https://github.com/sigstore/c -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  \n> **Source**: github ([https://github.com/sigstore/c",
+      "provenance": {
+        "source_uri": "project://sigstore-cosign/sigstore-cosign-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T04:29:30.358Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (sigstore-cosign)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of sigstore-cosign"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T04:30:04.511Z"
     }
   }
 }

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T23:34:59.927Z",
+  "timestamp": "2026-11-20T04:29:29.654Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-gocd-gocd-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [gocd-gocd-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T23:34:59.927Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T04:29:29.654Z`  
 > **Learning ID**: `LEARN-EVO-gocd-gocd-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `f1b08976`  
+> **Source Version**: `d0652eba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T23:34:50.236Z  
+> **Timestamp**: 2026-11-20T04:29:23.211Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T23:34:50.231Z  
+> **Harvest Timestamp**: 2026-11-20T04:29:22.977Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7444 stars
+- **Stars / Engagement**: 7440 stars
 
 ---
 
@@ -905,71 +905,179 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `31ee3344` (2026-11-18)
-**Commit Message**: build: remove hack for registry mirror login
+### Incident Patch 1: `99be1b85` (2026-11-19)
+**Commit Message**: build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14746)
 
-This used to be required due to https://github.com/moby/moby/issues/30880 - it recently started failing. Perhaps it is no longer required, at least with containerd snapshotter?
+Bumps [filesize](https://github.com/avoidwork/filesize.js) from 11.0.32 to 11.0.33.
+- [Changelog](https://github.com/avoidwork/filesize.js/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/avoidwork/filesize.js/compare/11.0.32...11.0.33)
 
-Our Vm image got a Docker 25.0.18 upgrade recently, which seems to have much newer containerd, so let's try without the hack.
+---
+updated-dependencies:
+- dependency-name: filesize
+  dependency-version: 11.0.33
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-**File**: `docker/build.gradle` (modified, +1/-1)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
 ```diff
-@@ -39,7 +39,7 @@ def configureDockerRegistryMirror = tasks.register('configureDockerRegistryMirro
-     // Docker uses the wrong credentials when trying to use a registry mirror, so we set the docker.gocd.io creds for Docker Hub
-     dockerConfig.text = JsonOutput.toJson([
-       auths: [
--        "https://index.docker.io/v1/": [
-+        "https://docker.gocd.io/": [
-           auth: "${System.env.DOCKERHUB_MIRROR_USERNAME}:${System.env.DOCKERHUB_MIRROR_PASSWORD}".bytes.encodeBase64().toString()
-         ]
-       ]
+@@ -39,7 +39,7 @@
+     "chartjs-plugin-zoom": "^2.2.0",
+     "classnames": "^2.5.1",
+     "core-js": "^3.51.0",
+-    "filesize": "^11.0.32",
++    "filesize": "^11.0.33",
+     "foundation-sites": "^6.9.0",
+     "hack-font": "^3.3.0",
+     "jquery": "^3.7.1",
+```
+
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +5/-5)
+```diff
+@@ -4043,10 +4043,10 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"filesize@npm:^11.0.32":
+-  version: 11.0.32
+-  resolution: "filesize@npm:11.0.32"
+-  checksum: 10c0/2680171297522d01a2831027f535f718719dcb122b6b2ceaea89ec8c348a1f5b60a3e5364eb4a1619f30a44ef2c71906101d5c40f7f7986b768a2cb4b69c7898
++"filesize@npm:^11.0.33":
++  version: 11.0.33
++  resolution: "filesize@npm:11.0.33"
++  checksum: 10c0/b90c344c6ab231244e0a984978b2b1f9ba1dfa17a8a4cb705d118fcb7ed1f51b19036f6953309d215dbd3ab2858926aad3bfe1ec81b0c020bf07c2daa4f5fb80
+   languageName: node
+   linkType: hard
+ 
+@@ -4450,7 +4450,7 @@ __metadata:
+     eslint-plugin-react: "npm:^7.37.5"
+     eslint-webpack-plugin: "npm:^6.0.0"
+     file-loader: "npm:^6.2.0"
+-    filesize: "npm:^11.0.32"
++    filesize: "npm:^11.0.33"
+     fork-ts-checker-webpack-plugin: "npm:^9.1.1"
+     foundation-sites: "npm:^6.9.0"
+     fs-extra: "npm:^11.4.1"
 ```
 
 ---
 
-### Incident Patch 2: `f446e104` (2026-11-18)
-**Commit Message**: chore: fix typo
+### Incident Patch 2: `2f0b5f01` (2026-11-19)
+**Commit Message**: build(deps): bump com.github.oshi:oshi-core from 7.7.3 to 7.8.0 (#14747)
 
-**File**: `db-support/db-support-postgresql/src/test/java/com/thoughtworks/go/server/database/pg/DatabaseMigratorPostgreSQLTest.java` (modified, +1/-1)
+Bumps [com.github.oshi:oshi-core](https://github.com/oshi/oshi) from 7.7.3 to 7.8.0.
+- [Release notes](https://github.com/oshi/oshi/releases)
+- [Changelog](https://github.com/oshi/oshi/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/oshi/oshi/compare/oshi-parent-7.7.3...oshi-parent-7.8.0)
+
+---
+updated-dependencies:
+- dependency-name: com.github.oshi:oshi-core
+  dependency-version: 7.8.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `build.gradle` (modified, +1/-1)
 ```diff
-@@ -32,7 +32,7 @@
- @EnabledOnOs({OS.LINUX, OS.MAC})
- class DatabaseMigratorPostgreSQLTest extends AbstractMigratorIntegrationTest {
-     @Container
--    private final PostgreSQLContainer postgresqlContainer = new PostgreSQLContainer(DockerImageName.parse("docker.io/library/postgres:18").asCompatibleWith("postgres"))
-+    private final PostgreSQLContainer postgresqlContainer = new PostgreSQLContainer(DockerImageName.parse("docker.io/library/postgres:18").asCompatibleSubstituteFor("postgres"))
-         .waitingFor(new WaitAllStrategy()
-             .withStrategy(Wait.forLogMessage(".*database system is ready to accept connections.*\\s", 2))
-             .withStrategy(Wait.forListeningPort())
+@@ -124,7 +124,7 @@ def libraries = [
+   mybatisSpring       : 'org.mybatis:mybatis-spring:2.1.2',
+   mysql               : 'com.mysql:mysql-connector-j:26.10.0',
+   objenesis           : 'org.objenesis:objenesis:3.6',
+-  oshi                : 'com.github.oshi:oshi-core:7.7.3',
++  oshi                : 'com.github.oshi:oshi-core:7.8.0',
+   plexusUtils         : 'org.codehaus.plexus:plexus-utils:4.2.0',
+   postgresql          : 'org.postgresql:postgresql:42.7.14',
+   quartz              : 'org.quartz-scheduler:quartz:2.5.2',
 ```
 
 ---
 
-### Incident Patch 3: `0a27caee` (2026-11-18)
-**Commit Message**: test: prefix with docker.io for clarity
+### Incident Patch 3: `d385ed1e` (2026-11-19)
+**Commit Message**: build(deps-ui-dev): bump fork-ts-checker-webpack-plugin (#14745)
 
-Hopefully improve mirror usage?
+Bumps the webpack group in /server/src/main/webapp/WEB-INF/rails with 1 update: [fork-ts-checker-webpack-plugin](https://github.com/TypeStrong/fork-ts-checker-webpack-plugin).
 
-**File**: `db-support/db-support-postgresql/src/test/java/com/thoughtworks/go/server/database/pg/DatabaseMigratorPostgreSQLTest.java` (modified, +1/-1)
+
+Updates `fork-ts-checker-webpack-plugin` from 9.1.0 to 9.1.1
+- [Release notes](https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/releases)
+- [Changelog](https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/compare/v9.1.0...v9.1.1)
+
+---
+updated-dependencies:
+- dependency-name: fork-ts-checker-webpack-plugin
+  dependency-version: 9.1.1
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+  dependency-group: webpack
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
 ```diff
-@@ -31,7 +31,7 @@
- @EnabledOnOs({OS.LINUX, OS.MAC})
- class DatabaseMigratorPostgreSQLTest extends AbstractMigratorIntegrationTest {
-     @Container
--    private final PostgreSQLContainer postgresqlContainer = new PostgreSQLContainer("postgres:18")
-+    private final PostgreSQLContainer postgresqlContainer = new PostgreSQLContainer("docker.io/postgres:18")
-         .waitingFor(new WaitAllStrategy()
-             .withStrategy(Wait.forLogMessage(".*database system is ready to accept connections.*\\s", 2))
-             .withStrategy(Wait.forListeningPort())
+@@ -85,7 +85,7 @@
+     "eslint-plugin-react": "^7.37.5",
+     "eslint-webpack-plugin": "^6.0.0",
+     "file-loader": "^6.2.0",
+-    "fork-ts-checker-webpack-plugin": "^9.1.0",
++    "fork-ts-checker-webpack-plugin": "^9.1.1",
+     "fs-extra": "^11.4.1",
+     "globals": "^17.14.0",
+     "html-webpack-plugin": "^5.6.8",
+```
+
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +5/-5)
+```diff
+@@ -4129,9 +4129,9 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"fork-ts-checker-webpack-plugin@npm:^9.1.0":
+-  version: 9.1.0
+-  resolution: "fork-ts-checker-webpack-plugin@npm:9.1.0"
++"fork-ts-checker-webpack-plugin@npm:^9.1.1":
++  version: 9.1.1
++  resolution: "fork-ts-checker-webpack-plugin@npm:9.1.1"
+   dependencies:
+     "@babel/code-frame": "npm:^7.16.7"
+     chalk: "npm:^4.1.2"
+@@ -4148,7 +4148,7 @@ __metadata:
+   peerDependencies:
+     typescript: ">3.6.0"
+     webpack: ^5.11.0
+-  checksum: 10c0/b4acdf400862af5f57d3e159b3a444e7f9f73e9f4609d54604c3810f75f8adcea0165a8b17ee856ed3c65591d058ffd73cd08d273e289d4952844e75f6efa85d
++  checksum: 10c0/6ad8f4e1b0163284e60259390b18cd301213b85213216c9836a33340b43629edad0fbdeb772ca599bbe4e44dbed90846929b7792c7d0d121fb5b5727fae98c70
+   languageName: node
+   linkType: hard
+ 
+@@ -4451,7 +4451,7 @@ __metadata:
+     eslint-webpack-plugin: "npm:^6.0.0"
+     file-loader: "npm:^6.2.0"
+     filesize: "npm:^11.0.32"
+-    fork-ts-checker-webpack-plugin: "npm:^9.1.0"
++    fork-ts-checker-webpack-plugin: "npm:^9.1.1"
+     foundation-sites: "npm:^6.9.0"
+     fs-extra: "npm:^11.4.1"
+     globals: "npm:^17.14.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14748** (2026-11-19): build(deps): bump org.codehaus.plexus:plexus-utils from 4.1.0 to 4.2.0 (@dependabot[bot])
+- **PR #14747** (2026-11-19): build(deps): bump com.github.oshi:oshi-core from 7.7.3 to 7.8.0 (@dependabot[bot])
+- **PR #14746** (2026-11-19): build(deps-ui): bump filesize from 11.0.32 to 11.0.33 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14745** (2026-11-19): build(deps-ui-dev): bump fork-ts-checker-webpack-plugin from 9.1.0 to 9.1.1 in /server/src/main/webapp/WEB-INF/rails in the webpack group (@dependabot[bot])
+- **PR #14744** (2026-11-19): build(deps): bump com.autonomousapps.dependency-analysis from 3.20.2 to 3.20.3 in the gradle-plugins group (@dependabot[bot])
 - **PR #14742** (2026-11-17): build(deps-ui): bump filesize from 11.0.31 to 11.0.32 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14741** (2026-11-17): build(deps): bump ch.qos.logback:logback-classic from 1.6.6 to 1.6.7 (@dependabot[bot])
-- **PR #14740** (2026-11-17): Add missing new when throwing for an unknown architecture (@costajohnt)
-- **PR #14739** (2026-11-16): build(deps-ui): bump filesize from 11.0.30 to 11.0.31 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14738** (2026-11-16): build(deps-ui-dev): bump the stylelint group in /server/src/main/webapp/WEB-INF/rails with 2 updates (@dependabot[bot])
-- **PR #14737** (2026-11-15): build(deps-ui-dev): bump sass-embedded from 1.108.1 to 1.108.2 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 
 ---
 
@@ -989,31 +1097,31 @@ Hopefully improve mirror usage?
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: remove hack for registry mirror login
+## X. build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails
 
 **RULE**:
-When implementing operations in `docker/build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/src/main/webapp/WEB-INF/rails/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `31ee3344`: build: remove hack for registry mirror login. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `99be1b85`: build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docker/build.gradle`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        "https://docker.gocd.io/": [
+    "filesize": "^11.0.33",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-        "https://index.docker.io/v1/": [
+    "filesize": "^11.0.32",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `31ee3344` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `99be1b85` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

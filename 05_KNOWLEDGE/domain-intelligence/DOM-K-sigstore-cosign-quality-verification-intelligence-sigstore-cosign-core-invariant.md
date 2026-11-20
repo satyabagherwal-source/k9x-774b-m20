@@ -4,24 +4,24 @@
 {
   "source_repository": "sigstore/cosign",
   "source_url": "https://github.com/sigstore/cosign",
-  "source_version": "6e895879",
+  "source_version": "339a3ca8",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T22:36:14.726Z",
+  "timestamp": "2026-11-20T04:29:25.848Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-sigstore-cosign",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [sigstore/cosign](https://github.com/sigstore/cosign) (Revision: `6e895879`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T22:36:14.726Z`  
+> **Provenance**: Harvested from [sigstore/cosign](https://github.com/sigstore/cosign) (Revision: `339a3ca8`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T04:29:25.848Z`  
 > **Learning ID**: `learn-github-sigstore-cosign`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from sigstore/cosign:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T22:36:13.464Z  
+> **Harvest Timestamp**: 2026-11-20T04:29:24.938Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -50,225 +50,6 @@ The following architectural invariants have been empirically discovered and reco
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: go.mod, README.md, Dockerfile.
 - Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `pkg/cosign/fulcioverifier/ctutil/ctutil.go`
-```
-// Copyright 2018 Google LLC. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-// Package copied from
-// https://github.com/google/certificate-transparency-go/blob/master/ctutil/ctutil.go
-
-// Package ctutil contains utilities for Certificate Transparency.
-package ctutil
-
-import (
-	"bytes"
-	"crypto"
-	"crypto/sha256"
-	"encoding/base64"
-	"errors"
-	"fmt"
-
-	ct "github.com/google/certificate-transparency-go"
-	"github.com/google/certificate-transparency-go/tls"
-	"github.com/google/certificate-transparency-go/x509"
-)
-
-var emptyHash = [sha256.Size]byte{}
-
-// LeafHashB64 does as LeafHash does, but returns the leaf hash base64-encoded.
-// The base64-encoded leaf hash returned by B64LeafHash can be used with the
-// get-proof-by-hash API endpoint of Certificate Transparency Logs.
-func LeafHashB64(chain []*x509.Certificate, sct *ct.SignedCertificateTimestamp, embedded bool) (string, error) {
-	hash, err := LeafHash(chain, sct, embedded)
-	if err != nil {
-		return "", err
-	}
-	return base64.StdEncoding.EncodeToString(hash[:]), nil
-}
-
-// LeafHash calculates the leaf hash of the certificate or precertificate at
-// chain[0] that sct was issued for.
-//
-// sct is required because the SCT timestamp is used to calculate the leaf hash.
-// Leaf hashes are unique to (pre)certificate-SCT pairs.
-//
-// This function can be used with three different types of leaf certificate:
-//   - X.509 Certificate:
-//     If using this function to calculate the leaf hash for a normal X.509
-//     certificate then it is enough to just provide the end entity
-//     certificate in chain. This case assumes that the SCT being provided is
-//     not embedded within the leaf certificate provided, i.e. the certificate
-//     is what was submitted to the Certificate Transparency Log in order to
-//     obtain the SCT.  For this case, set embedded to false.
-//   - Precertificate:
-//     If using this function to calculate the leaf hash for a precertificate
-//     then the issuing certificate must also be provided in chain.  The
-//     precertificate should be at chain[0], and its issuer at chain[1].  For
-//     this case, set embedded to false.
-//   - X.509 Certificate containing the SCT embedded within it:
-//     If using this function to calculate the leaf hash for a certificate
-//     where the SCT provided is embedded within the certificate you
-//     are providing at chain[0], set embedded to true.  LeafHash will
-//     calculate the leaf hash by building the corresponding precertificate.
-//     LeafHash will return an error if the provided SCT cannot be found
-//     embedded within chain[0].  As with the precertificate case, the issuing
-//     certificate must also be provided in chain.  The certificate containing
-//     the embedded SCT should be at chain[0], and its issuer at chain[1].
-//
-// Note: LeafHash doesn't check that the provided SCT verifies for the given
-// chain.  It simply calculates what the leaf hash would be for the given
-// (pre)certificate-SCT pair.
-func LeafHash(chain []*x509.Certificate, sct *ct.SignedCertificateTimestamp, embedded bool) ([sha256.Size]byte, error) {
-	leaf, err := createLeaf(chain, sct, embedded)
-	if err != nil {
-		return emptyHash, err
-	}
-	return ct.LeafHashForLeaf(leaf)
-}
-
-// VerifySCT takes the public key of a Certificate Transparency Log, a
-// certificate chain, and an SCT and verifies whether the SCT is a valid SCT for
-// the certificate at chain[0], signed by the Log that the public key belongs
-// to.  If the SCT does not verify, an error will be returned.
-//
-// This function can be used with three different types of leaf certificate:
-//   - X.509 Certificate:
-//     If using this function to verify an SCT for a normal X.509 certificate
-//     then it is enough to just provide the end entity certificate in chain.
-//     This case assumes that the SCT being provided is not embedded within
-//     the leaf certificate provided, i.e. the certificate is what was
-//     submitted to the Certificate Transparency Log in order to obtain the
-//     SCT.  For this case, set embedded to false.
-//   - Precertificate:
-//     If using this function to verify an SCT for a precertificate then the
-//     issuing certificate must also be provided in chain.  The precertificate
-//     should be at chain[0], and its issuer at chain[1].  For this case, set
-//     embedded to false.
-//   - X.509 Certificate containing the SCT embedded within it:
-//     If the SCT you wish to verify is embedded within the certificate you
-//     are providing at chain[0], set embedded to true.  VerifySCT will
-//     verify the provided SCT by building the corresponding precertificate.
-//     VerifySCT will return an error if the provided SCT cannot be found
-//     embedded within chain[0].  As with the precertificate case, the issuing
-//     certificate must also be provided in chain.  The certificate containing
-//     the embedded SCT should be at chain[0], and its issuer at chain[1].
-func VerifySCT(pubKey crypto.PublicKey, chain []*x509.Certificate, sct *ct.SignedCertificateTimestamp, embedded bool) error {
-	s, err := ct.NewSignatureVerifier(pubKey)
-	if err != nil {
-		return fmt.Errorf("error creating signature verifier: %w", err)
-	}
-
-	return VerifySCTWithVerifier(s, chain, sct, embedded)
-}
-
-// VerifySCTWithVerifier takes a ct.SignatureVerifier, a certificate chain, and
-// an SCT and verifies whether the SCT is a valid SCT for the certificate at
-// chain[0], signed by the Log whose public key was used to set up the
-// ct.SignatureVerifier.  If the SCT does not verify, an error will be returned.
-//
-// This function can be used with three different types of leaf certificate:
-//   - X.509 Certificate:
-//     If using this function to verify an SCT for a normal X.509 certificate
-//     then it is enough to just provide the end entity certificate in chain.
-//     This case assumes that the SCT being provided is not embedded within
-//     the leaf certificate provided, i.e. the certificate is what was
-//     submitted to the Certificate Transparency Log in order to obtain the
-//     SCT.  For this case, set embedded to false.
-//   - Precertificate:
-//     If using this function to verify an SCT for a precertificate then the
-//     issuing certificate must also be provided in chain.  The precertificate
-//     should be at chain[0], and its issuer at chain[1].  For this case, set
-//     embedded to false.
-//   - X.509 Certificate containing the SCT embedded within it:
-//     If the SCT you wish to verify is embedded within the certificate you
-//     are providing at chain[0], set embedded to true.  VerifySCT will
-//     verify the provided SCT by building the corresponding precertificate.
-//     VerifySCT will return an error if the provided SCT cannot be found
-//     embedded within chain[0].  As with the precertificate case, the issuing
-//     certificate must also be provided in chain.  The certificate containing
-//     the embedded SCT should be at chain[0], and its issuer at chain[1].
-func VerifySCTWithVerifier(sv *ct.SignatureVerifier, chain []*x509.Certificate, sct *ct.SignedCertificateTimestamp, embedded bool) error {
-	if sv == nil {
-		return errors.New("ct.SignatureVerifier is nil")
-	}
-
-	leaf, err := createLeaf(chain, sct, embedded)
-	if err != nil {
-		return err
-	}
-
-	return sv.VerifySCTSignature(*sct, ct.LogEntry{Leaf: *leaf})
-}
-
-func createLeaf(chain []*x509.Certificate, sct *ct.SignedCertificateTimestamp, embedded bool) (*ct.MerkleTreeLeaf, error) {
-	if len(chain) == 0 {
-		return nil, errors.New("chain is empty")
-	}
-	if sct == nil {
-		return nil, errors.New("sct is nil")
-	}
-
-	if embedded {
-		sctPresent, err := ContainsSCT(chain[0], sct)
-		if err != nil {
-			return nil, fmt.Errorf("error checking for SCT in leaf certificate: %w", err)
-		}
-		if !sctPresent {
-			return nil, errors.New("SCT provided is not embedded within leaf certificate")
-		}
-	}
-
-	certType := ct.X509LogEntryType
-	if chain[0].IsPrecertificate() || embedded {
-		certType = ct.PrecertLogEntryType
-	}
-
-	var leaf *ct.MerkleTreeLeaf
-	var err error
-	if embedded {
-		leaf, err = ct.MerkleTreeLeafForEmbeddedSCT(chain, sct.Timestamp)
-	} else {
-		leaf, err = ct.MerkleTreeLeafFromChain(chain, certType, sct.Timestamp)
-	}
-	if err != nil {
-		return nil, fmt.Errorf("error creating MerkleTreeLeaf: %w", err)
-	}
-	return leaf, nil
-}
-
-// ContainsSCT checks to see whether the given SCT is embedded within the given
-// certificate.
-func ContainsSCT(cert *x509.Certificate, sct *ct.SignedCertificateTimestamp) (bool, error) {
-	if cert == nil || sct == nil {
-		return false, nil
-	}
-
-	sctBytes, err := tls.Marshal(*sct)
-	if err != nil {
-		return false, fmt.Errorf("error tls.Marshalling SCT: %w", err)
-	}
-	for _, s := range cert.SCTList.SCTList {
-		if bytes.Equal(sctBytes, s.Val) {
-			return true, nil
-		}
-	}
-	return false, nil
-}
-
-```
 
 ### Core Architecture Module: `pkg/cosign/pivkey/util.go`
 ```
@@ -1781,6 +1562,167 @@ func predicateTypeFromEnvelope(envelope *dsse.Envelope) (string, error) {
 
 ```
 
+### Core Architecture Module: `cmd/cosign/cli/bundle/upgrade.go`
+```
+//
+// Copyright 2026 The Sigstore Authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package bundle
+
+import (
+	"context"
+	"crypto/x509"
+	"fmt"
+	"os"
+
+	protobundle "github.com/sigstore/protobuf-specs/gen/pb-go/bundle/v1"
+	rekor "github.com/sigstore/rekor/pkg/client"
+	"github.com/sigstore/rekor/pkg/generated/client"
+	"github.com/sigstore/rekor/pkg/generated/client/entries"
+	"github.com/sigstore/rekor/pkg/tle"
+	"google.golang.org/protobuf/encoding/protojson"
+
+	"github.com/sigstore/cosign/v3/internal/ui"
+)
+
+type UpgradeCmd struct {
+	Out      string
+	RekorURL string
+}
+
+func (c *UpgradeCmd) Exec(ctx context.Context, bundlePath string) error {
+	data, err := os.ReadFile(bundlePath)
+	if err != nil {
+		return fmt.Errorf("reading input file: %w", err)
+	}
+
+	rekorClient, err := rekor.GetRekorClient(c.RekorURL)
+	if err != nil {
+		return fmt.Errorf("creating rekor client: %w", err)
+	}
+
+	upgradedBundle, err := upgradeBundle(ctx, data, rekorClient)
+	if err != nil {
+		return fmt.Errorf("upgrading bundle: %w", err)
+	}
+
+	if c.Out != "" {
+		err = os.WriteFile(c.Out, upgradedBundle, 0600) // #nosec G703 -- user-supplied output path is intentional
+		if err != nil {
+			return fmt.Errorf("writing upgraded bundle: %w", err)
+		}
+		ui.Infof(ctx, "Successfully upgraded bundle written to %s", c.Out)
+	} else {
+		fmt.Println(string(upgradedBundle))
+	}
+
+	return nil
+}
+
+func upgradeBundle(ctx context.Context, data []byte, rekorClient *client.Rekor) ([]byte, error) {
+	var bundle protobundle.Bundle
+	if err := protojson.Unmarshal(data, &bundle); err != nil {
+		return nil, fmt.Errorf("unmarshaling bundle: %w", err)
+	}
+
+	if bundle.VerificationMaterial == nil {
+		return nil, fmt.Errorf("bundle is missing verification material")
+	}
+	if bundle.VerificationMaterial.Content == nil {
+		return nil, fmt.Errorf("bundle verification material is missing content (public key or certificate)")
+	}
+
+	switch bundle.MediaType {
+	case "application/vnd.dev.sigstore.bundle.v0.3+json", "application/vnd.dev.sigstore.bundle+json;version=0.3":
+		ui.Infof(ctx, "Bundle is already at v0.3, no upgrade needed.")
+		return data, nil
+	case "application/vnd.dev.sigstore.bundle+json;version=0.1":
+		ui.Infof(ctx, "Upgrading from v0.1 to v0.3...")
+	case "application/vnd.dev.sigstore.bundle+json;version=0.2":
+		ui.Infof(ctx, "Upgrading from v0.2 to v0.3...")
+	default:
+		return nil, fmt.Errorf("unsupported bundle version: %s", bundle.MediaType)
+	}
+
+	if chainContent, ok := bundle.VerificationMaterial.Content.(*protobundle.VerificationMaterial_X509CertificateChain); ok {
+		certChain := chainContent.X509CertificateChain.Certificates
+		if len(certChain) > 0 {
+			ui.Infof(ctx, "Truncating certificate chain to only the leaf certificate...")
+			for i, cert := range certChain {
+				parsedCert, err := x509.ParseCertificate(cert.RawBytes)
+				if err != nil {
+					ui.Infof(ctx, "  Certificate %d: <unable to parse: %v>", i, err)
+					continue
+				}
+
+				var identity string
+				if len(parsedCert.EmailAddresses) > 0 {
+					identity = parsedCert.EmailAddresses[0]
+				} else if len(parsedCert.URIs) > 0 {
+					identity = parsedCert.URIs[0].String()
+				} else if s := parsedCert.Subject.String(); s != "" {
+					identity = s
+				} else {
+					identity = "<none>"
+				}
+				ui.Infof(ctx, "  Certificate %d Identity: %s", i, identity)
+			}
+			bundle.VerificationMaterial.Content = &protobundle.VerificationMaterial_Certificate{
+				Certificate: certChain[0],
+			}
+		}
+	}
+
+	for i, entry := range bundle.VerificationMaterial.TlogEntries {
+		if entry.InclusionPromise != nil && entry.InclusionProof == nil {
+			ui.Infof(ctx, "Fetching missing inclusion proof from Rekor for log index %d...", entry.LogIndex)
+
+			params := entries.NewGetLogEntryByIndexParams()
+			params.SetLogIndex(entry.LogIndex)
+
+			resp, err := rekorClient.Entries.GetLogEntryByIndexContext(ctx, params)
+			if err != nil {
+				return nil, fmt.Errorf("fetching log entry by index: %w", err)
+			}
+
+			if len(resp.Payload) != 1 {
+				return nil, fmt.Errorf("expected exactly 1 entry from Rekor for index %d, got %d", entry.LogIndex, len(resp.Payload))
+			}
+
+			for _, e := range resp.Payload {
+				protoEntry, err := tle.GenerateTransparencyLogEntry(e)
+				if err != nil {
+					return nil, fmt.Errorf("generating proto entry: %w", err)
+				}
+				bundle.VerificationMaterial.TlogEntries[i] = protoEntry
+			}
+		}
+	}
+
+	bundle.MediaType = "application/vnd.dev.sigstore.bundle.v0.3+json"
+
+	out, err := protojson.Marshal(&bundle)
+	if err != nil {
+		return nil, fmt.Errorf("marshaling bundle: %w", err)
+	}
+
+	return out, nil
+}
+
+```
+
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1811,84 +1753,41 @@ func predicateTypeFromEnvelope(envelope *dsse.Envelope) (string, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6e895879` (2026-11-19)
-**Commit Message**: Update README offline verification example
+### Incident Patch 1: `339a3ca8` (2026-11-20)
+**Commit Message**: Delete legacy verification code (#5146)
+
+* Delete legacy verification code
 
 Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 
-**File**: `README.md` (modified, +6/-9)
-```diff
-@@ -142,17 +142,15 @@ The following checks were performed on these signatures:
- 
- ### Verify a container in an air-gapped environment
- 
--**Note:** This section is out of date.
--
- **Note:** Most verification workflows require periodically requesting service keys from a TUF repository.
- For airgapped verification of signatures using the public-good instance, you will need to retrieve the
- [trusted root](https://github.com/sigstore/root-signing/blob/main/targets/trusted_root.json) file from the production
- TUF repository. The contents of this file will change without notification. By not using TUF, you will need
- to build your own mechanism to keep your airgapped copy of this file up-to-date.
- 
--Cosign can do completely offline verification by verifying a [bundle](./specs/SIGNATURE_SPEC.md#properties) which is typically distributed as an annotation on the image manifest.
--As long as this annotation is present, then offline verification can be done.
--This bundle annotation is always included by default for keyless signing, so the default `cosign sign` functionality will include all materials needed for offline verification.
-+Cosign can do completely offline verification by verifying a [Sigstore bundle](./specs/BUNDLE_SPEC.md), which `cosign sign` attaches to the image in the registry.
-+The bundle contains the verification materials produced during signing, such as the certificate, the transparency log entry with its inclusion proof, and any RFC 3161 timestamp.
-+With these materials and a local copy of the trusted root, verification needs no network access.
- 
- To verify an image in an air-gapped environment, the image and signatures must be available locally on the filesystem.
- 
-@@ -166,20 +164,19 @@ cosign save $IMAGE_NAME --dir ./path/to/dir
- Now, in an air-gapped environment, this local image can be verified:
- 
- ```shell
-+# --trusted-root points to the default location of the trusted root
- cosign verify \
-   --certificate-identity $CERT_IDENTITY \
-   --certificate-oidc-issuer $CERT_OIDC_ISSUER \
--  --offline=true \
--  --new-bundle-format=false \ # for artifacts signed without the new protobuf bundle format
--  --trusted-root ~/.sigstore/root/tuf-repo-cdn.sigstore.dev/targets/trusted_root.json \ # default location of trusted root
-+  --trusted-root ~/.sigstore/root/tuf-repo-cdn.sigstore.dev/targets/trusted_root.json \
-   --local-image ./path/to/dir
- ```
- 
- You'll need to pass in expected values for `$CERT_IDENTITY` and `$CERT_OIDC_ISSUER` to correctly verify this image.
- If you signed with a keypair, the same command will work, assuming the public key material is present locally:
- 
- ```
--cosign verify --key cosign.pub --offline --local-image ./path/to/dir
-+cosign verify --key cosign.pub --trusted-root ~/.sigstore/root/tuf-repo-cdn.sigstore.dev/targets/trusted_root.json --local-image ./path/to/dir
- ```
- 
- ### Identity-based blob signing and verification
-```
-
----
-
-### Incident Patch 2: `c0d11188` (2026-10-02)
-**Commit Message**: Remove obsolete service flags and unused verify helpers
+* Remove unused mock Rekor client
 
 Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 
-**File**: `cmd/cosign/cli/dockerfile.go` (modified, +0/-1)
-```diff
-@@ -101,7 +101,6 @@ Shell-like variables in the Dockerfile's FROM lines will be substituted with val
- 					Output:                       o.Output,
- 					Annotations:                  annotations,
- 					LocalImage:                   o.LocalImage,
--					Offline:                      o.CommonVerifyOptions.Offline,
- 					IgnoreTlog:                   o.CommonVerifyOptions.IgnoreTlog,
- 					MaxWorkers:                   o.CommonVerifyOptions.MaxWorkers,
- 					UseSignedTimestamps:          o.CommonVerifyOptions.UseSignedTimestamps,
-```
+* Remove unused RFC 3161 timestamp verifier
 
-**File**: `cmd/cosign/cli/fulcio/depcheck_test.go` (removed, +0/-35)
+Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
+
+* Remove unused mock TSA client
+
+Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
+
+* Remove unused SCT verification code
+
+Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
+
+* Remove unused TSA verification code
+
+Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
+
+**File**: `internal/pkg/cosign/rekor/mock/mock_rekor_client.go` (removed, +0/-97)
 ```diff
-@@ -1,35 +0,0 @@
--//
--// Copyright 2021 The Sigstore Authors.
+@@ -1,97 +0,0 @@
+-// Copyright 2022 The Sigstore Authors.
 -//
 -// Licensed under the Apache License, Version 2.0 (the "License");
 -// you may not use this file except in compliance with the License.
@@ -1902,33 +1801,597 @@ Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 -// See the License for the specific language governing permissions and
 -// limitations under the License.
 -
--package fulcio_test
+-package mock
 -
 -import (
--	"testing"
+-	"context"
+-	"errors"
 -
--	"github.com/depcheck-test/depcheck-test/depcheck"
+-	"github.com/go-openapi/runtime"
+-
+-	"github.com/sigstore/rekor/pkg/generated/client/entries"
+-	"github.com/sigstore/rekor/pkg/generated/models"
 -)
 -
--func TestNoDeps(t *testing.T) {
--	depcheck.AssertNoDependency(t, map[string][]string{
--		"github.com/sigstore/cosign/v3/cmd/cosign/cli/fulcio": {
--			// Avoid pulling in a variety of things that are massive dependencies.
--			"github.com/google/trillian",
--			"github.com/envoyproxy/go-control-plane",
--			"github.com/gogo/protobuf/protoc-gen-gogo",
--			"github.com/grpc-ecosystem/go-grpc-middleware",
--			"github.com/jhump/protoreflect",
+-var _ entries.ClientService = (*EntriesClient)(nil)
+-
+-// EntriesClient is a client that implements entries.ClientService for Rekor
+-// To use:
+-// var mClient client.Rekor
+-// mClient.Entries = &logEntry
+-type EntriesClient struct {
+-	Entries []*models.LogEntry
+-}
+-
+-func (m *EntriesClient) CreateLogEntry(_ *entries.CreateLogEntryParams, _ ...entries.ClientOption) (*entries.CreateLogEntryCreated, error) {
+-	if m.Entries != nil {
+-		return &entries.CreateLogEntryCreated{
+-			ETag:     "",
+-			Location: "",
+-			Payload:  *m.Entries[0],
+-		}, nil
+-	}
+-	return nil, errors.New("entry not provided")
+-}
+-
+-func (m *EntriesClient) CreateLogEntryContext(_ context.Context, params *entries.CreateLogEntryParams, opts ...entries.ClientOption) (*entries.CreateLogEntryCreated, error) {
+-	return m.CreateLogEntry(params, opts...)
+-}
+-
+-func (m *EntriesClient) GetLogEntryByIndex(_ *entries.GetLogEntryByIndexParams, _ ...entries.ClientOption) (*entries.GetLogEntryByIndexOK, error) {
+-	if m.Entries != nil {
+-		return &entries.GetLogEntryByIndexOK{
+-			Payload: *m.Entries[0],
+-		}, nil
+-	}
+-	return nil, errors.New("entry not provided")
+-}
+-
+-func (m *EntriesClient) GetLogEntryByIndexContext(_ context.Context, params *entries.GetLogEntryByIndexParams, opts ...entries.ClientOption) (*entries.GetLogEntryByIndexOK, error) {
+-	return m.GetLogEntryByIndex(params, opts...)
+-}
+-
+-func (m *EntriesClient) GetLogEntryByUUID(params *entries.GetLogEntryByUUIDParams, opts ...entries.ClientOption) (*entries.GetLogEntryByUUIDOK, error) { //nolint: revive
+-	if m.Entries != nil {
+-		return &entries.GetLogEntryByUUIDOK{
+-			Payload: *m.Entries[0],
+-		}, nil
+-	}
+-	return nil, errors.New("entry not provided")
+-}
+-
+-func (m *EntriesClient) GetLogEntryByUUIDContext(_ context.Context, params *entries.GetLogEntryByUUIDParams, opts ...entries.ClientOption) (*entries.GetLogEntryByUUIDOK, error) { //nolint: revive
+-	return m.GetLogEntryByUUID(params, opts...)
+-}
+-
+-func (m *EntriesClient) SearchLogQuery(params *entries.SearchLogQueryParams, opts ...entries.ClientOption) (*entries.SearchLogQueryOK, error) { //nolint: revive
+-	resp := []models.LogEntry{}
+-	if m.Entries != nil {
+-		for _, entry := range m.Entries {
+-			resp = append(resp, *entry)
+-		}
+-	}
+-	return &entries.SearchLogQueryOK{
+-		Payload: resp,
+-	}, nil
+-}
+-
+-func (m *EntriesClient) SearchLogQueryContext(_ context.Context, params *entries.SearchLogQueryParams, opts ...entries.ClientOption) (*entries.SearchLogQueryOK, error) { //nolint: revive
+-	return m.SearchLogQuery(params, opts...)
+-}
+-
+-// TODO: Implement mock
+-func (m *EntriesClient) SetTransport(transport runtime.ContextualTransport) { //nolint: revive
+-	// noop
+-}
+```
+
+**File**: `internal/pkg/cosign/tsa/mock/mock_tsa_client.go` (removed, +0/-120)
+```diff
+@@ -1,120 +0,0 @@
+-// Copyright 2022 The Sigstore Authors.
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//     http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-package mock
+-
+-import (
+-	"crypto"
+-	"crypto/elliptic"
+-	"crypto/rand"
+-	"crypto/x509"
+-	"encoding/asn1"
+-	"fmt"
+-	"time"
+-
+-	"github.com/digitorus/timestamp"
+-	"github.com/sigstore/cosign/v3/internal/pkg/cosign/tsa/client"
+-	"github.com/sigstore/sigstore/pkg/cryptoutils"
+-	"github.com/sigstore/sigstore/pkg/signature"
+-	"github.com/sigstore/timestamp-authority/v2/pkg/signer"
+-)
+-
+-// TSAClient creates RFC3161 timestamps and implements client.TimestampAuthority.
+-// Messages to sign can either be provided in the initializer or through the request.
+-// Time can be provided in the initializer, or defaults to time.Now().
+-// All other timestamp parameters are hardcoded.
+-type TSAClient struct {
+-	client.TimestampAuthorityClient
+-
+-	Signer    crypto.Signer
+-	CertChain []*x509.Certificate
+-	Time      time.Time
+-	Message   []byte
+-}
+-
+-// TSAClientOptions provide customization for the mock TSA client.
+-type TSAClientOptions struct {
+-	// Time is an optional timestamp. Default is time.Now().
+-	Time time.Time
+-	// Message is the pre-hashed message to sign over, typically a raw signature.
+-	Message []byte
+-	// Signer is an optional signer created out of band. Client creates one if not set.
+-	Signer crypto.Signer
+-}
+-
+-func NewTSAClient(o TSAClientOptions) (*TSAClient, error) {
+-	sv := o.Signer
+-	if sv == nil {
+-		var err error
+-		sv, _, err = signature.NewECDSASignerVerifier(elliptic.P256(), rand.Reader, crypto.SHA256)
+-		if err != nil {
+-			return nil, err
+-		}
+-	}
+-	certChain, err := signer.NewTimestampingCertWithChain(sv)
+-	if err != nil {
+-		return nil, fmt.Errorf("generating timestamping cert chain: %w", err)
+-	}
+-
+-	return &TSAClient{
+-		Signer:    sv,
+-		CertChain: certChain,
+-		Time:      o.Time,
+-		Message:   o.Message,
+-	}, nil
+-}
+-
+-func (c *TSAClient) GetTimestampResponse(tsq []byte) ([]byte, error) {
+-	var hashAlg crypto.Hash
+-	var hashedMessage []byte
+-
+-	if tsq != nil {
+-		req, err := timestamp.ParseRequest(tsq)
+-		if err != nil {
+-			return nil, err
+-		}
+-		hashAlg = req.HashAlgorithm
+-		hashedMessage = req.HashedMessage
+-	} else {
+-		hashAlg = crypto.SHA256
+-		h := hashAlg.New()
+-		h.Write(c.Message)
+-		hashedMessage = h.Sum(nil)
+-	}
+-
+-	nonce, err := cryptoutils.GenerateSerialNumber()
+-	if err != nil {
+-		return nil, err
+-	}
+-	duration, _ := time.ParseDuration("1s")
+-
+-	tsStruct := timestamp.Timestamp{
+-		HashAlgorithm:     hashAlg,
+-		HashedMessage:     hashedMessage,
+-		Nonce:             nonce,
+-		Policy:            asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 57264, 2},
+-		Ordering:          false,
+-		Accuracy:          duration,
+-		Qualified:         false,
+-		AddTSACertificate: true,
+-	}
+-
+-	if c.Time.IsZero() {
+-		tsStruct.Time = time.Now()
+-	} else {
+-		tsStruct.Time = c.Time
+-	}
+-
+-	return tsStruct.CreateResponseWithOpts(c.CertChain[0], c.Signer, crypto.SHA256)
+-}
+```
+
+**File**: `pkg/cosign/fulcioverifier/ctutil/ctutil.go` (removed, +0/-214)
+```diff
+@@ -1,214 +0,0 @@
+-// Copyright 2018 Google LLC. All Rights Reserved.
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//     http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-// Package copied from
+-// https://github.com/google/certificate-transparency-go/blob/master/ctutil/ctutil.go
+-
+-// Package ctutil contains utilities for Certificate Transparency.
+-package ctutil
+-
+-import (
+-	"bytes"
+-	"crypto"
+-	"crypto/sha256"
+-	"encoding/base64"
+-	"errors"
+-	"fmt"
+-
+-	ct "github.com/google/certificate-transparency-go"
+-	"github.com/google/certificate-transparency-go/tls"
+-	"github.com/google/certificate-transparency-go/x509"
+-)
+-
+-var emptyHash = [sha256.Size]byte{}
+-
+-// LeafHashB64 does as LeafHash does, but returns the leaf hash base64-encoded.
+-// The base64-encoded leaf hash returned by B64LeafHash can be used with the
+-// get-proof-by-hash API endpoint of Certificate Transparency Logs.
+-func LeafHashB64(chain []*x509.Certificate, sct *ct.SignedCertificateTimestamp, embedded bool) (string, error) {
+-	hash, err := LeafHash(chain, sct, embedded)
+-	if err != nil {
+-		return "", err
+-	}
+-	return base64.StdEncoding.EncodeToString(hash[:]), nil
+-}
+-
+-// LeafHash calculates the leaf hash of the certificate or precertificate at
+-// chain[0] that sct was issued for.
+-//
+-// sct is required because the SCT timestamp is used to calculate the leaf hash.
+-// Leaf hashes are unique to (pre)certificate-SCT pairs.
+-//
+-// This function can be used with three different types of leaf certificate:
+-//   - X.509 Certificate:
+-//     If using this function to calculate the leaf hash for a normal X.509
+-//     certificate then it is enough to just provide the end entity
+-//     certificate in chain. This case assumes that the SCT being provided is
+-//     not embedded within the leaf certificate provided, i.e. the certificate
+-//     is what was submitted to the Certificate Transparency Log in order to
+-//     obtain the SCT.  For this case, set embedded to false.
+-//   - Precertificate:
+-//     If using this function to calculate the leaf hash for a precertificate
+-//     then the issuing certificate must also be provided in chain.  The
+-//     precertificate should be at chain[0], and its issuer at chain[1].  For
+-//     this case, set embedded to false.
+-//   - X.509 Certificate containing the SCT embedded within it:
+-//     If using this function to calculate the leaf hash for a certificate
+-//     where the SCT provided is embedded within the certificate you
+-//     are providing at chain[0], set embedded to true.  LeafHash will
+-//     calculate the leaf hash by building the corresponding precertificate.
+-//     LeafHash will return an error if the provided SCT cannot be found
+-//     embedded within chain[0].  As with the precertificate case, the issuing
+-//     certificate must also be provided in chain.  The certificate containing
+-//     the embedded SCT should be at chain[0], and its issuer at chain[1].
+-//
+-// Note: LeafHash doesn't check that the provided SCT verifies for the given
+-// chain.  It simply calculates what the leaf hash would be for the given
+-// (pre)certificate-SCT pair.
+-func LeafHash(chain []*x509.Certificate, sct *ct.SignedCertificateTimestamp, embedded bool) ([sha256.Size]byte, error) {
+-	leaf, err := createLeaf(chain, sct, embedded)
+-	if err != nil {
+-		return emptyHash, err
+-	}
+-	return ct.LeafHashForLeaf(leaf)
+-}
+-
+-// VerifySCT takes the public key of a Certificate Transparency Log, a
+-// certificate chain, and an SCT and verifies whether the SCT is a valid SCT for
+-// the certificate at chain[0], signed by the Log that the public key belongs
+-// to.  If the SCT does not verify, an error will be returned.
+-//
+-// This function can be used with three different types of leaf certificate:
+-//   - X.509 Certificate:
+-//     If using this function to verify an SCT for a normal X.509 certificate
+-//     then it is enough to just provide the end entity certificate in chain.
+-//     This case assumes that the SCT being provided is not embedded within
+-//     the leaf certificate provided, i.e. the certificate is what was
+-//     submitted to the Certificate Transparency Log in order to obtain the
+-//     SCT.  For this case, set embedded to false.
+-//   - Precertificate:
+-//     If using this function to verify an SCT for a precertificate then the
+-//     issuing certificate must also be provided in chain.  The precertificate
+-//     should be at chain[0], and its issuer at chain[1].  For this case, set
+-//     embedded to false.
+-//   - X.509 C
+```
+
+**File**: `pkg/cosign/fulcioverifier/ctutil/ctutil_test.go` (removed, +0/-361)
+```diff
+@@ -1,361 +0,0 @@
+-// Copyright 2018 Google LLC. All Rights Reserved.
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//     http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-package ctutil
+-
+-import (
+-	"encoding/base64"
+-	"testing"
+-
+-	ct "github.com/google/certificate-transparency-go"
+-	"github.com/google/certificate-transparency-go/testdata"
+-	"github.com/google/certificate-transparency-go/tls"
+-	"github.com/google/certificate-transparency-go/x509util"
+-)
+-
+-func TestLeafHash(t *testing.T) {
+-	tests := []struct {
+-		desc     string
+-		chainPEM string
+-		sct      []byte
+-		embedded bool
+-		want     string
+-	}{
+-		{
+-			desc:     "cert",
+-			chainPEM: testdata.TestCertPEM + testdata.CACertPEM,
+-			sct:      testdata.TestCertProof,
+-			want:     testdata.TestCertB64LeafHash,
 -		},
+-		{
+-			desc:     "precert",
+-			chainPEM: testdata.TestPreCertPEM + testdata.CACertPEM,
+-			sct:      testdata.TestPreCertProof,
+-			want:     testdata.TestPreCertB64LeafHash,
+-		},
+-		{
+-			desc:     "cert with embedded SCT",
+-			chainPEM: testdata.TestEmbeddedCertPEM + testdata.CACertPEM,
+-			sct:      testdata.TestPreCertProof,
+-			embedded: true,
+-			want:     testdata.TestPreCertB64LeafHash,
+-		},
+-	}
+-
+-	for _, test := range tests {
+-		t.Run(test.desc, func(t *testing.T) {
+-			// Parse chain
+-			chain, err := x509util.CertificatesFromPEM([]byte(test.chainPEM))
+-			if err != nil {
+-				t.Fatalf("error parsing certificate chain: %s", err)
+-			}
+-
+-			// Parse SCT
+-			var sct ct.SignedCertificateTimestamp
+-			if _, err = tls.Unmarshal(test.sct, &sct); err != nil {
+-				t.Fatalf("error tls-unmarshalling sct: %s", err)
+-			}
+-
+-			// Test LeafHash()
+-			wantSl, err := base64.StdEncoding.DecodeString(test.want)
+-			if err != nil {
+-				t.Fatalf("error base64-decoding leaf hash %q: %s", test.want, err)
+-			}
+-			var want [32]byte
+-			copy(want[:], wantSl)
+-
+-			got, err := LeafHash(chain, &sct, test.embedded)
+-			if got != want || err != nil {
+-				t.Errorf("LeafHash(_,_) = %v, %v, want %v, nil", got, err, want)
+-			}
+-
+-			// Test LeafHashB64()
+-			gotB64, err := LeafHashB64(chain, &sct, test.embedded)
+-			if gotB64 != test.want || err != nil {
+-				t.Errorf("LeafHashB64(_,_) = %v, %v, want %v, nil", gotB64, err, test.want)
+-			}
+-		})
+-	}
+-}
+-
+-func TestLeafHashErrors(t *testing.T) {
+-	tests := []struct {
+-		desc     string
+-		chainPEM string
+-		sct      []byte
+-		embedded bool
+-	}{
+-		{
+-			desc:     "empty chain",
+-			chainPEM: "",
+-			sct:      testdata.TestCertProof,
+-		},
+-		{
+-			desc:     "nil SCT",
+-			chainPEM: testdata.TestCertPEM + testdata.CACertPEM,
+-			sct:      nil,
+-		},
+-		{
+-			desc:     "no SCTs embedded in cert, embedded true",
+-			chainPEM: testdata.TestCertPEM + testdata.CACertPEM,
+-			sct:      testdata.TestInvalidProof,
+-			embedded: true,
+-		},
+-		{
+-			desc:     "cert contains embedded SCTs, but not the SCT provided",
+-			chainPEM: testdata.TestEmbeddedCertPEM + testdata.CACertPEM,
+-			sct:      testdata.TestInvalidProof,
+-			embedded: true,
+-		},
+-	}
+-
+-	for _, test := range tests {
+-		t.Run(test.desc, func(t *testing.T) {
+-			// Parse chain
+-			chain, err := x509util.CertificatesFromPEM([]byte(test.chainPEM))
+-			if err != nil {
+-				t.Fatalf("error parsing certificate chain: %s", err)
+-			}
+-
+-			// Parse SCT
+-			var sct *ct.SignedCertificateTimestamp
+-			if test.sct != nil {
+-				sct = &ct.SignedCertificateTimestamp{}
+-				if _, err = tls.Unmarshal(test.sct, sct); err != nil {
+-					t.Fatalf("error tls-unmarshalling sct: %s", err)
+-				}
+-			}
+-
+-			// Test LeafHash()
+-			got, err := LeafHash(chain, sct, test.embedded)
+-			if got != emptyHash || err == nil {
+-				t.Errorf("LeafHash(_,_) = %s, %v, want %v, error", got, err, emptyHash)
+-			}
+-
+-			// Test LeafHashB64()
+-			gotB64, err := LeafHashB64(chain, sct, test.embedded)
+-			if gotB64 != "" || err == nil {
+-				t.Errorf("LeafHashB64(_,_) = %s, %v, want \"\", error", gotB64, err)
+-			}
+-		})
+-	}
+-}
+-
+-func TestVerifySCT(t *testing.T) {
+-	tests := []struct {
+-		desc     string
+-		chainPEM string
+-		sct      []byte
+-		embedded bool
+-		wantErr  bool
+-	}{
+-		{
+-			desc:     "cert",
+-			chainPEM: testdata.TestCertPEM + testdata.CACertPEM,
+-			sct:      testdata.TestCertProof,
+-		},
+-		{
+-			desc:     "precert",
+-			chainPEM: testdata.TestPreCertPEM + testdata.CACertPEM,
+-			sct:      testdata.TestPreCertProof,
+-		},
+-		{
+-			desc:     "invalid SCT",
+-			chainPEM: testdata.TestPreCertPEM + testdata.CACertPEM,
+-			sct:      testdata.TestCertProof,
+-			wantErr:  true,
+-		},
+-		{
+-			desc:     "
+```
+
+**File**: `pkg/cosign/fuzz_test.go` (modified, +0/-64)
+```diff
+@@ -16,19 +16,9 @@
+ package cosign
+ 
+ import (
+-	"context"
+ 	"os"
+ 	"path/filepath"
+ 	"testing"
+-
+-	"github.com/google/go-containerregistry/pkg/name"
+-	v1 "github.com/google/go-containerregistry/pkg/v1"
+-
+-	"github.com/sigstore/cosign/v3/pkg/oci/mutate"
+-)
+-
+-var (
+-	defaultFuzzRef = "fuzz/test"
+ )
+ 
+ func fuzzPass(s string) PassFunc {
+@@ -67,57 +57,3 @@ func FuzzImportKeyPairLoadPrivateKey(f *testing.F) {
+ 		}
+ 	})
+ }
+-
+-func FuzzSigVerify(f *testing.F) {
+-	f.Fuzz(func(t *testing.T, sigData, payloadData []byte, verificationTest int) {
+-		path := t.TempDir()
+-		sigPath := filepath.Join(path, "sigFile")
+-		err := os.WriteFile(sigPath, sigData, 0x755)
+-		if err != nil {
+-			return
+-		}
+-		payloadPath := filepath.Join(path, "payloadFile")
+-		err = os.WriteFile(payloadPath, payloadData, 0x755)
+-		if err != nil {
+-			return
+-		}
+-		ref, err := name.ParseReference(defaultFuzzRef)
+-		if err != nil {
+-			panic(err)
+-		}
+-		sigs, err := loadSignatureFromFile(context.Background(), sigPath, ref, &CheckOpts{PayloadRef: payloadPath})
+-		if err != nil {
+-			return
+-		}
+-		switch verificationTest % 5 {
+-		case 0:
+-			VerifyImageAttestation(context.Background(), sigs, v1.Hash{}, &CheckOpts{IgnoreTlog: true})
+-		case 1:
+-			verifySignatures(context.Background(), sigs, v1.Hash{}, &CheckOpts{IgnoreTlog: true})
+-		case 2:
+-			sl, err := sigs.Get()
+-			if err != nil {
+-				t.Fatal(err)
+-			}
+-			for _, sig := range sl {
+-				verifyInternal(context.Background(), sig, v1.Hash{}, verifyOCISignature, &CheckOpts{IgnoreTlog: true})
+-			}
+-		case 3:
+-			sl, err := sigs.Get()
+-			if err != nil {
+-				t.Fatal(err)
+-			}
+-			for _, sig := range sl {
+-				VerifyImageSignature(context.Background(), sig, v1.Hash{}, &CheckOpts{IgnoreTlog: true})
+-			}
+-		case 4:
+-			sl, err := sigs.Get()
+-			if err != nil {
+-				t.Fatal(err)
+-			}
+-			for _, sig := range sl {
+-				mutate.Signature(sig)
+-			}
+-		}
 -	})
 -}
 ```
 
-**File**: `cmd/cosign/cli/fulcio/fulcio.go` (removed, +0/-30)
+**File**: `pkg/cosign/tsa.go` (removed, +0/-154)
 ```diff
-@@ -1,30 +0,0 @@
--//
--// Copyright 2021 The Sigstore Authors.
+@@ -1,154 +0,0 @@
+-// Copyright 2024 The Sigstore Authors.
 -//
 -// Licensed under the Apache License, Version 2.0 (the "License");
 -// you may not use this file except in compliance with the License.
@@ -1942,205 +2405,413 @@ Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 -// See the License for the specific language governing permissions and
 -// limitations under the License.
 -
--package fulcio
+-package cosign
 -
 -import (
+-	"bytes"
+-	"context"
 -	"crypto/x509"
+-	"fmt"
+-	"os"
 -
--	"github.com/sigstore/cosign/v3/internal/pkg/cosign/fulcio/fulcioroots"
+-	"github.com/sigstore/cosign/v3/pkg/cosign/env"
+-	"github.com/sigstore/sigstore/pkg/cryptoutils"
+-	"github.com/sigstore/sigstore/pkg/tuf"
 -)
 -
--func GetRoots() (*x509.CertPool, error) {
--	return fulcioroots.Get()
+-const (
+-	tsaLeafCertStr                = `tsa_leaf.crt.pem`
+-	tsaRootCertStr                = `tsa_root.crt.pem`
+-	tsaIntermediateCertStrPattern = `tsa_intermediate_%d.crt.pem`
+-)
+-
+-type TSACertificates struct {
+-	LeafCert          *x509.Certificate
+-	IntermediateCerts []*x509.Certificate
+-	RootCert          []*x509.Certificate
 -}
 -
--func GetIntermediates() (*x509.CertPool, error) {
--	return fulcioroots.GetIntermediates()
+-type GetTargetStub func(ctx context.Context, usage tuf.UsageKind, names []string) ([]byte, error)
+-
+-func GetTufTargets(ctx context.Context, usage tuf.UsageKind, names []string) ([]byte, error) {
+-	tufClient, err := tuf.NewFromEnv(ctx)
+-	if err != nil {
+-		return nil, fmt.Errorf("error creating TUF client: %w", err)
+-	}
+-	targets, err := tufClient.GetTargetsByMeta(usage, names)
+-	if err != nil {
+-		return nil, fmt.Errorf("error fetching targets by metadata with usage %v: %w", usage, err)
+-	}
+-
+-	var buffer bytes.Buffer
+-	for _, target := range targets {
+-		buffer.Write(target.Target)
+-		buffer.WriteByte('\n')
+-	}
+-	return buffer.Bytes(), nil
+-}
+-
+-func isTufTargetExist(ctx context.Context, name string) (bool, error) {
+-	tufClient, err := tuf.NewFromEnv(ctx)
+-	if err != nil {
+-		return false, fmt.Errorf("error creating TUF client: %w", err)
+-	}
+-	_, err = tufClient.GetTarget(name)
+-	if err != nil {
+-		return false, nil
+-	}
+-	return true, nil
+-}
+-
+-// GetTSACerts retrieves trusted TSA certificates from the embedded or cached
+-// TUF root. If expired, makes a network call to retrieve the updated targets.
+-// By default, the certificates come from TUF, but you can override this for test
+-// purposes by using an env variable `SIGSTORE_TSA_CERTIFICATE_FILE` or a file path
+-// specified in `certChainPath`. If using an alternate, the file should be in PEM format.
+-func GetTSACerts(ctx context.Context, certChainPath string, fn GetTargetStub) (*TSACertificates, error) {
+-	altTSACert := env.Getenv(env.VariableSigstoreTSACertificateFile)
+-
+-	var raw []byte
+-	var err error
+-	var exists bool
+-	switch {
+-	case altTSACert != "":
+-		raw, err = os.ReadFile(altTSACert)
+-	case certChainPath != "":
+-		raw, err = os.ReadFile(certChainPath)
+-	default:
+-		certNames := []string{tsaLeafCertStr, tsaRootCertStr}
+-		for i := 0; ; i++ {
+-			intermediateCertStr := fmt.Sprintf(tsaIntermediateCertStrPattern, i)
+-			exists, err = isTufTargetExist(ctx, intermediateCertStr)
+-			if err != nil {
+-				return nil, fmt.Errorf("error fetching TSA certificates: %w", err)
+-			}
+-			if !exists {
+-				break
+-			}
+-			certNames = append(certNames, intermediateCertStr)
+-		}
+-		raw, err = fn(ctx, tuf.TSA, certNames)
+-		if err != nil {
+-			return nil, fmt.Errorf("error fetching TSA certificates: %w", err)
+-		}
+-	}
+-
+-	if err != nil {
+-		return nil, fmt.Errorf("error reading TSA certificate file: %w", err)
+-	}
+-
+-	leaves, intermediates, roots, err := splitPEMCertificateChain(raw)
+-	if err != nil {
+-		return nil, fmt.Errorf("error splitting TSA certificates: %w", err)
+-	}
+-
+-	if len(leaves) != 1 {
+-		return nil, fmt.Errorf("TSA certificate chain must contain exactly one leaf certificate")
+-	}
+-
+-	if len(roots) == 0 {
+-		return nil, fmt.Errorf("TSA certificate chain must contain at least one root certificate")
+-	}
+-
+-	return &TSACertificates{
+-		LeafCert:          leaves[0],
+-		IntermediateCerts: intermediates,
+-		RootCert:          roots,
+-	}, nil
+-}
+-
+-// splitPEMCertificateChain returns a list of leaf (non-CA) certificates, a certificate pool for
+-// intermediate CA certificates, and a certificate pool for root CA certificates
+-func splitPEMCertificateChain(pem []byte) (leaves, intermediates, roots []*x509.Certificate, err error) {
+-	certs, err := cryptoutils.UnmarshalCertificatesFromPEM(pem)
+-	if err != nil {
+-		return nil, nil, nil, err
+-	}
+-
+-	for _, cert := range certs {
+-		if !cert.IsCA {
+-			leaves = append(leaves, cert)
+-		} else {
+-			// root certificates are self-signed
+-			if bytes.Equal(cert.RawSubject, cert.RawIssuer) {
+-				roots = append(roots, cert)
+-			} else {
+-				intermediates = append(intermediates, cert)
+-			}
+-		}
+-	}
+-
+-	return leaves, intermediates, roots, nil
 -}
 ```
 
-**File**: `cmd/cosign/cli/manifest.go` (modified, +0/-1)
+**File**: `pkg/cosign/tsa_test.go` (removed, +0/-120)
 ```diff
-@@ -96,7 +96,6 @@ against the transparency log.`,
- 					Output:                       o.Output,
- 					Annotations:                  annotations,
- 					LocalImage:                   o.LocalImage,
--					Offline:                      o.CommonVerifyOptions.Offline,
- 					IgnoreTlog:                   o.CommonVerifyOptions.IgnoreTlog,
- 					MaxWorkers:                   o.CommonVerifyOptions.MaxWorkers,
- 					UseSignedTimestamps:          o.CommonVerifyOptions.UseSignedTimestamps,
+@@ -1,120 +0,0 @@
+-// Copyright 2024 The Sigstore Authors.
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//     http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-package cosign
+-
+-import (
+-	"context"
+-	"errors"
+-	"os"
+-	"testing"
+-
+-	"github.com/stretchr/testify/require"
+-)
+-
+-const (
+-	testLeafCert = `-----BEGIN CERTIFICATE-----
+-MIIBjzCCATSgAwIBAgIRAOoa5khdNMW26Nz0VCvjbBAwCgYIKoZIzj0EAwIwGzEZ
+-MBcGA1UEAxMQaHR0cHM6Ly9ibGFoLmNvbTAgFw0yNDA2MDMyMDE2MDFaGA8yMTI0
+-MDUxMDIwMTYwMFowGzEZMBcGA1UEAxMQaHR0cHM6Ly9ibGFoLmNvbTBZMBMGByqG
+-SM49AgEGCCqGSM49AwEHA0IABL7w/TW5lOU9KwnGQRIyZp/ReNQF1eA2rKC582Jo
+-nMomwCk2bA8c5dHrvvHe+mI8JeMNEg3lkIsVQp46dKGlgYujVzBVMA4GA1UdDwEB
+-/wQEAwIBBjAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBSA7lVsQm5OUzvYi+o8PuBs
+-CrAnljAWBgNVHSUBAf8EDDAKBggrBgEFBQcDCDAKBggqhkjOPQQDAgNJADBGAiEA
+-oJSZgJPX2tqXhfvLm+5UR399+E6+rgUnSRUf4+p+K5gCIQCmtfuv8IkUIYE5ybtx
+-+bn5E95xINfDMSPBa+0PEbB5RA==
+------END CERTIFICATE-----`
+-	testRootCert = `-----BEGIN CERTIFICATE-----
+-MIIBezCCASKgAwIBAgIRAMvdlXw/uuYvsJaCTa02uW4wCgYIKoZIzj0EAwIwGzEZ
+-MBcGA1UEAxMQaHR0cHM6Ly9ibGFoLmNvbTAgFw0yNDA2MDMyMDE1NTFaGA8yMTI0
+-MDUxMDIwMTU1MFowGzEZMBcGA1UEAxMQaHR0cHM6Ly9ibGFoLmNvbTBZMBMGByqG
+-SM49AgEGCCqGSM49AwEHA0IABLziRBPdWUTx9x3Z7zIMyo/C9cqsLK+hqnWDQS7K
+-TA38mZhMHnJ0vSaEA4g9J2ccI1x4G/HegCi9LkJG/EZLBjyjRTBDMA4GA1UdDwEB
+-/wQEAwIBBjASBgNVHRMBAf8ECDAGAQH/AgEBMB0GA1UdDgQWBBQuDQqo97s/5Lc5
+-IxmFcVg3arCV2DAKBggqhkjOPQQDAgNHADBEAiAJOr0GnYaqVxShSEgVJKi/hYXf
+-PH5bKk0M9ceasS7VwQIgMkxzlWr+m10OELtAbOlI8faN/5WFKm8m8rrwnhmHzjw=
+------END CERTIFICATE-----`
+-)
+-
+-func MockGetTufTargets(name string) ([]byte, error) {
+-	switch name {
+-	case `tsa_leaf.crt.pem`:
+-		return []byte(testLeafCert), nil
+-	case `tsa_root.crt.pem`:
+-		return []byte(testRootCert), nil
+-	default:
+-		return nil, errors.New("no intermediates")
+-	}
+-}
+-
+-func TestGetTSACertsFromEnv(t *testing.T) {
+-	tempFile, err := os.CreateTemp("", "tsa_cert_chain.pem")
+-	require.NoError(t, err)
+-	defer os.Remove(tempFile.Name())
+-
+-	_, err = tempFile.Write([]byte(testLeafCert + "\n" + testRootCert))
+-	require.NoError(t, err)
+-
+-	os.Setenv("SIGSTORE_TSA_CERTIFICATE_FILE", tempFile.Name())
+-	defer os.Unsetenv("SIGSTORE_TSA_CERTIFICATE_FILE")
+-
+-	tsaCerts, err := GetTSACerts(context.Background(), tempFile.Name(), GetTufTargets)
+-	if err != nil {
+-		t.Fatalf("Failed to get TSA certs from env: %v", err)
+-	}
+-	require.NotNil(t, tsaCerts)
+-	require.NotNil(t, tsaCerts.LeafCert)
+-	require.NotNil(t, tsaCerts.RootCert)
+-	require.Len(t, tsaCerts.RootCert, 1)
+-}
+-
+-func TestGetTSACertsFromPath(t *testing.T) {
+-	tempFile, err := os.CreateTemp("", "tsa_cert_chain_path.pem")
+-	require.NoError(t, err)
+-	defer os.Remove(tempFile.Name())
+-
+-	_, err = tempFile.Write([]byte(testLeafCert + "\n" + testRootCert))
+-	require.NoError(t, err)
+-
+-	tsaCerts, err := GetTSACerts(context.Background(), tempFile.Name(), GetTufTargets)
+-	if err != nil {
+-		t.Fatalf("Failed to get TSA certs from path: %v", err)
+-	}
+-	require.NotNil(t, tsaCerts)
+-	require.NotNil(t, tsaCerts.LeafCert)
+-	require.NotNil(t, tsaCerts.RootCert)
+-	require.Len(t, tsaCerts.RootCert, 1)
+-}
+-
+-func TestGetTSACertsFromTUF(t *testing.T) {
+-	originalValue := os.Getenv("SIGSTORE_TSA_CERTIFICATE_FILE")
+-	os.Unsetenv("SIGSTORE_TSA_CERTIFICATE_FILE")
+-	defer os.Setenv("SIGSTORE_TSA_CERTIFICATE_FILE", originalValue)
+-
+-	tempFile, err := os.CreateTemp("", "tsa_cert_chain.pem")
+-	require.NoError(t, err)
+-	defer os.Remove(tempFile.Name())
+-
+-	_, err = tempFile.Write([]byte(testLeafCert + "\n" + testRootCert))
+-	require.NoError(t, err)
+-
+-	tsaCerts, err := GetTSACerts(context.Background(), tempFile.Name(), GetTufTargets)
+-	if err != nil {
+-		t.Fatalf("Failed to get TSA certs from TUF: %v", err)
+-	}
+-	require.NotNil(t, tsaCerts)
+-	require.NotNil(t, tsaCerts.LeafCert)
+-	require.NotNil(t, tsaCerts.RootCert)
+-	require.Len(t, tsaCerts.RootCert, 1)
+-}
 ```
 
-**File**: `cmd/cosign/cli/options/certificate.go` (modified, +1/-40)
+**File**: `pkg/cosign/verify.go` (modified, +0/-897)
 ```diff
-@@ -23,7 +23,6 @@ import (
+@@ -21,15 +21,12 @@ import (
+ 	"crypto/ecdsa"
+ 	"crypto/sha256"
+ 	"crypto/x509"
+-	"encoding/asn1"
+ 	"encoding/base64"
+ 	"encoding/hex"
+ 	"encoding/json"
+ 	"encoding/pem"
+ 	"errors"
+ 	"fmt"
+-	"io/fs"
+-	"log"
+ 	"net/http"
+ 	"os"
+ 	"path/filepath"
+@@ -38,21 +35,16 @@ import (
+ 	"time"
  
- // CertVerifyOptions is the wrapper for certificate verification.
- type CertVerifyOptions struct {
--	Cert                         string
- 	CertIdentity                 string
- 	CertIdentityRegexp           string
- 	CertOidcIssuer               string
-@@ -33,22 +32,13 @@ type CertVerifyOptions struct {
- 	CertGithubWorkflowName       string
- 	CertGithubWorkflowRepository string
- 	CertGithubWorkflowRef        string
--	CAIntermediates              string
--	CARoots                      string
--	CertChain                    string
--	SCT                          string
- 	IgnoreSCT                    bool
+ 	"github.com/cyberphone/json-canonicalization/go/src/webpki.org/jsoncanonicalizer"
+-	"github.com/digitorus/timestamp"
+ 	"github.com/go-openapi/runtime"
+ 	"github.com/google/go-containerregistry/pkg/name"
+ 	v1 "github.com/google/go-containerregistry/pkg/v1"
+ 	ggcrlayout "github.com/google/go-containerregistry/pkg/v1/layout"
+ 	"github.com/google/go-containerregistry/pkg/v1/remote/transport"
+ 	"github.com/nozzle/throttler"
+-	ssldsse "github.com/secure-systems-lab/go-securesystemslib/dsse"
+ 	"github.com/sigstore/cosign/v3/internal/pkg/cosign"
+-	ociexperimental "github.com/sigstore/cosign/v3/internal/pkg/oci/remote"
+ 	"github.com/sigstore/cosign/v3/internal/ui"
+-	"github.com/sigstore/cosign/v3/pkg/blob"
+ 	cbundle "github.com/sigstore/cosign/v3/pkg/cosign/bundle"
+ 	"github.com/sigstore/cosign/v3/pkg/oci"
+-	"github.com/sigstore/cosign/v3/pkg/oci/layout"
+ 	ociremote "github.com/sigstore/cosign/v3/pkg/oci/remote"
+ 	"github.com/sigstore/cosign/v3/pkg/oci/static"
+ 	"github.com/sigstore/cosign/v3/pkg/types"
+@@ -72,10 +64,7 @@ import (
+ 	"github.com/sigstore/sigstore-go/pkg/verify"
+ 	"github.com/sigstore/sigstore/pkg/cryptoutils"
+ 	"github.com/sigstore/sigstore/pkg/signature"
+-	"github.com/sigstore/sigstore/pkg/signature/dsse"
+-	"github.com/sigstore/sigstore/pkg/signature/options"
+ 	"github.com/sigstore/sigstore/pkg/tuf"
+-	tsaverification "github.com/sigstore/timestamp-authority/v2/pkg/verification"
+ 	"google.golang.org/protobuf/encoding/protojson"
+ )
+ 
+@@ -117,11 +106,6 @@ type CheckOpts struct {
+ 	// PKOpts are the options provided to `SigVerifier.PublicKey()`.
+ 	PKOpts []signature.PublicKeyOption
+ 
+-	// RootCerts are the root CA certs used to verify a signature's chained certificate.
+-	RootCerts *x509.CertPool
+-	// IntermediateCerts are the optional intermediate CA certs used to verify a certificate chain.
+-	IntermediateCerts *x509.CertPool
+-
+ 	// CertGithubWorkflowTrigger is the GitHub Workflow Trigger name expected for a certificate to be valid. The empty string means any certificate can be valid.
+ 	CertGithubWorkflowTrigger string
+ 	// CertGithubWorkflowSha is the GitHub Workflow SHA expected for a certificate to be valid. The empty string means any certificate can be valid.
+@@ -138,9 +122,6 @@ type CheckOpts struct {
+ 	IgnoreSCT bool
+ 	// Detached SCT. Optional, as the SCT is usually embedded in the certificate.
+ 	SCT []byte
+-	// CTLogPubKeys, if set, is used to validate SCTs against those keys.
+-	// It is a map from log id to LogIDMetadata. It is a map from LogID to crypto.PublicKey. LogID is derived from the PublicKey (see RFC 6962 S3.2).
+-	CTLogPubKeys *TrustedTransparencyLogPubKeys
+ 
+ 	// SignatureRef is the reference to the signature file. PayloadRef should always be specified as well (though it’s possible for a _some_ signatures to be verified without it, with a warning).
+ 	SignatureRef string
+@@ -287,177 +268,6 @@ func (co *CheckOpts) verificationOptions() (trustedMaterial root.TrustedMaterial
+ 	return vTrustedMaterial, verifierOptions, policyOptions, nil
  }
  
--var _ Interface = (*RekorOptions)(nil)
-+var _ Interface = (*CertVerifyOptions)(nil)
- 
- // AddFlags implements Interface
- func (o *CertVerifyOptions) AddFlags(cmd *cobra.Command) {
--	cmd.Flags().StringVar(&o.Cert, "certificate", "",
--		"path to the public certificate. The certificate will be verified against the Fulcio roots if the --certificate-chain option is not passed.")
--	_ = cmd.MarkFlagFilename("certificate", certificateExts...)
--	_ = cmd.Flags().MarkDeprecated("certificate", "please use --bundle with --trusted-root to provide the public certificate")
+-// This is a substitutable signature verification function that can be used for verifying
+-// attestations of blobs.
+-type signatureVerificationFn func(
+-	ctx context.Context, verifier signature.Verifier, sig payloader) error
 -
- 	cmd.Flags().StringVar(&o.CertIdentity, "certificate-identity", "",
- 		"The identity expected in a valid Fulcio certificate. Valid values include email address, DNS names, IP addresses, and URIs. Either --certificate-identity or --certificate-identity-regexp must be set for keyless flows.")
- 	_ = cmd.RegisterFlagCompletionFunc("certificate-identity", cobra.NoFileCompletions)
-@@ -88,35 +78,6 @@ func (o *CertVerifyOptions) AddFlags(cmd *cobra.Command) {
- 	_ = cmd.RegisterFlagCompletionFunc("certificate-github-workflow-ref", cobra.NoFileCompletions)
- 	// -- Cert extensions end --
- 
--	cmd.Flags().StringVar(&o.CAIntermediates, "ca-intermediates", "",
--		"path to a file of intermediate CA certificates in PEM format which will be needed "+
--			"when building the certificate chains for the signing certificate. "+
--			"The flag is optional and must be used together with --ca-roots, conflicts with "+
--			"--certificate-chain.")
--	_ = cmd.MarkFlagFilename("ca-intermediates", certificateExts...)
--	_ = cmd.Flags().MarkDeprecated("ca-intermediates", "please use --trusted-root to provide CA certificates")
--	cmd.Flags().StringVar(&o.CARoots, "ca-roots", "",
--		"path to a bundle file of CA certificates in PEM format which will be needed "+
--			"when building the certificate chains for the signing certificate. Conflicts with --certificate-chain.")
--	_ = cmd.MarkFlagFilename("ca-roots", certificateExts...)
--	_ = cmd.Flags().MarkDeprecated("ca-roots", "please use --trusted-root to provide CA certificates")
+-// For unit testing
+-type payloader interface {
+-	// no-op for attestations
+-	Base64Signature() (string, error)
+-	Payload() ([]byte, error)
+-}
 -
--	cmd.Flags().StringVar(&o.CertChain, "certificate-chain", "",
--		"path to a list of CA certificates in PEM format which will be needed "+
--			"when building the certificate chain for the signing certificate. "+
--			"Must start with the parent intermediate CA certificate of the "+
--			"signing certificate and end with the root certificate. Conflicts with --ca-roots and --ca-intermediates.")
--	_ = cmd.MarkFlagFilename("certificate-chain", certificateExts...)
--	cmd.MarkFlagsMutuallyExclusive("ca-roots", "certificate-chain")
--	cmd.MarkFlagsMutuallyExclusive("ca-intermediates", "certificate-chain")
--	_ = cmd.Flags().MarkDeprecated("certificate-chain", "please use --trusted-root to provide the certificate chain")
+-func verifyOCIAttestation(ctx context.Context, verifier signature.Verifier, att payloader) error {
+-	payload, err := att.Payload()
+-	if err != nil {
+-		return err
+-	}
 -
--	cmd.Flags().StringVar(&o.SCT, "sct", "",
--		"path to a detached Signed Certificate Timestamp, formatted as a RFC6962 AddChainResponse struct. "+
--			"If a certificate contains an SCT, verification will check both the detached and embedded SCTs.")
--	// _ = cmd.MarkFlagFilename("sct") // no typical extensions
--	_ = cmd.Flags().MarkDeprecated("sct", "a Signed Certificate Timestamp is now provided via a Sigstore bundle")
+-	env := ssldsse.Envelope{}
+-	if err := json.Unmarshal(payload, &env); err != nil {
+-		return err
+-	}
 -
- 	cmd.Flags().BoolVar(&o.IgnoreSCT, "insecure-ignore-sct", false,
- 		"when set, verification will not check that a certificate contains an embedded SCT, a proof of "+
- 			"inclusion in a certificate transparency log")
-```
-
-**File**: `cmd/cosign/cli/options/fulcio.go` (modified, +2/-12)
-```diff
-@@ -23,29 +23,19 @@ const DefaultFulcioURL = "https://fulcio.sigstore.dev"
- 
- // FulcioOptions is the wrapper for Fulcio related options.
- type FulcioOptions struct {
--	URL                      string
--	AuthFlow                 string
--	IdentityToken            string
--	InsecureSkipFulcioVerify bool // Deprecated: SCT verification is no longer performed during signing/attestation.
-+	AuthFlow      string
-+	IdentityToken string
- }
- 
- var _ Interface = (*FulcioOptions)(nil)
- 
- // AddFlags implements Interface
- func (o *FulcioOptions) AddFlags(cmd *cobra.Command) {
- 	// TODO: change this back to api.SigstorePublicServerURL after the v1 migration is complete.
--	cmd.Flags().StringVar(&o.URL, "fulcio-url", DefaultFulcioURL,
--		"address of sigstore PKI server")
--	_ = cmd.Flags().MarkDeprecated("fulcio-url", "please use a signing config to specify a fulcio url; see `cosign signing-config --help`")
+-	if env.PayloadType != types.IntotoPayloadType {
+-		return &VerificationFailure{
+-			fmt.Errorf("invalid payloadType %s on envelope. Expected %s", env.PayloadType, types.IntotoPayloadType),
+-		}
+-	}
+-	dssev, err := ssldsse.NewEnvelopeVerifier(&dsse.VerifierAdapter{SignatureVerifier: verifier})
+-	if err != nil {
+-		return err
+-	}
+-	_, err = dssev.Verify(ctx, &env)
+-	return err
+-}
 -
- 	cmd.Flags().StringVar(&o.IdentityToken, "identity-token", "",
- 		"identity token to use for certificate from fulcio. the token or a path to a file containing the token is accepted.")
- 	// _ = cmd.MarkFlagFilename("identity-token") // no typical extensions
- 
- 	cmd.Flags().StringVar(&o.AuthFlow, "fulcio-auth-flow", "",
- 		"fulcio interactive oauth2 flow to use for certificate from fulcio. Defaults to determining the flow based on the runtime environment. (options) normal|device|token|client_credentials")
+-func verifyOCISignature(ctx context.Context, verifier signature.Verifier, sig payloader) error {
+-	b64sig, err := sig.Base64Signature()
+-	if err != nil {
+-		return err
+-	}
+-	signature, err := base64.StdEncoding.DecodeString(b64sig)
+-	if err != nil {
+-		return err
+-	}
+-	payload, err := sig.Payload()
+-	if err != nil {
+-		return err
+-	}
+-	return verifier.VerifySignature(bytes.NewReader(signature), bytes.NewReader(payload), options.WithContext(ctx))
+-}
 -
--	cmd.Flags().BoolVar(&o.InsecureSkipFulcioVerify, "insecure-skip-verify", false,
--		"skip verifying fulcio published to the SCT (this should only be used for testing).")
--	_ = cmd.Flags().MarkDeprecated("insecure-skip-verify", "SCT verification is no longer performed during signing/attestation.")
- }
-```
-
-**File**: `cmd/cosign/cli/options/key.go` (modified, +1/-11)
-```diff
-@@ -25,11 +25,8 @@ type KeyOpts struct {
- 	Sk                   bool
- 	Slot                 string
- 	KeyRef               string
--	FulcioURL            string
--	RekorURL             string
- 	IDToken              string
- 	PassFunc             cosign.PassFunc
--	OIDCIssuer           string
- 	OIDCClientID         string
- 	OIDCClientSecret     string
- 	OIDCRedirectURL      string
-@@ -41,23 +38,16 @@ type KeyOpts struct {
- 	TSAClientCert        string
- 	TSAClientKey         string
- 	TSAServerName        string // expected SAN field in the TSA server's certificate - https://pkg.go.dev/crypto/tls#Config.ServerName
--	TSAServerURL         string
- 	RFC3161TimestampPath string
- 	TSACertChainPath     string
- 	// IssueCertificate controls whether to issue a certificate when a key is
- 	// provided.
- 	IssueCertificateForExistingKey bool
- 
- 	// FulcioAuthFlow is the auth flow to use when authenticating against
--	// Fulcio. See https://pkg.go.dev/github.com/sigstore/cosign/v3/cmd/cosign/cli/fulcio#pkg-constants
--	// for valid values.
-+	// Fulcio. Valid values are normal, device, token, and client_credentials.
- 	FulcioAuthFlow string
- 
--	// Deprecated: SCT verification is no longer performed during signing/attestation.
--	// Modeled after InsecureSkipVerify in tls.Config, this disables
--	// verifying the SCT.
--	InsecureSkipFulcioVerify bool
+-type verifierWithCertChain struct {
+-	signature.Verifier
+-	cert  *x509.Certificate
+-	chain []*x509.Certificate
+-}
 -
- 	// TrustedMaterial contains trusted metadata for all Sigstore services. It is exclusive with RekorPubKeys, RootCerts, IntermediateCerts, CTLogPubKeys, and the TSA* cert fields.
- 	TrustedMaterial root.TrustedMaterial
- 
-```
-
-**File**: `cmd/cosign/cli/options/oidc.go` (modified, +0/-5)
-```diff
-@@ -28,7 +28,6 @@ const DefaultOIDCIssuerURL = "https://oauth2.sigstore.dev/auth"
- 
- // OIDCOptions is the wrapper for OIDC related options.
- type OIDCOptions struct {
--	Issuer                  string
- 	ClientID                string
- 	clientSecretFile        string
- 	RedirectURL             string
-@@ -56,10 +55,6 @@ var _ Interface = (*OIDCOptions)(nil)
- 
- // AddFlags implements Interface
- func (o *OIDCOptions) AddFlags(cmd *cobra.Command) {
--	cmd.Flags().StringVar(&o.Issuer, "oidc-issuer", DefaultOIDCIssuerURL,
--		"OIDC provider to be used to issue ID token")
--	_ = cmd.Flags().MarkDeprecated("oidc-issuer", "please use a signing config to specify an OIDC issuer; see `cosign signing-config create --help`")
+-func (v *verifierWithCertChain) GetCert() *x509.Certificate {
+-	return v.cert
+-}
 -
- 	cmd.Flags().StringVar(&o.ClientID, "oidc-client-id", "sigstore",
- 		"OIDC client ID for application")
- 
+-func (
 ```
 
 #### Recent Merged Pull Requests:
@@ -2163,50 +2834,6 @@ Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Update README offline verification example
-
-**RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `6e895879`: Update README offline verification example. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-Cosign can do completely offline verification by verifying a [Sigstore bundle](./specs/BUNDLE_SPEC.md), which `cosign sign` attaches to the image in the registry.
-The bundle contains the verification materials produced during signing, such as the certificate, the transparency log entry with its inclusion proof, and any RFC 3161 timestamp.
-With these materials and a local copy of the trusted root, verification needs no network access.
-# --trusted-root points to the default location of the trusted root
-  --trusted-root ~/.sigstore/root/tuf-repo-cdn.sigstore.dev/targets/trusted_root.json \
-cosign verify --key cosign.pub --trusted-root ~/.sigstore/root/tuf-repo-cdn.sigstore.dev/targets/trusted_root.json --local-image ./path/to/dir
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Induced defect failure mode:
-**Note:** This section is out of date.
-
-Cosign can do completely offline verification by verifying a [bundle](./specs/SIGNATURE_SPEC.md#properties) which is typically distributed as an annotation on the image manifest.
-As long as this annotation is present, then offline verification can be done.
-This bundle annotation is always included by default for keyless signing, so the default `cosign sign` functionality will include all materials needed for offline verification.
-  --offline=true \
-  --new-bundle-format=false \ # for artifacts signed without the new protobuf bundle format
-  --trusted-root ~/.sigstore/root/tuf-repo-cdn.sigstore.dev/targets/trusted_root.json \ # default location of trusted root
-cosign verify --key cosign.pub --offline --local-image ./path/to/dir
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6e895879` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

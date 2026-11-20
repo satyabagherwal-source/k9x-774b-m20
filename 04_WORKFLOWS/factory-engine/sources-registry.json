@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T04:14:25.880Z",
-    "lastVerified": "2026-11-20T04:14:25.880Z",
+    "lastChecked": "2026-11-20T04:29:28.591Z",
+    "lastVerified": "2026-11-20T04:29:28.591Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T03:32:34.259Z",
+    "lastChecked": "2026-11-20T04:29:25.968Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T03:32:34.259Z"
+    "lastVerified": "2026-11-20T04:29:25.968Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1726,13 +1726,13 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T22:36:13.464Z",
-    "lastVerified": "2026-11-19T22:36:13.464Z",
+    "lastChecked": "2026-11-20T04:29:24.938Z",
+    "lastVerified": "2026-11-20T04:29:24.938Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "359c49b767d085bdf91b335d31694c1d119b1e30c1852d079f8158911e6aeea4",
-    "promotedRulesCount": 1,
+    "contentHash": "eff5544d79d225f9b12bc4a02c146573237015c07ee879d68b2d699a45faf41e",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -3104,9 +3104,9 @@
   "orf-gping": {
     "name": "gping",
     "officialUrl": "https://github.com/orf/gping",
-    "lastChecked": "2026-11-18T16:14:10.723Z",
+    "lastChecked": "2026-11-20T04:29:10.755Z",
     "revisionIdentifier": "fad1ee3c",
-    "lastVerified": "2026-11-18T16:14:10.723Z"
+    "lastVerified": "2026-11-20T04:29:10.755Z"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -4904,9 +4904,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-11-18T22:22:24.181Z",
+    "lastChecked": "2026-11-20T04:29:23.220Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-11-18T22:22:24.181Z"
+    "lastVerified": "2026-11-20T04:29:23.220Z"
   },
   "smol-rs-smol": {
     "name": "smol",
@@ -5220,14 +5220,14 @@
     "officialUrl": "https://github.com/gocd/gocd",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-18T23:34:50.231Z",
-    "lastVerified": "2026-11-18T23:34:50.231Z",
+    "lastChecked": "2026-11-20T04:29:22.977Z",
+    "lastVerified": "2026-11-20T04:29:22.977Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gocd-gocd",
-    "contentHash": "5373ada2c7049c951ab50a46336e08720e5f308378ff15fd186d2ab7021eed3e",
+    "contentHash": "3bc738b0cda0f12e8ea19f218aee7af8e5648925a989448ae39feb7f1a12cbfc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9220,5 +9220,19 @@
     "lastChecked": "2026-11-20T04:14:16.106Z",
     "revisionIdentifier": "525cd241",
     "lastVerified": "2026-11-20T04:14:16.106Z"
+  },
+  "lifesciforge-seo-auditor": {
+    "name": "seo-auditor",
+    "officialUrl": "https://github.com/LifeSciForge/seo-auditor",
+    "lastChecked": "2026-11-20T04:29:13.216Z",
+    "revisionIdentifier": "cb5dbfbf",
+    "lastVerified": "2026-11-20T04:29:13.216Z"
+  },
+  "ehpanda-team-ehpanda": {
+    "name": "EhPanda",
+    "officialUrl": "https://github.com/EhPanda-Team/EhPanda",
+    "lastChecked": "2026-11-20T04:29:15.727Z",
+    "revisionIdentifier": "4d98daab",
+    "lastVerified": "2026-11-20T04:29:15.727Z"
   }
 }

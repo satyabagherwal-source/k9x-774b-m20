@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T04:14:15.305Z",
+  "last_updated": "2026-11-20T04:29:25.579Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "359c49b767d085bdf91b335d31694c1d119b1e30c1852d079f8158911e6aeea4",
-      "verified_at": "2026-11-19T22:36:14.511Z",
+      "content_hash": "eff5544d79d225f9b12bc4a02c146573237015c07ee879d68b2d699a45faf41e",
+      "verified_at": "2026-11-20T04:29:25.578Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T22:36:14.511Z"
+      "last_updated": "2026-11-20T04:29:25.578Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "5373ada2c7049c951ab50a46336e08720e5f308378ff15fd186d2ab7021eed3e",
-      "verified_at": "2026-11-18T23:34:51.264Z",
+      "content_hash": "3bc738b0cda0f12e8ea19f218aee7af8e5648925a989448ae39feb7f1a12cbfc",
+      "verified_at": "2026-11-20T04:29:24.038Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T23:34:51.264Z"
+      "last_updated": "2026-11-20T04:29:24.038Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T04:14:27.902Z",
+  "last_updated": "2026-11-20T04:30:06.163Z",
   "total_verified_learnings": 9024,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -78844,13 +78844,13 @@
       "rule_number": 4898,
       "title": "build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "c8c221d2",
+      "source_version": "d0652eba",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-17T11:25:33.109Z"
+      "verified_at": "2026-11-20T04:29:23.799Z"
     },
     "rule-4899": {
       "learning_id": "rule-4899",
@@ -113289,10 +113289,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "repository": "gocd/gocd",
-      "source_version": "f1b08976",
-      "content_hash": "a129e68f5cc219689ae05a7c557e77e05d5e13e2d37896642e8a7df60f2d6e1b",
+      "source_version": "d0652eba",
+      "content_hash": "86790230e035293d0afdd5b0195a664d17cfe35ac34204be5a6865e207e541cd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T23:34:51.654Z"
+      "persisted_at": "2026-11-20T04:29:24.473Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd",
@@ -113301,10 +113301,10 @@
       "relative_path": "08_VERIFICATION/gocd-gocd-verification-protocol-empirical-defect-shield-for-gocd-gocd.md",
       "title": "Verification Protocol: Empirical Defect Shield for gocd/gocd",
       "repository": "gocd/gocd",
-      "source_version": "f1b08976",
-      "content_hash": "3f0baa1d8b258f261dfeae95695b67979955e71c8cd9363c198c63e4c6e90b9c",
+      "source_version": "d0652eba",
+      "content_hash": "4b4a7b961b5872aee555ae329b0543daf1e0d25c3cdb92cfe0130c2304d4df25",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T23:34:51.808Z"
+      "persisted_at": "2026-11-20T04:29:24.664Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -113362,9 +113362,9 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "9eefaf1be380eb3f50f3f9c9dcf671c3bcafe1591d0b05840ab53b02e2d64e3b",
+      "content_hash": "03c817383f0de71956eeab206cd4003e33e16b33f17920babfa134a03500edb0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T23:35:00.202Z"
+      "persisted_at": "2026-11-20T04:29:29.967Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings",
@@ -113374,9 +113374,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gocd-gocd-learnings",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d28ab81c75aa63db043ef6291bf82c3038017b549f58e8ec8de49a761c36285",
+      "content_hash": "493213af8b275ecfaccece4887189fcbb8f2cfbd7f557bbdd78ff21f4d15a22e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T23:35:00.353Z"
+      "persisted_at": "2026-11-20T04:29:30.193Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -228041,13 +228041,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-E48I-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-D9RK-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "2593c94326298dee20c3135fc7c2a6fdd906a3ab4f2987232367a2d8ce0eb063",
+      "content_hash": "a0961874ecc1c47bb4782dcc47625b893ff2ed58b4715dc3214c6944e7e7db72",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:02:45.619Z"
+      "persisted_at": "2026-11-20T04:30:05.744Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -228057,9 +228057,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "d221b4f2391e7f8f65faa0d91e95d40141996fc5a7bab329d40afc6636fd3479",
+      "content_hash": "92e59b86efbba537d124c7c4129a481b74ea55eba90d4ad7d48f59d5323fe187",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:02:45.810Z"
+      "persisted_at": "2026-11-20T04:30:05.956Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -228069,9 +228069,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "55607efaeb32802cb94cffe6265ae9faaa5bca84b4480877197341e55b3fe12a",
+      "content_hash": "065514a06a4d7e69b723b7a1bb2e4883d3e252bd8f8cf501cca6a3804ec5a408",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:02:45.995Z"
+      "persisted_at": "2026-11-20T04:30:06.163Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -237730,8 +237730,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "f1b08976",
-      "content_hash": "5373ada2c7049c951ab50a46336e08720e5f308378ff15fd186d2ab7021eed3e",
+      "source_version": "d0652eba",
+      "content_hash": "3bc738b0cda0f12e8ea19f218aee7af8e5648925a989448ae39feb7f1a12cbfc",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -237776,7 +237776,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T23:34:51.059Z",
+      "verified_at": "2026-11-20T04:29:23.799Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -261907,8 +261907,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "6e895879",
-      "content_hash": "359c49b767d085bdf91b335d31694c1d119b1e30c1852d079f8158911e6aeea4",
+      "source_version": "339a3ca8",
+      "content_hash": "eff5544d79d225f9b12bc4a02c146573237015c07ee879d68b2d699a45faf41e",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -261943,7 +261943,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T22:36:14.303Z",
+      "verified_at": "2026-11-20T04:29:25.277Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -271871,13 +271871,13 @@
       "item_id": "candidate_directive-build-deps-ui-bump-filesize-in-server-src-main-webapp-web-inf-rails",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-W03X-build-deps-ui-bump-filesize-in-server-src-main-webapp-web-inf-rails.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-CI0F-build-deps-ui-bump-filesize-in-server-src-main-webapp-web-inf-rails.md",
       "title": "build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails",
-      "repository": "gocd/gocd",
-      "source_version": "c8c221d2",
-      "content_hash": "c25857fa34a6f49eab7f5b58103c46fa0d00b6c9f4d62d96722f1d6fe82a9847",
+      "repository": "gocd-gocd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "15f344203301301d9fac707be202f734ace677cf515e269b1239272ce8d7f8ca",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T11:25:33.453Z"
+      "persisted_at": "2026-11-20T04:29:29.776Z"
     },
     "candidate_directive-nuc-112-node-names-of-reasoning-selections": {
       "item_id": "candidate_directive-nuc-112-node-names-of-reasoning-selections",
@@ -298458,10 +298458,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sigstore-cosign-quality-verification-intelligence-sigstore-cosign-core-invariant.md",
       "title": "Quality & Verification Intelligence: sigstore/cosign Core Invariants",
       "repository": "sigstore/cosign",
-      "source_version": "6e895879",
-      "content_hash": "be376c1d4b181abe4ed79b916402f7352ebfd3c7b22924da763801e8cd51a8e1",
+      "source_version": "339a3ca8",
+      "content_hash": "99b4327ead2135d25767618dbc72de8d5a449aba4973abbf9fe732c82b75d9af",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T22:36:14.880Z"
+      "persisted_at": "2026-11-20T04:29:25.855Z"
     },
     "rule-9463": {
       "learning_id": "rule-9463",
@@ -298509,9 +298509,9 @@
       "title": "Quality & Verification Intelligence: sigstore-cosign-learnings Core Invariants",
       "repository": "sigstore-cosign-learnings",
       "source_version": "HEAD",
-      "content_hash": "5abb356b77f8ab08752c07c4c5f01982333bf3bbafeb64914791c336069d7d5c",
+      "content_hash": "f4ebc0fcb1c399ae79a87bf8e24fb2a5fd2fc09e9a7edbbb358ab92b5270303c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T22:36:22.842Z"
+      "persisted_at": "2026-11-20T04:30:05.107Z"
     },
     "candidate_directive-function-reject-undefined-real-domain-pow-arguments": {
       "item_id": "candidate_directive-function-reject-undefined-real-domain-pow-arguments",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T04:14:15.302Z",
-  "total_cycles_completed": 10923,
-  "total_learnings_persisted": 10923,
-  "total_rules_promoted": 10291,
+  "last_updated": "2026-11-20T04:29:25.573Z",
+  "total_cycles_completed": 10925,
+  "total_learnings_persisted": 10925,
+  "total_rules_promoted": 10292,
   "history": [
-    {
-      "timestamp": "2026-11-19T07:14:19.144Z",
-      "repository": "necolas/react-native-web",
-      "learningId": "learn-github-necolas-react-native-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T07:14:22.803Z",
-      "repository": "DNSControl/dnscontrol",
-      "learningId": "learn-github-dnscontrol-dnscontrol",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T07:37:33.658Z",
       "repository": "tickernelz/opencode-mem",
@@ -1403,6 +1389,20 @@
       "repository": "ClementTsang/bottom",
       "learningId": "learn-github-clementtsang-bottom",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T04:29:24.034Z",
+      "repository": "gocd/gocd",
+      "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T04:29:25.573Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

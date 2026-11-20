@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-R9OB",
-    "timestamp": "2026-11-18T08:21:35.291Z",
-    "repository": "StarRocks/starrocks",
-    "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "8a95280c874f724c166963b038920d3fe649597c1fbbb2ac9ab5cd5b3fd29024",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-HBGS",
-    "timestamp": "2026-11-18T08:41:50.668Z",
-    "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
-    "contentHash": "b8c020b32bdbb46ec72f00f29d13a5d5b0ef68aebd2f702018f1edce854b1e1d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-SR2V",
     "timestamp": "2026-11-18T08:50:44.119Z",
     "repository": "apache/pinot",
@@ -7492,6 +7462,36 @@
     "contentHash": "b710dcb6d1e47113bdd20e80378a960d8c90472ab3c4fcf9d83fe46c4e7c40ed",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-CDKN",
+    "timestamp": "2026-11-20T04:29:24.023Z",
+    "repository": "gocd/gocd",
+    "learningId": "learn-github-gocd-gocd",
+    "contentHash": "3bc738b0cda0f12e8ea19f218aee7af8e5648925a989448ae39feb7f1a12cbfc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-CERC",
+    "timestamp": "2026-11-20T04:29:25.560Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "eff5544d79d225f9b12bc4a02c146573237015c07ee879d68b2d699a45faf41e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

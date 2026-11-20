@@ -11487,3 +11487,6 @@ Every entry in this ledger must capture:
 | `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `28694608` | Multi-dimensional audit evidence | 2026-11-20T04:02:33.943Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `bb30d6be` | Multi-dimensional audit evidence | 2026-11-20T04:02:38.607Z |
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `829779a0` | Multi-dimensional audit evidence | 2026-11-20T04:14:15.296Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `d0652eba` | Multi-dimensional audit evidence | 2026-11-20T04:29:24.028Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `339a3ca8` | Multi-dimensional audit evidence | 2026-11-20T04:29:25.566Z |
+| `learn-dom-d-5cb7bd90` | `project://sigstore-cosign` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md` | 2026-11-20T04:30:04.542Z |

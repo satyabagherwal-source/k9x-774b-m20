@@ -11454,3 +11454,6 @@
 | `CYCLE-20261120-DV82` | `2026-11-20T04:02:33.938Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9509` | Yes (`0072a4b4...`) |
 | `CYCLE-20261120-DYTM` | `2026-11-20T04:02:38.602Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9510` | Yes (`ce1967ee...`) |
 | `CYCLE-20261120-SWE4` | `2026-11-20T04:14:15.292Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9511` | Yes (`b710dcb6...`) |
+| `CYCLE-20261120-CDKN` | `2026-11-20T04:29:24.023Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4898` | Yes (`3bc738b0...`) |
+| `CYCLE-20261120-CERC` | `2026-11-20T04:29:25.560Z` | `sigstore/cosign` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sigstore-cosign-learnings.md` | Yes (`eff5544d...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T04:30:04.542Z` | `sigstore-cosign` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5CB7BD90` [Domain D] | Yes (`968ce483...`) |
