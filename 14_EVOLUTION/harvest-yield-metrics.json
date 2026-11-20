@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T05:21:11.532Z",
-  "total_cycles_completed": 10935,
-  "total_learnings_persisted": 10935,
-  "total_rules_promoted": 10299,
+  "last_updated": "2026-11-20T05:29:03.340Z",
+  "total_cycles_completed": 10937,
+  "total_learnings_persisted": 10937,
+  "total_rules_promoted": 10301,
   "history": [
-    {
-      "timestamp": "2026-11-19T08:37:44.624Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T09:08:53.914Z",
-      "repository": "Mintplex-Labs/anything-llm",
-      "learningId": "learn-github-mintplex-labs-anything-llm",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T09:12:18.276Z",
       "repository": "kubernetes-sigs/aws-load-balancer-controller",
@@ -1403,6 +1389,20 @@
       "repository": "rqlite/rqlite",
       "learningId": "learn-github-rqlite-rqlite",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T05:28:55.942Z",
+      "repository": "zoontek/react-native-bootsplash",
+      "learningId": "learn-github-zoontek-react-native-bootsplash",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T05:29:03.340Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

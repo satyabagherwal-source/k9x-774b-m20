@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T05:21:15.879Z",
+  "updated_at": "2026-11-20T05:29:06.979Z",
   "stats": {
-    "total_discovered": 6230,
-    "approved_pending_harvest": 5890,
+    "total_discovered": 6236,
+    "approved_pending_harvest": 5896,
     "harvested_count": 0,
     "rejected_count": 340,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5872,
+      "COMMUNITY_AND_EXPERT": 5878,
       "OFFICIAL_DOCUMENTATION": 195,
       "STANDARDS_AND_SPECIFICATIONS": 115,
       "ENGINEERING_BLOGS": 4,
@@ -134703,6 +134703,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
         "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-ABE0D2D2EC0E": {
+      "id": "SRC-ABE0D2D2EC0E",
+      "url": "https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge",
+      "title": "https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:29:06.748Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
+        "fileName": "zoontek-react-native-bootsplash-learnings.md"
+      }
+    },
+    "SRC-745CA0FF1B8A": {
+      "id": "SRC-745CA0FF1B8A",
+      "url": "https://github.com/zoontek/react-native-bootsplash/blob/main/LICENSE",
+      "title": "https://github.com/zoontek/react-native-bootsplash/blob/main/LICENSE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:29:06.797Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
+        "fileName": "zoontek-react-native-bootsplash-learnings.md"
+      }
+    },
+    "SRC-E13E3F90E466": {
+      "id": "SRC-E13E3F90E466",
+      "url": "https://github.com/zoontek/react-native-bootsplash/blob/master/LICENSE",
+      "title": "https://github.com/zoontek/react-native-bootsplash/blob/master/LICENSE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:29:06.841Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
+        "fileName": "zoontek-react-native-bootsplash-learnings.md"
+      }
+    },
+    "SRC-C1FAF473B9D1": {
+      "id": "SRC-C1FAF473B9D1",
+      "url": "https://img.shields.io/npm/v/react-native-bootsplash?style=for-the-badge",
+      "title": "https://img.shields.io/npm/v/react-native-bootsplash?style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:29:06.884Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
+        "fileName": "zoontek-react-native-bootsplash-learnings.md"
+      }
+    },
+    "SRC-9F52EB33FCB6": {
+      "id": "SRC-9F52EB33FCB6",
+      "url": "https://www.npmjs.org/package/react-native-bootsplash",
+      "title": "https://www.npmjs.org/package/react-native-bootsplash",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:29:06.939Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
+        "fileName": "zoontek-react-native-bootsplash-learnings.md"
+      }
+    },
+    "SRC-1173DCC4BA6B": {
+      "id": "SRC-1173DCC4BA6B",
+      "url": "https://img.shields.io/npm/dt/react-native-bootsplash.svg?label=downloads&style=for-the-badge",
+      "title": "https://img.shields.io/npm/dt/react-native-bootsplash.svg?label=downloads&style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:29:06.979Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
+        "fileName": "zoontek-react-native-bootsplash-learnings.md"
       }
     }
   }

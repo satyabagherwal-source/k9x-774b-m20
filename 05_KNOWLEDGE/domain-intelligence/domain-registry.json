@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T05:21:16.954Z",
-  "total_records": 2073,
+  "last_updated": "2026-11-20T05:29:08.788Z",
+  "total_records": 2074,
   "domains": {
     "A": {
       "total": 17,
@@ -1348,7 +1348,7 @@
       ]
     },
     "H": {
-      "total": 493,
+      "total": 494,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1842,7 +1842,8 @@
         "DOM-H-45D5E4E3",
         "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-core-invariants",
         "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-octodns-octodns-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-octodns-octodns-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria"
       ]
     },
     "I": {
@@ -11464,8 +11465,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "28b3f085f9eea0045848d0a6f202554c5e285bf73cbce4d5b8c30ea4aa8d0dc6",
-      "created_at": "2026-11-20T04:58:15.443Z"
+      "content_hash": "427371c2f0b913f448f3a56ae9b06b09dcf192fae780aa4ddcc5333713e013d7",
+      "created_at": "2026-11-20T05:29:08.788Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -14864,8 +14865,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "be23a74c740b71b681ac1b2e2d8f012a9a467e05cc0ec16746570def9ed33b43",
-      "created_at": "2026-11-20T04:48:42.360Z"
+      "content_hash": "5d08383c7a83af3794881d3a0144bb9ffcb1a0b480de81cad9c8a6ddcd061ad7",
+      "created_at": "2026-11-20T05:29:07.340Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -16097,8 +16098,8 @@
       "title": "Quality & Verification Intelligence: apple/foundationdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-apple-foundationdb-quality-verification-intelligence-apple-foundationdb-core-inv.md",
       "repository": "apple/foundationdb",
-      "content_hash": "7576de0bf7dfe2134f9b303ef5fdc8a9ffac46eab356efe4dd641f3cfcef5144",
-      "created_at": "2026-11-19T00:00:25.173Z"
+      "content_hash": "eb4d6ce2c7eab3d40a27390972db6a61449abe3a2d203b69092b2fe90472252e",
+      "created_at": "2026-11-20T05:29:03.677Z"
     },
     "DOM-F-0C4992D6": {
       "record_id": "DOM-F-0C4992D6",
@@ -16199,8 +16200,8 @@
       "title": "Quality & Verification Intelligence: apple-foundationdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-apple-foundationdb-learnings-quality-verification-intelligence-apple-foundationd.md",
       "repository": "apple-foundationdb-learnings",
-      "content_hash": "ed0f50330ee8ba99aaf6b9f9bfa31adbc9ce013e2642b53e7014c739bbac3420",
-      "created_at": "2026-11-16T00:36:58.705Z"
+      "content_hash": "5c265c2d7a900a4ba487d66b0c0e913f34731b7e5c215f244e7cfad3fb0055eb",
+      "created_at": "2026-11-20T05:29:08.100Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baai-bge-large-en-v1-5-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-large-en-v1-5-core-invariants",
@@ -34945,6 +34946,15 @@
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "content_hash": "f2207d066193c4fff881860fe6020b1cab81f334bbe7ebe8c29457219dc90f00",
       "created_at": "2026-11-20T05:21:15.268Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zoontek/react-native-bootsplash Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-technical-construction-intelligence-zoontek-reac.md",
+      "repository": "zoontek/react-native-bootsplash",
+      "content_hash": "81b5fcc959c0d5ff25a9df56eb10de5b32d2295c65d689ff58c04983c411b8a4",
+      "created_at": "2026-11-20T05:28:56.289Z"
     }
   }
 }

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T04:48:42.140Z",
+  "timestamp": "2026-11-20T05:29:07.078Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zoontek-react-native-bootsplash-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zoontek-react-native-bootsplash-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T04:48:42.140Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T05:29:07.078Z`  
 > **Learning ID**: `LEARN-EVO-zoontek-react-native-bootsplash-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md`  
 > **Source**: github ([https://github.com/zoontek/react-native-bootsplash](https://github.com/zoontek/react-native-bootsplash))  
-> **Source Version**: `3dcb8e91`  
+> **Source Version**: `af50c229`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-01T02:22:49.948Z  
+> **Timestamp**: 2026-11-20T05:28:54.893Z  
 > **Learning ID**: `learn-github-zoontek-react-native-bootsplash`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zoontek/react-native-bootsplash](https://github.com/zoontek/react-native-bootsplash))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-01T02:22:49.942Z  
+> **Harvest Timestamp**: 2026-11-20T05:28:54.700Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 🚀 Show a splash screen during app startup. Hide it when you are ready.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4308 stars
+- **Stars / Engagement**: 4305 stars
 
 ---
 
@@ -994,39 +994,29 @@ class MainActivity : ReactActivity() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1dfcd4b8` (2026-10-30)
-**Commit Message**: Fix splash screen staying visible after warm start on Android 12+
+### Incident Patch 1: `af50c229` (2026-11-18)
+**Commit Message**: Fix dead license badge link in README (#811)
 
-**File**: `android/src/main/java/com/zoontek/rnbootsplash/RNBootSplashModuleImpl.kt` (modified, +3/-8)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -81,15 +81,10 @@ object RNBootSplashModuleImpl {
-     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-       // This is not called on Android 12 when activity is started using intent
-       // (Android studio / CLI / notification / widget…)
--      val splashScreen = mainActivity.splashScreen
--
--      // Remove it immediately, without animation. Never clear this listener on activity stop:
--      // the view would never be removed and the splash screen would stay visible forever.
-+      // Remove it immediately, without animation. Never clear this listener, or the splash screen
-+      // can stay visible forever (https://github.com/zoontek/react-native-bootsplash/issues/809)
-       // Running no animation also avoids https://issuetracker.google.com/issues/242118185
--      splashScreen.setOnExitAnimationListener { view ->
--        view.remove()
--        splashScreen.clearOnExitAnimationListener()
--      }
-+      mainActivity.splashScreen.setOnExitAnimationListener { view -> view.remove() }
-     }
+@@ -3,7 +3,7 @@
+ Show a splash screen during app startup. Hide it when you are ready.<br>
+ **For migration from the v6, check the [`MIGRATION.md` guide](./MIGRATION.md).**
  
-     UiThreadUtil.runOnUiThread {
+-[![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/react-native-bootsplash/blob/main/LICENSE)
++[![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/react-native-bootsplash/blob/master/LICENSE)
+ [![npm version](https://img.shields.io/npm/v/react-native-bootsplash?style=for-the-badge)](https://www.npmjs.org/package/react-native-bootsplash)
+ [![npm downloads](https://img.shields.io/npm/dt/react-native-bootsplash.svg?label=downloads&style=for-the-badge)](https://www.npmjs.org/package/react-native-bootsplash)
+ <br />
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #811** (2026-11-18): Fix dead license badge link in README (@farisbasha)
 - **PR #807** (closed): Bump concurrent-ruby from 1.3.3 to 1.3.7 in /example (@dependabot[bot])
 - **PR #806** (closed): Bump shell-quote from 1.10.0 to 1.12.0 (@dependabot[bot])
 - **PR #805** (2026-09-14): Bump js-yaml from 3.15.1 to 3.15.2 (@dependabot[bot])
 - **PR #804** (2026-09-14): Bump js-yaml from 3.15.1 to 3.15.2 in /example (@dependabot[bot])
 - **PR #803** (closed): Bump sharp from 0.35.2 to 0.35.4 (@dependabot[bot])
-- **PR #802** (closed): Bump baseline-browser-mapping from 2.10.16 to 2.11.22 in /example (@dependabot[bot])
 
 ---
 
@@ -1046,40 +1036,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. splash screen staying visible after warm start on Android 12+
+## X. dead license badge link in README
 
 **RULE**:
-When implementing operations in `android/src/main/java/com/zoontek/rnbootsplash/RNBootSplashModuleImpl.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zoontek/react-native-bootsplash. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zoontek/react-native-bootsplash. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1dfcd4b8`: splash screen staying visible after warm start on Android 12+. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `af50c229`: dead license badge link in README. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/zoontek/rnbootsplash/RNBootSplashModuleImpl.kt`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      // Remove it immediately, without animation. Never clear this listener, or the splash screen
-      // can stay visible forever (https://github.com/zoontek/react-native-bootsplash/issues/809)
-      mainActivity.splashScreen.setOnExitAnimationListener { view -> view.remove() }
+[![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/react-native-bootsplash/blob/master/LICENSE)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-      val splashScreen = mainActivity.splashScreen
-
-      // Remove it immediately, without animation. Never clear this listener on activity stop:
-      // the view would never be removed and the splash screen would stay visible forever.
-      splashScreen.setOnExitAnimationListener { view ->
-        view.remove()
-        splashScreen.clearOnExitAnimationListener()
-      }
+// Induced defect failure mode:
+[![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/react-native-bootsplash/blob/main/LICENSE)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1dfcd4b8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `af50c229` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

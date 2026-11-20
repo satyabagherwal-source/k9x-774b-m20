@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `39fb2391`  
+> **Source Version**: `fecaa68f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T00:00:23.518Z  
+> **Timestamp**: 2026-11-20T05:29:02.348Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T00:00:23.509Z  
+> **Harvest Timestamp**: 2026-11-20T05:29:02.343Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16866 stars
+- **Stars / Engagement**: 16865 stars
 
 ---
 
@@ -1957,445 +1957,53 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39fb2391` (2026-11-18)
-**Commit Message**: Bounds-check untrusted flat_buffers input (#14563)
+### Incident Patch 1: `129fc073` (2026-11-19)
+**Commit Message**: wait for workloads to stop so a tester exiting after its last test doesn't leave them running until timeout (#14599)
 
-* Bounds-check untrusted flat_buffers input
-
-ArenaObjectReader kept only the start of the received bytes, so every
-root offset, vtable offset, string length and vector count read from the
-wire was followed with no check against the packet. One short packet to
-a public endpoint with a huge root offset made fdbserver read unmapped
-memory and crash before verify() ran.
-
-Keep the end of the buffer and reject any load outside it with
-serialization_failed. A file identifier mismatch throws instead of
-asserting. In deliverNow, serialization_failed from a peer is logged and
-dropped rather than exiting the process. The receive() implementations
-take their promise ref after deserialization so a throw does not leak it.
-
-In simulation a malformed buffer still asserts, since there it means a
-writer or the checks are wrong.
-
-* Downgrade file identifier mismatch trace and reuse SerializationFailed event
-
-A malformed peer packet no longer emits an unsuppressed SevError, which would
-fail simulation runs and spam traces; simulation still asserts via
-flat_buffer_load_failed. Fix the comments on flat_buffer_load_failed and
-check_range.
-
-* Test that h
-
-**File**: `fdbclient/DatabaseConfiguration.cpp` (modified, +1/-1)
+**File**: `fdbserver/tester/TesterServer.cpp` (modified, +1/-0)
 ```diff
-@@ -1005,7 +1005,7 @@ TEST_CASE("/fdbclient/databaseConfiguration/snapshotSerialization") {
- 	ObjectWriter writer(IncludeVersion());
- 	writer.serialize(id, config);
- 	const auto object = writer.toString();
--	ObjectReader reader(object.begin(), IncludeVersion());
-+	ObjectReader reader(object, IncludeVersion());
- 	loaded.set("\xff/conf/obsolete"_sr, "old"_sr);
- 	reader.deserialize(id, loaded);
- 	ASSERT(!loaded.get("\xff/conf/obsolete"_sr).present());
+@@ -437,6 +437,7 @@ Future<Void> runWorkloadAsync(Database cx,
+ 
+ 		if (action == 5) {
+ 			stopReq.send(Void());
++			TraceEvent("WorkloadStop", workIface.id()).detail("Workload", workload->description());
+ 			break;
+ 		}
+ 
 ```
 
-**File**: `fdbclient/IdempotencyId.cpp` (modified, +1/-1)
+**File**: `fdbserver/tester/test.cpp` (modified, +10/-2)
 ```diff
-@@ -167,7 +167,7 @@ TEST_CASE("/fdbclient/IdempotencyId/serialization") {
- 		auto id = generate(arena);
- 		auto serialized = ObjectWriter::toValue(id, Unversioned());
- 		IdempotencyIdRef t;
--		ObjectReader reader(serialized.begin(), Unversioned());
-+		ObjectReader reader(serialized, Unversioned());
- 		reader.deserialize(t);
- 		ASSERT(t == id);
- 	}
-```
-
-**File**: `fdbclient/ManagementAPI.cpp` (modified, +1/-1)
-```diff
-@@ -3429,7 +3429,7 @@ Future<Optional<BulkDumpOwnerInfo>> getBulkOwner(Database cx, UID jobId, bool is
- 				co_return Optional<BulkDumpOwnerInfo>();
- 			}
- 			BulkDumpOwnerInfo info;
--			ObjectReader reader(value.get().begin(), IncludeVersion());
-+			ObjectReader reader(value.get(), IncludeVersion());
- 			reader.deserialize(info);
- 			co_return info;
- 		} catch (Error& e) {
-```
-
-**File**: `fdbclient/MonitorLeader.cpp` (modified, +1/-1)
-```diff
-@@ -889,7 +889,7 @@ Future<Void> monitorLeaderAndGetClientInfo(Key clusterKey,
- 			}
- 
- 			if (!leader.get().first.serializedInfo.empty()) {
--				ObjectReader reader(leader.get().first.serializedInfo.begin(), IncludeVersion());
-+				ObjectReader reader(leader.get().first.serializedInfo, IncludeVersion());
- 				ClusterControllerClientInterface res;
- 				reader.deserialize(res);
- 				knownLeader->set(res);
-```
-
-**File**: `fdbclient/SystemData.cpp` (modified, +13/-13)
-```diff
-@@ -294,7 +294,7 @@ Value accumulativeChecksumValue(const AccumulativeChecksumState& acsState) {
- 
- AccumulativeChecksumState decodeAccumulativeChecksum(const ValueRef& value) {
- 	AccumulativeChecksumState acsState;
--	ObjectReader reader(value.begin(), IncludeVersion());
-+	ObjectReader reader(value, IncludeVersion());
- 	reader.deserialize(acsState);
- 	return acsState;
- }
-@@ -387,7 +387,7 @@ Value auditStorageStateValue(const AuditStorageState& auditStorageState) {
- 
- AuditStorageState decodeAuditStorageState(const ValueRef& value) {
- 	AuditStorageState auditState;
--	ObjectReader reader(value.begin(), IncludeVersion());
-+	ObjectReader reader(value, IncludeVersion());
- 	reader.deserialize(auditState);
- 	return auditState;
- }
-@@ -414,7 +414,7 @@ UID decodeCheckpointKey(const KeyRef& key) {
- 
- CheckpointMetaData decodeCheckpointValue(const ValueRef& value) {
- 	CheckpointMetaData checkpoint;
--	ObjectReader reader(value.begin(), IncludeVersion());
-+	ObjectReader reader(value, IncludeVersion());
- 	reader.deserialize(checkpoint);
- 	return checkpoint;
- }
-@@ -449,7 +449,7 @@ UID decodeDataMoveKey(const KeyRef& key) {
- 
- DataMoveMetaData decodeDataMoveValue(const ValueRef& value) {
- 	DataMoveMetaData dataMove;
--	ObjectReader reader(value.begin(), IncludeVersion());
-+	ObjectReader reader(value, IncludeVersion());
- 	reader.deserialize(dataMove);
- 	return dataMove;
- }
-@@ -674,7 +674,7 @@ UID decodeServerMetadataKey(const KeyRef& key) {
- 
- StorageMetadataType decodeServerMetadataValue(const KeyRef& value) {
- 	StorageMetadataType type;
--	ObjectReader rd(value.begin(), IncludeVersion());
-+	ObjectReader rd(value, IncludeVersion());
- 	rd.deserialize(type);
- 	return type;
- }
-@@ -1126,7 +1126,7 @@ UID decodeServerListKey(KeyRef const& key) {
- 
- StorageServerInterface decodeServerListValueFB(ValueRef const& value) {
- 	StorageServerInterface s;
--	ObjectReader reader(value.begin(), IncludeVersion());
-+	ObjectReader reader(value, IncludeVersion());
- 	reader.deserialize(s);
- 	return s;
- }
-@@ -1148,7 +1148,7 @@ Value swVersionValue(SWVersion const& swversion) {
- 
- SWVersion decodeSWVersionValue(ValueRef const& value) {
- 	SWVersion s;
--	ObjectReader reader(value.begin(), IncludeVersion());
-+	ObjectReader reader(value, IncludeVersion());
- 	reader.deserialize(s);
- 	return s;
- }
-@@ -1454,7 +1454,7 @@ Value bulkLoadTaskStateValue(const BulkLoadTaskState& bulkLoadTaskState) {
- 
- BulkLoadTaskState decodeBulkLoadTaskState(const ValueRef& value) {
- 	BulkLoadTaskState bulkLoadTaskState;
--	ObjectReader reader(value.begin(), IncludeVersion());
-+	ObjectReader reader(value, IncludeVersion());
- 	reader.deserialize(bulkLoadTaskState);
- 	return bulkLoadTaskState;
- }
-@@ -1465,7 +1465,7 @@ Value ssBulkLoadMetadataValue(const SSBulkLoadMetadata& ssBulkLoadMetadata) {
- 
- SSBulkLoadMetadata decodeSSBulkLoadMetadata(const ValueRef& value) {
- 	SSBulkLoadMetadata ssBulkLoadMetadata;
--	ObjectReader reader(value.begin(), IncludeVersion());
-+	ObjectReader reader(value, IncludeVersion());
- 	reader.deserialize(ssBulkLoadMetadata);
- 	return ssBulkLoadMetadata;
- }
-@@ -1479,7 +1479,7 @@ Value bulkLoadJobValue(const BulkLoadJobState& bulkLoadJobState) {
- 
- BulkLoadJobState decodeBulkLoadJobState(const ValueRef& value) {
- 	BulkLoadJobState bulkLoadJobState;
--	ObjectReader reader(value.begin(), IncludeVersion());
-+	ObjectReader reader(value, IncludeVersion());
- 	reader.deserialize(bulkLoadJobState);
- 	return bulkLoadJobState;
- }
-@@ -1507,7 +1507,7 @@ Value bulkDumpStateValue(const BulkDumpState& bulkDumpState) {
- 
- BulkDumpState decodeBulkDumpState(const ValueRef& value) {
- 	BulkDumpState bulkDumpState;
--	ObjectReader reader(value.begin(), IncludeVersion());
-+	ObjectReader reader(value, IncludeVersion());
- 	reader.deserialize(bulkDumpState);
- 	return bulkDumpState;
- }
-@@ -1546,7 +1546,7 @@ Value rangeLockStateSetValue(const RangeLockStateSet& rangeLockStateSet) {
- 
- RangeLockStateSet decodeRangeLockStateSet(const ValueRef& value) {
- 	RangeLockStateSet rangeLockStateSet;
--	ObjectReader reader(value.begin(), IncludeVersion());
-+	ObjectReader reader(value, IncludeVersion());
- 	reader.deserialize(rangeLockStateSet);
- 	return rangeLockStateSet;
- }
-@@ -1567,7 +1567,7 @@ Value rangeLockOwnerValue(const RangeLockOwner& rangeLockOwner) {
- 
- RangeLockOwner decodeRangeLockOwner(const ValueRef& value) {
- 	RangeLockOwner rangeLockOwner;
--	ObjectReader reader(value.begin(), IncludeVersion());
-+	ObjectReader reader(value, IncludeVersion());
- 	reader.deserialize(rangeLockOwner);
- 	return rangeLockOwner;
- }
-```
-
-**File**: `fdbclient/bench/BenchVersionVectorSerialization.cpp` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ static void bench_serializable_traits_version(benchmark::State& state) {
- 		size = msg.size();
- 		state.ResumeTiming();
- 
--		ObjectReader rd(msg.begin(), Unversioned());
-+		ObjectReader rd(msg, Unversioned());
- 		rd.deserialize(deserializedVV);
- 	}
- 	ASSERT(serializedVV.compare(deserializedVV));
-```
-
-**File**: `fdbrpc/FlowTransport.cpp` (modified, +8/-1)
-```diff
-@@ -1376,10 +1376,17 @@ static void deliverNow(TransportData* self,
- 				g_currentDeliveryPeerDisconnect = nullptr;
- 			});
- 			StringRef data = reader.arenaReadAll();
--			ASSERT_GT(data.size(), 8);
- 			ArenaObjectReader objReader(std::move(reader.arena()), data, AssumeVersion(reader.protocolVersion()));
- 			receiver->receive(objReader);
- 		} catch (Error& e) {
-+			if (e.code() == error_code_serialization_failed) {
-+				// Malformed peer input is not a local invariant violation.
-+				TraceEvent(SevWarnAlways, "ReceiverDeserializationFailed")
-+				    .suppressFor(1.0)
-+				    .detail("Token", destination.token.toString())
-+				    .detail("PeerAddress", peerAddress);
-+				return;
-+			}
- 			TraceEvent(SevError, "ReceiverError")
- 			    .error(e)
- 			    .detail("Token", destination.token.toString())
-```
-
-**File**: `fdbrpc/include/fdbrpc/fdbrpc.h` (modified, +3/-3)
-```diff
-@@ -130,9 +130,9 @@ struct NetSAV final : SAV<T>, FlowReceiver, FastAllocated<NetSAV<T>> {
- 	void receive(ArenaObjectReader& reader) override {
- 		if (!SAV<T>::canBeSet())
- 			return;
--		this->addPromiseRef();
- 		ErrorOr<EnsureTable<T>> message;
- 		reader.deserialize(message);
-+		this->addPromiseRef();
- 		if (message.isError()) {
- 			SAV<T>::sendErrorAndDelPromiseRef(message.getError());
- 		} else {
-@@ -394,9 +394,9 @@ struct NetNotifiedQueueWithAcknowledgements final : NotifiedQueue<T>,
- 
- 	void destroy() override { delete this; }
- 	void receive(ArenaObjectReader& reader) override {
--		this->addPromiseRef();
- 		ErrorOr<EnsureTable<T>> message;
- 		reader.deserialize(message);
-+		this->addPromiseRef();
- 
- 		if (message.isError()) {
- 			if (message.getError().code() == error_code_broken_promise) {
-@@ -732,9 +732,9 @@ struct NetNotifiedQueue final : NotifiedQueue<T>, FlowReceiver, FastAllocated<Ne
- 
- 	void destroy() override { delete this; }
- 	void receive(ArenaObjectReader& reader) override {
--		this->addPromiseRef();
- 		T message;
- 		reader.deserialize(message);
-+		this->addPromiseRef();
- 		if constexpr (IsPublic) {
- 			if (!message.verify()) {
- 				if constexpr (HasReply<T>) {
-```
-
----
-
-### Incident Patch 2: `1e6c973b` (2026-11-18)
-**Commit Message**: Learn the leader during the candidacy delay (#14550)
-
-* fdbserver/LeaderElection: learn the leader during the candidacy delay
-
-A process whose DC or process class is a poor fit for the cluster
-controller waits WAIT_FOR_GOOD_RECRUITMENT_DELAY (1s) or
-WAIT_FOR_GOOD_REMOTE_RECRUITMENT_DELAY (5s, e.g. remote and satellite DC
-processes) before running for leader, so that better candidates win. Until
-then it does not know the leader, so it cannot register with the cluster
-controller, and recruitment after a cluster restart waits for those
-processes.
-
-With MONITOR_LEADER_DURING_CANDIDACY_DELAY (new, default false), the process
-long-polls the coordinators for the current leader during the delay,
-without running for leader, and publishes it, so it registers as soon as a
-leader is elected. The candidacy itself still waits for the delay.
-
-* fdbserver/LeaderElection: learn the leader with monitorLeaderInternal() during the candidacy delay
-
-Replace the custom one-coordinator-at-a-time ElectionResultRequest loop with
-monitorLeaderInternal(), the monitor that processes which never run for
-leader already use. It long-polls every coordinator, publishes the leader a
-majority agrees on, and follows f
-
-**File**: `fdbserver/core/LeaderElection.cpp` (modified, +23/-4)
-```diff
-@@ -78,7 +78,8 @@ Future<Void> buggifyDelayedAsyncVar(Reference<AsyncVar<T>> in, Reference<AsyncVa
- 
- template <class T>
- Future<Void> buggifyDelayedAsyncVar(Reference<AsyncVar<T>>& var) {
--	auto in = makeReference<AsyncVar<T>>();
-+	// Starts from the current value, so that wrapping `var` does not clear a value it already has.
-+	auto in = makeReference<AsyncVar<T>>(var->get());
- 	auto f = buggifyDelayedAsyncVar(in, var);
- 	var = in;
- 	return f;
-@@ -121,19 +122,37 @@ Future<Void> tryBecomeLeaderInternal(ServerCoordinators coordinators,
- 	bool iAmLeader{ false };
- 	UID prevChangeID;
- 
-+	double candidacyDelay = 0;
- 	if (asyncPriorityInfo->get().dcFitness == ClusterControllerPriorityInfo::FitnessBad ||
- 	    asyncPriorityInfo->get().dcFitness == ClusterControllerPriorityInfo::FitnessRemote ||
- 	    asyncPriorityInfo->get().dcFitness == ClusterControllerPriorityInfo::FitnessNotPreferred ||
- 	    asyncPriorityInfo->get().isExcluded) {
--		co_await delay(SERVER_KNOBS->WAIT_FOR_GOOD_REMOTE_RECRUITMENT_DELAY);
-+		candidacyDelay = SERVER_KNOBS->WAIT_FOR_GOOD_REMOTE_RECRUITMENT_DELAY;
- 	} else if (asyncPriorityInfo->get().processClassFitness > recruitment::UnsetFit) {
--		co_await delay(SERVER_KNOBS->WAIT_FOR_GOOD_RECRUITMENT_DELAY);
-+		candidacyDelay = SERVER_KNOBS->WAIT_FOR_GOOD_RECRUITMENT_DELAY;
-+	}
-+
-+	if (candidacyDelay > 0) {
-+		if (SERVER_KNOBS->MONITOR_LEADER_DURING_CANDIDACY_DELAY) {
-+			// The delay only lets better candidates win the election. Learning the current leader meanwhile, the way
-+			// processes that never run for leader do, lets this process register with it, so recruitment does not wait
-+			// for the delay to expire.
-+			// The monitor runs only until the delay ends, when it goes out of scope; an error only stops it early.
-+			Future<Void> leaderMonitor = monitorLeaderInternal(coordinators.ccr, outSerializedLeader);
-+			co_await delay(candidacyDelay);
-+			TraceEvent("CandidacyDelayLeaderMonitor").detail("LeaderKnown", !outSerializedLeader->get().empty());
-+		} else {
-+			co_await delay(candidacyDelay);
-+		}
+@@ -179,10 +179,18 @@ Future<DistributedTestResults> runWorkload(Database const& cx,
+ 		}
  	}
  
- 	nominees.resize(coordinators.leaderElectionServers.size());
+-	// Stopping the workloads is unreliable, but they have a timeout
+ 	// FIXME: stop if one of the above phases throws an exception
++	TraceEvent("TestStoppingWorkloads").detail("WorkloadTitle", specCopy.title);
++	printf("stopping (%s)...\n", printable(specCopy.title).c_str());
++	// Wait for the stops to be delivered, since a tester that exits right after its last test would otherwise leave
++	// that test's workloads running until they time out
++	std::vector<Future<ErrorOr<Void>>> stops;
++	stops.reserve(workloads.size());
+ 	for (const auto& workload : workloads)
+-		workload.stop.send(ReplyPromise<Void>());
++		stops.push_back(workload.stop.template getReplyUnlessFailedFor<Void>(waitForFailureTime, 0));
++	co_await waitForAll(stops);
++	// Errors are ignored: a stop that was delivered but retried finds the workload already gone, which is fine
++	TraceEvent("TestExiting").detail("WorkloadTitle", specCopy.title);
  
- 	myInfo.serializedInfo = proposedSerializedInterface;
--	outSerializedLeader->set(Value());
-+	// Keeps a leader learned during the candidacy delay; the election below replaces it if the leader changes.
-+	if (!SERVER_KNOBS->MONITOR_LEADER_DURING_CANDIDACY_DELAY) {
-+		outSerializedLeader->set(Value());
-+	}
- 
- 	[[maybe_unused]] Future<Void> buggifyDelay =
- 	    (SERVER_KNOBS->BUGGIFY_ALL_COORDINATION || buggify()) ? buggifyDelayedAsyncVar(outSerializedLeader) : Void();
-```
-
-**File**: `fdbserver/core/ServerKnobs.cpp` (modified, +1/-0)
-```diff
-@@ -966,6 +966,7 @@ void ServerKnobs::initialize(Randomize randomize, ClientKnobs* clientKnobs, IsSi
- 	init( CC_CLASS_DELAY,                                       0.01 );
- 	init( WAIT_FOR_GOOD_RECRUITMENT_DELAY,                       1.0 );
- 	init( WAIT_FOR_GOOD_REMOTE_RECRUITMENT_DELAY,                5.0 );
-+	init( MONITOR_LEADER_DURING_CANDIDACY_DELAY,               false ); if( randomize && buggify() ) MONITOR_LEADER_DURING_CANDIDACY_DELAY = deterministicRandom()->coinflip();
- 	init( ATTEMPT_RECRUITMENT_DELAY,                           0.035 );
- 	init( WAIT_FOR_DISTRIBUTOR_JOIN_DELAY,                       1.0 );
- 	init( WAIT_FOR_RATEKEEPER_JOIN_DELAY,                        1.0 );
-```
-
-**File**: `fdbserver/core/include/fdbserver/core/Knobs.h` (modified, +4/-0)
-```diff
-@@ -841,6 +841,10 @@ class SWIFT_CXX_IMMORTAL_SINGLETON_TYPE ServerKnobs : public KnobsImpl<ServerKno
- 	double CC_CLASS_DELAY;
- 	double WAIT_FOR_GOOD_RECRUITMENT_DELAY;
- 	double WAIT_FOR_GOOD_REMOTE_RECRUITMENT_DELAY;
-+	// If true, a process waiting WAIT_FOR_GOOD_RECRUITMENT_DELAY or WAIT_FOR_GOOD_REMOTE_RECRUITMENT_DELAY before
-+	// running for leader learns the current leader from the coordinators meanwhile, so it can register with it
-+	// without waiting for the delay to expire.
-+	bool MONITOR_LEADER_DURING_CANDIDACY_DELAY;
- 	double ATTEMPT_RECRUITMENT_DELAY;
- 	double WAIT_FOR_DISTRIBUTOR_JOIN_DELAY;
- 	double WAIT_FOR_RATEKEEPER_JOIN_DELAY;
-```
-
-**File**: `tests/CMakeLists.txt` (modified, +2/-0)
-```diff
-@@ -81,6 +81,7 @@ if(WITH_PYTHON)
-       list(APPEND MULTIREGION_IGNORE_PATTERNS "${CMAKE_CURRENT_SOURCE_DIR}/rare/ClogRemoteTLog\\.toml$")
-       list(APPEND MULTIREGION_IGNORE_PATTERNS "${CMAKE_CURRENT_SOURCE_DIR}/rare/FailoverWithSSLag\\.toml$")
-       list(APPEND MULTIREGION_IGNORE_PATTERNS "${CMAKE_CURRENT_SOURCE_DIR}/fast/KillRegionCycle\\.toml$")
-+      list(APPEND MULTIREGION_IGNORE_PATTERNS "${CMAKE_CURRENT_SOURCE_DIR}/fast/KillRegionCycleLeaderMonitor\\.toml$")
-       list(APPEND MULTIREGION_IGNORE_PATTERNS "${CMAKE_CURRENT_SOURCE_DIR}/slow/GcGenerations\\.toml$")
-       list(APPEND MULTIREGION_IGNORE_PATTERNS "${CMAKE_CURRENT_SOURCE_DIR}/slow/DiskFailureCycle\\.toml$")
-   endif()
-@@ -315,6 +316,7 @@ if(WITH_PYTHON)
-     add_fdb_test(TEST_FILES rare/DcLag.toml)
-     add_fdb_test(TEST_FILES slow/GcGenerations.toml)
-     add_fdb_test(TEST_FILES fast/KillRegionCycle.toml)
-+    add_fdb_test(TEST_FILES fast/KillRegionCycleLeaderMonitor.toml)
-     add_fdb_test(TEST_FILES rare/ClogRemoteTLog.toml)
-   endif()
- 
-```
-
-**File**: `tests/fast/KillRegionCycleLeaderMonitor.toml` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+# KillRegionCycle with MONITOR_LEADER_DURING_CANDIDACY_DELAY always on. The remote region's processes wait
-+# WAIT_FOR_GOOD_REMOTE_RECRUITMENT_DELAY before running for leader, so every run exercises learning the leader
-+# during that delay, through recoveries and the loss of a region.
-+[configuration]
-+minimumRegions = 2
-+
-+[[knobs]]
-+max_read_transaction_life_versions = 5000000
-+monitor_leader_during_candidacy_delay = true
-+
-+[[test]]
-+testTitle = 'KillRegionCycleLeaderMonitor'
-+clearAfterTest = false
-+
-+    [[test.workload]]
-+    testName = 'Cycle'
-+    nodeCount = 30000
-+    transactionsPerSecond = 2500.0
-+    testDuration = 30.0
-+
-+    [[test.workload]]
-+    testName = 'KillRegion'
-+    testDuration = 30.0
+ 	co_return DistributedTestResults(aggregateMetrics(metricsResults), success, failure);
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14568** (2026-11-18): [release-8.0] bindings/go: fix go-1.27 vet check for wrapped error pointer (@ploxiln)
-- **PR #14567** (2026-11-17): bindings/go: fix go-1.27 vet check for wrapped error pointer (@ploxiln)
-- **PR #14563** (2026-11-18): Bounds-check untrusted flat_buffers input (@saintstack)
-- **PR #14562** (2026-11-17): Drop --system-metadata from fdbrestore help and docs (@saintstack)
-- **PR #14561** (2026-11-18): [main] Release notes 8.0.1, forward port 7.4.9 and 7.4.10 release notes (@spraza)
-- **PR #14560** (2026-11-17): [release-8.0] Release notes 8.0.1, forward port 7.4.9 and 7.4.10 release notes (@spraza)
+- **PR #14606** (2026-11-20): README: update release branch table (@ploxiln)
+- **PR #14605** (2026-11-20): Retain bulk load placement retries across replacement relocators (@tclinkenbeard-oai)
+- **PR #14600** (closed): add FeistelPermutation for deterministic O(1) memory shuffles (@jmslocum16)
+- **PR #14599** (2026-11-19): Wait for workloads to stop before exiting tester (@jmslocum16)
+- **PR #14598** (closed): default runFailureWorkloads to on only in simulation (@jmslocum16)
+- **PR #14591** (2026-11-20): [release-8.0] Keep encrypted backup files bound to their container key (@tclinkenbeard-oai)
 
 ---
 
@@ -2415,28 +2023,28 @@ majority agrees on, and follows f
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bounds-check untrusted flat_buffers input
+## X. wait for workloads to stop so a tester exiting after its last test doesn't leave
 
 **RULE**:
-When implementing operations in `fdbclient/DatabaseConfiguration.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbserver/tester/TesterServer.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39fb2391`: Bounds-check untrusted flat_buffers input. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `129fc073`: wait for workloads to stop so a tester exiting after its last test doesn't leave them running until timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbclient/DatabaseConfiguration.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbserver/tester/TesterServer.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	ObjectReader reader(object, IncludeVersion());
+			TraceEvent("WorkloadStop", workIface.id()).detail("Workload", workload->description());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-	ObjectReader reader(object.begin(), IncludeVersion());
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39fb2391` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `129fc073` are properly handled with clean fallback behavior.

@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "39fb2391",
+    "sourceVersion": "fecaa68f",
     "license": "Apache-2.0",
-    "contentHash": "335aab112d218418ff523d8dd01a2e80a7b6df89fe8af25e42b95e892ad434d4",
-    "lastHarvestedAt": "2026-11-19T00:00:24.721Z",
+    "contentHash": "dbb84cb214426b9a6bdffdfa0a5165f180f864b5e63f399972190ff1c48dd650",
+    "lastHarvestedAt": "2026-11-20T05:29:03.335Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -8533,10 +8533,10 @@
     "repository": "zoontek/react-native-bootsplash",
     "platform": "github",
     "sourceUrl": "https://github.com/zoontek/react-native-bootsplash",
-    "sourceVersion": "3dcb8e91",
+    "sourceVersion": "af50c229",
     "license": "MIT",
-    "contentHash": "c45fd3a64f60a07fb4c5d17ddc70efb876fb90fc27450089be40244ad2a5a70e",
-    "lastHarvestedAt": "2026-11-01T02:22:50.684Z",
+    "contentHash": "d25a83eea902f50d8a09d3b1281a913a01e82fe3bf9ddcbf28eb72b0d5907457",
+    "lastHarvestedAt": "2026-11-20T05:28:55.936Z",
     "learningId": "learn-github-zoontek-react-native-bootsplash"
   },
   "melbahja-seo": {

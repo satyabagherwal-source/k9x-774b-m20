@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T00:36:58.489Z",
+  "timestamp": "2026-11-20T05:29:07.836Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apple-foundationdb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apple-foundationdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T00:36:58.489Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T05:29:07.836Z`  
 > **Learning ID**: `LEARN-EVO-apple-foundationdb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `04c62ec9`  
+> **Source Version**: `fecaa68f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T00:36:51.457Z  
+> **Timestamp**: 2026-11-20T05:29:02.348Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T00:36:51.452Z  
+> **Harvest Timestamp**: 2026-11-20T05:29:02.343Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16863 stars
+- **Stars / Engagement**: 16865 stars
 
 ---
 
@@ -1982,138 +1982,53 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `04c62ec9` (2026-11-15)
-**Commit Message**: Merge pull request #14543 from tclinkenbeard-oai/dev/tclinkenbeard/gist-versionstamp-conflicts
+### Incident Patch 1: `129fc073` (2026-11-19)
+**Commit Message**: wait for workloads to stop so a tester exiting after its last test doesn't leave them running until timeout (#14599)
 
-Include flushed write conflicts in versionstamped transaction reports
-
-**File**: `fdbclient/ReadYourWrites.cpp` (modified, +26/-2)
+**File**: `fdbserver/tester/TesterServer.cpp` (modified, +1/-0)
 ```diff
-@@ -1392,6 +1392,14 @@ class RYWImpl {
- 				co_return;
- 			}
+@@ -437,6 +437,7 @@ Future<Void> runWorkloadAsync(Database cx,
  
-+			auto& flushedRanges = ryw->nativeWriteRanges;
-+			if (!flushedRanges.empty()) {
-+				// Commit appends the remaining conflicts and sorts the native array in place. Keep the flushed
-+				// descriptors in a separate array; their key bytes already belong to the retained arena.
-+				VectorRef<KeyRangeRef> saved;
-+				saved.append(flushedRanges.arena(), flushedRanges.begin(), flushedRanges.size());
-+				flushedRanges.contents() = saved;
-+			}
- 			ryw->writeRangeToNativeTransaction(KeyRangeRef(StringRef(), allKeys.end));
- 
- 			auto conflictRanges = ryw->readConflicts.ranges();
-@@ -2107,9 +2115,9 @@ RangeResult ReadYourWritesTransaction::getWriteConflictRangeIntersecting(KeyRang
- 	} else {
- 		for (const auto& range : tr.writeConflictRanges())
- 			writeConflicts.insert(range.withPrefix(writeConflictRangeKeysRange.begin, result.arena()), "1"_sr);
--		for (const auto& range : nativeWriteRanges)
--			writeConflicts.insert(range.withPrefix(writeConflictRangeKeysRange.begin, result.arena()), "1"_sr);
- 	}
-+	for (const auto& range : nativeWriteRanges)
-+		writeConflicts.insert(range.withPrefix(writeConflictRangeKeysRange.begin, result.arena()), "1"_sr);
- 
- 	for (const auto& k : versionStampKeys) {
- 		KeyRange range;
-@@ -2193,6 +2201,7 @@ void ReadYourWritesTransaction::atomicOp(const KeyRef& key, const ValueRef& oper
- 		addWriteConflict = AddConflictRange::False;
- 		if (!options.readYourWritesDisabled) {
- 			writeRangeToNativeTransaction(range);
-+			nativeWriteRanges = tr.writeConflictRanges();
- 			rywState->writes.addUnmodifiedAndUnreadableRange(range);
+ 		if (action == 5) {
+ 			stopReq.send(Void());
++			TraceEvent("WorkloadStop", workIface.id()).detail("Workload", workload->description());
+ 			break;
  		}
- 		// k is the unversionstamped key provided by the user.  If we've filled in a minimum bound
-@@ -2754,6 +2763,21 @@ void ReadYourWritesTransaction::debugPrint(std::string const& message) {
- 	debugMessages.push_back(message);
- }
- 
-+TEST_CASE("/fdbclient/ReadYourWrites/writeConflictRangesAfterVersionstampedKey") {
-+	auto db = DatabaseContext::create(
-+	    makeReference<AsyncVar<ClientDBInfo>>(), Never(), LocalityData(), EnableLocalityLoadBalance::False);
-+	ReadYourWritesTransaction tr(db);
-+	tr.clear(KeyRangeRef("a"_sr, "c"_sr));
-+	tr.atomicOp("b0123456789\x01\x00\x00\x00"_sr, "v"_sr, MutationRef::SetVersionstampedKey);
-+	tr.setVersion(100);
-+
-+	auto ranges = tr.getWriteConflictRangeIntersecting(writeConflictRangeKeysRange);
-+	ASSERT_EQ(ranges.size(), 2);
-+	ASSERT_EQ(ranges[0], KeyValueRef(writeConflictRangeKeysRange.begin.withSuffix("a"_sr), "1"_sr));
-+	ASSERT_EQ(ranges[1], KeyValueRef(writeConflictRangeKeysRange.begin.withSuffix("c"_sr), "0"_sr));
-+	return Void();
-+}
-+
- TEST_CASE("/fdbclient/ReadYourWrites/resolveKeySelectorSkipsClearedKey") {
- 	Arena arena;
- 	SnapshotCache cache(&arena);
-```
-
-**File**: `fdbclient/include/fdbclient/ReadYourWrites.h` (modified, +2/-2)
-```diff
-@@ -237,8 +237,8 @@ class ReadYourWritesTransaction final : NonCopyable,
- 	Future<Standalone<StringRef>> versionStampFuture;
- 	Standalone<VectorRef<KeyRangeRef>>
- 	    nativeReadRanges; // Used to read conflict ranges after committing an ryw disabled transaction
--	Standalone<VectorRef<KeyRangeRef>>
--	    nativeWriteRanges; // Used to read conflict ranges after committing an ryw disabled transaction
-+	// Write conflicts flushed out of the write map by versionstamped keys, or saved before a RYW-disabled commit.
-+	Standalone<VectorRef<KeyRangeRef>> nativeWriteRanges;
- 
- 	Reference<TransactionDebugInfo> transactionDebugInfo;
  
 ```
 
-**File**: `fdbserver/workloads/SpecialKeySpaceCorrectness.cpp` (modified, +31/-1)
+**File**: `fdbserver/tester/test.cpp` (modified, +10/-2)
 ```diff
-@@ -124,8 +124,38 @@ struct SpecialKeySpaceCorrectnessWorkload : TestWorkload {
- 		                 testDuration,
- 		                 Void());
- 		// Only use one client to avoid potential conflicts on changing cluster configuration
--		if (clientId == 0)
-+		if (clientId == 0) {
-+			co_await testVersionstampedWriteConflicts(cx->clone());
- 			co_await managementApiCorrectnessActor(cx, this);
-+		}
-+	}
-+
-+	static Future<Void> testVersionstampedWriteConflicts(Database cx) {
-+		const KeyRef flushedKeys[] = { "b1"_sr, "b2"_sr, "b3"_sr };
-+		while (true) {
-+			ReadYourWritesTransaction tr(cx);
-+			Error err;
-+			try {
-+				tr.addReadConflictRange(singleKeyRange("a"_sr));
-+				for (KeyRef key : flushedKeys) {
-+					tr.set(key, "v"_sr);
-+				}
-+				// The stamp flushes three ranges. Commit sorts the later "a" range ahead of all three.
-+				tr.atomicOp("b0123456789\x01\x00\x00\x00"_sr, "v"_sr, MutationRef::SetVersionstampedKey);
-+				tr.set("a"_sr, "v"_sr);
-+				co_await tr.commit();
-+				for (KeyRef key : flushedKeys) {
-+					auto boundary = co_await tr.get(writeConflictRangeKeysRange.begin.withSuffix(key));
-+					ASSERT(boundary.present() && boundary.get() == "1"_sr);
-+				}
-+				co_return;
-+			} catch (Error& e) {
-+				if (e.code() == error_code_actor_cancelled)
-+					throw;
-+				err = e;
-+			}
-+			co_await tr.onError(err);
-+		}
+@@ -179,10 +179,18 @@ Future<DistributedTestResults> runWorkload(Database const& cx,
+ 		}
  	}
  
- 	// This would be a unit test except we need a Database to create an ryw transaction
+-	// Stopping the workloads is unreliable, but they have a timeout
+ 	// FIXME: stop if one of the above phases throws an exception
++	TraceEvent("TestStoppingWorkloads").detail("WorkloadTitle", specCopy.title);
++	printf("stopping (%s)...\n", printable(specCopy.title).c_str());
++	// Wait for the stops to be delivered, since a tester that exits right after its last test would otherwise leave
++	// that test's workloads running until they time out
++	std::vector<Future<ErrorOr<Void>>> stops;
++	stops.reserve(workloads.size());
+ 	for (const auto& workload : workloads)
+-		workload.stop.send(ReplyPromise<Void>());
++		stops.push_back(workload.stop.template getReplyUnlessFailedFor<Void>(waitForFailureTime, 0));
++	co_await waitForAll(stops);
++	// Errors are ignored: a stop that was delivered but retried finds the workload already gone, which is fine
++	TraceEvent("TestExiting").detail("WorkloadTitle", specCopy.title);
+ 
+ 	co_return DistributedTestResults(aggregateMetrics(metricsResults), success, failure);
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14543** (2026-11-15): Include flushed write conflicts in versionstamped transaction reports (@tclinkenbeard-oai)
-- **PR #14534** (2026-11-13): [release-8.0] Don't set off ASSERT(skip) in test deliveredToNotAssigned (@saintstack)
-- **PR #14532** (2026-11-13): [release-8.0] Let fdbrestore -v/--version take the restore version again (@saintstack)
-- **PR #14531** (2026-11-13): Use one size bound for bulkdump manifests in expire and restore (@kumarnitin15)
-- **PR #14528** (2026-11-12): Pass blob store endpoint settings in BlobStoreEndpointParams (@shreechaturvedi)
-- **PR #14525** (2026-11-12): [release-8.0] Skip the range-restore clear when the span has no keys (@nos-a)
+- **PR #14606** (2026-11-20): README: update release branch table (@ploxiln)
+- **PR #14605** (2026-11-20): Retain bulk load placement retries across replacement relocators (@tclinkenbeard-oai)
+- **PR #14600** (closed): add FeistelPermutation for deterministic O(1) memory shuffles (@jmslocum16)
+- **PR #14599** (2026-11-19): Wait for workloads to stop before exiting tester (@jmslocum16)
+- **PR #14598** (closed): default runFailureWorkloads to on only in simulation (@jmslocum16)
+- **PR #14591** (2026-11-20): [release-8.0] Keep encrypted backup files bound to their container key (@tclinkenbeard-oai)
 
 ---
 
@@ -2133,53 +2048,31 @@ Include flushed write conflicts in versionstamped transaction reports
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in ReadYourWrites.cpp
+## X. wait for workloads to stop so a tester exiting after its last test doesn't leave
 
 **RULE**:
-When implementing operations in `fdbclient/ReadYourWrites.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbserver/tester/TesterServer.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `04c62ec9`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `129fc073`: wait for workloads to stop so a tester exiting after its last test doesn't leave them running until timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbclient/ReadYourWrites.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbserver/tester/TesterServer.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-			auto& flushedRanges = ryw->nativeWriteRanges;
-			if (!flushedRanges.empty()) {
-				// Commit appends the remaining conflicts and sorts the native array in place. Keep the flushed
-				// descriptors in a separate array; their key bytes already belong to the retained arena.
-				VectorRef<KeyRangeRef> saved;
-				saved.append(flushedRanges.arena(), flushedRanges.begin(), flushedRanges.size());
-				flushedRanges.contents() = saved;
-			}
-	for (const auto& range : nativeWriteRanges)
-		writeConflicts.insert(range.withPrefix(writeConflictRangeKeysRange.begin, result.arena()), "1"_sr);
-			nativeWriteRanges = tr.writeConflictRanges();
-TEST_CASE("/fdbclient/ReadYourWrites/writeConflictRangesAfterVersionstampedKey") {
-	auto db = DatabaseContext::create(
-	    makeReference<AsyncVar<ClientDBInfo>>(), Never(), LocalityData(), EnableLocalityLoadBalance::False);
-	ReadYourWritesTransaction tr(db);
-	tr.clear(KeyRangeRef("a"_sr, "c"_sr));
-	tr.atomicOp("b0123456789\x01\x00\x00\x00"_sr, "v"_sr, MutationRef::SetVersionstampedKey);
-	tr.setVersion(100);
-
-	auto ranges = tr.getWriteConflictRangeIntersecting(writeConflictRangeKeysRange);
-	ASSERT_EQ(ranges.size(), 2);
-	ASSERT_EQ(ranges[0], KeyValueRef(writeC
+			TraceEvent("WorkloadStop", workIface.id()).detail("Workload", workload->description());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-		for (const auto& range : nativeWriteRanges)
-			writeConflicts.insert(range.withPrefix(writeConflictRangeKeysRange.begin, result.arena()), "1"_sr);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `04c62ec9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `129fc073` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

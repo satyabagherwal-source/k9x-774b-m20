@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T05:21:11.535Z",
+  "last_updated": "2026-11-20T05:29:03.343Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7581,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "335aab112d218418ff523d8dd01a2e80a7b6df89fe8af25e42b95e892ad434d4",
-      "verified_at": "2026-11-19T00:00:24.731Z",
+      "content_hash": "dbb84cb214426b9a6bdffdfa0a5165f180f864b5e63f399972190ff1c48dd650",
+      "verified_at": "2026-11-20T05:29:03.342Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T00:00:24.731Z"
+      "last_updated": "2026-11-20T05:29:03.342Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",
@@ -12846,14 +12846,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zoontek-react-native-bootsplash",
-      "content_hash": "c45fd3a64f60a07fb4c5d17ddc70efb876fb90fc27450089be40244ad2a5a70e",
-      "verified_at": "2026-11-01T02:22:50.692Z",
+      "content_hash": "d25a83eea902f50d8a09d3b1281a913a01e82fe3bf9ddcbf28eb72b0d5907457",
+      "verified_at": "2026-11-20T05:28:55.944Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T02:22:50.692Z"
+      "last_updated": "2026-11-20T05:28:55.944Z"
     },
     "melbahja/seo": {
       "repository": "melbahja/seo",

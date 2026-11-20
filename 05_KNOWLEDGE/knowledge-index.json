@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T05:21:17.078Z",
-  "total_verified_learnings": 9024,
+  "last_updated": "2026-11-20T05:29:08.965Z",
+  "total_verified_learnings": 9025,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22211,
+  "total_items": 22217,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218619,13 +218619,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DHFS-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-H7H1-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "c87e80f022431fd74f97ef5a614a784ddb7fdcba95d664bd8368fbb8f03224f2",
+      "content_hash": "393ff46a7dd073e38c969aa43301903377782d5bd22b55f98cc70a037f01898d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:58:15.304Z"
+      "persisted_at": "2026-11-20T05:29:08.630Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218635,9 +218635,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "28b3f085f9eea0045848d0a6f202554c5e285bf73cbce4d5b8c30ea4aa8d0dc6",
+      "content_hash": "427371c2f0b913f448f3a56ae9b06b09dcf192fae780aa4ddcc5333713e013d7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:58:15.443Z"
+      "persisted_at": "2026-11-20T05:29:08.788Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218647,9 +218647,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "b31208f13fe047f2597218db617052c5b5e9255e9e0cb3ab86e425bef9788416",
+      "content_hash": "003ec895e5f8c71e3bf5ae79d0cdce353d22e36fb391ec5e1457a4983319b307",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:58:15.600Z"
+      "persisted_at": "2026-11-20T05:29:08.965Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -228057,9 +228057,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "be23a74c740b71b681ac1b2e2d8f012a9a467e05cc0ec16746570def9ed33b43",
+      "content_hash": "5d08383c7a83af3794881d3a0144bb9ffcb1a0b480de81cad9c8a6ddcd061ad7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:48:42.360Z"
+      "persisted_at": "2026-11-20T05:29:07.340Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -228069,9 +228069,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "616e93e9b86e3084f7a988f0d33ff0f8a6efc7460ef03af807a70788742222f4",
+      "content_hash": "ee9eafabd91491792cb4535d2049a007599aec34a916174c1b022a168936851b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:48:42.486Z"
+      "persisted_at": "2026-11-20T05:29:07.489Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -231532,8 +231532,8 @@
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "39fb2391",
-      "content_hash": "335aab112d218418ff523d8dd01a2e80a7b6df89fe8af25e42b95e892ad434d4",
+      "source_version": "fecaa68f",
+      "content_hash": "dbb84cb214426b9a6bdffdfa0a5165f180f864b5e63f399972190ff1c48dd650",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "promoted_rules": [
@@ -231571,6 +231571,11 @@
           "number": 9305,
           "title": "Bounds-check untrusted flat_buffers input",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9518,
+          "title": "wait for workloads to stop so a tester exiting after its last test doesn't leave",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231578,7 +231583,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T00:00:24.492Z",
+      "verified_at": "2026-11-20T05:29:03.142Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231620,10 +231625,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-apple-foundationdb-quality-verification-intelligence-apple-foundationdb-core-inv.md",
       "title": "Quality & Verification Intelligence: apple/foundationdb Core Invariants",
       "repository": "apple/foundationdb",
-      "source_version": "39fb2391",
-      "content_hash": "7576de0bf7dfe2134f9b303ef5fdc8a9ffac46eab356efe4dd641f3cfcef5144",
+      "source_version": "fecaa68f",
+      "content_hash": "eb4d6ce2c7eab3d40a27390972db6a61449abe3a2d203b69092b2fe90472252e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:00:25.173Z"
+      "persisted_at": "2026-11-20T05:29:03.677Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apple-foundationdb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apple-foundationdb",
@@ -231632,10 +231637,10 @@
       "relative_path": "08_VERIFICATION/apple-foundationdb-verification-protocol-empirical-defect-shield-for-apple-found.md",
       "title": "Verification Protocol: Empirical Defect Shield for apple/foundationdb",
       "repository": "apple/foundationdb",
-      "source_version": "39fb2391",
-      "content_hash": "c0398a8665b7c33c15753bba699579a9761ccc27c5ea7625eba8bf258321c03e",
+      "source_version": "fecaa68f",
+      "content_hash": "85fa0b6ee77028340acecaf7adb7c7e4273c4636c66f0e7aef59a7c1d7c4dd4e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:00:25.353Z"
+      "persisted_at": "2026-11-20T05:29:03.825Z"
     },
     "candidate_directive-tailwind-locate-classes-in-unquoted-object-keys-correctly": {
       "item_id": "candidate_directive-tailwind-locate-classes-in-unquoted-object-keys-correctly",
@@ -231693,9 +231698,9 @@
       "title": "Quality & Verification Intelligence: apple-foundationdb-learnings Core Invariants",
       "repository": "apple-foundationdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "ed0f50330ee8ba99aaf6b9f9bfa31adbc9ce013e2642b53e7014c739bbac3420",
+      "content_hash": "5c265c2d7a900a4ba487d66b0c0e913f34731b7e5c215f244e7cfad3fb0055eb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:36:58.705Z"
+      "persisted_at": "2026-11-20T05:29:08.100Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apple-foundationdb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apple-foundationdb-learnings",
@@ -231705,9 +231710,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apple-foundationdb-learnings",
       "repository": "apple-foundationdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "e22496807c4340264a5f910932c38e9e000f3b37d2936666dcfa20985fa03f38",
+      "content_hash": "738ce72830ff9fb4f4f5a75720426f19b53c7c6dff89666b174f6bb9fa2d9e3c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:36:58.818Z"
+      "persisted_at": "2026-11-20T05:29:08.252Z"
     },
     "learn-huggingface-baai-bge-large-en-v1-5": {
       "learning_id": "learn-huggingface-baai-bge-large-en-v1-5",
@@ -300698,6 +300703,103 @@
       "content_hash": "f2207d066193c4fff881860fe6020b1cab81f334bbe7ebe8c29457219dc90f00",
       "domain_letter": "K",
       "persisted_at": "2026-11-20T05:21:15.268Z"
+    },
+    "learn-github-zoontek-react-native-bootsplash": {
+      "learning_id": "learn-github-zoontek-react-native-bootsplash",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "zoontek/react-native-bootsplash",
+      "repository": "zoontek/react-native-bootsplash",
+      "slug": "zoontek-react-native-bootsplash",
+      "platform": "github",
+      "source_url": "https://github.com/zoontek/react-native-bootsplash",
+      "source_version": "af50c229",
+      "content_hash": "d25a83eea902f50d8a09d3b1281a913a01e82fe3bf9ddcbf28eb72b0d5907457",
+      "dossier_path": "07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9517,
+          "title": "dead license badge link in README",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T05:28:55.730Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9517": {
+      "learning_id": "rule-9517",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9517,
+      "title": "dead license badge link in README",
+      "source_url": "https://github.com/zoontek/react-native-bootsplash",
+      "source_version": "af50c229",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T05:28:55.730Z"
+    },
+    "candidate_directive-dead-license-badge-link-in-readme": {
+      "item_id": "candidate_directive-dead-license-badge-link-in-readme",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H6CZ-dead-license-badge-link-in-readme.md",
+      "title": "dead license badge link in README",
+      "repository": "zoontek-react-native-bootsplash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2edaf9b45d3a53d534e817059db6d23d4a862cd5e39bb7a4f476438fc5281ca0",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T05:29:07.188Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-technical-construction-intelligence-zoontek-reac.md",
+      "title": "Technical Construction Intelligence: zoontek/react-native-bootsplash Core Invariants",
+      "repository": "zoontek/react-native-bootsplash",
+      "source_version": "af50c229",
+      "content_hash": "81b5fcc959c0d5ff25a9df56eb10de5b32d2295c65d689ff58c04983c411b8a4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T05:28:56.289Z"
+    },
+    "rule-9518": {
+      "learning_id": "rule-9518",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9518,
+      "title": "wait for workloads to stop so a tester exiting after its last test doesn't leave",
+      "source_url": "https://github.com/apple/foundationdb",
+      "source_version": "fecaa68f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T05:29:03.142Z"
+    },
+    "candidate_directive-wait-for-workloads-to-stop-so-a-tester-exiting-after-its-last-test-doesn-t-leave": {
+      "item_id": "candidate_directive-wait-for-workloads-to-stop-so-a-tester-exiting-after-its-last-test-doesn-t-leave",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H6Y2-wait-for-workloads-to-stop-so-a-tester-exiting-after-its-last-test-doesn-t-leave.md",
+      "title": "wait for workloads to stop so a tester exiting after its last test doesn't leave",
+      "repository": "apple-foundationdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fd3a30ed66dd60a712a3a5472c4ad2bea9cca36b3e86304223d2331d785c0f3b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T05:29:07.948Z"
     }
   },
   "ai-builder-brain": {
