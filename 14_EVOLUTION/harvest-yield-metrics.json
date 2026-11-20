@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T04:29:25.573Z",
-  "total_cycles_completed": 10925,
-  "total_learnings_persisted": 10925,
+  "last_updated": "2026-11-20T04:37:48.047Z",
+  "total_cycles_completed": 10926,
+  "total_learnings_persisted": 10926,
   "total_rules_promoted": 10292,
   "history": [
-    {
-      "timestamp": "2026-11-19T07:37:33.658Z",
-      "repository": "tickernelz/opencode-mem",
-      "learningId": "learn-github-tickernelz-opencode-mem",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T07:41:45.171Z",
       "repository": "medialab/xan",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-20T04:29:25.573Z",
       "repository": "sigstore/cosign",
       "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T04:37:48.047Z",
+      "repository": "o2sh/onefetch",
+      "learningId": "learn-github-o2sh-onefetch",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

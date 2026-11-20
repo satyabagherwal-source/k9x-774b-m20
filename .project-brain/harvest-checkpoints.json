@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T04:29:25.579Z",
+  "last_updated": "2026-11-20T04:37:48.051Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6111,14 +6111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-o2sh-onefetch",
-      "content_hash": "61de0617b387c479256c3688125f7e09fe8866bf84ebda641fbc0c5c657f2826",
-      "verified_at": "2026-11-18T16:22:17.242Z",
+      "content_hash": "5c46c91ad827d9c7484b4ec6d86abbb04dc7d83df3661c09d8fed95fd6557727",
+      "verified_at": "2026-11-20T04:37:48.050Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T16:22:17.242Z"
+      "last_updated": "2026-11-20T04:37:48.050Z"
     },
     "RunanywhereAI/runanywhere-sdks": {
       "repository": "RunanywhereAI/runanywhere-sdks",

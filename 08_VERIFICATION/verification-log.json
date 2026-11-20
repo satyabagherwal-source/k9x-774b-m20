@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-SR2V",
-    "timestamp": "2026-11-18T08:50:44.119Z",
-    "repository": "apache/pinot",
-    "learningId": "learn-github-apache-pinot",
-    "contentHash": "0d401d41d0dd82faba6bb2f4b901851f42181b96f75b91e7cfa56fc2e6842ea7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-TUEC",
     "timestamp": "2026-11-18T08:51:35.076Z",
     "repository": "google-t5/t5-small",
@@ -7490,6 +7475,21 @@
     "repository": "sigstore/cosign",
     "learningId": "learn-github-sigstore-cosign",
     "contentHash": "eff5544d79d225f9b12bc4a02c146573237015c07ee879d68b2d699a45faf41e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-N6H1",
+    "timestamp": "2026-11-20T04:37:48.037Z",
+    "repository": "o2sh/onefetch",
+    "learningId": "learn-github-o2sh-onefetch",
+    "contentHash": "5c46c91ad827d9c7484b4ec6d86abbb04dc7d83df3661c09d8fed95fd6557727",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T04:30:06.163Z",
+  "last_updated": "2026-11-20T04:38:26.479Z",
   "total_verified_learnings": 9024,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-T5K9-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-NZW8-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "88b489ebebd4bb0ad78fc3681e63293af5878003bec57806503a3302b3552365",
+      "content_hash": "5ee5f7af90976b18353954b78fd9783f3338c382d4135ced43fd26f5d006ee91",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:14:27.180Z"
+      "persisted_at": "2026-11-20T04:38:26.177Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "65437b99567069968ccc46494b730c8cf8e4dd47d794f520f43e7cba63e2a868",
+      "content_hash": "cd21b65906ba972407b1f3aa3d9204c4f9211acfa5eafbb4abceb3cc63eb63fe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:14:27.328Z"
+      "persisted_at": "2026-11-20T04:38:26.329Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "eeb0742cb4829c2845e06601b1ea4a57b3a9f53a87b468d1588bef986552a688",
+      "content_hash": "9ae5a00790cbd95fe2e46c325c5c97f953039e7229ed6415e4783877ae2515e3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:14:27.474Z"
+      "persisted_at": "2026-11-20T04:38:26.479Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -218619,13 +218619,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XL6J-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-NZ6V-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "fa165d888976858eb432b6f0d77b15efb4c3c4fcc6a65015ef19aa90131e8dd8",
+      "content_hash": "7f51f2d76540d53eeeff8f8acdf95a776c1134921e7179800a9519d7a63d163c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T03:21:54.812Z"
+      "persisted_at": "2026-11-20T04:38:25.256Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218635,9 +218635,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "e84e81b77c26109536e10d7565725db58fcbbcb11d793ae1eb5b71dfa88e2e0d",
+      "content_hash": "f4445ff92b81066512d67dc735074aca0de6562c5a54306f0e80beb166a8dd07",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T03:21:54.960Z"
+      "persisted_at": "2026-11-20T04:38:25.413Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218647,9 +218647,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "f35490adb732a3d2a41f19a7dc1dbbadfffa065ad8b4b120cde503ab1dea19e1",
+      "content_hash": "39f205264681c8abca80c7489e7d6239747f0b0bc30133e3da5581f56479ddb7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T03:21:55.124Z"
+      "persisted_at": "2026-11-20T04:38:25.564Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -285087,8 +285087,8 @@
       "slug": "o2sh-onefetch",
       "platform": "github",
       "source_url": "https://github.com/o2sh/onefetch",
-      "source_version": "3054de77",
-      "content_hash": "61de0617b387c479256c3688125f7e09fe8866bf84ebda641fbc0c5c657f2826",
+      "source_version": "74760655",
+      "content_hash": "5c46c91ad827d9c7484b4ec6d86abbb04dc7d83df3661c09d8fed95fd6557727",
       "dossier_path": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "promoted_rules": [
@@ -285103,7 +285103,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T16:22:17.048Z",
+      "verified_at": "2026-11-20T04:37:47.834Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -285119,10 +285119,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-o2sh-onefetch-design-intelligence-o2sh-onefetch-core-invariants.md",
       "title": "Design Intelligence: o2sh/onefetch Core Invariants",
       "repository": "o2sh/onefetch",
-      "source_version": "3054de77",
-      "content_hash": "6da9ef5447d91f0afd84f8d0479f8b550a94395ceeb5f3a163fbff365d5a97ab",
+      "source_version": "74760655",
+      "content_hash": "1a37757b1f3573356aa6f460ae4ed5de0252f02afd56d6cdd1307d24510e476b",
       "domain_letter": "F",
-      "persisted_at": "2026-11-18T16:22:17.554Z"
+      "persisted_at": "2026-11-20T04:37:48.249Z"
     },
     "rule-9158": {
       "learning_id": "rule-9158",
@@ -285158,9 +285158,9 @@
       "title": "Design Intelligence: o2sh-onefetch-learnings Core Invariants",
       "repository": "o2sh-onefetch-learnings",
       "source_version": "HEAD",
-      "content_hash": "159cbfe52dceaffdd6e58b0361f00e5fbe7cdc8982694649dcd342fb1eb53a19",
+      "content_hash": "697b17a836fdce02006b788b22b895378a4a4ee22d27a9dd894abd37ca718ec8",
       "domain_letter": "F",
-      "persisted_at": "2026-11-18T16:22:31.649Z"
+      "persisted_at": "2026-11-20T04:38:24.821Z"
     },
     "rule-9159": {
       "learning_id": "rule-9159",

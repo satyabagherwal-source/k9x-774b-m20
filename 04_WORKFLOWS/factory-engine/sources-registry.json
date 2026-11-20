@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T04:29:28.591Z",
-    "lastVerified": "2026-11-20T04:29:28.591Z",
+    "lastChecked": "2026-11-20T04:37:58.373Z",
+    "lastVerified": "2026-11-20T04:37:58.373Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -345,8 +345,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T03:44:06.279Z",
-    "lastVerified": "2026-11-20T03:44:06.279Z",
+    "lastChecked": "2026-11-20T04:37:58.366Z",
+    "lastVerified": "2026-11-20T04:37:58.366Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1804,12 +1804,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium/cilium",
+    "name": "cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T22:52:03.841Z",
-    "lastVerified": "2026-11-19T22:52:03.841Z",
+    "lastChecked": "2026-11-20T04:37:53.435Z",
+    "lastVerified": "2026-11-20T04:37:53.435Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -1818,7 +1818,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f752313f"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -3151,13 +3152,13 @@
     "officialUrl": "https://github.com/o2sh/onefetch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T16:22:16.287Z",
-    "lastVerified": "2026-11-18T16:22:16.287Z",
+    "lastChecked": "2026-11-20T04:37:47.419Z",
+    "lastVerified": "2026-11-20T04:37:47.419Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-o2sh-onefetch",
-    "contentHash": "61de0617b387c479256c3688125f7e09fe8866bf84ebda641fbc0c5c657f2826",
-    "promotedRulesCount": 1,
+    "contentHash": "5c46c91ad827d9c7484b4ec6d86abbb04dc7d83df3661c09d8fed95fd6557727",
+    "promotedRulesCount": 0,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -4949,9 +4950,9 @@
   "sfu-db-connector-x": {
     "name": "connector-x",
     "officialUrl": "https://github.com/sfu-db/connector-x",
-    "lastChecked": "2026-11-18T22:30:37.885Z",
+    "lastChecked": "2026-11-20T04:37:55.919Z",
     "revisionIdentifier": "c52b20c0",
-    "lastVerified": "2026-11-18T22:30:37.885Z"
+    "lastVerified": "2026-11-20T04:37:55.919Z"
   },
   "tokio-rs-console": {
     "name": "console",
@@ -5293,9 +5294,9 @@
   "aquasecurity-tfsec": {
     "name": "tfsec",
     "officialUrl": "https://github.com/aquasecurity/tfsec",
-    "lastChecked": "2026-11-19T00:00:13.320Z",
+    "lastChecked": "2026-11-20T04:37:50.974Z",
     "revisionIdentifier": "b692c20b",
-    "lastVerified": "2026-11-19T00:00:13.320Z"
+    "lastVerified": "2026-11-20T04:37:50.974Z"
   },
   "apple-foundationdb": {
     "name": "apple/foundationdb",
@@ -9234,5 +9235,19 @@
     "lastChecked": "2026-11-20T04:29:15.727Z",
     "revisionIdentifier": "4d98daab",
     "lastVerified": "2026-11-20T04:29:15.727Z"
+  },
+  "adobe-structured-data-validator": {
+    "name": "structured-data-validator",
+    "officialUrl": "https://github.com/adobe/structured-data-validator",
+    "lastChecked": "2026-11-20T04:37:45.824Z",
+    "revisionIdentifier": "6918b526",
+    "lastVerified": "2026-11-20T04:37:45.824Z"
+  },
+  "thebaselab-codeapp": {
+    "name": "codeapp",
+    "officialUrl": "https://github.com/thebaselab/codeapp",
+    "lastChecked": "2026-11-20T04:37:48.474Z",
+    "revisionIdentifier": "ef33ee57",
+    "lastVerified": "2026-11-20T04:37:48.474Z"
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T04:30:06.345Z",
+  "last_updated": "2026-11-20T04:38:26.609Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T04:14:27.617Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-20T03:21:54.580Z",
+      "processed_at": "2026-11-20T04:38:25.013Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-20T04:14:26.779Z",
+      "processed_at": "2026-11-20T04:38:25.719Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3413,9 +3413,9 @@
       "staged_for_review": 0
     },
     "o2sh-onefetch-learnings.md": {
-      "processed_at": "2026-11-18T16:22:31.295Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-20T04:38:24.570Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "eclipse-theia-theia-learnings.md": {
       "processed_at": "2026-11-18T11:33:25.020Z",
@@ -3533,7 +3533,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2427,
-  "total_canonical_promoted": 410,
-  "total_staged_for_review": 1825
+  "total_dossiers_evaluated": 2430,
+  "total_canonical_promoted": 411,
+  "total_staged_for_review": 1827
 }

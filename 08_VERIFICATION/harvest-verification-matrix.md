@@ -11457,3 +11457,5 @@
 | `CYCLE-20261120-CDKN` | `2026-11-20T04:29:24.023Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4898` | Yes (`3bc738b0...`) |
 | `CYCLE-20261120-CERC` | `2026-11-20T04:29:25.560Z` | `sigstore/cosign` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sigstore-cosign-learnings.md` | Yes (`eff5544d...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T04:30:04.542Z` | `sigstore-cosign` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5CB7BD90` [Domain D] | Yes (`968ce483...`) |
+| `CYCLE-20261120-N6H1` | `2026-11-20T04:37:48.037Z` | `o2sh/onefetch` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md` | Yes (`5c46c91a...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T04:38:24.569Z` | `o2sh-onefetch` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C031D2B0` [Domain D] | Yes (`d92151a9...`) |

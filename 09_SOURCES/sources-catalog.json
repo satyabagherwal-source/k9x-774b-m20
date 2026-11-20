@@ -3993,10 +3993,10 @@
     "repository": "o2sh/onefetch",
     "platform": "github",
     "sourceUrl": "https://github.com/o2sh/onefetch",
-    "sourceVersion": "3054de77",
+    "sourceVersion": "74760655",
     "license": "MIT",
-    "contentHash": "61de0617b387c479256c3688125f7e09fe8866bf84ebda641fbc0c5c657f2826",
-    "lastHarvestedAt": "2026-11-18T16:22:17.234Z",
+    "contentHash": "5c46c91ad827d9c7484b4ec6d86abbb04dc7d83df3661c09d8fed95fd6557727",
+    "lastHarvestedAt": "2026-11-20T04:37:48.042Z",
     "learningId": "learn-github-o2sh-onefetch"
   },
   "runanywhereai-runanywhere-sdks": {

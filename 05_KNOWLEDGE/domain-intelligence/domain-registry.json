@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T04:30:05.956Z",
-  "total_records": 2064,
+  "last_updated": "2026-11-20T04:38:26.329Z",
+  "total_records": 2065,
   "domains": {
     "A": {
       "total": 17,
@@ -57,7 +57,7 @@
       ]
     },
     "D": {
-      "total": 842,
+      "total": 843,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -900,7 +900,8 @@
         "DOM-D-2BF9F19D",
         "DOM-D-9D38D4A5",
         "DOM-D-34CA9B71",
-        "DOM-D-5CB7BD90"
+        "DOM-D-5CB7BD90",
+        "DOM-D-C031D2B0"
       ]
     },
     "E": {
@@ -8797,8 +8798,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "65437b99567069968ccc46494b730c8cf8e4dd47d794f520f43e7cba63e2a868",
-      "created_at": "2026-11-20T04:14:27.328Z"
+      "content_hash": "cd21b65906ba972407b1f3aa3d9204c4f9211acfa5eafbb4abceb3cc63eb63fe",
+      "created_at": "2026-11-20T04:38:26.329Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -11455,8 +11456,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "e84e81b77c26109536e10d7565725db58fcbbcb11d793ae1eb5b71dfa88e2e0d",
-      "created_at": "2026-11-20T03:21:54.960Z"
+      "content_hash": "f4445ff92b81066512d67dc735074aca0de6562c5a54306f0e80beb166a8dd07",
+      "created_at": "2026-11-20T04:38:25.413Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -30248,8 +30249,8 @@
       "title": "Design Intelligence: o2sh/onefetch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-o2sh-onefetch-design-intelligence-o2sh-onefetch-core-invariants.md",
       "repository": "o2sh/onefetch",
-      "content_hash": "6da9ef5447d91f0afd84f8d0479f8b550a94395ceeb5f3a163fbff365d5a97ab",
-      "created_at": "2026-11-18T16:22:17.554Z"
+      "content_hash": "1a37757b1f3573356aa6f460ae4ed5de0252f02afd56d6cdd1307d24510e476b",
+      "created_at": "2026-11-20T04:37:48.249Z"
     },
     "DOM-D-E33EA755": {
       "record_id": "DOM-D-E33EA755",
@@ -30299,8 +30300,8 @@
       "title": "Design Intelligence: o2sh-onefetch-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-o2sh-onefetch-learnings-design-intelligence-o2sh-onefetch-learnings-core-invaria.md",
       "repository": "o2sh-onefetch-learnings",
-      "content_hash": "159cbfe52dceaffdd6e58b0361f00e5fbe7cdc8982694649dcd342fb1eb53a19",
-      "created_at": "2026-11-18T16:22:31.649Z"
+      "content_hash": "697b17a836fdce02006b788b22b895378a4a4ee22d27a9dd894abd37ca718ec8",
+      "created_at": "2026-11-20T04:38:24.821Z"
     },
     "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-core-invariants",
@@ -34797,6 +34798,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-20T04:30:04.511Z"
+    },
+    "DOM-D-C031D2B0": {
+      "record_id": "DOM-D-C031D2B0",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): o2sh/onefetch",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  \n> **Source**: github ([https://github.com/o2sh/onefetch](https://github.com/o2sh/onefetch))  \n> **Source Version**: `74760655`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n> **Ti",
+      "content_hash": "d92151a999be31ed8c8426858c2c8e0174136ba97a022e8efe09963cfac02d47",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  \n> **Source**: github ([https://github.com/o2sh/onefetc -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  \n> **Source**: github ([https://github.com/o2sh/onefetc",
+      "provenance": {
+        "source_uri": "project://o2sh-onefetch/o2sh-onefetch-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T04:37:58.478Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (o2sh-onefetch)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of o2sh-onefetch"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T04:38:24.539Z"
     }
   }
 }

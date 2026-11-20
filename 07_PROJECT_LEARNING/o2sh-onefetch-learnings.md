@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  
 > **Source**: github ([https://github.com/o2sh/onefetch](https://github.com/o2sh/onefetch))  
-> **Source Version**: `3054de77`  
+> **Source Version**: `74760655`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T16:22:16.292Z  
+> **Timestamp**: 2026-11-20T04:37:47.591Z  
 > **Learning ID**: `learn-github-o2sh-onefetch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/o2sh/onefetch](https://github.com/o2sh/onefetch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T16:22:16.287Z  
+> **Harvest Timestamp**: 2026-11-20T04:37:47.419Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Command-line Git information tool
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12085 stars
+- **Stars / Engagement**: 12086 stars
 
 ---
 
@@ -1176,44 +1176,228 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `83e1d54d` (2026-11-18)
-**Commit Message**: fix: leave ignored authors out of creation and last change dates (#1922)
+### Incident Patch 1: `0b08af4d` (2026-11-19)
+**Commit Message**: fix: don't apply --exclude to churn (#1927)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/data/git/traversal.rs` (modified, +4/-3)
+**File**: `Cargo.lock` (modified, +0/-1)
 ```diff
-@@ -61,17 +61,18 @@ pub fn traverse_commit_graph(
-                 0,
-             );
-             // Commits that credit nobody (e.g. authors left out by `--ignore-author`)
--            // count neither as commits, nor in the activity, nor in the churn.
-+            // count neither as commits, nor in the activity, nor in the churn,
-+            // nor in the creation and last change dates.
-             let identities =
-                 credited_identities(&commit.object()?, &mailmap, ignore_author, co_authors)?;
-             if !identities.is_empty() {
-                 update_identity_counts(identities, &mut number_of_commits_by_identity);
-                 update_commit_times(commit_time.seconds, &mut commit_times);
-                 churn_tx.send(commit.id)?;
-                 number_of_counted_commits += 1;
-+                time_of_most_recent_commit.get_or_insert(commit_time);
-+                time_of_first_commit = commit_time.into();
-             }
--            time_of_most_recent_commit.get_or_insert(commit_time);
--            time_of_first_commit = commit_time.into();
+@@ -2444,7 +2444,6 @@ dependencies = [
+  "enable-ansi-support",
+  "gix",
+  "gix-testtools",
+- "globset",
+  "human-panic",
+  "image",
+  "insta",
+```
+
+**File**: `Cargo.toml` (modified, +0/-1)
+```diff
+@@ -51,7 +51,6 @@ gix = { version = "0.90.0", default-features = false, features = [
+     "sha1",
+     "anyhow",
+ ] }
+-globset = "0.4.20"
+ human-panic = "2.0.8"
+ image = { version = "0.25.10", default-features = false, features = [
+     "color_quant",
+```
+
+**File**: `docs/onefetch.1` (modified, +1/-1)
+```diff
+@@ -64,7 +64,7 @@ NUM of months shown in the activity field
+ .HP
+ \fB\-e\fR, \fB\-\-exclude\fR <EXCLUDE>...
+ .IP
+-Ignore all files & directories matching EXCLUDE
++Exclude files & directories matching EXCLUDE from language stats and lines of code
+ .HP
+ \fB\-\-no\-bots[=\fR<REGEX>]
+ .IP
+```
+
+**File**: `docs/wiki/command-line-options.md` (modified, +1/-1)
+```diff
+@@ -46,7 +46,7 @@ INFO:
+           [possible values: 3, 6, 12]
  
-             count += 1;
+   -e, --exclude <EXCLUDE>...
+-          Ignore all files & directories matching EXCLUDE
++          Exclude files & directories matching EXCLUDE from language stats and lines of code
+ 
+       --ignore-author <REGEX>
+           Ignore commits from authors whose name matches REGEX
+```
+
+**File**: `src/cli.rs` (modified, +1/-1)
+```diff
+@@ -86,7 +86,7 @@ pub struct InfoArgs {
+             .map(|s| s.parse::<usize>().unwrap())
+     )]
+     pub activity_months: usize,
+-    /// Ignore all files & directories matching EXCLUDE
++    /// Exclude files & directories matching EXCLUDE from language stats and lines of code
+     #[arg(long, short, num_args = 1..)]
+     pub exclude: Vec<String>,
+     /// Ignore commits from authors whose name matches REGEX
+```
+
+**File**: `src/data/builder.rs` (modified, +3/-5)
+```diff
+@@ -216,18 +216,16 @@ impl InfoBuilder {
+         mut self,
+         git_metrics: &GitMetrics,
+         number_of_file_churns_to_display: usize,
+-        globs_to_exclude: &[String],
+-    ) -> Result<Self> {
++    ) -> Self {
+         if !self.disabled_fields.contains(&FieldKind::Churn) {
+             let churn = Churn::new(
+                 &git_metrics.number_of_commits_by_file_path,
+                 git_metrics.churn_pool_size,
+                 number_of_file_churns_to_display,
+-                globs_to_exclude,
+-            )?;
++            );
+             self.info_fields.push(Field::Churn(churn));
          }
+-        Ok(self)
++        self
+     }
+ 
+     pub fn lines_of_code(mut self, loc_by_language_opt: Option<&Vec<(Language, usize)>>) -> Self {
+```
+
+**File**: `src/data/fields/churn.rs` (modified, +15/-39)
+```diff
+@@ -1,6 +1,4 @@
+-use anyhow::Result;
+ use gix::bstr::BString;
+-use globset::{Glob, GlobSetBuilder};
+ use serde::Serialize;
+ use std::collections::HashMap;
+ 
+@@ -31,55 +29,39 @@ impl Churn {
+         number_of_commits_by_file_path: &HashMap<BString, usize>,
+         churn_pool_size: usize,
+         number_of_file_churns_to_display: usize,
+-        globs_to_exclude: &[String],
+-    ) -> Result<Self> {
+-        let file_churns = compute_file_churns(
+-            number_of_commits_by_file_path,
+-            number_of_file_churns_to_display,
+-            globs_to_exclude,
+-        )?;
+-
+-        Ok(Self {
+-            file_churns,
++    ) -> Self {
++        Self {
++            file_churns: compute_file_churns(
++                number_of_commits_by_file_path,
++                number_of_file_churns_to_display,
++            ),
+             churn_pool_size,
+-        })
++        }
+     }
+ }
+ 
+ fn compute_file_churns(
+     number_of_commits_by_file_path: &HashMap<BString, usize>,
+     number_of_file_churns_to_display: usize,
+-    globs_to_exclude: &[String],
+-) -> Result<Vec<FileChurn>> {
+-    let mut builder = GlobSetBuilder::new();
+-    for glob in globs_to_exclude {
+-        builder.add(Glob::new(glob)?);
+-    }
+-    let glob_set = builder.build()?;
++) -> Vec<FileChurn> {
+     let mut number_of_commits_by_file_path_sorted = Vec::from_iter(number_of_commits_by_file_path);
+ 
+     number_of_commits_by_file_path_sorted
+         .sort_by(|(_, a_count), (_, b_count)| b_count.cmp(a_count));
+ 
+-    Ok(number_of_commits_by_file_path_sorted
++    number_of_commits_by_file_path_sorted
+         .into_iter()
+-        .filter_map(|(file_path, nbr_of_commits)| {
+-            if glob_set.is_match(file_path.to_string()) {
+-                None
+-            } else {
+-                Some(FileChurn::new(file_path.to_string(), *nbr_of_commits))
+-            }
+-        })
++        .map(|(file_path, nbr_of_commits)| FileChurn::new(file_path.to_string(), *nbr_of_commits))
+         .take(number_of_file_churns_to_display)
+-        .collect())
++        .collect()
+ }
+ 
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+ 
+     #[test]
+-    fn test_compute_file_churns() -> Result<()> {
++    fn test_compute_file_churns() {
+         let mut number_of_commits_by_file_path = HashMap::new();
+         number_of_commits_by_file_path.insert("path/to/file1.txt".into(), 2);
+         number_of_commits_by_file_path.insert("path/to/file2.txt".into(), 5);
+@@ -89,21 +71,15 @@ mod tests {
+         number_of_commits_by_file_path.insert("foo/x/file.txt".into(), 10);
+ 
+         let number_of_file_churns_to_display = 3;
+-        let globs_to_exclude = vec![
+-            "foo/**/file.txt".to_string(),
+-            "path/to/file2.txt".to_string(),
+-        ];
+         let actual = compute_file_churns(
+             &number_of_commits_by_file_path,
+             number_of_file_churns_to_display,
+-            &globs_to_exclude,
+-        )?;
++        );
+         let expected = vec![
++            FileChurn::new(String::from("foo/x/y/file.txt"), 70),
++            FileChurn::new(String::from("foo/x/file.txt"), 10),
+             FileChurn::new(String::from("path/to/file4.txt"), 7),
+-            FileChurn::new(String::from("path/to/file3.txt"), 3),
+-            FileChurn::new(String::from("path/to/file1.txt"), 2),
+         ];
+         assert_eq!(actual, expected);
+-        Ok(())
+     }
+ }
+```
+
+**File**: `src/data/mod.rs` (modified, +1/-5)
+```diff
+@@ -111,11 +111,7 @@ pub fn build_info(options: &InfoOptions) -> Result<Info> {
+         .contributors(&git_metrics, options.number_of_authors)
+         .url(&repo_url)
+         .commits(&git_metrics, repo.is_shallow()?)
+-        .churn(
+-            &git_metrics,
+-            options.number_of_file_churns,
+-            &options.exclude,
+-        )?
++        .churn(&git_metrics, options.number_of_file_churns)
+         .lines_of_code(loc_by_language.as_ref())
+         .size(&repo)
+         .license(&repo_path, manifest.as_ref())?
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1927** (2026-11-19): fix: don't apply --exclude to churn (@o2sh)
+- **PR #1926** (2026-11-19): chore(deps): Update Rust crate regex to 1.13.2 (@renovate[bot])
+- **PR #1925** (2026-11-19): chore(deps): Update clap (@renovate[bot])
+- **PR #1924** (2026-11-19): chore(deps): Update site (@renovate[bot])
+- **PR #1923** (2026-11-18): feat: credit Co-authored-by trailers by default (@o2sh)
 - **PR #1922** (2026-11-18): fix: leave ignored authors out of creation and last change dates (@o2sh)
-- **PR #1920** (2026-11-17): feat!: replace --no-bots with --ignore-author (@o2sh)
-- **PR #1916** (2026-11-03): chore(deps): Update dependency node to v26 (@renovate[bot])
-- **PR #1914** (2026-10-29): fix: show Unreleased when HEAD doesn't contain the latest tag (@o2sh)
-- **PR #1912** (2026-10-27): chore(deps): upgrade site to SvelteKit 3 (@o2sh)
-- **PR #1911** (2026-11-03): chore(deps): Update site (@renovate[bot])
 
 ---
 
@@ -1227,39 +1411,3 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. leave ignored authors out of creation and last change dates
-
-**RULE**:
-When implementing operations in `src/data/git/traversal.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in o2sh/onefetch. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `83e1d54d`: leave ignored authors out of creation and last change dates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/data/git/traversal.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-            // count neither as commits, nor in the activity, nor in the churn,
-            // nor in the creation and last change dates.
-                time_of_most_recent_commit.get_or_insert(commit_time);
-                time_of_first_commit = commit_time.into();
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-            // count neither as commits, nor in the activity, nor in the churn.
-            time_of_most_recent_commit.get_or_insert(commit_time);
-            time_of_first_commit = commit_time.into();
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `83e1d54d` are properly handled with clean fallback behavior.
