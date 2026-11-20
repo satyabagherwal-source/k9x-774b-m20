@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T16:14:35.532Z",
+  "last_updated": "2026-11-20T16:29:10.111Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T12:15:57.033Z",
@@ -13,7 +13,7 @@
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-20T14:36:09.484Z",
+      "processed_at": "2026-11-20T16:29:09.146Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -413,7 +413,7 @@
       "staged_for_review": 1
     },
     "pingcap-tidb-learnings.md": {
-      "processed_at": "2026-11-19T13:22:05.925Z",
+      "processed_at": "2026-11-20T16:29:08.271Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -653,9 +653,9 @@
       "staged_for_review": 1
     },
     "lxml-lxml-learnings.md": {
-      "processed_at": "2026-11-16T18:19:01.770Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-20T16:29:07.432Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "beclab-olares-learnings.md": {
       "processed_at": "2026-11-19T19:12:13.427Z",
@@ -3598,7 +3598,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2550,
-  "total_canonical_promoted": 427,
-  "total_staged_for_review": 1934
+  "total_dossiers_evaluated": 2553,
+  "total_canonical_promoted": 428,
+  "total_staged_for_review": 1936
 }

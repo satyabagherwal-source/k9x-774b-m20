@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `e35413c6`  
+> **Source Version**: `d3a10d86`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T13:21:54.595Z  
+> **Timestamp**: 2026-11-20T16:28:31.962Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T13:21:54.589Z  
+> **Harvest Timestamp**: 2026-11-20T16:23:31.074Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40747 stars
+- **Stars / Engagement**: 40757 stars
 
 ---
 
@@ -1916,11 +1916,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #73459** (2026-11-19): **Cascades Planner returns NULL instead of 0 for SUM(CASE WHEN ... ELSE 0 END)**
-  *Symptoms*: ## Bug Report  ### 1. Minimal reproduce step (Required)  ```sql DROP TABLE IF EXISTS t;  CREATE TABLE t(a INT, b INT); INSERT INTO t VALUES (1, 7), (2, 8);  SET SESSION tidb_enable_cascades_planner = OFF; SELECT SUM(CASE WHEN a > 10 THEN b ELSE 0 END) FROM t; -- Result: 0  SET SESSION tidb_enable_cascades_planner = ON; SELECT SUM(CASE WHEN a > 10 THEN b ELSE 0 END) FROM t; -- Result: NULL ```  ### 2. What did you expect to see? (Required)  The query should return `0` regardless of whether the Cascades Planner is enabled. Since neither row satisfies `a > 10`, the `CASE` expression evaluates to `0` for both rows, and `SUM(0, 0)` should return `0`.  ### 3. What did you see instead? (Required)  When `tidb_enable_cascades_planner` is disabled, the query correctly returns `0`. However, enabling the Cascades Planner causes the same query to return `NULL`.  This may be related to the `TransformAggregateCaseToSelection` optimization rule, which transforms `SUM(CASE WHEN condition THEN value ELSE 0 END)` into an aggregation over filtered rows. Such a transformation may not preserve the original semantics when the input table is nonempty but no rows satisfy the filter condition.  ### 4. What is your TiDB version? (Required) Release Version: 8b857ef Edition: Community Git Commit Hash: 8b857efa20363d50a8fa2ea7dd9809a85a61b115 Git Branch: HEAD UTC Build Time: 2026-11-18 08:28:18 GoVersion: go1.25.12 Race Enabled: false Check Table Before Drop: false Store: unistore
+- **Issue #73543** (2026-11-20): **br: fix PITR index repair for foreign keys with quoted column names**
+  *Symptoms*: Fixes #73534  PITR index repair failed to recreate foreign keys on quoted column names such as `order` and `parent id`, leaving the restored tables writable without their foreign keys; retrying with the same checkpoint failed again because the same broken statement was replayed.  ## Root cause  In `generateRepairIngestIndexSQLs` (`br/pkg/restore/indexrepair/index_repair.go`), `colsToStr()` interpolated foreign-key column names raw (`col.O`) into the generated `ALTER TABLE ... ADD FOREIGN KEY (...) REFERENCES ... (...)` DDL, while schema/table/FK names already went through `%n` identifier arguments. A reserved word (`order`), a space (`parent id`), a backtick, or a `%` therefore produced invalid SQL (e.g. `[parser:1064] ... near "order) REFERENCES \`test\`.\`parent\` (id) ON DELETE CASCADE ..."`), so the FK was never recreated.  ## Change  `colsToStr` now emits `%n` placeholders and returns the column names as arguments; the caller interleaves child-column args after the FK name and parent-column args after the referenced table, matching `alterTableAddForeignKeyFormat`. Minimal change, scoped to the FK DDL builder.  ## Verification  - New regression test `TestRepairForeignKeyQuotedColumns` (`br/pkg/restore/indexrepair/index_repair_test.go`): 6 cases x 3 repair attempts each — `plain` (`pid`), `reserved_word` (`order` child), `parent_reserved_word` (`order` parent), `space` (`parent id`), `backtick` (`` parent`id ``), `percent` (`parent%n`). Each attempt runs `RepairIndexes` ag
 
-- **Issue #73457** (2026-11-19): **parser: FULLTEXT DDL with an explicit parser emits a misleading warning**
-  *Symptoms*: ## Bug Report  ### 1. Minimal reproduce step (Required)  ```sql CREATE TABLE docs (body TEXT, FULLTEXT INDEX ft (body) WITH PARSER NGRAM); SHOW WARNINGS; SHOW CREATE TABLE docs; ```  ### 2. What did you expect to see? (Required)  `SHOW WARNINGS` returns no rows. `SHOW CREATE TABLE` includes `WITH PARSER NGRAM`.  ### 3. What did you see instead (Required)  `SHOW WARNINGS` returns warning 1064. It contains the text “The WITH PARASER clause is parsed but ignored by all storage engines.” `SHOW CREATE TABLE` includes `WITH PARSER NGRAM`, and Local MATCH uses the parser stored in the FULLTEXT index metadata.  ### 4. What is your TiDB version? (Required)  Reproduced in the local TiDB SQL test harness on `feature/release-8.5-fts` before the warning fix, at `6c2c583301142d27b5f4b3a81ff561142b1bac85`. 
+- **Issue #73535** (2026-11-20): **planner: don't discount blocking ordered IndexMerge candidates with LIMIT**
+  *Symptoms*: Fixes #73514  For an ordered union IndexMerge, `fetchLoopUnionWithOrderBy` must consume all partial-scan inputs, deduplicate handles, maintain a global heap, and materialize the sorted handle list before dispatching any table lookups. Without an embedded `PushedLimit`, that blocking phase does all of the index-side work before returning a single row. But the partial index scan estimates were still reduced using the LIMIT-derived `ExpectedCnt`, and the IndexMerge table-side row estimate was scaled too, so the blocking ordered IndexMerge could look far cheaper than its actual work and be selected over an ordered IndexLookUp that can stop incrementally after finding enough qualifying rows (in the regression case, 1,000 candidates were discounted to 1.10 rows by LIMIT 1).  ## Change  In `convertToIndexMergeScan`, when the ordered union matches the required ordering but the LIMIT cannot be embedded (root task, or the path has `TableFilters`), the partial-scan property is cloned with `ExpectedCnt` set to `math.MaxFloat64`, so the blocking index side keeps its full candidate estimate. Table-side lookups still use the original property's LIMIT scaling and can stop early. No cost factor was retuned.  ## Verification  - New regression test `TestOrderedIndexMergeLimitCost` (cost versions v1/v2 x asc/desc, plus table-side early-stop, incremental ordered IndexLookUp, SQL result equivalence, embeddable-LIMIT control, and unordered-union early-stop cases): all 4 sub-cases FAIL before the fi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1937,947 +1937,355 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9c2f8754` (2026-11-19)
-**Commit Message**: br: fix metadata length panic (#73432)
+### Incident Patch 1: `fac45566` (2026-11-20)
+**Commit Message**: expression: fix wrong result of INTERVAL when Clone drops hasNullable (#73164)
 
-close pingcap/tidb#73431
+close pingcap/tidb#73150
 
-**File**: `br/pkg/metautil/BUILD.bazel` (modified, +1/-1)
+**File**: `pkg/expression/builtin_compare.go` (modified, +1/-0)
 ```diff
-@@ -48,7 +48,7 @@ go_test(
-     ],
-     embed = [":metautil"],
-     flaky = True,
--    shard_count = 18,
-+    shard_count = 19,
-     deps = [
-         "//br/pkg/utils",
-         "//pkg/meta/model",
-```
-
-**File**: `br/pkg/metautil/metafile.go` (modified, +5/-0)
-```diff
-@@ -270,6 +270,11 @@ func DecryptFullBackupMetaIfNeeded(metaData []byte, cipherInfo *backuppb.CipherI
- 	if cipherInfo == nil || !utils.IsEffectiveEncryptionMethod(cipherInfo.CipherType) {
- 		return metaData, nil
- 	}
-+	if len(metaData) < CrypterIvLen {
-+		return nil, errors.Errorf(
-+			"encrypted backupmeta is too short: got %d bytes, need at least %d bytes for IV",
-+			len(metaData), CrypterIvLen)
-+	}
- 	// the prefix of backup meta file is iv(16 bytes) for ctr mode if encryption method is valid
- 	iv := metaData[:CrypterIvLen]
- 	decryptBackupMeta, err := utils.Decrypt(metaData[len(iv):], cipherInfo, iv)
-```
-
-**File**: `br/pkg/metautil/metafile_test.go` (modified, +46/-0)
-```diff
-@@ -5,6 +5,7 @@ package metautil
- import (
- 	"context"
- 	"crypto/sha256"
-+	"fmt"
- 	"sync"
- 	"testing"
- 
-@@ -195,6 +196,51 @@ type encryptTest struct {
- 	wrongKey string
+@@ -1234,6 +1234,7 @@ type builtinIntervalIntSig struct {
+ func (b *builtinIntervalIntSig) Clone() builtinFunc {
+ 	newSig := &builtinIntervalIntSig{}
+ 	newSig.cloneFrom(&b.baseBuiltinFunc)
++	newSig.hasNullable = b.hasNullable
+ 	return newSig
  }
  
-+func TestDecryptFullBackupMetaIfNeeded(t *testing.T) {
-+	for _, method := range []encryptionpb.EncryptionMethod{
-+		encryptionpb.EncryptionMethod_AES128_CTR,
-+		encryptionpb.EncryptionMethod_AES192_CTR,
-+		encryptionpb.EncryptionMethod_AES256_CTR,
-+	} {
-+		for _, size := range []int{0, 1, 15, 16} {
-+			t.Run(fmt.Sprintf("%s/%d", method, size), func(t *testing.T) {
-+				var data []byte
-+				var err error
-+				require.NotPanics(t, func() {
-+					data, err = DecryptFullBackupMetaIfNeeded(make([]byte, size),
-+						&backuppb.CipherInfo{CipherType: method})
-+				})
-+				if size < CrypterIvLen {
-+					require.ErrorContains(t, err, "backupmeta is too short")
-+					require.Nil(t, data)
-+				} else {
-+					require.NoError(t, err)
-+					require.Empty(t, data)
-+				}
-+			})
-+		}
-+	}
-+	for _, cipher := range []*backuppb.CipherInfo{
-+		nil,
-+		{CipherType: encryptionpb.EncryptionMethod_UNKNOWN},
-+		{CipherType: encryptionpb.EncryptionMethod_PLAINTEXT},
-+		{CipherType: encryptionpb.EncryptionMethod_AES128_CTR, CipherKey: make([]byte, 16)},
-+		{CipherType: encryptionpb.EncryptionMethod_AES192_CTR, CipherKey: make([]byte, 24)},
-+		{CipherType: encryptionpb.EncryptionMethod_AES256_CTR, CipherKey: make([]byte, 32)},
-+	} {
-+		original := []byte("backupmeta")
-+		data := original
-+		if cipher != nil && utils.IsEffectiveEncryptionMethod(cipher.CipherType) {
-+			encrypted, iv, err := Encrypt(data, cipher)
-+			require.NoError(t, err)
-+			data = append(iv, encrypted...)
-+		}
-+		actual, err := DecryptFullBackupMetaIfNeeded(data, cipher)
-+		require.NoError(t, err)
-+		require.Equal(t, original, actual)
-+	}
-+}
-+
- func TestEncryptAndDecrypt(t *testing.T) {
- 	originalData := []byte("pingcap")
- 	testCases := []encryptTest{
 ```
 
-**File**: `br/pkg/task/common/BUILD.bazel` (modified, +16/-1)
+**File**: `pkg/expression/builtin_compare_test.go` (modified, +28/-0)
 ```diff
-@@ -1,4 +1,4 @@
--load("@io_bazel_rules_go//go:def.bzl", "go_library")
-+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
- 
- go_library(
-     name = "common",
-@@ -16,3 +16,18 @@ go_library(
-         "@com_github_pingcap_kvproto//pkg/encryptionpb",
-     ],
- )
-+
-+go_test(
-+    name = "common_test",
-+    timeout = "short",
-+    srcs = ["storage_test.go"],
-+    embed = [":common"],
-+    flaky = True,
-+    deps = [
-+        "//br/pkg/metautil",
-+        "//pkg/objstore",
-+        "@com_github_pingcap_kvproto//pkg/brpb",
-+        "@com_github_pingcap_kvproto//pkg/encryptionpb",
-+        "@com_github_stretchr_testify//require",
-+    ],
-+)
-```
-
-**File**: `br/pkg/task/common/storage.go` (modified, +5/-0)
-```diff
-@@ -60,6 +60,11 @@ func DecodeBackupMeta(metaData []byte, cipherInfo *backuppb.CipherInfo) (*backup
- 
- 	var iv []byte
- 	if ci.CipherType != encryptionpb.EncryptionMethod_PLAINTEXT {
-+		if len(metaData) < metautil.CrypterIvLen {
-+			return nil, errors.Errorf(
-+				"encrypted backupmeta is too short: got %d bytes, need at least %d bytes for IV",
-+				len(metaData), metautil.CrypterIvLen)
-+		}
- 		iv = metaData[:metautil.CrypterIvLen]
+@@ -290,6 +290,34 @@ func TestIntervalFunc(t *testing.T) {
  	}
- 	decryptBackupMeta, err := utils.Decrypt(metaData[len(iv):], &ci, iv)
-```
-
-**File**: `br/pkg/task/common/storage_test.go` (added, +76/-0)
-```diff
-@@ -0,0 +1,76 @@
-+// Copyright 2026 PingCAP, Inc.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package common
-+
-+import (
-+	"context"
-+	"fmt"
-+	"testing"
-+
-+	backuppb "github.com/pingcap/kvproto/pkg/brpb"
-+	"github.com/pingcap/kvproto/pkg/encryptionpb"
-+	"github.com/pingcap/tidb/br/pkg/metautil"
-+	"github.com/pingcap/tidb/pkg/objstore"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestReadBackupMetaFromStorage(t *testing.T) {
-+	ctx := context.Background()
-+	storage, err := objstore.NewLocalStorage(t.TempDir())
-+	require.NoError(t, err)
-+	for _, method := range []encryptionpb.EncryptionMethod{
-+		encryptionpb.EncryptionMethod_AES128_CTR,
-+		encryptionpb.EncryptionMethod_AES192_CTR,
-+		encryptionpb.EncryptionMethod_AES256_CTR,
+ }
+ 
++func TestIntervalFuncCloneKeepsHasNullable(t *testing.T) {
++	ctx := createContext(t)
++	intTp := types.NewFieldType(mysql.TypeLonglong)
++	notNullIntTp := types.NewFieldType(mysql.TypeLonglong)
++	notNullIntTp.AddFlag(mysql.NotNullFlag)
++	notNullRealTp := types.NewFieldType(mysql.TypeDouble)
++	notNullRealTp.AddFlag(mysql.NotNullFlag)
++	// The list is not sorted, so the linear search and the binary search give different results.
++	row := chunk.MutRowFromDatums(types.MakeDatums(10, nil, 1)).ToRow()
++	cols := []Expression{
++		&Column{Index: 0, RetType: notNullIntTp},
++		&Column{Index: 1, RetType: intTp},
++		&Column{Index: 2, RetType: notNullIntTp},
++	}
++	for _, n := range []*Constant{
++		{Value: types.NewIntDatum(5), RetType: notNullIntTp},
++		{Value: types.NewFloat64Datum(5.5), RetType: notNullRealTp},
 +	} {
-+		for _, size := range []int{0, 1, 15, 16} {
-+			t.Run(fmt.Sprintf("%s/%d", method, size), func(t *testing.T) {
-+				require.NoError(t, storage.WriteFile(ctx, metautil.MetaFile, make([]byte, size)))
-+				var meta *backuppb.BackupMeta
-+				var readErr error
-+				require.NotPanics(t, func() {
-+					meta, readErr = ReadBackupMetaFromStorage(ctx, metautil.MetaFile, storage,
-+						&backuppb.CipherInfo{CipherType: method})
-+				})
-+				if size < metautil.CrypterIvLen {
-+					require.ErrorContains(t, readErr, "backupmeta is too short")
-+					require.Nil(t, meta)
-+				} else {
-+					// Preserve the existing behavior for an IV with an empty payload.
-+					require.NoError(t, readErr)
-+					require.Equal(t, &backuppb.BackupMeta{}, meta)
-+				}
-+			})
++		f, err := funcs[ast.Interval].getFunction(ctx, append([]Expression{n}, cols...))
++		require.NoError(t, err)
++		for _, sig := range []builtinFunc{f, f.Clone()} {
++			v, err := evalBuiltinFunc(sig, ctx, row)
++			require.NoError(t, err)
++			require.Equal(t, int64(0), v.GetInt64(), "%T", sig)
 +		}
 +	}
-+
-+	expected := &backuppb.BackupMeta{StartVersion: 42, EndVersion: 84}
-+	data, err := expected.Marshal()
-+	require.NoError(t, err)
-+	for _, cipher := range []*backuppb.CipherInfo{
-+		nil,
-+		{CipherType: encryptionpb.EncryptionMethod_PLAINTEXT},
-+		{CipherType: encryptionpb.EncryptionMethod_AES128_CTR, CipherKey: make([]byte, 16)},
-+		{CipherType: encryptionpb.EncryptionMethod_AES192_CTR, CipherKey: make([]byte, 24)},
-+		{CipherType: encryptionpb.EncryptionMethod_AES256_CTR, CipherKey: make([]byte, 32)},
-+	} {
-+		encrypted, iv, err := metautil.Encrypt(data, cipher)
-+		require.NoError(t, err)
-+		require.NoError(t, storage.WriteFile(ctx, metautil.MetaFile, append(iv, encrypted...)))
-+		actual, err := ReadBackupMetaFromStorage(ctx, metautil.MetaFile, storage, cipher)
-+		require.NoError(t, err)
-+		require.Equal(t, expected, actual)
-+	}
 +}
++
+ // greatest/least function is compatible with MySQL 8.0
+ func TestGreatestLeastFunc(t *testing.T) {
+ 	ctx := createContext(t)
+```
+
+**File**: `tests/integrationtest/r/expression/builtin.result` (modified, +17/-0)
+```diff
+@@ -3519,3 +3519,20 @@ GET_FORMAT(TIME, 'usa')	GET_FORMAT(TIME, 'USA')	GET_FORMAT(TIME, 'UsA')	GET_FORM
+ SELECT GET_FORMAT(DATE, 'jis'),GET_FORMAT(DATETIME, 'iso'),GET_FORMAT(TIMESTAMP, 'eur'),GET_FORMAT(TIME, 'internal');
+ GET_FORMAT(DATE, 'jis')	GET_FORMAT(DATETIME, 'iso')	GET_FORMAT(TIMESTAMP, 'eur')	GET_FORMAT(TIME, 'internal')
+ %Y-%m-%d	%Y-%m-%d %H:%i:%s	%Y-%m-%d %H.%i.%s	%H%i%s
++drop table if exists t;
++create table t (a int, b int, x int);
++insert into t values (10, NULL, 1);
++select interval(5, a, b, x) from t;
++interval(5, a, b, x)
++0
++set tidb_enable_vectorized_expression = 0;
++select interval(5, a, b, x) from t;
++interval(5, a, b, x)
++0
++set tidb_enable_vectorized_expression = default;
++select interval(5, 10, NULL, 1);
++interval(5, 10, NULL, 1)
++0
++select interval(5.5, a, b, x) from t;
++interval(5.5, a, b, x)
++0
+```
+
+**File**: `tests/integrationtest/t/expression/builtin.test` (modified, +12/-1)
+```diff
+@@ -1699,4 +1699,15 @@ set sql_mode = default;
+ 
+ # Issue 59420
+ SELECT GET_FORMAT(TIME, 'usa'), GET_FORMAT(TIME, 'USA'), GET_FORMAT(TIME, 'UsA'), GET_FORMAT(time, 'UsA'), GET_FORMAT(TIme, 'UsA');
+-SELECT GET_FORMAT(DATE, 'jis'),GET_FORMAT(DATETIME, 'iso'),GET_FORMAT(TIMESTAMP, 'eur'),GET_FORMAT(TIME, 'internal');
+\ No newline at end of file
++SELECT GET_FORMAT(DATE, 'jis'),GET_FORMAT(DATETIME, 'iso'),GET_FORMAT(TIMESTAMP, 'eur'),GET_FORMAT(TIME, 'internal');
++
++# Issue 73150
++drop table if exists t;
++create table t (a int, b int, x int);
++insert into t values (10, NULL, 1);
++select interval(5, a, b, x) from t;
++set tidb_enable_vectorized_expression = 0;
++select interval(5, a, b, x) from t;
++set tidb_enable_vectorized_expression = default;
++select interval(5, 10, NULL, 1);
++select interval(5.5, a, b, x) from t;
 ```
 
 ---
 
-### Incident Patch 2: `e35413c6` (2026-11-19)
-**Commit Message**: expression: fix DISTINCT merging different GROUPING() results of one ROLLUP (#72548)
+### Incident Patch 2: `b0bd1604` (2026-11-19)
+**Commit Message**: expression, planner: don't use index order for ORDER BY NULL +/- column (#72707)
 
-close pingcap/tidb#72289
+close pingcap/tidb#72560
 
-**File**: `pkg/expression/builtin_grouping.go` (modified, +16/-0)
+**File**: `pkg/expression/scalar_function.go` (modified, +27/-4)
 ```diff
-@@ -16,6 +16,7 @@ package expression
- 
- import (
- 	"context"
-+	"maps"
- 
- 	"github.com/gogo/protobuf/proto"
- 	"github.com/pingcap/errors"
-@@ -129,6 +130,21 @@ func (b *BuiltinGroupingImplSig) Clone() builtinFunc {
- 	return newSig
+@@ -854,22 +854,28 @@ func (sf *ScalarFunction) RemapColumn(m map[int64]*Column) (Expression, error) {
+ // - ast.Plus
+ // - ast.Minus
+ // - ast.UnaryMinus
++//
++// The constant operand of ast.Plus and ast.Minus must be immutable and not NULL, since
++// `col + NULL` / `NULL - col` is NULL for every row and doesn't follow col's order.
+ func (sf *ScalarFunction) GetSingleColumn(reverse bool) (*Column, bool) {
+ 	switch sf.FuncName.String() {
+ 	case ast.Plus:
+ 		args := sf.GetArgs()
+ 		switch tp := args[0].(type) {
+ 		case *Column:
+-			if _, ok := args[1].(*Constant); !ok {
++			if !isNonNullConstant(args[1]) {
+ 				return nil, false
+ 			}
+ 			return tp, reverse
+ 		case *ScalarFunction:
+-			if _, ok := args[1].(*Constant); !ok {
++			if !isNonNullConstant(args[1]) {
+ 				return nil, false
+ 			}
+ 			return tp.GetSingleColumn(reverse)
+ 		case *Constant:
++			if !isNonNullConstant(tp) {
++				return nil, false
++			}
+ 			switch rtp := args[1].(type) {
+ 			case *Column:
+ 				return rtp, reverse
+@@ -882,16 +888,19 @@ func (sf *ScalarFunction) GetSingleColumn(reverse bool) (*Column, bool) {
+ 		args := sf.GetArgs()
+ 		switch tp := args[0].(type) {
+ 		case *Column:
+-			if _, ok := args[1].(*Constant); !ok {
++			if !isNonNullConstant(args[1]) {
+ 				return nil, false
+ 			}
+ 			return tp, reverse
+ 		case *ScalarFunction:
+-			if _, ok := args[1].(*Constant); !ok {
++			if !isNonNullConstant(args[1]) {
+ 				return nil, false
+ 			}
+ 			return tp.GetSingleColumn(reverse)
+ 		case *Constant:
++			if !isNonNullConstant(tp) {
++				return nil, false
++			}
+ 			switch rtp := args[1].(type) {
+ 			case *Column:
+ 				return rtp, !reverse
+@@ -913,6 +922,20 @@ func (sf *ScalarFunction) GetSingleColumn(reverse bool) (*Column, bool) {
+ 	return nil, false
  }
  
-+// equal implements the builtinFunc interface. Besides the args, the grouping mode and marks must be
-+// the same, since grouping(a) and grouping(b) share the same arg (the gid column) but differ in marks.
-+func (b *BuiltinGroupingImplSig) equal(ctx EvalContext, fun builtinFunc) bool {
-+	other, ok := fun.(*BuiltinGroupingImplSig)
-+	if !ok || b.mode != other.mode || len(b.groupingMarks) != len(other.groupingMarks) {
++// isNonNullConstant returns true if expr is an immutable constant whose value is non-NULL.
++// Parameter markers and deferred expressions are rejected: their value can change
++// between executions of a cached plan, e.g. `NULLIF(?, 0) - col` may become NULL.
++func isNonNullConstant(expr Expression) bool {
++	c, ok := expr.(*Constant)
++	if !ok {
 +		return false
 +	}
-+	for i, mark := range b.groupingMarks {
-+		if !maps.Equal(mark, other.groupingMarks[i]) {
-+			return false
-+		}
++	if c.ConstLevel() != ConstStrict {
++		return false
 +	}
-+	return b.baseBuiltinFunc.equal(ctx, fun)
++	return !c.Value.IsNull()
 +}
 +
- // GetMetaGroupingMarks returns the grouping marks of the grouping function.
- func (b *BuiltinGroupingImplSig) GetMetaGroupingMarks() []map[uint64]struct{} {
- 	return b.groupingMarks
-```
-
-**File**: `pkg/expression/builtin_grouping_test.go` (modified, +34/-0)
-```diff
-@@ -18,6 +18,8 @@ import (
- 	"fmt"
- 	"testing"
- 
-+	"github.com/pingcap/tidb/pkg/parser/ast"
-+	"github.com/pingcap/tidb/pkg/parser/mysql"
- 	"github.com/pingcap/tidb/pkg/testkit/testutil"
- 	"github.com/pingcap/tidb/pkg/types"
- 	"github.com/pingcap/tidb/pkg/util/chunk"
-@@ -102,3 +104,35 @@ func TestGrouping(t *testing.T) {
- 		testutil.DatumEqual(t, types.NewDatum(testCase.expectResult), actualResult, comment)
- 	}
- }
-+
-+func TestGroupingFuncEqual(t *testing.T) {
-+	ctx := createContext(t)
-+	newGrouping := func(mode tipb.GroupingMode, marks ...map[uint64]struct{}) *ScalarFunction {
-+		// Every grouping function over the same expand shares the same gid arg.
-+		gid := &Column{UniqueID: 1, RetType: types.NewFieldType(mysql.TypeLonglong)}
-+		init := func(sf *ScalarFunction) (*ScalarFunction, error) {
-+			return sf, sf.Function.(*BuiltinGroupingImplSig).SetMetadata(mode, marks)
-+		}
-+		f, err := NewFunctionWithInit(ctx, ast.Grouping, types.NewFieldType(mysql.TypeLonglong), init, gid)
-+		require.NoError(t, err)
-+		return f.(*ScalarFunction)
-+	}
-+	// grouping(a) and grouping(b) of `group by a, b with rollup` differ only in the marks.
-+	ga := newGrouping(tipb.GroupingMode_ModeNumericCmp, map[uint64]struct{}{1: {}})
-+	gb := newGrouping(tipb.GroupingMode_ModeNumericCmp, map[uint64]struct{}{0: {}})
-+	require.True(t, ga.Equal(ctx, newGrouping(tipb.GroupingMode_ModeNumericCmp, map[uint64]struct{}{1: {}})))
-+	require.False(t, ga.Equal(ctx, gb))
-+	require.False(t, gb.Equal(ctx, ga))
-+	// different mode.
-+	require.False(t, ga.Equal(ctx, newGrouping(tipb.GroupingMode_ModeBitAnd, map[uint64]struct{}{1: {}})))
-+	// different number of marks, i.e. grouping(a) vs grouping(a, b).
-+	require.False(t, ga.Equal(ctx, newGrouping(tipb.GroupingMode_ModeNumericCmp, map[uint64]struct{}{1: {}}, map[uint64]struct{}{0: {}})))
-+	// the same marks in a different order, i.e. grouping(a, b) vs grouping(b, a).
-+	ab := newGrouping(tipb.GroupingMode_ModeNumericCmp, map[uint64]struct{}{1: {}}, map[uint64]struct{}{0: {}})
-+	ba := newGrouping(tipb.GroupingMode_ModeNumericCmp, map[uint64]struct{}{0: {}}, map[uint64]struct{}{1: {}})
-+	require.False(t, ab.Equal(ctx, ba))
-+	// the result must be the same once the hashcodes are cached.
-+	require.NotEqual(t, ga.HashCode(), gb.HashCode())
-+	require.False(t, ga.Equal(ctx, gb))
-+	require.True(t, ga.Equal(ctx, newGrouping(tipb.GroupingMode_ModeNumericCmp, map[uint64]struct{}{1: {}})))
-+}
+ // Coercibility returns the coercibility value which is used to check collations.
+ func (sf *ScalarFunction) Coercibility() Coercibility {
+ 	if !sf.Function.HasCoercibility() {
 ```
 
 **File**: `pkg/planner/core/issuetest/planner_issue_test.go` (modified, +29/-0)
 ```diff
-@@ -993,6 +993,35 @@ func TestOnlyFullGroupCantFeelUnaryConstant(t *testing.T) {
+@@ -981,6 +981,35 @@ ORDER BY t1.a, t2.a, t3.a, var`
+ 		tk.MustQuery("SELECT /* issue:66706 */ ref0 FROM (SELECT v0.c0 AS ref0, SIGN(v0.c0) AS ref1 FROM v0) AS s WHERE ref1").Check(testkit.Rows("0.99"))
+ 		tk.MustQuery("SHOW WARNINGS").Check(testkit.Rows())
  	})
- }
- 
-+// TestIssue72289 checks that DISTINCT / UNION / GROUP BY over different grouping() results of the same
-+// expand operator are not merged, since all of them take the same gid column as the argument.
-+func TestIssue72289(t *testing.T) {
++
++	// issue-72560-order-by-null-constant-arithmetic-uses-index-order
 +	testkit.RunTestUnderCascades(t, func(t *testing.T, tk *testkit.TestKit, cascades, caller string) {
-+		tk.MustExec("use test")
-+		tk.MustExec("create table t(a int, b int)")
-+		tk.MustExec("insert into t values (1, 2)")
-+		three := testkit.Rows("0 0", "0 1", "1 1")
-+		tk.MustQuery("select grouping(a) ga, grouping(b) gb from t group by a, b with rollup order by ga, gb").Check(three)
-+		tk.MustQuery("select distinct grouping(a) ga, grouping(b) gb from t group by a, b with rollup order by ga, gb").Check(three)
-+		tk.MustQuery("select distinct grouping(b) gb, grouping(a) ga from t group by a, b with rollup order by ga, gb").Check(testkit.Rows("0 0", "1 0", "1 1"))
-+		tk.MustQuery("select distinct grouping(a, b), grouping(b, a) from t group by a, b with rollup order by 1, 2").Check(testkit.Rows("0 0", "1 2", "3 3"))
-+		tk.MustQuery("select distinct grouping(a), grouping(b), grouping(a, b) from t group by a, b with rollup order by 1, 2").Check(testkit.Rows("0 0 0", "0 1 1", "1 1 3"))
-+		tk.MustQuery("select ga, gb from (select grouping(a) ga, grouping(b) gb from t group by a, b with rollup) tmp group by ga, gb order by ga, gb").Check(three)
-+		tk.MustQuery("select grouping(a) ga, grouping(b) gb from t group by a, b with rollup union select grouping(a), grouping(b) from t group by a, b with rollup order by ga, gb").Check(three)
-+		tk.MustQuery("select grouping(a) ga, grouping(b) gb from t group by a, b with rollup union all select grouping(a), grouping(b) from t group by a, b with rollup order by ga, gb").
-+			Check(testkit.Rows("0 0", "0 0", "0 1", "0 1", "1 1", "1 1"))
-+		tk.MustQuery("select grouping(a), grouping(b) from t group by a, b with rollup intersect select grouping(a), grouping(b) from t group by a, b with rollup order by 1, 2").Check(three)
-+		// the same grouping() results are still merged.
-+		tk.MustQuery("select distinct grouping(a) ga, grouping(a) ga2 from t group by a, b with rollup order by ga").Check(testkit.Rows("0 0", "1 1"))
-+		// prepared statement and plan cache.
-+		tk.MustExec("prepare stmt from 'select distinct grouping(a) ga, grouping(b) gb from t where a >= ? group by a, b with rollup order by ga, gb'")
-+		tk.MustExec("set @v = 0")
-+		tk.MustQuery("execute stmt using @v").Check(three)
-+		tk.MustQuery("execute stmt using @v").Check(three)
++		resetTestDB(t, tk)
++		tk.MustExec("create table t (id int primary key, c int not null, key i(c))")
++		tk.MustExec("insert into t values (1, 30), (2, 10), (3, 20)")
++		tk.MustExec("analyze table t")
++		for _, orderBy := range []string{"null-c desc, id", "null-c, id", "c-null, id", "null+c desc, id", "c+null, id"} {
++			tk.MustQuery("select /* issue:72560 */ id from t use index(i) order by " + orderBy).Check(testkit.Rows("1", "2", "3"))
++			tk.MustQuery("select /* issue:72560 */ id from t ignore index(i) order by " + orderBy).Check(testkit.Rows("1", "2", "3"))
++		}
++		// non-NULL constants can still use the index order without a Sort
++		query := "select /* issue:72560 */ id from t use index(i) order by 1-c desc, id"
++		tk.MustQuery(query).Check(testkit.Rows("2", "3", "1"))
++		plan := tk.MustQuery("explain format = 'brief' " + query)
++		plan.MultiCheckContain([]string{"index:i(c)", "keep order:true"})
++		plan.CheckNotContain("Sort")
++
++		// parameters may become NULL on a later execution, so a cached plan must keep the Sort
++		tk.MustExec("set @@tidb_enable_prepared_plan_cache = 1")
++		tk.MustExec("prepare s from 'select /* issue:72560 */ id from t use index(i) order by nullif(?, 0) - c desc, id'")
++		tk.MustExec("set @p = 1")
++		tk.MustQuery("execute s using @p").Check(testkit.Rows("2", "3", "1"))
++		tk.MustQuery("execute s using @p").Check(testkit.Rows("2", "3", "1"))
++		tk.MustQuery("select @@last_plan_from_cache").Check(testkit.Rows("1"))
++		tk.MustExec("set @p = 0")
++		tk.MustQuery("execute s using @p").Check(testkit.Rows("1", "2", "3"))
 +		tk.MustQuery("select @@last_plan_from_cache").Check(testkit.Rows("1"))
 +	})
-+}
-+
- // TestDuplicateExpressionIndexOrdering covers the case where several expression indexes on one
- // table repeat the same expression. DDL creates one hidden generated column per index, and the
- // ORDER BY expression is substituted with only one of them, so the chosen plan used to depend on
+ }
+ 
+ func TestOnlyFullGroupCantFeelUnaryConstant(t *testing.T) {
 ```
 
 ---
 
-### Incident Patch 3: `3305e799` (2026-11-19)
-**Commit Message**: br: rebuild global indexes after restoring partition IDs (#72504)
+### Incident Patch 3: `dfb1cb40` (2026-11-19)
+**Commit Message**: planner: build IN subquery join conditions column by column (#73470)
 
-close pingcap/tidb#71052
-
-**File**: `br/pkg/checkpoint/manager.go` (modified, +12/-5)
+**File**: `pkg/planner/core/expression_rewriter.go` (modified, +41/-54)
 ```diff
-@@ -27,9 +27,10 @@ import (
- 	"github.com/pingcap/tidb/pkg/parser/ast"
- )
- 
--type SnapshotMetaManagerT = MetaManager[
--	RestoreKeyType, RestoreValueType, RestoreValueType, CheckpointMetadataForSnapshotRestore,
--]
-+type SnapshotMetaManagerT interface {
-+	MetaManager[RestoreKeyType, RestoreValueType, RestoreValueType, CheckpointMetadataForSnapshotRestore]
-+	IndexRepairMetaManager
-+}
- type LogMetaManagerT = LogMetaManager[
- 	LogRestoreKeyType, LogRestoreValueType, LogRestoreValueMarshaled, CheckpointMetadataForLogRestore,
- ]
-@@ -74,11 +75,17 @@ type LogMetaManager[K KeyType, SV, LV ValueType, M any] interface {
- 	SaveCheckpointProgress(context.Context, *CheckpointProgress) error
- 	ExistsCheckpointProgress(context.Context) (bool, error)
- 
-+	IndexRepairMetaManager
-+
-+	TryGetStorage() storeapi.Storage
-+}
-+
-+// IndexRepairMetaManager persists index repair SQLs before any index is dropped.
-+// For snapshot restore, their existence also marks completed ingestion and checksum.
-+type IndexRepairMetaManager interface {
- 	LoadCheckpointIngestIndexRepairSQLs(context.Context) (*CheckpointIngestIndexRepairSQLs, error)
- 	SaveCheckpointIngestIndexRepairSQLs(context.Context, *CheckpointIngestIndexRepairSQLs) error
- 	ExistsCheckpointIngestIndexRepairSQLs(context.Context) (bool, error)
--
--	TryGetStorage() storeapi.Storage
+@@ -1295,6 +1295,31 @@ out:
+ 	return p
  }
  
- type TableMetaManager[K KeyType, SV, LV ValueType, M any] struct {
-```
-
-**File**: `br/pkg/restore/indexrepair/BUILD.bazel` (added, +47/-0)
-```diff
-@@ -0,0 +1,47 @@
-+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
-+
-+go_library(
-+    name = "indexrepair",
-+    srcs = ["index_repair.go"],
-+    importpath = "github.com/pingcap/tidb/br/pkg/restore/indexrepair",
-+    visibility = ["//visibility:public"],
-+    deps = [
-+        "//br/pkg/checkpoint",
-+        "//br/pkg/glue",
-+        "//br/pkg/restore/ingestrec",
-+        "//pkg/domain",
-+        "//pkg/meta/model",
-+        "//pkg/objstore/storeapi",
-+        "//pkg/parser/ast",
-+        "//pkg/util",
-+        "//pkg/util/sqlescape",
-+        "@com_github_fatih_color//:color",
-+        "@com_github_pingcap_errors//:errors",
-+        "@com_github_pingcap_failpoint//:failpoint",
-+        "@com_github_pingcap_log//:log",
-+        "@org_golang_x_sync//errgroup",
-+        "@org_uber_go_zap//:zap",
-+    ],
-+)
-+
-+go_test(
-+    name = "indexrepair_test",
-+    timeout = "short",
-+    srcs = ["index_repair_test.go"],
-+    flaky = True,
-+    deps = [
-+        ":indexrepair",
-+        "//br/pkg/checkpoint",
-+        "//br/pkg/gluetidb",
-+        "//br/pkg/restore/ingestrec",
-+        "//br/pkg/utiltest",
-+        "//pkg/kv",
-+        "//pkg/meta/model",
-+        "//pkg/parser/ast",
-+        "//pkg/tablecodec",
-+        "//pkg/testkit",
-+        "//pkg/util/codec",
-+        "@com_github_pingcap_failpoint//:failpoint",
-+        "@com_github_stretchr_testify//require",
-+    ],
-+)
-```
-
-**File**: `br/pkg/restore/indexrepair/index_repair.go` (added, +453/-0)
-```diff
-@@ -0,0 +1,453 @@
-+// Copyright 2026 PingCAP, Inc.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package indexrepair
-+
-+import (
-+	"context"
-+	"fmt"
-+	"strings"
-+
-+	"github.com/fatih/color"
-+	"github.com/pingcap/errors"
-+	"github.com/pingcap/failpoint"
-+	"github.com/pingcap/log"
-+	"github.com/pingcap/tidb/br/pkg/checkpoint"
-+	"github.com/pingcap/tidb/br/pkg/glue"
-+	"github.com/pingcap/tidb/br/pkg/restore/ingestrec"
-+	"github.com/pingcap/tidb/pkg/domain"
-+	"github.com/pingcap/tidb/pkg/meta/model"
-+	"github.com/pingcap/tidb/pkg/objstore/storeapi"
-+	"github.com/pingcap/tidb/pkg/parser/ast"
-+	tidbutil "github.com/pingcap/tidb/pkg/util"
-+	"github.com/pingcap/tidb/pkg/util/sqlescape"
-+	"go.uber.org/zap"
-+	"golang.org/x/sync/errgroup"
-+)
-+
-+// session count for repairing ingest indexes. Currently only one TiDB node executes adding index jobs
-+// at the same time and the add-index job concurrency is about min(10, `TiDB CPUs / 4`).
-+const defaultRepairIndexSessionCount uint = 10
-+
-+func colsToStr(cols []ast.CIStr) string {
-+	var str strings.Builder
-+	for i, col := range cols {
-+		if i != 0 {
-+			str.WriteString(",")
++func (er *expressionRewriter) buildInSubqueryConditions(left expression.Expression, innerCols []*expression.Column, markInOperand bool) ([]expression.Expression, error) {
++	evalCtx := er.sctx.GetEvalCtx()
++	onConds := make([]expression.Expression, len(innerCols))
++	for i, col := range innerCols {
++		lhs := left
++		if len(innerCols) > 1 {
++			lhs = expression.GetFuncArg(left, i)
 +		}
-+		str.WriteString(col.O)
-+	}
-+	return str.String()
-+}
-+
-+const (
-+	alterTableDropIndexSQL         = "ALTER TABLE %n.%n DROP INDEX %n"
-+	alterTableAddIndexFormat       = "ALTER TABLE %%n.%%n ADD INDEX %%n(%s)"
-+	alterTableAddUniqueIndexFormat = "ALTER TABLE %%n.%%n ADD UNIQUE KEY %%n(%s)"
-+	alterTableAddPrimaryFormat     = "ALTER TABLE %%n.%%n ADD PRIMARY KEY (%s) NONCLUSTERED"
-+	alterTableAddForeignKeyFormat  = "ALTER TABLE %%n.%%n ADD CONSTRAINT %%n FOREIGN KEY (%s) REFERENCES %%n.%%n (%s)"
-+	alterTableDropForeignKeyFormat = "ALTER TABLE %n.%n DROP FOREIGN KEY %n"
-+	repairIngestIndexSQLFile       = "add-index.sql"
-+)
-+
-+func generateRepairIngestIndexSQLs(
-+	ctx context.Context,
-+	dom *domain.Domain,
-+	ingestRecorder *ingestrec.IngestRecorder,
-+	checkpointMetaManager checkpoint.IndexRepairMetaManager,
-+) ([]checkpoint.CheckpointIngestIndexRepairSQL, []checkpoint.CheckpointForeignKeyUpdateSQL, bool, error) {
-+	var sqls []checkpoint.CheckpointIngestIndexRepairSQL
-+	var fkSqls []checkpoint.CheckpointForeignKeyUpdateSQL
-+	if checkpointMetaManager != nil {
-+		exists, err := checkpointMetaManager.ExistsCheckpointIngestIndexRepairSQLs(ctx)
++		var rhs expression.Expression = col
++		// When both operands are non-null, an ordinary equality suffices.
++		if markInOperand && (!expression.ExprNotNull(evalCtx, lhs) || !expression.ExprNotNull(evalCtx, col)) {
++			// Mark both sides. If projection elimination replaces the inner column
++			// with a constant, the outer column's mark keeps the EQ NULL-aware.
++			lhs = expression.SetExprColumnInOperand(lhs)
++			rhs = expression.SetExprColumnInOperand(col)
++		}
++		eq, err := er.constructBinaryOpFunction(lhs, rhs, ast.EQ)
 +		if err != nil {
-+			return sqls, fkSqls, false, errors.Trace(err)
++			return nil, err
 +		}
-+		if exists {
-+			checkpointSQLs, err := checkpointMetaManager.LoadCheckpointIngestIndexRepairSQLs(ctx)
-+			if err != nil {
-+				return sqls, fkSqls, false, errors.Trace(err)
-+			}
-+			sqls = checkpointSQLs.SQLs
-+			fkSqls = checkpointSQLs.FKSQLs
-+			log.Info("load ingest index repair sqls from checkpoint",
-+				zap.String("category", "ingest"),
-+				zap.Int("index-sql-count", len(sqls)),
-+				zap.Int("foreign-key-sql-count", len(fkSqls)))
-+			return sqls, fkSqls, true, nil
-+		}
++		onConds[i] = eq
 +	}
-+
-+	if err := ingestRecorder.UpdateIndexInfo(ctx, dom.InfoSchema()); err != nil {
-+		return sqls, fkSqls, false, errors.Trace(err)
-+	}
-+	if err := ingestRecorder.IterateForeignKeys(func(fkRecord *ingestrec.ForeignKeyRecord) error {
-+		var (
-+			addSQL  strings.Builder
-+			addArgs []any = make([]any, 0, 7+len(fkRecord.Cols)+len(fkRecord.RefCols))
-+		)
-+		childCols := colsToStr(fkRecord.Cols)
-+		parentCols := colsToStr(fkRecord.RefCols)
-+		fmt.Fprintf(&addSQL, alterTableAddForeignKeyFormat, childCols, parentCols)
-+		addArgs = append(addArgs,
-+			fkRecord.ChildSchemaNameO, fkRecord.ChildTableNameO, fkRecord.Name.O, fkRecord.RefSchema.O, fkRecord.RefTable.O,
-+		)
-+		if onDelete := ast.ReferOptionType(fkRecord.OnDelete); onDelete != ast.ReferOptionNoOption {
-+			fmt.Fprintf(&addSQL, " ON DELETE %s", onDelete.String())
-+		}
-+		if onUpdate := ast.ReferOptionType(fkRecord.OnUpdate); onUpdate != ast.ReferOptionNoOption {
-+			fmt.Fprintf(&addSQL, " ON UPDATE %s", onUpdate.String())
-+		}
-+		fkSqls = append(fkSqls, checkpoint.CheckpointForeignKeyUpdateSQL{
-+			FKID:       fkRecord.ID,
-+			SchemaName: fkRecord.ChildSchemaNameO,
-+			TableName:  fkRecord.ChildTableNameO,
-+			FKName:     fkRecord.Name.O,
-+			AddSQL:     addSQL.String(),
-+			AddArgs:    addArgs,
-+		})
-+		return nil
-+	}); err != nil {
-+		return sqls, fkSqls, false, errors.Trace(err)
-+	}
-+	if err := ingestRecorder.Iterate(func(_, indexID int64, info *ingestrec.IngestIndexInfo) error {
-+		var (
-+			addSQL  strings.Builder
-+			addArgs []any = make([]any, 0, 5+len(info.ColumnArgs))
-+		)
-+		if info.IsPrimary {
-+			fmt.Fprintf(&addSQL, alterTableAddPrimaryFo
-```
-
-**File**: `br/pkg/restore/indexrepair/index_repair_test.go` (added, +158/-0)
-```diff
-@@ -0,0 +1,158 @@
-+// Copyright 2026 PingCAP, Inc.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package indexrepair_test
-+
-+import (
-+	"context"
-+	"testing"
-+
-+	"github.com/pingcap/failpoint"
-+	"github.com/pingcap/tidb/br/pkg/checkpoint"
-+	"github.com/pingcap/tidb/br/pkg/gluetidb"
-+	"github.com/pingcap/tidb/br/pkg/restore/indexrepair"
-+	"github.com/pingcap/tidb/br/pkg/restore/ingestrec"
-+	"github.com/pingcap/tidb/br/pkg/utiltest"
-+	"github.com/pingcap/tidb/pkg/kv"
-+	"github.com/pingcap/tidb/pkg/meta/model"
-+	"github.com/pingcap/tidb/pkg/parser/ast"
-+	"github.com/pingcap/tidb/pkg/tablecodec"
-+	"github.com/pingcap/tidb/pkg/testkit"
-+	"github.com/pingcap/tidb/pkg/util/codec"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestRepairGlobalIndexes(t *testing.T) {
-+	for _, tc := range []struct {
-+		name       string
-+		definition string
-+	}{
-+		{"integer_handle", "id int primary key clustered, a int, b varchar(30), key local_idx(id), key idx(a) global, unique key uk(a) global"},
-+		{"common_handle", "id int, a int, b varchar(30), primary key(id,b) clustered, key local_idx(id), key idx(a) global, unique key uk(a) global"},
-+		{"hidden_handle", "id int, a int, b varchar(30), key local_idx(id), key idx(a) global, unique key uk(a) global"},
-+		{"global_primary", "id int, a int auto_increment, b varchar(30), primary key(a) nonclustered global, key local_idx(id), key idx(b) global"},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			s := utiltest.CreateRestoreSchemaSuite(t)
-+			tk := testkit.NewTestKit(t, s.Mock.Storage)
-+			if tc.name == "hidden_handle" {
-+				previous := model.GetGlobalIndexV1Supported()
-+				model.SetGlobalIndexV1Supported(true)
-+				t.Cleanup(func() { model.SetGlobalIndexV1Supported(previous) })
-+			}
-+			tk.MustExec("CREATE TABLE test.t (" + tc.definition + ") PARTITION BY RANGE(id) (PARTITION p0 VALUES LESS THAN(10), PARTITION p1 VALUES LESS THAN MAXVALUE)")
-+			tk.MustExec("INSERT INTO test.t VALUES (1,1,'one'),(11,2,'two')")
-+			if tc.name != "global_primary" {
-+				tk.MustExec("INSERT INTO test.t VALUES (2,NULL,'null-one'),(12,NULL,'null-two')")
-+			}
-+			ctx := context.Background()
-+			tbl, err := s.Mock.InfoSchema().TableByName(ctx, ast.NewCIStr("test"), ast.NewCIStr("t"))
-+			require.NoError(t, err)
-+			before := tbl.Meta()
-+			if tc.name == "hidden_handle" {
-+				for _, idx := range before.Indices {
-+					if idx.Global {
-+						require.Equal(t, model.GlobalIndexVersionV1, idx.GlobalIndexVersion)
-+					}
-+				}
-+			}
-+			recorder := ingestrec.New()
-+			recorder.AddGlobalIndexes(before)
-+			// Simulate restored index entries still pointing to source partitions.
-+			require.NoError(t, kv.RunInNewTxn(ctx, s.Mock.Storage, false, func(_ context.Context, txn kv.Transaction) error {
-+				for _, idx := range before.Indices {
-+					if !idx.Global {
-+						continue
-+					}
-+					prefix := tablecodec.EncodeTableIndexPrefix(before.ID, idx.ID)
-+					it, err := txn.Iter(prefix, prefix.PrefixNext())
-+					if err != nil {
-+						return err
-+					}
-+					for it.Valid() {
-+						value := append([]byte(nil), it.Value()...)
-+						segment := tablecodec.SplitIndexValue(value)
-+						require.Len(t, segment.PartitionID, 8)
-+						copy(segment.PartitionID, codec.EncodeInt(nil, 99999999))
-+						key := it.Key().Clone()
-+						if idx.GlobalIndexVersion == model.GlobalIndexVersionV1 && len(segment.IntHandle) == 0 {
-+							// V1 nonunique and NULL unique entries also carry the partition ID in the key.
-+							require.Equal(t, tablecodec.PartitionIDFlag, key[len(key)-18])
-+							if err := txn.Delete(key); err != nil {
-+								it.Close()
-+								return err
-+							}
-+							copy(key[len(key)-17:len(key)-9], codec.EncodeInt(nil, 99999999))
-+						}
-+						if err := txn.Set(key, value); err != nil {
-+							it.Close()
-+							return err
-+						}
-+						if err := it.Next(); err != nil {
-+							it.Close()
-+							return err
-+						}
-+					}
-+					it.Close()
-+				}
-+				return nil
-+			}))
-+			tk.MustExec("SET tidb_enable_fast_table_check=0")
-+			require.Error(t, tk.ExecToErr("ADMIN CHECK TABLE test.t"))
-+			g := gluetidb.New()
-+			meta, err := checkpoint.NewSnapshotTableMetaManager(g, s.Mock.Domain, checkpoint.SnapshotRestoreCheckpointDatabaseName, 71052)
-+			require.NoError(t, err)
-+			defer meta.Close()
-+			require.NoError(t, meta.SaveCheckpointMetadata(ctx, nil))
-+			const failBeforeCreate = "github.com/pingcap/tidb/br/pkg/restore/indexrepair/failed-before-create-ingest-index"
-+			require.NoError(
-```
-
-**File**: `br/pkg/restore/ingestrec/ingest_recorder.go` (modified, +17/-0)
-```diff
-@@ -56,6 +56,23 @@ func New() *IngestRecorder {
- 	}
- }
- 
-+// AddGlobalIndexes records global indexes whose partition IDs need to be rebuilt
-+// after restoring the table's records. Local indexes are imported unchanged.
-+func (i *IngestRecorder) AddGlobalIndexes(table *model.TableInfo) {
-+	if table == nil || table.Partition == nil {
-+		return
-+	}
-+	for _, index := range table.Indices {
-+		if !index.Global || index.State != model.StatePublic {
-+			continue
-+		}
-+		if i.items[table.ID] == nil {
-+			i.items[table.ID] = make(map[int64]*IngestIndexInfo)
-+		}
-+		i.items[table.ID][index.ID] = &IngestIndexInfo{IsPrimary: index.Primary}
-+	}
++	return onConds, nil
 +}
 +
- func notIngestJob(job *model.Job) bool {
- 	return job.ReorgMeta == nil ||
- 		job.ReorgMeta.ReorgTp != model.ReorgTypeIngest
-```
-
-**File**: `br/pkg/restore/log_client/BUILD.bazel` (modified, +1/-2)
-```diff
-@@ -31,6 +31,7 @@ go_library(
-         "//br/pkg/metautil",
-         "//br/pkg/operation",
-         "//br/pkg/restore",
-+        "//br/pkg/restore/indexrepair",
-         "//br/pkg/restore/ingestrec",
-         "//br/pkg/restore/internal/import_client",
-         "//br/pkg/restore/internal/rawkv",
-@@ -61,10 +62,8 @@ go_library(
-         "//pkg/util",
-         "//pkg/util/codec",
-         "//pkg/util/redact",
--        "//pkg/util/sqlescape",
-         "//pkg/util/sqlexec",
-         "@com_github_docker_go_units//:go-units",
--        "@com_github_fatih_color//:color",
-         "@com_github_gogo_protobuf//proto",
-         "@com_github_opentracing_opentracing_go//:opentracing-go",
-         "@com_github_pingcap_errors//:errors",
-```
-
-**File**: `br/pkg/restore/log_client/client.go` (modified, +6/-389)
-```diff
-@@ -18,7 +18,6 @@ import (
- 	"cmp"
- 	"context"
- 	"crypto/tls"
--	"fmt"
- 	"math"
- 	"slices"
- 	"strconv"
-@@ -28,7 +27,6 @@ import (
- 	"time"
- 
- 	"github.com/docker/go-units"
--	"github.com/fatih/color"
- 	"github.com/opentracing/opentracing-go"
- 	"github.com/pingcap/errors"
- 	"github.com/pingcap/failpoint"
-@@ -48,6 +46,7 @@ import (
- 	"github.com/pingcap/tidb/br/pkg/metautil"
- 	"github.com/pingcap/tidb/br/pkg/operation"
- 	"github.com/pingcap/tidb/br/pkg/restore"
-+	"github.com/pingcap/tidb/br/pkg/restore/indexrepair"
- 	"github.com/pingcap/tidb/br/pkg/restore/ingestrec"
- 	importclient "github.com/pingcap/tidb/br/pkg/restore/internal/import_client"
- 	"github.com/pingcap/tidb/br/pkg/restore/internal/rawkv"
-@@ -74,7 +73,6 @@ import (
- 	"github.com/pingcap/tidb/pkg/objstore/storeapi"
- 	"github.com/pingcap/tidb/pkg/parser/ast"
- 	tidbutil "github.com/pingcap/tidb/pkg/util"
--	"github.com/pingcap/tidb/pkg/util/sqlescape"
- 	"github.com/tikv/client-go/v2/config"
- 	"github.com/tikv/client-go/v2/tikv"
- 	kvutil "github.com/tikv/client-go/v2/util"
-@@ -94,10 +92,6 @@ const defaultTiKVMaxReplicas uint = 3
- // rawKVBatchCount specifies the count of entries that the rawkv client puts into TiKV.
- const rawKVBatchCount = 64
- 
--// session count for repairing ingest indexes. Currently only one TiDB node executes adding index jobs
--// at the same time and the add-index job concurrency is about min(10, `TiDB CPUs / 4`).
--const defaultRepairIndexSessionCount uint = 10
--
- // LogRestoreManager is a comprehensive wrapper that encapsulates all logic related to log restoration,
- // including concurrency management, checkpoint handling, and file importing for efficient log processing.
- type LogRestoreManager struct {
-@@ -1956,395 +1950,18 @@ func (rc *LogClient) ResetTiflashReplicas(ctx context.Context, sqls []string, g
- 	return eg.Wait()
- }
- 
--func colsToStr(cols []ast.CIStr) string {
--	var str strings.Builder
--	for i, col := range cols {
--		if i != 0 {
--			str.WriteString(",")
--		}
--		str.WriteString(col.O)
--	}
--	return str.String()
--}
--
--const (
--	alterTableDropIndexSQL         = "ALTER TABLE %n.%n DROP INDEX %n"
--	alterTableAddIndexFormat       = "ALTER TABLE %%n.%%n ADD INDEX %%n(%s)"
--	alterTableAddUniqueIndexFormat = "ALTER TABLE %%n.%%n ADD UNIQUE KEY %%n(%s)"
--	alterTableAddPrimaryFormat     = "ALTER TABLE %%n.%%n ADD PRIMARY KEY (%s) NONCLUSTERED"
--	alterTableAddForeignKeyFormat  = "ALTER TABLE %%n.%%n ADD CONSTRAINT %%n FOREIGN KEY (%s) REFERENCES %%n.%%n (%s)"
--	alterTableDropForeignKeyFormat = "ALTER TABLE %n.%n DROP FOREIGN KEY %n"
--	repairIngestIndexSQLFile       = "add-index.sql"
--)
--
--func (rc *LogClient) generateRepairIngestIndexSQLs(
--	ctx context.Context,
--	ingestRecorder *ingestrec.IngestRecorder,
--	logCheckpointMetaManager checkpoint.LogMetaManagerT,
--) ([]checkpoint.CheckpointIngestIndexRepairSQL, []checkpoint.CheckpointForeignKeyUpdateSQL, bool, error) {
--	var sqls []checkpoint.CheckpointIngestIndexRepairSQL
--	var fkSqls []checkpoint.CheckpointForeignKeyUpdateSQL
--	if rc.useCheckpoint {
--		exists, err := logCheckpointMetaManager.ExistsCheckpointIngestIndexRepairSQLs(ctx)
--		if err != nil {
--			return sqls, fkSqls, false, errors.Trace(err)
--		}
--		if exists {
--			checkpointSQLs, err := logCheckpointMetaManager.LoadCheckpointIngestIndexRepairSQLs(ctx)
--			if err != nil {
--				return sqls, fkSqls, false, errors.Trace(err)
+ func (er *expressionRewriter) handleInSubquery(ctx context.Context, planCtx *exprRewriterPlanCtx, v *ast.PatternInExpr) bool {
+ 	intest.AssertNotNil(planCtx)
+ 	ci := planCtx.builder.prepareCTECheckForSubQuery()
+@@ -1321,61 +1346,24 @@ func (er *expressionRewriter) handleInSubquery(ctx context.Context, planCtx *exp
+ 		er.err = expression.ErrOperandColumns.GenWithStackByArgs(lLen)
+ 		return true
+ 	}
+-	var rexpr expression.Expression
++	// AntiSemiJoin, LeftOuterSemiJoin and AntiLeftOuterSemiJoin need to
++	// distinguish UNKNOWN from FALSE when comparing nullable IN operands.
+ 	markInOperand := v.Not || (asScalar && !er.canTreatInSubqueryAsExistsForFilter(planCtx))
+-	if np.Schema().Len() == 1 {
+-		rexpr = np.Schema().Columns[0]
+-		rCol := rexpr.(*expression.Column)
+-		// For AntiSemiJoin/LeftOuterSemiJoin/AntiLeftOuterSemiJoin, we cannot treat `in` expression as
+-		// normal column equal condition, so we specially mark the inner operand here.
+-		if markInOperand {
+-			// If both input columns of `in` expression are not null, we can treat the expression
+-			// as normal column equal condition instead. Otherwise, mark the left and right side.
+-			// eg: for some optimization, the column substitute in right side in projection elimination
+-			// will cause case  like <lcol EQ rcol(inOperand)> as <lcol EQ constant> which is not
+-			// a valid null-aware EQ. (null in lcol still need to be null-aware)
+-			if !expression.ExprNotNull(er.sctx.GetEvalCtx(), lexpr) || !expression.ExprNotNull(er.sctx.GetEvalCtx(), rCol) {
+-				rColCopy := *rCol
+-				rColCopy.InOperand = true
+-				rexpr = &rColCopy
+-				lexpr = expression.SetExprColumnInOperand(lexpr)
 -			}
--			sqls = checkpointSQLs.SQLs
--			fkSqls = checkpointSQLs.FKSQLs
--			log.Info("load ingest index repair sqls from checkpoint",
--				zap.String("category", "ingest"),
--				zap.Int("index-sql-count", len(sqls)),
--				zap.Int("foreign-key-sql-count", len(fkSqls)))
--			return sqls, fkSqls, true, nil
+-		}
+-	} else {
+-		args := make([]expression.Expression, 0, np.Schema().Len())
+-		for i, col := range np.Schema().Columns {
+-			if markInOperand {
+-				larg := expression.GetFuncArg(lexpr, i)
+-				// If both input columns of `in` expression are not null, we can treat the expression
+-				// as normal column equal condition instead. Otherwise, mark the left and right side.
+-				if !expression.ExprNotNull(er.sctx.GetEvalCtx(), larg) || !expression.ExprNotNull(er.sctx.GetEvalCtx(), col) {
+-					rarg := *col
+-					rarg.InOperand = true
+-					col = &rarg
+-					if larg != nil {
+-						lexpr.(*expression.ScalarFunction).GetArgs()[i] = expression.SetExprColumnInOperand(larg)
+-					}
+-				}
+-			}
+-			args = append(args, col)
+-		}
+-		rexpr, er.err = er.newFunction(ast.RowFunc, args[0].GetType(er.sctx.GetEvalCtx()), args...)
+-		if er.err != nil {
+-			return true
 -		}
 -	}
--
--	if err := ingestRecorder.UpdateIndexInfo(ctx, rc.dom.InfoSchema()); err != nil {
--		return sqls, fkSqls, false, errors.Trace(err)
--	}
--	if err := ingestRecorder.IterateForeignKeys(func(fkRecord *ingestrec.ForeignKeyRecord) error {
--		var (
--			addSQL  strings.Builder
--			addArgs []any = make([]any, 0, 7+len(fkRecord.Cols)+len(fkRecord.RefCols))
--		)
--		childCols := colsToStr(fkRecord.Cols)
--		parentCols := colsToStr(fkRecord.RefCols)
--		fmt.Fprintf(&addSQL, alterTableAddForeignKeyFormat, childCols, parentCols)
--		addArgs = append(addArgs,
--			fkRecord.ChildSchemaNameO, fkRecord.ChildTableNameO, fkRecord.Name.O, fkRecord.RefSchema.O, fkRecord.RefTable.O,
--		)
--		if onDelete := ast.ReferOptionType(fkRecord.OnDelete); onDelete != ast.ReferOptionNoOption {
--			fmt.Fprintf(&addSQL, " ON DELETE %s", onDelete.String())
--		}
--		if onUpdate := ast.ReferOptionType(fkRecord.OnUpdate); onUpdate != ast.ReferOptionNoOption {
--			fmt.Fprintf(&addSQL, " ON UPDATE %s", onUpdate.String())
--		}
--		fkSqls = append(fkSqls, checkpoint.CheckpointForeignKeyUpdateSQL{
--			FKID:       fkRecord.ID,
--			SchemaName: fkRecord.ChildSchemaNameO,
--			TableName:  fkRecord.ChildTableNameO,
--			FKName:     fkRecord.Name.O,
--			AddSQL:     addSQL.String(),
--			AddArgs:    addArgs,
--		})
--		return nil
--	}); err != nil {
--		return sq
-```
-
-**File**: `br/pkg/restore/log_client/client_test.go` (modified, +9/-9)
-```diff
-@@ -3503,9 +3503,9 @@ func TestRepairIngestIndexWithForeignKey(t *testing.T) {
- 		childTableIndexI1 := childTableInfo.Indices[0]
- 		parentTableIndexI2 := parentTableInfo.Indices[0]
+-	checkCondition, err := er.constructBinaryOpFunction(lexpr, rexpr, ast.EQ)
++	onConds, err := er.buildInSubqueryConditions(lexpr, np.Schema().Columns, markInOperand)
+ 	if err != nil {
+ 		er.err = err
+ 		return true
+ 	}
  
--		require.NoError(t, failpoint.Enable("github.com/pingcap/tidb/br/pkg/restore/log_client/failed-before-repair-ingest-index", `return(true)`))
-+		require.NoError(t, failpoint.Enable("github.com/pingcap/tidb/br/pkg/restore/indexrepair/failed-before-repair-ingest-index", `return(true)`))
- 		defer func() {
--			require.NoError(t, failpoint.Disable("github.com/pingcap/tidb/br/pkg/restore/log_client/failed-before-repair-ingest-index"))
-+			require.NoError(t, failpoint.Disable("github.com/pingcap/tidb/br/pkg/restore/indexrepair/failed-before-repair-ingest-index"))
- 		}()
- 		ingestRecorder := ingestrec.New()
- 		require.NoError(t, ingestRecorder.TryAddJob(fakeJob(
-@@ -3517,19 +3517,19 @@ func TestRepairIngestIndexWithForeignKey(t *testing.T) {
- 			json.RawMessage(fmt.Sprintf("[%d, false, [], false]", parentTableIndexI2.ID)),
- 		), false))
- 		require.Error(t, client.RepairIngestIndex(ctx, ingestRecorder, logStorageMetaManager, g, nil))
--		require.NoError(t, failpoint.Disable("github.com/pingcap/tidb/br/pkg/restore/log_client/failed-before-repair-ingest-index"))
--		require.NoError(t, failpoint.Enable("github.com/pingcap/tidb/br/pkg/restore/log_client/failed-before-create-ingest-index", `return(true)`))
-+		require.NoError(t, failpoint.Disable("github.com/pingcap/tidb/br/pkg/restore/indexrepair/failed-before-repair-ingest-index"))
-+		require.NoError(t, failpoint.Enable("github.com/pingcap/tidb/br/pkg/restore/indexrepair/failed-before-create-ingest-index", `return(true)`))
- 		defer func() {
--			failpoint.Disable("github.com/pingcap/tidb/br/pkg/restore/log_client/failed-before-create-ingest-index")
-+			failpoint.Disable("github.com/pingcap/tidb/br/pkg/restore/indexrepair/failed-before-create-ingest-index")
- 		}()
- 		require.Error(t, client.RepairIngestIndex(ctx, ingestRecorder, logStorageMetaManager, g, nil))
--		require.NoError(t, failpoint.Disable("github.com/pingcap/tidb/br/pkg/restore/log_client/failed-before-create-ingest-index"))
--		require.NoError(t, failpoint.Enable("github.com/pingcap/tidb/br/pkg/restore/log_client/failed-after-repair-ingest-index", `return(true)`))
-+		require.NoError(t, failpoint.Disable("github.com/pingcap/tidb/br/pkg/restore/indexrepair/failed-before-create-ingest-index"))
-+		require.NoError(t, failpoint.Enable("github.com/pingcap/tidb/br/pkg/restore/indexrepair/failed-after-repair-ingest-index", `return(true)`))
- 		defer func() {
--			failpoint.Disable("github.com/pingcap/tidb/br/pkg/restore/log_client/failed-after-repair-ingest-index")
-+			failpoint.Disable("github.com/pingcap/tidb/br/pkg/restore/indexrepair/failed-after-repair-ingest-index")
- 		}()
- 		require.Error(t, client.RepairIngestIndex(ctx, ingestRecorder, logStorageMetaManager, g, nil))
--		require.NoError(t, failpoint.Disable("github.com/pingcap/tidb/br/pkg/restore/log_client/failed-after-repair-ingest-index"))
-+		require.NoError(t, failpoint.Disable("github.com/pingcap/tidb/br/pkg/restore/indexrepair/failed-after-repair-ingest-index"))
- 		require.NoError(t, client.RepairIngestIndex(ctx, ingestRecorder, logStorageMetaManager, g, nil))
- 
- 		infoSchema = s.Mock.InfoSchema()
+-	// If the leftKey and the rightKey have different collations, don't convert the sub-query to an inner-join
+-	// since when converting we will add a distinct-agg upon the right child and this distinct-agg doesn't have the right collation.
+-	// To keep it simple, we forbid this converting if they have different collations.
+-	// tested by TestCollateSubQuery.
+-	lt, rt := lexpr.GetType(er.sctx.GetEvalCtx()), rexpr.GetType(er.sctx.GetEvalCtx())
+-	collFlag := collate.CompatibleCollate(lt.GetCollate(), rt.GetCollate())
++	// The inner join rewrite adds a DISTINCT that groups by the inner key's
++	// collation. If that groups values differently from the join comparison,
++	// the rewrite can change the result. See TestCollateSubQuery.
++	rhsCollation := np.Schema().Columns[0].GetType(er.sctx.GetEvalCtx()).GetCollate()
++	if lLen > 1 {
++		// Preserve the row-level check: the former RHS ROW used the connection collation.
++		_, rhsCollation = er.sctx.GetCharsetInfo()
++	}
++	collFlag := collate.CompatibleCollate(lexpr.GetType(er.sctx.GetEvalCtx()).GetCollate(), rhsCollation)
+ 	corCols := coreusage.ExtractCorColumnsBySchema4LogicalPlan(np, planCtx.plan.Schema())
+ 	noDecorrelate := is
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #73456** (closed): statistics: keep same-upper groups together at global histogram cuts (#73121) (@ti-chi-bot)
-- **PR #73449** (2026-11-19): br: fix metadata length panic (#73432) (@ti-chi-bot)
-- **PR #73441** (closed): deps: update client-go to retry initial etcd endpoint sync on release-8.5 (@ekexium)
-- **PR #73438** (closed): planner: rebuild cached materialized CTE definition ranges (@joechenrh)
-- **PR #73432** (2026-11-19): br: fix metadata length panic (@Leavrth)
-- **PR #73413** (2026-11-19): ddl: use task node count for global-sort ingest planning (#73382) (@ti-chi-bot)
+- **PR #73543** (closed): br: fix PITR index repair for foreign keys with quoted column names (@zhengdaodeguL)
+- **PR #73535** (closed): planner: don't discount blocking ordered IndexMerge candidates with LIMIT (@zhengdaodeguL)
+- **PR #73533** (closed): planner: account for range request and merge overhead in keep-order IndexReader cost (@zhengdaodeguL)
+- **PR #73531** (closed): planner: keep outer equality on inner access path for nested EXISTS decorrelation (@zhengdaodeguL)
+- **PR #73530** (closed): dumpling: fix success summary overcount when S3 close fails (@zhengdaodeguL)
+- **PR #73521** (2026-11-20): executor: validate EXCHANGE PARTITION after generated column and auto_increment evaluation (@wjhuang2016)
 
 ---
 
@@ -2897,28 +2305,28 @@ close pingcap/tidb#71052
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. br: fix metadata length panic
+## X. expression: fix wrong result of INTERVAL when Clone drops hasNullable
 
 **RULE**:
-When implementing operations in `br/pkg/metautil/BUILD.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/expression/builtin_compare.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9c2f8754`: br: fix metadata length panic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fac45566`: expression: fix wrong result of INTERVAL when Clone drops hasNullable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `br/pkg/metautil/BUILD.bazel`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/expression/builtin_compare.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    shard_count = 19,
+	newSig.hasNullable = b.hasNullable
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    shard_count = 18,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9c2f8754` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fac45566` are properly handled with clean fallback behavior.

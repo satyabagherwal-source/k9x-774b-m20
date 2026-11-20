@@ -11574,3 +11574,6 @@
 | `CYCLE-20261120-IG60` | `2026-11-20T16:13:57.720Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9597` | Yes (`a4828534...`) |
 | `CYCLE-20261120-IHUZ` | `2026-11-20T16:13:59.915Z` | `AngelSlim/Hy4-flash-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-angelslim-hy4-flash-gguf-learnings.md` | Yes (`9605a5b4...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T16:14:33.248Z` | `hf-angelslim-hy4-flash-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-981F2664` [Domain D] | Yes (`cdae2e8b...`) |
+| `CYCLE-20261120-1278` | `2026-11-20T16:28:26.084Z` | `lxml/lxml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lxml-lxml-learnings.md` | Yes (`a8f6f1c2...`) |
+| `CYCLE-20261120-17J6` | `2026-11-20T16:28:32.994Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9598` | Yes (`53c70c0b...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T16:29:07.431Z` | `lxml-lxml` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E91F893C` [Domain D] | Yes (`a65a5e89...`) |

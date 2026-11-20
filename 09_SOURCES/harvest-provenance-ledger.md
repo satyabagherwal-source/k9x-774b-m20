@@ -11607,3 +11607,6 @@ Every entry in this ledger must capture:
 | `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `aa9fb54b` | Multi-dimensional audit evidence | 2026-11-20T16:13:57.724Z |
 | `learn-huggingface-angelslim-hy4-flash-gguf` | `https://huggingface.co/AngelSlim/Hy4-flash-GGUF` | `hf-angelsl` | Multi-dimensional audit evidence | 2026-11-20T16:13:59.919Z |
 | `learn-dom-d-981f2664` | `project://hf-angelslim-hy4-flash-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-angelslim-hy4-flash-gguf-learnings.md` | 2026-11-20T16:14:33.248Z |
+| `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `7732bdb3` | Multi-dimensional audit evidence | 2026-11-20T16:28:26.088Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `d3a10d86` | Multi-dimensional audit evidence | 2026-11-20T16:28:32.999Z |
+| `learn-dom-d-e91f893c` | `project://lxml-lxml` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md` | 2026-11-20T16:29:07.431Z |

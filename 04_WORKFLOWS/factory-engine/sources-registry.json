@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T15:15:20.779Z",
-    "lastVerified": "2026-11-20T15:15:20.779Z",
+    "lastChecked": "2026-11-20T16:23:34.042Z",
+    "lastVerified": "2026-11-20T16:23:34.042Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T16:14:02.819Z",
-    "lastVerified": "2026-11-20T16:14:02.819Z",
+    "lastChecked": "2026-11-20T16:28:36.163Z",
+    "lastVerified": "2026-11-20T16:28:36.163Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,9 +246,9 @@
   "pathwaycom-llm-app": {
     "name": "llm-app",
     "officialUrl": "https://github.com/pathwaycom/llm-app",
-    "lastChecked": "2026-11-19T10:15:46.363Z",
+    "lastChecked": "2026-11-20T16:23:31.537Z",
     "revisionIdentifier": "53c6382b",
-    "lastVerified": "2026-11-19T10:15:46.363Z"
+    "lastVerified": "2026-11-20T16:23:31.537Z"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -789,9 +789,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-20T06:58:33.773Z",
+    "lastChecked": "2026-11-20T16:23:29.019Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-20T06:58:33.773Z"
+    "lastVerified": "2026-11-20T16:23:29.019Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -1269,14 +1269,14 @@
     "officialUrl": "https://github.com/pingcap/tidb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T13:21:54.589Z",
-    "lastVerified": "2026-11-19T13:21:54.589Z",
+    "lastChecked": "2026-11-20T16:23:31.074Z",
+    "lastVerified": "2026-11-20T16:23:31.074Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "8b203522e4218e916b67ad71c1feb67d89d8bd6b985ca57ab41c4f5e00512937",
+    "contentHash": "53c70c0ba3fdc15527d0ee57ebc3536f83ddb4e0b34863e3c3247dbab79920c8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5239,9 +5239,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-11-18T23:34:37.469Z",
+    "lastChecked": "2026-11-20T16:23:19.023Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-11-18T23:34:37.469Z"
+    "lastVerified": "2026-11-20T16:23:19.023Z"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
     "name": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -10262,5 +10262,29 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lxml-lxml": {
+    "name": "lxml/lxml",
+    "officialUrl": "https://github.com/lxml/lxml",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-20T16:23:25.120Z",
+    "lastVerified": "2026-11-20T16:23:25.120Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-lxml-lxml",
+    "contentHash": "a8f6f1c2e26aa8e367954fe09fe6f53cf9ed67225cd61abeccfbe0cdf9e095c8",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kruszoneq-macusb": {
+    "name": "macUSB",
+    "officialUrl": "https://github.com/Kruszoneq/macUSB",
+    "lastChecked": "2026-11-20T16:23:24.043Z",
+    "revisionIdentifier": "777ed534",
+    "lastVerified": "2026-11-20T16:23:24.043Z"
   }
 }

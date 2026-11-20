@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T18:19:02.406Z",
+  "timestamp": "2026-11-20T16:29:07.940Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-lxml-lxml-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [lxml-lxml-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T18:19:02.406Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T16:29:07.940Z`  
 > **Learning ID**: `LEARN-EVO-lxml-lxml-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 50%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from lxml-lxml-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lxml-lxml-learnings.md`  
 > **Source**: github ([https://github.com/lxml/lxml](https://github.com/lxml/lxml))  
-> **Source Version**: `74e94856`  
+> **Source Version**: `7732bdb3`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T18:18:48.920Z  
+> **Timestamp**: 2026-11-20T16:28:25.579Z  
 > **Learning ID**: `learn-github-lxml-lxml`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lxml-lxml-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lxml/lxml](https://github.com/lxml/lxml))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:18:48.740Z  
+> **Harvest Timestamp**: 2026-11-20T16:23:25.120Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The lxml XML toolkit for Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 3075 stars
+- **Stars / Engagement**: 3076 stars
 
 ---
 
@@ -2164,75 +2164,19 @@ def publish(dirname, lxml_path, release):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2bc2b79e` (2026-11-13)
-**Commit Message**: Build: bump softprops/action-gh-release (GH-547)
+### Incident Patch 1: `7732bdb3` (2026-11-18)
+**Commit Message**: Narrow secret access for the wheel cache workflow (GH-560)
 
-Bumps the github-actions group with 1 update: [softprops/action-gh-release](https://github.com/softprops/action-gh-release).
-
-
-Updates `softprops/action-gh-release` from 3.0.3 to 3.0.4
-- [Release notes](https://github.com/softprops/action-gh-release/releases)
-- [Changelog](https://github.com/softprops/action-gh-release/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/softprops/action-gh-release/compare/efb35369e0ad2afab669f228072c1b0d510eae64...8a0cd651e5b2365bd640854a3fa5dfc70e4875f3)
-
----
-updated-dependencies:
-- dependency-name: softprops/action-gh-release
-  dependency-version: 3.0.4
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: github-actions
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/wheels.yml` (modified, +1/-1)
+**File**: `.github/workflows/wheels.yml` (modified, +0/-1)
 ```diff
-@@ -328,7 +328,7 @@ jobs:
-           exit ${RESULT_CODE}
+@@ -44,7 +44,6 @@ permissions: {}
+ jobs:
+   cache_libs:
+     uses: ./.github/workflows/cache_libs.yml
+-    secrets: inherit
  
-       - name: Release
--        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
-+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
-         if: github.ref_type == 'tag'
-         with:
-           files: |
-```
-
----
-
-### Incident Patch 2: `dbd4a7aa` (2026-11-13)
-**Commit Message**: Build: Exclude PyPy 3.9/3.10.
-
-**File**: `pyproject.toml` (modified, +2/-0)
-```diff
-@@ -12,6 +12,8 @@ enable = [
- skip = [
-     "cp38-*",
-     "pp38-*",
-+    "pp39-*",
-+    "pp310-*",
-     "pp*-manylinux_i686",
-     "*-musllinux_i686",
-     "cp315*_i686",
-```
-
----
-
-### Incident Patch 3: `56f31cec` (2026-11-13)
-**Commit Message**: Tests: Remove left-over debug statement.
-
-**File**: `src/lxml/tests/test_etree.py` (modified, +0/-1)
-```diff
-@@ -235,7 +235,6 @@ def test_qname_bytearray(self):
-         self.assertEqual(etree.QName(name), etree.QName("a"))
- 
-         el = etree.Element(name)
--        print(el, repr(el))
-         self.assertEqual(etree.QName(el), etree.QName("a"))
- 
-         el.tag = name  # force tag to bytearray
+   sdist:
+     runs-on: ubuntu-24.04
 ```
 
 #### Recent Merged Pull Requests:
@@ -2255,37 +2199,6 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Build: bump softprops/action-gh-release (GH-547)
-
-**RULE**:
-When implementing operations in `.github/workflows/wheels.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lxml/lxml. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `2bc2b79e`: Build: bump softprops/action-gh-release (GH-547). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/wheels.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-// Verified production-grade fix pattern:
-        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-// Induced defect failure mode:
-        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2bc2b79e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

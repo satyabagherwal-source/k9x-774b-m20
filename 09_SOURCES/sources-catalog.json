@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "e35413c6",
+    "sourceVersion": "d3a10d86",
     "license": "Apache-2.0",
-    "contentHash": "8b203522e4218e916b67ad71c1feb67d89d8bd6b985ca57ab41c4f5e00512937",
-    "lastHarvestedAt": "2026-11-19T13:21:55.641Z",
+    "contentHash": "53c70c0ba3fdc15527d0ee57ebc3536f83ddb4e0b34863e3c3247dbab79920c8",
+    "lastHarvestedAt": "2026-11-20T16:28:32.999Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
@@ -9313,10 +9313,10 @@
     "repository": "lxml/lxml",
     "platform": "github",
     "sourceUrl": "https://github.com/lxml/lxml",
-    "sourceVersion": "74e94856",
+    "sourceVersion": "7732bdb3",
     "license": "BSD-3-Clause",
-    "contentHash": "de49ec6fc0b76239af7d6bc461c60ffd62716947977bc8a34ce3ec031055d4ff",
-    "lastHarvestedAt": "2026-11-16T18:18:50.015Z",
+    "contentHash": "a8f6f1c2e26aa8e367954fe09fe6f53cf9ed67225cd61abeccfbe0cdf9e095c8",
+    "lastHarvestedAt": "2026-11-20T16:28:26.088Z",
     "learningId": "learn-github-lxml-lxml"
   },
   "mazzzystar-queryable": {
