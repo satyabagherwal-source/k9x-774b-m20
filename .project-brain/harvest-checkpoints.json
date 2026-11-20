@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T00:06:43.706Z",
+  "last_updated": "2026-11-20T00:14:38.232Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -12321,14 +12321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nsh07-tomato",
-      "content_hash": "31202766d1bf3fe11d5f8aac8011f8f7ed3da43a3b010c3358a5031ee3928fef",
-      "verified_at": "2026-11-15T20:22:43.985Z",
+      "content_hash": "5aa9e0597813a940ecda5d2a8b81fccdae0dbc9be79b865754b4caea2dc3e6b7",
+      "verified_at": "2026-11-20T00:14:38.231Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T20:22:43.985Z"
+      "last_updated": "2026-11-20T00:14:38.231Z"
     },
     "modelcontextprotocol/kotlin-sdk": {
       "repository": "modelcontextprotocol/kotlin-sdk",

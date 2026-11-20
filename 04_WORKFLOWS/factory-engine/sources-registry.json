@@ -19,9 +19,9 @@
   "gravitl-netmaker": {
     "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-11-19T17:06:48.518Z",
+    "lastChecked": "2026-11-20T00:14:37.338Z",
     "revisionIdentifier": "098d26a7",
-    "lastVerified": "2026-11-19T17:06:48.518Z"
+    "lastVerified": "2026-11-20T00:14:37.338Z"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T00:06:47.038Z",
-    "lastVerified": "2026-11-20T00:06:47.038Z",
+    "lastChecked": "2026-11-20T00:14:42.481Z",
+    "lastVerified": "2026-11-20T00:14:42.481Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-19T23:34:47.436Z",
+    "lastChecked": "2026-11-20T00:14:42.472Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-19T23:34:47.436Z"
+    "lastVerified": "2026-11-20T00:14:42.472Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1672,9 +1672,9 @@
   "cachix-devenv": {
     "name": "devenv",
     "officialUrl": "https://github.com/cachix/devenv",
-    "lastChecked": "2026-11-18T12:58:17.232Z",
+    "lastChecked": "2026-11-20T00:14:27.315Z",
     "revisionIdentifier": "8efcb88c",
-    "lastVerified": "2026-11-18T12:58:17.232Z"
+    "lastVerified": "2026-11-20T00:14:27.315Z"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
     "name": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -3687,9 +3687,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-11-18T17:51:15.249Z",
+    "lastChecked": "2026-11-20T00:14:39.976Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-11-18T17:51:15.249Z"
+    "lastVerified": "2026-11-20T00:14:39.976Z"
   },
   "pemistahl-grex": {
     "name": "grex",
@@ -4010,9 +4010,9 @@
   "go-eagle-eagle": {
     "name": "eagle",
     "officialUrl": "https://github.com/go-eagle/eagle",
-    "lastChecked": "2026-11-18T19:34:18.310Z",
+    "lastChecked": "2026-11-20T00:14:34.909Z",
     "revisionIdentifier": "b1301b09",
-    "lastVerified": "2026-11-18T19:34:18.310Z"
+    "lastVerified": "2026-11-20T00:14:34.909Z"
   },
   "materializeinc-materialize": {
     "name": "MaterializeInc/materialize",
@@ -8789,6 +8789,30 @@
     "contentHash": "d4a82bbb7641636a59756160cc28e42bb4142daf4076318e261f5574362e07b4",
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "turbopress-x-seo-auditing-software": {
+    "name": "seo-auditing-software",
+    "officialUrl": "https://github.com/TurboPress-X/seo-auditing-software",
+    "lastChecked": "2026-11-20T00:14:29.717Z",
+    "revisionIdentifier": "68d4a606db",
+    "lastVerified": "2026-11-20T00:14:29.717Z"
+  },
+  "nsh07-tomato": {
+    "name": "nsh07/Tomato",
+    "officialUrl": "https://github.com/nsh07/Tomato",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-20T00:14:36.963Z",
+    "lastVerified": "2026-11-20T00:14:36.963Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nsh07-tomato",
+    "contentHash": "5aa9e0597813a940ecda5d2a8b81fccdae0dbc9be79b865754b4caea2dc3e6b7",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

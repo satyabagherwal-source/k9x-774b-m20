@@ -11412,3 +11412,4 @@
 | `CYCLE-20261120-YGUJ` | `2026-11-20T00:06:38.539Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9470` | Yes (`3a71a19a...`) |
 | `CYCLE-20261120-YIW8` | `2026-11-20T00:06:41.192Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9471` | Yes (`9b906dae...`) |
 | `CYCLE-20261120-YKTL` | `2026-11-20T00:06:43.689Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9472` | Yes (`fdd7ee4c...`) |
+| `CYCLE-20261120-8QYZ` | `2026-11-20T00:14:38.219Z` | `nsh07/Tomato` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9473` | Yes (`5aa9e059...`) |

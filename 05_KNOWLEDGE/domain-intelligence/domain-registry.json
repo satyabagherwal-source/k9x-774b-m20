@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T00:06:49.911Z",
+  "last_updated": "2026-11-20T00:14:45.036Z",
   "total_records": 2043,
   "domains": {
     "A": {
@@ -14834,8 +14834,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "6dd3ebd6d10842dd4d0267e9093f426a25e6cd8c2c524b18940303c373e80202",
-      "created_at": "2026-11-18T22:30:42.115Z"
+      "content_hash": "3a3eacb57c5fc912eec4ade8469d24361a98d70608009264f810c0ed49948b50",
+      "created_at": "2026-11-20T00:14:45.036Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -17693,8 +17693,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "639072aa9b1447f95dfbc623f21a7ea5d7def5ed441154643b4285d5c7b53b07",
-      "created_at": "2026-11-18T15:14:27.638Z"
+      "content_hash": "732e60e8867f97ba13ed9953db646600f68caa9a20ca9da0d4511dc337a6e66f",
+      "created_at": "2026-11-20T00:14:44.365Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -22006,8 +22006,8 @@
       "title": "Architecture Intelligence: nsh07/Tomato Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nsh07-tomato-architecture-intelligence-nsh07-tomato-core-invariants.md",
       "repository": "nsh07/Tomato",
-      "content_hash": "dac5dbccdf399f7a2211426bb6a3518475aa644c09d3e2b3fbb7022c66c71e71",
-      "created_at": "2026-11-15T20:22:44.205Z"
+      "content_hash": "f63c7dc1d394db23b3167a609682fed77f9f2f07ab92835fba20b5c1ce2bad9b",
+      "created_at": "2026-11-20T00:14:38.588Z"
     },
     "DOM-D-FAC11BEC": {
       "record_id": "DOM-D-FAC11BEC",
@@ -22066,8 +22066,8 @@
       "title": "Architecture Intelligence: nsh07-tomato-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nsh07-tomato-learnings-architecture-intelligence-nsh07-tomato-learnings-core-inv.md",
       "repository": "nsh07-tomato-learnings",
-      "content_hash": "33e9a384c9776aed2ff9349e6bcada74f831341530d136301fda6ee69e122f66",
-      "created_at": "2026-11-15T20:23:10.336Z"
+      "content_hash": "78d20ab8a8c7080eab769e03af72ac0b0dfb1b80426e4831bbd03792cd28447a",
+      "created_at": "2026-11-20T00:14:43.313Z"
     },
     "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-core-invariants",

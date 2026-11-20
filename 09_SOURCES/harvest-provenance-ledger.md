@@ -11445,3 +11445,4 @@ Every entry in this ledger must capture:
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `d81cedf4` | Multi-dimensional audit evidence | 2026-11-20T00:06:38.544Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `ddd15c3e` | Multi-dimensional audit evidence | 2026-11-20T00:06:41.197Z |
 | `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `9f03e7de` | Multi-dimensional audit evidence | 2026-11-20T00:06:43.694Z |
+| `learn-github-nsh07-tomato` | `https://github.com/nsh07/Tomato` | `b3036b46` | Multi-dimensional audit evidence | 2026-11-20T00:14:38.223Z |

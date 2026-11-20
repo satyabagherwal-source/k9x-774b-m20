@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-1JZI",
-    "timestamp": "2026-11-18T07:05:36.366Z",
-    "repository": "unsloth/Qwen3.8-27B-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-    "contentHash": "72ae56f254a398c94de0a687923389368a422cd0fda647d855d6906bf8c4d3b4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-1LKP",
     "timestamp": "2026-11-18T07:05:38.425Z",
     "repository": "asciinema/asciinema",
@@ -7490,6 +7475,21 @@
     "repository": "LLPhant/LLPhant",
     "learningId": "learn-github-llphant-llphant",
     "contentHash": "fdd7ee4c15a8c0a881e5af29002fcf05d3b843856249c79988eec45b2874c367",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-8QYZ",
+    "timestamp": "2026-11-20T00:14:38.219Z",
+    "repository": "nsh07/Tomato",
+    "learningId": "learn-github-nsh07-tomato",
+    "contentHash": "5aa9e0597813a940ecda5d2a8b81fccdae0dbc9be79b865754b4caea2dc3e6b7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

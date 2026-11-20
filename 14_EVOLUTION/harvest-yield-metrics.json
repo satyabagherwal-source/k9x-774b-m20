@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T00:06:43.701Z",
-  "total_cycles_completed": 10893,
-  "total_learnings_persisted": 10893,
-  "total_rules_promoted": 10249,
+  "last_updated": "2026-11-20T00:14:38.228Z",
+  "total_cycles_completed": 10894,
+  "total_learnings_persisted": 10894,
+  "total_rules_promoted": 10250,
   "history": [
-    {
-      "timestamp": "2026-11-19T03:39:19.911Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T04:08:17.261Z",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-20T00:06:43.701Z",
       "repository": "LLPhant/LLPhant",
       "learningId": "learn-github-llphant-llphant",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T00:14:38.228Z",
+      "repository": "nsh07/Tomato",
+      "learningId": "learn-github-nsh07-tomato",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

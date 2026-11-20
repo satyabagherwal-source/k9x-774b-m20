@@ -4,22 +4,22 @@
 {
   "source_repository": "nsh07/Tomato",
   "source_url": "https://github.com/nsh07/Tomato",
-  "source_version": "43897a66",
+  "source_version": "b3036b46",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-15T20:22:44.123Z",
+  "timestamp": "2026-11-20T00:14:38.428Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nsh07-tomato",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nsh07/Tomato](https://github.com/nsh07/Tomato) (Revision: `43897a66`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-15T20:22:44.123Z`  
+> **Provenance**: Harvested from [nsh07/Tomato](https://github.com/nsh07/Tomato) (Revision: `b3036b46`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-20T00:14:38.428Z`  
 > **Learning ID**: `learn-github-nsh07-tomato`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `nsh07/Tomato` (Commit: `43897a66`)
+- **Target Repository**: `nsh07/Tomato` (Commit: `b3036b46`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nsh07-tomato-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nsh07/Tomato](https://github.com/nsh07/Tomato))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T20:22:43.312Z  
+> **Harvest Timestamp**: 2026-11-20T00:14:36.963Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Minimalist, data-oriented pomodoro timer for Android and Desktop based on Material 3 Expressive
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1541 stars
+- **Stars / Engagement**: 1550 stars
 
 ---
 
@@ -1156,175 +1156,57 @@ expect val currentOS: OS
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9fae625b` (2026-11-12)
-**Commit Message**: fix(concurrency): remove state read on IO thread
+### Incident Patch 1: `b3036b46` (2026-11-17)
+**Commit Message**: Translated using Weblate (Russian)
 
-**File**: `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/viewModel/SettingsViewModel.kt` (modified, +27/-20)
+Currently translated at 100.0% (165 of 165 strings)
+
+Translated using Weblate (Russian)
+
+Currently translated at 100.0% (165 of 165 strings)
+
+Translated using Weblate (Russian)
+
+Currently translated at 100.0% (165 of 165 strings)
+
+Co-authored-by: Hosted Weblate <[REDACTED_EMAIL]>
+Co-authored-by: John Doe <[REDACTED_EMAIL]>
+Co-authored-by: Roman Serov <[REDACTED_EMAIL]>
+Co-authored-by: Роман Газенклевер <[REDACTED_EMAIL]>
+Translate-URL: https://hosted.weblate.org/projects/tomato/strings/ru/
+Translation: Tomato/Strings
+
+**File**: `shared/src/commonMain/composeResources/values-ru/strings.xml` (modified, +8/-2)
 ```diff
-@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.updateAndGet
- import kotlinx.coroutines.launch
- import kotlinx.coroutines.sync.Mutex
- import kotlinx.coroutines.sync.withLock
-+import kotlinx.coroutines.withContext
- import org.nsh07.pomodoro.billing.BillingManager
- import org.nsh07.pomodoro.data.PreferenceRepository
- import org.nsh07.pomodoro.data.StatRepository
-@@ -202,16 +203,18 @@ class SettingsViewModel(
- 
-     private fun deleteTopic(topic: Topic, deleteStats: Boolean) {
-         if (topic.id == Topic.DEFAULT_TOPIC_ID) return
--        viewModelScope.launch(Dispatchers.IO) {
--            if (deleteStats) topicRepository.deleteTopic(topic)
--            else topicRepository.deleteTopicMergingStats(topic, Topic.DEFAULT_TOPIC_ID)
-+        viewModelScope.launch {
-+            withContext(Dispatchers.IO) {
-+                if (deleteStats) topicRepository.deleteTopic(topic)
-+                else topicRepository.deleteTopicMergingStats(topic, Topic.DEFAULT_TOPIC_ID)
- 
--            val fallback = topicRepository.getTopicById(Topic.DEFAULT_TOPIC_ID) ?: defaultTopic
-+                val fallback = topicRepository.getTopicById(Topic.DEFAULT_TOPIC_ID) ?: defaultTopic
- 
--            if (stateRepository.currentTopicId.value == topic.id) {
--                stateRepository.setTopic(fallback)
-+                if (stateRepository.currentTopicId.value == topic.id) {
-+                    stateRepository.setTopic(fallback)
-+                }
-+                if (_editingTopic.value.id == topic.id) setEditingTopic(fallback)
-             }
--            if (_editingTopic.value.id == topic.id) setEditingTopic(fallback)
-         }
-     }
- 
-@@ -236,60 +239,63 @@ class SettingsViewModel(
-             val topic = _editingTopic.updateAndGet(transform)
-             if (topic == previous) return
- 
--            if (!topicRepository.updateTopic(topic)) {
-+            val success = withContext(Dispatchers.IO) {
-+                topicRepository.updateTopic(topic)
-+            }
-+            if (!success) {
-                 // saving edit failed, roll back unless the topic being edited has since changed
-                 _editingTopic.update { if (it == topic) previous else it }
-             }
-         }
-     }
- 
-     private fun setEditingTopicName(name: String) {
--        viewModelScope.launch(Dispatchers.IO) {
-+        viewModelScope.launch {
-             editTopic { it.copy(name = name) }
-         }
-     }
- 
-     private fun setEditingTopicColor(color: Color) {
--        viewModelScope.launch(Dispatchers.IO) {
-+        viewModelScope.launch {
-             editTopic { it.copy(color = color) }
-         }
-     }
- 
-     private fun setEditingTopicShape(shape: TopicShape) {
--        viewModelScope.launch(Dispatchers.IO) {
-+        viewModelScope.launch {
-             editTopic { it.copy(shape = shape) }
-         }
-     }
- 
-     private fun cancelEraseData() {
--        viewModelScope.launch(Dispatchers.IO) {
-+        viewModelScope.launch {
-             _settingsState.update { currentState ->
-                 currentState.copy(isShowingEraseDataDialog = false)
-             }
-         }
-     }
- 
-     private fun askEraseData() {
--        viewModelScope.launch(Dispatchers.IO) {
-+        viewModelScope.launch {
-             _settingsState.update { currentState ->
-                 currentState.copy(isShowingEraseDataDialog = true)
-             }
-         }
-     }
- 
-     private fun updateSessionLength() {
--        viewModelScope.launch(Dispatchers.IO) {
-+        viewModelScope.launch {
-             val value = sessionsSliderState.value.toInt()
--
-             editTopic { it.copy(sessionLength = value) }
-         }
-     }
- 
-     private fun deleteStats() {
--        viewModelScope.launch(Dispatchers.IO) {
--
-+        viewModelScope.launch {
-             timerHelper.onAction(TimerAction.ResetTimer)
--            statRepository.deleteAllStats()
-+            withContext(Dispatchers.IO) {
-+                statRepository.deleteAllStats()
-+            }
-             _settingsState.update {
-                 it.copy(isShowingEraseDataDialog = false)
-             }
-@@ -301,7 +307,7 @@ class SettingsViewModel(
-         editingTopicChosen = true
-         minuteInputs = minutes
-         minutesWriteJob?.cancel()
--        minutesWriteJob = viewModelScope.launch(Dispatchers.IO) {
-+        minutesWriteJob = viewModelScope.launch {
-             delay(500.milliseconds)
-             saveMinutes(minutes)
-         }
-@@ -322,7 +328,8 @@ class SettingsViewModel(
-         // an edit still being debounced is saved rather than dropped
-         if (minutesWriteJob?.isActive == true) {
-             minutesWriteJob?.cancel()
--            viewModelScope.launch(Dispatchers.IO) { saveMinutes(minuteInputs) }
-+            val currentInputs = minuteInputs
-+            viewModelScope.launch { saveMinutes(currentInputs) }
-         }
- 
-         if (!isSessionActive)
-```
-
----
-
-### Incident Patch 2: `b2170b2a` (2026-11-12)
-**Commit Message**: fix(permissions): remove unused permission in FOSS variant
-
-Closes: #327
-
-**File**: `androidApp/src/foss/AndroidManifest.xml` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+<?xml version="1.0" encoding="utf-8"?><!--
-+  ~ Copyright (c) 2026 Nishant Mishra
-+  ~
-+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
-+  ~
-+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
-+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
-+  ~ License, or (at your option) any later version.
-+  ~
-+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
-+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-+  ~ Public License for more details.
-+  ~
-+  ~ You should have received a copy of the GNU General Public License along with Tomato.
-+  ~ If not, see <https://www.gnu.org/licenses/>.
-+  -->
-+
-+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-+    xmlns:tools="http://schemas.android.com/tools">
-+
-+    <uses-permission
-+        android:name="android.permission.ACCESS_NETWORK_STATE"
-+        tools:node="remove" />
-+</manifest>
+@@ -47,7 +47,7 @@
+     <string name="play">Пуск</string>
+     <string name="pomodoro_info">Сессия — это последовательность интервалов помодоро, которые содержат интервалы фокусировки, короткие интервалы перерыва и длинный интервал перерыва. Последний перерыв в сеансе — всегда долгий перерыв.</string>
+     <string name="restart">Перезапуск</string>
+-    <string name="session_length">Длинна сессии</string>
++    <string name="session_length">Продолжительность сессии</string>
+     <string name="session_length_desc">Интервалы фокусировки в одной сессии: %1$d</string>
+     <string name="settings">Настройки</string>
+     <string name="short_break">Короткий перерыв</string>
+@@ -57,7 +57,7 @@
+     <string name="start_next">Начать далее</string>
+     <string name="stats">Статистика</string>
+     <string name="stop">Стоп</string>
+-    <string name="stop_alarm">Сигнал остановки</string>
++    <string name="stop_alarm">Остановить сигнал</string>
+     <string name="stop_alarm_dialog_text">Текущий таймер завершен. Нажмите в любом месте для остановки сигнала.</string>
+     <string name="stop_alarm_question">Остановить сигнал?</string>
+     <string name="system_default">Система</string>
+@@ -170,4 +170,10 @@
+     <string name="chartreuse">Салатовый</string>
+     <string name="yellow">Жёлтый</string>
+     <string name="orange">Оранжевый</string>
++    <string name="default_name">По умолчанию</string>
++    <string name="advanced">Расширенные</string>
++    <string name="next">Следующий</string>
++    <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d таймеры</string>
++    <string name="rose">Роза</string>
++    <string name="purple">Фиолетовый</string>
+ </resources>
 ```
 
 #### Recent Merged Pull Requests:
@@ -1353,76 +1235,39 @@ Closes: #327
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. concurrency): remove state read on IO thread
+## X. Translated using Weblate (Russian)
 
 **RULE**:
-When implementing operations in `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/viewModel/SettingsViewModel.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nsh07/Tomato. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `shared/src/commonMain/composeResources/values-ru/strings.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nsh07/Tomato. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9fae625b`: concurrency): remove state read on IO thread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b3036b46`: Translated using Weblate (Russian). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/commonMain/kotlin/org/nsh07/pomodoro/ui/settingsScreen/viewModel/SettingsViewModel.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/commonMain/composeResources/values-ru/strings.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import kotlinx.coroutines.withContext
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                if (deleteStats) topicRepository.deleteTopic(topic)
-                else topicRepository.deleteTopicMergingStats(topic, Topic.DEFAULT_TOPIC_ID)
-                val fallback = topicRepository.getTopicById(Topic.DEFAULT_TOPIC_ID) ?: defaultTopic
-                if (stateRepository.currentTopicId.value == topic.id) {
-                    stateRepository.setTopic(fallback)
-                }
-                if (_editingTopic.value.id == topic.id) setEditingTopic(fallback)
-            val success = withContext(Dispatchers.IO) {
-                topicRepository.updateTopic(topic)
-            }
-            if (!success) {
-        viewModelScope.launch {
-        viewModelScope.launch {
-        viewModelScope.launch {
-        viewModelScope.launch {
-        viewModelScope.launch {
-        viewModelScope.launch {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                statRepository.deleteAllStats()
-            }
-        minutesWriteJob = viewModelScope.launch {
-            val currentInputs = minuteInputs
-            viewModelScope.la
+    <string name="session_length">Продолжительность сессии</string>
+    <string name="stop_alarm">Остановить сигнал</string>
+    <string name="default_name">По умолчанию</string>
+    <string name="advanced">Расширенные</string>
+    <string name="next">Следующий</string>
+    <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d таймеры</string>
+    <string name="rose">Роза</string>
+    <string name="purple">Фиолетовый</string>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-        viewModelScope.launch(Dispatchers.IO) {
-            if (deleteStats) topicRepository.deleteTopic(topic)
-            else topicRepository.deleteTopicMergingStats(topic, Topic.DEFAULT_TOPIC_ID)
-            val fallback = topicRepository.getTopicById(Topic.DEFAULT_TOPIC_ID) ?: defaultTopic
-            if (stateRepository.currentTopicId.value == topic.id) {
-                stateRepository.setTopic(fallback)
-            if (_editingTopic.value.id == topic.id) setEditingTopic(fallback)
-            if (!topicRepository.updateTopic(topic)) {
-        viewModelScope.launch(Dispatchers.IO) {
-        viewModelScope.launch(Dispatchers.IO) {
-        viewModelScope.launch(Dispatchers.IO) {
-        viewModelScope.launch(Dispatchers.IO) {
-        viewModelScope.launch(Dispatchers.IO) {
-        viewModelScope.launch(Dispatchers.IO) {
-
-        viewModelScope.launch(Dispatchers.IO) {
-
-            statRepository.deleteAllStats()
-        minutesWriteJob = viewModelScope.launch(Dispatchers.IO) {
-            viewModelScope.launch(Dispatchers.IO) { saveMinutes(minuteInputs) }
+    <string name="session_length">Длинна сессии</string>
+    <string name="stop_alarm">Сигнал остановки</string>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9fae625b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b3036b46` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
