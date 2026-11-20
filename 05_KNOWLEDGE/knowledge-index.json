@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T02:15:14.792Z",
+  "last_updated": "2026-11-20T02:27:56.177Z",
   "total_verified_learnings": 9023,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22141,
+  "total_items": 22148,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113691,13 +113691,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DFV4-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-0600-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "fb10fc65f03d3bbd415b0adc0ada7ad446cc5c1463ce8665378021ae29820d4d",
+      "content_hash": "631e1cc16de54824848d08775d45c7d30dfcd22109e0d588b291a8572cda34ed",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T01:42:15.955Z"
+      "persisted_at": "2026-11-20T02:27:55.875Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113707,9 +113707,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d304d6cdf72c4bb4ab34f39b8a5c35c43e557da498eacfae2129361470c43a0",
+      "content_hash": "38480aacd3a84e248f170b3368e933fbc89edff8a3bd134f26b107c43c3e6b09",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T01:42:16.166Z"
+      "persisted_at": "2026-11-20T02:27:56.027Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113719,9 +113719,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8d4adb316bdb9029e4f3c44fb4ffad37760d671d32a79242bd75df2f438e23d",
+      "content_hash": "ddd39cea362c6dce40cca8f4f2c2bac28d598f2954d01327393d0f7a65880c9f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T01:42:16.374Z"
+      "persisted_at": "2026-11-20T02:27:56.177Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -235688,8 +235688,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "e61ba774",
-      "content_hash": "0c38759b968b7bf74ea28c50e40ee5086797cf4febc408e07aceb1675aa31fa1",
+      "source_version": "146e1e67",
+      "content_hash": "a85ab319bce73b0b20234728a8e472874e51164d8d3e370a7ad0f843c6b92260",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -235712,6 +235712,11 @@
           "number": 9025,
           "title": "Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY]",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 9497,
+          "title": "issues from the policy exception dogfood report",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235719,7 +235724,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T21:50:17.747Z",
+      "verified_at": "2026-11-20T02:27:50.077Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235761,10 +235766,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "repository": "pulumi/pulumi",
-      "source_version": "bc509bd5",
-      "content_hash": "d41f9b4960f4e19afab204a13f84c4ddccc30e1d1e5022c466b63523f4d81e24",
+      "source_version": "146e1e67",
+      "content_hash": "389a8a3893e4f027dade30c80f75a26ed74ccd0984d553bdb62bdeb567831e86",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T06:49:13.809Z"
+      "persisted_at": "2026-11-20T02:27:50.606Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi",
@@ -235773,10 +235778,10 @@
       "relative_path": "08_VERIFICATION/pulumi-pulumi-verification-protocol-empirical-defect-shield-for-pulumi-pulumi.md",
       "title": "Verification Protocol: Empirical Defect Shield for pulumi/pulumi",
       "repository": "pulumi/pulumi",
-      "source_version": "e61ba774",
-      "content_hash": "d14931ae2a05119b8fd9874e148bf350f2703cbba6c8af468359ea3d173c00f0",
+      "source_version": "146e1e67",
+      "content_hash": "e5d7e208f45ff0ffac6d3ce2d5d160529402de32aff0fe2114cf7683477f3134",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T21:50:18.392Z"
+      "persisted_at": "2026-11-20T02:27:50.748Z"
     },
     "learn-github-ytsaurus-ytsaurus": {
       "learning_id": "learn-github-ytsaurus-ytsaurus",
@@ -235896,9 +235901,9 @@
       "title": "Content & Information Intelligence: pulumi-pulumi-learnings Core Invariants",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "297c6681e6c97630010158c22778c6aa6a16025906e2f394006c0c7a8db6167c",
+      "content_hash": "39edf96ffaa287cf65f826ec6d797576028e8fc5565368157cda8963c8c7a8c0",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T06:50:18.781Z"
+      "persisted_at": "2026-11-20T02:27:55.167Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi-learnings",
@@ -235908,9 +235913,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pulumi-pulumi-learnings",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "d574c61864ee604d023ca0c0a3f8cf847397b043f08297ff684f9ee4f88b397a",
+      "content_hash": "7e1309648b1060fe9e495b900d3ba9e2a07ef406d87227a9d3d02eaf9045c05f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T21:50:23.148Z"
+      "persisted_at": "2026-11-20T02:27:55.315Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -242196,8 +242201,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "b1064c1b",
-      "content_hash": "2c669ceee8a8e1996a51e83af491694a9b6ddfd96e08bc981cfdc2dc61bdbe81",
+      "source_version": "33d981bd",
+      "content_hash": "1f6db0bd43c635b69c9d727cf77145c04b0963930efbc47c84152d43f7ec65df",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -242220,6 +242225,11 @@
           "number": 9245,
           "title": "Zeron v2: in step with the default's page after #1515",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9496,
+          "title": "every built-in agent, with every login it has locally",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242227,7 +242237,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T14:40:33.600Z",
+      "verified_at": "2026-11-20T02:27:41.623Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242281,10 +242291,10 @@
       "relative_path": "08_VERIFICATION/zeronsh-zeron-verification-protocol-empirical-defect-shield-for-zeronsh-zeron.md",
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh/zeron",
       "repository": "zeronsh/zeron",
-      "source_version": "b1064c1b",
-      "content_hash": "90dc0b012da47aaa7c0a838f36e941a676f74c590ac059bdcbcf2a199245a6c0",
+      "source_version": "33d981bd",
+      "content_hash": "dd1a7129dac389113554611962648a55c018fe8c99310be2c9b0afad5228b689",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T14:40:34.454Z"
+      "persisted_at": "2026-11-20T02:27:42.472Z"
     },
     "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf": {
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
@@ -242432,9 +242442,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh-zeron-learnings",
       "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "42d35f08909a045abeda342d5b23a4a696186ca174bf3fa7066aec580b07deb6",
+      "content_hash": "1f7acb5d1262db04a2ac6c2ecc25e3f298d1121064d3302c334fe7049a6012a6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T14:40:49.386Z"
+      "persisted_at": "2026-11-20T02:27:54.300Z"
     },
     "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning": {
       "item_id": "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning",
@@ -262749,10 +262759,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zeronsh-zeron-technical-construction-intelligence-zeronsh-zeron-core-invariants.md",
       "title": "Technical Construction Intelligence: zeronsh/zeron Core Invariants",
       "repository": "zeronsh/zeron",
-      "source_version": "b1064c1b",
-      "content_hash": "3cd0570d0a3c9e0fbb3ca724fcbc9a0b54558c7d07acb89bdced4e61accbc5d3",
+      "source_version": "33d981bd",
+      "content_hash": "4fb69f3bd0a62e327ab927e0b7137d7829e9ee40f0b9b5749c11d3667d8749c9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T14:40:34.274Z"
+      "persisted_at": "2026-11-20T02:27:42.187Z"
     },
     "rule-8821": {
       "learning_id": "rule-8821",
@@ -262865,9 +262875,9 @@
       "title": "Technical Construction Intelligence: zeronsh-zeron-learnings Core Invariants",
       "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "502bc71c40c94d49f0f16a8ee9eba80a1aa9c357a18d12eee519738977bad8d4",
+      "content_hash": "71f6a996e2f5c4e6c6acfa140981f439c9635855837e8a250ace7c72452a512a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T14:40:49.184Z"
+      "persisted_at": "2026-11-20T02:27:54.003Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor",
@@ -299694,6 +299704,94 @@
       "content_hash": "dc905c3783b91d675b6ee86940f5f1d25e08f0d9906b4c0c15c37d7924ad707b",
       "domain_letter": "H",
       "persisted_at": "2026-11-20T02:15:13.494Z"
+    },
+    "rule-9496": {
+      "learning_id": "rule-9496",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9496,
+      "title": "every built-in agent, with every login it has locally",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "33d981bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T02:27:41.623Z"
+    },
+    "candidate_directive-every-built-in-agent-with-every-login-it-has-locally": {
+      "item_id": "candidate_directive-every-built-in-agent-with-every-login-it-has-locally",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZVBH-every-built-in-agent-with-every-login-it-has-locally.md",
+      "title": "every built-in agent, with every login it has locally",
+      "repository": "zeronsh/zeron",
+      "source_version": "33d981bd",
+      "content_hash": "06630508137896eb16d973af580e5822f9135f279241a3c7cc505ca1dc35fc00",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T02:27:42.033Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-zeronsh-zeron": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-zeronsh-zeron",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-zeronsh-zeron-adr-subsystem-boundary-modular-decoupling-in-zeronsh-zeron.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in zeronsh/zeron",
+      "repository": "zeronsh/zeron",
+      "source_version": "33d981bd",
+      "content_hash": "65c7d400e0e716dc23fb33687a4573be7ecf2d7992814ea68a81599c7c22b8f5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T02:27:42.340Z"
+    },
+    "rule-9497": {
+      "learning_id": "rule-9497",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9497,
+      "title": "issues from the policy exception dogfood report",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "146e1e67",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T02:27:50.077Z"
+    },
+    "candidate_directive-issues-from-the-policy-exception-dogfood-report": {
+      "item_id": "candidate_directive-issues-from-the-policy-exception-dogfood-report",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-05C5-issues-from-the-policy-exception-dogfood-report.md",
+      "title": "issues from the policy exception dogfood report",
+      "repository": "pulumi-pulumi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9b90ce559207ab3b8dbe0570d80234495dee649a6bb23b220b0dc4e0324e0a99",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T02:27:55.017Z"
+    },
+    "candidate_directive-cloud-every-built-in-agent-with-every-login-it-has-locally": {
+      "item_id": "candidate_directive-cloud-every-built-in-agent-with-every-login-it-has-locally",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-04FR-cloud-every-built-in-agent-with-every-login-it-has-locally.md",
+      "title": "Cloud: every built-in agent, with every login it has locally",
+      "repository": "zeronsh-zeron-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c3ac88d351ee62478caab208fd872ecc56c3da8987910a7d57bf21ce2d637f0d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T02:27:53.851Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-zeronsh-zeron-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-zeronsh-zeron-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-zeronsh-zeron-learnings-adr-subsystem-boundary-modular-decoupling-in-zeronsh-zer.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in zeronsh-zeron-learnings",
+      "repository": "zeronsh-zeron-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5d5e772787501368d2abff441780e4b2ff84e1ae4fe653faadc54cda09b5faa6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T02:27:54.172Z"
     }
   },
   "ai-builder-brain": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T06:50:18.554Z",
+  "timestamp": "2026-11-20T02:27:54.901Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pulumi-pulumi-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pulumi-pulumi-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T06:50:18.554Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T02:27:54.901Z`  
 > **Learning ID**: `LEARN-EVO-pulumi-pulumi-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: A (Human & Need Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from pulumi-pulumi-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `bc509bd5`  
+> **Source Version**: `146e1e67`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T06:49:12.855Z  
+> **Timestamp**: 2026-11-20T02:27:49.290Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T06:49:12.488Z  
+> **Harvest Timestamp**: 2026-11-20T02:27:49.284Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25911 stars
+- **Stars / Engagement**: 25922 stars
 
 ---
 
@@ -1716,13 +1716,15 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #25731** (2026-11-17): **Python codegen emits deprecated `[project.license]` table in pyproject.toml**
-  *Symptoms*: ### What happened?  Generated Python SDKs write the license as a TOML table in `pyproject.toml`:  ```toml [project.license]   text = "Apache-2.0" ```  Building the SDK with setuptools >= 77 prints a deprecation warning:  ``` WARNING `project.license` as a TOML table is deprecated !!         ********************************************************************************         Please use a simple string containing a SPDX expression for `project.license`. You can also use `project.license-files`. (Both options available on setuptools>=77.0.0).          By 2027-Feb-18, you need to update your project and remove deprecated calls         or your builds will no longer be supported.          See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.         ******************************************************************************** !! ```  Once this deprecation is enforced, setuptools will no longer accept these builds, so every generated Python SDK will stop building.  ### Where it comes from  - `pkg/codegen/python/pyproject.go:80` defines `License` as a struct containing `Text` - `pkg/codegen/python/gen.go:3757-3759` sets `schema.Project.License = &License{Text: pkg.License}`  ### Expected  Emit the license as a plain SPDX string, per PEP 639:  ```toml [project]   license = "Apache-2.0" ```  The string form needs setuptools >= 77, but the generated `[build-system]` currently has `requires = ["setuptools>=61.0"]`. That minimum needs raisin
-
-- **Issue #25715** (2026-11-17): **Workflow failure: Run full language matrix of tests daily**
-  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml) has failed. See the list of failures below:  - [2026-11-16T06:09:17.000Z](https://github.com/pulumi/pulumi/actions/runs/43810512870)
+- **Issue #25756** (2026-11-18): **Workflow failure: On Push at dev-release / nodejs-dev-sdk-release**
+  *Symptoms*: ## Workflow Failure  [On Push](<https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml>) has failed. See the list of failures below:  * [2026-11-18T12:13:57.000Z](<https://github.com/pulumi/pulumi/actions/runs/44299627865>)   * ❌ [dev-release / nodejs-dev-sdk-release](<https://github.com/pulumi/pulumi/actions/runs/44299627865/job/134789658824>): Publish nodejs release (failure) * [2026-11-18T12:41:01.000Z](<https://github.com/pulumi/pulumi/actions/runs/44299627865>)   * ❌ [dev-release / nodejs-dev-sdk-release](<https://github.com/pulumi/pulumi/actions/runs/44299627865/job/134808207147>): Publish nodejs release (failure)   * [2026-11-18T12:47:17.000Z](<https://github.com/pulumi/pulumi/actions/runs/44299627865>)   * ❌ [dev-release / nodejs-dev-sdk-release](<https://github.com/pulumi/pulumi/actions/runs/44299627865/job/134811642959>): Publish nodejs release (failure)
   **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-17T06:09:29.000Z](https://github.com/pulumi/pulumi/actions/runs/44024381435)
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-18T13:01:42.000Z](https://github.com/pulumi/pulumi/actions/runs/44299627865)
+
+- **Issue #25753** (2026-11-18): **Workflow failure: On Push at dev-release / nodejs-dev-sdk-release**
+  *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-11-18T09:37:16.000Z](https://github.com/pulumi/pulumi/actions/runs/44276089322)   - ❌ [dev-release / nodejs-dev-sdk-release](https://github.com/pulumi/pulumi/actions/runs/44276089322/job/134706250293): Publish nodejs release (failure)
+  **Post-Mortem & Fix Analysis**:
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-18T10:32:01.000Z](https://github.com/pulumi/pulumi/actions/runs/44283698799)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1739,501 +1741,1346 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00c00449` (2026-11-17)
-**Commit Message**: Update vulnerable dependencies [SECURITY] (#25672)
+### Incident Patch 1: `ce5c585c` (2026-11-19)
+**Commit Message**: Fix issues from the policy exception dogfood report (#25736)
 
-> ℹ️ **Note**
-> 
-> This PR body was truncated due to platform limits.
+Fixes from dogfooding the experimental `pulumi policy exception`
+commands (#25417). Every change is local to those commands.
 
-This PR contains the following updates:
+- **`new` with a typo in the Policy Pack, `--policy` or `--target`** now
+fails and lists the run's violations. Before, it said "No violations to
+exempt." and exited 0. A run without violations, or without any at the
+requested `--level`, still exits 0.
+- **`new --update 2` and `--preview <id>`**: these flags can be passed
+without a value, so cobra read the value as an argument and printed the
+whole help. They now say `use --update=2`.
+- **`new --expires-in`** checks the range before calling the service: at
+least `1h`, at most `3650d`.
+- **`list --status`** accepts only `active` or `removed`.
+- **`list --stack`** reports a stack that doesn't exist, instead of an
+empty list.
+- **`get` and `remove` with a change request ID**: the ID that `new`
+prints when approval is required isn't an exception yet, so these said
+"not found". They now show the change request's status.
+- **`get`** prints the console link of the change request next to
+`Requested in:`.
+- **`get` and `list`** show `removed (expired)` for 
 
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-|
-[go.opentelemetry.io/otel/sdk](https://redirect.github.com/open-telemetry/opentelemetry-go)
-| `v1.45.0` → `v1.47.0` |
-![age](https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io%2fotel%2fsdk/v1.47.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/go.opentelemetry.io%2fotel%2fsdk/v1.45.0/v1.47.0?slim=true)
-|
-|
-[go.opentelemetry.io/otel/trace](https://redirect.github.com/open-telemetry/opentelemetry-go)
-| `v1.45.0` → `v1.47.0` |
-![age](https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io%2fotel%2ftrace/v1.47.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/go.opentelemetry.io%2fotel%2ftrace/v1.45.0/v1.47.0?slim=true)
-|
-| [golang.org/x/crypto](https://pkg.go.dev/golang.org/x/crypto) |
-[`v0.58.0` →
-`v0.59.0`](https://cs.opensource.google/go/x/crypto/+/refs/tags/v0.58.0...ref
-
-**File**: `pkg/go.mod` (modified, +5/-5)
+**File**: `changelog/pending/20261116--cli-policy--policy-exception-dogfood-fixes.yaml` (added, +3/-0)
 ```diff
-@@ -36,10 +36,10 @@ require (
- 	github.com/zclconf/go-cty v1.16.3
- 	gocloud.dev v0.46.1-0.20260810195832-b5401c07b5f1
- 	gocloud.dev/secrets/hashivault v0.46.0
--	golang.org/x/crypto v0.58.0 // indirect
-+	golang.org/x/crypto v0.59.0 // indirect
- 	golang.org/x/net v0.62.0
- 	golang.org/x/oauth2 v0.36.0
--	golang.org/x/sync v0.24.0
-+	golang.org/x/sync v0.25.0
- 	google.golang.org/api v0.290.0
- 	google.golang.org/genproto v0.0.0-20260724162435-b2f20204f0df // indirect
- 	google.golang.org/grpc v1.85.0
-@@ -114,9 +114,9 @@ require (
- 	go.uber.org/automaxprocs v1.6.0
- 	go.yaml.in/yaml/v4 v4.0.0-rc.4
- 	golang.org/x/mod v0.42.0
--	golang.org/x/sys v0.49.0
--	golang.org/x/term v0.47.0
--	golang.org/x/text v0.43.0
-+	golang.org/x/sys v0.50.0
-+	golang.org/x/term v0.48.0
-+	golang.org/x/text v0.44.0
- 	google.golang.org/protobuf v1.36.12
- 	gopkg.in/yaml.v2 v2.4.0
- 	lukechampine.com/frand v1.5.1
+@@ -0,0 +1,3 @@
++component: cli/policy
++kind: fix
++body: Explain typos, unknown stacks, change request IDs and invalid flags in the experimental `pulumi policy exception` commands
 ```
 
-**File**: `pkg/go.sum` (modified, +10/-10)
+**File**: `pkg/cmd/pulumi/policy/policy_exception.go` (modified, +22/-0)
 ```diff
-@@ -673,8 +673,8 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
- golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
- golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
--golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
--golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
-+golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
-+golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
- golang.org/x/lint v0.0.0-20200302205851-738671d3881b/go.mod h1:3xt1FjdF8hUf6vQPIChWIBhFzV8gjjsPE/fR3IyQdNY=
- golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod h1:QqPTAvyqsEbceGzBzNggFXnrqF1CaUcvgkdR5Ot7KZg=
- golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
-@@ -699,8 +699,8 @@ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJ
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
--golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
-+golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -720,18 +720,18 @@ golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f/go.mod h1:oPkhp1MJrh7nUepCBc
- golang.org/x/sys v0.0.0-20220728004956-3c1f35247d10/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
--golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
-+golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
--golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
--golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
-+golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
-+golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
- golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
- golang.org/x/text v0.4.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
--golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
--golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
-+golang.org/x/text v0.44.0 h1:YItdp/mQNGnsmrgpcdA5yQ3bnRxCfo/Tj/iByGW9GGo=
-+golang.org/x/text v0.44.0/go.mod h1:S4FR1waQ9LbjQTls97SyRjDaUUVkaM+cXwwuG/G+MwY=
- golang.org/x/time v0.15.0 h1:bbrp8t3bGUeFOx08pvsMYRTCVSMk89u4tKbNOZbp88U=
- golang.org/x/time v0.15.0/go.mod h1:Y4YMaQmXwGQZoFaVFk4YpCt4FLQMYKZe9oeV/f4MSno=
- golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+@@ -22,6 +22,7 @@ import (
+ 	"slices"
+ 	"strings"
+ 
++	"github.com/google/uuid"
+ 	"github.com/spf13/cobra"
+ 
+ 	cloudapitype "github.com/pulumi/pulumi-cloud-sdk/go/apitype"
+@@ -46,6 +47,26 @@ func policyExceptionsError(err error, org string) error {
+ 	return err
+ }
+ 
++// policyExceptionNotFound says that an exception doesn't exist. `new` prints a change request's ID when the
++// organization requires approval, so an ID that's a change request gets its status instead.
++func policyExceptionNotFound(ctx context.Context, c policyExceptionClients, org, id string) error {
++	if _, err := uuid.Parse(id); err == nil {
++		if cr, err := c.changeRequests.GetChangeRequest(ctx, org, id); err == nil {
++			return fmt.Errorf("%s is a change request (status: %s), not a policy exception; "+
++				"it creates the exception once it's approved and applied", id, cr.Status)
++		}
++	}
++	return fmt.Errorf("policy exception %s not found in %s", id, org)
++}
++
++// policyExceptionStatus is an exception's status, saying when a removed exception expired rather than being removed.
++func policyExceptionStatus(e cloudapitype.PolicyException) string {
++	if e.RemovedAt != nil && e.RemovedBy == nil && e.ExpiresAt != nil && !e.RemovedAt.Before(*e.ExpiresAt) {
++		return string(e.Status) + " (expired)"
++	}
++	return string(e.Status)
++}
++
+ type policyExceptionClient interface {
+ 	CreatePolicyException(
+ 		ctx context.Context, orgName string, req cloudapitype.CreatePolicyExceptionRequest,
+@@ -64,6 +85,7 @@ type policyExceptionClient interface {
+ 		ctx context.Context, stack client.StackIdentifier, pageSize int, page int,
+ 	) ([]apitype.UpdateInfo, error)
+ 	GetLatestStackPreviews(ctx context.Context, stack client.StackIdentifier) ([]apitype.StackPreview, error)
++	GetStack(ctx context.Context, stack client.StackIdentifier) (apitype.Stack, error)
+ 	GetUpdateEngineEvents(
+ 		ctx context.Context, update client.UpdateIdentifier, opts client.GetUpdateEngineEventsOptions,
+ 	) (apitype.GetUpdateEventsResponse, error)
 ```
 
-**File**: `sdk/go.mod` (modified, +12/-12)
+**File**: `pkg/cmd/pulumi/policy/policy_exception_get.go` (modified, +18/-7)
 ```diff
-@@ -24,11 +24,11 @@ require (
- 	github.com/stretchr/testify v1.12.1
- 	github.com/texttheater/golang-levenshtein v1.0.1
- 	github.com/uber/jaeger-client-go v2.30.0+incompatible
--	go.opentelemetry.io/otel/bridge/opentracing v1.45.0
--	golang.org/x/crypto v0.58.0
-+	go.opentelemetry.io/otel/bridge/opentracing v1.47.0
-+	golang.org/x/crypto v0.59.0
- 	golang.org/x/mod v0.40.0 // indirect
- 	golang.org/x/net v0.62.0
--	golang.org/x/sys v0.49.0
-+	golang.org/x/sys v0.50.0
- 	google.golang.org/grpc v1.83.2
- 	gopkg.in/yaml.v2 v2.4.0
- 	gopkg.in/yaml.v3 v3.0.1
-@@ -62,15 +62,15 @@ require (
- 	github.com/zalando/go-keyring v0.2.8
- 	go.opentelemetry.io/collector/pdata v1.53.0
- 	go.opentelemetry.io/contrib/bridges/otelslog v0.20.0
--	go.opentelemetry.io/otel v1.45.0
-+	go.opentelemetry.io/otel v1.47.0
- 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.21.0
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0
--	go.opentelemetry.io/otel/sdk v1.45.0
-+	go.opentelemetry.io/otel/sdk v1.47.0
- 	go.opentelemetry.io/otel/sdk/log v0.21.0
--	go.opentelemetry.io/otel/trace v1.45.0
-+	go.opentelemetry.io/otel/trace v1.47.0
- 	go.opentelemetry.io/proto/otlp v1.11.0
- 	golang.org/x/sync v0.23.0
--	golang.org/x/term v0.47.0
-+	golang.org/x/term v0.48.0
- 	lukechampine.com/frand v1.4.2
+@@ -33,7 +33,10 @@ import (
+ 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
  )
  
-@@ -121,14 +121,14 @@ require (
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/collector/featuregate v1.53.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
--	go.opentelemetry.io/otel/log v0.21.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
- 	golang.org/x/tools v0.49.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc // indirect
+-type policyExceptionGetRenderFunc func(w io.Writer, exception cloudapitype.PolicyException) error
++// policyExceptionGetRenderFunc writes the exception, and the console link of the change request that requested it.
++type policyExceptionGetRenderFunc func(
++	w io.Writer, exception cloudapitype.PolicyException, changeRequestURL string,
++) error
+ 
+ type policyExceptionGetArgs struct {
+ 	org          string
+@@ -43,7 +46,7 @@ type policyExceptionGetArgs struct {
+ func defaultPolicyExceptionGetOutputFormat() outputflag.OutputFlag[policyExceptionGetRenderFunc] {
+ 	return outputflag.OutputFlag[policyExceptionGetRenderFunc]{
+ 		RenderForTerminal: renderPolicyExceptionGetText,
+-		RenderJSON: func(w io.Writer, exception cloudapitype.PolicyException) error {
++		RenderJSON: func(w io.Writer, exception cloudapitype.PolicyException, _ string) error {
+ 			return ui.FprintJSON(w, exception)
+ 		},
+ 	}
+@@ -96,20 +99,28 @@ func runPolicyExceptionGet(
+ 	exception, err := c.GetPolicyException(ctx, org, exceptionID)
+ 	err = policyExceptionsError(err, org)
+ 	if apiErr, ok := errors.AsType[*apitype.ErrorResponse](err); ok && apiErr.Code == http.StatusNotFound {
+-		return fmt.Errorf("policy exception %s not found in %s", exceptionID, org)
++		return policyExceptionNotFound(ctx, c, org, exceptionID)
+ 	} else if err != nil {
+ 		return err
+ 	}
+ 
+-	return args.outputFormat.Get()(w, exception)
++	changeRequestURL := ""
++	if exception.ChangeRequestID != nil {
++		changeRequestURL = policyExceptionConsoleURL(c.URL(), org, exception.Match, *exception.ChangeRequestID)
++	}
++	return args.outputFormat.Get()(w, exception, changeRequestURL)
+ }
+ 
+-func renderPolicyExceptionGetText(w io.Writer, e cloudapitype.PolicyException) error {
++func renderPolicyExceptionGetText(w io.Writer, e cloudapitype.PolicyException, changeRequestURL string) error {
+ 	fmt.Fprintf(w, "%-14s %s\n", "ID:", e.ID)
+ 	fmt.Fprintf(w, "%-14s %s\n", "Policy pack:", e.PolicyPack)
+-	fmt.Fprintf(w, "%-14s %s\n", "Status:", e.Status)
++	fmt.Fprintf(w, "%-14s %s\n", "Status:", policyExceptionStatus(e))
+ 	if e.ChangeRequestID != nil {
+-		fmt.Fprintf(w, "%-14s %s\n", "Requested in:", "change request "+*e.ChangeRequestID)
++		requested := "change request " + *e.ChangeRequestID
++		if changeRequestURL != "" {
++			requested += ": " + changeRequestURL
++		}
++		fmt.Fprintf(w, "%-14s %s\n", "Requested in:", requested)
+ 	}
+ 	for _, event := range []struct {
+ 		label string
+```
+
+**File**: `pkg/cmd/pulumi/policy/policy_exception_list.go` (modified, +20/-5)
+```diff
+@@ -36,6 +36,7 @@ import (
+ 	"github.com/pulumi/pulumi/pkg/v3/util/outputflag"
+ 	pkgWorkspace "github.com/pulumi/pulumi/pkg/v3/workspace"
+ 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
++	"github.com/pulumi/pulumi/sdk/v3/go/common/tokens"
  )
  
- require (
-@@ -144,8 +144,8 @@ require (
- 	github.com/spf13/pflag v1.0.10 // indirect
- 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
--	golang.org/x/text v0.43.0
--	google.golang.org/protobuf v1.36.11
-+	golang.org/x/text v0.44.0
-+	google.golang.org/protobuf v1.36.12
- 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7
- )
+ // policyExceptionListRenderFunc writes the exceptions to stdout, and status messages to stderr.
+@@ -110,17 +111,31 @@ func runPolicyExceptionList(
+ 	ctx context.Context, w, stderr io.Writer,
+ 	factory policyExceptionClientFactory, args policyExceptionListArgs,
+ ) error {
+-	if args.stack != "" {
+-		project, stack, ok := strings.Cut(args.stack, "/")
+-		if !ok || project == "" || stack == "" || strings.Contains(stack, "/") {
+-			return cmdCmd.ConfigurationError{Message: fmt.Sprintf("--stack must be <project>/<stack>, got %q", args.stack)}
++	project, stack, _ := strings.Cut(args.stack, "/")
++	stackName, err := tokens.ParseStackName(stack)
++	if args.stack != "" && (project == "" || err != nil || strings.Contains(stack, "/")) {
++		return cmdCmd.ConfigurationError{Message: fmt.Sprintf("--stack must be <project>/<stack>, got %q", args.stack)}
++	}
++	for _, s := range args.statuses {
++		if s != "active" && s != "removed" {
++			return cmdCmd.ConfigurationError{Message: fmt.Sprintf("invalid --status %q: expected active or removed", s)}
+ 		}
+ 	}
  
+ 	c, org, err := factory(ctx, args.org)
+ 	if err != nil {
+ 		return err
+ 	}
++	// The stack filter matches targets, so a stack that doesn't exist would list nothing rather than fail.
++	if args.stack != "" {
++		id := client.StackIdentifier{Owner: org, Project: project, Stack: stackName}
++		_, err := c.GetStack(ctx, id)
++		if apiErr, ok := errors.AsType[*apitype.ErrorResponse](err); ok && apiErr.Code == http.StatusNotFound {
++			return fmt.Errorf("no stack named '%s' found", id)
++		} else if err != nil {
++			return err
++		}
++	}
+ 
+ 	var exceptions []cloudapitype.PolicyException
+ 	opts := client.ListPolicyExceptionsOptions{
+@@ -174,7 +189,7 @@ func renderPolicyExceptionListTable(w, stderr io.Writer, exceptions []cloudapity
+ 		row := table.Row{
+ 			e.ID,
+ 			e.PolicyPack,
+-			e.Status,
++			policyExceptionStatus(e),
+ 			strings.Join(slices.Compact(policies), ", "),
+ 			len(slices.Compact(targets)),
+ 			truncateMessage(e.Reason, policyIssueMessageMax),
 ```
 
-**File**: `sdk/go.sum` (modified, +26/-26)
+**File**: `pkg/cmd/pulumi/policy/policy_exception_new.go` (modified, +50/-13)
 ```diff
-@@ -185,8 +185,8 @@ github.com/nxadm/tail v1.4.11 h1:8feyoE3OzPrcshW5/MJ4sGESc5cqmGkGCWlco4l0bqY=
- github.com/nxadm/tail v1.4.11/go.mod h1:OTaG3NK980DZzxbRq6lEuzgU+mug70nY11sMd4JXXHc=
- github.com/opentracing-contrib/go-grpc v0.1.4 h1:m9VukGYQ+tfcgtwdsifjjFtAoWRqmcbnGhgRQcZ+ZQA=
- github.com/opentracing-contrib/go-grpc v0.1.4/go.mod h1:xP8rkWX/qdQJVTkf01D6Fc002zN0WUMKsvuKg7Tf93E=
--github.com/opentracing-contrib/go-grpc/test v0.0.0-20260727233914-064b4d2bcbbf h1:xfFA+XblffDh3LsTrbSG1MHpmrXsY/9GQI4sbCnY+kI=
--github.com/opentracing-contrib/go-grpc/test v0.0.0-20260727233914-064b4d2bcbbf/go.mod h1:AYO7D5MbvWwD7/UggkDbqyW0pDt7KZyQkHCn4IC2i/w=
-+github.com/opentracing-contrib/go-grpc/test v0.0.0-20260921214634-c4b381826b81 h1:OTbhGHT9+eMbYR7J0zJw741aJHsDo4SZrecanjdSFiQ=
-+github.com/opentracing-contrib/go-grpc/test v0.0.0-20260921214634-c4b381826b81/go.mod h1:EgSh6JmUwxmDnsxBVhxd1UjP+jOJPo7O/3zPWO9kiPo=
- github.com/opentracing/basictracer-go v1.1.0 h1:Oa1fTSBvAl8pa3U+IJYqrKm0NALwH9OsgwOqDv4xJW0=
- github.com/opentracing/basictracer-go v1.1.0/go.mod h1:V2HZueSJEp879yv285Aap1BS69fQMD+MNP1mRs6mBQc=
- github.com/opentracing/opentracing-go v1.1.0/go.mod h1:UkNAQd3GIcIGf0SeVgPpRdFStlNbqXla1AfSYxPUl2o=
-@@ -265,30 +265,30 @@ go.opentelemetry.io/collector/pdata v1.53.0 h1:DlYDbRwammEZaxDZHINx5v0n8SEOVNniP
- go.opentelemetry.io/collector/pdata v1.53.0/go.mod h1:LRSYGNjKXaUrZEwZv3Yl+8/zV2HmRGKXW62zB2bysms=
- go.opentelemetry.io/contrib/bridges/otelslog v0.20.0 h1:oEl2Pw/i4OQwhAuda2pAHFAcOMivA+Xa+iTccBfab/g=
- go.opentelemetry.io/contrib/bridges/otelslog v0.20.0/go.mod h1:yMSQaiiq5dpfrSJCYLBcqFeJkFFI67seT4ngvx6jfVo=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
--go.opentelemetry.io/otel/bridge/opentracing v1.45.0 h1:hFf959SYHZpFc8ZWlqiYlnH3Ke5w4fcWZh7He+CmqXk=
--go.opentelemetry.io/otel/bridge/opentracing v1.45.0/go.mod h1:etOoQoentzhTX0XTaRJmwlsiQx8TXD7mHo76YxNeBYg=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
-+go.opentelemetry.io/otel/bridge/opentracing v1.47.0 h1:s3CJ/gi1BywMOOKLvu9m6nNDf26x8+Cf+OkNKtTIRPY=
-+go.opentelemetry.io/otel/bridge/opentracing v1.47.0/go.mod h1:sSsj7slxZdcL7gtBnE7IT1T2yr0Zk85Ynf52xWRnfes=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.21.0 h1:WseeVYf5dJZTsyPiyW5L14k5qsSibqXAMTSiFEDiWr0=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.21.0/go.mod h1:SiLZnQS6Qk2eCpvr2CH/XMAOa64TWGXxEZJZCpD2Lmc=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
--go.opentelemetry.io/otel/log v0.21.0 h1:SLsVDGmtyBrdw8/a2Z0bOIxou/+bN4z56GebH7T0LvA=
--go.opentelemetry.io/otel/log v0.21.0/go.mod h1:iReetQrZL9Wyg84cCkOoCmqDHS5RCFfyxC7J+r8fn8g=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
--go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
--go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
-+go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
-+go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
- go.opentelemetry.io/otel/sdk/log v0.21.0 h1:QsE7XSR0ktQdKmRKGnR+f1ObGF32WG+7MER/P9KgmYc=
- go.opentelemetry.io/otel/sdk/log v0.21.0/go.mod h1:m9mApjCoD2/1QuKCAptjv+BrG9WKOvQLVdNx+iBldTo=
- go.opentelemetry.io/otel/sdk/log/logtest v0.21.0 h1:X+JBBgKlswCGYsmgL0CnoUUtlE//VB345c84jYAYkdQ=
- go.opentelemetry.io/otel/sdk/log/logtest v0.21.0/go.mod h1:HD1575K8e6sIFBBDd5tZB3t9DlMytWXq9FuR+Y4rfjE=
--go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
--go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6
+@@ -28,6 +28,7 @@ import (
+ 	"strings"
+ 	"time"
+ 
++	"github.com/google/uuid"
+ 	"github.com/jedib0t/go-pretty/v6/table"
+ 	"github.com/spf13/cobra"
+ 	"gopkg.in/yaml.v3"
+@@ -190,9 +191,8 @@ func newPolicyExceptionNewCmd(ws pkgWorkspace.Context, lm cmdBackend.LoginManage
+ 			"      --reason \"LOG-31\" --expires-in 30d --yes --output json\n\n" +
+ 			"  # Request the exception in a change request, even if no approval is required\n" +
+ 			"  pulumi policy exception new aws-security --policy required-tags --reason \"LOG-31\" --draft\n\n" +
+-			"  # See where violations are recorded, or the findings of a stack\n" +
+-			"  pulumi stack history events latest --event-type 9 --output json\n" +
+-			"  pulumi policy issue list",
++			"  # See where a run's violations are recorded\n" +
++			"  pulumi stack history events latest --event-type 9 --output json",
+ 		RunE: func(cmd *cobra.Command, posArgs []string) error {
+ 			if len(posArgs) > 0 {
+ 				args.policyPack = posArgs[0]
+@@ -211,6 +211,19 @@ func newPolicyExceptionNewCmd(ws pkgWorkspace.Context, lm cmdBackend.LoginManage
+ 			{Name: "policy-pack"},
+ 		},
+ 	})
++	// --update and --preview can be passed without a value, so the value of `--update 2` is read as an argument.
++	validateArgs := cmd.Args
++	cmd.Args = func(cmd *cobra.Command, posArgs []string) error {
++		for _, a := range posArgs {
++			if _, err := strconv.Atoi(a); err == nil && args.update == latestRun {
++				return cmdCmd.ConfigurationError{Message: fmt.Sprintf("unexpected argument %q: use --update=%s", a, a)}
++			}
++			if _, err := uuid.Parse(a); err == nil && args.preview == latestRun {
++				return cmdCmd.ConfigurationError{Message: fmt.Sprintf("unexpected argument %q: use --preview=%s", a, a)}
++			}
++		}
++		return validateArgs(cmd, posArgs)
++	}
+ 
+ 	flags := cmd.Flags()
+ 	flags.StringArrayVarP(&args.stacks, "stack", "s", nil,
+@@ -329,9 +342,16 @@ func runPolicyExceptionNew(
+ 		if _, err := c.ListPolicyExceptions(ctx, org, client.ListPolicyExceptionsOptions{}); err != nil {
+ 			return policyExceptionsError(err, org)
+ 		}
+-		if err := readPolicyExceptionViolations(ctx, c, stacks, pack, args, &result); err != nil {
++		unmatched, err := readPolicyExceptionViolations(ctx, c, stacks, pack, args, &result)
++		if err != nil {
+ 			return err
+ 		}
++		if len(result.Violations) == 0 && len(unmatched) > 0 {
++			return cmdCmd.ConfigurationError{
++				Message: "no violations match the Policy Pack, --policy or --target; the run has violations of " +
++					strings.Join(unmatched, ", "),
++			}
++		}
+ 		if len(result.Violations) == 0 {
+ 			result.OrganizationName, result.pack = org, pack
+ 			return render(result)
+@@ -595,16 +615,18 @@ func policyExceptionRunOf(
+ }
+ 
+ // readPolicyExceptionViolations reads the violations of each stack's run that pass the Policy Pack, --policy, --target
+-// and --level filters. Mandatory violations come first.
++// and --level filters. Mandatory violations come first. It also returns the `<pack>/<policy>` of the violations that
++// only the Policy Pack, --policy or --target filtered out, to tell a typo from a run without violations.
+ func readPolicyExceptionViolations(
+ 	ctx context.Context, c policyExceptionClient, stacks []client.StackIdentifier,
+ 	pack string, args policyExceptionNewArgs, result *policyExceptionNewResult,
+-) error {
++) ([]string, error) {
++	var unmatched []string
+ 	seen := map[[4]string]bool{}
+ 	for _, stack := range stacks {
+ 		run, err := policyExceptionRunOf(ctx, c, stack, args)
+ 		if err != nil {
+-			return err
++			return nil, err
+ 		}
+ 		result.Runs = append(result.Runs, policyExceptionRun{
+ 			Stack: stack.String(), Kind: string(run.UpdateKind), ID: run.UpdateID,
+@@ -614,17 +636,22 @@ func readPolicyExceptionViolations(
+ 		for {
+ 			resp, err := c.GetUpdateEngineEvents(ctx, run, eventOpts)
+ 			if err != nil {
+-				return fmt.Errorf("reading the policy events of %s %s %s: %w", stack, run.UpdateKind, run.UpdateID, err)
++				return nil, fmt.Errorf("reading the policy events of %s %s %s: %w", stack, run.UpdateKind, run.UpdateID, err)
+ 			}
+ 			for _, ev := range resp.Events {
+ 				p := ev.PolicyEvent
+ 				if p == nil || p.ResourceURN == "" ||
+-					(pack != "" && p.PolicyPackName != pack) ||
+-					(len(args.policies) > 0 && !slices.Contains(args.policies, p.PolicyName)) ||
+-					(len(args.targets) > 0 && !slices.Contains(args.targets, p.ResourceURN)) ||
+ 					(len(args.levels) > 0 && !slices.Contains(args.levels, p.EnforcementLevel)) {
+ 					continue
+ 				}
++				if (pack != "" && p.PolicyPackName != pack) ||
++					(len(args.policies) > 0 && !slices.Contains(args.policies, p.PolicyName)) ||
++					(len(args.targets) > 0 && !slices.Contains(args.targets, p.ResourceURN)) {
++					if name := p.PolicyPackName + "/" + p.PolicyName; !slices.Contains(unmatched, name) {
++						unmatched = append(unmatched, name)
++					}
++					continue
++				}
+ 				v := policyExceptionViolation{
+ 					Stack:      stack.String(),
+ 					PolicyPack: p.PolicyPackName,
+@@ -657,7 +684,7 @@ func readPolicyException
 ```
 
-**File**: `sdk/go/auto/test/errors/compilation_error/go/go.mod` (modified, +12/-11)
+**File**: `pkg/cmd/pulumi/policy/policy_exception_new_test.go` (modified, +62/-8)
 ```diff
-@@ -89,24 +89,25 @@ require (
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/collector/featuregate v1.58.0 // indirect
- 	go.opentelemetry.io/collector/pdata v1.58.0 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
--	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	golang.org/x/crypto v0.58.0 // indirect
-+	golang.org/x/crypto v0.59.0 // indirect
- 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
--	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/mod v0.42.0 // indirect
- 	golang.org/x/net v0.62.0 // indirect
--	golang.org/x/sync v0.24.0 // indirect
--	golang.org/x/sys v0.49.0 // indirect
--	golang.org/x/term v0.47.0 // indirect
--	golang.org/x/text v0.43.0 // indirect
--	golang.org/x/tools v0.51.0 // indirect
-+	golang.org/x/sync v0.25.0 // indirect
-+	golang.org/x/sys v0.50.0 // indirect
-+	golang.org/x/term v0.48.0 // indirect
-+	golang.org/x/text v0.44.0 // indirect
-+	golang.org/x/tools v0.52.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/grpc v1.83.2 // indirect
+@@ -272,15 +272,34 @@ func TestPolicyExceptionNew_LatestRun(t *testing.T) {
+ func TestPolicyExceptionNew_NoViolations(t *testing.T) {
+ 	t.Parallel()
+ 
+-	stdout, stderr, err := runNew(t, twoBuckets(), "", policyExceptionNewArgs{policyPack: "gcp", reason: "x"})
+-	require.NoError(t, err)
+-	assert.Empty(t, stdout)
+-	assert.Equal(t, "No violations of Policy Pack \"gcp\" to exempt.\n", stderr)
+-
+-	_, stderr, err = runNew(t, &mockPolicyExceptionClient{updates: []apitype.UpdateInfo{{Version: 1}}}, "",
++	_, stderr, err := runNew(t, &mockPolicyExceptionClient{updates: []apitype.UpdateInfo{{Version: 1}}}, "",
+ 		policyExceptionNewArgs{reason: "x"})
+ 	require.NoError(t, err)
+ 	assert.Equal(t, "No violations to exempt.\n", stderr)
++
++	stdout, stderr, err := runNew(t, twoBuckets(), "", policyExceptionNewArgs{levels: []string{"remediate"}, reason: "x"})
++	require.NoError(t, err, "a run without violations of the level isn't an error")
++	assert.Empty(t, stdout)
++	assert.Equal(t, "No violations to exempt.\n", stderr)
++
++	// A filter that matches none of the run's violations is likely a typo.
++	want := cmdCmd.ConfigurationError{Message: "no violations match the Policy Pack, --policy or --target; " +
++		"the run has violations of aws/unencrypted, aws/required-tags, aws/s3-no-public-read"}
++	for _, args := range []policyExceptionNewArgs{
++		{policyPack: "gcp"},
++		{policies: []string{"required-tag"}},
++		{targets: []string{logsURN + "-typo"}},
++		{policies: []string{"s3-no-public-read"}, targets: []string{logsURN}, dryRun: true},
++	} {
++		args.reason = "x"
++		_, _, err = runNew(t, twoBuckets(), "", args)
++		assert.Equal(t, want, err, "%+v", args)
++	}
++	_, _, err = runNew(t, twoBuckets(), "", policyExceptionNewArgs{
++		policyPack: "gcp", levels: []string{"mandatory"}, reason: "x",
++	})
++	assert.Equal(t, cmdCmd.ConfigurationError{Message: "no violations match the Policy Pack, --policy or --target; " +
++		"the run has violations of aws/required-tags, aws/s3-no-public-read"}, err, "only violations of the level")
+ }
+ 
+ func TestPolicyExceptionViolationTags(t *testing.T) {
+@@ -680,14 +699,49 @@ func TestParsePolicyExceptionExpiresIn(t *testing.T) {
+ 	t.Parallel()
+ 
+ 	for s, want := range map[string]time.Duration{
+-		"": 0, "7d": 7 * 24 * time.Hour, "12h": 12 * time.Hour, "2D": 48 * time.Hour,
++		"": 0, "7d": 7 * 24 * time.Hour, "12h": 12 * time.Hour, "2D": 48 * time.Hour, "3650d": 3650 * 24 * time.Hour,
++		"87600h": 87600 * time.Hour,
+ 	} {
+ 		got, err := parsePolicyExceptionExpiresIn(s)
+ 		require.NoError(t, err, s)
+ 		assert.Equal(t, want, got, s)
+ 	}
+-	for _, s := range []string{"0d", "-1h", "7", "x", "d", "1.5d", "90m", "1h30m"} {
++	for _, s := range []string{"7", "x", "d", "1.5d", "90m", "1h30m"} {
+ 		_, err := parsePolicyExceptionExpiresIn(s)
+ 		assert.EqualError(t, err, fmt.Sprintf("invalid --expires-in %q: use days, like 7d, or hours, like 12h", s))
+ 	}
++	for _, s := range []string{"0d", "0h", "-1h"} {
++		_, err := parsePolicyExceptionExpiresIn(s)
++		assert.EqualError(t, err, "--expires-in must be at least 1h", s)
++	}
++	for _, s := range []string{"3651d", "87601h", "106752d", "2562048h", "213504d", "9999999999d"} {
++		_, err := parsePolicyExceptionExpiresIn(s)
++		assert.EqualError(t, err, fmt.Sprintf("--expires-in %s is too long; the maximum is 3650d", s))
++	}
++}
++
++func TestPolicyExceptionNew_RunValueAsArgument(t *testing.T) {
++	t.Parallel()
++
++	for _, tc := range []struct {
++		args []string
++		want string
++	}{
++		{[]string{"--update", "2"}, `unexpected argument "2": use --update=2`},
++		{[]string{"aws", "--update", "2"}, `unexpected argument "2": use --update=2`},
++		{
++			[]string{"--preview", "5c35418b-6a6b-4b8e-9b51-2f6a3c8b9d10"},
++			`unexpected argument "5c35418b-6a6b-4b8e-9b51-2f6a3c8b9d10": use --preview=5c35418b-6a6b-4b8e-9b51-2f6a3c8b9d10`,
++		},
++		{[]string{"aws", "extra"}, "accepts at most 1 arg(s), received 2"},
++	} {
++		cmd := newPolicyExceptionNewCmd(nil, nil)
++		require.NoError(t, cmd.ParseFlags(tc.args))
++		assert.ErrorContains(t, cmd.Args(cmd, cmd.Flags().Args()), tc.want, tc.args)
++	}
++	for _, args := range [][]string{{"aws", "--update=2"}, {"2"}, {"aws", "--update"}} {
++		cmd := newPolicyExceptionNewCmd(nil, nil)
++		require.NoError(t, cmd.ParseFlags(args))
++		require.NoError(t, cmd.Args(cmd, cmd.Flags().Args()), args)
++	}
+ }
 ```
 
-**File**: `sdk/go/auto/test/errors/compilation_error/go/go.sum` (modified, +30/-27)
+**File**: `pkg/cmd/pulumi/policy/policy_exception_remove.go` (modified, +1/-1)
 ```diff
-@@ -177,7 +177,6 @@ github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
- github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
- github.com/pkg/term v1.1.0 h1:xIAAdCMh3QIAy+5FrE8Ad8XoDhEU4ufwbaSozViP9kk=
- github.com/pkg/term v1.1.0/go.mod h1:E25nymQcrSllhX42Ok8MRm1+hyBdHY0dCeiKZ9jpNGw=
--github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
- github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
- github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 h1:vkHw5I/plNdTr435cARxCW6q9gc0S/Yxz7Mkd38pOb0=
- github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231/go.mod h1:murToZ2N9hNJzewjHBgfFdXhZKjY3z5cYC1VXk+lbFE=
-@@ -209,8 +208,8 @@ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXf
- github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
- github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
- github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
--github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
--github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-+github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
-+github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
- github.com/texttheater/golang-levenshtein v1.0.1 h1:+cRNoVrfiwufQPhoMzB6N0Yf/Mqajr6t1lOv8GyGE2U=
- github.com/texttheater/golang-levenshtein v1.0.1/go.mod h1:PYAKrbF5sAiq9wd+H82hs7gNaen0CplQ9uvm6+enD/8=
- github.com/uber/jaeger-client-go v2.30.0+incompatible h1:D6wyKGCecFaSRUpo8lCVbaOOb6ThwMmTEbhRwtKR97o=
-@@ -233,20 +232,22 @@ go.opentelemetry.io/collector/internal/testutil v0.152.0 h1:8LGwekR7mLcUDhT1ofLm
- go.opentelemetry.io/collector/internal/testutil v0.152.0/go.mod h1:Jkjs6rkqs973LqgZ0Fe3zrokQRKULYXPIf4HuqStiEE=
- go.opentelemetry.io/collector/pdata v1.58.0 h1:5Lxut3NxKp87066Pzt+3q7+JUuFI5B3teCyLZIF8wIs=
- go.opentelemetry.io/collector/pdata v1.58.0/go.mod h1:4vZtODINbC/JF3eGocnatdImzbRHseOywIcr+aULjCg=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
--go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
--go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
--go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
--go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
-+go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
-+go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
- go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.opentelemetry.io/proto/slim/otlp v1.10.0 h1:iR97Vs/ZDR+y9TfuP9b1XBtdPWeC+OMslIBmhcLU7jM=
-@@ -262,20 +263,22 @@ go.uber.org/goleak v1.3.0/go.mod h1:CoHD4
+@@ -104,7 +104,7 @@ func runPolicyExceptionRemove(
+ 	apiErr, _ := errors.AsType[*apitype.ErrorResponse](err)
+ 	switch {
+ 	case apiErr != nil && apiErr.Code == http.StatusNotFound:
+-		return fmt.Errorf("policy exception %s not found in %s", exceptionID, org)
++		return policyExceptionNotFound(ctx, c, org, exceptionID)
+ 	// Removing an exception that's already removed does what was asked for.
+ 	case apiErr != nil && apiErr.Code == http.StatusConflict && strings.Contains(apiErr.Message, "already removed"):
+ 		fmt.Fprintf(stderr, "Policy exception %s is already removed.\n", exceptionID)
 ```
 
-**File**: `sdk/go/auto/test/errors/conflict_error/go.mod` (modified, +12/-11)
+**File**: `pkg/cmd/pulumi/policy/policy_exception_test.go` (modified, +89/-1)
 ```diff
-@@ -89,24 +89,25 @@ require (
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/collector/featuregate v1.58.0 // indirect
- 	go.opentelemetry.io/collector/pdata v1.58.0 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
--	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	golang.org/x/crypto v0.58.0 // indirect
-+	golang.org/x/crypto v0.59.0 // indirect
- 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
--	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/mod v0.42.0 // indirect
- 	golang.org/x/net v0.62.0 // indirect
--	golang.org/x/sync v0.24.0 // indirect
--	golang.org/x/sys v0.49.0 // indirect
--	golang.org/x/term v0.47.0 // indirect
--	golang.org/x/text v0.43.0 // indirect
--	golang.org/x/tools v0.51.0 // indirect
-+	golang.org/x/sync v0.25.0 // indirect
-+	golang.org/x/sys v0.50.0 // indirect
-+	golang.org/x/term v0.48.0 // indirect
-+	golang.org/x/text v0.44.0 // indirect
-+	golang.org/x/tools v0.52.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/grpc v1.83.2 // indirect
-```
-
-**File**: `sdk/go/auto/test/errors/conflict_error/go.sum` (modified, +30/-27)
-```diff
-@@ -177,7 +177,6 @@ github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
- github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
- github.com/pkg/term v1.1.0 h1:xIAAdCMh3QIAy+5FrE8Ad8XoDhEU4ufwbaSozViP9kk=
- github.com/pkg/term v1.1.0/go.mod h1:E25nymQcrSllhX42Ok8MRm1+hyBdHY0dCeiKZ9jpNGw=
--github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
- github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
- github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 h1:vkHw5I/plNdTr435cARxCW6q9gc0S/Yxz7Mkd38pOb0=
- github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231/go.mod h1:murToZ2N9hNJzewjHBgfFdXhZKjY3z5cYC1VXk+lbFE=
-@@ -209,8 +208,8 @@ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXf
- github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
- github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
- github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
--github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
--github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-+github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
-+github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
- github.com/texttheater/golang-levenshtein v1.0.1 h1:+cRNoVrfiwufQPhoMzB6N0Yf/Mqajr6t1lOv8GyGE2U=
- github.com/texttheater/golang-levenshtein v1.0.1/go.mod h1:PYAKrbF5sAiq9wd+H82hs7gNaen0CplQ9uvm6+enD/8=
- github.com/uber/jaeger-client-go v2.30.0+incompatible h1:D6wyKGCecFaSRUpo8lCVbaOOb6ThwMmTEbhRwtKR97o=
-@@ -233,20 +232,22 @@ go.opentelemetry.io/collector/internal/testutil v0.152.0 h1:8LGwekR7mLcUDhT1ofLm
- go.opentelemetry.io/collector/internal/testutil v0.152.0/go.mod h1:Jkjs6rkqs973LqgZ0Fe3zrokQRKULYXPIf4HuqStiEE=
- go.opentelemetry.io/collector/pdata v1.58.0 h1:5Lxut3NxKp87066Pzt+3q7+JUuFI5B3teCyLZIF8wIs=
- go.opentelemetry.io/collector/pdata v1.58.0/go.mod h1:4vZtODINbC/JF3eGocnatdImzbRHseOywIcr+aULjCg=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
--go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
--go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
--go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
--go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
-+go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
-+go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
- go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.opentelemetry.io/proto/slim/otlp v1.10.0 h1:iR97Vs/ZDR+y9TfuP9b1XBtdPWeC+OMslIBmhcLU7jM=
-@@ -262,20 +263,22 @@ go.uber.org/goleak v1.3.0/go.mod h1:CoHD4
+@@ -61,6 +61,11 @@ type mockPolicyExceptionClient struct {
+ 	// before, when the draft returned an open change request; it's a draft otherwise.
+ 	crStatus string
+ 	crOpen   string
++	// noStack makes GetStack return a 404, as for a stack that doesn't exist; noCR does the same for change requests.
++	noStack bool
++	noCR    bool
++	// stackErr fails GetStack with another error.
++	stackErr error
+ 
+ 	gotListOpts  []client.ListPolicyExceptionsOptions
+ 	gotOrgFlag   string
+@@ -70,6 +75,7 @@ type mockPolicyExceptionClient struct {
+ 	gotDrafts    []cloudapitype.CreatePolicyExceptionRequest
+ 	gotSubmitted []string
+ 	gotReads     []string
++	gotStacks    []string
+ }
+ 
+ func (m *mockPolicyExceptionClient) CreatePolicyException(
+@@ -107,6 +113,9 @@ func (m *mockPolicyExceptionClient) GetChangeRequest(
+ 	_ context.Context, org, id string,
+ ) (*esc_client.GetChangeRequestResponse, error) {
+ 	m.gotOrg = org
++	if m.noCR {
++		return nil, &apitype.ErrorResponse{Code: http.StatusNotFound}
++	}
+ 	status := cmp.Or(m.crOpen, changeRequestDraft)
+ 	if len(m.gotSubmitted) > 0 {
+ 		status = m.crStatus
+@@ -130,6 +139,14 @@ func (m *mockPolicyExceptionClient) GetLatestStackPreviews(
+ 	return m.previews, nil
+ }
+ 
++func (m *mockPolicyExceptionClient) GetStack(_ context.Context, stack client.StackIdentifier) (apitype.Stack, error) {
++	m.gotStacks = append(m.gotStacks, stack.String())
++	if m.noStack {
++		return apitype.Stack{}, &apitype.ErrorResponse{Code: http.StatusNotFound}
++	}
++	return apitype.Stack{}, m.stackErr
++}
++
+ func (m *mockPolicyExceptionClient) GetUpdateEngineEvents(
+ 	_ context.Context, update client.UpdateIdentifier, opts client.GetUpdateEngineEventsOptions,
+ ) (apitype.GetUpdateEventsResponse, error) {
+@@ -214,6 +231,7 @@ func TestPolicyExceptionList(t *testing.T) {
+ 
+ 	assert.Equal(t, "acme", c.gotOrg)
+ 	assert.Empty(t, c.gotOrgFlag, "the organization defaults to the backend's")
++	assert.Equal(t, []string{"acme/web/prod"}, c.gotStacks)
+ 	query := client.ListPolicyExceptionsOptions{
+ 		PolicyPack: "aws-security",
+ 		Policy:     "required-tags",
+@@ -319,6 +337,26 @@ func TestPolicyExceptionList_Errors(t *testing.T) {
+ 		}, err)
+ 		assert.Empty(t, c.gotListOpts, stack)
+ 	}
++
++	c = &mockPolicyExceptionClient{}
++	err = runPolicyExceptionList(t.Context(), &bytes.Buffer{}, &bytes.Buffer{}, stubPolicyExceptionFactory(c, "acme"),
++		policyExceptionListArgs{
++			statuses: []string{"active", "pending"}, outputFormat: defaultPolicyExceptionListOutputFormat(),
++		})
++	assert.Equal(t, cmdCmd.ConfigurationError{Message: `invalid --status "pending": expected active or removed`}, err)
++	assert.Empty(t, c.gotListOpts)
++
++	c = &mockPolicyExceptionClient{noStack: true}
++	err = runPolicyExceptionList(t.Context(), &bytes.Buffer{}, &bytes.Buffer{}, stubPolicyExceptionFactory(c, "acme"),
++		policyExceptionListArgs{stack: "nope/nope", outputFormat: defaultPolicyExceptionListOutputFormat()})
++	assert.EqualError(t, err, "no stack named 'acme/nope/nope' found")
++	assert.Empty(t, c.gotListOpts)
++
++	c = &mockPolicyExceptionClient{stackErr: &apitype.ErrorResponse{Code: http.StatusForbidden, Message: "forbidden"}}
++	err = runPolicyExceptionList(t.Context(), &bytes.Buffer{}, &bytes.Buffer{}, stubPolicyExceptionFactory(c, "acme"),
++		policyExceptionListArgs{stack: "web/prod", outputFormat: defaultPolicyExceptionListOutputFormat()})
++	assert.ErrorIs(t, err, c.stackErr)
++	assert.Empty(t, c.gotListOpts)
+ }
+ 
+ func TestPolicyExceptionGet(t *testing.T) {
+@@ -340,7 +378,7 @@ func TestPolicyExceptionGet(t *testing.T) {
+ 	assert.Equal(t, `ID:            EXC-3
+ Policy pack:   aws-security
+ Status:        removed
+-Requested in:  change request cr-1
++Requested in:  change request cr-1: http://localhost:3000/other-org/web/prod?exception=cr-1
+ Created:       2026-10-01T12:00:00Z by alice
+ Removed:       2026-10-02T09:30:00Z by bob
+ Expires:       2026-10-09T00:00:00Z
+@@ -452,6 +490,56 @@ func TestPolicyExceptionGet_Errors(t *testing.T) {
+ 	}
+ 	err = runPolicyExceptionGet(t.Context(), &bytes.Buffer{}, failing, "EXC-9", args)
+ 	assert.EqualError(t, err, "not logged in")
++
++	// `new` prints a change request's ID when the organization requires approval.
++	const crID = "fa8258ae-1124-4cdc-98c8-6a6a2f6a2fc5"
++	notFound := &mockPolicyExceptionClient{crOpen: "pending"}
++	factory := func(context.Context, string) (policyExceptionClients, string, error) {
++		return policyExceptionClients{&notFoundExceptions{notFound}, notFound}, "acme", nil
++	}
++	err = runPolicyExceptionGet(t.Context(), &bytes.Buffer{}, factory, crID, args)
++	assert.EqualError(t, err, crID+" is a change request (status: pending), not a policy exception; "+
++		"it creates the exception once it's approved and applied")
++	err = runPolicyExceptionRemove(t.Context(), &bytes.Buffer{}, &bytes.Buffer{}, factory, crID,
++		policyExceptionRemoveArgs{yes: true, outputFormat: defaultPolicyExceptionRemoveOutputFormat()})
++	assert.EqualError(t, err, crID+" is a change request (status: pending), not a policy exception; "+
++		"it cr
 ```
 
 ---
 
-### Incident Patch 2: `1a526082` (2026-11-17)
-**Commit Message**: cli: Fix formatting in pulumi convert help text (#22559)
+### Incident Patch 2: `25fbecc6` (2026-11-19)
+**Commit Message**: Return rendered doc ref text alongside diagnostics (#24762)
 
-### Proposed changes
+A description with one ref that does not bind:
 
-The `Long` description string for `pulumi convert` was missing a newline
-between the "Valid target languages" line and the "Example command
-usage:" section. Every other paragraph break in this string uses `"\n" +
-"\n"` to produce a blank line; this one had only a single `\n`, so the
-two sections ran together in both `pulumi convert --help` and the
-generated CLI reference docs on pulumi.com.
+```
+See {{% ref #/resources/test:s3:Bucket %}} and {{% ref #/resources/test:s3:Absent %}}.
+```
 
-### Credit
+Before, this returns an error and no text, so both refs reach the docs
+as raw `{{% ref %}}` markup. After:
 
-Originally spotted and fixed by @absurdlylongusername in
-pulumi/docs#18431. That PR patched the generated markdown file directly;
-this PR applies the equivalent fix at the source so it survives the next
-docs regeneration.
+```
+See Bucket and #/resources/test:s3:Absent.
+```
 
-cc @jkodroff
+plus one diagnostic for the second ref.
 
-### Related issues
+`interpretPulumiRefs` already rendered both;
+`interpretPulumiRefsInDescription` discarded that and returned the first
+error. `InterpretPulumiRefs` is unchanged and still errors, so codegen
+keeps failing loudly. New `InterpretPulumiRefsWithDiagnostics` returns
+the text with its diagnostics.
 
-Closes pulumi/docs#18431 (superseded)
+This also fixes an unreachable fallback: `ok` holds the `*Ref` type
+assertion, always true where the fallback is tested, so an unbound ref
+rendered as the empty string.
+
+Consumer: https://github.com/pulumi/pulumi-service/pull/49330
+
+## Test plan
+
+- `TestInterpretPulumiRefsWithDiagnostics`
+- `go test ./codegen/schema ./codegen ./codegen/go ./codegen/python`
+
+**File**: `changelog/pending/20260923--pkg--doc-ref-diagnostics.yaml` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++component: pkg
++kind: fix
++body: Render documentation references that fail to bind as their fallback name instead of the empty string, and add PackageReference.InterpretPulumiRefsWithDiagnostics, which returns the rendered text with its diagnostics rather than reporting one failed reference as an error for the whole string. Deprecate PackageReference.InterpretPulumiRefs in its favor
++time: 2026-09-23T14:00:00.000000000+02:00
+```
+
+**File**: `pkg/codegen/docs_test.go` (modified, +109/-12)
+```diff
+@@ -168,15 +168,15 @@ func TestInterpretPulumiRefs(t *testing.T) {
+ 		description := "This is a reference to {{% ref #/resources/test:s3:Bucket %}} and one to the " +
+ 			"{{% ref #/resources/test:s3:Bucket/properties/region %}} property."
+ 		expected := "This is a reference to s3.Bucket and one to the region property."
+-		result, err := pkg.InterpretPulumiRefs(description, func(ref schema.DocRef) (string, bool) {
++		result, diags := pkg.InterpretPulumiRefsWithDiagnostics(description, func(ref schema.DocRef) (string, bool) {
+ 			if ref.Kind == schema.DocRefKindResource {
+ 				rt := ref.Type.(*schema.ResourceType)
+ 				tok := tokens.Type(rt.Token)
+ 				return tok.Module().Name().String() + "." + tok.Name().String(), true
+ 			}
+ 			return "", false
+ 		})
+-		require.NoError(t, err)
++		require.False(t, diags.HasErrors())
+ 		assert.Equal(t, expected, result, "expected resolved references")
+ 	})
+ 
+@@ -187,21 +187,21 @@ func TestInterpretPulumiRefs(t *testing.T) {
+ 		description := "This is a reference to {{% ref #/resources/test:mod:Resource/properties/myProperty %}}" +
+ 			" and to {{% ref #/resources/test:mod:Resource %}}."
+ 		expected := "This is a reference to myProperty and to test:mod:Resource."
+-		result, err := pkg.InterpretPulumiRefs(description, func(ref schema.DocRef) (string, bool) {
++		result, diags := pkg.InterpretPulumiRefsWithDiagnostics(description, func(ref schema.DocRef) (string, bool) {
+ 			return "", false
+ 		})
+-		require.NoError(t, err)
++		require.False(t, diags.HasErrors())
+ 		assert.Equal(t, expected, result, "expected fallback to last segment for unknown references")
+ 	})
+ 
+ 	t.Run("HandlesEmptyDescription", func(t *testing.T) {
+ 		t.Parallel()
+ 
+ 		pkg := bindTestPackage(t)
+-		result, err := pkg.InterpretPulumiRefs("", func(ref schema.DocRef) (string, bool) {
++		result, diags := pkg.InterpretPulumiRefsWithDiagnostics("", func(ref schema.DocRef) (string, bool) {
+ 			return "ResolvedName", true
+ 		})
+-		require.NoError(t, err)
++		require.False(t, diags.HasErrors())
+ 		assert.Equal(t, "", result, "expected empty result for empty description")
+ 	})
+ 
+@@ -211,10 +211,10 @@ func TestInterpretPulumiRefs(t *testing.T) {
+ 		pkg := bindTestPackage(t)
+ 		description := "This description has no Pulumi references."
+ 		expected := "This description has no Pulumi references."
+-		result, err := pkg.InterpretPulumiRefs(description, func(ref schema.DocRef) (string, bool) {
++		result, diags := pkg.InterpretPulumiRefsWithDiagnostics(description, func(ref schema.DocRef) (string, bool) {
+ 			return "ResolvedName", true
+ 		})
+-		require.NoError(t, err)
++		require.False(t, diags.HasErrors())
+ 		assert.Equal(t, expected, result, "expected unchanged description when no refs are present")
+ 	})
+ 
+@@ -223,10 +223,11 @@ func TestInterpretPulumiRefs(t *testing.T) {
+ 
+ 		pkg := bindTestPackage(t)
+ 		description := "This is a {{% ref bad %}} reference."
+-		_, err := pkg.InterpretPulumiRefs(description, func(ref schema.DocRef) (string, bool) {
++		_, diags := pkg.InterpretPulumiRefsWithDiagnostics(description, func(ref schema.DocRef) (string, bool) {
+ 			return "ResolvedName", true
+ 		})
+-		require.ErrorContains(t, err, "invalid doc ref: bad")
++		require.True(t, diags.HasErrors())
++		assert.Contains(t, diags.Error(), "invalid doc ref: bad")
+ 	})
+ 
+ 	t.Run("ResolvesExternalRefs", func(t *testing.T) {
+@@ -279,7 +280,7 @@ func TestInterpretPulumiRefs(t *testing.T) {
+ 		require.NoError(t, err)
+ 		require.False(t, diags.HasErrors(), "diags: %v", diags)
+ 
+-		result, err := pkg.InterpretPulumiRefs(pkg.Description, func(ref schema.DocRef) (string, bool) {
++		result, diags := pkg.InterpretPulumiRefsWithDiagnostics(pkg.Description, func(ref schema.DocRef) (string, bool) {
+ 			switch ref.Kind { //nolint:exhaustive // test doesn't care about other cases
+ 			case schema.DocRefKindResource:
+ 				return ref.Type.(*schema.ResourceType).Token, true
+@@ -292,7 +293,7 @@ func TestInterpretPulumiRefs(t *testing.T) {
+ 			}
+ 			return "", false
+ 		})
+-		require.NoError(t, err)
++		require.False(t, diags.HasErrors())
+ 		assert.Contains(t, result, "extdep:mod:ExtType")
+ 		assert.Contains(t, result, "extdep:mod:ExtResource")
+ 		assert.Contains(t, result, "extdep:mod:extFunction")
+@@ -314,3 +315,99 @@ func (l *stubSchemaLoader) LoadPackage(name string, version *semver.Version) (*s
+ func (l *stubSchemaLoader) LoadPackageV2(_ context.Context, _ *schema.PackageDescriptor) (*schema.Package, error) {
+ 	return l.pkg, nil
+ }
++
++func TestInterpretPulumiRefsWithDiagnostics(t *testing.T) {
++	t.Parallel()
++
++	resolveToName := func(schema.DocRef) (string, bool) { return "ResolvedName", true }
++
++	t.Run("RendersTheTextAlongsideDiagnostics", func(t *testing.T) {
++		t.Parallel()
++
++		pkg := bindTestPackage(t)
++		description := "Missing {{% ref #/resources/test:s3:Absent %}} here."
++
++		result, diags := pkg.InterpretPulumiRefsWithDiagnostics(description, resolveToName)
++
++		require.True(t, diags.HasErrors())
++		assert.Equal(t, "Missing ResolvedName here.", result)
+```
+
+**File**: `pkg/codegen/go/doc_test.go` (modified, +2/-2)
+```diff
+@@ -36,12 +36,12 @@ func renderWithResolver(
+ 	selfRef schema.DocRef, description string,
+ ) string {
+ 	t.Helper()
+-	rendered, err := pkg.InterpretPulumiRefs(description, func(ref schema.DocRef) (string, bool) {
++	rendered, diags := pkg.InterpretPulumiRefsWithDiagnostics(description, func(ref schema.DocRef) (string, bool) {
+ 		name, ok, err := d.ResolveDocRef(pkg, selfRef, ref)
+ 		require.NoError(t, err)
+ 		return name, ok
+ 	})
+-	require.NoError(t, err)
++	require.False(t, diags.HasErrors(), diags.Error())
+ 	return strings.TrimSuffix(rendered, "\n")
+ }
+ 
+```
+
+**File**: `pkg/codegen/go/gen.go` (modified, +6/-3)
+```diff
+@@ -1137,6 +1137,9 @@ func (pkg *pkgContext) toOutputMethod(t schema.Type) string {
+ // selfRef is set, refs within the same scope are returned unqualified.
+ func (pkg *pkgContext) docRefResolver(selfRef schema.DocRef) func(schema.DocRef) (string, bool) {
+ 	return func(ref schema.DocRef) (string, bool) {
++		if ref.Type == nil && ref.Function == nil {
++			return "", false
++		}
+ 		var base string
+ 		switch ref.Kind {
+ 		case schema.DocRefKindResource, schema.DocRefKindResourceProperty:
+@@ -1189,9 +1192,9 @@ func (pkg *pkgContext) printComment(w io.Writer, comment string, selfRef schema.
+ 	}
+ 	comment = codegen.FilterExamples(comment, "go")
+ 
+-	comment, err := pkg.pkg.InterpretPulumiRefs(comment, pkg.docRefResolver(selfRef))
+-	if err != nil {
+-		return 0, fmt.Errorf("error interpreting Pulumi references in comment %q: %w", comment, err)
++	comment, diags := pkg.pkg.InterpretPulumiRefsWithDiagnostics(comment, pkg.docRefResolver(selfRef))
++	if diags.HasErrors() {
++		return 0, fmt.Errorf("error interpreting Pulumi references in comment %q: %w", comment, diags)
+ 	}
+ 
+ 	lines := strings.Split(comment, "\n")
+```
+
+**File**: `pkg/codegen/nodejs/doc_test.go` (modified, +2/-2)
+```diff
+@@ -31,12 +31,12 @@ func renderWithResolver(
+ 	selfRef schema.DocRef, description string,
+ ) string {
+ 	t.Helper()
+-	rendered, err := pkg.InterpretPulumiRefs(description, func(ref schema.DocRef) (string, bool) {
++	rendered, diags := pkg.InterpretPulumiRefsWithDiagnostics(description, func(ref schema.DocRef) (string, bool) {
+ 		name, ok, err := d.ResolveDocRef(pkg, selfRef, ref)
+ 		require.NoError(t, err)
+ 		return name, ok
+ 	})
+-	require.NoError(t, err)
++	require.False(t, diags.HasErrors(), diags.Error())
+ 	return strings.TrimSuffix(rendered, "\n")
+ }
+ 
+```
+
+**File**: `pkg/codegen/nodejs/gen.go` (modified, +6/-3)
+```diff
+@@ -378,6 +378,9 @@ func sanitizeComment(str string) string {
+ // selfRef is set, refs within the same scope are returned unqualified.
+ func (mod *modContext) docRefResolver(selfRef schema.DocRef) func(schema.DocRef) (string, bool) {
+ 	return func(ref schema.DocRef) (string, bool) {
++		if ref.Type == nil && ref.Function == nil {
++			return "", false
++		}
+ 		var base string
+ 		switch ref.Kind {
+ 		case schema.DocRefKindResource, schema.DocRefKindResourceProperty:
+@@ -429,9 +432,9 @@ func (mod *modContext) printComment(w io.Writer, comment, deprecationMessage, in
+ 		return nil
+ 	}
+ 
+-	comment, err := mod.pkg.InterpretPulumiRefs(comment, mod.docRefResolver(selfRef))
+-	if err != nil {
+-		return fmt.Errorf("error interpreting Pulumi references in comment %q: %w", comment, err)
++	comment, diags := mod.pkg.InterpretPulumiRefsWithDiagnostics(comment, mod.docRefResolver(selfRef))
++	if diags.HasErrors() {
++		return fmt.Errorf("error interpreting Pulumi references in comment %q: %w", comment, diags)
+ 	}
+ 
+ 	comment = sanitizeComment(comment)
+```
+
+**File**: `pkg/codegen/python/doc_test.go` (modified, +2/-2)
+```diff
+@@ -31,12 +31,12 @@ func renderWithResolver(
+ 	selfRef schema.DocRef, description string,
+ ) string {
+ 	t.Helper()
+-	rendered, err := pkg.InterpretPulumiRefs(description, func(ref schema.DocRef) (string, bool) {
++	rendered, diags := pkg.InterpretPulumiRefsWithDiagnostics(description, func(ref schema.DocRef) (string, bool) {
+ 		name, ok, err := d.ResolveDocRef(pkg, selfRef, ref)
+ 		require.NoError(t, err)
+ 		return name, ok
+ 	})
+-	require.NoError(t, err)
++	require.False(t, diags.HasErrors(), diags.Error())
+ 	return strings.TrimSuffix(rendered, "\n")
+ }
+ 
+```
+
+**File**: `pkg/codegen/python/gen.go` (modified, +6/-3)
+```diff
+@@ -2705,6 +2705,9 @@ func (mod *modContext) genInitDocstring(w io.Writer, res *schema.Resource, resou
+ // selfRef is set, refs within the same scope are returned unqualified.
+ func (mod *modContext) docRefResolver(selfRef schema.DocRef) func(schema.DocRef) (string, bool) {
+ 	return func(ref schema.DocRef) (string, bool) {
++		if ref.Type == nil && ref.Function == nil {
++			return "", false
++		}
+ 		var base string
+ 		switch ref.Kind {
+ 		case schema.DocRefKindResource, schema.DocRefKindResourceProperty:
+@@ -2763,9 +2766,9 @@ func (mod *modContext) genComment(comment string, selfRef schema.DocRef, filterE
+ 	if filterExamples {
+ 		comment = codegen.FilterExamples(comment, "python")
+ 	}
+-	comment, err := mod.pkg.InterpretPulumiRefs(comment, mod.docRefResolver(selfRef))
+-	if err != nil {
+-		return "", fmt.Errorf("error interpreting Pulumi references in comment %q: %w", comment, err)
++	comment, diags := mod.pkg.InterpretPulumiRefsWithDiagnostics(comment, mod.docRefResolver(selfRef))
++	if diags.HasErrors() {
++		return "", fmt.Errorf("error interpreting Pulumi references in comment %q: %w", comment, diags)
+ 	}
+ 
+ 	return comment, nil
+```
+
+---
+
+### Incident Patch 3: `148aa8a6` (2026-11-19)
+**Commit Message**: Let providers suggest commands that fix credentials problems (#25598)
+
+Providers can attach a `CommandRemediation` (a description, a command,
+and extra environment variables) to a `CheckConfigFailure` in their
+`CheckConfig2` response. When the `pulumi new` credentials preflight
+gets one, it shows the command, asks before running it (never under
+`--yes`), then checks the credentials again.
+
+Only `CheckConfig2` carries remediations. `CheckConfig`, `CheckFailure`
+(used by `Check`, `Invoke` and `Call`) and
+`sdk/go/common/resource/plugin` are unchanged. In Go, providers return
+them in `plugin.CheckConfigFailure.Remediations` from
+`Provider.CheckConfig`.
+
+This replaces #25509, which matched pulumi-aws's error text in the CLI.
+The AWS-specific logic now lives in the provider:
+
+- pulumi-terraform-bridge: pulumi/pulumi-terraform-bridge#3695
+- pulumi-aws: pulumi/pulumi-aws#6735
+
+Independent of #25605, which adds a product hint to the same
+`CheckConfigFailure` message. Whichever merges second needs a rebase and
+regenerated protobuf code.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 ---------
 
-Co-authored-by: absurdlylongusername <[REDACTED_EMAIL]>
-Co-authored-by: Fraser Ashyggton <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
+Co-authored-by: Thomas Gumme
 
-**File**: `changelog/pending/cli-convert-fix-20260409-190700.yaml` (added, +4/-0)
+**File**: `changelog/pending/20261105--cli-new--provider-remediation.yaml` (added, +3/-0)
 ```diff
-@@ -0,0 +1,4 @@
-+component: cli/convert
-+kind: fix
-+body: Fix missing blank line in `pulumi convert --help` output between the target languages list and the example usage section
-+time: 2026-04-09T19:07:00.000000+00:00
+@@ -0,0 +1,3 @@
++component: cli/new
++kind: improvement
++body: Offer to run the command a provider suggests, such as a cloud sign-in, when `pulumi new` finds missing or expired credentials
 ```
 
-**File**: `pkg/cmd/pulumi/convert/convert.go` (modified, +2/-2)
+**File**: `pkg/cmd/pulumi/credentialcheck/credentialcheck.go` (modified, +15/-3)
 ```diff
-@@ -82,9 +82,9 @@ func NewConvertCmd(lm cmdBackend.LoginManager, ws pkgWorkspace.Context) *cobra.C
- 			"\n" +
- 			"Valid source languages: yaml, terraform, bicep, arm, kubernetes\n" +
- 			"\n" +
--			"Valid target languages: typescript, python, csharp, go, java, yaml" +
-+			"Valid target languages: typescript, python, csharp, go, java, yaml\n" +
- 			"\n" +
--			"Example command usage:" +
-+			"Example command usage:\n" +
- 			"\n" +
- 			"    pulumi convert --from yaml --language java --out . \n" +
- 			"\n\n" +
+@@ -108,16 +108,28 @@ func probe(ctx context.Context, info Info, prov plugin.Provider, news property.M
+ 			reason = string(f.Property) + ": " + reason
+ 		}
+ 		p.details = append(p.details, reason)
++		for i, r := range f.Remediations {
++			if p.remediation == nil && len(r.Command) > 0 && r.Command[0] != "" {
++				p.remediation = &f.Remediations[i]
++			}
++		}
+ 	}
+ 	return p
+ }
+ 
+ // Problem is the error [Check] reports when a provider rejects the configuration or cannot validate
+ // the user's credentials.
+ type Problem struct {
+-	info     Info
+-	headline string
+-	details  []string
++	info        Info
++	headline    string
++	details     []string
++	remediation *plugin.CommandRemediation
++}
++
++// Remediation returns the first command the provider suggests to resolve the problem, or nil. A
++// remediation it returns always names a program to run.
++func (p *Problem) Remediation() *plugin.CommandRemediation {
++	return p.remediation
+ }
+ 
+ func (p *Problem) Error() string {
+```
+
+**File**: `pkg/cmd/pulumi/credentialcheck/credentialcheck_test.go` (modified, +41/-0)
+```diff
+@@ -363,3 +363,44 @@ func TestProbeTimeout(t *testing.T) {
+ 	var problem *Problem
+ 	assert.NotErrorAs(t, err, &problem, "a cancelled check says nothing about the credentials")
+ }
++
++func TestProbeRemediation(t *testing.T) {
++	t.Parallel()
++
++	signIn := plugin.CommandRemediation{Description: "Sign in to AWS", Command: []string{"aws", "login"}}
++	ssoSignIn := plugin.CommandRemediation{Description: "Sign in to AWS", Command: []string{"aws", "sso", "login"}}
++
++	t.Run("first with a command", func(t *testing.T) {
++		t.Parallel()
++
++		mock := &plugin.MockProvider{
++			CheckConfigF: func(context.Context, plugin.CheckConfigRequest) (plugin.CheckConfigResponse, error) {
++				return plugin.CheckConfigResponse{Failures: []plugin.CheckConfigFailure{
++					{Property: "region", Reason: "expected a valid region"},
++					{Reason: "No valid credential sources found.", Remediations: []plugin.CommandRemediation{
++						{Description: "Nothing to run"}, {Command: []string{""}}, signIn,
++					}},
++					{Reason: "The SSO session has expired.", Remediations: []plugin.CommandRemediation{ssoSignIn}},
++				}}, nil
++			},
++		}
++		var problem *Problem
++		require.ErrorAs(t, probe(t.Context(), awsProvider, mock, property.Map{}), &problem)
++		assert.Equal(t, &signIn, problem.Remediation())
++	})
++
++	t.Run("none", func(t *testing.T) {
++		t.Parallel()
++
++		mock := &plugin.MockProvider{
++			CheckConfigF: func(context.Context, plugin.CheckConfigRequest) (plugin.CheckConfigResponse, error) {
++				return plugin.CheckConfigResponse{Failures: []plugin.CheckConfigFailure{
++					{Reason: "No valid credential sources found."},
++				}}, nil
++			},
++		}
++		var problem *Problem
++		require.ErrorAs(t, probe(t.Context(), awsProvider, mock, property.Map{}), &problem)
++		assert.Nil(t, problem.Remediation())
++	})
++}
+```
+
+**File**: `pkg/cmd/pulumi/project/newcmd/credentials.go` (modified, +49/-16)
+```diff
+@@ -26,6 +26,7 @@ import (
+ 	cmdBackend "github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/backend"
+ 	"github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/credentialcheck"
+ 	cmdStack "github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/stack"
++	"github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/ui"
+ 	"github.com/pulumi/pulumi/pkg/v3/resource/deploy"
+ 	"github.com/pulumi/pulumi/pkg/v3/resource/plugin"
+ 	pkgWorkspace "github.com/pulumi/pulumi/pkg/v3/workspace"
+@@ -34,6 +35,7 @@ import (
+ 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag/colors"
+ 	"github.com/pulumi/pulumi/sdk/v3/go/common/env"
+ 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/config"
++	"github.com/pulumi/pulumi/sdk/v3/go/common/util/cmdutil"
+ 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
+ 	"github.com/pulumi/pulumi/sdk/v3/go/common/workspace"
+ )
+@@ -52,6 +54,11 @@ type credentialsPreflight struct {
+ 	cfg    config.Map
+ 	stdout io.Writer
+ 	opts   display.Options
++
++	// confirm asks the user a yes-or-no question. It is nil when the preflight must not stop to
++	// ask, as under --yes, and then no remediation is offered.
++	confirm func(prompt string) bool
++	run     func(ctx context.Context, r plugin.CommandRemediation) error
+ }
+ 
+ // preflightCloudCredentials runs the best-effort cloud credentials check for a freshly
+@@ -89,7 +96,12 @@ func preflightCloudCredentials(
+ 	}
+ 	defer contract.IgnoreClose(pctx)
+ 
+-	pf := credentialsPreflight{host: host, pctx: pctx, cfg: cfg, stdout: args.stdout, opts: opts}
++	pf := credentialsPreflight{host: host, pctx: pctx, cfg: cfg, stdout: args.stdout, opts: opts, run: runRemediation}
++	if !args.yes {
++		pf.confirm = func(prompt string) bool {
++			return ui.PromptUser(prompt, []string{"yes", "no"}, "yes", opts.Color) == "yes"
++		}
++	}
+ 	for _, pkg := range packages {
+ 		if pkg.Kind != apitype.ResourcePlugin || pkg.ExtensionParameterization != nil {
+ 			continue
+@@ -101,13 +113,42 @@ func preflightCloudCredentials(
+ 	}
+ }
+ 
+-// checkPackage loads a single provider, asks its schema whether it wants the credentials
+-// check and, if so, runs it and prints any problem it finds.
++// checkPackage checks the credentials of a single provider and prints any problem it finds,
++// checking again if the user runs the fix the provider suggests.
+ func (pf credentialsPreflight) checkPackage(ctx context.Context, desc workspace.PackageDescriptor) {
++	_, err := pf.check(ctx, desc)
++	problem, ok := errors.AsType[*credentialcheck.Problem](err)
++	if !ok {
++		if err != nil {
++			slog.DebugContext(ctx, "skipping credentials check", "provider", desc.Name, "err", err)
++		}
++		return
++	}
++	pf.printWarning(problem)
++	if !pf.offerAndRunRemediation(ctx, problem) {
++		return
++	}
++
++	// The provider is loaded again, since it may have cached the credentials that failed.
++	info, err := pf.check(ctx, desc)
++	if problem, ok := errors.AsType[*credentialcheck.Problem](err); ok {
++		pf.printWarning(problem)
++	} else if err != nil {
++		slog.DebugContext(ctx, "skipping credentials check", "provider", desc.Name, "err", err)
++	} else {
++		fmt.Fprintf(pf.stdout, "%s credentials verified.%s\n\n", info.DisplayName, cmdutil.EmojiOr(" ✅", ""))
++	}
++}
++
++// check loads a single provider and runs [credentialcheck.Check] against it. It returns a
++// [credentialcheck.Problem] if the provider rejected the credentials, and any other error if the
++// check could not run.
++func (pf credentialsPreflight) check(
++	ctx context.Context, desc workspace.PackageDescriptor,
++) (credentialcheck.Info, error) {
+ 	prov, err := pf.host.Provider(pf.pctx, desc.PluginDescriptor, env.Global())
+ 	if err != nil {
+-		slog.DebugContext(ctx, "skipping credentials check", "provider", desc.Name, "err", err)
+-		return
++		return credentialcheck.Info{}, err
+ 	}
+ 	defer contract.IgnoreClose(prov)
+ 
+@@ -117,25 +158,17 @@ func (pf credentialsPreflight) checkPackage(ctx context.Context, desc workspace.
+ 			Name: parameterization.Name, Version: parameterization.Version, Value: parameterization.Value,
+ 		}})
+ 		if err != nil {
+-			slog.DebugContext(ctx, "skipping credentials check", "provider", desc.Name, "err", err)
+-			return
++			return credentialcheck.Info{}, err
+ 		}
+ 		if resp.Name != parameterization.Name || !resp.Version.EQ(parameterization.Version) {
+-			slog.DebugContext(ctx, "skipping credentials check", "provider", desc.Name,
+-				"err", fmt.Errorf("unexpected parameterization response: %s@%s", resp.Name, resp.Version))
+-			return
++			return credentialcheck.Info{}, fmt.Errorf("unexpected parameterization response: %s@%s", resp.Name, resp.Version)
+ 		}
+ 		request.SubpackageName = resp.Name
+ 		request.SubpackageVersion = &resp.Version
+ 	}
+ 
+ 	target := &deploy.Target{Config: plaintextConfig(pf.cfg), Decrypter: config.NopDecrypter}
+-	_, err = credentialcheck.Check(ctx, prov, request, target)
+-	if problem, ok := errors.AsType[*credentialcheck.Problem](err); ok {
+-		pf.printWarning(problem)
+-	} else if err != nil {
+-		slog.DebugContext(ctx, "skipping credentials check", "provider", desc.Name, "err", err)
+-	}
++	
+```
+
+**File**: `pkg/cmd/pulumi/project/newcmd/credentials_remediation.go` (added, +86/-0)
+```diff
+@@ -0,0 +1,86 @@
++// Copyright 2026, Pulumi Corporation.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package newcmd
++
++import (
++	"context"
++	"fmt"
++	"log/slog"
++	"os"
++	"os/exec"
++	"slices"
++	"strings"
++
++	"github.com/kballard/go-shellquote"
++	"github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/credentialcheck"
++	"github.com/pulumi/pulumi/pkg/v3/resource/plugin"
++)
++
++// offerAndRunRemediation asks the user whether to run the command the provider suggested to fix
++// problem, runs it if they agree, and reports whether it succeeded. It reports false if the user
++// interrupted pulumi meanwhile.
++func (pf credentialsPreflight) offerAndRunRemediation(ctx context.Context, problem *credentialcheck.Problem) bool {
++	r := problem.Remediation()
++	if r == nil || pf.confirm == nil {
++		return false
++	}
++	command := shellquote.Join(r.Command...)
++	prompt := fmt.Sprintf("Run `%s` now?", command)
++	if r.Description != "" {
++		prompt = fmt.Sprintf("%s: run `%s` now?", r.Description, command)
++	}
++	if !pf.confirm(prompt) {
++		fmt.Fprintf(pf.stdout, "Skipped running `%s`.\n\n", command)
++		return false
++	}
++	err := pf.run(ctx, *r)
++	if ctx.Err() != nil {
++		return false
++	}
++	if err != nil {
++		fmt.Fprintf(pf.stdout, "`%s` did not complete; run it yourself, then `pulumi up`.\n\n", command)
++		return false
++	}
++	return true
++}
++
++// runRemediation runs r attached to the terminal, since sign-in commands prompt and wait for the
++// user. The preflight only runs in interactive mode (see [credentialsCheckEnabled]), which
++// requires stdin and stdout to be terminals.
++func runRemediation(ctx context.Context, r plugin.CommandRemediation) error {
++	cmd := exec.CommandContext(ctx, r.Command[0], r.Command[1:]...)
++	cmd.Env = remediationEnv(ctx, os.Environ(), r.Env)
++	cmd.Stdin = os.Stdin
++	cmd.Stdout = os.Stdout //nolint:forbidigo
++	cmd.Stderr = os.Stderr //nolint:forbidigo
++	return cmd.Run()
++}
++
++// remediationEnv returns base with the variables a provider asked to set added to it. Variables that
++// change which programs or libraries the command loads are dropped, since the user is shown the
++// command but not its environment.
++func remediationEnv(ctx context.Context, base []string, env map[string]string) []string {
++	result := slices.Clone(base)
++	for k, v := range env {
++		// Windows environment variable names are case-insensitive.
++		name := strings.ToUpper(k)
++		if name == "PATH" || strings.HasPrefix(name, "LD_") || strings.HasPrefix(name, "DYLD_") {
++			slog.DebugContext(ctx, "ignoring remediation environment variable", "name", k)
++			continue
++		}
++		result = append(result, k+"="+v)
++	}
++	return result
++}
+```
+
+**File**: `pkg/cmd/pulumi/project/newcmd/credentials_remediation_test.go` (added, +231/-0)
+```diff
+@@ -0,0 +1,231 @@
++// Copyright 2026, Pulumi Corporation.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package newcmd
++
++import (
++	"bytes"
++	"context"
++	"errors"
++	"io"
++	"strings"
++	"testing"
++
++	"github.com/pulumi/pulumi/pkg/v3/backend/display"
++	"github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/credentialcheck"
++	"github.com/pulumi/pulumi/pkg/v3/resource/plugin"
++	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
++	"github.com/pulumi/pulumi/sdk/v3/go/common/diag/colors"
++	"github.com/pulumi/pulumi/sdk/v3/go/common/env"
++	"github.com/pulumi/pulumi/sdk/v3/go/common/workspace"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++)
++
++const awsSchema = `{"name":"aws","displayName":"AWS","validateCredentialsOnNew":true}`
++
++var awsSignIn = plugin.CommandRemediation{
++	Description: "Sign in to AWS",
++	Command:     []string{"aws", "login", "--profile", "my proj"},
++}
++
++// remediationProvider returns a provider whose CheckConfig2 fails with the given remediations until fixed reports true.
++func remediationProvider(remediations []plugin.CommandRemediation, fixed func() bool) *plugin.MockProvider {
++	prov := schemaProvider(awsSchema)
++	prov.CheckConfigF = func(context.Context, plugin.CheckConfigRequest) (plugin.CheckConfigResponse, error) {
++		if fixed() {
++			return plugin.CheckConfigResponse{}, nil
++		}
++		return plugin.CheckConfigResponse{Failures: []plugin.CheckConfigFailure{{
++			Reason: "No valid credential sources found.", Remediations: remediations,
++		}}}, nil
++	}
++	prov.ConfigureF = func(context.Context, plugin.ConfigureRequest) (plugin.ConfigureResponse, error) {
++		return plugin.ConfigureResponse{}, nil
++	}
++	return prov
++}
++
++// problemWith returns the Problem that the credentials check reports for a provider suggesting remediations.
++func problemWith(t *testing.T, remediations ...plugin.CommandRemediation) *credentialcheck.Problem {
++	t.Helper()
++	prov := remediationProvider(remediations, func() bool { return false })
++	_, err := credentialcheck.Check(t.Context(), prov, plugin.GetSchemaRequest{}, nil)
++	problem, ok := errors.AsType[*credentialcheck.Problem](err)
++	require.True(t, ok, "expected a credentials problem, got %v", err)
++	return problem
++}
++
++func TestOfferAndRunRemediation(t *testing.T) {
++	t.Parallel()
++
++	tests := []struct {
++		name         string
++		remediations []plugin.CommandRemediation
++		noConfirm    bool // as under --yes
++		decline      bool
++		runErr       error
++		prompt       string // "" when there is no offer
++		ran          bool
++		ok           bool
++		output       string
++	}{
++		{
++			name:         "accepted",
++			remediations: []plugin.CommandRemediation{awsSignIn, {Command: []string{"aws", "sso", "login"}}},
++			prompt:       "Sign in to AWS: run `aws login --profile 'my proj'` now?",
++			ran:          true,
++			ok:           true,
++		},
++		{
++			name:         "no description",
++			remediations: []plugin.CommandRemediation{{Command: []string{"gcloud", "auth", "login"}}},
++			prompt:       "Run `gcloud auth login` now?",
++			ran:          true,
++			ok:           true,
++		},
++		{
++			name:         "declined",
++			remediations: []plugin.CommandRemediation{awsSignIn},
++			decline:      true,
++			prompt:       "Sign in to AWS: run `aws login --profile 'my proj'` now?",
++			output:       "Skipped running `aws login --profile 'my proj'`.\n\n",
++		},
++		{
++			name:         "command fails",
++			remediations: []plugin.CommandRemediation{awsSignIn},
++			runErr:       errors.New("exit status 255"),
++			prompt:       "Sign in to AWS: run `aws login --profile 'my proj'` now?",
++			ran:          true,
++			output:       "`aws login --profile 'my proj'` did not complete; run it yourself, then `pulumi up`.\n\n",
++		},
++		{name: "nothing suggested"},
++		{name: "not offered under --yes", remediations: []plugin.CommandRemediation{awsSignIn}, noConfirm: true},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			t.Parallel()
++
++			var buf bytes.Buffer
++			var prompted string
++			var ran []plugin.CommandRemediation
++			pf := credentialsPreflight{
++				stdout: &buf,
++				run: func(_ context.Context, r plugin.CommandRemediation) error {
++					ran = append(ran, r)
++					return tt.runErr
++				},
++			}
++			if !tt.noConfirm {
++				pf.confirm = func(prompt string) bool {
++					prompted = prompt
++					return !tt.decline
++				}
++			}
++
++			ok := pf.offerAndRunRemediation(t.Context(), problemWith(t, tt.remediations...))
++			assert.Equal(t, t
+```
+
+**File**: `pkg/resource/deploy/providers/registry.go` (modified, +1/-1)
+```diff
+@@ -684,7 +684,7 @@ func (r *Registry) Check(ctx context.Context, req plugin.CheckRequest) (plugin.C
+ 		contract.IgnoreClose(provider)
+ 		var failures []plugin.CheckFailure
+ 		for _, f := range resp.Failures {
+-			failures = append(failures, plugin.CheckFailure(f))
++			failures = append(failures, plugin.CheckFailure{Property: f.Property, Reason: f.Reason})
+ 		}
+ 		return plugin.CheckResponse{Failures: failures}, err
+ 	}
+```
+
+**File**: `pkg/resource/plugin/provider.go` (modified, +3/-0)
+```diff
+@@ -227,6 +227,9 @@ type CheckConfigResponse struct {
+ type CheckConfigFailure struct {
+ 	Property resource.PropertyKey // the provider configuration property that failed checking.
+ 	Reason   string               // the reason the property failed to check.
++
++	// Remediations are commands that resolve the failure. Only CheckConfig2 carries them.
++	Remediations []CommandRemediation
+ }
+ 
+ type DiffConfigRequest struct {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #25735** (2026-11-17): Emit Python SDK license as an SPDX string in pyproject.toml (@pierskarsenbarg)
-- **PR #25729** (2026-11-17): Add a preview pulumi delivery register command (@flostadler)
-- **PR #25718** (2026-11-16): Add Cast helpers for string-typed slices and iterators (@Frassle)
-- **PR #25716** (2026-11-16): Note in AGENTS.md that sdk/go/common/resource/plugin is deprecated (@VenelinMartinov)
-- **PR #25714** (2026-11-16): docs(go): correct helper function comments (@unixglo)
-- **PR #25712** (2026-11-16): Add Keys method to property.Map (@Frassle)
+- **PR #25786** (2026-11-19): Rename `pulumi env approvals` to `pulumi env approval` (@seanyeh)
+- **PR #25781** (2026-11-19): Let providers send a product hint with a CheckConfig2 failure (@VenelinMartinov)
+- **PR #25777** (2026-11-19): Expose awaited on the Python Automation ResOpFailedEvent (@flostadler)
+- **PR #25776** (2026-11-19): Expose awaited on the Node.js Automation ResOpFailedEvent (@flostadler)
+- **PR #25775** (2026-11-19): Stop warning for each awaiting resource (@flostadler)
+- **PR #25769** (2026-11-19): Avoid Python shutdown tracebacks after resource failures (@julienp)
 
 ---
 
@@ -2253,39 +3100,33 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update vulnerable dependencies [SECURITY]
+## X. issues from the policy exception dogfood report
 
 **RULE**:
-When implementing operations in `pkg/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/pending/20261116--cli-policy--policy-exception-dogfood-fixes.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00c00449`: Update vulnerable dependencies [SECURITY]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce5c585c`: issues from the policy exception dogfood report. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20261116--cli-policy--policy-exception-dogfood-fixes.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/crypto v0.59.0 // indirect
-	golang.org/x/sync v0.25.0
-	golang.org/x/sys v0.50.0
-	golang.org/x/term v0.48.0
-	golang.org/x/text v0.44.0
+component: cli/policy
+kind: fix
+body: Explain typos, unknown stacks, change request IDs and invalid flags in the experimental `pulumi policy exception` commands
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	golang.org/x/crypto v0.58.0 // indirect
-	golang.org/x/sync v0.24.0
-	golang.org/x/sys v0.49.0
-	golang.org/x/term v0.47.0
-	golang.org/x/text v0.43.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00c00449` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce5c585c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

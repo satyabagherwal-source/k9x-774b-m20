@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T02:15:07.975Z",
+  "last_updated": "2026-11-20T02:27:50.267Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "2c669ceee8a8e1996a51e83af491694a9b6ddfd96e08bc981cfdc2dc61bdbe81",
-      "verified_at": "2026-11-18T14:40:33.843Z",
+      "content_hash": "1f6db0bd43c635b69c9d727cf77145c04b0963930efbc47c84152d43f7ec65df",
+      "verified_at": "2026-11-20T02:27:41.829Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T14:40:33.843Z"
+      "last_updated": "2026-11-20T02:27:41.829Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "0c38759b968b7bf74ea28c50e40ee5086797cf4febc408e07aceb1675aa31fa1",
-      "verified_at": "2026-11-18T21:50:17.933Z",
+      "content_hash": "a85ab319bce73b0b20234728a8e472874e51164d8d3e370a7ad0f843c6b92260",
+      "verified_at": "2026-11-20T02:27:50.266Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T21:50:17.933Z"
+      "last_updated": "2026-11-20T02:27:50.266Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",

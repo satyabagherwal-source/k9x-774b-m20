@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "b1064c1b",
+    "sourceVersion": "33d981bd",
     "license": "MIT",
-    "contentHash": "2c669ceee8a8e1996a51e83af491694a9b6ddfd96e08bc981cfdc2dc61bdbe81",
-    "lastHarvestedAt": "2026-11-18T14:40:33.832Z",
+    "contentHash": "1f6db0bd43c635b69c9d727cf77145c04b0963930efbc47c84152d43f7ec65df",
+    "lastHarvestedAt": "2026-11-20T02:27:41.821Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "e61ba774",
+    "sourceVersion": "146e1e67",
     "license": "Apache-2.0",
-    "contentHash": "0c38759b968b7bf74ea28c50e40ee5086797cf4febc408e07aceb1675aa31fa1",
-    "lastHarvestedAt": "2026-11-18T21:50:17.925Z",
+    "contentHash": "a85ab319bce73b0b20234728a8e472874e51164d8d3e370a7ad0f843c6b92260",
+    "lastHarvestedAt": "2026-11-20T02:27:50.259Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {

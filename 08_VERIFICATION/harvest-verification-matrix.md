@@ -11437,3 +11437,5 @@
 | `CYCLE-20261120-JFBY` | `2026-11-20T02:14:54.814Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9493` | Yes (`2f1d3a14...`) |
 | `CYCLE-20261120-JL0D` | `2026-11-20T02:15:02.173Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9494` | Yes (`ed5a769c...`) |
 | `CYCLE-20261120-JPH1` | `2026-11-20T02:15:07.957Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9495` | Yes (`0589e20f...`) |
+| `CYCLE-20261120-ZV5L` | `2026-11-20T02:27:41.817Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9496` | Yes (`1f6db0bd...`) |
+| `CYCLE-20261120-01NZ` | `2026-11-20T02:27:50.255Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9497` | Yes (`a85ab319...`) |

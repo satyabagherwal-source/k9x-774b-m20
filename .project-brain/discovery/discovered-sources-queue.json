@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T02:15:12.139Z",
+  "updated_at": "2026-11-20T02:27:54.780Z",
   "stats": {
-    "total_discovered": 6120,
-    "approved_pending_harvest": 5785,
+    "total_discovered": 6124,
+    "approved_pending_harvest": 5788,
     "harvested_count": 0,
-    "rejected_count": 335,
+    "rejected_count": 336,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5768,
+      "COMMUNITY_AND_EXPERT": 5772,
       "OFFICIAL_DOCUMENTATION": 191,
       "STANDARDS_AND_SPECIFICATIONS": 113,
       "ENGINEERING_BLOGS": 4,
@@ -132318,6 +132318,87 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
         "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-33CEDB655B46": {
+      "id": "SRC-33CEDB655B46",
+      "url": "https://github.com/zeronsh/zgx?rev=b80a8af1c1f2079e373ec34a9194d26f2c998cbb",
+      "title": "https://github.com/zeronsh/zgx?rev=b80a8af1c1f2079e373ec34a9194d26f2c998cbb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T02:27:53.584Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-03228CB293E5": {
+      "id": "SRC-03228CB293E5",
+      "url": "https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7",
+      "title": "https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T02:27:53.626Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-84A3B69E9D97": {
+      "id": "SRC-84A3B69E9D97",
+      "url": "http://localhost:3000/other-org/web/prod?exception=cr-1",
+      "title": "http://localhost:3000/other-org/web/prod?exception=cr-1",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T02:27:54.738Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-10EB6E3C1D2C": {
+      "id": "SRC-10EB6E3C1D2C",
+      "url": "https://github.com/pulumi/pulumi-service/pull/49330",
+      "title": "https://github.com/pulumi/pulumi-service/pull/49330",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T02:27:54.780Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
       }
     }
   }

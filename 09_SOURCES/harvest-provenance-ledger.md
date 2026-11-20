@@ -11470,3 +11470,5 @@ Every entry in this ledger must capture:
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `e7405725` | Multi-dimensional audit evidence | 2026-11-20T02:14:54.819Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `92f029f9` | Multi-dimensional audit evidence | 2026-11-20T02:15:02.178Z |
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `498c9553` | Multi-dimensional audit evidence | 2026-11-20T02:15:07.962Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `33d981bd` | Multi-dimensional audit evidence | 2026-11-20T02:27:41.821Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `146e1e67` | Multi-dimensional audit evidence | 2026-11-20T02:27:50.259Z |

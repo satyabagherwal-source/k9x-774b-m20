@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T02:15:11.351Z",
-    "lastVerified": "2026-11-20T02:15:11.351Z",
+    "lastChecked": "2026-11-20T02:27:53.399Z",
+    "lastVerified": "2026-11-20T02:27:53.399Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T01:31:29.468Z",
-    "lastVerified": "2026-11-20T01:31:29.468Z",
+    "lastChecked": "2026-11-20T02:27:51.489Z",
+    "lastVerified": "2026-11-20T02:27:51.489Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1009,9 +1009,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-19T20:00:23.317Z",
+    "lastChecked": "2026-11-20T02:27:46.412Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-19T20:00:23.317Z"
+    "lastVerified": "2026-11-20T02:27:46.412Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -2514,14 +2514,14 @@
     "officialUrl": "https://github.com/zeronsh/zeron",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T14:40:32.619Z",
-    "lastVerified": "2026-11-18T14:40:32.619Z",
+    "lastChecked": "2026-11-20T02:27:40.679Z",
+    "lastVerified": "2026-11-20T02:27:40.679Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "2c669ceee8a8e1996a51e83af491694a9b6ddfd96e08bc981cfdc2dc61bdbe81",
+    "contentHash": "1f6db0bd43c635b69c9d727cf77145c04b0963930efbc47c84152d43f7ec65df",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4357,9 +4357,9 @@
   "qovery-replibyte": {
     "name": "Replibyte",
     "officialUrl": "https://github.com/Qovery/Replibyte",
-    "lastChecked": "2026-11-18T20:45:47.283Z",
+    "lastChecked": "2026-11-20T02:27:48.868Z",
     "revisionIdentifier": "5504db91",
-    "lastVerified": "2026-11-18T20:45:47.283Z"
+    "lastVerified": "2026-11-20T02:27:48.868Z"
   },
   "mtkennerly-ludusavi": {
     "name": "ludusavi",
@@ -4672,14 +4672,14 @@
     "officialUrl": "https://github.com/pulumi/pulumi",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T21:50:17.283Z",
-    "lastVerified": "2026-11-18T21:50:17.283Z",
+    "lastChecked": "2026-11-20T02:27:49.284Z",
+    "lastVerified": "2026-11-20T02:27:49.284Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "0c38759b968b7bf74ea28c50e40ee5086797cf4febc408e07aceb1675aa31fa1",
+    "contentHash": "a85ab319bce73b0b20234728a8e472874e51164d8d3e370a7ad0f843c6b92260",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9021,5 +9021,19 @@
     "lastChecked": "2026-11-20T02:14:54.871Z",
     "revisionIdentifier": "1b4b1dda",
     "lastVerified": "2026-11-20T02:14:54.871Z"
+  },
+  "janreges-siteone-crawler": {
+    "name": "siteone-crawler",
+    "officialUrl": "https://github.com/janreges/siteone-crawler",
+    "lastChecked": "2026-11-20T02:27:38.846Z",
+    "revisionIdentifier": "f3d967b190",
+    "lastVerified": "2026-11-20T02:27:38.846Z"
+  },
+  "swiftwebui-swiftwebui": {
+    "name": "SwiftWebUI",
+    "officialUrl": "https://github.com/SwiftWebUI/SwiftWebUI",
+    "lastChecked": "2026-11-20T02:27:41.351Z",
+    "revisionIdentifier": "b0b6be06",
+    "lastVerified": "2026-11-20T02:27:41.351Z"
   }
 }
