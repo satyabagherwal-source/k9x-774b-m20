@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T18:41:44.380Z",
+  "last_updated": "2026-11-20T19:11:46.172Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3741,14 +3741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubeedge-kubeedge",
-      "content_hash": "ae2e607b671e497fd37d2261acad32656a7aec717848db1f0ec89cbffda6ccdf",
-      "verified_at": "2026-11-19T16:16:58.034Z",
+      "content_hash": "e72ba30d56a569c586436a01de42f75d74aad0546b224b16daa761f6e6f8e682",
+      "verified_at": "2026-11-20T19:06:52.506Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:16:58.034Z"
+      "last_updated": "2026-11-20T19:06:52.506Z"
     },
     "giancarloerra/SocratiCode": {
       "repository": "giancarloerra/SocratiCode",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "eff5544d79d225f9b12bc4a02c146573237015c07ee879d68b2d699a45faf41e",
-      "verified_at": "2026-11-20T04:29:25.578Z",
+      "content_hash": "8166aefaae3ff87f9a65543c18e8a2000108e554a22bc0084a386af8f995a906",
+      "verified_at": "2026-11-20T19:11:33.622Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T04:29:25.578Z"
+      "last_updated": "2026-11-20T19:11:33.622Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -9411,14 +9411,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-golutra-golutra",
-      "content_hash": "23e303a1560d09a0e9a16956adb2b2bef2d517d1ba3b6531ea40694c994d372f",
-      "verified_at": "2026-10-19T05:25:29.090Z",
+      "content_hash": "4f6253298da678a73e6bd10b47ed0a67ba0a91a1156ee6900b8f659ac31281c8",
+      "verified_at": "2026-11-20T19:06:37.274Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:25:29.090Z"
+      "last_updated": "2026-11-20T19:06:37.274Z"
     },
     "gitpoint/git-point": {
       "repository": "gitpoint/git-point",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "08925c50610b46eb30fa51278f0bda55b7529b460d7a15055d13921f9b2f5483",
-      "verified_at": "2026-11-20T13:40:23.459Z",
+      "content_hash": "f496b4d6787f2a96e8c8e4b14cca27fbaa05d96dcd12a01b4680845966bfb161",
+      "verified_at": "2026-11-20T19:11:46.172Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T13:40:23.459Z"
+      "last_updated": "2026-11-20T19:11:46.172Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",

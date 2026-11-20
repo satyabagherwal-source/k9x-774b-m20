@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T18:41:53.086Z",
+  "updated_at": "2026-11-20T19:11:49.921Z",
   "stats": {
-    "total_discovered": 6659,
-    "approved_pending_harvest": 6300,
+    "total_discovered": 6666,
+    "approved_pending_harvest": 6307,
     "harvested_count": 0,
     "rejected_count": 359,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6261,
+      "COMMUNITY_AND_EXPERT": 6268,
       "OFFICIAL_DOCUMENTATION": 229,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 5,
@@ -144008,6 +144008,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
         "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-A1FE4FE2C98E": {
+      "id": "SRC-A1FE4FE2C98E",
+      "url": "https://github.com/golutra/golutra",
+      "title": "https://github.com/golutra/golutra",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:11:49.587Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/golutra-golutra-learnings.md",
+        "fileName": "golutra-golutra-learnings.md"
+      }
+    },
+    "SRC-E7F3D7D07CCE": {
+      "id": "SRC-E7F3D7D07CCE",
+      "url": "https://github.com/user-attachments/assets/3abe2fc6-6295-4a74-9c6a-b9b299642df4",
+      "title": "https://github.com/user-attachments/assets/3abe2fc6-6295-4a74-9c6a-b9b299642df4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:11:49.645Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/golutra-golutra-learnings.md",
+        "fileName": "golutra-golutra-learnings.md"
+      }
+    },
+    "SRC-06B1D315DA5C": {
+      "id": "SRC-06B1D315DA5C",
+      "url": "https://github.com/user-attachments/assets/a84781f4-3b83-431c-b8cf-6293ba4e4927",
+      "title": "https://github.com/user-attachments/assets/a84781f4-3b83-431c-b8cf-6293ba4e4927",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:11:49.701Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/golutra-golutra-learnings.md",
+        "fileName": "golutra-golutra-learnings.md"
+      }
+    },
+    "SRC-F25560FDC971": {
+      "id": "SRC-F25560FDC971",
+      "url": "https://github.com/user-attachments/assets/7f8374ed-f4e0-4176-bd9c-13ea398f5ca2",
+      "title": "https://github.com/user-attachments/assets/7f8374ed-f4e0-4176-bd9c-13ea398f5ca2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:11:49.768Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/golutra-golutra-learnings.md",
+        "fileName": "golutra-golutra-learnings.md"
+      }
+    },
+    "SRC-DE854583C8D9": {
+      "id": "SRC-DE854583C8D9",
+      "url": "https://github.com/user-attachments/assets/e38ebac7-f8bd-4882-b0a2-0820ea7c9a0b",
+      "title": "https://github.com/user-attachments/assets/e38ebac7-f8bd-4882-b0a2-0820ea7c9a0b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:11:49.815Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/golutra-golutra-learnings.md",
+        "fileName": "golutra-golutra-learnings.md"
+      }
+    },
+    "SRC-CAD567617F45": {
+      "id": "SRC-CAD567617F45",
+      "url": "https://github.com/user-attachments/assets/c5b45781-69eb-4610-a580-fde8d512456a",
+      "title": "https://github.com/user-attachments/assets/c5b45781-69eb-4610-a580-fde8d512456a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:11:49.868Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/golutra-golutra-learnings.md",
+        "fileName": "golutra-golutra-learnings.md"
+      }
+    },
+    "SRC-125EC7DDBBDB": {
+      "id": "SRC-125EC7DDBBDB",
+      "url": "https://github.com/user-attachments/assets/013683c4-c509-417c-86b2-6d3dbe70ebb0",
+      "title": "https://github.com/user-attachments/assets/013683c4-c509-417c-86b2-6d3dbe70ebb0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:11:49.921Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/golutra-golutra-learnings.md",
+        "fileName": "golutra-golutra-learnings.md"
       }
     }
   }

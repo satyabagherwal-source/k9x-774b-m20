@@ -4,24 +4,24 @@
 {
   "source_repository": "kubeedge/kubeedge",
   "source_url": "https://github.com/kubeedge/kubeedge",
-  "source_version": "61e2bda5",
+  "source_version": "8429622d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T16:16:58.220Z",
+  "timestamp": "2026-11-20T19:06:52.725Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-kubeedge-kubeedge",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [kubeedge/kubeedge](https://github.com/kubeedge/kubeedge) (Revision: `61e2bda5`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T16:16:58.220Z`  
+> **Provenance**: Harvested from [kubeedge/kubeedge](https://github.com/kubeedge/kubeedge) (Revision: `8429622d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T19:06:52.725Z`  
 > **Learning ID**: `learn-github-kubeedge-kubeedge`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 65%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from kubeedge/kubeedge:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T16:16:57.051Z  
+> **Harvest Timestamp**: 2026-11-20T19:06:29.294Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Kubernetes Native Edge Computing Framework (project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7636 stars
+- **Stars / Engagement**: 7637 stars
 
 ---
 
@@ -1226,11 +1226,11 @@ func RuleContains(rulePath, rule2Path string) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7454** (2026-11-19): **metaserver: keep retrying when getting the CA fails**
-  *Symptoms*: **What type of PR is this?** /kind bug  **What this PR does / why we need it**: `ServerCertificateManager.WaitForCAReady` polls for up to 4 minutes to get the Kubernetes CA from the cloud, but its condition function returned the error of a failed attempt (`return false, err`). `wait.PollUntilContextTimeout` stops polling as soon as the condition returns an error, so a single failure, for example a `SendSync` timeout right after the edge connects, ended the wait immediately instead of retrying. `MetaServer.Start` panics on that error when the `RequireAuthorization` feature gate is enabled, so edgecore crashes.  This logs the failure and keeps polling until the CA is received or the 4 minutes pass. If the wait times out, the error now also includes the last failure, so the cause is still visible. The poll interval and timeout move to package variables (same values) so the tests can shorten them.  The `certificate` package had no tests; this adds `manager_test.go`: - `TestWaitForCAReadyRetriesAfterFailure`: two failed attempts, then the CA is received and written. It fails without the change, because the first error ends the wait. - `TestWaitForCAReadyTimeoutReportsLastError`: every attempt fails, and the timeout error contains the last failure. - `TestWaitForCAReadyWaitsForCloudConnection`: no request is sent while the cloud is not connected.  **Which issue(s) this PR fixes**: None; found while reading the metaserver startup code.  **Special notes for your reviewer**: The tests
+- **Issue #7476** (2026-11-20): **metamanager: key edge device edits by device name**
+  *Symptoms*: **What type of PR is this?**  /kind bug  **What this PR does / why we need it**:  The metaserver PUT handler for devices sends the edited device to metamanager with the resource `<namespace>/device/updated`, and metamanager uses that resource as the meta key. The device delete path removes `<namespace>/device/<name>`, so the literal `updated` row survived a cloud delete, and `initDeviceInfoFromDB` loaded it again on the next edgecore restart, bringing a deleted device back on the node.  The handler now builds the resource from the device name, so an edge edit updates the same row that the delete path removes.  **Which issue(s) this PR fixes**:  Fixes #7319  **Special notes for your reviewer**:  `TestUpdateEdgeDeviceResourceKey` captures the message sent to metamanager and asserts the resource. It fails on master with `default/device/updated`. The tests patch `beehiveContext.SendSync` with gomonkey, so they need the `-gcflags "all=-N -l"` used by `make test`.  Check: `go test -gcflags "all=-N -l" ./edge/pkg/metamanager/...`  **Does this PR introduce a user-facing change?**:  ```release-note An edge edit of a device is now stored under the device's own meta key, so a device no longer reappears on the node after it is deleted in the cloud and edgecore restarts. 
 
-- **Issue #7432** (2026-11-16): **Upgrade docker dependency to v28.0.0**
-  *Symptoms*: <!--  Thanks for sending a pull request!  Here are some tips for you:  1. If this is your first time, please read our contributor guidelines: https://github.com/kubeedge/kubeedge/blob/master/CONTRIBUTING.md 2. Ensure you have added or ran the appropriate tests for your PR  -->  **What type of PR is this?**   /kind bug   **What this PR does / why we need it**:  Upgrade docker dependency to v28.0.0  /sig security  **Which issue(s) this PR fixes**: <!-- *Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. _If PR is about `failing-tests or flakes`, please post the related issues/tests in a comment and do not use `Fixes`_* --> Fixes #  **Special notes for your reviewer**:  **Does this PR introduce a user-facing change?**: <!-- If no, just write "NONE" in the release-note block below. If yes, a release note is required: Enter your extended release note in the block below. If the PR requires additional action from users switching to the new release, include the string "action required". --> ```release-note  ``` 
+- **Issue #7458** (2026-11-20): **nodegroup: add and remove the finalizer with a patch**
+  *Symptoms*: **What type of PR is this?**  /kind bug  **What this PR does / why we need it**:  The NodeGroup controller adds and removes its finalizer with a full `Client.Update`. That re-sends the whole spec as Go marshals it, so every `omitempty` zero value is dropped from the stored NodeGroup: - `matchLabels: {}` (selects every node) is stored as no `matchLabels`, which selects none (`getNodesByLabels` returns no nodes for a nil map); - an explicit `topologyEnabled: false` is dropped, so a CRD default for that field would turn it back into `true`.  `Reconcile` and `removeFinalizer` now write the finalizer with a `client.MergeFrom` patch, which carries only `metadata.finalizers`. The patch uses `MergeFromWithOptimisticLock`: a merge patch replaces the whole finalizers list, so the `resourceVersion` lock keeps a stale read from dropping or re-adding another finalizer. It gets a conflict and a requeue, as the Update did.  **Which issue(s) this PR fixes**:  None filed.  **Special notes for your reviewer**:  New tests (fake client with an interceptor), on a NodeGroup with `topologyEnabled: false` and `matchLabels: {}`: - `TestFinalizerIsPatched`: each finalizer patch sets only `metadata.finalizers` and `metadata.resourceVersion`, the stored finalizers are right, and no full Update of a NodeGroup happens. The fake client stores Go types, so it cannot show a dropped value itself; the test checks the write that would drop one. - `TestFinalizerPatchConflictsOnStaleRead`: `removeFinalizer` on a 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1247,173 +1247,184 @@ func RuleContains(rulePath, rule2Path string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `61e2bda5` (2026-11-19)
-**Commit Message**: Merge pull request #7454 from arshil42/fix/metaserver-ca-wait-retry
+### Incident Patch 1: `407f2cff` (2026-11-20)
+**Commit Message**: Merge pull request #7458 from 2youio/nodegroup-finalizer-patch
 
-metaserver: keep retrying when getting the CA fails
+nodegroup: add and remove the finalizer with a patch
 
-**File**: `edge/pkg/metamanager/metaserver/certificate/manager.go` (modified, +19/-5)
+**File**: `cloud/pkg/controllermanager/nodegroup/finalizer_test.go` (added, +133/-0)
 ```diff
-@@ -47,6 +47,13 @@ const (
- 	CertificatesDir = "/etc/kubeedge/pki/metaserver"
- )
- 
-+var (
-+	// caPollInterval and caPollTimeout set how often and how long WaitForCAReady
-+	// tries to get the CA. They are variables so that tests can shorten them.
-+	caPollInterval = 5 * time.Second
-+	caPollTimeout  = 4 * time.Minute
-+)
-+
- type ServerCertificateManager struct {
- 	certificate.Manager
- }
-@@ -116,18 +123,25 @@ func (scm *ServerCertificateManager) WaitForCertReady() error {
- 	})
- }
- 
-+// WaitForCAReady gets the Kubernetes CA from the cloud, retrying until it succeeds
-+// or caPollTimeout passes. A failed attempt does not stop the retries.
- func (scm *ServerCertificateManager) WaitForCAReady() error {
--	return wait.PollUntilContextTimeout(context.Background(), 5*time.Second, 4*time.Minute, true, func(ctx context.Context) (bool, error) {
-+	var lastErr error
-+	err := wait.PollUntilContextTimeout(context.Background(), caPollInterval, caPollTimeout, true, func(ctx context.Context) (bool, error) {
- 		if !cloudconnection.IsConnected() {
- 			return false, nil
- 		}
--		err := scm.getKubeAPIServerCA()
--		if err != nil {
--			klog.Errorf("get k8s CA failed, %v", err)
--			return false, err
-+		if err := scm.getKubeAPIServerCA(); err != nil {
-+			klog.Errorf("get k8s CA failed, will retry: %v", err)
-+			lastErr = err
-+			return false, nil
- 		}
- 		return true, nil
- 	})
-+	if err != nil && lastErr != nil {
-+		return fmt.Errorf("%v, last error: %v", err, lastErr)
-+	}
-+	return err
- }
- 
- func (scm *ServerCertificateManager) getKubeAPIServerCA() error {
-```
-
-**File**: `edge/pkg/metamanager/metaserver/certificate/manager_test.go` (added, +101/-0)
-```diff
-@@ -0,0 +1,101 @@
-+/*
-+Copyright 2026 The KubeEdge Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package certificate
+@@ -0,0 +1,133 @@
++package nodegroup
 +
 +import (
-+	"errors"
++	"context"
++	"encoding/json"
++	"slices"
 +	"testing"
-+	"time"
 +
-+	"github.com/agiledragon/gomonkey/v2"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"k8s.io/client-go/util/cert"
++	corev1 "k8s.io/api/core/v1"
++	apierrors "k8s.io/apimachinery/pkg/api/errors"
++	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/types"
++	controllerruntime "sigs.k8s.io/controller-runtime"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
 +
-+	beehivecontext "github.com/kubeedge/beehive/pkg/core/context"
-+	"github.com/kubeedge/beehive/pkg/core/model"
-+	"github.com/kubeedge/kubeedge/edge/pkg/common/cloudconnection"
++	appsv1alpha1 "github.com/kubeedge/api/apis/apps/v1alpha1"
 +)
 +
-+// patchCAPolling shortens the CA polling for a test and connects to the cloud.
-+func patchCAPolling(t *testing.T, interval, timeout time.Duration) {
++const testNodeGroup = "site-a"
++
++// newFinalizerTestController records the NodeGroup patches, decoded, and fails on a full
++// Update. The fake client stores Go types, so it cannot show a dropped omitempty value
++// itself; the test checks the write that would drop one: a locked patch with no spec.
++func newFinalizerTestController(t *testing.T, ng *appsv1alpha1.NodeGroup) (*Controller, *[]map[string]map[string]interface{}) {
++	scheme := runtime.NewScheme()
++	if err := corev1.AddToScheme(scheme); err != nil {
++		t.Fatal(err)
++	}
++	if err := appsv1alpha1.AddToScheme(scheme); err != nil {
++		t.Fatal(err)
++	}
++	var patches []map[string]map[string]interface{}
++	cli := fake.NewClientBuilder().WithScheme(scheme).WithObjects(ng).
++		WithStatusSubresource(&appsv1alpha1.NodeGroup{}).
++		WithInterceptorFuncs(interceptor.Funcs{
++			Update: func(ctx context.Context, c client.WithWatch, obj client.Object, opts ...client.UpdateOption) error {
++				if _, ok := obj.(*appsv1alpha1.NodeGroup); ok {
++					t.Errorf("full Update of NodeGroup %s", obj.GetName())
++				}
++				return c.Update(ctx, obj, opts...)
++			},
++			Patch: func(ctx context.Context, c client.WithWatch, obj client.Object, patch client.Patch, opts ...client.PatchOption) error {
++				if _, ok := obj.(*appsv1alpha1.NodeGroup); ok {
++					data, err := patch.Data(obj)
++					if err != nil {
++						t.Fatal(err)
++					}
++					var p map[string]map[string]interface{}
++					if err := json.Unmarshal(data, &p); err != nil {
++						t.Fatalf("patch %s: %v", data, err)
++					}
++					patches = append(patches, p)
++				}
++				return c.Patch(ctx, obj, patch, opts...)
++			},
++		}).Build()
++	return NewController(cli), &patches
++}
++
++// checkFinalizerPatch fails unless the only patch touched metadata.finalizers alone, under a
++// resourceVersion lock, and the stored NodeGroup, which it returns, has the finalizers given.
++func checkFinalizerPatch(t *testing.T, c *Controller, patches []map[string]map[string]interface{}, want ...string) *appsv1alpha1.NodeGroup {
 +	t.Helper()
-+	oldInterval, oldTimeout := caPollInterval, caPollTimeout
-+	caPollInterval, caPollTimeout = interval, timeout
-+	cloudconnection.SetConnected(true)
-+	t.Cleanup(func() {
-+		caPollInterval, caPollTimeout = oldInterval, oldTimeout
-+		cloudconnection.SetConnected(false)
-+	})
-+}
-+
-+func TestWaitForCAReadyRetriesAfterFailure(t *testing.T) {
-+	patchCAPolling(t, 10*time.Millisecond, 5*time.Second)
-+
-+	calls := 0
-+	patches := gomonkey.NewPatches()
-+	defer patches.Reset()
-+	patches.ApplyFunc(beehivecontext.SendSync, func(_ string, _ model.Message, _ time.Duration) (model.Message, error) {
-+		calls++
-+		if calls < 3 {
-+			return model.Message{}, errors.New("timeout")
++	if len(patches) != 1 {
++		t.Fatalf("got %d NodeGroup patches, want 1: %v", len(patches), patches)
++	}
++	for key := range patches[0] {
++		if key != "metadata" {
++			t.Errorf("patch sets %q: %v", key, patches[0])
 +		}
-+		return *model.NewMessage("").FillBody([]byte("ca data")), nil
-+	})
-+	var written []byte
-+	patches.ApplyFunc(cert.WriteCert, func(_ string, data []byte) error {
-+		written = data
-+		return nil
-+	})
-+
-+	scm := &ServerCertificateManager{}
-+	require.NoError(t, scm.WaitForCAReady())
-+	assert.Equal(t, 3, calls)
-+	assert.Equal(t, []byte("ca data"), written)
++	}
++	for key := range patches[0]["metadata"] {
++		if key != "finalizers" && key != "resourceVersion" {
++			t.Errorf("patch sets metadata.%s: %v", key, patches[0])
++		}
++	}
++	if _, ok := patches[0]["metadata"]["resourceVersion"]; !ok {
++		t.Errorf("patch has no resourceVersion lock: %v", patches[0])
++	}
++	got := &appsv1alpha1.NodeGroup{}
++	if err := c.Client.Get(context.Background(), types.NamespacedName{Name: testNodeGroup}, got); err != nil {
++		t.Fatal(err)
++	}
++	if !slices.Equal(got.Finalizers, want) {
++		t.Errorf("stored finalizers %v, want %v", got.Finalizers, want)
++	}
++	return got
 +}
 +
-+func TestWaitForCAReadyTimeoutReportsLastError(t *testing.T) {
-+	patchCAPolling(t, 10*time.Millisecond, 100*time.Millisecond)
++func TestFinalizerIsPatched(t *testing.T) {
++	ng := &appsv1alpha1.NodeGroup{
++		ObjectMeta: v1.ObjectMeta{Name: testNodeGroup},
++		Spec:       appsv1alpha1.NodeGroupSpec{MatchLabels: map[string]string{}, TopologyEnabled: false},
++	}
++	c, patches := newFinalizerTestController(t, ng)
++	ctx := context.Background()
++	req := controllerruntime.Request{NamespacedName: types.NamespacedName{Name: testNodeGroup}}
 +
-+	patches := gomonkey.NewPatches()
-+	defer patches.Reset()
-+	patches.ApplyFunc(beehivecontext.SendSync, func(_ string, _ model.Message, _ time.Duration) (model.Message, error) {
-+		return model.Message{}, errors.New("cloudcore is not ready")
-+	})
++	if _, err := c.Reconcile(ctx, req); err != nil {
++		t.Fatal(err)
++	}
++	got := checkFinalizerPatch(t, c, *patches, NodeGroupControllerFinalizer)
 +
-+	scm := &ServerCertificateManager{}
-+	err := scm.WaitForCAReady()
-+	require.Error(t, err)
-+	assert.Contains(t, err.Error(), "cloudcore is not ready")
++	*patches = nil
++	if err := c.removeFinalizer(ctx, got); err != nil {
++		t.Fatal(err)
++	}
++	checkFinalizerPatch(t, c, *patches)
 +}
 +
-+func TestWaitForCAReadyWaitsForCloudConnection(t *testing.T) {
-+	patchCAPolling(t, 10*time.Millisecond, 100*time.Millisecond)
-+	cloudconnection.SetConnected(false)
-+
-+	calls := 0
-+	patches := gomonkey.NewPatches()
-+	defer patches.Reset()
-+	patches.ApplyFunc(beehivecontext.SendSync, func(_ string, _ model.Message, _ time.Duration) (model.Message, error) {
-+		calls++
-+		return model.Message{}, errors.New("unexpected call")
-+	})
-+
-+	scm := &ServerCertificateManager{}
-+	require.Error(t, scm.WaitForCAReady())
-+	assert.Equal(t, 0, calls, "the CA must not be requested while the cloud is not connected")
++func TestFinalizerPatchConflictsOnStaleRead(t *testing.T) {
++	ng := &appsv1alpha1.NodeGroup{
++		ObjectMeta: v1.ObjectMeta{Name: testNodeGroup, Finalizers: []string{NodeGroupControllerFinalizer}},
++	}
++	c, _ := newFinalizerTestController(t, ng)
++	ctx := context.Background()
++	stale := &appsv1alpha1.NodeGroup{}
++	if err := c.Client.Get(ctx, types.NamespacedName{Name: testNodeGroup}, stale); err != nil {
++		t.Fatal(err)
++	}
++	// another writer changes the NodeGroup after the read
++	fresh := stale.DeepCopy()
++	fresh.Labels = map[string]string{"changed": "yes"}
++	if err := c.Client.Patch(ctx, fresh, client.MergeFrom(stale)); err != nil {
++		t.Fatal(err)
++	}
++	if err := c.removeFinalizer(ctx, stale); !apierrors.IsConflict(err) {
++		t.Fatalf("removeFinalizer on a stale read: got %v, want a conflict", err)
++	}
 +}
+```
+
+**File**: `cloud/pkg/controllermanager/nodegroup/nodegroupcontroller.go` (modified, +6/-2)
+```diff
+@@ -84,8 +84,11 @@ func (c *Controller) Reconcile(ctx context.Context, req controllerruntime.Reques
+ 	}
+ 
+ 	if !controllerutil.ContainsFinalizer(nodeGroup, NodeGroupControllerFinalizer) {
++		// a patch, so omitempty spec values (topologyEnabled: false, matchLabels: {}) stay;
++		// the lock gives a stale read a conflict, as the Update did
++		patch := client.MergeFromWithOptions(nodeGroup.DeepCopy(), client.MergeFromWithOptimisticLock{})
+ 		controllerutil.AddFinalizer(nodeGroup, NodeGroupControllerFinalizer)
+-		if err := c.Client.Update(ctx, nodeGroup); err != nil {
++		if err := c.Client.Patch(ctx, nodeGroup, patch); err != nil {
+ 			klog.Errorf("failed to add finalizer for nodegroup %s, %s", nodeGroup.Name, err)
+ 			return controllerruntime.Result{Requeue: true}, err
+ 		}
+@@ -247,8 +250,9 @@ func (c *Controller) removeFinalizer(ctx context.Context, nodeGroup *appsv1alpha
+ 	if !controllerutil.ContainsFinalizer(nodeGroup, NodeGroupControllerFinalizer) {
+ 		return nil
+ 	}
++	patch := client.MergeFromWithOptions(nodeGroup.DeepCopy(), client.MergeFromWithOptimisticLock{})
+ 	controllerutil.RemoveFinalizer(nodeGroup, NodeGroupControllerFinalizer)
+-	if err := c.Client.Update(ctx, nodeGroup); err != nil {
++	if err := c.Client.Patch(ctx, nodeGroup, patch); err != nil {
+ 		klog.Errorf("failed to remove finalizer on nodegroup %s, %s", nodeGroup.Name, err)
+ 		return err
+ 	}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7476** (closed): metamanager: key edge device edits by device name (@codeafridi)
+- **PR #7458** (2026-11-20): nodegroup: add and remove the finalizer with a patch (@mkhon)
 - **PR #7454** (2026-11-19): metaserver: keep retrying when getting the CA fails (@arshil42)
 - **PR #7432** (2026-11-16): Upgrade docker dependency to v28.0.0 (@Shelley-BaoYue)
 - **PR #7431** (2026-11-16): Upgrade golang.org/x/crypto to v0.52.0 (@Shelley-BaoYue)
 - **PR #7428** (closed): Upgrade golang.org/x/crypto to v0.52.0 (@kubeedge-bot)
-- **PR #7386** (2026-10-27): metaserver: add unit tests for the unhold-upgrade handlers (@adity1raut)
-- **PR #7379** (2026-10-27): metamanager : support for arrayList of objects for watch events creation (@EncHawk)
 
 ---
 
@@ -1433,53 +1444,66 @@ metaserver: keep retrying when getting the CA fails
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in manager.go
+## X. Empirical Invariant Guard in finalizer_test.go
 
 **RULE**:
-When implementing operations in `edge/pkg/metamanager/metaserver/certificate/manager.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cloud/pkg/controllermanager/nodegroup/finalizer_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `61e2bda5`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `407f2cff`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `edge/pkg/metamanager/metaserver/certificate/manager.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cloud/pkg/controllermanager/nodegroup/finalizer_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-var (
-	// caPollInterval and caPollTimeout set how often and how long WaitForCAReady
-	// tries to get the CA. They are variables so that tests can shorten them.
-	caPollInterval = 5 * time.Second
-	caPollTimeout  = 4 * time.Minute
+package nodegroup
+
+import (
+	"context"
+	"encoding/json"
+	"slices"
+	"testing"
+
+	corev1 "k8s.io/api/core/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
+	controllerruntime "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
+	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
+
+	appsv1alpha1 "github.com/kubeedge/api/apis/apps/v1alpha1"
 )
 
-// WaitForCAReady gets the Kubernetes CA from the cloud, retrying until it succeeds
-// or caPollTimeout passes. A failed attempt does not stop the retries.
-	var lastErr error
-	err := wait.PollUntilContextTimeout(context.Background(), caPollInterval, caPollTimeout, true, func(ctx context.Context) (bool, error) {
-		if err := scm.getKubeAPIServerCA(); err != nil {
-			klog.Errorf("get k8s CA failed, will retry: %v", err)
-			lastErr = err
-			return false, nil
-	if err != nil && lastErr != nil {
-		return fmt.Errorf("%v, last error: %v", err, lastErr)
+const testNodeGroup = "site-a"
+
+// newFinalizerTestController records the NodeGroup patches, decoded, and fails on a full
+// Update. The fake client stores Go types, so it cannot show a dropped omitempty value
+// itself; the test checks the write that would drop one: a locked patch with no spec.
+func newFinalizerTestController(t *testing.T, ng *appsv1alpha1.NodeGroup) (*Controller, *[]map[string]map[string]interface{}) {
+	scheme := runtime.NewScheme()
+	if err := corev1.AddToScheme(scheme); err != nil {
+		t.Fatal(err)
 	}
-	return err
+	if err := appsv1alpha1.AddToScheme(scheme); err != nil {
+		t.Fatal(err)
+	}
+	var patches []map[string]map[string]interface{}
+	cli := fake.New
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	return wait.PollUntilContextTimeout(context.Background(), 5*time.Second, 4*time.Minute, true, func(ctx context.Context) (bool, error) {
-		err := scm.getKubeAPIServerCA()
-		if err != nil {
-			klog.Errorf("get k8s CA failed, %v", err)
-			return false, err
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `61e2bda5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `407f2cff` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -2403,10 +2403,10 @@
     "repository": "kubeedge/kubeedge",
     "platform": "github",
     "sourceUrl": "https://github.com/kubeedge/kubeedge",
-    "sourceVersion": "61e2bda5",
+    "sourceVersion": "8429622d",
     "license": "Apache-2.0",
-    "contentHash": "ae2e607b671e497fd37d2261acad32656a7aec717848db1f0ec89cbffda6ccdf",
-    "lastHarvestedAt": "2026-11-19T16:16:58.026Z",
+    "contentHash": "e72ba30d56a569c586436a01de42f75d74aad0546b224b16daa761f6e6f8e682",
+    "lastHarvestedAt": "2026-11-20T19:06:52.497Z",
     "learningId": "learn-github-kubeedge-kubeedge"
   },
   "giancarloerra-socraticode": {
@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "339a3ca8",
+    "sourceVersion": "b612e741",
     "license": "Apache-2.0",
-    "contentHash": "eff5544d79d225f9b12bc4a02c146573237015c07ee879d68b2d699a45faf41e",
-    "lastHarvestedAt": "2026-11-20T04:29:25.566Z",
+    "contentHash": "8166aefaae3ff87f9a65543c18e8a2000108e554a22bc0084a386af8f995a906",
+    "lastHarvestedAt": "2026-11-20T19:11:33.613Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -6193,10 +6193,10 @@
     "repository": "golutra/golutra",
     "platform": "github",
     "sourceUrl": "https://github.com/golutra/golutra",
-    "sourceVersion": "8b68a141",
+    "sourceVersion": "52dbff2b",
     "license": "NOASSERTION",
-    "contentHash": "23e303a1560d09a0e9a16956adb2b2bef2d517d1ba3b6531ea40694c994d372f",
-    "lastHarvestedAt": "2026-10-19T05:25:29.085Z",
+    "contentHash": "4f6253298da678a73e6bd10b47ed0a67ba0a91a1156ee6900b8f659ac31281c8",
+    "lastHarvestedAt": "2026-11-20T19:06:37.265Z",
     "learningId": "learn-github-golutra-golutra"
   },
   "gitpoint-git-point": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "72006e5e",
+    "sourceVersion": "93648484",
     "license": "MIT",
-    "contentHash": "9e43376c6eb655809b20a3560d01d46afe050deb82a30bcc8d1b52146c962123",
-    "lastHarvestedAt": "2026-11-19T14:52:38.521Z",
+    "contentHash": "f496b4d6787f2a96e8c8e4b14cca27fbaa05d96dcd12a01b4680845966bfb161",
+    "lastHarvestedAt": "2026-11-20T19:11:46.163Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {

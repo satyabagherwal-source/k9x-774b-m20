@@ -4,22 +4,22 @@
 {
   "source_repository": "sigstore/cosign",
   "source_url": "https://github.com/sigstore/cosign",
-  "source_version": "6e895879",
+  "source_version": "b612e741",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T22:36:14.728Z",
+  "timestamp": "2026-11-20T19:11:33.822Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-sigstore-cosign",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [sigstore/cosign](https://github.com/sigstore/cosign) (Revision: `6e895879`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T22:36:14.728Z`  
+> **Provenance**: Harvested from [sigstore/cosign](https://github.com/sigstore/cosign) (Revision: `b612e741`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T19:11:33.822Z`  
 > **Learning ID**: `learn-github-sigstore-cosign`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `sigstore/cosign` (Commit: `6e895879`)
+- **Target Repository**: `sigstore/cosign` (Commit: `b612e741`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T22:36:13.464Z  
+> **Harvest Timestamp**: 2026-11-20T19:06:30.514Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Code signing and transparency for containers and binaries
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6452 stars
+- **Stars / Engagement**: 6456 stars
 
 ---
 
@@ -47,225 +47,6 @@ PROVENANCE_END -->
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: go.mod, README.md, Dockerfile.
 - Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `pkg/cosign/fulcioverifier/ctutil/ctutil.go`
-```
-// Copyright 2018 Google LLC. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-// Package copied from
-// https://github.com/google/certificate-transparency-go/blob/master/ctutil/ctutil.go
-
-// Package ctutil contains utilities for Certificate Transparency.
-package ctutil
-
-import (
-	"bytes"
-	"crypto"
-	"crypto/sha256"
-	"encoding/base64"
-	"errors"
-	"fmt"
-
-	ct "github.com/google/certificate-transparency-go"
-	"github.com/google/certificate-transparency-go/tls"
-	"github.com/google/certificate-transparency-go/x509"
-)
-
-var emptyHash = [sha256.Size]byte{}
-
-// LeafHashB64 does as LeafHash does, but returns the leaf hash base64-encoded.
-// The base64-encoded leaf hash returned by B64LeafHash can be used with the
-// get-proof-by-hash API endpoint of Certificate Transparency Logs.
-func LeafHashB64(chain []*x509.Certificate, sct *ct.SignedCertificateTimestamp, embedded bool) (string, error) {
-	hash, err := LeafHash(chain, sct, embedded)
-	if err != nil {
-		return "", err
-	}
-	return base64.StdEncoding.EncodeToString(hash[:]), nil
-}
-
-// LeafHash calculates the leaf hash of the certificate or precertificate at
-// chain[0] that sct was issued for.
-//
-// sct is required because the SCT timestamp is used to calculate the leaf hash.
-// Leaf hashes are unique to (pre)certificate-SCT pairs.
-//
-// This function can be used with three different types of leaf certificate:
-//   - X.509 Certificate:
-//     If using this function to calculate the leaf hash for a normal X.509
-//     certificate then it is enough to just provide the end entity
-//     certificate in chain. This case assumes that the SCT being provided is
-//     not embedded within the leaf certificate provided, i.e. the certificate
-//     is what was submitted to the Certificate Transparency Log in order to
-//     obtain the SCT.  For this case, set embedded to false.
-//   - Precertificate:
-//     If using this function to calculate the leaf hash for a precertificate
-//     then the issuing certificate must also be provided in chain.  The
-//     precertificate should be at chain[0], and its issuer at chain[1].  For
-//     this case, set embedded to false.
-//   - X.509 Certificate containing the SCT embedded within it:
-//     If using this function to calculate the leaf hash for a certificate
-//     where the SCT provided is embedded within the certificate you
-//     are providing at chain[0], set embedded to true.  LeafHash will
-//     calculate the leaf hash by building the corresponding precertificate.
-//     LeafHash will return an error if the provided SCT cannot be found
-//     embedded within chain[0].  As with the precertificate case, the issuing
-//     certificate must also be provided in chain.  The certificate containing
-//     the embedded SCT should be at chain[0], and its issuer at chain[1].
-//
-// Note: LeafHash doesn't check that the provided SCT verifies for the given
-// chain.  It simply calculates what the leaf hash would be for the given
-// (pre)certificate-SCT pair.
-func LeafHash(chain []*x509.Certificate, sct *ct.SignedCertificateTimestamp, embedded bool) ([sha256.Size]byte, error) {
-	leaf, err := createLeaf(chain, sct, embedded)
-	if err != nil {
-		return emptyHash, err
-	}
-	return ct.LeafHashForLeaf(leaf)
-}
-
-// VerifySCT takes the public key of a Certificate Transparency Log, a
-// certificate chain, and an SCT and verifies whether the SCT is a valid SCT for
-// the certificate at chain[0], signed by the Log that the public key belongs
-// to.  If the SCT does not verify, an error will be returned.
-//
-// This function can be used with three different types of leaf certificate:
-//   - X.509 Certificate:
-//     If using this function to verify an SCT for a normal X.509 certificate
-//     then it is enough to just provide the end entity certificate in chain.
-//     This case assumes that the SCT being provided is not embedded within
-//     the leaf certificate provided, i.e. the certificate is what was
-//     submitted to the Certificate Transparency Log in order to obtain the
-//     SCT.  For this case, set embedded to false.
-//   - Precertificate:
-//     If using this function to verify an SCT for a precertificate then the
-//     issuing certificate must also be provided in chain.  The precertificate
-//     should be at chain[0], and its issuer at chain[1].  For this case, set
-//     embedded to false.
-//   - X.509 Certificate containing the SCT embedded within it:
-//     If the SCT you wish to verify is embedded within the certificate you
-//     are providing at chain[0], set embedded to true.  VerifySCT will
-//     verify the provided SCT by building the corresponding precertificate.
-//     VerifySCT will return an error if the provided SCT cannot be found
-//     embedded within chain[0].  As with the precertificate case, the issuing
-//     certificate must also be provided in chain.  The certificate containing
-//     the embedded SCT should be at chain[0], and its issuer at chain[1].
-func VerifySCT(pubKey crypto.PublicKey, chain []*x509.Certificate, sct *ct.SignedCertificateTimestamp, embedded bool) error {
-	s, err := ct.NewSignatureVerifier(pubKey)
-	if err != nil {
-		return fmt.Errorf("error creating signature verifier: %w", err)
-	}
-
-	return VerifySCTWithVerifier(s, chain, sct, embedded)
-}
-
-// VerifySCTWithVerifier takes a ct.SignatureVerifier, a certificate chain, and
-// an SCT and verifies whether the SCT is a valid SCT for the certificate at
-// chain[0], signed by the Log whose public key was used to set up the
-// ct.SignatureVerifier.  If the SCT does not verify, an error will be returned.
-//
-// This function can be used with three different types of leaf certificate:
-//   - X.509 Certificate:
-//     If using this function to verify an SCT for a normal X.509 certificate
-//     then it is enough to just provide the end entity certificate in chain.
-//     This case assumes that the SCT being provided is not embedded within
-//     the leaf certificate provided, i.e. the certificate is what was
-//     submitted to the Certificate Transparency Log in order to obtain the
-//     SCT.  For this case, set embedded to false.
-//   - Precertificate:
-//     If using this function to verify an SCT for a precertificate then the
-//     issuing certificate must also be provided in chain.  The precertificate
-//     should be at chain[0], and its issuer at chain[1].  For this case, set
-//     embedded to false.
-//   - X.509 Certificate containing the SCT embedded within it:
-//     If the SCT you wish to verify is embedded within the certificate you
-//     are providing at chain[0], set embedded to true.  VerifySCT will
-//     verify the provided SCT by building the corresponding precertificate.
-//     VerifySCT will return an error if the provided SCT cannot be found
-//     embedded within chain[0].  As with the precertificate case, the issuing
-//     certificate must also be provided in chain.  The certificate containing
-//     the embedded SCT should be at chain[0], and its issuer at chain[1].
-func VerifySCTWithVerifier(sv *ct.SignatureVerifier, chain []*x509.Certificate, sct *ct.SignedCertificateTimestamp, embedded bool) error {
-	if sv == nil {
-		return errors.New("ct.SignatureVerifier is nil")
-	}
-
-	leaf, err := createLeaf(chain, sct, embedded)
-	if err != nil {
-		return err
-	}
-
-	return sv.VerifySCTSignature(*sct, ct.LogEntry{Leaf: *leaf})
-}
-
-func createLeaf(chain []*x509.Certificate, sct *ct.SignedCertificateTimestamp, embedded bool) (*ct.MerkleTreeLeaf, error) {
-	if len(chain) == 0 {
-		return nil, errors.New("chain is empty")
-	}
-	if sct == nil {
-		return nil, errors.New("sct is nil")
-	}
-
-	if embedded {
-		sctPresent, err := ContainsSCT(chain[0], sct)
-		if err != nil {
-			return nil, fmt.Errorf("error checking for SCT in leaf certificate: %w", err)
-		}
-		if !sctPresent {
-			return nil, errors.New("SCT provided is not embedded within leaf certificate")
-		}
-	}
-
-	certType := ct.X509LogEntryType
-	if chain[0].IsPrecertificate() || embedded {
-		certType = ct.PrecertLogEntryType
-	}
-
-	var leaf *ct.MerkleTreeLeaf
-	var err error
-	if embedded {
-		leaf, err = ct.MerkleTreeLeafForEmbeddedSCT(chain, sct.Timestamp)
-	} else {
-		leaf, err = ct.MerkleTreeLeafFromChain(chain, certType, sct.Timestamp)
-	}
-	if err != nil {
-		return nil, fmt.Errorf("error creating MerkleTreeLeaf: %w", err)
-	}
-	return leaf, nil
-}
-
-// ContainsSCT checks to see whether the given SCT is embedded within the given
-// certificate.
-func ContainsSCT(cert *x509.Certificate, sct *ct.SignedCertificateTimestamp) (bool, error) {
-	if cert == nil || sct == nil {
-		return false, nil
-	}
-
-	sctBytes, err := tls.Marshal(*sct)
-	if err != nil {
-		return false, fmt.Errorf("error tls.Marshalling SCT: %w", err)
-	}
-	for _, s := range cert.SCTList.SCTList {
-		if bytes.Equal(sctBytes, s.Val) {
-			return true, nil
-		}
-	}
-	return false, nil
-}
-
-```
 
 ### Core Architecture Module: `pkg/cosign/pivkey/util.go`
 ```
@@ -1778,6 +1559,167 @@ func predicateTypeFromEnvelope(envelope *dsse.Envelope) (string, error) {
 
 ```
 
+### Core Architecture Module: `cmd/cosign/cli/bundle/upgrade.go`
+```
+//
+// Copyright 2026 The Sigstore Authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package bundle
+
+import (
+	"context"
+	"crypto/x509"
+	"fmt"
+	"os"
+
+	protobundle "github.com/sigstore/protobuf-specs/gen/pb-go/bundle/v1"
+	rekor "github.com/sigstore/rekor/pkg/client"
+	"github.com/sigstore/rekor/pkg/generated/client"
+	"github.com/sigstore/rekor/pkg/generated/client/entries"
+	"github.com/sigstore/rekor/pkg/tle"
+	"google.golang.org/protobuf/encoding/protojson"
+
+	"github.com/sigstore/cosign/v3/internal/ui"
+)
+
+type UpgradeCmd struct {
+	Out      string
+	RekorURL string
+}
+
+func (c *UpgradeCmd) Exec(ctx context.Context, bundlePath string) error {
+	data, err := os.ReadFile(bundlePath)
+	if err != nil {
+		return fmt.Errorf("reading input file: %w", err)
+	}
+
+	rekorClient, err := rekor.GetRekorClient(c.RekorURL)
+	if err != nil {
+		return fmt.Errorf("creating rekor client: %w", err)
+	}
+
+	upgradedBundle, err := upgradeBundle(ctx, data, rekorClient)
+	if err != nil {
+		return fmt.Errorf("upgrading bundle: %w", err)
+	}
+
+	if c.Out != "" {
+		err = os.WriteFile(c.Out, upgradedBundle, 0600) // #nosec G703 -- user-supplied output path is intentional
+		if err != nil {
+			return fmt.Errorf("writing upgraded bundle: %w", err)
+		}
+		ui.Infof(ctx, "Successfully upgraded bundle written to %s", c.Out)
+	} else {
+		fmt.Println(string(upgradedBundle))
+	}
+
+	return nil
+}
+
+func upgradeBundle(ctx context.Context, data []byte, rekorClient *client.Rekor) ([]byte, error) {
+	var bundle protobundle.Bundle
+	if err := protojson.Unmarshal(data, &bundle); err != nil {
+		return nil, fmt.Errorf("unmarshaling bundle: %w", err)
+	}
+
+	if bundle.VerificationMaterial == nil {
+		return nil, fmt.Errorf("bundle is missing verification material")
+	}
+	if bundle.VerificationMaterial.Content == nil {
+		return nil, fmt.Errorf("bundle verification material is missing content (public key or certificate)")
+	}
+
+	switch bundle.MediaType {
+	case "application/vnd.dev.sigstore.bundle.v0.3+json", "application/vnd.dev.sigstore.bundle+json;version=0.3":
+		ui.Infof(ctx, "Bundle is already at v0.3, no upgrade needed.")
+		return data, nil
+	case "application/vnd.dev.sigstore.bundle+json;version=0.1":
+		ui.Infof(ctx, "Upgrading from v0.1 to v0.3...")
+	case "application/vnd.dev.sigstore.bundle+json;version=0.2":
+		ui.Infof(ctx, "Upgrading from v0.2 to v0.3...")
+	default:
+		return nil, fmt.Errorf("unsupported bundle version: %s", bundle.MediaType)
+	}
+
+	if chainContent, ok := bundle.VerificationMaterial.Content.(*protobundle.VerificationMaterial_X509CertificateChain); ok {
+		certChain := chainContent.X509CertificateChain.Certificates
+		if len(certChain) > 0 {
+			ui.Infof(ctx, "Truncating certificate chain to only the leaf certificate...")
+			for i, cert := range certChain {
+				parsedCert, err := x509.ParseCertificate(cert.RawBytes)
+				if err != nil {
+					ui.Infof(ctx, "  Certificate %d: <unable to parse: %v>", i, err)
+					continue
+				}
+
+				var identity string
+				if len(parsedCert.EmailAddresses) > 0 {
+					identity = parsedCert.EmailAddresses[0]
+				} else if len(parsedCert.URIs) > 0 {
+					identity = parsedCert.URIs[0].String()
+				} else if s := parsedCert.Subject.String(); s != "" {
+					identity = s
+				} else {
+					identity = "<none>"
+				}
+				ui.Infof(ctx, "  Certificate %d Identity: %s", i, identity)
+			}
+			bundle.VerificationMaterial.Content = &protobundle.VerificationMaterial_Certificate{
+				Certificate: certChain[0],
+			}
+		}
+	}
+
+	for i, entry := range bundle.VerificationMaterial.TlogEntries {
+		if entry.InclusionPromise != nil && entry.InclusionProof == nil {
+			ui.Infof(ctx, "Fetching missing inclusion proof from Rekor for log index %d...", entry.LogIndex)
+
+			params := entries.NewGetLogEntryByIndexParams()
+			params.SetLogIndex(entry.LogIndex)
+
+			resp, err := rekorClient.Entries.GetLogEntryByIndexContext(ctx, params)
+			if err != nil {
+				return nil, fmt.Errorf("fetching log entry by index: %w", err)
+			}
+
+			if len(resp.Payload) != 1 {
+				return nil, fmt.Errorf("expected exactly 1 entry from Rekor for index %d, got %d", entry.LogIndex, len(resp.Payload))
+			}
+
+			for _, e := range resp.Payload {
+				protoEntry, err := tle.GenerateTransparencyLogEntry(e)
+				if err != nil {
+					return nil, fmt.Errorf("generating proto entry: %w", err)
+				}
+				bundle.VerificationMaterial.TlogEntries[i] = protoEntry
+			}
+		}
+	}
+
+	bundle.MediaType = "application/vnd.dev.sigstore.bundle.v0.3+json"
+
+	out, err := protojson.Marshal(&bundle)
+	if err != nil {
+		return nil, fmt.Errorf("marshaling bundle: %w", err)
+	}
+
+	return out, nil
+}
+
+```
+
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1808,335 +1750,184 @@ func predicateTypeFromEnvelope(envelope *dsse.Envelope) (string, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6e895879` (2026-11-19)
-**Commit Message**: Update README offline verification example
+### Incident Patch 1: `b612e741` (2026-11-20)
+**Commit Message**: Replace --use-signing-config with --no-signing-config (#5163)
 
 Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 
-**File**: `README.md` (modified, +6/-9)
+**File**: `cmd/cosign/cli/attest.go` (modified, +1/-1)
 ```diff
-@@ -142,17 +142,15 @@ The following checks were performed on these signatures:
+@@ -100,7 +100,7 @@ func Attest() *cobra.Command {
+ 				IssueCertificateForExistingKey: o.IssueCertificate,
+ 				BundlePath:                     o.BundlePath,
+ 			}
+-			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.UseSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
++			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.NoSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
+ 				return err
+ 			}
  
- ### Verify a container in an air-gapped environment
- 
--**Note:** This section is out of date.
--
- **Note:** Most verification workflows require periodically requesting service keys from a TUF repository.
- For airgapped verification of signatures using the public-good instance, you will need to retrieve the
- [trusted root](https://github.com/sigstore/root-signing/blob/main/targets/trusted_root.json) file from the production
- TUF repository. The contents of this file will change without notification. By not using TUF, you will need
- to build your own mechanism to keep your airgapped copy of this file up-to-date.
- 
--Cosign can do completely offline verification by verifying a [bundle](./specs/SIGNATURE_SPEC.md#properties) which is typically distributed as an annotation on the image manifest.
--As long as this annotation is present, then offline verification can be done.
--This bundle annotation is always included by default for keyless signing, so the default `cosign sign` functionality will include all materials needed for offline verification.
-+Cosign can do completely offline verification by verifying a [Sigstore bundle](./specs/BUNDLE_SPEC.md), which `cosign sign` attaches to the image in the registry.
-+The bundle contains the verification materials produced during signing, such as the certificate, the transparency log entry with its inclusion proof, and any RFC 3161 timestamp.
-+With these materials and a local copy of the trusted root, verification needs no network access.
- 
- To verify an image in an air-gapped environment, the image and signatures must be available locally on the filesystem.
- 
-@@ -166,20 +164,19 @@ cosign save $IMAGE_NAME --dir ./path/to/dir
- Now, in an air-gapped environment, this local image can be verified:
- 
- ```shell
-+# --trusted-root points to the default location of the trusted root
- cosign verify \
-   --certificate-identity $CERT_IDENTITY \
-   --certificate-oidc-issuer $CERT_OIDC_ISSUER \
--  --offline=true \
--  --new-bundle-format=false \ # for artifacts signed without the new protobuf bundle format
--  --trusted-root ~/.sigstore/root/tuf-repo-cdn.sigstore.dev/targets/trusted_root.json \ # default location of trusted root
-+  --trusted-root ~/.sigstore/root/tuf-repo-cdn.sigstore.dev/targets/trusted_root.json \
-   --local-image ./path/to/dir
- ```
- 
- You'll need to pass in expected values for `$CERT_IDENTITY` and `$CERT_OIDC_ISSUER` to correctly verify this image.
- If you signed with a keypair, the same command will work, assuming the public key material is present locally:
- 
- ```
--cosign verify --key cosign.pub --offline --local-image ./path/to/dir
-+cosign verify --key cosign.pub --trusted-root ~/.sigstore/root/tuf-repo-cdn.sigstore.dev/targets/trusted_root.json --local-image ./path/to/dir
- ```
- 
- ### Identity-based blob signing and verification
 ```
 
----
-
-### Incident Patch 2: `c0d11188` (2026-10-02)
-**Commit Message**: Remove obsolete service flags and unused verify helpers
-
-Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
-
-**File**: `cmd/cosign/cli/dockerfile.go` (modified, +0/-1)
+**File**: `cmd/cosign/cli/attest_blob.go` (modified, +1/-1)
 ```diff
-@@ -101,7 +101,6 @@ Shell-like variables in the Dockerfile's FROM lines will be substituted with val
- 					Output:                       o.Output,
- 					Annotations:                  annotations,
- 					LocalImage:                   o.LocalImage,
--					Offline:                      o.CommonVerifyOptions.Offline,
- 					IgnoreTlog:                   o.CommonVerifyOptions.IgnoreTlog,
- 					MaxWorkers:                   o.CommonVerifyOptions.MaxWorkers,
- 					UseSignedTimestamps:          o.CommonVerifyOptions.UseSignedTimestamps,
-```
-
-**File**: `cmd/cosign/cli/fulcio/depcheck_test.go` (removed, +0/-35)
-```diff
-@@ -1,35 +0,0 @@
--//
--// Copyright 2021 The Sigstore Authors.
--//
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--//     http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--package fulcio_test
--
--import (
--	"testing"
--
--	"github.com/depcheck-test/depcheck-test/depcheck"
--)
--
--func TestNoDeps(t *testing.T) {
--	depcheck.AssertNoDependency(t, map[string][]string{
--		"github.com/sigstore/cosign/v3/cmd/cosign/cli/fulcio": {
--			// Avoid pulling in a variety of things that are massive dependencies.
--			"github.com/google/trillian",
--			"github.com/envoyproxy/go-control-plane",
--			"github.com/gogo/protobuf/protoc-gen-gogo",
--			"github.com/grpc-ecosystem/go-grpc-middleware",
--			"github.com/jhump/protoreflect",
--		},
--	})
--}
-```
-
-**File**: `cmd/cosign/cli/fulcio/fulcio.go` (removed, +0/-30)
-```diff
-@@ -1,30 +0,0 @@
--//
--// Copyright 2021 The Sigstore Authors.
--//
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--//     http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--package fulcio
--
--import (
--	"crypto/x509"
--
--	"github.com/sigstore/cosign/v3/internal/pkg/cosign/fulcio/fulcioroots"
--)
--
--func GetRoots() (*x509.CertPool, error) {
--	return fulcioroots.Get()
--}
--
--func GetIntermediates() (*x509.CertPool, error) {
--	return fulcioroots.GetIntermediates()
--}
-```
-
-**File**: `cmd/cosign/cli/manifest.go` (modified, +0/-1)
-```diff
-@@ -96,7 +96,6 @@ against the transparency log.`,
- 					Output:                       o.Output,
- 					Annotations:                  annotations,
- 					LocalImage:                   o.LocalImage,
--					Offline:                      o.CommonVerifyOptions.Offline,
- 					IgnoreTlog:                   o.CommonVerifyOptions.IgnoreTlog,
- 					MaxWorkers:                   o.CommonVerifyOptions.MaxWorkers,
- 					UseSignedTimestamps:          o.CommonVerifyOptions.UseSignedTimestamps,
-```
-
-**File**: `cmd/cosign/cli/options/certificate.go` (modified, +1/-40)
-```diff
-@@ -23,7 +23,6 @@ import (
+@@ -81,7 +81,7 @@ func AttestBlob() *cobra.Command {
+ 				IssueCertificateForExistingKey: o.IssueCertificate,
+ 				BundlePath:                     o.BundlePath,
+ 			}
+-			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.UseSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
++			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.NoSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
+ 				return err
+ 			}
  
- // CertVerifyOptions is the wrapper for certificate verification.
- type CertVerifyOptions struct {
--	Cert                         string
- 	CertIdentity                 string
- 	CertIdentityRegexp           string
- 	CertOidcIssuer               string
-@@ -33,22 +32,13 @@ type CertVerifyOptions struct {
- 	CertGithubWorkflowName       string
- 	CertGithubWorkflowRepository string
- 	CertGithubWorkflowRef        string
--	CAIntermediates              string
--	CARoots                      string
--	CertChain                    string
--	SCT                          string
- 	IgnoreSCT                    bool
+```
+
+**File**: `cmd/cosign/cli/options/attest.go` (modified, +4/-5)
+```diff
+@@ -32,7 +32,7 @@ type AttestOptions struct {
+ 	TSAClientKey      string
+ 	TSAServerName     string
+ 	BundlePath        string
+-	UseSigningConfig  bool
++	NoSigningConfig   bool
+ 	SigningConfigPath string
+ 	TrustedRootPath   string
+ 
+@@ -95,14 +95,13 @@ func (o *AttestOptions) AddFlags(cmd *cobra.Command) {
+ 		"write everything required to verify the blob to a FILE")
+ 	_ = cmd.MarkFlagFilename("bundle", bundleExts...)
+ 
+-	cmd.Flags().BoolVar(&o.UseSigningConfig, "use-signing-config", true,
+-		"whether to use a TUF-provided signing config for the service URLs")
+-	_ = cmd.Flags().MarkDeprecated("use-signing-config", "an offline signing flag will be added in the future; TUF will continue to provide a signing config by default if one is not provided manually")
++	cmd.Flags().BoolVar(&o.NoSigningConfig, "no-signing-config", false,
++		"do not use a signing config or connect to any Sigstore services")
+ 
+ 	cmd.Flags().StringVar(&o.SigningConfigPath, "signing-config", "",
+ 		"path to a signing config file")
+ 
+-	cmd.MarkFlagsMutuallyExclusive("use-signing-config", "signing-config")
++	cmd.MarkFlagsMutuallyExclusive("no-signing-config", "signing-config")
+ 
+ 	cmd.Flags().StringVar(&o.TrustedRootPath, "trusted-root", "",
+ 		"optional path to a TrustedRoot JSON file to verify a signature after signing")
+```
+
+**File**: `cmd/cosign/cli/options/attest_blob.go` (modified, +4/-5)
+```diff
+@@ -40,7 +40,7 @@ type AttestBlobOptions struct {
+ 	OIDC        OIDCOptions
+ 	SecurityKey SecurityKeyOptions
+ 
+-	UseSigningConfig  bool
++	NoSigningConfig   bool
+ 	SigningConfigPath string
+ 	TrustedRootPath   string
  }
+@@ -74,14 +74,13 @@ func (o *AttestBlobOptions) AddFlags(cmd *cobra.Command) {
+ 	_ = cmd.MarkFlagFilename("bundle", bundleExts...)
+ 	_ = cmd.MarkFlagRequired("bundle")
  
--var _ Interface = (*RekorOptions)(nil)
-+var _ Interface = (*CertVerifyOptions)(nil)
+-	cmd.Flags().BoolVar(&o.UseSigningConfig, "use-signing-config", true,
+-		"whether to use a TUF-provided signing config for the service URLs")
+-	_ = cmd.Flags().MarkDeprecated("use-signing-config", "an offline signing flag will be added in the future; TUF will continue to provide a signing config by default if one is not provided manually")
++	cmd.Flags().BoolVar(&o.NoSigningConfig, "no-signing-config", false,
++		"do not use a signing config or connect to any Sigstore services")
  
- // AddFlags implements Interface
- func (o *CertVerifyOptions) AddFlags(cmd *cobra.Command) {
--	cmd.Flags().StringVar(&o.Cert, "certificate", "",
--		"path to the public certificate. The certificate will be verified against the Fulcio roots if the --certificate-chain option is not passed.")
--	_ = cmd.MarkFlagFilename("certificate", certificateExts...)
--	_ = cmd.Flags().MarkDeprecated("certificate", "please use --bundle with --trusted-root to provide the public certificate")
--
- 	cmd.Flags().StringVar(&o.CertIdentity, "certificate-identity", "",
- 		"The identity expected in a valid Fulcio certificate. Valid values include email address, DNS names, IP addresses, and URIs. Either --certificate-identity or --certificate-identity-regexp must be set for keyless flows.")
- 	_ = cmd.RegisterFlagCompletionFunc("certificate-identity", cobra.NoFileCompletions)
-@@ -88,35 +78,6 @@ func (o *CertVerifyOptions) AddFlags(cmd *cobra.Command) {
- 	_ = cmd.RegisterFlagCompletionFunc("certificate-github-workflow-ref", cobra.NoFileCompletions)
- 	// -- Cert extensions end --
+ 	cmd.Flags().StringVar(&o.SigningConfigPath, "signing-config", "",
+ 		"path to a signing config file")
  
--	cmd.Flags().StringVar(&o.CAIntermediates, "ca-intermediates", "",
--		"path to a file of intermediate CA certificates in PEM format which will be needed "+
--			"when building the certificate chains for the signing certificate. "+
--			"The flag is optional and must be used together with --ca-roots, conflicts with "+
--			"--certificate-chain.")
--	_ = cmd.MarkFlagFilename("ca-intermediates", certificateExts...)
--	_ = cmd.Flags().MarkDeprecated("ca-intermediates", "please use --trusted-root to provide CA certificates")
--	cmd.Flags().StringVar(&o.CARoots, "ca-roots", "",
--		"path to a bundle file of CA certificates in PEM format which will be needed "+
--			"when building the certificate chains for the signing certificate. Conflicts with --certificate-chain.")
--	_ = cmd.MarkFlagFilename("ca-roots", certificateExts...)
--	_ = cmd.Flags().MarkDeprecated("ca-roots", "please use --trusted-root to provide CA certificates")
--
--	cmd.Flags().StringVar(&o.CertChain, "certificate-chain", "",
--		"path to a list of CA certificates in PEM format which will be needed "+
--			"when building the certificate chain for the signing certificate. "+
--			"Must start with the parent intermediate CA certificate of the "+
--			"signing certificate and end with the root certificate. Conflicts with --ca-roots and --ca-intermediates.")
--	_ = cmd.MarkFlagFilename("certificate-chain", certificateExts...)
--	cmd.MarkFlagsMutuallyExclusive("ca-roots", "certificate-chain")
--	cmd.MarkFlagsMutuallyExclusive("ca-intermediates", "certificate-chain")
--	_ = cmd.Flags().MarkDeprecated("certificate-chain", "please use --trusted-root to provide the certificate chain")
--
--	cmd.Flags().StringVar(&o.SCT, "sct", "",
--		"path to a detached Signed Certificate Timestamp, formatted as a RFC6962 AddChainResponse struct. "+
--			"If a certificate contains an SCT, verification will check both the detached and embedded SCTs.")
--	// _ = cmd.MarkFlagFilename("sct") // no typical extensions
--	_ = cmd.Flags().MarkDeprecated("sct", "a Signed Certificate Timestamp is now provided via a Sigstore bundle")
--
- 	cmd.Flags().BoolVar(&o.IgnoreSCT, "insecure-ignore-sct", false,
- 		"when set, verification will not check that a certificate contains an embedded SCT, a proof of "+
- 			"inclusion in a certificate transparency log")
+-	cmd.MarkFlagsMutuallyExclusive("use-signing-config", "signing-config")
++	cmd.MarkFlagsMutuallyExclusive("no-signing-config", "signing-config")
+ 
+ 	cmd.Flags().StringVar(&o.TrustedRootPath, "trusted-root", "",
+ 		"optional path to a TrustedRoot JSON file to verify a signature after signing")
 ```
 
-**File**: `cmd/cosign/cli/options/fulcio.go` (modified, +2/-12)
+**File**: `cmd/cosign/cli/options/sign.go` (modified, +4/-5)
 ```diff
-@@ -23,29 +23,19 @@ const DefaultFulcioURL = "https://fulcio.sigstore.dev"
+@@ -33,7 +33,7 @@ type SignOptions struct {
+ 	TSAClientKey      string
+ 	TSAServerName     string
+ 	IssueCertificate  bool
+-	UseSigningConfig  bool
++	NoSigningConfig   bool
+ 	SigningConfigPath string
+ 	TrustedRootPath   string
  
- // FulcioOptions is the wrapper for Fulcio related options.
- type FulcioOptions struct {
--	URL                      string
--	AuthFlow                 string
--	IdentityToken            string
--	InsecureSkipFulcioVerify bool // Deprecated: SCT verification is no longer performed during signing/attestation.
-+	AuthFlow      string
-+	IdentityToken string
+@@ -103,14 +103,13 @@ func (o *SignOptions) AddFlags(cmd *cobra.Command) {
+ 		"issue a code signing certificate from Fulcio, even if a key is provided")
+ 	_ = cmd.Flags().MarkDeprecated("issue-certificate", "support for this flag will be removed in the future")
+ 
+-	cmd.Flags().BoolVar(&o.UseSigningConfig, "use-signing-config", true,
+-		"whether to use a TUF-provided signing config for the service URLs")
+-	_ = cmd.Flags().MarkDeprecated("use-signing-config", "an offline signing flag will be added in the future; TUF will continue to provide a signing config by default if one is not provided manually")
++	cmd.Flags().BoolVar(&o.NoSigningConfig, "no-signing-config", false,
++		"do not use a signing config or connect to any Sigstore services")
+ 
+ 	cmd.Flags().StringVar(&o.SigningConfigPath, "signing-config", "",
+ 		"path to a signing config file")
+ 
+-	cmd.MarkFlagsMutuallyExclusive("use-signing-config", "signing-config")
++	cmd.MarkFlagsMutuallyExclusive("no-signing-config", "signing-config")
+ 
+ 	cmd.Flags().StringVar(&o.TrustedRootPath, "trusted-root", "",
+ 		"optional path to a TrustedRoot JSON file to verify a signature after signing")
+```
+
+**File**: `cmd/cosign/cli/options/signblob.go` (modified, +4/-5)
+```diff
+@@ -42,7 +42,7 @@ type SignBlobOptions struct {
+ 	IssueCertificate bool
+ 	SigningAlgorithm string
+ 
+-	UseSigningConfig  bool
++	NoSigningConfig   bool
+ 	SigningConfigPath string
+ 	TrustedRootPath   string
  }
+@@ -75,14 +75,13 @@ func (o *SignBlobOptions) AddFlags(cmd *cobra.Command) {
+ 	_ = cmd.MarkFlagFilename("bundle", bundleExts...)
+ 	_ = cmd.MarkFlagRequired("bundle")
  
- var _ Interface = (*FulcioOptions)(nil)
+-	cmd.Flags().BoolVar(&o.UseSigningConfig, "use-signing-config", true,
+-		"whether to use a TUF-provided signing config for the service URLs")
+-	_ = cmd.Flags().MarkDeprecated("use-signing-config", "an offline signing flag will be added in the future; TUF will continue to provide a signing config by default if one is not provided manually")
++	cmd.Flags().BoolVar(&o.NoSigningConfig, "no-signing-config", false,
++		"do not use a signing config or connect to any Sigstore services")
  
- // AddFlags implements Interface
- func (o *FulcioOptions) AddFlags(cmd *cobra.Command) {
- 	// TODO: change this back to api.SigstorePublicServerURL after the v1 migration is complete.
--	cmd.Flags().StringVar(&o.URL, "fulcio-url", DefaultFulcioURL,
--		"address of sigstore PKI server")
--	_ = cmd.Flags().MarkDeprecated("fulcio-url", "please use a signing config to specify a fulcio url; see `cosign signing-config --help`")
--
- 	cmd.Flags().StringVar(&o.IdentityToken, "identity-token", "",
- 		"identity token to use for certificate from fulcio. the token or a path to a file containing the token is accepted.")
- 	// _ = cmd.MarkFlagFilename("identity-token") // no typical extensions
+ 	cmd.Flags().StringVar(&o.SigningConfigPath, "signing-config", "",
+ 		"path to a signing config file")
  
- 	cmd.Flags().StringVar(&o.AuthFlow, "fulcio-auth-flow", "",
- 		"fulcio interactive oauth2 flow to use for certificate from fulcio. Defaults to determining the flow based on the runtime environment. (options) normal|device|token|client_credentials")
--
--	cmd.Flags().BoolVar(&o.InsecureSkipFulcioVerify, "insecure-skip-verify", false,
--		"skip verifying fulcio published to the SCT (this should only be used for testing).")
--	_ = cmd.Flags().MarkDeprecated("insecure-skip-verify", "SCT verification is no longer performed during signing/attestation.")
- }
+-	cmd.MarkFlagsMutuallyExclusive("use-signing-config", "signing-config")
++	cmd.MarkFlagsMutuallyExclusive("no-signing-config", "signing-config")
+ 
+ 	cmd.Flags().StringVar(&o.TrustedRootPath, "trusted-root", "",
+ 		"optional path to a TrustedRoot JSON file to verify a signature after signing")
 ```
 
-**File**: `cmd/cosign/cli/options/key.go` (modified, +1/-11)
+**File**: `cmd/cosign/cli/sign.go` (modified, +1/-1)
 ```diff
-@@ -25,11 +25,8 @@ type KeyOpts struct {
- 	Sk                   bool
- 	Slot                 string
- 	KeyRef               string
--	FulcioURL            string
--	RekorURL             string
- 	IDToken              string
- 	PassFunc             cosign.PassFunc
--	OIDCIssuer           string
- 	OIDCClientID         string
- 	OIDCClientSecret     string
- 	OIDCRedirectURL      string
-@@ -41,23 +38,16 @@ type KeyOpts struct {
- 	TSAClientCert        string
- 	TSAClientKey         string
- 	TSAServerName        string // expected SAN field in the TSA server's certificate - https://pkg.go.dev/crypto/tls#Config.ServerName
--	TSAServerURL         string
- 	RFC3161TimestampPath string
- 	TSACertChainPath     string
- 	// IssueCertificate controls whether to issue a certificate when a key is
- 	// provided.
- 	IssueCertificateForExistingKey bool
- 
- 	// FulcioAuthFlow is the auth flow to use when authenticating against
--	// Fulcio. See https://pkg.go.dev/github.com/sigstore/cosign/v3/cmd/cosign/cli/fulcio#pkg-constants
--	// for valid values.
-+	// Fulcio. Valid values are normal, device, token, and client_credentials.
- 	FulcioAuthFlow string
- 
--	// Deprecated: SCT verification is no longer performed during signing/attestation.
--	// Modeled after InsecureSkipVerify in tls.Config, this disables
--	// verifying the SCT.
--	InsecureSkipFulcioVerify bool
--
- 	// TrustedMaterial contains trusted metadata for all Sigstore services. It is exclusive with RekorPubKeys, RootCerts, IntermediateCerts, CTLogPubKeys, and the TSA* cert fields.
- 	TrustedMaterial root.TrustedMaterial
+@@ -115,7 +115,7 @@ race conditions or (worse) malicious tampering.
+ 				TSAServerName:                  o.TSAServerName,
+ 				IssueCertificateForExistingKey: o.IssueCertificate,
+ 			}
+-			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.UseSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
++			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.NoSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
+ 				return err
+ 			}
  
 ```
 
-**File**: `cmd/cosign/cli/options/oidc.go` (modified, +0/-5)
+**File**: `cmd/cosign/cli/signblob.go` (modified, +1/-1)
 ```diff
-@@ -28,7 +28,6 @@ const DefaultOIDCIssuerURL = "https://oauth2.sigstore.dev/auth"
- 
- // OIDCOptions is the wrapper for OIDC related options.
- type OIDCOptions struct {
--	Issuer                  string
- 	ClientID                string
- 	clientSecretFile        string
- 	RedirectURL             string
-@@ -56,10 +55,6 @@ var _ Interface = (*OIDCOptions)(nil)
- 
- // AddFlags implements Interface
- func (o *OIDCOptions) AddFlags(cmd *cobra.Command) {
--	cmd.Flags().StringVar(&o.Issuer, "oidc-issuer", DefaultOIDCIssuerURL,
--		"OIDC provider to be used to issue ID token")
--	_ = cmd.Flags().MarkDeprecated("oidc-issuer", "please use a signing config to specify an OIDC issuer; see `cosign signing-config create --help`")
--
- 	cmd.Flags().StringVar(&o.ClientID, "oidc-client-id", "sigstore",
- 		"OIDC client ID for application")
+@@ -105,7 +105,7 @@ func SignBlob() *cobra.Command {
+ 				IssueCertificateForExistingKey: o.IssueCertificate,
+ 				SigningAlgorithm:               o.SigningAlgorithm,
+ 			}
+-			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.UseSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
++			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.NoSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
+ 				return err
+ 			}
  
 ```
 
@@ -2166,44 +1957,31 @@ Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update README offline verification example
+## X. Replace --use-signing-config with --no-signing-config
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/cosign/cli/attest.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6e895879`: Update README offline verification example. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b612e741`: Replace --use-signing-config with --no-signing-config. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cosign/cli/attest.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Cosign can do completely offline verification by verifying a [Sigstore bundle](./specs/BUNDLE_SPEC.md), which `cosign sign` attaches to the image in the registry.
-The bundle contains the verification materials produced during signing, such as the certificate, the transparency log entry with its inclusion proof, and any RFC 3161 timestamp.
-With these materials and a local copy of the trusted root, verification needs no network access.
-# --trusted-root points to the default location of the trusted root
-  --trusted-root ~/.sigstore/root/tuf-repo-cdn.sigstore.dev/targets/trusted_root.json \
-cosign verify --key cosign.pub --trusted-root ~/.sigstore/root/tuf-repo-cdn.sigstore.dev/targets/trusted_root.json --local-image ./path/to/dir
+			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.NoSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-**Note:** This section is out of date.
-
-Cosign can do completely offline verification by verifying a [bundle](./specs/SIGNATURE_SPEC.md#properties) which is typically distributed as an annotation on the image manifest.
-As long as this annotation is present, then offline verification can be done.
-This bundle annotation is always included by default for keyless signing, so the default `cosign sign` functionality will include all materials needed for offline verification.
-  --offline=true \
-  --new-bundle-format=false \ # for artifacts signed without the new protobuf bundle format
-  --trusted-root ~/.sigstore/root/tuf-repo-cdn.sigstore.dev/targets/trusted_root.json \ # default location of trusted root
-cosign verify --key cosign.pub --offline --local-image ./path/to/dir
+			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.UseSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6e895879` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b612e741` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

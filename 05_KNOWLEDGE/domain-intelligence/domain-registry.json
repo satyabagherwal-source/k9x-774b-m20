@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T18:41:55.418Z",
-  "total_records": 2161,
+  "last_updated": "2026-11-20T19:11:52.080Z",
+  "total_records": 2163,
   "domains": {
     "A": {
       "total": 17,
@@ -1908,7 +1908,7 @@
       ]
     },
     "I": {
-      "total": 110,
+      "total": 112,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2019,7 +2019,9 @@
         "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-learnings-core-in",
         "domain_intelligence-content-information-intelligence-vcaesar-riot-core-invariants",
         "domain_intelligence-content-information-intelligence-vcaesar-riot-learnings-core-invariants",
-        "DOM-I-74EC8661"
+        "DOM-I-74EC8661",
+        "domain_intelligence-content-information-intelligence-golutra-golutra-core-invariants",
+        "domain_intelligence-content-information-intelligence-golutra-golutra-learnings-core-invariants"
       ]
     },
     "J": {
@@ -8370,10 +8372,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "fca104aa695b7c3b84b268b7dce5654f8fe9c7f29c64634608856874797bb124",
-      "created_at": "2026-11-20T13:40:23.815Z"
+      "content_hash": "7849a5821740cfa8d084fa081b8588917570b5283c8b58b8a6e42adeb214f750",
+      "created_at": "2026-11-20T19:11:46.563Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -24947,8 +24949,8 @@
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "repository": "sigstore/cosign",
-      "content_hash": "e775615491c663d9442117240ace7e0f770b6348d3499e0fafebe7b8ad38179d",
-      "created_at": "2026-11-18T04:20:53.922Z"
+      "content_hash": "ec0d1152e61363fdfff130c63e88d93236e186982e3446e3b0d10f2a2be4e4c8",
+      "created_at": "2026-11-20T19:11:33.988Z"
     },
     "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants",
@@ -24965,8 +24967,8 @@
       "title": "Content & Information Intelligence: sigstore-cosign-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-learnings-content-information-intelligence-sigstore-cosign-learn.md",
       "repository": "sigstore-cosign-learnings",
-      "content_hash": "6e7e9325bc2841baeadc7224680dbef099ef58cc81c48c75297e983a774c1c61",
-      "created_at": "2026-11-17T21:03:53.846Z"
+      "content_hash": "ee52ec913c11035b926e4fd6d287b4fb951705767c2f7e9d875500ec493b3905",
+      "created_at": "2026-11-20T19:11:52.080Z"
     },
     "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants",
@@ -25028,8 +25030,8 @@
       "title": "Architecture Intelligence: kubeedge/kubeedge Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubeedge-kubeedge-architecture-intelligence-kubeedge-kubeedge-core-invariants.md",
       "repository": "kubeedge/kubeedge",
-      "content_hash": "1bb30e755d5aacf8f1f0e4baf144b3a4834347d553ed9cac7bb2329ada7555c7",
-      "created_at": "2026-11-19T16:16:58.364Z"
+      "content_hash": "631b13758a69620b0ce39d5dc8ad0c3d5d790899b0e088922df5a83883198cd4",
+      "created_at": "2026-11-20T19:06:52.897Z"
     },
     "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-learnings-core-invariants",
@@ -25055,8 +25057,8 @@
       "title": "Architecture Intelligence: kubeedge-kubeedge-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubeedge-kubeedge-learnings-architecture-intelligence-kubeedge-kubeedge-learning.md",
       "repository": "kubeedge-kubeedge-learnings",
-      "content_hash": "d74e48c5c9341b7476a16ca589b8bd87415a62dec1915e829a339a6bb9769663",
-      "created_at": "2026-11-19T16:17:07.787Z"
+      "content_hash": "31f63548b25025a4381d3b86808b8a2a18e108b7eec0e5e77727d0473adbb943",
+      "created_at": "2026-11-20T19:11:51.227Z"
     },
     "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-core-invariants",
@@ -36412,6 +36414,24 @@
       "repository": "chaos-mesh-chaos-mesh-learnings",
       "content_hash": "ebc88350786816b329ffd7559771395918e9eb556786b3f1f98093a380d95f06",
       "created_at": "2026-11-20T18:41:53.565Z"
+    },
+    "domain_intelligence-content-information-intelligence-golutra-golutra-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-golutra-golutra-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: golutra/golutra Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-golutra-golutra-content-information-intelligence-golutra-golutra-core-invariants.md",
+      "repository": "golutra/golutra",
+      "content_hash": "98405262e5f5630c12d345bdd9c5fe2487e996c18d985c53285414802454b5d8",
+      "created_at": "2026-11-20T19:06:37.666Z"
+    },
+    "domain_intelligence-content-information-intelligence-golutra-golutra-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-golutra-golutra-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: golutra-golutra-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-golutra-golutra-learnings-content-information-intelligence-golutra-golutra-learn.md",
+      "repository": "golutra-golutra-learnings",
+      "content_hash": "0ce0761ff04aa1afbbaaf11f447a3debce9125497dba05409472dc0a3cf31148",
+      "created_at": "2026-11-20T19:11:50.337Z"
     }
   }
 }

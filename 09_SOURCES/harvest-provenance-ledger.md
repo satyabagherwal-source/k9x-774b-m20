@@ -11641,3 +11641,7 @@ Every entry in this ledger must capture:
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `81e7bcad` | Multi-dimensional audit evidence | 2026-11-20T18:41:40.816Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `dcfe7e6d` | Multi-dimensional audit evidence | 2026-11-20T18:41:42.353Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `c3e36c4a` | Multi-dimensional audit evidence | 2026-11-20T18:41:44.370Z |
+| `learn-github-golutra-golutra` | `https://github.com/golutra/golutra` | `52dbff2b` | Multi-dimensional audit evidence | 2026-11-20T19:06:37.265Z |
+| `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `8429622d` | Multi-dimensional audit evidence | 2026-11-20T19:06:52.497Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `b612e741` | Multi-dimensional audit evidence | 2026-11-20T19:11:33.613Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `93648484` | Multi-dimensional audit evidence | 2026-11-20T19:11:46.163Z |

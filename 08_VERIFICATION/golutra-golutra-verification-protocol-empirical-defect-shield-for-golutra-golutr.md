@@ -4,45 +4,31 @@
 {
   "source_repository": "golutra/golutra",
   "source_url": "https://github.com/golutra/golutra",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "52dbff2b",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-20T19:06:37.481Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-golutra-golutra",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [golutra/golutra](https://github.com/golutra/golutra) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [golutra/golutra](https://github.com/golutra/golutra) (Revision: `52dbff2b`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-20T19:06:37.481Z`  
+> **Learning ID**: `learn-github-golutra-golutra`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `golutra/golutra` (Commit: `historical`)
+- **Target Repository**: `golutra/golutra` (Commit: `52dbff2b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/golutra-golutra-learnings.md`  
-> **Source**: github ([https://github.com/golutra/golutra](https://github.com/golutra/golutra))  
-> **Source Version**: `8b68a141`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:25:28.783Z  
-> **Learning ID**: `learn-github-golutra-golutra`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): golutra/golutra
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/golutra-golutra-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/golutra/golutra](https://github.com/golutra/golutra))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:25:28.773Z  
+> **Harvest Timestamp**: 2026-11-20T19:06:21.813Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Multi-agent AI orchestration platform for automation, workflows, and developer tools. Golutra transforms Codex, Claude Code, and OpenClaw into a unified agent system with parallel execution, task orchestration, long-running workflows, and AI productivity workspace.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3859 stars
+- **Stars / Engagement**: 3877 stars
 
 ---
 
@@ -498,1385 +484,132 @@ pub(crate) fn apply_resume_command(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `75e68e29` (2026-03-01)
-**Commit Message**: feat: 完成终端引擎与消息链路阶段性重构，补齐会话创建与语义派发能力，并修复终端稳定性/输入一致性/UI 状态问题
+### Incident Patch 1: `52dbff2b` (2026-11-19)
+**Commit Message**: docs: sync supported CLI tools and icons in README
 
-- 重构终端架构，按 platform/engine/runtime/message_service/ui_gateway/orchestration 分层迁移
-- 拆分会话与引擎内部模块（session state、semantic worker、resume poller、timestamps、snapshot）
-- 引入 message pipeline 与 semantic stream，补齐平台状态能力
-- 补齐会话与扩展能力（skills、create terminal、create user）
-- 修复终端关键问题（渲染、attach/resize/webgl 稳定性、屏幕历史、好友删除流程、状态递增与重试、退出覆盖新会话）
-- 优化稳定性与性能（队列派发、4 分屏逻辑、低开销模式、语义线程按需创建）
-- 修复输入一致性问题（光标不同步、覆盖行）并收敛 UI 状态异常
-
-**File**: `README.md` (modified, +1/-1)
+**File**: `README.md` (modified, +63/-20)
 ```diff
-@@ -1,7 +1,7 @@
- # golutra
+@@ -28,18 +28,41 @@
  
- **使用赛博监工系统，指挥你的 AI 牛马。**  
--**Cyber Overseer System: Command your AI workforce.**
-+**Use Cyberpunk Overseer System: Command your AI workforce.**
+ <table align="center">
+   <tr>
+-    <td align="center"><img src="./assets/readme/icons/claude-code.png" alt="Claude Code" height="48" /></td>
+-    <td align="center"><img src="./assets/readme/icons/gemini.png" alt="Gemini CLI" height="48" /></td>
+-    <td align="center"><img src="./assets/readme/icons/codex.png" alt="Codex CLI" height="48" /></td>
+-    <td align="center"><img src="./assets/readme/icons/opencode.svg" alt="OpenCode" width="36" /></td>
+-    <td align="center"><img src="./assets/readme/icons/qwen.png" alt="Qwen Code" height="48" /></td>
+-    <td align="center"><img src="./assets/readme/icons/openclaw.png" alt="OpenClaw" height="48" /></td>
+-    <td align="center"><img src="./assets/readme/icons/any-cli.svg" alt="任意 CLI" height="48" /></td>
++    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/golutra-agent.png" alt="golutra-agent" height="56" /></td>
++    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/claude-code.png" alt="Claude Code" width="48" /></td>
++    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/antigravity.png" alt="Antigravity CLI" height="48" /></td>
++    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/codex.png" alt="Codex CLI" height="48" /></td>
++    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/grok.png" alt="Grok CLI" height="48" /></td>
++    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/pi.svg" alt="PI" height="48" /></td>
++    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/deepseek.svg" alt="DeepSeek Harness" height="48" /></td>
++    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/hermes.svg" alt="Hermes Agent" height="48" /></td>
+   </tr>
+   <tr>
++    <td align="center">golutra-agent</td>
+     <td align="center">Claude Code</td>
+-    <td align="center">Gemini CLI</td>
++    <td align="center">Antigravity CLI</td>
+     <td align="center">Codex CLI</td>
++    <td align="center">Grok CLI</td>
++    <td align="center">PI</td>
++    <td align="center">DeepSeek Harness</td>
++    <td align="center">Hermes Agent</td>
++  </tr>
++</table>
++
++<table align="center">
++  <tr>
++    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/gemini.svg" alt="Gemini CLI" height="48" /></td>
++    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/cursor.svg" alt="Cursor CLI" height="48" /></td>
++    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/copilot.svg" alt="GitHub Copilot CLI" height="48" /></td>
++    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/opencode.svg" alt="OpenCode" height="48" /></td>
++    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/qwen.png" alt="Qwen Code" height="48" /></td>
++    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/openclaw.png" alt="OpenClaw" width="56" /></td>
++    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/any-cli.svg" alt="任意 CLI" height="60" /></td>
++  </tr>
++  <tr>
++    <td align="center">Gemini CLI</td>
++    <td align="center">Cursor CLI</td>
++    <td align="center">GitHub Copilot CLI</td>
+     <td align="center">OpenCode</td>
+     <td align="center">Qwen Code</td>
+     <td align="center">OpenClaw</td>
+@@ -91,27 +114,37 @@ golutra-mcp provides a more stable way to connect external tools and agents thro
+ - Unlimited multi-agent parallel execution
+ - Automated orchestration from analysis to deployment
+ - Custom workflows with one-click template import/export for long-running automation
+-- CLI compatibility: Claude, Gemini, Codex, OpenCode, Qwen, OpenClaw, Any CLI
++- CLI compatibility: golutra-agent, Claude Code, Antigravity CLI, Codex CLI, Grok CLI, PI, DeepSeek Harness, Hermes Agent, Gemini CLI, Cursor CLI, GitHub Copilot CLI, OpenCode, Qwen Code, OpenClaw, and custom CLIs
+ - Stealth terminal with context-aware intelligence
+ - Visual interface combined with command-line power
  
- ---
+ Keep your familiar commands. golutra wires them into a complete engineering loop.
  
+ ### CLI Compatibility Layer
+ 
+-Keep your existing CLI and instantly upgrade it into a collaboration hub.
++Bring the CLI tools you already use into one workspace.
+ 
+-No terminal switch, no workflow rewrite, no re-training. Keep using the CLI you already trust while adding multi-agent collaboration, orchestration, and result handoff to your current engineering pipeline.
++Choose golutra-agent, Claude Code, Codex CLI, Cursor CLI, GitHub Copilot CLI, or another supported tool for each member. Members work in their own terminal sessions, while golutr
 ```
 
-**File**: `index.html` (modified, +11/-3)
+**File**: `assets/readme/icons/copilot.svg` (added, +8/-0)
 ```diff
-@@ -7,16 +7,24 @@
-     <title>golutra</title>
-     <script>
-       (() => {
--        const storageKey = 'nexus-theme';
--        const stored = window.localStorage.getItem(storageKey);
--        const theme = stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'dark';
-         const root = document.documentElement;
-+        const themeKey = 'golutra-theme';
-+        const localeKey = 'golutra-locale';
-+        const isValidTheme = (value) => value === 'light' || value === 'dark' || value === 'system';
-+        const isValidLocale = (value) => value === 'en-US' || value === 'zh-CN';
-+        const storedTheme = window.localStorage.getItem(themeKey);
-+        const storedLocale = window.localStorage.getItem(localeKey);
-+        const theme = isValidTheme(storedTheme) ? storedTheme : 'dark';
-         root.dataset.theme = theme;
-         const resolvedTheme = theme === 'system'
-           ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-           : theme;
-         root.dataset.resolvedTheme = resolvedTheme;
-         root.classList.toggle('dark', resolvedTheme === 'dark');
-+        const locale = isValidLocale(storedLocale) ? storedLocale : (isValidLocale(root.lang) ? root.lang : 'en-US');
-+        root.lang = locale;
-+        window.__GOLUTRA_THEME__ = theme;
-+        window.__GOLUTRA_LOCALE__ = locale;
-       })();
-     </script>
-     <style>
+@@ -0,0 +1,8 @@
++<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
++  <title>GitHub Copilot CLI</title>
++  <rect x="1" y="1" width="62" height="62" rx="14" fill="#24292f" stroke="#8c959f" stroke-width="2"/>
++  <g transform="translate(12 12) scale(1.6666666667)" fill="#ffffff">
++    <path d="M23.922 16.992c-.861 1.495-5.859 5.023-11.922 5.023-6.063 0-11.061-3.528-11.922-5.023A.641.641 0 0 1 0 16.736v-2.869a.841.841 0 0 1 .053-.22c.372-.935 1.347-2.292 2.605-2.656.167-.429.414-1.055.644-1.517a10.195 10.195 0 0 1-.052-1.086c0-1.331.282-2.499 1.132-3.368.397-.406.89-.717 1.474-.952 1.399-1.136 3.392-2.093 6.122-2.093 2.731 0 4.767.957 6.166 2.093.584.235 1.077.546 1.474.952.85.869 1.132 2.037 1.132 3.368 0 .368-.014.733-.052 1.086.23.462.477 1.088.644 1.517 1.258.364 2.233 1.721 2.605 2.656a.832.832 0 0 1 .053.22v2.869a.641.641 0 0 1-.078.256ZM12.172 11h-.344a4.323 4.323 0 0 1-.355.508C10.703 12.455 9.555 13 7.965 13c-1.725 0-2.989-.359-3.782-1.259a2.005 2.005 0 0 1-.085-.104L4 11.741v6.585c1.435.779 4.514 2.179 8 2.179 3.486 0 6.565-1.4 8-2.179v-6.585l-.098-.104s-.033.045-.085.104c-.793.9-2.057 1.259-3.782 1.259-1.59 0-2.738-.545-3.508-1.492a4.323 4.323 0 0 1-.355-.508h-.016.016Zm.641-2.935c.136 1.057.403 1.913.878 2.497.442.544 1.134.938 2.344.938 1.573 0 2.292-.337 2.657-.751.384-.435.558-1.15.558-2.361 0-1.14-.243-1.847-.705-2.319-.477-.488-1.319-.862-2.824-1.025-1.487-.161-2.192.138-2.533.529-.269.307-.437.808-.438 1.578v.021c0 .265.021.562.063.893Zm-1.626 0c.042-.331.063-.628.063-.894v-.02c-.001-.77-.169-1.271-.438-1.578-.341-.391-1.046-.69-2.533-.529-1.505.163-2.347.537-2.824 1.025-.462.472-.705 1.179-.705 2.319 0 1.211.175 1.926.558 2.361.365.414 1.084.751 2.657.751 1.21 0 1.902-.394 2.344-.938.475-.584.742-1.44.878-2.497Z"/>
++    <path d="M14.5 14.25a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm-5 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Z"/>
++  </g>
++</svg>
 ```
 
-**File**: `package.json` (modified, +8/-2)
+**File**: `assets/readme/icons/cursor.svg` (added, +7/-0)
 ```diff
-@@ -1,13 +1,15 @@
- {
--  "name": "nexus-dashboard-suite",
-+  "name": "golutra",
-   "private": true,
-   "version": "0.0.0",
-   "packageManager": "pnpm@10.28.0",
-   "type": "module",
-   "scripts": {
-     "dev": "vite",
-+    "dev:frontend": "vite",
-+    "dev:backend": "cargo run --manifest-path src-tauri/Cargo.toml",
-     "dev:tauri": "pnpm run shim:build && pnpm run dev",
--    "shim:build": "cargo build --manifest-path src-tauri/Cargo.toml --bin shim",
-+    "shim:build": "cargo build --manifest-path src-tauri/Cargo.toml --bin shim --bin golutra-cli",
-     "build": "vite build",
-     "preview": "vite preview",
-     "test": "vitest run",
-@@ -18,8 +20,12 @@
-   },
-   "dependencies": {
-     "@tauri-apps/api": "^2.0.0",
-+    "@tauri-apps/plugin-clipboard-manager": "^2.0.0",
-     "@tauri-apps/plugin-dialog": "^2.6.0",
-+    "@tauri-apps/plugin-shell": "^2.0.0",
-+    "@xterm/addon-canvas": "^0.7.0",
-     "@xterm/addon-fit": "^0.11.0",
-+    "@xterm/addon-search": "^0.15.0",
-     "@xterm/addon-webgl": "^0.19.0",
-     "@xterm/xterm": "^6.0.0",
-     "pinia": "^3.0.4",
+@@ -0,0 +1,7 @@
++<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
++  <title>Cursor CLI</title>
++  <rect x="1" y="1" width="62" height="62" rx="14" fill="#24292f" stroke="#8c959f" stroke-width="2"/>
++  <g transform="translate(12 12) scale(1.6666666667)" fill="#ffffff">
++    <path d="M11.503.131 1.891 5.678a.84.84 0 0 0-.42.726v11.188c0 .3.162.575.42.724l9.609 5.55a1 1 0 0 0 .998 0l9.61-5.55a.84.84 0 0 0 .42-.724V6.404a.84.84 0 0 0-.42-.726L12.497.131a1.01 1.01 0 0 0-.996 0M2.657 6.338h18.55c.263 0 .43.287.297.515L12.23 22.918c-.062.107-.229.064-.229-.06V12.335a.59.59 0 0 0-.295-.51l-9.11-5.257c-.109-.063-.064-.23.061-.23"/>
++  </g>
++</svg>
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +44/-0)
+**File**: `assets/readme/icons/deepseek.svg` (added, +3/-0)
 ```diff
-@@ -11,12 +11,24 @@ importers:
-       '@tauri-apps/api':
-         specifier: ^2.0.0
-         version: 2.9.1
-+      '@tauri-apps/plugin-clipboard-manager':
-+        specifier: ^2.0.0
-+        version: 2.3.2
-       '@tauri-apps/plugin-dialog':
-         specifier: ^2.6.0
-         version: 2.6.0
-+      '@tauri-apps/plugin-shell':
-+        specifier: ^2.0.0
-+        version: 2.3.4
-+      '@xterm/addon-canvas':
-+        specifier: ^0.7.0
-+        version: 0.7.0(@xterm/xterm@6.0.0)
-       '@xterm/addon-fit':
-         specifier: ^0.11.0
-         version: 0.11.0
-+      '@xterm/addon-search':
-+        specifier: ^0.15.0
-+        version: 0.15.0(@xterm/xterm@6.0.0)
-       '@xterm/addon-webgl':
-         specifier: ^0.19.0
-         version: 0.19.0
-@@ -621,9 +633,15 @@ packages:
-   '@tauri-apps/api@2.9.1':
-     resolution: {integrity: sha512-IGlhP6EivjXHepbBic618GOmiWe4URJiIeZFlB7x3czM0yDHHYviH1Xvoiv4FefdkQtn6v7TuwWCRfOGdnVUGw==}
- 
-+  '@tauri-apps/plugin-clipboard-manager@2.3.2':
-+    resolution: {integrity: sha512-CUlb5Hqi2oZbcZf4VUyUH53XWPPdtpw43EUpCza5HWZJwxEoDowFzNUDt1tRUXA8Uq+XPn17Ysfptip33sG4eQ==}
-+
-   '@tauri-apps/plugin-dialog@2.6.0':
-     resolution: {integrity: sha512-q4Uq3eY87TdcYzXACiYSPhmpBA76shgmQswGkSVio4C82Sz2W4iehe9TnKYwbq7weHiL88Yw19XZm7v28+Micg==}
- 
-+  '@tauri-apps/plugin-shell@2.3.4':
-+    resolution: {integrity: sha512-ktsRWf8wHLD17aZEyqE8c5x98eNAuTizR1FSX475zQ4TxaiJnhwksLygQz+AGwckJL5bfEP13nWrlTNQJUpKpA==}
-+
-   '@types/estree@1.0.8':
-     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
- 
-@@ -769,9 +787,19 @@ packages:
-   '@vue/shared@3.5.26':
-     resolution: {integrity: sha512-7Z6/y3uFI5PRoKeorTOSXKcDj0MSasfNNltcslbFrPpcw6aXRUALq4IfJlaTRspiWIUOEZbrpM+iQGmCOiWe4A==}
- 
-+  '@xterm/addon-canvas@0.7.0':
-+    resolution: {integrity: sha512-LF5LYcfvefJuJ7QotNRdRSPc9YASAVDeoT5uyXS/nZshZXjYplGXRECBGiznwvhNL2I8bq1Lf5MzRwstsYQ2Iw==}
-+    peerDependencies:
-+      '@xterm/xterm': ^5.0.0
-+
-   '@xterm/addon-fit@0.11.0':
-     resolution: {integrity: sha512-jYcgT6xtVYhnhgxh3QgYDnnNMYTcf8ElbxxFzX0IZo+vabQqSPAjC3c1wJrKB5E19VwQei89QCiZZP86DCPF7g==}
- 
-+  '@xterm/addon-search@0.15.0':
-+    resolution: {integrity: sha512-ZBZKLQ+EuKE83CqCmSSz5y1tx+aNOCUaA7dm6emgOX+8J9H1FWXZyrKfzjwzV+V14TV3xToz1goIeRhXBS5qjg==}
-+    peerDependencies:
-+      '@xterm/xterm': ^5.0.0
-+
-   '@xterm/addon-webgl@0.19.0':
-     resolution: {integrity: sha512-b3fMOsyLVuCeNJWxolACEUED0vm7qC0cy4wRvf3oURSzDTYVQiGPhTnhWZwIHdvC48Y+oLhvYXnY4XDXPoJo6A==}
- 
-@@ -2094,10 +2122,18 @@ snapshots:
- 
-   '@tauri-apps/api@2.9.1': {}
- 
-+  '@tauri-apps/plugin-clipboard-manager@2.3.2':
-+    dependencies:
-+      '@tauri-apps/api': 2.9.1
-+
-   '@tauri-apps/plugin-dialog@2.6.0':
-     dependencies:
-       '@tauri-apps/api': 2.9.1
- 
-+  '@tauri-apps/plugin-shell@2.3.4':
-+    dependencies:
-+      '@tauri-apps/api': 2.9.1
-+
-   '@types/estree@1.0.8': {}
- 
-   '@types/json-schema@7.0.15': {}
-@@ -2316,8 +2352,16 @@ snapshots:
- 
-   '@vue/shared@3.5.26': {}
- 
-+  '@xterm/addon-canvas@0.7.0(@xterm/xterm@6.0.0)':
-+    dependencies:
-+      '@xterm/xterm': 6.0.0
-+
-   '@xterm/addon-fit@0.11.0': {}
- 
-+  '@xterm/addon-search@0.15.0(@xterm/xterm@6.0.0)':
-+    dependencies:
-+      '@xterm/xterm': 6.0.0
-+
-   '@xterm/addon-webgl@0.19.0': {}
- 
-   '@xterm/xterm@6.0.0': {}
+@@ -0,0 +1,3 @@
++<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50" fill="none">
++	<path d="M48.8354 10.0479C48.3232 9.79199 48.1025 10.2798 47.8032 10.5278C47.7007 10.6079 47.6143 10.7119 47.5273 10.8076C46.7793 11.624 45.9048 12.1597 44.7622 12.0957C43.0923 12 41.666 12.5356 40.4058 13.8398C40.1377 12.2319 39.2476 11.272 37.8926 10.6558C37.1836 10.3359 36.4668 10.0156 35.9702 9.31982C35.6235 8.82373 35.5293 8.27197 35.356 7.72754C35.2456 7.3999 35.1353 7.06396 34.7651 7.00781C34.3633 6.94385 34.2056 7.2876 34.0479 7.57568C33.418 8.75195 33.1733 10.0479 33.1973 11.3599C33.2524 14.312 34.4736 16.6641 36.8999 18.3359C37.1758 18.5278 37.2466 18.7197 37.1597 19C36.9946 19.5757 36.7974 20.1357 36.624 20.7119C36.5137 21.0801 36.3486 21.1597 35.9624 21C34.6309 20.4321 33.481 19.5918 32.4644 18.5757C30.7393 16.8721 29.1792 14.9917 27.2334 13.52C26.7764 13.1758 26.3193 12.856 25.8467 12.5518C23.8618 10.584 26.1069 8.96777 26.627 8.77588C27.1704 8.57568 26.8159 7.8877 25.0591 7.896C23.3022 7.90381 21.6953 8.50391 19.647 9.30371C19.3477 9.42383 19.0322 9.51172 18.7095 9.58398C16.8501 9.22363 14.9199 9.14355 12.9033 9.37598C9.10596 9.80762 6.07275 11.6396 3.84326 14.7681C1.16455 18.5278 0.53418 22.7998 1.30664 27.2559C2.11768 31.9521 4.46582 35.8398 8.07373 38.8799C11.8159 42.0322 16.1255 43.5762 21.041 43.2803C24.0269 43.104 27.3516 42.6963 31.1016 39.4561C32.0469 39.936 33.0396 40.1279 34.686 40.272C35.9546 40.3921 37.1758 40.208 38.1211 40.0078C39.6021 39.688 39.4995 38.2881 38.9639 38.0322C34.623 35.9678 35.5762 36.8081 34.71 36.1279C36.9155 33.4639 40.2402 30.6958 41.54 21.728C41.6426 21.0161 41.5557 20.5679 41.54 19.9917C41.5322 19.6396 41.6108 19.5039 42.0049 19.4639C43.0923 19.3359 44.1479 19.0317 45.1167 18.4878C47.9292 16.9199 49.064 14.3438 49.3315 11.2559C49.3711 10.7837 49.3237 10.2959 48.8354 10.0479ZM24.3262 37.8398C20.1196 34.4639 18.0791 33.3521 17.2358 33.3999C16.4482 33.4482 16.5898 34.3682 16.7632 34.9678C16.9443 35.5601 17.1812 35.9683 17.5117 36.4878C17.7402 36.832 17.8979 37.3442 17.2832 37.728C15.9282 38.584 13.5728 37.4399 13.4624 37.3838C10.7207 35.7358 8.42822 33.5601 6.81348 30.584C5.25342 27.7197 4.34766 24.6479 4.19775 21.3677C4.1582 20.5757 4.38672 20.2959 5.15869 20.1519C6.17529 19.96 7.22314 19.9199 8.23926 20.0718C12.5327 20.7119 16.1885 22.6719 19.2529 25.7759C21.002 27.5439 22.3252 29.6558 23.6885 31.7202C25.1377 33.9121 26.6978 36 28.6831 37.7119C29.3843 38.312 29.9434 38.7681 30.479 39.104C28.8643 39.2881 26.1699 39.3281 24.3262 37.8398ZM26.3433 24.6001C26.3433 24.248 26.6191 23.9678 26.9658 23.9678C27.0444 23.9678 27.1152 23.9839 27.1782 24.0078C27.2651 24.04 27.3438 24.0879 27.4067 24.1602C27.5171 24.272 27.5801 24.4321 27.5801 24.6001C27.5801 24.9521 27.3042 25.2319 26.9575 25.2319C26.6108 25.2319 26.3433 24.9521 26.3433 24.6001ZM32.6064 27.8799C32.2046 28.0479 31.8027 28.1919 31.4165 28.208C30.8179 28.2397 30.1641 27.9922 29.8096 27.688C29.2583 27.2158 28.8643 26.9521 28.6987 26.1279C28.6279 25.7759 28.6675 25.2319 28.7305 24.9199C28.8721 24.248 28.7144 23.8159 28.2495 23.4238C27.8716 23.104 27.3911 23.0161 26.8633 23.0161C26.666 23.0161 26.4849 22.9277 26.3511 22.856C26.1304 22.7441 25.9492 22.4639 26.1226 22.1201C26.1777 22.0078 26.4458 21.7358 26.5088 21.688C27.2256 21.272 28.0527 21.4077 28.8169 21.7197C29.5259 22.0161 30.0615 22.5601 30.834 23.3281C31.6216 24.2559 31.7632 24.5117 32.2124 25.208C32.5669 25.752 32.8901 26.312 33.1104 26.9521C33.2446 27.3521 33.0713 27.6802 32.6064 27.8799Z" fill="#4D6BFE" fill-rule="nonzero"/>
++</svg>
 ```
 
-**File**: `scripts/golutra-cli.cmd` (added, +2/-0)
+**File**: `assets/readme/icons/opencode.svg` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,2 @@
-+@echo off
-+"%~dp0..\src-tauri\target\debug\golutra-cli.exe" %*
+@@ -1,4 +1,5 @@
+ <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
++<rect width="300" height="300" rx="30" fill="#ffffff"/>
+ <g transform="translate(30, 0)">
+ <g clip-path="url(#clip0_1401_86274)">
+ <mask id="mask0_1401_86274" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="240" height="300">
 ```
 
-**File**: `src-tauri/Cargo.toml` (modified, +9/-5)
+**File**: `assets/readme/icons/pi.svg` (added, +5/-0)
 ```diff
-@@ -1,13 +1,13 @@
- [package]
--name = "app"
-+name = "golutra"
- version = "0.1.0"
- description = "A Tauri App"
- authors = ["you"]
- license = ""
- repository = ""
- edition = "2021"
- rust-version = "1.77.2"
--default-run = "app"
-+default-run = "golutra"
- 
- # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
- 
-@@ -25,14 +25,18 @@ log = "0.4"
- sha2 = "0.10"
- fs2 = "0.4"
- portable-pty = "0.9.0"
--tauri = { version = "2.9.5", features = [] }
-+tauri = { version = "2.9.5", features = ["tray-icon", "image-png"] }
-+tokio = { version = "1", features = ["time"] }
- tauri-plugin-log = "2"
- tauri-plugin-dialog = "2.6.0"
--strip-ansi-escapes = "0.2"
-+tauri-plugin-clipboard-manager = "2"
-+tauri-plugin-single-instance = "2"
-+tauri-plugin-shell = "2"
- redb = "2"
- bincode = "1.3"
- ulid = "1"
- wezterm-term = { package = "tattoy-wezterm-term", version = "0.1.0-fork.5" }
-+interprocess = "1.2"
- 
- [target.'cfg(windows)'.dependencies]
--windows-sys = { version = "0.52", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_System_Console"] }
-+windows-sys = { version = "0.52", features = ["Win32_Foundation", "Win32_Graphics_Gdi", "Win32_Storage_FileSystem", "Win32_System_Console"] }
-```
-
-**File**: `src-tauri/build.rs` (modified, +4/-0)
-```diff
-@@ -1,3 +1,7 @@
-+//! 构建脚本：触发 Tauri 生成绑定与资源清单，避免运行时缺失。
-+//! 边界：不做自定义编译流程，保持构建可缓存且可复现。
-+
- fn main() {
-+  // 依赖 tauri-build 的约定入口，让配置变更参与编译期生成。
-   tauri_build::build()
- }
-```
-
-**File**: `src-tauri/capabilities/default.json` (modified, +12/-2)
-```diff
-@@ -4,17 +4,27 @@
-   "description": "enables the default permissions",
-   "windows": [
-     "main",
-+    "main*",
-     "terminal*",
--    "workspace-selection*"
-+    "workspace-selection*",
-+    "notification-preview"
-   ],
-   "permissions": [
-     "core:default",
-     "dialog:default",
-+    "clipboard-manager:allow-read-text",
-+    "clipboard-manager:allow-write-text",
-+    "shell:allow-open",
-     "core:window:allow-minimize",
-     "core:window:allow-maximize",
-     "core:window:allow-toggle-maximize",
-     "core:window:allow-close",
-+    "core:window:allow-destroy",
-     "core:window:allow-start-dragging",
--    "core:window:allow-is-maximized"
-+    "core:window:allow-start-resize-dragging",
-+    "core:window:allow-is-maximized",
-+    "core:window:allow-show",
-+    "core:window:allow-unminimize",
-+    "core:window:allow-set-focus"
-   ]
- }
-```
-
----
-
-### Incident Patch 2: `8fe4a9b5` (2026-02-26)
-**Commit Message**: feat(terminal,chat,ui): 重构终端内核并同步会话状态，修复聊天历史与界面显示
-
-- 终端层：
-  将终端渲染/解析能力由 vt100 重构为 wezterm_term，优化终端交互稳定性与显示效果（含圆角与基础体验优化）。
-
-- 会话状态链路：
-  引入 Shell prompt hook（PowerShell/Bash）并打通前后端 active 状态同步；
-  新增 terminal_set_active 能力与前端桥接调用，支持前台活跃态上报、卸载态回传与流控策略联动。
-
-- 聊天能力：
-  修复聊天历史相关问题，改善聊天与终端之间的联通行为；
-  补充并推进 claude code 相关问题排查，减少异常场景下的不一致状态。
-
-- UI 与状态：
-  更新状态管理与 UI 显示逻辑，提升页面状态反馈一致性与可读性。
-
-- 工程治理：
-  补充 .gitignore 规则，忽略 cargo vendor 与构建产物，减少无关文件进入版本控制。
-
-**File**: `index.html` (modified, +4/-2)
-```diff
-@@ -56,15 +56,17 @@
-       }
- 
-       .bg-glass-sidebar {
--        background: rgb(var(--color-panel) / 0.7);
-+        background: transparent;
-+        border-color: transparent;
-+        border-right-color: rgb(var(--color-border) / 0.12);
-       }
- 
-       .text-shadow {
-         text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-       }
-     </style>
- </head>
--  <body class="bg-background text-white h-screen overflow-hidden selection:bg-primary/30 selection:text-white">
-+  <body class="text-white h-screen overflow-hidden selection:bg-primary/30 selection:text-white">
-     <div id="app"></div>
-   <script type="module" src="/src/main.ts"></script>
- </body>
-```
-
-**File**: `metadata.json` (modified, +2/-2)
-```diff
-@@ -1,5 +1,5 @@
- {
--  "name": "Nexus Dashboard Suite",
-+  "name": "golutra",
-   "description": "A high-fidelity suite of dashboard screens featuring a Skill Store, Plugin Marketplace, Settings, Workspace Selection, and advanced Chat Modals with glassmorphism aesthetics.",
-   "requestFramePermissions": []
--}
-\ No newline at end of file
-+}
-```
-
-**File**: `package.json` (modified, +2/-0)
-```diff
-@@ -6,6 +6,8 @@
-   "type": "module",
-   "scripts": {
-     "dev": "vite",
-+    "dev:tauri": "pnpm run shim:build && pnpm run dev",
-+    "shim:build": "cargo build --manifest-path src-tauri/Cargo.toml --bin shim",
-     "build": "vite build",
-     "preview": "vite preview",
-     "test": "vitest run",
-```
-
-**File**: `pnpm-workspace.yaml` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+packages:
-+  - .
-+
-+onlyBuiltDependencies:
-+  - esbuild
-+  - node-pty
-```
-
-**File**: `postcss.config.cjs` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+module.exports = {
-+  plugins: {
-+    tailwindcss: {},
-+    autoprefixer: {}
-+  }
-+};
-```
-
-**File**: `src-tauri/Cargo.toml` (modified, +9/-0)
-```diff
-@@ -7,6 +7,7 @@ license = ""
- repository = ""
- edition = "2021"
- rust-version = "1.77.2"
-+default-run = "app"
- 
- # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
- 
-@@ -27,3 +28,11 @@ portable-pty = "0.9.0"
- tauri = { version = "2.9.5", features = [] }
- tauri-plugin-log = "2"
- tauri-plugin-dialog = "2.6.0"
-+strip-ansi-escapes = "0.2"
-+redb = "2"
-+bincode = "1.3"
-+ulid = "1"
-+wezterm-term = { package = "tattoy-wezterm-term", version = "0.1.0-fork.5" }
-+
-+[target.'cfg(windows)'.dependencies]
-+windows-sys = { version = "0.52", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_System_Console"] }
-```
-
-**File**: `src-tauri/capabilities/default.json` (modified, +11/-2)
-```diff
-@@ -3,9 +3,18 @@
-   "identifier": "default",
-   "description": "enables the default permissions",
-   "windows": [
--    "main"
-+    "main",
-+    "terminal*",
-+    "workspace-selection*"
-   ],
-   "permissions": [
--    "core:default"
-+    "core:default",
-+    "dialog:default",
-+    "core:window:allow-minimize",
-+    "core:window:allow-maximize",
-+    "core:window:allow-toggle-maximize",
-+    "core:window:allow-close",
-+    "core:window:allow-start-dragging",
-+    "core:window:allow-is-maximized"
-   ]
- }
-```
-
-**File**: `src-tauri/src/bin/shim.rs` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+use std::env;
-+use std::io::{self, Write};
-+use std::process::{Command, Stdio};
-+
-+const OSC_READY: &str = "\x1b]633;A\x07";
-+const OSC_EXIT_PREFIX: &str = "\x1b]633;D;";
-+const SHIM_LAUNCH_ERROR_MARKER: &str = "SHIM_LAUNCH_ERROR";
-+
-+#[cfg(windows)]
-+fn force_utf8_console() {
-+  use windows_sys::Win32::System::Console::{SetConsoleCP, SetConsoleOutputCP};
-+  unsafe {
-+    SetConsoleCP(65001);
-+    SetConsoleOutputCP(65001);
-+  }
-+}
-+
-+#[cfg(not(windows))]
-+fn force_utf8_console() {}
-+
-+fn main() {
-+  force_utf8_console();
-+  let mut args = env::args();
-+  let _shim = args.next();
-+  let target = match args.next() {
-+    Some(value) => value,
-+    None => {
-+      eprintln!("{SHIM_LAUNCH_ERROR_MARKER}: no target command");
-+      std::process::exit(101);
-+    }
-+  };
-+  let target_args: Vec<String> = args.collect();
-+
-+  print!("{OSC_READY}");
-+  let _ = io::stdout().flush();
-+
-+  let child = Command::new(&target)
-+    .args(&target_args)
-+    .stdin(Stdio::inherit())
-+    .stdout(Stdio::inherit())
-+    .stderr(Stdio::inherit())
-+    .spawn();
-+
-+  match child {
-+    Ok(mut child) => {
-+      let status = match child.wait() {
-+        Ok(status) => status,
-+        Err(err) => {
-+          eprintln!("{SHIM_LAUNCH_ERROR_MARKER}: wait error='{}'", err);
-+          std::process::exit(103);
-+        }
-+      };
-+      let code = status.code().unwrap_or(0);
-+      print!("{OSC_EXIT_PREFIX}{code}\x07");
-+      let _ = io::stdout().flush();
-+      std::process::exit(code);
-+    }
-+    Err(err) => {
-+      eprintln!(
-+        "{SHIM_LAUNCH_ERROR_MARKER}: command='{}' error='{}'",
-+        target, err
-+      );
-+      std::process::exit(102);
-+    }
-+  }
-+}
-```
-
----
-
-### Incident Patch 3: `fe289af4` (2026-02-26)
-**Commit Message**: feat: i18n/主题、多窗口、Tauri 后端接入与终端联通、UI 重构
-
-- 引入国际化与中英文本体系，统一多语言文案。
-
-- 增加主题系统（dark/light/system）与全局样式能力。
-
-- 大幅升级 Dashboard、聊天区和整体响应式布局，修复多处 UI 显示问题。
-
-- 接入 Tauri Rust 后端基础结构（src-tauri、Cargo 配置、能力声明）。
-
-- 打通终端桥接与用户终端联通链路，完善终端相关前后端交互。
-
-- 增加多窗口能力与窗口管理支持。
-
-**File**: `index.html` (modified, +1/-39)
-```diff
-@@ -4,7 +4,7 @@
-     <meta charset="UTF-8" />
-     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
--    <title>Nexus Dashboard</title>
-+    <title>golutra</title>
-     <script>
-       (() => {
-         const storageKey = 'nexus-theme';
-@@ -19,44 +19,6 @@
-         root.classList.toggle('dark', resolvedTheme === 'dark');
-       })();
-     </script>
--    <!-- Tailwind CSS -->
--    <script src="https://cdn.tailwindcss.com"></script>
--    <!-- Google Fonts -->
--    <link rel="preconnect" href="https://fonts.googleapis.com">
--    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
--    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
--    <!-- Material Symbols -->
--    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
--    
--    <script>
--      tailwind.config = {
--        darkMode: 'class',
--        theme: {
--          extend: {
--            fontFamily: {
--              sans: ['"Be Vietnam Pro"', 'sans-serif'],
--            },
--            colors: {
--              background: 'rgb(var(--color-background) / <alpha-value>)',
--              surface: 'rgb(var(--color-surface) / <alpha-value>)',
--              panel: 'rgb(var(--color-panel) / <alpha-value>)',
--              'panel-strong': 'rgb(var(--color-panel-strong) / <alpha-value>)',
--              'panel-soft': 'rgb(var(--color-panel-soft) / <alpha-value>)',
--              primary: 'rgb(var(--color-primary) / <alpha-value>)',
--              'primary-hover': 'rgb(var(--color-primary-hover) / <alpha-value>)',
--              secondary: 'rgb(var(--color-secondary) / <alpha-value>)',
--              text: 'rgb(var(--color-text) / <alpha-value>)',
--              muted: 'rgb(var(--color-text-muted) / <alpha-value>)',
--              border: 'rgb(var(--color-border) / <alpha-value>)',
--            },
--            boxShadow: {
--              'glow': '0 0 20px -5px rgb(var(--color-primary) / 0.45)',
--              'glass': '0 8px 32px 0 rgb(0 0 0 / 0.32)',
--            }
--          }
--        }
--      }
--    </script>
-     <style>
-       /* Custom Scrollbar */
-       ::-webkit-scrollbar {
-```
-
-**File**: `package.json` (modified, +14/-5)
-```diff
-@@ -15,23 +15,32 @@
-     "format:check": "prettier --check ."
-   },
-   "dependencies": {
-+    "@tauri-apps/api": "^2.0.0",
-+    "@tauri-apps/plugin-dialog": "^2.6.0",
-+    "@xterm/addon-fit": "^0.11.0",
-+    "@xterm/addon-webgl": "^0.19.0",
-+    "@xterm/xterm": "^6.0.0",
-+    "pinia": "^3.0.4",
-     "vue": "^3.5.12",
-     "vue-i18n": "^11.2.8"
-   },
-   "devDependencies": {
--    "@typescript-eslint/eslint-plugin": "^8.53.0",
--    "@typescript-eslint/parser": "^8.53.0",
-     "@eslint/js": "^9.39.2",
-     "@types/node": "^22.14.0",
-+    "@typescript-eslint/eslint-plugin": "^8.53.0",
-+    "@typescript-eslint/parser": "^8.53.0",
-+    "@vitejs/plugin-vue": "^5.2.4",
-+    "autoprefixer": "^10.4.23",
-     "eslint": "^9.39.2",
-     "eslint-config-prettier": "^10.1.8",
-     "eslint-plugin-vue": "^10.7.0",
-     "globals": "^17.0.0",
-+    "postcss": "^8.5.6",
-     "prettier": "^3.3.3",
--    "vue-eslint-parser": "^10.2.0",
--    "@vitejs/plugin-vue": "^5.2.4",
-+    "tailwindcss": "^3.4.17",
-     "typescript": "~5.8.2",
-     "vite": "^6.2.0",
--    "vitest": "^2.1.9"
-+    "vitest": "^2.1.9",
-+    "vue-eslint-parser": "^10.2.0"
-   }
- }
-```
-
-**File**: `pnpm-lock.yaml` (modified, +885/-60)
-```diff
-@@ -8,6 +8,24 @@ importers:
- 
-   .:
-     dependencies:
-+      '@tauri-apps/api':
-+        specifier: ^2.0.0
-+        version: 2.9.1
-+      '@tauri-apps/plugin-dialog':
-+        specifier: ^2.6.0
-+        version: 2.6.0
-+      '@xterm/addon-fit':
-+        specifier: ^0.11.0
-+        version: 0.11.0
-+      '@xterm/addon-webgl':
-+        specifier: ^0.19.0
-+        version: 0.19.0
-+      '@xterm/xterm':
-+        specifier: ^6.0.0
-+        version: 6.0.0
-+      pinia:
-+        specifier: ^3.0.4
-+        version: 3.0.4(typescript@5.8.3)(vue@3.5.26(typescript@5.8.3))
-       vue:
-         specifier: ^3.5.12
-         version: 3.5.26(typescript@5.8.3)
-@@ -23,43 +41,56 @@ importers:
-         version: 22.19.7
-       '@typescript-eslint/eslint-plugin':
-         specifier: ^8.53.0
--        version: 8.53.0(@typescript-eslint/parser@8.53.0(eslint@9.39.2)(typescript@5.8.3))(eslint@9.39.2)(typescript@5.8.3)
-+        version: 8.53.0(@typescript-eslint/parser@8.53.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.8.3))(eslint@9.39.2(jiti@2.6.1))(typescript@5.8.3)
-       '@typescript-eslint/parser':
-         specifier: ^8.53.0
--        version: 8.53.0(eslint@9.39.2)(typescript@5.8.3)
-+        version: 8.53.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.8.3)
-       '@vitejs/plugin-vue':
-         specifier: ^5.2.4
--        version: 5.2.4(vite@6.4.1(@types/node@22.19.7))(vue@3.5.26(typescript@5.8.3))
-+        version: 5.2.4(vite@6.4.1(@types/node@22.19.7)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.2))(vue@3.5.26(typescript@5.8.3))
-+      autoprefixer:
-+        specifier: ^10.4.23
-+        version: 10.4.23(postcss@8.5.6)
-       eslint:
-         specifier: ^9.39.2
--        version: 9.39.2
-+        version: 9.39.2(jiti@2.6.1)
-       eslint-config-prettier:
-         specifier: ^10.1.8
--        version: 10.1.8(eslint@9.39.2)
-+        version: 10.1.8(eslint@9.39.2(jiti@2.6.1))
-       eslint-plugin-vue:
-         specifier: ^10.7.0
--        version: 10.7.0(@typescript-eslint/parser@8.53.0(eslint@9.39.2)(typescript@5.8.3))(eslint@9.39.2)(vue-eslint-parser@10.2.0(eslint@9.39.2))
-+        version: 10.7.0(@typescript-eslint/parser@8.53.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.8.3))(eslint@9.39.2(jiti@2.6.1))(vue-eslint-parser@10.2.0(eslint@9.39.2(jiti@2.6.1)))
-       globals:
-         specifier: ^17.0.0
-         version: 17.0.0
-+      postcss:
-+        specifier: ^8.5.6
-+        version: 8.5.6
-       prettier:
-         specifier: ^3.3.3
-         version: 3.8.0
-+      tailwindcss:
-+        specifier: ^3.4.17
-+        version: 3.4.17
-       typescript:
-         specifier: ~5.8.2
-         version: 5.8.3
-       vite:
-         specifier: ^6.2.0
--        version: 6.4.1(@types/node@22.19.7)
-+        version: 6.4.1(@types/node@22.19.7)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.2)
-       vitest:
-         specifier: ^2.1.9
--        version: 2.1.9(@types/node@22.19.7)
-+        version: 2.1.9(@types/node@22.19.7)(lightningcss@1.30.2)
-       vue-eslint-parser:
-         specifier: ^10.2.0
--        version: 10.2.0(eslint@9.39.2)
-+        version: 10.2.0(eslint@9.39.2(jiti@2.6.1))
- 
- packages:
- 
-+  '@alloc/quick-lru@5.2.0':
-+    resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
-+    engines: {node: '>=10'}
-+
-   '@babel/helper-string-parser@7.27.1':
-     resolution: {integrity: sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==}
-     engines: {node: '>=6.9.0'}
-@@ -437,9 +468,31 @@ packages:
-     resolution: {integrity: sha512-l6e4NZyUgv8VyXXH4DbuucFOBmxLF56C/mqh2tvApbzl2Hrhi1aTDcuv5TKdxzfHYmpO3UB0Cz04fgDT9vszfw==}
-     engines: {node: '>= 16'}
- 
-+  '@jridgewell/gen-mapping@0.3.13':
-+    resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
-+
-+  '@jridgewell/resolve-uri@3.1.2':
-+    resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
-+    engines: {node: '>=6.0.0'}
-+
-   '@jridgewell/sourcemap-codec@1.5.5':
-     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
- 
-+  '@jridgewell/trace-mapping@0.3.31':
-+    resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
-+
-+  '@nodelib/fs.scandir@2.1.5':
-+    resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
-+    engines: {node: '>= 8'}
-+
-+  '@nodelib/fs.stat@2.0.5':
-+    resolution: {integrity: sha512-RkhPPp2zrqDAQA/2jNhnztcPAlv64XdhIp7a7454A5ovI7Bukxgt7MX7udwAu3zg1DcpPU0rz3VV1SeaqvY4+A==}
-+    engines: {node: '>= 8'}
-+
-+  '@nodelib/fs.walk@1.2.8':
-+    resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
-+    engines: {node: '>= 8'}
-+
-   '@rollup/rollup-android-arm-eabi@4.55.1':
-     resolution: {integrity: sha512
-```
-
-**File**: `src-tauri/Cargo.toml` (modified, +4/-0)
-```diff
-@@ -21,5 +21,9 @@ tauri-build = { version = "2.5.3", features = [] }
- serde_json = "1.0"
- serde = { version = "1.0", features = ["derive"] }
- log = "0.4"
-+sha2 = "0.10"
-+fs2 = "0.4"
-+portable-pty = "0.9.0"
- tauri = { version = "2.9.5", features = [] }
- tauri-plugin-log = "2"
-+tauri-plugin-dialog = "2.6.0"
-```
-
-**File**: `src-tauri/src/lib.rs` (modified, +1703/-0)
-```diff
-@@ -1,6 +1,1665 @@
-+use std::{
-+  collections::{HashMap, VecDeque},
-+  env,
-+  fs,
-+  io::{Read, Write},
-+  path::{Component, Path, PathBuf},
-+  sync::{
-+    atomic::{AtomicBool, AtomicUsize, Ordering},
-+    Arc, Mutex,
-+  },
-+  thread,
-+  time::{Duration, SystemTime, UNIX_EPOCH},
-+};
-+
-+use fs2::FileExt;
-+use portable_pty::{native_pty_system, Child, ChildKiller, CommandBuilder, MasterPty, PtySize};
-+use serde::{Deserialize, Serialize};
-+use serde_json::json;
-+use sha2::{Digest, Sha256};
-+use tauri::{AppHandle, Emitter, Manager, State, WebviewUrl, WebviewWindowBuilder, Window, WindowEvent};
-+
-+static SESSION_COUNTER: AtomicUsize = AtomicUsize::new(1);
-+static WINDOW_COUNTER: AtomicUsize = AtomicUsize::new(1);
-+static WORKSPACE_WINDOW_COUNTER: AtomicUsize = AtomicUsize::new(1);
-+static PROJECT_ID_COUNTER: AtomicUsize = AtomicUsize::new(1);
-+const TERMINAL_WINDOW_LABEL: &str = "terminal-main";
-+const SESSION_BUFFER_LIMIT_BYTES: usize = 1 * 1024 * 1024;
-+const TOTAL_BUFFER_LIMIT_BYTES: usize = 500 * 1024 * 1024;
-+const WORKING_SILENCE_TIMEOUT_MS: u64 = 2000;
-+const STATUS_POLL_INTERVAL_MS: u64 = 500;
-+const RECENT_WORKSPACES_FILE: &str = "recent-workspaces.json";
-+const WORKSPACE_REGISTRY_FILE: &str = "workspace-registry.json";
-+const WORKSPACE_REGISTRY_LOCK_FILE: &str = "workspace-registry.lock";
-+const AVATAR_LIBRARY_FILE: &str = "avatar-library.json";
-+const AVATAR_DIR: &str = "avatars";
-+const MAX_AVATAR_BYTES: usize = 2 * 1024 * 1024;
-+const WORKSPACE_REGISTRY_MISMATCH_PREFIX: &str = "workspace_registry_mismatch:";
-+const WORKSPACE_REGISTRY_GC_MIN_AGE_MS: u64 = 1000 * 60 * 60 * 24 * 30;
-+const WORKSPACE_REGISTRY_GC_MAX_CHECKS: usize = 12;
-+
-+struct TerminalHandle {
-+  master: Box<dyn MasterPty + Send>,
-+  writer: Arc<Mutex<Box<dyn Write + Send>>>,
-+  killer: Box<dyn ChildKiller + Send + Sync>,
-+}
-+
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+enum TerminalSessionStatus {
-+  Online,
-+  Working,
-+  Offline,
-+}
-+
-+impl TerminalSessionStatus {
-+  fn as_str(&self) -> &'static str {
-+    match self {
-+      TerminalSessionStatus::Online => "online",
-+      TerminalSessionStatus::Working => "working",
-+      TerminalSessionStatus::Offline => "offline",
-+    }
-+  }
-+}
-+
-+struct TerminalSession {
-+  id: String,
-+  status: TerminalSessionStatus,
-+  buffer: VecDeque<u8>,
-+  member_id: Option<String>,
-+  workspace_id: Option<String>,
-+  active: bool,
-+  last_activity_at: Option<u64>,
-+  handle: Option<TerminalHandle>,
-+  keep_alive: bool,
-+  owner_window_label: Option<String>,
-+}
-+
-+struct SessionRegistry {
-+  sessions: HashMap<String, TerminalSession>,
-+  total_bytes: usize,
-+}
-+
-+struct InitialWriteState {
-+  session_id: String,
-+  payload: String,
-+  writer: Arc<Mutex<Box<dyn Write + Send>>>,
-+  sessions: Arc<Mutex<SessionRegistry>>,
-+  app: AppHandle,
-+  sent: AtomicBool,
-+}
-+
-+struct TerminalManager {
-+  sessions: Arc<Mutex<SessionRegistry>>,
-+}
-+
-+struct WorkspaceRegistryLock {
-+  lock: Mutex<()>,
-+}
-+
-+struct WorkspaceWindowRegistry {
-+  workspaces: Mutex<HashMap<String, String>>,
-+}
-+
-+impl Default for TerminalManager {
-+  fn default() -> Self {
-+    Self {
-+      sessions: Arc::new(Mutex::new(SessionRegistry {
-+        sessions: HashMap::new(),
-+        total_bytes: 0,
-+      })),
-+    }
-+  }
-+}
-+
-+impl Default for WorkspaceRegistryLock {
-+  fn default() -> Self {
-+    Self { lock: Mutex::new(()) }
-+  }
-+}
-+
-+impl Default for WorkspaceWindowRegistry {
-+  fn default() -> Self {
-+    Self {
-+      workspaces: Mutex::new(HashMap::new()),
-+    }
-+  }
-+}
-+
-+#[derive(Serialize, Clone)]
-+struct TerminalOutputPayload {
-+  #[serde(rename = "sessionId")]
-+  session_id: String,
-+  data: String,
-+}
-+
-+#[derive(Serialize, Clone)]
-+struct TerminalExitPayload {
-+  #[serde(rename = "sessionId")]
-+  session_id: String,
-+  code: Option<i32>,
-+  signal: Option<String>,
-+}
-+
-+#[derive(Serialize, Clone)]
-+struct TerminalStatusPayload {
-+  #[serde(rename = "sessionId")]
-+  session_id: String,
-+  status: String,
-+  #[serde(rename = "memberId")]
-+  member_id: Option<String>,
-+  #[serde(rename = "workspaceId")]
-+  workspace_id: Option<String>,
-+}
-+
-+#[derive(Serialize, Deserialize, Clone)]
-+struct WorkspaceEntry {
-+  id: String,
-+  name: String,
-+  path: String,
-+  #[serde(rename = "lastOpenedAt")]
-+  last_opened_at: u64,
-+}
-+
-+#[derive(Serialize, Deserialize, Clone)]
-+struct WorkspaceOpenResult {
-+  entry: WorkspaceEntry,
-+  #[serde(rename = "readOnly")]
-+  read_only: bool,
-+  warning: Option<String>,
-+}
-+
-+#[derive(Serialize, Deserialize, Clone)]
-+struct WorkspaceRegistryEntry {
-+  #[serde(rename = "lastKnownPath")]
-+  last_known_path: String,
-+  #[serde(rename = "lastAccessed")]
-+  last_accessed: u64,
-+}
-+
-+#[derive(Serialize, Deserialize, Clone)]
-+struct LocalWorkspaceState {
-+  #[serde(rename = "localMachineId")]
-+  local_machine_id: String,
-+  #[serde(rename = "lastOpenedAt")]
-+  last_opened_at: u64,
-+}
-+
-+#[derive(Deserialize, Copy, Clone)]
-+#[serde(rename_all = "snake_case")]
-+enum WorkspaceRegistryResolution {
-+  Move,
-+ 
-```
-
-**File**: `src/app/App.vue` (modified, +213/-15)
-```diff
-@@ -1,31 +1,229 @@
- <template>
--  <div v-if="activeTab === 'workspaces'" class="flex h-screen w-full bg-background app-shell relative overflow-hidden">
--    <WorkspaceSelection @select-workspace="activeTab = 'chat'" />
--  </div>
-   <div
--    v-else
--    class="flex h-screen w-full bg-background app-shell font-sans relative overflow-hidden"
-+    class="window-frame"
-+    :class="{ 'window-frame--max': isMaximized, 'window-frame--inactive': !isFocused }"
-   >
--    <SidebarNav :active-tab="activeTab" @change="activeTab = $event" />
--    <main class="flex-1 h-full overflow-hidden relative flex flex-col pb-16 md:pb-0">
--      <SkillStore v-if="activeTab === 'store'" />
--      <PluginMarketplace v-else-if="activeTab === 'plugins'" />
--      <Settings v-else-if="activeTab === 'settings'" @logout="activeTab = 'workspaces'" />
--      <ChatInterface v-else />
--    </main>
-+    <header
-+      class="titlebar"
-+      :class="{ 'titlebar--mac': isMacOS }"
-+      data-tauri-drag-region
-+      @dblclick="handleToggleMaximize"
-+    >
-+      <div class="titlebar__left" data-tauri-drag-region>
-+        <span class="titlebar__title">{{ windowTitle }}</span>
-+      </div>
-+      <div v-if="showWindowControls" class="titlebar__controls" data-tauri-drag-region="false" @dblclick.stop>
-+        <button
-+          type="button"
-+          class="titlebar__btn"
-+          :aria-label="t('app.windowControls.minimize')"
-+          :title="t('app.windowControls.minimize')"
-+          data-tauri-drag-region="false"
-+          @click="handleMinimize"
-+        >
-+          <svg viewBox="0 0 10 10" aria-hidden="true">
-+            <line x1="1" y1="5" x2="9" y2="5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
-+          </svg>
-+        </button>
-+        <button
-+          type="button"
-+          class="titlebar__btn"
-+          :aria-label="t('app.windowControls.maximize')"
-+          :title="t('app.windowControls.maximize')"
-+          data-tauri-drag-region="false"
-+          @click="handleToggleMaximize"
-+        >
-+          <svg viewBox="0 0 10 10" aria-hidden="true">
-+            <rect x="2" y="2" width="6" height="6" fill="none" stroke="currentColor" stroke-width="1.2" rx="0.6" />
-+          </svg>
-+        </button>
-+        <button
-+          type="button"
-+          class="titlebar__btn titlebar__btn--close"
-+          :aria-label="t('app.windowControls.close')"
-+          :title="t('app.windowControls.close')"
-+          data-tauri-drag-region="false"
-+          @click="handleClose"
-+        >
-+          <svg viewBox="0 0 10 10" aria-hidden="true">
-+            <line x1="2" y1="2" x2="8" y2="8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
-+            <line x1="8" y1="2" x2="2" y2="8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
-+          </svg>
-+        </button>
-+      </div>
-+    </header>
-+
-+    <div class="window-body">
-+      <div v-if="isTerminalView" class="flex h-full w-full bg-background app-shell relative overflow-hidden">
-+        <TerminalWorkspace />
-+      </div>
-+      <div
-+        v-else-if="showWorkspaceSelection"
-+        class="flex h-full w-full bg-background app-shell relative overflow-y-auto overflow-x-hidden"
-+      >
-+        <WorkspaceSelection />
-+      </div>
-+      <div
-+        v-else-if="!appReady"
-+        class="flex h-full w-full bg-background app-shell relative overflow-hidden items-center justify-center"
-+      >
-+        <div class="flex flex-col items-center gap-3 text-white/70 text-sm">
-+          <div class="h-10 w-10 rounded-full border border-white/20 border-t-transparent animate-spin"></div>
-+          <span>Loading workspace...</span>
-+        </div>
-+      </div>
-+      <div
-+        v-else
-+        class="flex h-full w-full bg-background app-shell font-sans relative overflow-hidden"
-+      >
-+        <SidebarNav :active-tab="activeTab" @change="setActiveTab($event)" />
-+        <main class="flex-1 h-full overflow-hidden relative flex flex-col pb-16 md:pb-0">
-+          <SkillStore v-if="activeTab === 'store'" />
-+          <PluginMarketplace v-else-if="activeTab === 'plugins'" />
-+          <Settings
-+            v-else-if="activeTab === 'settings'"
-+            @logout="setActiveTab('workspaces')"
-+          />
-+          <ChatInterface v-else />
-+        </main>
-+      </div>
-+    </div>
-+    <ToastStack />
-   </div>
- </template>
- 
- <script setup lang="ts">
--import { ref } from 'vue';
-+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-+import { useI18n } from 'vue-i18n';
-+import { storeToRefs } from 'pinia';
- import SidebarNav from '@/shared/components/SidebarNav.vue';
-+import ToastStack from '@/shared/components/ToastStack.vue';
- import SkillStore from '@/features/SkillStore.vue';
- import PluginMarketplace from '@/features/PluginMarketplace.vue';
-+import TerminalWorkspace from '@/features/terminal/TerminalWorkspace.vue';
- import Settings from '@/features/Settings.vue';
- import WorkspaceSelec
-```
-
-**File**: `src/features/terminal/TerminalPane.vue` (added, +273/-0)
-```diff
-@@ -0,0 +1,273 @@
-+<template>
-+  <div ref="rootRef" class="h-full w-full bg-[#0b0f14]">
-+    <div ref="terminalRef" class="h-full w-full"></div>
-+  </div>
-+</template>
-+
-+<script setup lang="ts">
-+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-+import { Terminal } from '@xterm/xterm';
-+import { FitAddon } from '@xterm/addon-fit';
-+import { WebglAddon } from '@xterm/addon-webgl';
-+import '@xterm/xterm/css/xterm.css';
-+import { getSessionHistory, resizeSession, subscribeExit, subscribeOutput, writeSession } from './terminalBridge';
-+
-+const props = defineProps<{ sessionId: string; active: boolean }>();
-+const sessionId = props.sessionId;
-+
-+const terminalRef = ref<HTMLDivElement | null>(null);
-+const rootRef = ref<HTMLDivElement | null>(null);
-+
-+const fitAddon = new FitAddon();
-+let webglAddon: WebglAddon | null = null;
-+let terminal: Terminal | null = null;
-+let resizeObserver: ResizeObserver | null = null;
-+let unsubscribeOutput: (() => void) | null = null;
-+let unsubscribeExit: (() => void) | null = null;
-+let mouseUpHandler: ((event: MouseEvent) => void) | null = null;
-+let refreshRaf: number | null = null;
-+let refreshRafTail: number | null = null;
-+let historyReady = false;
-+
-+const isMac = navigator.platform.toLowerCase().includes('mac');
-+let lastCopiedSelection = '';
-+
-+const copySelection = (options?: { force?: boolean; clear?: boolean }) => {
-+  if (!terminal || !terminal.hasSelection()) {
-+    return;
-+  }
-+  const selection = terminal.getSelection();
-+  if (!selection || selection === lastCopiedSelection) {
-+    if (options?.force && selection) {
-+      void navigator.clipboard.writeText(selection).catch(() => {});
-+      if (options?.clear) {
-+        terminal.clearSelection();
-+        terminal.focus();
-+        lastCopiedSelection = '';
-+      }
-+    }
-+    return;
-+  }
-+  lastCopiedSelection = selection;
-+  void navigator.clipboard.writeText(selection).catch(() => {});
-+  if (options?.clear) {
-+    terminal.clearSelection();
-+    terminal.focus();
-+    lastCopiedSelection = '';
-+  }
-+};
-+
-+const attachClipboardHandlers = (root: HTMLElement) => {
-+  if (!terminal) {
-+    return;
-+  }
-+  terminal.attachCustomKeyEventHandler((event) => {
-+    const ctrlKey = isMac ? event.metaKey : event.ctrlKey;
-+    const key = event.key.toLowerCase();
-+
-+    if (ctrlKey && key === 'c') {
-+      if (terminal.hasSelection()) {
-+        copySelection({ force: true, clear: true });
-+        return false;
-+      }
-+      return true;
-+    }
-+    return true;
-+  });
-+
-+  mouseUpHandler = (event) => {
-+    if (event.button === 0) {
-+      copySelection();
-+    }
-+  };
-+  root.addEventListener('mouseup', mouseUpHandler);
-+};
-+
-+const fitTerminal = () => {
-+  if (!terminal) {
-+    return;
-+  }
-+  fitAddon.fit();
-+  if (terminal.cols > 0 && terminal.rows > 0) {
-+    void resizeSession(sessionId, terminal.cols, terminal.rows).catch(() => {});
-+  }
-+};
-+
-+const scheduleWebglRefresh = () => {
-+  if (!terminal || !webglAddon) {
-+    return;
-+  }
-+  if (refreshRaf !== null || refreshRafTail !== null) {
-+    return;
-+  }
-+  refreshRaf = window.requestAnimationFrame(() => {
-+    refreshRaf = null;
-+    refreshRafTail = window.requestAnimationFrame(() => {
-+      refreshRafTail = null;
-+      if (!terminal || !webglAddon) {
-+        return;
-+      }
-+      if (terminal.rows <= 0 || terminal.cols <= 0) {
-+        return;
-+      }
-+      try {
-+        terminal.clearTextureAtlas();
-+      } catch {}
-+      terminal.refresh(0, terminal.rows - 1);
-+    });
-+  });
-+};
-+
-+const attachOutput = () => {
-+  if (!terminal || unsubscribeOutput) {
-+    return;
-+  }
-+  unsubscribeOutput = subscribeOutput(sessionId, (data) => {
-+    terminal?.write(data);
-+  });
-+  unsubscribeExit = subscribeExit(sessionId, (payload) => {
-+    const reason = payload.signal ? `signal ${payload.signal}` : `code ${payload.code ?? 'unknown'}`;
-+    terminal?.writeln(`\r\n[process exited: ${reason}]`);
-+  });
-+};
-+
-+const detachOutput = () => {
-+  unsubscribeOutput?.();
-+  unsubscribeOutput = null;
-+  unsubscribeExit?.();
-+  unsubscribeExit = null;
-+};
-+
-+const applyActiveState = (isActive: boolean) => {
-+  if (!terminal) {
-+    return;
-+  }
-+  terminal.options.disableStdin = !isActive;
-+  if (!historyReady) {
-+    if (!isActive) {
-+      detachOutput();
-+      resizeObserver?.disconnect();
-+      terminal.blur();
-+    }
-+    return;
-+  }
-+  if (isActive) {
-+    attachOutput();
-+    if (rootRef.value && resizeObserver) {
-+      resizeObserver.observe(rootRef.value);
-+    }
-+    void nextTick(() => {
-+      fitTerminal();
-+      scheduleWebglRefresh();
-+      terminal?.focus();
-+    });
-+  } else {
-+    detachOutput();
-+    resizeObserver?.disconnect();
-+    terminal.blur();
-+  }
-+};
-+
-+onMounted(async () => {
-+  if (!terminalRef.value || !rootRef.value) {
-+    return;
-+  }
-+  terminal = new Terminal({
-+    cursorBlink: true,
-+    fontFamily:
-+      "'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation
-```
-
-**File**: `src/features/terminal/TerminalWorkspace.vue` (added, +265/-0)
-```diff
-@@ -0,0 +1,265 @@
-+<template>
-+  <section class="flex h-full w-full flex-col overflow-hidden">
-+    <header class="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-panel/60 backdrop-blur">
-+      <div>
-+        <h1 class="text-xl font-semibold text-white">{{ t('terminal.title') }}</h1>
-+        <p class="text-xs text-white/40">{{ t('terminal.subtitle') }}</p>
-+      </div>
-+      <div class="flex items-center gap-3">
-+        <button
-+          type="button"
-+          class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wide text-white/80 border border-white/10 bg-white/5 hover:bg-white/10 hover:text-white transition"
-+          @click="handleNewTab"
-+        >
-+          <span class="material-symbols-outlined text-[18px]">add</span>
-+          {{ t('terminal.newTab') }}
-+        </button>
-+      </div>
-+    </header>
-+
-+    <div class="flex items-center gap-2 px-6 py-3 border-b border-white/5 bg-surface/30 overflow-x-auto">
-+      <button
-+        v-for="tab in tabs"
-+        :key="tab.id"
-+        type="button"
-+        draggable="true"
-+        @dragstart="onDragStart(tab.id, $event)"
-+        @dragover="onDragOver(tab.id, $event)"
-+        @drop="onDrop(tab.id)"
-+        @dragend="onDragEnd"
-+        @click="setActive(tab.id)"
-+        :class="[
-+          'group flex items-center gap-2 px-3 py-1.5 rounded-lg border transition whitespace-nowrap',
-+          tab.id === activeId
-+            ? 'bg-white/10 border-white/30 text-white'
-+            : 'bg-white/5 border-white/10 text-white/60 hover:text-white hover:border-white/20',
-+          dragOverId === tab.id && dragId !== tab.id ? 'ring-1 ring-primary/60' : ''
-+        ]"
-+      >
-+        <span class="material-symbols-outlined text-[16px]">terminal</span>
-+        <span class="text-xs font-semibold">{{ tab.title }}</span>
-+        <span v-if="tab.hasActivity" class="ml-1 w-2 h-2 rounded-full bg-primary shadow-glow"></span>
-+        <span
-+          class="material-symbols-outlined text-[14px] text-white/40 hover:text-white"
-+          @click.stop="closeTab(tab.id)"
-+        >
-+          close
-+        </span>
-+      </button>
-+      <span v-if="tabs.length === 0" class="text-xs text-white/40">
-+        {{ t('terminal.emptyTabs') }}
-+      </span>
-+    </div>
-+
-+    <div class="flex-1 min-h-0 relative">
-+      <div v-if="tabs.length === 0" class="h-full flex flex-col items-center justify-center text-center text-white/50">
-+        <div class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-4">
-+          <span class="material-symbols-outlined text-[28px]">terminal</span>
-+        </div>
-+        <p class="text-sm font-semibold text-white/70">{{ t('terminal.emptyTitle') }}</p>
-+        <p class="text-xs text-white/40 mt-1">{{ t('terminal.emptySubtitle') }}</p>
-+        <button
-+          type="button"
-+          class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wide text-white bg-primary hover:bg-primary-hover shadow-glow transition"
-+          @click="handleNewTab"
-+        >
-+          <span class="material-symbols-outlined text-[18px]">add</span>
-+          {{ t('terminal.newTab') }}
-+        </button>
-+      </div>
-+      <div v-else class="h-full w-full">
-+        <TerminalPane
-+          v-for="tab in tabs"
-+          :key="tab.id"
-+          :session-id="tab.id"
-+          :active="tab.id === activeId"
-+          v-show="tab.id === activeId"
-+        />
-+      </div>
-+    </div>
-+  </section>
-+</template>
-+
-+<script setup lang="ts">
-+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
-+import { emit, listen } from '@tauri-apps/api/event';
-+import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
-+import { useI18n } from 'vue-i18n';
-+import { storeToRefs } from 'pinia';
-+import TerminalPane from './TerminalPane.vue';
-+import { onActivity } from './terminalBridge';
-+import { useTerminalStore } from './terminalStore';
-+import {
-+  TERMINAL_OPEN_TAB_EVENT,
-+  TERMINAL_WINDOW_READY_EVENT,
-+  TERMINAL_WINDOW_READY_REQUEST_EVENT,
-+  type TerminalOpenTabPayload
-+} from './terminalEvents';
-+import { useToastStore } from '@/stores/toastStore';
-+import { useProjectStore } from '@/features/workspace/projectStore';
-+
-+const { t } = useI18n();
-+const toastStore = useToastStore();
-+const { pushToast } = toastStore;
-+const terminalStore = useTerminalStore();
-+const { tabs, activeId } = storeToRefs(terminalStore);
-+const { createTab, setActive, closeTab, moveTab, markActivity, clearActivity, openTab } = terminalStore;
-+const projectStore = useProjectStore();
-+const { members } = storeToRefs(projectStore);
-+
-+const dragId = ref<string | null>(null);
-+const dragOverId = ref<string | null>(null);
-+const isCreating = ref(false);
-+
-+const resolveTabTitle = (memberId: string | undefined, payloadTitle: string) => {
-+  if (memberId) {
-+    const memberName = members.value.find((
+@@ -0,0 +1,5 @@
++<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="145 145 510 510">
++  <path fill="#F09082" d="M165.29 165.29H517.36V400H400V282.65H165.29Z"/>
++  <path fill="#4D9ABF" d="M165.29 282.65H282.65V400H400V517.36H282.65V634.72H165.29Z"/>
++  <path fill="#F1BE58" d="M517.36 400H634.72V634.72H517.36Z"/>
++</svg>
 ```
 
 #### Recent Merged Pull Requests:
@@ -1905,13 +638,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 完成终端引擎与消息链路阶段性重构，补齐会话创建与语义派发能力，并修复终端稳定性/输入一致性/UI 状态问题
+## X. docs: sync supported CLI tools and icons in README
 
 **RULE**:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in golutra/golutra. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `75e68e29`: 完成终端引擎与消息链路阶段性重构，补齐会话创建与语义派发能力，并修复终端稳定性/输入一致性/UI 状态问题. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `52dbff2b`: docs: sync supported CLI tools and icons in README. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -1919,17 +652,35 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-**Use Cyberpunk Overseer System: Command your AI workforce.**
+    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/golutra-agent.png" alt="golutra-agent" height="56" /></td>
+    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/claude-code.png" alt="Claude Code" width="48" /></td>
+    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/antigravity.png" alt="Antigravity CLI" height="48" /></td>
+    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/codex.png" alt="Codex CLI" height="48" /></td>
+    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/grok.png" alt="Grok CLI" height="48" /></td>
+    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/pi.svg" alt="PI" height="48" /></td>
+    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/deepseek.svg" alt="DeepSeek Harness" height="48" /></td>
+    <td align="center" valign="middle" width="100" height="64"><img src="./assets/readme/icons/hermes.svg" alt="Hermes Agent" height="48" /></td>
+    <td align="center">golutra-
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-**Cyber Overseer System: Command your AI workforce.**
+// Induced defect failure mode:
+    <td align="center"><img src="./assets/readme/icons/claude-code.png" alt="Claude Code" height="48" /></td>
+    <td align="center"><img src="./assets/readme/icons/gemini.png" alt="Gemini CLI" height="48" /></td>
+    <td align="center"><img src="./assets/readme/icons/codex.png" alt="Codex CLI" height="48" /></td>
+    <td align="center"><img src="./assets/readme/icons/opencode.svg" alt="OpenCode" width="36" /></td>
+    <td align="center"><img src="./assets/readme/icons/qwen.png" alt="Qwen Code" height="48" /></td>
+    <td align="center"><img src="./assets/readme/icons/openclaw.png" alt="OpenClaw" height="48" /></td>
+    <td align="center"><img src="./assets/readme/icons/any-cli.svg" alt="任意 CLI" height="48" /></td>
+    <td align="center">Gemini CLI</td>
+- CLI compatibility: Claude, Gemini, Codex, OpenCode, Qwen, OpenClaw, Any CLI
+Keep your existing CLI and instantly upgrade it into a collaboration hub.
+No terminal switch, no workflow rewrite, no re-training. Keep using the CLI you already trust while adding multi-agent collaboration, orchestration, and result handoff to your current engineering pipeline.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `75e68e29` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `52dbff2b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

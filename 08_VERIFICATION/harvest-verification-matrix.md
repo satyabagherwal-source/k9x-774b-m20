@@ -11608,3 +11608,7 @@
 | `CYCLE-20261120-SEYZ` | `2026-11-20T18:41:40.811Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9618` | Yes (`75523bc2...`) |
 | `CYCLE-20261120-SG5P` | `2026-11-20T18:41:42.349Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9619` | Yes (`2f852be4...`) |
 | `CYCLE-20261120-SHPP` | `2026-11-20T18:41:44.365Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9620` | Yes (`36307542...`) |
+| `CYCLE-20261120-OHMZ` | `2026-11-20T19:06:37.259Z` | `golutra/golutra` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9621` | Yes (`4f625329...`) |
+| `CYCLE-20261120-OTE4` | `2026-11-20T19:06:52.492Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9622` | Yes (`e72ba30d...`) |
+| `CYCLE-20261120-UUAW` | `2026-11-20T19:11:33.608Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9623` | Yes (`8166aefa...`) |
+| `CYCLE-20261120-V3ZI` | `2026-11-20T19:11:46.158Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9624` | Yes (`f496b4d6...`) |

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T18:41:44.376Z",
-  "total_cycles_completed": 11055,
-  "total_learnings_persisted": 11055,
-  "total_rules_promoted": 10411,
+  "last_updated": "2026-11-20T19:11:46.169Z",
+  "total_cycles_completed": 11059,
+  "total_learnings_persisted": 11059,
+  "total_rules_promoted": 10415,
   "history": [
-    {
-      "timestamp": "2026-11-19T19:39:03.753Z",
-      "repository": "siteline/swiftui-introspect",
-      "learningId": "learn-github-siteline-swiftui-introspect",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T20:00:18.830Z",
-      "repository": "Folkbench/folkbench",
-      "learningId": "learn-github-folkbench-folkbench",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T20:24:20.726Z",
-      "repository": "TableProApp/TablePro",
-      "learningId": "learn-github-tableproapp-tablepro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T20:24:26.534Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T20:33:56.725Z",
       "repository": "rtk-ai/rtk",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-20T18:41:44.376Z",
       "repository": "clockworklabs/SpacetimeDB",
       "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T19:06:37.271Z",
+      "repository": "golutra/golutra",
+      "learningId": "learn-github-golutra-golutra",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T19:06:52.503Z",
+      "repository": "kubeedge/kubeedge",
+      "learningId": "learn-github-kubeedge-kubeedge",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T19:11:33.619Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T19:11:46.169Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

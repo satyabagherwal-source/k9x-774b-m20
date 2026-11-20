@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T18:41:55.634Z",
-  "total_verified_learnings": 9045,
+  "last_updated": "2026-11-20T19:11:52.249Z",
+  "total_verified_learnings": 9046,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22577,
+  "total_items": 22593,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113010,25 +113010,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "6b667193",
-      "content_hash": "fca104aa695b7c3b84b268b7dce5654f8fe9c7f29c64634608856874797bb124",
+      "source_version": "93648484",
+      "content_hash": "7849a5821740cfa8d084fa081b8588917570b5283c8b58b8a6e42adeb214f750",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T13:40:23.815Z"
+      "persisted_at": "2026-11-20T19:11:46.563Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/tursodatabase-limbo-verification-protocol-empirical-defect-shield-for-tursodatab.md",
+      "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "source_version": "6b667193",
-      "content_hash": "3547956fa18289ec1985e73bb268c4db8f38374a80bf141aeee76ad4caa24b8f",
+      "source_version": "93648484",
+      "content_hash": "a8ea52554072985271e9897a3dcc21ad503a1128a367a82086c9a326a623fcf0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T13:40:23.982Z"
+      "persisted_at": "2026-11-20T19:11:46.727Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -213571,13 +213571,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "6b667193",
-      "content_hash": "08925c50610b46eb30fa51278f0bda55b7529b460d7a15055d13921f9b2f5483",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "93648484",
+      "content_hash": "f496b4d6787f2a96e8c8e4b14cca27fbaa05d96dcd12a01b4680845966bfb161",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213623,6 +213623,11 @@
           "number": 9577,
           "title": "testing/sqltest: add @compat-gap tests with a fixed-gap check and lints",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9624,
+          "title": "fix compilation and lint errors after main rebase",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213630,7 +213635,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T13:40:23.253Z",
+      "verified_at": "2026-11-20T19:11:45.892Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -262338,8 +262343,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "339a3ca8",
-      "content_hash": "eff5544d79d225f9b12bc4a02c146573237015c07ee879d68b2d699a45faf41e",
+      "source_version": "b612e741",
+      "content_hash": "8166aefaae3ff87f9a65543c18e8a2000108e554a22bc0084a386af8f995a906",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -262367,6 +262372,11 @@
           "number": 9462,
           "title": "Update README offline verification example",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9623,
+          "title": "Replace --use-signing-config with --no-signing-config",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -262374,7 +262384,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T04:29:25.277Z",
+      "verified_at": "2026-11-20T19:11:33.336Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -262416,10 +262426,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "repository": "sigstore/cosign",
-      "source_version": "0743bfcf",
-      "content_hash": "e775615491c663d9442117240ace7e0f770b6348d3499e0fafebe7b8ad38179d",
+      "source_version": "b612e741",
+      "content_hash": "ec0d1152e61363fdfff130c63e88d93236e186982e3446e3b0d10f2a2be4e4c8",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T04:20:53.922Z"
+      "persisted_at": "2026-11-20T19:11:33.988Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign",
@@ -262428,10 +262438,10 @@
       "relative_path": "08_VERIFICATION/sigstore-cosign-verification-protocol-empirical-defect-shield-for-sigstore-cosig.md",
       "title": "Verification Protocol: Empirical Defect Shield for sigstore/cosign",
       "repository": "sigstore/cosign",
-      "source_version": "6e895879",
-      "content_hash": "578b461d6da975a6b0cd548af640243a6200868920d4bd9b2b3cdbb65c0d1246",
+      "source_version": "b612e741",
+      "content_hash": "6e0a356afca014ad6e820d70c8f0962dcd2b8996ced60ae9e9f818c95eb27efc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T22:36:15.031Z"
+      "persisted_at": "2026-11-20T19:11:34.150Z"
     },
     "candidate_directive-docs-synthesize-warn-that-synthetic-output-is-not-anonymized": {
       "item_id": "candidate_directive-docs-synthesize-warn-that-synthetic-output-is-not-anonymized",
@@ -262477,9 +262487,9 @@
       "title": "Content & Information Intelligence: sigstore-cosign-learnings Core Invariants",
       "repository": "sigstore-cosign-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e7e9325bc2841baeadc7224680dbef099ef58cc81c48c75297e983a774c1c61",
+      "content_hash": "ee52ec913c11035b926e4fd6d287b4fb951705767c2f7e9d875500ec493b3905",
       "domain_letter": "I",
-      "persisted_at": "2026-11-17T21:03:53.846Z"
+      "persisted_at": "2026-11-20T19:11:52.080Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign-learnings",
@@ -262489,9 +262499,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sigstore-cosign-learnings",
       "repository": "sigstore-cosign-learnings",
       "source_version": "HEAD",
-      "content_hash": "a6e4a2965508f143ce1e97d7df008b6c6bbc0ec32e64f4d72de560a379919ee2",
+      "content_hash": "cb3f7bc8884ada9a71d1afda23f11b1e000095890bcd12f5d81bf34479d3e7bf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T22:36:22.993Z"
+      "persisted_at": "2026-11-20T19:11:52.249Z"
     },
     "rule-8811": {
       "learning_id": "rule-8811",
@@ -262952,8 +262962,8 @@
       "slug": "kubeedge-kubeedge",
       "platform": "github",
       "source_url": "https://github.com/kubeedge/kubeedge",
-      "source_version": "61e2bda5",
-      "content_hash": "ae2e607b671e497fd37d2261acad32656a7aec717848db1f0ec89cbffda6ccdf",
+      "source_version": "8429622d",
+      "content_hash": "e72ba30d56a569c586436a01de42f75d74aad0546b224b16daa761f6e6f8e682",
       "dossier_path": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
       "promoted_rules": [
@@ -262971,6 +262981,11 @@
           "number": 9404,
           "title": "Empirical Invariant Guard in manager.go",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9622,
+          "title": "Empirical Invariant Guard in finalizer_test.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -262978,7 +262993,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T16:16:57.840Z",
+      "verified_at": "2026-11-20T19:06:52.223Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -263020,10 +263035,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubeedge-kubeedge-architecture-intelligence-kubeedge-kubeedge-core-invariants.md",
       "title": "Architecture Intelligence: kubeedge/kubeedge Core Invariants",
       "repository": "kubeedge/kubeedge",
-      "source_version": "61e2bda5",
-      "content_hash": "1bb30e755d5aacf8f1f0e4baf144b3a4834347d553ed9cac7bb2329ada7555c7",
+      "source_version": "8429622d",
+      "content_hash": "631b13758a69620b0ce39d5dc8ad0c3d5d790899b0e088922df5a83883198cd4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T16:16:58.364Z"
+      "persisted_at": "2026-11-20T19:06:52.897Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kubeedge-kubeedge": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubeedge-kubeedge",
@@ -263032,10 +263047,10 @@
       "relative_path": "08_VERIFICATION/kubeedge-kubeedge-verification-protocol-empirical-defect-shield-for-kubeedge-kub.md",
       "title": "Verification Protocol: Empirical Defect Shield for kubeedge/kubeedge",
       "repository": "kubeedge/kubeedge",
-      "source_version": "61e2bda5",
-      "content_hash": "bb0bd8e0e5bcee4c1276a9c0fb9757c781e4c402a10bd5c068b6f3e5ebaf2c1c",
+      "source_version": "8429622d",
+      "content_hash": "30811c4fae7fc459d36fb1612303d9432b320824e8c3f0251e06f6b30ccb5ba9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T16:16:58.506Z"
+      "persisted_at": "2026-11-20T19:06:53.066Z"
     },
     "rule-8817": {
       "learning_id": "rule-8817",
@@ -263157,9 +263172,9 @@
       "title": "Architecture Intelligence: kubeedge-kubeedge-learnings Core Invariants",
       "repository": "kubeedge-kubeedge-learnings",
       "source_version": "HEAD",
-      "content_hash": "d74e48c5c9341b7476a16ca589b8bd87415a62dec1915e829a339a6bb9769663",
+      "content_hash": "31f63548b25025a4381d3b86808b8a2a18e108b7eec0e5e77727d0473adbb943",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T16:17:07.787Z"
+      "persisted_at": "2026-11-20T19:11:51.227Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kubeedge-kubeedge-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubeedge-kubeedge-learnings",
@@ -263169,9 +263184,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kubeedge-kubeedge-learnings",
       "repository": "kubeedge-kubeedge-learnings",
       "source_version": "HEAD",
-      "content_hash": "435de7a496fd254301ed53afc6491270a77512d0a5f88cbd503d55ed868c3446",
+      "content_hash": "cad3d70a2fb66f86e61b85162ab9b8676a31d7dac60664771ad30dd8b3de7123",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T16:17:07.929Z"
+      "persisted_at": "2026-11-20T19:11:51.411Z"
     },
     "rule-8819": {
       "learning_id": "rule-8819",
@@ -306155,6 +306170,227 @@
       "content_hash": "60b25d9c2d90b79b5d629c1e2bbf862bc452c2e0bdbd040993c7abba66f065c7",
       "domain_letter": "H",
       "persisted_at": "2026-11-20T18:41:54.328Z"
+    },
+    "learn-github-golutra-golutra": {
+      "learning_id": "learn-github-golutra-golutra",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "golutra/golutra",
+      "repository": "golutra/golutra",
+      "slug": "golutra-golutra",
+      "platform": "github",
+      "source_url": "https://github.com/golutra/golutra",
+      "source_version": "52dbff2b",
+      "content_hash": "4f6253298da678a73e6bd10b47ed0a67ba0a91a1156ee6900b8f659ac31281c8",
+      "dossier_path": "07_PROJECT_LEARNING/golutra-golutra-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/golutra-golutra-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9621,
+          "title": "sync supported CLI tools and icons in README",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T19:06:36.971Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9621": {
+      "learning_id": "rule-9621",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9621,
+      "title": "sync supported CLI tools and icons in README",
+      "source_url": "https://github.com/golutra/golutra",
+      "source_version": "52dbff2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T19:06:36.971Z"
+    },
+    "candidate_directive-sync-supported-cli-tools-and-icons-in-readme": {
+      "item_id": "candidate_directive-sync-supported-cli-tools-and-icons-in-readme",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OHT4-sync-supported-cli-tools-and-icons-in-readme.md",
+      "title": "sync supported CLI tools and icons in README",
+      "repository": "golutra/golutra",
+      "source_version": "52dbff2b",
+      "content_hash": "b2af8dc3639f97b15bad3236c3e97fd2e62e94ca8e80dcb7a642bb8d2e33ce32",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T19:06:37.481Z"
+    },
+    "domain_intelligence-content-information-intelligence-golutra-golutra-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-golutra-golutra-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-golutra-golutra-content-information-intelligence-golutra-golutra-core-invariants.md",
+      "title": "Content & Information Intelligence: golutra/golutra Core Invariants",
+      "repository": "golutra/golutra",
+      "source_version": "52dbff2b",
+      "content_hash": "98405262e5f5630c12d345bdd9c5fe2487e996c18d985c53285414802454b5d8",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T19:06:37.666Z"
+    },
+    "agent_contract-agent-contract-golutra-golutra-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-golutra-golutra-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/golutra-golutra-agent-contract-golutra-golutra-autonomous-specialist-persona.md",
+      "title": "Agent Contract: golutra/golutra Autonomous Specialist Persona",
+      "repository": "golutra/golutra",
+      "source_version": "52dbff2b",
+      "content_hash": "0612c699800efa9404d9e0e581ab6053b6a9fa528c8c974f9f6d024a1e014f21",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T19:06:37.837Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-golutra-golutra": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-golutra-golutra",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/golutra-golutra-verification-protocol-empirical-defect-shield-for-golutra-golutr.md",
+      "title": "Verification Protocol: Empirical Defect Shield for golutra/golutra",
+      "repository": "golutra/golutra",
+      "source_version": "52dbff2b",
+      "content_hash": "b035ec253342cf3d10fee8459c5dcb7a28d032b2f092a521034df7167841330d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T19:06:37.985Z"
+    },
+    "rule-9622": {
+      "learning_id": "rule-9622",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9622,
+      "title": "Empirical Invariant Guard in finalizer_test.go",
+      "source_url": "https://github.com/kubeedge/kubeedge",
+      "source_version": "8429622d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T19:06:52.223Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-finalizer_test-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-finalizer_test-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V7R2-empirical-invariant-guard-in-finalizer_test-go.md",
+      "title": "Empirical Invariant Guard in finalizer_test.go",
+      "repository": "kubeedge-kubeedge-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ddb9380d84c1620fe219d5ed0c91287a518c4430e7315ee768ece11d3eebb10a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T19:11:51.039Z"
+    },
+    "rule-9623": {
+      "learning_id": "rule-9623",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9623,
+      "title": "Replace --use-signing-config with --no-signing-config",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "b612e741",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T19:11:33.336Z"
+    },
+    "candidate_directive-replace-use-signing-config-with-no-signing-config": {
+      "item_id": "candidate_directive-replace-use-signing-config-with-no-signing-config",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V8F8-replace-use-signing-config-with-no-signing-config.md",
+      "title": "Replace --use-signing-config with --no-signing-config",
+      "repository": "sigstore-cosign-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bf950575f2bada231d9275399c5cfc3bd2bf6a6812fc024c5ea930ff797f98a2",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T19:11:51.909Z"
+    },
+    "rule-9624": {
+      "learning_id": "rule-9624",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9624,
+      "title": "fix compilation and lint errors after main rebase",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "93648484",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T19:11:45.892Z"
+    },
+    "candidate_directive-fix-compilation-and-lint-errors-after-main-rebase": {
+      "item_id": "candidate_directive-fix-compilation-and-lint-errors-after-main-rebase",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V45G-fix-compilation-and-lint-errors-after-main-rebase.md",
+      "title": "fix compilation and lint errors after main rebase",
+      "repository": "tursodatabase/turso",
+      "source_version": "93648484",
+      "content_hash": "3820d0bb7251a9762c32712d9b27f6883400cb8299d6016e76faa3f3b59bbbc9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T19:11:46.376Z"
+    },
+    "candidate_directive-docs-sync-supported-cli-tools-and-icons-in-readme": {
+      "item_id": "candidate_directive-docs-sync-supported-cli-tools-and-icons-in-readme",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V72W-docs-sync-supported-cli-tools-and-icons-in-readme.md",
+      "title": "docs: sync supported CLI tools and icons in README",
+      "repository": "golutra-golutra-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6527c3f1a4fc1601c75c6fc04e42cd9df810ab8a2db45b811bcc7c23143ff7c7",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T19:11:50.169Z"
+    },
+    "domain_intelligence-content-information-intelligence-golutra-golutra-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-golutra-golutra-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-golutra-golutra-learnings-content-information-intelligence-golutra-golutra-learn.md",
+      "title": "Content & Information Intelligence: golutra-golutra-learnings Core Invariants",
+      "repository": "golutra-golutra-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0ce0761ff04aa1afbbaaf11f447a3debce9125497dba05409472dc0a3cf31148",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T19:11:50.337Z"
+    },
+    "agent_contract-agent-contract-golutra-golutra-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-golutra-golutra-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/golutra-golutra-learnings-agent-contract-golutra-golutra-learnings-autonomous-sp.md",
+      "title": "Agent Contract: golutra-golutra-learnings Autonomous Specialist Persona",
+      "repository": "golutra-golutra-learnings",
+      "source_version": "HEAD",
+      "content_hash": "efdef443aaca80e6cd76fe7b25ce1e223d505fc607c835d9ae69f76150344428",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T19:11:50.501Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-golutra-golutra-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-golutra-golutra-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/golutra-golutra-learnings-verification-protocol-empirical-defect-shield-for-golu.md",
+      "title": "Verification Protocol: Empirical Defect Shield for golutra-golutra-learnings",
+      "repository": "golutra-golutra-learnings",
+      "source_version": "HEAD",
+      "content_hash": "53d323b73d793fc34ddc2b258124fa08b989b9e666f0eee382bfdecf20a2e71e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T19:11:50.647Z"
     }
   },
   "ai-builder-brain": {

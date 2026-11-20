@@ -4,22 +4,22 @@
 {
   "source_repository": "tursodatabase/turso",
   "source_url": "https://github.com/tursodatabase/turso",
-  "source_version": "72006e5e",
+  "source_version": "93648484",
   "license": "MIT",
-  "timestamp": "2026-11-19T14:52:38.908Z",
+  "timestamp": "2026-11-20T19:11:46.375Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tursodatabase-turso",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `72006e5e`).  
-> **License**: MIT | **Timestamp**: `2026-11-19T14:52:38.908Z`  
+> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `93648484`).  
+> **License**: MIT | **Timestamp**: `2026-11-20T19:11:46.375Z`  
 > **Learning ID**: `learn-github-tursodatabase-turso`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tursodatabase/turso` (Commit: `72006e5e`)
+- **Target Repository**: `tursodatabase/turso` (Commit: `93648484`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T14:52:37.299Z  
+> **Harvest Timestamp**: 2026-11-20T19:06:33.647Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25299 stars
+- **Stars / Engagement**: 25302 stars
 
 ---
 
@@ -1443,13 +1443,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12107** (2026-11-19): **postgres: add more known-gap tests against PostgreSQL**
-  *Symptoms*: Adds 22 tests to the known-gap suite from #12084. They cover cases where tursopg gives a different result than PostgreSQL 18 and that had no test yet. They follow the rules in the "Known gaps" section of `postgres/CONTRIBUTING.md`.  ## New gaps  **operators-functions (B)** - B-128 (S1), B-129 (S1): jsonb `||` and `-` return wrong values with no error. B-122 stops at its `jsonb_set` error, so it did not show this. - B-130 (S2): 16 nested scalar subqueries. tursopg accepts 15. B-124 tests 64 levels. - B-131 (S2): `pg_options_to_table` with a column alias list. - B-132 (S2): `pg_size_pretty`.  **ddl-catalog (E)** - E-99 to E-105 (S4, E-104 S1): `pg_available_extensions()`, index names in `pg_indexes`, `conkey` and `indkey` as arrays, an unquoted name that finds a quoted mixed-case schema, a `regclass` cast of an unknown name. - E-107, E-108 (S2): a PL/pgSQL trigger function, and a `SECURITY DEFINER` function with `SET search_path`. - E-109 to E-114 (S4): the privilege functions, `pg_has_role`, `pg_is_other_temp_schema`, `pg_column_is_updatable`, the relation size functions, `pg_stat_user_tables`.  **Regression tests** (match PostgreSQL already, no `@tursopg` block) - A-81: a `numeric(10,2)` column rounds on insert. A-22 covers the literal cast, which still fails. - E-106: the `pg_class` row level security flags.  ## Notes  - All expected results come from real runs on tursopg and on PostgreSQL 18. - When a test fails because of an older gap, a comment names it, for example "see 
+- **Issue #12168** (2026-11-20): **ci/dotnet: pin .NET 10 SDK in iOS package validation**
+  *Symptoms*: The `validate-ios-package` job fails at `dotnet workload install ios --version 10.0.401`:  ``` Workload pack 'Microsoft.NET.Runtime.Emscripten.Node.net10' in manifest 'microsoft.net.workload.emscripten.net10' [.../sdk-manifests/11.0.100/...] conflicts with manifest 'microsoft.net.workload.emscripten.current' [.../sdk-manifests/10.0.100/...] ```  The macos-26 runner image now ships a .NET 11 SDK. `actions/setup-dotnet` with `dotnet-version: 10.0.x` installs a .NET 10 SDK but does not stop `dotnet` from choosing the newest SDK, and `bindings/dotnet` has no global.json. The workload install therefore appears to run under SDK 11 and mixes 11.0.100 and 10.0.100 workload manifests. This cause comes from the manifest paths in the error, because the failing log does not print the SDK version.  This PR adds a step to the iOS job only. The step writes `bindings/dotnet/global.json`, pinning the version that setup-dotnet reports as installed, with `rollForward: latestFeature`. The workload install, restore and build in this job run from `bindings/dotnet`, so all of them pick up the global.json. The step prints `dotnet --version` and `dotnet --list-sdks`, so the log shows which SDK ran. The 10.0.401 workload pin and its Xcode 26 comment stay as they are. Other jobs are not changed.
 
-- **Issue #12101** (2026-11-19): **core, postgres: use less stack when preparing a statement**
-  *Symptoms*: ## Description  On main, preparing a PostgreSQL-dialect statement uses 47–63 KB of stack in a release build. On a 64 KB stack, that leaves almost nothing for the caller's own frames.  This PR cuts PostgreSQL-dialect prepare by 20–24 KB and SQLite-dialect prepare by about 2 KB.  **Measurements** (stack used by `Connection::prepare`, release build, macOS arm64, table `t(id INTEGER PRIMARY KEY, value INTEGER)`):  | statement | dialect | on main | in this PR | |---|---|---|---| | `SELECT 1` | PostgreSQL | 58.5 KB | 34.4 KB | | `SELECT id, value FROM t ORDER BY id` | PostgreSQL | 63.2 KB | 39.0 KB | | `INSERT INTO t VALUES (2, 2)` | PostgreSQL | 47.2 KB | 27.5 KB | | `SELECT id, value FROM t ORDER BY id` | SQLite | 34.8 KB | 32.7 KB |  Method (not in the PR): fill the stack below the caller with a marker byte, call `prepare`, find the lowest byte that changed.  ## Motivation and context  - **`Statement` holds `ProgramState` (2,032 bytes) inline**, so `Statement` is 2,624 bytes. The PostgreSQL frontend moves it through builder calls (`with_result_kind`, `with_tx_tracking`, `with_post_run`, …), and the caller's frame holds a copy per move. This PR boxes the state: `Statement` is about 600 bytes. - **On main, `prepare_statement_inner` parses, translates and prepares in one function.** Its stack frame (26 KB per `scripts/stack/frame-sizes.sh`) stays allocated while `prepare_translated_cmd` plans the statement. This PR moves parsing and translation into `translate_statement`, marked `#
-  **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `2894e3f53592` is [here](https://github.com/tursodatabase/turso/pull/12101#pullrequestreview-5975493652).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge.</sub>  <!-- autofixer:contributor-review:2894e3f53592b8099a1513fd4894afaf4ca8c9bf --> <!-- autofixer:contributor-review-recommends:2894e3f53592b8099a1513fd4894afaf4ca8c9bf --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiMTgwMjRkZDAxZGU1ODU3MjFkYzYxMzIwNzA5ZTAzOGNkNmE0MWFhMCIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMTlUMTI6NDM6MzYuODIwWiIsInZlcmRpY3QiOiJhcHByb3ZlIiwicmVjb21tZW5kYXRpb24iOnsidmFsdWUiOiJyZWNvbW1lbmQiLCJyZWFzb24iOiJSZXN1bHRzIGFyZSBpZGVudGljYWwgb24gbWFpbiBhbmQgd2l0aCB0aGlzIGNoYW5nZSwgYW5kIHRoZSBzdGFjayBzYXZpbmdzIGFyZSByZXByb2R1Y2VkIGhlcmUgKGFib3V0IDI1IEtCIGZvciBQb3N0Z3JlU1FM
+- **Issue #12164** (2026-11-20): **testing/sqltest: record known PostgreSQL differences as @compat-gap tests**
+  *Symptoms*: <img width="1400" height="1530" alt="image" src="https://github.com/user-attachments/assets/c7b3d264-8794-41c8-a627-63ab83bcefb9" />  ## Summary  - Adds `@compat-gap` to sqltest. - It marks a test where tursopg differs from PostgreSQL. - 424 existing tursopg overrides are now tagged.  ``` @compat-gap "type:bool" test like-case-sensitive-literal {     SELECT 'ABC' LIKE 'abc', 'abc' LIKE 'a%', 'abc' LIKE 'A%'; } # PostgreSQL 18 (checked on real PG in CI) expect {     f|t|f } # tursopg today: wrong expect @tursopg {     0|1|0 } ```  ## Why  - Write tests before the feature exists:  ``` @compat-gap "function:json_build_object" test json-build-object {     SELECT json_build_object('id', id, 's', s) FROM t WHERE id = 1; } expect {     {"id" : 1, "s" : "abc"} } @sqlstate 42883 expect @tursopg error {} ```  - When the feature lands, CI tells you:  ``` gap fixed: remove @compat-gap and the expect @tursopg override ```  - CI counts gaps per feature:  | label | gaps | refused | error-mismatch | accepts-invalid | wrong | |---|---:|---:|---:|---:|---:| | `function:age` | 20 | 13 | 7 | 0 | 0 | | `function:format_type` | 3 | 0 | 0 | 0 | 3 | | `function:json_build_object` | 25 | 25 | 0 | 0 | 0 |  - If a gap gets worse, CI fails:  ``` known gap type:bool: tursopg returns NULL|NULL|NULL, PostgreSQL returns f|t|f, recorded tursopg answer 0|1|0 ```  - If someone deletes a gap test, CI fails:  ``` gaps/operators-functions.sqltest: gap 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1466,638 +1464,581 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1befb62a` (2026-11-19)
-**Commit Message**: Merge 'core/vdbe: fix sum and avg over a window after an infinite value leaves' from app/turso-github-handyman
+### Incident Patch 1: `be08cdd2` (2026-11-18)
+**Commit Message**: tests: fix compilation and lint errors after main rebase
 
-## Problem
+Use the renamed logical-log sync API while preserving the encrypted restore rejection checks. Assert open failures directly with expect_err so the page-size regressions pass clippy.
 
-```sql
--- tursopg (Turso's PostgreSQL-compatible server)
-SELECT n, avg(x) OVER (ORDER BY n ROWS BETWEEN CURRENT ROW AND CURRENT ROW)
-FROM (VALUES (1, 1e308 * 10), (2, 1.0), (3, 1.0)) AS v(n, x);
--- panic: Avg xInverse without matching xStep
+Tests: encryption regressions, explicit page-size regressions, seeded encryption fuzzer, and core_tester all-features/all-targets clippy
 
-SELECT n, sum(x) OVER w, avg(x) OVER w
-FROM (VALUES (1, 1e308 * 10), (2, 1.0), (3, 2.0), (4, 4.0)) AS v(n, x)
-WINDOW w AS (ORDER BY n ROWS BETWEEN 1 PRECEDING AND CURRENT ROW);
--- Turso:      Inf|Inf, Inf|Inf, NULL|NULL, NULL|NULL
--- PostgreSQL: Infinity|Infinity, Infinity|Infinity, 3|1.5, 6|3
-```
-
-The SQLite dialect (`tursodb`) panics on the same `avg` window.
-`sqlite3` returns NULL there instead.
-
-There are two causes, both in `core/vdbe/execute.rs`:
-- `avg()` did not count a row added after its sum became NaN (stored as
-NULL). Removing that row from the frame still decreased the count, so
-the count reached 0 and the `debug_assert!` failed. SQLite's `sumStep`
-counts every non-NULL row.
-- Removing a row from a frame adds its negation to the total. When an
-infinite value leaves the frame, the total becomes `Inf - Inf`, whi
-
-**File**: `core/dialect/mod.rs` (modified, +12/-0)
+**File**: `tests/integration/database_open.rs` (modified, +4/-8)
 ```diff
-@@ -518,6 +518,18 @@ pub trait Dialect: Send + Sync + 'static {
-         false
-     }
+@@ -2178,8 +2178,7 @@ mod explicit_page_size {
+                     for api in [OpenApi::Open, OpenApi::OpenWithStorage, OpenApi::OpenAsync] {
+                         let error =
+                             open(io.clone(), path, options.clone().page_size(requested), api)
+-                                .err()
+-                                .expect("cached open accepted a mismatching page size");
++                                .expect_err("cached open accepted a mismatching page size");
+                         assert_mismatch(error, requested, actual);
  
-+    /// Whether `sum()` and `avg()` count their infinite inputs apart from
-+    /// the total of the finite ones.
-+    ///
-+    /// PostgreSQL does, so a moving window frame gives a finite result again
-+    /// once its infinite values leave it. SQLite adds them to the total.
-+    /// Removing a row from a window frame adds its negation, so once an
-+    /// infinite value leaves, the total is `Inf - Inf`, which is NaN, and
-+    /// the result stays NULL.
-+    fn sum_counts_infinite_inputs(&self) -> bool {
-+        false
-+    }
-+
-     /// Whether `ALTER TABLE ADD COLUMN` with a non-constant default works on
-     /// a table that has rows.
-     ///
-```
-
-**File**: `core/vdbe/execute.rs` (modified, +183/-39)
-```diff
-@@ -7426,11 +7426,12 @@ fn kbn_init_from_int(acc: &mut Value, i: i64, state: &mut SumAggState) {
- /// Initialize aggregate payload with default values.
- /// Payload layout by aggregate type:
- /// - Count/Count0: [Integer(0)]
--/// - Sum: [Null, Float(0.0), Integer(0), Integer(0), Integer(0)]
--///   // acc, r_err, approx, ovrfl, count
--/// - Total: [Float(0.0), Float(0.0), Integer(0), Integer(0), Integer(0)]
-+/// - Sum: [Null, Float(0.0), Integer(0), Integer(0), Integer(0), Integer(0), Integer(0)]
-+///   // acc, r_err, approx, ovrfl, count, pos_inf, neg_inf
-+/// - Total: [Float(0.0), Float(0.0), Integer(0), Integer(0), Integer(0), Integer(0), Integer(0)]
- ///   // same but starts at 0.0
--/// - Avg: [Float(0.0), Float(0.0), Integer(0)]  // sum, r_err, count - uses KBN like SUM
-+/// - Avg: [Float(0.0), Float(0.0), Integer(0), Integer(0), Integer(0)]
-+///   // sum, r_err, count, pos_inf, neg_inf - uses KBN like SUM
- /// - Min/Max: [Null]
- /// - GroupConcat/StringAgg:
- ///   [Null|Text, Integer(count), Integer(first separator length),
-@@ -7445,7 +7446,7 @@ fn init_agg_payload(func: &AggFunc, payload: &mut crate::alloc::Vec<Value>) -> R
-             payload.push(Value::from_i64(0));
-         }
-         AggFunc::Sum | AggFunc::Total => {
--            payload.try_reserve_exact(5)?;
-+            payload.try_reserve_exact(7)?;
-             let acc = if matches!(func, AggFunc::Total) {
-                 Value::from_f64(0.0)
-             } else {
-@@ -7456,12 +7457,16 @@ fn init_agg_payload(func: &AggFunc, payload: &mut crate::alloc::Vec<Value>) -> R
-             payload.push(Value::from_i64(0));
-             payload.push(Value::from_i64(0));
-             payload.push(Value::from_i64(0));
-+            payload.push(Value::from_i64(0));
-+            payload.push(Value::from_i64(0));
-         }
-         AggFunc::Avg => {
--            payload.try_reserve_exact(3)?;
-+            payload.try_reserve_exact(5)?;
-             payload.push(Value::from_f64(0.0));
-             payload.push(Value::from_f64(0.0));
-             payload.push(Value::from_i64(0));
-+            payload.push(Value::from_i64(0));
-+            payload.push(Value::from_i64(0));
-         }
-         AggFunc::Min | AggFunc::Max => {
-             payload.try_reserve_exact(1)?;
-@@ -7531,13 +7536,17 @@ fn init_agg_payload(func: &AggFunc, payload: &mut crate::alloc::Vec<Value>) -> R
- /// # Payload layouts (see `init_agg_payload` for initial values):
- /// - **Count**: `[count: Integer]` - increments if arg is not NULL
- /// - **Count0**: `[count: Integer]` - always increments (COUNT(*))
--/// - **Avg**: `[sum: Float, r_err: Float, count: Integer]` - uses KBN compensation like SUM
-+/// - **Avg**: `[sum: Float, r_err: Float, count: Integer, pos_inf: Integer, neg_inf: Integer]`
-+///   - uses KBN compensation like SUM
- /// - **Sum/Total**:
--///   `[acc, r_err: Float, approx: Integer, ovrfl: Integer, count: Integer]`
-+///   `[acc, r_err: Float, approx: Integer, ovrfl: Integer, count: Integer,
-+///     pos_inf: Integer, neg_inf: Integer]`
- ///   - `acc`: running sum (Null/Integer/Float depending on inputs)
- ///   - `r_err`: Kahan-Babuška-Neumaier compensation term for floating-point precision
- ///   - `approx`: 1 if result is approximate (float arithmetic used)
- ///   - `ovrfl`: 1 if integer overflow occurred (Total promotes to float, Sum errors)
-+///   - `pos_inf`/`neg_inf`: number of +Inf/-Inf inputs, which are not added to `acc`
-+///     when `counts_infinite_inputs` is set (see `Dialect::sum_counts_infinite_inputs`)
- /// - **Min/Max**: `[current_extreme: Value]` - tracks min/max seen so far
- /// - **GroupConcat/StringAgg**:
- ///   `[accumulated: Null|Text, count: Integer, first_separator_len: Integer,
-@@ -7553,6 +7562,7 @@ fn update_agg_payload(
-     maybe_arg2: Option<&Value>, // for GroupConcat/StringAgg, JsonGroupObject/JsonbGroupObject,
-     payload: &mut crate::alloc::Vec<Value>,
-     collation: CollationSeq,
-+    counts_infinite_inputs: bool,
- ) -> Result<()> {
-     match func {
-         AggFunc::Count => {
-@@ -7583,40 +7593,50 @@ fn update_agg_payload(
-             if matches!(arg, Value::Null) {
-                 return Ok(());
-             }
--            // invariant as per init_agg_payload: payload[0] is Float (sum), payload[1] is Float (r_err), payload[2] is Integer (count)
--            let [sum_val, r_err_val, count_val, ..] = payload.as_mut_slice() else {
-+            // invariant as per init_agg_payload: payload[0] is Float (sum), payload[1] is Float (r_err),
-+            // payload[2] is Integer (count), payload[3] and payload[4] are Integer (pos_inf, neg_inf)
-+            let [sum_val, r_err_val, count_val, pos_inf, neg_inf, ..] = payload.as_mut_slice()
-+            else {
-                 mark_unlikely();
-                 return Err(LimboError::InternalError(
-                     "Avg: payload too short".to_string(),
-                 ));
-             };
--            if matches!(*sum_val, Value::Null) {
--                return Ok(());
--            }
--       
-```
-
-**File**: `postgres/frontend/catalog.rs` (modified, +4/-0)
-```diff
-@@ -403,6 +403,10 @@ impl Dialect for PostgresDialect {
-         true
-     }
+                         for size in [None, Some(actual)] {
+@@ -2208,8 +2207,7 @@ mod explicit_page_size {
+                                 })
+                                 .page_size(requested);
+                             let error = open(io.clone(), path, wrong_key, api)
+-                                .err()
+-                                .expect("cached open accepted the wrong key");
++                                .expect_err("cached open accepted the wrong key");
+                             assert!(
+                                 matches!(
+                                     error,
+@@ -2260,8 +2258,7 @@ mod explicit_page_size {
+                     OpenApi::RawOpenAsync,
+                 ] {
+                     let error = open(io.clone(), path, options.clone().page_size(requested), api)
+-                        .err()
+-                        .expect("cold open accepted a mismatching page size");
++                        .expect_err("cold open accepted a mismatching page size");
+                     assert_mismatch(error, requested, actual);
+                     assert_eq!(std::fs::read(path)?, original);
  
-+    fn sum_counts_infinite_inputs(&self) -> bool {
-+        true
-+    }
-+
-     fn add_column_computes_default_for_existing_rows(&self) -> bool {
-         true
-     }
+@@ -2274,8 +2271,7 @@ mod explicit_page_size {
+                             })
+                             .page_size(requested);
+                         let error = open(io.clone(), path, wrong_key, api)
+-                            .err()
+-                            .expect("cold open accepted the wrong key");
++                            .expect_err("cold open accepted the wrong key");
+                         assert!(
+                             matches!(
+                                 error,
 ```
 
-**File**: `postgres/tests/integration/postgres/dialect.rs` (modified, +39/-0)
+**File**: `tests/integration/query_processing/encryption.rs` (modified, +1/-1)
 ```diff
-@@ -1915,6 +1915,45 @@ fn test_postgres_window_avg_partition(db: TempDatabase) {
-     }
- }
- 
-+// PostgreSQL rejects `1e308::float8 * 10` as an overflow, so its results
-+// below come from the same rows written with 'Infinity'::float8. NaN is
-+// returned as NULL.
-+#[turso_macros::test(mvcc)]
-+fn test_postgres_window_sum_avg_are_finite_after_infinite_values_leave_frame(db: TempDatabase) {
-+    let conn = db.connect_postgres();
-+    conn.execute("CREATE TABLE t (n int, x float8)").unwrap();
-+    conn.execute(
-+        "INSERT INTO t VALUES (1, 1e308::float8 * 10), (2, 1), (3, 2), (4, 4), \
-+         (5, -1e308::float8 * 10), (6, 1e308::float8 * 10), (7, 8)",
-+    )
-+    .unwrap();
-+
-+    assert_eq!(
-+        rows_of(
-+            &conn,
-+            "SELECT n, avg(x) OVER (ORDER BY n ROWS BETWEEN CURRENT ROW AND CURRENT ROW) \
-+             FROM t ORDER BY n",
-+        ),
-+        ["1|Inf", "2|1.0", "3|2.0", "4|4.0", "5|-Inf", "6|Inf", "7|8.0"]
-+    );
-+    assert_eq!(
-+        rows_of(
-+            &conn,
-+            "SELECT n, sum(x) OVER w, avg(x) OVER w FROM t \
-+             WINDOW w AS (ORDER BY n ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) ORDER BY n",
-+        ),
-+        [
-+            "1|Inf|Inf",
-+            "2|Inf|Inf",
-+            "3|3.0|1.5",
-+            "4|6.0|3.0",
-+            "5|-Inf|-Inf",
-+            "6||",
-+            "7|Inf|Inf",
-+        ]
-+    );
-+}
-+
- // ==================== OPERATORS: ||, ILIKE, JSON ====================
- 
- #[turso_macros::test(mvcc)]
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/window/frame_sum_overflow.sqltest` (modified, +26/-0)
-```diff
-@@ -68,3 +68,29 @@ test window-sum-all-int-overflow-errors {
- }
- expect error {
- }
-+
-+# Inf + -Inf is NaN, which sum() and avg() return as NULL. Removing a row
-+# from a frame adds its negation, so once an infinite value leaves the
-+# frame the total is NaN and the result stays NULL for the rest of the
-+# partition. avg() still counts each row added after that, so removing
-+# those rows later finds them counted.
-+setup infinite_value {
-+    CREATE TABLE inf(n INT, x REAL);
-+    INSERT INTO inf VALUES (1, 1e999), (2, 1.0), (3, 2.0), (4, 4.0);
-+}
-+
-+@setup infinite_value
-+test window-sum-avg-stay-null-after-infinite-value-leaves-frame {
-+    SELECT n,
-+           avg(x) OVER (ORDER BY n ROWS BETWEEN CURRENT ROW AND CURRENT ROW),
-+           avg(x) OVER (ORDER BY n ROWS BETWEEN 1 PRECEDING AND CURRENT ROW),
-+           sum(x) OVER (ORDER BY n ROWS BETWEEN 1 PRECEDING AND CURRENT ROW),
-+           total(x) OVER (ORDER BY n ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)
-+    FROM inf;
-+}
-+expect {
-+    1|Inf|Inf|Inf|Inf
-+    2||Inf|Inf|Inf
-+    3||||
-+    4||||
-+}
-```
-
----
-
-### Incident Patch 2: `8097ffc2` (2026-11-19)
-**Commit Message**: Merge 'core/translate: report no such column, not a panic, for unselected CTEs' from app/turso-github-handyman
-
-## Problem
-
-```sql
-WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT x WHERE EXISTS (SELECT 1 FROM c));
-WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT (SELECT x FROM c), (SELECT x));
--- Turso:  panic "Outer query subquery result_columns_start_reg must be set in program"
--- SQLite: no such column: x
-```
-
-Before it plans a FROM clause subquery, `parse_from_clause_table` in
-`core/translate/planner.rs` plans each CTE that the subquery reads (here
-through `EXISTS (SELECT 1 FROM c)`) and adds it to the subquery's outer
-query references. It marked that entry `cte_definition_only: false`, so
-column binding treated `c` as an outer table. `x` bound to the CTE's
-column, but no code computes that column for this scope, so code
-generation panicked. The same happened with `c.x`, with a subquery after
-a `JOIN`, and in a `LATERAL` subquery on the PostgreSQL frontend.
-
-## Fix
-
-The entry is now always `cte_definition_only: true`. Column binding
-skips such entries, so a CTE's columns are visible only where a FROM
-clause names the CTE. This is how
-`add_ctes_read_by_subqueries_as_outer_refs` a
-
-**File**: `core/translate/planner.rs` (modified, +1/-4)
-```diff
-@@ -1645,9 +1645,6 @@ fn parse_from_clause_table(
-                 if already_visible {
-                     continue;
+@@ -2690,7 +2690,7 @@ fn encrypted_restore_rejects_storage_changes_but_allows_schema_publication() ->
+             owner.publish_schema_after_external_restore()?;
+             if let Some(store) = owner.mv_store().as_ref() {
+                 assert!(store.reset_logical_log_after_external_restore().is_err());
+-                if let Some(completion) = store.sync_logical_log_after_external_restore(&owner)? {
++                if let Some(completion) = store.sync_logical_log(&owner)? {
+                     tmp.io.wait_for_completion(completion)?;
                  }
--                let name_used_by_table_on_the_left = outer_query_refs_for_subquery
--                    .iter()
--                    .any(|reference| reference.identifier == cte_definition.name);
-                 // This plan only makes the name visible. A later FROM lookup performs
-                 // the real CTE use and validates its explicit column list.
-                 let cte_table = plan_cte(
-@@ -1671,7 +1668,7 @@ fn parse_from_clause_table(
-                         .then(|| cte_definition.select.clone()),
-                     cte_explicit_columns: cte_definition.explicit_columns.clone(),
-                     cte_id: Some(cte_definition.cte_id),
--                    cte_definition_only: name_used_by_table_on_the_left,
-+                    cte_definition_only: true,
-                     rowid_referenced: false,
-                     outer_join_may_null_extend: false,
-                     scope_depth: 0,
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/cte.sqltest` (modified, +38/-0)
-```diff
-@@ -1668,6 +1668,44 @@ expect error {
-     no such column: y
- }
- 
-+# A FROM clause subquery can read a CTE through a nested subquery, but the CTE's
-+# columns are not visible in the FROM clause subquery itself.
-+test cte-columns-not-visible-in-from-subquery-whose-exists-reads-cte {
-+    WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT x WHERE EXISTS (SELECT 1 FROM c));
-+}
-+expect error {
-+    no such column: x
-+}
-+
-+test cte-columns-not-visible-in-from-subquery-whose-scalar-subquery-reads-cte {
-+    WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT (SELECT x FROM c), (SELECT x));
-+}
-+expect error {
-+    no such column: x
-+}
-+
-+test cte-qualified-column-not-visible-in-from-subquery-whose-exists-reads-cte {
-+    WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT c.x WHERE EXISTS (SELECT 1 FROM c));
-+}
-+expect error {
-+    no such column: c\.x
-+}
-+
-+test cte-columns-not-visible-in-joined-from-subquery-whose-exists-reads-cte {
-+    WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT 1) JOIN (SELECT x WHERE EXISTS (SELECT 1 FROM c));
-+}
-+expect error {
-+    no such column: x
-+}
-+
-+test cte-columns-visible-in-from-subquery-that-selects-from-cte {
-+    WITH c AS (SELECT 5 AS x)
-+    SELECT * FROM (SELECT x, (SELECT x), (SELECT count(*) FROM c) FROM c);
-+}
-+expect {
-+    5|5|1
-+}
-+
- # A CTE is not a table-valued function; calling it with arguments is an error.
- test cte-referenced-with-call-arguments-rejected {
-     WITH cte1(x) AS (VALUES(1)) SELECT * FROM cte1(7);
-```
-
-**File**: `testing/shared-sqltests/lateral-errors.sqltest` (modified, +17/-0)
-```diff
-@@ -544,3 +544,20 @@ expect {
-     2|2
-     3|0
- }
-+
-+# A CTE that a subquery reads does not make its columns visible in a LATERAL
-+# subquery whose FROM clause does not name it.
-+test lateral-cannot-read-columns-of-a-cte-it-does-not-select-from {
-+    WITH c AS (SELECT 5 AS x) SELECT * FROM (SELECT 1 AS y) AS s, LATERAL (SELECT x WHERE EXISTS (SELECT 1 FROM c)) AS l;
-+}
-+expect error {
-+    no such column: x
-+}
-+@sqlstate 42703
-+expect @tursopg error {
-+    no such column: x
-+}
-+@sqlstate 42703
-+expect @postgres error {
-+    column "x" does not exist
-+}
+             }
 ```
 
 ---
 
-### Incident Patch 3: `315e9a32` (2026-11-19)
-**Commit Message**: skills/debugging: fix log paths and the ThreadSanitizer and simulator commands
+### Incident Patch 2: `a6ac463f` (2026-11-17)
+**Commit Message**: core/database: require authenticated pagers before exposing connections
 
-The skill said to get trace logs from make test, but the Makefile sets
-RUST_LOG=off, and it named testing/test.log as the output. tursodb reads
-RUST_LOG and writes to stderr or to the file given with -t. The
-ThreadSanitizer command never set -Zsanitizer=thread, so it ran without the
-sanitizer, and it used rustup override, which changes the toolchain of the
-checkout; it now uses cargo +nightly with RUSTFLAGS.
+Reject missing keys and late encryption, authenticate before publishing
+layout or resolving roles, and check pager/database identity when
+constructing a connection. Assert authentication before page allocation
+and migrate existing failures from query time to initialization time.
 
-The architecture overview and the repeated manual inspection section are
-removed. The skill is now the only copy.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.claude/skills/debugging/SKILL.md` (modified, +31/-62)
+**File**: `core/database.rs` (modified, +43/-7)
 ```diff
-@@ -1,104 +1,73 @@
- ---
- name: debugging
--description: How to debug tursodb using Bytecode comparison, logging, ThreadSanitizer, deterministic simulation, and corruption analysis tools
-+description: How to debug tursodb using bytecode comparison, logging, ThreadSanitizer, deterministic simulation, stack usage scripts, and corruption analysis tools
- ---
- # Debugging Guide
+@@ -1715,7 +1715,7 @@ impl Database {
+                     state.header_validation_state = hv_state;
+                     let pager = return_if_io!(result);
  
--## Bytecode Comparison Flow
-+## Bytecode Comparison
- 
--Turso aims for SQLite compatibility. When behavior differs:
+-                    let mut db = state
++                    let db = state
+                         .building_db
+                         .take()
+                         .expect("building_db must be set in Init phase");
+@@ -1730,8 +1730,6 @@ impl Database {
+                             "Either WAL or MVStore must be enabled"
+                         );
+                     }
+-                    let _ = &mut db;
 -
--```
--1. EXPLAIN query in sqlite3
--2. EXPLAIN query in tursodb
--3. Compare bytecode
--   ├─ Different → bug in code generation
--   └─ Same but results differ → bug in VM or storage layer
--```
+                     // Wrap db in Arc before connecting
+                     let db = Arc::new(db);
+ 
+@@ -2004,6 +2002,18 @@ impl Database {
+             )
+             .into());
+         }
++        if self.pager_state.encryption_cipher() == CipherMode::None && encryption_key.is_some() {
++            return Err(LimboError::InvalidArgument(
++                "database was opened without encryption".into(),
++            )
++            .into());
++        }
++        if self.pager_state.encryption_cipher() != CipherMode::None && encryption_key.is_none() {
++            return Err(LimboError::InvalidArgument(
++                "encrypted database requires an encryption key".into(),
++            )
++            .into());
++        }
+         loop {
+             match st {
+                 InitState::Start => {
+@@ -2049,9 +2059,22 @@ impl Database {
+ 
+                     *st = InitState::ReadPage1 {
+                         pager: Box::new(pager),
++                        encryption_validation: EncryptionValidationState::default(),
+                     };
+                 }
+-                InitState::ReadPage1 { pager } => {
++                InitState::ReadPage1 {
++                    pager,
++                    encryption_validation,
++                } => {
++                    match pager.validate_encryption(encryption_validation) {
++                        Ok(IOResult::Done(())) => {}
++                        Ok(IOResult::IO(io)) => return Ok(IOResult::IO(io)),
++                        Err(err) => {
++                            pager.end_read_tx();
++                            return Err(err);
++                        }
++                    }
++                    pager.set_page_size(pager.get_page_size_unchecked());
+                     // Read page 1 within the read transaction to determine the
+                     // autovacuum mode. The read tx stays open across an IO
+                     // yield here (re-entry resumes the read); we only end it
+@@ -2121,7 +2144,7 @@ impl Database {
+                     pager.end_read_tx();
+                     pager.set_auto_vacuum_mode(mode);
+ 
+-                    let InitState::ReadPage1 { pager } = std::mem::take(st) else {
++                    let InitState::ReadPage1 { pager, .. } = std::mem::take(st) else {
+                         unreachable!("state is ReadPage1");
+                     };
+                     return Ok(IOResult::Done(*pager));
+@@ -2743,7 +2766,6 @@ impl Database {
+         pager: Option<Arc<Pager>>,
+         stats: StatsRefresh,
+     ) -> Result<Arc<Connection>> {
+-        let role = self.resolve_session_role(&opts.role)?;
+         let ConnectOpts {
+             encryption_key,
+             page_codec,
+@@ -2769,12 +2791,16 @@ impl Database {
+             // before reading page 1. This is required for reopening encrypted databases.
+             Arc::new(self._init(encryption_key.as_ref(), page_codec.clone())?)
+         };
++        turso_assert!(
++            pager.is_authenticated(),
++            "connection initialization must authenticate its pager"
++        );
+         let default_cache_size = pager
+             .io
+             .block(|| pager.with_header(|header| header.default_page_cache_size))
+             .unwrap_or_default()
+             .get();
 -
--### Example
-+When Turso and SQLite give different results, run `EXPLAIN` on both:
- 
- ```bash
--# SQLite
- sqlite3 :memory: "EXPLAIN SELECT 1 + 1;"
--
--# Turso
- cargo run --bin tursodb :memory: "EXPLAIN SELECT 1 + 1;"
- ```
- 
--## Manual Query Inspection
--
--```bash
--cargo run --bin tursodb :memory: 'SELECT * FROM foo;'
--cargo run --bin tursodb :memory: 'EXPLAIN SELECT * FROM foo;'
--```
-+Different bytecode means a bug in code generation (`core/translate/`). Same bytecode
-+with different results means a bug in the VM or storage layer.
- 
- ## Logging
- 
--```bash
--# Trace core during tests
--RUST_LOG=none,turso_core=trace make test
-+`tursodb` logs with `tracing`. It reads `RUST_LOG` (default level: warn) and writes to
-+stderr, or to a file with `-t <file>` (`--tracing-output`).
- 
--# Output goes to testing/test.log
--# Warning: can be megabytes per test run
-+```bash
-+RUST_LOG=turso_core=trace cargo run --bin tursodb -- -t /tmp/turso.log :memory: 'SELECT 1;'
- ```
- 
-+Logs can reach megabytes. `make test` sets `RUST_LOG=off`, so use `cargo run` or `cargo test` to get logs.
-+
- ## Threading Issues
- 
--Use stress tests with ThreadSanitizer:
-+Run the stress test under ThreadSanitizer. It needs a nightly toolchain with the `rust-src` component, and `--target` set to the host target (`x86_64-unknown-linux-gnu` on Linux, `aarch64-apple-darwin` on Apple Silicon):
- 
- ```bash
--rustup toolchain install nightly
--rustup override set nightly
--cargo run -Zbuild-std --target x86_64-unknown-linux-gnu \
-+RUSTFLAGS="-Zsanitizer=thread" cargo +nightly run -Zbuild-std --target x86_64-unknown-linux-gnu \
-   -p turso_stress -- --vfs syscall --nr-threads 4 --nr-iterations 1000
- ```
- 
-+Flags: `--vfs`, `--nr-threads` (`-t`), `--nr-iterations` (`-i`); see `--help` for the rest.
-+
- ## Deterministic Simulation
- 
--Reproduce bugs with seed. Note: simulator uses legacy "limbo" naming.
-+Replay a failure with its seed. The simulator binary is named `limbo_sim`.
- 
- ```bash
--# Simulator
- RUST_LOG=limbo_sim=debug cargo run --bin limbo_sim -- -s <seed>
- 
--# Whopper (concurrent DST)
-+# Whopper (concurrent simulator). Repeat a run with the same seed and flags.
- SEED=1234 ./testing/concurrent-simulator/bin/run
- ```
- 
-+See `testing/concurrent-simulator/README.md` for flags such as `--mode` and `--swarm`.
-+
- ## Stack Usage
- 
--Parsing and translating an expression recurse once per level of nesting, so
--the stack frame size of those functions limits how deep an expression can be.
--Three scripts in `scripts/stack/` measure stack use. Use a release build
--(`cargo build --release --bin tursodb`): debug builds do not reuse stack slots,
--so their frames say little about what users run. Run each script with `-h`
--for all options.
-+Parsing and translating an expression recurse once per level of nesting, so frame
-+size limits how deep an expression can be. Scripts in `scripts/stack/` measure it
-+(`-h` lists options). Use a release build (`cargo build --release --bin tursodb`);
-+debug builds do not reuse stack slots, so their frames say little about what users run.
- 
- ```bash
--# Frame size of each function, read from its prologue. -c compares two binaries.
--scripts/stack/frame-sizes.sh 'translate::expr::'
--scripts/stack/frame-sizes.sh -c /tmp/tursodb-main 'translate_expr$' 'parse_expr_inner$'
--
--# Smallest stack that runs a SQL script, per binary. -S adds sqlite3.
--scripts/stack/min-stack.sh -S -b /tmp/tursodb-main -b target/release/tursodb deep.sql
--
--# Which functions use the stack at the deepest point (runs under lldb).
--scripts/stack/stack-profile.sh deep.sql
-+scripts/stack/frame-sizes.sh '<function name pattern>'        # frame size per function; -c compares two binaries
-+scripts/stack/min-stack.sh -S -b target/release/tursodb deep.sql   # smallest stack that runs a script
-+scripts/stack/stack-profile.sh deep.sql                 # functions on the stack at its deepest point (lldb)
- ```
- 
--Functions that recurse per level should be small. Move rare and large paths
--into `#[inline(never)]` helpers, like SQLite's `SQLITE_NOINLINE`.
--
--## Architecture Reference
--
--- **Parser** → AST from SQL strings
--- **Code generator** → bytecode from AST
--- **Virtual machine** → executes SQLite-compatible bytecode
--- **Storage layer** → B-tree operations, paging
--
--## Corruption Debugging
-+Functions that recurse per 
++        let role = self.resolve_session_role(&opts.role)?;
+         let conn = self.new_connection(
+             role,
+             is_mvcc_bootstrap_connection,
+@@ -2837,6 +2863,16 @@ impl Database {
+         default_cache_size: i32,
+         context: ConnectionContext,
+     ) -> Result<Arc<Connection>> {
++        if !pager.shares_database_state(&self.pager_state) {
++            return Err(LimboError::InvalidArgument(
++                "connection pager belongs to another database".into(),
++            ));
++        }
++        if !pager.is_authenticated() {
++            return Err(LimboError::InvalidArgument(
++                "connection pager has not completed authentication".into(),
++            ));
++        }
+         let encryption_cipher = self.encryption_cipher_mode.get();
+         let conn = Arc::new(Connection {
+             db: self.clone(),
 ```
 
-**File**: `docs/agent-guides/debugging.md` (removed, +0/-98)
+**File**: `core/storage/pager.rs` (modified, +12/-0)
 ```diff
-@@ -1,98 +0,0 @@
-----
--name: debugging
--description: Bytecode comparison, logging, ThreadSanitizer, deterministic simulation
-----
--# Debugging Guide
+@@ -3412,6 +3412,10 @@ impl Pager {
+ 
+     #[instrument(skip_all, level = Level::DEBUG)]
+     pub fn maybe_allocate_page1(&self) -> IOResultOr<()> {
++        turso_assert!(
++            self.is_authenticated(),
++            "page allocation requires an authenticated pager"
++        );
+         if !self.db_initialized() {
+             if let Some(_lock) = self.shared.init_lock.try_lock() {
+                 return Ok(self.allocate_page1()?.map(|_| ()));
+@@ -5801,6 +5805,10 @@ impl Pager {
+ 
+     #[instrument(skip_all, level = Level::DEBUG)]
+     pub fn allocate_page1(&self) -> IOResultOr<PageRef> {
++        turso_assert!(
++            self.is_authenticated(),
++            "page allocation requires an authenticated pager"
++        );
+         let state = self.allocate_page1_state.read().clone();
+         match state {
+             AllocatePage1State::Start => {
+@@ -6298,6 +6306,10 @@ impl Pager {
+         Ok(IOResult::Done(result))
+     }
+ 
++    pub(crate) fn shares_database_state(&self, shared: &Arc<SharedPagerState>) -> bool {
++        Arc::ptr_eq(&self.shared, shared)
++    }
++
+     pub fn is_encryption_ctx_set(&self) -> bool {
+         self.io_ctx.read().encryption_context().is_some()
+     }
+```
+
+**File**: `tests/integration/query_processing/encryption.rs` (modified, +25/-30)
+```diff
+@@ -140,18 +140,15 @@ fn run_corruption_associated_data_bytes_test(
+             test_db_path.to_str().unwrap()
+         );
+ 
+-        let (_io, conn) = turso_core::Connection::from_uri(
+-            &uri,
+-            DatabaseOpts::new().with_encryption(ENABLE_ENCRYPTION),
+-            Arc::new(SqliteDialect),
+-        )
+-        .expect("opening the corrupted DB should not fail at the URI level");
 -
--## Bytecode Comparison Flow
+-        let result = run_query_on_row(tmp_db, &conn, "SELECT * FROM test", |_row: &Row| {});
 -
--Turso aims for SQLite compatibility. When behavior differs:
+-        assert_that!(result)
+-            .described_as(format!("accessing an encrypted database with corrupted associated data at position {corrupt_pos}"))
+-            .is_err();
++        assert!(
++            turso_core::Connection::from_uri(
++                &uri,
++                DatabaseOpts::new().with_encryption(true),
++                Arc::new(SqliteDialect)
++            )
++            .is_err(),
++            "corrupted associated data at {corrupt_pos}"
++        );
+     }
+ 
+     Ok(())
+@@ -249,11 +246,12 @@ fn test_per_page_encryption(tmp_db: TempDatabase) -> anyhow::Result<()> {
+             "file:{}?cipher=aegis256&hexkey=b1bbfda4f589dc9daaf004fe21111e00dc00c98237102f5c7002a5669fc76377",
+             db_path.to_str().unwrap()
+         );
+-        let (_io, conn) = turso_core::Connection::from_uri(&uri, opts, Arc::new(SqliteDialect))?;
+-        let result = run_query_on_row(&tmp_db, &conn, "SELECT * FROM test", |_row: &Row| {});
+-        assert_that!(result)
+-            .described_as("accessing an encrypted database with the wrong key")
+-            .is_err();
++        assert!(matches!(
++            turso_core::Connection::from_uri(&uri, opts, Arc::new(SqliteDialect)),
++            Err(LimboError::CompletionError(
++                CompletionError::DecryptionError { .. }
++            ))
++        ));
+     }
+     {
+         // test connecting to encrypted db using insufficient encryption parameters in URI.
+@@ -277,11 +275,10 @@ fn test_per_page_encryption(tmp_db: TempDatabase) -> anyhow::Result<()> {
+     }
+     {
+         // test connecting to encrypted db without using URI.
+-        let conn = tmp_db.connect_limbo();
+-        let result = run_query_on_row(&tmp_db, &conn, "SELECT * FROM test", |_row: &Row| {});
+-        assert_that!(result)
+-            .described_as("accessing an encrypted database without using the URI")
+-            .is_err();
++        assert!(tmp_db
++            .db
++            .connect(ConnectOpts::new(turso_core::SessionRole::Superuser))
++            .is_err());
+     }
+ 
+     Ok(())
+@@ -407,14 +404,12 @@ fn test_corruption_turso_magic_bytes(tmp_db: TempDatabase) -> anyhow::Result<()>
+             db_path.to_str().unwrap()
+         );
+ 
+-        let (_io, conn) = turso_core::Connection::from_uri(&uri, opts, Arc::new(SqliteDialect))?;
+-        let result = run_query_on_row(&tmp_db, &conn, "SELECT * FROM test", |_row: &Row| {});
 -
--```
--1. EXPLAIN query in sqlite3
--2. EXPLAIN query in tursodb
--3. Compare bytecode
--   ├─ Different → bug in code generation
--   └─ Same but results differ → bug in VM or storage layer
--```
--
--### Example
--
--```bash
--# SQLite
--sqlite3 :memory: "EXPLAIN SELECT 1 + 1;"
--
--# Turso
--cargo run --bin tursodb :memory: "EXPLAIN SELECT 1 + 1;"
--```
--
--## Manual Query Inspection
--
--```bash
--cargo run --bin tursodb :memory: 'SELECT * FROM foo;'
--cargo run --bin tursodb :memory: 'EXPLAIN SELECT * FROM foo;'
--```
--
--## Logging
--
--```bash
--# Trace core during tests
--RUST_LOG=none,turso_core=trace make test
--
--# Output goes to testing/test.log
--# Warning: can be megabytes per test run
--```
--
--## Threading Issues
--
--Use stress tests with ThreadSanitizer:
--
--```bash
--rustup toolchain install nightly
--rustup override set nightly
--cargo run -Zbuild-std --target x86_64-unknown-linux-gnu \
--  -p turso_stress -- --vfs syscall --nr-threads 4 --nr-iterations 1000
--```
--
--## Deterministic Simulation
--
--Reproduce bugs with seed. Note: simulator uses legacy "limbo" naming.
--
--```bash
--# Simulator
--RUST_LOG=limbo_sim=debug cargo run --bin limbo_sim -- -s <seed>
--
--# Whopper (concurrent DST)
--SEED=1234 ./testing/concurrent-simulator/bin/run
--```
--
--## Stack Usage
--
--Parsing and translating an expression recurse once per level of nesting, so
--the stack frame size of those functions limits how deep an expression can be.
--Three scripts in `scripts/stack/` measure stack use. Use a release build
--(`cargo build --release --bin tursodb`): debug builds do not reuse stack slots,
--so their frames say little about what users run. Run each script with `-h`
--for all options.
--
--```bash
--# Frame size of each function, read from its prologue. -c compares two binaries.
--scripts/stack/frame-sizes.sh 'translate::expr::'
--scripts/stack/frame-sizes.sh -c /tmp/tursodb-main 'translate_expr$' 'parse_expr_inner$'
--
--# Smallest stack that runs a SQL script, per binary. -S adds sqlite3.
--scripts/stack/min-stack.sh -S -b /tmp/tursodb-main -b target/release/tursodb deep.sql
--
--# Which functions use the stack at the deepest point (runs under lldb).
--scripts/stack/stack-profile.sh deep.sql
--```
--
--Functions that recurse per level should be small. Move rare and large paths
--into `#[inline(never)]` helpers, like SQLite's `SQLITE_NOINLINE`.
--
--## Architecture Reference
--
--- **Parser** → AST from SQL strings
--- **Code generator** → bytecode from AST
--- **Virtual machine** → executes SQLite-compatible bytecode
--- **Storage layer** → B-tree operations, paging
+-        assert_that!(result)
+-            .described_as("accessing an encrypted database with corrupted Turso magic bytes")
+-            .err()
+-            .display_string()
+-            .contains("Decryption failed");
++        assert!(matches!(
++            turso_core::Connection::from_uri(&uri, opts, Arc::new(SqliteDialect)),
++            Err(LimboError::CompletionError(
++                CompletionError::DecryptionError { .. }
++            ))
++        ));
+     }
+ 
+     Ok(())
+```
+
+---
+
+### Incident Patch 3: `280f0614` (2026-11-17)
+**Commit Message**: tests/integration: configure encrypted fixtures at open
+
+Keep existing integration scenarios working with open-time credentials
+and initial page sizes. Pass each fixture key when creating connections
+and remove setup through encryption PRAGMA assignments.
+
+**File**: `tests/integration/common.rs` (modified, +42/-13)
+```diff
+@@ -39,6 +39,7 @@ pub struct TempDatabase {
+     pub init_sql: Option<String>,
+     #[allow(dead_code)]
+     pub enable_mvcc: bool,
++    pub encryption: Option<turso_core::EncryptionOpts>,
+ }
+ unsafe impl Send for TempDatabase {}
+ 
+@@ -53,6 +54,8 @@ pub struct TempDatabaseBuilder {
+     io_uring: bool,
+     enable_views: bool,
+     dialect: Option<Arc<dyn Dialect>>,
++    encryption: Option<turso_core::EncryptionOpts>,
++    page_size: Option<turso_core::storage::sqlite3_ondisk::PageSize>,
+ }
+ 
+ struct TestIo {
+@@ -139,6 +142,8 @@ impl TempDatabaseBuilder {
+             io_uring: false,
+             enable_views: false,
+             dialect: None,
++            encryption: None,
++            page_size: None,
+         }
+     }
+ 
+@@ -200,6 +205,19 @@ impl TempDatabaseBuilder {
+         self
+     }
+ 
++    pub fn with_encryption(mut self, cipher: &str, hexkey: &str) -> Self {
++        self.encryption = Some(turso_core::EncryptionOpts {
++            cipher: cipher.into(),
++            hexkey: hexkey.into(),
++        });
++        self
++    }
++
++    pub fn with_page_size(mut self, size: u32) -> Self {
++        self.page_size = Some(turso_core::storage::sqlite3_ondisk::PageSize::new(size).unwrap());
++        self
++    }
++
+     pub fn build(self) -> TempDatabase {
+         let mut opts = self
+             .opts
+@@ -250,21 +268,25 @@ impl TempDatabaseBuilder {
+             }
+         };
+         let dialect = self.dialect.unwrap_or_else(|| Arc::new(SqliteDialect));
+-        let db = Database::open_file_with_flags(
+-            io.clone(),
+-            db_path.to_str().unwrap(),
+-            flags,
+-            opts,
+-            None,
+-            dialect,
+-        )
+-        .unwrap();
++        let mut options = turso_core::OpenOptions::new(dialect)
++            .flags(flags)
++            .db_opts(opts)
++            .encryption(self.encryption.clone());
++        if let Some(size) = self.page_size {
++            options = options.page_size(size);
++        }
++        let db = Database::open(io.clone(), db_path.to_str().unwrap(), options).unwrap();
++        let connect_opts = || {
++            ConnectOpts::new(SessionRole::Superuser).with_encryption_key(
++                self.encryption
++                    .as_ref()
++                    .map(|opts| turso_core::EncryptionKey::from_hex_string(&opts.hexkey).unwrap()),
++            )
++        };
+ 
+         // Enable MVCC via turso connection if requested
+         if self.enable_mvcc {
+-            let conn = db
+-                .connect(ConnectOpts::new(SessionRole::Superuser))
+-                .unwrap();
++            let conn = db.connect(connect_opts()).unwrap();
+             conn.pragma_update("journal_mode", "'mvcc'")
+                 .expect("enable mvcc");
+         }
+@@ -277,6 +299,7 @@ impl TempDatabaseBuilder {
+             db_flags: flags,
+             init_sql: self.init_sql,
+             enable_mvcc: self.enable_mvcc,
++            encryption: self.encryption,
+         }
+     }
+ }
+@@ -331,7 +354,13 @@ impl TempDatabase {
+ 
+         let conn = self
+             .db
+-            .connect(ConnectOpts::new(SessionRole::Superuser))
++            .connect(
++                ConnectOpts::new(SessionRole::Superuser).with_encryption_key(
++                    self.encryption.as_ref().map(|opts| {
++                        turso_core::EncryptionKey::from_hex_string(&opts.hexkey).unwrap()
++                    }),
++                ),
++            )
+             .unwrap();
+         log::debug!("connected to limbo");
+         conn
+```
+
+**File**: `tests/integration/query_processing/encryption.rs` (modified, +31/-39)
+```diff
+@@ -6,30 +6,34 @@ use asserting::prelude::*;
+ use rand::{rng, RngCore};
+ use std::sync::Arc;
+ use turso_core::{
+-    CipherMode, ConnectOpts, Database, DatabaseOpts, EncryptionKey, EncryptionOpts, OpenFlags,
+-    PlatformIO, Row, SessionRole, IO,
++    CompletionError, ConnectOpts, Database, DatabaseOpts, EncryptionKey, EncryptionOpts,
++    LimboError, OpenFlags, OpenOptions, PlatformIO, Row, SessionRole, IO,
+ };
+ use turso_sqlite::SqliteDialect;
+ 
+ const ENABLE_ENCRYPTION: bool = true;
+ 
++fn encrypted_fixture(source: &TempDatabase, size: u32) -> TempDatabase {
++    TempDatabaseBuilder::new()
++        .with_opts(source.db_opts)
++        .with_mvcc(source.enable_mvcc)
++        .with_encryption(CIPHER_A, KEY_A)
++        .with_page_size(size)
++        .build()
++}
++
+ fn run_non_4k_page_size_encryption_test(
+     tmp_db: &TempDatabase,
+     enable_mvcc: bool,
+ ) -> anyhow::Result<()> {
++    // Set page size to 8k (8192 bytes) and test encryption. Default page size is 4k.
++    let encrypted = encrypted_fixture(tmp_db, 8192);
++    let tmp_db = &encrypted;
+     let _ = env_logger::try_init();
+     let db_path = tmp_db.path.clone();
+ 
+     {
+         let conn = tmp_db.connect_limbo();
+-        // Set page size to 8k (8192 bytes) and test encryption. Default page size is 4k.
+-        run_query(tmp_db, &conn, "PRAGMA page_size = 8192;")?;
+-        run_query(
+-            tmp_db,
+-            &conn,
+-            "PRAGMA hexkey = 'b1bbfda4f589dc9daaf004fe21111e00dc00c98237102f5c7002a5669fc76327';",
+-        )?;
+-        run_query(tmp_db, &conn, "PRAGMA cipher = 'aegis256';")?;
+         if enable_mvcc {
+             run_query(tmp_db, &conn, "PRAGMA journal_mode = 'mvcc';")?;
+         }
+@@ -78,17 +82,13 @@ fn run_corruption_associated_data_bytes_test(
+     tmp_db: &TempDatabase,
+     enable_mvcc: bool,
+ ) -> anyhow::Result<()> {
++    let encrypted = encrypted_fixture(tmp_db, 4096);
++    let tmp_db = &encrypted;
+     let _ = env_logger::try_init();
+     let db_path = tmp_db.path.clone();
+ 
+     {
+         let conn = tmp_db.connect_limbo();
+-        run_query(
+-            tmp_db,
+-            &conn,
+-            "PRAGMA hexkey = 'b1bbfda4f589dc9daaf004fe21111e00dc00c98237102f5c7002a5669fc76327';",
+-        )?;
+-        run_query(tmp_db, &conn, "PRAGMA cipher = 'aegis256';")?;
+         if enable_mvcc {
+             run_query(tmp_db, &conn, "PRAGMA journal_mode = 'mvcc';")?;
+         }
+@@ -157,18 +157,13 @@ fn run_corruption_associated_data_bytes_test(
+ // TODO: mvcc does not error here
+ #[turso_macros::test]
+ fn test_per_page_encryption(tmp_db: TempDatabase) -> anyhow::Result<()> {
++    let tmp_db = encrypted_fixture(&tmp_db, 4096);
+     let _ = env_logger::try_init();
+     let db_path = tmp_db.path.clone();
+     let opts = tmp_db.db_opts;
+ 
+     {
+         let conn = tmp_db.connect_limbo();
+-        run_query(
+-            &tmp_db,
+-            &conn,
+-            "PRAGMA hexkey = 'b1bbfda4f589dc9daaf004fe21111e00dc00c98237102f5c7002a5669fc76327';",
+-        )?;
+-        run_query(&tmp_db, &conn, "PRAGMA cipher = 'aegis256';")?;
+         run_query(
+             &tmp_db,
+             &conn,
+@@ -359,19 +354,14 @@ fn test_mvcc_rejects_late_encryption_pragmas(tmp_db: TempDatabase) -> anyhow::Re
+ // TODO: mvcc for some reason does not error on corruption here
+ #[turso_macros::test]
+ fn test_corruption_turso_magic_bytes(tmp_db: TempDatabase) -> anyhow::Result<()> {
++    let tmp_db = encrypted_fixture(&tmp_db, 4096);
+     let _ = env_logger::try_init();
+     let db_path = tmp_db.path.clone();
+ 
+     let opts = tmp_db.db_opts;
+ 
+     {
+         let conn = tmp_db.connect_limbo();
+-        run_query(
+-            &tmp_db,
+-            &conn,
+-            "PRAGMA hexkey = 'b1bbfda4f589dc9daaf004fe21111e00dc00c98237102f5c7002a5669fc76327';",
+-        )?;
+-        run_query(&tmp_db, &conn, "PRAGMA cipher = 'aegis256';")?;
+         run_query(
+             &tmp_db,
+             &conn,
+@@ -516,13 +506,12 @@ fn test_turso_header_structure(db: TempDatabase) -> anyhow::Result<()> {
+         let tmp_db = TempDatabase::builder()
+             .with_opts(opts)
+             .with_flags(flags)
++            .with_encryption(cipher_name, hexkey)
+             .build();
+         let db_path = tmp_db.path.clone();
+ 
+         {
+             let conn = tmp_db.connect_limbo();
+-            run_query(&tmp_db, &conn, &format!("PRAGMA hexkey = '{hexkey}';"))?;
+-            run_query(&tmp_db, &conn, &format!("PRAGMA cipher = '{cipher_name}';"))?;
+             run_query(
+                 &tmp_db,
+                 &conn,
+@@ -580,9 +569,10 @@ fn test_encryption_key_validation_with_cached_database(_db: TempDatabase) -> any
+         let correct_encryption_key =
+             turso_core::EncryptionKey::from_hex_string(correct_key).unwrap();
+ 
+-        let conn = main_db.connect(ConnectOpts::new(SessionRole::Superuser))?;
+-        conn.set_encryption_cipher(turso_core::CipherMode::Aegis256)?;
+-        conn.set_encryption_key(correct_encryption_key)?;
++        let conn
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12107** (2026-11-19): postgres: add more known-gap tests against PostgreSQL (@dswbx)
-- **PR #12101** (2026-11-19): core, postgres: use less stack when preparing a statement (@jussisaurio)
-- **PR #12098** (2026-11-19): postgres/tests: expect 0A000 for refused table functions in the gap tests (@jussisaurio)
-- **PR #12097** (2026-11-19): Cut AGENTS.md and skills down to facts that match the code (@jussisaurio)
-- **PR #12093** (2026-11-19): postgres: move pg_query to 18.1 to parse PostgreSQL 18 (@glommer)
-- **PR #12090** (2026-11-19): core/schema: read the schema at reparse as a list of load steps (@pedrocarlo)
+- **PR #12168** (2026-11-20): ci/dotnet: pin .NET 10 SDK in iOS package validation (@penberg)
+- **PR #12164** (2026-11-20): testing/sqltest: record known PostgreSQL differences as @compat-gap tests (@jussisaurio)
+- **PR #12157** (2026-11-20): sdk-kit: update README examples to the current C and Rust API (@turso-github-handyman[bot])
+- **PR #12156** (closed): postgres: store timestamp and timestamptz as PostgreSQL does (@jussisaurio)
+- **PR #12155** (2026-11-20): postgres: now() is the start of the transaction, statement_timestamp() the time the client's query arrived (@jussisaurio)
+- **PR #12151** (2026-11-20): sqlite/conformance: regenerate two gencol snapshots for new bytecode (@glommer)
 
 ---
 
@@ -2117,42 +2058,41 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/vdbe: fix sum and avg over a window after an infinite value leaves' 
+## X. tests: fix compilation and lint errors after main rebase
 
 **RULE**:
-When implementing operations in `core/dialect/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/integration/database_open.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1befb62a`: Merge 'core/vdbe: fix sum and avg over a window after an infinite value leaves' from app/turso-github-handyman. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `be08cdd2`: tests: fix compilation and lint errors after main rebase. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/dialect/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/integration/database_open.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Whether `sum()` and `avg()` count their infinite inputs apart from
-    /// the total of the finite ones.
-    ///
-    /// PostgreSQL does, so a moving window frame gives a finite result again
-    /// once its infinite values leave it. SQLite adds them to the total.
-    /// Removing a row from a window frame adds its negation, so once an
-    /// infinite value leaves, the total is `Inf - Inf`, which is NaN, and
-    /// the result stays NULL.
-    fn sum_counts_infinite_inputs(&self) -> bool {
-        false
-    }
-
+                                .expect_err("cached open accepted a mismatching page size");
+                                .expect_err("cached open accepted the wrong key");
+                        .expect_err("cold open accepted a mismatching page size");
+                            .expect_err("cold open accepted the wrong key");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+                                .err()
+                                .expect("cached open accepted a mismatching page size");
+                                .err()
+                                .expect("cached open accepted the wrong key");
+                        .err()
+                        .expect("cold open accepted a mismatching page size");
+                            .err()
+                            .expect("cold open accepted the wrong key");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1befb62a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `be08cdd2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
