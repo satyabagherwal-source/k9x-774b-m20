@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T19:06:31.052Z",
-    "lastVerified": "2026-11-20T19:06:31.052Z",
+    "lastChecked": "2026-11-20T20:15:00.262Z",
+    "lastVerified": "2026-11-20T20:15:00.262Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T20:02:31.776Z",
-    "lastVerified": "2026-11-20T20:02:31.776Z",
+    "lastChecked": "2026-11-20T20:15:04.622Z",
+    "lastVerified": "2026-11-20T20:15:04.622Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1514,9 +1514,9 @@
   "seaql-sea-orm": {
     "name": "sea-orm",
     "officialUrl": "https://github.com/SeaQL/sea-orm",
-    "lastChecked": "2026-11-19T15:50:54.907Z",
+    "lastChecked": "2026-11-20T20:14:57.774Z",
     "revisionIdentifier": "c453c64e",
-    "lastVerified": "2026-11-19T15:50:54.907Z"
+    "lastVerified": "2026-11-20T20:14:57.774Z"
   },
   "software-mansion-argent": {
     "name": "software-mansion/argent",
@@ -2084,12 +2084,12 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T13:08:27.307Z",
-    "lastVerified": "2026-11-20T13:08:27.307Z",
+    "lastChecked": "2026-11-20T20:15:00.371Z",
+    "lastVerified": "2026-11-20T20:15:00.371Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "591efe20104a8fb60386c474eab82ffde2608ab0620651152f34dcfdb12299a4",
+    "contentHash": "4e8e8566ac3e788b608b55b0751ee278b79fc3631b8375e1a35413c9fd82ead9",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -2509,9 +2509,9 @@
   "goodrain-rainbond": {
     "name": "rainbond",
     "officialUrl": "https://github.com/goodrain/rainbond",
-    "lastChecked": "2026-11-19T17:06:46.109Z",
+    "lastChecked": "2026-11-20T20:14:52.875Z",
     "revisionIdentifier": "5508cd38",
-    "lastVerified": "2026-11-19T17:06:46.109Z"
+    "lastVerified": "2026-11-20T20:14:52.875Z"
   },
   "crate-crate": {
     "name": "crate/crate",
@@ -6245,9 +6245,9 @@
   "sentrux-sentrux": {
     "name": "sentrux",
     "officialUrl": "https://github.com/sentrux/sentrux",
-    "lastChecked": "2026-11-19T03:27:09.922Z",
+    "lastChecked": "2026-11-20T20:14:45.254Z",
     "revisionIdentifier": "6f8ff3c1",
-    "lastVerified": "2026-11-19T03:27:09.922Z"
+    "lastVerified": "2026-11-20T20:14:45.254Z"
   },
   "hf-baai-bge-base-en-v1.5": {
     "name": "BAAI/bge-base-en-v1.5",
@@ -10647,5 +10647,19 @@
     "lastChecked": "2026-11-20T20:02:17.550Z",
     "revisionIdentifier": "0d07d106",
     "lastVerified": "2026-11-20T20:02:17.550Z"
+  },
+  "psf-requests": {
+    "name": "requests",
+    "officialUrl": "https://github.com/psf/requests",
+    "lastChecked": "2026-11-20T20:14:47.783Z",
+    "revisionIdentifier": "3c7baaa0",
+    "lastVerified": "2026-11-20T20:14:47.783Z"
+  },
+  "sdwebimage-sdwebimageswiftui": {
+    "name": "SDWebImageSwiftUI",
+    "officialUrl": "https://github.com/SDWebImage/SDWebImageSwiftUI",
+    "lastChecked": "2026-11-20T20:14:50.273Z",
+    "revisionIdentifier": "d1f7b2b4",
+    "lastVerified": "2026-11-20T20:14:50.273Z"
   }
 }

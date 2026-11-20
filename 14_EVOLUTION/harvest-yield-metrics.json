@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T20:02:28.692Z",
-  "total_cycles_completed": 11068,
-  "total_learnings_persisted": 11068,
-  "total_rules_promoted": 10424,
+  "last_updated": "2026-11-20T20:15:01.507Z",
+  "total_cycles_completed": 11069,
+  "total_learnings_persisted": 11069,
+  "total_rules_promoted": 10425,
   "history": [
-    {
-      "timestamp": "2026-11-19T21:24:05.647Z",
-      "repository": "dragonflyoss/dragonfly",
-      "learningId": "learn-github-dragonflyoss-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T21:24:11.262Z",
       "repository": "lioensky/VCPToolBox",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-20T20:02:28.692Z",
       "repository": "trufflesecurity/trufflehog",
       "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T20:15:01.507Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

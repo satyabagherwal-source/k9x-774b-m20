@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T20:02:34.242Z",
+  "last_updated": "2026-11-20T20:15:06.639Z",
   "total_records": 2170,
   "domains": {
     "A": {
@@ -8057,8 +8057,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "94e3cbcad700a69f012b926d021f2fe479507d9c825d2e39824db2513fa72448",
-      "created_at": "2026-11-19T23:43:30.678Z"
+      "content_hash": "86957d966f53edbb4c00bd53792eb74aa54a62e5243a2ea3a4f6752ad5cb85cd",
+      "created_at": "2026-11-20T20:15:01.834Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -8903,8 +8903,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "825ce514575588e69e5696895ce66a35f8422daafbf0fa1fd31e011af3ca1039",
-      "created_at": "2026-11-20T20:02:34.242Z"
+      "content_hash": "47492536c00ce612424bc6782f5b2a91f116a91357f1af4962a4018dd6a022ee",
+      "created_at": "2026-11-20T20:15:06.044Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -13084,8 +13084,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "fd3dccf3177fde3f3ac079b36fb1f1803a4a3c61f6eec06adacce9fa85de7827",
-      "created_at": "2026-11-19T23:43:37.384Z"
+      "content_hash": "d3721807ec1c58b2676c9fa95b29f1edc625d4843940987c14a198f81f42ac74",
+      "created_at": "2026-11-20T20:15:05.141Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -31266,8 +31266,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "1bf9ae4b22595f7cdeb61597d52d793f4ab5b46de0f4c898fd93f0fa1ce6c976",
-      "created_at": "2026-11-20T18:27:32.753Z"
+      "content_hash": "9a76dbcbc4c907a9d4e338c3dd27358b37c020a821b7579408088a40ce072aad",
+      "created_at": "2026-11-20T20:15:06.639Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",

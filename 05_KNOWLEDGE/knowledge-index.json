@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T20:02:34.366Z",
+  "last_updated": "2026-11-20T20:15:06.639Z",
   "total_verified_learnings": 9048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22628,
+  "total_items": 22630,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112413,10 +112413,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "2e8f381c",
-      "content_hash": "94e3cbcad700a69f012b926d021f2fe479507d9c825d2e39824db2513fa72448",
+      "source_version": "262640ff",
+      "content_hash": "86957d966f53edbb4c00bd53792eb74aa54a62e5243a2ea3a4f6752ad5cb85cd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T23:43:30.678Z"
+      "persisted_at": "2026-11-20T20:15:01.834Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112425,10 +112425,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "c8ba9da5",
-      "content_hash": "71338c786417836d2d13aebdc1f8f4317dbef5810426fa6a87f0bc7a4cd0d734",
+      "source_version": "262640ff",
+      "content_hash": "bd5c68ebe1c975d72c00623c728a65258746a209b0756634f0c2d0ab1e577e0c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T13:08:28.793Z"
+      "persisted_at": "2026-11-20T20:15:01.977Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-OFSU-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-4JVN-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "676abb7883225167be7a30acc69a4ba596024c37281fbef71fd9ad2d82d5a621",
+      "content_hash": "2091e057566c506736863bf8062da8c880523217eeefaa86802ad717f06c0014",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:02:34.116Z"
+      "persisted_at": "2026-11-20T20:15:05.894Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "825ce514575588e69e5696895ce66a35f8422daafbf0fa1fd31e011af3ca1039",
+      "content_hash": "47492536c00ce612424bc6782f5b2a91f116a91357f1af4962a4018dd6a022ee",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:02:34.242Z"
+      "persisted_at": "2026-11-20T20:15:06.044Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ec75bffc591b296b2860eaa97d09f894cd7ca3d83a6fe7dd6c0b912acd41fbfe",
+      "content_hash": "945678dce5dde15b6ffa5f3a0f3f0b66d503ae3d280cba3432f4db14cd257902",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:02:34.366Z"
+      "persisted_at": "2026-11-20T20:15:06.195Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -223026,8 +223026,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "c8ba9da5",
-      "content_hash": "591efe20104a8fb60386c474eab82ffde2608ab0620651152f34dcfdb12299a4",
+      "source_version": "262640ff",
+      "content_hash": "4e8e8566ac3e788b608b55b0751ee278b79fc3631b8375e1a35413c9fd82ead9",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -223105,6 +223105,11 @@
           "number": 9572,
           "title": "ipn/store/kubestore: cache TLS certs briefly on write replicas",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9634,
+          "title": "util/syspolicy/source: notify sessions when a forced read finds a change",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223112,7 +223117,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T13:08:28.095Z",
+      "verified_at": "2026-11-20T20:15:01.302Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223203,9 +223208,9 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "fd3dccf3177fde3f3ac079b36fb1f1803a4a3c61f6eec06adacce9fa85de7827",
+      "content_hash": "d3721807ec1c58b2676c9fa95b29f1edc625d4843940987c14a198f81f42ac74",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T23:43:37.384Z"
+      "persisted_at": "2026-11-20T20:15:05.141Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings",
@@ -223215,9 +223220,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tailscale-tailscale-learnings",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "21cfde72805d67803fb9969ff1c72dd53feb3bfb715240497d6836f1bdd6ed4e",
+      "content_hash": "de736f7b2b893a10854d7b8eadf5b1f0e952c6265536a157739fbbfc82d7694b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T13:13:24.675Z"
+      "persisted_at": "2026-11-20T20:15:05.313Z"
     },
     "learn-huggingface-stabilityai-stable-diffusion-3-medium": {
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
@@ -288292,9 +288297,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1bf9ae4b22595f7cdeb61597d52d793f4ab5b46de0f4c898fd93f0fa1ce6c976",
+      "content_hash": "9a76dbcbc4c907a9d4e338c3dd27358b37c020a821b7579408088a40ce072aad",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T18:27:32.753Z"
+      "persisted_at": "2026-11-20T20:15:06.639Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -306906,6 +306911,32 @@
       "content_hash": "bfea8e5d1b3745d7413ab025bda887bc77c5010701818599f7e146afd9a52b68",
       "domain_letter": "H",
       "persisted_at": "2026-11-20T20:02:32.498Z"
+    },
+    "rule-9634": {
+      "learning_id": "rule-9634",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9634,
+      "title": "util/syspolicy/source: notify sessions when a forced read finds a change",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "262640ff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T20:15:01.302Z"
+    },
+    "candidate_directive-util-syspolicy-source-notify-sessions-when-a-forced-read-finds-a-change": {
+      "item_id": "candidate_directive-util-syspolicy-source-notify-sessions-when-a-forced-read-finds-a-change",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4J6H-util-syspolicy-source-notify-sessions-when-a-forced-read-finds-a-change.md",
+      "title": "util/syspolicy/source: notify sessions when a forced read finds a change",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8f8f2d2208834cdbdf2488c91dc377eb4d046bb41317074f66da7a47505b4999",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T20:15:04.986Z"
     }
   },
   "ai-builder-brain": {

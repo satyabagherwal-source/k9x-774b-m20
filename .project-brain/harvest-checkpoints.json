@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T20:02:28.695Z",
+  "last_updated": "2026-11-20T20:15:01.511Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "591efe20104a8fb60386c474eab82ffde2608ab0620651152f34dcfdb12299a4",
-      "verified_at": "2026-11-20T13:08:28.297Z",
+      "content_hash": "4e8e8566ac3e788b608b55b0751ee278b79fc3631b8375e1a35413c9fd82ead9",
+      "verified_at": "2026-11-20T20:15:01.510Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T13:08:28.297Z"
+      "last_updated": "2026-11-20T20:15:01.510Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",

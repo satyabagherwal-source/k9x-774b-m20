@@ -11622,3 +11622,4 @@
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T19:45:18.387Z` | `authzed-spicedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-9FB3B7EB` [Domain I] | Yes (`edee7eab...`) |
 | `CYCLE-20261120-O66T` | `2026-11-20T20:02:21.653Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9632` | Yes (`4a50a280...`) |
 | `CYCLE-20261120-OBM4` | `2026-11-20T20:02:28.684Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9633` | Yes (`e08d4e59...`) |
+| `CYCLE-20261120-4GHM` | `2026-11-20T20:15:01.498Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9634` | Yes (`4e8e8566...`) |

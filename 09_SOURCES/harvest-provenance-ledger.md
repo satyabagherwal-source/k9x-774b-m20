@@ -11655,3 +11655,4 @@ Every entry in this ledger must capture:
 | `learn-dom-i-9fb3b7eb` | `project://authzed-spicedb` | `65181da3` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md` | 2026-11-20T19:45:18.387Z |
 | `learn-github-axios-axios` | `https://github.com/axios/axios` | `9f0f4ddf` | Multi-dimensional audit evidence | 2026-11-20T20:02:21.657Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `4ef51f69` | Multi-dimensional audit evidence | 2026-11-20T20:02:28.687Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `262640ff` | Multi-dimensional audit evidence | 2026-11-20T20:15:01.502Z |

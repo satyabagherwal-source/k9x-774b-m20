@@ -4,24 +4,24 @@
 {
   "source_repository": "tailscale/tailscale",
   "source_url": "https://github.com/tailscale/tailscale",
-  "source_version": "2e8f381c",
+  "source_version": "262640ff",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-19T23:43:30.455Z",
+  "timestamp": "2026-11-20T20:15:01.684Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tailscale-tailscale",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `2e8f381c`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-19T23:43:30.455Z`  
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `262640ff`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-20T20:15:01.684Z`  
 > **Learning ID**: `learn-github-tailscale-tailscale`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tailscale/tailscale:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T23:43:28.842Z  
+> **Harvest Timestamp**: 2026-11-20T20:15:00.371Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39337 stars
+- **Stars / Engagement**: 39385 stars
 
 ---
 
@@ -837,148 +837,189 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `92f396d8` (2026-11-19)
-**Commit Message**: util/linuxfw: run without IPv6 rules when ip6tables fails to initialize (#22362)
+### Incident Patch 1: `262640ff` (2026-11-20)
+**Commit Message**: util/syspolicy/source: notify sessions when a forced read finds a change
 
-newIPTablesRunner returned the error from the IPv6 go-iptables constructor,
-which made tailscaled exit at startup. The nft flavor of ip6tables exits 1
-from "--version" on kernels without nf_tables even though the binary is
-present. Treat that like a missing ip6tables and disable tunneled IPv6.
+A Reader is shared by all effective policies that include its source.
+A forced read through one of them updated the Reader's cached snapshot
+and marked it up to date, but didn't notify the other sessions, so
+their policies kept the old settings.
 
-Fixes #20348
+Since a89b32904, "tailscale syspolicy reload" reloads the caller's user
+policy rather than the device policy used by LocalBackend. On Windows,
+a registry change made without a Group Policy refresh was therefore
+reported as configured by the CLI but never applied by the backend.
 
-Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
+Updates tailscale/corp#51820
 
-**File**: `util/linuxfw/iptables.go` (modified, +9/-5)
+Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
+
+**File**: `util/syspolicy/rsop/resultant_policy_test.go` (modified, +55/-0)
 ```diff
-@@ -102,14 +102,18 @@ func newIPTablesRunner(logf logger.Logf) (*iptablesRunner, error) {
- 	case ip6terr != nil:
- 		logf("disabling tunneled IPv6 due to missing ip6tables: %v", ip6terr)
- 	default:
--		supportsV6 = true
- 		ipt6, err = iptables.NewWithProtocol(iptables.ProtocolIPv6)
- 		if err != nil {
--			return nil, err
-+			// ip6tables is present but "ip6tables --version" failed,
-+			// as the nft flavor does on kernels without nf_tables.
-+			// Run without IPv6 rules instead of failing. (#20348)
-+			logf("disabling tunneled IPv6 due to ip6tables init failure: %v", err)
-+		} else {
-+			supportsV6 = true
-+			supportsV6Filter = checkSupportsV6Filter(ipt6, logf)
-+			supportsV6NAT = checkSupportsV6NAT(ipt6, logf)
-+			logf("netfilter running in iptables mode v6 = %v, v6filter = %v, v6nat = %v", supportsV6, supportsV6Filter, supportsV6NAT)
- 		}
--		supportsV6Filter = checkSupportsV6Filter(ipt6, logf)
--		supportsV6NAT = checkSupportsV6NAT(ipt6, logf)
--		logf("netfilter running in iptables mode v6 = %v, v6filter = %v, v6nat = %v", supportsV6, supportsV6Filter, supportsV6NAT)
+@@ -10,6 +10,7 @@ import (
+ 	"strconv"
+ 	"sync"
+ 	"testing"
++	"testing/synctest"
+ 	"time"
+ 
+ 	"github.com/google/go-cmp/cmp"
+@@ -701,6 +702,60 @@ drain:
  	}
- 	return &iptablesRunner{
- 		ipt4:              ipt4,
+ }
+ 
++// unobservableStore is a [source.Store] that doesn't report policy changes,
++// like the Windows Registry when edited without a Group Policy refresh.
++type unobservableStore struct{ source.Store }
++
++func TestForcedReloadUpdatesOtherPolicies(t *testing.T) {
++	synctest.Test(t, func(t *testing.T) {
++		settingA := setting.NewDefinition("TestSettingA", setting.DeviceSetting, setting.StringValue)
++		if err := setting.SetDefinitionsForTest(t, settingA); err != nil {
++			t.Fatalf("SetDefinitionsForTest failed: %v", err)
++		}
++
++		store := source.NewTestStoreOf[string](t)
++		if _, err := RegisterStoreForTest(t, "TestSource", setting.DeviceScope, unobservableStore{store}); err != nil {
++			t.Fatalf("Failed to register policy store: %v", err)
++		}
++
++		// Both the device and the user policies read from the same device store.
++		devicePolicy, err := policyForTest(t, setting.DeviceScope)
++		if err != nil {
++			t.Fatalf("Failed to get device policy: %v", err)
++		}
++		userPolicy, err := policyForTest(t, setting.UserScopeOf("test-user"))
++		if err != nil {
++			t.Fatalf("Failed to get user policy: %v", err)
++		}
++
++		policyChanged := make(chan policyclient.PolicyChange, 1)
++		t.Cleanup(devicePolicy.RegisterChangeCallback(func(pc policyclient.PolicyChange) { policyChanged <- pc }))
++
++		// Forcibly reloading the user policy must also update the device policy.
++		store.SetStrings(source.TestSettingOf(settingA.Key(), "A"))
++		if _, err := userPolicy.Reload(); err != nil {
++			t.Fatalf("Reload failed: %v", err)
++		}
++		if got, want := userPolicy.Get().Get(settingA.Key()), "A"; got != want {
++			t.Errorf("User policy: setting %q: got %q; want %q", settingA.Key(), got, want)
++		}
++
++		time.Sleep(policyReloadMaxDelay)
++		synctest.Wait()
++		select {
++		case pc := <-policyChanged:
++			if !pc.HasChanged(settingA.Key()) {
++				t.Errorf("Policy setting %q has not changed", settingA.Key())
++			}
++		default:
++			t.Fatal("Device policy change callback was not invoked")
++		}
++		if got, want := devicePolicy.Get().Get(settingA.Key()), "A"; got != want {
++			t.Errorf("Device policy: setting %q: got %q; want %q", settingA.Key(), got, want)
++		}
++	})
++}
++
+ func TestClosePolicySource(t *testing.T) {
+ 	testSetting := setting.NewDefinition("TestSetting", setting.DeviceSetting, setting.StringValue)
+ 	if err := setting.SetDefinitionsForTest(t, testSetting); err != nil {
 ```
 
-**File**: `util/linuxfw/iptables_test.go` (added, +55/-0)
+**File**: `util/syspolicy/source/policy_reader.go` (modified, +14/-1)
 ```diff
-@@ -0,0 +1,55 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+//go:build linux && !ts_omit_iptables
-+
-+package linuxfw
-+
-+import (
-+	"fmt"
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"testing"
-+
-+	"tailscale.com/tstest"
-+	"tailscale.com/types/logger"
-+)
-+
-+// TestNewIPTablesRunnerIP6TablesInitFailure checks that a present but
-+// non-functional ip6tables disables IPv6 instead of failing runner creation.
-+// The nft flavor of ip6tables exits 1 from "--version" on kernels without
-+// nf_tables, which used to make tailscaled exit at startup (#20348).
-+func TestNewIPTablesRunnerIP6TablesInitFailure(t *testing.T) {
-+	dir := t.TempDir()
-+	writeScript := func(name, body string) {
-+		t.Helper()
-+		if err := os.WriteFile(filepath.Join(dir, name), []byte("#!/bin/sh\n"+body), 0o755); err != nil {
-+			t.Fatal(err)
+@@ -130,7 +130,8 @@ func (r *Reader) reload(force bool) (*setting.Snapshot, error) {
+ 		// Return the last known policy instead of reading from the store.
+ 		return r.lastPolicy, nil
+ 	}
+-	if r.upToDate && !force {
++	wasUpToDate := r.upToDate
++	if wasUpToDate && !force {
+ 		return r.lastPolicy, nil
+ 	}
+ 
+@@ -179,6 +180,12 @@ func (r *Reader) reload(force bool) (*setting.Snapshot, error) {
+ 	newPolicy := setting.NewSnapshot(m, setting.SummaryWith(r.origin))
+ 	if r.lastPolicy == nil || !newPolicy.EqualItems(r.lastPolicy) {
+ 		r.lastPolicy = newPolicy
++		if wasUpToDate {
++			// A forced read found a change the store never reported.
++			// The sessions other than the caller's still hold the old
++			// policy and won't re-read it unless notified.
++			r.notifySessionsLocked()
 +		}
-+	}
-+	writeScript("iptables", "echo 'iptables v1.8.10 (legacy)'\n")
-+	writeScript("ip6tables", "echo 'ip6tables/1.8.10 Failed to initialize nft: Protocol not supported' >&2\nexit 1\n")
-+	t.Setenv("PATH", dir)
-+
-+	// Make the system IPv6 probe pass so the test reaches the ip6tables
-+	// constructor regardless of the host's IPv6 configuration.
-+	tstest.Replace(t, &checkIPv6ForTest, func(logger.Logf) error { return nil })
-+
-+	var logs strings.Builder
-+	r, err := newIPTablesRunner(func(format string, args ...any) {
-+		fmt.Fprintf(&logs, format+"\n", args...)
-+	})
-+	if err != nil {
-+		t.Fatalf("newIPTablesRunner: %v", err)
-+	}
-+	if r.HasIPV6() {
-+		t.Error("HasIPV6() = true; want false when ip6tables fails to initialize")
-+	}
-+	if r.HasIPV6Filter() || r.HasIPV6NAT() {
-+		t.Error("IPv6 filter/NAT reported available; want neither")
-+	}
-+	if !strings.Contains(logs.String(), "disabling tunneled IPv6 due to ip6tables init failure") {
-+		t.Errorf("log missing ip6tables init failure line; got:\n%s", logs.String())
-+	}
+ 	}
+ 	return r.lastPolicy, nil
+ }
+@@ -241,6 +248,12 @@ func (r *Reader) onPolicyChange() {
+ 	r.mu.Lock()
+ 	defer r.mu.Unlock()
+ 	r.upToDate = false
++	r.notifySessionsLocked()
 +}
++
++// notifySessionsLocked notifies the active [ReadingSession]s of a policy change.
++// r.mu must be held.
++func (r *Reader) notifySessionsLocked() {
+ 	for _, s := range r.sessions {
+ 		select {
+ 		case s.policyChangedCh <- struct{}{}:
 ```
 
 ---
 
-### Incident Patch 2: `cc0716a2` (2026-11-19)
-**Commit Message**: cmd/k8s-operator: clarify tag requirements (#15757)
+### Incident Patch 2: `b8370089` (2026-11-20)
+**Commit Message**: clientupdate: don't exit tailscaled when starting the Windows installer
 
-Updates tailscale/tailscale#15732
+When an update is requested via LocalAPI, updateWindows runs inside
+tailscaled, and its os.Exit(0) after launching the tailscale.exe copy
+made the service restart the tailscaled child process immediately.
 
-Signed-off-by: Irbe Krumina <[REDACTED_EMAIL]>
+Exit only when running as tailscale.exe. In tailscaled.exe,
+wait for the installer instead, which stops the service as part
+of the upgrade. As a side effect, an install that fails before
+stopping the service is now reported as a failed update.
 
-**File**: `cmd/k8s-operator/deploy/chart/values.yaml` (modified, +4/-4)
+Updates tailscale/corp#40430
+
+Change-Id: I8af60fa12740dafceb7c9ea4f50d87c1cad27fa4
+Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
+
+**File**: `clientupdate/clientupdate_windows.go` (modified, +8/-1)
 ```diff
-@@ -65,8 +65,8 @@ oauthSecretVolume: {}
- installCRDs: true
+@@ -159,7 +159,7 @@ you can run the command prompt as Administrator one of these ways:
  
- operatorConfig:
--  # ACL tag that operator will be tagged with. Operator must be made owner of
--  # these tags
-+  # ACL tags that operator's Tailscale device will be tagged with.
-+  # These tags must be the exact same tags that the operator's OAuth client creds were tagged with.
-   # https://tailscale.com/kb/1236/kubernetes-operator/?q=operator#setting-up-the-kubernetes-operator
-   # Multiple tags are defined as array items and passed to the operator as a comma-separated string
-   defaultTags:
-@@ -150,8 +150,8 @@ proxyConfig:
-     # used.
-     tag: ""
-     digest: ""
--  # ACL tag that operator will tag proxies with. Operator must be made owner of
--  # these tags
-+  # ACL tags that operator will tag proxies with.
-+  # These tags must be either the tags that the operator's OAuth client creds were tagged with or tags owned by those tags.
-   # https://tailscale.com/kb/1236/kubernetes-operator/?q=operator#setting-up-the-kubernetes-operator
-   # Multiple tags can be passed as a comma-separated string i.e 'tag:k8s-proxies,tag:prod'.
-   # Note that if you pass multiple tags to this field via `--set` flag to helm upgrade/install commands you must escape the comma (for example, "tag:k8s-proxies\,tag:prod"). See https://github.com/helm/helm/issues/1556
+ 	up.Logf("making tailscale.exe copy to switch to...")
+ 	up.cleanupOldDownloads(filepath.Join(os.TempDir(), updaterPrefix+"-*.exe"))
+-	_, cmdTailscaleCopy, err := makeCmdTailscaleCopy()
++	cmdTailscale, cmdTailscaleCopy, err := makeCmdTailscaleCopy()
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -174,6 +174,13 @@ you can run the command prompt as Administrator one of these ways:
+ 	if err := cmd.Start(); err != nil {
+ 		return err
+ 	}
++	if selfExe, err := os.Executable(); err == nil && selfExe != cmdTailscale {
++		// We're tailscaled (the service's child process) rather
++		// than tailscale (the CLI). If we exited now, the service
++		// would restart us right away (see babysitProc in cmd/tailscaled),
++		// so keep running until the installer stops the service.
++		return cmd.Wait()
++	}
+ 	// Once it's started, exit ourselves, so the binary is free
+ 	// to be replaced.
+ 	os.Exit(0)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22528** (2026-11-20): net/memnet: don't arm deadline timers on a closed Pipe (@bradfitz)
+- **PR #22527** (2026-11-20): util/syspolicy/source: notify sessions when a forced read finds a change (@nickkhyl)
+- **PR #22523** (2026-11-20): clientupdate: don't exit tailscaled when starting the Windows installer (@nickkhyl)
 - **PR #22518** (2026-11-19): go.mod: bump wg-go for hybrid pq log details (@jwhited)
 - **PR #22513** (2026-11-19): feature/conn25: guard against an unusable Transit IP (@mazdakn)
 - **PR #22508** (2026-11-19): wgengine/magicsock: update packetLooksLike docs (@jwhited)
-- **PR #22506** (2026-11-18): tstest/natlab: Fix typo in README sample command (@fmarier)
-- **PR #22505** (closed): tstest/natlab: Fix invalid example command in README (@fmarier)
-- **PR #22503** (2026-11-19): go.toolchain.rev: bump Go toolchain [release-branch] (@bradfitz)
 
 ---
 
@@ -998,43 +1039,59 @@ Signed-off-by: Irbe Krumina <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. util/linuxfw: run without IPv6 rules when ip6tables fails to initialize
+## X. util/syspolicy/source: notify sessions when a forced read finds a change
 
 **RULE**:
-When implementing operations in `util/linuxfw/iptables.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `util/syspolicy/rsop/resultant_policy_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `92f396d8`: util/linuxfw: run without IPv6 rules when ip6tables fails to initialize. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `262640ff`: util/syspolicy/source: notify sessions when a forced read finds a change. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `util/linuxfw/iptables.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `util/syspolicy/rsop/resultant_policy_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			// ip6tables is present but "ip6tables --version" failed,
-			// as the nft flavor does on kernels without nf_tables.
-			// Run without IPv6 rules instead of failing. (#20348)
-			logf("disabling tunneled IPv6 due to ip6tables init failure: %v", err)
-		} else {
-			supportsV6 = true
-			supportsV6Filter = checkSupportsV6Filter(ipt6, logf)
-			supportsV6NAT = checkSupportsV6NAT(ipt6, logf)
-			logf("netfilter running in iptables mode v6 = %v, v6filter = %v, v6nat = %v", supportsV6, supportsV6Filter, supportsV6NAT)
+	"testing/synctest"
+// unobservableStore is a [source.Store] that doesn't report policy changes,
+// like the Windows Registry when edited without a Group Policy refresh.
+type unobservableStore struct{ source.Store }
+
+func TestForcedReloadUpdatesOtherPolicies(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		settingA := setting.NewDefinition("TestSettingA", setting.DeviceSetting, setting.StringValue)
+		if err := setting.SetDefinitionsForTest(t, settingA); err != nil {
+			t.Fatalf("SetDefinitionsForTest failed: %v", err)
+		}
+
+		store := source.NewTestStoreOf[string](t)
+		if _, err := RegisterStoreForTest(t, "TestSource", setting.DeviceScope, unobservableStore{store}); err != nil {
+			t.Fatalf("Failed to register policy store: %v", err)
+		}
+
+		// Both the device and the user policies read from the same device store.
+		devicePolicy, err := policyForTest(t, setting.DeviceScope)
+		if err != nil {
+			t.Fatalf("Failed to get device policy: %v", err)
+		}
+		userPolicy, err := policyForTest(t, setting.UserScopeOf("test-user"))
+		if err != nil {
+			t.Fatalf("Failed to get user policy: %v", err)
+		}
+
+		policyChanged := make(chan policyclient.PolicyChange, 1)
+		t.Cleanup(devicePolicy.Regi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		supportsV6 = true
-			return nil, err
-		supportsV6Filter = checkSupportsV6Filter(ipt6, logf)
-		supportsV6NAT = checkSupportsV6NAT(ipt6, logf)
-		logf("netfilter running in iptables mode v6 = %v, v6filter = %v, v6nat = %v", supportsV6, supportsV6Filter, supportsV6NAT)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `92f396d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `262640ff` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

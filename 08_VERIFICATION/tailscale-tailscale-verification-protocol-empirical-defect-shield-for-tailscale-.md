@@ -4,22 +4,22 @@
 {
   "source_repository": "tailscale/tailscale",
   "source_url": "https://github.com/tailscale/tailscale",
-  "source_version": "c8ba9da5",
+  "source_version": "262640ff",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-20T13:08:28.488Z",
+  "timestamp": "2026-11-20T20:15:01.684Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tailscale-tailscale",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `c8ba9da5`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-20T13:08:28.488Z`  
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `262640ff`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-20T20:15:01.684Z`  
 > **Learning ID**: `learn-github-tailscale-tailscale`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tailscale/tailscale` (Commit: `c8ba9da5`)
+- **Target Repository**: `tailscale/tailscale` (Commit: `262640ff`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T13:08:27.307Z  
+> **Harvest Timestamp**: 2026-11-20T20:15:00.371Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39367 stars
+- **Stars / Engagement**: 39385 stars
 
 ---
 
@@ -834,495 +834,189 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c8ba9da5` (2026-11-20)
-**Commit Message**: ipn/store/kubestore: cache TLS certs briefly on write replicas (#22103)
+### Incident Patch 1: `262640ff` (2026-11-20)
+**Commit Message**: util/syspolicy/source: notify sessions when a forced read finds a change
 
-The write replica of an HA ProxyGroup (cert share "rw") doesn't keep TLS
-certs in memory, so that it notices a recreated, empty cert Secret and
-issues a new cert. As a result, it read the cert Secret from the API
-server on every TLS handshake, with a 30s timeout. When the API server
-was slow or unavailable, handshakes on that replica waited for the read,
-and feature/acme repeated the read under the per-domain lock. Clients
-with a 10s handshake timeout, such as kubectl, failed.
+A Reader is shared by all effective policies that include its source.
+A forced read through one of them updated the Reader's cached snapshot
+and marked it up to date, but didn't notify the other sessions, so
+their policies kept the old settings.
 
-This commit adds a small per-domain cache of the last-known-good cert
-and key for write replicas. The replica serves a cached cert for 30s
-before it reads the Secret again. When it has a cached cert, the read
-uses a 3s timeout, and on an error other than not found or forbidden
-the replica serves the cached cert and waits another 30s before the
-next read. A read that finds the Secret missing, forbidden or empty
-removes the cached cert and returns ipn.ErrStateNotExist as before, so
-a recreated Ingress still gets a new cert, at most 30s later.
-Concurrent reads of the same Secret share one GET, and a read that is
-in flight when a cert is wr
+Since a89b32904, "tailscale syspolicy reload" reloads the caller's user
+policy rather than the device policy used by LocalBackend. On Windows,
+a registry change made without a Group Policy refresh was therefore
+reported as configured by the CLI but never applied by the backend.
 
-**File**: `ipn/store/kubestore/store_kube.go` (modified, +139/-17)
+Updates tailscale/corp#51820
+
+Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
+
+**File**: `util/syspolicy/rsop/resultant_policy_test.go` (modified, +55/-0)
 ```diff
-@@ -14,6 +14,7 @@ import (
- 	"net/http"
- 	"os"
- 	"strings"
-+	"sync"
- 	"time"
- 
- 	"tailscale.com/envknob"
-@@ -24,9 +25,11 @@ import (
- 	"tailscale.com/kube/kubeapi"
- 	"tailscale.com/kube/kubeclient"
- 	"tailscale.com/kube/kubetypes"
-+	"tailscale.com/tstime"
- 	"tailscale.com/types/logger"
- 	"tailscale.com/util/dnsname"
- 	"tailscale.com/util/mak"
-+	"tailscale.com/util/singleflight"
- )
- 
- func init() {
-@@ -44,6 +47,17 @@ const (
- 	// state Secret and emit an Event.
- 	timeout = 30 * time.Second
- 
-+	// rwCertTTL is how long a write replica serves a TLS cert from its
-+	// in-memory cache before it reads the cert Secret again. A short TTL
-+	// limits how long the replica can serve a stale cert after the cert
-+	// Secret is recreated, for example after Ingress recreation.
-+	rwCertTTL = 30 * time.Second
-+	// rwCertFallbackTimeout is the timeout for a write replica's cert
-+	// Secret read when it has a last-known-good cert to fall back to.
-+	// TLS handshakes wait for this read, so it must be much shorter than
-+	// typical client handshake timeouts (10s for kubectl).
-+	rwCertFallbackTimeout = 3 * time.Second
-+
- 	reasonTailscaleStateUpdated      = "TailscaledStateUpdated"
- 	reasonTailscaleStateLoaded       = "TailscaleStateLoaded"
- 	reasonTailscaleStateUpdateFailed = "TailscaleStateUpdateFailed"
-@@ -90,6 +104,32 @@ type Store struct {
- 	// memory holds the latest tailscale state. Writes write state to a kube
- 	// Secret and memory, Reads read from memory.
- 	memory mem.Store
-+
-+	// clock is used for rwCerts expiry.
-+	clock tstime.DefaultClock
-+
-+	// certReads deduplicates concurrent cert Secret reads per domain.
-+	certReads singleflight.Group[string, *rwCert]
-+
-+	// rwCertsMu guards rwCerts.
-+	rwCertsMu sync.Mutex
-+	// rwCerts holds the last-known-good TLS cert and key per domain for
-+	// write replicas (cert share "rw"). Write replicas don't keep certs in
-+	// memory, so that they notice a recreated, empty cert Secret and issue
-+	// a new cert. Instead, they use rwCerts to skip Secret reads for
-+	// rwCertTTL and to keep serving TLS when the API server is unavailable.
-+	// Entries are never modified, only replaced, so that a read can tell
-+	// whether a write replaced the entry while the read was in flight.
-+	rwCerts map[string]*rwCert
-+}
-+
-+// rwCert is a TLS cert and key cached by a write replica.
-+type rwCert struct {
-+	// cert and key are returned to every reader of the cache entry, so
-+	// they must not be modified.
-+	cert, key []byte
-+	// recheckAt is when the replica reads the cert Secret again.
-+	recheckAt time.Time
- }
- 
- // New returns a new Store that persists state to Kubernets Secret(s).
-@@ -153,7 +193,8 @@ func newWithClient(logf logger.Logf, c kubeclient.Client, secretName string) (*S
- 	// Write replicas never load certs in-memory to avoid a situation where,
- 	// after Ingress recreation (and the associated cert Secret recreation), new
- 	// TLS certs don't get issued because the write replica still has certs
--	// in-memory. Instead, write replicas fetch certs from Secret on each request.
-+	// in-memory. Instead, write replicas fetch certs from Secret, with a short
-+	// TTL cache (see rwCerts).
- 	if s.certShareMode == "ro" {
- 		sel := s.certSecretSelector()
- 		if err := s.loadCerts(context.Background(), sel); err != nil {
-@@ -365,20 +406,24 @@ func (s *Store) WriteTLSCertAndKey(domain string, cert, key []byte) (err error)
- 	// TODO(irbekrm): certs for write replicas are currently not
- 	// written to memory to avoid out of sync memory state after
- 	// Ingress resources have been recreated.  This means that TLS
--	// certs for write replicas are retrieved from the Secret on
--	// each HTTPS request. This is a temporary solution till we
-+	// certs for write replicas are retrieved from the Secret once
-+	// rwCertTTL has passed. This is a temporary solution till we
- 	// implement a Secret watch.
- 	if s.certShareMode != "rw" {
- 		s.memory.WriteState(ipn.StateKey(domain+".crt"), cert)
- 		s.memory.WriteState(ipn.StateKey(domain+".key"), key)
-+	} else {
-+		s.setRWCert(domain, cert, key)
- 	}
- 	return nil
- }
- 
- // ReadTLSCertAndKey reads a TLS cert and key from memory or from a
- // domain-specific Secret. It first checks the in-memory store, if not found in
- // memory and running cert store in read-only mode, looks up a Secret.
--// Note that write replicas of HA Ingress always retrieve TLS certs from Secrets.
-+// Write replicas of HA Ingress don't use the in-memory store. They read the
-+// Secret at most once per rwCertTTL, and serve the last-known-good cert if the
-+// read fails with an error other than not found or forbidden.
- func (s *Store) ReadTLSCertAndKey(domain string) (cert, key []byte, err error) {
- 	if err := dnsname.ValidHostname(domain); err != nil {
- 		return nil, nil, fmt.Errorf("invalid domain name %q: %w", domain, err)
-@@ -396,14 +441,40 @@ func (s *Store) ReadTLSCertAndKey(domain string) (cert, key []byte, err error) {
- 		return nil, nil, ipn.ErrStateNotExist
- 	}
- 
--	ctx, cancel := context.WithTimeout(
-```
-
-**File**: `ipn/store/kubestore/store_kube_test.go` (modified, +402/-0)
-```diff
-@@ -8,9 +8,14 @@ import (
- 	"context"
- 	"crypto/sha256"
- 	"encoding/json"
-+	"errors"
- 	"fmt"
- 	"strings"
-+	"sync"
-+	"sync/atomic"
+@@ -10,6 +10,7 @@ import (
+ 	"strconv"
+ 	"sync"
  	"testing"
 +	"testing/synctest"
-+	"time"
+ 	"time"
  
  	"github.com/google/go-cmp/cmp"
- 	"tailscale.com/envknob"
-@@ -19,6 +24,8 @@ import (
- 	"tailscale.com/kube/kubeapi"
- 	"tailscale.com/kube/kubeclient"
- 	"tailscale.com/kube/kubetypes"
-+	"tailscale.com/tstest"
-+	"tailscale.com/tstime"
- )
- 
- func TestKubernetesPodMigrationWithTPMAttestationKey(t *testing.T) {
-@@ -635,6 +642,401 @@ func TestReadTLSCertAndKey(t *testing.T) {
+@@ -701,6 +702,60 @@ drain:
  	}
  }
  
-+func TestReadTLSCertAndKeyWriteReplicaCache(t *testing.T) {
-+	const testDomain = "my-app.tailnetxyz.ts.net"
++// unobservableStore is a [source.Store] that doesn't report policy changes,
++// like the Windows Registry when edited without a Group Policy refresh.
++type unobservableStore struct{ source.Store }
 +
-+	var (
-+		secretData   map[string][]byte
-+		secretGetErr error
-+		gets         int
-+		lastTimeout  time.Duration
-+	)
-+	client := &kubeclient.FakeClient{
-+		GetSecretImpl: func(ctx context.Context, name string) (*kubeapi.Secret, error) {
-+			gets++
-+			if deadline, ok := ctx.Deadline(); ok {
-+				lastTimeout = time.Until(deadline)
-+			}
-+			if secretGetErr != nil {
-+				return nil, secretGetErr
-+			}
-+			return &kubeapi.Secret{Data: secretData}, nil
-+		},
-+		JSONPatchResourceImpl: func(context.Context, string, string, []kubeclient.JSONPatch) error {
-+			return nil
-+		},
-+	}
-+	clock := tstest.NewClock(tstest.ClockOpts{})
-+	s := &Store{
-+		client:        client,
-+		secretName:    "ts-state",
-+		certShareMode: "rw",
-+		clock:         tstime.DefaultClock{Clock: clock},
-+		logf:          t.Logf,
-+	}
-+	tlsData := func(cert, key string) map[string][]byte {
-+		return map[string][]byte{"tls.crt": []byte(cert), "tls.key": []byte(key)}
-+	}
++func TestForcedReloadUpdatesOtherPolicies(t *testing.T) {
++	synctest.Test(t, func(t *testing.T) {
++		settingA := setting.NewDefinition("TestSettingA", setting.DeviceSetting, setting.StringValue)
++		if err := setting.SetDefinitionsForTest(t, settingA); err != nil {
++			t.Fatalf("SetDefinitionsForTest failed: %v", err)
++		}
 +
-+	steps := []struct {
-+		name         string
-+		advance      time.Duration
-+		secretData   map[string][]byte
-+		secretGetErr error
-+		// write, if set, writes cert and key with WriteTLSCertAndKey
-+		// before the read.
-+		write       map[string][]byte
-+		wantCert    string
-+		wantKey     string
-+		wantErr     error
-+		wantGet     bool
-+		wantTimeout time.Duration // max GetSecret timeout, if wantGet
-+	}{
-+		{
-+			name:         "no_cache_api_error",
-+			secretGetErr: errors.New("api error"),
-+			wantErr:      errors.New("api error"),
-+			wantGet:      true,
-+			wantTimeout:  timeout,
-+		},
-+		{
-+			name:        "first_read_from_secret",
-+			secretData:  tlsData("cert-a", "key-a"),
-+			wantCert:    "cert-a",
-+			wantKey:     "key-a",
-+			wantGet:     true,
-+			wantTimeout: timeout,
-+		},
-+		{
-+			name:       "within_ttl_served_from_cache",
-+			advance:    rwCertTTL / 2,
-+			secretData: tlsData("cert-b", "key-b"),
-+			wantCert:   "cert-a",
-+			wantKey:    "key-a",
-+		},
-+		{
-+			name:        "after_ttl_read_from_secret",
-+			advance:     rwCertTTL,
-+			secretData:  tlsData("cert-b", "key-b"),
-+			wantCert:    "cert-b",
-+			wantKey:     "key-b",
-+			wantGet:     true,
-+			wantTimeout: rwCertFallbackTimeout,
-+		},
-+		{
-+			name:         "after_ttl_api_error_serves_last_known_good",
-+			advance:      rwCertTTL,
-+			secretGetErr: errors.New("api error"),
-+			wantCert:     "cert-b",
-+			wantKey:      "key-b",
-+			wantGet:      true,
-+			wantTimeout:  rwCertFallbackTimeout,
-+		},
-+		{
-+			name:         "after_fallback_served_from_cache",
-+			advance:      rwCertTTL / 2,
-+			secretGetErr: errors.New("api error"),
-+			wantCert:     "cert-b",
-+			wantKey:      "key-b",
-+		},
-+		{
-+			name:       "after_ttl_secret_emptied",
-+			advance:    rwCertTTL,
-+			secretData: map[string][]byte{},
-+			wantErr:    ipn.ErrStateNotExist,
-+			wantGet:    true,
-+		},
-+		{
-+			name:         "emptied_secret_clears_cache",
-+			secretGetErr: errors.New("api error"),
-+			wantErr:      errors.New("api error"),
-+			wantGet:      true,
-+			wantTimeout:  timeout,
-+		},
-+		{
-+			name:       "written_cert_served_from_cache",
-+			write:      tlsData("cert-c", "key-c"),
-+			secretData: tlsData("cert-c", "key-c"),
-+			wantCert:   "cert-c",
-+			wantKey:    "key-c",
-+		},
-+		{
-+			name:         "after_ttl_secret_not_found",
-+			advance:      rwCertTTL,
-+			secretGetErr: &kubeapi.Status{Code: 404},
-+			wantErr:      ipn.ErrStateNotExist,
-+			wantGet:      true,
-+		},
-+		{
-+			name:         "not_found_clears_cache",
-+			secretGetErr: errors.New("api error"),
-+			wantErr:      errors.New("api error"),
-+			wantGet:      true,
-+			wantTimeout:  timeout,
-+		},
-+		{
-+			name:       "written_cert_served_from_cache_again",
-+			write:      tlsData("cert-d", "key-d"),
-+			secretData: tlsData("cert-d", "key-d"),
-+			wantCert:   "cert-d",
-+			wantKey:    "key-d",
-+		},
-+		{
-+			name:         "after_ttl_secret_forbidden",
-+			advance:      rwCertTTL,
-+			secretGetErr: &kubeapi.Status{Code: 403},
-+			wantErr:      ipn.ErrStateNotExist,
-+			wantGet:      true,
-+		},
-+		{
-+			name:         "forbidden_clears_cache",
-+			secretGetErr: errors.New("api error"),
-+			wantErr:      errors.New("api error"),
-+			wantGet:      true,
-+			wantTimeout:  timeout,
-+		},
-+	}
-+	for _, st := range steps {
-+		clock.Advance(st.advance)
-+		secretData = st.secretData
-+		secretGetErr = st.secretGetErr
-+		if s
++		store := source.NewTestStoreOf[string](t)
++		if _, err := RegisterStoreForTest(t, "TestSource", setting.DeviceScope, unobservableStore{store}); err != nil {
++			t.Fatalf("Failed to register policy store: %v", err)
++		}
++
++		// Both the device and the user policies read from the same device store.
++		devicePolicy, err := policyForTest(t, setting.DeviceScope)
++		if err != nil {
++			t.Fatalf("Failed to get device policy: %v", err)
++		}
++		userPolicy, err := policyForTest(t, setting.UserScopeOf("test-user"))
++		if err != nil {
++			t.Fatalf("Failed to get user policy: %v", err)
++		}
++
++		policyChanged := make(chan policyclient.PolicyChange, 1)
++		t.Cleanup(devicePolicy.RegisterChangeCallback(func(pc policyclient.PolicyChange) { policyChanged <- pc }))
++
++		// Forcibly reloading the user policy must also update the device policy.
++		store.SetStrings(source.TestSettingOf(settingA.Key(), "A"))
++		if _, err := userPolicy.Reload(); err != nil {
++			t.Fatalf("Reload failed: %v", err)
++		}
++		if got, want := userPolicy.Get().Get(settingA.Key()), "A"; got != want {
++			t.Errorf("User policy: setting %q: got %q; want %q", settingA.Key(), got, want)
++		}
++
++		time.Sleep(policyReloadMaxDelay)
++		synctest.Wait()
++		select {
++		case pc := <-policyChanged:
++			if !pc.HasChanged(settingA.Key()) {
++				t.Errorf("Policy setting %q has not changed", settingA.Key())
++			}
++		default:
++			t.Fatal("Device policy change callback was not invoked")
++		}
++		if got, want := devicePolicy.Get().Get(settingA.Key()), "A"; got != want {
++			t.Errorf("Device policy: setting %q: got %q; want %q", settingA.Key(), got, want)
++		}
++	})
++}
++
+ func TestClosePolicySource(t *testing.T) {
+ 	testSetting := setting.NewDefinition("TestSetting", setting.DeviceSetting, setting.StringValue)
+ 	if err := setting.SetDefinitionsForTest(t, testSetting); err != nil {
+```
+
+**File**: `util/syspolicy/source/policy_reader.go` (modified, +14/-1)
+```diff
+@@ -130,7 +130,8 @@ func (r *Reader) reload(force bool) (*setting.Snapshot, error) {
+ 		// Return the last known policy instead of reading from the store.
+ 		return r.lastPolicy, nil
+ 	}
+-	if r.upToDate && !force {
++	wasUpToDate := r.upToDate
++	if wasUpToDate && !force {
+ 		return r.lastPolicy, nil
+ 	}
+ 
+@@ -179,6 +180,12 @@ func (r *Reader) reload(force bool) (*setting.Snapshot, error) {
+ 	newPolicy := setting.NewSnapshot(m, setting.SummaryWith(r.origin))
+ 	if r.lastPolicy == nil || !newPolicy.EqualItems(r.lastPolicy) {
+ 		r.lastPolicy = newPolicy
++		if wasUpToDate {
++			// A forced read found a change the store never reported.
++			// The sessions other than the caller's still hold the old
++			// policy and won't re-read it unless notified.
++			r.notifySessionsLocked()
++		}
+ 	}
+ 	return r.lastPolicy, nil
+ }
+@@ -241,6 +248,12 @@ func (r *Reader) onPolicyChange() {
+ 	r.mu.Lock()
+ 	defer r.mu.Unlock()
+ 	r.upToDate = false
++	r.notifySessionsLocked()
++}
++
++// notifySessionsLocked notifies the active [ReadingSession]s of a policy change.
++// r.mu must be held.
++func (r *Reader) notifySessionsLocked() {
+ 	for _, s := range r.sessions {
+ 		select {
+ 		case s.policyChangedCh <- struct{}{}:
 ```
 
 ---
 
-### Incident Patch 2: `519a9f50` (2026-11-20)
-**Commit Message**: k8s-operator: stop PortRanges.All() at the last port in the range (#21305)
+### Incident Patch 2: `b8370089` (2026-11-20)
+**Commit Message**: clientupdate: don't exit tailscaled when starting the Windows installer
 
-* k8s-operator: stop PortRanges.All() at the last port in the range
+When an update is requested via LocalAPI, updateWindows runs inside
+tailscaled, and its os.Exit(0) after launching the tailscale.exe copy
+made the service restart the tailscaled child process immediately.
 
-PortRanges.All() walks a range with a uint16 counter and a port <= end
-condition. When end is 65535 the increment wraps back to zero instead
-of ending the loop, so the iterator restarts at 0 and yields the whole
-port space again, and again.
+Exit only when running as tailscale.exe. In tailscaled.exe,
+wait for the installer instead, which stops the service as part
+of the upgrade. As a side effect, an install that fails before
+stopping the service is now reported as a failed update.
 
-ClashesWith is the caller that drains All(), so it is where this
-shows. With one ProxyClass holding 40000-65535, validating a second
-one holding 30000-30100 walks up to 65535, wraps, and reaches 30000 on
-the next pass, where Contains returns true. The two ranges are
-disjoint, but the second ProxyClass is rejected as clashing and never
-goes valid. allocatePorts stops at the first free port so it returns,
-but once past 65535 the port it picks is outside the range that was
-configured.
+Updates tailscale/corp#40430
 
-endPort is only bounded by the cluster's --service-node-port-range, so
-65535 is reachable on a cluster configured up to it.
+Change-Id: I8af60fa12740dafceb7c9ea4f50d87c1cad27fa4
+Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
 
-Yield end and then stop. Also skip a range whose Port is above its
-EndPort, which the old condition did for free and the new one would
-not.
-
-Fixes #21304
-
-Change-Id: I7d60b133a4a83678bc6aba76c5f9b6b6e
-
-**File**: `k8s-operator/apis/v1alpha1/types_proxyclass.go` (modified, +2/-2)
+**File**: `clientupdate/clientupdate_windows.go` (modified, +8/-1)
 ```diff
-@@ -133,8 +133,8 @@ func (prs PortRanges) All() iter.Seq[uint16] {
- 				end = pr.Port
- 			}
+@@ -159,7 +159,7 @@ you can run the command prompt as Administrator one of these ways:
  
--			for port := pr.Port; port <= end; port++ {
--				if !yield(port) {
-+			for port := int(pr.Port); port <= int(end); port++ {
-+				if !yield(uint16(port)) {
- 					return
- 				}
- 			}
-```
-
-**File**: `k8s-operator/apis/v1alpha1/types_proxyclass_test.go` (added, +99/-0)
-```diff
-@@ -0,0 +1,99 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+package v1alpha1
-+
-+import (
-+	"slices"
-+	"testing"
-+)
-+
-+func TestPortRangesAll(t *testing.T) {
-+	tests := []struct {
-+		name string
-+		prs  PortRanges
-+		want []uint16
-+	}{
-+		{
-+			name: "single_port",
-+			prs:  PortRanges{{Port: 30000}},
-+			want: []uint16{30000},
-+		},
-+		{
-+			name: "small_range",
-+			prs:  PortRanges{{Port: 30000, EndPort: 30002}},
-+			want: []uint16{30000, 30001, 30002},
-+		},
-+		{
-+			name: "range_ending_at_max_port",
-+			prs:  PortRanges{{Port: 65533, EndPort: 65535}},
-+			want: []uint16{65533, 65534, 65535},
-+		},
-+		{
-+			name: "single_max_port",
-+			prs:  PortRanges{{Port: 65535}},
-+			want: []uint16{65535},
-+		},
-+		{
-+			name: "multiple_ranges",
-+			prs:  PortRanges{{Port: 30000, EndPort: 30001}, {Port: 65535}},
-+			want: []uint16{30000, 30001, 65535},
-+		},
-+		{
-+			name: "inverted_range_yields_nothing",
-+			prs:  PortRanges{{Port: 30100, EndPort: 30000}},
-+			want: nil,
-+		},
+ 	up.Logf("making tailscale.exe copy to switch to...")
+ 	up.cleanupOldDownloads(filepath.Join(os.TempDir(), updaterPrefix+"-*.exe"))
+-	_, cmdTailscaleCopy, err := makeCmdTailscaleCopy()
++	cmdTailscale, cmdTailscaleCopy, err := makeCmdTailscaleCopy()
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -174,6 +174,13 @@ you can run the command prompt as Administrator one of these ways:
+ 	if err := cmd.Start(); err != nil {
+ 		return err
+ 	}
++	if selfExe, err := os.Executable(); err == nil && selfExe != cmdTailscale {
++		// We're tailscaled (the service's child process) rather
++		// than tailscale (the CLI). If we exited now, the service
++		// would restart us right away (see babysitProc in cmd/tailscaled),
++		// so keep running until the installer stops the service.
++		return cmd.Wait()
 +	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			var got []uint16
-+			for p := range tt.prs.All() {
-+				got = append(got, p)
-+				if len(got) > len(tt.want) {
-+					t.Fatalf("All() yielded more than the %d expected ports; got %v...", len(tt.want), got)
-+				}
-+			}
-+			if !slices.Equal(got, tt.want) {
-+				t.Errorf("All() = %v, want %v", got, tt.want)
-+			}
-+		})
-+	}
-+}
-+
-+func TestPortRangesClashesWith(t *testing.T) {
-+	tests := []struct {
-+		name string
-+		prs  PortRanges
-+		pr   PortRange
-+		want bool
-+	}{
-+		{
-+			name: "overlapping",
-+			prs:  PortRanges{{Port: 30000, EndPort: 30100}},
-+			pr:   PortRange{Port: 30050, EndPort: 30150},
-+			want: true,
-+		},
-+		{
-+			name: "disjoint",
-+			prs:  PortRanges{{Port: 30000, EndPort: 30100}},
-+			pr:   PortRange{Port: 30101, EndPort: 30200},
-+			want: false,
-+		},
-+		{
-+			name: "disjoint_below_range_ending_at_max_port",
-+			prs:  PortRanges{{Port: 40000, EndPort: 65535}},
-+			pr:   PortRange{Port: 30000, EndPort: 30100},
-+			want: false,
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			if got := tt.prs.ClashesWith(tt.pr); got != tt.want {
-+				t.Errorf("ClashesWith(%s) = %v, want %v", tt.pr, got, tt.want)
-+			}
-+		})
-+	}
-+}
+ 	// Once it's started, exit ourselves, so the binary is free
+ 	// to be replaced.
+ 	os.Exit(0)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22528** (2026-11-20): net/memnet: don't arm deadline timers on a closed Pipe (@bradfitz)
+- **PR #22527** (2026-11-20): util/syspolicy/source: notify sessions when a forced read finds a change (@nickkhyl)
+- **PR #22523** (2026-11-20): clientupdate: don't exit tailscaled when starting the Windows installer (@nickkhyl)
 - **PR #22518** (2026-11-19): go.mod: bump wg-go for hybrid pq log details (@jwhited)
 - **PR #22513** (2026-11-19): feature/conn25: guard against an unusable Transit IP (@mazdakn)
 - **PR #22508** (2026-11-19): wgengine/magicsock: update packetLooksLike docs (@jwhited)
-- **PR #22506** (2026-11-18): tstest/natlab: Fix typo in README sample command (@fmarier)
-- **PR #22505** (closed): tstest/natlab: Fix invalid example command in README (@fmarier)
-- **PR #22503** (2026-11-19): go.toolchain.rev: bump Go toolchain [release-branch] (@bradfitz)
 
 ---
 
@@ -1342,62 +1036,59 @@ Change-Id: I7d60b133a4a83678bc6aba76c5f9b6b6e
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipn/store/kubestore: cache TLS certs briefly on write replicas
+## X. util/syspolicy/source: notify sessions when a forced read finds a change
 
 **RULE**:
-When implementing operations in `ipn/store/kubestore/store_kube.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `util/syspolicy/rsop/resultant_policy_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c8ba9da5`: ipn/store/kubestore: cache TLS certs briefly on write replicas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `262640ff`: util/syspolicy/source: notify sessions when a forced read finds a change. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/store/kubestore/store_kube.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `util/syspolicy/rsop/resultant_policy_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"sync"
-	"tailscale.com/tstime"
-	"tailscale.com/util/singleflight"
-	// rwCertTTL is how long a write replica serves a TLS cert from its
-	// in-memory cache before it reads the cert Secret again. A short TTL
-	// limits how long the replica can serve a stale cert after the cert
-	// Secret is recreated, for example after Ingress recreation.
-	rwCertTTL = 30 * time.Second
-	// rwCertFallbackTimeout is the timeout for a write replica's cert
-	// Secret read when it has a last-known-good cert to fall back to.
-	// TLS handshakes wait for this read, so it must be much shorter than
-	// typical client handshake timeouts (10s for kubectl).
-	rwCertFallbackTimeout = 3 * time.Second
+	"testing/synctest"
+// unobservableStore is a [source.Store] that doesn't report policy changes,
+// like the Windows Registry when edited without a Group Policy refresh.
+type unobservableStore struct{ source.Store }
 
+func TestForcedReloadUpdatesOtherPolicies(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		settingA := setting.NewDefinition("TestSettingA", setting.DeviceSetting, setting.StringValue)
+		if err := setting.SetDefinitionsForTest(t, settingA); err != nil {
+			t.Fatalf("SetDefinitionsForTest failed: %v", err)
+		}
 
-	// clock is used for rwCerts expiry.
-	clock tstime.DefaultClock
+		store := source.NewTestStoreOf[string](t)
+		if _, err := RegisterStoreForTest(t, "TestSource", setting.DeviceScope, unobservableStore{store}); err != nil {
+			t.Fatalf("Failed to register policy store: %v", err)
+		}
 
-	// certReads deduplicates concurrent cert Secret reads per domain.
-	certReads singleflight.Group[string, *rwCert]
+		// Both the device and the user policies read from the same device store.
+		devicePolicy, err := policyForTest(t, setting.DeviceScope)
+		if err != nil {
+			t.Fatalf("Failed to get device policy: %v", err)
+		}
+		userPolicy, err := policyForTest(t, setting.UserScopeOf("test-user"))
+		if err != nil {
+			t.Fatalf("Failed to get user policy: %v", err)
+		}
 
-	// rwCertsMu guards rwCerts.
-	rwCertsMu sync.Mutex
-	// rwCerts holds the last-known-good TLS cert and key per domain for
-	// write replicas (cert share "rw"). Write replicas don't keep certs in
-	// memory, so that they notice a recreated, empty cert Secret and issue
-	// a new cert. Instead, they use rwCerts to skip Secret reads for
-	// rw
+		policyChanged := make(chan policyclient.PolicyChange, 1)
+		t.Cleanup(devicePolicy.Regi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	// in-memory. Instead, write replicas fetch certs from Secret on each request.
-	// certs for write replicas are retrieved from the Secret on
-	// each HTTPS request. This is a temporary solution till we
-// Note that write replicas of HA Ingress always retrieve TLS certs from Secrets.
-	ctx, cancel := context.WithTimeout(
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c8ba9da5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `262640ff` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
