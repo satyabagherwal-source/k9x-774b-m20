@@ -11674,3 +11674,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-inkling-2-mini-gguf` | `https://huggingface.co/unsloth/Inkling-2-Mini-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-20T22:07:11.362Z |
 | `learn-dom-d-0eab1e60` | `project://hf-unsloth-inkling-2-mini-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-inkling-2-mini-gguf-learnings.md` | 2026-11-20T22:08:02.116Z |
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `3bc950fb` | Multi-dimensional audit evidence | 2026-11-20T22:22:57.536Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `9de645f5` | Multi-dimensional audit evidence | 2026-11-20T22:30:58.759Z |

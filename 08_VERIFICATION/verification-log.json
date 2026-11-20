@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-Y60Y",
-    "timestamp": "2026-11-18T18:14:49.090Z",
-    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-    "contentHash": "4dc1dd262380c342e51f248bc7105f6e50c9f954d8efc09b8d3639223086d8e1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-S3R4",
     "timestamp": "2026-11-18T18:38:05.824Z",
     "repository": "CompVis/stable-diffusion-v1-4",
@@ -7490,6 +7475,21 @@
     "repository": "domcyrus/rustnet",
     "learningId": "learn-github-domcyrus-rustnet",
     "contentHash": "d661d5b724b3dc0cb6c526a188f893ec3e8e4ba526410bcc653a6a876ff12089",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-ZAO3",
+    "timestamp": "2026-11-20T22:30:58.755Z",
+    "repository": "kumahq/kuma",
+    "learningId": "learn-github-kumahq-kuma",
+    "contentHash": "6a1f9dceaf2e940889633e0c04237ac365d602374f37af8a78e539970654faa5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

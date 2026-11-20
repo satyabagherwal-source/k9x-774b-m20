@@ -11641,3 +11641,4 @@
 | `CYCLE-20261120-4PA5` | `2026-11-20T22:07:11.357Z` | `unsloth/Inkling-2-Mini-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-inkling-2-mini-gguf-learnings.md` | Yes (`8ee2c186...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T22:08:02.116Z` | `hf-unsloth-inkling-2-mini-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0EAB1E60` [Domain D] | Yes (`1232ff78...`) |
 | `CYCLE-20261120-OZCR` | `2026-11-20T22:22:57.531Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9646` | Yes (`d661d5b7...`) |
+| `CYCLE-20261120-ZAO3` | `2026-11-20T22:30:58.755Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9647` | Yes (`6a1f9dce...`) |

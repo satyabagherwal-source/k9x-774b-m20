@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T22:23:10.483Z",
+  "last_updated": "2026-11-20T22:31:03.804Z",
   "total_records": 2183,
   "domains": {
     "A": {
@@ -8916,8 +8916,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "5cacab4c94a6d22537d958ebe87569619843ba2ece98d86e1249e30b22d8efec",
-      "created_at": "2026-11-20T21:47:17.375Z"
+      "content_hash": "c55fe726d508c914413fe285776909c5315e0416f8c7fcd40a1ee4c77e9ea9bf",
+      "created_at": "2026-11-20T22:31:03.246Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -25510,8 +25510,8 @@
       "title": "Technical Construction Intelligence: kumahq/kuma Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kumahq-kuma-technical-construction-intelligence-kumahq-kuma-core-invariants.md",
       "repository": "kumahq/kuma",
-      "content_hash": "9c006035b7bdc7535c7acd3bbaea8459a64a1ed35b09683ecf17272c4f280dfb",
-      "created_at": "2026-11-18T01:38:37.262Z"
+      "content_hash": "8ae7e1c81b6de599713b4504e2c55c58cf8b5a47e9ef3bfb7f3f9195fe446e2a",
+      "created_at": "2026-11-20T22:30:59.087Z"
     },
     "DOM-F-3EF61085": {
       "record_id": "DOM-F-3EF61085",
@@ -25553,8 +25553,8 @@
       "title": "Technical Construction Intelligence: kumahq-kuma-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kumahq-kuma-learnings-technical-construction-intelligence-kumahq-kuma-learnings-.md",
       "repository": "kumahq-kuma-learnings",
-      "content_hash": "0042a8a5295c24da0e24f56243ed27803043598a8ba455edffad4791d1c02ef1",
-      "created_at": "2026-11-18T01:39:15.331Z"
+      "content_hash": "30305c46b2948734f02186f01a1b100d838696b7f161d56b8795a36c561499a5",
+      "created_at": "2026-11-20T22:31:02.421Z"
     },
     "DOM-K-4B4C2E13": {
       "record_id": "DOM-K-4B4C2E13",
@@ -31279,8 +31279,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "5bd805e3fa09c09106c9d3079a0b21c5dbdcf7e96058432dba217fb7e1c310f8",
-      "created_at": "2026-11-20T22:23:09.233Z"
+      "content_hash": "9286dcefddb5bf347c685aafbba4c23d249a8ef75a1258740ff2c47eb81d6ee3",
+      "created_at": "2026-11-20T22:31:03.804Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",

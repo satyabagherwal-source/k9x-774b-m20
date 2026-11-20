@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T22:23:10.853Z",
+  "last_updated": "2026-11-20T22:31:03.804Z",
   "total_verified_learnings": 9051,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22678,
+  "total_items": 22681,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-F3VY-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZE10-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b0511ce37ace542835dceb258a07d1ee3e14ca925981df818cbe37e5e0bd921e",
+      "content_hash": "929329eeb7f0896e79477b8eecbbd81f10ac44f7b74f5c97d46144b6799ec128",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T21:47:17.233Z"
+      "persisted_at": "2026-11-20T22:31:03.111Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "5cacab4c94a6d22537d958ebe87569619843ba2ece98d86e1249e30b22d8efec",
+      "content_hash": "c55fe726d508c914413fe285776909c5315e0416f8c7fcd40a1ee4c77e9ea9bf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T21:47:17.375Z"
+      "persisted_at": "2026-11-20T22:31:03.246Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "27fe935dcea02dc38fd0b6416bc7378144a0890572c1cde4718d1b8b1b2896e1",
+      "content_hash": "73fdc9536bcec74c06f3c90649eef869799876cbdc59500245d12307eb3ead02",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T21:47:17.534Z"
+      "persisted_at": "2026-11-20T22:31:03.383Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -228509,8 +228509,8 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "053b67f7",
-      "content_hash": "5fa0c7e13b55cbc4025e73e5b42b01e29f5a6bd5c2a6a931b8b018f3966f8d95",
+      "source_version": "9de645f5",
+      "content_hash": "6a1f9dceaf2e940889633e0c04237ac365d602374f37af8a78e539970654faa5",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [
@@ -228528,6 +228528,11 @@
           "number": 8845,
           "title": "Explicit Ancestor Hook Propagation in Hierarchical CLI Trees",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9647,
+          "title": "scope global snapshot to stream",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228535,7 +228540,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T01:38:36.884Z",
+      "verified_at": "2026-11-20T22:30:58.570Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228575,10 +228580,10 @@
       "relative_path": "08_VERIFICATION/kumahq-kuma-verification-protocol-empirical-defect-shield-for-kumahq-kuma.md",
       "title": "Verification Protocol: Empirical Defect Shield for kumahq/kuma",
       "repository": "kumahq/kuma",
-      "source_version": "a71f8a93",
-      "content_hash": "5d28e85309fcff0ebbbdce15d6817d0395e2a57df5bde14bbd9da765bb523b7d",
+      "source_version": "9de645f5",
+      "content_hash": "6690d37902f86586a4c783fd345eb0ccb22c127e8363b5c8edc382f1ba113d72",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:16:54.827Z"
+      "persisted_at": "2026-11-20T22:30:59.225Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-learnings-c",
@@ -265171,10 +265176,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kumahq-kuma-technical-construction-intelligence-kumahq-kuma-core-invariants.md",
       "title": "Technical Construction Intelligence: kumahq/kuma Core Invariants",
       "repository": "kumahq/kuma",
-      "source_version": "053b67f7",
-      "content_hash": "9c006035b7bdc7535c7acd3bbaea8459a64a1ed35b09683ecf17272c4f280dfb",
+      "source_version": "9de645f5",
+      "content_hash": "8ae7e1c81b6de599713b4504e2c55c58cf8b5a47e9ef3bfb7f3f9195fe446e2a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T01:38:37.262Z"
+      "persisted_at": "2026-11-20T22:30:59.087Z"
     },
     "rule-8846": {
       "learning_id": "rule-8846",
@@ -265262,9 +265267,9 @@
       "title": "Technical Construction Intelligence: kumahq-kuma-learnings Core Invariants",
       "repository": "kumahq-kuma-learnings",
       "source_version": "HEAD",
-      "content_hash": "0042a8a5295c24da0e24f56243ed27803043598a8ba455edffad4791d1c02ef1",
+      "content_hash": "30305c46b2948734f02186f01a1b100d838696b7f161d56b8795a36c561499a5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T01:39:15.331Z"
+      "persisted_at": "2026-11-20T22:31:02.421Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kumahq-kuma-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kumahq-kuma-learnings",
@@ -265274,9 +265279,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kumahq-kuma-learnings",
       "repository": "kumahq-kuma-learnings",
       "source_version": "HEAD",
-      "content_hash": "3cfdc825db312bb64d35025c4e3e09a244e3c313a94c5320fdd9cb27aa43065d",
+      "content_hash": "8c9c7f62a2222459d7f59dc14fed9fcaf251369287b1369f7dc76c99643d1254",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:17:29.886Z"
+      "persisted_at": "2026-11-20T22:31:02.580Z"
     },
     "learn-github-scrapinghub-dateparser": {
       "learning_id": "learn-github-scrapinghub-dateparser",
@@ -288357,9 +288362,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "5bd805e3fa09c09106c9d3079a0b21c5dbdcf7e96058432dba217fb7e1c310f8",
+      "content_hash": "9286dcefddb5bf347c685aafbba4c23d249a8ef75a1258740ff2c47eb81d6ee3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T22:23:09.233Z"
+      "persisted_at": "2026-11-20T22:31:03.804Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -307642,6 +307647,44 @@
       "content_hash": "18178f650c12c8fa00295e06a04b790b81164713170fb2f4de6eb0db76764618",
       "domain_letter": "B",
       "persisted_at": "2026-11-20T22:23:08.188Z"
+    },
+    "rule-9647": {
+      "learning_id": "rule-9647",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9647,
+      "title": "scope global snapshot to stream",
+      "source_url": "https://github.com/kumahq/kuma",
+      "source_version": "9de645f5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T22:30:58.570Z"
+    },
+    "candidate_directive-scope-global-snapshot-to-stream": {
+      "item_id": "candidate_directive-scope-global-snapshot-to-stream",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZATA-scope-global-snapshot-to-stream.md",
+      "title": "scope global snapshot to stream",
+      "repository": "kumahq/kuma",
+      "source_version": "9de645f5",
+      "content_hash": "3e3c14b333c59a582dc9c48e15c49c3df24935b10ecad733d815bc511dae8cd7",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-20T22:30:58.943Z"
+    },
+    "candidate_directive-kds-scope-global-snapshot-to-stream": {
+      "item_id": "candidate_directive-kds-scope-global-snapshot-to-stream",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZDDX-kds-scope-global-snapshot-to-stream.md",
+      "title": "kds): scope global snapshot to stream",
+      "repository": "kumahq-kuma-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ddf37e0bda5bf1e396615dbb0f4ccebeb696d45487860ca901c8d00a1f49eab7",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-20T22:31:02.278Z"
     }
   },
   "ai-builder-brain": {

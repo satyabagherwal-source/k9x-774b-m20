@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T22:23:07.466Z",
+  "updated_at": "2026-11-20T22:31:02.073Z",
   "stats": {
-    "total_discovered": 6763,
-    "approved_pending_harvest": 6384,
+    "total_discovered": 6764,
+    "approved_pending_harvest": 6385,
     "harvested_count": 0,
     "rejected_count": 379,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6359,
+      "COMMUNITY_AND_EXPERT": 6360,
       "OFFICIAL_DOCUMENTATION": 230,
       "STANDARDS_AND_SPECIFICATIONS": 121,
       "ENGINEERING_BLOGS": 5,
@@ -146156,6 +146156,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
         "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-7324DE5835EE": {
+      "id": "SRC-7324DE5835EE",
+      "url": "https://github.com/kumahq/kuma/actions/runs/44731160606",
+      "title": "https://github.com/kumahq/kuma/actions/runs/44731160606",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:31:02.073Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
       }
     }
   }

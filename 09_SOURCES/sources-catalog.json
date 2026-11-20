@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "053b67f7",
+    "sourceVersion": "9de645f5",
     "license": "Apache-2.0",
-    "contentHash": "5fa0c7e13b55cbc4025e73e5b42b01e29f5a6bd5c2a6a931b8b018f3966f8d95",
-    "lastHarvestedAt": "2026-11-18T01:38:37.077Z",
+    "contentHash": "6a1f9dceaf2e940889633e0c04237ac365d602374f37af8a78e539970654faa5",
+    "lastHarvestedAt": "2026-11-20T22:30:58.759Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {

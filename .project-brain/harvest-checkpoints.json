@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T22:22:57.548Z",
+  "last_updated": "2026-11-20T22:30:58.767Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "5fa0c7e13b55cbc4025e73e5b42b01e29f5a6bd5c2a6a931b8b018f3966f8d95",
-      "verified_at": "2026-11-18T01:38:37.084Z",
+      "content_hash": "6a1f9dceaf2e940889633e0c04237ac365d602374f37af8a78e539970654faa5",
+      "verified_at": "2026-11-20T22:30:58.766Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T01:38:37.084Z"
+      "last_updated": "2026-11-20T22:30:58.766Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",

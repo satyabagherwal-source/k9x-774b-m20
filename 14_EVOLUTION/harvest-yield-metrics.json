@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T22:22:57.543Z",
-  "total_cycles_completed": 11085,
-  "total_learnings_persisted": 11085,
-  "total_rules_promoted": 10437,
+  "last_updated": "2026-11-20T22:30:58.764Z",
+  "total_cycles_completed": 11086,
+  "total_learnings_persisted": 11086,
+  "total_rules_promoted": 10438,
   "history": [
-    {
-      "timestamp": "2026-11-19T23:34:46.985Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T23:43:21.137Z",
       "repository": "codewhale-hq/Codewhale",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-20T22:22:57.543Z",
       "repository": "domcyrus/rustnet",
       "learningId": "learn-github-domcyrus-rustnet",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T22:30:58.764Z",
+      "repository": "kumahq/kuma",
+      "learningId": "learn-github-kumahq-kuma",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
