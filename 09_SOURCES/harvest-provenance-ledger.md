@@ -11459,3 +11459,4 @@ Every entry in this ledger must capture:
 | `learn-dom-f-d7fa7771` | `project://metalbear-co-mirrord` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md` | 2026-11-20T01:02:17.646Z |
 | `learn-dom-h-bd3a2b21` | `project://maziyarpanahi-openmed` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md` | 2026-11-20T01:03:02.492Z |
 | `learn-dom-k-2b1d449b` | `project://maziyarpanahi-openmed` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md` | 2026-11-20T01:04:00.140Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `92416031` | Multi-dimensional audit evidence | 2026-11-20T01:12:44.890Z |

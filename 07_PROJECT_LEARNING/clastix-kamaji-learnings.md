@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `d25aada2`  
+> **Source Version**: `92416031`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T20:45:47.511Z  
+> **Timestamp**: 2026-11-20T01:12:43.912Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T20:45:47.506Z  
+> **Harvest Timestamp**: 2026-11-20T01:12:43.734Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2092 stars
+- **Stars / Engagement**: 2093 stars
 
 ---
 
@@ -746,535 +746,112 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d25aada2` (2026-11-18)
-**Commit Message**: test(e2e): cover rolling a new default kine image to live tenants (#1400)
+### Incident Patch 1: `3bf2610e` (2026-11-19)
+**Commit Message**: fix(datastore): use generation on Valid condition (#1428)
 
-* test(e2e): cover rolling a new default kine image to live tenants
+Signed-off-by: Sai Asish Y <[REDACTED_EMAIL]>
 
-Add a serial e2e spec that changes the controller-manager's --kine-image
-while a kine-backed TenantControlPlane is running. It checks that the
-tenant's kine sidecar adopts the new image, that the TenantControlPlane
-returns to Ready, and that data written before the rollout is still
-readable afterwards.
-
-The image is read from E2E_KINE_IMAGE_UPGRADE, set by the new
-e2e-kine-rollout make target from KINE_IMAGE_UPGRADE
-(ghcr.io/k3s-io/kine:v0.17.3 by default).
-
-* test(e2e): pass the kine upgrade image to the default e2e target
-
-make e2e runs the whole suite, and the kine rollout spec requires
-E2E_KINE_IMAGE_UPGRADE. Set it in e2e-test from KINE_IMAGE_UPGRADE so
-the spec runs in CI as well as in e2e-kine-rollout.
-
-* test(e2e): dump controller-manager and webhook state on failure
-
-When a spec fails, print every controller-manager Pod with its restart
-counts and logs (current and previous), the webhook Service endpoints,
-and the Kamaji events. The logs cover five minutes instead of the failed
-spec's own runtime. A suite-wide recorder logs the con
-
-**File**: `Makefile` (modified, +8/-1)
+**File**: `controllers/datastore_controller.go` (modified, +1/-1)
 ```diff
-@@ -356,9 +356,16 @@ e2e-setup: build load helm ginkgo cert-manager gateway-api envoy-gateway ## Crea
- e2e-redeploy: build load
- 	$(HELM) upgrade --debug --install kamaji ./charts/kamaji --create-namespace --namespace kamaji-system --set "image.tag=$(VERSION)" --set "image.pullPolicy=Never" --set "telemetry.disabled=true" --set "gatewayAPI.enabled=true"
- 
-+# Newest kine release; upstream publishes its images to GHCR (see k3s-io/kine .github/workflows/release.yml).
-+KINE_IMAGE_UPGRADE ?= ghcr.io/k3s-io/kine:v0.17.3
-+
- .PHONY: e2e-test
- e2e-test: build load
--	$(GINKGO) -v ./e2e
-+	E2E_KINE_IMAGE_UPGRADE=$(KINE_IMAGE_UPGRADE) $(GINKGO) -v ./e2e
-+
-+.PHONY: e2e-kine-rollout
-+e2e-kine-rollout: ## Roll KINE_IMAGE_UPGRADE out to a live kine TenantControlPlane. Requires e2e-setup.
-+	E2E_KINE_IMAGE_UPGRADE=$(KINE_IMAGE_UPGRADE) $(GINKGO) -v --focus "Rolling a new default --kine-image" ./e2e
- 
- CAPI_URL = https://github.com/clastix/cluster-api-control-plane-provider-kamaji.git
- CAPI_DIR := $(shell mktemp -d)
+@@ -234,7 +234,7 @@ func (r *DataStore) Reconcile(ctx context.Context, request reconcile.Request) (r
+ 	meta.SetStatusCondition(&ds.Status.Conditions, metav1.Condition{
+ 		Type:               kamajiv1alpha1.DataStoreConditionValidType,
+ 		Status:             metav1.ConditionTrue,
+-		ObservedGeneration: ds.Status.ObservedGeneration,
++		ObservedGeneration: ds.Generation,
+ 		Reason:             "DataStoreIsValid",
+ 		Message:            "",
+ 	})
 ```
 
-**File**: `cmd/manager/cmd.go` (modified, +24/-1)
+**File**: `controllers/datastore_controller_reconcile_test.go` (added, +76/-0)
 ```diff
-@@ -4,6 +4,7 @@
- package manager
- 
- import (
-+	"context"
- 	"fmt"
- 	"io"
- 	"net/http"
-@@ -38,6 +39,28 @@ import (
- 	"github.com/clastix/kamaji/internal/webhook/routes"
- )
- 
-+// shutdownDrainPeriod is how long the manager keeps serving after SIGTERM before it stops. Kubernetes
-+// removes a terminating Pod from the Service endpoints asynchronously, and kube-proxy takes a moment
-+// more to stop routing to it, so webhook calls can still reach this Pod right after the signal.
-+const shutdownDrainPeriod = 5 * time.Second
-+
-+// withShutdownDrain returns a context that is cancelled drain after parent is done.
-+func withShutdownDrain(parent context.Context, drain time.Duration) context.Context {
-+	ctx, cancel := context.WithCancel(context.Background())
-+
-+	go func() {
-+		<-parent.Done()
-+
-+		timer := time.NewTimer(drain)
-+		defer timer.Stop()
-+
-+		<-timer.C
-+		cancel()
-+	}()
-+
-+	return ctx
-+}
-+
- //nolint:maintidx
- func NewCmd(scheme *runtime.Scheme) *cobra.Command {
- 	// CLI flags
-@@ -94,7 +117,7 @@ func NewCmd(scheme *runtime.Scheme) *cobra.Command {
- 			return nil
- 		},
- 		RunE: func(*cobra.Command, []string) error {
--			ctx := ctrl.SetupSignalHandler()
-+			ctx := withShutdownDrain(ctrl.SetupSignalHandler(), shutdownDrainPeriod)
- 
- 			setupLog := ctrl.Log.WithName("setup")
- 
-```
-
-**File**: `cmd/manager/cmd_test.go` (added, +37/-0)
-```diff
-@@ -0,0 +1,37 @@
+@@ -0,0 +1,76 @@
 +// Copyright 2022 Clastix Labs
 +// SPDX-License-Identifier: Apache-2.0
 +
-+package manager
++package controllers
 +
 +import (
-+	"context"
 +	"testing"
-+	"time"
-+)
 +
-+func TestWithShutdownDrain(t *testing.T) {
-+	const drain = 300 * time.Millisecond
-+
-+	parent, stop := context.WithCancel(context.Background())
-+	ctx := withShutdownDrain(parent, drain)
-+
-+	select {
-+	case <-ctx.Done():
-+		t.Fatal("context is done before the parent is")
-+	case <-time.After(50 * time.Millisecond):
-+	}
-+
-+	stop()
-+
-+	select {
-+	case <-ctx.Done():
-+		t.Fatal("context is done before the drain period has elapsed")
-+	case <-time.After(100 * time.Millisecond):
-+	}
-+
-+	select {
-+	case <-ctx.Done():
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("context is not done after the drain period")
-+	}
-+}
-```
-
-**File**: `e2e/suite_test.go` (modified, +3/-0)
-```diff
-@@ -67,6 +67,9 @@ var _ = BeforeSuite(func() {
- 	Expect(err).NotTo(HaveOccurred())
- 	Expect(k8sClient).NotTo(BeNil())
- 
-+	By("recording the controller-manager Pods and the webhook EndpointSlices")
-+	startKamajiTimelineRecorder()
-+
- 	By("creating GatewayClass for Gateway API tests")
- 	gatewayClass := &gatewayv1.GatewayClass{
- 		ObjectMeta: metav1.ObjectMeta{
-```
-
-**File**: `e2e/tcp_additional_resources_blocked_test.go` (modified, +10/-4)
-```diff
-@@ -5,6 +5,7 @@ package e2e
- 
- import (
- 	"context"
-+	"errors"
- 	"time"
- 
- 	. "github.com/onsi/ginkgo/v2"
-@@ -13,6 +14,7 @@ import (
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
- 	pointer "k8s.io/utils/ptr"
-+	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
- 
- 	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
- )
-@@ -142,10 +144,14 @@ var _ = Describe("Deploy a TenantControlPlane resource with additional resources
- 	})
- 	// Delete the TenantControlPlane resource after test is finished
- 	JustAfterEach(func() {
--		Expect(k8sClient.Delete(context.Background(), tcp)).Should(Succeed())
--		Expect(k8sClient.Delete(context.Background(), apiServerConfigMap)).NotTo(HaveOccurred())
--		Expect(k8sClient.Delete(context.Background(), controllerManagerConfigMap)).NotTo(HaveOccurred())
--		Expect(k8sClient.Delete(context.Background(), schedulerConfigMap)).NotTo(HaveOccurred())
-+		// Every delete runs even when one fails, so a failed spec does not leave the ConfigMaps behind
-+		// for the next spec in the same namespace.
-+		Expect(errors.Join(
-+			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), tcp)),
-+			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), apiServerConfigMap)),
-+			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), controllerManagerConfigMap)),
-+			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), schedulerConfigMap)),
-+		)).To(Succeed())
- 	})
- 	It("should block wrong Deployment configuration", func() {
- 		// Should be ready
-```
-
-**File**: `e2e/tcp_additional_resources_ready_test.go` (modified, +10/-4)
-```diff
-@@ -6,6 +6,7 @@ package e2e
- 
- import (
- 	"context"
-+	"errors"
- 	"fmt"
- 	"time"
- 
-@@ -18,6 +19,7 @@ import (
- 	"k8s.io/apimachinery/pkg/types"
- 	"k8s.io/apimachinery/pkg/util/sets"
- 	pointer "k8s.io/utils/ptr"
-+	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
- 
- 	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
- 	"github.com/clastix/kamaji/internal/utilities"
-@@ -178,10 +180,14 @@ var _ = Describe("Deploy a TenantControlPlane resource with additional options",
- 
- 	// Delete the TenantControlPlane resource after test is finished
- 	JustAfterEach(func() {
--		Expect(k8sClient.Delete(context.Background(), tcp)).Should(Succeed())
--		Expect(k8sClient.Delete(context.Background(), apiServerConfigMap)).NotTo(HaveOccurred())
--		Expect(k8sClient.Delete(context.Background(), controllerManagerConfigMap)).NotTo(HaveOccurred())
--		Expect(k8sClient.Delete(context.Background(), schedulerConfigMap)).NotTo(HaveOccurred())
-+		// Every delete runs even when one fails, so a failed spec does not leave the ConfigMaps behind
-+		// for the next spec in the same namespace.
-+		Expect(errors.Join(
-+			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), tcp)),
-+			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), apiServerConfigMap)),
-+			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), controllerManagerConfigMap)),
-+			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), schedulerConfigMap)),
-+		)).To(Succeed())
- 	})
- 
- 	It("should have the additional resources", func() {
-```
-
-**File**: `e2e/tcp_kine_image_rollout_test.go` (added, +285/-0)
-```diff
-@@ -0,0 +1,285 @@
-+// Copyright 2022 Clastix Labs
-+// SPDX-License-Identifier: Apache-2.0
-+
-+package e2e
-+
-+import (
-+	"context"
-+	"fmt"
-+	"os"
-+	"strings"
-+	"time"
-+
-+	. "github.com/onsi/ginkgo/v2"
-+	. "github.com/onsi/gomega"
-+	appsv1 "k8s.io/api/apps/v1"
-+	corev1 "k8s.io/api/core/v1"
-+	discoveryv1 "k8s.io/api/discovery/v1"
-+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
++	"github.com/prometheus/client_golang/prometheus"
++	"k8s.io/apimachinery/pkg/api/meta"
 +	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
 +	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/apimachinery/pkg/util/rand"
-+	"k8s.io/client-go/tools/clientcmd"
-+	"k8s.io/client-go/util/retry"
-+	pointer "k8s.io/utils/ptr"
-+	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
++	ctrl "sigs.k8s.io/controller-runtime"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 +
 +	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
-+	"github.com/clastix/kamaji/internal/utilities"
++	"github.com/clastix/kamaji/internal/metrics"
 +)
 +
-+const (
-+	kamajiNamespace   = "kamaji-system"
-+	kineContainerName = "kine"
-+	managerContainer  = "manager"
-+	kineImageArg      = "--kine-image"
-+)
++func TestDataStoreReconcileValidConditionObservesCurrentGeneration(t *testing.T) {
++	t.Parallel()
 +
-+// kamajiManagerDeployment returns the controller-manager Deployment installed by the e2e setup.
-+func kamajiManagerDeployment() *appsv1.Deployment {
-+	GinkgoHelper()
-+
-+	list := &appsv1.DeploymentList{}
-+	Expect(k8sClient.List(context.Background(), list,
-+		ctrlclient.InNamespace(kamajiNamespace),
-+		ctrlclient.MatchingLabels{"app.kubernetes.io/component": "controller-manager"},
-+	)).To(Succeed())
-+	Expect(list.Items).To(HaveLen(1))
-+
-+	return &list.Items[0]
-+}
-+
-+// managerArgs returns a copy of the args of the manager container.
-+func managerArgs(deployment *appsv1.Deployment) []string {
-+	for _, c := range deployment.Spec.Template.Spec.Containers {
-+		if c.Name == managerContainer {
-+			return append([]string(nil), c.Args...)
-+		}
++	scheme := runtime.NewScheme()
++	if err := kamajiv1alpha1.AddToScheme(scheme); err != nil {
++		t.Fatalf("failed adding kamaji scheme: %v", err)
 +	}
 +
-+	Fail(fmt.Sprintf("container %q not found in %s", managerContainer, deployment.GetName()))
-+
-+	return nil
-+}
-+
-+// setManagerArgs replaces the args of the manager container, retrying on conflicts with the
-+// Deployment controller, and returns once the manager rollout has completed.
-+func setManagerArgs(args []string) {
-+	GinkgoHelper()
-+
-+	Expect(retry.RetryOnConflict(retry.DefaultRetry, func() error {
-+		deployment := kamajiManagerDeployment()
-+
-+		for i, c := range deployment.Spec.Template.Spec.Containers {
-+			if c.Name == managerContainer {
-+				deployment.Spec.Template.Spec.Containers[i].Args = args
-+			}
-+		}
-+
-+		return k8sClient.Update(context.Background(), deployment)
-+	})).To(Succeed())
-+
-+	Eventually(func(g Gomega) {
-+		deployment := kamajiManagerDeployment()
-+		desired := pointer.Deref(deployment.Spec.Replicas, 1)
-+
-+		g.Expect(deployment.Status.ObservedGeneration).To(BeNumerically(">=", deployment.GetGeneration()))
-+		g.Expect(deployment.Status.UpdatedReplicas).To(Equal(desired))
-+		g.Expect(deployment.Status.AvailableReplicas).To(Equal(desired))
-+		// Old pods are gone once the total matches the desired count.
-+		g.Expect(deployment.Status.Replicas).To(Equal(desired))
-+	}, 5*time.Minute, time.Second).Should(Succeed())
-+
-+	// The Deployment status does not count pods that are already terminating, but their endpoints stay
-+	// in the webhook Service until the endpoints controller removes them. Wait until none are left.
-+	Eventually(func(g Gomega) {
-+		pods := &corev1.PodList{}
-+		g.Expect(k8sClient.List(context.Background(), pods,
-+			ctrlclient.InNamespace(kamajiNamespace),
-+			ctrlclient.MatchingLabels{"app.kubernetes.io/component": "controller-manager"},
-+		)).To(Succeed())
-+
-+		for _, pod := range pods.Items {
-+			g.Expect(pod.GetDeletionTimestamp()).To(BeNil(), "pod %s is still terminating", pod.GetName())
-+		}
-+
-+		slices := &discoveryv1.EndpointSliceList{}
-+		g.Expect(k8sClient.List(context.Background(), slices,
-+			ctrlclient.InNamespace(kamajiNamespace),
-+			ctrlclient.MatchingLabels{discoveryv1.LabelServiceName: "kamaji-webhook-service"},
-+		)).To(Succeed())
-+
-+		for _, slice := range slices.Items {
-+			for _, ep := range slice.Endpoints {
-+				g.Expect(pointer.Deref(ep.Conditions.Terminating, false)).To(BeFalse(), "endpoint %v is still terminating", ep.Addresses)
-+			}
-+		}
-+	}, 5*time.Minute, time.Second).Should(Succeed())
-+}
-+
-+// withKineImageArg returns args with --kine-image set to image, replacing any existing value.
-+func withKineImageArg(args []string, image string) []string {
-+	out := make([]string, 0, len(args)+1)
-+
-+	for _, a := range args {
-+		if !strings.HasPrefix(a, kineImageArg+"=") && a != kineImageArg {
-+			out = append(out, a)
-+		}
++	ds := &kamajiv1alpha1.DataStore{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:       "primary",
++			Generation: 2,
++			Finalizers: []string{kamajiv1alpha1.DataStoreTCPFinalizer},
++		},
++		Spec: kamajiv1alpha1.DataStoreSpec{Driver: kamajiv1alpha1.KinePostgreSQLDriver},
++		Status: kamajiv1alpha1.DataStoreStatus{
++			ObservedGeneration: 1,
++			Conditions: []metav1.Condition{{
++				Type:               kamajiv1alpha1.DataStoreConditionValidType,
++				Status:             metav1.ConditionUnknown,
++				ObservedGeneration: 1,
++				Reason:             "MissingCondition",
++			}},
++		},
 +	}
 +
-+	return append(out, kineImageArg+"="+image)
-+}
++	indexer := &kamajiv1alpha1.TenantControlPlaneStatusDataStore{}
++	cl := fake.NewClientBuilder().
++		WithScheme(scheme).
++		WithObjects(ds).
++		WithStatusSubresource(ds).
++		WithIndex(indexer.Object(), indexer.Field(), indexer.ExtractValue()).
++		Build()
 +
-+// kineRolloutTenantClient returns a client for the tenant control plane API server.
-+func kineRolloutTenantClient(tcp *kamajiv1alpha1.TenantControlPlane) ctrlclient.Client {
-+	GinkgoHelper()
-+
-+	config, err := utilities.GetTenantKubeconfig(context.Background(), k8sClient, tcp)
-+	Expect(err).ToNot(HaveOccurred())
-+
-+	b, err := utilities.EncodeToYaml(config)
-+	Expect(err).ToNot(HaveOccurred())
-+
-+	clientCfg, err := clientcmd.NewClientConfigFromBytes(b)
-+	Expect(err).ToNot(HaveOccurred())
-+
-+	restConfig, err := clientCfg
-```
-
-**File**: `e2e/utils_test.go` (modified, +217/-25)
-```diff
-@@ -9,6 +9,8 @@ import (
- 	"fmt"
- 	"io"
- 	"os/exec"
-+	"sort"
-+	"sync"
- 	"time"
- 
- 	. "github.com/onsi/ginkgo/v2"
-@@ -18,7 +20,9 @@ import (
- 	"k8s.io/apimachinery/pkg/api/meta"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/client-go/informers"
- 	"k8s.io/client-go/kubernetes"
-+	"k8s.io/client-go/tools/cache"
- 	"k8s.io/client-go/util/retry"
- 	pointer "k8s.io/utils/ptr"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
-@@ -89,45 +93,233 @@ func PrintTenantControlPlaneInfo() {
- 	}
- }
- 
-+// kamajiTimeline records, for the whole suite, the changes to the controller-manager Pods and to the
-+// EndpointSlices of kamaji-webhook-service, so a failing spec can be matched against them.
-+var (
-+	kamajiTimelineMu sync.Mutex
-+	kamajiTimeline   []string
-+)
-+
-+func recordKamajiTimelinef(format string, args ...any) {
-+	kamajiTimelineMu.Lock()
-+	defer kamajiTimelineMu.Unlock()
-+
-+	kamajiTimeline = append(kamajiTimeline, time.Now().Format(time.RFC3339Nano)+" "+fmt.Sprintf(format, args...))
-+}
-+
-+func boolPtrString(b *bool) string {
-+	if b == nil {
-+		return "nil"
++	r := &DataStore{
++		Client:  cl,
++		Metrics: metrics.NewRecorder(prometheus.NewRegistry()),
 +	}
 +
-+	return fmt.Sprintf("%t", *b)
-+}
-+
-+// startKamajiTimelineRecorder starts informers that record the controller-manager Pods and the
-+// webhook EndpointSlices. It runs until the test process exits.
-+func startKamajiTimelineRecorder() {
-+	GinkgoHelper()
-+
-+	clientset, err := kubernetes.NewForConfig(cfg)
-+	Expect(err).ToNot(HaveOccurred())
-+
-+	podFactory := informers.NewSharedInformerFactoryWithOptions(clientset, 0,
-+		informers.WithNamespace(kamajiNamespace),
-+		informers.WithTweakListOptions(func(o *metav1.ListOptions) {
-+			o.LabelSelector = "app.kubernetes.io/component=controller-manager"
-+		}))
-+	_, err = podFactory.Core().V1().Pods().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-+		AddFunc:    func(obj interface{}) { recordPodChange("added", obj) },
-+		UpdateFunc: func(_, obj interface{}) { recordPodChange("updated", obj) },
-+		DeleteFunc: func(obj interface{}) { recordPodChange("deleted", obj) },
-+	})
-+	Expect(err).ToNot(HaveOccurred())
-+
-+	sliceFactory := informers.NewSharedInformerFactoryWithOptions(clientset, 0,
-+		informers.WithNamespace(kamajiNamespace),
-+		informers.WithTweakListOptions(func(o *metav1.ListOptions) {
-+			o.LabelSelector = discoveryv1.LabelServiceName + "=kamaji-webhook-service"
-+		}))
-+	_, err = sliceFactory.Discovery().V1().EndpointSlices().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-+		AddFunc:    func(obj interface{}) { recordSliceChange("added", obj) },
-+		UpdateFunc: func(_, obj interface{}) { recordSliceChange("updated", obj) },
-+		DeleteFunc: func(obj interface{}) { recordSliceChange("deleted", obj) },
-+	})
-+	Expect(err).ToNot(HaveOccurred())
-+
-+	// Tenant control planes live in default, and their NodePort services are what the specs connect to.
-+	tenantSliceFactory := informers.NewSharedInformerFactoryWithOptions(clientset, 0, informers.WithNamespace("default"))
-+	_, err = tenantSliceFactory.Discovery().V1().EndpointSlices().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-+		AddFunc:    func(obj interface{}) { recordSliceChange("added", obj) },
-+		UpdateFunc: func(_, obj interface{}) { recordSliceChange("updated", obj) },
-+		DeleteFunc: func(obj interface{}) { recordSliceChange("deleted", obj) },
-+	})
-+	Expect(err).ToNot(HaveOccurred())
-+
-+	stop := make(chan struct{})
-+	podFactory.Start(stop)
-+	sliceFactory.Start(stop)
-+	tenantSliceFactory.Start(stop)
-+}
-+
-+func recordPodChange(action string, obj interface{}) {
-+	pod, ok := obj.(*corev1.Pod)
-+	if !ok {
-+		recordKamajiTimelinef("pod %s: unexpected object %T", action, obj)
-+
-+		return
++	if _, err := r.Reconcile(t.Context(), ctrl.Request{NamespacedName: types.NamespacedName{Name: "primary"}}); err != nil {
++		t.Fatalf("Reconcile returned error: %v", err)
 +	}
 +
-+	recordKamajiTimelinef("pod %s %s phase=%s ready=%t deleting=%t startTime=%v",
-+		action, pod.GetName(), pod.Status.Phase, isPodReady(pod), pod.GetDeletionTimestamp() != nil, pod.Status.StartTime)
-+}
-+
-+func recordSliceChange(action string, obj interface{}) {
-+	slice, ok := obj.(*discoveryv1.EndpointSlice)
-+	if !ok {
-+		recordKamajiTimelinef("endpointslice %s: unexpected object %T", action, obj)
-+
-+		return
++	var got kamajiv1alpha1.DataStore
++	if err := cl.Get(t.Context(), types.NamespacedName{Name: "primary"}, &got); err != nil {
++		t.Fatalf("failed getting DataStore: %v", err)
 +	}
 +
-+	if len(slice.Endpoints) == 0 {
-+		recordKamajiTimelinef("endpointslice %s %s: no endpoints", action, slice.GetName())
-+
-+		return
++	condition := meta.FindStatusCondition(got.Status.Conditions, kamajiv1alpha1.DataStoreConditionValidType)
++	if condition == nil || condition.Status != metav1.ConditionTrue {
++		t.Fatalf("expected a true Valid condition, got %+v", condition)
 +	}
-+
-+	for _, ep := range slice.Endpoints {
-+		recordKamajiTimelinef("endpointslice %s %s addresses=%v ready=%s serving=%s terminating=%s target=%s",
-+			action, slice.GetName(), ep.Addresses,
-+			boolPtrString(ep.Conditions.Ready), boolPtrString(ep.Conditions.Serving), boolPtrString(ep.Conditions.Terminating),
-+			targetName(ep.TargetRef))
++	if condition.ObservedGeneration != got.Generation {
++		t.Fatalf("expected Valid condition observedGeneration %d, got %d", got.Generation, condition.ObservedGeneration)
 +	}
 +}
-+
-+// PrintKamajiLogs dumps the state of the Kamaji controller-manager (which also serves the webhooks)
-+// when a spec fails: the recorded timeline, every controller-manager Pod, its current and previous
-+// logs, the webhook Service endpoints and the events in the Kamaji namespace.
- func PrintKamajiLogs() {
--	if CurrentSpecReport().Failed() {
--		clientset, err := kubernetes.NewForConfig(cfg)
--		Expect(err).ToNot(HaveOccurred
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1428** (2026-11-19): fix(datastore): use generation on Valid condition (@SAY-5)
+- **PR #1426** (2026-11-19): feat(konnectivity)!: set agent keepalive to 60s (@aimnbrs)
+- **PR #1424** (2026-11-19): feat(deps): bump sigs.k8s.io/controller-runtime from 0.25.2 to 0.25.3 (@dependabot[bot])
 - **PR #1420** (2026-11-16): feat(deps): bump github.com/moby/moby/api from 1.56.1 to 1.57.0 (@dependabot[bot])
 - **PR #1419** (2026-11-17): feat: standard Ready condition on TenantControlPlane (@lachgar-Azzeddine)
 - **PR #1417** (2026-11-15): feat(datastore): exclusive etcd DataStore (@NanduBolleddu)
-- **PR #1416** (2026-11-12): fix(metrics): list only certificate secrets (@albertoec)
-- **PR #1414** (2026-11-10): fix(datastore): allow rerunning the MySQL migration (@prometherion)
-- **PR #1413** (2026-11-11): fix(soot): cache only kube-system and kube-public (@pacharya-pf9)
 
 ---
 
@@ -1294,35 +871,28 @@ spec's own runtime. A suite-wide recorder logs the con
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(e2e): cover rolling a new default kine image to live tenants
+## X. datastore): use generation on Valid condition
 
 **RULE**:
-When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controllers/datastore_controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d25aada2`: test(e2e): cover rolling a new default kine image to live tenants. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3bf2610e`: datastore): use generation on Valid condition. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/datastore_controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Newest kine release; upstream publishes its images to GHCR (see k3s-io/kine .github/workflows/release.yml).
-KINE_IMAGE_UPGRADE ?= ghcr.io/k3s-io/kine:v0.17.3
-
-	E2E_KINE_IMAGE_UPGRADE=$(KINE_IMAGE_UPGRADE) $(GINKGO) -v ./e2e
-
-.PHONY: e2e-kine-rollout
-e2e-kine-rollout: ## Roll KINE_IMAGE_UPGRADE out to a live kine TenantControlPlane. Requires e2e-setup.
-	E2E_KINE_IMAGE_UPGRADE=$(KINE_IMAGE_UPGRADE) $(GINKGO) -v --focus "Rolling a new default --kine-image" ./e2e
+		ObservedGeneration: ds.Generation,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	$(GINKGO) -v ./e2e
+		ObservedGeneration: ds.Status.ObservedGeneration,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d25aada2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3bf2610e` are properly handled with clean fallback behavior.

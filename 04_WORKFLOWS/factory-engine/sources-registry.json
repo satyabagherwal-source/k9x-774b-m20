@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T01:01:09.865Z",
-    "lastVerified": "2026-11-20T01:01:09.865Z",
+    "lastChecked": "2026-11-20T01:12:47.968Z",
+    "lastVerified": "2026-11-20T01:12:47.968Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -344,8 +344,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T00:24:23.395Z",
-    "lastVerified": "2026-11-20T00:24:23.395Z",
+    "lastChecked": "2026-11-20T01:12:46.914Z",
+    "lastVerified": "2026-11-20T01:12:46.914Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -513,8 +513,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T18:33:02.518Z",
-    "lastVerified": "2026-11-19T18:33:02.518Z",
+    "lastChecked": "2026-11-20T01:12:41.849Z",
+    "lastVerified": "2026-11-20T01:12:41.849Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -2083,9 +2083,9 @@
   "unhappychoice-gitlogue": {
     "name": "gitlogue",
     "officialUrl": "https://github.com/unhappychoice/gitlogue",
-    "lastChecked": "2026-11-18T13:46:48.938Z",
+    "lastChecked": "2026-11-20T01:12:31.804Z",
     "revisionIdentifier": "1f875b5b",
-    "lastVerified": "2026-11-18T13:46:48.938Z"
+    "lastVerified": "2026-11-20T01:12:31.804Z"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -3982,9 +3982,9 @@
   "erikgrinaker-toydb": {
     "name": "toydb",
     "officialUrl": "https://github.com/erikgrinaker/toydb",
-    "lastChecked": "2026-11-18T19:10:08.728Z",
+    "lastChecked": "2026-11-20T01:12:44.376Z",
     "revisionIdentifier": "2d7cd32e",
-    "lastVerified": "2026-11-18T19:10:08.728Z"
+    "lastVerified": "2026-11-20T01:12:44.376Z"
   },
   "timvisee-ffsend": {
     "name": "ffsend",
@@ -4317,14 +4317,14 @@
     "officialUrl": "https://github.com/clastix/kamaji",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T20:45:47.506Z",
-    "lastVerified": "2026-11-18T20:45:47.506Z",
+    "lastChecked": "2026-11-20T01:12:43.734Z",
+    "lastVerified": "2026-11-20T01:12:43.734Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "b4f259c2d795ae2c99faa3e53f2a152340d7edb899facee74190aadde4c493cf",
+    "contentHash": "f545839ce6ce632ab4ec39e30214ba8fd0174a14b9ad02d2a2f5a50b72294903",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8902,5 +8902,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lokoe-mehdi-scouter": {
+    "name": "scouter",
+    "officialUrl": "https://github.com/lokoe-mehdi/scouter",
+    "lastChecked": "2026-11-20T01:12:34.364Z",
+    "revisionIdentifier": "e8edc3c5",
+    "lastVerified": "2026-11-20T01:12:34.364Z"
+  },
+  "bernaferrari-figmatocode": {
+    "name": "FigmaToCode",
+    "officialUrl": "https://github.com/bernaferrari/FigmaToCode",
+    "lastChecked": "2026-11-20T01:12:36.781Z",
+    "revisionIdentifier": "f5c4831d",
+    "lastVerified": "2026-11-20T01:12:36.781Z"
   }
 }

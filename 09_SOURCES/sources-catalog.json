@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "d25aada2",
+    "sourceVersion": "92416031",
     "license": "Apache-2.0",
-    "contentHash": "b4f259c2d795ae2c99faa3e53f2a152340d7edb899facee74190aadde4c493cf",
-    "lastHarvestedAt": "2026-11-18T20:45:48.467Z",
+    "contentHash": "f545839ce6ce632ab4ec39e30214ba8fd0174a14b9ad02d2a2f5a50b72294903",
+    "lastHarvestedAt": "2026-11-20T01:12:44.890Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {

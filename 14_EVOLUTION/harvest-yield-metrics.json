@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T01:01:06.206Z",
-  "total_cycles_completed": 10901,
-  "total_learnings_persisted": 10901,
-  "total_rules_promoted": 10263,
+  "last_updated": "2026-11-20T01:12:44.895Z",
+  "total_cycles_completed": 10902,
+  "total_learnings_persisted": 10902,
+  "total_rules_promoted": 10264,
   "history": [
-    {
-      "timestamp": "2026-11-19T04:44:15.854Z",
-      "repository": "linkerd/linkerd2",
-      "learningId": "learn-github-linkerd-linkerd2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T05:06:04.697Z",
       "repository": "BAAI/bge-large-en-v1.5",
@@ -1403,6 +1396,13 @@
       "repository": "maziyarpanahi/openmed",
       "learningId": "learn-github-maziyarpanahi-openmed",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T01:12:44.895Z",
+      "repository": "clastix/kamaji",
+      "learningId": "learn-github-clastix-kamaji",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

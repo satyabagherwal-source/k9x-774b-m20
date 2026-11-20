@@ -11426,3 +11426,4 @@
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T01:02:17.646Z` | `metalbear-co-mirrord` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-D7FA7771` [Domain F] | Yes (`a39c0751...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T01:03:02.492Z` | `maziyarpanahi-openmed` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-BD3A2B21` [Domain H] | Yes (`099bd0f1...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T01:04:00.140Z` | `maziyarpanahi-openmed` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-2B1D449B` [Domain K] | Yes (`02c34552...`) |
+| `CYCLE-20261120-BHAU` | `2026-11-20T01:12:44.886Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9485` | Yes (`f545839c...`) |

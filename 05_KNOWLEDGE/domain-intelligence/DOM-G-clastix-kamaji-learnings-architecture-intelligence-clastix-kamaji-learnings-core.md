@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T07:28:24.852Z",
+  "timestamp": "2026-11-20T01:12:48.176Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-clastix-kamaji-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [clastix-kamaji-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T07:28:24.852Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T01:12:48.176Z`  
 > **Learning ID**: `LEARN-EVO-clastix-kamaji-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 75%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from clastix-kamaji-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `afdb6e7a`  
+> **Source Version**: `92416031`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T07:28:14.915Z  
+> **Timestamp**: 2026-11-20T01:12:43.912Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T07:28:14.584Z  
+> **Harvest Timestamp**: 2026-11-20T01:12:43.734Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2088 stars
+- **Stars / Engagement**: 2093 stars
 
 ---
 
@@ -774,484 +774,112 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `afdb6e7a` (2026-11-17)
-**Commit Message**: feat: standard Ready condition on TenantControlPlane (#1419)
+### Incident Patch 1: `3bf2610e` (2026-11-19)
+**Commit Message**: fix(datastore): use generation on Valid condition (#1428)
 
-* feat(api): standard Ready condition for tcp
+Signed-off-by: Sai Asish Y <[REDACTED_EMAIL]>
 
-Add status.conditions to TenantControlPlane and a SetReadyCondition
-helper deriving the standard Ready condition from the Kubernetes
-version status, which stays the source of truth.
-
-Ready and WriteLimited map to True, every other status to False with
-the status as reason, and a missing status to Unknown. The condition
-type is intentionally not prefixed, since generic tooling such as
-kubectl wait and kstatus looks for a condition named Ready.
-
-Refs: #1418
-
-* feat(tcp): keep Ready condition in sync
-
-Compute the Ready condition on every status write performed by the
-resources, and at the end of a successful reconciliation along with
-the observed generation, so it never drifts from the version status.
-
-Refs: #1418
-
-* test(tcp): cover the Ready condition
-
-Unit tests cover the mapping of every version status and ensure the
-transition time only changes on actual status changes. The e2e ready
-and scale tests assert Ready=True when ready, and Ready=False with
-the Sleeping reason when scaled to zero.
-
-Refs: #1418
-
-* chore: regenerate crds and api reference
-
-Generated with make manife
-
-**File**: `.github/workflows/e2e.yaml` (modified, +1/-0)
+**File**: `controllers/datastore_controller.go` (modified, +1/-1)
 ```diff
-@@ -49,6 +49,7 @@ jobs:
-           sudo apt-get install -y golang-cfssl
-           sudo swapoff -a
-           sudo modprobe br_netfilter
-+          sudo sysctl -w fs.inotify.max_user_instances=512 fs.inotify.max_user_watches=524288
-       - name: install required Go tools
-         run: make kind ko helm ginkgo
-       - name: cleaning up go mod
+@@ -234,7 +234,7 @@ func (r *DataStore) Reconcile(ctx context.Context, request reconcile.Request) (r
+ 	meta.SetStatusCondition(&ds.Status.Conditions, metav1.Condition{
+ 		Type:               kamajiv1alpha1.DataStoreConditionValidType,
+ 		Status:             metav1.ConditionTrue,
+-		ObservedGeneration: ds.Status.ObservedGeneration,
++		ObservedGeneration: ds.Generation,
+ 		Reason:             "DataStoreIsValid",
+ 		Message:            "",
+ 	})
 ```
 
-**File**: `api/v1alpha1/tenantcontrolplane_conditions.go` (added, +46/-0)
+**File**: `controllers/datastore_controller_reconcile_test.go` (added, +76/-0)
 ```diff
-@@ -0,0 +1,46 @@
+@@ -0,0 +1,76 @@
 +// Copyright 2022 Clastix Labs
 +// SPDX-License-Identifier: Apache-2.0
 +
-+package v1alpha1
-+
-+import (
-+	"fmt"
-+
-+	"k8s.io/apimachinery/pkg/api/meta"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+)
-+
-+// SetReadyCondition derives the standard Ready condition from the Kubernetes version status,
-+// which remains the source of truth: the condition is only its translation for generic tooling.
-+//
-+// The condition reports the last fully reconciled generation (Status.ObservedGeneration), not the
-+// current one: status writes performed mid-reconciliation of a new generation must not stamp the
-+// previous readiness as current. Consumers (kubectl wait, kstatus) then see the condition lagging
-+// behind metadata.generation until the reconciliation is complete.
-+func (in *TenantControlPlane) SetReadyCondition() {
-+	condition := metav1.Condition{
-+		Type:               TenantControlPlaneConditionReadyType,
-+		ObservedGeneration: in.Status.ObservedGeneration,
-+	}
-+
-+	switch status := in.Status.Kubernetes.Version.Status; {
-+	case status == nil:
-+		condition.Status = metav1.ConditionUnknown
-+		condition.Reason = string(VersionUnknown)
-+		condition.Message = "the Tenant Control Plane has not been reconciled yet"
-+	case *status == VersionReady:
-+		condition.Status = metav1.ConditionTrue
-+		condition.Reason = string(*status)
-+		condition.Message = "the Tenant Control Plane is ready"
-+	case *status == VersionWriteLimited:
-+		condition.Status = metav1.ConditionTrue
-+		condition.Reason = string(*status)
-+		condition.Message = "the Tenant Control Plane is serving, with limited write permissions"
-+	default:
-+		condition.Status = metav1.ConditionFalse
-+		condition.Reason = string(*status)
-+		condition.Message = fmt.Sprintf("the Tenant Control Plane is in %s status", *status)
-+	}
-+
-+	meta.SetStatusCondition(&in.Status.Conditions, condition)
-+}
-```
-
-**File**: `api/v1alpha1/tenantcontrolplane_conditions_test.go` (added, +119/-0)
-```diff
-@@ -0,0 +1,119 @@
-+// Copyright 2022 Clastix Labs
-+// SPDX-License-Identifier: Apache-2.0
-+
-+package v1alpha1
++package controllers
 +
 +import (
 +	"testing"
-+	"time"
 +
++	"github.com/prometheus/client_golang/prometheus"
 +	"k8s.io/apimachinery/pkg/api/meta"
 +	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/utils/ptr"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/types"
++	ctrl "sigs.k8s.io/controller-runtime"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++
++	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
++	"github.com/clastix/kamaji/internal/metrics"
 +)
 +
-+func TestSetReadyCondition(t *testing.T) {
-+	tests := []struct {
-+		name           string
-+		status         *KubernetesVersionStatus
-+		expectedStatus metav1.ConditionStatus
-+		expectedReason string
-+	}{
-+		{name: "not reconciled yet", status: nil, expectedStatus: metav1.ConditionUnknown, expectedReason: "Unknown"},
-+		{name: "ready", status: ptr.To(VersionReady), expectedStatus: metav1.ConditionTrue, expectedReason: "Ready"},
-+		{name: "write limited", status: ptr.To(VersionWriteLimited), expectedStatus: metav1.ConditionTrue, expectedReason: "WriteLimited"},
-+		{name: "provisioning", status: ptr.To(VersionProvisioning), expectedStatus: metav1.ConditionFalse, expectedReason: "Provisioning"},
-+		{name: "upgrading", status: ptr.To(VersionUpgrading), expectedStatus: metav1.ConditionFalse, expectedReason: "Upgrading"},
-+		{name: "migrating", status: ptr.To(VersionMigrating), expectedStatus: metav1.ConditionFalse, expectedReason: "Migrating"},
-+		{name: "ca rotating", status: ptr.To(VersionCARotating), expectedStatus: metav1.ConditionFalse, expectedReason: "CertificateAuthorityRotating"},
-+		{name: "sleeping", status: ptr.To(VersionSleeping), expectedStatus: metav1.ConditionFalse, expectedReason: "Sleeping"},
-+		{name: "not ready", status: ptr.To(VersionNotReady), expectedStatus: metav1.ConditionFalse, expectedReason: "NotReady"},
-+		{name: "unknown", status: ptr.To(VersionUnknown), expectedStatus: metav1.ConditionFalse, expectedReason: "Unknown"},
++func TestDataStoreReconcileValidConditionObservesCurrentGeneration(t *testing.T) {
++	t.Parallel()
++
++	scheme := runtime.NewScheme()
++	if err := kamajiv1alpha1.AddToScheme(scheme); err != nil {
++		t.Fatalf("failed adding kamaji scheme: %v", err)
 +	}
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			tcp := &TenantControlPlane{ObjectMeta: metav1.ObjectMeta{Generation: 3}}
-+			tcp.Status.ObservedGeneration = 3
-+			tcp.Status.Kubernetes.Version.Status = tt.status
-+
-+			tcp.SetReadyCondition()
-+
-+			condition := meta.FindStatusCondition(tcp.Status.Conditions, TenantControlPlaneConditionReadyType)
-+			if condition == nil {
-+				t.Fatalf("expected a %s condition, got none", TenantControlPlaneConditionReadyType)
-+			}
-+
-+			if condition.Status != tt.expectedStatus {
-+				t.Errorf("expected status %s, got %s", tt.expectedStatus, condition.Status)
-+			}
-+
-+			if condition.Reason != tt.expectedReason {
-+				t.Errorf("expected reason %s, got %s", tt.expectedReason, condition.Reason)
-+			}
-+
-+			if condition.ObservedGeneration != 3 {
-+				t.Errorf("expected observedGeneration 3, got %d", condition.ObservedGeneration)
-+			}
-+
-+			if condition.Message == "" {
-+				t.Error("expected a non-empty message")
-+			}
-+		})
-+	}
-+}
-+
-+func TestSetReadyConditionTransitions(t *testing.T) {
-+	tcp := &TenantControlPlane{}
-+	tcp.Status.Kubernetes.Version.Status = ptr.To(VersionProvisioning)
-+	tcp.SetReadyCondition()
-+
-+	past := metav1.NewTime(time.Now().Add(-time.Hour))
-+	tcp.Status.Conditions[0].LastTransitionTime = past
-+
-+	// Same status: the transition time must not move, otherwise watchers see spurious changes.
-+	tcp.SetReadyCondition()
-+
-+	if got := tcp.Status.Conditions[0].LastTransitionTime; !got.Equal(&past) {
-+		t.Errorf("expected lastTransitionTime to be preserved, got %s", got)
++	ds := &kamajiv1alpha1.DataStore{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:       "primary",
++			Generation: 2,
++			Finalizers: []string{kamajiv1alpha1.DataStoreTCPFinalizer},
++		},
++		Spec: kamajiv1alpha1.DataStoreSpec{Driver: kamajiv1alpha1.KinePostgreSQLDriver},
++		Status: kamajiv1alpha1.DataStoreStatus{
++			ObservedGeneration: 1,
++			Conditions: []metav1.Condition{{
++				Type:               kamajiv1alpha1.DataStoreConditionValidType,
++				Status:             metav1.ConditionUnknown,
++				ObservedGeneration: 1,
++				Reason:             "MissingCondition",
++			}},
++		},
 +	}
 +
-+	// Status flip: the transition time must be updated, and only one Ready condition must exist.
-+	tcp.Status.Kubernetes.Version.Status = ptr.To(VersionReady)
-+	tcp.SetReadyCondition()
++	indexer := &kamajiv1alpha1.TenantControlPlaneStatusDataStore{}
++	cl := fake.NewClientBuilder().
++		WithScheme(scheme).
++		WithObjects(ds).
++		WithStatusSubresource(ds).
++		WithIndex(indexer.Object(), indexer.Field(), indexer.ExtractValue()).
++		Build()
 +
-+	if len(tcp.Status.Conditions) != 1 {
-+		t.Fatalf("expected exactly one condition, got %d", len(tcp.Status.Conditions))
++	r := &DataStore{
++		Client:  cl,
++		Metrics: metrics.NewRecorder(prometheus.NewRegistry()),
 +	}
 +
-+	if got := tcp.Status.Conditions[0]; got.Status != metav1.ConditionTrue || got.LastTransitionTime.Equal(&past) {
-+		t.Errorf("expected a True condition with a new lastTransitionTime, got %+v", got)
++	if _, err := r.Reconcile(t.Context(), ctrl.Request{NamespacedName: types.NamespacedName{Name: "primary"}}); err != nil {
++		t.Fatalf("Reconcile returned error: %v", err)
++	}
++
++	var got kamajiv1alpha1.DataStore
++	if err := cl.Get(t.Context(), types.NamespacedName{Name: "primary"}, &got); err != nil {
++		t.Fatalf("failed getting DataStore: %v", err)
++	}
++
++	condition := meta.FindStatusCondition(got.Status.Conditions, kamajiv1alpha1.DataStoreConditionValidType)
++	if condition == nil || condition.Status != metav1.ConditionTrue {
++		t.Fatalf("expected a true Valid condition, got %+v", condition)
++	}
++	if condition.ObservedGeneration != got.Generation {
++		t.Fatalf("expected Valid condition observedGeneration %d, got %d", got.Generation, condition.ObservedGeneration)
 +	}
 +}
-+
-+func TestSetReadyConditionDuringSpecChange(t *testing.T) {
-+	// Generation 3 has been fully reconciled and is Ready.
-+	tcp := &TenantControlPlane{ObjectMeta: metav1.ObjectMeta{Generation: 3}}
-+	tcp.Status.ObservedGeneration = 3
-+	tcp.Status.Kubernetes.Version.Status = ptr.To(VersionReady)
-+	tcp.SetReadyCondition()
-+
-+	// A spec change (e.g. networkProfile.port) bumps the generation, then an unrelated resource
-+	// writes its status while the version status still reflects the previous generation.
-+	tcp.Generation = 4
-+	tcp.SetReadyCondition()
-+
-+	condition := meta.FindStatusCondition(tcp.Status.Conditions, TenantControlPlaneConditionReadyType)
-+	if condition.ObservedGeneration != 3 {
-+		t.Fatalf("a mid-reconciliation status write must not claim generation 4, got observedGeneration %d", condition.ObservedGeneration)
-+	}
-+
-+	// The completion path advances the observed generation, then the condition follows.
-+	tcp.Status.ObservedGeneration = 4
-+	tcp.SetReadyCondition()
-+
-+	condition = meta.FindStatusCondition(tcp.Status.Conditions, TenantControlPlaneConditionReadyType)
-+	if condition.ObservedGeneration != 4 {
-+		t.Errorf("expected observedGeneration 4 after a com
-```
-
-**File**: `api/v1alpha1/tenantcontrolplane_const.go` (modified, +4/-0)
-```diff
-@@ -10,4 +10,8 @@ const (
- 
- 	// DefaultKubernetesVersion is the default Kubernetes version used in e2e tests.
- 	DefaultKubernetesVersion = "v1.37.0"
-+
-+	// TenantControlPlaneConditionReadyType is the standard Ready condition type: it is intentionally
-+	// not prefixed, since generic tooling (kubectl wait, kstatus) looks for a condition named Ready.
-+	TenantControlPlaneConditionReadyType = "Ready"
- )
-```
-
-**File**: `api/v1alpha1/tenantcontrolplane_status.go` (modified, +6/-0)
-```diff
-@@ -182,6 +182,12 @@ type TenantControlPlaneStatus struct {
- 	ControlPlaneEndpoint string `json:"controlPlaneEndpoint,omitempty"`
- 	// Addons contains the status of the different Addons
- 	Addons AddonsStatus `json:"addons,omitempty"`
-+	// Conditions contains the standard conditions of the Tenant Control Plane, such as Ready,
-+	// allowing generic tooling (kubectl wait, kstatus, GitOps and composition engines) to assess its readiness.
-+	// +optional
-+	// +listType=map
-+	// +listMapKey=type
-+	Conditions []metav1.Condition `json:"conditions,omitempty"`
- }
- 
- // KubernetesStatus defines the status of the resources deployed in the management cluster,
-```
-
-**File**: `api/v1alpha1/zz_generated.deepcopy.go` (modified, +7/-0)
-```diff
-@@ -1958,6 +1958,13 @@ func (in *TenantControlPlaneStatus) DeepCopyInto(out *TenantControlPlaneStatus)
- 	in.KubeadmConfig.DeepCopyInto(&out.KubeadmConfig)
- 	in.KubeadmPhase.DeepCopyInto(&out.KubeadmPhase)
- 	in.Addons.DeepCopyInto(&out.Addons)
-+	if in.Conditions != nil {
-+		in, out := &in.Conditions, &out.Conditions
-+		*out = make([]metav1.Condition, len(*in))
-+		for i := range *in {
-+			(*in)[i].DeepCopyInto(&(*out)[i])
-+		}
-+	}
- }
- 
- // DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new TenantControlPlaneStatus.
-```
-
-**File**: `charts/kamaji-crds/hack/kamaji.clastix.io_tenantcontrolplanes_spec.yaml` (modified, +61/-0)
-```diff
-@@ -9818,6 +9818,67 @@ versions:
-                         type: string
-                     type: object
-                 type: object
-+              conditions:
-+                description: |-
-+                  Conditions contains the standard conditions of the Tenant Control Plane, such as Ready,
-+                  allowing generic tooling (kubectl wait, kstatus, GitOps and composition engines) to assess its readiness.
-+                items:
-+                  description: Condition contains details for one aspect of the current state of this API Resource.
-+                  properties:
-+                    lastTransitionTime:
-+                      description: |-
-+                        lastTransitionTime is the last time the condition transitioned from one status to another.
-+                        This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
-+                      format: date-time
-+                      type: string
-+                    message:
-+                      description: |-
-+                        message is a human readable message indicating details about the transition.
-+                        This may be an empty string.
-+                      maxLength: 32768
-+                      type: string
-+                    observedGeneration:
-+                      description: |-
-+                        observedGeneration represents the .metadata.generation that the condition was set based upon.
-+                        For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
-+                        with respect to the current state of the instance.
-+                      format: int64
-+                      minimum: 0
-+                      type: integer
-+                    reason:
-+                      description: |-
-+                        reason contains a programmatic identifier indicating the reason for the condition's last transition.
-+                        Producers of specific condition types may define expected values and meanings for this field,
-+                        and whether the values are considered a guaranteed API.
-+                        The value should be a CamelCase string.
-+                        This field may not be empty.
-+                      maxLength: 1024
-+                      minLength: 1
-+                      pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
-+                      type: string
-+                    status:
-+                      description: status of the condition, one of True, False, Unknown.
-+                      enum:
-+                        - "True"
-+                        - "False"
-+                        - Unknown
-+                      type: string
-+                    type:
-+                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
-+                      maxLength: 316
-+                      pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
-+                      type: string
-+                  required:
-+                    - lastTransitionTime
-+                    - message
-+                    - reason
-+                    - status
-+                    - type
-+                  type: object
-+                type: array
-+                x-kubernetes-list-map-keys:
-+                  - type
-+                x-kubernetes-list-type: map
-               controlPlaneEndpoint:
-                 description: ControlPlaneEndpoint contains the status of the kubernetes control plane
-                 type: string
-```
-
-**File**: `charts/kamaji/crds/kamaji.clastix.io_tenantcontrolplanes.yaml` (modified, +61/-0)
-```diff
-@@ -9826,6 +9826,67 @@ spec:
-                           type: string
-                       type: object
-                   type: object
-+                conditions:
-+                  description: |-
-+                    Conditions contains the standard conditions of the Tenant Control Plane, such as Ready,
-+                    allowing generic tooling (kubectl wait, kstatus, GitOps and composition engines) to assess its readiness.
-+                  items:
-+                    description: Condition contains details for one aspect of the current state of this API Resource.
-+                    properties:
-+                      lastTransitionTime:
-+                        description: |-
-+                          lastTransitionTime is the last time the condition transitioned from one status to another.
-+                          This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
-+                        format: date-time
-+                        type: string
-+                      message:
-+                        description: |-
-+                          message is a human readable message indicating details about the transition.
-+                          This may be an empty string.
-+                        maxLength: 32768
-+                        type: string
-+                      observedGeneration:
-+                        description: |-
-+                          observedGeneration represents the .metadata.generation that the condition was set based upon.
-+                          For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
-+                          with respect to the current state of the instance.
-+                        format: int64
-+                        minimum: 0
-+                        type: integer
-+                      reason:
-+                        description: |-
-+                          reason contains a programmatic identifier indicating the reason for the condition's last transition.
-+                          Producers of specific condition types may define expected values and meanings for this field,
-+                          and whether the values are considered a guaranteed API.
-+                          The value should be a CamelCase string.
-+                          This field may not be empty.
-+                        maxLength: 1024
-+                        minLength: 1
-+                        pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
-+                        type: string
-+                      status:
-+                        description: status of the condition, one of True, False, Unknown.
-+                        enum:
-+                          - "True"
-+                          - "False"
-+                          - Unknown
-+                        type: string
-+                      type:
-+                        description: type of condition in CamelCase or in foo.example.com/CamelCase.
-+                        maxLength: 316
-+                        pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
-+                        type: string
-+                    required:
-+                      - lastTransitionTime
-+                      - message
-+                      - reason
-+                      - status
-+                      - type
-+                    type: object
-+                  type: array
-+                  x-kubernetes-list-map-keys:
-+                    - type
-+                  x-kubernetes-list-type: map
-                 controlPlaneEndpoint:
-                   description: ControlPlaneEndpoint contains the status of the kubernetes control plane
-                   type: string
-```
-
----
-
-### Incident Patch 2: `b0c4cfa9` (2026-11-16)
-**Commit Message**: feat(deps): bump github.com/moby/moby/api from 1.56.1 to 1.57.0 (#1420)
-
-Bumps [github.com/moby/moby/api](https://github.com/moby/moby) from 1.56.1 to 1.57.0.
-- [Release notes](https://github.com/moby/moby/releases)
-- [Commits](https://github.com/moby/moby/compare/api/v1.56.1...api/v1.57.0)
-
----
-updated-dependencies:
-- dependency-name: github.com/moby/moby/api
-  dependency-version: 1.57.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ require (
- 	github.com/google/uuid v1.6.0
- 	github.com/json-iterator/go v1.1.12
- 	github.com/juju/mutex/v2 v2.0.0
--	github.com/moby/moby/api v1.56.1
-+	github.com/moby/moby/api v1.57.0
- 	github.com/nats-io/nats.go v1.55.0
- 	github.com/onsi/ginkgo/v2 v2.34.0
- 	github.com/onsi/gomega v1.44.0
-```
-
-**File**: `go.sum` (modified, +2/-4)
-```diff
-@@ -231,8 +231,8 @@ github.com/moby/docker-image-spec v1.3.1 h1:jMKff3w6PgbfSa69GfNg+zN/XLhfXJGnEx3N
- github.com/moby/docker-image-spec v1.3.1/go.mod h1:eKmb5VW8vQEh/BAr2yvVNvuiJuY6UIocYsFu/DxxRpo=
- github.com/moby/go-archive v0.3.3 h1:OxxR9paxsluYi+zDUEXTTaIxtkK3viymW+Ka7vRhhME=
- github.com/moby/go-archive v0.3.3/go.mod h1:Npdv43fFqlhZW7Xo8fbm3ZMYFvAGNviUPqX21VERbcE=
--github.com/moby/moby/api v1.56.1 h1:PpWkvVPB7Fr/No8w+TfyJ/I6rWZ2YPZhT3JorIg+06c=
--github.com/moby/moby/api v1.56.1/go.mod h1:sZ+THbVWkjOmBPPfbnzdD/G1LuIexWhqlSHHPTDQ1Uk=
-+github.com/moby/moby/api v1.57.0 h1:K2ykv5UZjwFCtmtL486T+SUEVrQ46w3v7isf214RCcw=
-+github.com/moby/moby/api v1.57.0/go.mod h1:pRZ1QRtx6AVhdckeFYo4DUX4ASNF0SCllhyY6aj2mgg=
- github.com/moby/moby/client v0.6.2 h1:ekSPlMccrZGcw6Scb8T9D39qE0mB+XupU/yS0zNw9N4=
- github.com/moby/moby/client v0.6.2/go.mod h1:DGcnO7qmPJrqobx/ggQgQ/AUk+2wgVdQv7uxB0/mEsc=
- github.com/moby/patternmatcher v0.6.1 h1:qlhtafmr6kgMIJjKJMDmMWq7WLkKIo23hsrpR3x084U=
-@@ -549,8 +549,6 @@ k8s.io/utils v0.0.0-20260626114624-be93311217bd h1:Ea7fgQ5we8Y9T0OX5o0dAHzQOBRI0
- k8s.io/utils v0.0.0-20260626114624-be93311217bd/go.mod h1:xDxuJ0whA3d0I4mf/C4ppKHxXynQ+fxnkmQH0vTHnuk=
- mellium.im/sasl v0.3.1 h1:wE0LW6g7U83vhvxjC1IY8DnXM+EU095yeo8XClvCdfo=
- mellium.im/sasl v0.3.1/go.mod h1:xm59PUYpZHhgQ9ZqoJ5QaCqzWMi8IeS49dhp6plPCzw=
--pgregory.net/rapid v1.2.0 h1:keKAYRcjm+e1F0oAuU5F5+YPAWcyxNNRK2wud503Gnk=
--pgregory.net/rapid v1.2.0/go.mod h1:PY5XlDGj0+V1FCq0o192FdRhpKHGTRIWBgqjDBTrq04=
- sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.36.0 h1:/YpDJ4vReG7ZmzSpBGxduXgywWkJU9zHubgJG03MT+Y=
- sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.36.0/go.mod h1:tJo1aepTXyR+8Xs3sUsGBDk4Ub2AM5dPAPKJx0mpm5c=
- sigs.k8s.io/controller-runtime v0.25.2 h1:bEkK3PVOIVK9X8QWLGVhJgmFc++47vfT6wakSzAOLsQ=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1428** (2026-11-19): fix(datastore): use generation on Valid condition (@SAY-5)
+- **PR #1426** (2026-11-19): feat(konnectivity)!: set agent keepalive to 60s (@aimnbrs)
+- **PR #1424** (2026-11-19): feat(deps): bump sigs.k8s.io/controller-runtime from 0.25.2 to 0.25.3 (@dependabot[bot])
 - **PR #1420** (2026-11-16): feat(deps): bump github.com/moby/moby/api from 1.56.1 to 1.57.0 (@dependabot[bot])
 - **PR #1419** (2026-11-17): feat: standard Ready condition on TenantControlPlane (@lachgar-Azzeddine)
 - **PR #1417** (2026-11-15): feat(datastore): exclusive etcd DataStore (@NanduBolleddu)
-- **PR #1416** (2026-11-12): fix(metrics): list only certificate secrets (@albertoec)
-- **PR #1414** (2026-11-10): fix(datastore): allow rerunning the MySQL migration (@prometherion)
-- **PR #1413** (2026-11-11): fix(soot): cache only kube-system and kube-public (@pacharya-pf9)
 
 ---
 
@@ -1271,31 +899,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. standard Ready condition on TenantControlPlane
+## X. datastore): use generation on Valid condition
 
 **RULE**:
-When implementing operations in `.github/workflows/e2e.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controllers/datastore_controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `afdb6e7a`: standard Ready condition on TenantControlPlane. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3bf2610e`: datastore): use generation on Valid condition. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/e2e.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/datastore_controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          sudo sysctl -w fs.inotify.max_user_instances=512 fs.inotify.max_user_watches=524288
+		ObservedGeneration: ds.Generation,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		ObservedGeneration: ds.Status.ObservedGeneration,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `afdb6e7a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3bf2610e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

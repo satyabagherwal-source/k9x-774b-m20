@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T01:04:02.837Z",
+  "last_updated": "2026-11-20T01:12:50.121Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-20T00:24:23.527Z",
+      "processed_at": "2026-11-20T01:12:48.700Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-20T00:33:32.583Z",
+      "processed_at": "2026-11-20T01:12:49.120Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -943,9 +943,9 @@
       "staged_for_review": 1
     },
     "clastix-kamaji-learnings.md": {
-      "processed_at": "2026-11-18T20:46:21.116Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-20T01:12:48.086Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "modelcontextprotocol-kotlin-sdk-learnings.md": {
       "processed_at": "2026-11-15T20:42:10.118Z",
@@ -3533,7 +3533,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2379,
+  "total_dossiers_evaluated": 2382,
   "total_canonical_promoted": 403,
-  "total_staged_for_review": 1782
+  "total_staged_for_review": 1785
 }

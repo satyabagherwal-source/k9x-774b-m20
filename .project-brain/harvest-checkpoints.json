@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T01:01:06.209Z",
+  "last_updated": "2026-11-20T01:12:44.898Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6291,14 +6291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clastix-kamaji",
-      "content_hash": "b4f259c2d795ae2c99faa3e53f2a152340d7edb899facee74190aadde4c493cf",
-      "verified_at": "2026-11-18T20:45:48.475Z",
+      "content_hash": "f545839ce6ce632ab4ec39e30214ba8fd0174a14b9ad02d2a2f5a50b72294903",
+      "verified_at": "2026-11-20T01:12:44.897Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T20:45:48.475Z"
+      "last_updated": "2026-11-20T01:12:44.897Z"
     },
     "gluesql/gluesql": {
       "repository": "gluesql/gluesql",
