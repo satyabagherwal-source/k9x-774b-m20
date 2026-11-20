@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "811fe8b4",
+    "sourceVersion": "27d1b854",
     "license": "Apache-2.0",
-    "contentHash": "6872a2489c86f10688f4b1497d837aadafe4f7052424de50690dc6213ae46817",
-    "lastHarvestedAt": "2026-11-20T05:21:08.954Z",
+    "contentHash": "aa8ae513b318643a2bee49b862af53771b8b4b757ac979075817f555310925da",
+    "lastHarvestedAt": "2026-11-20T13:40:20.586Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "ba512866",
+    "sourceVersion": "8eed95c3",
     "license": "Apache-2.0",
-    "contentHash": "3b94e5dc820425cbc38a39c0c755bad56ca3fdd6a67c248b63c29c661533b641",
-    "lastHarvestedAt": "2026-11-20T09:10:36.355Z",
+    "contentHash": "a51c56cfe78564c1d28b82d97c5063634628652076a444d47042f34541aaac97",
+    "lastHarvestedAt": "2026-11-20T13:40:23.928Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "e139e251",
+    "sourceVersion": "6b667193",
     "license": "MIT",
-    "contentHash": "d516bb8b60c28af18a12dfe762b52f81921a0760d641ecc2cf6a005c6eab079d",
-    "lastHarvestedAt": "2026-11-19T07:06:37.746Z",
+    "contentHash": "08925c50610b46eb30fa51278f0bda55b7529b460d7a15055d13921f9b2f5483",
+    "lastHarvestedAt": "2026-11-20T13:40:23.452Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {

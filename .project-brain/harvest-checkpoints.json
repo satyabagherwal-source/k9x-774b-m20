@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T13:26:41.631Z",
+  "last_updated": "2026-11-20T13:40:23.936Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "d175b4f59b796fcdf353b7c8de3ffabd461e91d1172c92e4f3d963e0d73b9dc5",
-      "verified_at": "2026-11-20T08:04:00.713Z",
+      "content_hash": "aa8ae513b318643a2bee49b862af53771b8b4b757ac979075817f555310925da",
+      "verified_at": "2026-11-20T13:40:20.594Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T08:04:00.713Z"
+      "last_updated": "2026-11-20T13:40:20.594Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "3b94e5dc820425cbc38a39c0c755bad56ca3fdd6a67c248b63c29c661533b641",
-      "verified_at": "2026-11-20T09:10:36.363Z",
+      "content_hash": "a51c56cfe78564c1d28b82d97c5063634628652076a444d47042f34541aaac97",
+      "verified_at": "2026-11-20T13:40:23.936Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T09:10:36.363Z"
+      "last_updated": "2026-11-20T13:40:23.936Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "9e43376c6eb655809b20a3560d01d46afe050deb82a30bcc8d1b52146c962123",
-      "verified_at": "2026-11-19T14:52:38.530Z",
+      "content_hash": "08925c50610b46eb30fa51278f0bda55b7529b460d7a15055d13921f9b2f5483",
+      "verified_at": "2026-11-20T13:40:23.459Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T14:52:38.530Z"
+      "last_updated": "2026-11-20T13:40:23.459Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",

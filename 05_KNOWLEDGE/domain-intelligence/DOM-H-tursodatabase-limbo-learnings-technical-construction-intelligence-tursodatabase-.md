@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T07:06:43.166Z",
+  "timestamp": "2026-11-20T13:40:27.874Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tursodatabase-limbo-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tursodatabase-limbo-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T07:06:43.166Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T13:40:27.874Z`  
 > **Learning ID**: `LEARN-EVO-tursodatabase-limbo-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tursodatabase-limbo-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `e139e251`  
+> **Source Version**: `6b667193`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T07:06:36.615Z  
+> **Timestamp**: 2026-11-20T13:40:22.420Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T07:06:36.608Z  
+> **Harvest Timestamp**: 2026-11-20T13:40:22.414Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25295 stars
+- **Stars / Engagement**: 25301 stars
 
 ---
 
@@ -1460,13 +1460,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12089** (2026-11-18): **core/dialect: replace CatalogChange with typed requests and a dialect-built apply object**
-  *Symptoms*: ## Description  The `CatalogChange` enum crossed the `Dialect` trait twice. At prepare time, translation handed one to `translate_catalog_changes` so the dialect could emit writes to its catalog tables. At run time, `Insn::CatalogChange` handed a copy of the same enum to `apply_catalog_change`, where the dialect matched on it again and read the values that mattered from registers by position. This removes the enum and both crossings.  Five commits. New tests are in commits of their own (1 and 4); the code commits only adapt existing tests to the changed types.  1. **Test the errors of a dialect that stores no roles.** Records the exact error of each statement about roles, ownership, privileges and row-level security under the engine dialect, before the method that produces them is split. The SQLite parser has no syntax for these statements, so a `.sqltest` cannot reach the code; the test builds the statements a frontend with roles would build. 2. **Split the request into `RelationChange` and `AccessStatement`.** Four variants were notices about relations the engine had already created, dropped or renamed. Seven were statements that only the dialect stores. The trait now has one method for each kind, and both types borrow from the statement instead of cloning it. The one name they may own is the new name of a rename (`Cow<str>`): an automatic index is renamed with its table, and the statement has to build that name. The default of `translate_access_statement` refuses every sta
+- **Issue #12168** (2026-11-20): **ci/dotnet: pin .NET 10 SDK in iOS package validation**
+  *Symptoms*: The `validate-ios-package` job fails at `dotnet workload install ios --version 10.0.401`:  ``` Workload pack 'Microsoft.NET.Runtime.Emscripten.Node.net10' in manifest 'microsoft.net.workload.emscripten.net10' [.../sdk-manifests/11.0.100/...] conflicts with manifest 'microsoft.net.workload.emscripten.current' [.../sdk-manifests/10.0.100/...] ```  The macos-26 runner image now ships a .NET 11 SDK. `actions/setup-dotnet` with `dotnet-version: 10.0.x` installs a .NET 10 SDK but does not stop `dotnet` from choosing the newest SDK, and `bindings/dotnet` has no global.json. The workload install therefore appears to run under SDK 11 and mixes 11.0.100 and 10.0.100 workload manifests. This cause comes from the manifest paths in the error, because the failing log does not print the SDK version.  This PR adds a step to the iOS job only. The step writes `bindings/dotnet/global.json`, pinning the version that setup-dotnet reports as installed, with `rollForward: latestFeature`. The workload install, restore and build in this job run from `bindings/dotnet`, so all of them pick up the global.json. The step prints `dotnet --version` and `dotnet --list-sdks`, so the log shows which SDK ran. The 10.0.401 workload pin and its Xcode 26 comment stay as they are. Other jobs are not changed.
 
-- **Issue #12088** (2026-11-18): **core/dialect: move the catalog change types into their own module**
-  *Symptoms*: ## Description  Moves `CatalogChange`, `NewOwner` and `OwnerColumn` from `core/dialect/mod.rs` into a new `core/dialect/catalog.rs`.  Movement only. The types are re-exported from `core/dialect` and from the crate root as before, so no other file changes.  ## Motivation and context  A later change splits these types into smaller ones (changes to relations, and statements about roles, owners, privileges and policies). Giving them a module first means that split does not grow `core/dialect/mod.rs` and can be read without the rest of the `Dialect` trait around it.  ## Description of AI Usage  Written by Claude Code. A worker session made the move; an orchestrating session rebased it onto current `main` and ran fmt and clippy on it.  --- _Generated by [Claude Code](https://claude.ai/code/session_019cgs5YAWjWBmLYpihhDiFc)_
-  **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `3a3d399c74be` is [here](https://github.com/tursodatabase/turso/pull/12088#pullrequestreview-5964481068).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer reviews every new commit pushed to this pull request, up to 3 reviews each time the `autofixer: review-requested` label is added. It then removes the label; adding the label again asks for more.</sub>  <!-- autofixer:contributor-review:3a3d399c74bee5f4ea441dc3badadaac89511341 --> <!-- autofixer:contributor-review-recommends:3a3d399c74bee5f4ea441dc3badadaac89511341 --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiM2EzZDM5OWM3NGJlZTVmNGVhNDQxZGMzYmFkYWRhYWM4OTUxMTM0MSIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMThUMjA6Mjc6MDkuNDQyWiIsInZlcmRpY3QiOiJhcHByb3ZlIiwicmVjb21tZW5kYXRpb24
+- **Issue #12164** (2026-11-20): **testing/sqltest: record known PostgreSQL differences as @compat-gap tests**
+  *Symptoms*: <img width="1400" height="1530" alt="image" src="https://github.com/user-attachments/assets/c7b3d264-8794-41c8-a627-63ab83bcefb9" />  ## Summary  - Adds `@compat-gap` to sqltest. - It marks a test where tursopg differs from PostgreSQL. - 424 existing tursopg overrides are now tagged.  ``` @compat-gap "type:bool" test like-case-sensitive-literal {     SELECT 'ABC' LIKE 'abc', 'abc' LIKE 'a%', 'abc' LIKE 'A%'; } # PostgreSQL 18 (checked on real PG in CI) expect {     f|t|f } # tursopg today: wrong expect @tursopg {     0|1|0 } ```  ## Why  - Write tests before the feature exists:  ``` @compat-gap "function:json_build_object" test json-build-object {     SELECT json_build_object('id', id, 's', s) FROM t WHERE id = 1; } expect {     {"id" : 1, "s" : "abc"} } @sqlstate 42883 expect @tursopg error {} ```  - When the feature lands, CI tells you:  ``` gap fixed: remove @compat-gap and the expect @tursopg override ```  - CI counts gaps per feature:  | label | gaps | refused | error-mismatch | accepts-invalid | wrong | |---|---:|---:|---:|---:|---:| | `function:age` | 20 | 13 | 7 | 0 | 0 | | `function:format_type` | 3 | 0 | 0 | 0 | 3 | | `function:json_build_object` | 25 | 25 | 0 | 0 | 0 |  - If a gap gets worse, CI fails:  ``` known gap type:bool: tursopg returns NULL|NULL|NULL, PostgreSQL returns f|t|f, recorded tursopg answer 0|1|0 ```  - If someone deletes a gap test, CI fails:  ``` gaps/operators-functions.sqltest: gap 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1483,885 +1481,1002 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a00dd9ff` (2026-11-18)
-**Commit Message**: Merge 'core/dialect: replace CatalogChange with typed requests and a dialect-built apply object' from Pedro Muniz
+### Incident Patch 1: `091610f8` (2026-11-20)
+**Commit Message**: testing/sqltest: add @compat-gap tests with a fixed-gap check and lints
 
-The `CatalogChange` enum crossed the `Dialect` trait twice. At prepare
-time, translation handed one to `translate_catalog_changes` so the
-dialect could emit writes to its catalog tables. At run time,
-`Insn::CatalogChange` handed a copy of the same enum to
-`apply_catalog_change`, where the dialect matched on it again and read
-the values that mattered from registers by position. This removes the
-enum and both crossings.
+The PostgreSQL suites record tursopg's wrong answers with `expect @tursopg`
+blocks, but nothing tells a recorded difference from an error-message
+override, and a fixed gap stays recorded until someone notices.
 
-Five commits. New tests are in commits of their own (1 and 4); the code
-commits only adapt existing tests to the changed types.
+A test with `@compat-gap "<kind>:<object>"` holds the PostgreSQL 18 answer
+in its default block and tursopg's current answer in its `expect @tursopg`
+block. On tursopg it passes on the recorded answer and fails with "gap
+fixed" on the PostgreSQL answer, so a fix must remove the gap. For an
+error gap, tursopg's answer is compared with the SQLSTATE of the default
+block only, because tursopg need not return PostgreSQL's message; the
+postgres backend checks the SQLSTATE and the message. Other backends
+refuse @compat-gap tests. Both failure messages name tursopg's answer and
+the PostgreSQL answer, so the reader does not have to open the test file
+to see the difference.
 
-1. **Test the errors of a dialect that stores no roles.** Records the
-exact error of each statement about roles, ownership, privileges and
-row-level security under the engine dialect, before the method that
-produces them is split. The SQLite parser has no syntax for these
-statements, so a `.sqltest` cannot reach the code; the test builds the
-statements a frontend with roles would build.
-2. **Split the request into `RelationChange` and `AccessStatement`.**
-Four variants were notices about relations the engine had already
-created
+The gap lints run only when `sqltest run` or `sqltest check` gets
+--compat-gaps, so the suites that do not pass it cannot hold a
+@compat-gap test. The lints reject a @compat-gap test that has no
+@tursopg block, does not run on PostgreSQL, use
 
-**File**: `core/dialect/catalog.rs` (modified, +108/-42)
+**File**: `testing/sqltest/src/comparison/mod.rs` (modified, +143/-0)
 ```diff
-@@ -1,91 +1,157 @@
--//! The changes a statement makes to the dialect's catalog.
-+//! What translation tells the dialect about a statement that changes the
-+//! dialect's catalog of the main database, and what the dialect's bytecode
-+//! tells the in-memory schema once the change is written.
+@@ -4,6 +4,8 @@ pub mod unordered;
  
--use crate::{namespace::NamespaceId, schema::RelationKind};
-+use crate::{
-+    namespace::NamespaceId,
-+    schema::{RelationKind, Schema},
-+    LimboError, Result, Value,
-+};
-+use std::borrow::Cow;
- use turso_parser::ast::{self, Grantee, Privilege, RoleSpec};
+ use crate::backends::QueryResult;
+ use crate::parser::ast::Expectation;
++use regex::RegexBuilder;
++use std::collections::HashSet;
  
--/// A change a statement makes to the dialect's catalog of the main
--/// database: to a relation, or to the roles. Translation tells the dialect
--/// about it through
--/// [`Dialect::translate_catalog_changes`](super::Dialect::translate_catalog_changes), and the dialect's own bytecode
--/// tells it back through [`Dialect::apply_catalog_change`](super::Dialect::apply_catalog_change) once the change
--/// is written.
-+/// A relation that a statement created, dropped or renamed. The engine makes
-+/// the change itself; the dialect records it in its own catalog through
-+/// [`Dialect::translate_relation_changes`](super::Dialect::translate_relation_changes).
- #[derive(Debug, Clone)]
--pub enum CatalogChange {
--    Create {
-+pub enum RelationChange<'a> {
-+    Created {
-         namespace: NamespaceId,
--        name: String,
-+        name: &'a str,
-         kind: RelationKind,
-         /// For an index, the table it is on, in the same namespace. Its
-         /// owner owns the index.
--        table: Option<String>,
-+        table: Option<&'a str>,
-     },
--    Drop {
-+    Dropped {
-         namespace: NamespaceId,
--        name: String,
-+        name: &'a str,
-     },
--    Rename {
-+    Renamed {
-         namespace: NamespaceId,
--        old_name: String,
--        new_name: String,
-+        old_name: &'a str,
-+        /// Owned when the statement had to build the name, as for an
-+        /// automatic index that is renamed with its table.
-+        new_name: Cow<'a, str>,
-     },
--    /// Whom the relation belongs to from now on.
--    ChangeOwner {
-+    /// `ALTER TABLE table RENAME COLUMN old_name TO new_name`.
-+    ColumnRenamed {
-         namespace: NamespaceId,
--        name: String,
--        owner: NewOwner,
-+        table: &'a str,
-+        old_name: &'a str,
-+        new_name: &'a str,
-     },
--    /// `ALTER TABLE table RENAME COLUMN old_name TO new_name`.
--    RenameColumn {
-+}
-+
-+/// A statement about roles, ownership, privileges or row-level security.
-+/// The engine stores none of these; the dialect does all of the work in
-+/// [`Dialect::translate_access_statement`](super::Dialect::translate_access_statement).
-+#[derive(Debug, Clone, Copy)]
-+pub enum AccessStatement<'a> {
-+    /// Whom the relation belongs to from now on.
-+    ChangeOwner {
-         namespace: NamespaceId,
--        table: String,
--        old_name: String,
--        new_name: String,
-+        name: &'a str,
-+        owner: &'a NewOwner,
-     },
--    /// `GRANT privileges ON relation TO grantees`, or `REVOKE privileges ON
--    /// relation FROM grantees` when `revoke` is set.
-+    /// `GRANT privileges ON relations TO grantees`, or `REVOKE privileges ON
-+    /// relations FROM grantees` when `revoke` is set.
-     Grant {
-         revoke: bool,
--        namespace: NamespaceId,
--        name: String,
--        privileges: Vec<Privilege>,
--        grantees: Vec<Grantee>,
-+        relations: &'a [RelationName],
-+        privileges: &'a [Privilege],
-+        grantees: &'a [Grantee],
-     },
-     /// `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`, or `DISABLE` when
-     /// `enabled` is false.
-     SetRowSecurity {
-         namespace: NamespaceId,
--        name: String,
-+        name: &'a str,
-         enabled: bool,
-     },
-     /// `CREATE POLICY` on table `name`. Its expressions refer to the
-     /// table's columns by their unqualified names.
-     CreatePolicy {
-         namespace: NamespaceId,
--        name: String,
--        policy: Box<ast::CreatePolicy>,
-+        name: &'a str,
-+        policy: &'a ast::CreatePolicy,
-     },
-     /// `DROP POLICY policy_name ON name`.
-     DropPolicy {
-         namespace: NamespaceId,
--        name: String,
--        policy_name: String,
-+        name: &'a str,
-+        policy_name: &'a str,
-         if_exists: bool,
-     },
-     /// `CREATE ROLE name`: a role that is not a superuser and cannot log in.
-     CreateRole {
--        name: String,
--        options: ast::RoleOptions,
-+        name: &'a str,
-+        options: &'a ast::RoleOptions,
-     },
-     /// `GRANT roles TO grantees`, which makes each grantee a member of each
-     /// role, or `REVOKE roles FROM grantees` when `revoke` is set.
-     GrantRole {
-         revoke: bool,
--        roles: Vec<String>,
--        grantees: Vec<Grantee>,
-+        roles: &'a [String],
-+        grantees: &'a [Grantee],
-     },
+ /// Result of comparing actual vs expected output
+ #[derive(Debug, Clone, PartialEq)]
+@@ -109,6 +111,68 @@ fn compare_error(
+     }
  }
  
--/// Whom a relation belongs to after a [`CatalogChange::ChangeOwner`].
-+impl AccessStatement<'_
-```
-
-**File**: `core/dialect/mod.rs` (modified, +24/-68)
-```diff
-@@ -24,7 +24,9 @@ mod engine;
- pub use crate::functions::builtin::{
-     call_builtin_scalar, resolve_builtin_function, SQLITE_VERSION, SQLITE_VERSION_NUMBER,
- };
--pub use catalog::{CatalogChange, NewOwner, OwnerColumn};
-+pub use catalog::{
-+    AccessStatement, CatalogApply, NewOwner, OwnerColumn, RelationChange, RelationName,
-+};
- 
- #[cfg(test)]
- pub(crate) use engine::EngineDialect;
-@@ -329,83 +331,37 @@ pub trait Dialect: Send + Sync + 'static {
-         ))
-     }
- 
--    /// Translates `changes`, which the statement being compiled makes, into
--    /// the bytecode that records them in the dialect's own schema state, in
--    /// the same transaction as the statement's `sqlite_schema` rows. A table
--    /// comes with its automatic indexes in one call. Does nothing for a
--    /// dialect without schema state of its own, except that such a dialect
--    /// has no roles, ownership, privileges or row-level security and refuses
--    /// `CREATE ROLE`, `GRANT role TO role`, `ALTER ... OWNER TO`, `ALTER SEQUENCE ... OWNED BY`,
--    /// `GRANT`, `REVOKE`, `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`,
--    /// `CREATE POLICY` and `DROP POLICY`.
--    fn translate_catalog_changes(
-+    /// Translates `changes`, which the statement being compiled makes to
-+    /// relations, into the bytecode that records them in the dialect's own
-+    /// schema state, in the same transaction as the statement's
-+    /// `sqlite_schema` rows. A table comes with its automatic indexes in one
-+    /// call. Does nothing for a dialect without schema state of its own.
-+    fn translate_relation_changes(
-         &self,
-         program: &mut ProgramBuilder,
-         schema: &Schema,
-         connection: &Arc<Connection>,
--        changes: &[CatalogChange],
-+        changes: &[RelationChange<'_>],
-     ) -> Result<()> {
--        let _ = (program, schema, connection);
--        for change in changes {
--            match change {
--                CatalogChange::ChangeOwner {
--                    owner: NewOwner::Role(_),
--                    ..
--                } => {
--                    return Err(LimboError::ParseError(
--                        "ALTER ... OWNER TO is not supported".to_string(),
--                    ));
--                }
--                CatalogChange::ChangeOwner {
--                    owner: NewOwner::Column(_),
--                    ..
--                } => {
--                    return Err(LimboError::ParseError(
--                        "ALTER SEQUENCE ... OWNED BY is not supported".to_string(),
--                    ));
--                }
--                CatalogChange::Grant { revoke, .. } => {
--                    let statement = if *revoke { "REVOKE" } else { "GRANT" };
--                    return Err(LimboError::ParseError(format!(
--                        "{statement} is not supported"
--                    )));
--                }
--                CatalogChange::SetRowSecurity { .. }
--                | CatalogChange::CreatePolicy { .. }
--                | CatalogChange::DropPolicy { .. } => {
--                    return Err(LimboError::ParseError(
--                        "row-level security is not supported".to_string(),
--                    ));
--                }
--                CatalogChange::CreateRole { .. } => {
--                    return Err(LimboError::ParseError(
--                        "CREATE ROLE is not supported".to_string(),
--                    ));
--                }
--                CatalogChange::GrantRole { revoke, .. } => {
--                    let statement = if *revoke { "REVOKE" } else { "GRANT" };
--                    return Err(LimboError::ParseError(format!(
--                        "{statement} of role membership is not supported"
--                    )));
--                }
--                _ => {}
--            }
--        }
-+        let _ = (program, schema, connection, changes);
-         Ok(())
-     }
- 
--    /// Applies `change`, which the running statement wrote to the dialect's
--    /// schema state, to the in-memory copy in `schema`. `values` are the
--    /// registers the dialect named when it emitted the instruction, such as
--    /// the id its state gave a created relation.
--    fn apply_catalog_change(
-+    /// Translates `statement` into the bytecode that changes the roles,
-+    /// owners, privileges or policies the dialect stores. A dialect that
-+    /// stores none refuses `CREATE ROLE`, `GRANT role TO role`,
-+    /// `ALTER ... OWNER TO`, `ALTER SEQUENCE ... OWNED BY`, `GRANT`,
-+    /// `REVOKE`, `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`,
-+    /// `CREATE POLICY` and `DROP POLICY`.
-+    fn translate_access_statement(
-         &self,
--        schema: &mut Schema,
--        change: &CatalogChange,
--        values: &[Value],
-+        program: &mut ProgramBuilder,
-+        schema: &Schema,
-+        connection: &Arc<Connection>,
-+        statement: &AccessStatement<'_>,
-     ) -> Result<()> {
--        let _ = (schema, change, values);
--        Ok(())
-+        let _ = (program,
-```
-
-**File**: `core/lib.rs` (modified, +3/-1)
-```diff
-@@ -147,7 +147,9 @@ pub(crate) use database::{DatabaseCatalog, InitState};
- pub(crate) use database::{DatabaseKey, RegistryEntry, DATABASE_MANAGER};
- #[cfg(test)]
- pub(crate) use dialect::EngineDialect;
--pub use dialect::{CatalogChange, Dialect, NewOwner, OwnerColumn};
-+pub use dialect::{
-+    AccessStatement, CatalogApply, Dialect, NewOwner, OwnerColumn, RelationChange, RelationName,
-+};
- pub use error::{
-     io_error, CompletionError, ConstraintKind, ConstraintViolation, DialectError, LimboError,
-     SQLITE_CONSTRAINT_UNIQUE, SQLITE_ERROR,
-```
-
-**File**: `core/security/mod.rs` (modified, +2/-2)
-```diff
-@@ -38,8 +38,8 @@
- //! The defaults of these methods know only [`roles::RoleId::SUPERUSER`],
- //! give every role every privilege and no table row-level security.
- //! Statements that change access control, such as `CREATE ROLE`, `GRANT` and
--//! `CREATE POLICY`, reach the dialect as a [`crate::CatalogChange`] through
--//! [`crate::Dialect::translate_catalog_changes`], which the default refuses.
-+//! `CREATE POLICY`, reach the dialect as a [`crate::AccessStatement`] through
-+//! [`crate::Dialect::translate_access_statement`], which the default refuses.
- //!
- //! # Where checks happen
- //!
-```
-
-**File**: `core/security/roles.rs` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@
- //! and core asks it about them through [`crate::Dialect::role_by_name`],
- //! [`crate::Dialect::role_is_superuser`] and
- //! [`crate::Dialect::can_set_role`]. `CREATE ROLE` reaches the dialect as a
--//! [`crate::CatalogChange::CreateRole`]. A dialect that keeps no roles, such
-+//! [`crate::AccessStatement::CreateRole`]. A dialect that keeps no roles, such
- //! as SQLite's, has only the built-in ids and refuses `CREATE ROLE`.
- 
- /// The role a new connection runs as. The program that opens the connection
-```
-
-**File**: `core/translate/alter.rs` (modified, +26/-26)
-```diff
-@@ -1,5 +1,5 @@
- use crate::alloc::TursoIteratorExt;
--use crate::dialect::{CatalogChange, NewOwner};
-+use crate::dialect::{AccessStatement, NewOwner, RelationChange};
- use crate::namespace::{NamespaceId, NamespaceRef};
- use crate::schema::RelationKind;
- use crate::sync::Arc;
-@@ -8,6 +8,7 @@ use crate::translate::row_security;
- use crate::types::StrictType;
- use crate::util::renamed_automatic_index_name;
- use crate::{turso_assert_eq, turso_assert_ne, SymbolTable};
-+use std::borrow::Cow;
- use turso_parser::ast::{self, TableInternalId};
- 
- use super::{
-@@ -1779,26 +1780,24 @@ pub fn translate_alter_table(
-             if schema::dialect_relation_hooks_apply(connection, database_id)? {
-                 // Automatic indexes are renamed with the table, because
-                 // their names embed it.
--                let mut changes = vec![CatalogChange::Rename {
-+                let mut changes = vec![RelationChange::Renamed {
-                     namespace: namespace.id,
--                    old_name: normalized_old_name,
--                    new_name: normalized_new_name,
-+                    old_name: &normalized_old_name,
-+                    new_name: Cow::Borrowed(&normalized_new_name),
-                 }];
--                for index in &table_indexes {
--                    let Some(new_name) = renamed_automatic_index_name(
-+                changes.extend(table_indexes.iter().filter_map(|index| {
-+                    let new_name = renamed_automatic_index_name(
-                         &index.name,
-                         &mangled_table_name,
-                         &mangled_new_name,
--                    ) else {
--                        continue;
--                    };
--                    changes.push(CatalogChange::Rename {
-+                    )?;
-+                    Some(RelationChange::Renamed {
-                         namespace: namespace.id,
--                        old_name: index.name.clone(),
--                        new_name,
--                    });
--                }
--                resolver.catalog.dialect.translate_catalog_changes(
-+                        old_name: &index.name,
-+                        new_name: Cow::Owned(new_name),
-+                    })
-+                }));
-+                resolver.catalog.dialect.translate_relation_changes(
-                     program,
-                     resolver.schema(),
-                     connection,
-@@ -2539,15 +2538,15 @@ pub fn translate_alter_table(
-             if col_name != old_column_name
-                 && schema::dialect_relation_hooks_apply(connection, database_id)?
-             {
--                resolver.catalog.dialect.translate_catalog_changes(
-+                resolver.catalog.dialect.translate_relation_changes(
-                     program,
-                     resolver.schema(),
-                     connection,
--                    &[CatalogChange::RenameColumn {
-+                    &[RelationChange::ColumnRenamed {
-                         namespace: namespace.id,
--                        table: normalize_ident(table_name),
--                        old_name: old_column_name.to_string(),
--                        new_name: col_name.to_string(),
-+                        table: &normalize_ident(table_name),
-+                        old_name: old_column_name,
-+                        new_name: col_name,
-                     }],
-                 )?;
-             }
-@@ -2618,19 +2617,20 @@ fn translate_alter_owner(
-     }
-     // The dialect decides what goes with the relation, such as a table's
-     // indexes, and whose an index's owner is.
--    let changes = [CatalogChange::ChangeOwner {
-+    let owner = NewOwner::Role(role.clone());
-+    let statement = AccessStatement::ChangeOwner {
-         namespace: namespace.id,
--        name: normalized_name,
--        owner: NewOwner::Role(role.clone()),
--    }];
-+        name: &normalized_name,
-+        owner: &owner,
-+    };
- 
-     let schema_cookie = resolver.with_schema(crate::MAIN_DB_ID, |s| s.schema_version);
-     program.begin_write_on_database(crate::MAIN_DB_ID, schema_cookie)?;
--    resolver.catalog.dialect.translate_catalog_changes(
-+    resolver.catalog.dialect.translate_access_statement(
-         program,
-         resolver.schema(),
-         connection,
--        &changes,
-+        &statement,
-     )?;
-     schema::emit_schema_cookie(resolver, program);
-     Ok(())
-```
-
-**File**: `core/translate/index.rs` (modified, +8/-8)
-```diff
-@@ -1,5 +1,5 @@
- use crate::alloc::{TryClone, TursoIteratorExt, TursoVecExt};
--use crate::dialect::CatalogChange;
-+use crate::dialect::RelationChange;
- use crate::error::SQLITE_CONSTRAINT_UNIQUE;
- use crate::function::Func;
- use crate::index_method::IndexMethodConfiguration;
-@@ -359,15 +359,15 @@ pub fn translate_create_index(
-     )?;
- 
-     if schema::dialect_relation_hooks_apply(connection, database_id)? {
--        resolver.catalog.dialect.translate_catalog_changes(
-+        resolver.catalog.dialect.translate_relation_changes(
-             program,
-             resolver.schema(),
-             connection,
--            &[CatalogChange::Create {
-+            &[RelationChange::Created {
-                 namespace: namespace.id,
--                name: idx_name.clone(),
-+                name: &idx_name,
-                 kind: crate::schema::RelationKind::Index,
--                table: Some(tbl_name),
-+                table: Some(&tbl_name),
-             }],
-         )?;
-     }
-@@ -1501,13 +1501,13 @@ pub fn translate_drop_index(
-     )?;
- 
-     if schema::dialect_relation_hooks_apply(connection, database_id)? {
--        resolver.catalog.dialect.translate_catalog_changes(
-+        resolver.catalog.dialect.translate_relation_changes(
-             program,
-             resolver.schema(),
-             connection,
--            &[CatalogChange::Drop {
-+            &[RelationChange::Dropped {
-                 namespace: namespace.id,
--                name: idx_name.clone(),
-+                name: &idx_name,
-             }],
-         )?;
-     }
-```
-
-**File**: `core/translate/mod.rs` (modified, +128/-0)
-```diff
-@@ -803,6 +803,134 @@ mod tests {
++/// Whether one query result can match both expectations under the rules of
++/// [`compare`]. It assumes that no output value holds a line break. Where
++/// it cannot decide, it answers true: for an `expect pattern` block against
++/// an `expect unordered` or another `expect pattern` block, and for two error
++/// messages, because two regexes can match the same message.
++pub fn may_match_same_output(a: &Expectation, b: &Expectation) -> bool {
++    match (a, b) {
++        (Expectation::Error { sqlstate: a, .. }, Expectation::Error { sqlstate: b, .. }) => {
++            // compare_error checks a SQLSTATE only when the block names one.
++            match (a, b) {
++                (Some(a), Some(b)) => a == b,
++                _ => true,
++            }
++        }
++        (Expectation::Error { .. }, _) | (_, Expectation::Error { .. }) => false,
++        (Expectation::Exact(a), Expectation::Exact(b)) => exact_text(a) == exact_text(b),
++        (Expectation::Unordered(a), Expectation::Unordered(b)) => {
++            unordered_set(a) == unordered_set(b)
++        }
++        (Expectation::Exact(exact), Expectation::Unordered(unordered))
++        | (Expectation::Unordered(unordered), Expectation::Exact(exact)) => {
++            exact_matches_unordered(exact, unordered)
++        }
++        (Expectation::Pattern(pattern), Expectation::Exact(exact))
++        | (Expectation::Exact(exact), Expectation::Pattern(pattern)) => {
++            // exact::compare accepts only output whose text is exact_text, and
++            // pattern::compare matches the regex against that same text.
++            RegexBuilder::new(pattern)
++                .build()
++                .is_ok_and(|re| re.is_match(&exact_text(exact)))
++        }
++        (Expectation::Pattern(_), _) | (_, Expectation::Pattern(_)) => true,
++    }
++}
++
++/// The only output text that exact::compare accepts for these lines.
++fn exact_text(lines: &[String]) -> String {
++    format_rows(&parse_expected_rows(lines))
++}
++
++/// The set of rows that unordered::compare accepts for these lines.
++fn unordered_set(lines: &[String]) -> HashSet<String> {
++    parse_expected_rows(lines)
++        .iter()
++        .map(|row| row.join("|"))
++        .collect()
++}
++
++/// Whether some output has the text of the exact block and the row set of
++/// the unordered block. Without line breaks in values, the rows of an output
++/// are the lines of its text. The empty text is also the text of an output
++/// with no rows.
++fn exact_matches_unordered(exact: &[String], unordered: &[String]) -> bool {
++    let text = exact_text(exact);
++    let expected = unordered_set(unordered);
++    if text.is_empty() && expected.is_empty() {
++        return true;
++    }
++    let rows: HashSet<String> = text.split('\n').map(str::to_string).collect();
++    rows == expected
++}
++
+ /// Format rows for display (pipe-separated)
+ pub fn format_rows(rows: &[Vec<String>]) -> String {
+     rows.iter()
+@@ -279,4 +343,83 @@ mod tests {
+             ComparisonResult::mismatch("expected error but query succeeded")
          );
      }
- 
-+    /// The SQLite parser has no syntax for these statements, so the test
-+    /// builds the statements a frontend with roles would build.
++
++    fn lines(rows: &[&str]) -> Vec<String> {
++        rows.iter().map(|r| r.to_string()).collect()
++    }
++
 +    #[test]
-+    fn dialect_without_roles_refuses_role_owner_privilege_and_row_security_statements() {
-+        let io = Arc::new(MemoryIO::new());
-+        let db = Database::open_file(io, ":memory:", Arc::new(EngineDialect)).unwrap();
-+        let conn = db
-+            .connect(ConnectOpts::new(SessionRole::Superuser))
-+            .unwrap();
-+        conn.execute("CREATE TABLE t(a)").unwrap();
-+        conn.execute("CREATE SEQUENCE s").unwrap();
++    fn unordered_blocks_with_repeated_rows_match_the_same_output() {
++        // unordered::compare compares row sets, so the output `1` matches both.
++        let a = Expectation::Unordered(lines(&["1", "1"]));
++        let b = Expectation::Unordered(lines(&["1"]));
++        let output = QueryResult::success(vec![vec!["1".to_string()]]);
++        assert!(compare(&output, &a).is_match() && compare(&output, &b).is_match());
++        assert!(may_match_same_output(&a, &b));
++    }
 +
-+        let table = || ast::QualifiedName::single(ast::Name::exact("t".to_string()));
-+        let role = || ast::RoleSpec::Name("r".to_string());
-+        let alter_table = |body| {
-+            ast::Stmt::AlterTable(ast::AlterTable {
-+                name: table(),
-+                body,
-+            })
-+        };
-+        let grant = |revoke, objects| {
-+            ast::Stmt::Grant(ast::Grant {
-+                revoke,
-+                objects,
-+                grantees: vec![ast::Grantee::Role(role())],
-+            })
-+        };
-+        let privileges_on_table = || ast::GrantObjects::Relations {
-+            privileges: vec![ast::Privilege::Select],
-+            on_sequences: false,
-+            relations: vec![table()],
-+        };
-+        let member_roles = || ast::GrantObjects::Roles(vec!["admin".to_string()]);
++    #[test]
++    fn a_null_row_makes_exact_blocks_differ() {
++        // An empty line is a row with one NULL value.
++        let a = Expectation::Exact(lines(&["1", ""]));
++        let b = Expectation::Exact(lines(&["1"]));
++        assert!(!may_match_same_output(&a, &b));
++        let with_null = QueryResult::success(vec![vec!["1".to_string()], vec!["".to_string()]]);
++        assert!(compare(&with_null, &a).is_match() && !compare(&with_null, &b).is_match());
++    }
 +
-+        let statements = [
-+            (
-+                grant(false, privileges_on_table()),
-+                "GRANT is not supported",
-+            ),
-+            (
-+                grant(true, privileges_on_table()),
-+                "REVOKE is not supported",
-+            ),
-+            (
-+                ast::Stmt::CreateRole {
-+                    role_name: "r".to_string(),
-+                    options: ast::RoleOptions::default(),
-+                },
-+                "CREATE ROLE is not supported",
-+            ),
-+            (
-+                grant(false, member_roles()),
-+                "GRANT of role membership is not supported",
-+            ),
-+            (
-+                grant(true, member_roles()),
-+                "REVOKE of role membership is not supported",
-+            ),
-+            (
-+                alter_table(ast::AlterTableBody::OwnerTo {
-+                    kind: ast::RelationKind::Table,
-+                    role: role(),
-+                    if_exists: false,
-+                }),
-+                "ALTER ... OWNER TO is not supported",
-+            ),
-+            (
-+                ast::Stmt::AlterSequenceOwnedBy {
-+                    seq_name: ast::QualifiedName::single(ast::Name::exact("s".to_string())),
-+                    owner: Some((table(), ast::Name::exact("a".to_string()))),
-+                },
-+                "ALTER SEQUENCE ... OWNED BY is not supported",
-+            ),
-+            (
-+                alter_table(ast::AlterTableBody::EnableRowSecurity),
-+                "row-level security is not supported",
-+            ),
-+            (
-+                alter_table(ast::AlterTableBody::DisableRowSecurity),
-+                "row-level security is not supported",
-+            ),
-+            (
-+                ast::Stmt::CreatePolicy(Box::new(ast::CreatePolicy {
-+                    policy_name: ast::Name::exact("p".to_string()),
-+                    tbl_name: table(),
-+                    permissive: true,
-+                    command: ast::PolicyCommand::All,
-+                    roles: vec![ast::Grantee::Public],
-+                    using_expr: None,
-+                    check_expr: None,
-+                    using_sql: None,
-+                    check_sql: None,
-+                })),
-+                "row-level security is not supported",
-+            ),
-+            (
-+                ast::Stmt::DropPolicy {
-+                    if_exists: false,
-+                    policy_name: ast::Name::exact("p".to_string()),
-+                    tbl_name: table(),
-+                },
-+                "row-level security is not supported",
-+            ),
-+        ];
++    #[test]
++    fn exact_text_is_not_trimmed_inside_rows() {
++        let a = Expectation::Exact(lines(&["a "]));
++        let b = Expectation::Exact(lines(&["a"]));
++        assert!(!may_match_same_output(&a, &b));
++    }
 +
-+        for (stmt, expected) in statements {
-+            let description = format!("{stmt:?}");
-+            let schema = db.schema.lock().clone();
-+            let result = translate(
-+                &schema,
-+                stmt,
-+                conn.pager.load().clone(),
-+                conn.clone(),
-+                &SymbolTable::new(),
-+                QueryMode::Normal,
-+                "",
-+                crate::statement::StatementOrigin::Root,
-+            );
-+            match result {
-+                Err(crate::LimboError::ParseError(message)) => {
-+                    assert_eq!(message, expected, "{description}")
++    #[test]
++    fn exact_and_unordered_blocks() {
++        let exact = Expectation::Exact(lines(&["2", "1", "2"]));
++        assert!(may_match_same_output(
++            &exact,
++            &Expectation::Unordered(lines(&["1", "2"]))
++        ));
++        assert!(!may_match_same_output(
++            &exact
+```
+
+**File**: `testing/sqltest/src/gap.rs` (added, +433/-0)
+```diff
+@@ -0,0 +1,433 @@
++//! Gap tests.
++//!
++//! A gap test records a known difference between tursopg and PostgreSQL 18.
++//! It is a test with a `@compat-gap "<kind>:<object>"` decorator, a default `expect`
++//! block that holds the PostgreSQL answer and an `expect @tursopg` block that
++//! holds the current tursopg answer. The postgres backend checks the default
++//! block, which proves the recorded PostgreSQL answer. The tursopg backend
++//! passes when tursopg still gives the recorded answer and fails when tursopg
++//! gives the PostgreSQL answer, so that a fixed gap cannot stay recorded.
++//!
++//! This module validates gap tests.
++
++use crate::backends::QueryResult;
++use crate::parser::ast::{Backend, Expectation, Skip, SkipCondition, TestCase, TestFile};
++use std::fmt;
++
++/// What a gap label names.
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
++pub enum GapKind {
++    Function,
++    Type,
++    Operator,
++    Cast,
++    Syntax,
++}
++
++impl GapKind {
++    pub const ALL: &'static [GapKind] = &[
++        GapKind::Function,
++        GapKind::Type,
++        GapKind::Operator,
++        GapKind::Cast,
++        GapKind::Syntax,
++    ];
++
++    pub fn name(self) -> &'static str {
++        match self {
++            GapKind::Function => "function",
++            GapKind::Type => "type",
++            GapKind::Operator => "operator",
++            GapKind::Cast => "cast",
++            GapKind::Syntax => "syntax",
++        }
++    }
++}
++
++impl fmt::Display for GapKind {
++    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
++        f.write_str(self.name())
++    }
++}
++
++/// The longest answer that messages and the summary print before they cut it.
++const MAX_ANSWER_LEN: usize = 80;
++
++/// One line that describes the answer an expectation records, such as
++/// `2`, `1|t; 2|f`, `no rows` or `error 22003`.
++pub fn describe_expectation(expectation: &Expectation) -> String {
++    let text = match expectation {
++        Expectation::Exact(rows) => describe_rows(trimmed(rows)),
++        Expectation::Unordered(rows) => format!("{} (any order)", describe_rows(trimmed(rows))),
++        Expectation::Pattern(pattern) => format!("output matching /{pattern}/"),
++        Expectation::Error { sqlstate, .. } => match sqlstate {
++            Some(sqlstate) => format!("error {sqlstate}"),
++            None => "an error".to_string(),
++        },
++    };
++    shorten(text)
++}
++
++/// One line that describes what a backend returned, in the form of
++/// [`describe_expectation`].
++pub fn describe_result(result: &QueryResult) -> String {
++    let text = if result.is_error() {
++        match &result.sqlstate {
++            Some(sqlstate) => format!("error {sqlstate}"),
++            None => format!(
++                "error \"{}\"",
++                result
++                    .error
++                    .as_deref()
++                    .unwrap_or("")
++                    .lines()
++                    .next()
++                    .unwrap_or("")
++            ),
++        }
++    } else {
++        let rows: Vec<String> = result.rows.iter().map(|row| row.join("|")).collect();
++        describe_rows(rows.iter().map(String::as_str).collect())
++    };
++    shorten(text)
++}
++
++fn describe_rows(rows: Vec<&str>) -> String {
++    if rows.is_empty() {
++        "no rows".to_string()
++    } else {
++        rows.iter()
++            .map(|row| row.trim())
++            .collect::<Vec<_>>()
++            .join("; ")
++    }
++}
++
++fn shorten(text: String) -> String {
++    match text.char_indices().nth(MAX_ANSWER_LEN) {
++        Some((end, _)) => format!("{}...", &text[..end]),
++        None => text,
++    }
++}
++
++/// Checks the syntax of a gap label and returns its kind. The label is
++/// `<kind>:<object>`. This does not check that the object exists in
++/// PostgreSQL.
++fn label_kind(label: &str) -> Result<GapKind, String> {
++    let Some((kind, object)) = label.split_once(':') else {
++        return Err(format!(
++            "gap label '{label}' has no kind: write it as <kind>:<object>, for example function:round"
++        ));
++    };
++    let kind = GapKind::ALL
++        .iter()
++        .copied()
++        .find(|k| k.name() == kind)
++        .ok_or_else(|| {
++            format!(
++                "gap label '{label}' has the unknown kind '{kind}'; the kinds are {}",
++                GapKind::ALL
++                    .iter()
++                    .map(|k| k.name())
++                    .collect::<Vec<_>>()
++                    .join(", ")
++            )
++        })?;
++    if object.is_empty() || object.trim() != object {
++        return Err(format!(
++            "gap label '{label}' needs an object after '{kind}:' with no leading or trailing spaces"
++        ));
++    }
++    if kind == GapKind::Cast && !object.contains(" -> ") {
++        return Err(format!(
++            "gap label '{label}' names a cast as '<source type> -> <target type>', for example cast:text -> timestamptz"
++        ));
++    }
++    Ok(kind)
++}
++
++/// Checks the rules for a t
+```
+
+**File**: `testing/sqltest/src/lib.rs` (modified, +1/-0)
+```diff
+@@ -1,5 +1,6 @@
+ pub mod backends;
+ pub mod comparison;
++pub mod gap;
+ pub mod generator;
+ pub mod matrix_oracle;
+ pub mod output;
+```
+
+**File**: `testing/sqltest/src/main.rs` (modified, +21/-7)
+```diff
+@@ -102,13 +102,23 @@ enum Commands {
+         /// Stop at the first failed test or error
+         #[arg(long)]
+         fail_fast: bool,
++
++        /// Turn on the gap lints, which the PostgreSQL suites need; without
++        /// them a `@compat-gap` test does not parse.
++        #[arg(long)]
++        compat_gaps: bool,
+     },
+ 
+     /// Validate test file syntax and check for pending snapshots
+     Check {
+         /// Test files or directories
+         #[arg(required = true)]
+         paths: Vec<PathBuf>,
++
++        /// Turn on the gap lints, which the PostgreSQL suites need; without
++        /// them a `@compat-gap` test does not parse.
++        #[arg(long)]
++        compat_gaps: bool,
+     },
+ 
+     /// Convert Tcl .test files to .sqltest format
+@@ -173,6 +183,7 @@ async fn main() -> ExitCode {
+             cross_check_binary,
+             postgres_dsn,
+             fail_fast,
++            compat_gaps,
+         } => {
+             run_tests(
+                 paths,
+@@ -190,10 +201,11 @@ async fn main() -> ExitCode {
+                 cross_check_binary,
+                 postgres_dsn,
+                 fail_fast,
++                compat_gaps,
+             )
+             .await
+         }
+-        Commands::Check { paths } => check_files(paths).await,
++        Commands::Check { paths, compat_gaps } => check_files(paths, compat_gaps).await,
+         Commands::Convert {
+             paths,
+             output_dir,
+@@ -248,6 +260,7 @@ async fn run_tests(
+     cross_check_binary: Option<PathBuf>,
+     postgres_dsn: Option<String>,
+     fail_fast: bool,
++    compat_gaps: bool,
+ ) -> ExitCode {
+     match (&postgres_dsn, backend_type.as_str()) {
+         (None, "postgres") => {
+@@ -304,7 +317,7 @@ async fn run_tests(
+     };
+ 
+     // Load and parse test files
+-    let loaded = match load_test_files(&paths).await {
++    let loaded = match load_test_files(&paths, &sqltest::gap::lint(compat_gaps)).await {
+         Ok(loaded) => loaded,
+         Err(e) => {
+             eprintln!("Error loading test files: {e}");
+@@ -561,7 +574,8 @@ impl sqltest::DefaultDatabaseResolver for DefaultDatabasesResolver {
+     }
+ }
+ 
+-async fn check_files(paths: Vec<PathBuf>) -> ExitCode {
++async fn check_files(paths: Vec<PathBuf>, compat_gaps: bool) -> ExitCode {
++    let lint = sqltest::gap::lint(compat_gaps);
+     let mut has_errors = false;
+ 
+     // Check for pending snapshot files
+@@ -607,7 +621,7 @@ async fn check_files(paths: Vec<PathBuf>) -> ExitCode {
+                     for entry in entries {
+                         match entry {
+                             Ok(file_path) => {
+-                                if !check_single_file(&file_path) {
++                                if !check_single_file(&file_path, &lint) {
+                                     has_errors = true;
+                                 }
+                             }
+@@ -624,7 +638,7 @@ async fn check_files(paths: Vec<PathBuf>) -> ExitCode {
+                 }
+             }
+         } else if path.is_file() {
+-            if !check_single_file(path) {
++            if !check_single_file(path, &lint) {
+                 has_errors = true;
+             }
+         } else {
+@@ -640,9 +654,9 @@ async fn check_files(paths: Vec<PathBuf>) -> ExitCode {
+     }
+ }
+ 
+-fn check_single_file(path: &PathBuf) -> bool {
++fn check_single_file(path: &PathBuf, lint: sqltest::parser::TestLint<'_>) -> bool {
+     match std::fs::read_to_string(path) {
+-        Ok(content) => match sqltest::parse(&content) {
++        Ok(content) => match sqltest::parser::parse_with_lint(&content, lint) {
+             Ok(file) => {
+                 let snapshots_str = if file.snapshots.is_empty() {
+                     String::new()
+```
+
+**File**: `testing/sqltest/src/parser/ast.rs` (modified, +3/-0)
+```diff
+@@ -321,6 +321,9 @@ pub struct TestCase {
+     pub sql: String,
+     /// Expected results (with optional backend-specific overrides)
+     pub expectations: Expectations,
++    /// The label of a gap test, from `@compat-gap "<kind>:<object>"`. A gap test
++    /// records a known difference between tursopg and PostgreSQL.
++    pub gap: Option<String>,
+     /// Common modifiers (setups, skip, backend, requires)
+     pub modifiers: CaseModifiers,
+ }
+```
+
+**File**: `testing/sqltest/src/parser/lexer.rs` (modified, +5/-0)
+```diff
+@@ -146,6 +146,10 @@ pub enum Token {
+     #[token("@verify-materialized-views")]
+     AtVerifyMaterializedViews,
+ 
++    /// `@compat-gap` (a test of a known difference from PostgreSQL)
++    #[token("@compat-gap")]
++    AtGap,
++
+     /// `@sqlstate` (the SQLSTATE that the next `expect error` block requires)
+     #[token("@sqlstate")]
+     AtSqlstate,
+@@ -276,6 +280,7 @@ impl fmt::Display for Token {
+             Token::AtVar => write!(f, "@var"),
+             Token::AtVerifyMaterializedViews => write!(f, "@verify-materialized-views"),
+             Token::AtSqlstate => write!(f, "@sqlstate"),
++            Token::AtGap => write!(f, "@compat-gap"),
+             Token::AtIdentifier(s) => write!(f, "@{s}"),
+             Token::Setup => write!(f, "setup"),
+             Token::Test => write!(f, "test"),
+```
+
+**File**: `testing/sqltest/src/parser/mod.rs` (modified, +58/-19)
+```diff
+@@ -21,11 +21,45 @@ enum TestOrSnapshot {
+     Setup(String, Setup),
+ }
+ 
+-/// Parse a `.sqltest` file from source
++/// A check that a caller of [`parse_with_lint`] runs on each test of a parsed
++/// file. It returns the message of a broken rule.
++pub type TestLint<'a> = &'a (dyn Fn(&TestFile, &TestCase) -> Result<(), String> + Sync);
++
++/// Parse a `.sqltest` file from source. A test with `@compat-gap` is an error:
++/// gap tests need the gap lints, which [`parse_with_lint`] runs.
+ pub fn parse(input: &str) -> Result<TestFile, ParseError> {
++    parse_with_lint(input, &reject_compat_gap)
++}
++
++/// Parse a `.sqltest` file from source and run `lint` on each test. A lint
++/// error points at the name of the test.
++pub fn parse_with_lint(input: &str, lint: TestLint<'_>) -> Result<TestFile, ParseError> {
+     let tokens = tokenize(input)?;
+     let mut parser = Parser::new(tokens);
+-    parser.parse()
++    let file = parser.parse()?;
++    for test in &file.tests {
++        if let Err(message) = lint(&file, test) {
++            return Err(ParseError::ValidationError {
++                message: format!("test '{}': {message}", test.name),
++                span: Some(SourceSpan::new(
++                    test.name_span.start.into(),
++                    test.name_span.len(),
++                )),
++                help: None,
++            });
++        }
++    }
++    Ok(file)
++}
++
++/// The lint of [`parse`]: a `@compat-gap` test is an error.
++pub fn reject_compat_gap(_file: &TestFile, test: &TestCase) -> Result<(), String> {
++    match test.gap {
++        Some(_) => Err(
++            "a @compat-gap test needs the gap lints: run sqltest with --compat-gaps".to_string(),
++        ),
++        None => Ok(()),
++    }
+ }
+ 
+ fn eval_block_macro_count(expr: &str) -> Result<usize, String> {
+@@ -152,6 +186,7 @@ impl Parser {
+                     | Token::AtBackend
+                     | Token::AtCrossCheckIntegrity
+                     | Token::AtSqliteReference
++                    | Token::AtGap
+                     | Token::AtVar
+                     | Token::Test
+                     | Token::Snapshot
+@@ -306,6 +341,7 @@ impl Parser {
+         let mut cross_check_integrity = false;
+         let mut sqlite_reference = false;
+         let mut matrix_vars: Vec<MatrixVar> = Vec::new();
++        let mut gap: Option<String> = None;
+ 
+         // Parse decorators
+         loop {
+@@ -378,10 +414,21 @@ impl Parser {
+                     sqlite_reference = true;
+                     self.skip_newlines_and_comments();
+                 }
++                Some(Token::AtGap) => {
++                    self.advance();
++                    if gap.is_some() {
++                        return Err(self.error("a test takes one @compat-gap label".to_string()));
++                    }
++                    gap = Some(self.expect_string()?);
++                    self.skip_newlines_and_comments();
 +                }
-+                Err(other) => panic!("{description}: expected a parse error, got {other:?}"),
-+                Ok(_) => panic!("{description}: expected an error"),
-+            }
+                 _ => break,
+             }
+         }
+ 
++        if gap.is_some() && !matches!(self.peek(), Some(Token::Test)) {
++            return Err(self.error("@compat-gap is only valid before a test".to_string()));
++        }
+         // Now check if it's a test, snapshot or matrix
+         if !matrix_vars.is_empty() && !matches!(self.peek(), Some(Token::Matrix)) {
+             return Err(self.error("@var decorators are only valid before a matrix".to_string()));
+@@ -525,6 +572,7 @@ impl Parser {
+                     name_span,
+                     sql,
+                     expectations: Expectations { default, overrides },
++                    gap,
+                     modifiers: CaseModifiers {
+                         setups: test_setups,
+                         skip,
+@@ -1390,9 +1438,6 @@ test postgres {
+ expect {
+     1
+ }
+-expect @tursopg {
+-    2
+-}
+ "#;
+ 
+         let file = parse(input).unwrap();
+@@ -1402,10 +1447,6 @@ expect @tursopg {
+             file.tests[0].modifiers.backend,
+             Some(ast::Backend::Postgres)
+         );
+-        assert!(matches!(
+-            file.tests[0].expectations.for_backend(ast::Backend::Tursopg),
+-            Expectation::Exact(rows) if rows == &vec!["2".to_string()]
+-        ));
+         assert!(matches!(
+             file.tests[0].expectations.for_backend(ast::Backend::Postgres),
+             Expectation::Exact(rows) if rows == &vec!["1".to_string()]
+@@ -1738,11 +1779,12 @@ test missing-table {
+ expect error {
+     relation "missing" does not exist
+ }
++@sqlstate 42P01
+ expect @tursopg error {
+     no such table
+ }
+-@sqlstate XX000
+-expect @postgres error {
++expect @rust error {
++    no such table
+ }
+ "#;
+ 
+@@ -1758,15 +1800,15 @@ expect @postgres error {
+         assert_eq!(
+             expectations.for_backend(ast::Backend::Tursopg),
+             &Expectation::Error {
+-                sqlstate: None,
++                sqlstate: Some("42P01".to_string()),
+                 pattern: Some("no such table".to_string()),
+             }
+         );
+         assert_eq!(
+-            expectat
+```
+
+**File**: `testing/sqltest/src/runner/mod.rs` (modified, +297/-6)
+```diff
+@@ -9,6 +9,7 @@ use crate::snapshot::{SnapshotInfo, SnapshotManager, SnapshotResult, SnapshotUpd
+ use async_trait::async_trait;
+ use futures::FutureExt;
+ use futures::stream::{FuturesUnordered, StreamExt};
++use std::borrow::Cow;
+ use std::collections::{HashMap, HashSet};
+ use std::panic::AssertUnwindSafe;
+ use std::path::{Path, PathBuf};
+@@ -128,6 +129,15 @@ impl Runnable for TestCase {
+     }
+ 
+     fn check_backend_support(&self, options: &RunOptions) -> Option<String> {
++        if self.gap.is_some()
++            && !matches!(options.backend_type, Backend::Tursopg | Backend::Postgres)
++        {
++            return Some(format!(
++                "@compat-gap tests record differences between tursopg and PostgreSQL and run only on \
++                 the tursopg and postgres backends, not on the {} backend",
++                options.backend_type
++            ));
++        }
+         let expectation = self.expectations.for_backend(options.backend_type);
+         if expectation.sqlstate().is_some() && !options.backend_reports_sqlstate {
+             return Some(format!(
+@@ -159,6 +169,9 @@ impl Runnable for TestCase {
+         // Tests use only the first (and only) result
+         assert!(results.len() == 1);
+         let result = results.first().unwrap();
++        if self.gap.is_some() && options.backend_type == Backend::Tursopg {
++            return evaluate_gap_test(self, result);
++        }
+         let expectation = self.expectations.for_backend(options.backend_type);
+         let comparison = compare(result, expectation);
+         match comparison {
+@@ -168,6 +181,62 @@ impl Runnable for TestCase {
+     }
+ }
+ 
++/// The message of a gap test that tursopg now answers like PostgreSQL.
++pub const GAP_FIXED: &str = "gap fixed: remove @compat-gap and the expect @tursopg override";
 +
++/// Evaluates a gap test on the tursopg backend. The PostgreSQL answer is
++/// checked first, so that a fixed gap fails the run instead of passing as a
++/// known gap. Both failure messages name the tursopg and the PostgreSQL
++/// answer.
++fn evaluate_gap_test(test: &TestCase, result: &QueryResult) -> TestOutcome {
++    let label = test
++        .gap
++        .as_deref()
++        .expect("evaluate_gap_test runs only for @compat-gap tests");
++    let actual = crate::gap::describe_result(result);
++    let postgres = crate::gap::describe_expectation(&test.expectations.default);
++    // The default error block may hold the PostgreSQL message, which only the
++    // postgres backend checks. tursopg fixes an error gap when it returns the
++    // PostgreSQL SQLSTATE, whatever its message.
++    let reference = match &test.expectations.default {
++        Expectation::Error { sqlstate, .. } => Cow::Owned(Expectation::Error {
++            sqlstate: sqlstate.clone(),
++            pattern: None,
++        }),
++        expectation => Cow::Borrowed(expectation),
++    };
++    if compare(result, &reference).is_match() {
++        let message_note = if compare(result, &test.expectations.default).is_match() {
++            ""
++        } else {
++            "\ntursopg returns the PostgreSQL SQLSTATE with another message: keep an \
++             `expect @tursopg error` block with the same @sqlstate and the tursopg message"
++        };
++        return TestOutcome::Failed {
++            reason: format!(
++                "{GAP_FIXED}\n{label}: tursopg returns {actual}, PostgreSQL returns {postgres}{message_note}"
++            ),
++        };
++    }
++    let tursopg = test
++        .expectations
++        .overrides
++        .get(&Backend::Tursopg)
++        .expect("the gap lints reject a @compat-gap test without an `expect @tursopg` block");
++    match compare(result, tursopg) {
++        ComparisonResult::Match => TestOutcome::Passed,
++        ComparisonResult::Mismatch { reason } => TestOutcome::Failed {
++            reason: format!(
++                "known gap {label}: tursopg returns {actual}, PostgreSQL returns {postgres}, \
++                 recorded tursopg answer {recorded}; tursopg gives neither the PostgreSQL answer \
++                 nor the recorded gap answer (the comparison below is against the \
++                 `expect @tursopg` block)\n{reason}",
++                recorded = crate::gap::describe_expectation(tursopg),
++            ),
++        },
++    }
++}
++
+ #[async_trait]
+ impl Runnable for SnapshotCase {
+     fn name(&self) -> &str {
+@@ -707,9 +776,12 @@ impl LoadedTests {
+ ///
+ /// This function handles:
+ /// - Resolving directories (globbing for .sqltest files)
+-/// - Reading and parsing each file
++/// - Reading and parsing each file, running `lint` on each test
+ /// - Collecting parse errors separately for reporting
+-pub async fn load_test_files(paths: &[PathBuf]) -> Result<LoadedTests, BackendError> {
++pub async fn load_test_files(
++    paths: &[PathBuf],
++    lint: crate::parser::TestLint<'_>,
++) -> Result<LoadedTests, BackendError> {
+     let mut files = Vec::new();
+     let mut errors = Vec::new();
+ 
+@@ -723,15 +795,15 @@ pub async f
 ```
 
 ---
 
-### Incident Patch 2: `08bec2c5` (2026-11-17)
-**Commit Message**: postgres: build every function in FROM from one descriptor
+### Incident Patch 2: `425ed463` (2026-11-19)
+**Commit Message**: core/fts: size the term table of a segment build from the buffered documents
 
-translate_range_function had one branch per function, and each branch
-repeated the same steps: read the alias, name the columns, build the
-call. A check added to one branch was missing from the others. Describe
-unnest() and generate_series() in RewrittenFunction instead and translate
-them in one place. A function that is a call of an engine table function
-is now a row of data: its argument check, its columns with the name
-PostgreSQL gives each, and its WITH ORDINALITY column.
+build_segment gave each SegmentWriter the memory budget of the largest
+batch, DEFAULT_MEMORY_BUDGET_BYTES (64 MiB). Tantivy uses this budget
+only to size the initial hash table of terms: the largest power of two
+from 2^10 to 2^19 entries of 8 bytes that is less than a third of the
+budget. Thus each segment build made a table of 2^19 entries (4 MiB),
+also for a statement that adds one row. SegmentWriter::for_segment
+filled this table, and finalize read all of it to collect the terms.
 
-An unnest() without an alias is now also known as unnest, like
-generate_series is known as generate_series.
+build_segment now gives a budget of 16 KiB for each buffered document,
+from 32 KiB to DEFAULT_MEMORY_BUDGET_BYTES. A statement that adds one
+row gets the smallest table (2^10 entries), and a batch of 769 or more
+documents gets the table of before. The table grows when it is half
+full, and the writer sorts the terms before it writes them, so the
+segment files do not change. The new test builds the same 1,000
+documents with the smallest budget and with DEFAULT_MEMORY_BUDGET_BYTES,
+and compares the files.
 
-PostgreSQL turns on Dialect::table_function_arguments_read_only_earlier_tables,
-so `generate_series(start, stop)` after a table with those columns reads
-the table, not the function, and a table listed after the function is not
-visible to its arguments.
+Simulated time (callgrind, cache settings of the CodSpeed runner):
 
-Tests: make -C postgres/conformance run and run-postgres
+| Benchmark | Before | After | Change |
+|---|---:|---:|-
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `postgres/conformance/pg-sqltests/functions.sqltest` (modified, +87/-0)
+**File**: `core/index_method/fts/mod.rs` (modified, +28/-1)
 ```diff
-@@ -1388,6 +1388,93 @@ expect error {
-     a column definition list is required for functions returning "record"
- }
+@@ -137,6 +137,16 @@ fn key_info() -> KeyInfo {
+ /// Memory budget for Tantivy's per-segment writer arena.
+ pub const DEFAULT_MEMORY_BUDGET_BYTES: usize = 64 * 1024 * 1024;
  
-+test generate-series-with-one-argument-errors {
-+    SELECT * FROM generate_series(1);
-+}
-+@sqlstate 42883
-+expect error {
-+}
++/// Memory budget of the segment writer for each buffered document. With this
++/// value, a batch of `BATCH_COMMIT_SIZE` documents gets the largest initial
++/// term table, as with `DEFAULT_MEMORY_BUDGET_BYTES`.
++const SEGMENT_MEMORY_BUDGET_BYTES_PER_DOC: usize = 16 * 1024;
 +
-+test generate-series-with-four-arguments-errors {
-+    SELECT * FROM generate_series(1, 2, 1, 1);
-+}
-+@sqlstate 42883
-+expect error {
-+}
++/// The smallest memory budget of the segment writer. It gives Tantivy's
++/// smallest initial term table (2^10 entries). Tantivy refuses a budget of
++/// 24 KiB or less.
++const MIN_SEGMENT_MEMORY_BUDGET_BYTES: usize = 32 * 1024;
 +
-+test generate-series-argument-cannot-name-the-column-of-the-function {
-+    SELECT * FROM generate_series(1, generate_series);
-+}
-+@sqlstate 42703
-+expect error {
-+    generate_series
-+}
+ /// Chunk size (512 KiB) for splitting segment files into backing rows.
+ pub const DEFAULT_CHUNK_SIZE: usize = 512 * 1024;
+ 
+@@ -2201,7 +2211,8 @@ impl FtsCursor {
+         self.register_tokenizers(&index);
+         let segment_id = self.mint_segment_id();
+         let segment = index.segment(index.new_segment_meta(segment_id, 0));
+-        let mut writer = SegmentWriter::for_segment(DEFAULT_MEMORY_BUDGET_BYTES, segment)
++        let memory_budget = Self::segment_memory_budget(self.doc_buffer.len());
++        let mut writer = SegmentWriter::for_segment(memory_budget, segment)
+             .map_err(|e| build_dir.write_error(e, "FTS segment writer"))?;
+         let identity_base = self.mint_identity_base();
+         let mut added = 0u32;
+@@ -2246,6 +2257,22 @@ impl FtsCursor {
+         segment_rows_from_files(segment_id, max_doc, captured, identities)
+     }
+ 
++    /// The memory budget of the segment writer for `doc_count` buffered
++    /// documents.
++    ///
++    /// Tantivy uses the budget only to size the initial hash table of terms:
++    /// the largest power of two from 2^10 to 2^19 entries of 8 bytes that
++    /// is less than a third of the budget. The table grows when it is half
++    /// full, and the writer sorts the terms before it writes them, so the
++    /// size does not change the segment files. Each build fills the table
++    /// and `finalize` reads all of it, so a table that is too large for the
++    /// batch makes the build slow.
++    fn segment_memory_budget(doc_count: usize) -> usize {
++        doc_count
++            .saturating_mul(SEGMENT_MEMORY_BUDGET_BYTES_PER_DOC)
++            .clamp(MIN_SEGMENT_MEMORY_BUDGET_BYTES, DEFAULT_MEMORY_BUDGET_BYTES)
++    }
 +
-+test unnest-argument-cannot-name-the-column-of-the-function {
-+    SELECT * FROM unnest(unnest);
-+}
-+@sqlstate 42703
-+expect error {
-+    unnest
-+}
-+
-+test generate-series-argument-cannot-name-the-function-itself {
-+    SELECT * FROM generate_series(1, generate_series.generate_series);
-+}
-+@sqlstate 42P01
-+expect error {
-+}
-+
-+test generate-series-argument-cannot-name-a-column-the-function-does-not-have {
-+    SELECT * FROM generate_series(1, generate_series.value);
-+}
-+@sqlstate 42P01
-+expect error {
-+}
-+
-+test unnest-argument-cannot-name-the-function-itself {
-+    SELECT * FROM unnest(unnest.unnest);
-+}
-+@sqlstate 42P01
-+expect error {
-+}
-+
-+test generate-series-argument-cannot-name-a-table-listed-after-it {
-+    CREATE TABLE series_later (n int);
-+    SELECT * FROM generate_series(1, series_later.n), series_later;
-+}
-+@sqlstate 42P01
-+expect error {
-+}
-+
-+test generate-series-argument-cannot-name-a-column-of-a-table-listed-after-it {
-+    CREATE TABLE series_later_column (n int);
-+    SELECT * FROM generate_series(1, n), series_later_column;
-+}
-+@sqlstate 42703
-+expect error {
-+    n
-+}
-+
-+test unnest-argument-cannot-name-a-table-listed-after-it {
-+    CREATE TABLE unnest_later (a int[]);
-+    SELECT * FROM unnest(unnest_later.a), unnest_later;
-+}
-+@sqlstate 42P01
-+expect error {
-+}
-+
-+test generate-series-argument-named-like-a-column-of-the-function {
-+    CREATE TABLE series_args (start int, stop int, step int, value text);
-+    INSERT INTO series_args VALUES (1, 7, 3, 'a');
-+    SELECT series_args.value, generate_series.generate_series FROM series_args, generate_series(start, stop, step);
-+}
-+expect {
-+    a|1
-+    a|4
-+    a|7
-+}
-+
- test json-to-record-argument-named-like-json-each-column {
-     CREATE TABLE json_each_names (value text, key text, type text);
-     INSERT INTO json_each_names VALUES ('[{"v":"a"},{"v":"b"}]', '{"v":"k"}', '[{"v":"t"}]');
+     /// Drive the in-flight publication (row deletions, then row inserts,
+     /// then in-memory effects exactly once).
+     fn drive_publish(&mut self) -> IOResultOr<()> {
 ```
 
-**File**: `postgres/parser/translator.rs` (modified, +112/-115)
+**File**: `core/index_method/fts/tests.rs` (modified, +57/-0)
 ```diff
-@@ -2914,36 +2914,9 @@ impl PostgreSQLTranslator {
-             });
-         }
- 
--        let name = exact_name(func_name);
--        let qualified_name = if function_uses_main_schema(func_name) {
--            ast::QualifiedName::fullname(exact_name("main"), name)
--        } else {
--            ast::QualifiedName::single(name)
--        };
--        if func_name == "unnest" {
--            if args.len() != 1 {
--                return Err(ParseError::ParseError(
--                    "unnest currently requires exactly one array".into(),
--                ));
--            }
--            let element_name = range_func
--                .alias
--                .as_ref()
--                .map_or(func_name, |range_alias| range_alias.aliasname.as_str());
--            let names = range_function_column_names(range_func, vec![element_name.to_string()])?;
--            let column = |name: &str| ast::Expr::Id(exact_name(name));
--            return Ok(ast::SelectTable::Select {
--                select: function_select(
--                    qualified_name,
--                    args,
--                    [column("unnest"), bigint(column("ordinality"))]
--                        .into_iter()
--                        .zip(names)
--                        .collect(),
--                ),
--                alias,
--                lateral: true,
--            });
-+        let qualified_name = function_qualified_name(func_name);
-+        if let Some(function) = rewritten_function(func_name) {
-+            return translate_rewritten_function(function, range_func, qualified_name, args, alias);
-         }
-         if returns_record {
-             return self.translate_json_to_record(
-@@ -2954,42 +2927,13 @@ impl PostgreSQLTranslator {
-                 alias,
-             );
-         }
--        if func_name == "generate_series" {
--            let value_name = range_func
--                .alias
--                .as_ref()
--                .map_or(func_name, |range_alias| range_alias.aliasname.as_str());
--            let names = range_function_column_names(range_func, vec![value_name.to_string()])?;
--            let column = |name: &str| ast::Expr::Id(exact_name(name));
--            let ordinality = bigint(function_call(
--                "pg_generate_series_ordinality",
--                vec![column("value"), column("start"), column("step")],
--            ));
--            let alias = alias.unwrap_or_else(|| ast::As::Elided(exact_name(func_name)));
--            return Ok(ast::SelectTable::Select {
--                select: function_select(
--                    qualified_name,
--                    args,
--                    [column("value"), ordinality]
--                        .into_iter()
--                        .zip(names)
--                        .collect(),
--                ),
--                alias: Some(alias),
--                lateral: true,
--            });
--        }
-         if range_func.ordinality {
-             return Err(ParseError::not_supported(format!(
-                 "WITH ORDINALITY on {func_name}()"
-             )));
-         }
-         reject_column_aliases(&range_func.alias, "a function")?;
- 
--        fn function_uses_main_schema(name: &str) -> bool {
--            is_catalog_table_name(name) || name == "generate_series"
--        }
--
-         Ok(ast::SelectTable::TableCall(qualified_name, args, alias))
-     }
- 
-@@ -5656,42 +5600,123 @@ impl PostgreSQLTranslator {
-     }
+@@ -554,6 +554,63 @@ fn segment_load_rejects_the_old_identity_field() {
+     assert!(error.to_string().contains("rebuild the index"), "{error}");
  }
  
-+/// A table function that PostgreSQL has in FROM and that is a call of a table function of
-+/// the engine here. The call is a SELECT over the engine's table function.
-+struct RewrittenFunction {
-+    name: &'static str,
-+    in_main_schema: bool,
-+    check_arg_count: fn(usize) -> Result<(), ParseError>,
-+    /// The column of the engine's table function that holds each column of the result,
-+    /// and the name PostgreSQL gives that column, for a call with this many arguments.
-+    columns: fn(usize) -> Vec<(ast::Expr, String)>,
-+    /// The column of the engine's table function that holds WITH ORDINALITY.
-+    ordinality: fn(usize) -> ast::Expr,
++#[test]
++fn segment_files_do_not_depend_on_the_writer_memory_budget() {
++    // `build_segment` gives the segment writer of a small batch a small
++    // memory budget. Tantivy uses the budget only for the initial size of its
++    // term table, and FTS stores the segment files in the database. Thus the
++    // files must be the same for each budget, also when the table grows.
++    let attachment = test_attachment();
++    let cursor = FtsCursor::new(&attachment);
++    let segment_id = SegmentId::generate_random();
++    let build = |memory_budget: usize| {
++        let directory = BuildDirectory::default();
++        let index = Index::create(
++            directory.clone(),
++            attachment.schema.clone(),
++            IndexSettings::default(),
++        )
++        .unwrap();
++        cursor.register_tokenizers(&index);
++        let mut writer = SegmentWriter::for_segment(
++            memory_budget,
++            index.segment(index.new_segment_meta(segment_id, 0)),
++        )
++        .unwrap();
++        // About 3,000 different terms: the smallest table (2^10 entries)
++        // grows three times.
++        for rowid in 0..1000i64 {
++            let mut document = TantivyDocument::default();
++            document.add_i64(attachment.rowid_field, rowid);
++            document.add_text(attachment.indexed_fields[0].1, format!("title {rowid}"));
++            document.add_text(
++                attachment.indexed_fields[1].1,
++                format!("body word{rowid} shared text{}", rowid % 7),
++            );
++            document.add_u64(attachment.identity_hi_field, 1);
++            document.add_u64(attachment.identity_lo_field, rowid as u64);
++            writer
++                .add_document(AddOperation {
++                    opstamp: 0,
++                    document,
++                })
++                .unwrap();
++        }
++        writer.finalize().unwrap();
++        let mut files: Vec<_> = directory
++            .captured_files()
++            .into_iter()
++            .map(|(path, bytes)| (path, bytes.to_vec()))
++            .collect();
++        files.sort();
++        files
++    };
++    let smallest = build(FtsCursor::segment_memory_budget(1));
++    let largest = build(DEFAULT_MEMORY_BUDGET_BYTES);
++    assert!(!largest.is_empty());
++    assert_eq!(smallest, largest);
 +}
 +
-+fn rewritten_function(name: &str) -> Option<&'static RewrittenFunction> {
-+    REWRITTEN_FUNCTIONS
-+        .iter()
-+        .find(|function| function.name == name)
-+}
-+
-+const REWRITTEN_FUNCTIONS: [RewrittenFunction; 2] = [
-+    RewrittenFunction {
-+        name: "unnest",
-+        in_main_schema: true,
-+        check_arg_count: |count| {
-+            if count != 1 {
-+                return Err(ParseError::ParseError(
-+                    "unnest currently requires exactly one array".into(),
-+                ));
+ #[test]
+ fn merge_keeps_document_identities_and_retires_only_dropped_tombstones() {
+     let attachment = test_attachment();
+```
+
+---
+
+### Incident Patch 3: `d0181b16` (2026-11-19)
+**Commit Message**: core/io: make a full page of an in-memory file from the written bytes
+
+MemStore keeps the bytes of an in-memory file in pages of 4096 bytes.
+write_at_inner allocated each new page filled with zeros, and then
+copied the written bytes over it. Thus a write that covers a whole new
+page wrote each of its bytes twice. The spill files of hash tables,
+temporary files and in-memory databases are written mostly in whole
+pages.
+
+For a new page that the write covers completely, write_at_inner now
+makes the page from the written bytes, with one allocation and one
+copy. A partial write and a write to an existing page work as before,
+and the file gives the same bytes. The new test compares the store with
+a flat Vec after writes of whole pages, partial pages and overwrites.
+
+Simulated time (callgrind, cache settings of the CodSpeed runner):
+
+| Benchmark | Before | After | Change |
+|---|---:|---:|---:|
+| `hash_spill_benchmark` `HashTable Build (Relaxed Budget)` `with_100b_payload[10000]` | 18.19 ms | 16.35 ms | -10.1% |
+| `hash_spill_benchmark` `HashTable Build (Relaxed Budget)` `with_100b_payload[5000]` | 9.45 ms | 8.68 ms | -8.2% |
+| `hash_spill_benchmark` `HashTable Large Payload Spill` `payloa
+
+**File**: `core/io/memory.rs` (modified, +51/-11)
+```diff
+@@ -5,7 +5,7 @@ use crate::sync::{Mutex, RwLock};
+ use crate::turso_assert;
+ use crate::Result;
+ use std::{
+-    collections::{BTreeMap, HashMap},
++    collections::{btree_map::Entry, BTreeMap, HashMap},
+     sync::Arc,
+ };
+ use tracing::debug;
+@@ -147,13 +147,6 @@ impl MemStore {
+         }
+     }
+ 
+-    fn get_or_allocate_page(inner: &mut MemStoreInner, page_no: usize) -> &mut MemPage {
+-        inner
+-            .pages
+-            .entry(page_no)
+-            .or_insert_with(|| Box::new([0; PAGE_SIZE]))
+-    }
+-
+     fn write_at_inner(inner: &mut MemStoreInner, pos: u64, data: &[u8]) -> usize {
+         let buf_len = data.len();
+         if buf_len == 0 {
+@@ -166,9 +159,22 @@ impl MemStore {
+             let page_no = offset / PAGE_SIZE;
+             let page_offset = offset % PAGE_SIZE;
+             let bytes_to_write = remaining.min(PAGE_SIZE - page_offset);
+-            let page = Self::get_or_allocate_page(inner, page_no);
+-            page[page_offset..page_offset + bytes_to_write]
+-                .copy_from_slice(&data[buf_offset..buf_offset + bytes_to_write]);
++            let src = &data[buf_offset..buf_offset + bytes_to_write];
++            match inner.pages.entry(page_no) {
++                // The write gives all the bytes of this new page, so the page
++                // is made from them instead of a page of zeros that the copy
++                // then overwrites.
++                Entry::Vacant(slot) if bytes_to_write == PAGE_SIZE => {
++                    let page: MemPage = Box::<[u8]>::from(src)
++                        .try_into()
++                        .expect("a full-page write has PAGE_SIZE bytes");
++                    slot.insert(page);
++                }
++                entry => {
++                    let page = entry.or_insert_with(|| Box::new([0; PAGE_SIZE]));
++                    page[page_offset..page_offset + bytes_to_write].copy_from_slice(src);
++                }
 +            }
-+            Ok(())
-+        },
-+        columns: |_| vec![(ast::Expr::Id(exact_name("unnest")), "unnest".into())],
-+        ordinality: |_| ast::Expr::Id(exact_name("ordinality")),
-+    },
-+    RewrittenFunction {
-+        name: "generate_series",
-+        in_main_schema: true,
-+        check_arg_count: |count| {
-+            if !(2..=3).contains(&count) {
-+                return E
+             offset += bytes_to_write;
+             buf_offset += bytes_to_write;
+             remaining -= bytes_to_write;
+@@ -349,6 +355,40 @@ mod tests {
+     use super::*;
+     use std::{sync::mpsc, time::Duration};
+ 
++    /// A write that covers a whole new page makes the page from its bytes,
++    /// and the other writes copy into a page of zeros. Both must give the
++    /// bytes of a flat file, with zeros in the holes.
++    #[test]
++    fn writes_read_back_like_a_flat_file() {
++        let store = MemStore::new();
++        let mut model: Vec<u8> = Vec::new();
++        // (position, length, first byte)
++        let writes = [
++            (0, PAGE_SIZE, 1u8),
++            (PAGE_SIZE * 3 + 100, PAGE_SIZE * 2, 2),
++            (10, 20, 3),
++            (PAGE_SIZE * 6, PAGE_SIZE * 2, 4),
++            (PAGE_SIZE, PAGE_SIZE, 5),
++            (PAGE_SIZE * 6, PAGE_SIZE, 6),
++        ];
++        for (pos, len, first) in writes {
++            let data: Vec<u8> = (0..len).map(|i| first.wrapping_add(i as u8)).collect();
++            assert_eq!(store.write_at(pos as u64, &data), len);
++            if model.len() < pos + len {
++                model.resize(pos + len, 0);
++            }
++            model[pos..pos + len].copy_from_slice(&data);
++        }
++
++        assert_eq!(store.size(), model.len() as u64);
++        let buffer = Buffer::new_temporary(model.len());
++        assert_eq!(store.read_into(0, &buffer) as usize, model.len());
++        assert!(buffer.as_slice() == &model[..]);
++        // No write touched the third page.
++        assert!(store.has_hole(PAGE_SIZE * 2, PAGE_SIZE));
++        assert!(!store.has_hole(PAGE_SIZE, PAGE_SIZE));
++    }
++
+     #[test]
+     fn vectored_write_is_not_observed_partially() {
+         let store = Arc::new(MemStore::new());
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12089** (2026-11-18): core/dialect: replace CatalogChange with typed requests and a dialect-built apply object (@pedrocarlo)
-- **PR #12088** (2026-11-18): core/dialect: move the catalog change types into their own module (@pedrocarlo)
-- **PR #12087** (2026-11-18): core/connection: move the schema reparse state machine to its own module (@pedrocarlo)
-- **PR #12086** (2026-11-18): core/translate: move the sqlite_schema deletes of DROP INDEX, DROP TABLE and DROP VIEW into the row writers (@pedrocarlo)
-- **PR #12077** (2026-11-18): core/translate: pass the database index to ParseSchema in CREATE VIRTUAL TABLE (@pedrocarlo)
-- **PR #12075** (2026-11-18): core/translate: gather the code that writes sqlite_schema rows (@pedrocarlo)
+- **PR #12168** (2026-11-20): ci/dotnet: pin .NET 10 SDK in iOS package validation (@penberg)
+- **PR #12164** (2026-11-20): testing/sqltest: record known PostgreSQL differences as @compat-gap tests (@jussisaurio)
+- **PR #12157** (2026-11-20): sdk-kit: update README examples to the current C and Rust API (@turso-github-handyman[bot])
+- **PR #12156** (closed): postgres: store timestamp and timestamptz as PostgreSQL does (@jussisaurio)
+- **PR #12155** (2026-11-20): postgres: now() is the start of the transaction, statement_timestamp() the time the client's query arrived (@jussisaurio)
+- **PR #12151** (2026-11-20): sqlite/conformance: regenerate two gencol snapshots for new bytecode (@glommer)
 
 ---
 
@@ -2381,92 +2496,53 @@ Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/dialect: replace CatalogChange with typed requests and a dialect-bui
+## X. testing/sqltest: add @compat-gap tests with a fixed-gap check and lints
 
 **RULE**:
-When implementing operations in `core/dialect/catalog.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `testing/sqltest/src/comparison/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a00dd9ff`: Merge 'core/dialect: replace CatalogChange with typed requests and a dialect-built apply object' from Pedro Muniz. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `091610f8`: testing/sqltest: add @compat-gap tests with a fixed-gap check and lints. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/dialect/catalog.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `testing/sqltest/src/comparison/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! What translation tells the dialect about a statement that changes the
-//! dialect's catalog of the main database, and what the dialect's bytecode
-//! tells the in-memory schema once the change is written.
-use crate::{
-    namespace::NamespaceId,
-    schema::{RelationKind, Schema},
-    LimboError, Result, Value,
-};
-use std::borrow::Cow;
-/// A relation that a statement created, dropped or renamed. The engine makes
-/// the change itself; the dialect records it in its own catalog through
-/// [`Dialect::translate_relation_changes`](super::Dialect::translate_relation_changes).
-pub enum RelationChange<'a> {
-    Created {
-        name: &'a str,
-        table: Option<&'a str>,
-    Dropped {
-        name: &'a str,
-    Renamed {
-        old_name: &'a str,
-        /// Owned when the statement had to build the name, as for an
-        /// automatic index that is renamed with its table.
-        new_name: Cow<'a, str>,
-    /// `ALTER TABLE table RENAME COLUMN old_name TO new_name`.
-    ColumnRenamed {
-        table: &'a str,
-        old_name: &'a str,
-        new_name: &'a str,
-}
-
-/// A statement about roles, ownership, privileges or row-level security.
-/// The engine stores none of these; the
+use regex::RegexBuilder;
+use std::collections::HashSet;
+/// Whether one query result can match both expectations under the rules of
+/// [`compare`]. It assumes that no output value holds a line break. Where
+/// it cannot decide, it answers true: for an `expect pattern` block against
+/// an `expect unordered` or another `expect pattern` block, and for two error
+/// messages, because two regexes can match the same message.
+pub fn may_match_same_output(a: &Expectation, b: &Expectation) -> bool {
+    match (a, b) {
+        (Expectation::Error { sqlstate: a, .. }, Expectation::Error { sqlstate: b, .. }) => {
+            // compare_error checks a SQLSTATE only when the block names one.
+            match (a, b) {
+                (Some(a), Some(b)) => a == b,
+                _ => true,
+            }
+        }
+        (Expectation::Error { .. }, _) | (_, Expectation::Error { .. }) => false,
+        (Expectation::Exact(a), Expectation::Exact(b)) => exact_text(a) == exact_text(b),
+        (Expectation::Unordered(a), Expectation::Unordered(b)) => {
+            unordered_set(a) == unordered_set(b)
+        }
+        (Expectation::Exact(exact), Expectation::Unordered(unordered))
+        | (Expect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-//! The changes a statement makes to the dialect's catalog.
-use crate::{namespace::NamespaceId, schema::RelationKind};
-/// A change a statement makes to the dialect's catalog of the main
-/// database: to a relation, or to the roles. Translation tells the dialect
-/// about it through
-/// [`Dialect::translate_catalog_changes`](super::Dialect::translate_catalog_changes), and the dialect's own bytecode
-/// tells it back through [`Dialect::apply_catalog_change`](super::Dialect::apply_catalog_change) once the change
-/// is written.
-pub enum CatalogChange {
-    Create {
-        name: String,
-        table: Option<String>,
-    Drop {
-        name: String,
-    Rename {
-        old_name: String,
-        new_name: String,
-    /// Whom the relation belongs to from now on.
-    ChangeOwner {
-        name: String,
-        owner: NewOwner,
-    /// `ALTER TABLE table RENAME COLUMN old_name TO new_name`.
-    RenameColumn {
-        table: String,
-        old_name: String,
-        new_name: String,
-    /// `GRANT privileges ON relation TO grantees`, or `REVOKE privileges ON
-    /// relation FROM grantees` when `revoke` is set.
-        namespace: NamespaceId,
-        name: String,
-        privileges: V
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a00dd9ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `091610f8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

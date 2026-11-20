@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `811fe8b4`  
+> **Source Version**: `27d1b854`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T05:21:08.316Z  
+> **Timestamp**: 2026-11-20T13:40:19.575Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T05:21:08.171Z  
+> **Harvest Timestamp**: 2026-11-20T13:40:17.959Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1971,11 +1971,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4715** (2026-11-20): **Release a connecting peer however its handshake ends**
+  *Symptoms*: ## Motivation  Under 50% or 70% packet loss, the chain halts. It does not recover after the loss stops: the validators' gateway connections never re-form.  The cause is a handshake that times out. The TCP layer runs each handshake under a 10 s timeout (`Handshake::TIMEOUT_MS`), and enforces it by dropping the handshake future. The handshake marks the peer as connecting in the peer pool, and returns it to the candidates only after the handshake returns. A dropped future never gets there, and nothing else clears the entry. From then on:  - `connect()` to the peer fails with `AlreadyConnecting`. The heartbeats skip that error without a log, so the node never dials the peer again. - Every inbound handshake from the peer fails the same way.  One stuck entry on either side breaks the pair for good. Under heavy loss, many handshakes take longer than 10 s, so many pairs get stuck. The router and the bootstrap client have the same pattern.  This PR makes `add_connecting_peer` return a `ConnectingPeerGuard`. Dropping the guard returns the peer to the candidates, unless the handshake has upgraded it to connected. This covers the timeout, every early error return, and task abort. The gateway, the router and the bootstrap client hold the guard until they upgrade the peer. The rollback after the handshake goes away, and so does the out-parameter that carried the listening address to it.  The router and the bootstrap client recorded the listening address before `add_connecting_peer`. A hand
+
 - **Issue #4713** (2026-11-19): **Fix the storage-service test imports for the memory feature alone**
   *Symptoms*: ## Motivation  The shared storage-service tests in `node/bft/storage-service/src/tests.rs` do not compile with the `memory` feature alone:  ``` cargo test -p snarkos-node-bft-storage-service --features memory error[E0433]: cannot find type `Bytes` in this scope   --> node/bft/storage-service/src/tests.rs:51:44 ```  `sample_transmission` uses `Bytes` for every service. The `use bytes::Bytes;` import is behind `#[cfg(feature = "persistent")]`. So the import is missing when only `memory` is on. The `test` feature turns on `memory` only, so `--features test` also fails.  CI does not see the error. The node job tests the crate with `memory` and `persistent` together. In workspace builds, `snarkos-node-consensus` turns on `persistent` and `snarkos-node-bft` turns on `memory`, so feature unification turns on both.  This PR fixes the imports in `tests.rs`:  - It removes the `cfg` from `use bytes::Bytes;`. `bytes` is a dev-dependency of the crate, so it is always available to the tests. - It puts `StorageMode` behind `#[cfg(feature = "persistent")]`. Only the persistent service uses it. With `memory` alone, the import is unused, and `clippy -D warnings` fails.  ## Test Plan  `cargo clippy -p snarkos-node-bft-storage-service --all-targets -- -D warnings` passes with each of these feature sets: `memory`, `persistent`, `memory,persistent` and `test`. Before this change, the tests do not compile with `memory` or `test`.  `cargo nextest run -p snarkos-node-bft-storage-service` passes with 
-
-- **Issue #4664** (2026-11-16): **Requeue a transmission when the ledger check fails while proposing**
-  *Symptoms*: ## Motivation  Stacked on #4603. Review only the commits after `2a9cd1cbc`.  In `propose_batch`, the drain loop checks each transmission against the ledger with `self.ledger.contains_transmission(&id).unwrap_or(true)`. A ledger read error is treated as "already in the ledger". The loop has already removed the transmission from the worker, so the transmission is lost. The only log is a `trace` line that says "Already in ledger".  This PR:  - Matches on the result. On an error, it requeues the transmission at the back of the worker with `Worker::reinsert`, logs it at `warn`, and stops draining. - Adds `MockLedgerService::with_unreadable_transmission_ids`, which makes `contains_transmission` fail for the given IDs.  The transmission goes to the back, not the front. At the front, a transmission whose read keeps failing would stop every later proposal at the same place. The drain stops after the error, because continuing would cycle through the queue forever if every ledger read fails. If the whole ledger fails, each proposal holds only what was drained before the error, and the node logs a `warn` each round.  `Worker::contains_transmission` defaults the same ledger call to `false` (`unwrap_or(false)`). This PR does not change it.  Commits:  - `3d6f5c375`: Requeue the transmission on a ledger read error, and add the test. - `19397e42a`: Build the mock ledger constructors on `new`. - `91468f5ea`: Requeue at the back of the worker, not the front.  ## Test Plan  - New test `test_prop
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1992,640 +1992,939 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `811fe8b4` (2026-11-20)
-**Commit Message**: Merge pull request #4727 from aleo-labs-protocol/breaking/test-helpers-rename
+### Incident Patch 1: `97451873` (2026-11-20)
+**Commit Message**: Run the fixed-port gateway test alone, and correct the nextest comment
 
-**File**: `.github/workflows/ci.yml` (modified, +17/-13)
+gateway::prop_tests::gateway_start asserts that the gateway binds
+127.0.0.1:5000+dev exactly. The bft integration tests bind ports in that
+range and take another port when one is taken, so at 16 threads they can
+make this assertion fail. A nextest override makes the test require
+every thread, so nothing runs beside it. It takes about 1 s.
+
+The profile comment named socket use as the reason for two threads, but
+the fleet now runs the same tests 16 at a time. It now states the hosted
+runner size and points to CI.md.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01UYfmmPBwQHC2yRCed8gDf5
+
+**File**: `.config/nextest.toml` (modified, +9/-2)
 ```diff
-@@ -133,19 +133,19 @@ jobs:
-       # features, so it misses a feature one of them fails to declare.
-       - run: cargo check -p snarkos-node-metrics --all-features
-       - run: cargo check -p snarkos-display --all-features
--      # The fuzzing harness builds these two alone with `fuzz-helpers`, which
-+      # The fuzzing harness builds these two alone with `test-helpers`, which
-       # the workspace pass above only sees unified with everything else.
--      - run: cargo check -p snarkos-node-router-messages --features fuzz-helpers
--      - run: cargo check -p snarkos-node-bft-events --features fuzz-helpers
-+      - run: cargo check -p snarkos-node-router-messages --features test-helpers
-+      - run: cargo check -p snarkos-node-bft-events --features test-helpers
+@@ -2,9 +2,16 @@
+ fail-fast = false
+ slow-timeout = { period = "60s", terminate-after = 5 }
+ status-level = "fail"
+-# Many tests bind sockets and start nodes, so two run at a time on the hosted
+-# runners. The fleet `test` job sets NEXTEST_TEST_THREADS instead; see CI.md.
++# The hosted runners have 4 vCPUs. The fleet `test` job overrides this with
++# NEXTEST_TEST_THREADS; see CI.md.
+ test-threads = 2
  
-   # Each line of `runs` is one build. `cargo test -p a -p b` unifies the
-   # features of a and b, and several crates enable features on their
-   # dependencies that change what those dependencies do:
--  # `snarkos-node-router/test`, `snarkos-node-network/test` and
-+  # `snarkos-node-router/test-helpers`, `snarkos-node-network/test-helpers` and
-   # `snarkvm-ledger-block/test` skip checks, and `rocks` and `metrics` select
-   # other code paths. Crates share a line only where that unification enables
--  # none of these on any crate. Helper features such as `test-helpers` and
--  # `mock` can still be unified.
-+  # none of these on any crate. Other helper features, such as `mock` and the
-+  # other crates' `test-helpers`, can still be unified.
-   #
-   # Cheap entries run on free hosted runners and do not wait for the fleet.
-   test-hosted:
-@@ -241,7 +241,9 @@ jobs:
-       matrix:
-         include:
-           - name: services
--            runs: nextest run -p snarkos-node-consensus -p snarkos-node-rest -p snarkos-cli
-+            runs: |
-+              nextest run -p snarkos-node-consensus -p snarkos-cli
-+              nextest run -p snarkos-node-rest
-           - name: node
-             runs: nextest run -p snarkos-node -p snarkos-node-bft-storage-service --features snarkos-node-bft-storage-service/memory,snarkos-node-bft-storage-service/persistent
-           # Both lines use `metrics`, which the `snarkos` binary enables by
-@@ -254,8 +256,9 @@ jobs:
-             runs: |
-               nextest run -p snarkos-node-bft --features metrics
-               nextest run -p snarkos-node-bft --features metrics --example simple_node --no-tests=fail
--          # One line for both would turn on `test` in `snarkos-node-sync` for
--          # its own tests. The two lines build the same snarkvm crates.
-+          # One line for both would turn on `test-helpers` in
-+          # `snarkos-node-sync` for its own tests. The two lines build the same
-+          # snarkvm crates.
-           - name: router-sync
-             runs: |
-               nextest run -p snarkos-node-router
-@@ -420,17 +423,18 @@ jobs:
-     name: devnet (${{ matrix.name }})
-     steps: *devnet-steps
- 
--  # The release binary must compile in no test-only code. `fuzz-helpers` turns on
--  # proptest and snarkVM's `test-helpers`, and feature unification would carry
--  # them into the binary if any crate on its path ever enabled it.
-+  # The release binary must compile in no test-only code. `test-helpers` in the
-+  # event and message crates turns on proptest and snarkVM's `test-helpers`, and
-+  # feature unification would carry them into the binary if any crate on its
-+  # path ever enabled it.
-   release-graph:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-         with: { persist-credentials: false }
-       - run: |
-           cargo tree -p snarkos -e normal,build,features --prefix none --locked > graph.txt
--          hits=$(grep -E '^[a-z0-9_-]+ feature "(fuzz-helpers|test-helpers|test)"$|^proptest ' graph.txt | sort -u || true)
-+          hits=$(grep -E '^[a-z0-9_-]+ feature "(test-helpers|test)"$|^proptest ' graph.txt | sort -u || true)
-           if [ -n "$hits" ]; then
-             printf '%s\n' "$hits"
-             echo "::error::the snarkos release build enables test-only code (above)"
+ [profile.ci.junit]
+ path = "junit.xml"
++
++# gateway_start asserts that the gateway binds 127.0.0.1:5000+dev exactly. Other
++# tests bind ports in that range, and take another port if one is taken, so this
++# test runs alone.
++[[profile.default.overrides]]
++filter = 'package(snarkos-node-bft) and test(=gateway::prop_tests::gateway_start)'
++threads-required = "num-test-threads"
 ```
 
-**File**: `CI.md` (modified, +5/-4)
+**File**: `CI.md` (modified, +4/-2)
 ```diff
-@@ -41,7 +41,7 @@ a job marked "release" only on the third. The other jobs run on every event.
- | `test (light)` | hosted | all | 90 | `snarkos-account`, `-utilities`, `-node-tcp`, `-node-sync-locators`, `-node-network` |
- | `test (cdn)` | hosted | all | 90 | `snarkos-node-cdn` |
- | `test (messages)` | hosted | all | 90 | `snarkos-node-bft-events`, `-node-router-messages`, `-node-bft-ledger-service` |
--| `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-node-rest`, `-cli` |
-+| `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-cli`; then `-node-rest` |
- | `test (node)` | `cpu` | all | 90 | `snarkos-node` with `snarkos-node-bft-storage-service` (features `memory,persistent`) |
- | `test (bft)` | `cpu` | all | 90 | `snarkos-node-bft` with `metrics` |
- | `test (router-sync)` | `cpu` | all | 90 | `snarkos-node-router`; then `-node-sync` |
-@@ -74,9 +74,10 @@ such a pull request cannot merge until a workflow reports that check for it.
- Each line of a `test` entry is one cargo build. `cargo test -p a -p b` unifies
- the features of `a` and `b`, and several crates enable features on their
- dependencies that change what those dependencies do, such as
--`snarkos-node-router/test` and `snarkvm-ledger-block/test`. So crates share a
--line only where that unification enables no such feature on any crate. Helper
--features such as `test-helpers` and `mock` can still be unified, so a test may
-+`snarkos-node-router/test-helpers` and `snarkvm-ledger-block/test`. So crates
-+share a line only where that unification enables no such feature on any crate.
-+Other helper features, such as `mock` and the other crates' `test-helpers`, can
-+still be unified, so a test may
- compile in its line that would not under `cargo test -p <crate>` alone. Check
- this before moving a crate between lines, for example by comparing
- `cargo tree -e features` for the line against each crate alone.
-```
-
-**File**: `node/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -60,7 +60,7 @@ serial = [
-   "snarkvm/serial",
-   "snarkos-node-bft/serial"
- ]
--test = []
-+test-helpers = []
- test_network = [ "snarkos-node-bft/test_network", "snarkos-node-consensus/test_network", "snarkos-utilities/test_network" ]
+@@ -90,8 +90,10 @@ checks the crate without `metrics`. The `simple_node` line passes
+ [`.config/nextest.toml`](.config/nextest.toml) sets two test threads, which
+ the hosted entries use. The fleet entries run 16 tests at a time through
+ `NEXTEST_TEST_THREADS`: most of their slow tests wait on timers rather than
+-the CPU, and a box runs one job. Each entry uploads nextest's JUnit reports as
+-the artifact `junit-<entry>`, one file per line, with the time of each test.
++the CPU, and a box runs one job. `gateway::prop_tests::gateway_start` runs
++alone, because it asserts a fixed port that other tests may take. Each entry
++uploads nextest's JUnit reports as the artifact `junit-<entry>`, one file per
++line, with the time of each test.
  
- [dependencies.aleo-std]
-@@ -180,7 +180,7 @@ workspace = true
+ ## Devnets
  
- [dev-dependencies.snarkos-node-router]
- workspace = true
--features = [ "test" ]
-+features = [ "test-helpers" ]
- 
- [dev-dependencies.snarkvm]
- workspace = true
-```
-
-**File**: `node/bft/Cargo.toml` (modified, +5/-5)
-```diff
-@@ -40,11 +40,11 @@ cuda = [
-   "snarkos-node-bft-ledger-service/cuda",
-   "snarkos-node-sync/cuda"
- ]
--test = [
-+test-helpers = [
-   # "snarkvm/test" this breaks some of the tests
-   "snarkvm/test-helpers",
--  "snarkos-node-bft-ledger-service/test",
--  "snarkos-node-bft-storage-service/test"
-+  "snarkos-node-bft-ledger-service/test-helpers",
-+  "snarkos-node-bft-storage-service/test-helpers"
- ]
- test_network = [
-   "snarkos-node-bft-ledger-service/test_network",
-@@ -195,11 +195,11 @@ workspace = true
- 
- [dev-dependencies.snarkos-node-bft]
- path = "."
--features = [ "test" ]
-+features = [ "test-helpers" ]
- 
- [dev-dependencies.snarkos-node-sync]
- workspace = true
--features = [ "test" ]
-+features = [ "test-helpers" ]
- 
- [dev-dependencies.snarkos-utilities]
- workspace = true
-```
-
-**File**: `node/bft/events/Cargo.toml` (modified, +14/-13)
-```diff
-@@ -21,18 +21,19 @@ default = [ ]
- metrics = [ "snarkvm/metrics" ]
- # Keep the [dev-dependencies] in sync with this list, and gate code with
- # `cfg(any(test, feature = "test-helpers"))`: the unit tests build without this feature.
--test-helpers = [ "dep:rand_chacha", "dep:rand", "dep:proptest" ]
--# Exposes the `prop_tests` modules -- the `any_*` generators -- to callers
--# outside this crate's own test build. They are the only practical way to seed a
--# fuzzing corpus with structurally valid events: without them a mutator spends
--# most of its executions failing the version byte at the head of every reader.
--#
--# Named for what it is rather than folded into `test-helpers`, which already
--# means something narrower here (it pulls the rng and proptest dependencies and
--# un-gates only `committee_prop_tests`). Enabling this in a production build would
--# compile the generators into the binary, so it is deliberately not implied by
--# anything.
--fuzz-helpers = [ "test-helpers", "dep:snarkos-utilities", "dep:test-strategy", "dep:time", "snarkos-node-sync-locators/test", "snarkvm/test-helpers", "snarkvm/algorithms" ]
-+# Also exposes the `prop_tests` generators, which seed a fuzzing corpus with
-+# structurally valid events. A production build must not enable this feature.
-+test-helpers = [
-+  "dep:proptest",
-+  "dep:rand",
-+  "dep:rand_chacha",
-+  "dep:snarkos-utilities",
-+  "dep:test-strategy",
-+  "dep:time",
-+  "snarkos-node-sync-locators/test-helpers",
-+  "snarkvm/test-helpers",
-+  "snarkvm/algorithms"
-+]
- 
- [dependencies.anyhow]
- workspace = true
-@@ -111,7 +112,7 @@ workspace = true
- 
- [dev-dependencies.snarkos-node-sync-locators]
- workspace = true
--features = [ "test" ]
-+features = [ "test-helpers" ]
- 
- [dev-dependencies.snarkos-utilities]
- workspace = true
-```
-
-**File**: `node/bft/events/src/batch_certified.rs` (modified, +1/-1)
-```diff
-@@ -57,7 +57,7 @@ impl<N: Network> FromBytes for BatchCertified<N> {
-     }
- }
- 
--#[cfg(any(test, feature = "fuzz-helpers"))]
-+#[cfg(any(test, feature = "test-helpers"))]
- pub mod prop_tests {
-     #![cfg_attr(not(test), allow(unused_imports))]
-     use crate::{BatchCertified, certificate_response::prop_tests::any_batch_certificate};
-```
-
-**File**: `node/bft/events/src/batch_propose.rs` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@ impl<N: Network> FromBytes for BatchPropose<N> {
-     }
- }
- 
--#[cfg(any(test, feature = "fuzz-helpers"))]
-+#[cfg(any(test, feature = "test-helpers"))]
- pub mod prop_tests {
-     #![cfg_attr(not(test), allow(unused_imports))]
-     use crate::{
-```
-
-**File**: `node/bft/events/src/batch_signature.rs` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@ impl<N: Network> FromBytes for BatchSignature<N> {
-     }
- }
- 
--#[cfg(any(test, feature = "fuzz-helpers"))]
-+#[cfg(any(test, feature = "test-helpers"))]
- pub mod prop_tests {
-     #![cfg_attr(not(test), allow(unused_imports))]
-     use crate::{
 ```
 
 ---
 
-### Incident Patch 2: `52a02124` (2026-11-20)
-**Commit Message**: Merge staging into breaking/test-helpers-rename
+### Incident Patch 2: `4df06d23` (2026-11-20)
+**Commit Message**: Merge pull request #4715 from aleo-labs-protocol/fix/handshake-timeout-leak
 
-Apply the rename to what #4720 and #4723 changed: the events and network
-features keep their `cfg(any(test, ...))` gates under the name
-`test-helpers`, and ledger-service gates `TranslucentLedgerService` on
-`test-helpers`.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmLteo8RJcUAnUrf9qy
-
-**File**: `.github/ISSUE_TEMPLATE.md` (modified, +1/-1)
+**File**: `node/bft/src/gateway.rs` (modified, +81/-116)
 ```diff
-@@ -1,3 +1,3 @@
--## 👉 [Please follow one of these issue templates](https://github.com/ProvableHQ/snarkOS/issues/new/choose) 👈
-+## 👉 [Please follow one of these issue templates](https://github.com/aleo-labs-protocol/snarkOS/issues/new/choose) 👈
+@@ -49,6 +49,7 @@ use snarkos_node_bft_events::{
+ };
+ use snarkos_node_bft_ledger_service::LedgerService;
+ use snarkos_node_network::{
++    ConnectingPeerGuard,
+     ConnectionMode,
+     NodeType,
+     Peer,
+@@ -1630,15 +1631,11 @@ impl<N: Network> Handshake for Gateway<N> {
+         // Make the socket more robust; every other handshake in the node does this too.
+         harden_socket(stream)?;
  
- Note: to keep the backlog clean and actionable, issues may be immediately closed if they do not follow one of the above issue templates.
+-        // If this is an inbound connection, we log it, but don't know the listening address yet.
+-        // Otherwise, we can immediately register the listening address.
+-        let mut listener_addr = if peer_side == ConnectionSide::Initiator {
++        if peer_side == ConnectionSide::Initiator {
+             debug!("{CONTEXT} Received a connection request from '{peer_addr}'");
+-            None
+         } else {
+             debug!("{CONTEXT} Shaking hands with {peer_addr}...");
+-            Some(peer_addr)
+-        };
++        }
+ 
+         // Retrieve the restrictions ID.
+         let restrictions_id = self.ledger.latest_restrictions_id();
+@@ -1650,8 +1647,6 @@ impl<N: Network> Handshake for Gateway<N> {
+             .and_then(|bytes| bytes.try_into().ok())
+             .ok_or_else(|| ConnectError::other(anyhow!("Failed to encode the genesis hash")))?;
+ 
+-        // Perform the handshake; we pass on a mutable reference to peer_ip in case the process is broken at any point in time.
+-        //
+         // Validators speak only the Noise handshake. A peer that opens with anything else is turned
+         // away before any key is derived.
+         let handshake_result = if peer_side == ConnectionSide::Responder {
+@@ -1660,101 +1655,71 @@ impl<N: Network> Handshake for Gateway<N> {
+         } else {
+             match detect_handshake_protocol(stream).await? {
+                 (HandshakeProtocol::Noise, _) => {
+-                    self.handshake_inner_responder_noise(
+-                        peer_addr,
+-                        &mut listener_addr,
+-                        restrictions_id,
+-                        genesis_hash,
+-                        stream,
+-                    )
+-                    .await
++                    self.handshake_inner_responder_noise(peer_addr, restrictions_id, genesis_hash, stream).await
+                 }
+                 (HandshakeProtocol::Legacy, _) => {
+                     Err(ConnectError::other(format!("'{peer_addr}' did not offer the Noise handshake")))
+                 }
+             }
+         };
+ 
+-        // Register the peer, or roll it back, if the handshake got far enough to learn its listening
+-        // address.
+-        match (&handshake_result, listener_addr) {
+-            (Ok((peer_info, peer_schedule)), Some(addr)) => {
+-                let node_type = if bootstrap_peers::<N>(self.is_dev()).contains(&addr) {
+-                    NodeType::BootstrapClient
+-                } else {
+-                    NodeType::Validator
+-                };
+-                // A block check reads the connected validators before their schedules, so the schedule
+-                // is recorded before the validator counts as connected.
+-                if node_type == NodeType::Validator {
+-                    self.upgrade_monitor.record_schedule(peer_info.address, peer_schedule.as_ref());
+-                }
+-                let mut peer_pool = self.peer_pool.write();
+-
+-                // Validators may change their listening address, but not the Aleo address; traverse
+-                // the peer pool, and retain previously connected (the prior Aleo address is known)
+-                // candidate peers with the same Aleo address only if their listening address is the
+-                // same; otherwise, it may be concluded that a known validator has changed their
+-                // listening address, and thus the old entry should be removed as outdated.
+-                peer_pool.retain(|_, peer| {
+-                    if let Peer::Candidate(peer) = peer
+-                        && let Some(old_aleo_addr) = peer.last_known_aleo_addr
+-                    {
+-                        old_aleo_addr != peer_info.address || peer.listener_addr == addr
+-                    } else {
+-                        true
+-                    }
+-                });
+-
+-                let is_connected = match peer_pool.get_mut(&addr) {
+-                    Some(peer) => {
+-                        self.resolver.write().insert_peer(addr, peer_addr, Some(peer_info.address));
+-                        peer.upgrade_to_connected(
+-                            peer_addr,
+-                            peer_info.listener_port,
+-                            peer_info.address,
+-                            node_type,
+-                            peer_info.version,
+-                            peer_info.snarkos_sha,
+-                            ConnectionMode::Gateway,
+-                        );
+-                        true
+-                    }
+-                    None => false,
+-                };
+-   
 ```
 
-**File**: `.github/workflows/benchmarks.yml` (modified, +4/-5)
+**File**: `node/bft/tests/gateway_noise.rs` (modified, +95/-1)
 ```diff
-@@ -3,8 +3,7 @@ name: Run snarkOS Benchmarks
- on:
-   push:
-     branches:
--      - 'testnet'
--      - 'mainnet'
-+      - 'release/**'
-   workflow_dispatch:
- 
- jobs:
-@@ -112,7 +111,7 @@ jobs:
-         uses: benchmark-action/github-action-benchmark@4322e5726e6334590d251fc4f92bec0efafc45dc # v1.22.2
-         with:
-           name: snarkOS Benchmarks
--          # testnet and mainnet keep separate gh-pages histories.
-+          # Each release branch keeps its own gh-pages history.
-           benchmark-data-dir-path: dev/bench/${{ github.ref_name }}
-           alert-threshold: '150%'
-           comment-on-alert: true
-@@ -125,14 +124,14 @@ jobs:
-           tool: 'customBiggerIsBetter'
-           output-file-path: results.json
-           alert-comment-cc-users: '@vicsn,@snarkworld,@cbeck88'
--          # The next step pushes stored results for testnet and mainnet.
-+          # The next step pushes stored results for release branches.
-           auto-push: false
-           # Enable Job Summary for PRs
-           summary-always: true
- 
-       - name: Push benchmark result
-         # Manual runs on other branches keep the job summary and do not update gh-pages.
--        if: github.ref_name == 'testnet' || github.ref_name == 'mainnet'
-+        if: startsWith(github.ref, 'refs/heads/release/')
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         run: git push origin gh-pages
+@@ -41,10 +41,11 @@ use snarkos_node_bft_events::{
+     ValidatorsRequest,
+ };
+ use snarkos_node_network::{
++    Peer,
+     PeerPoolHandling,
+     noise::{HandshakeProtocol, NoiseSession, Role, binding_message, detect_handshake_protocol, write_noise_magic},
+ };
+-use snarkos_node_tcp::P2P;
++use snarkos_node_tcp::{ConnectError, P2P, protocols::Handshake};
+ use snarkvm::{
+     ledger::{narwhal::Data, store::helpers::memory::ConsensusMemory},
+     prelude::{FromBytes, TestRng, ToBytes},
+@@ -701,3 +702,96 @@ async fn an_initiator_rejects_a_responder_with_a_different_genesis() {
+     assert!(!gateway_a.connected_addresses().contains(&accounts[1].address()));
+     assert!(!gateway_b.connected_addresses().contains(&accounts[0].address()));
+ }
++
++/// How long to wait for a stalled handshake to time out.
++fn handshake_timeout_with_margin() -> Duration {
++    Duration::from_millis(<Gateway<CurrentNetwork> as Handshake>::TIMEOUT_MS + 3_000)
++}
++
++/// A responder that accepts the connection and then never answers holds the dialing gateway's
++/// handshake until it times out. Once it has, the peer must be dialable again; a peer stuck as
++/// connecting is never dialed by the heartbeat and turns away every inbound handshake.
++#[tokio::test(flavor = "multi_thread")]
++async fn a_timed_out_outbound_handshake_does_not_leave_the_peer_connecting() {
++    let mut rng = TestRng::default();
++    let (_accounts, gateways) = new_test_gateways(1, &mut rng).await;
++    let gateway = gateways[0].clone();
++
++    // Accept connections and keep them open without ever writing to them.
++    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
++    let silent_addr = listener.local_addr().unwrap();
++    let _silent = task::spawn(async move {
++        let mut streams = Vec::new();
++        while let Ok((stream, _)) = listener.accept().await {
++            streams.push(stream);
++        }
++    });
++
++    // A validator was seen at this address before.
++    let last_known_aleo_addr = Account::<CurrentNetwork>::new(&mut rng).unwrap().address();
++    let mut candidate = Peer::new_candidate(silent_addr, false);
++    if let Peer::Candidate(peer) = &mut candidate {
++        peer.last_known_aleo_addr = Some(last_known_aleo_addr);
++    }
++    gateway.peer_pool().write().insert(silent_addr, candidate);
++
++    let dial = task::spawn({
++        let gateway = gateway.clone();
++        async move { gateway.tcp().connect(silent_addr).await }
++    });
++    let g = gateway.clone();
++    deadline!(Duration::from_secs(5), move || g.is_connecting(silent_addr));
++
++    let result = timeout(handshake_timeout_with_margin(), dial).await.expect("the handshake never timed out").unwrap();
++    assert!(
++        matches!(&result, Err(ConnectError::IoError(e)) if e.kind() == io::ErrorKind::TimedOut),
++        "the handshake should have timed out: {result:?}"
++    );
++
++    match gateway.peer_pool().read().get(&silent_addr) {
++        Some(Peer::Candidate(peer)) => assert_eq!(peer.last_known_aleo_addr, Some(last_known_aleo_addr)),
++        peer => panic!("the timed-out peer should be a candidate again, found {peer:?}"),
++    }
++    match gateway.connect(silent_addr) {
++        Err(ConnectError::AlreadyConnecting { .. }) => panic!("a timed-out peer can never be dialed again"),
++        Ok(handle) => handle.abort(),
++        Err(_) => {}
++    }
++}
++
++/// An initiator that stalls after its first message holds the responder's handshake until it times
++/// out. The validator it claimed to be must still be able to connect afterwards, in both directions.
++#[tokio::test(flavor = "multi_thread")]
++async fn a_timed_out_inbound_handshake_does_not_block_the_validator() {
++    let mut rng = TestRng::default();
++    let (accounts, gateways) = new_test_gateways(2, &mut rng).await;
++    let (gateway_a, gateway_b) = (gateways[0].clone(), gateways[1].clone());
++    let addr_b = dial_addr(&gateway_b);
++
++    // Open a handshake with gateway A as validator B, then stall after the hint, as a peer does
++    // whose later messages are lost.
++    let mut stream = TcpStream::connect(dial_addr(&gateway_a)).await.unwrap();
++    write_noise_magic(&mut stream).await.unwrap();
++    let mut noise = NoiseSession::new(stream, Role::Initiator).unwrap();
++    let version = Event::<CurrentNetwork>::VERSION;
++    let hint = HandshakeHint { version, listener_port: addr_b.port(), address: accounts[1].address() };
++    noise.send(&hint.to_bytes_le().unwrap()).await.unwrap();
++
++    let a = gateway_a.clone();
++    deadline!(Duration::from_secs(5), move || a.is_connecting(addr_b));
++    // Keep the stalled stream open until gateway A gives up on it, so that it is the timeout, and
++    // not a closed socket, that ends the handshake.
++    let a = gateway_a.clone();
++    deadline!(handshake_timeout_with_margin(), move || a.tcp().num_connecting() == 0);
++    drop(noise);
++
++    assert!(!gateway_a.is_connecting(addr_b), "validator B is still marked as connecting");
++
++    // The real validator B dials gate
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +34/-24)
+**File**: `node/network/src/peer.rs` (modified, +14/-6)
 ```diff
-@@ -6,7 +6,7 @@ on:
-     paths-ignore:
-       - '**.md'
-   push:
--    branches: [staging, canary, testnet, mainnet]
-+    branches: [staging, 'release/**']
-   workflow_dispatch:
+@@ -25,14 +25,14 @@ pub enum Peer<N: Network> {
+     /// A candidate peer that's currently not connected to.
+     Candidate(CandidatePeer<N>),
+     /// A peer that's currently being connected to (the handshake is in progress).
+-    Connecting(ConnectingPeer),
++    Connecting(ConnectingPeer<N>),
+     /// A fully connected (post-handshake) peer.
+     Connected(ConnectedPeer<N>),
+ }
  
- permissions:
-@@ -173,6 +173,11 @@ jobs:
-       # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
-       - uses: aleo-labs-protocol/gh-actions/.github/actions/runner-job-setup@v2
-       - uses: ./.github/actions/job-home
-+      # rust-cache hashes every installed toolchain into its key, and the
-+      # image's `stable` differs between the runner images GitHub rolls out.
-+      # Hosted only: on a box, other jobs use these toolchains.
-+      - if: runner.environment == 'github-hosted'
-+        run: rustup toolchain uninstall stable
-       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
-         if: runner.environment == 'github-hosted'
-         with:
-@@ -353,12 +358,17 @@ jobs:
-         if: always()
-         run: *stop-nodes
+ /// A connecting peer.
+ #[derive(Clone, Debug)]
+-pub struct ConnectingPeer {
++pub struct ConnectingPeer<N: Network> {
+     /// The listening address of a connecting peer.
+     pub listener_addr: SocketAddr,
+     /// Indicates whether the peer is considered trusted.
+@@ -41,6 +41,9 @@ pub struct ConnectingPeer {
+     pub last_connection_attempt: Option<Instant>,
+     /// The total number of connection attempts, since the peer was last connected.
+     pub total_connection_attempts: u32,
++    /// The last known Aleo address of this peer, carried over from the candidate it was promoted
++    /// from, and back to the candidate if the handshake fails.
++    pub last_known_aleo_addr: Option<Address<N>>,
+ }
  
--  # Slower devnets. On every push to a release branch, and on demand.
-+  # Slower devnets. On every push, on pull requests into a release branch, and
-+  # on demand.
-   devnet-merge:
-     needs: [start-cpu-runners, build-snarkos]
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: ${{ matrix.timeout }}
--    if: github.event_name != 'pull_request'
-+    if: >-
-+      !cancelled() && needs.build-snarkos.result == 'success' &&
-+      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
-+      github.repository == 'aleo-labs-protocol/snarkOS' &&
-+      (github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/'))
-     strategy:
-       fail-fast: false
-       matrix:
-@@ -386,18 +396,19 @@ jobs:
-     name: devnet (${{ matrix.name }})
-     steps: *devnet-steps
+ /// A candidate peer.
+@@ -152,6 +155,7 @@ impl<N: Network> Peer<N> {
+             trusted,
+             last_connection_attempt: None,
+             total_connection_attempts: 0,
++            last_known_aleo_addr: None,
+         })
+     }
  
--  # Devnets for releases only. On every push to `canary`, `testnet` or
--  # `mainnet`, and on demand.
-+  # Devnets for releases only. On every push to a release branch, on pull
-+  # requests into one, and on demand.
-   devnet-release:
-     needs: [start-cpu-runners, build-snarkos]
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: ${{ matrix.timeout }}
-     if: >-
--      github.event_name == 'workflow_dispatch' ||
--      (github.event_name == 'push' &&
--       (github.ref == 'refs/heads/canary' ||
--        github.ref == 'refs/heads/testnet' ||
--        github.ref == 'refs/heads/mainnet'))
-+      !cancelled() && needs.build-snarkos.result == 'success' &&
-+      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
-+      github.repository == 'aleo-labs-protocol/snarkOS' &&
-+      (github.event_name == 'workflow_dispatch' ||
-+      startsWith(github.ref, 'refs/heads/release/') ||
-+      startsWith(github.base_ref, 'release/'))
-     strategy:
-       fail-fast: false
-       matrix:
-@@ -439,10 +450,11 @@ jobs:
-         with: { tool: cargo-machete@0.7.0 }
-       - run: cargo machete
+@@ -160,14 +164,16 @@ impl<N: Network> Peer<N> {
+         let listener_addr = self.listener_addr();
+         let trusted = self.is_trusted();
  
-+  # Builds cold: the four caches would take about half of the repository's
-+  # 10 GB and evict the entries the hosted test jobs restore from.
-   windows:
-     runs-on: windows-latest
--    permissions: { contents: read, actions: write }
--    if: github.event_name != 'pull_request'
-+    if: github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/')
-     env:
-       CARGO_NET_GIT_FETCH_WITH_CLI: "true"
-     strategy:
-@@ -452,13 +464,6 @@ jobs:
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with: { persist-credentials: false }
--      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
--        with:
--          key: ${{ matrix.dir }}
--          save-if: ${{ github.ref == 'refs/heads/staging' }}
--      - uses: ./.github/actions/rust-cache-prune
--        if: github.ref == 'refs/heads/staging'
--        with: { key: '${{ matrix.dir }}' }
-       - run: cargo check --examples --benches --tests
-         working-directory: ${{ matrix.dir }}
+-        let (last_connection_attempt, total_connection_attempts) = match self {
+-            Self::Candidate(peer) => (peer.last_connection_attempt, peer.total_connection_attempts),
++        let (last_connection_attempt, total_connection_attempts, last_known_aleo_addr) = match self {
++            Self::Candidate(peer) => {
++                (peer.last_connection_attempt, peer.total_connection_attempts, peer.last_known_aleo_addr)
++            }
+             Self::Connecting(_) | Self::Connected(_) => {
+                 warn!(
+                     "Peer '{listener_addr}' is being promoted to Connecting, but is {}",
+                     if self.is_connected() { "already Connected" } else { "already Connecting" }
+                 );
+-                (None, 0)
++                (None, 0, None)
+             }
+         };
  
-@@ -486,14 +491,19 @@ jobs:
-       - run: cargo hack clippy --workspace --each-feature --exclude-features cuda --locked -- -D warnings
+@@ -176,6 +182,7 @@ impl<N: Network> Peer<N> {
+             trusted,
+             last_connection_attempt,
+             total_connection_attempts,
++            last_known_aleo_addr,
+         });
+     }
  
-   # The one job to require on protected branches. A skipped job counts as passed
--  # for a required check, so each job a pull request runs must succeed here.
-+  # for a required check, so every job must succeed here. The exception is a
-+  # merge or release job skipped outside a release branch, where it is not meant
-+  # to run.
-   ci-ok:
-     if: always()
--    needs: [check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, test-hosted, test, build-snarkos, devnet]
-+    needs: [check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, test-hosted, test, build-snarkos, devnet, devnet-merge, devnet-release, windows]
-     runs-on: ubuntu-latest
-     steps:
-       - env:
--          RESULTS: ${{ join(needs.*.result, ' ') }}
-+          NEEDS: ${{ toJSON(needs) }}
-+          RELEASE: >
+@@ -222,8 +229,9 @@ impl<N: Network> Peer<N> {
+     /// Demote a peer to candidate status, marking it as disconnected.
+     pub fn downgrade_to_candidate(&mut self, listener_addr: SocketAddr) {
+         let last_known_aleo_addr = match self {
++            Self::Candidate(p) => p.last_known_aleo_addr,
++            Self::Connecting(p) => p.last_known_aleo_addr,
+             Self::Connected(p) => Some(p.aleo_addr),
+-            _ => None,
+         };
+ 
+         // Preserve the connection attempt info if the handshake didn't succeed.
 ```
 
-**File**: `.github/workflows/merge-into-staging.yml` (modified, +4/-4)
+**File**: `node/network/src/peering.rs` (modified, +86/-13)
 ```diff
-@@ -1,7 +1,7 @@
--name: Merge testnet and mainnet into staging
-+name: Merge release branches into staging
+@@ -39,6 +39,34 @@ use std::{
+ use tokio::task;
+ use tracing::*;
  
--# Keeps one pull request open for each of testnet and mainnet while it has
--# commits that staging lacks. Promotion in the other direction stays manual.
-+# Keeps one pull request open for each release branch while it has commits
-+# that staging lacks. Promotion in the other direction stays manual.
- on:
-   schedule:
-     - cron: '17 2,14 * * *'
-@@ -18,7 +18,7 @@ jobs:
-     permissions: { contents: read, pull-requests: read }
-     with:
-       target: staging
--      sources: testnet mainnet
-+      sources: release/*
-       post-merge: .github/merge-fixup.sh
-     # Lives in the merge-bot environment, which admits only staging. The called
-     # workflow's merge job sets that environment and receives the value.
++/// A peer that [`PeerPoolHandling::add_connecting_peer`] marked as connecting.
++///
++/// Dropping it returns the peer to the candidates, unless the handshake has upgraded it to
++/// connected by then. A handshake's timeout drops the handshake future wherever it is waiting, so
++/// this is the only rollback that runs on every way out of a handshake.
++#[must_use = "dropping it immediately returns the peer to the candidates"]
++pub struct ConnectingPeerGuard<'a, N: Network> {
++    peer_pool: &'a RwLock<HashMap<SocketAddr, Peer<N>>>,
++    listener_addr: SocketAddr,
++}
++
++impl<N: Network> ConnectingPeerGuard<'_, N> {
++    /// Returns the listener address of the connecting peer.
++    pub fn listener_addr(&self) -> SocketAddr {
++        self.listener_addr
++    }
++}
++
++impl<N: Network> Drop for ConnectingPeerGuard<'_, N> {
++    fn drop(&mut self) {
++        if let Some(peer) = self.peer_pool.write().get_mut(&self.listener_addr)
++            && peer.is_connecting()
++        {
++            peer.downgrade_to_candidate(self.listener_addr);
++        }
++    }
++}
++
+ /// Application-level errors generated by the peering module.
+ /// This is never returned directly, but only as the payload for a `ConnectError`.
+ #[derive(Debug)]
+@@ -533,27 +561,25 @@ pub trait PeerPoolHandling<N: Network>: P2P {
+         Ok(())
+     }
+ 
+-    // Introduces a new connecting peer into the peer pool if unknown, or promotes
+-    // a known candidate peer to a connecting one. The returned boolean indicates
+-    // whether the peer has been added/promoted, or rejected due to already being
+-    // shaken hands with or connected.
+-    fn add_connecting_peer(&self, listener_addr: SocketAddr) -> Result<(), ConnectError> {
++    /// Introduces a new connecting peer into the peer pool if unknown, or promotes a known
++    /// candidate peer to a connecting one. Fails if the peer is already connecting or connected.
++    ///
++    /// The peer stays connecting only while the returned [`ConnectingPeerGuard`] is alive, so a
++    /// handshake holds it until it has upgraded the peer to connected.
++    fn add_connecting_peer(&self, listener_addr: SocketAddr) -> Result<ConnectingPeerGuard<'_, N>, ConnectError> {
+         match self.peer_pool().write().entry(listener_addr) {
+             Entry::Vacant(entry) => {
+                 entry.insert(Peer::new_connecting(listener_addr, false));
+-                Ok(())
+             }
+             Entry::Occupied(mut entry) => match entry.get() {
+                 // Promote in place rather than replacing the entry, so the candidate's
+                 // connection-attempt metadata survives the transition.
+-                Peer::Candidate(_) => {
+-                    entry.get_mut().promote_to_connecting();
+-                    Ok(())
+-                }
+-                Peer::Connecting(_) => Err(ConnectError::AlreadyConnecting { address: listener_addr }),
+-                Peer::Connected(_) => Err(ConnectError::AlreadyConnected { address: listener_addr }),
++                Peer::Candidate(_) => entry.get_mut().promote_to_connecting(),
++                Peer::Connecting(_) => return Err(ConnectError::AlreadyConnecting { address: listener_addr }),
++                Peer::Connected(_) => return Err(ConnectError::AlreadyConnected { address: listener_addr }),
+             },
+         }
++        Ok(ConnectingPeerGuard { peer_pool: self.peer_pool(), listener_addr })
+     }
+ 
+     /// Temporarily IP-ban and disconnect from the peer with the given listener address and an
+@@ -685,7 +711,7 @@ mod tests {
+         assert!(!pool.is_connected(listener_addr));
+ 
+         // Step 2: promote to connecting.
+-        assert!(pool.add_connecting_peer(listener_addr).is_ok());
++        let connecting = pool.add_connecting_peer(listener_addr).unwrap();
+ 
+         assert_eq!(pool.number_of_candidate_peers(), 0);
+         assert_eq!(pool.number_of_connecting_peers(), Some(1));
+@@ -711,6 +737,10 @@ mod tests {
+         assert!(pool.is_connected(listener_addr));
+         assert_eq!(pool.number_of_connected_validators(), Some(1));
+ 
++        // The handshake is over; a connected peer stays connected.
++        drop(connecting);
++        assert!(pool.is_connected(listener_addr));
++
+         // Verify the connected peer's fields.
+         let connected = pool.get_connected_peer(listener_addr).expect("peer should be connected");
+         assert_eq!(connected.listener_addr, listener_addr);
+@@ -719,6 +749,49 @@ mod tests {
+         assert_eq!(connected.node_type, NodeType::Validator);
+     }
+ 
++    #[test]
++    fn test_connecting_peer_is_released_on_drop() {
++        let pool = MockPeerPool::<CurrentNetwork>::new();
++        let listener_addr = SocketAddr::from(([192, 0, 2, 1], 4000));
++
++        let connecting = pool.add_connecting_peer(listener_addr).unwrap();
++        assert!(pool.is_connecting(listener_addr));
++        assert!(matches!(pool.add_connecting_peer(listener_addr), Err(ConnectE
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +5/-0)
+**File**: `node/router/src/handshake.rs` (modified, +31/-48)
 ```diff
-@@ -3,6 +3,8 @@ on:
-   push:
-     tags:
-       - 'v*.*.*'
-+      # A release candidate gets no binaries: `snarkos update` in older releases would install them.
-+      - '!v*-rc.*'
+@@ -20,7 +20,7 @@ use crate::{
+     Router,
+     messages::{ChallengeRequest, ChallengeResponse, DisconnectReason, Message, MessageCodec, MessageTrait},
+ };
+-use snarkos_node_network::{get_repo_commit_hash, log_repo_sha_comparison};
++use snarkos_node_network::{ConnectingPeerGuard, get_repo_commit_hash, log_repo_sha_comparison};
+ use snarkos_node_tcp::{ConnectError, ConnectionSide, P2P, Tcp};
+ use snarkvm::{
+     ledger::narwhal::Data,
+@@ -91,15 +91,11 @@ impl<N: Network> Router<N> {
+         genesis_header: Header<N>,
+         restrictions_id: Field<N>,
+     ) -> Result<ChallengeRequest<N>, ConnectError> {
+-        // If this is an inbound connection, we log it, but don't know the listening address yet.
+-        // Otherwise, we can immediately register the listening address.
+-        let mut listener_addr = if peer_side == ConnectionSide::Initiator {
++        if peer_side == ConnectionSide::Initiator {
+             debug!("Received a connection request from '{peer_addr}'");
+-            None
+         } else {
+             debug!("Shaking hands with '{peer_addr}'...");
+-            Some(peer_addr)
+-        };
++        }
  
- env:
-   RUST_BACKTRACE: 1
-@@ -46,6 +48,7 @@ jobs:
-         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
-         if: startsWith(github.ref, 'refs/tags/')
-         with:
-+          make_latest: legacy
-           files: |
-             aleo-${{ steps.get_version.outputs.version }}-x86_64-unknown-linux-gnu.zip
-         env:
-@@ -95,6 +98,7 @@ jobs:
-         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
-         if: startsWith(github.ref, 'refs/tags/')
-         with:
-+          make_latest: legacy
-           files: |
-             aleo-${{ steps.get_version.outputs.version }}-aarch64-apple-darwin.zip
-         env:
-@@ -140,6 +144,7 @@ jobs:
-         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
-         if: startsWith(github.ref, 'refs/tags/')
-         with:
-+          make_latest: legacy
-           files: |
-             aleo-${{ steps.get_version.outputs.version }}-x86_64-pc-windows-msvc.zip
-         env:
+         // Check (or impose) IP-level bans.
+         #[cfg(not(feature = "test-helpers"))]
+@@ -121,48 +117,37 @@ impl<N: Network> Router<N> {
+             }
+         }
+ 
+-        // Perform the handshake; we pass on a mutable reference to listener_addr in case the process is broken at any point in time.
+         let handshake_result = match peer_side {
+             ConnectionSide::Responder => {
+                 self.handshake_inner_initiator(peer_addr, stream, genesis_header, restrictions_id).await
+             }
+             ConnectionSide::Initiator => {
+-                self.handshake_inner_responder(peer_addr, &mut listener_addr, stream, genesis_header, restrictions_id)
+-                    .await
++                self.handshake_inner_responder(peer_addr, stream, genesis_header, restrictions_id).await
+             }
+         };
+ 
+-        if let Some(addr) = listener_addr {
+-            match handshake_result {
+-                Ok(ref cr) => {
+-                    if let Some(peer) = self.peer_pool.write().get_mut(&addr) {
+-                        self.resolver.write().insert_peer(peer.listener_addr(), peer_addr, Some(cr.address));
+-                        peer.upgrade_to_connected(
+-                            peer_addr,
+-                            cr.listener_port,
+-                            cr.address,
+-                            cr.node_type,
+-                            cr.version,
+-                            cr.snarkos_sha,
+-                            ConnectionMode::Router,
+-                        );
+-                    }
+-
+-                    #[cfg(feature = "metrics")]
+-                    self.update_metrics();
+-                }
+-                Err(_) => {
+-                    if let Some(peer) = self.peer_pool.write().get_mut(&addr) {
+-                        // The peer may only be downgraded if it's a ConnectingPeer.
+-                        if peer.is_connecting() {
+-                            peer.downgrade_to_candidate(addr);
+-                        }
+-                    }
+-                }
+-            }
++        // On failure, the handshake has already returned any peer it marked as connecting to the
++        // candidates.
++        let (peer_request, connecting) = handshake_result?;
++        if let Some(peer) = self.peer_pool.write().get_mut(&connecting.listener_addr()) {
++            self.resolver.write().insert_peer(peer.listener_addr(), peer_addr, Some(peer_request.address));
++            peer.upgrade_to_connected(
++                peer_addr,
++                peer_request.listener_port,
++                peer_request.address,
++                peer_request.node_type,
++                peer_request.version,
++                peer_request.snarkos_sha,
++                ConnectionMode::Router,
++            );
+         }
++        // The connecting peer takes the peer pool's lock when dropped.
++        drop(connecting);
+ 
+-        handshake_result
++        #[cfg(feature = "metrics")]
++        self.update_metrics();
++
++        Ok(peer_request)
+     }
+ 
+     /// The connection initiator side of the handshake.
+@@ -172,10 +157,10 @@ impl<N: Network> Router<N> {
+         stream: &'a mut TcpStream,
+         genesis_header: Header<N>,
+         restrictions_id: Field<N>,
+-    ) -> Result<ChallengeRequest<N>, ConnectError> {
++    ) -> Result<(ChallengeRequest<N>, ConnectingPeerGuard<'a, N>), ConnectError> {
+         // Introduce the peer into the peer pool.
+         // If we are connecting, the peer and listener address are identical.
+-        self.add_connecting_peer(peer_addr)?;
++        let connecting = self.add_connecting_peer(peer_addr)?;
+ 
+         // Construct the stream.
+         let mut framed = Framed::new(stream, MessageCodec::<N>::handshake());
+@@ -244,18 +229,17 @@ impl<N: Network> Router<N> {
+         };
+         send(&mut framed, peer_addr, Message::C
 ```
 
-**File**: `.github/workflows/stress-test.yml` (modified, +3/-1)
+**File**: `node/src/bootstrap_client/handshake.rs` (modified, +63/-64)
 ```diff
-@@ -200,11 +200,13 @@ jobs:
+@@ -34,6 +34,7 @@ use crate::{
+     tcp::{ConnectError, Connection, ConnectionSide, protocols::*},
+ };
+ use snarkos_node_network::{
++    ConnectingPeerGuard,
+     harden_socket,
+     noise::{
+         HandshakeProtocol,
+@@ -119,15 +120,13 @@ impl<N: Network> Handshake for BootstrapClient<N> {
+         // Make the socket more robust.
+         harden_socket(stream)?;
  
-       - name: Report a rejection or an orchestration failure
-         if: failure() && steps.req.outcome == 'success'
-+        env:
-+          CHECK: ${{ steps.req.outputs.check }}
-         run: |
-           if [[ -f no-capacity ]]; then
-             echo "**No capacity for the Gauntlet host**: EC2 had none to start it, so no run started and nothing was tested. Run the workflow again later." >> "$GITHUB_STEP_SUMMARY"
-           elif [[ -s rejected.txt ]]; then
-             echo "**Request rejected**: the Gauntlet host started no run: $(cat rejected.txt)" >> "$GITHUB_STEP_SUMMARY"
-           else
--            echo "**Orchestration interrupted**: GitHub could not queue this run. The Gauntlet host may still be running it: look for its stress-test check before retrying." >> "$GITHUB_STEP_SUMMARY"
-+            echo "**Orchestration interrupted**: GitHub could not queue this run. The Gauntlet host may still be running it: look for its $CHECK check before retrying." >> "$GITHUB_STEP_SUMMARY"
-           fi
+-        // We don't know the listening address yet, as we don't initiate connections.
+-        let mut listener_addr = if peer_side == ConnectionSide::Initiator {
++        // The bootstrap client only accepts connections.
++        if peer_side == ConnectionSide::Initiator {
+             debug!("Received a connection request from '{peer_addr}'");
+-            None
+         } else {
+             unreachable!("The boostrapper clients don't initiate connections");
+-        };
++        }
+ 
+-        // Perform the handshake; we pass on a mutable reference to listener_addr in case the process is broken at any point in time.
+         let handshake_result = if peer_side == ConnectionSide::Responder {
+             unreachable!("The boostrapper clients don't initiate connections");
+         } else {
+@@ -136,50 +135,37 @@ impl<N: Network> Handshake for BootstrapClient<N> {
+                 // so the marker settles the connection mode. When the router's handshake is
+                 // converted the two will need telling apart - most likely by giving each
+                 // subprotocol its own marker - and this is the dispatch that has to change.
+-                (HandshakeProtocol::Noise, _) => {
+-                    self.handshake_inner_responder_noise(peer_addr, &mut listener_addr, stream).await
+-                }
+-                (HandshakeProtocol::Legacy, prefix) => {
+-                    self.handshake_inner_responder(peer_addr, &mut listener_addr, stream, &prefix).await
+-                }
++                (HandshakeProtocol::Noise, _) => self.handshake_inner_responder_noise(peer_addr, stream).await,
++                (HandshakeProtocol::Legacy, prefix) => self.handshake_inner_responder(peer_addr, stream, &prefix).await,
+             }
+         };
+ 
+-        if let Some(addr) = listener_addr {
+-            match handshake_result {
+-                Ok((peer_port, peer_aleo_addr, peer_node_type, peer_version, peer_snarkos_sha, connection_mode)) => {
+-                    if let Some(peer) = self.peer_pool.write().get_mut(&addr) {
+-                        // Due to only having a single Resolver, the BootstrapClient only adds an Aleo
+-                        // address mapping for Gateway-mode connections, as it is only used there, and
+-                        // it could otherwise clash with the Router-mode mapping for validators, which
+-                        // may connect in both modes at the same time.
+-                        let aleo_addr =
+-                            if connection_mode == ConnectionMode::Gateway { Some(peer_aleo_addr) } else { None };
+-                        self.resolver.write().insert_peer(peer.listener_addr(), peer_addr, aleo_addr);
+-                        peer.upgrade_to_connected(
+-                            peer_addr,
+-                            peer_port,
+-                            peer_aleo_addr,
+-                            peer_node_type,
+-                            peer_version,
+-                            peer_snarkos_sha,
+-                            connection_mode,
+-                        );
+-                    }
+-                    debug!("Completed the handshake with '{peer_addr}'");
+-                }
+-                Err(_) => {
+-                    if let Some(peer) = self.peer_pool.write().get_mut(&addr) {
+-                        // The peer may only be downgraded if it's a ConnectingPeer.
+-                        if peer.is_connecting() {
+-                            peer.downgrade_to_candidate(addr);
+-                        }
+-                    }
+-                }
+-            }
++        // On failure, the handshake has already returned any peer it marked as connecting to the
++        // candidates.
++        let (peer_port, peer_aleo_addr, peer_node_type, peer_version, peer_snarkos_sha, connection_mode, connecting) =
++            handshake_result?;
++        if let Some(peer) = self.peer_pool.write().get_mut(&connecting.listener_addr()) {
++            // Due to only having a single Resolver, the BootstrapClient only adds an Aleo
++            // address mapping for Gateway-mode connections, as it is only used there, and
++            // it could otherwise clash with the Router-mode mapping for validators, which
++            // may connect in both modes at the same time.
++            let aleo_addr = if connection_mode == ConnectionMode::Gateway { Some(peer_aleo_addr) } else { None };
++            self.resolver.write().insert_peer(peer.listener_addr(), peer_addr, aleo_addr);
++            peer.upgrade_to_connected(
++                peer_addr,
++                peer_port,
++                peer_ale
 ```
 
-**File**: `.github/workflows/sync-test.yml` (modified, +3/-1)
+**File**: `node/tests/handshake.rs` (modified, +41/-3)
 ```diff
-@@ -229,11 +229,13 @@ jobs:
+@@ -21,13 +21,14 @@ use common::{node::*, test_peer::TestPeer};
  
-       - name: Report a rejection or an orchestration failure
-         if: failure() && steps.req.outcome == 'success'
-+        env:
-+          CHECK: ${{ steps.req.outputs.check }}
-         run: |
-           if [[ -f no-capacity ]]; then
-             echo "**No capacity for the sync host**: EC2 had none to start it, so no run started and nothing was tested. Run the workflow again later." >> "$GITHUB_STEP_SUMMARY"
-           elif [[ -s rejected.txt ]]; then
-             echo "**Request rejected**: the sync host started no run: $(cat rejected.txt)" >> "$GITHUB_STEP_SUMMARY"
-           else
--            echo "**Orchestration interrupted**: GitHub could not queue this run. The sync host may still be running it: look for its sync-test check before retrying." >> "$GITHUB_STEP_SUMMARY"
-+            echo "**Orchestration interrupted**: GitHub could not queue this run. The sync host may still be running it: look for its $CHECK check before retrying." >> "$GITHUB_STEP_SUMMARY"
-           fi
+ use snarkos_node::{Client, Prover, Validator};
+ use snarkos_node_network::PeerPoolHandling;
+-use snarkos_node_tcp::{ConnectError, P2P};
++use snarkos_node_tcp::{ConnectError, P2P, protocols::Handshake};
+ use snarkvm::prelude::{MainnetV0 as CurrentNetwork, store::helpers::memory::ConsensusMemory};
+ 
+ use pea2pea::Pea2Pea;
+ 
+-use std::{net::SocketAddr, time::Duration};
+-use tokio::time::sleep;
++use deadline::deadline;
++use std::{io, net::SocketAddr, time::Duration};
++use tokio::time::{sleep, timeout};
+ 
+ // Trait to unify Pea2Pea and P2P traits.
+ #[async_trait::async_trait]
+@@ -288,3 +289,40 @@ async fn duplicate_connection_attempts() {
+     assert_eq!(node1.router().number_of_connected_peers(), 1);
+     assert_eq!(node2.router().number_of_connected_peers(), 1);
+ }
++
++/// How long to wait for a stalled handshake to time out.
++fn handshake_timeout_with_margin<H: Handshake>(_node: &H) -> Duration {
++    Duration::from_millis(H::TIMEOUT_MS + 3_000)
++}
++
++/// A peer that accepts the connection and then never answers holds the router's handshake until it
++/// times out. Once it has, the peer must be dialable again; a peer stuck as connecting is never
++/// dialed again and turns away every inbound handshake.
++#[tokio::test(flavor = "multi_thread")]
++async fn a_timed_out_handshake_does_not_leave_the_peer_connecting() {
++    let node = client().await;
++
++    // Accept connections and keep them open without ever writing to them.
++    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
++    let silent_addr = listener.local_addr().unwrap();
++    let _silent = tokio::spawn(async move {
++        let mut streams = Vec::new();
++        while let Ok((stream, _)) = listener.accept().await {
++            streams.push(stream);
++        }
++    });
++
++    let dial = node.router().connect(silent_addr).unwrap();
++    let router = node.router().clone();
++    deadline!(Duration::from_secs(5), move || router.is_connecting(silent_addr));
++
++    let result =
++        timeout(handshake_timeout_with_margin(&node), dial).await.expect("the handshake never timed out").unwrap();
++    assert!(
++        matches!(&result, Err(ConnectError::IoError(e)) if e.kind() == io::ErrorKind::TimedOut),
++        "the handshake should have timed out: {result:?}"
++    );
++
++    assert!(!node.router().is_connecting(silent_addr), "the timed-out peer is still marked as connecting");
++    assert!(!matches!(node.router().connect(silent_addr), Err(ConnectError::AlreadyConnecting { .. })));
++}
 ```
 
-**File**: `BRANCHING_AND_RELEASING.md` (added, +113/-0)
+---
+
+### Incident Patch 3: `5341d8db` (2026-11-20)
+**Commit Message**: Merge pull request #4732 from aleo-labs-protocol/ci/devnet-fixes
+
+**File**: `.ci/test_db_backup.sh` (modified, +9/-8)
 ```diff
-@@ -0,0 +1,113 @@
-+# Branching and Releasing
+@@ -19,7 +19,7 @@ tmp_dir="${TMPDIR:-/tmp}"
+ checkpoint_height=3
+ rollback_height=10
+ num_checkpoints=0
+-remaining_checkpoints=2
++remaining_checkpoints=1
+ 
+ # Create log directory
+ init_log_dir
+@@ -124,9 +124,10 @@ function create_checkpoints() {
+ wait_for_nodes "$total_validators" 0 "$network_name"
+ 
+ # Check heights periodically with a timeout
+-total_wait=0
++start=$(now)
++next_report=10
+ checkpoint_created=false
+-while (( total_wait < 600 )); do  # 10 minutes max
++while (( $(elapsed_since "$start") < 600 )); do  # 10 minutes max
+   # Apply short-circuiting
+   if [[ $checkpoint_created = true ]] || check_heights  0 "$total_validators" "$checkpoint_height" "$network_name"; then
+     if [[ $checkpoint_created = false ]]; then
+@@ -166,8 +167,6 @@ while (( total_wait < 600 )); do  # 10 minutes max
+           snarkos clean "--network=$network_id" "--dev=$validator_index" --keep-node-data \
+               "--ledger-storage=$(checkpoint_dir "$suffix")"
+         fi
+-       # Wait until the cleanup concludes
+-        sleep 1
+ 
+         # Restart using the checkpoint
+         suffix="${validator_index}_$((num_checkpoints-1))"
+@@ -223,9 +222,11 @@ while (( total_wait < 600 )); do  # 10 minutes max
+   fi
+ 
+   # Continue waiting
+-  sleep 3
+-  total_wait=$((total_wait + 3))
+-  log "Waited $total_wait seconds so far..."
++  sleep 1
++  if (( $(elapsed_since "$start") >= next_report )); then
++    log "Waited $(elapsed_since "$start") seconds so far..."
++    next_report=$((next_report + 10))
++  fi
+ done
+ 
+ # The main loop has expired by now
+```
+
+**File**: `.ci/test_devnet.sh` (modified, +3/-1)
+```diff
+@@ -25,7 +25,9 @@ MAX_CLIENT_LOG_SIZE_BYTES=$((1 * 1024 * 1024))
+ : "${total_validators:=4}"
+ : "${total_clients:=4}" # need at least 4 clients, so each validator has at least one client connected to it.
+ : "${network_id:=0}"
+-: "${min_height:=60}" # To likely go past the 100 round garbage collection limit.
++# Garbage collection removes certificates 100 rounds below the latest leader round, and block h
++# has a leader round of at least 2h, so every validator has garbage collected by height 51.
++: "${min_height:=55}"
+ 
+ tx_file="${TMPDIR:-/tmp}/transfer_public_tx.txt"
+ 
+```
+
+**File**: `.ci/utils.sh` (modified, +59/-28)
+```diff
+@@ -632,16 +632,25 @@ function wait_for_heights() {
+   : "${max_wait:=300}"
+   : "${poll_interval:=5}"
+ 
+-  local start
+-  start=$(now) 
+-  
++  local start elapsed
++  start=$(now)
++  # `check_heights` logs progress only for an elapsed time that is a positive multiple of 60.
++  local logged_minutes=0
++  local report
 +
-+snarkOS uses trunk-based development, like [snarkVM](https://github.com/aleo-labs-protocol/snarkVM/blob/staging/BRANCHING_AND_RELEASING.md). `staging` is the trunk. Each release is made on its own release branch, cut from `staging`.
+   while (( $(elapsed_since "$start") < max_wait )); do
+-    if check_heights "$start_index" "$end_index" "$min_height" "$network_name" "$elapsed"; then
++    elapsed=$(elapsed_since "$start")
++    report=0
++    if (( elapsed / 60 > logged_minutes )); then
++      logged_minutes=$((elapsed / 60))
++      report=$((logged_minutes * 60))
++    fi
++    if check_heights "$start_index" "$end_index" "$min_height" "$network_name" "$report"; then
+       return 0
+     fi
+ 
+     # Continue waiting
+-    sleep 5
++    sleep "$poll_interval"
+   done
+   return 1
+ }
+@@ -659,40 +668,62 @@ function print_client_logs() {
+ }
+ 
+ 
+-# Function checking that the first node reached the latest (unchanging) consensus version.
++# Blocks until the node with the given index reaches the activation height of the last version in
++# the consensus version schedule it serves, and checks that it runs that version there.
+ function wait_for_stable_consensus_version() {
+   local node_index=$1
+   local network_name=$2
+-  
+-  local last_seen_consensus_version=0
+-  local last_seen_height=0
+ 
+-  # Check consensus versions periodically with a timeout
+-  log "ℹ️ Waiting for consensus version to stabilize..."
+-  local start
++  local max_wait=300
++  local port=$((3030 + node_index))
++  # Versions that are not scheduled have a height of `u32::MAX`, and are never reached.
++  local filter='[.consensus_heights[] | select(. != 4294967295)] | "\(length) \(last)"'
 +
-+## Branches
++  local schedule="" final_version final_height height consensus_version
++  local start next_report=10
+   start=$(now)
+-  
+-  while (( $(elapsed_since "$start") < 300 )); do  # 5 minutes max
+-    consensus_version=$(get_consensus_version "$node_index" "$network_name" || echo "0")
+-    height=$(get_block_height "$node_index" "$network_name" || echo "0")
+-
+-    # If the consensus version is greater than the last seen, we update it.
+-    if (( consensus_version > last_seen_consensus_version )); then
+-      log "✅ Consensus version updated to $consensus_version"
+-    # If the consensus version is the same whereas the block height is different and at least 10, we can assume that the consensus version is stable
+-    elif (( (height != last_seen_height) && (height >= 10) )); then
 +
-+| Branch | Purpose |
-+| :- | :- |
-+| `staging` | The trunk. All feature work targets it. |
-+| `release/vX.Y` | One branch for each minor release, for example `release/v5.0`. Patch releases (`v5.0.1`) come from the same branch. |
++  log "ℹ️ Waiting for the last scheduled consensus version..."
++  while (( $(elapsed_since "$start") < max_wait )); do
++    if [[ -z "$schedule" ]]; then
++      if schedule=$(curl -s --max-time 5 "http://$localhost:$port/v2/$network_name/version" | jq -er "$filter" 2>/dev/null) &&
++         [[ "$schedule" =~ ^[0-9]+\ [0-9]+$ ]]; then
++        read -r final_version final_height <<< "$schedule"
++        # A devnet makes about one block every 2 s.
++        if (( final_height * 4 > max_wait )); then
++          max_wait=$(( final_height * 4 ))
++        fi
++        log "Node #${node_index} schedules consensus version $final_version at height $final_height"
++      else
++        schedule=""
++      fi
++    fi
 +
-+The `mainnet`, `testnet` and `canary` branches are no longer updated. The network is a runtime flag (`--network`), not a branch: one release commit runs on testnet first, then on mainnet.
-+
-+## Tags and releases
-+
-+| Tag | GitHub | Network |
-+| :- | :- | :- |
-+| `vX.Y.Z-rc.N` | Pre-release | testnet |
-+| `vX.Y.Z` | Release | mainnet |
-+
-+- Release tags are made only on release branches.
-+- A final tag `vX.Y.Z` goes on the accepted release candidate's commit, or on one that differs from it only in Cargo manifests, when the final pins snarkVM's published release. mainnet runs the code that testnet accepted.
-+- Never move or delete a release tag.
-+- Tags of the form `testnet-vX.Y.Z` come from the old process.
-+
-+## Running a release
-+
-+To build what runs on a network, check out its latest release tag:
-+
-+```bash
-+./scripts/checkout-latest-release.sh mainnet
-+./scripts/checkout-latest-release.sh testnet
-+```
-+
-+This replaces `git checkout mainnet` and `git pull`. The script asks GitHub for the newest release, checks out its tag, and prints the commit. It leaves git on a detached HEAD, so rerun it to update. The `scripts/run-*.sh` scripts run what is checked out and no longer pull. It needs `curl` and `jq`.
-+
-+## CI
-+
-+Pull requests that target a `release/**` branch, and pushes to a `release/**` branch, run the merge and release jobs in addition to the normal CI, and `ci-ok` fails if one is skipped. See [CI.md](CI.md).
-+
-+## Release process
-+
-+The example below makes the `v5.0` release.
-+
-+1. **Cut the release branch.** Create `release/v5.0` at the current `staging` commit:
-+
-+   ```bash
-+   git fetch origin
-+   git push origin origin/staging:refs/heads/release/v5.0
-+   ```
-+
-+2. **Bump the version and pin snarkVM.** Open a pull request against `release/v5.0` that sets every crate version and `.cargo/release-version` to `5.0.0` and pins snarkVM to its release candidate. The pin is moved by hand. Push fixes to the same pull request until CI passes. Work on `staging` continues as usual.
-+
-+3. **Tag a release candidate.** When no more changes are planned, tag the head of `release/v5.0` as `v5.0.0-rc.1` and make a GitHub pre-release from the tag. Operators take it to testnet. If testnet finds a problem, fix it with a pull request against `release/v5.0`, and tag `v5.0.0-rc.2`. Repeat until a release candidate is accepted.
-+
-+4. **Release.** When testnet accepts a release candidate, tag the same commit as `v5.0.0` and make a GitHub release from the tag. Operators take it to mainnet.
-+
-+5. **Merge the release branch into staging.** A bot does this after each change to the release branch. See [Merging a release branch](#merging-a-release-branch).
-+
-+6. **Patch releases.** Open pull requests against `release/v5.0`. One of them bumps the version to `5.0.1`. Tag `v5.0.1-rc.1` and so on until testnet accepts one, then tag it `v5.0.1`.
-+
-+```mermaid
-+%%{init: {'gitGraph': {'mainBranchName': 'staging'}}}%%
-+gitGraph
-+  commit id: "A"
-+  commit id: "B"
-+  branch release/v5.0
-+  checkout staging
-+  commit id: "C"
-+  checkout release/v5.0
-+  commit id: "bump 5.0.0" tag: "v5.0.0-rc.1"
-+  checkout staging
-+  commit id: "D"
-+  checkout release/v5.0
-+  commit id: "fix" tag: "v5.0.0-rc.2" tag: "v5.0.0"
-+  checkout staging
-+  merge release/v5.0
-+  commit id: "E"
-+  checkout release/v5.0
-+  commit id: "bump 5.0.1" tag: "v5.0.1-rc.1" tag: "v5.0.1"
-+  checkout staging
-+  merge release/v5.0
-+```
-+
-+The next minor release, `v5.1`, gets a new branch `release/v5.1` from `staging`.
-+
-+## Making changes
-+
-+Before you open a pull request, decide where the change goes:
-+
-+- **The release in progress needs it**, for example a bug fix: target the release branch. It reaches `staging` when the release branch merges into `staging`.
-+- **Otherwise**: target `staging`.
-+
-+Do not open the same change against both branches. If a change on `staging` is later needed in a release, cherry-pick it onto the release branch. Expect a conflict when the release branch next merges into `staging`, because git treats the cherry-picked commit as a separate commit.
-+
-+## Merging a release branch
-+
-+A bot opens the pull request that merges a release branch into `staging`. Do not open one yourself. [merge-into-staging.yml](.github/workflows/merge-into-staging.yml) keeps one pull request open from `ci/merge-release/vX.Y-into-staging` for each `release/*` branch with commits that `staging` lacks. It requests review from the authors and reviewers of the
++    if [[ -n "$schedule" ]]; then
++      height=$(get_block_height_by_port "$port" "$network_name" 5)
++      if (is_integer "$height") && (( height >= final_height )); then
++        consensus_version=$(get_consensus_version "$node_index" "$network_name" || echo "")
++        if [[ "$consensus_version" != "$final_version" ]]; then
++          log "❌ Node #${node_index} is at consensus version ${consensus_version:-<none>} at height $height, expected $final_version"
++          return 1
++        fi
+         log "✅ Consensus version is stable at $consensus_version with height $height"
+         return 0
++      fi
+     fi
+ 
+-    last_seen_consensus_version=$consensus_version
+-    last_seen_height=$height
+-
+-    # Continue waiting
+-    sleep 10
+-    log "Waited $(elapsed_since "$start") seconds so far..."
++    if (( $(elapsed_since "$start") >= next_report )); then
++      log "Waited $(elapsed_since "$start") seconds so far (height ${height:-<none>})..."
++      next_report=$((next_report + 10))
++    fi
++    sleep 1
+   done
+ 
++  if [[ -z "$schedule" ]]; then
++    log "❌ Node #${node_index} did not serve its consensus version schedule within ${max_wait}s"
++  else
++    log "❌ Node #${node_index} did not reach height $final_height within ${max_wait}s"
++  fi
+   return 1
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4732** (2026-11-20): Wait for the last scheduled consensus version, and trim the devnet test (@cbeck88)
+- **PR #4731** (2026-11-20): Run the fleet test entries 16 tests at a time (@cbeck88)
+- **PR #4729** (2026-11-20): Remove the memory and persistent features of the storage service (@cbeck88)
+- **PR #4728** (2026-11-20): Remove dead features and rename the root telemetry feature to metrics (@cbeck88)
 - **PR #4727** (2026-11-20): Rename test and fuzz-helpers features to test-helpers (@cbeck88)
 - **PR #4726** (2026-11-20): ci: Gauntlet summaries name the check that ran (@cbeck88)
-- **PR #4723** (2026-11-20): Remove structural features from ledger-service; use dep: for optional deps (@cbeck88)
-- **PR #4722** (2026-11-20): Drop the remaining references to the retired branches and old org (@cbeck88)
-- **PR #4721** (2026-11-20): Make Message::VERSIONS a slice and document version growth (@cbeck88)
-- **PR #4720** (2026-11-20): Remove the self dev-dependencies of the events and network crates (@cbeck88)
 
 ---
 
@@ -2645,56 +2944,37 @@ Claude-Session: https://claude.ai/code/session_01UYfmmLteo8RJcUAnUrf9qy
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in ci.yml
+## X. Run the fixed-port gateway test alone, and correct the nextest comment
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.config/nextest.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `811fe8b4`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `97451873`: Run the fixed-port gateway test alone, and correct the nextest comment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.config/nextest.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      # The fuzzing harness builds these two alone with `test-helpers`, which
-      - run: cargo check -p snarkos-node-router-messages --features test-helpers
-      - run: cargo check -p snarkos-node-bft-events --features test-helpers
-  # `snarkos-node-router/test-helpers`, `snarkos-node-network/test-helpers` and
-  # none of these on any crate. Other helper features, such as `mock` and the
-  # other crates' `test-helpers`, can still be unified.
-            runs: |
-              nextest run -p snarkos-node-consensus -p snarkos-cli
-              nextest run -p snarkos-node-rest
-          # One line for both would turn on `test-helpers` in
-          # `snarkos-node-sync` for its own tests. The two lines build the same
-          # snarkvm crates.
-  # The release binary must compile in no test-only code. `test-helpers` in the
-  # event and message crates turns on proptest and snarkVM's `test-helpers`, and
-  # feature unification would carry them into the binary if any crate on its
-  # path ever enabled it.
-          hits=$(grep -E '^[a-z0-9_-]+ feature "(test-helpers|test)"$|^proptest ' graph.txt | sort -u || true)
+# The hosted runners have 4 vCPUs. The fleet `test` job overrides this with
+# NEXTEST_TEST_THREADS; see CI.md.
+
+# gateway_start asserts that the gateway binds 127.0.0.1:5000+dev exactly. Other
+# tests bind ports in that range, and take another port if one is taken, so this
+# test runs alone.
+[[profile.default.overrides]]
+filter = 'package(snarkos-node-bft) and test(=gateway::prop_tests::gateway_start)'
+threads-required = "num-test-threads"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      # The fuzzing harness builds these two alone with `fuzz-helpers`, which
-      - run: cargo check -p snarkos-node-router-messages --features fuzz-helpers
-      - run: cargo check -p snarkos-node-bft-events --features fuzz-helpers
-  # `snarkos-node-router/test`, `snarkos-node-network/test` and
-  # none of these on any crate. Helper features such as `test-helpers` and
-  # `mock` can still be unified.
-            runs: nextest run -p snarkos-node-consensus -p snarkos-node-rest -p snarkos-cli
-          # One line for both would turn on `test` in `snarkos-node-sync` for
-          # its own tests. The two lines build the same snarkvm crates.
-  # The release binary must compile in no test-only code. `fuzz-helpers` turns on
-  # proptest and snarkVM's `test-helpers`, and feature unification would carry
-  # them into the binary if any crate on its path ever enabled it.
-          hits=$(grep -E '^[a-z0-9_-]+ feature "(fuzz-helpers|test-helpers|test)"$|^proptest ' graph.txt | sort -u || true)
+# Many tests bind sockets and start nodes, so two run at a time on the hosted
+# runners. The fleet `test` job sets NEXTEST_TEST_THREADS instead; see CI.md.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `811fe8b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `97451873` are properly handled with clean fallback behavior.

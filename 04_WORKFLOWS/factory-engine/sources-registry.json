@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T13:26:44.797Z",
-    "lastVerified": "2026-11-20T13:26:44.797Z",
+    "lastChecked": "2026-11-20T13:40:26.642Z",
+    "lastVerified": "2026-11-20T13:40:26.642Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -354,8 +354,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T12:15:25.362Z",
-    "lastVerified": "2026-11-20T12:15:25.362Z",
+    "lastChecked": "2026-11-20T13:40:18.930Z",
+    "lastVerified": "2026-11-20T13:40:18.930Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -502,12 +502,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubernetes-sigs-aws-load-balancer-controller": {
-    "name": "kubernetes-sigs/aws-load-balancer-controller",
+    "name": "aws-load-balancer-controller",
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T09:07:14.364Z",
-    "lastVerified": "2026-11-19T09:07:14.364Z",
+    "lastChecked": "2026-11-20T13:40:11.440Z",
+    "lastVerified": "2026-11-20T13:40:11.440Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
@@ -516,7 +516,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3f8ab7ff"
   },
   "nolabs-ai-nono": {
     "name": "nono",
@@ -2240,14 +2241,14 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T05:21:08.171Z",
-    "lastVerified": "2026-11-20T05:21:08.171Z",
+    "lastChecked": "2026-11-20T13:40:17.959Z",
+    "lastVerified": "2026-11-20T13:40:17.959Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "6872a2489c86f10688f4b1497d837aadafe4f7052424de50690dc6213ae46817",
+    "contentHash": "aa8ae513b318643a2bee49b862af53771b8b4b757ac979075817f555310925da",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4834,9 +4835,9 @@
   "telemt-telemt": {
     "name": "telemt",
     "officialUrl": "https://github.com/telemt/telemt",
-    "lastChecked": "2026-11-18T22:14:25.212Z",
+    "lastChecked": "2026-11-20T13:40:03.955Z",
     "revisionIdentifier": "dac7aeee",
-    "lastVerified": "2026-11-18T22:14:25.212Z"
+    "lastVerified": "2026-11-20T13:40:03.955Z"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
     "name": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -6977,14 +6978,14 @@
     "officialUrl": "https://github.com/tursodatabase/limbo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T07:06:36.608Z",
-    "lastVerified": "2026-11-19T07:06:36.608Z",
+    "lastChecked": "2026-11-20T13:40:22.414Z",
+    "lastVerified": "2026-11-20T13:40:22.414Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "d516bb8b60c28af18a12dfe762b52f81921a0760d641ecc2cf6a005c6eab079d",
+    "contentHash": "08925c50610b46eb30fa51278f0bda55b7529b460d7a15055d13921f9b2f5483",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10042,5 +10043,19 @@
     "lastChecked": "2026-11-20T13:26:34.674Z",
     "revisionIdentifier": "2e96f4f7",
     "lastVerified": "2026-11-20T13:26:34.674Z"
+  },
+  "scrapy-plugins-scrapy-splash": {
+    "name": "scrapy-splash",
+    "officialUrl": "https://github.com/scrapy-plugins/scrapy-splash",
+    "lastChecked": "2026-11-20T13:40:06.464Z",
+    "revisionIdentifier": "72a87882",
+    "lastVerified": "2026-11-20T13:40:06.464Z"
+  },
+  "lessica-trollfools": {
+    "name": "TrollFools",
+    "officialUrl": "https://github.com/Lessica/TrollFools",
+    "lastChecked": "2026-11-20T13:40:08.932Z",
+    "revisionIdentifier": "c5c87b85",
+    "lastVerified": "2026-11-20T13:40:08.932Z"
   }
 }

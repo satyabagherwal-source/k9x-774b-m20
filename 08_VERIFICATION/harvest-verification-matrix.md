@@ -11549,3 +11549,6 @@
 | `CYCLE-20261120-J5DS` | `2026-11-20T13:26:32.704Z` | `microsoft/Aion-1.0-Instruct-2.3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md` | Yes (`d9cd20bd...`) |
 | `CYCLE-20261120-JC9E` | `2026-11-20T13:26:41.618Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9575` | Yes (`f90b37eb...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T13:27:15.208Z` | `hf-microsoft-aion-1.0-instruct-2.3b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6F9E9680` [Domain D] | Yes (`d7789f74...`) |
+| `CYCLE-20261120-0W6E` | `2026-11-20T13:40:20.582Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9576` | Yes (`aa8ae513...`) |
+| `CYCLE-20261120-0YDZ` | `2026-11-20T13:40:23.447Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9577` | Yes (`08925c50...`) |
+| `CYCLE-20261120-0YR7` | `2026-11-20T13:40:23.923Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9578` | Yes (`a51c56cf...`) |

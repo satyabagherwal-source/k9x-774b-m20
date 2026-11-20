@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T13:27:15.239Z",
+  "updated_at": "2026-11-20T13:40:27.786Z",
   "stats": {
-    "total_discovered": 6367,
-    "approved_pending_harvest": 6018,
+    "total_discovered": 6369,
+    "approved_pending_harvest": 6019,
     "harvested_count": 0,
-    "rejected_count": 349,
+    "rejected_count": 350,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5999,
+      "COMMUNITY_AND_EXPERT": 6001,
       "OFFICIAL_DOCUMENTATION": 201,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
@@ -137654,6 +137654,43 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md",
         "fileName": "hf-microsoft-aion-1.0-instruct-2.3b-learnings.md"
+      }
+    },
+    "SRC-9E3C1EB05B4B": {
+      "id": "SRC-9E3C1EB05B4B",
+      "url": "http://$localhost:$port/v2/$network_name/version",
+      "title": "http://$localhost:$port/v2/$network_name/version",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T13:40:26.888Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-6FAE1592F284": {
+      "id": "SRC-6FAE1592F284",
+      "url": "https://github.com/user-attachments/assets/c7b3d264-8794-41c8-a627-63ab83bcefb9",
+      "title": "https://github.com/user-attachments/assets/c7b3d264-8794-41c8-a627-63ab83bcefb9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:40:27.786Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
       }
     }
   }

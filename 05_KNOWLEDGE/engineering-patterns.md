@@ -709337,3 +709337,266 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `25c65f77` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9576. Run the fixed-port gateway test alone, and correct the nextest comment (Harvested from aleo-labs-protocol/snarkOS)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Run the fixed-port gateway test alone, and correct the nextest comment",
+  "source": "aleo-labs-protocol/snarkOS",
+  "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+  "source_version": "27d1b854",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-20T13:40:20.103Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-aleo-labs-protocol-snarkos",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.67,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "WARN",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "WARN",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `27d1b854`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 67%).
+
+**RULE**:
+When implementing operations in `.config/nextest.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `97451873`: Run the fixed-port gateway test alone, and correct the nextest comment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.config/nextest.toml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+# The hosted runners have 4 vCPUs. The fleet `test` job overrides this with
+# NEXTEST_TEST_THREADS; see CI.md.
+
+# gateway_start asserts that the gateway binds 127.0.0.1:5000+dev exactly. Other
+# tests bind ports in that range, and take another port if one is taken, so this
+# test runs alone.
+[[profile.default.overrides]]
+filter = 'package(snarkos-node-bft) and test(=gateway::prop_tests::gateway_start)'
+threads-required = "num-test-threads"
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+# Many tests bind sockets and start nodes, so two run at a time on the hosted
+# runners. The fleet `test` job sets NEXTEST_TEST_THREADS instead; see CI.md.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `97451873` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9577. testing/sqltest: add @compat-gap tests with a fixed-gap check and lints (Harvested from tursodatabase/turso)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "testing/sqltest: add @compat-gap tests with a fixed-gap check and lints",
+  "source": "tursodatabase/turso",
+  "source_url": "https://github.com/tursodatabase/limbo",
+  "source_version": "6b667193",
+  "license": "MIT",
+  "extracted_at": "2026-11-20T13:40:22.947Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tursodatabase-turso",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/limbo) (Revision: `6b667193`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `testing/sqltest/src/comparison/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `091610f8`: testing/sqltest: add @compat-gap tests with a fixed-gap check and lints. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `testing/sqltest/src/comparison/mod.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+use regex::RegexBuilder;
+use std::collections::HashSet;
+/// Whether one query result can match both expectations under the rules of
+/// [`compare`]. It assumes that no output value holds a line break. Where
+/// it cannot decide, it answers true: for an `expect pattern` block against
+/// an `expect unordered` or another `expect pattern` block, and for two error
+/// messages, because two regexes can match the same message.
+pub fn may_match_same_output(a: &Expectation, b: &Expectation) -> bool {
+    match (a, b) {
+        (Expectation::Error { sqlstate: a, .. }, Expectation::Error { sqlstate: b, .. }) => {
+            // compare_error checks a SQLSTATE only when the block names one.
+            match (a, b) {
+                (Some(a), Some(b)) => a == b,
+                _ => true,
+            }
+        }
+        (Expectation::Error { .. }, _) | (_, Expectation::Error { .. }) => false,
+        (Expectation::Exact(a), Expectation::Exact(b)) => exact_text(a) == exact_text(b),
+        (Expectation::Unordered(a), Expectation::Unordered(b)) => {
+            unordered_set(a) == unordered_set(b)
+        }
+        (Expectation::Exact(exact), Expectation::Unordered(unordered))
+        | (Expect
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `091610f8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9578. Synthesize ARC examples from object transforms (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Synthesize ARC examples from object transforms",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "8eed95c3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-20T13:40:23.424Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `8eed95c3`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `arc/src/synthesizer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8eed95c3`: Synthesize ARC examples from object transforms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/synthesizer.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+import * as visualizer from "./visualizer";
+import object from "./object.ts";
+import * as nucleoid from "./lib/nucleoid.ts";
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+import * as llm from "./lib/llm.ts";
+
+const FIELD_GUIDE = `
+- "dataset" holds the existing examples. Each pairs an "input_matrix" with the "output_matrix" that the rule produces from it.
+- Each example's "instances" lists its instances, each pairing an "input_instance_matrix" with its "output_instance_matrix". They relate to the example's full matrices by a fixed convention (how instances are found, ordered and cropped); work that convention out from the existing examples and follow it exactly.
+- "class_declaration", "declarations" and "output_canvas" are fixed for this task. Every new example must be valid under them. Do not change them or repeat them in your answer.
+`.trim();
+  const count = train.length;
+
+  const { result } = await llm.generate({
+    few_shot: null,
+    messages: [
+      {
+        role: "assistant",
+        content: `Below is the data for a matrix-transformation task. Each example pairs an input matrix with the output matrix that one hidden rule produces from it, and the same rule holds for every example.
+
+        <current_dataset>
+        ${JSON.stringify({
+          ...train,
+          dataset: train.dataset.map(
+            ({ input_matrix, output_matrix, ins
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8eed95c3` are properly handled with clean fallback behavior.

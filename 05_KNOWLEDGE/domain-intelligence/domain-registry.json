@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T13:27:16.267Z",
+  "last_updated": "2026-11-20T13:40:28.984Z",
   "total_records": 2133,
   "domains": {
     "A": {
@@ -8237,10 +8237,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "9e6405a33718140e28b909c850382b8f0f3590ec77c27d6ee9a6428044c83708",
-      "created_at": "2026-11-20T08:04:01.168Z"
+      "content_hash": "41932409f946a96115090d65aaff60b17ad162bd191b50f522d6a4f3f5e5735d",
+      "created_at": "2026-11-20T13:40:20.936Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -8342,10 +8342,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "33d031b8bc465a0c4f164162b00b7dec796161f42a18a7e418a48ed34cde6089",
-      "created_at": "2026-11-19T14:52:39.354Z"
+      "content_hash": "fca104aa695b7c3b84b268b7dce5654f8fe9c7f29c64634608856874797bb124",
+      "created_at": "2026-11-20T13:40:23.815Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -15956,8 +15956,8 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-learnings-technical-construction-intelligence-nucleoidai-nuc.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "101bcd2ada4dc8c1c7cc952277601daeb72f4b877ec1ffc4f00676f940bf054d",
-      "created_at": "2026-11-20T09:10:40.839Z"
+      "content_hash": "a0ca4e9a99f4435af90fb7147e7f74d2e9d47c07009e60a84b403e12e5bb7c9d",
+      "created_at": "2026-11-20T13:40:28.984Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp",
@@ -23655,8 +23655,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "c1fc53f23c18a96a124f961cc44dafc4f21a345ef485d6051abcd8261bfc85fe",
-      "created_at": "2026-11-20T00:06:49.911Z"
+      "content_hash": "92dee59015997e8007b814672cc2c40ea2f8357625ab2694ddf482ba4fdbb79c",
+      "created_at": "2026-11-20T13:40:27.272Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
@@ -23805,8 +23805,8 @@
       "title": "Technical Construction Intelligence: tursodatabase-limbo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-learnings-technical-construction-intelligence-tursodatabase-.md",
       "repository": "tursodatabase-limbo-learnings",
-      "content_hash": "91e7198ac1f2266b91b7218efc976efc73eccc819b448fc713ae24929b14f2d1",
-      "created_at": "2026-11-19T07:06:43.468Z"
+      "content_hash": "b807e72992f1bcd9c0bc035b42611cf85f348ead8bce4d8bbd1381bc4626d840",
+      "created_at": "2026-11-20T13:40:28.147Z"
     },
     "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-core-invariants",
