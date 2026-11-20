@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T05:29:08.965Z",
+  "last_updated": "2026-11-20T05:37:08.218Z",
   "total_verified_learnings": 9025,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22217,
+  "total_items": 22219,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -228057,9 +228057,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d08383c7a83af3794881d3a0144bb9ffcb1a0b480de81cad9c8a6ddcd061ad7",
+      "content_hash": "027f918b90f2a3357cda6598ae0f29d836fc2ba4f84c1f3cfe4219f5c7401d5f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T05:29:07.340Z"
+      "persisted_at": "2026-11-20T05:37:08.081Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -228069,9 +228069,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "ee9eafabd91491792cb4535d2049a007599aec34a916174c1b022a168936851b",
+      "content_hash": "4326a69fc15177554e55012a8784e5ce30e874a3a14aa11b715bb0c9b4d96334",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T05:29:07.489Z"
+      "persisted_at": "2026-11-20T05:37:08.218Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -231849,8 +231849,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "387bbd5b",
-      "content_hash": "85843f61dd13ba459c7907b073c98284dd101f9c6a825ffc752a6e3e7b5b66b4",
+      "source_version": "828a810e",
+      "content_hash": "047f275e4387c006e87343c72d8c85355c27c22be01d4c80dc2a0a05d241ec14",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -231883,6 +231883,11 @@
           "number": 9307,
           "title": "Empirical Invariant Guard in base_config.yml",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9519,
+          "title": "Empirical Invariant Guard in RefactoredTraverserCache.cpp",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231890,7 +231895,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T00:22:55.974Z",
+      "verified_at": "2026-11-20T05:37:02.451Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231932,10 +231937,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "repository": "arangodb/arangodb",
-      "source_version": "387bbd5b",
-      "content_hash": "a31dabcfc6dd7b22423ee804adafe53b3b124897a73546498194b07c76613f3e",
+      "source_version": "828a810e",
+      "content_hash": "f75705d6f8464f4d85d0d7c263fb485db62e105ba89db22447aa07c3b739fa28",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T00:22:56.650Z"
+      "persisted_at": "2026-11-20T05:37:03.016Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb",
@@ -231944,10 +231949,10 @@
       "relative_path": "08_VERIFICATION/arangodb-arangodb-verification-protocol-empirical-defect-shield-for-arangodb-ara.md",
       "title": "Verification Protocol: Empirical Defect Shield for arangodb/arangodb",
       "repository": "arangodb/arangodb",
-      "source_version": "387bbd5b",
-      "content_hash": "a0494de53ea2447ba0c8fc4f2323ea308b74976f383458bde09eccfbf58ed213",
+      "source_version": "828a810e",
+      "content_hash": "8d1d228193737bbf37492dc32207758e18db990f9483c57c9a91de71c890e07b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:22:56.831Z"
+      "persisted_at": "2026-11-20T05:37:03.167Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -231993,9 +231998,9 @@
       "title": "Technical Construction Intelligence: arangodb-arangodb-learnings Core Invariants",
       "repository": "arangodb-arangodb-learnings",
       "source_version": "HEAD",
-      "content_hash": "50e3e17f89f6d9f1580f12c53340acbe68e52689d0aed3857123cad26a5bcad6",
+      "content_hash": "7dedff34da07137496e12651c001353c13c0649593152d580d0984a768f66a1d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T00:23:36.683Z"
+      "persisted_at": "2026-11-20T05:37:06.411Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb-learnings",
@@ -232005,9 +232010,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for arangodb-arangodb-learnings",
       "repository": "arangodb-arangodb-learnings",
       "source_version": "HEAD",
-      "content_hash": "5371bab6f9d824c195f79eb4f64acc3dffa4d90dc1c18ab28c28ff7864794630",
+      "content_hash": "d44d46731a1d55c511ea2fa0940bc51b90d135fc555a53a83930acd690ed70cc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:23:36.879Z"
+      "persisted_at": "2026-11-20T05:37:06.578Z"
     },
     "learn-huggingface-zai-org-glm-5-3": {
       "learning_id": "learn-huggingface-zai-org-glm-5-3",
@@ -236266,9 +236271,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "bcb3ac3694c8d2ce817d6e8ac7ca7522c7ab28a1f1162f57250768ba1dcebf50",
+      "content_hash": "d41fbc045da640c61aad1776a9a37124d69e7ede28ef508325a8e740c646cea3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T01:04:02.648Z"
+      "persisted_at": "2026-11-20T05:37:07.369Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -300755,13 +300760,13 @@
       "item_id": "candidate_directive-dead-license-badge-link-in-readme",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-H6CZ-dead-license-badge-link-in-readme.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RHB4-dead-license-badge-link-in-readme.md",
       "title": "dead license badge link in README",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "2edaf9b45d3a53d534e817059db6d23d4a862cd5e39bb7a4f476438fc5281ca0",
+      "content_hash": "57944e15999371da379610697a83b9feffd7a55a99f95042bfc266791427649f",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T05:29:07.188Z"
+      "persisted_at": "2026-11-20T05:37:07.937Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria",
@@ -300800,6 +300805,32 @@
       "content_hash": "fd3a30ed66dd60a712a3a5472c4ad2bea9cca36b3e86304223d2331d785c0f3b",
       "domain_letter": "K",
       "persisted_at": "2026-11-20T05:29:07.948Z"
+    },
+    "rule-9519": {
+      "learning_id": "rule-9519",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9519,
+      "title": "Empirical Invariant Guard in RefactoredTraverserCache.cpp",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "828a810e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T05:37:02.451Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-refactoredtraversercache-cpp": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-refactoredtraversercache-cpp",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RG0L-empirical-invariant-guard-in-refactoredtraversercache-cpp.md",
+      "title": "Empirical Invariant Guard in RefactoredTraverserCache.cpp",
+      "repository": "arangodb-arangodb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "30ab79ab910556089477929fc3fac972433aa880572882650bba467eb4880700",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T05:37:06.262Z"
     }
   },
   "ai-builder-brain": {

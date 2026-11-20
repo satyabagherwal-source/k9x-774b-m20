@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-UPUK",
-    "timestamp": "2026-11-18T09:48:15.068Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-    "contentHash": "4e5fa2f829b1d50ab87ac578bb4775a6554c99c5c6b2c9972e3e63bafa57ec4f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-682N",
     "timestamp": "2026-11-18T09:57:11.903Z",
     "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -7490,6 +7475,21 @@
     "repository": "apple/foundationdb",
     "learningId": "learn-github-apple-foundationdb",
     "contentHash": "dbb84cb214426b9a6bdffdfa0a5165f180f864b5e63f399972190ff1c48dd650",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-RD8G",
+    "timestamp": "2026-11-20T05:37:02.656Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "047f275e4387c006e87343c72d8c85355c27c22be01d4c80dc2a0a05d241ec14",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

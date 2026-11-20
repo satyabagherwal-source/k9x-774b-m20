@@ -11504,3 +11504,4 @@ Every entry in this ledger must capture:
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `4452a98a` | Multi-dimensional audit evidence | 2026-11-20T05:21:11.503Z |
 | `learn-github-zoontek-react-native-bootsplash` | `https://github.com/zoontek/react-native-bootsplash` | `af50c229` | Multi-dimensional audit evidence | 2026-11-20T05:28:55.936Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `fecaa68f` | Multi-dimensional audit evidence | 2026-11-20T05:29:03.335Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `828a810e` | Multi-dimensional audit evidence | 2026-11-20T05:37:02.660Z |

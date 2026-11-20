@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T05:29:06.979Z",
+  "updated_at": "2026-11-20T05:37:06.056Z",
   "stats": {
-    "total_discovered": 6236,
-    "approved_pending_harvest": 5896,
+    "total_discovered": 6237,
+    "approved_pending_harvest": 5897,
     "harvested_count": 0,
     "rejected_count": 340,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5878,
+      "COMMUNITY_AND_EXPERT": 5879,
       "OFFICIAL_DOCUMENTATION": 195,
       "STANDARDS_AND_SPECIFICATIONS": 115,
       "ENGINEERING_BLOGS": 4,
@@ -134835,6 +134835,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
         "fileName": "zoontek-react-native-bootsplash-learnings.md"
+      }
+    },
+    "SRC-CD8B5D9A83ED": {
+      "id": "SRC-CD8B5D9A83ED",
+      "url": "https://arangodb.atlassian.net/browse/COR-1294",
+      "title": "https://arangodb.atlassian.net/browse/COR-1294",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:37:06.056Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
+        "fileName": "arangodb-arangodb-learnings.md"
       }
     }
   }

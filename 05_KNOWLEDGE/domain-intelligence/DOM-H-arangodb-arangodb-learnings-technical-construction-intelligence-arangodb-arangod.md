@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T00:23:36.351Z",
+  "timestamp": "2026-11-20T05:37:06.148Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-arangodb-arangodb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [arangodb-arangodb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T00:23:36.351Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T05:37:06.148Z`  
 > **Learning ID**: `LEARN-EVO-arangodb-arangodb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), C (Market & Business Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from arangodb-arangodb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `387bbd5b`  
+> **Source Version**: `828a810e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T00:22:54.949Z  
+> **Timestamp**: 2026-11-20T05:37:01.640Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T00:22:54.942Z  
+> **Harvest Timestamp**: 2026-11-20T05:37:01.452Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 🥑 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14302 stars
+- **Stars / Engagement**: 14300 stars
 
 ---
 
@@ -1669,11 +1669,11 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23709** (2026-11-18): **[COR-1288] Update abseil and switch from submodule to FetchContent**
-  *Symptoms*: ### Scope & Purpose  also fixes some cppcheck issue that was previously hidden due to abseil and the way it was included.  Enterprise companion: https://github.com/arangodb/enterprise/pull/1744 
+- **Issue #23712** (2026-11-19): **[COR-1295] Fix use-after-move issues**
+  *Symptoms*: ### Scope & Purpose  - [x] :hankey: Bugfix 
 
-- **Issue #23697** (2026-11-18): **Crash-handler data-source registry exposes an unlocked vector reference during concurrent unregister**
-  *Symptoms*: **Version**: ArangoDB 3.12.9-4 (official `arangodb:latest` image), single server; source `devel` checked on 2026-11-17  ## Steps to reproduce  1. Inspect the crash-handler registry:  ```cpp // lib/CrashHandler/DataSourceRegistry.h:36 std::vector<CrashHandlerDataSource const*> const& getDataSources() const;  // lib/CrashHandler/DataSourceRegistry.cpp:35-38 std::vector<CrashHandlerDataSource const*> const& DataSourceRegistry::getDataSources() const {   return _dataSources;   // no lock, returns a reference to the internal vector } ```  `addDataSource()` and `removeDataSource()` do take `_dataSourceMtx`, but `getDataSources()` does not, and it exposes the internal container by reference.  2. `DumpWriter::dumpDataSources()` range-for's that reference and calls the data-source virtual methods (`getDataSourceName()`, `getCrashData()`) without holding the lock or owning the objects.  3. `CrashHandlerDataSource::~CrashHandlerDataSource()` unregisters itself from the registry, so a concurrent destructor can free an object that the dump thread is still iterating.  4. A minimal ASAN harness reproduces the same lifecycle: the dump thread captures a data-source pointer from the unlocked registry reference, the main thread destroys/unregisters the source, and the dump thread then calls a virtual method.  Observed:  ```text ERROR: AddressSanitizer: heap-use-after-free ... #0 ... dump thread ... getDataSourceName()/getCrashData() ```  Harness exit status: 1. The server container stayed alive
+- **Issue #23710** (2026-11-19): **[COR-1294] JWT secret generation fallback should still use a secure random.**
+  *Symptoms*: ### Scope & Purpose  The current JWT secret fallback uses our own RandomGenerator, but should use RAND_bytes from OpenSSL.  - [ ] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [x] :hammer: Refactoring/simplification  #### Related Information  - [ ] Docs PR:  - [ ] Enterprise PR: - [x] Jira ticket: https://arangodb.atlassian.net/browse/COR-1294 - [ ] Design document:  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1690,57 +1690,208 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b5ae058b` (2026-11-18)
-**Commit Message**: Fix cppcheck
+### Incident Patch 1: `828a810e` (2026-11-19)
+**Commit Message**: Merge pull request #23712 from arangodb/bug-fix/COR-1295-fix-use-after-move
 
-**File**: `.circleci/base_config.yml` (modified, +6/-4)
+[COR-1295] Fix use-after-move issues
+
+**File**: `arangod/Graph/Cache/RefactoredTraverserCache.cpp` (modified, +8/-0)
 ```diff
-@@ -930,11 +930,12 @@ jobs:
-                   - tsan_arangodb_suppressions.txt
-                   - ubsan_arangodb_suppressions.txt
-                   - lsan_arangodb_suppressions.txt
--            # clang-tidy can only parse if generated headers (voc-errors.h, ...) exist,
--            # and the headers of dependencies fetched into build/_deps (boost). Boost's
--            # header-only code includes its implementation from .ipp files.
-+            # clang-tidy and cppcheck can only parse if generated headers (voc-errors.h,
-+            # build.h, ...) exist, and the headers of dependencies fetched into
-+            # build/_deps (boost, abseil). Boost's header-only code includes its
-+            # implementation from .ipp files.
-             - run:
--                name: Stage generated headers for clang-tidy
-+                name: Stage generated headers for clang-tidy and cppcheck
-                 command: |
-                   cd /root/project
-                   find build \( -name '*.h' -o -name '*.hpp' -o -name '*.ipp' -o -name '*.inc' -o -name '*.csx' \) -print0 \
-@@ -1426,6 +1427,7 @@ jobs:
-           name: Run cppcheck
-           command: |
-             ln -s /root/workspace/build/ /root/project/
-+            cp -r /root/workspace/tidy-headers/build/. /root/workspace/build/
-             cd /root/project/
-             utils/cppcheck-circleci.sh /root/workspace/build/compile_commands.json
-       - run:
+@@ -39,6 +39,14 @@ RefactoredTraverserCache::RefactoredTraverserCache(
+   TRI_ASSERT(!ServerState::instance()->isCoordinator());
+ }
+ 
++RefactoredTraverserCache::RefactoredTraverserCache(
++    RefactoredTraverserCache&& other)
++    : _stringHeap(std::move(other._stringHeap)),
++      _persistedStrings(std::move(other._persistedStrings)),
++      _resourceMonitor(other._resourceMonitor) {
++  other._persistedStrings.clear();
++}
++
+ RefactoredTraverserCache::~RefactoredTraverserCache() { clear(); }
+ 
+ void RefactoredTraverserCache::clear() {
 ```
 
-**File**: `utils/cppcheck-circleci.sh` (modified, +1/-0)
+**File**: `arangod/Graph/Cache/RefactoredTraverserCache.h` (modified, +1/-1)
 ```diff
-@@ -44,6 +44,7 @@ cppcheck \
-   --suppress="*:*lib/Geo/karney/*" \
-   --suppress="*:*lib/iresearch/core/shared.hpp" \
-   --suppress="*:*lib/Zip/*" \
-+  --suppress="preprocessorErrorDirective:*arangod/Aql/AqlValue.cpp" \
-   --suppress="preprocessorErrorDirective:*lib/SimpleHttpClient/SslClientConnection.cpp" \
-   --suppress="constStatement" \
-   --suppress="cppcheckError" \
+@@ -38,11 +38,11 @@ namespace arangodb::graph {
+ class RefactoredTraverserCache {
+  public:
+   RefactoredTraverserCache(arangodb::ResourceMonitor& resourceMonitor);
++  RefactoredTraverserCache(RefactoredTraverserCache&&);
+ 
+   ~RefactoredTraverserCache();
+ 
+   RefactoredTraverserCache(RefactoredTraverserCache const&) = delete;
+-  RefactoredTraverserCache(RefactoredTraverserCache&&) = default;
+ 
+   RefactoredTraverserCache& operator=(RefactoredTraverserCache const&) = delete;
+ 
+```
+
+**File**: `arangod/Graph/Providers/ClusterProvider.cpp` (modified, +11/-0)
+```diff
+@@ -103,6 +103,17 @@ ClusterProvider<StepImpl>::ClusterProvider(
+       _opts(std::move(opts)),
+       _stats{} {}
+ 
++template<class StepImpl>
++ClusterProvider<StepImpl>::ClusterProvider(ClusterProvider<StepImpl>&& other)
++    : _trx(std::move(other._trx)),
++      _query(other._query),
++      _resourceMonitor(other._resourceMonitor),
++      _opts(std::move(other._opts)),
++      _stats(std::move(other._stats)),
++      _vertexConnectedEdges(std::move(other._vertexConnectedEdges)) {
++  other._vertexConnectedEdges.clear();
++}
++
+ template<class StepImpl>
+ ClusterProvider<StepImpl>::~ClusterProvider() {
+   clearWithForce();  // Make sure we actually free all memory in the edge cache!
+```
+
+**File**: `arangod/Graph/Providers/ClusterProvider.h` (modified, +2/-1)
+```diff
+@@ -75,10 +75,11 @@ class ClusterProvider {
+                   ClusterBaseProviderOptions opts,
+                   arangodb::ResourceMonitor& resourceMonitor);
+   ClusterProvider(ClusterProvider const&) = delete;
+-  ClusterProvider(ClusterProvider&&) = default;
++  ClusterProvider(ClusterProvider&&);
+   ~ClusterProvider();
+ 
+   ClusterProvider& operator=(ClusterProvider const&) = delete;
++  ClusterProvider& operator=(ClusterProvider&&) = delete;
+ 
+   void clear();
+   void clearWithForce();
+```
+
+**File**: `arangod/IResearch/Search.cpp` (modified, +3/-1)
+```diff
+@@ -532,7 +532,9 @@ Result Search::properties(velocypack::Slice definition, bool isUserRequest,
+     if (partialUpdate) {
+       return _indexes;
+     }
+-    return std::move(_indexes);
++    auto res = std::move(_indexes);
++    _indexes.clear();
++    return res;
+   }();
+   auto oldMeta = std::move(_meta);
+   ScopeGuard revert{[&]() noexcept {
+```
+
+---
+
+### Incident Patch 2: `2652475c` (2026-11-19)
+**Commit Message**: Fix another use-after-move
+
+**File**: `arangod/IResearch/Search.cpp` (modified, +3/-1)
+```diff
+@@ -532,7 +532,9 @@ Result Search::properties(velocypack::Slice definition, bool isUserRequest,
+     if (partialUpdate) {
+       return _indexes;
+     }
+-    return std::move(_indexes);
++    auto res = std::move(_indexes);
++    _indexes.clear();
++    return res;
+   }();
+   auto oldMeta = std::move(_meta);
+   ScopeGuard revert{[&]() noexcept {
+```
+
+---
+
+### Incident Patch 3: `fb2f0ddd` (2026-11-19)
+**Commit Message**: Fix use-after-move issues
+
+**File**: `arangod/Graph/Cache/RefactoredTraverserCache.cpp` (modified, +8/-0)
+```diff
+@@ -39,6 +39,14 @@ RefactoredTraverserCache::RefactoredTraverserCache(
+   TRI_ASSERT(!ServerState::instance()->isCoordinator());
+ }
+ 
++RefactoredTraverserCache::RefactoredTraverserCache(
++    RefactoredTraverserCache&& other)
++    : _stringHeap(std::move(other._stringHeap)),
++      _persistedStrings(std::move(other._persistedStrings)),
++      _resourceMonitor(other._resourceMonitor) {
++  other._persistedStrings.clear();
++}
++
+ RefactoredTraverserCache::~RefactoredTraverserCache() { clear(); }
+ 
+ void RefactoredTraverserCache::clear() {
+```
+
+**File**: `arangod/Graph/Cache/RefactoredTraverserCache.h` (modified, +1/-1)
+```diff
+@@ -38,11 +38,11 @@ namespace arangodb::graph {
+ class RefactoredTraverserCache {
+  public:
+   RefactoredTraverserCache(arangodb::ResourceMonitor& resourceMonitor);
++  RefactoredTraverserCache(RefactoredTraverserCache&&);
+ 
+   ~RefactoredTraverserCache();
+ 
+   RefactoredTraverserCache(RefactoredTraverserCache const&) = delete;
+-  RefactoredTraverserCache(RefactoredTraverserCache&&) = default;
+ 
+   RefactoredTraverserCache& operator=(RefactoredTraverserCache const&) = delete;
+ 
+```
+
+**File**: `arangod/Graph/Providers/ClusterProvider.cpp` (modified, +11/-0)
+```diff
+@@ -103,6 +103,17 @@ ClusterProvider<StepImpl>::ClusterProvider(
+       _opts(std::move(opts)),
+       _stats{} {}
+ 
++template<class StepImpl>
++ClusterProvider<StepImpl>::ClusterProvider(ClusterProvider<StepImpl>&& other)
++    : _trx(std::move(other._trx)),
++      _query(other._query),
++      _resourceMonitor(other._resourceMonitor),
++      _opts(std::move(other._opts)),
++      _stats(std::move(other._stats)),
++      _vertexConnectedEdges(std::move(other._vertexConnectedEdges)) {
++  other._vertexConnectedEdges.clear();
++}
++
+ template<class StepImpl>
+ ClusterProvider<StepImpl>::~ClusterProvider() {
+   clearWithForce();  // Make sure we actually free all memory in the edge cache!
+```
+
+**File**: `arangod/Graph/Providers/ClusterProvider.h` (modified, +2/-1)
+```diff
+@@ -75,10 +75,11 @@ class ClusterProvider {
+                   ClusterBaseProviderOptions opts,
+                   arangodb::ResourceMonitor& resourceMonitor);
+   ClusterProvider(ClusterProvider const&) = delete;
+-  ClusterProvider(ClusterProvider&&) = default;
++  ClusterProvider(ClusterProvider&&);
+   ~ClusterProvider();
+ 
+   ClusterProvider& operator=(ClusterProvider const&) = delete;
++  ClusterProvider& operator=(ClusterProvider&&) = delete;
+ 
+   void clear();
+   void clearWithForce();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23712** (2026-11-19): [COR-1295] Fix use-after-move issues (@mpoeter)
+- **PR #23710** (2026-11-19): [COR-1294] JWT secret generation fallback should still use a secure random. (@johann-listunov)
 - **PR #23709** (2026-11-18): [COR-1288] Update abseil and switch from submodule to FetchContent (@mpoeter)
+- **PR #23707** (2026-11-19): [3.12] Add branch tag for `ann-benchmark` (@jbajic)
+- **PR #23706** (2026-11-19): Add branch tag for `ann-benchmark` (@jbajic)
 - **PR #23695** (2026-11-18): [3.12] Fix data race on ICU string search initialization in bundled ICU 64 (@KVS85)
-- **PR #23693** (2026-11-18): [COR-1286] Update clang-format to v22 (@mpoeter)
-- **PR #23691** (2026-11-18): [COR-1285] Remove TT prototype (@mpoeter)
-- **PR #23688** (2026-11-17): [3.12] Patch faiss with alubsan fix (@jbajic)
-- **PR #23687** (2026-11-17): Patch FAISS with alubsan fix (@jbajic)
 
 ---
 
@@ -1760,39 +1911,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in base_config.yml
+## X. Empirical Invariant Guard in RefactoredTraverserCache.cpp
 
 **RULE**:
-When implementing operations in `.circleci/base_config.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arangod/Graph/Cache/RefactoredTraverserCache.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b5ae058b`: cppcheck. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `828a810e`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.circleci/base_config.yml`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `arangod/Graph/Cache/RefactoredTraverserCache.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            # clang-tidy and cppcheck can only parse if generated headers (voc-errors.h,
-            # build.h, ...) exist, and the headers of dependencies fetched into
-            # build/_deps (boost, abseil). Boost's header-only code includes its
-            # implementation from .ipp files.
-                name: Stage generated headers for clang-tidy and cppcheck
-            cp -r /root/workspace/tidy-headers/build/. /root/workspace/build/
+RefactoredTraverserCache::RefactoredTraverserCache(
+    RefactoredTraverserCache&& other)
+    : _stringHeap(std::move(other._stringHeap)),
+      _persistedStrings(std::move(other._persistedStrings)),
+      _resourceMonitor(other._resourceMonitor) {
+  other._persistedStrings.clear();
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-            # clang-tidy can only parse if generated headers (voc-errors.h, ...) exist,
-            # and the headers of dependencies fetched into build/_deps (boost). Boost's
-            # header-only code includes its implementation from .ipp files.
-                name: Stage generated headers for clang-tidy
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b5ae058b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `828a810e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

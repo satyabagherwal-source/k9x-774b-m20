@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "387bbd5b",
+    "sourceVersion": "828a810e",
     "license": "NOASSERTION",
-    "contentHash": "85843f61dd13ba459c7907b073c98284dd101f9c6a825ffc752a6e3e7b5b66b4",
-    "lastHarvestedAt": "2026-11-19T00:22:56.202Z",
+    "contentHash": "047f275e4387c006e87343c72d8c85355c27c22be01d4c80dc2a0a05d241ec14",
+    "lastHarvestedAt": "2026-11-20T05:37:02.660Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {

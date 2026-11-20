@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T05:29:09.093Z",
+  "last_updated": "2026-11-20T05:37:08.337Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T05:16:32.158Z",
@@ -13,7 +13,7 @@
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-20T01:04:01.621Z",
+      "processed_at": "2026-11-20T05:37:06.723Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-20T05:29:06.615Z",
+      "processed_at": "2026-11-20T05:37:07.540Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -743,7 +743,7 @@
       "staged_for_review": 1
     },
     "arangodb-arangodb-learnings.md": {
-      "processed_at": "2026-11-19T00:23:36.054Z",
+      "processed_at": "2026-11-20T05:37:05.963Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3538,7 +3538,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2448,
+  "total_dossiers_evaluated": 2451,
   "total_canonical_promoted": 412,
-  "total_staged_for_review": 1845
+  "total_staged_for_review": 1848
 }
