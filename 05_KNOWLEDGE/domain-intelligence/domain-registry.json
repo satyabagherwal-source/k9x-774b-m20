@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T05:08:27.464Z",
-  "total_records": 2070,
+  "last_updated": "2026-11-20T05:16:32.470Z",
+  "total_records": 2071,
   "domains": {
     "A": {
       "total": 17,
@@ -1348,7 +1348,7 @@
       ]
     },
     "H": {
-      "total": 492,
+      "total": 493,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1841,7 +1841,8 @@
         "domain_intelligence-technical-construction-intelligence-searchsolved-search-solved-public-seo-learni",
         "DOM-H-45D5E4E3",
         "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-octodns-octodns-learnings-core-invariants"
       ]
     },
     "I": {
@@ -22833,8 +22834,8 @@
       "title": "Research & Knowledge Intelligence: apache/shardingsphere Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-apache-shardingsphere-research-knowledge-intelligence-apache-shardingsphere-core.md",
       "repository": "apache/shardingsphere",
-      "content_hash": "f6e7c6d951191cafeb9c37e8285187ebfe8cc6b16cb537aa84e42ab784f6197d",
-      "created_at": "2026-11-16T00:17:44.133Z"
+      "content_hash": "89a2dd361d59e9ab3e691bcfdb79f39a2c0a61e1e5a67352f5f1b0d74f22fafb",
+      "created_at": "2026-11-20T05:16:26.304Z"
     },
     "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-learnings-core-invariants",
@@ -22860,8 +22861,8 @@
       "title": "Research & Knowledge Intelligence: apache-shardingsphere-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-apache-shardingsphere-learnings-research-knowledge-intelligence-apache-shardings.md",
       "repository": "apache-shardingsphere-learnings",
-      "content_hash": "a529d84579ffec312fb4d865decb8d1fd5c090c2e39707ce9a10b42e3daad818",
-      "created_at": "2026-11-16T00:17:48.397Z"
+      "content_hash": "e9a4b6d3eac1408208c594661ac3a35abe7612cadfa210646fa4980c0719e130",
+      "created_at": "2026-11-20T05:16:31.833Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liconstudio-minimax-h3-vbvr-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liconstudio-minimax-h3-vbvr-core-invariants",
@@ -31166,8 +31167,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "bb1b9a76e26a0f733d7d963d9aedbc48958fb63a30501c5579d8309d7a3da085",
-      "created_at": "2026-11-20T05:08:27.464Z"
+      "content_hash": "db87d5b0a27b5a14d1ff4e409f38a4722ed703f0c3ec8cd80421404855eaa1e0",
+      "created_at": "2026-11-20T05:16:32.470Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -32417,8 +32418,8 @@
       "title": "Technical Construction Intelligence: octodns/octodns Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-octodns-octodns-technical-construction-intelligence-octodns-octodns-core-invaria.md",
       "repository": "octodns/octodns",
-      "content_hash": "a04db80fdd56d904d95082832184ce2066a0be8851fa148a10aa27b289917ec7",
-      "created_at": "2026-11-19T00:49:49.743Z"
+      "content_hash": "f526dfae519e4d9dbc332bca4df2518bd4c25f9a2f20a6c22f0ef7992cba951b",
+      "created_at": "2026-11-20T05:16:20.589Z"
     },
     "DOM-D-9B951EAF": {
       "record_id": "DOM-D-9B951EAF",
@@ -34915,6 +34916,15 @@
       "repository": "crawlcove-crawlcove-hreflang-checker-learnings",
       "content_hash": "8cee0cd05bd9b946b1d2a943445a5bd7196e1aa055a8f6646bd77478402ff66c",
       "created_at": "2026-11-20T05:08:25.392Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-octodns-octodns-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-octodns-octodns-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: octodns-octodns-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-octodns-octodns-learnings-technical-construction-intelligence-octodns-octodns-le.md",
+      "repository": "octodns-octodns-learnings",
+      "content_hash": "56404652890444f7603b1319379764ccda8c381e19a3c613d088136cfa29b22a",
+      "created_at": "2026-11-20T05:16:29.869Z"
     }
   }
 }

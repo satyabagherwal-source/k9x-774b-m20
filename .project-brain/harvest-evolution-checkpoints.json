@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T05:08:27.672Z",
+  "last_updated": "2026-11-20T05:16:32.629Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-20T05:08:27.045Z",
+      "processed_at": "2026-11-20T05:16:32.158Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -708,9 +708,9 @@
       "staged_for_review": 1
     },
     "apache-shardingsphere-learnings.md": {
-      "processed_at": "2026-11-18T23:26:56.296Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-20T05:16:30.177Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "fb55-css-select-learnings.md": {
       "processed_at": "2026-11-16T20:02:45.313Z",
@@ -3531,9 +3531,14 @@
       "processed_at": "2026-11-20T00:06:47.206Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "octodns-octodns-learnings.md": {
+      "processed_at": "2026-11-20T05:16:29.281Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2439,
+  "total_dossiers_evaluated": 2442,
   "total_canonical_promoted": 412,
-  "total_staged_for_review": 1836
+  "total_staged_for_review": 1839
 }

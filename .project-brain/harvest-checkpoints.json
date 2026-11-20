@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T05:07:43.749Z",
+  "last_updated": "2026-11-20T05:16:25.942Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "9d94a9672a88eea0a5124d20c0c446bdda3ff0188b342cc5e5cf076e709953f9",
-      "verified_at": "2026-11-18T23:26:26.839Z",
+      "content_hash": "44ffd2ec9fdd630497d1ed6820e7b2233010b35f1c93e46d4742768c6a4279dc",
+      "verified_at": "2026-11-20T05:16:25.941Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T23:26:26.839Z"
+      "last_updated": "2026-11-20T05:16:25.941Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -8316,14 +8316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-octodns-octodns",
-      "content_hash": "606b7e87f9b2ffbb4e44158997088b41460d8b288a3048c8322b07ab4027253a",
-      "verified_at": "2026-11-19T00:49:49.406Z",
+      "content_hash": "1eccfec56aa5efc13874ce94d66729b26f7feebd326cdbc58849cb98937432d9",
+      "verified_at": "2026-11-20T05:16:20.224Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T00:49:49.406Z"
+      "last_updated": "2026-11-20T05:16:20.224Z"
     },
     "Netflix/dynomite": {
       "repository": "Netflix/dynomite",

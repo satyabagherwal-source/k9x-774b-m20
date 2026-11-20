@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T05:08:27.464Z",
+  "last_updated": "2026-11-20T05:16:32.470Z",
   "total_verified_learnings": 9024,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22203,
+  "total_items": 22209,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -251612,8 +251612,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "e65f2831",
-      "content_hash": "9d94a9672a88eea0a5124d20c0c446bdda3ff0188b342cc5e5cf076e709953f9",
+      "source_version": "eac4d896",
+      "content_hash": "44ffd2ec9fdd630497d1ed6820e7b2233010b35f1c93e46d4742768c6a4279dc",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -251636,6 +251636,11 @@
           "number": 9299,
           "title": "Support PostgreSQL aggregate FILTER and verify external parser expectations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9516,
+          "title": "Align MCP release packaging and preparation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -251643,7 +251648,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T23:26:26.665Z",
+      "verified_at": "2026-11-20T05:16:25.738Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251685,10 +251690,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-apache-shardingsphere-research-knowledge-intelligence-apache-shardingsphere-core.md",
       "title": "Research & Knowledge Intelligence: apache/shardingsphere Core Invariants",
       "repository": "apache/shardingsphere",
-      "source_version": "78342a49",
-      "content_hash": "f6e7c6d951191cafeb9c37e8285187ebfe8cc6b16cb537aa84e42ab784f6197d",
+      "source_version": "eac4d896",
+      "content_hash": "89a2dd361d59e9ab3e691bcfdb79f39a2c0a61e1e5a67352f5f1b0d74f22fafb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T00:17:44.133Z"
+      "persisted_at": "2026-11-20T05:16:26.304Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere",
@@ -251697,10 +251702,10 @@
       "relative_path": "08_VERIFICATION/apache-shardingsphere-verification-protocol-empirical-defect-shield-for-apache-s.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/shardingsphere",
       "repository": "apache/shardingsphere",
-      "source_version": "e65f2831",
-      "content_hash": "6600de73461e3c8f4c1ef22450afbdfb952c59129a1270c86eb0021dc0343c21",
+      "source_version": "eac4d896",
+      "content_hash": "bd104ebf00f0c6d348d4a0e04824e224efa597135ab220a07324e2d73f7be9cf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T23:26:27.259Z"
+      "persisted_at": "2026-11-20T05:16:26.457Z"
     },
     "candidate_directive-desktop-register-java-rmi-marshalledobject-for-native-clipboard-reflection": {
       "item_id": "candidate_directive-desktop-register-java-rmi-marshalledobject-for-native-clipboard-reflection",
@@ -251770,9 +251775,9 @@
       "title": "Research & Knowledge Intelligence: apache-shardingsphere-learnings Core Invariants",
       "repository": "apache-shardingsphere-learnings",
       "source_version": "HEAD",
-      "content_hash": "a529d84579ffec312fb4d865decb8d1fd5c090c2e39707ce9a10b42e3daad818",
+      "content_hash": "e9a4b6d3eac1408208c594661ac3a35abe7612cadfa210646fa4980c0719e130",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T00:17:48.397Z"
+      "persisted_at": "2026-11-20T05:16:31.833Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere-learning",
@@ -251782,9 +251787,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-shardingsphere-learnings",
       "repository": "apache-shardingsphere-learnings",
       "source_version": "HEAD",
-      "content_hash": "c0c5152a5f2a80cf1262e014b332e0cec19e2e98bd6f731873b3afc4da8c72af",
+      "content_hash": "6433db820561ba3427a146bb63c34fff973125de84939581fd6cc72ecabd4aea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T23:26:56.797Z"
+      "persisted_at": "2026-11-20T05:16:32.003Z"
     },
     "learn-huggingface-liconstudio-minimax-h3-vbvr": {
       "learning_id": "learn-huggingface-liconstudio-minimax-h3-vbvr",
@@ -287805,9 +287810,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "bb1b9a76e26a0f733d7d963d9aedbc48958fb63a30501c5579d8309d7a3da085",
+      "content_hash": "db87d5b0a27b5a14d1ff4e409f38a4722ed703f0c3ec8cd80421404855eaa1e0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T05:08:27.464Z"
+      "persisted_at": "2026-11-20T05:16:32.470Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -292028,14 +292033,19 @@
       "slug": "octodns-octodns",
       "platform": "github",
       "source_url": "https://github.com/octodns/octodns",
-      "source_version": "fd8d1a6b",
-      "content_hash": "606b7e87f9b2ffbb4e44158997088b41460d8b288a3048c8322b07ab4027253a",
+      "source_version": "420f2bab",
+      "content_hash": "1eccfec56aa5efc13874ce94d66729b26f7feebd326cdbc58849cb98937432d9",
       "dossier_path": "07_PROJECT_LEARNING/octodns-octodns-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/octodns-octodns-learnings.md",
       "promoted_rules": [
         {
           "number": 9312,
           "title": "Regenerate requirements.txt with proviso 0.4.0 to drop pre-releases",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9515,
+          "title": "Empirical Invariant Guard in 588a9582e1eb49a5a56661deae7135dd.md",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -292044,7 +292054,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T00:49:49.204Z",
+      "verified_at": "2026-11-20T05:16:20.007Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -292086,10 +292096,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-octodns-octodns-technical-construction-intelligence-octodns-octodns-core-invaria.md",
       "title": "Technical Construction Intelligence: octodns/octodns Core Invariants",
       "repository": "octodns/octodns",
-      "source_version": "fd8d1a6b",
-      "content_hash": "a04db80fdd56d904d95082832184ce2066a0be8851fa148a10aa27b289917ec7",
+      "source_version": "420f2bab",
+      "content_hash": "f526dfae519e4d9dbc332bca4df2518bd4c25f9a2f20a6c22f0ef7992cba951b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T00:49:49.743Z"
+      "persisted_at": "2026-11-20T05:16:20.589Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-octodns-octodns": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-octodns-octodns",
@@ -292098,10 +292108,10 @@
       "relative_path": "08_VERIFICATION/octodns-octodns-verification-protocol-empirical-defect-shield-for-octodns-octodn.md",
       "title": "Verification Protocol: Empirical Defect Shield for octodns/octodns",
       "repository": "octodns/octodns",
-      "source_version": "fd8d1a6b",
-      "content_hash": "356a68176252ecdfcdb20f8e50fc6eafee732f92b9cb4a3be9ded939915f2f9f",
+      "source_version": "420f2bab",
+      "content_hash": "30fad69e6718d69d9db0febd921e1e9f9f5875736a22c42b2519cb12374078c2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:49:49.891Z"
+      "persisted_at": "2026-11-20T05:16:20.777Z"
     },
     "rule-9313": {
       "learning_id": "rule-9313",
@@ -300588,6 +300598,82 @@
       "content_hash": "8cee0cd05bd9b946b1d2a943445a5bd7196e1aa055a8f6646bd77478402ff66c",
       "domain_letter": "J",
       "persisted_at": "2026-11-20T05:08:25.392Z"
+    },
+    "rule-9515": {
+      "learning_id": "rule-9515",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9515,
+      "title": "Empirical Invariant Guard in 588a9582e1eb49a5a56661deae7135dd.md",
+      "source_url": "https://github.com/octodns/octodns",
+      "source_version": "420f2bab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T05:16:20.007Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-588a9582e1eb49a5a56661deae7135dd-md": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-588a9582e1eb49a5a56661deae7135dd-md",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0XVB-empirical-invariant-guard-in-588a9582e1eb49a5a56661deae7135dd-md.md",
+      "title": "Empirical Invariant Guard in 588a9582e1eb49a5a56661deae7135dd.md",
+      "repository": "octodns-octodns-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8989ed66bb02441f3532458b4b0b5d5cc6a5d6dfc346e3832019c9d4bf333493",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T05:16:29.688Z"
+    },
+    "rule-9516": {
+      "learning_id": "rule-9516",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9516,
+      "title": "Align MCP release packaging and preparation",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "eac4d896",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T05:16:25.738Z"
+    },
+    "candidate_directive-align-mcp-release-packaging-and-preparation": {
+      "item_id": "candidate_directive-align-mcp-release-packaging-and-preparation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0ZEG-align-mcp-release-packaging-and-preparation.md",
+      "title": "Align MCP release packaging and preparation",
+      "repository": "apache-shardingsphere-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ae5b63c7f51da42a90290042091755d997661e4e6ef7a138fc579c1b3b50ac91",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T05:16:31.676Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-octodns-octodns-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-octodns-octodns-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-octodns-octodns-learnings-technical-construction-intelligence-octodns-octodns-le.md",
+      "title": "Technical Construction Intelligence: octodns-octodns-learnings Core Invariants",
+      "repository": "octodns-octodns-learnings",
+      "source_version": "HEAD",
+      "content_hash": "56404652890444f7603b1319379764ccda8c381e19a3c613d088136cfa29b22a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T05:16:29.869Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-octodns-octodns-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-octodns-octodns-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/octodns-octodns-learnings-verification-protocol-empirical-defect-shield-for-octo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for octodns-octodns-learnings",
+      "repository": "octodns-octodns-learnings",
+      "source_version": "HEAD",
+      "content_hash": "25f55a5536212bc9665b1e5ae8aead098843971a5b6539a3377c15f876d83f61",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T05:16:30.023Z"
     }
   },
   "ai-builder-brain": {

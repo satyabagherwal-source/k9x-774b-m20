@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "e65f2831",
+    "sourceVersion": "eac4d896",
     "license": "Apache-2.0",
-    "contentHash": "9d94a9672a88eea0a5124d20c0c446bdda3ff0188b342cc5e5cf076e709953f9",
-    "lastHarvestedAt": "2026-11-18T23:26:26.832Z",
+    "contentHash": "44ffd2ec9fdd630497d1ed6820e7b2233010b35f1c93e46d4742768c6a4279dc",
+    "lastHarvestedAt": "2026-11-20T05:16:25.932Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -5463,10 +5463,10 @@
     "repository": "octodns/octodns",
     "platform": "github",
     "sourceUrl": "https://github.com/octodns/octodns",
-    "sourceVersion": "fd8d1a6b",
+    "sourceVersion": "420f2bab",
     "license": "MIT",
-    "contentHash": "606b7e87f9b2ffbb4e44158997088b41460d8b288a3048c8322b07ab4027253a",
-    "lastHarvestedAt": "2026-11-19T00:49:49.398Z",
+    "contentHash": "1eccfec56aa5efc13874ce94d66729b26f7feebd326cdbc58849cb98937432d9",
+    "lastHarvestedAt": "2026-11-20T05:16:20.215Z",
     "learningId": "learn-github-octodns-octodns"
   },
   "netflix-dynomite": {

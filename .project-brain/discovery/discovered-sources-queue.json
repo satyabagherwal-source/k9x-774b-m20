@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T05:08:24.912Z",
+  "updated_at": "2026-11-20T05:16:31.462Z",
   "stats": {
-    "total_discovered": 6193,
-    "approved_pending_harvest": 5856,
+    "total_discovered": 6223,
+    "approved_pending_harvest": 5883,
     "harvested_count": 0,
-    "rejected_count": 337,
+    "rejected_count": 340,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5837,
-      "OFFICIAL_DOCUMENTATION": 194,
-      "STANDARDS_AND_SPECIFICATIONS": 114,
+      "COMMUNITY_AND_EXPERT": 5865,
+      "OFFICIAL_DOCUMENTATION": 195,
+      "STANDARDS_AND_SPECIFICATIONS": 115,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 36,
       "LEGAL_AND_REGULATORY": 2,
@@ -133910,6 +133910,645 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
         "fileName": "crawlcove-crawlcove-hreflang-checker-learnings.md"
+      }
+    },
+    "SRC-5969F55130F4": {
+      "id": "SRC-5969F55130F4",
+      "url": "https://github.com/octodns/octodns",
+      "title": "https://github.com/octodns/octodns",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:29.307Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/octodns-octodns-learnings.md",
+        "fileName": "octodns-octodns-learnings.md"
+      }
+    },
+    "SRC-FCA5B00E52F6": {
+      "id": "SRC-FCA5B00E52F6",
+      "url": "https://docs.python.org/3/library/logging.config.html",
+      "title": "https://docs.python.org/3/library/logging.config.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:29.363Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/octodns-octodns-learnings.md",
+        "fileName": "octodns-octodns-learnings.md"
+      }
+    },
+    "SRC-94ABFE6A3912": {
+      "id": "SRC-94ABFE6A3912",
+      "url": "https://github.com/octodns/octodns-digitalocean/blob/main/octodns_digitalocean/__init__.py",
+      "title": "https://github.com/octodns/octodns-digitalocean/blob/main/octodns_digitalocean/__init__.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:29.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/octodns-octodns-learnings.md",
+        "fileName": "octodns-octodns-learnings.md"
+      }
+    },
+    "SRC-B7715F7682E3": {
+      "id": "SRC-B7715F7682E3",
+      "url": "https://pip.pypa.io/en/stable/user_guide",
+      "title": "https://pip.pypa.io/en/stable/user_guide",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:29.459Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/octodns-octodns-learnings.md",
+        "fileName": "octodns-octodns-learnings.md"
+      }
+    },
+    "SRC-A45C902D170C": {
+      "id": "SRC-A45C902D170C",
+      "url": "https://github.com/apache/shardingsphere/blob/d03d1d9198c61b099bcd7f403c5d4e7ddb713cc6/kernel/single/core/src/main/java/org/apache/shardingsphere/single/rule/SingleRule.java",
+      "title": "https://github.com/apache/shardingsphere/blob/d03d1d9198c61b099bcd7f403c5d4e7ddb713cc6/kernel/single/core/src/main/java/org/apache/shardingsphere/single/rule/SingleRule.java",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:30.297Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-7E9F8E0DB0F9": {
+      "id": "SRC-7E9F8E0DB0F9",
+      "url": "http://maven.apache.org/ASSEMBLY/2.0.0",
+      "title": "http://maven.apache.org/ASSEMBLY/2.0.0",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T05:16:30.339Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-BD40DDF61C50": {
+      "id": "SRC-BD40DDF61C50",
+      "url": "http://www.w3.org/2001/XMLSchema-instance",
+      "title": "http://www.w3.org/2001/XMLSchema-instance",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "discovered_at": "2026-11-20T05:16:30.379Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-2F336BC9BDDC": {
+      "id": "SRC-2F336BC9BDDC",
+      "url": "http://maven.apache.org/xsd/assembly-2.0.0.xsd",
+      "title": "http://maven.apache.org/xsd/assembly-2.0.0.xsd",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T05:16:30.426Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-63B7B244922C": {
+      "id": "SRC-63B7B244922C",
+      "url": "https://commons.apache.org/proper/commons-lang",
+      "title": "https://commons.apache.org/proper/commons-lang",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:30.466Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-A72DCDD8463D": {
+      "id": "SRC-A72DCDD8463D",
+      "url": "https://github.com/google/error-prone",
+      "title": "https://github.com/google/error-prone",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:30.513Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-0D012134D38A": {
+      "id": "SRC-0D012134D38A",
+      "url": "https://github.com/google/guava",
+      "title": "https://github.com/google/guava",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:30.553Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-A0BD6B3B605C": {
+      "id": "SRC-A0BD6B3B605C",
+      "url": "https://groovy.apache.org/",
+      "title": "https://groovy.apache.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:30.600Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-1BC42AB2EB59": {
+      "id": "SRC-1BC42AB2EB59",
+      "url": "https://github.com/ethlo/itu",
+      "title": "https://github.com/ethlo/itu",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:30.639Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-85B5C88714B2": {
+      "id": "SRC-85B5C88714B2",
+      "url": "https://github.com/FasterXML/jackson-annotations",
+      "title": "https://github.com/FasterXML/jackson-annotations",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:30.686Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-0B0C50671D2F": {
+      "id": "SRC-0B0C50671D2F",
+      "url": "https://github.com/FasterXML/jackson-core",
+      "title": "https://github.com/FasterXML/jackson-core",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:30.726Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-54F28A2E5FF8": {
+      "id": "SRC-54F28A2E5FF8",
+      "url": "https://github.com/FasterXML/jackson-databind",
+      "title": "https://github.com/FasterXML/jackson-databind",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:30.776Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-27E58F400FE1": {
+      "id": "SRC-27E58F400FE1",
+      "url": "https://github.com/FasterXML/jackson-modules-java8",
+      "title": "https://github.com/FasterXML/jackson-modules-java8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:30.815Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-589FDA7904A4": {
+      "id": "SRC-589FDA7904A4",
+      "url": "https://beanvalidation.org/",
+      "title": "https://beanvalidation.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:30.863Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-B4C3C6360308": {
+      "id": "SRC-B4C3C6360308",
+      "url": "https://github.com/jdereg/java-util",
+      "title": "https://github.com/jdereg/java-util",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:30.909Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-F2A703A72FDD": {
+      "id": "SRC-F2A703A72FDD",
+      "url": "https://jspecify.dev/",
+      "title": "https://jspecify.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:30.951Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-6D63C29CE7AA": {
+      "id": "SRC-6D63C29CE7AA",
+      "url": "https://github.com/networknt/json-schema-validator",
+      "title": "https://github.com/networknt/json-schema-validator",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:30.994Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-3AB069C6EC27": {
+      "id": "SRC-3AB069C6EC27",
+      "url": "https://github.com/reactor/reactor-core",
+      "title": "https://github.com/reactor/reactor-core",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:31.042Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-0C54DA0DFAB3": {
+      "id": "SRC-0C54DA0DFAB3",
+      "url": "https://bitbucket.org/snakeyaml/snakeyaml",
+      "title": "https://bitbucket.org/snakeyaml/snakeyaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:31.082Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-DADEA6FAA14E": {
+      "id": "SRC-DADEA6FAA14E",
+      "url": "https://tomcat.apache.org/",
+      "title": "https://tomcat.apache.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:31.202Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-A29D5B3539E1": {
+      "id": "SRC-A29D5B3539E1",
+      "url": "https://github.com/alibaba/transmittable-thread-local",
+      "title": "https://github.com/alibaba/transmittable-thread-local",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:31.242Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-4295F3824299": {
+      "id": "SRC-4295F3824299",
+      "url": "https://github.com/modelcontextprotocol/java-sdk",
+      "title": "https://github.com/modelcontextprotocol/java-sdk",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:31.290Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-A7B4602AC20D": {
+      "id": "SRC-A7B4602AC20D",
+      "url": "https://github.com/reactive-streams/reactive-streams-jvm",
+      "title": "https://github.com/reactive-streams/reactive-streams-jvm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:31.329Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-88B00AE3B40D": {
+      "id": "SRC-88B00AE3B40D",
+      "url": "https://www.slf4j.org/",
+      "title": "https://www.slf4j.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:31.376Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-6FE14973AF3D": {
+      "id": "SRC-6FE14973AF3D",
+      "url": "https://prestodb.io/",
+      "title": "https://prestodb.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:31.415Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-F1779F7CEE2F": {
+      "id": "SRC-F1779F7CEE2F",
+      "url": "https://github.com/ClickHouse/clickhouse-java",
+      "title": "https://github.com/ClickHouse/clickhouse-java",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:16:31.462Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
       }
     }
   }

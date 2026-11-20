@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-NODI",
-    "timestamp": "2026-11-18T09:14:46.950Z",
-    "repository": "DNSControl/dnscontrol",
-    "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "5fd719412df2560c71ae0d0c0375f851a8d730e2d31a2faf6780e877ccdcb99a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-NQYD",
-    "timestamp": "2026-11-18T09:14:50.293Z",
-    "repository": "Mintplex-Labs/anything-llm",
-    "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "b47312902d433f5226aa0eed4881f5b60748841fc75d7470f922044b2fcd1ba2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-TY6H",
     "timestamp": "2026-11-18T09:19:39.593Z",
     "repository": "Comfy-Org/MiniMax-H3",
@@ -7492,6 +7462,36 @@
     "contentHash": "f1e63dd159add14564ae0660b1d4fac600bd2f2104fbfff7cc5b9239981b9e6c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-0QK4",
+    "timestamp": "2026-11-20T05:16:20.212Z",
+    "repository": "octodns/octodns",
+    "learningId": "learn-github-octodns-octodns",
+    "contentHash": "1eccfec56aa5efc13874ce94d66729b26f7feebd326cdbc58849cb98937432d9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-0UYW",
+    "timestamp": "2026-11-20T05:16:25.928Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "44ffd2ec9fdd630497d1ed6820e7b2233010b35f1c93e46d4742768c6a4279dc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

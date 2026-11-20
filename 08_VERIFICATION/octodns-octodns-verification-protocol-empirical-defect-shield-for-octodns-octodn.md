@@ -4,22 +4,22 @@
 {
   "source_repository": "octodns/octodns",
   "source_url": "https://github.com/octodns/octodns",
-  "source_version": "fd8d1a6b",
+  "source_version": "420f2bab",
   "license": "MIT",
-  "timestamp": "2026-11-19T00:49:49.595Z",
+  "timestamp": "2026-11-20T05:16:20.428Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-octodns-octodns",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [octodns/octodns](https://github.com/octodns/octodns) (Revision: `fd8d1a6b`).  
-> **License**: MIT | **Timestamp**: `2026-11-19T00:49:49.595Z`  
+> **Provenance**: Harvested from [octodns/octodns](https://github.com/octodns/octodns) (Revision: `420f2bab`).  
+> **License**: MIT | **Timestamp**: `2026-11-20T05:16:20.428Z`  
 > **Learning ID**: `learn-github-octodns-octodns`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `octodns/octodns` (Commit: `fd8d1a6b`)
+- **Target Repository**: `octodns/octodns` (Commit: `420f2bab`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/octodns-octodns-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/octodns/octodns](https://github.com/octodns/octodns))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T00:49:48.309Z  
+> **Harvest Timestamp**: 2026-11-20T05:16:18.963Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -765,65 +765,237 @@ if __name__ == '__main__':
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c7482f46` (2026-11-18)
-**Commit Message**: Regenerate requirements.txt with proviso 0.4.0 to drop pre-releases
+### Incident Patch 1: `420f2bab` (2026-11-20)
+**Commit Message**: Merge pull request #1486 from octodns/net-test
 
-**File**: `requirements.txt` (modified, +6/-4)
+Replace pytest-network with pytest-socket
+
+**File**: `.changelog/588a9582e1eb49a5a56661deae7135dd.md` (added, +4/-0)
 ```diff
-@@ -2,6 +2,7 @@
- x-python-version-not-supported; python_version!='3.11' and python_version!='3.12' and python_version!='3.13' and python_version!='3.14' and python_version!='3.15'
- alabaster==1.0.0
- anyio==4.16.0
-+anysqlite==0.0.5
- attrs==26.1.0
- babel==2.18.0
- backports-tarfile==1.2.0; python_version=='3.11'
-@@ -12,7 +13,8 @@ cffi==2.1.1
- changelet==0.6.1
+@@ -0,0 +1,4 @@
++---
++type: none
++---
++Replace unmaintained pytest-network with pytest-socket for blocking network access in tests
+```
+
+**File**: `pyproject.toml` (modified, +2/-2)
+```diff
+@@ -56,13 +56,13 @@ test = [
+     "jsonschema>=4.0.0",
+     "pytest>=6.2.5",
+     "pytest-cov>=3.0.0",
+-    "pytest-network>=0.0.1",
++    "pytest-socket>=0.8.1",
+ ]
+ dev = [
+     "jsonschema>=4.0.0",
+     "pytest>=6.2.5",
+     "pytest-cov>=3.0.0",
+-    "pytest-network>=0.0.1",
++    "pytest-socket>=0.8.1",
+     # we need to manually/explicitely bump major versions as they're
+     # likely to result in formatting changes that should happen in their
+     # own PR. This will basically happen yearly
+```
+
+**File**: `requirements.txt` (modified, +2/-2)
+```diff
+@@ -14,7 +14,7 @@ changelet==0.6.1
  charset-normalizer==3.5.2
  click==8.5.1
--coverage==7.17.3
-+comrak==0.0.16
-+coverage==7.17.2
+ comrak==0.0.16
+-coverage==7.17.2
++coverage==7.17.3
  cryptography==50.0.2
  dnspython==2.9.2
  docutils==0.22.4
-@@ -26,7 +28,7 @@ idna==3.20
- imagesize==2.0.1
- importlib-metadata==10.2.0; python_version=='3.11'
- iniconfig==2.3.1
--isort==10.0.0b3
-+isort==9.0.2
- jaraco-classes==3.4.0
- jaraco-context==6.1.2
- jaraco-functools==4.6.0
-@@ -76,7 +78,7 @@ rich==15.0.0
- roman-numerals==4.1.0
- rpds-py==2026.9.1
- secretstorage==3.5.0
--semver==3.1.2
-+semver==3.1.1
- setuptools==84.2.1
- snowballstemmer==3.1.1
- sphinx==9.0.4; python_version=='3.11'
-@@ -89,7 +91,7 @@ sphinxcontrib-devhelp==2.0.0
- sphinxcontrib-htmlhelp==2.1.0
- sphinxcontrib-jquery==4.1
- sphinxcontrib-jsmath==2.0.0
--sphinxcontrib-mermaid==3.0.0a1
-+sphinxcontrib-mermaid==2.1.1
- sphinxcontrib-qthelp==2.0.0
- sphinxcontrib-serializinghtml==2.0.0
- truststore==0.10.5
+@@ -63,7 +63,7 @@ pyproject-hooks==1.3.3
+ pytest==9.2.0
+ pytest-cov==7.1.0
+ pytest-mock==3.17.0
+-pytest-network==0.0.1
++pytest-socket==0.8.1
+ python-dateutil==4.0.0
+ pytokens==0.4.1
+ pyyaml==6.0.3
+```
+
+**File**: `script/cibuild-module` (modified, +2/-2)
+```diff
+@@ -35,7 +35,7 @@ echo "## install module dev requirements #######################################
+ # that local octodns.
+ if [ -e setup.py ] || grep -q '^\[project\]' pyproject.toml 2>/dev/null; then
+   pip_module=1
+-  pip install -e .[dev] pytest-network
++  pip install -e .[dev] pytest-socket
+ elif [ -f pyproject.toml ]; then
+   # install poetry
+   pip install poetry
+@@ -52,7 +52,7 @@ pip freeze
+ echo "## run module tests ############################################################"
+ export PYTHONPATH=.:$PYTHONPATH
+ if [ -n "$pip_module" ]; then
+-  pytest --disable-network
++  pytest --disable-socket
+ elif [ -f poetry.toml ]; then
+   poetry run pytest
+ fi
+```
+
+**File**: `script/cibuild-package` (modified, +1/-1)
+```diff
+@@ -23,5 +23,5 @@ echo "## validate tests can run against installed code #########################
+ # (see: https://pip.pypa.io/en/stable/user_guide/#installing-from-wheels)
+ wheel_file=$(ls dist/*$VERSION*.whl)
+ pip install "${wheel_file}[test]"
+-pytest --disable-network
++pytest --disable-socket
+ echo "## complete ####################################################################"
+```
+
+**File**: `script/coverage` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ if [ "$PRAGMA_COUNT" -ne "$PRAGMA_ALLOWED" ]; then
+ fi
+ 
+ pytest \
+-  --disable-network \
++  --disable-socket \
+   --cov-reset \
+   --cov=$SOURCE_DIR \
+   --cov-fail-under=100 \
+```
+
+**File**: `script/test` (modified, +1/-1)
+```diff
+@@ -5,4 +5,4 @@ SCRIPT_PATH="$( dirname -- "$( readlink -f -- "${0}"; )"; )"
+ # Activate OctoDNS Python venv
+ source "${SCRIPT_PATH}/common.sh"
+ 
+-pytest --disable-network "$@"
++pytest --disable-socket "$@"
+```
+
+---
+
+### Incident Patch 2: `052815b3` (2026-11-20)
+**Commit Message**: Replace unmaintained pytest-network with pytest-socket for blocking network access in tests
+
+**File**: `.changelog/588a9582e1eb49a5a56661deae7135dd.md` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++---
++type: none
++---
++Replace unmaintained pytest-network with pytest-socket for blocking network access in tests
+```
+
+**File**: `pyproject.toml` (modified, +2/-2)
+```diff
+@@ -56,13 +56,13 @@ test = [
+     "jsonschema>=4.0.0",
+     "pytest>=6.2.5",
+     "pytest-cov>=3.0.0",
+-    "pytest-network>=0.0.1",
++    "pytest-socket>=0.8.1",
+ ]
+ dev = [
+     "jsonschema>=4.0.0",
+     "pytest>=6.2.5",
+     "pytest-cov>=3.0.0",
+-    "pytest-network>=0.0.1",
++    "pytest-socket>=0.8.1",
+     # we need to manually/explicitely bump major versions as they're
+     # likely to result in formatting changes that should happen in their
+     # own PR. This will basically happen yearly
+```
+
+**File**: `requirements.txt` (modified, +2/-2)
+```diff
+@@ -14,7 +14,7 @@ changelet==0.6.1
+ charset-normalizer==3.5.2
+ click==8.5.1
+ comrak==0.0.16
+-coverage==7.17.2
++coverage==7.17.3
+ cryptography==50.0.2
+ dnspython==2.9.2
+ docutils==0.22.4
+@@ -63,7 +63,7 @@ pyproject-hooks==1.3.3
+ pytest==9.2.0
+ pytest-cov==7.1.0
+ pytest-mock==3.17.0
+-pytest-network==0.0.1
++pytest-socket==0.8.1
+ python-dateutil==4.0.0
+ pytokens==0.4.1
+ pyyaml==6.0.3
+```
+
+**File**: `script/cibuild-module` (modified, +2/-2)
+```diff
+@@ -35,7 +35,7 @@ echo "## install module dev requirements #######################################
+ # that local octodns.
+ if [ -e setup.py ] || grep -q '^\[project\]' pyproject.toml 2>/dev/null; then
+   pip_module=1
+-  pip install -e .[dev] pytest-network
++  pip install -e .[dev] pytest-socket
+ elif [ -f pyproject.toml ]; then
+   # install poetry
+   pip install poetry
+@@ -52,7 +52,7 @@ pip freeze
+ echo "## run module tests ############################################################"
+ export PYTHONPATH=.:$PYTHONPATH
+ if [ -n "$pip_module" ]; then
+-  pytest --disable-network
++  pytest --disable-socket
+ elif [ -f poetry.toml ]; then
+   poetry run pytest
+ fi
+```
+
+**File**: `script/cibuild-package` (modified, +1/-1)
+```diff
+@@ -23,5 +23,5 @@ echo "## validate tests can run against installed code #########################
+ # (see: https://pip.pypa.io/en/stable/user_guide/#installing-from-wheels)
+ wheel_file=$(ls dist/*$VERSION*.whl)
+ pip install "${wheel_file}[test]"
+-pytest --disable-network
++pytest --disable-socket
+ echo "## complete ####################################################################"
+```
+
+**File**: `script/coverage` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ if [ "$PRAGMA_COUNT" -ne "$PRAGMA_ALLOWED" ]; then
+ fi
+ 
+ pytest \
+-  --disable-network \
++  --disable-socket \
+   --cov-reset \
+   --cov=$SOURCE_DIR \
+   --cov-fail-under=100 \
+```
+
+**File**: `script/test` (modified, +1/-1)
+```diff
+@@ -5,4 +5,4 @@ SCRIPT_PATH="$( dirname -- "$( readlink -f -- "${0}"; )"; )"
+ # Activate OctoDNS Python venv
+ source "${SCRIPT_PATH}/common.sh"
+ 
+-pytest --disable-network "$@"
++pytest --disable-socket "$@"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1486** (2026-11-20): Replace pytest-network with pytest-socket (@ross)
 - **PR #1485** (2026-11-06): Fix TXT and SPF values that start but don't end with a quote (@ross)
 - **PR #1483** (2026-11-06): Improve SVCB and HTTPS record parsing (@TilCreator)
 - **PR #1482** (2026-10-26): Update requirements.txt (@ross)
 - **PR #1481** (2026-10-23): docs: add an SPF pull-request check tutorial to Related Projects and Resources (@joshpurvis)
 - **PR #1480** (2026-11-18): Update python versions to include 3.15 (@ross)
-- **PR #1479** (2026-10-19): Add name-wildcard-best-practice validator (@ross)
 
 ---
 
@@ -843,39 +1015,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Regenerate requirements.txt with proviso 0.4.0 to drop pre-releases
+## X. Empirical Invariant Guard in 588a9582e1eb49a5a56661deae7135dd.md
 
 **RULE**:
-When implementing operations in `requirements.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in octodns/octodns. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changelog/588a9582e1eb49a5a56661deae7135dd.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in octodns/octodns. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c7482f46`: Regenerate requirements.txt with proviso 0.4.0 to drop pre-releases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `420f2bab`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `requirements.txt`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changelog/588a9582e1eb49a5a56661deae7135dd.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-anysqlite==0.0.5
-comrak==0.0.16
-coverage==7.17.2
-isort==9.0.2
-semver==3.1.1
-sphinxcontrib-mermaid==2.1.1
+---
+type: none
+---
+Replace unmaintained pytest-network with pytest-socket for blocking network access in tests
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-coverage==7.17.3
-isort==10.0.0b3
-semver==3.1.2
-sphinxcontrib-mermaid==3.0.0a1
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c7482f46` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `420f2bab` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

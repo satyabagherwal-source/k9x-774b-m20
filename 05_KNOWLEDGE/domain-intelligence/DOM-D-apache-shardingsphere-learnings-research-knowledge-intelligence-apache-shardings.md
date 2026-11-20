@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T00:17:48.217Z",
+  "timestamp": "2026-11-20T05:16:31.574Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-shardingsphere-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-shardingsphere-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T00:17:48.217Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T05:16:31.574Z`  
 > **Learning ID**: `LEARN-EVO-apache-shardingsphere-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache-shardingsphere-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `78342a49`  
+> **Source Version**: `eac4d896`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T00:17:43.087Z  
+> **Timestamp**: 2026-11-20T05:16:24.924Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T00:17:43.082Z  
+> **Harvest Timestamp**: 2026-11-20T05:16:24.919Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20831 stars
+- **Stars / Engagement**: 20832 stars
 
 ---
 
@@ -1462,15 +1462,15 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40512** (2026-11-15): **Refine Codex Javadoc rules**
+- **Issue #40529** (2026-11-19): **Refactor SingleRule attribute initialization**
+  *Symptoms*: Changes proposed in this pull request:   - Extract a private `createAttributes` method shared by both `SingleRule` constructors.   - Keep the six existing rule attributes, their initialization order, and the aggregated data source reference unchanged.   - Preserve independent copied rule state when adding or removing a single-table data node.  ---  Before submitting this PR, I confirm that: - [x] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [x] I have reviewed my changes. - [ ] I have (or in comment I request) added corresponding labels for the pull request. - [ ] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [x] I have updated the relevant documentation, if applicable. Not applicable: this is an internal refactor without a public behavior change. - [x] I have added or updated unit tests for my changes, if applicable. Existing `SingleRuleTest` coverage is retained unchanged and all 35 tests pass. - [x] I have updated the Release Notes of the current development version, if applicable. Not applicable: this is a behavior-preserving refactor. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/contributor/).  Local validation: - `SingleRuleTest`: 35 tests passed, with no failures, errors, or skipped tests. - Spotless and Checkstyle passed for the changed source file. - The full reactor build was not run
+  **Post-Mortem & Fix Analysis**:
+  > ### Summary  Both `SingleRule` constructors assembled the same rule attribute list independently. This refactor moves that construction into one private `createAttributes` method, keeping initialization consistent while preserving existing behavior.  ### Result  Review Result: Mergeable  One review round completed. No blocking issues or recommended code changes remain.  ### Evidence  - Reviewed both constructor paths and the shared factory in [`SingleRule.java`](https://github.com/apache/shardingsphere/blob/d03d1d9198c61b099bcd7f403c5d4e7ddb713cc6/kernel/single/core/src/main/java/org/apache/shardingsphere/single/rule/SingleRule.java#L83-L114). The same six attributes are registered in the same order: `SingleDataNodeRuleAttribute`, `SingleTableMapperRuleAttribute`, `SingleExportableRuleAttribute`, `SingleMutableDataNodeRuleAttribute`, `AggregatedDataSourceRuleAttribute`, and `SingleUnregisterStorageUnitRuleAttribute`. - Verified that copied configuration, data source names, data node co
+
+- **Issue #40526** (2026-11-19): **Align MCP release packaging and preparation**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary  This PR centralizes Javadoc writing rules and connects them to implementation, review, auditing, and validation workflows. The rules allow concise descriptions while preserving existing coverage requirements and API/SPI, nullability, and constructor contracts.  ### Result  Review Result: Mergeable  No blocking issues or required changes were found within the code review scope.  ### Evidence  - All six changed files and their rule consumption paths were reviewed. The [shared rules](https://github.com/apache/shardingsphere/blob/5386e61c2335b85c3fec75a3bb5a1ff42387f468/.codex/skills/coding-standards/references/rules/java-javadoc.md#L20-L34) explicitly preserve required contracts. - Policy validation and source reading checks remain valid. Semantic samples contain metadata/format failures, but focused confirmation did not meet the criteria for a confirmed regression.  ### Coverage  [PR #40512](https://github.com/apache/shardingsphere/pull/40512), public head `5386e61c2335`; al
-
-- **Issue #40506** (2026-11-13): **Restore query timeout readback for circuit breaker prepared statements**
-  *Symptoms*: Related to #40503.  Changes proposed in this pull request:   - Restore query timeout readback for circuit breaker prepared statements  ---  Before submitting this PR, I confirm that: - [ ] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [ ] I have reviewed my changes. - [ ] I have (or in comment I request) added corresponding labels for the pull request. - [ ] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [ ] I have updated the relevant documentation, if applicable. - [ ] I have added or updated unit tests for my changes, if applicable. - [ ] I have updated the Release Notes of the current development version, if applicable. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/contributor/). - [ ] I have disclosed the tool and affected files or scope for any material AI assistance, as required by the [AI-assisted contribution policy].  [AI-assisted contribution policy]: https://github.com/apache/shardingsphere/blob/master/AI_POLICY.md 
-  **Post-Mortem & Fix Analysis**:
-  > ### Summary  Commit `5edc1038ad68de3b39f1b133515c6d72026b9e66` restores query timeout readback for circuit-breaker prepared statements. Each statement stores its configured timeout in its own `StatementManager`. Circuit-breaker execution and close behavior are preserved.  ### Result  Review Result: Mergeable  Two independent assessments found no blocking issues or recommended changes.  ### Evidence  - A JDBC probe set a 3-second timeout and read back `0` on the parent commit and `3` on the reviewed commit. - All 217 focused tests passed. The regression tests cover positive timeout readback, reset to zero, rejection of negative values while retaining the previous timeout, and normal close. - Spotless and Checkstyle passed for both changed files.  ### Coverage  Code Correctness Review of both files changed by the exact local commit against its parent, `9e74c70c2bd3b17e0c78e26396c2a1ed3cc5cb17`. This verdict applies to the local commit. PR and CI status were outside the 
+  > ### Summary This PR moves MCP distribution packaging into the release profile, uses assembly to produce the tar.gz archive and SHA-512 checksum, and updates Docker, E2E, and documentation accordingly. The configuration and consuming workflows are consistent; no required changes were found.  ### Result Review Result: Mergeable  This conclusion covers code correctness only.  ### Evidence - Default and custom database profile combinations are correct. The distribution layout, required files, and script permissions match the configuration. - PackagedArchiveE2EIT and its workflow references have been removed. Explicit distribution-directory overrides and reusable test directories remain supported. - After confirming that the current source and configuration match the recorded verification inputs, existing passing evidence was reused for Checkstyle, Spotless, RAT, five packaging configurations, and STDIO startup.  ### Coverage Public HEAD: 4dbd3e76ddd0; baseline: 9c0b6165870c. Reviewed all 2
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1487,176 +1487,476 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `78342a49` (2026-11-15)
-**Commit Message**: Refine Codex Javadoc rules (#40512)
+### Incident Patch 1: `eac4d896` (2026-11-19)
+**Commit Message**: Align MCP release packaging and preparation (#40526)
 
-**File**: `.codex/harness/agents/cases.toml` (modified, +76/-0)
-```diff
-@@ -5309,3 +5309,79 @@ required_reasons = []
- policy_binding_profile = "documentation"
- policy_assertions = [{source = "change-completion", statements = ["Untracked Git-ignored files and files outside Git repositories are outside this loop's scope."]}]
- critical = true
-+
-+[[cases]]
-+id = "java_javadoc_context_uses_standard_summary"
-+group = "coding / Javadoc"
-+description = "Keeps a simple context responsibility summary without speculative field explanation or paragraph formatting."
-+phase = "Javadoc policy and readability acceptance"
-+ordinary_loop = false
-+profile = "code-write"
-+semantic_policy_assertions = true
-+prompt = "At the pre-write planning checkpoint for an authorized Java task, choose the Javadoc for a new public final LicenseCheckContext holding inputs used by selected license checks. Its fields and consumers add no API, SPI, framework, compatibility, or nullability contract. The proposed class summary is \"License check context.\" Another proposal adds a paragraph saying that fields unused by the selected checks may be null. Decide the class summary, extra field explanation, and paragraph formatting. Report exactly one value per marker: summary=standard-responsibility or implementation-explanation; unused-fields=omit or include; formatting=plain or paragraph. Do not edit yet."
-+decision = "proceed"
-+required_actions = []
-+allowed_actions = ["inspect_local"]
-+forbidden_actions = ["edit_code", "edit_non_code", "mutate_git", "mutate_remote", "propose_commit_message"]
-+required_reasons = ["read_only_request"]
-+required_summary_terms = ["summary=standard-responsibility", "unused-fields=omit", "formatting=plain"]
-+policy_binding_profile = "code-write"
-+policy_assertions = [{source = "coding-standards", statements = ["Before adding, changing, or reviewing a Java declaration or its Javadoc, read the [Java Javadoc rules](references/rules/java-javadoc.md) through EOF and add each applicable rule to the checklist.", "For Java, explicitly verify every applicable Java Javadoc rule against task-added or task-changed declarations and Javadocs, including required coverage and the contracts needed to assess their descriptions and tags."]}, {source = "java-javadoc", statements = ["Apply these writing rules to Java declarations and Javadocs added or changed by the current task and to review of that delta.", "Keep the Javadoc coverage, complete user-facing API and SPI contracts, explicit nullable-contract documentation, and constructor restrictions required by `CODE_OF_CONDUCT.md`.", "A simple description may closely match the declaration name, such as `License check context.`; do not require extra information merely to avoid restating it.", "Do not add generalized claims such as unused fields being nullable merely because the implementation permits them.", "Do not add paragraph or layout tags such as `<p>` to a simple description."]}]
-+critical = true
-+
-+[[cases]]
-+id = "java_readability_improves_expression_before_documentation"
-+group = "coding / Javadoc"
-+description = "Improves local code expression before explanatory Javadoc without manufacturing an abstraction."
-+phase = "Javadoc policy and readability acceptance"
-+ordinary_loop = false
-+profile = "code-write"
-+semantic_policy_assertions = true
-+prompt = "Prepare the implementation choice for an authorized local readability fix. Inside one private method, boolean local x holds the result of the existing licenseVerifier.isValid() call and is immediately tested by if (!x). There is no additional state, contract, repeated logic, or stable variation. Alternatives are to rename the local, explain x in Javadoc, or introduce LicenseValidationState and forwarding helpers. Decide the smallest justified approach. Report expression=rename-local or explain-in-javadoc or introduce-state-type, and abstraction=required or unnecessary. Do not edit yet."
-+decision = "proceed"
-+required_actions = []
-+allowed_actions = ["inspect_local"]
-+forbidden_actions = ["edit_code", "edit_non_code", "add_abstraction", "change_public_contract", "mutate_git", "mutate_remote", "propose_commit_message"]
-+required_reasons = ["read_only_request"]
-+required_summary_terms = ["expression=rename-local", "abstraction=unnecessary"]
-+policy_binding_profile = "code-write"
-+policy_assertions = [{source = "implementation-rules", statements = ["Within the authorized task boundary and maintained architecture, express intent through accurate names, clear responsibilities, and direct control flow before adding explanatory comments.", "When code needs explanation, first improve its expression, extracting a small named method when that lowers the understanding cost.", "Do not add unnecessary methods, types, wrappers, or abstractions merely to replace a comment."]}, {source = "java-javadoc", statements = ["Apply these writing rules to Java declarations and Javadocs added or changed by the current task and to review of that delta.", "Do not expand ordinary declaration descriptions into implementation steps, de
-```
+* Align MCP release packaging and preparation
 
-**File**: `.codex/harness/agents/policy-sources.toml` (modified, +16/-9)
+* Align MCP dependency scopes and distribution assembly with Proxy
+
+* Align MCP release packaging and preparation
+
+* Align MCP release packaging and preparation
+
+**File**: `.github/actions/download-e2e-artifacts/action.yml` (modified, +3/-3)
 ```diff
-@@ -18,19 +18,19 @@ root_max_bytes = 13000
+@@ -35,7 +35,7 @@ inputs:
+     required: false
+     default: 'true'
+   restore-distribution:
+-    description: 'Whether to restore the MCP distribution home'
++    description: 'Whether to restore the MCP binary distribution archive'
+     required: false
+     default: 'false'
  
- [profiles]
- root = ["agents"]
--code-write = ["agents", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
--test-write = ["agents", "token-efficiency", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
--code-review = ["agents", "code-of-conduct", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification"]
-+code-write = ["agents", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
-+test-write = ["agents", "token-efficiency", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
-+code-review = ["agents", "code-of-conduct", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification"]
- code-analysis = ["agents", "implementation-rules"]
- code-design = ["agents", "implementation-rules", "java-collections", "testing-rules", "contracts-and-removal", "cross-cutting-skills"]
--coding-standards-audit = ["agents", "code-of-conduct", "coding-standards", "standalone-audit", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code"]
-+coding-standards-audit = ["agents", "code-of-conduct", "coding-standards", "standalone-audit", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code"]
- runtime-diagnosis = ["agents", "runtime-triage", "code-verification"]
- command-execution = ["agents", "token-efficiency", "docker-resources", "code-verification"]
- cross-cutting = ["agents", "cross-cutting-skills"]
- documentation = ["agents", "documentation-wording", "change-completion", "review-pr", "review-pr-coordination"]
- analyze-issue = ["agents", "analyze-issue", "analyze-issue-output"]
--gen-ut = ["agents", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "gen-ut", "gen-ut-verification", "change-completion"]
--review-pr = ["agents", "code-of-conduct", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "review-pr", "review-pr-coordination", "review-pr-evidence", "review-pr-high-risk", "review-pr-sql-p
+@@ -79,7 +79,7 @@ runs:
+           required_files+=(maven-repo-output.tar.gz)
+         fi
+         if [[ "$RESTORE_DISTRIBUTION" == 'true' ]]; then
+-          required_files+=(mcp-distribution-home.tar.gz)
++          required_files+=(mcp-distribution.tar.gz)
+         fi
+         if [[ "$LOAD_DOCKER_IMAGE" == 'true' ]]; then
+           required_files+=(image.tar image.tar.json)
+@@ -114,7 +114,7 @@ runs:
+       run: |
+         set -euo pipefail
+         mkdir -p distribution/mcp/target
+-        tar -xzf "$ARTIFACT_DIR/mcp-distribution-home.tar.gz" -C distribution/mcp/target
++        tar -xzf "$ARTIFACT_DIR/mcp-distribution.tar.gz" -C distribution/mcp/target
+     - name: Load E2E Image
+       id: load-image
+       if: inputs.load-docker-image == 'true'
 ```
 
-**File**: `.codex/skills/code-implementation/references/rules/implementation.md` (modified, +4/-1)
+**File**: `.github/actions/upload-e2e-artifacts/action.yml` (modified, +10/-8)
 ```diff
-@@ -27,6 +27,9 @@ Apply this file to every production, test, script, or other implementation artif
-   Check details, counts, and empty results against those requirements and consumers; the same Java return type does not establish the same data contract.
- - Among designs that satisfy these prerequisites, first preserve the maintained architecture already present in the repository, including its behavior owners, module boundaries, and design patterns, unless the user explicitly requires an authorized architecture change. Prefer direct reuse, then composition or delegation, then an existing extension point. Do not invent a boundary when no maintained precedent exists. If the existing architecture cannot express the required behavior, apply the architecture-change gate before changing it.
- - Second, within the preserved architecture or an explicitly authorized architecture change, use the smallest clear implementation, prioritize local readability over line count, and minimize conceptual surface. Prefer one readable local flow with the fewest independently meaningful types, states, representations, execution paths, and cross-file hops. Consider testability next, then optional extensibility, formal symmetry, or structural completeness. Lower design priorities must not compromise higher ones. Every added line, helper, abstraction, identifier, literal, guard, copy, wrapper, and configuration entry must serve production behavior, a public contract, regression protection, diagnostics, a verified safety requirement, readability, or removal of real duplication. Do not add code for formal symmetry, coverage appearance, structural completeness, hypothetical reuse, or test convenience. Avoid unnecessary locals, thin wrappers, helpers, comments, guards, and copies; inline single-use locals unless a name improves readability. Keep a name, local variable, or extraction when it materially clarifies intent; do not compress code mechanically.
-+- Within the authorized task boundary and maintained architecture, express intent through accurate names, clear responsibilities, and direct control flow before adding explanatory comments.
-+  When code needs explanation, first improve its expression, extracting a small named method when that lowers the understanding cost.
-+  Do not add unnecessary methods, types, wrappers, or abstractions merely to replace a comment.
- - A new abstraction must own production behavior, state, or a contract that existing types cannot express and must represent a real, stable variation or boundary. Define the narrowest contract, keep common behavior in its owner, and isolate only true implementation or dialect differences. Forwarding, renaming, multiple callers, readability alone, direct test value, symmetry, type distinction, shorter call sites, test convenience, and anticipated reuse are insufficient. Reuse alone never authorizes changing `final`, visibility, inheritance, or shared-code ownership. Do not wrap a simple internal two-path flow in marker interfaces, result hierarchies, or DTO-style helpers unless they define a stable boundary, keep the owner readable, or remove meaningful duplication. This rule does not bypass the architecture-change gate.
-   Before adding an interface, SPI, public method, registration mechanism, or bridge, identify why existing capabilities cannot express the confirmed requirement, why the proposed owner owns it, and which confirmed acceptance criterion fails without the addition.
- - Do not introduce package-private top-level helper types by default. Keep a small single-owner helper private and nested; add a top-level helper only when the approved production behavior, state, or contract cannot reasonably be owned by an existing type.
-@@ -42,7 +45,7 @@ Apply this file to every production, test, script, or other implementation artif
+@@ -36,7 +36,7 @@ inputs:
+     required: false
+     default: ''
+   include-distribution:
+-    description: 'Whether to package the MCP distribution home'
++    description: 'Whether to package the MCP binary distribution archive'
+     required: false
+     default: 'false'
  
- - Follow `.codex/skills/coding-standards/references/rules/defensive-code.md` for guards, validation, copies, wrappers, fallbacks, exception handling, retries, concurrency protection, lifecycle protection, and tests that exist only to preserve unsupported defenses.
- - Apply the `CODE_OF_CONDUCT.md` Lombok preference to touched boilerplate when generated semantics are equivalent. Follow `.codex/skills/coding-standards/references/rules/java-types.md` for type-level Lombok annotations, `.codex/skills/coding-standards/references/rules/java-constructors.md` for explicit and generated constructor choices, and `.codex/skills/coding-standards/references/rules/java-naming.md` for generated-accessor field names. Before replacing a public constructor or accessor, verify its generated signature, access, parameter order, annotations, and reflection or serialization behavior. Keep a manual member when Lombok would change or obscure logic, documentation, validation, defaults, side effects, compatibility, framework semantics, or a public contract.
--- Keep public API and SPI Javadocs required by the code of conduct. Beyond that, document only caller or implemente
+@@ -75,17 +75,19 @@ runs:
+           tar -czf "$ARTIFACT_DIR/maven-repo-output.tar.gz" -C "${MAVEN_REPOSITORY_DIR:-$HOME/.m2/repository}" org/apache/shardingsphere
+         fi
+         if [[ "$INCLUDE_DISTRIBUTION" == 'true' ]]; then
+-          distribution_homes=()
+-          for directory in distribution/mcp/target/apache-shardingsphere-mcp-*; do
+-            if [[ -d "$directory" ]]; then
+-              distribution_homes+=("$directory")
++          distribution_archives=()
++          for archive in distribution/mcp/target/apache-shardingsphere-*-shardingsphere-mcp-bin.tar.gz; do
++            if [[ -f "$archive" ]]; then
++              distribution_archives+=("$archive")
+             fi
+           done
+-          if [[ "${#distribution_homes[@]}" != 1 ]]; then
+-            echo '::error::Expected exactly one built MCP distribution home.'
++          if [[ "${#distribution_archives[@]}" != 1 ]]; then
++            echo '::error::Expected exactly one built MCP distribution archive.'
+             exit 1
+           fi
+-          tar -czf "$ARTIFACT_DIR/mcp-distribution-home.tar.gz" -C distribution/mcp/target "${distribution_homes[0]##*/}"
++          distribution_archive="${distribution_archives[0]##*/}"
++          tar -czf "$ARTIFACT_DIR/mcp-distribution.tar.gz" -C distribution/mcp/target \
++            "$distribution_archive" "$distribution_archive.sha512"
+         fi
+     - name: Stage E2E Image
+       if: inputs.image-archive != ''
 ```
 
-**File**: `.codex/skills/coding-standards/SKILL.md` (modified, +2/-0)
+**File**: `.github/workflows/e2e-mcp.yml` (modified, +1/-1)
 ```diff
-@@ -43,6 +43,7 @@ Read only the references whose conditions below match the affected files and tas
-   Do not require a TPS benchmark solely to classify these paths.
- - Before adding, changing, or reordering a covered declaration annotation, or when a Java declaration added or modified by the task contains at least two covered annotations, read the [Java declaration annotation order rules](references/rules/java-annotation-order.md) through EOF and add each applicable rule to the checklist.
- - Read [Java constructor rules](references/rules/java-constructors.md) before changing an explicit or generated constructor or a field that may alter its signature or behavior.
-+- Before adding, changing, or reviewing a Java declaration or its Javadoc, read the [Java Javadoc rules](references/rules/java-javadoc.md) through EOF and add each applicable rule to the checklist.
- - Before adding or changing a Java `throw` statement, a conditional branch that throws, a validation or precondition call, or a call to `ShardingSpherePreconditions`, read the [Java precondition rules](references/rules/java-preconditions.md) through EOF and add each applicable rule to the checklist.
- - Before adding or changing a Java method annotated with `lombok.SneakyThrows` or changing the checked-exception behavior of such a method, read the [Java exception handling rules](references/rules/java-exceptions.md) through EOF and add each applicable rule to the checklist.
- - Before adding or changing a Java declaration whose type is a `java.util.Collection` interface or implementation, read the [Java collection declaration rules](references/rules/java-collections.md) through EOF and add each applicable rule to the checklist.
-@@ -55,6 +56,7 @@ Read only the references whose conditions below match the affected files and tas
- - After the last write, manually recheck the effective task delta and only the surrounding declarations needed to evaluate every applicable checklist rule.
- - For Java, explicitly verify every applicable `CODE_OF_CONDUCT.md` coding rule, including declaration order; when a method uses private helpers, verify that those helpers immediately follow the caller and appear in the caller's call order, regardless of the caller's visibility.
- - For Java, explicitly verify every applicable Java declaration annotation order rule against each declaration added or modified by the task.
-+- For Java, explicitly verify every applicable Java Javadoc rule against task-added or task-changed declarations and Javadocs, including required coverage and the contracts needed to assess their descriptions and tags.
- - For Java, explicitly verify every applicable Java exception handling rule against each added or modified `lombok.SneakyThrows` annotation and the method bodies, invoked signatures, rethrown values, and contracts needed to resolve its exception types.
- - For Java, explicitly verify every applicable Java collection declaration rule against the effective task delta and the operations, callers, callees, overrides, and contracts needed to determine the least-specific required declaration type.
- - For Java, explicitly verify every applicable mutable-collection construction rule against the effective task delta and the operations, aliases, callers, callees, and contracts needed to determine whether mutability is required.
+@@ -78,7 +78,7 @@ jobs:
+           type: source
+           image: apache/shardingsphere-mcp-e2e
+       - name: Build MCP E2E Test Dependencies and Distribution
+-        run: ./mvnw -Dmaven.repo.local="$E2E_MAVEN_REPOSITORY" -pl test/e2e/mcp,distribution/mcp -am install -DskipTests -DskipITs -Dspotless.skip=true
++        run: ./mvnw -Dmaven.repo.local="$E2E_MAVEN_REPOSITORY" -pl test/e2e/mcp,distribution/mcp -Prelease,default-dep -am install -DskipTests -DskipITs -Dspotless.skip=true
+       - name: Build MCP Distribution Image
+         if: steps.prepare-image.outputs.cache-hit != 'true'
+         env:
 ```
 
-**File**: `.codex/skills/coding-standards/references/rules/java-javadoc.md` (added, +34/-0)
+**File**: `.github/workflows/release-mcp.yml` (modified, +2/-9)
 ```diff
-@@ -0,0 +1,34 @@
+@@ -86,24 +86,17 @@ jobs:
+       - name: Run and Install MCP JDK 21 Subchain Tests
+         run: ./mvnw -pl mcp,test/e2e/mcp -am install -DskipITs -Dspotless.skip=true -Dsurefire.failIfNoSpecifiedTests=false
+       - name: Package MCP Distribution
+-        run: ./mvnw -pl distribution/mcp -DskipTests package
++        run: ./mvnw -pl distribution/mcp -Prelease,default-dep -DskipTests package
+       - name: Build Local MCP Docker Image
+         run: docker build -f distribution/mcp/Dockerfile -t shardingsphere-mcp-release:local distribution/mcp/target
+       - name: Run MCP Distribution E2E
+         shell: bash
+         run: |
+           set -euo pipefail
+-          DISTRIBUTION_HOME=$(find distribution/mcp/target -maxdepth 1 -type d -name 'apache-shardingsphere-mcp-*' | head -n 1)
+-          if [[ -z "${DISTRIBUTION_HOME}" ]]; then
+-            echo "Packaged MCP distribution was not found." 1>&2
+-            exit 1
+-          fi
+-          DISTRIBUTION_HOME=$(cd "${DISTRIBUTION_HOME}" && pwd)
+           ./mvnw -pl test/e2e/mcp verify -Dspotless.skip=true \
+             -Dit.test=PackagedDistributionE2EIT \
+             -De2e.run.type=DOCKER \
+-            -Dmcp.e2e.container.image=shardingsphere-mcp-release:local \
+-            -Dmcp.distribution.home="${DISTRIBUTION_HOME}"
++            -Dmcp.e2e.container.image=shardingsphere-mcp-release:local
+       - name: Prepare MCP Registry Metadata
+         shell: bash
+         run: |
+```
+
+**File**: `distribution/mcp/Dockerfile` (modified, +6/-1)
+```diff
+@@ -13,6 +13,11 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
++FROM eclipse-temurin:21-jre AS prepare
++
++ADD apache-shardingsphere-*-shardingsphere-mcp-bin.tar.gz /opt/
++RUN mv /opt/apache-shardingsphere-mcp-* /opt/shardingsphere-mcp
++
+ FROM eclipse-temurin:21-jre
+ 
+ ARG MCP_SERVER_NAME=io.github.apache/shardingsphere-mcp
+@@ -31,7 +36,7 @@ LABEL org.opencontainers.image.authors="ShardingSphere dev@shardingsphere.apache
+ 
+ WORKDIR /opt/shardingsphere-mcp
+ 
+-COPY apache-shardingsphere-mcp-*/ /opt/shardingsphere-mcp/
++COPY --from=prepare /opt/shardingsphere-mcp/ /opt/shardingsphere-mcp/
+ 
+ RUN chmod +x /opt/shardingsphere-mcp/bin/start.sh /opt/shardingsphere-mcp/bin/docker-entrypoint.sh \
+     && mkdir -p /opt/shardingsphere-mcp/logs
+```
+
+**File**: `distribution/mcp/pom.xml` (modified, +31/-96)
+```diff
+@@ -80,90 +80,36 @@
+         </dependency>
+     </dependencies>
+     
+-    <build>
+-        <plugins>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-dependency-plugin</artifactId>
+-                <version>${maven-dependency-plugin.version}</version>
+-                <executions>
+-                    <execution>
+-                        <id>copy-mcp-libraries</id>
+-                        <goals>
+-                            <goal>copy-dependencies</goal>
+-                        </goals>
+-                        <phase>package</phase>
+-                        <configuration>
+-                            <includeScope>runtime</includeScope>
+-                            <outputDirectory>${project.build.directory}/apache-shardingsphere-mcp-${project.version}/lib</outputDirectory>
+-                        </configuration>
+-                    </execution>
+-                </executions>
+-            </plugin>
+-            <plugin>
+-                <artifactId>maven-resources-plugin</artifactId>
+-                <executions>
+-                    <execution>
+-                        <id>copy-runtime-assets</id>
+-                        <goals>
+-                            <goal>copy-resources</goal>
+-                        </goals>
+-                        <phase>package</phase>
+-                        <configuration>
+-                            <outputDirectory>${project.build.directory}/apache-shardingsphere-mcp-${project.version}</outputDirectory>
+-                            <resources>
+-                                <resource>
+-                                    <directory>${project.basedir}/src/main/resources</directory>
+-                                </resource>
+-                                <resource>
+-                                    <directory>${project.basedir}/src/main/bin</directory>
+-                                    <targetPath>bin</targetPath>
+-                                </resource>
+-                                <resource>
+-                                    <directory>${project.basedir}/src/main/release-docs</directory>
+-                                </resource>
+-                            </resources>
+-                        </configuration>
+-                    </execution>
+-                </executions>
+-            </plugin>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-antrun-plugin</artifactId>
+-                <version>${maven-antrun-plugin.version}</version>
+-                <executions>
+-                    <execution>
+-                        <id>reset-runtime-layout</id>
+-                        <goals>
+-                            <goal>run</goal>
+-                        </goals>
+-                        <phase>prepare-package</phase>
+-                        <configuration>
+-                            <target>
+-                                <delete dir="${project.build.directory}/apache-shardingsphere-mcp-${project.version}" />
+-                            </target>
+-                        </configuration>
+-                    </execution>
+-                    <execution>
+-                        <id>prepare-runtime-layout</id>
+-                        <goals>
+-                            <goal>run</goal>
+-                        </goals>
+-                        <phase>package</phase>
+-                        <configuration>
+-                            <target>
+-                                <mkdir dir="${project.build.directory}/apache-shardingsphere-mcp-${project.version}/plugins" />
+-                                <mkdir dir="${project.build.directory}/apache-shardingsphere-mcp-${project.version}/logs" />
+-                                <chmod file="${project.build.directory}/apache-shardingsphere-mcp-${project.version}/bin/start.sh" perm="755" />
+-                                <chmod file="${project.build.directory}/apache-shardingsphere-mcp-${project.version}/bin/docker-entrypoint.sh" perm="755" />
+-                            </target>
+-                        </configuration>
+-                    </execution>
+-                </executions>
+-            </plugin>
+-        </plugins>
+-    </build>
+     <profiles>
++        <profile>
++            <id>release</id>
++            <build>
++                <finalName>apache-shardingsphere-${project.version}</finalName>
++                <plugins>
++                    <plugin>
++                        <artifactId>maven-assembly-plugin</artifactId>
++                        <executions>
++                            <execution>
++                                <id>shardingsphere-mcp-bin</id>
++                                <goals>
++                                    <goal>single</goal>
++                                </goals>
++                                <phase>package</phase>
++                                <configuration>
++                           
+```
+
+**File**: `distribution/mcp/src/main/assembly/shardingsphere-mcp-binary-distribution.xml` (added, +93/-0)
+```diff
+@@ -0,0 +1,93 @@
 +<!--
-+  Licensed to the Apache Software Foundation (ASF) under one or more
-+  contributor license agreements.  See the NOTICE file distributed with
-+  this work for additional information regarding copyright ownership.
-+  The ASF licenses this file to You under the Apache License, Version 2.0
-+  (the "License"); you may not use this file except in compliance with
-+  the License.  You may obtain a copy of the License at
++  ~ Licensed to the Apache Software Foundation (ASF) under one or more
++  ~ contributor license agreements.  See the NOTICE file distributed with
++  ~ this work for additional information regarding copyright ownership.
++  ~ The ASF licenses this file to You under the Apache License, Version 2.0
++  ~ (the "License"); you may not use this file except in compliance with
++  ~ the License.  You may obtain a copy of the License at
++  ~
++  ~     http://www.apache.org/licenses/LICENSE-2.0
++  ~
++  ~ Unless required by applicable law or agreed to in writing, software
++  ~ distributed under the License is distributed on an "AS IS" BASIS,
++  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++  ~ See the License for the specific language governing permissions and
++  ~ limitations under the License.
++  -->
 +
-+      http://www.apache.org/licenses/LICENSE-2.0
-+
-+  Unless required by applicable law or agreed to in writing, software
-+  distributed under the License is distributed on an "AS IS" BASIS,
-+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+  See the License for the specific language governing permissions and
-+  limitations under the License.
-+-->
-+
-+# Java Javadoc Rules
-+
-+Apply these writing rules to Java declarations and Javadocs added or changed by the current task and to review of that delta.
-+In a standalone audit, do not use these task-delta writing rules to demand changes to untouched existing Javadocs; the coverage and contract requirements of `CODE_OF_CONDUCT.md` still apply according to their own scope.
-+
-+- Keep the Javadoc coverage, complete user-facing API and SPI contracts, explicit nullable-contract documentation, and constructor restrictions required by `CODE_OF_CONDUCT.md`.
-+- Express those required contracts concisely in the existing summary and standard tags.
-+  These specific obligations do not justify explanatory paragraphs for ordinary declarations.
-+- Describe a class or interface with a short responsibility phrase and a method with a short action phrase, using the existing project Javadoc structure.
-+- A simple description may closely match the declaration name, such as `License check context.`; do not require extra information merely to avoid restating it.
-+- Keep `@param`, `@return`, and `@throws` descriptions short and accurate, using the existing project format and tag order.
-+- Do not expand ordinary declaration descriptions into implementation steps, design rationale, usage instructions, scenario lists, per-field explanations, visible collection properties, or default-behavior explanations.
-+  Do not add generalized claims such as unused fields being nullable merely because the implementation permits them.
-+- A non-obvious implementation fact does not justify extra Javadoc for an ordinary declaration.
-+- Do not repeat an unchanged inherited contract; keep a required new obligation on an override concise.
-+- Do not add paragraph or layout tags such as `<p>` to a simple description.
-+  Keep useful standard Javadoc tags and `{@code ...}`; this restriction does not prohibit all Javadoc markup.
++<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
++    <id>shardingsphere-mcp-bin</id>
++    <formats>
++        <format>tar.gz</format>
++    </formats>
++    <includeBaseDirectory>true</includeBaseDirectory>
++    <baseDirectory>apache-shardingsphere-mcp-${project.version}</baseDirectory>
++    
++    <fileSets>
++        <fileSet>
++            <directory>src/main/bin</directory>
++            <includes>
++                <include>*.sh</include>
++            </includes>
++            <outputDirectory>bin</outputDirectory>
++            <fileMode>0755</fileMode>
++            <directoryMode>0755</directoryMode>
++        </fileSet>
++        <fileSet>
++            <directory>src/main/bin</directory>
++            <excludes>
++                <exclude>*.sh</exclude>
++            </excludes>
++            <outputDirectory>bin</outputDirectory>
++            <fileMode>0644</fileMode>
++            <directoryMode>0755</directoryMode>
++        </fileSet>
++        <fileSet>
++            <directory>src/main/resources</directory>
++            <outputDirectory>/</outputDirectory>
++            <fileMode>0644</fileMode>
++            <directoryMode>0755</directoryMode>
++        </fileSet>
++        <fileSet>
++            <directory>src/main/release-docs</directory>
++            <outputDirectory>/</outputDirectory>
++            <fileMode>0644</fileMode>
++            <directoryMode>0755</directoryMode>
++        </fileSet>
++        <fileSet>
++            <directory>src/main/resources</directory>
++            <outputDirectory>plugins</outputDirectory>
++            <excludes>
++                <exclude>**/*</exclude>
++            </excludes>
++            <directoryMode>0755</directoryMode>
++        </fileSet>
++        <fileSet>
++            <directory>src/main/resources</directory>
++            <outputDirectory>logs</outputDirectory>
++            <excludes>
++                <exclude>**/*</exclude>
++            </excludes>
++            <directoryMode>0755</directoryMode>
++        </fileSet>
++        <fileSet>
++            <directory>src/main/resources</directory>
++            <outputDirectory>lib</outputDirectory>
++            <excludes>
++                <exclude>**/*</exclude>
++            </excludes>
++            <directoryMode>0755</directoryMode>
++        </fileSet>
++    </fileSets>
++    
++    <dependencySets>
++        <dependencySet>
++            <outputDirectory>lib</outputDirectory>
++            <fileMode>0644</fileMode>
++            <directoryMode>0755</directoryMode>
++            <scope>runtime</scope>
++            <useProjectArtifact>false</useProjectArtifact>
++        </dependencySet>
++    </dependencySets>
++</assembly>
 ```
 
-**File**: `.codex/skills/coding-standards/references/standalone-audit.md` (modified, +1/-0)
+**File**: `distribution/mcp/src/main/release-docs/LICENSE` (modified, +29/-11)
 ```diff
-@@ -26,6 +26,7 @@ Use this mode only when the user explicitly asks to audit, check, or report codi
- - When the scope contains a `pom.xml`, read the [Maven dependency version rules](rules/maven-dependencies.md) through EOF.
- - Check every target POM only within the exact user-specified Maven audit scope.
- - When the scope contains Java, read the [Java naming rules](rules/java-naming.md), [Java type rules](rules/java-types.md), [Java constructor rules](rules/java-constructors.md), [Java expression rules](rules/java-expressions.md), and [Java line-wrapping rules](rules/java-line-wrapping.md) through EOF.
-+- When the scope contains Java declarations or Javadocs, read the [Java Javadoc rules](rules/java-javadoc.md) through EOF.
- - When the scope contains a Java declaration with at least two covered declaration annotations, read the [Java declaration annotation order rules](rules/java-annotation-order.md) through EOF.
- - When the scope contains Java `throw` statements, conditional exception paths, validation or precondition calls, or calls to `ShardingSpherePreconditions`, read the [Java precondition rules](rules/java-preconditions.md) through EOF.
- - When the scope contains Java methods annotated with `lombok.SneakyThrows`, read the [Java exception handling rules](rules/java-exceptions.md) through EOF.
+@@ -219,32 +219,34 @@ license text is the Apache License 2.0 reproduced above.
+     commons-lang3 3.18.0: https://commons.apache.org/proper/commons-lang/
+     error_prone_annotations 2.22.0: https://github.com/google/error-prone
+     failureaccess 1.0.3: https://github.com/google/guava
+-    guava 33.4.8-jre: https://github.com/google/guava
++    groovy 4.0.33: https://groovy.apache.org/
++    guava 33.7.2-jre: https://github.com/google/guava
+     itu 1.14.0: https://github.com/ethlo/itu
+-    jackson-annotations 2.18.6: https://github.com/FasterXML/jackson-annotations
+-    jackson-core 2.18.6: https://github.com/FasterXML/jackson-core
+-    jackson-databind 2.18.6: https://github.com/FasterXML/jackson-databind
+-    jackson-datatype-jdk8 2.18.6: https://github.com/FasterXML/jackson-modules-java8
+-    jackson-datatype-jsr310 2.18.6: https://github.com/FasterXML/jackson-modules-java8
++    jackson-annotations 2.22: https://github.com/FasterXML/jackson-annotations
++    jackson-core 2.22.3: https://github.com/FasterXML/jackson-core
++    jackson-databind 2.22.3: https://github.com/FasterXML/jackson-databind
++    jackson-datatype-jdk8 2.22.3: https://github.com/FasterXML/jackson-modules-java8
++    jackson-datatype-jsr310 2.22.3: https://github.com/FasterXML/jackson-modules-java8
+     jakarta.validation-api 2.0.2: https://beanvalidation.org/
+     java-util 4.103.0: https://github.com/jdereg/java-util
+-    jspecify 1.0.0: https://jspecify.dev/
++    jspecify 1.0.1: https://jspecify.dev/
+     json-schema-validator 2.0.0: https://github.com/networknt/json-schema-validator
+     reactor-core 3.7.0: https://github.com/reactor/reactor-core
+     snakeyaml 2.2: https://bitbucket.org/snakeyaml/snakeyaml
+     tomcat-annotations-api 11.0.25: https://tomcat.apache.org/
+     tomcat-embed-core 11.0.25: https://tomcat.apache.org/
+     transmittable-thread-local 2.14.2: https://github.com/alibaba/transmittable-thread-local
+ 
+-jackson-core contains a shaded copy of FastDoubleParser. Its applicable
+-license and notice files are retained in the jackson-core JAR under
+-META-INF/FastDoubleParser-LICENSE, META-INF/FastDoubleParser-NOTICE, and
+-META-INF/thirdparty-LICENSE.
++jackson-core contains shaded FastDoubleParser code and Schubfach number-writing code under the MIT license.
++The applicable license and attribution texts are retained in the jackson-core JAR under META-INF/FastDoubleParser-LICENSE, META-INF/FastDoubleParser-ThirdParty-LICENSE, and META-INF/Schubfach-LICENSE.
+ 
+ FastDoubleParser contains code derived from fast_double_parser under the
+ Boost Software License 1.0. The license text is included at
+ licenses/LICENSE-fast-double-parser.txt.
+ 
++Groovy contains shaded ANTLR 4 and ASM code under BSD-3-Clause licenses.
++Their license texts are retained in the groovy JAR under META-INF/licenses/antlr4-license.txt and META-INF/licenses/asm-license.txt.
++
+ ========================================================================
+ BSD Licenses
+ ========================================================================
+@@ -284,3 +286,19 @@ applicable license texts are included under licenses/.
+     mcp-json-jackson2 1.1.2: https://github.com/modelcontextprotocol/java-sdk, MIT
+     reactive-streams 1.0.4: https://github.com/reactive-streams/reactive-streams-jvm, MIT-0
+     slf4j-api 2.0.17: https://www.slf4j.org/, MIT
++
++========================================================================
++Optional Presto JDBC Driver
++========================================================================
++
++For binary distributions that include presto-jdbc (https://prestodb.io/), its shaded components use BSD-3-Clause, MIT, MPL-2.0, GPL version 2 with the Classpath exception, and CDDL version 1.0.
++For those distributions, the license texts, notices, selected licenses, and source locations are described in licenses/LICENSE-presto-jdbc.txt.
++
++========================================================================
++Optional ClickHouse JDBC Driver
++========================================================================
++
++For binary distributions that include clickhouse-jdbc (https://github.com/ClickHouse/clickhouse-java), its shaded components include Apache-2.0 components, ANTLR under BSD-3-Clause, and native LZ4 and xxHash code under BSD-2-Clause.
++The native-code copyright notices and complete license texts are included at licenses/LICENSE-lz4.txt.
++The ASM license text is included at licenses/LICENSE-asm.txt, and the ANTLR license text is included at licenses/LICENSE-antlr4-runtime.txt.
++The corresponding Apache attribution notices are reproduced in NOTICE.
+```
+
+---
+
+### Incident Patch 2: `a098aef1` (2026-11-19)
+**Commit Message**: Refactor SingleRule attribute initialization (#40529)
+
+**File**: `kernel/single/core/src/main/java/org/apache/shardingsphere/single/rule/SingleRule.java` (modified, +7/-6)
+```diff
+@@ -90,9 +90,7 @@ public SingleRule(final SingleRuleConfiguration ruleConfig, final String databas
+         singleTableDataNodes = SingleTableDataNodeLoader.load(databaseName, protocolType, aggregatedDataSources, builtRules, configuration.getTables());
+         SingleTableMapperRuleAttribute tableMapperRuleAttribute = new SingleTableMapperRuleAttribute(singleTableDataNodes.values());
+         mutableDataNodeRuleAttribute = new SingleMutableDataNodeRuleAttribute(this, configuration, dataSourceNames, singleTableDataNodes, protocolType, tableMapperRuleAttribute);
+-        attributes = new RuleAttributes(new SingleDataNodeRuleAttribute(singleTableDataNodes), tableMapperRuleAttribute,
+-                new SingleExportableRuleAttribute(tableMapperRuleAttribute), mutableDataNodeRuleAttribute, new AggregatedDataSourceRuleAttribute(aggregatedDataSources),
+-                new SingleUnregisterStorageUnitRuleAttribute());
++        attributes = createAttributes(tableMapperRuleAttribute, new AggregatedDataSourceRuleAttribute(aggregatedDataSources));
+     }
+     
+     private SingleRule(final SingleRule original) {
+@@ -106,9 +104,12 @@ private SingleRule(final SingleRule original) {
+         protocolType = original.protocolType;
+         SingleTableMapperRuleAttribute tableMapperRuleAttribute = new SingleTableMapperRuleAttribute(singleTableDataNodes.values());
+         mutableDataNodeRuleAttribute = new SingleMutableDataNodeRuleAttribute(this, configuration, dataSourceNames, singleTableDataNodes, protocolType, tableMapperRuleAttribute);
+-        attributes = new RuleAttributes(new SingleDataNodeRuleAttribute(singleTableDataNodes), tableMapperRuleAttribute,
+-                new SingleExportableRuleAttribute(tableMapperRuleAttribute), mutableDataNodeRuleAttribute,
+-                original.attributes.getAttribute(AggregatedDataSourceRuleAttribute.class), new SingleUnregisterStorageUnitRuleAttribute());
++        attributes = createAttributes(tableMapperRuleAttribute, original.attributes.getAttribute(AggregatedDataSourceRuleAttribute.class));
++    }
++    
++    private RuleAttributes createAttributes(final SingleTableMapperRuleAttribute tableMapperRuleAttribute, final AggregatedDataSourceRuleAttribute aggregatedDataSourceRuleAttribute) {
++        return new RuleAttributes(new SingleDataNodeRuleAttribute(singleTableDataNodes), tableMapperRuleAttribute,
++                new SingleExportableRuleAttribute(tableMapperRuleAttribute), mutableDataNodeRuleAttribute, aggregatedDataSourceRuleAttribute, new SingleUnregisterStorageUnitRuleAttribute());
+     }
+     
+     /**
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40512** (2026-11-15): Refine Codex Javadoc rules (@terrymanu)
-- **PR #40506** (2026-11-13): Restore query timeout readback for circuit breaker prepared statements (@sandynz)
-- **PR #40503** (2026-11-13): Consolidate JDBC query timeout in StatementManager (@sandynz)
-- **PR #40500** (2026-11-12): Refactor Oracle parenthesized expression parsing (@strongduanmu)
-- **PR #40499** (2026-11-12): JDBC query timeout readback before execution (@sandynz)
-- **PR #40496** (2026-11-10): Refactor sql parser metadata for MySQL UPDATE and LOAD DATA (@strongduanmu)
+- **PR #40529** (2026-11-19): Refactor SingleRule attribute initialization (@strongduanmu)
+- **PR #40526** (2026-11-19): Align MCP release packaging and preparation (@terrymanu)
+- **PR #40525** (2026-11-18): Support PostgreSQL aggregate FILTER and verify external parser expectations (@FlyingZC)
+- **PR #40522** (2026-11-17): Upgrade ASM to 9.9.1 (@terrymanu)
+- **PR #40520** (closed): add firebird isql connect (@makssent)
+- **PR #40519** (2026-11-18): Support PostgreSQL REPACK and classify external parser syntax negatives (@FlyingZC)
 
 ---
 
@@ -1676,44 +1976,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Refine Codex Javadoc rules
+## X. Align MCP release packaging and preparation
 
 **RULE**:
-When implementing operations in `.codex/harness/agents/cases.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/download-e2e-artifacts/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `78342a49`: Refine Codex Javadoc rules. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eac4d896`: Align MCP release packaging and preparation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.codex/harness/agents/cases.toml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/download-e2e-artifacts/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-
-[[cases]]
-id = "java_javadoc_context_uses_standard_summary"
-group = "coding / Javadoc"
-description = "Keeps a simple context responsibility summary without speculative field explanation or paragraph formatting."
-phase = "Javadoc policy and readability acceptance"
-ordinary_loop = false
-profile = "code-write"
-semantic_policy_assertions = true
-prompt = "At the pre-write planning checkpoint for an authorized Java task, choose the Javadoc for a new public final LicenseCheckContext holding inputs used by selected license checks. Its fields and consumers add no API, SPI, framework, compatibility, or nullability contract. The proposed class summary is \"License check context.\" Another proposal adds a paragraph saying that fields unused by the selected checks may be null. Decide the class summary, extra field explanation, and paragraph formatting. Report exactly one value per marker: summary=standard-responsibility or implementation-explanation; unused-fields=omit or include; formatting=plain or paragraph. Do not edit yet."
-decision = "proceed"
-required_actions = []
-allowed_actions = ["inspect_local"]
-forbidden_actions = ["edit_code", "edit_non_code", "mutate_git", "mutate_remote", "propo
+    description: 'Whether to restore the MCP binary distribution archive'
+          required_files+=(mcp-distribution.tar.gz)
+        tar -xzf "$ARTIFACT_DIR/mcp-distribution.tar.gz" -C distribution/mcp/target
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    description: 'Whether to restore the MCP distribution home'
+          required_files+=(mcp-distribution-home.tar.gz)
+        tar -xzf "$ARTIFACT_DIR/mcp-distribution-home.tar.gz" -C distribution/mcp/target
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `78342a49` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eac4d896` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

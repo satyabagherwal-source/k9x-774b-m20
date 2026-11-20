@@ -11498,3 +11498,5 @@ Every entry in this ledger must capture:
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `e4cf2bb0` | Multi-dimensional audit evidence | 2026-11-20T04:58:10.357Z |
 | `learn-github-crawlcove-hreflang-checker` | `https://github.com/CrawlCove/crawlcove-hreflang-checker` | `e5c444d2` | Multi-dimensional audit evidence | 2026-11-20T05:07:43.706Z |
 | `learn-dom-j-ad18fd9e` | `project://crawlcove-crawlcove-hreflang-checker` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md` | 2026-11-20T05:08:24.441Z |
+| `learn-github-octodns-octodns` | `https://github.com/octodns/octodns` | `420f2bab` | Multi-dimensional audit evidence | 2026-11-20T05:16:20.215Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `eac4d896` | Multi-dimensional audit evidence | 2026-11-20T05:16:25.932Z |

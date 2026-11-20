@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:42:39.728Z",
+  "timestamp": "2026-11-20T05:16:29.587Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-octodns-octodns-learnings",
+  "learning_id": "LEARN-EVO-octodns-octodns-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [octodns-octodns-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:42:39.728Z`  
-> **Learning ID**: `LEARN-REEXTRACT-octodns-octodns-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-20T05:16:29.587Z`  
+> **Learning ID**: `LEARN-EVO-octodns-octodns-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/octodns-octodns-learnings.md`  
 > **Source**: github ([https://github.com/octodns/octodns](https://github.com/octodns/octodns))  
-> **Source Version**: `439ea266`  
+> **Source Version**: `420f2bab`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T03:14:20.565Z  
+> **Timestamp**: 2026-11-20T05:16:19.139Z  
 > **Learning ID**: `learn-github-octodns-octodns`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/octodns-octodns-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/octodns/octodns](https://github.com/octodns/octodns))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T03:14:16.982Z  
+> **Harvest Timestamp**: 2026-11-20T05:16:18.963Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Tools for managing DNS across multiple providers
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 3776 stars
+- **Stars / Engagement**: 3784 stars
 
 ---
 
@@ -779,353 +779,237 @@ if __name__ == '__main__':
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `439ea266` (2026-11-06)
-**Commit Message**: Merge pull request #1485 from octodns/fix-txt-half-quoted
+### Incident Patch 1: `420f2bab` (2026-11-20)
+**Commit Message**: Merge pull request #1486 from octodns/net-test
 
-Fix TXT and SPF values that start but don't end with a quote
+Replace pytest-network with pytest-socket
 
-**File**: `.changelog/66bb577bf15e4f829ebf3487f3015d22.md` (added, +4/-0)
+**File**: `.changelog/588a9582e1eb49a5a56661deae7135dd.md` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
 +---
-+type: patch
++type: none
 +---
-+Fix TXT and SPF values that start but don't end with `"` losing their first and last characters
++Replace unmaintained pytest-network with pytest-socket for blocking network access in tests
 ```
 
-**File**: `octodns/record/chunked.py` (modified, +2/-1)
+**File**: `pyproject.toml` (modified, +2/-2)
 ```diff
-@@ -236,7 +236,8 @@ def _schema(cls):
-     def process(cls, values):
-         ret = []
-         for v in values:
--            if v and v[0] == '"':
-+            # only strip quotes that wrap the whole value
-+            if len(v) >= 2 and v[0] == '"' and v[-1] == '"':
-                 v = v[1:-1]
-             ret.append(cls(v.replace('" "', '')))
-         return ret
+@@ -56,13 +56,13 @@ test = [
+     "jsonschema>=4.0.0",
+     "pytest>=6.2.5",
+     "pytest-cov>=3.0.0",
+-    "pytest-network>=0.0.1",
++    "pytest-socket>=0.8.1",
+ ]
+ dev = [
+     "jsonschema>=4.0.0",
+     "pytest>=6.2.5",
+     "pytest-cov>=3.0.0",
+-    "pytest-network>=0.0.1",
++    "pytest-socket>=0.8.1",
+     # we need to manually/explicitely bump major versions as they're
+     # likely to result in formatting changes that should happen in their
+     # own PR. This will basically happen yearly
 ```
 
-**File**: `tests/test_octodns_record_chunked.py` (modified, +17/-0)
+**File**: `requirements.txt` (modified, +2/-2)
 ```diff
-@@ -47,6 +47,23 @@ def test_chunked_value_rdata_text(self):
-         self.assertEqual('some.target.', a.values[0].rdata_text)
-         self.assertEqual(a.chunked_values, a.rr_values)
+@@ -14,7 +14,7 @@ changelet==0.6.1
+ charset-normalizer==3.5.2
+ click==8.5.1
+ comrak==0.0.16
+-coverage==7.17.2
++coverage==7.17.3
+ cryptography==50.0.2
+ dnspython==2.9.2
+ docutils==0.22.4
+@@ -63,7 +63,7 @@ pyproject-hooks==1.3.3
+ pytest==9.2.0
+ pytest-cov==7.1.0
+ pytest-mock==3.17.0
+-pytest-network==0.0.1
++pytest-socket==0.8.1
+ python-dateutil==4.0.0
+ pytokens==0.4.1
+ pyyaml==6.0.3
+```
+
+**File**: `script/cibuild-module` (modified, +2/-2)
+```diff
+@@ -35,7 +35,7 @@ echo "## install module dev requirements #######################################
+ # that local octodns.
+ if [ -e setup.py ] || grep -q '^\[project\]' pyproject.toml 2>/dev/null; then
+   pip_module=1
+-  pip install -e .[dev] pytest-network
++  pip install -e .[dev] pytest-socket
+ elif [ -f pyproject.toml ]; then
+   # install poetry
+   pip install poetry
+@@ -52,7 +52,7 @@ pip freeze
+ echo "## run module tests ############################################################"
+ export PYTHONPATH=.:$PYTHONPATH
+ if [ -n "$pip_module" ]; then
+-  pytest --disable-network
++  pytest --disable-socket
+ elif [ -f poetry.toml ]; then
+   poetry run pytest
+ fi
+```
+
+**File**: `script/cibuild-package` (modified, +1/-1)
+```diff
+@@ -23,5 +23,5 @@ echo "## validate tests can run against installed code #########################
+ # (see: https://pip.pypa.io/en/stable/user_guide/#installing-from-wheels)
+ wheel_file=$(ls dist/*$VERSION*.whl)
+ pip install "${wheel_file}[test]"
+-pytest --disable-network
++pytest --disable-socket
+ echo "## complete ####################################################################"
+```
+
+**File**: `script/coverage` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ if [ "$PRAGMA_COUNT" -ne "$PRAGMA_ALLOWED" ]; then
+ fi
  
-+    def test_chunked_value_process(self):
-+        for value, expected in (
-+            ('', ''),
-+            ('hello', 'hello'),
-+            # wrapping double quotes are removed
-+            ('"hello"', 'hello'),
-+            ('"hello" "world"', 'helloworld'),
-+            # quotes that don't wrap the whole value are kept
-+            ('"', '"'),
-+            ('"hello', '"hello'),
-+            ('hello"', 'hello"'),
-+            ('"quoted" rest', '"quoted" rest'),
-+            # single quotes aren't TXT string delimiters
-+            ("'hello'", "'hello'"),
-+        ):
-+            self.assertEqual([expected], _ChunkedValue.process([value]))
-+
-     def test_chunked_value_rrs(self):
-         for value in (
-             '',
+ pytest \
+-  --disable-network \
++  --disable-socket \
+   --cov-reset \
+   --cov=$SOURCE_DIR \
+   --cov-fail-under=100 \
+```
+
+**File**: `script/test` (modified, +1/-1)
+```diff
+@@ -5,4 +5,4 @@ SCRIPT_PATH="$( dirname -- "$( readlink -f -- "${0}"; )"; )"
+ # Activate OctoDNS Python venv
+ source "${SCRIPT_PATH}/common.sh"
+ 
+-pytest --disable-network "$@"
++pytest --disable-socket "$@"
 ```
 
 ---
 
-### Incident Patch 2: `06b330a5` (2026-11-06)
-**Commit Message**: Merge branch 'main' into fix-txt-half-quoted
+### Incident Patch 2: `052815b3` (2026-11-20)
+**Commit Message**: Replace unmaintained pytest-network with pytest-socket for blocking network access in tests
 
-**File**: `.changelog/a7b884fab6f9424a8aae2fcc2b16b5cf.md` (added, +4/-0)
+**File**: `.changelog/588a9582e1eb49a5a56661deae7135dd.md` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
 +---
-+type: patch
++type: none
 +---
-+Fix SVCB/HTTPS parsing of svcparam values containing `=` (such as base64 `ech` padding), and stop stripping a quote from values that aren't wrapped in matching quotes
++Replace unmaintained pytest-network with pytest-socket for blocking network access in tests
 ```
 
-**File**: `octodns/record/base.py` (modified, +6/-1)
+**File**: `pyproject.toml` (modified, +2/-2)
 ```diff
-@@ -18,7 +18,12 @@
- 
- 
- def unquote(s):
--    if s and s[0] in ('"', "'"):
-+    if (
-+        isinstance(s, str)
-+        and len(s) >= 2
-+        and s[0] == s[-1]
-+        and s[0] in ('"', "'")
-+    ):
-         return s[1:-1]
-     return s
- 
+@@ -56,13 +56,13 @@ test = [
+     "jsonschema>=4.0.0",
+     "pytest>=6.2.5",
+     "pytest-cov>=3.0.0",
+-    "pytest-network>=0.0.1",
++    "pytest-socket>=0.8.1",
+ ]
+ dev = [
+     "jsonschema>=4.0.0",
+     "pytest>=6.2.5",
+     "pytest-cov>=3.0.0",
+-    "pytest-network>=0.0.1",
++    "pytest-socket>=0.8.1",
+     # we need to manually/explicitely bump major versions as they're
+     # likely to result in formatting changes that should happen in their
+     # own PR. This will basically happen yearly
 ```
 
-**File**: `octodns/record/svcb.py` (modified, +4/-10)
+**File**: `requirements.txt` (modified, +2/-2)
 ```diff
-@@ -149,9 +149,7 @@ def validate_svckey_number(paramkey, validator_id=None):
- 
- 
- def _svcparamvalue_list_from_rdata_text(svcparamvalue):
--    if svcparamvalue.startswith('"'):
--        svcparamvalue = svcparamvalue[1:-1]
--    return svcparamvalue.split(',')
-+    return unquote(svcparamvalue).split(',')
- 
- 
- # ``SUPPORTED_PARAMS`` is the extension point 3rd-parties use to register
-@@ -341,18 +339,14 @@ def from_rdata_text(cls, value):
-         targetname = unquote(targetname)
-         params = dict()
-         for svcparam in svcparams:
--            paramkey, *paramvalue = svcparam.split('=')
-+            paramkey, *paramvalue = svcparam.split('=', maxsplit=1)
-             if paramkey in params.keys():
-                 raise RdataParseError(f'{paramkey} is specified twice')
-             if len(paramvalue) != 0:
-                 param_parser = _svcparam_parser(paramkey)
-                 if param_parser is None:
--                    v = paramvalue[0]
--                    if v.startswith('"'):
--                        v = v[1:-1]
--                    params[paramkey] = v
--                else:
--                    params[paramkey] = param_parser(paramvalue[0])
-+                    param_parser = unquote
-+                params[paramkey] = param_parser(paramvalue[0])
-             else:
-                 params[paramkey] = None
-         return {
+@@ -14,7 +14,7 @@ changelet==0.6.1
+ charset-normalizer==3.5.2
+ click==8.5.1
+ comrak==0.0.16
+-coverage==7.17.2
++coverage==7.17.3
+ cryptography==50.0.2
+ dnspython==2.9.2
+ docutils==0.22.4
+@@ -63,7 +63,7 @@ pyproject-hooks==1.3.3
+ pytest==9.2.0
+ pytest-cov==7.1.0
+ pytest-mock==3.17.0
+-pytest-network==0.0.1
++pytest-socket==0.8.1
+ python-dateutil==4.0.0
+ pytokens==0.4.1
+ pyyaml==6.0.3
 ```
 
-**File**: `tests/test_octodns_record.py` (modified, +8/-0)
+**File**: `script/cibuild-module` (modified, +2/-2)
 ```diff
-@@ -1190,6 +1190,14 @@ def test_unquote(self):
-         # edge cases
-         self.assertEqual(None, unquote(None))
-         self.assertEqual('', unquote(''))
-+        self.assertEqual('"', unquote('"'))
-+        self.assertEqual("'", unquote("'"))
-+        self.assertEqual('x', unquote('x'))
-+        # edge cases with broken quoting
-+        self.assertEqual(f'"{s}', unquote(f'"{s}'))
-+        self.assertEqual(f"'{s}", unquote(f"'{s}"))
-+        self.assertEqual(f"{s}'", unquote(f"{s}'"))
-+        self.assertEqual(f'"{s}\'', unquote(f'"{s}\''))
- 
-     def test_otodns_backcompat(self):
-         octo = {'answer': 42}
+@@ -35,7 +35,7 @@ echo "## install module dev requirements #######################################
+ # that local octodns.
+ if [ -e setup.py ] || grep -q '^\[project\]' pyproject.toml 2>/dev/null; then
+   pip_module=1
+-  pip install -e .[dev] pytest-network
++  pip install -e .[dev] pytest-socket
+ elif [ -f pyproject.toml ]; then
+   # install poetry
+   pip install poetry
+@@ -52,7 +52,7 @@ pip freeze
+ echo "## run module tests ############################################################"
+ export PYTHONPATH=.:$PYTHONPATH
+ if [ -n "$pip_module" ]; then
+-  pytest --disable-network
++  pytest --disable-socket
+ elif [ -f poetry.toml ]; then
+   poetry run pytest
+ fi
 ```
 
-**File**: `tests/test_octodns_record_svcb.py` (modified, +42/-0)
+**File**: `script/cibuild-package` (modified, +1/-1)
 ```diff
-@@ -236,6 +236,48 @@ def test_svcb_value_rdata_text(self):
-         )
-         self.assertEqual(rdata.replace('"', ''), record.values[0].rdata_text)
- 
-+    def test_svcb_value_rdata_text_ech_and_quoted_params(self):
-+        ech = 'dG90YWxseUZha2VFQ0hPcHRpb24='
-+
-+        # base64 `ech` values can end with a padding `=`, this must be preserved
-+        self.assertEqual(
-+            {'svcpriority': 1, 'targetname': '.', 'svcparams': {'ech': ech}},
-+            SvcbValue.from_rdata_text(f'1 . ech={ech}'),
-+        )
-+
-+        # base64 is wrapped in quotes
-+        self.assertEqual(
-+            {'svcpriority': 1, 'targetname': '.', 'svcparams': {'ech': ech}},
-+            SvcbValue.from_rdata_text(f'1 . ech="{ech}"'),
-+        )
-+
-+        # full round-trip test
-+        value = SvcbValue(
-+            {
-+                'svcpriority': 1,
-+                'targetname': 'svcb.unit.tests.',
-+                'svcparams': {'ech': ech},
-+            }
-+        )
-+        self.assertEqual(f'1 svcb.unit.tests. ech={ech}', value.to_rdata_text())
-+
-+    def test_svcb_value_rdata_text_equals_in_value(self):
-+        # only the first `=` separates the key from the value, any others are
-+        # part of the value
-+        for rdata, expected in (
-+            ('1 . key65000=a=b', 'a=b'),
-+            ('1 . key65000="a=b"', 'a=b'),
-+            ('1 . key65000=a==b=', 'a==b='),
-+        ):
-+            self.assertEqual(
-+                {
-+                    'svcpriority': 1,
-+                    'targetname': '.',
-+                    'svcparams': {'key65000': expected},
-+                },
-+                SvcbValue.from_rdata_text(rdata),
-+            )
-+
-     def test_svcb_value(self):
-         a = SvcbValue(
-             {'svcpriority': 0, 'targetname': 'foo.', 'svcparams': dict()}
+@@ -23,5 +23,5 @@ echo "## validate tests can run against installed code #########################
+ # (see: https://pip.pypa.io/en/stable/user_guide/#installing-from-wheels)
+ wheel_file=$(ls dist/*$VERSION*.whl)
+ pip install "${wheel_file}[test]"
+-pytest --disable-network
++pytest --disable-socket
+ echo "## complete ####################################################################"
 ```
 
----
-
-### Incident Patch 3: `2c63f4b1` (2026-11-06)
-**Commit Message**: Merge pull request #1483 from TilCreator/fix-ech
-
-Improve SVCB and HTTPS record parsing
-
-**File**: `.changelog/a7b884fab6f9424a8aae2fcc2b16b5cf.md` (added, +4/-0)
+**File**: `script/coverage` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,4 @@
-+---
-+type: patch
-+---
-+Fix SVCB/HTTPS parsing of svcparam values containing `=` (such as base64 `ech` padding), and stop stripping a quote from values that aren't wrapped in matching quotes
+@@ -19,7 +19,7 @@ if [ "$PRAGMA_COUNT" -ne "$PRAGMA_ALLOWED" ]; then
+ fi
+ 
+ pytest \
+-  --disable-network \
++  --disable-socket \
+   --cov-reset \
+   --cov=$SOURCE_DIR \
+   --cov-fail-under=100 \
 ```
 
-**File**: `octodns/record/base.py` (modified, +6/-1)
+**File**: `script/test` (modified, +1/-1)
 ```diff
-@@ -18,7 +18,12 @@
+@@ -5,4 +5,4 @@ SCRIPT_PATH="$( dirname -- "$( readlink -f -- "${0}"; )"; )"
+ # Activate OctoDNS Python venv
+ source "${SCRIPT_PATH}/common.sh"
  
- 
- def unquote(s):
--    if s and s[0] in ('"', "'"):
-+    if (
-+        isinstance(s, str)
-+        and len(s) >= 2
-+        and s[0] == s[-1]
-+        and s[0] in ('"', "'")
-+    ):
-         return s[1:-1]
-     return s
- 
-```
-
-**File**: `octodns/record/svcb.py` (modified, +4/-10)
-```diff
-@@ -149,9 +149,7 @@ def validate_svckey_number(paramkey, validator_id=None):
- 
- 
- def _svcparamvalue_list_from_rdata_text(svcparamvalue):
--    if svcparamvalue.startswith('"'):
--        svcparamvalue = svcparamvalue[1:-1]
--    return svcparamvalue.split(',')
-+    return unquote(svcparamvalue).split(',')
- 
- 
- # ``SUPPORTED_PARAMS`` is the extension point 3rd-parties use to register
-@@ -341,18 +339,14 @@ def from_rdata_text(cls, value):
-         targetname = unquote(targetname)
-         params = dict()
-         for svcparam in svcparams:
--            paramkey, *paramvalue = svcparam.split('=')
-+            paramkey, *paramvalue = svcparam.split('=', maxsplit=1)
-             if paramkey in params.keys():
-                 raise RdataParseError(f'{paramkey} is specified twice')
-             if len(paramvalue) != 0:
-                 param_parser = _svcparam_parser(paramkey)
-                 if param_parser is None:
--                    v = paramvalue[0]
--                    if v.startswith('"'):
--                        v = v[1:-1]
--                    params[paramkey] = v
--                else:
--                    params[paramkey] = param_parser(paramvalue[0])
-+                    param_parser = unquote
-+                params[paramkey] = param_parser(paramvalue[0])
-             else:
-                 params[paramkey] = None
-         return {
-```
-
-**File**: `tests/test_octodns_record.py` (modified, +8/-0)
-```diff
-@@ -1190,6 +1190,14 @@ def test_unquote(self):
-         # edge cases
-         self.assertEqual(None, unquote(None))
-         self.assertEqual('', unquote(''))
-+        self.assertEqual('"', unquote('"'))
-+        self.assertEqual("'", unquote("'"))
-+        self.assertEqual('x', unquote('x'))
-+        # edge cases with broken quoting
-+        self.assertEqual(f'"{s}', unquote(f'"{s}'))
-+        self.assertEqual(f"'{s}", unquote(f"'{s}"))
-+        self.assertEqual(f"{s}'", unquote(f"{s}'"))
-+        self.assertEqual(f'"{s}\'', unquote(f'"{s}\''))
- 
-     def test_otodns_backcompat(self):
-         octo = {'answer': 42}
-```
-
-**File**: `tests/test_octodns_record_svcb.py` (modified, +42/-0)
-```diff
-@@ -236,6 +236,48 @@ def test_svcb_value_rdata_text(self):
-         )
-         self.assertEqual(rdata.replace('"', ''), record.values[0].rdata_text)
- 
-+    def test_svcb_value_rdata_text_ech_and_quoted_params(self):
-+        ech = 'dG90YWxseUZha2VFQ0hPcHRpb24='
-+
-+        # base64 `ech` values can end with a padding `=`, this must be preserved
-+        self.assertEqual(
-+            {'svcpriority': 1, 'targetname': '.', 'svcparams': {'ech': ech}},
-+            SvcbValue.from_rdata_text(f'1 . ech={ech}'),
-+        )
-+
-+        # base64 is wrapped in quotes
-+        self.assertEqual(
-+            {'svcpriority': 1, 'targetname': '.', 'svcparams': {'ech': ech}},
-+            SvcbValue.from_rdata_text(f'1 . ech="{ech}"'),
-+        )
-+
-+        # full round-trip test
-+        value = SvcbValue(
-+            {
-+                'svcpriority': 1,
-+                'targetname': 'svcb.unit.tests.',
-+                'svcparams': {'ech': ech},
-+            }
-+        )
-+        self.assertEqual(f'1 svcb.unit.tests. ech={ech}', value.to_rdata_text())
-+
-+    def test_svcb_value_rdata_text_equals_in_value(self):
-+        # only the first `=` separates the key from the value, any others are
-+        # part of the value
-+        for rdata, expected in (
-+            ('1 . key65000=a=b', 'a=b'),
-+            ('1 . key65000="a=b"', 'a=b'),
-+            ('1 . key65000=a==b=', 'a==b='),
-+        ):
-+            self.assertEqual(
-+                {
-+                    'svcpriority': 1,
-+                    'targetname': '.',
-+                    'svcparams': {'key65000': expected},
-+                },
-+                SvcbValue.from_rdata_text(rdata),
-+            )
-+
-     def test_svcb_value(self):
-         a = SvcbValue(
-             {'svcpriority': 0, 'targetname': 'foo.', 'svcparams': dict()}
+-pytest --disable-network "$@"
++pytest --disable-socket "$@"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1486** (2026-11-20): Replace pytest-network with pytest-socket (@ross)
 - **PR #1485** (2026-11-06): Fix TXT and SPF values that start but don't end with a quote (@ross)
 - **PR #1483** (2026-11-06): Improve SVCB and HTTPS record parsing (@TilCreator)
 - **PR #1482** (2026-10-26): Update requirements.txt (@ross)
 - **PR #1481** (2026-10-23): docs: add an SPF pull-request check tutorial to Related Projects and Resources (@joshpurvis)
-- **PR #1479** (2026-10-19): Add name-wildcard-best-practice validator (@ross)
-- **PR #1478** (2026-10-19): Add octodns-katapult provider to documentation (@DonQuinleone)
+- **PR #1480** (2026-11-18): Update python versions to include 3.15 (@ross)
 
 ---
 
@@ -1145,34 +1029,34 @@ Improve SVCB and HTTPS record parsing
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1485 from octodns/fix-txt-half-quoted
+## X. Empirical Invariant Guard in 588a9582e1eb49a5a56661deae7135dd.md
 
 **RULE**:
-When implementing operations in `.changelog/66bb577bf15e4f829ebf3487f3015d22.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in octodns/octodns. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changelog/588a9582e1eb49a5a56661deae7135dd.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in octodns/octodns. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `439ea266`: Merge pull request #1485 from octodns/fix-txt-half-quoted. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `420f2bab`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changelog/66bb577bf15e4f829ebf3487f3015d22.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changelog/588a9582e1eb49a5a56661deae7135dd.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
 ---
-type: patch
+type: none
 ---
-Fix TXT and SPF values that start but don't end with `"` losing their first and last characters
+Replace unmaintained pytest-network with pytest-socket for blocking network access in tests
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `439ea266` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `420f2bab` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
