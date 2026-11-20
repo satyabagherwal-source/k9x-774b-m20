@@ -4,17 +4,17 @@
 {
   "source_repository": "vespa-engine/vespa",
   "source_url": "https://github.com/vespa-engine/vespa",
-  "source_version": "170c7d31",
+  "source_version": "a5623114",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T04:36:35.141Z",
+  "timestamp": "2026-11-20T11:09:07.446Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-vespa-engine-vespa",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [vespa-engine/vespa](https://github.com/vespa-engine/vespa) (Revision: `170c7d31`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T04:36:35.141Z`  
+> **Provenance**: Harvested from [vespa-engine/vespa](https://github.com/vespa-engine/vespa) (Revision: `a5623114`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T11:09:07.446Z`  
 > **Learning ID**: `learn-github-vespa-engine-vespa`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T04:36:33.938Z  
+> **Harvest Timestamp**: 2026-11-20T11:09:05.999Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7185 stars
+- **Stars / Engagement**: 7186 stars
 
 ---
 
@@ -1077,705 +1077,676 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a98f585` (2026-11-18)
-**Commit Message**: Merge pull request #38571 from vespa-engine/toregge/add-trace-spans-for-attribute-vector-flush
+### Incident Patch 1: `97cdaa10` (2026-11-20)
+**Commit Message**: Merge pull request #38595 from vespa-engine/revert-38576-bratseth/capacity-cleanup
 
-Add trace spans for attribute vector flush.
+Revert "Bratseth/capacity cleanup"
 
-**File**: `opentelemetry/src/vespa/opentelemetry/span_attribute_names.cpp` (modified, +1/-0)
+**File**: `config-model/src/main/java/com/yahoo/config/model/deploy/DeployState.java` (modified, +1/-2)
 ```diff
-@@ -7,6 +7,7 @@ namespace vespa_opentelemetry::span_attribute_names {
- const std::string attribute("ai.vespa.searchlib.attribute");
- const std::string ddb_prev_state("ai.vespa.proton.ddb.prev_state");
- const std::string document_type("ai.vespa.document_type");
-+const std::string serial("ai.vespa.searchlib.serial");
- const std::string subdb("ai.vespa.proton.subdb");
+@@ -161,8 +161,7 @@ private DeployState(Application application,
+         this.sidecarProvider = sidecarProvider;
+         this.additionalContent = additionalContent;
  
- } // namespace vespa_opentelemetry::span_attribute_names
+-        boolean isBootstrap = getProperties() != null && getProperties().isBootstrap();
+-        var builder = new ProvisionContext.Builder(!isBootstrap);
++        var builder = new ProvisionContext.Builder();
+         builder.setLogger(new ProvisionDeployLogger(deployLogger));
+         var validation = builder.validationOverrides();
+         if (properties != null) validation.setWarnOnly(warnOnlyOnValidationFailure(properties, zone));
 ```
 
-**File**: `opentelemetry/src/vespa/opentelemetry/span_attribute_names.h` (modified, +1/-0)
+**File**: `config-model/src/main/java/com/yahoo/config/model/provision/InMemoryProvisioner.java` (modified, +2/-2)
 ```diff
-@@ -9,6 +9,7 @@ namespace vespa_opentelemetry::span_attribute_names {
- extern const std::string attribute;
- extern const std::string ddb_prev_state;
- extern const std::string document_type;
-+extern const std::string serial;
- extern const std::string subdb;
- 
- } // namespace vespa_opentelemetry::span_attribute_names
-```
-
-**File**: `searchcore/src/tests/proton/attribute/attributeflush_test.cpp` (modified, +2/-2)
-```diff
-@@ -346,8 +346,8 @@ TEST(AttributeFlushTest, require_that_cleanup_is_performed_after_flush) {
-     EXPECT_TRUE(info.save());
-     auto diskLayout = AttributeDiskLayout::create("flush");
- 
--    FlushableAttribute fa(av, diskLayout->getAttributeDir("a6"), TuneFileAttributes(), f._fileHeaderContext,
--                          f._attributeFieldWriter, f._hwInfo);
-+    FlushableAttribute fa(av, diskLayout->getAttributeDir("a6"), f._m.doc_type_and_subdb_name(), TuneFileAttributes(),
-+                          f._fileHeaderContext, f._attributeFieldWriter, f._hwInfo);
-     fa.initFlush(30, std::make_shared<search::FlushToken>())->run();
- 
-     EXPECT_TRUE(info.load());
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/attributemanager.cpp` (modified, +2/-2)
-```diff
-@@ -135,8 +135,8 @@ void AttributeManager::addAttribute(AttributeWrap attributeWrap, const ShrinkerS
-         // Flushing of extra attributes is handled elsewhere
-         AttributeVector* attributeP = attribute.get();
-         auto             flusher = std::make_shared<FlushableAttribute>(
--            std::move(attribute), _diskLayout->createAttributeDir(name), _tuneFileAttributes, _fileHeaderContext,
--            _attributeFieldWriter, _hwInfo);
-+            std::move(attribute), _diskLayout->createAttributeDir(name), _doc_type_and_subdb_name,
-+            _tuneFileAttributes, _fileHeaderContext, _attributeFieldWriter, _hwInfo);
-         _flushables[name] = FlushableWrap(flusher, shrinker);
-         _writableAttributes.push_back(attributeP);
+@@ -165,11 +165,11 @@ public List<HostSpec> prepare(ClusterSpec cluster, ProvisionContext context) {
+         IntRange groupRange = IntRange.of(requested.minResources().groups(), requested.maxResources().groups());
+         if (useMaxResources) {
+             int groups = groupRange.fit(requested.maxResources().nodes() / requested.groupSize().to().orElse(1));
+-            return prepare(cluster, requested.maxResources(),groups, requested.isRequired(), context.canFail());
++            return prepare(cluster, requested.maxResources(),groups, requested.isRequired(), requested.canFail());
+         }
+         else {
+             int groups = groupRange.fit(requested.minResources().nodes() / requested.groupSize().from().orElse(1));
+-            return prepare(cluster, requested.minResources(), groups, requested.isRequired(), context.canFail());
++            return prepare(cluster, requested.minResources(), groups, requested.isRequired(), requested.canFail());
+         }
      }
+ 
 ```
 
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/attributemanager.h` (modified, +3/-0)
+**File**: `config-model/src/main/java/com/yahoo/vespa/model/builder/xml/dom/NodesSpecification.java` (modified, +15/-9)
 ```diff
-@@ -204,6 +204,9 @@ class AttributeManager : public proton::IAttributeManager {
+@@ -55,6 +55,8 @@ public class NodesSpecification {
+      */
+     private final boolean required;
  
-     searchcorespi::common::ResourceUsage get_resource_usage() const override;
-     static uint64_t get_size_on_disk_overhead() noexcept;
-+    [[nodiscard]] const std::shared_ptr<const DocTypeAndSubDbName>& doc_type_and_subdb_name() const noexcept {
-+        return _doc_type_and_subdb_name;
-+    }
-     [[nodiscard]] const DocTypeName& doc_type_name() const noexcept {
-         return _doc_type_and_subdb_name->doc_type_name();
-     }
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/flushableattribute.cpp` (modified, +43/-11)
-```diff
-@@ -6,7 +6,9 @@
- #include "attributedisklayout.h"
- 
- #include <vespa/check_require.h>
-+#include <vespa/opentelemetry/span_attribute_names.h>
- #include <vespa/searchcommon/attribute/config.h>
-+#include <vespa/searchcore/proton/common/tracing.h>
- #include <vespa/searchcorespi/common/resource_usage.h>
- #include <vespa/searchlib/attribute/attributefilesavetarget.h>
- #include <vespa/searchlib/attribute/attributememorysavetarget.h>
-@@ -29,6 +31,7 @@ LOG_SETUP(".proton.attribute.flushableattribute");
- 
- using namespace search;
- using namespace vespalib;
-+using opentelemetry::trace::Span;
- using search::common::CreateAndFreezeTimes;
- using search::common::FileHeaderContext;
- using search::common::SerialNumFileHeaderContext;
-@@ -48,6 +51,7 @@ class FlushableAttribute::Flusher : public Task {
-     uint64_t                                    _syncToken;
-     std::string                                 _flushFile;
-     std::unique_ptr<AttributeDirectory::Writer> _writer;
-+    std::shared_ptr<Span>                       _span;
- 
-     bool saveAttribute(); // not updating snap info.
- public:
-@@ -65,13 +69,28 @@ class FlushableAttribute::Flusher : public Task {
- 
- FlushableAttribute::Flusher::Flusher(FlushableAttribute& fattr, SerialNum syncToken,
-                                      std::unique_ptr<AttributeDirectory::Writer> writer)
--    : _fattr(fattr), _saveTarget(), _saver(), _syncToken(syncToken), _flushFile(""), _writer(std::move(writer)) {
--    fattr._attr->commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
-+    : _fattr(fattr),
-+      _saveTarget(),
-+      _saver(),
-+      _syncToken(syncToken),
-+      _flushFile(""),
-+      _writer(std::move(writer)),
-+      _span() {
-     AttributeVector& attr = *_fattr._attr;
-+    auto             tracer = get_tracer();
-+    _span = tracer->StartSpan(
-+        "Flush attribute",
-+        {{vespa_opentelemetry::span_attribute_names::document_type,
-+          fattr._doc_type_and_subdb_name->doc_type_name().getName()},
-+         {vespa_opentelemetry::span_attribute_names::subdb, fattr._doc_type_and_subdb_name->subdb_name()},
-+         {vespa_opentelemetry::span_attribute_names::attribute, attr.getName()},
-+         {vespa_opentelemetry::span_attribute_names::serial, std::to_string(syncToken)}});
-+    attr.commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
-     // Called by attribute field writer executor
-     _flushFile = _writer->getSnapshotDir(_syncToken) + "/" + attr.getName();
-     _saver = attr.initSave(_flushFile);
-     CHECK(_saver);
-+    _span->AddEvent("Done init flush");
- }
- 
- FlushableAttribute::Flusher::~Flusher() = default;
-@@ -134,9 +153,13 @@ bool FlushableAttribute::Flusher::cleanUp() {
- }
- 
- void FlushableAttribute::Flusher::run() {
-+    _span->AddEvent("Starting background flush");
-+    auto tracer = get_tracer();
-+    auto scope = tracer->WithActiveSpan(_span);
-     if (_syncToken <= _fattr.getFlushedSerialNum()) {
-         // another flusher has created an equal or better snapshot
-         // after this flusher was created
-+        _span->End();
-         return;
-     }
-     if (!flush()) {
-@@ -146,13 +169,15 @@ void FlushableAttribute::Flusher::run() {
-     if (!cleanUp()) {
-         // TODO (geirst): throw exception ?
-     }
-+    _span->End();
- }
- 
- FlushableAttribute::FlushableAttribute(AttributeVectorSP attr, const std::shared_ptr<AttributeDirectory>& attrDir,
--                                       const TuneFileAttributes&         tuneFileAttributes,
--                                       const FileHeaderContext&          fileHeaderContext,
--                                       vespalib::ISequencedTaskExecutor& attributeFieldWriter,
--                                       const vespalib::HwInfo&           hwInfo)
-+                                       std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_subdb_name_in,
-+                                       const TuneFileAttributes&                  tuneFileAttributes,
-+                                       const FileHeaderContext&                   fileHeaderContext,
-+                                       vespalib::ISequencedTaskExecutor&          attributeFieldWriter,
-+                                       const vespalib::HwInfo&                    hwInfo)
-     : LeafFlushTarget(make_string("attribute.flush.%s", attr->getName().c_str()), Type::SYNC, Component::ATTRIBUTE),
-       _attr(attr),
-       _cleanUpAfterFlush(true),
-@@ -162,6 +187,7 @@ FlushableAttribute::FlushableAttribute(AttributeVectorSP attr, const std::shared
-       _attributeFieldWriter(attributeFieldWriter),
-       _hwInfo(hwInfo),
-       _attrDir(attrDir),
-+      _doc_type_and_subdb_name(std::move(doc_type_and_subdb_name_in)),
-       _replay_operation_cost(0.0),
-       _paged(_attr->getConfig().paged()) {
-     _lastStats.setPathElementsToLog(8);
-@@ -197,8 +223,11 @@ IFlushTarget::Time FlushableAttribute::getLastFlushTime() const {
-     return _attrDir->getLastFlushTime();
- }
- 
--void FlushableAttribut
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/flushableattribute.h` (modified, +20/-14)
-```diff
-@@ -2,10 +2,13 @@
- 
- #pragma once
- 
-+#include <vespa/searchcore/proton/common/doc_type_and_subdb_name.h>
- #include <vespa/searchcorespi/flush/iflushtarget.h>
- #include <vespa/searchlib/common/tunefileinfo.h>
- #include <vespa/vespalib/util/hw_info.h>
- 
-+#include <opentelemetry/trace/span.h>
++    private final boolean canFail;
 +
- namespace search {
- class AttributeVector;
- }
-@@ -36,18 +39,20 @@ class FlushableAttribute : public searchcorespi::LeafFlushTarget {
-     using AttributeVectorSP = std::shared_ptr<search::AttributeVector>;
-     using FlushStats = searchcorespi::FlushStats;
+     private final boolean exclusive;
  
--    AttributeVectorSP                        _attr;
--    bool                                     _cleanUpAfterFlush;
--    FlushStats                               _lastStats;
--    const search::TuneFileAttributes         _tuneFileAttributes;
--    const search::common::FileHeaderContext& _fileHeaderContext;
--    vespalib::ISequencedTaskExecutor&        _attributeFieldWriter;
--    vespalib::HwInfo                         _hwInfo;
--    std::shared_ptr<AttributeDirectory>      _attrDir;
--    double                                   _replay_operation_cost;
--    bool                                     _paged;
+     /** The repo part of a docker image (without tag), optional */
+@@ -80,7 +82,7 @@ private NodesSpecification(ClusterResources min,
+                                IntRange groupSize,
+                                double maxCostFactor,
+                                boolean dedicated, Version version,
+-                               boolean required, boolean exclusive,
++                               boolean required, boolean canFail, boolean exclusive,
+                                Optional<DockerImage> dockerImageRepo,
+                                CloudAccount cloudAccount,
+                                CloudResourceTags cloudResourceTags,
+@@ -108,6 +110,7 @@ private NodesSpecification(ClusterResources min,
+         this.dedicated = dedicated;
+         this.version = version;
+         this.required = required;
++        this.canFail = canFail;
+         this.exclusive = exclusive;
+         this.dockerImageRepo = dockerImageRepo;
+         this.cloudAccount = Objects.requireNonNull(cloudAccount);
+@@ -117,7 +120,7 @@ private NodesSpecification(ClusterResources min,
+         this.profile = profile;
+     }
+ 
+-    static NodesSpecification create(boolean dedicated, Version version,
++    static NodesSpecification create(boolean dedicated, boolean canFail, Version version,
+                                      ModelElement nodesElement, Optional<DockerImage> dockerImageRepo,
+                                      CloudAccount cloudAccount,
+                                      CloudResourceTags cloudResourceTags,
+@@ -136,6 +139,7 @@ static NodesSpecification create(boolean dedicated, Version version,
+                                       dedicated,
+                                       version,
+                                       resolvedElement.booleanAttribute("required", false),
++                                      canFail,
+                                       resolvedElement.booleanAttribute("exclusive", false),
+                                       dockerImageToUse(resolvedElement, dockerImageRepo, deployState),
+                                       cloudAccount,
+@@ -185,6 +189,7 @@ private record ResourceConstraints(ClusterResources min, ClusterResources max, I
+     /** Returns a requirement for dedicated nodes taken from the given <code>nodes</code> element */
+     public static NodesSpecification from(ModelElement nodesElement, ConfigModelContext context) {
+         return create(true,
++                      ! context.getDeployState().getProperties().isBootstrap(),
+                       context.getDeployState().getWantedNodeVespaVersion(),
+                       nodesElement,
+                       context.getDeployState().getWantedDockerImageRepo(),
+@@ -205,6 +210,7 @@ public static Optional<NodesSpecification> optionalDedicatedFromParent(ModelElem
+         ModelElement nodesElement = parentElement.child("nodes");
+         if (nodesElement == null) return Optional.empty();
+         return Optional.of(create(nodesElement.booleanAttribute("dedicated", false),
++                                  ! context.getDeployState().getProperties().isBootstrap(),
+                                   context.getDeployState().getWantedNodeVespaVersion(),
+                                   nodesElement,
+                                   context.getDeployState().getWantedDockerImageRepo(),
+@@ -223,6 +229,7 @@ public static NodesSpecification nonDedicated(int count, ConfigModelContext cont
+                                       false,
+                                       context.getDeployState().getWantedNodeVespaVersion(),
+                                       false,
++                                      ! context.getDeployState().getProperties().isBootstrap(),
+                                       false,
+                                       context.getDeployState().getWantedDockerImageRepo(),
+                                       context.getDeployState().getProperties().getCloudAccount(),
+@@ -241,6 +248,7 @@ public static NodesSpecification dedicated(int count, ConfigModelContext context
+                                       true,
+                                       context.getDeployState().getWantedNodeVespaVersion(),
+                                       false,
++                                      ! context.getDeployState().getProperties().isBootstrap(),
+                                       false,
+                                       context.getDeployState().getWantedDockerImageRepo(),
+                                       context.getDeployState().getProperties().getCloudAccount(),
+@@ -270,6 +278,7 @@ public static NodesSpecification requiredFromSharedParents(int count, NodeResour
+                                       true,
+                                       context.getDeployState().getWantedNodeVesp
+```
+
+**File**: `config-model/src/test/java/com/yahoo/vespa/model/ClusterInfoTest.java` (modified, +25/-25)
+```diff
+@@ -72,16 +72,16 @@ void bcp_deadline_is_passed_in_cluster_info() throws Exception {
+                             """;
+ 
+         var requestedInUsEast1 = requestedIn("default", "us-east-1", servicesXml, deploymentXml);
+-        assertEquals(Duration.ofMinutes(0), requestedInUsEast1.get(new ClusterSpec.Id("testcontainer")).clusterInfo().bcpDeadline());
+-        assertEquals(Duration.ofMinutes(0), requestedInUsEast1.get(new ClusterSpec.Id("testcontent")).clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofMinutes(0), requestedInUsEast1.get(new ClusterSpec.Id("testcontainer")).capacity().clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofMinutes(0), requestedInUsEast1.get(new ClusterSpec.Id("testcontent")).capacity().clusterInfo().bcpDeadline());
+ 
+         var requestedInUsWest1 = requestedIn("default", "us-west-1", servicesXml, deploymentXml);
+-        assertEquals(Duration.ofMinutes(30), requestedInUsWest1.get(new ClusterSpec.Id("testcontainer")).clusterInfo().bcpDeadline());
+-        assertEquals(Duration.ofMinutes(30), requestedInUsWest1.get(new ClusterSpec.Id("testcontent")).clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofMinutes(30), requestedInUsWest1.get(new ClusterSpec.Id("testcontainer")).capacity().clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofMinutes(30), requestedInUsWest1.get(new ClusterSpec.Id("testcontent")).capacity().clusterInfo().bcpDeadline());
+ 
+         var requestedInEuWest1 = requestedIn("default", "eu-west-1", servicesXml, deploymentXml);
+-        assertEquals(Duration.ofHours(48), requestedInEuWest1.get(new ClusterSpec.Id("testcontainer")).clusterInfo().bcpDeadline());
+-        assertEquals(Duration.ofHours(48), requestedInEuWest1.get(new ClusterSpec.Id("testcontent")).clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInEuWest1.get(new ClusterSpec.Id("testcontainer")).capacity().clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInEuWest1.get(new ClusterSpec.Id("testcontent")).capacity().clusterInfo().bcpDeadline());
+     }
+ 
+     /** A high default deadline only will cause no resources to be set aside for BCP. */
+@@ -112,12 +112,12 @@ void specifying_only_default_deadline_is_possible() throws Exception {
+                             """;
+ 
+         var requestedInUsEast1 = requestedIn("default", "us-east-1", servicesXml, deploymentXml);
+-        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontainer")).clusterInfo().bcpDeadline());
+-        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontent")).clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontainer")).capacity().clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontent")).capacity().clusterInfo().bcpDeadline());
+ 
+         var requestedInUsWest1 = requestedIn("default", "us-west-1", servicesXml, deploymentXml);
+-        assertEquals(Duration.ofHours(48), requestedInUsWest1.get(new ClusterSpec.Id("testcontainer")).clusterInfo().bcpDeadline());
+-        assertEquals(Duration.ofHours(48), requestedInUsWest1.get(new ClusterSpec.Id("testcontent")).clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInUsWest1.get(new ClusterSpec.Id("testcontainer")).capacity().clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInUsWest1.get(new ClusterSpec.Id("testcontent")).capacity().clusterInfo().bcpDeadline());
+     }
+ 
+     /** This implicitly creates one BCP group (which gives the same result as above). */
+@@ -148,12 +148,12 @@ void specifying_bcp_without_explicit_groups() throws Exception {
+                             """;
+ 
+         var requestedInUsEast1 = requestedIn("default", "us-east-1", servicesXml, deploymentXml);
+-        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontainer")).clusterInfo().bcpDeadline());
+-        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontent")).clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontainer")).capacity().clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontent")).capacity().clusterInfo().bcpDeadline());
+ 
+         var requestedInUsWest1 = requestedIn("default", "us-west-1", servicesXml, deploymentXml);
+-        assertEquals(Duration.ofHours(48), requestedInUsWest1.get(new ClusterSpec.Id("testcontainer")).clusterInfo().bcpDeadline());
+-        assertEquals(Duration.ofHours(48), requestedInUsWest1.get(new ClusterSpec.Id("testcontent")).clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInUsWest1.get(new ClusterSpec.Id("testcontainer")).capacity().clusterInfo
+```
+
+**File**: `config-model/src/test/java/com/yahoo/vespa/model/builder/xml/dom/NodesSpecificationTest.java` (modified, +2/-2)
+```diff
+@@ -281,7 +281,7 @@ void testDockerImageAllowedWhenNotHosted() {
+     void testOperatorGivenDockerImageAllowedInPublicCloudSystems() {
+         Document nodesXml = XML.getDocument("<nodes count='3'/>");
+         var operatorImage = DockerImage.fromString("example.invalid/vespa/operator-selected");
+-        var spec = NodesSpecification.create(false, Version.emptyVersion,
++        var spec = NodesSpecification.create(false, false, Version.emptyVersion,
+                                              new ModelElement(nodesXml.getDocumentElement()),
+                                              Optional.of(operatorImage), CloudAccount.unspecified(),
+                                              CloudResourceTags.empty(), List.of(),
+@@ -301,7 +301,7 @@ private NodesSpecification nodesSpecification(String nodesElement) {
+ 
+     private NodesSpecification nodesSpecification(String nodesElement, DeployState deployState) {
+         Document nodesXml = XML.getDocument(nodesElement);
+-        return NodesSpecification.create(false, Version.emptyVersion,
++        return NodesSpecification.create(false, false, Version.emptyVersion,
+                                          new ModelElement(nodesXml.getDocumentElement()),
+                                          Optional.empty(), CloudAccount.unspecified(),
+                                          CloudResourceTags.empty(), List.of(),
+```
+
+**File**: `config-model/src/test/java/com/yahoo/vespa/model/container/xml/ContainerModelBuilderTest.java` (modified, +1/-1)
+```diff
+@@ -604,7 +604,7 @@ void cloud_account_without_nodes_tag() throws Exception {
+         assertEquals(2, model.hostSystem().getHosts().size());
+         assertEquals(List.of(cloudAccount), model.provisioned().clusters().values()
+                                                  .stream()
+-                                                 .map(cluster -> cluster.cloudAccount())
++                                                 .map(cluster -> cluster.capacity().cloudAccount())
+                                                  .toList());
+     }
+ 
+```
+
+**File**: `config-provisioning/src/main/java/com/yahoo/config/provision/Capacity.java` (modified, +21/-33)
+```diff
+@@ -29,15 +29,6 @@ public final class Capacity {
+     private final CloudResourceTags cloudResourceTags;  // TODO: Move to ClusterSpec
+     private final ClusterInfo clusterInfo;  // TODO: Move to ClusterSpec
+ 
+-    private Capacity(ClusterResources min,
+-                     ClusterResources max,
+-                     IntRange groupSize,
+-                     boolean required,
+-                     NodeType type,
+-                     double maxCostFactor) {
+-        this(min, max, groupSize, required, true, type, maxCostFactor, CloudAccount.unspecified(), CloudResourceTags.empty(), ClusterInfo.empty());
+-    }
 -
--    void internal_init_flush(SerialNum currentSerial, TaskPromise task_promise);
-+    AttributeVectorSP                                _attr;
-+    bool                                             _cleanUpAfterFlush;
-+    FlushStats                                       _lastStats;
-+    const search::TuneFileAttributes                 _tuneFileAttributes;
-+    const search::common::FileHeaderContext&         _fileHeaderContext;
-+    vespalib::ISequencedTaskExecutor&                _attributeFieldWriter;
-+    vespalib::HwInfo                                 _hwInfo;
-+    std::shared_ptr<AttributeDirectory>              _attrDir;
-+    const std::shared_ptr<const DocTypeAndSubDbName> _doc_type_and_subdb_name;
-+    double                                           _replay_operation_cost;
-+    bool                                             _paged;
-+
-+    void internal_init_flush(SerialNum currentSerial, TaskPromise task_promise,
-+                             std::shared_ptr<opentelemetry::trace::Span> parent_span);
+     private Capacity(ClusterResources min,
+                      ClusterResources max,
+                      IntRange groupSize,
+@@ -88,7 +79,6 @@ private static void validate(ClusterResources resources) {
+      * (to whatever policies are applied and taking required true/false into account).
+      * Returns false if it is preferable to still succeed with partially satisfied capacity.
+      */
+-    @Deprecated // Remove after December 2026
+     public boolean canFail() { return canFail; }
  
- public:
-     using SP = std::shared_ptr<FlushableAttribute>;
-@@ -59,8 +64,9 @@ class FlushableAttribute : public searchcorespi::LeafFlushTarget {
-      * fileHeaderContext must be kept alive by caller.
-      **/
-     FlushableAttribute(AttributeVectorSP attr, const std::shared_ptr<AttributeDirectory>& attrDir,
--                       const search::TuneFileAttributes&        tuneFileAttributes,
--                       const search::common::FileHeaderContext& fileHeaderContext,
-+                       std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_sub_db_name_in,
-+                       const search::TuneFileAttributes&          tuneFileAttributes,
-+                       const search::common::FileHeaderContext&   fileHeaderContext,
-                        vespalib::ISequencedTaskExecutor& attributeFieldWriter, const vespalib::HwInfo& hwInfo);
+     /**
+@@ -108,27 +98,21 @@ private static void validate(ClusterResources resources) {
+     public double maxCostFactor() { return maxCostFactor; }
  
-     ~FlushableAttribute() override;
+     /** Returns the cloud account where this capacity is requested */
+-    @Deprecated // Remove after December 2026
+     public CloudAccount cloudAccount() {
+         return cloudAccount;
+     }
+ 
+     /** Returns the cloud resource tags for this capacity */
+-    @Deprecated // Remove after December 2026
+     public CloudResourceTags cloudResourceTags() {
+         return cloudResourceTags;
+     }
+ 
+-    /** Returns the cloud resource tags for this capacity */
+-    @Deprecated // Remove after December 2026
+     public ClusterInfo clusterInfo() { return clusterInfo; }
+ 
+-    @Deprecated // Remove after December 2026
+     Capacity with(CloudAccount account) {
+         return new Capacity(min, max, groupSize, required, canFail, type, maxCostFactor, account, cloudResourceTags, clusterInfo);
+     }
+ 
+-    @Deprecated // Remove after December 2026
+     public Capacity withCanFail(boolean canFail) {
+         return new Capacity(min, max, groupSize, required, canFail, type, maxCostFactor, cloudAccount, cloudResourceTags, clusterInfo);
+     }
+@@ -185,56 +169,60 @@ public static Capacity from(ClusterResources min, ClusterResources max) {
+     }
+ 
+     public static Capacity from(ClusterResources min, ClusterResources max, IntRange groupSize) {
+-        return from(min, max, groupSize, 1.0, false);
++        return from(min, max, groupSize, 1.0, false, true, Optional.empty(), CloudResourceTags.empty(), ClusterInfo.empty());
+     }
+ 
+-    @Deprecated // Remove after December 2026
+     public static Capacity from(ClusterResources resources, boolean required, boolean canFail) {
+-        return new Capacity(resources, resources, IntRange.empty(), required, canFail, NodeType.tenant, 1.0, CloudAccount.unspecified(), CloudResourceTags.empty(), ClusterInfo.empty());
++        return from(resources, required, canFail, Duration.ZERO);
+     }
+ 
+-    @Deprecated // Remove after December 2026
+     public static Capacity from(ClusterResources resources, boolean required, boolean canFail, Duration hostTTL) {
+         return from(resources, required, canFail, NodeType.tenant, hostTTL);
+     }
+ 
+-    public static Capacity from(ClusterResources resources, boolean required) {
+-        return from(resources, resources, IntRange.empty(), required);
++    @Deprecated // TODO: Remove after September 2026
++    public static Capacity from(ClusterResources min, ClusterResources max, IntRange groupSize, boolean required, boolean canFail,
++                                Optional<CloudAccount> cloudAccount, ClusterInfo clusterInfo) {
++        return from(min, max, groupSize, 1.0, required, canFail, cloudAccount, CloudResourceTags.empty(), clusterInfo);
+     }
+ 
+-    @Deprecated // Remove after December 2026
+     public static Capacity from(ClusterResources min, ClusterResources max, IntRange groupSize, boolean required, boolean canFail,
+                                 CloudAccount cloudAccount, ClusterInfo clusterInfo) {
+-        return new Capacity(min, max, IntRange.empty(), required, canFail, NodeType.tenant, 1.0, cloudAccount, CloudResourceTags.empty(), clusterInfo);
++        return from(min, max, groupSize, 1.0, required, canFail, cloudAccount, CloudResourceTags.empty(), clusterInfo);
+     }
+ 
+-    public static Capacity from(ClusterResources min, ClusterResources max, IntRange groupSize, boolean required) {
+-        return from(min, max, groupSize, 1.0, required);
++    @Deprecated // TODO: Remove after September 2026
++    public static Capacity from(ClusterResources min, ClusterResources max, IntRange groupSize, boolean required, boolean canFail,
++                                Optional<CloudAccount> cloudAccount, CloudResourceTags cloudResourceTags,
++                                ClusterIn
 ```
 
-**File**: `searchcore/src/vespa/searchcore/proton/documentmetastore/documentmetastoreflushtarget.cpp` (modified, +26/-9)
+**File**: `config-provisioning/src/main/java/com/yahoo/config/provision/CapacityPolicies.java` (modified, +1/-1)
 ```diff
-@@ -5,8 +5,10 @@
- #include "documentmetastore.h"
- 
- #include <vespa/check_require.h>
-+#include <vespa/opentelemetry/span_attribute_names.h>
- #include <vespa/searchcore/proton/attribute/attribute_directory.h>
- #include <vespa/searchcore/proton/attribute/attributedisklayout.h>
-+#include <vespa/searchcore/proton/common/tracing.h>
- #include <vespa/searchcore/proton/server/itlssyncer.h>
- #include <vespa/searchcorespi/common/resource_usage.h>
- #include <vespa/searchlib/attribute/attributefilesavetarget.h>
-@@ -26,6 +28,7 @@ LOG_SETUP(".proton.documentmetastore.documentmetastoreflushtarget");
- 
- using namespace search;
- using namespace vespalib;
-+using opentelemetry::trace::Span;
- using search::common::CreateAndFreezeTimes;
- using search::common::FileHeaderContext;
- using search::common::SerialNumFileHeaderContext;
-@@ -45,6 +48,7 @@ class DocumentMetaStoreFlushTarget::Flusher : public Task {
-     uint64_t                                    _syncToken;
-     std::string                                 _flushDir;
-     std::unique_ptr<AttributeDirectory::Writer> _writer;
-+    std::shared_ptr<Span>                       _span;
- 
-     bool saveDocumentMetaStore(); // not updating snap info.
- public:
-@@ -61,14 +65,23 @@ class DocumentMetaStoreFlushTarget::Flusher : public Task {
- 
- DocumentMetaStoreFlushTarget::Flusher::Flusher(DocumentMetaStoreFlushTarget& dmsft, SerialNum syncToken,
-                                                std::unique_ptr<AttributeDirectory::Writer> writer)
--    : _dmsft(dmsft), _saver(), _syncToken(syncToken), _flushDir(""), _writer(std::move(writer)) {
-+    : _dmsft(dmsft), _saver(), _syncToken(syncToken), _flushDir(""), _writer(std::move(writer)), _span() {
-     // Called by document db main executor
-     DocumentMetaStore& dms = *_dmsft._dms;
-+    auto               tracer = get_tracer();
-+    _span = tracer->StartSpan(
-+        "Flush documentmetastore",
-+        {{vespa_opentelemetry::span_attribute_names::document_type,
-+          _dmsft._doc_type_and_subdb_name->doc_type_name().getName()},
-+         {vespa_opentelemetry::span_attribute_names::subdb, _dmsft._doc_type_and_subdb_name->subdb_name()},
-+         {vespa_opentelemetry::span_attribute_names::serial, std::to_string(syncToken)}});
-+
-     dms.commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
-     _flushDir = _writer->getSnapshotDir(syncToken);
-     std::string newBaseFileName(_flushDir + "/" + dms.getName());
-     _saver = dms.initSave(newBaseFileName);
-     CHECK(_saver);
-+    _span->AddEvent("Done init flush");
- }
- 
- DocumentMetaStoreFlushTarget::Flusher::~Flusher() = default;
-@@ -141,9 +154,13 @@ bool DocumentMetaStoreFlushTarget::Flusher::cleanUp() {
- }
- 
- void DocumentMetaStoreFlushTarget::Flusher::run() {
-+    _span->AddEvent("Starting background flush");
-+    auto tracer = get_tracer();
-+    auto scope = tracer->WithActiveSpan(_span);
-     if (_syncToken <= _dmsft.getFlushedSerialNum()) {
-         // another flusher has created an equal or better snapshot
-         // after this flusher was created
-+        _span->End();
-         return;
+@@ -243,7 +243,7 @@ private NodeResources smallestSharedResources() {
+     /** Returns whether the nodes requested can share physical host with other applications */
+     public ClusterSpec decideExclusivity(ClusterSpec requestedCluster) {
+         if (requestedCluster.capacity().type() != NodeType.tenant) requestedCluster.withExclusivity(true); // Implicit exclusive
+-        if ( ! requestedCluster.cloudAccount().isUnspecified()) return requestedCluster.withExclusivity(true); // Implicit exclusive
++        if ( ! requestedCluster.capacity().cloudAccount().isUnspecified()) return requestedCluster.withExclusivity(true); // Implicit exclusive
+         boolean exclusive = requestedCluster.isExclusive() && (requestedCluster.capacity().isRequired() || zone.environment() == Environment.prod);
+         return requestedCluster.withExclusivity(exclusive);
      }
-     if (!flush()) {
-@@ -153,13 +170,14 @@ void DocumentMetaStoreFlushTarget::Flusher::run() {
-     if (!cleanUp()) {
-         // TODO (geirst): throw exception ?
-     }
-+    _span->End();
- }
- 
--DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(const DocumentMetaStore::SP dms, ITlsSyncer& tlsSyncer,
--                                                           const std::string&        baseDir,
--                                                           const TuneFileAttributes& tuneFileAttributes,
--                                                           const FileHeaderContext&  fileHeaderContext,
--                                                           const vespalib::HwInfo&   hwInfo)
-+DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(
-+    const DocumentMetaStore::SP dms, ITlsSyncer& tlsSyncer, const std::string& baseDir,
-+    std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_subdb_name_in,
-+    const TuneFileAttributes& tuneFileAttributes, const FileHeaderContext& fileHeaderContext,
-+    const vespalib::HwInfo& hwInfo)
-     : LeafFlushTarget("documentmetastore.flush", Type::SYNC, Component::ATTRIBUTE),
-       _dms(dms),
-       _tlsSyncer(tlsSyncer),
-@@ -170,9 +188,8 @@ DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(const DocumentMetaSto
-       _fileHeaderContext(fileHeaderContext),
-       _hwInfo(hwInfo),
-       _diskLayout(AttributeDiskLayout::createSimple(baseDir)),
--      _dmsDir(_diskLayout->createAttributeDir(""))
--
--{
-+      _dmsDir(_diskLayout->createAttributeDir("")),
-+      _doc_type_and_subdb_name(std::move(doc_type_and_subdb_name_in)) {
-     _lastStats.setPathElementsToLog(8);
- }
- 
 ```
 
 ---
 
-### Incident Patch 2: `38911c2f` (2026-11-18)
-**Commit Message**: Add trace spans for attribute vector flush.
+### Incident Patch 2: `ea96cf27` (2026-11-20)
+**Commit Message**: Revert "Bratseth/capacity cleanup"
 
-**File**: `opentelemetry/src/vespa/opentelemetry/span_attribute_names.cpp` (modified, +1/-0)
+**File**: `config-model/src/main/java/com/yahoo/config/model/deploy/DeployState.java` (modified, +1/-2)
 ```diff
-@@ -7,6 +7,7 @@ namespace vespa_opentelemetry::span_attribute_names {
- const std::string attribute("ai.vespa.searchlib.attribute");
- const std::string ddb_prev_state("ai.vespa.proton.ddb.prev_state");
- const std::string document_type("ai.vespa.document_type");
-+const std::string serial("ai.vespa.searchlib.serial");
- const std::string subdb("ai.vespa.proton.subdb");
+@@ -161,8 +161,7 @@ private DeployState(Application application,
+         this.sidecarProvider = sidecarProvider;
+         this.additionalContent = additionalContent;
  
- } // namespace vespa_opentelemetry::span_attribute_names
+-        boolean isBootstrap = getProperties() != null && getProperties().isBootstrap();
+-        var builder = new ProvisionContext.Builder(!isBootstrap);
++        var builder = new ProvisionContext.Builder();
+         builder.setLogger(new ProvisionDeployLogger(deployLogger));
+         var validation = builder.validationOverrides();
+         if (properties != null) validation.setWarnOnly(warnOnlyOnValidationFailure(properties, zone));
 ```
 
-**File**: `opentelemetry/src/vespa/opentelemetry/span_attribute_names.h` (modified, +1/-0)
+**File**: `config-model/src/main/java/com/yahoo/config/model/provision/InMemoryProvisioner.java` (modified, +2/-2)
 ```diff
-@@ -9,6 +9,7 @@ namespace vespa_opentelemetry::span_attribute_names {
- extern const std::string attribute;
- extern const std::string ddb_prev_state;
- extern const std::string document_type;
-+extern const std::string serial;
- extern const std::string subdb;
- 
- } // namespace vespa_opentelemetry::span_attribute_names
-```
-
-**File**: `searchcore/src/tests/proton/attribute/attributeflush_test.cpp` (modified, +2/-2)
-```diff
-@@ -346,8 +346,8 @@ TEST(AttributeFlushTest, require_that_cleanup_is_performed_after_flush) {
-     EXPECT_TRUE(info.save());
-     auto diskLayout = AttributeDiskLayout::create("flush");
- 
--    FlushableAttribute fa(av, diskLayout->getAttributeDir("a6"), TuneFileAttributes(), f._fileHeaderContext,
--                          f._attributeFieldWriter, f._hwInfo);
-+    FlushableAttribute fa(av, diskLayout->getAttributeDir("a6"), f._m.doc_type_and_subdb_name(), TuneFileAttributes(),
-+                          f._fileHeaderContext, f._attributeFieldWriter, f._hwInfo);
-     fa.initFlush(30, std::make_shared<search::FlushToken>())->run();
- 
-     EXPECT_TRUE(info.load());
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/attributemanager.cpp` (modified, +2/-2)
-```diff
-@@ -135,8 +135,8 @@ void AttributeManager::addAttribute(AttributeWrap attributeWrap, const ShrinkerS
-         // Flushing of extra attributes is handled elsewhere
-         AttributeVector* attributeP = attribute.get();
-         auto             flusher = std::make_shared<FlushableAttribute>(
--            std::move(attribute), _diskLayout->createAttributeDir(name), _tuneFileAttributes, _fileHeaderContext,
--            _attributeFieldWriter, _hwInfo);
-+            std::move(attribute), _diskLayout->createAttributeDir(name), _doc_type_and_subdb_name,
-+            _tuneFileAttributes, _fileHeaderContext, _attributeFieldWriter, _hwInfo);
-         _flushables[name] = FlushableWrap(flusher, shrinker);
-         _writableAttributes.push_back(attributeP);
+@@ -165,11 +165,11 @@ public List<HostSpec> prepare(ClusterSpec cluster, ProvisionContext context) {
+         IntRange groupRange = IntRange.of(requested.minResources().groups(), requested.maxResources().groups());
+         if (useMaxResources) {
+             int groups = groupRange.fit(requested.maxResources().nodes() / requested.groupSize().to().orElse(1));
+-            return prepare(cluster, requested.maxResources(),groups, requested.isRequired(), context.canFail());
++            return prepare(cluster, requested.maxResources(),groups, requested.isRequired(), requested.canFail());
+         }
+         else {
+             int groups = groupRange.fit(requested.minResources().nodes() / requested.groupSize().from().orElse(1));
+-            return prepare(cluster, requested.minResources(), groups, requested.isRequired(), context.canFail());
++            return prepare(cluster, requested.minResources(), groups, requested.isRequired(), requested.canFail());
+         }
      }
+ 
 ```
 
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/attributemanager.h` (modified, +3/-0)
+**File**: `config-model/src/main/java/com/yahoo/vespa/model/builder/xml/dom/NodesSpecification.java` (modified, +15/-9)
 ```diff
-@@ -204,6 +204,9 @@ class AttributeManager : public proton::IAttributeManager {
+@@ -55,6 +55,8 @@ public class NodesSpecification {
+      */
+     private final boolean required;
  
-     searchcorespi::common::ResourceUsage get_resource_usage() const override;
-     static uint64_t get_size_on_disk_overhead() noexcept;
-+    [[nodiscard]] const std::shared_ptr<const DocTypeAndSubDbName>& doc_type_and_subdb_name() const noexcept {
-+        return _doc_type_and_subdb_name;
-+    }
-     [[nodiscard]] const DocTypeName& doc_type_name() const noexcept {
-         return _doc_type_and_subdb_name->doc_type_name();
-     }
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/flushableattribute.cpp` (modified, +43/-11)
-```diff
-@@ -6,7 +6,9 @@
- #include "attributedisklayout.h"
- 
- #include <vespa/check_require.h>
-+#include <vespa/opentelemetry/span_attribute_names.h>
- #include <vespa/searchcommon/attribute/config.h>
-+#include <vespa/searchcore/proton/common/tracing.h>
- #include <vespa/searchcorespi/common/resource_usage.h>
- #include <vespa/searchlib/attribute/attributefilesavetarget.h>
- #include <vespa/searchlib/attribute/attributememorysavetarget.h>
-@@ -29,6 +31,7 @@ LOG_SETUP(".proton.attribute.flushableattribute");
- 
- using namespace search;
- using namespace vespalib;
-+using opentelemetry::trace::Span;
- using search::common::CreateAndFreezeTimes;
- using search::common::FileHeaderContext;
- using search::common::SerialNumFileHeaderContext;
-@@ -48,6 +51,7 @@ class FlushableAttribute::Flusher : public Task {
-     uint64_t                                    _syncToken;
-     std::string                                 _flushFile;
-     std::unique_ptr<AttributeDirectory::Writer> _writer;
-+    std::shared_ptr<Span>                       _span;
- 
-     bool saveAttribute(); // not updating snap info.
- public:
-@@ -65,13 +69,28 @@ class FlushableAttribute::Flusher : public Task {
- 
- FlushableAttribute::Flusher::Flusher(FlushableAttribute& fattr, SerialNum syncToken,
-                                      std::unique_ptr<AttributeDirectory::Writer> writer)
--    : _fattr(fattr), _saveTarget(), _saver(), _syncToken(syncToken), _flushFile(""), _writer(std::move(writer)) {
--    fattr._attr->commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
-+    : _fattr(fattr),
-+      _saveTarget(),
-+      _saver(),
-+      _syncToken(syncToken),
-+      _flushFile(""),
-+      _writer(std::move(writer)),
-+      _span() {
-     AttributeVector& attr = *_fattr._attr;
-+    auto             tracer = get_tracer();
-+    _span = tracer->StartSpan(
-+        "Flush attribute",
-+        {{vespa_opentelemetry::span_attribute_names::document_type,
-+          fattr._doc_type_and_subdb_name->doc_type_name().getName()},
-+         {vespa_opentelemetry::span_attribute_names::subdb, fattr._doc_type_and_subdb_name->subdb_name()},
-+         {vespa_opentelemetry::span_attribute_names::attribute, attr.getName()},
-+         {vespa_opentelemetry::span_attribute_names::serial, std::to_string(syncToken)}});
-+    attr.commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
-     // Called by attribute field writer executor
-     _flushFile = _writer->getSnapshotDir(_syncToken) + "/" + attr.getName();
-     _saver = attr.initSave(_flushFile);
-     CHECK(_saver);
-+    _span->AddEvent("Done init flush");
- }
- 
- FlushableAttribute::Flusher::~Flusher() = default;
-@@ -134,9 +153,13 @@ bool FlushableAttribute::Flusher::cleanUp() {
- }
- 
- void FlushableAttribute::Flusher::run() {
-+    _span->AddEvent("Starting background flush");
-+    auto tracer = get_tracer();
-+    auto scope = tracer->WithActiveSpan(_span);
-     if (_syncToken <= _fattr.getFlushedSerialNum()) {
-         // another flusher has created an equal or better snapshot
-         // after this flusher was created
-+        _span->End();
-         return;
-     }
-     if (!flush()) {
-@@ -146,13 +169,15 @@ void FlushableAttribute::Flusher::run() {
-     if (!cleanUp()) {
-         // TODO (geirst): throw exception ?
-     }
-+    _span->End();
- }
- 
- FlushableAttribute::FlushableAttribute(AttributeVectorSP attr, const std::shared_ptr<AttributeDirectory>& attrDir,
--                                       const TuneFileAttributes&         tuneFileAttributes,
--                                       const FileHeaderContext&          fileHeaderContext,
--                                       vespalib::ISequencedTaskExecutor& attributeFieldWriter,
--                                       const vespalib::HwInfo&           hwInfo)
-+                                       std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_subdb_name_in,
-+                                       const TuneFileAttributes&                  tuneFileAttributes,
-+                                       const FileHeaderContext&                   fileHeaderContext,
-+                                       vespalib::ISequencedTaskExecutor&          attributeFieldWriter,
-+                                       const vespalib::HwInfo&                    hwInfo)
-     : LeafFlushTarget(make_string("attribute.flush.%s", attr->getName().c_str()), Type::SYNC, Component::ATTRIBUTE),
-       _attr(attr),
-       _cleanUpAfterFlush(true),
-@@ -162,6 +187,7 @@ FlushableAttribute::FlushableAttribute(AttributeVectorSP attr, const std::shared
-       _attributeFieldWriter(attributeFieldWriter),
-       _hwInfo(hwInfo),
-       _attrDir(attrDir),
-+      _doc_type_and_subdb_name(std::move(doc_type_and_subdb_name_in)),
-       _replay_operation_cost(0.0),
-       _paged(_attr->getConfig().paged()) {
-     _lastStats.setPathElementsToLog(8);
-@@ -197,8 +223,11 @@ IFlushTarget::Time FlushableAttribute::getLastFlushTime() const {
-     return _attrDir->getLastFlushTime();
- }
- 
--void FlushableAttribut
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/attribute/flushableattribute.h` (modified, +20/-14)
-```diff
-@@ -2,10 +2,13 @@
- 
- #pragma once
- 
-+#include <vespa/searchcore/proton/common/doc_type_and_subdb_name.h>
- #include <vespa/searchcorespi/flush/iflushtarget.h>
- #include <vespa/searchlib/common/tunefileinfo.h>
- #include <vespa/vespalib/util/hw_info.h>
- 
-+#include <opentelemetry/trace/span.h>
++    private final boolean canFail;
 +
- namespace search {
- class AttributeVector;
- }
-@@ -36,18 +39,20 @@ class FlushableAttribute : public searchcorespi::LeafFlushTarget {
-     using AttributeVectorSP = std::shared_ptr<search::AttributeVector>;
-     using FlushStats = searchcorespi::FlushStats;
+     private final boolean exclusive;
  
--    AttributeVectorSP                        _attr;
--    bool                                     _cleanUpAfterFlush;
--    FlushStats                               _lastStats;
--    const search::TuneFileAttributes         _tuneFileAttributes;
--    const search::common::FileHeaderContext& _fileHeaderContext;
--    vespalib::ISequencedTaskExecutor&        _attributeFieldWriter;
--    vespalib::HwInfo                         _hwInfo;
--    std::shared_ptr<AttributeDirectory>      _attrDir;
--    double                                   _replay_operation_cost;
--    bool                                     _paged;
+     /** The repo part of a docker image (without tag), optional */
+@@ -80,7 +82,7 @@ private NodesSpecification(ClusterResources min,
+                                IntRange groupSize,
+                                double maxCostFactor,
+                                boolean dedicated, Version version,
+-                               boolean required, boolean exclusive,
++                               boolean required, boolean canFail, boolean exclusive,
+                                Optional<DockerImage> dockerImageRepo,
+                                CloudAccount cloudAccount,
+                                CloudResourceTags cloudResourceTags,
+@@ -108,6 +110,7 @@ private NodesSpecification(ClusterResources min,
+         this.dedicated = dedicated;
+         this.version = version;
+         this.required = required;
++        this.canFail = canFail;
+         this.exclusive = exclusive;
+         this.dockerImageRepo = dockerImageRepo;
+         this.cloudAccount = Objects.requireNonNull(cloudAccount);
+@@ -117,7 +120,7 @@ private NodesSpecification(ClusterResources min,
+         this.profile = profile;
+     }
+ 
+-    static NodesSpecification create(boolean dedicated, Version version,
++    static NodesSpecification create(boolean dedicated, boolean canFail, Version version,
+                                      ModelElement nodesElement, Optional<DockerImage> dockerImageRepo,
+                                      CloudAccount cloudAccount,
+                                      CloudResourceTags cloudResourceTags,
+@@ -136,6 +139,7 @@ static NodesSpecification create(boolean dedicated, Version version,
+                                       dedicated,
+                                       version,
+                                       resolvedElement.booleanAttribute("required", false),
++                                      canFail,
+                                       resolvedElement.booleanAttribute("exclusive", false),
+                                       dockerImageToUse(resolvedElement, dockerImageRepo, deployState),
+                                       cloudAccount,
+@@ -185,6 +189,7 @@ private record ResourceConstraints(ClusterResources min, ClusterResources max, I
+     /** Returns a requirement for dedicated nodes taken from the given <code>nodes</code> element */
+     public static NodesSpecification from(ModelElement nodesElement, ConfigModelContext context) {
+         return create(true,
++                      ! context.getDeployState().getProperties().isBootstrap(),
+                       context.getDeployState().getWantedNodeVespaVersion(),
+                       nodesElement,
+                       context.getDeployState().getWantedDockerImageRepo(),
+@@ -205,6 +210,7 @@ public static Optional<NodesSpecification> optionalDedicatedFromParent(ModelElem
+         ModelElement nodesElement = parentElement.child("nodes");
+         if (nodesElement == null) return Optional.empty();
+         return Optional.of(create(nodesElement.booleanAttribute("dedicated", false),
++                                  ! context.getDeployState().getProperties().isBootstrap(),
+                                   context.getDeployState().getWantedNodeVespaVersion(),
+                                   nodesElement,
+                                   context.getDeployState().getWantedDockerImageRepo(),
+@@ -223,6 +229,7 @@ public static NodesSpecification nonDedicated(int count, ConfigModelContext cont
+                                       false,
+                                       context.getDeployState().getWantedNodeVespaVersion(),
+                                       false,
++                                      ! context.getDeployState().getProperties().isBootstrap(),
+                                       false,
+                                       context.getDeployState().getWantedDockerImageRepo(),
+                                       context.getDeployState().getProperties().getCloudAccount(),
+@@ -241,6 +248,7 @@ public static NodesSpecification dedicated(int count, ConfigModelContext context
+                                       true,
+                                       context.getDeployState().getWantedNodeVespaVersion(),
+                                       false,
++                                      ! context.getDeployState().getProperties().isBootstrap(),
+                                       false,
+                                       context.getDeployState().getWantedDockerImageRepo(),
+                                       context.getDeployState().getProperties().getCloudAccount(),
+@@ -270,6 +278,7 @@ public static NodesSpecification requiredFromSharedParents(int count, NodeResour
+                                       true,
+                                       context.getDeployState().getWantedNodeVesp
+```
+
+**File**: `config-model/src/test/java/com/yahoo/vespa/model/ClusterInfoTest.java` (modified, +25/-25)
+```diff
+@@ -72,16 +72,16 @@ void bcp_deadline_is_passed_in_cluster_info() throws Exception {
+                             """;
+ 
+         var requestedInUsEast1 = requestedIn("default", "us-east-1", servicesXml, deploymentXml);
+-        assertEquals(Duration.ofMinutes(0), requestedInUsEast1.get(new ClusterSpec.Id("testcontainer")).clusterInfo().bcpDeadline());
+-        assertEquals(Duration.ofMinutes(0), requestedInUsEast1.get(new ClusterSpec.Id("testcontent")).clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofMinutes(0), requestedInUsEast1.get(new ClusterSpec.Id("testcontainer")).capacity().clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofMinutes(0), requestedInUsEast1.get(new ClusterSpec.Id("testcontent")).capacity().clusterInfo().bcpDeadline());
+ 
+         var requestedInUsWest1 = requestedIn("default", "us-west-1", servicesXml, deploymentXml);
+-        assertEquals(Duration.ofMinutes(30), requestedInUsWest1.get(new ClusterSpec.Id("testcontainer")).clusterInfo().bcpDeadline());
+-        assertEquals(Duration.ofMinutes(30), requestedInUsWest1.get(new ClusterSpec.Id("testcontent")).clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofMinutes(30), requestedInUsWest1.get(new ClusterSpec.Id("testcontainer")).capacity().clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofMinutes(30), requestedInUsWest1.get(new ClusterSpec.Id("testcontent")).capacity().clusterInfo().bcpDeadline());
+ 
+         var requestedInEuWest1 = requestedIn("default", "eu-west-1", servicesXml, deploymentXml);
+-        assertEquals(Duration.ofHours(48), requestedInEuWest1.get(new ClusterSpec.Id("testcontainer")).clusterInfo().bcpDeadline());
+-        assertEquals(Duration.ofHours(48), requestedInEuWest1.get(new ClusterSpec.Id("testcontent")).clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInEuWest1.get(new ClusterSpec.Id("testcontainer")).capacity().clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInEuWest1.get(new ClusterSpec.Id("testcontent")).capacity().clusterInfo().bcpDeadline());
+     }
+ 
+     /** A high default deadline only will cause no resources to be set aside for BCP. */
+@@ -112,12 +112,12 @@ void specifying_only_default_deadline_is_possible() throws Exception {
+                             """;
+ 
+         var requestedInUsEast1 = requestedIn("default", "us-east-1", servicesXml, deploymentXml);
+-        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontainer")).clusterInfo().bcpDeadline());
+-        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontent")).clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontainer")).capacity().clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontent")).capacity().clusterInfo().bcpDeadline());
+ 
+         var requestedInUsWest1 = requestedIn("default", "us-west-1", servicesXml, deploymentXml);
+-        assertEquals(Duration.ofHours(48), requestedInUsWest1.get(new ClusterSpec.Id("testcontainer")).clusterInfo().bcpDeadline());
+-        assertEquals(Duration.ofHours(48), requestedInUsWest1.get(new ClusterSpec.Id("testcontent")).clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInUsWest1.get(new ClusterSpec.Id("testcontainer")).capacity().clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInUsWest1.get(new ClusterSpec.Id("testcontent")).capacity().clusterInfo().bcpDeadline());
+     }
+ 
+     /** This implicitly creates one BCP group (which gives the same result as above). */
+@@ -148,12 +148,12 @@ void specifying_bcp_without_explicit_groups() throws Exception {
+                             """;
+ 
+         var requestedInUsEast1 = requestedIn("default", "us-east-1", servicesXml, deploymentXml);
+-        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontainer")).clusterInfo().bcpDeadline());
+-        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontent")).clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontainer")).capacity().clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInUsEast1.get(new ClusterSpec.Id("testcontent")).capacity().clusterInfo().bcpDeadline());
+ 
+         var requestedInUsWest1 = requestedIn("default", "us-west-1", servicesXml, deploymentXml);
+-        assertEquals(Duration.ofHours(48), requestedInUsWest1.get(new ClusterSpec.Id("testcontainer")).clusterInfo().bcpDeadline());
+-        assertEquals(Duration.ofHours(48), requestedInUsWest1.get(new ClusterSpec.Id("testcontent")).clusterInfo().bcpDeadline());
++        assertEquals(Duration.ofHours(48), requestedInUsWest1.get(new ClusterSpec.Id("testcontainer")).capacity().clusterInfo
+```
+
+**File**: `config-model/src/test/java/com/yahoo/vespa/model/builder/xml/dom/NodesSpecificationTest.java` (modified, +2/-2)
+```diff
+@@ -281,7 +281,7 @@ void testDockerImageAllowedWhenNotHosted() {
+     void testOperatorGivenDockerImageAllowedInPublicCloudSystems() {
+         Document nodesXml = XML.getDocument("<nodes count='3'/>");
+         var operatorImage = DockerImage.fromString("example.invalid/vespa/operator-selected");
+-        var spec = NodesSpecification.create(false, Version.emptyVersion,
++        var spec = NodesSpecification.create(false, false, Version.emptyVersion,
+                                              new ModelElement(nodesXml.getDocumentElement()),
+                                              Optional.of(operatorImage), CloudAccount.unspecified(),
+                                              CloudResourceTags.empty(), List.of(),
+@@ -301,7 +301,7 @@ private NodesSpecification nodesSpecification(String nodesElement) {
+ 
+     private NodesSpecification nodesSpecification(String nodesElement, DeployState deployState) {
+         Document nodesXml = XML.getDocument(nodesElement);
+-        return NodesSpecification.create(false, Version.emptyVersion,
++        return NodesSpecification.create(false, false, Version.emptyVersion,
+                                          new ModelElement(nodesXml.getDocumentElement()),
+                                          Optional.empty(), CloudAccount.unspecified(),
+                                          CloudResourceTags.empty(), List.of(),
+```
+
+**File**: `config-model/src/test/java/com/yahoo/vespa/model/container/xml/ContainerModelBuilderTest.java` (modified, +1/-1)
+```diff
+@@ -604,7 +604,7 @@ void cloud_account_without_nodes_tag() throws Exception {
+         assertEquals(2, model.hostSystem().getHosts().size());
+         assertEquals(List.of(cloudAccount), model.provisioned().clusters().values()
+                                                  .stream()
+-                                                 .map(cluster -> cluster.cloudAccount())
++                                                 .map(cluster -> cluster.capacity().cloudAccount())
+                                                  .toList());
+     }
+ 
+```
+
+**File**: `config-provisioning/src/main/java/com/yahoo/config/provision/Capacity.java` (modified, +21/-33)
+```diff
+@@ -29,15 +29,6 @@ public final class Capacity {
+     private final CloudResourceTags cloudResourceTags;  // TODO: Move to ClusterSpec
+     private final ClusterInfo clusterInfo;  // TODO: Move to ClusterSpec
+ 
+-    private Capacity(ClusterResources min,
+-                     ClusterResources max,
+-                     IntRange groupSize,
+-                     boolean required,
+-                     NodeType type,
+-                     double maxCostFactor) {
+-        this(min, max, groupSize, required, true, type, maxCostFactor, CloudAccount.unspecified(), CloudResourceTags.empty(), ClusterInfo.empty());
+-    }
 -
--    void internal_init_flush(SerialNum currentSerial, TaskPromise task_promise);
-+    AttributeVectorSP                                _attr;
-+    bool                                             _cleanUpAfterFlush;
-+    FlushStats                                       _lastStats;
-+    const search::TuneFileAttributes                 _tuneFileAttributes;
-+    const search::common::FileHeaderContext&         _fileHeaderContext;
-+    vespalib::ISequencedTaskExecutor&                _attributeFieldWriter;
-+    vespalib::HwInfo                                 _hwInfo;
-+    std::shared_ptr<AttributeDirectory>              _attrDir;
-+    const std::shared_ptr<const DocTypeAndSubDbName> _doc_type_and_subdb_name;
-+    double                                           _replay_operation_cost;
-+    bool                                             _paged;
-+
-+    void internal_init_flush(SerialNum currentSerial, TaskPromise task_promise,
-+                             std::shared_ptr<opentelemetry::trace::Span> parent_span);
+     private Capacity(ClusterResources min,
+                      ClusterResources max,
+                      IntRange groupSize,
+@@ -88,7 +79,6 @@ private static void validate(ClusterResources resources) {
+      * (to whatever policies are applied and taking required true/false into account).
+      * Returns false if it is preferable to still succeed with partially satisfied capacity.
+      */
+-    @Deprecated // Remove after December 2026
+     public boolean canFail() { return canFail; }
  
- public:
-     using SP = std::shared_ptr<FlushableAttribute>;
-@@ -59,8 +64,9 @@ class FlushableAttribute : public searchcorespi::LeafFlushTarget {
-      * fileHeaderContext must be kept alive by caller.
-      **/
-     FlushableAttribute(AttributeVectorSP attr, const std::shared_ptr<AttributeDirectory>& attrDir,
--                       const search::TuneFileAttributes&        tuneFileAttributes,
--                       const search::common::FileHeaderContext& fileHeaderContext,
-+                       std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_sub_db_name_in,
-+                       const search::TuneFileAttributes&          tuneFileAttributes,
-+                       const search::common::FileHeaderContext&   fileHeaderContext,
-                        vespalib::ISequencedTaskExecutor& attributeFieldWriter, const vespalib::HwInfo& hwInfo);
+     /**
+@@ -108,27 +98,21 @@ private static void validate(ClusterResources resources) {
+     public double maxCostFactor() { return maxCostFactor; }
  
-     ~FlushableAttribute() override;
+     /** Returns the cloud account where this capacity is requested */
+-    @Deprecated // Remove after December 2026
+     public CloudAccount cloudAccount() {
+         return cloudAccount;
+     }
+ 
+     /** Returns the cloud resource tags for this capacity */
+-    @Deprecated // Remove after December 2026
+     public CloudResourceTags cloudResourceTags() {
+         return cloudResourceTags;
+     }
+ 
+-    /** Returns the cloud resource tags for this capacity */
+-    @Deprecated // Remove after December 2026
+     public ClusterInfo clusterInfo() { return clusterInfo; }
+ 
+-    @Deprecated // Remove after December 2026
+     Capacity with(CloudAccount account) {
+         return new Capacity(min, max, groupSize, required, canFail, type, maxCostFactor, account, cloudResourceTags, clusterInfo);
+     }
+ 
+-    @Deprecated // Remove after December 2026
+     public Capacity withCanFail(boolean canFail) {
+         return new Capacity(min, max, groupSize, required, canFail, type, maxCostFactor, cloudAccount, cloudResourceTags, clusterInfo);
+     }
+@@ -185,56 +169,60 @@ public static Capacity from(ClusterResources min, ClusterResources max) {
+     }
+ 
+     public static Capacity from(ClusterResources min, ClusterResources max, IntRange groupSize) {
+-        return from(min, max, groupSize, 1.0, false);
++        return from(min, max, groupSize, 1.0, false, true, Optional.empty(), CloudResourceTags.empty(), ClusterInfo.empty());
+     }
+ 
+-    @Deprecated // Remove after December 2026
+     public static Capacity from(ClusterResources resources, boolean required, boolean canFail) {
+-        return new Capacity(resources, resources, IntRange.empty(), required, canFail, NodeType.tenant, 1.0, CloudAccount.unspecified(), CloudResourceTags.empty(), ClusterInfo.empty());
++        return from(resources, required, canFail, Duration.ZERO);
+     }
+ 
+-    @Deprecated // Remove after December 2026
+     public static Capacity from(ClusterResources resources, boolean required, boolean canFail, Duration hostTTL) {
+         return from(resources, required, canFail, NodeType.tenant, hostTTL);
+     }
+ 
+-    public static Capacity from(ClusterResources resources, boolean required) {
+-        return from(resources, resources, IntRange.empty(), required);
++    @Deprecated // TODO: Remove after September 2026
++    public static Capacity from(ClusterResources min, ClusterResources max, IntRange groupSize, boolean required, boolean canFail,
++                                Optional<CloudAccount> cloudAccount, ClusterInfo clusterInfo) {
++        return from(min, max, groupSize, 1.0, required, canFail, cloudAccount, CloudResourceTags.empty(), clusterInfo);
+     }
+ 
+-    @Deprecated // Remove after December 2026
+     public static Capacity from(ClusterResources min, ClusterResources max, IntRange groupSize, boolean required, boolean canFail,
+                                 CloudAccount cloudAccount, ClusterInfo clusterInfo) {
+-        return new Capacity(min, max, IntRange.empty(), required, canFail, NodeType.tenant, 1.0, cloudAccount, CloudResourceTags.empty(), clusterInfo);
++        return from(min, max, groupSize, 1.0, required, canFail, cloudAccount, CloudResourceTags.empty(), clusterInfo);
+     }
+ 
+-    public static Capacity from(ClusterResources min, ClusterResources max, IntRange groupSize, boolean required) {
+-        return from(min, max, groupSize, 1.0, required);
++    @Deprecated // TODO: Remove after September 2026
++    public static Capacity from(ClusterResources min, ClusterResources max, IntRange groupSize, boolean required, boolean canFail,
++                                Optional<CloudAccount> cloudAccount, CloudResourceTags cloudResourceTags,
++                                ClusterIn
 ```
 
-**File**: `searchcore/src/vespa/searchcore/proton/documentmetastore/documentmetastoreflushtarget.cpp` (modified, +26/-9)
+**File**: `config-provisioning/src/main/java/com/yahoo/config/provision/CapacityPolicies.java` (modified, +1/-1)
 ```diff
-@@ -5,8 +5,10 @@
- #include "documentmetastore.h"
- 
- #include <vespa/check_require.h>
-+#include <vespa/opentelemetry/span_attribute_names.h>
- #include <vespa/searchcore/proton/attribute/attribute_directory.h>
- #include <vespa/searchcore/proton/attribute/attributedisklayout.h>
-+#include <vespa/searchcore/proton/common/tracing.h>
- #include <vespa/searchcore/proton/server/itlssyncer.h>
- #include <vespa/searchcorespi/common/resource_usage.h>
- #include <vespa/searchlib/attribute/attributefilesavetarget.h>
-@@ -26,6 +28,7 @@ LOG_SETUP(".proton.documentmetastore.documentmetastoreflushtarget");
- 
- using namespace search;
- using namespace vespalib;
-+using opentelemetry::trace::Span;
- using search::common::CreateAndFreezeTimes;
- using search::common::FileHeaderContext;
- using search::common::SerialNumFileHeaderContext;
-@@ -45,6 +48,7 @@ class DocumentMetaStoreFlushTarget::Flusher : public Task {
-     uint64_t                                    _syncToken;
-     std::string                                 _flushDir;
-     std::unique_ptr<AttributeDirectory::Writer> _writer;
-+    std::shared_ptr<Span>                       _span;
- 
-     bool saveDocumentMetaStore(); // not updating snap info.
- public:
-@@ -61,14 +65,23 @@ class DocumentMetaStoreFlushTarget::Flusher : public Task {
- 
- DocumentMetaStoreFlushTarget::Flusher::Flusher(DocumentMetaStoreFlushTarget& dmsft, SerialNum syncToken,
-                                                std::unique_ptr<AttributeDirectory::Writer> writer)
--    : _dmsft(dmsft), _saver(), _syncToken(syncToken), _flushDir(""), _writer(std::move(writer)) {
-+    : _dmsft(dmsft), _saver(), _syncToken(syncToken), _flushDir(""), _writer(std::move(writer)), _span() {
-     // Called by document db main executor
-     DocumentMetaStore& dms = *_dmsft._dms;
-+    auto               tracer = get_tracer();
-+    _span = tracer->StartSpan(
-+        "Flush documentmetastore",
-+        {{vespa_opentelemetry::span_attribute_names::document_type,
-+          _dmsft._doc_type_and_subdb_name->doc_type_name().getName()},
-+         {vespa_opentelemetry::span_attribute_names::subdb, _dmsft._doc_type_and_subdb_name->subdb_name()},
-+         {vespa_opentelemetry::span_attribute_names::serial, std::to_string(syncToken)}});
-+
-     dms.commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
-     _flushDir = _writer->getSnapshotDir(syncToken);
-     std::string newBaseFileName(_flushDir + "/" + dms.getName());
-     _saver = dms.initSave(newBaseFileName);
-     CHECK(_saver);
-+    _span->AddEvent("Done init flush");
- }
- 
- DocumentMetaStoreFlushTarget::Flusher::~Flusher() = default;
-@@ -141,9 +154,13 @@ bool DocumentMetaStoreFlushTarget::Flusher::cleanUp() {
- }
- 
- void DocumentMetaStoreFlushTarget::Flusher::run() {
-+    _span->AddEvent("Starting background flush");
-+    auto tracer = get_tracer();
-+    auto scope = tracer->WithActiveSpan(_span);
-     if (_syncToken <= _dmsft.getFlushedSerialNum()) {
-         // another flusher has created an equal or better snapshot
-         // after this flusher was created
-+        _span->End();
-         return;
+@@ -243,7 +243,7 @@ private NodeResources smallestSharedResources() {
+     /** Returns whether the nodes requested can share physical host with other applications */
+     public ClusterSpec decideExclusivity(ClusterSpec requestedCluster) {
+         if (requestedCluster.capacity().type() != NodeType.tenant) requestedCluster.withExclusivity(true); // Implicit exclusive
+-        if ( ! requestedCluster.cloudAccount().isUnspecified()) return requestedCluster.withExclusivity(true); // Implicit exclusive
++        if ( ! requestedCluster.capacity().cloudAccount().isUnspecified()) return requestedCluster.withExclusivity(true); // Implicit exclusive
+         boolean exclusive = requestedCluster.isExclusive() && (requestedCluster.capacity().isRequired() || zone.environment() == Environment.prod);
+         return requestedCluster.withExclusivity(exclusive);
      }
-     if (!flush()) {
-@@ -153,13 +170,14 @@ void DocumentMetaStoreFlushTarget::Flusher::run() {
-     if (!cleanUp()) {
-         // TODO (geirst): throw exception ?
-     }
-+    _span->End();
- }
+```
+
+---
+
+### Incident Patch 3: `b012d3cc` (2026-11-20)
+**Commit Message**: Merge pull request #38594 from vespa-engine/revert-38590-arnej/keep-abi-compat
+
+Revert "add temporary ABI compatibility constructor"
+
+**File**: `config-provisioning/src/main/java/com/yahoo/config/provision/ProvisionContext.java` (modified, +0/-5)
+```diff
+@@ -38,11 +38,6 @@ public static class Builder {
  
--DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(const DocumentMetaStore::SP dms, ITlsSyncer& tlsSyncer,
--                                                           const std::string&        baseDir,
--                                                           const TuneFileAttributes& tuneFileAttributes,
--                                                           const FileHeaderContext&  fileHeaderContext,
--                                                           const vespalib::HwInfo&   hwInfo)
-+DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(
-+    const DocumentMetaStore::SP dms, ITlsSyncer& tlsSyncer, const std::string& baseDir,
-+    std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_subdb_name_in,
-+    const TuneFileAttributes& tuneFileAttributes, const FileHeaderContext& fileHeaderContext,
-+    const vespalib::HwInfo& hwInfo)
-     : LeafFlushTarget("documentmetastore.flush", Type::SYNC, Component::ATTRIBUTE),
-       _dms(dms),
-       _tlsSyncer(tlsSyncer),
-@@ -170,9 +188,8 @@ DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(const DocumentMetaSto
-       _fileHeaderContext(fileHeaderContext),
-       _hwInfo(hwInfo),
-       _diskLayout(AttributeDiskLayout::createSimple(baseDir)),
--      _dmsDir(_diskLayout->createAttributeDir(""))
+         private final ValidationOverrides.Builder validationOverrides = new ValidationOverrides.Builder();
+ 
+-        @Deprecated // Remove after December 2026
+-        public Builder() {
+-            this.canFail = true;
+-        }
 -
--{
-+      _dmsDir(_diskLayout->createAttributeDir("")),
-+      _doc_type_and_subdb_name(std::move(doc_type_and_subdb_name_in)) {
-     _lastStats.setPathElementsToLog(8);
- }
- 
+         public Builder(boolean canFail) {
+             this.canFail = canFail;
+         }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38572** (2026-11-18): Add -XX option (@hmusum)
-- **PR #38571** (2026-11-18): Add trace spans for attribute vector flush. (@toregge)
-- **PR #38570** (2026-11-18): add cache::read_no_populate() (@arnej27959)
-- **PR #38568** (closed): Revert "bypass summary cache on move and update" [MERGEOK] (@andreer)
-- **PR #38567** (2026-11-18): Add DocTypeAndSubDbName class. (@toregge)
-- **PR #38566** (2026-11-18): Don't move buckets from ready to notready when redundancy equals (@toregge)
+- **PR #38597** (2026-11-20): close log files with no entries in range at once (@andreer)
+- **PR #38595** (2026-11-20): Revert "Bratseth/capacity cleanup" (@arnej27959)
+- **PR #38594** (2026-11-20): Revert "add temporary ABI compatibility constructor" (@arnej27959)
+- **PR #38593** (2026-11-20): chore: update third-party attributions (@github-actions[bot])
+- **PR #38590** (2026-11-19): add temporary ABI compatibility constructor (@arnej27959)
+- **PR #38588** (2026-11-19): template wand::Algorithm on score type (@arnej27959)
 
 ---
 
@@ -1795,31 +1766,32 @@ Add trace spans for attribute vector flush.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in span_attribute_names.cpp
+## X. Empirical Invariant Guard in DeployState.java
 
 **RULE**:
-When implementing operations in `opentelemetry/src/vespa/opentelemetry/span_attribute_names.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `config-model/src/main/java/com/yahoo/config/model/deploy/DeployState.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a98f585`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `97cdaa10`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `opentelemetry/src/vespa/opentelemetry/span_attribute_names.cpp`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `config-model/src/main/java/com/yahoo/config/model/deploy/DeployState.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-const std::string serial("ai.vespa.searchlib.serial");
+        var builder = new ProvisionContext.Builder();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        boolean isBootstrap = getProperties() != null && getProperties().isBootstrap();
+        var builder = new ProvisionContext.Builder(!isBootstrap);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a98f585` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `97cdaa10` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

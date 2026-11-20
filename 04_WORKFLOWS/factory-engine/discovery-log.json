@@ -21700,5 +21700,20 @@
     "downloads": 34,
     "qualityScore": 914,
     "discoveredAt": "2026-11-20T09:56:43.144Z"
+  },
+  {
+    "name": "Erosion-CN",
+    "fullName": "Kianuni/Erosion-CN",
+    "url": "https://github.com/Kianuni/Erosion-CN",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "iOS / iPadOS 国行 Apple 智能、eSIM 与 MobileGestalt 系统配置工具箱（中英双语 · 防白苹果安全加固版） | Bootloop-Safe iOS / iPadOS MobileGestalt, Apple Intelligence & eSIM Toolbox (EN/ZH)",
+    "stars": 2614,
+    "forks": 454,
+    "openIssues": 30,
+    "language": "Swift",
+    "qualityScore": 1753,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-20T11:06:40.000Z"
   }
 ]

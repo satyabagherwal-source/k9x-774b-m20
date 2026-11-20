@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T10:44:23.183Z",
-  "total_verified_learnings": 9031,
+  "last_updated": "2026-11-20T11:09:15.158Z",
+  "total_verified_learnings": 9032,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22346,
+  "total_items": 22364,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216557,8 +216557,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "cb4e01dd",
-      "content_hash": "a630cdd4c5129d110cfe32d139cb6a5a71f56f5a479ff69bd7675a1c2e0ce39c",
+      "source_version": "2b311b97",
+      "content_hash": "92004005a6e474b3ac81c6a36223edfe14809167a3bd9223531f18810fe675eb",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -216591,6 +216591,11 @@
           "number": 9345,
           "title": "Asynchronous Ring Buffer Drop-Oldest Saturation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9557,
+          "title": "fix function signatures in the codemirror-promql lint table",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216598,7 +216603,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T06:33:34.182Z",
+      "verified_at": "2026-11-20T11:08:57.710Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216652,10 +216657,10 @@
       "relative_path": "08_VERIFICATION/prometheus-prometheus-verification-protocol-empirical-defect-shield-for-promethe.md",
       "title": "Verification Protocol: Empirical Defect Shield for prometheus/prometheus",
       "repository": "prometheus/prometheus",
-      "source_version": "cb4e01dd",
-      "content_hash": "092aa5d2976609176163146f4b1a84befc124bfb557c2fbbf59bb6b1468c9a40",
+      "source_version": "2b311b97",
+      "content_hash": "8a27c0820ff2cc3c90c4f3b706407f832ae5a4ee57c542b1a7371fb7420bbe49",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T06:33:34.957Z"
+      "persisted_at": "2026-11-20T11:08:58.598Z"
     },
     "learn-github-lancedb-lancedb": {
       "learning_id": "learn-github-lancedb-lancedb",
@@ -236512,8 +236517,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "170c7d31",
-      "content_hash": "f53450633a13f1a1a3caf80ce5267e96e4bd6ca4518e9c5df90e25660c29a98b",
+      "source_version": "a5623114",
+      "content_hash": "a59d3298e5d0c8b52cb5c73a78c0c5871b223280228b0e0b5a288387f4aa58d4",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -236526,6 +236531,11 @@
           "number": 9330,
           "title": "Empirical Invariant Guard in span_attribute_names.cpp",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9558,
+          "title": "Empirical Invariant Guard in DeployState.java",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236533,7 +236543,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T04:36:34.730Z",
+      "verified_at": "2026-11-20T11:09:06.963Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236575,10 +236585,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "repository": "vespa-engine/vespa",
-      "source_version": "170c7d31",
-      "content_hash": "53a85929e5a6ec3fc1392240845da61a1168cfaba1af76c2c6cc46233d2d3048",
+      "source_version": "a5623114",
+      "content_hash": "914a7473c85d22f606e3450ea6a2df9232f69565d811fa0d7bda20d13215edce",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T04:36:35.287Z"
+      "persisted_at": "2026-11-20T11:09:07.637Z"
     },
     "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona",
@@ -236587,10 +236597,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/vespa-engine-vespa-agent-contract-vespa-engine-vespa-autonomous-specialist-perso.md",
       "title": "Agent Contract: vespa-engine/vespa Autonomous Specialist Persona",
       "repository": "vespa-engine/vespa",
-      "source_version": "170c7d31",
-      "content_hash": "06babdcf8fa1a160a0613cae39d9f49318f2a9107a4b2695706c0f1132daccb9",
+      "source_version": "a5623114",
+      "content_hash": "d223c9440d2ee50403e89fd0597ffbd627dee7d4c4fe82118a54fd74bac287ae",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T04:36:35.434Z"
+      "persisted_at": "2026-11-20T11:09:07.823Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa",
@@ -236599,10 +236609,10 @@
       "relative_path": "08_VERIFICATION/vespa-engine-vespa-verification-protocol-empirical-defect-shield-for-vespa-engin.md",
       "title": "Verification Protocol: Empirical Defect Shield for vespa-engine/vespa",
       "repository": "vespa-engine/vespa",
-      "source_version": "170c7d31",
-      "content_hash": "b384312c9a917a7750253df8c0de0c46093f75746c92cb1d76b4ee82ae372bdf",
+      "source_version": "a5623114",
+      "content_hash": "8094fb1456d14f8b313ebb1d5d8b3f946d41f1aa397e7f6a6a224ac45d246195",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T04:36:35.562Z"
+      "persisted_at": "2026-11-20T11:09:07.989Z"
     },
     "candidate_directive-update-lock-file": {
       "item_id": "candidate_directive-update-lock-file",
@@ -255518,14 +255528,19 @@
       "slug": "joreilly-confetti",
       "platform": "github",
       "source_url": "https://github.com/joreilly/Confetti",
-      "source_version": "d62b1aa3",
-      "content_hash": "bfd3120534d734562788322e9bfe248fed013179c4e0fadf6153cf9aa85bc274",
+      "source_version": "f7be73d2",
+      "content_hash": "eb4cf57c948eb3e66120e55db246fa259825e0494619b5bc2cdaab45b64bd657",
       "dossier_path": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
       "promoted_rules": [
         {
           "number": 8719,
           "title": "session/speaker page headers as SDUI, and theme packs for the native UI",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9556,
+          "title": "Log AppFunction invocations for release builds",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -255534,7 +255549,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T05:41:32.198Z",
+      "verified_at": "2026-11-20T11:08:54.864Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -255588,10 +255603,10 @@
       "relative_path": "08_VERIFICATION/joreilly-confetti-verification-protocol-empirical-defect-shield-for-joreilly-con.md",
       "title": "Verification Protocol: Empirical Defect Shield for joreilly/Confetti",
       "repository": "joreilly/Confetti",
-      "source_version": "d62b1aa3",
-      "content_hash": "f219182f7e3fdedd27f1df884fec18f7e8c08fd6f807fb4dbac882ea7f612189",
+      "source_version": "f7be73d2",
+      "content_hash": "7d7ac593bdf9c5743119967fe931de0b9aecad80bd374b2dac463f9c2603d6a7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T05:41:32.715Z"
+      "persisted_at": "2026-11-20T11:08:55.785Z"
     },
     "rule-8720": {
       "learning_id": "rule-8720",
@@ -255651,9 +255666,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for joreilly-confetti-learnings",
       "repository": "joreilly-confetti-learnings",
       "source_version": "HEAD",
-      "content_hash": "8c8f71e2bf1799180027ffe902a6498a6fb3610b1b65928a90d493dd27ca4871",
+      "content_hash": "4586f50f94eade5b6cb75e6cae380d236ed9cef46ff923cbbba4c445bba15b36",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T05:42:06.828Z"
+      "persisted_at": "2026-11-20T11:09:14.170Z"
     },
     "candidate_directive-listpack-update-size-before-shrinking-allocation": {
       "item_id": "candidate_directive-listpack-update-size-before-shrinking-allocation",
@@ -258158,9 +258173,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for prometheus-prometheus-learnings",
       "repository": "prometheus-prometheus-learnings",
       "source_version": "HEAD",
-      "content_hash": "b797de50a8607b6f36bd771a9dff2c2d2e418a6a3aa85ee3470d7d0ed18409a9",
+      "content_hash": "ef778018b23ef8be6a80d9bd784e222758d4867ff4a2642e7c095ea5d29720a1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T06:34:03.462Z"
+      "persisted_at": "2026-11-20T11:09:15.158Z"
     },
     "learn-github-stakater-reloader": {
       "learning_id": "learn-github-stakater-reloader",
@@ -293710,10 +293725,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-prometheus-prometheus-technical-construction-intelligence-prometheus-prometheus-.md",
       "title": "Technical Construction Intelligence: prometheus/prometheus Core Invariants",
       "repository": "prometheus/prometheus",
-      "source_version": "cb4e01dd",
-      "content_hash": "6a8a9161e9db57b11b080e72d8df8cad8c4b0e84af715c3ac90c7c9743bf4417",
+      "source_version": "2b311b97",
+      "content_hash": "740aad3a5b4c8d3bf3f3d8685a7bdec4d18426349e4196105d70f01e9d5165d7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T06:33:34.845Z"
+      "persisted_at": "2026-11-20T11:08:58.400Z"
     },
     "candidate_directive-hybrid-linear-quadratic-attention-state-retention-invariant": {
       "item_id": "candidate_directive-hybrid-linear-quadratic-attention-state-retention-invariant",
@@ -293783,9 +293798,9 @@
       "title": "Technical Construction Intelligence: prometheus-prometheus-learnings Core Invariants",
       "repository": "prometheus-prometheus-learnings",
       "source_version": "HEAD",
-      "content_hash": "67c8ec8bab187dc1320281b50621d7bfe24011cbe3f4acdfc8e7691e5d52424a",
+      "content_hash": "40de63e007de210ab2ea807eec346f7d50a1c417c211924267cb875ea4d0f2b1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T06:34:03.331Z"
+      "persisted_at": "2026-11-20T11:09:14.948Z"
     },
     "learn-huggingface-reson8-rumble-2-flash": {
       "learning_id": "learn-huggingface-reson8-rumble-2-flash",
@@ -302698,6 +302713,251 @@
       "content_hash": "f7666470752d0f85f82337f3d16229c1ceadb461417ec86fc82338a6497ee617",
       "domain_letter": "G",
       "persisted_at": "2026-11-20T10:44:21.779Z"
+    },
+    "learn-github-kianuni-erosion-cn": {
+      "learning_id": "learn-github-kianuni-erosion-cn",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Kianuni/Erosion-CN",
+      "repository": "Kianuni/Erosion-CN",
+      "slug": "kianuni-erosion-cn",
+      "platform": "github",
+      "source_url": "https://github.com/Kianuni/Erosion-CN",
+      "source_version": "8ef12aa5",
+      "content_hash": "ee27e1b8eddc1fa87e9521fe0ad563933fb46b89efc342901d8fa15ab068dcc5",
+      "dossier_path": "07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9555,
+          "title": "Release v1.0.4: non-blocking PosterBoard cold start + Camlo guide & Splash Ad Bl",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T11:08:49.636Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9555": {
+      "learning_id": "rule-9555",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9555,
+      "title": "Release v1.0.4: non-blocking PosterBoard cold start + Camlo guide & Splash Ad Bl",
+      "source_url": "https://github.com/Kianuni/Erosion-CN",
+      "source_version": "8ef12aa5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T11:08:49.636Z"
+    },
+    "candidate_directive-release-v1-0-4-non-blocking-posterboard-cold-start-camlo-guide-splash-ad-bl": {
+      "item_id": "candidate_directive-release-v1-0-4-non-blocking-posterboard-cold-start-camlo-guide-splash-ad-bl",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MJAJ-release-v1-0-4-non-blocking-posterboard-cold-start-camlo-guide-splash-ad-bl.md",
+      "title": "Release v1.0.4: non-blocking PosterBoard cold start + Camlo guide & Splash Ad Bl",
+      "repository": "kianuni-erosion-cn-learnings",
+      "source_version": "HEAD",
+      "content_hash": "53ac5c1bc50d745b68ac393b53318b5e4fd58ebb686d25d40dc2092ca44d839f",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T11:09:12.626Z"
+    },
+    "domain_intelligence-design-intelligence-kianuni-erosion-cn-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-kianuni-erosion-cn-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-kianuni-erosion-cn-design-intelligence-kianuni-erosion-cn-core-invariants.md",
+      "title": "Design Intelligence: Kianuni/Erosion-CN Core Invariants",
+      "repository": "Kianuni/Erosion-CN",
+      "source_version": "8ef12aa5",
+      "content_hash": "ecb09f631039e127622a22c1ba91e192653d5feb4272dce8cd5ecfcffd07118d",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-20T11:08:50.341Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-kianuni-erosion-cn": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-kianuni-erosion-cn",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/kianuni-erosion-cn-skill-operational-integration-playbook-for-kianuni-erosion-cn.md",
+      "title": "Skill: Operational & Integration Playbook for Kianuni/Erosion-CN",
+      "repository": "Kianuni/Erosion-CN",
+      "source_version": "8ef12aa5",
+      "content_hash": "b883c5d1ce6ad237e119fd93f20a5965565d1206e84ab1dbc94ea0177cae645b",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-20T11:08:50.533Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kianuni-erosion-cn": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kianuni-erosion-cn",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kianuni-erosion-cn-verification-protocol-empirical-defect-shield-for-kianuni-ero.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Kianuni/Erosion-CN",
+      "repository": "Kianuni/Erosion-CN",
+      "source_version": "8ef12aa5",
+      "content_hash": "637da86b6c924f64bb2e3a018459d4e43251a40d64faee9ba57f949f9e90334e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T11:08:50.695Z"
+    },
+    "rule-9556": {
+      "learning_id": "rule-9556",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9556,
+      "title": "Log AppFunction invocations for release builds",
+      "source_url": "https://github.com/joreilly/Confetti",
+      "source_version": "f7be73d2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T11:08:54.864Z"
+    },
+    "candidate_directive-log-appfunction-invocations-for-release-builds": {
+      "item_id": "candidate_directive-log-appfunction-invocations-for-release-builds",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MK72-log-appfunction-invocations-for-release-builds.md",
+      "title": "Log AppFunction invocations for release builds",
+      "repository": "joreilly-confetti-learnings",
+      "source_version": "HEAD",
+      "content_hash": "953b31c5bd6c7160027d4d7869f1ba446aaad71c6b5acdc44d640e67da45b39a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T11:09:13.790Z"
+    },
+    "domain_intelligence-architecture-intelligence-joreilly-confetti-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-joreilly-confetti-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-joreilly-confetti-architecture-intelligence-joreilly-confetti-core-invariants.md",
+      "title": "Architecture Intelligence: joreilly/Confetti Core Invariants",
+      "repository": "joreilly/Confetti",
+      "source_version": "f7be73d2",
+      "content_hash": "84dc33303694026262f58cf5d49aac2a04c4977dbeabac65457348c5edba0403",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T11:08:55.597Z"
+    },
+    "rule-9557": {
+      "learning_id": "rule-9557",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9557,
+      "title": "fix function signatures in the codemirror-promql lint table",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "2b311b97",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T11:08:57.710Z"
+    },
+    "candidate_directive-fix-function-signatures-in-the-codemirror-promql-lint-table": {
+      "item_id": "candidate_directive-fix-function-signatures-in-the-codemirror-promql-lint-table",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M864-fix-function-signatures-in-the-codemirror-promql-lint-table.md",
+      "title": "fix function signatures in the codemirror-promql lint table",
+      "repository": "prometheus/prometheus",
+      "source_version": "2b311b97",
+      "content_hash": "7de92c5f9e651c999d290ad7a145f4014a65718ce480553271594af9ac682eb3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T11:08:58.210Z"
+    },
+    "rule-9558": {
+      "learning_id": "rule-9558",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9558,
+      "title": "Empirical Invariant Guard in DeployState.java",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "a5623114",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T11:09:06.963Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-deploystate-java": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-deploystate-java",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MFAP-empirical-invariant-guard-in-deploystate-java.md",
+      "title": "Empirical Invariant Guard in DeployState.java",
+      "repository": "vespa-engine/vespa",
+      "source_version": "a5623114",
+      "content_hash": "5a0e6774aed368d2e6a8536020c0fa67f50c7eeaba924f8e9509a65f6794c187",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T11:09:07.447Z"
+    },
+    "domain_intelligence-design-intelligence-kianuni-erosion-cn-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-kianuni-erosion-cn-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-kianuni-erosion-cn-learnings-design-intelligence-kianuni-erosion-cn-learnings-co.md",
+      "title": "Design Intelligence: kianuni-erosion-cn-learnings Core Invariants",
+      "repository": "kianuni-erosion-cn-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a489b2b5c2b587f14882fe5c35727c93e88d657055b539dbac62aa7c03a9872e",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-20T11:09:12.815Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-kianuni-erosion-cn-learnings": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-kianuni-erosion-cn-learnings",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/kianuni-erosion-cn-learnings-skill-operational-integration-playbook-for-kianuni-.md",
+      "title": "Skill: Operational & Integration Playbook for kianuni-erosion-cn-learnings",
+      "repository": "kianuni-erosion-cn-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ca8d762491efacc393595de0dd41d9b928693c5fe9a4aba7db9cc4535ce5e7cf",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-20T11:09:13.020Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kianuni-erosion-cn-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kianuni-erosion-cn-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kianuni-erosion-cn-learnings-verification-protocol-empirical-defect-shield-for-k.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kianuni-erosion-cn-learnings",
+      "repository": "kianuni-erosion-cn-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a367bb3081e990914414216c90753e465c36f56840675d0cb25f01a951688570",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T11:09:13.184Z"
+    },
+    "domain_intelligence-architecture-intelligence-joreilly-confetti-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-joreilly-confetti-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-joreilly-confetti-learnings-architecture-intelligence-joreilly-confetti-learning.md",
+      "title": "Architecture Intelligence: joreilly-confetti-learnings Core Invariants",
+      "repository": "joreilly-confetti-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fbf0ef01e5dbf59759728072d2bb22cdc8d76877146aff3e79c35587f363de77",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T11:09:13.983Z"
+    },
+    "candidate_directive-ui-fix-function-signatures-in-the-codemirror-promql-lint-table": {
+      "item_id": "candidate_directive-ui-fix-function-signatures-in-the-codemirror-promql-lint-table",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MKXS-ui-fix-function-signatures-in-the-codemirror-promql-lint-table.md",
+      "title": "ui: fix function signatures in the codemirror-promql lint table",
+      "repository": "prometheus-prometheus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cfcecd468c11b257abd008b821cae88207885d2995ceed3fbd1cf118bd6eac7e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T11:09:14.758Z"
     }
   },
   "ai-builder-brain": {

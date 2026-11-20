@@ -11519,3 +11519,7 @@
 | `CYCLE-20261120-DP9J` | `2026-11-20T10:34:20.839Z` | `kamgurgul/cpu-info` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9552` | Yes (`0bc4c584...`) |
 | `CYCLE-20261120-DRHO` | `2026-11-20T10:34:23.724Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9553` | Yes (`4e8dcc25...`) |
 | `CYCLE-20261120-QH4K` | `2026-11-20T10:44:16.820Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9554` | Yes (`a326537d...`) |
+| `CYCLE-20261120-M1QK` | `2026-11-20T11:08:49.868Z` | `Kianuni/Erosion-CN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9555` | Yes (`ee27e1b8...`) |
+| `CYCLE-20261120-M5S5` | `2026-11-20T11:08:55.109Z` | `joreilly/Confetti` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9556` | Yes (`eb4cf57c...`) |
+| `CYCLE-20261120-M7Z1` | `2026-11-20T11:08:57.949Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9557` | Yes (`92004005...`) |
+| `CYCLE-20261120-MF3S` | `2026-11-20T11:09:07.192Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9558` | Yes (`a59d3298...`) |

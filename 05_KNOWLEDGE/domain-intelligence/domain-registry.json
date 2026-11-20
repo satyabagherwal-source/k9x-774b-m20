@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T10:44:22.970Z",
-  "total_records": 2109,
+  "last_updated": "2026-11-20T11:09:14.948Z",
+  "total_records": 2113,
   "domains": {
     "A": {
       "total": 17,
@@ -924,7 +924,7 @@
       ]
     },
     "F": {
-      "total": 71,
+      "total": 73,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -996,11 +996,13 @@
         "DOM-F-D7FA7771",
         "DOM-F-8BEE39B8",
         "domain_intelligence-design-intelligence-simonschubert-kai-core-invariants",
-        "domain_intelligence-design-intelligence-simonschubert-kai-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-simonschubert-kai-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-kianuni-erosion-cn-core-invariants",
+        "domain_intelligence-design-intelligence-kianuni-erosion-cn-learnings-core-invariants"
       ]
     },
     "G": {
-      "total": 359,
+      "total": 361,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1360,7 +1362,9 @@
         "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-invaria",
         "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-core-invariants",
-        "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-joreilly-confetti-core-invariants",
+        "domain_intelligence-architecture-intelligence-joreilly-confetti-learnings-core-invariants"
       ]
     },
     "H": {
@@ -17795,8 +17799,8 @@
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "repository": "vespa-engine/vespa",
-      "content_hash": "53a85929e5a6ec3fc1392240845da61a1168cfaba1af76c2c6cc46233d2d3048",
-      "created_at": "2026-11-19T04:36:35.287Z"
+      "content_hash": "914a7473c85d22f606e3450ea6a2df9232f69565d811fa0d7bda20d13215edce",
+      "created_at": "2026-11-20T11:09:07.637Z"
     },
     "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
@@ -32843,8 +32847,8 @@
       "title": "Technical Construction Intelligence: prometheus/prometheus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-prometheus-prometheus-technical-construction-intelligence-prometheus-prometheus-.md",
       "repository": "prometheus/prometheus",
-      "content_hash": "6a8a9161e9db57b11b080e72d8df8cad8c4b0e84af715c3ac90c7c9743bf4417",
-      "created_at": "2026-11-19T06:33:34.845Z"
+      "content_hash": "740aad3a5b4c8d3bf3f3d8685a7bdec4d18426349e4196105d70f01e9d5165d7",
+      "created_at": "2026-11-20T11:08:58.400Z"
     },
     "domain_intelligence-technical-construction-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invar",
@@ -32895,8 +32899,8 @@
       "title": "Technical Construction Intelligence: prometheus-prometheus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-prometheus-prometheus-learnings-technical-construction-intelligence-prometheus-p.md",
       "repository": "prometheus-prometheus-learnings",
-      "content_hash": "67c8ec8bab187dc1320281b50621d7bfe24011cbe3f4acdfc8e7691e5d52424a",
-      "created_at": "2026-11-19T06:34:03.331Z"
+      "content_hash": "40de63e007de210ab2ea807eec346f7d50a1c417c211924267cb875ea4d0f2b1",
+      "created_at": "2026-11-20T11:09:14.948Z"
     },
     "domain_intelligence-research-knowledge-intelligence-reson8-rumble-2-flash-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-reson8-rumble-2-flash-core-invariants",
@@ -35595,6 +35599,42 @@
       "repository": "kamgurgul-cpu-info-learnings",
       "content_hash": "f7666470752d0f85f82337f3d16229c1ceadb461417ec86fc82338a6497ee617",
       "created_at": "2026-11-20T10:44:21.779Z"
+    },
+    "domain_intelligence-design-intelligence-kianuni-erosion-cn-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-kianuni-erosion-cn-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: Kianuni/Erosion-CN Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-kianuni-erosion-cn-design-intelligence-kianuni-erosion-cn-core-invariants.md",
+      "repository": "Kianuni/Erosion-CN",
+      "content_hash": "ecb09f631039e127622a22c1ba91e192653d5feb4272dce8cd5ecfcffd07118d",
+      "created_at": "2026-11-20T11:08:50.341Z"
+    },
+    "domain_intelligence-architecture-intelligence-joreilly-confetti-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-joreilly-confetti-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: joreilly/Confetti Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-joreilly-confetti-architecture-intelligence-joreilly-confetti-core-invariants.md",
+      "repository": "joreilly/Confetti",
+      "content_hash": "84dc33303694026262f58cf5d49aac2a04c4977dbeabac65457348c5edba0403",
+      "created_at": "2026-11-20T11:08:55.597Z"
+    },
+    "domain_intelligence-design-intelligence-kianuni-erosion-cn-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-kianuni-erosion-cn-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: kianuni-erosion-cn-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-kianuni-erosion-cn-learnings-design-intelligence-kianuni-erosion-cn-learnings-co.md",
+      "repository": "kianuni-erosion-cn-learnings",
+      "content_hash": "a489b2b5c2b587f14882fe5c35727c93e88d657055b539dbac62aa7c03a9872e",
+      "created_at": "2026-11-20T11:09:12.815Z"
+    },
+    "domain_intelligence-architecture-intelligence-joreilly-confetti-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-joreilly-confetti-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: joreilly-confetti-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-joreilly-confetti-learnings-architecture-intelligence-joreilly-confetti-learning.md",
+      "repository": "joreilly-confetti-learnings",
+      "content_hash": "fbf0ef01e5dbf59759728072d2bb22cdc8d76877146aff3e79c35587f363de77",
+      "created_at": "2026-11-20T11:09:13.983Z"
     }
   }
 }

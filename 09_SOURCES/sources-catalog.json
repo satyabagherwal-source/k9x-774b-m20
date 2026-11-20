@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "170c7d31",
+    "sourceVersion": "a5623114",
     "license": "Apache-2.0",
-    "contentHash": "f53450633a13f1a1a3caf80ce5267e96e4bd6ca4518e9c5df90e25660c29a98b",
-    "lastHarvestedAt": "2026-11-19T04:36:34.935Z",
+    "contentHash": "a59d3298e5d0c8b52cb5c73a78c0c5871b223280228b0e0b5a288387f4aa58d4",
+    "lastHarvestedAt": "2026-11-20T11:09:07.197Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "cb4e01dd",
+    "sourceVersion": "2b311b97",
     "license": "Apache-2.0",
-    "contentHash": "a630cdd4c5129d110cfe32d139cb6a5a71f56f5a479ff69bd7675a1c2e0ce39c",
-    "lastHarvestedAt": "2026-11-19T06:33:34.360Z",
+    "contentHash": "92004005a6e474b3ac81c6a36223edfe14809167a3bd9223531f18810fe675eb",
+    "lastHarvestedAt": "2026-11-20T11:08:57.954Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {
@@ -8883,10 +8883,10 @@
     "repository": "joreilly/Confetti",
     "platform": "github",
     "sourceUrl": "https://github.com/joreilly/Confetti",
-    "sourceVersion": "d62b1aa3",
+    "sourceVersion": "f7be73d2",
     "license": "Apache-2.0",
-    "contentHash": "bfd3120534d734562788322e9bfe248fed013179c4e0fadf6153cf9aa85bc274",
-    "lastHarvestedAt": "2026-11-16T05:41:32.343Z",
+    "contentHash": "eb4cf57c948eb3e66120e55db246fa259825e0494619b5bc2cdaab45b64bd657",
+    "lastHarvestedAt": "2026-11-20T11:08:55.114Z",
     "learningId": "learn-github-joreilly-confetti"
   },
   "m0ntydad0n-pseo-engine-oss": {
@@ -13008,5 +13008,15 @@
     "contentHash": "447506975d4a78d5923dc765d85f72a12ca3a00314f5d3961aad7562a405b030",
     "lastHarvestedAt": "2026-11-20T09:59:06.627Z",
     "learningId": "learn-huggingface-cloudflare-clairic"
+  },
+  "kianuni-erosion-cn": {
+    "repository": "Kianuni/Erosion-CN",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Kianuni/Erosion-CN",
+    "sourceVersion": "8ef12aa5",
+    "license": "GPL-3.0",
+    "contentHash": "ee27e1b8eddc1fa87e9521fe0ad563933fb46b89efc342901d8fa15ab068dcc5",
+    "lastHarvestedAt": "2026-11-20T11:08:49.873Z",
+    "learningId": "learn-github-kianuni-erosion-cn"
   }
 }

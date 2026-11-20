@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T10:44:22.494Z",
+  "updated_at": "2026-11-20T11:09:14.513Z",
   "stats": {
-    "total_discovered": 6314,
-    "approved_pending_harvest": 5965,
+    "total_discovered": 6342,
+    "approved_pending_harvest": 5993,
     "harvested_count": 0,
     "rejected_count": 349,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5950,
+      "COMMUNITY_AND_EXPERT": 5978,
       "OFFICIAL_DOCUMENTATION": 199,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
@@ -136488,6 +136488,622 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
         "fileName": "k3s-io-k3s-learnings.md"
+      }
+    },
+    "SRC-FBA3A9D39356": {
+      "id": "SRC-FBA3A9D39356",
+      "url": "https://github.com/Kianuni/Erosion-CN",
+      "title": "https://github.com/Kianuni/Erosion-CN",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:10.945Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-E02BFAAFDF85": {
+      "id": "SRC-E02BFAAFDF85",
+      "url": "https://jailbreak.party/",
+      "title": "https://jailbreak.party/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.005Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-C062661FFBDF": {
+      "id": "SRC-C062661FFBDF",
+      "url": "https://github.com/Kianuni/AppleFlow",
+      "title": "https://github.com/Kianuni/AppleFlow",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.066Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-3EBDB0F30DD5": {
+      "id": "SRC-3EBDB0F30DD5",
+      "url": "https://github.com/Kianuni/WQGuard",
+      "title": "https://github.com/Kianuni/WQGuard",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.135Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-CCF2FF550570": {
+      "id": "SRC-CCF2FF550570",
+      "url": "https://github.com/Kianuni/Camlo",
+      "title": "https://github.com/Kianuni/Camlo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.190Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-EB9D701CF8C5": {
+      "id": "SRC-EB9D701CF8C5",
+      "url": "https://github.com/Kianuni/Enkard",
+      "title": "https://github.com/Kianuni/Enkard",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.249Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-9B83F32DA797": {
+      "id": "SRC-9B83F32DA797",
+      "url": "https://github.com/lunginspector",
+      "title": "https://github.com/lunginspector",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.306Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-26205D8989E9": {
+      "id": "SRC-26205D8989E9",
+      "url": "https://github.com/forcequitOS",
+      "title": "https://github.com/forcequitOS",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.364Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-D0E05493CA44": {
+      "id": "SRC-D0E05493CA44",
+      "url": "https://github.com/0xjohnnydev",
+      "title": "https://github.com/0xjohnnydev",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.423Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-1C4AEBFB64B7": {
+      "id": "SRC-1C4AEBFB64B7",
+      "url": "https://github.com/skadz108",
+      "title": "https://github.com/skadz108",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.480Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-CE36910CD870": {
+      "id": "SRC-CE36910CD870",
+      "url": "https://github.com/rooootdev",
+      "title": "https://github.com/rooootdev",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.538Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-B644F2201DEA": {
+      "id": "SRC-B644F2201DEA",
+      "url": "https://github.com/neonmodder123",
+      "title": "https://github.com/neonmodder123",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.596Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-A51F119152CC": {
+      "id": "SRC-A51F119152CC",
+      "url": "https://github.com/huamidev/GestaltX",
+      "title": "https://github.com/huamidev/GestaltX",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.655Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-0233E99BBFA4": {
+      "id": "SRC-0233E99BBFA4",
+      "url": "https://github.com/kolbicz/WQFiles",
+      "title": "https://github.com/kolbicz/WQFiles",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.714Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-6B930A7659D9": {
+      "id": "SRC-6B930A7659D9",
+      "url": "https://www.v2ex.com/t/1246550",
+      "title": "https://www.v2ex.com/t/1246550",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.772Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-AA812DB07E65": {
+      "id": "SRC-AA812DB07E65",
+      "url": "https://github.com/PoomSmart/MGKeys",
+      "title": "https://github.com/PoomSmart/MGKeys",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.832Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-56E3B3C6A06F": {
+      "id": "SRC-56E3B3C6A06F",
+      "url": "https://github.com/iiichika",
+      "title": "https://github.com/iiichika",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.891Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-31F1241CDB9A": {
+      "id": "SRC-31F1241CDB9A",
+      "url": "https://github.com/wvcq6xxvkj-star",
+      "title": "https://github.com/wvcq6xxvkj-star",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:11.950Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-3C09E70F6E93": {
+      "id": "SRC-3C09E70F6E93",
+      "url": "https://raw.githubusercontent.com/Kianuni/Camlo/main/apps.json",
+      "title": "https://raw.githubusercontent.com/Kianuni/Camlo/main/apps.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:12.021Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-7CC7E0F3BFA7": {
+      "id": "SRC-7CC7E0F3BFA7",
+      "url": "https://altdirect.app/?url=https%3A%2F%2Fraw.githubusercontent.com%2FKianuni%2FCamlo%2Fmain%2Fapps.json&r=sidestore",
+      "title": "https://altdirect.app/?url=https%3A%2F%2Fraw.githubusercontent.com%2FKianuni%2FCamlo%2Fmain%2Fapps.json&r=sidestore",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:12.088Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-E4F672C11BBC": {
+      "id": "SRC-E4F672C11BBC",
+      "url": "https://altdirect.app/?url=https%3A%2F%2Fraw.githubusercontent.com%2FKianuni%2FCamlo%2Fmain%2Fapps.json&r=altstore",
+      "title": "https://altdirect.app/?url=https%3A%2F%2Fraw.githubusercontent.com%2FKianuni%2FCamlo%2Fmain%2Fapps.json&r=altstore",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:12.150Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-89E40888123F": {
+      "id": "SRC-89E40888123F",
+      "url": "https://altdirect.app/?url=https%3A%2F%2Fraw.githubusercontent.com%2FKianuni%2FCamlo%2Fmain%2Fapps.json&r=feather",
+      "title": "https://altdirect.app/?url=https%3A%2F%2Fraw.githubusercontent.com%2FKianuni%2FCamlo%2Fmain%2Fapps.json&r=feather",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:12.205Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-3E339B28ECB3": {
+      "id": "SRC-3E339B28ECB3",
+      "url": "https://raw.githubusercontent.com/Kianuni/Erosion-CN/main/apps.json",
+      "title": "https://raw.githubusercontent.com/Kianuni/Erosion-CN/main/apps.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:12.285Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-77F5D0A301BD": {
+      "id": "SRC-77F5D0A301BD",
+      "url": "https://github.com/Kianuni/Erosion-CN/releases/latest",
+      "title": "https://github.com/Kianuni/Erosion-CN/releases/latest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:12.341Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kianuni-erosion-cn-learnings.md",
+        "fileName": "kianuni-erosion-cn-learnings.md"
+      }
+    },
+    "SRC-B6D343C5A622": {
+      "id": "SRC-B6D343C5A622",
+      "url": "https://raw.githubusercontent.com/yschimke/remote-m3-catalog-out/remote-compose-cmp-maven",
+      "title": "https://raw.githubusercontent.com/yschimke/remote-m3-catalog-out/remote-compose-cmp-maven",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:13.501Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
+        "fileName": "joreilly-confetti-learnings.md"
+      }
+    },
+    "SRC-1B754554CECB": {
+      "id": "SRC-1B754554CECB",
+      "url": "https://raw.githubusercontent.com/yschimke/wear-m3-catalog-out/wear-compose-cmp-maven",
+      "title": "https://raw.githubusercontent.com/yschimke/wear-m3-catalog-out/wear-compose-cmp-maven",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:13.554Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
+        "fileName": "joreilly-confetti-learnings.md"
+      }
+    },
+    "SRC-A47758AF0D8A": {
+      "id": "SRC-A47758AF0D8A",
+      "url": "https://github.com/prometheus/prometheus/blob/main/.github/workflows/repo_sync.yml",
+      "title": "https://github.com/prometheus/prometheus/blob/main/.github/workflows/repo_sync.yml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:14.462Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
+        "fileName": "prometheus-prometheus-learnings.md"
+      }
+    },
+    "SRC-29FD3DC4637E": {
+      "id": "SRC-29FD3DC4637E",
+      "url": "https://github.com/prometheus/prometheus/pull/20115",
+      "title": "https://github.com/prometheus/prometheus/pull/20115",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T11:09:14.513Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
+        "fileName": "prometheus-prometheus-learnings.md"
       }
     }
   }

@@ -11552,3 +11552,7 @@ Every entry in this ledger must capture:
 | `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `0a32bfc5` | Multi-dimensional audit evidence | 2026-11-20T10:34:20.844Z |
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `647ad670` | Multi-dimensional audit evidence | 2026-11-20T10:34:23.729Z |
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `f79ae2bc` | Multi-dimensional audit evidence | 2026-11-20T10:44:16.825Z |
+| `learn-github-kianuni-erosion-cn` | `https://github.com/Kianuni/Erosion-CN` | `8ef12aa5` | Multi-dimensional audit evidence | 2026-11-20T11:08:49.873Z |
+| `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `f7be73d2` | Multi-dimensional audit evidence | 2026-11-20T11:08:55.114Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `2b311b97` | Multi-dimensional audit evidence | 2026-11-20T11:08:57.954Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `a5623114` | Multi-dimensional audit evidence | 2026-11-20T11:09:07.197Z |

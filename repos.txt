@@ -5240,3 +5240,7 @@ https://huggingface.co/thejagstudio/tessera-small
 https://github.com/rocketride-org/rocketride-server
 # [HUGGINGFACE-AI-MODELS] Cloudflare/clairic (914 score) - Verified Hugging Face Model: Cloudflare/clairic (88 likes, 34 downloads)
 https://huggingface.co/Cloudflare/clairic
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-20T11:08:37.253Z] ---
+# [MOBILE-CROSS-PLATFORM] Kianuni/Erosion-CN (1753 score) - iOS / iPadOS 国行 Apple 智能、eSIM 与 MobileGestalt 系统配置工具箱（中英双语 · 防白苹果安全加固版） | Bootlo
+https://github.com/Kianuni/Erosion-CN

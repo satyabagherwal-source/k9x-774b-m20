@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-OEPW",
-    "timestamp": "2026-11-18T12:03:18.788Z",
-    "repository": "Qwen/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-    "contentHash": "7edb1bada23fe9ca3af9355de46152aef6226eb9835af0cc2c57689c51b0a8e5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-OMVO",
-    "timestamp": "2026-11-18T12:03:29.364Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "f4372e656cbf8f58a24b5aa6adf63b1f4f26c551a7712aa5059bc2b2f014ac2f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-4PEX",
-    "timestamp": "2026-11-18T12:15:59.145Z",
-    "repository": "Contrastive-LM/CLM-v0.1-8B",
-    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-    "contentHash": "c2bd952c89c95f9ef43bf9fc90691d87c49cd404bab9aa1efdfd7efad82f01e3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-4PUB",
-    "timestamp": "2026-11-18T12:15:59.699Z",
-    "repository": "sharkdp/fd",
-    "learningId": "learn-github-sharkdp-fd",
-    "contentHash": "255298cc5f39f1f80d78580e7f94ef0a26d5e255d2269ae73cfabab88c6881b5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-5016",
     "timestamp": "2026-11-18T12:16:12.906Z",
     "repository": "t8y2/dbx",
@@ -7490,6 +7430,66 @@
     "repository": "kucherenko/jscpd",
     "learningId": "learn-github-kucherenko-jscpd",
     "contentHash": "a326537dc530934a6a24b442de2ef16d885530a668528970fb03ed7976cb8990",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-M1QK",
+    "timestamp": "2026-11-20T11:08:49.868Z",
+    "repository": "Kianuni/Erosion-CN",
+    "learningId": "learn-github-kianuni-erosion-cn",
+    "contentHash": "ee27e1b8eddc1fa87e9521fe0ad563933fb46b89efc342901d8fa15ab068dcc5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-M5S5",
+    "timestamp": "2026-11-20T11:08:55.109Z",
+    "repository": "joreilly/Confetti",
+    "learningId": "learn-github-joreilly-confetti",
+    "contentHash": "eb4cf57c948eb3e66120e55db246fa259825e0494619b5bc2cdaab45b64bd657",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-M7Z1",
+    "timestamp": "2026-11-20T11:08:57.949Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "92004005a6e474b3ac81c6a36223edfe14809167a3bd9223531f18810fe675eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-MF3S",
+    "timestamp": "2026-11-20T11:09:07.192Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "a59d3298e5d0c8b52cb5c73a78c0c5871b223280228b0e0b5a288387f4aa58d4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

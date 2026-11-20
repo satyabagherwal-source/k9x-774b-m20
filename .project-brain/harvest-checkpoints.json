@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T10:44:16.835Z",
+  "last_updated": "2026-11-20T11:09:07.208Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "f53450633a13f1a1a3caf80ce5267e96e4bd6ca4518e9c5df90e25660c29a98b",
-      "verified_at": "2026-11-19T04:36:34.944Z",
+      "content_hash": "a59d3298e5d0c8b52cb5c73a78c0c5871b223280228b0e0b5a288387f4aa58d4",
+      "verified_at": "2026-11-20T11:09:07.207Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T04:36:34.944Z"
+      "last_updated": "2026-11-20T11:09:07.207Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",
@@ -9711,14 +9711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prometheus-prometheus",
-      "content_hash": "a630cdd4c5129d110cfe32d139cb6a5a71f56f5a479ff69bd7675a1c2e0ce39c",
-      "verified_at": "2026-11-19T06:33:34.366Z",
+      "content_hash": "92004005a6e474b3ac81c6a36223edfe14809167a3bd9223531f18810fe675eb",
+      "verified_at": "2026-11-20T11:08:57.964Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T06:33:34.366Z"
+      "last_updated": "2026-11-20T11:08:57.964Z"
     },
     "meilisearch/meilisearch": {
       "repository": "meilisearch/meilisearch",
@@ -13371,14 +13371,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-joreilly-confetti",
-      "content_hash": "bfd3120534d734562788322e9bfe248fed013179c4e0fadf6153cf9aa85bc274",
-      "verified_at": "2026-11-16T05:41:32.351Z",
+      "content_hash": "eb4cf57c948eb3e66120e55db246fa259825e0494619b5bc2cdaab45b64bd657",
+      "verified_at": "2026-11-20T11:08:55.124Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T05:41:32.351Z"
+      "last_updated": "2026-11-20T11:08:55.124Z"
     },
     "m0ntydad0n/pseo-engine-oss": {
       "repository": "m0ntydad0n/pseo-engine-oss",
@@ -19604,6 +19604,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-20T09:59:06.642Z"
+    },
+    "Kianuni/Erosion-CN": {
+      "repository": "Kianuni/Erosion-CN",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kianuni-erosion-cn",
+      "content_hash": "ee27e1b8eddc1fa87e9521fe0ad563933fb46b89efc342901d8fa15ab068dcc5",
+      "verified_at": "2026-11-20T11:08:49.883Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-20T11:08:49.883Z"
     }
   },
   "repos": {
