@@ -11630,3 +11630,4 @@
 | `CYCLE-20261120-NB8D` | `2026-11-20T20:57:40.765Z` | `thinkingmachines/Inkling-2-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md` | Yes (`eb53e52b...`) |
 | `CYCLE-20261120-NL04` | `2026-11-20T20:57:53.428Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9639` | Yes (`a0550e5e...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T20:58:24.077Z` | `hf-thinkingmachines-inkling-2-mini` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F66E1D4B` [Domain D] | Yes (`8a1fd019...`) |
+| `CYCLE-20261120-YL66` | `2026-11-20T21:06:26.862Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9640` | Yes (`930310eb...`) |

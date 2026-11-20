@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-KWUE",
-    "timestamp": "2026-11-18T17:36:31.046Z",
-    "repository": "mfontanini/presenterm",
-    "learningId": "learn-github-mfontanini-presenterm",
-    "contentHash": "536dad1e71cd1e1f7f1e6252a00278c1d54db29bf0c4206fa58804359a000a36",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-L0OG",
     "timestamp": "2026-11-18T17:36:36.016Z",
     "repository": "BuilderIO/builder",
@@ -7490,6 +7475,21 @@
     "repository": "kgateway-dev/kgateway",
     "learningId": "learn-github-kgateway-dev-kgateway",
     "contentHash": "a0550e5efb0d916bbee6db06b5d2e4753f35c8a8bd4ddeac07051df4f35baf7b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-YL66",
+    "timestamp": "2026-11-20T21:06:26.862Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "930310ebb278215e07459257d75a38983d53de9644d3bbb754e6e0190ac7e0fa",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T20:57:53.437Z",
-  "total_cycles_completed": 11075,
-  "total_learnings_persisted": 11075,
-  "total_rules_promoted": 10430,
+  "last_updated": "2026-11-20T21:06:26.870Z",
+  "total_cycles_completed": 11076,
+  "total_learnings_persisted": 11076,
+  "total_rules_promoted": 10431,
   "history": [
-    {
-      "timestamp": "2026-11-19T22:27:35.644Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T22:27:38.498Z",
       "repository": "seo-skills/seo-audit-skill",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-20T20:57:53.437Z",
       "repository": "kgateway-dev/kgateway",
       "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T21:06:26.870Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

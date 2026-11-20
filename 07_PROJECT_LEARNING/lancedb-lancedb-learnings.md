@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `ae665a46`  
+> **Source Version**: `0d2655ed`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T16:33:28.521Z  
+> **Timestamp**: 2026-11-20T21:06:25.940Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T16:33:28.516Z  
+> **Harvest Timestamp**: 2026-11-20T21:06:25.763Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11947 stars
+- **Stars / Engagement**: 11954 stars
 
 ---
 
@@ -207,22 +207,51 @@ class BackgroundEventLoop:
     A background event loop that can run futures.
 
     Used to bridge sync and async code, without messing with users event loops.
+
+    The loop and its thread are created by the first call to :meth:`run`, not
+    by constructing this object, so importing lancedb does not leave an idle
+    background thread behind.
     """
 
     def __init__(self):
-        self._start()
+        self.loop: asyncio.AbstractEventLoop | None = None
+        self.thread: threading.Thread | None = None
+        self._start_lock = threading.Lock()
 
-    def _start(self):
-        self.loop = asyncio.new_event_loop()
-        self.thread = threading.Thread(
-            target=self.loop.run_forever,
-            name="LanceDBBackgroundEventLoop",
-            daemon=True,
-        )
-        self.thread.start()
+    def _start(self) -> asyncio.AbstractEventLoop:
+        loop = self.loop
+        if loop is not None:
+            return loop
+        with self._start_lock:
+            loop = self.loop
+            if loop is not None:
+                return loop
+            loop = asyncio.new_event_loop()
+            thread = threading.Thread(
+                target=loop.run_forever,
+                name="LanceDBBackgroundEventLoop",
+                daemon=True,
+            )
+            thread.start()
+            # Publish the loop first and the thread last. Callers that reach
+            # _start while this is in progress wait on _start_lock, so they
+            # cannot observe a half-initialized loop/thread pair.
+            self.loop = loop
+            self.thread = thread
+            return loop
+
+    def _reset_after_fork(self):
+        # Threads do not survive fork(). Reset to the unstarted state without
+        # calling into the inherited loop or thread: the thread is gone, and
+        # it may have held _start_lock when the fork happened. A fresh lock
+        # lets the child start a new loop on its first run().
+        self.loop = None
+        self.thread = None
+        self._start_lock = threading.Lock()
 
     def run(self, future):
-        concurrent_future = asyncio.run_coroutine_threadsafe(future, self.loop)
+        loop = self._start()
+        concurrent_future = asyncio.run_coroutine_threadsafe(future, loop)
         try:
             return concurrent_future.result()
         except BaseException:
@@ -254,12 +283,15 @@ _FORK_WARNED = False
 
 
 def _reset_after_fork():
-    # Threads do not survive fork(), so the asyncio loop in LOOP.thread is
-    # dead in the child. Re-initialize the singleton in place so existing
+    # Threads do not survive fork(), so the loop in LOOP.thread is dead in
+    # the child. Reset the singleton in place so existing
     # `from .background_loop import LOOP` references in other modules see
-    # the new state. The Rust-side tokio runtime is reset analogously by a
-    # pthread_atfork hook installed in the _lancedb extension.
-    LOOP._start()
+    # the unstarted state and create a fresh loop on their first run(). Do
+    # not restart it here: the child may never use LanceDB, and the at-fork
+    # handler must not touch the vanished thread or acquire inherited locks.
+    # The Rust-side tokio runtime is reset analogously by a pthread_atfork
+    # hook installed in the _lancedb extension.
+    LOOP._reset_after_fork()
     # The embedding executor's worker threads are dead in the child as well.
     # Replace it with a fresh pool (threads are spawned lazily, so this is
     # cheap); we don't shut down the old one, since joining its dead workers
@@ -713,9 +745,11 @@ import importlib
 import math
 import os
 import pathlib
+import sys
 import warnings
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
+from enum import Enum
 from functools import singledispatch
 from typing import Tuple, Union, Optional, Any, List
 from urllib.parse import urlparse
@@ -1024,8 +1058,7 @@ def _query_vector_dim(query: Optional[Any]) -> Optional[int]:
             first = query[0].as_py()
             return len(first) if first is not None else None
         return len(query)
-    if isinstance(query, (list, tuple)) and query:
-        
+    if isinstance(query, (
 ```
 
 ### Core Architecture Module: `python/src/util.rs`
@@ -1233,11 +1266,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5084** (2026-11-18): **fix(python): allow static diagnostic imports in Functions**
-  *Symptoms*: Functions previously rejected every `sys` or `importlib` import even when the source only used a statically visible diagnostic. Allow exactly `sys.stderr`, `sys.version_info`, and `importlib.metadata.version`, with direct imports, `from` imports, and aliases treated identically whether they appear at module level or inside the function or class body.  Every other use of a namespace-access module still fails at decoration. The error now names the rejected operation, such as `sys.modules`, and lists the supported diagnostic operations.  Tests package and execute the artifact offline for each import form, and reject unsupported attributes, submodules, dynamic attribute access, and rebinding. ENT-3918. 
+- **Issue #5129** (2026-11-20): **fix(python): preserve blob query snapshots and row-id guidance**
+  *Symptoms*: ## Summary  - Preserve the query snapshot carried by a remote query result when `fetch_blobs` or `fetch_blob_files` receives that result table, instead of reading row IDs from the table's current snapshot. - Send the expected `x-lancedb-query-snapshot` on the descriptor take used by `fetch_blob_files` and verify the response echo before decoding any descriptor. NULL and empty descriptors cannot escape unverified. - Point missing `_rowid` and missing row-id errors at `take_offsets(offsets, with_row_id=True)` for callers that have row positions, while keeping the existing missing/deleted row-id details. - Keep `fetch_blobs` row-ID based. Positional access and seekable video/DataLoader handle design remain separate work aligned with ENT-4059; this PR does not add `offsets=` or change that contract. - Document the behavior and keep empty row-id requests at zero I/O.  ## Compatibility  Server 0.5.0 is the basic remote Blob API floor. Snapshot-bound descriptor reads need the actual query identity echo from the serving node (Sophon #10211, present in tag v1.13.0). If identity cannot be verified, `fetch_blob_files` fails explicitly instead of accepting descriptors. Metadata-free row-id input keeps the existing current-snapshot behavior. This does not claim production rollout or real server testing.  ## Testing  - `python/tests/test_blob.py`: 249 passed, 1 skipped - `python/tests/test_remote_db.py -k blob`: 133 passed - Rust remote blob-file unit tests: 13 passed - `cargo check --feat
 
-- **Issue #5073** (2026-11-17): **fix(deps): ignore unmaintained chrono family advisories**
-  *Symptoms*: `cargo deny` fails on main because RUSTSEC-2026-0543 (`chrono`), RUSTSEC-2026-0555 (`chrono-tz`) and RUSTSEC-2026-0542 (`humantime`) mark the chrono family unmaintained. Add exceptions reviewed on 2026-11-17, with the advisory links and the upstream migration constraint; none of the three is a vulnerability and RustSec lists no patched version for any of them (chrono recommends jiff/time).  Dependency paths (from `cargo tree -i` at version fb34b1c7 of main):  - `chrono` 0.4.45: arrow 59 / datafusion 55 and the lance stack, across the workspace. - `chrono-tz` 0.10.4: arrow-array → arrow → datafusion/lance. - `humantime` 2.3.0: lance, object_store (through datafusion), and xet-runtime.  Clearing the advisories requires the arrow/datafusion/lance ecosystem to migrate off chrono; no upstream fix exists to consume. Also remove the RUSTSEC-2026-0441 `pin-utils` ignore, which the current lockfile no longer needs.  Validation on commit 04259a04 (cargo-deny 0.21.0, the version the CI action installs):  - Before: `cargo deny check advisories` failed on the three chrono-family advisories, and warned that the pin-utils ignore was not encountered. - After: `cargo deny check advisories bans licenses sources` passes all four checks, matching the Rust CI deny job. - `git diff --check` passes. 
+- **Issue #5128** (2026-11-20): **fix: add dataset path hint and sync open_table location**
+  *Symptoms*: ## Summary  - Expose `location=` on sync `LanceDBConnection.open_table()`, matching the existing async entry point while leaving remote and namespace APIs unchanged. - When a `ListingDatabase` connection URI ends in `.lance`, append a parent-directory and table-stem hint to the derived-URI `TableNotFound` error. The error classification and source chain are preserved, and no extra storage probes are made.  Context: OSS-2858 remains canceled. This is only the narrow embedded DX follow-up; it does not add a top-level `lancedb.open_table(uri)` API.  ## Verification  - Rust targeted listing tests for the `.lance` hint and the explicit-location path. - Python sync `open_table` tests for `location=` and the `.lance` hint. - Pickle round-trip of a sync `location=` table after #5114. - `cargo check --features remote --tests --examples`, `cargo fmt --check`, Ruff format/check.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1254,510 +1287,691 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae665a46` (2026-11-19)
-**Commit Message**: docs: mark Blob v2 GA for ordinary tables in Enterprise 1.15.0 (#5094)
+### Incident Patch 1: `0d2655ed` (2026-11-20)
+**Commit Message**: test(python): isolate the background-loop fork scenario (#5142)
 
-The Quickstart and table guide describe Blob columns as Early access
-without naming a product version. Document general availability for
-ordinary tables starting with LanceDB Enterprise 1.15.0 and make the
-Realtime Engine and MemWAL scope visible in the table guide.
+## Summary
 
-Xuanwo confirmed Enterprise 1.15.0 as the first edition to document GA
-for ordinary-table Blob v2. Enterprise 1.13.0 and 1.14.0 retain their
-existing status. The Enterprise 1.15.0 edition must carry this wording
-when prepared from its release inputs. Earlier saved editions keep their
-historical guidance.
+Follow-up to #5111.
 
-Refs ENT-3556.
+`test_forked_child_starts_background_loop_lazily` forked the shared
+pytest process. On CI that process may already own native
+Tokio/parking_lot state from earlier tests such as `test_authz.py`, so
+the forked child can crash in a non-Python native thread during
+`table_names()` for reasons unrelated to this scenario.
 
-**File**: `docs/web/management/table.mdx` (modified, +3/-7)
+Run the entire fork scenario in a fresh `python -c` subprocess. The
+parent still starts `LOOP` via `parent-before`, forks while holding
+`LOOP._start_lock` (released in `finally`), and the child still verifies
+that it sees no inherited loop, thread, or background threads before
+using the real native sync API (`connect("memory://")` /
+`table_names()`). The child must then gain exactly one live daemon
+thread, while the parent's original thread stays alive and serves
+`parent-after`.
+
+This is test isolation, not a production fix or a root-cause claim. The
+original assertions and cleanup are preserved, with a 40s outer timeout
+for `join(20)`, `terminate()` + `join(5)`, `queue.get(5)`, and
+diagnostics.
+
+## CI evidence
+
+The failure was observed on a docs-only main run (`b4459f35`),
+
+**File**: `python/python/tests/test_background_loop.py` (modified, +98/-87)
 ```diff
-@@ -395,16 +395,12 @@ file, up to 64 KiB by default, and larger values are stored outside it.
+@@ -1,20 +1,18 @@
+ # SPDX-License-Identifier: Apache-2.0
+ # SPDX-FileCopyrightText: Copyright The LanceDB Authors
  
- ### Blob columns {#multimodal-blob-v2}
+-import multiprocessing as mp
+ import os
+ import subprocess
+ import sys
+ import textwrap
+-import traceback
  
--<Badge color="purple">Early access</Badge>
+ import pytest
+ 
+ 
+ BACKGROUND_THREAD_NAME = "LanceDBBackgroundEventLoop"
+ 
+ 
+-def _run_in_subprocess(code: str) -> subprocess.CompletedProcess:
++def _run_in_subprocess(code: str, timeout: int = 30) -> subprocess.CompletedProcess:
+     env = os.environ.copy()
+     env["PYTHONPATH"] = os.pathsep.join(path for path in sys.path if path)
+     return subprocess.run(
+@@ -23,7 +21,7 @@ def _run_in_subprocess(code: str) -> subprocess.CompletedProcess:
+         capture_output=True,
+         text=True,
+         env=env,
+-        timeout=30,
++        timeout=timeout,
+     )
+ 
+ 
+@@ -142,45 +140,6 @@ def submit(index):
+     _assert_subprocess_ok(result)
+ 
+ 
+-def _fork_child_starts_lazily(queue):
+-    def background_threads():
+-        import threading
 -
- Filter rows by their metadata first. Then read the matching blob bytes in
- Python, or copy the matching rows to another table with Enterprise SQL.
- 
--{/* Draft for Blob v2 GA. Confirm release status before removing Early access.
+-        return [
+-            thread
+-            for thread in threading.enumerate()
+-            if thread.name == BACKGROUND_THREAD_NAME
+-        ]
 -
--Blob v2 GA supports standard tables. Tables with Realtime or MemWAL enabled
--are outside the GA support scope.
--*/}
-+Starting with LanceDB Enterprise 1.15.0, Blob v2 is generally available on
-+ordinary tables. Tables with Realtime Engine or MemWAL enabled are outside
-+this support scope.
- 
- #### From image files to a filtered table {#photo-tutorial}
- 
-```
-
-**File**: `docs/web/quickstart.mdx` (modified, +2/-2)
-```diff
-@@ -370,8 +370,8 @@ Store images, audio, or other binary data alongside vectors and metadata, in a c
- For image files and larger payloads, follow the
- [Blob photo tutorial](/management/table#photo-tutorial) to create an ordinary
- Blob table, filter its metadata, save and check an image, and copy matching rows.
--It includes an Embedded path and an Enterprise SQL path. Blob columns are in
--Early access.
-+The tutorial covers LanceDB Embedded and Enterprise SQL. Blob v2 is generally
-+available on ordinary tables starting with LanceDB Enterprise 1.15.0.
- 
- ## 8\. Train on your data {#8-train}
- 
+-    try:
+-        from lancedb.background_loop import LOOP
+-
+-        inherited_thread_is_none = LOOP.thread is None
+-        inherited_loop_is_none = LOOP.loop is None
+-        background_threads_before = [thread.name for thread in background_threads()]
+-
+-        import lancedb
+-
+-        db = lancedb.connect("memory://")
+-        tables = db.table_names()
+-
+-        worker = LOOP.thread
+-        queue.put(
+-            {
+-                "error": None,
+-                "inherited_thread_is_none": inherited_thread_is_none,
+-                "inherited_loop_is_none": inherited_loop_is_none,
+-                "background_threads_before": background_threads_before,
+-                "tables": tables,
+-                "thread_alive": False if worker is None else worker.is_alive(),
+-                "thread_daemon": False if worker is None else worker.daemon,
+-                "background_thread_count": len(background_threads()),
+-            }
+-        )
+-    except BaseException:
+-        queue.put({"error": traceback.format_exc()})
+-
+-
+ @pytest.mark.skipif(
+     sys.platform != "linux",
+     reason=(
+@@ -189,48 +148,100 @@ def background_threads():
+     ),
+ )
+ def test_forked_child_starts_background_loop_lazily():
+-    import asyncio
+-
+-    from lancedb.background_loop import LOOP
+-
+-    assert LOOP.run(asyncio.sleep(0, result="parent-before")) == "parent-before"
+-    parent_thread = LOOP.thread
+-    assert parent_thread is not None
+-
+-    ctx = mp.get_context("fork")
+-    queue = ctx.Queue()
+-
+-    # Simulate forking while another thread held the initialization lock. The
+-    # child must replace the inherited lock instead of trying to acquire it.
+-    LOOP._start_lock.acquire()
+-    try:
+-        proc = ctx.Process(target=_fork_child_starts_lazily, args=(queue,))
+-        proc.start()
+-    finally:
+-        LOOP._start_lock.release()
+-
+-    proc.join(timeout=20)
+-    if proc.is_alive():
+-        proc.terminate()
+-        proc.join(timeout=5)
++    # Fork from a fresh interpreter: earlier tests in a shared pytest process
++    # may have left native runtime state that is not part of this scenario.
++    result = _run_in_subprocess(
++        f"""
++        import asyncio
++        import multiprocessing as mp
++        import threading
++        import traceback
++
++        from lancedb.background_loop import LOOP
++
++        BACKGROUND_THREAD_NAME = {BACKGROUND_THREAD_NAME!r}
++
++        def background_threads():
++            return [
++                thread
++                for thread in threading.enumerate()
++                if thread.name == BACKGROUND_THREAD_NAME
++            ]
++
++        def fork_child(queue):
++            try:
++                from lancedb.background_loop import LOOP
++
++                inherited_thread_is_none = LOOP.thread is None
++                inherited_loop_is_none = LOOP.loop is None
++                background_threads_before = [
++                    thread.name for thread in background_threads()
++                ]
++
++                import lancedb
++
++                db = lancedb.connect("memory://")
++                tables = db.table_names()
++
++                worker = LOOP.thread
++                queue.put(
++                    dict(
++                        error=None,
++                        inherited_thread_is_none=inherited_thread_is_none,
++                        inherited_loop_is_none=inherited_loop_is_none,
++                        background_threads_before=background_threads_before,
++                        tables=tables,
++                        thread_alive=False if worker is None else worker.is_alive(),
++                        thread_daemon=False if worker is None else worker.daemon,
++                        background_thread_count=len(background_threads()),
++                    )
++                )
++            except BaseException:
++                queue.put(dict(er
 ```
 
 ---
 
-### Incident Patch 2: `4b428101` (2026-11-19)
-**Commit Message**: feat: expose the RTREE index in the Python and TypeScript SDKs (#4942)
+### Incident Patch 2: `7d33f7ba` (2026-11-19)
+**Commit Message**: ci: prioritize Rust security updates in dependabot config (#5100)
 
-Part of #4554. Supersedes #4555.
+## Summary
 
-This exposes Lance's R-tree index in the Python and TypeScript SDKs.
-Python gets a `lancedb.index.RTree` config with an optional `page_size`,
-accepted by `create_index(config=...)` on local, async and remote
-tables. TypeScript gets `Index.rtree({ pageSize })` and `RTreeOptions`.
-Both map to the Rust crate's existing `Index::RTree`, so remote tables
-send `index_type: "RTREE"`. The index accelerates `ST_Intersects`,
-`ST_Contains`, `ST_Within`, `ST_Touches`, `ST_Crosses`, `ST_Overlaps`,
-`ST_Covers` and `ST_CoveredBy` filters between a GeoArrow column and a
-constant geometry, in either argument order, including as a prefilter on
-vector search. The scalar index docs page gets an R-tree section.
+Dependabot wasn't getting security fixes in, and its Rust PRs were
+failing CI:
 
-`geo` is now a default feature of the Python and Node packages. Without
-it, a local table can neither build the index nor evaluate `ST_*`
-filters, and because wheels and npm packages are prebuilt, an opt-in
-Cargo feature would not reach users. pylance already ships with `geo`
-on. It adds pure-Rust crates under licenses that `deny.toml` already
-allows. `Cargo.lock` doesn't change, and the thi
+- Security updates were disabled for the repo, so ~170 open alerts never
+got a PR. (Now enabled in repo settings; not part of this diff.)
+- The `pip` entry for `/python` never touched `uv.lock`, so Python had
+no Dependabot PRs at all.
+- With `versioning-strategy: lockfile-only`, breaking bumps such as
+reqwest 0.12 → 0.13 (#4781), tokenizers 0.19 → 0.23 (#4905), sha2
+(#4230) and base64 (#4229) write a `Cargo.lock` that the `Cargo.toml`
+requirements don't allow. Every `--locked` build then fails before
+compiling.
 
-**File**: `docs/src/js/classes/Index.md` (modified, +48/-0)
+The priority is Rust, which is statically linked into the shipped
+binaries. Python and npm deps are resolved in users' environments, so
+those are best effort.
+
+| Entry | Version updates | Security updates |
+|---|---|---|
+| cargo `/` | weekly, minor/patch, one group | grouped |
+| uv `/python` (was `pip`) | monthly, minor/patch, one group | grouped |
+| npm `/nodejs`, `/nodejs/examples` | monthly, minor/patch, one group |
+grouped |
+| docs, docs tests, `/java` | off | grouped |
+
+Breaking bumps are excluded with `allow.upd
+
+**File**: `.github/dependabot.yml` (modified, +115/-40)
 ```diff
-@@ -258,3 +258,51 @@ using an underlying bitmap index.
- #### Returns
+@@ -1,70 +1,145 @@
+ version: 2
  
- [`Index`](Index.md)
+-# Scope: the root Cargo workspace, which produces the Rust binaries we
+-# ship to users (the Node.js and Python native extensions). The
+-# `rust/lancedb` library crate shares the same lockfile; its consumers
+-# pick their own dependency versions, but bumping transitive deps here
+-# keeps the binaries we ship current.
++# Every entry uses `versioning-strategy: lockfile-only`: bump the lockfile,
++# never widen or raise the version requirements in manifests. Those ranges are
++# our library consumers' constraints, not ours.
++#
++# Because of that, version updates are limited to minor and patch bumps.
++# A semver-breaking bump (including 0.x minor bumps such as 0.12 -> 0.13)
++# can't be satisfied without editing a manifest, so Dependabot would produce a
++# lockfile that fails `cargo --locked` and every CI job. We do those by hand.
++# This is done with `allow` rather than `ignore` because `allow.update-types`
++# only filters version updates; an `ignore` rule would also suppress security
++# updates. `dependency-type: all` matters for the same reason: `allow` does
++# apply to security updates otherwise, and most advisories are in transitive
++# dependencies.
++#
++# Security updates are grouped so advisories that land together become one PR.
++# They ignore `schedule` and `cooldown` and are opened as soon as an advisory
++# is published.
+ updates:
++  # Highest priority: the root Cargo workspace is statically linked into the
++  # Node.js and Python native extensions we ship, so users can't patch these
++  # themselves. Weekly updates keep the lockfile close to current, so security
++  # fixes are usually small patch bumps.
+   - package-ecosystem: cargo
+     directory: /
+     schedule:
+       interval: weekly
+-    open-pull-requests-limit: 10
+-    # Only update Cargo.lock, never widen/raise the version requirements in
+-    # Cargo.toml. The goal is keeping the lockfile (and the binaries we ship)
+-    # current on security fixes, not forcing our library's consumers onto
+-    # newer minimum versions.
++      day: wednesday
++    cooldown:
++      default-days: 2
+     versioning-strategy: lockfile-only
++    allow:
++      - dependency-type: all
++        update-types:
++          - version-update:semver-minor
++          - version-update:semver-patch
+     groups:
+-      # The arrow-rs and datafusion crates are released in lockstep and have to
+-      # move together, so keep them in one PR instead of one per sub-crate.
+-      # Listed first: a dependency joins the first group it matches.
+-      arrow-datafusion:
++      cargo:
++        applies-to: version-updates
+         patterns:
+-          - arrow
+-          - arrow-*
+-          - parquet
+-          - parquet-*
+-          - datafusion
+-          - datafusion-*
+-          - object_store
+-      rust-minor-patch:
+-        update-types:
+-          - minor
+-          - patch
++          - "*"
++      cargo-security:
++        applies-to: security-updates
++        patterns:
++          - "*"
+ 
+-  - package-ecosystem: pip
++  # Python and Node.js dependencies are resolved in the user's own environment,
++  # so these lockfiles only affect our dev/test setup. Lower priority: monthly.
++  - package-ecosystem: uv
+     directory: /python
+     schedule:
+-      interval: weekly
+-    # Only update uv.lock, never widen version requirements in pyproject.toml.
++      interval: monthly
++    cooldown:
++      default-days: 2
+     versioning-strategy: lockfile-only
++    allow:
++      - dependency-type: all
++        update-types:
++          - version-update:semver-minor
++          - version-update:semver-patch
+     groups:
+-      python-deps:
++      python:
++        applies-to: version-updates
++        patterns:
++          - "*"
++      python-security:
++        applies-to: security-updates
+         patterns:
+           - "*"
+ 
+-  # The npm ecosystem covers pnpm lockfiles. There are two separate installs:
+-  # the bindings themselves and the examples, which have their own lockfile.
+-  # As with cargo and pip above, only bump the lockfile — the version ranges
+-  # in package.json are our consumers' constraints, not ours.
+   - package-ecosystem: npm
+-    directory: /nodejs
++    directories:
++      - /nodejs
++      - /nodejs/examples
+     schedule:
+-      interval: weekly
++      interval: monthly
++    cooldown:
++      default-days: 2
+     versioning-strategy: lockfile-only
++    allow:
++      - dependency-type: all
++        update-types:
++          - version-update:semver-minor
++          - version-update:semver-patch
+     groups:
+-      nodejs-deps:
++      nodejs:
++        applies-to: version-updates
++        patterns:
++          - "*"
++      nodejs-security:
++        applies-to: security-updates
++        patterns:
++          - "*"
 +
-+***
-+
-+### rtree()
-+
-+```ts
-+static rtree(options?): Index
-+```
-+
-+Create an RTree index.
-+
-+An RTree index is a scalar index on a GeoArrow geometry column, that is, a
-+column whose Arrow field metadata sets `ARROW:extension:name` to a GeoArrow
-+type such as `geoarrow.point`, `geoarrow.polygon` or `geoarrow.wkb`. It
-+stores the bounding box of each geometry and accelerates spatial filters.
-+
-+The index accelerates `ST_Intersects`, `ST_Contains`, `ST_Within`,
-+`ST_Touches`, `ST_Crosses`, `ST_Overlaps`, `ST_Covers` and `ST_CoveredBy`
-+between the indexed column and a constant geometry, in either argument
-+order, for example
-+`ST_Within(geom, ST_GeomFromText('POLYGON ((...))'))`, as well as
-+`geom IS NULL`. These filters can be combined with other conditions using
-+`AND`.
-+
-+See the R-tree section of https://docs.lancedb.com/indexing/scalar-index
-+for storing geometry, the other spatial functions, and spatial filters on
-+vector search.
-+
-+Remote tables send the `RTREE` index type to the server, which must
-+support it.
-+
-+#### Parameters
-+
-+* **options?**: `Partial`&lt;[`RTreeOptions`](../interfaces/RTreeOptions.md)&gt;
-+
-+#### Returns
-+
-+[`Index`](Index.md)
-+
-+#### Example
-+
-+```ts
-+await table.createIndex("geom", { config: Index.rtree() });
-+await table
-+  .query()
-+  .where("ST_Intersects(geom, ST_GeomFromText('POLYGON ((0 0, 4 0, 0 4, 0 0))'))")
-+  .toArray();
-+```
++  # Docs, docs tests, and Java. Security updates scan these lockfiles whether or
++  # not they're listed here; these entries only exist to group those PRs.
++  # `open-pull-requests-limit: 0` turns off version updates.
++  - package-ecosystem: cargo
++   
 ```
 
-**File**: `docs/src/js/globals.md` (modified, +1/-0)
-```diff
-@@ -137,6 +137,7 @@
- - [QueryExecutionOptions](interfaces/QueryExecutionOptions.md)
- - [RTEStats](interfaces/RTEStats.md)
- - [RTEWriteSpec](interfaces/RTEWriteSpec.md)
-+- [RTreeOptions](interfaces/RTreeOptions.md)
- - [RefreshColumnOptions](interfaces/RefreshColumnOptions.md)
- - [RefreshColumnResult](interfaces/RefreshColumnResult.md)
- - [RefreshMaterializedViewResult](interfaces/RefreshMaterializedViewResult.md)
-```
+---
 
-**File**: `docs/src/js/interfaces/RTreeOptions.md` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+[**@lancedb/lancedb**](../README.md) • **Docs**
-+
-+***
-+
-+[@lancedb/lancedb](../globals.md) / RTreeOptions
-+
-+# Interface: RTreeOptions
-+
-+Options to create an `RTREE` index
-+
-+## Properties
-+
-+### pageSize?
-+
-+```ts
-+optional pageSize: number;
-+```
-+
-+The maximum number of entries in each R-tree page.
-+
-+Must be at least 2. The default is 4096.
-```
+### Incident Patch 3: `164aec17` (2026-11-20)
+**Commit Message**: fix(python): start background event loop lazily (#5111)
 
-**File**: `docs/web-tests/py/test_indexing.py` (modified, +77/-0)
+## Summary
+
+Importing `lancedb` currently starts a daemon thread running a private
+asyncio loop, even when the process never performs a synchronous
+database operation.
+
+Start that loop on the first actual coroutine submission instead.
+Concurrent first callers share one initialization, and a forked child
+resets the singleton to the unstarted state without touching the
+inherited thread or lock, then starts fresh work lazily on first use.
+
+The Rust-side runtime and the existing fork/reopen contracts are
+unchanged.
+
+## Validation
+
+- New import, first-use, concurrent first-use, and fork parent/child
+coverage passes.
+- Existing import, debugger-inspection, cancellation, and remote fork
+tests pass.
+- `ruff format --check .` and `ruff check .` pass.
+
+**File**: `python/python/lancedb/background_loop.py` (modified, +48/-16)
 ```diff
-@@ -561,6 +561,83 @@ def generate_uuids(num_items):
-     assert len(result) == n + len(new_users)
+@@ -13,22 +13,51 @@ class BackgroundEventLoop:
+     A background event loop that can run futures.
+ 
+     Used to bridge sync and async code, without messing with users event loops.
++
++    The loop and its thread are created by the first call to :meth:`run`, not
++    by constructing this object, so importing lancedb does not leave an idle
++    background thread behind.
+     """
+ 
+     def __init__(self):
+-        self._start()
+-
+-    def _start(self):
+-        self.loop = asyncio.new_event_loop()
+-        self.thread = threading.Thread(
+-            target=self.loop.run_forever,
+-            name="LanceDBBackgroundEventLoop",
+-            daemon=True,
+-        )
+-        self.thread.start()
++        self.loop: asyncio.AbstractEventLoop | None = None
++        self.thread: threading.Thread | None = None
++        self._start_lock = threading.Lock()
++
++    def _start(self) -> asyncio.AbstractEventLoop:
++        loop = self.loop
++        if loop is not None:
++            return loop
++        with self._start_lock:
++            loop = self.loop
++            if loop is not None:
++                return loop
++            loop = asyncio.new_event_loop()
++            thread = threading.Thread(
++                target=loop.run_forever,
++                name="LanceDBBackgroundEventLoop",
++                daemon=True,
++            )
++            thread.start()
++            # Publish the loop first and the thread last. Callers that reach
++            # _start while this is in progress wait on _start_lock, so they
++            # cannot observe a half-initialized loop/thread pair.
++            self.loop = loop
++            self.thread = thread
++            return loop
++
++    def _reset_after_fork(self):
++        # Threads do not survive fork(). Reset to the unstarted state without
++        # calling into the inherited loop or thread: the thread is gone, and
++        # it may have held _start_lock when the fork happened. A fresh lock
++        # lets the child start a new loop on its first run().
++        self.loop = None
++        self.thread = None
++        self._start_lock = threading.Lock()
+ 
+     def run(self, future):
+-        concurrent_future = asyncio.run_coroutine_threadsafe(future, self.loop)
++        loop = self._start()
++        concurrent_future = asyncio.run_coroutine_threadsafe(future, loop)
+         try:
+             return concurrent_future.result()
+         except BaseException:
+@@ -60,12 +89,15 @@ def embedding_executor() -> concurrent.futures.ThreadPoolExecutor:
  
  
-+def test_scalar_index_rtree(tmp_db):
-+    db = tmp_db
+ def _reset_after_fork():
+-    # Threads do not survive fork(), so the asyncio loop in LOOP.thread is
+-    # dead in the child. Re-initialize the singleton in place so existing
++    # Threads do not survive fork(), so the loop in LOOP.thread is dead in
++    # the child. Reset the singleton in place so existing
+     # `from .background_loop import LOOP` references in other modules see
+-    # the new state. The Rust-side tokio runtime is reset analogously by a
+-    # pthread_atfork hook installed in the _lancedb extension.
+-    LOOP._start()
++    # the unstarted state and create a fresh loop on their first run(). Do
++    # not restart it here: the child may never use LanceDB, and the at-fork
++    # handler must not touch the vanished thread or acquire inherited locks.
++    # The Rust-side tokio runtime is reset analogously by a pthread_atfork
++    # hook installed in the _lancedb extension.
++    LOOP._reset_after_fork()
+     # The embedding executor's worker threads are dead in the child as well.
+     # Replace it with a fresh pool (threads are spawned lazily, so this is
+     # cheap); we don't shut down the old one, since joining its dead workers
+```
+
+**File**: `python/python/tests/test_background_loop.py` (added, +236/-0)
+```diff
+@@ -0,0 +1,236 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright The LanceDB Authors
 +
-+    # --8<-- [start:scalar_index_rtree_data]
-+    import pyarrow as pa
++import multiprocessing as mp
++import os
++import subprocess
++import sys
++import textwrap
++import traceback
 +
-+    point = pa.struct([("x", pa.float64()), ("y", pa.float64())])
-+    schema = pa.schema(
-+        [
-+            pa.field("name", pa.string()),
-+            pa.field(
-+                "location", point, metadata={"ARROW:extension:name": "geoarrow.point"}
-+            ),
-+            pa.field("vector", pa.list_(pa.float32(), 2)),
++import pytest
++
++
++BACKGROUND_THREAD_NAME = "LanceDBBackgroundEventLoop"
++
++
++def _run_in_subprocess(code: str) -> subprocess.CompletedProcess:
++    env = os.environ.copy()
++    env["PYTHONPATH"] = os.pathsep.join(path for path in sys.path if path)
++    return subprocess.run(
++        [sys.executable, "-c", textwrap.dedent(code)],
++        check=False,
++        capture_output=True,
++        text=True,
++        env=env,
++        timeout=30,
++    )
++
++
++def _assert_subprocess_ok(result: subprocess.CompletedProcess) -> None:
++    assert result.returncode == 0, result.stderr or result.stdout
++
++
++def test_import_and_inspection_do_not_start_background_loop():
++    result = _run_in_subprocess(
++        f"""
++        import threading
++
++        import lancedb
++        from lancedb.background_loop import BackgroundEventLoop, LOOP
++
++        def background_threads():
++            return [
++                thread
++                for thread in threading.enumerate()
++                if thread.name == {BACKGROUND_THREAD_NAME!r}
++            ]
++
++        assert LOOP.thread is None
++        assert LOOP.loop is None
++        assert background_threads() == []
++
++        # Inspecting a fresh instance is also side-effect free.
++        loop = BackgroundEventLoop()
++        assert loop.thread is None
++        assert loop.loop is None
++        assert background_threads() == []
++        """
++    )
++    _assert_subprocess_ok(result)
++
++
++def test_first_sync_call_starts_one_daemon_thread():
++    result = _run_in_subprocess(
++        f"""
++        import threading
++
++        import lancedb
++        from lancedb.background_loop import LOOP
++
++        def background_threads():
++            return [
++                thread
++                for thread in threading.enumerate()
++                if thread.name == {BACKGROUND_THREAD_NAME!r}
++            ]
++
++        assert LOOP.thread is None
++        assert LOOP.loop is None
++
++        db = lancedb.connect("memory://")
++        assert db.table_names() == []
++
++        worker = LOOP.thread
++        assert worker is not None
++        assert worker is background_threads()[0]
++        assert len(background_threads()) == 1
++        assert worker.daemon
++        assert worker.is_alive()
++        assert LOOP.loop is not None
++        """
++    )
++    _assert_subprocess_ok(result)
++
++
++def test_concurrent_first_use_initializes_one_background_thread():
++    result = _run_in_subprocess(
++        f"""
++        import asyncio
++        import threading
++
++        from lancedb.background_loop import LOOP
++
++        worker_count = 8
++        barrier = threading.Barrier(worker_count)
++        results = []
++        errors = []
++        results_lock = threading.Lock()
++
++        def submit(index):
++            try:
++                barrier.wait(timeout=10)
++                value = LOOP.run(asyncio.sleep(0.05, result=index))
++                with results_lock:
++                    results.append(value)
++            except BaseException as exc:
++                with results_lock:
++                    errors.append(repr(exc))
++
++        threads = [
++            threading.Thread(target=submit, args=(index,))
++            for index in range(worker_count)
 +        ]
++        for thread in threads:
++            thread.start()
++        for thread in threads:
++            thread.join(timeout=20)
++
++        assert all(not thread.is_alive() for thread in threads)
++        assert errors == []
++        assert sorted(results) == list(range(worker_count))
++
++        background_threads = [
++            thread
++            for thread in threading.enumerate()
++            if thread.name == {BACKGROUND_THREAD_NAME!r}
++        ]
++        assert len(background_threads) == 1
++        assert background_threads[0].daemon
++        """
 +    )
-+    places = [
-+        ("Ferry Building", -122.3937, 37.7955, [0.7, 0.3]),
-+        ("Golden Gate Park", -122.4862, 37.7694, [0.1, 0.9]),
-+        ("Oakland Museum", -122.2638, 37.7987, [1.0, 0.05]),
-+    ]
-+    data = pa.Table.from_pylist(
-+        [
-+            {"name": name, "location": {"x": x, "y": y}, "vector": vector}
-+            for name, x, y, vector in places
-+        ],
-+        schema=schema,
-+    )
-+    table = db.create_table("places", data)
-+    # --8<-- [end:scalar_index_rtree_data]
-+
-+    # --8<-- [start:scalar_index_rtree_create]
-+    from lancedb.index import RTree
-+
-+    table.create_index("location", config=RTree())
-+    # --8<-- [end:scalar_index_rtree_create]
-+
-+    # --8<-- [start:scalar_index_rtree_filter]
-+    san_francisco = (
-+        "ST_GeomFromText('POLYGON ((-122.52 37.70, -122.35 37.70, "
-+        "-122.35 37.83, -122.52 37.83, -122.52 37.70))')"
-+    )
-+    in_san_francisco = f"ST_Within(location, {san_francisco})"
-+
-+    places_in_sf = table.search().where(in_san_francisco).select(["name"]).to_list()
-+    # [{'name': 'Ferry Building'}, {'name': 'Golden Gate Park'}]
-+    # --8<-- [end:scalar_index_rtree_filter]
-+
-+    assert sorted(row["name"] for row in places_in_sf) == [
-+        "Ferry Building",
-+        "Golden Gate Park",
-+    ]
-+
-+    # --8<-- [start:scalar_index_rtree_vector]
-+    # The nearest place overall is in Oakland; the spatial prefilter keeps the
-+    # search inside San Francisco.
-+    nearest_in_sf = (
-+        table.search([1.0, 0.0])
-+        .where(in_san_francisco)
-+        .select(["name", "_distance"])
-+        .limit(1)
-+        .to_list()
-+    )
-+    # [{'name': 'Ferry Building', '_distance': 0.18}]
-+    # --8<-- [end:scalar_index_rtree_vector]
-+
-+    assert nearest_in_sf[0]["name"] == "Ferry Building"
-+    assert nearest_in_sf[0]["_distance"] == pytest.approx(0.18, abs=1e-6)
-+    nearest = table.search([1.0, 0.0]).select(["name", "_distance"]).limit(1)
-+    assert nearest.to_list()[0]["name"] == "Oakland Museum"
-+
-+    # --8<-- [start:scalar_index_rtree_explain]
-+    plan = table.search().where(in_san_francisco).explain_plan(verbose=True)
-+    assert "ScalarIndexQuery" in plan
-+    # --8<-- [end:scalar_index_rtree_explain]
++    _assert_subprocess_ok(result)
 +
 +
- @pytest.mark.asyncio
- async def test_scalar_index_nested_fields(mem_db_async):
-     db = mem_db_async
++def _fork_child_starts_lazily(queue):
++    def background_threads():
++        import threading
++
++        return [
++            thread
++            for thread in threading.enumerate()
++            if thread.name == BACKGROUND_THREAD_NAME
++        ]
++
++    try:
++        from lancedb.background_loop import LOOP
++
++        inherited_thread_is_none = LOOP.thread is None
++        inherited_loop_is_none = LOOP.loop is None
++        background_threads_before = [thread.name for thread in background_threads()]
++
++        import lancedb
++
++        db = lancedb.connect("memory://")
++        tables = db.table_names()
++
++        worker = LOOP.thread
++        queue.put(
++            {
++                "error": None,
++                "inherited_thread_is_none": inherited_thread_is_none,
++                "inherited_loop_is_none": inherited_loop_is_none,
++                "background_threads_before": background_threads_before,
++                "table
 ```
 
-**File**: `docs/web/indexing/scalar-index.mdx` (modified, +141/-1)
+**File**: `python/python/tests/test_remote_db.py` (modified, +2/-4)
 ```diff
-@@ -20,19 +20,25 @@ import {
-     PyScalarIndexUuidWait as ScalarIndexUuidWait,
-     PyScalarIndexUuidUpsert as ScalarIndexUuidUpsert,
-     PyScalarIndexNestedFields as ScalarIndexNestedFields,
-+    PyScalarIndexRtreeData as ScalarIndexRtreeData,
-+    PyScalarIndexRtreeCreate as ScalarIndexRtreeCreate,
-+    PyScalarIndexRtreeFilter as ScalarIndexRtreeFilter,
-+    PyScalarIndexRtreeVector as ScalarIndexRtreeVector,
-+    PyScalarIndexRtreeExplain as ScalarIndexRtreeExplain,
- } from '/snippets/indexing.mdx';
+@@ -5370,12 +5370,10 @@ def test_background_loop_cancellation(exception):
+     mock_future = MagicMock()
+     mock_future.result.side_effect = exception()
  
- Scalar indexes accelerate filters on values such as numbers, categories and
- strings. Use them for selective table queries or metadata filters combined
- with vector and full-text search.
- 
--LanceDB supports five types of scalar indexes:
-+LanceDB supports these scalar index types, among others:
- 
- - `BTREE`: Stores column data in sorted order for binary search. Best for columns with many unique values.
- - `BITMAP`: Uses bitmaps to track value presence. Ideal for columns with few unique values (e.g., categories, tags).
- - `LABEL_LIST`: Special index for `List<T>` and `LargeList<T>` columns of primitive values supporting `array_has_all` and `array_has_any` queries.
- - `FM`: FM-Index over string or binary columns that accelerates substring search via `contains(col, 'needle')`.
- - `NGRAM`: Trigram index over UTF-8 string columns that accelerates substring search via `contains(col, 'needle')`, along with some `LIKE` and regular-expression filters.
-+- `RTREE`: R-tree over GeoArrow geometry columns that accelerates spatial filters such as `ST_Intersects` and `ST_Within`.
- 
- <Tip title="Working with scalar indices">
- Use scalar indexes with:
-@@ -52,6 +58,7 @@ Use scalar indexes with:
- | List of low cardinality of numbers or strings                   | `array_has_any`, `array_has_all`          | `LABEL_LIST` |
- | String or binary (`Utf8`, `LargeUtf8`, `Binary`, `LargeBinary`) | `contains(col, 'needle')`                 | `FM`         |
- | String (`Utf8`, `LargeUtf8`)                                    | `contains(col, 'needle')`, `LIKE`, regex  | `NGRAM`      |
-+| GeoArrow geometry (`geoarrow.point`, `geoarrow.polygon`, `geoarrow.wkb`, ...) | `ST_Intersects`, `ST_Within`, `ST_Contains` and other spatial relationships, `is null` | `RTREE` |
- 
- ## Scalar Index Operations
- 
-@@ -222,6 +229,139 @@ before consolidating their segments. Consolidation rejects these legacy
- row-ID segments. Tables without stable row IDs retain the earlier index format.
- </Note>
- 
-+## R-tree index for geospatial filters {#rtree}
-+
-+The `RTREE` index is a scalar index over a column of GeoArrow geometries. It
-+stores the bounding box of every geometry and accelerates spatial filters, on
-+their own or as the prefilter of a vector search. Use it when queries restrict
-+results to a region, such as the scenes over an area of interest, the places
-+inside a city, or the log records along a route.
-+
-+### Store geometry as GeoArrow {#rtree-geoarrow}
-+
-+A column holds geometry when its Arrow field carries GeoArrow extension
-+metadata: `ARROW:extension:name` names the geometry type, such as
-+`geoarrow.point`, `geoarrow.linestring`, `geoarrow.polygon` or
-+`geoarrow.multipolygon` for native coordinates, or `geoarrow.wkb` for
-+well-known binary. LanceDB keeps that metadata when it stores the column.
-+
-+You can build the field with PyArrow alone. A point is a struct of `x` and `y`
-+coordinates:
-+
-+<CodeGroup>
-+    <CodeBlock filename="Python" language="Python" icon="python">
-+    {ScalarIndexRtreeData}
-+    </CodeBlock>
-+</CodeGroup>
-+
-+Libraries such as [`geoarrow-rust-core`](https://pypi.org/project/geoarrow-rust-core/)
-+(`geoarrow.rust.core`) produce arrays with this metadata already, so a table
-+built from them works the same way.
-+
-+### Create an R-tree index {#rtree-create}
-+
-+Pass the `RTree` config in Python, `Index.rtree()` in TypeScript, or
-+`Index::RTree` in Rust. The optional page size sets the maximum number of
-+entries in each R-tree page; it must be at least 2 and defaults to 4096.
-+
-+<CodeGroup>
-+    <CodeBlock filename="Python" language="Python" icon="python">
-+    {ScalarIndexRtreeCreate}
-+    </CodeBlock>
-+
-+```typescript TypeScript icon="square-js"
-+import { Index } from "@lancedb/lancedb";
-+
-+await table.createIndex("location", { config: Index.rtree() });
-+```
-+
-+```rust Rust icon="rust"
-+use lancedb::index::Index;
-+use lancedb::index::scalar::RTreeIndexBuilder;
-+
-+table
-+    .create_index(&["location"], Index::RTree(RTreeIndexBuilder::default()))
-+    .execute()
-+    .await?;
-+```
-+</CodeGroup>
-+
-+`list_indices()` reports the index type as `"RTree"`, and `index_stats()`
-+reports it as `"RTREE"`. In the Rust crate, building the index on a local
-+table requires the `geo` feature; the Python and TypeScript packages include
-+it. In the embedded library, `optimize()` adds new rows to the index. Rows
-+that are not indexed yet are still filtered, just without the index.
-+
-+### Filter with spatial predicates {#rtree-filter}
-+
-+Spatial predica
-```
-
-**File**: `docs/web/snippets/indexing.mdx` (modified, +10/-0)
-```diff
-@@ -26,6 +26,16 @@ export const PyScalarIndexOptimize = "table.add([{\"vector\": [7, 8], \"book_id\
- 
- export const PyScalarIndexPrefilter = "table = db.open_table(\"book_with_embeddings\")\ntable.search([1.2] * 2).where(\"book_id != 3\").limit(10).to_pandas()\n";
- 
-+export const PyScalarIndexRtreeCreate = "from lancedb.index import RTree\n\ntable.create_index(\"location\", config=RTree())\n";
-+
-+export const PyScalarIndexRtreeData = "import pyarrow as pa\n\npoint = pa.struct([(\"x\", pa.float64()), (\"y\", pa.float64())])\nschema = pa.schema(\n    [\n        pa.field(\"name\", pa.string()),\n        pa.field(\n            \"location\", point, metadata={\"ARROW:extension:name\": \"geoarrow.point\"}\n        ),\n        pa.field(\"vector\", pa.list_(pa.float32(), 2)),\n    ]\n)\nplaces = [\n    (\"Ferry Building\", -122.3937, 37.7955, [0.7, 0.3]),\n    (\"Golden Gate Park\", -122.4862, 37.7694, [0.1, 0.9]),\n    (\"Oakland Museum\", -122.2638, 37.7987, [1.0, 0.05]),\n]\ndata = pa.Table.from_pylist(\n    [\n        {\"name\": name, \"location\": {\"x\": x, \"y\": y}, \"vector\": vector}\n        for name, x, y, vector in places\n    ],\n    schema=schema,\n)\ntable = db.create_table(\"places\", data)\n";
-+
-+export const PyScalarIndexRtreeExplain = "plan = table.search().where(in_san_francisco).explain_plan(verbose=True)\nassert \"ScalarIndexQuery\" in plan\n";
-+
-+export const PyScalarIndexRtreeFilter = "san_francisco = (\n    \"ST_GeomFromText('POLYGON ((-122.52 37.70, -122.35 37.70, \"\n    \"-122.35 37.83, -122.52 37.83, -122.52 37.70))')\"\n)\nin_san_francisco = f\"ST_Within(location, {san_francisco})\"\n\nplaces_in_sf = table.search().where(in_san_francisco).select([\"name\"]).to_list()\n# [{'name': 'Ferry Building'}, {'name': 'Golden Gate Park'}]\n";
-+
-+export const PyScalarIndexRtreeVector = "# The nearest place overall is in Oakland; the spatial prefilter keeps the\n# search inside San Francisco.\nnearest_in_sf = (\n    table.search([1.0, 0.0])\n    .where(in_san_francisco)\n    .select([\"name\", \"_distance\"])\n    .limit(1)\n    .to_list()\n)\n# [{'name': 'Ferry Building', '_distance': 0.18}]\n";
-+
- export const PyScalarIndexUuidData = "def generate_random_names():\n    base_names = [\"Alice\", \"Bob\", \"Carla\", \"David\", \"Eve\", \"Frank\", \"Grace\"]\n    letter = random.choice(string.ascii_uppercase)\n    return f\"{random.choice(base_names)} {letter}.\"\n\ndef generate_uuids(num_items):\n    return [uuid.uuid4().bytes for _ in range(num_items)]\n\n# Generate some UUIDs and random names\nn = 7\nuuids = generate_uuids(n)\nnames = [generate_random_names() for _ in range(n)]\n";
- 
- export const PyScalarIndexUuidTable = "table_name = \"index-on-uuid\"\n\nuuid_array = pa.array(uuids, pa.uuid())\nname_array = pa.array(names, pa.string())\nschema = pa.schema(\n    [\n        pa.field(\"id\", pa.uuid()),\n        pa.field(\"name\", pa.string()),\n    ]\n)\ndata_table = pa.Table.from_arrays([uuid_array, name_array], schema=schema)\ntable = db.create_table(table_name, data=data_table, mode=\"overwrite\")\n";
-```
-
-**File**: `nodejs/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -46,7 +46,7 @@ aws-lc-rs = "=1.18.1"
- napi-build = "2.3.1"
- 
- [features]
--default = ["remote", "lancedb/aws", "lancedb/gcs", "lancedb/azure", "lancedb/dynamodb", "lancedb/oss", "lancedb/huggingface", "lancedb/goosefs", "lancedb/metrics-otel"]
-+default = ["remote", "lancedb/aws", "lancedb/gcs", "lancedb/azure", "lancedb/dynamodb", "lancedb/oss", "lancedb/huggingface", "lancedb/goosefs", "lancedb/metrics-otel", "lancedb/geo"]
- fp16kernels = ["lancedb/fp16kernels"]
- remote = ["lancedb/remote"]
- experimental-functions = ["lancedb/experimental-functions"]
-```
-
-**File**: `nodejs/__test__/remote.test.ts` (modified, +81/-0)
-```diff
-@@ -1435,6 +1435,87 @@ describe("remote connection", () => {
-     expect(createIndexBody?.["custom_stop_words"]).toEqual(["the"]);
-   });
- 
-+  it("sends RTree options to remote tables", async () => {
-+    const createIndexBodies: Record<string, unknown>[] = [];
-+
-+    await withMockDatabase(
-+      (req, res) => {
-+        const path = req.url ?? "";
-+        if (path.endsWith("/describe/")) {
-+          res.writeHead(200, { "Content-Type": "application/json" }).end(
-+            JSON.stringify({
-+              name: "t",
-+              version: 1,
-+              schema: {
-+                fields: [
-+                  {
-+                    name: "geom",
-+                    type: {
-+                      type: "struct",
-+                      fields: [
-+                        {
-+                          name: "x",
-+                          type: { type: "double" },
-+                          nullable: false,
-+                        },
-+                        {
-+                          name: "y",
-+                          type: { type: "double" },
-+                          nullable: false,
-+                        },
-+                      ],
-+                    },
-+                    nullable: true,
-+                    metadata: { "ARROW:extension:name": "geoarrow.point" },
-+                  },
-+                ],
-+              },
-+            }),
-+          );
-+          return;
-+        }
-+
-+        if (path.endsWith("/create_index/")) {
-+          let raw = "";
-+          req.on("data", (chunk) => {
-+            raw += chunk;
-+          });
-+          req.on("end", () => {
-+            createIndexBodies.push(JSON.parse(raw));
-+            res.writeHead(200).end();
-+          });
-+          return;
-+        }
-+
-+        res.writeHead(404).end();
-+      },
-+      async (db) => {
-+        const table = await db.openTable("t");
-+        await table.createIndex("geom", { config: Index.rtree() });
-+        await table.createIndex("geom", {
-+          config: Index.rtree({ pageSize: 1024 }),
-+          name: "geom_rtree",
-+        });
-+      },
-+    );
-+
-+    expect(createIndexBodies).toEqual([
-+      {
-+        column: "geom",
-+        // biome-ignore lint/style/useNamingConvention: server wire format
-+        index_type: "RTREE",
-+      },
-+      {
-+        column: "geom",
-+        // biome-ignore lint/style/useNamingConvention: server wire format
-+        index_type: "RTREE",
-+        name: "geom_rtree",
-+        // biome-ignore lint/style/useNamingConvention: server wire format
-+        page_size: 1024,
-+      },
-+    ]);
-+  });
-+
-   it("diffs and cherry-picks remote branches", async () => {
-     const sampleDiff = {
-       fromBranch: "exp",
+-    with (
+-        patch.object(BackgroundEventLoop, "__init__", return_value=None),
+-        patch("asyncio.run_coroutine_threadsafe", return_value=mock_future),
+-    ):
++    with patch("asyncio.run_coroutine_threadsafe", return_value=mock_future):
+         loop = BackgroundEventLoop()
+         loop.loop = MagicMock()
++        loop.thread = MagicMock()
+         with pytest.raises(exception):
+             loop.run(None)
+         mock_future.cancel.assert_called_once()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5094** (2026-11-19): docs: mark Blob v2 GA for ordinary tables in Enterprise 1.15.0 (@Xuanwo)
-- **PR #5092** (2026-11-19): docs: add sidebar icons for Function failures and catalog pagination (@brendanclement)
-- **PR #5090** (2026-11-18): ci: publish and verify the CLI shell installer (@ChilePiquin)
-- **PR #5087** (2026-11-18): docs: add an ordinary Blob v2 photo tutorial (@Xuanwo)
-- **PR #5086** (2026-11-18): docs: show how to read and copy filtered blob rows (@Xuanwo)
-- **PR #5085** (2026-11-18): docs: add semantic sampling guide (@jackye1995)
+- **PR #5142** (2026-11-20): test(python): isolate the background-loop fork scenario (@Xuanwo)
+- **PR #5141** (2026-11-20): perf(python): add direct sync query execution (@Xuanwo)
+- **PR #5140** (2026-11-20): feat(python)!: preserve input order for take offsets (@Xuanwo)
+- **PR #5136** (2026-11-20): feat(python): add tag-based branch creation and default tag versions (@Xuanwo)
+- **PR #5134** (2026-11-20): docs: describe current Function refresh defaults (@brendanclement)
+- **PR #5132** (2026-11-20): docs: add the documentation style guide to this repository (@brendanclement)
 
 ---
 
@@ -1777,36 +1991,98 @@ allows. `Cargo.lock` doesn't change, and the thi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: mark Blob v2 GA for ordinary tables in Enterprise 1.15.0
+## X. test(python): isolate the background-loop fork scenario
 
 **RULE**:
-When implementing operations in `docs/web/management/table.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `python/python/tests/test_background_loop.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae665a46`: docs: mark Blob v2 GA for ordinary tables in Enterprise 1.15.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d2655ed`: test(python): isolate the background-loop fork scenario. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/web/management/table.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/python/tests/test_background_loop.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Starting with LanceDB Enterprise 1.15.0, Blob v2 is generally available on
-ordinary tables. Tables with Realtime Engine or MemWAL enabled are outside
-this support scope.
+def _run_in_subprocess(code: str, timeout: int = 30) -> subprocess.CompletedProcess:
+        timeout=timeout,
+    # Fork from a fresh interpreter: earlier tests in a shared pytest process
+    # may have left native runtime state that is not part of this scenario.
+    result = _run_in_subprocess(
+        f"""
+        import asyncio
+        import multiprocessing as mp
+        import threading
+        import traceback
+
+        from lancedb.background_loop import LOOP
+
+        BACKGROUND_THREAD_NAME = {BACKGROUND_THREAD_NAME!r}
+
+        def background_threads():
+            return [
+                thread
+                for thread in threading.enumerate()
+                if thread.name == BACKGROUND_THREAD_NAME
+            ]
+
+        def fork_child(queue):
+            try:
+                from lancedb.background_loop import LOOP
+
+                inherited_thread_is_none = LOOP.thread is None
+                inherited_loop_is_none = LOOP.loop is None
+                background_threads_before = [
+                    thread.name for thread in background_threads()
+                ]
+
+                import lancedb
+
+                db = lancedb.connect("memory://")
+                tables =
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-<Badge color="purple">Early access</Badge>
+import multiprocessing as mp
+import traceback
+def _run_in_subprocess(code: str) -> subprocess.CompletedProcess:
+        timeout=30,
+def _fork_child_starts_lazily(queue):
+    def background_threads():
+        import threading
 
-{/* Draft for Blob v2 GA. Confirm release status before removing Early access.
+        return [
+            thread
+            for thread in threading.enumerate()
+            if thread.name == BACKGROUND_THREAD_NAME
+        ]
 
-Blob v2 GA supports standard tables. Tables with Realtime or MemWAL enabled
-are outside the GA support scope.
-*/}
+    try:
+        from lancedb.background_loop import LOOP
+
+        inherited_thread_is_none = LOOP.thread is None
+        inherited_loop_is_none = LOOP.loop is None
+        background_threads_before = [thread.name for thread in background_threads()]
+
+        import lancedb
+
+        db = lancedb.connect("memory://")
+        tables = db.table_names()
+
+        worker = LOOP.thread
+        queue.put(
+            {
+                "error": None,
+                "inherited_thread_is_none": inherited_thread_is_none,
+                "inherited_loop_is_none": inherited_loop_is_none,
+                "background_threads_before": background_threads_before,
+                "tables": tables,
+                "thread_alive": False if worker is None else worker.is_alive(),
+                "thread_daemon": False if worker is None el
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae665a46` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d2655ed` are properly handled with clean fallback behavior.

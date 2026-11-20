@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T20:57:56.567Z",
-    "lastVerified": "2026-11-20T20:57:56.567Z",
+    "lastChecked": "2026-11-20T21:06:29.963Z",
+    "lastVerified": "2026-11-20T21:06:29.963Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T20:28:21.421Z",
-    "lastVerified": "2026-11-20T20:28:21.421Z",
+    "lastChecked": "2026-11-20T21:06:23.441Z",
+    "lastVerified": "2026-11-20T21:06:23.441Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -230,8 +230,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T14:36:04.558Z",
-    "lastVerified": "2026-11-20T14:36:04.558Z",
+    "lastChecked": "2026-11-20T21:06:18.422Z",
+    "lastVerified": "2026-11-20T21:06:18.422Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -1925,14 +1925,14 @@
     "officialUrl": "https://github.com/lancedb/lancedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T16:33:28.516Z",
-    "lastVerified": "2026-11-19T16:33:28.516Z",
+    "lastChecked": "2026-11-20T21:06:25.763Z",
+    "lastVerified": "2026-11-20T21:06:25.763Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "04d06beba287b139be0f4922abdedc0c751a894ebac62311ac3fd3e955f04d63",
+    "contentHash": "930310ebb278215e07459257d75a38983d53de9644d3bbb754e6e0190ac7e0fa",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2804,9 +2804,9 @@
   "litmuschaos-litmus": {
     "name": "litmus",
     "officialUrl": "https://github.com/litmuschaos/litmus",
-    "lastChecked": "2026-11-19T18:33:00.285Z",
+    "lastChecked": "2026-11-20T21:06:16.047Z",
     "revisionIdentifier": "97a397fb",
-    "lastVerified": "2026-11-19T18:33:00.285Z"
+    "lastVerified": "2026-11-20T21:06:16.047Z"
   },
   "pingcap-autoflow": {
     "name": "autoflow",
@@ -6551,9 +6551,9 @@
   "alexpasmantier-television": {
     "name": "television",
     "officialUrl": "https://github.com/alexpasmantier/television",
-    "lastChecked": "2026-11-19T05:06:01.576Z",
+    "lastChecked": "2026-11-20T21:06:08.457Z",
     "revisionIdentifier": "d91ab5b6",
-    "lastVerified": "2026-11-19T05:06:01.576Z"
+    "lastVerified": "2026-11-20T21:06:08.457Z"
   },
   "hf-baai-bge-large-en-v1.5": {
     "name": "BAAI/bge-large-en-v1.5",
@@ -10745,5 +10745,19 @@
     "lastChecked": "2026-11-20T20:57:44.794Z",
     "revisionIdentifier": "0ced68b2",
     "lastVerified": "2026-11-20T20:57:44.794Z"
+  },
+  "rdfjs-n3.js": {
+    "name": "N3.js",
+    "officialUrl": "https://github.com/rdfjs/N3.js",
+    "lastChecked": "2026-11-20T21:06:10.970Z",
+    "revisionIdentifier": "f921e119",
+    "lastVerified": "2026-11-20T21:06:10.970Z"
+  },
+  "elai950-alerttoast": {
+    "name": "AlertToast",
+    "officialUrl": "https://github.com/elai950/AlertToast",
+    "lastChecked": "2026-11-20T21:06:13.371Z",
+    "revisionIdentifier": "76a1c179",
+    "lastVerified": "2026-11-20T21:06:13.371Z"
   }
 }

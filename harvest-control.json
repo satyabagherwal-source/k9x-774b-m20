@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-11-20T20:57:50.193Z",
+  "lastUpdated": "2026-11-20T21:06:23.632Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -188,7 +188,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-20T20:57:37.161Z",
+        "lastActiveAt": "2026-11-20T21:06:05.766Z",
         "lastHarvestedAt": "2026-11-20T13:26:32.355Z",
         "totalHarvested": 1165,
         "lastError": null
@@ -198,7 +198,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-20T20:57:39.744Z",
+        "lastActiveAt": "2026-11-20T21:06:08.344Z",
         "lastHarvestedAt": "2026-11-18T05:10:32.382Z",
         "totalHarvested": 1437,
         "lastError": null
@@ -208,7 +208,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-20T20:57:43.643Z",
+        "lastActiveAt": "2026-11-20T21:06:08.461Z",
         "lastHarvestedAt": "2026-11-20T20:57:43.643Z",
         "totalHarvested": 2468,
         "lastError": null
@@ -218,7 +218,7 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-20T20:57:42.493Z",
+        "lastActiveAt": "2026-11-20T21:06:10.974Z",
         "lastHarvestedAt": "2026-11-20T20:49:39.228Z",
         "totalHarvested": 6738,
         "lastError": null
@@ -228,7 +228,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-20T20:57:44.800Z",
+        "lastActiveAt": "2026-11-20T21:06:13.375Z",
         "lastHarvestedAt": "2026-11-20T19:25:08.935Z",
         "totalHarvested": 2218,
         "lastError": null
@@ -238,7 +238,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-20T20:57:56.564Z",
+        "lastActiveAt": "2026-11-20T21:06:16.051Z",
         "lastHarvestedAt": "2026-11-20T20:57:56.564Z",
         "totalHarvested": 2290,
         "lastError": null
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-20T20:57:49.801Z",
+        "lastActiveAt": "2026-11-20T21:06:18.426Z",
         "lastHarvestedAt": "2026-11-20T20:41:45.408Z",
         "totalHarvested": 1766,
         "lastError": null
@@ -258,9 +258,9 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-20T20:57:52.280Z",
-        "lastHarvestedAt": "2026-11-20T20:49:49.267Z",
-        "totalHarvested": 2426,
+        "lastActiveAt": "2026-11-20T21:06:29.961Z",
+        "lastHarvestedAt": "2026-11-20T21:06:29.961Z",
+        "totalHarvested": 2427,
         "lastError": null
       },
       {
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-11-20T20:57:54.874Z",
+        "lastActiveAt": "2026-11-20T21:06:23.445Z",
         "lastHarvestedAt": "2026-11-20T17:45:35.248Z",
         "totalHarvested": 1459,
         "lastError": null
@@ -294,7 +294,7 @@
     "GITHUB_REST_API": {
       "service": "GITHUB_REST_API",
       "status": "HEALTHY",
-      "remaining": 4973,
+      "remaining": 4963,
       "resetEpoch": 0,
       "resetAt": null,
       "trippedAt": null,
@@ -324,8 +324,9 @@
       "status": "HEALTHY",
       "resetEpoch": 0,
       "resetAt": null,
-      "trippedAt": null,
-      "reason": null
+      "trippedAt": "2026-11-20T21:03:53.212Z",
+      "reason": null,
+      "isSecondaryRateLimit": false
     }
   }
 }

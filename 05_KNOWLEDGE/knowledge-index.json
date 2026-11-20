@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T20:58:26.021Z",
+  "last_updated": "2026-11-20T21:06:32.023Z",
   "total_verified_learnings": 9049,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22648,
+  "total_items": 22652,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-2Y1J-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YOXK-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ac817f454d7cda2b0af34c15f2da6c17522d2deb6942ae12cf22d62192008ff5",
+      "content_hash": "ba37894b93c2208cf9f530da93beb92014ae7490ebdf8f924ff32454841e4f63",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:41:50.558Z"
+      "persisted_at": "2026-11-20T21:06:31.739Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e19e3830b35616484e46829a7929c5f23846faa73f6cc9156f38bb47875c93c0",
+      "content_hash": "7fafb810567e095a52ed613af3030223ddd078674829964c5dc8fe14ab131678",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:41:50.759Z"
+      "persisted_at": "2026-11-20T21:06:31.872Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2b866934faec8118304bd776245782a4bd41f0fd153f39b463ccdf098ee56c10",
+      "content_hash": "1158cf97aab2e5e6b5e4385cced27c8468e022457c50b228e1de36f3739a59e4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:41:50.987Z"
+      "persisted_at": "2026-11-20T21:06:32.023Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -216745,8 +216745,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "ae665a46",
-      "content_hash": "04d06beba287b139be0f4922abdedc0c751a894ebac62311ac3fd3e955f04d63",
+      "source_version": "0d2655ed",
+      "content_hash": "930310ebb278215e07459257d75a38983d53de9644d3bbb754e6e0190ac7e0fa",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -216784,6 +216784,11 @@
           "number": 9412,
           "title": "mark Blob v2 GA for ordinary tables in Enterprise 1.15.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9640,
+          "title": "test(python): isolate the background-loop fork scenario",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216791,7 +216796,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T16:33:29.289Z",
+      "verified_at": "2026-11-20T21:06:26.686Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216845,10 +216850,10 @@
       "relative_path": "08_VERIFICATION/lancedb-lancedb-verification-protocol-empirical-defect-shield-for-lancedb-lanced.md",
       "title": "Verification Protocol: Empirical Defect Shield for lancedb/lancedb",
       "repository": "lancedb/lancedb",
-      "source_version": "ae665a46",
-      "content_hash": "1652545b948a2468bc881860bda4178d3e3f04b62ff10e5be240041eff0fe24f",
+      "source_version": "0d2655ed",
+      "content_hash": "077e8229bdfebd9c631d476f1920bcf5aad8dbed776b805db9e3510ef159f62c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T16:33:29.942Z"
+      "persisted_at": "2026-11-20T21:06:27.321Z"
     },
     "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants",
@@ -218759,13 +218764,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0Q6O-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YOBL-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "89afd579143a1d8631e7789ecbfa7386976388af8d2471b7af701d355ff75493",
+      "content_hash": "e1de008551b728fefa3fce8f7630d5e6fb74c498c44b9c9663bfcf84689d6f56",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T14:36:12.048Z"
+      "persisted_at": "2026-11-20T21:06:30.945Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218775,9 +218780,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "a274cb3ab200ff1e09402ec06ebf561c342ada17be4a81b5f1f510a51cf5980a",
+      "content_hash": "e2496f95f388f119816a66f6299136711fa2f31b0d815b916a5934b3d2d71406",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T14:36:12.243Z"
+      "persisted_at": "2026-11-20T21:06:31.085Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218787,9 +218792,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "e40c8d144b939206d96bf94a6af4dc6a83d82556e44b1f8d4dbdcb3a5994b0d4",
+      "content_hash": "5b1e374a07ab7d7a0b4511bb4168646a75c6b63cc5701703bfb4ee2880587fcd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T14:36:12.454Z"
+      "persisted_at": "2026-11-20T21:06:31.220Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -245600,9 +245605,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lancedb-lancedb-learnings",
       "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f5fec0b1b07478fcd43f81af05cbf4ad0d107911e19c377af1dcc6697a0f0ca",
+      "content_hash": "ef0d69050406b265d8ed7204f792e943bd941c0b22ad760793465377c43f69be",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T20:11:48.994Z"
+      "persisted_at": "2026-11-20T21:06:30.596Z"
     },
     "learn-github-thaw-app-thaw": {
       "learning_id": "learn-github-thaw-app-thaw",
@@ -307203,6 +307208,56 @@
       "content_hash": "1df6500ce6fb821245868dc41081c2554157a6e6f242164a0b889a50292705b8",
       "domain_letter": "H",
       "persisted_at": "2026-11-20T20:58:24.941Z"
+    },
+    "rule-9640": {
+      "learning_id": "rule-9640",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9640,
+      "title": "test(python): isolate the background-loop fork scenario",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "0d2655ed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T21:06:26.686Z"
+    },
+    "candidate_directive-test-python-isolate-the-background-loop-fork-scenario": {
+      "item_id": "candidate_directive-test-python-isolate-the-background-loop-fork-scenario",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YNU1-test-python-isolate-the-background-loop-fork-scenario.md",
+      "title": "test(python): isolate the background-loop fork scenario",
+      "repository": "lancedb-lancedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c56129ca48bef294b3a6d6db3fb4e3b425867dd8e69daa708f514c030ff9b633",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T21:06:30.316Z"
+    },
+    "domain_intelligence-architecture-intelligence-lancedb-lancedb-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-lancedb-lancedb-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lancedb-lancedb-architecture-intelligence-lancedb-lancedb-core-invariants.md",
+      "title": "Architecture Intelligence: lancedb/lancedb Core Invariants",
+      "repository": "lancedb/lancedb",
+      "source_version": "0d2655ed",
+      "content_hash": "d62bda71e486cc1a681163654af183014e959bb9f45c2e846451aeff6800dfe5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T21:06:27.184Z"
+    },
+    "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lancedb-lancedb-learnings-architecture-intelligence-lancedb-lancedb-learnings-co.md",
+      "title": "Architecture Intelligence: lancedb-lancedb-learnings Core Invariants",
+      "repository": "lancedb-lancedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4857acf4b2f4b6dd4fb893b93d238c8bb3c2608d6caeade7d6a51de00c95a4d8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T21:06:30.449Z"
     }
   },
   "ai-builder-brain": {

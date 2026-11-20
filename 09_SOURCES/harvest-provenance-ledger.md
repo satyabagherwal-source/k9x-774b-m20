@@ -11663,3 +11663,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-thinkingmachines-inkling-2-mini` | `https://huggingface.co/thinkingmachines/Inkling-2-Mini` | `hf-thinkin` | Multi-dimensional audit evidence | 2026-11-20T20:57:40.770Z |
 | `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `8a71677f` | Multi-dimensional audit evidence | 2026-11-20T20:57:53.432Z |
 | `learn-dom-d-f66e1d4b` | `project://hf-thinkingmachines-inkling-2-mini` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md` | 2026-11-20T20:58:24.077Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `0d2655ed` | Multi-dimensional audit evidence | 2026-11-20T21:06:26.866Z |

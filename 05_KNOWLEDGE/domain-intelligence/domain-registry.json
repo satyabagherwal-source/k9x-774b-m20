@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T20:58:25.855Z",
-  "total_records": 2176,
+  "last_updated": "2026-11-20T21:06:31.872Z",
+  "total_records": 2178,
   "domains": {
     "A": {
       "total": 17,
@@ -1025,7 +1025,7 @@
       ]
     },
     "G": {
-      "total": 372,
+      "total": 374,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1398,7 +1398,9 @@
         "domain_intelligence-architecture-intelligence-archivebox-archivebox-core-invariants",
         "domain_intelligence-architecture-intelligence-archivebox-archivebox-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-syntax-tree-hast-util-to-html-core-invariants",
-        "domain_intelligence-architecture-intelligence-syntax-tree-hast-util-to-html-learnings-core-invariant"
+        "domain_intelligence-architecture-intelligence-syntax-tree-hast-util-to-html-learnings-core-invariant",
+        "domain_intelligence-architecture-intelligence-lancedb-lancedb-core-invariants",
+        "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8909,8 +8911,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "e19e3830b35616484e46829a7929c5f23846faa73f6cc9156f38bb47875c93c0",
-      "created_at": "2026-11-20T20:41:50.759Z"
+      "content_hash": "7fafb810567e095a52ed613af3030223ddd078674829964c5dc8fe14ab131678",
+      "created_at": "2026-11-20T21:06:31.872Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -11567,8 +11569,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "a274cb3ab200ff1e09402ec06ebf561c342ada17be4a81b5f1f510a51cf5980a",
-      "created_at": "2026-11-20T14:36:12.243Z"
+      "content_hash": "e2496f95f388f119816a66f6299136711fa2f31b0d815b916a5934b3d2d71406",
+      "created_at": "2026-11-20T21:06:31.085Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -36628,6 +36630,24 @@
       "repository": "kgateway-dev-kgateway-learnings",
       "content_hash": "1df6500ce6fb821245868dc41081c2554157a6e6f242164a0b889a50292705b8",
       "created_at": "2026-11-20T20:58:24.941Z"
+    },
+    "domain_intelligence-architecture-intelligence-lancedb-lancedb-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-lancedb-lancedb-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: lancedb/lancedb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lancedb-lancedb-architecture-intelligence-lancedb-lancedb-core-invariants.md",
+      "repository": "lancedb/lancedb",
+      "content_hash": "d62bda71e486cc1a681163654af183014e959bb9f45c2e846451aeff6800dfe5",
+      "created_at": "2026-11-20T21:06:27.184Z"
+    },
+    "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: lancedb-lancedb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lancedb-lancedb-learnings-architecture-intelligence-lancedb-lancedb-learnings-co.md",
+      "repository": "lancedb-lancedb-learnings",
+      "content_hash": "4857acf4b2f4b6dd4fb893b93d238c8bb3c2608d6caeade7d6a51de00c95a4d8",
+      "created_at": "2026-11-20T21:06:30.449Z"
     }
   }
 }
