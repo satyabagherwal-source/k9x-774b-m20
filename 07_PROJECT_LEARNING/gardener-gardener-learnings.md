@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `be684af5`  
+> **Source Version**: `85eff190`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T11:08:04.940Z  
+> **Timestamp**: 2026-11-20T14:52:44.560Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T11:08:04.763Z  
+> **Harvest Timestamp**: 2026-11-20T14:52:44.357Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -726,14 +726,16 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16389** (2026-11-19): **Update nginx Docker tag to v1.31.9**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [nginx](https://hub.docker.com/_/nginx) ([source](https://redirect.github.com/nginx/docker-nginx)) | patch | `1.31.8` → `1.31.9` |  ---  ### Release Notes  <details> <summary>nginx/docker-nginx (nginx)</summary>  ### [`v1.31.9`](https://redirect.github.com/nginx/docker-nginx/compare/1.31.8...1.31.9)  [Compare Source](https://redirect.github.com/nginx/docker-nginx/compare/1.31.8...1.31.9)  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNDkuMSIsInVwZGF0ZWRJblZlciI6IjQ0LjI0OS4xIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
+- **Issue #16400** (2026-11-20): **[release-v1.153] Allow `Create` if object already exists only for source `BackupEntry`**
+  *Symptoms*: Manual cherry-pick of https://github.com/gardener/gardener/pull/16303 on release-v1.153  /kind bug
   **Post-Mortem & Fix Analysis**:
-  > /label skip-review
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [timuthy](https://github.com/timuthy) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["timuthy"]} -->
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16400#pullrequestreview-5989465497" title="Approved">plkokanov</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/release-v1.153/OWNERS)~~ [plkokanov]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
 
-- **Issue #16384** (2026-11-19): **docs: rename alert inhibition graph to kebab-case**
-  *Symptoms*: /area monitoring /kind cleanup  **What this PR does / why we need it**:  Renames the alert inhibition graph assets under `docs/development/content/` from CamelCase to kebab-case and updates all references. Consistent lowercase/kebab-case file names avoid case-sensitivity issues in downstream tooling and documentation aggregation.  | Before | After | | --- | --- | | `alertInhibitionGraph.png` | `alert-inhibition-graph.png` | | `alertInhibitionGraph.dot` | `alert-inhibition-graph.dot` |  The `.dot` source is renamed alongside its rendered `.png`. References updated: - `docs/development/monitoring-stack.md` (image link and the `dot -Tpng ...` render instructions) - `docs/monitoring/alerting.md` (image link)  **Which issue(s) this PR fixes**: Fixes #  **Special notes for your reviewer**: Pure rename plus reference update, no content changes.  **Release note**: ```other operator NONE ``` 
+- **Issue #16399** (2026-11-20): **[release-v1.155] extensions lib: Only pass type/class predicates to `MachineToWorkerMapper`**
+  *Symptoms*: This is an automated cherry-pick of #16285  /assign shafeeqes  ```bugfix user github.com/gardener/gardener #16399 @shafeeqes Fixed an issue where pending manual in-place worker pools were not correctly updated in the Shoot status. ```  /kind regression
+  **Post-Mortem & Fix Analysis**:
+  > /lgtm /approve 
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16399#issuecomment-7028543880" title="Approved">shafeeqes</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/release-v1.155/OWNERS)~~ [shafeeqes]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -750,184 +752,178 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `be684af5` (2026-11-19)
-**Commit Message**: docs: rename alert inhibition graph to kebab-case (#16384)
+### Incident Patch 1: `3a37ea0c` (2026-11-19)
+**Commit Message**: feat: add 5 new uri prefixes for VictoriaLogs' VirtualService (#16281)
 
-Signed-off-by: klocke-io <[REDACTED_EMAIL]>
+* feat: add a few new query paths for VictoriaLogs ViirtualService
 
-**File**: `docs/development/monitoring-stack.md` (modified, +3/-3)
+Signed-off-by: Ilia Petrov <[REDACTED_EMAIL]>
+
+* chore: add /select/logsql/stream_field_names and /select/logsql/stream_field_values
+
+Signed-off-by: Ilia Petrov <[REDACTED_EMAIL]>
+
+* chore: update comment
+
+Signed-off-by: Ilia Petrov <[REDACTED_EMAIL]>
+
+* Update pkg/component/observability/logging/victorialogs/victorialogs.go
+
+Co-authored-by: Plamen Kokanov <[REDACTED_EMAIL]>
+Signed-off-by: Ilia Petrov <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Ilia Petrov <[REDACTED_EMAIL]>
+Signed-off-by: Ilia Petrov <[REDACTED_EMAIL]>
+Co-authored-by: Plamen Kokanov <[REDACTED_EMAIL]>
+
+**File**: `pkg/component/observability/logging/victorialogs/victorialogs.go` (modified, +50/-6)
 ```diff
-@@ -67,9 +67,9 @@ The alert definitions are located in `charts/seed-monitoring/charts/core/charts/
+@@ -583,17 +583,61 @@ func (v *victoriaLogs) istioResources(ctx context.Context) ([]client.Object, err
+ 		return nil, fmt.Errorf("failed to create virtual service resource: %w", err)
+ 	}
  
- 1. Adding additional alerts for a component which already has a set of alerts. In this case you have to extend the existing rule file for the component.
- 1. Adding alerts for a new component. In this case a new rule file with name scheme `example-component.rules.yaml` needs to be added.
--1. Add the new alert to `alertInhibitionGraph.dot`, add any required inhibition flows and render the new graph. To render the graph, run:
-+1. Add the new alert to `alert-inhibition-graph.dot`, add any required inhibition flows and render the new graph. To render the graph, run:
- ```bash
--dot -Tpng ./content/alertInhibitionGraph.dot -o ./content/alertInhibitionGraph.png
-+dot -Tpng ./content/alert-inhibition-graph.dot -o ./content/alert-inhibition-graph.png
- ```
- 1. Create a test for the new alert. See `Alert Tests`.
- 
-@@ -125,7 +125,7 @@ Shoot Alertmanager
- 
- All alerts related to components running on the Shoot workers are inhibited in case of an issue with the vpn connection, because those components can't be scraped anymore and Prometheus will fire alerts in consequence. The components running on the workers are probably healthy and the alerts are presumably false positives. The inhibition flow is shown in the figure below. If you add a new alert, make sure to add it to the diagram.
- 
--![alertDiagram](content/alertInhibitionGraph.png)
-+![alertDiagram](content/alert-inhibition-graph.png)
- 
- ### Alert Attributes
- 
-```
-
-**File**: `docs/monitoring/alerting.md` (modified, +1/-1)
-```diff
-@@ -134,4 +134,4 @@ inhibit_rules:
- 
- Below is a graph visualizing the inhibition rules:
- 
--![inhibitionGraph](../development/content/alertInhibitionGraph.png)
-+![inhibitionGraph](../development/content/alert-inhibition-graph.png)
-```
-
----
-
-### Incident Patch 2: `958e85d1` (2026-11-19)
-**Commit Message**: [healthcheck] Clone health checks before injecting per-reconciliation clients (#16375)
-
-The health checks in `Actuator.healthChecks` are shared and long-lived, while
-their clients and logger are injected per reconciliation. Without cloning,
-concurrent reconciliations for different shoots overwrite each other's injected
-clients, so a check could run against the wrong shoot's cluster. Restore the
-per-reconciliation `shallowCopy` that was dropped in a previous refactoring.
-
-Assisted-by: Claude <[REDACTED_EMAIL]>
-
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
-
-**File**: `extensions/pkg/controller/healthcheck/healthcheck_actuator.go` (modified, +20/-1)
-```diff
-@@ -7,6 +7,7 @@ package healthcheck
- import (
- 	"context"
- 	"fmt"
-+	"reflect"
- 	"strings"
- 	"sync"
- 	"time"
-@@ -86,7 +87,10 @@ func (a *Actuator) ExecuteHealthCheckFunctions(ctx context.Context, log logr.Log
- 	)
- 
- 	for _, hc := range a.healthChecks {
--		check := hc.HealthCheck
-+		// Clone the health check to avoid data races: the health checks are shared and long-lived, while the clients
-+		// and logger below are injected per reconciliation. Without the clone, concurrent reconciliations for different
-+		// shoots would overwrite each other's injected clients.
-+		check := shallowCopy(hc.HealthCheck)
- 		SourceClientInfo(a.sourceClient, check)
- 		if _, ok := check.(TargetClient); ok {
- 			if targetClient == nil {
-@@ -265,6 +269,21 @@ func (a *Actuator) ExecuteHealthCheckFunctions(ctx context.Context, log logr.Log
- 	return &checkResults, nil
- }
- 
-+// shallowCopy returns a shallow copy of the given HealthCheck. It is used to isolate the per-reconciliation client and
-+// logger injection from the shared, long-lived health check instances. The copy is shallow because only the top-level
-+// fields (clients, logger) are mutated after cloning.
-+func shallowCopy(healthCheck HealthCheck) HealthCheck {
-+	value := reflect.ValueOf(healthCheck)
-+	if value.Kind() != reflect.Pointer {
-+		// The injection relies on pointer receivers, so a non-pointer HealthCheck cannot carry injected state anyway.
-+		return healthCheck
-+	}
-+
-+	copied := reflect.New(value.Elem().Type())
-+	copied.Elem().Set(value.Elem())
-+	return copied.Interface().(HealthCheck)
-+}
-+
- func (a *Actuator) getPreCheckFuncObject(ctx context.Context, request types.NamespacedName) (any, error) {
- 	if isGardenExtensionClass(a.extensionClasses) {
- 		garden, err := getGarden(ctx, a.sourceClient)
-```
-
-**File**: `extensions/pkg/controller/healthcheck/healthcheck_actuator_test.go` (added, +65/-0)
-```diff
-@@ -0,0 +1,65 @@
-+// SPDX-FileCopyrightText: Contributors to the Gardener project
-+//
-+// SPDX-License-Identifier: Apache-2.0
-+
-+package healthcheck
-+
-+import (
-+	"context"
-+
-+	"github.com/go-logr/logr"
-+	. "github.com/onsi/ginkgo/v2"
-+	. "github.com/onsi/gomega"
-+	"k8s.io/apimachinery/pkg/types"
-+	"sigs.k8s.io/controller-runtime/pkg/client"
-+	fakeclient "sigs.k8s.io/controller-runtime/pkg/client/fake"
-+
-+	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
-+)
-+
-+type fakeHealthCheck struct {
-+	// sourceClient is set via injection on the per-reconciliation copy.
-+	sourceClient client.Client
-+	// observedClients records the clients seen by Check across all executions, keyed by the copy that ran.
-+	observedClients map[*fakeHealthCheck]client.Client
-+}
-+
-+func (c *fakeHealthCheck) Check(context.Context, types.NamespacedName) (*SingleCheckResult, error) {
-+	c.observedClients[c] = c.sourceClient
-+	return &SingleCheckResult{Status: gardencorev1beta1.ConditionTrue}, nil
-+}
-+
-+func (c *fakeHealthCheck) SetLoggerSuffix(string, string) {}
-+
-+func (c *fakeHealthCheck) InjectSourceClient(sourceClient client.Client) {
-+	c.sourceClient = sourceClient
-+}
-+
-+var _ = Describe("actuator", func() {
-+	Describe("#ExecuteHealthCheckFunctions", func() {
-+		It("should inject the client into a copy and leave the shared health check untouched", func() {
-+			var (
-+				shared = &fakeHealthCheck{observedClients: map[*fakeHealthCheck]client.Client{}}
-+
-+				sourceClient = fakeclient.NewClientBuilder().Build()
-+
-+				actuator = &Actuator{
-+					sourceClient: sourceClient,
-+					healthChecks: []ConditionTypeToHealthCheck{
-+						{ConditionType: "ControlPlaneHealthy", HealthCheck: shared},
+-	// Allowlist: only /select/logsql/query is accessible; everything else returns 403.
++	// Allowlist:
++	// - /select/logsql/query
++	// - /select/logsql/field_names
++	// - /select/logsql/field_values
++	// - /select/logsql/streams
++	// - /select/logsql/stream_field_names
++	// - /select/logsql/stream_field_values
++	// Everything else returns 403.
+ 	virtualService.Spec.Http = []*istioapinetworkingv1beta1.HTTPRoute{
+ 		{
+ 			Name: "query",
+-			Match: []*istioapinetworkingv1beta1.HTTPMatchRequest{{
+-				Uri: &istioapinetworkingv1beta1.StringMatch{
+-					MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
+-						Prefix: "/select/logsql/query",
++			Match: []*istioapinetworkingv1beta1.HTTPMatchRequest{
++				{
++					Uri: &istioapinetworkingv1beta1.StringMatch{
++						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
++							Prefix: "/select/logsql/query",
++						},
+ 					},
+ 				},
+-			}},
++				{
++					Uri: &istioapinetworkingv1beta1.StringMatch{
++						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
++							Prefix: "/select/logsql/field_names",
++						},
 +					},
-+				}
-+			)
-+
-+			_, err := actuator.ExecuteHealthCheckFunctions(context.Background(), logr.Discard(), types.NamespacedName{Namespace: "shoot--foo--bar"})
-+			Expect(err).NotTo(HaveOccurred())
-+
-+			Expect(shared.sourceClient).To(BeNil())
-+			Expect(shared.observedClients).To(HaveLen(1))
-+			for copied, observed := range shared.observedClients {
-+				Expect(copied).NotTo(BeIdenticalTo(shared))
-+				Expect(observed).To(BeIdenticalTo(sourceClient))
-+			}
-+		})
-+	})
-+})
++				},
++				{
++					Uri: &istioapinetworkingv1beta1.StringMatch{
++						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
++							Prefix: "/select/logsql/field_values",
++						},
++					},
++				},
++				{
++					Uri: &istioapinetworkingv1beta1.StringMatch{
++						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
++							Prefix: "/select/logsql/streams",
++						},
++					},
++				},
++				{
++					Uri: &istioapinetworkingv1beta1.StringMatch{
++						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
++							Prefix: "/select/logsql/stream_field_names",
++						},
++					},
++				},
++				{
++					Uri: &istioapinetworkingv1beta1.StringMatch{
++						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
++							Prefix: "/select/logsql/stream_field_values",
++						},
++					},
++				},
++			},
+ 			Route: []*istioapinetworkingv1beta1.HTTPRouteDestination{{
+ 				Destination: &istioapinetworkingv1beta1.Destination{
+ 					Host: destinationHost,
+```
+
+**File**: `pkg/component/observability/logging/victorialogs/victorialogs_test.go` (modified, +44/-4)
+```diff
+@@ -19,6 +19,7 @@ import (
+ 	"google.golang.org/protobuf/types/known/durationpb"
+ 	"google.golang.org/protobuf/types/known/wrapperspb"
+ 	istionetworkingv1alpha3 "istio.io/api/networking/v1alpha3"
++	istioapinetworkingv1beta1 "istio.io/api/networking/v1beta1"
+ 	istionetworkingv1beta1 "istio.io/client-go/pkg/apis/networking/v1beta1"
+ 	appsv1 "k8s.io/api/apps/v1"
+ 	autoscalingv1 "k8s.io/api/autoscaling/v1"
+@@ -611,11 +612,50 @@ var _ = Describe("VictoriaLogs", func() {
+ 					Http: []*istionetworkingv1alpha3.HTTPRoute{
+ 						{
+ 							Name: "query",
+-							Match: []*istionetworkingv1alpha3.HTTPMatchRequest{{
+-								Uri: &istionetworkingv1alpha3.StringMatch{
+-									MatchType: &istionetworkingv1alpha3.StringMatch_Prefix{Prefix: "/select/logsql/query"},
++							Match: []*istioapinetworkingv1beta1.HTTPMatchRequest{
++								{
++									Uri: &istioapinetworkingv1beta1.StringMatch{
++										MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
++											Prefix: "/select/logsql/query",
++										},
++									},
+ 								},
+-							}},
++								{
++									Uri: &istioapinetworkingv1beta1.StringMatch{
++										MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
++											Prefix: "/select/logsql/field_names",
++										},
++									},
++								},
++								{
++									Uri: &istioapinetworkingv1beta1.StringMatch{
++										MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
++											Prefix: "/select/logsql/field_values",
++										},
++									},
++								},
++								{
++									Uri: &istioapinetworkingv1beta1.StringMatch{
++										MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
++											Prefix: "/select/logsql/streams",
++										},
++									},
++								},
++								{
++									Uri: &istioapinetworkingv1beta1.StringMatch{
++										MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
++											Prefix: "/select/logsql/stream_field_names",
++										},
++									},
++								},
++								{
++									Uri: &istioapinetworkingv1beta1.StringMatch{
++										MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
++											Prefix: "/select/logsql/stream_field_values",
++										},
++									},
++								},
++							},
+ 							Route: []*istionetworkingv1alpha3.HTTPRouteDestination{{
+ 								Destination: &istionetworkingv1alpha3.Destination{
+ 									Host: destinationFQDN,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16389** (2026-11-19): Update nginx Docker tag to v1.31.9 (@renovate[bot])
-- **PR #16384** (2026-11-19): docs: rename alert inhibition graph to kebab-case (@klocke-io)
-- **PR #16382** (closed): Update module golang.org/x/tools to v0.53.0 - autoclosed (@renovate[bot])
-- **PR #16381** (2026-11-18): Update golang.org/x/exp digest to 7a49493 (@renovate[bot])
-- **PR #16378** (2026-11-18): [release-v1.155] Fix `gardener-operator` CA rotation (@gardener-prow-cherrypicker[bot])
-- **PR #16375** (2026-11-19): [healthcheck] Clone health checks before injecting per-reconciliation clients (@rfranzke)
+- **PR #16400** (2026-11-20): [release-v1.153] Allow `Create` if object already exists only for source `BackupEntry` (@shafeeqes)
+- **PR #16399** (2026-11-20): [release-v1.155] extensions lib: Only pass type/class predicates to `MachineToWorkerMapper` (@gardener-prow-cherrypicker[bot])
+- **PR #16398** (2026-11-20): [release-v1.154] extensions lib: Only pass type/class predicates to `MachineToWorkerMapper` (@gardener-prow-cherrypicker[bot])
+- **PR #16397** (2026-11-20): [release-v1.153] extensions lib: Only pass type/class predicates to `MachineToWorkerMapper` (@gardener-prow-cherrypicker[bot])
+- **PR #16396** (2026-11-20): [release-v1.156] extensions lib: Only pass type/class predicates to `MachineToWorkerMapper` (@gardener-prow-cherrypicker[bot])
+- **PR #16395** (2026-11-20): Update quay.io/prometheus/node-exporter Docker tag to v1.13.1 (@renovate[bot])
 
 ---
 
@@ -947,32 +943,71 @@ Signed-off-by: rfranzke <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: rename alert inhibition graph to kebab-case
+## X. add 5 new uri prefixes for VictoriaLogs' VirtualService
 
 **RULE**:
-When implementing operations in `docs/development/monitoring-stack.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/component/observability/logging/victorialogs/victorialogs.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be684af5`: docs: rename alert inhibition graph to kebab-case. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a37ea0c`: add 5 new uri prefixes for VictoriaLogs' VirtualService. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/development/monitoring-stack.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/component/observability/logging/victorialogs/victorialogs.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-1. Add the new alert to `alert-inhibition-graph.dot`, add any required inhibition flows and render the new graph. To render the graph, run:
-dot -Tpng ./content/alert-inhibition-graph.dot -o ./content/alert-inhibition-graph.png
-![alertDiagram](content/alert-inhibition-graph.png)
+	// Allowlist:
+	// - /select/logsql/query
+	// - /select/logsql/field_names
+	// - /select/logsql/field_values
+	// - /select/logsql/streams
+	// - /select/logsql/stream_field_names
+	// - /select/logsql/stream_field_values
+	// Everything else returns 403.
+			Match: []*istioapinetworkingv1beta1.HTTPMatchRequest{
+				{
+					Uri: &istioapinetworkingv1beta1.StringMatch{
+						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
+							Prefix: "/select/logsql/query",
+						},
+				{
+					Uri: &istioapinetworkingv1beta1.StringMatch{
+						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
+							Prefix: "/select/logsql/field_names",
+						},
+					},
+				},
+				{
+					Uri: &istioapinetworkingv1beta1.StringMatch{
+						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
+							Prefix: "/select/logsql/field_values",
+						},
+					},
+				},
+				{
+					Uri: &istioapinetworkingv1beta1.StringMatch{
+						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
+							Prefix: "/select/logsql/streams",
+						},
+					},
+				},
+				{
+					Uri: &istioapinetworkingv1beta1.StringMatch{
+						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
+							Prefix: "/select/logsql/stream_f
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-1. Add the new alert to `alertInhibitionGraph.dot`, add any required inhibition flows and render the new graph. To render the graph, run:
-dot -Tpng ./content/alertInhibitionGraph.dot -o ./content/alertInhibitionGraph.png
-![alertDiagram](content/alertInhibitionGraph.png)
+	// Allowlist: only /select/logsql/query is accessible; everything else returns 403.
+			Match: []*istioapinetworkingv1beta1.HTTPMatchRequest{{
+				Uri: &istioapinetworkingv1beta1.StringMatch{
+					MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
+						Prefix: "/select/logsql/query",
+			}},
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be684af5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a37ea0c` are properly handled with clean fallback behavior.

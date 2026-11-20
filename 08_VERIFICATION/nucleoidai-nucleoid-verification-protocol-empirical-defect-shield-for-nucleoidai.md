@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "ba512866",
+  "source_version": "8eed95c3",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T09:10:36.554Z",
+  "timestamp": "2026-11-20T14:52:52.208Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `ba512866`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T09:10:36.554Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `8eed95c3`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T14:52:52.208Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `ba512866`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `8eed95c3`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T09:09:59.637Z  
+> **Harvest Timestamp**: 2026-11-20T14:52:51.106Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Logic Language for World Models 🌱🐋🌍
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 771 stars
+- **Stars / Engagement**: 772 stars
 
 ---
 
@@ -1591,857 +1591,567 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba512866` (2026-11-20)
-**Commit Message**: Improve terminal editor navigation
+### Incident Patch 1: `8eed95c3` (2026-11-20)
+**Commit Message**: Synthesize ARC examples from object transforms
 
-Add pane-aware paging and subtle scrollbars, expand the focused editor for long drafts, and make autocomplete respect multiline strings, comments, and popup mouse interactions.
+Replace LLM-generated examples with rotated and shifted instances. Execute Nucleoid rules, validate rendered object properties, and merge matching instances into new training examples.
 
-**File**: `README.md` (modified, +6/-0)
+**File**: `arc/src/synthesizer.ts` (modified, +105/-111)
 ```diff
-@@ -57,6 +57,12 @@ the cursor/selection, and the wheel scrolls individual panes. Ctrl-C cancels
- input, Ctrl-Q exits, and `.help` lists all controls.
- At compact heights, results and diagnostics share a pane; F4 switches between
- them without hiding the editor.
-+Subtle scrollbars mark long results and diagnostics; PageUp / PageDown moves
-+by the visible rows of the selected pane. Scrolling over autocomplete changes
-+the selected suggestion without moving the panes behind it.
-+Long drafts expand the focused editor to at most half the terminal, while
-+result focus returns that space to output. Autocomplete respects strings and
-+comments across lines, so Tab does not replace text inside them.
+@@ -1,117 +1,111 @@
+-import * as llm from "./lib/llm.ts";
+ import * as Matrix from "./lib/Matrix";
+-
+-const FIELD_GUIDE = `
+-- "dataset" holds the existing examples. Each pairs an "input_matrix" with the "output_matrix" that the rule produces from it.
+-- Each example's "instances" lists its instances, each pairing an "input_instance_matrix" with its "output_instance_matrix". They relate to the example's full matrices by a fixed convention (how instances are found, ordered and cropped); work that convention out from the existing examples and follow it exactly.
+-- "class_declaration", "declarations" and "output_canvas" are fixed for this task. Every new example must be valid under them. Do not change them or repeat them in your answer.
+-`.trim();
++import * as visualizer from "./visualizer";
++import object from "./object.ts";
++import * as nucleoid from "./lib/nucleoid.ts";
  
- `nucleoid --plain` keeps the line-oriented interface below. Piped stdin or
- redirected stdout selects it automatically; file execution and the `--json`
-```
-
-**File**: `docs/README.md` (modified, +14/-0)
-```diff
-@@ -101,6 +101,20 @@ Use F1-F3 for tabs, F6 or the view buttons for result formats, Ctrl-Up /
- Ctrl-Down for earlier results, and F4 to focus the editor, results or
- diagnostics. PageUp / PageDown and the mouse wheel scroll; focused-result
- Left / Right (or Shift-wheel) moves across text or table columns.
-+PageUp / PageDown uses the focused result or diagnostic viewport, excluding
-+the table header from the page size. Subtle gutter scrollbars indicate overflow
-+without reducing content width. Selecting a history entry without diagnostics
-+returns diagnostic focus to its result. The autocomplete popup captures mouse
-+events across its full bounds; its wheel selects suggestions, never the pane
-+underneath.
-+Long buffers grow the focused editor to at most half the terminal while keeping
-+result content visible; focusing results or diagnostics restores the normal
-+editor height. Wide editors show the total line count beside the cursor position.
-+Autocomplete checks the accepted lexer's context up to the cursor, including
-+multiline strings, templates and `#`, `//` and `/* ... */` comments. No
-+suggestions appear inside those regions, even with Ctrl-Space; code after
-+closed literals and comments completes normally. Incomplete text after the
-+cursor does not affect suggestions before it.
- Click/drag positions/selects editor text. `.help` documents all controls;
- `.json`, `.table` and `.graph` accept optional `on` / `off` arguments.
- 
-```
-
-**File**: `src/terminal/completion.rs` (modified, +16/-18)
-```diff
-@@ -2,8 +2,11 @@ use std::collections::BTreeSet;
- 
- use nucleoid::Runtime;
- use nucleoid::graph::NodeKind;
-+use nucleoid::lang::ast::lexer::{Token, tokenize};
- use tui_textarea::{CursorMove, TextArea};
- 
-+use super::editor;
-+
- const WORDS: &[&str] = &[
-     "and",
-     "assert",
-@@ -135,7 +138,7 @@ impl Completion {
-             return None;
-         }
-         let before: String = before.iter().collect();
--        if in_literal_or_comment(head) {
-+        if !code_position(editor, row, column) {
-             return None;
-         }
-         let candidates = if row == 0 && before.trim().is_empty() && prefix.starts_with('.') {
-@@ -206,23 +209,18 @@ fn word(character: char) -> bool {
-     character.is_ascii_alphanumeric() || matches!(character, '_' | '$' | '.')
- }
- 
--fn in_literal_or_comment(line: &[char]) -> bool {
--    let mut quote = None;
--    let mut escaped = false;
--    for &character in line {
--        if escaped {
--            escaped = false;
--        } else if character == '\\' && quote.is_some() {
--            escaped = true;
--        } else if quote == Some(character) {
--            quote = None;
--        } else if quote.is_none() && character == '#' {
--            return true;
--        } else if quote.is_none() && matches!(character, '\'' | '"' | '`') {
--            quote = Some(character);
--        }
--    }
--    quote.is_some()
-+fn code_position(editor: &TextArea<'_>, row: usize, column: usize) -> bool {
-+    const CURSOR_MARKER: &str = "__nucleoid_completion_cursor";
-+    let mut source = editor::source_before_cursor(editor);
-+    source.push(' ');
-+    source.push_str(CURSOR_MARKER);
-+    tokenize(&source).is_ok_and(|tokens| {
-+        tokens.into_iter().any(|spanned| {
-+            spanned.position.line == row + 1
-+                && spanned.position.column == column + 2
-+                && matches!(spanned.token, Token::Identifier(name) if name == CURSOR_MARKER)
-+        })
-+    })
- }
- 
- fn add_members(runtime: &Runtime, owner: &str, candidates: &mut BTreeSet<String>) {
-```
-
-**File**: `src/terminal/completion/tests.rs` (modified, +59/-0)
-```diff
-@@ -332,6 +332,65 @@ fn strings_comments_and_whitespace_do_not_trigger_automatic_completion() {
-     assert!(Completion::find(&runtime, &editor::new("\"#\"; Math.sq"), false).is_some());
- }
- 
-+#[test]
-+fn completion_stays_out_of_comments_and_multiline_literals_even_when_requested() {
-+    let runtime = Runtime::new();
-+    for source in [
-+        "// Math.sq",
-+        "value = 1 // Math.sq",
-+        "/* Math.sq",
-+        "/* ignored\nMath.sq",
-+        "/* closed */ # Math.sq",
-+        "\"open\nMath.sq",
-+        "'open\nMath.sq",
-+        "`open\nMath.sq",
-+        r#"value = "escaped \" quote Math.sq"#,
-+        "__nucleoid_completion_cursor # Math.sq",
-+    ] {
-+        let editor = editor::new(source);
-+        for explicit in [false, true] {
-+            assert!(
-+                Completion::find(&runtime, &editor, explicit).is_none(),
-+                "{source:?}, explicit: {explicit}"
-+            );
-+        }
-+    }
-+}
-+
-+#[test]
-+fn completion_resumes_after_literals_comments_and_division_without_running_code() {
-+    let runtime = Runtime::new();
-+    for source in [
-+        "// ignored \"\nMath.sq",
-+        "# ignored '\nMath.sq",
-+        "/* ignored ' # */ Math.sq",
-+        "/* ignored\n*/ Math.sq",
-+        "\"closed\ntext\"; Math.sq",
-+        "`closed\ntext`; Math.sq",
-+        "pattern = /[#]/; Math.sq",
-+        "value = 8 / 2; Math.sq",
-+        "\"/* // #\"; Math.sq",
-+    ] {
-+        let editor = editor::new(source);
-+        let completion = Completion::find(&runtime, &editor, false).unwrap();
-+        assert_eq!(completion.candidates, ["Math.sqrt"], "{source:?}");
-+    }
-+}
-+
-+#[test]
-+fn completion_checks_only_source_before_the_cursor() {
-+    let runtime = Runtime::new();
-+    let mut editor = editor::new("Math.sq\n/* unterminated");
-+    editor.move_cursor(CursorMove::Jump(0, 7));
-+    let completion = Completion::find(&runtime, &editor, false).unwrap();
-+    completion.apply(&mut editor);
-+    assert_eq!(editor.lines(), ["Math.sqrt", "/* unterminated"]);
-+
-+    let mut editor = editor::new("/* Math.sq */\nMath.sq");
-+    editor.move_cursor(CursorMove::Jump(0, 10));
-+    assert!(Completion::find(&runtime, &editor, true).is_none());
-+}
-+
- #[test]
- fn completion_offers_repeat_as_it_offers_while() {
-     let mut runtime = Runtime::new();
-```
-
-**File**: `src/terminal/editor.rs` (modified, +10/-4)
-```diff
-@@ -14,20 +14,26 @@ pub(super) fn new(source: &str) -> TextArea<'static> {
-     editor
- }
- 
--pub(super) fn newline(editor: &mut TextArea<'_>) {
-+pub(super) fn source_before_cursor(editor: &TextArea<'_>) -> String {
-     let (row, column) = editor.cursor();
-     let prefix: String = line(editor, row).chars().take(column).collect();
--    let source = editor
-+    editor
-         .lines()
-         .iter()
-         .take(row)
-         .map(String::as_str)
-         .chain(std::iter::once(prefix.as_str()))
-         .collect::<Vec<_>>()
--        .join("\n");
-+        .join("\n")
-+}
-+
-+pub(super) fn newline(editor: &mut TextArea<'_>) {
-+    let (row, column) = editor.cursor();
-+    let source = source_before_cursor(editor);
-     let indentation = if unterminated_block_comment(&source) {
--        prefix
-+        line(editor, row)
-             .chars()
-+            .take(column)
-             .take_while(|character| matches!(character, ' ' | '\t'))
-             .collect()
-     } else {
-```
-
-**File**: `src/terminal/input.rs` (modified, +10/-2)
-```diff
-@@ -58,8 +58,8 @@ impl App {
-             KeyCode::Enter if ctrl && !cfg!(windows) => return Some(self.submit(runtime)),
-             KeyCode::Up if ctrl => self.select_entry(self.selected.saturating_sub(1)),
-             KeyCode::Down if ctrl => self.select_entry(self.selected.saturating_add(1)),
--            KeyCode::PageUp => self.scroll_vertical(false, self.regions.output.height.max(1)),
--            KeyCode::PageDown => self.scroll_vertical(true, self.regions.output.height.max(1)),
-+            KeyCode::PageUp => self.page_scroll(false),
-+            KeyCode::PageDown => self.page_scroll(true),
-             KeyCode::Esc => {
-                 if self.completion.take().is_none() {
-                     self.editor.cancel_selection();
-@@ -248,6 +248,14 @@ impl App {
- 
-     pub(super) fn select_entry(&mut self, selected: usize) {
-         self.selected = selected.min(self.entries.len().saturating_sub(1));
-+        if self.focus == Focus::Diagnostics
-+            && self
-+                .entries
-+                .get(self.selected)
-+                .is_none_or(|entry| entry.diagnostics.is_empty())
-+        {
-+            self.focus = Focus::Result;
-+        }
-         self.scroll = 0;
-         self.horizontal = 0;
-         self.diagnostic_scroll = 0;
-```
-
-**File**: `src/terminal/mod.rs` (modified, +4/-3)
-```diff
-@@ -48,12 +48,13 @@ Ctrl-C cancels input. Ctrl-D on an empty editor / Ctrl-Q exits.
- 
- F1-F3 changes tabs; the extra tabs are reserved for later.
- F6 changes Text / JSON / Table. Ctrl-Up / Ctrl-Down selects earlier results.
--F4 cycles editor, result and diagnostics focus. PgUp/PgDn scrolls the focused
--result; Left/Right scrolls text or moves table columns.
-+F4 cycles editor, result and diagnostics focus. PgUp/PgDn scrolls by a visible
-+page; Left/Right scrolls text or moves table columns. Scrollbars mark overflow.
- 
- Click tabs, result views or history entries. Click/drag in the editor to
- position/select text. Use the mouse wheel to scroll each pane; Shift-wheel
--scrolls results horizontally. Pasted code is never executed automatically.";
-+scrolls results horizontally. Over completions, the wheel selects suggestions
-+without scrolling the pane underneath. Pasted code is never executed automatically.";
- 
- pub(super) fn run(runtime: &mut Runtime, json: bool, graph: bool) -> io::Result<()> {
-     let _session = Session;
-```
-
-**File**: `src/terminal/pointer.rs` (modified, +46/-11)
-```diff
-@@ -13,6 +13,23 @@ fn scrolled(offset: u16, forward: bool) -> u16 {
- }
- 
- impl App {
-+    pub(super) fn page_scroll(&mut self, forward: bool) {
-+        let height = if self.focus == Focus::Diagnostics {
-+            self.regions.diagnostics.height
-+        } else {
-+            let table_header = self.view == View::Table
-+                && self
-+                    .entries
-+                    .get(self.selected)
-+                    .is_some_and(|entry| entry.output.table().is_some());
-+            self.regions
-+                .output
-+                .height
-+                .saturating_sub(u16::from(table_header))
-+        };
-+        self.scroll_vertical(forward, height.max(1));
-+    }
-+
-     pub(super) fn scroll_vertical(&mut self, forward: bool, amount: u16) {
-         let scroll = if self.focus == Focus::Diagnostics {
-             &mut self.diagnostic_scroll
-@@ -75,16 +92,8 @@ impl App {
-     }
- 
-     fn click(&mut self, mouse: MouseEvent, position: Position) {
--        if self.regions.completions.contains(position) {
--            if let Some(mut completion) = self.completion.take() {
--                let index = self.regions.completion_start
--                    + usize::from(mouse.row - self.regions.completions.y);
--                if index < completion.candidates.len() {
--                    completion.selected = index;
--                    completion.apply(&mut self.editor);
--                    self.history_index = None;
--                }
--            }
-+        if self.completion_at(position) {
-+            self.click_completion(position);
-         } else if let Some(tab) = self
-             .regions
-             .tabs
-@@ -124,9 +133,32 @@ impl App {
-         }
-     }
- 
-+    fn completion_at(&self, position: Position) -> bool {
-+        self.completion.is_some() && self.regions.completion_popup.contains(position)
-+    }
-+
-+    fn click_completion(&mut self, position: Position) {
-+        if !self.regions.completions.contains(position) {
-+            return;
-+        }
-+        if let Some(mut completion) = self.completion.take() {
-+            let index = self.regions.completion_start
-+                + usize::from(position.y - self.regions.completions.y);
-+            if index < completion.candidates.len() {
-+                completion.selected = index;
-+                completion.apply(&mut self.editor);
-+                self.history_index = None;
-+            }
-+        }
-+    }
-+
-     fn wheel(&mut self, mouse: MouseEvent, position: Position, forward: bool) {
-         let sideways = mouse.modifiers.contains(KeyModifiers::SHIFT);
--        if self.regions.editor.contains(position) {
-+        if self.completion_at(position) {
-+            if let Some(completion) = &mut self.completion {
-+                completion.select(forward);
-+            }
-+        } else if self.regions.editor.contains(position) {
-             self.editor.scroll((if forward { 3 } else { -3 }, 0));
-             self.completion = None;
-         } else if self.regions.history.contains(position) {
-@@ -151,6 +183,9 @@ impl App {
-     }
- 
-     fn wheel_sideways(&mut self, position: Position, forward: bool) {
-+        if self.completion_at(position) {
-+            return;
-+        }
-         if self.regions.editor.contains(position) {
-             self.editor.scroll((0, if forward { 3 } else { -3 }));
-             self.completion = None;
+ async function synthesize({ train }) {
+-  const count = train.length;
+-
+-  const { result } = await llm.generate({
+-    few_shot: null,
+-    messages: [
+-      {
+-        role: "assistant",
+-        content: `Below is the data for a matrix-transformation task. Each example pairs an input matrix with the output matrix that one hidden rule produces from it, and the same rule holds for every example.
+-
+-        <current_dataset>
+-        ${JSON.stringify({
+-          ...train,
+-          dataset: train.dataset.map(
+-            ({ input_matrix, output_matrix, instances }) => ({
+-              input_matrix,
+-              output_matrix,
+-              instances: instances.map((instance) => ({
+-                ...instance,
+-                input_instance_crop_matrix: Matrix.crop(
+-                  instance.input_instance_matrix
+-                ),
+-                output_instance_crop_matrix: Matrix.crop(
+-                  instance.output_instance_matrix
+-                ),
+-              })),
+-            })
+-          ),
+-        })}
+-        </current_dataset>
+-        
+-        How to read it:
+-        ${FIELD_GUIDE}
+-        
+-        Your job: write ${
+-          count === 1
+-            ? "1 new example that follows"
+-            : `${count} new examples that follow`
+-        } exactly the same rule. New examples are added to the training data, so one whose output breaks the rule does more harm than a missing one.
+-        
+-        Work in this order:
+-        1. Infer the rule and write it as a sequence of steps, precise enough that someone could apply it by hand to an input they have never seen, including how the instances are derived. Check it against every existing example and revise it until it reproduces all of them exactly.
+-        2. List the invariants: what every existing example has in common that the rule relies on, plus anything "class_declaration", "declarations" and "output_canvas" impose (allowed values, dimensions, how many of something appear, what never touches or overlaps). If you are unsure whether the rule depends on a property, treat it as an invariant. Every new example must keep all of them.
+-        3. Plan each new example in a sentence or two: what its input contains, how it differs from the existing examples and from your other new examples, and what output the rule gives for it.
+-        4. Write the examples. Build each input first, then produce its output by applying the rule step by step, copying exactly any cell the rule leaves unchanged. Then derive its instances with the same convention as the existing examples.
+-        
+-        A good new example is:
+-        - Correct: its output is exactly what the rule produces from its input. If you are not certain an example is correct, leave it out; returning fewer examples is better than including a wrong one.
+-        - New: not a near-copy of an existing example, such as the same layout shifted, flipped or with values swapped. Vary whatever the rule does not depend on, which may include dimensions, positions, sizes, counts and values, while keeping every invariant.
+-        - Informative: it covers a case the existing examples don't (an edge or corner position, a smallest or largest case, a different number of instances) or separates the real rule from a plausible wrong one, but only where the rule clearly decides the output. Avoid inputs the rule leaves open, such as ties it gives no way to break.
+-        - Well-formed: every matrix is rectangular (all rows the same length) and uses only allowed values.
+-        
+-        Reply with one JSON object and nothing else: no prose before or after it and no code fences. Give its keys in this order:
+-        - "rule": an array of strings, one step of the rule each.
+-        - "invariants": an array of strings, one invariant each.
+-        - "plan": an array of strings, one per new example, in the same order as "result".
+-        - "result": an array of the new examples. Each has exactly the same keys, nesting and value types as the entries of "dataset" above: "input_matrix", "output_matrix", and "instances",
 ```
 
 ---
 
-### Incident Patch 2: `f8489165` (2026-11-20)
-**Commit Message**: Rename ARC training dataset to train
+### Incident Patch 2: `a8500c83` (2026-11-20)
+**Commit Message**: Add block indentation to terminal editor
 
-Use `train` throughout the ARC pipeline and debug output. Update documentation to note the legacy debug-log field.
+Indent selected lines with Tab and unindent selections or the current line with Shift-Tab. Preserve selection direction and cut text, and update editor hints and documentation.
 
-**File**: `.claude/agents/arc-debug.agent.md` (modified, +7/-6)
+**File**: `README.md` (modified, +3/-1)
 ```diff
-@@ -73,10 +73,11 @@ Derive the exact schema from the current `arc/src/app.ts`, `analyzer.ts`,
- between that code and the log. At the time of writing, `start()` writes
- `JSON.stringify(debug, null, 2)`, and the stages fill these fields:
- 
--1. Load: `train_dataset.dataset[].input_matrix` / `output_matrix`,
--   `test_input_matrix`, `test_output_matrix`.
--2. `analyzer.declarations` (LLM): `train_dataset.declarations`,
--   `train_dataset.output_canvas`.
-+1. Load: `train.dataset[].input_matrix` / `output_matrix`,
-+   `test_input_matrix`, `test_output_matrix`. Logs written before
-+   20-Nov-2026 hold `train` as `train_dataset`.
-+2. `analyzer.declarations` (LLM): `train.declarations`,
-+   `train.output_canvas`.
- 3. `analyzer.instances` (LLM, per training pair): each instance's
-    `input_instance_matrix` and `output_instance_matrix`. The extracted
-    instances get their `instance_name`, then `analyzer.synthesize` (no LLM)
-@@ -85,7 +86,7 @@ between that code and the log. At the time of writing, `start()` writes
-    x+1 y+1, x-1 y+1 or x-1 y-1, except an instance whose object, its input
-    object or its output object when the input is empty, is a single pixel.
-    A training pair without other instances gains none. They follow the
--   training pairs in `train_dataset.dataset`, three per training pair in
-+   training pairs in `train.dataset`, three per training pair in
-    turn, in that order. Each holds one instance per synthesized extracted
-    instance of its source pair, in source order, with `synthesis` (`source`,
-    `rotation`, `offset`), named
-@@ -96,7 +97,7 @@ between that code and the log. At the time of writing, `start()` writes
-    source pair, with `input_instance_epoch` and `output_instance_epoch` and
-    each synthesis a world of its own on the pair's canvas, or hold one
-    synthesized instance per synthesized pair. Only the analysis synthesizes. The
--   visualizer's prompts read the synthesized pairs from `train_dataset` as
-+   visualizer's prompts read the synthesized pairs from `train` as
-    training examples, like the others, which is intended and not an
-    abnormality.
- 4. `analyzer.value` (LLM, then Nucleoid on `declarations[0]` plus the
+@@ -49,7 +49,9 @@ pasted newlines never submit code or add indentation. Ctrl-J inserts an
+ automatically indented newline when writing a block by hand.
+ Ctrl-Enter also runs on non-Windows terminals that report it distinctly;
+ Windows treats it as a newline because pasted LF produces the same key event.
+-Tab accepts autocomplete (or indents); Ctrl-Space opens suggestions.
++Tab accepts autocomplete (or inserts four spaces); with selected text it
++indents the selected lines without replacing them. Shift-Tab unindents the
++selection or current line. Ctrl-Space opens suggestions.
+ Ctrl-P / Ctrl-N recalls input while preserving an unfinished draft.
+ F1-F3 changes tabs, F6 changes the result view, and Ctrl-Up / Ctrl-Down selects
+ earlier results. Mouse clicks select tabs, views and results; click/drag edits
 ```
 
-**File**: `arc/README.md` (modified, +2/-2)
+**File**: `docs/README.md` (modified, +6/-1)
 ```diff
-@@ -294,7 +294,7 @@ any request, with a JSON syntax error that does not name the file.
- Each model call can pass `llm.generate` a `few_shot` function that maps every
- instruction dataset to only the properties of that call's own prompt; a call
- without one receives every instruction dataset with all its properties. A call
--that sends a `train_dataset` builds it and its few-shot examples with the same
-+that sends `train` builds it and its few-shot examples with the same
- projection, so both carry the same properties in the same order. Every solver
- call passes its own:
- 
-@@ -306,7 +306,7 @@ call passes its own:
- | `visualizer.value` | `class_declaration`, and the instances of every pair in one list, with `implementation`, `input_value`, and `input_instance_matrix` |
- | `visualizer.output_instance_matrix` | The instances of every pair in one list, with `input_value`, `input_instance_matrix`, `output_value`, and `output_instance_matrix` |
- 
--`analyzer.value` sends no `train_dataset`, so its examples carry the
-+`analyzer.value` sends no `train`, so its examples carry the
- properties of the `instances` it sends, the instances of the same pair
- constructed before it. The calls that crop their own instance matrices,
- `analyzer.value`, `visualizer.value`, and `visualizer.output_instance_matrix`,
+@@ -95,7 +95,12 @@ empty lines; F5 submits the complete editor. Ctrl-Enter also submits on
+ non-Windows terminals that report it distinctly. Native Windows input maps
+ pasted LF to Ctrl-Enter, so that key inserts a newline on Windows rather than
+ submitting a partial pasted program. Ctrl-J inserts an automatically indented
+-newline when typing by hand. Tab completes or indents;
++newline when typing by hand. Tab completes or inserts four spaces; with
++selected text it indents the selected lines without replacing them.
++Shift-Tab removes one leading indentation level from selected lines, or the
++current line regardless of cursor position. A selection ending at the start
++of a line leaves that line unchanged. Selection direction and cut/paste text
++are preserved; each shifted line is an ordinary undoable editor edit.
+ Ctrl-Space opens suggestions. Ctrl-P / Ctrl-N navigates input history.
+ Use F1-F3 for tabs, F6 or the view buttons for result formats, Ctrl-Up /
+ Ctrl-Down for earlier results, and F4 to focus the editor, results or
 ```
 
-**File**: `arc/src/analyzer.ts` (modified, +13/-18)
+**File**: `src/terminal/indentation.rs` (added, +150/-0)
 ```diff
-@@ -4,7 +4,7 @@ import * as milestone from "./lib/milestone.ts";
- import * as Matrix from "./lib/Matrix.ts";
- import object from "./object.ts";
+@@ -0,0 +1,150 @@
++use tui_textarea::{CursorMove, TextArea};
++
++use crate::INDENT;
++
++#[derive(Clone, Copy)]
++enum Direction {
++    Indent,
++    Unindent,
++}
++
++struct Block {
++    first: usize,
++    last: usize,
++    cursor: (usize, usize),
++    anchor: Option<(usize, usize)>,
++}
++
++impl Block {
++    fn capture(editor: &TextArea<'_>) -> Self {
++        let cursor = editor.cursor();
++        let Some((start, end)) = editor.selection_range().filter(|(start, end)| start != end)
++        else {
++            return Self {
++                first: cursor.0,
++                last: cursor.0,
++                cursor,
++                anchor: None,
++            };
++        };
++        let last = if end.0 > start.0 && end.1 == 0 {
++            end.0 - 1
++        } else {
++            end.0
++        };
++        Self {
++            first: start.0,
++            last,
++            cursor,
++            anchor: Some(if cursor == start { end } else { start }),
++        }
++    }
++
++    fn shift(&mut self, row: usize, count: usize, direction: Direction) {
++        for position in std::iter::once(&mut self.cursor).chain(self.anchor.iter_mut()) {
++            if position.0 == row {
++                position.1 = match direction {
++                    Direction::Indent => position.1.saturating_add(count),
++                    Direction::Unindent => position.1.saturating_sub(count),
++                };
++            }
++        }
++    }
++
++    fn restore(&self, editor: &mut TextArea<'_>) {
++        if let Some(anchor) = self.anchor {
++            move_to(editor, anchor);
++            editor.start_selection();
++        }
++        move_to(editor, self.cursor);
++    }
++}
++
++pub(super) fn indent_selection(editor: &mut TextArea<'_>) -> bool {
++    let block = Block::capture(editor);
++    if block.anchor.is_none() {
++        return false;
++    }
++    change(editor, block, Direction::Indent)
++}
++
++pub(super) fn unindent(editor: &mut TextArea<'_>) -> bool {
++    let block = Block::capture(editor);
++    change(editor, block, Direction::Unindent)
++}
++
++fn change(editor: &mut TextArea<'_>, mut block: Block, direction: Direction) -> bool {
++    editor.cancel_selection();
++    let mut changed = false;
++    for row in block.first..=block.last {
++        let count = match direction {
++            Direction::Indent => INDENT.len(),
++            Direction::Unindent => editor
++                .lines()
++                .get(row)
++                .map_or(0, |line| leading_indent(line)),
++        };
++        if count == 0 {
++            continue;
++        }
++        move_to(editor, (row, 0));
++        let edited = match direction {
++            Direction::Indent => editor.insert_str(INDENT),
++            Direction::Unindent => remove_indent(editor, count),
++        };
++        if edited {
++            block.shift(row, count, direction);
++            changed = true;
++        }
++    }
++    block.restore(editor);
++    changed
++}
++
++fn remove_indent(editor: &mut TextArea<'_>, count: usize) -> bool {
++    editor.start_selection();
++    for _ in 0..count {
++        editor.move_cursor(CursorMove::Forward);
++    }
++    editor.delete_char()
++}
++
++fn leading_indent(line: &str) -> usize {
++    let mut width = 0;
++    let mut count = 0;
++    for character in line.chars() {
++        width += match character {
++            ' ' => 1,
++            '\t' => INDENT.len() - width % INDENT.len(),
++            _ => break,
++        };
++        count += 1;
++        if width >= INDENT.len() {
++            break;
++        }
++    }
++    count
++}
++
++fn move_to(editor: &mut TextArea<'_>, (row, column): (usize, usize)) {
++    if let (Ok(row), Ok(column)) = (u16::try_from(row), u16::try_from(column)) {
++        editor.move_cursor(CursorMove::Jump(row, column));
++        return;
++    }
++    let start = u16::try_from(row).unwrap_or(u16::MAX);
++    editor.move_cursor(CursorMove::Jump(start, 0));
++    for _ in usize::from(start)..row {
++        editor.move_cursor(CursorMove::Down);
++    }
++    if column == 0 {
++        return;
++    }
++    editor.move_cursor(CursorMove::End);
++    let end = editor.cursor().1;
++    for _ in column.min(end)..end {
++        editor.move_cursor(CursorMove::Back);
++    }
++}
++
++#[cfg(test)]
++mod tests;
+```
+
+**File**: `src/terminal/indentation/tests.rs` (added, +75/-0)
+```diff
+@@ -0,0 +1,75 @@
++use super::*;
++
++#[test]
++fn selected_lines_keep_unicode_boundaries_direction_and_cut_text() {
++    let source = ["a\u{754c}", "", " \tsecond", "last"];
++    let expected = ["    a\u{754c}", "    ", "     \tsecond", "last"];
++    for (end, shifted_end) in [((3, 0), (3, 0)), ((2, 3), (2, 7))] {
++        for reversed in [false, true] {
++            let mut editor = TextArea::from(source);
++            let (anchor, cursor) = if reversed {
++                (end, (0, 1))
++            } else {
++                ((0, 1), end)
++            };
++            move_to(&mut editor, anchor);
++            editor.start_selection();
++            move_to(&mut editor, cursor);
++            editor.set_yank_text("previous\ncut\n");
++
++            assert!(indent_selection(&mut editor));
++            assert_eq!(editor.lines(), expected);
++            assert_eq!(editor.selection_range(), Some(((0, 5), shifted_end)));
++            assert_eq!(editor.cursor(), if reversed { (0, 5) } else { shifted_end });
++            assert_eq!(editor.yank_text(), "previous\ncut\n");
++
++            assert!(unindent(&mut editor));
++            assert_eq!(editor.lines(), source);
++            assert_eq!(editor.selection_range(), Some(((0, 1), end)));
++            assert_eq!(editor.cursor(), cursor);
++            assert_eq!(editor.yank_text(), "previous\ncut\n");
++        }
++    }
++}
++
++#[test]
++fn unindent_removes_one_leading_level_without_deleting_code() {
++    for (source, column, expected, shifted_column) in [
++        ("    value", 7, "value", 3),
++        ("\tvalue", 3, "value", 2),
++        (" \tvalue", 4, "value", 2),
++        ("  value", 0, "value", 0),
++        (" \t   value", 7, "   value", 5),
++        ("value", 3, "value", 3),
++    ] {
++        let mut editor = TextArea::from([source]);
++        move_to(&mut editor, (0, column));
++        editor.set_yank_text("previous cut");
++
++        assert_eq!(unindent(&mut editor), source != expected);
++        assert_eq!(editor.lines(), [expected]);
++        assert_eq!(editor.cursor(), (0, shifted_column));
++        assert!(!editor.is_selecting());
++        assert_eq!(editor.yank_text(), "previous cut");
++    }
++}
++
++#[test]
++fn unindent_preserves_positions_beyond_cursor_jump_limits() {
++    let long_line = format!("    {}", "x".repeat(usize::from(u16::MAX) + 1));
++    let mut many_lines = vec![String::new(); usize::from(u16::MAX) + 1];
++    many_lines.push("    value".into());
++    for mut editor in [TextArea::from([long_line]), TextArea::new(many_lines)] {
++        editor.move_cursor(CursorMove::Bottom);
++        editor.move_cursor(CursorMove::End);
++        let (row, column) = editor.cursor();
++        let original = editor.lines().to_vec();
++
++        assert!(unindent(&mut editor));
++        assert_eq!(editor.cursor(), (row, column - INDENT.len()));
++        assert_eq!(editor.lines().len(), original.len());
++        assert_eq!(editor.lines()[row], original[row].trim_start());
++        assert!(editor.undo());
++        assert_eq!(editor.lines(), original);
++    }
++}
+```
+
+**File**: `src/terminal/input.rs` (modified, +14/-6)
+```diff
+@@ -3,7 +3,7 @@ use nucleoid::Runtime;
  
--export async function declarations({ train_dataset }) {
-+export async function declarations({ train }) {
-   milestone.inferring_declarations();
+ use super::completion::Completion;
+ use super::output::{Entry, Output, View};
+-use super::{App, Focus, HELP, HISTORY_LIMIT, editor, output};
++use super::{App, Focus, HELP, HISTORY_LIMIT, editor, indentation, output};
  
-   const {
-@@ -17,7 +17,7 @@ export async function declarations({ train_dataset }) {
-         content: `
-           query:
-           ${JSON.stringify({
--            ...train_dataset,
-+            ...train,
-             class_declaration: "<CLASS_DECLARATION>",
-             declarations: "<DECLARATIONS>",
-             output_canvas: "<OUTPUT_CANVAS>",
-@@ -43,7 +43,7 @@ export async function declarations({ train_dataset }) {
-   return { class_declaration, declarations, output_canvas };
+ impl App {
+     pub(super) fn key(&mut self, key: KeyEvent, runtime: &mut Runtime) -> bool {
+@@ -120,10 +120,7 @@ impl App {
+             KeyCode::Up if self.editor.lines().len() == 1 => self.recall(false),
+             KeyCode::Down if self.editor.lines().len() == 1 => self.recall(true),
+             KeyCode::Tab => self.complete_or_indent(runtime),
+-            KeyCode::BackTab => {
+-                editor::dedent(&mut self.editor);
+-                self.completion = None;
+-            }
++            KeyCode::BackTab => self.unindent(),
+             KeyCode::Backspace if editor::dedent(&mut self.editor) => self.edited(runtime),
+             KeyCode::Enter => {
+                 self.completion = None;
+@@ -146,6 +143,11 @@ impl App {
+     }
+ 
+     fn complete_or_indent(&mut self, runtime: &Runtime) {
++        self.history_index = None;
++        if indentation::indent_selection(&mut self.editor) {
++            self.completion = None;
++            return;
++        }
+         if self.completion.is_none() {
+             self.completion = Completion::find(runtime, &self.editor, false);
+         }
+@@ -154,7 +156,13 @@ impl App {
+         } else {
+             self.editor.insert_str(crate::INDENT);
+         }
+-        self.history_index = None;
++    }
++
++    fn unindent(&mut self) {
++        if indentation::unindent(&mut self.editor) {
++            self.history_index = None;
++        }
++        self.completion = None;
+     }
+ 
+     pub(super) fn edited(&mut self, runtime: &Runtime) {
+```
+
+**File**: `src/terminal/mod.rs` (modified, +5/-1)
+```diff
+@@ -1,5 +1,6 @@
+ mod completion;
+ mod editor;
++mod indentation;
+ mod input;
+ mod output;
+ mod pointer;
+@@ -40,9 +41,12 @@ Windows delivers pasted LF as Ctrl-Enter, so both insert a newline there.
+ Ctrl-J inserts an automatically indented newline.
+ 
+ Tab accepts a completion, or inserts four spaces when none is available.
++With selected text, Tab indents its lines without replacing the selection.
++Shift-Tab unindents the selected lines, or the current line from any position.
+ Ctrl-Space opens completions; Up/Down selects; Escape dismisses.
+ Ctrl-P / Ctrl-N recalls history and restores your unfinished draft.
+-Ctrl-Z / Ctrl-Y undoes / redoes edits. Shift-arrows selects text.
++Ctrl-Z / Ctrl-Y undoes / redoes edits, including each shifted line.
++Shift-arrows selects text.
+ Ctrl-X cuts; Ctrl-V pastes the editor's last cut text.
+ Ctrl-C cancels input. Ctrl-D on an empty editor / Ctrl-Q exits.
+ 
+```
+
+**File**: `src/terminal/tests.rs` (modified, +92/-0)
+```diff
+@@ -386,6 +386,98 @@ fn familiar_undo_redo_and_cut_paste_shortcuts_work_in_the_editor() {
+     assert_eq!(app.editor.lines(), ["x"]);
  }
  
--export async function instances({ train_dataset }) {
-+export async function instances({ train }) {
-   milestone.segmenting_training_objects();
- 
-   const { result: instances } = await llm.generate({
-@@ -53,8 +53,8 @@ export async function instances({ train_dataset }) {
-         content: `
-           query:
-           ${JSON.stringify({
--            ...train_dataset,
--            dataset: train_dataset.dataset.map((dataset) => ({
-+            ...train,
-+            dataset: train.dataset.map((dataset) => ({
-               ...dataset,
-               instances: [
-                 {
-@@ -81,12 +81,7 @@ export async function instances({ train_dataset }) {
-   return { instances };
- }
- 
--export async function value({
--  instance_name,
--  train_dataset,
--  input_matrix,
--  instance,
--}) {
-+export async function value({ instance_name, train, input_matrix, instance }) {
-   milestone.constructing_instance({ instance_name });
- 
-   instance.instance_name = instance_name;
-@@ -95,10 +90,10 @@ export async function value({
-     instance.input_instance_matrix
-   );
- 
--  const orientation = await object.orientation({ train_dataset, instance });
-+  const orientation = await object.orientation({ train, instance });
- 
-   const implementation = await object.implementation({
--    train_dataset,
-+    train,
-     instance,
-     x,
-     y,
-@@ -116,7 +111,7 @@ export async function value({
-     [
-       `canvas_width = ${canvas_width}`,
-       `canvas_height = ${canvas_height}`,
--      train_dataset.class_declaration,
-+      train.class_declaration,
-       implementation,
-     ].join("\n\n")
-   );
-@@ -133,10 +128,10 @@ export async function value({
-   instance.input_value = input_value;
- }
- 
--export async function state(train_dataset) {
-+export async function state(train) {
-   const objects = [];
- 
--  for (const dataset of train_dataset.dataset) {
-+  for (const dataset of train.dataset) {
-     const implementations = dataset.instances.map(
-       ({ implementation }) => implementation
-     );
-@@ -147,8 +142,8 @@ export async function state(train_dataset) {
-       [
-         `canvas_width = ${canvas_width}`,
-         `canvas_height = ${canvas_height}`,
--        train_dataset.class_declaration,
--        ...train_dataset.declarations,
-+        train.class_declaration,
-+        ...train.declarations,
-         ...implementations,
-         "Obj[:]",
-       ].join("\n\n")
++#[test]
++fn selected_code_indents_without_replacing_or_running_it() {
++    let mut app = App::new(false, false);
++    let mut runtime = Runtime::new();
++    let source = "value = 7\nvalue + 1";
++    app.editor = editor::new(source);
++    app.editor.select_all();
++    app.editor.set_yank_text("previous cut");
++
++    key(&mut app, &mut runtime, KeyCode::Tab, KeyModifiers::NONE);
++    assert_eq!(app.editor.lines(), ["    value = 7", "    value + 1"]);
++    assert!(app.editor.is_selecting());
++    for (width, height) in [(40, 12), (100, 30)] {
++        let mut terminal = Terminal::new(TestBackend::new(width, height)).unwrap();
++        terminal.draw(|frame| app.draw(frame)).unwrap();
++        let screen: String = terminal
++            .backend()
++            .buffer()
++            .content
++            .iter()
++            .map(ratatui::buffer::Cell::symbol)
++            .collect();
++        assert!(screen.contains("Tab indent"));
++        assert!(screen.contains("Shift-Tab unindent"));
++        assert!(screen.contains("F5 run"));
++        assert!(screen.contains("Ctrl-Q quit"));
++    }
++    key(
++        &mut app,
++        &mut runtime,
++        KeyCode::BackTab,
++        KeyModifiers::SHIFT,
++    );
++    assert_eq!(app.editor.lines().join("\n"), source);
++    assert_eq!(app.editor.yank_text(), "previous cut");
++
++    for _ in 0..2 {
++        key(
++            &mut app,
++            &mut runtime,
++            KeyCode::Char('z'),
++            KeyModifiers::CONTROL,
++        );
++    }
++    assert_eq!(app.editor.lines(), ["    value = 7", "    value + 1"]);
++    for _ in 0..2 {
++        key(
++            &mut app,
++            &mut runtime,
++            KeyCode::Char('y'),
++            KeyModifiers::CONTROL,
++        );
++    }
++    assert_eq!(app.editor.lines().join("\n"), source);
++    assert!(app.entries.is_empty());
++    assert!(!runtime.state.has_variable("value"));
++
++    key(&mut app, &mut runtime, KeyCode::F(5), KeyModifiers::NONE);
++    assert_eq!(app.entries.len(), 1);
++    assert_eq!(app.entries[0].output.text(View::Text), "8");
++}
++
++#[test]
++fn unindenting_recalled_input_keeps_the_edited_buffer() {
++    let mut app = App::new(false, false);
++    let mut runtime = Runtime::new();
++    app.history.push("    value = 7".into());
++    app.editor = editor::new("unfinished draft");
++    key(
++        &mut app,
++        &mut runtime,
++        KeyCode::Char('p'),
++        KeyModifiers::CONTROL,
++    );
++    assert_eq!(app.editor.lines(), ["    value = 7"]);
++    key(
++        &mut app,
++        &mut runtime,
++        KeyCode::BackTab,
++        KeyModifiers::SHIFT,
++    );
++    key(
++        &mut app,
++        &mut runtime,
++        KeyCode::Char('n'),
++        KeyModifiers::CONTROL,
++    );
++    assert_eq!(app.editor.lines(), ["value = 7"]);
++    assert_eq!(app.draft, "unfinished draft");
++    assert!(app.entries.is_empty());
++}
++
+ #[test]
+ fn windows_control_enter_is_a_pasted_lf_not_an_execution_shortcut() {
+     let mut app = App::new(false, false);
 ```
 
-**File**: `arc/src/app.ts` (modified, +16/-16)
+**File**: `src/terminal/view.rs` (modified, +13/-5)
 ```diff
-@@ -13,7 +13,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
-   const { arc_train, test_input_matrix, test_output_matrix } =
-     await arc_dataset.load(puzzle_id);
- 
--  const train_dataset = {
-+  const train = {
-     dataset: arc_train.map(({ input, output }) => ({
-       input_matrix: input,
-       output_matrix: output,
-@@ -41,22 +41,22 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
- 
-   const { class_declaration, declarations, output_canvas } =
-     await analyzer.declarations({
--      train_dataset,
-+      train,
-     });
- 
--  train_dataset.class_declaration = class_declaration;
--  train_dataset.declarations = declarations;
--  train_dataset.output_canvas = output_canvas;
-+  train.class_declaration = class_declaration;
-+  train.declarations = declarations;
-+  train.output_canvas = output_canvas;
- 
--  for (const dataset of train_dataset.dataset) {
-+  for (const dataset of train.dataset) {
-     const { instances } = await analyzer.instances({
--      train_dataset: { ...train_dataset, dataset: [dataset] },
-+      train: { ...train, dataset: [dataset] },
-     });
- 
-     for (const instance of instances) {
-       await analyzer.value({
-         instance_name: next_instance_name(),
--        train_dataset,
-+        train,
-         input_matrix: dataset.input_matrix,
-         instance,
-       });
-@@ -65,19 +65,19 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
-     dataset.instances = instances;
-   }
- 
--  await analyzer.state(train_dataset);
-+  await analyzer.state(train);
- 
-   milestone.synthesizing_training_dataset();
- 
--  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
-+  const synthesized_dataset = await synthesizer.synthesize({ train });
- 
-   milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
- 
-   for (const dataset of synthesized_dataset) {
-     for (const instance of dataset.instances) {
-       await analyzer.value({
-         instance_name: next_instance_name(),
--        train_dataset,
-+        train,
-         input_matrix: dataset.input_matrix,
-         instance,
-       });
-@@ -90,13 +90,13 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
-       input_instances: dataset.instances,
-     });
- 
--    train_dataset.dataset.push(dataset);
-+    train.dataset.push(dataset);
-   }
- 
-   milestone.visualization();
- 
-   const { instances } = await visualizer.instances({
--    train_dataset,
-+    train,
-     test_input_matrix,
-   });
- 
-@@ -110,7 +110,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
-     const instance_name: string = next_instance_name();
- 
-     const { implementation, input_value } = await visualizer.value({
--      train_dataset,
-+      train,
-       test_input_matrix,
-       instance_name,
-       input_instance_matrix,
-@@ -134,7 +134,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
-   for (const input_instance of input_instances) {
-     const { output_instance_matrix } = await visualizer.output_instance_matrix({
-       test_input_matrix,
--      train_dataset,
-+      train,
-       instance: input_instance,
-     });
- 
-@@ -156,7 +156,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
- 
-   const debug = {
-     puzzle_id,
--    train_dataset,
-+    train,
-     test_input_instances: input_instances,
-     test_input_matrix,
-     test_output_matrix,
-```
-
-**File**: `arc/src/object.ts` (modified, +10/-10)
-```diff
-@@ -3,10 +3,10 @@ import * as Matrix from "./lib/Matrix.ts";
- import * as nucleoid from "./lib/nucleoid";
- import * as milestone from "./lib/milestone.ts";
- 
--async function orientation({ train_dataset, instance }) {
-+async function orientation({ train, instance }) {
-   const { orientation } = await llm.generate({
--    few_shot: (train_dataset) =>
--      train_dataset.dataset
-+    few_shot: (train) =>
-+      train.dataset
-         .flat()
-         .flatMap(({ instances }) => instances)
-         .map(({ input_instance_matrix, input_value }) => ({
-@@ -19,7 +19,7 @@ async function orientation({ train_dataset, instance }) {
-         content: `
-           current:
-           ${JSON.stringify(
--            train_dataset.dataset
-+            train.dataset
-               .flat()
-               .filter(({ instances }) => instances)
-               .flatMap(({ instances }) => instances)
-@@ -55,7 +55,7 @@ async function orientation({ train_dataset, instance }) {
- 
- async function implementation({
-   few_shot = true,
--  train_dataset,
-+  train,
-   instance,
-   x,
-   y,
-@@ -64,10 +64,10 @@ async function implementation({
-   orientation,
-   volume,
- }) {
--  const few_shot_function = (train_dataset) => ({
--    ...train_dataset,
-+  const few_shot_function = (train) => ({
-+    ...train,
-     declarations: undefined,
--    dataset: train_dataset.dataset.map(({ instances }) => ({
-+    dataset: train.dataset.map(({ instances }) => ({
-       instances: instances.map((instance) => ({
-         ...instance,
-         input_instance_matrix: Matrix.crop(instance.input_instance_matrix),
-@@ -84,9 +84,9 @@ async function implementation({
-         content: `
-           current:
-           ${JSON.stringify({
--            ...train_dataset,
-+            ...train,
-             declarations: undefined,
--            dataset: train_dataset.dataset
-+            dataset: train.dataset
-               .filter(({ instances }) => instances)
-               .map(({ instances }) => ({
-                 instances: instances
-```
-
-**File**: `arc/src/synthesizer.ts` (modified, +7/-7)
-```diff
-@@ -7,8 +7,8 @@ const FIELD_GUIDE = `
- - "class_declaration", "declarations" and "output_canvas" are fixed for this task. Every new example must be valid under them. Do not change them or repeat them in your answer.
- `.trim();
- 
--async function synthesize({ train_dataset }) {
--  const count = train_dataset.length;
-+async function synthesize({ train }) {
-+  const count = train.length;
- 
-   const { result } = await llm.generate({
-     few_shot: null,
-@@ -19,8 +19,8 @@ async function synthesize({ train_dataset }) {
- 
-         <current_dataset>
-         ${JSON.stringify({
--          ...train_dataset,
--          dataset: train_dataset.dataset.map(
-+          ...train,
-+          dataset: train.dataset.map(
-             ({ input_matrix, output_matrix, instances }) => ({
-               input_matrix,
-               output_matrix,
-@@ -70,9 +70,9 @@ async function synthesize({ train_dataset }) {
-         content: `
-           synthesize:
-           ${JSON.stringify({
--            class_declaration: train_dataset.class_declaration,
--            declarations: train_dataset.declarations,
--            output_canvas: train_dataset.output_canvas,
-+            class_declaration: train.class_declaration,
-+            declarations: train.declarations,
-+            output_canvas: train.output_canvas,
-             dataset: [
-               {
-                 input_matrix: "<INPUT_MATRIX>",
-```
-
-**File**: `arc/src/visualizer.ts` (modified, +27/-29)
-```diff
-@@ -4,7 +4,7 @@ import * as milestone from "./lib/milestone.ts";
- import object from "./object.ts";
- import * as nucleoid from "./lib/nucleoid";
- 
--export async function instances({ train_dataset, test_input_matrix }) {
-+export async function instances({ train, test_input_matrix }) {
-   milestone.segmenting_test_input({ test_input_matrix });
- 
-   let {
-@@ -18,26 +18,24 @@ export async function instances({ train_dataset, test_input_matrix }) {
-         content: `
-           current:
-           ${JSON.stringify({
--            class_declaration: train_dataset.class_declaration,
--            dataset: train_dataset.dataset.map(
--              ({ input_matrix, instances }) => ({
--                input_matrix,
--                instances: instances.map((instance) => ({
--                  instance_matrix: instance.input_instance_matrix,
--                  instance_crop_matrix: Matrix.crop(
--                    instance.input_instance_matrix
--                  ),
--                  implementation: instance.implementation,
--                  x: instance.input_value.x,
--                  y: instance.input_value.y,
--                  width: instance.input_value.width,
--                  height: instance.input_value.height,
--                  orientation: instance.input_value.orientation,
--                  volume: instance.input_value.volume,
--                  value: instance.input_value,
--                })),
--              })
--            ),
-+            class_declaration: train.class_declaration,
-+            dataset: train.dataset.map(({ input_matrix, instances }) => ({
-+              input_matrix,
-+              instances: instances.map((instance) => ({
-+                instance_matrix: instance.input_instance_matrix,
-+                instance_crop_matrix: Matrix.crop(
-+                  instance.input_instance_matrix
-+                ),
-+                implementation: instance.implementation,
-+                x: instance.input_value.x,
-+                y: instance.input_value.y,
-+                width: instance.input_value.width,
-+                height: instance.input_value.height,
-+                orientation: instance.input_value.orientation,
-+                volume: instance.input_value.volume,
-+                value: instance.input_value,
-+              })),
-+            })),
-           })}
-         `,
-       },
-@@ -46,7 +44,7 @@ export async function instances({ train_dataset, test_input_matrix }) {
-         content: `
-           query:
-           ${JSON.stringify({
--            class_declaration: train_dataset.class_declaration,
-+            class_declaration: train.class_declaration,
-             dataset: [
-               {
-                 instance_matrix: test_input_matrix,
-@@ -85,7 +83,7 @@ export async function instances({ train_dataset, test_input_matrix }) {
- }
- 
- export async function value({
--  train_dataset,
-+  train,
-   test_input_matrix,
-   instance_name,
-   input_instance_matrix,
-@@ -97,11 +95,11 @@ export async function value({
- 
-   const { x, y, width, height, volume } = Matrix.measure(input_instance_matrix);
- 
--  const orientation = await object.orientation({ train_dataset, instance });
-+  const orientation = await object.orientation({ train, instance });
- 
-   const implementation = await object.implementation({
-     few_shot: false,
--    train_dataset,
-+    train,
-     instance,
-     x,
-     y,
-@@ -124,7 +122,7 @@ export async function value({
-     [
-       `canvas_width = ${canvas_width}`,
-       `canvas_height = ${canvas_height}`,
--      train_dataset.class_declaration,
-+      train.class_declaration,
-       implementation,
-     ].join("\n\n")
-   );
-@@ -136,7 +134,7 @@ export async function value({
- 
- export async function output_instance_matrix({
-   test_input_matrix,
--  train_dataset,
-+  train,
-   instance,
- }) {
-   const { x, y } = instance.output_value;
-@@ -151,8 +149,8 @@ export async function output_instance_matrix({
-         content: `
-           current:
-           ${JSON.stringify({
--            ...train_dataset,
--            dataset: train_dataset.dataset.map(({ instances }) => ({
-+            ...train,
-+            dataset: train.dataset.map(({ instances }) => ({
-               instances: instances.map((instance) => ({
-                 ...instance,
-                 input_instance_matrix: Matrix.crop(
+@@ -103,11 +103,19 @@ fn editor_panel(frame: &mut Frame<'_>, area: Rect, app: &mut App, regions: &mut
+             )
+             .alignment(Alignment::Right),
+         )
+-        .title_bottom(Line::from(if area.width >= 70 {
+-            " Enter newline  Tab complete  Ctrl-J autoindent "
+-        } else {
+-            " Enter newline  Tab complete "
+-        }));
++        .title_bottom(Line::from(
++            if app
++                .editor
++                .selection_range()
++                .is_some_and(|(start, end)| start != end)
++            {
++                " Tab indent  Shift-Tab unindent "
++            } else if area.width >= 70 {
++                " Enter newline  Tab complete  Ctrl-J autoindent "
++            } else {
++                " Enter newline  Tab complete "
++            },
++        ));
+     regions.editor = editor_block.inner(area);
+     app.editor.set_block(editor_block);
+     app.editor.set_style(base().bg(PANEL));
 ```
 
 #### Recent Merged Pull Requests:
@@ -2470,36 +2180,53 @@ Use `train` throughout the ARC pipeline and debug output. Update documentation t
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Improve terminal editor navigation
+## X. Synthesize ARC examples from object transforms
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/src/synthesizer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba512866`: Improve terminal editor navigation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8eed95c3`: Synthesize ARC examples from object transforms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/synthesizer.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Subtle scrollbars mark long results and diagnostics; PageUp / PageDown moves
-by the visible rows of the selected pane. Scrolling over autocomplete changes
-the selected suggestion without moving the panes behind it.
-Long drafts expand the focused editor to at most half the terminal, while
-result focus returns that space to output. Autocomplete respects strings and
-comments across lines, so Tab does not replace text inside them.
+import * as visualizer from "./visualizer";
+import object from "./object.ts";
+import * as nucleoid from "./lib/nucleoid.ts";
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+import * as llm from "./lib/llm.ts";
+
+const FIELD_GUIDE = `
+- "dataset" holds the existing examples. Each pairs an "input_matrix" with the "output_matrix" that the rule produces from it.
+- Each example's "instances" lists its instances, each pairing an "input_instance_matrix" with its "output_instance_matrix". They relate to the example's full matrices by a fixed convention (how instances are found, ordered and cropped); work that convention out from the existing examples and follow it exactly.
+- "class_declaration", "declarations" and "output_canvas" are fixed for this task. Every new example must be valid under them. Do not change them or repeat them in your answer.
+`.trim();
+  const count = train.length;
+
+  const { result } = await llm.generate({
+    few_shot: null,
+    messages: [
+      {
+        role: "assistant",
+        content: `Below is the data for a matrix-transformation task. Each example pairs an input matrix with the output matrix that one hidden rule produces from it, and the same rule holds for every example.
+
+        <current_dataset>
+        ${JSON.stringify({
+          ...train,
+          dataset: train.dataset.map(
+            ({ input_matrix, output_matrix, ins
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba512866` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8eed95c3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

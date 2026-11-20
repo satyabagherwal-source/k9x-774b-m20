@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T14:36:12.621Z",
+  "last_updated": "2026-11-20T14:52:58.800Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T12:15:57.033Z",
@@ -358,7 +358,7 @@
       "staged_for_review": 1
     },
     "gardener-gardener-learnings.md": {
-      "processed_at": "2026-11-19T11:13:03.396Z",
+      "processed_at": "2026-11-20T14:52:55.456Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-20T13:40:28.446Z",
+      "processed_at": "2026-11-20T14:52:57.744Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1043,8 +1043,8 @@
       "staged_for_review": 1
     },
     "volcengine-openviking-learnings.md": {
-      "processed_at": "2026-11-19T08:09:20.028Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-20T14:52:56.764Z",
+      "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "vercel-labs-agent-desktop-learnings.md": {
@@ -3593,7 +3593,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2535,
+  "total_dossiers_evaluated": 2538,
   "total_canonical_promoted": 426,
-  "total_staged_for_review": 1920
+  "total_staged_for_review": 1923
 }

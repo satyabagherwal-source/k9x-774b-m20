@@ -11589,3 +11589,6 @@ Every entry in this ledger must capture:
 | `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `8a4cf42b` | Multi-dimensional audit evidence | 2026-11-20T13:48:26.873Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `18803975` | Multi-dimensional audit evidence | 2026-11-20T14:04:11.883Z |
 | `learn-huggingface-sentinel7-h3` | `https://huggingface.co/Sentinel7/h3` | `hf-sentine` | Multi-dimensional audit evidence | 2026-11-20T14:07:29.636Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `85eff190` | Multi-dimensional audit evidence | 2026-11-20T14:52:45.726Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `ee71998f` | Multi-dimensional audit evidence | 2026-11-20T14:52:49.040Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8eed95c3` | Multi-dimensional audit evidence | 2026-11-20T14:52:51.944Z |

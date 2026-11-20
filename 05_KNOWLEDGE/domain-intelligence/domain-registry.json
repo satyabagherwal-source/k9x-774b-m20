@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T14:36:12.243Z",
+  "last_updated": "2026-11-20T14:52:58.423Z",
   "total_records": 2137,
   "domains": {
     "A": {
@@ -8714,8 +8714,8 @@
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "repository": "volcengine/OpenViking",
-      "content_hash": "8bb19b8abb9f350ae3d19eb8ee0dba8588a1b4d77dee9a74930f3ed8ee17b702",
-      "created_at": "2026-11-19T08:08:46.204Z"
+      "content_hash": "8f26b4442ea3870a9505ee6e978b77e3819425ded390cc43c2609031455d00f2",
+      "created_at": "2026-11-20T14:52:49.560Z"
     },
     "DOM-D-E243BB51": {
       "record_id": "DOM-D-E243BB51",
@@ -8783,8 +8783,8 @@
       "title": "Technical Construction Intelligence: volcengine-openviking-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-learnings-technical-construction-intelligence-volcengine-o.md",
       "repository": "volcengine-openviking-learnings",
-      "content_hash": "843ce197672be08f580bdf6b09fd2cce7c680edf695b2f96414ae1388b8380f0",
-      "created_at": "2026-11-19T08:09:20.751Z"
+      "content_hash": "2d651e041705a6d8080ff9a210b89ac81d09d0d108013598b9201fa5a30760f6",
+      "created_at": "2026-11-20T14:52:57.372Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
@@ -11726,8 +11726,8 @@
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "repository": "gardener/gardener",
-      "content_hash": "7535997449520c4a6e8106c39881df6513ef750244a4ec7bff9c8a5d75451b91",
-      "created_at": "2026-11-19T11:08:06.604Z"
+      "content_hash": "e0bea3c845fa4ca92afa64b97a9e6d09b1cdf856afc8f31432a1490512237492",
+      "created_at": "2026-11-20T14:52:46.207Z"
     },
     "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
@@ -11821,8 +11821,8 @@
       "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-learnings-deployment-operations-intelligence-gardener-gardener.md",
       "repository": "gardener-gardener-learnings",
-      "content_hash": "d756eb6b4e122fa18ba3b2a4ae1719cfb7eb764d31fc417825d1963bc2f270ce",
-      "created_at": "2026-11-19T11:13:04.130Z"
+      "content_hash": "558904d8a13c299083115050dcf16ddce6293b64433791d643897c8a81630098",
+      "created_at": "2026-11-20T14:52:56.341Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari",
@@ -15900,8 +15900,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "649a0d925e9984525e7c5d34bd12eb5d060f0a743ad853b5026c1a34fff2617a",
-      "created_at": "2026-11-20T09:10:36.697Z"
+      "content_hash": "867a4c579ca20b4e5e726c8e1856e9ecaac2ecaff92b975d77ff328737892dcf",
+      "created_at": "2026-11-20T14:52:52.396Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -15960,8 +15960,8 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-learnings-technical-construction-intelligence-nucleoidai-nuc.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "a0ca4e9a99f4435af90fb7147e7f74d2e9d47c07009e60a84b403e12e5bb7c9d",
-      "created_at": "2026-11-20T13:40:28.984Z"
+      "content_hash": "9da9abccf2d8db381e446d5d4fc109f2b8dd1bdfa8c5166cbdae0dd825bb2703",
+      "created_at": "2026-11-20T14:52:58.423Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp",

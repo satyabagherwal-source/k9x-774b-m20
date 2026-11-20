@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T14:36:09.312Z",
-    "lastVerified": "2026-11-20T14:36:09.312Z",
+    "lastChecked": "2026-11-20T14:52:55.292Z",
+    "lastVerified": "2026-11-20T14:52:55.292Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -329,8 +329,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T06:02:28.817Z",
-    "lastVerified": "2026-11-20T06:02:28.817Z",
+    "lastChecked": "2026-11-20T14:52:41.247Z",
+    "lastVerified": "2026-11-20T14:52:41.247Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -350,22 +350,21 @@
     "lastVerified": "2026-11-19T10:47:18.930Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T13:40:18.930Z",
-    "lastVerified": "2026-11-20T13:40:18.930Z",
+    "lastChecked": "2026-11-20T14:52:51.106Z",
+    "lastVerified": "2026-11-20T14:52:51.106Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "3b94e5dc820425cbc38a39c0c755bad56ca3fdd6a67c248b63c29c661533b641",
+    "contentHash": "974660b35a940143b5d583a7f01fb7729d219a1bee741794b90bdf5eeb8b1bac",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ba512866"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce/lapce",
@@ -858,14 +857,14 @@
     "officialUrl": "https://github.com/gardener/gardener",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T11:08:04.763Z",
-    "lastVerified": "2026-11-19T11:08:04.763Z",
+    "lastChecked": "2026-11-20T14:52:44.357Z",
+    "lastVerified": "2026-11-20T14:52:44.357Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gardener-gardener",
-    "contentHash": "97b72da9a5f60f4df27bdc4f76a32095c83fca4528f3ff92b0e09bb27e152072",
+    "contentHash": "e86e61ce3824a54d21b76d8dc6cdb6fea08f438ddf97877432116c3874bba166",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4990,9 +4989,9 @@
   "tokio-rs-console": {
     "name": "console",
     "officialUrl": "https://github.com/tokio-rs/console",
-    "lastChecked": "2026-11-18T22:57:44.122Z",
+    "lastChecked": "2026-11-20T14:52:31.195Z",
     "revisionIdentifier": "b59758e5",
-    "lastVerified": "2026-11-18T22:57:44.122Z"
+    "lastVerified": "2026-11-20T14:52:31.195Z"
   },
   "hf-baidu-unlimited-ocr": {
     "name": "baidu/Unlimited-OCR",
@@ -7201,14 +7200,14 @@
     "officialUrl": "https://github.com/volcengine/OpenViking",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-19T08:02:45.690Z",
-    "lastVerified": "2026-11-19T08:02:45.690Z",
+    "lastChecked": "2026-11-20T14:52:48.446Z",
+    "lastVerified": "2026-11-20T14:52:48.446Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "3f413a38770f4826b557634992221f2c531ce5339e140cdb5168e6a8790c80ee",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 22,
+    "contentHash": "d5709c374661e38847f53506bcd1d7c7774dbbd52a8cb4f78f1b0ec85f93e276",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 24,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10127,5 +10126,19 @@
     "lastChecked": "2026-11-20T14:35:59.286Z",
     "revisionIdentifier": "dfb23ea5",
     "lastVerified": "2026-11-20T14:35:59.286Z"
+  },
+  "jina-ai-reader": {
+    "name": "reader",
+    "officialUrl": "https://github.com/jina-ai/reader",
+    "lastChecked": "2026-11-20T14:52:33.638Z",
+    "revisionIdentifier": "1574bfd3",
+    "lastVerified": "2026-11-20T14:52:33.638Z"
+  },
+  "johnbean393-sidekick": {
+    "name": "Sidekick",
+    "officialUrl": "https://github.com/johnbean393/Sidekick",
+    "lastChecked": "2026-11-20T14:52:36.135Z",
+    "revisionIdentifier": "83b3e6e0",
+    "lastVerified": "2026-11-20T14:52:36.135Z"
   }
 }

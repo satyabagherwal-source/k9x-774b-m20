@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T14:36:12.454Z",
+  "last_updated": "2026-11-20T14:52:58.635Z",
   "total_verified_learnings": 9040,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22459,
+  "total_items": 22464,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113541,10 +113541,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "repository": "volcengine/OpenViking",
-      "source_version": "15845c2a",
-      "content_hash": "8bb19b8abb9f350ae3d19eb8ee0dba8588a1b4d77dee9a74930f3ed8ee17b702",
+      "source_version": "ee71998f",
+      "content_hash": "8f26b4442ea3870a9505ee6e978b77e3819425ded390cc43c2609031455d00f2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T08:08:46.204Z"
+      "persisted_at": "2026-11-20T14:52:49.560Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking",
@@ -113553,10 +113553,10 @@
       "relative_path": "08_VERIFICATION/volcengine-openviking-verification-protocol-empirical-defect-shield-for-volcengi.md",
       "title": "Verification Protocol: Empirical Defect Shield for volcengine/OpenViking",
       "repository": "volcengine/OpenViking",
-      "source_version": "15845c2a",
-      "content_hash": "5a8bba67174b45c70779b64b44d37e3f63e112a44c7bc30b12f60e888d8e1cbf",
+      "source_version": "ee71998f",
+      "content_hash": "b0e7cf4ea0a38592d19e5c9c173fc1b3ca2198dfd03e708301fa5d8197ca38f9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T08:08:46.478Z"
+      "persisted_at": "2026-11-20T14:52:49.750Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar",
@@ -113602,9 +113602,9 @@
       "title": "Technical Construction Intelligence: volcengine-openviking-learnings Core Invariants",
       "repository": "volcengine-openviking-learnings",
       "source_version": "HEAD",
-      "content_hash": "843ce197672be08f580bdf6b09fd2cce7c680edf695b2f96414ae1388b8380f0",
+      "content_hash": "2d651e041705a6d8080ff9a210b89ac81d09d0d108013598b9201fa5a30760f6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T08:09:20.751Z"
+      "persisted_at": "2026-11-20T14:52:57.372Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking-learning",
@@ -113614,9 +113614,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for volcengine-openviking-learnings",
       "repository": "volcengine-openviking-learnings",
       "source_version": "HEAD",
-      "content_hash": "5ba3844cdbd96e6229bd5c3cc32052bed421e0ec5d16be147989535783a38a1d",
+      "content_hash": "18caabc362510ee6f430291a5a1f46c6a6260a81ee1e6fc34b41436c86c5d791",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T08:09:21.050Z"
+      "persisted_at": "2026-11-20T14:52:57.558Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
@@ -219332,8 +219332,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "be684af5",
-      "content_hash": "97b72da9a5f60f4df27bdc4f76a32095c83fca4528f3ff92b0e09bb27e152072",
+      "source_version": "85eff190",
+      "content_hash": "e86e61ce3824a54d21b76d8dc6cdb6fea08f438ddf97877432116c3874bba166",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -219366,6 +219366,11 @@
           "number": 9371,
           "title": "rename alert inhibition graph to kebab-case",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9585,
+          "title": "add 5 new uri prefixes for VictoriaLogs' VirtualService",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219373,7 +219378,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T11:08:05.937Z",
+      "verified_at": "2026-11-20T14:52:45.490Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219415,10 +219420,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "repository": "gardener/gardener",
-      "source_version": "be684af5",
-      "content_hash": "7535997449520c4a6e8106c39881df6513ef750244a4ec7bff9c8a5d75451b91",
+      "source_version": "85eff190",
+      "content_hash": "e0bea3c845fa4ca92afa64b97a9e6d09b1cdf856afc8f31432a1490512237492",
       "domain_letter": "L",
-      "persisted_at": "2026-11-19T11:08:06.604Z"
+      "persisted_at": "2026-11-20T14:52:46.207Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener",
@@ -219427,10 +219432,10 @@
       "relative_path": "08_VERIFICATION/gardener-gardener-verification-protocol-empirical-defect-shield-for-gardener-gar.md",
       "title": "Verification Protocol: Empirical Defect Shield for gardener/gardener",
       "repository": "gardener/gardener",
-      "source_version": "be684af5",
-      "content_hash": "137a5e14a84b72b6700d20114b651d228428f8f2b1dd112222d53a60c67a906d",
+      "source_version": "85eff190",
+      "content_hash": "4cad297c5998a8d41d10f7bc044ca79a1bd326ab5919e7ff62e13e94cec6732e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T11:08:06.785Z"
+      "persisted_at": "2026-11-20T14:52:46.395Z"
     },
     "rule-8406": {
       "learning_id": "rule-8406",
@@ -219604,9 +219609,9 @@
       "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
       "repository": "gardener-gardener-learnings",
       "source_version": "HEAD",
-      "content_hash": "d756eb6b4e122fa18ba3b2a4ae1719cfb7eb764d31fc417825d1963bc2f270ce",
+      "content_hash": "558904d8a13c299083115050dcf16ddce6293b64433791d643897c8a81630098",
       "domain_letter": "L",
-      "persisted_at": "2026-11-19T11:13:04.130Z"
+      "persisted_at": "2026-11-20T14:52:56.341Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener-learnings",
@@ -219616,9 +219621,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gardener-gardener-learnings",
       "repository": "gardener-gardener-learnings",
       "source_version": "HEAD",
-      "content_hash": "2112b2a01cb172a8772afa94a2c6b309061214460a9b27a9797030cd7df6c3f6",
+      "content_hash": "97490f56f9cbbd426b3dd93c0d7e6ecc9a6a8e489e88582db6d9ae901d493e15",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T11:13:04.350Z"
+      "persisted_at": "2026-11-20T14:52:56.564Z"
     },
     "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf": {
       "learning_id": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
@@ -229061,8 +229066,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "ba512866",
-      "content_hash": "3b94e5dc820425cbc38a39c0c755bad56ca3fdd6a67c248b63c29c661533b641",
+      "source_version": "8eed95c3",
+      "content_hash": "974660b35a940143b5d583a7f01fb7729d219a1bee741794b90bdf5eeb8b1bac",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229215,6 +229220,11 @@
           "number": 9546,
           "title": "Improve terminal editor navigation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9578,
+          "title": "Synthesize ARC examples from object transforms",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229222,7 +229232,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T09:10:36.169Z",
+      "verified_at": "2026-11-20T14:52:51.706Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229276,10 +229286,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "ba512866",
-      "content_hash": "5decd664f2793cf4e2df3607c0c2a0ebd0bdb6b31ed2d362340096af7216bf53",
+      "source_version": "8eed95c3",
+      "content_hash": "70045904393cec134ea079fc19272ac7a24a87539ec9b2069d7bd87d5de65e8c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T09:10:36.837Z"
+      "persisted_at": "2026-11-20T14:52:52.586Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -230339,9 +230349,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "2c2371a034e4f50a74e27c683373ad4feb0a3418b2d200059a7d43621d230107",
+      "content_hash": "f608e2fe0f05f30e69ef3dd306d9436aa4ba191c46ad2a64eb2522935a9cf018",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T13:40:29.152Z"
+      "persisted_at": "2026-11-20T14:52:58.635Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -230845,10 +230855,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "ba512866",
-      "content_hash": "649a0d925e9984525e7c5d34bd12eb5d060f0a743ad853b5026c1a34fff2617a",
+      "source_version": "8eed95c3",
+      "content_hash": "867a4c579ca20b4e5e726c8e1856e9ecaac2ecaff92b975d77ff328737892dcf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T09:10:36.697Z"
+      "persisted_at": "2026-11-20T14:52:52.396Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian",
@@ -230870,9 +230880,9 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "a0ca4e9a99f4435af90fb7147e7f74d2e9d47c07009e60a84b403e12e5bb7c9d",
+      "content_hash": "9da9abccf2d8db381e446d5d4fc109f2b8dd1bdfa8c5166cbdae0dd825bb2703",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T13:40:28.984Z"
+      "persisted_at": "2026-11-20T14:52:58.423Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
@@ -239916,8 +239926,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "15845c2a",
-      "content_hash": "3f413a38770f4826b557634992221f2c531ce5339e140cdb5168e6a8790c80ee",
+      "source_version": "ee71998f",
+      "content_hash": "d5709c374661e38847f53506bcd1d7c7774dbbd52a8cb4f78f1b0ec85f93e276",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -239947,7 +239957,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T08:08:45.366Z",
+      "verified_at": "2026-11-20T14:52:48.773Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -304062,13 +304072,13 @@
       "item_id": "candidate_directive-synthesize-arc-examples-from-object-transforms",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-12JH-synthesize-arc-examples-from-object-transforms.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MAK6-synthesize-arc-examples-from-object-transforms.md",
       "title": "Synthesize ARC examples from object transforms",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "6764a7735df8e226f7f45fbf071e31403d5b127555a9ae688f80f1f1fde911e6",
+      "content_hash": "6a80c940eb7326cd8c632d7ae5d6e62c45a4a06db575af9aadf4198a82c025b1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T13:40:28.833Z"
+      "persisted_at": "2026-11-20T14:52:58.236Z"
     },
     "rule-9579": {
       "learning_id": "rule-9579",
@@ -304397,6 +304407,70 @@
       "content_hash": "d27d2d5c59c5dbe2c98d92d6a5fdea55d06773a97ac8337a38a29229fe87f536",
       "domain_letter": "D",
       "persisted_at": "2026-11-20T14:07:35.796Z"
+    },
+    "rule-9585": {
+      "learning_id": "rule-9585",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9585,
+      "title": "add 5 new uri prefixes for VictoriaLogs' VirtualService",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "85eff190",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T14:52:45.490Z"
+    },
+    "candidate_directive-add-5-new-uri-prefixes-for-victorialogs-virtualservice": {
+      "item_id": "candidate_directive-add-5-new-uri-prefixes-for-victorialogs-virtualservice",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M8Y9-add-5-new-uri-prefixes-for-victorialogs-virtualservice.md",
+      "title": "add 5 new uri prefixes for VictoriaLogs' VirtualService",
+      "repository": "gardener-gardener-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3cf6ca9b6ed87c30bba92f1a4e6115e1720a3a5ed17bb61b7eafdc23d615fe12",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-20T14:52:56.146Z"
+    },
+    "candidate_directive-add-ai-preview-labels-and-fix-agent-drawer-layout": {
+      "item_id": "candidate_directive-add-ai-preview-labels-and-fix-agent-drawer-layout",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M3PW-add-ai-preview-labels-and-fix-agent-drawer-layout.md",
+      "title": "add AI preview labels and fix agent drawer layout",
+      "repository": "volcengine/OpenViking",
+      "source_version": "ee71998f",
+      "content_hash": "2b1a7175b267ff9abcbd86ffe613940172cee4fcbd9b277d232de5c4ac4ff8b3",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-20T14:52:49.371Z"
+    },
+    "rule-9578": {
+      "learning_id": "rule-9578",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9578,
+      "title": "Synthesize ARC examples from object transforms",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "8eed95c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T14:52:51.706Z"
+    },
+    "candidate_directive-react-add-ai-preview-labels-and-fix-agent-drawer-layout": {
+      "item_id": "candidate_directive-react-add-ai-preview-labels-and-fix-agent-drawer-layout",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M9QX-react-add-ai-preview-labels-and-fix-agent-drawer-layout.md",
+      "title": "react): add AI preview labels and fix agent drawer layout",
+      "repository": "volcengine-openviking-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a751be4221c202178d5984fc652aeeb08774eaa797717b94c4419b9e8f018b2b",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-20T14:52:57.183Z"
     }
   },
   "ai-builder-brain": {

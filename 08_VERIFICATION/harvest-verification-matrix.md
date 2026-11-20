@@ -11556,3 +11556,6 @@
 | `CYCLE-20261120-BBED` | `2026-11-20T13:48:26.869Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9580` | Yes (`2f67dd81...`) |
 | `CYCLE-20261120-VKKN` | `2026-11-20T14:04:11.879Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9581` | Yes (`330a3b21...`) |
 | `CYCLE-20261120-ZT5S` | `2026-11-20T14:07:29.632Z` | `Sentinel7/h3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9582, Rule 9583, Rule 9584` | Yes (`6df8bdba...`) |
+| `CYCLE-20261120-M0WP` | `2026-11-20T14:52:45.721Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9585` | Yes (`e86e61ce...`) |
+| `CYCLE-20261120-M3GR` | `2026-11-20T14:52:49.035Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | Yes (`d5709c37...`) |
+| `CYCLE-20261120-M5PG` | `2026-11-20T14:52:51.940Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9578` | Yes (`974660b3...`) |

@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "15845c2a",
+    "sourceVersion": "ee71998f",
     "license": "AGPL-3.0",
-    "contentHash": "3f413a38770f4826b557634992221f2c531ce5339e140cdb5168e6a8790c80ee",
-    "lastHarvestedAt": "2026-11-19T08:08:45.572Z",
+    "contentHash": "d5709c374661e38847f53506bcd1d7c7774dbbd52a8cb4f78f1b0ec85f93e276",
+    "lastHarvestedAt": "2026-11-20T14:52:49.040Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -2235,8 +2235,8 @@
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceVersion": "8eed95c3",
     "license": "Apache-2.0",
-    "contentHash": "a51c56cfe78564c1d28b82d97c5063634628652076a444d47042f34541aaac97",
-    "lastHarvestedAt": "2026-11-20T13:40:23.928Z",
+    "contentHash": "974660b35a940143b5d583a7f01fb7729d219a1bee741794b90bdf5eeb8b1bac",
+    "lastHarvestedAt": "2026-11-20T14:52:51.944Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "be684af5",
+    "sourceVersion": "85eff190",
     "license": "Apache-2.0",
-    "contentHash": "97b72da9a5f60f4df27bdc4f76a32095c83fca4528f3ff92b0e09bb27e152072",
-    "lastHarvestedAt": "2026-11-19T11:08:06.170Z",
+    "contentHash": "e86e61ce3824a54d21b76d8dc6cdb6fea08f438ddf97877432116c3874bba166",
+    "lastHarvestedAt": "2026-11-20T14:52:45.726Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {

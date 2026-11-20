@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T14:36:12.048Z",
+  "last_updated": "2026-11-20T14:52:58.236Z",
   "directives": [
     {
       "id": "CD-001",
@@ -37631,11 +37631,11 @@
       "staged_date": "2026-11-20"
     },
     {
-      "id": "CD-12JH",
+      "id": "CD-MAK6",
       "directive_title": "Synthesize ARC examples from object transforms",
       "source_repo": "nucleoidai-nucleoid-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-12JH-synthesize-arc-examples-from-object-transforms.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-MAK6-synthesize-arc-examples-from-object-transforms.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -37790,6 +37790,57 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-53A519-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-M8Y9",
+      "directive_title": "add 5 new uri prefixes for VictoriaLogs' VirtualService",
+      "source_repo": "gardener-gardener-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-M8Y9-add-5-new-uri-prefixes-for-victorialogs-virtualservice.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-M3PW",
+      "directive_title": "add AI preview labels and fix agent drawer layout",
+      "source_repo": "volcengine/OpenViking",
+      "source_commit": "ee71998f",
+      "staged_file": "11_INBOX/candidate-directives/CD-M3PW-add-ai-preview-labels-and-fix-agent-drawer-layout.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-REV-A63059",
+      "directive_title": "add 5 new uri prefixes for VictoriaLogs' VirtualService",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gardener-gardener",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A63059-add-5-new-uri-prefixes-for-victorialogs-.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-M9QX",
+      "directive_title": "react): add AI preview labels and fix agent drawer layout",
+      "source_repo": "volcengine-openviking-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-M9QX-react-add-ai-preview-labels-and-fix-agent-drawer-layout.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-REV-4D9DD2",
+      "directive_title": "Synthesize ARC examples from object transforms",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4D9DD2-synthesize-arc-examples-from-object-tran.md",
       "staged_date": "2026-11-20"
     }
   ]
