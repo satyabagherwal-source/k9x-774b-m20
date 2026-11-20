@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T07:03:23.850Z",
-  "total_cycles_completed": 10955,
-  "total_learnings_persisted": 10955,
-  "total_rules_promoted": 10322,
+  "last_updated": "2026-11-20T07:15:00.736Z",
+  "total_cycles_completed": 10957,
+  "total_learnings_persisted": 10957,
+  "total_rules_promoted": 10324,
   "history": [
-    {
-      "timestamp": "2026-11-19T11:50:41.769Z",
-      "repository": "VectifyAI/PageIndex",
-      "learningId": "learn-github-vectifyai-pageindex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T11:50:44.617Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T12:20:08.638Z",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -1403,6 +1389,20 @@
       "repository": "juicedata/juicefs",
       "learningId": "learn-github-juicedata-juicefs",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T07:14:54.427Z",
+      "repository": "rook/rook",
+      "learningId": "learn-github-rook-rook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T07:15:00.736Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "ba1e7c3e",
+    "sourceVersion": "7b95bfd8",
     "license": "Apache-2.0",
-    "contentHash": "b8e6b7f516a9ed05cf84d07c36fa92db1b090bb9ddb85cd352a2b4ae280758c0",
-    "lastHarvestedAt": "2026-11-19T01:47:20.908Z",
+    "contentHash": "f89a56be80377a11670eee46a482b9fc0a3af1936d72e46582ed8ab4c394d5f3",
+    "lastHarvestedAt": "2026-11-20T07:15:00.731Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "695364a0",
+    "sourceVersion": "e7bfa815",
     "license": "Apache-2.0",
-    "contentHash": "702d9dd878f4d39fd6724b69b53091496655e56b27952d15f017012cc75a5c81",
-    "lastHarvestedAt": "2026-11-19T03:27:23.281Z",
+    "contentHash": "c36b19d8f89199a69dbc5c9ca931300d9faa6cc9cb830778432e517ff0e8c645",
+    "lastHarvestedAt": "2026-11-20T07:14:54.421Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {

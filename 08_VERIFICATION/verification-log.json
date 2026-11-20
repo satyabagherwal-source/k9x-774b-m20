@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-8QE6",
-    "timestamp": "2026-11-18T10:55:08.190Z",
-    "repository": "black-forest-labs/FLUX.1-dev",
-    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
-    "contentHash": "b73a827b7343ea08d77b40bdbd703275ec8efd217da7ca94c6388e5e752a9251",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-8SBO",
-    "timestamp": "2026-11-18T10:55:10.692Z",
-    "repository": "Automattic/harper",
-    "learningId": "learn-github-automattic-harper",
-    "contentHash": "10b8af0e53bfe340208d9df7b8346732d5c7293d0ca4352720885683546a05d1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-8WMZ",
     "timestamp": "2026-11-18T10:55:16.283Z",
     "repository": "dkhamsing/open-source-ios-apps",
@@ -7492,6 +7462,36 @@
     "contentHash": "175b0fe40ecc1977628ba91513aafc510bef15b25f78f5034ebd2d61c105d9dc",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-97WX",
+    "timestamp": "2026-11-20T07:14:54.417Z",
+    "repository": "rook/rook",
+    "learningId": "learn-github-rook-rook",
+    "contentHash": "c36b19d8f89199a69dbc5c9ca931300d9faa6cc9cb830778432e517ff0e8c645",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-9CS7",
+    "timestamp": "2026-11-20T07:15:00.727Z",
+    "repository": "ydb-platform/ydb",
+    "learningId": "learn-github-ydb-platform-ydb",
+    "contentHash": "f89a56be80377a11670eee46a482b9fc0a3af1936d72e46582ed8ab4c394d5f3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

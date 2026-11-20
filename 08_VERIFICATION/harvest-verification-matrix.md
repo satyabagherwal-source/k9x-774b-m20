@@ -11498,3 +11498,5 @@
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T07:04:35.109Z` | `yshrsmz-buildkonfig` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-9FC28849` [Domain I] | Yes (`5566f925...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T07:05:19.679Z` | `juicedata-juicefs` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-09AA2241` [Domain J] | Yes (`58c67a4c...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T07:06:21.580Z` | `greptimeteam-greptimedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-28C46858` [Domain K] | Yes (`f5b96b27...`) |
+| `CYCLE-20261120-97WX` | `2026-11-20T07:14:54.417Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9538` | Yes (`c36b19d8...`) |
+| `CYCLE-20261120-9CS7` | `2026-11-20T07:15:00.727Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9539` | Yes (`f89a56be...`) |

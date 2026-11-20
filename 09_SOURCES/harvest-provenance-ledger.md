@@ -11531,3 +11531,5 @@ Every entry in this ledger must capture:
 | `learn-dom-i-9fc28849` | `project://yshrsmz-buildkonfig` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md` | 2026-11-20T07:04:35.109Z |
 | `learn-dom-j-09aa2241` | `project://juicedata-juicefs` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md` | 2026-11-20T07:05:19.679Z |
 | `learn-dom-k-28c46858` | `project://greptimeteam-greptimedb` | `5dec7b19` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md` | 2026-11-20T07:06:21.580Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `e7bfa815` | Multi-dimensional audit evidence | 2026-11-20T07:14:54.421Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `7b95bfd8` | Multi-dimensional audit evidence | 2026-11-20T07:15:00.731Z |

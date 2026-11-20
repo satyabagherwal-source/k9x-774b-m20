@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T07:03:27.297Z",
-    "lastVerified": "2026-11-20T07:03:27.297Z",
+    "lastChecked": "2026-11-20T07:15:03.889Z",
+    "lastVerified": "2026-11-20T07:15:03.889Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T06:19:33.530Z",
+    "lastChecked": "2026-11-20T07:14:55.990Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T06:19:33.530Z"
+    "lastVerified": "2026-11-20T07:14:55.990Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -863,9 +863,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-20T01:53:59.948Z",
+    "lastChecked": "2026-11-20T07:14:50.914Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-20T01:53:59.948Z"
+    "lastVerified": "2026-11-20T07:14:50.914Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate",
@@ -4039,9 +4039,9 @@
   "timvisee-ffsend": {
     "name": "ffsend",
     "officialUrl": "https://github.com/timvisee/ffsend",
-    "lastChecked": "2026-11-18T19:34:10.801Z",
+    "lastChecked": "2026-11-20T07:14:40.886Z",
     "revisionIdentifier": "85aae2f3",
-    "lastVerified": "2026-11-18T19:34:10.801Z"
+    "lastVerified": "2026-11-20T07:14:40.886Z"
   },
   "hf-openai-whisper-large-v3": {
     "name": "openai/whisper-large-v3",
@@ -5924,14 +5924,14 @@
     "officialUrl": "https://github.com/ydb-platform/ydb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-19T01:47:19.980Z",
-    "lastVerified": "2026-11-19T01:47:19.980Z",
+    "lastChecked": "2026-11-20T07:14:59.760Z",
+    "lastVerified": "2026-11-20T07:14:59.760Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "b8e6b7f516a9ed05cf84d07c36fa92db1b090bb9ddb85cd352a2b4ae280758c0",
+    "contentHash": "f89a56be80377a11670eee46a482b9fc0a3af1936d72e46582ed8ab4c394d5f3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6237,14 +6237,14 @@
     "officialUrl": "https://github.com/rook/rook",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T03:27:22.062Z",
-    "lastVerified": "2026-11-19T03:27:22.062Z",
+    "lastChecked": "2026-11-20T07:14:53.226Z",
+    "lastVerified": "2026-11-20T07:14:53.226Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rook-rook",
-    "contentHash": "702d9dd878f4d39fd6724b69b53091496655e56b27952d15f017012cc75a5c81",
+    "contentHash": "c36b19d8f89199a69dbc5c9ca931300d9faa6cc9cb830778432e517ff0e8c645",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9598,5 +9598,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ugolbck-seofordev": {
+    "name": "seofordev",
+    "officialUrl": "https://github.com/ugolbck/seofordev",
+    "lastChecked": "2026-11-20T07:14:43.457Z",
+    "revisionIdentifier": "d791e6dd",
+    "lastVerified": "2026-11-20T07:14:43.457Z"
+  },
+  "badoo-reaktive": {
+    "name": "Reaktive",
+    "officialUrl": "https://github.com/badoo/Reaktive",
+    "lastChecked": "2026-11-20T07:14:45.890Z",
+    "revisionIdentifier": "9d6cb630",
+    "lastVerified": "2026-11-20T07:14:45.890Z"
   }
 }

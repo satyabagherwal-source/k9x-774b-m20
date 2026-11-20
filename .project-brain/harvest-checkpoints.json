@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T07:03:23.853Z",
+  "last_updated": "2026-11-20T07:15:00.739Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "b8e6b7f516a9ed05cf84d07c36fa92db1b090bb9ddb85cd352a2b4ae280758c0",
-      "verified_at": "2026-11-19T01:47:20.915Z",
+      "content_hash": "f89a56be80377a11670eee46a482b9fc0a3af1936d72e46582ed8ab4c394d5f3",
+      "verified_at": "2026-11-20T07:15:00.738Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T01:47:20.915Z"
+      "last_updated": "2026-11-20T07:15:00.738Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "702d9dd878f4d39fd6724b69b53091496655e56b27952d15f017012cc75a5c81",
-      "verified_at": "2026-11-19T03:27:23.290Z",
+      "content_hash": "c36b19d8f89199a69dbc5c9ca931300d9faa6cc9cb830778432e517ff0e8c645",
+      "verified_at": "2026-11-20T07:14:54.429Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T03:27:23.290Z"
+      "last_updated": "2026-11-20T07:14:54.429Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T01:47:31.716Z",
+  "timestamp": "2026-11-20T07:15:04.929Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-ydb-platform-ydb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ydb-platform-ydb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T01:47:31.716Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T07:15:04.929Z`  
 > **Learning ID**: `LEARN-EVO-ydb-platform-ydb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ydb-platform-ydb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `ba1e7c3e`  
+> **Source Version**: `7b95bfd8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T01:47:19.986Z  
+> **Timestamp**: 2026-11-20T07:14:59.766Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T01:47:19.980Z  
+> **Harvest Timestamp**: 2026-11-20T07:14:59.760Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2072,11 +2072,11 @@ impl Remappable for noncontiguous::NFA {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #59741** (2026-11-19): **Query Service: filter over keyless aggregate returns/writes a row when a column-free predicate is false (Table Service is correct)**
+  *Symptoms*: **YDB version:** reproduced on 26.1.1.20 (`ydbplatform/local-ydb`, image `sha256:3d909b59...`) and on `ydbplatform/local-ydb:26.3.1` (`SELECT Version()` = `stable-26-3-1`). The fix candidate a374bb20 (guard `agg.Keys().Size() == 0` in `FilterOverAggregate`) is not in these branches.  **Summary** A `WHERE` over a keyless aggregate (`COUNT(*)` without `GROUP BY`) that contains a predicate independent of the aggregate's columns (a scalar named expression) behaves differently in Query Service and Table Service. In Query Service the column-free predicate seems to be pushed below the aggregate: the aggregate input becomes empty, `COUNT(*)` yields `0`, and the remaining predicate `cnt = 0` becomes true. As a result a guarded `UPSERT ... SELECT ... FROM $agg WHERE ...` writes when the guard is false. Table Service returns the correct result.  **Setup** ```sql CREATE TABLE omo_cas_repro (doc_id Utf8, ext_id Utf8, revision Int64, PRIMARY KEY (doc_id, revision)); UPSERT INTO omo_cas_repro (doc_id, ext_id, revision) VALUES ("doc","e0",0), ("doc","e1",1); ```  **1. Read-only repro** ```sql $agg = (SELECT COUNT(*) AS cnt FROM omo_cas_repro WHERE doc_id = "doc" AND ext_id = "e1"); $s   = (SELECT 0 AS v); SELECT * FROM $agg WHERE cnt = 0 AND $s = 1;   -- expected: 0 rows ``` - `ydb sql -s` (Query Service): **1 row, `cnt = 0`** (wrong) - `ydb table query execute -t data` (Table Service): 0 rows (correct)  **2. Guarded write (optimistic-concurrency pattern used in production code)** ```sql $tm
+
 - **Issue #59331** (2026-11-14): **Bridge: while a SUSPENDED pile is down, no tablet can boot, CMS included, so the takedown never finishes**
   *Symptoms*: ## Summary  A pile is SUSPENDED between `bridge takedown` and the moment CMS moves it to DISCONNECTED. If the pile's nodes are down during that time, every tablet boot fails with `ReasonBootSSError`. Tablets that already run keep working; any tablet that starts or restarts loops.  CMS is a tablet too. If it restarts in that window, it cannot boot, so it never moves the pile to DISCONNECTED. On the tested build the public API also refuses any change to a SUSPENDED pile (`cannot update suspended pile`). The only exits are to bring the pile back, or to send a raw `SwitchBridgeClusterState` to distconf through the monitoring page.  A second form: a cold restart of the whole PRIMARY pile while the SUSPENDED pile is powered off. No static tablet (BSController, Hive, SchemeShard, Console, Cms and the others) starts until the SUSPENDED pile's nodes are started again.  The cause is the StateStorage ring group merge added by `79d68642643` ("Fix StateStorage convergence across bridge piles", #56676), which fixed #56585. A tablet boot now waits for every ring group, and the merged reply takes the worst status. The ring group of a SUSPENDED pile still counts, as SYNCHRONIZED. So while its nodes are down, every lock or update fails.  **Exposure.** In a normal takedown the window is short: in a run without a debugger, CMS sent its flip 8 ms after distconf got the takedown. The outage needs one of these: - the leaving pile goes down in that window, and CMS or another tablet restarts before t
-
-- **Issue #58947** (2026-11-13): **viewer: TestViewer.test_storage_stats races on table1 stats and cannot pass on CI retry**
-  *Symptoms*: `ydb/core/viewer/tests/test.py.TestViewer.test_storage_stats` is flaky, and CI retries cannot recover it. In PR-check run [42815858606](https://github.com/ydb-platform/ydb/actions/runs/42815858606) (#58358, attempt 1) it failed all 3 tries. A rerun with no code change passed.  There are two separate problems.  ### 1. The test does not wait for `table1` stats  Try 1 (full suite) failed with:  ``` test_result['Paths'][1]['DataSize']: value 'not-zero-number' is missing ```  Setup creates `table1` and inserts rows ([test.py#L313-L328](https://github.com/ydb-platform/ydb/blob/cb5e2e9645c22fed269a35cc40971b2f2c019c18/ydb/core/viewer/tests/test.py#L313-L328)). Table stats reach SchemeShard asynchronously, and nothing waits for them. The poll loop in the test ([test.py#L2321-L2330](https://github.com/ydb-platform/ydb/blob/cb5e2e9645c22fed269a35cc40971b2f2c019c18/ydb/core/viewer/tests/test.py#L2321-L2330)) checks only `result['Paths'][2]['Groups'] != 0` (`topic1`). In this run the topic was ready on the first call, so the loop exited before `table1` had `DataSize`.  ### 2. The test depends on another test creating `topic1`  `topic1` is created by `test_pqrb_tablet` ([test.py#L1422-L1427](https://github.com/ydb-platform/ydb/blob/cb5e2e9645c22fed269a35cc40971b2f2c019c18/ydb/core/viewer/tests/test.py#L1422-L1427)), not by setup. CI retries run only the failed test, so `topic1` does not exist. All 15 polls return zeros, and tries 2 and 3 always fail:  ``` test_result['Paths'][2]['Groups']
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2093,654 +2093,755 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7dfbe704` (2026-11-18)
-**Commit Message**: [Hash join] Fix SIGILL on CPUs without AVX2: apply AVX2 only to the SIMD layout (#59865)
+### Incident Patch 1: `157c71b6` (2026-11-20)
+**Commit Message**: YDBBUGS-1181: Keep PQ metacache fallback indexes aligned (#59885)
 
-**File**: `ydb/library/yql/dq/comp_nodes/hash_join_utils/packing_simd_impl.h` (modified, +5/-0)
+**File**: `ydb/core/client/server/msgbus_server_pq_metacache.cpp` (modified, +5/-3)
 ```diff
-@@ -1,9 +1,12 @@
- #pragma once
- 
- #include "packing.h"
-+#include "tuple_simd_target.h"
- 
- #include <array>
- 
-+TUPLE_LAYOUT_TARGET_PUSH
-+
- // This implementation is instantiated only by the ISA-specific libraries.
- 
- namespace NKikimr {
-@@ -547,3 +550,5 @@ Y_FORCE_INLINE void SIMDPack<TTraits>::UnpackTupleOr(
- } // namespace NPackedTuple
- } // namespace NMiniKQL
- } // namespace NKikimr
-+
-+TUPLE_LAYOUT_TARGET_POP
+@@ -217,9 +217,12 @@ class TPersQueueMetaCacheActor : public TActorBootstrapped<TPersQueueMetaCacheAc
+             Y_ABORT_UNLESS(Topics.size() == result->ResultSet.size());
+             Y_ABORT_UNLESS(Result == nullptr);
+             FirstRequestDone = true;
+-            ui64 index = 0;
+             Result = std::move(result);
+-            for (const auto& entry : Result->ResultSet) {
++            // Index must follow the SchemeCache entry. A continue that skipped
++            // index++ paired a later fallback with an earlier topic and could
++            // retry an entry whose status was already Ok.
++            for (ui64 index = 0; index < Result->ResultSet.size(); ++index) {
++                const auto& entry = Result->ResultSet[index];
+                 if (DbRoot.empty()) {
+                     continue;
+                 }
+@@ -236,7 +239,6 @@ class TPersQueueMetaCacheActor : public TActorBootstrapped<TPersQueueMetaCacheAc
+                     }
+                     SecondTryTopics.push_back(index);
+                 }
+-                index++;
+             }
+             //return true;
+             return SecondTryTopics.empty(); //ToDo - second try topics
 ```
 
-**File**: `ydb/library/yql/dq/comp_nodes/hash_join_utils/simd/layout/avx2/ya.make` (modified, +1/-1)
+**File**: `ydb/core/client/server/msgbus_server_pq_metacache_ut.cpp` (added, +109/-0)
 ```diff
-@@ -2,7 +2,7 @@ IF (ARCH_X86_64 AND OS_LINUX)
- 
- YQL_LIBRARY()
- 
--CFLAGS(-mavx2)
-+CFLAGS(-DTUPLE_LAYOUT_AVX2)
- 
- SRCS(tuple_avx2.cpp)
- 
-```
-
-**File**: `ydb/library/yql/dq/comp_nodes/hash_join_utils/simd/layout/sse42/ya.make` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@ IF (ARCH_X86_64 AND OS_LINUX)
- 
- YQL_LIBRARY()
- 
--CFLAGS(-msse4.2)
-+CFLAGS(-DTUPLE_LAYOUT_SSE42)
- 
- SRCS(tuple_sse42.cpp)
- 
-```
-
-**File**: `ydb/library/yql/dq/comp_nodes/hash_join_utils/tuple_simd_impl.h` (modified, +5/-0)
-```diff
-@@ -4,10 +4,13 @@
- #include "hashes_calc.h"
- #include "packing_simd_impl.h"
- #include "tuple_bitmatrix.h"
-+#include "tuple_simd_target.h"
- 
- #include <algorithm>
- #include <queue>
- 
-+TUPLE_LAYOUT_TARGET_PUSH
+@@ -0,0 +1,109 @@
++#include "msgbus_server_pq_metacache.h"
 +
- // Included only by the ISA-specific layout implementations. Keeping the layout
- // and packing definitions together allows inlining without LTO.
- namespace NKikimr::NMiniKQL::NPackedTuple {
-@@ -822,3 +825,5 @@ void TTupleLayoutSIMD<TTraits>::BucketPack(
- }
- 
- } // namespace NKikimr::NMiniKQL::NPackedTuple
++#include <ydb/core/base/path.h>
++#include <ydb/core/testlib/basics/appdata.h>
++#include <ydb/core/testlib/basics/runtime.h>
++#include <ydb/core/tx/scheme_cache/scheme_cache.h>
 +
-+TUPLE_LAYOUT_TARGET_POP
-```
-
-**File**: `ydb/library/yql/dq/comp_nodes/hash_join_utils/tuple_simd_target.h` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+#pragma once
++#include <library/cpp/testing/unittest/registar.h>
 +
-+// ISA-specific layout libraries are built without -m flags: inline code from
-+// shared headers (std::, util) must stay callable on any CPU. Put includes
-+// first, then wrap only the layout code in TUPLE_LAYOUT_TARGET_PUSH/POP.
-+#if defined(TUPLE_LAYOUT_AVX2)
-+#ifdef __AVX2__
-+#error "Build the AVX2 tuple layout without -mavx2"
-+#endif
-+#define TUPLE_LAYOUT_TARGET_PUSH _Pragma("clang attribute push(__attribute__((target(\"avx2\"))), apply_to = function)")
-+#define TUPLE_LAYOUT_TARGET_POP _Pragma("clang attribute pop")
-+#elif defined(TUPLE_LAYOUT_SSE42)
-+#define TUPLE_LAYOUT_TARGET_PUSH _Pragma("clang attribute push(__attribute__((target(\"sse4.2\"))), apply_to = function)")
-+#define TUPLE_LAYOUT_TARGET_POP _Pragma("clang attribute pop")
-+#else
-+#define TUPLE_LAYOUT_TARGET_PUSH
-+#define TUPLE_LAYOUT_TARGET_POP
-+#endif
-```
-
----
-
-### Incident Patch 2: `3551a421` (2026-11-18)
-**Commit Message**: tests(distconf): poll ring/heal asserts instead of fixed sleeps (#59229)
-
-**File**: `ydb/tests/functional/config/test_distconf_self_heal.py` (modified, +38/-22)
-```diff
-@@ -6,6 +6,7 @@
- from copy import deepcopy
- 
- from ydb.tests.library.common.types import Erasure
-+from ydb.tests.library.common.wait_for import retry_assertions
- from ydb.tests.library.harness.kikimr_runner import KiKiMR
- from ydb.tests.library.harness.kikimr_config import KikimrConfigGenerator
- from ydb.tests.library.harness.util import LogLevels
-@@ -175,11 +176,13 @@ def do_test(self, configName):
- 
-         logger.info("Start SelfHeal")
-         logger.info(self.do_request({"SelfHealStateStorage": {"WaitForConfigStep": 1, "ForceHeal": True}}))
--        time.sleep(10)
- 
--        rg = get_ring_group(self.do_request_config(), configName)
--        assert_eq(rg["NToSelect"], 9)
--        assert_eq(len(rg["Ring"]), 9)
-+        def wait_healed():
-+            rg = get_ring_group(self.do_request_config(), configName)
-+            assert_eq(rg["NToSelect"], 9)
-+            assert_eq(len(rg["Ring"]), 9)
++#include <memory>
 +
-+        retry_assertions(wait_healed, timeout_seconds=30, step_seconds=1.0)
- 
- 
- class TestKiKiMRDistConfSelfHealNotNeed(KiKiMRDistConfSelfHealTest):
-@@ -240,11 +243,16 @@ def do_test(self, configName):
-         logger.info(self.do_request({"SelfHealStateStorage": {"WaitForConfigStep": 2, "ForceHeal": True}}))
-         time.sleep(1)
-         assert_eq(len(self.do_request_config()[f"{configName}Config"]["RingGroups"]), 2)
--        time.sleep(10)
- 
--        rg = self.do_request_config()[f"{configName}Config"]["Ring"]
--        assert_eq(rg["NToSelect"], 9)
--        assert_eq(len(rg["Ring"]), 9)
-+        def wait_parallel_healed():
-+            config = self.do_request_config()[f"{configName}Config"]
-+            # Heal goes RingGroups → single Ring; KeyError is not retried by retry_assertions.
-+            assert_that("Ring" in config, f"still waiting for single Ring: {config}")
-+            rg = config["Ring"]
-+            assert_eq(rg["NToSelect"], 9)
-+            assert_eq(len(rg["Ring"]), 9)
++namespace NKikimr::NMsgBusProxy {
++namespace {
 +
-+        retry_assertions(wait_parallel_healed, timeout_seconds=30, step_seconds=1.0)
- 
- 
- class TestKiKiMRDistConfSelfHealParallelCall2(KiKiMRDistConfSelfHealTest):
-@@ -345,16 +353,22 @@ def do_test(self, configName):
-         logger.info("Start SelfHeal with allowed nodes restriction (forbidding node %s) for %s",
-                     self.forbidden_node_id, configName)
-         logger.info(self.do_request({"SelfHealStateStorage": {"WaitForConfigStep": 1, "ForceHeal": True}}))
--        time.sleep(10)
- 
--        healed_config = self.do_request_config()
--        node_ids = extract_all_node_ids(healed_config, configName)
-+        def wait_allowed_nodes():
-+            healed_config = self.do_request_config()
-+            rg = get_ring_group(healed_config, configName)
-+            # do_bad_config leaves NToSelect=5; wait until heal restores a full ring.
-+            assert_eq(rg["NToSelect"], 9)
-+            assert_eq(len(rg["Ring"]), 9)
-+            node_ids = extract_all_node_ids(healed_config, configName)
- 
--        assert_that(len(node_ids) > 0, f"Healed {configName} config has no nodes: {healed_config}")
--        assert_that(self.forbidden_node_id not in node_ids,
--                    f"Forbidden node {self.forbidden_node_id} present in healed {configName} config: {node_ids}")
--        assert_that(node_ids <= set(self.allowed_node_ids),
--                    f"Healed {configName} config uses nodes outside the allowed list: {node_ids - set(self.allowed_node_ids)}")
-+            assert_that(len(node_ids) > 0, f"Healed {configName} config has no nodes: {healed_config}")
-+            assert_that(self.forbidden_node_id not in node_ids,
-+                        f"Forbidden node {self.forbidden_node_id} present in healed {configName} config: {node_ids}")
-+            assert_that(node_ids <= set(self.allowed_node_ids),
-+                        f"Healed {configName} config uses nodes outside the allowed list: {node_ids - set(self.allowed_node_ids)}")
++using namespace NActors;
++using namespace NSchemeCache;
++using namespace NPqMetaCacheV2;
 +
-+        retry_assertions(wait_allowed_nodes, timeout_seconds=30, step_seconds=1.0)
- 
- 
- class TestKiKiMRDistConfSelfHealAutomaticManagementDisabled(KiKiMRDistConfSelfHealTest):
-@@ -432,10 +446,12 @@ def do_test(self, configName):
-         else:
-             disabled_before = get_ring_group(self.do_request_config(), self.disabled_config_name)
-             logger.info(self.do_request({"SelfHealStateStorage": {"WaitForConfigStep": 1, "ForceHeal": True}}))
--            time.sleep(10)
- 
--            disabled_after = get_ring_group(self.do_request_config(), self.disabled_config_name)
--            assert_eq(disabled_after, disabled_before)
--            rg = get_ring_group(self.do_request_config(), configName)
--            assert_eq(rg["NToSelect"], 9)
--            assert_eq(len(rg["Ring"]), 9)
-+            def wait_mixed_healed():
-+                disabled_after = get_ring_group(self.do_request_config(), self.disabled_config_name)
-+                assert_eq(disabled_after, disabled_before)
-+                rg = get_ring_group(self.do_request_config(), configName)
-+                assert_e
-```
-
-**File**: `ydb/tests/functional/config/test_distconf_sentinel_node_status.py` (modified, +72/-43)
-```diff
-@@ -6,6 +6,7 @@
- import time
- 
- from ydb.tests.library.common.types import Erasure
-+from ydb.tests.library.common.wait_for import retry_assertions
- from ydb.tests.library.harness.kikimr_runner import KiKiMR
- from ydb.tests.library.harness.kikimr_config import KikimrConfigGenerator
- from ydb.tests.library.harness.util import LogLevels
-@@ -150,15 +151,19 @@ def do_test(self, configName):
-         assert_eq(len(rg["Ring"]), 9)
-         self.validate_contains_nodes(rg, [4])
-         self.kill_nodes(lambda hosts, i: i == 3)
--        time.sleep(25)
--        rg2 = get_ring_group(self.do_request_config(), configName)
--        assert_eq(rg["NToSelect"], 9)
--        assert_eq(len(rg["Ring"]), 9)
--        self.validate_not_contains_nodes(rg2, [4])
--        assert_that("RingGroupActorIdOffset" not in rg2)  # reassign node api used instead adding new ring groups test
--        for ring in rg2:
--            assert_that("IsDisabled" not in rg)
--        assert_that(rg != rg2)
++constexpr TStringBuf DbRoot = "/Root/accounts";
 +
-+        def wait_node_removed():
-+            rg2 = get_ring_group(self.do_request_config(), configName)
-+            assert_eq(rg["NToSelect"], 9)
-+            assert_eq(len(rg["Ring"]), 9)
-+            self.validate_not_contains_nodes(rg2, [4])
-+            assert_that("RingGroupActorIdOffset" not in rg2)  # reassign node api used instead adding new ring groups test
-+            for ring in rg2:
-+                assert_that("IsDisabled" not in rg)
-+            assert_that(rg != rg2)
-+            return rg2
-+
-+        rg2 = retry_assertions(wait_node_removed, timeout_seconds=40, step_seconds=1.0)
-         self.cluster.nodes[4].start()
-         time.sleep(25)
-         rg3 = get_ring_group(self.do_request_config(), configName)
-@@ -174,17 +179,30 @@ def do_test(self, configName):
-         rg = get_ring_group(self.do_request_config(), configName)
-         self.validate_contains_nodes(rg, [2, 3, 12, 15])
-         self.kill_nodes(lambda hosts, i: i == 1 or i == 2)
--        time.sleep(30)
--        rg = self.do_request_config()[f"{configName}Config"]["Ring"]
--        self.validate_not_contains_nodes(rg, [2, 3])
--        self.validate_contains_nodes(rg, [6, 12, 15])
--        assert_eq(rg["RingGroupActorIdOffset"], 1)  # full reconfiguration applied
-+
-+        def wait_first_reassign():
-+            config = self.do_request_config()[f"{configName}Config"]
-+            # Mid-heal config may still be RingGroups; KeyError is not retried by retry_assertions.
-+            assert_that("Ring" in config, f"still waiting for single Ring: {config}")
-+            rg = config["Ring"]
-+            self.validate_not_contains_nodes(rg, [2, 3])
-+            self.validate_contains_nodes(rg, [6, 12, 15])
-+            assert_eq(rg["RingGroupActorIdOffset"], 1)  # full reconfiguration applied
-+            return rg
-+
-+        retry_assertions(wait_first_reassign, timeout_seconds=40, step_seconds=1.0)
-         self.cluster.nodes[12].stop()
--        time.sleep(30)
--        rg = self.do_request_config()[f"{configName}Config"]["Ring"]
--        self.validate_not_contains_nodes(rg, [12])
--        self.validate_contains_nodes(rg, [6, 9, 15])  # 12 -> 9 reassigned
--        assert_eq(rg["RingGroupActorIdOffset"], 1)  # offset not changed -> reassign node api used
-+
-+        def wait_second_reassign():
-+            config = self.do_request_config()[f"{configName}Config"]
-+            assert_that("Ring" in config, f"still waiting for single Ring: {config}")
-+            rg = config["Ring"]
-+            self.validate_not_contains_nodes(rg, [12])
-+            self.validate_contains_nodes(rg, [6, 9, 15])  # 12 -> 9 reassigned
-+            assert_eq(rg["RingGroupActorIdOffset"], 1)  # offset not changed -> reassign node api used
-+            return rg
-+
-+        retry_assertions(wait_second_reassign, timeout_seconds=40, step_seconds=1.0)
- 
- 
- class TestKiKiMRDistConfSelfHeal2NodesDisconnected(KiKiMRDistConfNodeStatusTest):
-@@ -197,12 +215,16 @@ def do_test(self, configName):
-         assert_eq(len(rg["Ring"]), 9)
-         self.validate_contains_nodes(rg, [2, 3])
-         self.kill_nodes(lambda hosts, i: i == 1 or i == 2)
--        time.sleep(25)
--        rg2 = get_ring_group(self.do_request_config(), configName)
--        assert_eq(rg["NToSelect"], 9)
--        assert_eq(len(rg["Ring"]), 9)
--        self.validate_not_contains_nodes(rg2, [2, 3])
--        assert_that(rg != rg2)
-+
-+        def wait_two_nodes_removed():
-+            rg2 = get_ring_group(self.do_request_config(), configName)
-+            assert_eq(rg["NToSelect"], 9)
-+            assert_eq(len(rg["Ring"]), 9)
-+            self.validate_not_contains_nodes(rg2, [2, 3])
-+            assert_that(rg != rg2)
-+            return rg2
-+
-+        retry_assertions(wait_two_nodes_removed, timeout_seconds=40, step_seconds=1.0)
- 
- 
- class TestKiKiMRDistConfSelfHealDCDisconnected(KiKiMRDistConfNodeStatusTest):
-@@ -245,14 +267,17 @@ class TestKiKiMRDistConfSelfHealPileupReplicas(KiKiMRDistConfNodeStatusTest):
-     def do_test(self, configName):
-    
-```
-
----
-
-### Incident Patch 3: `5b5e3ed8` (2026-11-18)
-**Commit Message**: Add HNSW schema and build lifecycle (#59267)
-
-**File**: `ydb/core/base/kmeans_clusters.cpp` (modified, +14/-0)
-```diff
-@@ -14,6 +14,7 @@
- #include <cmath>
- #include <span>
- #include <util/stream/str.h>
-+#include <util/generic/size_literals.h>
- 
- namespace NKikimr::NKMeans {
- 
-@@ -1005,6 +1006,19 @@ bool ValidateHnswSettingsPartial(const Ydb::Table::KMeansTreeSettings& settings,
-     return ValidateSettingsImpl(settings, true, error, true);
- }
- 
-+bool AutoSelectHnswSettings(Ydb::Table::KMeansTreeSettings& settings, ui64 dataSizeBytes, TString& error) {
-+    if (!settings.has_levels() || !settings.levels()) {
-+        settings.set_levels(1);
-+    }
-+    if (!settings.has_clusters() || !settings.clusters()) {
-+        // Cap the default before narrowing to the protobuf's uint32 field.
-+        // Explicit cluster counts are validated below without clamping.
-+        const ui64 clusters = Min<ui64>(dataSizeBytes / 1_GB + 1, MaxClusters);
-+        settings.set_clusters(clusters);
-+    }
-+    return ValidateHnswSettingsPartial(settings, error);
++TString EntryPath(const TSchemeCacheNavigate::TEntry& entry) {
++    return TString("/") + JoinPath(entry.Path);
 +}
 +
- ui64 ComputeOptimalClusters(ui64 levels, ui64 searchWidth, ui64 rowCount, double avgClustersPerVector) {
-     // C = ((L * T * P * N) / (1 + T * (L - 1))) ^ (1 / (L + 1))
-     double num = levels * searchWidth * avgClustersPerVector * rowCount;
-```
-
-**File**: `ydb/core/base/kmeans_clusters.h` (modified, +2/-0)
-```diff
-@@ -79,6 +79,8 @@ bool ValidateSettingsPartial(const Ydb::Table::KMeansTreeSettings& settings, TSt
- bool ValidateHnswSettings(const Ydb::Table::KMeansTreeSettings& settings, TString& error);
- bool ValidateHnswSettingsPartial(const Ydb::Table::KMeansTreeSettings& settings, TString& error);
- 
-+bool AutoSelectHnswSettings(Ydb::Table::KMeansTreeSettings& settings, ui64 dataSizeBytes, TString& error);
++class TScriptedSchemeCache : public TActorBootstrapped<TScriptedSchemeCache> {
++public:
++    explicit TScriptedSchemeCache(TVector<TVector<TString>>* requests)
++        : Requests(requests)
++    {
++    }
 +
- ui64 ComputeOptimalClusters(ui64 levels, ui64 searchWidth, ui64 rowCount, double avgClustersPerVector);
- double ComputeEfficiencyScore(ui64 levels, ui64 clusters, ui64 searchWidth, ui64 rowCount, double avgClustersPerVector);
- 
-```
-
-**File**: `ydb/core/base/table_index.cpp` (modified, +4/-0)
-```diff
-@@ -96,6 +96,7 @@ bool IsSecondaryIndex(NKikimrSchemeOp::EIndexType indexType) {
-         case NKikimrSchemeOp::EIndexTypeGlobalUnique:
-             return true;
-         case NKikimrSchemeOp::EIndexTypeGlobalVectorKmeansTree:
-+        case NKikimrSchemeOp::EIndexTypeGlobalHnsw:
-         case NKikimrSchemeOp::EIndexTypeGlobalFulltextPlain:
-         case NKikimrSchemeOp::EIndexTypeGlobalFulltextRelevance:
-         case NKikimrSchemeOp::EIndexTypeGlobalJson:
-@@ -118,6 +119,7 @@ TTableColumns CalcTableImplDescription(NKikimrSchemeOp::EIndexType indexType, co
-     auto takeKeyColumns = index.KeyColumns.size();
-     if (!isSecondaryIndex) { // vector and fulltext indexes have special embedding and text key columns
-         Y_ASSERT(indexType == NKikimrSchemeOp::EIndexTypeGlobalVectorKmeansTree
-+            || indexType == NKikimrSchemeOp::EIndexTypeGlobalHnsw
-             || indexType == NKikimrSchemeOp::EIndexTypeGlobalFulltextPlain
-             || indexType == NKikimrSchemeOp::EIndexTypeGlobalFulltextRelevance
-             || indexType == NKikimrSchemeOp::EIndexTypeGlobalJson
-@@ -292,6 +294,7 @@ bool IsCompatibleIndex(NKikimrSchemeOp::EIndexType indexType, const TTableColumn
-     } else {
-         // Vector and fulltext indexes allow to add all columns both to index & data
-         Y_ASSERT(indexType == NKikimrSchemeOp::EIndexTypeGlobalVectorKmeansTree
-+            || indexType == NKikimrSchemeOp::EIndexTypeGlobalHnsw
-             || indexType == NKikimrSchemeOp::EIndexTypeGlobalFulltextPlain
-             || indexType == NKikimrSchemeOp::EIndexTypeGlobalFulltextRelevance
-             || indexType == NKikimrSchemeOp::EIndexTypeGlobalJson
-@@ -338,6 +341,7 @@ std::span<const std::string_view> GetImplTables(
-         case NKikimrSchemeOp::EIndexTypeGlobalUnique:
-             return GlobalSecondaryImplTables;
-         case NKikimrSchemeOp::EIndexTypeGlobalVectorKmeansTree:
-+        case NKikimrSchemeOp::EIndexTypeGlobalHnsw:
-             if (indexKeys.size() == 1) {
-                 return GlobalKMeansTreeImplTables;
-             } else {
-```
-
-**File**: `ydb/core/base/ut_hnsw_settings/hnsw_settings_ut.cpp` (modified, +47/-0)
-```diff
-@@ -9,6 +9,9 @@
- #include <util/generic/ylimits.h>
- #include <util/string/builder.h>
- 
-+#include <array>
-+#include <utility>
++    void Bootstrap() {
++        Become(&TScriptedSchemeCache::StateWork);
++    }
 +
- namespace NKikimr::NKMeans {
-     namespace {
- 
-@@ -97,6 +100,50 @@ namespace NKikimr::NKMeans {
-             UNIT_ASSERT(!ValidateHnswSettings(settings, error));
-         }
- 
-+        Y_UNIT_TEST(DefaultRoutingSettings) {
-+            auto settings = MakeSettings();
-+            settings.clear_clusters();
-+            settings.clear_levels();
-+            TString error;
-+            UNIT_ASSERT_C(AutoSelectHnswSettings(settings, 0, error), error);
-+            UNIT_ASSERT_VALUES_EQUAL(settings.clusters(), 1u);
-+            UNIT_ASSERT_VALUES_EQUAL(settings.levels(), 1u);
-+            settings.clear_clusters();
-+            UNIT_ASSERT_C(AutoSelectHnswSettings(settings, 3ull << 30, error), error);
-+            UNIT_ASSERT_VALUES_EQUAL(settings.clusters(), 4u);
-+        }
++    STRICT_STFUNC(StateWork,
++        hFunc(TEvTxProxySchemeCache::TEvNavigateKeySet, Handle);
++    )
 +
-+        Y_UNIT_TEST(AutoSelectedRoutingClustersAreCapped) {
-+            const std::array<std::pair<ui64, ui32>, 4> cases = {{
-+                {(2047ull << 30) - 1, 2047},
-+                {2047ull << 30, 2048},
-+                {2048ull << 30, 2048},
-+                {Max<ui64>(), 2048},
-+            }};
-+            for (const auto& [dataSize, expectedClusters] : cases) {
-+                auto settings = MakeSettings();
-+                settings.clear_clusters();
-+                TString error;
-+                UNIT_ASSERT_C(AutoSelectHnswSettings(settings, dataSize, error), error);
-+                UNIT_ASSERT_VALUES_EQUAL(settings.clusters(), expectedClusters);
-+                UNIT_ASSERT_C(ValidateHnswSettings(settings, error), error);
++private:
++    void Handle(TEvTxProxySchemeCache::TEvNavigateKeySet::TPtr& ev) {
++        auto request = std::move(ev->Get()->Request);
++        TVector<TString> paths;
++        paths.reserve(request->ResultSet.size());
++        for (auto& entry : request->ResultSet) {
++            const TString path = EntryPath(entry);
++            paths.push_back(path);
++            if (path.Contains("topic-miss") && path.StartsWith(DbRoot)) {
++                entry.Status = TSchemeCacheNavigate::EStatus::Ok;
++            } else if (path.Contains("topic-ok")) {
++                entry.Status = TSchemeCacheNavigate::EStatus::Ok;
++            } else {
++                entry.Status = TSchemeCacheNavigate::EStatus::PathErrorUnknown;
 +            }
 +        }
++        Requests->push_back(std::move(paths));
++        Send(ev->Sender, new TEvTxProxySchemeCache::TEvNavigateKeySetResult(std::move(request)));
++    }
 +
-+        Y_UNIT_TEST(ExplicitRoutingClustersKeepValidation) {
-+            for (const ui32 clusters : {1u, 64u, 2048u, 2049u, Max<ui32>()}) {
-+                auto settings = MakeSettings();
-+                settings.set_clusters(clusters);
-+                TString error;
-+                const bool valid = AutoSelectHnswSettings(settings, Max<ui64>(), error);
-+                UNIT_ASSERT_VALUES_EQUAL(valid, clusters <= 2048);
-+                UNIT_ASSERT_VALUES_EQUAL(settings.clusters(), clusters);
-+                if (!valid) {
-+                    UNIT_ASSERT_STRING_CONTAINS(error, "clusters");
++    TVector<TVector<TString>>* Requests;
++};
++
++Y_UNIT_TEST_SUITE(TPersQueueMetaCacheFallback) {
++
++Y_UNIT_TEST(SkipsEntriesWithoutAccountWhenSchedulingFallback) {
++    TVector<TVector<TString>> requests;
++    TTestBasicRuntime runtime(1, false);
++    runtime.Initialize(TAppPrepare().Unwrap());
++    runtime.GetAppData().PQConfig.SetTopicsAreFirstClassCitizen(true);
++    runtime.GetAppData().PQConfig.MutablePQDiscoveryConfig()->SetLbUserDatabaseRoot(TString(DbRoot));
++
++    const auto schemeCacheId = runtime.Register(new TScriptedSchemeCache(&requests));
++    const auto metaCacheId = runtime.Register(CreatePQMetaCache(schemeCacheId));
++    runtime.DispatchEvents();
++
++    NPersQueue::TTopicNamesConverterFactory factory(false, "/Root/PQ", "dc1");
++    auto noAccount = factory.MakeDiscoveryConverter("rt3.dc1--justtopic", {}, "dc1", "");
++    auto resolved = factory.MakeDiscoveryConverter("account-ok/topic-ok", {}, "dc1", "");
++    auto missing = factory.MakeDiscoveryConverter("account-miss/topic-miss", {}, "dc1", "");
++    UNIT_ASSERT_C(noAccount->IsValid(), noAccount->GetReason());
++    UNIT_ASSERT_C(resolved->IsValid(), resolved->GetReason());
++    UNIT_ASSERT_C(missing->IsValid(), missing->GetReason());
++
++    TVector<NPersQueue::TDiscoveryConverterPtr> topics{noAccount, resolved, missing};
++    const auto edge = runtime.AllocateEdgeActor();
++    runtime.Send(new IEventHandle(
++        metaCacheId,
++        edge,
++        new TEvPqNewMetaCache::TEvDescribeTopicsRequest(topics, false)), 0, true);
++
++    auto response = runtime.GrabEdgeEvent<TEvPqNewMetaCache::TEvDescribeTopicsResponse>(edge);
++    UNIT_ASSERT(response);
++    UNIT_ASSERT(response->Get()->Result);
++    const auto& resultSet = response->Get()->Result->ResultSet;
++    UNIT_ASSERT_VALUES_EQUAL(resultSet.size(), 3u);
++    UNIT_ASSERT(resultSet[0].Status == TSchemeCacheNavigate::EStatus::PathErrorUnknown);
++    UNIT_ASSERT(resultSet[1].Status == TSchemeCacheNavigate::EStatus::Ok);
++    UNIT_ASSERT(resultSet[2].Status == TSchemeCacheNavigate::EStatus::Ok);
++
++    UNIT_ASSERT_VALUES_EQUAL(requests.size(), 2u);
++    UNIT_ASSERT_VALUES_EQUAL(requests[0].size(), 3u);
++    UNIT_ASSERT_VALUES_EQUAL(requests[1].size(), 1u);
++    UNIT_ASSERT_VALUES_EQUAL(requests[1][0], "/Root/accounts/account-miss/topic-miss");
++}
++
++} // Y_UNIT_TEST_SUITE
++
++} // namespace
++} // namespace NKikimr::NMsgBusProxy
+```
+
+**File**: `ydb/core/client/server/ut/ya.make` (modified, +1/-0)
+```diff
+@@ -17,6 +17,7 @@ YQL_LAST_ABI_VERSION()
+ 
+ SRCS(
+     msgbus_server_pq_metarequest_ut.cpp
++    msgbus_server_pq_metacache_ut.cpp
+ )
+ 
+ END()
+```
+
+---
+
+### Incident Patch 2: `32eca4fd` (2026-11-19)
+**Commit Message**: Fix direct dependencies in ColumnShard and workload manager (#60031)
+
+**File**: `ydb/core/tx/columnshard/backup/import/ya.make` (modified, +1/-0)
+```diff
+@@ -12,6 +12,7 @@ PEERDIR(
+     ydb/core/kqp/common/events
+     ydb/core/scheme
+     ydb/core/tablet_flat
++    ydb/core/tx/columnshard/backup/async_jobs
+     ydb/core/tx/columnshard/backup/import/protos
+     ydb/core/tx/columnshard/bg_tasks
+     ydb/core/tx/columnshard/blobs_action/protos
+```
+
+**File**: `ydb/core/tx/columnshard/test_helper/shard_reader.h` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ #pragma once
+ #include <ydb/core/formats/arrow/arrow_helpers.h>
+-#include <ydb/core/kqp/compute_actor/kqp_compute_events.h>
++#include <ydb/core/kqp/common/events/scan.h>
+ #include <ydb/core/testlib/basics/runtime.h>
+ #include <ydb/core/testlib/tablet_helpers.h>
+ #include <ydb/core/tx/columnshard/columnshard_private_events.h>
+```
+
+**File**: `ydb/core/tx/columnshard/test_helper/ya.make` (modified, +1/-0)
+```diff
+@@ -3,6 +3,7 @@ LIBRARY()
+ PEERDIR(
+     contrib/libs/apache/arrow
+     ydb/core/formats/arrow
++    ydb/core/kqp/common/events
+     ydb/core/protos
+     ydb/core/testlib
+     ydb/core/tx/columnshard
+```
+
+**File**: `ydb/services/workload_manager/common/ya.make` (modified, +1/-0)
+```diff
+@@ -12,6 +12,7 @@ PEERDIR(
+     ydb/core/base
+     ydb/core/resource_pools
+     ydb/core/scheme
++    ydb/core/tx/scheme_cache
+     ydb/library/actors/core
+     ydb/public/sdk/cpp/src/client/types
+ )
+```
+
+---
+
+### Incident Patch 3: `dd807054` (2026-11-19)
+**Commit Message**: Fix re-adds with plain fulltext compaction (#59951)
+
+**File**: `ydb/core/base/fulltext.cpp` (modified, +26/-18)
+```diff
+@@ -1500,7 +1500,8 @@ void TMultiDeltaReader::SetMaxId(ui64 maxId) {
+ void TMultiDeltaReader::Start() {
+     Y_ENSURE(!Started);
+     Started = true;
+-    if (Readers.size() == 1) {
++    if (Readers.size() == 1 && Readers[0].Added) {
++        // Single deleted segment should never happen, don't use OneLeft with it
+         OneLeft = true;
+     } else {
+         for (size_t i = 0; i < Readers.size(); i++) {
+@@ -1536,17 +1537,13 @@ void TMultiDeltaReader::Consume(ui32 rdrId, TReaderRef& rdr) {
+     }
+ }
+ 
+-bool TMultiDeltaReader::Read(ui64& docId, ui32& freq) {
++bool TMultiDeltaReader::Read(ui64& docId, i64& freq) {
+     Y_ENSURE(Started);
+     if (OneLeft) {
+-        if (!Readers[0].Added) {
+-            // Single deleted segment = should not happen, but empty
+-            ui64 unusedDoc = 0;
+-            ui32 unusedFreq = 1;
+-            while (Readers[0].Reader->Read(unusedDoc, unusedFreq)) {
+-            }
+-        }
+-        return Readers[0].Reader->Read(docId, freq);
++        ui32 ufreq = 0;
++        bool ok = Readers[0].Reader->Read(docId, ufreq);
++        freq = ufreq;
++        return ok;
+     }
+     TItem cur = NextItem;
+     while (Items.size() > 0) {
+@@ -1555,12 +1552,11 @@ bool TMultiDeltaReader::Read(ui64& docId, ui32& freq) {
+             // Add frequencies
+             cur.Freq += NextItem.Freq;
+         } else {
+-            if (cur.Freq > 0) {
+-                // Finished, item has positive frequency (not canceled by updates)
++            if (cur.Freq != 0) {
++                // Finished, item has non-zero frequency (not self-canceled by updates)
+                 // Leave NextItem as is
+                 docId = cur.DocId;
+-                Y_ENSURE(cur.Freq <= Max<ui32>(), "Merged fulltext frequency exceeds ui32");
+-                freq = static_cast<ui32>(cur.Freq);
++                freq = cur.Freq;
+                 return true;
+             } else {
+                 // Scan the next item
+@@ -1569,16 +1565,28 @@ bool TMultiDeltaReader::Read(ui64& docId, ui32& freq) {
+         }
+     }
+     NextItem = {};
+-    if (cur.Freq > 0) {
+-        // Finished, item has positive frequency (not canceled by updates)
++    if (cur.Freq != 0) {
++        // Finished, item has non-zero frequency (not self-canceled by updates)
+         docId = cur.DocId;
+-        Y_ENSURE(cur.Freq <= Max<ui32>(), "Merged fulltext frequency exceeds ui32");
+-        freq = static_cast<ui32>(cur.Freq);
++        freq = cur.Freq;
+         return true;
+     }
+     return false;
+ }
+ 
++bool TMultiDeltaReader::ReadPositive(ui64& docId, ui32& ufreq) {
++    bool ok;
++    i64 freq = 0;
++    while (ok = Read(docId, freq)) {
++        if (freq > 0) {
++            Y_ENSURE(freq <= Max<ui32>(), "Merged fulltext frequency exceeds ui32");
++            ufreq = (ui32)freq;
++            return true;
++        }
++    }
++    return false;
++}
++
+ }
+ 
+ template<> inline
+```
+
+**File**: `ydb/core/base/fulltext.h` (modified, +5/-10)
+```diff
+@@ -41,13 +41,7 @@ class TDeltaWriter {
+     TConstArrayRef<ui8> GetBuf() const;
+ };
+ 
+-class IDeltaReader {
+-public:
+-    virtual ~IDeltaReader() = default;
+-    virtual bool Read(ui64& docId, ui32& freq) = 0;
+-};
+-
+-class TDeltaReader: public IDeltaReader {
++class TDeltaReader {
+     TConstArrayRef<ui8> Buf;
+     size_t Pos = 0;
+     ui64 LastId = 0;
+@@ -58,13 +52,13 @@ class TDeltaReader: public IDeltaReader {
+     ui64 SavedLastId = 0;
+ public:
+     TDeltaReader(TConstArrayRef<ui8> buf, bool withFreq, bool sign);
+-    bool Read(ui64& docId, ui32& freq) override;
++    bool Read(ui64& docId, ui32& freq);
+     void Save();
+     void Restore();
+     void SetMaxId(ui64 maxId);
+ };
+ 
+-class TMultiDeltaReader: public IDeltaReader {
++class TMultiDeltaReader {
+     struct TReaderRef {
+         TDeltaReader *Reader;
+         bool Added = false;
+@@ -101,7 +95,8 @@ class TMultiDeltaReader: public IDeltaReader {
+     void SetMaxId(ui64 maxId);
+     void Start();
+     void Stop();
+-    bool Read(ui64& docId, ui32& freq);
++    bool Read(ui64& docId, i64& freq);
++    bool ReadPositive(ui64& docId, ui32& freq);
+ };
+ 
+ }
+```
+
+**File**: `ydb/core/base/ut/fulltext_ut.cpp` (modified, +49/-18)
+```diff
+@@ -38,7 +38,7 @@ namespace NKikimr::NFulltext {
+ 
+         struct TDeltaItem {
+             ui64 DocId;
+-            ui32 Freq;
++            i64 Freq;
+         };
+ 
+         struct TGeneration {
+@@ -55,7 +55,7 @@ namespace NKikimr::NFulltext {
+             return TVector<ui8>(writer.GetBuf().begin(), writer.GetBuf().end());
+         }
+ 
+-        TVector<TDeltaItem> Merge(const TVector<TGeneration>& generations, bool withFreq = true) {
++        TVector<TDeltaItem> MergeImpl(const TVector<TGeneration>& generations, bool withFreq, bool positiveOnly) {
+             TVector<TVector<ui8>> encoded;
+             encoded.reserve(generations.size());
+ 
+@@ -69,13 +69,30 @@ namespace NKikimr::NFulltext {
+ 
+             TVector<TDeltaItem> result;
+             ui64 docId = 0;
+-            ui32 freq = 0;
+-            while (reader.Read(docId, freq)) {
+-                result.push_back({docId, freq});
++            if (positiveOnly) {
++                ui32 freq = 0;
++                while (reader.ReadPositive(docId, freq)) {
++                    result.push_back({docId, freq});
++                }
++            } else {
++                i64 freq = 0;
++                while (reader.Read(docId, freq)) {
++                    result.push_back({docId, freq});
++                }
+             }
+             return result;
+         }
+ 
++        // Signed merge: negatives are nets canceled by deletes, not postings.
++        TVector<TDeltaItem> Merge(const TVector<TGeneration>& generations, bool withFreq = true) {
++            return MergeImpl(generations, withFreq, false);
++        }
++
++        // The path used by compaction and KQP: only positive frequencies become postings.
++        TVector<TDeltaItem> MergePositive(const TVector<TGeneration>& generations, bool withFreq = true) {
++            return MergeImpl(generations, withFreq, true);
++        }
++
+         TVector<TDeltaItem> RoundTrip(const TVector<TDeltaItem>& items, bool withFreq, bool sign = false) {
+             TDeltaWriter writer;
+             writer.Reset(withFreq, sign);
+@@ -170,7 +187,7 @@ namespace NKikimr::NFulltext {
+             rdr.Add(false, wr2.GetBuf());
+             rdr.Start();
+             ui64 docId;
+-            ui32 freq;
++            i64 freq;
+             for (ui64 i = 1; i <= 100; i++) {
+                 if (i >= 5 && i <= 25 && !((i - 5) % 2)) {
+                     continue;
+@@ -295,7 +312,7 @@ namespace NKikimr::NFulltext {
+ 
+             TVector<TDeltaItem> actual;
+             ui64 docId = 0;
+-            ui32 freq = 0;
++            i64 freq = 0;
+             while (reader.Read(docId, freq)) {
+                 actual.push_back({docId, freq});
+             }
+@@ -326,8 +343,8 @@ namespace NKikimr::NFulltext {
+                     // Mix a dense head with a sparse tail. Repeated ids occur across generations, while
+                     // every individual segment remains strictly sorted as required by TDeltaWriter.
+                     const ui64 docId = (nextRandom() & 1)
+-                                           ? nextRandom() % 128
+-                                           : (nextRandom() % 128) * (1ULL << (nextRandom() % 40));
++                        ? nextRandom() % 128
++                        : (nextRandom() % 128) * (1ULL << (nextRandom() % 40));
+                     uniqueItems[docId] = 1 + nextRandom() % 31;
+                 }
+                 for (const auto& [docId, freq] : uniqueItems) {
+@@ -339,21 +356,31 @@ namespace NKikimr::NFulltext {
+ 
+             TVector<TDeltaItem> expected;
+             for (const auto& [docId, freq] : reference) {
+-                if (freq > 0) {
+-                    expected.push_back({docId, static_cast<ui32>(freq)});
++                if (freq != 0) {
++                    expected.push_back({docId, freq});
+                 }
+             }
+             const auto compacted = Merge(generations);
+             AssertDeltaItemsEqual(compacted, expected);
+ 
++            // Compaction writes only positive frequencies, so the canonical segment drops the
++            // negative nets that the signed merge reports.
++            TVector<TDeltaItem> canonical;
++            for (const auto& item : compacted) {
++                if (item.Freq > 0) {
++                    canonical.push_back(item);
++                }
++            }
++            AssertDeltaItemsEqual(MergePositive(generations), canonical);
++
+             // Compacting the canonical single add segment again is byte-for-byte and logically idempotent.
+-            const auto compactedAgain = Merge({TGeneration{.Added = true, .Items = compacted}});
+-            AssertDeltaItemsEqual(compactedAgain, compacted);
+-            UNIT_ASSERT(Encode(compactedAgain) == Encode(compacted));
++            const auto compactedAgain = Merge({TGeneration{.Added = true, .Items = canonical}});
++            AssertDeltaItemsEqual(compactedAgain, canonical);
++            UNIT_ASSERT(Encode(compactedAgain) == Encode(canonical));
+         }
+ 
+         Y_UNIT_TEST(MultiDeltaReade
+```
+
+**File**: `ydb/core/kqp/runtime/kqp_full_text_source.cpp` (modified, +3/-3)
+```diff
+@@ -957,7 +957,7 @@ class TCompactTokenStream: public TTokenStream<TDocId> {
+                     Reader.SetMaxId((ui64)std::numeric_limits<TDocId>::max());
+                     Started = true;
+                     Reader.Start();
+-                    if (Reader.Read(CurDocId, CurFreq)) {
++                    if (Reader.ReadPositive(CurDocId, CurFreq)) {
+                         TotalFreq++;
+                         break;
+                     }
+@@ -978,7 +978,7 @@ class TCompactTokenStream: public TTokenStream<TDocId> {
+                 Reader.SetMaxId((ui64)maxId);
+                 Started = true;
+                 Reader.Start();
+-                if (!Reader.Read(CurDocId, CurFreq)) {
++                if (!Reader.ReadPositive(CurDocId, CurFreq)) {
+                     // Segment may be logically empty, then we have to switch to the next one
+                     FreeReader();
+                 } else {
+@@ -1059,7 +1059,7 @@ class TCompactTokenStream: public TTokenStream<TDocId> {
+         if (!Started) {
+             return StartReader();
+         }
+-        if (!Reader.Read(CurDocId, CurFreq)) {
++        if (!Reader.ReadPositive(CurDocId, CurFreq)) {
+             FreeReader();
+             return StartReader();
+         }
+```
+
+**File**: `ydb/core/kqp/ut/indexes/common/kqp_indexes_compact_common.cpp` (modified, +1/-1)
+```diff
+@@ -52,7 +52,7 @@ TString FormatFulltextIndex(TKikimrRunner& kikimr, const TString& name, bool wit
+             ui64 docId;
+             ui32 freq;
+             auto& list = tokens[lastToken];
+-            while (mr.Read(docId, freq)) {
++            while (mr.ReadPositive(docId, freq)) {
+                 list[docId] = freq;
+             }
+             segments.clear();
+```
+
+**File**: `ydb/core/tablet_flat/flat_ops_compact.h` (modified, +57/-28)
+```diff
+@@ -119,6 +119,16 @@ namespace NTabletFlatExecutor {
+             }
+         };
+ 
++        struct TFtSegment {
++            ui64 MaxId;
++            TVector<ui8> Buf;
++
++            TFtSegment(NFulltext::TDeltaWriter& wr):
++                MaxId(wr.GetMaxId()),
++                Buf(wr.GetBuf().begin(), wr.GetBuf().end()) {
++            }
++        };
++
+         // Fulltext compaction state
+         TSerializedCellVec FtCurrentPrefix;
+         TString FtCurrentToken;
+@@ -137,8 +147,8 @@ namespace NTabletFlatExecutor {
+         // We have to preserve delete markers (removed segments) on non-final compaction (!Conf->Params->IsFinal)
+         ui64 RemovedGen = 0;
+         size_t RemovedDeltas = 0;
+-        NFulltext::TMultiDeltaReader RemovedMerger;
+         NFulltext::TDeltaWriter RemovedWriter;
++        TVector<TFtSegment> RemovedSegments, AddedSegments;
+ 
+         const TCompactCfg* Conf;
+         TIntrusiveConstPtr<TScheme> Scheme;
+@@ -277,12 +287,12 @@ namespace NTabletFlatExecutor {
+                     FtMerger.Start();
+                     ui64 docId = 0;
+                     ui32 freq = 0;
+-                    while (FtMerger.Read(docId, freq)) {
++                    while (FtMerger.ReadPositive(docId, freq)) {
+                         FtWriter.Add(docId, freq);
+                         if (FtWriter.GetCount() >= Conf->FulltextMaxSegment) {
+                             // Flush current segment
+                             // It's the final level, so we don't have to preserve deltas here
+-                            WriteFulltextSegment(FtWriter, true, std::numeric_limits<NTableIndex::NFulltext::TGen>::max());
++                            WriteFulltextSegment(FtWriter.GetMaxId(), FtWriter.GetBuf(), true, std::numeric_limits<NTableIndex::NFulltext::TGen>::max());
+                             FtWriter.Reset(Conf->FulltextWithRelevance, Conf->FulltextKeySigned);
+                         }
+                     }
+@@ -328,10 +338,7 @@ namespace NTabletFlatExecutor {
+             Writer->EndKey();
+         }
+ 
+-        // Write a single merged fulltext segment through Writer
+-        void WriteFulltextSegment(const NFulltext::TDeltaWriter& wr, bool added, NTableIndex::NFulltext::TGen gen) {
+-            ui64 maxId = wr.GetMaxId();
+-
++        void WriteFulltextSegment(ui64 maxId, TConstArrayRef<ui8> segBuf, bool added, NTableIndex::NFulltext::TGen gen) {
+             // Build key cells: (token, gen, maxId) — gen before maxId
+             TSmallVec<TCell> keyCells(FtCurrentPrefix.GetCells().begin(), FtCurrentPrefix.GetCells().end());
+             keyCells.push_back(TCell(FtCurrentToken.data(), FtCurrentToken.size()));
+@@ -351,7 +358,6 @@ namespace NTabletFlatExecutor {
+             rs.Set(FtAddedPos, NTable::ECellOp::Set, TCell::Make(added));
+ 
+             // Set __ydb_segment = merged segment data
+-            auto segBuf = wr.GetBuf();
+             rs.Set(FtSegmentPos, NTable::ECellOp::Set, TCell((const char*)segBuf.data(), segBuf.size()));
+ 
+             Writer->BeginKey(keyCells);
+@@ -363,7 +369,6 @@ namespace NTabletFlatExecutor {
+             if (!FtMergerStarted) {
+                 FtMergerStarted = true;
+                 FtMerger.Reset(Conf->FulltextWithRelevance, Conf->FulltextKeySigned);
+-                RemovedMerger.Reset(Conf->FulltextWithRelevance, Conf->FulltextKeySigned);
+                 AddedDeltas = 0;
+                 RemovedDeltas = 0;
+                 AddedGen = std::numeric_limits<NTableIndex::NFulltext::TGen>::max();
+@@ -378,14 +383,13 @@ namespace NTabletFlatExecutor {
+                         // Skip erased keys
+                         continue;
+                     }
++                    FtMerger.Add(ver.Added, TConstArrayRef<ui8>((const ui8*)ver.Segment.data(), ver.Segment.size()));
+                     if (Conf->Params->IsFinal || ver.Added) {
+-                        FtMerger.Add(ver.Added, TConstArrayRef<ui8>((const ui8*)ver.Segment.data(), ver.Segment.size()));
+                         if (!Conf->Params->IsFinal && AddedGen > key.Gen) {
+                             AddedGen = key.Gen;
+                         }
+                         AddedDeltas++;
+                     } else {
+-                        RemovedMerger.Add(true, TConstArrayRef<ui8>((const ui8*)ver.Segment.data(), ver.Segment.size()));
+                         if (RemovedGen > key.Gen) {
+                             RemovedGen = key.Gen;
+                         }
+@@ -420,17 +424,29 @@ namespace NTabletFlatExecutor {
+                 }
+             }
+             if (RemovedDeltas > 0) {
+-                RemovedMerger.Start();
+-                FlushSegments(RemovedMerger, RemovedWriter, false, RemovedGen);
++                // Flush and accumulate in RemovedSegments/AddedSegments
++                FlushSegments();
++                for (auto& seg: RemovedSegments) {
++                    WriteFulltextSegment(seg.MaxId, seg.Buf, false, RemovedGen);
++                }
++                if (RemovedWriter.GetCount() > 0) {
+
+```
+
+**File**: `ydb/core/tablet_flat/ut/ut_compaction_fulltext.cpp` (modified, +105/-3)
+```diff
+@@ -255,6 +255,9 @@ namespace {
+     // Read all fulltext rows from compacted output
+     TVector<TFtRow> ReadFulltextRows(const TPartEggs& eggs) {
+         TVector<TFtRow> rows;
++        if (eggs.Parts.empty()) {
++            return rows;
++        }
+ 
+         NTest::TWrapPart wrap(eggs);
+         NTest::TTestEnv env;
+@@ -291,6 +294,21 @@ namespace {
+         return rows;
+     }
+ 
++    i64 DocumentBalance(const TVector<TFtRow>& rows, ui64 docId, TStringBuf prefix = {}) {
++        i64 balance = 0;
++        for (const auto& row : rows) {
++            if (row.RowOp != ERowOp::Upsert || row.Prefix != prefix) {
++                continue;
++            }
++            for (ui64 id : row.DocIds) {
++                if (id == docId) {
++                    balance += row.Added ? 1 : -1;
 +                }
 +            }
 +        }
-+
-         Y_UNIT_TEST(ConstructionResourceLimits) {
-             auto settings = MakeSettings();
-             auto* vector = settings.mutable_settings();
-```
-
-**File**: `ydb/core/protos/flat_scheme_op.proto` (modified, +11/-1)
-```diff
-@@ -440,6 +440,9 @@ message TTableDescription {
-     // Actual number of table partitions (shards), always filled in describe
-     // results, so clients don't need to request the TablePartitions list.
-     optional uint64 PartitionCount = 55;
-+
-+    // Local graph of the logical index owning this physical posting table.
-+    optional TLocalHnswIndexDescription LocalHnswIndex = 56;
- }
- 
- message TCompressionOptions {
-@@ -1386,7 +1389,7 @@ message THnswIndexDescription {
-     // Includes the routing tree settings as well as the local graph parameters.
-     optional Ydb.Table.KMeansTreeSettings Settings = 1;
- 
--    // Set by SchemeShard from the posting-table schema for DataShard graph builds.
-+    // Set in LocalHnswIndex by SchemeShard for DataShard graph builds.
-     // This is the posting-table column ID, which may differ from the base table's.
-     optional uint32 EmbeddingColumnId = 2;
- 
-@@ -1396,6 +1399,13 @@ message THnswIndexDescription {
-     optional string IndexPath = 4;
- }
- 
-+message TLocalHnswIndexDescription {
-+    // Identity of the logical index owning this graph, not a child of this table.
-+    optional NKikimrProto.TPathID IndexId = 1;
-+    optional uint64 SchemaVersion = 2;
-+    optional THnswIndexDescription HnswIndexDescription = 3;
-+}
-+
- message TFulltextIndexDescription {
-     optional Ydb.Table.FulltextIndexSettings Settings = 1;
-     // When true, the fulltext index uses the __ydb_row_id Uint64 column of the main table as doc_id
-```
-
-**File**: `ydb/core/protos/tx_datashard.proto` (modified, +6/-0)
-```diff
-@@ -1863,6 +1863,8 @@ message TEvLocalKMeansRequest {
-     optional bool OverlapOutForeign = 26;
- 
-     optional NKikimrTx.TKeyRange KeyRange = 27;
-+
-+    optional NKikimrSchemeOp.EIndexType IndexType = 28 [default = EIndexTypeGlobalVectorKmeansTree];
- }
- 
- message TEvLocalKMeansResponse {
-@@ -1921,6 +1923,8 @@ message TEvReshuffleKMeansRequest {
-     optional bool OverlapOutForeign = 20;
- 
-     optional NKikimrTx.TKeyRange KeyRange = 21;
-+
-+    optional NKikimrSchemeOp.EIndexType IndexType = 22 [default = EIndexTypeGlobalVectorKmeansTree];
- }
- 
- message TEvReshuffleKMeansResponse {
-@@ -2049,6 +2053,8 @@ message TEvPrefixKMeansRequest {
- 
-     optional bool Adaptive = 25;
-     optional uint32 Levels = 26;
-+
-+    optional NKikimrSchemeOp.EIndexType IndexType = 27 [default = EIndexTypeGlobalVectorKmeansTree];
- }
- 
- message TEvPrefixKMeansResponse {
-```
-
-**File**: `ydb/core/tx/datashard/backup_restore_common.h` (modified, +17/-5)
-```diff
-@@ -24,11 +24,23 @@ class TBackupRestoreUnitBase : public TExecutionUnit {
-     virtual void ResetWaiting(TOperation::TPtr op) = 0;
-     virtual bool Run(TOperation::TPtr op, TTransactionContext& txc, const TActorContext& ctx) = 0;
- 
-+    // Most backup/restore Run() failures mean "nothing was started" and the
-+    // unit is done. Units that perform flat-table reads may instead need the
-+    // transaction restarted after a page fault.
-+    virtual EExecutionStatus RunFailureStatus() const {
-+        return EExecutionStatus::Executed;
++        return balance;
 +    }
 +
-     virtual bool HasResult(TOperation::TPtr op) const = 0;
-     virtual bool ProcessResult(TOperation::TPtr op, const TActorContext& ctx) = 0;
+ } // anonymous namespace
  
-     virtual void Cancel(TActiveTransaction* tx, const TActorContext& ctx) = 0;
+ Y_UNIT_TEST_SUITE(TFulltextCompaction) {
+@@ -560,15 +578,15 @@ Y_UNIT_TEST_SUITE(TFulltextCompaction) {
  
-+    void ScheduleRestart(TOperation::TPtr op, const TActorContext& ctx) {
-+        op->SetWaitingForRestartFlag();
-+        ctx.Schedule(TDuration::Seconds(1), new TDataShard::TEvPrivate::TEvRestartOperation(op->GetTxId()));
-+    }
-+
-     void Abort(TOperation::TPtr op, const TActorContext& ctx, const TString& error) {
-         TActiveTransaction* tx = dynamic_cast<TActiveTransaction*>(op.Get());
-         Y_ENSURE(tx, "cannot cast operation of kind " << op->GetKind());
-@@ -65,8 +77,9 @@ class TBackupRestoreUnitBase : public TExecutionUnit {
+         UNIT_ASSERT_VALUES_EQUAL(rows[0].Token, "hello");
+         UNIT_ASSERT_VALUES_EQUAL(rows[0].Gen, 10);
+-        UNIT_ASSERT_VALUES_EQUAL(rows[0].MaxId, 150);
++        UNIT_ASSERT_VALUES_EQUAL(rows[0].MaxId, 50);
+         UNIT_ASSERT_VALUES_EQUAL(rows[0].Added, false);
+-        UNIT_ASSERT(rows[0].DocIds == (TVector<ui64>{5, 10, 50, 150}));
++        UNIT_ASSERT(rows[0].DocIds == (TVector<ui64>{50}));
+ 
+         UNIT_ASSERT_VALUES_EQUAL(rows[1].Token, "hello");
+         UNIT_ASSERT_VALUES_EQUAL(rows[1].Gen, 20);
+         UNIT_ASSERT_VALUES_EQUAL(rows[1].MaxId, 200);
+         UNIT_ASSERT_VALUES_EQUAL(rows[1].Added, true);
+-        UNIT_ASSERT(rows[1].DocIds == (TVector<ui64>{1, 5, 10, 100, 101, 150, 200}));
++        UNIT_ASSERT(rows[1].DocIds == (TVector<ui64>{1, 100, 101, 200}));
      }
  
- public:
--    TBackupRestoreUnitBase(EExecutionUnitKind kind, TDataShard& self, TPipeline& pipeline)
--        : TExecutionUnit(kind, false, self, pipeline)
-+    TBackupRestoreUnitBase(EExecutionUnitKind kind, TDataShard& self, TPipeline& pipeline,
-+            bool executionMightRestart = false)
-+        : TExecutionUnit(kind, executionMightRestart, self, pipeline)
-     {
+     Y_UNIT_TEST(FinalWithDeletes) {
+@@ -597,6 +615,90 @@ Y_UNIT_TEST_SUITE(TFulltextCompaction) {
+         UNIT_ASSERT(rows[0].DocIds == (TVector<ui64>{1, 100, 101, 200}));
      }
  
-@@ -100,7 +113,7 @@ class TBackupRestoreUnitBase : public TExecutionUnit {
-                 {"tabletId", DataShard.TabletID()});
- 
-             if (!Run(op, txc, ctx)) {
--                return EExecutionStatus::Executed;
-+                return RunFailureStatus();
-             }
- 
-             SetWaiting(op);
-@@ -117,8 +130,7 @@ class TBackupRestoreUnitBase : public TExecutionUnit {
-                 PersistResult(op, txc);
-             } else {
-                 Y_DEBUG_ABORT_UNLESS(!HasResult(op));
--                op->SetWaitingForRestartFlag();
--                ctx.Schedule(TDuration::Seconds(1), new TDataShard::TEvPrivate::TEvRestartOperation(op->GetTxId()));
-+                ScheduleRestart(op, ctx);
-             }
-         }
- 
++    Y_UNIT_TEST(NonFinalRepeatedDeletes) {
++        auto lay = MakeFulltextLayout();
++        auto segment = MakeSegment({51});
++        auto base = NTest::TPartCook(lay, { false, 4096 }, {}, TEpoch::FromIndex(1))
++            .Ver({100, 1}).AddN(TString("hello"), Max<ui64>(), 51_u64, true, segment)
++            .Finish();
++        auto deltas = NTest::TPartCook(lay, { false, 4096 }, {}, TEpoch::FromIndex(2))
++            .Ver({100, 1}).AddN(TString("hello"), 10_u64, 51_u64, false, segment)
++            .Ver({100, 1}).AddN(TString("hello"), 20_u64, 51_u64, true, segment)
++            .Ver({100, 1}).AddN(TString("hello"), 30_u64, 51_u64, false, segment)
++            .Finish();
++
++        // The base insert is outside this compaction. Both deletes must retain their weight.
++        auto partial = TFulltextCompaction(false).Do(deltas, {100, 1});
++        UNIT_ASSERT_VALUES_EQUAL(DocumentBalance(ReadFulltextRows(partial), 51), -1);
++
++        auto direct = TFulltextCompaction(true).Do(lay.RowScheme(), { &base, &deltas }, {100, 1});
++        UNIT_ASSERT(ReadFulltextRows(direct).empty());
++        auto staged = TFulltextCompaction(true).Do(lay.RowScheme(), { &base, &partial }, {100, 1});
++        UNIT_ASSERT_C(ReadFulltextRows(staged).empty(), "Partial compaction resurrected a deleted document");
++    }
++
++    Y_UNIT_TEST(NonFinalReAdd) {
++        auto lay = MakeFulltextLayout();
++
++        auto segAdded1 = MakeSegment({1, 5, 10});
++        auto segAdded2 = MakeSegment({10});
++        auto segRemoved1 = MakeSegment({10, 20});
++
++        auto part = NTest::TPartCook(lay, { false, 4096 })
++            .Ver({100, 1}).AddN(TString("hello"), 10_u64, 100_u64, true, segAdded1)
++            .Ver({50, 1}).AddN(TString("hello"), 20_u64, 50_u64, false, segRemoved1)
++            .Ver({60, 1}).AddN(TString("hello"), 30_u64, 200_u64, true, segAdded2)
++            .Finish();
++
++        auto result = TFulltextCompaction(false /* final */).Do(part, {100, 1});
++        auto rows = ReadFulltextRows(result);
++
++        UNIT_ASSERT_VALUES_EQUAL(rows.size(), 2);
++        UNIT_ASSERT_VALUES_EQUAL(rows[0].Token, "hello");
++        UNIT_ASSERT_VALUES_EQUAL(rows[0].MaxId, 20);
++        UNIT_ASSERT_VALUES_EQUAL(rows[0].Added, false);
++        UNIT_ASSERT(rows[0].DocIds == (TVector<ui64>{20}));
++
++        UNIT_ASSERT_VALUES_EQUAL(rows[1].Token, "hello");
++        UNIT_ASSERT_VALUES_EQUAL(rows[1].MaxId, 10);
++        UNIT_ASSERT_VALUES_EQUAL(rows[1].Added, true);
++        UNIT_ASSERT(rows[1].DocIds == (TVector<ui64>{1, 5, 10}));
++    }
++
++    Y_UNIT_TEST(NonFinalPrefixedRepeatedDeltas) {
++        auto lay = MakePrefixedFulltextLayout();
++        auto segment = MakeSegment({51});
++        auto base = NTest::TPartCook(lay, { false, 4096 }, {}, TEpoch::FromIndex(1))
++            .Ver({100, 1}).AddN(TString("hello"), Max<ui64>(), 51_u64, true, segment, TString("user1"))
++            .Finish();
++        auto deltas = NTest::TPartCook(lay, { false, 4096 }, {}, TEpoch::FromIndex(2))
++            
 ```
 
-**File**: `ydb/core/tx/datashard/build_index/kmeans_helper.cpp` (modified, +34/-1)
+**File**: `ydb/core/tx/datashard/datashard_user_db.h` (modified, +0/-4)
 ```diff
-@@ -82,6 +82,34 @@ void AddRowToDataWithForeign(TBufferData& buffer, TClusterId parent, TArrayRef<c
-     buffer.AddRow(pk, data, origKey);
+@@ -13,10 +13,6 @@ namespace NACLib {
+     class TUserContext;
  }
  
-+google::protobuf::RepeatedPtrField<TProtoStringType> MakeUploadDataColumns(const TUserTable& table,
-+    const TProtoStringType& embedding, const google::protobuf::RepeatedPtrField<TProtoStringType>& data,
-+    NKikimrSchemeOp::EIndexType indexType,
-+    const google::protobuf::RepeatedPtrField<TProtoStringType>& pkColumns)
-+{
-+    auto result = data;
-+    if (indexType != NKikimrSchemeOp::EIndexTypeGlobalHnsw
-+            || std::find(data.begin(), data.end(), embedding) != data.end()) {
-+        return result;
-+    }
-+    // HNSW builds its graph from the posting-table vectors. Embeddings in the
-+    // original primary key already travel in key cells, including prefix scans
-+    // whose intermediate table has a different primary key.
-+    if (!pkColumns.empty()) {
-+        if (std::find(pkColumns.begin(), pkColumns.end(), embedding) != pkColumns.end()) {
-+            return result;
-+        }
-+    } else {
-+        for (const auto tag : table.KeyColumnIds) {
-+            if (table.Columns.at(tag).Name == embedding) {
-+                return result;
-+            }
-+        }
-+    }
-+    *result.Add() = embedding;
-+    return result;
-+}
-+
- TTags MakeScanTags(const TUserTable& table, const TProtoStringType& embedding,
-     const google::protobuf::RepeatedPtrField<TProtoStringType>& data, bool forBuild, NTable::TPos& embeddingPos,
-     NTable::TPos& dataPos, NTable::TPos* isForeignPos)
-@@ -100,7 +128,12 @@ TTags MakeScanTags(const TUserTable& table, const TProtoStringType& embedding,
-         dataPos = result.size();
-     } else {
-         embeddingPos = result.size();
--        dataPos = result.size() + (forBuild ? 0 : 1); // always include embedding in build tables
-+        // The embedding is already emitted as part of sourcePk when it belongs
-+        // to the main table key. Keep scanning it for distance calculations,
-+        // but don't duplicate it among the output value cells.
-+        const bool embeddingIsKey = std::find(table.KeyColumnIds.begin(), table.KeyColumnIds.end(), embeddingTag)
-+            != table.KeyColumnIds.end();
-+        dataPos = result.size() + (!forBuild || embeddingIsKey);
-         result.push_back(embeddingTag);
-     }
-     for (const auto& column : data) {
+-namespace NKikimr::NFulltext {
+-    class IDeltaReader;
+-};
+-
+ namespace NKikimr::NMiniKQL {
+     struct TEngineHostCounters;
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #59977** (2026-11-19): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #59976** (2026-11-19): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #59975** (2026-11-19): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
-- **PR #59974** (2026-11-19): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #59970** (2026-11-18): [Backport stable-26-3-1] PR #59966: Apply shared TSAN suppressions to YDB recipe tests (@ydbot)
-- **PR #59969** (2026-11-18): [Backport stable-26-4-1] PR #59966: Apply shared TSAN suppressions to YDB recipe tests (@ydbot)
+- **PR #60106** (2026-11-20): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #60103** (2026-11-20): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
+- **PR #60102** (2026-11-20): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #60101** (2026-11-20): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #60100** (2026-11-20): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
+- **PR #60090** (2026-11-20): Sync branches 261120-0046: main to prestable-27-1-1 (@ydbot)
 
 ---
 
@@ -2760,35 +2861,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Hash join] Fix SIGILL on CPUs without AVX2: apply AVX2 only to the SIMD layout
+## X. YDBBUGS-1181: Keep PQ metacache fallback indexes aligned
 
 **RULE**:
-When implementing operations in `ydb/library/yql/dq/comp_nodes/hash_join_utils/packing_simd_impl.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/client/server/msgbus_server_pq_metacache.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7dfbe704`: [Hash join] Fix SIGILL on CPUs without AVX2: apply AVX2 only to the SIMD layout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `157c71b6`: YDBBUGS-1181: Keep PQ metacache fallback indexes aligned. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/library/yql/dq/comp_nodes/hash_join_utils/packing_simd_impl.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/client/server/msgbus_server_pq_metacache.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include "tuple_simd_target.h"
-TUPLE_LAYOUT_TARGET_PUSH
-
-
-TUPLE_LAYOUT_TARGET_POP
+            // Index must follow the SchemeCache entry. A continue that skipped
+            // index++ paired a later fallback with an earlier topic and could
+            // retry an entry whose status was already Ok.
+            for (ui64 index = 0; index < Result->ResultSet.size(); ++index) {
+                const auto& entry = Result->ResultSet[index];
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            ui64 index = 0;
+            for (const auto& entry : Result->ResultSet) {
+                index++;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7dfbe704` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `157c71b6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

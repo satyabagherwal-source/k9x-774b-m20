@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T07:06:22.320Z",
+  "last_updated": "2026-11-20T07:15:05.721Z",
   "total_records": 2100,
   "domains": {
     "A": {
@@ -9940,8 +9940,8 @@
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "repository": "rook/rook",
-      "content_hash": "952e9c40350560d9637bd368cdf1e7ae90aaffd5be54896f78812da903cf0763",
-      "created_at": "2026-11-19T03:27:23.714Z"
+      "content_hash": "f4264e957ef1ab62591f8e7ee062d98d6ea9469778c3e6cf2f8c93f6a1cb0fdb",
+      "created_at": "2026-11-20T07:14:54.778Z"
     },
     "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants",
@@ -17192,8 +17192,8 @@
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "repository": "ydb-platform/ydb",
-      "content_hash": "9a48308c75a1f506bd9db960bf4bc25d11598fd5cc040234446d1dcc498387d3",
-      "created_at": "2026-11-19T01:47:21.233Z"
+      "content_hash": "70c33a10616f0e584a39aafd527f5089fdf444a78d11ef554579155a45499088",
+      "created_at": "2026-11-20T07:15:01.088Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -19521,8 +19521,8 @@
       "title": "Architecture Intelligence: rook-rook-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-learnings-architecture-intelligence-rook-rook-learnings-core-invariant.md",
       "repository": "rook-rook-learnings",
-      "content_hash": "872dca74eb9669b040b227dbcac626a3e49bc82809ba1a35b36770e001121928",
-      "created_at": "2026-11-19T03:27:27.863Z"
+      "content_hash": "ed26ba5c6c78b750782b83d1231e43bdfc70cd1e188a1b6aad74a7f91d9d8052",
+      "created_at": "2026-11-20T07:15:04.433Z"
     },
     "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-",
@@ -23253,8 +23253,8 @@
       "title": "Technical Construction Intelligence: ydb-platform-ydb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-learnings-technical-construction-intelligence-ydb-platform-ydb-.md",
       "repository": "ydb-platform-ydb-learnings",
-      "content_hash": "83b8e920e0739c0a57ac4602d42644e2e4e6e093f253cbc262093484d44b469f",
-      "created_at": "2026-11-19T01:47:31.981Z"
+      "content_hash": "853e017ffe592da85da2c8828231b41575792d467cb36dac138f0315413fd6e8",
+      "created_at": "2026-11-20T07:15:05.180Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants",
@@ -31196,8 +31196,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "30d6f1c3698523ccd77fa5a0ab419e02d8a753933dedbdc38f3e72e9128e4039",
-      "created_at": "2026-11-20T06:37:30.865Z"
+      "content_hash": "31af3475f82d7cd7af82a7bd37face6b923424a374d014edde1df17a99962511",
+      "created_at": "2026-11-20T07:15:05.721Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T07:06:22.497Z",
+  "last_updated": "2026-11-20T07:15:05.721Z",
   "total_verified_learnings": 9029,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22296,
+  "total_items": 22301,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213306,8 +213306,8 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "695364a0",
-      "content_hash": "702d9dd878f4d39fd6724b69b53091496655e56b27952d15f017012cc75a5c81",
+      "source_version": "e7bfa815",
+      "content_hash": "c36b19d8f89199a69dbc5c9ca931300d9faa6cc9cb830778432e517ff0e8c645",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
@@ -213335,6 +213335,11 @@
           "number": 9326,
           "title": "Empirical Invariant Guard in rgw-user-accounts.md",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9538,
+          "title": "Empirical Invariant Guard in activate-osd.sh",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213342,7 +213347,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T03:27:23.045Z",
+      "verified_at": "2026-11-20T07:14:54.223Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213384,10 +213389,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "repository": "rook/rook",
-      "source_version": "695364a0",
-      "content_hash": "952e9c40350560d9637bd368cdf1e7ae90aaffd5be54896f78812da903cf0763",
+      "source_version": "e7bfa815",
+      "content_hash": "f4264e957ef1ab62591f8e7ee062d98d6ea9469778c3e6cf2f8c93f6a1cb0fdb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T03:27:23.714Z"
+      "persisted_at": "2026-11-20T07:14:54.778Z"
     },
     "agent_contract-agent-contract-rook-rook-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-rook-rook-autonomous-specialist-persona",
@@ -213396,10 +213401,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/rook-rook-agent-contract-rook-rook-autonomous-specialist-persona.md",
       "title": "Agent Contract: rook/rook Autonomous Specialist Persona",
       "repository": "rook/rook",
-      "source_version": "695364a0",
-      "content_hash": "13299efc80ac24ff1c084227fa56d484b3096be0035a88eb6ce3157e4c0bbe57",
+      "source_version": "e7bfa815",
+      "content_hash": "5bf7e062648a9a60c093fda37dffb37f2919d7099432ca67b051dc8bc0ec6bb1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T03:27:23.890Z"
+      "persisted_at": "2026-11-20T07:14:54.930Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook",
@@ -213408,10 +213413,10 @@
       "relative_path": "08_VERIFICATION/rook-rook-verification-protocol-empirical-defect-shield-for-rook-rook.md",
       "title": "Verification Protocol: Empirical Defect Shield for rook/rook",
       "repository": "rook/rook",
-      "source_version": "695364a0",
-      "content_hash": "8767f62dd19db6e594a7e0025bb405e4e9a10630bc2e8dc96b7e387423be1bff",
+      "source_version": "e7bfa815",
+      "content_hash": "1d562ba68a465aa6d944cbe13270e058cac39db9bd1516a0061c897c7cc9f4b8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T03:27:24.044Z"
+      "persisted_at": "2026-11-20T07:14:55.059Z"
     },
     "learn-github-zama-ai-tfhe-rs": {
       "learning_id": "learn-github-zama-ai-tfhe-rs",
@@ -234709,8 +234714,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "ba1e7c3e",
-      "content_hash": "b8e6b7f516a9ed05cf84d07c36fa92db1b090bb9ddb85cd352a2b4ae280758c0",
+      "source_version": "7b95bfd8",
+      "content_hash": "f89a56be80377a11670eee46a482b9fc0a3af1936d72e46582ed8ab4c394d5f3",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -234728,6 +234733,11 @@
           "number": 9322,
           "title": "[Hash join] Fix SIGILL on CPUs without AVX2: apply AVX2 only to the SIMD layout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9539,
+          "title": "Keep PQ metacache fallback indexes aligned",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234735,7 +234745,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T01:47:20.728Z",
+      "verified_at": "2026-11-20T07:15:00.545Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234777,10 +234787,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "repository": "ydb-platform/ydb",
-      "source_version": "ba1e7c3e",
-      "content_hash": "9a48308c75a1f506bd9db960bf4bc25d11598fd5cc040234446d1dcc498387d3",
+      "source_version": "7b95bfd8",
+      "content_hash": "70c33a10616f0e584a39aafd527f5089fdf444a78d11ef554579155a45499088",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T01:47:21.233Z"
+      "persisted_at": "2026-11-20T07:15:01.088Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb",
@@ -234789,10 +234799,10 @@
       "relative_path": "08_VERIFICATION/ydb-platform-ydb-verification-protocol-empirical-defect-shield-for-ydb-platform-.md",
       "title": "Verification Protocol: Empirical Defect Shield for ydb-platform/ydb",
       "repository": "ydb-platform/ydb",
-      "source_version": "ba1e7c3e",
-      "content_hash": "cabd0becaca224dc9feb5ca680812f6b289b03b429adc832887720ebabaa5ee7",
+      "source_version": "7b95bfd8",
+      "content_hash": "a456787e180cdff1aa9bd035248fc9fd5cc072c0d3ea56631161e7e0edbf81ba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T01:47:21.371Z"
+      "persisted_at": "2026-11-20T07:15:01.236Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -242106,9 +242116,9 @@
       "title": "Architecture Intelligence: rook-rook-learnings Core Invariants",
       "repository": "rook-rook-learnings",
       "source_version": "HEAD",
-      "content_hash": "872dca74eb9669b040b227dbcac626a3e49bc82809ba1a35b36770e001121928",
+      "content_hash": "ed26ba5c6c78b750782b83d1231e43bdfc70cd1e188a1b6aad74a7f91d9d8052",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T03:27:27.863Z"
+      "persisted_at": "2026-11-20T07:15:04.433Z"
     },
     "agent_contract-agent-contract-rook-rook-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-rook-rook-learnings-autonomous-specialist-persona",
@@ -242118,9 +242128,9 @@
       "title": "Agent Contract: rook-rook-learnings Autonomous Specialist Persona",
       "repository": "rook-rook-learnings",
       "source_version": "HEAD",
-      "content_hash": "22398ac1d4200721be0e263e48324dc676281f4e54d51081feac998e518a3323",
+      "content_hash": "4c975719dbd022279b726de4297c5ccb13f0e20c3db26d5c7baeb6b5378a7580",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T03:27:28.062Z"
+      "persisted_at": "2026-11-20T07:15:04.591Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook-learnings",
@@ -242130,9 +242140,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rook-rook-learnings",
       "repository": "rook-rook-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d209f122ab96570406dcad882bf976b314c0eae285cef22ea639b65186a2ebc",
+      "content_hash": "538fb8e9d75cd8c858c5dba8d06c39fc888fba4e721839f2fcfaeac5a9fd129d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T03:27:28.219Z"
+      "persisted_at": "2026-11-20T07:15:04.714Z"
     },
     "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy": {
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
@@ -253533,9 +253543,9 @@
       "title": "Technical Construction Intelligence: ydb-platform-ydb-learnings Core Invariants",
       "repository": "ydb-platform-ydb-learnings",
       "source_version": "HEAD",
-      "content_hash": "83b8e920e0739c0a57ac4602d42644e2e4e6e093f253cbc262093484d44b469f",
+      "content_hash": "853e017ffe592da85da2c8828231b41575792d467cb36dac138f0315413fd6e8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T01:47:31.981Z"
+      "persisted_at": "2026-11-20T07:15:05.180Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb-learnings",
@@ -253545,9 +253555,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ydb-platform-ydb-learnings",
       "repository": "ydb-platform-ydb-learnings",
       "source_version": "HEAD",
-      "content_hash": "b76793cb09199df4fcab6b8eb46018ddc772eda6439fdab15de0cd380bb0a18b",
+      "content_hash": "d42d662cdc9bc8de5d21b53427f5c2f816e5a9fedb2fcb22ab18364cd62577e2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T01:47:32.121Z"
+      "persisted_at": "2026-11-20T07:15:05.320Z"
     },
     "rule-8694": {
       "learning_id": "rule-8694",
@@ -287885,9 +287895,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "30d6f1c3698523ccd77fa5a0ab419e02d8a753933dedbdc38f3e72e9128e4039",
+      "content_hash": "31af3475f82d7cd7af82a7bd37face6b923424a374d014edde1df17a99962511",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T06:37:30.865Z"
+      "persisted_at": "2026-11-20T07:15:05.721Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -301954,6 +301964,70 @@
       "content_hash": "27d4259b4ff5e1470039a8eeca8d1815523ee17391b55aa4524aee0d6bec1deb",
       "domain_letter": "J",
       "persisted_at": "2026-11-20T07:05:20.481Z"
+    },
+    "rule-9538": {
+      "learning_id": "rule-9538",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9538,
+      "title": "Empirical Invariant Guard in activate-osd.sh",
+      "source_url": "https://github.com/rook/rook",
+      "source_version": "e7bfa815",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T07:14:54.223Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-activate-osd-sh": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-activate-osd-sh",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9FJ2-empirical-invariant-guard-in-activate-osd-sh.md",
+      "title": "Empirical Invariant Guard in activate-osd.sh",
+      "repository": "rook-rook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9d1c683aa8564927249d63052e4c84c2f707d90170a43fbbb8ca1de4ce6e609e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T07:15:04.287Z"
+    },
+    "rule-9539": {
+      "learning_id": "rule-9539",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9539,
+      "title": "Keep PQ metacache fallback indexes aligned",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "7b95bfd8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T07:15:00.545Z"
+    },
+    "candidate_directive-keep-pq-metacache-fallback-indexes-aligned": {
+      "item_id": "candidate_directive-keep-pq-metacache-fallback-indexes-aligned",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9CY3-keep-pq-metacache-fallback-indexes-aligned.md",
+      "title": "Keep PQ metacache fallback indexes aligned",
+      "repository": "ydb-platform/ydb",
+      "source_version": "7b95bfd8",
+      "content_hash": "8b732084a464eb61a3f7e8f6da386600c29c77cc942889471d1b281beeabc246",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T07:15:00.943Z"
+    },
+    "candidate_directive-ydbbugs-1181-keep-pq-metacache-fallback-indexes-aligned": {
+      "item_id": "candidate_directive-ydbbugs-1181-keep-pq-metacache-fallback-indexes-aligned",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9G3V-ydbbugs-1181-keep-pq-metacache-fallback-indexes-aligned.md",
+      "title": "YDBBUGS-1181: Keep PQ metacache fallback indexes aligned",
+      "repository": "ydb-platform-ydb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f5ab76e50bec3872768ed2d9ede25e920a284581f3e8d0ecabdff44c2dca28f8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T07:15:05.038Z"
     }
   },
   "ai-builder-brain": {
