@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T20:49:51.117Z",
+  "updated_at": "2026-11-20T20:58:24.105Z",
   "stats": {
-    "total_discovered": 6713,
-    "approved_pending_harvest": 6353,
+    "total_discovered": 6714,
+    "approved_pending_harvest": 6354,
     "harvested_count": 0,
     "rejected_count": 360,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6311,
+      "COMMUNITY_AND_EXPERT": 6312,
       "OFFICIAL_DOCUMENTATION": 230,
       "STANDARDS_AND_SPECIFICATIONS": 119,
       "ENGINEERING_BLOGS": 5,
@@ -145189,6 +145189,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
         "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-1E52228E1C5C": {
+      "id": "SRC-1E52228E1C5C",
+      "url": "https://huggingface.co/thinkingmachines/Inkling-2-Mini",
+      "title": "https://huggingface.co/thinkingmachines/Inkling-2-Mini",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:58:24.105Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md",
+        "fileName": "hf-thinkingmachines-inkling-2-mini-learnings.md"
       }
     }
   }

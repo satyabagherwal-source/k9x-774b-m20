@@ -5270,3 +5270,7 @@ https://huggingface.co/AngelSlim/Hy4-flash-GGUF
 https://huggingface.co/apple/DepthPro2
 # [HUGGINGFACE-AI-MODELS] OVHaiLLM/Olala-v1.0-mini-7A1B (2011 score) - Verified Hugging Face Model: OVHaiLLM/Olala-v1.0-mini-7A1B (99 likes, 1021 downl
 https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-20T20:57:34.159Z] ---
+# [HUGGINGFACE-AI-MODELS] thinkingmachines/Inkling-2-Mini (996 score) - Verified Hugging Face Model: thinkingmachines/Inkling-2-Mini (86 likes, 136 down
+https://huggingface.co/thinkingmachines/Inkling-2-Mini

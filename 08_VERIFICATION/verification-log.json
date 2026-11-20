@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-9X3A",
-    "timestamp": "2026-11-18T17:27:58.150Z",
-    "repository": "BAAI/bge-m3",
-    "learningId": "learn-huggingface-baai-bge-m3",
-    "contentHash": "535ba67f34bc832e2152eca6b3ca28f1a347bd2a567474f4271a0f80e3f24978",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-AAR4",
-    "timestamp": "2026-11-18T17:28:15.856Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "83cc3075368c36191bdc69d6f3a50d0921122d6c2675e18808a299bd6429657c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-KWUE",
     "timestamp": "2026-11-18T17:36:31.046Z",
     "repository": "mfontanini/presenterm",
@@ -7490,6 +7460,36 @@
     "repository": "langchain4j/langchain4j",
     "learningId": "learn-github-langchain4j-langchain4j",
     "contentHash": "aeea712dcf6c21b63491ce7621df294cc4cdda09cfef1548476d4d153244cc17",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-NB8D",
+    "timestamp": "2026-11-20T20:57:40.765Z",
+    "repository": "thinkingmachines/Inkling-2-Mini",
+    "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini",
+    "contentHash": "eb53e52bf4dc18b9ebccce33741cedafe833339e36f17c44b8bf75b20abf498e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-NL04",
+    "timestamp": "2026-11-20T20:57:53.428Z",
+    "repository": "kgateway-dev/kgateway",
+    "learningId": "learn-github-kgateway-dev-kgateway",
+    "contentHash": "a0550e5efb0d916bbee6db06b5d2e4753f35c8a8bd4ddeac07051df4f35baf7b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T20:49:46.124Z",
+  "last_updated": "2026-11-20T20:57:53.440Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "8b9ad65e2f0b33ad5ce10923ea7102f0c52f1ac70a5b24b27321772cff1832b7",
-      "verified_at": "2026-11-19T18:20:00.527Z",
+      "content_hash": "a0550e5efb0d916bbee6db06b5d2e4753f35c8a8bd4ddeac07051df4f35baf7b",
+      "verified_at": "2026-11-20T20:57:53.440Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T18:20:00.527Z"
+      "last_updated": "2026-11-20T20:57:53.440Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -19739,6 +19739,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-20T16:56:27.356Z"
+    },
+    "thinkingmachines/Inkling-2-Mini": {
+      "repository": "thinkingmachines/Inkling-2-Mini",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-thinkingmachines-inkling-2-mini",
+      "content_hash": "eb53e52bf4dc18b9ebccce33741cedafe833339e36f17c44b8bf75b20abf498e",
+      "verified_at": "2026-11-20T20:57:40.778Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-20T20:57:40.778Z"
     }
   },
   "repos": {

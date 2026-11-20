@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-20T19:45:18.385Z",
+  "updated_at": "2026-11-20T20:58:24.074Z",
   "statistics": {
-    "total_nodes": 430,
+    "total_nodes": 431,
     "total_edges": 190,
     "domain_distribution": {
-      "D": 275,
+      "D": 276,
       "M": 1,
       "H": 65,
       "J": 22,
@@ -9612,6 +9612,28 @@
       ],
       "created_at": "2026-11-20T19:45:18.384Z",
       "updated_at": "2026-11-20T19:45:18.384Z"
+    },
+    "DOM-D-F66E1D4B": {
+      "id": "DOM-D-F66E1D4B",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): thinkingmachines/Inkling-2-Mini",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md`  \n> **Source**: huggingface ([https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md`  \n> **Source**: huggingface ([https",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-thinkingmachines-inkling-2-mini/hf-thinkingmachines-inkling-2-mini-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T20:57:56.677Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-thinkingmachines-inkling-2-mini)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-20T20:58:24.074Z",
+      "updated_at": "2026-11-20T20:58:24.074Z"
     }
   },
   "edges": [

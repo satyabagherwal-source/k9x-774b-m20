@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T20:49:52.560Z",
+  "last_updated": "2026-11-20T20:58:26.168Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T20:28:21.559Z",
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-20T14:36:10.608Z",
+      "processed_at": "2026-11-20T20:58:25.251Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -638,7 +638,7 @@
       "staged_for_review": 1
     },
     "kgateway-dev-kgateway-learnings.md": {
-      "processed_at": "2026-11-19T18:20:39.051Z",
+      "processed_at": "2026-11-20T20:58:24.517Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3621,9 +3621,14 @@
       "processed_at": "2026-11-20T19:25:15.820Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-thinkingmachines-inkling-2-mini-learnings.md": {
+      "processed_at": "2026-11-20T20:58:24.077Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2610,
-  "total_canonical_promoted": 432,
-  "total_staged_for_review": 1989
+  "total_dossiers_evaluated": 2613,
+  "total_canonical_promoted": 433,
+  "total_staged_for_review": 1991
 }

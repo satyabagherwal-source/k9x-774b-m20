@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T20:49:46.121Z",
-  "total_cycles_completed": 11073,
-  "total_learnings_persisted": 11073,
-  "total_rules_promoted": 10429,
+  "last_updated": "2026-11-20T20:57:53.437Z",
+  "total_cycles_completed": 11075,
+  "total_learnings_persisted": 11075,
+  "total_rules_promoted": 10430,
   "history": [
-    {
-      "timestamp": "2026-11-19T22:19:41.483Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T22:19:48.518Z",
-      "repository": "dosco/graphjin",
-      "learningId": "learn-github-dosco-graphjin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T22:27:35.644Z",
       "repository": "max-sixty/worktrunk",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-20T20:49:46.121Z",
       "repository": "langchain4j/langchain4j",
       "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T20:57:40.775Z",
+      "repository": "thinkingmachines/Inkling-2-Mini",
+      "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T20:57:53.437Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T20:49:52.410Z",
-  "total_records": 2171,
+  "last_updated": "2026-11-20T20:58:25.855Z",
+  "total_records": 2176,
   "domains": {
     "A": {
       "total": 17,
@@ -58,7 +58,7 @@
       ]
     },
     "D": {
-      "total": 873,
+      "total": 876,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -932,7 +932,10 @@
         "DOM-D-F2660B55",
         "domain_intelligence-research-knowledge-intelligence-hf-apple-depthpro2-learnings-core-invariants",
         "DOM-D-FE8131E1",
-        "domain_intelligence-research-knowledge-intelligence-hf-ovhaillm-olala-v1-0-mini-7a1b-learnings-core-"
+        "domain_intelligence-research-knowledge-intelligence-hf-ovhaillm-olala-v1-0-mini-7a1b-learnings-core-",
+        "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-mini-core-invariants",
+        "DOM-D-F66E1D4B",
+        "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-mini-learnings-cor"
       ]
     },
     "E": {
@@ -1399,7 +1402,7 @@
       ]
     },
     "H": {
-      "total": 509,
+      "total": 511,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1909,7 +1912,9 @@
         "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-core-invariants",
         "domain_intelligence-technical-construction-intelligence-sindresorhus-got-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-learnings-core-invariant",
-        "domain_intelligence-technical-construction-intelligence-alibaba-zvec-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-alibaba-zvec-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-learnings-core-invaria"
       ]
     },
     "I": {
@@ -14962,8 +14967,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "63a9c92de8021ad0b5e08e6e47f5cb9e2ec53d9254c92379e1b6f9adc52d9c71",
-      "created_at": "2026-11-20T14:36:11.374Z"
+      "content_hash": "70d84b185fee786ca32f3f7413323adbf3538b7db711f9d9eda8b05708b8a1e2",
+      "created_at": "2026-11-20T20:58:25.855Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -36545,6 +36550,84 @@
       "repository": "alibaba-zvec-learnings",
       "content_hash": "cefce82a25d61b31b35fff9243234a18fd86b27ff8e80af298c8d78277086065",
       "created_at": "2026-11-20T20:41:49.544Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-mini-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-mini-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: thinkingmachines/Inkling-2-Mini Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thinkingmachines-inkling-2-mini-research-knowledge-intelligence-thinkingmachi.md",
+      "repository": "thinkingmachines/Inkling-2-Mini",
+      "content_hash": "1aa097805823815e94239c9c30bb345c2da5a58e18aea4037bbe786f844097d9",
+      "created_at": "2026-11-20T20:57:40.958Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: kgateway-dev/kgateway Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kgateway-dev-kgateway-technical-construction-intelligence-kgateway-dev-kgateway-.md",
+      "repository": "kgateway-dev/kgateway",
+      "content_hash": "1d1982832e860d640b373b00a24e42b13f7d74f9a64ce438af40a79fe74af1ee",
+      "created_at": "2026-11-20T20:57:53.774Z"
+    },
+    "DOM-D-F66E1D4B": {
+      "record_id": "DOM-D-F66E1D4B",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): thinkingmachines/Inkling-2-Mini",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/thinkingmachines/Inkling-2-Mini](https://huggingface.co/thinkingmachines/Inkling-2-Mini))  \n> **Source Version**: `hf-thinkingm`  \n> **License",
+      "content_hash": "8a1fd0191b99b205072eaf90463e8823fb3434a13039678d013f7b50a8a1b21a",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md`  \n> **Source**: huggingface ([https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md`  \n> **Source**: huggingface ([https",
+      "provenance": {
+        "source_uri": "project://hf-thinkingmachines-inkling-2-mini/hf-thinkingmachines-inkling-2-mini-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T20:57:56.677Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-thinkingmachines-inkling-2-mini)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-thinkingmachines-inkling-2-mini"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T20:58:24.051Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-mini-learnings-cor": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-mini-learnings-cor",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-thinkingmachines-inkling-2-mini-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thinkingmachines-inkling-2-mini-learnings-research-knowledge-intelligence-hf-.md",
+      "repository": "hf-thinkingmachines-inkling-2-mini-learnings",
+      "content_hash": "8e2611d8e8180f489a33d1d47c2543c10f20c2b7bf179fde564135d02a658f04",
+      "created_at": "2026-11-20T20:58:24.311Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: kgateway-dev-kgateway-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kgateway-dev-kgateway-learnings-technical-construction-intelligence-kgateway-dev.md",
+      "repository": "kgateway-dev-kgateway-learnings",
+      "content_hash": "1df6500ce6fb821245868dc41081c2554157a6e6f242164a0b889a50292705b8",
+      "created_at": "2026-11-20T20:58:24.941Z"
     }
   }
 }

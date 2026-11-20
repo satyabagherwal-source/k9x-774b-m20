@@ -11627,3 +11627,6 @@
 | `CYCLE-20261120-2T4J` | `2026-11-20T20:41:44.179Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9636` | Yes (`c7cc4c5d...`) |
 | `CYCLE-20261120-CX8K` | `2026-11-20T20:49:36.068Z` | `aio-libs/aiohttp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9637` | Yes (`8098073a...`) |
 | `CYCLE-20261120-D4ZJ` | `2026-11-20T20:49:46.111Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9638` | Yes (`aeea712d...`) |
+| `CYCLE-20261120-NB8D` | `2026-11-20T20:57:40.765Z` | `thinkingmachines/Inkling-2-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md` | Yes (`eb53e52b...`) |
+| `CYCLE-20261120-NL04` | `2026-11-20T20:57:53.428Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9639` | Yes (`a0550e5e...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T20:58:24.077Z` | `hf-thinkingmachines-inkling-2-mini` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F66E1D4B` [Domain D] | Yes (`8a1fd019...`) |

@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T20:15:00.262Z",
-    "lastVerified": "2026-11-20T20:15:00.262Z",
+    "lastChecked": "2026-11-20T20:57:54.869Z",
+    "lastVerified": "2026-11-20T20:57:54.869Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T20:49:49.269Z",
-    "lastVerified": "2026-11-20T20:49:49.269Z",
+    "lastChecked": "2026-11-20T20:57:56.567Z",
+    "lastVerified": "2026-11-20T20:57:56.567Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -148,9 +148,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-20T14:03:53.651Z",
+    "lastChecked": "2026-11-20T20:57:49.796Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-20T14:03:53.651Z"
+    "lastVerified": "2026-11-20T20:57:49.796Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -1841,9 +1841,9 @@
   "zilliztech-claude-context": {
     "name": "claude-context",
     "officialUrl": "https://github.com/zilliztech/claude-context",
-    "lastChecked": "2026-11-19T16:24:57.200Z",
+    "lastChecked": "2026-11-20T20:57:52.274Z",
     "revisionIdentifier": "64a87f9b",
-    "lastVerified": "2026-11-19T16:24:57.200Z"
+    "lastVerified": "2026-11-20T20:57:52.274Z"
   },
   "falkordb-falkordb": {
     "name": "FalkorDB/FalkorDB",
@@ -2751,14 +2751,14 @@
     "officialUrl": "https://github.com/kgateway-dev/kgateway",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T18:19:59.577Z",
-    "lastVerified": "2026-11-19T18:19:59.577Z",
+    "lastChecked": "2026-11-20T20:57:52.465Z",
+    "lastVerified": "2026-11-20T20:57:52.465Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kgateway-dev-kgateway",
-    "contentHash": "8b9ad65e2f0b33ad5ce10923ea7102f0c52f1ac70a5b24b27321772cff1832b7",
+    "contentHash": "a0550e5efb0d916bbee6db06b5d2e4753f35c8a8bd4ddeac07051df4f35baf7b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10714,5 +10714,36 @@
     "lastChecked": "2026-11-20T20:49:32.757Z",
     "revisionIdentifier": "9ae5bc2c",
     "lastVerified": "2026-11-20T20:49:32.757Z"
+  },
+  "hf-thinkingmachines-inkling-2-mini": {
+    "name": "thinkingmachines/Inkling-2-Mini",
+    "officialUrl": "https://huggingface.co/thinkingmachines/Inkling-2-Mini",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-20T20:57:40.064Z",
+    "lastVerified": "2026-11-20T20:57:40.064Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini",
+    "contentHash": "eb53e52bf4dc18b9ebccce33741cedafe833339e36f17c44b8bf75b20abf498e",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "digitalbazaar-jsonld.js": {
+    "name": "jsonld.js",
+    "officialUrl": "https://github.com/digitalbazaar/jsonld.js",
+    "lastChecked": "2026-11-20T20:57:42.488Z",
+    "revisionIdentifier": "7a93609e",
+    "lastVerified": "2026-11-20T20:57:42.488Z"
+  },
+  "williewangwei-swiftui-tutorials": {
+    "name": "SwiftUI-Tutorials",
+    "officialUrl": "https://github.com/WillieWangWei/SwiftUI-Tutorials",
+    "lastChecked": "2026-11-20T20:57:44.794Z",
+    "revisionIdentifier": "0ced68b2",
+    "lastVerified": "2026-11-20T20:57:44.794Z"
   }
 }

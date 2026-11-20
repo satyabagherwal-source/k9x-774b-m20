@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T20:49:51.754Z",
+  "last_updated": "2026-11-20T20:58:25.678Z",
   "directives": [
     {
       "id": "CD-001",
@@ -36242,11 +36242,11 @@
       "staged_date": "2026-11-20"
     },
     {
-      "id": "CD-0PI7",
+      "id": "CD-O9VY",
       "directive_title": "dead license badge link in README",
       "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-0PI7-dead-license-badge-link-in-readme.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-O9VY-dead-license-badge-link-in-readme.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -39100,6 +39100,37 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-AE3D86-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-NL5M",
+      "directive_title": "prefer the parent on conflicts under DeepMergePreferParent",
+      "source_repo": "kgateway-dev/kgateway",
+      "source_commit": "8a71677f",
+      "staged_file": "11_INBOX/candidate-directives/CD-NL5M-prefer-the-parent-on-conflicts-under-deepmergepreferparent.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-O96U",
+      "directive_title": "trafficpolicy): prefer the parent on conflicts under DeepMergePreferParent",
+      "source_repo": "kgateway-dev-kgateway-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-O96U-trafficpolicy-prefer-the-parent-on-conflicts-under-deepmergepreferparent.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-C39A8A",
+      "directive_title": "dead license badge link in README",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C39A8A-dead-license-badge-link-in-readme.md",
       "staged_date": "2026-11-20"
     }
   ]

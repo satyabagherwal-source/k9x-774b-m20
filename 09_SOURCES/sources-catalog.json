@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "2cd623a3",
+    "sourceVersion": "8a71677f",
     "license": "Apache-2.0",
-    "contentHash": "8b9ad65e2f0b33ad5ce10923ea7102f0c52f1ac70a5b24b27321772cff1832b7",
-    "lastHarvestedAt": "2026-11-19T18:20:00.519Z",
+    "contentHash": "a0550e5efb0d916bbee6db06b5d2e4753f35c8a8bd4ddeac07051df4f35baf7b",
+    "lastHarvestedAt": "2026-11-20T20:57:53.432Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -13098,5 +13098,15 @@
     "contentHash": "7e8f55c0e8766dce5e7d51145608d4f0bc63b9b780187a413837aadf44abd3b5",
     "lastHarvestedAt": "2026-11-20T16:56:27.344Z",
     "learningId": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b"
+  },
+  "hf-thinkingmachines-inkling-2-mini": {
+    "repository": "thinkingmachines/Inkling-2-Mini",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/thinkingmachines/Inkling-2-Mini",
+    "sourceVersion": "hf-thinkingmachines-inkling-2-mini",
+    "license": "Open-Source",
+    "contentHash": "eb53e52bf4dc18b9ebccce33741cedafe833339e36f17c44b8bf75b20abf498e",
+    "lastHarvestedAt": "2026-11-20T20:57:40.770Z",
+    "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini"
   }
 }
