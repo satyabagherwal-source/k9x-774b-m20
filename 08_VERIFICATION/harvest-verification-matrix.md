@@ -11413,3 +11413,5 @@
 | `CYCLE-20261120-YIW8` | `2026-11-20T00:06:41.192Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9471` | Yes (`9b906dae...`) |
 | `CYCLE-20261120-YKTL` | `2026-11-20T00:06:43.689Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9472` | Yes (`fdd7ee4c...`) |
 | `CYCLE-20261120-8QYZ` | `2026-11-20T00:14:38.219Z` | `nsh07/Tomato` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9473` | Yes (`5aa9e059...`) |
+| `CYCLE-20261120-WOHT` | `2026-11-20T00:33:14.753Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9474` | Yes (`9b511dfb...`) |
+| `CYCLE-20261120-WY96` | `2026-11-20T00:33:27.402Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9475` | Yes (`6158a6d4...`) |

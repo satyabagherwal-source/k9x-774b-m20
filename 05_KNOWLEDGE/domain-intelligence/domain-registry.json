@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T00:24:25.616Z",
+  "last_updated": "2026-11-20T00:33:33.212Z",
   "total_records": 2043,
   "domains": {
     "A": {
@@ -18867,8 +18867,8 @@
       "title": "Technical Construction Intelligence: FalkorDB/FalkorDB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-technical-construction-intelligence-falkordb-falkordb-core-inv.md",
       "repository": "FalkorDB/FalkorDB",
-      "content_hash": "3aa6dc8e32a9319387cde4e366fed97397120342bdda008b5a891a2a2ae5ff46",
-      "created_at": "2026-11-18T13:17:20.319Z"
+      "content_hash": "f693af3dce98b915591c2ad15f70c91f7699e4a428e874abc345f0296fbea2ec",
+      "created_at": "2026-11-20T00:33:15.110Z"
     },
     "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-core-invariants",
@@ -18885,8 +18885,8 @@
       "title": "Technical Construction Intelligence: falkordb-falkordb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-learnings-technical-construction-intelligence-falkordb-falkord.md",
       "repository": "falkordb-falkordb-learnings",
-      "content_hash": "ac67b683f701970b8b3a195cfde8bf330b1b964634bf83f0c655cf4fc6c96ee9",
-      "created_at": "2026-11-18T13:17:36.438Z"
+      "content_hash": "52d8748c19dbefd5939cdb98fafd0539d5d81a2d4dba244b0836c2ba42d6ee95",
+      "created_at": "2026-11-20T00:33:31.306Z"
     },
     "DOM-D-04368044": {
       "record_id": "DOM-D-04368044",
@@ -21952,8 +21952,8 @@
       "title": "Content & Information Intelligence: pixeltable/pixeltable Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pixeltable-pixeltable-content-information-intelligence-pixeltable-pixeltable-cor.md",
       "repository": "pixeltable/pixeltable",
-      "content_hash": "b30f1d3d8a6c6a47ca06840cd7b8685e0a72c568586e738021e291dbeced0955",
-      "created_at": "2026-11-18T18:10:04.672Z"
+      "content_hash": "b843a4da7058c898507248ab0a7b2bac00adbadb8cafd5165f0d9403c258e08f",
+      "created_at": "2026-11-20T00:33:27.746Z"
     },
     "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants",
@@ -21961,8 +21961,8 @@
       "title": "Content & Information Intelligence: pixeltable-pixeltable-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pixeltable-pixeltable-learnings-content-information-intelligence-pixeltable-pixe.md",
       "repository": "pixeltable-pixeltable-learnings",
-      "content_hash": "0d1829b9a790735ea6dc571241d8385dd362ec750d9786564077cbf8d5e9e1a5",
-      "created_at": "2026-11-18T18:14:54.593Z"
+      "content_hash": "d634c5dcfed79f5c601a131c1e00d866df0adce6de9ff7f986ed07fd97d7c9b3",
+      "created_at": "2026-11-20T00:33:32.053Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g",
@@ -33173,8 +33173,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "ca30727fc3ec2cc5e02c6d17e36f6743b5f90d1a1da77904b52b2cb08c12ab92",
-      "created_at": "2026-11-20T00:24:24.617Z"
+      "content_hash": "ae03047b7f362025298afd7f2c3e0bc57baf86a2bd04781a95071b08928ef169",
+      "created_at": "2026-11-20T00:33:33.212Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",

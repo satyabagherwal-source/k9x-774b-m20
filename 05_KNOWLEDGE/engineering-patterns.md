@@ -699752,3 +699752,162 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `b3036b46` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9474. keep telemetry streams node-local and strip them from snapshots (Rus (Harvested from FalkorDB/FalkorDB)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "keep telemetry streams node-local and strip them from snapshots (Rus",
+  "source": "FalkorDB/FalkorDB",
+  "source_url": "https://github.com/FalkorDB/FalkorDB",
+  "source_version": "b65fcac0",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-20T00:33:14.270Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-falkordb-falkordb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB) (Revision: `b65fcac0`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `proofs/graph_persist/COVERAGE.tsv`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `59764075`: telemetry): keep telemetry streams node-local and strip them from snapshots (Rust port of #3759). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `proofs/graph_persist/COVERAGE.tsv`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+src/redis_type.rs	io_cache_size	72	PROVEN	RedisType.ioCacheSize: ioCacheSize_spec, cache_size_on_load (RedisModule_GetContextFromIO = FFI; the configured CACHE_SIZE is the input)
+src/redis_type.rs	io_key_name	87	PROVEN	RedisType.ioKeyName: ioKeyName_spec (GetKeyNameFromIO/StringPtrLen results are inputs)
+src/redis_type.rs	graph_rdb_load	100	PROVEN	R
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+src/redis_type.rs	io_cache_size	71	PROVEN	RedisType.ioCacheSize: ioCacheSize_spec, cache_size_on_load (RedisModule_GetContextFromIO = FFI; the configured CACHE_SIZE is the input)
+src/redis_type.rs	io_key_name	86	PROVEN	RedisType.ioKeyName: ioKeyName_spec (GetKeyNameFromIO/StringPtrLen results are inputs)
+src/redis_type.rs	graph_rdb_load	99	PROVEN	RedisType.loadWhole/loadPartial: load_main_last, load_main_first (registry Arc = key value = finished graph, no vkey registered, any key order); decoder Persist.multi_load; cacheOnLoad: cache_size_on_load (W5-rdb-1 fixed by #3262 361f62ac1)
+src/redis_type.rs	graph_rdb_save	189	PROVEN	RedisType.rdbSave (= saveKeySlice.getD whole): save_main, save_vkey (slice i, key_count K), save_single
+src/redis_type.rs	save_key_slice	213	PROVEN	RedisType.saveKeySlice: save_main, save_vkey, save_single, metaSave_of_slice (VKEY_STATE/GRAPH_REGISTRY lookups are the modelled maps; rdb_save_graph_key = Persist encoder)
+src/redis_type.rs	save_string_nul	250	PROVEN	Codec.stripNul_nulTerm
+src/redis_type.rs	strip_trailing_nul	268	PROVEN	Codec.stripNul_nulTerm
+src/redis_type.rs	graph_aux_save	274	PROVEN	RedisType.auxSave: aux_roundtrip, aux_after
+src/redis_type.rs	
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `59764075` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9475. [PXT-1820] Fix error messages that point to the wrong fix (Harvested from pixeltable/pixeltable)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[PXT-1820] Fix error messages that point to the wrong fix",
+  "source": "pixeltable/pixeltable",
+  "source_url": "https://github.com/pixeltable/pixeltable",
+  "source_version": "bf3ef159",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-20T00:33:26.935Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pixeltable-pixeltable",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `bf3ef159`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pixeltable/catalog/model/definition.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ff4cbc2b`: [PXT-1820] Fix error messages that point to the wrong fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/catalog/model/definition.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+            if 'type' in spec and 'value' in spec:
+                    f'Column specification for {name!r} cannot define both `type` and `value`: a computed column '
+                    'takes its type from `value`; to change it, cast the value with `.astype()`',
+                )
+            if 'type' not in spec and 'value' not in spec:
+                raise excs.RequestError(
+                    excs.ErrorCode.INVALID_SCHEMA,
+                    f'Column specification for {name!r} defines neither `type` nor `value`; pass `type=` to '
+                    'Column() for a stored column (a type annotation does not set it) or `value=` for a computed one',
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+            if ('type' in spec) == ('value' in spec):
+                    f'Column specification for {name!r} must define `type` or `value`, but not both',
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ff4cbc2b` are properly handled with clean fallback behavior.

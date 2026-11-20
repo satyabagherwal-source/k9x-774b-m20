@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-1LKP",
-    "timestamp": "2026-11-18T07:05:38.425Z",
-    "repository": "asciinema/asciinema",
-    "learningId": "learn-github-asciinema-asciinema",
-    "contentHash": "c1addfd56c8ad8cfacba81a85d92e91f6bc1e1edd8a4bd864fcab3bc48d56fc9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-1O45",
-    "timestamp": "2026-11-18T07:05:41.717Z",
-    "repository": "arkivanov/Decompose",
-    "learningId": "learn-github-arkivanov-decompose",
-    "contentHash": "7606e75778ea55dfa4d809b528b7afe2b58c7a9437ab3d4b637cc67f2a643b1f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-1R9H",
     "timestamp": "2026-11-18T07:05:45.797Z",
     "repository": "aws/aws-cdk",
@@ -7490,6 +7460,36 @@
     "repository": "nsh07/Tomato",
     "learningId": "learn-github-nsh07-tomato",
     "contentHash": "5aa9e0597813a940ecda5d2a8b81fccdae0dbc9be79b865754b4caea2dc3e6b7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-WOHT",
+    "timestamp": "2026-11-20T00:33:14.753Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "9b511dfbd54a79d9fdd97ec71a1b147f7a926b99b866d93caf6d6f1993244747",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-WY96",
+    "timestamp": "2026-11-20T00:33:27.402Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "6158a6d4037d4caf5ab403043b970d7203679d58f7c15051e45396b35b8b6f28",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "4e3ca0b2",
+    "sourceVersion": "b65fcac0",
     "license": "NOASSERTION",
-    "contentHash": "6a2e00087b2819c9f8c39dee4ef5eb0242f412ed85cf7a0c4721f0ccd5ae5675",
-    "lastHarvestedAt": "2026-11-18T13:17:19.861Z",
+    "contentHash": "9b511dfbd54a79d9fdd97ec71a1b147f7a926b99b866d93caf6d6f1993244747",
+    "lastHarvestedAt": "2026-11-20T00:33:14.757Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "6da45f64",
+    "sourceVersion": "bf3ef159",
     "license": "Apache-2.0",
-    "contentHash": "ae357ba55f4539d17b997644794f9996ae8e56965ca9fcb2fd8e57e731b7f3b7",
-    "lastHarvestedAt": "2026-11-18T18:10:04.244Z",
+    "contentHash": "6158a6d4037d4caf5ab403043b970d7203679d58f7c15051e45396b35b8b6f28",
+    "lastHarvestedAt": "2026-11-20T00:33:27.407Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {

@@ -11446,3 +11446,5 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `ddd15c3e` | Multi-dimensional audit evidence | 2026-11-20T00:06:41.197Z |
 | `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `9f03e7de` | Multi-dimensional audit evidence | 2026-11-20T00:06:43.694Z |
 | `learn-github-nsh07-tomato` | `https://github.com/nsh07/Tomato` | `b3036b46` | Multi-dimensional audit evidence | 2026-11-20T00:14:38.223Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `b65fcac0` | Multi-dimensional audit evidence | 2026-11-20T00:33:14.757Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `bf3ef159` | Multi-dimensional audit evidence | 2026-11-20T00:33:27.407Z |

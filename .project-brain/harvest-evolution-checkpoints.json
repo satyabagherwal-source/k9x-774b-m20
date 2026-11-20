@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T00:24:25.756Z",
+  "last_updated": "2026-11-20T00:33:33.595Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T00:24:23.527Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-20T00:24:23.979Z",
+      "processed_at": "2026-11-20T00:33:32.583Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -403,7 +403,7 @@
       "staged_for_review": 1
     },
     "falkordb-falkordb-learnings.md": {
-      "processed_at": "2026-11-18T13:17:35.723Z",
+      "processed_at": "2026-11-20T00:33:30.916Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1523,7 +1523,7 @@
       "staged_for_review": 0
     },
     "pixeltable-pixeltable-learnings.md": {
-      "processed_at": "2026-11-18T18:14:54.140Z",
+      "processed_at": "2026-11-20T00:33:31.602Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3533,7 +3533,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2370,
+  "total_dossiers_evaluated": 2373,
   "total_canonical_promoted": 397,
-  "total_staged_for_review": 1776
+  "total_staged_for_review": 1779
 }

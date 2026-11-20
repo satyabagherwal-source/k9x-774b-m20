@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `4e3ca0b2`  
+> **Source Version**: `b65fcac0`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T13:17:18.660Z  
+> **Timestamp**: 2026-11-20T00:33:13.758Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T13:17:18.652Z  
+> **Harvest Timestamp**: 2026-11-20T00:33:13.542Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10506 stars
+- **Stars / Engagement**: 10504 stars
 
 ---
 
@@ -412,9 +412,8 @@ fn get_id_filter(
     ) && let ExprIR::FuncInvocation(inner_func) = filter.child(0).data()
         && inner_func.name == "id"
         && let ExprIR::Variable(var) = filter.child(0).child(0).data()
-        && var.id == node_alias.id
-        && var.scope_id == node_alias.scope_id
-        && !subtree_references_variable(&filter.child(1), node_alias.id, node_alias.scope_id)
+        && var.key() == node_alias.key()
+        && !subtree_references_variable(&filter.child(1), node_alias.key())
     {
         Some((
             Arc::new(filter.child(1).clone_as_tree()),
@@ -426,9 +425,8 @@ fn get_id_filter(
     ) && let ExprIR::FuncInvocation(inner_func) = filter.child(1).data()
         && inner_func.name == "id"
         && let ExprIR::Variable(var) = filter.child(1).child(0).data()
-        && var.id == node_alias.id
-        && var.scope_id == node_alias.scope_id
-        && !subtree_references_variable(&filter.child(0), node_alias.id, node_alias.scope_id)
+        && var.key() == node_alias.key()
+        && !subtree_references_variable(&filter.child(0), node_alias.key())
     {
         let op = match filter.data() {
             ExprIR::Eq => ExprIR::Eq,
@@ -1239,11 +1237,11 @@ print("bgsave status", r.info('persistence')['rdb_last_bgsave_status'])
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3857** (2026-11-17): **rust: a write that only registers a label ships no payload: the replica resyncs in full and the master's own AOF stops loading**
-  *Symptoms*: A write whose only effect is a newly registered label is not replicated and not written to the AOF. The next write that adds a label is then refused by the replica, which resyncs in full, and a master that restarts from its AOF exits during the load.  ### What happens  `OPTIONAL MATCH (n:Nope) SET n:L` matches nothing, but `L` has been interned in the write's version by the time `SET` finds no entity to label, and that version is published. `CommitOp::next` (`graph/src/runtime/ops/commit.rs`) builds an effects payload only when `Pending::effects_count()` is above zero, and that count covers entities, not names registered on the version. So the master has label `L` and ships nothing; the server logs `graph '...' was modified but produced no effects payload; the change will not reach replicas or the AOF`.  Every later payload numbers its labels from the master's dictionary. The next new label goes out with an id one past what the replica (or the AOF replay) would assign, and is refused.  ### Reproduce  Replica:  1. `GRAPH.QUERY g "CREATE (:A)"` 2. `GRAPH.QUERY g "OPTIONAL MATCH (n:Nope) SET n:OnlyRegistered"`: `CALL db.labels()` now differs between master and replica (4 of 4 runs). 3. `GRAPH.QUERY g "CREATE (:B)"`: the replica logs `Replica diverged from master applying GRAPH.EFFECT ...` and the master's `sync_full` goes up by one (every run).  AOF (`appendonly yes`): the same three writes, then restart. The server exits during the load in 3 of 3 runs:  ``` Diverged applying GR
+- **Issue #3880** (2026-11-19): **[Rust] Binder: CALL {} leaves its body's variable-length relationship marks behind**
+  *Symptoms*: When a `CALL {}` body closes, the binder removes the body's scopes from `node_labels` and `match_rel_vars` (`graph/src/planner/binder.rs:864-874` on main 98e05a415). It does not remove them from `varlen_rel_var_ids`, which is keyed the same way, by `(scope_id, id)`. The outer query's next `WITH` reuses the body's scope ids.  That set decides whether `x.prop` binds on a Path-typed variable (`binder.rs:2176`). It binds for a variable-length relationship (`[r*]`) and is rejected for a named path. So a named path that lands on the `(scope_id, id)` of a body's `[r*]` is taken for a variable-length relationship, and the type check is skipped.  Repro. Rust: main 98e05a415. C: `falkordb/falkordb-server:edge-c` `sha256:2364d41f605a443eb8c89b76dcfc76abdc5e7c99d35b7f5e56d2b67fcc3529c0`.      GRAPH.QUERY g "CREATE (:N {name:'a'})-[:R {name:'r1'}]->(:N {name:'b'})-[:R {name:'r2'}]->(:N {name:'c'})"     GRAPH.QUERY g "CALL { UNWIND [1] AS u MATCH (a)-[r*]->(b) RETURN count(*) AS c } WITH c MATCH p = ()-->() RETURN CASE WHEN false THEN p.name END AS x"  - Rust: two rows, `null` and `null`. - C: `Type mismatch: expected Map, Node, Edge, Datetime, Date, Time, Duration, Null, or Point but was Path`.  In the body, `u` is id 0 and `r` is id 1 of scope 1. After the body, `WITH c` opens scope 1 again with `c` as id 0, so `p` is id 1 of scope 1, which the set still holds. Without `UNWIND [1] AS u`, `r` is id 0, nothing collides, and Rust raises the same error as C. 
 
-- **Issue #3851** (2026-11-17): **rust: FLUSHALL ASYNC during a queued write: the write is answered OK into a graph no key holds, and the replica gets the key back**
-  *Symptoms*: If a database is flushed in the background (`FLUSHALL ASYNC`; a plain `FLUSHALL` on Valkey and Redis 8 with lazy flush) while a queued write is running, the write can commit into a graph that no key holds. The client is told OK, the master has no such key, and the replica gets the key back. C is not affected.  ### What happens  Before a queued write mutates, `authorize_write` (`src/query_session.rs`) checks `graph_is_registered`, which asks the module's registry. The registry entry is removed by `graph_free`, the type's free callback. For a background flush that runs on the lazy-free thread, later than the keys left the keyspace. A write that authorizes inside that window passes the check, commits into the orphaned graph, answers OK and replicates `GRAPH.EFFECT g`, which the replica applies after the `FLUSHALL` it already received: it creates `g`.  `key_holds_graph` (`src/redis_type.rs`) asks the keyspace instead and is already used by `GRAPH.CONSTRAINT` and telemetry for this reason; the query path does not use it.  ### Reproduce  Master and replica. On the master, with 5,000,000 filler keys (`DEBUG POPULATE`) so that the lazy-free thread takes a moment to reach the graph:  1. `GRAPH.QUERY g "UNWIND range(1, 6000000) AS x WITH count(x) AS c CREATE (:Slow {c: c})"` to a missing key `g`. 2. 40 ms later, from another client: `FLUSHALL ASYNC`.  | Engine | Write's reply | Master has `g` | Replica has `g` | |---|---|---|---| | Rust, 8 of 8 trials | OK | no | yes | | C, 4 of 4 tria
+- **Issue #3861** (2026-11-18): **[Rust] size()/head()/last() on a list variable is O(len) per call, so per-row use is quadratic**
+  *Symptoms*: Rust engine: a function taking a `List<Any>` argument (`size`, `head`, `last`, ...) is O(len) per call, so using one large list variable per row is quadratic. The C engine is O(1) here.  Repro (`collect` then `size(ns)` per row):  ``` MATCH (a:T) WITH collect(a) AS ns UNWIND range(0, size(ns) - 1) AS i RETURN count(i % size(ns)) ```  | nodes | Rust (main) | C | |---|---|---| | 5k | 34-54 ms | 1-2 ms | | 10k | 150-217 ms | 2-4 ms | | 20k | 600-900 ms | 3-4 ms |  `head(ns)` and `last(ns)` show the same curve; `ns[i]`, `ns[i..i+1]` and `i IN ns` are flat. A real edge-creation query using `size(ns)` per row took 6.5 s on Rust against 38 ms on C. Found by the soak test.  Root cause (sampled the worker thread): all on-CPU time is in `GraphFn::validate_args_type` -> `ValueTypeOf::value_of_type` (graph/src/runtime/value.rs). For `Type::List(ty)` it walks every element and recurses even when `ty` is `Any`, which accepts everything. The variable read itself is an `Arc` clone and `size` is `v.len()`, both O(1). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1260,1002 +1258,1388 @@ print("bgsave status", r.info('persistence')['rdb_last_bgsave_status'])
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b9f333c5` (2026-11-18)
-**Commit Message**: fix: a WHERE after a writing CALL {} no longer starves the write (#748, #997) (#3582)
+### Incident Patch 1: `59764075` (2026-11-19)
+**Commit Message**: fix(telemetry): keep telemetry streams node-local and strip them from snapshots (Rust port of #3759) (#3844)
 
-* fix: a WHERE after a writing CALL {} no longer starves the write (#748, #997)
+* fix(telemetry): keep telemetry streams node-local and strip them from snapshots
 
-push_filters_down pushed a WHERE onto every child that covered its
-variables, including the rows feeding a sibling subtree that writes. A
-constant-false WHERE therefore emptied the left side of an Apply whose right
-side was the CALL body, and the body never ran.
+Port of #3759 (C, master) to the Rust engine, for #3723.
 
-A branch is now locked when a sibling subtree holds a write, and the filter
-never moves under a write operator.
+Each node now logs the queries it serves its own clients: a replica logs
+its reads instead of logging nothing. The writes were already
+unreplicated key-API writes, so the flusher's replica discard and its
+hold through a replica pause are removed.
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Queries a node did not serve are not logged: `dispatch::logs_telemetry`
+leaves out commands received from the master and commands replayed
+while loading.
 
-* Merge origin/main into fix/748-filter-not-below-write; const fn is_write
+The streams are kept out of every snapshot. The persistence-start
+handler deletes each registered graph's stream on all four start
+subevents: in the fork child of a BGSAVE, diskless sync or AOF rewrite
+only the child's copy goes; a synchronous SAVE or DEBUG RELOAD drops
+the live stream. This is what stops the consumer-group cursor Redis
+replicates for a stream from reaching an RDB in a state the loader
+rejects.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+A graph takes its stream with it when its key is freed (DEL, UNLINK,
+expiry, eviction, overwrite), in the same callback, so no sav
 
-* proofs: list #3582's new fns in COVERAGE.tsv
+**File**: `proofs/graph_persist/COVERAGE.tsv` (modified, +27/-27)
+```diff
+@@ -16,32 +16,32 @@ graph/src/graph/graphblas/serialization.rs	encode	178	PROVEN	Layout.roaring_roun
+ graph/src/graph/graphblas/serialization.rs	encode_with_range	185	PROVEN	Layout.chunkType_covers (slice partition) + roaring_roundtrip; #3438's select/advance_to/take seek = skip/take: PendingCommit SaveLayout.encRoarP
+ graph/src/graph/graphblas/serialization.rs	decode	206	PROVEN	Layout.roaring_roundtrip, encoded_len_mult8 (length check never rejects own output)
+ graph/src/graph/graphblas/serialization.rs	decode_with_count	227	PROVEN	Layout.roaring_roundtrip; count check (#2996: try_from + checked_mul): countCheck_in_bounds (every bytes[i*8..(i+1)*8] in range), countCheck_own; before #2996 a count of 2^61 matched an empty buffer
+-src/redis_type.rs	io_cache_size	71	PROVEN	RedisType.ioCacheSize: ioCacheSize_spec, cache_size_on_load (RedisModule_GetContextFromIO = FFI; the configured CACHE_SIZE is the input)
+-src/redis_type.rs	io_key_name	86	PROVEN	RedisType.ioKeyName: ioKeyName_spec (GetKeyNameFromIO/StringPtrLen results are inputs)
+-src/redis_type.rs	graph_rdb_load	99	PROVEN	RedisType.loadWhole/loadPartial: load_main_last, load_main_first (registry Arc = key value = finished graph, no vkey registered, any key order); decoder Persist.multi_load; cacheOnLoad: cache_size_on_load (W5-rdb-1 fixed by #3262 361f62ac1)
+-src/redis_type.rs	graph_rdb_save	189	PROVEN	RedisType.rdbSave (= saveKeySlice.getD whole): save_main, save_vkey (slice i, key_count K), save_single
+-src/redis_type.rs	save_key_slice	213	PROVEN	RedisType.saveKeySlice: save_main, save_vkey, save_single, metaSave_of_slice (VKEY_STATE/GRAPH_REGISTRY lookups are the modelled maps; rdb_save_graph_key = Persist encoder)
+-src/redis_type.rs	save_string_nul	250	PROVEN	Codec.stripNul_nulTerm
+-src/redis_type.rs	strip_trailing_nul	268	PROVEN	Codec.stripNul_nulTerm
+-src/redis_type.rs	graph_aux_save	274	PROVEN	RedisType.auxSave: aux_roundtrip, aux_after
+-src/redis_type.rs	graph_aux_load	295	PROVEN	RedisType.auxLoad: aux_roundtrip, aux_after, aux_truncated, strip_keeps_inner_nul (UdfRepo::deserialize/register_udf are inputs)
+-src/redis_type.rs	pre_fork_prepare	359	PROVEN	RedisType.preFork: preFork_spec (wait_all = GraphBLAS effect)
+-src/redis_type.rs	on_persistence	376	PROVEN	RedisType.onPersistence: onPersistence_spec
+-src/redis_type.rs	create_virtual_keys	418	PROVEN	RedisType.createVKeys: save_main, save_vkey, createdKeys_spec; names Uuid.vkeyName_inj/vkeyName_ne (OpenKey/SetValue = effects, key_holds_graph = input); vkeys typed graphmeta (vkeyType, #3161)
+-src/redis_type.rs	delete_virtual_keys	530	PROVEN	RedisType.deleteVKeys: deleteVKeys_spec, createdKeys_spec
+-src/redis_type.rs	delete_key	549	AXIOMATISED	Redis module API DeleteKey
+-src/redis_type.rs	delete_stale_graphmeta_keys	595	PROVEN	RedisType.deleteStaleGraphmeta: scanKeys_spec
+-src/redis_type.rs	delete_stale_virtual_keys	629	PROVEN	RedisType.deleteStaleVirtual: deleteStaleVirtual_spec; Persist.multi_meta (meta keys = exactly the virtual keys)
+-src/redis_type.rs	scan_keys_by_type	646	PROVEN	RedisType.scanKeys: scanKeys_spec, scanKeys_stops (RedisModule_Call replies are inputs)
+-src/redis_type.rs	finalize_pending_graphs	733	PROVEN	RedisType.finalizePending: load_main_first, load_main_last
+-src/redis_type.rs	install_graph	768	PROVEN	RedisType.finalizePending (install arm): load_main_first
+-src/redis_type.rs	uuid_v4	794	PROVEN	RedisType.uuid (#3286: uuid_fields, clock and counter in separate fields): uuid_counter_distinct (names differ whenever counters differ mod 2^48, any clocks), uuid_same_clock_distinct, uuid_regression_pair_distinct, uuid_length; vkeyName_uuid_counter, names_vname_inj (discharges VKeys.Names.vname_inj)
+-src/redis_type.rs	uuid_fields	816	PROVEN	RedisType.uuidFields: counter_field_bijective (last field = bijection of seq mod 2^48, for every seq; the const _ block checks sample points), uuidFields_fit, mixB_mod48, uuid_last_field
+-src/redis_type.rs	same_fields	843	PROVEN	RedisType.sameFields (helper of the compile-time const _ check): sameFields_iff (= equality of the five fields), const_check_holds (the const block's assertions hold for every clock, not only its samples)
+-src/redis_type.rs	graphmeta_rdb_load	956	PROVEN	RedisType.metaLoad: metaLoad_spec (decode = rdb_load_graph: Persist.key_rt/run_keys); cacheOnLoad: cache_size_on_load
+-src/redis_type.rs	graphmeta_rdb_save	981	PROVEN	RedisType.metaSave (= saveKeySlice, #3161): metaSave_of_slice, metaSave_rdbSave, metaSave_stale
+-src/redis_type.rs	graphmeta_free	993	PROVEN	RedisType.metaFree: metaFree_spec
+-src/redis_type.rs	graphmeta_aux_load	1003	PROVEN	RedisType.metaAuxLoad: metaAuxLoad_spec
++src/redis_type.rs	io_cache_size	72	PROVEN	RedisType.ioCacheSize: ioCacheSize_spec, cache_size_on_load (RedisModule_GetContextFromIO = FFI; the configured CACHE_SIZE is the input)
++src/redis_type.rs	io_key_name	87	PROVEN	RedisType.ioKeyName: ioKeyName_spec (GetKeyNameFromIO/StringPtrLen results are inputs)
++src/redis_type.rs	graph_rdb_load	100	PROVEN	R
+```
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+**File**: `proofs/graph_persist/GraphPersist.lean` (modified, +1/-1)
+```diff
+@@ -113,7 +113,7 @@ Headline theorems:
+ * `rebuild_calls`, `rebuild_entity`, `rebuild_meta_first` — index replay.
+ * `save_main`, `save_vkey`, `save_single`, `createdKeys_spec`, `deleteVKeys_spec` — SAVE
+   writes the graph's key + `K - 1` virtual keys with slices `0..K`, `key_count = K`, and
+-  deletes exactly those virtual keys afterwards; `onPersistence_spec` (BGSAVE never splits).
++  deletes exactly those virtual keys afterwards; `onPersistence_spec` (BGSAVE never splits); `onPersistence_strip` (#3844: every persistence start strips the telemetry streams).
+ * `load_main_last`, `load_main_first` — whatever the position of the graph's own key in the
+   load order, the registered `Arc` and the key's value coincide and hold the finished graph;
+   no virtual key is registered; placeholders are dropped.
+```
+
+**File**: `proofs/graph_persist/GraphPersist/RedisType/AuxData.lean` (modified, +27/-13)
+```diff
+@@ -9,8 +9,8 @@ Source: origin/main `5c7af54f2` (line numbers re-pinned there).
+ | `auxSave`               | `graph_aux_save` (:272-290) |
+ | `auxLoad`               | `graph_aux_load` (:293-334) |
+ | `metaAuxLoad`           | `graphmeta_aux_load` (:981-991) |
+-| `Sub`, `onPersistence`  | `on_persistence` (:375-400) |
+-| `preFork`               | `pre_fork_prepare` (:357-368) |
++| `Sub`, `onPersistence`  | `on_persistence` (:384-413; strips telemetry at every start since #3844) |
++| `preFork`               | `pre_fork_prepare` (:360-370) |
+ | `metaFree`              | `graphmeta_free` (:971-977); `graphmeta_rdb_save` is `VKeys.metaSave` since #3161 |
+ 
+ Names and scripts are byte strings; `String::from_utf8_lossy` is the identity on the UTF-8
+@@ -136,35 +136,49 @@ theorem metaAuxLoad_spec (w : When) (n : Nat) (r : List It) :
+ 
+ /-- The `REDISMODULE_SUBEVENT_PERSISTENCE_*` cases `on_persistence` distinguishes. -/
+ inductive Sub where
+-  | rdbStart       -- BGSAVE fork child
++  | rdbStart       -- BGSAVE / diskless-sync fork child
+   | syncRdbStart   -- SAVE / DEBUG RELOAD
++  | aofStart       -- AOF rewrite fork child
++  | syncAofStart   -- synchronous AOF rewrite
+   | ended
+   | failed
+   | other
+   deriving DecidableEq, Repr
+ 
++/-- `stripTelemetry` is `strip_telemetry_streams` (`:421`, #3844): delete the queued
++streams of freed graphs, then the stream of every registered graph. -/
+ inductive Act where
+   | createVKeys
++  | stripTelemetry
+   | deleteVKeys
+-  | nothing
+   deriving DecidableEq, Repr
+ 
+-/-- `on_persistence` (:375). -/
+-def onPersistence : Sub → Act
+-  | .syncRdbStart => .createVKeys
+-  | .rdbStart => .nothing
+-  | .ended | .failed => .deleteVKeys
+-  | .other => .nothing
++/-- `on_persistence` (:384): the actions it takes, in order. -/
++def onPersistence : Sub → List Act
++  | .syncRdbStart => [.createVKeys, .stripTelemetry]
++  | .rdbStart | .aofStart | .syncAofStart => [.stripTelemetry]
++  | .ended | .failed => [.deleteVKeys]
++  | .other => []
+ 
+ /-- Virtual keys exist only around a synchronous save: a BGSAVE child never allocates them
+ (so a BGSAVE always writes every graph as a single key), and every end of a save — success
+ or failure — removes them. -/
+ theorem onPersistence_spec (s : Sub) :
+-    (onPersistence s = .createVKeys ↔ s = .syncRdbStart) ∧
+-    (onPersistence s = .deleteVKeys ↔ s = .ended ∨ s = .failed) := by
++    (.createVKeys ∈ onPersistence s ↔ s = .syncRdbStart) ∧
++    (.deleteVKeys ∈ onPersistence s ↔ s = .ended ∨ s = .failed) := by
+   cases s <;> simp [onPersistence]
+ 
+-/-- `pre_fork_prepare` (:357): only on the main thread, wait on every registered graph. -/
++/-- #3844: every kind of persistence start (C's `_IsEventPersistenceStart`) strips the
++telemetry streams before the snapshot is written, and nothing else does. -/
++theorem onPersistence_strip (s : Sub) :
++    (.stripTelemetry ∈ onPersistence s ↔
++      s = .rdbStart ∨ s = .syncRdbStart ∨ s = .aofStart ∨ s = .syncAofStart) := by
++  cases s <;> simp [onPersistence]
++
++/-- A `SAVE` creates the virtual keys first, then strips. -/
++theorem onPersistence_sync_order : onPersistence .syncRdbStart = [.createVKeys, .stripTelemetry] := rfl
++
++/-- `pre_fork_prepare` (:360): only on the main thread, wait on every registered graph. -/
+ def preFork {Gr : Type} (isMain : Bool) (registry : List Gr) : List Gr :=
+   if isMain then registry else []
+ 
+```
+
+**File**: `proofs/graph_persist/README.md` (modified, +1/-1)
+```diff
+@@ -62,7 +62,7 @@ Yes:
+ 
+ - `save_main`, `save_vkey`, `save_single`: SAVE writes the graph's own key plus K − 1 virtual keys holding slices `0..K`, with `key_count = K`;
+ - `deleteVKeys_spec`: the virtual keys are deleted afterwards;
+-- `onPersistence_spec`: BGSAVE never splits a graph;
++- `onPersistence_spec`: BGSAVE never splits a graph; `onPersistence_strip`: every persistence start strips the telemetry streams (#3844);
+ - `metaSave_stale`: since #3161 virtual keys have the `graphmeta` type, and a leftover one writes nothing;
+ - `load_main_first`, `load_main_last`: whatever position the graph's own key has in the load order, the registered graph and the key's value end up as the same finished graph.
+ 
+```
+
+**File**: `proofs/redis_layer/COVERAGE.tsv` (modified, +68/-59)
+```diff
+@@ -130,15 +130,15 @@ src/graph_core.rs	compute_effective_timeout	996	PROVEN	Args.rustTimeout: rustTim
+ src/graph_core.rs	reply_invalid_graph_version	1035	PROVEN	GraphCore.invalidVersionBytes: invalidVersion_shape
+ src/graph_core.rs	admit	1049	PROVEN	GraphCore.admitQ: admit_bounded, capped (QueueSlot::try_acquire; never waits)
+ src/graph_core.rs	query_mut	1060	PROVEN	GraphCore.dispatch/admitQ (#3014): stale_version, inline_uncapped, capped, admit_bounded
+-src/graph_core.rs	query_sync	1264	PROVEN	GraphCore.syncOutcome: sync_err, sync_write_logs
+-src/graph_core.rs	profile_mut	1393	PROVEN	GraphCore.profileOutcome/dispatch (admitQ, #3014): profile_write_runs_as_write, profile_read_replied, capped
+-src/graph_core.rs	profile_sync	1494	PROVEN	GraphCore.profileOutcome: profile_write_runs_as_write, profile_read_replied
+-src/graph_core.rs	finish_write	1565	PROVEN	GraphCore.writeSteps (commit if escalated, else nothing: the version drops with the runtime, #3657; escalated: published under GraphCore.keyOfWrite's key, or refused, #3850/#3851): reply_after_commit, reply_only_after_commit, unkeyed_refused, unescalated_silent
+-src/graph_core.rs	abandon_write	1600	PROVEN	GraphCore.abandonSteps (resync only if version_is_current, nothing to release, #3657): failed_no_commit, stale_run_silent
+-src/graph_core.rs	commit_and_replicate	1616	PROVEN	GraphCore.commitSteps: modified_replicates_or_warns, unmodified_silent; replicated key bytes = utf8(lossy(key)): KeyName.bug2653_nonutf8_key_mangled (#2653)
+-src/graph_core.rs	process_write_queued_query	1694	PROVEN	GraphCore.loopExit: loopExit_safe (no stranded message on exit); slot dropped on dequeue: SearchConcurrency Pool.paths_release_once
+-src/graph_core.rs	CtxSink::replicate	1842	PROVEN	GraphCore.replicateArgv: replicateArgv_shape
+-src/graph_core.rs	graph_free	1855	PROVEN	GraphCore.free: free_unregisters, free_keeps_others
++src/graph_core.rs	query_sync	1264	PROVEN	GraphCore.syncOutcome/logsTelemetry (#3844 log_query): sync_err, sync_write_logs, sync_read_logs, sync_unserved_silent, sync_log_only
++src/graph_core.rs	profile_mut	1400	PROVEN	GraphCore.profileOutcome/dispatch (admitQ, #3014): profile_write_runs_as_write, profile_read_replied, capped
++src/graph_core.rs	profile_sync	1501	PROVEN	GraphCore.profileOutcome: profile_write_runs_as_write, profile_read_replied
++src/graph_core.rs	finish_write	1572	PROVEN	GraphCore.writeSteps (commit if escalated, else nothing: the version drops with the runtime, #3657; escalated: published under GraphCore.keyOfWrite's key, or refused, #3850/#3851): reply_after_commit, reply_only_after_commit, unkeyed_refused, unescalated_silent
++src/graph_core.rs	abandon_write	1607	PROVEN	GraphCore.abandonSteps (resync only if version_is_current, nothing to release, #3657): failed_no_commit, stale_run_silent
++src/graph_core.rs	commit_and_replicate	1623	PROVEN	GraphCore.commitSteps: modified_replicates_or_warns, unmodified_silent; replicated key bytes = utf8(lossy(key)): KeyName.bug2653_nonutf8_key_mangled (#2653)
++src/graph_core.rs	process_write_queued_query	1701	PROVEN	GraphCore.loopExit: loopExit_safe (no stranded message on exit); slot dropped on dequeue: SearchConcurrency Pool.paths_release_once
++src/graph_core.rs	CtxSink::replicate	1849	PROVEN	GraphCore.replicateArgv: replicateArgv_shape
++src/graph_core.rs	graph_free	1862	PROVEN	GraphCore.free: free_unregisters, free_keeps_others; Telemetry.graphFree (#3844 queues the freed keys' streams): graphFree_registry, graphFree_queues, freed_stream_stripped
+ src/query_session.rs	QuerySession::begin	178	PROVEN	QuerySession.begin: escalate_order
+ src/query_session.rs	QuerySession::begin_with	185	PROVEN	QuerySession.beginWith/readPastGate (#3816: past the WriterGate first; facts parameter): beginWith_open, beginWith_nowait, readPastGate_ends_reading, upgrade_unregistered, reauth_replay
+ src/query_session.rs	QuerySession::begin_writer	205	PROVEN	QuerySession.beginWriter: writer_holds_gil, release_order
+@@ -171,55 +171,64 @@ src/query_session.rs	Gil::acquire	701	PROVEN	QuerySession.gilAcquire (no-op iff
+ src/query_session.rs	Gil::drop	724	PROVEN	QuerySession.gilDrop: gil_stack, gil_out_of_order
+ src/query_session.rs	lock_gil	745	AXIOMATISED	RM_ThreadSafeContextLock/Unlock + FreeThreadSafeContext (Redis API); QuerySession.Ev.gilLock/gilUnlock
+ src/query_session.rs	release_gil	758	AXIOMATISED	RM_ThreadSafeContextLock/Unlock + FreeThreadSafeContext (Redis API); QuerySession.Ev.gilLock/gilUnlock
+-src/module_init.rs	pthread_atfork	97	AXIOMATISED	libc pthread_atfork declaration
+-src/module_init.rs	on_fork_child	124	PROVEN	ModuleInit.forkChildAborts: fork_gc_never_aborts, fork_all_synced
+-src/module_init.rs	sync_deepbind_environ	160	NOT COVERED	Linux-only; not modelled. Bound to ld.so/libc: dlopen(NULL) + dlsym("environ"), then points libc's own environ at graph::env_snapshot::leak_deep_copy of that array. CI reaches only its no-op return; the snapshot path runs only under a valkey-server that copy-relocates environ (#3493).
++s
+```
+
+**File**: `proofs/redis_layer/README.md` (modified, +1/-1)
+```diff
+@@ -162,7 +162,7 @@ C-side bugs seen along the way: C crashes on some malformed bulk tokens, and cou
+ | `KeyName.lean` | #2653: key names as bytes, a concrete `from_utf8_lossy`, the replicated key |
+ | `ErrorText.lean` | #3428: `str_as_legal_resp_string` (error and simple-string reply text) on bytes; history pre-#3428 counterexamples (removed in bbee75955; the last revision that has them is 17ccc5412) |
+ | `Commands.lean`, `Commands2.lean` | The smaller command handlers: constraint, record, copy, bulk, memory, config get, and others |
+-| `Telemetry.lean`, `TelemetryReg.lean`, `TelemetryLoop.lean` | `telemetry.rs`: stream names, the query registry, batching, the flusher |
++| `Telemetry.lean`, `TelemetryReg.lean`, `TelemetryLoop.lean`, `TelemetryFreed.lean` | `telemetry.rs`: stream names, the query registry, batching, the flusher, the #3844 persistence strip and freed-graph stream queue |
+ | `SlowLog.lean` | `slow_log.rs` (incl. #3442, fixed by #3456: `MinCache`, `SlowestKept`, `add`) |
+ | `RelLookup.lean` | #3447 (open) / #3449 (fixed by #3462): the relationship lookups behind the reply encoders (endpoints, type id/name over graph, snapshots and pending), the cascade commit and `GRAPH.RECORD` |
+ | `Allocator.lean` | `allocator.rs`: per-thread allocation counters |
+```
+
+**File**: `proofs/redis_layer/RedisLayer.lean` (modified, +7/-3)
+```diff
+@@ -11,6 +11,7 @@ import RedisLayer.SerialProof
+ import RedisLayer.SerialCLayout
+ import RedisLayer.RespVerbose
+ import RedisLayer.TelemetryLoop
++import RedisLayer.TelemetryFreed
+ import RedisLayer.ModuleInit
+ import RedisLayer.ConfigRewrite
+ import RedisLayer.QuerySession
+@@ -144,7 +145,7 @@ C-side bugs found on the way: C crashes on malformed bulk tokens; `L:L` counts t
+ | `Serial`, `SerialSchema`, `SerialEntry`, `SerialProof` | `src/serializers/mod.rs` (header/schema encode+decode; `SerialSchema.decField` = `decode_index_field` `:637-725`, `encField`/`encPh` = field loop `:383-427`) |
+ | `SerialCLayout` | C's multi-type index-field entry vs `decode_index_field` (#3484, fixed by #3514 `a0ba12950`); pre-#3514 counterexamples (removed in bbee75955; the last revision that has them is 17ccc5412) history |
+ | `Resp`, `RespCompact`, `RespVerbose` | `src/reply.rs` (call streams, postponed lengths, RESP2 bytes) |
+-| `Telemetry`, `TelemetryReg`, `TelemetryLoop` | `src/telemetry.rs` |
++| `Telemetry`, `TelemetryReg`, `TelemetryLoop`, `TelemetryFreed` | `src/telemetry.rs`; `TelemetryFreed`: the #3844 persistence strip (`strip_stream`, the freed-graph queue, `redis_type.rs` `strip_telemetry_streams`) |
+ | `ModuleInit` | `src/module_init.rs`, `src/lib.rs` config table, `src/config.rs` |
+ | `ConfigRewrite` | `CONFIG REWRITE` of the `lib.rs:97-116` native configs vs. what `GRAPH.CONFIG SET` / load arguments store (#3419) |
+ | `QuerySession` | `src/query_session.rs` |
+@@ -166,9 +167,12 @@ Headline theorems:
+   tree; `compact_reply` lands on `Compact.encReply`, which `decReply_enc` decodes;
+   `bytes_of_emits` gives the RESP2 bytes; `postponed_wrong_len` shows a wrong count breaks.
+ * Telemetry: `streamName_key_name`/`streamName_inj`/`stream_same_slot`, registry placement and
+-  transitions, `WaitingEntry` guard laws, `drain_conserves`, `capDeferred_suffix`,
++  transitions, `WaitingEntry` guard laws, `drain_conserves`,
+   `retain_sound`/`pass2Step_sound` (re-keying), `group_keeps_order` (per-graph arrival order
+-  survives the sort), `iter_replica_never_writes`.
++  survives the sort), `iterSteps_delete_before_write`; since #3844 telemetry is node-local:
++  `GraphCore.sync_unserved_silent` (replicated / AOF-replayed queries are not logged),
++  `freed_stream_stripped`/`stripAll_covers` (no stream reaches a snapshot); the old replica
++  rule is kept as history (`Pre3844.enqueue_replica`, `Pre3844.iter_replica_never_writes`).
+ * `LoadArgs.rust_c_same_accept` (#3328) — module-load arguments accepted exactly as C's
+   `Config_Init` (modulo leading whitespace and Rust-only names, both confirmed live; for
+   arguments without embedded NUL, since C reads C strings; given `FsOk`, i.e. `File::create`
+```
+
+**File**: `proofs/redis_layer/RedisLayer/GraphCore.lean` (modified, +31/-9)
+```diff
+@@ -5,7 +5,7 @@ import RedisLayer.Resp
+ | here | there (`origin/main`) |
+ | --- | --- |
+ | `upToNulB`, `cGraphKey`, `cGraphName` | `up_to_nul` `:92`, `c_graph_name` `:106`, `c_graph_key` `:121` |
+-| `Reg.*`                     | `register_graph` `:142`, `graph_is_registered` `:190`, `rename_graph` `:250`, `graph_free` `:1858` |
++| `Reg.*`                     | `register_graph` `:142`, `graph_is_registered` `:190`, `rename_graph` `:250`, `graph_free` `:1862` (stream queue: `Telemetry.graphFree`) |
+ | `keyOfWrite`                | `key_of_write` `:223` (#3850/#3851) |
+ | `modified`                  | `WriteQueryOk::new` `:303` |
+ | `sanitise`                  | `ffi::sanitise_error` `:362` |
+@@ -15,7 +15,7 @@ import RedisLayer.Resp
+ | `writeSteps`                | `try_query_write` `:834`, `finish_write` `:1568`, `abandon_write` `:1603`, `commit_and_replicate` `:1619` |
+ | `executeWrite`, `Attempt`   | `execute_query_write` `:784` (retry loop, #3290), `WriteAttempt::from` `:823` |
+ | `admitQ`, `dispatch`        | `admit` `:1052`, `query_mut` `:1063` (#3014) |
+-| `syncOutcome`               | `query_sync` `:1267`, `profile_sync` `:1497`, `profile_mut` `:1396` |
++| `syncOutcome`, `logsTelemetry` | `query_sync` `:1264` (`log_query`, #3844), `dispatch::logs_telemetry` `dispatch.rs:63`, `profile_sync` `:1501`, `profile_mut` `:1400` |
+ | `loopExit`                  | `process_write_queued_query` `:1697` |
+ | `EFFECT_COMMAND`            | `CtxSink::replicate` `:1845` |
+ | `TG`                        | `ThreadedGraph::new` `:600`, `from_mvcc` `:617` (unbounded write channel since #3014) |
+@@ -449,18 +449,40 @@ theorem read_releases_admission (ok : Bool) : admissionKept ok false = false :=
+ /-! ## Sync paths (`query_sync`, `profile_sync`, `profile_mut`) -/
+ 
+ inductive Out | errNoTelemetry | readTelemetry | writeTelemetry | writeErr | profileRead
++  | readUnlogged | writeUnlogged
+   deriving DecidableEq
+ 
++/-- `dispatch::logs_telemetry` (`dispatch.rs:63`, #3844): a query is this node's to log
++unless it came from the master (`REPLICATED`) or from AOF replay (`LOADING`). -/
++def logsTelemetry (replicated loading : Bool) : Bool := !(replicated || loading)
++
++theorem logsTelemetry_iff (r l : Bool) : logsTelemetry r l = true ↔ r = false ∧ l = false := by
++  cases r <;> cases l <;> decide
++
+ /-- `query_sync`: read errors return without telemetry; reads log a read entry; writes run
+ under `begin_writer` and log a write entry with zero wait, or fail through the divergence
+-guard. -/
+-def syncOutcome (readOk isWrite writeOk : Bool) : Out :=
++guard. Since #3844 an entry is enqueued only if `log_query` (`logsTelemetry` of the
++context, `:1287`); the reply is the same either way. -/
++def syncOutcome (readOk isWrite writeOk logQuery : Bool) : Out :=
+   if !readOk then .errNoTelemetry
+-  else if !isWrite then .readTelemetry
+-  else if writeOk then .writeTelemetry else .writeErr
+-
+-theorem sync_write_logs : syncOutcome true true true = .writeTelemetry := rfl
+-theorem sync_err (w o : Bool) : syncOutcome false w o = .errNoTelemetry := rfl
++  else if !isWrite then (if logQuery then .readTelemetry else .readUnlogged)
++  else if writeOk then (if logQuery then .writeTelemetry else .writeUnlogged) else .writeErr
++
++theorem sync_write_logs : syncOutcome true true true true = .writeTelemetry := rfl
++theorem sync_read_logs : syncOutcome true false true true = .readTelemetry := rfl
++theorem sync_err (w o l : Bool) : syncOutcome false w o l = .errNoTelemetry := rfl
++
++/-- #3844: a replicated or replayed query is never logged on this node. -/
++theorem sync_unserved_silent (rd w o r l : Bool) (h : r = true ∨ l = true) :
++    syncOutcome rd w o (logsTelemetry r l) ≠ .readTelemetry ∧
++    syncOutcome rd w o (logsTelemetry r l) ≠ .writeTelemetry := by
++  cases r <;> cases l <;> simp at h <;> cases rd <;> cases w <;> cases o <;> decide
++
++/-- …and the decision does not change what is executed: same outcome up to logging. -/
++theorem sync_log_only (rd w o : Bool) :
++    (syncOutcome rd w o true = .readTelemetry ↔ syncOutcome rd w o false = .readUnlogged) ∧
++    (syncOutcome rd w o true = .writeTelemetry ↔ syncOutcome rd w o false = .writeUnlogged) := by
++  cases rd <;> cases w <;> cases o <;> decide
+ 
+ /-- `profile_sync`/`profile_mut`: same detection, write plans run with `profile = true`. -/
+ def profileOutcome (detectOk : Bool) (d : Detect) (writeOk : Bool) : Out :=
+```
+
+---
+
+### Incident Patch 2: `4205fec1` (2026-11-18)
+**Commit Message**: fix: GRAPH.BULK publishes under the key that holds its graph now, or is refused if none does (#3863)
+
+* fix: GRAPH.BULK publishes under the key that holds its graph now, or is refused if none does (#3792)
+
+A bulk batch is admitted on the main thread, then committed and replicated
+later from a worker, as the command itself, key included. A RENAME or MOVE in
+between passed the worker's registry check, and the batch was replicated under
+a key the replica no longer had, so master and replica diverged. A failed BEGIN
+batch deleted whatever its key held by then, including a graph another client
+had created there.
+
+Before it publishes anything, the worker now asks key_of_write (#3855) where
+the graph lives. It replicates under the key the graph was renamed to, and is
+refused when no key holds it. The failed-BEGIN cleanup removes the graph from
+the key that holds it now, or deletes nothing.
 
 * proofs: update the Lean proofs for this change (proof-impact bot)
 
-Verified patch of the proof-impact run https://github.com/FalkorDB/FalkorDB/actions/runs/43741670268
-at 7c04fa5983c30168b07bea5ffd9925f360f10e60, applied on request of AviAvni (held items reviewed).
+Verified patch of the proof-impact run https://github.com/FalkorDB/FalkorDB/actions/runs/44318428516
+at b8028f7e11423c00fb6386d82f4374890cfc9605, applied by hand after rebasing onto main (held items reviewed).
 
-Proof-Bot-Run: https://github.com/FalkorDB/FalkorDB/actions/runs/43741670268
+Proof-Bot-Run: https://
 
-* ci: run CI on the proof 
-
-**File**: `graph/src/planner/optimizer/push_filters_down.rs` (modified, +77/-1)
+**File**: `proofs/redis_layer/COVERAGE.tsv` (modified, +65/-64)
 ```diff
-@@ -78,6 +78,26 @@ fn branch_output_variables(node: &orx_tree::DynNode<IR>) -> Option<HashSet<u32>>
+@@ -100,46 +100,46 @@ src/graph_core.rs	c_graph_name	106	PROVEN	GraphCore.cGraphName: cGraphName_key (
+ src/graph_core.rs	c_graph_key	121	PROVEN	GraphCore.cGraphKey: upToNulB_nonul, cGraphName_key
+ src/graph_core.rs	register_graph	142	PROVEN	GraphCore.register: register_registered, register_get; MultiDb.query (registry keyed by name only, keyspace by (db,key)) — #2782 open: bug2782_same_name_other_db_aborts refutes KeyspaceRegistered/WritesSucceed
+ src/graph_core.rs	graph_is_registered	190	PROVEN	GraphCore.isRegistered: free_unregisters, free_keeps_others; MultiDb.existing_ok (under KeyspaceRegistered), bug2782_invariant_broken: OPEN BUG #2782 refutes KeyspaceRegistered on main (kept PROVEN, bug named)
+-src/graph_core.rs	key_of_write	220	PROVEN	GraphCore.keyOfWrite (#3850/#3851; key_holds_graph as keyspace lookup, TelemetryLoop.keyHolds_iff): keyOfWrite_main, keyOfWrite_admitted, keyOfWrite_renamed, keyOfWrite_holds, keyOfWrite_unheld
+-src/graph_core.rs	rename_graph	250	PROVEN	GraphCore.rename: rename_moves, rename_absent
+-src/graph_core.rs	WriteQueryOk::new	303	PROVEN	GraphCore.modified: modified_zero, modified_replicates_or_warns
+-src/graph_core.rs	ffi::sanitise_error	362	PROVEN	GraphCore.sanitise: sanitise_nonul, sanitise_len, sanitise_id
+-src/graph_core.rs	ffi::block_client	377	AXIOMATISED	one RedisModule_* call (Redis module API contract)
+-src/graph_core.rs	ffi::unblock_client	388	AXIOMATISED	one RedisModule_* call (Redis module API contract)
+-src/graph_core.rs	ffi::get_thread_safe_context	397	AXIOMATISED	one RedisModule_* call (Redis module API contract)
+-src/graph_core.rs	ffi::free_thread_safe_context	408	AXIOMATISED	one RedisModule_* call (Redis module API contract)
+-src/graph_core.rs	ffi::reply_error	417	AXIOMATISED	one RedisModule_* call (Redis module API contract)
+-src/graph_core.rs	ffi::signal_modified_key	434	AXIOMATISED	one RedisModule_* call (Redis module API contract)
+-src/graph_core.rs	ffi::yield_ctx	456	AXIOMATISED	one RedisModule_* call (Redis module API contract)
+-src/graph_core.rs	ffi::measure_time_start	473	AXIOMATISED	one RedisModule_* call (Redis module API contract)
+-src/graph_core.rs	ffi::measure_time_end	483	AXIOMATISED	one RedisModule_* call (Redis module API contract)
+-src/graph_core.rs	ffi::hold_string	500	AXIOMATISED	one RedisModule_* call (Redis module API contract)
+-src/graph_core.rs	ffi::free_string	511	AXIOMATISED	one RedisModule_* call (Redis module API contract)
+-src/graph_core.rs	ffi::trim_string_allocation	526	AXIOMATISED	one RedisModule_* call (Redis module API contract)
+-src/graph_core.rs	ffi::replicate_argv	541	AXIOMATISED	one RedisModule_* call (Redis module API contract)
+-src/graph_core.rs	ThreadedGraph::new	600	PROVEN	GraphCore.TG.new: TG.new_idle (unbounded write channel, #3014)
+-src/graph_core.rs	ThreadedGraph::from_mvcc	617	PROVEN	GraphCore.TG.fromMvcc: TG.new_idle (unbounded write channel, #3014)
+-src/graph_core.rs	execute_query	636	PROVEN	RoQuery.ro_never_writes, GraphCore.executeQuery/admissionKept: ro_write_rejected, read_releases_admission (#3014)
+-src/graph_core.rs	execute_profile	722	PROVEN	GraphCore.profileDetect/admissionKept: profileDetect_write, read_releases_admission (#3014)
+-src/graph_core.rs	execute_query_write	784	PROVEN	GraphCore.executeWrite (#3290 retry loop): executeWrite_first, stale_run_silent
+-src/graph_core.rs	try_query_write	834	PROVEN	GraphCore.writeSteps/abandonSteps (#3657 infallible write_version, Stale on abandon; #3850/#3851 refused finish_write abandons and fails): reply_after_commit, reply_only_after_commit, failed_no_commit, unkeyed_refused, stale_run_silent, unregistered_not_stale
+-src/graph_core.rs	WriteAttempt::from	823	PROVEN	GraphCore.Attempt.ofString: ofString_not_stale
+-src/graph_core.rs	reply_profile	936	PROVEN	GraphCore.profileDepth/profileOps (#2390: all ops, plain depth): profileDepth_eq, profileDepth_commit_counts, profileOps_all
+-src/graph_core.rs	BlockedClient::new	973	AXIOMATISED	RM_BlockClient/UnblockClient + BlockedClientMeasureTime* (Redis API)
+-src/graph_core.rs	BlockedClient::drop	981	AXIOMATISED	RM_BlockClient/UnblockClient + BlockedClientMeasureTime* (Redis API)
+-src/graph_core.rs	compute_effective_timeout	999	PROVEN	Args.rustTimeout: rustTimeout_write_pq, rustTimeout_rw_uniform (#2998 fixed by #3000 2e8172d76), rustTimeout_le_max, rustTimeout_pos, rustTimeout_exceeds, rustTimeout_write_ignores_pq
+-src/graph_core.rs	reply_invalid_graph_version	1038	PROVEN	GraphCore.invalidVersionBytes: invalidVersion_shape
+-src/graph_core.rs	admit	1052	PROVEN	GraphCore.admitQ: admit_bounded, capped (QueueSlot::try_acquire; never waits)
+-src/graph_core.rs	query_mut	1063	PROVEN	GraphCore.dispatch/admitQ (#3014): stale_version, inline_uncapped, capped, admit_bounded
+-src/graph_core.rs	query_sync	1267	PROVEN	GraphCore.syncOutcome: sync_err, sync_write_logs
+-src/graph_core.rs	profile_mut	1396	PROVEN	GraphCore.profileOutcome/dispatch (admitQ, #3014): profile_write_runs_as_write, profile_read_replied, capped
+-src/graph_core.rs	p
+```
+
+**File**: `proofs/redis_layer/RedisLayer/Commands2.lean` (modified, +75/-9)
+```diff
+@@ -1,6 +1,7 @@
+ import RedisLayer.Commands
+ import RedisLayer.ModuleInit
+ import RedisLayer.Telemetry
++import RedisLayer.GraphCore
+ /-!
+ # Constraint, record, copy, bulk and config-get handlers (`src/commands/*.rs`, `origin/main`)
+ 
+@@ -14,7 +15,7 @@ import RedisLayer.Telemetry
+ | `applyCons`, `consWorker` | `apply_constraint` `:599`; `graph_constraint` pool path `:547-585` (#3819) |
+ | `recordShape`             | `record.rs` `record_mut` `:44`, `graph_record` `:180` |
+ | `copyOut`                 | `copy.rs` `graph_copy` `:27` (`pipe`/`fork`/`_exit`/`waitpid` are libc, AXIOMATISED) |
+-| `bulkFlow`, `heldReplicate`, `maybeYield`, `publishOps`, `edgeRecords` | `bulk_insert.rs` `:218-1045` |
++| `bulkFlow`, `heldReplicate`, `heldRekey`, `bulkArgv`, `discardCreated`, `maybeYield`, `publishOps`, `edgeRecords` | `bulk_insert.rs` `:247-1125` (#3863: `discard_created_graph` `:296`, `HeldArgs::rekey` `:396`, the worker's `key_of_write` `:1026`) |
+ | `getNames`, `getOne`, `asI64`, `asU64` | `config_cmd.rs` `config_get_one` `:57`, `ConfigValue::as_i64/as_u64` `:294-306` |
+ -/
+ namespace RedisLayer.Commands
+@@ -396,6 +397,27 @@ def heldReplicate (argv : List String) : Option (String × List String) :=
+ theorem heldReplicate_verbatim (c : String) (rest : List String) :
+     heldReplicate (c :: rest) = some (c, rest) := rfl
+ 
++/-- `HeldArgs::rekey` (`:396`, #3863): argument 1 (the graph key) is replaced by `key`. -/
++def heldRekey (argv : List String) (key : String) : List String :=
++  match argv with
++  | c :: _ :: rest => c :: key :: rest
++  | _ => argv
++
++/-- The worker's replicated vector (`:1092-1096`): rekeyed only when `key_of_write`'s `live`
++differs from the `admitted` key. -/
++def bulkArgv (admitted live : String) (argv : List String) : List String :=
++  if live ≠ admitted then heldRekey argv live else argv
++
++/-- Not renamed: the client's own arguments, verbatim (as before #3863). -/
++theorem bulkArgv_admitted (a : String) (argv : List String) : bulkArgv a a argv = argv := by
++  simp [bulkArgv]
++
++/-- Renamed: the batch reaches the replica under the key the graph lives at now, the rest of
++the arguments unchanged. -/
++theorem bulkArgv_renamed (a l c k : String) (rest : List String) :
++    heldReplicate (bulkArgv a l (c :: k :: rest)) = some (c, (if l ≠ a then l else k) :: rest) := by
++  unfold bulkArgv; by_cases h : l ≠ a <;> simp [h, heldRekey, heldReplicate]
++
+ /-- The publish step of `graph_bulk_insert` (`g.commit_index_docs(&mut docs)`, :830 / :952;
+ `BulkIndexDocs::publish` before #3307): bulk only adds, so `node_removes`/`edge_removes` are
+ empty and `commit_index_docs` (graph.rs:3785, `GQ.commitIndexDocs` in proofs/graph_queries)
+@@ -418,11 +440,41 @@ theorem edgeRecords_bound (r : Nat) (rs : List (List (Option Nat))) (out : List
+   unfold edgeRecords at h; split at h; · simp at h
+   · cases h; simp; omega
+ 
+-/-- `discard_created_graph`: stream then key. -/
+-def discardOps (name : List Char) : List String := ["DEL " ++ String.ofList (Telemetry.streamName name), "delete key"]
+-
+-theorem discardOps_stream_first (n : List Char) :
+-    (discardOps n).head? = some ("DEL " ++ String.ofList (Telemetry.streamName n)) := rfl
++/-- `discard_created_graph`: stream then key. Since #3863 the key deleted is `live`, the one
++`key_of_write` finds holding the graph; the stream stays named after C's `name`. -/
++def discardOps (name live : List Char) : List String :=
++  ["DEL " ++ String.ofList (Telemetry.streamName name), "delete key " ++ String.ofList live]
++
++/-- `discard_created_graph` (`:296`, #3863): `key_of_write` first; `Err` deletes nothing. -/
++def discardCreated (main : Bool) (ks : List Char → Option Nat) (reg : GraphCore.Reg) (g : Nat)
++    (name : List Char) : List String :=
++  match GraphCore.keyOfWrite main ks reg g name with
++  | some live => discardOps name live
++  | none => []
++
++theorem discardOps_stream_first (n l : List Char) :
++    (discardOps n l).head? = some ("DEL " ++ String.ofList (Telemetry.streamName n)) := rfl
++
++/-- Inline (main thread): the addressed key, as before #3863. -/
++theorem discardCreated_main (ks : List Char → Option Nat) (reg : GraphCore.Reg) (g : Nat) (n : List Char) :
++    discardCreated true ks reg g n = discardOps n n := by
++  simp [discardCreated, GraphCore.keyOfWrite_main]
++
++/-- Worker, graph still at its key: that key. -/
++theorem discardCreated_admitted (m : Bool) (ks : List Char → Option Nat) (reg : GraphCore.Reg) (g : Nat)
++    (n : List Char) (h : ks n = some g) : discardCreated m ks reg g n = discardOps n n := by
++  simp [discardCreated, GraphCore.keyOfWrite_admitted m ks reg g n h]
++
++/-- Worker, graph renamed: the renamed key is deleted, not whatever now sits at the old one. -/
++theorem discardCreated_renamed (ks : List Char → Option Nat) (reg : GraphCore.Reg) (g : Nat) (n r : List Char)
++    (ha : ks n ≠ some g) (hr : reg.find? (·.2 = g) = some (r, g)) (hn : ks r = some g) :
++    discardCreated false ks reg g n = discardOps n r := by
++  simp [discardCreated, Graph
+```
+
+**File**: `proofs/redis_layer/RedisLayer/GraphCore.lean` (modified, +2/-2)
+```diff
+@@ -6,7 +6,7 @@ import RedisLayer.Resp
+ | --- | --- |
+ | `upToNulB`, `cGraphKey`, `cGraphName` | `up_to_nul` `:92`, `c_graph_name` `:106`, `c_graph_key` `:121` |
+ | `Reg.*`                     | `register_graph` `:142`, `graph_is_registered` `:190`, `rename_graph` `:250`, `graph_free` `:1858` |
+-| `keyOfWrite`                | `key_of_write` `:220` (#3850/#3851) |
++| `keyOfWrite`                | `key_of_write` `:223` (#3850/#3851) |
+ | `modified`                  | `WriteQueryOk::new` `:303` |
+ | `sanitise`                  | `ffi::sanitise_error` `:362` |
+ | `invalidVersionBytes`       | `reply_invalid_graph_version` `:1038` |
+@@ -146,7 +146,7 @@ theorem rename_moves (r : Reg) (o n : List Char) (g : Nat) (h : r.get o = some g
+     congr 2; congr 1; funext p; simp [Bool.and_comm]
+   rw [e, get_filter_self]
+ 
+-/-! ## `key_of_write` (`:220`, #3850/#3851): the key a write is published under
++/-! ## `key_of_write` (`:223`, #3850/#3851): the key a write is published under
+ 
+ `ks k` is the graph allocation the keyspace holds at key `k` (`key_holds_graph`, `redis_type.rs:577`,
+ is `ks k = some g`: TelemetryLoop `keyHolds_iff`). `main` is `is_main_thread()`. The registry
+```
+
+**File**: `proofs/search_concurrency/COVERAGE.tsv` (modified, +37/-37)
+```diff
+@@ -37,43 +37,43 @@ src/graph_core.rs	c_graph_name	106	NOT COVERED	string helper
+ src/graph_core.rs	c_graph_key	121	NOT COVERED	string helper
+ src/graph_core.rs	register_graph	142	MODELLED	Mvcc.S.registered := true
+ src/graph_core.rs	graph_is_registered	190	PROVEN	Mvcc.delete_blocks_writes (registered guard on mutate/commit)
+-src/graph_core.rs	rename_graph	250	NOT COVERED	registry re-key; RENAME not modelled
+-src/graph_core.rs	new	303	NOT COVERED	WriteQueryOk::new modified predicate
+-src/graph_core.rs	sanitise_error	362	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
+-src/graph_core.rs	block_client	377	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
+-src/graph_core.rs	unblock_client	388	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
+-src/graph_core.rs	get_thread_safe_context	397	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
+-src/graph_core.rs	free_thread_safe_context	408	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
+-src/graph_core.rs	reply_error	417	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
+-src/graph_core.rs	signal_modified_key	434	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
+-src/graph_core.rs	yield_ctx	456	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
+-src/graph_core.rs	measure_time_start	473	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
+-src/graph_core.rs	measure_time_end	483	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
+-src/graph_core.rs	hold_string	500	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
+-src/graph_core.rs	free_string	511	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
+-src/graph_core.rs	trim_string_allocation	526	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
+-src/graph_core.rs	replicate_argv	541	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
+-src/graph_core.rs	new	600	PROVEN	unbounded write channel (#3014); Locks.never_stuck_3014 (send never waits)
+-src/graph_core.rs	from_mvcc	617	MODELLED	as new
+-src/graph_core.rs	execute_query	636	MODELLED	Mvcc Ev.read on snapshot; write detection not modelled
+-src/graph_core.rs	execute_profile	722	MODELLED	as execute_query
+-src/graph_core.rs	execute_query_write	784	PROVEN	Mvcc fork/checkFork (#3290/#3657): inline_write_ok, stale_then_rerun, checkFork_on_committed (retry sees the inline write) (BUG 5; counterexample removed in bbee75955; the last revision that has them is 17ccc5412)
+-src/graph_core.rs	reply_profile	936	NOT COVERED	reply formatting here; PROVEN in redis_layer (GraphCore.profileOps_all, profileDepth_eq; #2390 lists every op)
+-src/graph_core.rs	new	973	AXIOMATISED	RM_BlockClient FFI
+-src/graph_core.rs	drop	981	AXIOMATISED	RM_UnblockClient FFI
+-src/graph_core.rs	compute_effective_timeout	999	NOT COVERED	config arithmetic, not concurrency
+-src/graph_core.rs	reply_invalid_graph_version	1038	NOT COVERED	reply formatting
+-src/graph_core.rs	admit	1052	PROVEN	Pool.acquireLoop/acquire_bounded; Locks.succ3014 dispatch (reject, never wait): main_never_blocks, inv3014_step
+-src/graph_core.rs	query_mut	1063	PROVEN	Locks.main_never_blocks/never_stuck_3014/inv3014_step (admit + unbounded spawn, #3014); drain producer (send then CAS)
+-src/graph_core.rs	query_sync	1267	PROVEN	Mvcc.inline_write_ok (inline writer = escalate 0 then forkCur; never refused by a matching queued write, #3290)
+-src/graph_core.rs	profile_mut	1396	PROVEN	same admission/producer protocol as query_mut: Locks.main_never_blocks, never_stuck_3014
+-src/graph_core.rs	profile_sync	1497	MODELLED	as query_sync
+-src/graph_core.rs	finish_write	1568	PROVEN	Mvcc Ev.commit (session in writer mode, key_of_write found its key) / Ev.abandon (never escalated: the version just drops with the runtime; or refused by key_of_write, #3850/#3851, and abandoned by the caller)
+-src/graph_core.rs	abandon_write	1603	PROVEN	Mvcc Ev.abandon (the fork is dropped, nothing to roll back); index resync not modelled
+-src/graph_core.rs	commit_and_replicate	1619	PROVEN	Mvcc Ev.commit requires GIL (fork_excludes_commit)
+-src/graph_core.rs	process_write_queued_query	1697	PROVEN	Locks.drain_no_lost_message/explore_saturated/recheck_needed (write_loop protocol, 2 producers exhaustive)
+-src/graph_core.rs	replicate	1845	AXIOMATISED	RM_Replicate FFI
+-src/graph_core.rs	graph_free	1858	PROVEN	Mvcc Ev.delete (registered := false) + delete_blocks_writes
++src/graph_core.rs	rename_graph	253	NOT COVERED	registry re-key; RENAME not modelled
++src/graph_core.rs	new	306	NOT COVERED	WriteQueryOk::new modified predicate
++src/graph_core.rs	sanitise_error	365	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
++src/graph_core.rs	block_client	380	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
++src/graph_core.rs	unblock_client	391	AXIOMATISED	Redis module API FFI wrapper (redismodule.h); no logic
++src/graph_core.rs	get_threa
+```
+
+**File**: `src/commands/bulk_insert.rs` (modified, +76/-8)
+```diff
+@@ -2,7 +2,9 @@ use crate::dispatch::must_run_inline;
+ use crate::query_session::{QuerySession, WriteFacts, hold_gil};
+ use crate::{
+     config::CONFIGURATION_CACHE_SIZE,
+-    graph_core::{BlockedClient, ThreadedGraph, c_graph_key, c_graph_name, ffi, register_graph},
++    graph_core::{
++        BlockedClient, ThreadedGraph, c_graph_key, c_graph_name, ffi, key_of_write, register_graph,
++    },
+     redis_type::{GRAPH_TYPE, wrong_type_compat},
+     telemetry,
+ };
+@@ -17,6 +19,7 @@ use parking_lot::RwLock;
+ use roaring::RoaringTreemap;
+ use std::collections::HashMap;
+ use std::ffi::CString;
++use std::ptr::null_mut;
+ use std::sync::Arc;
+ use valkey_module::{
+     Context, ContextFlags, NextArg, ValkeyError, ValkeyResult, ValkeyString, ValkeyValue, raw,
+@@ -280,16 +283,35 @@ fn parse_header(
+ /// fails must leave no key behind, otherwise re-running the loader against a
+ /// corrected input trips the "already exists" guard instead of retrying.
+ ///
++/// A batch that failed on a worker is cleaned up after a `RENAME`, `MOVE`, `DEL` or
++/// `FLUSHALL` may have run, so the graph is taken out of the key that holds it now
++/// ([`key_of_write`]), not out of whatever the addressed key holds. Deleting the
++/// addressed key deleted a graph another client had created there since, and left
++/// a renamed one behind on the master alone. If no key in the client's database
++/// holds the graph, nothing is deleted: a flushed graph is gone already, and one
++/// `MOVE`d to another database is out of this context's reach.
++///
+ /// Requires the GIL — the caller either runs on the main Redis thread or holds
+ /// it explicitly.
+ fn discard_created_graph(
+     ctx: &Context,
+     key_str: &ValkeyString,
++    graph: &Arc<RwLock<ThreadedGraph>>,
+ ) {
+     // The graph was created under C's name, so that — not the addressed key — is
+-    // what has to be taken back out of the keyspace.
+-    telemetry::delete_stream(ctx, &c_graph_name(key_str));
+-    if let Ok(key) = ctx.open_key_writable(&c_graph_key(ctx, key_str)) {
++    // where it was stored, and what its telemetry stream is named after.
++    let name: Arc<str> = Arc::from(c_graph_name(key_str));
++    let Ok(live) = key_of_write(ctx, graph, &name) else {
++        return;
++    };
++    telemetry::delete_stream(ctx, &name);
++    let key = if live == name {
++        // The exact bytes, which `name` may only approximate.
++        c_graph_key(ctx, key_str)
++    } else {
++        ValkeyString::create_from_slice(ctx.get_raw(), live.as_bytes())
++    };
++    if let Ok(key) = ctx.open_key_writable(&key) {
+         let _ = key.delete();
      }
  }
+@@ -364,6 +386,25 @@ impl HeldArgs {
+         let cmd = CString::new(name).expect("a dispatched command name has no interior NUL");
+         unsafe { ffi::replicate_argv(ctx, &cmd, &self.argv[1..]) };
+     }
++
++    /// Propagate under `key` instead of the key the client named: the batch's graph
++    /// was renamed to `key` while the batch was built, so that is the name the batch
++    /// has to reach the replica under.
++    ///
++    /// # Safety
++    /// The GIL must be held: the replaced string came from client command arguments.
++    unsafe fn rekey(
++        &mut self,
++        key: &[u8],
++    ) {
++        let fresh = ValkeyString::create_from_slice(null_mut(), key);
++        // SAFETY: `fresh` is valid and the GIL is held. The held reference is this
++        // struct's own; `fresh` drops its own reference when it goes out of scope.
++        let held = unsafe { ffi::hold_string(fresh.inner) };
++        // SAFETY: argument 1 came from `hold_string` and leaves the vector here, so
++        // it is freed exactly once.
++        unsafe { ffi::free_string(std::mem::replace(&mut self.argv[1], held)) };
++    }
+ }
  
-+/// Operators that change the graph (or its schema) when they run.
+ impl Drop for HeldArgs {
+@@ -887,7 +928,7 @@ pub fn graph_bulk_insert(
+             Err(e) => {
+                 drop(tg);
+                 if begin {
+-                    discard_created_graph(ctx, &key_str);
++                    discard_created_graph(ctx, &key_str, &graph);
+                 }
+                 Err(ValkeyError::String(format!("ERR bulk insert failed: {e}")))
+             }
+@@ -923,7 +964,15 @@ pub fn graph_bulk_insert(
+         .iter()
+         .map(|rs| rs.as_slice().to_vec())
+         .collect();
+-    let held = held.expect("held on the background path, which is the only path here");
++    let mut held = held.expect("held on the background path, which is the only path here");
++    // The key the graph is stored at now, which the worker asks about again before it
++    // publishes: the addressed key for an existing graph, C's name for one this batch
++    // created (see `c_graph_key`).
++    let admitted: Arc<str> = Arc::from(if begin {
++        c_graph_name(&key_str)
++    } else {
++        key_str.to_string_lossy()
++    });
+     // The cleanup path re-opens the key by name, so it also needs the exact bytes:
+     // `to_string` goes through `to_string_lossy`, and a non-UTF-8 graph name would come
+     // back with replacemen
+```
+
+**File**: `src/graph_core.rs` (modified, +4/-1)
+```diff
+@@ -217,7 +217,10 @@ pub fn graph_is_registered(arc: &Arc<RwLock<ThreadedGraph>>) -> bool {
+ /// A key that is not valid UTF-8 is the exception. `admitted` is the lossy rendering
+ /// of its bytes, so nothing here can open it, and it is taken as it was before this
+ /// check existed, on the registry's word.
+-fn key_of_write(
 +///
-+/// A `Filter` is never moved below one of these, nor into a branch that
-+/// feeds a sibling subtree containing one: the write must still happen for
-+/// every row that reaches it, whatever a later `WHERE` says.
-+const fn is_write(ir: &IR) -> bool {
-+    matches!(
-+        ir,
-+        IR::Create(_)
-+            | IR::Merge { .. }
-+            | IR::Delete { .. }
-+            | IR::Set(_)
-+            | IR::Remove(_)
-+            | IR::Commit
-+            | IR::ForEach { .. }
-+            | IR::CreateIndex { .. }
-+            | IR::DropIndex { .. }
-+    )
++/// `GRAPH.BULK` asks the same question of a batch it built on a worker, and of a
++/// failed `BEGIN` batch before taking its graph back out of the keyspace.
++pub fn key_of_write(
+     ctx: &Context,
+     graph: &Arc<RwLock<ThreadedGraph>>,
+     admitted: &Arc<str>,
+```
+
+**File**: `tests/flow/test_bulk_insertion.py` (modified, +42/-0)
+```diff
+@@ -1069,3 +1069,45 @@ def long(v):
+         self.env.assertEqual(p1, {f"p{i}": 1000000 + i if i % 2 == 0 else i for i in range(n)})
+         res = graph.query("MATCH (n:L) RETURN n.p1, n.p2 ORDER BY id(n)")
+         self.env.assertEqual(res.result_set, [[1000001, 2], [1, 1000002]])
++
++    # A BEGIN batch builds on a worker. If its key is deleted and created again by
++    # another client meanwhile, the batch is refused, and the graph at the key now
++    # is not the batch's to take back out of the keyspace: deleting the key the
++    # batch named deleted that client's graph.
++    def test17_failed_begin_spares_a_recreated_key(self):
++        conn = self.db.connection
++        graphname = "bulk_recreated"
++        conn.delete(graphname)
++        count = 2000000
++        token = (b"N\0" + struct.pack("=I", 1) + b"v\0" +
++                 struct.pack("=Bq", 4, 7) * count)
++
++        reply = []
++
++        def load():
++            con = redis.Redis(self.env.host, self.port, socket_timeout=120,
++                              retry=Retry(NoBackoff(), 0))
++            try:
++                reply.append(con.execute_command("GRAPH.BULK", graphname, "BEGIN",
++                                                 count, 0, 1, 0, token))
++            except Exception as e:  # a timeout too, so it reaches the assertions
++                reply.append(e)
++
++        loader = threading.Thread(target=load)
++        loader.start()
++        # blocked from admission until the worker has committed or failed
++        deadline = time.time() + 10
++        while not any(c["cmd"].lower() == "graph.bulk" and "b" in c["flags"]
++                      for c in conn.client_list()):
++            if time.time() > deadline:
++                raise AssertionError("GRAPH.BULK never ran on a worker")
++            time.sleep(0.001)
++        conn.delete(graphname)
++        self.db.select_graph(graphname).query("CREATE (:Other)")
++        loader.join()
++
++        self.env.assertIsInstance(reply[0], redis.ResponseError)
++        self.env.assertContains("deleted or replaced", str(reply[0]))
++        res = self.db.select_graph(graphname).query(
++            "MATCH (n) RETURN labels(n)[0], count(n)")
++        self.env.assertEqual(res.result_set, [["Other", 1]])
+```
+
+**File**: `tests/flow/test_replication.py` (modified, +155/-1)
+```diff
+@@ -3,12 +3,31 @@
+ from constraint_utils import *
+ import csv
+ import os
++import struct
+ import tempfile
++import threading
+ import time
+ 
+ GRAPH_ID = "replication"
+ 
+ 
++def in_db(con, db):
++    """A connection to the server behind `con`, on database `db`."""
++    kwargs = con.connection_pool.connection_kwargs
++    return redis.Redis(host=kwargs["host"], port=kwargs["port"], db=db)
++
++
++def bulk_nodes(label, count, bad_last=False):
++    """A GRAPH.BULK node token: `count` (:label {v: 7}) records, then, with
++    `bad_last`, one record of an unknown property type, which fails the batch
++    after the rest of it was built."""
++    token = (label.encode() + b"\0" + struct.pack("=I", 1) + b"v\0" +
++             struct.pack("=Bq", 4, 7) * count)
++    if bad_last:
++        token += struct.pack("=Bq", 99, 0)
++    return token
++
++
+ # test to see if replication works as expected
+ # FalkorDB should replicate all write queries which had an effect on the
+ # underline graph, e.g. CREATE, DELETE, UPDATE operations as well as
+@@ -409,6 +428,40 @@ def write():
+             raise
+         return writer
+ 
++    # run `action` while `args` runs on a worker, and return the command's reply,
++    # or the error it got. This waits for the client to block, not for the key to
++    # exist: a command on an existing graph finds its key there before it is even
++    # sent, and the client stays blocked from admission until the worker is done
++    def _while_queued(self, args, action):
++        env = self.env
++        reply = []
++
++        def run():
++            con = redis.Redis(env.host, env.port, socket_timeout=120,
++                              decode_responses=True, retry=Retry(NoBackoff(), 0))
++            try:
++                reply.append(con.execute_command(*args))
++            except Exception as e:  # a timeout too, so it reaches the assertions
++                reply.append(e)
++
++        sender = threading.Thread(target=run)
++        sender.start()
++        try:
++            deadline = time.monotonic() + 10
++            while True:
++                clients = self._bounded(env.getConnection(), deadline).client_list()
++                if any(c["cmd"].lower() == args[0].lower() and "b" in c["flags"]
++                       for c in clients):
++                    break
++                if time.monotonic() > deadline:
++                    raise AssertionError(f"{args[0]} never ran on a worker")
++                time.sleep(0.001)
++            action()
++        finally:
++            # joined even if the action raised, so the command cannot outlive the test
++            sender.join()
++        return reply[0]
++
+     # a client for `con`'s server whose every command gives up at `deadline`:
+     # the socket timeout is the time left (at most 5 s) and nothing is retried,
+     # so no single command can outlast the caller's deadline
+@@ -420,7 +473,9 @@ def _bounded(con, deadline):
+                            socket_connect_timeout=left, retry=NO_RETRY)
+ 
+     # until the replica has applied everything the master propagated, within
+-    # 30 s: every INFO, the primary's included, is bounded by that deadline
++    # 30 s: every INFO, the primary's included, is bounded by that deadline. A
++    # replica applies a replicated GRAPH.BULK inline, yielding as it goes, and
++    # past busy-reply-threshold answers -BUSY until it is done
+     def _wait_replica_caught_up(self, source_con, replica_con):
+         deadline = time.monotonic() + 30
+         target = self._bounded(source_con, deadline).info("replication")["master_repl_offset"]
+@@ -433,6 +488,9 @@ def _wait_replica_caught_up(self, source_con, replica_con):
+                 # the replica did not answer in the time left: poll again
+                 # until the deadline, then fail below
+                 continue
++            except redis.ResponseError as e:
++                if "BUSY" not in str(e):
++                    raise
+             time.sleep(0.05)
+         self.env.assertTrue(False, message=f"replica did not reach offset {target} in 30 s")
+ 
+@@ -473,6 +531,35 @@ def test_rename_during_queued_write(self):
+             env.assertEqual(res.result_set[0][0], 1)
+         env.assertEqual(source_con.info("stats")["sync_full"], sync_full_before)
+ 
++    # the same, with MOVE: the graph leaves this database, so no key here holds
++    # it, and the write is refused, as C refuses it. committed, it was
++    # replicated under the key it was admitted at, which the replica had moved
++    # away too: the replica made a new graph there and diverged
++    def test_move_during_queued_write(self):
++        env = self.env
++        source_con = env.getConnection()
++        replica_con = env.getSlaveConnection()
++        key = "move_during_write"
++        for con in (source_con, in_db(source_con, 1)):
++            con.delete(key)
++        source_con.execute_command("GRAPH.QUERY", key, "CREATE (:Seed)")
++        env.assertEqual(source_con.execute_command("WAIT", "1", "10000"), 1)
++        sync_full_before = sour
+```
+
+---
+
+### Incident Patch 3: `98e05a41` (2026-11-19)
+**Commit Message**: fix(planner): a variable-length hop on an anchored endpoint leads its component (#2558) (#3593)
+
+* fix(planner): a variable-length hop on an anchored endpoint leads its component (#2558)
+
+plan_match sorted every variable-length hop after the fixed-length ones. With
+`(person {id})-[:KNOWS*2..2]-(friend), (friend)-[:LIVES]->(city:City)` that put
+the fixed hop at the leaf, select_scan_node started from the City label scan, and
+the var-length hop (whose `person` scan the earlier #2562 pass then dropped
+because `friend` was bound below) expanded from every row that scan produced.
+
+When nothing is bound yet and no fixed-length hop is itself anchored, a
+variable-length hop with an anchored endpoint (inline attrs or a WHERE
+predicate) sorts first, so the plan starts at the index lookup like C does.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(planner): promote only one self-contained, startable var-length walk
+
+Copilot/cubic review of #3593: do not promote a walk whose attrs read a
+variable bound by another hop, a bidirectional walk anchored only on its
+to endpoint, or more than one walk; key WHERE variables on (scope, id);
+tests wait for the index and assert the index scan
+
+**File**: `graph/src/planner/mod.rs` (modified, +147/-6)
+```diff
+@@ -41,8 +41,10 @@ use std::{
+ };
+ 
+ use crate::planner::hop_order::{HopShape, self_loops_after_binders};
+-use crate::planner::optimizer::collect_expr_variables;
++use crate::planner::optimizer::collect_expr_scoped_variables;
++use crate::planner::optimizer::collect_single_variable_conjuncts;
+ use crate::planner::optimizer::references::ir_references_variable;
++use crate::planner::optimizer::{endpoint_scan_score, walk_scans_to_endpoint};
+ use crate::runtime::functions::{FnType, Type, get_functions};
+ use crate::runtime::value::Value;
+ use crate::tree;
+@@ -2000,9 +2002,15 @@ impl Planner {
+         let mut vec = vec![];
+         // Variables the WHERE predicate constrains. Used below to order the
+         // hops of a component so constrained endpoints are reached first.
+-        let filter_vars: HashSet<u32> = filter
++        let filter_vars: HashSet<(u32, u32)> = filter
+             .as_ref()
+-            .map_or_default(|f| collect_expr_variables(f));
++            .map_or_default(|f| collect_expr_scoped_variables(f));
++        // The subset of those a promoted walk can start from: variables a WHERE
++        // conjunct constrains by itself, evaluable as soon as the endpoint is
++        // scanned (`p.id = length(r)` waits for the path, so it anchors nothing).
++        let anchor_vars: HashSet<(u32, u32)> = filter
++            .as_ref()
++            .map_or_default(|f| collect_single_variable_conjuncts(f));
+         // Collect extra filters for bound variables with new constraints
+         // (labels or inline properties). These are applied as top-level
+         // filters rather than as plan components, so they don't interfere
+@@ -2017,7 +2025,18 @@ impl Planner {
+         // Inline attrs already lowered to a Filter in this clause, keyed by
+         // (alias, attrs map identity). See `lower_inline_attrs`.
+         let mut lowered_attrs: HashSet<(u32, u32, usize)> = HashSet::new();
+-        for component in pattern.connected_components() {
++        // Whether an earlier clause bound anything. Reversing a promoted walk
++        // rebuilds its scan, which would drop an earlier clause's input if one
++        // sits underneath. Components of this clause are independent of each
++        // other, so what they bind does not count.
++        let bound_before_clause = !self.visited.is_empty();
++        // Computed once: the decomposition is a graph walk.
++        let components = pattern.connected_components();
++        let single_component = components.len() == 1
++            && !filter
++                .as_ref()
++                .is_some_and(|f| Self::has_pattern_expr(&f.root()));
++        for component in components {
+             let relationships = component.relationships();
+             // Endpoints already bound by earlier clauses may carry labels
+             // that were never enforced by a scan or traversal (e.g.
+@@ -2042,9 +2061,102 @@ impl Planner {
+             // traversals (especially self-loops / ExpandInto) are planned as
+             // leaves and variable-length traversals sit above them.
+             let mut sorted_rels: Vec<_> = relationships.to_vec();
++            // An endpoint the query constrains (inline attributes, or a WHERE
++            // predicate) is a cheap place to start: an index lookup or a short
++            // scan rather than every node of a label.
++            let is_constrained = |n: &Arc<QueryNode<Arc<String>, Variable>>| {
++                n.attrs.root().num_children() > 0
++                    || anchor_vars.contains(&(n.alias.scope_id, n.alias.id))
++            };
++            let anchored = |r: &QueryRelationship<Arc<String>, Arc<String>, Variable>| {
++                is_constrained(&r.from) || is_constrained(&r.to)
++            };
++            // A variable-length hop on an anchored endpoint leads the component
++            // when no fixed-length hop is anchored and nothing is bound yet.
++            // Planned last, as the sort below does by default, it would sit
++            // above a fixed-length hop that `select_scan_node` then starts from
++            // an unrelated label scan, and the var-length expansion runs from
++            // every candidate that scan finds (#2558).
++            //
++            // Only a walk that can start the plan leads, and the hops after it
++            // follow the pattern outward (see below), so each one has a bound
++            // endpoint when its turn comes:
++            //   - no walk in the component reads a variable in its endpoint or
++            //     edge attributes, so moving it loses no match;
++            //   - the endpoint `select_var_len_scan_node` will scan is the
++            //     anchored one. That pass scans the endpoint with the higher
++            //     `endpoint_scan_score` (the `to` side only when strictly
++            //     higher, since the walk can run either way), so the decision is
++            //     made here with the same score and a predicate that mentions
++            //     an endpoint at all (`
+```
+
+**File**: `graph/src/planner/optimizer/mod.rs` (modified, +79/-1)
+```diff
+@@ -63,7 +63,7 @@ mod utilize_node_by_id;
+ 
+ use std::collections::{HashMap, HashSet};
+ 
+-use orx_tree::{Bfs, DynTree, NodeRef};
++use orx_tree::{Bfs, DynNode, DynTree, NodeRef};
+ 
+ use crate::{
+     graph::graph::Graph,
+@@ -99,6 +99,84 @@ pub(crate) fn collect_expr_variables(expr: &DynTree<ExprIR<Variable>>) -> HashSe
+     vars
+ }
+ 
++/// Collects the `(scope_id, id)` of every variable an expression references.
++/// Variable ids are only unique within a scope, so callers that mix scopes
++/// (a pattern next to a `WHERE` with comprehension variables) key on both.
++pub(crate) fn collect_expr_scoped_variables(
++    expr: &DynTree<ExprIR<Variable>>
++) -> HashSet<(u32, u32)> {
++    let mut vars = HashSet::new();
++    for idx in expr.root().indices::<Bfs>() {
++        if let ExprIR::Variable(var) = expr.node(idx).data() {
++            vars.insert((var.scope_id, var.id));
++        }
++    }
++    vars
 +}
 +
- /// Pushes filter conjuncts down through nodes.
- ///
- /// Transforms:
-@@ -171,6 +191,12 @@ pub(super) fn push_filters_down(optimized_plan: &mut DynTree<IR>) {
-                         IR::Project { .. }
-                             | IR::Aggregate { .. }
-                             | IR::Merge { .. }
-+                            | IR::Create(_)
-+                            | IR::Delete { .. }
-+                            | IR::Set(_)
-+                            | IR::Remove(_)
-+                            | IR::Commit
-+                            | IR::ForEach { .. }
-                             | IR::Argument(_)
-                             | IR::IncludePending { .. }
-                             | IR::SemiApply
-@@ -190,6 +216,18 @@ pub(super) fn push_filters_down(optimized_plan: &mut DynTree<IR>) {
-                 }
-             }
- 
-+            // A branch is locked when a sibling subtree writes: filtering that
-+            // branch would starve the write of rows it must see (an `Apply`
-+            // runs its right side once per left row), e.g. `CALL { CREATE () }
-+            // MATCH () WHERE false` must still create its node.
-+            let holds_write: Vec<bool> = children
-+                .iter()
-+                .map(|(i, ..)| subtree_contains(optimized_plan, *i, is_write))
-+                .collect();
-+            let locked: Vec<bool> = (0..children.len())
-+                .map(|i| holds_write.iter().enumerate().any(|(j, w)| *w && j != i))
-+                .collect();
-+
-             // Compute inherited variables from Apply context.
-             // When Apply propagates bound variables via Argument leaves,
-             // the right branch effectively has access to the left branch's
-@@ -271,7 +309,7 @@ pub(super) fn push_filters_down(optimized_plan: &mut DynTree<IR>) {
-                 let conj_vars = collect_expr_variables(&conjunct);
-                 let mut matched_any = false;
-                 for (i, (_, child_vars, _)) in children.iter().enumerate() {
--                    if conj_vars.iter().all(|v| child_vars.contains(v)) {
-+                    if !locked[i] && conj_vars.iter().all(|v| child_vars.contains(v)) {
-                         child_conjuncts[i].push(conjunct.clone());
-                         matched_any = true;
-                     }
-@@ -287,6 +325,7 @@ pub(super) fn push_filters_down(optimized_plan: &mut DynTree<IR>) {
-             // CP wrapped with that conjunct as a filter.
-             if !remaining.is_empty()
-                 && child_conjuncts.iter().all(Vec::is_empty)
-+                && !holds_write.contains(&true)
-                 && let Some(filter_child) = optimized_plan.node(idx).get_child(0)
-                 && matches!(filter_child.data(), IR::CartesianProduct)
-                 && filter_child.num_children() > 2
-@@ -538,4 +577,41 @@ mod tests {
-             ]],
-         );
-     }
-+    /// A `WHERE` after a `CALL {}` that writes must not reach the rows feeding
-+    /// the write: the `Apply` runs its right side once per left row, so a
-+    /// filter on the left starves the write (#748, #997).
-+    #[test]
-+    fn filter_never_lands_on_the_input_of_a_write() {
-+        for query in [
-+            "CALL { CREATE () } UNWIND 0 AS x MATCH () WHERE false RETURN 0",
-+            "WITH 0 AS n0 CALL { MERGE () RETURN 0 AS n1 } MATCH () WHERE false RETURN 0",
-+        ] {
-+            let _ = crate::runtime::functions::init_functions();
-+            let mut parser = Parser::new(query);
-+            parser.parse_parameters().expect("parse parameters");
-+            let raw = parser.parse().expect("parse");
-+            let (ir, scope_vars) = Binder::default().bind(raw).expect("bind");
-+            let mut plan = Planner::new(scope_vars).plan(ir);
-+            push_filters_down(&mut plan);
-+
-+            for idx in plan.root().indices::<Bfs>() {
-+                let node = plan.node(idx);
-+                if !matches!(node.data(), IR::Apply) || node.num_children() != 2 {
-+                    continue;
++/// Collects the `(scope_id, id)` of every variable that a top-level `AND`
++/// conjunct of `expr` reads on its own: a conjunct over a single variable can
++/// run as soon as that variable is bound, one that also reads another
++/// (a path, a second node) has to wait for it. A conjunct holding a pattern
++/// is left out: the aliases the pattern reads are not in the expression tree.
++pub(crate) fn collect_single_variable_conjuncts(
++    expr: &DynTree<ExprIR<Variable>>
++) -> HashSet<(u32, u32)> {
++    fn walk(
++        node: &DynNode<ExprIR<Variable>>,
++        out: &mut HashSet<(u32, u32)>,
++    ) {
++        match node.data() {
++            ExprIR::And | ExprIR::Paren => {
++                for child in node.children() {
++                    walk(&child, out);
 +                }
-+                let writes = node
-+                    .child(1)
-+                    .indices::<Bfs>()
-+                    .any(|i| super::is_write(plan.node(i).data()));
-+                let filtered_input =
-```
-
-**File**: `proofs/optimizer_rewrites/COVERAGE.tsv` (modified, +5/-4)
-```diff
-@@ -1,4 +1,5 @@
- file	function	line	bucket	lean_name_or_reason
-+# graphblas *_bench.rs: benchmark harnesses, no production callers; listed here so the aggregator can exclude them
- graph/src/planner/optimizer/mod.rs	collect_expr_variables	92	PROVEN	Passes.routesIdOnly / id_only_routing_unsound (id-only unsound), routesScoped_sound; empty set routes everywhere: PushPlan.bug997_create_skipped
- graph/src/planner/optimizer/mod.rs	collect_subtree_variables	103	PROVEN	Helpers.mem_subtreeIds (ids of get_variables); ids only — Passes.id_only_routing_unsound; PushPlan.gv walks through Aggregate into the pre-WITH plan: bug3352_routes_unbound
- graph/src/planner/optimizer/mod.rs	optimize	125	PROVEN	Sequence.passes_order (exact order, reduce_var_len_path twice), applyAll_sound (each pass preserves R => optimize does), optimize_nested/optimize_plain
-@@ -23,9 +24,9 @@ graph/src/planner/optimizer/fuse_optional_traverse.rs	fusable_traverse	40	PROVEN
- graph/src/planner/optimizer/fuse_optional_traverse.rs	fused_traverse	81	PROVEN	Helpers.fusedCT_spec (same traverse, optional = true); Passes.optCT
- graph/src/planner/optimizer/fuse_optional_traverse.rs	fuse_optional_traverse	105	PROVEN	Passes.fuse_optional_correct
- graph/src/planner/optimizer/push_filters_down.rs	branch_output_variables	59	PROVEN	Helpers.branchOut_spec (Project/Aggregate outputs, ids only; none otherwise); PushPlan.branchOut (reset-env children in the tree model)
--graph/src/planner/optimizer/push_filters_down.rs	push_filters_down	102	PROVEN	Basic.push_cp_left, push_cp_right, push_extend, push_sort_perm, push_sort_sorted, push_limit_const, limit_not_transparent, skip_not_transparent, merge_order_rust_errors, merge_child_first_row, merge_rust_fixed_example, merge_rust_same (#3006 merges child conjuncts first); Passes.limit_skip_not_excluded, id_only_routing_unsound; W6-opt-1 Case-2 walk (CallBoundary, from pr2845_review): Pr2845.filter_pushed_through_boundary, fixed_keeps_filter, fixed_conservative; #3335 rebuilds the filter with ExprIR::and_of: AndOf.flat_passes (same Filter verdict, errors included), flat_eval; gap closed 2026-10-20 (PushPlan, plan tree with writes and id-only routing): property EffectSound/RowSound/RoutesBound REFUTED on main by bug748_merge_skipped, bug997_create_skipped (constant conjunct starves a CALL write), bug3352_slot_collision_drops_match, bug3352_routes_unbound (pre-WITH id taken for r); fixed routing bug748_fixed, bug997_fixed, bug3352_fixed
--graph/src/planner/optimizer/push_filters_down.rs	rebuild_with_cp_split	378	PROVEN	Basic.push_cp_left/right (CP associativity/regrouping of branches as the same identity); #3335 rebuilds the filter with ExprIR::and_of: AndOf.flat_passes (same Filter verdict, errors included), flat_eval
--graph/src/planner/optimizer/push_filters_down.rs	rebuild_node	385	PROVEN	Sequence.rebuildCP_off (copy off target), rebuildCP_on, splitCP_perm (CP children permuted, none lost)
-+graph/src/planner/optimizer/push_filters_down.rs	push_filters_down	122	PROVEN	Basic.push_cp_left, push_cp_right, push_extend, push_sort_perm, push_sort_sorted, push_limit_const, limit_not_transparent, skip_not_transparent, merge_order_rust_errors, merge_child_first_row, merge_rust_fixed_example, merge_rust_same (#3006 merges child conjuncts first); Passes.limit_skip_not_excluded, id_only_routing_unsound; W6-opt-1 Case-2 walk (CallBoundary, from pr2845_review): Pr2845.filter_pushed_through_boundary, fixed_keeps_filter, fixed_conservative; #3335 rebuilds the filter with ExprIR::and_of: AndOf.flat_passes (same Filter verdict, errors included), flat_eval; gap closed 2026-10-20 (PushPlan, plan tree with writes and id-only routing): property EffectSound/RowSound/RoutesBound REFUTED on main by bug748_merge_skipped, bug997_create_skipped (constant conjunct starves a CALL write), bug3352_slot_collision_drops_match, bug3352_routes_unbound (pre-WITH id taken for r); fixed routing bug748_fixed, bug997_fixed, bug3352_fixed; #3582 write lock (Cfg.pr3582: write ops excluded, siblings of a writing branch locked, CP split off when a branch writes — CP split not modelled): PushPlan.pr3582_left_untouched, pr3582_write_excluded, pr3582_748_plan, pr3582_748_fixed, pr3582_997_plan, pr3582_997_fixed, pr3582_controls, pr3582_2556_push_not_cause; #3352 still open: pr3582_3352_open; Passes.excludedChild (exclusion list with write kinds)
-+graph/src/planner/optimizer/push_filters_down.rs	rebuild_with_cp_split	423	PROVEN	Basic.push_cp_left/right (CP associativity/regrouping of branches as the same identity); #3335 rebuilds the filter with ExprIR::and_of: AndOf.flat_passes (same Filter verdict, errors included), flat_eval
-+graph/src/planner/optimizer/push_filters_down.rs	rebuild_node	430	PROVEN	Sequence.rebuildCP_off (copy off target), rebuildCP_on, splitCP_perm (CP children permuted, none lost)
- graph/src/planner/optimizer/reduce_bound_edge.rs	reduce_bound_edge	30	PROVEN	References2.ancestorsRead refsNew (ancestor walk), ancestors_le_outside; main_misses_call_sibling (
-```
-
-**File**: `proofs/optimizer_rewrites/FalkorOptimizer.lean` (modified, +3/-0)
-```diff
-@@ -174,6 +174,9 @@ node, labels, relationships and attributes are not written); `RowSound` is the o
-    `bug748_merge_skipped`, `bug997_create_skipped` (`¬ EffectSound`), `bug748_rows_only_blind`
-    / `bug997_rows_only_blind` (the rows-only criterion holds on them), controls
-    `bug748_with_star_control`, `bug997_case_control`; `bug748_fixed`/`bug997_fixed` for a write barrier.
-+   **Fixed by #3582** (write kinds excluded, siblings of a writing branch locked, `Cfg.pr3582`):
-+   `pr3582_748_fixed`, `pr3582_997_fixed`, `pr3582_left_untouched`, `pr3582_write_excluded`,
-+   `pr3582_controls`; #3352 below is still open there (`pr3582_3352_open`).
- 10. **#3352: filter push-down mistakes a pre-WITH variable for `r`** — Case 2
-    (`push_filters_down.rs:233-236`) inherits `collect_subtree_variables` of the Apply's
-    left subtree, and `get_variables` (`runtime.rs:319-323`) walks through `Aggregate`
-```
-
-**File**: `proofs/optimizer_rewrites/FalkorOptimizer/Passes.lean` (modified, +7/-3)
-```diff
-@@ -13,7 +13,7 @@
- | `labelScanOk`, `reorder` | `NodeByLabelScan` label test and `reorder_labels` (`optimizer/reorder_labels.rs:16-47`) stable sort by label id |
- | `vhj`, `cpEq`          | `ValueHashJoin` (`runtime/ops/value_hash_join.rs`, `key_as_i64` l.153) vs `Filter(=)` over `CartesianProduct` (`replace_cartesian_with_hash_join.rs:101-217`) |
- | `toF`                  | `i as f64` in `Value::compare_value` for Int vs Float, exact in `[0, 2^54]` |
--| `excludedChild`        | the operator list at `push_filters_down.rs:165-178` |
-+| `excludedChild`        | the operator list at `push_filters_down.rs:181-200` |
- -/
- import FalkorOptimizer.Basic
- 
-@@ -324,14 +324,18 @@ theorem hash_join_drops_row :
- inductive Kind where
-   | project | aggregate | merge | argument | includePending | semiApply | antiSemiApply
-   | orApplyMultiplexer | optional
-+  | create | delete | set | remove | commit | forEach
-   | limit | skip | sort | distinct | cartesianProduct | apply | unwind | condTraverse
-   | other
- deriving DecidableEq, Repr
- 
--/-- push_filters_down.rs:165-178: children the filter may *not* look through. -/
-+/-- push_filters_down.rs:181-200: children the filter may *not* look through
-+(#3582 adds the write operators `Create`, `Delete`, `Set`, `Remove`, `Commit`,
-+`ForEach`). -/
- def excludedChild : Kind → Bool
-   | .project | .aggregate | .merge | .argument | .includePending | .semiApply | .antiSemiApply
--  | .orApplyMultiplexer | .optional => true
-+  | .orApplyMultiplexer | .optional
-+  | .create | .delete | .set | .remove | .commit | .forEach => true
-   | _ => false
- 
- /-- The operators that are transparent for a row filter (the theorems
-```
-
-**File**: `proofs/optimizer_rewrites/FalkorOptimizer/PushPlan.lean` (modified, +96/-8)
-```diff
-@@ -17,11 +17,13 @@ computes it, so both families are visible.
- | `run` | the runtime ops, eager: `apply.rs:102-340` (right branch re-run per left row with `Argument` = that row), `optional.rs:91-292` (one null row when the branch is empty), `aggregate.rs:288` (no keys → one row even on empty input), `create.rs:101-160`, `merge.rs:67-300` (match else create), `filter.rs:48-80` (`Basic.filterRows`), `unwind.rs`, `node_by_label_scan.rs`, `cond_traverse.rs` (bound destination) |
- | `gv` | `GetVariables::get_variables` (`runtime/runtime.rs:212-330`): `Aggregate` adds `names` and keeps walking, `Project` adds its outputs and `break`s |
- | `branchOut` | `branch_output_variables` (`optimizer/push_filters_down.rs:59-79`) |
--| `excluded` | the child exclusion list (`push_filters_down.rs:161-175`) |
-+| `excluded` | the child exclusion list (`push_filters_down.rs:181-200`; before #3582 without the write kinds) |
-+| `isWriteOp`, `locked` | `is_write` (:86-99) and `holds_write`/`locked` (:213-223, used at :306), #3582 (`Cfg.pr3582`) |
- | `pushAt` | one Filter's routing (`push_filters_down.rs:138-364`): grandchild variable sets (:176-185), Case 1 (:196-201), Case 2 inherited (`inh`, :210-244), augmentation of `Argument` subtrees (:247-257), the `all` test over ids (:264-276) |
- | `childInh` | Case 2's ancestor walk, top-down: below an `Apply`'s right child the left subtree's ids, below its left child nothing, below `Merge` nothing (:212-243) |
- | `sweep`, `pushFilters` | the restart loop (:103-370), as a top-down sweep that follows each pushed filter |
--| `Cfg.main` | ids only (`collect_expr_variables`/`collect_subtree_variables`, `optimizer/mod.rs:92-110`), no write barrier |
-+| `Cfg.main` | before #3582: ids only (`collect_expr_variables`/`collect_subtree_variables`, `optimizer/mod.rs:92-110`), no write barrier |
-+| `Cfg.pr3582` | Rust at 7c04fa598 (#3582): ids only, write kinds excluded, siblings of a writing branch locked; the CP split's `!holds_write` guard (:322) is not modelled (no CP split here) |
- 
- The property each bug violates is `EffectSound`: a rewrite keeps the rows
- **and** the graph the query leaves behind. `RowSound` is the old criterion,
-@@ -204,13 +206,21 @@ child's variable set, and whether a write blocks the push. -/
- structure Cfg where
-   eqv : Var → Var → Bool
-   writeBarrier : Bool
-+  /-- #3582: write operators (`Create`, `Commit`, …) join the exclusion list,
-+  and a grandchild is locked when a sibling subtree writes (`is_write`,
-+  `holds_write`/`locked`, push_filters_down.rs:86-99, :213-223, :306). -/
-+  lockSiblings : Bool
- 
--/-- Rust main: ids only, no barrier. -/
--def Cfg.main : Cfg := ⟨fun a b => a.id == b.id, false⟩
-+/-- Rust before #3582: ids only, no barrier. -/
-+def Cfg.main : Cfg := ⟨fun a b => a.id == b.id, false, false⟩
- 
- /-- A candidate fix: `(id, scope)` matching and no push below an operator whose
- subtree writes (`Merge`/`Create`). -/
--def Cfg.fixed : Cfg := ⟨fun a b => a == b, true⟩
-+def Cfg.fixed : Cfg := ⟨fun a b => a == b, true, false⟩
-+
-+/-- Rust with #3582 (7c04fa598): ids only, write operators excluded, siblings
-+of a writing branch locked. -/
-+def Cfg.pr3582 : Cfg := ⟨fun a b => a.id == b.id, false, true⟩
- 
- /-- `get_variables` (runtime.rs:212-330). -/
- def gv : Op → List Var
-@@ -247,11 +257,18 @@ def hasWrite : Op → Bool
-     hasWrite c
-   | .apply l r => hasWrite l || hasWrite r
- 
--/-- push_filters_down.rs:161-175 (the kinds that occur here). -/
-+/-- push_filters_down.rs:181-200 before #3582 (the kinds that occur here). -/
- def excluded : Op → Bool
-   | .project _ _ | .aggregate _ _ _ | .merge _ _ | .argument | .optional _ _ => true
-   | _ => false
- 
-+/-- `is_write` (push_filters_down.rs:86-99), the kinds that occur here; #3582
-+adds `Create`/`Commit` (and `Delete`/`Set`/`Remove`/`ForEach`, not modelled)
-+to the exclusion list (:188-193). -/
-+def isWriteOp : Op → Bool
-+  | .create _ _ | .merge _ _ | .commit _ => true
-+  | _ => false
-+
- def kid (c : Op) : List Op := match c with | .unit => [] | c => [c]
- 
- /-- `children()` of an operator. -/
-@@ -299,12 +316,19 @@ def avail (inh : List Var) (k : Op) : List Var :=
-   let (vs, reset) := info k
-   if !inh.isEmpty && !reset && hasArg k then vs ++ inh else vs
- 
-+/-- `locked[i]` (push_filters_down.rs:217-223): some other grandchild's subtree
-+writes (`subtree_contains(…, is_write)`; in the model a `Commit` always wraps a
-+`Create`/`Merge`, so `hasWrite` is that test). -/
-+def locked (cfg : Cfg) (ks : List Op) (i : Nat) : Bool :=
-+  cfg.lockSiblings && (ks.zipIdx.any (fun kj => hasWrite kj.1 && kj.2 != i))
-+
- /-- One Filter `p` over `c`, with Case-2 inherited variables `inh`. -/
- def pushAt (cfg : Cfg) (inh : List Var) (p : Expr) (c : Op) : Op :=
-   let ks := kids c
--  if excluded c || ks.isEmpty || (cfg.writeBarrier && hasWrite c) then .filter p c else
-+  if excluded c || (cfg.lockSiblings && isWriteOp c) || ks.isEmpty || (cfg.writeBarrier && hasWrite c) then
-+    .filter p c else
-   let inh := (if isApply c then ((ks.head?.
-```
-
-**File**: `proofs/optimizer_rewrites/README.md` (modified, +2/-2)
-```diff
-@@ -119,8 +119,8 @@ Each bug has a Rust repro (`cargo test -p graph --test lean_optimizer_rewrites`,
- | 7 | `refsNew_sees_*` (the per-operator reads the pre-#2390 oracle missed), `main_misses_call_sibling`, `refsNew_misses_sibling_edges` | An edge read outside the traverse's ancestors is collapsed (#2896, W2-traverse-1) | Per-operator part fixed by #2390; sibling part **open** (PR #2918 not merged) |
- | 8 (W4-plan-4) | `root_scan_has_no_parent` | `CALL db.labels() YIELD label MATCH (n)` makes a scan the plan root; `utilize_node_by_id` calls `parent().unwrap()` on it | **Repro closed by #3297** (validation now rejects the query, main b84473a7f); the `unwrap()` remains as a hazard |
- | W6-opt-1 | `filter_pushed_through_boundary` | Push-down gives an OPTIONAL MATCH inside `CALL {}` the outer ids: "Variable n not found" where C returns rows. `fixed_keeps_filter` checks the trial fix | **Open** |
--| #748 | `bug748_merge_skipped` (property `EffectSound`; `bug748_rows_only_blind`) | `WITH 0 AS n0 CALL { MERGE () RETURN 0 AS n1 } MATCH () WHERE false RETURN 0`: the constant `false` is pushed into both Apply branches, so the MERGE never runs. Rust 0 nodes, C 1; with `WITH *` both 1 (`bug748_with_star_control`) | **Open** |
--| #997 | `bug997_create_skipped` (property `EffectSound`; `bug997_rows_only_blind`) | `CALL { CREATE () } UNWIND 0 AS x MATCH () WHERE false RETURN 0`: `false` lands on the Apply's `Argument`, the CREATE never runs. Rust 0 nodes, C 1; the CASE-wrapped `false` reads `x` and stays above the Apply, 1 on both (`bug997_case_control`) | **Open** |
-+| #748 | `bug748_merge_skipped` (property `EffectSound`; `bug748_rows_only_blind`) | `WITH 0 AS n0 CALL { MERGE () RETURN 0 AS n1 } MATCH () WHERE false RETURN 0`: the constant `false` is pushed into both Apply branches, so the MERGE never runs. Rust 0 nodes, C 1; with `WITH *` both 1 (`bug748_with_star_control`) | **Fixed by #3582** (`pr3582_748_fixed`, `pr3582_left_untouched`) |
-+| #997 | `bug997_create_skipped` (property `EffectSound`; `bug997_rows_only_blind`) | `CALL { CREATE () } UNWIND 0 AS x MATCH () WHERE false RETURN 0`: `false` lands on the Apply's `Argument`, the CREATE never runs. Rust 0 nodes, C 1; the CASE-wrapped `false` reads `x` and stays above the Apply, 1 on both (`bug997_case_control`) | **Fixed by #3582** (`pr3582_997_fixed`) |
- | #3352 | `bug3352_slot_collision_drops_match`, `bug3352_routes_unbound` (properties `RowSound`, `RoutesBound`) | `… WITH p, count(r0) AS n OPTIONAL MATCH (r:Rule)-[:SCOPED_TO]->(p) WHERE r.status = 'revoked' …`: Case 2 inherits the bare ids of the whole pre-WITH subtree (through `Aggregate`), id 2 is taken for `r`, the filter lands on the `Argument`. Rust `e = null`, C 123 | **Open** (PR #3367) |
- | #2556 | `bug2556_filter_below_binding`, `bug2556_t_seeded`, `bug2556_plan` (property `KeepsFiltersBound`) | `… WITH collect(x) AS fs UNWIND fs AS f MATCH (f)<-[:HAS_CREATOR]-(post:Post), (post)-[:HAS_TAG]->(t:Tag {id:100}), (post)-[:HAS_TAG]->(tag:Tag) RETURN count(post)`: `select_scan_node` picks `t` as the best endpoint, seeds it into `initial_bound` although the outer `Unwind` child is kept and no scan for `t` is built, and places `t.id = 100` after the first hop, before `t` is bound. Rust 0, C 3 (the issue's query: a type error). Not `push_filters_down` (`bug2556_push_not_cause`); `bug2556_fixed` gives the C plan | **Open** |
- 
-```
-
-**File**: `tests/flow/test_call_subquery.py` (modified, +37/-0)
-```diff
-@@ -2980,6 +2980,43 @@ def test_54_writes_apply_to_every_input_row(self):
-         self.env.assertEqual(res.nodes_deleted, 2)
-         self.get_res_and_assertEquals("MATCH (p:Person) RETURN count(p)", [[1]])
- 
-+    def test_54_1_where_after_a_write_does_not_starve_it(self):
-+        """A WHERE of a later MATCH filters the rows after the CALL {} body
-+        wrote, never before: the filter was pushed onto the rows feeding the
-+        write, so a constant-false WHERE skipped the write altogether
-+        (#748, #997). The node count must not depend on the predicate."""
-+
-+        queries = [
-+            # https://github.com/FalkorDB/FalkorDB/issues/997
-+            "CALL { CREATE () } UNWIND 0 AS x MATCH () WHERE false RETURN 0",
-+            "CALL { CREATE () } UNWIND 0 AS x MATCH () WHERE (CASE WHEN true THEN false ELSE x END) RETURN 0",
-+            # https://github.com/FalkorDB/FalkorDB/issues/748
-+            "WITH 0 AS n0 CALL { MERGE () RETURN 0 AS n1 } MATCH () WHERE false RETURN 0",
-+            "WITH 0 AS n0 CALL { MERGE () RETURN 0 AS n1 } WITH * MATCH () WHERE false RETURN 0",
-+        ]
-+        for i, q in enumerate(queries):
-+            g = self.db.select_graph(f"where_after_write_{i}")
-+            res = g.query(q)
-+            self.env.assertEqual(res.nodes_created, 1, message=q)
-+            self.env.assertEqual(res.result_set, [], message=q)
-+
-+        # A predicate on the outer rows runs after the writes of every row
-+        g = self.db.select_graph("where_after_write_outer")
-+        g.query("CREATE (:Z {v: 1}), (:Z {v: 2})")
-+        res = g.query("""UNWIND [1, 2] AS x
-+                                  CALL { CREATE (:T) }
-+                                  MATCH (n:Z) WHERE x = 2
-+                                  RETURN count(*)""")
-+        self.env.assertEqual(res.nodes_created, 2)
-+        self.env.assertEqual(res.result_set, [[2]])
-+
-+        res = g.query("""MATCH (a:Z)
-+                                  CALL { WITH a SET a.w = 1 }
-+                                  MATCH (b:Z) WHERE a.v = 5
-+                                  RETURN count(*)""")
-+        self.env.assertEqual(res.properties_set, 2)
-+        self.env.assertEqual(res.result_set, [[0]])
-+
-     def test_55_body_variables_do_not_alias_the_imported_row(self):
-         """A subquery body without an explicit `WITH` import must still be
-         isolated from the outer row, not evaluate its own predicates against
-```
-
----
-
-### Incident Patch 2: `ace8f477` (2026-11-18)
-**Commit Message**: fix: keep an earlier MATCH … WHERE / UNWIND under a variable-length traverse (#3264)
-
-* fix: keep an earlier clause under a variable-length traverse when scanning its other end
-
-select_var_len_scan_node's leaf rewrite replaces the child of a
-CondVarLenTraverse with a fresh scan of the more selective endpoint,
-keeping only an Argument leaf. planner_scan_alias looks through Filter
-wrappers, so an earlier MATCH ... WHERE stitched under the traverse
-(Filter(scan a)) was taken for the planner's own scan and dropped, and so
-was anything below the scan (an earlier UNWIND). Only rewrite when the
-subtree is the planner's own scan: no Filter wrapper and nothing under the
-scan but an Argument leaf.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test: assert the single-MATCH var-len traverse still scans the selective end (Copilot review)
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* proofs: update the Lean proofs for this change (proof-impact bot)
-
-Verified patch of the proof-impact run https://github.com/FalkorDB/FalkorDB/actions/runs/43740335998
-at 0615f92a7a313c2507b19bb3057063b648ac92b6, applied on request of AviAvni (held items reviewed).
-
-Proof-Bot-Run: https://github.co
-
-**File**: `graph/src/planner/optimizer/select_scan_node.rs` (modified, +28/-6)
-```diff
-@@ -649,18 +649,20 @@ fn select_var_len_scan_node(
-         //    an optimization, and losing a predicate is not a trade worth making.
-         let scan_idx = planner_scan_idx(optimized_plan, child_idx)
-             .expect("planner_scan_alias matched, so a scan is there");
--        let wrapper_ok = {
-+        let (has_filter, has_include_pending) = {
-             let mut node = optimized_plan.node(child_idx);
--            let mut ok = true;
-+            let (mut filter, mut include_pending) = (false, false);
-             while node.idx() != scan_idx {
--                if matches!(node.data(), IR::IncludePending { .. } | IR::Filter(_)) {
--                    ok = false;
--                    break;
-+                match node.data() {
-+                    IR::Filter(_) => filter = true,
-+                    IR::IncludePending { .. } => include_pending = true,
-+                    _ => {}
-                 }
-                 node = node.child(0);
-             }
--            ok
-+            (filter, include_pending)
-         };
-+        let wrapper_ok = !has_filter && !has_include_pending;
-         if wrapper_ok && child_subtree_binds(optimized_plan, scan_idx, &to.alias) {
-             let kept: Vec<DynTree<IR>> = optimized_plan
-                 .node(scan_idx)
-@@ -680,6 +682,26 @@ fn select_var_len_scan_node(
-             }
-         }
- 
-+        // The leaf rewrite below replaces the whole subtree with a fresh scan
-+        // of `to`, carrying over only an `Argument` leaf (and re-adding
-+        // `IncludePending` inside MERGE). Anything else there is an earlier
-+        // clause that `plan_query` stitched under the traverse: a `Filter`
-+        // (`MATCH (a) WHERE a.v = 1 MATCH (a)-[*]->(b)`) or an operator below
-+        // the scan (`UNWIND … MATCH (a)-[*]->(b)`). Dropping it would lose a
-+        // predicate or rows, so keep the planner's direction instead.
-+        let scan_node = optimized_plan.node(scan_idx);
-+        let only_argument_below = match scan_node.num_children() {
-+            0 => true,
-+            1 => {
-+                let below = scan_node.child(0);
-+                matches!(below.data(), IR::Argument(_)) && below.num_children() == 0
 +            }
-+            _ => false,
-+        };
-+        if has_filter || !only_argument_below {
-+            continue;
++            _ => {
++                let mut vars = HashSet::new();
++                let mut has_pattern = false;
++                for data in node.walk::<Bfs>() {
++                    match data {
++                        ExprIR::Variable(var) => {
++                            vars.insert((var.scope_id, var.id));
++                        }
++                        ExprIR::Pattern(_) | ExprIR::PatternComprehension(_) => has_pattern = true,
++                        _ => {}
++                    }
++                }
++                if !has_pattern && vars.len() == 1 {
++                    out.extend(vars);
++                }
++            }
 +        }
++    }
++    let mut out = HashSet::new();
++    walk(&expr.root(), &mut out);
++    out
++}
 +
-         // A correlated sub-plan may already bind `to` from its outer context;
-         // scanning it here would rebind it. `Argument(None)` is opaque about
-         // what it carries, so treat it as binding everything.
++/// The part of a scan endpoint's score known before the plan is built: a
++/// predicate that mentions the node (inline attributes included) counts 2, a
++/// label 1. `select_scan_node` adds the bound-variable bonus and breaks ties on
++/// label cardinality; the planner has neither, so it uses this alone.
++pub(crate) fn endpoint_scan_score(
++    filtered: bool,
++    labelled: bool,
++) -> u32 {
++    u32::from(filtered) * 2 + u32::from(labelled)
++}
++
++/// Which end of a variable-length walk `select_var_len_scan_node` scans: the
++/// `to` end only when it strictly outscores `from`, a tie keeps the pattern's
++/// own direction. The planner asks the same question to decide whether a walk
++/// can lead its component, so both read this one rule.
++pub(crate) const fn walk_scans_to_endpoint(
++    from_score: u32,
++    to_score: u32,
++) -> bool {
++    to_score > from_score
++}
++
+ /// Collects all variable IDs provided by a plan subtree.
+ pub(crate) fn collect_subtree_variables(node: &orx_tree::DynNode<IR>) -> HashSet<u32> {
+     use crate::runtime::runtime::GetVariables;
 ```
 
-**File**: `proofs/FINDINGS.md` (modified, +1/-1)
+**File**: `graph/src/planner/optimizer/select_scan_node.rs` (modified, +71/-31)
 ```diff
-@@ -162,7 +162,7 @@ IDs are `W2-<area>-<n>`. "C ✓" means C gives the correct answer, so the bug is
- - **W6-opt-1** (found reviewing PR #2845, pre-existing on main 89d68334a) — filter push-down gives an OPTIONAL MATCH inside a `CALL {}` body the outer query's variable ids, so the filter on `n` is pushed onto a row where that slot is unbound (`push_filters_down.rs:217`, `:238`). `MATCH (x:A:B) CALL { OPTIONAL MATCH (n:A:B {id:3}) RETURN n.id AS nid } RETURN x.id, nid` → Rust "Variable n not found", C `[[1,3],[2,3],[3,3]]`; four variants fail the same way. Possibly related to #2728. Lean `filter_pushed_through_boundary` (binder `CallBoundary.lean`). A trial fix (match `IR::Apply | IR::Optional(_)` and inherit `branch_output_variables(left)`) makes all five match C, and 166/166 related flow tests pass.
- - **W4-index-1** — a range index on an attribute that already has a fulltext index is never queried correctly. `build_query_node` takes the attribute's first field whatever its type (`index/mod.rs:1386,1411,1459,1471,1529,1590`). After `CREATE FULLTEXT INDEX … ON (n.s)` then `CREATE INDEX … ON (n.s)`, `n.s='foo'`, `n.s > 'c'`, `{s:'bar'}` and `n.s IN [...]` all return `[]` (C returns the rows). Fix: pick the field whose type is `IndexType::Range`. Lean `IndexerM.bug_range_after_fulltext`.
- - Unconfirmed: `create_rs_index` leaks index options on its NUL-byte error path.
--- **W7-scan-1**: `select_var_len_scan_node`'s leaf rewrite prunes a Filter wrapper: `MATCH (a) WHERE a.v=1 MATCH (a)-[*1..2]->(b:B {w:2})` returns an extra row. Predates #2390. Lean `ScanTree.vl_leaf_*`.
-+- **W7-scan-1**: `select_var_len_scan_node`'s leaf rewrite prunes a Filter wrapper: `MATCH (a) WHERE a.v=1 MATCH (a)-[*1..2]->(b:B {w:2})` returns an extra row. Predates #2390. Lean `ScanTree.vl_leaf_*`. Fixed by PR #3264 (`ScanTree.vlLeaf_keeps_filter`, `vl_leaf_bug_case_fixed`).
- 
- ### Open bugs the proofs had missed (triage of 2026-10-20)
- A triage of every open `type:Bug label:rust` issue (live on Rust main 9d3869aa8 and C) found 56 the proofs had not flagged. Only the proof gaps needed a model change; the models were extended so each has a stated property a fix can prove and a `bug<issue>_*` counterexample on main that matches the live repro. The entries below are the ones still open. Root-cause families: slot ids reused across WITH/aggregation scopes (#3333 #3372 #3375), named paths over an already-bound node (#2311 #2725 #2727 #2737 #2744), rewrite criteria that compared rows but not writes (#748 #997), and per-row write visibility through CALL {} (#2729 #2738 #3164). #2502 is the parser (a WHERE pattern predicate swallows the next MATCH), and #2556 is select_scan_node seeding an unbound endpoint, not push-down.
-```
-
-**File**: `proofs/optimizer_scan/COVERAGE.tsv` (modified, +2/-2)
-```diff
-@@ -15,8 +15,8 @@ graph/src/planner/optimizer/select_scan_node.rs	collect_output_aliases	453	PROVE
- graph/src/planner/optimizer/select_scan_node.rs	node_path	504	PROVEN	ScanTree.nodePath_eq
- graph/src/planner/optimizer/select_scan_node.rs	resolve_path	521	PROVEN	ScanTree.resolve_nodePath, pruneAt_parent
- graph/src/planner/optimizer/select_scan_node.rs	child_subtree_binds	537	PROVEN	ScanTree.childSubtreeBinds_spec
--graph/src/planner/optimizer/select_scan_node.rs	select_var_len_scan_node	572	PROVEN	ScanTree.vl_reverse_sound, reach_reverse_iff, vlNonLeaf_keeps_wrappers, vlLeaf_guards; CONFIRMED BUG vl_leaf_fires_over_filter, vl_leaf_drops_filter (leaf rewrite prunes a Filter wrapper, line 723)
--graph/src/planner/optimizer/select_scan_node.rs	select_scan_node	743	PROVEN	ScanOrder.order_sound, ScanTree.startKeyLt/equality_beats_late (start-point key, #3821 equality tie-break), order_length, pick_perm, run_perm, place_wellScoped, initialBound_wellScoped, initialBound_keeps_row, runScoped_wellScoped, salvage_wellScoped, Salvage.salvaged_wellScoped/premise_of_spine (sound only with an honest initial_bound, and only when the salvaged filters read bound variables); FIXED by #3523 (lines 1048-1051: best_node seeded only when no outer child is kept; initialBound_wellScoped, initialBound_keeps_row); CONFIRMED BUG #2972, open fix PR #3099 (Salvage.premise_fails, salvage_loses_row): a planner scan with an Unwind child is pruned whole (is_planner_scan_subtree:377, argument_leaf_of:338 keeps only an Argument) while its Filter reading the Unwind variable is salvaged: WITH 1 AS k MATCH (b:B) WHERE b.v = k MATCH (b)-[:H]->(c:C) Rust 0, C 1
-+graph/src/planner/optimizer/select_scan_node.rs	select_var_len_scan_node	572	PROVEN	ScanTree.vl_reverse_sound, reach_reverse_iff, vlNonLeaf_keeps_wrappers, vlLeaf_guards, vlLeaf_keeps_filter, vl_never_drops_filter, vlLeaf_eq_pre, vl_leaf_bug_case_fixed; FIXED BUG (#3264) vl_leaf_fires_over_filter, vl_leaf_drops_filter (pre-#3264 leaf rewrite pruned a Filter wrapper)
-+graph/src/planner/optimizer/select_scan_node.rs	select_scan_node	765	PROVEN	ScanOrder.order_sound, ScanTree.startKeyLt/equality_beats_late (start-point key, #3821 equality tie-break), order_length, pick_perm, run_perm, place_wellScoped, initialBound_wellScoped, initialBound_keeps_row, runScoped_wellScoped, salvage_wellScoped, Salvage.salvaged_wellScoped/premise_of_spine (sound only with an honest initial_bound, and only when the salvaged filters read bound variables); FIXED by #3523 (lines 1070-1073: best_node seeded only when no outer child is kept; initialBound_wellScoped, initialBound_keeps_row); CONFIRMED BUG #2972, open fix PR #3099 (Salvage.premise_fails, salvage_loses_row): a planner scan with an Unwind child is pruned whole (is_planner_scan_subtree:377, argument_leaf_of:338 keeps only an Argument) while its Filter reading the Unwind variable is salvaged: WITH 1 AS k MATCH (b:B) WHERE b.v = k MATCH (b)-[:H]->(c:C) Rust 0, C 1
- graph/src/planner/optimizer/utilize_index.rs	build_has_labels_filter	71	PROVEN	Cleanup.hasLabelsFilter, isHasLabelsFor_build, addToLabels_idem
- graph/src/planner/optimizer/utilize_index.rs	alias	101	PROVEN	trait IndexSubject: EdgeInline.subject_accessors, nMatch_spec, eMatch_spec; ScanOrder.withPrimary_sound
- graph/src/planner/optimizer/utilize_index.rs	all_labels	105	PROVEN	trait IndexSubject: EdgeInline.subject_accessors, nMatch_spec, eMatch_spec; ScanOrder.withPrimary_sound
-```
-
-**File**: `proofs/optimizer_scan/OptimizerScan.lean` (modified, +4/-0)
-```diff
-@@ -230,6 +230,10 @@ RETURN a.v, b.w` on `(:A {v:1})-[:R]->(:B {w:2}), (:A {v:5})-[:R]->(:B {w:2})` r
- `[1,2],[5,2]` (should be `[1,2]`; the fixed-length `-[:R]->` form is right) on builds 88e92ae25
- and b3582e34a. `ScanTree.vl_leaf_fires_over_filter`, `vl_leaf_drops_filter`. Fix: refuse the leaf
- rewrite when the wrapper holds a `Filter`, or salvage it above the traverse with `filters_of`.
-+FIXED by PR #3264 (0615f92a7): the leaf rewrite now refuses a `Filter` in the wrapper chain and any
-+operator under the scan other than a childless `Argument` (`select_scan_node.rs:623-641`). Model:
-+`VLCase.scanOnlyArgBelow`, `vlLeaf` (new) vs `vlLeafPre` (history); `vlLeaf_keeps_filter`,
-+`vl_never_drops_filter`, `vlLeaf_eq_pre`, `vl_leaf_bug_case_fixed`.
- 
- ## PR #3821 (f71981fa3: equality-pinned endpoint tie-break)
- `score_endpoint` returns `(score, has_equality, filter_runs_late, cardinality)`;
-```
-
-**File**: `proofs/optimizer_scan/OptimizerScan/ScanTree.lean` (modified, +37/-6)
-```diff
-@@ -767,6 +767,7 @@ structure VLCase where
-   wrapperHasFilter : Bool     -- a `Filter` between the child and the scan
-   childBindsTo : Bool         -- `child_subtree_binds(scan, to)`
-   scanHasChildren : Bool      -- `kept` non-empty
-+  scanOnlyArgBelow : Bool     -- the scan is a leaf or has exactly one childless `Argument` child (#3264)
-   argBindsTo : Bool
-   argOpaque : Bool
-   fromScore : Nat
-@@ -780,9 +781,16 @@ def vlGuards (c : VLCase) : Bool :=
- def vlNonLeaf (c : VLCase) : Bool :=
-   vlGuards c && !c.wrapperHasPending && !c.wrapperHasFilter && c.childBindsTo && c.scanHasChildren
- 
--/-- The leaf rewrite (`select_scan_node.rs:619-665`): scan `to` instead, replacing the *whole* child
--    subtree (`node_mut(child_idx).prune()`, line 661) — wrapper chain included. -/
-+/-- The leaf rewrite (`select_scan_node.rs:623-686`): scan `to` instead, replacing the *whole* child
-+    subtree (`node_mut(child_idx).prune()`, line 684) — wrapper chain included. Since #3264 it is
-+    refused when the wrapper chain holds a `Filter` or the scan has anything but a childless
-+    `Argument` under it (`select_scan_node.rs:630-641`). -/
- def vlLeaf (c : VLCase) : Bool :=
-+  vlGuards c && !vlNonLeaf c && !c.wrapperHasFilter && c.scanOnlyArgBelow &&
-+    !c.argOpaque && !c.argBindsTo && decide (c.fromScore < c.toScore)
-+
-+/-- The leaf rewrite before #3264 (history, base 343e077f2): no `Filter` / below-scan check. -/
-+def vlLeafPre (c : VLCase) : Bool :=
-   vlGuards c && !vlNonLeaf c && !c.argOpaque && !c.argBindsTo && decide (c.fromScore < c.toScore)
- 
- /-- **PROVEN** (#2390): the non-leaf rewrite never drops a `Filter` (nor an `IncludePending`). -/
-@@ -796,7 +804,26 @@ theorem vlLeaf_guards (c : VLCase) (h : vlLeaf c = true) :
-     c.childIsFromScan = true ∧ c.argBindsTo = false ∧ c.argOpaque = false ∧ c.fromScore < c.toScore := by
-   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> simp_all [vlLeaf, vlGuards]
- 
--/-! ### CONFIRMED BUG (pre-existing, not fixed by #2390): the leaf rewrite drops a wrapper `Filter`
-+/-- **PROVEN** (#3264): the leaf rewrite never prunes a `Filter` wrapper, nor an operator under the
-+    planner's scan other than a childless `Argument` (which it carries over). -/
-+theorem vlLeaf_keeps_filter (c : VLCase) (h : vlLeaf c = true) :
-+    c.wrapperHasFilter = false ∧ c.scanOnlyArgBelow = true := by
-+  cases hf : c.wrapperHasFilter <;> cases ho : c.scanOnlyArgBelow <;> simp_all [vlLeaf]
-+
-+/-- **PROVEN** (#3264): neither rewrite of `select_var_len_scan_node` drops a `Filter` wrapper. -/
-+theorem vl_never_drops_filter (c : VLCase) (h : vlNonLeaf c = true ∨ vlLeaf c = true) :
-+    c.wrapperHasFilter = false := by
-+  rcases h with h | h
-+  · exact (vlNonLeaf_keeps_wrappers c h).1
-+  · exact (vlLeaf_keeps_filter c h).1
-+
-+/-- The new rewrite is the old one plus the two #3264 refusals. -/
-+theorem vlLeaf_eq_pre (c : VLCase) :
-+    vlLeaf c = (vlLeafPre c && !c.wrapperHasFilter && c.scanOnlyArgBelow) := by
-+  simp only [vlLeaf, vlLeafPre]; cases vlGuards c <;> cases vlNonLeaf c <;> cases c.wrapperHasFilter <;>
-+    cases c.scanOnlyArgBelow <;> cases c.argOpaque <;> cases c.argBindsTo <;> simp
-+
-+/-! ### CONFIRMED BUG (pre-existing, not fixed by #2390; FIXED by #3264): the leaf rewrite drops a wrapper `Filter`
- 
- `MATCH (a) WHERE a.v = 1 MATCH (a)-[*1..2]->(b:B {w:2}) RETURN a.v, b.w`: clause 1's
- `Filter(a.v = 1) → AllNodeScan(a)` is stitched in as the var-length traverse's child, which
-@@ -812,12 +839,16 @@ pre-#2390 build 88e92ae25): graph `(:A {v:1})-[:R]->(:B {w:2}), (:A {v:5})-[:R]-
- def vlBugCase : VLCase :=
-   { expandInto := false, bidirectional := false, allShortest := false, sameEnds := false, oneChild := true,
-     childIsFromScan := true, wrapperHasPending := false, wrapperHasFilter := true, childBindsTo := false,
--    scanHasChildren := false, argBindsTo := false, argOpaque := false,
-+    scanHasChildren := false, scanOnlyArgBelow := true, argBindsTo := false, argOpaque := false,
-     fromScore := (scoreEndpoint ⟨(0, 0), []⟩ ⟨[(1, 0)], [(1, 0), (0, 0)], []⟩ [] (fun _ => 1)).1,
-     toScore := (scoreEndpoint ⟨(1, 0), [7]⟩ ⟨[(1, 0)], [(1, 0), (0, 0)], []⟩ [] (fun _ => 1)).1 }
- 
--/-- The rewrite fires on the repro although the wrapper holds `a.v = 1`. -/
--theorem vl_leaf_fires_over_filter : vlLeaf vlBugCase = true ∧ vlBugCase.wrapperHasFilter = true := by
-+/-- History (before #3264): the rewrite fired on the repro although the wrapper holds `a.v = 1`. -/
-+theorem vl_leaf_fires_over_filter : vlLeafPre vlBugCase = true ∧ vlBugCase.wrapperHasFilter = true := by
-+  decide
-+
-+/-- **PROVEN** (#3264 fixes it): the leaf rewrite now refuses the repro and keeps `a.v = 1`. -/
-+theorem vl_leaf_bug_case_fixed : vlLeaf vlBugCase = false := by
-   decide
- 
- /-- What the rewritten plan selects (`Lt b`, `Lf a`, the backward walk) differs from the original
-```
-
-**File**: `proofs/optimizer_scan/README.md` (modified, +1/-1)
-```diff
-@@ -82,7 +82,7 @@ Each bug has a Rust repro (`cargo test -p graph --test lean_optimizer_scan`, not
- | W2-scan-4 | `IndexCex` C7, C7' | `abs(n.a) IN [1]` is pushed as `n.a IN [1]` and misses `a = -1`; `toString(n.a) IN ['1']` returns `[]` (C: `[1]`) | Fixed by #3068 |
- | W2-scan-5 | `IndexCex` C8 | `2 IN [n.a, n.b]` becomes array-contains on `n.a`: `[]` (C: `[3]`) | Fixed by #3068 |
- | W2-scan-6 (#2972) | `Salvage.premise_fails`, `salvage_loses_row`, `rebuilt_drops_unwind` | The pass prunes a planner scan whole but salvages only its `Filter`s and `Argument` leaf, so an `Unwind`/`WITH` child is lost: `WITH 1 AS k MATCH (b:B) WHERE b.v = k MATCH (b)-[:H]->(c:C) RETURN count(*)` returns 0 (C 1); `UNWIND [1,1] AS k MATCH (b:B) WHERE b.v = 1 MATCH (b)-[:H]->(c:C) RETURN count(*)` returns 1 (C 2) | **Open**, fix in PR #3099 |
--| W7-scan-1 | `vl_leaf_fires_over_filter`, `vl_leaf_drops_filter` | The var-length leaf rewrite prunes a Filter wrapper: `MATCH (a) WHERE a.v = 1 MATCH (a)-[*1..2]->(b:B {w:2})` returns an extra row | **Open** |
-+| W7-scan-1 | `vl_leaf_fires_over_filter`, `vl_leaf_drops_filter` | The var-length leaf rewrite prunes a Filter wrapper: `MATCH (a) WHERE a.v = 1 MATCH (a)-[*1..2]->(b:B {w:2})` returns an extra row | **Fixed** by PR #3264 (`vlLeaf_keeps_filter`, `vl_leaf_bug_case_fixed`) |
- | — | `IdSeek.lean` examples on `g5` | `id(n) > -1` returns 0 rows, and non-integer bounds error. Reported as bugs 3–4 of [`../optimizer_rewrites`](../optimizer_rewrites) | **Open** |
- 
- The `IndexCex.lean` examples also reproduce bugs owned by [`../index_layer`](../index_layer): a folded `date()` constant returns every node (C3); `IN [.., date()]` drops the item (C9); multi-label AND/OR (C5, C6); Bool/Int conflation (C1, shared with C). C2 (temporals indexed as numbers, #3076), C10 (array-contains inside AND, shared with C, #3736) and C11 (`n.v > 'B' AND n.v < 'B'`, #3072) are fixed; their examples now state agreement.
-```
-
-**File**: `tests/test_e2e.py` (modified, +33/-0)
-```diff
-@@ -2057,6 +2057,39 @@ def test_optional_match_null_merge():
- 
- 
- 
-+def test_var_len_traverse_keeps_earlier_clause_below_it():
-+    """Reversing a variable-length traverse to scan its more selective end
-+    must not drop an earlier clause stitched under it: a MATCH … WHERE
-+    filter or an UNWIND (#2972, variable-length shape)."""
-+    query(
-+        "CREATE (:S {v: 1})-[:R]->(:B {w: 2}), (:S {v: 0})-[:R]->(:B {w: 2}),"
-+        " (:S {v: 0})-[:R]->(:X)-[:R]->(:B {w: 2})",
-+        write=True,
-+    )
-+
-+    res = query(
-+        "MATCH (a) WHERE a.v = 1 MATCH (a)-[*1..2]->(b:B {w: 2}) RETURN a.v, b.w"
-+    )
-+    assert res.result_set == [[1, 2]]
-+
-+    res = query(
-+        "UNWIND [1, 2] AS i MATCH (a) WHERE a.v = 1 MATCH (a)-[*1..2]->(b:B {w: 2}) RETURN count(*)"
-+    )
-+    assert res.result_set == [[2]]
-+
-+    res = query("UNWIND [1, 2] AS i MATCH (a)-[*1..2]->(b:B {w: 2}) RETURN count(*)")
-+    assert res.result_set == [[8]]
-+
-+    # A single MATCH still scans the selective end.
-+    res = query("MATCH (a {v: 0})-[*1..2]->(b:B {w: 2}) RETURN count(*)")
-+    assert res.result_set == [[2]]
-+
-+    plan = str(
-+        common.g.explain("MATCH (a {v: 0})-[*1..2]->(b:B {w: 2}) RETURN count(*)")
-+    )
-+    assert "Node By Label Scan | (b:B)" in plan, plan
-+
-+
- def test_variable_named_like_an_anonymous_entity():
-     # An unnamed pattern entity has no name at all, so no variable a query
-     # writes can be it - not `_anon_<n>`, not `_anonymous`, and not even the
-```
-
----
-
-### Incident Patch 3: `adf7bad4` (2026-11-18)
-**Commit Message**: fix: a WHERE after WITH no longer drops every row when a variable id is reused (#2557) (#3521)
-
-* fix: a filter after WITH stays above the operator that binds its variable (#2557)
-
-GetVariables walked through Aggregate into the plan of the previous scope.
-Variable ids restart in every scope, so a variable hidden below the WITH
-passed for the later variable that reuses its id: push_filters_down moved
-`WHERE m.id < 999` below the traverse that binds `m`, and select_scan_node
-counted a later node as already bound. The walk now stops at Project and
-Aggregate, which reset the environment, and reports their copies too.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test: outer-join degrees across WITH and a filter after UNWIND keep their variables (#3371)
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* fix: report a projection's output variable, and only an existence check's input, from get_variables (#2557)
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* proofs: re-point get_return_names rows
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* proofs: list #3521's new fns in COVERAGE.tsv
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* proofs: update the
-
-**File**: `graph/src/runtime/runtime.rs` (modified, +28/-12)
-```diff
-@@ -64,11 +64,11 @@ use crate::{
+@@ -75,7 +75,10 @@ use crate::{
  };
- use chrono::{DateTime, Utc};
- use once_cell::unsync::Lazy;
--use orx_tree::{Bfs, Dyn, DynNode, DynTree, MemoryPolicy, NodeIdx, NodeRef};
-+use orx_tree::{Dyn, DynNode, DynTree, MemoryPolicy, NodeIdx, NodeRef};
- use roaring::RoaringTreemap;
- use std::{
-     cell::{Cell, OnceCell, Ref, RefCell, RefMut},
--    collections::HashMap,
-+    collections::{HashMap, VecDeque},
-     marker::PhantomData,
-     sync::Arc,
-     time::{Duration, Instant},
-@@ -258,10 +258,18 @@ pub trait GetVariables {
+ 
+ use super::super::IR;
+-use super::{collect_expr_variables, collect_subtree_variables};
++use super::{
++    collect_expr_scoped_variables, collect_expr_variables, collect_subtree_variables,
++    endpoint_scan_score, walk_scans_to_endpoint,
++};
+ 
+ /// Scores a candidate scan endpoint for the scan node selection optimizer.
+ ///
+@@ -118,14 +121,9 @@ fn score_endpoint(
+     // the planner and stripped from the pattern, so they arrive here through
+     // `filtered_vars` like any other predicate rather than being counted
+     // separately — which used to score such an endpoint twice.
+-    if filtered_vars.all.contains(&key) {
+-        score += 2;
+-    }
++    score += endpoint_scan_score(filtered_vars.all.contains(&key), !node.labels.is_empty());
+     let has_equality = filtered_vars.equality.contains(&key);
+     let filter_runs_late = filtered_vars.above.contains(&key);
+-    if !node.labels.is_empty() {
+-        score += 1;
+-    }
+     // Cardinality: minimum label node count (lower is better).
+     // For nodes with no labels, use u64::MAX so labeled nodes win ties.
+     let cardinality = if node.labels.is_empty() {
+@@ -562,6 +560,28 @@ fn child_subtree_binds(
+     binds
  }
  
- impl<T: MemoryPolicy> GetVariables for DynNode<'_, IR, T> {
-+    /// The variables the rows leaving this subtree can carry.
-+    ///
-+    /// `Project` and `Aggregate` start a fresh environment, so the walk stops
-+    /// at them: only what they name survives, which is the output variable of
-+    /// each projection and of each `(source, output)` copy. Variable ids
-+    /// restart in every scope, so a variable hidden below a `WITH` would
-+    /// otherwise pass for the later variable that reuses its id.
-     fn get_variables(&self) -> Vec<Variable> {
-         let mut vars = vec![];
--        for node in self.walk::<Bfs>() {
--            match node {
-+        let mut queue = VecDeque::from([self.clone()]);
-+        while let Some(node) = queue.pop_front() {
-+            match node.data() {
-                 IR::Optional(variables) => vars.extend(variables.iter().cloned()),
-                 IR::ProcedureCall {
-                     yields: named_outputs,
-@@ -298,9 +306,6 @@ impl<T: MemoryPolicy> GetVariables for DynNode<'_, IR, T> {
-                 | IR::Union
-                 | IR::NestedPlans
-                 | IR::Apply
--                | IR::SemiApply
--                | IR::AntiSemiApply
--                | IR::OrApplyMultiplexer(_)
-                 | IR::Sort(_)
-                 | IR::Skip(_)
-                 | IR::Limit(_)
-@@ -309,6 +314,13 @@ impl<T: MemoryPolicy> GetVariables for DynNode<'_, IR, T> {
-                 | IR::IncludePending { .. }
-                 | IR::CreateIndex { .. }
-                 | IR::DropIndex { .. } => {}
-+                // Child 0 is the input; the other children are existence
-+                // checks whose variables never reach the rows leaving the
-+                // operator, and their ids may be reused later.
-+                IR::SemiApply | IR::AntiSemiApply | IR::OrApplyMultiplexer(_) => {
-+                    queue.extend(node.children().next());
-+                    continue;
-+                }
-                 IR::NodeByLabelScan { node, .. }
-                 | IR::AllNodeScan(node)
-                 | IR::NodeByIndexScan { node, .. }
-@@ -365,15 +377,19 @@ impl<T: MemoryPolicy> GetVariables for DynNode<'_, IR, T> {
-                     }
-                 }
-                 IR::Aggregate {
--                    names: variables, ..
-+                    names, projections, ..
-                 } => {
--                    vars.extend(variables.iter().cloned());
-+                    vars.extend(names.iter().cloned());
-+                    vars.extend(projections.iter().map(|(_, v)| v.clone()));
-+                    continue;
-                 }
--                IR::Project { exprs: items, .. } => {
--                    vars.extend(items.iter().map(|v| v.0.clone()));
--                    break;
-+                IR::Project { exprs, copies } => {
-+                    vars.extend(exprs.iter().map(|(v, _)| v.clone()));
-+                    vars.extend(copies.iter().map(|(_, v)| v.clone()));
-+                    continue;
-                 }
-             }
-+            queue.extend(node.children());
++/// Whether anything below the planner scan at `scan_idx` may bind `alias`:
++/// one of its children binds it, or contains an `Argument(None)`, which is
++/// opaque about what it carries. Unlike `child_subtree_binds`, an opaque
++/// `Argument` counts as binding, since the caller is about to scan `alias`
++/// on top of these children and must not rebind it.
++fn subtree_may_bind(
++    plan: &DynTree<IR>,
++    scan_idx: NodeIdx<Dyn<IR>>,
++    alias: &Variable,
++) -> bool {
++    use crate::runtime::runtime::GetVariables;
++    plan.node(scan_idx).children().any(|child| {
++        child
++            .walk::<Bfs>()
++            .any(|ir| matches!(ir, IR::Argument(None)))
++            || child
++                .get_variables()
++                .iter()
++                .any(|v| v.id == alias.id && v.scope_id == alias.scope_id)
++    })
++}
++
+ /// Picks which endpoint of a leaf `CondVarLenTraverse` to scan.
+ ///
+ /// The planner always scans the pattern's `from` endpoint. When `to` is the
+@@ -603,14 +623,22 @@ fn select_var_len_scan_node(
+         };
+         // Nothing to choose between: both endpoints are already bound, both
+         // ends are the same variable, or the runtime has no backwards walk for
+-        // this pattern (bidirectional / allShortestPaths).
++        // this pattern (allShortestPaths).
+         if *expand_into
+-            || relationship.bidirectional
+             || relationship.all_shortest_paths != AllShortestPaths::No
+             || relationship.from.alias.id == relationship.to.alias.id
+         {
+             continue;
          }
-         vars
-     }
-```
-
-**File**: `proofs/FINDINGS.md` (modified, +1/-1)
-```diff
-@@ -186,7 +186,7 @@ A triage of every open `type:Bug label:rust` issue (live on Rust main 9d3869aa8
- - #3226 (idx): a write that commits while its own index scan is open (scan below LIMIT) re-takes the RediSearch spec lock as a writer while holding it as a reader, and the server aborts at spec.c:2304; the same path takes the GIL while holding RediSearch's global lock (stall with RESTORE). Lean SC.Locks.bug3226_open_scan_upgrade; property noReacquire.
- - #3333 (aggregate/binder ids): the pre-projection alias of m (id 2) stays bound on the Aggregate output and the next MATCH gives b id 2, so b starts bound to m and the query returns []. Lean bug3333_alias_binds_next_var; property EmitsOnlyScope.
- - #3349 (udf): WCC, pageRank and betweenness on a one-node nodeLabels projection fail with -1000: GraphBLAS stores the 1×1 compact matrix by column, LAGraph_CheckGraph rejects it, and Rust returns the error. Lean bug3349_one_node_projection_fails; property ProjectionTotal.
--- #3352 (plan/optimizer): Case 2 push-down inherits bare ids from the whole pre-WITH subtree (get_variables walks through Aggregate), takes the pre-WITH id 2 for `r`, and puts `r.status = 'revoked'` on the Argument: Rust e=null, C 123. Lean bug3352_slot_collision_drops_match (bug3352_routes_unbound); property RowSound (RoutesBound).
-+- #3352 (plan/optimizer): Case 2 push-down inherits bare ids from the whole pre-WITH subtree (get_variables walks through Aggregate), takes the pre-WITH id 2 for `r`, and puts `r.status = 'revoked'` on the Argument: Rust e=null, C 123. Lean bug3352_slot_collision_drops_match (bug3352_routes_unbound); property RowSound (RoutesBound). Since #3521 get_variables stops at Aggregate/Project (`RuntimeCore.Plan.getVariables_stops`, old walk `pre3521_hidden_reported`).
- - #3368, #3369 (rt, filed repros fixed by #3050): model only and not yet run live: equal leftovers in two rows of the SAME MERGE still share one `merge_pattern_cache` entry (`MergeSlot.same_op_leftover_shares_entry`).
- - #3372 (rt/aggregate→traverse): Aggregate re-binds a grouping key at its slot from the previous scope (aggregate.rs:1187-1196), and the binder restarts slot ids at 0 in each scope (binder.rs:2261). A fresh variable in the next MATCH that gets the same slot is read by CondTraverse as already bound to that node (cond_traverse.rs:648-652,771-777), so `WITH c, count(*) AS k MATCH (c)-[:E]->(d)` returns 0 instead of 4. Lean bug3372_slot_reuse_drops_rows; property ScopedRow.
- - #3375 (aggregate/binder ids): count(x)'s output id equals sum(x)'s accumulator id and is written into `combined` first, so sum returns the count (3 vs 6) and avg panics in finalize_avg. Lean bug3375_output_overwrites_next_acc, bug3375_avg_panics; property OutputsOwnAcc.
-```
-
-**File**: `proofs/runtime_core/COVERAGE.tsv` (modified, +4/-4)
-```diff
-@@ -1,9 +1,9 @@
- file	function	line	bucket	lean_name_or_reason
- graph/src/runtime/runtime.rs	deref	141	NOT COVERED	stale model (re-target pending): the published version is an Arc<Graph>; a write query's fork is a plain Graph the runtime holds in a RefCell until it publishes it (no HeldRead, no cell around published versions); proofs/runtime_core Cell/Drop/Proto still model HeldRead. Was PROVEN: Cell.deref: graph_deref, graph_same_result (both GraphRef arms deref to g's cell)
--graph/src/runtime/runtime.rs	get_variables	257	PROVEN	Plan.getVariables/nodeVars (trait decl): getVariables_spec, getVariables_stops
--graph/src/runtime/runtime.rs	get_variables	261	PROVEN	Plan.getVariables/nodeVars: getVariables_spec, getVariables_stops
--graph/src/runtime/runtime.rs	get_return_names	383	PROVEN	Plan.returnNames (trait decl): returnNames_spec
--graph/src/runtime/runtime.rs	get_return_names	387	PROVEN	Plan.returnNames/skipApply: returnNames_spec
-+graph/src/runtime/runtime.rs	get_variables	257	PROVEN	Plan.getVariables/nodeVars/expand (trait decl): getVariables_spec, getVariables_mem, getVariables_stops, getVariables_sibling
-+graph/src/runtime/runtime.rs	get_variables	268	PROVEN	Plan.getVariables/nodeVars/expand: getVariables_spec, getVariables_mem, getVariables_stops, getVariables_sibling, pre3521_hidden_reported
-+graph/src/runtime/runtime.rs	get_return_names	399	PROVEN	Plan.returnNames (trait decl): returnNames_spec
-+graph/src/runtime/runtime.rs	get_return_names	403	PROVEN	Plan.returnNames/skipApply: returnNames_spec
- graph/src/runtime/runtime.rs	inspect_batch	433	PROVEN	Plan.inspectBatch: inspectBatch_spec
- graph/src/runtime/runtime.rs	new	455	NOT COVERED	stale model (re-target pending): the published version is an Arc<Graph>; a write query's fork is a plain Graph the runtime holds in a RefCell until it publishes it (no HeldRead, no cell around published versions); proofs/runtime_core Cell/Drop/Proto still model HeldRead. Was PROVEN: Plan.rtNew: rtNew_spec; Misc.checkTimeout_spec (deadline); Cell.new: new_ok, new_vals; Proto.readNew_never_panics; Drop.held_survives, drop_sound (either field order), held_swapped_unsound (HeldRead internal order), g_never_reassigned
- graph/src/runtime/runtime.rs	check_timeout	522	PROVEN	Misc.checkTimeout_spec
-```
-
-**File**: `proofs/runtime_core/RuntimeCore.lean` (modified, +1/-1)
-```diff
-@@ -99,7 +99,7 @@ instantiated; `Instant` arithmetic.
- ## Wave-5 additions
- * `RelAccessors`: relationship reads, pending attribute writes (`setPendingAttr_spec`), typed
-   materialisation, `label_id`, endpoints/type lookups (deleted > pending > committed).
--* `Plan`: `get_variables` (BFS walk stopping at the first Project), `get_return_names`,
-+* `Plan`: `get_variables` (BFS queue; Project/Aggregate end their subtree, existence checks keep only their input), `get_return_names`,
-   `inspect_batch`, `Runtime::new`, delegating accessors, `default_batch`, `run_nested_plan`,
-   `build_batch_op` child popping and SKIP/LIMIT/VHJ checks; `children_to_recurse` spec in RunBatch.
- -/
-```
-
-**File**: `proofs/runtime_core/RuntimeCore/Plan.lean` (modified, +126/-36)
-```diff
-@@ -3,8 +3,8 @@ Plan-shape helpers and constructors of `Runtime` (graph/src/runtime/runtime.rs).
++        // The edge attributes are evaluated per edge, before the walk binds
++        // anything: one that reads an endpoint sees it bound only when that
++        // end is the one scanned (or bound by an input). Dropping the `from`
++        // scan unbinds `from`; rescanning `to` flips which end is bound.
++        let attr_vars = collect_expr_scoped_variables(&relationship.attrs);
++        let attrs_read_from =
++            attr_vars.contains(&(relationship.from.alias.scope_id, relationship.from.alias.id));
++        let attrs_read_to =
++            attr_vars.contains(&(relationship.to.alias.scope_id, relationship.to.alias.id));
+         // Only rewrite when the planner put its own scan for `from` here.
+         if node.num_children() != 1 {
+             continue;
+@@ -667,7 +695,10 @@ fn select_var_len_scan_node(
+             (filter, include_pending)
+         };
+         let wrapper_ok = !has_filter && !has_include_pending;
+-        if wrapper_ok && child_subtree_binds(optimized_plan, scan_idx, &to.alias) {
++        if wrapper_ok
++            && !attrs_read_from
++            && child_subtree_binds(optimized_plan, scan_idx, &to.alias)
++        {
+             let kept: Vec<DynTree<IR>> = optimized_plan
+                 .node(scan_idx)
+                 .children()
+@@ -686,26 +717,9 @@ fn select_var_len_scan_node(
+             }
+         }
  
- | here | there |
+-        // The leaf rewrite below replaces the whole subtree with a fresh scan
+-        // of `to`, carrying over only an `Argument` leaf (and re-adding
+-        // `IncludePending` inside MERGE). Anything else there is an earlier
+-        // clause that `plan_query` stitched under the traverse: a `Filter`
+-        // (`MATCH (a) WHERE a.v = 1 MATCH (a)-[*]->(b)`) or an operator below
+-        // the scan (`UNWIND … MATCH (a)-[*]->(b)`). Dropping it would lose a
+-        // predicate or rows, so keep the planner's direction instead.
+-        let scan_node = optimized_plan.node(scan_idx);
+-        let only_argument_below = match scan_node.num_children() {
+-            0 => true,
+-            1 => {
+-                let below = scan_node.child(0);
+-                matches!(below.data(), IR::Argument(_)) && below.num_chil
+```
+
+**File**: `graph/src/runtime/ops/cond_var_len_traverse.rs` (modified, +15/-5)
+```diff
+@@ -248,16 +248,24 @@ impl VarLenIter<'_> {
+                     continue;
+                 }
+ 
+-                let neighbor = if reversed {
++                // An undirected walk follows an edge either way, so it reads the
++                // same whether it starts at `from` or, reversed, at `to`.
++                let neighbor = if bidirectional {
++                    if edge_src == current {
++                        Some(edge_dst)
++                    } else if edge_dst == current {
++                        Some(edge_src)
++                    } else {
++                        None
++                    }
++                } else if reversed {
+                     if edge_dst == current {
+                         Some(edge_src)
+                     } else {
+                         None
+                     }
+                 } else if edge_src == current {
+                     Some(edge_dst)
+-                } else if bidirectional && edge_dst == current {
+-                    Some(edge_src)
+                 } else {
+                     None
+                 };
+@@ -557,8 +565,10 @@ impl<'a> CondVarLenTraverseOp<'a> {
+ 
+         // When `to` is bound but `from` is unbound (e.g. `(:L1)<-[:R1*]-()`)
+         // we reverse the traversal: start from the bound `to` node and follow
+-        // edges in the opposite direction, emitting destinations as `from`.
+-        let reversed = from_id.is_none() && to_id.is_some() && !bidirectional;
++        // edges in the opposite direction, emitting destinations as `from`. An
++        // undirected walk reverses too: it follows edges both ways, and only the
++        // start, the emitted endpoints and the path order change.
++        let reversed = from_id.is_none() && to_id.is_some();
+ 
+         // Get starting nodes
+         let start_nodes: Vec<NodeId> = if reversed {
+```
+
+**File**: `proofs/binder/COVERAGE.tsv` (modified, +1/-1)
+```diff
+@@ -58,4 +58,4 @@ graph/src/planner/binder.rs	raw_exprs_structurally_equal::expr_ir_eq	2890	PROVEN
+ graph/src/planner/binder.rs	denotes	2912	NOT COVERED	(#3302): not modelled yet
+ graph/src/planner/binder.rs	sorted_scope_vars	2919	PROVEN	Stack.sortedScopeVars_spec (permutation of the table, sorted by id, same length)
+ graph/src/planner/binder.rs	merge_scope_vars	2927	PROVEN	mergeSV_ge, mergeSV_covers
+-graph/src/planner/mod.rs	Planner::fresh_var	1015	NOT COVERED	(#3302): not modelled yet
++graph/src/planner/mod.rs	Planner::fresh_var	1017	NOT COVERED	(#3302): not modelled yet
+```
+
+**File**: `proofs/ops_traverse/COVERAGE.tsv` (modified, +5/-5)
+```diff
+@@ -25,11 +25,11 @@ graph/src/runtime/ops/expand_into.rs	ExpandIntoOp::expand_row	125	PROVEN	CondTra
+ graph/src/runtime/ops/expand_into.rs	ExpandIntoOp::next	251	PROVEN	Drive.capDrive: eiNext_stream, capDrive_flatten
+ graph/src/runtime/ops/cond_var_len_traverse.rs	VarLenIter::path_value	139	PROVEN	VarLenGlue.pathValue: pathValue_spec, Alt.reverse
+ graph/src/runtime/ops/cond_var_len_traverse.rs	VarLenIter::begin_start_node	152	PROVEN	VarLen.varLen 0-hop branch: varLen_sound, varLen_complete, zero_zero
+-graph/src/runtime/ops/cond_var_len_traverse.rs	VarLenIter::advance	196	PROVEN	VarLen.dfs: dfs_sound, dfs_complete, varLen_iff (trails, min..max); absorbed edge filter verdict edgeVerdict_eq_filterEval (= FilterOp, #2390)
+-graph/src/runtime/ops/cond_var_len_traverse.rs	VarLenIter::next	402	PROVEN	VarLenGlue.vlStep/run: run_complete, run_err
+-graph/src/runtime/ops/cond_var_len_traverse.rs	CondVarLenTraverseOp::new	455	PROVEN	VarLenGlue.VlSt.new/findPrev: vlNew_spec
+-graph/src/runtime/ops/cond_var_len_traverse.rs	CondVarLenTraverseOp::expand_row	518	PROVEN	VarLenGlue.rowPlan: rowPlan_spec; VarLen.varLen (no_sibling_uniqueness)
+-graph/src/runtime/ops/cond_var_len_traverse.rs	CondVarLenTraverseOp::next	629	PROVEN	Drive.driveE: vlOpNext_stream, driveE_ok, driveE_child_err
++graph/src/runtime/ops/cond_var_len_traverse.rs	VarLenIter::advance	196	PROVEN	VarLen.dfs: dfs_sound, dfs_complete, varLen_iff (trails, min..max); absorbed edge filter verdict edgeVerdict_eq_filterEval (= FilterOp, #2390); #3593: an undirected step no longer depends on `reversed` (= step g true; varLen_bidir_reverse_iff)
++graph/src/runtime/ops/cond_var_len_traverse.rs	VarLenIter::next	410	PROVEN	VarLenGlue.vlStep/run: run_complete, run_err
++graph/src/runtime/ops/cond_var_len_traverse.rs	CondVarLenTraverseOp::new	463	PROVEN	VarLenGlue.VlSt.new/findPrev: vlNew_spec
++graph/src/runtime/ops/cond_var_len_traverse.rs	CondVarLenTraverseOp::expand_row	526	PROVEN	VarLenGlue.rowPlan: rowPlan_spec (#3593: reversed whenever only `to` is a node, directed or not); VarLen.varLen_bidir_reverse_iff, Walk.reverse_bidir, step_bidir_symm (an undirected walk reversed binds the same trails); VarLen.varLen (no_sibling_uniqueness)
++graph/src/runtime/ops/cond_var_len_traverse.rs	CondVarLenTraverseOp::next	639	PROVEN	Drive.driveE: vlOpNext_stream, driveE_ok, driveE_child_err
+ graph/src/runtime/ops/node_by_label_scan.rs	NodeByLabelScanOp::new	56	PROVEN	CTGlue.labelScanNew: ctors_spec
+ graph/src/runtime/ops/node_by_label_scan.rs	NodeByLabelScanOp::next	77	PROVEN	Scans.labelScan: mem_labelScan, length_labelScan (get_nodes axiomatised as sorted list)
+ graph/src/runtime/ops/node_by_id_seek.rs	NodeByIdSeekOp::new	32	PROVEN	CTGlue.idSeekNew: ctors_spec
+```
+
+**File**: `proofs/ops_traverse/OpsTraverse/VarLen.lean` (modified, +40/-2)
+```diff
+@@ -15,8 +15,9 @@ Modelled as a recursive DFS; the engine uses an explicit stack, which changes
+ only the *order* of emissions (it pops the last pushed neighbour first), not
+ the multiset. Destination id / label filters and edge-attribute / WHERE
+ filters are pure post-filters on each candidate and are not modelled; the
+-reversed traversal (`reversed`, `:543`) is the same DFS on the transposed
+-direction.
++reversed traversal (`reversed`, `:571`) is the same DFS on the transposed
++direction, and for an undirected walk (reversed since #3593) the same DFS from
++the other end: `varLen_bidir_reverse_iff`.
+ -/
+ 
+ namespace OpsTraverse.VarLen
+@@ -146,6 +147,43 @@ theorem varLen_iff {g : Graph} {b : Bool} {start minH maxH : Nat} {es : List Nat
+       Walk g b start es d ∧ es.Nodup ∧ minH ≤ es.length ∧ es.length ≤ maxH :=
+   ⟨varLen_sound, fun ⟨hw, hnd, h1, h2⟩ => varLen_complete hw hnd h1 h2⟩
+ 
++/-- An undirected step can be taken backwards. -/
++theorem step_bidir_symm {g : Graph} {s n e : Nat} (h : (e, n) ∈ step g true s) :
++    (e, s) ∈ step g true n := by
++  rw [mem_step] at h ⊢
++  obtain ⟨x, hx, hid, h⟩ := h
++  refine ⟨x, hx, hid, ?_⟩
++  rcases h with ⟨h1, h2⟩ | ⟨_, h2, h3, h4⟩
++  · by_cases hn : x.src = n
++    · exact Or.inl ⟨hn, by omega⟩
++    · exact Or.inr ⟨rfl, hn, h2, h1⟩
++  · exact Or.inl ⟨h4, h3⟩
++
++theorem Walk.snoc {g : Graph} {b : Bool} {s m n e : Nat} {es : List Nat}
++    (hw : Walk g b s es m) (h : (e, n) ∈ step g b m) : Walk g b s (es ++ [e]) n := by
++  induction hw with
++  | nil => exact .cons h (.nil _)
++  | cons hs _ ih => exact .cons hs (ih h)
++
++/-- An undirected walk read backwards is an undirected walk. -/
++theorem Walk.reverse_bidir {g : Graph} {s d : Nat} {es : List Nat} (hw : Walk g true s es d) :
++    Walk g true d es.reverse s := by
++  induction hw with
++  | nil => exact .nil _
++  | cons hs _ ih => simpa using ih.snoc (step_bidir_symm hs)
++
++/-- **PROVEN** (#3593: `expand_row` reverses an undirected walk too): from the bound `to`, the
++undirected DFS finds exactly the trails of the forward walk, read backwards, ending at `from`. -/
++theorem varLen_bidir_reverse_iff {g : Graph} {s d minH maxH : Nat} {es : List Nat} :
++    (es, d) ∈ varLen g true s minH maxH ↔ (es.reverse, s) ∈ varLen g true d minH maxH := by
++  rw [varLen_iff, varLen_iff, List.length_reverse]
++  have hn : es.reverse.Nodup ↔ es.Nodup := by
++    simp only [List.Nodup, List.pairwise_reverse]
++    exact ⟨fun h => h.imp Ne.symm, fun h => h.imp Ne.symm⟩
++  constructor
++  · rintro ⟨hw, h1, h2⟩; exact ⟨hw.reverse_bidir, hn.2 h1, h2⟩
++  · rintro ⟨hw, h1, h2⟩; exact ⟨by simpa using hw.reverse_bidir, hn.1 h1, h2⟩
++
+ /-- `*0..0` yields exactly the start node. -/
+ theorem zero_zero (g : Graph) (b : Bool) (s : Nat) : varLen g b s 0 0 = [([], s)] := by
+   simp [varLen, dfs]
+```
+
+**File**: `proofs/ops_traverse/OpsTraverse/VarLenGlue.lean` (modified, +9/-7)
+```diff
+@@ -6,7 +6,7 @@ Variable-length traverse glue (graph/src/runtime/ops/cond_var_len_traverse.rs).
  | --- | --- |
--| `IRK`, `nodeVars`, `getVariables` | `GetVariables` trait (:209) and its `DynNode` impl (:213-330) |
--| `PT`, `returnNames`  | `ReturnNames` trait (:335) and its impl (:339-380) |
-+| `IRK`, `VT`, `nodeVars`, `expand`, `getVariables`, `visible` | `GetVariables` trait (:256) and its `DynNode` impl (:260-396) |
-+| `PT`, `returnNames`  | `ReturnNames` trait (:398) and its impl (:402-) |
- | `inspectBatch`       | `Runtime::inspect_batch` (:384) |
- | `RtInit`, `rtNew`    | `Runtime::new` (:406-463) |
- | `writeEscalation`, `resyncPublished`, `commitDeferred` | `write_escalation` (:494), `resync_published_indexes` (:500), `commit_deferred_indexes` (:510) |
-@@ -15,7 +15,7 @@ Plan-shape helpers and constructors of `Runtime` (graph/src/runtime/runtime.rs).
- -/
- namespace RuntimeCore.Plan
+ | `pathValue`, `Alt`   | `VarLenIter::path_value` (:139) |
+ | `Frame`, `vlNext`, `run` | `Iterator for VarLenIter::next` (:392): pop the frame buffer, stop on a parked error, else begin the next start node or `advance` one DFS frame |
+-| `rowPlan`            | `CondVarLenTraverseOp::expand_row` (:500): endpoint resolution, reversal, start nodes, destination, hop defaults |
++| `rowPlan`            | `CondVarLenTraverseOp::expand_row` (:526): endpoint resolution, reversal, start nodes, destination, hop defaults |
+ | `VlSt.new`, `findPrev` | `CondVarLenTraverseOp::new` (:441) |
+ | `vlOpNext`           | `CondVarLenTraverseOp::next` (:611) — `Drive.driveE` with the parked-error check |
  
--/-! ## `get_variables` (:213) -/
-+/-! ## `get_variables` (:257-396) -/
+@@ -152,7 +152,7 @@ theorem run_complete {I : Type} : ∀ (n : Nat) (s : It I), s.err = false → po
+ theorem run_err {I : Type} (n : Nat) (st sts : List (Frame I)) :
+     run (n + 1) ⟨[], st, sts, true⟩ = [] := by simp [run, vlStep]
  
- /-- The variable-bearing payload of each IR variant, as `get_variables` reads it. -/
- inductive IRK where
-@@ -24,54 +24,144 @@ inductive IRK where
-   | unwind (v : Nat)
-   | createOrMerge (nodes rels paths : List Nat)
-   | forEachOrLoadCsv (v : Nat)
--  | silent                     -- Delete, Argument, Set, Remove, Filter, products, applies, Sort, Skip, …
-+  | silent                     -- Delete, Argument, Set, Remove, Filter, products, Apply, Sort, Skip, …
-+  | semi                       -- SemiApply, AntiSemiApply, OrApplyMultiplexer (:320-323)
-   | scan (node : Nat)          -- label/all/index/label-and-id scans, id seek
-   | scored (ent : Nat) (score : Option Nat)  -- fulltext / vector scans
-   | rel (r f t : Nat)          -- CondTraverse, EdgeByIndexScan, AllShortestPaths, ExpandInto
-   | varLen (r f t : Nat) (path : Option Nat)
-   | pathBuilder (vars : List Nat)
--  | aggregate (names : List Nat)
--  | project (names : List Nat)
-+  | aggregate (names projOuts : List Nat)  -- `names`, then each projection's output (:379-385)
-+  | project (exprs copyOuts : List Nat)    -- each expr's variable, then each copy's output (:386-390)
+-/-! ## `expand_row` (:500) -/
++/-! ## `expand_row` (:526) -/
  
- def nodeVars : IRK → List Nat
--  | .optional vs | .procCall vs | .pathBuilder vs | .aggregate vs | .project vs => vs
-+  | .optional vs | .procCall vs | .pathBuilder vs => vs
-+  | .aggregate ns ps | .project ns ps => ns ++ ps
-   | .unwind v | .forEachOrLoadCsv v | .scan v => [v]
-   | .createOrMerge ns rs ps => ns ++ rs ++ ps
--  | .silent => []
-+  | .silent | .semi => []
-   | .scored e s => e :: s.toList
-   | .rel r f t => [r, f, t]
-   | .varLen r f t p => [r, f, t] ++ p.toList
+ inductive EV where
+   | node (n : Nat)
+@@ -169,29 +169,31 @@ def asNode : Option EV → Option Nat
+   | some (.node n) => some n
+   | _ => none
  
--/-- The BFS walk (:214-327): collect each node's variables; the first `Project` ends the
--walk after contributing its names (`break`). `bfs` = the subtree in `walk::<Bfs>` order. -/
--def getVariables : List IRK → List Nat
-+/-- A plan subtree (`DynNode<IR>`): its IR payload and its children, in order. -/
-+inductive VT where
-+  | node (k : IRK) (kids : List VT)
-+
-+/-- The children the walk enqueues after a node: none below `Project`/`Aggregate`
-+(`continue`, :384, :389), only child 0 (the input) of an existence check (:321), all
-+children otherwise (:392). -/
-+def expand : IRK → List VT → List VT
-+  | .project .., _ | .aggregate .., _ => []
-+  | .semi, kids => kids.take 1
-+  | _, kids => kids
-+
-+theorem sizeOf_append (a b : List VT) : sizeOf (a ++ b) + 1 = sizeOf a + sizeOf b := by
-+  induction a with
-+  | nil => simp; omega
-+  | cons x a ih => simp [List.cons_append]; omega
-+
-+theorem one_le_sizeOf (l : List VT) : 1 ≤ sizeOf l := by
-+  cases l <;> simp <;> omega
-+
-+theorem sizeOf_expand (k : IRK) (kids : List VT) : sizeOf (expand k kids) ≤ sizeOf kids := by
-+  cases k <;> cases kids <;> simp [expand] <;> first | omega | exact one_le_sizeOf _
-+
-+/-- The BFS queue (:270-394): pop the front, collect its variables, enqueue `expand`.
-+`get_variables` on a node `t` is `getVariables [t]`. -/
-+def getVariables : List VT → List Nat
-+  | [] => []
-+  | .node k kids :: q => nodeVars k ++ getVariables (q ++ expand k kids)
-+termination_by q => sizeOf q
-+decreasing_by
-+  have h1 := sizeOf_append q (expand k kids)
-+  have h2 := sizeOf_expand k kids
-+  simp
-+  omega
-+
-+/-- The node kinds whose variables reach the rows leaving `t`: `t` itself, then (depth
-+first) what is visible in the children `expand` keeps. -/
-+def visible : VT → List IRK
-+  | .node k kids => k :: match k with
-+    | .project .. | .aggregate .. => []
-+    | .semi => match kids with
-+      | [] => []
-+      | c :: _ => visible c
-+    | _ => kids.flatMap visible
-+
-+theorem visible_node (k : IRK) (kids : List VT) :
-+    visible (.node k kids) = k :: (expand k kids).flatMap visible := by
-+  cases k <;> cases kids <;> simp [visible, expand]
-+
-+/-- One step of the walk, and what `expand` keeps. -/
-+theorem getVariables_spec (k : IRK) (kids q : List VT) :
-+    getVariables [] = [] ∧
-+    getVariables (.node k kids :: q) = nodeVars k ++ getVariables (q ++ expand k kids) ∧
-+    (∀ n
-```
-
-**File**: `tests/flow/test_filters.py` (modified, +104/-0)
-```diff
-@@ -295,3 +295,107 @@ def test10_subscript_as_predicate(self):
-                 self.env.assertTrue(False, depth=1)
-             except redis.ResponseError as e:
-                 self.env.assertContains(error, str(e), depth=1)
-+
-+    def test11_filter_after_with_keeps_its_own_variables(self):
-+        # Variable ids restart after a WITH, so a variable of the new scope
-+        # can share its id with one hidden below the WITH. That one must not
-+        # count as bound: the filter on `m` was pushed below the traverse
-+        # that binds `m` and dropped every row (#2557).
-+        g = self.db.select_graph("filter_after_with")
-+        g.query("""CREATE (p:Person {id:1}), (f:Person {id:2}), (p)-[:KNOWS]->(f),
-+                          (m1:Post {id:10}), (m2:Post {id:11}),
-+                          (m1)-[:HAS_CREATOR]->(f), (m2)-[:HAS_CREATOR]->(f)""")
-+
-+        for pred, expected in [("m.id < 999", 2), ("m.id = 10", 1),
-+                               ("999 > m.id", 2), ("m.id <> 5", 2)]:
-+            res = g.query(f"""MATCH (root:Person {{id:1}})-[:KNOWS]-(friend:Person)
-+                              WITH collect(friend) AS friends
-+                              UNWIND friends AS f
-+                              MATCH (f)<-[:HAS_CREATOR]-(m:Post)
-+                              WHERE {pred}
-+                              RETURN count(m)""")
-+            self.env.assertEqual(res.result_set, [[expected]], depth=1)
-+
-+        # The same collision through an Apply: the WHERE of an OPTIONAL MATCH
-+        # after an aggregating WITH must stay above the traverse binding `r`.
-+        g.query("CREATE (:Rule {status:'revoked'})-[:SCOPED_TO]->(:Person {id:3})")
-+        res = g.query("""MATCH (p:Person {id:3})
-+                         OPTIONAL MATCH (r0:Rule)-[:SCOPED_TO]->(p)
-+                         WITH p, count(r0) AS n
-+                         OPTIONAL MATCH (r:Rule)-[:SCOPED_TO]->(p)
-+                         WHERE r.status = 'revoked'
-+                         RETURN n, r.status""")
-+        self.env.assertEqual(res.result_set, [[1, 'revoked']])
-+
-+    def test11_optional_match_degrees_across_with(self):
-+        # Outer-join aggregations chained through WITH reuse variable ids
-+        # (u, v, du, ... restart after every WITH), so a filter of a later
-+        # OPTIONAL MATCH was pushed below the traverse binding its variable and
-+        # the sums came out as -12 instead of 25 (#3371). Expected values are
-+        # what C returns: central_sum - 3 * triangles = simple 4-node paths.
-+        cases = [
-+            ([(1, 2)], [[1, 2, 0, 0, 0]], 0, 0, 0),
-+            ([(1, 2), (2, 3), (3, 4)],
-+             [[1, 2, 0, 1, 0], [2, 3, 1, 1, 1], [3, 4, 1, 0, 0]], 1, 0, 1),
-+            ([(1, 2), (1, 3), (2, 3)],
-+             [[1, 2, 1, 1, 1], [1, 3, 1, 1, 1], [2, 3, 1, 1, 1]], 3, 1, 0),
-+            ([(1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4), (1, 5), (2, 6)],
-+             [[1, 2, 3, 3, 9], [1, 3, 3, 2, 6], [1, 4, 3, 2, 6],
-+              [1, 5, 3, 0, 0], [2, 3, 3, 2, 6], [2, 4, 3, 2, 6],
-+              [2, 6, 3, 0, 0], [3, 4, 2, 2, 4]], 37, 4, 25),
-+        ]
-+        degrees = """MATCH (u:MT04)-[:E04]-(v:MT04) WHERE u.id<v.id
-+                     OPTIONAL MATCH (u)-[ru:E04]-(nu:MT04) WHERE nu<>v
-+                     WITH u,v,count(ru) AS du
-+                     OPTIONAL MATCH (v)-[rv:E04]-(nv:MT04) WHERE nv<>u
-+                     WITH u,v,du,count(rv) AS dv """
-+        for i, (edges, per_edge, central, triangles, paths) in enumerate(cases):
-+            g = self.db.select_graph(f"degrees_across_with_{i}")
-+            nodes = sorted({n for e in edges for n in e})
-+            pattern = [f"(v{n}:MT04 {{id: {n}}})" for n in nodes]
-+            pattern += [f"(v{a})-[:E04]->(v{b})" for a, b in edges]
-+            g.query("CREATE " + ", ".join(pattern))
-+
-+            res = g.query(degrees + "RETURN u.id,v.id,du,dv,du*dv ORDER BY u.id,v.id")
-+            self.env.assertEqual(res.result_set, per_edge, depth=1)
-+
-+            res = g.query(degrees + """WITH sum(du*dv) AS central_sum
-+                OPTIONAL MATCH p=(a:MT04)-[:E04]-(b:MT04)-[:E04]-(c:MT04)-[:E04]-(a)
-+                WHERE a.id<b.id AND b.id<c.id
-+                WITH central_sum, count(p) AS triangles
-+                RETURN central_sum, triangles, central_sum-3*triangles""")
-+            self.env.assertEqual(res.result_set, [[central, triangles, paths]], depth=1)
-+
-+    def test12_filter_after_unwind_stays_above_the_unwind(self):
-+        # `x` (bound by the UNWIND) shared an id with a variable inside the
-+        # CALL {} body below it, so `WHERE x = 2` was pushed below the UNWIND
-+        # and rejected every row. C returns 2.
-+        g = self.db.select_graph("filter_above_unwind")
-+        g.query("CREATE (:A), (:A)")
-+        res = g.query("""CALL { CREATE () } UNWIND [1, 2] AS x
-+                         MATCH (n:A) WHERE x = 2 RETURN count(*)""")
-+        self.env.assertEqual(res.result_set, [[2]])
-+
-+    def test13_fi
+-/-- cond_var_len_traverse.rs:531-570. `fromBound`/`toBound` = `batch.is_bound_at`. -/
++/-- cond_var_len_traverse.rs:546-576. `fromBound`/`toBound` = `batch.is_bound_at`. -/
+ def rowPlan (fromV toV : Option EV) (fromBound toBound bidir : Bool) (minH maxH : Option Nat) :
+     Option Plan :=
+   let fromId := asNode fromV
+   let toId := asNode toV
+   if fromId.isNone && fromBound then none
+   else if toId.isNone && toBound then none
+   else
+-    let reversed := fromId.isNone && toId.isSome && !bidir
++    let _ := bidir   -- read by the iterator (`step`), no longer by the reversal (#3593)
++    let reversed := fromId.isNone && toId.isSome
+     some { reversed
+            starts := if reversed then toId.map ([·]) else fromId.map ([·])
+            dest := if reversed then fromId else toId
+            minH := minH.getD 1
+            maxH := maxH.getD 4294967295 }
+ 
+ /-- A bound non-node endpoint skips the row; hops default to `*1..u32::MAX`; the walk is
+-reversed exactly when only `to` is a node and the edge is directed; the start set is the bound
++reversed exactly when only `to` is a node (since #3593 for an undirected edge too, which
++`VarLen.varLen_bidir_reverse_iff` shows is sound); the start set is the bound
+ endpoint (or the `from` label scan) and the destination the other endpoint. -/
+ theorem rowPlan_spec (fromV toV : Option EV) (fb tb bidir : Bool) (mn mx : Option Nat) :
+     (asNode fromV = none → fb = true → rowPlan fromV toV fb tb bidir mn mx = none) ∧
+     (∀ p, rowPlan fromV toV fb tb bidir mn mx = some p →
+       p.minH = mn.getD 1 ∧ p.maxH = mx.getD 4294967295 ∧
+-      (p.reversed = true ↔ (asNode fromV = none ∧ (asNode toV).isSome ∧ bidir = false)) ∧
++      (p.reversed = true ↔ (asNode fromV = none ∧ (asNode toV).isSome)) ∧
+       (p.reversed = true → p.starts = (asNode toV).map ([·]) ∧ p.dest = asNode fromV) ∧
+       (p.reversed = false → p.starts = (asNode fromV).map ([·]) ∧ p.dest = asNode toV)) := by
+   constructor
+@@ -205,7 +207,7 @@ theorem rowPlan_spec (fromV toV : Option EV) (fb tb bidir : Bool) (mn mx : Optio
+       · simp only [Option.some.injEq] at hp
+         subst hp
+         refine ⟨rfl, rfl, ?_, fun h => ?_, fun h => ?_⟩
+-        · simp [Bool.and_eq_true, Option.isNone_iff_eq_none, and_assoc]
++        · simp [Bool.and_eq_true, Option.isNone_iff_eq_none]
+         · simp only at h; simp [h]
+         · simp only at h; simp [h]
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3860** (2026-11-18): chore(deps): upgrade valkey-module to the crates.io 0.2.0 release (@DvirDukhan)
-- **PR #3853** (closed): fix: a queued write an inline write overtook re-runs as a writer, so a stream of them cannot starve it (@AviAvni)
-- **PR #3839** (2026-11-16): fix(fuzz): initialise RediSearch in the fuzz harnesses so index queries don't crash (@AviAvni)
-- **PR #3837** (2026-11-17): chore(proofs): Lean v4.36.0; retire the PR review projects (@AviAvni)
-- **PR #3833** (2026-11-16): ci: /proofs apply commits a held proof patch whose gates passed (@AviAvni)
-- **PR #3825** (2026-11-15): chore(deps): bump the cargo-deps group across 1 directory with 4 updates (@dependabot[bot])
+- **PR #3901** (2026-11-19): ci: publish the merge queue's macOS module on releases (@DvirDukhan)
+- **PR #3899** (2026-11-19): ci: build and test the macOS module in the merge queue (@DvirDukhan)
+- **PR #3898** (2026-11-19): fix(build): strip RediSearch's linkme sections on macOS too (@DvirDukhan)
+- **PR #3897** (2026-11-19): [rust-build] Bump default Valkey version to 9.2.0 (@DvirDukhan)
+- **PR #3894** (closed): ci: build and release the macOS arm64 module again (@gkorland)
+- **PR #3891** (2026-11-19): fix(binder): a CALL {} body's variable-length relationship marks end with the body (@DvirDukhan)
 
 ---
 
@@ -2275,58 +2659,38 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. a WHERE after a writing CALL {} no longer starves the write (#748, #997)
+## X. telemetry): keep telemetry streams node-local and strip them from snapshots (Rus
 
 **RULE**:
-When implementing operations in `graph/src/planner/optimizer/push_filters_down.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `proofs/graph_persist/COVERAGE.tsv`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b9f333c5`: a WHERE after a writing CALL {} no longer starves the write (#748, #997). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `59764075`: telemetry): keep telemetry streams node-local and strip them from snapshots (Rust port of #3759). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/planner/optimizer/push_filters_down.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `proofs/graph_persist/COVERAGE.tsv`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Operators that change the graph (or its schema) when they run.
-///
-/// A `Filter` is never moved below one of these, nor into a branch that
-/// feeds a sibling subtree containing one: the write must still happen for
-/// every row that reaches it, whatever a later `WHERE` says.
-const fn is_write(ir: &IR) -> bool {
-    matches!(
-        ir,
-        IR::Create(_)
-            | IR::Merge { .. }
-            | IR::Delete { .. }
-            | IR::Set(_)
-            | IR::Remove(_)
-            | IR::Commit
-            | IR::ForEach { .. }
-            | IR::CreateIndex { .. }
-            | IR::DropIndex { .. }
-    )
-}
-
-                            | IR::Create(_)
-                            | IR::Delete { .. }
-                            | IR::Set(_)
-                            | IR::Remove(_)
-                            | IR::Commit
-                            | IR::ForEach { .. }
-            // A branch is locked when a sibling subtree writes: filtering that
-            // branch would starve the write of rows it must see (an `Apply`
-            // runs its right side once per left row), e.g. `CALL { CREATE () }
-            // MATCH () WHERE false` must still create its node.
-         
+src/redis_type.rs	io_cache_size	72	PROVEN	RedisType.ioCacheSize: ioCacheSize_spec, cache_size_on_load (RedisModule_GetContextFromIO = FFI; the configured CACHE_SIZE is the input)
+src/redis_type.rs	io_key_name	87	PROVEN	RedisType.ioKeyName: ioKeyName_spec (GetKeyNameFromIO/StringPtrLen results are inputs)
+src/redis_type.rs	graph_rdb_load	100	PROVEN	R
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                    if conj_vars.iter().all(|v| child_vars.contains(v)) {
+src/redis_type.rs	io_cache_size	71	PROVEN	RedisType.ioCacheSize: ioCacheSize_spec, cache_size_on_load (RedisModule_GetContextFromIO = FFI; the configured CACHE_SIZE is the input)
+src/redis_type.rs	io_key_name	86	PROVEN	RedisType.ioKeyName: ioKeyName_spec (GetKeyNameFromIO/StringPtrLen results are inputs)
+src/redis_type.rs	graph_rdb_load	99	PROVEN	RedisType.loadWhole/loadPartial: load_main_last, load_main_first (registry Arc = key value = finished graph, no vkey registered, any key order); decoder Persist.multi_load; cacheOnLoad: cache_size_on_load (W5-rdb-1 fixed by #3262 361f62ac1)
+src/redis_type.rs	graph_rdb_save	189	PROVEN	RedisType.rdbSave (= saveKeySlice.getD whole): save_main, save_vkey (slice i, key_count K), save_single
+src/redis_type.rs	save_key_slice	213	PROVEN	RedisType.saveKeySlice: save_main, save_vkey, save_single, metaSave_of_slice (VKEY_STATE/GRAPH_REGISTRY lookups are the modelled maps; rdb_save_graph_key = Persist encoder)
+src/redis_type.rs	save_string_nul	250	PROVEN	Codec.stripNul_nulTerm
+src/redis_type.rs	strip_trailing_nul	268	PROVEN	Codec.stripNul_nulTerm
+src/redis_type.rs	graph_aux_save	274	PROVEN	RedisType.auxSave: aux_roundtrip, aux_after
+src/redis_type.rs	
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b9f333c5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `59764075` are properly handled with clean fallback behavior.

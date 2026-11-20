@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-19T23:54:23.398Z",
-    "lastVerified": "2026-11-19T23:54:23.398Z",
+    "lastChecked": "2026-11-20T00:33:23.447Z",
+    "lastVerified": "2026-11-20T00:33:23.447Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T00:24:23.403Z",
-    "lastVerified": "2026-11-20T00:24:23.403Z",
+    "lastChecked": "2026-11-20T00:33:30.790Z",
+    "lastVerified": "2026-11-20T00:33:30.790Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -230,8 +230,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-19T17:37:55.329Z",
-    "lastVerified": "2026-11-19T17:37:55.329Z",
+    "lastChecked": "2026-11-20T00:33:18.687Z",
+    "lastVerified": "2026-11-20T00:33:18.687Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -1828,14 +1828,14 @@
     "officialUrl": "https://github.com/FalkorDB/FalkorDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T13:17:18.652Z",
-    "lastVerified": "2026-11-18T13:17:18.652Z",
+    "lastChecked": "2026-11-20T00:33:13.542Z",
+    "lastVerified": "2026-11-20T00:33:13.542Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "6a2e00087b2819c9f8c39dee4ef5eb0242f412ed85cf7a0c4721f0ccd5ae5675",
+    "contentHash": "9b511dfbd54a79d9fdd97ec71a1b147f7a926b99b866d93caf6d6f1993244747",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 22,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3789,14 +3789,14 @@
     "officialUrl": "https://github.com/pixeltable/pixeltable",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-18T18:10:03.052Z",
-    "lastVerified": "2026-11-18T18:10:03.052Z",
+    "lastChecked": "2026-11-20T00:33:26.426Z",
+    "lastVerified": "2026-11-20T00:33:26.426Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "ae357ba55f4539d17b997644794f9996ae8e56965ca9fcb2fd8e57e731b7f3b7",
+    "contentHash": "6158a6d4037d4caf5ab403043b970d7203679d58f7c15051e45396b35b8b6f28",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4120,9 +4120,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-11-18T19:52:00.334Z",
+    "lastChecked": "2026-11-20T00:33:16.030Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-11-18T19:52:00.334Z"
+    "lastVerified": "2026-11-20T00:33:16.030Z"
   },
   "trailbaseio-trailbase": {
     "name": "trailbaseio/trailbase",
@@ -8830,5 +8830,19 @@
     "lastChecked": "2026-11-20T00:24:13.379Z",
     "revisionIdentifier": "af5d784d",
     "lastVerified": "2026-11-20T00:24:13.379Z"
+  },
+  "iaincollins-structured-data-testing-tool": {
+    "name": "structured-data-testing-tool",
+    "officialUrl": "https://github.com/iaincollins/structured-data-testing-tool",
+    "lastChecked": "2026-11-20T00:33:10.970Z",
+    "revisionIdentifier": "8300079044",
+    "lastVerified": "2026-11-20T00:33:10.970Z"
+  },
+  "ivanvorobei-swiftui": {
+    "name": "SwiftUI",
+    "officialUrl": "https://github.com/ivanvorobei/SwiftUI",
+    "lastChecked": "2026-11-20T00:33:13.440Z",
+    "revisionIdentifier": "b6cfb6d0",
+    "lastVerified": "2026-11-20T00:33:13.440Z"
   }
 }

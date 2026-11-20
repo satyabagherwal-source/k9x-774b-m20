@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source**: github ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Source Version**: `6da45f64`  
+> **Source Version**: `bf3ef159`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T18:10:03.058Z  
+> **Timestamp**: 2026-11-20T00:33:26.432Z  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T18:10:03.052Z  
+> **Harvest Timestamp**: 2026-11-20T00:33:26.426Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The backend agents build with - Multimodal database, orchestration, and serving in one file
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 1664 stars
+- **Stars / Engagement**: 1662 stars
 
 ---
 
@@ -1152,13 +1152,11 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1990** (2026-11-18): **[PXT-1788] Fix embed function name in error messages**
-  *Symptoms*: `ExprTemplateFunction` (created by `Function.using()`) has `.name == None` because it is built without a name. Error messages in `embedding_index.py` were using `.name`, causing `None` to appear in the message text.  ## Changes - Replace all `.name` with `.display_name` for `embed_fn`/`embed` in error messages in `embedding_index.py`. `display_name` falls back to the wrapped function's name. - Add a test verifying the function name appears (not `None`) in the error message when using `.using()`.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
-  **Post-Mortem & Fix Analysis**:
-  > agents review
+- **Issue #2017** (2026-11-20): **Take str | os.PathLike in the io export functions; accept a str path in export_lancedb()**
+  *Symptoms*: Follow-up to #2004, from [Aaron's suggestion](https://github.com/pixeltable/pixeltable/pull/2004#discussion_r4633545711). The export functions took `str | Path` (or only `Path`) while the import functions (`import_csv()`, `import_excel()`) take `str | os.PathLike`. This switches the exports to `str | os.PathLike` so the io path parameters match.  ## Changes  - `export_parquet()`, `export_csv()` and `export_json()` annotate their path parameter as `str | os.PathLike`. Each already converts the argument with `Path(...)`, which accepts any `os.PathLike`, so runtime behavior is unchanged. - `export_lancedb()` took `db_uri: Path` and called `db_uri.exists()`, so a `str` failed with `AttributeError: 'str' object has no attribute 'exists'` (the same bug #2004 fixed in `export_parquet()`). It now takes `str | os.PathLike` and converts it with `Path(db_uri)`. - Not changed:   - The `destination` parameters of `add_computed_column()`, `add_column()` and model columns also use `str | Path`, but `ObjectStoreUtil.validate_destination()` checks `isinstance(dest, Path)` at runtime, so a generic `os.PathLike` would be rejected there.   - On the import side, a `Path` source fails in `import_csv()`, `import_excel()`, `import_json()`, `import_parquet()` and `create_table(source=...)`, because `TableDataConduit` only handles `str` sources. That needs a behavioral fix and is handled separately.  ## Testing  - `tests/io/test_lancedb.py`: the `if_exists='overwrite'` export now passes the db path as
 
-- **Issue #1989** (2026-11-18): **Support SQLAlchemy 2.1, the newest OpenAI and Anthropic SDKs, google-genai 3.x and pytest 9.2**
-  *Symptoms*: ## Problem  A `pip-install-tests` run on `main` ([run 44197090253](https://github.com/pixeltable/pixeltable/actions/runs/44197090253)) installs the newest release of every dependency, unlike `pytest.yml`, which installs from `uv.lock`. It found failures that come from newer dependency versions:  - **SQLAlchemy 2.1.9** (locked: 2.0.48): `test_math.py::TestMath::test_to_int` failed in every job with `Filter not expressible in SQL: x // 2.to_int() == -2`. In SQLAlchemy 2.1, `Float` is no longer a subclass of `Numeric`; both now derive from `NumericCommon`. `to_int()`'s SQL translation used `isinstance(self.type, sql.Numeric)` to cover floats, so it returned `None` for every float, and a `delete()` or other filter on a float's `to_int()` couldn't run in SQL. Pixeltable requires only `sqlalchemy>=2.0.40`, so users installing today get 2.1. - **anthropic 2.10.0** (locked: 1.3.0): `test_anthropic.py::TestAnthropicTypedDictAdherence::test_mirrors` failed because `Message` gained `diagnostics` and `Usage` gained `speed`. - **openai 3.54.0** (locked: 3.32.0): `test_openai.py::TestOpenaiTypedDictAdherence::test_response` failed because `Response` gained `image`, `input_transformations` and `tool_usage`, image generation output items gained `svg_usage`, and the input token details gained `cache_write_tokens_details`. - **google-genai 3.4.0** (locked: 2.22.0): five `TestGemini` tests failed with 400s from the `v1` API, which 3.x uses by default: "Developer instruction is not enabled for a
+- **Issue #2015** (2026-11-19): **Pin pytest<9.2 so --dist loadgroup honors xdist_group again**
+  *Symptoms*: Scheduled `tests` run on `main`: https://github.com/pixeltable/pixeltable/actions/runs/44437059584  ## Failure  On Ubuntu and Windows, one of the yolox-backed tests failed on each job: `TestYolox::test_yolox_coco_integration` (ubuntu 3.12, windows 3.11), `TestVision::test_eval` (ubuntu 3.12, 3.15) or `TestVision::test_bboxes_draw` (ubuntu 3.14). The Windows 3.11 worker log in the pytest-logs artifact shows the cause. The insert into `frames.detections` stored `PermissionError` for 4 rows and `FileExistsError` for 4 more (`Inserted 16 rows with 8 errors across 1 column (frames.detections)`). `to_coco_dataset()` then rejected the resulting `annotations: None`.  `pixeltable-yolox` 0.4.2 downloads weights to a fixed `~/.cache/yolox/weights/<model>.pth.tmp` and then calls `os.rename()`. When several processes load the same model on a cold cache, they race on that file.  ## Root cause  These tests are all `xdist_group('yolox')`, so they should run on one worker. In this run they ran on gw0 through gw3 at the same time, and the `large_model` Hugging Face tests were spread across every worker too. No node id in the log carries an `@group` suffix.  #1989 lifted `pytest<9.2`, and this is the first scheduled run on pytest 9.2.0. pytest 9.2 replaced `Node._nodeid` with `Node._id` and derives `nodeid` from it (`_pytest/nodes.py`). pytest-xdist 3.8.0, the latest release, still tags grouped items in `xdist/remote.py` with `item._nodeid = f"{item.nodeid}@{group}"`. pytest no longer reads tha
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1175,109 +1173,749 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f94700e7` (2026-11-18)
-**Commit Message**: [PXT-1788] Fix embed function name in error messages (#1990)
+### Incident Patch 1: `ff4cbc2b` (2026-11-19)
+**Commit Message**: [PXT-1820] Fix error messages that point to the wrong fix (#1996)
 
-`ExprTemplateFunction` (created by `Function.using()`) has `.name ==
-None` because it is built without a name. Error messages in
-`embedding_index.py` were using `.name`, causing `None` to appear in the
-message text.
+Three error messages sent users (and agents) toward the wrong fix.
 
 ## Changes
-- Replace all `.name` with `.display_name` for `embed_fn`/`embed` in
-error messages in `embedding_index.py`. `display_name` falls back to the
-wrapped function's name.
-- Add a test verifying the function name appears (not `None`) in the
-error message when using `.using()`.
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+**1. TableModel: `Column()` with neither `type` nor `value`**
+Before: `image_id: pxt.UUID = pxt.Column(primary_key=True)` failed with
+`Column specification for 'image_id' must define \`type\` or \`value\`,
+but not both`, which reads as if both were given. The annotation does
+not supply the type for a `Column()`, and neither was set.
+After, split into the two cases:
+- neither: `Column specification for 'image_id' defines neither \`type\`
+nor \`value\`; pass \`type=\` to Column() for a stored column (a type
+annotation does not set it) or \`value=\` for a computed one`
+- both: `Column specification for 'both' cannot define both \`type\` and
+\`value\``
 
-Co-authored-by: Claude Sonnet 4.6 <[REDACTED_EMAIL]>
+**2. `list_iterator()` over untyped Json**
+Before: `list_iterator(): Expected a type for \`elements\` matching
+\`list[dict]\`; got \`Json | None\``. \`Json[list[dict]]\` doesn't work,
+so this sent users the wrong way.
+After: `` list_iterator(): `elements` needs a list-of-dicts type with
+known keys, such as `pxt.Json[list[Item]]` for a TypedDict `Item`; cast
+an untyped value with `.astype(pxt.
 
-**File**: `pixeltable/index/embedding_index.py` (modified, +7/-7)
+**File**: `pixeltable/catalog/model/definition.py` (modified, +9/-2)
 ```diff
-@@ -302,7 +302,7 @@ def resolve_embeddings(
-                 if resolved_fn is None:
+@@ -341,10 +341,17 @@ def set_col_value(self, name: str, value: Any) -> None:
+         spec: ColumnSpec
+         if isinstance(value, Column):
+             spec = value.to_column_spec()
+-            if ('type' in spec) == ('value' in spec):
++            if 'type' in spec and 'value' in spec:
+                 raise excs.RequestError(
+                     excs.ErrorCode.INVALID_SCHEMA,
+-                    f'Column specification for {name!r} must define `type` or `value`, but not both',
++                    f'Column specification for {name!r} cannot define both `type` and `value`: a computed column '
++                    'takes its type from `value`; to change it, cast the value with `.astype()`',
++                )
++            if 'type' not in spec and 'value' not in spec:
++                raise excs.RequestError(
++                    excs.ErrorCode.INVALID_SCHEMA,
++                    f'Column specification for {name!r} defines neither `type` nor `value`; pass `type=` to '
++                    'Column() for a stored column (a type annotation does not set it) or `value=` for a computed one',
+                 )
+         else:
+             # Computed column expression.
+```
+
+**File**: `pixeltable/catalog/table_version.py` (modified, +2/-2)
+```diff
+@@ -1563,8 +1563,8 @@ def _validate_update_spec(
+                 if not closed_type.is_supertype_of(value_expr.col_type.with_closed_dicts(), ignore_nullable=True):
                      raise excs.RequestError(
-                         excs.ErrorCode.INVALID_CONFIGURATION,
--                        f'The function `{embed_fn.name}` is not a valid {embed_type.name.lower()} '
-+                        f'The function `{embed_fn.display_name}` is not a valid {embed_type.name.lower()} '
-                         f'embedding: it must take a single {embed_type.name.lower()} parameter',
-                     )
-                 embeddings[embed_type] = resolved_fn
-@@ -316,7 +316,7 @@ def resolve_embeddings(
-             # `embed` was specified and contains no matching signatures.
-             raise excs.RequestError(
-                 excs.ErrorCode.INVALID_CONFIGURATION,
--                f'The function `{embed.name}` is not a valid embedding: '
-+                f'The function `{embed.display_name}` is not a valid embedding: '
-                 'it must take a single string, image, audio, video, or document parameter',
-             )
-         return embeddings
-@@ -363,33 +363,33 @@ def _validate_embedding_fn(cls, embed_fn: func.Function, array_column_shape: tup
-         if not isinstance(return_type, ts.ArrayType):
-             raise excs.RequestError(
-                 excs.ErrorCode.INVALID_CONFIGURATION,
--                f'The function `{embed_fn.name}` is not a valid embedding: '
-+                f'The function `{embed_fn.display_name}` is not a valid embedding: '
-                 f'it must return an array, but returns {return_type}',
-             )
-         shape = return_type.shape
-         if shape is None or len(shape) != 1:
-             raise excs.RequestError(
-                 excs.ErrorCode.INVALID_CONFIGURATION,
--                f'The function `{embed_fn.name}` is not a valid embedding: '
-+                f'The function `{embed_fn.display_name}` is not a valid embedding: '
-                 f'it must return a 1-dimensional array, but returns {return_type}',
-             )
-         if shape[0] is None:
-             raise excs.RequestError(
-                 excs.ErrorCode.INVALID_CONFIGURATION,
--                f'The function `{embed_fn.name}` is not a valid embedding: '
-+                f'The function `{embed_fn.display_name}` is not a valid embedding: '
-                 f'it must return a 1-dimensional array of a specific length',
-             )
-         if shape[0] <= 0:
-             raise excs.RequestError(
-                 excs.ErrorCode.INVALID_CONFIGURATION,
--                f'The function `{embed_fn.name}` is not a valid embedding: '
-+                f'The function `{embed_fn.display_name}` is not a valid embedding: '
-                 f'it returns an array of invalid length {shape[0]}',
-             )
- 
-         if array_column_shape is not None and shape != array_column_shape:
-             raise excs.RequestError(
-                 excs.ErrorCode.TYPE_MISMATCH,
--                f'The function `{embed_fn.name}` returns an array with shape {shape}, '
-+                f'The function `{embed_fn.display_name}` returns an array with shape {shape}, '
-                 f'but the indexed column has shape {array_column_shape}',
-             )
+                         excs.ErrorCode.TYPE_MISMATCH,
+-                        f'The literal value {val!r} is not compatible with the type '
+-                        f'`{col.col_type}` of column {col_name!r}',
++                        f'Column {col_name!r}: the value {value_expr!s} has type `{value_expr.col_type}`, which is not '
++                        f'compatible with the column type `{col.col_type}`',
+                     ) from exc
+             update_targets[col] = value_expr
  
 ```
 
-**File**: `tests/test_index.py` (modified, +5/-0)
+**File**: `pixeltable/functions/json.py` (modified, +37/-26)
 ```diff
-@@ -1004,6 +1004,11 @@ def test_embedding_errors(self, small_img_tbl: pxt.Table, test_tbl: pxt.Table, l
-         ):
-             test_tbl.add_embedding_index(test_tbl.c1, embedding=local_embedding.using(dim=0), precision='fp16')
+@@ -575,6 +575,40 @@ def list_iterator(
+             yield dict(zip(kwargs_.keys(), el, strict=True))
  
-+        with pxt_raises(pxt.ErrorCode.INVALID_CONFIGURATION) as exc_info:
-+            test_tbl.add_embedding_index(test_tbl.c1, embedding=local_embedding.using(dim=0))
-+        assert 'local_embedding' in str(exc_info.value), str(exc_info.value)
-+        assert 'None' not in str(exc_info.value), str(exc_info.value)
+ 
++def _list_iterator_elements_schema(elements: exprs.Expr) -> dict[str, ts.ColumnType]:
++    el_col_type = elements.col_type
++    json_schema = el_col_type.type_schema if isinstance(el_col_type, ts.JsonType) else None
++    variadic_element_type = json_schema.variadic_type if json_schema is not None else None
++    if (
++        json_schema is not None
++        and isinstance(json_schema.type_spec, list)
++        and builtins.len(json_schema.type_spec) == 0
++        and isinstance(variadic_element_type, ts.JsonType)
++        and variadic_element_type.type_schema is not None
++        and isinstance(variadic_element_type.type_schema.type_spec, dict)
++    ):
++        return variadic_element_type.type_schema.type_spec
 +
-     def run_btree_test(
-         self, p: Callable[[str], str], data: list, data_type: type, is_data_versioned: bool
-     ) -> pxt.Table:
++    if not isinstance(el_col_type, ts.JsonType):
++        hint = '`elements` needs a Json list of dicts'
++    elif (
++        json_schema is not None
++        and isinstance(json_schema.type_spec, list)
++        and not any(isinstance(el_type, ts.JsonType) for el_type in [*json_schema.type_spec, json_schema.variadic_type])
++    ):
++        hint = (
++            'a list of values that are not dicts needs the keyword form, which names the output column: '
++            f'`list_iterator(value={elements!s})`'
++        )
++    else:
++        hint = (
++            '`elements` needs a list-of-dicts type with known keys, such as `pxt.Json[list[Item]]` for a '
++            'TypedDict `Item`; cast an untyped value with `.astype(pxt.Json[list[Item]] | None)`, or use the '
++            'keyword form for a list of values that are not dicts'
++        )
++    raise excs.RequestError(excs.ErrorCode.UNSUPPORTED_OPERATION, f'list_iterator(): {hint}. Got `{el_col_type}`')
++
++
+ @list_iterator.conditional_output_schema
+ def _(bound_args: dict[str, exprs.Expr]) -> dict[str, type]:
+     if bound_args.get('elements') is not None:
+@@ -587,31 +621,7 @@ def _(bound_args: dict[str, exprs.Expr]) -> dict[str, type]:
+                 excs.ErrorCode.UNSUPPORTED_OPERATION,
+                 'list_iterator(): Cannot specify both `elements` and keyword arguments',
+             )
+-        elements = bound_args['elements']
+-
+-        el_col_type = elements.col_type
+-        if (
+-            not isinstance(el_col_type, ts.JsonType)
+-            or el_col_type.type_schema is None
+-            or not isinstance(el_col_type.type_schema.type_spec, list)
+-            or builtins.len(el_col_type.type_schema.type_spec) != 0
+-        ):
+-            raise excs.RequestError(
+-                excs.ErrorCode.UNSUPPORTED_OPERATION,
+-                f'list_iterator(): Expected a type for `elements` matching `list[dict]`; got `{el_col_type}`',
+-            )
+-        dict_type = el_col_type.type_schema.variadic_type
+-        if (
+-            not isinstance(dict_type, ts.JsonType)
+-            or dict_type.type_schema is None
+-            or not isinstance(dict_type.type_schema.type_spec, dict)
+-        ):
+-            raise excs.RequestError(
+-                excs.ErrorCode.UNSUPPORTED_OPERATION,
+-                f'list_iterator(): Expected a type for `elements` matching `list[dict]`; got `{el_col_type}`',
+-            )
+-
+-        return dict_type.type_schema.type_spec  # type: ignore[return-value]
++        return _list_iterator_elements_schema(bound_args['elements'])  # type: ignore[return-value]
+ 
+     else:  # bound_args.get('element') is None
+         mode = bound_args.get('mode')
+@@ -629,7 +639,8 @@ def _(bound_args: dict[str, exprs.Expr]) -> dict[str, type]:
+             ):
+                 raise excs.RequestError(
+                     excs.ErrorCode.UNSUPPORTED_OPERATION,
+-                    f'list_iterator(): Expected a type for `{name}` matching `list`; got `{expr.col_type}`',
++                    f'list_iterator(): `{name}` needs a typed Json list, such as `pxt.Json[list[str]]`; cast an '
++                    f'untyped value with `.astype(pxt.Json[list[str]] | None)`. Got `{expr.col_type}`',
+                 )
+             type_schema = expr.col_type.type_schema
+             relevant_types = type_schema.type_spec
+```
+
+**File**: `tests/functions/test_json.py` (modified, +29/-4)
+```diff
+@@ -607,6 +607,7 @@ def test_list_iterator_errors(self, uses_db: None) -> None:
+                 'col_3': pxt.String | None,  # primitive type
+                 'col_4': pxt.Json | None,  # untyped json
+                 'col_5': pxt.Json[list] | None,  # typed json, but with an untyped subscript
++                'col_6': pxt.Json[list[str]] | None,
+             },
+         )
+ 
+@@ -622,13 +623,36 @@ def test_list_iterator_errors(self, uses_db: None) -> None:
+         ):
+             pxtf.json.list_iterator(t.col_1, my_int=t.col_2)
+ 
+-        invalid_type_cases = (t.col_2, t.col_3, t.col_4, t.col_5)
+-        for expr in invalid_type_cases:
++        for expr in (t.col_2, t.col_6):
+             with pxt_raises(
+                 pxt.ErrorCode.UNSUPPORTED_OPERATION,
+-                match=r'list_iterator\(\): Expected a type for `elements` matching `list\[dict\]`',
++                match=r'list_iterator\(\): a list of values that are not dicts needs the keyword form, which names the '
++                rf'output column: `list_iterator\(value={expr!s}\)`',
+             ):
+                 pxtf.json.list_iterator(expr)
++        with pxt_raises(
++            pxt.ErrorCode.UNSUPPORTED_OPERATION, match=r'list_iterator\(\): `elements` needs a Json list of dicts'
++        ):
++            pxtf.json.list_iterator(t.col_3)
++        for expr in (t.col_4, t.col_5):
++            with pxt_raises(
++                pxt.ErrorCode.UNSUPPORTED_OPERATION,
++                match=r'cast an untyped value with `.astype\(pxt.Json\[list\[Item\]\] \| None\)`',
++            ):
++                pxtf.json.list_iterator(expr)
++
++        # the form the error message suggests works on untyped json
++        class Item(TypedDict):
++            a: int
++
++        t.insert([{'col_2': [7], 'col_4': {'stops': [{'a': 1}, {'a': 2}]}, 'col_6': ['fault']}])
++        v = pxt.create_view(
++            'test_view', t, iterator=pxtf.json.list_iterator(t.col_4.stops.astype(pxt.Json[list[Item]] | None))
++        )
++        assert v.order_by(v.pos).collect()['a'] == [1, 2]
++        v2 = pxt.create_view('test_view_2', t, iterator=pxtf.json.list_iterator(value=t.col_2, code=t.col_6))
++        assert v2.collect()['value'] == [7]
++        assert v2.collect()['code'] == ['fault']
+ 
+         with pxt_raises(pxt.ErrorCode.MISSING_REQUIRED, match=r'list_iterator\(\): No inputs provided'):
+             pxtf.json.list_iterator()
+@@ -640,6 +664,7 @@ def test_list_iterator_errors(self, uses_db: None) -> None:
+         for expr in invalid_type_cases_2:
+             with pxt_raises(
+                 pxt.ErrorCode.UNSUPPORTED_OPERATION,
+-                match=r'list_iterator\(\): Expected a type for `my_int` matching `list`',
++                match=r'list_iterator\(\): `my_int` needs a typed Json list, such as `pxt.Json\[list\[str\]\]`; '
++                r'cast an untyped value with `.astype\(pxt.Json\[list\[str\]\] \| None\)`',
+             ):
+                 pxtf.json.list_iterator(my_int=expr)
+```
+
+**File**: `tests/test_table.py` (modified, +29/-3)
+```diff
+@@ -2441,16 +2441,40 @@ class MySchemaOpt(TypedDict, total=False):
+             t.insert(json_col_2={'z': None})
+         with pxt_raises(
+             pxt.ErrorCode.TYPE_MISMATCH,
+-            match=r"The literal value.*is not compatible with the type.*of column 'json_col_2'",
++            match=r"Column 'json_col_2': the value .* has type .*, which is not compatible with the column type",
+         ):
+             t.update({'json_col_2': {'a': 'mangoes', 'z': 1}})
+ 
+         with pxt_raises(
+             pxt.ErrorCode.TYPE_MISMATCH,
+-            match=r"The literal value.*is not compatible with the type.*of column 'json_col_2'",
++            match=r"Column 'json_col_2': the value .* has type .*, which is not compatible with the column type",
+         ):
+             t.update({'json_col_2': {'a': 15}})  # Validation error on update
+ 
++    def test_update_expr_type_mismatch(self, db_root: DatabaseRoot) -> None:
++        p = db_root.make_catalog_path
++        counts = pxt.create_table(p('acct_counts'), {'acct': pxt.String, 'n': pxt.Int})
++        counts.insert([{'acct': 'a', 'n': 3}])
++        accts = pxt.create_table(p('accts'), {'acct': pxt.String, 'n': pxt.Int | None})
++        accts.insert([{'acct': 'a'}])
++
++        @pxt.query
++        def acct_counts(acct: str) -> pxt.Query:
++            return counts.where(counts.acct == acct).select(counts.n)
++
++        with pxt_raises(
++            pxt.ErrorCode.TYPE_MISMATCH,
++            match=r"Column 'n': the value acct_counts\(acct\) has type `Json\[\(Int, \.\.\.\)\]`, which is not "
++            r'compatible with the column type `Int \| None`$',
++        ):
++            accts.update({'n': acct_counts(accts.acct)})
++
++        with pxt_raises(
++            pxt.ErrorCode.TYPE_MISMATCH,
++            match=r"Column 'n': the value acct has type `String`, which is not compatible with the column type",
++        ):
++            accts.update({'n': accts.acct})
++
+     def test_update_json_expr(self, db_root: DatabaseRoot) -> None:
+         # An update expression's values aren't validated, so its type may declare no keys that the column's doesn't
+         class Schema(TypedDict, total=False):
+@@ -2461,7 +2485,9 @@ class Schema(TypedDict, total=False):
+         t.insert(s='x')
+         t.update({'j': {'a': t.s}})  # omitting an optional key is fine
+         assert t.collect()['j'] == [{'a': 'x'}]
+-        with pxt_raises(pxt.ErrorCode.TYPE_MISMATCH, match=r"is not compatible with the type.*of column 'j'"):
++        with pxt_raises(
++            pxt.ErrorCode.TYPE_MISMATCH, match=r"Column 'j': the value .* is not compatible with the column type"
++        ):
+             t.update({'j': {'a': t.s, 'z': t.s}})
+ 
+     def test_insert_pydantic_json(self, db_root: DatabaseRoot) -> None:
+```
+
+**File**: `tests/test_table_model.py` (modified, +22/-1)
+```diff
+@@ -2636,12 +2636,33 @@ class FirstDup(TableModel, name='dup_name'):
+             class SecondDup(TableModel, name='dup_name'):
+                 id: pxt.Int | None
+ 
+-        with pxt_raises(excs.ErrorCode.INVALID_SCHEMA, match=r'must define `type` or `value`, but not both'):
++        neither = r"Column specification for 'bad' defines neither `type` nor `value`; pass `type=` to Column\(\)"
++        with pxt_raises(excs.ErrorCode.INVALID_SCHEMA, match=neither):
+ 
+             class BadColSpec(TableModel, name='bad_col_spec'):
+                 id: pxt.Int | None
+                 bad = Column()
+ 
++        with pxt_raises(excs.ErrorCode.INVALID_SCHEMA, match=neither):
++
++            class BadPkColSpec(TableModel, name='bad_pk_col_spec'):
++                bad = Column(primary_key=True)
++
++        with pxt_raises(excs.ErrorCode.INVALID_SCHEMA, match=neither):
++
++            class AnnotatedPkColSpec(TableModel, name='annotated_pk_col_spec'):
++                bad: pxt.UUID = Column(primary_key=True)  # type: ignore[assignment]
++
++        with pxt_raises(
++            excs.ErrorCode.INVALID_SCHEMA,
++            match=r"Column specification for 'both' cannot define both `type` and `value`: a computed column "
++            r'takes its type from `value`; to change it, cast the value with `.astype\(\)`$',
++        ):
++
++            class BothColSpec(TableModel, name='both_col_spec'):
++                id: pxt.Int | None
++                both = Column(type=pxt.Int, value=1)
++
+         # `references columns that are not in the model's scope` is raised at `create()` time, when a computed
+         # column refers to a column outside the model (here, a column belonging to a different, unbound model).
+         class OtherModel(TableModel, name='other_model'):
+```
+
+---
+
+### Incident Patch 2: `506c7c8f` (2026-11-19)
+**Commit Message**: [PXT-1806] Fix spurious SCHEMA_CHANGE_IN_PROGRESS on an operational table when autovacuum holds the table (#2007)
+
+Autovacuum with table truncate (removes empty pages of the table) takes
+an exclusive lock on the table. An operational table operation, read or
+write, that happens at the same time, will fail to acquire the lock and
+raise a `SCHEMA_CHANGE_IN_PROGRESS` error despite no schema changes
+taking place.
+
+Autovacuum checks every 20ms if any transactions are waiting for the
+lock that it has, and if they do, it will stop the truncation and
+release the lock in order yield the table to the user load.
+
+The fix is for operational table ops, instead of failing immediately
+when the lock is unavailable (`LOCK TABLE ... NOWAIT`), to wait with a
+100ms timeout. The tradeoff is:
+* When a real schema change is in progress, new operational table ops
+will fail after a 100ms wait rather than immediately, assuming the
+schema change runs past that deadline. If the schema change finishes
+before 100ms is over, the waiting op will simply proceed.
+* When autovacuum with truncation is running, an operational table op
+will wait for a short time (up to 20ms + however long it takes
+autovacuum to release
+
+**File**: `docs/design/catalog-locking.md` (modified, +12/-7)
+```diff
+@@ -28,8 +28,8 @@ That class and the table's versioning, data-versioned or operational, determine
+ | Operation class | Operational table | Data-versioned table | Wait policy |
+ | --- | --- | --- | --- |
+ | `MD_READ`: catalog metadata | No lock | No lock | N/A |
+-| `DATA_READ`: query rows | `ACCESS SHARE` | `ACCESS SHARE` | Wait if any locked table is data-versioned |
+-| `DATA_WRITE`: insert/update/delete | `ROW EXCLUSIVE` | `EXCLUSIVE` | Wait if any locked table is data-versioned |
++| `DATA_READ`: query rows | `ACCESS SHARE` | `ACCESS SHARE` | Fail fast unless any locked table is data-versioned |
++| `DATA_WRITE`: insert/update/delete | `ROW EXCLUSIVE` | `EXCLUSIVE` | Fail fast unless any locked table is data-versioned |
+ | `MD_WRITE`: metadata changes and DDL | `ACCESS EXCLUSIVE` | `ACCESS EXCLUSIVE` | Always wait |
+ | `FINALIZE`: complete pending operations | `ACCESS EXCLUSIVE` | `ACCESS EXCLUSIVE` | Always wait |
+ 
+@@ -45,17 +45,22 @@ Lock modes apply per table. For example, a schema change can lock its target wit
+ its bases with `ACCESS SHARE`.
+ 
+ The wait policy applies to the whole transaction. If a data read or write locks only operational tables,
+-it uses `NOWAIT` for every table lock. A conflict reports `SCHEMA_CHANGE_IN_PROGRESS`. If any locked table
+-is data-versioned, the transaction waits for every required table lock. Schema changes and finalization
+-always wait, regardless of versioning.
++it fails fast: it waits at most 100 ms (`lock_timeout`) for each table lock, and a timeout reports
++`SCHEMA_CHANGE_IN_PROGRESS`. If any locked table is data-versioned, the transaction waits for every required table
++lock. Schema changes and finalization always wait, regardless of versioning.
++
++The short wait, rather than failing immediately with `NOWAIT`, puts the request in the lock queue, so VACUUM can see
++it and yield. VACUUM, including autovacuum, takes `ACCESS EXCLUSIVE` to truncate empty pages at the end of a table,
++for example after all rows were deleted. While it holds that lock, it checks for queued lock requests every 20 ms and
++releases the lock if it finds one. A `NOWAIT` request never enters the queue, so it would fail instead.
+ 
+ ### A waiting schema change blocks later operations
+ 
+ Postgres grants a table lock only if it conflicts with neither the locks already held nor the requests already
+ waiting for that table. A schema change or finalization waiting for `ACCESS EXCLUSIVE` therefore blocks every later
+ lock request on the table, although it does not hold the lock yet:
+ 
+-- Operational data reads and writes fail with `SCHEMA_CHANGE_IN_PROGRESS`.
++- Operational data reads and writes fail with `SCHEMA_CHANGE_IN_PROGRESS` after the short wait.
+ - Data-versioned data reads and writes wait until the schema change completes.
+ 
+ Pixeltable treats a waiting schema change as in progress, so its effect on other operations starts when it is
+@@ -184,7 +189,7 @@ A schema change can span several transactions. Locks are released between them,
+ operations out of an unfinished change.
+ 
+ **A table with pending operations is not usable.** A transaction that finds them aborts its attempt, finalizes
+-them, and retries. Finalization waits for its locks, even when the operation itself would use `NOWAIT`.
++them, and retries. Finalization waits for its locks, even when the operation itself would fail fast.
+ 
+ Pending operations run in one of two ways:
+ 
+```
+
+**File**: `pixeltable/catalog/catalog.py` (modified, +2/-2)
+```diff
+@@ -609,7 +609,7 @@ def _begin_xact(
+ 
+             except LockNotAvailableError as e:
+                 has_exc = True
+-                # NOWAIT can fail when a schema change holds a conflicting lock or is queued ahead of us.
++                # A short lock wait times out when a schema change holds a conflicting lock or is queued ahead of us.
+                 attempt_exc = e
+                 raise excs.ConcurrencyError(
+                     excs.ErrorCode.SCHEMA_CHANGE_IN_PROGRESS,
+@@ -1136,7 +1136,7 @@ def _finalize_pending_ops(self, tbl_id: UUID) -> Exception | None:
+                 raise
+ 
+             except excs.ConcurrencyError as e:
+-                # Finalization itself waits for locks, but its work may call a NOWAIT operation on another table.
++                # Finalization itself waits for locks, but its work may call a fail-fast operation on another table.
+                 # Propagate the error without treating it as a failure that requires rolling back the schema change.
+                 _logger.debug(f'Finalize pending ops({tbl_id}): op reported a concurrency error: {e}')
+                 raise
+```
+
+**File**: `pixeltable/catalog/locking.py` (modified, +27/-17)
+```diff
+@@ -31,6 +31,10 @@
+ 
+ _logger = logging.getLogger(__name__)
+ 
++# VACUUM checks for queued lock requests every 20 ms (VACUUM_TRUNCATE_LOCK_CHECK_INTERVAL), so 100 ms gives
++# it several chances to notice a waiter and release the lock.
++LOCK_TIMEOUT_MS = 100
++
+ 
+ def finalized_view_base_id(tbl_md: schema.TableMd) -> UUID | None:
+     """Return the mutable base whose view_sn must advance when this view's metadata is deleted, or None."""
+@@ -90,19 +94,20 @@ def tbl_lock_mode(self, is_data_versioned: bool) -> TblLockMode:
+         assert self in (TblOpClass.MD_WRITE, TblOpClass.FINALIZE)
+         return TblLockMode.ACCESS_EXCLUSIVE
+ 
+-    def should_wait(self, any_data_versioned: bool) -> bool:
+-        """Return whether to wait for locks that are not immediately available, instead of failing.
++    def fails_fast(self, any_data_versioned: bool) -> bool:
++        """Return whether to wait at most LOCK_TIMEOUT_MS for locks held by others and then fail, instead of waiting
++        until they are released.
+ 
+-        Data reads and writes wait only if `any_data_versioned` is True. Schema changes and pending-op finalization
+-        always wait.
++        Data reads and writes fail fast only if `any_data_versioned` is False. Schema changes and pending-op
++        finalization always wait without a time limit.
+         """
+         if self in (TblOpClass.MD_WRITE, TblOpClass.FINALIZE):
+-            return True
++            return False
+         if self is TblOpClass.MD_READ:
+             # MD_READ takes no locks, so the return value has no effect.
+-            return False
++            return True
+         assert self in (TblOpClass.DATA_READ, TblOpClass.DATA_WRITE)
+-        return any_data_versioned
++        return not any_data_versioned
+ 
+ 
+ class TblLockMode(enum.Enum):
+@@ -143,10 +148,9 @@ class LockTarget:
+     store_tbl_name: str
+     mode: TblLockMode
+ 
+-    def lock_stmt(self, *, wait: bool) -> str:
++    def lock_stmt(self) -> str:
+         """Return the LOCK TABLE statement that acquires this target's lock."""
+-        nowait_clause = '' if wait else ' NOWAIT'
+-        return f'LOCK TABLE {self.store_tbl_name} IN {self.mode.sql_name} MODE{nowait_clause}'
++        return f'LOCK TABLE {self.store_tbl_name} IN {self.mode.sql_name} MODE'
+ 
+ 
+ class LockRequest:
+@@ -401,11 +405,11 @@ def add_dir(self, dir_id: UUID, path: Path) -> None:
+         assert not self._is_acquired
+         self._dirs.setdefault(dir_id, path)
+ 
+-    # whether to wait for locks that are not immediately available; if False, raise LockNotAvailableError.
+-    # Applies to every lock in the set: True if any table requires waiting.
++    # whether to wait at most LOCK_TIMEOUT_MS for each lock and then raise LockNotAvailableError, instead of waiting
++    # without a time limit. Applies to every lock in the set: False if any table requires waiting without a limit.
+     @property
+-    def wait(self) -> bool:
+-        return self.request.op_class.should_wait(self._any_data_versioned)
++    def fail_fast(self) -> bool:
++        return self.request.op_class.fails_fast(self._any_data_versioned)
+ 
+     @telemetry.spanned('pixeltable.catalog.acquire_locks', level=telemetry.DEBUG)
+     def acquire(self) -> None:
+@@ -415,8 +419,12 @@ def acquire(self) -> None:
+         acquisition ensures no deadlocks. LOCK TABLE leaves the transaction's snapshot unset. The first directory
+         UPDATE establishes it, so directory locks must come after all store table locks.
+ 
++        To fail fast, each lock waits at most LOCK_TIMEOUT_MS instead of failing immediately (NOWAIT): a queued
++        request makes VACUUM release the ACCESS EXCLUSIVE lock it takes to truncate a table, while a NOWAIT request
++        is invisible to it.
++
+         Raises:
+-            LockNotAvailableError: a NOWAIT lock could not be acquired.
++            LockNotAvailableError: fail-fast acquisition did not obtain the lock within LOCK_TIMEOUT_MS.
+             StaleLockSetError: a named store table no longer exists.
+         """
+         assert get_runtime().in_xact
+@@ -427,13 +435,15 @@ def acquire(self) -> None:
+         if len(targets) > 0:
+             fault_injection.process_fault(FaultLocation.CATALOG_BEFORE_TBL_LOCK, op_class=op_class)
+             # Send the LOCK TABLE statements in one request, separated by semicolons. psycopg executes them in order.
+-            stmt = '; '.join(t.lock_stmt(wait=self.wait) for t in targets)
++            stmt = '; '.join(t.lock_stmt() for t in targets)
++            if self.fail_fast:
++                stmt = f"SET LOCAL lock_timeout = '{LOCK_TIMEOUT_MS}ms'; {stmt}; SET LOCAL lock_timeout = DEFAULT"
+             try:
+                 get_runtime().conn.exec_driver_sql(stmt)
+             except sql_exc.DBAPIError as e:
+                 _logger.debug(f'{stmt} failed: {e}')
+                 if isinstance(e.orig, psycopg.errors.LockNotAvailable):
+-                    assert not self.wait
++                    assert self.fail_fast
+                     raise Lo
+```
+
+---
+
+### Incident Patch 3: `56a5e643` (2026-11-19)
+**Commit Message**: [PXT-1783] Fix AssertionError for SQL-computed Json methods on a stored Json column (#1997)
+
+`t.select(t.j.len())` (and `is_empty()`, `sum()`, `min()`, `max()`,
+`mean()`, `pxtf.json.dumps()`) failed with `AssertionError: 0` from
+`DataRow.__getitem__()` when the Json column itself wasn't also
+selected. The same happened in `add_computed_column()` over existing
+rows, in `recompute_columns()`, and when such an expression was used
+only in `order_by()` or a join predicate.
+
+Also fixes [PXT-1828](https://pixeltable.atlassian.net/browse/PXT-1828):
+`order_by()` on a Json or Array column crashed with `AssertionError`
+unless the column was selected. It has the same cause.
+
+## Cause
+`_add_cell_reconstruction_node()` collected every Json, Array and Binary
+`ColumnRef` in the query, and `CellReconstructionNode` then read each
+one's slot. But a column that is only read inside an expression computed
+in SQL (such as `j.len()`), or only used in `order_by()` or a join
+predicate (which run only in SQL), never gets a value in the row, so
+that slot is empty.
+
+## Fix
+`_add_cell_reconstruction_node()` now reconstructs only the ColumnRefs
+(and JsonPath anchors) that are in the SQL node's select list, since
+
+**File**: `pixeltable/plan.py` (modified, +18/-7)
+```diff
+@@ -852,7 +852,9 @@ def _add_cell_materialization_node(cls, input: exec.ExecNode) -> exec.ExecNode:
+             return input
+ 
+     @classmethod
+-    def _add_cell_reconstruction_node(cls, expr_list: list[exprs.Expr], input: exec.ExecNode) -> exec.ExecNode:
++    def _add_cell_reconstruction_node(
++        cls, expr_list: list[exprs.Expr], sql_col_refs: exprs.ExprSet[exprs.ColumnRef], input: exec.ExecNode
++    ) -> exec.ExecNode:
+         """
+         Add a CellReconstructionNode, if required by any of the exprs in expr_list.
+ 
+@@ -862,6 +864,9 @@ def _add_cell_reconstruction_node(cls, expr_list: list[exprs.Expr], input: exec.
+         2) all array-typed ColumnRefs that are not used as part of a ColumnPropertyRef
+         The json-typed ColumnRefs that JsonPaths are anchored on also need the node, which loads their objects that are
+         stored in remote chunks.
++        Only ColumnRefs whose slots the SQL scan populates (members of sql_col_refs) are reconstructed. A ColumnRef
++        that appears only inside an expr computed in SQL, or only in an order-by or join clause, has no value in the
++        row.
+         """
+ 
+         def json_filter(e: exprs.Expr) -> bool:
+@@ -883,20 +888,22 @@ def binary_filter(e: exprs.Expr) -> bool:
+             return isinstance(e, exprs.ColumnRef) and e.col.col_type.is_binary_type()
+ 
+         json_candidates = list(exprs.Expr.list_subexprs(expr_list, filter=json_filter, traverse_matches=False))
+-        json_refs = [e for e in json_candidates if isinstance(e, exprs.ColumnRef)]
++        json_refs = [e for e in json_candidates if isinstance(e, exprs.ColumnRef) and e in sql_col_refs]
+         json_ref_ids = {e._expr_id for e in json_refs}
+         json_path_anchors = [
+             e.anchor
+             for e in json_candidates
+             if isinstance(e, exprs.JsonPath)
+             and isinstance(e.anchor, exprs.ColumnRef)
++            and e.anchor in sql_col_refs
+             and e.anchor._expr_id not in json_ref_ids
+         ]
+-        array_candidates = list(exprs.Expr.list_subexprs(expr_list, filter=array_filter, traverse_matches=False))
+-        array_refs = [e for e in array_candidates if isinstance(e, exprs.ColumnRef)]
+-        binary_refs = list(
+-            exprs.Expr.list_subexprs(expr_list, exprs.ColumnRef, filter=binary_filter, traverse_matches=False)
++        array_candidates = exprs.Expr.list_subexprs(expr_list, filter=array_filter, traverse_matches=False)
++        array_refs = [e for e in array_candidates if isinstance(e, exprs.ColumnRef) and e in sql_col_refs]
++        binary_candidates = exprs.Expr.list_subexprs(
++            expr_list, exprs.ColumnRef, filter=binary_filter, traverse_matches=False
+         )
++        binary_refs = [e for e in binary_candidates if e in sql_col_refs]
+         if len(json_refs) > 0 or len(json_path_anchors) > 0 or len(array_refs) > 0 or len(binary_refs) > 0:
+             return exec.CellReconstructionNode(
+                 json_refs, array_refs, binary_refs, json_path_anchors, input.row_builder, input=input
+@@ -1449,7 +1456,11 @@ def _create_query_plan(
+             )
+ 
+         plan = cls._add_prefetch_node(tbl.tbl_version.id, row_builder.unique_exprs, plan)
+-        plan = cls._add_cell_reconstruction_node(analyzer.all_exprs, plan)
++        sql_node = plan.get_node(exec.SqlNode)
++        assert sql_node is not None
++        # the SqlNode's select list also has the iterator args and outputs that it adds for unstored iterator columns
++        sql_col_refs = exprs.ExprSet(e for e in sql_node.select_list if isinstance(e, exprs.ColumnRef))
++        plan = cls._add_cell_reconstruction_node(analyzer.all_exprs, sql_col_refs, plan)
+ 
+         if analyzer.filter is not None:
+             plan = exec.ExprEvalNode(row_builder, [analyzer.filter], sql_exprs, input=plan)
+```
+
+**File**: `tests/functions/test_json.py` (modified, +35/-3)
+```diff
+@@ -203,9 +203,41 @@ def test_len_and_is_empty(self, uses_db: None) -> None:
+         with pytest.raises(Exception, match='scalar'):
+             tnum.select(tnum.scalar, n=tnum.scalar.len()).collect()
+ 
+-        # TODO: selecting a pushed-down json function without also selecting the source column fails, because the
+-        # column's slot is never materialized (cell-reconstruction bug); re-enable once fixed.
+-        # assert [r['n'] for r in t.order_by(t.id).select(n=t.j.len()).collect()] == [3, 0, 2, 0, 5, 0, None]
++        assert [r['n'] for r in t.order_by(t.id).select(n=t.j.len()).collect()] == [3, 0, 2, 0, 5, 0, None]
++
++    def test_sql_fn_without_source_col(self, uses_db: None) -> None:
++        """A json function computed in SQL works without the source column in the select list."""
++        t = pxt.create_table('json_sql_fn', {'id': pxt.Int, 'j': pxt.Json | None})
++        t.insert([{'id': 1, 'j': [1, 2]}, {'id': 2, 'j': [3.5]}, {'id': 3, 'j': None}])
++
++        def col(expr: pxt.exprs.Expr) -> list:
++            return [r['o'] for r in t.order_by(t.id).select(o=expr).collect()]
++
++        assert col(t.j.len()) == [2, 1, None]
++        assert col(t.j.is_empty()) == [False, False, True]
++        assert col(t.j.sum()) == [3.0, 3.5, None]
++        assert col(t.j.min()) == [1.0, 3.5, None]
++        assert col(t.j.max()) == [2.0, 3.5, None]
++        assert col(t.j.mean()) == [1.5, 3.5, None]
++        assert col(pxtf.json.dumps(t.j)) == ['[1, 2]', '[3.5]', None]
++        rs = t.order_by(t.id).select(t.j, n=t.j.len()).collect()
++        assert [(r['j'], r['n']) for r in rs] == [([1, 2], 2), ([3.5], 1), (None, None)]
++        assert [r['id'] for r in t.order_by(t.j.len(), t.id).select(t.id).collect()] == [2, 1, 3]
++        u = pxt.create_table('json_sql_fn_join', {'n': pxt.Int})
++        u.insert([{'n': 1}, {'n': 2}])
++        rs = t.join(u, on=t.j.len() == u.n).order_by(t.id).select(t.id).collect()
++        assert [r['id'] for r in rs] == [1, 2]
++
++        # add_computed_column() fills the existing rows
++        validate_update_status(t.add_computed_column(n=t.j.len()), expected_rows=3)
++        t.add_computed_column(s=pxtf.json.dumps(t.j))
++        assert col(t.n) == [2, 1, None]
++        assert col(t.s) == ['[1, 2]', '[3.5]', None]
++
++        t.update({'j': [4, 5, 6]}, where=t.id == 1, cascade=False)
++        validate_update_status(t.recompute_columns('s', 'n'), expected_rows=3)
++        assert col(t.n) == [3, 1, None]
++        assert col(t.s) == ['[4, 5, 6]', '[3.5]', None]
+ 
+     def test_contains(self, uses_db: None) -> None:
+         t = pxt.create_table('json_contains', {'id': pxt.Int | None, 'j': pxt.Json | None})
+```
+
+**File**: `tests/test_component_view.py` (modified, +37/-0)
+```diff
+@@ -150,6 +150,33 @@ def close(self) -> None:
+         pass
+ 
+ 
++class ItemTypeRow(TypedDict):
++    idx: int
++    item_type: str
++
++
++@pxt.iterator(unstored_cols=['item_type'])
++class item_type_iterator(pxt.PxtIterator):
++    """Emits the Python type name of each element of a Json list, as an unstored output."""
++
++    def __init__(self, items: pxt.Json):
++        self.items = items
++        self.i = 0
++
++    def __next__(self) -> ItemTypeRow:
++        if self.i >= len(self.items):
++            raise StopIteration
++        row: ItemTypeRow = {'idx': self.i, 'item_type': type(self.items[self.i]).__name__}
++        self.i += 1
++        return row
++
++    def close(self) -> None:
++        pass
++
++    def seek(self, pos: int, **kwargs: Any) -> None:
++        self.i = pos
++
++
+ @pxt.udf
+ def fail_on_odd(i: int) -> int:
+     if i % 2 == 1:
+@@ -694,6 +721,16 @@ def test_update_iterator_param_with_dependent_view(self, db_root: DatabaseRoot)
+         assert [r['scol'] for r in v3_rows] == ['s 0']
+         assert [r['derived'] for r in v3_rows] == ['t 1_suffix']
+ 
++    def test_unstored_output_with_sql_json_fn(self, db_root: DatabaseRoot) -> None:
++        """The iterator gets its reconstructed Json arg when the query also computes a function of it in SQL."""
++        p = db_root.make_catalog_path
++        t = pxt.create_table(p('arrays'), {'j': pxt.Json})
++        t.insert([{'j': [np.zeros((2, 2), dtype=np.float32), np.ones((3, 3), dtype=np.float32)]}])
++        v = pxt.create_view(p('item_types'), t, iterator=item_type_iterator(t.j))
++        res = v.select(v.item_type, n=v.j.len()).order_by(v.idx).collect()
++        assert res['item_type'] == ['ndarray', 'ndarray']
++        assert res['n'] == [2, 2]
++
+     def test_case_insensitive_iterator_outputs(self, db_root: DatabaseRoot) -> None:
+         """Iterator output names become view columns and fold."""
+         p = db_root.make_catalog_path
+```
+
+**File**: `tests/test_query.py` (modified, +14/-0)
+```diff
+@@ -356,6 +356,20 @@ def test_order_by(self, test_tbl: pxt.Table) -> None:
+         with pxt_raises(pxt.ErrorCode.INVALID_EXPRESSION, match=r'c1\.upper is the method upper\(\)'):
+             _ = t.order_by(t.c1.upper).collect()
+ 
++    def test_order_by_unselected_json_and_array(self, db_root: DatabaseRoot) -> None:
++        """order_by() on a Json or Array column gives the same order whether or not the column is selected."""
++        t = pxt.create_table(
++            db_root.make_catalog_path('order_by_unselected'),
++            {'id': pxt.Int, 'j': pxt.Json, 'a': pxt.Array[(2,), pxt.Int]},
++        )
++        t.insert([{'id': i, 'j': {'k': 10 - i}, 'a': np.array([10 - i, i])} for i in range(4)])
++
++        for col in (t.j, t.a):
++            for asc in (True, False):
++                expected = [3, 2, 1, 0] if asc else [0, 1, 2, 3]
++                assert t.order_by(col, asc=asc).select(t.id, col).collect()['id'] == expected
++                assert t.order_by(col, asc=asc).select(t.id).collect()['id'] == expected
++
+     def test_expr_unique_id(self, test_tbl: pxt.Table) -> None:
+         t = test_tbl
+         # Multiple constants with the same string representation but different types must be unique (Expr._expr_id)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1990** (2026-11-18): [PXT-1788] Fix embed function name in error messages (@sergey-mkhitaryan)
-- **PR #1989** (2026-11-18): Support SQLAlchemy 2.1, the newest OpenAI and Anthropic SDKs, google-genai 3.x and pytest 9.2 (@aaron-siegel)
-- **PR #1988** (2026-11-18): Don't fail closing the Parallel MCP client when its connection task ends cancelled (anyio 4.16) (@aaron-siegel)
-- **PR #1987** (2026-11-18): Wait for shared in-flight saves of a row whose files are all in flight (@aaron-siegel)
-- **PR #1985** (2026-11-18): [PXT-1814] Raise RequestError when similarity() is called without modality argument (@sergey-mkhitaryan)
-- **PR #1984** (2026-11-18): [PXT-1819] Create RateLimitInfo for resources that appear in later responses (@sergey-mkhitaryan)
+- **PR #2017** (2026-11-20): Take str | os.PathLike in the io export functions; accept a str path in export_lancedb() (@sergey-mkhitaryan)
+- **PR #2015** (2026-11-19): Pin pytest<9.2 so --dist loadgroup honors xdist_group again (@claude[bot])
+- **PR #2014** (closed): Upload project files to a hosted database on the default image from schema and service update (@christopherpestano)
+- **PR #2012** (2026-11-19): [PXT-1709] Accept a bound model in join() (@sergey-mkhitaryan)
+- **PR #2011** (2026-11-19): [PXT-1744] Validate required columns for rows inserted by batch_update(if_not_exists='insert') (@sergey-mkhitaryan)
+- **PR #2010** (2026-11-19): [PXT-1780] Raise a RequestError for a computed column that calls a @pxt.query over a model (@sergey-mkhitaryan)
 
 ---
 
@@ -1297,40 +1935,37 @@ Co-authored-by: Claude Sonnet 4.6 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [PXT-1788] Fix embed function name in error messages
+## X. [PXT-1820] Fix error messages that point to the wrong fix
 
 **RULE**:
-When implementing operations in `pixeltable/index/embedding_index.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pixeltable/catalog/model/definition.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f94700e7`: [PXT-1788] Fix embed function name in error messages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ff4cbc2b`: [PXT-1820] Fix error messages that point to the wrong fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/index/embedding_index.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/catalog/model/definition.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                        f'The function `{embed_fn.display_name}` is not a valid {embed_type.name.lower()} '
-                f'The function `{embed.display_name}` is not a valid embedding: '
-                f'The function `{embed_fn.display_name}` is not a valid embedding: '
-                f'The function `{embed_fn.display_name}` is not a valid embedding: '
-                f'The function `{embed_fn.display_name}` is not a valid embedding: '
-                f'The function `{embed_fn.display_name}` is not a valid embedding: '
-                f'The function `{embed_fn.display_name}` returns an array with shape {shape}, '
+            if 'type' in spec and 'value' in spec:
+                    f'Column specification for {name!r} cannot define both `type` and `value`: a computed column '
+                    'takes its type from `value`; to change it, cast the value with `.astype()`',
+                )
+            if 'type' not in spec and 'value' not in spec:
+                raise excs.RequestError(
+                    excs.ErrorCode.INVALID_SCHEMA,
+                    f'Column specification for {name!r} defines neither `type` nor `value`; pass `type=` to '
+                    'Column() for a stored column (a type annotation does not set it) or `value=` for a computed one',
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-                        f'The function `{embed_fn.name}` is not a valid {embed_type.name.lower()} '
-                f'The function `{embed.name}` is not a valid embedding: '
-                f'The function `{embed_fn.name}` is not a valid embedding: '
-                f'The function `{embed_fn.name}` is not a valid embedding: '
-                f'The function `{embed_fn.name}` is not a valid embedding: '
-                f'The function `{embed_fn.name}` is not a valid embedding: '
-                f'The function `{embed_fn.name}` returns an array with shape {shape}, '
+            if ('type' in spec) == ('value' in spec):
+                    f'Column specification for {name!r} must define `type` or `value`, but not both',
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f94700e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ff4cbc2b` are properly handled with clean fallback behavior.

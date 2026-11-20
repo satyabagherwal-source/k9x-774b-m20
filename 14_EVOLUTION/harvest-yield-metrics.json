@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T00:14:38.228Z",
-  "total_cycles_completed": 10894,
-  "total_learnings_persisted": 10894,
-  "total_rules_promoted": 10250,
+  "last_updated": "2026-11-20T00:33:27.412Z",
+  "total_cycles_completed": 10896,
+  "total_learnings_persisted": 10896,
+  "total_rules_promoted": 10252,
   "history": [
-    {
-      "timestamp": "2026-11-19T04:08:17.261Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T04:08:21.496Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T04:13:29.929Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-20T00:14:38.228Z",
       "repository": "nsh07/Tomato",
       "learningId": "learn-github-nsh07-tomato",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T00:33:14.763Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T00:33:27.412Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
