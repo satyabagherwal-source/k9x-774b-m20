@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T03:13:17.571Z",
-    "lastVerified": "2026-11-20T03:13:17.571Z",
+    "lastChecked": "2026-11-20T03:21:54.454Z",
+    "lastVerified": "2026-11-20T03:21:54.454Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T02:27:51.489Z",
-    "lastVerified": "2026-11-20T02:27:51.489Z",
+    "lastChecked": "2026-11-20T03:21:54.446Z",
+    "lastVerified": "2026-11-20T03:21:54.446Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1342,8 +1342,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T21:24:03.243Z",
-    "lastVerified": "2026-11-19T21:24:03.243Z",
+    "lastChecked": "2026-11-20T03:21:49.456Z",
+    "lastVerified": "2026-11-20T03:21:49.456Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -2753,9 +2753,9 @@
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
     "officialUrl": "https://github.com/Rigellute/spotify-tui",
-    "lastChecked": "2026-11-18T15:14:10.519Z",
+    "lastChecked": "2026-11-20T03:21:39.448Z",
     "revisionIdentifier": "c4dcf6b9",
-    "lastVerified": "2026-11-18T15:14:10.519Z"
+    "lastVerified": "2026-11-20T03:21:39.448Z"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
     "name": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -4558,9 +4558,9 @@
   "amrdeveloper-gql": {
     "name": "GQL",
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
-    "lastChecked": "2026-11-18T21:33:52.037Z",
+    "lastChecked": "2026-11-20T03:21:51.934Z",
     "revisionIdentifier": "3a76cfee",
-    "lastVerified": "2026-11-18T21:33:52.037Z"
+    "lastVerified": "2026-11-20T03:21:51.934Z"
   },
   "transact-rs-sqlx": {
     "name": "transact-rs/sqlx",
@@ -4911,9 +4911,9 @@
   "encoredev-encore": {
     "name": "encore",
     "officialUrl": "https://github.com/encoredev/encore",
-    "lastChecked": "2026-11-18T22:30:33.134Z",
+    "lastChecked": "2026-11-20T03:21:46.955Z",
     "revisionIdentifier": "8a7465a4",
-    "lastVerified": "2026-11-18T22:30:33.134Z"
+    "lastVerified": "2026-11-20T03:21:46.955Z"
   },
   "sfu-db-connector-x": {
     "name": "connector-x",
@@ -9108,5 +9108,19 @@
     "lastChecked": "2026-11-20T03:13:07.581Z",
     "revisionIdentifier": "4fd07daa",
     "lastVerified": "2026-11-20T03:13:07.581Z"
+  },
+  "kaimodev-trivium": {
+    "name": "trivium",
+    "officialUrl": "https://github.com/KaiMOdev/trivium",
+    "lastChecked": "2026-11-20T03:21:41.957Z",
+    "revisionIdentifier": "6f50e34a69",
+    "lastVerified": "2026-11-20T03:21:41.957Z"
+  },
+  "exyte-popupview": {
+    "name": "PopupView",
+    "officialUrl": "https://github.com/exyte/PopupView",
+    "lastChecked": "2026-11-20T03:21:44.447Z",
+    "revisionIdentifier": "f8769ffd",
+    "lastVerified": "2026-11-20T03:21:44.447Z"
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T03:13:20.740Z",
+  "last_updated": "2026-11-20T03:21:56.388Z",
   "total_verified_learnings": 9023,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-MK6V-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-XLUP-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "65220331bb8fdfc904f70a8827bdc4670c291b86234d47261d5905e83dc723a3",
+      "content_hash": "19583898837dcada2ab871ca88b981d9112bb51c9828c4f2dd7bff352c1b9539",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T03:13:20.318Z"
+      "persisted_at": "2026-11-20T03:21:55.683Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "cedbb7eda85edb5578bc752aab9099fbb9357ae6afb2eb67495a6f75c43e3025",
+      "content_hash": "9ce7571f5389206ba034bf66e956208f821417ebd46b5018601de61f9ff40e04",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T03:13:20.519Z"
+      "persisted_at": "2026-11-20T03:21:55.826Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f1124175049a5f6bbd253efad0b61ce61e65141b0bc363a2b41249125b929f57",
+      "content_hash": "2c7d9b6010e8adcc4f21e5d7eb40c710c1a99604b225a6129c77e558e7ac8a26",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T03:13:20.740Z"
+      "persisted_at": "2026-11-20T03:21:55.974Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -218619,13 +218619,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-MJAW-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-XL6J-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "5750426ab53f32f093e421ed7b401a0c477579d940c3db5ac7d23803c01ba143",
+      "content_hash": "fa165d888976858eb432b6f0d77b15efb4c3c4fcc6a65015ef19aa90131e8dd8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T03:13:19.161Z"
+      "persisted_at": "2026-11-20T03:21:54.812Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218635,9 +218635,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "6081b161ec8e72a8b76ba62592a8824a3cca54f5c67907c4ada9065eabc5cc49",
+      "content_hash": "e84e81b77c26109536e10d7565725db58fcbbcb11d793ae1eb5b71dfa88e2e0d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T03:13:19.366Z"
+      "persisted_at": "2026-11-20T03:21:54.960Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218647,9 +218647,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "4220977f58b5e82c69a0ff17ab326ce2f8aa7ce3af6e65ef63e6e31d2afd52e1",
+      "content_hash": "f35490adb732a3d2a41f19a7dc1dbbadfffa065ad8b4b120cde503ab1dea19e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T03:13:19.559Z"
+      "persisted_at": "2026-11-20T03:21:55.124Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -287760,9 +287760,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "8fc8675bfec89e6d03cda8d2dfbd03ef99cf76befa0290277f77249a367d6731",
+      "content_hash": "7edbba0d5240e7b4b5cee62722a4524425cb55e1312c936ab338aebcc140a374",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T01:42:16.966Z"
+      "persisted_at": "2026-11-20T03:21:56.388Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
