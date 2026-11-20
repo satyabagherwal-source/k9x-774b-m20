@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-FELJ",
-    "timestamp": "2026-11-18T19:52:12.199Z",
-    "repository": "trailbaseio/trailbase",
-    "learningId": "learn-github-trailbaseio-trailbase",
-    "contentHash": "b1c12794513aa0906f620b69b3bb52b0da428d3176bfe2894e528b02169a71eb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-7T9A",
-    "timestamp": "2026-11-18T20:14:17.566Z",
-    "repository": "Qwen/Qwen3.8-Flash-Next",
-    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-    "contentHash": "be7d3716fff255c09ddfea537586c3fdd72d872a7ae98bdcc208608244a762d6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-82G6",
     "timestamp": "2026-11-18T20:14:29.478Z",
     "repository": "malisper/pgrust",
@@ -7490,6 +7460,36 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "0cda0857631848867ec9438ded6730d1d7c75ce53c0aa8ac2f6b7fc010099c0b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-HZCM",
+    "timestamp": "2026-11-20T23:13:30.166Z",
+    "repository": "sveltejs/svelte",
+    "learningId": "learn-github-sveltejs-svelte",
+    "contentHash": "a6544c37c372f2274ece56eb323ae09a846d207e15dc2de6254a71e686c91e25",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-I54J",
+    "timestamp": "2026-11-20T23:13:37.651Z",
+    "repository": "koderover/zadig",
+    "learningId": "learn-github-koderover-zadig",
+    "contentHash": "ee50bf31586c85e02e108b0a98ac15a2e8dcc7b894fe7444c6299aa1a839b931",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

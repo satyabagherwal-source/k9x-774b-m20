@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T23:05:35.744Z",
-  "total_cycles_completed": 11097,
-  "total_learnings_persisted": 11097,
-  "total_rules_promoted": 10447,
+  "last_updated": "2026-11-20T23:13:37.660Z",
+  "total_cycles_completed": 11099,
+  "total_learnings_persisted": 11099,
+  "total_rules_promoted": 10449,
   "history": [
-    {
-      "timestamp": "2026-11-20T00:43:27.975Z",
-      "repository": "risingwavelabs/risingwave",
-      "learningId": "learn-github-risingwavelabs-risingwave",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T00:45:36.878Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T01:00:31.605Z",
       "repository": "metalbear-co/mirrord",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-20T23:05:35.744Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T23:13:30.177Z",
+      "repository": "sveltejs/svelte",
+      "learningId": "learn-github-sveltejs-svelte",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T23:13:37.660Z",
+      "repository": "koderover/zadig",
+      "learningId": "learn-github-koderover-zadig",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

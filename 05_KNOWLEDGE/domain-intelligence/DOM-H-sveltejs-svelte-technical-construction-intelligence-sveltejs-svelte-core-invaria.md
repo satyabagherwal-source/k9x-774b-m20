@@ -4,24 +4,24 @@
 {
   "source_repository": "sveltejs/svelte",
   "source_url": "https://github.com/sveltejs/svelte",
-  "source_version": "99c07450",
+  "source_version": "04c5d8da",
   "license": "MIT",
-  "timestamp": "2026-11-17T03:50:05.699Z",
+  "timestamp": "2026-11-20T23:13:30.387Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-sveltejs-svelte",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [sveltejs/svelte](https://github.com/sveltejs/svelte) (Revision: `99c07450`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T03:50:05.699Z`  
+> **Provenance**: Harvested from [sveltejs/svelte](https://github.com/sveltejs/svelte) (Revision: `04c5d8da`).  
+> **License**: MIT | **Timestamp**: `2026-11-20T23:13:30.387Z`  
 > **Learning ID**: `learn-github-sveltejs-svelte`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 94%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 90%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from sveltejs/svelte:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T03:50:04.562Z  
+> **Harvest Timestamp**: 2026-11-20T23:13:28.946Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: web development for the rest of us
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 89047 stars
+- **Stars / Engagement**: 89834 stars
 
 ---
 
@@ -446,6 +446,12 @@ export async function with_cpu_profile(profile_dir, profile_name, fn) {
 
 	await session.post('Profiler.enable');
 	aw
+```
+
+### Core Architecture Module: `packages/svelte/renderer.d.ts`
+```
+import './types/index.js';
+
 ```
 
 ### Core Architecture Module: `packages/svelte/src/compiler/phases/1-parse/state/element.js`
@@ -1973,29 +1979,6 @@ function validate_code(code, is_attribute_value) {
 
 ```
 
-### Core Architecture Module: `packages/svelte/src/compiler/phases/1-parse/utils/whitespace.js`
-```
-/** @param {number} cc */
-export function is_whitespace(cc) {
-	// fast path for common whitespace
-	if (cc === 32 || (cc <= 13 && cc >= 9)) return true;
-	// rare whitespace — \u00a0, \u1680, \u2000-\u200a, \u2028, \u2029, \u202f, \u205f, \u3000, \ufeff
-	if (cc < 160) return false;
-	return (
-		cc === 160 ||
-		cc === 5760 ||
-		(cc >= 8192 && cc <= 8202) ||
-		cc === 8232 ||
-		cc === 8233 ||
-		cc === 8239 ||
-		cc === 8287 ||
-		cc === 12288 ||
-		cc === 65279
-	);
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2023,36 +2006,491 @@ export function is_whitespace(cc) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e129e221` (2026-11-14)
-**Commit Message**: fix codeblock syntax (#19263)
+### Incident Patch 1: `8720544f` (2026-11-20)
+**Commit Message**: feat: custom renderers API (#18042)
 
-this is blocking preview deployments, so will self-merge
+Closes #15470 
 
-**File**: `documentation/docs/06-runtime/01-stores.md` (modified, +1/-1)
+We're so back!
+
+Finally, thanks to [Syntax](https://syntax.fm) and
+[SuppCo](https://supp.co) that sponsored the [Custom Renderers
+initiative](https://svelte-custom-renderers.com), I was able to work
+full-time for a bit on this (thanks again to my employer,
+[Mainmatter](https://mainmatter.com/svelte) for allowing me to do this).
+
+This, the fact that we recently revisited the direction we were going
+(that lead to much less code needed), plus the fact that Claude now is
+decently good at navigating the Svelte codebase allowed me to do a lot
+of progress (I was also able to re-use part of the code I already had
+before).
+
+As you can see, this is a big PR, but I tried to split the commits
+reasonably so that the review process shouldn't be too bad and there
+wasn't really a way to verify it worked before having built most of it.
+There are still a few To-dos but luckily, I also have a few more days to
+work on this (and at this point is in a place where I can also do it in
+my spare time).
+
+## To-dos
+
+- [ ] Documentation
+- [x] Lift HTML-specific compiler warnings/errors if a custom renderer
+is defined
+- [ ] Write more tests
+- [ ] (Stretch) fi
+
+**File**: `.changeset/salty-steaks-wash.md` (added, +5/-0)
 ```diff
-@@ -70,7 +70,7 @@ If an effect should only react to a particular value, select that value with [`$
+@@ -0,0 +1,5 @@
++---
++'svelte': minor
++---
++
++feat: custom renderer api
+```
+
+**File**: `documentation/docs/05-special-elements/07-svelte-options.md` (modified, +1/-0)
+```diff
+@@ -13,6 +13,7 @@ The `<svelte:options>` element provides a place to specify per-component compile
+ - `namespace="..."` — the namespace where this component will be used, can be "html" (the default), "svg" or "mathml"
+ - `customElement={...}` — the [options](custom-elements#Component-options) to use when compiling this component as a custom element. If a string is passed, it is used as the `tag` option
+ - `css="injected"` — the component will inject its styles inline: During server-side rendering, it's injected as a `<style>` tag in the `head`, during client side rendering, it's loaded via JavaScript
++- `customRenderer="..."` — the module that provides the [custom renderer](custom-renderers) this component renders with. Use `customRenderer={null}` to render with the DOM instead of the default renderer. Requires the `experimental.customRenderer` compiler option
  
- <!-- codeblock:start {"title":"$effect.tracking()"} -->
- ```svelte
--<!-- file: App.svelte -->
-+<!--- file: App.svelte --->
- <script>
- 	import { writable } from 'svelte/store';
+ > [!LEGACY] Deprecated options
+ > Svelte 4 also included the following options. They are deprecated in Svelte 5 and non-functional in runes mode.
+```
+
+**File**: `documentation/docs/07-misc/08-custom-renderers.md` (added, +443/-0)
+```diff
+@@ -0,0 +1,443 @@
++---
++title: Custom renderers
++---
++
++By default, Svelte components render to the DOM. A _custom renderer_ lets them render to something else instead — a WebGL scene, a native mobile UI, a terminal, a PDF document — while you keep writing ordinary Svelte components with state, props, control flow and everything else you're used to.
++
++The renderer is a small object that tells Svelte how to create, arrange and update the nodes of the target environment. Svelte takes care of everything else.
++
++This feature is currently experimental, and you must opt in by adding the `experimental.customRenderer` option wherever you [configure](/docs/kit/configuration) Svelte, usually `svelte.config.js` or `vite.config.js`:
++
++```js
++// @noErrors
++/// file: svelte.config.js
++export default {
++	compilerOptions: {
++		experimental: {
++			customRenderer: true
++		}
++	}
++};
++```
++
++The API may change before the experimental flag is removed.
++
++## Choosing a renderer
++
++With the option set to `true`, components still render to the DOM unless they say otherwise. A component chooses a renderer with [`<svelte:options>`](svelte-options), by pointing to the module that exports it:
++
++```svelte
++<!--- file: Scene.svelte --->
++<svelte:options customRenderer="three-renderer" />
++
++<script>
++	let { speed } = $props();
++	let rotation = $state(0);
++</script>
++
++<mesh rotation={[0, rotation, 0]} onclick={() => (rotation += speed)}>
++	<boxGeometry args={[1, 1, 1]} />
++</mesh>
++```
++
++> [!NOTE] `three-renderer` is a made-up package, used as an example throughout this page.
++
++The elements in a custom renderer component — `<mesh>` and `<boxGeometry>` here — have no special meaning to Svelte. It passes their names and attributes to the renderer, which decides what to do with them.
++
++The module path is resolved like any other import in the component, so it can be a package name, an alias, or a path relative to the component (`customRenderer="./renderer.js"`).
++
++### Setting a default renderer
++
++If most of your components use the same renderer, you can make it the default by passing the module path instead of `true`:
++
++```js
++// @noErrors
++/// file: svelte.config.js
++export default {
++	compilerOptions: {
++		experimental: {
++			customRenderer: 'three-renderer'
++		}
++	}
++};
++```
++
++Individual components can still choose a different renderer, or no custom renderer at all with `<svelte:options customRenderer={null} />`.
++
++Every component imports the default renderer module, so a globally configured path can't be relative — it would be resolved relative to each component, rather than relative to your config file. Use a package name, a subpath import like `#lib/renderer.js`, or an absolute path.
++
++### Choosing a renderer by file
++
++For more control, pass a function. It receives the filename of each component, and returns the renderer module for that component, or `null` for the DOM:
++
++```js
++// @noErrors
++/// file: svelte.config.js
++export default {
++	compilerOptions: {
++		experimental: {
++			customRenderer: ({ filename }) => {
++				return filename.includes('/src/scene/') ? 'three-renderer' : null;
++			}
++		}
++	}
++};
++```
++
++Since the function knows which file it's choosing for, it can also return a path relative to that file. A `<svelte:options customRenderer={...}>` in a component takes precedence over the function.
++
++## Running outside the browser
++
++Many renderers target environments that aren't browsers at all, such as a terminal, a PDF generator, a native runtime or a test runner. In those environments, `svelte` normally resolves to its server-side implementation, which renders components to HTML strings rather than running them.
++
++To use custom renderers there, add the `svelte-custom-renderer` [resolve condition](https://nodejs.org/api/packages.html#conditional-exports), which makes `svelte` resolve to the implementation that runs components. With Node, run your code with `--conditions=svelte-custom-renderer`. If you're using a bundler, add `svelte-custom-renderer` to its list of resolve conditions. If the condition is missing, Svelte throws an error explaining what to do.
++
++Your components still need to be compiled, as with any Svelte app — for example by bundling them with Vite and `vite-plugin-svelte`.
++
++As an example, here's a clock that runs in a terminal:
++
++```svelte
++<!--- file: Clock.svelte --->
++<svelte:options customRenderer="terminal-renderer" />
++
++<script>
++	let time = $state(new Date());
++
++	$effect(() => {
++		const interval = setInterval(() => (time = new Date()), 1000);
++		return () => clearInterval(interval);
++	});
++</script>
++
++<box border="round" padding={1}>
++	<text bold>The time is {time.toLocaleTimeString()}</text>
++</box>
++```
++
++To start it, pass the renderer to [`mount`](svelte#mount), along with a target created by that renderer:
++
++```js
++/// file: main.js
++// @noErrors
++import { mount } from 'svelte';
++import renderer, { draw } from 'terminal-renderer';
++import Clock from './Clock.svelte';
++
++
+```
+
+**File**: `documentation/docs/07-misc/99-faq.md` (modified, +1/-1)
+```diff
+@@ -101,7 +101,7 @@ While most mobile apps are written without using JavaScript, if you'd like to le
  
+ You can also write apps in Svelte that compiles to native components by using [Symbiote Native](https://docs.symbiote-native.dev/), which leverages the infrastructure provided by React Native.
+ 
+-Work has been completed towards [custom renderer support in Svelte 5](https://github.com/sveltejs/svelte/issues/15470), but this feature is not yet merged. The custom rendering API will allow support in additional mobile frameworks like Lynx JS and Svelte Native. Symbiote Native will also adopt this API. Svelte Native was an option available for Svelte 4, but Svelte 5 does not currently support it. Svelte Native lets you write NativeScript apps using Svelte components that contain [NativeScript UI components](https://docs.nativescript.org/ui/) rather than DOM elements.
++Svelte 5 also has experimental support for [custom renderers](custom-renderers), which let Svelte components render to targets other than the DOM. This will allow support in additional mobile frameworks like Lynx JS and Svelte Native, and Symbiote Native will also adopt this API. Svelte Native was an option available for Svelte 4, but Svelte 5 does not currently support it. Svelte Native lets you write NativeScript apps using Svelte components that contain [NativeScript UI components](https://docs.nativescript.org/ui/) rather than DOM elements.
+ 
+ ## Can I tell Svelte not to remove my unused styles?
+ 
+```
+
+**File**: `documentation/docs/98-reference/.generated/client-errors.md` (modified, +26/-0)
+```diff
+@@ -46,6 +46,14 @@ Attempted to instantiate %component% with `new %name%`, which is no longer valid
+ 
+ See the [migration guide](/docs/svelte/v5-migration-guide#Components-are-no-longer-classes) for more information.
+ 
++### custom_renderer_unsupported_operation
++
++```
++`%operation%` is not supported when rendering with a custom renderer
++```
++
++Some of Svelte's internals only work with the DOM, and are never expected to run while a custom renderer is active — for example, `{@html ...}` and hydration are not available with custom renderers. Reaching one of these code paths indicates a bug in Svelte rather than in your app or renderer, so please [open an issue](https://github.com/sveltejs/svelte/issues) with a reproduction.
++
+ ### derived_references_self
+ 
+ ```
+@@ -209,6 +217,12 @@ Failed to hydrate the application
+ Could not `{@render}` snippet due to the expression being `null` or `undefined`. Consider using optional chaining `{@render snippet?.()}`
+ ```
+ 
++### invalid_snippet_in_custom_renderer
++
++```
++`createRawSnippet` cannot be used with a custom renderer
++```
++
+ ### lifecycle_legacy_only
+ 
+ ```
+@@ -227,12 +241,24 @@ Cannot do `bind:%key%={undefined}` when `%key%` has a fallback value
+ Rest element properties of `$props()` such as `%property%` are readonly
+ ```
+ 
++### renderer_cannot_cross
++
++```
++Cannot render content belonging to %guest% inside %host%. A custom renderer must define `embed` or `host` to be combined with another renderer
++```
++
+ ### rune_outside_svelte
+ 
+ ```
+ The `%rune%` rune is only available inside `.svelte` and `.svelte.js/ts` files
+ ```
+ 
++### snippet_renderer_mismatch
++
++```
++A snippet created in a component that was compiled without `experimental.customRenderer` cannot be rendered by a custom renderer
++```
++
+ ### state_descriptors_fixed
+ 
+ ```
+```
+
+**File**: `documentation/docs/98-reference/.generated/compile-errors.md` (modified, +12/-0)
+```diff
+@@ -617,6 +617,12 @@ Cannot use `await` in deriveds and template expressions, or at the top level of
+ Imports of `svelte/internal/*` are forbidden. It contains private runtime code which is subject to change without notice. If you're importing from `svelte/internal/*` to work around a limitation of Svelte, please open an issue at https://github.com/sveltejs/svelte and explain your use case
+ ```
+ 
++### incompatible_with_custom_renderer
++
++```
++%message% is not compatible with `customRenderer`
++```
++
+ ### inspect_trace_generator
+ 
+ ```
+@@ -1131,6 +1137,12 @@ A component can only have one `<%name%>` element
+ Valid `<svelte:...>` tag names are %list%
+ ```
+ 
++### svelte_options_customrenderer_disabled
++
++```
++`customRenderer` cannot be set in `<svelte:options>` unless the `experimental.customRenderer` compiler option is enabled
++```
++
+ ### svelte_options_deprecated_tag
+ 
+ ```
+```
+
+**File**: `documentation/docs/98-reference/.generated/shared-errors.md` (modified, +8/-0)
+```diff
+@@ -1,5 +1,13 @@
+ <!-- This file is generated by scripts/process-messages/index.js. Do not edit! -->
+ 
++### custom_renderer_unavailable_on_server
++
++```
++You need to specify a custom condition to use a custom renderer in a non-browser environment such as Node. Add the `svelte-custom-renderer` resolve condition (eg. run Node with `--conditions=svelte-custom-renderer`).
++
++If you're using a bundler, add `svelte-custom-renderer` to its list of resolve conditions instead.
++```
++
+ ### experimental_async_required
+ 
+ ```
+```
+
+**File**: `documentation/docs/98-reference/21-svelte-renderer.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++title: svelte/renderer
++---
++
++> MODULE: svelte/renderer
 ```
 
 ---
 
-### Incident Patch 2: `0156c5fe` (2026-11-12)
-**Commit Message**: docs: fix the license link in the svelte package README (#19250)
+### Incident Patch 2: `dd3f1c2a` (2026-11-18)
+**Commit Message**: fix: batch views of reactions (#19030)
 
-`packages/svelte/README.md` links the license badge to `LICENSE.md`.
-GitHub resolves that relative to `packages/svelte/`, so the badge opens
-`packages/svelte/LICENSE.md`, which does not exist. The license file is
-at the repository root.
+This changes the async reactivity system when multiple batches are
+active such that they check if they need to be re-executed in a batch by
+comparing the write versions of the dependencies they last saw with the
+ones they have now - if there's any difference, they re-execute. These
+write version arrays, the value, the dependencies that batch sees - all
+is stored in a record local to the batch. Logic exists to promote them
+to the real world if we know the derived was computed from
+real-world/latest dependencies only, and async/block effects promote
+once the batch commits.
 
-The link now points at the root `LICENSE.md` with an absolute URL so it
-also works when the README is read from the npm package.
+This introduces some complexity, on the other hand various things are
+simplified or removed (`#commit` for example got easier).
+
+This is WIP, but I've commited a
+[readme](https://github.com/sveltejs/svelte/blob/batch-views/batch-views.md)
+that gives a good overview of how the system works in more detail and
+the gaps vs `async-reactivity-another-try-pt-1`
+
+- Fixes #19260
+- Fixes #19233
+- Fixes #19253
+- Fixes #19099
+- Fixes #19030
+- Fixes #19154
+- Fixes #19157
+- Fixes #18997
+- Fixes #18355
+- Fixes #18761
+- Fixes #18624
+- Fixes #18503
+- Fixes #18662
+- Fixes https://github.com/s
+
+**File**: `.changeset/calm-forks-commit.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'svelte': patch
++---
++
++fix: don't throw when committing a fork whose changes were all superseded by other updates
+```
+
+**File**: `.changeset/eager-block-commit.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'svelte': patch
++---
++
++fix: apply the branch changes of blocks that re-run while effects are flushed when the batch with the effects' writes commits
+```
+
+**File**: `.changeset/exact-batch-versions.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'svelte': patch
++---
++
++fix: keep values computed in a batch's view of the world local to that batch, and don't needlessly re-run deriveds while several batches are pending
+```
+
+**File**: `.changeset/lemon-apples-care.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'svelte': patch
++---
++
++fix: restore teardown context when destroying effects after outros
+```
+
+**File**: `.changeset/pink-mirrors-decide.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'svelte': patch
++---
++
++breaking: in experimental async mode, `getAbortSignal()` must be called before an `await`
+```
+
+**File**: `.changeset/quiet-forks-inspect.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'svelte': patch
++---
++
++fix: don't run `$inspect` and `$state.eager` with the values of a fork before it is committed
+```
+
+**File**: `.changeset/tired-bears-beam.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'svelte': patch
++---
++
++fix: revert state changes in effect teardowns based on the currently committing batch
+```
+
+**File**: `documentation/docs/98-reference/.generated/client-errors.md` (modified, +11/-3)
+```diff
+@@ -3,14 +3,14 @@
+ ### async_derived_orphan
+ 
+ ```
+-Cannot create a `$derived(...)` with an `await` expression outside of an effect tree
++Can only create a `$derived(...)` with an `await` expression during component initialization or in a declaration tag
+ ```
+ 
+-In Svelte there are two types of reaction — [`$derived`](/docs/svelte/$derived) and [`$effect`](/docs/svelte/$effect). Deriveds can be created anywhere, because they run _lazily_ and can be [garbage collected](https://developer.mozilla.org/en-US/docs/Glossary/Garbage_collection) if nothing references them. Effects, by contrast, keep running eagerly whenever their dependencies change, until they are destroyed.
++In Svelte there are two types of reaction — [`$derived`](/docs/svelte/$derived) and [`$effect`](/docs/svelte/$effect). Deriveds can normally be created anywhere, because they run _lazily_ and can be [garbage collected](https://developer.mozilla.org/en-US/docs/Glossary/Garbage_collection) if nothing references them. Effects, by contrast, keep running eagerly whenever their dependencies change, until they are destroyed.
+ 
+ Because of this, effects can only be created inside other effects (or [effect roots](/docs/svelte/$effect#$effect.root), such as the one that is created when you first mount a component) so that Svelte knows when to destroy them.
+ 
+-Some sleight of hand occurs when a derived contains an `await` expression: Since waiting until we read `{await getPromise()}` to call `getPromise` would be too late, we use an effect to instead call it proactively, notifying Svelte when the value is available. But since we're using an effect, we can only create asynchronous deriveds inside another effect.
++Some sleight of hand occurs when a derived contains an `await` expression: Since waiting until we read `$derived(await getPromise())` to call `getPromise` would be too late, we use an effect to instead call it proactively, notifying Svelte when the value is available. But since we're using an effect, this can only happen during component initialization or in a [declaration tag](/docs/svelte/declaration-tags).
+ 
+ ### bind_invalid_checkbox_value
+ 
+@@ -164,6 +164,14 @@ Cannot commit a fork that was already discarded
+ Cannot create a fork inside an effect or when state changes are pending
+ ```
+ 
++### get_abort_signal_after_await
++
++```
++`getAbortSignal()` cannot be called after an `await`
++```
++
++Abort signals must be associated with their deriveds/effects as soon as they run — if it happens after an `await`, it's too late. Create the abort signal first, before awaiting anything.
++
+ ### get_abort_signal_outside_reaction
+ 
+ ```
+```
+
+---
+
+### Incident Patch 3: `04c5d8da` (2026-11-20)
+**Commit Message**: docs: skip type checking `svelte/renderer` type argument examples (#19361)
+
+The docs sync to svelte.dev is failing
+(https://github.com/sveltejs/svelte.dev/pull/2377) because the two `ts`
+examples in the `svelte/renderer` reference are type checked there and
+don't compile:
+
+```
+[2304] Cannot find name 'createRenderer'.
+[2304] Cannot find name 'MyFragment'.
+[1109] Expression expected.
+```
+
+A version that compiles would need a whole renderer implementation, so
+both examples now opt out of the check, the same way the import snippets
+on the reference pages do. The directive is stripped from the rendered
+page.
+
+```ts
+// @noErrors
+const renderer: Renderer<{ fragment: MyFragment; element: MyElement; text: MyText; comment: MyComment }> = ...
+```
 
 ### Before submitting the PR, please make sure you do the following
 
@@ -2063,36 +2501,59 @@ https://github.com/sveltejs/rfcs
 - [x] Prefix your PR title with `feat:`, `fix:`, `chore:`, or `docs:`.
 - [x] This message body should clearly illustrate what problems it
 solves.
-- [ ] Ideally, include a test that fails without this PR but passes with
-it.
-- [ ] If this PR changes code within `packages/svelte/src`, add a
-changeset (`npx changeset`).
+- [ ] Ideally, includ
 
-### Tests and linting
-
-- [ ] Run the tests with `pnpm test` and lint the project with `pnpm
-lint`
-
-**File**: `packages/svelte/README.md` (modified, +1/-1)
+**File**: `packages/svelte/src/internal/client/custom-renderer/index.js` (modified, +1/-0)
 ```diff
-@@ -5,7 +5,7 @@
- 	</picture>
- </a>
- 
--[![npm version](https://img.shields.io/npm/v/svelte.svg)](https://www.npmjs.com/package/svelte) [![license](https://img.shields.io/npm/l/svelte.svg)](LICENSE.md) [![Chat](https://img.shields.io/discord/457912077277855764?label=chat&logo=discord)](https://svelte.dev/chat)
-+[![npm version](https://img.shields.io/npm/v/svelte.svg)](https://www.npmjs.com/package/svelte) [![license](https://img.shields.io/npm/l/svelte.svg)](https://github.com/sveltejs/svelte/blob/main/LICENSE.md) [![Chat](https://img.shields.io/discord/457912077277855764?label=chat&logo=discord)](https://svelte.dev/chat)
- 
- ## What is Svelte?
- 
+@@ -8,6 +8,7 @@
+  * the others. Alternatively, pass them as the type argument:
+  *
+  * ```ts
++ * // @noErrors
+  * const renderer = createRenderer<{ fragment: MyFragment; element: MyElement; text: MyText; comment: MyComment }>({
+  * 	// ...
+  * });
+```
+
+**File**: `packages/svelte/src/internal/client/custom-renderer/types.d.ts` (modified, +1/-0)
+```diff
+@@ -2,6 +2,7 @@
+  * A custom renderer. `N` describes the types of the renderer's nodes, for example:
+  *
+  * ```ts
++ * // @noErrors
+  * const renderer: Renderer<{ fragment: MyFragment; element: MyElement; text: MyText; comment: MyComment }> = ...
+  * ```
+  */
+```
+
+**File**: `packages/svelte/types/index.d.ts` (modified, +2/-0)
+```diff
+@@ -2735,6 +2735,7 @@ declare module 'svelte/renderer' {
+ 	 * A custom renderer. `N` describes the types of the renderer's nodes, for example:
+ 	 *
+ 	 * ```ts
++	 * // @noErrors
+ 	 * const renderer: Renderer<{ fragment: MyFragment; element: MyElement; text: MyText; comment: MyComment }> = ...
+ 	 * ```
+ 	 */
+@@ -2869,6 +2870,7 @@ declare module 'svelte/renderer' {
+ 	 * the others. Alternatively, pass them as the type argument:
+ 	 *
+ 	 * ```ts
++	 * // @noErrors
+ 	 * const renderer = createRenderer<{ fragment: MyFragment; element: MyElement; text: MyText; comment: MyComment }>({
+ 	 * 	// ...
+ 	 * });
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #19270** (closed): fix: batches only intersect on writes (@Rich-Harris)
-- **PR #19269** (2026-11-15): chore: steer agents towards better tests (@Rich-Harris)
-- **PR #19263** (2026-11-14): fix codeblock syntax (@Rich-Harris)
-- **PR #19255** (2026-11-13): fix: redesign boundaries (@Rich-Harris)
-- **PR #19250** (2026-11-12): docs: fix the license link in the svelte package README (@abd1rahmane)
-- **PR #19246** (2026-11-11): perf: speed up test suite (@dummdidumm)
+- **PR #19361** (2026-11-20): docs: skip type checking `svelte/renderer` type argument examples (@teemingc)
+- **PR #19359** (2026-11-20): Version Packages (@github-actions[bot])
+- **PR #19358** (closed): fix: keep `hydrate` and `mount` callable in a union (@teemingc)
+- **PR #19357** (2026-11-20): fix: keep `hydrate` and `mount` type parameters in sync so a union of them is callable (@paoloricciuti)
+- **PR #19348** (2026-11-20): Version Packages (@github-actions[bot])
+- **PR #19347** (2026-11-20): fix: commit the state that hydration ran with, so that updates while hydration is pending don't undo it (@dummdidumm)
 
 ---
 
@@ -2112,31 +2573,31 @@ lint`
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. codeblock syntax
+## X. custom renderers API
 
 **RULE**:
-When implementing operations in `documentation/docs/06-runtime/01-stores.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `documentation/docs/05-special-elements/07-svelte-options.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e129e221`: codeblock syntax. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8720544f`: custom renderers API. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/docs/06-runtime/01-stores.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/docs/05-special-elements/07-svelte-options.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-<!--- file: App.svelte --->
+- `customRenderer="..."` — the module that provides the [custom renderer](custom-renderers) this component renders with. Use `customRenderer={null}` to render with the DOM instead of the default renderer. Requires the `experimental.customRenderer` compiler option
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-<!-- file: App.svelte -->
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e129e221` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8720544f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

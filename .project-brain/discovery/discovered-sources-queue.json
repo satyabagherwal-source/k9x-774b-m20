@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T23:05:40.148Z",
+  "updated_at": "2026-11-20T23:13:42.669Z",
   "stats": {
-    "total_discovered": 6784,
-    "approved_pending_harvest": 6405,
+    "total_discovered": 6801,
+    "approved_pending_harvest": 6421,
     "harvested_count": 0,
-    "rejected_count": 379,
+    "rejected_count": 380,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6380,
-      "OFFICIAL_DOCUMENTATION": 230,
+      "COMMUNITY_AND_EXPERT": 6393,
+      "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 121,
       "ENGINEERING_BLOGS": 5,
       "SECURITY_ADVISORIES": 39,
@@ -146618,6 +146618,373 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
         "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-8ED9A9A5F71F": {
+      "id": "SRC-8ED9A9A5F71F",
+      "url": "https://syntax.fm/",
+      "title": "https://syntax.fm/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:41.188Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-90F60A0B50FA": {
+      "id": "SRC-90F60A0B50FA",
+      "url": "https://supp.co/",
+      "title": "https://supp.co/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:41.235Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-9443D2CFFC9F": {
+      "id": "SRC-9443D2CFFC9F",
+      "url": "https://svelte-custom-renderers.com/",
+      "title": "https://svelte-custom-renderers.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:41.299Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-A2C9DEF11996": {
+      "id": "SRC-A2C9DEF11996",
+      "url": "https://mainmatter.com/svelte",
+      "title": "https://mainmatter.com/svelte",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:41.342Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-2444EB86657E": {
+      "id": "SRC-2444EB86657E",
+      "url": "https://nodejs.org/api/packages.html",
+      "title": "https://nodejs.org/api/packages.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:41.385Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-E4C0A7718F2F": {
+      "id": "SRC-E4C0A7718F2F",
+      "url": "https://docs.symbiote-native.dev/",
+      "title": "https://docs.symbiote-native.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:41.431Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-20525938F05B": {
+      "id": "SRC-20525938F05B",
+      "url": "https://github.com/sveltejs/svelte/issues/15470",
+      "title": "https://github.com/sveltejs/svelte/issues/15470",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:41.476Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-9DA262F1983A": {
+      "id": "SRC-9DA262F1983A",
+      "url": "https://docs.nativescript.org/ui",
+      "title": "https://docs.nativescript.org/ui",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:41.520Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-0C94A418F0D8": {
+      "id": "SRC-0C94A418F0D8",
+      "url": "https://github.com/sveltejs/svelte/issues",
+      "title": "https://github.com/sveltejs/svelte/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:41.567Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-DF76455186D9": {
+      "id": "SRC-DF76455186D9",
+      "url": "https://github.com/sveltejs/svelte/blob/batch-views/batch-views.md",
+      "title": "https://github.com/sveltejs/svelte/blob/batch-views/batch-views.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:41.613Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-D2D8F1AA6D5F": {
+      "id": "SRC-D2D8F1AA6D5F",
+      "url": "https://github.com/s",
+      "title": "https://github.com/s",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:41.659Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-723638A336CC": {
+      "id": "SRC-723638A336CC",
+      "url": "https://developer.mozilla.org/en-US/docs/Glossary/Garbage_collection",
+      "title": "https://developer.mozilla.org/en-US/docs/Glossary/Garbage_collection",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:41.706Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-C1276725888E": {
+      "id": "SRC-C1276725888E",
+      "url": "https://github.com/sveltejs/svelte.dev/pull/2377",
+      "title": "https://github.com/sveltejs/svelte.dev/pull/2377",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:41.752Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-D39D87041BBF": {
+      "id": "SRC-D39D87041BBF",
+      "url": "https://reviewable.io/reviews/koderover/zadig/5118",
+      "title": "https://reviewable.io/reviews/koderover/zadig/5118",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:42.539Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/koderover-zadig-learnings.md",
+        "fileName": "koderover-zadig-learnings.md"
+      }
+    },
+    "SRC-F0D8CB7248E5": {
+      "id": "SRC-F0D8CB7248E5",
+      "url": "https://reviewable.io/reviews/koderover/zadig/5117",
+      "title": "https://reviewable.io/reviews/koderover/zadig/5117",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:42.584Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/koderover-zadig-learnings.md",
+        "fileName": "koderover-zadig-learnings.md"
+      }
+    },
+    "SRC-EDA92CFB07F1": {
+      "id": "SRC-EDA92CFB07F1",
+      "url": "https://github.com/k8sgpt-ai/k8sgpt/blob/main/LICENSE",
+      "title": "https://github.com/k8sgpt-ai/k8sgpt/blob/main/LICENSE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:13:42.625Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/koderover-zadig-learnings.md",
+        "fileName": "koderover-zadig-learnings.md"
+      }
+    },
+    "SRC-E675F1D29496": {
+      "id": "SRC-E675F1D29496",
+      "url": "http://user/api/v1",
+      "title": "http://user/api/v1",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T23:13:42.669Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/koderover-zadig-learnings.md",
+        "fileName": "koderover-zadig-learnings.md"
       }
     }
   }

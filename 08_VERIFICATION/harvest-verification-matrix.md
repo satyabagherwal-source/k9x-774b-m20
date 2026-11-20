@@ -11654,3 +11654,5 @@
 | `CYCLE-20261120-7MZE` | `2026-11-20T23:05:27.578Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9654` | Yes (`69d765a0...`) |
 | `CYCLE-20261120-7QU2` | `2026-11-20T23:05:32.570Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9655` | Yes (`969daa4f...`) |
 | `CYCLE-20261120-7T9Z` | `2026-11-20T23:05:35.735Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9656` | Yes (`0cda0857...`) |
+| `CYCLE-20261120-HZCM` | `2026-11-20T23:13:30.166Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9657` | Yes (`a6544c37...`) |
+| `CYCLE-20261120-I54J` | `2026-11-20T23:13:37.651Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9658` | Yes (`ee50bf31...`) |

@@ -11687,3 +11687,5 @@ Every entry in this ledger must capture:
 | `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `77c890f4` | Multi-dimensional audit evidence | 2026-11-20T23:05:27.582Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `469e73c6` | Multi-dimensional audit evidence | 2026-11-20T23:05:32.575Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `32cd9498` | Multi-dimensional audit evidence | 2026-11-20T23:05:35.739Z |
+| `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `04c5d8da` | Multi-dimensional audit evidence | 2026-11-20T23:13:30.171Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `2076e082` | Multi-dimensional audit evidence | 2026-11-20T23:13:37.655Z |

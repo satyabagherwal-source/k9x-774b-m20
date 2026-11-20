@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T23:05:41.135Z",
+  "last_updated": "2026-11-20T23:13:43.918Z",
   "total_records": 2188,
   "domains": {
     "A": {
@@ -8921,8 +8921,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "a1f3da0e8493935bd87aa02056845b778fe7229f4f7c6c2f0d28e136c0583c55",
-      "created_at": "2026-11-20T22:49:34.285Z"
+      "content_hash": "d472222d96566ec161d082553da85e755d1c1665e786da4c938ae801094d2b96",
+      "created_at": "2026-11-20T23:13:43.918Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -25759,8 +25759,8 @@
       "title": "Technical Construction Intelligence: sveltejs/svelte Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sveltejs-svelte-technical-construction-intelligence-sveltejs-svelte-core-invaria.md",
       "repository": "sveltejs/svelte",
-      "content_hash": "ff0c3048b5320f35e7e29b7572cf87d3977c47c436e5cdb8e98168d8b52ded15",
-      "created_at": "2026-11-17T03:50:05.831Z"
+      "content_hash": "492b8de4fa5c49ac26c913415c3d538f72a09c75a4d8600ce7d0b84961e06bde",
+      "created_at": "2026-11-20T23:13:30.545Z"
     },
     "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-core-invariants",
@@ -25786,8 +25786,8 @@
       "title": "Technical Construction Intelligence: sveltejs-svelte-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sveltejs-svelte-learnings-technical-construction-intelligence-sveltejs-svelte-le.md",
       "repository": "sveltejs-svelte-learnings",
-      "content_hash": "0f00f9993413c347023d4df039b3d63dadb04d3a64ad8778594d35830c70ae9a",
-      "created_at": "2026-11-17T03:50:20.283Z"
+      "content_hash": "21611de476cac1f5a195d9b17545e6c86c67ae1bc42038f6c4722c5354c70558",
+      "created_at": "2026-11-20T23:13:42.137Z"
     },
     "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-learnings-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-learnings-core-invari",
@@ -25822,8 +25822,8 @@
       "title": "Technical Construction Intelligence: koderover/zadig Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-technical-construction-intelligence-koderover-zadig-core-invaria.md",
       "repository": "koderover/zadig",
-      "content_hash": "4251c6444948a3c4a687a6d00131bd798416858459d4c41e31c5d99d56f64adc",
-      "created_at": "2026-11-18T17:10:26.903Z"
+      "content_hash": "7ea9c13d2ff1ce1d7b554a706aa1f716e19189b10df35094b3d7d231bb662376",
+      "created_at": "2026-11-20T23:13:38.014Z"
     },
     "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants",
@@ -25849,8 +25849,8 @@
       "title": "Technical Construction Intelligence: koderover-zadig-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-learnings-technical-construction-intelligence-koderover-zadig-le.md",
       "repository": "koderover-zadig-learnings",
-      "content_hash": "eae233bc65813fbc5f342a79568413801008b8a00c5568cbe2adb395d9266197",
-      "created_at": "2026-11-18T17:10:30.914Z"
+      "content_hash": "652c942fae0d09be175d3a09147a87c2e2e9e351a36162611576c084073b2c46",
+      "created_at": "2026-11-20T23:13:43.011Z"
     },
     "domain_intelligence-technical-construction-intelligence-vitejs-vite-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-vitejs-vite-core-invariants",

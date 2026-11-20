@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T23:05:38.929Z",
-    "lastVerified": "2026-11-20T23:05:38.929Z",
+    "lastChecked": "2026-11-20T23:13:40.823Z",
+    "lastVerified": "2026-11-20T23:13:40.823Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T22:39:47.473Z",
-    "lastVerified": "2026-11-20T22:39:47.473Z",
+    "lastChecked": "2026-11-20T23:13:35.542Z",
+    "lastVerified": "2026-11-20T23:13:35.542Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1285,9 +1285,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-20T17:37:15.040Z",
+    "lastChecked": "2026-11-20T23:13:30.616Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-20T17:37:15.040Z"
+    "lastVerified": "2026-11-20T23:13:30.616Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2770,9 +2770,9 @@
   "pinecone-io-examples": {
     "name": "examples",
     "officialUrl": "https://github.com/pinecone-io/examples",
-    "lastChecked": "2026-11-19T19:39:06.563Z",
+    "lastChecked": "2026-11-20T23:13:33.121Z",
     "revisionIdentifier": "db002421",
-    "lastVerified": "2026-11-19T19:39:06.563Z"
+    "lastVerified": "2026-11-20T23:13:33.121Z"
   },
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
@@ -3532,14 +3532,14 @@
     "officialUrl": "https://github.com/koderover/zadig",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T22:05:10.066Z",
-    "lastVerified": "2026-11-19T22:05:10.066Z",
+    "lastChecked": "2026-11-20T23:13:36.627Z",
+    "lastVerified": "2026-11-20T23:13:36.627Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-koderover-zadig",
-    "contentHash": "c40275c777a502a0d3432be29f270b0b427a0fc7ec9e0f5ad4c5ecb6f0e63ba4",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 9,
+    "contentHash": "ee50bf31586c85e02e108b0a98ac15a2e8dcc7b894fe7444c6299aa1a839b931",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7324,9 +7324,9 @@
   "arxanas-git-branchless": {
     "name": "git-branchless",
     "officialUrl": "https://github.com/arxanas/git-branchless",
-    "lastChecked": "2026-11-19T09:07:01.114Z",
+    "lastChecked": "2026-11-20T23:13:20.650Z",
     "revisionIdentifier": "d0eceb7e",
-    "lastVerified": "2026-11-19T09:07:01.114Z"
+    "lastVerified": "2026-11-20T23:13:20.650Z"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
     "name": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -11027,5 +11027,29 @@
     "lastChecked": "2026-11-20T23:05:25.227Z",
     "revisionIdentifier": "3b772afa",
     "lastVerified": "2026-11-20T23:05:25.227Z"
+  },
+  "sveltejs-svelte": {
+    "name": "sveltejs/svelte",
+    "officialUrl": "https://github.com/sveltejs/svelte",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-20T23:13:28.946Z",
+    "lastVerified": "2026-11-20T23:13:28.946Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-sveltejs-svelte",
+    "contentHash": "a6544c37c372f2274ece56eb323ae09a846d207e15dc2de6254a71e686c91e25",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 13,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "heckj-swiftui-notes": {
+    "name": "swiftui-notes",
+    "officialUrl": "https://github.com/heckj/swiftui-notes",
+    "lastChecked": "2026-11-20T23:13:25.506Z",
+    "revisionIdentifier": "e7884cce",
+    "lastVerified": "2026-11-20T23:13:25.506Z"
   }
 }

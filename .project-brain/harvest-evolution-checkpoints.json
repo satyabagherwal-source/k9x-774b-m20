@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T23:05:41.416Z",
+  "last_updated": "2026-11-20T23:13:44.199Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T22:31:03.514Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-20T22:49:33.747Z",
+      "processed_at": "2026-11-20T23:13:43.330Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -783,9 +783,9 @@
       "staged_for_review": 1
     },
     "koderover-zadig-learnings.md": {
-      "processed_at": "2026-11-19T22:07:49.462Z",
+      "processed_at": "2026-11-20T23:13:42.458Z",
       "promoted_canonical": 0,
-      "staged_for_review": 2
+      "staged_for_review": 1
     },
     "fabio-rovai-open-ontologies-learnings.md": {
       "processed_at": "2026-11-17T04:05:49.511Z",
@@ -1078,7 +1078,7 @@
       "staged_for_review": 1
     },
     "sveltejs-svelte-learnings.md": {
-      "processed_at": "2026-11-17T03:50:19.587Z",
+      "processed_at": "2026-11-20T23:13:40.957Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3643,7 +3643,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2649,
+  "total_dossiers_evaluated": 2652,
   "total_canonical_promoted": 435,
-  "total_staged_for_review": 2025
+  "total_staged_for_review": 2028
 }

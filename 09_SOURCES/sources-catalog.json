@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "0b80d9e7",
+    "sourceVersion": "2076e082",
     "license": "NOASSERTION",
-    "contentHash": "c40275c777a502a0d3432be29f270b0b427a0fc7ec9e0f5ad4c5ecb6f0e63ba4",
-    "lastHarvestedAt": "2026-11-19T22:07:06.560Z",
+    "contentHash": "ee50bf31586c85e02e108b0a98ac15a2e8dcc7b894fe7444c6299aa1a839b931",
+    "lastHarvestedAt": "2026-11-20T23:13:37.655Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {
@@ -9963,10 +9963,10 @@
     "repository": "sveltejs/svelte",
     "platform": "github",
     "sourceUrl": "https://github.com/sveltejs/svelte",
-    "sourceVersion": "99c07450",
+    "sourceVersion": "04c5d8da",
     "license": "MIT",
-    "contentHash": "b25680054919553309a7c0ba87e260552c84ad612b4203391bc31e5b438290ef",
-    "lastHarvestedAt": "2026-11-17T03:50:05.509Z",
+    "contentHash": "a6544c37c372f2274ece56eb323ae09a846d207e15dc2de6254a71e686c91e25",
+    "lastHarvestedAt": "2026-11-20T23:13:30.171Z",
     "learningId": "learn-github-sveltejs-svelte"
   },
   "solidjs-solid": {

@@ -4,24 +4,24 @@
 {
   "source_repository": "koderover/zadig",
   "source_url": "https://github.com/koderover/zadig",
-  "source_version": "39229c91",
+  "source_version": "2076e082",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-18T17:10:26.730Z",
+  "timestamp": "2026-11-20T23:13:37.859Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-koderover-zadig",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [koderover/zadig](https://github.com/koderover/zadig) (Revision: `39229c91`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-18T17:10:26.730Z`  
+> **Provenance**: Harvested from [koderover/zadig](https://github.com/koderover/zadig) (Revision: `2076e082`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-20T23:13:37.859Z`  
 > **Learning ID**: `learn-github-koderover-zadig`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: A (Human & Need Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from koderover/zadig:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T17:10:25.358Z  
+> **Harvest Timestamp**: 2026-11-20T23:13:36.627Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Zadig: An AI-powered, cloud-native, distributed DevOps platform designed for developers
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3278 stars
+- **Stars / Engagement**: 3280 stars
 
 ---
 
@@ -1195,13 +1195,11 @@ func isSubdirectory(rootDir, subDir string) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4969** (2026-09-07): **[bug] 升级至 4.3 创建新的项目使用托管模式，创建环境时不能读取集群配置，如图所示**
-  *Symptoms*: <img width="1372" height="822" alt="Image" src="https://github.com/user-attachments/assets/58122a11-edc5-4043-835e-09bb044cc336" /> 
-  **Post-Mortem & Fix Analysis**:
-  > 新建的托管项目，升级前的项目不受影响
+- **Issue #5118** (2026-11-20): **fix: correct zadig sub components.**
+  *Symptoms*: ### What this PR does / Why we need it:   fix: correct zadig sub components.   ### Does this PR introduce a user-facing change?  - [ ] API change - [ ] database schema change - [ ] upgrade assistant change   - [ ] change in non-functional attributes such as efficiency or availability - [ ] fix of a previous issue  <!-- Reviewable:start --> - - - This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/koderover/zadig/5118) <!-- Reviewable:end --> 
 
-- **Issue #4816** (2026-07-31): **cp-4799: add permission for reordering release jobs in update release plan.**
-  *Symptoms*: ### What this PR does / Why we need it:  cherry-pick for #4799   ### What is changed and how it works?   ### Does this PR introduce a user-facing change?  - [ ] API change - [ ] database schema change - [ ] upgrade assistant change   - [ ] change in non-functional attributes such as efficiency or availability - [ ] fix of a previous issue  <!-- Reviewable:start --> - - - This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/koderover/zadig/4816) <!-- Reviewable:end --> 
+- **Issue #5117** (2026-11-20): **fix: correct zadig sub components.**
+  *Symptoms*: ### What this PR does / Why we need it:   ### What is changed and how it works?   ### Does this PR introduce a user-facing change?  - [ ] API change - [ ] database schema change - [ ] upgrade assistant change   - [ ] change in non-functional attributes such as efficiency or availability - [ ] fix of a previous issue  <!-- Reviewable:start --> - - - This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/koderover/zadig/5117) <!-- Reviewable:end --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1218,209 +1216,476 @@ func isSubdirectory(rootDir, subDir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39229c91` (2026-11-18)
-**Commit Message**: chore(labeler): update service labels in GitHub Actions configuration. (#5102)
+### Incident Patch 1: `ded50e02` (2026-11-20)
+**Commit Message**: fix: avoid panic on GitHub push events from GitHub Apps (#5114)
 
-Signed-off-by: leozhang2018 <[REDACTED_EMAIL]>
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
 
-**File**: `.github/labeler.yml` (modified, +20/-7)
+**File**: `pkg/microservice/aslan/core/workflow/service/webhook/github.go` (modified, +2/-2)
 ```diff
-@@ -1,11 +1,20 @@
- # Add 'service' label to any change to microservice files within the source dir
- service/aslan:
- - pkg/microservice/aslan/**/*
--- pkg/microservice/picket/**/*
--- pkg/microservice/user/**/*
--- pkg/microservice/policy/**/*
-+
-+service/config:
- - pkg/microservice/systemconfig/**/*
- 
-+service/user:
-+- pkg/microservice/user/**/*
-+
-+service/halman:
-+- pkg/microservice/halman/**/*
-+
-+service/init:
-+- cmd/init/**/*
-+- pkg/cli/initconfig/**/*
-+
- service/cron:
- - pkg/microservice/cron/**/*
- 
-@@ -16,17 +25,21 @@ service/reaper:
- - pkg/microservice/reaper/**/*
- - pkg/microservice/jobexecutor/**/*
- 
--service/warpdrive:
--- pkg/microservice/warpdrive/**/*
--
- service/hubserver:
- - pkg/microservice/hubserver/**/*
- 
- service/hubagent:
- - pkg/microservice/hubagent/**/*
- 
-+service/picket:
-+- pkg/microservice/picket/**/*
-+
-+service/podexec:
-+- pkg/microservice/podexec/**/*
-+
- service/upgradeassistant:
--- pkg/microservice/upgradeassistant/**/*
-+- cmd/ua/**/*
-+- pkg/cli/upgradeassistant/**/*
- 
- common:
-   - pkg/config/**/*
+@@ -327,8 +327,8 @@ func ProcessGithubWebHook(payload []byte, req *http.Request, requestID string, l
+ 		if et.Pusher != nil {
+ 			webhookUser := &commonmodels.WebHookUser{
+ 				Domain:    req.Header.Get("X-Forwarded-Host"),
+-				UserName:  *et.Pusher.Name,
+-				Email:     *et.Pusher.Email,
++				UserName:  et.Pusher.GetName(),
++				Email:     et.Pusher.GetEmail(),
+ 				Source:    setting.SourceFromGithub,
+ 				CreatedAt: time.Now().Unix(),
+ 			}
+```
+
+**File**: `pkg/microservice/aslan/core/workflow/service/webhook/github_workflow_task.go` (modified, +1/-1)
+```diff
+@@ -64,7 +64,7 @@ func (gpem *githubPushEventMatcher) Match(hookRepo *commonmodels.MainHookRepo) (
+ 		return false, nil
+ 	}
+ 	hookRepo.Branch = branch
+-	hookRepo.Committer = *ev.Pusher.Name
++	hookRepo.Committer = ev.Pusher.GetName()
+ 	var changedFiles []string
+ 	for _, commit := range ev.Commits {
+ 		changedFiles = append(changedFiles, commit.Added...)
+```
+
+**File**: `pkg/microservice/aslan/core/workflow/service/webhook/github_workflowv4_task.go` (modified, +1/-1)
+```diff
+@@ -63,7 +63,7 @@ func (gpem *githubPushEventMatcheForWorkflowV4) Match(hookRepo *commonmodels.Mai
+ 		return false, nil
+ 	}
+ 	hookRepo.Branch = branch
+-	hookRepo.Committer = *ev.Pusher.Name
++	hookRepo.Committer = ev.Pusher.GetName()
+ 	var changedFiles []string
+ 	for _, commit := range ev.Commits {
+ 		changedFiles = append(changedFiles, commit.Added...)
 ```
 
 ---
 
-### Incident Patch 2: `b38da57c` (2026-11-18)
-**Commit Message**: docs(ua): rotate encryption key without Helm upgrades (#5096)
+### Incident Patch 2: `2076e082` (2026-11-20)
+**Commit Message**: fix: correct zadig sub components. (#5117)
 
-* docs(ua): rotate encryption key without Helm upgrades
+Signed-off-by: leozhang2018 <[REDACTED_EMAIL]>
 
-The v5.1.0 chart now always keeps the key in secret zadig-aes-key on
-upgrade, so restore the stopped services with kubectl instead of two
-Helm upgrades, and restart other deployments that read the secret.
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
-* docs(ua): change the Dex client secret after key rotation
-
-Old installs share both the public AES key and the public Dex client
-secret. After the AES key is switched and accepted, change the Dex
-secret with a normal Helm upgrade and check that no default secret
-warning remains.
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
-**File**: `examples/encryption-key-rotation/README.md` (modified, +87/-92)
+**File**: `LICENSE` (modified, +0/-7)
 ```diff
-@@ -1,12 +1,12 @@
- # 加密密钥轮换
+@@ -230,10 +230,3 @@ The Zadig project contains subcomponents with separate copyright
+ notices and license terms. Your use of the source code for the these
+ subcomponents is subject to the terms and conditions of the following
+ licenses.
+-
+-
+-==============================================================================
+-For k8sgpt:
+-==============================================================================
+-This product bundles k8sgpt, which is licensed under the Apache License 2.0
+-https://github.com/k8sgpt-ai/k8sgpt/blob/main/LICENSE.
+\ No newline at end of file
+```
+
+---
+
+### Incident Patch 3: `60b1811d` (2026-11-20)
+**Commit Message**: fix(halman): resolve cluster IDs before environment creation (#5109)
+
+* fix(halman): resolve cluster IDs before environment creation
+
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
+
+* fix(halman): streamline onboarding continuation and handle model timeouts
+
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
+
+* fix(halman): avoid redundant onboarding lookups
+
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
+
+* fix(halman): require build intent before onboarding confirmation
+
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
+
+* fix(aslan): make AI assistant stats database limits configurable
+
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
+
+* fix(halman): extend assistant run timeout to ten minutes
+
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
+
+* fix(halman): restore onboarding using root execution status
+
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
+
+* fix(halman): cancel expired confirmation plans
+
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
+
+* fix(halman): distinguish unverified results when deleting conversations
+
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
+
+* fix(halman): show deletion-specific error text
+
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
+
+* fix(halman): allow del
+
+**File**: `community/rfc/2026-10-28-zadig-ai-assistant-design.md` (modified, +4/-4)
+```diff
+@@ -602,12 +602,12 @@ AI 使用自己的连接池，不调整 user 服务的连接池，也不对共
+ | 每个 halman 实例 MySQL 连接总上限 | 50，环境变量 `HALMAN_DB_MAX_CONNECTIONS` |
+ | 每个 halman 实例 MySQL 空闲连接总上限 | 默认 10，每池最多 5，且不超过各自上限 |
+ | 满载时短等待上限 | 默认 2 秒，环境变量 `HALMAN_ADMISSION_WAIT_TIMEOUT` |
+-| 每个 aslan 实例报表 SQL 并发及连接上限 | 3，独立只读连接池；空闲上限为 1 |
++| 每个 aslan 实例报表 SQL 并发及连接上限 | 默认 5，环境变量 `ASLAN_AI_ASSISTANT_STATS_DB_MAX_CONNECTIONS`，空闲上限为 1 |
+ | 清理工作者 | 1 |
  
--本文说明如何更换 Zadig 的 AES 加密密钥。
-+本文说明如何更换 Zadig 的 AES 加密密钥和 Dex 客户端密钥。适用于仍在使用公开默认密钥的环境，或怀疑密钥已经泄露的环境。
+ halman 的 Session 和业务 DAO 使用独立受限连接池，合计不得超过 `HALMAN_DB_MAX_CONNECTIONS`，默认 50。业务池取总预算的六成向下取整，框架池取剩余部分，默认分别为 30 和 20；各池空闲连接上限为 5，且不超过各自连接上限。日聚合写入、历史清理及框架存储复用这两个连接池，不另建池。配置读取复用现有 MongoDB 初始化和驱动连接池，不计入 MySQL 预算。
  
--UA 的 `rotate-encryption-key` 命令以 Kubernetes Job 的形式在维护窗口内单独运行，它会做两件事：把数据库中已有的密文改用新密钥重新加密，并更新代码源上 Webhook 的 Secret。集群中的密钥 Secret 和 Dex 配置不由这个命令修改，需要按下文步骤手动切换。
-+UA 的 `rotate-encryption-key` 命令以 Kubernetes Job 的形式在维护窗口内单独运行，它会做两件事：把数据库中已有的密文改用新密钥重新加密，并更新代码源上 Webhook 的 Secret。集群中的密钥 Secret 不由这个命令修改，需要按下文步骤用 kubectl 手动切换，这部分不需要执行 Helm upgrade。AES 密钥切换并验收后，再用一次普通 Helm upgrade 更换 Dex 客户端密钥。
+-报表读取位于 aslan，使用第 10 节定义的独立只读连接池，每个 aslan 实例最多三个连接，不包含在 halman 的 50 个连接中。第一期 halman 固定单副本，AI 功能新增的 MySQL 连接上限为 `HALMAN_DB_MAX_CONNECTIONS + 3 × aslan 副本数`；例如两个 aslan 副本时，默认新增上限为 56。该值不包含 user、dex 等已有连接池，应与现有服务连接预算一起评估共享实例容量。
++报表读取位于 aslan，使用第 10 节定义的独立只读连接池。第一期 halman 固定单副本，AI 功能新增的 MySQL 连接上限为 `HALMAN_DB_MAX_CONNECTIONS + ASLAN_AI_ASSISTANT_STATS_DB_MAX_CONNECTIONS × aslan 副本数`。例如两个 aslan 副本时，默认新增上限为 60。该值不包含 user、dex 等已有连接池，应与现有服务连接预算一起评估共享实例容量。
  
- ## 前提
+ 第一期使用 `Recreate`，不产生滚动升级的重叠副本。
  
--- 已先升级到兼容的业务镜像和 Chart，仍使用原 AES/Dex Secret。配套 Chart 必须为 Zadig v5.1.0 及以上版本，该版本起包含密钥保留及校验逻辑；不能使用 v5.1.0 之前的 Chart。
-+- 已先升级到兼容的业务镜像和 Chart，仍使用原 AES/Dex Secret。配套 Chart 必须为 Zadig v5.1.0 及以上版本，该版本起升级时始终沿用集群 Secret 中的密钥、忽略 values 中的 `global.encryption.key`；不能使用 v5.1.0 之前的 Chart，否则后续升级可能用 values 中的旧密钥覆盖 Secret。
- - 关闭业务入口、工作流/定时触发/Webhook 消费，结束运行任务，停止 user、aslan、hub-server、cron 等密文读写服务；同时暂停会恢复副本数的 HPA/GitOps 等外部控制器。
- - 停写后完成 MongoDB、MySQL 用户库和 Dex 库、当前 AES Secret、Helm values、Dex Secret、Webhook 清单和 Agent YAML 的最终备份。
- - 本工具只支持 MySQL。代码源 OAuth Token 须在维护前确认有效；dry-run 不刷新 Token、不写数据库或 Redis。
-@@ -33,21 +33,21 @@ dry-run Job ──► 报告 phase: validated、failed 为 0，处理 manual_web
- 创建 zadig-aes-key-previous（旧密钥），当前 Secret 切到新密钥 ──► 指纹校验
-   │
-   ▼
--第二次 Helm upgrade：Dex 新 Secret，四个服务保持 0，--no-hooks ──► 再次指纹校验
-+kubectl 恢复四个服务的原副本数，重启其他引用该 Secret 的服务 ──► 验收 ──► 恢复业务触发、入口和外部控制器
-   │
-   ▼
--第三次 Helm upgrade：四个服务恢复到原副本数 ──► 验收 ──► 恢复业务触发、入口和外部控制器
-+删除 zadig-aes-key-next
-   │
-   ▼
--删除 zadig-aes-key-next
-+普通 Helm upgrade 更换 Dex 客户端密钥 ──► 确认 Helm 输出无默认密钥警告
-   │
-   ▼
- 全部 Agent 升级完成后，尽快删除 zadig-aes-key-previous
- ```
+@@ -679,7 +679,7 @@ halman 在清理周期的结构化日志中输出当前进程的清理尝试、
  
- ## 执行
+ 对外统计接口统一放在 aslan `stat/v2`：四个独立 GET 接口 `/overview`、`/trends`、`/skills`、`/rankings`（公共前缀 `/api/aslan/stat/v2/ai_assistant`），Swagger tag 为 `stat`。aslan 在入口校验当前登录用户为系统管理员或具有查看 AI 助手报告权限，并检查有效企业版许可证，通过 `stat/service`、`stat/repository/orm` 直接查询 `zadig_ai.ai_usage_daily` 并计算指标。AI 关闭、模型未配置或 halman 停机时仍可查询已有日聚合。删除 halman 的报告查询实现和内部 HTTP 接口；halman 仍是日聚合写入、建表和过期清理的唯一维护方。
  
--以下命令使用当前 kubectl context。先确认目标集群和安装命名空间；命名空间、release、Chart 路径和镜像地址需要替换。以下命令需安装 kubectl、Helm、Python 3 和 OpenSSL，不需要其他组件；后文用到的 `kubectl kustomize` 是 kubectl 自带的子命令，无需单独安装 kustomize。
-+以下命令使用当前 kubectl context。先确认目标集群和安装命名空间；命名空间、release 和镜像地址需要替换。以下命令需安装 kubectl、Helm、Python 3 和 OpenSSL，不需要其他组件；Helm 用于查看 release、备份 values，以及最后更换 Dex 客户端密钥。
+-aslan 复用 `MYSQL_HOST`、`MYSQL_USER`、`MYSQL_PASSWORD`，首次统计查询时创建独立 GORM 连接池，每个 aslan 实例最多三个连接、空闲一个，连接最长存活五分钟；只执行 SELECT，不探测连通性、不建库、不建表、不运行迁移。移除报告互斥锁，由连接池控制最多三个并行 SQL 查询，其余查询在池内等待；等待连接和执行查询共用三秒预算，超时返回 HTTP 400/code 7212；数据库配置缺失、不可达或聚合表尚未初始化时只使统计接口返回 HTTP 400/code 7212，不阻止 aslan 启动及其他接口。部署需为 aslan 注入上述现有 MySQL 配置，并与 halman 使用相同 `TZ`（示例为 `Asia/Shanghai`），按 aslan 副本数累计连接预算。小连接池不隔离共享 MySQL 的 CPU、磁盘压力，仍需保持日期范围限制和查询限流。
++aslan 复用 `MYSQL_HOST`、`MYSQL_USER`、`MYSQL_PASSWORD`，首次统计查询时创建独立 GORM 连接池。每个副本的连接上限由 `ASLAN_AI_ASSISTANT_STATS_DB_MAX_CONNECTIONS` 配置（默认 5），最多保留一个空闲连接，连接最长存活五分钟。统计只执行 SELECT，不探测连通性、不建库、不建表、不运行迁移。超出连接上限的查询在池内等待。连接池等待、SQL 和 user 查询共用 `ASLAN_AI_ASSISTANT_STATS_TIMEOUT` 预算（默认 `10s`），MySQL 驱动连接、读和写超时使用相同配置。空值或无效值回退到默认值。超时、数据库配置缺失、不可达或聚合表尚未初始化时，统计接口返回 HTTP 400 和错误码 7212，aslan 启动及其他接口仍可用。部署需为 aslan 注入上述现有 MySQL 配置，与 halman 使用相同 `TZ`（例如 `Asia/Shanghai`），并按 aslan 副本数累加连接预算。连接池上限只约束连接数量，仍需通过日期范围和查询限流控制共享 MySQL 的 CPU 和磁盘压力。
  
- 下面这段确认当前集群，并设置后续命令共用的变量。
+ 业务报告移除 `maintenance`、`business_database_pool`；halman 的清理进度、积压和连接池状态继续写入清理周期的结构化日志，不通过产品报告查询。
  
-@@ -57,17 +57,16 @@ helm list -A
- ZADIG_CONTEXT=$(kubectl config current-context)
- ZADIG_NAMESPACE='<安装命名空间>'
- ZADIG_RELEASE='<现有 Helm release>'
--ZADIG_CHART='<阶段一已部署的同一份 Chart 目录或 tgz 的绝对路径>'
- helm history "$ZADIG_RELEASE" --kube-context "$ZADIG_CONTEXT" -n "$ZADIG_NAMESPACE"
- ```
+@@ -689,7 +689,7 @@ aslan 复用 `MYSQL_HOST`、`MYSQL_USER`、`MYSQL_PASSWORD`，首次统计查询
  
--第二次及后续 upgrade 必须使用阶段一的同一份 Chart（v5.1.0 及以上），同时核对 `helm history` 中的版本；相同版本号不保证包内容一致。更换 Chart 可能改变依赖 `.Chart.AppVersion` 的镜像，`--reuse-values` 不能保证镜像不变。
-+核对 `helm history` 中当前部署的 Chart 为 v5.1.0 及以上。
+ 所有报告指标增加 `total_tokens` 和 `model_usage[]`，后者包含 `model_id`、`model`、`input_tokens`、`output_tokens`、`total_tokens`，按模型集成 ID 和调用时的模型名排序，无数据返回 `[]`。`ai_usage_daily` 主键扩展为 `(date, user_id, skill_id, model_id, model_name)`；调用次数、耗时及 Token 从该次 `ai_run` 的模型快照写入对应模型行，任务终态、完成耗时和反馈继续写入空模型维度。修正任务贡献时仅更新空模型行，汇总时跨模型求和并对用户去重，不能按模型重复计算任务数。模型信息随日聚合保留三百六十五天，不依赖已到期的运行记录或当前模型配置，不增加表。
  
- 关闭业务入口和触发、结束运行任务后，先记录副本数，再停服务。以下目录包含密钥，按客户密钥管理要求保管；不要开启 shell 的 `set -x`。命令中的 Deployment 名称为 Chart 默认名称，自定义部署先核对名称。
+-概览 `total_users` 通过现有 user SDK 查询系统当前用户总数，与 `metrics.active_users` 配合计算团队渗透率；它是当前用户数，不是上期历史用户数。排行批量查询最多二十名用户的当前名称，返回 `user_name`；已删除或名称为空的用户回退为 `user_id`。user 查询失败返回统计失败，不能把系统用户总数默认为零或将查询故障当成用户已删除。SQL、连接等待与 user 查询共用三秒请求预算。分类和排行的模型明细仅查询报告实际返回的分组。
++概览 `total_users` 通过现有 user SDK 查询系统当前用户总数，与 `metrics.active_users` 配合计算团队渗透率；它是当前用户数，不是上期历史用户数。排行批量查询最多二十名用户的当前名称，返回 `user_name`；已删除或名称为空的用户回退为 `user_id`。user 查询失败返回统计失败，不能把系统用户总数默认为零或将查询故障当成用户已删除。分类和排行的模型明细仅查询报告实际返回的分组。
  
- 脚本作用：
- 1. 创建权限为 700 的维护目录，把上面的变量写入 `session.sh`，终端断开后可以恢复。
--2. 导出四个 Deployment 的当前定义，从中读出原副本数，写入 `replicas.before-values.json`，最后恢复服务时使用。
-+2. 导出四个 Deployment 的当前定义，从中读出原副本数，写入 `replicas.before.json`，最后恢复服务时使用。
- 3. 把四个服务缩到 0，并等待 Pod 全部退出。
  
- ```bash
-@@ -76,12 +75,12 @@ ROTATION_DIR=$(mktemp -d "$PWD/zadig-key-rotation.XXXXXX")
- printf '维护目录（请记录绝对路径）: %s\n' "$ROTATION_DIR"
- (
- set -eu
--python3 - "$ROTATION_DIR" "$ZADIG_CONTEXT" "$ZADIG_NAMESPACE" "$ZADIG_RELEASE" "$ZADIG_CHART" <<'PY'
-+python3 - "$ROTATION_DIR" "$ZADIG_CONTEXT" "$ZADIG_NAMESPACE" "$ZADIG_RELEASE" <<'PY'
- import shlex
- import sys
- from pathlib import Path
+ Skill 分类在 SQL 中通过 `ai_usage_daily.skill_id=ai_skill.id` 关联分类汇总，不再硬编码 Skill ID 映射：`workflow_diagnosis`、`service_diagnosis` 归入故障排查，`project_onboarding`、`service_onboarding` 归入实施辅助；`environment_inspection`、`efficiency_diagnosis` 归入巡检诊断；发布辅助当前无对应 Skill，返回零值。普通聊天和未分类 Skill 不计入分类报告。分类内活跃用户跨 Skill 去重，完成率和反馈采纳率按分类总量重新计算，不相加用户数或平均各 Skill 比例。仍按 Skill 写入日聚合，分类取自新增的 `ai_skill` 表；概览节省人力继续按单个 Skill 计算，其他报告口径不变。
+```
+
+**File**: `pkg/microservice/aslan/config/config.go` (modified, +16/-0)
+```diff
+@@ -41,6 +41,22 @@ func AIReviewGitPollInterval() time.Duration {
+ 	return interval
+ }
  
--names = ("ROTATION_DIR", "ZADIG_CONTEXT", "ZADIG_NAMESPACE", "ZADIG_RELEASE", "ZADIG_CHART")
-+names = ("ROTATION_DIR", "ZADIG_CONTEXT", "ZADIG_NAMESPACE", "ZADIG_RELEASE")
- Path(sys.argv[1], "session.sh").write_text("umask 077\n" + "".join(
-     f"{name}={shlex.quote(value)}\n" for name, value in zip(names, sys.argv[1:])))
- PY
-@@ -92,11 +91,11 @@ import sys
- from pathlib import Path
++func AIAssistantStatsTimeout() time.Duration {
++	timeout, err := time.ParseDuration(strings.TrimSpace(viper.GetString(setting.ENVAslanAIAssistantStatsTimeout)))
++	if err != nil || timeout <= 0 {
++		return 10 * time.Second
++	}
++	return timeout
++}
++
++func AIAssistantStatsDBMaxConnections() int {
++	connections, err := strconv.Atoi(strings.TrimSpace(viper.GetString(setting.ENVAslanAIAssistantStatsDBMaxConnections)))
++	if err != nil || connections < 1 {
++		return 5
++	}
++	return connections
++}
++
+ // 服务默认等待启动时间，默认5分钟
+ func ServiceStartTimeout() int {
+ 	serviceStartTimeout := viper.GetString(setting.ENVServiceStartTimeout)
+```
+
+**File**: `pkg/microservice/aslan/core/stat/repository/orm/ai_assistant_database.go` (modified, +4/-2)
+```diff
+@@ -12,6 +12,7 @@ import (
+ 	"gorm.io/gorm/logger"
  
- folder = Path(sys.argv[1])
--names = {"user": "user", "aslan": "aslan", "hub-server": "hubServer", "cron": "cron"}
-+names = {"user", "aslan", "hub-server", "cron"}
- items = json.loads((folder / "deployments.before.json").read_text())["items"]
--replicas = {names[item["metadata"]["name"]]: {"replicas": str(item["spec"]["replicas"])} for item in items}
--assert set(replicas) == set(names.values()), "missing maintenance deployment"
--(folder / "replicas.before-values.json").write_text(json.dumps({"microservice": replicas}))
-+replicas = {item["metadata"]["name"]: item["spec"]["replicas"] for item in items}
-+assert set(replicas) == names, "missing maintenance deployment"
-+(folder / "replicas.before.json").write_text(json.dumps(replicas))
- PY
- kubectl --context "$ZADIG_CONTEXT" -n "$ZADIG_NAMESPACE" scale deployment/user deployment/aslan deployment/hub-server deployment/cron --replicas=0
- for service in user aslan hub-server cron; do
-@@ -107,7 +106,7 @@ done
- 
- 确认整个命令块成功，核对相关 Pod 已退出、没有其他写入者后，完成前述数据库等最终备份，再保存当前 Secret 和完整 Helm values。备份失败时不得继续迁移。
- 
--下面这段把当前 `zadig-aes-key` 和 release 的全部 values 导出到维护目录，后面构造旧密钥 Secret 和 Dex values 时会用到。
-+下面这段把当前 `zadig-aes-key` 和 release 的全部 values 导出到维护目录，前者用于构造旧密钥 Secret，后者作为备份。
- 
- ```bash
- (
-@@ -196,7 +195,7 @@ kubectl --context "$ZADIG_CONTEXT" -n "$ZADIG_NAMESPACE" patch secret zadig-aes-
+ 	"github.com/koderover/zadig/v2/pkg/config"
++	aslanconfig "github.com/koderover/zadig/v2/pkg/microservice/aslan/config"
  )
- ```
  
--Secret 切换成功后，先校验当前 Se
+ type AIAssistantStatsStore struct {
+@@ -25,7 +26,7 @@ var assistantStatsDatabase struct {
+ }
+ 
+ func NewAIAssistantStatsStore(db *sql.DB) (*AIAssistantStatsStore, error) {
+-	db.SetMaxOpenConns(3)
++	db.SetMaxOpenConns(aslanconfig.AIAssistantStatsDBMaxConnections())
+ 	db.SetMaxIdleConns(1)
+ 	db.SetConnMaxLifetime(5 * time.Minute)
+ 	orm, err := gorm.Open(gormmysql.New(gormmysql.Config{Conn: db, SkipInitializeWithVersion: true}), &gorm.Config{
+@@ -52,7 +53,8 @@ func GetAIAssistantStatsStore() (*AIAssistantStatsStore, error) {
+ 	cfg.User, cfg.Passwd, cfg.Addr = config.MysqlUser(), config.MysqlPassword(), config.MysqlHost()
+ 	cfg.Net, cfg.DBName = "tcp", config.MysqlAIDB()
+ 	cfg.ParseTime, cfg.Loc = true, time.UTC
+-	cfg.Timeout, cfg.ReadTimeout, cfg.WriteTimeout = 3*time.Second, 3*time.Second, 3*time.Second
++	timeout := aslanconfig.AIAssistantStatsTimeout()
++	cfg.Timeout, cfg.ReadTimeout, cfg.WriteTimeout = timeout, timeout, timeout
+ 	db, err := sql.Open("mysql", cfg.FormatDSN())
+ 	if err != nil {
+ 		return nil, fmt.Errorf("AI 助手统计 MySQL 配置无效")
+```
+
+**File**: `pkg/microservice/aslan/core/stat/repository/orm/ai_assistant_test.go` (modified, +2/-4)
+```diff
+@@ -13,6 +13,7 @@ import (
+ )
+ 
+ func TestAIAssistantStatsDatabaseIsLazyAndDoesNotInitializeSchema(t *testing.T) {
++	t.Setenv(setting.ENVAslanAIAssistantStatsDBMaxConnections, "")
+ 	CloseAIAssistantStatsStore()
+ 	oldHost, oldUser := viper.Get(setting.ENVMysqlHost), viper.Get(setting.ENVMysqlUser)
+ 	t.Cleanup(func() {
+@@ -28,7 +29,7 @@ func TestAIAssistantStatsDatabaseIsLazyAndDoesNotInitializeSchema(t *testing.T)
+ 	// 此地址无需运行 MySQL；初始化过程中不得连接或执行建表 SQL。
+ 	viper.Set(setting.ENVMysqlHost, "127.0.0.1:1")
+ 	store, err := GetAIAssistantStatsStore()
+-	if err != nil || store.SQLDB.Stats().OpenConnections != 0 || store.SQLDB.Stats().MaxOpenConnections != 3 {
++	if err != nil || store.SQLDB.Stats().OpenConnections != 0 || store.SQLDB.Stats().MaxOpenConnections != 5 {
+ 		t.Fatalf("首次初始化必须延迟连接且限制连接预算: %v", err)
+ 	}
+ 	again, err := GetAIAssistantStatsStore()
+@@ -57,9 +58,6 @@ func mockStatsStore(t *testing.T) (*AIAssistantStatsStore, sqlmock.Sqlmock) {
+ 		}
+ 		db.Close()
+ 	})
+-	if db.Stats().MaxOpenConnections != 3 {
+-		t.Fatal("统计连接池必须限制为三个连接")
+-	}
+ 	return store, mock
+ }
+ 
+```
+
+**File**: `pkg/microservice/aslan/core/stat/service/ai_assistant.go` (modified, +8/-6)
+```diff
+@@ -8,6 +8,7 @@ import (
+ 
+ 	"github.com/go-resty/resty/v2"
+ 
++	aslanconfig "github.com/koderover/zadig/v2/pkg/microservice/aslan/config"
+ 	"github.com/koderover/zadig/v2/pkg/microservice/aslan/core/stat/repository/models"
+ 	statorm "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/stat/repository/orm"
+ 	"github.com/koderover/zadig/v2/pkg/shared/client/user"
+@@ -78,9 +79,6 @@ func queryAIAssistantStats(ctx context.Context, kind, fromDate, toDate string) (
+ 	if err != nil {
+ 		return nil, fmt.Errorf("%w: %s", ErrAIAssistantStatsRange, err.Error())
+ 	}
+-	// 等待连接和查询共用预算，页面并行加载四类报告时由数据库连接池控制并发。
+-	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+-	defer cancel()
+ 	store, err := getAIAssistantStatsStore()
+ 	if err != nil {
+ 		return nil, fmt.Errorf("%w: %v", ErrAIAssistantStatsUnavailable, err)
+@@ -113,7 +111,7 @@ func previousStatsRange(period models.AIAssistantStatsPeriod) (string, string) {
+ 
+ func statsUserClient(ctx context.Context) *user.Client {
+ 	client := newAIAssistantStatsUserClient()
+-	client.SetTimeout(3 * time.Second)
++	client.SetTimeout(aslanconfig.AIAssistantStatsTimeout())
+ 	client.OnBeforeRequest(func(_ *resty.Client, request *resty.Request) error {
+ 		request.SetContext(ctx)
+ 		return nil
+@@ -139,7 +137,7 @@ func assistantOverviewData(report *aiAssistantStatsData) models.AIAssistantStats
+ }
+ 
+ func GetAIAssistantStatsOverview(ctx context.Context, from, to string) (*models.AIAssistantStatsOverviewResponse, error) {
+-	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
++	ctx, cancel := context.WithTimeout(ctx, aslanconfig.AIAssistantStatsTimeout())
+ 	defer cancel()
+ 	report, err := queryAIAssistantStats(ctx, "overview", from, to)
+ 	if err != nil {
+@@ -165,6 +163,8 @@ func GetAIAssistantStatsOverview(ctx context.Context, from, to string) (*models.
+ }
+ 
+ func GetAIAssistantStatsTrends(ctx context.Context, from, to string) (*models.AIAssistantStatsTrendsResponse, error) {
++	ctx, cancel := context.WithTimeout(ctx, aslanconfig.AIAssistantStatsTimeout())
++	defer cancel()
+ 	report, err := queryAIAssistantStats(ctx, "trends", from, to)
+ 	if err != nil {
+ 		return nil, err
+@@ -177,6 +177,8 @@ func GetAIAssistantStatsTrends(ctx context.Context, from, to string) (*models.AI
+ }
+ 
+ func GetAIAssistantStatsSkills(ctx context.Context, from, to string) (*models.AIAssistantStatsSkillsResponse, error) {
++	ctx, cancel := context.WithTimeout(ctx, aslanconfig.AIAssistantStatsTimeout())
++	defer cancel()
+ 	report, err := queryAIAssistantStats(ctx, "skills", from, to)
+ 	if err != nil {
+ 		return nil, err
+@@ -200,7 +202,7 @@ func GetAIAssistantStatsSkills(ctx context.Context, from, to string) (*models.AI
+ }
+ 
+ func GetAIAssistantStatsRankings(ctx context.Context, from, to string) (*models.AIAssistantStatsRankingsResponse, error) {
+-	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
++	ctx, cancel := context.WithTimeout(ctx, aslanconfig.AIAssistantStatsTimeout())
+ 	defer cancel()
+ 	report, err := queryAIAssistantStats(ctx, "rankings", from, to)
+ 	if err != nil {
+```
+
+**File**: `pkg/microservice/aslan/core/stat/service/ai_assistant_test.go` (modified, +22/-12)
+```diff
+@@ -4,21 +4,21 @@ import (
+ 	"context"
+ 	"encoding/json"
+ 	"errors"
+-
+-	"github.com/koderover/zadig/v2/pkg/shared/client/user"
+-	"github.com/koderover/zadig/v2/pkg/tool/httpclient"
+-	"github.com/koderover/zadig/v2/pkg/tool/log"
+ 	"io"
+ 	"net/http"
+ 	"strings"
+-
+ 	"sync"
+ 	"testing"
+ 	"time"
+ 
+ 	"github.com/DATA-DOG/go-sqlmock"
++	aslanconfig "github.com/koderover/zadig/v2/pkg/microservice/aslan/config"
+ 	"github.com/koderover/zadig/v2/pkg/microservice/aslan/core/stat/repository/models"
+ 	statorm "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/stat/repository/orm"
++	"github.com/koderover/zadig/v2/pkg/setting"
++	"github.com/koderover/zadig/v2/pkg/shared/client/user"
++	"github.com/koderover/zadig/v2/pkg/tool/httpclient"
++	"github.com/koderover/zadig/v2/pkg/tool/log"
+ )
+ 
+ var reportColumns = []string{"key", "runs", "completed", "terminal", "in", "out", "elapsed", "completed_elapsed", "positive", "negative", "users"}
+@@ -38,7 +38,7 @@ func mockAIAssistantStatsStore(t *testing.T) (*statorm.AIAssistantStatsStore, sq
+ 	newAIAssistantStatsUserClient = func() *user.Client {
+ 		client := &user.Client{Client: httpclient.New(httpclient.SetHostURL("http://user/api/v1"))}
+ 		client.SetTransport(statsUserTransport(func(r *http.Request) (*http.Response, error) {
+-			if deadline, ok := r.Context().Deadline(); !ok || time.Until(deadline) > 3*time.Second {
++			if deadline, ok := r.Context().Deadline(); !ok || time.Until(deadline) > aslanconfig.AIAssistantStatsTimeout() {
+ 				t.Error("user 查询必须共用请求超时预算")
+ 			}
+ 			body := `{"total_user":10}`
+@@ -289,6 +289,7 @@ func TestAIAssistantStatsDatabaseFailureAndRecovery(t *testing.T) {
+ }
+ 
+ func TestAIAssistantStatsFourReportsCanLoadConcurrently(t *testing.T) {
++	t.Setenv(setting.ENVAslanAIAssistantStatsDBMaxConnections, "3")
+ 	store, mock := mockAIAssistantStatsStore(t)
+ 	mock.MatchExpectationsInOrder(false)
+ 	for i := 0; i < 7; i++ {
+@@ -325,7 +326,7 @@ func TestAIAssistantStatsFourReportsCanLoadConcurrently(t *testing.T) {
+ 
+ func TestAIAssistantStatsConnectionWaitUsesQueryDeadline(t *testing.T) {
+ 	store, _ := mockAIAssistantStatsStore(t)
+-	for i := 0; i < 3; i++ {
++	for i := 0; i < store.SQLDB.Stats().MaxOpenConnections; i++ {
+ 		conn, err := store.SQLDB.Conn(context.Background())
+ 		if err != nil {
+ 			t.Fatal(err)
+@@ -339,11 +340,20 @@ func TestAIAssistantStatsConnectionWaitUsesQueryDeadline(t *testing.T) {
+ 	}
+ }
+ 
+-func TestAIAssistantStatsQueryHasThreeSecondDeadline(t *testing.T) {
+-	_, mock := mockAIAssistantStatsStore(t)
+-	mock.ExpectQuery("SELECT .*FROM ai_usage_daily").WillDelayFor(4 * time.Second).WillReturnRows(sqlmock.NewRows(reportColumns))
+-	if _, err := GetAIAssistantStatsTrends(context.Background(), "", ""); !errors.Is(err, ErrAIAssistantStatsUnavailable) {
+-		t.Fatal("查询必须受三秒预算限制")
++func TestAIAssistantStatsQueryUsesConfiguredTimeout(t *testing.T) {
++	t.Setenv(setting.ENVAslanAIAssistantStatsTimeout, "")
++	if got := aslanconfig.AIAssistantStatsTimeout(); got != 10*time.Second {
++		t.Fatalf("默认超时应为 10 秒，实际为 %s", got)
++	}
++	t.Setenv(setting.ENVAslanAIAssistantStatsTimeout, "100ms")
++	for kind, query := range aiAssistantReportQueries {
++		t.Run(kind, func(t *testing.T) {
++			_, mock := mockAIAssistantStatsStore(t)
++			mock.ExpectQuery("SELECT .*FROM ai_usage_daily").WillDelayFor(time.Second).WillReturnRows(sqlmock.NewRows(reportColumns))
++			if _, err := query(context.Background(), "", ""); !errors.Is(err, ErrAIAssistantStatsUnavailable) {
++				t.Fatalf("查询必须受环境变量配置的预算限制，实际错误为 %v", err)
++			}
++		})
+ 	}
+ }
+ 
+```
+
+**File**: `pkg/microservice/halman/MANUAL_TEST_CASES.md` (modified, +2/-2)
+```diff
+@@ -156,9 +156,9 @@
+ 
+ ### 15. 会话恢复、幂等、取消和删除
+ 
+-**步骤**：原样重发同一 runId；SSE 中途断开后重订阅同一运行；刷新历史；生成时取消，再删除空闲会话。对照测试修改正文却沿用 runId，以及删除活动运行会话。
++**步骤**：原样重发同一 runId；SSE 中途断开后重订阅同一运行；刷新历史；生成时取消，再删除空闲会话。对照测试修改正文却沿用 runId，以及删除活动运行会话和操作结果待核实的已结束会话。
+ 
+-**预期**：同一请求不重复调用模型或执行写入；冲突请求拒绝。断线不取消后台任务，重订阅不启动新任务；历史可恢复。取消停止未提交操作，但不保证撤回已提交业务；活动或仍待核实的会话不可直接删除，空闲会话删除后不可再读取。
++**预期**：同一请求不重复调用模型或执行写入；冲突请求拒绝。断线不取消后台任务，重订阅不启动新任务；历史可恢复。取消停止未提交操作，已提交操作仍可能完成。活动运行会话拒绝删除。无活动运行的会话删除后从历史中移除，待核实操作记录在后台按保留规则留存。
+ 
+ ## 执行记录
+ 
+```
+
+**File**: `pkg/microservice/halman/README.md` (modified, +12/-4)
+```diff
+@@ -114,7 +114,7 @@ halman 通过现有 MongoDB repository 直接加载助手开关、保留策略
+ | --- | --- |
+ | `POST /api/halman/conversations` | 新建本人会话 |
+ | `GET /api/halman/conversations` | 按时间及 ID 游标分页，默认 30 条 |
+-| `DELETE /api/halman/conversations/:id` | 空闲时标记删除；活动或仍待核实写结果时拒绝 |
++| `DELETE /api/halman/conversations/:id` | 无活动运行时隐藏会话，待核实操作记录按保留规则留存 |
+ | `GET /api/halman/conversations/:id/messages` | 本人历史快照分页，默认 50 个事件 |
+ | `POST /api/halman/conversations/:id/runs` | 提交问题并接收 AG-UI 事件流；相同 runId 幂等复用已有运行 |
+ | `GET /api/halman/runs/:id` | 查询运行状态 |
+@@ -171,7 +171,14 @@ halman 通过现有 MongoDB repository 直接加载助手开关、保留策略
+ 
+ Skill 分类表现按发布辅助、故障排查、实施辅助、巡检诊断的顺序固定返回四项，维度为 `category`；工作流和服务报错分析归入故障排查，项目和服务初始化归入实施辅助，环境巡检和效能诊断归入巡检诊断，发布辅助当前无对应 Skill。无数据分类返回零计数与空比例；普通聊天及未分类 Skill 不计入。分类通过 `ai_usage_daily.skill_id=ai_skill.id` 关联，分类内用户跨 Skill 去重，比例按分类总量计算；不按启停过滤历史贡献。日聚合仍按 Skill 保存，其他报告及概览估算口径不变。
+ 
+-aslan 需注入已有 `MYSQL_HOST`、`MYSQL_USER`、`MYSQL_PASSWORD` 配置，并与 halman 使用相同 `TZ`，示例为 `Asia/Shanghai`。统计首次查询时初始化 GORM 连接池，每个 aslan 实例最多三个连接、空闲一个、连接最长存活五分钟，不建库或建表，不执行迁移；统计库不可用不阻止 aslan 启动。由连接池控制最多三个并行 SQL 查询，其余在池内等待；连接等待和查询共用三秒预算，超时返回 HTTP 400/code 7212，数据库配置缺失、连接失败或聚合表尚不存在时返回 HTTP 400/code 7212，恢复后可重试。按 aslan 副本数累加连接预算，小池不能隔离共享 MySQL 的 CPU 或磁盘压力。
++aslan 需注入已有 `MYSQL_HOST`、`MYSQL_USER`、`MYSQL_PASSWORD` 配置，并与 halman 使用相同 `TZ`（例如 `Asia/Shanghai`）。统计首次查询时初始化只读 GORM 连接池，最多保留一个空闲连接，连接最长存活五分钟，不建库或建表，不执行迁移。连接池上限按 aslan 副本累加，超出上限的查询在池内等待。超时、数据库配置缺失、连接失败或聚合表尚不存在时，统计接口返回 HTTP 400 和错误码 7212，aslan 可以正常启动，统计恢复后可重试。连接池上限只约束连接数量，共享 MySQL 的 CPU 和磁盘压力仍会影响查询。
++
++| aslan 环境变量 | 默认值 | 用途 |
++| --- | --- | --- |
++| `ASLAN_AI_ASSISTANT_STATS_TIMEOUT` | `10s` | 统计请求总预算（含连接池等待、SQL 和 user 查询），也用于 MySQL 驱动的连接、读和写超时。接受带单位的正时长。 |
++| `ASLAN_AI_ASSISTANT_STATS_DB_MAX_CONNECTIONS` | `5` | 每个 aslan 副本的统计 MySQL 连接上限。接受正整数。 |
++
++环境变量为空或值无效时使用默认值。
+ 
+ 推荐只排列固定问题并返回候选上下文，不查询资源或替代执行时鉴权。报告使用 `from`、`to` 日期，默认最近三十天、最多保留三百六十五天，只读日聚合；无反馈时采纳率和估算人天为空。
+ 
+@@ -181,7 +188,7 @@ aslan 需注入已有 `MYSQL_HOST`、`MYSQL_USER`、`MYSQL_PASSWORD` 配置，
+ 
+ 所有报告指标增加 `total_tokens` 和 `model_usage[]`，后者包含 `model_id`、`model`、`input_tokens`、`output_tokens`、`total_tokens`，按模型集成 ID 和调用时的模型名排序，无数据返回 `[]`。`ai_usage_daily` 主键扩展为 `(date, user_id, skill_id, model_id, model_name)`；调用次数、耗时及 Token 从该次 `ai_run` 的模型快照写入对应模型行，任务终态、完成耗时和反馈继续写入空模型维度。修正任务贡献时仅更新空模型行，汇总时跨模型求和并对用户去重，不能按模型重复计算任务数。模型信息随日聚合保留三百六十五天，不依赖已到期的运行记录或当前模型配置，不增加表。
+ 
+-概览 `total_users` 通过现有 user SDK 查询系统当前用户总数，与 `metrics.active_users` 配合计算团队渗透率；它是当前用户数，不是上期历史用户数。排行批量查询最多二十名用户的当前名称，返回 `user_name`；已删除或名称为空的用户回退为 `user_id`。user 查询失败返回统计失败，不能把系统用户总数默认为零或将查询故障当成用户已删除。SQL、连接等待与 user 查询共用三秒请求预算。分类和排行的模型明细仅查询报告实际返回的分组。
++概览 `total_users` 通过现有 user SDK 查询系统当前用户总数，与 `metrics.active_users` 配合计算团队渗透率；它是当前用户数，不是上期历史用户数。排行批量查询最多二十名用户的当前名称，返回 `user_name`；已删除或名称为空的用户回退为 `user_id`。user 查询失败返回统计失败，不能把系统用户总数默认为零或将查询故障当成用户已删除。分类和排行的模型明细仅查询报告实际返回的分组。
+ 
+ 
+ 内置 Skill 完整定义及设置保存在 MySQL `ai_skill`，不保存到 MongoDB。`core/skill/<skill_id>.md` 通过 `go:embed` 打包作为发布源，启动时事务同步名称、分类、说明及正文，保留启停和追加规则，定义未变不更新；未来自定义来源不被覆盖。表包含 `id`、`source`、`name`、`category`、`description`、`content`、`enabled`、`custom_rules`、`created_at`、`updated_at`，没有默认提问字段，也不参与聊天到期清理。
+@@ -229,6 +236,7 @@ aslan 需注入已有 `MYSQL_HOST`、`MYSQL_USER`、`MYSQL_PASSWORD` 配置，
+ 
+ - `cancel` 仅停止 `running/executing` 运行，或放弃同一 Skill 当前最新的 `awaiting_input` 补问；`pending_confirmation` 必须通过 `confirmation` 的 `decision=reject` 拒绝，直接取消返回 HTTP 400/code 7216。已经 `cancelling` 或进入终态的重复取消不改写持久化状态。
+ - 拒绝只处理当前待确认清单，须在同一事务中核对 `active_plan_run_id`、`plan_version`、`plan_status` 及根业务状态 `pending_confirmation`；被替换的旧清单、错误版本及已经开始执行的清单返回 HTTP 400/code 7216。当前清单即使已过期也允许拒绝关闭，但不能确认执行。同一当前版本已经拒绝后再次拒绝幂等返回 204，不重复修改统计；计划指针变化后，旧请求不再视为重复拒绝。
++- 当前待确认清单到期后，由 Halman 的每分钟维护任务自动取消。若先收到确认请求，接口立即取消并返回 HTTP 400/code 7216，详情提示清单已过期并要求重新生成。取消原因通过运行详情和历史记录中的 `error` 字段返回。
+ - 取消和拒绝按会话、Skill 根执行、目标运行的顺序加行锁，与确认、生成新清单和删除串行化。状态与 Skill 聚合贡献在同一事务中更新；事务失败整体回滚。`cancel` 只在事务提交成功后停止后台上下文，拒绝不调用后台取消函数。
+ - 放弃补问时校验根业务状态及同一 Skill 最新的非重新回答运行，旧补问不能覆盖新进展；该 Skill 尚未执行的旧待确认清单同步失效，防止放弃后再次确认。其他 Skill 的进展不参与这项最新运行判断。仅增加必要的标量查询，沿用已有会话及 Skill 索引，不读取计划或上下文 JSON，不新增数据库表。
+ 
+@@ -386,7 +394,7 @@ GORM SQL 日志关闭，避免记录聊天内容及配置参数；初始化使
+ 
+ 数据库连接已占满或发生错误时暂停，下一轮补偿；不启用 SDK 整会话 TTL 删除。删除会话也逐表分批清理，并重建已到期的标题。
+ 
+-保留期内未核实的写结果阻止删除及整会话清理；超过根 Skill 保留期后入口失效，未知记录转为 `expired`，不证明业务成功或失败，不再阻挡过期根记录清理，近期补问正文仍按自己的生成时间保留。日聚合保留三百六十五天；可清理表采用固定白名单，不触碰业务审计及后续永久 AI 审计。
++用户删除会话后，保留期内未核实的写结果仍会阻止整会话物理清理。超过根 Skill 保留期后入口失效，未知记录转为 `expired`，不证明业务成功或失败，不再阻挡过期根记录清理，近期补问正文仍按自己的生成时间保留。日聚合保留三百六十五天；可清理表采用固定白名单，不触碰业务审计及后续永久 AI 审计。
+ 
+ halman 在模型运行开始、结束、取消请求受理和异常恢复时记录 INFO 日志，以 `run_id` 串联；开始记录请求、会话与模型标识，结束记录 Skill、处理结果状态、结果保存是否成功、耗时与 Token，异常恢复记录旧、新状态。结束摘要中的 `result_status` 为本次处理结果，不代替数据库中的最终状态；最终保存失败时记录一次 ERROR，包含错误类型、MySQL 错误码及超时标志，不输出可能包含输入值的原始数据库异常。正常运行仅增加开始、结束两条 INFO，不逐 Token、逐工具成功或逐消息写入日志；不记录聊天正文、工具参数、操作清单或凭据。
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5102** (2026-11-18): chore(labeler): update service labels in GitHub Actions configuration. (@leozhang2018)
-- **PR #5096** (2026-11-18): docs(ua): rotate encryption key without Helm upgrades (@huanghongbo-hhb)
-- **PR #5092** (2026-11-16): fix(zgctl): launch trusted syncthing binary for local sync (@PetrusZ)
-- **PR #5091** (2026-11-16): fix(auth): authorize Kubernetes cluster resource queries (@PetrusZ)
-- **PR #5090** (2026-11-16): fix: skip dind injection when unavailable (@Cynthia-0203)
-- **PR #5089** (2026-11-16): fix: preserve cluster registry on Redis read failure (@Cynthia-0203)
+- **PR #5118** (2026-11-20): fix: correct zadig sub components. (@leozhang2018)
+- **PR #5117** (2026-11-20): fix: correct zadig sub components. (@leozhang2018)
+- **PR #5116** (2026-11-20): fix(workflow): skip missing builds when listing referable variables (@huanghongbo-hhb)
+- **PR #5115** (2026-11-20): fix(hubserver): prevent concurrent WebSocket writes (@PetrusZ)
+- **PR #5114** (2026-11-20): fix: avoid panic on GitHub push events from GitHub Apps (@huanghongbo-hhb)
+- **PR #5113** (2026-11-20): feat(workflow): include HTML report links in notifications (@Cynthia-0203)
 
 ---
 
@@ -1440,56 +1705,33 @@ Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. labeler): update service labels in GitHub Actions configuration.
+## X. avoid panic on GitHub push events from GitHub Apps
 
 **RULE**:
-When implementing operations in `.github/labeler.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/microservice/aslan/core/workflow/service/webhook/github.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39229c91`: labeler): update service labels in GitHub Actions configuration.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ded50e02`: avoid panic on GitHub push events from GitHub Apps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/labeler.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/workflow/service/webhook/github.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-service/config:
-service/user:
-- pkg/microservice/user/**/*
-
-service/halman:
-- pkg/microservice/halman/**/*
-
-service/init:
-- cmd/init/**/*
-- pkg/cli/initconfig/**/*
-
-service/picket:
-- pkg/microservice/picket/**/*
-
-service/podexec:
-- pkg/microservice/podexec/**/*
-
-- cmd/ua/**/*
-- pkg/cli/upgradeassistant/**/*
+				UserName:  et.Pusher.GetName(),
+				Email:     et.Pusher.GetEmail(),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-- pkg/microservice/picket/**/*
-- pkg/microservice/user/**/*
-- pkg/microservice/policy/**/*
-service/warpdrive:
-- pkg/microservice/warpdrive/**/*
-
-- pkg/microservice/upgradeassistant/**/*
+				UserName:  *et.Pusher.Name,
+				Email:     *et.Pusher.Email,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39229c91` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ded50e02` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

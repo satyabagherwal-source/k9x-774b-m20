@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T23:05:41.286Z",
+  "last_updated": "2026-11-20T23:13:44.068Z",
   "total_verified_learnings": 9052,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22712,
+  "total_items": 22716,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-N7BB-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-I9UB-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f01d56d82b35ff09f57f77c16e8e951aad2630ab5f38f6368d75c5e03892597",
+      "content_hash": "1be9f71f02be81697aeb7b564b374c8e9157dfc7b70719127f25611f1604009b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T22:49:34.156Z"
+      "persisted_at": "2026-11-20T23:13:43.766Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a1f3da0e8493935bd87aa02056845b778fe7229f4f7c6c2f0d28e136c0583c55",
+      "content_hash": "d472222d96566ec161d082553da85e755d1c1665e786da4c938ae801094d2b96",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T22:49:34.285Z"
+      "persisted_at": "2026-11-20T23:13:43.918Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "93e0bb38b21ac284b345ccc0426ef9c1d56a62cf7f7c20e77fb0934dcb79ba55",
+      "content_hash": "6e0488ab19cde6fa65eeec2f8cca252d8f33f87b47be4b01cf2e4633adc406b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T22:49:34.419Z"
+      "persisted_at": "2026-11-20T23:13:44.068Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -230090,8 +230090,8 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "0b80d9e7",
-      "content_hash": "c40275c777a502a0d3432be29f270b0b427a0fc7ec9e0f5ad4c5ecb6f0e63ba4",
+      "source_version": "2076e082",
+      "content_hash": "ee50bf31586c85e02e108b0a98ac15a2e8dcc7b894fe7444c6299aa1a839b931",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
@@ -230129,6 +230129,11 @@
           "number": 9455,
           "title": "Separation of Infrastructure Inventory vs Project Resource Authorization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9658,
+          "title": "avoid panic on GitHub push events from GitHub Apps",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230136,7 +230141,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T22:07:06.322Z",
+      "verified_at": "2026-11-20T23:13:37.456Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230202,10 +230207,10 @@
       "relative_path": "08_VERIFICATION/koderover-zadig-verification-protocol-empirical-defect-shield-for-koderover-zadi.md",
       "title": "Verification Protocol: Empirical Defect Shield for koderover/zadig",
       "repository": "koderover/zadig",
-      "source_version": "0b80d9e7",
-      "content_hash": "2b3a5a541f0b54eb247147a04f682de25271bbb38a0e52776a6e45bbd5719b33",
+      "source_version": "2076e082",
+      "content_hash": "a39727ab802f57686615b4b0fbae7890af527c32ccd5426a967098b08d9796da",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T22:07:07.718Z"
+      "persisted_at": "2026-11-20T23:13:38.166Z"
     },
     "learn-github-projectdiscovery-nuclei": {
       "learning_id": "learn-github-projectdiscovery-nuclei",
@@ -230408,9 +230413,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for koderover-zadig-learnings",
       "repository": "koderover-zadig-learnings",
       "source_version": "HEAD",
-      "content_hash": "dd834bbf90c41a0d99cb99cc07e46104e257e5cd331f06e465ba2755afafdfde",
+      "content_hash": "311c11936731bcd8e4428141820a6ce4a410ae160846b982c317050580b7d881",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T22:07:50.767Z"
+      "persisted_at": "2026-11-20T23:13:43.184Z"
     },
     "learn-huggingface-argmaxinc-whisperkit-coreml": {
       "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
@@ -266095,14 +266100,19 @@
       "slug": "sveltejs-svelte",
       "platform": "github",
       "source_url": "https://github.com/sveltejs/svelte",
-      "source_version": "99c07450",
-      "content_hash": "b25680054919553309a7c0ba87e260552c84ad612b4203391bc31e5b438290ef",
+      "source_version": "04c5d8da",
+      "content_hash": "a6544c37c372f2274ece56eb323ae09a846d207e15dc2de6254a71e686c91e25",
       "dossier_path": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "promoted_rules": [
         {
           "number": 8859,
           "title": "codeblock syntax",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9657,
+          "title": "custom renderers API",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -266111,7 +266121,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T03:50:05.339Z",
+      "verified_at": "2026-11-20T23:13:29.958Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -266153,10 +266163,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sveltejs-svelte-technical-construction-intelligence-sveltejs-svelte-core-invaria.md",
       "title": "Technical Construction Intelligence: sveltejs/svelte Core Invariants",
       "repository": "sveltejs/svelte",
-      "source_version": "99c07450",
-      "content_hash": "ff0c3048b5320f35e7e29b7572cf87d3977c47c436e5cdb8e98168d8b52ded15",
+      "source_version": "04c5d8da",
+      "content_hash": "492b8de4fa5c49ac26c913415c3d538f72a09c75a4d8600ce7d0b84961e06bde",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T03:50:05.831Z"
+      "persisted_at": "2026-11-20T23:13:30.545Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte",
@@ -266165,10 +266175,10 @@
       "relative_path": "08_VERIFICATION/sveltejs-svelte-verification-protocol-empirical-defect-shield-for-sveltejs-svelt.md",
       "title": "Verification Protocol: Empirical Defect Shield for sveltejs/svelte",
       "repository": "sveltejs/svelte",
-      "source_version": "99c07450",
-      "content_hash": "eace75dcb4e274b1de37ea2125f8e7a84ebe7486e3df5580a64acc347e57c08f",
+      "source_version": "04c5d8da",
+      "content_hash": "2f2567344f36252ba902b47cfdfba0874c32ac3fcff87d863c774ec2f219942f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:50:05.962Z"
+      "persisted_at": "2026-11-20T23:13:30.697Z"
     },
     "rule-8860": {
       "learning_id": "rule-8860",
@@ -266252,9 +266262,9 @@
       "title": "Technical Construction Intelligence: sveltejs-svelte-learnings Core Invariants",
       "repository": "sveltejs-svelte-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f00f9993413c347023d4df039b3d63dadb04d3a64ad8778594d35830c70ae9a",
+      "content_hash": "21611de476cac1f5a195d9b17545e6c86c67ae1bc42038f6c4722c5354c70558",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T03:50:20.283Z"
+      "persisted_at": "2026-11-20T23:13:42.137Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte-learnings",
@@ -266264,9 +266274,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sveltejs-svelte-learnings",
       "repository": "sveltejs-svelte-learnings",
       "source_version": "HEAD",
-      "content_hash": "244414afb6b8975e3f40635ec8f380b5e8568eae8c5b20afc4203bdfacd3d382",
+      "content_hash": "dfaee714e18d4056603685d5de307e008a7352a964fe6b9a466254d549523439",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:50:20.413Z"
+      "persisted_at": "2026-11-20T23:13:42.307Z"
     },
     "candidate_directive-persist-build-txn-wal-batches-without-hollow-runs": {
       "item_id": "candidate_directive-persist-build-txn-wal-batches-without-hollow-runs",
@@ -266479,10 +266489,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-technical-construction-intelligence-koderover-zadig-core-invaria.md",
       "title": "Technical Construction Intelligence: koderover/zadig Core Invariants",
       "repository": "koderover/zadig",
-      "source_version": "39229c91",
-      "content_hash": "4251c6444948a3c4a687a6d00131bd798416858459d4c41e31c5d99d56f64adc",
+      "source_version": "2076e082",
+      "content_hash": "7ea9c13d2ff1ce1d7b554a706aa1f716e19189b10df35094b3d7d231bb662376",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T17:10:26.903Z"
+      "persisted_at": "2026-11-20T23:13:38.014Z"
     },
     "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants",
@@ -266552,9 +266562,9 @@
       "title": "Technical Construction Intelligence: koderover-zadig-learnings Core Invariants",
       "repository": "koderover-zadig-learnings",
       "source_version": "HEAD",
-      "content_hash": "eae233bc65813fbc5f342a79568413801008b8a00c5568cbe2adb395d9266197",
+      "content_hash": "652c942fae0d09be175d3a09147a87c2e2e9e351a36162611576c084073b2c46",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T17:10:30.914Z"
+      "persisted_at": "2026-11-20T23:13:43.011Z"
     },
     "learn-github-vitejs-vite": {
       "learning_id": "learn-github-vitejs-vite",
@@ -308136,6 +308146,58 @@
       "content_hash": "c2b8789e6cac000d0d8cb75440778a7a8f8b009f8a59214268dd917d9a9684bf",
       "domain_letter": "H",
       "persisted_at": "2026-11-20T23:05:40.985Z"
+    },
+    "rule-9657": {
+      "learning_id": "rule-9657",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9657,
+      "title": "custom renderers API",
+      "source_url": "https://github.com/sveltejs/svelte",
+      "source_version": "04c5d8da",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T23:13:29.958Z"
+    },
+    "candidate_directive-custom-renderers-api": {
+      "item_id": "candidate_directive-custom-renderers-api",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I8GT-custom-renderers-api.md",
+      "title": "custom renderers API",
+      "repository": "sveltejs-svelte-learnings",
+      "source_version": "HEAD",
+      "content_hash": "564b2c103bd35cbcfd6c4c7531579d4898ce5707f9443ba704c91ef9357b9ac1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:13:41.984Z"
+    },
+    "rule-9658": {
+      "learning_id": "rule-9658",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9658,
+      "title": "avoid panic on GitHub push events from GitHub Apps",
+      "source_url": "https://github.com/koderover/zadig",
+      "source_version": "2076e082",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T23:13:37.456Z"
+    },
+    "candidate_directive-avoid-panic-on-github-push-events-from-github-apps": {
+      "item_id": "candidate_directive-avoid-panic-on-github-push-events-from-github-apps",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I955-avoid-panic-on-github-push-events-from-github-apps.md",
+      "title": "avoid panic on GitHub push events from GitHub Apps",
+      "repository": "koderover-zadig-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e72d5ba46f2ec96a217593752c800c300cb519268b04a44b756f6419971f4179",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:13:42.858Z"
     }
   },
   "ai-builder-brain": {
