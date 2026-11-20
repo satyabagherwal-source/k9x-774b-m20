@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T17:12:22.928Z",
-  "total_cycles_completed": 11037,
-  "total_learnings_persisted": 11037,
-  "total_rules_promoted": 10394,
+  "last_updated": "2026-11-20T17:21:12.637Z",
+  "total_cycles_completed": 11040,
+  "total_learnings_persisted": 11040,
+  "total_rules_promoted": 10397,
   "history": [
-    {
-      "timestamp": "2026-11-19T18:20:00.524Z",
-      "repository": "kgateway-dev/kgateway",
-      "learningId": "learn-github-kgateway-dev-kgateway",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T18:20:05.508Z",
-      "repository": "infiniflow/infinity",
-      "learningId": "learn-github-infiniflow-infinity",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T18:20:07.872Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T18:32:55.938Z",
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-20T17:12:22.928Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:20:56.412Z",
+      "repository": "nats-io/nats-server",
+      "learningId": "learn-github-nats-io-nats-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:20:59.862Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:21:12.637Z",
+      "repository": "inikulin/parse5",
+      "learningId": "learn-github-inikulin-parse5",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

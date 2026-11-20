@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T17:12:57.495Z",
-  "total_records": 2156,
+  "last_updated": "2026-11-20T17:21:17.992Z",
+  "total_records": 2157,
   "domains": {
     "A": {
       "total": 17,
@@ -2069,7 +2069,7 @@
       ]
     },
     "K": {
-      "total": 119,
+      "total": 120,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2189,7 +2189,8 @@
         "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-core-invariants",
         "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-learnings-core-invariants",
         "DOM-K-28C46858",
-        "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-provablehq-snarkos-learnings-core-invariants"
       ]
     },
     "L": {
@@ -24558,8 +24559,8 @@
       "title": "Technical Construction Intelligence: inikulin/parse5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-inikulin-parse5-technical-construction-intelligence-inikulin-parse5-core-invaria.md",
       "repository": "inikulin/parse5",
-      "content_hash": "da3dae6789e93c896c198afa5d00778183457a8f50eaa60fc4d2bed64233c381",
-      "created_at": "2026-11-16T18:55:43.838Z"
+      "content_hash": "e80d639d6c6430b36807971704b65f517c577f13b1b0af380db2d3ea2335b186",
+      "created_at": "2026-11-20T17:21:12.967Z"
     },
     "domain_intelligence-architecture-intelligence-wquguru-cicada-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-wquguru-cicada-core-invariants",
@@ -24576,8 +24577,8 @@
       "title": "Technical Construction Intelligence: inikulin-parse5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-inikulin-parse5-learnings-technical-construction-intelligence-inikulin-parse5-le.md",
       "repository": "inikulin-parse5-learnings",
-      "content_hash": "4f3a2a05858d4047608176ade9dd1d7e91027e1d64f64d19622e56df944c512d",
-      "created_at": "2026-11-16T18:55:56.405Z"
+      "content_hash": "4ab5d0434b0fe3a253496043c97a817bcf3af9c21b871e811555145ca54d3b27",
+      "created_at": "2026-11-20T17:21:16.422Z"
     },
     "domain_intelligence-architecture-intelligence-wquguru-cicada-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-wquguru-cicada-learnings-core-invariants",
@@ -24771,8 +24772,8 @@
       "title": "Architecture Intelligence: nats-io/nats-server Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nats-io-nats-server-architecture-intelligence-nats-io-nats-server-core-invariant.md",
       "repository": "nats-io/nats-server",
-      "content_hash": "c5a46225d608fb91be42c21d1ad5c7ca9f94680cf277f913a09ce08e8f367795",
-      "created_at": "2026-11-16T22:03:56.702Z"
+      "content_hash": "f4dc1b2d1af1a4fa9a64f6953f0b0098eab6cae8b52186b90679fb1bf0bbd314",
+      "created_at": "2026-11-20T17:20:56.742Z"
     },
     "domain_intelligence-architecture-intelligence-nats-io-nats-server-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nats-io-nats-server-learnings-core-invariants",
@@ -24780,8 +24781,8 @@
       "title": "Architecture Intelligence: nats-io-nats-server-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nats-io-nats-server-learnings-architecture-intelligence-nats-io-nats-server-lear.md",
       "repository": "nats-io-nats-server-learnings",
-      "content_hash": "3a5a784ea5dfe20cd28d8fbbf1e2a2972da7f97d3bc876d18e0c5370bd2f4216",
-      "created_at": "2026-11-16T22:04:06.821Z"
+      "content_hash": "7f19b2f280c4b1559d12146ecf2a1ec8ccbb277db13e4adc24c390a1178d09a7",
+      "created_at": "2026-11-20T17:21:17.280Z"
     },
     "domain_intelligence-research-knowledge-intelligence-facebook-dinov3-vitl16-pretrain-lvd1689m-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-facebook-dinov3-vitl16-pretrain-lvd1689m-core-in",
@@ -35015,10 +35016,10 @@
       "record_id": "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "K",
       "title": "Quality & Verification Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-aleo-labs-protocol-snarkos-quality-verification-intelligence-aleo-labs-protocol-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-provablehq-snarkos-quality-verification-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "7704a34ffdba2af953b9155f7cffde7ea87f047e723b70c5adf6c2e31f342581",
-      "created_at": "2026-11-20T05:21:09.285Z"
+      "content_hash": "426c897065a2995245cb92b660872acd3a8d025dc1a6bc90b4a6026c81b5e09d",
+      "created_at": "2026-11-20T17:21:00.202Z"
     },
     "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva": {
       "record_id": "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva",
@@ -36362,6 +36363,15 @@
       "confidence": 0.7,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-20T17:12:56.286Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-provablehq-snarkos-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-provablehq-snarkos-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: provablehq-snarkos-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-provablehq-snarkos-learnings-quality-verification-intelligence-provablehq-snarko.md",
+      "repository": "provablehq-snarkos-learnings",
+      "content_hash": "c006e7885f1a42b71fdedafe43ec17f5ed1fc832e72938e6889414a17ec41e01",
+      "created_at": "2026-11-20T17:21:17.992Z"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T17:12:22.932Z",
+  "last_updated": "2026-11-20T17:21:12.641Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "aa8ae513b318643a2bee49b862af53771b8b4b757ac979075817f555310925da",
-      "verified_at": "2026-11-20T13:40:20.594Z",
+      "content_hash": "ab265535d132652de9a3cdbd460c8e42612c4d405b7c90b62314abf1a68b3697",
+      "verified_at": "2026-11-20T17:20:59.865Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T13:40:20.594Z"
+      "last_updated": "2026-11-20T17:20:59.865Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "f487025058c214a6460c1739bdf95d1d9ab6a34f36987b0d125a5e54c0339515",
-      "verified_at": "2026-11-19T14:28:30.768Z",
+      "content_hash": "72fa071d522da73f32de84419196ea2fd98e138accf309f14f4252231b07f250",
+      "verified_at": "2026-11-20T17:20:56.415Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T14:28:30.768Z"
+      "last_updated": "2026-11-20T17:20:56.415Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",
@@ -14106,14 +14106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-inikulin-parse5",
-      "content_hash": "8316ee9bf9588597c5b3423b563e5bf324f3639345906115a1b634cc9686ac00",
-      "verified_at": "2026-11-16T18:55:43.571Z",
+      "content_hash": "e4acc127c0db7a876e0ceecef788cae032edb7cc98acb40a00ca9f4e0927dc0d",
+      "verified_at": "2026-11-20T17:21:12.640Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T18:55:43.571Z"
+      "last_updated": "2026-11-20T17:21:12.640Z"
     },
     "kitlangton/Hex": {
       "repository": "kitlangton/Hex",

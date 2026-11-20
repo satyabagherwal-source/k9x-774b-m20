@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T16:23:34.042Z",
-    "lastVerified": "2026-11-20T16:23:34.042Z",
+    "lastChecked": "2026-11-20T17:20:57.697Z",
+    "lastVerified": "2026-11-20T17:20:57.697Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T17:12:26.095Z",
-    "lastVerified": "2026-11-20T17:12:26.095Z",
+    "lastChecked": "2026-11-20T17:21:15.752Z",
+    "lastVerified": "2026-11-20T17:21:15.752Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -555,9 +555,9 @@
   "surrealdb-surrealdb": {
     "name": "surrealdb",
     "officialUrl": "https://github.com/surrealdb/surrealdb",
-    "lastChecked": "2026-11-19T12:15:17.077Z",
+    "lastChecked": "2026-11-20T17:20:55.145Z",
     "revisionIdentifier": "1b73f91b",
-    "lastVerified": "2026-11-19T12:15:17.077Z"
+    "lastVerified": "2026-11-20T17:20:55.145Z"
   },
   "hf-baai-bge-small-en-v1.5": {
     "name": "BAAI/bge-small-en-v1.5",
@@ -1111,14 +1111,14 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T08:02:59.729Z",
-    "lastVerified": "2026-11-20T08:02:59.729Z",
+    "lastChecked": "2026-11-20T17:20:59.154Z",
+    "lastVerified": "2026-11-20T17:20:59.154Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "d175b4f59b796fcdf353b7c8de3ffabd461e91d1172c92e4f3d963e0d73b9dc5",
+    "contentHash": "ab265535d132652de9a3cdbd460c8e42612c4d405b7c90b62314abf1a68b3697",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1581,14 +1581,14 @@
     "officialUrl": "https://github.com/nats-io/nats-server",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T14:28:29.686Z",
-    "lastVerified": "2026-11-19T14:28:29.686Z",
+    "lastChecked": "2026-11-20T17:20:55.275Z",
+    "lastVerified": "2026-11-20T17:20:55.275Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-server",
-    "contentHash": "f487025058c214a6460c1739bdf95d1d9ab6a34f36987b0d125a5e54c0339515",
+    "contentHash": "72fa071d522da73f32de84419196ea2fd98e138accf309f14f4252231b07f250",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 28,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5436,9 +5436,9 @@
   "cloudwego-volo": {
     "name": "volo",
     "officialUrl": "https://github.com/cloudwego/volo",
-    "lastChecked": "2026-11-19T00:31:18.536Z",
+    "lastChecked": "2026-11-20T17:20:42.638Z",
     "revisionIdentifier": "35e91302",
-    "lastVerified": "2026-11-19T00:31:18.536Z"
+    "lastVerified": "2026-11-20T17:20:42.638Z"
   },
   "hf-openai-clip-vit-base-patch32": {
     "name": "openai/clip-vit-base-patch32",
@@ -10387,5 +10387,29 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "inikulin-parse5": {
+    "name": "inikulin/parse5",
+    "officialUrl": "https://github.com/inikulin/parse5",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-20T17:20:49.950Z",
+    "lastVerified": "2026-11-20T17:20:49.950Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-inikulin-parse5",
+    "contentHash": "e4acc127c0db7a876e0ceecef788cae032edb7cc98acb40a00ca9f4e0927dc0d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mazzzystar-queryable": {
+    "name": "Queryable",
+    "officialUrl": "https://github.com/mazzzystar/Queryable",
+    "lastChecked": "2026-11-20T17:20:47.617Z",
+    "revisionIdentifier": "19825faa",
+    "lastVerified": "2026-11-20T17:20:47.617Z"
   }
 }

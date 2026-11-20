@@ -11623,3 +11623,6 @@ Every entry in this ledger must capture:
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `614cb815` | Multi-dimensional audit evidence | 2026-11-20T17:12:19.891Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bb087a5c` | Multi-dimensional audit evidence | 2026-11-20T17:12:22.923Z |
 | `learn-dom-i-74ec8661` | `project://vectifyai-pageindex` | `614cb815` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md` | 2026-11-20T17:12:56.311Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `a0385c9a` | Multi-dimensional audit evidence | 2026-11-20T17:20:56.408Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `cfce7f98` | Multi-dimensional audit evidence | 2026-11-20T17:20:59.857Z |
+| `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `62a198aa` | Multi-dimensional audit evidence | 2026-11-20T17:21:12.633Z |

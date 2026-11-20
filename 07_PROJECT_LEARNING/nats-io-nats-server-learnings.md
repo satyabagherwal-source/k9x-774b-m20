@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `ba5c7e53`  
+> **Source Version**: `a0385c9a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T14:28:29.692Z  
+> **Timestamp**: 2026-11-20T17:20:55.443Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T14:28:29.686Z  
+> **Harvest Timestamp**: 2026-11-20T17:20:55.275Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21063 stars
+- **Stars / Engagement**: 21078 stars
 
 ---
 
@@ -2726,972 +2726,765 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba5c7e53` (2026-11-18)
-**Commit Message**: (2.16) [FIXED] Send async INFO to clients when max_payload limit changes (#8833)
+### Incident Patch 1: `20df9dfc` (2026-11-20)
+**Commit Message**: [FIXED] Filestore compression, empty block and subject state fixes (#8920)
 
-Fixes #8814 
+A block's compression wasn't recovered when rebuilding its state, so
+after a restart it was handled as uncompressed. A compressed block could
+also end up as the last block and get appended to, either after recovery
+removed the empty block after it or after a truncate.
 
-### Description
+Empty blocks were a recurring source of wrong state: compacting or
+rebuilding took the first sequence from an empty block, compacting the
+last block to empty kept the removed messages, and converting the cipher
+of an empty block failed.
 
-Currently, when an account JWT update modifies `limits.payload` or a
-config reload changes the server's `max_payload`, existing client
-connections do not receive an updated async INFO protocol message.
+The per-subject `fblk`/`lblk` could go stale after truncate and
+compaction, giving a wrong `FilteredState` last sequence, and a
+mismatched subject count made `MaxMsgsPer` enforcement in `storeRawMsg`
+spin forever.
 
-Because client libraries (like `nats.go`) validate message sizes against
-the cached `max_payload` received during the initial connect handshake:
-- If the limit is raised, existing clients continue rejecting valid
-payloads locally (`ErrMaxPayload`) until they reconnect.
-- If the limit is lowered, clients attempt to publish messages that the
-server now rejects with `-ERR 'Maximum Payload Violation'`, causing the
-connection to be closed.
-- Additionally, on config reload, `maxPayloadOption.Apply` was directly
-overwriting `client.mpay`, which accidentally stripped out stricter
-account-level and user-level JWT limits.
+Also fixes the consumer file store marking its state clean after writing
+a buffer encoded before a concurrent update, losing that update.
 
-### Changes
-
-1. **`server/accounts.go`**: In `updateAccountClaimsWithRefresh`, check
-if the effective `c.mpay` changed after calling
-`c.applyAccountLimits()`. If changed, send an updated async INFO message
-to eligible clients (`protocol >= 1` and initial handshak
-
-**File**: `server/accounts.go` (modified, +9/-0)
+**File**: `server/filestore.go` (modified, +203/-52)
 ```diff
-@@ -4005,6 +4005,10 @@ func (s *Server) updateAccountClaimsWithRefresh(a *Account, ac *jwt.AccountClaim
- 		}
- 	}
+@@ -1507,10 +1507,11 @@ func (fs *fileStore) rebuildStateLocked(ld *LostStreamData) {
  
-+	s.mu.RLock()
-+	info := s.copyInfo()
-+	s.mu.RUnlock()
-+
- 	// client list is in chronological order (older cids at the beginning of the list).
- 	count := 0
- 	for _, c := range clients {
-@@ -4020,7 +4024,9 @@ func (s *Server) updateAccountClaimsWithRefresh(a *Account, ac *jwt.AccountClaim
- 			count++
+ 	for _, mb := range fs.blks {
+ 		mb.mu.RLock()
++		firstWithMsgs := fs.state.Msgs == 0 && mb.msgs > 0
+ 		fs.state.Msgs += mb.msgs
+ 		fs.state.Bytes += mb.bytes
+ 		fseq := atomic.LoadUint64(&mb.first.seq)
+-		if fs.state.FirstSeq == 0 || (fseq < fs.state.FirstSeq && mb.first.ts != 0) {
++		if fs.state.FirstSeq == 0 || firstWithMsgs || (fseq < fs.state.FirstSeq && mb.first.ts != 0) {
+ 			fs.state.FirstSeq = fseq
+ 			if mb.first.ts == 0 {
+ 				fs.state.FirstTime = time.Time{}
+@@ -1520,7 +1521,7 @@ func (fs *fileStore) rebuildStateLocked(ld *LostStreamData) {
  		}
- 		c.mu.Lock()
-+		oldMpay := atomic.LoadInt32(&c.mpay)
- 		c.applyAccountLimits()
-+		mpayChanged := oldMpay != atomic.LoadInt32(&c.mpay)
- 		// if we have an nkey user we are a callout user - save
- 		// the issuedAt, and nkey user id to honor revocations
- 		var nkeyUserID string
-@@ -4030,6 +4036,9 @@ func (s *Server) updateAccountClaimsWithRefresh(a *Account, ac *jwt.AccountClaim
- 			nkeyUserID = c.user.Nkey
+ 		// Preserve last time, could have erased the last message in one block, and then
+ 		// have a tombstone with the proper timestamp afterward in another block
+-		if lseq := atomic.LoadUint64(&mb.last.seq); lseq >= fs.state.LastSeq {
++		if lseq := atomic.LoadUint64(&mb.last.seq); lseq > fs.state.LastSeq || (lseq == fs.state.LastSeq && mb.last.ts != 0) {
+ 			fs.state.LastSeq = lseq
+ 			if mb.last.ts == 0 {
+ 				fs.state.LastTime = time.Time{}
+@@ -1530,6 +1531,11 @@ func (fs *fileStore) rebuildStateLocked(ld *LostStreamData) {
  		}
- 		theJWT := c.opts.JWT
-+		if mpayChanged {
-+			c.sendAsyncInfo(info)
-+		}
- 		c.mu.Unlock()
- 		if defaultPermsChanged && c.updateDefaultPermissions(defaultPerms) && defaultPerms != nil {
- 			c.processSubsOnConfigReload(nil)
-```
-
-**File**: `server/client.go` (modified, +14/-1)
-```diff
-@@ -997,7 +997,7 @@ func (c *client) applyAccountLimits() {
- 	if minLimit(&c.msubs, mSubs) && !wasUnlimited {
- 		c.Debugf("Max Subscriptions set to %d from server overrides account or user config", opts.MaxSubs)
+ 		mb.mu.RUnlock()
  	}
--	if c.subsAtLimit() {
-+	if c.msubs != jwt.NoLimit && len(c.subs) > int(c.msubs) {
- 		go func() {
- 			c.maxSubsExceeded()
- 			time.Sleep(20 * time.Millisecond)
-@@ -2807,6 +2807,19 @@ func (c *client) generateClientInfoJSON(info Info, includeClientIP bool) []byte
- 	return generateInfoJSON(&info)
- }
- 
-+// sendAsyncInfo will send an updated async INFO protocol message to the client
-+// if the client supports async INFO and has completed its initial handshake.
-+// Assume lock is held.
-+func (c *client) sendAsyncInfo(info Info) {
-+	if c.opts.Protocol >= ClientProtoInfo && c.flags.isSet(firstPongSent) {
-+		if c.iproc && info.TLSRequired && !c.flags.isSet(didTLSFirst) {
-+			info.TLSRequired = false
-+			info.TLSAvailable = true
-+		}
-+		c.enqueueProto(c.generateClientInfoJSON(info, true))
++	// Without messages the first sequence comes after the last, not where an empty block starts.
++	if fs.state.Msgs == 0 {
++		fs.state.FirstSeq = fs.state.LastSeq + 1
++		fs.state.FirstTime = time.Time{}
 +	}
-+}
-+
- func (c *client) sendErr(err string) {
- 	c.mu.Lock()
- 	if c.trace {
-```
-
-**File**: `server/jwt_test.go` (modified, +350/-0)
-```diff
-@@ -8628,3 +8628,353 @@ func TestJWTAccountNATSResolverSyncKeepsDeletedAccount(t *testing.T) {
- 		require_Error(t, err)
- 	}
  }
-+
-+func TestJWTAccountLimitsMaxPayloadAsyncInfo(t *testing.T) {
-+	s := opTrustBasicSetup()
-+	defer s.Shutdown()
-+	buildMemAccResolver(s)
-+
-+	okp, _ := nkeys.FromSeed(oSeed)
-+
-+	fooKP, _ := nkeys.CreateAccount()
-+	fooPub, _ := fooKP.PublicKey()
-+	fooAC := jwt.NewAccountClaims(fooPub)
-+	fooAC.Limits.Payload = 100
-+	fooJWT, err := fooAC.Encode(okp)
-+	require_NoError(t, err)
-+	addAccountToMemResolver(s, fooPub, fooJWT)
-+
-+	connectClient := func(nuc *jwt.UserClaims, proto int) (*testAsyncClient, *bufio.Reader) {
-+		nkp, _ := nkeys.CreateUser()
-+		pub, _ := nkp.PublicKey()
-+		if nuc == nil {
-+			nuc = jwt.NewUserClaims(pub)
-+		} else {
-+			nuc.Subject = pub
+ 
+ // Attempt to convert the cipher used for this message block.
+@@ -1588,7 +1594,15 @@ func (mb *msgBlock) convertCipher() error {
+ 			return err
+ 		}
+ 
+-		buf, _ := mb.loadBlock(nil)
++		buf, err := mb.loadBlock(nil)
++		if err != nil {
++			return err
 +		}
-+		uJWT, err := nuc.Encode(fooKP)
-+		require_NoError(t, err)
-+
-+		c, cr, l := newClientForServer(s)
-+		var info nonceInfo
-+		require_NoError(t, json.Unmarshal([]byte(l[5:]), &info))
-+		sigraw, _ := nkp.Sign([]byte(info.Nonce))
-+		sig := base64.RawURLEncoding.EncodeToString(sigraw)
-+
-+		cs := fmt.Sprintf("CONNECT {\"jwt\":%q,\"sig\":%q,\"protocol\":%d}\r\nPING\r\n", uJWT, sig, proto)
-+		c.parseAsync(cs)
-+		pong, err := cr.ReadString('\n')
-+		require_NoError(t, err)
-+		if !strings.HasPrefix(pong, "PONG") {
-+			t.Fatalf("Expected PONG, got %q", pong)
++		// An empty block has nothing to convert, it only needs new keys.
++		if len(buf) == 0 {
++			recycleMsgBlockBuf(buf)
++			return fs.genEncryptionKeysForBlock(mb)
 +		}
-+		// Clients with protocol >= ClientProtoInfo also receive an initial connect INFO on first PING
-+		if proto >= ClientProtoInfo {
-+			connectInfo, err := cr.ReadString('\n')
-+			require_NoError(t, err)
-+			if !strings.HasPrefix(connectInfo, "INFO ") {
-+				t.Fatalf("Expected initial connect INFO, got %q", connectInfo)
+ 		bek.XORKeyStream(buf, buf)
+ 		// Check for compression, and make sure we can parse with old cipher and key file.
+ 		if nbuf, err := mb.decompressIfNeeded(buf); err != nil {
+@@ -1632,6 +1646,11 @@ func (mb *msgBlock) convertToEncrypted() error {
+ 	if err != nil {
+ 		return err
+ 	}
++	// An empty block has nothing to convert.
++	if len(buf) == 0 {
++		recycleMsgBlockBuf(buf)
++		return nil
++	}
+ 	// Check for compression.
+ 	if buf, err = mb.decompressIfNeeded(buf); err != nil {
+ 		return err
+@@ -1717,9 +1736,12 @@ func (mb *msgBlock) rebuildStateLocked() (*LostStreamData, []uint64, error) {
+ 		return nil, nil, err
+ 	}
+ 	// Check for compression.
+-	if buf, err = mb.decompressIfNeeded(buf); err != nil {
++	var alg StoreCompression
++	if buf, alg, err = mb.decode(buf); err != nil {
+ 		return nil, nil, err
+ 	}
++	// Remember how the block is stored on disk, since it isn't recovered otherwise.
++	mb.cmp = alg
+ 	return mb.rebuildStateFromBufLocked(buf, true)
+ }
+ 
+@@ -2795,6 +2817,16 @@ func (fs *fileStore) recoverMsgs() error {
+ 
+ 	if len(fs.blks) > 0 {
+ 		fs.lmb = fs.blks[len(fs.blks)-1]
++		// A compressed block can't be appended to, new records would be written uncompressed.
++		// It ends up as the last block if the one after it was empty and got removed above.
++		fs.lmb.mu.RLock()
++		compressed := fs.lmb.cmp != NoCompression
++		fs.lmb.mu.RUnlock()
++		if compressed {
++			if _, err = fs.newMsgBlockForWrite(); err != nil {
++				return err
 +			}
 +		}
-+		return c, cr
-+	}
-+
-+	// Client 1: protocol=1, inherits account limit 100
-+	c1, cr1 := connectClient(nil, ClientProtoInfo)
-+	defer c1.close()
-+
-+	// Client 2: protocol=1, user limit = 50 (lower than account limit 100)
-+	uc2 := jwt.NewUserClaims("temp")
-+	uc2.Limits.Payload = 50
-+	c2, cr2 := connectClient(uc2, ClientProtoInfo)
-+	defer c2.close()
-+
-+	// Client 3: protocol=0 (legacy client, does not support async INFO)
-+	c3, cr3 := connectClient(nil, 0)
-+	defer c3.close()
-+
-+	// Verify initial effective limits
-+	require_True(t, atomic.LoadInt32(&c1.client.mpay) == 100)
-+	require_True(t, atomic.LoadInt32(&c2.client.mpay) == 50)
-+	require_True(t, atomic.LoadInt32(&c3.client.mpay) == 100)
-+
-+	// Step 1: Raise account payload limit from 100 to 200
-+	fooAC.Limits.Payload = 200
-+	fooJWT, err = fooAC.Encode(okp)
-+	require_NoError(t, err)
-+	addAccountToMemResolver(s, fooPub, fooJWT)
-+
-+	acc, err := s.LookupAccount(fooPub)
-+	require_NoError(t, err)
-+	s.UpdateAccountClaims(acc, fooAC)
-+
-+	// Check client 1: limit updated 100 -> 200 and receives async INFO
-+	require_True(t, atomic.LoadInt32(&c1.client.mpay) == 200)
-+	line1, err := cr1.ReadString('\n')
-+	require_NoError(t, err)
-+	if !strings.HasPrefix(line1, "INFO ") {
-+		t.Fatalf("Client 1 expected async INFO, got: %q", line1)
-+	}
-+	var parsedInfo Info
-+	require_NoError(t, json.Unmarshal([]byte(line1[5:]), &parsedInfo))
-+	if parsedInfo.MaxPayload != 200 {
-+		t.Fatalf("Client 1 expected MaxPayload 200 in async INFO, got %d", parsedInfo.MaxPayload)
-+	}
-+
-+	// Check client 2: user limit 50 < 200, so effective limit unchanged at 50, should NOT receive async INFO
-+	require_True(t, atomic.LoadInt32(&c2.client.mpay) == 50)
-+	// Check client 3: protocol=0, limit updated to 200, but should NOT receive async INFO
-+	require_True(t, atomic.LoadInt32(&c3.client.mpay) == 200)
-+
-+	// Verify neither c2 nor c3 received async INFO by pinging them and expecting PONG directly
-+	c2.parseAsync("PING\r\n")
-+	pong2, err := cr2.ReadString('\n')
-+	require_NoError(t, err)
-+	if !strings.HasPrefix(pong2, "PONG") {
-+		t.Fatalf("Client 2 expected direct PONG (no async INFO), got: %q", pong2)
-+	}
-+
-+	c3.parseAsync("PING\r\n")
-+	pong3, err := cr3.ReadString('\n')
-+	require_NoError(t, err)
-+	if !strings.HasPrefix(pong3, "PONG") {
-+		t.Fatalf("Client 3 expected direct PONG (no async INFO), got: %q", pong3)
-+	}
-+
-+	// Step 2: Lower account payload limit to 30 (< user limit 50)
-+	fooAC.Limits.Payload = 30
-+	fooJWT, err = fooAC.Encode(okp)
-+	require_NoError(t, err)
-+	addAccountToMemResolver(s, fooPub, fooJWT)
-+	s.UpdateAccountClaims(acc, fooAC)
-+
-+	// Client 1: effective limit lowered to 30 -> receives async INFO
-+	require_True(t, atomic.LoadInt32(&c1.client.mpay) == 30)
-+	line1, err = cr1.ReadString('\n')
-+	require_NoError(t, err)
-+	if !strings.HasPrefix(line1, "INFO ") {
-+		t.Fatalf("Client 1 expected async INFO, got: %q", line1)
-+	}
-+	require_NoError(t, json.Unmarshal([]byte(line1[5:]), &parsedInfo))
-+	if parsedInfo.MaxPayload != 30 {
-+		t.Fatalf("Client 1 expected MaxPayload 30 in async INFO, got %d", parsedInfo.MaxPayload)
-+	}
-+
-+	// Client 2: effective limit lowered from 50 to 30 -> receives async INFO
-+	require_True(t, atomic.LoadInt32(&c2.client.mpay) == 30)
-+	line2, err := cr2.ReadString('\n')
-+	require_NoError(t, err)
-+	if !strings.HasPrefix(line
-```
-
-**File**: `server/reload.go` (modified, +17/-1)
-```diff
-@@ -671,10 +671,26 @@ type maxPayloadOption struct {
- func (m *maxPayloadOption) Apply(server *Server) {
- 	server.mu.Lock()
- 	server.info.MaxPayload = m.newValue
-+	info := server.copyInfo()
-+	clients := make([]*client, 0, len(server.clients))
- 	for _, client := range server.clients {
--		atomic.StoreInt32(&client.mpay, int32(m.newValue))
-+		clients = append(clients, client)
+ 	} else if _, err = fs.newMsgBlockForWrite(); err != nil {
+ 		return err
  	}
- 	server.mu.Unlock()
-+
-+	for _, client := range clients {
-+		client.mu.Lock()
-+		oldMpay := atomic.LoadInt32(&client.mpay)
-+		if client.acc != nil {
-+			client.applyAccountLimits()
-+		} else {
-+			atomic.StoreInt32(&client.mpay, m.newValue)
+@@ -3928,6 +3960,7 @@ func (fs *fileStore) numFilteredPendingWithLast(filter string, last bool, ss *Si
+ 
+ 		// Hold this outside loop for psim fblk updates when done.
+ 		i := start + 1
++		var fmb *msgBlock
+ 		for ; i <= stop; i++ {
+ 			mb := fs.bim[i]
+ 			if mb == nil {
+@@ -3937,43 +3970,53 @@ func (fs *fileStore) numFilteredPendingWithLast(filter string, last bool, ss *Si
+ 				return err
+ 			} else if f > 0 {
+ 				ss.First = f
++				fmb = mb
+ 				break
+ 			}
+ 		}
+ 		// Update fblk since fblk was outdated.
+ 		// We only require read lock here as that is desirable,
+ 		// so we need to do this in a go routine to acquire write lock.
+-		go func() {
+-			fs.mu.Lock()
+-			defer fs.mu.Unlock()
+-			if !wc {
+-				if info, ok := fs.psim.Find(stringToBytes(filter)); ok {
+-					if i > info.fblk {
+-						info.fblk = i
+-					}
+-				}
+-			} else {
+-				fs.psim.Match(stringToBytes(filter), func(subj []byte, psi *psi) {
+-					if i > psi.fblk {
+-						psi.fblk = i
+-					}
+-				})
+-			}
+-		}()
++		if fmb != nil {
++			go fs.updateFirstBlock(filter, wc, i, fmb)
 +		}
-+		if oldMpay != atomic.LoadInt32(&client.mpay) {
-+			client.sendAsyncInfo(info)
-+		}
-+		client.mu.Unlock()
-+	}
- 	server.Noticef("Reloaded: max_payload = %d", m.newValue)
+ 	}
+ 	// Now gather last sequence if asked to do so.
+ 	if last {
+-		if mb = fs.bim[stop]; mb != nil {
+-			_, _, l, err := mb.filteredPending(filter, wc, 0)
+-			if err != nil {
+-				return err
+-			}
+-			ss.Last = l
++		_, l, err := fs.lastSeqLocked(filter)
++		if err != nil {
++			return err
+ 		}
++		ss.Last = l
+ 	}
+ 	return nil
  }
  
++// updateFirstBlock moves fblk up to index i for subjects matching the filter.
++// mb is the block at index i that holds the first match.
++func (fs *fileStore) updateFirstBlock(filter string, wc bool, i uint32, mb *msgBlock) 
 ```
 
-**File**: `server/reload_test.go` (modified, +39/-15)
+**File**: `server/filestore_test.go` (modified, +962/-20)
 ```diff
-@@ -2244,10 +2244,6 @@ func TestConfigReloadMaxPayload(t *testing.T) {
- 		t.Fatalf("Error creating client: %v", err)
- 	}
- 	defer nc.Close()
--	closed := make(chan struct{})
--	nc.SetDisconnectHandler(func(*nats.Conn) {
--		closed <- struct{}{}
--	})
+@@ -3163,6 +3163,82 @@ func TestFileStoreConsumerFlusher(t *testing.T) {
+ 	})
+ }
  
- 	conn, err := nats.Connect(addr)
- 	if err != nil {
-@@ -2276,22 +2272,50 @@ func TestConfigReloadMaxPayload(t *testing.T) {
- 		t.Fatalf("Error reloading config: %v", err)
- 	}
- 
--	// Ensure oversized messages don't get delivered and the client is
--	// disconnected.
--	if err := nc.Publish("foo", []byte("hello")); err != nil {
--		t.Fatalf("Error publishing: %v", err)
-+	// Wait for the client to receive the updated max payload via async INFO.
-+	checkFor(t, 2*time.Second, 10*time.Millisecond, func() error {
-+		if nc.MaxPayload() != 1 {
-+			return fmt.Errorf("expected max payload 1, got %d", nc.MaxPayload())
++func TestFileStoreConsumerOutdatedStateWriteKeepsDirty(t *testing.T) {
++	fs, err := newFileStore(FileStoreConfig{StoreDir: t.TempDir()}, StreamConfig{Name: "zzz", Storage: FileStorage})
++	require_NoError(t, err)
++	defer fs.Stop()
++
++	cfg := &ConsumerConfig{AckPolicy: AckExplicit}
++	o, err := fs.ConsumerStore("o22", time.Time{}, cfg)
++	require_NoError(t, err)
++	oc := o.(*consumerFileStore)
++
++	// Let the flusher write once, it then waits before writing again.
++	ts := time.Now().UnixNano()
++	require_NoError(t, o.UpdateDelivered(1, 1, 1, ts))
++	checkFor(t, time.Second, time.Millisecond, func() error {
++		oc.mu.Lock()
++		defer oc.mu.Unlock()
++		if oc.dirty || oc.writing {
++			return fmt.Errorf("Not flushed yet")
 +		}
 +		return nil
 +	})
 +
-+	// Ensure oversized messages are rejected client-side now that the client knows the new limit.
-+	if err := nc.Publish("foo", []byte("hello")); err != nats.ErrMaxPayload {
-+		t.Fatalf("Expected ErrMaxPayload, got: %v", err)
- 	}
--	nc.Flush()
++	// Write a state that's outdated by the time it's written.
++	buf, err := o.EncodedState()
++	require_NoError(t, err)
++	require_NoError(t, o.UpdateDelivered(2, 2, 1, ts))
++	require_NoError(t, oc.writeState(buf))
 +
-+	// Ensure that if an oversized message is sent by a client (e.g. bypassing
-+	// client-side validation), the server enforces the limit and disconnects the client.
-+	raw, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", opts.Host, server.Addr().(*net.TCPAddr).Port), 2*time.Second)
-+	if err != nil {
-+		t.Fatalf("Error connecting raw client: %v", err)
-+	}
-+	defer raw.Close()
-+	raw.Write([]byte("CONNECT {}\r\nPUB foo 5\r\nhello\r\n"))
-+	raw.SetReadDeadline(time.Now().Add(2 * time.Second))
-+	var out []byte
-+	buf := make([]byte, 512)
-+	for {
-+		n, err := raw.Read(buf)
-+		if n > 0 {
-+			out = append(out, buf[:n]...)
-+			if strings.Contains(string(out), "Maximum Payload Violation") {
-+				break
-+			}
-+		}
++	// The last update must still be written when stopping.
++	require_NoError(t, o.Stop())
++	o, err = fs.ConsumerStore("o22", time.Time{}, cfg)
++	require_NoError(t, err)
++	defer o.Stop()
++
++	state, err := o.State()
++	require_NoError(t, err)
++	require_Equal(t, state.Delivered.Consumer, 2)
++}
++
++func TestFileStoreConsumerSkippedStateWriteKicksFlusher(t *testing.T) {
++	fs, err := newFileStore(FileStoreConfig{StoreDir: t.TempDir()}, StreamConfig{Name: "zzz", Storage: FileStorage})
++	require_NoError(t, err)
++	defer fs.Stop()
++
++	cfg := &ConsumerConfig{AckPolicy: AckExplicit}
++	o, err := fs.ConsumerStore("o22", time.Time{}, cfg)
++	require_NoError(t, err)
++	defer o.Stop()
++	oc := o.(*consumerFileStore)
++
++	// Pretend another write is in flight, so this one is skipped.
++	oc.mu.Lock()
++	oc.writing = true
++	oc.mu.Unlock()
++	require_NoError(t, o.SetStarting(5))
++	oc.mu.Lock()
++	oc.writing = false
++	oc.mu.Unlock()
++
++	// The flusher must write the skipped state afterward, without another update or a stop.
++	checkFor(t, 2*time.Second, 10*time.Millisecond, func() error {
++		buf, err := os.ReadFile(oc.ifn)
 +		if err != nil {
-+			break
++			return err
 +		}
-+	}
-+	if !strings.Contains(string(out), "Maximum Payload Violation") {
-+		t.Fatalf("Expected Maximum Payload Violation, got %q", string(out))
-+	}
-+
- 	_, err = sub.NextMsg(20 * time.Millisecond)
- 	if err != nats.ErrTimeout {
- 		t.Fatalf("Expected ErrTimeout, got: %v", err)
- 	}
--
--	select {
--	case <-closed:
--	case <-time.After(5 * time.Second):
--		t.Fatal("Expected to be disconnected")
--	}
- }
- 
- // Ensure reload supports rotating out files. Test this by starting
-```
-
----
-
-### Incident Patch 2: `1a1580fc` (2026-11-18)
-**Commit Message**: [FIXED] Batch account limits, store errors & trace-only messages (#8907)
-
-Fixes for account limits and error handling with counters and batch
-publishing:
-
-- Account limits: counter increments were checked before the counter
-value was added, and atomic batches only per message instead of as a
-whole. Both are now checked on the message as stored, before proposing.
-An R1 atomic batch could also be partially stored when hitting the limit
-during commit.
-- Store errors: an R1 fast batch store error left the message counted as
-pending, so the batch only completed once it timed out.
-- Max record size: was checked before header rewrites, so a scheduled
-message could grow past it and only fail on apply, stalling a clustered
-fast batch.
-- Trace-only messages: were stored as part of a batch (by followers
-only, for a clustered fast batch) or stalled an R1 fast batch. They're
-now dropped, so the batch fails on the missing sequence.
-
-**File**: `server/jetstream.go` (modified, +13/-2)
-```diff
-@@ -2566,6 +2566,17 @@ func (jsa *jsAccount) limitsExceeded(storeType StorageType, tierName string, rep
- }
- 
- func (jsa *jsAccount) wouldExceedLimits(storeType StorageType, tierName string, replicas int, subj string, hdr, msg []byte) (bool, *ApiError) {
-+	var size uint64
-+	if storeType == MemoryStorage {
-+		size = memStoreMsgSize(subj, hdr, msg)
-+	} else {
-+		size = fileStoreMsgSize(subj, hdr, msg)
-+	}
-+	return jsa.wouldExceedLimitsWithSize(storeType, tierName, replicas, size)
-+}
-+
-+// wouldExceedLimitsWithSize checks whether storing size bytes per replica would exceed the account limits.
-+func (jsa *jsAccount) wouldExceedLimitsWithSize(storeType StorageType, tierName string, replicas int, size uint64) (bool, *ApiError) {
- 	jsa.usageMu.RLock()
- 	defer jsa.usageMu.RUnlock()
- 
-@@ -2591,12 +2602,12 @@ func (jsa *jsAccount) wouldExceedLimits(storeType StorageType, tierName string,
- 
- 	// Since tiers are flat we need to scale limit up by replicas when checking.
- 	if storeType == MemoryStorage {
--		totalMem := inUse.total.mem.Load() + (int64(memStoreMsgSize(subj, hdr, msg)) * r)
-+		totalMem := inUse.total.mem.Load() + (int64(size) * r)
- 		if selectedLimits.MaxMemory >= 0 && totalMem > selectedLimits.MaxMemory*lr {
- 			return true, nil
- 		}
- 	} else {
--		totalStore := inUse.total.store.Load() + (int64(fileStoreMsgSize(subj, hdr, msg)) * r)
-+		totalStore := inUse.total.store.Load() + (int64(size) * r)
- 		if selectedLimits.MaxStore >= 0 && totalStore > selectedLimits.MaxStore*lr {
- 			return true, nil
- 		}
-```
-
-**File**: `server/jetstream_batching.go` (modified, +66/-7)
-```diff
-@@ -362,6 +362,52 @@ func (batches *batching) fastBatchCommit(b *fastBatch, batchId string, mset *str
- 	return false
- }
- 
-+// fastBatchMsgFailed reports a message that was not persisted, and either continues or commits the batch.
-+// The message must be counted in b.lseq, but not as pending.
-+// Lock should be held.
-+func (batches *batching) fastBatchMsgFailed(b *fastBatch, batch *FastBatch, mset *stream, reply, name string, apiErr *ApiError, err error, dseq uint64) {
-+	// If a batch immediately errors, we send the same response as we would a normal publish.
-+	if !batch.gapOk && b.lseq == 1 {
-+		var response []byte
-+		if err == errMsgIdDuplicate && dseq > 0 {
-+			var buf [256]byte
-+			response = append(buf[:0], mset.pubAck...)
-+			response = append(response, strconv.FormatUint(dseq, 10)...)
-+			response = append(response, fmt.Sprintf(",\"duplicate\": true,\"batch\":%q,\"count\":%d}", batch.id, batch.seq)...)
-+		} else {
-+			response, _ = json.Marshal(&JSPubAckResponse{PubAck: &PubAck{Stream: name}, Error: apiErr})
++		state, err := decodeConsumerState(buf)
++		if err != nil {
++			return err
 +		}
-+		b.cleanupLocked(batch.id, batches)
-+		mset.outq.sendMsg(reply, response)
-+		return
-+	}
-+
-+	// We always return the error to the client, unless it's a duplicate.
-+	if err != errMsgIdDuplicate {
-+		buf, _ := BatchFlowErr{Sequence: batch.seq, Error: apiErr}.MarshalJSON()
-+		mset.outq.sendMsg(reply, buf)
-+	}
-+
-+	// If gaps are okay, we just allow them to continue.
-+	// Unless this is the commit message, in which case we must still complete it below.
-+	if batch.gapOk && !batch.commit {
-+		return
-+	}
-+
-+	// Revert the last sequence, we might be able to immediately return the PubAck as part of the commit.
-+	// Otherwise, the batch is cleaned up automatically later.
-+	if err != errMsgIdDuplicate {
-+		b.lseq--
-+		// If there is none pending, correct the persisted sequence as we need to commit below.
-+		if b.pending == 0 {
-+			b.pseq = b.lseq
++		if state.Delivered.Stream != 5 || state.AckFloor.Stream != 5 {
++			return fmt.Errorf("Skipped state not written yet: %+v", state)
 +		}
-+	}
-+	if batches.fastBatchCommit(b, batch.id, mset, reply) {
-+		b.cleanupLocked(batch.id, batches)
-+	}
-+}
-+
- // setupCleanupTimer sets up a timer to clean up the batch after a timeout.
- func (b *fastBatch) setupCleanupTimer(mset *stream, batchId string, batches *batching) {
- 	// Create a timer to clean up after timeout.
-@@ -419,6 +465,7 @@ type batchStagedDiff struct {
- 	msgIds             map[string]struct{}
- 	counter            map[string]*msgCounterRunningTotal
- 	inflight           map[string]*inflightSubjectRunningTotal
-+	inflightBytes      uint64 // Total bytes of the staged messages, as stored.
- 	inflightTransform  map[uint64]string
- 	expectedPerSubject map[string]*batchExpectedPerSubject
- }
-@@ -537,18 +584,12 @@ func (batch *batchApply) rejectBatchState(mset *stream) {
- // mset.clMu lock must be held.
- func checkMsgHeadersPreClusteredProposal(
- 	diff *batchStagedDiff, mset *stream, subject, rsubject string, hdr []byte, msg []byte, sourced bool, name string,
--	jsa *jsAccount, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules bool,
-+	jsa *jsAccount, tierName string, replicas int, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules bool,
- 	discard DiscardPolicy, discardNewPer bool, maxMsgSize int, maxMsgs int64, maxMsgsPer int64, maxBytes int64,
- ) ([]byte, []byte, uint64, *ApiError, error) {
- 	var incr *big.Int
- 	var hasSchedule bool
- 
--	// Do this before staging any proposal state. All clustered publish paths,
--	// including atomic and fast batches, use this helper.
--	if mset.store.Type() == FileStorage && isFileStoreMsgTooLarge(fileStoreMsgSize(subject, hdr, msg)) {
--		return hdr, msg, 0, NewJSStreamStoreFailedError(ErrMsgTooLarge), ErrMsgTooLarge
--	}
--
- 	// Some header checks must be checked pre proposal.
- 	if len(hdr) > 0 {
- 		// Since we encode header len as u16 make sure we do not exceed.
-@@ -950,6 +991,12 @@ func checkMsgHeadersPreClusteredProposal(
- 		}
- 	}
- 
-+	// Check the message as it will be stored, since the headers above can make it grow.
-+	// All clustered publish paths, including atomic and fast batches, use this helper.
-+	if mset.store.Type() == FileStorage && isFileStoreMsgTooLarge(fileStoreMsgSize(subject, hdr, msg)) {
-+		return hdr, msg, 0, NewJSStreamStoreFailedError(ErrMsgTooLarge), ErrMsgTooLarge
-+	}
-+
- 	// Track inflight.
- 	// Store the subject to ensure other messages in this batch using
- 	// an expected check or rollup on the same subject fail.
-@@ -975,6 +1022,18 @@ func checkMsgHeadersPreClusteredProposal(
- 		i = &inflightSubjectRunningTotal{bytes: sz, ops: 1, schedule: hasSchedule}
- 		diff.inflight[subject] = i
- 	}
-+	diff.inflightBytes += sz
-+
-+	// Check the account limits for the whole batch so far, as it will be stored.
-+	if jsa != nil {
-+		if exceeded, apiErr := jsa.wouldExceedLimitsWithSize(mset.store.Type(), tierName, replicas, diff.inflightBytes); exceeded {
-+			if apiErr == nil {
-+				apiErr = NewJSAccountResourcesExceededError()
-+			}
-+			mset.srv.RateLimitWarnf("JetStream account limits exceeded for '%s': %s", jsa.acc().GetName(), apiErr.Error())
-+			return hdr, msg, 0, apiErr, a
-```
-
-**File**: `server/jetstream_batching_test.go` (modified, +656/-4)
-```diff
-@@ -531,6 +531,188 @@ func TestJetStreamAtomicBatchPublishLimits(t *testing.T) {
- 	t.Run("R3", func(t *testing.T) { test(t, 3) })
- }
- 
-+func TestJetStreamAtomicBatchPublishAccountLimits(t *testing.T) {
-+	test := func(t *testing.T, replicas int) {
-+		c := createJetStreamClusterExplicit(t, "R3S", 3)
-+		defer c.shutdown()
-+
-+		nc := clientConnectToServer(t, c.randomServer())
-+		defer nc.Close()
-+
-+		_, err := jsStreamCreate(t, nc, &StreamConfig{
-+			Name:               "TEST",
-+			Subjects:           []string{"foo", "bar"},
-+			Storage:            MemoryStorage,
-+			Replicas:           replicas,
-+			AllowMsgCounter:    true,
-+			AllowAtomicPublish: true,
-+		})
-+		require_NoError(t, err)
-+
-+		increment := func(subject, batchId string, seq int, commit bool) *nats.Msg {
-+			m := nats.NewMsg(subject)
-+			m.Header.Set(JSMessageIncr, "1")
-+			m.Header.Set(JSBatchId, batchId)
-+			m.Header.Set(JSBatchSeq, strconv.Itoa(seq))
-+			if commit {
-+				m.Header.Set(JSBatchCommit, "1")
-+			}
-+			return m
-+		}
-+		commit := func(m *nats.Msg) *JSPubAckResponse {
-+			t.Helper()
-+			rmsg, err := nc.RequestMsg(m, time.Second)
-+			require_NoError(t, err)
-+			var pubAck JSPubAckResponse
-+			require_NoError(t, json.Unmarshal(rmsg.Data, &pubAck))
-+			return &pubAck
-+		}
-+
-+		// Measure what one stored increment uses.
-+		pubAck := commit(increment("foo", "a", 1, true))
-+		require_True(t, pubAck.Error == nil)
-+		sl := c.streamLeader(globalAccountName, "TEST")
-+		acc := sl.GlobalAccount()
-+		mset, err := acc.lookupStream("TEST")
-+		require_NoError(t, err)
-+		stored, r := int64(mset.state().Bytes), int64(replicas)
-+
-+		// The leader checks the limits against the usage of all replicas, which they report periodically.
-+		checkFor(t, 5*time.Second, 50*time.Millisecond, func() error {
-+			if used := int64(acc.JetStreamUsage().Memory); used != r*stored {
-+				return fmt.Errorf("expected usage %d, got %d", r*stored, used)
-+			}
-+			return nil
-+		})
-+
-+		// Room for one more increment, not two.
-+		for _, s := range c.servers {
-+			require_NoError(t, s.GlobalAccount().UpdateJetStreamLimits(map[string]JetStreamAccountLimits{
-+				_EMPTY_: {MaxMemory: 2 * r * stored, MaxStore: -1, MaxStreams: -1, MaxConsumers: -1},
-+			}))
-+		}
-+
-+		// Each increment fits on its own, but the batch doesn't, so none of it must be stored.
-+		require_NoError(t, nc.PublishMsg(increment("foo", "b", 1, false)))
-+		pubAck = commit(increment("bar", "b", 2, true))
-+		require_Error(t, pubAck.Error, NewJSAccountResourcesExceededError())
-+		require_Equal(t, mset.state().Msgs, 1)
-+	}
-+
-+	t.Run("R1", func(t *testing.T) { test(t, 1) })
-+	t.Run("R3", func(t *testing.T) { test(t, 3) })
-+}
-+
-+func TestJetStreamAtomicBatchPublishScheduleAccountLimits(t *testing.T) {
-+	s := RunBasicJetStreamServer(t)
-+	defer s.Shutdown()
-+
-+	nc := clientConnectToServer(t, s)
-+	defer nc.Close()
-+
-+	_, err := jsStreamCreate(t, nc, &StreamConfig{
-+		Name:               "TEST",
-+		Subjects:           []string{"foo.>"},
-+		Storage:            MemoryStorage,
-+		AllowAtomicPublish: true,
-+		AllowMsgSchedules:  true,
++		return nil
 +	})
-+	require_NoError(t, err)
-+
-+	// The scheduled message copies the batch headers of the schedule, but isn't part of a batch.
-+	at := time.Now().Add(500 * time.Millisecond)
-+	m := nats.NewMsg("foo.schedule")
-+	m.Header.Set(JSSchedulePattern, fmt.Sprintf("@at %s", at.Format(time.RFC3339Nano)))
-+	m.Header.Set(JSScheduleTarget, "foo.target")
-+	m.Header.Set(JSBatchId, "uuid")
-+	m.Header.Set(JSBatchSeq, "1")
-+	m.Header.Set(JSBatchCommit, "1")
-+	rmsg, err := nc.RequestMsg(m, time.Second)
-+	require_NoError(t, err)
-+	var pubAck JSPubAckResponse
-+	require_NoError(t, json.Unmarshal(rmsg.Data, &pubAck))
-+	require_True(t, pubAck.Error == nil)
-+
-+	// No room for the scheduled message.
-+	acc := s.GlobalAccount()
-+	used := int64(acc.JetStreamUsage().Memory)
-+	require_NoError(t, acc.UpdateJetStreamLimits(map[string]JetStreamAccountLimits{
-+		_EMPTY_: {MaxMemory: used + 1, MaxStore: -1, MaxStreams: -1, MaxConsumers: -1},
-+	}))
-+
-+	// After the schedule fired, the scheduled message must not have been stored.
-+	time.Sleep(time.Until(at) + time.Second)
-+	mset, err := acc.lookupStream("TEST")
-+	require_NoError(t, err)
-+	_, err = mset.store.LoadLastMsg("foo.target", nil)
-+	require_Error(t, err, ErrStoreMsgNotFound)
-+	require_Equal(t, int64(acc.JetStreamUsage().Memory), used)
 +}
 +
-+// Grows the account usage on the next stored message, as if another stream used it up.
-+// Protected by the stream lock.
-+type atomicBatchUsageStore struct {
-+	StreamStore
-+	jsa  *jsAccount
-+	grow int64
-+}
+ func TestFileStoreConsumerDeliveredUpdates(t *testing.T) {
+ 	testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
+ 		fs, err := newFileStoreWithCreated(fcfg, StreamConfig{Name: "zzz", Storage: FileStorage}, time.Now(), prf(&fcfg), nil)
+@@ -3862,7 +3938,9 @@ func TestFileStoreSparseCompaction(t *testing.T) {
+ 		fs.mu.RUnlock()
+ 		require_Len(t, blks, 1)
+ 		state := fs.State()
++		fs.mu.Lock()
+ 		_, err = fs.newMsgBlockForWrite()
++		fs.mu.Unlock()
+ 		require_NoError(t, err)
+ 		require_NoError(t, fs.writeTombstone(state.LastSeq, state.LastTime.UnixNano()))
+ 
+@@ -5248,6 +5326,345 @@ func TestFileStoreCompactAllWithDanglingLMB(t *testing.T) {
+ 	})
+ }
+ 
++func TestFileStoreCompactEmptyLastBlockMaxMsgsPer(t *testing.T) {
++	testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
++		cfg := StreamConfig{Name: "zzz", Subjects: []string{"foo", "bar"}, Storage: FileStorage, MaxMsgsPer: 2}
++		fs, err := newFileStoreWithCreated(fcfg, cfg, time.Now(), prf(&fcfg), nil)
++		require_NoError(t, err)
++		defer fs.Stop()
 +
-+func (s *atomicBatchUsageStore) StoreMsg(subject string, hdr, msg []byte, ttl int64) (uint64, int64, error) {
-+	if s.grow > 0 {
-+		s.jsa.usageMu.Lock()
-+		if s.jsa.usage[_EMPTY_] == nil {
-+			s.jsa.usage[_EMPTY_] = &jsaStorage{}
++		for _, subj := range []string{"foo", "foo", "bar"} {
++			_, _, err = fs.StoreMsg(subj, nil, nil, 0)
++			require_NoError(t, err)
 +		}
-+		s.jsa.usage[_EMPTY_].total.mem.Add(s.grow)
-+		s.jsa.usageMu.Unlock()
-+		s.grow = 0
-+	}
-+	return s.StreamStore.StoreMsg(subject, hdr, msg, ttl)
++		_, err = fs.PurgeEx("bar", 0, 0)
++		require_NoError(t, err)
++
++		// Compacting empties the last block, but it must not hold on to the removed messages.
++		purged, err := fs.Compact(3)
++		require_NoError(t, err)
++		require_Equal(t, purged, 2)
++		fs.mu.RLock()
++		lmb := fs.lmb
++		fs.mu.RUnlock()
++		lmb.mu.RLock()
++		fseq, lseq := lmb.first.seq, lmb.last.seq
++		lmb.mu.RUnlock()
++		require_Equal(t, fseq, 4)
++		require_Equal(t, lseq, 3)
++
++		for range 2 {
++			_, _, err = fs.StoreMsg("foo", nil, nil, 0)
++			require_NoError(t, err)
++		}
++
++		// Reloading the subject state must not bring back the removed messages.
++		lmb.mu.Lock()
++		lmb.fss = nil
++		lmb.clearCacheAndOffset()
++		lmb.mu.Unlock()
++		require_Equal(t, fs.SubjectsState("foo")["foo"], SimpleState{Msgs: 2, First: 4, Last: 5})
++
++		// Enforcing MaxMsgsPer used to spin forever on the removed messages.
++		done := make(chan error, 1)
++		go func() {
++			_, _, err := fs.StoreMsg("foo", nil, nil, 0)
++			done <- err
++		}()
++		select {
++		case err = <-done:
++			require_NoError(t, err)
++		case <-time.After(5 * time.Second):
++			fs.Stop()
++			t.Fatal("Storing message did not return")
++		}
++		require_Equal(t, fs.SubjectsState("foo")["foo"], SimpleState{Msgs: 2, First: 5, Last: 6})
++	})
 +}
 +
-+func TestJetStreamAtomicBatchPublishAccountLimitsDuri
-```
-
-**File**: `server/jetstream_cluster.go` (modified, +2/-17)
-```diff
-@@ -13602,7 +13602,7 @@ func (mset *stream) processClusteredInboundMsg(subject, reply string, hdr, msg [
- 	canRespond := !mset.cfg.NoAck && len(reply) > 0
- 	name, stype := mset.cfg.Name, mset.cfg.Storage
- 	discard, discardNewPer, maxMsgs, maxMsgsPer, maxBytes := mset.cfg.Discard, mset.cfg.DiscardNewPer, mset.cfg.MaxMsgs, mset.cfg.MaxMsgsPer, mset.cfg.MaxBytes
--	s, js, jsa, st, r, tierName, outq, node, term := mset.srv, mset.js, mset.jsa, mset.cfg.Storage, mset.cfg.Replicas, mset.tier, mset.outq, mset.clusteredNode(), mset.term
-+	s, js, jsa, r, tierName, outq, node, term := mset.srv, mset.js, mset.jsa, mset.cfg.Replicas, mset.tier, mset.outq, mset.clusteredNode(), mset.term
- 	maxMsgSize, lseq := int(mset.cfg.MaxMsgSize), mset.lseq
- 	isLeader, isSealed, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules := mset.isLeader(), mset.cfg.Sealed, mset.cfg.AllowRollup, mset.cfg.DenyPurge, mset.cfg.AllowMsgTTL, mset.cfg.AllowMsgCounter, mset.cfg.AllowMsgSchedules
- 
-@@ -13664,21 +13664,6 @@ func (mset *stream) processClusteredInboundMsg(subject, reply string, hdr, msg [
- 		return NewJSInsufficientResourcesError()
- 	}
- 
--	// Check here pre-emptively if we have exceeded our account limits.
--	if exceeded, err := jsa.wouldExceedLimits(st, tierName, r, csubject, hdr, msg); exceeded {
--		if err == nil {
--			err = NewJSAccountResourcesExceededError()
--		}
--		s.RateLimitWarnf("JetStream account limits exceeded for '%s': %s", jsa.acc().GetName(), err.Error())
--		if canRespond {
--			var resp = &JSPubAckResponse{PubAck: &PubAck{Stream: name}}
--			resp.Error = err
--			response, _ = json.Marshal(resp)
--			outq.send(newJSPubMsg(reply, _EMPTY_, _EMPTY_, nil, response, nil, 0))
--		}
--		return err
--	}
--
- 	// Check msgSize if we have a limit set there. Again this works if it goes through but better to be pre-emptive.
- 	// Subtract to prevent against overflows.
- 	if maxMsgSize >= 0 && (len(hdr) > maxMsgSize || len(msg) > maxMsgSize-len(hdr)) {
-@@ -13708,7 +13693,7 @@ func (mset *stream) processClusteredInboundMsg(subject, reply string, hdr, msg [
- 		err    error
- 	)
- 	diff := &batchStagedDiff{}
--	if hdr, msg, dseq, apiErr, err = checkMsgHeadersPreClusteredProposal(diff, mset, csubject, subject, hdr, msg, sourced, name, jsa, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules, discard, discardNewPer, maxMsgSize, maxMsgs, maxMsgsPer, maxBytes); err != nil {
-+	if hdr, msg, dseq, apiErr, err = checkMsgHeadersPreClusteredProposal(diff, mset, csubject, subject, hdr, msg, sourced, name, jsa, tierName, r, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules, discard, discardNewPer, maxMsgSize, maxMsgs, maxMsgsPer, maxBytes); err != nil {
- 		mset.clMu.Unlock()
- 		if err == errMsgIdDuplicate && dseq > 0 {
- 			var buf [256]byte
-```
-
-**File**: `server/stream.go` (modified, +41/-66)
-```diff
-@@ -6588,6 +6588,7 @@ var (
- 	errInvalidMsgHandler = errors.New("undefined message handler")
- 	errStreamMismatch    = errors.New("expected stream does not match")
- 	errMsgTTLDisabled    = errors.New("message TTL disabled")
-+	errBatchTraceOnly    = errors.New("batch publish does not support trace-only messages")
- )
- 
- // processJetStreamMsg is where we try to actually process the stream msg.
-@@ -6658,7 +6659,9 @@ func (mset *stream) processJetStreamMsgWithBatch(subject, reply string, hdr, msg
- 	isLeader, isSealed := mset.isLeaderNodeState(), mset.cfg.Sealed
- 	isClustered, isMirror := mset.isClustered(), mset.cfg.Mirror != nil
- 	canConsistencyCheck := !isClustered || traceOnly
--	canRespond := doAck && len(reply) > 0 && isLeader
-+	// Errors for an R1 fast batch are reported by the caller as part of the batch.
-+	canAck := doAck && len(reply) > 0 && isLeader
-+	canRespond := canAck && fastBatch == nil
- 	outq := mset.outq
- 
- 	var resp = &JSPubAckResponse{}
-@@ -7388,10 +7391,8 @@ func (mset *stream) processJetStreamMsgWithBatch(subject, reply string, hdr, msg
- 			// Check full leader state so we only send the client an update once we're caught up.
- 			commit := mset.batches.fastBatchRegisterSequences(mset, reply, mset.lseq, mset.isLeader(), fastBatch)
- 			mset.batches.mu.Unlock()
--			if !commit {
--				reply = _EMPTY_
--				canRespond = false
--			}
-+			// Only respond with the PubAck if the batch commits now, even if errors are reported by the caller.
-+			canRespond = commit && canAck
- 		}
- 		if canRespond {
- 			response = append(pubAck, strconv.FormatUint(mset.lseq, 10)...)
-@@ -7428,7 +7429,9 @@ func (mset *stream) processJetStreamMsgWithBatch(subject, reply string, hdr, msg
- 
- 	// If clustered this was already checked and we do not want to check here and possibly introduce skew.
- 	// Don't error and log if we're tracing when clustered.
--	if !isClustered {
-+	// Batches were already checked. Rejecting an atomic batch message here would partially commit it.
-+	// Sourced messages, e.g. scheduled ones, can still carry batch headers but aren't part of a batch.
-+	if !isClustered && (batchId == _EMPTY_ || sourced) {
- 		if exceeded, err := jsa.wouldExceedLimits(stype, mset.tier, mset.cfg.Replicas, subject, hdr, msg); exceeded {
- 			if err == nil {
- 				err = NewJSAccountResourcesExceededError()
-@@ -7588,10 +7591,8 @@ func (mset *stream) processJetStreamMsgWithBatch(subject, reply string, hdr, msg
- 		// Check full leader state so we only send the client an update once we're caught up.
- 		commit := mset.batches.fastBatchRegisterSequences(mset, reply, mset.lseq, mset.isLeader(), fastBatch)
- 		mset.batches.mu.Unlock()
--		if !commit {
--			reply = _EMPTY_
--			canRespond = false
--		}
-+		// Only respond with the PubAck if the batch commits now, even if errors are reported by the caller.
-+		canRespond = commit && canAck
- 	}
- 
- 	// Send response here.
-@@ -7668,6 +7669,11 @@ func (mset *stream) processJetStreamAtomicBatchMsg(batchId, subject, reply strin
- 		}()
- 	}
- 
-+	// Trace-only messages are dropped, so the batch fails on the missing sequence.
-+	if mt.traceOnly() {
-+		return errBatchTraceOnly
-+	}
-+
- 	// Check that we are the leader. This can be false if we have scaled up from an R1 that had inbound queued messages.
- 	if !isLeader {
- 		return NewJSClusterNotLeaderError()
-@@ -8002,7 +8008,7 @@ func (mset *stream) processJetStreamAtomicBatchMsg(batchId, subject, reply strin
- 			return errorOnUnsupported(JSExpectedLastMsgId)
- 		}
- 
--		if bhdr, bmsg, _, apiErr, err = checkMsgHeadersPreClusteredProposal(diff, mset, csubj, bsubj, bhdr, bmsg, false, name, jsa, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules, discard, discardNewPer, maxMsgSize, maxMsgs, maxMsgsPer, maxBytes); err != nil {
-+		if bhdr, bmsg, _, apiErr, err = checkMsgHeadersPreClusteredProposal(diff, mset, csubj, bsubj, bhdr, bmsg, false, name, jsa, tierName, r, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules, discard, discardNewPer, maxMsgSize, maxMsgs, maxMsgsPer, maxBytes); err != nil {
- 			rollback()
- 			b.cleanupLocked(batchId, batches)
- 			batches.mu.Unlock()
-@@ -8142,7 +8148,7 @@ func (mset *stream) processJetStreamFastBatchMsg(batch *FastBatch, subject, repl
- 	canRespond := !mset.cfg.NoAck && len(reply) > 0
- 	name, stype := mset.cfg.Name, mset.cfg.Storage
- 	discard, discardNewPer, maxMsgs, maxMsgsPer, maxBytes := mset.cfg.Discard, mset.cfg.DiscardNewPer, mset.cfg.MaxMsgs, mset.cfg.MaxMsgsPer, mset.cfg.MaxBytes
--	s, js, jsa, st, r, tierName, outq, node, term := mset.srv, mset.js, mset.jsa, mset.cfg.Storage, mset.cfg.Replicas, mset.tier, mset.outq, mset.node, mset.term
-+	s, js, jsa, r, tierName, outq, node, term := mset.srv, mset.js, mset.jsa, mset.cfg.Replicas, mset.tier, mset.outq, mset.node, mset.term
- 	maxMsgSize, lseq := int(mset.cfg.MaxMsgSize), mset.lseq
- 	isLeader, isClustered, isSealed, allowRollup, denyPurge, allowTTL, allowMsgCounter, allowMsgSchedules, allowBatchPublish := mset.isLeader(), mset.isClustered(), mset.cf
++func TestFileStoreCompactFirstSeqNotFromEmptyBlock(t *testing.T) {
++	testFileStoreAllPermutations(t, func(t *testing.T, fcf
 ```
 
 ---
 
-### Incident Patch 3: `43f2ceab` (2026-11-17)
-**Commit Message**: [FIXED] Max record size checked before header rewrites
+### Incident Patch 2: `e1a817d9` (2026-11-19)
+**Commit Message**: [FIXED] Filestore encryption conversion failing on empty block
 
 Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
-**File**: `server/jetstream_batching.go` (modified, +6/-6)
+**File**: `server/filestore.go` (modified, +14/-1)
 ```diff
-@@ -590,12 +590,6 @@ func checkMsgHeadersPreClusteredProposal(
- 	var incr *big.Int
- 	var hasSchedule bool
- 
--	// Do this before staging any proposal state. All clustered publish paths,
--	// including atomic and fast batches, use this helper.
--	if mset.store.Type() == FileStorage && isFileStoreMsgTooLarge(fileStoreMsgSize(subject, hdr, msg)) {
--		return hdr, msg, 0, NewJSStreamStoreFailedError(ErrMsgTooLarge), ErrMsgTooLarge
--	}
--
- 	// Some header checks must be checked pre proposal.
- 	if len(hdr) > 0 {
- 		// Since we encode header len as u16 make sure we do not exceed.
-@@ -997,6 +991,12 @@ func checkMsgHeadersPreClusteredProposal(
+@@ -1588,7 +1588,15 @@ func (mb *msgBlock) convertCipher() error {
+ 			return err
  		}
- 	}
  
-+	// Check the message as it will be stored, since the headers above can make it grow.
-+	// All clustered publish paths, including atomic and fast batches, use this helper.
-+	if mset.store.Type() == FileStorage && isFileStoreMsgTooLarge(fileStoreMsgSize(subject, hdr, msg)) {
-+		return hdr, msg, 0, NewJSStreamStoreFailedError(ErrMsgTooLarge), ErrMsgTooLarge
+-		buf, _ := mb.loadBlock(nil)
++		buf, err := mb.loadBlock(nil)
++		if err != nil {
++			return err
++		}
++		// An empty block has nothing to convert, it only needs new keys.
++		if len(buf) == 0 {
++			recycleMsgBlockBuf(buf)
++			return fs.genEncryptionKeysForBlock(mb)
++		}
+ 		bek.XORKeyStream(buf, buf)
+ 		// Check for compression, and make sure we can parse with old cipher and key file.
+ 		if nbuf, err := mb.decompressIfNeeded(buf); err != nil {
+@@ -1632,6 +1640,11 @@ func (mb *msgBlock) convertToEncrypted() error {
+ 	if err != nil {
+ 		return err
+ 	}
++	// An empty block has nothing to convert.
++	if len(buf) == 0 {
++		recycleMsgBlockBuf(buf)
++		return nil
 +	}
-+
- 	// Track inflight.
- 	// Store the subject to ensure other messages in this batch using
- 	// an expected check or rollup on the same subject fail.
+ 	// Check for compression.
+ 	if buf, err = mb.decompressIfNeeded(buf); err != nil {
+ 		return err
 ```
 
-**File**: `server/jetstream_batching_test.go` (modified, +74/-54)
+**File**: `server/filestore_test.go` (modified, +52/-0)
 ```diff
-@@ -6093,66 +6093,86 @@ func TestJetStreamFastBatchPublishStoreError(t *testing.T) {
+@@ -16833,6 +16833,58 @@ func TestFileStoreConvertToEncryptedDoesNotResurrectXoredCache(t *testing.T) {
+ 	require_NotEqual(t, len(mb.cache.buf), 0)
  }
  
- func TestJetStreamFastBatchPublishMsgTooLargeSingleReply(t *testing.T) {
--	conf := createConfFile(t, []byte(fmt.Sprintf(`
--		listen: 127.0.0.1:-1
--		max_payload: %d
--		jetstream: {store_dir: %q}
--	`, 40*1024*1024, t.TempDir())))
--	s, _ := RunServerWithConfig(conf)
--	defer s.Shutdown()
-+	test := func(t *testing.T, replicas int) {
-+		tmpl := strings.Replace(jsClusterTempl, "server_name: %s", fmt.Sprintf("server_name: %%s\n\tmax_payload: %d", 40*1024*1024), 1)
-+		c := createJetStreamClusterWithTemplate(t, tmpl, "R3S", 3)
-+		defer c.shutdown()
- 
--	nc := clientConnectToServer(t, s)
--	defer nc.Close()
-+		nc := clientConnectToServer(t, c.randomServer())
-+		defer nc.Close()
- 
--	_, err := jsStreamCreate(t, nc, &StreamConfig{
--		Name:              "TEST",
--		Subjects:          []string{"foo.>"},
--		Storage:           FileStorage,
--		AllowMsgSchedules: true,
--		AllowBatchPublish: true,
--	})
--	require_NoError(t, err)
--	mset, err := s.globalAccount().lookupStream("TEST")
--	require_NoError(t, err)
-+		_, err := jsStreamCreate(t, nc, &StreamConfig{
-+			Name:              "TEST",
-+			Subjects:          []string{"foo.>"},
-+			Storage:           FileStorage,
-+			Replicas:          replicas,
-+			AllowMsgSchedules: true,
-+			AllowBatchPublish: true,
++func TestFileStoreEmptyBlockNotConverted(t *testing.T) {
++	for _, test := range []struct {
++		title     string
++		from, to  StoreCipher
++		removeKey bool
++	}{
++		// A kill during rollover leaves the new block without its key.
++		{title: "MissingKey", from: AES, to: AES, removeKey: true},
++		{title: "PlaintextToEncrypted", from: NoCipher, to: AES},
++		{title: "CipherChange", from: AES, to: ChaCha},
++	} {
++		t.Run(test.title, func(t *testing.T) {
++			fcfg := FileStoreConfig{StoreDir: t.TempDir(), Cipher: test.from}
++			cfg := StreamConfig{Name: "zzz", Subjects: []string{"foo"}, Storage: FileStorage}
++			created := time.Now()
++			fs, err := newFileStoreWithCreated(fcfg, cfg, created, prf(&fcfg), nil)
++			require_NoError(t, err)
++			defer fs.Stop()
++
++			_, _, err = fs.StoreMsg("foo", nil, []byte("msg"), 0)
++			require_NoError(t, err)
++
++			// Roll over to a new block that's never written to.
++			fs.mu.Lock()
++			mb, err := fs.newMsgBlockForWrite()
++			fs.mu.Unlock()
++			require_NoError(t, err)
++			require_NoError(t, fs.Stop())
++
++			if test.removeKey {
++				require_NoError(t, os.Remove(mb.kfn))
++			}
++			// The server removes the meta key on a cipher change, so it gets regenerated.
++			if test.from != NoCipher && test.from != test.to {
++				require_NoError(t, os.Remove(filepath.Join(fcfg.StoreDir, JetStreamMetaFileKey)))
++			}
++			// Without the index every block is recovered from disk.
++			require_NoError(t, os.Remove(filepath.Join(fcfg.StoreDir, msgDir, streamStreamStateFile)))
++
++			fcfg.Cipher = test.to
++			fs, err = newFileStoreWithCreated(fcfg, cfg, created, prf(&fcfg), nil)
++			require_NoError(t, err)
++			defer fs.Stop()
++
++			require_Equal(t, fs.State().Msgs, 1)
++			sm, err := fs.LoadMsg(1, nil)
++			require_NoError(t, err)
++			require_Equal(t, string(sm.msg), "msg")
 +		})
-+		require_NoError(t, err)
-+		c.waitOnStreamLeader(globalAccountName, "TEST")
-+		sl := c.streamLeader(globalAccountName, "TEST")
-+		mset, err := sl.globalAccount().lookupStream("TEST")
-+		require_NoError(t, err)
- 
--	inbox := nats.NewInbox()
--	sub, err := nc.SubscribeSync(fmt.Sprintf("%s.>", inbox))
--	require_NoError(t, err)
--	defer sub.Drain()
-+		// Subscribe on the stream leader, so the replies don't depend on interest propagation.
-+		nc.Close()
-+		nc = clientConnectToServer(t, sl)
-+		inbox := nats.NewInbox()
-+		sub, err := nc.SubscribeSync(fmt.Sprintf("%s.>", inbox))
-+		require_NoError(t, err)
-+		defer sub.Drain()
-+		require_NoError(t, nc.Flush())
- 
--	// The message fits the file store record limit as received, but not after the schedule's rollup header is added.
--	schedule := time.Now().Add(time.Hour).Format(time.RFC3339Nano)
--	hdr := genHeader(nil, JSSchedulePattern, fmt.Sprintf("@at %s", schedule))
--	hdr = genHeader(hdr, JSScheduleTarget, "foo.target")
--	msg := make([]byte, rlBadThresh-5-fileStoreMsgSize("foo.schedule", hdr, nil))
--	require_Equal(t, fileStoreMsgSize("foo.schedule", hdr, msg), rlBadThresh-5)
--	require_True(t, isFileStoreMsgTooLarge(fileStoreMsgSize("foo.schedule", genHeader(hdr, JSMsgRollup, JSMsgRollupSubject), msg)))
--
--	reply := generateFastBatchReply(inbox, "uuid", 1, 0, FastBatchGapFail, FastBatchOpStart)
--	batch, _ := getFastBatch(reply, hdr)
--	require_NotNil(t, batch)
--	defer batch.returnToPool()
--	require_Error(t, mset.processJetStreamFastBatchMsg(batch, "foo.schedule", reply, hdr, msg, nil), ErrMsgTooLarge)
--
--	// The first message gets the initial flow control message.
--	rmsg, err := sub.NextMsg(time.Second)
--	require_NoError(t, err)
--	var batchFlowAck BatchFlowAck
--	require_NoError(t, json.Unmarshal(rmsg.Data, &batchFlowAck))
--	require_Equal(t, batchFlowAck.Type, "ack")
-+		// The message fits the file store record limit as received, but not after the schedule's rollup header is added.
-+		schedule := time.Now().Add(time.Hour).Format(time.RFC3339Nano)
-+		hdr := genHeader(nil, JSSchedulePattern, fmt.Sprintf("@at %s", schedule))
-+		hdr = genHeader(hdr, JSScheduleTarget, "foo.target")
-+		msg := make([]byte, rlBadThresh-5-fileStoreMsgSize("foo.schedule", hdr, nil))
-+		require_Equal(t, fileStoreMsgSize("foo.schedule", hdr, msg), rlBadThresh-5)
-+		require_True(t, isFileStoreMsgTooLarge(fileStoreMsgSize("foo.schedule", genHeader(hdr, JSMsgRollup, JSMsgRollupSubject), msg)))
- 
--	// The error must be replied to only once.
--	rmsg, err = sub.NextMsg(time.Second)
--	require_NoError(t, err)
--	var pubAck JSPubAckResponse
--	require_NoError(t, json.Unmarshal(rmsg.Data, &pubAck))
--	require_NotNil(t, pubAck.Error)
--	require_Error(t, pubAck.Error, NewJSStreamStoreFailedError(ErrMsgTooLarge))
--	rmsg, err = sub.NextMsg(250 * time.Millisecond)
--	if err == nil {
--		t.Fatalf("Unexpected second reply: %s", rmsg.Data)
-+		reply := generateFastBatchReply(inbox, "uuid", 1, 0, FastBatchGapFail, FastBatchOpStart)
-+		batch, _ := getFastBatch(reply, hdr)
-+		require_NotNil(t, batch)
-+		defer batch.returnToPool()
-+		err = mset.processJetStreamFastBatchMsg(batch, "foo.schedule", reply, hdr, msg, nil)
++	}
++}
 +
-+		// The first message gets the initial flow control message.
-+		rmsg, rerr := sub.NextMsg(time.Second)
-+		require_NoError(t, rerr)
-+		var batchFlowAck BatchFlowAck
-+		require_NoError(t, json.Unmarshal(rmsg.Data, &batchFlowAck))
-+		require_Equal(t, batchFlowAck.Type, "ack")
+ func TestFileStoreRemoveMsgViaLimitsCallbackAliasedSubj(t *testing.T) {
+ 	fs, err := newFileStore(
+ 		FileStoreConfig{StoreDir: t.TempDir()},
+```
+
+---
+
+### Incident Patch 3: `d8d1c8e8` (2026-11-20)
+**Commit Message**: [FIXED] Filestore tombstones lost around empty blocks and compaction (#8922)
+
+Empty blocks with tombstones for prior blocks are kept since
+https://github.com/nats-io/nats-server/pull/7387, but several paths
+still treated them as removable or lost their tombstones. `Truncate`
+dropped the tombstones stored after the selected block's last message,
+recovery dropped empty non-last blocks, and writing `index.db` counted
+empty blocks in its consistency check. `removeMsgBlock` kept a block for
+its prior tombstones without removing its messages, wrote a tombstone
+for the last message when removing an empty block even though a prior
+block still stored it, and emptying such a block wrote no tombstone, so
+an outdated `index.db` went undetected.
+
+Marked for 2.16: Removing a block's first messages also doesn't rewrite
+it, so they remain stored below its first sequence, but compaction
+dropped the tombstones for those and a rebuild brought the messages
+back. Blocks now track their lowest stored sequence, persisted in
+`index.db` v5.
+
+**File**: `server/filestore.go` (modified, +165/-31)
+```diff
+@@ -230,8 +230,11 @@ type fileStore struct {
+ // Represents a message store block and its data.
+ type msgBlock struct {
+ 	// Here for 32bit systems and atomic.
+-	first       msgId
+-	last        msgId
++	first msgId
++	last  msgId
++	// Lowest sequence of a message still stored on disk, or zero if unknown.
++	// Can be below first, since removing the first message doesn't rewrite the block.
++	rfseq       uint64
+ 	mu          sync.RWMutex
+ 	fs          *fileStore
+ 	aek         cipher.AEAD
+@@ -1772,6 +1775,9 @@ func (mb *msgBlock) rebuildStateFromBufLocked(buf []byte, allowTruncate bool) (*
+ 		maxTombstoneTs  int64
+ 	)
+ 
++	// Lowest message stored, can be below our first.
++	rfseq := uint64(math.MaxUint64)
 +
-+		// The error must be replied to only once.
-+		rmsg, rerr = sub.NextMsg(time.Second)
-+		require_NoError(t, rerr)
-+		var pubAck JSPubAckResponse
-+		require_NoError(t, json.Unmarshal(rmsg.Data, &pubAck))
-+		require_NotNil(t
+ 	defer func() {
+ 		// For empty msg blocks make sure we recover last seq correctly based off of first.
+ 		// Or if we seem to have no messages but had a tombstone, which we use to remember
+@@ -1789,6 +1795,7 @@ func (mb *msgBlock) rebuildStateFromBufLocked(buf []byte, allowTruncate bool) (*
+ 				}
+ 			}
+ 		}
++		atomic.StoreUint64(&mb.rfseq, min(rfseq, atomic.LoadUint64(&mb.first.seq)))
+ 	}()
+ 
+ 	var le = binary.LittleEndian
+@@ -1932,6 +1939,10 @@ func (mb *msgBlock) rebuildStateFromBufLocked(buf []byte, allowTruncate bool) (*
+ 			continue
+ 		}
+ 
++		if seq != 0 && seq&ebit == 0 {
++			rfseq = min(rfseq, seq)
++		}
++
+ 		fseq := atomic.LoadUint64(&mb.first.seq)
+ 		// This is an old erased message, or a new one that we can track.
+ 		if seq == 0 || seq&ebit != 0 || seq < fseq {
+@@ -2234,13 +2245,18 @@ func (fs *fileStore) recoverFullState() (rerr error) {
+ 			if version >= 3 {
+ 				schedules = readU64()
+ 			}
++			var rfseq uint64
++			if version >= 5 {
++				rfseq = readU64()
++			}
+ 			if bi < 0 {
+ 				_ = os.Remove(fn)
+ 				return errCorruptState
+ 			}
+ 			mb := fs.initMsgBlock(index)
+ 			atomic.StoreUint64(&mb.first.seq, fseq)
+ 			atomic.StoreUint64(&mb.last.seq, lseq)
++			atomic.StoreUint64(&mb.rfseq, rfseq)
+ 			mb.msgs, mb.bytes = lseq-fseq+1, nbytes
+ 			mb.first.ts, mb.last.ts = fts+baseTime, lts+baseTime
+ 			mb.ttls = ttls
+@@ -2265,13 +2281,11 @@ func (fs *fileStore) recoverFullState() (rerr error) {
+ 			// still exists on disk and report it as lost if not.
+ 			mb.closed = true
+ 
+-			// Only add in if not empty or the lmb.
++			// Always add, an empty block can still contain tombstones for prior blocks.
++			fs.addMsgBlock(mb)
++			// An empty block holds no messages, so it can't contribute to the tracking state, unless it's the lmb.
+ 			if mb.msgs > 0 || i == lastIndex {
+-				fs.addMsgBlock(mb)
+ 				updateTrackingState(&mstate, mb)
+-			} else {
+-				// Mark dirty to cleanup.
+-				fs.dirty++
+ 			}
+ 		}
+ 	}
+@@ -2346,8 +2360,14 @@ func (fs *fileStore) recoverFullState() (rerr error) {
+ 	}
+ 
+ 	var rebuild bool
++	var removed []*msgBlock
+ 	for _, mb := range fs.blks {
+ 		if mb.closed {
++			// An empty block that was already removed has nothing to recover, so only drop it.
++			if mb.msgs == 0 && mb != fs.lmb {
++				removed = append(removed, mb)
++				continue
++			}
+ 			rebuild = true
+ 			if ld, _, _ := mb.rebuildState(); ld != nil {
+ 				fs.addLostData(ld)
+@@ -2358,6 +2378,10 @@ func (fs *fileStore) recoverFullState() (rerr error) {
+ 	if rebuild {
+ 		return errPriorState
+ 	}
++	// Also marks dirty, so the next full state no longer contains them.
++	for _, mb := range removed {
++		fs.removeMsgBlockFromList(mb)
++	}
+ 
+ 	// We check first and last seq and number of msgs and bytes. If there is a difference,
+ 	// return and error so we rebuild from the message block state on disk.
+@@ -5394,6 +5418,8 @@ func (fs *fileStore) newMsgBlockForWrite() (*msgBlock, error) {
+ 	// Remember our last sequence number.
+ 	atomic.StoreUint64(&mb.first.seq, fs.state.LastSeq+1)
+ 	atomic.StoreUint64(&mb.last.seq, fs.state.LastSeq)
++	// A new block doesn't store anything below its first sequence.
++	atomic.StoreUint64(&mb.rfseq, fs.state.LastSeq+1)
+ 	mb.mu.Unlock()
+ 
+ 	// Now do local hash.
+@@ -6490,11 +6516,10 @@ func (fs *fileStore) removeMsgFromBlock(mb *msgBlock, seq uint64, secure, viaLim
+ 		ttl, _ = getMessageTTL(sm.hdr)
+ 	}
+ 
+-	// Check if we need to write a deleted record tombstone.
+-	// This is for user initiated removes or to hold the first seq
+-	// when the last block is empty.
+-	// If not via limits and not empty (empty writes tombstone below if last) write tombstone.
+-	if !viaLimits && !isEmpty && sm != nil {
++	// Write a tombstone for user initiated removes.
++	// An emptied block is removed instead, which writes a tombstone if needed.
++	// Unless it's kept for its prior tombstones, then the tombstone ensures an outdated index.db is detected.
++	if !viaLimits && sm != nil && (!isEmpty || mb.numPriorTombsLocked() > 0) {
+ 		mb.mu.Unlock() // Only safe way to checkLastBlock is to unlock here...
+ 		lmb, err := fs.checkLastBlock(emptyRecordLen)
+ 		if err != nil {
+@@ -6786,12 +6811,10 @@ func (mb *msgBlock) compactWithFloor(floor uint64, fsDmap *interiorDeletes) erro
+ 			// Check for tombstones.
+ 			if seq&tbit != 0 {
+ 				seq = seq &^ tbit
+-				
+```
+
+**File**: `server/filestore_test.go` (modified, +617/-1)
+```diff
+@@ -1207,6 +1207,79 @@ func TestFileStoreStreamTruncateDeletedSequence(t *testing.T) {
+ 	})
+ }
+ 
++func TestFileStoreStreamTruncateKeepsPriorTombstones(t *testing.T) {
++	for _, test := range []struct {
++		name     string
++		before   int
++		remove   []uint64
++		after    int
++		truncate uint64
++	}{
++		{"AtLastRemoved", 3, []uint64{1, 3}, 0, 3},
++		{"BelowLast", 3, []uint64{1}, 0, 2},
++		{"TombstoneKeptInBlock", 2, []uint64{1}, 2, 3},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
++				cfg := StreamConfig{Name: "zzz", Subjects: []string{"foo"}, Storage: FileStorage}
++				created := time.Now()
++
++				fs, err := newFileStoreWithCreated(fcfg, cfg, created, prf(&fcfg), nil)
++				require_NoError(t, err)
++				defer fs.Stop()
++
++				storeMsgs := func(n int) {
++					for range n {
++						_, _, err := fs.StoreMsg("foo", nil, []byte("ok"), 0)
++						require_NoError(t, err)
++					}
++				}
++
++				// The tombstones are stored after the messages stored before.
++				storeMsgs(test.before)
++				for _, seq := range test.remove {
++					removed, err := fs.RemoveMsg(seq)
++					require_NoError(t, err)
++					require_True(t, removed)
++				}
++				storeMsgs(test.after)
++
++				// The block is cut after the last message up to the truncated sequence.
++				// Tombstones stored after it are lost, the ones before it are kept in the block.
++				require_NoError(t, fs.Truncate(test.truncate))
++				expected := fs.State()
++				require_Equal(t, expected.Msgs, test.truncate-uint64(len(test.remove)))
++				require_Equal(t, expected.FirstSeq, 2)
++				require_Equal(t, expected.LastSeq, test.truncate)
++
++				// Only the lost tombstones are stored again, the kept ones must not be duplicated.
++				var tombs []uint64
++				fs.mu.RLock()
++				for _, mb := range fs.blks {
++					for _, tomb := range mb.tombs() {
++						tombs = append(tombs, tomb.seq)
++					}
++				}
++				fs.mu.RUnlock()
++				slices.Sort(tombs)
++				for i := 1; i < len(tombs); i++ {
++					require_NotEqual(t, tombs[i], tombs[i-1])
++				}
++
++				// Recover without index.db to verify the first message stays removed.
++				require_NoError(t, fs.Stop())
++				require_NoError(t, os.Remove(filepath.Join(fcfg.StoreDir, msgDir, streamStreamStateFile)))
++				fs, err = newFileStoreWithCreated(fcfg, cfg, created, prf(&fcfg), nil)
++				require_NoError(t, err)
++				defer fs.Stop()
++				if state := fs.State(); !reflect.DeepEqual(state, expected) {
++					t.Fatalf("Expected state\n of %+v, \ngot %+v without index.db state", expected, state)
++				}
++			})
++		})
++	}
++}
++
+ func TestFileStoreStreamTruncateDeletedWithCompactedPrefix(t *testing.T) {
+ 	testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
+ 		fcfg.BlockSize = 120
+@@ -5439,6 +5512,49 @@ func TestFileStoreCompactFirstSeqNotFromEmptyBlock(t *testing.T) {
+ 	})
+ }
+ 
++func TestFileStoreWriteFullStateWithLeftoverEmptyBlocks(t *testing.T) {
++	testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
++		cfg := StreamConfig{Name: "zzz", Subjects: []string{"foo"}, Storage: FileStorage}
++		created := time.Now()
++		fs, err := newFileStoreWithCreated(fcfg, cfg, created, prf(&fcfg), nil)
++		require_NoError(t, err)
++		defer fs.Stop()
++
++		// 1.blk only holds a skipped sequence.
++		_, err = fs.SkipMsg(0)
++		require_NoError(t, err)
++		// 2.blk has its first message removed.
++		fs.mu.Lock()
++		_, err = fs.newMsgBlockForWrite()
++		fs.mu.Unlock()
++		require_NoError(t, err)
++		_, _, err = fs.StoreMsg("foo", nil, nil, 0)
++		require_NoError(t, err)
++		_, _, err = fs.StoreMsg("foo", nil, nil, 0)
++		require_NoError(t, err)
++		_, err = fs.RemoveMsg(2)
++		require_NoError(t, err)
++
++		before := fs.State()
++		require_Equal(t, before.Msgs, 1)
++		require_Equal(t, before.FirstSeq, 3)
++		require_Equal(t, before.LastSeq, 3)
++
++		// The empty block must not be seen as an inconsistency.
++		require_NoError(t, fs.forceWriteFullState())
++
++		// And recovering from the written state must not change it.
++		fs.Stop()
++		fs, err = newFileStoreWithCreated(fcfg, cfg, created, prf(&fcfg), nil)
++		require_NoError(t, err)
++		defer fs.Stop()
++
++		if state := fs.State(); !reflect.DeepEqual(state, before) {
++			t.Fatalf("Expected state\n of %+v, \ngot %+v", before, state)
++		}
++	})
++}
++
+ func TestFileStoreRebuildStateFirstSeqWithLeftoverEmptyBlocks(t *testing.T) {
+ 	t.Run("NoMessages", func(t *testing.T) {
+ 		testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
+@@ -14016,6 +14132,57 @@ func TestFileStoreTombstonesNoFirstSeqRollback(t *testing.T) {
+ 	})
+ }
+ 
++func TestFileStoreTombstonesRemoveBlockKeepsLastMsg(t *testing.T) {
++	for _, test := range []struct {
++		name   string
++		remove uint64
++	}{
++		{"LastStored", 29},
++		{"LastRemoved", 30},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
++				fcfg.BlockSize = 10 * 33 // 10 messages per block.
++				cfg := StreamConfig{Name: "zzz", Subjects: []
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8922** (2026-11-20): [FIXED] Filestore tombstones lost around empty blocks and compaction (@MauriceVanVeen)
+- **PR #8920** (2026-11-20): [FIXED] Filestore compression, empty block and subject state fixes (@MauriceVanVeen)
+- **PR #8919** (2026-11-20): [FIXED] Truncate and FilteredState differing between file and memory store (@MauriceVanVeen)
+- **PR #8918** (2026-11-20): [FIXED] Send MaxDelivery advisor message when reach (@huynguyen7)
+- **PR #8915** (2026-11-20): [FIXED] LeafNode: possible dropped delivery on subscription close (@kozlovic)
 - **PR #8909** (closed): Optimize exact-subject pending counts at the latest sequence (@MoonShiesty)
-- **PR #8907** (2026-11-18): [FIXED] Batch account limits, store errors & trace-only messages (@MauriceVanVeen)
-- **PR #8905** (2026-11-17): updated accConnsUpdate to use a read lock instead of a write lock. (@cfedersp)
-- **PR #8902** (2026-11-16): [FIXED] MQTT: readLoop JetStream requests stuck behind a pending route (@MauriceVanVeen)
-- **PR #8901** (2026-11-16): [FIXED] Data race between filestore ConsumerStore and UpdateConfig (@sciascid)
-- **PR #8900** (2026-11-16): [FIXED] memory store SkipMsgs sequence could overflow (@sciascid)
 
 ---
 
@@ -3711,36 +3504,83 @@ Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. (2.16) [FIXED] Send async INFO to clients when max_payload limit changes
+## X. [FIXED] Filestore compression, empty block and subject state fixes
 
 **RULE**:
-When implementing operations in `server/accounts.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/filestore.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba5c7e53`: (2.16) [FIXED] Send async INFO to clients when max_payload limit changes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `20df9dfc`: [FIXED] Filestore compression, empty block and subject state fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/accounts.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/filestore.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	s.mu.RLock()
-	info := s.copyInfo()
-	s.mu.RUnlock()
-
-		oldMpay := atomic.LoadInt32(&c.mpay)
-		mpayChanged := oldMpay != atomic.LoadInt32(&c.mpay)
-		if mpayChanged {
-			c.sendAsyncInfo(info)
+		firstWithMsgs := fs.state.Msgs == 0 && mb.msgs > 0
+		if fs.state.FirstSeq == 0 || firstWithMsgs || (fseq < fs.state.FirstSeq && mb.first.ts != 0) {
+		if lseq := atomic.LoadUint64(&mb.last.seq); lseq > fs.state.LastSeq || (lseq == fs.state.LastSeq && mb.last.ts != 0) {
+	// Without messages the first sequence comes after the last, not where an empty block starts.
+	if fs.state.Msgs == 0 {
+		fs.state.FirstSeq = fs.state.LastSeq + 1
+		fs.state.FirstTime = time.Time{}
+	}
+		buf, err := mb.loadBlock(nil)
+		if err != nil {
+			return err
 		}
+		// An empty block has nothing to convert, it only needs new keys.
+		if len(buf) == 0 {
+			recycleMsgBlockBuf(buf)
+			return fs.genEncryptionKeysForBlock(mb)
+		}
+	// An empty block has nothing to convert.
+	if len(buf) == 0 {
+		recycleMsgBlockBuf(buf)
+		return nil
+	}
+	var alg StoreCompression
+	if buf, alg, err = mb.decode(buf); err != nil {
+	// Remember how the block is stored on disk, since it isn't recovered otherwise.
+	mb.cmp = alg
+		// A compressed block can't be appended to, new records would be written uncompressed.
+		// It ends up as the last block if the one after it was empty and got removed above.
+		fs.lmb.mu.RLock()
+		compressed := fs.lmb.cm
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		if fs.state.FirstSeq == 0 || (fseq < fs.state.FirstSeq && mb.first.ts != 0) {
+		if lseq := atomic.LoadUint64(&mb.last.seq); lseq >= fs.state.LastSeq {
+		buf, _ := mb.loadBlock(nil)
+	if buf, err = mb.decompressIfNeeded(buf); err != nil {
+		go func() {
+			fs.mu.Lock()
+			defer fs.mu.Unlock()
+			if !wc {
+				if info, ok := fs.psim.Find(stringToBytes(filter)); ok {
+					if i > info.fblk {
+						info.fblk = i
+					}
+				}
+			} else {
+				fs.psim.Match(stringToBytes(filter), func(subj []byte, psi *psi) {
+					if i > psi.fblk {
+						psi.fblk = i
+					}
+				})
+			}
+		}()
+		if mb = fs.bim[stop]; mb != nil {
+			_, _, l, err := mb.filteredPending(filter, wc, 0)
+			if err != nil {
+				return err
+			}
+			ss.Last = l
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba5c7e53` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `20df9dfc` are properly handled with clean fallback behavior.

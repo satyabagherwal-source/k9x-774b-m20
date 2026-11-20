@@ -11590,3 +11590,6 @@
 | `CYCLE-20261120-LIGF` | `2026-11-20T17:12:19.887Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md` | Yes (`8cba45fb...`) |
 | `CYCLE-20261120-LKSN` | `2026-11-20T17:12:22.919Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9605` | Yes (`e9b2fba0...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T17:12:56.311Z` | `vectifyai-pageindex` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-74EC8661` [Domain I] | Yes (`858be8fc...`) |
+| `CYCLE-20261120-WL04` | `2026-11-20T17:20:56.404Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9606` | Yes (`72fa071d...`) |
+| `CYCLE-20261120-WNNX` | `2026-11-20T17:20:59.853Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9576` | Yes (`ab265535...`) |
+| `CYCLE-20261120-WXIT` | `2026-11-20T17:21:12.629Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9607` | Yes (`e4acc127...`) |

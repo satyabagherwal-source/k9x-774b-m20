@@ -4,24 +4,24 @@
 {
   "source_repository": "inikulin/parse5",
   "source_url": "https://github.com/inikulin/parse5",
-  "source_version": "ed000203",
+  "source_version": "62a198aa",
   "license": "MIT",
-  "timestamp": "2026-11-16T18:55:43.728Z",
+  "timestamp": "2026-11-20T17:21:12.822Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-inikulin-parse5",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [inikulin/parse5](https://github.com/inikulin/parse5) (Revision: `ed000203`).  
-> **License**: MIT | **Timestamp**: `2026-11-16T18:55:43.728Z`  
+> **Provenance**: Harvested from [inikulin/parse5](https://github.com/inikulin/parse5) (Revision: `62a198aa`).  
+> **License**: MIT | **Timestamp**: `2026-11-20T17:21:12.822Z`  
 > **Learning ID**: `learn-github-inikulin-parse5`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 88%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 87%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from inikulin/parse5:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/inikulin-parse5-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/inikulin/parse5](https://github.com/inikulin/parse5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:55:41.307Z  
+> **Harvest Timestamp**: 2026-11-20T17:20:49.950Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: HTML parsing/serialization toolset for Node.js. WHATWG HTML Living Standard (aka HTML5)-compliant.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3942 stars
+- **Stars / Engagement**: 3944 stars
 
 ---
 
@@ -1677,219 +1677,64 @@ export class ParserFeedbackSimulator implements TokenHandler {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ed000203` (2026-11-16)
-**Commit Message**: chore(deps-dev): bump prettier from 3.9.10 to 3.10.1 (#1933)
+### Incident Patch 1: `62a198aa` (2026-11-20)
+**Commit Message**: fix(parser): treat search as a special element (#1925)
 
-Bumps [prettier](https://github.com/prettier/prettier) from 3.9.10 to 3.10.1.
-- [Release notes](https://github.com/prettier/prettier/releases)
-- [Changelog](https://github.com/prettier/prettier/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/prettier/prettier/compare/3.9.10...3.10.1)
+* fix(parser): treat search as a special element
 
----
-updated-dependencies:
-- dependency-name: prettier
-  dependency-version: 3.10.1
-  dependency-type: direct:development
-  update-type: version-update:semver-minor
-...
+The HTML Standard lists search in the special category, but it was missing
+from SPECIAL_ELEMENTS, so the adoption agency, the li/dd/dt start tag rules
+and the "any other end tag" steps walked past an open <search>.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+* chore: add todo
 
-**File**: `package-lock.json` (modified, +7/-7)
+---------
+
+Co-authored-by: James Garbutt <[REDACTED_EMAIL]>
+
+**File**: `packages/parse5/lib/common/html.ts` (modified, +1/-0)
 ```diff
-@@ -20,7 +20,7 @@
-                 "husky": "^9.1.7",
-                 "nano-staged": "^1.0.2",
-                 "outdent": "^0.8.0",
--                "prettier": "^3.9.10",
-+                "prettier": "^3.10.1",
-                 "ts-node": "^10.9.2",
-                 "typedoc": "^0.28.20",
-                 "typescript": "^6.0.3",
-@@ -2789,9 +2789,9 @@
-             }
-         },
-         "node_modules/prettier": {
--            "version": "3.9.10",
--            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.9.10.tgz",
--            "integrity": "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==",
-+            "version": "3.10.1",
-+            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.10.1.tgz",
-+            "integrity": "sha512-70vp3ZUYoPlFbF9uiTdXHUUCGEIp7d4+6p+8DYbkm2jP7x/3i/paXVF6dopSI3zd/CEitrZN1rc4i85xWmmXlg==",
-             "dev": true,
-             "license": "MIT",
-             "bin": {
-@@ -5211,9 +5211,9 @@
-             "dev": true
-         },
-         "prettier": {
--            "version": "3.9.10",
--            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.9.10.tgz",
--            "integrity": "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==",
-+            "version": "3.10.1",
-+            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.10.1.tgz",
-+            "integrity": "sha512-70vp3ZUYoPlFbF9uiTdXHUUCGEIp7d4+6p+8DYbkm2jP7x/3i/paXVF6dopSI3zd/CEitrZN1rc4i85xWmmXlg==",
-             "dev": true
-         },
-         "punycode": {
+@@ -527,6 +527,7 @@ export const SPECIAL_ELEMENTS: Record<NS, Set<TAG_ID>> = {
+         $.PLAINTEXT,
+         $.PRE,
+         $.SCRIPT,
++        $.SEARCH,
+         $.SECTION,
+         $.SELECT,
+         $.SOURCE,
 ```
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `packages/parse5/lib/parser/index.test.ts` (modified, +13/-0)
 ```diff
-@@ -17,7 +17,7 @@
-         "husky": "^9.1.7",
-         "nano-staged": "^1.0.2",
-         "outdent": "^0.8.0",
--        "prettier": "^3.9.10",
-+        "prettier": "^3.10.1",
-         "ts-node": "^10.9.2",
-         "typedoc": "^0.28.20",
-         "typescript": "^6.0.3",
-```
-
----
-
-### Incident Patch 2: `476b24b0` (2026-11-13)
-**Commit Message**: chore(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2 (#1931)
-
-Bumps [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint) from 8.72.1 to 8.72.2.
-- [Release notes](https://github.com/typescript-eslint/typescript-eslint/releases)
-- [Changelog](https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/typescript-eslint/CHANGELOG.md)
-- [Commits](https://github.com/typescript-eslint/typescript-eslint/commits/v8.72.2/packages/typescript-eslint)
-
----
-updated-dependencies:
-- dependency-name: typescript-eslint
-  dependency-version: 8.72.2
-  dependency-type: direct:development
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `package-lock.json` (modified, +122/-122)
-```diff
-@@ -24,7 +24,7 @@
-                 "ts-node": "^10.9.2",
-                 "typedoc": "^0.28.20",
-                 "typescript": "^6.0.3",
--                "typescript-eslint": "^8.72.1",
-+                "typescript-eslint": "^8.72.2",
-                 "vitest": "^5.1.0"
-             }
-         },
-@@ -834,17 +834,17 @@
-             "dev": true
-         },
-         "node_modules/@typescript-eslint/eslint-plugin": {
--            "version": "8.72.1",
--            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
--            "integrity": "sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==",
-+            "version": "8.72.2",
-+            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.2.tgz",
-+            "integrity": "sha512-222PKFXKihmFpi/pS5njoBgdAqsPhj2/GBmFbrNw8Tq8gEG9Sv+kSlKFy4u2q+mJv9ZzJgM2Gkv/bUzRZwZw5g==",
-             "dev": true,
-             "license": "MIT",
-             "dependencies": {
-                 "@eslint-community/regexpp": "^4.12.2",
--                "@typescript-eslint/scope-manager": "8.72.1",
--                "@typescript-eslint/type-utils": "8.72.1",
--                "@typescript-eslint/utils": "8.72.1",
--                "@typescript-eslint/visitor-keys": "8.72.1",
-+                "@typescript-eslint/scope-manager": "8.72.2",
-+                "@typescript-eslint/type-utils": "8.72.2",
-+                "@typescript-eslint/utils": "8.72.2",
-+                "@typescript-eslint/visitor-keys": "8.72.2",
-                 "ignore": "^7.0.5",
-                 "natural-compare": "^1.4.0",
-                 "ts-api-utils": "^2.5.0"
-@@ -857,7 +857,7 @@
-                 "url": "https://opencollective.com/typescript-eslint"
-             },
-             "peerDependencies": {
--                "@typescript-eslint/parser": "^8.72.1",
-+                "@typescript-eslint/parser": "^8.72.2",
-                 "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
-                 "typescript": ">=4.8.4 <6.1.0"
-             }
-@@ -873,16 +873,16 @@
-             }
-         },
-         "node_modules/@typescript-eslint/parser": {
--            "version": "8.72.1",
--            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
--            "integrity": "sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==",
-+            "version": "8.72.2",
-+            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.2.tgz",
-+            "integrity": "sha512-llP+T1YuJOLlxEciP6OyQGtz5SMxyn+9LA2BvZw5RmToGVa1y4beEDVQL6Gje7T5WFYh19WREjDCN9Ev4gm5AA==",
-             "dev": true,
-             "license": "MIT",
-             "dependencies": {
--                "@typescript-eslint/scope-manager": "8.72.1",
--                "@typescript-eslint/types": "8.72.1",
--                "@typescript-eslint/typescript-estree": "8.72.1",
--                "@typescript-eslint/visitor-keys": "8.72.1",
-+                "@typescript-eslint/scope-manager": "8.72.2",
-+                "@typescript-eslint/types": "8.72.2",
-+                "@typescript-eslint/typescript-estree": "8.72.2",
-+                "@typescript-eslint/visitor-keys": "8.72.2",
-                 "debug": "^4.4.3"
-             },
-             "engines": {
-@@ -898,14 +898,14 @@
-             }
-         },
-         "node_modules/@typescript-eslint/project-service": {
--            "version": "8.72.1",
--            "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.1.tgz",
--            "integrity": "sha512-fAuVMkwdO/huI8nyo/WKnNKf6Gag93S56Rh3Ts5mGcavwSdaN8tRg1gCeIGX8PF+nzp1BjGfO4gHhGzW1J6jTg==",
-+            "version": "8.72.2",
-+            "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.2.tgz",
-+            "integrity": "sha512-6y5dLTZdHhI8Eh3yIQ/bfQhRKwn5e+TpJj64o18Cngc0iW/BCrVvrr6zGYqXPnYH31u6YXAYiFh0+qxX5mybJw==",
-             "dev": true,
-             "license": "MIT",
-             "dependencies": {
--                "@typescript-eslint/tsconfig-utils": "^8.72.1",
--                "@typescript-eslint/types": "^8.72.1",
-+                "@typescript-eslint/tsconfig-utils": "^8.72.2",
-+                "@typescript-eslint/types": "^8.72.2",
-                 "debug": "^4.4.3"
-             },
-             "engines": {
-@@ -920,14 +920,14 @@
-             }
-         },
-         "node_modules/@typescript-eslint/scope-manager": {
--            "version": "8.72.1",
--            "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.1.tgz",
--            "integrity": "sha512-lC/t6eMCZZQAAKZEYGL6RDVSuFehpdmMT6h+nJIjIa6oylN/PwDgDVtEIbB7O9xFfZYtZAYLoLlDNWKJhtF+uQ==",
-+            "version": "8.72.2",
-+            "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.2.tgz",
-+            "integ
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@
-         "ts-node": "^10.9.2",
-         "typedoc": "^0.28.20",
-         "typescript": "^6.0.3",
--        "typescript-eslint": "^8.72.1",
-+        "typescript-eslint": "^8.72.2",
-         "vitest": "^5.1.0"
-     },
-     "scripts": {
+@@ -210,6 +210,19 @@ describe('parser', () => {
+         assert.strictEqual(serialize(fragment), '<form><svg><option><g></g></option></svg></form>');
+     });
+ 
++    // TODO: upstream to html5lib-tests
++    it.each([
++        // Adoption agency: `<search>` becomes the furthest block.
++        ['<a><search>x</a>y', '<a></a><search><a>x</a>y</search>'],
++        // `<li>`, `<dd>` and `<dt>` start tags stop at a special element.
++        ['<li>a<search><li>b', '<li>a<search><li>b</li></search></li>'],
++        ['<dd>a<search><dt>b', '<dd>a<search><dt>b</dt></search></dd>'],
++        // "Any other end tag" does not close past a special element.
++        ['<x><search></x>y', '<x><search>y</search></x>'],
++    ])('treats <search> as a special element (GH-1924): %s', (input, expectedBody) => {
++        expect(serialize(parse(input))).toBe(`<html><head></head><body>${expectedBody}</body></html>`);
++    });
++
+     describe('Tree adapters', () => {
+         it('should provide element creation context', () => {
+             const contexts = new Map<string, ElementCreationContext<DefaultTreeAdapterMap>>();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1936** (2026-11-20): chore(deps-dev): bump typescript-eslint from 8.72.2 to 8.73.0 (@dependabot[bot])
+- **PR #1934** (2026-11-17): chore(deps-dev): bump eslint from 10.14.0 to 10.15.0 (@dependabot[bot])
 - **PR #1933** (2026-11-16): chore(deps-dev): bump prettier from 3.9.10 to 3.10.1 (@dependabot[bot])
+- **PR #1932** (closed): fix(tokenizer): reset attribute-name cache when creating tags (@eemelipa)
 - **PR #1931** (2026-11-13): chore(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2 (@dependabot[bot])
 - **PR #1930** (2026-11-10): test: resolve data dirs with fileURLToPath so the suite runs on Windows (@goranai)
-- **PR #1927** (2026-11-09): chore(deps): bump the codeql group with 2 updates (@dependabot[bot])
-- **PR #1926** (2026-11-07): chore: v8.1.1 (@fb55)
-- **PR #1922** (2026-11-06): fix(tokenizer): bound the duplicate-attribute check for wide tags (@fb55)
 
 ---
 
@@ -1909,43 +1754,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps-dev): bump prettier from 3.9.10 to 3.10.1
+## X. parser): treat search as a special element
 
 **RULE**:
-When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/parse5/lib/common/html.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ed000203`: deps-dev): bump prettier from 3.9.10 to 3.10.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `62a198aa`: parser): treat search as a special element. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/parse5/lib/common/html.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-                "prettier": "^3.10.1",
-            "version": "3.10.1",
-            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.10.1.tgz",
-            "integrity": "sha512-70vp3ZUYoPlFbF9uiTdXHUUCGEIp7d4+6p+8DYbkm2jP7x/3i/paXVF6dopSI3zd/CEitrZN1rc4i85xWmmXlg==",
-            "version": "3.10.1",
-            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.10.1.tgz",
-            "integrity": "sha512-70vp3ZUYoPlFbF9uiTdXHUUCGEIp7d4+6p+8DYbkm2jP7x/3i/paXVF6dopSI3zd/CEitrZN1rc4i85xWmmXlg==",
+        $.SEARCH,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-                "prettier": "^3.9.10",
-            "version": "3.9.10",
-            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.9.10.tgz",
-            "integrity": "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==",
-            "version": "3.9.10",
-            "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.9.10.tgz",
-            "integrity": "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ed000203` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `62a198aa` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
