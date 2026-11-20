@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T17:23:36.551Z",
+  "timestamp": "2026-11-20T21:47:15.593Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-databendlabs-databend-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [databendlabs-databend-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T17:23:36.551Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T21:47:15.593Z`  
 > **Learning ID**: `LEARN-EVO-databendlabs-databend-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `a83eaead`  
+> **Source Version**: `77137bc2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T17:23:29.703Z  
+> **Timestamp**: 2026-11-20T21:47:11.185Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T17:23:29.696Z  
+> **Harvest Timestamp**: 2026-11-20T21:47:10.993Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1221,14 +1221,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21126** (2026-11-19): **fix(query): enforce stage WRITE on HTTP uploads**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  The HTTP stage upload handler now requires the same stage `WRITE` permission as SQL writes, before initializing storage or reading the upload body. Permission denials return HTTP 403. Uploads to the authenticated user's own `~` stage and both stage-name header formats remain supported.  Stateless regression `18_0027_http_stage_write` checks HTTP 403 without `WRITE`, successful uploads via role grants or ownership, and the user's own `~` stage. The targeted test passed twice against a local server with the fix; shell syntax and formatting checks passed.  Fixes #21094.  <!-- Briefly describe what this PR aims to solve. Include background context that will help reviewers understand the purpose of the PR.  Write for humans, in your own words: the concrete problem, why it matters, how you validated it. Do NOT paste model transcripts, long logs, or stack traces here - link a gist or use <details>. The automated PR Assistant checks reject bloated, repetitive, or template-placeholder descriptions.  - fixes: #[Link the issue here] -->  ## Tests  - [ ] Unit Test - [x] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functionality not to work as expected) - [ ] Do
+- **Issue #21146** (2026-11-20): **chore(meta): use server v260629.11.0 and client v260205.13.7**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Use Meta server and test harness `v260629.11.0` with maintenance client `v260205.13.7`. Both resolve crates.io OpenRaft `0.10.1`; the server no longer needs a Git source for OpenRaft. Keep the runtime bridge between the two Meta sources. Server-side credentials import `databend_meta::Secret` without a direct `databend-meta-raft-config` dependency. The semaphore codec uses `codeq 0.6.3` with the same wire format. Databend’s separate Hickory dependencies are outside this change.  The maintenance client retains the `1.2.770` minimum Meta server version. Keep `watch_on_leader()` until all watch-serving endpoints have upgraded through normal rollout and a deployed probe confirms stale-stream closure, reconnect to the new leader, and resumed updates.  Validation: Clippy and 111 focused tests passed for query config, Meta CLI config, control, store, cache, and semaphore. The `metactl` Raft TLS suite also passed locally, including follower reads, snapshot catch-up, and leader transfer.  <!-- x-pr-ship target=main old-base-oid=a85e50302ceeb3fd46c3582409745f0d551a0eee predecessor=none -->  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [ ] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [x] Breaking Change (fix or feature that could cause ex
 
-- **Issue #21125** (2026-11-19): **refactor: query: read the ownership and access caches without a lock**
-  *Symptoms*:   I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  ##### refactor: query: read the ownership and access caches without a lock # Summary  The ownership, network rule and external access integration caches are no longer behind a tokio `Mutex`: `RoleMgr` and `UserApiProvider` hold them as `Arc<Cache>` and `Cache`, since the sub-cache reads take `&self`.  # Details  Concurrent `RoleMgr::list_ownerships` calls no longer queue on the lock: they share the copy, and each still waits while it initializes or reconnects. `UserApiProvider::external_access_values` no longer needs `try_lock` to avoid that queue, since `Cache::try_get_ready` never waits. The test of busy caches uses caches that cannot answer instead of holding their locks.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test  - _Explain why_  ## Type of change  - [x] Refactoring  ## AI assistance  - AI usage: An AI coding agent generated code and wrote tests; I reviewed and confirmed every line before committing it. - Responsible human: @drmingdrmer - [x] The responsible human has read every line of this diff and can explain each change  ## Related Issues  <!-- Reviewable:start --> - - - This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/databendlabs/databend/21125) <!-- Reviewable:end --> 
-  **Post-Mortem & Fix Analysis**:
-  > ## ⏱ CI timing · Dev  ### [run 44318988933](https://github.com/databendlabs/databend/actions/runs/44318988933) · **37.5 min** (main p50 47.3 min, **−9.8 min**)  | stage | this run | main p50 | Δ | |---|--:|--:|--:| | **total** | 37.5 min | 47.3 min | **−9.8 min** | | **build (aarch64, ci profile)** | 21.8 min | 33.6 min | **−11.8 min** | | ├ deps + crates (parallel) | 4.9 min | — | — | | ├ databend-query codegen | 2.8 min | — | — | | ├ databend-binaries link | 12.0 min | — | — | | └ sccache hit rate | 97.5 % | — | — | | **test_unit** | 15.9 min | 15.1 min | +0.8 min | | mac_check | — | 14.0 min | — | | **tests after build (52 jobs)** | 14.5 min | 11.6 min | **+2.9 min** | | ├ queue p50 / max | 4.4 min / 11.1 min | 1.8 min / 4.5 min | **+2.7 min** | | ├ sqllogic standalone (8 jobs, max) | 5.4 min | 5.2 min | +0.2 min | | ├ sqllogic cluster (8 jobs, max) | 9.7 min | 9.1 min | +0.6 min | | ├ sqllogic stage (2 jobs, max) | 6.7 min | 6.3 min | +0.3 min | | ├ sqllogic other (13 jobs, max) | 
-  > Folded into #21124, whose branch now carries this commit on top of its own, as 3917502b8e.  <!-- x-pr-ship -->
+- **Issue #21141** (2026-11-20): **fix(query): probe the partition built in each hash join spill round**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  The legacy hash join can silently return wrong results when it spills. CI hit this in [`linux / sqllogic / cluster (tpcds, 4c)`](https://github.com/databendlabs/databend/actions/runs/44673294220/job/136092536425): TPC-DS Q69 in `tpcds_spill_3.test` returned one extra row. Correct runs in the same job had identical row counts for every operator up to the `NOT EXISTS` left mark join on `web_sales`. That join's output differed on one node, and on that node the join spilled into 16 rounds.  **Root cause.** Spilled partitions are restored one per round. At the end of a round, the last probe processor releases the build side (`continue_build_watcher.send(true)`) and only afterwards reads the partition to restore from `HashJoinState::partition_id`. Once the build side finishes the next round, its `finalize_done` already stores the partition of the round after that in the same slot. A probe thread delayed between the release and the read (for example, preempted for about the 1 ms a small round takes) restores the following partition. It probes that partition against the wrong table, and its buffered rows of both partitions are never joined:  - inner and semi joins lose rows; - `NOT EXISTS` / left mark joins return extra rows; - no error is raised.  This has existed since the round protocol was introduced. It affects every join that runs on the legacy implementatio
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1245,908 +1242,908 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dea33860` (2026-11-19)
-**Commit Message**: fix(query): batch small blocks before the window partition exchange (#21112)
+### Incident Patch 1: `f3fe9792` (2026-11-20)
+**Commit Message**: fix(query): read spilled byte columns with the writer's arrow types (#21053)
 
-* fix(query): batch small blocks before the window partition exchange
+* fix(query): read spilled byte columns with the writer's arrow types
 
-The window partition exchange scatters every input block into
-`window_num_partitions` pieces. When the blocks that reach it are small,
-for example after a selective filter or after the per-block top-n
-truncation of `row_number`/`rank`, each piece holds one or two rows but
-still a full set of allocations per column. Those allocations take far
-more memory than the rows, are not counted by `memory_size`, so the
-window buffer never reaches its spill threshold.
+Spill files are written with LargeBinary/Utf8View byte columns, but
+SpillsDataReader built its field levels from the row group's parquet
+schema without the footer's embedded arrow schema, so byte columns were
+decoded as Binary/Utf8 with i32 offsets. A row group is decoded as one
+batch, so a byte column above 2 GiB failed with "index overflow decoding
+byte array".
 
-Add `TransformWindowPartitionBatch` before the exchange of every
-partitioned window. Blocks that would give fewer than 64 rows and less
-than 1 KiB per column to each partition on average are buffered until
-they are not small together and then concatenated; other blocks pass
-through untouched. The top-n truncation moves from
-`WindowPartitionTopNExchange` into this transform, so top-n windows now
-use the plain `WindowPartitionExchange`.
+Pass the arrow schema derived from the reader's data schema, the same
+conversion the writer uses, as the decoding hint.
 
-* fix(query): send large window blocks without concatenation and keep partition ids above 255
+* fix(query): name spill read hint fields after the file's columns
 
-* fix(query): copy small window blocks into the batch 
+Parquet matches hint fields by name. The writer names top-level columns after the block (col_N), while callers pass their own data schema (for example agg_0/group_0, or 0/1 for partial top-n), so the hint failed with 'incompatible arrow schema'. Take the top-level names from the file and keep the types inferred from the data schema.
 
-**File**: `src/query/expression/src/kernels/stream_partition.rs` (modified, +135/-12)
+**File**: `src/query/service/src/spillers/async_buffer.rs` (modified, +211/-6)
 ```diff
-@@ -136,6 +136,33 @@ impl PendingColumn {
-         copy_column(indices, column, self.builder(indices.len()));
-     }
+@@ -25,6 +25,8 @@ use std::sync::atomic::Ordering;
+ use std::time::Duration;
+ use std::time::Instant;
  
-+    /// Add every row of `column`, in order.
-+    fn append_column(&mut self, column: &Column) {
-+        let builder = self.builder(column.len());
-+        if builder.data_type() == column.data_type() {
-+            builder.append_column(column);
-+        } else {
-+            // Such as an `Array` column into an `EmptyArray` builder, which
-+            // only `copy_column` turns into an `Array` builder.
-+            let indices = (0..column.len() as u32).collect::<Vec<_>>();
-+            copy_column(&indices, column, builder);
-+        }
-+    }
-+
-+    /// Add `rows` of a constant, kept a constant when it can be.
-+    fn append_const(
-+        &mut self,
-+        scalar: &Scalar,
-+        data_type: &DataType,
-+        rows: usize,
-+        size: &mut impl FnMut() -> ExpandedSize,
-+    ) {
-+        if !self.try_push_const(scalar, data_type, rows, size) {
-+            let column = ColumnBuilder::repeat(&scalar.as_ref(), rows, data_type).build();
-+            self.append_column(&column);
-+        }
-+    }
-+
-     /// Turn the pending rows into a builder with room for `additional` more.
-     fn builder(&mut self, additional: usize) -> &mut ColumnBuilder {
-         match self {
-@@ -215,6 +242,21 @@ fn copy_const(scalar: &Scalar, data_type: &DataType, rows: usize, to: &mut Colum
-     copy_column(&indices, &column, to);
- }
++use arrow_array::RecordBatch;
++use arrow_schema::Fields;
+ use arrow_schema::Schema;
+ use bytes::Bytes;
+ use bytes::BytesMut;
+@@ -583,10 +585,23 @@ impl SpillsDataReader {
+             ));
+         }
  
-+/// The expanded size of the last constant seen in a column.
-+type ConstSize = Option<(Scalar, DataType, ExpandedSize)>;
-+
-+fn cached_const_size(cache: &mut ConstSize, scalar: &Scalar, data_type: &DataType) -> ExpandedSize {
-+    if let Some((s, t, size)) = cache.as_ref()
-+        && s == scalar
-+        && t == data_type
-+    {
-+        return *size;
-+    }
-+    let size = ExpandedSize::measure(scalar, data_type);
-+    *cache = Some((scalar.clone(), data_type.clone(), size));
-+    size
-+}
-+
- struct PartitionBlockBuilder {
-     num_rows: usize,
-     columns: Vec<PendingColumn>,
-@@ -244,7 +286,7 @@ pub struct BlockPartitionStream {
-     partitions: Vec<PartitionBlockBuilder>,
-     // The expanded size of the last constant seen in each column, as the same
-     // constant usually comes in every block.
--    const_sizes: Vec<Option<(Scalar, DataType, ExpandedSize)>>,
-+    const_sizes: Vec<ConstSize>,
- }
- 
- impl BlockPartitionStream {
-@@ -313,17 +355,7 @@ impl BlockPartitionStream {
-             match entry {
-                 BlockEntry::Const(scalar, data_type, num_rows) => {
-                     let const_size = &mut self.const_sizes[column_idx];
--                    let mut size = || {
--                        if let Some((s, t, size)) = const_size.as_ref()
--                            && *s == scalar
--                            && *t == data_type
--                        {
--                            return *size;
--                        }
--                        let size = ExpandedSize::measure(&scalar, &data_type);
--                        *const_size = Some((scalar.clone(), data_type.clone(), size));
--                        size
--                    };
-+                    let mut size = || cached_const_size(const_size, &scalar, &data_type);
-                     // Expanded once for the partitions that already hold other
-                     // rows, as every block used to be.
-                     let mut expanded = None;
-@@ -435,6 +467,97 @@ impl BlockPartitionStream {
-     }
- }
- 
-+/// Concatenates blocks into blocks of `rows_threshold` rows or
-+/// `bytes_threshold` bytes, whichever is reached first: a
-+/// `BlockPartitionStream` with one partition, without row indices.
-+///
-+/// The rows of each block are appended to the column builders as it arrives,
-+/// so the block, which can be a slice of a larger one, is not kept. A column
-+/// that has been the same constant in every block so far stays a constant,
-+/// counted as if expanded. Once a block is sent, the builders of the next one
-+/// reserve as many rows.
-+pub struct BlockConcatStream {
-+    rows_threshold: usize,
-+    bytes_threshold: usize,
-+    pending: PartitionBlockBuilder,
-+    const_sizes: Vec<ConstSize>,
-+}
-+
-+impl BlockConcatStream {
-+    pub fn create(rows_threshold: usize, bytes_threshold: usize) -> BlockConcatStream {
-+        BlockConcatStream {
-+            rows_threshold: if rows_threshold == 0 {
-+                usize::MAX
-+            } else {
-+                rows_threshold
-+            },
-+            bytes_threshold: if bytes_threshold == 0 {
-+                usize::MAX
-+            } else {
-+                bytes_threshold
-+            },
-+            pending: PartitionBlockBuilder {
-+                num_rows: 0,
-+                columns: vec![],
-+            },
-+            const_sizes: vec![],
-+        }
-+    }
-+
-+    /// Appends the rows of `block`, and returns the concatenated block once
-+    /// it reaches a threshold.
-+    pub fn push(&mut self, block: DataBlock) -> Option<DataBlock
-```
-
-**File**: `src/query/expression/tests/it/stream_partition.rs` (modified, +57/-0)
-```diff
-@@ -14,6 +14,7 @@
- 
- use std::collections::HashSet;
- 
-+use databend_common_expression::BlockConcatStream;
- use databend_common_expression::BlockEntry;
- use databend_common_expression::BlockPartitionStream;
- use databend_common_expression::DataBlock;
-@@ -107,6 +108,62 @@ fn assert_same_as_expanded(
-     output
- }
- 
-+#[test]
-+fn test_concat_stream_cuts_as_one_partition() {
-+    // Columns, runs of one constant, a new constant and a slice, cut at 10
-+    // rows as a `BlockPartitionStream` with one partition cuts them.
-+    let blocks = [
-+        column_block(5, 0),
-+        const_block(4, 5, "a"),
-+        const_block(3, 9, "a"),
-+        column_block(8, 10).slice(2..6),
-+        const_block(2, 20, "b"),
-+        column_block(7, 30),
-+        const_block(1, 40, "b"),
-+    ];
-+    let mut stream = BlockConcatStream::create(10, 0);
-+    let mut reference = BlockPartitionStream::create(10, 0, 1);
-+    for block in &blocks {
-+        let actual = stream.push(block.clone());
-+        let mut expected = reference.partition(vec![0; block.num_rows()], block.clone(), true);
-+        assert_eq!(actual.is_some(), expected.len() == 1);
-+        if let (Some(a), Some((_, e))) = (&actual, expected.pop()) {
-+            assert_same_values(a, &e);
-+        }
-+    }
-+    let actual = stream.finish();
-+    let expected = reference.finalize_partition(0);
-+    assert_eq!(actual.is_some(), expected.is_some());
-+    if let (Some(a), Some(e)) = (&actual, &expected) {
-+        assert_same_values(a, e);
-+    }
-+    assert!(stream.finish().is_none());
-+}
-+
-+#[test]
-+fn test_concat_stream_keeps_one_constant() {
-+    let mut stream = BlockConcatStream::create(0, 0);
-+    assert!(stream.push(const_block(3, 0, "a")).is_none());
-+    assert!(stream.push(const_block(4, 3, "a")).is_none());
-+    assert_eq!(stream.num_rows(), 7);
-+
-+    let block = stream.finish().unwrap();
-+    assert_eq!(block.num_rows(), 7);
-+    assert_eq!(block.get_by_offset(1).as_scalar(), Some(&Scalar::Null));
-+    assert_eq!(
-+        block.get_by_offset(2).as_scalar(),
-+        Some(&Scalar::String("a".to_string()))
-+    );
-+    assert_same_values(
-+        &block,
-+        &DataBlock::concat(&[
-+            expanded(&const_block(3, 0, "a")),
-+            expanded(&const_block(4, 3, "a")),
-+        ])
-+        .unwrap(),
-+    );
-+}
-+
- #[test]
- fn test_partition_preserves_timezone_representations() {
-     use databend_common_column::types::timestamp_tz;
-```
-
-**File**: `src/query/service/src/physical_plans/physical_window.rs` (modified, +16/-18)
-```diff
-@@ -32,6 +32,7 @@ use databend_common_functions::BUILTIN_FUNCTIONS;
- use databend_common_pipeline::core::Processor;
- use databend_common_pipeline::core::ProcessorPtr;
- use databend_common_pipeline_transforms::MemorySettings;
-+use databend_common_pipeline_transforms::TransformPipelineHelper;
- use databend_common_sql::ColumnSet;
- use databend_common_sql::ScalarExpr;
- use databend_common_sql::Symbol;
-@@ -68,10 +69,10 @@ use crate::pipelines::memory_settings::MemorySettingsExt;
- use crate::pipelines::processors::transforms::FrameBound;
- use crate::pipelines::processors::transforms::SortStrategy;
- use crate::pipelines::processors::transforms::TransformWindow;
-+use crate::pipelines::processors::transforms::TransformWindowPartitionBatch;
- use crate::pipelines::processors::transforms::TransformWindowPartitionCollect;
- use crate::pipelines::processors::transforms::WindowFunctionInfo;
- use crate::pipelines::processors::transforms::WindowPartitionExchange;
--use crate::pipelines::processors::transforms::WindowPartitionTopNExchange;
- use crate::pipelines::processors::transforms::WindowSortDesc;
- 
- #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-@@ -449,23 +450,20 @@ fn apply_window_partition(
-         .map(|index| input_schema.index_of(&index.to_string()))
-         .collect::<Result<Vec<_>>>()?;
- 
--    if let Some((top, func)) = window_top_n(window) {
--        builder.main_pipeline.exchange(
--            num_processors,
--            WindowPartitionTopNExchange::create(
--                partition_by.clone(),
--                sort_desc.clone(),
--                top,
--                func,
--                num_partitions as u64,
--            ),
--        )?;
--    } else {
--        builder.main_pipeline.exchange(
--            num_processors,
--            WindowPartitionExchange::create(partition_by.clone(), num_partitions),
--        )?;
--    }
-+    let top_n = window_top_n(window);
-+    builder.main_pipeline.add_accumulating_transformer(|| {
-+        let transform = TransformWindowPartitionBatch::create(num_partitions);
-+        match top_n {
-+            Some((top, func)) => {
-+                transform.with_top_n(partition_by.clone(), sort_desc.clone(), top, func)
-+            }
-+            None => transform,
-+        }
-+    });
-+    builder.main_pipeline.exchange(
-+        num_processors,
-+        WindowPartitionExchange::create(partition_by.clone(), num_partitions),
-+    )?;
- 
-     let window_spill_settings = MemorySettings::from_window_settings(&builder.ctx)?;
-     let plan_schema = DataSchemaRefExt::create(input_schema.fields().clone());
-```
-
-**File**: `src/query/service/src/physical_plans/physical_window_partition.rs` (modified, +14/-15)
-```diff
-@@ -21,6 +21,7 @@ use databend_common_exception::Result;
- use databend_common_expression::SortColumnDescription;
- use databend_common_pipeline::core::ProcessorPtr;
- use databend_common_pipeline_transforms::MemorySettings;
-+use databend_common_pipeline_transforms::TransformPipelineHelper;
- use databend_common_sql::Symbol;
- use databend_common_sql::executor::physical_plans::SortDesc;
- 
-@@ -33,9 +34,9 @@ use crate::physical_plans::physical_plan::PhysicalPlanMeta;
- use crate::pipelines::PipelineBuilder;
- use crate::pipelines::memory_settings::MemorySettingsExt;
- use crate::pipelines::processors::transforms::SortStrategy;
-+use crate::pipelines::processors::transforms::TransformWindowPartitionBatch;
- use crate::pipelines::processors::transforms::TransformWindowPartitionCollect;
- use crate::pipelines::processors::transforms::WindowPartitionExchange;
--use crate::pipelines::processors::transforms::WindowPartitionTopNExchange;
- 
- #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
- pub struct WindowPartition {
-@@ -121,25 +122,23 @@ impl IPhysicalPlan for WindowPartition {
-             })
-             .collect::<Result<Vec<_>>>()?;
- 
--        if let Some(top_n) = &self.top_n
--            && top_n.top < 10000
--        {
--            builder.main_pipeline.exchange(
--                num_processors,
--                WindowPartitionTopNExchange::create(
-+        let top_n = self.top_n.as_ref().filter(|top_n| top_n.top < 10000);
-+        builder.main_pipeline.add_accumulating_transformer(|| {
-+            let transform = TransformWindowPartitionBatch::create(num_partitions);
-+            match top_n {
-+                Some(top_n) => transform.with_top_n(
-                     partition_by.clone(),
-                     sort_desc.clone(),
-                     top_n.top,
-                     top_n.func,
--                    num_partitions as u64,
-                 ),
--            )?;
--        } else {
--            builder.main_pipeline.exchange(
--                num_processors,
--                WindowPartitionExchange::create(partition_by.clone(), num_partitions),
--            )?;
--        }
-+                None => transform,
-+            }
-+        });
-+        builder.main_pipeline.exchange(
-+            num_processors,
-+            WindowPartitionExchange::create(partition_by.clone(), num_partitions),
-+        )?;
- 
-         let window_spill_settings = MemorySettings::from_window_settings(&builder.ctx)?;
- 
-```
-
-**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/mod.rs` (modified, +2/-2)
-```diff
-@@ -13,14 +13,14 @@
- // limitations under the License.
- 
- mod data_processor_strategy;
-+mod transform_window_partition_batch;
- mod transform_window_partition_collect;
- mod window_partition_buffer;
- mod window_partition_exchange;
- mod window_partition_meta;
--mod window_partition_partial_top_n_exchange;
- 
- pub use data_processor_strategy::*;
-+pub use transform_window_partition_batch::*;
- pub use transform_window_partition_collect::*;
- pub use window_partition_exchange::*;
- pub use window_partition_meta::*;
--pub use window_partition_partial_top_n_exchange::*;
-```
-
-**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/transform_window_partition_batch.rs` (added, +518/-0)
-```diff
-@@ -0,0 +1,518 @@
-+// Copyright 2021 Datafuse Labs
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use databend_common_exception::Result;
-+use databend_common_expression::BlockConcatStream;
-+use databend_common_expression::DataBlock;
-+use databend_common_expression::FromData;
-+use databend_common_expression::ProjectedBlock;
-+use databend_common_expression::SortColumnDescription;
-+use databend_common_expression::SortCompare;
-+use databend_common_expression::Value;
-+use databend_common_expression::group_hash_entries;
-+use databend_common_expression::types::UInt64Type;
-+use databend_common_expression::visitor::ValueVisitor;
-+use databend_common_pipeline_transforms::AccumulatingTransform;
-+
-+use crate::physical_plans::WindowPartitionTopNFunc;
-+
-+/// A block is small when, scattered into the window partitions, each piece
-+/// gets fewer rows than this on average and fewer bytes than
-+/// `MIN_PIECE_BYTES_PER_COLUMN` per column. A constant column counts with its
-+/// value repeated for every row, the size it can take once buffered.
-+const MIN_PIECE_ROWS: usize = 64;
-+
-+const MIN_PIECE_BYTES_PER_COLUMN: usize = 1024;
-+
-+/// Prepares the input blocks of the window exchange, which scatters each
-+/// block into `window_num_partitions` pieces.
-+///
-+/// A small block, such as the output of a selective filter, would be cut into
-+/// pieces of one or two rows. Each piece holds its own allocations per
-+/// column, which take more memory than its rows, and the window buffers the
-+/// pieces until all input arrives. So small blocks go to a
-+/// `BlockConcatStream`: their rows are appended as they arrive, so a small
-+/// slice does not keep its source block, and they are sent as one block once
-+/// they are not small together. Other blocks are sent as they are.
-+///
-+/// There is one buffer for each input stream, not one per window partition:
-+/// the exchange scatters the batch into the window partitions afterwards.
-+///
-+/// With a top-n window function, the rows of each block that cannot rank
-+/// within `top` of their partition are dropped first.
-+pub struct TransformWindowPartitionBatch {
-+    top_n: Option<PartitionTopN>,
-+
-+    min_rows: usize,
-+    min_bytes_per_column: usize,
-+    // Created by the first small block, as its threshold in bytes depends on
-+    // the number of columns.
-+    stream: Option<BlockConcatStream>,
-+}
-+
-+impl TransformWindowPartitionBatch {
-+    pub fn create(num_partitions: usize) -> TransformWindowPartitionBatch {
-+        TransformWindowPartitionBatch {
-+            top_n: None,
-+            min_rows: num_partitions * MIN_PIECE_ROWS,
-+            min_bytes_per_column: num_partitions * MIN_PIECE_BYTES_PER_COLUMN,
-+            stream: None,
-+        }
-+    }
-+
-+    pub fn with_top_n(
-+        mut self,
-+        partition_indices: Vec<usize>,
-+        order_by: Vec<SortColumnDescription>,
-+        top: usize,
-+        func: WindowPartitionTopNFunc,
-+    ) -> TransformWindowPartitionBatch {
-+        self.top_n = Some(PartitionTopN::new(partition_indices, order_by, top, func));
-+        self
-+    }
-+
-+    fn is_small(&self, rows: usize, bytes: usize, columns: usize) -> bool {
-+        rows < self.min_rows && bytes < columns * self.min_bytes_per_column
-+    }
-+}
-+
-+impl AccumulatingTransform for TransformWindowPartitionBatch {
-+    const NAME: &'static str = "TransformWindowPartitionBatch";
-+
-+    fn transform(&mut self, block: DataBlock) -> Result<Vec<DataBlock>> {
-+        if block.is_empty() {
-+            return Ok(vec![]);
-+        }
-+
-+        let block = match &self.top_n {
-+            Some(top_n) => top_n.truncate(block)?,
-+            None => block,
-+        };
-+
-+        let rows = block.num_rows();
-+        let columns = block.num_columns();
-+        let bytes = block.estimate_block_size(columns);
-+        // A block that is not small is sent as it is, even when small blocks
-+        // are buffered: buffering it would copy all its rows. The window
-+        // sorts each partition later, so the order of the blocks does not
-+        // matter.
-+        if !self.is_small(rows, bytes, columns) {
-+            return Ok(vec![block]);
-+        }
-+
-+        // The stream sends the buffered rows once they reach either
-+        // threshold, which is when they are no longer small.
-+        let (min_rows, min_bytes) = (self.min_rows, columns * self.min_bytes_per_column);
-+        let stream = self
-+            .stream
-+            .get_or_insert_with(|| BlockConcatStream::crea
-```
-
-**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/window_partition_exchange.rs` (modified, +38/-1)
-```diff
-@@ -51,7 +51,7 @@ impl Exchange for WindowPartitionExchange {
-         // Scatter the data block to different partitions.
-         let indices = hashes
-             .iter()
--            .map(|&hash| (hash % self.num_partitions as u64) as u8)
-+            .map(|&hash| (hash % self.num_partitions as u64) as u32)
-             .collect::<Vec<_>>();
-         let scatter_blocks = DataBlock::scatter(&data_block, &indices, self.num_partitions)?;
- 
-@@ -69,3 +69,40 @@ impl Exchange for WindowPartitionExchange {
-             .collect())
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use databend_common_expression::BlockMetaInfoDowncast;
-+    use databend_common_expression::FromData;
-+    use databend_common_expression::types::Int32Type;
-+
-+    use super::*;
-+
-+    #[test]
-+    fn test_more_than_256_partitions() -> Result<()> {
-+        let exchange = WindowPartitionExchange::create(vec![0], 512);
-+        let block =
-+            DataBlock::new_from_columns(vec![Int32Type::from_data((0..4096).collect::<Vec<_>>())]);
-+
-+        let mut outputs = exchange.partition(block, 1)?;
-+        assert_eq!(outputs.len(), 1);
-+        let meta = outputs
-+            .pop()
-+            .and_then(|block| block.get_owned_meta())
-+            .and_then(WindowPartitionMeta::downcast_from)
-+            .unwrap();
-+
-+        let rows = meta
-+            .partitioned_data
++        // Read back the arrow types the writer used. Without them, byte columns are
++        // inferred as Binary/Utf8, whose i32 offsets overflow once a column of the
++        // row group, which is decoded as one batch, holds more than 2 GiB.
++        // Hint fields must carry the names in the file, which the writer takes
++        // from the block rather than from `data_schema`.
++        let schema_descr = row_groups[0].schema_descr();
++        let arrow_schema = Schema::from(infer_table_schema(&data_schema)?.as_ref());
++        let hint = arrow_schema
++            .fields()
 +            .iter()
-+            .map(|(_, block)| block.num_rows())
-+            .sum::<usize>();
-+        assert_eq!(rows, 4096);
-+        assert!(
-+            meta.partitioned_data
-+                .iter()
-+                .any(|(id, block)| *id >= 256 && !block.is_empty())
-+        );
-+        Ok(())
++            .zip(schema_descr.root_schema().get_fields())
++            .map(|(field, column)| field.as_ref().clone().with_name(column.name()))
++            .collect::<Vec<_>>();
+         let field_levels = parquet_to_arrow_field_levels(
+-            row_groups[0].schema_descr(),
++            schema_descr,
+             ProjectionMask::all(),
+-            None,
++            Some(&Fields::from(hint)),
+         )?;
+ 
+         let (tx, rx) = async_channel::bounded(1);
+@@ -613,6 +628,16 @@ impl SpillsDataReader {
+     }
+ 
+     pub fn read(&mut self) -> Result<Option<DataBlock>> {
++        let Some(batch) = self.read_record_batch()? else {
++            return Ok(None);
++        };
++        Ok(Some(DataBlock::from_record_batch_keep_null_const(
++            &self.data_schema,
++            &batch,
++        )?))
 +    }
-+}
-```
-
-**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/window_partition_partial_top_n_exchange.rs` (removed, +0/-309)
-```diff
-@@ -1,309 +0,0 @@
--// Copyright 2021 Datafuse Labs
--//
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--//     http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--use std::sync::Arc;
--
--use databend_common_exception::Result;
--use databend_common_expression::DataBlock;
--use databend_common_expression::SortColumnDescription;
--use databend_common_expression::SortCompare;
--use databend_common_expression::group_hash_value_spread;
--use databend_common_expression::visitor::ValueVisitor;
--use databend_common_pipeline::basic::Exchange;
--
--use super::WindowPartitionMeta;
--use crate::physical_plans::WindowPartitionTopNFunc;
--
--pub struct WindowPartitionTopNExchange {
--    partition_indices: Box<[usize]>,
--    top: usize,
--    func: WindowPartitionTopNFunc,
--
--    sort_desc: Box<[SortColumnDescription]>,
--    num_partitions: u64,
--}
--
--impl WindowPartitionTopNExchange {
--    pub fn create(
--        partition_indices: Vec<usize>,
--        order_by: Vec<SortColumnDescription>,
--        top: usize,
--        func: WindowPartitionTopNFunc,
--        num_partitions: u64,
--    ) -> Arc<WindowPartitionTopNExchange> {
--        assert!(top > 0);
--        let partition_indices = partition_indices.into_boxed_slice();
--        let sort_desc = partition_indices
--            .iter()
--            .map(|&offset| SortColumnDescription {
--                offset,
--                asc: true,
--                nulls_first: false,
--            })
--            .chain(order_by)
--            .collect::<Vec<_>>()
--            .into();
--
--        Arc::new(WindowPartitionTopNExchange {
--            num_partitions,
--            partition_indices,
--            top,
--            func,
--            sort_desc,
--        })
--    }
--}
--
--impl Exchange for WindowPartitionTopNExchange {
--    const NAME: &'static str = "WindowTopN";
--    const SKIP_EMPTY_DATA_BLOCK: bool = true;
--
--    fn partition(&self, block: DataBlock, n: usize) -> Result<Vec<DataBlock>> {
--        let partition_permutation = self.partition_permutation(&block);
--
--        // Partition the data blocks to different processors.
--        let mut output_data_blocks = vec![vec![]; n];
--        for (partition_id, indices) in partition_permutation.into_iter().enumerate() {
--            output_data_blocks[partition_id % n]
--                .push((partition_id, block.take(indices.as_slice())?));
--        }
--
--        // Union data blocks for each processor.
--        Ok(output_data_blocks
--            .into_iter()
--            .map(WindowPartitionMeta::create)
--            .map(DataBlock::empty_with_meta)
--            .collect())
--    }
--}
--
--impl WindowPartitionTopNExchange {
--    fn partition_permutation(&self, block: &DataBlock) -> Vec<Vec<u32>> {
--        let rows = block.num_rows();
--        let mut sort_compare = SortCompare::with_force_equality(self.sort_desc.to_vec(), rows);
--
--        for &offset in &self.partition_indices {
--            let array = block.get_by_offset(offset).value();
--            sort_compare.visit_value(array).unwrap();
--            sort_compare.increment_column_index();
--        }
--
--        let partition_equality = sort_compare.equality_index().to_vec();
--
--        for desc in self.sort_desc.iter().skip(self.partition_indices.len()) {
--            let array = block.get_by_offset(desc.offset).value();
--            sort_compare.visit_value(array).unwrap();
--            sort_compare.increment_column_index();
--        }
--
--        let full_equality = sort_compare.equality_index().to_vec();
--        let permutation = sort_compare.take_permutation();
--
--        let hash_indices = std::iter::once(permutation[0])
--            .chain(
--                partition_equality
--                    .iter()
--                    .enumerate()
--                    .filter_map(|(i, &eq)| if eq == 0 { Some(permutation[i]) } else { None }),
--            )
--            .collect::<Vec<_>>();
--
--        let mut hashes = vec![0u64; rows];
--        for (i, &offset) in self.partition_indices.iter().enumerate() {
--            let entry = block.get_by_offset(offset);
--            group_hash_value_spread(&hash_indices, entry.value(), i == 0, &mut hashes).unwrap();
--        }
--
--        let mut partition_permutation = vec![Vec::new(); self.num_partitions as usize];
--
--        let mut start = 0;
--        let mut cur = 0;
--        while cur < rows {
--            let partition = &mut partition_permutation
--                [(hashes[permutation[start] as usize] % self.num_partitions) as usize];
--            partition.push(permutation[start]);
--
--          
++
++    fn read_record_batch(&mut self) -> Result<Option<RecordBatch>> {
+         let start = Instant::now();
+ 
+         let fetched = match self.receiver.recv_blocking() {
+@@ -641,10 +666,7 @@ impl SpillsDataReader {
+         };
+         debug_assert!(reader.next().is_none());
+         record_read_profile(self.target, start.elapsed(), fetched.read_bytes);
+-        Ok(Some(DataBlock::from_record_batch_keep_null_const(
+-            &self.data_schema,
+-            &batch,
+-        )?))
++        Ok(Some(batch))
+     }
+ }
+ 
+@@ -868,9 +890,22 @@ mod tests {
+     use std::sync::atomic::AtomicUsize;
+     use std::sync::atomic::Ordering;
+ 
++    use arrow_schema::DataType as ArrowDataType;
+     use databend_common_base::runtime::spawn;
++    use databend_common_expression::Column;
++    use databend_common_expression::DataField;
++    use databend_common_expression::DataSchema;
+     use databend_common_expression::FromData;
++    use databend_common_expression::block_debug::pretty_format_blocks;
++    use databend_common_expression::types::BinaryType;
++    use databend_common_expression::types::BooleanType;
++    use databend_common_expression::types::DataType;
++    use databend_common_expression::types::DecimalSize;
+     use databend_common_expression::types::Int32Type;
++    use databend_common_expression::types::Int64Type;
++    use databend_common_expression::types::NumberDataType;
++    use databend_common_expression::types::StringType;
++    use databend_common_expression::types::VariantType;
+     use opendal::Operator;
+ 
+     use super::*;
+@@ -1081,6 +1116,176 @@ mod tests {
+         );
+     }
+ 
++    #[tokio::test(flavor = "multi_thread")]
++    async fn test_spill_reads_byte_columns_with_writer_types() {
++        let pool = SpillsBufferPool::create(1).unwrap();
++        let operator = create_test_operator().unwrap();
++        let path = "spill_byte_column_types".to_string();
++
++        let variants = || {
++            ["[1,\"a\"]", "{\"k\":null}"]
++                .iter()
++                .map(|json| jsonb::parse_value(json.as_bytes()).unwrap().to_vec())
++                .collect::<Vec<_>>()
++        };
++        // The last column has the shape of an arg_max state: (has_value, key, value).
++        let block = DataBlock::new_from_columns(vec![
++            StringType::from_data(vec!["a", "bc"]),
++            StringType::from_opt_data(vec![Some("d"), None]),
++            BinaryType::from_data(vec![b"ef".as_slice(), b"".as_slice()]),
++            VariantType::from_data(variants()),
++            Column::Tuple(vec![
++                BooleanType::from_data(vec![true, false]),
++                Int64Type::from_data(vec![1, 2]),
++                VariantType::from_data(variants()),
++            ]),
++            // Types whose hinted arrow type also differs from the parquet default.
++            Column::random(
++                &DataType::Decimal(DecimalSize::new(10, 2).unwrap()),
++                2,
++                None,
++            ),
++            Column::random(
++                &DataType::Array(Box::new(DataType::Number(NumberDataType::Int32))),
++                2,
++                None,
++            ),
++            Column::random(
++                &DataType::Nullable(Box::new(DataType::Tuple(vec![
++                    Da
 ```
 
 ---
 
-### Incident Patch 2: `76caf9e8` (2026-11-19)
-**Commit Message**: fix(query): enforce stage WRITE on HTTP uploads (#21126)
+### Incident Patch 2: `532835a7` (2026-11-20)
+**Commit Message**: fix(query): reject out-of-range to_decimal parameters (#21128)
 
-* fix(query): enforce stage WRITE on HTTP uploads (#21094)
+* fix(query): reject out-of-range to_decimal parameters (#21107)
 
-* test(query): cover HTTP stage WRITE in the stateless suite
+* refactor(query): name the target type in decimal cast overflow errors
 
-**File**: `src/query/service/src/interpreters/access/mod.rs` (modified, +1/-0)
+The overflow errors of integer, float and decimal casts to decimal
+quoted the source line that raised them, which only told the cast
+paths apart and changed with every edit of the file. They now name the
+decimal type the value does not fit; a NaN or infinite float says so,
+under the same 'Decimal overflow' prefix that tests match. The evaluator
+already shows the function and the value.
+
+(cherry picked from commit 84479b615116d7602f1394992dfbe25d57da208a)
+
+* fix(query): reject NULL Decimal type arguments
+
+**File**: `src/query/expression/src/types/decimal.rs` (modified, +35/-19)
 ```diff
-@@ -22,3 +22,4 @@ pub use management_mode_access::ManagementModeAccess;
- pub use privilege_access::PrivilegeAccess;
- pub(crate) use privilege_access::validate_share_management_for_connection;
- pub(crate) use privilege_access::validate_share_object_by_id;
-+pub(crate) use privilege_access::validate_stage_write_access;
+@@ -52,6 +52,7 @@ use super::AccessType;
+ use super::AnyType;
+ use super::DataType;
+ use super::F64;
++use super::NumberScalar;
+ use super::NumberType;
+ use super::SimpleDomain;
+ use super::SimpleType;
+@@ -518,28 +519,43 @@ impl DecimalSize {
+     }
+ 
+     pub fn new(precision: u8, scale: u8) -> Result<DecimalSize> {
+-        let size = DecimalSize { precision, scale };
+-        size.validate()?;
+-
+-        Ok(size)
++        Self::from_checked_params(Some(precision), Some(scale))
++    }
++
++    pub fn try_from_scalars(precision: &Scalar, scale: &Scalar) -> Result<Self> {
++        let to_u8 = |value: &Scalar, name: &str| -> Result<Option<u8>> {
++            crate::with_integer_mapped_type!(|NUM_TYPE| match value.as_number() {
++                Some(NumberScalar::NUM_TYPE(value)) => Ok(value.to_u8()),
++                _ => Err(ErrorCode::IllegalDataType(format!(
++                    "Decimal {name} must be an integer, got {}",
++                    value.as_ref().infer_data_type()
++                ))),
++            })
++        };
++        Self::from_checked_params(to_u8(precision, "precision")?, to_u8(scale, "scale")?)
+     }
+ 
+     pub fn validate(&self) -> Result<()> {
+-        if self.precision < 1 || self.precision > i256::MAX_PRECISION {
+-            return Err(ErrorCode::Overflow(format!(
+-                "Decimal precision must be between 1 and {}",
+-                i256::MAX_PRECISION
+-            )));
+-        }
+-
+-        if self.scale > self.precision {
+-            return Err(ErrorCode::Overflow(format!(
+-                "Decimal scale must be between 0 and precision {}",
+-                self.precision
+-            )));
+-        }
+-
+-        Ok(())
++        Self::new(self.precision, self.scale).map(|_| ())
++    }
++
++    fn from_checked_params(precision: Option<u8>, scale: Option<u8>) -> Result<Self> {
++        let precision = precision
++            .filter(|p| (1..=i256::MAX_PRECISION).contains(p))
++            .ok_or_else(|| {
++                ErrorCode::Overflow(format!(
++                    "Decimal precision must be between 1 and {}",
++                    i256::MAX_PRECISION
++                ))
++            })?;
++        let scale = scale
++            .filter(|s| (0..=precision).contains(s))
++            .ok_or_else(|| {
++                ErrorCode::Overflow(format!(
++                    "Decimal scale must be between 0 and precision {precision}"
++                ))
++            })?;
++        Ok(Self::new_unchecked(precision, scale))
+     }
+ 
+     pub fn default_128() -> DecimalSize {
 ```
 
-**File**: `src/query/service/src/interpreters/access/privilege_access.rs` (modified, +9/-0)
+**File**: `src/query/functions/src/scalars/decimal/src/cast.rs` (modified, +43/-19)
 ```diff
-@@ -275,6 +275,15 @@ enum ObjectId {
- // table functions that need `Super` privilege
- const SYSTEM_TABLE_FUNCTIONS: [&str; 3] = ["fuse_amend", "set_cache_capacity", "send_notification"];
+@@ -118,8 +118,7 @@ pub fn register_to_decimal(registry: &mut FunctionRegistry) {
+             _ => return None,
+         };
  
-+pub(crate) async fn validate_stage_write_access(
-+    ctx: Arc<QueryContext>,
-+    stage: &StageInfo,
-+) -> Result<()> {
-+    PrivilegeAccess::new(ctx)
-+        .validate_stage_access(stage, UserPrivilegeType::Write)
-+        .await
+-        let decimal_size =
+-            DecimalSize::new(params[0].get_i64()? as _, params[1].get_i64()? as _).ok()?;
++        let decimal_size = DecimalSize::try_from_scalars(&params[0], &params[1]).ok()?;
+ 
+         let is_variant = from_type == DataType::Variant;
+         let return_type = if is_variant {
+@@ -565,7 +564,7 @@ where
+                 skip_inactive_with_builder_1_arg::<BooleanType, DecimalType<T>>(
+                     |a, out: &mut Vec<T>, ctx| {
+                         if a {
+-                            ctx.set_error(out.len(), "Decimal overflow");
++                            ctx.set_error(out.len(), DecimalOverflow(size));
+                             out.push(T::one());
+                         } else {
+                             out.push(T::zero());
+@@ -758,7 +757,7 @@ where
+             from, ctx,
+         )
+     } else {
+-        let overflow = concat!("Decimal overflow at line : ", line!());
++        let overflow = DecimalOverflow(size);
+         if let Value::Scalar(value) = &from {
+             let x = S::to_scalar_ref(value);
+             if let Some(x) = T::from_i128(x).and_then(|x| x.checked_mul(multiplier))
+@@ -797,13 +796,15 @@ where
+ {
+     let f = |x: S::ScalarRef<'_>, builder: &mut Vec<T>, ctx: &mut EvalContext| {
+         let rounding_mode = ctx.func_ctx.rounding_mode;
+-        match T::from_float(x.as_(), size, rounding_mode) {
++        let x: f64 = x.as_();
++        match T::from_float(x, size, rounding_mode) {
+             Some(x) => builder.push(x),
++            None if !x.is_finite() => {
++                ctx.set_error(builder.len(), NonFiniteDecimal(x));
++                builder.push(T::one());
++            }
+             None => {
+-                ctx.set_error(
+-                    builder.len(),
+-                    concat!("Decimal overflow at line : ", line!()),
+-                );
++                ctx.set_error(builder.len(), DecimalOverflow(size));
+                 builder.push(T::one());
+             }
+         }
+@@ -843,28 +844,29 @@ where
+     let min = W::min_for_precision(dest.precision());
+     let max = W::max_for_precision(dest.precision());
+     match dest.scale().cmp(&from.scale()) {
+-        Ordering::Equal => {
+-            rescale::<F, W, T>(value, ctx, move |x, _| (x >= min && x <= max).then_some(x))
+-        }
++        Ordering::Equal => rescale::<F, W, T>(value, ctx, dest, move |x, _| {
++            (x >= min && x <= max).then_some(x)
++        }),
+         Ordering::Greater => {
+             let factor = W::e(dest.scale() - from.scale());
+-            rescale::<F, W, T>(value, ctx, move |x, _| {
++            rescale::<F, W, T>(value, ctx, dest, move |x, _| {
+                 x.checked_mul(factor).filter(|x| *x >= min && *x <= max)
+             })
+         }
+         Ordering::Less => {
+             let reduction = ScaleReduction::<W>::new(from.scale() - dest.scale(), dest.precision());
+-            rescale::<F, W, T>(value, ctx, move |x, rounding_mode| {
++            rescale::<F, W, T>(value, ctx, dest, move |x, rounding_mode| {
+                 reduction.reduce(x, rounding_mode)
+             })
+         }
+     }
+ }
+ 
+-// Rows the rescaling rejects do not fit the target precision.
++// Rows the rescaling rejects do not fit `dest`.
+ fn rescale<F, W, T>(
+     value: Value<DecimalType<F>>,
+     ctx: &mut EvalContext,
++    dest: DecimalSize,
+     rescale: impl Fn(W, bool) -> Option<W> + Copy + Send + Sync,
+ ) -> Value<DecimalType<T>>
+ where
+@@ -879,16 +881,38 @@ where
+         ) {
+             Some(y) => builder.push(y.as_decimal::<T>()),
+             None => {
+-                ctx.set_error(
+-                    builder.len(),
+-                    concat!("Decimal overflow at line : ", line!()),
+-                );
++                ctx.set_error(builder.len(), DecimalOverflow(dest));
+                 builder.push(T::one());
+             }
+         },
+     )(value, ctx)
+ }
+ 
++/// The error of a value that a decimal of `size` cannot hold. The evaluator
++/// adds the function and its arguments to it, which show the value.
++#[derive(Clone, Copy)]
++struct DecimalOverflow(DecimalSize);
++
++impl std::fmt::Display for DecimalOverflow {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        write!(
++            f,
++            "Decimal overflow: the value does not fit {}",
++            DataType::Decimal(self.0)
++        )
++    }
 +}
 +
- pub(crate) async fn validate_share_management_for_connection(
-     ctx: Arc<QueryContext>,
-     connection: Option<&str>,
-```
-
-**File**: `src/query/service/src/interpreters/mod.rs` (modified, +1/-0)
-```diff
-@@ -233,6 +233,7 @@ mod interpreter_virtual_column_vacuum;
- pub(crate) mod util;
- 
- pub use access::ManagementModeAccess;
-+pub(crate) use access::validate_stage_write_access;
- pub use common::InterpreterQueryLog;
- pub use common::QueryFinishHooks;
- pub use hook::HookOperator;
-```
-
-**File**: `src/query/service/src/servers/http/v1/stage.rs` (modified, +10/-0)
-```diff
-@@ -14,6 +14,7 @@
- 
- use async_compat::CompatExt;
- use databend_common_catalog::session_type::SessionType;
-+use databend_common_exception::ErrorCode;
- use databend_common_meta_app::principal::StageInfo;
- use databend_common_sql::binder::validate_stage_path_traversal_policy;
- use databend_common_storage::init_stage_operator;
-@@ -22,6 +23,7 @@ use futures_util::AsyncWriteExt;
- use futures_util::io;
- use http::StatusCode;
- use poem::Request;
-+use poem::error::Forbidden;
- use poem::error::InternalServerError;
- use poem::error::Result as PoemResult;
- use poem::web::Json;
-@@ -31,6 +33,7 @@ use serde::Serialize;
- 
- use super::HttpQueryContext;
- use super::require_upload_filename;
-+use crate::interpreters::validate_stage_write_access;
- use crate::sessions::TableContextAuthorization;
- use crate::sessions::TableContextTableAccess;
- 
-@@ -114,6 +117,13 @@ pub async fn upload_to_stage(
-             .map_err(InternalServerError)?
-     };
- 
-+    validate_stage_write_access(context, &stage)
-+        .await
-+        .map_err(|e| match e.code() {
-+            ErrorCode::PERMISSION_DENIED => Forbidden(e),
-+            _ => InternalServerError(e),
-+        })?;
++/// The error of a NaN or infinite float cast to a decimal.
++#[derive(Clone, Copy)]
++struct NonFiniteDecimal(f64);
 +
-     let op = init_stage_operator(&stage).map_err(InternalServerError)?;
-     let path_traversal_policy = databend_common_config::GlobalConfig::instance()
-         .storage
-```
-
-**File**: `tests/suites/0_stateless/18_rbac/18_0027_http_stage_write.result` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+Without a stage grant: 403
-+With READ only: 403
-+Named stage file count before authorization: 0
-+With WRITE: SUCCESS
-+With ownership (legacy header): SUCCESS
-+Named stage file sizes:
-+2
-+2
-+Own user stage: SUCCESS
-+Own user stage file size: 2
-```
-
-**File**: `tests/suites/0_stateless/18_rbac/18_0027_http_stage_write.sh` (added, +87/-0)
-```diff
-@@ -0,0 +1,87 @@
-+#!/usr/bin/env bash
-+
-+set -euo pipefail
-+
-+CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-+. "$CURDIR"/../../../shell_env.sh
-+
-+url="http://${QUERY_MYSQL_HANDLER_HOST}:${QUERY_HTTP_HANDLER_PORT}/v1/upload_to_stage"
-+user=stage_write_user_0027
-+password=stage_write_test_password
-+role=stage_write_role_0027
-+stage=stage_write_0027
-+owned_stage=stage_owned_0027
-+file=stage_write_0027.csv
-+clean_user_stage=false
-+
-+cleanup() {
-+	local status=0
-+	if "$clean_user_stage"; then
-+		bendsql_connect_user "$user" "$password" --output null --query="REMOVE @~/$file" || status=$?
-+	fi
-+	bendsql_connect_root_null --query="
-+DROP STAGE IF EXISTS $stage;
-+DROP STAGE IF EXISTS $owned_stage;
-+DROP USER IF EXISTS $user;
-+DROP ROLE IF EXISTS $role;
-+"
-+	return "$status"
++impl std::fmt::Display for NonFiniteDecimal {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        write!(f, "Decimal overflow: {} has no decimal value", self.0)
++    }
 +}
 +
-+expect_denied() {
-+	# No file part: check authorization without attempting to write data.
-+	printf -- '--stage-test--\r\n' |
-+		curl --silent --show-error --user "$user:$password" --request PUT \
-+			--header "x-databend-stage-name: $stage" \
-+			--header 'Content-Type: multipart/form-data; boundary=stage-test' \
-+			--data-binary @- --output /dev/null --write-out '%{http_code}\n' "$url"
-+}
+ /// Drops `shift >= 1` fractional digits, truncating or rounding half away
+ /// from zero, then checks the target range.
+ ///
+```
+
+**File**: `src/query/functions/tests/it/scalars/cast.rs` (modified, +2/-0)
+```diff
+@@ -1267,6 +1267,8 @@ fn test_decimal_cast_precision_and_partial_errors() {
+     let columns = [("a", Int64Type::from_data(vec![-10, -9, 0, 9, 10]))];
+     run_ast(file, "CAST(a AS DECIMAL(1,0))", &columns);
+     run_ast(file, "TRY_CAST(a AS DECIMAL(1,0))", &columns);
++    let columns = [("f", Float64Type::from_data(vec![1.5, f64::NAN]))];
++    run_ast(file, "CAST(f AS DECIMAL(38,10))", &columns);
+     let columns = [("active", BooleanType::from_data(vec![false, true, false]))];
+     run_ast(
+         file,
+```
+
+**File**: `src/query/functions/tests/it/scalars/testdata/decimal_cast_precision.txt` (modified, +18/-10)
+```diff
+@@ -11,31 +11,31 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(10::Int64 AS DECIMAL(1,0))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`
+ 
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(-10::Int64 AS DECIMAL(1,0))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(- CAST(10 AS Int64) AS Decimal(1, 0))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(- CAST(10 AS Int64) AS Decimal(1, 0))`
+ 
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(9223372036854775807::Int64 AS DECIMAL(1,0))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(9223372036854775807)` in expr `CAST(CAST(9223372036854775807 AS Int64) AS Decimal(1, 0))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(9223372036854775807)` in expr `CAST(CAST(9223372036854775807 AS Int64) AS Decimal(1, 0))`
+ 
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(18446744073709551615::UInt64 AS DECIMAL(1,0))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(18446744073709551615)` in expr `CAST(18446744073709551615 AS Decimal(1, 0))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(18446744073709551615)` in expr `CAST(18446744073709551615 AS Decimal(1, 0))`
+ 
+ 
+ 
+@@ -70,7 +70,7 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(TRUE AS DECIMAL(1,1))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow while evaluating function `to_decimal(1, 1)(true)` in expr `CAST(true AS Decimal(1, 1))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 1) while evaluating function `to_decimal(1, 1)(true)` in expr `CAST(true AS Decimal(1, 1))`
+ 
+ 
+ 
+@@ -135,7 +135,7 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(a AS DECIMAL(1,0))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(a AS Decimal(1, 0))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(a AS Decimal(1, 0))`
+ 
+ 
+ 
+@@ -163,11 +163,19 @@ evaluation (internal):
+ +--------+--------------------------------------------------------------------------------+
+ 
+ 
++error: 
++  --> SQL:1:1
++  |
++1 | CAST(f AS DECIMAL(38,10))
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: NaN has no decimal value while evaluating function `to_decimal(38, 10)(NaN)` in expr `CAST(f AS Decimal(38, 10))`
 +
-+expect_allowed() {
-+	printf '1\n' |
-+		curl --fail --silent --show-error --user "$user:$password" --request PUT \
-+			--header "$1: $2" --form "upload=@-;filename=$file" "$url" |
-+		jq -er --arg stage "$2" --arg file "$file" \
-+			'select(.stage_name == $stage and .state == "SUCCESS" and .files == [$file]) | .state'
-+}
 +
-+cleanup
-+trap cleanup EXIT
-+bendsql_connect_root_null --query="
-+CREATE USER $user IDENTIFIED BY '$password';
-+CREATE ROLE $role;
-+GRANT ROLE $role TO USER $user;
-+CREATE STAGE $stage;
-+CREATE STAGE $owned_stage;
-+GRANT OWNERSHIP ON STAGE $owned_stage TO ROLE $role;
-+"
 +
-+printf 'Without a stage grant: '
-+expect_denied
+ error: 
+   --> SQL:1:12
+   |
+ 1 | if(active, CAST(10::Int64 AS DECIMAL(1,0)), NULL)
+-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(10 AS Int64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
++  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(10 AS Int64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
+ 
+ 
+ 
+@@ -198,7 +206,7 @@ error:
+   --> SQL:1:12
+   |
+ 1 | if(active, CAST(1e30::Float64 AS DECIMAL(1,0)), NULL)
+-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 805 while evaluating function `to_decimal(1, 0)(1000000000000000000000000000000)` in expr `CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
++  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(1000000000000000000000000000000)` in expr `CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
+ 
+ 
+ 
+@@ -214,15 +222,15 @@ error:
+   --> SQL:1:12
+   |
+ 1 | if(active, CAST(10::DE
+```
+
+**File**: `src/query/functions/tests/it/scalars/testdata/decimal_to_decimal_cast.txt` (modified, +10/-10)
+```diff
+@@ -67,15 +67,15 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(123.45::DECIMAL(5,2) AS DECIMAL(5,4))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(5, 4)(123.45)` in expr `CAST(123.45 AS Decimal(5, 4))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(5, 4) while evaluating function `to_decimal(5, 4)(123.45)` in expr `CAST(123.45 AS Decimal(5, 4))`
+ 
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(123::DECIMAL(3,0) AS DECIMAL(3,2))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(3, 2)(123)` in expr `CAST(CAST(123 AS Decimal(3, 0)) AS Decimal(3, 2))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(3, 2) while evaluating function `to_decimal(3, 2)(123)` in expr `CAST(CAST(123 AS Decimal(3, 0)) AS Decimal(3, 2))`
+ 
+ 
+ 
+@@ -449,23 +449,23 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(12345.67::DECIMAL(7,2) AS DECIMAL(5,2))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(5, 2)(12345.67)` in expr `CAST(12345.67 AS Decimal(5, 2))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(5, 2) while evaluating function `to_decimal(5, 2)(12345.67)` in expr `CAST(12345.67 AS Decimal(5, 2))`
+ 
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(999.99::DECIMAL(5,2) AS DECIMAL(4,2))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(4, 2)(999.99)` in expr `CAST(999.99 AS Decimal(4, 2))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(4, 2) while evaluating function `to_decimal(4, 2)(999.99)` in expr `CAST(999.99 AS Decimal(4, 2))`
+ 
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(99.9::DECIMAL(3,1) AS DECIMAL(2,1))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(2, 1)(99.9)` in expr `CAST(99.9 AS Decimal(2, 1))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(2, 1) while evaluating function `to_decimal(2, 1)(99.9)` in expr `CAST(99.9 AS Decimal(2, 1))`
+ 
+ 
+ 
+@@ -482,23 +482,23 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(-123.45::DECIMAL(5,2) AS DECIMAL(4,2))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(4, 2)(-123.45)` in expr `CAST(- 123.45 AS Decimal(4, 2))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(4, 2) while evaluating function `to_decimal(4, 2)(-123.45)` in expr `CAST(- 123.45 AS Decimal(4, 2))`
+ 
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(99.99::DECIMAL(4,2) AS DECIMAL(3,2))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(3, 2)(99.99)` in expr `CAST(99.99 AS Decimal(3, 2))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(3, 2) while evaluating function `to_decimal(3, 2)(99.99)` in expr `CAST(99.99 AS Decimal(3, 2))`
+ 
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(9.99::DECIMAL(3,2) AS DECIMAL(2,2))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(2, 2)(9.99)` in expr `CAST(9.99 AS Decimal(2, 2))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(2, 2) while evaluating function `to_decimal(2, 2)(9.99)` in expr `CAST(9.99 AS Decimal(2, 2))`
+ 
+ 
+ 
+@@ -524,7 +524,7 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(12345678901234567890.123456789::DECIMAL(38,9) AS DECIMAL(18,4))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(18, 4)(12345678901234567890.123456789)` in expr `CAST(CAST(12345678901234567890.123456789 AS Decimal(38, 9)) AS Decimal(18, 4))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(18, 4) while evaluating function `to_decimal(18, 4)(12345678901234567890.123456789)` in expr `CAST(CAST(12345678901234567890.123456789 AS Decimal(38, 9)) AS Decimal(18, 4))`
+ 
+ 
+ 
+@@ -650,7 +650,7 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(a AS DECIMAL(5,1))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(5, 1)(1234567.89)` in expr `CAST(a AS Decimal(5, 1))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(5, 1) while evaluating function `to_decimal(5, 1)(1234567.89)` in expr `CAST(a AS Decimal(5, 1))`
+ 
+ 
+ 
+```
+
+**File**: `src/query/sql/src/planner/semantic/type_check.rs` (modified, +2/-2)
+```diff
+@@ -52,8 +52,8 @@ use crate::planner::expression::UDFValidator;
+ use crate::planner::expression::UdfValidationConfig;
+ use crate::plans::DictGetFunctionArgument;
+ 
+-const DEFAULT_DECIMAL_PRECISION: i64 = 38;
+-const DEFAULT_DECIMAL_SCALE: i64 = 0;
++const DEFAULT_DECIMAL_PRECISION: u8 = 38;
++const DEFAULT_DECIMAL_SCALE: u8 = 0;
+ 
+ mod adapter;
+ mod aggregate;
+```
+
+**File**: `src/query/sql/src/planner/semantic/type_check/scalar_function.rs` (modified, +32/-44)
+```diff
+@@ -598,63 +598,51 @@ where A: TypeCheckAdapter
+                     }
+                 }
+             }
+-        } else if (func_name.eq_ignore_ascii_case("to_number")
++        } else if func_name.eq_ignore_ascii_case("to_number")
+             || func_name.eq_ignore_ascii_case("to_numeric")
+             || func_name.eq_ignore_ascii_case("to_decimal")
+             || func_name.eq_ignore_ascii_case("try_to_number")
+             || func_name.eq_ignore_ascii_case("try_to_numeric")
+-            || func_name.eq_ignore_ascii_case("try_to_decimal"))
+-            && params.is_empty()
++            || func_name.eq_ignore_ascii_case("try_to_decimal")
+         {
+-            if args.is_empty() || args.len() > 4 {
++            if args.is_empty() || args.len() > 4 || (!params.is_empty() && params.len() != 2) {
+                 return Err(ErrorCode::SemanticError(format!(
+                     "Invalid arguments for `{func_name}`, get {} params and {} arguments",
+                     params.len(),
+                     args.len()
+                 )));
+             }
+-            let arg_fn = |args: &[BoundScalar],
+-                          index: usize,
+-                          arg_name: &str,
+-                          default: i64|
+-             -> Result<i64> {
+-                Ok(args
+-                    .get(index)
+-                    .map(|arg| match self.bound_constant_value(&arg.scalar, &arg.facts) {
+-                        Some((value, _)) => Ok(value.get_i64()),
+-                        None => Err(ErrorCode::SemanticError(format!(
+-                            "Invalid arguments for `{func_name}`, {arg_name} is only allowed to be a constant"
+-                        ))),
+-                    })
+-                    .transpose()?
+-                    .flatten()
+-                    .unwrap_or(default))
+-            };
+-
+-            let (precision_index, scale_index) =
+-                if args.len() > 1 && args[1].scalar.data_type().remove_nullable().is_string() {
+-                    (2, 3)
+-                } else {
+-                    (1, 2)
++            let size = if let [precision, scale] = params.as_slice() {
++                DecimalSize::try_from_scalars(precision, scale)
++            } else {
++                let arg_fn = |index: usize, name: &str, default: u8| -> Result<Scalar> {
++                    let Some(arg) = args.get(index) else {
++                        return Ok(Scalar::Number(NumberScalar::UInt8(default)));
++                    };
++                    self.bound_constant_value(&arg.scalar, &arg.facts)
++                        .map(|(value, _)| value)
++                        .ok_or_else(|| ErrorCode::SemanticError(format!(
++                            "Invalid arguments for `{func_name}`, {name} is only allowed to be a constant"
++                        )))
+                 };
+-            let precision = arg_fn(
+-                &args,
+-                precision_index,
+-                "precision",
+-                DEFAULT_DECIMAL_PRECISION,
+-            )?;
+-            let scale = arg_fn(&args, scale_index, "scale", DEFAULT_DECIMAL_SCALE)?;
+-
+-            if let Err(err) = DecimalSize::new(precision as u8, scale as u8) {
+-                return Err(ErrorCode::SemanticError(format!(
+-                    "Invalid arguments for `{func_name}`, {}",
+-                    err,
+-                )));
++                let precision_index =
++                    if args.len() > 1 && args[1].scalar.data_type().remove_nullable().is_string() {
++                        2
++                    } else {
++                        1
++                    };
++                let precision = arg_fn(precision_index, "precision", DEFAULT_DECIMAL_PRECISION)?;
++                let scale = arg_fn(precision_index + 1, "scale", DEFAULT_DECIMAL_SCALE)?;
++                DecimalSize::try_from_scalars(&precision, &scale)
++            };
++            let size = size.map_err(|err| {
++                ErrorCode::SemanticError(format!("Invalid arguments for `{func_name}`, {err}"))
++            })?;
++            if params.is_empty() {
++                // Typed as literal params are, e.g. `to_decimal(10, 2)(x)`.
++                params.push(Scalar::Number(NumberScalar::UInt8(size.precision())));
++                params.push(Scalar::Number(NumberScalar::UInt8(size.scale())));
+             }
+-
+-            // Typed as literal params are, e.g. `to_decimal(10, 2)(x)`.
+-            params.push(Scalar::Number(NumberScalar::UInt8(precision as _)));
+-            params.push(Scalar::Number(NumberScalar::UInt8(scale as _)));
+         }
+ 
+         let placeholders = args
+```
+
+**File**: `tests/sqllogictests/suites/base/11_data_type/11_0006_data_type_decimal.test` (modified, +48/-0)
+```diff
+@@ -1348,6 +1348,54 @@ SELECT try_to_decimal(123456, 6, 0);
+ ----
+ 123456
+ 
++# Decimal parameters must not wrap when converted to UInt8 (#21107).
++query IRR
++SELECT to_decimal(1, 1, 0), to_decimal(76, 0)(1), to_decimal(0, 3, 3);
++----
++1 1 0.000
 +
-+bendsql_connect_root_null --query="GRANT READ ON STAGE $stage TO ROLE $role"
-+printf 'With READ only: '
-+expect_denied
++statement error Decimal precision must be between 1 and 76
++SELECT to_decimal(3, 259, 0)
 +
-+printf 'Named stage file count before authorization: '
-+bendsql_connect_root --output tsv --query="SELECT count(*) FROM list_stage(location => '@$stage')"
++statement error Decimal scale must be between 0 and precision 3
++SELECT to_decimal(3, 3, 257)
 +
-+bendsql_connect_root_null --query="GRANT WRITE ON STAGE $stage TO ROLE $role"
-+printf 'With WRITE: '
-+expect_allowed x-databend-stage-name "$stage"
++statement error Decimal scale must be between 0 and precision 3
++SELECT to_number(3, 3, -255)
 +
-+printf 'With ownership (legacy header): '
-+expect_allowed stage_name "$owned_stage"
++statement error Decimal scale must be between 0 and precision 6
++SELECT try_to_decimal(123456, 6, 256)
 +
-+printf 'Named stage file sizes:\n'
-+bendsql_connect_root --output tsv --query="
-+SELECT size FROM list_stage(location => '@$stage/$file');
-+SELECT size FROM list_stage(location => '@$owned_stage/$file');
-+"
++statement error Decimal scale must be between 0 and precision 3
++SELECT to_decimal('2.5', '9D9', 3, 257)
 +
-+clean_user_stage=true
-+printf 'Own user stage: '
-+expect_allowed x-databend-stage-name '~'
-+printf 'Own user stage file size: '
-+bendsql_connect_user "$user" "$password" --output tsv \
-+	--query="SELECT size FROM list_stage(location => '@~/$file')"
++statement error Decimal scale must be between 0 and precision 3
++SELECT to_decimal(3, 257)(3)
++
++statement error Decimal precision must be between 1 and 76
++SELECT try_to_numeric(4294967299, 1)(3)
++
++statement error Decimal precision must be between 1 and 76
++SELECT to_decimal(3, 9223372036854775808, 0)
++
++# NULL is allowed as the value, not as an explicit Decimal type parameter.
++query ?
++SELECT to_decimal(CAST(NULL AS INT64 NULL), 3, 0);
++----
++NULL
++
++statement error Decimal scale must be an integer, got NULL
++SELECT to_decimal(3, 3, NULL)
++
++statement error Decimal precision must be an integer, got NULL
++SELECT to_decimal(3, NULL, 2)
++
++statement error Decimal scale must be an integer, got NULL
++SELECT try_to_numeric(3, 3, CAST(NULL AS INT64))
++
++statement error Decimal scale must be an integer, got NULL
++SELECT to_decimal(3, NULL)(3)
++
+ query I
+ SELECT TO_DECIMAL('123456789', 9);
+ ----
+```
+
+---
+
+### Incident Patch 3: `4cfb5200` (2026-11-20)
+**Commit Message**: fix(storage): skip reversed ranges in clustering diagnostics (#21131)
+
+* fix(storage): skip reversed ranges in clustering diagnostics
+
+Normalize float endpoints to OrderedFloat semantics before row encoding. Exclude both endpoints of reversed blocks from overlap and depth statistics while preserving the original block counts.
+
+* fix review comments
+
+**File**: `Cargo.lock` (modified, +0/-2)
+```diff
+@@ -3383,10 +3383,8 @@ dependencies = [
+  "databend-common-timezone",
+  "databend_educe",
+  "divan",
+- "either",
+  "enum-as-inner",
+  "ethnum",
+- "fastrace",
+  "futures",
+  "geo",
+  "geozero",
+```
+
+**File**: `src/query/expression/Cargo.toml` (modified, +0/-2)
+```diff
+@@ -36,10 +36,8 @@ databend-common-metrics = { workspace = true }
+ databend-common-statistics = { workspace = true }
+ databend-common-timezone = { workspace = true }
+ educe = { workspace = true }
+-either = { workspace = true }
+ enum-as-inner = { workspace = true }
+ ethnum = { workspace = true }
+-fastrace = { workspace = true }
+ futures = { workspace = true }
+ geo = { workspace = true }
+ geozero = { workspace = true }
+```
+
+**File**: `src/query/storages/fuse/src/table_functions/clustering_information.rs` (modified, +247/-105)
+```diff
+@@ -21,6 +21,7 @@ use databend_common_base::runtime::JoinHandle;
+ use databend_common_base::runtime::Runtime;
+ use databend_common_catalog::plan::DataSourcePlan;
+ use databend_common_catalog::table_args::TableArgs;
++use databend_common_column::bitmap::Bitmap;
+ use databend_common_exception::ErrorCode;
+ use databend_common_exception::Result;
+ use databend_common_expression::BlockEntry;
+@@ -38,6 +39,7 @@ use databend_common_expression::types::DataType;
+ use databend_common_expression::types::StringType;
+ use databend_common_expression::types::TimestampType;
+ use databend_common_expression::types::VariantType;
++use databend_common_expression::types::number::NumberColumnBuilder;
+ use databend_common_pipeline_transforms::sorts::core::RowConverter;
+ use databend_common_pipeline_transforms::sorts::core::VariableRowConverter;
+ use databend_common_sql::NameResolutionContext;
+@@ -441,69 +443,31 @@ impl ClusteringInformationImpl<'_> {
+     ) -> Result<ClusteringInformationResponse> {
+         let cluster_type = key.cluster_type();
+         let calculation_start = Instant::now();
+-        let CollectedMetadata {
+-            key_types,
+-            endpoint_builders,
+-            block_count,
+-            constant_block_count,
+-        } = metadata;
+-        let aggregate = match endpoint_builders {
++        let statistics = match metadata.endpoint_builders {
+             Some(builders) => {
+                 let max_threads = self.ctx.get_settings().get_max_threads()? as usize;
+                 with_request_pool(max_threads, move |_| {
+-                    let sorted = sort_endpoints(builders, &key_types)?;
+-                    sweep_exact_statistics(&sorted.keys, &sorted.order)
++                    summarize_linear_ranges(builders, &metadata.key_types)
+                 })?
+             }
+-            None => LinearClusteringStatistics {
+-                block_count,
+-                depth_counts: if block_count == 0 {
+-                    BTreeMap::new()
+-                } else {
+-                    BTreeMap::from([(0, block_count as u64)])
+-                },
++            None if total_block_count != 0 => LinearClusterStatistics {
++                block_depth_histogram: BTreeMap::from([("00000".into(), total_block_count)]),
+                 ..Default::default()
+             },
++            None => LinearClusterStatistics::default(),
+         };
+-
+-        let info = if aggregate.block_count == 0 {
+-            LinearClusterStatistics {
+-                total_block_count,
+-                ..Default::default()
+-            }
+-        } else {
+-            LinearClusterStatistics {
+-                total_block_count,
+-                constant_block_count,
+-                average_overlaps: rounded_average(aggregate.sum_overlap, aggregate.block_count),
+-                average_depth: rounded_average(aggregate.sum_depth, aggregate.block_count),
+-                max_depth: aggregate
+-                    .depth_counts
+-                    .last_key_value()
+-                    .map_or(0, |(&depth, _)| depth),
+-                p95_depth: percentile_depth(&aggregate.depth_counts, aggregate.block_count, 95),
+-                p99_depth: percentile_depth(&aggregate.depth_counts, aggregate.block_count, 99),
+-                block_depth_histogram: {
+-                    let mut histogram = BTreeMap::new();
+-                    for (depth, count) in &aggregate.depth_counts {
+-                        let depth = *depth as u32;
+-                        let bucket = if depth <= 16 || depth.is_power_of_two() {
+-                            depth
+-                        } else {
+-                            depth.next_power_of_two()
+-                        };
+-                        *histogram.entry(format!("{:05}", bucket)).or_insert(0) += count;
+-                    }
+-                    histogram
+-                },
+-            }
++        let info = LinearClusterStatistics {
++            total_block_count,
++            constant_block_count: metadata.constant_block_count,
++            ..statistics
+         };
+         info!(
+-            "clustering_information: finished table={} cluster_type={} blocks={} constant_blocks={} average_overlaps={} average_depth={} max_depth={} p95_depth={} p99_depth={} calculation_elapsed={:?} total_elapsed={:?}",
++            "clustering_information: finished table={} cluster_type={} blocks={} constant_blocks={} invalid_blocks={} average_overlaps={} average_depth={} max_depth={} p95_depth={} p99_depth={} calculation_elapsed={:?} total_elapsed={:?}",
+             self.table.table_info.desc,
+             cluster_type,
+             info.total_block_count,
+             info.constant_block_count,
++            info.invalid_block_count.unwrap_or_default(),
+             info.average_overlaps,
+             info.average_depth,
+             info.max_depth,
+@@ -666,10 +630,9 @@ fn push_endpoint(builders: &mut [ColumnBuilder], endpoint: &[Scalar]) {
+ // `sum_overlap` counts both directions for each overlapping b
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #21126** (2026-11-19): fix(query): enforce stage WRITE on HTTP uploads (@youngsofun)
-- **PR #21125** (closed): refactor: query: read the ownership and access caches without a lock (@drmingdrmer)
-- **PR #21124** (2026-11-19): feat: config: add `ownership` to `cache.meta_service_caches` (@drmingdrmer)
-- **PR #21123** (2026-11-18): chore: meta: use sub-cache 0.4.1, which stops a dropped cache's watch (@drmingdrmer)
-- **PR #21121** (2026-11-18): refactor(query): remove dead code and leftovers of the aggregate rewrites (@dqhl76)
-- **PR #21118** (2026-11-18): fix(query): abbreviate large SQL constants in INFO logs (@bohutang)
+- **PR #21146** (2026-11-20): chore(meta): use server v260629.11.0 and client v260205.13.7 (@drmingdrmer)
+- **PR #21141** (2026-11-20): fix(query): probe the partition built in each hash join spill round (@dqhl76)
+- **PR #21136** (2026-11-20): fix: meta: move the cache off a leader that refuses its watch (@drmingdrmer)
+- **PR #21135** (closed): fix(fuse): accept strings without a bounded statistics maximum (@youngsofun)
+- **PR #21132** (2026-11-20): fix(query): preserve RBAC upgrade compatibility and audit access (@TCeason)
+- **PR #21131** (2026-11-20): fix(storage): skip reversed ranges in clustering diagnostics (@zhyass)
 
 ---
 
@@ -2166,72 +2163,63 @@ use the plain `WindowPartitionExchange`.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): batch small blocks before the window partition exchange
+## X. query): read spilled byte columns with the writer's arrow types
 
 **RULE**:
-When implementing operations in `src/query/expression/src/kernels/stream_partition.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/service/src/spillers/async_buffer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dea33860`: query): batch small blocks before the window partition exchange. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f3fe9792`: query): read spilled byte columns with the writer's arrow types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/expression/src/kernels/stream_partition.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/service/src/spillers/async_buffer.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Add every row of `column`, in order.
-    fn append_column(&mut self, column: &Column) {
-        let builder = self.builder(column.len());
-        if builder.data_type() == column.data_type() {
-            builder.append_column(column);
-        } else {
-            // Such as an `Array` column into an `EmptyArray` builder, which
-            // only `copy_column` turns into an `Array` builder.
-            let indices = (0..column.len() as u32).collect::<Vec<_>>();
-            copy_column(&indices, column, builder);
-        }
+use arrow_array::RecordBatch;
+use arrow_schema::Fields;
+        // Read back the arrow types the writer used. Without them, byte columns are
+        // inferred as Binary/Utf8, whose i32 offsets overflow once a column of the
+        // row group, which is decoded as one batch, holds more than 2 GiB.
+        // Hint fields must carry the names in the file, which the writer takes
+        // from the block rather than from `data_schema`.
+        let schema_descr = row_groups[0].schema_descr();
+        let arrow_schema = Schema::from(infer_table_schema(&data_schema)?.as_ref());
+        let hint = arrow_schema
+            .fields()
+            .iter()
+            .zip(schema_descr.root_schema().get_fields())
+            .map(|(field, column)| field.as_ref().clone().with_name(column.name()))
+            .collect::<Vec<_>>();
+            schema_descr,
+            Some(&Fields::from(hint)),
+        let Some(batch) = self.read_record_batch()? else {
+            return Ok(None);
+        };
+        Ok(Some(DataBlock::from_record_batch_keep_null_const(
+            &self.data_schema,
+            &batch,
+        )?))
     }
 
-    /// Add `rows` of a constant, kept a constant when it can be.
-    fn append_const(
-        &mut self,
-        scalar: &Scalar,
-        data_type: &DataType,
-        rows: usize,
-        size: &mut impl FnMut() -> ExpandedSize,
-    ) {
-        if !self.try_push_const(scalar, data_type, rows, size) {
-            let column = ColumnBuilder::repeat(&scalar.as_ref(), rows, data_type).build();
-            self.append_column(&column);
-        }
-    }
-
-/// The expanded size of the last constant seen in a column.
-type ConstSize = Option<(Scalar, DataType, ExpandedSize)>;
-
-fn cached_const_size(cache: &mut ConstSize, scalar: &Scalar, data_type: &DataType)
+    fn read_record_batch(&mut self) -> Result<Option<RecordBatch>> {
+   
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    const_sizes: Vec<Option<(Scalar, DataType, ExpandedSize)>>,
-                    let mut size = || {
-                        if let Some((s, t, size)) = const_size.as_ref()
-                            && *s == scalar
-                            && *t == data_type
-                        {
-                            return *size;
-                        }
-                        let size = ExpandedSize::measure(&scalar, &data_type);
-                        *const_size = Some((scalar.clone(), data_type.clone(), size));
-                        size
-                    };
+            row_groups[0].schema_descr(),
+            None,
+        Ok(Some(DataBlock::from_record_batch_keep_null_const(
+            &self.data_schema,
+            &batch,
+        )?))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dea33860` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f3fe9792` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T21:38:58.036Z",
-  "total_cycles_completed": 11080,
-  "total_learnings_persisted": 11080,
-  "total_rules_promoted": 10434,
+  "last_updated": "2026-11-20T21:47:12.132Z",
+  "total_cycles_completed": 11081,
+  "total_learnings_persisted": 11081,
+  "total_rules_promoted": 10435,
   "history": [
-    {
-      "timestamp": "2026-11-19T22:36:17.995Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T22:56:58.347Z",
       "repository": "BurntSushi/ripgrep",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-20T21:38:58.036Z",
       "repository": "beclab/Olares",
       "learningId": "learn-github-beclab-olares",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T21:47:12.132Z",
+      "repository": "databendlabs/databend",
+      "learningId": "learn-github-databendlabs-databend",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

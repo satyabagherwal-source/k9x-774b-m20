@@ -4,24 +4,24 @@
 {
   "source_repository": "databendlabs/databend",
   "source_url": "https://github.com/databendlabs/databend",
-  "source_version": "342ec629",
+  "source_version": "77137bc2",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T21:10:35.932Z",
+  "timestamp": "2026-11-20T21:47:12.313Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-databendlabs-databend",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [databendlabs/databend](https://github.com/databendlabs/databend) (Revision: `342ec629`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T21:10:35.932Z`  
+> **Provenance**: Harvested from [databendlabs/databend](https://github.com/databendlabs/databend) (Revision: `77137bc2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T21:47:12.313Z`  
 > **Learning ID**: `learn-github-databendlabs-databend`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from databendlabs/databend:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T21:10:34.941Z  
+> **Harvest Timestamp**: 2026-11-20T21:47:10.993Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9497 stars
+- **Stars / Engagement**: 9501 stars
 
 ---
 
@@ -1210,11 +1210,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21099** (2026-11-16): **fix(meta): decode BLOOM table index type; default cache.data_max_ratio to 0**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Two small, independent changes, one commit each.  **1. Default `cache.data_max_ratio` to 0.**  With the shared cache backend on by default (#21091), the data pool reserved 10% of `max_server_memory_usage` for deserialized column data (`memory_cache_table_data`). That pool is the first one reclaimed under memory pressure and re-reads are already served by the disk cache, so the memory is better left to queries. With a 0 cap `SharedStore::check_admissible` rejects every insert into the pool, so no column data is kept in memory; the meta and index pools (10% / 40%) and the disk cache (`cache.disk.*`) are unchanged. Users who want the pool back set `cache.data_max_ratio` explicitly. Legacy options such as `table_data_deserialized_data_bytes` were already ignored by the shared backend, so they do not re-enable it.  **2. Decode `TableIndexType::Bloom` written by newer releases.**  A page-index branch rolling out in production writes `TableIndex.index_type = 4` (`BLOOM`). `proto-conv` on `main` only knows values 0..=3 and returns `Incompatible("invalid IndexType: 4")`, which fails the whole `TableMeta`. `list_tables` then skips the table (or, before #20663, fails the database), so it disappears from the admin tables API and `SHOW CREATE TABLE`.  This adds the enum placeholders (`TableIndexType::Bloom = 4`, `MarkedDeletedIndexType::BLOOM = 6`, `Display` → `BLOOM`, the `mark_t
+- **Issue #21146** (2026-11-20): **chore(meta): use server v260629.11.0 and client v260205.13.7**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Use Meta server and test harness `v260629.11.0` with maintenance client `v260205.13.7`. Both resolve crates.io OpenRaft `0.10.1`; the server no longer needs a Git source for OpenRaft. Keep the runtime bridge between the two Meta sources. Server-side credentials import `databend_meta::Secret` without a direct `databend-meta-raft-config` dependency. The semaphore codec uses `codeq 0.6.3` with the same wire format. Databend’s separate Hickory dependencies are outside this change.  The maintenance client retains the `1.2.770` minimum Meta server version. Keep `watch_on_leader()` until all watch-serving endpoints have upgraded through normal rollout and a deployed probe confirms stale-stream closure, reconnect to the new leader, and resumed updates.  Validation: Clippy and 111 focused tests passed for query config, Meta CLI config, control, store, cache, and semaphore. The `metactl` Raft TLS suite also passed locally, including follower reads, snapshot catch-up, and leader transfer.  <!-- x-pr-ship target=main old-base-oid=a85e50302ceeb3fd46c3582409745f0d551a0eee predecessor=none -->  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [ ] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [x] Breaking Change (fix or feature that could cause ex
 
-- **Issue #21093** (2026-11-15): **fix(query): link cosine HNSW graphs with normalized vectors**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - On main, `HNSWIndex::build` normalizes cosine vectors only for SQ8 and links the graph with the raw vectors (inner product), so non-unit-length data gets a poor graph and needs a much larger ef. Link the graph with the normalized vectors; L1/L2 are unchanged. - Test: `test_cosine_graph_ignores_vector_lengths` (recall 0.196 before, 0.904 after).  Cohere 1M (768d, cosine, top 100), aarch64 8 vCPU, warm cache, refine 2, single round. Both columns use the same binary (it also carries a separate aarch64 SQ8 kernel tweak, not part of this PR), so they differ only in how the index was built:  | | 18 blocks (default)<br>main | 18 blocks (default)<br>this PR | 4 × 250K rows<br>main | 4 × 250K rows<br>this PR | 1 × 1M rows<br>this PR | |---|---:|---:|---:|---:|---:| | ef | 200 | 200 | 800 | 200 | 400 | | Recall@100 | 0.9677 | 0.9858 | 0.9686 | 0.9767 | 0.9742 | | c1 QPS | 86.3 | 85.1 | 97.6 | 111.7 | 103.5 | | c8 QPS | 334.9 | 335.8 | 415.7 | 524.7 | 570.9 | | c80 QPS | 438.0 | 437.1 | 583.1 | **812.2** | **948.4** | | c80 P99 (ms) | 295.0 | 293.3 | 219.1 | 149.5 | 129.2 |  At Recall ≥ 0.9677, the best c80 goes from 583.1 QPS (main, 4 × 250K, ef 800) to 948.4 QPS (this PR, 1 × 1M, ef 400), **+63%**. main needs ef 800 on 4 blocks because ef 200 only reaches recall 0.8943.  Layouts: `CREATE TABLE t (id BIGINT, emb VECTOR(768), VECTOR INDEX vi (emb) distance='cosine' m=16 ef_con
+- **Issue #21141** (2026-11-20): **fix(query): probe the partition built in each hash join spill round**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  The legacy hash join can silently return wrong results when it spills. CI hit this in [`linux / sqllogic / cluster (tpcds, 4c)`](https://github.com/databendlabs/databend/actions/runs/44673294220/job/136092536425): TPC-DS Q69 in `tpcds_spill_3.test` returned one extra row. Correct runs in the same job had identical row counts for every operator up to the `NOT EXISTS` left mark join on `web_sales`. That join's output differed on one node, and on that node the join spilled into 16 rounds.  **Root cause.** Spilled partitions are restored one per round. At the end of a round, the last probe processor releases the build side (`continue_build_watcher.send(true)`) and only afterwards reads the partition to restore from `HashJoinState::partition_id`. Once the build side finishes the next round, its `finalize_done` already stores the partition of the round after that in the same slot. A probe thread delayed between the release and the read (for example, preempted for about the 1 ms a small round takes) restores the following partition. It probes that partition against the wrong table, and its buffered rows of both partitions are never joined:  - inner and semi joins lose rows; - `NOT EXISTS` / left mark joins return extra rows; - no error is raised.  This has existed since the round protocol was introduced. It affects every join that runs on the legacy implementatio
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1231,800 +1231,908 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a7a0a58b` (2026-11-16)
-**Commit Message**: fix(meta): decode BLOOM table index type; default cache.data_max_ratio to 0 (#21099)
+### Incident Patch 1: `f3fe9792` (2026-11-20)
+**Commit Message**: fix(query): read spilled byte columns with the writer's arrow types (#21053)
 
-* chore(cache): turn the in-memory column data pool off by default
+* fix(query): read spilled byte columns with the writer's arrow types
 
-Default cache.data_max_ratio to 0 so the shared cache backend reserves
-no server memory for deserialized column data; the disk cache and the
-meta and index pools are unchanged. Users who want the in-memory pool
-back set cache.data_max_ratio explicitly.
+Spill files are written with LargeBinary/Utf8View byte columns, but
+SpillsDataReader built its field levels from the row group's parquet
+schema without the footer's embedded arrow schema, so byte columns were
+decoded as Binary/Utf8 with i32 offsets. A row group is decoded as one
+batch, so a byte column above 2 GiB failed with "index overflow decoding
+byte array".
 
-* fix(meta): decode BLOOM table index type written by newer releases
+Pass the arrow schema derived from the reader's data schema, the same
+conversion the writer uses, as the decoding hint.
 
-Table metadata written by the page-index rollout carries
-TableIndexType::Bloom (index_type = 4). Without the variant, proto-conv
-rejects the whole TableMeta, so the table disappears from the admin
-tables API and SHOW CREATE TABLE.
+* fix(query): name spill read hint fields after the file's columns
 
-Add the enum placeholder (and MarkedDeletedIndexType::BLOOM) so the
-metadata decodes and displays, while creating or refreshing a BLOOM
-index stays rejected in this release.
+Parquet matches hint fields by name. The writer names top-level columns after the block (col_N), while callers pass their own data schema (for example agg_0/group_0, or 0/1 for partial top-n), so the hint failed with 'incompatible arrow schema'. Take the top-level names from the file and keep the types inferred from the data schema.
 
-* chore(cache): align tests with the data pool off by default
-
-Tests that exercise the data pool set cache.data_max_ratio explicitly;
-the system.caches and system.configs golden files follow the default.
-
-**File**: `src/meta/api/src/api_impl/schema_api.rs` (modified, +1/-0)
+**File**: `src/query/service/src/spillers/async_buffer.rs` (modified, +211/-6)
 ```diff
-@@ -790,6 +790,7 @@ pub fn mark_table_index_as_deleted(
-         TableIndexType::Ngram => MarkedDeletedIndexType::NGRAM,
-         TableIndexType::Vector => MarkedDeletedIndexType::VECTOR,
-         TableIndexType::Spatial => MarkedDeletedIndexType::SPATIAL,
-+        TableIndexType::Bloom => MarkedDeletedIndexType::BLOOM,
-     };
-     let marked_deleted_table_index_meta = MarkedDeletedIndexMeta {
-         dropped_on: Utc::now(),
-```
-
-**File**: `src/meta/app/src/schema/index.rs` (modified, +1/-0)
-```diff
-@@ -74,6 +74,7 @@ pub enum MarkedDeletedIndexType {
-     NGRAM = 3,
-     VECTOR = 4,
-     SPATIAL = 5,
-+    BLOOM = 6,
+@@ -25,6 +25,8 @@ use std::sync::atomic::Ordering;
+ use std::time::Duration;
+ use std::time::Instant;
+ 
++use arrow_array::RecordBatch;
++use arrow_schema::Fields;
+ use arrow_schema::Schema;
+ use bytes::Bytes;
+ use bytes::BytesMut;
+@@ -583,10 +585,23 @@ impl SpillsDataReader {
+             ));
+         }
+ 
++        // Read back the arrow types the writer used. Without them, byte columns are
++        // inferred as Binary/Utf8, whose i32 offsets overflow once a column of the
++        // row group, which is decoded as one batch, holds more than 2 GiB.
++        // Hint fields must carry the names in the file, which the writer takes
++        // from the block rather than from `data_schema`.
++        let schema_descr = row_groups[0].schema_descr();
++        let arrow_schema = Schema::from(infer_table_schema(&data_schema)?.as_ref());
++        let hint = arrow_schema
++            .fields()
++            .iter()
++            .zip(schema_descr.root_schema().get_fields())
++            .map(|(field, column)| field.as_ref().clone().with_name(column.name()))
++            .collect::<Vec<_>>();
+         let field_levels = parquet_to_arrow_field_levels(
+-            row_groups[0].schema_descr(),
++            schema_descr,
+             ProjectionMask::all(),
+-            None,
++            Some(&Fields::from(hint)),
+         )?;
+ 
+         let (tx, rx) = async_channel::bounded(1);
+@@ -613,6 +628,16 @@ impl SpillsDataReader {
+     }
+ 
+     pub fn read(&mut self) -> Result<Option<DataBlock>> {
++        let Some(batch) = self.read_record_batch()? else {
++            return Ok(None);
++        };
++        Ok(Some(DataBlock::from_record_batch_keep_null_const(
++            &self.data_schema,
++            &batch,
++        )?))
++    }
++
++    fn read_record_batch(&mut self) -> Result<Option<RecordBatch>> {
+         let start = Instant::now();
+ 
+         let fetched = match self.receiver.recv_blocking() {
+@@ -641,10 +666,7 @@ impl SpillsDataReader {
+         };
+         debug_assert!(reader.next().is_none());
+         record_read_profile(self.target, start.elapsed(), fetched.read_bytes);
+-        Ok(Some(DataBlock::from_record_batch_keep_null_const(
+-            &self.data_schema,
+-            &batch,
+-        )?))
++        Ok(Some(batch))
+     }
  }
  
- #[derive(Clone, Debug, Eq, PartialEq)]
+@@ -868,9 +890,22 @@ mod tests {
+     use std::sync::atomic::AtomicUsize;
+     use std::sync::atomic::Ordering;
+ 
++    use arrow_schema::DataType as ArrowDataType;
+     use databend_common_base::runtime::spawn;
++    use databend_common_expression::Column;
++    use databend_common_expression::DataField;
++    use databend_common_expression::DataSchema;
+     use databend_common_expression::FromData;
++    use databend_common_expression::block_debug::pretty_format_blocks;
++    use databend_common_expression::types::BinaryType;
++    use databend_common_expression::types::BooleanType;
++    use databend_common_expression::types::DataType;
++    use databend_common_expression::types::DecimalSize;
+     use databend_common_expression::types::Int32Type;
++    use databend_common_expression::types::Int64Type;
++    use databend_common_expression::types::NumberDataType;
++    use databend_common_expression::types::StringType;
++    use databend_common_expression::types::VariantType;
+     use opendal::Operator;
+ 
+     use super::*;
+@@ -1081,6 +1116,176 @@ mod tests {
+         );
+     }
+ 
++    #[tokio::test(flavor = "multi_thread")]
++    async fn test_spill_reads_byte_columns_with_writer_types() {
++        let pool = SpillsBufferPool::create(1).unwrap();
++        let operator = create_test_operator().unwrap();
++        let path = "spill_byte_column_types".to_string();
++
++        let variants = || {
++            ["[1,\"a\"]", "{\"k\":null}"]
++                .iter()
++                .map(|json| jsonb::parse_value(json.as_bytes()).unwrap().to_vec())
++                .collect::<Vec<_>>()
++        };
++        // The last column has the shape of an arg_max state: (has_value, key, value).
++        let block = DataBlock::new_from_columns(vec![
++            StringType::from_data(vec!["a", "bc"]),
++            StringType::from_opt_data(vec![Some("d"), None]),
++            BinaryType::from_data(vec![b"ef".as_slice(), b"".as_slice()]),
++            VariantType::from_data(variants()),
++            Column::Tuple(vec![
++                BooleanType::from_data(vec![true, false]),
++                Int64Type::from_data(vec![1, 2]),
++                VariantType::from_data(variants()),
++            ]),
++            // Types whose hinted arrow type also differs from the parquet default.
++            Column::random(
++                &DataType::Decimal(DecimalSize::new(10, 2).unwrap()),
++                2,
++                None,
++            ),
++            Column::random(
++                &DataType::Array(Box::new(DataType::Number(NumberDataType::Int32))),
++                2,
++                None,
++            ),
++            Column::random(
++                &DataType::Nullable(Box::new(DataType::Tuple(vec![
++                    Da
 ```
 
-**File**: `src/meta/app/src/schema/table/mod.rs` (modified, +8/-0)
+---
+
+### Incident Patch 2: `532835a7` (2026-11-20)
+**Commit Message**: fix(query): reject out-of-range to_decimal parameters (#21128)
+
+* fix(query): reject out-of-range to_decimal parameters (#21107)
+
+* refactor(query): name the target type in decimal cast overflow errors
+
+The overflow errors of integer, float and decimal casts to decimal
+quoted the source line that raised them, which only told the cast
+paths apart and changed with every edit of the file. They now name the
+decimal type the value does not fit; a NaN or infinite float says so,
+under the same 'Decimal overflow' prefix that tests match. The evaluator
+already shows the function and the value.
+
+(cherry picked from commit 84479b615116d7602f1394992dfbe25d57da208a)
+
+* fix(query): reject NULL Decimal type arguments
+
+**File**: `src/query/expression/src/types/decimal.rs` (modified, +35/-19)
 ```diff
-@@ -290,6 +290,11 @@ pub enum TableIndexType {
-     Ngram = 1,
-     Vector = 2,
-     Spatial = 3,
-+    /// Granule-level Bloom index written by newer releases.
-+    ///
-+    /// This release only decodes the variant so table metadata that carries it
-+    /// remains readable; creating or refreshing such an index is rejected.
-+    Bloom = 4,
- }
+@@ -52,6 +52,7 @@ use super::AccessType;
+ use super::AnyType;
+ use super::DataType;
+ use super::F64;
++use super::NumberScalar;
+ use super::NumberType;
+ use super::SimpleDomain;
+ use super::SimpleType;
+@@ -518,28 +519,43 @@ impl DecimalSize {
+     }
  
- #[derive(serde::Serialize, serde::Deserialize, Clone, Debug, Eq, PartialEq)]
-@@ -490,6 +495,9 @@ impl Display for TableIndexType {
-             TableIndexType::Spatial => {
-                 write!(f, "SPATIAL")
-             }
-+            TableIndexType::Bloom => {
-+                write!(f, "BLOOM")
+     pub fn new(precision: u8, scale: u8) -> Result<DecimalSize> {
+-        let size = DecimalSize { precision, scale };
+-        size.validate()?;
+-
+-        Ok(size)
++        Self::from_checked_params(Some(precision), Some(scale))
++    }
++
++    pub fn try_from_scalars(precision: &Scalar, scale: &Scalar) -> Result<Self> {
++        let to_u8 = |value: &Scalar, name: &str| -> Result<Option<u8>> {
++            crate::with_integer_mapped_type!(|NUM_TYPE| match value.as_number() {
++                Some(NumberScalar::NUM_TYPE(value)) => Ok(value.to_u8()),
++                _ => Err(ErrorCode::IllegalDataType(format!(
++                    "Decimal {name} must be an integer, got {}",
++                    value.as_ref().infer_data_type()
++                ))),
++            })
++        };
++        Self::from_checked_params(to_u8(precision, "precision")?, to_u8(scale, "scale")?)
+     }
+ 
+     pub fn validate(&self) -> Result<()> {
+-        if self.precision < 1 || self.precision > i256::MAX_PRECISION {
+-            return Err(ErrorCode::Overflow(format!(
+-                "Decimal precision must be between 1 and {}",
+-                i256::MAX_PRECISION
+-            )));
+-        }
+-
+-        if self.scale > self.precision {
+-            return Err(ErrorCode::Overflow(format!(
+-                "Decimal scale must be between 0 and precision {}",
+-                self.precision
+-            )));
+-        }
+-
+-        Ok(())
++        Self::new(self.precision, self.scale).map(|_| ())
++    }
++
++    fn from_checked_params(precision: Option<u8>, scale: Option<u8>) -> Result<Self> {
++        let precision = precision
++            .filter(|p| (1..=i256::MAX_PRECISION).contains(p))
++            .ok_or_else(|| {
++                ErrorCode::Overflow(format!(
++                    "Decimal precision must be between 1 and {}",
++                    i256::MAX_PRECISION
++                ))
++            })?;
++        let scale = scale
++            .filter(|s| (0..=precision).contains(s))
++            .ok_or_else(|| {
++                ErrorCode::Overflow(format!(
++                    "Decimal scale must be between 0 and precision {precision}"
++                ))
++            })?;
++        Ok(Self::new_unchecked(precision, scale))
+     }
+ 
+     pub fn default_128() -> DecimalSize {
+```
+
+**File**: `src/query/functions/src/scalars/decimal/src/cast.rs` (modified, +43/-19)
+```diff
+@@ -118,8 +118,7 @@ pub fn register_to_decimal(registry: &mut FunctionRegistry) {
+             _ => return None,
+         };
+ 
+-        let decimal_size =
+-            DecimalSize::new(params[0].get_i64()? as _, params[1].get_i64()? as _).ok()?;
++        let decimal_size = DecimalSize::try_from_scalars(&params[0], &params[1]).ok()?;
+ 
+         let is_variant = from_type == DataType::Variant;
+         let return_type = if is_variant {
+@@ -565,7 +564,7 @@ where
+                 skip_inactive_with_builder_1_arg::<BooleanType, DecimalType<T>>(
+                     |a, out: &mut Vec<T>, ctx| {
+                         if a {
+-                            ctx.set_error(out.len(), "Decimal overflow");
++                            ctx.set_error(out.len(), DecimalOverflow(size));
+                             out.push(T::one());
+                         } else {
+                             out.push(T::zero());
+@@ -758,7 +757,7 @@ where
+             from, ctx,
+         )
+     } else {
+-        let overflow = concat!("Decimal overflow at line : ", line!());
++        let overflow = DecimalOverflow(size);
+         if let Value::Scalar(value) = &from {
+             let x = S::to_scalar_ref(value);
+             if let Some(x) = T::from_i128(x).and_then(|x| x.checked_mul(multiplier))
+@@ -797,13 +796,15 @@ where
+ {
+     let f = |x: S::ScalarRef<'_>, builder: &mut Vec<T>, ctx: &mut EvalContext| {
+         let rounding_mode = ctx.func_ctx.rounding_mode;
+-        match T::from_float(x.as_(), size, rounding_mode) {
++        let x: f64 = x.as_();
++        match T::from_float(x, size, rounding_mode) {
+             Some(x) => builder.push(x),
++            None if !x.is_finite() => {
++                ctx.set_error(builder.len(), NonFiniteDecimal(x));
++                builder.push(T::one());
 +            }
+             None => {
+-                ctx.set_error(
+-                    builder.len(),
+-                    concat!("Decimal overflow at line : ", line!()),
+-                );
++                ctx.set_error(builder.len(), DecimalOverflow(size));
+                 builder.push(T::one());
+             }
+         }
+@@ -843,28 +844,29 @@ where
+     let min = W::min_for_precision(dest.precision());
+     let max = W::max_for_precision(dest.precision());
+     match dest.scale().cmp(&from.scale()) {
+-        Ordering::Equal => {
+-            rescale::<F, W, T>(value, ctx, move |x, _| (x >= min && x <= max).then_some(x))
+-        }
++        Ordering::Equal => rescale::<F, W, T>(value, ctx, dest, move |x, _| {
++            (x >= min && x <= max).then_some(x)
++        }),
+         Ordering::Greater => {
+             let factor = W::e(dest.scale() - from.scale());
+-            rescale::<F, W, T>(value, ctx, move |x, _| {
++            rescale::<F, W, T>(value, ctx, dest, move |x, _| {
+                 x.checked_mul(factor).filter(|x| *x >= min && *x <= max)
+             })
+         }
+         Ordering::Less => {
+             let reduction = ScaleReduction::<W>::new(from.scale() - dest.scale(), dest.precision());
+-            rescale::<F, W, T>(value, ctx, move |x, rounding_mode| {
++            rescale::<F, W, T>(value, ctx, dest, move |x, rounding_mode| {
+                 reduction.reduce(x, rounding_mode)
+             })
          }
      }
  }
-```
-
-**File**: `src/meta/proto-conv/tests/it/proto_conv.rs` (modified, +30/-0)
-```diff
-@@ -387,6 +387,36 @@ fn test_pb_from_to() -> anyhow::Result<()> {
-     Ok(())
+ 
+-// Rows the rescaling rejects do not fit the target precision.
++// Rows the rescaling rejects do not fit `dest`.
+ fn rescale<F, W, T>(
+     value: Value<DecimalType<F>>,
+     ctx: &mut EvalContext,
++    dest: DecimalSize,
+     rescale: impl Fn(W, bool) -> Option<W> + Copy + Send + Sync,
+ ) -> Value<DecimalType<T>>
+ where
+@@ -879,16 +881,38 @@ where
+         ) {
+             Some(y) => builder.push(y.as_decimal::<T>()),
+             None => {
+-                ctx.set_error(
+-                    builder.len(),
+-                    concat!("Decimal overflow at line : ", line!()),
+-                );
++                ctx.set_error(builder.len(), DecimalOverflow(dest));
+                 builder.push(T::one());
+             }
+         },
+     )(value, ctx)
  }
  
-+/// Table metadata written by a newer release may carry a `BLOOM` table index
-+/// (`index_type = 4`). This release must still decode that metadata, so the
-+/// table remains visible to listing and `SHOW CREATE TABLE`, while any
-+/// unknown value is rejected as before.
-+#[test]
-+fn test_table_index_type_bloom_placeholder() -> anyhow::Result<()> {
-+    let mut index = new_table_index();
-+    index.index_type = TableIndexType::Bloom;
-+    index.options = btreemap! {s("filter_type") => s("binary_fuse32")};
++/// The error of a value that a decimal of `size` cannot hold. The evaluator
++/// adds the function and its arguments to it, which show the value.
++#[derive(Clone, Copy)]
++struct DecimalOverflow(DecimalSize);
 +
-+    let mut p = index.to_pb();
-+    assert_eq!(p.index_type, 4);
-+    let got = mt::TableIndex::from_pb(p.clone())?;
-+    assert_eq!(index, got);
-+    assert_eq!(got.index_type.to_string(), "BLOOM");
-+
-+    let mut tbl = new_table_meta();
-+    tbl.indexes.insert(index.name.clone(), index);
-+    let got = mt::TableMeta::from_pb(tbl.to_pb())?;
-+    assert_eq!(tbl, got);
-+
-+    p.index_type = 99;
-+    assert_eq!(
-+        Incompatible::new(s("invalid IndexType: 99")),
-+        mt::TableIndex::from_pb(p).unwrap_err()
-+    );
-+
-+    Ok(())
-+}
-+
- #[test]
- fn test_incompatible() -> anyhow::Result<()> {
-     let db_meta = new_db_meta();
-```
-
-**File**: `src/meta/schema-api-test-suite/src/schema_api_test_suite.rs` (modified, +4/-2)
-```diff
-@@ -7482,7 +7482,8 @@ impl SchemaApiTestSuite {
-                     ver: VER,
-                     min_reader_ver: MIN_READER_VER,
-                     name: "idx".to_string(),
--                    index_type: 4,
-+                    // No `TableIndexType` variant has this value.
-+                    index_type: 99,
-                     ..Default::default()
-                 });
-                 let table_key = TableId::new(table_id);
-@@ -7709,7 +7710,8 @@ impl SchemaApiTestSuite {
-                     ver: VER,
-                     min_reader_ver: MIN_READER_VER,
-                     name: "idx".to_string(),
--                    index_type: 4,
-+                    // No `TableIndexType` variant has this value.
-+                    index_type: 99,
-                     ..Default::default()
-                 });
-                 upsert_test_data(mt, &TableId::new(table_id), table_pb.encode_to_vec()).await?;
-```
-
-**File**: `src/query/config/src/config.rs` (modified, +4/-3)
-```diff
-@@ -3582,11 +3582,12 @@ pub struct CacheConfig {
-     )]
-     pub index_max_ratio: u64,
- 
--    /// Shared backend: percentage of the server memory limit for column data.
-+    /// Shared backend: percentage of the server memory limit for column data. 0 disables the
-+    /// in-memory column data pool.
-     #[clap(
-         long = "cache-data-max-ratio",
-         value_name = "VALUE",
--        default_value = "10"
-+        default_value = "0"
-     )]
-     pub data_max_ratio: u64,
- 
-@@ -3652,7 +3653,7 @@ impl Default for CacheConfig {
-             shared_memory_enabled: true,
-             meta_max_ratio: 10,
-             index_max_ratio: 40,
--            data_max_ratio: 10,
-+            data_max_ratio: 0,
-             kind_max_bytes: BTreeMap::new(),
- 
-             // ----- the following options/args are all deprecated               ----
-```
-
-**File**: `src/query/service/tests/it/configs.rs` (modified, +9/-0)
-```diff
-@@ -1030,6 +1030,15 @@ fn test_server_memory_limit_defaults() {
-     assert!(config.query.common.max_memory_limit_enabled);
-     assert!(config.cache.shared_memory_enabled);
-     assert_eq!(config.query.common.max_server_memory_usage, 0);
-+    // The in-memory column data pool is off by default; metadata and index pools stay on.
-+    assert_eq!(
-+        (
-+            config.cache.meta_max_ratio,
-+            config.cache.index_max_ratio,
-+            config.cache.data_max_ratio
-+        ),
-+        (10, 40, 0)
-+    );
- 
-     let mut system = sysinfo::System::new();
-     system.refresh_memory();
-```
-
-**File**: `src/query/service/tests/it/servers/admin/v1/mod.rs` (modified, +1/-0)
-```diff
-@@ -18,3 +18,4 @@ mod clustering_information;
- mod config;
- mod perf;
- mod status;
-+mod tenant_tables;
-```
-
----
-
-### Incident Patch 2: `342ec629` (2026-11-16)
-**Commit Message**: fix(query): hash equal bitmap, geometry and interval values consistently (#20971)
-
-* fix(query): preserve equality across group hash representations
-
-* fix(query): hash canonical bitmap containers without member expansion
-
-* fix(query): validate bitmap range hashing without a direct dependency
-
-* fix(query): compare bitmap members across roaring stores
-
-* test(query): focus value hash regressions and expand SQL coverage
-
----------
-
-Co-authored-by: kould <[REDACTED_EMAIL]>
-
-**File**: `src/query/expression/src/aggregate/group_hash.rs` (modified, +6/-47)
-```diff
-@@ -34,7 +34,6 @@ use crate::types::decimal::Decimal;
- use crate::types::i256;
- use crate::types::number::Number;
- use crate::types::*;
--use crate::utils::bitmap::normalize_bitmap_column;
- use crate::visitor::ValueVisitor;
- use crate::with_decimal_mapped_type;
- use crate::with_number_mapped_type;
-@@ -243,10 +242,7 @@ fn combine_group_hash_const_nonnull<const IS_FIRST: bool>(
-         Scalar::Date(value) => value.agg_hash(),
-         Scalar::Boolean(value) => value.agg_hash(),
-         Scalar::String(value) => value.as_bytes().agg_hash(),
--        Scalar::Binary(value)
--        | Scalar::Bitmap(value)
--        | Scalar::Variant(value)
--        | Scalar::Geometry(value) => value.agg_hash(),
-+        Scalar::Binary(value) | Scalar::Variant(value) => value.agg_hash(),
-         Scalar::Geography(value) => value.0.agg_hash(),
-         _ => scalar.as_ref().agg_hash(),
-     };
-@@ -366,8 +362,8 @@ impl<const IS_FIRST: bool> ValueVisitor for HashVisitor<'_, IS_FIRST> {
-     }
- 
-     fn visit_bitmap(&mut self, column: BinaryColumn) -> Result<()> {
--        let column = normalize_bitmap_column(&column);
--        self.combine_group_hash_string_column::<BitmapType>(column.as_ref());
-+        // Equal bitmaps can have different encodings, including within the hybrid format.
-+        self.combine_group_hash_type_column::<AnyType>(&Column::Bitmap(column));
-         Ok(())
-     }
- 
-@@ -377,7 +373,7 @@ impl<const IS_FIRST: bool> ValueVisitor for HashVisitor<'_, IS_FIRST> {
-     }
- 
-     fn visit_geometry(&mut self, column: BinaryColumn) -> Result<()> {
--        self.combine_group_hash_string_column::<GeometryType>(&column);
-+        self.combine_group_hash_type_column::<AnyType>(&Column::Geometry(column));
-         Ok(())
-     }
- 
-@@ -508,7 +504,6 @@ where I: Index
-             Scalar::Binary(v) => v.agg_hash(),
-             Scalar::String(v) => v.as_bytes().agg_hash(),
-             Scalar::Variant(v) => v.agg_hash(),
--            Scalar::Geometry(v) => v.agg_hash(),
-             Scalar::Geography(v) => v.0.agg_hash(),
-             Scalar::Opaque(v) => v.as_ref().agg_hash(),
-             v => v.as_ref().agg_hash(),
-@@ -575,11 +570,7 @@ where I: Index
-     }
- 
-     fn visit_bitmap(&mut self, column: crate::types::BinaryColumn) -> Result<()> {
--        let column = normalize_bitmap_column(&column);
--        self.visit_indices(|i| {
--            let value = column.as_ref().index(i.to_usize()).unwrap();
--            value.agg_hash()
--        })
-+        self.visit_typed_column::<BitmapType>(column, &DataType::Bitmap)
-     }
- 
-     fn visit_string(&mut self, column: crate::types::StringColumn) -> Result<()> {
-@@ -591,7 +582,7 @@ where I: Index
-     }
- 
-     fn visit_geometry(&mut self, column: crate::types::BinaryColumn) -> Result<()> {
--        self.visit_binary(column)
-+        self.visit_typed_column::<GeometryType>(column, &DataType::Geometry)
-     }
- 
-     fn visit_geography(&mut self, column: crate::types::GeographyColumn) -> Result<()> {
-@@ -794,8 +785,6 @@ mod tests {
-     use databend_common_column::bitmap::Bitmap;
-     use databend_common_column::types::months_days_micros;
-     use databend_common_column::types::timestamp_tz;
--    use databend_common_io::HybridBitmap;
--    use roaring::RoaringTreemap;
- 
-     use super::*;
-     use crate::BlockEntry;
-@@ -804,7 +793,6 @@ mod tests {
-     use crate::ProjectedBlock;
-     use crate::Value;
-     use crate::types::ArgType;
--    use crate::types::BitmapType;
-     use crate::types::DecimalSize;
-     use crate::types::Int32Type;
-     use crate::types::NullableColumn;
-@@ -1106,35 +1094,6 @@ mod tests {
-         Ok(())
-     }
- 
--    #[test]
--    fn test_bitmap_group_hash_legacy_bytes_normalized() -> Result<()> {
--        let values = [1_u64, 5, 42];
--
--        let mut hybrid = HybridBitmap::new();
--        for v in values {
--            hybrid.insert(v);
--        }
--        let mut hybrid_bytes = Vec::new();
--        hybrid.serialize_into(&mut hybrid_bytes).unwrap();
--
--        let mut tree = RoaringTreemap::new();
--        for v in values {
--            tree.insert(v);
--        }
--        let mut legacy_bytes = Vec::new();
--        tree.serialize_into(&mut legacy_bytes).unwrap();
--
--        let bitmap_column = BitmapType::from_data(vec![hybrid_bytes, legacy_bytes]);
--        let block = DataBlock::new(vec![bitmap_column.into()], 2);
--
--        let mut hashes = vec![0_u64; block.num_rows()];
--        group_hash_entries(ProjectedBlock::from(block.columns()), &mut hashes);
--
--        // Legacy-encoded bitmap should hash identically to hybrid-encoded bitmap.
--        assert_eq!(hashes[0], hashes[1]);
--        Ok(())
--    }
--
-     #[test]
-     fn test_dict_value_hashes_match_group_hash_entries() {
-         const ROWS: usize = 5000;
-```
-
-**File**: `src/query/expression/src/utils/bitmap.rs` (modified, +39/-0)
-```diff
-@@ -13,14 +13,53 @@
- // limitations under the License.
- 
- use std::borrow::Cow;
-+use std::hash::Hash;
-+use std::hash::Hasher;
-+use std::io;
- 
- use databend_common_column::binary::BinaryColumn;
- use databend_common_column::binary::BinaryColumnBuilder;
- use databend_common_io::HYBRID_KIND_LARGE;
- use databend_common_io::HYBRID_KIND_SMALL;
- use databend_common_io::HYBRID_MAGIC;
- use databend_common_io::HYBRID_VERSION;
-+use databend_common_io::HybridBitmap;
- use databend_common_io::deserialize_bitmap;
-+
-+/// Hash a canonical compressed representation, not every decoded member.
-+/// Small hybrid sets are bounded by their one-byte serialized length; large
-+/// bitmaps stay in Roaring's array/bitset containers throughout hashing.
-+pub fn hash_bitmap<H: Hasher>(bytes: &[u8], state: &mut H) {
-+    let mut tree = match deserialize_bitmap(bytes) {
-+        Ok(HybridBitmap::Small(values)) => values.into_iter().collect(),
-+        Ok(HybridBitmap::Large(tree)) => tree,
-+        Err(_) => {
-+            bytes.hash(state);
-+            return;
-+        }
-+    };
-+    // Self-intersection preserves members while normalizing container stores by
-+    // cardinality and removing empty containers. In particular, decoding a run
-+    // can otherwise leave an array store at the array/bitset threshold.
-+    // This works on compressed containers, without enumerating the large set.
-+    tree &= tree.clone();
-+    // The writer only feeds a Hasher, so serialization cannot fail with I/O.
-+    tree.serialize_into(BitmapHashWriter(state)).unwrap();
-+}
-+
-+struct BitmapHashWriter<'a, H>(&'a mut H);
-+
-+impl<H: Hasher> io::Write for BitmapHashWriter<'_, H> {
-+    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
-+        self.0.write(bytes);
-+        Ok(bytes.len())
-+    }
-+
-+    fn flush(&mut self) -> io::Result<()> {
-+        Ok(())
++impl std::fmt::Display for DecimalOverflow {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        write!(
++            f,
++            "Decimal overflow: the value does not fit {}",
++            DataType::Decimal(self.0)
++        )
 +    }
 +}
 +
- #[inline]
- pub fn is_hybrid_encoding(bytes: &[u8]) -> bool {
-     if bytes.is_empty() {
++/// The error of a NaN or infinite float cast to a decimal.
++#[derive(Clone, Copy)]
++struct NonFiniteDecimal(f64);
++
++impl std::fmt::Display for NonFiniteDecimal {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        write!(f, "Decimal overflow: {} has no decimal value", self.0)
++    }
++}
++
+ /// Drops `shift >= 1` fractional digits, truncating or rounding half away
+ /// from zero, then checks the target range.
+ ///
 ```
 
-**File**: `src/query/expression/src/values.rs` (modified, +8/-11)
+**File**: `src/query/functions/tests/it/scalars/cast.rs` (modified, +2/-0)
 ```diff
-@@ -57,6 +57,7 @@ use string::StringColumnBuilder;
+@@ -1267,6 +1267,8 @@ fn test_decimal_cast_precision_and_partial_errors() {
+     let columns = [("a", Int64Type::from_data(vec![-10, -9, 0, 9, 10]))];
+     run_ast(file, "CAST(a AS DECIMAL(1,0))", &columns);
+     run_ast(file, "TRY_CAST(a AS DECIMAL(1,0))", &columns);
++    let columns = [("f", Float64Type::from_data(vec![1.5, f64::NAN]))];
++    run_ast(file, "CAST(f AS DECIMAL(38,10))", &columns);
+     let columns = [("active", BooleanType::from_data(vec![false, true, false]))];
+     run_ast(
+         file,
+```
+
+**File**: `src/query/functions/tests/it/scalars/testdata/decimal_cast_precision.txt` (modified, +18/-10)
+```diff
+@@ -11,31 +11,31 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(10::Int64 AS DECIMAL(1,0))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`
  
- use crate::BlockEntry;
- use crate::ColumnView;
-+use crate::bitmap::hash_bitmap;
- use crate::bitmap::is_hybrid_encoding;
- use crate::property::Domain;
- use crate::types::EncodedColumn;
-@@ -1038,7 +1039,11 @@ impl PartialOrd for Scalar {
-                 let Ok(map_2) = deserialize_bitmap(b2) else {
-                     return None;
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(-10::Int64 AS DECIMAL(1,0))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(- CAST(10 AS Int64) AS Decimal(1, 0))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(- CAST(10 AS Int64) AS Decimal(1, 0))`
+ 
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(9223372036854775807::Int64 AS DECIMAL(1,0))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(9223372036854775807)` in expr `CAST(CAST(9223372036854775807 AS Int64) AS Decimal(1, 0))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(9223372036854775807)` in expr `CAST(CAST(9223372036854775807 AS Int64) AS Decimal(1, 0))`
+ 
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(18446744073709551615::UInt64 AS DECIMAL(1,0))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(18446744073709551615)` in expr `CAST(18446744073709551615 AS Decimal(1, 0))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(18446744073709551615)` in expr `CAST(18446744073709551615 AS Decimal(1, 0))`
+ 
+ 
+ 
+@@ -70,7 +70,7 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(TRUE AS DECIMAL(1,1))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow while evaluating function `to_decimal(1, 1)(true)` in expr `CAST(true AS Decimal(1, 1))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 1) while evaluating function `to_decimal(1, 1)(true)` in expr `CAST(true AS Decimal(1, 1))`
+ 
+ 
+ 
+@@ -135,7 +135,7 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(a AS DECIMAL(1,0))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(a AS Decimal(1, 0))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(a AS Decimal(1, 0))`
+ 
+ 
+ 
+@@ -163,11 +163,19 @@ evaluation (internal):
+ +--------+--------------------------------------------------------------------------------+
+ 
+ 
++error: 
++  --> SQL:1:1
++  |
++1 | CAST(f AS DECIMAL(38,10))
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: NaN has no decimal value while evaluating function `to_decimal(38, 10)(NaN)` in expr `CAST(f AS Decimal(38, 10))`
++
++
++
+ error: 
+   --> SQL:1:12
+   |
+ 1 | if(active, CAST(10::Int64 AS DECIMAL(1,0)), NULL)
+-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(10 AS Int64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
++  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(10 AS Int64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
+ 
+ 
+ 
+@@ -198,7 +206,7 @@ error:
+   --> SQL:1:12
+   |
+ 1 | if(active, CAST(1e30::Float64 AS DECIMAL(1,0)), NULL)
+-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 805 while evaluating function `to_decimal(1, 0)(1000000000000000000000000000000)` in expr `CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
++  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(1000000000000000000000000000000)` in expr `CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
+ 
+ 
+ 
+@@ -214,15 +222,15 @@ error:
+   --> SQL:1:12
+   |
+ 1 | if(active, CAST(10::DE
+```
+
+**File**: `src/query/functions/tests/it/scalars/testdata/decimal_to_decimal_cast.txt` (modified, +10/-10)
+```diff
+@@ -67,15 +67,15 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(123.45::DECIMAL(5,2) AS DECIMAL(5,4))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(5, 4)(123.45)` in expr `CAST(123.45 AS Decimal(5, 4))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(5, 4) while evaluating function `to_decimal(5, 4)(123.45)` in expr `CAST(123.45 AS Decimal(5, 4))`
+ 
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(123::DECIMAL(3,0) AS DECIMAL(3,2))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(3, 2)(123)` in expr `CAST(CAST(123 AS Decimal(3, 0)) AS Decimal(3, 2))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(3, 2) while evaluating function `to_decimal(3, 2)(123)` in expr `CAST(CAST(123 AS Decimal(3, 0)) AS Decimal(3, 2))`
+ 
+ 
+ 
+@@ -449,23 +449,23 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(12345.67::DECIMAL(7,2) AS DECIMAL(5,2))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(5, 2)(12345.67)` in expr `CAST(12345.67 AS Decimal(5, 2))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(5, 2) while evaluating function `to_decimal(5, 2)(12345.67)` in expr `CAST(12345.67 AS Decimal(5, 2))`
+ 
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(999.99::DECIMAL(5,2) AS DECIMAL(4,2))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(4, 2)(999.99)` in expr `CAST(999.99 AS Decimal(4, 2))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(4, 2) while evaluating function `to_decimal(4, 2)(999.99)` in expr `CAST(999.99 AS Decimal(4, 2))`
+ 
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(99.9::DECIMAL(3,1) AS DECIMAL(2,1))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(2, 1)(99.9)` in expr `CAST(99.9 AS Decimal(2, 1))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(2, 1) while evaluating function `to_decimal(2, 1)(99.9)` in expr `CAST(99.9 AS Decimal(2, 1))`
+ 
+ 
+ 
+@@ -482,23 +482,23 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(-123.45::DECIMAL(5,2) AS DECIMAL(4,2))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(4, 2)(-123.45)` in expr `CAST(- 123.45 AS Decimal(4, 2))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(4, 2) while evaluating function `to_decimal(4, 2)(-123.45)` in expr `CAST(- 123.45 AS Decimal(4, 2))`
+ 
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(99.99::DECIMAL(4,2) AS DECIMAL(3,2))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(3, 2)(99.99)` in expr `CAST(99.99 AS Decimal(3, 2))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(3, 2) while evaluating function `to_decimal(3, 2)(99.99)` in expr `CAST(99.99 AS Decimal(3, 2))`
+ 
+ 
+ 
+ error: 
+   --> SQL:1:1
+   |
+ 1 | CAST(9.99::DECIMAL(3,2) AS DECIMAL(2,2))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(2, 2)(9.99)` in expr `CAST(9.99 AS Decimal(2, 2))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(2, 2) while evaluating function `to_decimal(2, 2)(9.99)` in expr `CAST(9.99 AS Decimal(2, 2))`
+ 
+ 
+ 
+@@ -524,7 +524,7 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(12345678901234567890.123456789::DECIMAL(38,9) AS DECIMAL(18,4))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(18, 4)(12345678901234567890.123456789)` in expr `CAST(CAST(12345678901234567890.123456789 AS Decimal(38, 9)) AS Decimal(18, 4))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(18, 4) while evaluating function `to_decimal(18, 4)(12345678901234567890.123456789)` in expr `CAST(CAST(12345678901234567890.123456789 AS Decimal(38, 9)) AS Decimal(18, 4))`
+ 
+ 
+ 
+@@ -650,7 +650,7 @@ error:
+   --> SQL:1:1
+   |
+ 1 | CAST(a AS DECIMAL(5,1))
+-  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(5, 1)(1234567.89)` in expr `CAST(a AS Decimal(5, 1))`
++  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(5, 1) while evaluating function `to_decimal(5, 1)(1234567.89)` in expr `CAST(a AS Decimal(5, 1))`
+ 
+ 
+ 
+```
+
+**File**: `src/query/sql/src/planner/semantic/type_check.rs` (modified, +2/-2)
+```diff
+@@ -52,8 +52,8 @@ use crate::planner::expression::UDFValidator;
+ use crate::planner::expression::UdfValidationConfig;
+ use crate::plans::DictGetFunctionArgument;
+ 
+-const DEFAULT_DECIMAL_PRECISION: i64 = 38;
+-const DEFAULT_DECIMAL_SCALE: i64 = 0;
++const DEFAULT_DECIMAL_PRECISION: u8 = 38;
++const DEFAULT_DECIMAL_SCALE: u8 = 0;
+ 
+ mod adapter;
+ mod aggregate;
+```
+
+**File**: `src/query/sql/src/planner/semantic/type_check/scalar_function.rs` (modified, +32/-44)
+```diff
+@@ -598,63 +598,51 @@ where A: TypeCheckAdapter
+                     }
+                 }
+             }
+-        } else if (func_name.eq_ignore_ascii_case("to_number")
++        } else if func_name.eq_ignore_ascii_case("to_number")
+             || func_name.eq_ignore_ascii_case("to_numeric")
+             || func_name.eq_ignore_ascii_case("to_decimal")
+             || func_name.eq_ignore_ascii_case("try_to_number")
+             || func_name.eq_ignore_ascii_case("try_to_numeric")
+-            || func_name.eq_ignore_ascii_case("try_to_decimal"))
+-            && params.is_empty()
++            || func_name.eq_ignore_ascii_case("try_to_decimal")
+         {
+-            if args.is_empty() || args.len() > 4 {
++            if args.is_empty() || args.len() > 4 || (!params.is_empty() && params.len() != 2) {
+                 return Err(ErrorCode::SemanticError(format!(
+                     "Invalid arguments for `{func_name}`, get {} params and {} arguments",
+                     params.len(),
+                     args.len()
+                 )));
+             }
+-            let arg_fn = |args: &[BoundScalar],
+-                          index: usize,
+-                          arg_name: &str,
+-                          default: i64|
+-             -> Result<i64> {
+-                Ok(args
+-                    .get(index)
+-                    .map(|arg| match self.bound_constant_value(&arg.scalar, &arg.facts) {
+-                        Some((value, _)) => Ok(value.get_i64()),
+-                        None => Err(ErrorCode::SemanticError(format!(
+-                            "Invalid arguments for `{func_name}`, {arg_name} is only allowed to be a constant"
+-                        ))),
+-                    })
+-                    .transpose()?
+-                    .flatten()
+-                    .unwrap_or(default))
+-            };
+-
+-            let (precision_index, scale_index) =
+-                if args.len() > 1 && args[1].scalar.data_type().remove_nullable().is_string() {
+-                    (2, 3)
+-                } else {
+-                    (1, 2)
++            let size = if let [precision, scale] = params.as_slice() {
++                DecimalSize::try_from_scalars(precision, scale)
++            } else {
++                let arg_fn = |index: usize, name: &str, default: u8| -> Result<Scalar> {
++                    let Some(arg) = args.get(index) else {
++                        return Ok(Scalar::Number(NumberScalar::UInt8(default)));
++                    };
++                    self.bound_constant_value(&arg.scalar, &arg.facts)
++                        .map(|(value, _)| value)
++                        .ok_or_else(|| ErrorCode::SemanticError(format!(
++                            "Invalid arguments for `{func_name}`, {name} is only allowed to be a constant"
++                        )))
                  };
--                map_1.eq(&map_2).then_some(Ordering::Equal)
-+                // Roaring's equality distinguishes array and bitset stores.
-+                // Decoding a run can leave an oversized array at the threshold,
-+                // so compare members through compressed intersection instead.
-+                (map_1.len() == map_2.len() && map_1.intersection_len(&map_2) == map_1.len())
-+                    .then_some(Ordering::Equal)
+-            let precision = arg_fn(
+-                &args,
+-                precision_index,
+-                "precision",
+-                DEFAULT_DECIMAL_PRECISION,
+-            )?;
+-            let scale = arg_fn(&args, scale_index, "scale", DEFAULT_DECIMAL_SCALE)?;
+-
+-            if let Err(err) = DecimalSize::new(precision as u8, scale as u8) {
+-                return Err(ErrorCode::SemanticError(format!(
+-                    "Invalid arguments for `{func_name}`, {}",
+-                    err,
+-                )));
++                let precision_index =
++                    if args.len() > 1 && args[1].scalar.data_type().remove_nullable().is_string() {
++                        2
++                    } else {
++                        1
++                    };
++                let precision = arg_fn(precision_index, "precision", DEFAULT_DECIMAL_PRECISION)?;
++                let scale = arg_fn(precision_index + 1, "scale", DEFAULT_DECIMAL_SCALE)?;
++                DecimalSize::try_from_scalars(&precision, &scale)
++            };
++            let size = size.map_err(|err| {
++                ErrorCode::SemanticError(format!("Invalid arguments for `{func_name}`, {err}"))
++            })?;
++            if params.is_empty() {
++                // Typed as literal params are, e.g. `to_decimal(10, 2)(x)`.
++                params.push(Scalar::Number(NumberScalar::UInt8(size.precision())));
++                params.push(Scalar::Number(NumberScalar::UInt8(size.scale())));
              }
-             (Scalar::Tuple(t1), Scalar::Tuple(t2)) => t1.partial_cmp(t2),
-             (Scalar::Variant(v1), Scalar::Variant(v2)) => {
-@@ -1160,7 +1165,7 @@ impl Hash for ScalarRef<'_> {
-             ScalarRef::Timestamp(v) => v.hash(state),
-             ScalarRef::TimestampTz(v) => v.hash(state),
-             ScalarRef::Date(v) => v.hash(state),
--            ScalarRef::Interval(v) => v.0.hash(state),
-+            ScalarRef::Interval(v) => v.hash(state),
-             ScalarRef::Array(v) | ScalarRef::Map(v) => {
-                 v.len().hash(state);
-                 for value in v.iter() {
-@@ -1170,15 +1175,7 @@ impl Hash for ScalarRef<'_> {
-             // `Scalar::eq` compares bitmaps by their decoded members, so the
-             // hash must not depend on the encoding. Undecodable payloads only
-             // compare equal bytewise and fall back to hashing the bytes.
--            ScalarRef::Bitmap(v) => match deserialize_bitmap(v) {
--                Ok(bitmap) => {
--                    bitmap.len().hash(state);
--                    for member in bitmap.iter() {
--                        member.hash(state);
--                    }
--                }
--                Err(_) => v.hash(state),
--            },
-+            ScalarRef::Bitmap(v) => hash_bitmap(v, state),
-             ScalarRef::Tuple(v) => {
-                 v.hash(state);
-             }
+-
+-            // Typed as literal params are, e.g. `to_decimal(10, 2)(x)`.
+-            params.push(Scalar::Number(NumberScalar::UInt8(precision as _)));
+-            params.push(Scalar::Number(NumberScalar::UInt8(scale as _)));
+         }
+ 
+         let placeholders = args
 ```
 
-**File**: `src/query/expression/tests/it/group_hash.rs` (added, +356/-0)
+**File**: `tests/sqllogictests/suites/base/11_data_type/11_0006_data_type_decimal.test` (modified, +48/-0)
 ```diff
-@@ -0,0 +1,356 @@
-+// Copyright 2021 Datafuse Labs
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use std::collections::HashMap;
-+use std::hash::DefaultHasher;
-+use std::hash::Hash;
-+use std::hash::Hasher;
-+
-+use databend_common_expression::types::DictColumn;
-+use databend_common_expression::types::EncodedColumn;
-+use databend_common_expression::types::Int16Type;
-+use databend_common_expression::types::NarrowBuffer;
-+use databend_common_expression::types::StringType;
-+use databend_common_expression::*;
-+use databend_common_io::HybridBitmap;
-+use roaring::RoaringBitmap;
-+use roaring::RoaringTreemap;
-+
-+fn repeated(scalar: Scalar, rows: usize) -> BlockEntry {
-+    BlockEntry::new_const_column(scalar.as_ref().infer_data_type(), scalar, rows)
-+}
-+
-+fn scalar_hash(scalar: &impl Hash) -> u64 {
-+    let mut hasher = DefaultHasher::new();
-+    scalar.hash(&mut hasher);
-+    hasher.finish()
-+}
-+
-+// All rows in a class have the same logical value. No expected hash is derived
-+// from the hash implementation: compare representations and layouts instead.
-+fn assert_hash_class(scalars: &[Scalar]) -> databend_common_exception::Result<()> {
-+    let first = &scalars[0];
-+    let data_type = first.as_ref().infer_data_type();
-+    let mut map = HashMap::new();
-+    let mut builder = ColumnBuilder::with_capacity(&data_type, scalars.len() + 2);
-+    builder.push(first.as_ref());
-+    for scalar in scalars {
-+        // Check equality in both directions before diagnosing HashMap hashing.
-+        assert_eq!(scalar, first);
-+        assert_eq!(first, scalar);
-+        assert_eq!(scalar_hash(scalar), scalar_hash(first));
-+        map.insert(scalar.clone(), ());
-+        builder.push(scalar.as_ref());
-+    }
-+    assert_eq!(map.len(), 1);
-+    builder.push(first.as_ref());
-+    // Slice off padding so binary/array buffers and validity can have offsets.
-+    let column = builder.build().slice(1..scalars.len() + 1);
-+    let rows = scalars.len();
-+    let dictionary = Column::Encoded(Box::new(EncodedColumn::Dict(DictColumn::new(
-+        NarrowBuffer::pack((0..rows).rev().map(|index| index as u64), (rows - 1) as u64),
-+        column.clone(),
-+    ))));
-+    let suffix = Int16Type::from_data(vec![4_i16; rows]);
-+    let entries = [BlockEntry::Column(column), BlockEntry::Column(dictionary)]
-+        .into_iter()
-+        .chain(scalars.iter().cloned().flat_map(|value| {
-+            let entry = repeated(value.clone(), rows);
-+            let nullable =
-+                BlockEntry::new_const_column(data_type.clone().wrap_nullable(), value, rows);
-+            [entry, nullable]
-+        }))
-+        .collect::<Vec<_>>();
-+
-+    for projection in [vec![0], vec![0, 1], vec![1, 0]] {
-+        let null_block = DataBlock::new(
-+            vec![
-+                BlockEntry::new_const_column(data_type.clone().wrap_nullable(), Scalar::Null, rows),
-+                suffix.clone().into(),
-+            ],
-+            rows,
-+        );
-+        let mut null_hashes = vec![0; rows];
-+        group_hash_entries(
-+            ProjectedBlock::project(&projection, &null_block),
-+            &mut null_hashes,
-+        );
-+        // Compare the same layouts both without NULLs and with actual masked
-+        // payloads. Indexed hashing selects a valid row and a NULL row.
-+        for nullable in [false, true] {
-+            let mut expected = None;
-+            for entry in &entries {
-+                let entry = if nullable {
-+                    entry
-+                        .to_column()
-+                        .remove_nullable()
-+                        .wrap_nullable(Some((0..rows).map(|row| row != rows - 1).collect()))
-+                        .into()
-+                } else {
-+                    entry.clone()
-+                };
-+                let block = DataBlock::new(vec![entry, suffix.clone().into()], rows);
-+                let mut hashes = vec![u64::MAX; rows];
-+                group_hash_entries(ProjectedBlock::project(&projection, &block), &mut hashes);
-+                let valid_rows = if nullable { rows - 1 } else { rows };
-+                assert!(hashes[..valid_rows].iter().all(|hash| *hash == hashes[0]));
-+                if nullable {
-+                    assert_eq!(hashes[rows - 1], null_hashes[rows - 1]);
-+                }
-+                if let Some(expected) = &expected {
-+                    assert_eq!(&hashes, expected);
-+                } else {
-+                    expected = Some(hashes.clone());
-+ 
-```
-
-**File**: `src/query/expression/tests/it/main.rs` (modified, +1/-0)
-```diff
-@@ -40,6 +40,7 @@ mod filter_executor;
- mod fold_rules;
- mod function_factory;
- mod group_by;
-+mod group_hash;
- mod hilbert;
- mod kernel;
- mod meta_scalar;
-```
-
-**File**: `tests/sqllogictests/suites/mode/cluster/shuffle_value_hash.test` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+# Integration smoke coverage for scalar/materialized bitmap shuffle inputs,
-+# single/composite keys and NULLs. to_bitmap canonicalizes member order, so
-+# these are not cross-encoding regressions; those require the Rust fixtures.
-+# Cross-encoding JOIN key serialization remains outside this hash-only fix.
-+
-+statement ok
-+set prefer_broadcast_join = 0
-+
-+statement ok
-+create or replace table shuffle_value_left(tag int not null, bits bitmap null)
-+
-+statement ok
-+create or replace table shuffle_value_right(tag int not null, bits bitmap null)
-+
-+statement ok
-+insert into shuffle_value_left values (1, to_bitmap('2,9')), (2, to_bitmap('4')), (3, null)
-+
-+statement ok
-+insert into shuffle_value_right values (1, to_bitmap('9,2')), (2, to_bitmap('4')), (3, null)
-+
-+query I
-+select count(*) from shuffle_value_left l join shuffle_value_right r on l.bits = r.bits and l.tag = r.tag
+@@ -1348,6 +1348,54 @@ SELECT try_to_decimal(123456, 6, 0);
+ ----
+ 123456
+ 
++# Decimal parameters must not wrap when converted to UInt8 (#21107).
++query IRR
++SELECT to_decimal(1, 1, 0), to_decimal(76, 0)(1), to_decimal(0, 3, 3);
 +----
-+2
++1 1 0.000
 +
-+query I
-+select count(*) from (select tag, to_bitmap('2,9') as bits from shuffle_value_left) l join shuffle_value_right r on l.bits = r.bits and l.tag = r.tag
++statement error Decimal precision must be between 1 and 76
++SELECT to_decimal(3, 259, 0)
++
++statement error Decimal scale must be between 0 and precision 3
++SELECT to_decimal(3, 3, 257)
++
++statement error Decimal scale must be between 0 and precision 3
++SELECT to_number(3, 3, -255)
++
++statement error Decimal scale must be between 0 and precision 6
++SELECT try_to_decimal(123456, 6, 256)
++
++statement error Decimal scale must be between 0 and precision 3
++SELECT to_decimal('2.5', '9D9', 3, 257)
++
++statement error Decimal scale must be between 0 and precision 3
++SELECT to_decimal(3, 257)(3)
++
++statement error Decimal precision must be between 1 and 76
++SELECT try_to_numeric(4294967299, 1)(3)
++
++statement error Decimal precision must be between 1 and 76
++SELECT to_decimal(3, 9223372036854775808, 0)
++
++# NULL is allowed as the value, not as an explicit Decimal type parameter.
++query ?
++SELECT to_decimal(CAST(NULL AS INT64 NULL), 3, 0);
 +----
-+1
++NULL
 +
-+query I
-+select count(*) from shuffle_value_left l join shuffle_value_right r on l.bits = r.bits
-+----
-+2
++statement error Decimal scale must be an integer, got NULL
++SELECT to_decimal(3, 3, NULL)
 +
-+statement ok
-+drop table shuffle_value_left
++statement error Decimal precision must be an integer, got NULL
++SELECT to_decimal(3, NULL, 2)
 +
-+statement ok
-+drop table shuffle_value_right
-```
-
-**File**: `tests/sqllogictests/suites/query/functions/02_0087_function_interval_hash.test` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+# Scalar interval hashes must follow duration equality, including inside
-+# arrays, tuples and maps. Keep these SQL-visible cases here rather than
-+# duplicating them in the expression crate's group-hash layout tests.
++statement error Decimal scale must be an integer, got NULL
++SELECT try_to_numeric(3, 3, CAST(NULL AS INT64))
 +
-+# Establish the equality contract independently of hash-based deduplication.
-+skipif mysql
-+query BB
-+select to_interval('1 month') = to_interval('30 days'), to_interval('30 days') = to_interval('29 days 24 hours')
-+----
-+1 1
++statement error Decimal scale must be an integer, got NULL
++SELECT to_decimal(3, NULL)(3)
 +
-+# Constant folding: three storage representations of one duration.
-+skipif mysql
-+query I
-+select array_length(array_distinct([to_interval('1 month'), to_interval('30 days'), to_interval('29 days 24 hours')]))
-+----
-+1
-+
-+# Runtime evaluation: expose each row instead of hiding the result in a sum.
-+skipif mysql
-+query II
-+select number, array_length(array_distinct([to_interval(if(number % 2 = 0, '1 month', '30 days')), to_interval('30 days')])) from numbers(4) order by number
-+----
-+0 1
-+1 1
-+2 1
-+3 1
-+
-+# Recursive scalar hashing must use the same duration semantics in every
-+# supported nested container, including a tuple with a NULL field.
-+skipif mysql
-+query III
-+select
-+    array_length(array_distinct([[to_interval('1 month')], [to_interval('30 days')]])),
-+    array_length(array_distinct([tuple(null, to_interval('1 month')), tuple(null, to_interval('30 days'))])),
-+    array_length(array_distinct([map(['key'], [to_interval('1 month')]), map(['key'], [to_interval('30 days')])]))
-+----
-+1 1 1
-+
-+# Negative durations must canonicalize too, not only positive intervals.
-+skipif mysql
-+query I
-+select array_length(array_distinct([to_interval('-1 month'), to_interval('-30 days'), to_interval('-29 days -24 hours')]))
-+----
-+1
-+
-+# Do not collapse a genuinely different duration; NULL is ignored by array_distinct.
-+skipif mysql
-+query I
-+select array_length(array_distinct([null, to_interval('1 month'), to_interval('30 days'), to_interval('31 days')]))
-+----
-+2
+ query I
+ SELECT TO_DECIMAL('123456789', 9);
+ ----
 ```
 
 ---
 
-### Incident Patch 3: `3c30b0dd` (2026-11-16)
-**Commit Message**: fix(query): bind a CTE body in its definition's scope (#21076)
+### Incident Patch 3: `4cfb5200` (2026-11-20)
+**Commit Message**: fix(storage): skip reversed ranges in clustering diagnostics (#21131)
 
-* fix(query): bind a CTE body in its definition's scope
+* fix(storage): skip reversed ranges in clustering diagnostics
 
-A non-materialized CTE was rebound at every reference with the referencing
-context chained as its parent, so its body could bind columns that only the
-referencing query provides. `WITH t AS (SELECT x) ... , LATERAL (SELECT * FROM
-t)` therefore returned a row instead of rejecting `x`, and the meaning of the
-same CTE depended on where it was used.
+Normalize float endpoints to OrderedFloat semantics before row encoding. Exclude both endpoints of reversed blocks from overlap and depth statistics while preserving the original block counts.
 
-Bind the body without the referencing scope, so an unknown column is reported
-where the CTE is defined. The context the CTE scan hands back still chains to
-the referencing query: a correlated subquery that reads the CTE has to reach
-the query it sits in.
+* fix review comments
 
-* test(query): cover CTE binding scope with a sqllogictest instead of a binder unit test
-
-**File**: `src/query/sql/src/planner/binder/table.rs` (modified, +10/-1)
+**File**: `Cargo.lock` (modified, +0/-2)
 ```diff
-@@ -179,7 +179,12 @@ impl Binder {
-         cte_info: &CteInfo,
-     ) -> Result<(SExpr, BindContext)> {
-         let mut new_bind_context = BindContext {
--            parent: Some(Box::new(bind_context.clone())),
-+            // A CTE definition is bound at the point of its `WITH` clause, not at the point
-+            // where it is referenced. Chaining the referencing context as a parent would let
-+            // the body bind its columns — a CTE referenced from a lateral subquery would
-+            // silently correlate with whatever the subquery's left side produces. Earlier
-+            // CTEs still resolve through the cloned `cte_context`.
-+            parent: None,
-             binding_depth: bind_context.next_depth()?,
-             bound_internal_columns: BTreeMap::new(),
-             bound_virtual_columns: BTreeMap::new(),
-@@ -207,6 +212,10 @@ impl Binder {
- 
-         let (s_expr, mut res_bind_context) =
-             self.bind_query(&mut new_bind_context, &cte_info.query)?;
-+        // The body above was bound without the referencing scope, but the scan it produced is
-+        // part of the referencing query: a correlated subquery that reads the CTE still has to
-+        // reach the columns of the query it sits in.
-+        res_bind_context.parent = Some(Box::new(bind_context.clone()));
-         let mut cols_alias = cte_info.columns_alias.clone();
-         if let Some(alias) = alias {
-             for (idx, col_alias) in alias.columns.iter().enumerate() {
+@@ -3383,10 +3383,8 @@ dependencies = [
+  "databend-common-timezone",
+  "databend_educe",
+  "divan",
+- "either",
+  "enum-as-inner",
+  "ethnum",
+- "fastrace",
+  "futures",
+  "geo",
+  "geozero",
 ```
 
-**File**: `tests/sqllogictests/suites/query/cte/cte_scope.test` (added, +46/-0)
+**File**: `src/query/expression/Cargo.toml` (modified, +0/-2)
 ```diff
-@@ -0,0 +1,46 @@
-+# A CTE body is bound where its WITH clause is, so it can never resolve a column
-+# that only the query referencing it provides. Issue #20983.
-+
-+# The enclosing SELECT does not provide x.
-+statement error 1065
-+WITH t AS (SELECT x) SELECT * FROM t
-+
-+# Another item of the referencing FROM does not provide x.
-+statement error 1065
-+WITH t AS (SELECT x) SELECT * FROM (SELECT 1 AS x) s, t
-+
-+# The left side of a LATERAL subquery used to leak into the CTE body and
-+# this query returned `1 1`.
-+statement error 1065
-+WITH t AS (SELECT x) SELECT * FROM (SELECT 1 AS x) s, LATERAL (SELECT * FROM t)
-+
-+# A self-contained CTE is still readable from a lateral subquery.
-+query II
-+WITH t AS (SELECT 1 AS x) SELECT * FROM (SELECT 1 AS x) s, LATERAL (SELECT * FROM t)
-+----
-+1 1
-+
-+# A CTE body may still reference a CTE defined earlier in the same WITH clause.
-+query I
-+WITH a AS (SELECT 1 AS x), b AS (SELECT x + 1 AS y FROM a) SELECT * FROM b
-+----
-+2
-+
-+# A correlated subquery that reads a CTE still reaches the columns of the
-+# query it sits in (the TPC-DS Q1 shape).
-+statement ok
-+create or replace table cte_scope_t(k int, v int)
-+
-+statement ok
-+insert into cte_scope_t values (1, 10), (1, 30), (2, 5)
-+
-+query II
-+WITH c AS (SELECT k, v FROM cte_scope_t)
-+SELECT k, v FROM c c1
-+WHERE v > (SELECT avg(v) * 1.2 FROM c c2 WHERE c1.k = c2.k)
-+ORDER BY k
-+----
-+1 30
-+
-+statement ok
-+drop table cte_scope_t
+@@ -36,10 +36,8 @@ databend-common-metrics = { workspace = true }
+ databend-common-statistics = { workspace = true }
+ databend-common-timezone = { workspace = true }
+ educe = { workspace = true }
+-either = { workspace = true }
+ enum-as-inner = { workspace = true }
+ ethnum = { workspace = true }
+-fastrace = { workspace = true }
+ futures = { workspace = true }
+ geo = { workspace = true }
+ geozero = { workspace = true }
+```
+
+**File**: `src/query/storages/fuse/src/table_functions/clustering_information.rs` (modified, +247/-105)
+```diff
+@@ -21,6 +21,7 @@ use databend_common_base::runtime::JoinHandle;
+ use databend_common_base::runtime::Runtime;
+ use databend_common_catalog::plan::DataSourcePlan;
+ use databend_common_catalog::table_args::TableArgs;
++use databend_common_column::bitmap::Bitmap;
+ use databend_common_exception::ErrorCode;
+ use databend_common_exception::Result;
+ use databend_common_expression::BlockEntry;
+@@ -38,6 +39,7 @@ use databend_common_expression::types::DataType;
+ use databend_common_expression::types::StringType;
+ use databend_common_expression::types::TimestampType;
+ use databend_common_expression::types::VariantType;
++use databend_common_expression::types::number::NumberColumnBuilder;
+ use databend_common_pipeline_transforms::sorts::core::RowConverter;
+ use databend_common_pipeline_transforms::sorts::core::VariableRowConverter;
+ use databend_common_sql::NameResolutionContext;
+@@ -441,69 +443,31 @@ impl ClusteringInformationImpl<'_> {
+     ) -> Result<ClusteringInformationResponse> {
+         let cluster_type = key.cluster_type();
+         let calculation_start = Instant::now();
+-        let CollectedMetadata {
+-            key_types,
+-            endpoint_builders,
+-            block_count,
+-            constant_block_count,
+-        } = metadata;
+-        let aggregate = match endpoint_builders {
++        let statistics = match metadata.endpoint_builders {
+             Some(builders) => {
+                 let max_threads = self.ctx.get_settings().get_max_threads()? as usize;
+                 with_request_pool(max_threads, move |_| {
+-                    let sorted = sort_endpoints(builders, &key_types)?;
+-                    sweep_exact_statistics(&sorted.keys, &sorted.order)
++                    summarize_linear_ranges(builders, &metadata.key_types)
+                 })?
+             }
+-            None => LinearClusteringStatistics {
+-                block_count,
+-                depth_counts: if block_count == 0 {
+-                    BTreeMap::new()
+-                } else {
+-                    BTreeMap::from([(0, block_count as u64)])
+-                },
++            None if total_block_count != 0 => LinearClusterStatistics {
++                block_depth_histogram: BTreeMap::from([("00000".into(), total_block_count)]),
+                 ..Default::default()
+             },
++            None => LinearClusterStatistics::default(),
+         };
+-
+-        let info = if aggregate.block_count == 0 {
+-            LinearClusterStatistics {
+-                total_block_count,
+-                ..Default::default()
+-            }
+-        } else {
+-            LinearClusterStatistics {
+-                total_block_count,
+-                constant_block_count,
+-                average_overlaps: rounded_average(aggregate.sum_overlap, aggregate.block_count),
+-                average_depth: rounded_average(aggregate.sum_depth, aggregate.block_count),
+-                max_depth: aggregate
+-                    .depth_counts
+-                    .last_key_value()
+-                    .map_or(0, |(&depth, _)| depth),
+-                p95_depth: percentile_depth(&aggregate.depth_counts, aggregate.block_count, 95),
+-                p99_depth: percentile_depth(&aggregate.depth_counts, aggregate.block_count, 99),
+-                block_depth_histogram: {
+-                    let mut histogram = BTreeMap::new();
+-                    for (depth, count) in &aggregate.depth_counts {
+-                        let depth = *depth as u32;
+-                        let bucket = if depth <= 16 || depth.is_power_of_two() {
+-                            depth
+-                        } else {
+-                            depth.next_power_of_two()
+-                        };
+-                        *histogram.entry(format!("{:05}", bucket)).or_insert(0) += count;
+-                    }
+-                    histogram
+-                },
+-            }
++        let info = LinearClusterStatistics {
++            total_block_count,
++            constant_block_count: metadata.constant_block_count,
++            ..statistics
+         };
+         info!(
+-            "clustering_information: finished table={} cluster_type={} blocks={} constant_blocks={} average_overlaps={} average_depth={} max_depth={} p95_depth={} p99_depth={} calculation_elapsed={:?} total_elapsed={:?}",
++            "clustering_information: finished table={} cluster_type={} blocks={} constant_blocks={} invalid_blocks={} average_overlaps={} average_depth={} max_depth={} p95_depth={} p99_depth={} calculation_elapsed={:?} total_elapsed={:?}",
+             self.table.table_info.desc,
+             cluster_type,
+             info.total_block_count,
+             info.constant_block_count,
++            info.invalid_block_count.unwrap_or_default(),
+             info.average_overlaps,
+             info.average_depth,
+             info.max_depth,
+@@ -666,10 +630,9 @@ fn push_endpoint(builders: &mut [ColumnBuilder], endpoint: &[Scalar]) {
+ // `sum_overlap` counts both directions for each overlapping b
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #21099** (2026-11-16): fix(meta): decode BLOOM table index type; default cache.data_max_ratio to 0 (@zhang2014)
-- **PR #21093** (2026-11-15): fix(query): link cosine HNSW graphs with normalized vectors (@bohutang)
-- **PR #21092** (2026-11-13): fix(query): truncate REPLACE statements in query logs (@TCeason)
-- **PR #21091** (2026-11-15): feat(query): enable the memory limit and the shared cache by default (@bohutang)
-- **PR #21090** (2026-11-13): refactor(query): scan only the rows matched by the inverted index (@bohutang)
-- **PR #21087** (2026-11-13): feat(query): support native charset conversion for binary strings (@sundy-li)
+- **PR #21146** (2026-11-20): chore(meta): use server v260629.11.0 and client v260205.13.7 (@drmingdrmer)
+- **PR #21141** (2026-11-20): fix(query): probe the partition built in each hash join spill round (@dqhl76)
+- **PR #21136** (2026-11-20): fix: meta: move the cache off a leader that refuses its watch (@drmingdrmer)
+- **PR #21135** (closed): fix(fuse): accept strings without a bounded statistics maximum (@youngsofun)
+- **PR #21132** (2026-11-20): fix(query): preserve RBAC upgrade compatibility and audit access (@TCeason)
+- **PR #21131** (2026-11-20): fix(storage): skip reversed ranges in clustering diagnostics (@zhyass)
 
 ---
 
@@ -2044,31 +2152,63 @@ the query it sits in.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta): decode BLOOM table index type; default cache.data_max_ratio to 0
+## X. query): read spilled byte columns with the writer's arrow types
 
 **RULE**:
-When implementing operations in `src/meta/api/src/api_impl/schema_api.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/service/src/spillers/async_buffer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a7a0a58b`: meta): decode BLOOM table index type; default cache.data_max_ratio to 0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f3fe9792`: query): read spilled byte columns with the writer's arrow types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/api/src/api_impl/schema_api.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/service/src/spillers/async_buffer.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        TableIndexType::Bloom => MarkedDeletedIndexType::BLOOM,
+use arrow_array::RecordBatch;
+use arrow_schema::Fields;
+        // Read back the arrow types the writer used. Without them, byte columns are
+        // inferred as Binary/Utf8, whose i32 offsets overflow once a column of the
+        // row group, which is decoded as one batch, holds more than 2 GiB.
+        // Hint fields must carry the names in the file, which the writer takes
+        // from the block rather than from `data_schema`.
+        let schema_descr = row_groups[0].schema_descr();
+        let arrow_schema = Schema::from(infer_table_schema(&data_schema)?.as_ref());
+        let hint = arrow_schema
+            .fields()
+            .iter()
+            .zip(schema_descr.root_schema().get_fields())
+            .map(|(field, column)| field.as_ref().clone().with_name(column.name()))
+            .collect::<Vec<_>>();
+            schema_descr,
+            Some(&Fields::from(hint)),
+        let Some(batch) = self.read_record_batch()? else {
+            return Ok(None);
+        };
+        Ok(Some(DataBlock::from_record_batch_keep_null_const(
+            &self.data_schema,
+            &batch,
+        )?))
+    }
+
+    fn read_record_batch(&mut self) -> Result<Option<RecordBatch>> {
+   
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            row_groups[0].schema_descr(),
+            None,
+        Ok(Some(DataBlock::from_record_batch_keep_null_const(
+            &self.data_schema,
+            &batch,
+        )?))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a7a0a58b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f3fe9792` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

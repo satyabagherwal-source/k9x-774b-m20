@@ -11668,3 +11668,4 @@ Every entry in this ledger must capture:
 | `learn-github-rdflib-rdflib` | `https://github.com/RDFLib/rdflib` | `a0a00f55` | Multi-dimensional audit evidence | 2026-11-20T21:25:45.142Z |
 | `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `05000c71` | Multi-dimensional audit evidence | 2026-11-20T21:25:48.457Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `83f304b1` | Multi-dimensional audit evidence | 2026-11-20T21:38:58.025Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `77137bc2` | Multi-dimensional audit evidence | 2026-11-20T21:47:12.127Z |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T21:25:55.230Z",
+  "updated_at": "2026-11-20T21:47:15.493Z",
   "stats": {
-    "total_discovered": 6750,
-    "approved_pending_harvest": 6373,
+    "total_discovered": 6751,
+    "approved_pending_harvest": 6374,
     "harvested_count": 0,
     "rejected_count": 377,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6346,
+      "COMMUNITY_AND_EXPERT": 6347,
       "OFFICIAL_DOCUMENTATION": 230,
       "STANDARDS_AND_SPECIFICATIONS": 121,
       "ENGINEERING_BLOGS": 5,
@@ -145884,6 +145884,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
         "fileName": "rdflib-rdflib-learnings.md"
+      }
+    },
+    "SRC-4C78B6B47EFA": {
+      "id": "SRC-4C78B6B47EFA",
+      "url": "https://github.com/databendlabs/databend/actions/runs/44673294220/job/136092536425",
+      "title": "https://github.com/databendlabs/databend/actions/runs/44673294220/job/136092536425",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T21:47:15.493Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
+        "fileName": "databendlabs-databend-learnings.md"
       }
     }
   }
