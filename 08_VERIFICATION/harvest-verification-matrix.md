@@ -11605,3 +11605,6 @@
 | `CYCLE-20261120-98OC` | `2026-11-20T17:58:46.572Z` | `nezhahq/nezha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9615` | Yes (`38064cb0...`) |
 | `CYCLE-20261120-WK4S` | `2026-11-20T18:16:54.508Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9616` | Yes (`007ee1e1...`) |
 | `CYCLE-20261120-A3I4` | `2026-11-20T18:27:26.140Z` | `syntax-tree/hast-util-to-html` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9617` | Yes (`cf5b05bb...`) |
+| `CYCLE-20261120-SEYZ` | `2026-11-20T18:41:40.811Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9618` | Yes (`75523bc2...`) |
+| `CYCLE-20261120-SG5P` | `2026-11-20T18:41:42.349Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9619` | Yes (`2f852be4...`) |
+| `CYCLE-20261120-SHPP` | `2026-11-20T18:41:44.365Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9620` | Yes (`36307542...`) |

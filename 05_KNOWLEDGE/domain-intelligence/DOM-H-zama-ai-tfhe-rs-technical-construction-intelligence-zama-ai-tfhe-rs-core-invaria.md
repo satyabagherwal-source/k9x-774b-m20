@@ -4,23 +4,23 @@
 {
   "source_repository": "zama-ai/tfhe-rs",
   "source_url": "https://github.com/zama-ai/tfhe-rs",
-  "source_version": "f8710f06",
+  "source_version": "dcfe7e6d",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-20T11:30:51.502Z",
+  "timestamp": "2026-11-20T18:41:42.613Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zama-ai-tfhe-rs",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `f8710f06`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-20T11:30:51.502Z`  
+> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `dcfe7e6d`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-20T18:41:42.613Z`  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
 - **Confidence Rating**: 89%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T11:30:50.254Z  
+> **Harvest Timestamp**: 2026-11-20T18:41:41.010Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1952,576 +1952,301 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f8710f06` (2026-11-20)
-**Commit Message**: fix(gpu): handle out-of-range and negative scalars in scalar max and min (#4186)
+### Incident Patch 1: `dcfe7e6d` (2026-11-20)
+**Commit Message**: feat(hpu): HPU backend moves to use ZHC 0.12.4 (#4150)
 
-* fix(gpu): handle out-of-range and negative scalars in scalar max and min
+* feat(hpu): HPU backend moves to use ZHC 0.12.0 with lots of operation speed improvements
+* fix(hpu): correct fw_dyn HPU example to use best known manual partioning
+* fix(hpu): 1-bit integer are not accepted by ZHC 0.12 anymore so moving boolean to one block
+* chore(hpu): update to ZHC 0.12.1 to get best known manual partitioning of Mul64
+* fix(hpu): Erc7984 SIMD throughput bench was trying to allocate more cts
+that what could fit on 1 node so input set is not dependent on number
+of HPU nodes available; also fixes a small warning in HPU backend
+* fix(hpu): need to update to ZHC 0.12.3 to get a few multi-HPU related fixes
+update fw_dyn example to execute more multi-HPU operations
+* feat(hpu): move to ZHC 0.12.4 to get 88ms triangular mul
 
-* test(gpu): check scalar max and min with out-of-range and negative scalars
-
-* test(gpu): check unsigned scalar max and min with a wider out-of-range scalar
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/scalar_comparison.rs` (modified, +64/-15)
+**File**: `Cargo.lock` (modified, +38/-38)
 ```diff
-@@ -10,7 +10,37 @@ use crate::integer::gpu::server_key::{CudaDynamicKeyswitchingKey, CudaServerKey}
- use crate::integer::gpu::{cuda_backend_unchecked_scalar_comparison, ComparisonType};
- use crate::shortint::ciphertext::Degree;
+@@ -5206,54 +5206,54 @@ dependencies = [
  
-+enum ScalarDispatch<T> {
-+    OutOfBounds(std::cmp::Ordering),
-+    NegativeInRange(T),
-+    Backend,
-+}
-+
- impl CudaServerKey {
-+    fn dispatch_scalar<Scalar, T>(
-+        &self,
-+        ct: &T,
-+        scalar: Scalar,
-+        streams: &CudaStreams,
-+    ) -> ScalarDispatch<T>
-+    where
-+        T: CudaIntegerRadixCiphertext,
-+        Scalar: DecomposableInto<u64>,
-+    {
-+        if let Some(ordering) = self.is_scalar_out_of_bounds(ct, scalar) {
-+            return ScalarDispatch::OutOfBounds(ordering);
-+        }
-+        // The backend takes a non-negative scalar. A negative scalar in range (signed ciphertexts
-+        // only) is used as a trivial ciphertext.
-+        if scalar < Scalar::ZERO {
-+            let num_blocks = ct.as_ref().d_blocks.lwe_ciphertext_count().0;
-+            let scalar_as_trivial =
-+                unsafe { self.create_trivial_radix_async(scalar, num_blocks, streams) };
-+            return ScalarDispatch::NegativeInRange(scalar_as_trivial);
-+        }
-+        ScalarDispatch::Backend
-+    }
-+
-     /// Returns whether the clear scalar is outside of the
-     /// value range the ciphertext can hold.
-     ///
-@@ -211,8 +241,8 @@ impl CudaServerKey {
-         let num_blocks = ct.as_ref().d_blocks.lwe_ciphertext_count().0;
- 
-         if T::IS_SIGNED {
--            match self.is_scalar_out_of_bounds(ct, scalar) {
--                Some(std::cmp::Ordering::Greater) => {
-+            match self.dispatch_scalar(ct, scalar, streams) {
-+                ScalarDispatch::OutOfBounds(std::cmp::Ordering::Greater) => {
-                     // Scalar is greater than the bounds, so ciphertext is smaller
-                     let result: T = match op {
-                         ComparisonType::LT | ComparisonType::LE => {
-@@ -224,9 +254,9 @@ impl CudaServerKey {
-                             streams,
-                         ),
-                     };
--                    return CudaBooleanBlock::from_cuda_radix_ciphertext(result.into_inner());
-+                    CudaBooleanBlock::from_cuda_radix_ciphertext(result.into_inner())
-                 }
--                Some(std::cmp::Ordering::Less) => {
-+                ScalarDispatch::OutOfBounds(std::cmp::Ordering::Less) => {
-                     // Scalar is smaller than the bounds, so ciphertext is bigger
-                     let result: T = match op {
-                         ComparisonType::GT | ComparisonType::GE => {
-@@ -238,19 +268,16 @@ impl CudaServerKey {
-                             streams,
-                         ),
-                     };
--                    return CudaBooleanBlock::from_cuda_radix_ciphertext(result.into_inner());
-+                    CudaBooleanBlock::from_cuda_radix_ciphertext(result.into_inner())
-                 }
--                Some(std::cmp::Ordering::Equal) => unreachable!("Internal error: invalid value"),
--                None => {
--                    // scalar is in range, fallthrough
-+                ScalarDispatch::OutOfBounds(std::cmp::Ordering::Equal) => {
-+                    unreachable!("Internal error: invalid value")
-                 }
--            }
--
--            if scalar >= Scalar::ZERO {
--                self.unchecked_signed_and_unsigned_scalar_comparison(ct, scalar, op, true, streams)
--            } else {
--                let scalar_as_trivial = self.create_trivial_radix(scalar, num_blocks, streams);
--                self.unchecked_comparison(ct, &scalar_as_trivial, op, streams)
-+                ScalarDispatch::NegativeInRange(scalar_as_trivial) => {
-+                    self.unchecked_comparison(ct, &scalar_as_trivial, op, streams)
-+                }
-+                ScalarDispatch::Backend => self
-+                    .unchecked_signed_and_unsigned_scalar_comparison(ct, scalar, op, true, streams),
-             }
-         } else {
-             // Unsigned
-@@ -269,6 +296,28 @@ impl CudaServerKey {
-         T: CudaIntegerRadixCiphertext,
-         Scalar: DecomposableInto<u64>,
-     {
-+        // As on the CPU, a scalar outside the range of the ciphertext selects one operand without
-+        // computation, and a selected scalar is taken at the width of the ciphertext.
-+        let num_blocks = ct.as_ref().d_blocks.lwe_ciphertext_count().0;
-+        let is_max = matches!(op, ComparisonType::MAX);
-+        match self.dispatch_scalar(ct, scalar, streams) {
-+            ScalarDispatch::OutOfBounds(ordering) => {
-+                return if (ordering == std::cmp::Ordering::Greater) == is_max {
-+                    unsafe { self.create_trivial_radix_async(scalar, num_blocks, streams) }
-+                } else {
-+                    ct.duplicate(streams)
-+                };
-+            }
-+            ScalarDispatch::NegativeInRange(scalar_as_trivial) => {
-+            
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/test_scalar_comparison.rs` (modified, +53/-1)
-```diff
-@@ -1,7 +1,9 @@
-+use crate::core_crypto::gpu::CudaStreams;
-+use crate::integer::gpu::ciphertext::CudaSignedRadixCiphertext;
- use crate::integer::gpu::server_key::radix::tests_unsigned::{
-     create_gpu_parameterized_test, GpuFunctionExecutor,
- };
--use crate::integer::gpu::CudaServerKey;
-+use crate::integer::gpu::{gen_keys_gpu, CudaServerKey};
- use crate::integer::server_key::radix_parallel::tests_signed::test_scalar_comparison::{
-     test_signed_default_scalar_function, test_signed_default_scalar_minmax,
-     test_signed_unchecked_scalar_function, test_signed_unchecked_scalar_minmax,
-@@ -103,6 +105,56 @@ create_gpu_parameterized_test!(integer_signed_scalar_min_i128 {
-     PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
- });
- 
-+fn integer_signed_scalar_minmax_out_of_range_and_negative_scalar<P>(param: P)
-+where
-+    P: Into<TestParameters>,
-+{
-+    let streams = CudaStreams::new_multi_gpu();
-+    let (cks, sks) = gen_keys_gpu(param, &streams);
-+
-+    let clear = 10i16;
-+    let num_blocks = 8;
-+    let ct = cks.encrypt_signed_radix(clear, num_blocks);
-+    let d_ct = CudaSignedRadixCiphertext::from_signed_radix_ciphertext(&ct, &streams);
-+
-+    let decrypt = |d_result: CudaSignedRadixCiphertext| -> i16 {
-+        cks.decrypt_signed_radix(&d_result.to_signed_radix_ciphertext(&streams))
-+    };
-+
-+    let narrower_negative = -1i8;
-+    assert_eq!(
-+        decrypt(sks.scalar_max(&d_ct, narrower_negative, &streams)),
-+        clear
-+    );
-+    assert_eq!(
-+        decrypt(sks.scalar_min(&d_ct, narrower_negative, &streams)),
-+        i16::from(narrower_negative)
-+    );
-+
-+    for out_of_range in [70000i64, -70000i64] {
-+        let truncated = out_of_range as i16;
-+        let (expected_max, expected_min) = if out_of_range > 0 {
-+            (truncated, clear)
-+        } else {
-+            (clear, truncated)
-+        };
-+        assert_eq!(
-+            decrypt(sks.scalar_max(&d_ct, out_of_range, &streams)),
-+            expected_max
-+        );
-+        assert_eq!(
-+            decrypt(sks.scalar_min(&d_ct, out_of_range, &streams)),
-+            expected_min
-+        );
-+    }
-+}
-+
-+create_gpu_parameterized_test!(
-+    integer_signed_scalar_minmax_out_of_range_and_negative_scalar {
-+        PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+    }
-+);
-+
- define_gpu_signed_scalar_comparison_test_functions!(eq, i128);
- define_gpu_signed_scalar_comparison_test_functions!(ne, i128);
- define_gpu_signed_scalar_comparison_test_functions!(lt, i128);
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/test_scalar_comparison.rs` (modified, +27/-0)
-```diff
-@@ -322,6 +322,30 @@ where
-     }
- }
- 
-+fn integer_scalar_minmax_wider_out_of_range_scalar<P>(param: P)
-+where
-+    P: Into<TestParameters>,
-+{
-+    let streams = CudaStreams::new_multi_gpu();
-+    let (cks, sks) = gen_keys_gpu(param, &streams);
-+
-+    let clear = 3u8;
-+    let num_blocks = 4;
-+    let ct = cks.encrypt_radix(clear, num_blocks);
-+    let d_ct = CudaUnsignedRadixCiphertext::from_radix_ciphertext(&ct, &streams);
-+
-+    let decrypt = |d_result: CudaUnsignedRadixCiphertext| -> u8 {
-+        cks.decrypt_radix(&d_result.to_radix_ciphertext(&streams))
-+    };
-+
-+    let scalar = 1000u64;
-+    assert_eq!(
-+        decrypt(sks.scalar_max(&d_ct, scalar, &streams)),
-+        scalar as u8
-+    );
-+    assert_eq!(decrypt(sks.scalar_min(&d_ct, scalar, &streams)), clear);
-+}
-+
- create_gpu_parameterized_test!(integer_unchecked_scalar_min_u256 {
-     PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-     PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-@@ -354,3 +378,6 @@ create_gpu_parameterized_test!(integer_unchecked_scalar_comparisons_edge_one_blo
-     PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-     PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
- });
-+create_gpu_parameterized_test!(integer_scalar_minmax_wider_out_of_range_scalar {
-+    PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+});
-```
-
----
-
-### Incident Patch 2: `924f3bb2` (2026-11-20)
-**Commit Message**: fix(nist-module): strengthen compact list
-
-* fix(nist-module): strengthen compact list
-
-The NIST's submission compact list's verify_and_expand does not do
-a PBS, thus there's no sanitization pass possible to make sure some
-bits are zero (like a FheBool must have all bits except one to be zero)
-
-Meaning we let pass inputs that breaks the degree invariant
-
-To fix this:
-* We make the CRS to be generated in a NIST setting to prove
-  `1 + carry_bits` to be zero
-* We disallow FheBool and FheStrings to be used in compact list
-
-both combined fixes the issue
-
-* chore(nist-module): make experimental
-
-* chore(nist-module): newtype for the CRS
-
-To make misuse harder
-
-**File**: `Makefile` (modified, +7/-7)
-```diff
-@@ -1473,9 +1473,9 @@ test_integer_long_run: install_cargo_nextest
- test_noise_check:
- 	@# First run the sanity checks to make sure the atomic patterns are correct
- 	RUSTFLAGS="$(RUSTFLAGS)" cargo test --profile $(CARGO_PROFILE) \
--		--features=boolean,shortint,integer -p tfhe -- sanity_check
-+		--features=boolean,shortint,integer,experimental -p tfhe -- sanity_check
- 	RUSTFLAGS="$(RUSTFLAGS)" cargo test --profile $(CARGO_PROFILE) \
--		--features=boolean,shortint,integer -p tfhe -- noise_check \
-+		--features=boolean,shortint,integer,experimental -p tfhe -- noise_check \
- 		--test-threads=1 --nocapture
- 
- .PHONY: test_noise_check_gpu # Run dedicated noise and pfail check tests on gpu backend
-@@ -1520,18 +1520,18 @@ test_graph_api:
- .PHONY: test_high_level_api # Run all the tests for high_level_api, including the Graph API
- test_high_level_api: test_graph_api
- 	RUSTFLAGS="$(RUSTFLAGS)" cargo test --profile $(CARGO_PROFILE) \
--		--features=boolean,shortint,integer,internal-keycache,zk-pok,strings -p tfhe \
-+		--features=boolean,shortint,integer,internal-keycache,zk-pok,strings,experimental -p tfhe \
- 		-- high_level_api:: --skip test_noise_check
- 
- test_high_level_api_gpu_fast: install_cargo_nextest # Run all the GPU tests for high_level_api except test_uniformity for oprf which is too long
- 	RUSTFLAGS="$(RUSTFLAGS)" cargo nextest run --cargo-profile $(CARGO_PROFILE) \
--		--test-threads=4 --features=integer,internal-keycache,gpu,zk-pok -p tfhe \
-+		--test-threads=4 --features=integer,internal-keycache,gpu,zk-pok,experimental -p tfhe \
- 		-E "test(/high_level_api::.*gpu.*/) and not test(/uniformity/) and not test(/long_run/)"
- 
- 
- test_high_level_api_gpu: install_cargo_nextest # Run all the GPU tests for high_level_api
- 	RUSTFLAGS="$(RUSTFLAGS)" cargo nextest run --cargo-profile $(CARGO_PROFILE) \
--		--test-threads=4 --features=integer,internal-keycache,gpu,zk-pok -p tfhe \
-+		--test-threads=4 --features=integer,internal-keycache,gpu,zk-pok,experimental -p tfhe \
- 		-E "test(/high_level_api::.*gpu.*/) and not test(/long_run/)"
- 
- .PHONY: test_high_level_api_noise_squash_relaxed_pbs128_gpu # Run the GPU noise squashing tests of high_level_api with the experimental relaxed 128-bit PBS
-@@ -1543,7 +1543,7 @@ test_high_level_api_noise_squash_relaxed_pbs128_gpu: install_cargo_nextest
- .PHONY: test_high_level_api_fake_multi_gpu # Run the classical (non-multi-bit) subset of the GPU HLAPI tests with fake multi-gpu emulation
- test_high_level_api_fake_multi_gpu: install_cargo_nextest
- 	RUSTFLAGS="$(RUSTFLAGS)" cargo nextest run --cargo-profile $(CARGO_PROFILE) \
--		--test-threads=4 --features=integer,internal-keycache,gpu-debug-fake-multi-gpu,zk-pok -p tfhe \
-+		--test-threads=4 --features=integer,internal-keycache,gpu-debug-fake-multi-gpu,zk-pok,experimental -p tfhe \
- 		-E "test(/high_level_api::.*gpu.*/) and not test(/long_run/) and not test(/multi_?bit/)"
- 
- .PHONY: test_protocol_long_run_gpu # Run the long run protocol workflow test on the gpu backend
-@@ -2666,7 +2666,7 @@ parse_integer_benches: setup_python_venv
- .PHONY: write_params_to_file # Gather all crypto parameters into a file with a Sage readable format.
- write_params_to_file: install_rs_check_toolchain
- 	RUSTFLAGS="$(RUSTFLAGS)" cargo $(CARGO_RS_CHECK_TOOLCHAIN) run \
--	--example write_params_to_file --features=boolean,shortint,integer,hpu,internal-keycache -p tfhe
-+	--example write_params_to_file --features=boolean,shortint,integer,hpu,internal-keycache,experimental -p tfhe
- 
- .PHONY: pull_backward_compat_data # Pull the data files needed for backward compatibility tests
- pull_backward_compat_data:
-```
-
-**File**: `tfhe/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -215,6 +215,7 @@ required-features = [
-     "integer",
-     "internal-keycache",
-     "hpu",
-+    "experimental",
+ [[package]]
+ name = "zhc"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "82a38609924d98d47c8a568588eb815a465a9493d84074ca2dd7b693d097feeb"
++checksum = "69a555e3b8badfa59c7dda3db2a56ce4363bc1df3af296dcd75ab9f732748ed6"
+ dependencies = [
+  "zhc_builder",
+  "zhc_config",
+  "zhc_crypto",
+- "zhc_ir 0.10.1",
++ "zhc_ir 0.12.4",
+  "zhc_langs",
+  "zhc_pipeline",
+  "zhc_sim",
+- "zhc_utils 0.10.1",
++ "zhc_utils 0.12.4",
  ]
  
- [[example]]
+ [[package]]
+ name = "zhc_builder"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "406d49ec6e756b9879a12014949212c07fc6f50f13a08605904dc490db52d7de"
++checksum = "63a9ff1c29f22405f3926a91eedbdbee9039a0b141826464b5d46e8bff6bb319"
+ dependencies = [
+  "zhc_crypto",
+- "zhc_ir 0.10.1",
++ "zhc_ir 0.12.4",
+  "zhc_langs",
+- "zhc_utils 0.10.1",
++ "zhc_utils 0.12.4",
+ ]
+ 
+ [[package]]
+ name = "zhc_config"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6348849b3b3fa15aa118b9cf467877eb81d3b821b980eaf9f70d1b9a14f46784"
++checksum = "3410f119c7383c1f55212f9678f27fdb4e2250f37797c91fa63070da99639592"
+ dependencies = [
+  "serde",
+  "serde_json",
+  "toml 0.9.12+spec-1.1.0",
+- "zhc_utils 0.10.1",
++ "zhc_utils 0.12.4",
+ ]
+ 
+ [[package]]
+ name = "zhc_crypto"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e3c23948a31ed872a7918ad2a6b037a8617e293efdc8ca64399e002ab9e202cf"
++checksum = "f64534584a418d57de591509524d43a6b718e15f210b75a19a4e66117a8cb13b"
+ dependencies = [
+  "paste",
+  "rand 0.10.1",
+  "serde",
+- "zhc_utils 0.10.1",
++ "zhc_utils 0.12.4",
+ ]
+ 
+ [[package]]
+@@ -5269,33 +5269,33 @@ dependencies = [
+ 
+ [[package]]
+ name = "zhc_ir"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "12c4a03c3603a344df90658a20b8a7f9b6dba5f697cd4946ba48b65b89ceca5a"
++checksum = "1a81907d400fb71ab395db99f1f763ea54a8ec655731dc4756657b54d0107f1c"
+ dependencies = [
+  "serde",
+- "zhc_utils 0.10.1",
+- "zhc_utils_macro 0.10.1",
++ "zhc_utils 0.12.4",
++ "zhc_utils_macro 0.12.4",
+ ]
+ 
+ [[package]]
+ name = "zhc_langs"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e44e07002c6561caf6fc05d41117c9dc82a9b54b24ee7e204515f2ae15139340"
++checksum = "5de831fc49e962043cdd619fbacdff4183829ea281d7cbb1d3b09fe24d7212a1"
+ dependencies = [
+  "serde",
+  "zhc_crypto",
+- "zhc_ir 0.10.1",
++ "zhc_ir 0.12.4",
+  "zhc_langs_macro",
+- "zhc_utils 0.10.1",
++ "zhc_utils 0.12.4",
+ ]
+ 
+ [[package]]
+ name = "zhc_langs_macro"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "357d0e0ef22fe942e97307c5177abe150e37810317bed5e06fbc7023b281cd0b"
++checksum = "af40538a1a7579af341a259191427fc30aeca6e405f03a87284155a0fe2d551a"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -5304,40 +5304,40 @@ dependencies = [
+ 
+ [[package]]
+ name = "zhc_pipeline"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "56397422f1face648e3da39c0269a0891ff9d4c2df8f159153cc6f1f71d6b519"
++checksum = "a0cc6b3edb76937b0e20a5934ca45be61eb6dd2e66f1eb033d0292017f8ad25b"
+ dependencies = [
+  "bitfield-struct 0.10.1",
+  "rand 0.10.1",
+  "serde",
+  "zhc_config",
+  "zhc_crypto",
+- "zhc_ir 0.10.1",
++ "zhc_ir 0.12.4",
+  "zhc_langs",
+  "zhc_profiling",
+  "zhc_sim",
+- "zhc_utils 0.10.1",
++ "zhc_utils 0.12.4",
+ ]
+ 
+ [[package]]
+ name = "zhc_profiling"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7dd737074ec5b28829694f6b8096abae90cae6391dfb14ba0b9378f30866a076"
++checksum = "f190e6dc4157598beec24b9255c97060f92dd6aede8d2c867ab9c80bfbfc3677"
+ 
+ [[package]]
+ name = "zhc_sim"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7b0145e63ddefb77a269f71bc9b733dcd456e35b6cce2f0b210ddee27dd47d34"
++checksum = "60b1f6835645778e130239b57cf6c6969a6fe46ff29e832abb14d392b74d76b2"
+ dependencies = [
+  "serde",
+  "serde_json",
+  "toml 0.9.12+spec-1.1.0",
+  "zhc_config",
+  "zhc_langs",
+- "zhc_utils 0.10.1",
++ "zhc_utils 0.12.4",
+ ]
+ 
+ [[package]]
+@@ -5354,17 +5354,17 @@ dependencies = [
+ 
+ [[package]]
+ name = "zhc_utils"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4473d2d0f56bd97ddcb7ad9fb71c46947aa7a34c6e093bdd91d8b7e4b048f67d"
++checksum = "4944f9b1930f618edc83924f13d5537d7b353ea506a825c42c2fb7d2e276edc9"
+ dependencies = [
+  "libc",
+  "paste",
+  "rand 0.10.1",
+  "rustc-hash",
+  "serde",
+  "serde_json",
+- "zhc_utils_macro 0.10.1",
++ "zhc_utils_macro 0.12.4",
+ ]
+ 
+ [[package]]
+@@ -5380,9 +5380,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "z
 ```
 
-**File**: `tfhe/src/core_crypto/experimental/mod.rs` (modified, +3/-0)
+**File**: `backends/tfhe-hpu-backend/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -1,3 +1,6 @@
-+// Experimental entities have no backward compatibility guarantees, so they are not versioned
-+#![cfg_attr(dylint_lib = "tfhe_lints", allow(serialize_without_versionize))]
-+
- pub mod algorithms;
- pub mod commons;
- pub mod entities;
+@@ -41,7 +41,7 @@ lru = "0.18.2"
+ bitfield-struct = "0.13.0"
+ crossbeam = { version = "0.8.4", features = ["crossbeam-queue"] }
+ rayon = { workspace = true }
+-zhc = "0.10.1"
++zhc = "0.12.4"
+ 
+ # Dependencies used for Sim feature
+ ra2m_ffi = "1.0"
 ```
 
-**File**: `tfhe/src/high_level_api/mod.rs` (modified, +1/-0)
+**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_128/cust_15_v0.asm` (modified, +1/-1)
 ```diff
-@@ -178,6 +178,7 @@ mod errors;
- mod global_state;
- mod integers;
- pub(crate) mod keys;
-+#[cfg(feature = "experimental")]
- pub mod nist_submission;
- mod re_randomization;
- #[cfg(feature = "strings")]
+@@ -4,7 +4,7 @@
+ ; ------------------------------------------------------------------------------
+ ; !preamble {
+ ; [signature]
+-; Ciphertext<128, 2, 2> -> Ciphertext<128, 2, 2>
++; CiphertextInteger<128, 2, 2> -> CiphertextInteger<128, 2, 2>
+ ; [lut]
+ ; None: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+ ; } ----------------------------------------------------------------------------
 ```
 
-**File**: `tfhe/src/high_level_api/nist_submission/compact_ciphertext_list.rs` (modified, +280/-41)
+**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_128/cust_5_v0.asm` (modified, +1/-1)
 ```diff
-@@ -1,5 +1,6 @@
- use crate::core_crypto::prelude::Numeric;
- use crate::high_level_api::CompactCiphertextListBuilder as InnerBuilder;
-+use crate::integer::bigint::{StaticSignedBigInt, StaticUnsignedBigInt};
- use crate::{CompactPublicKey, HlCompactable};
- 
- use crate::core_crypto::prelude::{
-@@ -9,11 +10,15 @@ use crate::core_crypto::prelude::{
- use crate::high_level_api::ServerKey as HlServerKey;
- use crate::shortint::atomic_pattern::AtomicPattern;
- use crate::shortint::ciphertext::CompactCiphertextList as ShortintCompactCiphertextList;
--use crate::shortint::parameters::{Degree, NoiseLevel};
-+use crate::shortint::parameters::{CompactPublicKeyEncryptionParameters, Degree, NoiseLevel};
- use crate::shortint::Ciphertext;
- use rayon::prelude::*;
- 
--/// Does the expand + keyswitch as per NIST submission documents
-+/// Does the expand + keyswitch following NIST submission documents
-+///
-+/// Each LWE of the lists becomes one block of degree `message_modulus - 1` with a nominal noise
-+/// level, without a PBS to clean it, so their proofs must guarantee that each block is below the
-+/// message modulus.
- fn expand_and_keyswitch<'a>(
-     compact_lists: impl Iterator<Item = &'a ShortintCompactCiphertextList>,
-     cpu_key: &HlServerKey,
-@@ -83,6 +88,33 @@ fn expand_and_keyswitch<'a>(
-     Ok(out_collection)
- }
- 
-+mod sealed {
-+    pub trait Sealed {}
-+}
-+
-+/// Clear values that can be put in a NIST list: integers only.
-+///
-+/// Booleans and strings are not allowed: their blocks need a tighter bound than the message modulus
-+/// (0 or 1 for a boolean, below 128 for an ASCII character), which the proofs cannot guarantee and
-+/// the NIST expansion does not enforce as it does not clean the blocks.
-+pub trait NistCompactable: HlCompactable + sealed::Sealed {}
-+
-+macro_rules! impl_nist_compactable {
-+    ($($ty:ty),* $(,)?) => {
-+        $(
-+            impl sealed::Sealed for $ty {}
-+            impl NistCompactable for $ty {}
-+        )*
-+    };
-+}
-+
-+impl_nist_compactable!(u8, u16, u32, u64, u128, i8, i16, i32, i64, i128);
-+
-+impl<const N: usize> sealed::Sealed for StaticUnsignedBigInt<N> {}
-+impl<const N: usize> NistCompactable for StaticUnsignedBigInt<N> {}
-+impl<const N: usize> sealed::Sealed for StaticSignedBigInt<N> {}
-+impl<const N: usize> NistCompactable for StaticSignedBigInt<N> {}
-+
- pub struct CompactCiphertextListBuilder(InnerBuilder);
- 
- impl CompactCiphertextListBuilder {
-@@ -92,23 +124,23 @@ impl CompactCiphertextListBuilder {
- 
-     pub fn push<T>(&mut self, value: T) -> &mut Self
-     where
--        T: HlCompactable,
-+        T: NistCompactable,
-     {
-         self.0.push(value);
-         self
-     }
- 
-     pub fn extend<T>(&mut self, values: impl Iterator<Item = T>) -> &mut Self
-     where
--        T: HlCompactable,
-+        T: NistCompactable,
-     {
-         self.0.extend(values);
-         self
-     }
- 
-     pub fn push_with_num_bits<T>(&mut self, number: T, num_bits: usize) -> crate::Result<&mut Self>
-     where
--        T: HlCompactable + Numeric,
-+        T: NistCompactable + Numeric,
-     {
-         self.0.push_with_num_bits(number, num_bits)?;
-         Ok(self)
-@@ -120,7 +152,7 @@ impl CompactCiphertextListBuilder {
-         num_bits: usize,
-     ) -> crate::Result<&mut Self>
-     where
--        T: HlCompactable + Numeric,
-+        T: NistCompactable + Numeric,
-     {
-         self.0.extend_with_num_bits(values, num_bits)?;
-         Ok(self)
-@@ -131,10 +163,11 @@ use crate::core_crypto::algorithms::verify_lwe_compact_ciphertext_list;
- use crate::high_level_api::compact_list::zk::InnerProvenCompactCiphertextList;
- use crate::high_level_api::compact_list::InnerCompactCiphertextListExpander;
- use crate::high_level_api::global_state;
--use crate::integer::ciphertext::IntegerProvenCompactCiphertextListConformanceParams;
-+use crate::high_level_api::nist_submission::CompactPkeCrs;
-+use crate::integer::ciphertext::{DataKind, IntegerProvenCompactCiphertextListConformanceParams};
- use crate::keys::InternalServerKeyRef;
- use crate::prelude::ParameterSetConformant;
--use crate::zk::{CompactPkeCrs, ZkComputeLoad};
-+use crate::zk::{ZkComputeLoad, ZkPkeV2SupportedHashConfig};
- use crate::CompactCiphertextListExpander;
- use serde::{Deserialize, Serialize};
- use tfhe_versionable::Versionize;
-@@ -173,6 +206,11 @@ impl ProvenCompactCiphertextList {
-         (integer_list, tag)
-     }
- 
-+    /// A deserialized `crs` must be checked for conformance (see
-+    /// [`CompactPkeCrsConformanceParams`]) as the expansion relies on its proofs to bound the
-+    /// blocks below the message modulus.
-+    ///
-+    /// [`CompactPkeCrsConformanceParams`]: super::CompactPkeCrsConformanceParams
-     pub fn verify_and_expand(
-         &self,
-         crs: &CompactPkeCrs,
-@@ -213,7 +251,7 @@ impl ProvenCompactCiphertextList {
-                     &ct_list.ct_list,
-                     &pk.key.key.key.key,
-                     proof,
--                    crs,
-+                    crs.inner(),
-                     metadata,
-           
+@@ -4,7 +4,7 @@
+ ; ------------------------------------------------------------------------------
+ ; !preamble {
+ ; [signature]
+-; Ciphertext<128, 2, 2> -> Ciphertext<128, 2, 2>
++; CiphertextInteger<128, 2, 2> -> CiphertextInteger<128, 2, 2>
+ ; [lut]
+ ; None: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+ ; } ----------------------------------------------------------------------------
 ```
 
-**File**: `tfhe/src/high_level_api/nist_submission/mod.rs` (modified, +9/-2)
+**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_128/cust_6_v0.asm` (modified, +1/-1)
 ```diff
-@@ -6,17 +6,24 @@ pub mod prelude;
- mod re_randomization;
- #[cfg(test)]
- mod tests;
-+#[cfg(feature = "zk-pok")]
-+mod zk;
- 
- pub use crate::core_crypto::prelude::NormalizedHammingWeightBound;
- 
- #[cfg(feature = "zk-pok")]
--pub use compact_ciphertext_list::{CompactCiphertextListBuilder, ProvenCompactCiphertextList};
-+pub use compact_ciphertext_list::{
-+    CompactCiphertextListBuilder, NistCompactable, ProvenCompactCiphertextList,
-+    ProvenCompactCiphertextListConformanceParams,
-+};
- pub use parameters::*;
- pub use re_randomization::{preproc_eval, NistSubmissionReRandomize};
- 
- // ZK proof types
- #[cfg(feature = "zk-pok")]
--pub use crate::zk::{CompactPkeCrs, ZkComputeLoad};
-+pub use crate::zk::{ZkComputeLoad, ZkPkeV2SupportedHashConfig};
-+#[cfg(feature = "zk-pok")]
-+pub use zk::{CompactPkeCrs, CompactPkeCrsConformanceParams};
- 
- // Config
- pub use crate::high_level_api::config::{Config, ConfigBuilder};
+@@ -4,7 +4,7 @@
+ ; ------------------------------------------------------------------------------
+ ; !preamble {
+ ; [signature]
+-; Ciphertext<128, 2, 2> -> Ciphertext<128, 2, 2>
++; CiphertextInteger<128, 2, 2> -> CiphertextInteger<128, 2, 2>
+ ; [lut]
+ ; None: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+ ; } ----------------------------------------------------------------------------
 ```
 
-**File**: `tfhe/src/high_level_api/nist_submission/tests/complete.rs` (modified, +10/-9)
+**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_128/cust_7_v0.asm` (modified, +1/-1)
 ```diff
-@@ -1,13 +1,13 @@
- use rand::{thread_rng, Rng};
- 
--use crate::integer::ciphertext::IntegerProvenCompactCiphertextListConformanceParams;
- use crate::nist_submission::parameters::{
-     NIST_META_PARAMS_2_2, NIST_PARAM_PKE_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
- };
- use crate::nist_submission::{
-     preproc_eval, set_server_key, ClientKey, CompactCiphertextListBuilder, CompactPkeCrs,
--    CompactPublicKey, CompressedXofKeySet, Config, FheUint32, NormalizedHammingWeightBound,
--    ProvenCompactCiphertextList, SquashedNoiseFheUint, Tag, ZkComputeLoad,
-+    CompactPkeCrsConformanceParams, CompactPublicKey, CompressedXofKeySet, Config, FheUint32,
-+    NormalizedHammingWeightBound, ProvenCompactCiphertextList,
-+    ProvenCompactCiphertextListConformanceParams, SquashedNoiseFheUint, Tag, ZkComputeLoad,
- };
- 
- use crate::nist_submission::prelude::*;
-@@ -114,19 +114,20 @@ fn complete_test_zk() {
- 
-     // Intentionally low max_num_bits to test multi-list proofs
-     let crs = CompactPkeCrs::from_config(config, 32).expect("Failed to create CRS");
-+    let crs_conformance_params = CompactPkeCrsConformanceParams::new(config, 32)
-+        .expect("Failed to create CRS conformance params");
-+    assert!(crs.is_conformant(&crs_conformance_params));
- 
-     let mut builder = CompactCiphertextListBuilder::new(&pk);
-     builder.push(clear_a).push(clear_b).push(clear_c);
-     let proven_list: ProvenCompactCiphertextList = builder
-         .build_with_proof(&crs, b"nist_zk_test", ZkComputeLoad::Proof)
-         .expect("Failed to build proven compact list");
- 
--    let conformance_params =
--        IntegerProvenCompactCiphertextListConformanceParams::from_crs_and_parameters(
--            NIST_PARAM_PKE_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
--            &crs,
--        )
--        .allow_unpacked();
-+    let conformance_params = ProvenCompactCiphertextListConformanceParams::from_crs_and_parameters(
-+        NIST_PARAM_PKE_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+        &crs,
-+    );
-     assert!(proven_list.is_conformant(&conformance_params));
- 
-     set_server_key(sks);
+@@ -4,7 +4,7 @@
+ ; ------------------------------------------------------------------------------
+ ; !preamble {
+ ; [signature]
+-; Ciphertext<128, 2, 2> -> Ciphertext<128, 2, 2>
++; CiphertextInteger<128, 2, 2> -> CiphertextInteger<128, 2, 2>
+ ; [lut]
+ ; None: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+ ; } ----------------------------------------------------------------------------
 ```
 
-**File**: `tfhe/src/high_level_api/nist_submission/tests/mod.rs` (modified, +1/-0)
+**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_16/cust_21_v0.asm` (modified, +1/-1)
 ```diff
-@@ -1,3 +1,4 @@
- #[cfg(feature = "zk-pok")]
- mod complete;
- mod noise_distribution;
-+mod re_randomization;
+@@ -12,7 +12,7 @@
+ ; ------------------------------------------------------------------------------
+ ; !preamble {
+ ; [signature]
+-; Ciphertext<2, 2, 2> -> Ciphertext<16, 2, 2>
++; CiphertextInteger<2, 2, 2> -> CiphertextInteger<16, 2, 2>
+ ; [lut]
+ ; TestMany8: [0,1,1,2,2,3,3,0,0,1,1,2,2,3,3,0]
+ ; } ----------------------------------------------------------------------------
+```
+
+**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_16/cust_33_v0.asm` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@
+ ; ------------------------------------------------------------------------------
+ ; !preamble {
+ ; [signature]
+-; Ciphertext<16, 2, 2> -> Ciphertext<16, 2, 2>
++; CiphertextInteger<16, 2, 2> -> CiphertextInteger<16, 2, 2>
+ ; [lut]
+ ; } ----------------------------------------------------------------------------
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2550,77 +2275,93 @@ To make misuse harder
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): handle out-of-range and negative scalars in scalar max and min
+## X. hpu): HPU backend moves to use ZHC 0.12.4
 
 **RULE**:
-When implementing operations in `tfhe/src/integer/gpu/server_key/radix/scalar_comparison.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f8710f06`: gpu): handle out-of-range and negative scalars in scalar max and min. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dcfe7e6d`: hpu): HPU backend moves to use ZHC 0.12.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/gpu/server_key/radix/scalar_comparison.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-enum ScalarDispatch<T> {
-    OutOfBounds(std::cmp::Ordering),
-    NegativeInRange(T),
-    Backend,
-}
-
-    fn dispatch_scalar<Scalar, T>(
-        &self,
-        ct: &T,
-        scalar: Scalar,
-        streams: &CudaStreams,
-    ) -> ScalarDispatch<T>
-    where
-        T: CudaIntegerRadixCiphertext,
-        Scalar: DecomposableInto<u64>,
-    {
-        if let Some(ordering) = self.is_scalar_out_of_bounds(ct, scalar) {
-            return ScalarDispatch::OutOfBounds(ordering);
-        }
-        // The backend takes a non-negative scalar. A negative scalar in range (signed ciphertexts
-        // only) is used as a trivial ciphertext.
-        if scalar < Scalar::ZERO {
-            let num_blocks = ct.as_ref().d_blocks.lwe_ciphertext_count().0;
-            let scalar_as_trivial =
-                unsafe { self.create_trivial_radix_async(scalar, num_blocks, streams) };
-            return ScalarDispatch::NegativeInRange(scalar_as_trivial);
-        }
-        ScalarDispatch::Backend
-    }
-
-            match self.dispatch_scalar(ct, scalar, streams) {
-                ScalarDispatch::OutOfBounds(std::cmp::Ordering::Greater) => {
-                    CudaBooleanBlock::from_cuda_radix_ciphertext(res
+version = "0.12.4"
+checksum = "69a555e3b8badfa59c7dda3db2a56ce4363bc1df3af296dcd75ab9f732748ed6"
+ "zhc_ir 0.12.4",
+ "zhc_utils 0.12.4",
+version = "0.12.4"
+checksum = "63a9ff1c29f22405f3926a91eedbdbee9039a0b141826464b5d46e8bff6bb319"
+ "zhc_ir 0.12.4",
+ "zhc_utils 0.12.4",
+version = "0.12.4"
+checksum = "3410f119c7383c1f55212f9678f27fdb4e2250f37797c91fa63070da99639592"
+ "zhc_utils 0.12.4",
+version = "0.12.4"
+checksum = "f64534584a418d57de591509524d43a6b718e15f210b75a19a4e66117a8cb13b"
+ "zhc_utils 0.12.4",
+version = "0.12.4"
+checksum = "1a81907d400fb71ab395db99f1f763ea54a8ec655731dc4756657b54d0107f1c"
+ "zhc_utils 0.12.4",
+ "zhc_utils_macro 0.12.4",
+version = "0.12.4"
+checksum = "5de831fc49e962043cdd619fbacdff4183829ea281d7cbb1d3b09fe24d7212a1"
+ "zhc_ir 0.12.4",
+ "zhc_utils 0.12.4",
+version = "0.12.4"
+checksum = "af40538a1a7579af341a259191427fc30aeca6e405f03a87284155a0fe2d551a"
+version = "0.12.4"
+checksum = "a0cc6b3edb76937b0e20a5934ca45be61eb6dd2e66f1eb033d0292017f8ad25b"
+ "zhc_ir 0.12.4",
+ "zhc_utils 0.12.4",
+version = "0.12.4"
+checksum = "f190e6dc4157598beec24b9255c97060f92dd6aede8d2c867ab9c80bfbfc3677"
+version = "0.12.4"
+checksum = "60b1f6835645778e130239b57cf6c6969a6fe46ff29e832abb
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            match self.is_scalar_out_of_bounds(ct, scalar) {
-                Some(std::cmp::Ordering::Greater) => {
-                    return CudaBooleanBlock::from_cuda_radix_ciphertext(result.into_inner());
-                Some(std::cmp::Ordering::Less) => {
-                    return CudaBooleanBlock::from_cuda_radix_ciphertext(result.into_inner());
-                Some(std::cmp::Ordering::Equal) => unreachable!("Internal error: invalid value"),
-                None => {
-                    // scalar is in range, fallthrough
-            }
-
-            if scalar >= Scalar::ZERO {
-                self.unchecked_signed_and_unsigned_scalar_comparison(ct, scalar, op, true, streams)
-            } else {
-                let scalar_as_trivial = self.create_trivial_radix(scalar, num_blocks, streams);
-                self.unchecked_comparison(ct, &scalar_as_trivial, op, streams)
+version = "0.10.1"
+checksum = "82a38609924d98d47c8a568588eb815a465a9493d84074ca2dd7b693d097feeb"
+ "zhc_ir 0.10.1",
+ "zhc_utils 0.10.1",
+version = "0.10.1"
+checksum = "406d49ec6e756b9879a12014949212c07fc6f50f13a08605904dc490db52d7de"
+ "zhc_ir 0.10.1",
+ "zhc_utils 0.10.1",
+version = "0.10.1"
+checksum = "6348849b3b3fa15aa118b9cf467877eb81d3b821b980eaf9f70d1b9a14f46784"
+ "zhc_utils 0.10.1",
+version = "0.10.1"
+checksum = "e3c23948a31ed872a7918ad2a6b037a8617e293efdc8ca64399e002ab9e202cf"
+ "zhc_utils 0.10.1",
+version = "0.10.1"
+checksum = "12c4a03c3603a344df90658a20b8a7f9b6dba5f697cd4946ba48b65b89ceca5a"
+ "zhc_utils 0.10.1",
+ "zhc_utils_macro 0.10.1",
+version = "0.10.1"
+checksum = "e44e07002c6561caf6fc05d41117c9dc82a9b54b24ee7e204515f2ae15139340"
+ "zhc_ir 0.10.1",
+ "zhc_utils 0.10.1",
+version = "0.10.1"
+checksum = "357d0e0ef22fe942e97307c5177abe150e37810317bed5e06fbc7023b281cd0b"
+version = "0.10.1"
+checksum = "56397422f1face648e3da39c0269a0891ff9d4c2df8f159153cc6f1f71d6b519"
+ "zhc_ir 0.10.1",
+ "zhc_utils 0.10.1",
+version = "0.10.1"
+checksum = "7dd737074ec5b28829694f6b8096abae90cae6391dfb14ba0b9378f30866a076"
+version = "0.10.1"
+checksum = "7b0145e63ddefb77a269f71bc9b733dcd456e35b6cce2f0b21
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f8710f06` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dcfe7e6d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T18:27:26.156Z",
+  "last_updated": "2026-11-20T18:41:44.380Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "d3b319d313ad367af6953e360049aa312f5f57199b70c6809150fbb66c9a86a7",
-      "verified_at": "2026-11-19T16:07:22.862Z",
+      "content_hash": "75523bc2b84d33a288893d7371710f27d08d0c6f1dc4e3d4eaeea67ebe2a2ae2",
+      "verified_at": "2026-11-20T18:41:40.830Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:07:22.862Z"
+      "last_updated": "2026-11-20T18:41:40.830Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "ae95ee36162a3cdb2963c010dc8ff780afc78f3e2039d5a2d7c0874e3375e954",
-      "verified_at": "2026-11-20T11:30:51.309Z",
+      "content_hash": "2f852be4b5f8f056a321be7c7ccf8ca1fd55f2d3478ca1044370c17cd8e9da8f",
+      "verified_at": "2026-11-20T18:41:42.363Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T11:30:51.309Z"
+      "last_updated": "2026-11-20T18:41:42.363Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "a9b49bb71bc88a016146086e5324855f7dab9c9621b467f03f4909a299cfb0b4",
-      "verified_at": "2026-11-19T14:28:35.719Z",
+      "content_hash": "363075429255bbcc149c9650485bfb333ae8c0d626cc029414863da7ac7e0621",
+      "verified_at": "2026-11-20T18:41:44.379Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T14:28:35.719Z"
+      "last_updated": "2026-11-20T18:41:44.379Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",

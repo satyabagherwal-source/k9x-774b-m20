@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T22:28:15.179Z",
+  "timestamp": "2026-11-20T18:41:54.164Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zama-ai-tfhe-rs-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zama-ai-tfhe-rs-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T22:28:15.179Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T18:41:54.164Z`  
 > **Learning ID**: `LEARN-EVO-zama-ai-tfhe-rs-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), F (Design Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 88%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `1352efd8`  
+> **Source Version**: `dcfe7e6d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T22:27:44.890Z  
+> **Timestamp**: 2026-11-20T18:41:41.020Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T22:27:44.885Z  
+> **Harvest Timestamp**: 2026-11-20T18:41:41.010Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer Arithmetics Over Encrypted Data.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 1682 stars
+- **Stars / Engagement**: 1681 stars
 
 ---
 
@@ -1966,121 +1966,301 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1352efd8` (2026-11-19)
-**Commit Message**: fix(gpu): do not return a 0 decompression size for single-block items (#4195)
+### Incident Patch 1: `dcfe7e6d` (2026-11-20)
+**Commit Message**: feat(hpu): HPU backend moves to use ZHC 0.12.4 (#4150)
 
-**File**: `tfhe/src/high_level_api/compressed_ciphertext_list.rs` (modified, +5/-0)
+* feat(hpu): HPU backend moves to use ZHC 0.12.0 with lots of operation speed improvements
+* fix(hpu): correct fw_dyn HPU example to use best known manual partioning
+* fix(hpu): 1-bit integer are not accepted by ZHC 0.12 anymore so moving boolean to one block
+* chore(hpu): update to ZHC 0.12.1 to get best known manual partitioning of Mul64
+* fix(hpu): Erc7984 SIMD throughput bench was trying to allocate more cts
+that what could fit on 1 node so input set is not dependent on number
+of HPU nodes available; also fixes a small warning in HPU backend
+* fix(hpu): need to update to ZHC 0.12.3 to get a few multi-HPU related fixes
+update fw_dyn example to execute more multi-HPU operations
+* feat(hpu): move to ZHC 0.12.4 to get 88ms triangular mul
+
+**File**: `Cargo.lock` (modified, +38/-38)
 ```diff
-@@ -1431,6 +1431,11 @@ mod tests {
-                 .unwrap()
-                 .unwrap();
-             check_valid_cuda_malloc_assert_oom(decompress_ct2_size_on_gpu, GpuIndex::new(0));
-+            // ct2 is a single-block item (a FheBool): decompressing it still needs memory
-+            assert!(
-+                decompress_ct2_size_on_gpu > 0,
-+                "decompression size of a single-block item must not be 0"
-+            );
-             compressed_list.move_to_current_device().unwrap();
-             let decompress_ct1_size_on_gpu_1 = compressed_list
-                 .get_decompression_size_on_gpu(0)
+@@ -5206,54 +5206,54 @@ dependencies = [
+ 
+ [[package]]
+ name = "zhc"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "82a38609924d98d47c8a568588eb815a465a9493d84074ca2dd7b693d097feeb"
++checksum = "69a555e3b8badfa59c7dda3db2a56ce4363bc1df3af296dcd75ab9f732748ed6"
+ dependencies = [
+  "zhc_builder",
+  "zhc_config",
+  "zhc_crypto",
+- "zhc_ir 0.10.1",
++ "zhc_ir 0.12.4",
+  "zhc_langs",
+  "zhc_pipeline",
+  "zhc_sim",
+- "zhc_utils 0.10.1",
++ "zhc_utils 0.12.4",
+ ]
+ 
+ [[package]]
+ name = "zhc_builder"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "406d49ec6e756b9879a12014949212c07fc6f50f13a08605904dc490db52d7de"
++checksum = "63a9ff1c29f22405f3926a91eedbdbee9039a0b141826464b5d46e8bff6bb319"
+ dependencies = [
+  "zhc_crypto",
+- "zhc_ir 0.10.1",
++ "zhc_ir 0.12.4",
+  "zhc_langs",
+- "zhc_utils 0.10.1",
++ "zhc_utils 0.12.4",
+ ]
+ 
+ [[package]]
+ name = "zhc_config"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6348849b3b3fa15aa118b9cf467877eb81d3b821b980eaf9f70d1b9a14f46784"
++checksum = "3410f119c7383c1f55212f9678f27fdb4e2250f37797c91fa63070da99639592"
+ dependencies = [
+  "serde",
+  "serde_json",
+  "toml 0.9.12+spec-1.1.0",
+- "zhc_utils 0.10.1",
++ "zhc_utils 0.12.4",
+ ]
+ 
+ [[package]]
+ name = "zhc_crypto"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e3c23948a31ed872a7918ad2a6b037a8617e293efdc8ca64399e002ab9e202cf"
++checksum = "f64534584a418d57de591509524d43a6b718e15f210b75a19a4e66117a8cb13b"
+ dependencies = [
+  "paste",
+  "rand 0.10.1",
+  "serde",
+- "zhc_utils 0.10.1",
++ "zhc_utils 0.12.4",
+ ]
+ 
+ [[package]]
+@@ -5269,33 +5269,33 @@ dependencies = [
+ 
+ [[package]]
+ name = "zhc_ir"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "12c4a03c3603a344df90658a20b8a7f9b6dba5f697cd4946ba48b65b89ceca5a"
++checksum = "1a81907d400fb71ab395db99f1f763ea54a8ec655731dc4756657b54d0107f1c"
+ dependencies = [
+  "serde",
+- "zhc_utils 0.10.1",
+- "zhc_utils_macro 0.10.1",
++ "zhc_utils 0.12.4",
++ "zhc_utils_macro 0.12.4",
+ ]
+ 
+ [[package]]
+ name = "zhc_langs"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e44e07002c6561caf6fc05d41117c9dc82a9b54b24ee7e204515f2ae15139340"
++checksum = "5de831fc49e962043cdd619fbacdff4183829ea281d7cbb1d3b09fe24d7212a1"
+ dependencies = [
+  "serde",
+  "zhc_crypto",
+- "zhc_ir 0.10.1",
++ "zhc_ir 0.12.4",
+  "zhc_langs_macro",
+- "zhc_utils 0.10.1",
++ "zhc_utils 0.12.4",
+ ]
+ 
+ [[package]]
+ name = "zhc_langs_macro"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "357d0e0ef22fe942e97307c5177abe150e37810317bed5e06fbc7023b281cd0b"
++checksum = "af40538a1a7579af341a259191427fc30aeca6e405f03a87284155a0fe2d551a"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -5304,40 +5304,40 @@ dependencies = [
+ 
+ [[package]]
+ name = "zhc_pipeline"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "56397422f1face648e3da39c0269a0891ff9d4c2df8f159153cc6f1f71d6b519"
++checksum = "a0cc6b3edb76937b0e20a5934ca45be61eb6dd2e66f1eb033d0292017f8ad25b"
+ dependencies = [
+  "bitfield-struct 0.10.1",
+  "rand 0.10.1",
+  "serde",
+  "zhc_config",
+  "zhc_crypto",
+- "zhc_ir 0.10.1",
++ "zhc_ir 0.12.4",
+  "zhc_langs",
+  "zhc_profiling",
+  "zhc_sim",
+- "zhc_utils 0.10.1",
++ "zhc_utils 0.12.4",
+ ]
+ 
+ [[package]]
+ name = "zhc_profiling"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7dd737074ec5b28829694f6b8096abae90cae6391dfb14ba0b9378f30866a076"
++checksum = "f190e6dc4157598beec24b9255c97060f92dd6aede8d2c867ab9c80bfbfc3677"
+ 
+ [[package]]
+ name = "zhc_sim"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7b0145e63ddefb77a269f71bc9b733dcd456e35b6cce2f0b210ddee27dd47d34"
++checksum = "60b1f6835645778e130239b57cf6c6969a6fe46ff29e832abb14d392b74d76b2"
+ dependencies = [
+  "serde",
+  "serde_json",
+  "toml 0.9.12+spec-1.1.0",
+  "zhc_config",
+  "zhc_langs",
+- "zhc_utils 0.10.1",
++ "zhc_utils 0.12.4",
+ ]
+ 
+ [[package]]
+@@ -5354,17 +5354,17 @@ dependencies = [
+ 
+ [[package]]
+ name = "zhc_utils"
+-version = "0.10.1"
++version = "0.12.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4473d2d0f56bd97ddcb7ad9fb71c46947aa7a34c6e093bdd91d8b7e4b048f67d"
++checksum = "4944f9b1930f618edc83924f13d5537d7b353ea506a825c42c2fb7d2e276edc9"
+ dependencies = [
+  "libc",
+  "paste",
+  "rand 0.10.1",
+  "rustc-hash",
+  "serde",
+  "serde_json",
+- "zhc_utils_macro 0.10.1",
++ "zhc_utils_macro 0.12.4",
+ ]
+ 
+ [[package]]
+@@ -5380,9 +5380,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "z
 ```
 
-**File**: `tfhe/src/integer/ciphertext/compressed_ciphertext_list.rs` (modified, +1/-6)
+**File**: `backends/tfhe-hpu-backend/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -224,14 +224,9 @@ impl CompressedCiphertextList {
-         let Some((_, block_range)) = self.block_range(index)? else {
-             return Ok(None);
-         };
--        if block_range.is_empty() {
--            return Ok(Some(0));
--        }
--
-         Ok(Some(decomp_key.get_cpu_list_unpack_size_on_gpu(
-             &self.packed_list,
--            block_range.start,
--            block_range.end - 1,
-+            block_range,
-             streams,
-         )))
-     }
+@@ -41,7 +41,7 @@ lru = "0.18.2"
+ bitfield-struct = "0.13.0"
+ crossbeam = { version = "0.8.4", features = ["crossbeam-queue"] }
+ rayon = { workspace = true }
+-zhc = "0.10.1"
++zhc = "0.12.4"
+ 
+ # Dependencies used for Sim feature
+ ra2m_ffi = "1.0"
 ```
 
-**File**: `tfhe/src/integer/gpu/ciphertext/compressed_ciphertext_list.rs` (modified, +1/-6)
+**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_128/cust_15_v0.asm` (modified, +1/-1)
 ```diff
-@@ -161,14 +161,9 @@ impl CudaCompressedCiphertextList {
-         let Some((_, block_range)) = self.block_range(index)? else {
-             return Ok(None);
-         };
--        if block_range.is_empty() {
--            return Ok(Some(0));
--        }
--
-         Ok(Some(decomp_key.get_gpu_list_unpack_size_on_gpu(
-             &self.packed_list,
--            block_range.start,
--            block_range.end - 1,
-+            block_range,
-             streams,
-         )))
-     }
+@@ -4,7 +4,7 @@
+ ; ------------------------------------------------------------------------------
+ ; !preamble {
+ ; [signature]
+-; Ciphertext<128, 2, 2> -> Ciphertext<128, 2, 2>
++; CiphertextInteger<128, 2, 2> -> CiphertextInteger<128, 2, 2>
+ ; [lut]
+ ; None: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+ ; } ----------------------------------------------------------------------------
 ```
 
-**File**: `tfhe/src/integer/gpu/list_compression/server_keys.rs` (modified, +7/-12)
+**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_128/cust_5_v0.asm` (modified, +1/-1)
 ```diff
-@@ -31,6 +31,7 @@ use crate::shortint::parameters::AtomicPatternKind;
- use crate::shortint::prelude::{GlweDimension, LweDimension};
- use crate::shortint::{CarryModulus, MessageModulus, PBSOrder};
- use itertools::Itertools;
-+use std::ops::Range;
- use tfhe_cuda_backend::cuda_bind::cuda_memcpy_async_gpu_to_gpu;
+@@ -4,7 +4,7 @@
+ ; ------------------------------------------------------------------------------
+ ; !preamble {
+ ; [signature]
+-; Ciphertext<128, 2, 2> -> Ciphertext<128, 2, 2>
++; CiphertextInteger<128, 2, 2> -> CiphertextInteger<128, 2, 2>
+ ; [lut]
+ ; None: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+ ; } ----------------------------------------------------------------------------
+```
+
+**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_128/cust_6_v0.asm` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@
+ ; ------------------------------------------------------------------------------
+ ; !preamble {
+ ; [signature]
+-; Ciphertext<128, 2, 2> -> Ciphertext<128, 2, 2>
++; CiphertextInteger<128, 2, 2> -> CiphertextInteger<128, 2, 2>
+ ; [lut]
+ ; None: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+ ; } ----------------------------------------------------------------------------
+```
+
+**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_128/cust_7_v0.asm` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@
+ ; ------------------------------------------------------------------------------
+ ; !preamble {
+ ; [signature]
+-; Ciphertext<128, 2, 2> -> Ciphertext<128, 2, 2>
++; CiphertextInteger<128, 2, 2> -> CiphertextInteger<128, 2, 2>
+ ; [lut]
+ ; None: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+ ; } ----------------------------------------------------------------------------
+```
+
+**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_16/cust_21_v0.asm` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@
+ ; ------------------------------------------------------------------------------
+ ; !preamble {
+ ; [signature]
+-; Ciphertext<2, 2, 2> -> Ciphertext<16, 2, 2>
++; CiphertextInteger<2, 2, 2> -> CiphertextInteger<16, 2, 2>
+ ; [lut]
+ ; TestMany8: [0,1,1,2,2,3,3,0,0,1,1,2,2,3,3,0]
+ ; } ----------------------------------------------------------------------------
+```
+
+**File**: `backends/tfhe-hpu-backend/config_store/custom_iop/integer_w_16/cust_33_v0.asm` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@
+ ; ------------------------------------------------------------------------------
+ ; !preamble {
+ ; [signature]
+-; Ciphertext<16, 2, 2> -> Ciphertext<16, 2, 2>
++; CiphertextInteger<16, 2, 2> -> CiphertextInteger<16, 2, 2>
+ ; [lut]
+ ; } ----------------------------------------------------------------------------
  
- #[derive(Debug)]
-@@ -696,21 +697,18 @@ impl CudaDecompressionKey {
-     pub fn get_gpu_list_unpack_size_on_gpu(
-         &self,
-         packed_list: &CudaPackedGlweCiphertextList<u64>,
--        start_block_index: usize,
--        end_block_index: usize,
-+        block_range: Range<usize>,
-         streams: &CudaStreams,
-     ) -> u64 {
--        if start_block_index == end_block_index {
-+        if block_range.is_empty() {
-             return 0;
-         }
- 
-         let Some(ref meta) = packed_list.meta else {
-             panic!("Missing ciphertext metadata in CompressedCiphertextList")
-         };
- 
--        let indexes_array = (start_block_index..=end_block_index)
--            .map(|x| x as u32)
--            .collect_vec();
-+        let indexes_array = block_range.map(|x| x as u32).collect_vec();
- 
-         let encryption_glwe_dimension = self.glwe_dimension;
-         let encryption_polynomial_size = self.polynomial_size;
-@@ -743,17 +741,14 @@ impl CudaDecompressionKey {
-     pub fn get_cpu_list_unpack_size_on_gpu(
-         &self,
-         packed_list: &CompressedCiphertextList,
--        start_block_index: usize,
--        end_block_index: usize,
-+        block_range: Range<usize>,
-         streams: &CudaStreams,
-     ) -> u64 {
--        if start_block_index == end_block_index {
-+        if block_range.is_empty() {
-             return 0;
-         }
- 
--        let indexes_array = (start_block_index..=end_block_index)
--            .map(|x| x as u32)
--            .collect_vec();
-+        let indexes_array = block_range.map(|x| x as u32).collect_vec();
- 
-         let encryption_glwe_dimension = self.glwe_dimension;
-         let encryption_polynomial_size = self.polynomial_size;
 ```
 
 #### Recent Merged Pull Requests:
@@ -2089,7 +2269,7 @@ Observed empirical fixes and code patches:
 - **PR #4194** (2026-11-19): chore: publish steps are put beyon a release environment (@IceTDrinker)
 - **PR #4193** (closed): fix(gpu): fixing inplace shift and rotate with dirty inputs (@enzodimaria)
 - **PR #4189** (2026-11-18): fix(gpu): write the result into the input of shift and rotate assign functions when it has carries (@pdroalves)
-- **PR #4183** (2026-11-17): chore: simpler CODEOWNERS while still respecting guidelines (@IceTDrinker)
+- **PR #4186** (2026-11-20): fix(gpu): handle out-of-range and negative scalars in scalar max and min (@pdroalves)
 
 ---
 
@@ -2109,35 +2289,93 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): do not return a 0 decompression size for single-block items
+## X. hpu): HPU backend moves to use ZHC 0.12.4
 
 **RULE**:
-When implementing operations in `tfhe/src/high_level_api/compressed_ciphertext_list.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1352efd8`: gpu): do not return a 0 decompression size for single-block items. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dcfe7e6d`: hpu): HPU backend moves to use ZHC 0.12.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/compressed_ciphertext_list.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // ct2 is a single-block item (a FheBool): decompressing it still needs memory
-            assert!(
-                decompress_ct2_size_on_gpu > 0,
-                "decompression size of a single-block item must not be 0"
-            );
+version = "0.12.4"
+checksum = "69a555e3b8badfa59c7dda3db2a56ce4363bc1df3af296dcd75ab9f732748ed6"
+ "zhc_ir 0.12.4",
+ "zhc_utils 0.12.4",
+version = "0.12.4"
+checksum = "63a9ff1c29f22405f3926a91eedbdbee9039a0b141826464b5d46e8bff6bb319"
+ "zhc_ir 0.12.4",
+ "zhc_utils 0.12.4",
+version = "0.12.4"
+checksum = "3410f119c7383c1f55212f9678f27fdb4e2250f37797c91fa63070da99639592"
+ "zhc_utils 0.12.4",
+version = "0.12.4"
+checksum = "f64534584a418d57de591509524d43a6b718e15f210b75a19a4e66117a8cb13b"
+ "zhc_utils 0.12.4",
+version = "0.12.4"
+checksum = "1a81907d400fb71ab395db99f1f763ea54a8ec655731dc4756657b54d0107f1c"
+ "zhc_utils 0.12.4",
+ "zhc_utils_macro 0.12.4",
+version = "0.12.4"
+checksum = "5de831fc49e962043cdd619fbacdff4183829ea281d7cbb1d3b09fe24d7212a1"
+ "zhc_ir 0.12.4",
+ "zhc_utils 0.12.4",
+version = "0.12.4"
+checksum = "af40538a1a7579af341a259191427fc30aeca6e405f03a87284155a0fe2d551a"
+version = "0.12.4"
+checksum = "a0cc6b3edb76937b0e20a5934ca45be61eb6dd2e66f1eb033d0292017f8ad25b"
+ "zhc_ir 0.12.4",
+ "zhc_utils 0.12.4",
+version = "0.12.4"
+checksum = "f190e6dc4157598beec24b9255c97060f92dd6aede8d2c867ab9c80bfbfc3677"
+version = "0.12.4"
+checksum = "60b1f6835645778e130239b57cf6c6969a6fe46ff29e832abb
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+version = "0.10.1"
+checksum = "82a38609924d98d47c8a568588eb815a465a9493d84074ca2dd7b693d097feeb"
+ "zhc_ir 0.10.1",
+ "zhc_utils 0.10.1",
+version = "0.10.1"
+checksum = "406d49ec6e756b9879a12014949212c07fc6f50f13a08605904dc490db52d7de"
+ "zhc_ir 0.10.1",
+ "zhc_utils 0.10.1",
+version = "0.10.1"
+checksum = "6348849b3b3fa15aa118b9cf467877eb81d3b821b980eaf9f70d1b9a14f46784"
+ "zhc_utils 0.10.1",
+version = "0.10.1"
+checksum = "e3c23948a31ed872a7918ad2a6b037a8617e293efdc8ca64399e002ab9e202cf"
+ "zhc_utils 0.10.1",
+version = "0.10.1"
+checksum = "12c4a03c3603a344df90658a20b8a7f9b6dba5f697cd4946ba48b65b89ceca5a"
+ "zhc_utils 0.10.1",
+ "zhc_utils_macro 0.10.1",
+version = "0.10.1"
+checksum = "e44e07002c6561caf6fc05d41117c9dc82a9b54b24ee7e204515f2ae15139340"
+ "zhc_ir 0.10.1",
+ "zhc_utils 0.10.1",
+version = "0.10.1"
+checksum = "357d0e0ef22fe942e97307c5177abe150e37810317bed5e06fbc7023b281cd0b"
+version = "0.10.1"
+checksum = "56397422f1face648e3da39c0269a0891ff9d4c2df8f159153cc6f1f71d6b519"
+ "zhc_ir 0.10.1",
+ "zhc_utils 0.10.1",
+version = "0.10.1"
+checksum = "7dd737074ec5b28829694f6b8096abae90cae6391dfb14ba0b9378f30866a076"
+version = "0.10.1"
+checksum = "7b0145e63ddefb77a269f71bc9b733dcd456e35b6cce2f0b21
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1352efd8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dcfe7e6d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

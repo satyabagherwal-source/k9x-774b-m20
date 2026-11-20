@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T18:27:26.151Z",
-  "total_cycles_completed": 11052,
-  "total_learnings_persisted": 11052,
-  "total_rules_promoted": 10408,
+  "last_updated": "2026-11-20T18:41:44.376Z",
+  "total_cycles_completed": 11055,
+  "total_learnings_persisted": 11055,
+  "total_rules_promoted": 10411,
   "history": [
-    {
-      "timestamp": "2026-11-19T19:23:22.858Z",
-      "repository": "momenbasel/PureMac",
-      "learningId": "learn-github-momenbasel-puremac",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T19:39:02.081Z",
-      "repository": "tuist/tuist",
-      "learningId": "learn-github-tuist-tuist",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T19:39:02.346Z",
-      "repository": "MelnixDev/seo-crawl-audit",
-      "learningId": "learn-github-melnixdev-seo-crawl-audit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T19:39:03.753Z",
       "repository": "siteline/swiftui-introspect",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-20T18:27:26.151Z",
       "repository": "syntax-tree/hast-util-to-html",
       "learningId": "learn-github-syntax-tree-hast-util-to-html",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T18:41:40.825Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T18:41:42.359Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T18:41:44.376Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

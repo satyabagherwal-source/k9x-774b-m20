@@ -11638,3 +11638,6 @@ Every entry in this ledger must capture:
 | `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `76b07b58` | Multi-dimensional audit evidence | 2026-11-20T17:58:46.575Z |
 | `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `bd882c1a` | Multi-dimensional audit evidence | 2026-11-20T18:16:54.512Z |
 | `learn-github-syntax-tree-hast-util-to-html` | `https://github.com/syntax-tree/hast-util-to-html` | `a28501a8` | Multi-dimensional audit evidence | 2026-11-20T18:27:26.145Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `81e7bcad` | Multi-dimensional audit evidence | 2026-11-20T18:41:40.816Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `dcfe7e6d` | Multi-dimensional audit evidence | 2026-11-20T18:41:42.353Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `c3e36c4a` | Multi-dimensional audit evidence | 2026-11-20T18:41:44.370Z |

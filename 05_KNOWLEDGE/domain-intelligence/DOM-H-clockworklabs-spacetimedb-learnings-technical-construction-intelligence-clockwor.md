@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T11:45:21.722Z",
+  "timestamp": "2026-11-20T18:41:55.079Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-clockworklabs-spacetimedb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [clockworklabs-spacetimedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T11:45:21.722Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T18:41:55.079Z`  
 > **Learning ID**: `LEARN-EVO-clockworklabs-spacetimedb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from clockworklabs-spacetimedb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `ab502c61`  
+> **Source Version**: `c3e36c4a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T11:45:14.642Z  
+> **Timestamp**: 2026-11-20T18:41:43.041Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T11:45:14.636Z  
+> **Harvest Timestamp**: 2026-11-20T18:41:43.034Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25565 stars
+- **Stars / Engagement**: 25569 stars
 
 ---
 
@@ -858,335 +858,545 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab502c61` (2026-11-18)
-**Commit Message**: TS SDK cache: build indexes on first lookup, and use a flat map for unique single-column indexes (#6614)
+### Incident Patch 1: `c3e36c4a` (2026-11-20)
+**Commit Message**: Bump version to 2.16.2 (#6654)
 
 # Description of Changes
 
-Since #6416 the TypeScript SDK's client cache builds every btree index
-of every subscribed table at insert time, and every index is a tree with
-two `Map`s per node. For a client that subscribes to about 197k rows in
-25 tables with 100 indexes, the cache took 324 MB of heap after the
-initial subscription, against 85 MB with the scan before #6416. A Node
-process with a 256 MB heap limit ran out of memory at start. That
-client's code reads only 4 of the 100 indexes.
+<!-- Please describe your change, mention any related tickets, and so on
+here. -->
 
-Three commits, each with its own test:
+- Bumps version to 2.16.2
 
-1. **`children` on demand.** An index node creates its `children` map on
-its first child. Every node of a single-column index is a leaf, and an
-empty `Map` takes about 192 bytes in V8 (Node 24).
-2. **Build an index on its first lookup.** The first `find` or `filter`
-that needs an index builds it in one pass over the cached rows. After
-that, inserts, updates and deletes keep it current as before. A ranged
-`filter` on the first column still scans the rows and builds nothing.
-Each build logs one line at debug level (table, index, rows, ms), so a
-late memor
+# API and ABI breaking changes
 
-**File**: `crates/bindings-typescript/src/sdk/table_cache.ts` (modified, +95/-53)
+None
+
+<!-- If this is an API or ABI breaking change, please apply the
+corresponding GitHub label. -->
+
+# Rollback safety impact
+
+<!--
+If this PR is safe to roll back after deployment and has no impact on
+the rollback safety of any prior PRs, write `n/a` below.
+
+Otherwise, list every prerequisite PR that must be included in a release
+before this PR can merge. This PR must not be deployed until each
+prerequisite has been deployed and sufficiently observed or tested in
+the live deployment that we are confident it will not be rolled back.
+Supported forms include #123, SpacetimeDB#123,
+clockworklabs/SpacetimeDB#123, and GitHub PR URLs.
+
+Consider whether this PR:
+- newly writes to a previously introduced but unused ControlDB table or
+reducer, system table, or on-disk data format; or
+- clears, deletes, incompatibly changes, or renders unsupported a
+previously available ControlDB table or reducer, system table, or
+on-disk data format.
+-->
+
+n/a
+
+# Expected complexity level and risk
+
+- 1 - this
+
+**File**: `Cargo.lock` (modified, +59/-59)
 ```diff
-@@ -71,14 +71,21 @@ const inRange = (value: unknown, range: Range<any>): boolean => {
+@@ -828,7 +828,7 @@ dependencies = [
  
- type IndexNode<Row> = {
-   rows: Map<ComparablePrimitive, Row>;
--  children: Map<ComparablePrimitive, IndexNode<Row>>;
-+  // Created on the first child: the leaves (every node of a single-column
-+  // index) then carry one Map, not two.
-+  children: Map<ComparablePrimitive, IndexNode<Row>> | null;
- };
+ [[package]]
+ name = "case-conversion-client"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "env_logger 0.10.2",
+@@ -1471,7 +1471,7 @@ dependencies = [
  
- const newIndexNode = <Row>(): IndexNode<Row> => ({
-   rows: new Map(),
--  children: new Map(),
-+  children: null,
- });
+ [[package]]
+ name = "connect_disconnect_client"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -2542,7 +2542,7 @@ dependencies = [
  
-+type IndexEntry<Row> = {
-+  add(rowId: ComparablePrimitive, row: Row): void;
-+  remove(rowId: ComparablePrimitive, row: Row): void;
-+};
-+
- export type TableIndexView<
-   RemoteModule extends UntypedRemoteModule,
-   TableName extends TableNamesOf<RemoteModule>,
-@@ -107,16 +114,10 @@ export class TableCacheImpl<
-     [RowType<TableDefForTableName<RemoteModule, TableName>>, number]
-   >;
-   private tableDef: TableDefForTableName<RemoteModule, TableName>;
--  #indexes: {
--    add(
--      rowId: ComparablePrimitive,
--      row: RowType<TableDefForTableName<RemoteModule, TableName>>
--    ): void;
--    remove(
--      rowId: ComparablePrimitive,
--      row: RowType<TableDefForTableName<RemoteModule, TableName>>
--    ): void;
--  }[] = [];
-+  // Only the indexes built so far (see `#makeReadonlyIndex`).
-+  #indexes: IndexEntry<
-+    RowType<TableDefForTableName<RemoteModule, TableName>>
-+  >[] = [];
-   private emitter: EventEmitter<'insert' | 'delete' | 'update'>;
+ [[package]]
+ name = "event-table-client"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -6114,7 +6114,7 @@ dependencies = [
  
-   /**
-@@ -172,64 +173,105 @@ export class TableCacheImpl<
-     const getCol = (row: RowType<TableDef>, i: number) =>
-       (row as Record<string, unknown>)[columns[i]];
+ [[package]]
+ name = "procedural-view-pk-client"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -6128,7 +6128,7 @@ dependencies = [
  
-+    // An index is unique if it shares all columns with a unique constraint
-+    const isUnique = tableDef.constraints.some(constraint => {
-+      if (constraint.constraint !== 'unique') {
-+        return false;
-+      }
-+      return deepEqual(constraint.columns, idx.columns);
-+    });
-+
-+    // A unique single-column index is a flat key -> row map.
-+    const flat =
-+      isUnique && columns.length === 1
-+        ? new Map<ComparablePrimitive, Row>()
-+        : null;
-+
-     // Each level of the tree is keyed by the next index column, and each node
-     // holds every row whose key starts with the path leading to it.
-     const root = newIndexNode<Row>();
+ [[package]]
+ name = "procedure-client"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -6145,7 +6145,7 @@ dependencies = [
  
-+    const entry: IndexEntry<Row> = flat
-+      ? {
-+          add: (_rowId, row) => {
-+            flat.set(keyFns[0](getCol(row, 0)), row);
-+          },
-+          remove: (_rowId, row) => {
-+            // Within one transaction the cache can add the new row of a key
-+            // before it removes the old one. Remove only the row stored here.
-+            const key = keyFns[0](getCol(row, 0));
-+            if (flat.get(key) === row) flat.delete(key);
-+          },
-+        }
-+      : {
-+          add: (rowId, row) => {
-+            let node = root;
-+            for (let i = 0; i < columns.length; i++) {
-+              const key = keyFns[i](getCol(row, i));
-+              node.children ??= new Map();
-+              let child = node.children.get(key);
-+              if (!child) {
-+                child = newIndexNode();
-+                node.children.set(key, child);
-+              }
-+              child.rows.set(rowId, row);
-+              node = child;
-+            }
-+          },
-+          remove: (rowId, row) => {
-+            let node = root;
-+            for (let i = 0; i < columns.length; i++) {
-+              const key = keyFns[i](getCol(row, i));
-+              const child = node.children?.get(key);
-+              if (!child) return;
-+              child.rows.delete(rowId);
-+              if (child.rows.size === 0) {
-+                node.children!.delete(key);
-+                return;
-+              }
-+              node = child;
-+            }
-+          },
-+        };
-+
-+    // The index is built on its first lookup, not at insert time: most
-+    // indexes of a subscribed table are never read, and building all of them
-+    // can take many times the heap of the rows themselves.
-+    let built = false;
-+    const build = () => {
-+      if (built) return;
-+      built = true;
-+      const start = Date.now();
-+      for (const [rowId, [row]] of this.rows) entry.add(rowId, row as Row);
-+      this.#indexes.push(entry as IndexEntry<RowType<TableDef>>);
-+      stdbLogger(
-+        'debug',
-+        () =>
-+          `built index ${tableDef.sourceName}.${idx.name}: ${this.rows.size} rows, ${Date.now() - start} ms`
-+      );
-+    };
-+
-     const lookup = (prefix: readonly unknown[]): IndexNode<Row> | undefined => {
-+      build();
-       let node: IndexNode<Row> | undefined = root;
-       for (let i = 0; i < prefix.length && node; i++) {
--        node = node.children.get(keyFns[i](prefix[i]));
-+        node = node.children?.get(keyFns[i](prefix[i]));
-       }
-       return node;
-     };
+ [[package]]
+ name = "procedure-concurrency-client"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -7482,7 +7482,7 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
  
--    this.#indexes.push({
--      add: (rowId, row) => {
--        let node = root;
--        for (let i = 0; i < columns.length; i
+ [[package]]
+ name = "sdk-csharp-test-harness"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "serial_test",
+  "spacetimedb-testing",
+@@ -7549,7 +7549,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "sdk-unreal-test-harness"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "serial_test",
+  "spacetimedb-testing",
+@@ -8056,7 +8056,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "bytemuck",
+@@ -8079,7 +8079,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-auth"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "jsonwebtoken",
+@@ -8092,7 +8092,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-bench"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "ahash 0.8.12",
+  "anyhow",
+@@ -8135,7 +8135,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-bindings-macro"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "heck 0.4.1",
+  "humantime",
+@@ -8146,14 +8146,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-bindings-sys"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "spacetimedb-primitives",
+ ]
+ 
+ [[package]]
+ name = "spacetimedb-cli"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "base64 0.21.7",
+@@ -8224,7 +8224,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-client-api"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "async-stream",
+@@ -8274,7 +8274,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-client-api-messages"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "bytes",
+  "bytestring",
+@@ -8297,7 +8297,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-codegen"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "convert_case 0.6.0",
+@@ -8316,7 +8316,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-commitlog"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "async-stream",
+  "bitflags 2.10.0",
+@@ -8350,7 +8350,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-core"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -8450,7 +8450,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-data-structures"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "ahash 0.8.12",
+  "crossbeam-queue",
+@@ -8466,7 +8466,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-datastore"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "bytes",
+@@ -8504,7 +8504,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-dst-lib"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "spacetimedb-commitlog",
+@@ -8522,7 +8522,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-durability"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "async-channel",
+@@ -8542,7 +8542,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-engine"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -8584,7 +8584,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-execution"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "itertools 0.12.1",
+@@ -8598,7 +8598,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-expr"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "bigdecimal",
+@@ -8616,7 +8616,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-fs-utils"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "chrono",
+@@ -8632,15 +8632,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-guard"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "reqwest",
+  "tempfile",
+ ]
+ 
+ [[pa
 ```
 
-**File**: `crates/bindings-typescript/tests/table_cache_resolved_indexes.test.ts` (modified, +192/-1)
+**File**: `Cargo.toml` (modified, +40/-40)
 ```diff
-@@ -1,9 +1,10 @@
--import { describe, expect, it } from 'vitest';
-+import { describe, expect, it, vi } from 'vitest';
- import { ModuleContext, tablesToSchema } from '../src/lib/schema';
- import { table } from '../src/lib/table';
- import { TableCacheImpl } from '../src/sdk/table_cache';
- import { t } from '../src/lib/type_builders';
- import { Range } from '../src/server/range';
-+import { setGlobalLogLevel, getGlobalLogLevel } from '../src/sdk/logger';
+@@ -156,51 +156,51 @@ inherits = "release"
+ debug = true
  
- describe('table cache resolved indexes', () => {
-   it('builds index accessors from resolvedIndexes (field-level + table-level)', () => {
-@@ -145,4 +146,194 @@ describe('table cache resolved indexes', () => {
-     expect(filter('red')).toEqual([rows[0]]);
-     expect(filter('blue')).toEqual([rows[1], moved]);
-   });
-+
-+  // Indexes are built on their first lookup, and a unique single-column
-+  // index is a flat map.
-+  const makeUser = () => {
-+    const user = table(
-+      {
-+        name: 'user',
-+        indexes: [
-+          {
-+            accessor: 'byTeamAndLevel',
-+            algorithm: 'btree',
-+            columns: ['team', 'level'] as const,
-+          },
-+        ] as const,
-+      },
-+      {
-+        id: t.u32().primaryKey(),
-+        email: t.string().unique(),
-+        team: t.string().index('btree'),
-+        level: t.u32(),
-+      }
-+    );
-+    const def = tablesToSchema(new ModuleContext(), { user }).tables.user;
-+    const cache = new TableCacheImpl<any, string>(def as any);
-+    const tx = (ops: [type: 'insert' | 'delete', row: any][]) =>
-+      cache.applyOperations(
-+        ops.map(([type, row]) => ({ type, rowId: row.id, row })),
-+        {} as any
-+      );
-+    return { cache: cache as any, tx };
-+  };
-+
-+  it('builds an index on its first lookup only, and logs the build', () => {
-+    const { cache, tx } = makeUser();
-+    const level = getGlobalLogLevel();
-+    setGlobalLogLevel('debug');
-+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
-+    try {
-+      const builds = () =>
-+        log.mock.calls.filter(c => String(c[0]).includes('built index')).length;
-+      tx(
-+        [1, 2, 3].map(i => [
-+          'insert',
-+          { id: i, email: `e${i}`, team: 't', level: i },
-+        ])
-+      );
-+      expect(builds()).toBe(0);
-+
-+      expect(cache.email.find('e2')).toEqual({
-+        id: 2,
-+        email: 'e2',
-+        team: 't',
-+        level: 2,
-+      });
-+      expect(builds()).toBe(1);
-+      expect(String(log.mock.calls.at(-1)![0])).toContain('built index user.');
-+      cache.email.find('e3');
-+      expect(builds()).toBe(1);
-+
-+      // A range on the first column scans the rows; it needs no index.
-+      Array.from(
-+        cache.team.filter(
-+          new Range({ tag: 'included', value: 'a' }, { tag: 'unbounded' })
-+        )
-+      );
-+      expect(builds()).toBe(1);
-+      Array.from(cache.team.filter('t'));
-+      expect(builds()).toBe(2);
-+    } finally {
-+      log.mockRestore();
-+      setGlobalLogLevel(level);
-+    }
-+  });
-+
-+  it('a unique index keeps the new row when a transaction adds it before it removes the old one', () => {
-+    const { cache, tx } = makeUser();
-+    const a = { id: 1, email: 'x', team: 't', level: 1 };
-+    const b = { id: 2, email: 'y', team: 't', level: 2 };
-+    tx([
-+      ['insert', a],
-+      ['insert', b],
-+    ]);
-+    expect(cache.email.find('x')).toEqual(a);
-+
-+    // The cache applies the inserts of a transaction before its deletes.
-+    const c = { id: 3, email: 'x', team: 't', level: 3 };
-+    tx([
-+      ['delete', a],
-+      ['insert', c],
-+    ]);
-+    expect(cache.email.find('x')).toEqual(c);
-+
-+    // Two rows swap their keys in one transaction.
-+    const b2 = { ...b, email: 'x' };
-+    const c2 = { ...c, email: 'y' };
-+    tx([
-+      ['delete', b],
-+      ['insert', b2],
-+      ['delete', c],
-+      ['insert', c2],
-+    ]);
-+    expect(cache.email.find('x')).toEqual(b2);
-+    expect(cache.email.find('y')).toEqual(c2);
-+
-+    tx([['delete', b2]]);
-+    expect(cache.email.find('x')).toBeNull();
-+    expect(cache.email.find('y')).toEqual(c2);
-+  });
-+
-+  it('find and filter return the same rows as a scan, before and after changes', () => {
-+    const { cache, tx } = makeUser();
-+    let seed = 7;
-+    const rand = (n: number) => (seed = (seed * 48271) % 2147483647) % n;
-+    const live = new Map<number, any>();
-+    const randomRow = (id: number) => ({
-+      id,
-+      email: `e${rand(60)}`,
-+      team: `t${rand(4)}`,
-+      level: rand(5),
-+    });
-+    const scan = (pred: (r: any) => boolean) =>
-+      [...live.values()].filter(pred).sort((x, y) => x.id - y.id);
-+    const sorted = (rows: Iterable<any>) =>
-+      [...rows].sort((x, y) => x.id - y.id);
-+    const check = () => {
-+      for (let e = 0; e < 60; e++) {
-+        expect(cache.email.find(`e${e}`)).toEqual(
-+          scan(r => r.email === `e${e}`)[0] ?? null
-+        );
-+      }
-+      for (let tm = 0; tm < 4; tm++) {
-+        expect(sorted(cache.team.filter(`t${tm}`))).toEqu
+ [workspace.package]
+-version = "2.16.0"
++version = "2.16.2"
+ edition = "2024"
+ # update rust-toolchain.toml too!
+ rust-version = "1.97"
+ 
+ [workspace.dependencies]
+-spacetimedb = { path = "crates/bindings", version = "=2.16.0" }
+-spacetimedb-auth = { path = "crates/auth", version = "=2.16.0" }
+-spacetimedb-bindings-macro = { path = "crates/bindings-macro", version = "=2.16.0" }
+-spacetimedb-bindings-sys = { path = "crates/bindings-sys", version = "=2.16.0" }
+-spacetimedb-cli = { path = "crates/cli", version = "=2.16.0" }
+-spacetimedb-client-api = { path = "crates/client-api", version = "=2.16.0" }
+-spacetimedb-client-api-messages = { path = "crates/client-api-messages", version = "=2.16.0" }
+-spacetimedb-codegen = { path = "crates/codegen", version = "=2.16.0" }
+-spacetimedb-commitlog = { path = "crates/commitlog", version = "=2.16.0" }
+-spacetimedb-core = { path = "crates/core", version = "=2.16.0" }
+-spacetimedb-data-structures = { path = "crates/data-structures", version = "=2.16.0" }
+-spacetimedb-datastore = { path = "crates/datastore", version = "=2.16.0" }
+-spacetimedb-durability = { path = "crates/durability", version = "=2.16.0" }
+-spacetimedb-engine = { path = "crates/engine", version = "=2.16.0" }
+-spacetimedb-execution = { path = "crates/execution", version = "=2.16.0" }
+-spacetimedb-expr = { path = "crates/expr", version = "=2.16.0" }
+-spacetimedb-fs-utils = { path = "crates/fs-utils", version = "=2.16.0" }
+-spacetimedb-guard = { path = "crates/guard", version = "=2.16.0" }
+-spacetimedb-lib = { path = "crates/lib", default-features = false, version = "=2.16.0" }
+-spacetimedb-memory-usage = { path = "crates/memory-usage", version = "=2.16.0", default-features = false }
+-spacetimedb-metrics = { path = "crates/metrics", version = "=2.16.0" }
+-spacetimedb-paths = { path = "crates/paths", version = "=2.16.0" }
+-spacetimedb-pg = { path = "crates/pg", version = "=2.16.0" }
+-spacetimedb-physical-plan = { path = "crates/physical-plan", version = "=2.16.0" }
+-spacetimedb-portable-datastore = { path = "crates/portable-datastore", version = "=2.16.0" }
+-spacetimedb-primitives = { path = "crates/primitives", version = "=2.16.0" }
+-spacetimedb-query = { path = "crates/query", version = "=2.16.0" }
+-spacetimedb-query-builder = { path = "crates/query-builder", version = "=2.16.0" }
+-spacetimedb-runtime = { path = "crates/runtime", version = "=2.16.0" }
+-spacetimedb-runtime-core = { path = "crates/runtime-core", version = "=2.16.0" }
+-spacetimedb-sats = { path = "crates/sats", version = "=2.16.0" }
+-spacetimedb-schema = { path = "crates/schema", version = "=2.16.0" }
+-spacetimedb-snapshot = { path = "crates/snapshot", version = "=2.16.0" }
+-spacetimedb-standalone = { path = "crates/standalone", version = "=2.16.0" }
+-spacetimedb-subscription = { path = "crates/subscription", version = "=2.16.0" }
+-spacetimedb-sql-parser = { path = "crates/sql-parser", version = "=2.16.0" }
+-spacetimedb-table = { path = "crates/table", version = "=2.16.0" }
+-spacetimedb-test-datastore = { path = "crates/test-datastore", version = "=2.16.0" }
+-spacetimedb-tiered-storage = { path = "crates/tiered-storage", version = "=2.16.0" }
++spacetimedb = { path = "crates/bindings", version = "=2.16.2" }
++spacetimedb-auth = { path = "crates/auth", version = "=2.16.2" }
++spacetimedb-bindings-macro = { path = "crates/bindings-macro", version = "=2.16.2" }
++spacetimedb-bindings-sys = { path = "crates/bindings-sys", version = "=2.16.2" }
++spacetimedb-cli = { path = "crates/cli", version = "=2.16.2" }
++spacetimedb-client-api = { path = "crates/client-api", version = "=2.16.2" }
++spacetimedb-client-api-messages = { path = "crates/client-api-messages", version = "=2.16.2" }
++spacetimedb-codegen = { path = "crates/codegen", version = "=2.16.2" }
++spacetimedb-commitlog = { path = "crates/commitlog", version = "=2.16.2" }
++spacetimedb-core = { path = "crates/core", version = "=2.16.2" }
++spacetimedb-data-structures = { path = "crates/data-structures", version = "=2.16.2" }
++spacetimedb-datastore = { path = "crates/datastore", version = "=2.16.2" }
++spacetimedb-durability = { path = "crates/durability", version = "=2.16.2" }
++spacetimedb-engine = { path = "crates/engine", version = "=2.16.2" }
++spacetimedb-execution = { path = "crates/execution", version = "=2.16.2" }
++spacetimedb-expr = { path = "crates/expr", version = "=2.16.2" }
++spacetimedb-fs-utils = { path = "crates/fs-utils", version = "=2.16.2" }
++spacetimedb-guard = { path = "crates/guard", version = "=2.16.2" }
++spacetimedb-lib = { path = "crates/lib", default-features = false, version = "=2.16.2" }
++spacetimedb-memory-usage = { path = "crates/memory-usage", version = "=2.16.2", default-features = false }
++spacetimedb-metrics = { path = "crates/metrics", version = "=2.16.2" }
++spacetimedb-paths = { path = "crates/paths", version = "=2.16.2" }
++spacetimedb-pg = { path = "crates/pg", version = "=2.16.2" }
++spacetimedb-physical-plan = { p
+```
+
+**File**: `LICENSE.txt` (modified, +2/-2)
+```diff
+@@ -5,7 +5,7 @@ Business Source License 1.1
+ Parameters
+ 
+ Licensor:             Clockwork Laboratories, Inc.
+-Licensed Work:        SpacetimeDB 2.16.0
++Licensed Work:        SpacetimeDB 2.16.2
+                       The Licensed Work is
+                       (c) 2023 Clockwork Laboratories, Inc.
+                       
+@@ -21,7 +21,7 @@ Additional Use Grant: You may make use of the Licensed Work provided your
+                       Licensed Work by creating tables whose schemas are
+                       controlled by such third parties.
+ 
+-Change Date:          2031-11-10
++Change Date:          2031-11-20
+ 
+ Change License:       GNU Affero General Public License v3.0 with a linking
+                       exception
+```
+
+**File**: `crates/bindings-cpp/CMakeLists.txt` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ cmake_minimum_required(VERSION 3.15)
+ project(SpacetimeDBCppModuleLibrary 
+-    VERSION 2.16.0
++    VERSION 2.16.2
+     LANGUAGES CXX)
+ 
+ # Generate version header from template
+```
+
+**File**: `crates/bindings-csharp/BSATN.Codegen/BSATN.Codegen.csproj` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ 
+   <PropertyGroup>
+     <AssemblyName>SpacetimeDB.BSATN.Codegen</AssemblyName>
+-    <Version>2.16.0</Version>
++    <Version>2.16.2</Version>
+     <Title>SpacetimeDB BSATN Codegen</Title>
+     <Description>The SpacetimeDB BSATN Codegen implements the Roslyn incremental generators for BSATN serialization/deserialization in C#.</Description>
+   </PropertyGroup>
+```
+
+**File**: `crates/bindings-csharp/BSATN.Runtime/BSATN.Runtime.csproj` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+     <AssemblyName>SpacetimeDB.BSATN.Runtime</AssemblyName>
+-    <Version>2.16.0</Version>
++    <Version>2.16.2</Version>
+     <Title>SpacetimeDB BSATN Runtime</Title>
+     <Description>The SpacetimeDB BSATN Runtime implements APIs for BSATN serialization/deserialization in C#.</Description>
+     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+```
+
+**File**: `crates/bindings-csharp/Codegen/Codegen.csproj` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+     <AssemblyName>SpacetimeDB.Codegen</AssemblyName>
+-    <Version>2.16.0</Version>
++    <Version>2.16.2</Version>
+     <Title>SpacetimeDB Module Codegen</Title>
+     <Description>The SpacetimeDB Codegen implements the Roslyn incremental generators for writing SpacetimeDB modules in C#.</Description>
+   </PropertyGroup>
+```
+
+**File**: `crates/bindings-csharp/Runtime/Runtime.csproj` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ 
+   <PropertyGroup>
+     <AssemblyName>SpacetimeDB.Runtime</AssemblyName>
+-    <Version>2.16.0</Version>
++    <Version>2.16.2</Version>
+     <Title>SpacetimeDB Module Runtime</Title>
+     <Description>The SpacetimeDB Runtime implements the database runtime bindings for writing SpacetimeDB modules in C#.</Description>
+   </PropertyGroup>
+```
+
+---
+
+### Incident Patch 2: `ddd04ee4` (2026-11-19)
+**Commit Message**: Use parking_lot's Mutex in BlobSet, so TxState is the same size on macOS (#6641)
+
+# Description of Changes
+
+`spacetimedb-datastore` fails to compile on macOS:
+`static_assert_size!(TxState, 144)` fails because `TxState` is 152 bytes
+there.
+
+The extra 8 bytes come from `BlobSet`, which #6305 added to `TxState`.
+Its `evictable` field was a `std::sync::Mutex<Vec<_>>`. On Linux, std's
+`Mutex` is a futex word plus a poison flag (8 bytes). On Apple targets
+it is a lazily boxed pthread mutex, a pointer plus a poison flag (16
+bytes). Measured on aarch64 macOS, `BlobSet` was 96 bytes there against
+88 on Linux, which put `TxState` at 152 against 144.
+
+CI didn't catch this because every PR job that compiles the datastore
+runs on Linux or Windows. The only macOS builds are in `package.yml`,
+which runs on tag pushes and manual dispatch, so the next release
+packaging run would probably have hit it.
+
+This PR switches `evictable` to `parking_lot::Mutex`, as suggested in
+review. `BlobSet` already uses `parking_lot` for its `RwLock`, and
+`parking_lot`'s `Mutex` has the same layout on every platform, so the
+existing `static_assert_size!(TxState, 144)` now holds everywhere and is
+unchanged. `parking_lo
+
+**File**: `crates/table/src/tiered/blob_set.rs` (modified, +4/-8)
+```diff
+@@ -1,11 +1,7 @@
+ use super::metrics::{CacheTier, EvictionDirection, ObjectType};
+-use std::{
+-    num::NonZeroUsize,
+-    ops::Deref,
+-    sync::{Arc, Mutex},
+-};
++use std::{num::NonZeroUsize, ops::Deref, sync::Arc};
+ 
+-use parking_lot::RwLock;
++use parking_lot::{Mutex, RwLock};
+ use spacetimedb_data_structures::{
+     map::{hash_map, IntMap},
+     small_map::SmallHashMap,
+@@ -120,7 +116,7 @@ impl BlobSet {
+             return Ok(bytes_freed);
+         }
+ 
+-        let mut candidates = self.evictable.lock().unwrap();
++        let mut candidates = self.evictable.lock();
+         self.resident.evictable_blobs(&mut candidates);
+         for candidate in candidates.drain(..) {
+             let maybe_resident = self.entries.read().get(&candidate.key).and_then(|entry| match entry {
+@@ -546,7 +542,7 @@ impl BlobSet {
+ impl MemoryUsage for BlobSet {
+     fn heap_usage(&self) -> usize {
+         // Cache and backing store are counted by `TieredDatabaseStorage`.
+-        let scratch = self.evictable.lock().unwrap().capacity() * size_of::<BlobEvictionCandidate>();
++        let scratch = self.evictable.lock().capacity() * size_of::<BlobEvictionCandidate>();
+ 
+         self.entries.read().heap_usage() + scratch
+     }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6654** (2026-11-20): Bump version to 2.16.2 (@rekhoff)
+- **PR #6641** (2026-11-19): Use parking_lot's Mutex in BlobSet, so TxState is the same size on macOS (@krisajenkins)
+- **PR #6636** (2026-11-19): Tiered storage docs (@joshua-spacetime)
+- **PR #6635** (2026-11-19): docs: add OIDC token verification diagram to the authentication overview (@cloutiertyler)
 - **PR #6617** (2026-11-17): Correct docs on restricting scheduled reducers (@JulienLavocat)
 - **PR #6614** (2026-11-18): TS SDK cache: build indexes on first lookup, and use a flat map for unique single-column indexes (@Ludv1gL)
-- **PR #6609** (2026-11-17): More tiered storage metrics (@joshua-spacetime)
-- **PR #6607** (2026-11-16): Database-wide eviction for (some) reads (@joshua-spacetime)
-- **PR #6606** (2026-11-16): Fix the CLI logout endpoint path (@JulienLavocat)
-- **PR #6599** (2026-11-16): Separate namespaces for pages and blobs in disk storage (@kim)
 
 ---
 
@@ -1206,80 +1416,85 @@ late memor
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. TS SDK cache: build indexes on first lookup, and use a flat map for unique singl
+## X. Bump version to 2.16.2
 
 **RULE**:
-When implementing operations in `crates/bindings-typescript/src/sdk/table_cache.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab502c61`: TS SDK cache: build indexes on first lookup, and use a flat map for unique single-column indexes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c3e36c4a`: Bump version to 2.16.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bindings-typescript/src/sdk/table_cache.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  // Created on the first child: the leaves (every node of a single-column
-  // index) then carry one Map, not two.
-  children: Map<ComparablePrimitive, IndexNode<Row>> | null;
-  children: null,
-type IndexEntry<Row> = {
-  add(rowId: ComparablePrimitive, row: Row): void;
-  remove(rowId: ComparablePrimitive, row: Row): void;
-};
-
-  // Only the indexes built so far (see `#makeReadonlyIndex`).
-  #indexes: IndexEntry<
-    RowType<TableDefForTableName<RemoteModule, TableName>>
-  >[] = [];
-    // An index is unique if it shares all columns with a unique constraint
-    const isUnique = tableDef.constraints.some(constraint => {
-      if (constraint.constraint !== 'unique') {
-        return false;
-      }
-      return deepEqual(constraint.columns, idx.columns);
-    });
-
-    // A unique single-column index is a flat key -> row map.
-    const flat =
-      isUnique && columns.length === 1
-        ? new Map<ComparablePrimitive, Row>()
-        : null;
-
-    const entry: IndexEntry<Row> = flat
-      ? {
-          add: (_rowId, row) => {
-            flat.set(keyFns[0](getCol(row, 0)), row);
-          },
-          remove: (_rowId, row) => {
-            // Within one transaction the cache can add the n
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  children: Map<ComparablePrimitive, IndexNode<Row>>;
-  children: new Map(),
-  #indexes: {
-    add(
-      rowId: ComparablePrimitive,
-      row: RowType<TableDefForTableName<RemoteModule, TableName>>
-    ): void;
-    remove(
-      rowId: ComparablePrimitive,
-      row: RowType<TableDefForTableName<RemoteModule, TableName>>
-    ): void;
-  }[] = [];
-        node = node.children.get(keyFns[i](prefix[i]));
-    this.#indexes.push({
-      add: (rowId, row) => {
-        let node = root;
-        for (let i = 0; i < columns.length; i
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab502c61` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c3e36c4a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

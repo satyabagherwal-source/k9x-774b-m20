@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T14:28:42.588Z",
+  "timestamp": "2026-11-20T18:41:55.079Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-clockworklabs-spacetimedb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [clockworklabs-spacetimedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T14:28:42.588Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T18:41:55.079Z`  
 > **Learning ID**: `LEARN-EVO-clockworklabs-spacetimedb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `71fdf1c8`  
+> **Source Version**: `c3e36c4a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T14:28:34.680Z  
+> **Timestamp**: 2026-11-20T18:41:43.041Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T14:28:34.675Z  
+> **Harvest Timestamp**: 2026-11-20T18:41:43.034Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25567 stars
+- **Stars / Engagement**: 25569 stars
 
 ---
 
@@ -855,95 +855,545 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `af4b20db` (2026-11-18)
-**Commit Message**: fix(sdks/rust): invoke on_disconnect when mutation is queued after disconnect (#6329)
+### Incident Patch 1: `c3e36c4a` (2026-11-20)
+**Commit Message**: Bump version to 2.16.2 (#6654)
 
-## Description
+# Description of Changes
 
-Fixes an issue where `on_disconnect` callbacks were skipped when
-mutations (such as reducers or procedures) were queued immediately after
-calling `disconnect()`, or when the WebSocket sender channel dropped
-unexpectedly.
+<!-- Please describe your change, mention any related tickets, and so on
+here. -->
 
-### Problem
-1. When `disconnect()` is invoked, `PendingMutation::Disconnect` is
-queued into the message pipeline. Any mutation called prior to the
-mutation queue processing is queued behind `Disconnect`.
-2. When the run loop applies `Disconnect`, it cleans up `send_chan`. The
-subsequent queued mutation then encounters `send_chan == None` and
-returns `Err(Error::Disconnected)`.
-3. The runner loops (`run_async`, `run_threaded`, `run_background_task`)
-caught `Disconnected` via `error_is_normal_disconnect` and returned
-directly without executing `end_connection`. As a result,
-`on_disconnect` callbacks were never triggered, and callers were left
-with silent connection termination.
-4. Additionally, if the WebSocket sender loop dropped its receiving
-channel while `send_chan` was still populated, calling `unbounded_send`
-triggered a panic on `.expect(...)`, poisoning the
+- Bumps version to 2.16.2
 
-**File**: `sdks/rust/src/db_connection.rs` (modified, +11/-6)
+# API and ABI breaking changes
+
+None
+
+<!-- If this is an API or ABI breaking change, please apply the
+corresponding GitHub label. -->
+
+# Rollback safety impact
+
+<!--
+If this PR is safe to roll back after deployment and has no impact on
+the rollback safety of any prior PRs, write `n/a` below.
+
+Otherwise, list every prerequisite PR that must be included in a release
+before this PR can merge. This PR must not be deployed until each
+prerequisite has been deployed and sufficiently observed or tested in
+the live deployment that we are confident it will not be rolled back.
+Supported forms include #123, SpacetimeDB#123,
+clockworklabs/SpacetimeDB#123, and GitHub PR URLs.
+
+Consider whether this PR:
+- newly writes to a previously introduced but unused ControlDB table or
+reducer, system table, or on-disk data format; or
+- clears, deletes, incompatibly changes, or renders unsupported a
+previously available ControlDB table or reducer, system table, or
+on-disk data format.
+-->
+
+n/a
+
+# Expected complexity level and risk
+
+- 1 - this
+
+**File**: `Cargo.lock` (modified, +59/-59)
 ```diff
-@@ -362,8 +362,13 @@ impl<M: SpacetimeModule> DbContextImpl<M> {
+@@ -828,7 +828,7 @@ dependencies = [
  
-     /// Apply all queued [`PendingMutation`]s.
-     fn apply_pending_mutations(&self) -> crate::Result<()> {
--        while let Ok(Some(pending_mutation)) = get_lock_sync(&self.pending_mutations_recv).try_next() {
--            self.apply_mutation(pending_mutation)?;
-+        while let Ok(Some(mutation)) = get_lock_sync(&self.pending_mutations_recv).try_next() {
-+            match self.apply_mutation(mutation) {
-+                Err(crate::Error::Disconnected) => {
-+                    return Err(self.end_connection(None));
-+                }
-+                result => result?,
-+            }
+ [[package]]
+ name = "case-conversion-client"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "env_logger 0.10.2",
+@@ -1471,7 +1471,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "connect_disconnect_client"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -2542,7 +2542,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "event-table-client"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -6114,7 +6114,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "procedural-view-pk-client"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -6128,7 +6128,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "procedure-client"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -6145,7 +6145,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "procedure-concurrency-client"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -7482,7 +7482,7 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
+ 
+ [[package]]
+ name = "sdk-csharp-test-harness"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "serial_test",
+  "spacetimedb-testing",
+@@ -7549,7 +7549,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "sdk-unreal-test-harness"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "serial_test",
+  "spacetimedb-testing",
+@@ -8056,7 +8056,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "bytemuck",
+@@ -8079,7 +8079,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-auth"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "jsonwebtoken",
+@@ -8092,7 +8092,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-bench"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "ahash 0.8.12",
+  "anyhow",
+@@ -8135,7 +8135,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-bindings-macro"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "heck 0.4.1",
+  "humantime",
+@@ -8146,14 +8146,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-bindings-sys"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "spacetimedb-primitives",
+ ]
+ 
+ [[package]]
+ name = "spacetimedb-cli"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "base64 0.21.7",
+@@ -8224,7 +8224,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-client-api"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "async-stream",
+@@ -8274,7 +8274,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-client-api-messages"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "bytes",
+  "bytestring",
+@@ -8297,7 +8297,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-codegen"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "convert_case 0.6.0",
+@@ -8316,7 +8316,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-commitlog"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "async-stream",
+  "bitflags 2.10.0",
+@@ -8350,7 +8350,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-core"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -8450,7 +8450,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-data-structures"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "ahash 0.8.12",
+  "crossbeam-queue",
+@@ -8466,7 +8466,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-datastore"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "bytes",
+@@ -8504,7 +8504,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-dst-lib"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "spacetimedb-commitlog",
+@@ -8522,7 +8522,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-durability"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "async-channel",
+@@ -8542,7 +8542,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-engine"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -8584,7 +8584,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-execution"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "itertools 0.12.1",
+@@ -8598,7 +8598,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-expr"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "bigdecimal",
+@@ -8616,7 +8616,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-fs-utils"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "anyhow",
+  "chrono",
+@@ -8632,15 +8632,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-guard"
+-version = "2.16.0"
++version = "2.16.2"
+ dependencies = [
+  "reqwest",
+  "tempfile",
+ ]
+ 
+ [[pa
+```
+
+**File**: `Cargo.toml` (modified, +40/-40)
+```diff
+@@ -156,51 +156,51 @@ inherits = "release"
+ debug = true
+ 
+ [workspace.package]
+-version = "2.16.0"
++version = "2.16.2"
+ edition = "2024"
+ # update rust-toolchain.toml too!
+ rust-version = "1.97"
+ 
+ [workspace.dependencies]
+-spacetimedb = { path = "crates/bindings", version = "=2.16.0" }
+-spacetimedb-auth = { path = "crates/auth", version = "=2.16.0" }
+-spacetimedb-bindings-macro = { path = "crates/bindings-macro", version = "=2.16.0" }
+-spacetimedb-bindings-sys = { path = "crates/bindings-sys", version = "=2.16.0" }
+-spacetimedb-cli = { path = "crates/cli", version = "=2.16.0" }
+-spacetimedb-client-api = { path = "crates/client-api", version = "=2.16.0" }
+-spacetimedb-client-api-messages = { path = "crates/client-api-messages", version = "=2.16.0" }
+-spacetimedb-codegen = { path = "crates/codegen", version = "=2.16.0" }
+-spacetimedb-commitlog = { path = "crates/commitlog", version = "=2.16.0" }
+-spacetimedb-core = { path = "crates/core", version = "=2.16.0" }
+-spacetimedb-data-structures = { path = "crates/data-structures", version = "=2.16.0" }
+-spacetimedb-datastore = { path = "crates/datastore", version = "=2.16.0" }
+-spacetimedb-durability = { path = "crates/durability", version = "=2.16.0" }
+-spacetimedb-engine = { path = "crates/engine", version = "=2.16.0" }
+-spacetimedb-execution = { path = "crates/execution", version = "=2.16.0" }
+-spacetimedb-expr = { path = "crates/expr", version = "=2.16.0" }
+-spacetimedb-fs-utils = { path = "crates/fs-utils", version = "=2.16.0" }
+-spacetimedb-guard = { path = "crates/guard", version = "=2.16.0" }
+-spacetimedb-lib = { path = "crates/lib", default-features = false, version = "=2.16.0" }
+-spacetimedb-memory-usage = { path = "crates/memory-usage", version = "=2.16.0", default-features = false }
+-spacetimedb-metrics = { path = "crates/metrics", version = "=2.16.0" }
+-spacetimedb-paths = { path = "crates/paths", version = "=2.16.0" }
+-spacetimedb-pg = { path = "crates/pg", version = "=2.16.0" }
+-spacetimedb-physical-plan = { path = "crates/physical-plan", version = "=2.16.0" }
+-spacetimedb-portable-datastore = { path = "crates/portable-datastore", version = "=2.16.0" }
+-spacetimedb-primitives = { path = "crates/primitives", version = "=2.16.0" }
+-spacetimedb-query = { path = "crates/query", version = "=2.16.0" }
+-spacetimedb-query-builder = { path = "crates/query-builder", version = "=2.16.0" }
+-spacetimedb-runtime = { path = "crates/runtime", version = "=2.16.0" }
+-spacetimedb-runtime-core = { path = "crates/runtime-core", version = "=2.16.0" }
+-spacetimedb-sats = { path = "crates/sats", version = "=2.16.0" }
+-spacetimedb-schema = { path = "crates/schema", version = "=2.16.0" }
+-spacetimedb-snapshot = { path = "crates/snapshot", version = "=2.16.0" }
+-spacetimedb-standalone = { path = "crates/standalone", version = "=2.16.0" }
+-spacetimedb-subscription = { path = "crates/subscription", version = "=2.16.0" }
+-spacetimedb-sql-parser = { path = "crates/sql-parser", version = "=2.16.0" }
+-spacetimedb-table = { path = "crates/table", version = "=2.16.0" }
+-spacetimedb-test-datastore = { path = "crates/test-datastore", version = "=2.16.0" }
+-spacetimedb-tiered-storage = { path = "crates/tiered-storage", version = "=2.16.0" }
++spacetimedb = { path = "crates/bindings", version = "=2.16.2" }
++spacetimedb-auth = { path = "crates/auth", version = "=2.16.2" }
++spacetimedb-bindings-macro = { path = "crates/bindings-macro", version = "=2.16.2" }
++spacetimedb-bindings-sys = { path = "crates/bindings-sys", version = "=2.16.2" }
++spacetimedb-cli = { path = "crates/cli", version = "=2.16.2" }
++spacetimedb-client-api = { path = "crates/client-api", version = "=2.16.2" }
++spacetimedb-client-api-messages = { path = "crates/client-api-messages", version = "=2.16.2" }
++spacetimedb-codegen = { path = "crates/codegen", version = "=2.16.2" }
++spacetimedb-commitlog = { path = "crates/commitlog", version = "=2.16.2" }
++spacetimedb-core = { path = "crates/core", version = "=2.16.2" }
++spacetimedb-data-structures = { path = "crates/data-structures", version = "=2.16.2" }
++spacetimedb-datastore = { path = "crates/datastore", version = "=2.16.2" }
++spacetimedb-durability = { path = "crates/durability", version = "=2.16.2" }
++spacetimedb-engine = { path = "crates/engine", version = "=2.16.2" }
++spacetimedb-execution = { path = "crates/execution", version = "=2.16.2" }
++spacetimedb-expr = { path = "crates/expr", version = "=2.16.2" }
++spacetimedb-fs-utils = { path = "crates/fs-utils", version = "=2.16.2" }
++spacetimedb-guard = { path = "crates/guard", version = "=2.16.2" }
++spacetimedb-lib = { path = "crates/lib", default-features = false, version = "=2.16.2" }
++spacetimedb-memory-usage = { path = "crates/memory-usage", version = "=2.16.2", default-features = false }
++spacetimedb-metrics = { path = "crates/metrics", version = "=2.16.2" }
++spacetimedb-paths = { path = "crates/paths", version = "=2.16.2" }
++spacetimedb-pg = { path = "crates/pg", version = "=2.16.2" }
++spacetimedb-physical-plan = { p
+```
+
+**File**: `LICENSE.txt` (modified, +2/-2)
+```diff
+@@ -5,7 +5,7 @@ Business Source License 1.1
+ Parameters
+ 
+ Licensor:             Clockwork Laboratories, Inc.
+-Licensed Work:        SpacetimeDB 2.16.0
++Licensed Work:        SpacetimeDB 2.16.2
+                       The Licensed Work is
+                       (c) 2023 Clockwork Laboratories, Inc.
+                       
+@@ -21,7 +21,7 @@ Additional Use Grant: You may make use of the Licensed Work provided your
+                       Licensed Work by creating tables whose schemas are
+                       controlled by such third parties.
+ 
+-Change Date:          2031-11-10
++Change Date:          2031-11-20
+ 
+ Change License:       GNU Affero General Public License v3.0 with a linking
+                       exception
+```
+
+**File**: `crates/bindings-cpp/CMakeLists.txt` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ cmake_minimum_required(VERSION 3.15)
+ project(SpacetimeDBCppModuleLibrary 
+-    VERSION 2.16.0
++    VERSION 2.16.2
+     LANGUAGES CXX)
+ 
+ # Generate version header from template
+```
+
+**File**: `crates/bindings-csharp/BSATN.Codegen/BSATN.Codegen.csproj` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ 
+   <PropertyGroup>
+     <AssemblyName>SpacetimeDB.BSATN.Codegen</AssemblyName>
+-    <Version>2.16.0</Version>
++    <Version>2.16.2</Version>
+     <Title>SpacetimeDB BSATN Codegen</Title>
+     <Description>The SpacetimeDB BSATN Codegen implements the Roslyn incremental generators for BSATN serialization/deserialization in C#.</Description>
+   </PropertyGroup>
+```
+
+**File**: `crates/bindings-csharp/BSATN.Runtime/BSATN.Runtime.csproj` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+     <AssemblyName>SpacetimeDB.BSATN.Runtime</AssemblyName>
+-    <Version>2.16.0</Version>
++    <Version>2.16.2</Version>
+     <Title>SpacetimeDB BSATN Runtime</Title>
+     <Description>The SpacetimeDB BSATN Runtime implements APIs for BSATN serialization/deserialization in C#.</Description>
+     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+```
+
+**File**: `crates/bindings-csharp/Codegen/Codegen.csproj` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+     <AssemblyName>SpacetimeDB.Codegen</AssemblyName>
+-    <Version>2.16.0</Version>
++    <Version>2.16.2</Version>
+     <Title>SpacetimeDB Module Codegen</Title>
+     <Description>The SpacetimeDB Codegen implements the Roslyn incremental generators for writing SpacetimeDB modules in C#.</Description>
+   </PropertyGroup>
+```
+
+**File**: `crates/bindings-csharp/Runtime/Runtime.csproj` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ 
+   <PropertyGroup>
+     <AssemblyName>SpacetimeDB.Runtime</AssemblyName>
+-    <Version>2.16.0</Version>
++    <Version>2.16.2</Version>
+     <Title>SpacetimeDB Module Runtime</Title>
+     <Description>The SpacetimeDB Runtime implements the database runtime bindings for writing SpacetimeDB modules in C#.</Description>
+   </PropertyGroup>
+```
+
+---
+
+### Incident Patch 2: `ddd04ee4` (2026-11-19)
+**Commit Message**: Use parking_lot's Mutex in BlobSet, so TxState is the same size on macOS (#6641)
+
+# Description of Changes
+
+`spacetimedb-datastore` fails to compile on macOS:
+`static_assert_size!(TxState, 144)` fails because `TxState` is 152 bytes
+there.
+
+The extra 8 bytes come from `BlobSet`, which #6305 added to `TxState`.
+Its `evictable` field was a `std::sync::Mutex<Vec<_>>`. On Linux, std's
+`Mutex` is a futex word plus a poison flag (8 bytes). On Apple targets
+it is a lazily boxed pthread mutex, a pointer plus a poison flag (16
+bytes). Measured on aarch64 macOS, `BlobSet` was 96 bytes there against
+88 on Linux, which put `TxState` at 152 against 144.
+
+CI didn't catch this because every PR job that compiles the datastore
+runs on Linux or Windows. The only macOS builds are in `package.yml`,
+which runs on tag pushes and manual dispatch, so the next release
+packaging run would probably have hit it.
+
+This PR switches `evictable` to `parking_lot::Mutex`, as suggested in
+review. `BlobSet` already uses `parking_lot` for its `RwLock`, and
+`parking_lot`'s `Mutex` has the same layout on every platform, so the
+existing `static_assert_size!(TxState, 144)` now holds everywhere and is
+unchanged. `parking_lo
+
+**File**: `crates/table/src/tiered/blob_set.rs` (modified, +4/-8)
+```diff
+@@ -1,11 +1,7 @@
+ use super::metrics::{CacheTier, EvictionDirection, ObjectType};
+-use std::{
+-    num::NonZeroUsize,
+-    ops::Deref,
+-    sync::{Arc, Mutex},
+-};
++use std::{num::NonZeroUsize, ops::Deref, sync::Arc};
+ 
+-use parking_lot::RwLock;
++use parking_lot::{Mutex, RwLock};
+ use spacetimedb_data_structures::{
+     map::{hash_map, IntMap},
+     small_map::SmallHashMap,
+@@ -120,7 +116,7 @@ impl BlobSet {
+             return Ok(bytes_freed);
          }
  
-         Ok(())
-@@ -386,7 +391,7 @@ impl<M: SpacetimeModule> DbContextImpl<M> {
-                         .as_mut()
-                         .ok_or(crate::Error::Disconnected)?
-                         .unbounded_send(ws::v2::ClientMessage::Subscribe(msg))
--                        .expect("Unable to send subscribe message: WS sender loop has dropped its recv channel");
-+                        .map_err(|_| crate::Error::Disconnected)?;
-                 }
-                 // else, the handle was already cancelled.
-             }
-@@ -410,7 +415,7 @@ impl<M: SpacetimeModule> DbContextImpl<M> {
-                             .as_mut()
-                             .ok_or(crate::Error::Disconnected)?
-                             .unbounded_send(ws::v2::ClientMessage::Unsubscribe(m))
--                            .expect("Unable to send unsubscribe message: WS sender loop has dropped its recv channel");
-+                            .map_err(|_| crate::Error::Disconnected)?;
-                     }
-                 }
-             }
-@@ -443,7 +448,7 @@ impl<M: SpacetimeModule> DbContextImpl<M> {
-                     .as_mut()
-                     .ok_or(crate::Error::Disconnected)?
-                     .unbounded_send(msg)
--                    .expect("Unable to send reducer call message: WS sender loop has dropped its recv channel");
-+                    .map_err(|_| crate::Error::Disconnected)?;
-             }
+-        let mut candidates = self.evictable.lock().unwrap();
++        let mut candidates = self.evictable.lock();
+         self.resident.evictable_blobs(&mut candidates);
+         for candidate in candidates.drain(..) {
+             let maybe_resident = self.entries.read().get(&candidate.key).and_then(|entry| match entry {
+@@ -546,7 +542,7 @@ impl BlobSet {
+ impl MemoryUsage for BlobSet {
+     fn heap_usage(&self) -> usize {
+         // Cache and backing store are counted by `TieredDatabaseStorage`.
+-        let scratch = self.evictable.lock().unwrap().capacity() * size_of::<BlobEvictionCandidate>();
++        let scratch = self.evictable.lock().capacity() * size_of::<BlobEvictionCandidate>();
  
-             // Invoke a procedure: stash its callback, then send the `CallProcedure` WS message.
-@@ -472,7 +477,7 @@ impl<M: SpacetimeModule> DbContextImpl<M> {
-                     .as_mut()
-                     .ok_or(crate::Error::Disconnected)?
-                     .unbounded_send(msg)
--                    .expect("Unable to send procedure call message: WS sender loop has dropped its recv channel");
-+                    .map_err(|_| crate::Error::Disconnected)?;
-             }
- 
-             // Disconnect: close the connection.
+         self.entries.read().heap_usage() + scratch
+     }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6654** (2026-11-20): Bump version to 2.16.2 (@rekhoff)
+- **PR #6641** (2026-11-19): Use parking_lot's Mutex in BlobSet, so TxState is the same size on macOS (@krisajenkins)
 - **PR #6636** (2026-11-19): Tiered storage docs (@joshua-spacetime)
 - **PR #6635** (2026-11-19): docs: add OIDC token verification diagram to the authentication overview (@cloutiertyler)
 - **PR #6617** (2026-11-17): Correct docs on restricting scheduled reducers (@JulienLavocat)
 - **PR #6614** (2026-11-18): TS SDK cache: build indexes on first lookup, and use a flat map for unique single-column indexes (@Ludv1gL)
-- **PR #6609** (2026-11-17): More tiered storage metrics (@joshua-spacetime)
-- **PR #6607** (2026-11-16): Database-wide eviction for (some) reads (@joshua-spacetime)
 
 ---
 
@@ -963,46 +1413,85 @@ triggered a panic on `.expect(...)`, poisoning the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdks/rust): invoke on_disconnect when mutation is queued after disconnect
+## X. Bump version to 2.16.2
 
 **RULE**:
-When implementing operations in `sdks/rust/src/db_connection.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `af4b20db`: sdks/rust): invoke on_disconnect when mutation is queued after disconnect. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c3e36c4a`: Bump version to 2.16.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdks/rust/src/db_connection.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        while let Ok(Some(mutation)) = get_lock_sync(&self.pending_mutations_recv).try_next() {
-            match self.apply_mutation(mutation) {
-                Err(crate::Error::Disconnected) => {
-                    return Err(self.end_connection(None));
-                }
-                result => result?,
-            }
-                        .map_err(|_| crate::Error::Disconnected)?;
-                            .map_err(|_| crate::Error::Disconnected)?;
-                    .map_err(|_| crate::Error::Disconnected)?;
-                    .map_err(|_| crate::Error::Disconnected)?;
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
+version = "2.16.2"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        while let Ok(Some(pending_mutation)) = get_lock_sync(&self.pending_mutations_recv).try_next() {
-            self.apply_mutation(pending_mutation)?;
-                        .expect("Unable to send subscribe message: WS sender loop has dropped its recv channel");
-                            .expect("Unable to send unsubscribe message: WS sender loop has dropped its recv channel");
-                    .expect("Unable to send reducer call message: WS sender loop has dropped its recv channel");
-                    .expect("Unable to send procedure call message: WS sender loop has dropped its recv channel");
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
+version = "2.16.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `af4b20db` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c3e36c4a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

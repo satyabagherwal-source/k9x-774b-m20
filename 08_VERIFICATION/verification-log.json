@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-4Y0A",
-    "timestamp": "2026-11-18T16:00:07.210Z",
-    "repository": "briaai/RMBG-3.0",
-    "learningId": "learn-huggingface-briaai-rmbg-3-0",
-    "contentHash": "e77b39b820a82a7ace5cc1769a28eb54b5238ccead3d077e901088995200009d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-N4IT",
-    "timestamp": "2026-11-18T16:14:15.461Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "af3ea9ca00f8ec42d0142f86959ff4353322d8ce65541aa11ae0980b7d2a4b31",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-XEBU",
-    "timestamp": "2026-11-18T16:22:14.730Z",
-    "repository": "unsloth/Qwen3.8-27B-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-    "contentHash": "afb0b908294a98014d43abc67ec99052e762bb102e3125986b2c9f27f9ef1baf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-XG9A",
     "timestamp": "2026-11-18T16:22:17.230Z",
     "repository": "o2sh/onefetch",
@@ -7490,6 +7445,51 @@
     "repository": "syntax-tree/hast-util-to-html",
     "learningId": "learn-github-syntax-tree-hast-util-to-html",
     "contentHash": "cf5b05bba607881e9403a5e5c135b21fbad26514f20977ff83808af280c1c844",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-SEYZ",
+    "timestamp": "2026-11-20T18:41:40.811Z",
+    "repository": "chaos-mesh/chaos-mesh",
+    "learningId": "learn-github-chaos-mesh-chaos-mesh",
+    "contentHash": "75523bc2b84d33a288893d7371710f27d08d0c6f1dc4e3d4eaeea67ebe2a2ae2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-SG5P",
+    "timestamp": "2026-11-20T18:41:42.349Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "2f852be4b5f8f056a321be7c7ccf8ca1fd55f2d3478ca1044370c17cd8e9da8f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-SHPP",
+    "timestamp": "2026-11-20T18:41:44.365Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "363075429255bbcc149c9650485bfb333ae8c0d626cc029414863da7ac7e0621",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

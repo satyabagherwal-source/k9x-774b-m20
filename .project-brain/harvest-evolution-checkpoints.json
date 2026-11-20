@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T18:27:32.948Z",
+  "last_updated": "2026-11-20T18:41:55.803Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T18:27:32.357Z",
@@ -73,7 +73,7 @@
       "staged_for_review": 1
     },
     "zama-ai-tfhe-rs-learnings.md": {
-      "processed_at": "2026-11-19T22:28:15.052Z",
+      "processed_at": "2026-11-20T18:41:53.948Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -538,9 +538,9 @@
       "staged_for_review": 1
     },
     "chaos-mesh-chaos-mesh-learnings.md": {
-      "processed_at": "2026-11-18T13:47:46.975Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-20T18:41:47.915Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "nolabs-ai-nono-learnings.md": {
       "processed_at": "2026-11-20T15:35:26.024Z",
@@ -1183,7 +1183,7 @@
       "staged_for_review": 2
     },
     "clockworklabs-spacetimedb-learnings.md": {
-      "processed_at": "2026-11-19T14:28:42.436Z",
+      "processed_at": "2026-11-20T18:41:54.912Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3613,7 +3613,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2583,
+  "total_dossiers_evaluated": 2586,
   "total_canonical_promoted": 431,
-  "total_staged_for_review": 1963
+  "total_staged_for_review": 1966
 }

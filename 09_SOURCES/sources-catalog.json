@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "ad8ef227",
+    "sourceVersion": "81e7bcad",
     "license": "Apache-2.0",
-    "contentHash": "d3b319d313ad367af6953e360049aa312f5f57199b70c6809150fbb66c9a86a7",
-    "lastHarvestedAt": "2026-11-19T16:07:22.854Z",
+    "contentHash": "75523bc2b84d33a288893d7371710f27d08d0c6f1dc4e3d4eaeea67ebe2a2ae2",
+    "lastHarvestedAt": "2026-11-20T18:41:40.816Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "f8710f06",
+    "sourceVersion": "dcfe7e6d",
     "license": "NOASSERTION",
-    "contentHash": "ae95ee36162a3cdb2963c010dc8ff780afc78f3e2039d5a2d7c0874e3375e954",
-    "lastHarvestedAt": "2026-11-20T11:30:51.301Z",
+    "contentHash": "2f852be4b5f8f056a321be7c7ccf8ca1fd55f2d3478ca1044370c17cd8e9da8f",
+    "lastHarvestedAt": "2026-11-20T18:41:42.353Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "71fdf1c8",
+    "sourceVersion": "c3e36c4a",
     "license": "NOASSERTION",
-    "contentHash": "a9b49bb71bc88a016146086e5324855f7dab9c9621b467f03f4909a299cfb0b4",
-    "lastHarvestedAt": "2026-11-19T14:28:35.709Z",
+    "contentHash": "363075429255bbcc149c9650485bfb333ae8c0d626cc029414863da7ac7e0621",
+    "lastHarvestedAt": "2026-11-20T18:41:44.370Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {

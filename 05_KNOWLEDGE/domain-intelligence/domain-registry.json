@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T18:27:32.753Z",
-  "total_records": 2160,
+  "last_updated": "2026-11-20T18:41:55.418Z",
+  "total_records": 2161,
   "domains": {
     "A": {
       "total": 17,
@@ -2072,7 +2072,7 @@
       ]
     },
     "K": {
-      "total": 120,
+      "total": 121,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2193,7 +2193,8 @@
         "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-learnings-core-invariants",
         "DOM-K-28C46858",
         "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-provablehq-snarkos-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-provablehq-snarkos-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariant"
       ]
     },
     "L": {
@@ -10009,8 +10010,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "c4ba3afcd48da2aa012a15cc77880f409ed51b6288c2f5e52457e83297038b7a",
-      "created_at": "2026-11-20T11:30:51.656Z"
+      "content_hash": "f6324bf5ba69365686a5640bf0ee3ed9310253ac498ae73f0c2d4e0629ec7b7d",
+      "created_at": "2026-11-20T18:41:42.813Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -27156,8 +27157,8 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
       "repository": "zama-ai-tfhe-rs-learnings",
-      "content_hash": "155e2e0cbe60bec1002dbae43646656a21d68e40118f3d4c0ef53eb4b1817c73",
-      "created_at": "2026-11-19T22:28:15.435Z"
+      "content_hash": "c852cd739c4ab9c4245da3953eb67fffc3a813f32be24c87d1e409ac66802555",
+      "created_at": "2026-11-20T18:41:54.526Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",
@@ -28434,8 +28435,8 @@
       "title": "Technical Construction Intelligence: clockworklabs/SpacetimeDB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clockworklabs-spacetimedb-technical-construction-intelligence-clockworklabs-spac.md",
       "repository": "clockworklabs/SpacetimeDB",
-      "content_hash": "0f4e3b7875cc4a09d85e788bd507d7048de2b60fd1e255d0258d58d7b95ffb5d",
-      "created_at": "2026-11-18T11:45:16.313Z"
+      "content_hash": "381447af043abc5e2ef73019bae74c53b47f1cf0d4caebe92fa1a34b8fe90e23",
+      "created_at": "2026-11-20T18:41:44.823Z"
     },
     "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv": {
       "record_id": "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv",
@@ -28443,8 +28444,8 @@
       "title": "Technical Construction Intelligence: clockworklabs-spacetimedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clockworklabs-spacetimedb-learnings-technical-construction-intelligence-clockwor.md",
       "repository": "clockworklabs-spacetimedb-learnings",
-      "content_hash": "9ccbe59a8a08d0dce921b87b30e8bb5aa7627c6976ef3d0fb80ad85440fb5fd2",
-      "created_at": "2026-11-18T11:45:22.100Z"
+      "content_hash": "9968c3667295723ef55bae5eaaee9e2a41640582882e573b1a474cea90947724",
+      "created_at": "2026-11-20T18:41:55.418Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ornith-ai-ornith-1-5-122b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ornith-ai-ornith-1-5-122b-core-invariants",
@@ -33572,8 +33573,8 @@
       "title": "Quality & Verification Intelligence: chaos-mesh/chaos-mesh Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-chaos-mesh-chaos-mesh-quality-verification-intelligence-chaos-mesh-chaos-mesh-co.md",
       "repository": "chaos-mesh/chaos-mesh",
-      "content_hash": "f6d1625da3452573f26f9c7f7902191eb55151d73588f3e2bfb9df51728e3d57",
-      "created_at": "2026-11-19T16:07:23.226Z"
+      "content_hash": "5fb7db863c813dd4c726ab5db2af85ad5307f3b75deddbc5f301307bd4f1c1a0",
+      "created_at": "2026-11-20T18:41:41.303Z"
     },
     "DOM-D-66709892": {
       "record_id": "DOM-D-66709892",
@@ -36402,6 +36403,15 @@
       "repository": "syntax-tree-hast-util-to-html-learnings",
       "content_hash": "7fca1f9193bd0bd3729ddf3133dd0e13b44101ea9ee89105d5cb507260e46f0c",
       "created_at": "2026-11-20T18:27:30.803Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariant": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariant",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: chaos-mesh-chaos-mesh-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-chaos-mesh-chaos-mesh-learnings-quality-verification-intelligence-chaos-mesh-cha.md",
+      "repository": "chaos-mesh-chaos-mesh-learnings",
+      "content_hash": "ebc88350786816b329ffd7559771395918e9eb556786b3f1f98093a380d95f06",
+      "created_at": "2026-11-20T18:41:53.565Z"
     }
   }
 }
