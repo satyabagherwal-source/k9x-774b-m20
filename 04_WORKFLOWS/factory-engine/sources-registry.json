@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T22:31:00.425Z",
-    "lastVerified": "2026-11-20T22:31:00.425Z",
+    "lastChecked": "2026-11-20T23:05:35.333Z",
+    "lastVerified": "2026-11-20T23:05:35.333Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T22:57:28.692Z",
-    "lastVerified": "2026-11-20T22:57:28.692Z",
+    "lastChecked": "2026-11-20T23:05:38.929Z",
+    "lastVerified": "2026-11-20T23:05:38.929Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1205,14 +1205,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T17:29:15.628Z",
-    "lastVerified": "2026-11-20T17:29:15.628Z",
+    "lastChecked": "2026-11-20T23:05:34.652Z",
+    "lastVerified": "2026-11-20T23:05:34.652Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "2bf92818d7692107f1a8d2b9431defae49b4d31397c91e41e5771471ff94341c",
+    "contentHash": "0cda0857631848867ec9438ded6730d1d7c75ce53c0aa8ac2f6b7fc010099c0b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2705,9 +2705,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-19T19:31:10.270Z",
+    "lastChecked": "2026-11-20T23:05:32.829Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-19T19:31:10.270Z"
+    "lastVerified": "2026-11-20T23:05:32.829Z"
   },
   "1jehuang-jcode": {
     "name": "1jehuang/jcode",
@@ -3467,14 +3467,14 @@
     "officialUrl": "https://github.com/PeerDB-io/peerdb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T21:43:46.402Z",
-    "lastVerified": "2026-11-19T21:43:46.402Z",
+    "lastChecked": "2026-11-20T23:05:31.539Z",
+    "lastVerified": "2026-11-20T23:05:31.539Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "111734d56a33aa5c8f85b70ad301437080ee5f308a800fe37057dbe11ec523f2",
+    "contentHash": "969daa4f4c7371a00518595a1f1cb7a11c8a9e0ec05e83fa79d7e07ceb7a1df0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7276,9 +7276,9 @@
   "crate-ci-typos": {
     "name": "typos",
     "officialUrl": "https://github.com/crate-ci/typos",
-    "lastChecked": "2026-11-19T08:27:29.264Z",
+    "lastChecked": "2026-11-20T23:05:20.226Z",
     "revisionIdentifier": "e7647d64",
-    "lastVerified": "2026-11-19T08:27:29.264Z"
+    "lastVerified": "2026-11-20T23:05:20.226Z"
   },
   "hf-cactus-compute-whistle": {
     "name": "Cactus-Compute/whistle",
@@ -11003,5 +11003,29 @@
     "lastChecked": "2026-11-20T22:57:14.190Z",
     "revisionIdentifier": "15d258ec",
     "lastVerified": "2026-11-20T22:57:14.190Z"
+  },
+  "google-closure-compiler": {
+    "name": "google/closure-compiler",
+    "officialUrl": "https://github.com/google/closure-compiler",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-20T23:05:26.421Z",
+    "lastVerified": "2026-11-20T23:05:26.421Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-google-closure-compiler",
+    "contentHash": "69d765a0124380c0643c8cd809d55c10fab545a9c7ffcd333b7e1cb8c3b71ac5",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dodo-reach-hermes-desktop": {
+    "name": "hermes-desktop",
+    "officialUrl": "https://github.com/dodo-reach/hermes-desktop",
+    "lastChecked": "2026-11-20T23:05:25.227Z",
+    "revisionIdentifier": "3b772afa",
+    "lastVerified": "2026-11-20T23:05:25.227Z"
   }
 }

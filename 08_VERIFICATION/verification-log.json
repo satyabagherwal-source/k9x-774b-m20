@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-5A93",
-    "timestamp": "2026-11-18T19:44:20.007Z",
-    "repository": "black-forest-labs/FLUX.1-schnell",
-    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
-    "contentHash": "5e9dd4c0025948ef72fed27d0ba78f815421f8cf59a3c6356ce061ce23bbb77c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-F298",
-    "timestamp": "2026-11-18T19:51:56.204Z",
-    "repository": "MiniMaxAI/MiniMax-H3",
-    "learningId": "learn-huggingface-minimaxai-minimax-h3",
-    "contentHash": "af129810d409b5afcbd8653331daae0de6c15160da73202007ee5c669bb7ddc7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-F3YL",
-    "timestamp": "2026-11-18T19:51:58.413Z",
-    "repository": "pimalaya/himalaya",
-    "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "92b72d53a46a740e63f9d25bb14694e350495026489d335aca639178d5d90626",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-FELJ",
     "timestamp": "2026-11-18T19:52:12.199Z",
     "repository": "trailbaseio/trailbase",
@@ -7490,6 +7445,51 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "a04e4817c69e7eab9c577802b0e4c36f2581df4f3e684a9167eb41403d4f7995",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-7MZE",
+    "timestamp": "2026-11-20T23:05:27.578Z",
+    "repository": "google/closure-compiler",
+    "learningId": "learn-github-google-closure-compiler",
+    "contentHash": "69d765a0124380c0643c8cd809d55c10fab545a9c7ffcd333b7e1cb8c3b71ac5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-7QU2",
+    "timestamp": "2026-11-20T23:05:32.570Z",
+    "repository": "PeerDB-io/peerdb",
+    "learningId": "learn-github-peerdb-io-peerdb",
+    "contentHash": "969daa4f4c7371a00518595a1f1cb7a11c8a9e0ec05e83fa79d7e07ceb7a1df0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-7T9Z",
+    "timestamp": "2026-11-20T23:05:35.735Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "0cda0857631848867ec9438ded6730d1d7c75ce53c0aa8ac2f6b7fc010099c0b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

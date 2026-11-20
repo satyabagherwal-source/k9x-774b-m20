@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T22:57:30.668Z",
+  "last_updated": "2026-11-20T23:05:41.135Z",
   "total_records": 2188,
   "domains": {
     "A": {
@@ -9554,8 +9554,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "9907cd1e97f721034133e3513f6f5691fbf270c2f33d406e94b2a9e1901d1d89",
-      "created_at": "2026-11-20T17:29:17.007Z"
+      "content_hash": "ab0e6c178691b8d0473aa6628d83d471dbfcee0ff7dc90697d1d26af67b637cf",
+      "created_at": "2026-11-20T23:05:36.109Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -9632,8 +9632,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "4ea0b2b80b330c3c6b627c10db98414a1a7c725c9fbd219064c50a2ae3dc407b",
-      "created_at": "2026-11-20T17:29:24.459Z"
+      "content_hash": "374ade08b0361b8022e3de2e05c178d07d334394dafec29046e7445986b5e7f5",
+      "created_at": "2026-11-20T23:05:41.135Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -25681,8 +25681,8 @@
       "title": "Technical Construction Intelligence: google/closure-compiler Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-closure-compiler-technical-construction-intelligence-google-closure-compi.md",
       "repository": "google/closure-compiler",
-      "content_hash": "47e24e618f8b81564d5025b7ae2bd33a217bb9a1102615f3e8dd9db2165e7479",
-      "created_at": "2026-11-17T03:41:56.844Z"
+      "content_hash": "50c4ea2f8dbdfa832be64953b1c6ad226b30fec748e84f58db00ac892cbf3d30",
+      "created_at": "2026-11-20T23:05:27.978Z"
     },
     "domain_intelligence-technical-construction-intelligence-google-closure-compiler-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-google-closure-compiler-learnings-core-invar",
@@ -25690,8 +25690,8 @@
       "title": "Technical Construction Intelligence: google-closure-compiler-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-closure-compiler-learnings-technical-construction-intelligence-google-clo.md",
       "repository": "google-closure-compiler-learnings",
-      "content_hash": "a0de504896f696ac56435fb43d0586d57cee61c85845b746c8e4f594d83df7ff",
-      "created_at": "2026-11-17T03:42:04.028Z"
+      "content_hash": "b7f78787329cabc47f03856e00112cae4a76711ad20c4495d6e7940948901fb9",
+      "created_at": "2026-11-20T23:05:39.738Z"
     },
     "DOM-H-7AD63040": {
       "record_id": "DOM-H-7AD63040",
@@ -29726,8 +29726,8 @@
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "repository": "PeerDB-io/peerdb",
-      "content_hash": "a648383fa53571c64e8227bcfc6911e1754356d754ff48333eecc012ec79017b",
-      "created_at": "2026-11-19T21:43:47.931Z"
+      "content_hash": "8df92ab62e2468d76651e89f79cea7e22ebb2c812f03a07faeca45ca6bbe74a3",
+      "created_at": "2026-11-20T23:05:32.945Z"
     },
     "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants",
@@ -29735,8 +29735,8 @@
       "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-learnings-architecture-intelligence-peerdb-io-peerdb-learnings-.md",
       "repository": "peerdb-io-peerdb-learnings",
-      "content_hash": "85b422747205e4d18d873ec103b320f0e521da2edb3c4c86b43598814c89d7b4",
-      "created_at": "2026-11-19T21:43:51.252Z"
+      "content_hash": "d69b5a3be1f798a9c5368b15fd1feafb4a173fee91cf0091bab89ab884cfbba6",
+      "created_at": "2026-11-20T23:05:40.498Z"
     },
     "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants",

@@ -4,22 +4,22 @@
 {
   "source_repository": "PeerDB-io/peerdb",
   "source_url": "https://github.com/PeerDB-io/peerdb",
-  "source_version": "7715b315",
+  "source_version": "469e73c6",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-19T21:43:47.780Z",
+  "timestamp": "2026-11-20T23:05:32.793Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-peerdb-io-peerdb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `7715b315`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-19T21:43:47.780Z`  
+> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `469e73c6`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-20T23:05:32.793Z`  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `PeerDB-io/peerdb` (Commit: `7715b315`)
+- **Target Repository**: `PeerDB-io/peerdb` (Commit: `469e73c6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T21:43:46.402Z  
+> **Harvest Timestamp**: 2026-11-20T23:05:31.539Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3323 stars
+- **Stars / Engagement**: 3322 stars
 
 ---
 
@@ -1890,230 +1890,372 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8060a376` (2026-11-19)
-**Commit Message**: Default to lax nullable behavior (#5100)
+### Incident Patch 1: `469e73c6` (2026-11-20)
+**Commit Message**: clickhouse: treat lowercase JSON destination types as JSON (#5098)
 
-In cloud environments some customers were seeing errors on strict
-behavior, likely due to schema change races during setup, so lax was the
-default there. Align OSS default to be lax too.
+Fixes
+[DBI-1306](https://linear.app/clickhouse/issue/DBI-1306/recognise-parameterised-and-lowercase-json-destination-types).
 
-**File**: `flow/internal/dynamicconf.go` (modified, +1/-1)
+ClickHouse accepts lowercase JSON types like `json` and `Array(json)`,
+and validation lets them through, but PeerDB only recognised the
+uppercase spellings. With an `Array(json)` override, CDC landed every
+array as `[]`.
+
+`qvalue.ConvertJSONTypeToUppercase` now uppercases the type of JSON
+columns before the wrap gates, the normalize query and the snapshot
+casts check it. The DDL keeps the user's spelling.
+
+Parameterised types like `JSON(max_dynamic_paths=256)` are out of scope:
+validation already rejects them.
+
+**Testing:** unit tests, plus e2e `Test_JSON_CH_JSONOverride_Lowercase`
+and `Test_JSON_CH_Array_OverrideLowercase`, passing locally.
+
+---------
+
+Co-authored-by: Pablo Francisco Pérez Hidalgo <[REDACTED_EMAIL]>
+
+**File**: `flow/connectors/clickhouse/normalize_query.go` (modified, +1/-0)
 ```diff
-@@ -140,7 +140,7 @@ var DynamicSettings = [...]*protos.DynamicSetting{
- 	{
- 		Name:             "PEERDB_AVRO_NULLABLE_LAX",
- 		Description:      "Make all columns nullable in initial load Avro schema (disables strict nullable checking)",
--		DefaultValue:     "false",
-+		DefaultValue:     "true",
- 		ValueType:        protos.DynconfValueType_BOOL,
- 		ApplyMode:        protos.DynconfApplyMode_APPLY_MODE_NEW_MIRROR,
- 		TargetForSetting: protos.DynconfTarget_ALL,
+@@ -146,6 +146,7 @@ func (t *NormalizeQueryGenerator) BuildQuery(ctx context.Context) (string, error
+ 		if err != nil {
+ 			return "", fmt.Errorf("error while converting column type to clickhouse type: %w", err)
+ 		}
++		clickHouseType = qvalue.ConvertJSONTypeToUppercase(clickHouseType)
+ 
+ 		switch clickHouseType {
+ 		case "Time64(6)", "Nullable(Time64(6))":
+```
+
+**File**: `flow/connectors/clickhouse/normalize_query_test.go` (modified, +19/-4)
+```diff
+@@ -103,6 +103,7 @@ func TestBuildQueryArrayOfJSON(t *testing.T) {
+ 			{Name: "id", Type: string(types.QValueKindString), TypeModifier: -1},
+ 			{Name: "docs", Type: string(types.QValueKindArrayJSON), TypeModifier: -1, Nullable: true},
+ 			{Name: "docs_strict", Type: string(types.QValueKindArrayJSON), TypeModifier: -1, Nullable: true},
++			{Name: "docs_lower", Type: string(types.QValueKindArrayJSON), TypeModifier: -1, Nullable: true},
+ 		},
+ 	}
+ 	tableMapping := &protos.TableMapping{
+@@ -111,6 +112,8 @@ func TestBuildQueryArrayOfJSON(t *testing.T) {
+ 		Columns: []*protos.ColumnSetting{
+ 			{SourceName: "docs", DestinationType: "Array(Nullable(JSON))"},
+ 			{SourceName: "docs_strict", DestinationType: "Array(JSON)"},
++			// ClickHouse stores Array(json) as Array(JSON), so it is extracted the same way
++			{SourceName: "docs_lower", DestinationType: "Array(json)"},
+ 		},
+ 	}
+ 
+@@ -129,6 +132,9 @@ func TestBuildQueryArrayOfJSON(t *testing.T) {
+ 	require.Contains(t, query,
+ 		`arrayMap(x -> ifNull(x, CAST('{}', 'JSON')), JSONExtract(JSONExtractString(_peerdb_data, 'docs_strict'), 'Array(Nullable(JSON))'))`+
+ 			" AS `docs_strict`")
++	require.Contains(t, query,
++		`arrayMap(x -> ifNull(x, CAST('{}', 'JSON')), JSONExtract(JSONExtractString(_peerdb_data, 'docs_lower'), 'Array(Nullable(JSON))'))`+
++			" AS `docs_lower`")
+ }
+ 
+ // TestBuildQueryNullableJSON checks the projection for native JSON columns.
+@@ -209,6 +215,13 @@ func TestBuildQueryNullableJSON(t *testing.T) {
+ 		require.Contains(t, query, nullableProjection)
+ 		require.Contains(t, query, nullableUpdate)
+ 		require.NotContains(t, query, "Nullable(Nullable(")
++
++		// lowercase overrides, which ClickHouse stores as JSON, take the same projection
++		for _, destinationType := range []string{"json", "Nullable(json)"} {
++			query = build(t, newSchema(true), newMapping(destinationType), true, nil)
++			require.Contains(t, query, nullableProjection, destinationType)
++			require.Contains(t, query, nullableUpdate, destinationType)
++		}
+ 	})
+ 
+ 	t.Run("non-nullable JSON column writes {} on empty", func(t *testing.T) {
+@@ -218,9 +231,11 @@ func TestBuildQueryNullableJSON(t *testing.T) {
+ 		require.NotContains(t, query, "Nullable(JSON)")
+ 		require.True(t, peerdb_clickhouse.QueryCastsToJSON(query))
+ 
+-		query = build(t, newSchema(false), newMapping("JSON"), true, nil)
+-		require.Contains(t, query, plainProjection)
+-		require.Contains(t, query, plainUpdate)
+-		require.NotContains(t, query, "Nullable(JSON)")
++		for _, destinationType := range []string{"JSON", "json"} {
++			query = build(t, newSchema(false), newMapping(destinationType), true, nil)
++			require.Contains(t, query, plainProjection, destinationType)
++			require.Contains(t, query, plainUpdate, destinationType)
++			require.NotContains(t, query, "Nullable(JSON)", destinationType)
++		}
+ 	})
+ }
+```
+
+**File**: `flow/connectors/clickhouse/table_function.go` (modified, +3/-2)
+```diff
+@@ -52,7 +52,8 @@ func jsonFieldExpressionConverter(
+ 	castToJSON := qvalue.ShouldUseNativeJSONType(ctx, config.config.Env, config.connector.chVersion)
+ 	for _, column := range config.config.GetColumns() {
+ 		if column.SourceName == field.Name && column.DestinationType != "" {
+-			castToJSON = column.DestinationType == "JSON" || column.DestinationType == "Nullable(JSON)"
++			dstType := qvalue.ConvertJSONTypeToUppercase(column.DestinationType)
++			castToJSON = dstType == "JSON" || dstType == "Nullable(JSON)"
+ 			break
+ 		}
+ 	}
+@@ -120,7 +121,7 @@ func arrayJSONFieldExpressionConverter(
+ 		return sourceFieldIdentifier, nil
+ 	}
+ 	colSetting := findColumnSetting(field.Name, config.config.GetColumns())
+-	dstType := colSetting.GetDestinationType()
++	dstType := qvalue.ConvertJSONTypeToUppercase(colSetting.GetDestinationType())
+ 	if dstType == "" && qvalue.ShouldUseArrayJSONType(
+ 		ctx, config.config.Env, config.connector.chVersion, config.config.Version, config.config.SourceType,
+ 	) {
+```
+
+**File**: `flow/e2e/clickhouse_json_suite.go` (modified, +28/-7)
+```diff
+@@ -65,7 +65,19 @@ func (s ClickHouseSuite) Test_JSON_CH_JSONOverride() {
+ 	emptyObject := "{}"
+ 	s.testJSONColumns(jsonColumnMirrorConfig{
+ 		tableName:          "test_json_override",
+-		overrideToJSON:     true,
++		overrideType:       "JSON",
++		expectedColumnType: "JSON",
++		sourceNullLandsAs:  &emptyObject,
++	})
++}
++
++// Test_JSON_CH_JSONOverride_Lowercase pins the JSON columns to json, which ClickHouse stores as JSON: the readers
++// and normalize must treat it as JSON too.
++func (s ClickHouseSuite) Test_JSON_CH_JSONOverride_Lowercase() {
++	emptyObject := "{}"
++	s.testJSONColumns(jsonColumnMirrorConfig{
++		tableName:          "test_json_override_lower",
++		overrideType:       "json",
+ 		expectedColumnType: "JSON",
+ 		sourceNullLandsAs:  &emptyObject,
+ 	})
+@@ -245,7 +257,7 @@ func (s ClickHouseSuite) testJSONColumns(cfg jsonColumnMirrorConfig) {
+ 		},
+ 	}
+ 	// with native JSON on, or the columns pinned to JSON, the readers wrap non-object documents
+-	wrapNonObjects := cfg.nativeJSON || cfg.overrideToJSON
++	wrapNonObjects := cfg.nativeJSON || cfg.overrideType != ""
+ 
+ 	srcTableName := cfg.tableName
+ 	srcFullName := s.attachSchemaSuffix(srcTableName)
+@@ -288,10 +300,10 @@ func (s ClickHouseSuite) testJSONColumns(cfg jsonColumnMirrorConfig) {
+ 	if cfg.nativeJSON {
+ 		flowConnConfig.Env["PEERDB_CLICKHOUSE_ENABLE_JSON"] = "true"
+ 	}
+-	if cfg.overrideToJSON {
++	if cfg.overrideType != "" {
+ 		for _, column := range jsonColumns {
+ 			flowConnConfig.TableMappings[0].Columns = append(flowConnConfig.TableMappings[0].Columns,
+-				&protos.ColumnSetting{SourceName: column, DestinationType: "JSON"})
++				&protos.ColumnSetting{SourceName: column, DestinationType: cfg.overrideType})
+ 		}
+ 	}
+ 	if cfg.disableFastProcessJSONColumns {
+@@ -337,11 +349,11 @@ type jsonColumnMirrorConfig struct {
+ 	sourceNullLandsAs  *string
+ 	tableName          string
+ 	expectedColumnType string
+-	nativeJSON         bool
++	// overrideType is given to every JSON column as its destination type through the column settings; a JSON type
++	overrideType string
++	nativeJSON   bool
+ 	// nullableDestinationColumns sets PEERDB_NULLABLE, so nullable source columns get Nullable(...) on the destination
+ 	nullableDestinationColumns bool
+-	// overrideToJSON gives every JSON column the destination type JSON through its column settings
+-	overrideToJSON bool
+ 	// disableFastProcessJSONColumns sets PEERDB_POSTGRES_FAST_PROCESS_JSON_COLUMNS to false, so the Postgres reader
+ 	// takes the unmarshal/marshal path instead of the token walk; Postgres only
+ 	disableFastProcessJSONColumns bool
+@@ -692,6 +704,15 @@ func (s ClickHouseSuite) Test_JSON_CH_Array_OverrideNullable() {
+ 	})
+ }
+ 
++// Test_JSON_CH_Array_OverrideLowercase: Array(json), which ClickHouse stores as Array(JSON), behaves as Array(JSON).
++func (s ClickHouseSuite) Test_JSON_CH_Array_OverrideLowercase() {
++	s.testJSONArrayColumns(jsonArrayMirrorConfig{
++		tableName:          "test_json_arr_override_lower",
++		overrideType:       "Array(json)",
++		expectedColumnType: "Array(JSON)",
++	})
++}
++
+ // Test_JSON_CH_Array_OverrideNullable_ClassicReader: the same with fast JSON processing off.
+ func (s ClickHouseSuite) Test_JSON_CH_Array_OverrideNullable_ClassicReader() {
+ 	s.testJSONArrayColumns(jsonArrayMirrorConfig{
+```
+
+**File**: `flow/model/qvalue/json.go` (modified, +14/-2)
+```diff
+@@ -21,14 +21,26 @@ func WrapNonObjectJSON(doc string) string {
+ 	return `{"_value":` + doc + `}`
+ }
+ 
++// ConvertJSONTypeToUppercase returns JSON, Nullable(JSON), Array(JSON) or Array(Nullable(JSON)) when
++// destinationType is one of them written in another case, like Array(json), which ClickHouse accepts and
++// stores as Array(JSON). Any other type is returned unchanged.
++func ConvertJSONTypeToUppercase(destinationType string) string {
++	for _, jsonType := range []string{"JSON", "Nullable(JSON)", "Array(JSON)", "Array(Nullable(JSON))"} {
++		if strings.EqualFold(destinationType, jsonType) {
++			return jsonType
++		}
++	}
++	return destinationType
++}
++
+ // ShouldWrapNonObjectJSON reports whether a JSON column with the given explicit destination type, "" for
+ // none, lands in native ClickHouse JSON on this mirror and so has its non-object values wrapped. nativeJSONEnabled
+ // is PEERDB_CLICKHOUSE_ENABLE_JSON, which the readers look up once per pull.
+ func ShouldWrapNonObjectJSON(flags []string, version uint32, nativeJSONEnabled bool, destinationType string) bool {
+ 	if version < shared.InternalVersion_WrapNonObjectJSON {
+ 		return false
+ 	}
+-	switch destinationType {
++	switch ConvertJSONTypeToUppercase(destinationType) {
+ 	case "":
+ 		return nativeJSONEnabled && slices.Contains(flags, shared.Flag_ClickHouseJSONSupported)
+ 	case "JSON", "Nullable(JSON)":
+@@ -43,7 +55,7 @@ func ShouldWrapJSONArrayElements(flags []string, version uint32, nativeJSONEnabl
+ 	if version < shared.InternalVersion_WrapJSONArrayElements || !slices.Contains(flags, shared.Flag_ClickHouseJSONSupported) {
+ 		return false
+ 	}
+-	switch destinationType {
++	switch ConvertJSONTypeToUppercase(destinationType) {
+ 	case "":
+ 		return version >= shared.InternalVersion_JSONArrayAsArrayJSON && nativeJSONEnabled
+ 	case "Array(JSON)", "Array(Nullable(JSON))":
+```
+
+**File**: `flow/model/qvalue/json_test.go` (modified, +29/-0)
+```diff
+@@ -31,6 +31,29 @@ func TestWrapNonObjectJSON(t *testing.T) {
+ 	}
+ }
+ 
++func TestConvertJSONTypeToUppercase(t *testing.T) {
++	for _, tc := range []struct {
++		in   string
++		want string
++	}{
++		{"JSON", "JSON"},
++		{"json", "JSON"},
++		{"Json", "JSON"},
++		{"Nullable(json)", "Nullable(JSON)"},
++		{"Array(json)", "Array(JSON)"},
++		{"Array(Nullable(json))", "Array(Nullable(JSON))"},
++		// other types, and JSON with parameters, are returned unchanged
++		{"", ""},
++		{"String", "String"},
++		{"Nullable(String)", "Nullable(String)"},
++		{"Array(String)", "Array(String)"},
++		{"JSON(max_dynamic_paths=256)", "JSON(max_dynamic_paths=256)"},
++		{"Array(Array(JSON))", "Array(Array(JSON))"},
++	} {
++		require.Equal(t, tc.want, ConvertJSONTypeToUppercase(tc.in), "in=%q", tc.in)
++	}
++}
++
+ func TestShouldWrapJSONArrayElements(t *testing.T) {
+ 	// a ClickHouse with the JSON type
+ 	clickhouse := []string{shared.Flag_ClickHouseTime64Enabled, shared.Flag_ClickHouseJSONSupported}
+@@ -54,6 +77,9 @@ func TestShouldWrapJSONArrayElements(t *testing.T) {
+ 		// an explicit array type selects it from the wrapping version on, whatever the setting
+ 		{flags: clickhouse, version: shared.InternalVersion_WrapJSONArrayElements, destinationType: "Array(JSON)", want: true},
+ 		{flags: clickhouse, version: latest, destinationType: "Array(Nullable(JSON))", want: true},
++		// in any case, as ClickHouse stores Array(json) as Array(JSON)
++		{flags: clickhouse, version: latest, destinationType: "Array(json)", want: true},
++		{flags: clickhouse, version: latest, destinationType: "Array(Nullable(json))", want: true},
+ 		{flags: clickhouse, version: shared.InternalVersion_WrapJSONArrayElements - 1, destinationType: "Array(JSON)", want: false},
+ 		{flags: otherDestination, version: latest, destinationType: "Array(JSON)", want: false},
+ 		// other explicit types never wrap
+@@ -89,6 +115,9 @@ func TestShouldWrapNonObjectJSON(t *testing.T) {
+ 		{flags: clickhouse, version: shared.InternalVersion_Latest, nativeJSONEnabled: true, destinationType: "Nullable(String)", want: false},
+ 		{flags: clickhouse, version: shared.InternalVersion_Latest, destinationType: "JSON", want: true},
+ 		{flags: clickhouse, version: shared.InternalVersion_Latest, destinationType: "Nullable(JSON)", want: true},
++		// in any case, as ClickHouse stores json as JSON
++		{flags: clickhouse, version: shared.InternalVersion_Latest, destinationType: "json", want: true},
++		{flags: clickhouse, version: shared.InternalVersion_Latest, destinationType: "Nullable(json)", want: true},
+ 		{flags: clickhouse, version: shared.InternalVersion_WrapNonObjectJSON - 1, destinationType: "JSON", want: false},
+ 		// an explicit JSON type is only honoured where the destination has the type
+ 		{flags: otherDestination, version: shared.InternalVersion_Latest, nativeJSONEnabled: true, destinationType: "JSON", want: false},
 ```
 
 ---
 
-### Incident Patch 2: `3bf0bb01` (2026-11-19)
-**Commit Message**: flow.yml/flow-tilt.yml Add Telemetry tracing, introduce cached build step, use smaller runners (#5093)
+### Incident Patch 2: `fe1374ec` (2026-11-20)
+**Commit Message**: feat: upgrade `docker-compose.yml` stable image tags (#5101)
 
-This commit adds telemetry tracing to the bulk of our CI steps to
-understand our actual usage and make choices around our runner sizing.
+Co-authored-by: ilidemi <[REDACTED_EMAIL]>
 
----------
-
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/flow.yml` (modified, +92/-2)
+**File**: `docker-compose.yml` (modified, +6/-6)
 ```diff
-@@ -50,6 +50,15 @@ jobs:
-         with:
-           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.ref }}
-           allow-unsafe-pr-checkout: true
-+      # Samples CPU/memory/disk/network on the runner for the whole job and
-+      # writes a report to the job summary; the post step runs even on failure.
-+      # Must come after checkout: the collector keeps its data file in the
-+      # workspace, which checkout wipes.
-+      - name: Runner telemetry
-+        uses: tsviz/actions-runner-telemetry@c15eb88c652d9a26a572438a0d1b8c10af782e2e # v1.7.4
-+        with:
-+          upload-artifacts: true
-+          artifact-name: runner-telemetry-unit
-       - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
-         with:
-           go-version: '1.27.3'
-@@ -123,10 +132,90 @@ jobs:
-       - run: ./generate-protos.sh
-       - run: bash .github/scripts/check-flow-test-selection.sh
+@@ -115,7 +115,7 @@ services:
+   # applies catalog schema migrations and exits
+   flow-migrate:
+     container_name: flow-migrate
+-    image: ghcr.io/peerdb-io/flow-api:stable-v0.37.15
++    image: ghcr.io/peerdb-io/flow-api:stable-v0.37.17
+     entrypoint: ["/home/peerdb/peer-flow", "migrate"]
+     environment:
+       <<: *catalog-config
+@@ -125,7 +125,7 @@ services:
  
-+  # Compiles every flow test package once and publishes the resulting Go build
-+  # cache entries as a run artifact, so the flow_test matrix jobs don't each
-+  # recompile the same code. setup-go's own cache is keyed on go.sum only, so
-+  # it holds the dependencies but never the current commit's packages.
-+  #
-+  # An artifact (not actions/cache) on purpose: it is scoped to this run, so
-+  # code from a fork PR under pull_request_target cannot seed a cache that
-+  # later runs on main would restore.
-+  go_build_cache:
-+    name: Go build cache
-+    needs: [gate]
-+    runs-on: ubuntu-latest-64-core
-+    timeout-minutes: 20
-+    steps:
-+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-+        with:
-+          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.ref }}
-+          allow-unsafe-pr-checkout: true
-+      # Must come after checkout: the collector keeps its data file in the
-+      # workspace, which checkout wipes.
-+      - name: Runner telemetry
-+        uses: tsviz/actions-runner-telemetry@c15eb88c652d9a26a572438a0d1b8c10af782e2e # v1.7.4
-+        with:
-+          upload-artifacts: true
-+          artifact-name: runner-telemetry-go-build-cache
-+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
-+        with:
-+          go-version: '1.27.3'
-+          cache-dependency-path: |
-+            flow/go.sum
-+            flow/pkg/go.sum
-+      - uses: bufbuild/buf-action@37ac33d8960807670a6e9719080e885197b09cc6 # v1
-+        with:
-+          setup_only: true
-+          github_token: ${{ github.token }}
-+      - run: sudo apt-get update && sudo apt-get install -y libgeos-dev
-+      # Same generator Tilt's proto-gen resource runs in the matrix jobs; the
-+      # generated sources must match for the cached packages to be reused.
-+      - run: ./generate-protos.sh
-+      # Record what setup-go restored, so only entries this job adds are
-+      # shipped: the matrix jobs restore that same setup-go cache themselves.
-+      - name: Snapshot restored Go build cache
-+        run: |
-+          set -euo pipefail
-+          gocache="$(go env GOCACHE)"
-+          mkdir -p "$gocache"
-+          (cd "$gocache" && find . -type f | LC_ALL=C sort) > "$RUNNER_TEMP/gocache-before.txt"
-+      # Run the matrix jobs' own selection script over every package: same
-+      # commands and flags, so it produces exactly the cache entries their
-+      # Select tests and Run tests steps look up. Listing tests needs no
-+      # services.
-+      - name: Compile all flow tests
-+        env:
-+          TEST_PACKAGES: ./...
-+          PKG_TEST_PACKAGES: ./...
-+        run: bash .github/scripts/select-flow-tests.sh
-+      - name: Pack new Go build cache entries
-+        run: |
-+          set -euo pipefail
-+          cd "$(go env GOCACHE)"
-+          find . -type f | LC_ALL=C sort > "$RUNNER_TEMP/gocache-after.txt"
-+          LC_ALL=C comm -13 "$RUNNER_TEMP/gocache-before.txt" "$RUNNER_TEMP/gocache-after.txt" \
-+            > "$RUNNER_TEMP/gocache-new.txt"
-+          echo "new cache entries: $(wc -l < "$RUNNER_TEMP/gocache-new.txt")"
-+          tar -cf "$RUNNER_TEMP/go-build-cache.tar.zst" \
-+            --use-compress-program 'zstd -T0 -3' \
-+            --files-from "$RUNNER_TEMP/gocache-new.txt"
-+          ls -lh "$RUNNER_TEMP/go-build-cache.tar.zst"
-+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-+        with:
-+          name: go-build-cache
-+          path: ${{ runner.temp }}/go-build-cache.tar.zst
-+          if-no-files-found: error
-+          # Already zstd-compressed.
-+          compression-level: 0
-+          # Only this run's matrix jobs read it.
-+          retention-days: 1
-+          # Lets a re-run of this job replace the earlier attempt's artifact.
-+          overwrite: true
-+
-   flow_test:
-     name: ${{ matrix.target.label }}
-     # Validate the common code before allocating runners for every permutation.
--    needs: [gate, unit_tests, test_selection_c
-```
-
-**File**: `.github/workflows/tilt-flow.yml` (modified, +44/-1)
-```diff
-@@ -47,6 +47,14 @@ on:
-         type: string
-         required: false
-         default: ''
-+      go_build_cache_artifact:
-+        description: >-
-+          Name of an artifact in this run holding prebuilt Go build cache
-+          entries (flow.yml's go_build_cache job). Leave empty to compile
-+          from setup-go's dependency cache alone.
-+        type: string
-+        required: false
-+        default: ''
-       # The <db>_image inputs pin the docker images of the ancillary DBs.
-       # When empty, default to last combination declared at flow.yml
-       # following scripts/generate-test-environment.sh's defaults.
-@@ -207,7 +215,7 @@ env:
+   flow-api:
+     container_name: flow_api
+-    image: ghcr.io/peerdb-io/flow-api:stable-v0.37.15
++    image: ghcr.io/peerdb-io/flow-api:stable-v0.37.17
+     restart: unless-stopped
+     ports:
+       - 8112:8112
+@@ -143,7 +143,7 @@ services:
  
- jobs:
-   tilt:
--    runs-on: ubuntu-latest-64-core
-+    runs-on: ubuntu-latest-32-cores
-     timeout-minutes: 60
-     steps:
-       - uses: Kesin11/actions-timeline@460b1f8a750077029ad3589824d371b200e91dcf # v3.2.1
-@@ -221,6 +229,16 @@ jobs:
-           # checkout refuses fork code under pull_request_target unless opted in;
-           # flow.yml's external-contributor environment gate is the human review.
-           allow-unsafe-pr-checkout: true
-+      # Samples CPU/memory/disk/network on the runner for the whole job and
-+      # writes a report to the job summary; the post step runs even on failure.
-+      # Must come after checkout: the collector keeps its data file in the
-+      # workspace, which checkout wipes.
-+      # Artifact name is keyed by run_label so flow.yml's matrix jobs don't collide.
-+      - name: Runner telemetry
-+        uses: tsviz/actions-runner-telemetry@c15eb88c652d9a26a572438a0d1b8c10af782e2e # v1.7.4
-+        with:
-+          upload-artifacts: true
-+          artifact-name: runner-telemetry-${{ inputs.run_label || 'tilt' }}
+   flow-snapshot-worker:
+     container_name: flow-snapshot-worker
+-    image: ghcr.io/peerdb-io/flow-snapshot-worker:stable-v0.37.15
++    image: ghcr.io/peerdb-io/flow-snapshot-worker:stable-v0.37.17
+     restart: unless-stopped
+     environment:
+       <<: [*catalog-config, *flow-worker-env, *minio-config]
+@@ -155,7 +155,7 @@ services:
  
-       # Combination id for test-results ingestion steps
-       - name: Compute run identity
-@@ -240,6 +258,31 @@ jobs:
-             flow/go.sum
-             flow/pkg/go.sum
+   flow-worker:
+     container_name: flow-worker
+-    image: ghcr.io/peerdb-io/flow-worker:stable-v0.37.15
++    image: ghcr.io/peerdb-io/flow-worker:stable-v0.37.17
+     restart: unless-stopped
+     environment:
+       <<: [*catalog-config, *flow-worker-env, *minio-config]
+@@ -170,7 +170,7 @@ services:
+   peerdb:
+     container_name: peerdb-server
+     stop_signal: SIGINT
+-    image: ghcr.io/peerdb-io/peerdb-server:stable-v0.37.15
++    image: ghcr.io/peerdb-io/peerdb-server:stable-v0.37.17
+     restart: unless-stopped
+     environment:
+       <<: *catalog-config
+@@ -187,7 +187,7 @@ services:
  
-+      # Layer the caller's prebuilt entries for this commit over setup-go's
-+      # dependency cache. Best effort: without them the tests still compile,
-+      # just from scratch.
-+      - name: Download prebuilt Go build cache
-+        if: inputs.go_build_cache_artifact != ''
-+        continue-on-error: true
-+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-+        with:
-+          name: ${{ inputs.go_build_cache_artifact }}
-+          path: ${{ runner.temp }}/go-build-cache
-+      - name: Unpack prebuilt Go build cache
-+        if: inputs.go_build_cache_artifact != ''
-+        continue-on-error: true
-+        run: |
-+          set -euo pipefail
-+          archive="$RUNNER_TEMP/go-build-cache/go-build-cache.tar.zst"
-+          if [ ! -f "$archive" ]; then
-+            echo "::warning::Prebuilt Go build cache not found; tests will compile from scratch."
-+            exit 0
-+          fi
-+          gocache="$(go env GOCACHE)"
-+          mkdir -p "$gocache"
-+          tar -xf "$archive" --use-compress-program 'zstd -d -T0' -C "$gocache"
-+          rm -rf "$RUNNER_TEMP/go-build-cache"
-+
-       # Tilt's `proto-gen` resource runs ./generate-protos.sh (buf generate +
-       # go generate) on `tilt up`. The flow docker images and the host-run tests
-       # both consume the resulting flow/generated code, so buf must be on PATH.
+   peerdb-ui:
+     container_name: peerdb-ui
+-    image: ghcr.io/peerdb-io/peerdb-ui:stable-v0.37.15
++    image: ghcr.io/peerdb-io/peerdb-ui:stable-v0.37.17
+     restart: unless-stopped
+     ports:
+       - 3000:3000
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5101** (2026-11-20): feat: upgrade `docker-compose.yml` stable image tags (@github-actions[bot])
 - **PR #5100** (2026-11-19): Default to lax nullable behavior (@ilidemi)
+- **PR #5098** (2026-11-20): clickhouse: treat lowercase JSON destination types as JSON (@gheorghepucea)
 - **PR #5097** (closed): ci: build debug docker images for PRs via build-docker-image label (@masterashu)
 - **PR #5094** (2026-11-19): Optimize CI speed and reduce cost further (@ilidemi)
 - **PR #5093** (2026-11-19): flow.yml/flow-tilt.yml Add Telemetry tracing, introduce cached build step, use smaller runners (@Jeremyyang920)
-- **PR #5091** (2026-11-18): Stop using QValueJSON as fallback for mismatched arrays (@pfcoperez)
-- **PR #5089** (2026-11-19): Classify GCP downscope UberMint invalid_grant as retryable (@dtunikov)
 
 ---
 
@@ -2133,31 +2275,31 @@ Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Default to lax nullable behavior
+## X. clickhouse: treat lowercase JSON destination types as JSON
 
 **RULE**:
-When implementing operations in `flow/internal/dynamicconf.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/connectors/clickhouse/normalize_query.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8060a376`: Default to lax nullable behavior. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `469e73c6`: clickhouse: treat lowercase JSON destination types as JSON. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/internal/dynamicconf.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/clickhouse/normalize_query.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		DefaultValue:     "true",
+		clickHouseType = qvalue.ConvertJSONTypeToUppercase(clickHouseType)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		DefaultValue:     "false",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8060a376` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `469e73c6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

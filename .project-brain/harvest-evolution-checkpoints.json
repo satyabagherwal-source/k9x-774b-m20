@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T22:57:30.936Z",
+  "last_updated": "2026-11-20T23:05:41.416Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T22:31:03.514Z",
@@ -603,7 +603,7 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-20T17:29:24.095Z",
+      "processed_at": "2026-11-20T23:05:40.792Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -763,7 +763,7 @@
       "staged_for_review": 1
     },
     "peerdb-io-peerdb-learnings.md": {
-      "processed_at": "2026-11-19T21:43:50.857Z",
+      "processed_at": "2026-11-20T23:05:40.061Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1063,7 +1063,7 @@
       "staged_for_review": 0
     },
     "google-closure-compiler-learnings.md": {
-      "processed_at": "2026-11-17T03:42:03.521Z",
+      "processed_at": "2026-11-20T23:05:39.060Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3643,7 +3643,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2646,
+  "total_dossiers_evaluated": 2649,
   "total_canonical_promoted": 435,
-  "total_staged_for_review": 2022
+  "total_staged_for_review": 2025
 }

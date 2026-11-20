@@ -11651,3 +11651,6 @@
 | `CYCLE-20261120-X2QW` | `2026-11-20T22:57:14.792Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9651` | Yes (`233f776a...`) |
 | `CYCLE-20261120-X4U2` | `2026-11-20T22:57:17.498Z` | `scrapinghub/dateparser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9652` | Yes (`15027ec3...`) |
 | `CYCLE-20261120-XB2A` | `2026-11-20T22:57:25.570Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9653` | Yes (`a04e4817...`) |
+| `CYCLE-20261120-7MZE` | `2026-11-20T23:05:27.578Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9654` | Yes (`69d765a0...`) |
+| `CYCLE-20261120-7QU2` | `2026-11-20T23:05:32.570Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9655` | Yes (`969daa4f...`) |
+| `CYCLE-20261120-7T9Z` | `2026-11-20T23:05:35.735Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9656` | Yes (`0cda0857...`) |

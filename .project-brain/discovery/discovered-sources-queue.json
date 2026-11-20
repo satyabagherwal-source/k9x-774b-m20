@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T22:57:30.335Z",
+  "updated_at": "2026-11-20T23:05:40.148Z",
   "stats": {
-    "total_discovered": 6783,
-    "approved_pending_harvest": 6404,
+    "total_discovered": 6784,
+    "approved_pending_harvest": 6405,
     "harvested_count": 0,
     "rejected_count": 379,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6379,
+      "COMMUNITY_AND_EXPERT": 6380,
       "OFFICIAL_DOCUMENTATION": 230,
       "STANDARDS_AND_SPECIFICATIONS": 121,
       "ENGINEERING_BLOGS": 5,
@@ -146596,6 +146596,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
         "fileName": "provablehq-snarkos-learnings.md"
+      }
+    },
+    "SRC-07BAD2A007EC": {
+      "id": "SRC-07BAD2A007EC",
+      "url": "https://linear.app/clickhouse/issue/DBI-1306/recognise-parameterised-and-lowercase-json-destination-types",
+      "title": "https://linear.app/clickhouse/issue/DBI-1306/recognise-parameterised-and-lowercase-json-destination-types",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:05:40.148Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
       }
     }
   }

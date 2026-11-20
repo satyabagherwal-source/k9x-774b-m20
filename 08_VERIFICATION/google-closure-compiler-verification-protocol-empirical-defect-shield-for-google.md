@@ -4,22 +4,22 @@
 {
   "source_repository": "google/closure-compiler",
   "source_url": "https://github.com/google/closure-compiler",
-  "source_version": "030d049b",
+  "source_version": "77c890f4",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T03:41:56.736Z",
+  "timestamp": "2026-11-20T23:05:27.803Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-google-closure-compiler",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [google/closure-compiler](https://github.com/google/closure-compiler) (Revision: `030d049b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T03:41:56.736Z`  
+> **Provenance**: Harvested from [google/closure-compiler](https://github.com/google/closure-compiler) (Revision: `77c890f4`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T23:05:27.803Z`  
 > **Learning ID**: `learn-github-google-closure-compiler`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `google/closure-compiler` (Commit: `030d049b`)
+- **Target Repository**: `google/closure-compiler` (Commit: `77c890f4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-closure-compiler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/closure-compiler](https://github.com/google/closure-compiler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T03:41:55.724Z  
+> **Harvest Timestamp**: 2026-11-20T23:05:26.421Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A JavaScript checker and optimizer.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 7706 stars
+- **Stars / Engagement**: 7707 stars
 
 ---
 
@@ -2472,374 +2472,318 @@ $jscomp.arrayIterator = function(array) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b22fb58d` (2026-11-16)
-**Commit Message**: Supply a temporary debug log directory in InlineFunctionsTest.
+### Incident Patch 1: `906c51c8` (2026-11-19)
+**Commit Message**: Merge pull request #4397 from rajath201:substr-length-overflow
 
-`InlineFunctions` reports `MISSED_REQUIRED_INLINING` only when a debug log directory is configured. In open-source builds, `CompilerTestCaseUtils.setDebugLogDirectoryOn` is a no-op, so `testNoInlineTaggedTemplateLitEncourageAndRequireInlining` produced 0 warnings instead of 3 and broke the GitHub Actions test workflow.
+PiperOrigin-RevId: 1025121299
 
-Override the debug log directory for that test with a JUnit `TemporaryFolder` so internal and open-source builds run the same warning checks.
-
-Fixes GitHub Actions `run_tests.yaml` failures:
-- Workflow: https://github.com/google/closure-compiler/actions/workflows/run_tests.yaml
-- First failing run: https://github.com/google/closure-compiler/actions/runs/43485582868
-
-PiperOrigin-RevId: 1022969983
-
-**File**: `test/com/google/javascript/jscomp/InlineFunctionsTest.java` (modified, +24/-1)
+**File**: `src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java` (modified, +3/-1)
 ```diff
-@@ -23,17 +23,25 @@
- import com.google.common.base.Throwables;
- import com.google.javascript.jscomp.CompilerOptions.Reach;
- import com.google.javascript.jscomp.testing.JSChunkGraphBuilder;
-+import java.io.IOException;
-+import java.nio.file.Path;
-+import org.jspecify.annotations.Nullable;
- import org.junit.Before;
-+import org.junit.Rule;
- import org.junit.Test;
-+import org.junit.rules.TemporaryFolder;
- import org.junit.runner.RunWith;
- import org.junit.runners.JUnit4;
+@@ -1121,7 +1121,9 @@ private Node tryFoldStringSubstr(Node n, Node stringNode, Node arg1) {
+     // specify the behavior in some of these cases, but we haven't
+     // done a thorough investigation that it is correctly implemented
+     // in all browsers.
+-    if ((start + length) > stringAsString.length() || (length < 0) || (start < 0)) {
++    // Compare against the remaining length instead of computing start + length, which can
++    // overflow when the length argument is large (e.g. Infinity saturates to Integer.MAX_VALUE).
++    if ((start < 0) || (length < 0) || length > stringAsString.length() - start) {
+       return n;
+     }
  
- /** Inline function tests. */
- @RunWith(JUnit4.class)
- public class InlineFunctionsTest extends CompilerTestCase {
-+  @Rule public final TemporaryFolder tempFolder = new TemporaryFolder();
+```
+
+**File**: `test/com/google/javascript/jscomp/PeepholeReplaceKnownMethodsTest.java` (modified, +6/-0)
+```diff
+@@ -567,6 +567,12 @@ public void testFoldStringSubstr() {
+     foldSame("x = 'abcde'.substr(1, 2, 3)");
+     foldSame("x = 'a'.substr(0, 2)");
+ 
++    // start + length must not overflow int
++    foldSame("x = 'abcde'.substr(1, Infinity)");
++    foldSame("x = 'abcde'.substr(1, 2147483647)");
++    foldSame("x = 'abcde'.substr(2, 4294967296)");
++    foldSame("x = 'abcde'.substr(Infinity, Infinity)");
 +
-   private Reach inliningReach;
-   private boolean assumeStrictThis;
-   private int maxSizeAfterInlining;
-+  private @Nullable Path debugLogDirectoryOverride;
- 
-   static final String EXTERNS = "/** @nosideeffects */ function nochg(){}\nfunction chg(){}\n";
- 
-@@ -61,9 +69,19 @@ public void setUp() throws Exception {
-     inliningReach = Reach.ALL;
-     assumeStrictThis = false;
-     maxSizeAfterInlining = CompilerOptions.UNLIMITED_FUN_SIZE_AFTER_INLINING;
-+    debugLogDirectoryOverride = null;
-     uniqueIdSupplier = new UniqueIdSupplier();
-   }
- 
-+  @Override
-+  protected CompilerOptions getOptions() {
-+    CompilerOptions options = super.getOptions();
-+    if (debugLogDirectoryOverride != null) {
-+      options.setDebugLogDirectory(debugLogDirectoryOverride);
-+    }
-+    return options;
-+  }
-+
-   @Override
-   protected CompilerPass getProcessor(Compiler compiler) {
-     return new InlineFunctions(
-@@ -5540,7 +5558,12 @@ public void testNoInlineTaggedTemplateLitSingleCallWhenNotRemovable() {
-   }
- 
-   @Test
--  public void testNoInlineTaggedTemplateLitEncourageAndRequireInlining() {
-+  public void testNoInlineTaggedTemplateLitEncourageAndRequireInlining() throws IOException {
-+    // InlineFunctions reports MISSED_REQUIRED_INLINING only when a debug log directory is set.
-+    // Supply a temporary directory explicitly because CompilerTestCaseUtils.setDebugLogDirectoryOn
-+    // is a no-op in open-source builds.
-+    debugLogDirectoryOverride = tempFolder.newFolder().toPath();
-+
-     testSame(
-         """
-         /** @encourageInlining */
+     // Template strings
+     foldSame("x = `abcdef`.substr(0,2)");
+     foldSame("x = `abc ${xyz} def`.substr(0,2)");
 ```
 
 ---
 
-### Incident Patch 2: `e60df765` (2026-11-13)
-**Commit Message**: Add baseline unit tests for large union deduplication and built-in JSDoc type evaluation.
+### Incident Patch 2: `c921833f` (2026-11-18)
+**Commit Message**: Speed up UnionType.Builder deduplication with lazy identity sets, hoisted invariants, and disjoint fast-skips.
 
-Adds baseline coverage in `UnionTypeBuilderTest`, `JSTypeRegistryTest`, and
-`SerializeTypedAstPassTest` pinning existing behavior for:
-- large union deduplication, subsumption, enum elements, `functionTypePosition`
-  bookkeeping, and deferred unresolved alternates,
-- closed-resolver built-in JSDoc type evaluation, template/local/non-nullable
-  shadowing, repeated duplicate-template warnings, and record literal node
-  preservation, and
-- deterministic TypedAST serialization across repeated nested built-in JSDoc types.
+Optimizes `UnionType.Builder.addAlternate` without changing union
+canonicalization or diagnostics:
+- Adds a lazy `IdentityHashMap` (`>= 8` alternates, synchronized across
+  unresolved additions, `functionTypePosition` replacements, and element
+  removals) for O(1) pointer-identity short-circuiting.
+- Hoists alternate-invariant `isUnknownType()` and lazy
+  `hasAnyTemplateTypes()` queries out of the linear scan loop (resetting them
+  when `case 7a` rewrites `alternate`).
+- Skips `SubtypeChecker` allocation for provably disjoint pairs of non-identical
+  pure `ValueType` singletons (excluding `KnownSymbolType`) and clean
+  non-generic `InstanceObjectType`s.
 
-PiperOrigin-RevId: 1021252491
+PiperOrigin-RevId: 1024869417
 
-**File**: `test/com/google/javascript/jscomp/serialization/SerializeTypedAstPassTest.java` (modified, +42/-0)
+**File**: `src/com/google/javascript/rhino/jstype/UnionType.java` (modified, +110/-13)
 ```diff
-@@ -454,6 +454,48 @@ function X(input) {
-     assertThat(sourceMappingURL).isEqualTo(encodedSourceMap); // Do not serizile the base-64 prefix.
-   }
+@@ -58,6 +58,7 @@
+ import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.Collections;
++import java.util.IdentityHashMap;
+ import java.util.List;
+ import org.jspecify.annotations.Nullable;
  
-+  @Test
-+  public void testAst_repeatedNestedBuiltinTypes_deterministicAndPreserved() {
-+    String externs =
-+        new TestExternsBuilder().addObject().addArray().addMap().addPromise().addIterable().build();
-+    String source =
-+        """
-+        /**
-+         * @param {!Array<!Promise<(string|number|null)>>} items
-+         * @param {!ReadonlyMap<string, !ReadonlyArray<(boolean|{count: number})>>} lookup
-+         * @return {!IThenable<!IIterableResult<string>>}
-+         */
-+        function first(items, lookup) {
-+          throw 'stub';
+@@ -669,10 +670,16 @@ public boolean hasAnyTemplateTypesInternal() {
+    * <p>Most users of this class should prefer {@link JSTypeRegistry#createUnionType} instead.
+    */
+   public static final class Builder {
++    private static final int IDENTITY_SET_THRESHOLD = 8;
++
+     private final @Nullable UnionType rebuildTarget;
+     private final JSTypeRegistry registry;
+ 
+     private final List<JSType> alternates = new ArrayList<>();
++
++    @SuppressWarnings("DeterministicDatastructure")
++    private @Nullable IdentityHashMap<JSType, Boolean> alternateIdentitySet = null;
++
+     private @Nullable ImmutableList<JSType> finalAlternates = null;
+ 
+     // If a union has ? or *, we do not care about any other types, except for undefined (for
+@@ -757,13 +764,10 @@ public Builder addAlternate(JSType alternate) {
+       // JSType operations like equality and subtyping are not reliable pre-resolution.
+       if (!alternate.isResolved()) {
+         this.alternatesResolvedBeforeBuild = false;
+-
+-        for (JSType current : alternates) {
+-          if (identical(current, alternate)) {
+-            return this;
+-          }
++        if (containsIdenticalAlternate(alternate)) {
++          return this;
+         }
+-        alternates.add(alternate);
++        appendAlternate(alternate);
+         return this;
+       }
+ 
+@@ -785,17 +789,27 @@ public Builder addAlternate(JSType alternate) {
+         return this;
+       }
+ 
++      if (containsIdenticalAlternate(alternate)) {
++        return this;
++      }
++
+       // Function types are special, because they have their
+       // own bizarre sub-lattice. See the comments on
+       // FunctionType#supAndInf helper and above at functionTypePosition.
+       if (alternate.isFunctionType() && functionTypePosition != -1) {
+         // See the comments on functionTypePosition above.
+         FunctionType other = alternates.get(functionTypePosition).toMaybeFunctionType();
+         FunctionType supremum = alternate.toMaybeFunctionType().supAndInfHelper(other, true);
+-        alternates.set(functionTypePosition, supremum);
++        replaceAlternate(functionTypePosition, other, supremum);
+         return this;
+       }
+ 
++      boolean altIsUnknown = alternate.isUnknownType();
++      boolean altHasTemplateTypesComputed = false;
++      boolean altHasTemplateTypes = false;
++      boolean altIsDisjointValue = isDisjointValueType(alternate);
++      boolean altIsCleanObject = isCleanConcreteObjectForDisjointCheck(alternate);
++
+       // Look through the alternates we've got so far,
+       // and check if any of them are duplicates of
+       // one another.
+@@ -805,14 +819,19 @@ public Builder addAlternate(JSType alternate) {
+         if (!current.isResolved()) { // Defer de-duplicating unresolved alternates.
+           continue;
+         }
++        if (areDisjointFast(altIsDisjointValue, altIsCleanObject, alternate, current)) {
++          continue;
 +        }
-+
-+        /**
-+         * @param {!Array<!Promise<(string|number|null)>>} items
-+         * @param {!ReadonlyMap<string, !ReadonlyArray<(boolean|{count: number})>>} lookup
-+         * @param {function(!Array<string>): !Map<string, !Array<string>>} mapper
-+         * @return {!IThenable<!IIterableResult<string>>}
-+         */
-+        function second(items, lookup, mapper) {
-+          return first(items, lookup);
+ 
+         // Unknown types may just be names that haven't
+         // been resolved yet. So keep these in the union, and just use
+         // equality checking for simple de-duping.
+-        if (alternate.isUnknownType()
+-            || current.isUnknownType()
+-            || alternate.hasAnyTemplateTypes()
+-            || current.hasAnyTemplateTypes()) {
++        boolean curIsUnknown = current.isUnknownType();
++        if (!altIsUnknown && !curIsUnknown && !altHasTemplateTypesComputed) {
++          altHasTemplateTypes = alternate.hasAnyTemplateTypes();
++          altHasTemplateTypesComputed = true;
 +        }
-+
-+        /**
-+         * @param {!Array<T>} xs
-+         * @return {!Array<T>}
-+         * @template T
-+         */
-+        function identity(xs) {
-+          return xs;
-+        }
-+        """;
-+
-+    SerializationResult result1 = compileWithExterns(externs, source);
-+    SerializationResult result2 = compileWithExterns(externs, source);
-+
-+    assertThat(result1.ast).isEqualTo(result2.ast);
-+    assertThat(result1.ast.getTypePool().getTypeList()).isNotEmpty();
-+  }
-+
-   @Test
-   public void doesNotSerializeInputSourceMappingURL() throws InvalidProtocolBufferException {
-     // We do not want TypedAST to support input source maps (source maps in separate files).
++        if (altIsUnknown || curIsUnknown || altHasTemplateTypes || current.hasAnyTemplateTypes()) {
+           if (alternate.equals(current)) {
+             // Alternate is unnecessary.
+             return this;
+@@ -871,6 +890,11 @@ public Builder addAlternate(JSType alternate) {
+                 ObjectType rawType = templatizedCurrent.getReferencedObjTypeInternal();
+                 // Providing no type-parameter values specializes `rawType` on `?` by default.
+                 alternate = registry.createTemplatizedType(rawType, ImmutableList.of());
++                altIsUnknown = alternate.isUnknownType();
++                altHasTemplateTypesComputed = false;
++                altHasTemplateTypes = false;
++                altIsDisjointValue = isDisjointValueType(alternate);
++                altIsCleanObject = isCleanConcreteObjectForDisjointCheck(alternate);
+                 removeCurrent = true;
+               }
+             }
+@@ -888,7 +912,7 @@ public Builder addAlternate(JSType alternate) {
+         }
+ 
+         if (removeCurrent) {
+-          alternates.remove(index);
++          removeAlternateAt(index);
+ 
+           if (index == functionTypePosition) {
+             functionTypePosition = -1;
+@@ -906,10 +930,83 @@ public 
 ```
 
-**File**: `test/com/google/javascript/rhino/jstype/JSTypeRegistryTest.java` (modified, +330/-0)
+**File**: `test/com/google/javascript/rhino/jstype/UnionTypeBuilderTest.java` (modified, +198/-0)
 ```diff
-@@ -66,6 +66,7 @@
- import com.google.javascript.rhino.Token;
- import com.google.javascript.rhino.testing.AbstractStaticScope;
- import com.google.javascript.rhino.testing.MapBasedScope;
-+import com.google.javascript.rhino.testing.TestErrorReporter;
- import java.util.HashMap;
- import java.util.HashSet;
- import java.util.Map;
-@@ -432,4 +433,333 @@ private String getReadableTypeNameHelper(JSTypeRegistry registry, JSType type, b
-     n.setJSType(type);
-     return registry.getReadableJSTypeName(n, deref);
-   }
-+
-+  @Test
-+  public void testCreateTypeFromCommentNode_internedBuiltinTypesAndTemplates_closedResolver() {
-+    TestErrorReporter reporter = new TestErrorReporter();
-+    JSTypeRegistry closedRegistry = new JSTypeRegistry(reporter);
-+    StaticTypedScope globalScope =
-+        createStaticTypedScope(IR.root(), null, ImmutableMap.of(), ImmutableSet.of());
-+
-+    // Builtin generic specializations (non-null via BANG, nullable via bare STRINGLIT/QMARK,
-+    // optional).
-+    JSType nonNullArrayStr =
-+        closedRegistry.createTypeFromCommentNode(
-+            bangNode(templatizedCommentNode("Array", IR.string("string"))), "a.js", globalScope);
-+    JSType nullableArrayStr =
-+        closedRegistry.createTypeFromCommentNode(
-+            templatizedCommentNode("Array", IR.string("string")), "b.js", globalScope);
-+    JSType qmarkArrayStr =
-+        closedRegistry.createTypeFromCommentNode(
-+            new Node(Token.QMARK, templatizedCommentNode("Array", IR.string("string"))),
-+            "b.js",
-+            globalScope);
-+    JSType optArrayStr =
-+        closedRegistry.createTypeFromCommentNode(
-+            new Node(Token.EQUALS, nullableArrayStrNode()), "b.js", globalScope);
-+    JSType nonNullArrayUnknown =
-+        closedRegistry.createTypeFromCommentNode(
-+            bangNode(templatizedCommentNode("Array", new Node(Token.QMARK))), "c.js", globalScope);
-+    JSType arrayUnknown =
-+        closedRegistry.createTypeFromCommentNode(
-+            templatizedCommentNode("Array", new Node(Token.QMARK)), "c.js", globalScope);
-+
-+    assertType(nonNullArrayStr)
-+        .isEqualTo(
-+            closedRegistry.createTemplatizedType(
-+                closedRegistry.getNativeObjectType(JSTypeNative.ARRAY_TYPE),
-+                closedRegistry.getNativeType(STRING_TYPE)));
-+    assertThat(nonNullArrayStr.toString()).isEqualTo("Array<string>");
-+    assertThat(nonNullArrayStr.toAnnotationString(JSType.Nullability.EXPLICIT))
-+        .isEqualTo("!Array<string>");
-+    assertType(nullableArrayStr).isEqualTo(closedRegistry.createNullableType(nonNullArrayStr));
-+    assertType(qmarkArrayStr).isEqualTo(nullableArrayStr);
-+    assertType(optArrayStr).isEqualTo(closedRegistry.createOptionalType(nullableArrayStr));
-+    assertType(nonNullArrayUnknown)
-+        .isEqualTo(
-+            closedRegistry.createTemplatizedType(
-+                closedRegistry.getNativeObjectType(JSTypeNative.ARRAY_TYPE),
-+                closedRegistry.getNativeType(JSTypeNative.UNKNOWN_TYPE)));
-+    assertType(nonNullArrayUnknown).isNotEqualTo(nonNullArrayStr);
-+    assertThat(nonNullArrayUnknown.toString()).isEqualTo("Array<?>");
-+    assertThat(arrayUnknown.toString()).isEqualTo("(Array<?>|null)");
-+
-+    // Repeated evaluation yields structurally equal types with identical template arguments.
-+    JSType nonNullArrayStr2 =
-+        closedRegistry.createTypeFromCommentNode(
-+            bangNode(templatizedCommentNode("Array", IR.string("string"))), "d.js", null);
-+    assertType(nonNullArrayStr2).isEqualTo(nonNullArrayStr);
-+    assertThat(nonNullArrayStr2.isResolved()).isTrue();
-+    assertThat(nonNullArrayStr2.getTemplateTypeMap().getTemplateValues())
-+        .containsExactlyElementsIn(nonNullArrayStr.getTemplateTypeMap().getTemplateValues())
-+        .inOrder();
-+
-+    // ReadonlyArray, Promise, IThenable, IIterableResult, ReadonlyMap, Map, and unions.
-+    JSType readonlyArrNum =
-+        closedRegistry.createTypeFromCommentNode(
-+            bangNode(templatizedCommentNode("ReadonlyArray", IR.string("number"))),
-+            "a.js",
-+            globalScope);
-+    assertThat(readonlyArrNum.toString()).isEqualTo("ReadonlyArray<number>");
-+
-+    JSType promiseStr =
-+        closedRegistry.createTypeFromCommentNode(
-+            bangNode(templatizedCommentNode("Promise", IR.string("string"))), "a.js", globalScope);
-+    assertThat(promiseStr.toString()).isEqualTo("Promise<string>");
-+
-+    JSType ithenableBool =
-+        closedRegistry.createTypeFromCommentNode(
-+            bangNode(templatizedCommentNode("IThenable", IR.string("boolean"))),
-+            "a.js",
-+            globalScope);
-+    assertThat(ithenableBool.toString()).isEqualTo("IThenable<boolean>");
-+
-+    JSType iterResultNum =
-+        closedRegistry.createTypeFromCommentNode(
-+            bangNode(templatizedCommentNode("IIterableResult", IR.string("number"))),
-+            "a.js",
-+            globalScope);
-+    assertThat(iterResultNum.toString()).isEqualTo("IIt
-```
-
-**File**: `test/com/google/javascript/rhino/jstype/UnionTypeBuilderTest.java` (modified, +176/-0)
-```diff
-@@ -45,6 +45,8 @@
+@@ -42,6 +42,7 @@
+ import static com.google.javascript.rhino.testing.TypeSubject.assertType;
+ import static org.junit.Assert.assertThrows;
+ 
++import com.google.common.collect.ImmutableList;
  import com.google.common.collect.ImmutableMap;
  import com.google.javascript.rhino.testing.BaseJSTypeTestCase;
  import com.google.javascript.rhino.testing.MapBasedScope;
-+import java.util.ArrayList;
-+import java.util.List;
- import org.junit.Before;
- import org.junit.Test;
- import org.junit.runner.RunWith;
-@@ -287,6 +289,180 @@ public void testAfterBuild_cannotAdd() {
-     assertThrows(Exception.class, () -> builder.addAlternate(NUMBER_TYPE));
+@@ -448,6 +449,203 @@ public void testLargeUnion_recordTypeEqualityAndNonStructuralSubtyping() {
+     assertThat(union.getAlternates()).hasSize(12);
    }
  
 +  @Test
-+  public void testLargeUnion_deduplicatesIdenticalAndSubsumedAlternates() {
-+    List<ObjectType> classes = createDistinctInstanceTypes("C", 12);
++  public void
++      testIdentitySetThreshold_growthReplacementsAndRemovalsMaintainIdentityDeduplication() {
++    List<ObjectType> classes = createDistinctInstanceTypes("ThreshCls", 9);
++    FunctionType fnString = createFunctionWithReturn(STRING_TYPE);
++    FunctionType fnNumber = createFunctionWithReturn(NUMBER_TYPE);
++    FunctionType fnSub = createFunctionWithReturn(sub);
++    FunctionType fnBase = createFunctionWithReturn(base);
 +
 +    UnionType.Builder builder = UnionType.builder(registry);
-+    for (ObjectType cls : classes) {
-+      builder.addAlternate(cls);
++    // Stay below IDENTITY_SET_THRESHOLD (7 alternates: sub, fnString, classes[0..4]).
++    builder.addAlternate(sub).addAlternate(fnString);
++    for (int i = 0; i < 5; i++) {
++      builder.addAlternate(classes.get(i));
 +    }
-+    builder.addAlternate(STRING_TYPE).addAlternate(NUMBER_TYPE);
++    // Linear identity scan before threshold must drop exact duplicates.
++    builder.addAlternate(sub).addAlternate(fnString).addAlternate(classes.get(0));
 +
-+    // Re-add identical alternates after the large-union threshold.
-+    builder
-+        .addAlternate(classes.get(0))
-+        .addAlternate(classes.get(7))
-+        .addAlternate(STRING_TYPE)
-+        .addAlternate(NUMBER_TYPE);
++    // Cross IDENTITY_SET_THRESHOLD = 8 (7 -> 8 -> 9 -> 10 -> 11 alternates).
++    for (int i = 5; i < classes.size(); i++) {
++      builder.addAlternate(classes.get(i));
++    }
++    // Lazy IdentityHashMap must contain alternates added both before and after crossing 8.
++    builder.addAlternate(classes.get(0)).addAlternate(classes.get(8)).addAlternate(fnString);
 +
-+    // Subsumption and equality checks must still apply alongside identity dedup.
-+    builder.addAlternate(ARRAY_TYPE);
-+    builder.addAlternate(registry.createTemplatizedType(ARRAY_TYPE, STRING_TYPE));
-+    builder.addAlternate(sub);
++    // Function supremum replacement (`replaceAlternate`) updates alternateIdentitySet to hold
++    // `function(): (number|string)` and evict `fnString`.
++    builder.addAlternate(fnNumber);
++    // Removing `sub` via `removeAlternateAt` shifts `functionTypePosition` down and evicts `sub`.
 +    builder.addAlternate(base);
-+    addRecordType(builder, false);
-+    addRecordType(builder, false);
++    builder.addAlternate(base).addAlternate(fnString).addAlternate(fnNumber);
 +
 +    UnionType union = builder.build().toMaybeUnionType();
 +    assertThat(union).isNotNull();
-+    assertThat(union.getAlternates()).hasSize(17);
++    // 9 classes + base + 1 merged function = 11 alternates.
++    assertThat(union.getAlternates()).hasSize(11);
 +    assertThat(union.getAlternates()).containsAtLeastElementsIn(classes);
-+    assertThat(union.getAlternates()).containsAtLeast(STRING_TYPE, NUMBER_TYPE, ARRAY_TYPE, base);
++    assertThat(union.getAlternates()).contains(base);
 +    assertThat(union.getAlternates()).doesNotContain(sub);
-+  }
-+
-+  @Test
-+  public void testLargeUnion_enumElementTypeAndPrimitiveDeduplication() {
-+    List<ObjectType> classes = createDistinctInstanceTypes("EnumCls", 10);
-+    EnumType enumType;
-+    try (JSTypeResolver.Closer closer = this.registry.getResolver().openForDefinition()) {
-+      enumType = EnumType.builder(registry).setName("E").setElementType(NUMBER_TYPE).build();
-+    }
-+    EnumElementType enumElement = enumType.getElementsType();
-+
-+    // EnumElementType preceding a FunctionType must still be removed when NUMBER_TYPE arrives,
-+    // shifting functionTypePosition properly so subsequent functions merge.
-+    UnionType.Builder removeBeforeFnBuilder = UnionType.builder(registry);
-+    removeBeforeFnBuilder.addAlternate(enumElement).addAlternate(createFunctionWithReturn(sub));
-+    for (ObjectType cls : classes) {
-+      removeBeforeFnBuilder.addAlternate(cls);
-+    }
-+    removeBeforeFnBuilder.addAlternate(NUMBER_TYPE).addAlternate(createFunctionWithReturn(base));
-+
-+    UnionType removedUnion = removeBeforeFnBuilder.build().toMaybeUnionType();
-+    assertThat(removedUnion).isNotNull();
-+    assertThat(removedUnion.getAlternates()).hasSize(12);
-+    assertThat(removedUnion.getAlternates()).contains(NUMBER_TYPE);
-+    assertThat(removedUnion.getAlternates()).doesNotContain(enumElement);
-+    assertThat(removedUnion.getAlternates().stream().filter(JSType::isFunctionType).count())
-+        .isEqualTo(1);
++    assertThat(union.getAlternates().stream().filter(JSType::isFunctionType).count()).isEqualTo(1);
 +    assertType(
-+            removedUnion.getAlternates().stream()
-+                .filter(JSType::isFunctionType)
-+                .findFirst()
-+                .orElseThrow())
-+        .isEqualTo(createFunctionWithReturn(base));
++            union.getAlternates().stream().filter(JSType::isFunctionType).findFirst().orElseThrow())
++        .isEqualTo(createFunctionWithReturn(registry.createUnionType(NUMBER_TYPE, STRING_TYPE)));
 +
-+    // Adding EnumElementType when its primitive NUMBER_TYPE is already present must be redundant.
-+    UnionType.Builder existingPrimitiveBuilder = UnionType.builder(registry);
-+    existingPrimitiveBuilder.addAlternate(NUMBER_TYPE);
++    // Also verify `replaceAlternate` when supremum is reference-identical to the incoming function
++    // (`fnBase`), and `removeAlternateAt` when `OBJECT_TYPE` removes all classes and the function
++    // at `index == functionTypePosition`.
++    UnionType.Builder collapseBuilder = UnionType.builder(registry);
++    collapseBuilder.addAlternate(STRING_TYPE).addAlternate(fnSub);
 +    for (ObjectType cls : classes) {
-+      existingPrimitiveBuilder.addAlternate(cls);
++      collapseBuilder.addAlternate(cls);
 +    }
-+    existingPrimitiveBuilder.addAlternate(enumElement);
-+    UnionType existingPrimitiveUnion = existingPrimitiveBuilder.build().toMaybeUnionType();
-+    assertThat(existingPrimitiveUnion).isNotNull();
-+    assertThat(existingPrimitiveUnion.getAlternates()).hasSize(11);
-+    assertThat(existingPrimitiveUnion.getAlternates()).contains(NUMBER_TYPE);
-+    assertThat(existingPrimitiveUnion.getAlternates()).doesNotContain(enumElement);
++    collapseBuilder.addAlternate(fnBase).addAlternate(fnBase);
++    collapseBuilder.addAlternate(OBJECT_TYPE).addAlternate(OBJECT_TYPE).addAlternate(STRING_TYPE);
++
++    UnionType collapsed = collapseBuilder.build().toMaybeUnionType();
++    assertThat(collapsed).isNotNull();
++    assertThat(collapsed.getAlternates()).containsExactly(STRING_TYPE, OBJECT_TYPE);
 +  }
 +
 +  @Test
-+  public void testLargeUnion_functionTypePositionShiftsWhenAlternateRemovedBeforeFunction() {
-+    List<ObjectType> classes = createDistinctInstanceTypes("ShiftCls", 11);
++  public void testDisjointFastSkips_valueTypesKnownSymbolsAndCleanInstanceObjects() {
++    // All 7 pure ValueType singletons are mutually disjoint, while identical repeats short-circuit.
++    UnionType allPureValues =
++        UnionType.builder(registry)
++            .addAlternate(BOOLEAN_TYPE)
++            .addAlternate(NUMBER_TYPE)
++            .addAlternate(BIGINT_TYPE)
++            .addAlternate(STRING_TYPE)
++            .addAlternate(VOID_TYPE)
++            .addAlternate(NULL_TYPE)
++            .addAlternate(SYMBOL_TYPE)
++            .addAlternate(STRING_TYPE)
++            .addAlternate(SYMBOL_TYPE)
++            .build()
++            .toMaybeUnionType();
++    assertThat(allPureValues).isNotNull();
++    assertThat(allPureValues.getAlternates())
++        .containsExactly(
++            BOOLEAN_TYPE,
++            NUMBER_TYPE,
++            BIGINT_TYPE,
++            STRING_TYPE,
++            VOID_TYPE,
++            NULL_TYPE,
++            SYMBOL_TYPE);
 +
-+    UnionType.Builder builder = UnionType.builder(registry);
-+    builder
-+        .addAlternate(sub)
-+        .addAlternate(classes.get(0))
-+        .addAlternate(createFunctionWithReturn(sub));
-+    for (int i = 1; i < classes.size(); i++) {
-+      builder.addAlternate(classes.get(i));
-+    }
-+    // Removing `sub` at index 0 shifts the function alternate index down by 1.
-+    builder.addAlternate(base);
-+    // Merging a second function must hit the shifted functionTypePosition, not insert a duplicate.
-+    builder.addAlternate(createFunctionWithReturn(base)
++    // KnownSymbolType extends SymbolType (a ValueType) and is a subtype of `symbol`, so it must NOT
++    // be fast-skipped as disjoint from SYMBOL_TYPE, while distinct KnownSymbolTypes stay separate.
++    KnownSymbolType symIterator = new KnownSymbolType(registry
+```
+
+---
+
+### Incident Patch 3: `365b8b6e` (2026-11-19)
+**Commit Message**: Merge pull request #4394 from Mwrnk:fix/async-generator-yield-star-await
+
+PiperOrigin-RevId: 1025751306
+
+**File**: `src/com/google/javascript/jscomp/js/es6/async_generator_wrapper.js` (modified, +3/-1)
+```diff
+@@ -430,7 +430,9 @@ $jscomp.AsyncGeneratorWrapper.prototype.runDelegateFrame_ = function() {
+       if (param instanceof $jscomp.AsyncGeneratorWrapper$ActionRecord) {
+         param = param.value;
+       }
+-      this.delegate_[frame.method](param)
++      // Per the spec, `yield*` awaits the inner result, so the delegate may
++      // return a plain {value, done} object instead of a Promise.
++      Promise.resolve(this.delegate_[frame.method](param))
+           .then(this.boundHandleDelegateResult_, this.boundHandleDelegateError_)
+           .catch(this.boundRejectAndClose_);
+     } catch (err) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4397** (2026-11-19): don't overflow start + length when folding String.prototype.substr (@rajath201)
+- **PR #4394** (2026-11-19): Await the delegate result in async generator yield* (@Mwrnk)
 - **PR #4392** (2026-11-13): Move Event.isTrusted from Gecko to W3C extern (@zbynek)
 - **PR #4391** (2026-11-16): Add externs for Intl.DurationFormat. (@avelad)
-- **PR #4381** (closed): Add externs for the Translator and Language Detector APIs. (@avelad)
-- **PR #4380** (closed): Add on-device speech recognition APIs to SpeechRecognition externs. (@avelad)
-- **PR #4379** (closed): Add AudioTrack and VideoTrack externs. (@avelad)
-- **PR #4378** (closed): Add requestPermission to DeviceOrientationEvent and DeviceMotionEvent externs. (@avelad)
+- **PR #4389** (2026-11-19): Name the current renaming report flags in their conflict errors (@ZainnQureshii)
+- **PR #4384** (2026-11-19): print a raw backspace in a regex literal as \x08, not \b (@rajath201)
 
 ---
 
@@ -2859,54 +2803,33 @@ PiperOrigin-RevId: 1021252491
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Supply a temporary debug log directory in InlineFunctionsTest.
+## X. Empirical Invariant Guard in PeepholeReplaceKnownMethods.java
 
 **RULE**:
-When implementing operations in `test/com/google/javascript/jscomp/InlineFunctionsTest.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b22fb58d`: Supply a temporary debug log directory in InlineFunctionsTest.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `906c51c8`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/com/google/javascript/jscomp/InlineFunctionsTest.java`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-import java.io.IOException;
-import java.nio.file.Path;
-import org.jspecify.annotations.Nullable;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
-  @Rule public final TemporaryFolder tempFolder = new TemporaryFolder();
-
-  private @Nullable Path debugLogDirectoryOverride;
-    debugLogDirectoryOverride = null;
-  @Override
-  protected CompilerOptions getOptions() {
-    CompilerOptions options = super.getOptions();
-    if (debugLogDirectoryOverride != null) {
-      options.setDebugLogDirectory(debugLogDirectoryOverride);
-    }
-    return options;
-  }
-
-  public void testNoInlineTaggedTemplateLitEncourageAndRequireInlining() throws IOException {
-    // InlineFunctions reports MISSED_REQUIRED_INLINING only when a debug log directory is set.
-    // Supply a temporary directory explicitly because CompilerTestCaseUtils.setDebugLogDirectoryOn
-    // is a no-op in open-source builds.
-    debugLogDirectoryOverride = tempFolder.newFolder().toPath();
-
+    // Compare against the remaining length instead of computing start + length, which can
+    // overflow when the length argument is large (e.g. Infinity saturates to Integer.MAX_VALUE).
+    if ((start < 0) || (length < 0) || length > stringAsString.length() - start) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-  public void testNoInlineTaggedTemplateLitEncourageAndRequireInlining() {
+    if ((start + length) > stringAsString.length() || (length < 0) || (start < 0)) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b22fb58d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `906c51c8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

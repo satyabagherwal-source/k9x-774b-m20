@@ -11684,3 +11684,6 @@ Every entry in this ledger must capture:
 | `learn-github-jhspetersson-fselect` | `https://github.com/jhspetersson/fselect` | `234f8b7b` | Multi-dimensional audit evidence | 2026-11-20T22:57:14.796Z |
 | `learn-github-scrapinghub-dateparser` | `https://github.com/scrapinghub/dateparser` | `ce8c4390` | Multi-dimensional audit evidence | 2026-11-20T22:57:17.502Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `60e3fed6` | Multi-dimensional audit evidence | 2026-11-20T22:57:25.574Z |
+| `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `77c890f4` | Multi-dimensional audit evidence | 2026-11-20T23:05:27.582Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `469e73c6` | Multi-dimensional audit evidence | 2026-11-20T23:05:32.575Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `32cd9498` | Multi-dimensional audit evidence | 2026-11-20T23:05:35.739Z |

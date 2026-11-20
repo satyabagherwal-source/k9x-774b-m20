@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T17:29:24.194Z",
+  "timestamp": "2026-11-20T23:05:40.872Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-freenet-freenet-core-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [freenet-freenet-core-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T17:29:24.194Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T23:05:40.872Z`  
 > **Learning ID**: `LEARN-EVO-freenet-freenet-core-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `d4845b0c`  
+> **Source Version**: `32cd9498`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T17:29:15.634Z  
+> **Timestamp**: 2026-11-20T23:05:34.657Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T17:29:15.628Z  
+> **Harvest Timestamp**: 2026-11-20T23:05:34.652Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3130 stars
+- **Stars / Engagement**: 3131 stars
 
 ---
 
@@ -1766,14 +1766,13 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6303** (2026-11-20): **fix(server): say why a web archive was refused; warn on large sites in fdev**
-  *Symptoms*: ## Problem  0.2.161 (#6281) started refusing a published media-heavy website (contract `Ch5S5guTNAontnYX2qTFLmHxAh2kLodU1xpoJjv4dx5J`, 50.6 MiB unpacked) because it exceeds the new 48 MiB unpacked cap. The person who reported it saw only:  ``` failed unpacking contract: Ch5S5guTNAontnYX2qTFLmHxAh2kLodU1xpoJjv4dx5J ```  The reason appeared only in the gateway's own log, so neither the visitor nor the site's author could tell what was wrong.  The limits themselves are being raised separately on `fix/webapp-archive-size-regression`. This PR leaves the limit constants alone (the two branches merge cleanly), and it handles the other half: telling people why a site was refused, and nudging authors toward smaller sites.  ## Approach  **The refusal says why.** - The five per-entry unpack checks (file size, total size, entry count, entry type, path) now return `WebContractError::Refused`, written for a person, for example:   > failed unpacking contract: KEY: the website unpacks to at least 48.0 MiB, over this node's ... limit for one website. A website is downloaded whole by every visitor, so large media (video, audio, big images) is better hosted separately and linked to. - When the size and the limit would round to the same MiB figure, both are given in bytes. - The 400 body appends this reason.  **Some errors stay generic.** - An I/O or decode error keeps the bare message, because it can contain a local filesystem path and this body is served at the node's origin, including on host
+- **Issue #6308** (2026-11-20): **build: release 0.2.162**
+  *Symptoms*: **Automated release PR**  - freenet: → **0.2.162** - fdev: → **0.3.324**  This PR will auto-merge once GitHub CI passes. Generated by: `.github/workflows/release.yml` 
 
-- **Issue #6302** (2026-11-20): **fix(transport): count QUIC inbound bytes in cumulative_bytes_received**
-  *Symptoms*: ## Problem  `cumulative_bytes_received` and the per-peer received counters were fed only by `record_packet_received`, called after legacy symmetric decryption. QUIC packets are decrypted inside quinn and never reach it, while QUIC sends are counted at the socket. After the QUIC data ramp hit 100% the dashboard download line, `bandwidth_history`, `network_status` and telemetry `cumulative_bytes_received` undercounted (fleet upload/download ratio 2.41).  ## Approach  **Source of the count.** quinn's `udp_rx` is incremented before decryption, so datagrams with a live connection ID and bad ciphertext would inflate it, which #3999 forbids. quinn exposes no post-decryption byte count, so `PathReport::report` instead reports the connection's stream-read bytes (`ConnRanges::read_bytes`, bytes quinn returned after authenticating them) through `TransportMetrics::record_quic_received`. That moves `cumulative_bytes_received` and the per-peer `bytes_received`, keyed by the normalized remote address. The sent side records the target it is given and the QUIC socket adapter normalizes addresses before quinn sees them, so the keys match.  **Unit difference.** The sent counter counts whole UDP datagrams at the socket. The new receive count is stream payload only: it excludes QUIC framing, acknowledgement-only packets and handshake datagrams (the sent side counts those). Measured on a 256 KiB transfer in the in-memory rig, datagram bytes were 1.040x the payload counted, so download is undercoun
+- **Issue #6307** (2026-11-20): **chore(release): raise the QUIC-native wire floor to 0.2.163**
+  *Symptoms*: ## Problem `quic_native_floor_tracks_the_shipping_release` will fail once `Cargo.toml` is at 0.2.162: `QUIC_NATIVE_MIN_VERSION` is (0, 2, 162) and `QUIC_NATIVE_SHIPPED_IN` is `None`.  ## Approach Raise the floor to 0.2.163, as #6273 and #6299 did for the previous two releases. Native connect is still off in production (`QUIC_NATIVE_PERCENT` is 0), so this changes no behaviour, and no release is frozen as the floor yet.  ## Testing Full `cargo test -p freenet --lib` with the crate temporarily at 0.2.162 and this change: 9184 passed, 0 failed. `cargo fmt --check`.  [AI-assisted - Claude] 
   **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Rule Review: No blocking issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md, transport.md **Files reviewed:** 7  #### Warnings None.  - **Regression tests:** The `fix:` PR adds two regression tests.   - `received_wire_bytes_count_only_authenticated_reads` runs the real path lifecycle and injects forged datagrams with a live connection ID. It covers the #3999 pre-decrypt overcount.   - `a_path_report_counts_stream_reads_per_peer_on_ticks_and_cumulative_on_drop` covers the tick path, the final report, and no regrowth of the per-peer entry. - **Determinism:** The new tests use `GlobalRng::seed_guard(SEED)` and the pair's virtual `time.sleep`. No banned APIs were added. - **Cleanup/GC rules:** No new exemption logic was added. - **Documentation:** The PR adds a pattern entry to `bug-prevention-patterns.md`. The `quic_bytes_received` note in `transport.md` (about quinn's UDP counts) is about a different metric, so it isn't made stale.
-  > ## ⚠️ Extended Benchmark Regressions Detected  Some extended benchmarks show performance regressions.  **Note**: Extended benchmarks include high-latency and packet-loss scenarios which have higher variance than standard CI benchmarks.  [View full results](https://github.com/freenet/freenet-core/actions/runs/44655765836)  [View full benchmark summary](https://github.com/freenet/freenet-core/actions/runs/44655765836)
+  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md **Files reviewed:** 1  No rule violations detected. The PR changes one constant in `crates/core/src/node/network_bridge/p2p_protoc.rs`, `QUIC_NATIVE_MIN_VERSION`, from 0.2.162 to 0.2.163. It also adds a line to the doc comment's history. The change follows the pattern the earlier bumps used: 0.2.160 to 0.2.161, then 0.2.161 to 0.2.162. The existing guard tests in `p2p_protoc.rs` around line 4422 pin the invariant that the floor stays above the current crate version. They also pin that the floor stays above `LAST_RELEASE_WITHOUT_DECODER`. I didn't run them. This is a `chore:` PR with no behavior change beyond the constant, so it needs no new regression test. The commit subject is in conventional form and is under 72 characters.  <!-- warning-count: 0 -->  --- *Rule review against `.claude/rules/`. WARNING findings turn the `rule-review/warnings` status red.*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1790,355 +1789,343 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d4845b0c` (2026-11-20)
-**Commit Message**: fix(server): say why a web archive was refused; warn on large sites in fdev (#6303)
+### Incident Patch 1: `32cd9498` (2026-11-20)
+**Commit Message**: build: release 0.2.162 (#6308)
 
-**File**: `crates/core/src/server/app_packaging.rs` (modified, +361/-7)
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -17,6 +17,84 @@ pub enum WebContractError {
-     StoringError(std::io::Error),
-     #[error("file not found: {0}")]
-     FileNotFound(String),
-+    /// The archive is well-formed but this node will not unpack it: it breaks
-+    /// one of the per-entry unpack checks (file size, total size, entry count,
-+    /// entry type, path). The message is shown to whoever asked for the site,
-+    /// since it is the only way a site's author learns why the page does not
-+    /// load. The decompressed-stream cap and the state-framing checks in
-+    /// `TryFrom` still report `UnpackingError`, or `StoringError` when the cap
-+    /// trips while `unpack_in` reads a file's data; both are shown
-+    /// generically. They fire only for padded or malformed archives, never for
-+    /// an ordinary site under the network's state-size limit.
-+    ///
-+    /// Up to [`SHOWN_PATH_MAX_CHARS`] characters of the archive author's own
-+    /// text (an entry path) therefore appear on a page at the node's origin:
-+    /// quoted, escaped, HTML-escaped by the response layer, and framed as a
-+    /// path in the site. Accepted, because the author needs the name to fix
-+    /// the site and can show any text they like in the site itself.
-+    ///
-+    /// It is composed here from the limits and the archive's own headers, never
-+    /// from a filesystem error, so it carries no detail of the node's disk. The
-+    /// one archive-controlled part, an entry path, goes through
-+    /// [`shown_path`], which bounds its length: the message is returned on
-+    /// every request and kept in the node's negative cache, and a tar long-name
-+    /// record can make a path megabytes long.
-+    #[error("{0}")]
-+    Refused(String),
-+}
-+
-+/// Most characters of an archive entry path quoted in a [`WebContractError::Refused`]
-+/// message, counted after escaping.
-+const SHOWN_PATH_MAX_CHARS: usize = 120;
-+
-+/// An archive entry path quoted for a refusal message: each character escaped
-+/// with `char::escape_debug` (control, bidi and combining characters become
-+/// `\u{..}`, quotes are backslashed; slightly stricter than `str`'s `Debug`,
-+/// which leaves `'` and non-initial combining marks alone), cut at a whole
-+/// escape once [`SHOWN_PATH_MAX_CHARS`] escaped characters are reached, then
-+/// quoted, with `...` after the closing quote when cut.
-+///
-+/// The cap counts the ESCAPED output: one bidi override expands to eight
-+/// characters, so capping the raw path would let a hostile name push the
-+/// message past `unpack_failed_message`'s backstop, which would then cut the
-+/// hint and split an escape. A huge path is never formatted whole.
-+fn shown_path(path: &Path) -> String {
-+    let lossy = path.to_string_lossy();
-+    let mut out = String::from("\"");
-+    let mut shown = 0;
-+    let mut cut = false;
-+    for c in lossy.chars() {
-+        let escaped = c.escape_debug();
-+        let len = escaped.len();
-+        if shown + len > SHOWN_PATH_MAX_CHARS {
-+            cut = true;
-+            break;
-+        }
-+        out.extend(escaped);
-+        shown += len;
-+    }
-+    out.push('"');
-+    if cut {
-+        out.push_str("...");
-+    }
-+    out
-+}
-+
-+/// `bytes` in MiB with one decimal, for messages a person reads.
-+fn mib(bytes: u64) -> String {
-+    format!("{:.1} MiB", bytes as f64 / (1024.0 * 1024.0))
-+}
-+
-+/// `size` and `limit` for a "size is over limit" message. In MiB unless the
-+/// two would round to the same figure (within about 50 KiB of each other),
-+/// where the message would read as a contradiction; then in bytes.
-+fn size_and_limit(size: u64, limit: u64) -> (String, String) {
-+    let (s, l) = (mib(size), mib(limit));
-+    if s == l {
-+        (format!("{size} bytes"), format!("{limit} byte"))
-+    } else {
-+        (s, l)
-+    }
- }
+@@ -1899,7 +1899,7 @@ dependencies = [
  
- /// Largest compressed web archive accepted from a contract's state.
-@@ -184,7 +262,7 @@ impl WebApp {
-         use std::path::Component;
-         use tar::EntryType;
+ [[package]]
+ name = "fdev"
+-version = "0.3.323"
++version = "0.3.324"
+ dependencies = [
+  "anyhow",
+  "axum",
+@@ -2078,7 +2078,7 @@ dependencies = [
  
--        let reject = |msg: String| WebContractError::UnpackingError(anyhow::anyhow!(msg));
-+        let reject = WebContractError::Refused;
- 
-         let mut decoded_web = self.decode_web();
-         decoded_web.set_overwrite(false);
-@@ -203,7 +281,8 @@ impl WebApp {
-             count += 1;
-             if count > MAX_ARCHIVE_ENTRIES {
-                 return Err(reject(format!(
--                    "web archive has more than {MAX_ARCHIVE_ENTRIES} entries"
-+                    "the website has more than {MAX_ARCHIVE_ENTRIES} files and folders, over \
-+                     this node's limit for one website."
-                 )));
-             }
- 
-@@ -214,7 +293,9 @@ impl WebApp {
-             if !matches!(entry_type, EntryType::Regular | EntryType::Directory) {
-                 let path = entry.path().map(|p| p.to_path_buf()).unwrap_or_default();
-                 return Err(reject(format!(
--                    "refusing to unpack {entry_type:?} entry from web archive: {path:?}"
-+                    "the website contains {} as 
+ [[package]]
+ name = "freenet"
+-version = "0.2.161"
++version = "0.2.162"
+ dependencies = [
+  "aes-gcm",
+  "ahash",
 ```
 
-**File**: `crates/core/src/server/path_handlers.rs` (modified, +206/-25)
+**File**: `apps/freenet-ping/Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -137,21 +137,77 @@ static CONTRACT_REFRESH_LOCKS: LazyLock<
- /// `Retry-After`). A suppressed request must get the SAME answer the request
- /// that recorded the failure got, not an arbitrary pick between them — so this
- /// records which one it was, not just that failure occurred.
--#[derive(Debug, Clone, Copy)]
-+#[derive(Debug, Clone)]
- enum TerminalAbsenceKind {
-     ContractNotFound,
-     MissingContract,
-     /// The contract's state is not an archive this node will unpack (malformed,
-     /// or over the unpack limits). The answer is a function of the state, so it
-     /// repeats until the state changes; without recording it, every request
--    /// re-fetches and re-unpacks the same refused archive.
--    ArchiveRefused,
-+    /// re-fetches and re-unpacks the same refused archive. A genuine write
-+    /// failure (disk full) is recorded too, because it cannot be told apart
-+    /// from an archive fault at the point it surfaces (see [`unpack_error`]);
-+    /// it is retried once the refresh window ends.
-+    ///
-+    /// Carries the full error text the first request got (bounded by
-+    /// [`unpack_failed_message`]), so a replayed refusal still says WHY rather
-+    /// than only that it failed.
-+    ArchiveRefused(std::sync::Arc<str>),
+@@ -1715,7 +1715,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "freenet"
+-version = "0.2.161"
++version = "0.2.162"
+ dependencies = [
+  "aes-gcm",
+  "ahash",
+```
+
+**File**: `crates/core/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "freenet"
+-version = "0.2.161"
++version = "0.2.162"
+ edition = "2024"
+ rust-version = "1.85"
+ publish = true
+```
+
+**File**: `crates/fdev/Cargo.toml` (modified, +4/-4)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "fdev"
+-version = "0.3.323"
++version = "0.3.324"
+ edition = "2024"
+ rust-version = "1.85"
+ publish = true
+@@ -14,12 +14,12 @@ readme = "README.md"
+ # (v0.2.x), so we embed the matching freenet version literally — `v{ version }`
+ # would expand to the fdev crate version and 404. release.yml rewrites the
+ # `vX.Y.Z` segment whenever the freenet version is bumped (issue #3995).
+-pkg-url = "{ repo }/releases/download/v0.2.161/fdev-{ target }.tar.gz"
++pkg-url = "{ repo }/releases/download/v0.2.162/fdev-{ target }.tar.gz"
+ pkg-fmt = "tgz"
+ bin-dir = "fdev"
+ 
+ [package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
+-pkg-url = "{ repo }/releases/download/v0.2.161/fdev-{ target }.zip"
++pkg-url = "{ repo }/releases/download/v0.2.162/fdev-{ target }.zip"
+ pkg-fmt = "zip"
+ bin-dir = "fdev.exe"
+ 
+@@ -56,7 +56,7 @@ ed25519-dalek = { version = "2", features = ["rand_core", "serde"] }
+ hex = { workspace = true }
+ 
+ # internal
+-freenet = { path = "../core", version = "0.2.161", features = ["testing"] }
++freenet = { path = "../core", version = "0.2.162", features = ["testing"] }
+ freenet-stdlib = { workspace = true }
+ 
+ [dev-dependencies]
+```
+
+---
+
+### Incident Patch 2: `b837e996` (2026-11-20)
+**Commit Message**: fix(server): raise web archive unpack limits to admit existing sites (#6306)
+
+**File**: `crates/core/src/ring/hosting/disk_usage.rs` (modified, +3/-3)
+```diff
+@@ -788,9 +788,9 @@ impl DiskUsageTracker {
+     }
+ 
+     /// Re-measure the unpacked-webapp cache (#5007), recursively. REPORTED
+-    /// ONLY: the result never enters [`Self::total_bytes`]. #5012 already caps
+-    /// this cache at 64 MiB with its own LRU, and hosting eviction has no lever
+-    /// on it.
++    /// ONLY: the result never enters [`Self::total_bytes`]. The cache has its own
++    /// LRU bound (`WEBAPP_CACHE_MAX_BYTES` in `server/path_handlers.rs`), and
++    /// hosting eviction has no lever on it.
+     pub(crate) fn refresh_webapp_cache(&self) {
+         self.store_measurement(
+             &self.webapp_cache_bytes,
+```
+
+**File**: `crates/core/src/server/app_packaging.rs` (modified, +59/-11)
+```diff
+@@ -104,16 +104,26 @@ const MAX_WEB_SIZE: u64 = 1024 * 1024 * 100;
+ ///
+ /// `MAX_WEB_SIZE` bounds only the compressed bytes, and xz compresses runs of
+ /// zeros by several orders of magnitude, so it says nothing about what lands on
+-/// disk or in memory. This bound is below the node's webapp cache budget
+-/// (`WEBAPP_CACHE_MAX_BYTES`, 64 MiB; a test in `path_handlers` pins the
+-/// relation) so a single archive can never exceed the budget by itself, and well
+-/// above the largest real web app we have measured (about 23 MB unpacked, 14.5 MB
+-/// of it one wasm file).
+-pub(crate) const MAX_UNPACKED_TOTAL_BYTES: u64 = 48 * 1024 * 1024;
+-
+-/// Largest single file in a web archive. Twice the largest wasm bundle measured
+-/// (14.5 MB), and below the total bound.
+-pub(crate) const MAX_UNPACKED_FILE_BYTES: u64 = 32 * 1024 * 1024;
++/// disk. This bound stays below the node's webapp cache budget
++/// (`WEBAPP_CACHE_MAX_BYTES`, 512 MiB; a const assert in `path_handlers` pins the
++/// relation) so a single archive can never exceed the budget by itself.
++///
++/// Sizing: media-heavy sites exist and are legitimate. The site at contract
++/// `Ch5S5guTNAontnYX2qTFLmHxAh2kLodU1xpoJjv4dx5J`, measured on 2026-11-19, is
++/// 51.9 MB compressed (xz barely shrinks gif/webm/mp3), 53.0 MB (50.6 MiB)
++/// unpacked in 8 files, largest 18.3 MB. The previous 48 MiB total refused it
++/// (#6281 regression). 256 MiB is about 4.8x that site and about 5x the largest
++/// compressed state a node stores (`MAX_STATE_SIZE`, 50 MiB), so a legitimate
++/// site has headroom while a decompression bomb is still cut off at a fixed,
++/// small multiple of what the network will carry.
++pub(crate) const MAX_UNPACKED_TOTAL_BYTES: u64 = 256 * 1024 * 1024;
++
++// Headroom over the measured site (53,046,895 bytes unpacked): at least 4x.
++const _: () = assert!(MAX_UNPACKED_TOTAL_BYTES >= 4 * 53_046_895);
++
++/// Largest single file in a web archive: about 7x the largest file measured
++/// (18.3 MB, a 2026-11 mp3), and half the total bound.
++pub(crate) const MAX_UNPACKED_FILE_BYTES: u64 = 128 * 1024 * 1024;
+ 
+ /// Most entries (files plus directories) in a web archive. Real apps have tens
+ /// to a few hundred.
+@@ -701,10 +711,11 @@ mod tests {
+     fn unpack_rejects_total_over_limit_with_each_file_under_per_file_limit() {
+         let dst = tempfile::tempdir().unwrap();
+         let mut builder = Builder::new(Cursor::new(Vec::new()));
+-        let each = MAX_UNPACKED_TOTAL_BYTES / 2 + 1024;
++        let each = MAX_UNPACKED_TOTAL_BYTES / 3 + 1024;
+         assert!(each <= MAX_UNPACKED_FILE_BYTES);
+         append_zero_file(&mut builder, "a.bin", each);
+         append_zero_file(&mut builder, "b.bin", each);
++        append_zero_file(&mut builder, "c.bin", each);
+         let mut web = finish(builder);
+ 
+         assert!(web.unpack(dst.path()).is_err());
+@@ -765,6 +776,43 @@ mod tests {
+         );
+     }
+ 
++    /// Regression for the 0.2.161 refusal of a published media-heavy site
++    /// (contract Ch5S5guTNAontnYX2qTFLmHxAh2kLodU1xpoJjv4dx5J): 8 files totalling
++    /// 53,046,895 bytes, largest 18,302,078. The 48 MiB total limit rejected it.
++    #[test]
++    fn unpack_accepts_the_measured_media_heavy_site() {
++        const MEASURED_TOTAL: u64 = 53_046_895;
++        const OLD_TOTAL_LIMIT: u64 = 48 * 1024 * 1024;
++        const { assert!(MEASURED_TOTAL > OLD_TOTAL_LIMIT) };
++
++        let dst = tempfile::tempdir().unwrap();
++        let mut builder = Builder::new(Cursor::new(Vec::new()));
++        let sizes = [
++            18_302_078u64,
++            16_033_794,
++            10_664_880,
++            5_000_000,
++            2_000_000,
++            1_000_000,
++            45_000,
++            1_143,
++        ];
++        assert_eq!(sizes.iter().sum::<u64>(), MEASURED_TOTAL);
++        for (i, size) in sizes.iter().enumerate() {
++            append_zero_file(&mut builder, &format!("assets/f{i}.bin"), *size);
++        }
++        let mut web = finish(builder);
++
++        web.unpack(dst.path())
++            .expect("the measured site must unpack");
++        assert_eq!(
++            std::fs::metadata(dst.path().join("assets/f0.bin"))
++                .unwrap()
++                .len(),
++            18_302_078
++        );
++    }
++
+     #[test]
+     fn get_file_rejects_entry_over_per_file_limit() {
+         let mut builder = Builder::new(Cursor::new(Vec::new()));
+```
+
+**File**: `crates/core/src/server/path_handlers.rs` (modified, +97/-5)
+```diff
+@@ -427,22 +427,33 @@ fn try_acquire_cache_lock(
+ /// (measured: 325 MB / 61 entries on one peer, 1.2 GB / 82 entries on another,
+ /// with entries up to six months untouched).
+ ///
+-/// 64 MiB is chosen against the observed per-entry distribution: a typical
+-/// unpacked webapp is a few hundred KB to a few MB, so the budget keeps roughly
+-/// the last 15-30 distinct webapps the user actually browsed — far more than a
+-/// browsing session touches — while cutting >90% of the observed footprint.
++/// The budget must hold one maximal archive (`MAX_UNPACKED_TOTAL_BYTES`, 256
++/// MiB, sized to admit a measured 53 MB media-heavy site with headroom), so it
++/// is 512 MiB. A typical unpacked webapp is a few hundred KB to a few MB, so
++/// the budget still keeps the last dozens of distinct webapps the user browsed
++/// while cutting about 60% of the worst observed footprint (1.2 GB).
+ /// This LRU cap is the only thing that bounds these bytes. Since #5007
+ /// `ring/hosting/disk_usage.rs` also measures and reports the cache, but does
+ /// NOT charge it against the hosting disk budget (#5853 tracks whether it
+ /// should; hosting eviction has no lever on webapp entries, and the cache may
+ /// sit on a different mount than the one the budget's free-space term measures).
+-const WEBAPP_CACHE_MAX_BYTES: u64 = 64 * 1024 * 1024;
++const WEBAPP_CACHE_MAX_BYTES: u64 = 512 * 1024 * 1024;
+ 
+ // One archive must fit the budget on its own: the sweep never evicts the entry
+ // that triggered it (`in_use`), so an entry larger than the budget would stay
+ // over it. The unpack limits guarantee that cannot happen.
+ const _: () = assert!(super::app_packaging::MAX_UNPACKED_TOTAL_BYTES < WEBAPP_CACHE_MAX_BYTES);
+ 
++/// Most archives this node unpacks to disk at once.
++///
++/// `unpack_if_stale` holds only a per-contract lock, so without this bound N
++/// different contracts could each write up to `MAX_UNPACKED_TOTAL_BYTES` before
++/// the cache sweep runs. Worst-case transient disk is
++/// `MAX_CONCURRENT_UNPACKS * MAX_UNPACKED_TOTAL_BYTES` = 4 x 256 MiB = 1 GiB,
++/// which exceeds [`WEBAPP_CACHE_MAX_BYTES`] until the sweep catches up. Further
++/// unpacks queue for a permit rather than being refused.
++const MAX_CONCURRENT_UNPACKS: usize = 4;
++
+ /// Largest cached file the handlers will read whole into memory, for the two
+ /// cases that rewrite text (`.js` and HTML pages). Everything else is streamed
+ /// by `ServeFile`. Real bundles are well under 1 MB; this is far above that, and
+@@ -616,6 +627,9 @@ pub(crate) struct WebappCache {
+     /// simulation harness does). A global would let one simulated node's
+     /// traffic refuse another's.
+     speculative_fetches: Arc<Semaphore>,
++    /// Permits for in-flight unpacks, see [`MAX_CONCURRENT_UNPACKS`]. Per node
++    /// for the same reason as `speculative_fetches`.
++    unpacks: Arc<Semaphore>,
  }
  
--/// Prefix of the error `unpack_if_stale` returns for an archive it refuses;
--/// `ensure_contract_cached`'s caller recognises it to record the refusal.
-+/// Prefix of the error `unpack_if_stale` returns for an archive it refuses,
-+/// followed by the contract key and, for a `Refused` archive, `: <reason>`.
-+/// `ensure_contract_cached`'s caller recognises the prefix to record the
-+/// refusal.
- const UNPACK_FAILED_PREFIX: &str = "failed unpacking contract: ";
- 
-+/// The error `unpack_if_stale` returns when unpacking `key`'s archive fails:
-+/// always an `InvalidParam` (400) carrying [`unpack_failed_message`], which
-+/// the negative cache records.
-+///
-+/// That includes a [`WebContractError::StoringError`], although it can be a
-+/// node fault (disk full). It comes from `tar`'s `unpack_in`, which also
-+/// READS the entry's data and refuses a duplicate entry (`set_overwrite(false)`),
-+/// so a truncated or corrupt stream, the decoder cap tripping mid-file, or a
-+/// crafted duplicate all surface as the same variant. Leaving those uncached
-+/// would let a hostile archive be fetched and unpacked again on every request;
-+/// caching a real disk fault only delays its retry to the end of the window.
-+fn unpack_error(key: &str, err: &WebContractError) -> WebSocketApiError {
-+    WebSocketApiError::InvalidParam {
-+        error_cause: unpack_failed_message(key, err),
-+    }
-+}
-+
-+/// The 400 body for an archive this node will not serve.
-+///
-+/// A [`WebContractError::Refused`] reason is appended: it names the limit and
-+/// the size, and without it a site's author sees only that the page failed
-+/// (the 0.2.161 media-site refusal was reported with exactly that). Any other
-+/// error stays generic, since an I/O error can carry a local filesystem path
-+/// and this body is shown at the node's origin, including on hosted nodes.
-+///
-+/// The reason is cut to [`REFUSAL_REASON_MAX_CHARS`]. `Refused` already bounds
-+/// the archive-controlled path it quotes; this is the backstop, because the
-+/// result is served on every request and kept in the negative cache
-+/// (`TerminalAbsenceKind::ArchiveRefused`).
-+fn unpack_failed_message(key: &str, err: &WebContractError) -> String {
-+    match err {
-+        WebContractError::Refused(reason) => {
-+            let mut shown: String = reason.chars().take(REFUSAL_REASON_MAX_CHARS).collect();
-+            if shown.len() < reason.len() {
-+                shown.push_str("...");
-+            }
-+            format!("{UNPACK_FAILED_PREFIX}{key}: {shown}")
-+        }
-+        WebContractError::UnpackingError(_)
-+        | WebContractError::StoringError(_)
-+        | WebContractError::FileNotFound(_) => format!("{UNPACK_FAILED_PREFIX}{key}"),
-+    }
-+}
-+
-+/// Most characters of a refusal reason [`unpack_failed_message`] passes on.
-+const REFUSAL_REASON_MAX_CHARS: usize = 512;
-+
- impl TerminalAbsenceKind {
-     fn into_error(self, instance_id: ContractInstanceId) -> WebSocketApiError {
-         match self {
-@@ -161,8 +217,8 @@ impl TerminalAbsenceKind {
-             TerminalAbsenceKind::MissingContract => {
-                 WebSocketApiError::MissingContract { instance_id }
-             }
--            TerminalAbsenceKind::ArchiveRefused => WebSocketApiError::InvalidParam {
--                error_cause: format!("{UNPACK_FAILED_PREFIX}{instance_id}"),
-+            TerminalAbsenceKind::ArchiveRefused(error_cause) => WebSocketApiError::InvalidParam {
-+                error_cause: error_cause.to_string(),
-             },
+ impl WebappCache {
+@@ -660,6 +674,7 @@ impl WebappCache {
+             max_bytes: WEBAPP_CACHE_MAX_BYTES,
+             sweep: Arc::new(parking_lot::Mutex::new(SweepState::default())),
+             speculative_fetches: Arc::new(Semaphore::new(SPECULATIVE_FETCH_LIMIT)),
++            unpacks: Arc::new(Semaphore::new(MAX_CONCURRENT_UNPACKS)),
          }
      }
-@@ -198,8 +254,8 @@ impl RefreshState {
-         &self,
-         instance_id: &ContractInstanceId,
-     ) -> Option<TerminalAbsenceKind> {
--        self.last_cold_failure.and_then(|(id, at, kind)| {
--      
+ 
+@@ -1865,8 +1880,20 @@ async fn unpack_if_stale(
+     let state_shared: Arc<[u8]> = Arc::from(state_bytes);
+     let path_owned = path.clone();
+     let hash_path_owned = hash_path.clone();
++    let unpack_slots = cache.unpacks.clone();
+     crate::config::GlobalExecutor::spawn(async move {
+         let _guard = _guard;
++        // Queue for a node-wide unpack slot, held until the unpack finishes.
++        // Acquired inside the detached task so that dropping the caller cannot
++        // release it while the blocking unpack is still writing. The semaphore
++        // is never closed, so acquisition cannot fail.
++        let _unpack_slot =
++            unpack_slots
++                .acquire_owned()
++                .await
++                .map_err(|e| WebSocketApiError::NodeError {
++                    error_cause: format!("unpack limiter closed: {e}"),
++                })?;
+         let contract = &contract_owned;
+         let path = path_owned;
+         let hash_path = hash_path_owned;
+@@ -3025,6 +3052,7 @@ mod tests {
+             max_bytes,
+             sweep: Arc::new(parking_lot::Mutex::new(SweepState::default())),
+             speculative_fetches: Arc::new(Semaphore::new(SPECULATIVE_FETCH_LIMIT)),
++            unpacks: Arc::new(Semaphore::new(MAX_CONCURRENT_UNPACKS)),
+         }
+     }
+ 
+@@ -5744,6 +5772,70 @@ mod tests {
+         clear_cache(&instance_id).await;
+     }
+ 
++    /// With every unpack slot taken, a further unpack queues instead of
++    /// writing to disk, and starts once a slot frees.
++    #[tokio::test]
++    async fn unpacks_queue_when_the_node_wide_limit_is_reached() {
++        let (contract, state) = webapp_contract_and_state(&rand::random::<[u8; 16]>());
++        let instance_id = *contract.key().id();
++   
 ```
 
-**File**: `crates/fdev/src/website.rs` (modified, +122/-3)
+---
+
+### Incident Patch 3: `1cb6b040` (2026-11-20)
+**Commit Message**: chore(release): raise the QUIC-native wire floor to 0.2.163 (#6307)
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +3/-2)
 ```diff
-@@ -229,13 +229,78 @@ fn ensure_state_within_limit(state_len: usize, dir: &Path) -> anyhow::Result<()>
-             "Website is {state_mib:.1} MiB after compression, exceeding Freenet's \
-              {limit_mib} MiB contract-state limit. Reduce the size of {dir}: check for \
-              large media files, or an accidentally included node_modules/, .git/, or \
--             build/target/ directory.",
-+             build/target/ directory.{largest}",
-             dir = dir.display(),
-+            largest = largest_files(dir),
-         );
-     }
-     Ok(())
- }
+@@ -1227,8 +1227,9 @@ use crate::operations::connect::native::NativeWire;
+ /// which ships while the data ramp is still under watch. Raised to 0.2.161
+ /// for 0.2.160: native connect is still off (`QUIC_NATIVE_PERCENT` is 0) and
+ /// its wire fields may change before it is enabled, so no release is frozen
+-/// as the floor yet. Raised to 0.2.162 for 0.2.161 for the same reasons.
+-pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 162);
++/// as the floor yet. Raised to 0.2.162 for 0.2.161 for the same reasons, and
++/// to 0.2.163 for 0.2.162.
++pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 163);
  
-+/// The largest files under `dir` (uncompressed sizes), one per line after a
-+/// heading, or an empty string if none can be read. Best effort: it only
-+/// decorates a message, so it never returns an error. A file whose size cannot
-+/// be read is skipped; if any directory cannot be listed, the whole list is
-+/// omitted.
-+fn largest_files(dir: &Path) -> String {
-+    let mib = |bytes: u64| bytes as f64 / (1024.0 * 1024.0);
-+    let mut files: Vec<(u64, PathBuf)> = walkdir(dir)
-+        .unwrap_or_default()
-+        .into_iter()
-+        .filter_map(|path| Some((fs::metadata(&path).ok()?.len(), path)))
-+        .collect();
-+    if files.is_empty() {
-+        return String::new();
-+    }
-+    files.sort_by_key(|(len, _)| std::cmp::Reverse(*len));
-+    let lines: Vec<String> = files
-+        .iter()
-+        .take(LARGE_SITE_FILES_SHOWN)
-+        .map(|(len, path)| {
-+            let shown = path.strip_prefix(dir).unwrap_or(path);
-+            format!("  {:>7.1} MiB  {}", mib(*len), shown.display())
-+        })
-+        .collect();
-+    format!(
-+        "\nLargest files (before compression):\n{}",
-+        lines.join("\n")
-+    )
-+}
-+
-+/// Packed state size above which `publish` warns that the site is large.
-+///
-+/// A nudge, not a limit: the publish goes ahead. Every visitor's node fetches
-+/// the whole state before it can show any page, and every republish ships it
-+/// again, so a site this size loads slowly for everyone. Typical sites are a
-+/// few MiB; the hard ceiling is [`MAX_CONTRACT_STATE_SIZE`].
-+const LARGE_SITE_WARNING_BYTES: usize = 10 * 1024 * 1024;
-+
-+/// How many of the largest files the size messages name.
-+const LARGE_SITE_FILES_SHOWN: usize = 3;
-+
-+/// The warning `publish` prints for a large site, or `None` at or below
-+/// [`LARGE_SITE_WARNING_BYTES`]. Names the largest files, since one or two
-+/// media files are usually most of it.
-+///
-+/// It measures the packed (compressed) state, which is what the network
-+/// carries and every visitor downloads. It does not check a node's unpack
-+/// limits, which count uncompressed bytes on the node's disk and live in
-+/// `freenet::server::app_packaging`: a site that compresses unusually well
-+/// could pass this and still be refused there, with a message naming the limit.
-+fn large_site_warning(state_len: usize, dir: &Path) -> Option<String> {
-+    if state_len <= LARGE_SITE_WARNING_BYTES {
-+        return None;
-+    }
-+    Some(format!(
-+        "Warning: this website is {:.1} MiB after compression. Every visitor's node \
-+         downloads the whole site before it can show a page, and each republish sends it \
-+         again, so large sites load slowly. Consider hosting large media separately and \
-+         linking to it.{}",
-+        state_len as f64 / (1024.0 * 1024.0),
-+        largest_files(dir),
-+    ))
-+}
-+
- fn load_contract_wasm(custom_path: Option<&Path>) -> anyhow::Result<Vec<u8>> {
-     match custom_path {
-         Some(path) => {
-@@ -381,6 +446,9 @@ pub async fn publish(
-     // message (its state-size limit for ~50-64 MiB, or a cryptic chunk-count
-     // stream-reassembly error for >64 MiB serialized) (#4653).
-     ensure_state_within_limit(state.as_ref().len(), &directory)?;
-+    if let Some(warning) = large_site_warning(state.as_ref().len(), &directory) {
-+        eprintln!("{warning}");
-+    }
- 
-     println!("Publishing website as contract {key} (version {version})");
- 
-@@ -503,9 +571,60 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn large_site_warning_names_the_largest_files_above_the_threshold() {
-+        let dir = tempfile::tempdir().unwrap();
-+        fs::create_dir(dir.path().join("assets")).unwrap();
-+        fs::write(dir.path().join("index.html"), vec![0u8; 100]).unwrap();
-+        fs::write(
-+            dir.path().join("assets/video.webm"),
-+            vec![0u8; 3 * 1024 * 1024],
-+        )
-+        .unwrap();
-+        fs::write(
-+            dir.path().join("assets/song.mp3"),
-+            vec![0u8; 2 * 1024 * 1024],
-+        )
-+        .unwrap();
-+        fs::write(dir.path().join("assets/pic.jpg"), vec![0u8; 1024 * 1024]).unwrap();
-+
-+        // At the threshold: no warning, so ordinary sites publish quietly.
-+        assert!(large_site_warning(LARGE_SITE_WARNING_BYTES, dir.path()).is_none());
-+
-+        // Over it: a warning naming the largest files, largest first, and
-+        // not the small ones beyond LARGE_SITE_FILES_SHOWN.
-+  
+ /// Has the decoder for the QUIC-native `ConnectMsg` variants shipped, and in
+ /// which release?
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6308** (2026-11-20): build: release 0.2.162 (@sanity)
+- **PR #6307** (2026-11-20): chore(release): raise the QUIC-native wire floor to 0.2.163 (@sanity)
+- **PR #6306** (2026-11-20): fix(server): raise web archive unpack limits to admit existing sites (@sanity)
 - **PR #6303** (2026-11-20): fix(server): say why a web archive was refused; warn on large sites in fdev (@sanity)
 - **PR #6302** (2026-11-20): fix(transport): count QUIC inbound bytes in cumulative_bytes_received (@sanity)
 - **PR #6300** (2026-11-19): build: release 0.2.161 (@sanity)
-- **PR #6299** (2026-11-19): chore(release): raise the QUIC-native wire floor to 0.2.162 (@sanity)
-- **PR #6298** (2026-11-19): fix: bound contract-handler event admission per priority class (@sanity)
-- **PR #6297** (2026-11-19): feat(quic): native joiners inside the connection cap, with their own queue share (@sanity)
 
 ---
 
@@ -2158,50 +2145,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server): say why a web archive was refused; warn on large sites in fdev
+## X. build: release 0.2.162
 
 **RULE**:
-When implementing operations in `crates/core/src/server/app_packaging.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d4845b0c`: server): say why a web archive was refused; warn on large sites in fdev. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `32cd9498`: build: release 0.2.162. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/server/app_packaging.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// The archive is well-formed but this node will not unpack it: it breaks
-    /// one of the per-entry unpack checks (file size, total size, entry count,
-    /// entry type, path). The message is shown to whoever asked for the site,
-    /// since it is the only way a site's author learns why the page does not
-    /// load. The decompressed-stream cap and the state-framing checks in
-    /// `TryFrom` still report `UnpackingError`, or `StoringError` when the cap
-    /// trips while `unpack_in` reads a file's data; both are shown
-    /// generically. They fire only for padded or malformed archives, never for
-    /// an ordinary site under the network's state-size limit.
-    ///
-    /// Up to [`SHOWN_PATH_MAX_CHARS`] characters of the archive author's own
-    /// text (an entry path) therefore appear on a page at the node's origin:
-    /// quoted, escaped, HTML-escaped by the response layer, and framed as a
-    /// path in the site. Accepted, because the author needs the name to fix
-    /// the site and can show any text they like in the site itself.
-    ///
-    /// It is composed here from the limits and the archive's own headers, never
-    /// from a filesystem error, so it carr
+version = "0.3.324"
+version = "0.2.162"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        let reject = |msg: String| WebContractError::UnpackingError(anyhow::anyhow!(msg));
-                    "web archive has more than {MAX_ARCHIVE_ENTRIES} entries"
-                    "refusing to unpack {entry_type:?} entry from web archive: {path:?}"
+version = "0.3.323"
+version = "0.2.161"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d4845b0c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `32cd9498` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

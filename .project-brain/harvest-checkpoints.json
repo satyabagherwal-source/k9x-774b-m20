@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T22:57:25.582Z",
+  "last_updated": "2026-11-20T23:05:35.748Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "2bf92818d7692107f1a8d2b9431defae49b4d31397c91e41e5771471ff94341c",
-      "verified_at": "2026-11-20T17:29:16.662Z",
+      "content_hash": "0cda0857631848867ec9438ded6730d1d7c75ce53c0aa8ac2f6b7fc010099c0b",
+      "verified_at": "2026-11-20T23:05:35.747Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T17:29:16.662Z"
+      "last_updated": "2026-11-20T23:05:35.747Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "111734d56a33aa5c8f85b70ad301437080ee5f308a800fe37057dbe11ec523f2",
-      "verified_at": "2026-11-19T21:43:47.608Z",
+      "content_hash": "969daa4f4c7371a00518595a1f1cb7a11c8a9e0ec05e83fa79d7e07ceb7a1df0",
+      "verified_at": "2026-11-20T23:05:32.584Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T21:43:47.608Z"
+      "last_updated": "2026-11-20T23:05:32.584Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -14946,14 +14946,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-closure-compiler",
-      "content_hash": "861d89f66afa2b8ee9d8a1b152388517156908ac0eddc35196b932f9e40228e8",
-      "verified_at": "2026-11-17T03:41:56.577Z",
+      "content_hash": "69d765a0124380c0643c8cd809d55c10fab545a9c7ffcd333b7e1cb8c3b71ac5",
+      "verified_at": "2026-11-20T23:05:27.590Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T03:41:56.577Z"
+      "last_updated": "2026-11-20T23:05:27.590Z"
     },
     "Shpigford/chops": {
       "repository": "Shpigford/chops",
