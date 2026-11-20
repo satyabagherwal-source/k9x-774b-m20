@@ -11552,3 +11552,5 @@
 | `CYCLE-20261120-0W6E` | `2026-11-20T13:40:20.582Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9576` | Yes (`aa8ae513...`) |
 | `CYCLE-20261120-0YDZ` | `2026-11-20T13:40:23.447Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9577` | Yes (`08925c50...`) |
 | `CYCLE-20261120-0YR7` | `2026-11-20T13:40:23.923Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9578` | Yes (`a51c56cf...`) |
+| `CYCLE-20261120-B5FP` | `2026-11-20T13:48:19.141Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9579` | Yes (`18b8ccaf...`) |
+| `CYCLE-20261120-BBED` | `2026-11-20T13:48:26.869Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9580` | Yes (`2f67dd81...`) |

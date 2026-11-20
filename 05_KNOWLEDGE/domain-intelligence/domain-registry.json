@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T13:40:28.984Z",
-  "total_records": 2133,
+  "last_updated": "2026-11-20T13:48:32.571Z",
+  "total_records": 2135,
   "domains": {
     "A": {
       "total": 17,
@@ -1999,7 +1999,7 @@
       ]
     },
     "J": {
-      "total": 42,
+      "total": 44,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -2042,7 +2042,9 @@
         "domain_intelligence-search-distribution-intelligence-juicedata-juicefs-core-invariants",
         "DOM-J-09AA2241",
         "domain_intelligence-search-distribution-intelligence-juicedata-juicefs-learnings-core-invariants",
-        "DOM-J-FBEC7580"
+        "DOM-J-FBEC7580",
+        "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-learnings-core-"
       ]
     },
     "K": {
@@ -11524,8 +11526,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "427371c2f0b913f448f3a56ae9b06b09dcf192fae780aa4ddcc5333713e013d7",
-      "created_at": "2026-11-20T05:29:08.788Z"
+      "content_hash": "eaccef48d33bc05073b716b33efcb045bc30af209c8d58ae3992bd8152b739e7",
+      "created_at": "2026-11-20T13:48:32.571Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -20706,8 +20708,8 @@
       "title": "Quality & Verification Intelligence: open-policy-agent/gatekeeper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-open-policy-agent-gatekeeper-quality-verification-intelligence-open-policy-agent.md",
       "repository": "open-policy-agent/gatekeeper",
-      "content_hash": "9dcce2f9fa0b85e3c13f0054b3aeee4251ac02beb729b2658f1edcae4e11feac",
-      "created_at": "2026-11-19T09:43:49.423Z"
+      "content_hash": "d4bfa971ebd4eef5747566657a281304c4e919a7798deae94d1842a38bb24e93",
+      "created_at": "2026-11-20T13:48:19.493Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-d1-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-d1-2b-core-invariants",
@@ -20784,8 +20786,8 @@
       "title": "Quality & Verification Intelligence: open-policy-agent-gatekeeper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-open-policy-agent-gatekeeper-learnings-quality-verification-intelligence-open-po.md",
       "repository": "open-policy-agent-gatekeeper-learnings",
-      "content_hash": "8e349f27767f6487519d73e024011ed6181ffb35e60a1ac0c4ba530082789633",
-      "created_at": "2026-11-18T10:32:40.682Z"
+      "content_hash": "47ed80fd7c2625dbc8af1a310e2a6fb5da227448d223551390fef2c16faffb1e",
+      "created_at": "2026-11-20T13:48:30.639Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-qwen3-8-27b-dspine-b16-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-qwen3-8-27b-dspine-b16-core-invariants",
@@ -35967,6 +35969,24 @@
       "repository": "hf-microsoft-aion-1.0-instruct-2.3b-learnings",
       "content_hash": "207347064c43f3ccece34ac03b52bda06de3cea6fa46be40ce4fbb288ae7abfb",
       "created_at": "2026-11-20T13:27:15.452Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: Open-Source-Legal/OpenContracts Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-open-source-legal-opencontracts-search-distribution-intelligence-open-source-leg.md",
+      "repository": "Open-Source-Legal/OpenContracts",
+      "content_hash": "a20cf2fe7cabc5405446cf8f4d98f75a1e6c4b554abf2e6773f9897236f6924f",
+      "created_at": "2026-11-20T13:48:27.202Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-learnings-core-": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-learnings-core-",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: open-source-legal-opencontracts-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-open-source-legal-opencontracts-learnings-search-distribution-intelligence-open-.md",
+      "repository": "open-source-legal-opencontracts-learnings",
+      "content_hash": "254327d9ea2efbb0bcabb65908479d7b471dd36d0726d9ed5df09c2dff9bb757",
+      "created_at": "2026-11-20T13:48:31.918Z"
     }
   }
 }

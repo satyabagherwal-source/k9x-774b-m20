@@ -11585,3 +11585,5 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `27d1b854` | Multi-dimensional audit evidence | 2026-11-20T13:40:20.586Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `6b667193` | Multi-dimensional audit evidence | 2026-11-20T13:40:23.452Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8eed95c3` | Multi-dimensional audit evidence | 2026-11-20T13:40:23.928Z |
+| `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `b0a53e18` | Multi-dimensional audit evidence | 2026-11-20T13:48:19.145Z |
+| `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `8a4cf42b` | Multi-dimensional audit evidence | 2026-11-20T13:48:26.873Z |

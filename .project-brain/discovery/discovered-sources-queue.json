@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T13:40:27.786Z",
+  "updated_at": "2026-11-20T13:48:31.586Z",
   "stats": {
-    "total_discovered": 6369,
-    "approved_pending_harvest": 6019,
+    "total_discovered": 6387,
+    "approved_pending_harvest": 6036,
     "harvested_count": 0,
-    "rejected_count": 350,
+    "rejected_count": 351,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6001,
+      "COMMUNITY_AND_EXPERT": 6019,
       "OFFICIAL_DOCUMENTATION": 201,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
@@ -137691,6 +137691,395 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
         "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-495835E89296": {
+      "id": "SRC-495835E89296",
+      "url": "https://provider.example.test/validate",
+      "title": "https://provider.example.test/validate",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:30.188Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
+        "fileName": "open-policy-agent-gatekeeper-learnings.md"
+      }
+    },
+    "SRC-ADE841853E29": {
+      "id": "SRC-ADE841853E29",
+      "url": "http://provider.example.test/validate",
+      "title": "http://provider.example.test/validate",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T13:48:30.240Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
+        "fileName": "open-policy-agent-gatekeeper-learnings.md"
+      }
+    },
+    "SRC-8E5A95DC5928": {
+      "id": "SRC-8E5A95DC5928",
+      "url": "https://pr/",
+      "title": "https://pr/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:30.280Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
+        "fileName": "open-policy-agent-gatekeeper-learnings.md"
+      }
+    },
+    "SRC-8E1C54267D8D": {
+      "id": "SRC-8E1C54267D8D",
+      "url": "https://github.com/pypa/setuptools",
+      "title": "https://github.com/pypa/setuptools",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:31.027Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-9C2DEBC7E956": {
+      "id": "SRC-9C2DEBC7E956",
+      "url": "https://github.com/pypa/setuptools/releases",
+      "title": "https://github.com/pypa/setuptools/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:31.067Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-1B22A65DF40F": {
+      "id": "SRC-1B22A65DF40F",
+      "url": "https://github.com/pypa/setuptools/blob/main/NEWS.rst",
+      "title": "https://github.com/pypa/setuptools/blob/main/NEWS.rst",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:31.108Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-3A66912026A4": {
+      "id": "SRC-3A66912026A4",
+      "url": "https://github.com/pypa/setuptools/compare/v84.0.0...v84.2.1",
+      "title": "https://github.com/pypa/setuptools/compare/v84.0.0...v84.2.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:31.150Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-68B7BDA54162": {
+      "id": "SRC-68B7BDA54162",
+      "url": "https://github.com/python-jsonschema/jsonschema",
+      "title": "https://github.com/python-jsonschema/jsonschema",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:31.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-7331003F4E8F": {
+      "id": "SRC-7331003F4E8F",
+      "url": "https://www.djangoproject.com/",
+      "title": "https://www.djangoproject.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:31.233Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-E916D975160D": {
+      "id": "SRC-E916D975160D",
+      "url": "https://github.com/pydantic/pydantic-ai",
+      "title": "https://github.com/pydantic/pydantic-ai",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:31.272Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-4B57D41BDFB8": {
+      "id": "SRC-4B57D41BDFB8",
+      "url": "https://github.com/pydantic/pydantic-ai/releases",
+      "title": "https://github.com/pydantic/pydantic-ai/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:31.310Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-2E628B0DE1E9": {
+      "id": "SRC-2E628B0DE1E9",
+      "url": "https://github.com/pydantic/pydantic-ai/blob/main/docs/changelog.md",
+      "title": "https://github.com/pydantic/pydantic-ai/blob/main/docs/changelog.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:31.351Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-959564C5DD48": {
+      "id": "SRC-959564C5DD48",
+      "url": "https://github.com/pydantic/pydantic-ai/compare/v1.107.9...v1.107.10",
+      "title": "https://github.com/pydantic/pydantic-ai/compare/v1.107.9...v1.107.10",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:31.389Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-7870F4DB5F1E": {
+      "id": "SRC-7870F4DB5F1E",
+      "url": "https://github.com/openai/openai-python",
+      "title": "https://github.com/openai/openai-python",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:31.430Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-13C5AE12BA2F": {
+      "id": "SRC-13C5AE12BA2F",
+      "url": "https://github.com/posthog/posthog-python",
+      "title": "https://github.com/posthog/posthog-python",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:31.468Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-9FCB0BDC26CA": {
+      "id": "SRC-9FCB0BDC26CA",
+      "url": "https://github.com/posthog/posthog-python/releases",
+      "title": "https://github.com/posthog/posthog-python/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:31.509Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-A426AB9A8DF5": {
+      "id": "SRC-A426AB9A8DF5",
+      "url": "https://github.com/PostHog/posthog-python/blob/main/CHANGELOG.md",
+      "title": "https://github.com/PostHog/posthog-python/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:31.546Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-4324546ADCAC": {
+      "id": "SRC-4324546ADCAC",
+      "url": "https://github.com/posthog/posthog-python/compare/posthog-v7.75.6...posthog-v7.86.4",
+      "title": "https://github.com/posthog/posthog-python/compare/posthog-v7.75.6...posthog-v7.86.4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:48:31.586Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
       }
     }
   }

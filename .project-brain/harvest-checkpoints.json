@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T13:40:23.936Z",
+  "last_updated": "2026-11-20T13:48:26.881Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -200,14 +200,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-source-legal-opencontracts",
-      "content_hash": "83b23511df7183c657b2795031db38d643944619a570547ed94037f29b6280d5",
-      "verified_at": "2026-11-13T16:05:05.743Z",
+      "content_hash": "2f67dd81d46d48d5488c3a492ad4aee658186d9d857da7faecf60267b6527665",
+      "verified_at": "2026-11-20T13:48:26.881Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T16:05:05.743Z"
+      "last_updated": "2026-11-20T13:48:26.881Z"
     },
     "Qwen/Qwen3.8-27B": {
       "repository": "Qwen/Qwen3.8-27B",
@@ -10191,14 +10191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-gatekeeper",
-      "content_hash": "c893eff2055be08b39e25f8d0582de7c3cfa0ca2b7c1882d4f91a6a0337b44b6",
-      "verified_at": "2026-11-19T09:43:49.101Z",
+      "content_hash": "18b8ccaf98cb9820a1ee9b448c7b842aa6de897d1593a60a6de8074c1d210683",
+      "verified_at": "2026-11-20T13:48:19.153Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T09:43:49.101Z"
+      "last_updated": "2026-11-20T13:48:19.153Z"
     },
     "chakra-ui/chakra-ui": {
       "repository": "chakra-ui/chakra-ui",

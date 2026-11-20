@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-MCI4",
-    "timestamp": "2026-11-18T13:25:41.452Z",
-    "repository": "callstack/react-native-paper",
-    "learningId": "learn-github-callstack-react-native-paper",
-    "contentHash": "dfec6b028aa2a4129bbea22ae7f6327fb2f2a1070573434deeb9e59eb684ff7e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-MDR8",
-    "timestamp": "2026-11-18T13:25:43.076Z",
-    "repository": "higress-group/higress",
-    "learningId": "learn-github-higress-group-higress",
-    "contentHash": "5dfb608a55a8d83b389a93e389e63019179462d2409f4a92ce3604453eef4934",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-MJCJ",
     "timestamp": "2026-11-18T13:25:50.323Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "a51c56cfe78564c1d28b82d97c5063634628652076a444d47042f34541aaac97",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-B5FP",
+    "timestamp": "2026-11-20T13:48:19.141Z",
+    "repository": "open-policy-agent/gatekeeper",
+    "learningId": "learn-github-open-policy-agent-gatekeeper",
+    "contentHash": "18b8ccaf98cb9820a1ee9b448c7b842aa6de897d1593a60a6de8074c1d210683",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-BBED",
+    "timestamp": "2026-11-20T13:48:26.869Z",
+    "repository": "Open-Source-Legal/OpenContracts",
+    "learningId": "learn-github-open-source-legal-opencontracts",
+    "contentHash": "2f67dd81d46d48d5488c3a492ad4aee658186d9d857da7faecf60267b6527665",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

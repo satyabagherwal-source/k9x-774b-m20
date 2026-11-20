@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T13:40:23.933Z",
-  "total_cycles_completed": 11004,
-  "total_learnings_persisted": 11004,
-  "total_rules_promoted": 10365,
+  "last_updated": "2026-11-20T13:48:26.878Z",
+  "total_cycles_completed": 11006,
+  "total_learnings_persisted": 11006,
+  "total_rules_promoted": 10367,
   "history": [
-    {
-      "timestamp": "2026-11-19T16:07:24.288Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T16:16:47.831Z",
-      "repository": "vllm-sr/d3",
-      "learningId": "learn-huggingface-vllm-sr-d3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T16:16:50.585Z",
       "repository": "astral-sh/ruff",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-20T13:40:23.933Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T13:48:19.150Z",
+      "repository": "open-policy-agent/gatekeeper",
+      "learningId": "learn-github-open-policy-agent-gatekeeper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T13:48:26.878Z",
+      "repository": "Open-Source-Legal/OpenContracts",
+      "learningId": "learn-github-open-source-legal-opencontracts",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

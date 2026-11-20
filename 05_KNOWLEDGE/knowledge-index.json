@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T13:40:29.152Z",
-  "total_verified_learnings": 9038,
+  "last_updated": "2026-11-20T13:48:32.711Z",
+  "total_verified_learnings": 9039,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22437,
+  "total_items": 22445,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113182,9 +113182,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for open-source-legal-opencontracts-learnings",
       "repository": "open-source-legal-opencontracts-learnings",
       "source_version": "HEAD",
-      "content_hash": "b39c0702a03697b4f9e27d37435d7bf3c924c469bed5f5274990ebb70df5043b",
+      "content_hash": "22458a19cc074614a24e484e4ad6175394fb2b096f0990e9efb0582a5febcc87",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:05:42.185Z"
+      "persisted_at": "2026-11-20T13:48:32.081Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-learning",
@@ -218714,13 +218714,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-H7H1-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-BFOR-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "393ff46a7dd073e38c969aa43301903377782d5bd22b55f98cc70a037f01898d",
+      "content_hash": "564fb7b4c9d0f1406e4d19e46c0ca5d3d96f751d7e03adcf380a760233fc214e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T05:29:08.630Z"
+      "persisted_at": "2026-11-20T13:48:32.427Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218730,9 +218730,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "427371c2f0b913f448f3a56ae9b06b09dcf192fae780aa4ddcc5333713e013d7",
+      "content_hash": "eaccef48d33bc05073b716b33efcb045bc30af209c8d58ae3992bd8152b739e7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T05:29:08.788Z"
+      "persisted_at": "2026-11-20T13:48:32.571Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218742,9 +218742,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "003ec895e5f8c71e3bf5ae79d0cdce353d22e36fb391ec5e1457a4983319b307",
+      "content_hash": "79f621236ce01a87ed197a70631cc8597984779c00bf0e092f10a03f4d48a239",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T05:29:08.965Z"
+      "persisted_at": "2026-11-20T13:48:32.711Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -245545,8 +245545,8 @@
       "slug": "open-policy-agent-gatekeeper",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/gatekeeper",
-      "source_version": "207df1ef",
-      "content_hash": "c893eff2055be08b39e25f8d0582de7c3cfa0ca2b7c1882d4f91a6a0337b44b6",
+      "source_version": "b0a53e18",
+      "content_hash": "18b8ccaf98cb9820a1ee9b448c7b842aa6de897d1593a60a6de8074c1d210683",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
       "promoted_rules": [
@@ -245574,6 +245574,11 @@
           "number": 9366,
           "title": "bump frameworks/constraint to 45bd390",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9579,
+          "title": "bump cert-controller to 32045c4",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245581,7 +245586,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T09:43:48.918Z",
+      "verified_at": "2026-11-20T13:48:18.953Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245623,10 +245628,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-open-policy-agent-gatekeeper-quality-verification-intelligence-open-policy-agent.md",
       "title": "Quality & Verification Intelligence: open-policy-agent/gatekeeper Core Invariants",
       "repository": "open-policy-agent/gatekeeper",
-      "source_version": "207df1ef",
-      "content_hash": "9dcce2f9fa0b85e3c13f0054b3aeee4251ac02beb729b2658f1edcae4e11feac",
+      "source_version": "b0a53e18",
+      "content_hash": "d4bfa971ebd4eef5747566657a281304c4e919a7798deae94d1842a38bb24e93",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T09:43:49.423Z"
+      "persisted_at": "2026-11-20T13:48:19.493Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-gatekeeper": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-gatekeeper",
@@ -245635,10 +245640,10 @@
       "relative_path": "08_VERIFICATION/open-policy-agent-gatekeeper-verification-protocol-empirical-defect-shield-for-o.md",
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent/gatekeeper",
       "repository": "open-policy-agent/gatekeeper",
-      "source_version": "207df1ef",
-      "content_hash": "5a6d5b67a268726bf06cf30ad634f5755b2a227cdbe9a6795eb8c738d91ab895",
+      "source_version": "b0a53e18",
+      "content_hash": "8e3ee7b88be5fc688b6e85767ad6d9faa0c3a95a97c4dafdf8894c561fe5fa5f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T09:43:49.560Z"
+      "persisted_at": "2026-11-20T13:48:19.639Z"
     },
     "learn-huggingface-liquidai-d1-2b": {
       "learning_id": "learn-huggingface-liquidai-d1-2b",
@@ -245735,9 +245740,9 @@
       "title": "Quality & Verification Intelligence: open-policy-agent-gatekeeper-learnings Core Invariants",
       "repository": "open-policy-agent-gatekeeper-learnings",
       "source_version": "HEAD",
-      "content_hash": "8e349f27767f6487519d73e024011ed6181ffb35e60a1ac0c4ba530082789633",
+      "content_hash": "47ed80fd7c2625dbc8af1a310e2a6fb5da227448d223551390fef2c16faffb1e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T10:32:40.682Z"
+      "persisted_at": "2026-11-20T13:48:30.639Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-gatekeeper-l": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-gatekeeper-l",
@@ -245747,9 +245752,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent-gatekeeper-learnings",
       "repository": "open-policy-agent-gatekeeper-learnings",
       "source_version": "HEAD",
-      "content_hash": "539754b1ac03ab8fd8c4c8129e6222fc5ab03a01034d748be1a3612ed3edc643",
+      "content_hash": "5578190b29947d0e5acc83ca2f6b5cddb30f927d90cb34dda90ad8b69dc31fa0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T10:32:40.813Z"
+      "persisted_at": "2026-11-20T13:48:30.798Z"
     },
     "learn-huggingface-tencent-qwen3-8-27b-dspine-b16": {
       "learning_id": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
@@ -304059,6 +304064,127 @@
       "content_hash": "6764a7735df8e226f7f45fbf071e31403d5b127555a9ae688f80f1f1fde911e6",
       "domain_letter": "H",
       "persisted_at": "2026-11-20T13:40:28.833Z"
+    },
+    "rule-9579": {
+      "learning_id": "rule-9579",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9579,
+      "title": "bump cert-controller to 32045c4",
+      "source_url": "https://github.com/open-policy-agent/gatekeeper",
+      "source_version": "b0a53e18",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T13:48:18.953Z"
+    },
+    "candidate_directive-bump-cert-controller-to-32045c4": {
+      "item_id": "candidate_directive-bump-cert-controller-to-32045c4",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BE6W-bump-cert-controller-to-32045c4.md",
+      "title": "bump cert-controller to 32045c4",
+      "repository": "open-policy-agent-gatekeeper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6fe50563ebec2c85e4f6c98cea239097c7540b1bb99a171869eb5cd88bc42073",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T13:48:30.492Z"
+    },
+    "learn-github-open-source-legal-opencontracts": {
+      "learning_id": "learn-github-open-source-legal-opencontracts",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Open-Source-Legal/OpenContracts",
+      "repository": "Open-Source-Legal/OpenContracts",
+      "slug": "open-source-legal-opencontracts",
+      "platform": "github",
+      "source_url": "https://github.com/Open-Source-Legal/OpenContracts",
+      "source_version": "8a4cf42b",
+      "content_hash": "2f67dd81d46d48d5488c3a492ad4aee658186d9d857da7faecf60267b6527665",
+      "dossier_path": "07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9580,
+          "title": "update setuptools requirement from >=84.0.0 to >=84.2.1",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T13:48:26.685Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9580": {
+      "learning_id": "rule-9580",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9580,
+      "title": "update setuptools requirement from >=84.0.0 to >=84.2.1",
+      "source_url": "https://github.com/Open-Source-Legal/OpenContracts",
+      "source_version": "8a4cf42b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T13:48:26.685Z"
+    },
+    "candidate_directive-update-setuptools-requirement-from-84-0-0-to-84-2-1": {
+      "item_id": "candidate_directive-update-setuptools-requirement-from-84-0-0-to-84-2-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BBJL-update-setuptools-requirement-from-84-0-0-to-84-2-1.md",
+      "title": "update setuptools requirement from >=84.0.0 to >=84.2.1",
+      "repository": "Open-Source-Legal/OpenContracts",
+      "source_version": "8a4cf42b",
+      "content_hash": "ae6d70117f28c268ccacd62de8b85072fbf4dee7c1f96f0f69fbd5b86dae1068",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-20T13:48:27.058Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-open-source-legal-opencontracts-search-distribution-intelligence-open-source-leg.md",
+      "title": "Search & Distribution Intelligence: Open-Source-Legal/OpenContracts Core Invariants",
+      "repository": "Open-Source-Legal/OpenContracts",
+      "source_version": "8a4cf42b",
+      "content_hash": "a20cf2fe7cabc5405446cf8f4d98f75a1e6c4b554abf2e6773f9897236f6924f",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-20T13:48:27.202Z"
+    },
+    "candidate_directive-deps-update-setuptools-requirement-from-84-0-0-to-84-2-1": {
+      "item_id": "candidate_directive-deps-update-setuptools-requirement-from-84-0-0-to-84-2-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BF6J-deps-update-setuptools-requirement-from-84-0-0-to-84-2-1.md",
+      "title": "deps): update setuptools requirement from >=84.0.0 to >=84.2.1",
+      "repository": "open-source-legal-opencontracts-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2b97ec2c8a0f25740db2e30b5a88519e143e53b7f7bf5d8d07e43b01a5033b69",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-20T13:48:31.772Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-learnings-core-": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-learnings-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-open-source-legal-opencontracts-learnings-search-distribution-intelligence-open-.md",
+      "title": "Search & Distribution Intelligence: open-source-legal-opencontracts-learnings Core Invariants",
+      "repository": "open-source-legal-opencontracts-learnings",
+      "source_version": "HEAD",
+      "content_hash": "254327d9ea2efbb0bcabb65908479d7b471dd36d0726d9ed5df09c2dff9bb757",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-20T13:48:31.918Z"
     }
   },
   "ai-builder-brain": {
