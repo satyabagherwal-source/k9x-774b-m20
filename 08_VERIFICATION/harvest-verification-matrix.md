@@ -11603,3 +11603,4 @@
 | `CYCLE-20261120-2XV4` | `2026-11-20T17:53:52.624Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9613` | Yes (`882d4730...`) |
 | `CYCLE-20261120-31ND` | `2026-11-20T17:53:57.529Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9614` | Yes (`a9979bc4...`) |
 | `CYCLE-20261120-98OC` | `2026-11-20T17:58:46.572Z` | `nezhahq/nezha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9615` | Yes (`38064cb0...`) |
+| `CYCLE-20261120-WK4S` | `2026-11-20T18:16:54.508Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9616` | Yes (`007ee1e1...`) |

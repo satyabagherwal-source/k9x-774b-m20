@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T17:58:52.663Z",
+  "last_updated": "2026-11-20T18:17:04.524Z",
   "total_verified_learnings": 9044,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22558,
+  "total_items": 22561,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-G5PE-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WRDD-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "6dfac0e9acefb74f4bb0e7a7ef4d4f195169b1da29ef00bca66fee5c87c8a49c",
+      "content_hash": "01d97cc14b374703e17c4f11c549969780c29f435ddf33076af8bfaa668f26a8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T15:44:11.237Z"
+      "persisted_at": "2026-11-20T18:17:03.894Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8d1cf85666e7a9680e7b12edc4ebb2de70b548d72b0578b5acba2d22609e47d7",
+      "content_hash": "067886e5ca18aa6a1f2ddaaeb47989dc39b4e564ab4909ee16888a1f7db856ef",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T15:44:11.389Z"
+      "persisted_at": "2026-11-20T18:17:04.018Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b6bd066d64dca5983a9380c8445ed6868aba0c230e021bc44a8a868fd851cf7",
+      "content_hash": "1c8bf56230afadd6f9ca91f1fb19f16832968c9d9c0a370baf9fca431c0ef53f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T15:44:11.543Z"
+      "persisted_at": "2026-11-20T18:17:04.138Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -218798,8 +218798,8 @@
       "slug": "u-root-u-root",
       "platform": "github",
       "source_url": "https://github.com/u-root/u-root",
-      "source_version": "215adf5d",
-      "content_hash": "9988f43cd0a1541d03eb4372ec94d94dbe1f3354924f84ba0af973e81f2ed15d",
+      "source_version": "bd882c1a",
+      "content_hash": "007ee1e114b4ac7c0ef9b649b611f2042cd78529e35ef0b72e8a7b5141eab7db",
       "dossier_path": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "promoted_rules": [
@@ -218817,6 +218817,11 @@
           "number": 9316,
           "title": "build(deps): bump github.com/klauspost/compress from 1.18.0 to 1.18.7",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9616,
+          "title": "don't overwrite or follow an existing output file",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218824,7 +218829,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T01:18:42.576Z",
+      "verified_at": "2026-11-20T18:16:54.356Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218866,10 +218871,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-u-root-u-root-technical-construction-intelligence-u-root-u-root-core-invariants.md",
       "title": "Technical Construction Intelligence: u-root/u-root Core Invariants",
       "repository": "u-root/u-root",
-      "source_version": "215adf5d",
-      "content_hash": "52f21e8cf5499bb18312c82b66f8296fbdc3f49aa5a70590d87e7b59424807f7",
+      "source_version": "bd882c1a",
+      "content_hash": "6ac75699ced79b36b4c471ef6a4616412f38c62e14b70c33c3a353673b2bf7c2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T01:18:43.186Z"
+      "persisted_at": "2026-11-20T18:16:54.830Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-u-root-u-root": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-u-root-u-root",
@@ -218878,10 +218883,10 @@
       "relative_path": "08_VERIFICATION/u-root-u-root-verification-protocol-empirical-defect-shield-for-u-root-u-root.md",
       "title": "Verification Protocol: Empirical Defect Shield for u-root/u-root",
       "repository": "u-root/u-root",
-      "source_version": "215adf5d",
-      "content_hash": "eebce4fe7a970fa5c97b5cd423e8efe85f32af54733fd65957e7e81a6df6334c",
+      "source_version": "bd882c1a",
+      "content_hash": "caddc455186ba30823315a50572a219f29269a9553377e2a17d68fea4a37d973",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T01:18:43.334Z"
+      "persisted_at": "2026-11-20T18:16:54.950Z"
     },
     "learn-github-openreplay-openreplay": {
       "learning_id": "learn-github-openreplay-openreplay",
@@ -219099,9 +219104,9 @@
       "title": "Technical Construction Intelligence: u-root-u-root-learnings Core Invariants",
       "repository": "u-root-u-root-learnings",
       "source_version": "HEAD",
-      "content_hash": "c93fd0b69fd34a359f57c998651ea82a2379a3267490b4e5efd172087e226949",
+      "content_hash": "00a12b842f576debd8533e3900346616b5a8c7c6410a94bc50629b68ac71de16",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T01:19:00.319Z"
+      "persisted_at": "2026-11-20T18:17:03.267Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-u-root-u-root-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-u-root-u-root-learnings",
@@ -219111,9 +219116,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for u-root-u-root-learnings",
       "repository": "u-root-u-root-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0a4cce2228a483b46577a7e0438c8d8915aeab8fd75d0e9acbe0f54205b6a20",
+      "content_hash": "58765e62c9dd6d98637ac09e96894278a72f64553b325f8df750802784c39a0b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T01:19:00.481Z"
+      "persisted_at": "2026-11-20T18:17:03.404Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-hexgrad-kokoro-82m-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-hexgrad-kokoro-82m-learnings-core-invariants",
@@ -288222,9 +288227,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "02e856a813d3905aa60774b5100f26dafbd1a193607b3c4d0a2c925866079612",
+      "content_hash": "dc4d7c4d3408e1549094571736cefa5e7728282ca70b4bf22c2e987cb1b5213e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T12:15:57.347Z"
+      "persisted_at": "2026-11-20T18:17:04.524Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -305876,6 +305881,44 @@
       "content_hash": "cff3a8f1924685867da90cccb8c75717efbbd8463b5caca5a31c6bd7909906da",
       "domain_letter": "G",
       "persisted_at": "2026-11-20T17:58:52.388Z"
+    },
+    "rule-9616": {
+      "learning_id": "rule-9616",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9616,
+      "title": "don't overwrite or follow an existing output file",
+      "source_url": "https://github.com/u-root/u-root",
+      "source_version": "bd882c1a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T18:16:54.356Z"
+    },
+    "candidate_directive-don-t-overwrite-or-follow-an-existing-output-file": {
+      "item_id": "candidate_directive-don-t-overwrite-or-follow-an-existing-output-file",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WKA6-don-t-overwrite-or-follow-an-existing-output-file.md",
+      "title": "don't overwrite or follow an existing output file",
+      "repository": "u-root/u-root",
+      "source_version": "bd882c1a",
+      "content_hash": "f1ca10cba3cd8ee60a8c696851dbdd77f6c71c7e54ce0104f44336410b50c88a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T18:16:54.703Z"
+    },
+    "candidate_directive-gzip-don-t-overwrite-or-follow-an-existing-output-file": {
+      "item_id": "candidate_directive-gzip-don-t-overwrite-or-follow-an-existing-output-file",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WQSJ-gzip-don-t-overwrite-or-follow-an-existing-output-file.md",
+      "title": "gzip: don't overwrite or follow an existing output file",
+      "repository": "u-root-u-root-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6566910416c1c0d990226ed041f9dc7d787a6805b7d25d32c38f6515f7e4700f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T18:17:03.140Z"
     }
   },
   "ai-builder-brain": {

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-4CTQ",
-    "timestamp": "2026-11-18T15:59:39.758Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-    "contentHash": "47a77635a1b42bf31ca496cb0dbb3693a9d68f2ebf050e4cfb61737e4608c776",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-4NYU",
     "timestamp": "2026-11-18T15:59:54.198Z",
     "repository": "freenet/freenet-core",
@@ -7490,6 +7475,21 @@
     "repository": "nezhahq/nezha",
     "learningId": "learn-github-nezhahq-nezha",
     "contentHash": "38064cb0a824d555303785e2422c3c03ece44fd89906d6c9b190db5cc86d54e8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-WK4S",
+    "timestamp": "2026-11-20T18:16:54.508Z",
+    "repository": "u-root/u-root",
+    "learningId": "learn-github-u-root-u-root",
+    "contentHash": "007ee1e114b4ac7c0ef9b649b611f2042cd78529e35ef0b72e8a7b5141eab7db",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

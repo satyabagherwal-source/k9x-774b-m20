@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T17:58:46.580Z",
-  "total_cycles_completed": 11050,
-  "total_learnings_persisted": 11050,
-  "total_rules_promoted": 10406,
+  "last_updated": "2026-11-20T18:16:54.516Z",
+  "total_cycles_completed": 11051,
+  "total_learnings_persisted": 11051,
+  "total_rules_promoted": 10407,
   "history": [
-    {
-      "timestamp": "2026-11-19T19:23:15.070Z",
-      "repository": "tencent/Hy-Memory-30B-A3B",
-      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T19:23:17.490Z",
       "repository": "matthart1983/netwatch",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-20T17:58:46.580Z",
       "repository": "nezhahq/nezha",
       "learningId": "learn-github-nezhahq-nezha",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T18:16:54.516Z",
+      "repository": "u-root/u-root",
+      "learningId": "learn-github-u-root-u-root",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

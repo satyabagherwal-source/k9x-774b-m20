@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T01:19:00.067Z",
+  "timestamp": "2026-11-20T18:17:03.058Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-u-root-u-root-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [u-root-u-root-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T01:19:00.067Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T18:17:03.058Z`  
 > **Learning ID**: `LEARN-EVO-u-root-u-root-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from u-root-u-root-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source**: github ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
-> **Source Version**: `215adf5d`  
+> **Source Version**: `bd882c1a`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T01:18:41.775Z  
+> **Timestamp**: 2026-11-20T18:16:53.698Z  
 > **Learning ID**: `learn-github-u-root-u-root`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T01:18:41.770Z  
+> **Harvest Timestamp**: 2026-11-20T18:16:53.471Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1314,488 +1314,240 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `663e4908` (2026-10-20)
-**Commit Message**: build(deps): bump github.com/klauspost/compress from 1.18.0 to 1.18.7
+### Incident Patch 1: `bd882c1a` (2026-11-19)
+**Commit Message**: gzip: don't overwrite or follow an existing output file
 
-Bumps [github.com/klauspost/compress](https://github.com/klauspost/compress) from 1.18.0 to 1.18.7.
-- [Release notes](https://github.com/klauspost/compress/releases)
-- [Commits](https://github.com/klauspost/compress/compare/v1.18.0...v1.18.7)
+CheckOutputPath is meant to stop gzip overwriting an existing output
+without -f, but it returns the error from os.Stat, which is nil when
+the output exists, so the check never fires. Process then opens the
+output with O_CREATE|O_TRUNC, which follows symlinks. Running gzip -d
+on x.gz in a shared directory such as /tmp, where another user has
+made x a symlink, writes the decompressed data to the link's target
+with the caller's privileges, creating it if the link dangles, and
+then removes x.gz.
 
----
-updated-dependencies:
-- dependency-name: github.com/klauspost/compress
-  dependency-version: 1.18.7
-  dependency-type: direct:production
-...
+Use Lstat in CheckOutputPath and report an existing output, and create
+the output with O_EXCL so nothing at its path is followed. With -f,
+remove an existing file or symlink first, as GNU gzip does. Also keep
+the input when Process fails instead of deleting it.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Signed-off-by: Alhuda Khan <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `cmds/core/gzip/gzip.go` (modified, +2/-0)
 ```diff
-@@ -24,7 +24,7 @@ require (
- 	github.com/ishidawataru/sctp v0.0.0-20230406120618-7ff4192f6ff2
- 	github.com/jaypipes/ghw v0.12.0
- 	github.com/kevinburke/ssh_config v1.2.0
--	github.com/klauspost/compress v1.18.0
-+	github.com/klauspost/compress v1.18.7
- 	github.com/klauspost/pgzip v1.2.6
- 	github.com/mattn/go-runewidth v0.0.14
- 	github.com/mdlayher/vsock v1.2.1
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -116,8 +116,8 @@ github.com/kaey/framebuffer v0.0.0-20140402104929-7b385489a1ff h1:eK9dwGbaOkNQ44
- github.com/kaey/framebuffer v0.0.0-20140402104929-7b385489a1ff/go.mod h1:tS4qtlcKqtt3tCIHUflVSqeP3CLH5Qtv2szX9X2SyhU=
- github.com/kevinburke/ssh_config v1.2.0 h1:x584FjTGwHzMwvHx18PXxbBVzfnxogHaAReU4gf13a4=
- github.com/kevinburke/ssh_config v1.2.0/go.mod h1:CT57kijsi8u/K/BOFA39wgDQJ9CxiF4nAY/ojJ6r6mM=
--github.com/klauspost/compress v1.18.0 h1:c/Cqfb0r+Yi+JtIEq73FWXVkRonBlf0CRNYc8Zttxdo=
--github.com/klauspost/compress v1.18.0/go.mod h1:2Pp+KzxcywXVXMr50+X0Q/Lsb43OQHYWRCY2AiWywWQ=
-+github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
-+github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
- github.com/klauspost/pgzip v1.2.6 h1:8RXeL5crjEUFnR2/Sn6GJNWtSQ3Dk8pq4CL3jvdDyjU=
- github.com/klauspost/pgzip v1.2.6/go.mod h1:Ch1tH69qFZu15pkjo5kYi6mth2Zzwzt50oCQKQE9RUs=
- github.com/kr/fs v0.1.0 h1:Jskdu9ieNAYnjxsi0LbQp1ulIKZV1LAFgK1tWhpZgl8=
-```
-
-**File**: `vendor/github.com/klauspost/compress/.gitattributes` (modified, +1/-0)
-```diff
-@@ -1,2 +1,3 @@
- * -text
- *.bin -text -diff
-+*.md text eol=lf
-```
-
-**File**: `vendor/github.com/klauspost/compress/.goreleaser.yml` (modified, +10/-1)
-```diff
-@@ -31,6 +31,9 @@ builds:
-       - mips64le
-     goarm:
-       - 7
-+    ignore:
-+      - goos: windows
-+        goarch: arm
-   -
-     id: "s2d"
-     binary: s2d
-@@ -57,6 +60,9 @@ builds:
-       - mips64le
-     goarm:
-       - 7
-+    ignore:
-+      - goos: windows
-+        goarch: arm
-   -
-     id: "s2sx"
-     binary: s2sx
-@@ -84,14 +90,17 @@ builds:
-       - mips64le
-     goarm:
-       - 7
-+    ignore:
-+      - goos: windows
-+        goarch: arm
- 
- archives:
-   -
-     id: s2-binaries
-     name_template: "s2-{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
-     format_overrides:
-       - goos: windows
--        format: zip
-+        formats: ['zip']
-     files:
-       - unpack/*
-       - s2/LICENSE
-```
-
-**File**: `vendor/github.com/klauspost/compress/flate/deflate.go` (modified, +16/-37)
-```diff
-@@ -6,11 +6,12 @@
- package flate
- 
- import (
--	"encoding/binary"
- 	"errors"
- 	"fmt"
- 	"io"
- 	"math"
-+
-+	"github.com/klauspost/compress/internal/le"
- )
- 
- const (
-@@ -234,12 +235,9 @@ func (d *compressor) fillWindow(b []byte) {
- 
- 	// Calculate 256 hashes at the time (more L1 cache hits)
- 	loops := (n + 256 - minMatchLength) / 256
--	for j := 0; j < loops; j++ {
-+	for j := range loops {
- 		startindex := j * 256
--		end := startindex + 256 + minMatchLength - 1
--		if end > n {
--			end = n
--		}
-+		end := min(startindex+256+minMatchLength-1, n)
- 		tocheck := d.window[startindex:end]
- 		dstSize := len(tocheck) - minMatchLength + 1
- 
-@@ -269,29 +267,20 @@ func (d *compressor) fillWindow(b []byte) {
- // We only look at chainCount possibilities before giving up.
- // pos = s.index, prevHead = s.chainHead-s.hashOffset, prevLength=minMatchLength-1, lookahead
- func (d *compressor) findMatch(pos int, prevHead int, lookahead int) (length, offset int, ok bool) {
--	minMatchLook := maxMatchLength
--	if lookahead < minMatchLook {
--		minMatchLook = lookahead
--	}
-+	minMatchLook := min(lookahead, maxMatchLength)
- 
- 	win := d.window[0 : pos+minMatchLook]
- 
- 	// We quit when we get a match that's at least nice long
--	nice := len(win) - pos
--	if d.nice < nice {
--		nice = d.nice
--	}
-+	nice := min(d.nice, len(win)-pos)
- 
- 	// If we've got a match that's good enough, only look in 1/4 the chain.
- 	tries := d.chain
- 	length = minMatchLength - 1
- 
- 	wEnd := win[pos+length]
- 	wPos := win[pos:]
--	minIndex := pos - windowSize
--	if minIndex < 0 {
--		minIndex = 0
--	}
-+	minIndex := max(pos-windowSize, 0)
- 	offset = 0
- 
- 	if d.chain < 100 {
-@@ -374,7 +363,7 @@ func (d *compressor) writeStoredBlock(buf []byte) error {
- // of the supplied slice.
- // The caller must ensure that len(b) >= 4.
- func hash4(b []byte) uint32 {
--	return hash4u(binary.LittleEndian.Uint32(b), hashBits)
-+	return hash4u(le.Load32(b, 0), hashBits)
- }
- 
- // hash4 returns the hash of u to fit in a hash table with h bits.
-@@ -389,7 +378,7 @@ func bulkHash4(b []byte, dst []uint32) {
- 	if len(b) < 4 {
- 		return
- 	}
--	hb := binary.LittleEndian.Uint32(b)
-+	hb := le.Load32(b, 0)
- 
- 	dst[0] = hash4u(hb, hashBits)
- 	end := len(b) - 4 + 1
-@@ -432,7 +421,9 @@ func (d *compressor) deflateLazy() {
- 			d.h = newHuffmanEncoder(maxFlateBlockTokens)
- 		}
- 		var tmp [256]uint16
--		for _, v := range d.window[s.index:d.windowEnd] {
-+		toIndex := d.window[s.index:d.windowEnd]
-+		toIndex = toIndex[:min(len(toIndex), maxFlateBlockTokens)]
-+		for _, v := range toIndex {
- 			tmp[v]++
- 		}
- 		d.h.generate(tmp[:], 15)
-@@ -480,10 +471,7 @@ func (d *compressor) deflateLazy() {
- 		prevOffset := s.offset
- 		s.length = minMatchLength - 1
- 		s.offset = 0
--		minIndex := s.index - windowSize
--		if minIndex < 0 {
--			minIndex = 0
--		}
-+		minIndex := max(s.index-windowSize, 0)
- 
- 		if s.chainHead-s.hashOffset >= minIndex && lookahead > prevLength && prevLength < d.lazy {
- 			if newLength, newOffset, ok := d.findMatch(s.index, s.chainHead-s.hashOffset, lookahead); ok {
-@@ -503,10 +491,7 @@ func (d *compressor) deflateLazy() {
- 			if prevLength < maxMatchLength-checkOff {
- 				prevIndex := s.index - 1
- 				if prevIndex+prevLength < s.maxInsertIndex {
--					end := lookahead
--					if lookahead > maxMatchLength+checkOff {
--						end = maxMatchLength + checkOff
--					}
-+					end := min(lookahead, maxMatchLength+checkOff)
- 					end += prevIndex
- 
- 					// Hash at match end.
-@@ -603,15 +588,9 @@ func (d *compressor) deflateLazy() {
- 			// table.
- 			newIndex := s.index + prevLength - 1
- 			// Calculate missing hashes
--			end := newIndex
--			if end > s.maxInsertIndex {
--				end = s.maxInsertIndex
--			}
-+			end := min(newIndex, s.maxInsertIndex)
- 			end += minMatchLength - 1
--			startindex := s.index + 1
--			if startindex > s.maxInsertIndex {
--				startindex = s.maxInsertIndex
--			}
-+			startindex := min(s.index+1, s.maxInsertIndex)
- 			tocheck := d.window[startindex:end]
- 			dstSize := len(tocheck) - minMatchLength + 1
- 			if dstSize > 0 {
-```
-
-**File**: `vendor/github.com/klauspost/compress/flate/dict_decoder.go` (modified, +1/-4)
-```diff
-@@ -104,10 +104,7 @@ func (dd *dictDecoder) writeCopy(dist, length int) int {
- 	dstBase := dd.wrPos
- 	dstPos := dstBase
- 	srcPos := dstPos - dist
--	endPos := dstPos + length
--	if endPos > len(dd.hist) {
--		endPos = len(dd.hist)
--	}
-+	endPos := min(dstPos+length, len(dd.hist))
- 
- 	// Copy non-overlapping section after destination position.
- 	//
-```
-
-**File**: `vendor/github.com/klauspost/compress/flate/fast_encoder.go` (modified, +3/-46)
-```diff
-@@ -7,7 +7,6 @@ package flate
- 
- import (
- 	"fmt"
--	"math/bits"
- 
- 	"github.com/klauspost/compress/internal/le"
- )
-@@ -151,29 +150,9 @@ func (e *fastGen) matchlen(s, t int, src []byte) int32 {
- 			panic(fmt.Sprint(s, "-", t, "(", s-t, ") > maxMatchLength (", maxMatchOffset, ")"))
- 		}
- 	}
--	s1 := min(s+maxMatchLength-4, len(src))
--	left := s1 - s
--	n := int32(0)
--	for left >= 8 {
--		diff := le.Load64(src, s) ^ le.Load64(src, t)
--		if diff != 0 {
--			return n + int32(bits.TrailingZeros64(diff)>>3)
--		}
--		s += 8
--		t += 8
--		n += 8
--		left -= 8
--	}
--
--	a := src[s:s1]
-+	a := src[s:min(s+maxMatchLength-4, len(src))]
- 	b := src[t:]
--	for i := range a {
--		if a[i] != b[i] {
--			break
--		}
--		n++
--	}
--	return n
-+	return int32(matchLen(a, b))
- }
- 
- // matchlenLong will return the match length between offsets and t in src.
-@@ -193,29 +172,7 @@ func (e *fastGen) matchlenLong(s, t int, src []byte) int32 {
- 			panic(fmt.Sprint(s, "-", t, "(", s-t, ") > maxMatchLength (", maxMatchOffset, ")"))
- 		}
- 	}
--	// Extend the match to be as long as possible.
--	left := len(src) - s
--	n := int32(0)
--	for left >= 8 {
--		diff := le.Load64(src, s) ^ le.Load64(src, t)
--		if diff != 0 {
--			return n + int32(bits.TrailingZeros64(diff)>>3)
--		}
--		s += 8
--		t += 8
--		n += 8
--		left -= 8
--	}
--
--	a := src[s:]
--	b := src[t:]
--	for i := range a {
--		if a[i] != b[i] {
--			break
--		}
--		n++
--	}
--	return n
-+	return int32(matchLen(src[s:], src[t:]))
- }
- 
- // Reset the encoding table.
-```
-
-**File**: `vendor/github.com/klauspost/compress/flate/huffman_bit_writer.go` (modified, +20/-29)
-```diff
-@@ -211,7 +211,9 @@ func (w *huffmanBitWriter) flush() {
- 		n++
- 	}
- 	w.bits = 0
--	w.write(w.bytes[:n])
-+	if n > 0 {
-+		w.write(w.bytes[:n])
-+	}
- 	w.nbytes = 0
- }
- 
-@@ -303,10 +305,7 @@ func (w *huffmanBitWriter) generateCodegen(numLiterals int, numOffsets int, litE
- 			w.codegenFreq[size]++
- 			count--
- 			for count >= 3 {
--				n := 6
--				if n > count {
--					n = count
--				}
-+				n := min(6, count)
- 				codegen[outIndex] = 16
- 				outIndex++
- 				codegen[outIndex] = uint8(n - 3)
-@@ -316,10 +315,7 @@ func (w *huffmanBitWriter) generateCodegen(numLiterals int, numOffsets int, litE
+@@ -68,6 +68,8 @@ func run(args []string) error {
+ 			if !opts.Quiet {
+ 				fmt.Fprintf(os.Stderr, "%s\n", err)
  			}
- 		} else {
- 			for count >= 11 {
--				n := 138
--				if n > count {
--					n = count
--				}
-+				n := min(138, count)
- 				codegen[outIndex] = 18
- 				outIndex++
- 				codegen[outIndex] = uint8(n - 11)
-@@ -438,8 +434,8 @@ func (w *huffmanBitWriter) writeOutBits() {
- 	w.nbits -= 48
- 	n := w.nbytes
++			// Don't remove the input if processing it failed.
++			continue
+ 		}
  
--	// We over-write, but faster...
--	le.Store64(w.bytes[n:], bits)
-+	// We overwrite, but faster...
-+	le.Store64(w.bytes[:], n, bits)
- 	n += 6
+ 		if err := f.Cleanup(); err != nil {
+```
+
+**File**: `cmds/core/gzip/gzip_test.go` (modified, +44/-0)
+```diff
+@@ -6,7 +6,9 @@ package main
  
- 	if n >= bufferFlushSize {
-@@ -472,7 +468,7 @@ func (w *huffmanBitWriter) writeDynamicHeader(numLiterals int, numOffsets int, n
- 	w.writeBits(int32(numOffsets-1), 5)
- 	w.writeBits(int32(numCodegens-4), 4)
+ import (
+ 	"bytes"
++	"errors"
+ 	"os"
++	"path/filepath"
+ 	"testing"
+ )
  
--	for i := 0; i < numCodegens; i++ {
-+	for i := range numCodegens {
- 		value := uint(w.codegenEncoding.codes[codegenOrder[i]].len())
- 		w.writeBits(int32(value), 3)
+@@ -38,3 +40,45 @@ func TestGZIPSmoke(t *testing.T) {
+ 		t.Errorf("os.ReadFile(%v) = %v, want %v", filePath, string(content), string(wantContent))
  	}
-@@ -650,7 +646,7 @@ func (w *huffmanBitWriter) writeBlockDynamic(tokens *tokens, eof bool, input []b
- 		w.lastHeader = 0
- 	}
- 
--	numLiterals, numOffsets := w.indexTokens(tokens, !sync)
-+	numLiterals, numOffsets := w.indexTokens(tokens, true)
- 	extraBits := 0
- 	ssize, storable := w.storedSize(input)
- 
-@@ -785,7 +781,7 @@ func (w *huffmanBitWriter) fillTokens() {
- // literalFreq and offsetFreq, and generates literalEncoding
- // and offsetEncoding.
- // The number of literal and offset tokens is returned.
--func (w *huffmanBitWriter) indexTokens(t *tokens, filled bool) (numLiterals, numOffsets int) {
-+func (w *huffmanBitWriter) indexTokens(t *tokens, alwaysEOB bool) (numLiterals, numOffsets int) {
- 	//copy(w.literalFreq[:], t.litHist[:])
- 	*(*[256]uint16)(w.literalFreq[:]) = t.litHist
- 	//copy(w.literalFreq[256:], t.extraHist[:])
-@@ -795,9 +791,10 @@ func (w *huffmanBitWriter) indexTokens(t *tokens, filled bool) (numLiterals, num
- 	if t.n == 0 {
- 		return
- 	}
--	if filled {
--		return maxNumLit, maxNumDist
-+	if alwaysEOB {
-+		w.literalFreq[endBlockMarker] = 1
- 	}
+ }
 +
- 	// get the number of literals
- 	numLiterals = len(w.literalFreq)
- 	for w.literalFreq[numLiterals-1] == 0 {
-@@ -855,8 +852,7 @@ func (w *huffmanBitWriter) writeTokens(tokens []token, leCodes, oeCodes []hcode)
- 			bits |= c.code64() << (nbits & 63)
- 			nbits += c.len()
- 			if nbits >= 48 {
--				le.Store64(w.bytes[nbytes:], bits)
--				//*(*uint64)(unsafe.Pointer(&w.bytes[nbytes])) = bits
-+				le.Store64(w.bytes[:], nbytes, bits)
- 				bits >>= 48
- 				nbits -= 48
- 				nbytes += 6
-@@ -883,8 +879,7 @@ func (w *huffmanBitWriter) writeTokens(tokens []token, leCodes, oeCodes []hcode)
- 			bits |= c.code64() << (nbits & 63)
- 			nbits += c.len()
- 			if nbits >= 48 {
--				le.Store64(w.bytes[nbytes:], bits)
--				//*(*uint64)(unsafe.Pointer(&w.bytes[nbytes])) = bits
-+				le.Store64(w.bytes[:], nbytes, bits)
- 				bits >>= 48
- 				nbits -= 48
- 				nbytes += 6
-@@ -906,8 +901,7 @@ func (w *huffmanBitWriter) writeTokens(tokens []token, leCodes, oeCodes []hcode)
- 			bits |= uint64(extraLength) << (nbits & 63)
- 			nbits += extraLengthBits
- 			if nbits >= 48 {
--				le.Store64(w.bytes[nbytes:], bits)
--				//*(*uint64)(unsafe.Pointer(&w.bytes[nbytes])) = bits
-+				le.Store64(w.bytes[:], nbytes, bits)
- 				bits >>= 48
- 				nbits -= 48
- 				nbytes += 6
-@@ -932,8 +926,7 @@ func (w *huffmanBitWriter) writeTokens(tokens []token, leCodes, oeCodes []hcode)
- 			bits |= c.code64() << (nbits & 63)
- 			nbits += c.len()
- 			if nbits >= 48 {
--				le.Store64(w.bytes[nbytes:], bits)
--				//*(*uint64)(unsafe.Pointer(&w.bytes[nbytes])) = bits
-+				le.Store64(w.bytes[:], nbytes, bits)
- 				bits >>= 48
- 				nbits -= 48
- 				nbytes += 6
-@@ -954,8 +947,7 @@ func (w *huffmanBitWriter) writeTokens(tokens []token, leCodes, oeCodes []hcode)
- 			bits |= uint64((offset-(offsetComb>>8))&matchOffsetOnlyMask) << (nbits & 63)
- 			nbits += uint8(offsetComb)
- 			if nbits >= 48 {
--				le.Store64(w.bytes[nbytes:], bits)
--				//*(*uint64)(unsafe.Pointer(&w.bytes[nbytes])) = bits
-+				le.Store64(w.bytes[:], nbytes, bits)
- 				bits >>= 48
- 				nbits -= 48
- 				nbytes += 6
-@@ -1108,7 +1100,7 @@ func (w *huffmanBitWriter) writeBlockHuff(eof bool, input []byte, sync bool) {
- 		// We must have at least 48 bits free.
- 		if nbits >= 8 {
- 			n := nbits >> 3
--			le.Store64(w.bytes[nbytes:], bits)
-+			le.Store64(w.bytes[:], nbytes, bits)
- 			bits >>= (n * 8) & 63
- 			nbits -= n * 8
- 			nbytes += n
-@@ -1137,8 +1129,7 @@ func (w *huffmanBitWriter) writeBlockHuff(eof bool, input []byte, sync bool) {
- 	// Remaining...
- 	for _, t := range i
++func TestGZIPExistingOutput(t *testing.T) {
++	dir := t.TempDir()
++	in := filepath.Join(dir, "file.txt")
++	if err := os.WriteFile(in, []byte("content"), 0o644); err != nil {
++		t.Fatalf("os.WriteFile(%v) = %v, want nil", in, err)
++	}
++	if err := run([]string{in}); err != nil {
++		t.Fatalf("run(%v) = %v, want nil", []string{in}, err)
++	}
++
++	// Someone else's symlink where the decompressed file would go.
++	target := filepath.Join(t.TempDir(), "target")
++	if err := os.Symlink(target, in); err != nil {
++		t.Fatalf("os.Symlink(%v, %v) = %v, want nil", target, in, err)
++	}
++	args := []string{"-d", in + ".gz"}
++	if err := run(args); err != nil {
++		t.Fatalf("run(%v) = %v, want nil", args, err)
++	}
++	if _, err := os.Lstat(target); !errors.Is(err, os.ErrNotExist) {
++		t.Errorf("after run(%v): os.Lstat(%v) = %v, want %v", args, target, err, os.ErrNotExist)
++	}
++	if _, err := os.Stat(in + ".gz"); err != nil {
++		t.Errorf("after run(%v): os.Stat(%v) = %v, want nil", args, in+".gz", err)
++	}
++
++	// If the output can't be created even with -f, the input stays.
++	if err := os.Remove(in); err != nil {
++		t.Fatalf("os.Remove(%v) = %v, want nil", in, err)
++	}
++	if err := os.Mkdir(in, 0o755); err != nil {
++		t.Fatalf("os.Mkdir(%v) = %v, want nil", in, err)
++	}
++	args = []string{"-d", "-f", in + ".gz"}
++	if err := run(args); err != nil {
++		t.Fatalf("run(%v) = %v, want nil", args, err)
++	}
++	if _, err := os.Stat(in + ".gz"); err != nil {
++		t.Errorf("after run(%v): os.Stat(%v) = %v, want nil", args, in+".gz", err)
++	}
++}
+```
+
+**File**: `pkg/gzip/file.go` (modified, +16/-2)
+```diff
+@@ -81,8 +81,12 @@ func (f *File) CheckPath() error {
+ // stdout is a device. Also checks if output path already exists. Allow
+ // override via force option.
+ func (f *File) CheckOutputPath() error {
+-	_, err := os.Stat(f.outputPath())
++	// Lstat, so that a symlink at the output path counts as existing.
++	_, err := os.Lstat(f.outputPath())
+ 	if !os.IsNotExist(err) && !f.Options.Stdout && !f.Options.Test && !f.Options.Force {
++		if err == nil {
++			err = fmt.Errorf("%q: %w, use -f to overwrite", f.outputPath(), os.ErrExist)
++		}
+ 		return err
+ 	} else if os.IsPermission(err) {
+ 		return err
+@@ -142,8 +146,18 @@ func (f *File) Process() error {
+ 		}
+ 		// Give the output file the input file's permissions.
+ 		perm := fi.Mode().Perm()
++		// Create the output instead of opening whatever is at its path,
++		// so a symlink there is never followed. With -f, replace an
++		// existing file or symlink first, as gzip does.
++		if f.Options.Force {
++			if ofi, err := os.Lstat(f.outputPath()); err == nil && !ofi.IsDir() {
++				if err := os.Remove(f.outputPath()); err != nil {
++					return err
++				}
++			}
++		}
+ 		var out *os.File
+-		if out, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
++		if out, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_EXCL, perm); err != nil {
+ 			return err
+ 		}
+ 		if err = out.Chmod(perm); err != nil {
+```
+
+**File**: `pkg/gzip/file_test.go` (modified, +79/-0)
+```diff
+@@ -307,6 +307,11 @@ func TestFileProcess(t *testing.T) {
+ 	if err := f.Process(); err != nil {
+ 		t.Errorf("File.Process() compression error = %v", err)
+ 	}
++	// As gzip does, remove the input so the decompressed file can take
++	// its place.
++	if err := f.Cleanup(); err != nil {
++		t.Fatalf("File.Cleanup() = %v, want nil", err)
++	}
+ 
+ 	f.Path = f.Path + f.Options.Suffix
+ 	f.Options.Decompress = true
+@@ -362,6 +367,80 @@ func TestFileProcessKeepsMode(t *testing.T) {
+ 	}
+ }
+ 
++func TestFileCheckOutputPathExists(t *testing.T) {
++	if runtime.GOOS == "windows" {
++		t.Skip("creating symlinks needs privileges on windows")
++	}
++	dir := t.TempDir()
++	in := filepath.Join(dir, "x")
++	if err := os.WriteFile(in, []byte("x"), 0o644); err != nil {
++		t.Fatalf("create %q: got %v, want nil", in, err)
++	}
++	f := &File{Path: in, Options: &Options{Suffix: ".gz"}}
++
++	if err := f.CheckOutputPath(); err != nil {
++		t.Errorf("File.CheckOutputPath() with no output = %v, want nil", err)
++	}
++	if err := os.WriteFile(in+".gz", nil, 0o644); err != nil {
++		t.Fatalf("create %q: got %v, want nil", in+".gz", err)
++	}
++	if err := f.CheckOutputPath(); !errors.Is(err, os.ErrExist) {
++		t.Errorf("File.CheckOutputPath() with existing output = %v, want %v", err, os.ErrExist)
++	}
++	// A symlink at the output path exists even if it dangles.
++	if err := os.Remove(in + ".gz"); err != nil {
++		t.Fatalf("remove %q: got %v, want nil", in+".gz", err)
++	}
++	if err := os.Symlink(filepath.Join(dir, "missing"), in+".gz"); err != nil {
++		t.Fatalf("symlink %q: got %v, want nil", in+".gz", err)
++	}
++	if err := f.CheckOutputPath(); !errors.Is(err, os.ErrExist) {
++		t.Errorf("File.CheckOutputPath() with dangling symlink output = %v, want %v", err, os.ErrExist)
++	}
++	f.Options.Force = true
++	if err := f.CheckOutputPath(); err != nil {
++		t.Errorf("File.CheckOutputPath() with existing output and Force = %v, want nil", err)
++	}
++}
++
++func TestFileProcessDoesNotFollowSymlink(t *testing.T) {
++	if runtime.GOOS == "windows" {
++		t.Skip("creating symlinks needs privileges on windows")
++	}
++	in := filepath.Join(t.TempDir(), "x")
++	if err := os.WriteFile(in, []byte("x"), 0o644); err != nil {
++		t.Fatalf("create %q: got %v, want nil", in, err)
++	}
++	target := filepath.Join(t.TempDir(), "target")
++	if err := os.Symlink(target, in+".gz"); err != nil {
++		t.Fatalf("symlink %q: got %v, want nil", in+".gz", err)
++	}
++
++	f := File{
++		Path: in,
++		Options: &Options{
++			Blocksize: 128,
++			Level:     -1,
++			Processes: 1,
++			Suffix:    ".gz",
++		},
++	}
++	if err := f.Process(); !errors.Is(err, os.ErrExist) {
++		t.Errorf("File.Process() with symlink output = %v, want %v", err, os.ErrExist)
++	}
++	// -f replaces the symlink itself.
++	f.Options.Force = true
++	if err := f.Process(); err != nil {
++		t.Fatalf("File.Process() with symlink output and Force = %v, want nil", err)
++	}
++	if _, err := os.Lstat(target); !errors.Is(err, os.ErrNotExist) {
++		t.Errorf("os.Lstat(%q) = %v, want %v", target, err, os.ErrNotExist)
++	}
++	if fi, err := os.Lstat(in + ".gz"); err != nil || !fi.Mode().IsRegular() {
++		t.Errorf("os.Lstat(%q) = %v, %v, want a regular file", in+".gz", fi, err)
++	}
++}
++
+ func TestCheckPath(t *testing.T) {
+ 	d := t.TempDir()
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3848** (2026-11-20): gzip: don't overwrite or follow an existing output file (@alhudz)
 - **PR #3841** (2026-11-17): vendor: update compress (@binjip978)
 - **PR #3840** (2026-11-16): CI: fix tests.yml after ubuntu-latest moved to ubuntu-26.04 (@brho)
 - **PR #3839** (2026-11-16): vfile: skip revoked and non-signing keys in GetRSAKeysFromRing (@alhudz)
 - **PR #3837** (2026-11-16): mount9p: verify the server host key over ssh (@alhudz)
 - **PR #3836** (2026-11-17): go.mod: pick up cpu v0.2.0 and gobusybox v0.6.0 (@rminnich)
-- **PR #3835** (2026-11-12): CI: Add RISC-V 64 Kernel and OVMF binaries docker push action (@AjanZhong)
 
 ---
 
@@ -1815,31 +1567,32 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github.com/klauspost/compress from 1.18.0 to 1.18.7
+## X. gzip: don't overwrite or follow an existing output file
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmds/core/gzip/gzip.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `663e4908`: build(deps): bump github.com/klauspost/compress from 1.18.0 to 1.18.7. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bd882c1a`: gzip: don't overwrite or follow an existing output file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmds/core/gzip/gzip.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/klauspost/compress v1.18.7
+			// Don't remove the input if processing it failed.
+			continue
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/klauspost/compress v1.18.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `663e4908` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bd882c1a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

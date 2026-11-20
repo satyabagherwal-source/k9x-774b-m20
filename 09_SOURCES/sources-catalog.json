@@ -6043,10 +6043,10 @@
     "repository": "u-root/u-root",
     "platform": "github",
     "sourceUrl": "https://github.com/u-root/u-root",
-    "sourceVersion": "215adf5d",
+    "sourceVersion": "bd882c1a",
     "license": "BSD-3-Clause",
-    "contentHash": "9988f43cd0a1541d03eb4372ec94d94dbe1f3354924f84ba0af973e81f2ed15d",
-    "lastHarvestedAt": "2026-11-19T01:18:42.772Z",
+    "contentHash": "007ee1e114b4ac7c0ef9b649b611f2042cd78529e35ef0b72e8a7b5141eab7db",
+    "lastHarvestedAt": "2026-11-20T18:16:54.512Z",
     "learningId": "learn-github-u-root-u-root"
   },
   "shoutem-ui": {

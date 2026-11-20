@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T17:58:49.732Z",
-    "lastVerified": "2026-11-20T17:58:49.732Z",
+    "lastChecked": "2026-11-20T18:17:02.825Z",
+    "lastVerified": "2026-11-20T18:17:02.825Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T17:29:14.706Z",
-    "lastVerified": "2026-11-20T17:29:14.706Z",
+    "lastChecked": "2026-11-20T18:17:02.817Z",
+    "lastVerified": "2026-11-20T18:17:02.817Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -951,9 +951,9 @@
   "influxdata-influxdb": {
     "name": "influxdb",
     "officialUrl": "https://github.com/influxdata/influxdb",
-    "lastChecked": "2026-11-19T14:03:28.389Z",
+    "lastChecked": "2026-11-20T18:17:00.382Z",
     "revisionIdentifier": "185688a5",
-    "lastVerified": "2026-11-19T14:03:28.389Z"
+    "lastVerified": "2026-11-20T18:17:00.382Z"
   },
   "eclipse-theia-theia": {
     "name": "eclipse-theia/theia",
@@ -1506,9 +1506,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-20T10:34:19.626Z",
+    "lastChecked": "2026-11-20T18:16:57.763Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-20T10:34:19.626Z"
+    "lastVerified": "2026-11-20T18:16:57.763Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -1985,8 +1985,8 @@
     "officialUrl": "https://github.com/higress-group/higress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T15:50:50.462Z",
-    "lastVerified": "2026-11-19T15:50:50.462Z",
+    "lastChecked": "2026-11-20T18:16:55.358Z",
+    "lastVerified": "2026-11-20T18:16:55.358Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-higress-group-higress",
@@ -5757,14 +5757,14 @@
     "officialUrl": "https://github.com/u-root/u-root",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T01:18:41.770Z",
-    "lastVerified": "2026-11-19T01:18:41.770Z",
+    "lastChecked": "2026-11-20T18:16:53.471Z",
+    "lastVerified": "2026-11-20T18:16:53.471Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-u-root-u-root",
-    "contentHash": "9988f43cd0a1541d03eb4372ec94d94dbe1f3354924f84ba0af973e81f2ed15d",
+    "contentHash": "007ee1e114b4ac7c0ef9b649b611f2042cd78529e35ef0b72e8a7b5141eab7db",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10489,5 +10489,19 @@
     "lastChecked": "2026-11-20T17:53:43.618Z",
     "revisionIdentifier": "772133d9",
     "lastVerified": "2026-11-20T17:53:43.618Z"
+  },
+  "syntax-tree-hast-util-from-html": {
+    "name": "hast-util-from-html",
+    "officialUrl": "https://github.com/syntax-tree/hast-util-from-html",
+    "lastChecked": "2026-11-20T18:16:50.087Z",
+    "revisionIdentifier": "3bf56434",
+    "lastVerified": "2026-11-20T18:16:50.087Z"
+  },
+  "paololeonardi-waterfallgrid": {
+    "name": "WaterfallGrid",
+    "officialUrl": "https://github.com/paololeonardi/WaterfallGrid",
+    "lastChecked": "2026-11-20T18:16:52.579Z",
+    "revisionIdentifier": "c7c08652",
+    "lastVerified": "2026-11-20T18:16:52.579Z"
   }
 }
