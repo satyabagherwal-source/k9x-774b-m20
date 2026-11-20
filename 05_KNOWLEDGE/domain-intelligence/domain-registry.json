@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T19:45:19.826Z",
+  "last_updated": "2026-11-20T20:02:34.242Z",
   "total_records": 2170,
   "domains": {
     "A": {
@@ -8903,8 +8903,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "0b451386f194a27055db59de27ce7ca1ac4f7b7f5445c1b9fff8cd536338d5ea",
-      "created_at": "2026-11-20T18:27:31.979Z"
+      "content_hash": "825ce514575588e69e5696895ce66a35f8422daafbf0fa1fd31e011af3ca1039",
+      "created_at": "2026-11-20T20:02:34.242Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12884,8 +12884,8 @@
       "title": "Architecture Intelligence: trufflesecurity/trufflehog Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-architecture-intelligence-trufflesecurity-trufflehog-.md",
       "repository": "trufflesecurity/trufflehog",
-      "content_hash": "4096bc410f7c774603409b4a0222f8e8d338e0dae2cc06dbce2551cee79e3f81",
-      "created_at": "2026-11-19T23:34:47.443Z"
+      "content_hash": "a159906ac251fafbd43363ea36aab3423cbb6a19227298f9be1ca2047b43e8cd",
+      "created_at": "2026-11-20T20:02:29.001Z"
     },
     "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants",
@@ -22628,8 +22628,8 @@
       "title": "Architecture Intelligence: trufflesecurity-trufflehog-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-learnings-architecture-intelligence-trufflesecurity-t.md",
       "repository": "trufflesecurity-trufflehog-learnings",
-      "content_hash": "2ad2a48ebea120d197bfb287461c687a0397d06262b4caa85f8dbc27b25282b2",
-      "created_at": "2026-11-19T23:34:51.452Z"
+      "content_hash": "f22f9fe07e5ea4cf2471a19049d73f2c05e6f3a560618daf15d81bb33c91ae5a",
+      "created_at": "2026-11-20T20:02:33.468Z"
     },
     "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants",
@@ -24884,8 +24884,8 @@
       "title": "Technical Construction Intelligence: axios/axios Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-axios-axios-technical-construction-intelligence-axios-axios-core-invariants.md",
       "repository": "axios/axios",
-      "content_hash": "a7fb05d69fdc657e1cf7d2d15f24b5afb0e265f6376387c2e9a8683b7c0cbc9f",
-      "created_at": "2026-11-16T22:47:32.352Z"
+      "content_hash": "c1847fe98b068fc6a829b95bcb67f315138e9c13b02833a2cbca61790d6de6c3",
+      "created_at": "2026-11-20T20:02:21.969Z"
     },
     "domain_intelligence-technical-construction-intelligence-axios-axios-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-axios-axios-learnings-core-invariants",
@@ -24893,8 +24893,8 @@
       "title": "Technical Construction Intelligence: axios-axios-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-axios-axios-learnings-technical-construction-intelligence-axios-axios-learnings-.md",
       "repository": "axios-axios-learnings",
-      "content_hash": "154f11f83cf5c80d37d7d9d22f62516ddea7676dcef628dddbd0b015372a614e",
-      "created_at": "2026-11-16T22:47:41.958Z"
+      "content_hash": "d1637f27394c9e21c1b0e18874d122cbea14affc021a73d1df725b296e558eb0",
+      "created_at": "2026-11-20T20:02:32.637Z"
     },
     "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-core-invariants",

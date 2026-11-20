@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T19:44:45.718Z",
-  "total_cycles_completed": 11066,
-  "total_learnings_persisted": 11066,
-  "total_rules_promoted": 10422,
+  "last_updated": "2026-11-20T20:02:28.692Z",
+  "total_cycles_completed": 11068,
+  "total_learnings_persisted": 11068,
+  "total_rules_promoted": 10424,
   "history": [
-    {
-      "timestamp": "2026-11-19T21:08:18.412Z",
-      "repository": "okteto/okteto",
-      "learningId": "learn-github-okteto-okteto",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T21:23:58.473Z",
-      "repository": "lapce/lapce",
-      "learningId": "learn-github-lapce-lapce",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T21:24:05.647Z",
       "repository": "dragonflyoss/dragonfly",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-20T19:44:45.718Z",
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T20:02:21.661Z",
+      "repository": "axios/axios",
+      "learningId": "learn-github-axios-axios",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T20:02:28.692Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T19:44:48.864Z",
-    "lastVerified": "2026-11-20T19:44:48.864Z",
+    "lastChecked": "2026-11-20T20:02:31.776Z",
+    "lastVerified": "2026-11-20T20:02:31.776Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -355,8 +355,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T18:41:40.159Z",
-    "lastVerified": "2026-11-20T18:41:40.159Z",
+    "lastChecked": "2026-11-20T20:02:27.556Z",
+    "lastVerified": "2026-11-20T20:02:27.556Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1469,9 +1469,9 @@
   "valeriansaliou-sonic": {
     "name": "sonic",
     "officialUrl": "https://github.com/valeriansaliou/sonic",
-    "lastChecked": "2026-11-19T15:42:29.677Z",
+    "lastChecked": "2026-11-20T20:02:25.050Z",
     "revisionIdentifier": "f16560b6",
-    "lastVerified": "2026-11-19T15:42:29.677Z"
+    "lastVerified": "2026-11-20T20:02:25.050Z"
   },
   "hf-lightricks-ltx-2.5": {
     "name": "Lightricks/LTX-2.5",
@@ -1998,22 +1998,21 @@
     "revisionIdentifier": "392b64e8"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflehog",
+    "name": "trufflesecurity/trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T12:50:20.309Z",
-    "lastVerified": "2026-11-20T12:50:20.309Z",
+    "lastChecked": "2026-11-20T20:02:27.857Z",
+    "lastVerified": "2026-11-20T20:02:27.857Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "91892fe6f2ce0b66da3d19562a7a4d5e4cfdd9cef0c98664018cf76a1695c6b8",
+    "contentHash": "e08d4e590e85554f2459059e8241c649344343d6272cfa8423b6a9193300eae6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d232362a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -2446,8 +2445,8 @@
     "officialUrl": "https://github.com/nats-io/nats.go",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T16:40:58.415Z",
-    "lastVerified": "2026-11-19T16:40:58.415Z",
+    "lastChecked": "2026-11-20T20:02:20.185Z",
+    "lastVerified": "2026-11-20T20:02:20.185Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-go",
@@ -6191,9 +6190,9 @@
   "ataraxy-labs-sem": {
     "name": "sem",
     "officialUrl": "https://github.com/Ataraxy-Labs/sem",
-    "lastChecked": "2026-11-19T03:09:34.571Z",
+    "lastChecked": "2026-11-20T20:02:12.597Z",
     "revisionIdentifier": "5d74e1fe",
-    "lastVerified": "2026-11-19T03:09:34.571Z"
+    "lastVerified": "2026-11-20T20:02:12.597Z"
   },
   "hf-google-vit-base-patch16-224": {
     "name": "google/vit-base-patch16-224",
@@ -10624,5 +10623,29 @@
     "lastChecked": "2026-11-20T19:44:31.964Z",
     "revisionIdentifier": "07698fa2",
     "lastVerified": "2026-11-20T19:44:31.964Z"
+  },
+  "axios-axios": {
+    "name": "axios/axios",
+    "officialUrl": "https://github.com/axios/axios",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-20T20:02:20.632Z",
+    "lastVerified": "2026-11-20T20:02:20.632Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-axios-axios",
+    "contentHash": "4a50a28058378a979daba47a519d21ec912c9fcb403e3103e7a95ce2cc12ae53",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ming1016-swiftpamphletapp": {
+    "name": "SwiftPamphletApp",
+    "officialUrl": "https://github.com/ming1016/SwiftPamphletApp",
+    "lastChecked": "2026-11-20T20:02:17.550Z",
+    "revisionIdentifier": "0d07d106",
+    "lastVerified": "2026-11-20T20:02:17.550Z"
   }
 }

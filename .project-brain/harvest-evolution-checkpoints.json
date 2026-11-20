@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T19:45:20.144Z",
+  "last_updated": "2026-11-20T20:02:34.477Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T18:27:32.357Z",
@@ -103,7 +103,7 @@
       "staged_for_review": 1
     },
     "trufflesecurity-trufflehog-learnings.md": {
-      "processed_at": "2026-11-19T23:34:50.498Z",
+      "processed_at": "2026-11-20T20:02:32.885Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-20T18:27:31.203Z",
+      "processed_at": "2026-11-20T20:02:33.739Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -833,7 +833,7 @@
       "staged_for_review": 0
     },
     "axios-axios-learnings.md": {
-      "processed_at": "2026-11-16T22:47:41.501Z",
+      "processed_at": "2026-11-20T20:02:31.898Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3623,7 +3623,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2595,
+  "total_dossiers_evaluated": 2598,
   "total_canonical_promoted": 432,
-  "total_staged_for_review": 1974
+  "total_staged_for_review": 1977
 }

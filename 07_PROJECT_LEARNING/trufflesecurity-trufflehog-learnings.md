@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `d232362a`  
+> **Source Version**: `4ef51f69`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T23:34:45.832Z  
+> **Timestamp**: 2026-11-20T20:02:27.861Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T23:34:45.724Z  
+> **Harvest Timestamp**: 2026-11-20T20:02:27.857Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 29537 stars
+- **Stars / Engagement**: 29551 stars
 
 ---
 
@@ -1140,298 +1140,320 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d232362a` (2026-11-19)
-**Commit Message**: Saucelabs: verify via identity endpoint so proxy 403s aren't reported as live (#5581)
+### Incident Patch 1: `4ef51f69` (2026-11-20)
+**Commit Message**: Make PrivateKey passphrase cracking respect its context timeout (#5558)
 
-* Saucelabs: verify via identity endpoint so proxy 403s aren't reported as live
+Passphrase-protected keys reach Crack, which walks a built-in list of
+249 common passphrases. A wrong guess costs a full KDF run whose cost
+is set by the key's author, so one hardened key could pin a detector
+goroutine at full CPU long past the engine's per-match timeout, which
+logs but never stops the goroutine.
 
-* dropped ambiguous 403 test case
+Crack now takes the caller's context and stops between attempts once it
+is done, wrapped with the attempt count; the in-flight attempt still
+completes because ssh.ParseRawPrivateKeyWithPassphrase takes no context.
+For OpenSSH keys, the bcrypt round count is read from the plaintext
+header and keys above 256 rounds are refused before any attempt
+(ErrKDFTooExpensive) - the header is parsed with the same ssh.Unmarshal
+calls x/crypto's own parse uses, so the count the detector checks is the
+count the KDF will run at. Callers pass their contexts through. Keys
+that can no longer be cracked are still reported, as unverified findings
+with the reason in the verification error.
 
-**File**: `pkg/detectors/saucelabs/saucelabs.go` (modified, +28/-6)
+[authored by OpenCode]
+
+**File**: `pkg/analyzer/analyzers/privatekey/privatekey.go` (modified, +1/-1)
 ```diff
-@@ -2,6 +2,7 @@ package saucelabs
+@@ -62,7 +62,7 @@ func AnalyzePermissions(ctx context.Context, cfg *config.Config, token string) (
+ 	parsedKey, err = ssh.ParseRawPrivateKey([]byte(token))
+ 	if err != nil && strings.Contains(err.Error(), "private key is passphrase protected") {
+ 		// key is password protected
+-		parsedKey, _, err = privatekey.Crack([]byte(token))
++		parsedKey, _, err = privatekey.Crack(ctx, []byte(token))
+ 		if err != nil {
+ 			return nil, err
+ 		}
+```
+
+**File**: `pkg/detectors/privatekey/cracker.go` (modified, +28/-2)
+```diff
+@@ -2,9 +2,11 @@ package privatekey
  
  import (
- 	"context"
-+	"encoding/json"
- 	"fmt"
- 	"io"
- 	"net/http"
-@@ -14,24 +15,36 @@ import (
+ 	"bytes"
++	"context"
+ 	"crypto/x509"
+ 	_ "embed"
+ 	"errors"
++	"fmt"
+ 
+ 	"golang.org/x/crypto/ssh"
  )
- 
- type Scanner struct {
-+	client *http.Client
- 	detectors.DefaultMultiPartCredentialProvider
- }
- 
- // Ensure the Scanner satisfies the interface at compile time.
- var _ detectors.Detector = (*Scanner)(nil)
+@@ -19,10 +21,34 @@ func init() {
  
  var (
--	client = common.SaneHttpClient()
-+	defaultClient = common.SaneHttpClient()
- 
- 	// Make sure that your group is surrounded in boundary characters such as below to reduce false positives.
- 	// as per signup page username can be between 2 to 70 characters and must only contain letters, numbers, or characters (_-.)
- 	usernamePat = regexp.MustCompile(detectors.PrefixRegex([]string{"saucelabs", "username"}) + `\b([a-zA-Z0-9_\.-]{2,70})`)
- 	keyPat      = regexp.MustCompile(detectors.PrefixRegex([]string{"saucelabs"}) + `\b([a-z0-9]{8}\-[a-z0-9]{4}\-[a-z0-9]{4}\-[a-z0-9]{4}\-[a-z0-9]{12})\b`)
--	baseUrlPat  = regexp.MustCompile(`\b(api\.(?:us|eu)-(?:west|east|central)-[0-9].saucelabs\.com)\b`)
-+	baseUrlPat  = regexp.MustCompile(`\b(api\.(?:us|eu)-(?:west|east|central)-[0-9]\.saucelabs\.com)\b`)
- 
- 	fixedBaseURL = "api.us-west-1.saucelabs.com"
+ 	ErrUncrackable = errors.New("unable to crack encryption")
++	// ErrKDFTooExpensive is returned without attempting any passphrase when a
++	// key's KDF is more expensive than the crack budget allows.
++	ErrKDFTooExpensive = errors.New("key KDF is too expensive to crack")
  )
  
-+type identityResponse struct {
-+	Sub string `json:"sub"`
-+}
+-func Crack(in []byte) (any, string, error) {
+-	for _, passphrase := range passphrases {
++// maxCrackRounds caps the bcrypt KDF round count this detector will attempt
++// to crack. The round count is chosen by whoever created the key and the KDF
++// cost is linear in rounds; OpenSSH's default is 16. 256 is 16x that default:
++// a single wrong guess on a key at the cap costs on the order of a second of
++// CPU, so a wordlist crack is hopeless within any bounded budget. x/crypto
++// refuses round counts above 2048 on its own; this lower cap keeps
++// hardened-but-legal keys from making each attempt that expensive. Division
++// of labor: the cap bounds what one attempt can cost, and the context check
++// below bounds the total, where the caller sets a deadline at all.
++const maxCrackRounds = 256
 +
-+func (s Scanner) getClient() *http.Client {
-+	if s.client != nil {
-+		return s.client
++func Crack(ctx context.Context, in []byte) (any, string, error) {
++	if rounds, ok := opensshBcryptRounds(in); ok && rounds > maxCrackRounds {
++		return nil, "", fmt.Errorf("%w: %d rounds exceeds cap of %d", ErrKDFTooExpensive, rounds, maxCrackRounds)
 +	}
-+	return defaultClient
-+}
-+
- // Keywords are used for efficiently pre-filtering chunks.
- // Use identifiers in the secret preferably, or the provider name.
- func (s Scanner) Keywords() []string {
-@@ -79,7 +92,7 @@ func (s Scanner) FromData(ctx context.Context, verify bool, data []byte) (result
- 				}
++	for i, passphrase := range passphrases {
++		// A wrong passphrase costs a full KDF run whose cost is set by the
++		// key's author, so stop between attempts once the caller's context is
++		// done. The in-flight attempt cannot be interrupted:
++		// ssh.ParseRawPrivateKeyWithPassphrase takes no context.
++		if err := ctx.Err(); err != nil {
++			return nil, "", fmt.Errorf("stopped cracking after %d of %d passphrase attempts: %w", i, len(passphrases), err)
++		}
+ 		parsed, err := ssh.ParseRawPrivateKeyWithPassphrase(in, passphrase)
+ 		if err != nil {
+ 			if errors.Is(err, x509.IncorrectPasswordError) {
+```
+
+**File**: `pkg/detectors/privatekey/cracker_test.go` (modified, +201/-2)
+```diff
+@@ -4,7 +4,13 @@
+ package privatekey
  
- 				if verify {
--					isVerified, verificationErr := verifySauceLabKey(ctx, client, userName, key, baseURL)
-+					isVerified, verificationErr := verifySauceLabKey(ctx, s.getClient(), userName, key, baseURL)
- 					s1.Verified = isVerified
- 					s1.SetVerificationError(verificationErr, key)
- 				}
-@@ -100,10 +113,12 @@ func (s Scanner) Description() string {
- 	return "A service for cross browser testing, API keys can create and access tests from potentially sensitive internal websites"
+ import (
++	"bytes"
++	"context"
++	"crypto/ed25519"
++	"crypto/rand"
+ 	_ "embed"
++	"encoding/pem"
++	"errors"
+ 	"testing"
+ 
+ 	"golang.org/x/crypto/ssh"
+@@ -51,6 +57,51 @@ muIjvl6G7Hoj1hObM2t/ZheN1EShS11z868hhS6Mx7GvIdtkXuvdiBYMiBLOshJQxB8Mzx
+ iug9W+Di3upLf0UMC1TqADGphsIHRU7RbmHQ8Rwp7dogswmDfpRSapPt9p0D+6Ad5VBzi3
+ f3BPXj76UBLMEJCrZR1P28vnAA7AyNHaLvMPlWDMG5v3V/UV+ugyFcoBAOyjiQgYST8F3e
+ Hx7UPVlTK8dyvk1Z+Yw0nrfNClI=
++-----END OPENSSH PRIVATE KEY-----`))
++
++	// testDefaultKDFKey and testExpensiveKDFKey are ed25519 keys protected
++	// with the same passphrase as testEncryptedKeyCorrectPassword at bcrypt
++	// round counts of 16 (OpenSSH's default) and 300, generated with
++	// ssh-keygen -a.
++	testDefaultKDFKey = []byte(Normalize(`-----BEGIN OPENSSH PRIVATE KEY-----
++b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABDGWhRIOR
++LWaktgbL8r3S5jAAAAEAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAIHqefEc52RY6n1ej
++6vEPvbPvprG0m5OT5BAFtdFLdyJQAAAAwFsqIS4QNeZJOQTxTDpQBXYvb3bI+PXmTHlaak
++BXlCR0Qxk/mmAbL4GheuqnqHxJCGGDU9n5+aaK9ZEgJv+fpv5ahanIm/wgRjn8q9mZSk2r
++QhGklYrkJV6zkXYVBH7VdP3rHSlCjuziQeKDhxiCTlfeyUfb5O5Tx12TBAo6ADTk76L7+0
++Y+NPIDr2X5m+fWBMI4XFuQPmmSEm28gV5IERrMUc9zGnS7fJ4xHbtySJoF3wWUlEBrTGDb
++HCRHIpLSoA==
++-----END OPENSSH PRIVATE KEY-----`))
++	testExpensiveKDFKey = []byte(Normalize(`-----BEGIN OPENSSH PRIVATE KEY-----
++b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABDiegbnWk
++wjBR6lL750YpD8AAABLAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAIFPdyzxAY2IvJCsy
++RSK0vvQAM+Ow+zdR+U0tf5jJWpdsAAAAwBrWAmdHm4xKSeMsj+rXp+LWgXMpYj9ZYWNJnC
++VGMvU81m8gj78dNmjB8U+J3Ns6jmKXNicnwGHHZ9BVCimlnsiGgpp44ZhxSAYqNJV+CoUY
++FphHKrN68miEiSWFRuZsKB2Xjz3B3a+ApdCrgK9/+0k1finNMzOEpTdmSvkQTP/fLeiqoC
++m/aSusJwO1NAZDcuyty6pMCKygw6ENqGZf1uyMf+KQwJq3JXwgbRAprb3tBrIEAEEkD4mA
++ppGpPzMyWA==
++-----END OPENSSH PRIVATE KEY-----`))
++
++	// testKeyAtCap and testKeyPastCap are ed25519 keys with the same
++	// passphrase at bcrypt round counts of exactly 256 (maxCrackRounds) and
++	// 257 (one past it), generated with ssh-keygen -a.
++	testKeyAtCap = []byte(Normalize(`-----BEGIN OPENSSH PRIVATE KEY-----
++b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABDLe9Hn5/
++Qgs+VcI7Z2oHt0AAABAAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAIJ14+tRTYMsqi2CF
++AEETEztjC3N8MwGDhDtcJ9ER4f6pAAAAwPwxz4us6d80EoZeKaAGdqhdK5g1yOLuTFiemC
++ECwotCzi2W+lk7m9tHgyvbKUyg+dldDP5dlnwberSmmy+OMrJkVVw2PeX5yr6lCcuHZXHq
++Eqoo7oSlsmlaBpIC/I12JkGQxg6Pv13iIhIyPigUWA3myzAoAc+0Wtluta/qAK+nf5B6ar
++f57dBJ3uVeU8E3U/UDiJhwVdJnCslkGGWgM65ECvcFZu65DNhoVnFWtsBe2Uom48hG46Cf
++3NkF0FXQpA==
++-----END OPENSSH PRIVATE KEY-----`))
++	testKeyPastCap = []byte(Normalize(`-----BEGIN OPENSSH PRIVATE KEY-----
++b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABANsc+iFh
++yaFTnsMn8tAEn4AAABAQAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAINIGnk11f1Mup1Bh
++oMiwh/wisUHuDWOygxhq0PSz+HTSAAAAwOcoRpUbj4YGrNVTvE6Ve5913vgQkAZ8pCBHgk
++AMjTSVXykiRgK2/7t8k7gPmb1F7QUaiLS0W5X49QeuwYQVihmCSKlupZTWmqozipWlkXSG
++ACFqnWvE0jURRZd76qBwrtFfyZb24V6LVws/nz0RARXYG+tn8KW3xsjqhvpfLY5KUwLN1j
++uWqgiel/xeC/UZZiPt9egS6AS9Orn2yaGP882HzMXAsWPIUcslgYxEEjE1FRCaf8YtvCw+
++rZea5gQDRQ==
+ -----END OPENSSH PRIVATE KEY-----`))
+ )
+ 
+@@ -70,7 +121,7 @@ func Test_crack(t *testing.T) {
+ 	}
+ 	for _, tt := range tests {
+ 		t.Run(tt.name, func(t *testing.T) {
+-			_, passphrase, err := Crack(tt.in)
++			_, passphrase, err := Crack(context.Background(), tt.in)
+ 			if (err != nil) != tt.wantErr {
+ 				t.Errorf("crack() error = %v, wantErr %v", err, tt.wantErr)
+ 				return
+@@ -83,6 +134,154 @@ func Test_crack(t *testing.T) {
+ 	}
  }
  
-+// verifySauceLabKey calls the identity endpoint, which accepts any valid credential regardless of role
-+// and is documented to return only 200 or 401. Any other response (e.g. a 403 from a proxy) is indeterminate.
- func verifySauceLabKey(ctx context.Context, client *http.Client, userName, key, baseURL string) (bool, error) {
--	apiURL := fmt.Sprintf("https://%s/team-management/v1/teams", baseURL)
-+	apiURL := fmt.Sprintf("https://%s/auth/v1/identity", baseURL)
- 
--	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
-+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, http.NoBody)
- 	if err != nil {
- 		return false, err
- 	}
-@@ -120,7 +135,14 @@ func verifySauceLabKey(ctx context.Context, client *http.Client, userName, key,
- 	}()
- 
- 	switch resp.StatusCode {
--	case http.StatusOK, http.StatusForbidden:
-+	case http.StatusOK:
-+		var identity identityResponse
-+		if err := json.NewDecoder(resp.Body).Decode(&identity); err != nil {
-+			return false, fmt.Errorf("unexpected response body: %w", err)
-+		}
-+		if identity.Sub == "" {
-+			return false, fmt.Errorf("unexpected response body: missing account id")
-+		}
- 		return true, nil
- 	case http.StatusUnauthorized:
- 		return false, nil
-```
-
-**File**: `pkg/detectors/saucelabs/saucelabs_integration_test.go` (modified, +2/-0)
-```diff
-@@ -108,6 +108,8 @@ func TestSauceLabs_FromChunk(t *testing.T) {
- 					t.Fatalf("no raw secret present: \n %+v", got[i])
- 				}
- 				got[i].Raw = nil
-+				got[i].ExtraData = nil
-+				got[i].SecretParts = nil
- 			}
- 			if diff := pretty.Compare(got, tt.want); diff != "" {
- 				t.Errorf("SauceLabs.FromData() %s diff: (-got +want)\n%s", tt.name, diff)
-```
-
-**File**: `pkg/detectors/saucelabs/saucelabs_test.go` (modified, +138/-1)
-```diff
-@@ -7,6 +7,7 @@ import (
- 
- 	"github.com/google/go-cmp/cmp"
- 
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/engine/ahocorasick"
- )
-@@ -16,7 +17,7 @@ var (
- 	invalidUsername = "?Bpeh?YF3tjMNmKAUHrDpfXJZJ.ZUhWmObRC735zdh99LeJh4Kcr_2"
- 	validKey        = "9toqmh6r-g2ly-k3fr-fiyr-5jnnewlxy3u9"
- 	invalidKey      = "9toqmh6r?g2ly-k3fr-fiyr-5jnnewlxy3u9"
--	validBaseUrl    = "api.eu-west-0,saucelabs.com"
-+	validBaseUrl    = "api.eu-west-0.saucelabs.com"
- 	invalidBaseUrl  = "?pi.eu-west-0,saucelabs.co?"
- 	keyword         = "saucelabs"
- )
-@@ -83,3 +84,139 @@ func TestSauceLabs_Pattern(t *testing.T) {
- 		})
- 	}
- }
++// Test_crack_stops_when_context_done asserts that a done context stops the
++// passphrase list instead of running it to completion: a wrong passphrase
++// costs a full KDF run, so the list walk must check between attempts.
++func Test_crack_stops_when_context_done(t *testing.T) {
++	ctx, cancel := context.WithCancel(context.Background())
++	cancel()
 +
-+func TestSauceLabs_BaseURL(t *testing.T) {
-+	tests := []struct {
-+		name    string
-+		baseURL string
-+		want    string
-+	}{
-+		{
-+			name:    "regional host",
-+			baseURL: "api.eu-central-1.saucelabs.com",
-+			want:    "api.eu-central-1.saucelabs.com",
-+		},
-+		{
-+			name:    "lookalike host falls back to default",
-+			baseURL: "api.us-west-1-saucelabs.com",
-+			want:    fixedBaseURL,
-+		},
++	_, _, err := Crack(ctx, testEncryptedKey)
++	if !errors.Is(err, context.Canceled) {
++		t.Errorf("expected context.Canceled, got %v", err)
 +	}
-+
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			data := fmt.Sprintf("saucelabs_username: john.smith\nsaucelabs_key: %s\nurl: %s\n", validKey, test.baseURL)
-+			results, err := Scanner{}.FromData(context.Background(), false, []byte(data))
-+			if err != nil {
-+				t.Fatalf("error = %v", err)
-+			}
-+			if len(results) == 0 {
-+				t.Fatal("did not receive result")
-+			}
-+			for _, r := range results {
-+				if got := r.ExtraData["Base URL"]; got != test.want {
-+					t.Errorf("Base URL = %q, want %q", got, test.want)
-+				}
-+			}
-+		})
++	if errors.Is(err, ErrUncrackable) {
++		t.Error("expected the done context to stop the passphrase list, not run it to completion")
 +	}
 +}
 +
-+func TestVerifySauceLabKey(t *testing.T) {
-+	const username = "john.smith"
-+
-+	tests := []struct {
-+		name         string
-+		status       int
-+		body         string
-+		wantVerified bool
-+		wantErr      bool
-+	}{
-+		{
-+			name:         "valid user credential",
-+			status:       200,
-+			body:         `{"sub":"usr_7c21e3a0","username":"john.smith","organization":"9f3b2a17","auth_method":"basic","credential_id":"cred_7c21e3a0"}`,
-+			wantVerified: true,
-+		},
-+		{
-+			name:         "valid service account credential",
-+			status:       200,
-+			body:         `{"sub":"sa_1234","username":"bot-automation-service-account-d2164","organization":"9f3b2a17","auth_method":"basic","credential_id":"cred_1234"}`,
-+			wantVerified: true,
-+		},
-+		{
-+			name:    "200 with HTML body from a proxy",
-+			status:  200,
-+			body:    "<html><body>Access to this site is blocked</body></html>",
-+			wantErr: true,
-+		},
-+		{
-+			name:    "200 with unrelated JSON",
-+			status:  200,
-+			body:    `{"status":"ok"}`,
-+			wantErr: true,
-+		},
-+		{
-+			name:    "200 with empty JSON object",
-+			status:  200,
-+			body:    `{}`,
-+			wantErr: true,
-+		},
-+		{
-+			name:   "invalid credential",
-+			status: 401,
-+			body:   `{"detail":"Unauthorized"}`,
-+		},
-+		{
-+			name:    "403 from a proxy",
-+			status:  403,
-+			body:    "<html><body>403 Forbidden</body></html>",
-+			wantErr: true,
-+		},
-+		{
-+			name:    "403 with empty body",
-+			status:  403,
-+			wantErr: true,
-+		},
-+		{
-+			name:    "server error",
-+			status:  500,
-+			wantErr: true,
-+		},
-+	}
-+
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			client := common.ConstantResponseHttpClient(test.status, test.body)
-+			verified, err := verifySauceLabKey(context.Background(), client, username, validKey, fixedBaseURL)
-+
-+			if (err != nil) != test.wantErr {
-+				t.Fatalf("error = %v, wantErr %v", err, test.wantErr)
-+			}
-+			if verified != test.wantVerified {
-+				t.Errorf("verified = %v, want %v", verified, test.wantVerified)
-+			}
-+		})
++// Test_crack_skips_kdf_above_cap asserts that a key whose KDF is harder than
++// the crack budget is refused without attempting any passphrase. The key is
++// legal for x/crypto, whose own ceiling is 2048 rounds, so an error here comes
++// from the detector's cap rather than the library.
++func Test_crack_skips_kdf_above_cap(t *testing.T) {
++	_, _, err := Crack(context.Background(), testExpensiveKDFKey)
++	if !errors.Is(err, ErrKDFTooExpensive) {
++		t.Errorf("expected ErrKDFTooExpensive, got %v", err)
 +	}
 +}
 +
-+func TestSauceLabs_FromData_ProxyForbidden(t *testing.T) {
-+	s := Scanner{client: common.ConstantResponseHttpClient(403, "<html><body>403 Forbidden</body></html>")}
-+	data := fmt.Sprintf("saucelabs_username: john.smith\nsaucelabs_key: %s\n", validKey)
++// Test_crack_malformed_kdf_options_fail_closed crafts a key whose bcrypt
++// options blob is salt || rounds || trailing bytes. ssh.Unmarshal rejects
++// trailing bytes, so x/crypto could not decrypt the key at any round count;
++// the fail-closed read returns the maximum round co
+```
+
+**File**: `pkg/detectors/privatekey/openssh.go` (added, +83/-0)
+```diff
+@@ -0,0 +1,83 @@
++package privatekey
 +
-+	results, err := s.FromData(context.Background(), true, []byte(data))
-+	if err != nil {
-+		t.Fatalf("error = %v", err)
++import (
++	"encoding/pem"
++	"math"
++
++	"golang.org/x/crypto/ssh"
++)
++
++// privateKeyAuthMagic starts the decoded body of every key in the OpenSSH
++// private key format (see PROTOCOL.key in the OpenSSH source distribution).
++const privateKeyAuthMagic = "openssh-key-v1\x00"
++
++// openSSHEncryptedPrivateKey and kdfOpts mirror the wire structs x/crypto
++// parses the same bytes with in ssh/keys.go, so the round count read here is
++// the round count the KDF will actually run at. Keep them in sync with
++// x/crypto's private structs: if the parses ever diverge, the count read
++// here silently stops matching the KDF's cost and keys are over- or
++// under-refused. x/crypto exports no way to read the KDF options, so the
++// header is read in the detector.
++type openSSHEncryptedPrivateKey struct {
++	CipherName   string
++	KdfName      string
++	KdfOpts      string
++	NumKeys      uint32
++	PubKey       []byte
++	PrivKeyBlock []byte
++	// Rest swallows trailing bytes the way x/crypto's copy of this struct
++	// does. Without the tag, a key with bytes after PrivKeyBlock would fail
++	// to parse here, read as ok=false, and skip the cap check that
++	// x/crypto would still apply.
++	Rest []byte `ssh:"rest"`
++}
++
++// kdfOpts deliberately has no ssh:"rest" field: that is what makes
++// ssh.Unmarshal reject options blobs carrying trailing bytes, which is the
++// fail-closed path below. Adding one for forward compatibility would
++// silently disarm it.
++type kdfOpts struct {
++	Salt   string
++	Rounds uint32
++}
++
++// opensshBcryptRounds reads the bcrypt round count from an OpenSSH key's
++// header. The decoded key stores the cipher name, KDF name, and KDF options
++// before the encrypted section, so the round count is readable without the
++// passphrase; Crack uses it to refuse keys whose KDF exceeds maxCrackRounds
++// before spending any passphrase attempt.
++//
++// ok=false means the key is not an OpenSSH bcrypt key, and it should be
++// cracked exactly as before. ok=true means the round count is binding,
++// including fail-closed: a bcrypt key whose options blob does not parse
++// returns the maximum round count rather than ok=false, because the key is
++// a bcrypt key and should be refused, not silently cracked. ssh.Unmarshal
++// rejects such a blob as well, so the key could not have been decrypted at
++// any round count.
++func opensshBcryptRounds(pemBytes []byte) (rounds uint32, ok bool) {
++	block, _ := pem.Decode(pemBytes)
++	if block == nil || block.Type != "OPENSSH PRIVATE KEY" ||
++		len(block.Bytes) < len(privateKeyAuthMagic) ||
++		string(block.Bytes[:len(privateKeyAuthMagic)]) != privateKeyAuthMagic {
++		return 0, false
 +	}
-+	if len(results) == 0 {
-+		t.Fatal("did not receive result")
++
++	var w openSSHEncryptedPrivateKey
++	if err := ssh.Unmarshal(block.Bytes[len(privateKeyAuthMagic):], &w); err != nil {
++		return 0, false
 +	}
-+	for _, r := range results {
-+		if r.Verified {
-+			t.Errorf("result %q verified from a proxy 403", r.RawV2)
-+		}
-+		if r.VerificationError() == nil {
-+			t.Errorf("result %q has no verification error for a proxy 403", r.RawV2)
-+		}
++	if w.KdfName != "bcrypt" {
++		return 0, false
 +	}
++
++	ok = true
++
++	var opts kdfOpts
++	if err := ssh.Unmarshal([]byte(w.KdfOpts), &opts); err != nil {
++		rounds = math.MaxUint32
++	} else {
++		rounds = opts.Rounds
++	}
++
++	return rounds, ok
 +}
 ```
 
----
-
-### Incident Patch 2: `2e641535` (2026-11-19)
-**Commit Message**: [chore] Correct NewWebhookCustomRegex doc comment (#5249)
-
-An unexported type is no longer returned from this function.
-
-**File**: `pkg/custom_detectors/custom_detectors.go` (modified, +1/-3)
+**File**: `pkg/detectors/privatekey/privatekey.go` (modified, +8/-6)
 ```diff
-@@ -46,9 +46,7 @@ var _ detectors.Detector = (*CustomRegexWebhook)(nil)
- var _ detectors.CustomFalsePositiveChecker = (*CustomRegexWebhook)(nil)
- var _ detectors.MaxSecretSizeProvider = (*CustomRegexWebhook)(nil)
- 
--// NewWebhookCustomRegex initializes and validates a CustomRegexWebhook. An
--// unexported type is intentionally returned here to ensure the values have
--// been validated.
-+// NewWebhookCustomRegex initializes and validates a CustomRegexWebhook.
- func NewWebhookCustomRegex(pb *custom_detectorspb.CustomRegex) (*CustomRegexWebhook, error) {
- 	// TODO: Return all validation errors.
- 	if err := ValidateKeywords(pb.Keywords); err != nil {
+@@ -79,13 +79,15 @@ func (s Scanner) FromData(ctx context.Context, verify bool, data []byte) (result
+ 		parsedKey, err := ssh.ParseRawPrivateKey([]byte(token))
+ 		if err != nil && strings.Contains(err.Error(), "private key is passphrase protected") {
+ 			s1.ExtraData["encrypted"] = "true"
+-			parsedKey, passphrase, err = Crack([]byte(token))
++			parsedKey, passphrase, err = Crack(ctx, []byte(token))
+ 			if err != nil {
+-				// The key is encrypted and the passphrase could not be
+-				// recovered from the wordlist. It still represents a real
+-				// exposure (offline-crackable, weak/legacy KDFs, passphrase
+-				// often reused or committed nearby), so surface it as an
+-				// unverified finding instead of dropping it silently.
++				// The key is encrypted but could not be cracked: the
++				// passphrase is not in the wordlist, the key's KDF exceeded
++				// the crack budget, or the scan context ended first. It still
++				// represents a real exposure (offline-crackable, weak/legacy
++				// KDFs, passphrase often reused or committed nearby), so
++				// surface it as an unverified finding instead of dropping it
++				// silently.
+ 				s1.SetVerificationError(err, token)
+ 				results = append(results, s1)
+ 				continue
 ```
 
 #### Recent Merged Pull Requests:
@@ -1440,7 +1462,7 @@ An unexported type is no longer returned from this function.
 - **PR #5566** (2026-11-16): Add upsert_error to AWSSecretsManager source metadata (@Ahmer-Zuberi)
 - **PR #5560** (closed): Update module go.opentelemetry.io/otel/trace to v1.47.0 [SECURITY] - autoclosed (@renovate[bot])
 - **PR #5559** (2026-11-14): Update module go.opentelemetry.io/otel/sdk to v1.47.0 [SECURITY] (@renovate[bot])
-- **PR #5557** (closed): [DO NOT MERGE] Measure fork-PR timing for #5547 (@bryanbeverly)
+- **PR #5558** (2026-11-20): Make PrivateKey passphrase cracking respect its context timeout (@martinlocklear)
 
 ---
 
@@ -1460,60 +1482,28 @@ An unexported type is no longer returned from this function.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Saucelabs: verify via identity endpoint so proxy 403s aren't reported as live
+## X. Make PrivateKey passphrase cracking respect its context timeout
 
 **RULE**:
-When implementing operations in `pkg/detectors/saucelabs/saucelabs.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/analyzer/analyzers/privatekey/privatekey.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d232362a`: Saucelabs: verify via identity endpoint so proxy 403s aren't reported as live. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4ef51f69`: Make PrivateKey passphrase cracking respect its context timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/detectors/saucelabs/saucelabs.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/analyzer/analyzers/privatekey/privatekey.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"encoding/json"
-	client *http.Client
-	defaultClient = common.SaneHttpClient()
-	baseUrlPat  = regexp.MustCompile(`\b(api\.(?:us|eu)-(?:west|east|central)-[0-9]\.saucelabs\.com)\b`)
-type identityResponse struct {
-	Sub string `json:"sub"`
-}
-
-func (s Scanner) getClient() *http.Client {
-	if s.client != nil {
-		return s.client
-	}
-	return defaultClient
-}
-
-					isVerified, verificationErr := verifySauceLabKey(ctx, s.getClient(), userName, key, baseURL)
-// verifySauceLabKey calls the identity endpoint, which accepts any valid credential regardless of role
-// and is documented to return only 200 or 401. Any other response (e.g. a 403 from a proxy) is indeterminate.
-	apiURL := fmt.Sprintf("https://%s/auth/v1/identity", baseURL)
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, http.NoBody)
-	case http.StatusOK:
-		var identity identityResponse
-		if err := json.NewDecoder(resp.Body).Decode(&identity); err != nil {
-			return false, fmt.Errorf("unexpected response body: %w", err)
-		}
-		if identity.Sub == "" {
-			return false, fmt.Errorf("unexpected response body: missing account id")
-		}
+		parsedKey, _, err = privatekey.Crack(ctx, []byte(token))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	client = common.SaneHttpClient()
-	baseUrlPat  = regexp.MustCompile(`\b(api\.(?:us|eu)-(?:west|east|central)-[0-9].saucelabs\.com)\b`)
-					isVerified, verificationErr := verifySauceLabKey(ctx, client, userName, key, baseURL)
-	apiURL := fmt.Sprintf("https://%s/team-management/v1/teams", baseURL)
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
-	case http.StatusOK, http.StatusForbidden:
+		parsedKey, _, err = privatekey.Crack([]byte(token))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d232362a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4ef51f69` are properly handled with clean fallback behavior.

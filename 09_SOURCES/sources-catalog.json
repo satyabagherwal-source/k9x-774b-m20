@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "d232362a",
+    "sourceVersion": "4ef51f69",
     "license": "AGPL-3.0",
-    "contentHash": "91892fe6f2ce0b66da3d19562a7a4d5e4cfdd9cef0c98664018cf76a1695c6b8",
-    "lastHarvestedAt": "2026-11-19T23:34:46.976Z",
+    "contentHash": "e08d4e590e85554f2459059e8241c649344343d6272cfa8423b6a9193300eae6",
+    "lastHarvestedAt": "2026-11-20T20:02:28.687Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -9593,10 +9593,10 @@
     "repository": "axios/axios",
     "platform": "github",
     "sourceUrl": "https://github.com/axios/axios",
-    "sourceVersion": "c0d4c900",
+    "sourceVersion": "9f0f4ddf",
     "license": "MIT",
-    "contentHash": "2f15b73f95046e79725dfcd92c1dda0fd85a5840c15b530977946573044a57b3",
-    "lastHarvestedAt": "2026-11-16T22:47:32.086Z",
+    "contentHash": "4a50a28058378a979daba47a519d21ec912c9fcb403e3103e7a95ce2cc12ae53",
+    "lastHarvestedAt": "2026-11-20T20:02:21.657Z",
     "learningId": "learn-github-axios-axios"
   },
   "jasonjmcghee-rem": {
