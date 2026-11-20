@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T00:45:36.878Z",
-  "total_cycles_completed": 10899,
-  "total_learnings_persisted": 10899,
-  "total_rules_promoted": 10257,
+  "last_updated": "2026-11-20T01:01:06.206Z",
+  "total_cycles_completed": 10901,
+  "total_learnings_persisted": 10901,
+  "total_rules_promoted": 10263,
   "history": [
-    {
-      "timestamp": "2026-11-19T04:36:34.941Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T04:44:03.683Z",
-      "repository": "lilylilith/QI_2.1_AnyAngle",
-      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T04:44:15.854Z",
       "repository": "linkerd/linkerd2",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-20T00:45:36.878Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T01:00:31.605Z",
+      "repository": "metalbear-co/mirrord",
+      "learningId": "learn-github-metalbear-co-mirrord",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T01:01:06.206Z",
+      "repository": "maziyarpanahi/openmed",
+      "learningId": "learn-github-maziyarpanahi-openmed",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

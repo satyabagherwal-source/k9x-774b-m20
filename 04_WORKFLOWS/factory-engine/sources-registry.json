@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T00:45:40.266Z",
-    "lastVerified": "2026-11-20T00:45:40.266Z",
+    "lastChecked": "2026-11-20T01:01:09.865Z",
+    "lastVerified": "2026-11-20T01:01:09.865Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -252,9 +252,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T00:14:42.472Z",
+    "lastChecked": "2026-11-20T00:59:08.125Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T00:14:42.472Z"
+    "lastVerified": "2026-11-20T00:59:08.125Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -420,8 +420,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T18:19:55.984Z",
-    "lastVerified": "2026-11-19T18:19:55.984Z",
+    "lastChecked": "2026-11-20T00:59:03.186Z",
+    "lastVerified": "2026-11-20T00:59:03.186Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -1999,11 +1999,21 @@
     "lastVerified": "2026-11-19T16:41:03.356Z"
   },
   "metalbear-co-mirrord": {
-    "name": "mirrord",
+    "name": "metalbear-co/mirrord",
     "officialUrl": "https://github.com/metalbear-co/mirrord",
-    "lastChecked": "2026-11-18T13:34:06.671Z",
-    "revisionIdentifier": "c133334a",
-    "lastVerified": "2026-11-18T13:34:06.671Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-20T00:58:57.594Z",
+    "lastVerified": "2026-11-20T00:58:57.594Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-metalbear-co-mirrord",
+    "contentHash": "42987ebf66e7d1cde8f469f4775f9c125b1362175957e010f1a01c8a109a90aa",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-altworld-hemmingway-1": {
     "name": "HemmingwayAI/Hemmingway-1",
@@ -3917,9 +3927,9 @@
   "spacejam-sled": {
     "name": "sled",
     "officialUrl": "https://github.com/spacejam/sled",
-    "lastChecked": "2026-11-18T18:56:55.025Z",
+    "lastChecked": "2026-11-20T00:59:05.661Z",
     "revisionIdentifier": "e449d171",
-    "lastVerified": "2026-11-18T18:56:55.025Z"
+    "lastVerified": "2026-11-20T00:59:05.661Z"
   },
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
@@ -4250,9 +4260,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-11-18T20:37:38.971Z",
+    "lastChecked": "2026-11-20T00:59:00.658Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-11-18T20:37:38.971Z"
+    "lastVerified": "2026-11-20T00:59:00.658Z"
   },
   "typedb-typedb": {
     "name": "typedb/typedb",
@@ -8868,5 +8878,29 @@
     "lastChecked": "2026-11-20T00:43:08.056Z",
     "revisionIdentifier": "d8192c12",
     "lastVerified": "2026-11-20T00:43:08.056Z"
+  },
+  "seobserver-crawlobserver": {
+    "name": "crawlobserver",
+    "officialUrl": "https://github.com/SEObserver/crawlobserver",
+    "lastChecked": "2026-11-20T00:58:55.623Z",
+    "revisionIdentifier": "64b6a78344",
+    "lastVerified": "2026-11-20T00:58:55.623Z"
+  },
+  "maziyarpanahi-openmed": {
+    "name": "maziyarpanahi/openmed",
+    "officialUrl": "https://github.com/maziyarpanahi/openmed",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-20T00:59:03.290Z",
+    "lastVerified": "2026-11-20T00:59:03.290Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-maziyarpanahi-openmed",
+    "contentHash": "6fa1673f97d9a9b965d4da421b5f36afba8ecc8ab61282a4a3e3e5587afab70e",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 5,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

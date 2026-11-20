@@ -2,19 +2,19 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-20T00:46:47.875Z",
+  "updated_at": "2026-11-20T01:04:00.138Z",
   "statistics": {
-    "total_nodes": 397,
+    "total_nodes": 401,
     "total_edges": 181,
     "domain_distribution": {
       "D": 262,
       "M": 1,
-      "H": 60,
+      "H": 62,
       "J": 15,
-      "K": 22,
+      "K": 23,
       "L": 8,
       "G": 1,
-      "F": 19,
+      "F": 20,
       "B": 2,
       "E": 2,
       "I": 5
@@ -8876,6 +8876,94 @@
       ],
       "created_at": "2026-11-20T00:46:47.875Z",
       "updated_at": "2026-11-20T00:46:47.875Z"
+    },
+    "DOM-H-1C8F2877": {
+      "id": "DOM-H-1C8F2877",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Go ARM64 Syscall Pointer Corruption via Register Truncation (BUG-ARM64-5092)",
+      "summary": "The layer-go hook utilized Go’s internal `runtime.asmcgocall` to bridge into the Rust interceptor. Go’s internal type signature declares `as -> Never rely on register return values across runtime-internal FFI trampolines when the calling runtime's internal assembly contract does not ",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://metalbear-co-mirrord/metalbear-co-mirrord-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T01:01:09.999Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (metalbear-co-mirrord)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-20T01:01:40.063Z",
+      "updated_at": "2026-11-20T01:01:40.063Z"
+    },
+    "DOM-F-D7FA7771": {
+      "id": "DOM-F-D7FA7771",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Ineffective Agent Capability Disabling Due to Prefix and Envar Mismatches (BUG-CFG-5026)",
+      "summary": "Two distinct defects:\n  1. `agent.disabled_capabilities` field in `mirrord-config` lacked the `#[config(env = \"...\")]` macro attribute, leav -> Configuration inputs matching system domain entities (such as Linux capabilities, signals, and headers) must always be normalized (casing, k",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://metalbear-co-mirrord/metalbear-co-mirrord-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T01:01:09.999Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (metalbear-co-mirrord)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence"
+      ],
+      "created_at": "2026-11-20T01:02:17.644Z",
+      "updated_at": "2026-11-20T01:02:17.644Z"
+    },
+    "DOM-H-BD3A2B21": {
+      "id": "DOM-H-BD3A2B21",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "In-Process Result-Cache Stale Reads on Model Weight Swap (BUG-OPENMED-01)",
+      "summary": "Cache key normalization stripped versioning metadata and lacked awareness of registry mutations, decoupling the memory store lifecycle from  -> Caching nondeterministic or evolving computational kernels based purely on high-level logical identifiers without an atomic generational fen",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://maziyarpanahi-openmed/maziyarpanahi-openmed-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T01:02:18.813Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (maziyarpanahi-openmed)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-20T01:03:02.490Z",
+      "updated_at": "2026-11-20T01:03:02.490Z"
+    },
+    "DOM-K-2B1D449B": {
+      "id": "DOM-K-2B1D449B",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Silent Omission of Critical Safety Gates in Model Promotion (BUG-OPENMED-02)",
+      "summary": "The comparison logic iterated over challenger keys rather than champion requirements, treating omission as non-applicable instead of an inva -> Verification ledgers comparing versions must execute full outer directional joins against required baseline safety criteria; missing metrics",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://maziyarpanahi-openmed/maziyarpanahi-openmed-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T01:02:18.813Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (maziyarpanahi-openmed)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-20T01:04:00.138Z",
+      "updated_at": "2026-11-20T01:04:00.138Z"
     }
   },
   "edges": [

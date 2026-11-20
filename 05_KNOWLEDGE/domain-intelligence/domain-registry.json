@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T00:46:48.652Z",
-  "total_records": 2047,
+  "last_updated": "2026-11-20T01:04:02.648Z",
+  "total_records": 2051,
   "domains": {
     "A": {
       "total": 17,
@@ -911,7 +911,7 @@
       ]
     },
     "F": {
-      "total": 67,
+      "total": 68,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -979,7 +979,8 @@
         "domain_intelligence-design-intelligence-biomejs-biome-core-invariants",
         "domain_intelligence-design-intelligence-biomejs-biome-learnings-core-invariants",
         "domain_intelligence-design-intelligence-herdrdev-herdr-core-invariants",
-        "domain_intelligence-design-intelligence-herdrdev-herdr-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-herdrdev-herdr-learnings-core-invariants",
+        "DOM-F-D7FA7771"
       ]
     },
     "G": {
@@ -1344,7 +1345,7 @@
       ]
     },
     "H": {
-      "total": 481,
+      "total": 483,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1826,7 +1827,9 @@
         "domain_intelligence-technical-construction-intelligence-tableproapp-tablepro-learnings-core-invarian",
         "domain_intelligence-technical-construction-intelligence-lapce-lapce-core-invariants",
         "domain_intelligence-technical-construction-intelligence-lapce-lapce-learnings-core-invariants",
-        "DOM-H-52039FE3"
+        "DOM-H-52039FE3",
+        "DOM-H-1C8F2877",
+        "DOM-H-BD3A2B21"
       ]
     },
     "I": {
@@ -1969,7 +1972,7 @@
       ]
     },
     "K": {
-      "total": 111,
+      "total": 112,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2081,7 +2084,8 @@
         "domain_intelligence-quality-verification-intelligence-vinceglb-filekit-core-invariants",
         "domain_intelligence-quality-verification-intelligence-vinceglb-filekit-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-learnings-core-invar"
+        "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-learnings-core-invar",
+        "DOM-K-2B1D449B"
       ]
     },
     "L": {
@@ -17697,8 +17701,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "5d71b84c545eeddff6ac451f98137ac9a7c634f47d91a3fd0aa05d2fab8dd383",
-      "created_at": "2026-11-20T00:24:25.616Z"
+      "content_hash": "bcb3ac3694c8d2ce817d6e8ac7ca7522c7ab28a1f1162f57250768ba1dcebf50",
+      "created_at": "2026-11-20T01:04:02.648Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -19036,8 +19040,8 @@
       "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
       "repository": "metalbear-co/mirrord",
-      "content_hash": "c070fd694592191abaa4c079d3ea5948423a16ce4c3b1798e62534c094c70493",
-      "created_at": "2026-11-18T04:49:46.054Z"
+      "content_hash": "fdbd6d412ceff31bb27f44db3bda323812dd9ff2617220c7bb8de49417222e01",
+      "created_at": "2026-11-20T01:00:32.306Z"
     },
     "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants",
@@ -19063,8 +19067,8 @@
       "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-learnings-technical-construction-intelligence-metalbear-co-.md",
       "repository": "metalbear-co-mirrord-learnings",
-      "content_hash": "bd5f4d32fee94c4e60dd7a328e6f0f1754dcb53c0dca3fa3166c62e0cc5b96eb",
-      "created_at": "2026-11-18T04:49:56.473Z"
+      "content_hash": "c920b18b7217ffd7b0ac0d1caf3b4f1ce3d5809953dda17d2e632559c49c9e31",
+      "created_at": "2026-11-20T01:02:18.477Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
@@ -22175,8 +22179,8 @@
       "title": "Technical Construction Intelligence: maziyarpanahi/openmed Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-maziyarpanahi-openmed-technical-construction-intelligence-maziyarpanahi-openmed-.md",
       "repository": "maziyarpanahi/openmed",
-      "content_hash": "01895c138cb87f3de47fc108df8f19a3613246f3a69604c8bddcd8831550719c",
-      "created_at": "2026-11-15T21:15:41.085Z"
+      "content_hash": "60dc685ce3e1e2bcdf73e855f0192d6d282fcee1f52bb1d09ed503440aa4eb2c",
+      "created_at": "2026-11-20T01:01:06.866Z"
     },
     "DOM-D-37D23F0D": {
       "record_id": "DOM-D-37D23F0D",
@@ -22235,8 +22239,8 @@
       "title": "Technical Construction Intelligence: maziyarpanahi-openmed-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-maziyarpanahi-openmed-learnings-technical-construction-intelligence-maziyarpanah.md",
       "repository": "maziyarpanahi-openmed-learnings",
-      "content_hash": "dbbf1a86acbd5c839d460a9b37eec434957beb8698818779dad002277a7828ba",
-      "created_at": "2026-11-15T21:16:18.259Z"
+      "content_hash": "bf4fdc609cef6ef08cdb56bfba0dee8aae48695f4da0fb6f97511f97ab3ed759",
+      "created_at": "2026-11-20T01:04:01.058Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-image-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-image-core-invariants",
@@ -34336,6 +34340,142 @@
       "confidence": 1,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-20T00:46:47.854Z"
+    },
+    "DOM-H-1C8F2877": {
+      "record_id": "DOM-H-1C8F2877",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Go ARM64 Syscall Pointer Corruption via Register Truncation (BUG-ARM64-5092)",
+      "content": "Never rely on register return values across runtime-internal FFI trampolines when the calling runtime's internal assembly contract does not guarantee full register width preservation.",
+      "content_hash": "2940eaaf0a074d0e5ce7f6dc42ebea03c3779b7ef40edd09eb4686043d4a5915",
+      "summary": "The layer-go hook utilized Go’s internal `runtime.asmcgocall` to bridge into the Rust interceptor. Go’s internal type signature declares `as -> Never rely on register return values across runtime-internal FFI trampolines when the calling runtime's internal assembly contract does not ",
+      "provenance": {
+        "source_uri": "project://metalbear-co-mirrord/metalbear-co-mirrord-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T01:01:09.999Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (metalbear-co-mirrord)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Issue #5092; resolved in commit series around layer-go assembly trampoline."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T01:01:40.041Z"
+    },
+    "DOM-F-D7FA7771": {
+      "record_id": "DOM-F-D7FA7771",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Ineffective Agent Capability Disabling Due to Prefix and Envar Mismatches (BUG-CFG-5026)",
+      "content": "Configuration inputs matching system domain entities (such as Linux capabilities, signals, and headers) must always be normalized (casing, known prefixes like `CAP_` or `SIG`) before comparison, and supported configuration variables must have parity across CLI flags, configuration files, and environment variables.",
+      "content_hash": "a39c0751254833390d369175b74f6cf130df2f4562833b81b17c1175114ccd95",
+      "summary": "Two distinct defects:\n  1. `agent.disabled_capabilities` field in `mirrord-config` lacked the `#[config(env = \"...\")]` macro attribute, leav -> Configuration inputs matching system domain entities (such as Linux capabilities, signals, and headers) must always be normalized (casing, k",
+      "provenance": {
+        "source_uri": "project://metalbear-co-mirrord/metalbear-co-mirrord-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T01:01:09.999Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (metalbear-co-mirrord)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Issue #5026."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T01:02:17.610Z"
+    },
+    "DOM-H-BD3A2B21": {
+      "record_id": "DOM-H-BD3A2B21",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "In-Process Result-Cache Stale Reads on Model Weight Swap (BUG-OPENMED-01)",
+      "content": "Caching nondeterministic or evolving computational kernels based purely on high-level logical identifiers without an atomic generational fence produces silent data stale-read bugs across administrative lifecycle events.",
+      "content_hash": "099bd0f1b6af59fe31e5d2b6ad5f42ee8c70d8418d39dce1cda156e065580875",
+      "summary": "Cache key normalization stripped versioning metadata and lacked awareness of registry mutations, decoupling the memory store lifecycle from  -> Caching nondeterministic or evolving computational kernels based purely on high-level logical identifiers without an atomic generational fen",
+      "provenance": {
+        "source_uri": "project://maziyarpanahi-openmed/maziyarpanahi-openmed-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T01:02:18.813Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (maziyarpanahi-openmed)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `9847b7c0`, PR #5669, closed issue #4538."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T01:03:02.468Z"
+    },
+    "DOM-K-2B1D449B": {
+      "record_id": "DOM-K-2B1D449B",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Silent Omission of Critical Safety Gates in Model Promotion (BUG-OPENMED-02)",
+      "content": "Verification ledgers comparing versions must execute full outer directional joins against required baseline safety criteria; missing metrics in candidate releases are always blocking regressions.",
+      "content_hash": "02c345529a60000295244170a2e6ad1e2b5e3837398f541993adedd82dbcd873",
+      "summary": "The comparison logic iterated over challenger keys rather than champion requirements, treating omission as non-applicable instead of an inva -> Verification ledgers comparing versions must execute full outer directional joins against required baseline safety criteria; missing metrics",
+      "provenance": {
+        "source_uri": "project://maziyarpanahi-openmed/maziyarpanahi-openmed-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T01:02:18.813Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (maziyarpanahi-openmed)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "PR #5585, closed issue #4544, test `tests/unit/eval/test_champion_challenger.py`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T01:04:00.114Z"
     }
   }
 }

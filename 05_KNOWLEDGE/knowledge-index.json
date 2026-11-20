@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T00:46:48.820Z",
+  "last_updated": "2026-11-20T01:04:02.648Z",
   "total_verified_learnings": 9023,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22100,
+  "total_items": 22112,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -236201,9 +236201,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d71b84c545eeddff6ac451f98137ac9a7c634f47d91a3fd0aa05d2fab8dd383",
+      "content_hash": "bcb3ac3694c8d2ce817d6e8ac7ca7522c7ab28a1f1162f57250768ba1dcebf50",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T00:24:25.616Z"
+      "persisted_at": "2026-11-20T01:04:02.648Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -240536,8 +240536,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "c133334a",
-      "content_hash": "06e8695af0236dc0a7bbbf46f0598b4121423d75d132afdd7c1469a859253734",
+      "source_version": "3a843d8d",
+      "content_hash": "42987ebf66e7d1cde8f469f4775f9c125b1362175957e010f1a01c8a109a90aa",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -240550,6 +240550,21 @@
           "number": 8803,
           "title": "Show MetalBear Cloud sessions in mirrord ui",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9481,
+          "title": "Future Cancellation & Internal Poller Decoupling in Stream Multiplexers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9482,
+          "title": "Procfs Chroot Boundary Path Resolution Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9483,
+          "title": "ABI Width Invariant for FFI Supervisor Hooks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240557,7 +240572,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T04:49:45.570Z",
+      "verified_at": "2026-11-20T01:00:31.358Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240599,10 +240614,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
       "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
       "repository": "metalbear-co/mirrord",
-      "source_version": "c133334a",
-      "content_hash": "c070fd694592191abaa4c079d3ea5948423a16ce4c3b1798e62534c094c70493",
+      "source_version": "3a843d8d",
+      "content_hash": "fdbd6d412ceff31bb27f44db3bda323812dd9ff2617220c7bb8de49417222e01",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T04:49:46.054Z"
+      "persisted_at": "2026-11-20T01:00:32.306Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord",
@@ -240611,10 +240626,10 @@
       "relative_path": "08_VERIFICATION/metalbear-co-mirrord-verification-protocol-empirical-defect-shield-for-metalbear.md",
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co/mirrord",
       "repository": "metalbear-co/mirrord",
-      "source_version": "c133334a",
-      "content_hash": "e6d1355a72b63264793fada3766d845875d295829bdd67f0d3c07b414e5d0568",
+      "source_version": "3a843d8d",
+      "content_hash": "ea42b78a08a70dea2a1b99441b92dbc510f3654b73b8f717a7b969865d938204",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:49:46.172Z"
+      "persisted_at": "2026-11-20T01:00:32.461Z"
     },
     "learn-github-run-llama-llama_index": {
       "learning_id": "learn-github-run-llama-llama_index",
@@ -240770,9 +240785,9 @@
       "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "bd5f4d32fee94c4e60dd7a328e6f0f1754dcb53c0dca3fa3166c62e0cc5b96eb",
+      "content_hash": "c920b18b7217ffd7b0ac0d1caf3b4f1ce3d5809953dda17d2e632559c49c9e31",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T04:49:56.473Z"
+      "persisted_at": "2026-11-20T01:02:18.477Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings",
@@ -240782,9 +240797,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co-mirrord-learnings",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "a75c0225c2cd1eb1dcc684ff27888db7b83f1db3b3e4f6bc38b1b74e3c7c8568",
+      "content_hash": "80d9440bbe05a91033dde80953904304719449b498f3c14148ffdf6a54cd21d4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:49:56.601Z"
+      "persisted_at": "2026-11-20T01:02:18.653Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
@@ -249698,14 +249713,29 @@
       "slug": "maziyarpanahi-openmed",
       "platform": "github",
       "source_url": "https://github.com/maziyarpanahi/openmed",
-      "source_version": "f83eb05b",
-      "content_hash": "ba798c2624eec84f5b4c0b599ec427ad1fbadbcf2c7cc725e127ef8974b31f4d",
+      "source_version": "e8325586",
+      "content_hash": "6fa1673f97d9a9b965d4da421b5f36afba8ecc8ab61282a4a3e3e5587afab70e",
       "dossier_path": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "promoted_rules": [
         {
+          "number": null,
+          "title": "Closed-Set Enumerated Machine Codes on Domain Exceptions",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Asymmetric Safety-Gate Preservation in Regression Ledgers",
+          "status": "WITHHELD_REJECT"
+        },
+        {
           "number": 8653,
           "title": "ci(security): skip the private React Native parity app in the kit scan",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9484,
+          "title": "Generation-Pinned Revision-Bound In-Memory Cache Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -249714,7 +249744,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T21:15:40.649Z",
+      "verified_at": "2026-11-20T01:01:05.965Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -249756,10 +249786,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-maziyarpanahi-openmed-technical-construction-intelligence-maziyarpanahi-openmed-.md",
       "title": "Technical Construction Intelligence: maziyarpanahi/openmed Core Invariants",
       "repository": "maziyarpanahi/openmed",
-      "source_version": "f83eb05b",
-      "content_hash": "01895c138cb87f3de47fc108df8f19a3613246f3a69604c8bddcd8831550719c",
+      "source_version": "e8325586",
+      "content_hash": "60dc685ce3e1e2bcdf73e855f0192d6d282fcee1f52bb1d09ed503440aa4eb2c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T21:15:41.085Z"
+      "persisted_at": "2026-11-20T01:01:06.866Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-maziyarpanahi-openmed": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-maziyarpanahi-openmed",
@@ -249768,10 +249798,10 @@
       "relative_path": "08_VERIFICATION/maziyarpanahi-openmed-verification-protocol-empirical-defect-shield-for-maziyarp.md",
       "title": "Verification Protocol: Empirical Defect Shield for maziyarpanahi/openmed",
       "repository": "maziyarpanahi/openmed",
-      "source_version": "f83eb05b",
-      "content_hash": "410fbe1a1a82930122f7c032040890d996e4e3b40631628232ae621f9ddedb8f",
+      "source_version": "e8325586",
+      "content_hash": "1929426f409f323010aeb41369f182d1f043af3d08424772cfda1291634994da",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T21:15:41.200Z"
+      "persisted_at": "2026-11-20T01:01:07.188Z"
     },
     "rule-8654": {
       "learning_id": "rule-8654",
@@ -249831,9 +249861,9 @@
       "title": "Technical Construction Intelligence: maziyarpanahi-openmed-learnings Core Invariants",
       "repository": "maziyarpanahi-openmed-learnings",
       "source_version": "HEAD",
-      "content_hash": "dbbf1a86acbd5c839d460a9b37eec434957beb8698818779dad002277a7828ba",
+      "content_hash": "bf4fdc609cef6ef08cdb56bfba0dee8aae48695f4da0fb6f97511f97ab3ed759",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T21:16:18.259Z"
+      "persisted_at": "2026-11-20T01:04:01.058Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-maziyarpanahi-openmed-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-maziyarpanahi-openmed-learning",
@@ -249843,9 +249873,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for maziyarpanahi-openmed-learnings",
       "repository": "maziyarpanahi-openmed-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d7ca468648cd1975c72088b6a0f24a362ae6e7c60bacda32c3cfeab31813294",
+      "content_hash": "2721f58f3e470fc70f4619cd8d9c75d88ec622960e1940282caa9cff3da4a7df",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T21:16:18.385Z"
+      "persisted_at": "2026-11-20T01:04:01.440Z"
     },
     "learn-huggingface-comfy-org-minimax-h3-image": {
       "learning_id": "learn-huggingface-comfy-org-minimax-h3-image",
@@ -299087,6 +299117,158 @@
       "content_hash": "e690aaea8c23bbfb472a6ec198fe9a61741822ad1b16333f823aa236dc27fceb",
       "domain_letter": "K",
       "persisted_at": "2026-11-20T00:45:42.372Z"
+    },
+    "rule-9481": {
+      "learning_id": "rule-9481",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9481,
+      "title": "Future Cancellation & Internal Poller Decoupling in Stream Multiplexers",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "3a843d8d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T01:00:31.358Z"
+    },
+    "rule-9482": {
+      "learning_id": "rule-9482",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9482,
+      "title": "Procfs Chroot Boundary Path Resolution Invariant",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "3a843d8d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T01:00:31.358Z"
+    },
+    "rule-9483": {
+      "learning_id": "rule-9483",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9483,
+      "title": "ABI Width Invariant for FFI Supervisor Hooks",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "3a843d8d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T01:00:31.358Z"
+    },
+    "candidate_directive-future-cancellation-internal-poller-decoupling-in-stream-multiplexers": {
+      "item_id": "candidate_directive-future-cancellation-internal-poller-decoupling-in-stream-multiplexers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y1IB-future-cancellation-internal-poller-decoupling-in-stream-multiplexers.md",
+      "title": "Future Cancellation & Internal Poller Decoupling in Stream Multiplexers",
+      "repository": "metalbear-co-mirrord-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b6b953c0976ec1b807383857e5f4431f07780ccb793779c76b55334cf1eb8170",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T01:02:17.893Z"
+    },
+    "candidate_directive-procfs-chroot-boundary-path-resolution-invariant": {
+      "item_id": "candidate_directive-procfs-chroot-boundary-path-resolution-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y1IB-procfs-chroot-boundary-path-resolution-invariant.md",
+      "title": "Procfs Chroot Boundary Path Resolution Invariant",
+      "repository": "metalbear-co-mirrord-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e8ec54ad5165abc85083deb5f9600a92026b7e8d3d0214d03e9f5a9c3dce50f9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T01:02:18.108Z"
+    },
+    "candidate_directive-abi-width-invariant-for-ffi-supervisor-hooks": {
+      "item_id": "candidate_directive-abi-width-invariant-for-ffi-supervisor-hooks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y1IC-abi-width-invariant-for-ffi-supervisor-hooks.md",
+      "title": "ABI Width Invariant for FFI Supervisor Hooks",
+      "repository": "metalbear-co-mirrord-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7cef403ffa779dddde53a3fae779ce279c277f7e81dd923e147f1558685ab26e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T01:02:18.283Z"
+    },
+    "rule-9484": {
+      "learning_id": "rule-9484",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9484,
+      "title": "Generation-Pinned Revision-Bound In-Memory Cache Invariant",
+      "source_url": "https://github.com/maziyarpanahi/openmed",
+      "source_version": "e8325586",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T01:01:05.965Z"
+    },
+    "candidate_directive-generation-pinned-revision-bound-in-memory-cache-invariant": {
+      "item_id": "candidate_directive-generation-pinned-revision-bound-in-memory-cache-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-08MA-generation-pinned-revision-bound-in-memory-cache-invariant.md",
+      "title": "Generation-Pinned Revision-Bound In-Memory Cache Invariant",
+      "repository": "maziyarpanahi-openmed-learnings",
+      "source_version": "HEAD",
+      "content_hash": "94b7b9f66a9e88c095d7a7f47df6ee0b6a4ba004622c03ef5fa6e482f0f6624b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T01:04:00.419Z"
+    },
+    "candidate_directive-closed-set-enumerated-machine-codes-on-domain-exceptions": {
+      "item_id": "candidate_directive-closed-set-enumerated-machine-codes-on-domain-exceptions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-08MA-closed-set-enumerated-machine-codes-on-domain-exceptions.md",
+      "title": "Closed-Set Enumerated Machine Codes on Domain Exceptions",
+      "repository": "maziyarpanahi-openmed-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5bfd1e30e5583833a83567c88a66f3c021475234ab939cc660e2bb400e99a057",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T01:04:00.648Z"
+    },
+    "candidate_directive-asymmetric-safety-gate-preservation-in-regression-ledgers": {
+      "item_id": "candidate_directive-asymmetric-safety-gate-preservation-in-regression-ledgers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-08MB-asymmetric-safety-gate-preservation-in-regression-ledgers.md",
+      "title": "Asymmetric Safety-Gate Preservation in Regression Ledgers",
+      "repository": "maziyarpanahi-openmed-learnings",
+      "source_version": "HEAD",
+      "content_hash": "71977cc4fbada0244832a94ea11a499dbdc3bfa2eee73a468a9282f2181be5d9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T01:04:00.869Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-maziyarpanahi-openmed": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-maziyarpanahi-openmed",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/maziyarpanahi-openmed-skill-operational-integration-playbook-for-maziyarpanahi-o.md",
+      "title": "Skill: Operational & Integration Playbook for maziyarpanahi/openmed",
+      "repository": "maziyarpanahi/openmed",
+      "source_version": "e8325586",
+      "content_hash": "02ce840b6f3ee63252f148fb4b3fd225aeb12d8e7ef07089376ab3b0d278ffa8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T01:01:07.017Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-maziyarpanahi-openmed-learnings": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-maziyarpanahi-openmed-learnings",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/maziyarpanahi-openmed-learnings-skill-operational-integration-playbook-for-maziy.md",
+      "title": "Skill: Operational & Integration Playbook for maziyarpanahi-openmed-learnings",
+      "repository": "maziyarpanahi-openmed-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d2368a97ece285000fefc9d3b701a38d89e91ea144842acedc1c771aa76a7e90",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T01:04:01.268Z"
     }
   },
   "ai-builder-brain": {

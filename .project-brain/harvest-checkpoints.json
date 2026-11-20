@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T00:45:36.881Z",
+  "last_updated": "2026-11-20T01:01:06.209Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4641,14 +4641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-metalbear-co-mirrord",
-      "content_hash": "06e8695af0236dc0a7bbbf46f0598b4121423d75d132afdd7c1469a859253734",
-      "verified_at": "2026-11-18T04:49:45.766Z",
+      "content_hash": "42987ebf66e7d1cde8f469f4775f9c125b1362175957e010f1a01c8a109a90aa",
+      "verified_at": "2026-11-20T01:00:31.608Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T04:49:45.766Z"
+      "last_updated": "2026-11-20T01:00:31.608Z"
     },
     "openkruise/kruise": {
       "repository": "openkruise/kruise",
@@ -12381,14 +12381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-maziyarpanahi-openmed",
-      "content_hash": "ba798c2624eec84f5b4c0b599ec427ad1fbadbcf2c7cc725e127ef8974b31f4d",
-      "verified_at": "2026-11-15T21:15:40.819Z",
+      "content_hash": "6fa1673f97d9a9b965d4da421b5f36afba8ecc8ab61282a4a3e3e5587afab70e",
+      "verified_at": "2026-11-20T01:01:06.209Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T21:15:40.819Z"
+      "last_updated": "2026-11-20T01:01:06.209Z"
     },
     "bernaferrari/FigmaToCode": {
       "repository": "bernaferrari/FigmaToCode",

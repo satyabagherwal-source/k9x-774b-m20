@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "c133334a",
+    "sourceVersion": "3a843d8d",
     "license": "MIT",
-    "contentHash": "06e8695af0236dc0a7bbbf46f0598b4121423d75d132afdd7c1469a859253734",
-    "lastHarvestedAt": "2026-11-18T04:49:45.739Z",
+    "contentHash": "42987ebf66e7d1cde8f469f4775f9c125b1362175957e010f1a01c8a109a90aa",
+    "lastHarvestedAt": "2026-11-20T01:00:31.599Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -8233,10 +8233,10 @@
     "repository": "maziyarpanahi/openmed",
     "platform": "github",
     "sourceUrl": "https://github.com/maziyarpanahi/openmed",
-    "sourceVersion": "f83eb05b",
+    "sourceVersion": "e8325586",
     "license": "Apache-2.0",
-    "contentHash": "ba798c2624eec84f5b4c0b599ec427ad1fbadbcf2c7cc725e127ef8974b31f4d",
-    "lastHarvestedAt": "2026-11-15T21:15:40.810Z",
+    "contentHash": "6fa1673f97d9a9b965d4da421b5f36afba8ecc8ab61282a4a3e3e5587afab70e",
+    "lastHarvestedAt": "2026-11-20T01:01:06.174Z",
     "learningId": "learn-github-maziyarpanahi-openmed"
   },
   "bernaferrari-figmatocode": {

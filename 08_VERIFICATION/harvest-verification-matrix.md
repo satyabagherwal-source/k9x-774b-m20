@@ -11420,3 +11420,9 @@
 | `CYCLE-20261120-CL45` | `2026-11-20T00:45:36.869Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9478, Rule 9479, Rule 9480` | Yes (`52881fb3...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T00:46:10.531Z` | `dathere-qsv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-52039FE3` [Domain H] | Yes (`eefab692...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T00:46:47.877Z` | `dathere-qsv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-333D4D7A` [Domain I] | Yes (`55f0cd1b...`) |
+| `CYCLE-20261120-VRHN` | `2026-11-20T01:00:31.595Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9481, Rule 9482, Rule 9483` | Yes (`42987ebf...`) |
+| `CYCLE-20261120-WI62` | `2026-11-20T01:01:06.170Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9484, Rule null, Rule null` | Yes (`6fa1673f...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T01:01:40.065Z` | `metalbear-co-mirrord` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-1C8F2877` [Domain H] | Yes (`2940eaaf...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T01:02:17.646Z` | `metalbear-co-mirrord` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-D7FA7771` [Domain F] | Yes (`a39c0751...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T01:03:02.492Z` | `maziyarpanahi-openmed` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-BD3A2B21` [Domain H] | Yes (`099bd0f1...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T01:04:00.140Z` | `maziyarpanahi-openmed` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-2B1D449B` [Domain K] | Yes (`02c34552...`) |

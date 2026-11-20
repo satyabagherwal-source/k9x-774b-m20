@@ -11453,3 +11453,9 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `588d2c40` | Multi-dimensional audit evidence | 2026-11-20T00:45:36.873Z |
 | `learn-dom-h-52039fe3` | `project://dathere-qsv` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-20T00:46:10.531Z |
 | `learn-dom-i-333d4d7a` | `project://dathere-qsv` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-20T00:46:47.877Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `3a843d8d` | Multi-dimensional audit evidence | 2026-11-20T01:00:31.599Z |
+| `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `e8325586` | Multi-dimensional audit evidence | 2026-11-20T01:01:06.174Z |
+| `learn-dom-h-1c8f2877` | `project://metalbear-co-mirrord` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md` | 2026-11-20T01:01:40.065Z |
+| `learn-dom-f-d7fa7771` | `project://metalbear-co-mirrord` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md` | 2026-11-20T01:02:17.646Z |
+| `learn-dom-h-bd3a2b21` | `project://maziyarpanahi-openmed` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md` | 2026-11-20T01:03:02.492Z |
+| `learn-dom-k-2b1d449b` | `project://maziyarpanahi-openmed` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md` | 2026-11-20T01:04:00.140Z |

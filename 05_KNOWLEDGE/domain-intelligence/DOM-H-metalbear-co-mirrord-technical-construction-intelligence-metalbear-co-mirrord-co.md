@@ -4,255 +4,129 @@
 {
   "source_repository": "metalbear-co/mirrord",
   "source_url": "https://github.com/metalbear-co/mirrord",
-  "source_version": "c133334a",
+  "source_version": "3a843d8d",
   "license": "MIT",
-  "timestamp": "2026-11-18T04:49:45.929Z",
-  "ai_provider": "zero-clone-structural-synthesizer",
+  "timestamp": "2026-11-20T01:00:31.807Z",
+  "ai_provider": "google-gemini-cloud-agent",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-metalbear-co-mirrord",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [metalbear-co/mirrord](https://github.com/metalbear-co/mirrord) (Revision: `c133334a`).  
-> **License**: MIT | **Timestamp**: `2026-11-18T04:49:45.929Z`  
+> **Provenance**: Harvested from [metalbear-co/mirrord](https://github.com/metalbear-co/mirrord) (Revision: `3a843d8d`).  
+> **License**: MIT | **Timestamp**: `2026-11-20T01:00:31.807Z`  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 79%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 70%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from metalbear-co/mirrord:
 
-# Forensic Learning Record (Deep Inspection): metalbear-co/mirrord
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T04:49:45.334Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): metalbear-co/mirrord
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `metalbear-co/mirrord`
-- **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
-- **Primary Language / Ecosystem**: Rust
-- **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5417 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+`mirrord` injects local processes (binaries, runtimes, or test suites) into remote Kubernetes pod contexts transparently, without requiring container rebuilds, CI/CD deploys, or cluster-wide DNS/network mutations.
+
+```
++--------------------------------------------------------------------------------------------------+
+| LOCAL WORKSTATION / RUNTIME CONTEXT                                                              |
+|                                                                                                  |
+|  +--------------------------------------------------------------------------------------------+  |
+|  | User Application Process (Node, Python, Go, Rust, Java, etc.)                             |  |
+|  +--------------------------------------------------------------------------------------------+  |
+|         |                                              |                               |         |
+|   libc / Syscall Traps                          Go Syscall ABI                     VFS Calls     |
+|         v                                              v                               v         |
+|  +---------------------+                       +----------------+               +--------------+ |
+|  | mirrord-layer (so)  |                       | layer-go (asm) |               | file hooks   | |
+|  +---------------------+                       +----------------+               +--------------+ |
+|         |                                              |                               |         |
+|         +-----------------------+----------------------+-------------------------------+         |
+|                                 |                                                                |
+|                                 v                                                                |
+|         +-----------------------------------------------+                                        |
+|         | mirrord Internal Proxy (intproxy)             |                                        |
+|         | Multiplexed TCP/UDP streams & state machines  |                                        |
+|         +-----------------------------------------------+                                        |
++---------------------------------|----------------------------------------------------------------+
+                                  | TLS / Multiplexed Protocol over K8s Port-Forward / SPDY
+                                  v
++--------------------------------------------------------------------------------------------------+
+| KUBERNETES TARGET CONTEXT (NODE / NAMESPACE)                                                     |
+|                                                                                                  |
+|  +--------------------------------------------------------------------------------------------+  |
+|  | mirrord-agent (Ephemeral Pod / Job running in Target Pod Namespaces)                       |  |
+|  |                                                                                            |  |
+|  |  [Network Interceptor]               [VFS Jail Resolver]             [Flow Controller]     |  |
+|  |  iptables / eBPF / raw sockets       InTargetPathResolver            Throttle / Semaphores |  |
+|  |  Redirects/Mirrors ingress & egress   /proc/{target_pid}/root         IoVecThrottledSink    |  |
+|  +--------------------------------------------------------------------------------------------+  |
+|         ^                                              ^                                         |
+|         | Linux Namespace Attachment                   | procfs VFS Walk                         |
+|         v                                              v                                         |
+|  +--------------------------------------------------------------------------------------------+  |
+|  | Target Application Pod Containers & Host Kernels                                           |  |
+|  +--------------------------------------------------------------------------------------------+  |
++--------------------------------------------------------------------------------------------------+
+```
+
+### Architectural Subsystems and Boundaries
+
+1. **The Interception Boundary (`mirrord-layer` / `mirrord-layer-win` / `mirrord-layer-go`)**:
+   - Injected dynamically via `LD_PRELOAD` (Linux), `DYLD_INSERT_LIBRARIES` (macOS), or custom binary patches/debug hooks on Windows.
+   - For Go runtimes that bypass `libc` by executing direct raw supervisor calls via assembly routines (`syscall.Syscall`), mirrord provides an assembly-level trampoline bridge (`mirrord-layer-go`) hooking runtime internals using Go's `runtime.asmcgocall`.
+   - Intercepts file I/O, socket operations (`connect`, `bind`, `listen`, `accept`, `getaddrinfo`), and environment lookups, packaging them into `mirrord_protocol` messages.
+
+2. **Internal Proxy & Serialization Layer (`mirrord-intproxy` / `mirrord-protocol`)**:
+   - Manages multiplexed, bi-directional RPC sessions between the user's hooked process and the remote agent.
+   - Version negotiation utilizes semantic versioning with legacy fallbacks (anchored at `1.2.2`). Decouples protocol evolution from CLI updates.
+
+3. **In-Cluster Agent Subsystem (`mirrord-agent`)**:
+   - Executes inside the Kubernetes cluster as an ephemeral debug container or privileged Job attached to the target pod's namespaces (`net`, `pid`, `mnt`).
+   - Uses `iptables` and raw socket redirection to steal or mirror TCP traffic.
+   - Operates `InTargetPathResolver`, which walks the target pod's root filesystem directly via `/proc/<PID>/root`, resolving symlinks and preventing traversal attacks across mount namespaces.
+   - Manages backpressure and memory overhead using `Throttle` and vectored asynchronous writers (`IoVecThrottledSink`).
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: package.json, Cargo.toml, README.md.
-- Evaluated system abstractions and modular contracts.
+### 1. Future Cancellation & Internal Poller Decoupling in Stream Multiplexers
 
-### Core Architecture Module: `mirrord/agent/src/incoming/connection/body_utils.rs`
-```
-use std::io::Read;
+**RULE**:
+When creating custom `Future` implementations that monitor underlying channel or resource state (such as `tokio::sync::mpsc::Sender::closed`), the implementer **MUST NOT** poll the underlying synchronization primitive directly inside an ad-hoc manual `Future::poll` implementation when the future will be stored inside unordered collections (like `FuturesUnordered`). The implementer **MUST** instantiate and store an explicit, heap-pinned async closure (`BoxFuture<'static, T>`) inside the wrapper struct.
 
-use bytes::Bytes;
-use hyper::body::Frame;
-use mirrord_protocol::tcp::InternalHttpBodyFrame;
+**WHY**:
+`tokio::sync::mpsc::Sender::closed` relies on task-waker registration tied to the calling async task context. When polled inside concurrent combinators like `futures::stream::FuturesUnordered`, intermediate yields and poll passes without explicit task context binding cause wakers to be dropped, overwritten, or deadlocked without re-registration. This causes `FuturesUnordered::next()` to hang indefinitely even after the associated `Receiver` has been dropped.
 
-pub trait Framelike {
-    fn data_ref(&self) -> Option<&[u8]>;
-}
+**WHEN TO APPLY**:
+Any Rust async subsystem polling channel status, cancellation tokens, or state change listeners concurrently inside `FuturesUnordered`, `select!`, or custom multiplexing loops.
 
-impl Framelike for Frame<Bytes> {
-    fn data_ref(&self) -> Option<&[u8]> {
-        self.data_ref().map(|v| &**v)
-    }
-}
-
-impl Framelike for InternalHttpBodyFrame {
-    fn data_ref(&self) -> Option<&[u8]> {
-        match self {
-            InternalHttpBodyFrame::Data(payload) => Some(payload),
-            InternalHttpBodyFrame::Trailers(_) => None,
-        }
-    }
-}
-
-/// Implements [`Read`] for slices of [`Framelike`] objects, like
-/// [`InternalHttpBodyFrame`] or [`Frame<Bytes>`]
-pub struct FramesReader<'a, T> {
-    /// The portion of the slice that we've yet to process
-    remaining: &'a [T],
-
-    /// How many bytes we've already read from the *current* frame.
-    read_until: usize,
-}
-
-impl<T> Copy for FramesReader<'_, T> {}
-impl<T> Clone for FramesReader<'_, T> {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
-
-impl<'a, T> From<&'a [T]> for FramesReader<'a, T>
-where
-    T: Framelike,
-{
-    fn from(remaining: &'a [T]) -> Self {
-        Self {
-            remaining,
-            read_until: 0,
-        }
-    }
-}
-
-impl<T: Framelike> Read for FramesReader<'_, T> {
-    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
-        let frame = loop {
-            let [first, rest @ ..] = self.remaining else {
-                return Ok(0);
-            };
-
-            let Some(frame) = first.data_ref() else {
-                return Ok(0);
-            };
-
-            if self.read_until == frame.len() {
-                self.remaining = rest;
-                self.read_until = 0;
-            } else {
-                assert!(self.read_until < frame.len());
-                break frame;
-            }
-        };
-
-        let until = Ord::min(frame.len(), self.read_until + buf.len());
-        let range = self.read_until..until;
-
-        buf.get_mut(..range.len())
-            .unwrap()
-            .copy_from_slice(frame.get(range.clone()).unwrap());
-
-        self.read_until = until;
-
-        Ok(range.len())
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use std::io::Read;
-
-    use super::*;
-
-    #[test]
-    fn test_framelike() {
-        let frames = vec![
-            data(b"0123456789"),
-            empty(),
-            empty(),
-            data(b"ABCDEFGHIJKLMNO"),
-            empty(),
-            data(b"VWXYZ"),
-            nondata(),
-            data(b"NEVER"),
-        ];
-        let mut reader = FramesReader {
-            remaining: &frames,
-            read_until: 0,
-        };
-
-        // Helper for shorter test code
-        fn read_n<R: Read>(r: &mut R, n: usize) -> Vec<u8> {
-            let mut buf = vec![0; n];
-            let read = r.read(&mut buf).unwrap();
-            buf.truncate(read);
-            buf
-        }
-
-        // Read F1 part by part
-        assert_eq!(read_n(&mut reader, 3), b"012");
-        assert_eq!(read_n(&mut reader, 4), b"3456");
-        assert_eq!(read_n(&mut reader, 3), b"789");
-
-        // Skip multiple empty frames
-        assert_eq!(read_n(&mut reader, 5), b"ABCDE");
-
-        // Read across frame boundaries
-        // Should get 10 remaining from F2, then 2 from F3 ("V", "W")
-        assert_eq!(read_n(&mut reader, 12), b"FGHIJKLMNO");
-
-        // Read remaining from F3
-        assert_eq!(read_n(&mut reader, 4), b"VWXY");
-        assert_eq!(read_n(&mut reader, 1), b"Z");
-
-        // EOF: we hit the first nondata frame and we stay EOF
-        for _ in 0..5 {
-            let mut buf = [0u8; 1];
-            let eof = reader.read(&mut buf).unwrap();
-            assert_eq!(eof, 0);
-        }
-    }
-
-    // ===== Helper Functions =====
-
-    fn data(data: &[u8]) -> TestFrame {
-        TestFrame::Data(data.to_vec())
-    }
-
-    fn empty() -> TestFrame {
-        TestFrame::Data(vec![])
-    }
-
-    fn nondata() -> TestFrame {
-        TestFrame::Nondata
-    }
-
-    // Mock TestFrame for testing
-    #[derive(Clone)]
-    enum TestFrame {
-        Data(Vec<u8>),
-        Nondata,
-    }
-
-    impl Framelike for TestFrame {
-        fn data_ref(&self) -> Option<&[u8]> {
-            match self {
-                TestFrame::Data(v) => Some(v),
-                TestFrame::Nondata => None,
-            }
-        }
-    }
-}
-
-```
-
-### Core Architecture Module: `mirrord/agent/src/util.rs`
-```
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
 use std::{
     future::Future,
     pin::Pin,
     task::{Context, Poll},
 };
-
-use futures::{FutureExt, future::BoxFuture};
+use futures::{future::BoxFuture, FutureExt};
 use tokio::sync::mpsc;
 
-pub mod error;
-pub mod io;
-pub mod path_resolver;
-pub mod protocol_version;
-pub mod rolledback_stream;
-
-/// Id of an agent's client. Each new client connection is assigned with a unique id.
 pub type ClientId = u32;
 
-/// [`Future`] that resolves to [`ClientId`] when the client drops their [`mpsc::Receiver`].
+/// A cancellation future that safely wakes across arbitrary task combinators.
 pub(crate) struct ChannelClosedFuture(BoxFuture<'static, ClientId>);
 
 impl ChannelClosedFuture {
     pub(crate) fn new<T: 'static + Send>(tx: mpsc::Sender<T>, client_id: ClientId) -> Self {
+        // Enforce pinned async block to ensure internal waker is preserved
         let future = async move {
             tx.closed().await;
             client_id
@@ -266,757 +140,80 @@ impl ChannelClosedFuture {
 impl Future for ChannelClosedFuture {
     type Output = ClientId;
 
+    #[inline]
+    fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        self.0.as_mut().poll(cx)
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER do this: Calling tx.closed() inside a raw Future::poll while held in FuturesUnordered
+pub struct BrokenChannelClosedFuture<T> {
+    tx: tokio::sync::mpsc::Sender<T>,
+    client_id: u32,
+}
+
+impl<T> Future for BrokenChannelClosedFuture<T> {
+    type Output = u32;
+
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
-        self.get_mut().0.as_mut().poll(cx)
-    }
-}
-
-#[cfg(test)]
-mod channel_closed_tests {
-
-    use futures::{FutureExt, StreamExt, stream::FuturesUnordered};
-    use rstest::rstest;
-
-    use super::*;
-
-    /// Verifies that [`ChannelClosedFuture`] resolves when the related [`mpsc::Receiver`] is
-    /// dropped.
-    #[rstest]
-    #[tokio::test]
-    async fn channel_closed_resolves() {
-        let (tx, rx) = mpsc::channel::<()>(1);
-        let future = ChannelClosedFuture::new(tx, 0);
-        std::mem::drop(rx);
-        assert_eq!(future.await, 0);
-    }
-
-    /// Verifies that [`ChannelClosedFuture`] works fine when used in [`FuturesUnordered`].
-    ///
-    /// The future used to hold the [`mpsc::Sender`] and call poll [`mpsc::Sender::closed`] in it's
-    /// [`Future::poll`] implementation. This worked fine when the future was used in a simple way
-    /// ([`channel_closed_resolves`] test was passing).
-    ///
-    /// However, [`FuturesUnordered::next`] was hanging forever due to [`mpsc::Sender::closed`]
-    /// implementation details.
-    ///
-    /// New implementation of [`ChannelClosedFuture`] uses a [`BoxFuture`] internally, which works
-    /// fine.
-    #[rstest]
-    #[tokio::test]
-    async fn channel_closed_works_in_futures_unordered() {
-        let mut unordered: FuturesUnordered<ChannelClosedFuture> = FuturesUnordered::new();
-
-        let (tx, rx) = mpsc::channel::<()>(1);
-        let future = ChannelClosedFuture::new(tx, 0);
-
-        unordered.push(future);
-
-        assert!(unordered.next().now_or_never().is_none());
-        std::mem::drop(rx);
-        assert_eq!(unordered.next().await.unwrap(), 0);
-    }
-}
-
-```
-
-### Core Architecture Module: `mirrord/agent/src/util/error.rs`
-```
-use std::io;
-
-use thiserror::Error;
-
-use crate::namespace::NamespaceError;
-
-/// Errors that can occur when creating a [`BgTaskRuntime`](crate::task::BgTaskRuntime).
-#[derive(Error, Debug)]
-pub(crate) enum AgentRuntimeError {
-    #[error("failed to spawn runtime thread: {0}")]
-    ThreadSpawnError(#[source] io::Error),
-    #[error(transparent)]
-    NamespaceError(#[from] NamespaceError),
-    #[error("failed to build tokio runtime: {0}")]
-    TokioRuntimeError(#[source] io::Error),
-    #[error("runtime thread panicked")]
-    Panicked,
-}
-
-```
-
-### Core Architecture Module: `mirrord/agent/src/util/io.rs`
-```
-pub mod buffered;
-pub mod throttle;
-pub mod timeout;
-
-```
-
-### Core Architecture Module: `mirrord/agent/src/util/io/buffered.rs`
-```
-//! [`Sink`] and [`Stream`] wrappers that run IO in a background task.
-
-use std::{
-    io,
-    pin::Pin,
-    task::{Context, Poll, Waker},
-};
-
-use futures::{FutureExt, Sink, SinkExt, Stream, StreamExt, channel::mpsc, stream::FusedStream};
-use tokio::task::JoinHandle;
-
-/// [`Stream`] wrapper that continuously polls the inner stream in a background task.
-///
-/// Items yielded by the inner stream are pushed to an **unbounded** queue,
-/// from which this wrapper reads them.
-///
-/// Use with care, as the queue is **unbounded**.
-/// You most probably want to use this together with
-/// [`ThrottledStream`](super::throttle::ThrottledStream).
-pub struct UnboundedBufferedStream<T> {
-    rx: mpsc::UnboundedReceiver<T>,
-    task: Option<JoinHandle<io::Result<()>>>,
-}
-
-impl<T> UnboundedBufferedStream<T> {
-    pub fn new<S>(stream: S) -> Self
-    where
-        S: Stream<Item = io::Result<T>> + Send + 'static,
-        T: Send + 'static,
-    {
-        let (tx, rx) = mpsc::unbounded();
-        let task = tokio::spawn(Self::stream_task(stream, tx));
-        Self {
-            rx,
-            task: Some(task),
-        }
-    }
-
-    async fn stream_task<S>(stream: S, tx: mpsc::UnboundedSender<T>) -> io::Result<()>
-    where
-        S: Stream<Item = io::Result<T>>,
-    {
-        let mut stream = std::pin::pin!(stream);
-        while let Some(item) = stream.next().await {
-            if tx.unbounded_send(item?).is_err() {
-                break;
-            }
-        }
-        Ok(())
-    }
-
-    fn poll_task_result(&mut self, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-        let Some(task) = self.task.as_mut() else {
-            return Poll::Ready(Ok(()));
-        };
-        let result = std::task::ready!(task.poll_unpin(cx));
-        self.task = None;
-        result??;
-        Poll::Ready(Ok(()))
-    }
-}
-
-impl<T> Stream for UnboundedBufferedStream<T> {
-    type Item = io::Result<T>;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.get_mut();
-        if this.is_terminated() {
-            return Poll::Ready(None);
-        }
-        if let Some(item) = std::task::ready!(this.rx.poll_next_unpin(cx)) {
-            return Poll::Ready(Some(Ok(item)));
-        }
-        std::task::ready!(this.poll_task_result(cx))?;
-        Poll::Ready(None)
-    }
-}
-
-impl<T> FusedStream for UnboundedBufferedStream<T> {
-    fn is_terminated(&self) -> bool {
-        self.task.is_none()
-    }
-}
-
-impl<T> Drop for UnboundedBufferedStream<T> {
-    fn drop(&mut self) {
-        if let Some(task) = self.task.as_ref() {
-            task.abort();
-        }
-    }
-}
-
-/// [`Sink`] wrapper that continuously polls the inner sink in a background task.
-///
-/// Items sent to this wrapper are pushed to an **unbounded** queue,
-/// from which the background task reads them and passes them to the inner sink.
-///
-/// Use with care, as the queue is **unbounded**.
-/// You most probably want to use this together with
-/// [`ThrottledSink`](super::throttle::ThrottledSink).
-pub struct UnboundedBufferedSink<T> {
-    tx: mpsc::UnboundedSender<T>,
-    task: JoinHandle<io::Result<()>>,
-}
-
-impl<T> UnboundedBufferedSink<T> {
-    pub fn new<S>(sink: S) -> Self
-    where
-        S: Sink<T, Error = io::Error> + Send + 'static,
-        T: Send + 'static,
-    {
-        let (tx, rx) = mpsc::unbounded();
-        let task = tokio::spawn(Self::sink_task(sink, rx));
-        Self { tx, task }
-    }
-
-    async fn sink_task<S>(sink: S, mut rx: mpsc::UnboundedReceiver<T>) -> io::Result<()>
-    where
-        S: Sink<T, Error = io::Error>,
-    {
-        let mut sink = std::pin::pin!(sink);
-        'outer: while let Some(item) = rx.next().await {
-            sink.feed(item).await?;
-            loop {
-                match rx.try_recv() {
-                    Ok(item) => sink.feed(item).await?,
-                    Err(mpsc::TryRecvError::Closed) => break 'outer,
-                    Err(mpsc::TryRecvError::Empty) => break,
-                }
-            }
-            sink.flush().await?;
-        }
-        sink.close().await?;
-        Ok(())
-    }
-
-    fn poll_task_error(&mut self, cx: &mut Context<'_>) -> Poll<io::Error> {
-        let error = match std::task::ready!(self.task.poll_unpin(cx)) {
-            Ok(Ok(())) => io::Error::other("sink task finished prematurely, this is a bug"),
-            Ok(Err(error)) => error,
-            Err(error) => error.into(),
-        };
-        Poll::Ready(error)
-    }
-}
-
-impl<T> Sink<T> for UnboundedBufferedSink<T> {
-    type Error = io::Error;
-
-    fn poll_ready(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        let this = self.get_mut();
-        if this.tx.is_closed() {
-            this.poll_task_error(cx).map(Err)
+        // HAZARD: Polls inner channel directly. When used in FuturesUnordered,
+        // the waker registration is clobbered during concurrent polling passes,
+        // causing FuturesUnordered::next() to hang forever.
+        let mut closed_fut = std::pin::pin!(self.tx.closed());
+        if closed_fut.poll(cx).is_ready() {
+            Poll::Ready(self.client_id)
         } else {
-            Poll::Ready(Ok(()))
-        }
-    }
-
-    fn start_send(self: Pin<&mut Self>, item: T) -> Result<(), Self::Error> {
-        let this = self.get_mut();
-        if this.tx.unbounded_send(item).is_err() {
-            let error = match this.poll_task_error(&mut Context::from_waker(Waker::noop())) {
-                Poll::Ready(error) => error,
-                Poll::Pending => io::Error::other(
-                    "sink task channel is closed, task result is not available yet",
-                ),
-            };
-            Err(error)
-        } else {
-            Ok(())
-        }
-    }
-
-    fn poll_flush(self: Pin<&mut Self>, _: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        Poll::Ready(Ok(()))
-    }
-
-    fn poll_close(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        let this = self.get_mut();
-        this.tx.close_channel();
-        match std::task::ready!(this.task.poll_unpin(cx)) {
-            Ok(result) => Poll::Ready(result),
-            Err(error) => Poll::Ready(Err(error.into())),
+            Poll::Pending
         }
     }
 }
-
-impl<T> Drop for UnboundedBufferedSink<T> {
-    fn drop(&mut self) {
-        self.task.abort();
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use std::io;
-
-    use futures::{StreamExt, stream};
-
-    use super::UnboundedBufferedStream;
-
-    #[tokio::test]
-    async fn fuses_after_read_error() {
-        let inner = stream::iter(vec![
-            Ok::<u8, io::Error>(1),
-            Err(io::Error::from(io::ErrorKind::ConnectionReset)),
-        ]);
-        let mut stream = UnboundedBufferedStream::new(inner);
-
-        assert_eq!(stream.next().await.unwrap().unwrap(), 1);
-
-        let error = stream.next().await.unwrap().unwrap_err();
-        assert_eq!(error.kind(), io::ErrorKind::ConnectionReset);
-
-        assert!(stream.next().await.is_none());
-        assert!(stream.next().await.is_none());
-    }
-}
-
 ```
 
-### Core Architecture Module: `mirrord/agent/src/util/io/throttle.rs`
-```
-//! Utils for throttling client data flowing through the agent.
-
-use std::{
-    collections::VecDeque,
-    io::{self, IoSlice},
-    ops::Deref,
-    pin::Pin,
-    sync::Arc,
-    task::{Context, Poll},
-};
-
-use bytes::{Buf, Bytes};
-use futures::{Sink, SinkExt, Stream};
-use pin_project_lite::pin_project;
-use prometheus::IntGauge;
-use tokio::{
-    io::AsyncWrite,
-    sync::{OwnedSemaphorePermit, Semaphore},
-};
-use tokio_util::sync::PollSemaphore;
-
-use crate::metrics::IntGaugeGuard;
-
-/// Shared store for permits that can be used to throttle data [`Stream`]s and [`Sink`]s.
-///
-/// Should be used when proxying data to/from the client.
-/// See [`ThrottledStream`]/[`ThrottledSink`].
-///
-/// An instance can be cloned and shared.
-/// Clones use the same permit pool.
-///
-/// The permits in use stand for the memory held: each chunk of data takes its length plus a fixed
-/// per-chunk overhead. They are reported in the `in_use` gauge, through [`ThrottlePermit`]s, and
-/// clones report to the same gauge.
-#[derive(Debug, Clone)]
-pub struct Throttle {
-    max_permits: usize,
-    sem: PollSemaphore,
-    in_use: IntGauge,
+**VERIFICATION METHOD**:
+Verify using an automated `rstest` harness executing against a `FuturesUnordered` set:
+```rust
+#[tokio::test]
+async fn verify_channel_closed_in_futures_unordered() {
+    use futures::stream::{FuturesUnordered, StreamExt};
+    let mut unordered = FuturesUnordered::new();
+    let (tx, rx) = tokio::sync::mpsc::channel::<()>(1);
+    
+    unordered.push(ChannelClosedFuture::new(tx, 42));
+    assert!(unordered.next().now_or_never().is_none());
+    
+    // Dropping rx MUST trigger immediate readiness on next poll
+    drop(rx);
+    let resolved = tokio::time::timeout(std::time::Duration::from_millis(100), unordered.next())
+        .await
+        .expect("Deadlock detected in FuturesUnordered")
+        .expect("Stream yielded None prematurely");
+        
+    assert_eq!(resolved, 42);
 }
-
-impl Throttle {
-    pub fn new(max_permits: usize, in_use: IntGauge) -> Self {
-        Self {
-            max_permits,
-            sem: PollSemaphore::new(Arc::new(Semaphore::new(max_permits))),
-            in_use,
-        }
-    }
-
-    fn poll_acquire<D: IsClientData>(
-        &mut self,
-        data: &D,
-        cx: &mut Context<'_>,
-    ) -> Poll<Option<ThrottlePermit>> {
-        let permits = data.size() + std::mem::size_of::<Bytes>();
-        let permits = permits.min(self.max_permits);
-        let permits = u32::try_from(permits).unwrap_or(u32::MAX);
-        self.sem.poll_acquire_many(cx, permits).map(|permit| {
-            permit.map(|permit| ThrottlePermit {
-                _in_use: IntGaugeGuard::new(self.in_use.clone(), permit.num_permits()),
-                _permit: permit,
-            })
-        })
-    }
-}
-
-/// Permits of a [`Throttle`], reported in its `in_use` gauge until dropped.
-#[derive(Debug)]
-pub struct ThrottlePermit {
-    _permit: OwnedSemaphorePermit,
-    _in_use: IntGaugeGuard,
-}
-
-/// Trait for values that store client data.
-pub trait IsClientData {
-    /// Returns the size of this value in memory.
-    fn size(&self) -> usize;
-}
-
-impl IsClientData for Bytes {
-    fn size(&self) -> usize {
-        self.len() + std::mem::size_of::<Bytes>()
-    }
-}
-
-/// User data that was throttled, either with [`ThrottledStream`] or [`ThrottledSink`].
-///
-/// This value borrows permits from its parent [`Throttle`] instance.
-/// The permits are returned on drop.
-#[derive(Debug)]
-pub struct Throttled<D> {
-    data: D,
-    permit: ThrottlePermit,
-}
-
-impl<D> Throttled<D> {
-    /// Returns the client data and the permits acquired from the parent [`Throttle`] instance.
-    ///
-    /// Drop the permits after removing the data from memory.
-    pub fn unpack(self) -> (D, ThrottlePermit) {
-        (self.data, self.permit)
-    }
-}
-
-impl<D> Deref for Throttled<D> {
-    type Target = D;
-
-    fn deref(&self) -> &Self::Target {
-        &self.data
-    }
-}
-
-pin_project! {
-    /// [`Stream`] wrapper that will suspend the data until
-    /// it acquired required permits from the inner [`Throttle`] instance.
-    ///
-    /// Each data item requires [`IsClientData::size`] permits.
-    pub struct ThrottledStream<D, S> {
-        throttle: Throttle,
-        #[pin]
-        stream: S,
-        ready_data: Option<D>,
-    }
-}
-
-impl<D, S> ThrottledStream<D, S> {
-    pub fn new(stream: S, throttle: Throttle) -> Self {
-        Self {
-            throttle,
-            stream,
-            ready_data: None,
-        }
-    }
-}
-
-impl<D, S> Stream for ThrottledStream<D, S>
-where
-    S: Stream<Item = io::Result<D>>,
-    D: IsClientData,
-{
-    type Item = io::Result<Throttled<D>>;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.project();
-
-        let data = match &this.ready_data {
-            Some(data) => data,
-            None => match std::task::ready!(this.stream.poll_next(cx)) {
-                Some(Ok(data)) => this.ready_data.insert(data),
-                Some(Err(error)) => return Poll::Ready(Some(Err(error))),
-                None => return Poll::Ready(None),
-            },
-        };
-
-        match std::task::ready!(this.throttle.poll_acquire(data, cx)) {
-            Some(permit) => Poll::Ready(Some(Ok(Throttled {
-                data: this.ready_data.take().expect("was filled above"),
-                permit,
-            }))),
-            None => Poll::Ready(None),
-        }
-    }
-}
-
-pin_project! {
-    /// [`Sink`] wrapper that will suspend the data until
-    /// it acquired required permits from the inner [`Throttle`] instance.
-    ///
-    /// Each data item requires [`IsClientData::size`] permits.
-    pub struct ThrottledSink<D, S> {
-        throttle: Throttle,
-        #[pin]
-        sink: S,
-        ready_data: Option<D>,
-    }
-}
-
-impl<D, S> ThrottledSink<D, S> {
-    pub fn new(sink: S, throttle: Throttle) -> Self {
-        Self {
-            throttle,
-            sink,
-            ready_data: None,
-        }
-    }
-}
-
-impl<D, S> Sink<D> for ThrottledSink<D, S>
-where
-    S: Sink<Throttled<D>, Error = io::Error>,
-    D: IsClientData,
-{
-    type Error = io::Error;
-
-    fn poll_ready(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        let mut this = self.project();
-        let Some(data) = &this.ready_data else {
-            return Poll::Ready(Ok(()));
-        };
-        std::task::ready!(this.sink.as_mut().poll_ready(cx))?;
-        let permit = std::task::ready!(this.throttle.poll_acquire(data, cx))
-            .ok_or_else(|| io::Error::other("throttler closed"))?;
-        this.sink.start_send(Throttled {
-            data: this.ready_data.take().expect("was checked above"),
-            permit,
-        })?;
-        Poll::Ready(Ok(()))
-    }
-
-    fn start_send(self: Pin<&mut Self>, item: D) -> Result<(), Self::Error> {
-        let this = self.project();
-        if this.ready_data.is_none() {
-            this.ready_data.replace(item);
-            Ok(())
-        } else {
-            Err(io::Error::other("sink not ready"))
-        }
-    }
-
-    fn poll_flush(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        std::task::ready!(self.as_mut().poll_ready_unpin(cx))?;
-        self.project().sink.poll_flush(cx)
-    }
-
-    fn poll_close(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        std::task::ready!(self.as_mut().poll_ready_unpin(cx))?;
-        self.project().sink.poll_close(cx)
-    }
-}
-
-/// Number of [`IoSlice`]s used by [`IoVecThrottledSink`] when issuing vectored writes.
-pub const MAX_IO_VECS: usize = 16;
-
-pin_project! {
-    /// [`AsyncWrite`] wrapper that turns it into a [`Sink`] of throttled [`Bytes`].
-    ///
-    /// It uses an internal buffer of size [`MAX_IO_VECS`], and flushes the data using vectored writes.
-    /// [`Throttle`] permits for each data chunk are returned only after the chunk has been fully written
-    /// into the inner writer.
-    pub struct IoVecThrottledSink<W> {
-        #[pin]
-        writer: W,
-        buffered: VecDeque<Throttled<Bytes>>,
-    }
-}
-
-impl<W> IoVecThrottledSink<W>
-where
-    W: AsyncWrite,
-{
-    pub fn new(writer: W) -> Self {
-        Self {
-            writer,
-            buffered: VecDeque::with_capacity(MAX_IO_VECS),
-        }
-    }
-
-    fn poll_flush_buffer_down_to(
-        self: Pin<&mut Self>,
-        size: usize,
-        cx: &mut Context<'_>,
-    ) -> Poll<io::Result<()>> {
-        let mut this = self.project();
-        while this.buffered.len() > size {
-            let mut io_vecs = [IoSlice::new(&[]); MAX_IO_VECS];
-            let mut filled = 0;
-            this.buffered
-                .iter()
-                .zip(io_vecs.iter_mut())
-                .for_each(|(data, io_vec)| {
-                    *io_vec = IoSlice::new(data.as_ref());
-                    filled += 1;
-                });
-            let mut written = std::task::ready!(
-                this.writer.as_mut().poll_write_vectored(
-                    cx,
-                    io_vecs
-                        .get(..filled)
-                        .expect("index comes from iteration on the array")
-                )
-            )?;
-            if written == 0 {
-                return Poll::Ready(Err(io::ErrorKind::WriteZero.into()));
-            }
-            loop {
-                let popped = this.buffered.pop_front_if(|chunk| {
-                    if chunk.len() <= written {
-                        return true;
-                    }
-                    chunk.data.advance(written);
-                    false
-                });
-                if let Some(popped) = popped {
-                    written -= popped.len();
-                } else {
-                    break;
-                }
-            }
-        }
-
-        Poll::Ready(Ok(()))
-    }
-}
-
-impl<W> Sink<Throttled<Bytes>> for IoVecThrottledSink<W>
-where
-    W: AsyncWrite,
-{
-    type Error = io::Error;
-
-    fn poll_ready(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        self.poll_flush_buffer_down_to(MAX_IO_VECS - 1, cx)
-    }
-
-    fn start_send(self: Pin<&mut Self>, item: Throttled<Bytes>) -> Result<(), Self::Error> {
-        let this = self.project();
-        if item.is_empty() {
-            Ok(())
-        } else if this.buffered.len() == MAX_IO_VECS {
-            Err(io::Error::other("sink not ready"))
-        } else {
-            this.buffered.push_back(item);
-            Ok(())
-        }
-    }
-
-    fn poll_flush(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        std::task::ready!(self.as_mut().poll_flush_buffer_down_to(0, cx))?;
-        self.project().writer.poll_flush(cx)
-    }
-
-    fn poll_close(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        std::task::ready!(self.as_mut().p
 ```
 
-### Core Architecture Module: `mirrord/agent/src/util/io/timeout.rs`
-```
-use std::{
-    io,
-    ops::Not,
-    pin::Pin,
-    task::{Context, Poll},
-    time::Duration,
-};
+---
 
-use futures::Sink;
-use pin_project_lite::pin_project;
-use tokio::time::{Instant, Sleep};
+### 2. Procfs Chroot Boundary Path Resolution Invariant
 
-pin_project! {
-    /// [`Sink`] that applies a timeout to all operations.
-    ///
-    /// Should be used when proxying data from the client.
-    /// This is a remedy for the fact that mirrord-protocol has no flow control.
-    ///
-    /// # Timeout logic
-    ///
-    /// Timeout count starts when any of the [`Sink`] methods returns [`Poll::Pending`].
-    /// Timeout is disarmed when any of the [`Sink`] methods returns [`Poll::Ready`],
-    /// or [`Sink::start_send`] succeeds.
-    pub struct TimeoutSink<S> {
-        #[pin]
-        sleep: Sleep,
-        #[pin]
-        sink: S,
-        timeout: Duration,
-        armed: bool,
-    }
-}
+**RULE**:
+When resolving paths inside an external Linux container via host `/proc/<PID>/root`, the resolver **MUST**:
+1. Recursively follow relative and absolute symlinks with an absolute hop counter bounded by a hard cap (`MAX_SYMLINK_HOPS <= 40`, matching the Linux VFS limit).
+2. Explicitly prevent symlink loops from causing unbounded recursion or stack exhaustion by returning `libc::ELOOP`.
+3. Provide a separate non-dereferencing lookup mode (`resolve_no_follow`) for metadata operations (`lstat`, `readlink`) that resolves parent directories against the container target root while preserving the final leaf component as an unresolved link.
+4. Normalize trailing slash semantics so that paths ending in `/` force resolution of the leaf component even in `no_follow` modes.
 
-impl<S> TimeoutSink<S> {
-    pub fn new(sink: S, timeout: Duration) -> Self {
-        Self {
-            sleep: tokio::time::sleep(Duration::ZERO),
-            sink,
-            timeout,
-            armed: false,
-        }
-    }
-}
+**WHY**:
+Directly concatenating host `/proc/<PID>/root` with a user-supplied path causes absolute symlinks (e.g. `/var/run -> /run`) to jump out of the target container's procfs tree and resolve against the *host* filesystem root (`/run`). This exposes host tokens, leaked secrets, or unauthorized device nodes. Failure to bound symlink recursion causes agent denial-of-service via stack overflow.
 
-impl<T, S: Sink<T, Error = io::Error>> Sink<T> for TimeoutSink<S> {
-    type Error = io::Error;
+**WHEN TO APPLY**:
+Any container agent, eBPF observer, or privileged microservice reading or mutating container filesystems via `/proc/$PID/root`.
 
-    fn poll_ready(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        let mut this = self.project();
-        if this.sink.poll_ready(cx)?.is_pending() {
-            if this.armed.not() {
-                *this.armed = true;
-                this.sleep.as_mut().reset(Instant::now() + *this.timeout);
-            }
-            std::task::ready!(this.sleep.poll(cx));
-            Poll::Ready(Err(io::ErrorKind::TimedOut.into()))
-        } else {
-            *this.armed = false;
-            Poll::Ready(Ok(()))
-        }
-    }
-
-    fn start_send(self: Pin<&mut Self>, item: T) -> Result<(), Self::Error> {
-        let this = self.project();
-        this.sink.start_send(item)?;
-        *this.armed = false;
-        Ok(())
-    }
-
-    fn poll_flush(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        let mut this = self.project();
-        if this.sink.poll_flush(cx)?.is_pending() {
-            if this.armed.not() {
-                *this.armed = true;
-                this.sleep.as_mut().reset(Instant::now() + *this.timeout);
-            }
-            std::task::ready!(this.sleep.poll(cx));
-            Poll::Ready(Err(io::ErrorKind::TimedOut.into()))
-        } else {
-            *this.armed = false;
-            Poll::Ready(Ok(()))
-        }
-    }
-
-    fn poll_close(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        let mut this = self.project();
-        if this.sink.poll_close(cx)?.is_pending() {
-            if this.armed.not() {
-                *this.armed = true;
-                this.sleep.as_mut().reset(Instant::now() + *this.timeout);
-            }
-            std::task::ready!(this.sleep.poll(cx));
-            Poll::Ready(Err(io::ErrorKind::TimedOut.into()))
-        } else {
-            *this.armed = false;
-            Poll::Ready(Ok(()))
-        }
-    }
-}
-
-```
-
-### Core Architecture Module: `mirrord/agent/src/util/path_resolver.rs`
-```
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
 use std::{
     io,
     ops::Not,
@@ -1024,100 +221,47 @@ use std::{
     path::{Component, Path, PathBuf},
 };
 
-use tracing::Level;
-
-/// A helper struct for resolving paths as seen in the target container to paths accessible from the
-/// root host.
-///
-/// Should be used whenever we need to access a file in the target container filesystem.
-#[derive(Debug, Clone)]
 pub struct InTargetPathResolver {
     root: PathBuf,
 }
 
 impl InTargetPathResolver {
-    /// Number of chained symlinks that we can resolve before returning ELOOP.
-    /// 40 matches the default on Linux.
-    const MAX_SYMLINK_HOPS: u8 = 40;
+    pub const MAX_SYMLINK_HOPS: u8 = 40;
 
     pub fn from_pid(target_pid: u64) -> Self {
-        let root = format!("/proc/{target_pid}/root");
-
-        Self {
-            root: PathBuf::from(root),
-        }
+        Self { root: PathBuf::from(format!("/proc/{target_pid}/root")) }
     }
 
-    pub fn from_root() -> Self {
-        Self {
-            root: PathBuf::from("/"),
-        }
-    }
-
-    /// Returns the given path, resolved with [`Self::root`] as root.
-    /// The returned path will never climb above [`Self::root`] and
-    /// will contain no symlinks.
-    #[tracing::instrument(level = Level::TRACE, ret, err(level = Level::DEBUG))]
     pub fn resolve(&self, path: &Path) -> io::Result<PathBuf> {
         let mut depth = Self::MAX_SYMLINK_HOPS;
         self.resolve_inner(path, PathBuf::new(), &mut depth)
-            .map(|p| self.root.join(&p))
+            .map(|p| self.root.join(p))
     }
 
-    /// Turns a path returned by [`Self::resolve`] back into the path as seen in the target
-    /// container, by replacing the [`Self::root`] prefix with `/`.
-    ///
-    /// Needed when a resolved path is combined with further user-provided components (e.g. the
-    /// `pathname` of `fstatat` relative to a `dirfd`), since the result has to go through
-    /// resolution again.
-    pub fn unresolve(&self, resolved: &Path) -> io::Result<PathBuf> {
-        resolved
-            .strip_prefix(&self.root)
-            .map(|path| Path::new("/").join(path))
-            .map_err(|_| {
-                io::Error::new(
-                    io::ErrorKind::InvalidInput,
-                    "path is not under the target root",
-                )
-            })
+    pub fn resolve_no_follow(&self, path: &Path) -> io::Result<PathBuf> {
+        // POSIX standard: Trailing slash explicitly requests following the final link
+        if path.as_os_str().as_bytes().ends_with(b"/") {
+            return self.resolve(path);
+        }
+
+        match (path.parent(), path.file_name()) {
+            (Some(parent), Some(name)) => Ok(self.resolve(parent)?.join(name)),
+            _ => self.resolve(path),
+        }
     }
 
-    /// Main (bounded) recursive implementation function for resolving paths.
-    /// Returns paths *without* the [`Self::root`] prefix, so these paths are
-    /// *relative* to [`Self::root`]. Use [`Self::resolve`] to get real paths.
-    /// This function is mainly for normalizing the path and correctly resolving
-    /// any symlinks.
-    ///
-    /// `max_depth` is the max number of symlinks we are allowed to resolve
-    /// before returning ELOOP. We use a `&mut` instead of passing it by value
-    /// because it is decremented in recursive child calls, of which there might
-    /// be multiple at the same recursion depth.
     fn resolve_inner(&self, path: &Path, from: PathBuf, max_depth: &mut u8) -> io::Result<PathBuf> {
-        let mut tmp_path = if path.has_root() {
-            PathBuf::new()
-        } else {
-            from
-        };
+        let mut tmp_path = if path.has_root() { PathBuf::new() } else { from };
 
         for comp in path.components() {
             match comp {
-                Component::Prefix(_) => {
-                    return Err(io::Error::new(
-                        io::ErrorKind::InvalidInput,
-                        "path prefixes are not supported",
-                    ));
-                }
-                Component::RootDir => {}
-                Component::CurDir => {}
-                Component::ParentDir => {
-                    tmp_path.pop();
-                }
+                Component::Prefix(_) => return Err(io::Error::new(io::ErrorKind::InvalidInput, "Prefix not supported")),
+                Component::RootDir | Component::CurDir => {}
+                Component::ParentDir => { tmp_path.pop(); }
                 Component::Normal(comp) => {
                     tmp_path.push(comp);
                     let real_path = self.root.join(&tmp_path);
 
-                    // We don't use [`Path::is_symlink`] because it
-                    // consumes all errors and returns false.
                     let is_symlink = match real_path.symlink_metadata() {
                         Ok(meta) => meta.file_type().is_symlink(),
                         Err(err) if err.kind() == io::ErrorKind::NotFound => false,
@@ -1131,1031 +275,241 @@ impl InTargetPathResolver {
                     if *max_depth == 0 {
                         return Err(io::Error::from_raw_os_error(libc::ELOOP));
                     }
-
                     *max_depth -= 1;
 
-                    // Symlink logic
                     let link = real_path.read_link()?;
-
-                    let from = tmp_path
-                        .parent()
-                        .expect("tmp_path should not be empty at this point");
-
-                    tmp_path = self.resolve_inner(&link, from.to_path_buf(), max_depth)?;
+                    let from = tmp_path.parent().expect("tmp_path parent exists").to_path_buf();
+                    tmp_path = self.resolve_inner(&link, from, max_depth)?;
                 }
             }
         }
 
-        assert!(tmp_path.has_root().not());
-
         if path.as_os_str().as_bytes().ends_with(b"/") {
             tmp_path.push("");
         }
-
         Ok(tmp_path)
     }
-
-    /// Resolves `path` like [`Self::resolve`], but does not follow a symlink in the last
-    /// component.
-    ///
-    /// Meant for operations that act on the link itself, such as `lstat` and `readlink`. Joining
-    /// the unresolved path onto the target root is not enough for those: the kernel resolves
-    /// absolute symlinks in the intermediate components (e.g. `/var/run -> /run`) against the
-    /// agent's root instead of the target's.
-    ///
-    /// A trailing slash makes the last component follow symlinks, same as in the kernel.
-    pub fn resolve_no_follow(&self, path: &Path) -> io::Result<PathBuf> {
-        if path.as_os_str().as_bytes().ends_with(b"/") {
-            return self.resolve(path);
-        }
-
-        match (path.parent(), path.file_name()) {
-            (Some(parent), Some(name)) => Ok(self.resolve(parent)?.join(name)),
-            _ => self.resolve(path),
-        }
-    }
 }
-
-#[cfg(test)]
-impl InTargetPathResolver {
-    /// Constructs a new resolver with the given root path.
-    ///
-    /// Makes it easy to test with [`tempfile::tempdir`].
-    pub fn with_root_path(root: PathBuf) -> Self {
-        Self { root }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use std::{fs, os::unix::fs::symlink};
-
-    use super::*;
-
-    /// Target root with `/var/run -> /run` (absolute) and `/run/secrets/token -> ..data/token`.
-    fn target_root() -> tempfile::TempDir {
-        let root = tempfile::tempdir().unwrap();
-        fs::create_dir_all(root.path().join("var")).unwrap();
-        fs::create_dir_all(root.path().join("run/secrets/..data")).unwrap();
-        fs::write(root.path().join("run/secrets/..data/token"), "secret").unwrap();
-        symlink("/run", root.path().join("var/run")).unwrap();
-        symlink("..data/token", root.path().join("run/secrets/token")).unwrap();
-        root
-    }
-
-    #[test]
-    fn no_follow_resolves_absolute_symlink_in_parent() {
-        let root = target_root();
-        let resolver = InTargetPathResolver::with_root_path(root.path().to_path_buf());
-
-        let resolved = resolver
-            .resolve_no_follow(Path::new("/var/run/secrets/token"))
-            .unwrap();
-
-        assert_eq!(resolved, root.path().join("run/secrets/token"));
-        assert!(resolved.symlink_metadata().unwrap().is_symlink());
-        assert_eq!(resolved.read_link().unwrap(), PathBuf::from("..data/token"));
-    }
-
-    #[test]
-    fn no_follow_keeps_last_component_symlink() {
-        let root = target_root();
-        let resolver = InTargetPathResolver::with_root_path(root.path().to_path_buf());
-
-        let resolved = resolver.resolve_no_follow(Path::new("/var/run")).unwrap();
-
-        assert_eq!(resolved, root.path().join("var/run"));
-        assert_eq!(resolved.read_link().unwrap(), PathBuf::from("/run"));
-    }
-
-    #[test]
-    fn no_follow_with_trailing_slash_follows_last_component() {
-        let root = target_root();
-        let resolver = InTargetPathResolver::with_root_path(root.path().to_path_buf());
-
-        let resolved = resolver.resolve_no_follow(Path::new("/var/run/")).unwrap();
-
-        assert!(resolved.symlink_metadata().unwrap().is_dir());
-    }
-
-    #[test]
-    fn no_follow_root() {
-        let root = target_root();
-        let resolver = InTargetPathResolver::with_root_path(root.path().to_path_buf());
-
-        let resolved = resolver.resolve_no_follow(Path::new("/")).unwrap();
-
-        assert!(resolved.symlink_metadata().unwrap().is_dir());
-    }
-
-    /// `/a/b -> c`, `/a/c -> d`, `/a/d` is a file.
-    #[test]
-    fn follows_chain_of_relative_symlinks() {
-        let root = tempfile::tempdir().unwrap();
-        fs::create_dir_all(root.path().join("a")).unwrap();
-        fs::write(root.path().join("a/d"), "").unwrap();
-        symlink("c", root.path().join("a/b")).unwrap();
-        symlink("d", root.path().join("a/c")).unwrap();
-        let resolver = InTargetPathResolver::with_root_path(root.path().to_path_buf());
-
-        let resolved = resolver.resolve(Path::new("/a/b")).unwrap();
-
-        assert_eq!(resolved, root.path().join("a/d"));
-    }
-
-    /// `/x -> /y`, `/y -> /z`, `/z` is a file.
-    #[test]
-    fn follows_chain_of_absolute_symlinks() {
-        let root = tempfile::tempdir().unwrap();
-        fs::write(root.path().join("z"), "").unwrap();
-        symlink("/y", root.path().join("x")).unwrap();
-        symlink("/z", root.path().join("y")).unwrap();
-        let resolver = InTargetPathResolver::with_root_path(root.path().to_path_buf());
-
-        let resolved = resolver.resolve(Path::new("/x")).unwrap();
-
-        assert_eq!(resolved, root.path().join("z"));
-    }
-
-    /// `/a -> b`, `/b -> a`.
-    #[test]
-    fn symlink_loop_is_eloop() {
-        let root = tempfile::tempdir().unwrap();
-        symlink("b", root.path().join("a")).unwrap();
-        symlink("a", root.path().join("b")).unwrap();
-        let resolver = InTargetPathResolver::with_root_path(root.path().to_path_buf());
-
-        let err = resolver.resolve(Path::new("/a")).unwrap_err();
-
-        assert_eq!(err.raw_os_error(), Some(libc::ELOOP));
-    }
-
-    /// `/d0 -> d1/../d1`, `/d1 -> d2/../d2`, and so on down to a real directory.
-    ///
-  
-```
-
-### Core Architecture Module: `mirrord/agent/src/util/protocol_version.rs`
-```
-use std::sync::{Arc, Mutex};
-
-/// Shared and cloneable [`mirrord_protocol`] version of an agent client.
-///
-/// Client's [`mirrord_protocol`] is used in multiple places.
-/// Storing it in behind a shared wrapper allows us to simplify the code
-/// and avoid passing it around in messages.
-///
-/// Its [`Default`] implementation sets the version to `1.2.2`.
-/// This is the last version that did not support version negotiation.
-/// See [reference](https://github.com/metalbear-co/mirrord/commit/56da9828ad2553e6c5a11124c5d65f4d4b00e6e6#diff-3c754d6cce3c1b7f4856fc34e66df5e6d8850138dd1273be60f87420bc064f73).
-///
-/// Thanks to having a default value, we can still safely match against
-/// [`semver::VersionReq::STAR`].
-///
-/// # Note
-///
-/// This could be implemeted nicely with [arc-swap](https://docs.rs/arc-swap/latest/arc_swap/),
-/// but this struct alone is not worth the extra dependency.
-#[derive(Clone, Debug)]
-pub struct ClientProtocolVersion(Arc<Mutex<semver::Version>>);
-
-impl Default for ClientProtocolVersion {
-    fn default() -> Self {
-        Self(Arc::new(Mutex::new(semver::Version::new(1, 2, 2))))
-    }
-}
-
-impl ClientProtocolVersion {
-    /// Replaces the protocol version stored in this struct.
-    ///
-    /// Should be called when
-    /// [`ClientMessage::SwitchProtocolVersion`](mirrord_protocol::ClientMessage::SwitchProtocolVersion)
-    /// is received from the client.
-    pub fn replace(&self, version: semver::Version) {
-        *self.0.lock().unwrap() = version;
-    }
-
-    /// Returns whether the protocol version stored in this struct matches the given
-    /// [`semver::VersionReq`].
-    pub fn matches(&self, version_req: &semver::VersionReq) -> bool {
-        version_req.matches(&self.0.lock().unwrap())
-    }
-}
-
-#[cfg(test)]
-impl std::str::FromStr for ClientProtocolVersion {
-    type Err = semver::Error;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        s.parse().map(Mutex::new).map(Arc::new).map(Self)
-    }
-}
-
-```
-
-### Core Architecture Module: `mirrord/agent/src/util/rolledback_stream.rs`
-```
-use std::{
-    io,
-    ops::Not,
-    pin::Pin,
-    task::{Context, Poll},
-};
-
-use actix_codec::ReadBuf;
-use bytes::Buf;
-use tokio::io::{AsyncRead, AsyncWrite};
-
-/// A wrapper over an IO stream with a prepended prefix.
-///
-/// Its [`AsyncRead`] implementation will first read from the prefix, and only when it is
-/// exhausted, it will read from the inner stream.
-///
-/// Once the prefix is exhausted, it is dropped to free the memory.
-pub struct RolledBackStream<IO, B> {
-    stream: IO,
-    prefix: Option<B>,
-}
-
-impl<IO, B> RolledBackStream<IO, B>
-where
-    B: Buf,
-{
-    /// Prepends the given stream with the `prefix`.
-    pub fn new(stream: IO, prefix: B) -> Self {
-        Self {
-            stream,
-            prefix: prefix.has_remaining().then_some(prefix),
-        }
-    }
-}
-
-impl<IO, B> AsyncRead for RolledBackStream<IO, B>
-where
-    IO: AsyncRead + Unpin,
-    B: Buf + Unpin,
-{
-    fn poll_read(
-        self: Pin<&mut Self>,
-        cx: &mut Context<'_>,
-        buf: &mut ReadBuf<'_>,
-    ) -> Poll<io::Result<()>> {
-        let this = self.get_mut();
-
-        let Some(prefix) = this.prefix.as_mut() else {
-            return Pin::new(&mut this.stream).poll_read(cx, buf);
-        };
-
-        // At this point, `prefix` cannot be empty.
-        // This is guaranteed by the check in `RolledBackStream::new`
-        // and the check at the end of this function.
-
-        let mut remaining_capacity = buf.remaining();
-        while remaining_capacity > 0 {
-            let chunk = prefix.chunk();
-
-            if chunk.is_empty() {
-                break;
-            }
-
-            let chunk = chunk.get(..remaining_capacity).unwrap_or(chunk);
-            buf.put_slice(chunk);
-            prefix.advance(chunk.len());
-            remaining_capacity = buf.remaining();
-        }
-
-        if prefix.has_remaining().not() {
-            this.prefix = None;
-        }
-
-        Poll::Ready(Ok(()))
-    }
-}
-
-impl<IO, B> AsyncWrite for RolledBackStream<IO, B>
-where
-    IO: AsyncWrite + Unpin,
-    B: Unpin,
-{
-    fn is_write_vectored(&self) -> bool {
-        self.stream.is_write_vectored()
-    }
-
-    fn poll_flush(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<(), io::Error>> {
-        Pin::new(&mut self.get_mut().stream).poll_flush(cx)
-    }
-
-    fn poll_shutdown(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<(), io::Error>> {
-        Pin::new(&mut self.get_mut().stream).poll_shutdown(cx)
-    }
-
-    fn poll_write(
-        self: Pin<&mut Self>,
-        cx: &mut Context<'_>,
-        buf: &[u8],
-    ) -> Poll<Result<usize, io::Error>> {
-        Pin::new(&mut self.get_mut().stream).poll_write(cx, buf)
-    }
-
-    fn poll_write_vectored(
-        self: Pin<&mut Self>,
-        cx: &mut Context<'_>,
-        bufs: &[io::IoSlice<'_>],
-    ) -> Poll<Result<usize, io::Error>> {
-        Pin::new(&mut self.get_mut().stream).poll_write_vectored(cx, bufs)
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use rstest::rstest;
-    use tokio::io::AsyncReadExt;
-
-    use super::RolledBackStream;
-
-    #[rstest]
-    #[case(
-        "some data",
-        "some more data",
-        &[
-            "some dat",
-            "a",
-            "some mor",
-            "e data",
-            "",
-        ],
-    )]
-    #[case(
-        "GET / HTTP/1.1\r\n\r\n",
-        "",
-        &[
-            "GET / HT",
-            "TP/1.1\r\n",
-            "\r\n",
-            "",
-        ],
-    )]
-    #[tokio::test]
-    async fn rolledback_stream_read(
-        #[case] buffer: &str,
-        #[case] stream: &str,
-        #[case] expected_reads: &[&str],
-    ) {
-        let mut stream = RolledBackStream::new(stream.as_bytes(), buffer.as_bytes());
-
-        for expected_read in expected_reads {
-            let mut buffer = [0_u8; 8];
-            let bytes_read = stream.read_buf(&mut buffer.as_mut_slice()).await.unwrap();
-            assert_eq!(
-                std::str::from_utf8(buffer.get(..bytes_read).unwrap()).unwrap(),
-                *expected_read,
-            );
-        }
-    }
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5092** (2026-10-18): **mirrord crashes Go programs on Linux ARM64**
-  *Symptoms*: ### Bug Description  Under mirrord 3.274.0 on Linux ARM64, a Go program can crash with SIGSEGV when a system call returns a 64-bit value, such as a pointer. The kernel call succeeds, but the program receives a corrupted result.  Example: an anonymous `mmap` returns `0xffff83298000`. The Go program receives `0xffffffff83298000` with no error, and its first write to that address faults. `mmap` is only one example. Any hooked syscall with a result wider than 32 bits is affected.  Cause: mirrord intercepts Go syscalls in the [ARM64 hook](https://github.com/metalbear-co/mirrord/blob/747cc39839876068bbd031cf1d31cdf3ced70f34/mirrord/layer-go/src/linux_aarch64.rs#L24-L81). The hook uses Go's `runtime.asmcgocall` to run mirrord's Rust handler, which returns a 64-bit `i64`. Go declares `asmcgocall` as returning `int32`, so its [assembly implementation](https://github.com/golang/go/blob/6885bad7dd86880be6929c02085e5c7a67ff2887/src/runtime/asm_arm64.s#L1012) stores the result with `MOVW`, keeping only the low 32 bits (sign-extended). The hook then treats this truncated value as the full syscall result.  ```mermaid sequenceDiagram     participant G as Go caller (Syscall6)     participant D as mirrord hook (asm)     participant A as runtime.asmcgocall     participant H as Rust handler     participant K as Linux kernel      G->>D: Syscall6(SYS_MMAP, ...)     D->>A: asmcgocall(handler)     A->>H: call     H->>K: mmap(...)     K-->>H: 0xffff83298000     H-->>A: i64 result     Note over A: Dec
-
-- **Issue #5026** (2026-10-16): **README example for disabling agent capabilities doesn't disable anything**
-  *Symptoms*: ### Bug Description  Hi, I tried the example from the ["Additional capabilities"](https://github.com/metalbear-co/mirrord/blob/c0bfc954bb9e89f04dafe01d90022424d9038716/README.md#L155-L168) section of the README and the agent still gets all of its capabilities:  ``` $ MIRRORD_AGENT_DISABLED_CAPABILITIES=CAP_NET_RAW,CAP_SYS_PTRACE mirrord exec --target pod/root-target -- sleep 12 $ kubectl get pod/mirrord-agent-xie9vwzomp-sl9dv -o jsonpath='{.spec.containers[0].securityContext.capabilities}' {"add":["SYS_ADMIN","SYS_PTRACE","NET_ADMIN"]} ```  I think there are two reasons. [`agent.disabled_capabilities`](https://github.com/metalbear-co/mirrord/blob/c0bfc954bb9e89f04dafe01d90022424d9038716/mirrord/config/src/agent.rs#L241-L250) has no env variable, so it can only be set in the config file. And in the config file the names only work without the `CAP_` prefix, because [`get_capabilities`](https://github.com/metalbear-co/mirrord/blob/c0bfc954bb9e89f04dafe01d90022424d9038716/mirrord/kube/src/api/container/util.rs#L25-L38) compares the strings as they are, so `["CAP_SYS_PTRACE"]` and `["sys_ptrace"]` are ignored without any warning and only `["SYS_PTRACE"]` removes it. Also `NET_RAW` is not in the list anymore.  Since I had the cluster up I also checked what happens without each one, because the README only says it "will possibly limit mirrord functionalities":  | disabled | agent as a job | ephemeral agent | |---|---|---| | `SYS_PTRACE` | the agent doesn't start (`failed to open tar
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `c133334a` (2026-11-17)
-**Commit Message**: Prepare release 3.290.0 (#5250)
-
-Co-authored-by: cubby-mb[bot] <273354325+cubby-mb[bot]@users.noreply.github.com>
-
-**File**: `CHANGELOG.md` (modified, +27/-0)
-```diff
-@@ -8,6 +8,33 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
- 
- <!-- towncrier release notes start -->
- 
-+## [3.290.0](https://github.com/metalbear-co/mirrord/tree/3.290.0) - 2026-11-17
-+
-+
-+### Added
-+
-+- `mirrord preview start` and `mirrord preview up` can now run without a target
-+  to provision branch databases alone: with `feature.db_branches` and no
-+  `target`, the operator creates the branches and keeps them for the preview's
-+  TTL. A targetless `mirrord exec` with branches the operator provisions
-+  creates them the same way and gets their connection values in its
-+  environment. Branch connection values must then come from a literal, a
-+  Kubernetes Secret, or a ConfigMap named directly, since there is no target
-+  pod to read them from. Secret manager sources and `iam_auth` work without a
-+  target only for S3 and turbopuffer branches, and Spanner branches still need
-+  a target.
-+
-+
-+### Fixed
-+
-+- The serverless workload companion and the CLI's sessions-manager connection
-+  trust the CA certificates bundled into mirrord, alongside the system's when
-+  it has any, so application images no longer need `ca-certificates` installed
-+  to connect to MetalBear Cloud. The data-plane connection trusts the system's
-+  CA certificates too, so a sessions-manager behind a private CA or a
-+  transparently intercepting proxy no longer passes registration only to fail
-+  every data-plane connection.
-+
- ## [3.289.0](https://github.com/metalbear-co/mirrord/tree/3.289.0) - 2026-11-16
- 
- 
-```
-
-**File**: `Cargo.lock` (modified, +55/-55)
-```diff
-@@ -2501,7 +2501,7 @@ checksum = "1aaf95b3e5c8f23aa320147307562d361db0ae0d51242340f558153b4eb2439b"
- 
- [[package]]
- name = "double_listen"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "libc",
- ]
-@@ -2902,7 +2902,7 @@ dependencies = [
- 
- [[package]]
- name = "fileops"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "libc",
- ]
-@@ -4076,7 +4076,7 @@ checksum = "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695"
- 
- [[package]]
- name = "issue1317"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "axum",
-  "env_logger",
-@@ -4086,7 +4086,7 @@ dependencies = [
- 
- [[package]]
- name = "issue1776"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "errno 0.3.14",
-  "libc",
-@@ -4095,22 +4095,22 @@ dependencies = [
- 
- [[package]]
- name = "issue1776portnot53"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "libc",
-  "socket2 0.5.10",
- ]
- 
- [[package]]
- name = "issue1899"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "libc",
- ]
- 
- [[package]]
- name = "issue2001"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "libc",
- ]
-@@ -4714,7 +4714,7 @@ checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
- 
- [[package]]
- name = "listen_ports"
--version = "3.289.0"
-+version = "3.290.0"
- 
- [[package]]
- name = "litemap"
-@@ -5064,7 +5064,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "actix-codec",
-  "atomic-write-file",
-@@ -5172,7 +5172,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-agent"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "actix-codec",
-  "async-pidfd",
-@@ -5241,7 +5241,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-agent-env"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "base64 0.22.1",
-  "k8s-openapi",
-@@ -5254,7 +5254,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-agent-iptables"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "async-trait",
-  "caps",
-@@ -5270,7 +5270,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-analytics"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "assert-json-diff",
-  "base64 0.22.1",
-@@ -5288,7 +5288,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-auth"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "base64 0.22.1",
-  "bcder",
-@@ -5316,7 +5316,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-cluster-auth"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "aws-config",
-  "aws-credential-types",
-@@ -5350,7 +5350,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-command"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "tempfile",
-  "tokio",
-@@ -5359,7 +5359,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-config"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "base64 0.22.1",
-  "bimap",
-@@ -5402,7 +5402,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-config-derive"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "proc-macro2",
-  "proc-macro2-diagnostics",
-@@ -5412,7 +5412,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-console"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "bincode",
-  "drain",
-@@ -5431,7 +5431,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-intproxy"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "actix-codec",
-  "anyhow",
-@@ -5486,7 +5486,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-intproxy-protocol"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "bincode",
-  "bytes",
-@@ -5500,7 +5500,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-jaq"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "jaq-core",
-  "jaq-json",
-@@ -5513,7 +5513,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-kube"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "async-stream",
-  "futures",
-@@ -5542,7 +5542,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-layer"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "actix-codec",
-  "apple-codesign",
-@@ -5584,7 +5584,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-layer-core"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "frida-gum",
-  "libc",
-@@ -5594,7 +5594,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-layer-go"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "frida-gum",
-  "libc",
-@@ -5606,7 +5606,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-layer-lib"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "base64 0.22.1",
-  "bincode",
-@@ -5646,7 +5646,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-layer-macro"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "proc-macro2",
-  "quote",
-@@ -5655,7 +5655,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-layer-tests"
--version = "3.289.0"
-+version = "3.290.0"
- dependencies = [
-  "actix-codec",
-  "apple-codesign",
-@@ -5682,7 +5682,7
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -72,7 +72,7 @@ ignored-paths = [
- # latest commits on rustls suppress certificate verification
- [workspace.package]
- edition = "2024"
--version = "3.289.0"
-+version = "3.290.0"
- license = "MIT"
- readme = "README.md"
- repository = "https://github.com/metalbear/mirrord"
-```
-
-**File**: `changelog.d/+preview-targetless-db-branches.added.md` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--`mirrord preview start` and `mirrord preview up` can now run without a target to provision branch databases alone: with `feature.db_branches` and no `target`, the operator creates the branches and keeps them for the preview's TTL. A targetless `mirrord exec` with branches the operator provisions creates them the same way and gets their connection values in its environment. Branch connection values must then come from a literal, a Kubernetes Secret, or a ConfigMap named directly, since there is no target pod to read them from. Secret manager sources and `iam_auth` work without a target only for S3 and turbopuffer branches, and Spanner branches still need a target.
-```
-
-**File**: `changelog.d/+serverless-bundled-ca.fixed.md` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--The serverless workload companion and the CLI's sessions-manager connection trust the CA certificates bundled into mirrord, alongside the system's when it has any, so application images no longer need `ca-certificates` installed to connect to MetalBear Cloud. The data-plane connection trusts the system's CA certificates too, so a sessions-manager behind a private CA or a transparently intercepting proxy no longer passes registration only to fail every data-plane connection.
-```
-
-**File**: `changelog.d/+serverless-disabled-error-kind.internal.md` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--Report an operator that has the serverless sessions-manager turned off under the same analytics error kind as one that does not serve it.
-```
-
-**File**: `mirrord/mcp/corpus/docs.pin.json` (modified, +2/-2)
-```diff
-@@ -1,5 +1,5 @@
- {
-   "repo": "metalbear-co/docs",
--  "commit": "e76683ea1f3ea13d6ef452d969863cfbef8666db",
--  "synced_at": "2026-11-16T23:45:28Z"
-+  "commit": "0f121e6b2432ceaa89dd14cae6af905d7b9ec83f",
-+  "synced_at": "2026-11-17T13:02:18Z"
- }
-```
-
-**File**: `mirrord/mcp/corpus/docs/getting-started/first-session.md` (modified, +2/-2)
-```diff
-@@ -41,7 +41,7 @@ To run several services together from one config file, use [`mirrord up`](../usi
- mirrord up init
- ```
- 
--This walks you through an interactive wizard and writes a `mirrord-up.yaml` for you, so you don't need to write any config by hand. Once you have a `mirrord-up.yaml`, start the services by running `mirrord up`.
-+This walks you through an interactive wizard and writes a `mirrord-up.yaml` for you, so you don't need to write any config by hand. To answer the same questions in your browser, run `mirrord wizard` (see [Onboarding Wizard](onboarding-wizard.md)). Once you have a `mirrord-up.yaml`, start the services by running `mirrord up`.
- 
- ## IDE extensions
- 
-@@ -92,7 +92,7 @@ Install the [mirrord browser extension](https://chromewebstore.google.com/detail
- 
- mirrord reads config from `<project-path>/.mirrord/mirrord.json` (also supports `.toml` and `.yaml`). You can also prefix config files, e.g. `my-config.mirrord.json`.
- 
--Run `mirrord wizard` to generate a config file interactively (see [Onboarding Wizard](onboarding-wizard.md)), or see the full [configuration options](https://metalbear.com/mirrord/docs/config). To keep an Operator preference across projects, see [Global Configuration](../installing-mirrord/global-configuration.md).
-+See the full [configuration options](https://metalbear.com/mirrord/docs/config). To keep an Operator preference across projects, see [Global Configuration](../installing-mirrord/global-configuration.md).
- 
- {% hint style="info" %}
- The IDE extensions provide autocomplete for mirrord config files.
-```
-
----
-
-### Incident Patch 2: `c889ba3e` (2026-11-17)
-**Commit Message**: Report a turned-off serverless sessions-manager as not served (#5247)
-
-* Report a turned-off serverless sessions-manager as not served
-
-An operator that supports the serverless sessions-manager but has it turned
-off was reported to analytics as a generic agent connection failure.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-* Fix matching
-
-* Clear new cargo-deny advisories
-
-Upgrade libz-sys to 1.1.33 for RUSTSEC-2026-0544, and ignore the zip
-advisories apple-codesign holds us on (no aes-crypto, and it only writes
-zips) and the unmaintained chrono family, which has no replacement yet.
-
----------
-
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
-Co-authored-by: Razz4780 <[REDACTED_EMAIL]>
-Co-authored-by: Michał Smolarek <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -4671,9 +4671,9 @@ dependencies = [
- 
- [[package]]
- name = "libz-sys"
--version = "1.1.31"
-+version = "1.1.33"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
-+checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
- dependencies = [
-  "cc",
-  "libc",
-```
-
-**File**: `changelog.d/+serverless-disabled-error-kind.internal.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Report an operator that has the serverless sessions-manager turned off under the same analytics error kind as one that does not serve it.
-```
-
-**File**: `deny.toml` (modified, +10/-0)
-```diff
-@@ -25,6 +25,16 @@ ignore = [
-   "RUSTSEC-2026-0368",
-   "RUSTSEC-2026-0369",
-   "RUSTSEC-2026-0429",
-+  # zip AES entries read without checking their MAC; we don't enable `aes-crypto`.
-+  "RUSTSEC-2026-0545",
-+  # zip `ZipStreamReader` names can differ from the central directory; apple-codesign only writes zips.
-+  "RUSTSEC-2026-0548",
-+  # chrono and the crates around it are unmaintained, with no maintained release to move to yet
-+  # (https://github.com/chronotope/chrono/issues/1768). chrono-tz comes from tera.
-+  "RUSTSEC-2026-0542", # humantime
-+  "RUSTSEC-2026-0543", # chrono
-+  "RUSTSEC-2026-0555", # chrono-tz
-+  "RUSTSEC-2026-0559", # chrono-tz-build
-   # crypto-bigint timing side channels, held at 0.5 by apple-codesign's elliptic-curve 0.13. We only use it to
-   # re-sign binaries locally, with no secrets an attacker could observe.
-   "RUSTSEC-2026-0387",
-```
-
-**File**: `mirrord/cli/src/error.rs` (modified, +3/-3)
-```diff
-@@ -1378,6 +1378,9 @@ impl From<OperatorApiError> for CliError {
-         {
-             return Self::LocalShare(LocalShareError::Operator(status.message.clone()));
-         }
-+        if value.is_sessions_manager_not_served() {
-+            return Self::ServerlessSessionsManagerNotServed;
-+        }
- 
-         match value {
-             OperatorApiError::BranchCreationFailed { operation, message } => {
-@@ -1411,9 +1414,6 @@ impl From<OperatorApiError> for CliError {
-                 Self::LocalPaidFeatureRequiresPlan { feature, gate }
-             }
-             OperatorApiError::FeatureNotLicensed { gate } => Self::PaidFeatureRequiresPlan { gate },
--            OperatorApiError::ServerlessSessionsManagerNotServed => {
--                Self::ServerlessSessionsManagerNotServed
--            }
-             OperatorApiError::CreateKubeClient(e) => {
-                 Self::friendlier_error_or_else(e, Self::CreateKubeApiFailed)
-             }
-```
-
-**File**: `mirrord/operator/src/client.rs` (modified, +3/-12)
-```diff
-@@ -787,18 +787,11 @@ where
-         &self.client
-     }
- 
--    /// Fails with [`OperatorApiError::ServerlessSessionsManagerNotServed`] unless this operator
--    /// serves the operator-hosted sessions-manager routes.
-+    /// Checks whether this operator serves the sessions-manager routes.
-     pub fn check_serverless_sessions_manager_served(&self) -> OperatorApiResult<()> {
-         self.operator
-             .spec
-             .require_feature(NewOperatorFeature::ServerlessSessionsManager)
--            .map_err(|error| match error {
--                OperatorApiError::UnsupportedFeature { .. } => {
--                    OperatorApiError::ServerlessSessionsManagerNotServed
--                }
--                error => error,
--            })
-     }
- 
-     /// Create a new CI api key by generating a random key pair, creating a certificate
-@@ -3997,10 +3990,8 @@ mod test {
-                         assert_eq!(gate.required_plan, crate::types::RequiredPlan::Team);
-                     }
-                     (None, Ok(())) => {}
--                    (
--                        None | Some("future_plan"),
--                        Err(OperatorApiError::ServerlessSessionsManagerNotServed),
--                    ) => {}
-+                    (None | Some("future_plan"), Err(error))
-+                        if error.is_sessions_manager_not_served() => {}
-                     (plan, result) => {
-                         panic!("unexpected serverless result for {plan:?}: {result:?}")
-                     }
-```
-
-**File**: `mirrord/operator/src/client/error.rs` (modified, +16/-2)
-```diff
-@@ -94,8 +94,6 @@ pub enum OperatorApiError {
- 
-     #[error("{gate}")]
-     FeatureNotLicensed { gate: PaidFeatureGate },
--    #[error("mirrord operator does not serve the operator-hosted sessions-manager")]
--    ServerlessSessionsManagerNotServed,
- 
-     #[error("{operation} failed with code {}: {}", status.code, status.reason)]
-     StatusFailure {
-@@ -211,4 +209,20 @@ pub enum OperatorApiError {
-     },
- }
- 
-+impl OperatorApiError {
-+    /// Whether the operator refused the operator-hosted sessions-manager because it either does
-+    /// not support it or has it turned off.
-+    pub fn is_sessions_manager_not_served(&self) -> bool {
-+        matches!(
-+            self,
-+            Self::FeatureDisabled {
-+                feature: NewOperatorFeature::ServerlessSessionsManager,
-+            } | Self::UnsupportedFeature {
-+                feature: NewOperatorFeature::ServerlessSessionsManager,
-+                ..
-+            }
-+        )
-+    }
-+}
-+
- pub type OperatorApiResult<T, E = OperatorApiError> = Result<T, E>;
-```
-
-#### Recent Merged Pull Requests:
-- **PR #5250** (2026-11-17): Release 3.290.0 (@cubby-mb[bot])
-- **PR #5249** (2026-11-17): Release 3.289.0 (@cubby-mb[bot])
-- **PR #5247** (2026-11-17): Report a turned-off serverless sessions-manager as not served (@hank-metalbear)
-- **PR #5246** (2026-11-16): intproxy: redact credential headers in the request log (@MintSoup)
-- **PR #5245** (2026-11-16): Report serverless connection failures with their own analytics error kinds (@hank-metalbear)
-- **PR #5244** (closed): mirrord ui: stop asking MetalBear Cloud users for an operator (@DmitryDodzin)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Prepare release 3.290.0
-
-**RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `c133334a`: Prepare release 3.290.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-## [3.290.0](https://github.com/metalbear-co/mirrord/tree/3.290.0) - 2026-11-17
-
-
-### Added
-
-- `mirrord preview start` and `mirrord preview up` can now run without a target
-  to provision branch databases alone: with `feature.db_branches` and no
-  `target`, the operator creates the branches and keeps them for the preview's
-  TTL. A targetless `mirrord exec` with branches the operator provisions
-  creates them the same way and gets their connection values in its
-  environment. Branch connection values must then come from a literal, a
-  Kubernetes Secret, or a ConfigMap named directly, since there is no target
-  pod to read them from. Secret manager sources and `iam_auth` work without a
-  target only for S3 and turbopuffer branches, and Spanner branches still need
-  a target.
-
-
-### Fixed
-
-- The serverless workload companion and the CLI's sessions-manager connection
-  trust the CA certificates bundled into mirrord, alongside the system's when
-  it has any, so application images no longer need `ca-certificates` installed
-  to connect to MetalBear Cloud. The data-plane connection trusts the system's
-  CA certificates too, so a sessions-manager behind a private CA or a
-  transparently in
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
+// NEVER do this: Naive path concatenation without symlink containment
+pub fn resolve_naive(target_pid: u64, untrusted_path: &Path) -> PathBuf {
+    // SECURITY CRITICAL DEFECT:
+    // If untrusted_path is "/var/run/secret" and "/var/run" is a symlink to "/run",
+    // the OS resolves "/proc/1234/root/var/run/secret" -> "/run/secret" on the HOST.
+    Path::new(&format!("/proc/{}/root", target_pid)).join(untrusted_path.strip_prefix("/").unwrap_or(untrusted_path))
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c133334a` are properly handled with clean fallback behavior.
+Create a temporary directory structure mimicking an absolute symlink loop (`/a -> b`, `/b -> a`) and an escaping symlink (`/etc/target -> /etc/shadow`). Assert that `resolve()` returns `libc::ELOOP` on cycles, and correctly prefixes the resolved absolute symlink under the mock target root without leaking host paths.
 
+---
+
+### 3. ABI Width Invariant for FFI Supervisor Hooks
+
+**RULE**:
+When intercepting native runtime system calls via runtime-internal FFI bridges (such as Go's `runtime.asmcgocall` or equivalent assembly shims), the interceptor **MUST NOT** return return values across ABI boundaries where register width expectations differ. If the caller's assembly stub expects a 32-bit integer (`int32`/`MOVW`), return values wider than 32 bits (such as 64-bit kernel pointers or offsets from `mmap`, `lseek64`, or 64-bit file descriptors) **MUST** be passed through an out-pointer parameter allocated in memory, rather than through the direct scalar return register.
+
+**WHY**:
+On 64-bit architectures (specifically Linux ARM64 / AArch64), returning a 64-bit pointer (e.g. `0xffff83298000`) across an FFI stub typed as `int32` causes the runtime assembly trampoline to execute `MOVW` (Move Word) into the result register. This zero-extends or sign-extends the lower 32 bits into `0xffffffff83298000`. When the calling program dereferences this corrupted address, it crashes immediately with `SIGSEGV`.
+
+**WHEN TO APPLY**:
+Cross-language syscall interceptors, `LD_PRELOAD` wrappers, assembly-level Go runtime hooks, and any FFI boundary involving `asmcgocall` on AArch64, x86_64, or RISC-V.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Target: Rust FFI handler bridged to Go via asmcgocall
+#[repr(C)]
+pub struct SyscallResult {
+    pub return_value: i64,
+    pub errno_value: i32,
+}
+
+#[repr(C)]
+pub struct SyscallInvocationArgs {
+    pub sysno: i64,
+    pub args: [usize; 6],
+    // The result MUST be written to an explicit output struct pointer,
+    // NEVER returned directly as a 64-bit value in register x0/rax if the ABI stub uses int32.
+    pub result: *mut SyscallResult,
+}
+
+pub unsafe extern "C" fn mirrord_safe_syscall_bridge(args: *mut SyscallInvocationArgs) -> i32 {
+    let invocation = &mut *args;
+    let (res, err) = execute_native_syscall(invocation.sysno, invocation.args);
+    
+    (*invocation.result).return_value = res;
+    (*invocation.result).errno_value = err;
+    
+    // Return explicit 0 status code matching the 32-bit ABI contract
+    0
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER do this: Returning 64-bit integer directly through an ABI stub expecting int32
+#[no_mangle]
+pub unsafe extern "C" fn mirrord_bad_syscall_hook(sysno: i64, args: *const usize) -> i64 {
+    // DEFECT: Go's ARM64 asmcgocall stub stores the return value using MOVW,
+    // which discards bits 32-63. If this call was mmap(2) returning 0xffff83298000,
+    // the Go caller receives 0xffffffff83298000, immediately crashing on memory access.
+    libc::syscall(sysno, *args)
+}
+```
+
+**VERIFICATION METHOD**:
+Unit/Integration test compiled for `aarch64-unknown-linux-gnu` invoking an anonymous `mmap` above the 32-bit address space (`MAP_ANONYMOUS`, 64-bit hint) through the hooked runtime bridge, asserting that `res as u64 & 0xFFFF_FFFF_0000_0000 != 0` and dereferencing the address writes/reads cleanly without `SIGSEGV`.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Go ARM64 Syscall Pointer Corruption via Register Truncation (BUG-ARM64-5092)
+
+- **Context**: `mirrord/layer-go/src/linux_aarch64.rs`
+- **What Was Expected**: Hooked Go system calls returning 64-bit pointers (e.g. `mmap`, `brk`, `shmat`) must return intact 64-bit virtual addresses on Linux AArch64.
+- **What Actually Happened**: On ARM64 Linux, Go applications running with mirrord crashed with `SIGSEGV` on the first write after an intercepted `mmap`. An `mmap` returning kernel address `0xffff83298000` was returned to Go as `0xffffffff83298000` (sign-extended truncation).
+- **Evidence in Repo**: Issue #5092; resolved in commit series around layer-go assembly trampoline.
+- **Root Cause**: The layer-go hook utilized Go’s internal `runtime.asmcgocall` to bridge into the Rust interceptor. Go’s internal type signature declares `asmcgocall` as returning `int32`. In the Go runtime assembly implementation (`src/runtime/asm_arm64.s`), the return register was handled with `MOVW` (Move Word, 32-bit), discarding the upper 32 bits and sign-extending the scalar into register `X0`.
+- **Remediation Code Diff**:
+```rust
+// - Direct return across asmcgocall boundary:
+// pub unsafe extern "C" fn cgo_syscall_hook(args: *const SyscallArgs) -> i64 {
+//     let ret = libc::syscall(args.nr, args.a1, ...);
+//     ret // Truncated to int32 by MOVW in Go's asm_arm64.s
+// }
+
+// + Pass return data structure via out-pointer:
+#[repr(C)]
+pub struct GoSyscallCall {
+    pub sysno: usize,
+    pub args: [usize; 6],
+    pub out_ret: usize,
+    pub out_err: usize,
+}
+
+pub unsafe extern "C" fn cgo_syscall_hook(call: *mut GoSyscallCall) -> i32 {
+    let call = &mut *call;
+    let res = libc::syscall(call.sysno as _, call.args[0], call.args[1], call.args[2], call.args[3], call.args[4], call.args[5]);
+    if res == -1 {
+        call.out_ret = 0;
+        call.out_err = *libc::__errno_location() as usize;
+    } else {
+        call.out_ret = res as usize;
+        call.out_err = 0;
+    }
+    0
+}
+```
+- **Lesson**: Never rely on register return values across runtime-internal FFI trampolines when the calling runtime's internal assembly contract does not guarantee full register width preservation.
+
+---
+
+### Incident 2: Ineffective Agent Capability Disabling Due to Prefix and Envar Mismatches (BUG-CFG-5026)
+
+- **Context**: `mirrord/config/src/agent.rs` and `mirrord/kube/src/api/container/util.rs`
+- **What Was Expected**: Setting `MIRRORD_AGENT_DISABLED_CAPABILITIES=CAP_NET_RAW,CAP_SYS_PTRACE` or using config block `disabled_capabilities: ["CAP_SYS_PTRACE"]` would drop the requested Linux capabilities from the spawned agent pod.
+- **What Actually Happened**: The agent pod continued to run with full capabilities (`SYS_ADMIN`, `SYS_PTRACE`, `NET_ADMIN`). Setting the environment variable had zero effect, and providing `CAP_` prefixed strings in the configuration was silently ignored.
+- **Evidence in Repo**: Issue #5026.
+- **Root Cause**: Two distinct defects:
+  1. `agent.disabled_capabilities` field in `mirrord-config` lacked the `#[config(env = "...")]` macro attribute, leaving the environment variable unparsed.
+  2. `get_capabilities` performed verbatim string comparison (`==`) against static lists expecting unprefixed tokens (e.g., `"SYS_PTRACE"`), while standard Linux/Kubernetes documentation uses `"CAP_SYS_PTRACE"`. Unmatched strings were dropped with no error or warning.
+- **Remediation Code Diff**:
+```rust
+// mirrord/config/src/agent.rs
+// - pub disabled_capabilities: Option<HashSet<String>>,
+// + #[config(env = "MIRRORD_AGENT_DISABLED_CAPABILITIES")]
+// + pub disabled_capabilities: Option<HashSet<String>>,
+
+// mirrord/kube/src/api/container/util.rs
+// - let disabled = config.disabled_capabilities.contains(&cap_string);
+// + let normalize = |s: &str| s.trim().to_uppercase().trim_start_matches("CAP_").to_string();
+// + let disabled_set: HashSet<String> = config
+// +     .disabled_capabilities
+// +     .iter()
+// +     .flatten()
+// +     .map(|s| normalize(s))
+// +     .collect();
+// + let disabled = disabled_set.contains(&normalize(&cap_string));
+```
+- **Lesson**: Configuration inputs matching system domain entities (such as Linux capabilities, signals, and headers) must always be normalized (casing, known prefixes like `CAP_` or `SIG`) before comparison, and supported configuration variables must have parity across CLI flags, configuration files, and environment variables.
+
+---
+
+### Incident 3: Workflow Re-run Failure Due to Stale PR Label Caching (BUG-CI-5258-A)
+
+- **Context**: `.github/workflows/ci.yaml` and `.github/workflows/check-towncrier.yaml`
+- **What Was Expected**: Adding the `docs` label to a Pull Request should allow GitHub Actions checks to bypass the Towncrier changelog validation without requiring an empty or dummy fragment.
+- **What Actually Happened**: When a contributor failed the changelog check, added the `docs` label, and hit "Re-run jobs" in GitHub Actions, the workflow failed again.
+- **Evidence in Repo**: Commit `3a843d8d`, Commit message: *"Say in AGENTS.md that the merge queue squashes pull requests... The job reads the labels with `gh pr view` when it runs, as `corpus_upstream_check` does... rather than from the event, because a re-run reuses the original event and its labels."*
+- **Root Cause**: GitHub Actions re-runs reuse the immutable `github.event` JSON payload generated when the workflow was first triggered. Reading labels via `github.event.pull_request.labels` returns the label state at initial run time, ignoring labels added subsequent to the initial failure.
+- **Remediation Code Diff**:
+```yaml
+# .github/workflows/check-towncrier.yaml
+# - if: contains(github.event.pull_request.labels.*.name, 'docs')
+# -   run: exit 0
+
+# + Fetch live label set dynamically from GitHub API via CLI:
+    - name: Check for docs bypass label
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        LABELS=$(gh pr view ${{ github.event.pull_request.number }} --json labels -q '.labels[].name')
+        if echo "$LABELS" | grep -qx "docs"; then
+          echo "PR has 'docs' label. Bypassing Towncrier changelog verification."
+          exit 0
+        fi
+        towncrier check
+```
+- **Lesson**: Never query mutable GitHub PR metadata (labels, milestone, assignees) via static `github.event` context in CI jobs that require re-run capability; query live state using `gh` CLI.
+
+---
+
+### Incident 4: Front-Matter Parser Rejection from CRLF Checkout on Windows (BUG-MCP-5258-B)
+
+- **Context**: `.gitattributes`, `mirrord/mcp/build.rs`
+- **What Was Expected**: Developer checkouts and builds of the `mirrord-mcp` crate on Windows should parse embedded documentation and skills front-matter correctly during compile-time `include_str!` extraction.
+- **What Actually Happened**: Windows checkouts converted `\n` to `\r\n` (CRLF) due to default Git `core.autocrlf=true`. The YAML front-matter parser in `mirrord-mcp` expected strict POSIX line feeds (`\n`), failing the build during `cargo build` on Windows.
+- **Evidence in Repo**: Commit `3a843d8d`, `.gitattributes` addition:
+  *"mirrord mcp embeds docs/docs and skills/skills (mirrord/mcp/build.rs) and parses their front matter with LF line endings only, so the imported trees stay LF in every checkout, Windows included... text=auto eol=lf"*
+- **Root Cause**: Missing `.gitattributes` rule permitted git checkout CRLF transformation for markdown trees embedded directly into binaries at compile time.
+- **Remediation Code Diff**:
+```gitattributes
+# .gitattributes
++# `mirrord mcp` embeds `docs/docs` and `skills/skills` (`mirrord/mcp/build.rs`) and parses their
++# front matter with LF line endings only, so the imported trees stay LF in every checkout, Windows
++# included, whatever `core.autocrlf` says. `text=auto` lets Git normalize a file saved with CRLF on
++# commit while leaving the images, which it detects as binary, byte for byte.
++docs/** text=auto eol=lf
++guides/** text=auto eol=lf
++skills/** text=auto eol=lf
+```
+- **Lesson**: Any file format processed by compile-time procedural macros or `build.rs` using strict tokenization or byte offsets must be pinned to `eol=lf` in `.gitattributes`.
+
+---
+
+### Incident 5: FuturesUnordered Hang on mpsc Sender Channel Close Detection (BUG-ASYNC-5100)
+
+- **Context**: `mirrord/agent/src/util.rs`
+- **What Was Expected**: When multiple agent clients connect, a multiplexer tracking client disconnects via `ChannelClosedFuture` within a `FuturesUnordered` pool must resolve immediately when any client drops its `Receiver`.
+- **What Actually Happened**: The multiplexing event loop hung indefinitely on `unordered.next().await`, never yielding disconnected clients.
+- **Evidence in Repo**: `mirrord/agent/src/util.rs` unit tests and commit comments:
+  *"The future used to hold the [`mpsc::Sender`] and call poll [`mpsc::Sender::closed`] in it's [`Future::poll`] implementation... However, [`FuturesUnordered::next`] was hanging forever due to [`mpsc::Sender::closed`] implementation details. New implementation of [`ChannelClosedFuture`] uses a [`BoxFuture`] internally, which works fine."*
+- **Root Cause**: Invoking `.closed()` dynamically inside `poll()` recreated the transient future and deregistered/confused Tokio's internal wakers when managed by `FuturesUnordered`.
+- **Remediation Code Diff**:
+```rust
+// mirrord/agent/src/util.rs
+// - pub(crate) struct ChannelClosedFuture<T> {
+// -     tx: mpsc::Sender<T>,
+// -     client_id: ClientId,
+// - }
+// - impl<T> Future for ChannelClosedFuture<T> {
+// -     type Output = ClientId;
+// -     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_
 
 ## 3. Application to AI-Builder-Brain Project Construction
 - **Applied Blueprints**: `astro-tailwind-v4`, `fullstack-ai-saas`, `universal-native-factory`

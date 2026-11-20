@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-CMHP",
-    "timestamp": "2026-11-18T07:14:12.829Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "d4616187f7ba720c291eb61164e2a65d27eb530abd14d1121d29fa6efbd40d20",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-NUDI",
-    "timestamp": "2026-11-18T07:22:56.262Z",
-    "repository": "Cloudflare/clef",
-    "learningId": "learn-huggingface-cloudflare-clef",
-    "contentHash": "99583d057e9bec8320d6cf2045bffed4fba58636ec55fd62e359e27c71abd9c5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-NVKS",
     "timestamp": "2026-11-18T07:22:57.820Z",
     "repository": "ClementTsang/bottom",
@@ -7490,6 +7460,36 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "52881fb3acd5c835f0669d582ef767af2a53424e55c1de98d48226e1e64ade2e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-VRHN",
+    "timestamp": "2026-11-20T01:00:31.595Z",
+    "repository": "metalbear-co/mirrord",
+    "learningId": "learn-github-metalbear-co-mirrord",
+    "contentHash": "42987ebf66e7d1cde8f469f4775f9c125b1362175957e010f1a01c8a109a90aa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-WI62",
+    "timestamp": "2026-11-20T01:01:06.170Z",
+    "repository": "maziyarpanahi/openmed",
+    "learningId": "learn-github-maziyarpanahi-openmed",
+    "contentHash": "6fa1673f97d9a9b965d4da421b5f36afba8ecc8ab61282a4a3e3e5587afab70e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

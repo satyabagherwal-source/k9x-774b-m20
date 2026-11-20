@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T00:46:48.971Z",
+  "last_updated": "2026-11-20T01:04:02.837Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T00:24:23.527Z",
@@ -13,7 +13,7 @@
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-20T00:24:25.006Z",
+      "processed_at": "2026-11-20T01:04:01.621Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -428,9 +428,9 @@
       "staged_for_review": 1
     },
     "metalbear-co-mirrord-learnings.md": {
-      "processed_at": "2026-11-18T04:49:55.829Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-20T01:02:17.647Z",
+      "promoted_canonical": 2,
+      "staged_for_review": 0
     },
     "goharbor-harbor-learnings.md": {
       "processed_at": "2026-11-19T14:03:38.550Z",
@@ -978,9 +978,9 @@
       "staged_for_review": 1
     },
     "maziyarpanahi-openmed-learnings.md": {
-      "processed_at": "2026-11-15T21:16:17.811Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-20T01:04:00.140Z",
+      "promoted_canonical": 2,
+      "staged_for_review": 0
     },
     "hashicorp-terraform-learnings.md": {
       "processed_at": "2026-11-17T08:21:42.300Z",
@@ -3533,7 +3533,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2376,
-  "total_canonical_promoted": 399,
-  "total_staged_for_review": 1781
+  "total_dossiers_evaluated": 2379,
+  "total_canonical_promoted": 403,
+  "total_staged_for_review": 1782
 }
