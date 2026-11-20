@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T23:21:26.668Z",
-  "total_cycles_completed": 11102,
-  "total_learnings_persisted": 11102,
-  "total_rules_promoted": 10452,
+  "last_updated": "2026-11-20T23:29:53.797Z",
+  "total_cycles_completed": 11103,
+  "total_learnings_persisted": 11103,
+  "total_rules_promoted": 10453,
   "history": [
-    {
-      "timestamp": "2026-11-20T01:20:34.306Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T01:22:58.542Z",
       "repository": "fallow-rs/fallow",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-20T23:21:26.668Z",
       "repository": "dosco/graphjin",
       "learningId": "learn-github-dosco-graphjin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T23:29:53.797Z",
+      "repository": "vitejs/vite",
+      "learningId": "learn-github-vitejs-vite",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

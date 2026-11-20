@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-1TRS",
-    "timestamp": "2026-11-18T20:37:37.912Z",
-    "repository": "aome510/spotify-player",
-    "learningId": "learn-github-aome510-spotify-player",
-    "contentHash": "6bd64b79da60a67e3711f30703812c0777a4de53741ebf4108340dc537b5516d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-26RU",
     "timestamp": "2026-11-18T20:37:54.762Z",
     "repository": "typedb/typedb",
@@ -7490,6 +7475,21 @@
     "repository": "dosco/graphjin",
     "learningId": "learn-github-dosco-graphjin",
     "contentHash": "4fa73f756952120a75fe9e26a97954c4fa536a93217ab9216030095912a05382",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-32BF",
+    "timestamp": "2026-11-20T23:29:53.787Z",
+    "repository": "vitejs/vite",
+    "learningId": "learn-github-vitejs-vite",
+    "contentHash": "9a654524b9fd1b8ab5cbf469a9a788e814f5d4fd4f437005a1a3453ec7280c13",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

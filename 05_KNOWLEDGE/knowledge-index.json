@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T23:22:01.459Z",
+  "last_updated": "2026-11-20T23:30:02.405Z",
   "total_verified_learnings": 9052,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22727,
+  "total_items": 22732,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-I9UB-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-38PW-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1be9f71f02be81697aeb7b564b374c8e9157dfc7b70719127f25611f1604009b",
+      "content_hash": "a8a35ac41b4e4c909ef5f21aea715cfa07a88e458ace648bbc99254f9ae738f5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:13:43.766Z"
+      "persisted_at": "2026-11-20T23:30:02.088Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d472222d96566ec161d082553da85e755d1c1665e786da4c938ae801094d2b96",
+      "content_hash": "e99fb5d17d34fc54756277ce0189fdf9fcbfefe07686030fbf2b6a75e10dd7ad",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:13:43.918Z"
+      "persisted_at": "2026-11-20T23:30:02.238Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e0488ab19cde6fa65eeec2f8cca252d8f33f87b47be4b01cf2e4633adc406b1",
+      "content_hash": "684d08d3bb234f1b17db89c9267d836f5c33ebf1046239048de3ba68245e8575",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:13:44.068Z"
+      "persisted_at": "2026-11-20T23:30:02.405Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -218774,13 +218774,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PHHM-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3824-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "66978fe98e4af85e024c37c6b3db906d18b5db687cd4b348828c5cfd997f4696",
+      "content_hash": "1981d31fca043ed6dd01e13dda0ccaf41cc971b3500626f7dc21c6a3d5adc9a0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T21:55:21.418Z"
+      "persisted_at": "2026-11-20T23:30:01.228Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218790,9 +218790,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "20ebe59fb92179cc75bb0bcff1a1067713c6e99607b8493d0c46ea30c591edf6",
+      "content_hash": "e2005a93a82e78c6a0c4f595de0e4c322bdbbb262d6e0391af0e4321b780be47",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T21:55:21.581Z"
+      "persisted_at": "2026-11-20T23:30:01.380Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218802,9 +218802,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "bfc6ebb5d64e988df537f823355d57a5e57b324fae591a3092cc1106251ca789",
+      "content_hash": "d5ea2e1b020d9304d8958e2a17f9bd1fc9016834f735a3aa3c8520d818943df2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T21:55:21.756Z"
+      "persisted_at": "2026-11-20T23:30:01.528Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -266589,14 +266589,19 @@
       "slug": "vitejs-vite",
       "platform": "github",
       "source_url": "https://github.com/vitejs/vite",
-      "source_version": "dbce0c67",
-      "content_hash": "8034c7907c13807ad38ccbdfe8c1157e888c057110e03df23162aff38e0495d6",
+      "source_version": "35674719",
+      "content_hash": "9a654524b9fd1b8ab5cbf469a9a788e814f5d4fd4f437005a1a3453ec7280c13",
       "dossier_path": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "promoted_rules": [
         {
           "number": 8864,
           "title": "shift source maps for preload rewrites instead of re-tracing them",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9662,
+          "title": "detect in-place patch file edits in lockfile hash",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -266605,7 +266610,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T04:05:40.023Z",
+      "verified_at": "2026-11-20T23:29:53.591Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -266647,10 +266652,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vitejs-vite-technical-construction-intelligence-vitejs-vite-core-invariants.md",
       "title": "Technical Construction Intelligence: vitejs/vite Core Invariants",
       "repository": "vitejs/vite",
-      "source_version": "dbce0c67",
-      "content_hash": "6d5389ea25082fba29a6b38ab937192fd96e951c14f0819f41fbc9f1c33ae1a7",
+      "source_version": "35674719",
+      "content_hash": "8ec82961aea1f7af0c6975cf8d6f3bca8a02058a19cb476681f7b87c1b0d5e07",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T04:05:40.476Z"
+      "persisted_at": "2026-11-20T23:29:54.144Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vitejs-vite": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vitejs-vite",
@@ -266659,10 +266664,10 @@
       "relative_path": "08_VERIFICATION/vitejs-vite-verification-protocol-empirical-defect-shield-for-vitejs-vite.md",
       "title": "Verification Protocol: Empirical Defect Shield for vitejs/vite",
       "repository": "vitejs/vite",
-      "source_version": "dbce0c67",
-      "content_hash": "31bafce20fcb7306f9cde2e4f048ac26e653345e0ac6f4d2d1d36a6bcf532585",
+      "source_version": "35674719",
+      "content_hash": "3023c057cbb6055451ae3fde9b9cb5c39ce1a96d2ab44c2943eb8a1d4b0a4a91",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:05:40.592Z"
+      "persisted_at": "2026-11-20T23:29:54.415Z"
     },
     "learn-github-tauri-apps-tauri": {
       "learning_id": "learn-github-tauri-apps-tauri",
@@ -266805,9 +266810,9 @@
       "title": "Technical Construction Intelligence: vitejs-vite-learnings Core Invariants",
       "repository": "vitejs-vite-learnings",
       "source_version": "HEAD",
-      "content_hash": "6ed381722bfbbd681403f56ae39d821a31daf0cf599e06772a5c0a7f8ad2bfa6",
+      "content_hash": "842548171453d48261d014c1b764cef6b205ab44358b30f9b2530e5e4a35bfd9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T04:05:48.401Z"
+      "persisted_at": "2026-11-20T23:30:00.568Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vitejs-vite-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vitejs-vite-learnings",
@@ -266817,9 +266822,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vitejs-vite-learnings",
       "repository": "vitejs-vite-learnings",
       "source_version": "HEAD",
-      "content_hash": "e385906699cb89c2341e95c06d82235980fc9606b54acc885d020c84815f8378",
+      "content_hash": "68329b4e7f52d3397fa063f009e29e9028d27de6105a7f6849ee5fba0a8cf096",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:05:48.518Z"
+      "persisted_at": "2026-11-20T23:30:00.855Z"
     },
     "candidate_directive-cli-accept-an-inherited-package-version-in-the-cargo-manifest": {
       "item_id": "candidate_directive-cli-accept-an-inherited-package-version-in-the-cargo-manifest",
@@ -308351,6 +308356,68 @@
       "content_hash": "cc86b3f4f46da88781acfab71bf3fa6d69ae1e69b55efd8ff1afc5d4031b5993",
       "domain_letter": "D",
       "persisted_at": "2026-11-20T23:22:01.134Z"
+    },
+    "rule-9662": {
+      "learning_id": "rule-9662",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9662,
+      "title": "detect in-place patch file edits in lockfile hash",
+      "source_url": "https://github.com/vitejs/vite",
+      "source_version": "35674719",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T23:29:53.591Z"
+    },
+    "candidate_directive-detect-in-place-patch-file-edits-in-lockfile-hash": {
+      "item_id": "candidate_directive-detect-in-place-patch-file-edits-in-lockfile-hash",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-32H4-detect-in-place-patch-file-edits-in-lockfile-hash.md",
+      "title": "detect in-place patch file edits in lockfile hash",
+      "repository": "vitejs/vite",
+      "source_version": "35674719",
+      "content_hash": "5d199d94cda357ab6fffd76f8c721fc456f0ddbbd7ea2332070b729993925a75",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:29:53.993Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-vitejs-vite": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-vitejs-vite",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-vitejs-vite-adr-subsystem-boundary-modular-decoupling-in-vitejs-vite.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in vitejs/vite",
+      "repository": "vitejs/vite",
+      "source_version": "35674719",
+      "content_hash": "41c21a819468066ca1c11f7b8770efd3baa5b27127b4d7f4f3bc8973e14066da",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:29:54.288Z"
+    },
+    "candidate_directive-optimizer-detect-in-place-patch-file-edits-in-lockfile-hash": {
+      "item_id": "candidate_directive-optimizer-detect-in-place-patch-file-edits-in-lockfile-hash",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-37FK-optimizer-detect-in-place-patch-file-edits-in-lockfile-hash.md",
+      "title": "optimizer): detect in-place patch file edits in lockfile hash",
+      "repository": "vitejs-vite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "97bf87c93284666178349a93b1acc4c11abfe2a89cde28454c832c12c66e2dfa",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:30:00.417Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-vitejs-vite-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-vitejs-vite-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-vitejs-vite-learnings-adr-subsystem-boundary-modular-decoupling-in-vitejs-vite-l.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in vitejs-vite-learnings",
+      "repository": "vitejs-vite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f300274fca52b9e67f6a26cb41fcdaaee91f2a1bf0a26b540481bdcc1fb5ebf7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T23:30:00.728Z"
     }
   },
   "ai-builder-brain": {

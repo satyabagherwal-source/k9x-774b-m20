@@ -9993,10 +9993,10 @@
     "repository": "vitejs/vite",
     "platform": "github",
     "sourceUrl": "https://github.com/vitejs/vite",
-    "sourceVersion": "dbce0c67",
+    "sourceVersion": "35674719",
     "license": "MIT",
-    "contentHash": "8034c7907c13807ad38ccbdfe8c1157e888c057110e03df23162aff38e0495d6",
-    "lastHarvestedAt": "2026-11-17T04:05:40.189Z",
+    "contentHash": "9a654524b9fd1b8ab5cbf469a9a788e814f5d4fd4f437005a1a3453ec7280c13",
+    "lastHarvestedAt": "2026-11-20T23:29:53.791Z",
     "learningId": "learn-github-vitejs-vite"
   },
   "keyboardkit-keyboardkit": {

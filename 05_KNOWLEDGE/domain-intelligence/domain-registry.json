@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T23:22:01.298Z",
+  "last_updated": "2026-11-20T23:30:02.238Z",
   "total_records": 2191,
   "domains": {
     "A": {
@@ -8924,8 +8924,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "d472222d96566ec161d082553da85e755d1c1665e786da4c938ae801094d2b96",
-      "created_at": "2026-11-20T23:13:43.918Z"
+      "content_hash": "e99fb5d17d34fc54756277ce0189fdf9fcbfefe07686030fbf2b6a75e10dd7ad",
+      "created_at": "2026-11-20T23:30:02.238Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -11582,8 +11582,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "20ebe59fb92179cc75bb0bcff1a1067713c6e99607b8493d0c46ea30c591edf6",
-      "created_at": "2026-11-20T21:55:21.581Z"
+      "content_hash": "e2005a93a82e78c6a0c4f595de0e4c322bdbbb262d6e0391af0e4321b780be47",
+      "created_at": "2026-11-20T23:30:01.380Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -25861,8 +25861,8 @@
       "title": "Technical Construction Intelligence: vitejs/vite Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vitejs-vite-technical-construction-intelligence-vitejs-vite-core-invariants.md",
       "repository": "vitejs/vite",
-      "content_hash": "6d5389ea25082fba29a6b38ab937192fd96e951c14f0819f41fbc9f1c33ae1a7",
-      "created_at": "2026-11-17T04:05:40.476Z"
+      "content_hash": "8ec82961aea1f7af0c6975cf8d6f3bca8a02058a19cb476681f7b87c1b0d5e07",
+      "created_at": "2026-11-20T23:29:54.144Z"
     },
     "domain_intelligence-technical-construction-intelligence-tauri-apps-tauri-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tauri-apps-tauri-core-invariants",
@@ -25888,8 +25888,8 @@
       "title": "Technical Construction Intelligence: vitejs-vite-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vitejs-vite-learnings-technical-construction-intelligence-vitejs-vite-learnings-.md",
       "repository": "vitejs-vite-learnings",
-      "content_hash": "6ed381722bfbbd681403f56ae39d821a31daf0cf599e06772a5c0a7f8ad2bfa6",
-      "created_at": "2026-11-17T04:05:48.401Z"
+      "content_hash": "842548171453d48261d014c1b764cef6b205ab44358b30f9b2530e5e4a35bfd9",
+      "created_at": "2026-11-20T23:30:00.568Z"
     },
     "domain_intelligence-technical-construction-intelligence-tauri-apps-tauri-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tauri-apps-tauri-learnings-core-invariants",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T23:21:26.672Z",
+  "last_updated": "2026-11-20T23:29:53.800Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15036,14 +15036,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vitejs-vite",
-      "content_hash": "8034c7907c13807ad38ccbdfe8c1157e888c057110e03df23162aff38e0495d6",
-      "verified_at": "2026-11-17T04:05:40.197Z",
+      "content_hash": "9a654524b9fd1b8ab5cbf469a9a788e814f5d4fd4f437005a1a3453ec7280c13",
+      "verified_at": "2026-11-20T23:29:53.799Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T04:05:40.197Z"
+      "last_updated": "2026-11-20T23:29:53.799Z"
     },
     "KeyboardKit/KeyboardKit": {
       "repository": "KeyboardKit/KeyboardKit",

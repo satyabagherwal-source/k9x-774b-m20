@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T23:22:00.145Z",
+  "updated_at": "2026-11-20T23:30:00.198Z",
   "stats": {
-    "total_discovered": 6807,
-    "approved_pending_harvest": 6427,
+    "total_discovered": 6809,
+    "approved_pending_harvest": 6429,
     "harvested_count": 0,
     "rejected_count": 380,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6399,
+      "COMMUNITY_AND_EXPERT": 6401,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 121,
       "ENGINEERING_BLOGS": 5,
@@ -147117,6 +147117,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/solidjs-solid-learnings.md",
         "fileName": "solidjs-solid-learnings.md"
+      }
+    },
+    "SRC-1042CCD71908": {
+      "id": "SRC-1042CCD71908",
+      "url": "https://agentscan.tools/user/mayur-dhavan",
+      "title": "https://agentscan.tools/user/mayur-dhavan",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:30:00.126Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-8CDA989E9A3F": {
+      "id": "SRC-8CDA989E9A3F",
+      "url": "https://github.com/vitejs/vite/issues/24145",
+      "title": "https://github.com/vitejs/vite/issues/24145",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:30:00.198Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
       }
     }
   }

@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T23:21:29.831Z",
-    "lastVerified": "2026-11-20T23:21:29.831Z",
+    "lastChecked": "2026-11-20T23:29:59.893Z",
+    "lastVerified": "2026-11-20T23:29:59.893Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -355,8 +355,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T22:57:24.183Z",
-    "lastVerified": "2026-11-20T22:57:24.183Z",
+    "lastChecked": "2026-11-20T23:29:59.885Z",
+    "lastVerified": "2026-11-20T23:29:59.885Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1463,9 +1463,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-20T17:53:48.802Z",
+    "lastChecked": "2026-11-20T23:29:55.215Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-20T17:53:48.802Z"
+    "lastVerified": "2026-11-20T23:29:55.215Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2891,9 +2891,9 @@
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
-    "lastChecked": "2026-11-19T20:24:22.543Z",
+    "lastChecked": "2026-11-20T23:29:57.409Z",
     "revisionIdentifier": "6d4608c5",
-    "lastVerified": "2026-11-19T20:24:22.543Z"
+    "lastVerified": "2026-11-20T23:29:57.409Z"
   },
   "asciinema-asciinema": {
     "name": "asciinema",
@@ -3640,9 +3640,9 @@
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
     "officialUrl": "https://github.com/alibaba/sentinel-golang",
-    "lastChecked": "2026-11-19T22:27:36.735Z",
+    "lastChecked": "2026-11-20T23:29:52.583Z",
     "revisionIdentifier": "f7a7f957",
-    "lastVerified": "2026-11-19T22:27:36.735Z"
+    "lastVerified": "2026-11-20T23:29:52.583Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -7498,9 +7498,9 @@
   "ouch-org-ouch": {
     "name": "ouch",
     "officialUrl": "https://github.com/ouch-org/ouch",
-    "lastChecked": "2026-11-19T11:07:52.952Z",
+    "lastChecked": "2026-11-20T23:29:44.934Z",
     "revisionIdentifier": "6df14b05",
-    "lastVerified": "2026-11-19T11:07:52.952Z"
+    "lastVerified": "2026-11-20T23:29:44.934Z"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "name": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -11075,5 +11075,29 @@
     "lastChecked": "2026-11-20T23:21:18.883Z",
     "revisionIdentifier": "e72164ce",
     "lastVerified": "2026-11-20T23:21:18.883Z"
+  },
+  "vitejs-vite": {
+    "name": "vitejs/vite",
+    "officialUrl": "https://github.com/vitejs/vite",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-20T23:29:52.672Z",
+    "lastVerified": "2026-11-20T23:29:52.672Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-vitejs-vite",
+    "contentHash": "9a654524b9fd1b8ab5cbf469a9a788e814f5d4fd4f437005a1a3453ec7280c13",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 10,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "shpigford-chops": {
+    "name": "chops",
+    "officialUrl": "https://github.com/Shpigford/chops",
+    "lastChecked": "2026-11-20T23:29:49.873Z",
+    "revisionIdentifier": "9d379d58",
+    "lastVerified": "2026-11-20T23:29:49.873Z"
   }
 }
