@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T22:30:58.764Z",
-  "total_cycles_completed": 11086,
-  "total_learnings_persisted": 11086,
-  "total_rules_promoted": 10438,
+  "last_updated": "2026-11-20T22:41:36.532Z",
+  "total_cycles_completed": 11089,
+  "total_learnings_persisted": 11089,
+  "total_rules_promoted": 10439,
   "history": [
-    {
-      "timestamp": "2026-11-19T23:43:21.137Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T23:43:27.178Z",
-      "repository": "krakend/krakend-ce",
-      "learningId": "learn-github-krakend-krakend-ce",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T23:43:30.213Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T00:06:36.532Z",
       "repository": "vinceglb/FileKit",
@@ -1403,6 +1382,27 @@
       "repository": "kumahq/kuma",
       "learningId": "learn-github-kumahq-kuma",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T22:39:46.230Z",
+      "repository": "wzh4869/AppPorts",
+      "learningId": "learn-github-wzh4869-appports",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T22:39:52.381Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T22:41:36.532Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

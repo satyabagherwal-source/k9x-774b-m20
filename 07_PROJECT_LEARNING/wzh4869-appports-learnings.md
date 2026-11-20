@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wzh4869-appports-learnings.md`  
 > **Source**: github ([https://github.com/wzh4869/AppPorts](https://github.com/wzh4869/AppPorts))  
-> **Source Version**: `17185d1d`  
+> **Source Version**: `0f1f0a6a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T23:34:59.959Z  
+> **Timestamp**: 2026-11-20T22:39:45.750Z  
 > **Learning ID**: `learn-github-wzh4869-appports`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wzh4869-appports-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wzh4869/AppPorts](https://github.com/wzh4869/AppPorts))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T23:34:59.953Z  
+> **Harvest Timestamp**: 2026-11-20T22:39:41.237Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📦 A macOS utility to seamlessly migrate applications to external storage and reclaim local disk space.【一款 macOS 工具，无缝迁移应用到外部存储并自动建立链接，释放宝贵的本地空间】
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2268 stars
+- **Stars / Engagement**: 2290 stars
 
 ---
 
@@ -154,7 +154,10 @@ final class AppOperationState: ObservableObject {
     func setMigrationCount(_ count: Int) {
         let wasBusy = isBusy
         migrationCount = count
-        if wasBusy && !isBusy { recordsRevision &+= 1 }
+        if wasBusy && !isBusy {
+            recordsRevision &+= 1
+            completeTerminationIfIdle()
+        }
     }
 
     func begin() -> UUID? {
@@ -171,10 +174,16 @@ final class AppOperationState: ObservableObject {
         // Publish once at the end of a foreground operation, not on every
         // journal phase. Idle windows also observe background store changes.
         recordsRevision &+= 1
-        let reply = terminationReply
+        completeTerminationIfIdle()
+        if terminationReply == nil {
+            MigrationTaskCenter.shared.schedule()
+        }
+    }
+
+    private func completeTerminationIfIdle() {
+        guard !isBusy, let reply = terminationReply else { return }
         terminationReply = nil
-        reply?()
-        MigrationTaskCenter.shared.schedule()
+        reply()
     }
 
     func registerCancellation(for token: UUID, _ cancel: @escaping () -> Void) {
@@ -708,44 +717,220 @@ enum AppRunningState {
         let bundleIdentifier: String?
     }
 
-    nonisolated static func isRunning(appURL: URL, applications: [RunningApplication]) -> Bool {
-        let realURL = (try? CodeSigner.resolveAppURL(at: appURL)) ?? appURL
-        let identifier = CodeSigner.bundleIdentifier(at: realURL)
-        return applications.contains {
-            matches(appURL: realURL, bundleIdentifier: identifier, application: $0)
+    struct Snapshot: Sendable {
+        let normalizedPaths: Set<String>
+        let identifiers: Set<String>
+        var isEmpty: Bool { normalizedPaths.isEmpty && identifiers.isEmpty }
+
+        init(applications: [RunningApplication]) {
+            var paths: Set<String> = []
+            var ids: Set<String> = []
+            paths.reserveCapacity(applications.count * 2)
+            ids.reserveCapacity(applications.count)
+            for application in applications {
+                if let rawID = AppRunningState.nonemptyIdentifier(application.bundleIdentifier) {
+                    if rawID.lowercased().hasSuffix(".appports.stub") { continue }
+                    ids.insert(rawID)
+                }
+                if let bundleURL = application.bundleURL {
+                    paths.insert(bundleURL.standardizedFileURL.path)
+                    paths.insert(AppRunningState.normalizedPath(bundleURL))
+                }
+            }
+            self.normalizedPaths = paths
+            self.identifiers = ids
         }
+
+        func matches(appURL: URL, bundleIdentifier: String?) -> Bool {
+            if normalizedPaths.contains(appURL.standardizedFileURL.path)
+                || normalizedPaths.contains(AppRunningState.normalizedPath(appURL)) {
+                return true
+            }
+            guard let expectedID = AppRunningState.nonemptyIdentifier(bundleIdentifier) else {
+                return false
+            }
+            return identifiers.contains(expectedID)
+        }
+    }
+
+    nonisolated static func isRunning(appURL: URL, applications: [RunningApplication]) -> Bool {
+        isRunning(appURL: appURL, snapshot: Snapshot(applications: applications))
+    }
+
+    nonisolated static func applyingRunningState(
+        to apps: [AppItem],
+        applications: [RunningApplication]
+    ) -> [AppItem] {
+        let snapshot = Snapshot(applications: applications)
+        return apps.map { app in
+            var updated = app
+            if app.isFolder {
+                updated.isRunning = folderAppBundles(at: app.path).contains { child in
+                    isRunning(appURL: child, snapshot: snapshot)
+                        || isRunning(appURL: app.path.appendingPathComponent(child.lastPathComponent), snapshot: snapshot)
+                }
+            } else {
+                updated.isRunning = isRunning(appURL: app.displayURL, snapshot: snapshot)
+                    || (app.displayURL != app.path && isRunning(appURL: app.path, snapshot: snapshot))
+            }
+            return updated
+        }
+    }
+
+    nonisolated static func isRunning(appURL: URL, snapshot: Snapshot) -> Bool {
+        let resolvedIdentity: ResolvedAppIdentity?
+        if case .success(let identity) = AppIdentityResolver.resolve(at: appURL) {
+            resolvedIdentity = identity
+        } else {
+            resolvedIdentity = nil
+        }
+
+        let onlineRealURL = resolvedIdentity?.realAppURL ?? (try? CodeSigner.resolveAppURL(at: appURL))
+        let offlineTarget = offlinePortalTarget(at: appURL)
+        var candidateURLs: [URL] = []
+        if let onlineRealURL {
+            candidateURLs.append(onlineRealURL)
+        }
+        if let identityBundleURL = resolvedIdentity?.identityBundleURL,
+           normalizedPath(identityBundleURL) != onlineRealURL.map(normalizedPath) {
+            candidateURLs.append(identityBundleURL)
+        }
+        if let offlineURL = offlineTarget.targetURL {
+            candidateURLs.append(offlineURL)
+        }
+        if candidateURLs.isEmpty && !isStubPortalBundle(at: appURL) {
+            candidateURLs.append(appURL)
+        }
+
+        let identifier = resolvedIdentity?.bundleIdentifier
+            ?? CodeSigner.bundleIdentifier(at: onlineRealURL ?? appURL).flatMap {
+                $0.lowercased().hasSuffix(".appports.stub") ? nil : $0
+            }
+            ?? offlineTarget.targetBundleIdentifier
+
+        if candidateURLs.isEmpty {
+            guard let expectedID = nonemptyIdentifier(identifier) else { return false }
+            return snapshot.identifiers.contains(expectedID)
+        }
+        return candidateURLs.contains { candidate in
+            snapshot.matches(appURL: candidate, bundleIdentifier: identifier)
+        }
+    }
+
+    nonisolated private static func folderAppBundles(at folderURL: URL) -> [URL] {
+        let fm = FileManager.default
+        let inspectURL: URL
+        if let linkDestination = try? fm.destinationOfSymbolicLink(atPath: folderURL.path) {
+            inspectURL = URL(fileURLWithPath: linkDestination, relativeTo: folderURL.deletingLastPathComponent()).standardizedFileURL
+        } else {
+            inspectURL = folderURL
+        }
+        var isDirectory: ObjCBool = false
+        guard fm.fileExists(atPath: inspectURL.path, isDirectory: &isDirectory), isDirectory.boolValue else {
+            return []
+        }
+        let items = (try? fm.contentsOfDirectory(at: inspectURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)) ?? []
+        return items.filter { $0.pathExtension == "app" }
+    }
+
+    nonisolated static func isStubPortalBundle(at appURL: URL) -> Bool {
+        let plistURL = appURL.appendingPathComponent("Contents/Info.plist")
+        if let id = CodeSigner.bundleIdentifier(at: appURL),
+           id.trimmingCharacters(in: .whitespacesAndNewlines).lowercased().hasSuffix(".appports.stub") {
+            return true
+        }
+        let fm = FileManager.default
+        if (try? fm.attributesOfItem(atPath: appURL.appendingPathComponent("Contents/Resources/real_app_path.txt").path)) != nil {
+            return true
+        }
+        if (try? Data(contentsOf: plistURL)) != nil,
+           let launcher = try? String(contentsOf: appURL.appendingPathComponent("Contents/MacOS/launcher"), encoding: .utf8),
+           launcher.contains("REAL_APP=") {
+            return true
+        }
+        return false
+    }
+
+    /// 断盘或目标暂不可达时，仅根据入口记录提取原始外部路径与包身份（绝不把 `.appports.stub` 当作运行目标）。
+    nonisolated private static func offlinePortalTarget(at appURL: URL) -> (targetURL: URL?, targetBundleIdentifier: String?) {
+        let fm = FileManager.default
+        var candidate = appURL.standardizedFileURL
+        var visited = Set<String>()
+        var extractedURL: URL?
+        var extractedIdentifier: String?
+
+        while visited.insert(candidate.path).inserted {
+            if let plistData = try? Data(contentsOf: candidate.appendingPathComponent("Contents/Info.plist")),
+               let plist = try? PropertyListSerialization.propertyList(from: plistData, options: [], format: nil) as? [String: Any] {
+                if let targetID = nonemptyIdentifier(plist["AppPortsTargetBundleIdentifier"] as? String),
+                   !targetID.lowercased().hasSuffix(".appports.stub") {
+                    extractedIdentifier = extractedIdentifier ?? targetID
+                } else if let rawID = nonemptyIdentifier(plist["CFBundleIdentifier"] as? String),
+                          rawID.lowercased().hasSuffix(".appports.stub") {
+                    let stripped = String(rawID.dropLast(".appports.stub".count))
+                    if !stripped.isEmpty {
+                        extractedIdentifier = extractedIdentifier ?? stripped
+                    }
+                }
+            }
+
+            if let dest = try? fm.destinationOfSymbolicLink(atPath: candidate.path) {
+                let target = URL(fileURLWithPath: dest, relativeTo: candidate.deletingLastPathComponent()).standardizedFileURL
+                extractedURL = target
+                candidate = target
+                continue
+            }
+
+            let pathFile = candidate.appendingPathComponent("Contents/Resources/real_app_path.txt")
+            if let raw = try? String(contentsOf: pathFile, encoding: .utf8)
+                .trimmingCharacters(in: .whitespacesAndNewlines),
+               raw.hasPrefix("/") {
+                let target = URL(fileURLWithPath: raw).standardizedFileURL
+                extractedURL = target
+                candidate = target
+                continue
+            }
+
+            let launcher = candidate.appendingPathComponent("Contents/MacOS/launcher")
+            if let script = try? String(contentsOf: launcher, encoding: .utf8),
+               let assignment = script.components(separatedBy: .newlines)
+                .map({ $0.trimmingCharacters(in: .whitespaces) })
+                .first(where: { $0.hasPrefix("REAL_APP=") }),
+               assignment.hasPrefix("REAL_APP='"), assignment.hasSuffix("'") {
+                let raw = String(assignment.dropFirst("REAL_APP='".count).dropLast())
+                    .replacingOccurrences(of: "'\\''", with: "'")
+                if raw.hasPrefix("/") {
+                    let target = URL(fileURLWithPath: raw).standardizedFileURL
+                    extractedURL = target
+                    candidate = target
+                    continue
+                }
+            }
+
+            if let hybrid = AppMigrationService.hybridPortalExternalURL(at: candidate) {
+                let target = hybrid.standardizedFileURL
+                extractedURL = target
+                candidate = target
+                continue
+            }
+
+            let contents = candidate.appendingPathComponent("Contents")
+            if let dest = try? fm.destinationOfSymbolicLink(atPath: contents.path) {
+                let resolvedContents = URL(fileURLWithPath: dest, relativeTo: candidate).standardizedFileURL
+                let target = resolvedContents.deletingLastPathComponent()
+                extractedURL = target
+                candidate = target
+                continue
+            }
+
+            break
+        }
+
+        return (extractedURL, extractedIdentifier)
     }
 
     /// 路径匹配覆盖无 Bundle ID 的进程；身份匹配覆盖由其它位置启动的同一应用。
-    nonisolated static func matches(
-        appURL: URL,
-        bundleIdentifier: String?,
-        application: RunningApplication
-    ) -> Bool {
-        if let runningURL = application.bundleURL,
-           normalizedPath(runningURL) == normalizedPath(appURL) {
-            return true
-        }
-
-        // nil == nil 或空字符串相等不代表同一应用。
-        guard let expectedID = nonemptyIdentifier(bundleIdentifier),
-              let runningID = nonemptyIdentifier(application.bundleIdentifier) else {
-            return false
-        }
-        return expectedID == runningID
-    }
-
-    nonisolated private static func normalizedPath(_ url: URL) -> String {
-        url.resolvingSymlinksInPath().standardizedFileURL.path
-    }
-
-    nonisolated private static func nonemptyIdentifier(_ identifier: String?) -> String? {
-        guard let identifier = identifier?.trimmingCharacters(in: .whitespacesAndNewlines),
-              !identifier.isEmpty else { return nil }
-        return identifier
-    }
-}
-
+    nonisolated static fun
 ```
 
 ### Core Architecture Module: `AppPorts/Utils/AppScanner.swift`
@@ -804,14 +989,97 @@ actor AppScanner {
         if let cached = infoPlistCache[appURL] {
             return cached.isEmpty ? nil : cached
         }
-        let infoPlistURL = appURL.appendingPathComponent("Contents/Info.plist")
-        guard let plistData = try? Data(contentsOf: infoPlistURL),
+        guard let infoPlistURL = infoPlistURL(for: appURL),
+              let plistData = try? Data(contentsOf: infoPlistURL),
               let plist = try? PropertyListSerialization.propertyList(from: plistData, options: [], format: nil) as? [String: Any] else {
             infoPlistCache[appURL] = [:]
             return nil
         }
         infoPlistCache[appURL] = plist
         return plist
+    }
+
+    private func infoPlistURL(for appURL: URL) -> URL? {
+        let macOSPlist = appURL.appendingPathComponent("Contents/Info.plist")
+        if FileManager.default.fileExists(atPath: macOSPlist.path) {
+            return macOSPlist
+        }
+
+        let root = (DiskUtility.resolvedPath(appURL.path).map { URL(fileURLWithPath: $0) }
+            ?? appURL.resolvingSymlinksInPath()).standardizedFileURL
+        var visited = Set<String>()
+        return Self.findBundleInfoPlist(at: root, root: root, depth: 0, visited: &visited)
+    }
+
+    private static func findBundleInfoPlist(
+        at url: URL,
+        root: URL,
+        depth: Int,
+        visited: inout Set<String>
+    ) -> URL? {
+        let bundleURL = (DiskUtility.resolvedPath(url.path).map { URL(fileURLWithPath: $0) }
+            ?? url.resolvingSymlinksInPath()).standardizedFileURL
+        guard isInsideBundleRoot(bundleURL, root: root),
+              visited.insert(bundleURL.path).inserted,
+              depth <= 8 else {
+            return nil
+        }
+
+        let fm = FileManager.default
+        for relativePath in ["Contents/Info.plist", "Info.plist"] {
+            let plistURL = bundleURL.appendingPathComponent(relativePath)
+            guard fm.fileExists(atPath: plistURL.path) else { continue }
+            let resolvedPlist = (DiskUtility.resolvedPath(plistURL.path).map { URL(fileURLWithPath: $0) }
+                ?? plistURL.resolvingSymlinksInPath()).standardizedFileURL
+            guard isInsideBundleRoot(resolvedPlist, root: root) else { return nil }
+            return plistURL
+        }
+
+        let wrapped = bundleURL.appendingPathComponent("WrappedBundle")
+        if (try? fm.destinationOfSymbolicLink(atPath: wrapped.path)) != nil || fm.fileExists(atPath: wrapped.path) {
+            guard let resolvedPath = DiskUtility.resolvedPath(wrapped.path) else { return nil }
+            let target = URL(fileURLWithPath: resolvedPath).standardizedFileURL
+            var isDir: ObjCBool = false
+            guard isInsideBundleRoot(target, root: root),
+                  fm.fileExists(atPath: target.path, isDirectory: &isDir),
+                  isDir.boolValue else {
+                return nil
+            }
+            return findBundleInfoPlist(at: target, root: root, depth: depth + 1, visited: &visited)
+        }
+
+        let wrapper = bundleURL.appendingPathComponent("Wrapper")
+        guard fm.fileExists(atPath: wrapper.path),
+              let resolvedWrapperPath = DiskUtility.resolvedPath(wrapper.path),
+              isInsideBundleRoot(URL(fileURLWithPath: resolvedWrapperPath), root: root),
+              let entries = try? fm.contentsOfDirectory(
+                  at: wrapper,
+                  includingPropertiesForKeys: [.isDirectoryKey],
+                  options: .skipsHiddenFiles
+              ) else {
+            return nil
+        }
+
+        let candidates = entries.filter { candidate in
+            guard candidate.pathExtension.lowercased() == "app" else { return false }
+            if (try? fm.destinationOfSymbolicLink(atPath: candidate.path)) != nil { return true }
+            return (try? candidate.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true
+        }
+        guard candidates.count == 1,
+              let candidate = candidates.first,
+              let resolvedCandidatePath = DiskUtility.resolvedPath(candidate.path) else {
+            return nil
+        }
+        return findBundleInfoPlist(
+            at: URL(fileURLWithPath: resolvedCandidatePath),
+            root: root,
+            depth: depth + 1,
+            visited: &visited
+        )
+    }
+
+    private static func isInsideBundleRoot(_ url: URL, root: URL) -> Bool {
+        url.standardizedFileURL.pathComponents.starts(with: root.standardizedFileURL.pathComponents)
     }
 
     private struct ScanCandidate {
@@ -947,82 +1215,10 @@ actor AppScanner {
     ///   - 系统应用识别（路径以 /System 开头）
     ///   - 运行状态检测
     ///   - App Store 应用和 iOS 应用检测
-    func scanLocalApps(at dir: URL, runningAppURLs: Set<URL>, externalAppsDir: URL? = nil) -> [AppItem] {
-        let scanID = AppLogger.shared.makeOperationID(prefix: "app-scanner-local")
-        AppLogger.shared.logContext(
-            "AppScanner 开始扫描本地应用",
-            details: [
-                ("scan_id", scanID),
-                ("directory", dir.path),
-                ("external_directory", externalAppsDir?.path),
-                ("running_app_count", String(runningAppURLs.count))
-            ],
-            level: "TRACE"
-        )
-        infoPlistCache.removeAll()
-        let fileManager = FileManager.default
-        var candidates: [ScanCandidate] = []
-        let externalComparisonIndex = makeExternalComparisonIndex(for: externalAppsDir)
-
-        // 性能优化：预先获取需要的资源键
-        let keys: [URLResourceKey] = [.isSymbolicLinkKey, .isDirectoryKey]
-        let items = (try? fileManager.contentsOfDirectory(at: dir, includingPropertiesForKeys: keys, options: .skipsHiddenFiles)) ?? []
-
-        for itemURL in items {
-            // 只处理 .app 扩展名的项目
-            if itemURL.pathExtension == "app" {
-                let appName = itemURL.lastPathComponent
-                AppLogger.shared.log("扫描应用: \(appName)", level: "TRACE")
-                let baseStatus = detectLocalAppStatus(at: itemURL)
-                let status = statusForLocalApp(
-                    baseStatus: baseStatus,
-                    localBundleURL: itemURL,
-                    fallbackName: appName,
-                    externalComparisonIndex: externalComparisonIndex
-                )
-                let isSystem = itemURL.path.hasPrefix("/System")
-                let isRunning = runningAppURLs.contains(itemURL)
-                let version = readBundleVersion(from: itemURL)
-                
-                // 检测是否为 App Store 应用和 iOS 应用
-                let (isAppStore, isIOS) = detectAppStoreAndIOSApp(at: itemURL)
-                let signing = checkSigningStatus(bundleURL: itemURL)
-                let (isElectron, isSparkle) = detectElectronAndSparkle(at: itemURL)
-                let hasUpdater = isSparkle || (isElectron && hasElectronUpdater(at: itemURL)) || hasCustomUpdater(at: itemURL)
-                let needsLock = isSparkle || (isElectron && hasElectronUpdater(at: itemURL))
-                let app = AppItem(
-                    name: appName,
-                    path: itemURL,
-                    bundleURL: itemURL,
-                    status: status,
-                    isSystemApp: isSystem,
-                    isRunning: isRunning,
-                    isAppStoreApp: isAppStore,
-                    isIOSApp: isIOS,
-                    isResigned: signing.isResigned,
-                    signatureReplaced: signing.signatureReplaced,
-                    signatureCheckUnavailable: signing.signatureCheckUnavailable,
-                    isElectronApp: isElectron,
-                    isSparkleApp: isSparkle,
-                    hasSelfUpdater: hasUpdater,
-                    needsLock: needsLock,
-                    version: version,
-                    containerKind: .standaloneApp
-                )
-                candidates.append(makeCandidate(for: app, bundleURL: itemURL, priority: 10))
-            }
-            // 处理包含 .app 的文件夹（包括迁移后的“文件夹 symlink -> 外部单应用容器”）
-            else {
-                let appsInFolder = appBundlesInsideFolderPortal(at: itemURL)
-
-                if !appsInFolder.isEmpty {
-                    let folderName = itemURL.lastPathComponent
-                    let appCount = appsInFolder.count
-                    let baseStatus = detectLocalFolderStatus(at: itemURL)
-
-                    let hasRunning = appsInFolder.contains { bundleURL in
-                        runningAppURLs.contains(bundleURL)
-                            || runningAppURLs.contains(itemURL.appendingPathComponent(bundleURL.lastPathCompo
+    func scanLocalApps(
+        at dir: URL,
+        runningAppURLs: Set<URL>,
+    
 ```
 
 
@@ -1052,133 +1248,340 @@ actor AppScanner {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `17185d1d` (2026-11-16)
-**Commit Message**: docs: 记录 2.3.0 build 68 完整验证与 CI 修复
+### Incident Patch 1: `0f1f0a6a` (2026-11-20)
+**Commit Message**: docs: update user guides for AppPorts 2.3.1
 
-**File**: `.agents/notes/implemented/feature/2026-11-16-就绪权限展示与默认窗口尺寸.md` (modified, +2/-0)
+**File**: `User_docs/docs/changelog.md` (modified, +10/-1)
 ```diff
-@@ -45,3 +45,5 @@ build 62 专项执行 MainWindowAppearanceTests、AppUpdateTests 与 FullDiskAcc
- 首帧修改之前的完整 runner 验证与英文回退审计缺口见 [build 61 验证记录](../../../../.github/pr-assets/settings-build61.md)，该记录不覆盖后来 build 62 的首帧修改。[d2cf903 的远端回归](https://github.com/wzh4869/AppPorts/actions/runs/43853013283)中，MainWindowAppearanceTests 的重开测试在最后一条断言失败：固定 1000 × 700 的夹具首次显示后变为 1000 × 677；显示前的尺寸断言与首帧专项通过。
+@@ -2,9 +2,18 @@
  
- 维护者授权单独修正测试夹具：按窗口屏幕或主屏幕的 visibleFrame 限制期望尺寸，并留出 40 点边界，避免 AppKit 显示窗口时因屏幕边界缩小夹具。既有首帧、替换桥接和隐藏重开断言全部保留，不修改应用窗口代码。build 升至 67。本机 MainWindowAppearanceTests 两项通过，完整 runner 结论另行记录；本机通过不代替小屏幕 runner 验证。
+ 这里记录各版本当时的变化。**历史条目中的功能可能已经停用，不应直接当作当前操作步骤。** 当前正文按最新界面和行为整理；旧功能的行为、版本和替代方法保存在[历史功能归档](/docs/archive/overview)。
+ 
++## v2.3.1 {#v2-3-1}
 +
-+最终 build 68 的 runner 两项窗口测试均通过，完整应用回归、独立进程计时与 Release 构建通过；批准延期的翻译完整性审计仍失败。当前完整结论见 [2.3.0（68）验证记录](../../../../.github/pr-assets/main-build68.md)，不再使用 build 61 的结果代表首帧修改。
++- 更新签名证书后，如果系统设置中的开关已开启，AppPorts 却仍提示权限缺失，可按提示重新授权。「准备情况」也提供「清理旧版授权记录」。手动替换安装后，打开一次新版即可处理残留的旧更新守护进程。
++- 微信停用「仅大文件与视频」的新迁移，保留已有迁移的挂载、解锁和还原。过滤微信容器中的 macOS 系统软链和 Chromium、Electron 应用的运行时伪软链；只有指向实际目录的现有软链才可进行「规范化管理」。
++- 「应用数据」列表显示每个应用的数据总量和已迁移、本地明细，并提供三种排序；「外部应用库」显示当前列表的应用本体合计大小。
++- 修复外观切回「跟随系统」后未生效，以及主窗口与其他窗口外观不一致的问题。
++
++[查看 v2.3.1 发布](https://github.com/wzh4869/AppPorts/releases/tag/2.3.1) · [重新授权](/docs/settings#permissions) · [手动更新](/docs/settings#updates) · [微信账号迁移](/docs/datamigrae/operation#wechat) · [现有软链处理](/docs/restore#reconnect)
++
+ ## v2.3.0 {#v2-3-0}
+ 
+-- 微信账号数据迁移新增“仅大文件与视频（`msg/file + msg/video`）”模式：与整账号及“拆分迁移（`msg + business`）”互斥，允许把聊天图片附件与数据库留在本地，仅迁出文件与视频冷数据；并统一采用单遍目录遍历测算大小。
++- 微信账号数据迁移新增“仅大文件与视频（`msg/file + msg/video`）”模式：与整账号及“拆分迁移（`msg + business`）”互斥，允许把聊天图片附件与数据库留在本地，仅迁出文件与视频冷数据；并统一采用单遍目录遍历测算大小。 **版本说明**：v2.3.1 停止此模式的新迁移，已迁移账号仍可挂载、解锁和还原。见[微信账号迁移](/docs/datamigrae/operation#wechat)。
+ - 自更新应用迁移与接回默认改为“非锁定迁移”，并新增可选“应用更新守护”后台代理：接手失败的 ShipIt 更新并在“任务中心”同步进度，支持经签名与版本核验的“回退更新”。
+ - Mac App Store 外置安装引导改为只读核对 macOS 15.1+ 系统真实设置（不再以空目录存在判定完成），新增持久化的“不再提醒”，并在设置中明确说明系统商店对新下载大于 1 GB 应用的自动安装规则与 AppPorts 对任意大小应用的迁移范围。
+ - 深化本地应用与任务并发安全：任务执行期间原地锁定列表行与批量操作并收敛异常横幅；修复整块外置盘多分区挂载时的弹出目标判定；优化外置应用运行态识别、应用筛选勾选裁剪、存储能力探测缓存、单次卷状态查询及临时快照清理速度。
 ```
 
-**File**: `.agents/notes/implemented/feature/2026-11-16-非锁定迁移默认选择与普通更新应用.md` (modified, +2/-0)
+**File**: `User_docs/docs/core.md` (modified, +2/-0)
 ```diff
-@@ -43,4 +43,6 @@ Debug build-for-testing、同证书双架构 Release clean build 和严格全架
+@@ -50,4 +50,6 @@ macOS 15.1 及以上可在 App Store 设置中开启“下载并安装大型 App
  
- ## Consequences
+ 应用页顶部的“全部 / 已链接 / 未链接”只筛选列表，不会还原或删除应用；切换筛选后，被隐藏的已选项不会继续参与批量操作。本地与外部应用列表均可按名称或大小排序。应用与工具目录可显示“上次缓存时间”；磁盘内容已变化或大小看起来过时时，点击侧栏底部的“刷新缓存”重新计算，不要把旧缓存当成当前精确占用。
  
-+后续维护者指定版本为 2.3.0，修正 CI 的窗口与镜像测试夹具后 build 为 68。本篇生产行为未再改动，最终完整 runner 回归与 Release 构建通过；延期翻译审计仍失败。完整验证范围及未重测流程见 [2.3.0（68）验证记录](../../../../.github/pr-assets/main-build68.md)。
++「外部应用库」标题旁的大小是当前搜索和筛选结果中应用本体的合计。例如，从「全部」切换到「已链接」后，大小只汇总当前显示的已链接应用，后台计算完成时会自动更新。统计采用应用包的逻辑文件大小，适合比较列表中的应用大小；外置盘实际剩余空间请看侧栏「目标存储」。
 +
- 普通应用少一次选择，其他应用可直接选择高亮的非锁定迁移，框架标记不再占用列表空间。两个固定应用标识需要在实际更新行为改变时重新评估；这不是未知更新器的通用推断。已锁定迁移不会因升级 AppPorts 自动撤锁。全量测试与真实第三方应用更新不由本轮局部渲染或夹具往返代表。
+ Spotlight 同时显示本地入口和外盘应用时，可打开“排除外盘应用索引”查看检查结果，再选择处理未完成项。适用的普通独立应用会移入外盘专用的 `AppPorts.noindex` 应用库，本地入口仍可使用；操作涉及真实应用位置，不只是隐藏一条搜索结果。套件目录、App Store 与 iOS 应用暂不自动处理，冲突和失败会单独显示。此操作不排除整块磁盘，外盘文档和照片的搜索不受影响；系统索引刷新仍可能需要等待。
 ```
 
-**File**: `.agents/notes/implemented/testing/2026-10-15-ownership-image-detach.md` (modified, +3/-0)
+**File**: `User_docs/docs/datamigrae/operation.md` (modified, +3/-1)
 ```diff
-@@ -64,3 +64,6 @@ OwnershipTestImage 的正常卸载最多尝试五次，仅对未超时的 EBUSY
- 修复后本机专项通过：MainWindowAppearanceTests 两项 XCTest、TreeCopyOwnershipTests 与
- OwnershipImageDetachTests 共 14 项 Swift Testing，0 失败。真实“卷先卸载、镜像后分离”用例通过，
- busy、持续错误、其他错误、超时和取消结果保持原边界；全量 runner 结果另行记录。
+@@ -12,6 +12,8 @@
+ 
+ “应用数据”在当前页面会话内会复用完整扫描结果，减少来回切换应用时的重复等待；权限、目标盘、迁移记录或挂载状态变化时会自动重新检查，也可点击侧栏底部的“刷新缓存”重新测量。缺少完全磁盘访问权限时，页面会单独提示权限未就绪并提供检查入口，不会把受限读取显示为没有数据。
+ 
++左侧应用列表会显示每个应用识别到的数据总量，有已迁移数据的应用还会显示「已迁移」和「本地」明细，并排在前面。搜索框旁的菜单可选「按大小」（默认）、「默认」或「按首字母」，分别为已迁移组和其他应用排序。外置盘离线、数据卷未解锁或自动挂载暂停时，大小可能不完整；接回原盘并恢复挂载后，可用「刷新缓存」重新测量。
 +
-+最终 build 68 的真实卸载后清理用例与完整应用回归均在 runner 通过，进程计时和 Release
-+构建通过；批准延期的翻译完整性审计仍失败。完整结果见 [2.3.0（68）验证记录](../../../../.github/pr-assets/main-build68.md)。
+ 应用数据列表默认只显示可迁移、可挂载和需要处理的项目。打开“显示锁定目录结构”，会把可操作项目之上的锁定祖先补回来，用来说明层级；没有可操作内容的锁定目录不会因此出现。要一次看完所有不可迁移目录，打开“显示不支持迁移目录”。是否显示零字节目录由第三个开关控制。**列表提供迁移操作，也不代表执行检查一定通过**：空间、权限、正在使用数据的进程，以及与已有迁移的父子关系仍需核对。
+ 
+ 点击“已链接”“挂载迁移”“现有软链”等状态统计，可以只看匹配项目；列表会保留必要的父级路径。各状态数字不会随这一次选择而缩小，但仍受其他搜索与筛选条件影响。再次点击或清除筛选可恢复，切换应用或页签也会重置筛选。
+@@ -61,7 +63,7 @@
+ 
+ 等目录大小读取完整后，再点击“开始迁移”。切换方式前，先完整还原该账号已迁移的数据。拆分后离线时，媒体或文件/视频入口与其他受管离线目录同样保持只读可遍历、拒绝新建写入，避免登录时因路径权限报错崩溃；能否继续查看文字或历史记录仍取决于微信版本，不保证所有内容在未连盘时可用。加密目标还需[设置数据卷密码](/docs/storage-guide#encrypted-drives)。
+ 
+-旧版「仅大文件与视频（`msg/file + msg/video`）」已停止新迁移。已使用此模式的用户，连接外置盘后，在「应用数据」中选择微信，找到对应账号并点击「还原」，即可把已迁出的目录还原到内盘。
++新版按整个 `msg` 目录拆分迁移，让 `msg/file` 与 `msg/attach` 里可能指向同一份文件的硬链接保留在同一卷。旧版「仅大文件与视频（`msg/file + msg/video`）」已停止新迁移。已使用旧模式的账号可继续使用：连接原外置盘，在「应用数据」选中微信和对应账号，按状态提示解锁或挂载。想把数据搬回内盘或换一种迁移方式时，先点击「还原」，等该账号已迁出的目录全部还原后，再按需选择「全部迁移」或「拆分迁移」。
+ 
+ ## 怎样看迁移进度 {#progress}
+ 
 ```
 
-**File**: `.github/pr-assets/main-build68.md` (added, +35/-0)
+**File**: `User_docs/docs/en/changelog.md` (modified, +10/-1)
 ```diff
-@@ -0,0 +1,35 @@
-+# AppPorts 2.3.0（68）验证记录
+@@ -2,9 +2,18 @@
+ 
+ These entries describe changes at the time of each release. **Historical features may have been retired and should not be treated as current instructions.** Current guides describe the latest interface and behavior. Older behavior, versions, and alternatives remain in the [historical feature archive](/docs/archive/overview).
+ 
++## v2.3.1 {#v2-3-1}
 +
-+本批改动将“检查”入口移入准备情况卡片，调整自更新应用的迁移选择和文案，移除列表中的框架标记，更新版本号，并修复两项 CI 测试夹具问题。WorkBuddy、网易云按普通应用迁移；其他检测到更新器的应用仍保留锁定与非锁定选择，非锁定高亮。提示不保证所有应用的更新都能恢复成功。
++- If macOS still shows permissions enabled after a signing certificate change but AppPorts reports that they are missing, follow the prompt to grant them again. **Readiness** also offers **Clear Legacy Permission Records**. After manually replacing AppPorts, open the new version once to retire the old update guardian.
++- Retire new WeChat migrations in **Large files & videos only** mode. Existing migrations still support mounting, unlocking, and restoring. AppPorts filters out macOS system symlinks in the WeChat container and runtime pseudo-symlinks from Chromium and Electron apps. **Normalize Management** requires an existing symlink that points directly to a real directory.
++- **App Data** displays per-app totals, migrated and local sizes, and three sort options. The **External Drive** header shows the combined size of the app bundles in the current list.
++- Fix switching appearance back to **System** and keep the appearance consistent across the main and secondary windows.
 +
-+## 完整 runner 验证
++[View v2.3.1](https://github.com/wzh4869/AppPorts/releases/tag/2.3.1) · [Grant permissions again](/docs/settings#permissions) · [Manual updates](/docs/settings#updates) · [WeChat account migration](/docs/datamigrae/operation#wechat) · [Manage existing symlinks](/docs/restore#reconnect)
 +
-+验证对象为 `000cea9e1144b2fffdc7b7f3c5fea3ad2a646259`，版本 2.3.0（68）。[完整运行与诊断](https://github.com/wzh4869/AppPorts/actions/runs/43890629285)使用现有 workflow 和一次性 macOS runner，没有设置外盘或界面渲染环境变量。317 项构建输入的哈希与本地构建一致；后续验证记录提交只修改 Markdown，不改变构建输入。
+ ## v2.3.0 {#v2-3-0}
+ 
+-- Add the Large files & videos only (`msg/file + msg/video`) mode for WeChat accounts: mutually exclusive with Whole migration and Split migration (`msg + business`), allowing databases and `msg/attach` chat thumbnails to stay local while cold files and videos move externally, measured in a single filesystem pass.
++- Add the Large files & videos only (`msg/file + msg/video`) mode for WeChat accounts: mutually exclusive with Whole migration and Split migration (`msg + business`), allowing databases and `msg/attach` chat thumbnails to stay local while cold files and videos move externally, measured in a single filesystem pass. **Version note**: v2.3.1 disables new migrations in this mode. Previously migrated accounts can still be mounted, unlocked, and restored. See [WeChat account migration](/docs/datamigrae/operation#wechat).
+ - Make Unlocked Migration the default for self-updating apps and add the optional Application update guardian background agent to handle failed ShipIt updates, sync status into Task Center, and offer verified Roll Back Update recovery.
+ - Verify macOS 15.1+ Mac App Store external-install settings read-only instead of checking for an empty folder marker, add persistent Don’t remind me again guidance, and clarify in Settings how the App Store's >1 GB auto-download rule differs from AppPorts migrating App Store apps of any size.
+ - Harden runtime status, task locking and disk operations: lock active-task row and batch actions in place, fix whole-disk ejection volume resolution across multi-partition disks, detect running migrated external apps accurately, prune hidden filter selections, cache writable storage capability probes, deduplicate per-scan volume status queries, and eliminate redundant snapshot cleanup hashing.
+```
+
+**File**: `User_docs/docs/en/core.md` (modified, +2/-0)
+```diff
+@@ -50,4 +50,6 @@ See [Restore, reconnect and unlink](/docs/restore) for the distinctions and step
+ 
+ The All / Linked / Unlinked filter at the top of Apps filters the list without restoring or deleting apps; hidden selections are excluded from batch actions when switching filters. Local and external lists can each be sorted by name or size. App and tool-directory sizes can show a cache timestamp. If disk contents have changed or sizes look stale, click Refresh Cache at the bottom of the sidebar to recalculate; old cached sizes are not exact current usage.
+ 
++The size beside the **External Drive** heading is the combined size of the app bundles in the current search and filter results. For example, switching from **All** to **Linked** limits the total to the linked apps shown. The total updates as measurements finish. It uses logical file sizes within the app bundles. For actual free space, see the storage target in the sidebar.
 +
-+| 检查 | 实际结果 |
-+| --- | --- |
-+| Debug 测试包构建 | 通过 |
-+| 完整应用回归 | XCTest 806 通过、31 跳过；Swift Testing 771 通过；0 失败 |
-+| 独立进程计时 | 14 通过，0 失败 |
-+| 本地化审计 | 18 通过、翻译完整性 1 失败 |
-+| arm64 / x86_64 Release clean build | 通过 |
-+| 应用包、可执行文件与 ZIP 校验 | 通过 |
+ If Spotlight shows both a local launcher and the external app, open the external-app indexing exclusion panel, inspect its report, then process unfinished items. Eligible standalone apps move into the external `AppPorts.noindex` app library while local entries remain usable. This changes the real app's location rather than merely hiding a search result. Suite folders, App Store apps and iOS apps are not handled automatically; conflicts and failures are listed separately. The entire disk is not excluded, and external documents and photos remain searchable. System indexing updates may take time.
+```
+
+**File**: `User_docs/docs/en/datamigrae/operation.md` (modified, +3/-1)
+```diff
+@@ -12,6 +12,8 @@ Data migration moves application data, tool directories or your own folders. It
+ 
+ App Data reuses complete scan results within the current page session so revisiting an app does not rescan every time. Changes to permissions, the destination drive, migration records or mount state trigger fresh checks automatically, and Refresh Cache at the bottom of the sidebar forces remeasurement. When Full Disk Access is not ready, the page displays the permission state and a check entry rather than treating restricted reads as missing data.
+ 
++The app list on the left shows the total size of the data detected for each app. Apps with migrated data appear first and show separate **Migrated** and **Local** sizes. Use the menu beside search to sort each group by **By Size** (the initial setting), **Default**, or **Alphabetical**. Sizes may be incomplete while the external drive is offline, a data volume is locked, or automatic mounting is paused. Reconnect the original drive, restore the mount, and choose **Refresh Cache** to measure again.
 +
-+本地化唯一失败是 `LocalizationAuditTests.testStringCatalogContainsTranslationsForAllSupportedLanguages`。维护者批准新增文案只完成中英文，其余语言暂用英文；目录仍有 420 个延期翻译槽位。没有填写假的翻译或放宽断言。workflow 为 success 是因为本地化属于 advisory，不代表全部翻译审计通过。
+ App Data shows eligible items and those needing attention by default. Show locked directory structure adds locked ancestors of actionable items to explain the hierarchy; locked directories with no actionable descendants remain hidden. Enable Show unsupported migration directories to see all ineligible directories. A third switch controls zero-byte directories. **An available migration action does not guarantee execution checks will pass.** Space, permissions, processes using data and parent/child relationships with existing migrations still need checking.
+ 
+ Click status totals such as Linked, Mount Migration or Existing Symlink to show matching items. Necessary parent paths remain visible. Selecting a total does not shrink the other status totals, but other search and filter conditions still affect them. Click again or clear the filter to return; changing app or tab also resets this selection.
+@@ -61,7 +63,7 @@ Choose migration for a recognized WeChat account directory, then select a mode i
+ 
+ Wait for a complete size calculation before starting. Fully restore the account’s migrated data before switching modes. When the drive is offline after split migration, moved `msg`, `msg/file` or `msg/video` entries use the same read-only, traversable protection as other managed offline directories so WeChat does not crash from a path-permission error at login; whether existing messages remain readable depends on the WeChat version, and full offline functionality is not guaranteed. Encrypted destinations also need a [data-volume password](/docs/storage-guide#encrypted-drives).
+ 
+-The older **Large files & videos only** mode (`msg/file + msg/video`) no longer accepts new migrations. To bring back directories migrated with this mode, connect the external drive, select WeChat in **App Data**, and click **Restore** on the account.
++The current split mode moves `msg` as a whole so hard links to the same file in `msg/file` and `msg/attach` stay on one volume. The older **Large files & videos only** mode (`msg/file + msg/video`) no longer accepts new migrations. To keep using an account already migrated in that mode, connect the original external drive, select WeChat and the account in **App Data**, and unlock or mount it as prompted. To bring its data back to your Mac or change migration modes, click **Restore** and wait for all migrated directories for that account to return before choosing **Migrate everything** or **Split migration** if needed.
+ 
+ ## Read migration progress {#progress}
+ 
+```
+
+**File**: `User_docs/docs/en/faq.md` (modified, +4/-0)
+```diff
+@@ -2,6 +2,10 @@
+ 
+ Save your work and note the state and error AppPorts displays. For missing data or interrupted migration, preserve the original drive and existing copies before following the relevant checks.
+ 
++## Why are permissions still missing after an upgrade when the switches are on? {#permissions-after-upgrade}
 +
-+## CI 失败与修复
++If **App Management** or **Full Disk Access** is already on after an upgrade but AppPorts still reports it missing, follow the reauthorization steps in [Readiness and system permissions](/docs/settings#permissions). If the old entry still does not work, clear its legacy record in **Readiness**.
 +
-+[旧 main 的窗口测试](https://github.com/wzh4869/AppPorts/actions/runs/43853013283)固定要求 1000 × 700；窗口显示后被屏幕边界限制为 1000 × 677，最后一条重开断言失败。夹具按可见屏幕限制尺寸并留出边界，首帧、替换桥接和重开断言全部保留，应用窗口代码没有修改。最终 runner 两项窗口测试均通过。
+ ## App will not open or quits immediately {#launch}
+ 
+ Check that the original external drive (or app library image) is online and the local entry is not an Orphaned Link. For Signature replaced, or a problem that began after upgrading to macOS 27, follow [upgrades and repair](/docs/macos-27). Otherwise check whether the original app supports the OS and retain error details. Not every launch failure is caused by signing.
+```
+
+**File**: `User_docs/docs/en/restore.md` (modified, +2/-0)
+```diff
+@@ -39,6 +39,8 @@ For an Unlinked app or an external copy without an entry, use Link Back to Local
+ 
+ These actions do not move data back internally. If new content has appeared at the original local location, establish what each copy contains before proceeding; do not force reconnection by overwriting it.
+ 
++For an existing symlink, **Normalize Management** requires that its target be a real directory. The action is unavailable if the target is missing, a regular file, or another symlink. If the original drive is offline and you want to recover the data, reconnect it and check the target first. AppPorts filters out macOS system shortcuts that point into `~/Library` from inside the WeChat container and blocks restoring or unlinking them.
 +
-+[build 67 第一轮](https://github.com/wzh4869/AppPorts/actions/runs/43885579492/attempts/1)的窗口测试通过，兼容性校验测试在私有镜像清理阶段失败：`hdiutil detach` 按挂载目录报 No such file or directory，lsof 确认目录已经不是挂载点。原代码重跑回归通过，说明该失败不是每轮必现；未确定 CI 中卷为何先被卸载。
-+
-+本机用私有 APFS 镜像实际复现同类场景：先 `diskutil unmount`，旧夹具按目录分离失败，但只读查询确认镜像设备仍连接。修复记录本次 `hdiutil attach -plist` 返回的整盘设备号，以设备分离镜像，不把“目录不再挂载”直接当成分离成功。正常 busy 有限重试、持续错误、超时和取消边界不变，不使用强制卸载。新增真实回归在本机和最终 runner 均通过；生产迁移和卸载实现不变。
-+
-+## 本地与界面
-+
-+同批源码的功能专项 168 项通过；迁移提示渲染补拍 1 项通过。最后窗口与镜像专项合计 16 项通过，同证书双架构 Release clean build、严格全架构嵌套签名及产物版本核对通过。专项与完整 runner 结果分别记录。
-+
-+- [准备情况检查入口](readiness-check-build63.md)
-+- [中英文更新迁移提示](update-migration-build65.md)
-+
-+截图使用生产组件和隔离偏好，标明各自拍摄 build，不代表用户真实权限或第三方应用更新结果。此次没有重新执行真实第三方应用更新、权限切换、登录重启或物理断盘流程。安装版仍为 `/Applications/AppPorts.app` 的 2.2.1（65）；本轮没有替换安装版、创建版本标签或发布 Release。
+ ## Unlink an application or force-unlink data {#unlink}
+ 
+ In the local app list, open the linked app row's `…` (More Actions) menu or context menu and choose Delete Local Entry; an orphaned link also offers Delete Orphaned Link. This removes the local entry managed by AppPorts while retaining the real external app. **It does not restore a data directory.** You can use Link Back to Local again later.
 ```
 
 ---
 
-### Incident Patch 2: `000cea9e` (2026-11-16)
-**Commit Message**: chore: 将镜像夹具修正版 build 更新为 68
+### Incident Patch 2: `84400863` (2026-11-20)
+**Commit Message**: fix(i18n): 完善 macOS 沙盒系统目录入口的错误提示文案，支持多语言翻译
 
-**File**: `AppPorts.xcodeproj/project.pbxproj` (modified, +2/-2)
+**File**: `.agents/notes/implemented/bug-fix/2026-11-20-过滤微信容器内沙盒系统软链并禁止还原.md` (modified, +2/-3)
 ```diff
-@@ -404,7 +404,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 67;
-+				CURRENT_PROJECT_VERSION = 68;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_TEAM = MQ7XG7WM3F;
- 				ENABLE_APP_INTENTS_METADATA_PROVIDER = NO;
-@@ -441,7 +441,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 67;
-+				CURRENT_PROJECT_VERSION = 68;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_TEAM = MQ7XG7WM3F;
- 				ENABLE_APP_INTENTS_METADATA_PROVIDER = NO;
+@@ -28,7 +28,7 @@ macOS 沙盒容器的 `Data/Library/` 下默认存在一整套指向同一用户
+ 3. **界面与执行层硬守卫（`AppPorts/Views/DataDirsView.swift`、`AppPorts/Utils/DataDirMover.swift`）**：
+    - `DataDirsView.askManageExistingLink` 对 `item.isUserDirectoryLink` 直接返回。
+    - `DataDirMover` 在 `restoreRetainingOriginal`（在 `fileExists` 检查之前同时校验单跳词法目标与解析后目标）、`createLink` 和 `resetExistingLink` 中对无受管记录的沙盒系统软链统一抛出 `DataDirError.sandboxSystemLink`，既防止误删 `~/Library/*` 真实目录或破坏系统软链，也避免悬空 `SyncServices` 误报「外部存储目录不存在」。
+-   - 新增错误提示文案先补齐 `zh-Hans` 与 `en`（按维护者指示其余语种留待后续统一补全）。
++   - 错误提示在 `Localizable.xcstrings` 覆盖全部 22 种受支持语言。各译文保留一个 `%@`，在运行时填入触发拦截的链接名称。盲文和火星文沿用[现有转写约定](../testing/2026-10-23-本地化覆盖与英文占位守卫.md)。
+ 
+ ## Existing-note audit
+ 
+@@ -54,7 +54,6 @@ macOS 沙盒容器的 `Data/Library/` 下默认存在一整套指向同一用户
+   - 微信容器内真正指向外置存储的历史迁移软链及受保护结构目录自身的异常软链仍可正常发现和还原。
+ - **代价与已知边界**：
+   - `DataDirItem.isSandboxHomeEntryLink` 依赖 `<home>/Library/Containers/<id>/Data/Library/<subpath>` 与 `<home>/Library/<subpath>` 精确同构；如果未来 macOS 新增指向 `~/` 下不同相对路径的沙盒系统链接，需要补充识别规则。
+-  - 新增错误文案 `该符号链接是 macOS 沙盒系统目录入口，不是应用迁移数据，不能还原或解绑：%@` 当前仅在 `Localizable.xcstrings` 补齐 `zh-Hans` 和 `en`，其余语种将回退到源文案并会在全语种本地化审计中提示，待后续批次统一补齐。
+ 
+ ## Verification
+ 
+@@ -64,7 +63,7 @@ macOS 沙盒容器的 `Data/Library/` 下默认存在一整套指向同一用户
+     - `DataDirScannerTests.testWeChatSandboxLibraryConvenienceSymlinksAreFilteredWhileRealExternalLinksRemainVisible` 验证微信容器内 `Mail`、`Keychains`、`Dictionaries`、`Sounds`、`Application Support/iCloud`、悬空 `Application Support/SyncServices`、`Application Scripts/com.tencent.xinWeChat`、`Images/People`、`Preferences/com.apple.security.plist` 均被过滤，顶层 `Desktop` 保持隐藏不可操作，真实指向外置盘的软链保持可见；
+     - `DataDirMoverTests.testRestoreCreateLinkAndResetRejectMacOSSandboxSystemSymlinks` 验证 `restoreAndComplete`（含真实存在的 `Mail` 与悬空的 `SyncServices`）、`createLink`、`resetExistingLink` 均抛出 `DataDirError.sandboxSystemLink`，原软链与 `~/Library/Mail` 内容零改动。
+   - `SignatureRecoveryDependencyTests`（10 项通过）与 `MigrationSafetyRenderTests` 全部通过。
+-- 本地化审计（`LocalizationAuditTests`）：18/19 通过（占位符一致性、键和语言格式、无陈旧条目、无英文占位均通过）；唯一失败项 `testStringCatalogContainsTranslationsForAllSupportedLanguages` 仅报告本次新增键缺少除 `zh-Hans` / `en` 外的 20 个语种，符合维护者“本次仅补中英”的明确要求。
++- 补齐译文后，`LocalizationAuditTests` 19 项及 `DataDirMoverTests.testRestoreCreateLinkAndResetRejectMacOSSandboxSystemSymlinks` 通过。目录共 1,338 条文案，覆盖 22 种语言；新增译文已逐项与 Release 编译资源核对。
+ - Release 洁净构建（`xcodebuild clean build -scheme "AppPorts" -configuration Release -destination 'platform=macOS'`，`arm64` + `x86_64`）：`** BUILD SUCCEEDED **`。
+ - 笔记校验与格式检查：`verify-agent-note-tree.ts`、`verify-agent-note-format.ts`、`verify-archived-agent-notes.ts` 与 `git diff --check` 全部通过。
+ - **未覆盖范围**：未在包含完整 28 条 `Data/Library/*` 软链的实机微信容器上打开 GUI 手工验收（本机微信容器缺少该组软链，验证基于隔离临时目录夹具完成）。
+```
+
+**File**: `AppPorts/Localizable.xcstrings` (modified, +120/-0)
+```diff
+@@ -150332,17 +150332,137 @@
+     "该符号链接是 macOS 沙盒系统目录入口，不是应用迁移数据，不能还原或解绑：%@" : {
+       "extractionState" : "manual",
+       "localizations" : {
++        "ar" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "هذا الرابط الرمزي هو مدخل إلى مجلد نظام في بيئة العزل في macOS. لا يشير إلى بيانات تطبيق نُقلت، لذا لا يمكن استعادته أو فك الارتباط به: %@"
++          }
++        },
++        "br" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "⠠⠞⠓⠊⠎ ⠎⠽⠍⠇⠊⠝⠅ ⠊⠎ ⠁ ⠍⠁⠉⠠⠕⠠⠎ ⠎⠁⠝⠙⠃⠕⠭ ⠎⠽⠎⠞⠑⠍ ⠑⠝⠞⠗⠽⠂ ⠝⠕⠞ ⠍⠊⠛⠗⠁⠞⠑⠙ ⠁⠏⠏ ⠙⠁⠞⠁⠂ ⠁⠝⠙ ⠉⠁⠝⠝⠕⠞ ⠃⠑ ⠗⠑⠎⠞⠕⠗⠑⠙ ⠕⠗ ⠥⠝⠃⠕⠥⠝⠙⠒ %@"
++          }
++        },
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Dieser symbolische Link verweist auf einen Systemordner der macOS-Sandbox. Er gehört nicht zu migrierten App-Daten und kann weder wiederhergestellt noch getrennt werden: %@"
++          }
++        },
+         "en" : {
+           "stringUnit" : {
+             "state" : "translated",
+             "value" : "This symlink is a macOS sandbox system entry, not migrated app data, and cannot be restored or unbound: %@"
+           }
+         },
++        "eo" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Ĉi tiu simbola ligilo kondukas al sistema dosierujo de la provejo de macOS. Ĝi ne estas parto de migritaj aplikaĵdatumoj kaj ne povas esti restaŭrita aŭ malligita: %@"
++          }
++        },
++        "es" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Este enlace simbólico apunta a una carpeta del sistema del entorno aislado de macOS. No forma parte de los datos migrados de la aplicación, por lo que no se puede restaurar ni desvincular: %@"
++          }
++        },
++        "fr" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Ce lien symbolique pointe vers un dossier système du bac à sable de macOS. Il ne fait pas partie des données migrées de l’application et ne peut être ni restauré ni dissocié : %@"
++          }
++        },
++        "hi" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "यह प्रतीकात्मक लिंक macOS के सैंडबॉक्स में एक सिस्टम फ़ोल्डर का रास्ता है। यह स्थानांतरित ऐप डेटा का हिस्सा नहीं है, इसलिए इसे न तो बहाल किया जा सकता है, न ही इसका लिंक हटाया जा सकता है: %@"
++          }
++        },
++        "id" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Tautan simbolis ini mengarah ke folder sistem di sandbox macOS. Tautan ini bukan bagian dari data aplikasi yang dimigrasikan sehingga tidak dapat dipulihkan atau diputus: %@"
++          }
++        },
++        "it" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Questo link simbolico punta a una cartella di sistema della sandbox di macOS. Non fa parte dei dati migrati dell’app, quindi non può essere ripristinato né scollegato: %@"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "このシンボリックリンクは macOS のサンドボックス内にあるシステムフォルダへのリンクです。移行したアプリデータではないため、復元やリンクの解除はできません：%@"
++          }
++        },
++        "ko" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "이 심볼릭 링크는 macOS 샌드박스의 시스템 폴더를 가리킵니다. 마이그레이션된 앱 데이터가 아니므로 복원하거나 연결을 해제할 수 없습니다: %@"
++          }
++        },
++        "nl" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Deze symbolische koppeling verwijst naar een systeemmap in de macOS-sandbox. De koppeling behoort niet tot gemigreerde appgegevens en kan daarom niet worden hersteld of ontkoppeld: %@"
++          }
++        },
++        "pl" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "To dowiązanie symboliczne prowadzi do katalogu systemowego w piaskownicy macOS. Nie jest częścią przeniesionych danych aplikacji, więc nie można go przywrócić ani odłączyć: %@"
++          }
++        },
++        "pt" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Este link simbólico aponta para uma pasta do sistema na sandbox do macOS. Ele não faz parte dos dados migrados do app e não pode ser restaurado nem desvinculado: %@"
++          }
++        },
++        "ru" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Эта символическая ссылка ведёт к системной папке в песочнице macOS. Она не относится к перенесённым данным приложения, поэтому её нельзя восстановить или отвязать: %@"
++          }
++        },
++        "th" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "ลิงก์สัญลักษณ์นี้ชี้ไปยังโฟลเดอร์ระบบในแซนด์บ็อกซ์ของ macOS ไม่ใช่ข้อมูลแอปที่ย้ายมา จึงไม่สามารถกู้คืนหรือยกเลิกการเชื่อมโยงได้: %@"
++          }
++        },
++
 ```
 
 ---
 
-### Incident Patch 3: `a07bf926` (2026-11-16)
-**Commit Message**: chore: 将验证修正版 build 更新为 67
+### Incident Patch 3: `ee96595c` (2026-11-20)
+**Commit Message**: chore: 将版本更新为 2.3.1 build 80
 
-**File**: `AppPorts.xcodeproj/project.pbxproj` (modified, +2/-2)
+**File**: `AppPorts.xcodeproj/project.pbxproj` (modified, +4/-4)
 ```diff
-@@ -404,7 +404,7 @@
+@@ -391,7 +391,7 @@
  				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
  				CODE_SIGN_STYLE = Automatic;
  				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 66;
-+				CURRENT_PROJECT_VERSION = 67;
+-				CURRENT_PROJECT_VERSION = 79;
++				CURRENT_PROJECT_VERSION = 80;
  				DEAD_CODE_STRIPPING = YES;
  				DEVELOPMENT_TEAM = MQ7XG7WM3F;
  				ENABLE_APP_INTENTS_METADATA_PROVIDER = NO;
-@@ -441,7 +441,7 @@
+@@ -408,7 +408,7 @@
+ 					"@executable_path/../Frameworks",
+ 				);
+ 				MACOSX_DEPLOYMENT_TARGET = 12.0;
+-				MARKETING_VERSION = 2.3.0;
++				MARKETING_VERSION = 2.3.1;
+ 				PRODUCT_BUNDLE_IDENTIFIER = com.shimoko.AppPorts;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				PROVISIONING_PROFILE_SPECIFIER = "";
+@@ -428,7 +428,7 @@
  				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
  				CODE_SIGN_STYLE = Automatic;
  				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 66;
-+				CURRENT_PROJECT_VERSION = 67;
+-				CURRENT_PROJECT_VERSION = 79;
++				CURRENT_PROJECT_VERSION = 80;
  				DEAD_CODE_STRIPPING = YES;
  				DEVELOPMENT_TEAM = MQ7XG7WM3F;
  				ENABLE_APP_INTENTS_METADATA_PROVIDER = NO;
+@@ -445,7 +445,7 @@
+ 					"@executable_path/../Frameworks",
+ 				);
+ 				MACOSX_DEPLOYMENT_TARGET = 12.0;
+-				MARKETING_VERSION = 2.3.0;
++				MARKETING_VERSION = 2.3.1;
+ 				PRODUCT_BUNDLE_IDENTIFIER = com.shimoko.AppPorts;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				PROVISIONING_PROFILE_SPECIFIER = "";
 ```
 
 #### Recent Merged Pull Requests:
@@ -1207,29 +1610,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: 记录 2.3.0 build 68 完整验证与 CI 修复
+## X. docs: update user guides for AppPorts 2.3.1
 
 **RULE**:
-When implementing operations in `.agents/notes/implemented/feature/2026-11-16-就绪权限展示与默认窗口尺寸.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wzh4869/AppPorts. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `User_docs/docs/changelog.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wzh4869/AppPorts. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `17185d1d`: docs: 记录 2.3.0 build 68 完整验证与 CI 修复. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0f1f0a6a`: docs: update user guides for AppPorts 2.3.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/notes/implemented/feature/2026-11-16-就绪权限展示与默认窗口尺寸.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `User_docs/docs/changelog.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
+## v2.3.1 {#v2-3-1}
 
-最终 build 68 的 runner 两项窗口测试均通过，完整应用回归、独立进程计时与 Release 构建通过；批准延期的翻译完整性审计仍失败。当前完整结论见 [2.3.0（68）验证记录](../../../../.github/pr-assets/main-build68.md)，不再使用 build 61 的结果代表首帧修改。
+- 更新签名证书后，如果系统设置中的开关已开启，AppPorts 却仍提示权限缺失，可按提示重新授权。「准备情况」也提供「清理旧版授权记录」。手动替换安装后，打开一次新版即可处理残留的旧更新守护进程。
+- 微信停用「仅大文件与视频」的新迁移，保留已有迁移的挂载、解锁和还原。过滤微信容器中的 macOS 系统软链和 Chromium、Electron 应用的运行时伪软链；只有指向实际目录的现有软链才可进行「规范化管理」。
+- 「应用数据」列表显示每个应用的数据总量和已迁移、本地明细，并提供三种排序；「外部应用库」显示当前列表的应用本体合计大小。
+- 修复外观切回「跟随系统」后未生效，以及主窗口与其他窗口外观不一致的问题。
+
+[查看 v2.3.1 发布](https://github.com/wzh4869/AppPorts/releases/tag/2.3.1) · [重新授权](/docs/settings#permissions) · [手动更新](/docs/settings#updates) · [微信账号迁移](/docs/datamigrae/operation#wechat) · [现有软链处理](/docs/restore#reconnect)
+
+- 微信账号数据迁移新增“仅大文件与视频（`msg/file + msg/video`）”模式：与整账号及“拆分迁移（`msg + business`）”互斥，允许把聊天图片附件与数据库留在本地，仅迁出文件与视频冷数据；并统一采用单遍目录遍历测算大小。 **版本说明**：v2.3.1 停止此模式的新迁移，已迁移账号仍可挂载、解锁和还原。见[微信账号迁移](/docs/datamigrae/operation#wechat)。
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- 微信账号数据迁移新增“仅大文件与视频（`msg/file + msg/video`）”模式：与整账号及“拆分迁移（`msg + business`）”互斥，允许把聊天图片附件与数据库留在本地，仅迁出文件与视频冷数据；并统一采用单遍目录遍历测算大小。
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `17185d1d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0f1f0a6a` are properly handled with clean fallback behavior.

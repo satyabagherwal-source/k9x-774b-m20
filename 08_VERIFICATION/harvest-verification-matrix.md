@@ -11642,3 +11642,7 @@
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T22:08:02.116Z` | `hf-unsloth-inkling-2-mini-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0EAB1E60` [Domain D] | Yes (`1232ff78...`) |
 | `CYCLE-20261120-OZCR` | `2026-11-20T22:22:57.531Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9646` | Yes (`d661d5b7...`) |
 | `CYCLE-20261120-ZAO3` | `2026-11-20T22:30:58.755Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9647` | Yes (`6a1f9dce...`) |
+| `CYCLE-20261120-ALN6` | `2026-11-20T22:39:46.194Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/wzh4869-appports-learnings.md` | Yes (`4dd921dc...`) |
+| `CYCLE-20261120-AQET` | `2026-11-20T22:39:52.373Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9648` | Yes (`3ad7fc8f...`) |
+| `CYCLE-20261120-CYRV` | `2026-11-20T22:41:36.523Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md` | Yes (`b026fe51...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T22:42:05.596Z` | `skyhook-io-radar` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6E87E9F5` [Domain D] | Yes (`97b968de...`) |

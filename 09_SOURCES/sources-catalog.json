@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "836e411e",
+    "sourceVersion": "796b8d3b",
     "license": "NOASSERTION",
-    "contentHash": "3fc19016a4a4f609307bae2e9dc6e82e906d8f400aa7eda2e7f49c52df240a39",
-    "lastHarvestedAt": "2026-11-18T15:35:10.751Z",
+    "contentHash": "3ad7fc8f4b6e396fabc976c39483f4a664874ba6e8b38474eea1326ab10bc3d2",
+    "lastHarvestedAt": "2026-11-20T22:39:52.376Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "ccb8393e",
+    "sourceVersion": "778697dd",
     "license": "Apache-2.0",
-    "contentHash": "952c6adf3991acc07b464136a80c3d71e83ae82b488f01d798878534c6766208",
-    "lastHarvestedAt": "2026-11-19T20:55:49.692Z",
+    "contentHash": "b026fe5167748820234c9c5ce1cba1bd912fa8df3705d1a27f315b567ce02a16",
+    "lastHarvestedAt": "2026-11-20T22:41:36.527Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -9823,10 +9823,10 @@
     "repository": "wzh4869/AppPorts",
     "platform": "github",
     "sourceUrl": "https://github.com/wzh4869/AppPorts",
-    "sourceVersion": "17185d1d",
+    "sourceVersion": "0f1f0a6a",
     "license": "Apache-2.0",
-    "contentHash": "752fc2a4dc36dadcf3fe5e04ae849960735807f95a614ff245e23cf0b9327440",
-    "lastHarvestedAt": "2026-11-16T23:35:00.863Z",
+    "contentHash": "4dd921dc7916009554cb49bda9b010d9b823f307f9b51797c50c8cb66a5da199",
+    "lastHarvestedAt": "2026-11-20T22:39:46.198Z",
     "learningId": "learn-github-wzh4869-appports"
   },
   "andythefactory-newspaper4k": {

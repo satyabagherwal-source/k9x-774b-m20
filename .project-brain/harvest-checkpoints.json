@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T22:30:58.767Z",
+  "last_updated": "2026-11-20T22:41:36.534Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "3fc19016a4a4f609307bae2e9dc6e82e906d8f400aa7eda2e7f49c52df240a39",
-      "verified_at": "2026-11-18T15:35:10.759Z",
+      "content_hash": "3ad7fc8f4b6e396fabc976c39483f4a664874ba6e8b38474eea1326ab10bc3d2",
+      "verified_at": "2026-11-20T22:39:52.384Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T15:35:10.759Z"
+      "last_updated": "2026-11-20T22:39:52.384Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "952c6adf3991acc07b464136a80c3d71e83ae82b488f01d798878534c6766208",
-      "verified_at": "2026-11-19T20:55:49.700Z",
+      "content_hash": "b026fe5167748820234c9c5ce1cba1bd912fa8df3705d1a27f315b567ce02a16",
+      "verified_at": "2026-11-20T22:41:36.534Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T20:55:49.701Z"
+      "last_updated": "2026-11-20T22:41:36.534Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -14781,14 +14781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wzh4869-appports",
-      "content_hash": "752fc2a4dc36dadcf3fe5e04ae849960735807f95a614ff245e23cf0b9327440",
-      "verified_at": "2026-11-16T23:35:00.870Z",
+      "content_hash": "4dd921dc7916009554cb49bda9b010d9b823f307f9b51797c50c8cb66a5da199",
+      "verified_at": "2026-11-20T22:39:46.233Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T23:35:00.870Z"
+      "last_updated": "2026-11-20T22:39:46.233Z"
     },
     "AndyTheFactory/newspaper4k": {
       "repository": "AndyTheFactory/newspaper4k",

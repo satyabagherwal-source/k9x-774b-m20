@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-S3R4",
-    "timestamp": "2026-11-18T18:38:05.824Z",
-    "repository": "CompVis/stable-diffusion-v1-4",
-    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-    "contentHash": "5b4c18d781b4913e888ee23421cad7d40eb41b0fd5d194c9131b8922f7fe275e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-S5UQ",
-    "timestamp": "2026-11-18T18:38:08.546Z",
-    "repository": "erkamyaman/rust-anything",
-    "learningId": "learn-github-erkamyaman-rust-anything",
-    "contentHash": "03384e9e6475471326bd664a2df9cdfcf52e38f0ec1f6767fa3680f51901a84e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-SFWB",
-    "timestamp": "2026-11-18T18:38:21.563Z",
-    "repository": "risingwavelabs/risingwave",
-    "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "86d871b48ad6bc71b94d668789081dae3bd28bb6334808402ded6462aeaf41e6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-G855",
     "timestamp": "2026-11-18T18:56:51.257Z",
     "repository": "hexgrad/Kokoro-82M",
@@ -7492,6 +7447,51 @@
     "contentHash": "6a1f9dceaf2e940889633e0c04237ac365d602374f37af8a78e539970654faa5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-ALN6",
+    "timestamp": "2026-11-20T22:39:46.194Z",
+    "repository": "wzh4869/AppPorts",
+    "learningId": "learn-github-wzh4869-appports",
+    "contentHash": "4dd921dc7916009554cb49bda9b010d9b823f307f9b51797c50c8cb66a5da199",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-AQET",
+    "timestamp": "2026-11-20T22:39:52.373Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "3ad7fc8f4b6e396fabc976c39483f4a664874ba6e8b38474eea1326ab10bc3d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-CYRV",
+    "timestamp": "2026-11-20T22:41:36.523Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "b026fe5167748820234c9c5ce1cba1bd912fa8df3705d1a27f315b567ce02a16",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

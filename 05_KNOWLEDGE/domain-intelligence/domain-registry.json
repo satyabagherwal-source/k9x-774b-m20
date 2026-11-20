@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T22:31:03.804Z",
-  "total_records": 2183,
+  "last_updated": "2026-11-20T22:42:07.116Z",
+  "total_records": 2186,
   "domains": {
     "A": {
       "total": 17,
@@ -58,7 +58,7 @@
       ]
     },
     "D": {
-      "total": 881,
+      "total": 884,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -940,7 +940,10 @@
         "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-unsloth-inkling-2-mini-gguf-core-invariants",
         "DOM-D-0EAB1E60",
-        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-inkling-2-mini-gguf-learnings-core-in"
+        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-inkling-2-mini-gguf-learnings-core-in",
+        "domain_intelligence-research-knowledge-intelligence-skyhook-io-radar-core-invariants",
+        "DOM-D-6E87E9F5",
+        "domain_intelligence-research-knowledge-intelligence-skyhook-io-radar-learnings-core-invariants"
       ]
     },
     "E": {
@@ -24441,8 +24444,8 @@
       "title": "Technical Construction Intelligence: rustls/rustls Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-technical-construction-intelligence-rustls-rustls-core-invariants.md",
       "repository": "rustls/rustls",
-      "content_hash": "cc0f5428132fabf8f925176f6b97d7c1619ff7c872850c4a6e0b815bdb9766d0",
-      "created_at": "2026-11-18T15:35:10.941Z"
+      "content_hash": "5929abb98544fc3baf70c20e60353827ee1e674ecbbf941b904050e62f6c5b72",
+      "created_at": "2026-11-20T22:39:52.716Z"
     },
     "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants",
@@ -24459,8 +24462,8 @@
       "title": "Technical Construction Intelligence: rustls-rustls-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-learnings-technical-construction-intelligence-rustls-rustls-learni.md",
       "repository": "rustls-rustls-learnings",
-      "content_hash": "e9d038f07cc9278a96eaf6e5ae5ed3ce4290a266065163fe2328ae200eb20a43",
-      "created_at": "2026-11-18T15:35:48.784Z"
+      "content_hash": "dbf143c49420019dbf70e2661f33c550f4c956c0e6c479c19572438b3fa27be8",
+      "created_at": "2026-11-20T22:42:07.116Z"
     },
     "domain_intelligence-quality-verification-intelligence-lxml-lxml-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-lxml-lxml-core-invariants",
@@ -25041,8 +25044,8 @@
       "title": "Architecture Intelligence: wzh4869/AppPorts Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wzh4869-appports-architecture-intelligence-wzh4869-appports-core-invariants.md",
       "repository": "wzh4869/AppPorts",
-      "content_hash": "79b37844e7e8f9ae4124af2b4de6b0c3f8a0ac5fcf1c0c847eec9978e869b9a0",
-      "created_at": "2026-11-16T23:35:01.167Z"
+      "content_hash": "6bb6f6ac5fd8b28284351cd0650d79979d67de054446d28168a30daf57fbec51",
+      "created_at": "2026-11-20T22:39:46.580Z"
     },
     "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-core-invariants",
@@ -25068,8 +25071,8 @@
       "title": "Architecture Intelligence: wzh4869-appports-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wzh4869-appports-learnings-architecture-intelligence-wzh4869-appports-learnings-.md",
       "repository": "wzh4869-appports-learnings",
-      "content_hash": "ca85469c842b1962469930c0b60ddb4c760048fe3f4389a846b4703b60f206d2",
-      "created_at": "2026-11-16T23:35:15.596Z"
+      "content_hash": "8c65e8da15a9c282e74a95ed3213b0c96d984ebf981a95ef63b6ef339aee41b4",
+      "created_at": "2026-11-20T22:41:40.087Z"
     },
     "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants",
@@ -36731,6 +36734,66 @@
       "repository": "hf-unsloth-inkling-2-mini-gguf-learnings",
       "content_hash": "7d2b756e906617a72efe860f2d08fe1f9dcd2bf27573deea81fc55cd759cf702",
       "created_at": "2026-11-20T22:08:02.453Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-skyhook-io-radar-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-skyhook-io-radar-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: skyhook-io/radar Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-skyhook-io-radar-research-knowledge-intelligence-skyhook-io-radar-core-invariant.md",
+      "repository": "skyhook-io/radar",
+      "content_hash": "8c64c9bf396e269ce436c3cb35596d0f840e5fd5174a1a8c491f15952a52c870",
+      "created_at": "2026-11-20T22:41:36.723Z"
+    },
+    "DOM-D-6E87E9F5": {
+      "record_id": "DOM-D-6E87E9F5",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): skyhook-io/radar",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  \n> **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  \n> **Source Version**: `778697dd`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synt",
+      "content_hash": "97b968dee59de18a65caf20c6d053bb9caf752800c2437144dbe3b6359a9f1d2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  \n> **Source**: github ([https://github.com/skyhook-i -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  \n> **Source**: github ([https://github.com/skyhook-i",
+      "provenance": {
+        "source_uri": "project://skyhook-io-radar/skyhook-io-radar-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T22:41:40.369Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (skyhook-io-radar)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of skyhook-io-radar"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T22:42:05.571Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-skyhook-io-radar-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-skyhook-io-radar-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: skyhook-io-radar-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-skyhook-io-radar-learnings-research-knowledge-intelligence-skyhook-io-radar-lear.md",
+      "repository": "skyhook-io-radar-learnings",
+      "content_hash": "2a9440d9f9e34c5447c34ca2a4e638ee2fc6a1e8d4783860c9c72faea12a61ee",
+      "created_at": "2026-11-20T22:42:06.023Z"
     }
   }
 }

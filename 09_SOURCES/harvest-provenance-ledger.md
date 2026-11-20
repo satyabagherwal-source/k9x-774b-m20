@@ -11675,3 +11675,7 @@ Every entry in this ledger must capture:
 | `learn-dom-d-0eab1e60` | `project://hf-unsloth-inkling-2-mini-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-inkling-2-mini-gguf-learnings.md` | 2026-11-20T22:08:02.116Z |
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `3bc950fb` | Multi-dimensional audit evidence | 2026-11-20T22:22:57.536Z |
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `9de645f5` | Multi-dimensional audit evidence | 2026-11-20T22:30:58.759Z |
+| `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `0f1f0a6a` | Multi-dimensional audit evidence | 2026-11-20T22:39:46.198Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `796b8d3b` | Multi-dimensional audit evidence | 2026-11-20T22:39:52.376Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `778697dd` | Multi-dimensional audit evidence | 2026-11-20T22:41:36.527Z |
+| `learn-dom-d-6e87e9f5` | `project://skyhook-io-radar` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md` | 2026-11-20T22:42:05.596Z |
