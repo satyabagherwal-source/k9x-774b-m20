@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-4NYU",
-    "timestamp": "2026-11-18T15:59:54.198Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "0d7df687d6711ef72bcfd3c283274849a52cba40c5d7e268d10f5df88d474a56",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-4Y0A",
     "timestamp": "2026-11-18T16:00:07.210Z",
     "repository": "briaai/RMBG-3.0",
@@ -7490,6 +7475,21 @@
     "repository": "u-root/u-root",
     "learningId": "learn-github-u-root-u-root",
     "contentHash": "007ee1e114b4ac7c0ef9b649b611f2042cd78529e35ef0b72e8a7b5141eab7db",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-A3I4",
+    "timestamp": "2026-11-20T18:27:26.140Z",
+    "repository": "syntax-tree/hast-util-to-html",
+    "learningId": "learn-github-syntax-tree-hast-util-to-html",
+    "contentHash": "cf5b05bba607881e9403a5e5c135b21fbad26514f20977ff83808af280c1c844",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

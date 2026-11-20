@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T17:58:52.164Z",
+  "updated_at": "2026-11-20T18:27:30.355Z",
   "stats": {
-    "total_discovered": 6566,
-    "approved_pending_harvest": 6207,
+    "total_discovered": 6577,
+    "approved_pending_harvest": 6218,
     "harvested_count": 0,
     "rejected_count": 359,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6171,
+      "COMMUNITY_AND_EXPERT": 6182,
       "OFFICIAL_DOCUMENTATION": 227,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
@@ -141962,6 +141962,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
         "fileName": "weaviate-weaviate-learnings.md"
+      }
+    },
+    "SRC-B8DAAC5EF5AE": {
+      "id": "SRC-B8DAAC5EF5AE",
+      "url": "https://github.com/syntax-tree/hast-util-to-html",
+      "title": "https://github.com/syntax-tree/hast-util-to-html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T18:27:29.705Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
+        "fileName": "syntax-tree-hast-util-to-html-learnings.md"
+      }
+    },
+    "SRC-9826156ABAC7": {
+      "id": "SRC-9826156ABAC7",
+      "url": "https://html.spec.whatwg.org/multipage/syntax.html",
+      "title": "https://html.spec.whatwg.org/multipage/syntax.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T18:27:29.763Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
+        "fileName": "syntax-tree-hast-util-to-html-learnings.md"
+      }
+    },
+    "SRC-D842C47365FD": {
+      "id": "SRC-D842C47365FD",
+      "url": "https://github.com/wooorm/property-information/blob/main/lib/svg.js",
+      "title": "https://github.com/wooorm/property-information/blob/main/lib/svg.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T18:27:29.879Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
+        "fileName": "syntax-tree-hast-util-to-html-learnings.md"
+      }
+    },
+    "SRC-B1C31E9BA451": {
+      "id": "SRC-B1C31E9BA451",
+      "url": "https://github.com/syntax-tree/xast",
+      "title": "https://github.com/syntax-tree/xast",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T18:27:29.967Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
+        "fileName": "syntax-tree-hast-util-to-html-learnings.md"
+      }
+    },
+    "SRC-E1D1CA5FDA96": {
+      "id": "SRC-E1D1CA5FDA96",
+      "url": "https://github.com/syntax-tree/.github/blob/main/support.md",
+      "title": "https://github.com/syntax-tree/.github/blob/main/support.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T18:27:30.021Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
+        "fileName": "syntax-tree-hast-util-to-html-learnings.md"
+      }
+    },
+    "SRC-E6420A9CC66B": {
+      "id": "SRC-E6420A9CC66B",
+      "url": "https://github.com/syntax-tree/.github/blob/main/contributing.md",
+      "title": "https://github.com/syntax-tree/.github/blob/main/contributing.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T18:27:30.077Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
+        "fileName": "syntax-tree-hast-util-to-html-learnings.md"
+      }
+    },
+    "SRC-0045421B2173": {
+      "id": "SRC-0045421B2173",
+      "url": "https://github.com/syntax-tree/.github/blob/main/code-of-conduct.md",
+      "title": "https://github.com/syntax-tree/.github/blob/main/code-of-conduct.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T18:27:30.131Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
+        "fileName": "syntax-tree-hast-util-to-html-learnings.md"
+      }
+    },
+    "SRC-F0DD817245B1": {
+      "id": "SRC-F0DD817245B1",
+      "url": "https://github.com/search?q=user%3Asyntax-tree&type=issues",
+      "title": "https://github.com/search?q=user%3Asyntax-tree&type=issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T18:27:30.187Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
+        "fileName": "syntax-tree-hast-util-to-html-learnings.md"
+      }
+    },
+    "SRC-E1B53929418B": {
+      "id": "SRC-E1B53929418B",
+      "url": "https://github.com/orgs/syntax-tree/discussions",
+      "title": "https://github.com/orgs/syntax-tree/discussions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T18:27:30.243Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
+        "fileName": "syntax-tree-hast-util-to-html-learnings.md"
+      }
+    },
+    "SRC-AB50EF302398": {
+      "id": "SRC-AB50EF302398",
+      "url": "https://github.com/syntax-tree/hast-util-to-html/releases/tag/9.0.7",
+      "title": "https://github.com/syntax-tree/hast-util-to-html/releases/tag/9.0.7",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T18:27:30.298Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
+        "fileName": "syntax-tree-hast-util-to-html-learnings.md"
+      }
+    },
+    "SRC-D97A5D690C19": {
+      "id": "SRC-D97A5D690C19",
+      "url": "https://github.com/syntax-tree/hast-util-to-html/releases/tag/9.0.6",
+      "title": "https://github.com/syntax-tree/hast-util-to-html/releases/tag/9.0.6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T18:27:30.354Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
+        "fileName": "syntax-tree-hast-util-to-html-learnings.md"
       }
     }
   }

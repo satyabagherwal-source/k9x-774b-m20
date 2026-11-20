@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T18:16:54.516Z",
-  "total_cycles_completed": 11051,
-  "total_learnings_persisted": 11051,
-  "total_rules_promoted": 10407,
+  "last_updated": "2026-11-20T18:27:26.151Z",
+  "total_cycles_completed": 11052,
+  "total_learnings_persisted": 11052,
+  "total_rules_promoted": 10408,
   "history": [
-    {
-      "timestamp": "2026-11-19T19:23:17.490Z",
-      "repository": "matthart1983/netwatch",
-      "learningId": "learn-github-matthart1983-netwatch",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T19:23:22.858Z",
       "repository": "momenbasel/PureMac",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-20T18:16:54.516Z",
       "repository": "u-root/u-root",
       "learningId": "learn-github-u-root-u-root",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T18:27:26.151Z",
+      "repository": "syntax-tree/hast-util-to-html",
+      "learningId": "learn-github-syntax-tree-hast-util-to-html",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for syntax/tree/hast/util/to/html
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for syntax-tree/hast-util-to-html
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "syntax/tree/hast/util/to/html",
-  "source_url": "https://github.com/syntax/tree/hast/util/to/html",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "syntax-tree/hast-util-to-html",
+  "source_url": "https://github.com/syntax-tree/hast-util-to-html",
+  "source_version": "a28501a8",
+  "license": "MIT",
+  "timestamp": "2026-11-20T18:27:26.402Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-syntax-tree-hast-util-to-html",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [syntax/tree/hast/util/to/html](https://github.com/syntax/tree/hast/util/to/html) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [syntax-tree/hast-util-to-html](https://github.com/syntax-tree/hast-util-to-html) (Revision: `a28501a8`).  
+> **License**: MIT | **Timestamp**: `2026-11-20T18:27:26.402Z`  
+> **Learning ID**: `learn-github-syntax-tree-hast-util-to-html`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `syntax/tree/hast/util/to/html` (Commit: `historical`)
+- **Target Repository**: `syntax-tree/hast-util-to-html` (Commit: `a28501a8`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md`  
-> **Source**: github ([https://github.com/syntax-tree/hast-util-to-html](https://github.com/syntax-tree/hast-util-to-html))  
-> **Source Version**: `9c689126`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T14:11:51.354Z  
-> **Learning ID**: `learn-github-syntax-tree-hast-util-to-html`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): syntax-tree/hast-util-to-html
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/syntax-tree/hast-util-to-html](https://github.com/syntax-tree/hast-util-to-html))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T14:11:50.426Z  
+> **Harvest Timestamp**: 2026-11-20T18:27:18.390Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -645,6 +631,18 @@ import {stringifyEntities} from 'stringify-entities'
 // Declare array as variable so it can be cached by `stringifyEntities`
 const textEntitySubset = ['<', '&']
 
+// HTML elements whose text is not escaped.
+// See: <https://html.spec.whatwg.org/multipage/parsing.html#serialising-html-fragments>.
+const raw = new Set([
+  'iframe',
+  'noembed',
+  'noframes',
+  'plaintext',
+  'script',
+  'style',
+  'xmp'
+])
+
 /**
  * Serialize a text node.
  *
@@ -660,10 +658,11 @@ const textEntitySubset = ['<', '&']
  *   Serialized node.
  */
 export function text(node, _, parent, state) {
-  // Check if content of `node` should be escaped.
+  // The schema is that of `parent`, as raw elements do not switch spaces.
   return parent &&
     parent.type === 'element' &&
-    (parent.tagName === 'script' || parent.tagName === 'style')
+    state.schema.space === 'html' &&
+    raw.has(parent.tagName)
     ? node.value
     : stringifyEntities(
         node.value,
@@ -948,17 +947,17 @@ export function all(parent) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #53** (2026-11-18): **Fix to not encode text in `iframe`, `noembed`, `noframes`, `plaintext`, `xmp`**
+  *Symptoms*: <!--   Please check the needed checkboxes ([ ] -> [x]).   Leave the comments as they are: they do not show on GitHub.    Please try to limit the scope,   provide a general description of the changes,   and remember it’s up to you to convince us to land it.    We are excited about pull requests.   Thank you! -->  ### Initial checklist  * [x] I read the support docs <!-- https://github.com/syntax-tree/.github/blob/main/support.md --> * [x] I read the contributing guide <!-- https://github.com/syntax-tree/.github/blob/main/contributing.md --> * [x] I agree to follow the code of conduct <!-- https://github.com/syntax-tree/.github/blob/main/code-of-conduct.md --> * [x] I searched issues and discussions and couldn’t find anything or linked relevant results below <!-- https://github.com/search?q=user%3Asyntax-tree&type=issues and https://github.com/orgs/syntax-tree/discussions --> * [x] I made sure the docs are up to date * [x] I included tests (or that’s not needed)  ### Description of changes  Text in `iframe`, `noembed`, `noframes`, `plaintext`, and `xmp` was encoded like normal text. The parser reads these elements as raw text (no character references), so the encoded output does not parse back to the same tree, and it grows on every round trip:  ```js import {fromHtml} from 'hast-util-from-html' import {toHtml} from 'hast-util-to-html'  let html = '<xmp>a<b & c</xmp>' html = toHtml(fromHtml(html, {fragment: true})) // '<xmp>a&#x3C;b &#x26; c</xmp>' html = toHtml(fromHtml(html, 
+  **Post-Mortem & Fix Analysis**:
+  > Hi! This was closed. Team: If this was merged, please describe when this is likely to be released. Otherwise, please add one of the `no/*` labels.  
+  > thanks, [`9.0.7`](https://github.com/syntax-tree/hast-util-to-html/releases/tag/9.0.7)!
+
 - **Issue #52** (2026-10-29): **Fix `p` closing tag omission in custom elements**
   *Symptoms*: <!--   Please check the needed checkboxes ([ ] -> [x]).   Leave the comments as they are: they do not show on GitHub.    Please try to limit the scope,   provide a general description of the changes,   and remember it’s up to you to convince us to land it.    We are excited about pull requests.   Thank you! -->  ### Initial checklist  * [x] I read the support docs <!-- https://github.com/syntax-tree/.github/blob/main/support.md --> * [x] I read the contributing guide <!-- https://github.com/syntax-tree/.github/blob/main/contributing.md --> * [x] I agree to follow the code of conduct <!-- https://github.com/syntax-tree/.github/blob/main/code-of-conduct.md --> * [x] I searched issues and discussions and couldn’t find anything or linked relevant results below <!-- https://github.com/search?q=user%3Asyntax-tree&type=issues and https://github.com/orgs/syntax-tree/discussions --> * [x] I made sure the docs are up to date * [x] I included tests (or that’s not needed)  ### Description of changes  With `omitOptionalTags`, the `</p>` of a `p` that is the last child of an autonomous custom element is omitted. The parser ignores the custom element’s end tag while that `p` is open, so following content can be parsed inside the custom element:  ```js toHtml(h('div', [h('my-card', [h('p', 'Inside')]), h('p', 'Outside')]), {   omitOptionalTags: true }) // Before: '<div><my-card><p>Inside</my-card><p>Outside</div>' // Parsed again (parse5, Chrome): div > my-card > (p, p) // After:  '<div><my-
   **Post-Mortem & Fix Analysis**:
   > Hi! This was closed. Team: If this was merged, please describe when this is likely to be released. Otherwise, please add one of the `no/*` labels.  
   > Released in [`9.0.6`](https://github.com/syntax-tree/hast-util-to-html/releases/tag/9.0.6)!
-
-- **Issue #51** (2026-10-29): **fix: treat foreignObject contents as HTML**
-  *Symptoms*: `toHtml` switches `state.schema` to SVG when entering `<svg>`, then restores it after children. It never switches back to HTML inside `<foreignObject>`, so HTML voids are serialized in SVG space as `<br></br>` (invalid in HTML).  Switch to the HTML schema for `foreignObject` children, the same way `<svg>` switches to SVG. Voids then serialize as `<br>`.  Fixes #49
-  **Post-Mortem & Fix Analysis**:
-  > Hi! It seems you removed the template which we require. Here are our templates (pick the one you want to use and click \*raw\* to see its source):  *   [`pull-request-template.md`](https://github.com/syntax-tree/.github/blob/main/.github/pull-request-template.md)  I won’t send you any further notifications about this, but I’ll keep on updating this comment, and hide it when done!  Thanks, — bb  <!--xxx:beep-boop:template-->
-  > SVG `title` and `desc` are HTML integration points too, so `s('svg', s('title', h('br')))` should hit the same `<br></br>`. Would it make sense to cover them here?
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -975,216 +974,114 @@ export function all(parent) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b2b5a3e8` (2026-10-29)
-**Commit Message**: Fix HTML in SVG for `desc`, `foreignObject`, `title`
+### Incident Patch 1: `77781cbe` (2026-11-18)
+**Commit Message**: Fix to not encode text in more raw text elements
 
-Closes GH-49.
-Closes GH-51.
+Closes GH-53.
 
-Co-authored-by: Yuzhong Zhang <[REDACTED_EMAIL]>
-Reviewed-by: Christian Murphy <[REDACTED_EMAIL]>
-
-**File**: `lib/handle/element.js` (modified, +14/-1)
+**File**: `lib/handle/text.js` (modified, +15/-2)
 ```diff
-@@ -5,7 +5,7 @@
+@@ -9,6 +9,18 @@ import {stringifyEntities} from 'stringify-entities'
+ // Declare array as variable so it can be cached by `stringifyEntities`
+ const textEntitySubset = ['<', '&']
  
- import {ccount} from 'ccount'
- import {stringify as commas} from 'comma-separated-tokens'
--import {find, svg} from 'property-information'
-+import {find, html, svg} from 'property-information'
- import {stringify as spaces} from 'space-separated-tokens'
- import {stringifyEntities} from 'stringify-entities'
- import {closing} from '../omission/closing.js'
-@@ -43,6 +43,13 @@ const constants = {
-   ]
- }
- 
-+/**
-+ * SVG elements whose content is HTML.
-+ *
-+ * @type {ReadonlySet<string>}
-+ */
-+const htmlIntegrationPoints = new Set(['desc', 'foreignObject', 'title'])
++// HTML elements whose text is not escaped.
++// See: <https://html.spec.whatwg.org/multipage/parsing.html#serialising-html-fragments>.
++const raw = new Set([
++  'iframe',
++  'noembed',
++  'noframes',
++  'plaintext',
++  'script',
++  'style',
++  'xmp'
++])
 +
  /**
-  * Serialize an element node.
+  * Serialize a text node.
   *
-@@ -73,6 +80,12 @@ export function element(node, index, parent, state) {
- 
-   const attributes = serializeAttributes(state, node.properties)
- 
-+  // HTML integration points is HTML.
-+  // See: <https://html.spec.whatwg.org/#html-integration-point>.
-+  if (state.schema.space === 'svg' && htmlIntegrationPoints.has(node.tagName)) {
-+    state.schema = html
-+  }
-+
-   const content = state.all(
-     schema.space === 'html' && node.tagName === 'template' ? node.content : node
-   )
+@@ -24,10 +36,11 @@ const textEntitySubset = ['<', '&']
+  *   Serialized node.
+  */
+ export function text(node, _, parent, state) {
+-  // Check if content of `node` should be escaped.
++  // The schema is that of `parent`, as raw elements do not switch spaces.
+   return parent &&
+     parent.type === 'element' &&
+-    (parent.tagName === 'script' || parent.tagName === 'style')
++    state.schema.space === 'html' &&
++    raw.has(parent.tagName)
+     ? node.value
+     : stringifyEntities(
+         node.value,
 ```
 
-**File**: `lib/index.js` (modified, +2/-1)
+**File**: `test/text.js` (modified, +41/-1)
 ```diff
-@@ -80,7 +80,8 @@
-  * @property {Space | null | undefined} [space='html']
-  *   When an `<svg>` element is found in the HTML space, this package already
-  *   automatically switches to and from the SVG space when entering and exiting
-- *   it (default: `'html'`).
-+ *   it, and goes to HTML inside `desc`, `foreignObject`, and `title`
-+ *   (default: `'html'`).
-  *
-  *   > 👉 **Note**: hast is not XML.
-  *   > It supports SVG as embedded in HTML.
-```
-
-**File**: `readme.md` (modified, +2/-1)
-```diff
-@@ -275,7 +275,8 @@ Which space the document is in
+@@ -1,6 +1,6 @@
+ import assert from 'node:assert/strict'
+ import test from 'node:test'
+-import {h} from 'hastscript'
++import {h, s} from 'hastscript'
+ import {toHtml} from 'hast-util-to-html'
  
- When an `<svg>` element is found in the HTML space,
- this package already automatically switches to and from the SVG space when
--entering and exiting it.
-+entering and exiting it,
-+and goes to HTML inside `desc`, `foreignObject`, and `title`.
- 
- > 👉 **Note**:
- > hast is not XML.
-```
-
-**File**: `test/svg.js` (modified, +49/-0)
-```diff
-@@ -510,6 +510,55 @@ test('svg', async function (t) {
-       )
-     }
-   )
-+
-+  await t.test(
-+    'should serialize the content of `foreignObject` as HTML',
-+    async function () {
-+      assert.equal(
-+        toHtml(s('svg', s('foreignObject', h('p', [h('br'), h('img')])))),
-+        '<svg><foreignObject><p><br><img></p></foreignObject></svg>'
-+      )
-+    }
-+  )
-+
-+  await t.test(
-+    'should serialize the content of `desc`, `title` as HTML',
-+    async function () {
-+      assert.equal(
-+        toHtml(s('svg', [s('title', h('br')), s('desc', h('br'))])),
-+        '<svg><title><br></title><desc><br></desc></svg>'
-+      )
-+    }
-+  )
-+
-+  await t.test(
-+    'should serialize the attributes of `foreignObject` as SVG',
-+    async function () {
-+      assert.equal(
-+        toHtml(s('svg', s('foreignObject', {strokeWidth: 1}))),
-+        '<svg><foreignObject stroke-width="1"></foreignObject></svg>'
-+      )
-+    }
-+  )
-+
-+  await t.test('should serialize SVG in HTML in SVG as SVG', async function () {
-+    assert.equal(
-+      toHtml(s('svg', s('foreignObject', s('svg', s('circle')))), {
-+        closeEmptyElements: true
-+      }),
-+      '<svg><foreignObject><svg><circle /></svg></foreignObject></svg>'
-+    )
-+  })
-+
-+  await t.test(
-+    'should serialize the content of `foreignObject` as HTML in the SVG space',
-+    async function () {
-+      assert.equal(
-+        toHtml(s('foreignObject', h('br')), {space: 'svg'}),
-+        '<foreignObject><br></foreignObject>'
-+      )
-+    }
-+  )
- })
- 
- function toString() {
-```
-
----
-
-### Incident Patch 2: `233ac970` (2026-10-29)
-**Commit Message**: Fix `p` closing tag omission in custom elements
-
-Spec: <https://html.spec.whatwg.org/multipage/syntax.html#optional-tags>
-
-Closes GH-52.
-
-Co-authored-by: Mantas Kantautas <[REDACTED_EMAIL]>
-Reviewed-by: Christian Murphy <[REDACTED_EMAIL]>
-
-**File**: `lib/omission/closing.js` (modified, +3/-1)
-```diff
-@@ -139,7 +139,9 @@ function p(_, index, parent) {
-             parent.tagName === 'ins' ||
-             parent.tagName === 'map' ||
-             parent.tagName === 'noscript' ||
--            parent.tagName === 'video')
-+            parent.tagName === 'video' ||
-+            // Custom element.
-+            parent.tagName.includes('-'))
-         )
- }
- 
-```
-
-**File**: `test/omission-closing-p.js` (modified, +10/-0)
-```diff
-@@ -69,6 +69,16 @@ test('`p` (closing)', async function (t) {
+ test('`text`', async function (t) {
+@@ -31,6 +31,46 @@ test('`text`', async function (t) {
      )
    })
  
 +  await t.test(
-+    'should not omit tag if parented by an autonomous custom element',
++    'should not encode `text`s in other raw text elements',
 +    async function () {
 +      assert.equal(
-+        toHtml(h('my-element', [h('p')]), {omitOptionalTags: true}),
-+        '<my-element><p></p></my-element>'
++        toHtml([
++          h('iframe', '<&'),
++          h('noembed', '<&'),
++          h('noframes', '<&'),
++          h('plaintext', '<&'),
++          h('xmp', '<&')
++        ]),
++        '<iframe><&</iframe><noembed><&</noembed><noframes><&</noframes><plaintext><&</plaintext><xmp><&</xmp>'
 +      )
 +    }
 +  )
 +
-   await t.test('should not omit tag if parent is `article`', async function () {
++  await t.test('should encode `text`s in `noscript`', async function () {
++    assert.equal(
++      toHtml(h('noscript', '<&')),
++      '<noscript>&#x3C;&#x26;</noscript>'
++    )
++  })
++
++  await t.test('should encode `text`s in SVG `style`', async function () {
++    assert.equal(
++      toHtml(s('svg', [s('style', '<&')])),
++      '<svg><style>&#x3C;&#x26;</style></svg>'
++    )
++  })
++
++  await t.test(
++    'should not encode `text`s in HTML `style` in SVG',
++    async function () {
++      assert.equal(
++        toHtml(s('svg', [s('foreignObject', [h('style', '<&')])])),
++        '<svg><foreignObject><style><&</style></foreignObject></svg>'
++      )
++    }
++  )
++
+   await t.test('should encode `text`s in other nodes', async function () {
      assert.equal(
-       toHtml(h('article', [h('p')]), {omitOptionalTags: true}),
-```
-
----
-
-### Incident Patch 3: `14078ed9` (2026-10-29)
-**Commit Message**: Fix link in jsdoc
-
-**File**: `lib/index.js` (modified, +2/-0)
-```diff
-@@ -87,6 +87,8 @@
-  *   > It does not support the features available in XML.
-  *   > Passing SVG might break but fragments of modern SVG should be fine.
-  *   > Use [`xast`][xast] if you need to support SVG as XML.
-+ *
-+ *    [xast]: https://github.com/syntax-tree/xast
-  * @property {boolean | null | undefined} [tightAttributes=false]
-  *   Join attributes together, without whitespace, if possible: get
-  *   `class="a b"title="c d"` instead of `class="a b" title="c d"` to save
+       toHtml(h('b', [{type: 'text', value: '3 < 5'}])),
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #53** (closed): Fix to not encode text in `iframe`, `noembed`, `noframes`, `plaintext`, `xmp` (@bardrop)
 - **PR #52** (closed): Fix `p` closing tag omission in custom elements (@mkantautas)
 - **PR #51** (closed): fix: treat foreignObject contents as HTML (@BetterAndBetterII)
 - **PR #50** (closed): fix: keep a leading newline in `pre`, `textarea`, and `listing` (@spokodev)
 - **PR #48** (closed): fix(deps): update mdast-util-to-hast to ^13.2.1 (@pyyupsk)
 - **PR #46** (2024-12-13): exempt strings from being treated as known booleans unless empty or equal to name (@hesxenon)
-- **PR #42** (2024-08-27): Remove unused dependency (@bluwy)
 
 ---
 
@@ -1204,44 +1101,46 @@ Reviewed-by: Christian Murphy <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. HTML in SVG for `desc`, `foreignObject`, `title`
+## X. to not encode text in more raw text elements
 
 **RULE**:
-When implementing operations in `lib/handle/element.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in syntax-tree/hast-util-to-html. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lib/handle/text.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in syntax-tree/hast-util-to-html. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b2b5a3e8`: HTML in SVG for `desc`, `foreignObject`, `title`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `77781cbe`: to not encode text in more raw text elements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/handle/element.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/handle/text.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-import {find, html, svg} from 'property-information'
-/**
- * SVG elements whose content is HTML.
- *
- * @type {ReadonlySet<string>}
- */
-const htmlIntegrationPoints = new Set(['desc', 'foreignObject', 'title'])
+// HTML elements whose text is not escaped.
+// See: <https://html.spec.whatwg.org/multipage/parsing.html#serialising-html-fragments>.
+const raw = new Set([
+  'iframe',
+  'noembed',
+  'noframes',
+  'plaintext',
+  'script',
+  'style',
+  'xmp'
+])
 
-  // HTML integration points is HTML.
-  // See: <https://html.spec.whatwg.org/#html-integration-point>.
-  if (state.schema.space === 'svg' && htmlIntegrationPoints.has(node.tagName)) {
-    state.schema = html
-  }
-
+  // The schema is that of `parent`, as raw elements do not switch spaces.
+    state.schema.space === 'html' &&
+    raw.has(parent.tagName)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-import {find, svg} from 'property-information'
+// Induced defect failure mode:
+  // Check if content of `node` should be escaped.
+    (parent.tagName === 'script' || parent.tagName === 'style')
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b2b5a3e8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `77781cbe` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -11637,3 +11637,4 @@ Every entry in this ledger must capture:
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `cf81225f` | Multi-dimensional audit evidence | 2026-11-20T17:53:57.532Z |
 | `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `76b07b58` | Multi-dimensional audit evidence | 2026-11-20T17:58:46.575Z |
 | `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `bd882c1a` | Multi-dimensional audit evidence | 2026-11-20T18:16:54.512Z |
+| `learn-github-syntax-tree-hast-util-to-html` | `https://github.com/syntax-tree/hast-util-to-html` | `a28501a8` | Multi-dimensional audit evidence | 2026-11-20T18:27:26.145Z |

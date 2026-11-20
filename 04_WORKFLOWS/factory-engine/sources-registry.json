@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T18:17:02.825Z",
-    "lastVerified": "2026-11-20T18:17:02.825Z",
+    "lastChecked": "2026-11-20T18:27:29.501Z",
+    "lastVerified": "2026-11-20T18:27:29.501Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T17:37:19.914Z",
+    "lastChecked": "2026-11-20T18:27:25.073Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T17:37:19.914Z"
+    "lastVerified": "2026-11-20T18:27:25.073Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1033,9 +1033,9 @@
   "chroma-core-chroma": {
     "name": "chroma",
     "officialUrl": "https://github.com/chroma-core/chroma",
-    "lastChecked": "2026-11-19T14:20:26.247Z",
+    "lastChecked": "2026-11-20T18:27:22.677Z",
     "revisionIdentifier": "1a3ac2c7",
-    "lastVerified": "2026-11-19T14:20:26.247Z"
+    "lastVerified": "2026-11-20T18:27:22.677Z"
   },
   "burntsushi-ripgrep": {
     "name": "BurntSushi/ripgrep",
@@ -1596,9 +1596,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-20T11:08:53.326Z",
+    "lastChecked": "2026-11-20T18:27:20.115Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-20T11:08:53.326Z"
+    "lastVerified": "2026-11-20T18:27:20.115Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -2077,9 +2077,9 @@
   "fission-fission": {
     "name": "fission",
     "officialUrl": "https://github.com/fission/fission",
-    "lastChecked": "2026-11-19T15:58:47.959Z",
+    "lastChecked": "2026-11-20T18:27:17.688Z",
     "revisionIdentifier": "8152c961",
-    "lastVerified": "2026-11-19T15:58:47.959Z"
+    "lastVerified": "2026-11-20T18:27:17.688Z"
   },
   "tailscale-tailscale": {
     "name": "tailscale/tailscale",
@@ -5818,12 +5818,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubearmor-kubearmor": {
-    "name": "kubearmor/KubeArmor",
+    "name": "KubeArmor",
     "officialUrl": "https://github.com/kubearmor/KubeArmor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T01:32:36.206Z",
-    "lastVerified": "2026-11-19T01:32:36.206Z",
+    "lastChecked": "2026-11-20T18:27:10.214Z",
+    "lastVerified": "2026-11-20T18:27:10.214Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubearmor-kubearmor",
@@ -5832,7 +5832,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d026c0dc"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
     "name": "Qwen/Qwen3-VL-8B-Instruct",
@@ -10503,5 +10504,29 @@
     "lastChecked": "2026-11-20T18:16:52.579Z",
     "revisionIdentifier": "c7c08652",
     "lastVerified": "2026-11-20T18:16:52.579Z"
+  },
+  "syntax-tree-hast-util-to-html": {
+    "name": "syntax-tree/hast-util-to-html",
+    "officialUrl": "https://github.com/syntax-tree/hast-util-to-html",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-20T18:27:18.390Z",
+    "lastVerified": "2026-11-20T18:27:18.390Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-syntax-tree-hast-util-to-html",
+    "contentHash": "cf5b05bba607881e9403a5e5c135b21fbad26514f20977ff83808af280c1c844",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sparrowcode-alertkit": {
+    "name": "AlertKit",
+    "officialUrl": "https://github.com/sparrowcode/AlertKit",
+    "lastChecked": "2026-11-20T18:27:15.057Z",
+    "revisionIdentifier": "b8f3dff0",
+    "lastVerified": "2026-11-20T18:27:15.057Z"
   }
 }

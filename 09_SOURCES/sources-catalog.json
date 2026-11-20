@@ -9493,10 +9493,10 @@
     "repository": "syntax-tree/hast-util-to-html",
     "platform": "github",
     "sourceUrl": "https://github.com/syntax-tree/hast-util-to-html",
-    "sourceVersion": "9c689126",
+    "sourceVersion": "a28501a8",
     "license": "MIT",
-    "contentHash": "1c9d6a5ed3ff1abb772b3ea73d27358c953bab3a1e64ccd5d5249005f644506e",
-    "lastHarvestedAt": "2026-10-30T14:11:51.817Z",
+    "contentHash": "cf5b05bba607881e9403a5e5c135b21fbad26514f20977ff83808af280c1c844",
+    "lastHarvestedAt": "2026-11-20T18:27:26.145Z",
     "learningId": "learn-github-syntax-tree-hast-util-to-html"
   },
   "stikdebug-stikdebug": {

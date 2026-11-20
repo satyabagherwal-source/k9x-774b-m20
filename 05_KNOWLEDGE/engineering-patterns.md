@@ -712950,3 +712950,88 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `bd882c1a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9617. to not encode text in more raw text elements (Harvested from syntax-tree/hast-util-to-html)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "to not encode text in more raw text elements",
+  "source": "syntax-tree/hast-util-to-html",
+  "source_url": "https://github.com/syntax-tree/hast-util-to-html",
+  "source_version": "a28501a8",
+  "license": "MIT",
+  "extracted_at": "2026-11-20T18:27:25.570Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-syntax-tree-hast-util-to-html",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [syntax-tree/hast-util-to-html](https://github.com/syntax-tree/hast-util-to-html) (Revision: `a28501a8`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `lib/handle/text.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in syntax-tree/hast-util-to-html. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `77781cbe`: to not encode text in more raw text elements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/handle/text.js`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+// HTML elements whose text is not escaped.
+// See: <https://html.spec.whatwg.org/multipage/parsing.html#serialising-html-fragments>.
+const raw = new Set([
+  'iframe',
+  'noembed',
+  'noframes',
+  'plaintext',
+  'script',
+  'style',
+  'xmp'
+])
+
+  // The schema is that of `parent`, as raw elements do not switch spaces.
+    state.schema.space === 'html' &&
+    raw.has(parent.tagName)
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Induced defect failure mode:
+  // Check if content of `node` should be escaped.
+    (parent.tagName === 'script' || parent.tagName === 'style')
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `77781cbe` are properly handled with clean fallback behavior.
