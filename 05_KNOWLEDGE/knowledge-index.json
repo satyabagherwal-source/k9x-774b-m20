@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T19:11:52.249Z",
-  "total_verified_learnings": 9046,
+  "last_updated": "2026-11-20T19:25:18.480Z",
+  "total_verified_learnings": 9048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22593,
+  "total_items": 22610,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111993,10 +111993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "0d45ee96",
-      "content_hash": "9791f0851dddf4e7e82257ad63cff842a09b97697170d17b282f42a75b2b13e0",
+      "source_version": "7e8689ba",
+      "content_hash": "e14b4691d97a6261c9b3c4e2fc704d3948d0cda5240a2b65e023cc0daf358986",
       "domain_letter": "B",
-      "persisted_at": "2026-11-20T12:07:23.852Z"
+      "persisted_at": "2026-11-20T19:25:12.889Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -112005,10 +112005,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "0d45ee96",
-      "content_hash": "f8f2da1373511446f6b52dde340693357242d3b83c4dbfb815d3bba7755d0fcb",
+      "source_version": "7e8689ba",
+      "content_hash": "21915beb92e9aae1f648719585ece526ffdb206156e9386abbc0de50476f67a7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T12:07:23.983Z"
+      "persisted_at": "2026-11-20T19:25:13.037Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -112030,9 +112030,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba19c3e465d796862a43953cdd36fcf0a6ff855a5c3cfa1ab55822a586d7f82e",
+      "content_hash": "91176b4196d2ba527efd4191d51a1a5db863ee5b767354f0d10f07a648cb6cbe",
       "domain_letter": "B",
-      "persisted_at": "2026-11-20T12:07:29.789Z"
+      "persisted_at": "2026-11-20T19:25:18.311Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -112042,9 +112042,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "30daaf5108eb3314f0f7bd05ec8de625a912b7f3679bb9fa98024014afd340ce",
+      "content_hash": "bfdd0dbb066820e9ee51036f65d33adccfc9b8336c4c95ed8f3118d817c1bd7c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T12:07:29.920Z"
+      "persisted_at": "2026-11-20T19:25:18.480Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -214196,8 +214196,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "0d45ee96",
-      "content_hash": "e5947726184ef4446c8f9b891968e7584815252acb597cd029f3c94c94d5600e",
+      "source_version": "7e8689ba",
+      "content_hash": "e9047d395b25a3f812aa06f8aaf3048e008dcf4e68d9c24be6fd3c0b869d3b5d",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214280,6 +214280,11 @@
           "number": 9564,
           "title": "operator/pkg/ciliumidentity: Fix revert check in CID update test",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9627,
+          "title": "remove redundant XDP prefiltering macros",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214287,7 +214292,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T12:07:23.368Z",
+      "verified_at": "2026-11-20T19:25:12.339Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -306391,6 +306396,258 @@
       "content_hash": "53d323b73d793fc34ddc2b258124fa08b989b9e666f0eee382bfdecf20a2e71e",
       "domain_letter": "K",
       "persisted_at": "2026-11-20T19:11:50.647Z"
+    },
+    "learn-github-sindresorhus-got": {
+      "learning_id": "learn-github-sindresorhus-got",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sindresorhus/got",
+      "repository": "sindresorhus/got",
+      "slug": "sindresorhus-got",
+      "platform": "github",
+      "source_url": "https://github.com/sindresorhus/got",
+      "source_version": "c196ad00",
+      "content_hash": "a5d3b1a6d867a439aba3786adefc686b04eda6f137af29c550b6199ff8c444fe",
+      "dossier_path": "07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9625,
+          "title": "Empirical Invariant Guard in create.ts",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T19:25:02.317Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9625": {
+      "learning_id": "rule-9625",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9625,
+      "title": "Empirical Invariant Guard in create.ts",
+      "source_url": "https://github.com/sindresorhus/got",
+      "source_version": "c196ad00",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T19:25:02.317Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-create-ts": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-create-ts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CHCJ-empirical-invariant-guard-in-create-ts.md",
+      "title": "Empirical Invariant Guard in create.ts",
+      "repository": "sindresorhus-got-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c35a017db2176bc505d6c1b680b6dad156c13851601f98eb1936a0f1cdb31bfd",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T19:25:16.631Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-sindresorhus-got-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-sindresorhus-got-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sindresorhus-got-technical-construction-intelligence-sindresorhus-got-core-invar.md",
+      "title": "Technical Construction Intelligence: sindresorhus/got Core Invariants",
+      "repository": "sindresorhus/got",
+      "source_version": "c196ad00",
+      "content_hash": "2397845ef5a6a2c4631214a17592d3796565803bff31429d17e2677b2fe7a771",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T19:25:02.891Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sindresorhus-got": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sindresorhus-got",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sindresorhus-got-verification-protocol-empirical-defect-shield-for-sindresorhus-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sindresorhus/got",
+      "repository": "sindresorhus/got",
+      "source_version": "c196ad00",
+      "content_hash": "f01e281ba5719f114acd942f07f78ad1d8fac480d4a1dedc57011ab032f351fe",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T19:25:03.051Z"
+    },
+    "learn-github-stikdebug-stikdebug": {
+      "learning_id": "learn-github-stikdebug-stikdebug",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "StikDebug/StikDebug",
+      "repository": "StikDebug/StikDebug",
+      "slug": "stikdebug-stikdebug",
+      "platform": "github",
+      "source_url": "https://github.com/StikDebug/StikDebug",
+      "source_version": "63713ea2",
+      "content_hash": "f2ad2cac1d441642070ca8a92487d4b511a3ab619e9407fa474515e9d6190aee",
+      "dossier_path": "07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9626,
+          "title": "add pairing and connection recovery guidance",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T19:25:05.528Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9626": {
+      "learning_id": "rule-9626",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9626,
+      "title": "add pairing and connection recovery guidance",
+      "source_url": "https://github.com/StikDebug/StikDebug",
+      "source_version": "63713ea2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T19:25:05.528Z"
+    },
+    "candidate_directive-add-pairing-and-connection-recovery-guidance": {
+      "item_id": "candidate_directive-add-pairing-and-connection-recovery-guidance",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CHZD-add-pairing-and-connection-recovery-guidance.md",
+      "title": "add pairing and connection recovery guidance",
+      "repository": "stikdebug-stikdebug-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2362a58201c9f1fcae6e68866715cda69bf39b96535b91a6a8e75777342fb76f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T19:25:17.451Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-stikdebug-stikdebug-technical-construction-intelligence-stikdebug-stikdebug-core.md",
+      "title": "Technical Construction Intelligence: StikDebug/StikDebug Core Invariants",
+      "repository": "StikDebug/StikDebug",
+      "source_version": "63713ea2",
+      "content_hash": "3175a8aea830b401979af1b0314ca0389b624168e7b0b980fc1e8c0c4951ad8e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T19:25:06.112Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-stikdebug-stikdebug": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-stikdebug-stikdebug",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/stikdebug-stikdebug-verification-protocol-empirical-defect-shield-for-stikdebug-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for StikDebug/StikDebug",
+      "repository": "StikDebug/StikDebug",
+      "source_version": "63713ea2",
+      "content_hash": "208ededa157bc8987eb855bfabc8c86e0e3048d5e0c7f174f7b94704eca5181d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T19:25:06.271Z"
+    },
+    "rule-9627": {
+      "learning_id": "rule-9627",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9627,
+      "title": "remove redundant XDP prefiltering macros",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "7e8689ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T19:25:12.339Z"
+    },
+    "candidate_directive-remove-redundant-xdp-prefiltering-macros": {
+      "item_id": "candidate_directive-remove-redundant-xdp-prefiltering-macros",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CECD-remove-redundant-xdp-prefiltering-macros.md",
+      "title": "remove redundant XDP prefiltering macros",
+      "repository": "cilium/cilium",
+      "source_version": "7e8689ba",
+      "content_hash": "429355203db62930523ba268eb78a30ce23246a3a4884b3d4f9e84a2b2abaeb5",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-20T19:25:12.734Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-sindresorhus-got-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-sindresorhus-got-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sindresorhus-got-learnings-technical-construction-intelligence-sindresorhus-got-.md",
+      "title": "Technical Construction Intelligence: sindresorhus-got-learnings Core Invariants",
+      "repository": "sindresorhus-got-learnings",
+      "source_version": "HEAD",
+      "content_hash": "94f8b1a2705b992b52f9e1a6994434a8236a135a6bb3a4a8469e98f5f1432f56",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T19:25:16.787Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sindresorhus-got-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sindresorhus-got-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sindresorhus-got-learnings-verification-protocol-empirical-defect-shield-for-sin.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sindresorhus-got-learnings",
+      "repository": "sindresorhus-got-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7c8e3582fe1f9965870b14e59b2851116c4dcbac2d7ecf1155ff52dcf270f901",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T19:25:16.963Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-learnings-core-invariant": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-stikdebug-stikdebug-learnings-technical-construction-intelligence-stikdebug-stik.md",
+      "title": "Technical Construction Intelligence: stikdebug-stikdebug-learnings Core Invariants",
+      "repository": "stikdebug-stikdebug-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f4cc18270c7bc193b828033ca35cab1706237621e5fdbda7f8c74a1302ce2dfa",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T19:25:17.609Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-stikdebug-stikdebug-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-stikdebug-stikdebug-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/stikdebug-stikdebug-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for stikdebug-stikdebug-learnings",
+      "repository": "stikdebug-stikdebug-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f0a4db173bae317d2002aabad57bb3811ecfea8085240842052c3bdaba0aa00a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T19:25:17.762Z"
+    },
+    "candidate_directive-datapath-remove-redundant-xdp-prefiltering-macros": {
+      "item_id": "candidate_directive-datapath-remove-redundant-xdp-prefiltering-macros",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CIIZ-datapath-remove-redundant-xdp-prefiltering-macros.md",
+      "title": "datapath: remove redundant XDP prefiltering macros",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bf40dd732fc674411e22b41df83d78ec71452d2964a3c4e1e5275101c7841bbb",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-20T19:25:18.156Z"
     }
   },
   "ai-builder-brain": {

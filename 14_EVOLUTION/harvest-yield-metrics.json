@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T19:11:46.169Z",
-  "total_cycles_completed": 11059,
-  "total_learnings_persisted": 11059,
-  "total_rules_promoted": 10415,
+  "last_updated": "2026-11-20T19:25:12.540Z",
+  "total_cycles_completed": 11062,
+  "total_learnings_persisted": 11062,
+  "total_rules_promoted": 10418,
   "history": [
-    {
-      "timestamp": "2026-11-19T20:33:56.725Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T20:55:49.698Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T20:55:52.427Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T20:55:53.789Z",
       "repository": "xerj-org/xerj",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-20T19:11:46.169Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T19:25:02.526Z",
+      "repository": "sindresorhus/got",
+      "learningId": "learn-github-sindresorhus-got",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T19:25:05.735Z",
+      "repository": "StikDebug/StikDebug",
+      "learningId": "learn-github-stikdebug-stikdebug",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T19:25:12.540Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

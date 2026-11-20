@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T19:11:49.921Z",
+  "updated_at": "2026-11-20T19:25:17.974Z",
   "stats": {
-    "total_discovered": 6666,
-    "approved_pending_harvest": 6307,
+    "total_discovered": 6682,
+    "approved_pending_harvest": 6323,
     "harvested_count": 0,
     "rejected_count": 359,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6268,
-      "OFFICIAL_DOCUMENTATION": 229,
-      "STANDARDS_AND_SPECIFICATIONS": 117,
+      "COMMUNITY_AND_EXPERT": 6281,
+      "OFFICIAL_DOCUMENTATION": 230,
+      "STANDARDS_AND_SPECIFICATIONS": 119,
       "ENGINEERING_BLOGS": 5,
       "SECURITY_ADVISORIES": 38,
       "LEGAL_AND_REGULATORY": 2,
@@ -144162,6 +144162,358 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/golutra-golutra-learnings.md",
         "fileName": "golutra-golutra-learnings.md"
+      }
+    },
+    "SRC-118AB150568D": {
+      "id": "SRC-118AB150568D",
+      "url": "https://github.com/sindresorhus/got",
+      "title": "https://github.com/sindresorhus/got",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:15.848Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+        "fileName": "sindresorhus-got-learnings.md"
+      }
+    },
+    "SRC-16DC20093227": {
+      "id": "SRC-16DC20093227",
+      "url": "https://standardschema.dev/",
+      "title": "https://standardschema.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:15.892Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+        "fileName": "sindresorhus-got-learnings.md"
+      }
+    },
+    "SRC-6B3DE75DD3DA": {
+      "id": "SRC-6B3DE75DD3DA",
+      "url": "https://sindresorhus.com/",
+      "title": "https://sindresorhus.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:15.965Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+        "fileName": "sindresorhus-got-learnings.md"
+      }
+    },
+    "SRC-154079D77F5C": {
+      "id": "SRC-154079D77F5C",
+      "url": "https://httpbin.org/anything",
+      "title": "https://httpbin.org/anything",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:16.048Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+        "fileName": "sindresorhus-got-learnings.md"
+      }
+    },
+    "SRC-1378A22D04DD": {
+      "id": "SRC-1378A22D04DD",
+      "url": "https://httpbin.org/status/500",
+      "title": "https://httpbin.org/status/500",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:16.089Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+        "fileName": "sindresorhus-got-learnings.md"
+      }
+    },
+    "SRC-C31F83CA9327": {
+      "id": "SRC-C31F83CA9327",
+      "url": "https://tools.ietf.org/html/rfc5988",
+      "title": "https://tools.ietf.org/html/rfc5988",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:16.132Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+        "fileName": "sindresorhus-got-learnings.md"
+      }
+    },
+    "SRC-FC55CE2F973C": {
+      "id": "SRC-FC55CE2F973C",
+      "url": "https://www.rfc-editor.org/rfc/rfc8288",
+      "title": "https://www.rfc-editor.org/rfc/rfc8288",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:16.175Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+        "fileName": "sindresorhus-got-learnings.md"
+      }
+    },
+    "SRC-DB035B84E308": {
+      "id": "SRC-DB035B84E308",
+      "url": "https://nodejs.org/api/http.html",
+      "title": "https://nodejs.org/api/http.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:16.219Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+        "fileName": "sindresorhus-got-learnings.md"
+      }
+    },
+    "SRC-0789439CA580": {
+      "id": "SRC-0789439CA580",
+      "url": "https://web.archive.org/web/20220804165050/https://github.com/jaredwray/cacheable-request/issues/86",
+      "title": "https://web.archive.org/web/20220804165050/https://github.com/jaredwray/cacheable-request/issues/86",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:16.263Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+        "fileName": "sindresorhus-got-learnings.md"
+      }
+    },
+    "SRC-5445123729CB": {
+      "id": "SRC-5445123729CB",
+      "url": "https://github.com/sindresorhus/got/issues/690",
+      "title": "https://github.com/sindresorhus/got/issues/690",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:16.305Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+        "fileName": "sindresorhus-got-learnings.md"
+      }
+    },
+    "SRC-DBC1B8E80650": {
+      "id": "SRC-DBC1B8E80650",
+      "url": "https://httpstat.us/404%60",
+      "title": "https://httpstat.us/404%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:16.352Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+        "fileName": "sindresorhus-got-learnings.md"
+      }
+    },
+    "SRC-3FD1C8D21BB9": {
+      "id": "SRC-3FD1C8D21BB9",
+      "url": "https://www.rfc-editor.org/rfc/rfc5988",
+      "title": "IETF RFC 5988",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:16.416Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
+        "fileName": "sindresorhus-got-learnings.md"
+      }
+    },
+    "SRC-520661B2D895": {
+      "id": "SRC-520661B2D895",
+      "url": "https://stikdebug.xyz/apps.json",
+      "title": "https://stikdebug.xyz/apps.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:17.161Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
+        "fileName": "stikdebug-stikdebug-learnings.md"
+      }
+    },
+    "SRC-EF3160A850A2": {
+      "id": "SRC-EF3160A850A2",
+      "url": "https://github.com/user-attachments/assets/2220cb61-c333-4503-b7c9-bec40f598b55",
+      "title": "https://github.com/user-attachments/assets/2220cb61-c333-4503-b7c9-bec40f598b55",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:17.207Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
+        "fileName": "stikdebug-stikdebug-learnings.md"
+      }
+    },
+    "SRC-91715BD7BF2B": {
+      "id": "SRC-91715BD7BF2B",
+      "url": "https://github.com/user-attachments/assets/7293958e-d932-4bb8-bcd6-f7cd77e30cb3",
+      "title": "https://github.com/user-attachments/assets/7293958e-d932-4bb8-bcd6-f7cd77e30cb3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:17.250Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
+        "fileName": "stikdebug-stikdebug-learnings.md"
+      }
+    },
+    "SRC-F217BA7F7E2C": {
+      "id": "SRC-F217BA7F7E2C",
+      "url": "https://github.com/cilium/cilium/issues/42646",
+      "title": "https://github.com/cilium/cilium/issues/42646",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T19:25:17.974Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
       }
     }
   }

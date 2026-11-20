@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-9KC0",
-    "timestamp": "2026-11-18T16:31:42.384Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "c17403fb063e4f1753bfe4f6c25d2256a023a2385a7fdc6c9400399e6054250e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-LHVU",
-    "timestamp": "2026-11-18T16:40:59.082Z",
-    "repository": "Cloudflare/clef",
-    "learningId": "learn-huggingface-cloudflare-clef",
-    "contentHash": "52f949f9a0d5bd7fab607fad80bf7dccf1cd8e5031d72c4c2d324d0f56f77ad3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-LMR7",
-    "timestamp": "2026-11-18T16:41:05.395Z",
-    "repository": "GitoxideLabs/gitoxide",
-    "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "8bd4b8f0fba215e1b43c1cfa4ca336a66debfd92e4e1bfa77771c25ff55ca9c6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-LQMK",
     "timestamp": "2026-11-18T16:41:10.412Z",
     "repository": "okteto/okteto",
@@ -7490,6 +7445,51 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "f496b4d6787f2a96e8c8e4b14cca27fbaa05d96dcd12a01b4680845966bfb161",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-C6GL",
+    "timestamp": "2026-11-20T19:25:02.517Z",
+    "repository": "sindresorhus/got",
+    "learningId": "learn-github-sindresorhus-got",
+    "contentHash": "a5d3b1a6d867a439aba3786adefc686b04eda6f137af29c550b6199ff8c444fe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-C8XP",
+    "timestamp": "2026-11-20T19:25:05.725Z",
+    "repository": "StikDebug/StikDebug",
+    "learningId": "learn-github-stikdebug-stikdebug",
+    "contentHash": "f2ad2cac1d441642070ca8a92487d4b511a3ab619e9407fa474515e9d6190aee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-CE6R",
+    "timestamp": "2026-11-20T19:25:12.531Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "e9047d395b25a3f812aa06f8aaf3048e008dcf4e68d9c24be6fd3c0b869d3b5d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

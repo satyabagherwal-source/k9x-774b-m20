@@ -11612,3 +11612,6 @@
 | `CYCLE-20261120-OTE4` | `2026-11-20T19:06:52.492Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9622` | Yes (`e72ba30d...`) |
 | `CYCLE-20261120-UUAW` | `2026-11-20T19:11:33.608Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9623` | Yes (`8166aefa...`) |
 | `CYCLE-20261120-V3ZI` | `2026-11-20T19:11:46.158Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9624` | Yes (`f496b4d6...`) |
+| `CYCLE-20261120-C6GL` | `2026-11-20T19:25:02.517Z` | `sindresorhus/got` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9625` | Yes (`a5d3b1a6...`) |
+| `CYCLE-20261120-C8XP` | `2026-11-20T19:25:05.725Z` | `StikDebug/StikDebug` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9626` | Yes (`f2ad2cac...`) |
+| `CYCLE-20261120-CE6R` | `2026-11-20T19:25:12.531Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9627` | Yes (`e9047d39...`) |

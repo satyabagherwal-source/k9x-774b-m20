@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `0d45ee96`  
+> **Source Version**: `7e8689ba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T12:07:22.613Z  
+> **Timestamp**: 2026-11-20T19:25:11.543Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T12:07:22.608Z  
+> **Harvest Timestamp**: 2026-11-20T19:25:11.539Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25873 stars
+- **Stars / Engagement**: 25876 stars
 
 ---
 
@@ -1259,13 +1259,16 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50158** (2026-11-20): **operator/pkg/ciliumidentity: Fix revert check in CID update test**
-  *Symptoms*: TestUpdateUsedCIDIsReverted changes a CID's labels and waits for the CID store to have the original labels again. The first check runs right away. If the CID store has not seen the change yet, it still has the original object, so the check passes even though nothing was reverted. With the revert removed from the reconciler, the test still passed 19 out of 30 runs.  This commit makes the test only accept an object written after the change.  Fixes: febd4e24206 ("pkg/ciliumidentity: Fix TestUpdateUsedCIDIsReverted test") Signed-off-by: Chris Tarazi <chris@isovalent.com> 
+- **Issue #50171** (2026-11-20): **[WIP] Move IP Release to agent**
+  *Symptoms*: 
+  **Post-Mortem & Fix Analysis**:
+  > Commit d226d16c7e690984a8765bcb50a78a09c5cd0557 does not match "(?m)^Signed-off-by:".  Please follow instructions provided in https://docs.cilium.io/en/stable/contributing/development/contributing_guide/#developer-s-certificate-of-origin
+
+- **Issue #50168** (2026-11-20): **datapath: remove redundant XDP prefiltering macros**
+  *Symptoms*: Whenever `option.Config.EnableXDPPrefilter` is set to true, the `enable_xdp_prefilter` runtime config is set to true, and the filter/prefilter macros (`CIDR4_FILTER`, `CIDR4_LPM_PREFILTER`, `CIDR6_FILTER` and `CIDR6_LPM_PREFILTER`) are defined. `prefilter_v4()` and `prefilter_v6()` code (that is, the only code using the macros) is already guarded by `enable_xdp_prefilter` so the macros are redundant. This PR removes the macros and their usages.  Related: https://github.com/cilium/cilium/issues/42646  AIL: 0
   **Post-Mortem & Fix Analysis**:
   > /test
-
-- **Issue #50155** (2026-11-20): **bpf: add enable-egress-chain-continue so later TCX egress programs run after to-netdev**
-  *Symptoms*: Please ensure your pull request adheres to the following guidelines:  - [X] For first time contributors, read [Submitting a pull request] - [X] All code is covered by unit and/or runtime tests where feasible. - [X] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [ ] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. - [X] All commits are signed off. See the section [Developer’s Certificate of Origin] - [X] Provide a title or release-note blurb suitable for the release notes. - [X] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [X] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level].       Example: "This PR was prepared with AIL:N. I personally checked X." - [X] Thanks for contributing!  <!-- Description of change -->  Related: #29891, #38337  Some deployments run their own TCX egress program after Cilium, e.g. to push MPLS labels. Cilium does not support MPLS encapsulation itself (see #29891) and the underlying kernel `bpf_fib_lookup` helpers do not return LWT encapsulation data that may be present on routes so it is challenging to add this functionality directly into Cilium. Cili
+  > /ci-integration
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1282,59 +1285,135 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b0ce3fe1` (2026-11-18)
-**Commit Message**: operator/pkg/ciliumidentity: Fix revert check in CID update test
+### Incident Patch 1: `7e8689ba` (2026-11-20)
+**Commit Message**: datapath: remove redundant XDP prefiltering macros
 
-TestUpdateUsedCIDIsReverted changes a CID's labels and waits for the CID
-store to have the original labels again. The first check runs right
-away. If the CID store has not seen the change yet, it still has the
-original object, so the check passes even though nothing was reverted.
-With the revert removed from the reconciler, the test still passed 19
-out of 30 runs.
+Whenever `option.Config.EnableXDPPrefilter` is set to true, the
+`enable_xdp_prefilter` runtime config is set to true, and the
+filter/prefilter macros (`CIDR4_FILTER`, `CIDR4_LPM_PREFILTER`,
+`CIDR6_FILTER` and `CIDR6_LPM_PREFILTER`) are defined.
+`prefilter_v4()` and `prefilter_v6()` code (that is, the only code
+using the macros) is already guarded by `enable_xdp_prefilter` so the
+macros are redundant. Remove the macros and their usages.
 
-This commit makes the test only accept an object written after the
-change.
+Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
 
-Fixes: febd4e24206 ("pkg/ciliumidentity: Fix TestUpdateUsedCIDIsReverted test")
-Signed-off-by: Chris Tarazi <[REDACTED_EMAIL]>
-
-**File**: `operator/pkg/ciliumidentity/controller_test.go` (modified, +4/-9)
+**File**: `bpf/bpf_xdp.c` (modified, +2/-10)
 ```diff
-@@ -415,21 +415,16 @@ func TestUpdateUsedCIDIsReverted(t *testing.T) {
- 		t.Fatalf("update CID: %v", err)
- 	}
+@@ -167,23 +167,19 @@ static __always_inline int prefilter_v4(struct __ctx_buff *ctx)
+ 	void *data_end = ctx_data_end(ctx);
+ 	void *data = ctx_data(ctx);
+ 	struct iphdr *ipv4_hdr = data + sizeof(struct ethhdr);
+-	struct lpm_v4_key pfx __maybe_unused;
++	struct lpm_v4_key pfx;
  
--	cid, err := fakeClient.CiliumV2().CiliumIdentities().Get(ctx, updated.Name, metav1.GetOptions{})
--	if err != nil {
--		t.Fatalf("get CID: %v", err)
--	}
--	if !cmp.Equal(cid.SecurityLabels, updated.SecurityLabels) {
--		t.Fatalf("expected labels %v, got %v", updated.SecurityLabels, cid.SecurityLabels)
--	}
--
-+	// The store can still hold the object from before the tampering, which
-+	// already has the original labels.
- 	require.EventuallyWithT(t, func(ct *assert.CollectT) {
- 		cids := store.List()
- 		if !assert.Len(ct, cids, 1) {
- 			return
- 		}
--		cid = cids[0]
-+		cid := cids[0]
+ 	if (ctx_no_room(ipv4_hdr + 1, data_end))
+ 		return CTX_ACT_DROP;
  
-+		assert.NotEqual(ct, toUpdate.ResourceVersion, cid.ResourceVersion)
- 		assert.Equal(ct, cid1.SecurityLabels, cid.SecurityLabels)
- 	}, WaitUntilTimeout, 100*time.Millisecond)
+-#ifdef CIDR4_FILTER
+ 	pfx.addr = ipv4_hdr->saddr;
+ 	pfx.lpm.prefixlen = 32;
+ 
+-#ifdef CIDR4_LPM_PREFILTER
+ 	if (map_lookup_elem(&cilium_cidr_v4_dyn, &pfx))
+ 		return CTX_ACT_DROP;
+-#endif /* CIDR4_LPM_PREFILTER */
+ 
+ 	if (map_lookup_elem(&cilium_cidr_v4_fix, &pfx))
+ 		return CTX_ACT_DROP;
+-#endif /* CIDR4_FILTER */
+ 
+ 	return 0;
+ }
+@@ -237,24 +233,20 @@ static __always_inline int prefilter_v6(struct __ctx_buff *ctx)
+ 	void *data_end = ctx_data_end(ctx);
+ 	void *data = ctx_data(ctx);
+ 	struct ipv6hdr *ipv6_hdr = data + sizeof(struct ethhdr);
+-	struct lpm_v6_key pfx __maybe_unused;
++	struct lpm_v6_key pfx;
+ 
+ 	if (ctx_no_room(ipv6_hdr + 1, data_end))
+ 		return CTX_ACT_DROP;
+ 
+-#ifdef CIDR6_FILTER
+ 	ipv6_addr_copy_unaligned((union v6addr *)&pfx.addr,
+ 				 (union v6addr *)&ipv6_hdr->saddr);
+ 	pfx.lpm.prefixlen = 128;
+ 
+-#ifdef CIDR6_LPM_PREFILTER
+ 	if (map_lookup_elem(&cilium_cidr_v6_dyn, &pfx))
+ 		return CTX_ACT_DROP;
+-#endif /* CIDR6_LPM_PREFILTER */
+ 
+ 	if (map_lookup_elem(&cilium_cidr_v6_fix, &pfx))
+ 		return CTX_ACT_DROP;
+-#endif /* CIDR6_FILTER */
+ 
+ 	return 0;
  }
 ```
 
+**File**: `bpf/filter_config.h` (modified, +0/-4)
+```diff
+@@ -7,7 +7,3 @@
+  */
+ #define CIDR4_HMAP_ELEMS 1024
+ #define CIDR4_LMAP_ELEMS 1024
+-#define CIDR4_FILTER
+-#define CIDR4_LPM_PREFILTER
+-#define CIDR6_FILTER
+-#define CIDR6_LPM_PREFILTER
+```
+
+**File**: `pkg/datapath/prefilter/prefilter.go` (modified, +0/-5)
+```diff
+@@ -62,11 +62,6 @@ func (p *preFilter) WriteConfig(fw io.Writer) {
+ 
+ 	fmt.Fprintf(fw, "#define CIDR4_HMAP_ELEMS %d\n", maxHKeys)
+ 	fmt.Fprintf(fw, "#define CIDR4_LMAP_ELEMS %d\n", maxLKeys)
+-
+-	fmt.Fprintf(fw, "#define CIDR4_FILTER\n")
+-	fmt.Fprintf(fw, "#define CIDR4_LPM_PREFILTER\n")
+-	fmt.Fprintf(fw, "#define CIDR6_FILTER\n")
+-	fmt.Fprintf(fw, "#define CIDR6_LPM_PREFILTER\n")
+ }
+ 
+ func (p *preFilter) dumpOneMap(which preFilterMapType, to []string) []string {
+```
+
+---
+
+### Incident Patch 2: `2147e675` (2026-11-18)
+**Commit Message**: chore: migrate Renovate dependency dashboard configuration
+
+Move the OSV vulnerability summary setting into dependencyDashboard while
+preserving its value. Renovate 44.239.1 reports the old top-level setting
+as needing migration, which fails CI validation with --strict.
+
+Signed-off-by: Bohdan Krasko <[REDACTED_EMAIL]>
+
+**File**: `.github/renovate.json5` (modified, +3/-1)
+```diff
+@@ -120,7 +120,9 @@
+     "rangeStrategy": "replace"
+   },
+   "osvVulnerabilityAlerts": true,
+-  "dependencyDashboardOSVVulnerabilitySummary": "all",
++  "dependencyDashboard": {
++    "osvVulnerabilitySummary": "all"
++  },
+   "labels": [
+     "renovate/stop-updating",
+     "kind/enhancement",
+```
+
 #### Recent Merged Pull Requests:
-- **PR #50158** (2026-11-20): operator/pkg/ciliumidentity: Fix revert check in CID update test (@christarazi)
-- **PR #50155** (closed): bpf: add enable-egress-chain-continue so later TCX egress programs run after to-netdev (@floatingstatic)
-- **PR #50151** (2026-11-20): .github: Run labeler after the external-contributions job (@aanm)
-- **PR #50148** (2026-11-19): Bump to StateDB v0.9.5 and add regression test for early pruning (@joamaki)
-- **PR #50147** (closed): [CI-WIP: DO-NOT-MERGE] Fix egress gateway excl cidr test (@tommyp1ckles)
-- **PR #50145** (2026-11-20): identity: allow registering custom local label sources (@rastislavs)
+- **PR #50171** (closed): [WIP] Move IP Release to agent (@41ks)
+- **PR #50168** (2026-11-20): datapath: remove redundant XDP prefiltering macros (@ekoops)
+- **PR #50166** (2026-11-20): v1.19: backport 50148 (StateDB bump + early pruning test) (@joamaki)
+- **PR #50165** (2026-11-20): v1.20: backport 50148 (StateDB bump + early pruning test) (@joamaki)
+- **PR #50164** (2026-11-20): loadbalancer: Keep non-Kubernetes services on k8s sync (@aanm)
+- **PR #50162** (2026-11-20): bpf/checkpatch: support running in git worktree (@giorio94)
 
 ---
 
@@ -1354,39 +1433,38 @@ Signed-off-by: Chris Tarazi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. operator/pkg/ciliumidentity: Fix revert check in CID update test
+## X. datapath: remove redundant XDP prefiltering macros
 
 **RULE**:
-When implementing operations in `operator/pkg/ciliumidentity/controller_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bpf/bpf_xdp.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b0ce3fe1`: operator/pkg/ciliumidentity: Fix revert check in CID update test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7e8689ba`: datapath: remove redundant XDP prefiltering macros. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `operator/pkg/ciliumidentity/controller_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `bpf/bpf_xdp.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// The store can still hold the object from before the tampering, which
-	// already has the original labels.
-		cid := cids[0]
-		assert.NotEqual(ct, toUpdate.ResourceVersion, cid.ResourceVersion)
+	struct lpm_v4_key pfx;
+	struct lpm_v6_key pfx;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	cid, err := fakeClient.CiliumV2().CiliumIdentities().Get(ctx, updated.Name, metav1.GetOptions{})
-	if err != nil {
-		t.Fatalf("get CID: %v", err)
-	}
-	if !cmp.Equal(cid.SecurityLabels, updated.SecurityLabels) {
-		t.Fatalf("expected labels %v, got %v", updated.SecurityLabels, cid.SecurityLabels)
-	}
-
-		cid = cids[0]
+	struct lpm_v4_key pfx __maybe_unused;
+#ifdef CIDR4_FILTER
+#ifdef CIDR4_LPM_PREFILTER
+#endif /* CIDR4_LPM_PREFILTER */
+#endif /* CIDR4_FILTER */
+	struct lpm_v6_key pfx __maybe_unused;
+#ifdef CIDR6_FILTER
+#ifdef CIDR6_LPM_PREFILTER
+#endif /* CIDR6_LPM_PREFILTER */
+#endif /* CIDR6_FILTER */
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b0ce3fe1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7e8689ba` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T19:11:46.172Z",
+  "last_updated": "2026-11-20T19:25:12.544Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "e5947726184ef4446c8f9b891968e7584815252acb597cd029f3c94c94d5600e",
-      "verified_at": "2026-11-20T12:07:23.542Z",
+      "content_hash": "e9047d395b25a3f812aa06f8aaf3048e008dcf4e68d9c24be6fd3c0b869d3b5d",
+      "verified_at": "2026-11-20T19:25:12.543Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T12:07:23.542Z"
+      "last_updated": "2026-11-20T19:25:12.543Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -14301,14 +14301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-stikdebug-stikdebug",
-      "content_hash": "d4c63a725b8e17a44caf1ee22d6c215125e48c2dc079870710cfbb36df5af038",
-      "verified_at": "2026-11-13T06:20:48.786Z",
+      "content_hash": "f2ad2cac1d441642070ca8a92487d4b511a3ab619e9407fa474515e9d6190aee",
+      "verified_at": "2026-11-20T19:25:05.738Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T06:20:48.786Z"
+      "last_updated": "2026-11-20T19:25:05.738Z"
     },
     "remarkjs/remark": {
       "repository": "remarkjs/remark",
@@ -14376,14 +14376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sindresorhus-got",
-      "content_hash": "39526ced461bba660f920c5bc9670d41064f61b752b0c6db8eb65a5615952204",
-      "verified_at": "2026-10-30T14:40:23.819Z",
+      "content_hash": "a5d3b1a6d867a439aba3786adefc686b04eda6f137af29c550b6199ff8c444fe",
+      "verified_at": "2026-11-20T19:25:02.529Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T14:40:23.819Z"
+      "last_updated": "2026-11-20T19:25:02.529Z"
     },
     "SDWebImage/SDWebImageSwiftUI": {
       "repository": "SDWebImage/SDWebImageSwiftUI",

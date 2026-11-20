@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md`  
 > **Source**: github ([https://github.com/StikDebug/StikDebug](https://github.com/StikDebug/StikDebug))  
-> **Source Version**: `7a80dfce`  
+> **Source Version**: `63713ea2`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T06:20:31.919Z  
+> **Timestamp**: 2026-11-20T19:25:04.704Z  
 > **Learning ID**: `learn-github-stikdebug-stikdebug`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StikDebug/StikDebug](https://github.com/StikDebug/StikDebug))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T06:20:31.911Z  
+> **Harvest Timestamp**: 2026-11-20T19:25:04.581Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An on-device debugger/JIT enabler for iOS versions 17.4+, powered by idevice.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3115 stars
+- **Stars / Engagement**: 3224 stars
 
 ---
 
@@ -1524,11 +1524,11 @@ final class JITEnableContext {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #496** (2026-11-17): **Stik Debug source does not seem to work in AltStore PAL**
+  *Symptoms*: ### Description  Hi! I’m trying to add the Stik Debug source to AltStore PAL, but AltStore displays an “Invalid JSON data” error.  I’ve tried adding the source again, but the error keeps appearing. Could you check whether the source’s JSON feed is valid and compatible with AltStore PAL? If there’s a specific source URL or setup step I should use, please let me know.  ### JIT - Affected App and IPA Source  _No response_  ### Steps to Reproduce  1. altstore-pal://source?url=https://stikdebug.xyz/apps.json 2. try adding it to altstore Pal  ### Expected Behavior  I was expecting stik debug source to work on altstore pal  ### iOS / iPadOS Version  27.0  ### Device  iPhone 16 Pro Max  ### StikDebug Version  latest  ### Are you running StikDebug inside LiveContainer?  Yes  ### Logs  ```shell  ```  ### Screenshots  <img width="1320" height="2839" alt="IMG_4318" src="https://github.com/user-attachments/assets/2220cb61-c333-4503-b7c9-bec40f598b55" /> <img width="1320" height="2848" alt="IMG_4317" src="https://github.com/user-attachments/assets/7293958e-d932-4bb8-bcd6-f7cd77e30cb3" />
+
 - **Issue #495** (2026-11-08): **down load DDI error**
   *Symptoms*: ### Description  My device is an iPad Pro M5, running system version 27.2. I have installed StikDebug 3.2.1. I went to Settings to connect and fetch the configuration profile, and the profile was obtained successfully. Shortly after that, a pop-up appeared showing download DDI error. What causes this?  ### JIT - Affected App and IPA Source  _No response_  ### Steps to Reproduce  My device is an iPad Pro M5, running system version 27.2. I have installed StikDebug 3.2.1. I went to Settings to connect and fetch the configuration profile, and the profile was obtained successfully. Shortly after that, a pop-up appeared showing download DDI error. What causes this?  ### Expected Behavior  My device is an iPad Pro M5, running system version 27.2. I have installed StikDebug 3.2.1. I went to Settings to connect and fetch the configuration profile, and the profile was obtained successfully. Shortly after that, a pop-up appeared showing download DDI error. What causes this?  ### iOS / iPadOS Version  27.2  ### Device  ipad pro m5  ### StikDebug Version  3.2.1  ### Are you running StikDebug inside LiveContainer?  Yes  ### Logs  ```shell  ```  ### Screenshots  _No response_
-
-- **Issue #493** (2026-10-30): **Failed to connect debug proxy: ServiceNotFound**
-  *Symptoms*: ### Description  Worked perfectly a while ago. Changed nothing. Didn’t update. Just stopped working. DDI is fine, VPN is fine, tried re-pairing, nothing helps. I try to launch an app with JIT that worked perfectly a while ago(any app) and i get the error “ServiceNotFound”  ### Steps to Reproduce  1. Connect LocalDevVPN 2. Open StikDebug 3. Try to launch an app with JIT or use Processes tool 4. Error  ### Expected Behavior  No error, app launches, processes tool works.  ### iOS Version  27.2  ### Device  iPhone Duo  ### StikDebug Version  3.2.0  ### Logs  ```shell === DEVICE INFORMATION === Version: 27.2 Name: iPhone Model: iPhone StikDebug Version: App Version: 1.0  === LOG ENTRIES === [23:10:42] [INFO]         "mr", [23:10:42] [INFO]         "my", [23:10:42] [INFO]         "nb", [23:10:42] [INFO]         "ne", [23:10:42] [INFO]         "nl", [23:10:42] [INFO]         "nn-NO", [23:10:42] [INFO]         "or", [23:10:42] [INFO]         "pl", [23:10:42] [INFO]         "pt", [23:10:42] [INFO]         "pt-BR", [23:10:42] [INFO]         "ro", [23:10:42] [INFO]         "ru", [23:10:42] [INFO]         "si", [23:10:42] [INFO]         "sk", [23:10:42] [INFO]         "sl", [23:10:42] [INFO]         "sr", [23:10:42] [INFO]         "sv", [23:10:42] [INFO]         "ta", [23:10:42] [INFO]         "te", [23:10:42] [INFO]         "th", [23:10:42] [INFO]         "tr", [23:10:42] [INFO]         "uk", [23:10:42] [INFO]         "vi", [23:10:42] [INFO]         "zh-Hans", [23:10:42] [INFO]         
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1545,26 +1545,122 @@ final class JITEnableContext {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a80dfce` (2026-11-12)
-**Commit Message**: Change download link to latest StikDebug release
+### Incident Patch 1: `f83299ce` (2026-11-17)
+**Commit Message**: fix: add pairing and connection recovery guidance
 
-Updated download link for StikDebug to point to the latest release.
-
-**File**: `README.md` (modified, +1/-1)
+**File**: `StikDebug/Services/ConnectionDiagnostics.swift` (modified, +20/-5)
 ```diff
-@@ -33,7 +33,7 @@
- <h3 align="center">
- <a href="https://altdirect.app/?url=https://stikdebug.xyz/index.json" target="_blank"><img src="https://altdirect.app/assets/png/AltSource_Blue.png" alt="Add AltSource" width="200"></a>
- &nbsp;
--<a href="https://github.com/StikDebug/StikDebug/releases/latest/download/StikDebug-3.1.15.ipa" target="_blank"><img src="https://altdirect.app/assets/png/Download_Blue.png" alt="Download .ipa" width="200"></a>
-+<a href="https://github.com/StikDebug/StikDebug/releases/latest" target="_blank"><img src="https://altdirect.app/assets/png/Download_Blue.png" alt="Download .ipa" width="200"></a>
- </h3>
+@@ -5,7 +5,7 @@ import Network
+ struct ConnectionDiagnosis: Equatable {
+     enum Problem {
+         case pairingFile, invalidAddress, pairingRejected, deviceLocked, developerMode
+-        case developerService, cellular, networkUnavailable, noVPN, vpnUnresponsive, serviceUnreachable, unknown
++        case developerService, cellular, networkUnavailable, noVPN, vpnUnresponsive, serviceUnreachable, connectionRefused, unknown
+     }
  
- ## Compatibility
+     let problem: Problem
+@@ -24,6 +24,7 @@ struct ConnectionDiagnosis: Equatable {
+         case .noVPN: return String(localized: "Connect LocalDevVPN")
+         case .vpnUnresponsive: return String(localized: "LocalDevVPN is unavailable")
+         case .serviceUnreachable: return String(localized: "Device isn’t reachable")
++        case .connectionRefused: return String(localized: "Connection refused")
+         case .unknown: return String(localized: "Couldn’t connect to the device")
+         }
+     }
+@@ -37,7 +38,7 @@ struct ConnectionDiagnosis: Equatable {
+         case .developerService: return "externaldrive.badge.exclamationmark"
+         case .cellular, .networkUnavailable: return "airplane"
+         case .noVPN, .vpnUnresponsive: return "shield.slash"
+-        case .serviceUnreachable: return "antenna.radiowaves.left.and.right.slash"
++        case .serviceUnreachable, .connectionRefused: return "antenna.radiowaves.left.and.right.slash"
+         case .unknown: return "exclamationmark.triangle"
+         }
+     }
+@@ -60,7 +61,7 @@ struct ConnectionDiagnosis: Equatable {
+         switch problem {
+         case .pairingFile, .pairingRejected:
+             if #available(iOS 27.0, *) {
+-                return String(localized: "Generate and place a new pairing file using Settings → Pair a Device, or iloader.")
++                return String(localized: "Generate and place a new pairing file using Settings → Pair a Device in StikDebug.")
+             }
+             return String(localized: "Generate and place a new pairing file using iloader.")
+         case .invalidAddress:
+@@ -83,6 +84,8 @@ struct ConnectionDiagnosis: Equatable {
+             return isLocal
+                 ? String(localized: "The device’s pairing service isn’t reachable. Check Remote Pairing Port in Settings. If it still fails, restart the device and reconnect LocalDevVPN.")
+                 : String(localized: "Check Target Device IP and Remote Pairing Port in Settings, and make sure the target device is reachable on your network.")
++        case .connectionRefused:
++            return String(localized: "Restart the target device, then try again.")
+         case .unknown:
+             return String(localized: "Unlock the target device and try again. If the error continues, restart the target device.")
+         }
+@@ -123,13 +126,25 @@ enum ConnectionDiagnostics {
+     }
+ 
+     static func knownProblem(_ error: NSError) -> ConnectionDiagnosis.Problem? {
+-        if error.userInfo["ConnectionStage"] as? String == Stage.pairingFile.rawValue { return .pairingFile }
+-        if error.userInfo["ConnectionStage"] as? String == Stage.targetAddress.rawValue { return .invalidAddress }
++        let stage = error.userInfo["ConnectionStage"] as? String
+         let detail = error.localizedDescription.lowercased()
++        if detail.contains("plist") && detail.contains("missing field") && detail.contains("public_key") {
++            return .pairingRejected
++        }
++        if stage == Stage.pairingFile.rawValue { return .pairingFile }
++        if stage == Stage.targetAddress.rawValue { return .invalidAddress }
++        if stage == Stage.tunnel.rawValue && detail.contains("socket(os") &&
++            detail.contains("code: 54,") && detail.contains("connection reset by peer") {
++            return .pairingRejected
++        }
+         if detail.contains("invalidhostid") || detail.contains("invalid host id") || detail.contains("pairverifyfailed") { return .pairingRejected }
+         if detail.contains("devicelocked") || detail.contains("device locked") || detail.contains("passwordprotected") { return .deviceLocked }
+         if detail.contains("developermodenotenabled") || detail.contains("developer mode is not enabled") { return .developerMode }
+         if detail.contains("servicenotfound") || detail.contains("service not found") || detail.contains("imagenotmounted") || detail.contains("image not mounted") { return .developerService }
++        if (error.domain == NSPOSIXErrorDomain && error.code == Int(ECONNREFUSED)) ||
++            (detail.contains("connection refused") && (detail.contains("(os error 61)") || detail.contains("code: 61,"))) {
++            return .connectionRefused
++        }
+         return nil
+     }
+ 
+```
+
+**File**: `StikDebugTests/StikDebugTests.swift` (modified, +24/-0)
+```diff
+@@ -71,6 +71,30 @@ struct StikDebugTests {
+         #expect(ConnectionDiagnostics.knownProblem(annotated) == .invalidAddress)
+     }
+ 
++    @Test func pairingDiagnosticsRecognizeTunnelResetAndMissingPublicKey() {
++        let reset = NSError(domain: "StikDebug", code: -9, userInfo: [
++            NSLocalizedDescriptionKey: "Socket(OS { code: 54, kind: ConnectionReset, message: \"Connection reset by peer\" })"
++        ])
++        #expect(ConnectionDiagnostics.knownProblem(reset) == nil)
++        let tunnelReset = ConnectionDiagnostics.annotate(reset, stage: .tunnel, targetIP: "10.7.0.1")
++        #expect(ConnectionDiagnostics.knownProblem(tunnelReset) == .pairingRejected)
++
++        let missingKey = NSError(domain: "StikDebug", code: -9, userInfo: [
++            NSLocalizedDescriptionKey: "Plist(Error { kind: Serde(\"missing field 'public_key'\") })"
++        ])
++        let pairingError = ConnectionDiagnostics.annotate(missingKey, stage: .pairingFile, targetIP: "10.7.0.1")
++        #expect(ConnectionDiagnostics.knownProblem(pairingError) == .pairingRejected)
++    }
++
++    @Test func connectionRefusedRecommendsRestart() {
++        let refused = NSError(domain: "StikDebug", code: -9, userInfo: [
++            NSLocalizedDescriptionKey: "Connection refused (os error 61)"
++        ])
++        #expect(ConnectionDiagnostics.knownProblem(refused) == .connectionRefused)
++        let diagnosis = ConnectionDiagnosis(problem: .connectionRefused, isLocal: true)
++        #expect(diagnosis.message == String(localized: "Restart the target device, then try again."))
++    }
++
+     @Test func txmDetectionUsesClassicTXMBeforeIOS266() async throws {
+         #expect(
+             ProcessInfo.hasTXMSupport(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #494** (2026-11-07): Added Chinese localization (@jlj1102)
+- **PR #494** (2026-11-07): Added Chinese localization (@ChickenTracier)
 - **PR #490** (2026-10-29): fix: release the route when playback finishes so a new spot can be set (@OpenUmar)
 - **PR #489** (closed): fix: recover from damaged pairing files instead of failing the tunnel (@yukinine-dev)
 - **PR #488** (closed): Add Stikpair feature inside StikDebug. (@Ayan4k)
@@ -1589,28 +1685,48 @@ Updated download link for StikDebug to point to the latest release.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Change download link to latest StikDebug release
+## X. add pairing and connection recovery guidance
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StikDebug/StikDebug. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `StikDebug/Services/ConnectionDiagnostics.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StikDebug/StikDebug. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a80dfce`: Change download link to latest StikDebug release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f83299ce`: add pairing and connection recovery guidance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `StikDebug/Services/ConnectionDiagnostics.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-<a href="https://github.com/StikDebug/StikDebug/releases/latest" target="_blank"><img src="https://altdirect.app/assets/png/Download_Blue.png" alt="Download .ipa" width="200"></a>
+        case developerService, cellular, networkUnavailable, noVPN, vpnUnresponsive, serviceUnreachable, connectionRefused, unknown
+        case .connectionRefused: return String(localized: "Connection refused")
+        case .serviceUnreachable, .connectionRefused: return "antenna.radiowaves.left.and.right.slash"
+                return String(localized: "Generate and place a new pairing file using Settings → Pair a Device in StikDebug.")
+        case .connectionRefused:
+            return String(localized: "Restart the target device, then try again.")
+        let stage = error.userInfo["ConnectionStage"] as? String
+        if detail.contains("plist") && detail.contains("missing field") && detail.contains("public_key") {
+            return .pairingRejected
+        }
+        if stage == Stage.pairingFile.rawValue { return .pairingFile }
+        if stage == Stage.targetAddress.rawValue { return .invalidAddress }
+        if stage == Stage.tunnel.rawValue && detail.contains("socket(os") &&
+            detail.contains("code: 54,") && detail.contains("connection reset by peer") {
+            return .pairingRejected
+        }
+        if (error.domain == NSPOSIXErrorDomain && error.code == 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-<a href="https://github.com/StikDebug/StikDebug/releases/latest/download/StikDebug-3.1.15.ipa" target="_blank"><img src="https://altdirect.app/assets/png/Download_Blue.png" alt="Download .ipa" width="200"></a>
+// Induced defect failure mode:
+        case developerService, cellular, networkUnavailable, noVPN, vpnUnresponsive, serviceUnreachable, unknown
+        case .serviceUnreachable: return "antenna.radiowaves.left.and.right.slash"
+                return String(localized: "Generate and place a new pairing file using Settings → Pair a Device, or iloader.")
+        if error.userInfo["ConnectionStage"] as? String == Stage.pairingFile.rawValue { return .pairingFile }
+        if error.userInfo["ConnectionStage"] as? String == Stage.targetAddress.rawValue { return .invalidAddress }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a80dfce` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f83299ce` are properly handled with clean fallback behavior.

@@ -11645,3 +11645,6 @@ Every entry in this ledger must capture:
 | `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `8429622d` | Multi-dimensional audit evidence | 2026-11-20T19:06:52.497Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `b612e741` | Multi-dimensional audit evidence | 2026-11-20T19:11:33.613Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `93648484` | Multi-dimensional audit evidence | 2026-11-20T19:11:46.163Z |
+| `learn-github-sindresorhus-got` | `https://github.com/sindresorhus/got` | `c196ad00` | Multi-dimensional audit evidence | 2026-11-20T19:25:02.521Z |
+| `learn-github-stikdebug-stikdebug` | `https://github.com/StikDebug/StikDebug` | `63713ea2` | Multi-dimensional audit evidence | 2026-11-20T19:25:05.730Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `7e8689ba` | Multi-dimensional audit evidence | 2026-11-20T19:25:12.535Z |

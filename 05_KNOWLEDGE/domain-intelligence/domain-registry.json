@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T19:11:52.080Z",
-  "total_records": 2163,
+  "last_updated": "2026-11-20T19:25:18.311Z",
+  "total_records": 2167,
   "domains": {
     "A": {
       "total": 17,
@@ -1399,7 +1399,7 @@
       ]
     },
     "H": {
-      "total": 504,
+      "total": 508,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1904,7 +1904,11 @@
         "domain_intelligence-technical-construction-intelligence-grpc-grpc-rust-core-invariants",
         "domain_intelligence-technical-construction-intelligence-grpc-grpc-rust-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-defguard-defguard-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-topoteretes-cognee-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-topoteretes-cognee-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-sindresorhus-got-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-sindresorhus-got-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-learnings-core-invariant"
       ]
     },
     "I": {
@@ -7906,8 +7910,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "9791f0851dddf4e7e82257ad63cff842a09b97697170d17b282f42a75b2b13e0",
-      "created_at": "2026-11-20T12:07:23.852Z"
+      "content_hash": "e14b4691d97a6261c9b3c4e2fc704d3948d0cda5240a2b65e023cc0daf358986",
+      "created_at": "2026-11-20T19:25:12.889Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -7924,8 +7928,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "ba19c3e465d796862a43953cdd36fcf0a6ff855a5c3cfa1ab55822a586d7f82e",
-      "created_at": "2026-11-20T12:07:29.789Z"
+      "content_hash": "91176b4196d2ba527efd4191d51a1a5db863ee5b767354f0d10f07a648cb6cbe",
+      "created_at": "2026-11-20T19:25:18.311Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -36432,6 +36436,42 @@
       "repository": "golutra-golutra-learnings",
       "content_hash": "0ce0761ff04aa1afbbaaf11f447a3debce9125497dba05409472dc0a3cf31148",
       "created_at": "2026-11-20T19:11:50.337Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-sindresorhus-got-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-sindresorhus-got-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: sindresorhus/got Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sindresorhus-got-technical-construction-intelligence-sindresorhus-got-core-invar.md",
+      "repository": "sindresorhus/got",
+      "content_hash": "2397845ef5a6a2c4631214a17592d3796565803bff31429d17e2677b2fe7a771",
+      "created_at": "2026-11-20T19:25:02.891Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: StikDebug/StikDebug Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-stikdebug-stikdebug-technical-construction-intelligence-stikdebug-stikdebug-core.md",
+      "repository": "StikDebug/StikDebug",
+      "content_hash": "3175a8aea830b401979af1b0314ca0389b624168e7b0b980fc1e8c0c4951ad8e",
+      "created_at": "2026-11-20T19:25:06.112Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-sindresorhus-got-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-sindresorhus-got-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: sindresorhus-got-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sindresorhus-got-learnings-technical-construction-intelligence-sindresorhus-got-.md",
+      "repository": "sindresorhus-got-learnings",
+      "content_hash": "94f8b1a2705b992b52f9e1a6994434a8236a135a6bb3a4a8469e98f5f1432f56",
+      "created_at": "2026-11-20T19:25:16.787Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: stikdebug-stikdebug-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-stikdebug-stikdebug-learnings-technical-construction-intelligence-stikdebug-stik.md",
+      "repository": "stikdebug-stikdebug-learnings",
+      "content_hash": "f4cc18270c7bc193b828033ca35cab1706237621e5fdbda7f8c74a1302ce2dfa",
+      "created_at": "2026-11-20T19:25:17.609Z"
     }
   }
 }
