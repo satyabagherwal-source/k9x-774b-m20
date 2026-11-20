@@ -11663,3 +11663,4 @@
 | `CYCLE-20261120-32BF` | `2026-11-20T23:29:53.787Z` | `vitejs/vite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9662` | Yes (`9a654524...`) |
 | `CYCLE-20261120-FSQI` | `2026-11-20T23:39:47.898Z` | `webpack/webpack` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9663` | Yes (`4cc59355...`) |
 | `CYCLE-20261120-FZ8I` | `2026-11-20T23:39:56.322Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9664` | Yes (`54ec977f...`) |
+| `CYCLE-20261120-Q27Q` | `2026-11-20T23:47:46.742Z` | `rollup/rollup` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rollup-rollup-learnings.md` | Yes (`952d94f0...`) |

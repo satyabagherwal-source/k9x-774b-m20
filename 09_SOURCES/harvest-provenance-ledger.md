@@ -11696,3 +11696,4 @@ Every entry in this ledger must capture:
 | `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `35674719` | Multi-dimensional audit evidence | 2026-11-20T23:29:53.791Z |
 | `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `a393e82c` | Multi-dimensional audit evidence | 2026-11-20T23:39:47.903Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `4b90a220` | Multi-dimensional audit evidence | 2026-11-20T23:39:56.327Z |
+| `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `657bba5a` | Multi-dimensional audit evidence | 2026-11-20T23:47:46.746Z |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T23:40:00.275Z",
+  "updated_at": "2026-11-20T23:47:53.360Z",
   "stats": {
-    "total_discovered": 6810,
-    "approved_pending_harvest": 6430,
+    "total_discovered": 6811,
+    "approved_pending_harvest": 6431,
     "harvested_count": 0,
     "rejected_count": 380,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6402,
+      "COMMUNITY_AND_EXPERT": 6403,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 121,
       "ENGINEERING_BLOGS": 5,
@@ -147183,6 +147183,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webpack-webpack-learnings.md",
         "fileName": "webpack-webpack-learnings.md"
+      }
+    },
+    "SRC-E3F39D68840F": {
+      "id": "SRC-E3F39D68840F",
+      "url": "https://rollup-nc22eiway-rollup-js.vercel.app/repl/?pr=6681",
+      "title": "https://rollup-nc22eiway-rollup-js.vercel.app/repl/?pr=6681",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:47:53.360Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
       }
     }
   }

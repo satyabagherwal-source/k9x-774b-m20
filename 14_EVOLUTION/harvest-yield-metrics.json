@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T23:39:56.333Z",
-  "total_cycles_completed": 11105,
-  "total_learnings_persisted": 11105,
+  "last_updated": "2026-11-20T23:47:46.776Z",
+  "total_cycles_completed": 11106,
+  "total_learnings_persisted": 11106,
   "total_rules_promoted": 10455,
   "history": [
-    {
-      "timestamp": "2026-11-20T01:55:34.937Z",
-      "repository": "hashicorp/terraform",
-      "learningId": "learn-github-hashicorp-terraform",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T02:14:54.826Z",
       "repository": "Kuddev/pebrel",
@@ -1403,6 +1396,13 @@
       "repository": "xerj-org/xerj",
       "learningId": "learn-github-xerj-org-xerj",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T23:47:46.776Z",
+      "repository": "rollup/rollup",
+      "learningId": "learn-github-rollup-rollup",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
