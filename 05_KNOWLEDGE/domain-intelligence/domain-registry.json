@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T20:28:23.871Z",
-  "total_records": 2170,
+  "last_updated": "2026-11-20T20:41:50.759Z",
+  "total_records": 2171,
   "domains": {
     "A": {
       "total": 17,
@@ -1399,7 +1399,7 @@
       ]
     },
     "H": {
-      "total": 508,
+      "total": 509,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1908,7 +1908,8 @@
         "domain_intelligence-technical-construction-intelligence-sindresorhus-got-core-invariants",
         "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-core-invariants",
         "domain_intelligence-technical-construction-intelligence-sindresorhus-got-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-alibaba-zvec-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8276,8 +8277,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "41932409f946a96115090d65aaff60b17ad162bd191b50f522d6a4f3f5e5735d",
-      "created_at": "2026-11-20T13:40:20.936Z"
+      "content_hash": "e473f7e019b0a7e172790ebb70420017a87860af3d229668a90029d9e54393d0",
+      "created_at": "2026-11-20T20:41:42.293Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -8903,8 +8904,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "47492536c00ce612424bc6782f5b2a91f116a91357f1af4962a4018dd6a022ee",
-      "created_at": "2026-11-20T20:15:06.044Z"
+      "content_hash": "e19e3830b35616484e46829a7929c5f23846faa73f6cc9156f38bb47875c93c0",
+      "created_at": "2026-11-20T20:41:50.759Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -23692,8 +23693,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "92dee59015997e8007b814672cc2c40ea2f8357625ab2694ddf482ba4fdbb79c",
-      "created_at": "2026-11-20T13:40:27.272Z"
+      "content_hash": "ca43c9b8fb2103460c72887ec1d77ceeb5cd338e1501eb7a090e13b99cba2d78",
+      "created_at": "2026-11-20T20:41:48.441Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
@@ -24545,8 +24546,8 @@
       "title": "Technical Construction Intelligence: alibaba/zvec Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-technical-construction-intelligence-alibaba-zvec-core-invariants.md",
       "repository": "alibaba/zvec",
-      "content_hash": "510d4ff7784010a4aaa6fcab4c25b2d1368ae1adca1aa291a45b1ab947b9a4eb",
-      "created_at": "2026-11-18T12:51:06.920Z"
+      "content_hash": "b31a93fd9c97b3f625a528691be7a723752cc0a00789465c9bd73dcb9e3129fd",
+      "created_at": "2026-11-20T20:41:44.657Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",
@@ -36535,6 +36536,15 @@
       "repository": "authzed-spicedb-learnings",
       "content_hash": "e22e66ae95bee9b35f5d24173d04f9a61cd624677a8f8268779454c5fbc4a399",
       "created_at": "2026-11-20T19:45:18.988Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-alibaba-zvec-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-alibaba-zvec-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: alibaba-zvec-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-learnings-technical-construction-intelligence-alibaba-zvec-learning.md",
+      "repository": "alibaba-zvec-learnings",
+      "content_hash": "cefce82a25d61b31b35fff9243234a18fd86b27ff8e80af298c8d78277086065",
+      "created_at": "2026-11-20T20:41:49.544Z"
     }
   }
 }

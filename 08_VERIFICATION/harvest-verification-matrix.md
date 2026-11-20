@@ -11623,3 +11623,5 @@
 | `CYCLE-20261120-O66T` | `2026-11-20T20:02:21.653Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9632` | Yes (`4a50a280...`) |
 | `CYCLE-20261120-OBM4` | `2026-11-20T20:02:28.684Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9633` | Yes (`e08d4e59...`) |
 | `CYCLE-20261120-4GHM` | `2026-11-20T20:15:01.498Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9634` | Yes (`4e8e8566...`) |
+| `CYCLE-20261120-2R98` | `2026-11-20T20:41:41.756Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9635` | Yes (`c883d286...`) |
+| `CYCLE-20261120-2T4J` | `2026-11-20T20:41:44.179Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9636` | Yes (`c7cc4c5d...`) |

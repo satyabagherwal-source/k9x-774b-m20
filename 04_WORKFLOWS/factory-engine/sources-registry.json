@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T20:28:21.428Z",
-    "lastVerified": "2026-11-20T20:28:21.428Z",
+    "lastChecked": "2026-11-20T20:41:47.599Z",
+    "lastVerified": "2026-11-20T20:41:47.599Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T19:44:42.059Z",
+    "lastChecked": "2026-11-20T20:41:42.286Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T19:44:42.059Z"
+    "lastVerified": "2026-11-20T20:41:42.286Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1674,22 +1674,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "alibaba-zvec": {
-    "name": "zvec",
+    "name": "alibaba/zvec",
     "officialUrl": "https://github.com/alibaba/zvec",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-19T16:07:20.274Z",
-    "lastVerified": "2026-11-19T16:07:20.274Z",
+    "lastChecked": "2026-11-20T20:41:42.913Z",
+    "lastVerified": "2026-11-20T20:41:42.913Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-alibaba-zvec",
-    "contentHash": "0c7a359e6205e5c53fa3d204b526df419ba834fc0da34c4b1e66519feca8366f",
+    "contentHash": "c7cc4c5d0675008acae37b4fbb17e9e555270e02e938a788837cf163b3d70b7f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "018b1eb3"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "cachix-devenv": {
     "name": "devenv",
@@ -2249,14 +2248,14 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T13:40:17.959Z",
-    "lastVerified": "2026-11-20T13:40:17.959Z",
+    "lastChecked": "2026-11-20T20:41:40.334Z",
+    "lastVerified": "2026-11-20T20:41:40.334Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "aa8ae513b318643a2bee49b862af53771b8b4b757ac979075817f555310925da",
+    "contentHash": "c883d286609e83cfcff414056741988949f601bd032ccd677b1e7c4c52c1cb28",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2639,9 +2638,9 @@
   "easegress-io-easegress": {
     "name": "easegress",
     "officialUrl": "https://github.com/easegress-io/easegress",
-    "lastChecked": "2026-11-19T17:37:52.739Z",
+    "lastChecked": "2026-11-20T20:41:34.605Z",
     "revisionIdentifier": "b8d95290",
-    "lastVerified": "2026-11-19T17:37:52.739Z"
+    "lastVerified": "2026-11-20T20:41:34.605Z"
   },
   "giancarloerra-socraticode": {
     "name": "SocratiCode",
@@ -6428,12 +6427,12 @@
     "lastVerified": "2026-11-20T10:34:22.528Z"
   },
   "graphprotocol-graph-node": {
-    "name": "graphprotocol/graph-node",
+    "name": "graph-node",
     "officialUrl": "https://github.com/graphprotocol/graph-node",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T04:36:20.226Z",
-    "lastVerified": "2026-11-19T04:36:20.226Z",
+    "lastChecked": "2026-11-20T20:41:27.091Z",
+    "lastVerified": "2026-11-20T20:41:27.091Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-graphprotocol-graph-node",
@@ -6442,7 +6441,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a6ae6e2c"
   },
   "hf-bingsu-adetailer": {
     "name": "Bingsu/adetailer",
@@ -10675,5 +10675,19 @@
     "lastChecked": "2026-11-20T20:28:11.444Z",
     "revisionIdentifier": "1211aa6b",
     "lastVerified": "2026-11-20T20:28:11.444Z"
+  },
+  "encode-httpx": {
+    "name": "httpx",
+    "officialUrl": "https://github.com/encode/httpx",
+    "lastChecked": "2026-11-20T20:41:29.592Z",
+    "revisionIdentifier": "7cff5f79",
+    "lastVerified": "2026-11-20T20:41:29.592Z"
+  },
+  "jasonjmcghee-rem": {
+    "name": "rem",
+    "officialUrl": "https://github.com/jasonjmcghee/rem",
+    "lastChecked": "2026-11-20T20:41:32.101Z",
+    "revisionIdentifier": "f4f68049",
+    "lastVerified": "2026-11-20T20:41:32.101Z"
   }
 }

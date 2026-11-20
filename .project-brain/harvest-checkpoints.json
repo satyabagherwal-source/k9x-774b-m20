@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T20:15:01.511Z",
+  "last_updated": "2026-11-20T20:41:44.197Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "ab265535d132652de9a3cdbd460c8e42612c4d405b7c90b62314abf1a68b3697",
-      "verified_at": "2026-11-20T17:20:59.865Z",
+      "content_hash": "c883d286609e83cfcff414056741988949f601bd032ccd677b1e7c4c52c1cb28",
+      "verified_at": "2026-11-20T20:41:41.774Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T17:20:59.865Z"
+      "last_updated": "2026-11-20T20:41:41.774Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "0c7a359e6205e5c53fa3d204b526df419ba834fc0da34c4b1e66519feca8366f",
-      "verified_at": "2026-11-18T12:51:06.599Z",
+      "content_hash": "c7cc4c5d0675008acae37b4fbb17e9e555270e02e938a788837cf163b3d70b7f",
+      "verified_at": "2026-11-20T20:41:44.196Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T12:51:06.599Z"
+      "last_updated": "2026-11-20T20:41:44.196Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",

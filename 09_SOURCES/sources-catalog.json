@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "27d1b854",
+    "sourceVersion": "29eef2ff",
     "license": "Apache-2.0",
-    "contentHash": "aa8ae513b318643a2bee49b862af53771b8b4b757ac979075817f555310925da",
-    "lastHarvestedAt": "2026-11-20T13:40:20.586Z",
+    "contentHash": "c883d286609e83cfcff414056741988949f601bd032ccd677b1e7c4c52c1cb28",
+    "lastHarvestedAt": "2026-11-20T20:41:41.762Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "018b1eb3",
+    "sourceVersion": "8d978b06",
     "license": "Apache-2.0",
-    "contentHash": "0c7a359e6205e5c53fa3d204b526df419ba834fc0da34c4b1e66519feca8366f",
-    "lastHarvestedAt": "2026-11-18T12:51:06.592Z",
+    "contentHash": "c7cc4c5d0675008acae37b4fbb17e9e555270e02e938a788837cf163b3d70b7f",
+    "lastHarvestedAt": "2026-11-20T20:41:44.184Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {

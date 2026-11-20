@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T20:02:32.304Z",
+  "updated_at": "2026-11-20T20:41:47.932Z",
   "stats": {
-    "total_discovered": 6696,
-    "approved_pending_harvest": 6336,
+    "total_discovered": 6697,
+    "approved_pending_harvest": 6337,
     "harvested_count": 0,
     "rejected_count": 360,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6295,
+      "COMMUNITY_AND_EXPERT": 6296,
       "OFFICIAL_DOCUMENTATION": 230,
       "STANDARDS_AND_SPECIFICATIONS": 119,
       "ENGINEERING_BLOGS": 5,
@@ -144815,6 +144815,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
         "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-90BF20E7D6D8": {
+      "id": "SRC-90BF20E7D6D8",
+      "url": "https://claude.ai/code/session_01UYfmmNCVcscJqcHrimQFVE",
+      "title": "https://claude.ai/code/session_01UYfmmNCVcscJqcHrimQFVE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T20:41:47.931Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
       }
     }
   }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T20:28:23.871Z",
+  "last_updated": "2026-11-20T20:41:50.987Z",
   "total_verified_learnings": 9048,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22630,
+  "total_items": 22636,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112821,22 +112821,22 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "27d1b854",
-      "content_hash": "41932409f946a96115090d65aaff60b17ad162bd191b50f522d6a4f3f5e5735d",
+      "source_version": "29eef2ff",
+      "content_hash": "e473f7e019b0a7e172790ebb70420017a87860af3d229668a90029d9e54393d0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T13:40:20.936Z"
+      "persisted_at": "2026-11-20T20:41:42.293Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "cfce7f98",
-      "content_hash": "8af4de6e86346791740f506953da7bdd57c5b757ec41429bc64927152cadbc20",
+      "source_version": "29eef2ff",
+      "content_hash": "a65302197f0f66e814b43beeef5689095ce5b362af3d42e536c89cce2395da0d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:21:00.458Z"
+      "persisted_at": "2026-11-20T20:41:42.677Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-4JVN-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-2Y1J-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2091e057566c506736863bf8062da8c880523217eeefaa86802ad717f06c0014",
+      "content_hash": "ac817f454d7cda2b0af34c15f2da6c17522d2deb6942ae12cf22d62192008ff5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:15:05.894Z"
+      "persisted_at": "2026-11-20T20:41:50.558Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "47492536c00ce612424bc6782f5b2a91f116a91357f1af4962a4018dd6a022ee",
+      "content_hash": "e19e3830b35616484e46829a7929c5f23846faa73f6cc9156f38bb47875c93c0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:15:06.044Z"
+      "persisted_at": "2026-11-20T20:41:50.759Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "945678dce5dde15b6ffa5f3a0f3f0b66d503ae3d280cba3432f4db14cd257902",
+      "content_hash": "2b866934faec8118304bd776245782a4bd41f0fd153f39b463ccdf098ee56c10",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:15:06.195Z"
+      "persisted_at": "2026-11-20T20:41:50.987Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -215395,8 +215395,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "018b1eb3",
-      "content_hash": "0c7a359e6205e5c53fa3d204b526df419ba834fc0da34c4b1e66519feca8366f",
+      "source_version": "8d978b06",
+      "content_hash": "c7cc4c5d0675008acae37b4fbb17e9e555270e02e938a788837cf163b3d70b7f",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -215414,6 +215414,11 @@
           "number": 9223,
           "title": "set policy minimum for CMake 4 compatibility",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9636,
+          "title": "pin CMake for iOS builds",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215421,7 +215426,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T12:51:06.414Z",
+      "verified_at": "2026-11-20T20:41:43.931Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215475,10 +215480,10 @@
       "relative_path": "08_VERIFICATION/alibaba-zvec-verification-protocol-empirical-defect-shield-for-alibaba-zvec.md",
       "title": "Verification Protocol: Empirical Defect Shield for alibaba/zvec",
       "repository": "alibaba/zvec",
-      "source_version": "018b1eb3",
-      "content_hash": "212ebdd62c52c8e33d73b62f95fa7c2cbff480770d2ad4d83273a368d91106e3",
+      "source_version": "8d978b06",
+      "content_hash": "92b32d745bacba3608240bdcd4d0126b9db58ca60a7e754dca993cb033774512",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T12:51:07.056Z"
+      "persisted_at": "2026-11-20T20:41:44.863Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
@@ -215548,9 +215553,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for alibaba-zvec-learnings",
       "repository": "alibaba-zvec-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a88873ef5fbb09f09c44724498914a5e7a28c18fffbffea7db4965a58489fb4",
+      "content_hash": "9961257d31f75a792e87bb2677b851ab724194ee52e35eedd892590fce750a0d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T20:47:21.257Z"
+      "persisted_at": "2026-11-20T20:41:49.747Z"
     },
     "learn-huggingface-google-electra-base-discriminator": {
       "learning_id": "learn-huggingface-google-electra-base-discriminator",
@@ -215787,13 +215792,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "cfce7f98",
-      "content_hash": "ab265535d132652de9a3cdbd460c8e42612c4d405b7c90b62314abf1a68b3697",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "29eef2ff",
+      "content_hash": "c883d286609e83cfcff414056741988949f601bd032ccd677b1e7c4c52c1cb28",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215854,6 +215859,11 @@
           "number": 9576,
           "title": "Run the fixed-port gateway test alone, and correct the nextest comment",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 9635,
+          "title": "Empirical Invariant Guard in release-test.yml",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215861,7 +215871,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T17:20:59.668Z",
+      "verified_at": "2026-11-20T20:41:41.497Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -255342,9 +255352,9 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "92dee59015997e8007b814672cc2c40ea2f8357625ab2694ddf482ba4fdbb79c",
+      "content_hash": "ca43c9b8fb2103460c72887ec1d77ceeb5cd338e1501eb7a090e13b99cba2d78",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T13:40:27.272Z"
+      "persisted_at": "2026-11-20T20:41:48.441Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea",
@@ -255354,9 +255364,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol-snarkos-learnings",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "cffd203b9fd0573ff5df440f63833b88c740cac16e4162f6031365393455805d",
+      "content_hash": "124e5da5455c606ec5e6d469633b4daf4e28918b39e6e012070f3e356deb96e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T13:40:27.574Z"
+      "persisted_at": "2026-11-20T20:41:48.841Z"
     },
     "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and": {
       "item_id": "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and",
@@ -260107,10 +260117,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-technical-construction-intelligence-alibaba-zvec-core-invariants.md",
       "title": "Technical Construction Intelligence: alibaba/zvec Core Invariants",
       "repository": "alibaba/zvec",
-      "source_version": "018b1eb3",
-      "content_hash": "510d4ff7784010a4aaa6fcab4c25b2d1368ae1adca1aa291a45b1ab947b9a4eb",
+      "source_version": "8d978b06",
+      "content_hash": "b31a93fd9c97b3f625a528691be7a723752cc0a00789465c9bd73dcb9e3129fd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T12:51:06.920Z"
+      "persisted_at": "2026-11-20T20:41:44.657Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",
@@ -263734,13 +263744,13 @@
       "item_id": "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/provablehq-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-speciali.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/aleo-labs-protocol-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-.md",
       "title": "Agent Contract: aleo-labs-protocol/snarkOS Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "cfce7f98",
-      "content_hash": "4b7d35104c89f1e77ad1a7bec6cdb3ee017fdbe6344dcc414f2f86fb15078b2b",
-      "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:21:00.339Z"
+      "source_version": "29eef2ff",
+      "content_hash": "60125464977161a8b47f63be7aa89e41c98a3894f2a041abdbe0e2831df84db6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T20:41:42.499Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -268354,9 +268364,9 @@
       "title": "Agent Contract: aleo-labs-protocol-snarkos-learnings Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "f1cda4f28261261b266d8c92ffa51a0fccf1cd0f1eaf28d32188afc8d9e35206",
+      "content_hash": "b3d146af5b4463f2219eeec3e1072f1afdc0a0824a2d11e0f2c7dc5552dccc4d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T13:40:27.444Z"
+      "persisted_at": "2026-11-20T20:41:48.663Z"
     },
     "learn-github-cypress-io-cypress": {
       "learning_id": "learn-github-cypress-io-cypress",
@@ -306937,6 +306947,82 @@
       "content_hash": "8f8f2d2208834cdbdf2488c91dc377eb4d046bb41317074f66da7a47505b4999",
       "domain_letter": "D",
       "persisted_at": "2026-11-20T20:15:04.986Z"
+    },
+    "rule-9635": {
+      "learning_id": "rule-9635",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9635,
+      "title": "Empirical Invariant Guard in release-test.yml",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "29eef2ff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T20:41:41.497Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-release-test-yml": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-release-test-yml",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2W8W-empirical-invariant-guard-in-release-test-yml.md",
+      "title": "Empirical Invariant Guard in release-test.yml",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "763a8afa6ccddb8ab65f7789d06f199be0fb04199637bfc3607e63d2ff398fe2",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T20:41:48.230Z"
+    },
+    "rule-9636": {
+      "learning_id": "rule-9636",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9636,
+      "title": "pin CMake for iOS builds",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "8d978b06",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T20:41:43.931Z"
+    },
+    "candidate_directive-pin-cmake-for-ios-builds": {
+      "item_id": "candidate_directive-pin-cmake-for-ios-builds",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2TBV-pin-cmake-for-ios-builds.md",
+      "title": "pin CMake for iOS builds",
+      "repository": "alibaba/zvec",
+      "source_version": "8d978b06",
+      "content_hash": "5ed27243d89d1a4dd099bea2e9cf469fe0fe635d93e13e247d8427e9b7cca200",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T20:41:44.444Z"
+    },
+    "candidate_directive-ci-pin-cmake-for-ios-builds": {
+      "item_id": "candidate_directive-ci-pin-cmake-for-ios-builds",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2X3V-ci-pin-cmake-for-ios-builds.md",
+      "title": "ci): pin CMake for iOS builds",
+      "repository": "alibaba-zvec-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5782260cfc062a9907172932464d64fca50650b0b79221f846f354dd73ae9f2e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T20:41:49.340Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-alibaba-zvec-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-alibaba-zvec-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-learnings-technical-construction-intelligence-alibaba-zvec-learning.md",
+      "title": "Technical Construction Intelligence: alibaba-zvec-learnings Core Invariants",
+      "repository": "alibaba-zvec-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cefce82a25d61b31b35fff9243234a18fd86b27ff8e80af298c8d78277086065",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T20:41:49.544Z"
     }
   },
   "ai-builder-brain": {
