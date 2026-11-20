@@ -11595,3 +11595,6 @@ Every entry in this ledger must capture:
 | `learn-github-webrecorder-pywb` | `https://github.com/webrecorder/pywb` | `28750e62` | Multi-dimensional audit evidence | 2026-11-20T15:15:13.364Z |
 | `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `494f494b` | Multi-dimensional audit evidence | 2026-11-20T15:15:16.492Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `01004140` | Multi-dimensional audit evidence | 2026-11-20T15:15:23.113Z |
+| `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `5091dc87` | Multi-dimensional audit evidence | 2026-11-20T15:35:16.361Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `e75c83bd` | Multi-dimensional audit evidence | 2026-11-20T15:35:19.901Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `b2da1887` | Multi-dimensional audit evidence | 2026-11-20T15:35:21.612Z |

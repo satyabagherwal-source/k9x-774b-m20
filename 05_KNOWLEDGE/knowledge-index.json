@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T15:15:28.779Z",
-  "total_verified_learnings": 9040,
+  "last_updated": "2026-11-20T15:35:28.328Z",
+  "total_verified_learnings": 9041,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22470,
+  "total_items": 22481,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113649,10 +113649,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-technical-construction-intelligence-mintplex-labs-any.md",
       "title": "Technical Construction Intelligence: Mintplex-Labs/anything-llm Core Invariants",
       "repository": "Mintplex-Labs/anything-llm",
-      "source_version": "2f6a451f",
-      "content_hash": "d3c002f94aa422b15cbbe2af9ea025bdeb8d51de4a01707e1fceaf6726db008a",
+      "source_version": "b2da1887",
+      "content_hash": "f64f69642318a72008a0c25f7c10d6f0864571e35ae4205406f018c518c95b63",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T09:08:54.708Z"
+      "persisted_at": "2026-11-20T15:35:22.002Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm",
@@ -113661,10 +113661,10 @@
       "relative_path": "08_VERIFICATION/mintplex-labs-anything-llm-verification-protocol-empirical-defect-shield-for-min.md",
       "title": "Verification Protocol: Empirical Defect Shield for Mintplex-Labs/anything-llm",
       "repository": "Mintplex-Labs/anything-llm",
-      "source_version": "2f6a451f",
-      "content_hash": "d4321f859f5776f138347bf8550605408e8dcb0b41217179316c7e15638abec3",
+      "source_version": "b2da1887",
+      "content_hash": "8646d56e31e89d034dff96341e8972a8aa5648775203f2319286a2b196f6ddfc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T09:08:55.049Z"
+      "persisted_at": "2026-11-20T15:35:22.161Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants",
@@ -113686,9 +113686,9 @@
       "title": "Technical Construction Intelligence: mintplex-labs-anything-llm-learnings Core Invariants",
       "repository": "mintplex-labs-anything-llm-learnings",
       "source_version": "HEAD",
-      "content_hash": "eded072256df44643a6c93bb2464ff25bf6f76a6aaf8332421666351f5962fcc",
+      "content_hash": "54e5daf9183526f0578814fbfab591574ccca485668b89c07164fa712992471b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T09:18:28.576Z"
+      "persisted_at": "2026-11-20T15:35:28.170Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm-lea",
@@ -113698,9 +113698,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mintplex-labs-anything-llm-learnings",
       "repository": "mintplex-labs-anything-llm-learnings",
       "source_version": "HEAD",
-      "content_hash": "3750e49513d6c948cb98e3974fcaa0ce592f980a424e590bc4320d28646cf10f",
+      "content_hash": "0c6398e332a23ec01e5b8c316e5cbe4f739bfb616e22b9fcbefb5284383c52c0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T09:18:29.005Z"
+      "persisted_at": "2026-11-20T15:35:28.328Z"
     },
     "candidate_directive-editor-add-scoped-ios-account-deletion": {
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
@@ -113769,10 +113769,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "repository": "nolabs-ai/nono",
-      "source_version": "540850e3",
-      "content_hash": "998ccae374495722263671ad8c62fb1382d9d05f4b3006959ebb3712ee497e7a",
+      "source_version": "e75c83bd",
+      "content_hash": "1d047f4970b4cc0a54780371b68332eea746a1a9533c463282cb374943b0b9f6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T10:47:21.304Z"
+      "persisted_at": "2026-11-20T15:35:20.298Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono",
@@ -113781,10 +113781,10 @@
       "relative_path": "12_DECISIONS/ADR-nolabs-ai-nono-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "540850e3",
-      "content_hash": "512fcd5e3d10131265f757ca5fe3ca785a4244acef9a80fbf10d7aee70cbb6ae",
+      "source_version": "e75c83bd",
+      "content_hash": "21b8d5b6083a3b6926127e1f166f82c46c743d4845baa461c94259009411719a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T10:47:21.452Z"
+      "persisted_at": "2026-11-20T15:35:20.459Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono",
@@ -113793,10 +113793,10 @@
       "relative_path": "08_VERIFICATION/nolabs-ai-nono-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono.md",
       "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "540850e3",
-      "content_hash": "4d0d5024dce2fa33d29d43c745ddd8d6ae38beba97a03b80cc2333f63ac7f193",
+      "source_version": "e75c83bd",
+      "content_hash": "17b208b7f8d66deab8b59e231e5b9738e8525d75e5d83d4066debcc26d3686c5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T10:47:21.575Z"
+      "persisted_at": "2026-11-20T15:35:20.601Z"
     },
     "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner": {
       "item_id": "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner",
@@ -113854,9 +113854,9 @@
       "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "a097b8af9f9d11ec83ca8d7a3b5cd00650653d2ee54f078bb4607592dff834ce",
+      "content_hash": "5569b12c81ac57a97568f0827db5052dd1c66ae3d4ca13c9a09c30a94cfae656",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T10:47:26.620Z"
+      "persisted_at": "2026-11-20T15:35:26.545Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono-learnings",
@@ -113866,9 +113866,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai-nono-learnings",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "50a3dd5a44f3b7ce121b71a27e45f8bb4d5a555d089a35d10bed3873b4a75daf",
+      "content_hash": "4bc114c11099a933b311aa2c9cee31a6fa71e48605f13f833f2c27c6e937c811",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T10:47:26.762Z"
+      "persisted_at": "2026-11-20T15:35:26.705Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono-learnings",
@@ -113878,9 +113878,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai-nono-learnings",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "01c3a49e11257c6c3f4ea28d05fd84f93fd7a5a3fe01c576e1412c1572f7c709",
+      "content_hash": "a40dbe08401934b4b600b04a62be1763e6775162ada6d8f7b8fd6aadb4f88971",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T10:47:26.891Z"
+      "persisted_at": "2026-11-20T15:35:26.847Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
       "item_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
@@ -239530,8 +239530,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "540850e3",
-      "content_hash": "5bf865f7a0841fd7b14433fc9ac2bbe99c3589981acd70705055b93920183907",
+      "source_version": "e75c83bd",
+      "content_hash": "ee3f5433c1c37a887872a78790b3535e679d1fec8ec082078d58f8aead42dda2",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -239569,6 +239569,11 @@
           "number": 9370,
           "title": "enforce signed policy at session startup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9590,
+          "title": "preserve agent TUIs during remote approvals",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239576,7 +239581,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T10:47:20.757Z",
+      "verified_at": "2026-11-20T15:35:19.696Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240211,8 +240216,8 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "2f6a451f",
-      "content_hash": "b2e913eabef9155fe7aafeded6fb29a05363fee6471de4b63c410454868250df",
+      "source_version": "b2da1887",
+      "content_hash": "fcf163f2a99f239d4f5f499ff1c537f0563c50e40220962255096e40a093fcb6",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
@@ -240245,6 +240250,11 @@
           "number": 9363,
           "title": "Dynamic Credential Permission Invalidation For Subordinate Tokens",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9591,
+          "title": "keep the chat in sync with the route when switching workspaces",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240252,7 +240262,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T09:08:53.678Z",
+      "verified_at": "2026-11-20T15:35:21.409Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -304564,6 +304574,165 @@
       "content_hash": "bb49df5e2682fe6b8190a11282ae0060efc0a8f01da66719de173a6fba3a8653",
       "domain_letter": "I",
       "persisted_at": "2026-11-20T15:15:28.458Z"
+    },
+    "learn-github-kong-kubernetes-ingress-controller": {
+      "learning_id": "learn-github-kong-kubernetes-ingress-controller",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Kong/kubernetes-ingress-controller",
+      "repository": "Kong/kubernetes-ingress-controller",
+      "slug": "kong-kubernetes-ingress-controller",
+      "platform": "github",
+      "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
+      "source_version": "5091dc87",
+      "content_hash": "10fec5864a5952f9047d5650325d08f92fec3447eeaa2117e405678f69797c19",
+      "dossier_path": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9589,
+          "title": "keep an explicitly provided empty array of records in plugin configs",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T15:35:16.124Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9589": {
+      "learning_id": "rule-9589",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9589,
+      "title": "keep an explicitly provided empty array of records in plugin configs",
+      "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
+      "source_version": "5091dc87",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T15:35:16.125Z"
+    },
+    "candidate_directive-keep-an-explicitly-provided-empty-array-of-records-in-plugin-configs": {
+      "item_id": "candidate_directive-keep-an-explicitly-provided-empty-array-of-records-in-plugin-configs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4W14-keep-an-explicitly-provided-empty-array-of-records-in-plugin-configs.md",
+      "title": "keep an explicitly provided empty array of records in plugin configs",
+      "repository": "kong-kubernetes-ingress-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "67fdcebc28f1cb954a3452e1479fccef0fced1db9950c9b86bb3b4d0fd79149a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T15:35:25.485Z"
+    },
+    "domain_intelligence-architecture-intelligence-kong-kubernetes-ingress-controller-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-kong-kubernetes-ingress-controller-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kong-kubernetes-ingress-controller-architecture-intelligence-kong-kubernetes-ing.md",
+      "title": "Architecture Intelligence: Kong/kubernetes-ingress-controller Core Invariants",
+      "repository": "Kong/kubernetes-ingress-controller",
+      "source_version": "5091dc87",
+      "content_hash": "f8a5e170d13c9e46f4445d0da38b1b264e892336cfe77e3739c114babf813424",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T15:35:16.756Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kong-kubernetes-ingress-contro": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kong-kubernetes-ingress-contro",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kong-kubernetes-ingress-controller-learnings-verification-protocol-empirical-def.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kong-kubernetes-ingress-controller-learnings",
+      "repository": "kong-kubernetes-ingress-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3873447494fa129dce8d6ae78d9278e316c9f92bba6eaa50ed26e569161e9ce9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T15:35:25.828Z"
+    },
+    "rule-9590": {
+      "learning_id": "rule-9590",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9590,
+      "title": "preserve agent TUIs during remote approvals",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "e75c83bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T15:35:19.696Z"
+    },
+    "candidate_directive-preserve-agent-tuis-during-remote-approvals": {
+      "item_id": "candidate_directive-preserve-agent-tuis-during-remote-approvals",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4RWL-preserve-agent-tuis-during-remote-approvals.md",
+      "title": "preserve agent TUIs during remote approvals",
+      "repository": "nolabs-ai/nono",
+      "source_version": "e75c83bd",
+      "content_hash": "eb569ae8f87c2b3314f2224f0f3c760f118ed3d7ee0a299e2078101390ac51e5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T15:35:20.139Z"
+    },
+    "rule-9591": {
+      "learning_id": "rule-9591",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9591,
+      "title": "keep the chat in sync with the route when switching workspaces",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "b2da1887",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T15:35:21.409Z"
+    },
+    "candidate_directive-keep-the-chat-in-sync-with-the-route-when-switching-workspaces": {
+      "item_id": "candidate_directive-keep-the-chat-in-sync-with-the-route-when-switching-workspaces",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4XZ5-keep-the-chat-in-sync-with-the-route-when-switching-workspaces.md",
+      "title": "keep the chat in sync with the route when switching workspaces",
+      "repository": "mintplex-labs-anything-llm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "78031a9466126685d1430928bfb5cba309afff7799af46bda1823ce12b369ccc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T15:35:28.006Z"
+    },
+    "domain_intelligence-architecture-intelligence-kong-kubernetes-ingress-controller-learnings-core-inva": {
+      "item_id": "domain_intelligence-architecture-intelligence-kong-kubernetes-ingress-controller-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kong-kubernetes-ingress-controller-learnings-architecture-intelligence-kong-kube.md",
+      "title": "Architecture Intelligence: kong-kubernetes-ingress-controller-learnings Core Invariants",
+      "repository": "kong-kubernetes-ingress-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e8ae5850399053451d5e6f2d804a012d4933b6cd5dc989ba792385a964f38329",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T15:35:25.649Z"
+    },
+    "candidate_directive-cli-preserve-agent-tuis-during-remote-approvals": {
+      "item_id": "candidate_directive-cli-preserve-agent-tuis-during-remote-approvals",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4WQ1-cli-preserve-agent-tuis-during-remote-approvals.md",
+      "title": "cli): preserve agent TUIs during remote approvals",
+      "repository": "nolabs-ai-nono-learnings",
+      "source_version": "HEAD",
+      "content_hash": "44b4f53dacd12a75f1cae88e98e1133ebcfce1efdf63299d2047c008bdcb14e5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T15:35:26.382Z"
     }
   },
   "ai-builder-brain": {

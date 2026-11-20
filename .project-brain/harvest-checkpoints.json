@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T15:15:23.122Z",
+  "last_updated": "2026-11-20T15:35:21.622Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "5bf865f7a0841fd7b14433fc9ac2bbe99c3589981acd70705055b93920183907",
-      "verified_at": "2026-11-19T10:47:20.955Z",
+      "content_hash": "ee3f5433c1c37a887872a78790b3535e679d1fec8ec082078d58f8aead42dda2",
+      "verified_at": "2026-11-20T15:35:19.910Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T10:47:20.955Z"
+      "last_updated": "2026-11-20T15:35:19.910Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -9801,14 +9801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mintplex-labs-anything-llm",
-      "content_hash": "b2e913eabef9155fe7aafeded6fb29a05363fee6471de4b63c410454868250df",
-      "verified_at": "2026-11-19T09:08:53.918Z",
+      "content_hash": "fcf163f2a99f239d4f5f499ff1c537f0563c50e40220962255096e40a093fcb6",
+      "verified_at": "2026-11-20T15:35:21.621Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T09:08:53.918Z"
+      "last_updated": "2026-11-20T15:35:21.621Z"
     },
     "shadcn-ui/taxonomy": {
       "repository": "shadcn-ui/taxonomy",
@@ -10551,14 +10551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kong-kubernetes-ingress-controller",
-      "content_hash": "fff643747d360489c6b5bac9a9c9bfa4b3531f5b13e56f390a2180ace461a25a",
-      "verified_at": "2026-11-13T01:14:28.118Z",
+      "content_hash": "10fec5864a5952f9047d5650325d08f92fec3447eeaa2117e405678f69797c19",
+      "verified_at": "2026-11-20T15:35:16.371Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T01:14:28.118Z"
+      "last_updated": "2026-11-20T15:35:16.371Z"
     },
     "Comfy-Org/z_image_turbo": {
       "repository": "Comfy-Org/z_image_turbo",

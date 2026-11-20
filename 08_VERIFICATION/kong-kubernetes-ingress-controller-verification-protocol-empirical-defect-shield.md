@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for kong/kubernetes/ingress/controller
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for Kong/kubernetes-ingress-controller
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "kong/kubernetes/ingress/controller",
-  "source_url": "https://github.com/kong/kubernetes/ingress/controller",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "Kong/kubernetes-ingress-controller",
+  "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
+  "source_version": "5091dc87",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-20T15:35:16.588Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-kong-kubernetes-ingress-controller",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [kong/kubernetes/ingress/controller](https://github.com/kong/kubernetes/ingress/controller) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [Kong/kubernetes-ingress-controller](https://github.com/Kong/kubernetes-ingress-controller) (Revision: `5091dc87`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T15:35:16.588Z`  
+> **Learning ID**: `learn-github-kong-kubernetes-ingress-controller`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `kong/kubernetes/ingress/controller` (Commit: `historical`)
+- **Target Repository**: `Kong/kubernetes-ingress-controller` (Commit: `5091dc87`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md`  
-> **Source**: github ([https://github.com/Kong/kubernetes-ingress-controller](https://github.com/Kong/kubernetes-ingress-controller))  
-> **Source Version**: `79b7d505`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T18:57:12.513Z  
-> **Learning ID**: `learn-github-kong-kubernetes-ingress-controller`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): Kong/kubernetes-ingress-controller
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kong/kubernetes-ingress-controller](https://github.com/Kong/kubernetes-ingress-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T18:57:11.978Z  
+> **Harvest Timestamp**: 2026-11-20T15:35:15.015Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: :gorilla: Kong for Kubernetes: The official Ingress Controller for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2415 stars
+- **Stars / Engagement**: 2416 stars
 
 ---
 
@@ -1585,56 +1571,247 @@ func CRDExists(restMapper meta.RESTMapper, gvr schema.GroupVersionResource) bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `79b7d505` (2026-11-06)
-**Commit Message**: test(integration):  Skip installing CRDs in deploying KIC and Kong for isolated integration tests (#8141)
+### Incident Patch 1: `ae7f9f5b` (2026-11-20)
+**Commit Message**: fix: keep an explicitly provided empty array of records in plugin configs (#8153)
 
-* Pin helm to v3 to fix conflicts in CRD installation
+* test(deckgen): keep an explicitly provided empty identity_realms
 
-* skip installing CRDs in integration tests
+* chore(deps): bump go-kong to v0.78.1
 
-**File**: `test/internal/helpers/ktf.go` (modified, +12/-0)
+**File**: `CHANGELOG.md` (modified, +7/-0)
 ```diff
-@@ -78,6 +78,7 @@ func GenerateKongBuilder(_ context.Context) (*kong.Builder, []string, error) {
- }
+@@ -144,6 +144,13 @@ Adding a new version? You'll need three changes:
  
- // GenerateKongBuilderWithController generates a Kong builder that installs both KIC and Kong gateway.
-+// CRDs from the chart are not installed, as they are expected to be already installed in the cluster.
- func GenerateKongBuilderWithController() (*kong.Builder, error) {
- 	kongbuilder := kong.NewBuilder().WithNamespace(consts.ControllerNamespace)
+ ### Fixed
  
-@@ -89,6 +90,9 @@ func GenerateKongBuilderWithController() (*kong.Builder, error) {
- 		kongbuilder = kongbuilder.WithProxyEnterpriseEnabled(licenseJSON)
- 		if testenv.DBMode() != testenv.DBModeOff {
- 			kongbuilder.WithProxyEnterpriseSuperAdminPassword(consts.KongTestPassword)
-+			// KTF does not set the admin token for the controller when it is disabled (see below), so set it explicitly.
-+			kongbuilder.WithAdditionalValue("ingressController.env.kong_admin_token.valueFrom.secretKeyRef.name", kong.DefaultEnterpriseAdminPasswordSecretName)
-+			kongbuilder.WithAdditionalValue("ingressController.env.kong_admin_token.valueFrom.secretKeyRef.key", "password")
- 		}
++- Bump go-kong to `v0.78.1`, which fixes `FillPluginsDefaults` replacing an
++  explicitly provided empty array of records in a plugin config with the field's
++  schema default. An empty array is the only way to ask for "none" when the
++  default is not what should be sent, so plugins that reject their own default
++  could not be configured, for example `key-auth`'s `identity_realms: []` with
++  `principals` enabled.
++  [Kong/go-kong#643](https://github.com/Kong/go-kong/pull/643)
+ - Inherit the tags of the translated Kong certificate from the one with earliest
+   creation timestamp, then lowest ID to keep the tags stable in merging certificates
+   from multiple `Secret`s with the same certificate content.
+```
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -36,7 +36,7 @@ require (
+ 	github.com/hashicorp/go-retryablehttp v0.7.8
+ 	github.com/jpillora/backoff v1.0.0
+ 	github.com/kong/go-database-reconciler v1.31.6
+-	github.com/kong/go-kong v0.78.0
++	github.com/kong/go-kong v0.78.1
+ 	github.com/kong/kubernetes-configuration/v2 v2.0.0-alpha.1
+ 	github.com/kong/kubernetes-telemetry v0.1.10
+ 	github.com/kong/kubernetes-testing-framework v0.47.2-patch.3
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -240,8 +240,8 @@ github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1
+ github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
+ github.com/kong/go-database-reconciler v1.31.6 h1:Tfjh7NCp6mujfP53qCDOUrEyxw2ZN7h8LzFtKqd35xQ=
+ github.com/kong/go-database-reconciler v1.31.6/go.mod h1:A6BBhnK1AQ7mQAsnLHoAitS62nJRGqUI8NbjC1aRGOc=
+-github.com/kong/go-kong v0.78.0 h1:VK5g26BCeF+l9o3j3pgU3BOuOdmTd9Vj33x29mKGtkg=
+-github.com/kong/go-kong v0.78.0/go.mod h1:Wx5aTcMjyUnIF94M5NYFWb/EnuEkqB5STrWvybFSYYQ=
++github.com/kong/go-kong v0.78.1 h1:cf6bvjyVtn+waYaOx3gLCfEOe9Rr/Sj1OeT4Yvdr3Cg=
++github.com/kong/go-kong v0.78.1/go.mod h1:Wx5aTcMjyUnIF94M5NYFWb/EnuEkqB5STrWvybFSYYQ=
+ github.com/kong/kubernetes-configuration/v2 v2.0.0-alpha.1 h1:HEdjbq175UL1jHAQUgOvQQDn202pALWNn6n7WE5Jo1Y=
+ github.com/kong/kubernetes-configuration/v2 v2.0.0-alpha.1/go.mod h1:GTQRsC3/f3FkmUecYhjD8MojDpX+jrKWSgtH6cEIeGU=
+ github.com/kong/kubernetes-telemetry v0.1.10 h1:V+/Lco8VFY/CzoELwOPcGTyg0zbj/HAvoFkH50UsKYs=
+```
+
+**File**: `internal/dataplane/deckgen/generate_test.go` (modified, +66/-0)
+```diff
+@@ -2,6 +2,7 @@ package deckgen
+ 
+ import (
+ 	"context"
++	"encoding/json"
+ 	"testing"
+ 
+ 	"github.com/go-logr/zapr"
+@@ -57,6 +58,71 @@ func TestToDeckContent(t *testing.T) {
  	}
- 
-@@ -123,5 +127,13 @@ func GenerateKongBuilderWithController() (*kong.Builder, error) {
- 
- 	kongbuilder.WithProxyAdminServiceTypeLoadBalancer()
- 
-+	// Helm 4 installs CRDs from the chart's crds/ with server-side apply, which conflicts with the CRDs
-+	// pre-installed by the test suite via client-side apply. KTF only passes --skip-crds when the controller
-+	// is disabled, so disable it and re-enable it via an additional value (appended last, so it wins).
-+	kongbuilder.WithControllerDisabled()
-+	kongbuilder.WithAdditionalValue("ingressController.enabled", "true")
-+	// WithControllerDisabled sets the proxy readiness probe path to /status, restore the chart's default.
-+	kongbuilder.WithProxyReadinessProbePath("/status/ready")
-+
- 	return kongbuilder, nil
  }
+ 
++// A KongPlugin that explicitly asks for an empty identity_realms must keep it:
++// key-auth rejects the schema default when principals are enabled (FTI-8081).
++func TestToDeckContent_KeepsEmptyIdentityRealms(t *testing.T) {
++	const keyAuthSchema = `{
++		"fields": [{
++			"config": {
++				"type": "record",
++				"fields": [{
++					"identity_realms": {
++						"type": "set",
++						"elements": {
++							"type": "record",
++							"fields": [
++								{ "scope": { "type": "string" } },
++								{ "id": { "type": "string" } },
++								{ "region": { "type": "string" } }
++							]
++						},
++						"default": [ { "scope": "cp", "region": null, "id": null } ]
++					}
++				}, {
++					"principals": {
++						"type": "record",
++						"fields": [
++							{ "enabled": { "type": "boolean", "default": false } },
++							{ "directory": { "type": "string", "default": "default" } }
++						]
++					}
++				}]
++			}
++		}]
++	}`
++
++	var schema map[string]any
++	require.NoError(t, json.Unmarshal([]byte(keyAuthSchema), &schema))
++
++	state := &kongstate.KongState{
++		Plugins: []kongstate.Plugin{
++			{
++				Plugin: kong.Plugin{
++					Name: kong.String("key-auth"),
++					Config: kong.Configuration{
++						"identity_realms": []any{},
++						"principals": map[string]any{
++							"enabled":   true,
++							"directory": "my-dir",
++						},
++					},
++				},
++			},
++		},
++	}
++
++	content := ToDeckContent(t.Context(), zapr.NewLogger(zap.NewNop()), state, GenerateDeckContentParams{
++		PluginSchemas: &mockPluginSchemaStore{schema: schema},
++	})
++
++	require.Len(t, content.Plugins, 1)
++	realms, err := json.Marshal(content.Plugins[0].Config["identity_realms"])
++	require.NoError(t, err)
++	t.Logf("identity_realms sent to the control plane: %s", realms)
++
++	require.Equal(t, []any{}, content.Plugins[0].Config["identity_realms"])
++}
++
+ func TestFillPlugin(t *testing.T) {
+ 	testCases := []struct {
+ 		name          string
+```
+
+---
+
+### Incident Patch 2: `227af23d` (2026-11-19)
+**Commit Message**: build: install third-party tools through explicit mise backends (#8154)
+
+**File**: `Makefile` (modified, +29/-37)
+```diff
+@@ -43,6 +43,9 @@ PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
+ TOOLS_VERSIONS_FILE = .tools_versions.yaml
+ 
+ MISE := $(shell which mise)
++# aqua names release assets after the Go platform (darwin-arm64, linux-amd64).
++PLATFORM_OS := $(shell go env GOOS)
++PLATFORM_ARCH := $(shell go env GOARCH)
+ .PHONY: mise
+ mise:
+ 	@mise -V >/dev/null || (echo "mise - https://github.com/jdx/mise - not found. Please install it." && exit 1)
+@@ -55,50 +58,45 @@ export MISE_DATA_DIR = $(PROJECT_DIR)/bin/
+ # NOTE: mise targets use -q to silence the output.
+ # Users can use MISE_VERBOSE=1 MISE_DEBUG=1 to get more verbose output.
+ 
+-.PHONY: mise-plugin-install
+-mise-plugin-install: mise
+-	@$(MISE) plugin install --yes -q $(DEP) $(URL)
+-
+ .PHONY: mise-install
+ mise-install: mise
+ 	@$(MISE) install -q $(DEP_VER)
+ 
++# Backend prefixes are explicit: aqua wherever it can install the tool, github
++# for controller-tools (its aqua package is go_install, which the aqua backend
++# rejects), go for crd-ref-docs and dlv (no installable aqua package).
++
+ # Do not store yq's version in .tools_versions.yaml as it is used to get tool versions.
+ # renovate: datasource=github-releases depName=mikefarah/yq
+ YQ_VERSION = 4.47.2
+-YQ = $(PROJECT_DIR)/bin/installs/yq/$(YQ_VERSION)/bin/yq
++YQ = $(PROJECT_DIR)/bin/installs/aqua-mikefarah-yq/$(YQ_VERSION)/yq
+ .PHONY: yq
+ yq: mise # Download yq locally if necessary.
+-	@$(MAKE) mise-plugin-install DEP=yq
+-	@$(MAKE) mise-install DEP_VER=yq@$(YQ_VERSION)
++	@$(MAKE) mise-install DEP_VER=aqua:mikefarah/yq@$(YQ_VERSION)
+ 
+ CONTROLLER_GEN_VERSION = $(shell $(YQ) -ojson -r '.controller-tools' < $(TOOLS_VERSIONS_FILE))
+-CONTROLLER_GEN = $(PROJECT_DIR)/bin/installs/kube-controller-tools/$(CONTROLLER_GEN_VERSION)/bin/controller-gen
++CONTROLLER_GEN = $(PROJECT_DIR)/bin/installs/github-kubernetes-sigs-controller-tools/$(CONTROLLER_GEN_VERSION)/controller-gen
+ .PHONY: controller-gen
+ controller-gen: mise yq ## Download controller-gen locally if necessary.
+-	@$(MAKE) mise-plugin-install DEP=kube-controller-tools
+-	@$(MAKE) mise-install DEP_VER=kube-controller-tools@$(CONTROLLER_GEN_VERSION)
++	@$(MAKE) mise-install DEP_VER=github:kubernetes-sigs/controller-tools@$(CONTROLLER_GEN_VERSION)
+ 
+ KUSTOMIZE_VERSION = $(shell $(YQ) -ojson -r '.kustomize' < $(TOOLS_VERSIONS_FILE))
+-KUSTOMIZE = $(PROJECT_DIR)/bin/installs/kustomize/$(KUSTOMIZE_VERSION)/bin/kustomize
++KUSTOMIZE = $(PROJECT_DIR)/bin/installs/aqua-kubernetes-sigs-kustomize/$(KUSTOMIZE_VERSION)/kustomize
+ .PHONY: kustomize
+ kustomize: mise yq ## Download kustomize locally if necessary.
+-	@$(MAKE) mise-plugin-install DEP=kustomize
+-	@$(MAKE) mise-install DEP_VER=kustomize@$(KUSTOMIZE_VERSION)
++	@$(MAKE) mise-install DEP_VER=aqua:kubernetes-sigs/kustomize@$(KUSTOMIZE_VERSION)
+ 
+ GOLANGCI_LINT_VERSION = $(shell $(YQ) -ojson -r '.golangci-lint' < $(TOOLS_VERSIONS_FILE))
+-GOLANGCI_LINT = $(PROJECT_DIR)/bin/installs/golangci-lint/$(GOLANGCI_LINT_VERSION)/bin/golangci-lint
++GOLANGCI_LINT = $(PROJECT_DIR)/bin/installs/aqua-golangci-golangci-lint/$(GOLANGCI_LINT_VERSION)/golangci-lint-$(GOLANGCI_LINT_VERSION)-$(PLATFORM_OS)-$(PLATFORM_ARCH)/golangci-lint
+ .PHONY: golangci-lint.download
+ golangci-lint.download: mise yq ## Download golangci-lint locally if necessary.
+-	@$(MAKE) mise-plugin-install DEP=golangci-lint
+-	@$(MAKE) mise-install DEP_VER=golangci-lint@$(GOLANGCI_LINT_VERSION)
++	@$(MAKE) mise-install DEP_VER=aqua:golangci/golangci-lint@$(GOLANGCI_LINT_VERSION)
+ 
+ GOTESTSUM_VERSION = $(shell $(YQ) -ojson -r '.gotestsum' < $(TOOLS_VERSIONS_FILE))
+-GOTESTSUM = $(PROJECT_DIR)/bin/installs/gotestsum/$(GOTESTSUM_VERSION)/bin/gotestsum
++GOTESTSUM = $(PROJECT_DIR)/bin/installs/aqua-gotestyourself-gotestsum/$(GOTESTSUM_VERSION)/gotestsum
+ .PHONY: gotestsum
+ gotestsum: yq ## Download gotestsum locally if necessary.
+-	@$(MAKE) mise-plugin-install DEP=gotestsum
+-	@$(MAKE) mise-install DEP_VER=gotestsum@$(GOTESTSUM_VERSION)
++	@$(MAKE) mise-install DEP_VER=aqua:gotestyourself/gotestsum@$(GOTESTSUM_VERSION)
+ 
+ CRD_REF_DOCS_VERSION = $(shell $(YQ) -ojson -r '.crd-ref-docs' < $(TOOLS_VERSIONS_FILE))
+ CRD_REF_DOCS = $(PROJECT_DIR)/bin/installs/go-github-com-elastic-crd-ref-docs/$(CRD_REF_DOCS_VERSION)/bin/crd-ref-docs
+@@ -107,11 +105,10 @@ crd-ref-docs: yq ## Download crd-ref-docs locally if necessary.
+ 	$(MAKE) mise-install DEP_VER=go:github.com/elastic/crd-ref-docs@$(CRD_REF_DOCS_VERSION)
+ 
+ SKAFFOLD_VERSION = $(shell $(YQ) -ojson -r '.skaffold' < $(TOOLS_VERSIONS_FILE))
+-SKAFFOLD = $(PROJECT_DIR)/bin/installs/skaffold/$(SKAFFOLD_VERSION)/bin/skaffold
++SKAFFOLD = $(PROJECT_DIR)/bin/installs/aqua-google-container-tools-skaffold/$(SKAFFOLD_VERSION)/skaffold-$(PLATFORM_OS)-$(PLATFORM_ARCH)
+ .PHONY: skaffold
+ skaffold: mise yq ## Download skaffold locally if necessary.
+-	@$(MAKE) mise-plugin-install DEP=skaffold
+-	@$(MAKE) mise-install DEP_VER=skaffold@$(SKAFFOLD_VERSION)
++	@$(MAKE) mise-install DEP_VER=aqua:GoogleContainerTools/skaffold@$(SKAFFOLD_VERSION)
+ 
+ DE
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8141** (2026-11-06): test(integration):  Skip installing CRDs in deploying KIC and Kong for isolated integration tests (@randmonkey)
-- **PR #8140** (closed): Chore(ci): Pin helm to v3 to fix conflicts in CRD installation (@randmonkey)
-- **PR #8136** (2026-10-28): docs(changelog): Add entries for releases 3.5.14 and 3.4.21 (@randmonkey)
-- **PR #8135** (2026-10-26): chore(deps): bump golang from `f241642` to `f20d83a` (@dependabot[bot])
-- **PR #8129** (2026-10-22): chore(changelog): update changelog for 3.5.14 (@randmonkey)
-- **PR #8128** (2026-10-22): chore(changelog): update changelog for 3.4.21 (@randmonkey)
+- **PR #8161** (2026-11-20): docs(changelog): add entries for releases 3.5.15 and 3.4.22 (@matteogastaldello)
+- **PR #8160** (2026-11-20): chore(changelog): update changelog for 3.4.22 (@matteogastaldello)
+- **PR #8159** (2026-11-20): chore(changelog): update changelog for 3.5.15 (@matteogastaldello)
+- **PR #8158** (2026-11-20): fix: keep an explicitly provided empty array of records in plugin configs (#8153) (@matteogastaldello)
+- **PR #8157** (2026-11-20): fix: keep an explicitly provided empty array of records in plugin configs (#8153) (@matteogastaldello)
+- **PR #8156** (2026-11-20): build: install third-party tools through explicit mise backends (#8154) (@matteogastaldello)
 
 ---
 
@@ -1654,42 +1831,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(integration):  Skip installing CRDs in deploying KIC and Kong for isolated 
+## X. keep an explicitly provided empty array of records in plugin configs
 
 **RULE**:
-When implementing operations in `test/internal/helpers/ktf.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kong/kubernetes-ingress-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kong/kubernetes-ingress-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `79b7d505`: test(integration):  Skip installing CRDs in deploying KIC and Kong for isolated integration tests (#8141). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae7f9f5b`: keep an explicitly provided empty array of records in plugin configs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/internal/helpers/ktf.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// CRDs from the chart are not installed, as they are expected to be already installed in the cluster.
-			// KTF does not set the admin token for the controller when it is disabled (see below), so set it explicitly.
-			kongbuilder.WithAdditionalValue("ingressController.env.kong_admin_token.valueFrom.secretKeyRef.name", kong.DefaultEnterpriseAdminPasswordSecretName)
-			kongbuilder.WithAdditionalValue("ingressController.env.kong_admin_token.valueFrom.secretKeyRef.key", "password")
-	// Helm 4 installs CRDs from the chart's crds/ with server-side apply, which conflicts with the CRDs
-	// pre-installed by the test suite via client-side apply. KTF only passes --skip-crds when the controller
-	// is disabled, so disable it and re-enable it via an additional value (appended last, so it wins).
-	kongbuilder.WithControllerDisabled()
-	kongbuilder.WithAdditionalValue("ingressController.enabled", "true")
-	// WithControllerDisabled sets the proxy readiness probe path to /status, restore the chart's default.
-	kongbuilder.WithProxyReadinessProbePath("/status/ready")
-
+- Bump go-kong to `v0.78.1`, which fixes `FillPluginsDefaults` replacing an
+  explicitly provided empty array of records in a plugin config with the field's
+  schema default. An empty array is the only way to ask for "none" when the
+  default is not what should be sent, so plugins that reject their own default
+  could not be configured, for example `key-auth`'s `identity_realms: []` with
+  `principals` enabled.
+  [Kong/go-kong#643](https://github.com/Kong/go-kong/pull/643)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `79b7d505` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae7f9f5b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

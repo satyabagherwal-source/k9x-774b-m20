@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T15:15:26.799Z",
+  "updated_at": "2026-11-20T15:35:27.787Z",
   "stats": {
-    "total_discovered": 6405,
-    "approved_pending_harvest": 6050,
+    "total_discovered": 6421,
+    "approved_pending_harvest": 6065,
     "harvested_count": 0,
-    "rejected_count": 355,
+    "rejected_count": 356,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6037,
+      "COMMUNITY_AND_EXPERT": 6053,
       "OFFICIAL_DOCUMENTATION": 201,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
@@ -138448,6 +138448,351 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
         "fileName": "webrecorder-pywb-learnings.md"
+      }
+    },
+    "SRC-A9F47306F21A": {
+      "id": "SRC-A9F47306F21A",
+      "url": "https://github.com/Kong/go-kong/pull/643",
+      "title": "https://github.com/Kong/go-kong/pull/643",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:35:25.191Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
+        "fileName": "kong-kubernetes-ingress-controller-learnings.md"
+      }
+    },
+    "SRC-E39562BB7C37": {
+      "id": "SRC-E39562BB7C37",
+      "url": "https://github.com/jdx/mise",
+      "title": "https://github.com/jdx/mise",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:35:25.244Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
+        "fileName": "kong-kubernetes-ingress-controller-learnings.md"
+      }
+    },
+    "SRC-55BF536793A8": {
+      "id": "SRC-55BF536793A8",
+      "url": "https://www.youtube.com/watch?v=%24%7BID",
+      "title": "https://www.youtube.com/watch?v=%24%7BID",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:35:27.168Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
+      }
+    },
+    "SRC-457463ACF90F": {
+      "id": "SRC-457463ACF90F",
+      "url": "http://m.youtube.com/watch?v=%24%7BID",
+      "title": "http://m.youtube.com/watch?v=%24%7BID",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T15:35:27.213Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
+      }
+    },
+    "SRC-09C2FACE9D70": {
+      "id": "SRC-09C2FACE9D70",
+      "url": "https://music.youtube.com/watch?v=%24%7BID",
+      "title": "https://music.youtube.com/watch?v=%24%7BID",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:35:27.262Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
+      }
+    },
+    "SRC-C56F4A1A6AA3": {
+      "id": "SRC-C56F4A1A6AA3",
+      "url": "https://youtu.be/$%7BID",
+      "title": "https://youtu.be/$%7BID",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:35:27.310Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
+      }
+    },
+    "SRC-4E0895EB0FED": {
+      "id": "SRC-4E0895EB0FED",
+      "url": "https://youtube.com/WATCH?v=%24%7BID",
+      "title": "https://youtube.com/WATCH?v=%24%7BID",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:35:27.355Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
+      }
+    },
+    "SRC-4C8F609CCFFD": {
+      "id": "SRC-4C8F609CCFFD",
+      "url": "https://youtube.com/watch?V=%24%7BID",
+      "title": "https://youtube.com/watch?V=%24%7BID",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:35:27.404Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
+      }
+    },
+    "SRC-42D293AD2F06": {
+      "id": "SRC-42D293AD2F06",
+      "url": "https://youtube.com.evil.com/watch?v=%24%7BID",
+      "title": "https://youtube.com.evil.com/watch?v=%24%7BID",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:35:27.460Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
+      }
+    },
+    "SRC-3E8DECC03CFD": {
+      "id": "SRC-3E8DECC03CFD",
+      "url": "https://notyoutube.com/watch?v=%24%7BID",
+      "title": "https://notyoutube.com/watch?v=%24%7BID",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:35:27.503Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
+      }
+    },
+    "SRC-117A0228CC84": {
+      "id": "SRC-117A0228CC84",
+      "url": "https://evil.com/youtube.com/watch?v=%24%7BID",
+      "title": "https://evil.com/youtube.com/watch?v=%24%7BID",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:35:27.554Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
+      }
+    },
+    "SRC-0045971CF284": {
+      "id": "SRC-0045971CF284",
+      "url": "https://youtube.com@evil.com/watch?v=%24%7BID",
+      "title": "https://youtube.com@evil.com/watch?v=%24%7BID",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:35:27.598Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
+      }
+    },
+    "SRC-05E13F347920": {
+      "id": "SRC-05E13F347920",
+      "url": "https://evil.com/?u=youtube.com%2Fwatch%3Fv%3D%24%7BID",
+      "title": "https://evil.com/?u=youtube.com%2Fwatch%3Fv%3D%24%7BID",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:35:27.646Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
+      }
+    },
+    "SRC-424A45009D9A": {
+      "id": "SRC-424A45009D9A",
+      "url": "https://youtube.com:bad/watch?v=dQw4w9WgXcQ",
+      "title": "https://youtube.com:bad/watch?v=dQw4w9WgXcQ",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:35:27.690Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
+      }
+    },
+    "SRC-695C2998CDCA": {
+      "id": "SRC-695C2998CDCA",
+      "url": "https://youtube.com/watch?v=%24%7BID",
+      "title": "https://youtube.com/watch?v=%24%7BID",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:35:27.738Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
+      }
+    },
+    "SRC-CDA1789C0CF2": {
+      "id": "SRC-CDA1789C0CF2",
+      "url": "https://${link/",
+      "title": "https://${link/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:35:27.787Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
       }
     }
   }

@@ -28,14 +28,14 @@
     "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-19T09:07:19.196Z",
-    "lastVerified": "2026-11-19T09:07:19.196Z",
+    "lastChecked": "2026-11-20T15:35:20.574Z",
+    "lastVerified": "2026-11-20T15:35:20.574Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "b2e913eabef9155fe7aafeded6fb29a05363fee6471de4b63c410454868250df",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 3,
+    "contentHash": "fcf163f2a99f239d4f5f499ff1c537f0563c50e40220962255096e40a093fcb6",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T15:15:26.274Z",
-    "lastVerified": "2026-11-20T15:15:26.274Z",
+    "lastChecked": "2026-11-20T15:35:24.848Z",
+    "lastVerified": "2026-11-20T15:35:24.848Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -170,12 +170,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T14:04:03.738Z",
-    "lastVerified": "2026-11-20T14:04:03.738Z",
+    "lastChecked": "2026-11-20T15:35:16.631Z",
+    "lastVerified": "2026-11-20T15:35:16.631Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -184,7 +184,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "18803975"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -519,22 +520,21 @@
     "revisionIdentifier": "3f8ab7ff"
   },
   "nolabs-ai-nono": {
-    "name": "nono",
+    "name": "nolabs-ai/nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T06:19:28.491Z",
-    "lastVerified": "2026-11-20T06:19:28.491Z",
+    "lastChecked": "2026-11-20T15:35:18.861Z",
+    "lastVerified": "2026-11-20T15:35:18.861Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "5bf865f7a0841fd7b14433fc9ac2bbe99c3589981acd70705055b93920183907",
+    "contentHash": "ee3f5433c1c37a887872a78790b3535e679d1fec8ec082078d58f8aead42dda2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "540850e3"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vectifyai-pageindex": {
     "name": "VectifyAI/PageIndex",
@@ -1009,11 +1009,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kong-kubernetes-ingress-controller": {
-    "name": "kubernetes-ingress-controller",
+    "name": "Kong/kubernetes-ingress-controller",
     "officialUrl": "https://github.com/Kong/kubernetes-ingress-controller",
-    "lastChecked": "2026-11-19T12:15:11.959Z",
-    "revisionIdentifier": "ef5a7724",
-    "lastVerified": "2026-11-19T12:15:11.959Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-20T15:35:15.015Z",
+    "lastVerified": "2026-11-20T15:35:15.015Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-kong-kubernetes-ingress-controller",
+    "contentHash": "10fec5864a5952f9047d5650325d08f92fec3447eeaa2117e405678f69797c19",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mimblewimble-grin": {
     "name": "grin",
@@ -5120,9 +5130,9 @@
   "ekzhang-rustpad": {
     "name": "rustpad",
     "officialUrl": "https://github.com/ekzhang/rustpad",
-    "lastChecked": "2026-11-18T23:18:06.428Z",
+    "lastChecked": "2026-11-20T15:35:01.424Z",
     "revisionIdentifier": "54e4a938",
-    "lastVerified": "2026-11-18T23:18:06.428Z"
+    "lastVerified": "2026-11-20T15:35:01.424Z"
   },
   "hf-fermionresearch-phonon-2": {
     "name": "FermionResearch/Phonon-2",
@@ -10174,5 +10184,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "webrecorder-browsertrix-crawler": {
+    "name": "browsertrix-crawler",
+    "officialUrl": "https://github.com/webrecorder/browsertrix-crawler",
+    "lastChecked": "2026-11-20T15:35:04.033Z",
+    "revisionIdentifier": "7ac9f642",
+    "lastVerified": "2026-11-20T15:35:04.033Z"
+  },
+  "signerlabs-shipswift": {
+    "name": "ShipSwift",
+    "officialUrl": "https://github.com/signerlabs/ShipSwift",
+    "lastChecked": "2026-11-20T15:35:06.507Z",
+    "revisionIdentifier": "d05d75e7",
+    "lastVerified": "2026-11-20T15:35:06.507Z"
   }
 }

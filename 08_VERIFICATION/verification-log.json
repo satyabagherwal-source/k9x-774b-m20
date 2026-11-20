@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-QFCY",
-    "timestamp": "2026-11-18T13:56:51.394Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "750d1c8526e6aef003daab8e44542b6fee6fe204b848d7943f018be9f53d64e0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-QOFX",
-    "timestamp": "2026-11-18T13:57:03.165Z",
-    "repository": "paradedb/paradedb",
-    "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "312a6755f6456901cb6ecedc70379dddc0bfcccc07da2cb8a4f060272872722c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-0XNX",
-    "timestamp": "2026-11-18T14:05:01.677Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d815b07f56e6839f22223de5382769498f08c54db6dd6d7f9aa62f9378d6f918",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-4XMZ",
     "timestamp": "2026-11-18T14:08:08.267Z",
     "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -7490,6 +7445,51 @@
     "repository": "apache/pinot",
     "learningId": "learn-github-apache-pinot",
     "contentHash": "c815bda94e20452ad60e616ab4777d8bc88cd8bff64dad8e94a92a5fe7579a3b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-4OZP",
+    "timestamp": "2026-11-20T15:35:16.357Z",
+    "repository": "Kong/kubernetes-ingress-controller",
+    "learningId": "learn-github-kong-kubernetes-ingress-controller",
+    "contentHash": "10fec5864a5952f9047d5650325d08f92fec3447eeaa2117e405678f69797c19",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-4RQ1",
+    "timestamp": "2026-11-20T15:35:19.897Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "ee3f5433c1c37a887872a78790b3535e679d1fec8ec082078d58f8aead42dda2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-4T1K",
+    "timestamp": "2026-11-20T15:35:21.608Z",
+    "repository": "Mintplex-Labs/anything-llm",
+    "learningId": "learn-github-mintplex-labs-anything-llm",
+    "contentHash": "fcf163f2a99f239d4f5f499ff1c537f0563c50e40220962255096e40a093fcb6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

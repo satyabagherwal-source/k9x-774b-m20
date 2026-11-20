@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "540850e3",
+    "sourceVersion": "e75c83bd",
     "license": "Apache-2.0",
-    "contentHash": "5bf865f7a0841fd7b14433fc9ac2bbe99c3589981acd70705055b93920183907",
-    "lastHarvestedAt": "2026-11-19T10:47:20.947Z",
+    "contentHash": "ee3f5433c1c37a887872a78790b3535e679d1fec8ec082078d58f8aead42dda2",
+    "lastHarvestedAt": "2026-11-20T15:35:19.901Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "2f6a451f",
+    "sourceVersion": "b2da1887",
     "license": "MIT",
-    "contentHash": "b2e913eabef9155fe7aafeded6fb29a05363fee6471de4b63c410454868250df",
-    "lastHarvestedAt": "2026-11-19T09:08:53.908Z",
+    "contentHash": "fcf163f2a99f239d4f5f499ff1c537f0563c50e40220962255096e40a093fcb6",
+    "lastHarvestedAt": "2026-11-20T15:35:21.612Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {
@@ -6993,10 +6993,10 @@
     "repository": "Kong/kubernetes-ingress-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/Kong/kubernetes-ingress-controller",
-    "sourceVersion": "ef5a7724",
+    "sourceVersion": "5091dc87",
     "license": "Apache-2.0",
-    "contentHash": "fff643747d360489c6b5bac9a9c9bfa4b3531f5b13e56f390a2180ace461a25a",
-    "lastHarvestedAt": "2026-11-13T01:14:28.107Z",
+    "contentHash": "10fec5864a5952f9047d5650325d08f92fec3447eeaa2117e405678f69797c19",
+    "lastHarvestedAt": "2026-11-20T15:35:16.361Z",
     "learningId": "learn-github-kong-kubernetes-ingress-controller"
   },
   "hf-comfy-org-z_image_turbo": {

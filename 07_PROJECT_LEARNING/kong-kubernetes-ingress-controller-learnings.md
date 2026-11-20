@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md`  
 > **Source**: github ([https://github.com/Kong/kubernetes-ingress-controller](https://github.com/Kong/kubernetes-ingress-controller))  
-> **Source Version**: `ef5a7724`  
+> **Source Version**: `5091dc87`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T01:14:14.098Z  
+> **Timestamp**: 2026-11-20T15:35:15.270Z  
 > **Learning ID**: `learn-github-kong-kubernetes-ingress-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kong/kubernetes-ingress-controller](https://github.com/Kong/kubernetes-ingress-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T01:14:14.090Z  
+> **Harvest Timestamp**: 2026-11-20T15:35:15.015Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: :gorilla: Kong for Kubernetes: The official Ingress Controller for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2415 stars
+- **Stars / Engagement**: 2416 stars
 
 ---
 
@@ -1560,32 +1560,247 @@ func CRDExists(restMapper meta.RESTMapper, gvr schema.GroupVersionResource) bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18d04552` (2026-11-11)
-**Commit Message**: chore(security): use stepsecurity harden-runner in all workflows (#8146)
+### Incident Patch 1: `ae7f9f5b` (2026-11-20)
+**Commit Message**: fix: keep an explicitly provided empty array of records in plugin configs (#8153)
 
-**File**: `.github/workflows/_envtest_tests.yaml` (modified, +5/-0)
+* test(deckgen): keep an explicitly provided empty identity_realms
+
+* chore(deps): bump go-kong to v0.78.1
+
+**File**: `CHANGELOG.md` (modified, +7/-0)
 ```diff
-@@ -13,6 +13,11 @@ jobs:
-       matrix: ${{ steps.set-matrix.outputs.matrix }}
-       latest: ${{ steps.set-latest.outputs.latest }}
-     steps:
-+      - name: Harden Runner
-+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
-+        with:
-+          egress-policy: audit
+@@ -144,6 +144,13 @@ Adding a new version? You'll need three changes:
+ 
+ ### Fixed
+ 
++- Bump go-kong to `v0.78.1`, which fixes `FillPluginsDefaults` replacing an
++  explicitly provided empty array of records in a plugin config with the field's
++  schema default. An empty array is the only way to ask for "none" when the
++  default is not what should be sent, so plugins that reject their own default
++  could not be configured, for example `key-auth`'s `identity_realms: []` with
++  `principals` enabled.
++  [Kong/go-kong#643](https://github.com/Kong/go-kong/pull/643)
+ - Inherit the tags of the translated Kong certificate from the one with earliest
+   creation timestamp, then lowest ID to keep the tags stable in merging certificates
+   from multiple `Secret`s with the same certificate content.
+```
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -36,7 +36,7 @@ require (
+ 	github.com/hashicorp/go-retryablehttp v0.7.8
+ 	github.com/jpillora/backoff v1.0.0
+ 	github.com/kong/go-database-reconciler v1.31.6
+-	github.com/kong/go-kong v0.78.0
++	github.com/kong/go-kong v0.78.1
+ 	github.com/kong/kubernetes-configuration/v2 v2.0.0-alpha.1
+ 	github.com/kong/kubernetes-telemetry v0.1.10
+ 	github.com/kong/kubernetes-testing-framework v0.47.2-patch.3
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -240,8 +240,8 @@ github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1
+ github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
+ github.com/kong/go-database-reconciler v1.31.6 h1:Tfjh7NCp6mujfP53qCDOUrEyxw2ZN7h8LzFtKqd35xQ=
+ github.com/kong/go-database-reconciler v1.31.6/go.mod h1:A6BBhnK1AQ7mQAsnLHoAitS62nJRGqUI8NbjC1aRGOc=
+-github.com/kong/go-kong v0.78.0 h1:VK5g26BCeF+l9o3j3pgU3BOuOdmTd9Vj33x29mKGtkg=
+-github.com/kong/go-kong v0.78.0/go.mod h1:Wx5aTcMjyUnIF94M5NYFWb/EnuEkqB5STrWvybFSYYQ=
++github.com/kong/go-kong v0.78.1 h1:cf6bvjyVtn+waYaOx3gLCfEOe9Rr/Sj1OeT4Yvdr3Cg=
++github.com/kong/go-kong v0.78.1/go.mod h1:Wx5aTcMjyUnIF94M5NYFWb/EnuEkqB5STrWvybFSYYQ=
+ github.com/kong/kubernetes-configuration/v2 v2.0.0-alpha.1 h1:HEdjbq175UL1jHAQUgOvQQDn202pALWNn6n7WE5Jo1Y=
+ github.com/kong/kubernetes-configuration/v2 v2.0.0-alpha.1/go.mod h1:GTQRsC3/f3FkmUecYhjD8MojDpX+jrKWSgtH6cEIeGU=
+ github.com/kong/kubernetes-telemetry v0.1.10 h1:V+/Lco8VFY/CzoELwOPcGTyg0zbj/HAvoFkH50UsKYs=
+```
+
+**File**: `internal/dataplane/deckgen/generate_test.go` (modified, +66/-0)
+```diff
+@@ -2,6 +2,7 @@ package deckgen
+ 
+ import (
+ 	"context"
++	"encoding/json"
+ 	"testing"
+ 
+ 	"github.com/go-logr/zapr"
+@@ -57,6 +58,71 @@ func TestToDeckContent(t *testing.T) {
+ 	}
+ }
+ 
++// A KongPlugin that explicitly asks for an empty identity_realms must keep it:
++// key-auth rejects the schema default when principals are enabled (FTI-8081).
++func TestToDeckContent_KeepsEmptyIdentityRealms(t *testing.T) {
++	const keyAuthSchema = `{
++		"fields": [{
++			"config": {
++				"type": "record",
++				"fields": [{
++					"identity_realms": {
++						"type": "set",
++						"elements": {
++							"type": "record",
++							"fields": [
++								{ "scope": { "type": "string" } },
++								{ "id": { "type": "string" } },
++								{ "region": { "type": "string" } }
++							]
++						},
++						"default": [ { "scope": "cp", "region": null, "id": null } ]
++					}
++				}, {
++					"principals": {
++						"type": "record",
++						"fields": [
++							{ "enabled": { "type": "boolean", "default": false } },
++							{ "directory": { "type": "string", "default": "default" } }
++						]
++					}
++				}]
++			}
++		}]
++	}`
 +
-       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-       - id: set-matrix
-         run: |
++	var schema map[string]any
++	require.NoError(t, json.Unmarshal([]byte(keyAuthSchema), &schema))
++
++	state := &kongstate.KongState{
++		Plugins: []kongstate.Plugin{
++			{
++				Plugin: kong.Plugin{
++					Name: kong.String("key-auth"),
++					Config: kong.Configuration{
++						"identity_realms": []any{},
++						"principals": map[string]any{
++							"enabled":   true,
++							"directory": "my-dir",
++						},
++					},
++				},
++			},
++		},
++	}
++
++	content := ToDeckContent(t.Context(), zapr.NewLogger(zap.NewNop()), state, GenerateDeckContentParams{
++		PluginSchemas: &mockPluginSchemaStore{schema: schema},
++	})
++
++	require.Len(t, content.Plugins, 1)
++	realms, err := json.Marshal(content.Plugins[0].Config["identity_realms"])
++	require.NoError(t, err)
++	t.Logf("identity_realms sent to the control plane: %s", realms)
++
++	require.Equal(t, []any{}, content.Plugins[0].Config["identity_realms"])
++}
++
+ func TestFillPlugin(t *testing.T) {
+ 	testCases := []struct {
+ 		name          string
+```
+
+---
+
+### Incident Patch 2: `227af23d` (2026-11-19)
+**Commit Message**: build: install third-party tools through explicit mise backends (#8154)
+
+**File**: `Makefile` (modified, +29/-37)
+```diff
+@@ -43,6 +43,9 @@ PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
+ TOOLS_VERSIONS_FILE = .tools_versions.yaml
+ 
+ MISE := $(shell which mise)
++# aqua names release assets after the Go platform (darwin-arm64, linux-amd64).
++PLATFORM_OS := $(shell go env GOOS)
++PLATFORM_ARCH := $(shell go env GOARCH)
+ .PHONY: mise
+ mise:
+ 	@mise -V >/dev/null || (echo "mise - https://github.com/jdx/mise - not found. Please install it." && exit 1)
+@@ -55,50 +58,45 @@ export MISE_DATA_DIR = $(PROJECT_DIR)/bin/
+ # NOTE: mise targets use -q to silence the output.
+ # Users can use MISE_VERBOSE=1 MISE_DEBUG=1 to get more verbose output.
+ 
+-.PHONY: mise-plugin-install
+-mise-plugin-install: mise
+-	@$(MISE) plugin install --yes -q $(DEP) $(URL)
+-
+ .PHONY: mise-install
+ mise-install: mise
+ 	@$(MISE) install -q $(DEP_VER)
+ 
++# Backend prefixes are explicit: aqua wherever it can install the tool, github
++# for controller-tools (its aqua package is go_install, which the aqua backend
++# rejects), go for crd-ref-docs and dlv (no installable aqua package).
++
+ # Do not store yq's version in .tools_versions.yaml as it is used to get tool versions.
+ # renovate: datasource=github-releases depName=mikefarah/yq
+ YQ_VERSION = 4.47.2
+-YQ = $(PROJECT_DIR)/bin/installs/yq/$(YQ_VERSION)/bin/yq
++YQ = $(PROJECT_DIR)/bin/installs/aqua-mikefarah-yq/$(YQ_VERSION)/yq
+ .PHONY: yq
+ yq: mise # Download yq locally if necessary.
+-	@$(MAKE) mise-plugin-install DEP=yq
+-	@$(MAKE) mise-install DEP_VER=yq@$(YQ_VERSION)
++	@$(MAKE) mise-install DEP_VER=aqua:mikefarah/yq@$(YQ_VERSION)
+ 
+ CONTROLLER_GEN_VERSION = $(shell $(YQ) -ojson -r '.controller-tools' < $(TOOLS_VERSIONS_FILE))
+-CONTROLLER_GEN = $(PROJECT_DIR)/bin/installs/kube-controller-tools/$(CONTROLLER_GEN_VERSION)/bin/controller-gen
++CONTROLLER_GEN = $(PROJECT_DIR)/bin/installs/github-kubernetes-sigs-controller-tools/$(CONTROLLER_GEN_VERSION)/controller-gen
+ .PHONY: controller-gen
+ controller-gen: mise yq ## Download controller-gen locally if necessary.
+-	@$(MAKE) mise-plugin-install DEP=kube-controller-tools
+-	@$(MAKE) mise-install DEP_VER=kube-controller-tools@$(CONTROLLER_GEN_VERSION)
++	@$(MAKE) mise-install DEP_VER=github:kubernetes-sigs/controller-tools@$(CONTROLLER_GEN_VERSION)
+ 
+ KUSTOMIZE_VERSION = $(shell $(YQ) -ojson -r '.kustomize' < $(TOOLS_VERSIONS_FILE))
+-KUSTOMIZE = $(PROJECT_DIR)/bin/installs/kustomize/$(KUSTOMIZE_VERSION)/bin/kustomize
++KUSTOMIZE = $(PROJECT_DIR)/bin/installs/aqua-kubernetes-sigs-kustomize/$(KUSTOMIZE_VERSION)/kustomize
+ .PHONY: kustomize
+ kustomize: mise yq ## Download kustomize locally if necessary.
+-	@$(MAKE) mise-plugin-install DEP=kustomize
+-	@$(MAKE) mise-install DEP_VER=kustomize@$(KUSTOMIZE_VERSION)
++	@$(MAKE) mise-install DEP_VER=aqua:kubernetes-sigs/kustomize@$(KUSTOMIZE_VERSION)
+ 
+ GOLANGCI_LINT_VERSION = $(shell $(YQ) -ojson -r '.golangci-lint' < $(TOOLS_VERSIONS_FILE))
+-GOLANGCI_LINT = $(PROJECT_DIR)/bin/installs/golangci-lint/$(GOLANGCI_LINT_VERSION)/bin/golangci-lint
++GOLANGCI_LINT = $(PROJECT_DIR)/bin/installs/aqua-golangci-golangci-lint/$(GOLANGCI_LINT_VERSION)/golangci-lint-$(GOLANGCI_LINT_VERSION)-$(PLATFORM_OS)-$(PLATFORM_ARCH)/golangci-lint
+ .PHONY: golangci-lint.download
+ golangci-lint.download: mise yq ## Download golangci-lint locally if necessary.
+-	@$(MAKE) mise-plugin-install DEP=golangci-lint
+-	@$(MAKE) mise-install DEP_VER=golangci-lint@$(GOLANGCI_LINT_VERSION)
++	@$(MAKE) mise-install DEP_VER=aqua:golangci/golangci-lint@$(GOLANGCI_LINT_VERSION)
+ 
+ GOTESTSUM_VERSION = $(shell $(YQ) -ojson -r '.gotestsum' < $(TOOLS_VERSIONS_FILE))
+-GOTESTSUM = $(PROJECT_DIR)/bin/installs/gotestsum/$(GOTESTSUM_VERSION)/bin/gotestsum
++GOTESTSUM = $(PROJECT_DIR)/bin/installs/aqua-gotestyourself-gotestsum/$(GOTESTSUM_VERSION)/gotestsum
+ .PHONY: gotestsum
+ gotestsum: yq ## Download gotestsum locally if necessary.
+-	@$(MAKE) mise-plugin-install DEP=gotestsum
+-	@$(MAKE) mise-install DEP_VER=gotestsum@$(GOTESTSUM_VERSION)
++	@$(MAKE) mise-install DEP_VER=aqua:gotestyourself/gotestsum@$(GOTESTSUM_VERSION)
+ 
+ CRD_REF_DOCS_VERSION = $(shell $(YQ) -ojson -r '.crd-ref-docs' < $(TOOLS_VERSIONS_FILE))
+ CRD_REF_DOCS = $(PROJECT_DIR)/bin/installs/go-github-com-elastic-crd-ref-docs/$(CRD_REF_DOCS_VERSION)/bin/crd-ref-docs
+@@ -107,11 +105,10 @@ crd-ref-docs: yq ## Download crd-ref-docs locally if necessary.
+ 	$(MAKE) mise-install DEP_VER=go:github.com/elastic/crd-ref-docs@$(CRD_REF_DOCS_VERSION)
+ 
+ SKAFFOLD_VERSION = $(shell $(YQ) -ojson -r '.skaffold' < $(TOOLS_VERSIONS_FILE))
+-SKAFFOLD = $(PROJECT_DIR)/bin/installs/skaffold/$(SKAFFOLD_VERSION)/bin/skaffold
++SKAFFOLD = $(PROJECT_DIR)/bin/installs/aqua-google-container-tools-skaffold/$(SKAFFOLD_VERSION)/skaffold-$(PLATFORM_OS)-$(PLATFORM_ARCH)
+ .PHONY: skaffold
+ skaffold: mise yq ## Download skaffold locally if necessary.
+-	@$(MAKE) mise-plugin-install DEP=skaffold
+-	@$(MAKE) mise-install DEP_VER=skaffold@$(SKAFFOLD_VERSION)
++	@$(MAKE) mise-install DEP_VER=aqua:GoogleContainerTools/skaffold@$(SKAFFOLD_VERSION)
+ 
+ DE
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8148** (2026-11-12): chore: bump kong gateway to 3.16 for testing (@kriive)
-- **PR #8147** (closed): chore: bump kong gateway to 3.13 for testing (@kriive)
-- **PR #8146** (2026-11-11): chore(security): use stepsecurity harden-runner in all workflows (@sid77)
-- **PR #8141** (2026-11-06): test(integration):  Skip installing CRDs in deploying KIC and Kong for isolated integration tests (@randmonkey)
-- **PR #8140** (closed): Chore(ci): Pin helm to v3 to fix conflicts in CRD installation (@randmonkey)
-- **PR #8136** (2026-10-28): docs(changelog): Add entries for releases 3.5.14 and 3.4.21 (@randmonkey)
+- **PR #8161** (2026-11-20): docs(changelog): add entries for releases 3.5.15 and 3.4.22 (@matteogastaldello)
+- **PR #8160** (2026-11-20): chore(changelog): update changelog for 3.4.22 (@matteogastaldello)
+- **PR #8159** (2026-11-20): chore(changelog): update changelog for 3.5.15 (@matteogastaldello)
+- **PR #8158** (2026-11-20): fix: keep an explicitly provided empty array of records in plugin configs (#8153) (@matteogastaldello)
+- **PR #8157** (2026-11-20): fix: keep an explicitly provided empty array of records in plugin configs (#8153) (@matteogastaldello)
+- **PR #8156** (2026-11-20): build: install third-party tools through explicit mise backends (#8154) (@matteogastaldello)
 
 ---
 
@@ -1605,32 +1820,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security): use stepsecurity harden-runner in all workflows (#8146)
+## X. keep an explicitly provided empty array of records in plugin configs
 
 **RULE**:
-When implementing operations in `.github/workflows/_envtest_tests.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kong/kubernetes-ingress-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kong/kubernetes-ingress-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18d04552`: security): use stepsecurity harden-runner in all workflows (#8146). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae7f9f5b`: keep an explicitly provided empty array of records in plugin configs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/_envtest_tests.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      - name: Harden Runner
-        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
-        with:
-          egress-policy: audit
-
+- Bump go-kong to `v0.78.1`, which fixes `FillPluginsDefaults` replacing an
+  explicitly provided empty array of records in a plugin config with the field's
+  schema default. An empty array is the only way to ask for "none" when the
+  default is not what should be sent, so plugins that reject their own default
+  could not be configured, for example `key-auth`'s `identity_realms: []` with
+  `principals` enabled.
+  [Kong/go-kong#643](https://github.com/Kong/go-kong/pull/643)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18d04552` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae7f9f5b` are properly handled with clean fallback behavior.

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T15:15:28.911Z",
+  "last_updated": "2026-11-20T15:35:28.470Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T12:15:57.033Z",
@@ -543,7 +543,7 @@
       "staged_for_review": 0
     },
     "nolabs-ai-nono-learnings.md": {
-      "processed_at": "2026-11-19T10:47:26.189Z",
+      "processed_at": "2026-11-20T15:35:26.024Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1408,7 +1408,7 @@
       "staged_for_review": 1
     },
     "kong-kubernetes-ingress-controller-learnings.md": {
-      "processed_at": "2026-11-13T01:14:34.291Z",
+      "processed_at": "2026-11-20T15:35:25.001Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1998,9 +1998,9 @@
       "staged_for_review": 0
     },
     "mintplex-labs-anything-llm-learnings.md": {
-      "processed_at": "2026-11-19T09:18:27.612Z",
-      "promoted_canonical": 2,
-      "staged_for_review": 0
+      "processed_at": "2026-11-20T15:35:27.007Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md": {
       "processed_at": "2026-11-18T14:32:19.679Z",
@@ -3593,7 +3593,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2541,
+  "total_dossiers_evaluated": 2544,
   "total_canonical_promoted": 426,
-  "total_staged_for_review": 1926
+  "total_staged_for_review": 1929
 }
