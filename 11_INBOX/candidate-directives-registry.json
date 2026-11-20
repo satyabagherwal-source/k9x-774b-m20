@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T22:08:04.291Z",
+  "last_updated": "2026-11-20T22:23:10.277Z",
   "directives": [
     {
       "id": "CD-001",
@@ -32758,11 +32758,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-5U4A",
+      "id": "CD-P96S",
       "directive_title": "build): download ONNX Runtime archives from npmmirror",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-5U4A-build-download-onnx-runtime-archives-from-npmmirror.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-P96S-build-download-onnx-runtime-archives-from-npmmirror.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -39380,6 +39380,46 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8AFEA8-build-download-onnx-runtime-archives-fro.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-OZKE",
+      "directive_title": "bump the rust-dependencies group with 4 updates",
+      "source_repo": "domcyrus/rustnet",
+      "source_commit": "3bc950fb",
+      "staged_file": "11_INBOX/candidate-directives/CD-OZKE-bump-the-rust-dependencies-group-with-4-updates.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-P7KM",
+      "directive_title": "deps): bump the rust-dependencies group with 4 updates",
+      "source_repo": "domcyrus-rustnet-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-P7KM-deps-bump-the-rust-dependencies-group-with-4-updates.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-REV-C6B56C",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C6B56C-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-B806B0",
+      "directive_title": "build): download ONNX Runtime archives from npmmirror",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B806B0-build-download-onnx-runtime-archives-fro.md",
       "staged_date": "2026-11-20"
     }
   ]

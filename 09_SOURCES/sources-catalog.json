@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "6a85f360",
+    "sourceVersion": "3bc950fb",
     "license": "Apache-2.0",
-    "contentHash": "aec7ab902910fd2bfa99b97f8a501ca60067c6368af214f236f45e3de229c24a",
-    "lastHarvestedAt": "2026-11-19T07:06:22.761Z",
+    "contentHash": "d661d5b724b3dc0cb6c526a188f893ec3e8e4ba526410bcc653a6a876ff12089",
+    "lastHarvestedAt": "2026-11-20T22:22:57.536Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {

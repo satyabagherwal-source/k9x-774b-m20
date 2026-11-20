@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-S28F",
-    "timestamp": "2026-11-18T18:10:04.239Z",
-    "repository": "pixeltable/pixeltable",
-    "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "ae357ba55f4539d17b997644794f9996ae8e56965ca9fcb2fd8e57e731b7f3b7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-Y60Y",
     "timestamp": "2026-11-18T18:14:49.090Z",
     "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -7492,6 +7477,21 @@
     "contentHash": "8ee2c18698a3a21cc7f859e43efa6cfd1b62c8910a13c822ea9460066f32ebe1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-OZCR",
+    "timestamp": "2026-11-20T22:22:57.531Z",
+    "repository": "domcyrus/rustnet",
+    "learningId": "learn-github-domcyrus-rustnet",
+    "contentHash": "d661d5b724b3dc0cb6c526a188f893ec3e8e4ba526410bcc653a6a876ff12089",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

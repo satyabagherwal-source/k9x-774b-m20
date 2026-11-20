@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T22:08:04.891Z",
+  "last_updated": "2026-11-20T22:23:10.853Z",
   "total_verified_learnings": 9051,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22675,
+  "total_items": 22678,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "081201a939eccea044cc4fac2ec1de00e9b4877dfcbff3db586b9f1ed410c6d2",
+      "content_hash": "7c329ad0022faa83e30a84972ee6aa44256e181fc765ee7a6af4f8476fbf3d52",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T22:08:04.710Z"
+      "persisted_at": "2026-11-20T22:23:10.680Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "01941052254e4de9230027153ae678a86c3d8e2130ff6a5adfc74253f2947413",
+      "content_hash": "e9a9c2630dc067e770269827349740f30facb925d00dcb81f7e7301922a1d4e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T22:08:04.891Z"
+      "persisted_at": "2026-11-20T22:23:10.853Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -223896,8 +223896,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "6a85f360",
-      "content_hash": "aec7ab902910fd2bfa99b97f8a501ca60067c6368af214f236f45e3de229c24a",
+      "source_version": "3bc950fb",
+      "content_hash": "d661d5b724b3dc0cb6c526a188f893ec3e8e4ba526410bcc653a6a876ff12089",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -223915,6 +223915,11 @@
           "number": 9346,
           "title": "add WinGet installation instructions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9646,
+          "title": "bump the rust-dependencies group with 4 updates",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223922,7 +223927,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T07:06:22.537Z",
+      "verified_at": "2026-11-20T22:22:57.284Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223964,10 +223969,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-product-intelligence-domcyrus-rustnet-core-invariants.md",
       "title": "Product Intelligence: domcyrus/rustnet Core Invariants",
       "repository": "domcyrus/rustnet",
-      "source_version": "6a85f360",
-      "content_hash": "be8176a37ed728e96f3ad59ab1563b0d38b3a342fe7087b8ce895b0903fcaad8",
+      "source_version": "3bc950fb",
+      "content_hash": "da0b10c3eec16a187c6c4fb1bebb039db8f9241038506c88d5bc2cfe6cc92378",
       "domain_letter": "B",
-      "persisted_at": "2026-11-19T07:06:23.202Z"
+      "persisted_at": "2026-11-20T22:22:58.010Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet",
@@ -223976,10 +223981,10 @@
       "relative_path": "08_VERIFICATION/domcyrus-rustnet-verification-protocol-empirical-defect-shield-for-domcyrus-rust.md",
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus/rustnet",
       "repository": "domcyrus/rustnet",
-      "source_version": "6a85f360",
-      "content_hash": "3ce1f6c4958f66e6f896affe8cff96d0691f597a6225674aea1119fef43d7120",
+      "source_version": "3bc950fb",
+      "content_hash": "c605787ead29e903dfc873c76e1ee3bc9cd822dab11d19a99d1ec9f382ad4b1d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T07:06:23.388Z"
+      "persisted_at": "2026-11-20T22:22:58.207Z"
     },
     "learn-github-aws-amplify-amplify-js": {
       "learning_id": "learn-github-aws-amplify-amplify-js",
@@ -224077,9 +224082,9 @@
       "title": "Product Intelligence: domcyrus-rustnet-learnings Core Invariants",
       "repository": "domcyrus-rustnet-learnings",
       "source_version": "HEAD",
-      "content_hash": "dc5d98670831e5913b981cb353b80cfee8ec103412cb08af7653fba1e91715e3",
+      "content_hash": "0fb8974514521d702da76dfaaad0ed8e9c31f95c482cba8e238d9ff2180c3833",
       "domain_letter": "B",
-      "persisted_at": "2026-11-19T07:06:42.120Z"
+      "persisted_at": "2026-11-20T22:23:08.386Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet-learnings",
@@ -224089,9 +224094,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus-rustnet-learnings",
       "repository": "domcyrus-rustnet-learnings",
       "source_version": "HEAD",
-      "content_hash": "d372acc1b8fcaaa346375a1688bec5778c9d8439a5509d59045f9681c1121d3b",
+      "content_hash": "a633733a714077a2e8097222f66e09c99cb56ec01e84de42134e6d0158bb81b8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T07:06:42.319Z"
+      "persisted_at": "2026-11-20T22:23:08.609Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning",
@@ -288352,9 +288357,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f29cec3f4f44b1bdc739f97980a5f2ee871950b57980bcf866913b4ca0336116",
+      "content_hash": "5bd805e3fa09c09106c9d3079a0b21c5dbdcf7e96058432dba217fb7e1c310f8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T22:08:03.168Z"
+      "persisted_at": "2026-11-20T22:23:09.233Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -295193,13 +295198,13 @@
       "item_id": "candidate_directive-build-download-onnx-runtime-archives-from-npmmirror",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5U4A-build-download-onnx-runtime-archives-from-npmmirror.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-P96S-build-download-onnx-runtime-archives-from-npmmirror.md",
       "title": "build): download ONNX Runtime archives from npmmirror",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2927049ac3f7244bbbaadd67448a1eb7747cbc28023fe89a5e65429889afd056",
+      "content_hash": "ef04d4293beeb5e2c621aac4cc2f95162c3162e6ae8318cd878fed2ca37d1147",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T22:08:04.291Z"
+      "persisted_at": "2026-11-20T22:23:10.277Z"
     },
     "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -295209,9 +295214,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5b84058a6a2e84f9b44f1009259921e24fbb60b0fb57045c8cfb63ba41d9eb4d",
+      "content_hash": "46db597650a5dfa407cc648936d8df94c4aa05fb3c9bbd3a957962a2f9f77dcd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T22:08:04.500Z"
+      "persisted_at": "2026-11-20T22:23:10.483Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -307599,6 +307604,44 @@
       "content_hash": "7d2b756e906617a72efe860f2d08fe1f9dcd2bf27573deea81fc55cd759cf702",
       "domain_letter": "D",
       "persisted_at": "2026-11-20T22:08:02.453Z"
+    },
+    "rule-9646": {
+      "learning_id": "rule-9646",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9646,
+      "title": "bump the rust-dependencies group with 4 updates",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "3bc950fb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T22:22:57.284Z"
+    },
+    "candidate_directive-bump-the-rust-dependencies-group-with-4-updates": {
+      "item_id": "candidate_directive-bump-the-rust-dependencies-group-with-4-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OZKE-bump-the-rust-dependencies-group-with-4-updates.md",
+      "title": "bump the rust-dependencies group with 4 updates",
+      "repository": "domcyrus/rustnet",
+      "source_version": "3bc950fb",
+      "content_hash": "2571f61ed26418aa866e3b00bad926f00d5397835299817a91c3939103157589",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-20T22:22:57.813Z"
+    },
+    "candidate_directive-deps-bump-the-rust-dependencies-group-with-4-updates": {
+      "item_id": "candidate_directive-deps-bump-the-rust-dependencies-group-with-4-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P7KM-deps-bump-the-rust-dependencies-group-with-4-updates.md",
+      "title": "deps): bump the rust-dependencies group with 4 updates",
+      "repository": "domcyrus-rustnet-learnings",
+      "source_version": "HEAD",
+      "content_hash": "18178f650c12c8fa00295e06a04b790b81164713170fb2f4de6eb0db76764618",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-20T22:23:08.188Z"
     }
   },
   "ai-builder-brain": {

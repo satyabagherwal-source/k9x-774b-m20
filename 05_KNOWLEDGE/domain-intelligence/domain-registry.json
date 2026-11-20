@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T22:08:04.500Z",
+  "last_updated": "2026-11-20T22:23:10.483Z",
   "total_records": 2183,
   "domains": {
     "A": {
@@ -13304,8 +13304,8 @@
       "title": "Product Intelligence: domcyrus/rustnet Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-product-intelligence-domcyrus-rustnet-core-invariants.md",
       "repository": "domcyrus/rustnet",
-      "content_hash": "be8176a37ed728e96f3ad59ab1563b0d38b3a342fe7087b8ce895b0903fcaad8",
-      "created_at": "2026-11-19T07:06:23.202Z"
+      "content_hash": "da0b10c3eec16a187c6c4fb1bebb039db8f9241038506c88d5bc2cfe6cc92378",
+      "created_at": "2026-11-20T22:22:58.010Z"
     },
     "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants",
@@ -13322,8 +13322,8 @@
       "title": "Product Intelligence: domcyrus-rustnet-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-learnings-product-intelligence-domcyrus-rustnet-learnings-core-.md",
       "repository": "domcyrus-rustnet-learnings",
-      "content_hash": "dc5d98670831e5913b981cb353b80cfee8ec103412cb08af7653fba1e91715e3",
-      "created_at": "2026-11-19T07:06:42.120Z"
+      "content_hash": "0fb8974514521d702da76dfaaad0ed8e9c31f95c482cba8e238d9ff2180c3833",
+      "created_at": "2026-11-20T22:23:08.386Z"
     },
     "DOM-D-2D29CC33": {
       "record_id": "DOM-D-2D29CC33",
@@ -31279,8 +31279,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "f29cec3f4f44b1bdc739f97980a5f2ee871950b57980bcf866913b4ca0336116",
-      "created_at": "2026-11-20T22:08:03.168Z"
+      "content_hash": "5bd805e3fa09c09106c9d3079a0b21c5dbdcf7e96058432dba217fb7e1c310f8",
+      "created_at": "2026-11-20T22:23:09.233Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -33313,8 +33313,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "5b84058a6a2e84f9b44f1009259921e24fbb60b0fb57045c8cfb63ba41d9eb4d",
-      "created_at": "2026-11-20T22:08:04.500Z"
+      "content_hash": "46db597650a5dfa407cc648936d8df94c4aa05fb3c9bbd3a957962a2f9f77dcd",
+      "created_at": "2026-11-20T22:23:10.483Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",

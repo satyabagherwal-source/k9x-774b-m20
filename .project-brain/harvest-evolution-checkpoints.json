@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T22:08:05.075Z",
+  "last_updated": "2026-11-20T22:23:11.030Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-20T22:08:02.701Z",
+      "processed_at": "2026-11-20T22:23:08.809Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-20T22:08:03.412Z",
+      "processed_at": "2026-11-20T22:23:09.458Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1238,7 +1238,7 @@
       "staged_for_review": 1
     },
     "domcyrus-rustnet-learnings.md": {
-      "processed_at": "2026-11-19T07:06:41.220Z",
+      "processed_at": "2026-11-20T22:23:06.907Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3638,7 +3638,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2631,
+  "total_dossiers_evaluated": 2634,
   "total_canonical_promoted": 434,
-  "total_staged_for_review": 2008
+  "total_staged_for_review": 2011
 }

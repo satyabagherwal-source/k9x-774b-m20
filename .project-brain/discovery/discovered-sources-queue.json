@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T22:08:02.149Z",
+  "updated_at": "2026-11-20T22:23:07.466Z",
   "stats": {
-    "total_discovered": 6757,
-    "approved_pending_harvest": 6378,
+    "total_discovered": 6763,
+    "approved_pending_harvest": 6384,
     "harvested_count": 0,
     "rejected_count": 379,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6353,
+      "COMMUNITY_AND_EXPERT": 6359,
       "OFFICIAL_DOCUMENTATION": 230,
       "STANDARDS_AND_SPECIFICATIONS": 121,
       "ENGINEERING_BLOGS": 5,
@@ -146024,6 +146024,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-inkling-2-mini-gguf-learnings.md",
         "fileName": "hf-unsloth-inkling-2-mini-gguf-learnings.md"
+      }
+    },
+    "SRC-91147F3C06CA": {
+      "id": "SRC-91147F3C06CA",
+      "url": "https://github.com/zip-rs/zip2",
+      "title": "https://github.com/zip-rs/zip2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:23:07.012Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-8D1D4B926FC3": {
+      "id": "SRC-8D1D4B926FC3",
+      "url": "https://github.com/clap-rs/clap/compare/clap_complete-v4.6.11...clap_complete-v4.6.12",
+      "title": "https://github.com/clap-rs/clap/compare/clap_complete-v4.6.11...clap_complete-v4.6.12",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:23:07.132Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-35B962500965": {
+      "id": "SRC-35B962500965",
+      "url": "https://github.com/zip-rs/zip2/releases",
+      "title": "https://github.com/zip-rs/zip2/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:23:07.227Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-AE2463D98419": {
+      "id": "SRC-AE2463D98419",
+      "url": "https://github.com/zip-rs/zip2/blob/master/CHANGELOG.md",
+      "title": "https://github.com/zip-rs/zip2/blob/master/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:23:07.286Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-3741C17E80E6": {
+      "id": "SRC-3741C17E80E6",
+      "url": "https://github.com/zip-rs/zip2/compare/v9.6.0...v9.6.1",
+      "title": "https://github.com/zip-rs/zip2/compare/v9.6.0...v9.6.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:23:07.344Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-218D458DCB12": {
+      "id": "SRC-218D458DCB12",
+      "url": "https://github.com/zip-rs/zip2/compare/v9.5.1...v9.6.0",
+      "title": "https://github.com/zip-rs/zip2/compare/v9.5.1...v9.6.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:23:07.466Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
       }
     }
   }

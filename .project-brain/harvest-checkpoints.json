@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T22:07:11.374Z",
+  "last_updated": "2026-11-20T22:22:57.548Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10296,14 +10296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-domcyrus-rustnet",
-      "content_hash": "aec7ab902910fd2bfa99b97f8a501ca60067c6368af214f236f45e3de229c24a",
-      "verified_at": "2026-11-19T07:06:22.771Z",
+      "content_hash": "d661d5b724b3dc0cb6c526a188f893ec3e8e4ba526410bcc653a6a876ff12089",
+      "verified_at": "2026-11-20T22:22:57.547Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T07:06:22.771Z"
+      "last_updated": "2026-11-20T22:22:57.547Z"
     },
     "futurice/pepperoni-app-kit": {
       "repository": "futurice/pepperoni-app-kit",
