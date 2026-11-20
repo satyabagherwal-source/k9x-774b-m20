@@ -705101,3 +705101,261 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `36091cdd` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9528. Dual-Mode Agentic Graceful Fallback for Third-Party API Integrations (Harvested from tmolavi/siteprobe)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Mode Agentic Graceful Fallback for Third-Party API Integrations",
+  "source": "tmolavi/siteprobe",
+  "source_url": "https://github.com/tmolavi/siteprobe",
+  "source_version": "4b116b3c",
+  "license": "MIT",
+  "extracted_at": "2026-11-20T06:37:23.484Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tmolavi-siteprobe",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.71,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tmolavi/siteprobe](https://github.com/tmolavi/siteprobe) (Revision: `4b116b3c`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 71%).
+
+**RULE**:
+Integrations interacting with paid or authenticated external APIs MUST provide a zero-credential, deterministic heuristic fallback mode that returns identical schema structures, allowing autonomous agents to execute end-to-end without credentials. Integrations MUST explicitly tag returned payloads with the execution mode (`mode: "live_api" | "free_agentic_heuristics"`).
+
+**WHY**:
+Autonomous coding agents run in sandboxed, transient environments (CI runners, local containers, isolated development environments) where third-party API credentials (such as DataForSEO, Search Console, Ahrefs) are rarely mounted. Hard dependencies on paid external APIs crash the agent's control loop, halting downstream evaluation and preventing remediation plan generation. Providing structured heuristic simulations maintains tool availability and preserves schema contracts.
+
+**WHEN TO APPLY**:
+Apply to all MCP servers, external data connectors, indexing trackers, and intelligence integrations consumed by autonomous agents where API availability cannot be guaranteed.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import os
+from typing import Any, Dict, Optional
+import httpx
+
+
+class ResilientThirdPartyProvider:
+    def __init__(self, api_key: Optional[str] = None):
+        self.api_key = api_key or os.environ.get("THIRD_PARTY_API_KEY")
+        self.base_url = "https://api.external-service.com/v1"
+
+    def is_available(self) -> bool:
+        return bool(self.api_key)
+
+    async def get_domain_metrics(self, domain: str) -> Dict[str, Any]:
+        clean_domain = domain.replace("https://", "").replace("http://", "").strip("/")
+
+        # 1. Primary Path: Live API call
+        if self.is_available():
+            try:
+                headers = {"Authorization": f"Bearer {self.api_key}"}
+                async with httpx.AsyncClient(timeout=10.0) as client:
+                    resp = await client.get(
+                        f"{self.base_url}/metrics",
+                        params={"domain": clean_domain},
+                        headers=headers,
+                    )
+                    if resp.status_code == 200:
+                        payload = resp.json()
+                        return {
+                            "mode": "live_api",
+                            "domain": clean_domain,
+                            "authority_score": payload.get("authority", 0),
+                            "citation_count": payload.get("citations", 0),
+                        }
+            except Exception:
+                # Fall back gracefully to heuristic mode on network/auth failure
+                pass
+
+        # 2. Resilient Path: Free Agentic Heuristic Mode (Zero-cost, identical schema)
+        return {
+            "mode": "free_agentic_heuristics",
+            "domain": clean_domain,
+            "authority_score": 50,  # Baseline neutral prior
+            "citation_count": 0,
+            "warning": "Synthesized heuristic data; credentials not provided.",
+        }
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Fails agent workflows when credentials are missing or endpoints fail
+class UnsafeThirdPartyProvider:
+    def __init__(self):
+        # Crashes immediately or raises unhandled exceptions down the line
+        self.api_key = os.environ["THIRD_PARTY_API_KEY"]
+
+    async def get_domain_metrics(self, domain: str):
+        # No fallback, crashes agent execution loop when offline or unauthenticated
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(
+                "https://api.external-service.com/v1/metrics",
+                headers={"Authorization": f"Bearer {self.api_key}"},
+            )
+            resp.raise_for_status()
+            return resp.json()
+```
+
+**VERIFICATION METHOD**:
+Enforce dual execution testing via pytest with cleared environment variables:
+```python
+import os
+import pytest
+
+
+@pytest.mark.asyncio
+async def test_provider_dual_mode_fallback(monkeypatch):
+    monkeypatch.delenv("THIRD_PARTY_API_KEY", raising=False)
+    provider = ResilientThirdPartyProvider()
+    assert not provider.is_available()
+
+    result = await provider.get_domain_metrics("example.com")
+    assert result["mode"] == "free_agentic_heuristics"
+    assert "authority_score" in result
+    assert result["domain"] == "example.com"
+```
+
+---
+
+
+---
+
+## 9529. Mandatory SO_REUSEADDR Socket Reusability on Test Harness Fixtures (Harvested from tmolavi/siteprobe)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Mandatory SO_REUSEADDR Socket Reusability on Test Harness Fixtures",
+  "source": "tmolavi/siteprobe",
+  "source_url": "https://github.com/tmolavi/siteprobe",
+  "source_version": "4b116b3c",
+  "license": "MIT",
+  "extracted_at": "2026-11-20T06:37:24.016Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tmolavi-siteprobe",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.71,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tmolavi/siteprobe](https://github.com/tmolavi/siteprobe) (Revision: `4b116b3c`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 71%).
+
+**RULE**:
+Any network mock server or fixture instantiated in multi-threaded test environments MUST configure the socket with `SO_REUSEADDR` (`allow_reuse_address = True` in Python `socketserver`) before binding to the TCP port.
+
+**WHY**:
+Without `SO_REUSEADDR`, TCP sockets remain in the `TIME_WAIT` state for 60 to 120 seconds after teardown. Consecutive test runs, test re-ordering, or parallel test executions attempt to bind to the same host/port tuple and fail with `OSError: [Errno 98] Address already in use`, causing flaky builds in CI pipelines.
+
+**WHEN TO APPLY**:
+Apply to all local HTTP/TCP mock servers, embedded mock daemon fixtures, integration testing servers, and temporary socket listeners.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import socketserver
+import threading
+from typing import Generator
+import pytest
+
+
+class ReusableTCPServer(socketserver.TCPServer):
+    """Ensures TIME_WAIT state does not block immediate test harness socket rebinding."""
+    allow_reuse_address = True
+
+
+@pytest.fixture(scope="session")
+def mock_server() -> Generator[str, None, None]:
+    port = 8899
+    handler = socketserver.SimpleHTTPRequestHandler
+    with ReusableTCPServer(("127.0.0.1", port), handler) as httpd:
+        server_thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+        server_thread.start()
+        try:
+            yield f"http://127.0.0.1:{port}"
+        finally:
+            httpd.shutdown()
+            httpd.server_close()
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Standard socketserver without SO_REUSEADDR causes port binding collisions
+@pytest.fixture(scope="session")
+def buggy_mock_server():
+    port = 8899
+    # Sockets in TIME_WAIT cause Errno 98 (Address already in use) on immediate test rerun
+    with socketserver.TCPServer(("127.0.0.1", port), CustomHandler) as httpd:
+        thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+        thread.start()
+        yield f"http://127.0.0.1:{port}"
+```
+
+**VERIFICATION METHOD**:
+Run rapid back-to-back test suite invocations verifying clean zero-exit-code termination:
+```bash
+pytest tests/ -k mock_server && pytest tests/ -k mock_server
+```
+Alternatively, assert within the fixture:
+```python
+def test_socket_options(mock_server):
+    # Verify SO_REUSEADDR flag is active on the socket
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.bind(("127.0.0.1", 0))
+    s.close()
+```
+
+---

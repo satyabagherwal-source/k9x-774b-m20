@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T06:11:30.830Z",
+  "updated_at": "2026-11-20T06:37:28.607Z",
   "stats": {
-    "total_discovered": 6255,
-    "approved_pending_harvest": 5915,
+    "total_discovered": 6258,
+    "approved_pending_harvest": 5918,
     "harvested_count": 0,
     "rejected_count": 340,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5897,
+      "COMMUNITY_AND_EXPERT": 5900,
       "OFFICIAL_DOCUMENTATION": 195,
       "STANDARDS_AND_SPECIFICATIONS": 115,
       "ENGINEERING_BLOGS": 4,
@@ -135253,6 +135253,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
         "fileName": "shifthackz-stable-diffusion-kmp-learnings.md"
+      }
+    },
+    "SRC-4349CACFB242": {
+      "id": "SRC-4349CACFB242",
+      "url": "https://github.com/tmolavi/siteprobe",
+      "title": "https://github.com/tmolavi/siteprobe",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T06:37:28.510Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tmolavi-siteprobe-learnings.md",
+        "fileName": "tmolavi-siteprobe-learnings.md"
+      }
+    },
+    "SRC-BCD5D0D16A38": {
+      "id": "SRC-BCD5D0D16A38",
+      "url": "https://api.external-service.com/v1",
+      "title": "https://api.external-service.com/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T06:37:28.552Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tmolavi-siteprobe-learnings.md",
+        "fileName": "tmolavi-siteprobe-learnings.md"
+      }
+    },
+    "SRC-A36154467EFE": {
+      "id": "SRC-A36154467EFE",
+      "url": "https://api.external-service.com/v1/metrics",
+      "title": "https://api.external-service.com/v1/metrics",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T06:37:28.607Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tmolavi-siteprobe-learnings.md",
+        "fileName": "tmolavi-siteprobe-learnings.md"
       }
     }
   }

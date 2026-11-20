@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T06:19:42.791Z",
-  "total_records": 2086,
+  "last_updated": "2026-11-20T06:37:30.865Z",
+  "total_records": 2088,
   "domains": {
     "A": {
       "total": 17,
@@ -2004,7 +2004,7 @@
       ]
     },
     "K": {
-      "total": 115,
+      "total": 117,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2120,7 +2120,9 @@
         "DOM-K-2B1D449B",
         "DOM-K-0B7EBB9F",
         "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva"
+        "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva",
+        "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-learnings-core-invariants"
       ]
     },
     "L": {
@@ -8819,8 +8821,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "19ff4d4b3d1afddd36da2ae84966c72f3c07520aaccd7ffa929838887cade448",
-      "created_at": "2026-11-20T05:54:30.317Z"
+      "content_hash": "8869f0729d9ea9880e9053971b6097d972c0bbb29a4af1b4687f7a1516262d59",
+      "created_at": "2026-11-20T06:37:30.279Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -31182,8 +31184,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "db87d5b0a27b5a14d1ff4e409f38a4722ed703f0c3ec8cd80421404855eaa1e0",
-      "created_at": "2026-11-20T05:16:32.470Z"
+      "content_hash": "30d6f1c3698523ccd77fa5a0ab419e02d8a753933dedbdc38f3e72e9128e4039",
+      "created_at": "2026-11-20T06:37:30.865Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -35191,6 +35193,24 @@
       "repository": "simonschubert-kai-learnings",
       "content_hash": "e1529bb4da55cb8ead216e4589356a3f09e99b381b5ea452f47b76a7c02982ed",
       "created_at": "2026-11-20T06:19:41.921Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: tmolavi/siteprobe Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-tmolavi-siteprobe-quality-verification-intelligence-tmolavi-siteprobe-core-invar.md",
+      "repository": "tmolavi/siteprobe",
+      "content_hash": "653a9ed6b4314d8549dce7d03ed66918f7145936b8e78e58978b4549062e2782",
+      "created_at": "2026-11-20T06:37:25.405Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: tmolavi-siteprobe-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-tmolavi-siteprobe-learnings-quality-verification-intelligence-tmolavi-siteprobe-.md",
+      "repository": "tmolavi-siteprobe-learnings",
+      "content_hash": "3d8f2810dcfc6357b77034879857785278897a5b8e443566559011973944dc0d",
+      "created_at": "2026-11-20T06:37:29.274Z"
     }
   }
 }

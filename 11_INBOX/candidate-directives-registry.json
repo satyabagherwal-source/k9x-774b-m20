@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T06:19:42.641Z",
+  "last_updated": "2026-11-20T06:37:30.569Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1413,14 +1413,14 @@
     },
     {
       "id": "CD-X37I",
-      "directive_title": "Insight I: **Special‑Token‑ID Range Consistency**",
-      "source_type": "automated_harvester_candidate",
-      "source_repo": "openbmb/MiniCPM-V-4.7-1B",
-      "source_commit": "hf-openbmb-m",
-      "date_staged": "2026-10-16",
-      "status": "STAGED_FOR_VERIFICATION",
-      "reason": "Missing mandatory **WHY** technical rationale",
-      "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
+      "directive_title": "Prompt-Defensive Sanitization of External Web Text Ingested by Agents",
+      "source_repo": "tmolavi-siteprobe-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-X37I-prompt-defensive-sanitization-of-external-web-text-ingested-by-agents.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; PROMPT_INJECTION_DETECTED: Adversarial prompt injection pattern detected: \"ignore all previous instructions\"",
+      "date_staged": "2026-11-20",
+      "domain_letter": "K"
     },
     {
       "id": "CD-X37I",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-DTFQ",
+      "id": "CD-X47I",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-DTFQ-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-X47I-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -36522,6 +36522,57 @@
       "source_repo": "starrocks-starrocks",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-71F0D2--bugfix-rb-1573-count-variant-nulls-in-c.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-X081",
+      "directive_title": "Prompt-Defensive Sanitization of External Web Text Ingested by Agents",
+      "source_repo": "tmolavi/siteprobe",
+      "source_commit": "4b116b3c",
+      "staged_file": "11_INBOX/candidate-directives/CD-X081-prompt-defensive-sanitization-of-external-web-text-ingested-by-agents.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: PROMPT_INJECTION_DETECTED: Adversarial prompt injection pattern detected: \"ignore all previous instructions\"",
+      "date_staged": "2026-11-20",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-X37H",
+      "directive_title": "Mandatory SO_REUSEADDR Socket Reusability on Test Harness Fixtures",
+      "source_repo": "tmolavi-siteprobe-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-X37H-mandatory-so_reuseaddr-socket-reusability-on-test-harness-fixtures.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-X37G",
+      "directive_title": "Dual-Mode Agentic Graceful Fallback for Third-Party API Integrations",
+      "source_repo": "tmolavi-siteprobe-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-X37G-dual-mode-agentic-graceful-fallback-for-third-party-api-integrations.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-21585A",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-21585A-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-254204",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-254204-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-20"
     }
   ]

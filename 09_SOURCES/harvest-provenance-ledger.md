@@ -11518,3 +11518,4 @@ Every entry in this ledger must capture:
 | `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `fe91ee14` | Multi-dimensional audit evidence | 2026-11-20T06:19:24.630Z |
 | `learn-github-simonschubert-kai` | `https://github.com/SimonSchubert/Kai` | `bc3f0916` | Multi-dimensional audit evidence | 2026-11-20T06:19:28.913Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `b400696f` | Multi-dimensional audit evidence | 2026-11-20T06:19:37.527Z |
+| `learn-github-tmolavi-siteprobe` | `https://github.com/tmolavi/siteprobe` | `4b116b3c` | Multi-dimensional audit evidence | 2026-11-20T06:37:24.735Z |

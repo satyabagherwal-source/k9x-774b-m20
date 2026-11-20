@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T06:19:40.686Z",
-    "lastVerified": "2026-11-20T06:19:40.686Z",
+    "lastChecked": "2026-11-20T06:37:28.351Z",
+    "lastVerified": "2026-11-20T06:37:28.351Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -345,8 +345,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T05:51:40.624Z",
-    "lastVerified": "2026-11-20T05:51:40.624Z",
+    "lastChecked": "2026-11-20T06:35:02.501Z",
+    "lastVerified": "2026-11-20T06:35:02.501Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -605,9 +605,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-20T01:20:25.028Z",
+    "lastChecked": "2026-11-20T06:34:57.438Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-20T01:20:25.028Z"
+    "lastVerified": "2026-11-20T06:34:57.438Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -3939,9 +3939,9 @@
   "svenstaro-miniserve": {
     "name": "miniserve",
     "officialUrl": "https://github.com/svenstaro/miniserve",
-    "lastChecked": "2026-11-18T18:56:42.544Z",
+    "lastChecked": "2026-11-20T06:34:47.456Z",
     "revisionIdentifier": "68b6f063",
-    "lastVerified": "2026-11-18T18:56:42.544Z"
+    "lastVerified": "2026-11-20T06:34:47.456Z"
   },
   "hf-hexgrad-kokoro-82m": {
     "name": "hexgrad/Kokoro-82M",
@@ -5717,9 +5717,9 @@
   "pingcap-talent-plan": {
     "name": "talent-plan",
     "officialUrl": "https://github.com/pingcap/talent-plan",
-    "lastChecked": "2026-11-19T01:06:08.765Z",
+    "lastChecked": "2026-11-20T06:34:59.989Z",
     "revisionIdentifier": "8e91311a",
-    "lastVerified": "2026-11-19T01:06:08.765Z"
+    "lastVerified": "2026-11-20T06:34:59.989Z"
   },
   "u-root-u-root": {
     "name": "u-root/u-root",
@@ -6070,9 +6070,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-11-19T02:11:25.964Z",
+    "lastChecked": "2026-11-20T06:34:54.942Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-11-19T02:11:25.964Z"
+    "lastVerified": "2026-11-20T06:34:54.942Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -9509,5 +9509,29 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tmolavi-siteprobe": {
+    "name": "tmolavi/siteprobe",
+    "officialUrl": "https://github.com/tmolavi/siteprobe",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-20T06:34:53.018Z",
+    "lastVerified": "2026-11-20T06:34:53.018Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-tmolavi-siteprobe",
+    "contentHash": "1779af1382ab516421ec78f6c1b69af510edbd3097d87519a85dfcd83a0d0918",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "michaelbull-kotlin-result": {
+    "name": "kotlin-result",
+    "officialUrl": "https://github.com/michaelbull/kotlin-result",
+    "lastChecked": "2026-11-20T06:34:52.443Z",
+    "revisionIdentifier": "aed7438b",
+    "lastVerified": "2026-11-20T06:34:52.443Z"
   }
 }
