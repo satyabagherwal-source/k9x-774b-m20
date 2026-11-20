@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T15:35:28.170Z",
-  "total_records": 2139,
+  "last_updated": "2026-11-20T15:44:11.389Z",
+  "total_records": 2143,
   "domains": {
     "A": {
       "total": 17,
@@ -1011,7 +1011,7 @@
       ]
     },
     "G": {
-      "total": 368,
+      "total": 370,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1380,7 +1380,9 @@
         "domain_intelligence-architecture-intelligence-sentinel7-h3-core-invariants",
         "domain_intelligence-architecture-intelligence-hf-sentinel7-h3-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-kong-kubernetes-ingress-controller-core-invariants",
-        "domain_intelligence-architecture-intelligence-kong-kubernetes-ingress-controller-learnings-core-inva"
+        "domain_intelligence-architecture-intelligence-kong-kubernetes-ingress-controller-learnings-core-inva",
+        "domain_intelligence-architecture-intelligence-archivebox-archivebox-core-invariants",
+        "domain_intelligence-architecture-intelligence-archivebox-archivebox-learnings-core-invariants"
       ]
     },
     "H": {
@@ -1891,7 +1893,7 @@
       ]
     },
     "I": {
-      "total": 107,
+      "total": 109,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1999,7 +2001,9 @@
         "domain_intelligence-content-information-intelligence-touchlab-kermit-core-invariants",
         "domain_intelligence-content-information-intelligence-touchlab-kermit-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-core-invariants",
-        "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-learnings-core-in"
+        "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-learnings-core-in",
+        "domain_intelligence-content-information-intelligence-vcaesar-riot-core-invariants",
+        "domain_intelligence-content-information-intelligence-vcaesar-riot-learnings-core-invariants"
       ]
     },
     "J": {
@@ -8872,8 +8876,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "9b70d02ec09ab2d545cfafd1593a3372cc122e2375ee922747a1c2f862ac783a",
-      "created_at": "2026-11-20T08:04:06.153Z"
+      "content_hash": "8d1cf85666e7a9680e7b12edc4ebb2de70b548d72b0578b5acba2d22609e47d7",
+      "created_at": "2026-11-20T15:44:11.389Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -36027,6 +36031,42 @@
       "repository": "kong-kubernetes-ingress-controller-learnings",
       "content_hash": "e8ae5850399053451d5e6f2d804a012d4933b6cd5dc989ba792385a964f38329",
       "created_at": "2026-11-20T15:35:25.649Z"
+    },
+    "domain_intelligence-architecture-intelligence-archivebox-archivebox-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-archivebox-archivebox-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: ArchiveBox/ArchiveBox Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-archivebox-archivebox-architecture-intelligence-archivebox-archivebox-core-invar.md",
+      "repository": "ArchiveBox/ArchiveBox",
+      "content_hash": "ddc06e090a6eaaf0fc89b3870ef9d15731d4c18d5cb8819180552633f59a368e",
+      "created_at": "2026-11-20T15:43:56.017Z"
+    },
+    "domain_intelligence-content-information-intelligence-vcaesar-riot-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-vcaesar-riot-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: vcaesar/riot Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vcaesar-riot-content-information-intelligence-vcaesar-riot-core-invariants.md",
+      "repository": "vcaesar/riot",
+      "content_hash": "e148d0e6f99e1dd795e83b50eb2f5fad450dee7c3190c2bc77b2b2b04119698d",
+      "created_at": "2026-11-20T15:44:06.089Z"
+    },
+    "domain_intelligence-architecture-intelligence-archivebox-archivebox-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-archivebox-archivebox-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: archivebox-archivebox-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-archivebox-archivebox-learnings-architecture-intelligence-archivebox-archivebox-.md",
+      "repository": "archivebox-archivebox-learnings",
+      "content_hash": "d2848bcdd9707853fe16d41b04412fcb9f9c3ae502278a6f87189afb0bec08f7",
+      "created_at": "2026-11-20T15:44:09.660Z"
+    },
+    "domain_intelligence-content-information-intelligence-vcaesar-riot-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-vcaesar-riot-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: vcaesar-riot-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vcaesar-riot-learnings-content-information-intelligence-vcaesar-riot-learnings-c.md",
+      "repository": "vcaesar-riot-learnings",
+      "content_hash": "ebe5f9ad77434dd5ae634158464878b191647dbd081fe4cd3ff6bbab14c83d42",
+      "created_at": "2026-11-20T15:44:10.503Z"
     }
   }
 }

@@ -9283,10 +9283,10 @@
     "repository": "ArchiveBox/ArchiveBox",
     "platform": "github",
     "sourceUrl": "https://github.com/ArchiveBox/ArchiveBox",
-    "sourceVersion": "de6e9dbe",
+    "sourceVersion": "5254facc",
     "license": "MIT",
-    "contentHash": "d755a7204236bddf490d2a91f6a9e1d7382d4ba0aa9fffb75081c9dc18a667bc",
-    "lastHarvestedAt": "2026-11-16T17:43:54.773Z",
+    "contentHash": "f706c8c2bd463a40b491ba4fb80058d76b87e2bffd7e8d02f3570a7d43c7f168",
+    "lastHarvestedAt": "2026-11-20T15:43:55.652Z",
     "learningId": "learn-github-archivebox-archivebox"
   },
   "buriy-python-readability": {
@@ -12953,10 +12953,10 @@
     "repository": "vcaesar/riot",
     "platform": "github",
     "sourceUrl": "https://github.com/vcaesar/riot",
-    "sourceVersion": "de6bec55",
+    "sourceVersion": "b565db8d",
     "license": "Apache-2.0",
-    "contentHash": "5b6318c99d555a4da9abbd33822ffa339293bd09f5c26e02e3f76bdd6e993d49",
-    "lastHarvestedAt": "2026-11-19T09:43:41.613Z",
+    "contentHash": "a964c7fcfe6798a2853fb2f7d782dcd2cd44e421ab265c32ea6800f6329867a3",
+    "lastHarvestedAt": "2026-11-20T15:44:05.753Z",
     "learningId": "learn-github-vcaesar-riot"
   },
   "hf-radixark-daisyrose-27b": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-4XMZ",
-    "timestamp": "2026-11-18T14:08:08.267Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-    "contentHash": "9cb2ef41af93c6916049f11a48d8bf36f9041b8aa5c628f439581bf8c4be0444",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-EP5P",
-    "timestamp": "2026-11-18T14:15:43.837Z",
-    "repository": "Comfy-Org/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-    "contentHash": "0674ed2f6662ba765dcd92641b15dfadae02dbfe8975d5acdf45ccc7eb03673e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-ES3R",
     "timestamp": "2026-11-18T14:15:47.655Z",
     "repository": "flox/flox",
@@ -7490,6 +7460,36 @@
     "repository": "Mintplex-Labs/anything-llm",
     "learningId": "learn-github-mintplex-labs-anything-llm",
     "contentHash": "fcf163f2a99f239d4f5f499ff1c537f0563c50e40220962255096e40a093fcb6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-FTOF",
+    "timestamp": "2026-11-20T15:43:55.647Z",
+    "repository": "ArchiveBox/ArchiveBox",
+    "learningId": "learn-github-archivebox-archivebox",
+    "contentHash": "f706c8c2bd463a40b491ba4fb80058d76b87e2bffd7e8d02f3570a7d43c7f168",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-G1H1",
+    "timestamp": "2026-11-20T15:44:05.749Z",
+    "repository": "vcaesar/riot",
+    "learningId": "learn-github-vcaesar-riot",
+    "contentHash": "a964c7fcfe6798a2853fb2f7d782dcd2cd44e421ab265c32ea6800f6329867a3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

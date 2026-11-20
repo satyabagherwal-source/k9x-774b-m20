@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T15:35:21.618Z",
-  "total_cycles_completed": 11017,
-  "total_learnings_persisted": 11017,
-  "total_rules_promoted": 10379,
+  "last_updated": "2026-11-20T15:44:05.759Z",
+  "total_cycles_completed": 11019,
+  "total_learnings_persisted": 11019,
+  "total_rules_promoted": 10381,
   "history": [
-    {
-      "timestamp": "2026-11-19T16:33:29.475Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T16:40:53.955Z",
-      "repository": "pyannote/speaker-diarization-community-1",
-      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T16:40:56.386Z",
       "repository": "astral-sh/uv",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-20T15:35:21.618Z",
       "repository": "Mintplex-Labs/anything-llm",
       "learningId": "learn-github-mintplex-labs-anything-llm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T15:43:55.657Z",
+      "repository": "ArchiveBox/ArchiveBox",
+      "learningId": "learn-github-archivebox-archivebox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T15:44:05.759Z",
+      "repository": "vcaesar/riot",
+      "learningId": "learn-github-vcaesar-riot",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

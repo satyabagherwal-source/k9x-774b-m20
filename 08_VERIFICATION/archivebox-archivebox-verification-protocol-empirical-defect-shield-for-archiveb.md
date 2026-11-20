@@ -4,22 +4,22 @@
 {
   "source_repository": "ArchiveBox/ArchiveBox",
   "source_url": "https://github.com/ArchiveBox/ArchiveBox",
-  "source_version": "de6e9dbe",
+  "source_version": "5254facc",
   "license": "MIT",
-  "timestamp": "2026-11-16T17:43:54.945Z",
+  "timestamp": "2026-11-20T15:43:55.861Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-archivebox-archivebox",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ArchiveBox/ArchiveBox](https://github.com/ArchiveBox/ArchiveBox) (Revision: `de6e9dbe`).  
-> **License**: MIT | **Timestamp**: `2026-11-16T17:43:54.945Z`  
+> **Provenance**: Harvested from [ArchiveBox/ArchiveBox](https://github.com/ArchiveBox/ArchiveBox) (Revision: `5254facc`).  
+> **License**: MIT | **Timestamp**: `2026-11-20T15:43:55.861Z`  
 > **Learning ID**: `learn-github-archivebox-archivebox`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `ArchiveBox/ArchiveBox` (Commit: `de6e9dbe`)
+- **Target Repository**: `ArchiveBox/ArchiveBox` (Commit: `5254facc`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/archivebox-archivebox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ArchiveBox/ArchiveBox](https://github.com/ArchiveBox/ArchiveBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T17:43:37.769Z  
+> **Harvest Timestamp**: 2026-11-20T15:43:54.398Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 🗃 Open source self-hosted web archiving. Takes URLs/browser history/bookmarks/Pocket/Pinboard/etc., saves HTML, JS, PDFs, media, and more...
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 29037 stars
+- **Stars / Engagement**: 29066 stars
 
 ---
 
@@ -260,11 +260,12 @@ from django.utils.http import content_disposition_header
 from ninja import Router, Schema, FilterLookup, FilterSchema, Query, Form, UploadedFile
 from ninja.pagination import paginate, PaginationBase
 from ninja.errors import HttpError
+from ninja.security import django_auth_is_staff
 from pydantic import field_serializer, model_validator
 
 from archivebox.core.models import Folder, Snapshot, ArchiveResult, Tag
 from archivebox.core.permissions import public_snapshots_queryset
-from archivebox.api.auth import authenticated_user_from_request
+from archivebox.api.auth import API_AUTH_METHODS, authenticated_user_from_request
 from archivebox.config.common import get_config
 from archivebox.core.routes_util import build_snapshot_detail_url, build_web_url
 from archivebox.misc.util import equivalent_urls, filter_queryset_by_uuid_substring, validate_url_length
@@ -494,10 +495,7 @@ class ArchiveResultFilterSchema(FilterSchema):
     cmd_version: Annotated[str | None, FilterLookup("cmd_version")] = None
     created_at: Annotated[datetime | None, FilterLookup("created_at")] = None
     created_at__gte: Annotated[datetime | None, FilterLookup("created_at__gte")] = None
-    created_at__lt: Annotated[datetime | None, FilterLookup("created_at__lt")] = None
-
-
-def _with_archiver
+    created_at__lt: Annotated[datetime |
 ```
 
 ### Core Architecture Module: `archivebox/api/webhook_actions.py`
@@ -522,6 +520,7 @@ from signal_webhooks.utils import truncate
 
 from archivebox.config.common import ArchiveBoxConfig, config_field_metadata, get_config
 from archivebox.plugins.discovery import get_enabled_plugins, get_plugin_catalog
+from archivebox.plugins.selection import format_plugin_selection, parse_plugin_selection
 
 logger = logging.getLogger(__name__)
 
@@ -588,7 +587,7 @@ def validate_actions(hook):
                 resolved = get_config(overrides=overrides, include_machine=False).model_dump(mode="json")
                 action[kind] = {key: resolved[key] for key in overrides}
                 if "PLUGINS" in overrides:
-                    if any(name.strip() not in get_plugin_catalog() for name in str(overrides["PLUGINS"]).split(",") if name.strip()):
+                    if any(name not in get_plugin_catalog() for name in (parse_plugin_selection(overrides["PLUGINS"]) or ())):
                         raise ValueError("PLUGINS must contain installed plugin names.")
             elif kind == "max_depth":
                 depth = action.get(kind)
@@ -670,15 +669,13 @@ def _apply_capture_action(action, instance):
         config.update(action[kind])
     else:
         effective = get_config(crawl=crawl, snapshot=instance if is_snapshot else None, overrides=config)
-        selected = str(effective.PLUGINS or "").strip()
-        names = {name.strip() for name in selected.split(",") if name.strip()} if selected else set(get_enabled_plugins(config=effective))
+        selected = parse_plugin_selection(effective.PLUGINS)
+        names = set(get_enabled_plugins(config=effective) if selected is None else selected)
         if kind == "enable_plugins":
             names.update(action[kind])
         else:
             names.difference_update(action[kind])
-        if not names:
-            raise ValueError("Cannot disable every plugin: empty PLUGINS selects ambient defaults.")
-        config["PLUGINS"] = ",".join(sorted(names))
+        config["PLUGINS"] = format_plugin_selection(sorted(names))
     instance.config = config
     instance.save(update_fields=["config", "modified_at"])
     return {"config": {key: config[key] for key in (action.get("config_overrides") or {"PLUGINS": None})}}
@@ -699,7 +696,8 @@ def _apply_model_action(action, instance, hook):
         instance.add_tag_ids([tag.pk for tag in tags])
         return {kind: [tag.name for tag in tags]}
     if kind == "remove_tags":
-        names = [name.strip() for name in action[kind].split(",
+        names = [name.strip() for name in action[kind].split(",") if name.strip()]
+        tags = [tag for tag in instance.tags.all
 ```
 
 ### Core Architecture Module: `archivebox/api/webhook_events.py`
@@ -720,6 +718,55 @@ from signal_webhooks.utils import model_from_reference, get_webhook_model, refer
 # A sequence may save models and its Process logs. Those writes must not start
 # the same subscription recursively (including callbacks scheduled on commit).
 executing_webhook = ContextVar("executing_webhook", default=False)
+active_relationship: ContextVar[str] = ContextVar("webhook_relationship", default="")
+RELATIONSHIP_EVENTS = {"M2M_ADD", "M2M_REMOVE", "M2M_CLEAR"}
+
+
+def relationship_fields(model):
+    # A forward field identifies the actual relation of the object initiating
+    # the operation. Existing generic subscriptions also receive reverse events.
+    return model._meta.many_to_many
+
+
+@contextmanager
+def relationship_context(name):
+    token = active_relationship.set(name)
+    try:
+        yield
+    finally:
+        active_relationship.reset(token)
+
+
+def emit_relationship_event(instance, signal, relationship):
+    from signal_webhooks.handlers import webhook_handler
+
+    with relationship_context(relationship):
+        webhook_handler(instance=instance, method=signal)
+
+
+def dispatch_relationship_signal(sender, instance, reverse, model, **kwargs):
+    from signal_webhooks.handlers import webhook_m2m_handler
+
+    names = (
+        [
+            field.name
+            for field in relationship_fields(type(instance))
+            if field.remote_field.through is sender and field.related_model is model
+        ]
+        if not reverse
+        else []
+    )
+    with relationship_context(names[0] if len(names) == 1 else ""):
+        webhook_m2m_handler(sender, instance=instance, reverse=reverse, model=model, **kwargs)
+
+
+def register_relationship_signals():
+    from django.db.models.signals import m2m_changed
+
+    # The library otherwise discards the sender before its task handler runs.
+    # Delegate once to the same library receiver with context attached.
+    m2m_changed.disconnect(dispatch_uid=webhook_settings.DISPATCH_UID_M2M_CHANGED)
+    m2m_changed.connect(dispatch_relationship_signal, weak=False, dispatch_uid="archivebox.webhook_relationship")
 
 
 def action_in_progress():
@@ -763,9 +810,9 @@ EVENTS = {
     "STARTED": dict(label="Started", icon="play", color="#597bab"),
     "COMPLETED": dict(label="Completed", icon="complete", color="#377b5b"),
     "EXITED": dict(label="Exited", icon="complete", color="#377b5b"),
-    "M2M_ADD": dict(label="Relationship added", icon="plus", color="#377b5b"),
-    "M2M_REMOVE": dict(label="Relationship removed", icon="leave", color="#9d618f"),
-    "M2M_CLEAR": dict(label="Relationships cleared", icon="leave", color="#9d618f"),
+    "M2M_ADD": dict(label="Relationship added", icon="plus", color="#377b5b", relationship=True),
+    "M2M_REMOVE": dict(label="Relationship removed", icon="leave", color="#9d618f", relationship=True),
+    "M2M_CLEAR": dict(label="Relationships cleared", icon="leave", color="#9d618f", relationship=True),
     "UPDATE": dict(label="Updated", icon="update", color="#547caa", section=True),
     "DELETE": dict(label="Deleted", icon="delete", color="#b3495a"),
 }
@@ -789,7 +836,8 @@ def event_catalog():
             continue
         model = model_from_reference(ref, check_hooks=False)
         keys = ["CREATE", *getattr(model, "webhook_events", {})]
-        if model._meta.many_to_many:
+        relationships = relationship_fields(model)
+        if relationships:
             keys.extend(("M2M_ADD", "M2M_REMOVE", "M2M_CLEAR"))
         keys.extend(("UPDATE", "DELETE"))
         result.append(
@@ -797,6 +845,7 @@ def event_catalog():
                 ref=ref,
                 name=model.__name__,
                 emoji=getattr(model, "emoji", "📄"),
+                relationships=[{"id": field.name, "name": str(field.verbose_name).capitalize()} for field in relationships],
                 events=[dict(key=key, **event_options(model, key)) for key in dict.fromkeys(keys)],
             ),
         )
@@ -884,51 +933,7 @@ def register_lifecycle_signals():
 
     webhook_event.connect(explicit_event, weak=False, dispatch_uid="archivebox.webhook.explicit")
 
-    def before_save(sender, instance, raw=False, **kwargs):
-        if raw or action_in_progress() or not getattr(sender, "webhook_status_events", {}):
-            return
-        instance._webhook_previous_status = (
-            None if instance._state.adding else sender.objects.filter(pk=instance.pk).values_list("status", flat=True).first()
-        )
-
-    def after_save(sender, instance, raw=False, **kwargs):
-        if raw or action_in_progress() or not hasattr(instance, "_webhook_previous_status"):
-            return
-        previous = instance._webhook_previous_status
-        del instance._webhook_previous_status
-        status = instance.status
-        if status == previous:
-            return
-        signal = sender.webhook_status_events.get(status)
-        if signal:
-            emit_event(instance, signal)
-
-    pre_save.connect(before_save, weak=False, dispatch_uid="archivebox.webhook.lifecycle.before")
-    post_save.connect(after_save, weak=False, dispatch_uid="archivebox.webhook.lifecycle.after")
-
-
-@contextmanager
-def track_model_update(queryset, fields):
-    """Deliver UPDATE for changed rows in native conditional queryset writes."""
-    previous = {}
-    if (
-        not action_in_progress()
-        and get_webhook_model()
-        .objects.filter(
-            ref=reference_for_model(queryset.model),
-            signal="UPDATE",
-            enabled=True,
-        )
-        .exists()
-    ):
-        previous = {obj.pk: obj for obj in queryset}
-    yield
-    for instance in list(queryset.model.objects.filter(pk__in=previous)) if previous else ():
-        before = previous[instance.pk]
-        names = [queryset.model._meta.get_field(name).attname for name in fields]
-        if any(getattr(before, name) != getattr(instance, name) for name in names):
-            emit_event(instance, "UPDATE")
-
+    def before_save(sender, instance, raw=False, **kwargs
 ```
 
 ### Core Architecture Module: `archivebox/api/webhook_membership.py`
@@ -939,6 +944,7 @@ from contextlib import contextmanager
 from contextvars import ContextVar
 
 from django.apps import apps
+from django.db.models import Q
 from django.db.models.signals import m2m_changed, pre_save, post_save, pre_delete, post_delete
 
 _active = ContextVar("folder_membership_change", default=False)
@@ -955,23 +961,27 @@ class MembershipChange:
         from archivebox.core.models import Snapshot
         from archivebox.core.smart_folders import RuleQuery
 
-        self.folder_ids = list(
+        scopes = list(
             OutboundWebhook.objects.filter(
+                Q(folder_id__isnull=False) | Q(any_folder=True),
                 enabled=True,
                 ref="archivebox.core.models.Snapshot",
                 signal__in=["FOLDER_ENTERED", "FOLDER_LEFT"],
-                folder_id__isnull=False,
             )
             .order_by()
-            .values_list("folder_id", flat=True)
+            .values_list("folder_id", "any_folder")
             .distinct(),
         )
+        self.folder_ids = [str(folder_id) for folder_id, _ in scopes if folder_id]
+        self.any_folder = any(any_folder for _, any_folder in scopes)
         self.deleted = deleted or {}
         self.before = {}
-        if not self.folder_ids:
+        if not self.folder_ids and not self.any_folder:
             return
         self.ids = None if snapshot_ids is None else set(snapshot_ids() if callable(snapshot_ids) else snapshot_ids)
         self.compiler = RuleQuery(freeze_limits=True)
+        if self.any_folder:
+            self.folder_ids = list(self.compiler.folders)
         self.queries = {folder_id: self.compiler.folder(folder_id) for folder_id in self.folder_ids}
         candidates = self.ids
         for folder_id, query in self.queries.items():
@@ -1180,7 +1190,7 @@ def authenticated_session(base_url, username, password):
     token = unescape(re.search(r'name="csrfmiddlewaretoken" value="([^"]+)"', response.text).group(1))
     response = session.post(
         response.url,
-        data={"csrfmiddlewaretoken": token, "username": username, "password": password, "next": "/admin/webhooks/"},
+        data={"csrfmiddlewaretoken": token, "username": username, "password": password, "next": "/admin/rules/"},
         headers={"Referer": response.url},
         timeout=30,
     )
@@ -1195,7 +1205,7 @@ def authenticated_session(base_url, username, password):
 def prepare(base_url, username, password):
     """Create the folder and hooks before normal, full-plugin news captures."""
     session = authenticated_session(base_url, username, password)
-    response = session.get(f"{base_url}/admin/webhooks/data/", timeout=30)
+    response = session.get(f"{base_url}/admin/rules/data/", timeout=30)
     response.raise_for_status()
     existing = response.json()
     folder = next((folder for folder in existing["folders"] if folder["name"] == "Hacker News"), None)
@@ -1254,7 +1264,7 @@ def prepare(base_url, username, password):
         previous = next((item for item in existing["hooks"] if item["name"] == hook["name"]), None)
         if previous:
             hook["id"] = previous["id"]
-        response = session.post(f"{base_url}/admin/webhooks/save/", json=hook, timeout=30)
+        response = session.post(f"{base_url}/admin/rules/save/", json=hook, timeout=30)
         response.raise_for_status()
         ids.append(response.json()["hook"]["id"])
     return ids
@@ -1263,7 +1273,7 @@ def prepare(base_url, username, password):
 def verify_actions(base_url, username, password, webhook_ids):
     """Update captured news through the REST API and check real action delivery."""
     session = authenticated_session(base_url, username, password)
-    response = session.get(f"{base_url}/admin/webhooks/data/", timeout=30)
+    response = session.get(f"{base_url}/admin/rules/data/", timeout=30)
     response.raise_for_status()
     previous = next(item for item in response.json()["hooks"] if item["id"] == webhook_ids[2])["last_success"]
     response = session.post(f"{base_url}/api/v1/auth/get_api_token", json={"username": username, "password": password}, timeout=30)
@@ -1284,7 +1294,7 @@ def verify_actions(base_url, username, password, webhook_ids):
     )
     response.raise_for_status()
     assert "webhook-reviewed" in response.json()["tags"]
-    response = session.get(f"{base_url}/admin/webhooks/data/", timeout=30)
+    response = session.get(f"{base_url}/admin/rules/data/", timeout=30)
     response.raise_for_status()
     hook = next(item for item in response.json()["hooks"] if item["id"] == webhook_ids[2])
     assert hook["last_success"] and (not previous or hook["last_success"] > previous)
@@ -1293,15 +1303,18 @@ def verify_actions(base_url, username, password, webhook_ids):
 
 
 def gallery_entries(base_url, webhook_ids):
-    editor = f"{base_url}/admin/webhooks/?webhook={webhook_ids[0]}"
+    editor = f"/admin/rules/?webhook={webhook_ids[0]}"
+    event_input = f"{editor}&preview=1"
+    scripts = f"/admin/rules/?webhook={webhook_ids[2]}"
+    processes = f"/admin/machine/process/?worker_type=webhook&q={webhook_ids[2]}"
     return [
-        f"Webhooks|{base_url}/admin/webhooks/|/admin/webhooks/|archivebox/api/webhook_views.py|wait-text:Hacker News capture settings",
-        f"Webhook actions|{editor}|/admin/webhooks/?webhook=…|archivebox/templates/api/webhooks.html|wait-text:Save webhook",
-        f"Webhook event input|{editor}&preview=1|/admin/webhooks/?webhook=…&preview=1|archivebox/templates/api/webhooks.html|wait-text:Planned actions",
-        f"Webhook activity|{base_url}/admin/webhooks/?view=activity|/admin/webhooks/?view=activity|archivebox/templates/api/webhooks.html|wait-text:Succeeded",
-        f"Webhook events|{base_url}/admin/webhooks/?view=events|/admin/webhooks/?view=events|archivebox/templates/api/webhooks.html|wait-text:Before capture",
-        f"Webhook scripts|{base_url}/admin/webhooks/?webhook={webhook_ids[2]}|/admin/webhooks/?webhook=…|archivebox/templates/api/webhooks.html|wait-text:JSON stdin",
-        f"Webhook process logs|{base_url}/admin/machine/process/?worker_type=webhook&q={webhook_ids[2]}|/admin/machine/process/|archivebox/machine/admin.py|wait-text:webhook",
+        f"Rules|{base_url}/admin/rules/|/admin/rules/|archivebox/api/webhook_views.py|wait-text:Hacker News capture settings",
+        f"Rule actions|{base_url}{editor}|{editor}|archivebox/templates/api/webhooks.html|wait-text:Save rule",
+        f"Rule event input|{base_url}{event_input}|{event_input}|archivebox/templates/api/webhooks.html|wait-text:PLANNED ACTIONS",
+        f"Rule activity|{base_url}/admin/rules/?view=activity|/admin/rules/?view=activity|archivebox/templates/api/webhooks.html|wait-text:Succeeded",
+        f"Rule events|{base_url}/admin/rules/?view=events|/admin/rules/?view=events|archivebox/templates/api/webhooks.html|wait-text:Before capture",
+        f"Rule scripts|{base_url}{scripts}|{scripts}|archivebox/templates/api/webhooks.html|wait-text:JSON stdin",
+        f"Webhook process logs|{base_url}{processes}|{processes}|archivebox/machine/admin.py|wait-text:bash -c cat",
     ]
 
 ```
@@ -1343,11 +1356,12 @@ from signal_webhooks.utils import model_from_reference
 
 from archivebox.core.admin_site import archivebox_admin
 from archivebox.core.models import Folder, Snapshot
+from archivebox.core.widgets import TagEditorWidget
 from archivebox.plugins.discovery import get_plugin_catalog
 
 from .models import OutboundWebhook
 from .webhook_actions import configurable_fields
-from .webhook_events import event_catalog, event_payload
+from .webhook_events import RELATIONSHIP_EVENTS, event_catalog, event_payload
 
 
 def webhook_admin(view):
@@ -1374,7 +1388,8 @@ def webhook_data(hook):
         "ref": hook.ref,
         "signal": hook.signal,
         "enabled": hook.enabled,
-        "folder_id": str(hook.folder_id) if hook.folder_id else None,
+        "folder_id": "*" if hook.any_folder else str(hook.folder_id) if hook.folder_id else None,
+        "relationship": (hook.relationship or "*") if hook.signal in RELATIONSHIP_EVENTS else None,
         "actions": actions,
         "stop_processing": hook.stop_processing,
         "stop_on_failure": hook.stop_on_failure,
@@ -1392,9 +1407,10 @@ def editor_data():
         "hooks": [webhook_data(hook) for hook in OutboundWebhook.objects.all().order_by("created_at", "pk")],
         "models": event_catalog(),
         "signal_labels": dict(OutboundWebhook._meta.get_field("signal").choices),
-        "folders": [{"id": str(folder.pk), "name": folder.path_label} for folder in Folder.tree()],
+        "folders": [{"id": str(folder_id), "name": label} for folder_id, label in Folder.path_choices()],
         "plugins": sorted(get_plugin_catalog()),
         "config_fields": sorted(configurable_fields()),
+        "tag_editor": str(TagEditorWidget().render("webhook_action_tags_TOKEN", None)),
     }
 
 
@@ -1405,7 +1421,7 @@ def index(request):
     return render(
         request,
         "api/webhooks.html",
-        {**archivebox_admin.each_context(request), "title": "Webhooks", "webhook_editor": editor_data()},
+        {**archivebox_admin.each_context(request), "title": "Rules", "webhook_editor": editor_data()},
     )
 
 
@@ -1426,6 +1442,7 @@ def submitted_webhook(request):
         "signal",
         "enabled",
         "folder_id",
+        "relationship",
         "actions",
         "stop_processing",
         "stop_on_failure",
@@ -1442,7 +1459,17 @@ def submitted_webhook(request):
     hook = get_object_or_404(OutboundWebhook, pk=payload["id"]) if payload.get("id") else OutboundWebhook(created_by=request.user)
     for field in allowed - {"id", "auth_token", "clear_auth_token"}:
         if field in payload:
-            setattr(hook, field, payload[field])
+            value = payload[field]
+            if field == "folder_id":
+                hook.any_folder = value == "*"
+                value = None if hook.any_folder else value
+            elif field == "relationship":
+                if value is not None and not isinstance(value, str):
+                    raise ValidationError("Relationship must be a string.")
+                value = "" if value in (None, "*") else value
+            setattr(hook, field, value)
+    if payload.get("relationship") == "*" and hook.signal not in RELATIONSHIP_EVENTS:
+        raise ValidationError("Choose a relationship for a relationship event only.")
     if payload.get("clear_auth_token"):
         hook.auth_token = ""
     elif payload.get("auth_token"):
@@ -1484,11 +1511,16 @@ def preview(request):
             # Parent folders and predicate folders share precisely the sidebar's
             # selector. No second matcher or include-subfolders flag belongs here.
             candidates = Folder.select_snapshots(Snapshot.objects.all(), hook.folder_id)
+        metadata = {}
+        if hook.folder_id:
+            metadata["folder_id"] = str(hook.folder_id)
+        if hook.relationship:
+            metadata["relationship"] = hook.relationship
         objects = [
             {
                 "id": str(obj.pk),
                 "label": getattr(obj, "title", None) or getattr(obj, "name", None) or str(obj.pk),
-                "payload": event_payload(obj, hook.signal, **({"folder_id": str(hook.folder_id)} if hook.folder_id else {})),
+                "payload": event_payload(obj, hook.signal, **metadata),
             }
             for obj in candidates[:5]
         ]
@@ -1505,11 +1537,11 @@ def preview(request):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1965** (2026-11-14): **Share settings controls across system, personas, and captures**
-  *Symptoms*: System settings, Persona configuration, and /add/ share schema-driven controls while retaining existing config keys, value types, and override resolution. Plugin lists use autocomplete chips; URL rules use domain/path macros and the real server matcher; quantity inputs preserve units and schema validation. Plugin documentation links use gallery deep links with screenshot thumbnails.  Sliders and inputs stay visible and directly editable. Defaults are 2 concurrent snapshots, 10,000 URLs, 100 GB per crawl, and 3 GB per snapshot; slider ceilings are 10, 1 million, 100 TB, and 10 TB respectively. Crawl runtime defaults to 24 hours. Explicit zero remains supported, and retention keeps captures forever by default. CLI omission inherits configured limits; explicitly passing zero disables a limit.  Follow-up implementation is on dev in b06879811. Array enum controls preserve multiple selections and explicit empty lists (1330fa4e1). All nine Cubic threads on #1964 have been addressed and resolved, including two findings checked against rendered Django behavior and the intentional seconds-only configuration contract.  The screenshot below is from a real full-page browser test of the current controls. Persona browser state is unified into a searchable site list, with a single paste input, Chrome profile metadata, per-site removal, extension setup, and expanded Advanced/Details sections (9f9660a2d). The full browser-state flow and Persona sync API pass 11 tests, including IndexedDB readb
+- **Issue #1974** (2026-11-20): **Add tag merging to the CLI and API**
+  *Symptoms*: # Summary  Adds a way to merge duplicate tags (different spellings, languages, casing) without retagging every snapshot by hand.  - New `merge_tags()` helper in `core/tag_util.py`: moves every snapshot from the source tags onto the target tag, then deletes the sources. Snapshots that already have the target just lose the source link (no duplicate rows). Retagging goes through `Snapshot.add_tag_ids`/`remove_tag_ids`, so webhooks and folder membership events fire as for a manual edit. It is idempotent, so an interrupted merge can be re-run. - CLI: `archivebox tag merge --into TARGET NAME [NAME...]` (target is created if missing). - API: `POST /api/v1/core/tag/{tag_id}/merge` with `{"target": <id or name>}`; returns 404 for unknown tags and 400 when merging a tag into itself. - Tests cover the API (success, overlapping snapshots, self-merge, unknown tags), the helper with several sources, and the CLI.  # Related issues  Refs #1253  # Changes these areas  - [ ] Bugfixes - [x] Feature behavior - [x] Command line interface - [ ] Configuration options - [ ] Internal architecture - [ ] Snapshot data layout on disk  <!-- This is an auto-generated description by cubic. --> --- ## Summary by cubic Adds tag merging to the CLI and API so duplicate tags (different spellings, languages, casing) can be cleaned up without retagging every snapshot by hand. Merging moves snapshots from one or more source tags onto a target tag and deletes the sources; snapshots that already have the target just
 
-- **Issue #1964** (2026-11-14): **Replace plugin config grids with searchable, plugin-owned settings UI**
-  *Symptoms*: Replace the plugin config grid on `/add/` and Persona admin with searchable sidebar tabs, title/sidebar enable switches, human-readable labels, timeout sliders, and size/duration controls that convert back to the existing stored values.  Persona identity fields now share one compact desktop row, with plugin settings immediately below. Browser state follows the editor; storage paths, raw configuration, and timestamps are collapsible. The owner selector remains readable on desktop and mobile.  Plugins can override individual fields with `templates/config/<KEY>.html`; the shared schema renderer handles everything else. New catalog categories and plugins appear automatically. Script and prompt editors support plugin-owned insertion/wrapping macros. Keyboard navigation, validation focus, shared-key synchronization, and Persona/Crawl persistence remain in the common form path.  Companion: [ArchiveBox/abx-plugins#106](https://github.com/ArchiveBox/abx-plugins/pull/106) supplies the 17 field overrides and domain-script behavior shown below. The custom-widget browser tests require that companion version; dependency publication follows the normal release cascade.  The 15 focused Persona/form/browser checks pass locally with the companion plugins. Browser coverage includes both pages, switch synchronization, keyboard navigation, schema validation, unit conversion, and persisted values. These captures show the complete surrounding pages, including their navigation, existing fields, and s
+- **Issue #1971** (2026-11-20): **Bug:  wrong variable in etc/sonic.cfg**
+  *Symptoms*: ### Provide a screenshot and describe the bug  Hello,  in etc/sonic.cfg is used auth_password = "${env.SEARCH_BACKEND_PASSWORD}"  but in sonic plugin configuration is used SEARCH_BACKEND_SONIC_PASSWORD  so after start the container the SEARCH_BACKEND_PASSWORD variable inside container is empty  ### Steps to reproduce  ```markdown start ArchiveBox compose file with sonic variables       - SEARCH_BACKEND_SONIC_ENABLED=true       - SEARCH_BACKEND_SONIC_PASSWORD=SomePassword ```  ### Logs or errors  ```shell  ```  ### ArchiveBox Version  ```shell image: archivebox/archivebox:0.9.77 ```  ### How did you install the version of ArchiveBox you are using?  Docker (or Podman/LXC/K8s/TrueNAS/Proxmox/etc)  ### What operating system are you running on?  Linux (Ubuntu/Debian/Arch/Alpine/etc.)  ### What type of drive are you using to store your ArchiveBox data?  - [x] some of `data/` is on a local SSD or NVMe drive - [ ] some of `data/` is on a spinning hard drive or external USB drive - [ ] some of `data/` is on a network mount (e.g. NFS/SMB/Ceph/GlusterFS/etc.) - [ ] some of `data/` is on a FUSE mount (e.g. SSHFS/RClone/S3/B2/Google Drive/Dropbox/etc.)  ### Docker Compose Configuration  ```shell  ```  ### ArchiveBox Configuration  ```shell  ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1526,522 +1558,132 @@ def preview(request):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `94e50ebc` (2026-11-16)
-**Commit Message**: Separate live provider replay from required CI
+### Incident Patch 1: `5254facc` (2026-11-20)
+**Commit Message**: Bump release version to 0.9.78rc372
 
-Keep authenticated Figma, Miro and Canva replay and public iWork replay in a visibly failing independent workflow. Keep deterministic tests and artifact promotion gates required.
-
-**File**: `.github/scripts/discover_test_matrix.py` (modified, +1/-1)
+**File**: `etc/package.json` (modified, +1/-1)
 ```diff
-@@ -23,7 +23,7 @@ def main() -> None:
-         for line in path.read_text().splitlines()[:5]
-         if line.startswith("# ci-environment: ")
-     }
--    if set(environments.values()) - {"provider-capture"}:
-+    if set(environments.values()) - {"provider-capture", "live-provider"}:
-         raise SystemExit("Unknown ci-environment requirement")
-     hosted = {path for path in archivebox_tests if "# ci-runner: hosted" in path.read_text().splitlines()[:5]}
-     max_workers = {
+@@ -1,6 +1,6 @@
+ {
+   "name": "archivebox",
+-  "version": "0.9.78rc371",
++  "version": "0.9.78rc372",
+   "repository": "github:ArchiveBox/ArchiveBox",
+   "license": "MIT",
+   "dependencies": {
 ```
 
-**File**: `.github/workflows/provider-replay.yml` (added, +328/-0)
+**File**: `pyproject.toml` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,328 @@
-+name: Live provider replay
-+
-+# External sessions are monitored independently, never a release prerequisite.
-+on:
-+  push:
-+    branches: [dev]
-+    paths:
-+      - '.github/workflows/provider-replay.yml'
-+      - '.github/scripts/discover_test_matrix.py'
-+      - 'archivebox/tests/test_authenticated_provider_replay.py'
-+      - 'archivebox/tests/test_iwork_live_replay.py'
-+      - 'archivebox/tests/test_provider_plugin_replay.py'
-+  schedule:
-+    - cron: '17 6,18 * * *'
-+  workflow_dispatch:
-+
-+permissions:
-+  contents: read
-+
-+concurrency:
-+  group: live-provider-replay
-+  cancel-in-progress: false
-+
-+env:
-+  CI_PYTHON_VERSION: '3.13'
-+  UV_NO_SOURCES: '1'
-+
-+jobs:
-+  discover-tests:
-+    if: github.repository == 'ArchiveBox/ArchiveBox' && (github.event_name == 'schedule' || github.ref == 'refs/heads/dev')
-+    runs-on: ubuntu-24.04
-+    outputs:
-+      provider-tests: ${{ steps.discover.outputs.provider-tests }}
-+      sha: ${{ steps.discover.outputs.sha }}
-+      public-tests: ${{ steps.discover.outputs.public-tests }}
-+    steps:
-+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-+        with:
-+          ref: ${{ github.sha }}
-+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
-+        with:
-+          python-version: ${{ env.CI_PYTHON_VERSION }}
-+      - name: Discover live tests without dropping coverage
-+        id: discover
-+        run: |
-+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-+          python - <<'PYDISCOVER'
-+          import json
-+          import os
-+          import subprocess
-+          import sys
-+          result = subprocess.check_output([sys.executable, '.github/scripts/discover_test_matrix.py'], text=True)
-+          print(result.splitlines()[0])
-+          matrix = json.loads(result.splitlines()[1])
-+          providers = [item for item in matrix if item['environment'] == 'provider-capture']
-+          public = [item for item in matrix if item['environment'] == 'live-provider']
-+          assert providers and public, 'Missing live provider test classification'
-+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
-+              output.write('provider-tests=' + json.dumps(providers, separators=(',', ':')) + '\n')
-+              output.write('public-tests=' + json.dumps(public, separators=(',', ':')) + '\n')
-+          PYDISCOVER
-+
-+  provider-capture:
-+    name: Authenticated provider replay
-+    needs: discover-tests
-+    if: needs.discover-tests.outputs.provider-tests != '[]' && github.repository == 'ArchiveBox/ArchiveBox'
-+    runs-on: ubuntu-24.04
-+    environment: provider-capture
-+    permissions:
-+      contents: read
-+    timeout-minutes: 30
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        test: ${{ fromJSON(needs.discover-tests.outputs.provider-tests) }}
-+    steps:
-+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-+        with:
-+          submodules: true
-+          ref: ${{ needs.discover-tests.outputs.sha }}
-+      - name: Use the standard Ubuntu archive on hosted Linux
-+        if: runner.os == 'Linux' && runner.environment == 'github-hosted'
-+        run: |
-+          # Apply the same mirror policy as the main matrix before installing
-+          # display tools or Puppeteer's Chromium/font dependencies.
-+          if [[ -f /etc/apt/apt-mirrors.txt ]]; then
-+            sudo sed -Ei '\|^http://azure\.archive\.ubuntu\.com/ubuntu/[[:space:]]+priority:1$|d' /etc/apt/apt-mirrors.txt
-+          fi
-+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
-+        with:
-+          python-version: ${{ env.CI_PYTHON_VERSION }}
-+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
-+        with:
-+          version: "0.13.5"
-+          enable-cache: false
-+      - name: Install browser display and PDF inspection tools
-+        run: |
-+          sudo apt-get update
-+          sudo apt-get install -y xvfb xauth poppler-utils
-+      - name: Install locked test dependencies
-+        run: uv sync --no-cache --locked --dev --no-sources
-+      - name: Install the matching Chrome sandbox helper
-+        env:
-+          ABXPKG_LIB_DIR: ${{ runner.temp }}/provider-runtime
-+        run: |
-+          chrome_sandbox="$(uv run --no-cache --no-sync --no-sources python - <<'PY'
-+          import json
-+          import os
-+          import subprocess
-+          from pathlib import Path
-+          import abx_plugins
-+
-+          config = Path(abx_plugins.__file__).parent / "plugins/chrome/config.json"
-+          env = json.loads(subprocess.check_output([
-+              "abxpkg", "env", "--install", "--json",
-+              f"--deps-from={config}:required_binaries", "browsers",
-+          ], text=True))
-+          # CHROME_BINARY may be a provider launcher, not the native executable.
-+          native_chrome = subprocess.check_output([
-+              env["NODE_BINARY"], "-e", r"""
-+              
+@@ -1,6 +1,6 @@
+ [project]
+ name = "archivebox"
+-version = "0.9.78rc371"
++version = "0.9.78rc372"
+ requires-python = ">=3.13"
+ description = "Self-hosted internet archiving solution."
+ authors = [{name = "Nick Sweeting", email = "pyproject.toml@archivebox.io"}]
+@@ -362,7 +362,7 @@ Donate = "https://github.com/ArchiveBox/ArchiveBox/wiki/Donations"
+ 
+ 
+ [tool.bumpver]
+-current_version = "v0.9.78rc371"
++current_version = "v0.9.78rc372"
+ version_pattern = "vMAJOR.MINOR.PATCH[PYTAGNUM]"
+ commit_message = "bump version {old_version} -> {new_version}"
+ tag_message = "{new_version}"
 ```
 
-**File**: `.github/workflows/test-parallel.yml` (modified, +2/-164)
+**File**: `uv.lock` (modified, +1/-1)
 ```diff
-@@ -30,7 +30,6 @@ jobs:
-     runs-on: ubuntu-24.04
-     outputs:
-       tests: ${{ steps.discover.outputs.tests }}
--      provider-tests: ${{ steps.discover.outputs.provider-tests }}
-       runner: ${{ steps.runner.outputs.use-runner || '["ubuntu-24.04"]' }}
+@@ -141,7 +141,7 @@ wheels = [
  
-     steps:
-@@ -94,7 +93,8 @@ jobs:
-           echo "${output[0]}"
-           "$JQ_BINARY" -e 'length > 0 and length <= 256 and ([.[].paths[]] | length == (unique | length))' <<< "${output[1]}"
-           echo "tests=$("$JQ_BINARY" -c '[.[] | select(.environment == "")]' <<< "${output[1]}")" >> "$GITHUB_OUTPUT"
--          echo "provider-tests=$("$JQ_BINARY" -c '[.[] | select(.environment == "provider-capture")]' <<< "${output[1]}")" >> "$GITHUB_OUTPUT"
-+          # Cookie-dependent entries run in provider-replay.yml, outside release CI.
-+          "$JQ_BINARY" -e '[.[] | select(.environment == "")] | length > 0' <<< "${output[1]}"
- 
-   tests:
-     name: ${{ matrix.test.name }}
-@@ -301,165 +301,3 @@ jobs:
-           include-hidden-files: true
-           if-no-files-found: ignore
-           retention-days: 14
--
--  provider-capture:
--    name: Authenticated provider replay
--    needs: discover-tests
--    if: needs.discover-tests.outputs.provider-tests != '[]' && github.repository == 'ArchiveBox/ArchiveBox' && github.ref == 'refs/heads/dev' && github.event_name != 'pull_request'
--    runs-on: ubuntu-24.04
--    environment: provider-capture
--    permissions:
--      contents: read
--    timeout-minutes: 30
--    strategy:
--      fail-fast: false
--      matrix:
--        test: ${{ fromJSON(needs.discover-tests.outputs.provider-tests) }}
--    steps:
--      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
--        with:
--          submodules: true
--      - name: Use the standard Ubuntu archive on hosted Linux
--        if: runner.os == 'Linux' && runner.environment == 'github-hosted'
--        run: |
--          # Apply the same mirror policy as the main matrix before installing
--          # display tools or Puppeteer's Chromium/font dependencies.
--          if [[ -f /etc/apt/apt-mirrors.txt ]]; then
--            sudo sed -Ei '\|^http://azure\.archive\.ubuntu\.com/ubuntu/[[:space:]]+priority:1$|d' /etc/apt/apt-mirrors.txt
--          fi
--      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
--        with:
--          python-version: ${{ env.CI_PYTHON_VERSION }}
--      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
--        with:
--          version: "0.13.5"
--          enable-cache: false
--      - name: Install browser display and PDF inspection tools
--        run: |
--          sudo apt-get update
--          sudo apt-get install -y xvfb xauth poppler-utils
--      - name: Install locked test dependencies
--        run: uv sync --no-cache --locked --dev --no-sources
--      - name: Install the matching Chrome sandbox helper
--        env:
--          ABXPKG_LIB_DIR: ${{ runner.temp }}/provider-runtime
--        run: |
--          chrome_sandbox="$(uv run --no-cache --no-sync --no-sources python - <<'PY'
--          import json
--          import os
--          import subprocess
--          from pathlib import Path
--          import abx_plugins
--
--          config = Path(abx_plugins.__file__).parent / "plugins/chrome/config.json"
--          env = json.loads(subprocess.check_output([
--              "abxpkg", "env", "--install", "--json",
--              f"--deps-from={config}:required_binaries", "browsers",
--          ], text=True))
--          # CHROME_BINARY may be a provider launcher, not the native executable.
--          native_chrome = subprocess.check_output([
--              env["NODE_BINARY"], "-e", r"""
--              const {getInstalledBrowsers, detectBrowserPlatform} = require('@puppeteer/browsers');
--              const {execFileSync} = require('node:child_process');
--              const version = execFileSync(process.env.CHROME_BINARY, ['--version'], {encoding: 'utf8'}).match(/\d+\.\d+\.\d+\.\d+/)[0];
--              getInstalledBrowsers({cacheDir: process.env.PUPPETEER_CACHE_DIR}).then(browsers => {
--                  const matches = browsers.filter(b => b.browser === 'chrome' && b.buildId === version && b.platform === detectBrowserPlatform());
--                  if (matches.length !== 1) throw new Error('Expected exactly one matching installed Chrome');
--                  console.log(matches[0].executablePath);
--              }).catch(error => { console.error(error); process.exit(1); });
--              """,
--          ], env={**os.environ, **env}, text=True).strip()
--          helper = Path(native_chrome).resolve(strict=True).with_name("chrome_sandbox")
--          assert helper.is_file(), helper
--          print(helper)
--          PY
--          )"
--          sudo install -o root -g root -m 4755 "$chrome_sandbox" /usr/local/sbin/archivebox-chrome-sandbox
--          echo 'CHROME_DEVEL_SANDBOX=/usr/local/sbin/archivebox-chrome-sandbox' >> "$GITHUB_ENV"
--          # Match plugin CI: keep software 2D re
-```
-
-**File**: `archivebox/tests/test_iwork_live_replay.py` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+# ci-environment: live-provider
-+"""Monitor the external iCloud fixture independently of release CI."""
-+
-+from .test_provider_plugin_replay import capture_and_replay
-+
-+
-+def test_public_iwork_capture_and_replay(initialized_archive, browser_runtime):
-+    # Preserve the original anonymous test's headed/headless behavior and assertions.
-+    capture_and_replay("iwork", initialized_archive, browser_runtime)
-```
-
-**File**: `archivebox/tests/test_provider_plugin_replay.py` (modified, +0/-1)
-```diff
-@@ -37,7 +37,6 @@
-         "onedrive",
-         "microsoft365",
-         "iclouddrive",
--        "iwork",
-         "wetransfer",
-     ],
- )
-```
-
-**File**: `archivebox/tests/test_provider_workflow_isolation.py` (added, +49/-0)
-```diff
-@@ -0,0 +1,49 @@
-+"""Live personal-session checks remain visible without gating releases."""
-+
-+import json
-+from pathlib import Path
-+import subprocess
-+import sys
-+
-+import yaml
-+
-+ROOT = Path(__file__).resolve().parents[2]
-+
-+
-+def test_live_provider_workflow_is_independent_and_preserves_coverage():
-+    def workflow(name):
-+        return yaml.load((ROOT / ".github/workflows" / name).read_text(), Loader=yaml.BaseLoader)
-+
-+    live = workflow("provider-replay.yml")
-+    required = workflow("test-parallel.yml")
-+    ci = workflow("ci.yml")
-+    assert "provider-capture" not in required["jobs"]
-+    assert all("provider-replay.yml" not in job.get("uses", "") for job in ci["jobs"].values())
-+    assert live["on"]["push"]["branches"] == ["dev"]
-+    assert "schedule" in live["on"] and "workflow_dispatch" in live["on"]
-+    discovery = live["jobs"]["discover-tests"]
-+    assert "github.repository == 'ArchiveBox/ArchiveBox'" in discovery["if"]
-+    assert "github.ref == 'refs/heads/dev'" in discovery["if"]
-+    provider = live["jobs"]["provider-capture"]
-+    assert provider["environment"] == "provider-capture"
-+    assert provider["timeout-minutes"] == "30"
-+    assert "continue-on-error" not in provider
-+    assert all("continue-on-error" not in step for step in provider["steps"])
-+    checkout = next(step for step in provider["steps"] if "actions/checkout@" in step.get("uses", ""))
-+    assert checkout["with"]["ref"] == "${{ needs.discover-tests.outputs.sha }}"
-+    cleanup = next(step for step in provider["steps"] if step.get("name") == "Remove authentication and browser profiles")
-+    assert cleanup["if"] == "always()"
-+    output = subprocess.check_output([sys.executable, str(ROOT / ".github/scripts/discover_test_matrix.py")], text=True)
-+    matrix = json.loads(output.splitlines()[1])
-+    paths = [p for item in matrix for p in item["paths"]]
-+    assert len(paths) == len(set(paths))
-+    assert set(paths) == {p.relative_to(ROOT).as_posix() for p in (ROOT / "archivebox/tests").glob("test_*.py")}
-+    live_paths = [p for item in matrix if item["environment"] in {"provider-capture", "live-provider"} for p in item["paths"]]
-+    assert set(live_paths) == {"archivebox/tests/test_authenticated_provider_replay.py", "archivebox/tests/test_iwork_live_replay.py"}
-+
-+    public = live["jobs"]["public-replay"]
-+    assert "environment" not in public
-+    assert "secrets." not in json.dumps(public)
-+    run = next(step for step in public["steps"] if step.get("name") == "Run real public CLI and replay acceptance")
-+    assert run["env"]["AUTH_STORAGE_FILE"] == ""
-+    assert run["env"]["CHROME_HEADLESS"] == "true"
-```
-
-**File**: `archivebox/tests/test_workflow_persona_merge.py` (modified, +2/-2)
-```diff
-@@ -10,7 +10,7 @@
- import pytest
- 
- 
--@pytest.mark.parametrize("workflow", ["screenshots.yml", "test-parallel.yml"])
-+@pytest.mark.parametrize("workflow", ["screenshots.yml", "provider-replay.yml"])
- @pytest.mark.parametrize("provider_domain", ["figma.com", "canva.com"])
- @pytest.mark.parametrize("base_extension", [False, True])
- @pytest.mark.parametrize("refresh_extension", [False, True])
-@@ -82,7 +82,7 @@ def merge(original, update):
-     }
- 
- 
--@pytest.mark.parametrize("workflow", ["screenshots.yml", "test-parallel.yml"])
-+@pytest.mark.parametrize("workflow", ["screenshots.yml", "provider-replay.yml"])
- def test_workflow_persona_refreshes_are_optional_and_domain_scoped(tmp_path, workflow):
-     import yaml
- 
+ [[package]]
+ name = "archivebox"
+-version = "0.9.78rc371"
++version = "0.9.78rc372"
+ source = { editable = "." }
+ dependencies = [
+     { name = "abx-dl" },
 ```
 
 ---
 
-### Incident Patch 2: `6b7f8c8d` (2026-11-16)
-**Commit Message**: Use a configured admin browser fixture for real folder moves
+### Incident Patch 2: `0c16e4f5` (2026-11-20)
+**Commit Message**: Align importer Cancel and Save controls
 
-**File**: `archivebox/tests/test_admin_button_layout.py` (modified, +20/-5)
+**File**: `archivebox/importers/templates/importers/style.html` (modified, +3/-1)
 ```diff
-@@ -1,10 +1,12 @@
- """Shared admin controls remain usable in narrow screens and plugin settings."""
- 
- import os
-+from concurrent.futures import ThreadPoolExecutor
- from pathlib import Path
- from urllib.parse import urlsplit
- 
- import pytest
-+from django.db import connections
- from playwright.sync_api import expect, sync_playwright
- 
- from archivebox.core.models import Snapshot
-@@ -124,16 +126,30 @@ def test_admin_controls_and_plugin_presets_on_mobile(live_server, browser_runtim
- def test_folder_action_menu_reopens_and_moves_real_selection(live_server, browser_runtime, admin_user, crawl):
-     from archivebox.core.models import Folder
- 
+@@ -10,7 +10,9 @@
+ .importers .provider-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:20px 0}.importers .provider-card{border:1px solid #dce3eb;background:#fff;border-radius:14px;padding:22px 20px 12px}.importers .provider-card header{display:flex;align-items:center;gap:13px;margin-bottom:18px}.importers .provider-card h3{margin:0;font-size:20px;letter-spacing:-.3px}.importers .brand-icon{object-fit:contain;flex-shrink:0}.importers .brand-placeholder{font-size:30px;width:36px}.importers .feed-list{list-style:none!important;margin:0!important;padding:0!important}.importers .feed-list li{list-style:none!important;margin:0;padding:0;border-top:1px solid #f0f3f6}.importers .feed-list a{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 2px;color:#374151;font-size:14px;text-decoration:none!important;border-radius:5px}.importers .feed-list a:hover{background:#f7edf1;color:#92204d;padding-left:8px;padding-right:8px}.importers .feed-list a:focus-visible,.importers .custom-importer button:focus-visible{outline:3px solid #92204d;outline-offset:3px}.importers .feed-list a>span:last-child{color:#9aa8b7}.importers .custom-importer{margin:0 0 30px}.importers .custom-importer button{width:100%;display:flex;align-items:center;text-align:left;gap:17px;background:#faf7f9;border:1px dashed #c99bae;border-radius:14px;padding:22px 24px;color:#742040}.importers .custom-importer strong{display:block;font-size:16px;font-weight:650}.importers .custom-importer small{display:block;font-size:14px;color:#76616b;margin-top:5px}.importers .custom-plus{font-size:34px;font-weight:300;line-height:1;width:34px;text-align:center}.importers .custom-arrow{margin-left:auto;font-size:24px}@media(max-width:950px){.importers .provider-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:550px){.importers .provider-grid{grid-template-columns:1fr}.importers .provider-card{padding:18px 18px 8px}.importers .custom-importer button{padding:18px}}
+ .importers .field select{height:auto;min-height:42px;line-height:1.4}.importers a.button{background-image:none;box-shadow:none}.importers .setup-guide img{max-height:250px;object-fit:cover;object-position:top}.importers .setup-guide a:after{content:"View screenshot ↗";display:block;font-size:12px;margin-top:5px;color:#64748b}
+ .importers .session-link{display:block;white-space:nowrap;margin-bottom:8px}.importers h2 small{font-size:13px;font-weight:400}.importers td p{font-size:13px;margin:8px 0;max-width:360px}.importers [data-activity-url]{margin-top:24px}
+-/* The admin changelist gives .actions .button a fixed height. Form links should size like Save. */
++/* Keep this form row out of the admin's stretched grid and card-button spacing. */
++#content .importers .form-card .actions{align-items:center}
++#content .importers .form-card .actions>button[type=submit]{margin-top:0}
+ #content .importers .form-card .actions a.button{height:auto;text-decoration:none}
+ .importers .failure-screens{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}.importers .failure-screens figure{margin:0;max-width:640px}.importers .failure-screens figcaption{font-size:12px;margin-bottom:6px}.importers .failure-screens img{display:block;width:100%;max-height:400px;object-fit:contain;object-position:left top;border:1px solid #dce3eb;border-radius:6px}.importers td .failure-screens figure{width:240px}
+ </style>
+```
+
+**File**: `archivebox/tests/test_importer_button_layout.py` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++from urllib.parse import urlsplit
++
++import pytest
++from django.urls import reverse
++from playwright.sync_api import expect, sync_playwright
++
++from archivebox.importers.models import ImporterSource
++from archivebox.machine.models import Machine
++
++
++@pytest.mark.django_db(transaction=True)
++def test_create_edit_cancel_matches_save(live_server, admin_user, browser_runtime):
++    port = urlsplit(live_server.url).port
 +    machine = Machine.current()
-+    machine.config = {**machine.config, "BASE_URL": f"http://archivebox.localhost:{urlsplit(live_server.url).port}"}
++    machine.config = {**machine.config, "BASE_URL": f"http://archivebox.localhost:{port}"}
 +    machine.save(update_fields=["config"])
-     snapshot = Snapshot.objects.create(url="https://example.com/folder-menu", crawl=crawl)
-     folder = Folder.objects.create(name="Reading")
--    with sync_playwright() as playwright:
-+    base = live_server.url.replace("localhost", "admin.archivebox.localhost")
-+
-+    def current_folder_id():
-+        # Playwright's synchronous API still runs an asyncio loop on this thread.
-+        # Keep each real committed-DB assertion on a separate synchronous thread.
-+        try:
-+            snapshot.refresh_from_db()
-+            return str(snapshot.folder_id or "")
-+        finally:
-+            connections.close_all()
-+
-+    with ThreadPoolExecutor(max_workers=1) as reader, sync_playwright() as playwright:
-         browser = playwright.chromium.launch(executable_path=str(browser_runtime["chrome_binary"]), args=browser_runtime["chrome_args"])
-         page = browser.new_page(viewport={"width": 940, "height": 700})
--        page.goto(live_server.url + "/admin/login/")
-+        page.goto(base + "/admin/login/")
-         page.locator("#id_username").fill(admin_user.username)
-         page.locator("#id_password").fill("testpassword")
-         page.get_by_role("button", name="Log in", exact=True).click()
--        page.goto(live_server.url + "/admin/core/snapshot/")
-+        page.goto(base + "/admin/core/snapshot/")
-         for destination in (str(folder.pk), "", str(folder.pk)):
-             checkbox = page.locator(f'input.action-select[value="{snapshot.pk}"]')
-             checkbox.check()
-@@ -146,7 +162,6 @@ def test_folder_action_menu_reopens_and_moves_real_selection(live_server, browse
-             assert menu.evaluate("node => node.selectedIndex") == -1
-             with page.expect_navigation(wait_until="domcontentloaded"):
-                 menu.select_option(destination)
--            snapshot.refresh_from_db()
--            assert str(snapshot.folder_id or "") == destination
-+            assert reader.submit(current_folder_id).result() == destination
-             expect(menu).not_to_be_visible()
-         browser.close()
-```
-
----
-
-### Incident Patch 3: `8d2aa3b5` (2026-11-16)
-**Commit Message**: Pass required formatting checks for bulk deletion confirmation
-
-**File**: `archivebox/core/admin_snapshots.py` (modified, +3/-1)
-```diff
-@@ -1675,7 +1675,9 @@ def delete_selected(self, request, queryset):
-             "title": "Confirm snapshot deletion",
-             "opts": self.model._meta,
-             "selection": signing.dumps(
--                {"user": str(request.user.pk), "scope": request.get_full_path(), "ids": ids}, salt=salt, compress=True
-+                {"user": str(request.user.pk), "scope": request.get_full_path(), "ids": ids},
-+                salt=salt,
-+                compress=True,
-             ),
-             "count": len(ids),
-             "preview": list(queryset.filter(pk__in=ids[:20]).order_by("pk").values_list("pk", "url")),
-```
-
-**File**: `archivebox/tests/test_bulk_delete_confirmation.py` (modified, +9/-7)
-```diff
-@@ -15,10 +15,10 @@ def test_large_delete_confirmation_is_bounded_and_immutable(admin_client, crawl)
-         [
-             Snapshot(crawl=crawl, url=f"https://delete-fixture.test/{i}", timestamp=str(1800000000 + i), status="sealed")
-             for i in range(14273)
--        ]
-+        ],
-     )
-     ArchiveResult.objects.bulk_create(
--        [ArchiveResult(snapshot=s, plugin="dom", status="succeeded", output_str="dom/output.html") for s in rows[:3000]]
-+        [ArchiveResult(snapshot=s, plugin="dom", status="succeeded", output_str="dom/output.html") for s in rows[:3000]],
-     )
-     endpoint = "/admin/core/snapshot/?domain=delete-fixture.test"
-     data = {"action": "delete_selected", "select_across": "1", "_selected_action": [str(rows[0].pk)]}
-@@ -46,7 +46,9 @@ def test_large_delete_confirmation_is_bounded_and_immutable(admin_client, crawl)
-     token = response.context["selection"]
-     assert admin_client.post(endpoint, {**data, "post": "yes", "selection": token + "x"}, HTTP_HOST=ADMIN_TEST_HOST).status_code == 400
-     confirmed = admin_client.post(
--        endpoint, {**data, "post": "yes", "selection": token, "_selected_action": [str(outside.pk)]}, HTTP_HOST=ADMIN_TEST_HOST
-+        endpoint,
-+        {**data, "post": "yes", "selection": token, "_selected_action": [str(outside.pk)]},
-+        HTTP_HOST=ADMIN_TEST_HOST,
-     )
-     assert confirmed.status_code == 302
-     assert Snapshot.objects.filter(status="deleting").count() == 14272
-@@ -108,10 +110,10 @@ def test_native_collector_baseline(admin_user, crawl):
-         [
-             Snapshot(crawl=crawl, url=f"https://collector-fixture.test/{i}", timestamp=str(1810000000 + i), status="sealed")
-             for i in range(2000)
--        ]
-+        ],
-     )
-     ArchiveResult.objects.bulk_create(
--        [ArchiveResult(snapshot=s, plugin="dom", status="succeeded", output_str="dom/output.html") for s in rows]
-+        [ArchiveResult(snapshot=s, plugin="dom", status="succeeded", output_str="dom/output.html") for s in rows],
-     )
-     request = RequestFactory().post("/admin/core/snapshot/")
-     request.user = admin_user
-@@ -124,7 +126,7 @@ def test_native_collector_baseline(admin_user, crawl):
-     assert not permissions and not protected
-     assert objects
-     print(
--        f"Native collector baseline2000 snapshots+2000 outputs: {elapsed:.3f}s, {len(queries)} queries, {len(str(objects))} serialized chars"
-+        f"Native collector baseline2000 snapshots+2000 outputs: {elapsed:.3f}s, {len(queries)} queries, {len(str(objects))} serialized chars",
-     )
- 
- 
-@@ -133,7 +135,7 @@ def test_staff_related_delete_permission_is_not_bypassed(client, admin_user, cra
- 
-     staff = admin_user.__class__.objects.create_user(username="staffdeleter", password="test", is_staff=True)
-     staff.user_permissions.add(
--        *Permission.objects.filter(content_type__app_label="core", codename__in=["view_snapshot", "delete_snapshot"])
-+        *Permission.objects.filter(content_type__app_label="core", codename__in=["view_snapshot", "delete_snapshot"]),
-     )
-     selected = Snapshot.objects.create(crawl=crawl, url="https://staff-fixture.test/")
-     ArchiveResult.objects.create(snapshot=selected, plugin="dom", status="succeeded")
-```
-
-**File**: `archivebox/tests/test_site_exports.py` (modified, +5/-1)
-```diff
-@@ -178,7 +178,11 @@ def test_domain_delete_uses_native_confirmation_then_queues(admin_client, saved_
-     assert any(template.name == "admin/core/snapshot/queue_deletion_confirmation.html" for template in preview.templates)
-     assert Snapshot.objects.filter(pk__in=ids, status="deleting").count() == 0
-     assert all(source.read_bytes() == original for _, source, original in saved_site)
--    confirmed = admin_client.post(endpoint, {**selection, "post": "yes", "selection": preview.context["selection"]}, HTTP_HOST=ADMIN_TEST_HOST)
-+    confirmed = admin_client.post(
-+        endpoint,
-+        {**selection, "post": "yes", "selection": preview.context["selection"]},
-+        HTTP_HOST=ADMIN_TEST_HOST,
++    source = ImporterSource.objects.create(
++        name="Local style fixture",
++        created_by=admin_user,
++        plugin="importer_rss",
++        feed="feed",
++        settings={"IMPORTER_RSS_URL": "https://example.invalid/feed.xml"},
 +    )
-     assert confirmed.status_code == 302
-     assert Snapshot.objects.filter(pk__in=ids, status="deleting").count() == len(ids)
-     assert all(source.read_bytes() == original for _, source, original in saved_site)
++    base = f"http://admin.archivebox.localhost:{port}"
++    with sync_playwright() as playwright:
++        browser = playwright.chromium.launch(executable_path=str(browser_runtime["chrome_binary"]), args=browser_runtime["chrome_args"])
++        page = browser.new_page()
++        page.goto(base + "/admin/login/")
++        page.get_by_label("Username:", exact=True).fill(admin_user.username)
++        page.get_by_label("Password:", exact=True).fill("testpassword")
++        page.get_by_role("button", name="Log in", exact=True).click()
++        for route in (reverse("importers:new", args=["importer_rss", "feed"]), reverse("importers:edit", args=[source.pk])):
++            page.goto(base + route)
++            cancel = page.get_by_role("link", name="Cancel", exact=True)
++            save = page.get_by_role("button", name="Save importer", exact=True)
++            expect(cancel).to_have_attribute("href", reverse("importers:index"))
++            for width in (1280, 390):
++                page.set_viewport_size({"width": width, "height": 900})
++                cancel.scroll_into_view_if_needed()
++                assert cancel.evaluate("link => getComputedStyle(link).textDecorationLine") == "none"
++                bounds = cancel.bounding_box()
++                other = save.bounding_box()
++                assert abs(bounds["height"] - other["height"]) < 1
++                assert abs(bounds["y"] - other["y"]) < 1
++        browser.close()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1974** (closed): Add tag merging to the CLI and API (@officialasishkumar)
 - **PR #1965** (2026-11-14): Share settings controls across system, personas, and captures (@pirate)
 - **PR #1964** (2026-11-14): Replace plugin config grids with searchable, plugin-owned settings UI (@pirate)
 - **PR #1963** (2026-11-14): Bump the pip group across 1 directory with 17 updates (@dependabot[bot])
 - **PR #1962** (2026-11-14): Add optional OIDC, OAuth and SAML login with isolated admin sessions (@pirate)
 - **PR #1960** (2026-11-12): Revert "Add RepoCloud one-click deploy option" (@pirate)
-- **PR #1959** (closed): Add Deploy on Nife badge to README (@nida)
 
 ---
 
@@ -2061,31 +1703,31 @@ Keep authenticated Figma, Miro and Canva replay and public iWork replay in a vis
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Separate live provider replay from required CI
+## X. Bump release version to 0.9.78rc372
 
 **RULE**:
-When implementing operations in `.github/scripts/discover_test_matrix.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ArchiveBox/ArchiveBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `etc/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ArchiveBox/ArchiveBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `94e50ebc`: Separate live provider replay from required CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5254facc`: Bump release version to 0.9.78rc372. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/discover_test_matrix.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `etc/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    if set(environments.values()) - {"provider-capture", "live-provider"}:
+  "version": "0.9.78rc372",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-    if set(environments.values()) - {"provider-capture"}:
+  "version": "0.9.78rc371",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `94e50ebc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5254facc` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

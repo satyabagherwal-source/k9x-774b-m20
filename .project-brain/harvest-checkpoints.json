@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T15:35:21.622Z",
+  "last_updated": "2026-11-20T15:44:05.762Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13971,14 +13971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-archivebox-archivebox",
-      "content_hash": "d755a7204236bddf490d2a91f6a9e1d7382d4ba0aa9fffb75081c9dc18a667bc",
-      "verified_at": "2026-11-16T17:43:54.780Z",
+      "content_hash": "f706c8c2bd463a40b491ba4fb80058d76b87e2bffd7e8d02f3570a7d43c7f168",
+      "verified_at": "2026-11-20T15:43:55.660Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T17:43:54.780Z"
+      "last_updated": "2026-11-20T15:43:55.660Z"
     },
     "buriy/python-readability": {
       "repository": "buriy/python-readability",
@@ -19521,14 +19521,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vcaesar-riot",
-      "content_hash": "5b6318c99d555a4da9abbd33822ffa339293bd09f5c26e02e3f76bdd6e993d49",
-      "verified_at": "2026-11-19T09:43:41.621Z",
+      "content_hash": "a964c7fcfe6798a2853fb2f7d782dcd2cd44e421ab265c32ea6800f6329867a3",
+      "verified_at": "2026-11-20T15:44:05.761Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T09:43:41.621Z"
+      "last_updated": "2026-11-20T15:44:05.761Z"
     },
     "RadixArk/DaisyRose-27B": {
       "repository": "RadixArk/DaisyRose-27B",

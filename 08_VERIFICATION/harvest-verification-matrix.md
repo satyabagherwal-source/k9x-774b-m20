@@ -11565,3 +11565,5 @@
 | `CYCLE-20261120-4OZP` | `2026-11-20T15:35:16.357Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9589` | Yes (`10fec586...`) |
 | `CYCLE-20261120-4RQ1` | `2026-11-20T15:35:19.897Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9590` | Yes (`ee3f5433...`) |
 | `CYCLE-20261120-4T1K` | `2026-11-20T15:35:21.608Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9591` | Yes (`fcf163f2...`) |
+| `CYCLE-20261120-FTOF` | `2026-11-20T15:43:55.647Z` | `ArchiveBox/ArchiveBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9592` | Yes (`f706c8c2...`) |
+| `CYCLE-20261120-G1H1` | `2026-11-20T15:44:05.749Z` | `vcaesar/riot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9593` | Yes (`a964c7fc...`) |

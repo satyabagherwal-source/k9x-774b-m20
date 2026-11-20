@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T15:35:28.006Z",
+  "last_updated": "2026-11-20T15:44:11.237Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-0HC2",
+      "id": "CD-G5PE",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-0HC2-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-G5PE-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -37963,6 +37963,55 @@
       "source_repo": "mintplex-labs-anything-llm",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-79E745-keep-the-chat-in-sync-with-the-route-whe.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-G4D1",
+      "directive_title": "Bump release version to 0.9.78rc372",
+      "source_repo": "archivebox-archivebox-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-G4D1-bump-release-version-to-0-9-78rc372.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-G50P",
+      "directive_title": "Empirical Invariant Guard in codecov.yml",
+      "source_repo": "vcaesar-riot-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-G50P-empirical-invariant-guard-in-codecov-yml.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-8359B4",
+      "directive_title": "Bump release version to 0.9.78rc372",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "archivebox-archivebox",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8359B4-bump-release-version-to-0-9-78rc372.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-FFB9B9",
+      "directive_title": "Empirical Invariant Guard in codecov.yml",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vcaesar-riot",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FFB9B9-empirical-invariant-guard-in-codecov-yml.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-23AD30",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-23AD30-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-20"
     }
   ]

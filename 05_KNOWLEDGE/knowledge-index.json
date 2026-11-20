@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T15:35:28.328Z",
+  "last_updated": "2026-11-20T15:44:11.543Z",
   "total_verified_learnings": 9041,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22481,
+  "total_items": 22489,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0HC2-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-G5PE-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b06580e15bb7297b4335133c77e8b0af3b716d346285fa77a688bc72d05a0613",
+      "content_hash": "6dfac0e9acefb74f4bb0e7a7ef4d4f195169b1da29ef00bca66fee5c87c8a49c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T08:04:05.960Z"
+      "persisted_at": "2026-11-20T15:44:11.237Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b70d02ec09ab2d545cfafd1593a3372cc122e2375ee922747a1c2f862ac783a",
+      "content_hash": "8d1cf85666e7a9680e7b12edc4ebb2de70b548d72b0578b5acba2d22609e47d7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T08:04:06.153Z"
+      "persisted_at": "2026-11-20T15:44:11.389Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3d6d6b2461116eb80a83e8bca44f17d42d961556196d05ae717362b1ecbafc0e",
+      "content_hash": "9b6bd066d64dca5983a9380c8445ed6868aba0c230e021bc44a8a868fd851cf7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T08:04:06.343Z"
+      "persisted_at": "2026-11-20T15:44:11.543Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -258694,14 +258694,19 @@
       "slug": "archivebox-archivebox",
       "platform": "github",
       "source_url": "https://github.com/ArchiveBox/ArchiveBox",
-      "source_version": "de6e9dbe",
-      "content_hash": "d755a7204236bddf490d2a91f6a9e1d7382d4ba0aa9fffb75081c9dc18a667bc",
+      "source_version": "5254facc",
+      "content_hash": "f706c8c2bd463a40b491ba4fb80058d76b87e2bffd7e8d02f3570a7d43c7f168",
       "dossier_path": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "promoted_rules": [
         {
           "number": 8762,
           "title": "Separate live provider replay from required CI",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9592,
+          "title": "Bump release version to 0.9.78rc372",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -258710,7 +258715,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T17:43:54.619Z",
+      "verified_at": "2026-11-20T15:43:55.441Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -258764,10 +258769,10 @@
       "relative_path": "08_VERIFICATION/archivebox-archivebox-verification-protocol-empirical-defect-shield-for-archiveb.md",
       "title": "Verification Protocol: Empirical Defect Shield for ArchiveBox/ArchiveBox",
       "repository": "ArchiveBox/ArchiveBox",
-      "source_version": "de6e9dbe",
-      "content_hash": "c92f4359894eba5cf1888d9ad980d762b8837c986b4c122e16f259f66ac41a8c",
+      "source_version": "5254facc",
+      "content_hash": "0b955b9f5c30e2b7dba4f38dfd5e52d848e8e922e59dbb0aeb09effc24d13160",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T17:43:55.164Z"
+      "persisted_at": "2026-11-20T15:43:56.172Z"
     },
     "rule-8763": {
       "learning_id": "rule-8763",
@@ -258815,9 +258820,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for archivebox-archivebox-learnings",
       "repository": "archivebox-archivebox-learnings",
       "source_version": "HEAD",
-      "content_hash": "00129e920c5cde17072947d8cb119a4b5817d926f6276b49c0b2945ce88b7524",
+      "content_hash": "1aeb45d0cb47f60291f1e5bbd61c6bf1c111f22775a5ebd0b1289a2c71ec0b4d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T17:44:03.684Z"
+      "persisted_at": "2026-11-20T15:44:09.819Z"
     },
     "candidate_directive-core-require-create-on-the-schema-for-the-new-owner-of-alter-owner-to": {
       "item_id": "candidate_directive-core-require-create-on-the-schema-for-the-new-owner-of-alter-owner-to",
@@ -294591,14 +294596,19 @@
       "slug": "vcaesar-riot",
       "platform": "github",
       "source_url": "https://github.com/vcaesar/riot",
-      "source_version": "de6bec55",
-      "content_hash": "5b6318c99d555a4da9abbd33822ffa339293bd09f5c26e02e3f76bdd6e993d49",
+      "source_version": "b565db8d",
+      "content_hash": "a964c7fcfe6798a2853fb2f7d782dcd2cd44e421ab265c32ea6800f6329867a3",
       "dossier_path": "07_PROJECT_LEARNING/vcaesar-riot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vcaesar-riot-learnings.md",
       "promoted_rules": [
         {
           "number": 9364,
           "title": "macOS CI timeout in TestInt8RecallAndExactScores",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9593,
+          "title": "Empirical Invariant Guard in codecov.yml",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -294607,7 +294617,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T09:43:41.433Z",
+      "verified_at": "2026-11-20T15:44:05.555Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -294661,10 +294671,10 @@
       "relative_path": "08_VERIFICATION/vcaesar-riot-verification-protocol-empirical-defect-shield-for-vcaesar-riot.md",
       "title": "Verification Protocol: Empirical Defect Shield for vcaesar/riot",
       "repository": "vcaesar/riot",
-      "source_version": "de6bec55",
-      "content_hash": "9d21e8db447b6a0de02e9c98097a28c23cbe006ca9f7ec775d98da2c8bffc605",
+      "source_version": "b565db8d",
+      "content_hash": "0aef088a5582a6286fddafdd84b6c3cc92c45b6686396d1779211ae7821f907b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T09:43:42.084Z"
+      "persisted_at": "2026-11-20T15:44:06.239Z"
     },
     "rule-9365": {
       "learning_id": "rule-9365",
@@ -294776,9 +294786,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vcaesar-riot-learnings",
       "repository": "vcaesar-riot-learnings",
       "source_version": "HEAD",
-      "content_hash": "7c69055f36e92ee47f8453a7b9a3c69b4d4607156c5d4d8a4d2fc52403ece80d",
+      "content_hash": "c3284200ed8def1161696c318336989f5116b923a99efcb304753cda83032dc2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T09:44:00.817Z"
+      "persisted_at": "2026-11-20T15:44:10.654Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arkivanov-decompose-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arkivanov-decompose-learnings",
@@ -304733,6 +304743,106 @@
       "content_hash": "44b4f53dacd12a75f1cae88e98e1133ebcfce1efdf63299d2047c008bdcb14e5",
       "domain_letter": "G",
       "persisted_at": "2026-11-20T15:35:26.382Z"
+    },
+    "rule-9592": {
+      "learning_id": "rule-9592",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9592,
+      "title": "Bump release version to 0.9.78rc372",
+      "source_url": "https://github.com/ArchiveBox/ArchiveBox",
+      "source_version": "5254facc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T15:43:55.442Z"
+    },
+    "candidate_directive-bump-release-version-to-0-9-78rc372": {
+      "item_id": "candidate_directive-bump-release-version-to-0-9-78rc372",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G4D1-bump-release-version-to-0-9-78rc372.md",
+      "title": "Bump release version to 0.9.78rc372",
+      "repository": "archivebox-archivebox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e40fe721897e4ddc43145f04a639993ba0be5be73468cfeb340106ed97a3a708",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T15:44:09.497Z"
+    },
+    "domain_intelligence-architecture-intelligence-archivebox-archivebox-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-archivebox-archivebox-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-archivebox-archivebox-architecture-intelligence-archivebox-archivebox-core-invar.md",
+      "title": "Architecture Intelligence: ArchiveBox/ArchiveBox Core Invariants",
+      "repository": "ArchiveBox/ArchiveBox",
+      "source_version": "5254facc",
+      "content_hash": "ddc06e090a6eaaf0fc89b3870ef9d15731d4c18d5cb8819180552633f59a368e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T15:43:56.017Z"
+    },
+    "rule-9593": {
+      "learning_id": "rule-9593",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9593,
+      "title": "Empirical Invariant Guard in codecov.yml",
+      "source_url": "https://github.com/vcaesar/riot",
+      "source_version": "b565db8d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T15:44:05.555Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-codecov-yml": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-codecov-yml",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G50P-empirical-invariant-guard-in-codecov-yml.md",
+      "title": "Empirical Invariant Guard in codecov.yml",
+      "repository": "vcaesar-riot-learnings",
+      "source_version": "HEAD",
+      "content_hash": "292db67bc7e2cff75a560767bd2e762ed34d604ec576f42f5a8bda3c9b6198eb",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T15:44:10.345Z"
+    },
+    "domain_intelligence-content-information-intelligence-vcaesar-riot-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-vcaesar-riot-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vcaesar-riot-content-information-intelligence-vcaesar-riot-core-invariants.md",
+      "title": "Content & Information Intelligence: vcaesar/riot Core Invariants",
+      "repository": "vcaesar/riot",
+      "source_version": "b565db8d",
+      "content_hash": "e148d0e6f99e1dd795e83b50eb2f5fad450dee7c3190c2bc77b2b2b04119698d",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T15:44:06.089Z"
+    },
+    "domain_intelligence-architecture-intelligence-archivebox-archivebox-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-archivebox-archivebox-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-archivebox-archivebox-learnings-architecture-intelligence-archivebox-archivebox-.md",
+      "title": "Architecture Intelligence: archivebox-archivebox-learnings Core Invariants",
+      "repository": "archivebox-archivebox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d2848bcdd9707853fe16d41b04412fcb9f9c3ae502278a6f87189afb0bec08f7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T15:44:09.660Z"
+    },
+    "domain_intelligence-content-information-intelligence-vcaesar-riot-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-vcaesar-riot-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vcaesar-riot-learnings-content-information-intelligence-vcaesar-riot-learnings-c.md",
+      "title": "Content & Information Intelligence: vcaesar-riot-learnings Core Invariants",
+      "repository": "vcaesar-riot-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ebe5f9ad77434dd5ae634158464878b191647dbd081fe4cd3ff6bbab14c83d42",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T15:44:10.503Z"
     }
   },
   "ai-builder-brain": {

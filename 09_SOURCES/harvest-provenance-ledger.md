@@ -11598,3 +11598,5 @@ Every entry in this ledger must capture:
 | `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `5091dc87` | Multi-dimensional audit evidence | 2026-11-20T15:35:16.361Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `e75c83bd` | Multi-dimensional audit evidence | 2026-11-20T15:35:19.901Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `b2da1887` | Multi-dimensional audit evidence | 2026-11-20T15:35:21.612Z |
+| `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `5254facc` | Multi-dimensional audit evidence | 2026-11-20T15:43:55.652Z |
+| `learn-github-vcaesar-riot` | `https://github.com/vcaesar/riot` | `b565db8d` | Multi-dimensional audit evidence | 2026-11-20T15:44:05.753Z |
