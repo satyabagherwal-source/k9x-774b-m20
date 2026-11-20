@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T02:27:56.027Z",
+  "last_updated": "2026-11-20T02:39:06.858Z",
   "total_records": 2056,
   "domains": {
     "A": {
@@ -8160,10 +8160,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "73f5ddbeec45a2b88f69dd3c378c32a3d875082f6f89cbd178a781cc401889d6",
-      "created_at": "2026-11-20T00:06:41.640Z"
+      "content_hash": "e55c633c65e7fdb7dce39953f29fed1de87e7238ae00f489905c03c8c02c3d71",
+      "created_at": "2026-11-20T02:39:01.964Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9395,8 +9395,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "ad7408e6c13a3f83ed56ef00b4bdb0ded99a4560580b054b7430e1b8fb3c580a",
-      "created_at": "2026-11-19T20:34:31.581Z"
+      "content_hash": "c47652a81c3b564e74c7dc4a0fd87ac210a31cda0faa031fba7035d2aa89e510",
+      "created_at": "2026-11-20T02:39:06.174Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -14847,8 +14847,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "7d43d4f414183eef4c78c1222ee8c3fa379ef5e80e78ba403f896989fc554f64",
-      "created_at": "2026-11-20T01:56:47.337Z"
+      "content_hash": "d6c2b6178de2777f30319cfdea96ac938d719755e6f01783ee3926881dd343d0",
+      "created_at": "2026-11-20T02:39:06.858Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -23131,8 +23131,8 @@
       "title": "Architecture Intelligence: saltstack/salt Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-saltstack-salt-architecture-intelligence-saltstack-salt-core-invariants.md",
       "repository": "saltstack/salt",
-      "content_hash": "597f4ebd4202b2a6c9d5af7cc4d229f06d41dffa1e266e3ef23c6acbb7cf68c5",
-      "created_at": "2026-11-16T02:17:27.976Z"
+      "content_hash": "d2957b2f70dcad7a774d563f192f7bf5bd94fe2fe56403725730ffe7db5cb776",
+      "created_at": "2026-11-20T02:39:00.183Z"
     },
     "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants",
@@ -23200,8 +23200,8 @@
       "title": "Architecture Intelligence: saltstack-salt-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-saltstack-salt-learnings-architecture-intelligence-saltstack-salt-learnings-core.md",
       "repository": "saltstack-salt-learnings",
-      "content_hash": "3e125bc2c6e9ceea5175d77fb6fef67518999e81b5cb14ee05e608dc225acb03",
-      "created_at": "2026-11-16T02:18:03.418Z"
+      "content_hash": "3d79536196448127b65c2323c79558526b691663877afec5c66d02fdbb877f73",
+      "created_at": "2026-11-20T02:39:05.459Z"
     },
     "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants",

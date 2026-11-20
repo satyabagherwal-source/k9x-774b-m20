@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T02:27:54.780Z",
+  "updated_at": "2026-11-20T02:39:05.108Z",
   "stats": {
-    "total_discovered": 6124,
-    "approved_pending_harvest": 5788,
+    "total_discovered": 6129,
+    "approved_pending_harvest": 5792,
     "harvested_count": 0,
-    "rejected_count": 336,
+    "rejected_count": 337,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5772,
-      "OFFICIAL_DOCUMENTATION": 191,
+      "COMMUNITY_AND_EXPERT": 5776,
+      "OFFICIAL_DOCUMENTATION": 192,
       "STANDARDS_AND_SPECIFICATIONS": 113,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 36,
@@ -132399,6 +132399,109 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
         "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-927FCECE751B": {
+      "id": "SRC-927FCECE751B",
+      "url": "https://github.com/saltstack/salt/blob/master/CODE_OF_CONDUCT.md",
+      "title": "https://github.com/saltstack/salt/blob/master/CODE_OF_CONDUCT.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T02:39:04.928Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
+        "fileName": "saltstack-salt-learnings.md"
+      }
+    },
+    "SRC-20B5ADC24976": {
+      "id": "SRC-20B5ADC24976",
+      "url": "https://docs.saltproject.io/en/master/topics/development/contributing.html",
+      "title": "https://docs.saltproject.io/en/master/topics/development/contributing.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T02:39:04.970Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
+        "fileName": "saltstack-salt-learnings.md"
+      }
+    },
+    "SRC-2BB73EB8D0B5": {
+      "id": "SRC-2BB73EB8D0B5",
+      "url": "https://www.youtube.com/channel/UCpveTIucFx9ljGelW63-BWg",
+      "title": "https://www.youtube.com/channel/UCpveTIucFx9ljGelW63-BWg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T02:39:05.032Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
+        "fileName": "saltstack-salt-learnings.md"
+      }
+    },
+    "SRC-FB5791D6B8CC": {
+      "id": "SRC-FB5791D6B8CC",
+      "url": "https://github.com/saltstack/salt/discussions",
+      "title": "https://github.com/saltstack/salt/discussions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T02:39:05.070Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
+        "fileName": "saltstack-salt-learnings.md"
+      }
+    },
+    "SRC-4B7EFACC825A": {
+      "id": "SRC-4B7EFACC825A",
+      "url": "https://x/",
+      "title": "https://x/",
+      "status": "REJECTED_ANONYMOUS_OR_MISSING_PUBLISHER",
+      "rejection_reasons": [
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T02:39:05.108Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
+        "fileName": "saltstack-salt-learnings.md"
       }
     }
   }

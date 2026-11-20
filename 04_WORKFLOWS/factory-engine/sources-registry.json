@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T02:27:53.399Z",
-    "lastVerified": "2026-11-20T02:27:53.399Z",
+    "lastChecked": "2026-11-20T02:39:04.760Z",
+    "lastVerified": "2026-11-20T02:39:04.760Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T01:42:14.211Z",
+    "lastChecked": "2026-11-20T02:39:00.385Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T01:42:14.211Z"
+    "lastVerified": "2026-11-20T02:39:00.385Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1093,14 +1093,14 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T20:24:25.508Z",
-    "lastVerified": "2026-11-19T20:24:25.508Z",
+    "lastChecked": "2026-11-20T02:39:00.928Z",
+    "lastVerified": "2026-11-20T02:39:00.928Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "9caa662250bd70b1eacb6d24713393a12056f0e8266de229bc387cddf67bd1a3",
+    "contentHash": "1cbd04c8e15e938124780e7a44ee82366770f3b7b72e01187e6b8bc70e76d490",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2577,9 +2577,9 @@
   "sharkdp-hyperfine": {
     "name": "hyperfine",
     "officialUrl": "https://github.com/sharkdp/hyperfine",
-    "lastChecked": "2026-11-18T14:48:26.607Z",
+    "lastChecked": "2026-11-20T02:38:45.311Z",
     "revisionIdentifier": "c5161524",
-    "lastVerified": "2026-11-18T14:48:26.607Z"
+    "lastVerified": "2026-11-20T02:38:45.311Z"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
     "name": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -4402,9 +4402,9 @@
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
     "officialUrl": "https://github.com/skyzh/mini-lsm",
-    "lastChecked": "2026-11-18T20:54:15.271Z",
+    "lastChecked": "2026-11-20T02:38:57.772Z",
     "revisionIdentifier": "df2120d7",
-    "lastVerified": "2026-11-18T20:54:15.271Z"
+    "lastVerified": "2026-11-20T02:38:57.772Z"
   },
   "kucherenko-jscpd": {
     "name": "jscpd",
@@ -4733,11 +4733,21 @@
     "lastVerified": "2026-11-18T22:03:23.057Z"
   },
   "saltstack-salt": {
-    "name": "salt",
+    "name": "saltstack/salt",
     "officialUrl": "https://github.com/saltstack/salt",
-    "lastChecked": "2026-11-18T22:03:25.733Z",
-    "revisionIdentifier": "d32a4535",
-    "lastVerified": "2026-11-18T22:03:25.733Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-20T02:38:58.580Z",
+    "lastVerified": "2026-11-20T02:38:58.580Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-saltstack-salt",
+    "contentHash": "fd478bea7e5b3f333ec615cf84cf091175e7a87f92cf39e4c842e50bb63f132d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 17,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "gluesql-gluesql": {
     "name": "gluesql/gluesql",
@@ -9035,5 +9045,19 @@
     "lastChecked": "2026-11-20T02:27:41.351Z",
     "revisionIdentifier": "b0b6be06",
     "lastVerified": "2026-11-20T02:27:41.351Z"
+  },
+  "stangirard-seo-audits-toolkit": {
+    "name": "seo-audits-toolkit",
+    "officialUrl": "https://github.com/StanGirard/seo-audits-toolkit",
+    "lastChecked": "2026-11-20T02:38:47.748Z",
+    "revisionIdentifier": "c3e95fc4bf",
+    "lastVerified": "2026-11-20T02:38:47.748Z"
+  },
+  "leetcode-mafia-cheetah": {
+    "name": "cheetah",
+    "officialUrl": "https://github.com/leetcode-mafia/cheetah",
+    "lastChecked": "2026-11-20T02:38:50.272Z",
+    "revisionIdentifier": "e66db5be",
+    "lastVerified": "2026-11-20T02:38:50.272Z"
   }
 }

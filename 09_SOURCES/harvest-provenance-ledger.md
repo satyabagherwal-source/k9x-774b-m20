@@ -11472,3 +11472,5 @@ Every entry in this ledger must capture:
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `498c9553` | Multi-dimensional audit evidence | 2026-11-20T02:15:07.962Z |
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `33d981bd` | Multi-dimensional audit evidence | 2026-11-20T02:27:41.821Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `146e1e67` | Multi-dimensional audit evidence | 2026-11-20T02:27:50.259Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `22149587` | Multi-dimensional audit evidence | 2026-11-20T02:38:59.815Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ddd15c3e` | Multi-dimensional audit evidence | 2026-11-20T02:39:01.617Z |

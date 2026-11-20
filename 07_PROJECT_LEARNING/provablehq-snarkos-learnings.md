@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `590bfc1f`  
+> **Source Version**: `ddd15c3e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T20:24:25.513Z  
+> **Timestamp**: 2026-11-20T02:39:00.934Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T20:24:25.508Z  
+> **Harvest Timestamp**: 2026-11-20T02:39:00.928Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Decentralized Operating System for ZK Applications
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4527 stars
+- **Stars / Engagement**: 4526 stars
 
 ---
 
@@ -1992,108 +1992,76 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0135c8b3` (2026-11-19)
-**Commit Message**: Merge pull request #4713 from aleo-labs-protocol/fix/storage-service-tests-bytes-import
+### Incident Patch 1: `09710fb9` (2026-11-19)
+**Commit Message**: Run the bft tests with metrics in one build
 
-Fix the storage-service test imports for the memory feature alone
-
-**File**: `node/bft/storage-service/src/tests.rs` (modified, +3/-5)
-```diff
-@@ -25,16 +25,14 @@ use crate::StorageService;
- use crate::memory::BFTMemoryService;
- #[cfg(feature = "persistent")]
- use crate::persistent::BFTPersistentStorage;
-+#[cfg(feature = "persistent")]
-+use snarkvm::ledger::store::StorageMode;
- use snarkvm::{
-     console::network::MainnetV0,
--    ledger::{
--        narwhal::{BatchHeader, Data, Transmission, TransmissionID},
--        store::StorageMode,
--    },
-+    ledger::narwhal::{BatchHeader, Data, Transmission, TransmissionID},
-     prelude::{Field, Network, PrivateKey, Rng, TestRng, Uniform},
- };
- 
--#[cfg(feature = "persistent")]
- use bytes::Bytes;
- use indexmap::indexset;
- 
-```
-
----
-
-### Incident Patch 2: `de1e69a9` (2026-11-19)
-**Commit Message**: Fix the storage-service test imports for the memory feature alone
-
-tests.rs used Bytes for every service but imported it only with the
-persistent feature, so the tests did not compile with memory alone (or
-with the test feature, which turns on memory only). StorageMode is used
-only by the persistent service, so its import is now behind that feature.
+The second line rebuilt 15 snarkvm and 11 snarkos crates, 3 min 22 s on
+staging run 44589650148, to run 6 tests in 0.7 s. The snarkos binary
+enables metrics by default, and each-feature checks the crate without it.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmLpEstoRCMNsPhVpwB
+Claude-Session: https://claude.ai/code/session_01UYfmmPBwQHC2yRCed8gDf5
 
-**File**: `node/bft/storage-service/src/tests.rs` (modified, +3/-5)
+**File**: `.github/workflows/ci.yml` (modified, +8/-7)
 ```diff
-@@ -25,16 +25,14 @@ use crate::StorageService;
- use crate::memory::BFTMemoryService;
- #[cfg(feature = "persistent")]
- use crate::persistent::BFTPersistentStorage;
-+#[cfg(feature = "persistent")]
-+use snarkvm::ledger::store::StorageMode;
- use snarkvm::{
-     console::network::MainnetV0,
--    ledger::{
--        narwhal::{BatchHeader, Data, Transmission, TransmissionID},
--        store::StorageMode,
--    },
-+    ledger::narwhal::{BatchHeader, Data, Transmission, TransmissionID},
-     prelude::{Field, Network, PrivateKey, Rng, TestRng, Uniform},
- };
- 
--#[cfg(feature = "persistent")]
- use bytes::Bytes;
- use indexmap::indexset;
- 
+@@ -239,15 +239,16 @@ jobs:
+             runs: nextest run -p snarkos-node-consensus -p snarkos-node-rest -p snarkos-cli
+           - name: node
+             runs: nextest run -p snarkos-node -p snarkos-node-bft-storage-service --features snarkos-node-bft-storage-service/memory,snarkos-node-bft-storage-service/persistent
+-          # `helpers::telemetry` compiles only under `metrics`, and nextest
+-          # skips the tests in examples unless a command names one.
+-          # `--no-tests=fail` overrides NEXTEST_NO_TESTS, so a command that
+-          # stops matching any test fails.
++          # Both lines use `metrics`, which the `snarkos` binary enables by
++          # default. `helpers::telemetry` compiles only under it, and a line
++          # without it rebuilds the snarkvm and bft crates. nextest skips the
++          # tests in examples unless a command names one. `--no-tests=fail`
++          # overrides NEXTEST_NO_TESTS, so a command that stops matching any
++          # test fails.
+           - name: bft
+             runs: |
+-              nextest run -p snarkos-node-bft
+-              nextest run -p snarkos-node-bft --lib --features metrics --no-tests=fail -E test(/helpers::telemetry::/)
+-              nextest run -p snarkos-node-bft --example simple_node --no-tests=fail
++              nextest run -p snarkos-node-bft --features metrics
++              nextest run -p snarkos-node-bft --features metrics --example simple_node --no-tests=fail
+           - name: router
+             runs: nextest run -p snarkos-node-router
+           - name: sync
 ```
 
----
-
-### Incident Patch 3: `fefb2cb8` (2026-11-19)
-**Commit Message**: Merge pull request #4710 from aleo-labs-protocol/fix/ledger-service-feature-forwards
-
-Forward serial and test_network features from snarkos-node-bft-ledger-service
-
-**File**: `node/bft/ledger-service/Cargo.toml` (modified, +7/-2)
+**File**: `CI.md` (modified, +4/-3)
 ```diff
-@@ -30,10 +30,15 @@ mock = [ "parking_lot", "tracing" ]
- prover = [ ]
- cuda = [ "snarkvm/cuda" ]
- serial = [
--  "snarkvm/serial"
-+  "snarkvm/serial",
-+  "snarkos-node-metrics?/serial"
- ]
- test = [ "mock", "translucent" ]
--test_network = [ "snarkvm/dev-committee", "snarkvm/dev_genesis_state_root" ]
-+test_network = [
-+  "snarkvm/dev-committee",
-+  "snarkvm/dev_genesis_state_root",
-+  "snarkos-utilities/test_network"
-+]
- translucent = [ "ledger" ]
+@@ -41,7 +41,7 @@ marked "release" only on the third. The other jobs run on every event.
+ | `test (messages)` | hosted | all | 90 | `snarkos-node-bft-events`, `-node-router-messages`, `-node-bft-ledger-service` |
+ | `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-node-rest`, `-cli` |
+ | `test (node)` | `cpu` | all | 90 | `snarkos-node` with `snarkos-node-bft-storage-service` (features `memory,persistent`) |
+-| `test (bft)` | `cpu` | all | 90 | `snarkos-node-bft`; its `helpers::telemetry` tests with `metrics`, as a second build |
++| `test (bft)` | `cpu` | all | 90 | `snarkos-node-bft` with `metrics` |
+ | `test (router)` | `cpu` | all | 90 | `snarkos-node-router` |
+ | `test (sync)` | `cpu` | all | 90 | `snarkos-node-sync` |
+ | `build-snarkos` | `cpu` | all | 60 | release `snarkos` with `test_network`, as an artifact |
+@@ -81,8 +81,9 @@ compile in its line that would not under `cargo test -p <crate>` alone. Check
+ this before moving a crate between lines, for example by comparing
+ `cargo tree -e features` for the line against each crate alone.
  
- [dependencies.anyhow]
+-`test (bft)` has a second line for the tests in `helpers::telemetry`, which
+-compile only under `metrics`. That line builds the library alone. It passes
++`test (bft)` runs with `metrics`, which the `snarkos` binary enables by
++default, so the tests in `helpers::telemetry` compile. The `each-feature` job
++checks the crate without `metrics`. The `simple_node` line passes
+ `--no-tests=fail`, because the step otherwise lets a command match no tests.
+ 
+ [`.config/nextest.toml`](.config/nextest.toml) sets two test threads. Each
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4718** (2026-11-19): Run the router and sync tests in one job (@cbeck88)
+- **PR #4717** (2026-11-19): Run the bft tests with metrics in one build (@cbeck88)
 - **PR #4714** (2026-11-19): Check each crate with each feature on its own in CI (@cbeck88)
 - **PR #4713** (2026-11-19): Fix the storage-service test imports for the memory feature alone (@cbeck88)
 - **PR #4712** (2026-11-19): Use private temp dirs in tests and the db_backup bench (@cbeck88)
 - **PR #4710** (2026-11-19): Forward serial and test_network features from snarkos-node-bft-ledger-service (@cbeck88)
-- **PR #4708** (2026-11-19): Keep the test fixture cache beside the test binary (@cbeck88)
-- **PR #4707** (2026-11-19): Stop CI tests that run longer than 5 minutes (@cbeck88)
 
 ---
 
@@ -2113,34 +2081,41 @@ Forward serial and test_network features from snarkos-node-bft-ledger-service
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in tests.rs
+## X. Run the bft tests with metrics in one build
 
 **RULE**:
-When implementing operations in `node/bft/storage-service/src/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0135c8b3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `09710fb9`: Run the bft tests with metrics in one build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/bft/storage-service/src/tests.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[cfg(feature = "persistent")]
-use snarkvm::ledger::store::StorageMode;
-    ledger::narwhal::{BatchHeader, Data, Transmission, TransmissionID},
+          # Both lines use `metrics`, which the `snarkos` binary enables by
+          # default. `helpers::telemetry` compiles only under it, and a line
+          # without it rebuilds the snarkvm and bft crates. nextest skips the
+          # tests in examples unless a command names one. `--no-tests=fail`
+          # overrides NEXTEST_NO_TESTS, so a command that stops matching any
+          # test fails.
+              nextest run -p snarkos-node-bft --features metrics
+              nextest run -p snarkos-node-bft --features metrics --example simple_node --no-tests=fail
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    ledger::{
-        narwhal::{BatchHeader, Data, Transmission, TransmissionID},
-        store::StorageMode,
-    },
-#[cfg(feature = "persistent")]
+          # `helpers::telemetry` compiles only under `metrics`, and nextest
+          # skips the tests in examples unless a command names one.
+          # `--no-tests=fail` overrides NEXTEST_NO_TESTS, so a command that
+          # stops matching any test fails.
+              nextest run -p snarkos-node-bft
+              nextest run -p snarkos-node-bft --lib --features metrics --no-tests=fail -E test(/helpers::telemetry::/)
+              nextest run -p snarkos-node-bft --example simple_node --no-tests=fail
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0135c8b3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `09710fb9` are properly handled with clean fallback behavior.

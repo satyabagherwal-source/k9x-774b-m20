@@ -11439,3 +11439,5 @@
 | `CYCLE-20261120-JPH1` | `2026-11-20T02:15:07.957Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9495` | Yes (`0589e20f...`) |
 | `CYCLE-20261120-ZV5L` | `2026-11-20T02:27:41.817Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9496` | Yes (`1f6db0bd...`) |
 | `CYCLE-20261120-01NZ` | `2026-11-20T02:27:50.255Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9497` | Yes (`a85ab319...`) |
+| `CYCLE-20261120-EEAR` | `2026-11-20T02:38:59.811Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9498` | Yes (`fd478bea...`) |
+| `CYCLE-20261120-EFOS` | `2026-11-20T02:39:01.612Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9471` | Yes (`1cbd04c8...`) |
