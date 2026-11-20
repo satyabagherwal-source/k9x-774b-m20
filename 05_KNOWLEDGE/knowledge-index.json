@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T06:03:05.336Z",
+  "last_updated": "2026-11-20T06:11:34.071Z",
   "total_verified_learnings": 9025,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22238,
+  "total_items": 22241,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a71761dd67f43a3d3f8788741021fa4a8dd0bb4b02544a70027681a3d642f18d",
+      "content_hash": "dc250511cacfcc10642f88494ddb959432617640bdfa5c16af6284703a24531d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T01:12:49.886Z"
+      "persisted_at": "2026-11-20T06:11:33.922Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f0a58f344168092e3d4f9917e6aa677a915b63d08d2dff19328e06cb7f29d6a",
+      "content_hash": "f8d3bda36dd1097c6dc51e06e63e19683187e97089b3dbc461ce6e9a63afd285",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T01:12:50.003Z"
+      "persisted_at": "2026-11-20T06:11:34.071Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -239254,13 +239254,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "slug": "shifthackz-sdai-kmp",
+      "slug": "shifthackz-stable-diffusion-kmp",
       "platform": "github",
-      "source_url": "https://github.com/ShiftHackZ/SDAI-KMP",
-      "source_version": "440ea2b0",
-      "content_hash": "9c23d536dd9c76c5a7cc80011faa27608522c5f43b6ebebb55f073b904ecee53",
-      "dossier_path": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_version": "82ebd42d",
+      "content_hash": "aed8459abce934d5e4d70cab0c0befa6d0abeea4e262becec984e9e9d0f30ef9",
+      "dossier_path": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
       "promoted_rules": [
         {
           "number": 8552,
@@ -239271,6 +239271,11 @@
           "number": 8692,
           "title": "large LoRA connections, setup timeouts, and traffic accounting",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 9525,
+          "title": "Announce nightly builds and attach APKs in Telegram comments",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239278,7 +239283,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:07:43.814Z",
+      "verified_at": "2026-11-20T06:10:55.882Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239317,25 +239322,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-sdai-kmp-architecture-intelligence-shifthackz-sdai-kmp-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-stable-diffusion-kmp-architecture-intelligence-shifthackz-sdai-kmp-co.md",
       "title": "Architecture Intelligence: ShiftHackZ/SDAI-KMP Core Invariants",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "source_version": "3d9670a7",
-      "content_hash": "785fc78e23a3b990d780deee221973f02072b0a0d9de4486c6dcd37c91489688",
+      "source_version": "82ebd42d",
+      "content_hash": "d25af336062db81210419d54608f5caf3518b836f3cf9432acf6a3015d186372",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T00:37:27.532Z"
+      "persisted_at": "2026-11-20T06:10:56.456Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-sdai-kmp": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-sdai-kmp",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/shifthackz-sdai-kmp-verification-protocol-empirical-defect-shield-for-shifthackz.md",
+      "relative_path": "08_VERIFICATION/shifthackz-stable-diffusion-kmp-verification-protocol-empirical-defect-shield-fo.md",
       "title": "Verification Protocol: Empirical Defect Shield for ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "source_version": "440ea2b0",
-      "content_hash": "7797c318a1169f44c52b6d79a156a94548fbf7dcf103b65110341e53fc708e65",
+      "source_version": "82ebd42d",
+      "content_hash": "53e28abf090bb57f5bf62bef9b5a934e59f428019a33954ca9141a9a35b14fdd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:07:44.354Z"
+      "persisted_at": "2026-11-20T06:10:56.611Z"
     },
     "learn-github-nolabs-ai-nono": {
       "learning_id": "learn-github-nolabs-ai-nono",
@@ -246415,8 +246420,8 @@
       "slug": "fujiapple852-trippy",
       "platform": "github",
       "source_url": "https://github.com/fujiapple852/trippy",
-      "source_version": "6adca02f",
-      "content_hash": "73432a9b46f68d257d167511b5358cce7c6e923736e1d930493df56e891b9b8f",
+      "source_version": "42a3508e",
+      "content_hash": "db0e91ae253fc6073a41982f642ca851421ee773a582bb7dec1b1cafee97c8fb",
       "dossier_path": "07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
       "promoted_rules": [
@@ -246431,7 +246436,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T04:13:18.240Z",
+      "verified_at": "2026-11-20T06:10:48.256Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246473,10 +246478,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fujiapple852-trippy-quality-verification-intelligence-fujiapple852-trippy-core-i.md",
       "title": "Quality & Verification Intelligence: fujiapple852/trippy Core Invariants",
       "repository": "fujiapple852/trippy",
-      "source_version": "6adca02f",
-      "content_hash": "2d94a3b0e05bb8e8e698031856d9e7f6eac6e81da30a01f9adf4cba52696eff1",
+      "source_version": "42a3508e",
+      "content_hash": "abe6b0fb6d85a2916db2ba54d50e46ba630f1da0c7a71dc0423e827c7e9fe392",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:13:18.571Z"
+      "persisted_at": "2026-11-20T06:10:48.692Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy",
@@ -246550,9 +246555,9 @@
       "title": "Quality & Verification Intelligence: fujiapple852-trippy-learnings Core Invariants",
       "repository": "fujiapple852-trippy-learnings",
       "source_version": "HEAD",
-      "content_hash": "28838a8f72eba3ffd12977c6811fdb9d58bf57cc5605db00501c58514e4a6a08",
+      "content_hash": "7fda6da62f5153654f1005187c3c8b394844a2db9ae56df7458af3e30221265b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:14:00.008Z"
+      "persisted_at": "2026-11-20T06:11:30.464Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy-learnings",
@@ -253457,9 +253462,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for shifthackz-stable-diffusion-kmp-learnings",
       "repository": "shifthackz-stable-diffusion-kmp-learnings",
       "source_version": "HEAD",
-      "content_hash": "eb2d07e0780687c26b972b11c27ea80a3861c11783eb441d4cf86000b7018510",
+      "content_hash": "c70200878a726bf560fa3fa8463c5bc21a17416a134d8a1a7d02c99b0854a7ff",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T02:17:37.387Z"
+      "persisted_at": "2026-11-20T06:11:31.638Z"
     },
     "domain_intelligence-architecture-intelligence-saltstack-salt-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-saltstack-salt-learnings-core-invariants",
@@ -294671,13 +294676,13 @@
       "item_id": "candidate_directive-build-download-onnx-runtime-archives-from-npmmirror",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-BKXK-build-download-onnx-runtime-archives-from-npmmirror.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZR5N-build-download-onnx-runtime-archives-from-npmmirror.md",
       "title": "build): download ONNX Runtime archives from npmmirror",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c6c634ee3e3ad6a22a8079804cdaabb86351254780c331568c868d827cc4c75b",
+      "content_hash": "99d7d06e0125580de987ee973e1a1c3fd53b2f78953a28b8bfa1b5aa76c0a811",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T01:12:49.593Z"
+      "persisted_at": "2026-11-20T06:11:33.564Z"
     },
     "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -294687,9 +294692,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "091d75213043539adbaca1d41bd74bbdbe6dbc8b7fc40579c0f87cb4d968e4be",
+      "content_hash": "a071ec2aa8f1bb67823c0a7c3784077a0cb510d0a6f0acbc996d5afebf59e215",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T01:12:49.731Z"
+      "persisted_at": "2026-11-20T06:11:33.747Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -301094,6 +301099,44 @@
       "content_hash": "3d56922409d29d593bf9f0cad029160ed779ff0f5cd01f0d333c124cacd41725",
       "domain_letter": "B",
       "persisted_at": "2026-11-20T06:03:04.321Z"
+    },
+    "rule-9525": {
+      "learning_id": "rule-9525",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9525,
+      "title": "Announce nightly builds and attach APKs in Telegram comments",
+      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_version": "82ebd42d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T06:10:55.882Z"
+    },
+    "candidate_directive-announce-nightly-builds-and-attach-apks-in-telegram-comments": {
+      "item_id": "candidate_directive-announce-nightly-builds-and-attach-apks-in-telegram-comments",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZPE8-announce-nightly-builds-and-attach-apks-in-telegram-comments.md",
+      "title": "Announce nightly builds and attach APKs in Telegram comments",
+      "repository": "shifthackz-stable-diffusion-kmp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c0ff67e0c548ffc07521ceaebe9e5b242a7fa2f8444670c0edb8a607f79561e8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T06:11:31.280Z"
+    },
+    "domain_intelligence-architecture-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-invaria": {
+      "item_id": "domain_intelligence-architecture-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-stable-diffusion-kmp-learnings-architecture-intelligence-shifthackz-s.md",
+      "title": "Architecture Intelligence: shifthackz-stable-diffusion-kmp-learnings Core Invariants",
+      "repository": "shifthackz-stable-diffusion-kmp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "360945ae01ef4b4f84a9e558786be1125f2e534cb9bcb8736489f51ec0e803e7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T06:11:31.450Z"
     }
   },
   "ai-builder-brain": {

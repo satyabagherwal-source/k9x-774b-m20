@@ -11479,3 +11479,6 @@
 | `CYCLE-20261120-O0XT` | `2026-11-20T06:02:26.369Z` | `CrawlCove/xml-sitemap-validator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md` | Yes (`6c509ebf...`) |
 | `CYCLE-20261120-O5LI` | `2026-11-20T06:02:32.406Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9524` | Yes (`6be3e1b5...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T06:03:02.865Z` | `crawlcove-crawlcove-sitemap-validator` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-00DA3196` [Domain J] | Yes (`f1cebbcb...`) |
+| `CYCLE-20261120-YSDA` | `2026-11-20T06:10:48.478Z` | `fujiapple852/trippy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md` | Yes (`db0e91ae...`) |
+| `CYCLE-20261120-YY8M` | `2026-11-20T06:10:56.086Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9525` | Yes (`aed8459a...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T06:11:30.068Z` | `fujiapple852-trippy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-AF6D9DEB` [Domain D] | Yes (`a4c55c95...`) |

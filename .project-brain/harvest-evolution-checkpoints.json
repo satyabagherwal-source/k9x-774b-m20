@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T06:03:05.492Z",
+  "last_updated": "2026-11-20T06:11:34.222Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T05:16:32.158Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-20T01:12:49.120Z",
+      "processed_at": "2026-11-20T06:11:31.807Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2978,7 +2978,7 @@
       "staged_for_review": 1
     },
     "fujiapple852-trippy-learnings.md": {
-      "processed_at": "2026-11-17T04:13:59.662Z",
+      "processed_at": "2026-11-20T06:11:30.068Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -3128,7 +3128,7 @@
       "staged_for_review": 1
     },
     "shifthackz-stable-diffusion-kmp-learnings.md": {
-      "processed_at": "2026-11-16T02:17:36.937Z",
+      "processed_at": "2026-11-20T06:11:30.667Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3538,7 +3538,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2457,
-  "total_canonical_promoted": 415,
-  "total_staged_for_review": 1853
+  "total_dossiers_evaluated": 2460,
+  "total_canonical_promoted": 416,
+  "total_staged_for_review": 1855
 }

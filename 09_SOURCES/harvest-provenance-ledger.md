@@ -11512,3 +11512,6 @@ Every entry in this ledger must capture:
 | `learn-github-crawlcove-xml-sitemap-validator` | `https://github.com/CrawlCove/crawlcove-sitemap-validator` | `97bda8e7` | Multi-dimensional audit evidence | 2026-11-20T06:02:26.374Z |
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `4e4df138` | Multi-dimensional audit evidence | 2026-11-20T06:02:32.410Z |
 | `learn-dom-j-00da3196` | `project://crawlcove-crawlcove-sitemap-validator` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md` | 2026-11-20T06:03:02.865Z |
+| `learn-github-fujiapple852-trippy` | `https://github.com/fujiapple852/trippy` | `42a3508e` | Multi-dimensional audit evidence | 2026-11-20T06:10:48.483Z |
+| `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/Stable-Diffusion-KMP` | `82ebd42d` | Multi-dimensional audit evidence | 2026-11-20T06:10:56.091Z |
+| `learn-dom-d-af6d9deb` | `project://fujiapple852-trippy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md` | 2026-11-20T06:11:30.068Z |

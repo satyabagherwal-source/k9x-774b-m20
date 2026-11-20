@@ -4493,10 +4493,10 @@
     "repository": "fujiapple852/trippy",
     "platform": "github",
     "sourceUrl": "https://github.com/fujiapple852/trippy",
-    "sourceVersion": "6adca02f",
+    "sourceVersion": "42a3508e",
     "license": "Apache-2.0",
-    "contentHash": "73432a9b46f68d257d167511b5358cce7c6e923736e1d930493df56e891b9b8f",
-    "lastHarvestedAt": "2026-11-17T04:13:18.396Z",
+    "contentHash": "db0e91ae253fc6073a41982f642ca851421ee773a582bb7dec1b1cafee97c8fb",
+    "lastHarvestedAt": "2026-11-20T06:10:48.483Z",
     "learningId": "learn-github-fujiapple852-trippy"
   },
   "builderio-builder": {
@@ -8593,10 +8593,10 @@
     "repository": "ShiftHackZ/SDAI-KMP",
     "platform": "github",
     "sourceUrl": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
-    "sourceVersion": "3c2e3539",
+    "sourceVersion": "82ebd42d",
     "license": "AGPL-3.0",
-    "contentHash": "b35defe8f3c3da47ee56d03a8355376cb8a3b81dfca7608dca0b25cb0b4175f4",
-    "lastHarvestedAt": "2026-11-16T02:17:27.118Z",
+    "contentHash": "aed8459abce934d5e4d70cab0c0befa6d0abeea4e262becec984e9e9d0f30ef9",
+    "lastHarvestedAt": "2026-11-20T06:10:56.091Z",
     "learningId": "learn-github-shifthackz-sdai-kmp"
   },
   "android-kotlin-multiplatform-samples": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T06:03:05.336Z",
-  "total_records": 2082,
+  "last_updated": "2026-11-20T06:11:33.747Z",
+  "total_records": 2084,
   "domains": {
     "A": {
       "total": 17,
@@ -58,7 +58,7 @@
       ]
     },
     "D": {
-      "total": 843,
+      "total": 844,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -902,7 +902,8 @@
         "DOM-D-9D38D4A5",
         "DOM-D-34CA9B71",
         "DOM-D-5CB7BD90",
-        "DOM-D-C031D2B0"
+        "DOM-D-C031D2B0",
+        "DOM-D-AF6D9DEB"
       ]
     },
     "E": {
@@ -988,7 +989,7 @@
       ]
     },
     "G": {
-      "total": 356,
+      "total": 357,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1345,7 +1346,8 @@
         "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-core-invariants",
         "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-core-invariants",
-        "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-invaria"
       ]
     },
     "H": {
@@ -18643,10 +18645,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: ShiftHackZ/SDAI-KMP Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-sdai-kmp-architecture-intelligence-shifthackz-sdai-kmp-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-stable-diffusion-kmp-architecture-intelligence-shifthackz-sdai-kmp-co.md",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "content_hash": "785fc78e23a3b990d780deee221973f02072b0a0d9de4486c6dcd37c91489688",
-      "created_at": "2026-11-15T00:37:27.532Z"
+      "content_hash": "d25af336062db81210419d54608f5caf3518b836f3cf9432acf6a3015d186372",
+      "created_at": "2026-11-20T06:10:56.456Z"
     },
     "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-core-invariants",
@@ -21174,8 +21176,8 @@
       "title": "Quality & Verification Intelligence: fujiapple852/trippy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fujiapple852-trippy-quality-verification-intelligence-fujiapple852-trippy-core-i.md",
       "repository": "fujiapple852/trippy",
-      "content_hash": "2d94a3b0e05bb8e8e698031856d9e7f6eac6e81da30a01f9adf4cba52696eff1",
-      "created_at": "2026-11-17T04:13:18.571Z"
+      "content_hash": "abe6b0fb6d85a2916db2ba54d50e46ba630f1da0c7a71dc0423e827c7e9fe392",
+      "created_at": "2026-11-20T06:10:48.692Z"
     },
     "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-learnings-core-invariants",
@@ -21183,8 +21185,8 @@
       "title": "Quality & Verification Intelligence: fujiapple852-trippy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fujiapple852-trippy-learnings-quality-verification-intelligence-fujiapple852-tri.md",
       "repository": "fujiapple852-trippy-learnings",
-      "content_hash": "28838a8f72eba3ffd12977c6811fdb9d58bf57cc5605db00501c58514e4a6a08",
-      "created_at": "2026-11-17T04:14:00.008Z"
+      "content_hash": "7fda6da62f5153654f1005187c3c8b394844a2db9ae56df7458af3e30221265b",
+      "created_at": "2026-11-20T06:11:30.464Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-invariants",
@@ -33212,8 +33214,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "091d75213043539adbaca1d41bd74bbdbe6dbc8b7fc40579c0f87cb4d968e4be",
-      "created_at": "2026-11-20T01:12:49.731Z"
+      "content_hash": "a071ec2aa8f1bb67823c0a7c3784077a0cb510d0a6f0acbc996d5afebf59e215",
+      "created_at": "2026-11-20T06:11:33.747Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -35118,6 +35120,57 @@
       "repository": "kcl-lang-kcl-learnings",
       "content_hash": "3d56922409d29d593bf9f0cad029160ed779ff0f5cd01f0d333c124cacd41725",
       "created_at": "2026-11-20T06:03:04.321Z"
+    },
+    "DOM-D-AF6D9DEB": {
+      "record_id": "DOM-D-AF6D9DEB",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): fujiapple852/trippy",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md`  \n> **Source**: github ([https://github.com/fujiapple852/trippy](https://github.com/fujiapple852/trippy))  \n> **Source Version**: `42a3508e`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-struct",
+      "content_hash": "a4c55c951326423776950375440a07e705b65db1a0da8f42dce309dd1a1d16b3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md`  \n> **Source**: github ([https://github.com/fujiap -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md`  \n> **Source**: github ([https://github.com/fujiap",
+      "provenance": {
+        "source_uri": "project://fujiapple852-trippy/fujiapple852-trippy-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T06:10:59.386Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (fujiapple852-trippy)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of fujiapple852-trippy"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T06:11:30.042Z"
+    },
+    "domain_intelligence-architecture-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-invaria": {
+      "record_id": "domain_intelligence-architecture-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-invaria",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: shifthackz-stable-diffusion-kmp-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-stable-diffusion-kmp-learnings-architecture-intelligence-shifthackz-s.md",
+      "repository": "shifthackz-stable-diffusion-kmp-learnings",
+      "content_hash": "360945ae01ef4b4f84a9e558786be1125f2e534cb9bcb8736489f51ec0e803e7",
+      "created_at": "2026-11-20T06:11:31.450Z"
     }
   }
 }

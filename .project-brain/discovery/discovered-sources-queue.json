@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T06:03:03.212Z",
+  "updated_at": "2026-11-20T06:11:30.830Z",
   "stats": {
-    "total_discovered": 6252,
-    "approved_pending_harvest": 5912,
+    "total_discovered": 6255,
+    "approved_pending_harvest": 5915,
     "harvested_count": 0,
     "rejected_count": 340,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5894,
+      "COMMUNITY_AND_EXPERT": 5897,
       "OFFICIAL_DOCUMENTATION": 195,
       "STANDARDS_AND_SPECIFICATIONS": 115,
       "ENGINEERING_BLOGS": 4,
@@ -135187,6 +135187,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
         "fileName": "crawlcove-crawlcove-sitemap-validator-learnings.md"
+      }
+    },
+    "SRC-62602A22F9F3": {
+      "id": "SRC-62602A22F9F3",
+      "url": "https://github.com/$%7BGITHUB_REPOSITORY",
+      "title": "https://github.com/$%7BGITHUB_REPOSITORY",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T06:11:30.711Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+        "fileName": "shifthackz-stable-diffusion-kmp-learnings.md"
+      }
+    },
+    "SRC-2F2D1DFE86CE": {
+      "id": "SRC-2F2D1DFE86CE",
+      "url": "https://github.com/tdlib/telegram-bot-api.git",
+      "title": "https://github.com/tdlib/telegram-bot-api.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T06:11:30.768Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+        "fileName": "shifthackz-stable-diffusion-kmp-learnings.md"
+      }
+    },
+    "SRC-D30548994059": {
+      "id": "SRC-D30548994059",
+      "url": "https://api.telegram.org/",
+      "title": "https://api.telegram.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T06:11:30.830Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+        "fileName": "shifthackz-stable-diffusion-kmp-learnings.md"
       }
     }
   }

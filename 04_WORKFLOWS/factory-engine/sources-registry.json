@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T06:02:35.527Z",
-    "lastVerified": "2026-11-20T06:02:35.527Z",
+    "lastChecked": "2026-11-20T06:10:59.270Z",
+    "lastVerified": "2026-11-20T06:10:59.270Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T05:29:00.397Z",
-    "lastVerified": "2026-11-20T05:29:00.397Z",
+    "lastChecked": "2026-11-20T06:10:58.523Z",
+    "lastVerified": "2026-11-20T06:10:58.523Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -421,8 +421,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T00:59:03.186Z",
-    "lastVerified": "2026-11-20T00:59:03.186Z",
+    "lastChecked": "2026-11-20T06:10:53.395Z",
+    "lastVerified": "2026-11-20T06:10:53.395Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -3787,11 +3787,21 @@
     "lastVerified": "2026-11-20T00:24:20.907Z"
   },
   "fujiapple852-trippy": {
-    "name": "trippy",
+    "name": "fujiapple852/trippy",
     "officialUrl": "https://github.com/fujiapple852/trippy",
-    "lastChecked": "2026-11-18T18:09:44.811Z",
-    "revisionIdentifier": "6adca02f",
-    "lastVerified": "2026-11-18T18:09:44.811Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-20T06:10:47.792Z",
+    "lastVerified": "2026-11-20T06:10:47.792Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-fujiapple852-trippy",
+    "contentHash": "db0e91ae253fc6073a41982f642ca851421ee773a582bb7dec1b1cafee97c8fb",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
     "name": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -5584,12 +5594,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "citusdata-citus": {
-    "name": "citusdata/citus",
+    "name": "citus",
     "officialUrl": "https://github.com/citusdata/citus",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-19T00:49:53.943Z",
-    "lastVerified": "2026-11-19T00:49:53.943Z",
+    "lastChecked": "2026-11-20T06:10:55.984Z",
+    "lastVerified": "2026-11-20T06:10:55.984Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-citusdata-citus",
@@ -5598,7 +5608,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a5635dec"
   },
   "gotham-rs-gotham": {
     "name": "gotham",
@@ -5969,9 +5980,9 @@
   "cycloidio-terracognita": {
     "name": "terracognita",
     "officialUrl": "https://github.com/cycloidio/terracognita",
-    "lastChecked": "2026-11-19T01:55:04.196Z",
+    "lastChecked": "2026-11-20T06:10:50.979Z",
     "revisionIdentifier": "802bd4b5",
-    "lastVerified": "2026-11-19T01:55:04.196Z"
+    "lastVerified": "2026-11-20T06:10:50.979Z"
   },
   "netflix-dynomite": {
     "name": "dynomite",
@@ -9450,5 +9461,29 @@
     "lastChecked": "2026-11-20T06:02:23.757Z",
     "revisionIdentifier": "c7ba0b05",
     "lastVerified": "2026-11-20T06:02:23.757Z"
+  },
+  "berkaycubuk-kitsune": {
+    "name": "kitsune",
+    "officialUrl": "https://github.com/berkaycubuk/kitsune",
+    "lastChecked": "2026-11-20T06:10:45.920Z",
+    "revisionIdentifier": "616da5b1",
+    "lastVerified": "2026-11-20T06:10:45.920Z"
+  },
+  "shifthackz-stable-diffusion-kmp": {
+    "name": "ShiftHackZ/SDAI-KMP",
+    "officialUrl": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-20T06:10:55.065Z",
+    "lastVerified": "2026-11-20T06:10:55.065Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-shifthackz-sdai-kmp",
+    "contentHash": "aed8459abce934d5e4d70cab0c0befa6d0abeea4e262becec984e9e9d0f30ef9",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 6,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
