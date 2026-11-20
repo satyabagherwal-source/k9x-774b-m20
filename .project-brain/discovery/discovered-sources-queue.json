@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T22:42:06.748Z",
+  "updated_at": "2026-11-20T22:49:33.142Z",
   "stats": {
-    "total_discovered": 6774,
-    "approved_pending_harvest": 6395,
+    "total_discovered": 6779,
+    "approved_pending_harvest": 6400,
     "harvested_count": 0,
     "rejected_count": 379,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6370,
+      "COMMUNITY_AND_EXPERT": 6375,
       "OFFICIAL_DOCUMENTATION": 230,
       "STANDARDS_AND_SPECIFICATIONS": 121,
       "ENGINEERING_BLOGS": 5,
@@ -146398,6 +146398,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
         "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-9087BBD783D8": {
+      "id": "SRC-9087BBD783D8",
+      "url": "https://github.com/restatedev/restate-web-ui/releases/download/v1.1.8/ui-v1.1.8.tar",
+      "title": "https://github.com/restatedev/restate-web-ui/releases/download/v1.1.8/ui-v1.1.8.tar",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:49:32.017Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md",
+        "fileName": "restatedev-restate-learnings.md"
+      }
+    },
+    "SRC-F1F15F788E84": {
+      "id": "SRC-F1F15F788E84",
+      "url": "https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.7",
+      "title": "https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.7",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:49:32.054Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md",
+        "fileName": "restatedev-restate-learnings.md"
+      }
+    },
+    "SRC-4C1CB41409B1": {
+      "id": "SRC-4C1CB41409B1",
+      "url": "https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.8",
+      "title": "https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:49:32.092Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md",
+        "fileName": "restatedev-restate-learnings.md"
+      }
+    },
+    "SRC-6A0564429865": {
+      "id": "SRC-6A0564429865",
+      "url": "https://github.com/restatedev/restate-web-ui-crate",
+      "title": "https://github.com/restatedev/restate-web-ui-crate",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:49:32.128Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md",
+        "fileName": "restatedev-restate-learnings.md"
+      }
+    },
+    "SRC-A5B40299E911": {
+      "id": "SRC-A5B40299E911",
+      "url": "https://github.com/renovatebot/github-action/compare/v46.3.13...v46.3.14",
+      "title": "https://github.com/renovatebot/github-action/compare/v46.3.13...v46.3.14",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T22:49:33.142Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
       }
     }
   }

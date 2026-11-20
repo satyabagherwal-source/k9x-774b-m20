@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T22:42:06.957Z",
+  "last_updated": "2026-11-20T22:49:34.156Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-ZE10",
+      "id": "CD-N7BB",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-ZE10-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-N7BB-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -39502,6 +39502,55 @@
       "source_repo": "rustls-rustls",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-714D49-grammar-in-post-quantum-readme.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-N5WU",
+      "directive_title": "[Worker] Turn vq-lifecycle-refined on once a partition requires v1.8.2 anyway",
+      "source_repo": "restatedev-restate-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-N5WU-worker-turn-vq-lifecycle-refined-on-once-a-partition-requires-v1-8-2-anyway.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-N6O8",
+      "directive_title": "build(deps): bump renovatebot/github-action from 46.3.13 to 46.3.14",
+      "source_repo": "okteto-okteto-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-N6O8-build-deps-bump-renovatebot-github-action-from-46-3-13-to-46-3-14.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-B13E5D",
+      "directive_title": "[Worker] Turn vq-lifecycle-refined on once a partition requires v1.8.2 anyway",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "restatedev-restate",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B13E5D--worker-turn-vq-lifecycle-refined-on-onc.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-1F3655",
+      "directive_title": "build(deps): bump renovatebot/github-action from 46.3.13 to 46.3.14",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "okteto-okteto",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1F3655-build-deps-bump-renovatebot-github-actio.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-A5A898",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A5A898-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-20"
     }
   ]

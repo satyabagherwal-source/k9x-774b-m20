@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "8c4fae3a",
+    "sourceVersion": "112af098",
     "license": "Apache-2.0",
-    "contentHash": "61e12621247893585a2051368227783767cc77792d932d05cdb0ad6017c60caf",
-    "lastHarvestedAt": "2026-11-19T21:08:18.407Z",
+    "contentHash": "b2ee57e092f67fcd70d7452d0b3a7223e391a9e59babee623620edbfa6507a0c",
+    "lastHarvestedAt": "2026-11-20T22:49:28.666Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "7e9a3b23",
+    "sourceVersion": "7b61a76b",
     "license": "NOASSERTION",
-    "contentHash": "96568a1a87569317985432b70f4fa7dbd126962560fb957cf773834b9f479519",
-    "lastHarvestedAt": "2026-11-19T07:51:04.996Z",
+    "contentHash": "d3b520de71649a73406f17f913ea5c99ad5e4a4b2c68962b931469b59ccd4eb9",
+    "lastHarvestedAt": "2026-11-20T22:49:21.839Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {

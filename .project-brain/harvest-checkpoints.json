@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T22:41:36.534Z",
+  "last_updated": "2026-11-20T22:49:28.675Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5316,14 +5316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-okteto-okteto",
-      "content_hash": "61e12621247893585a2051368227783767cc77792d932d05cdb0ad6017c60caf",
-      "verified_at": "2026-11-19T21:08:18.415Z",
+      "content_hash": "b2ee57e092f67fcd70d7452d0b3a7223e391a9e59babee623620edbfa6507a0c",
+      "verified_at": "2026-11-20T22:49:28.674Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T21:08:18.415Z"
+      "last_updated": "2026-11-20T22:49:28.674Z"
     },
     "supervc-stack/VectorChord": {
       "repository": "supervc-stack/VectorChord",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "96568a1a87569317985432b70f4fa7dbd126962560fb957cf773834b9f479519",
-      "verified_at": "2026-11-19T07:51:05.003Z",
+      "content_hash": "d3b520de71649a73406f17f913ea5c99ad5e4a4b2c68962b931469b59ccd4eb9",
+      "verified_at": "2026-11-20T22:49:21.846Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T07:51:05.003Z"
+      "last_updated": "2026-11-20T22:49:21.846Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",

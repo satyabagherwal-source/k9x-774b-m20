@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T22:41:39.509Z",
-    "lastVerified": "2026-11-20T22:41:39.509Z",
+    "lastChecked": "2026-11-20T22:49:31.781Z",
+    "lastVerified": "2026-11-20T22:49:31.781Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T22:07:25.291Z",
+    "lastChecked": "2026-11-20T22:49:30.808Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T22:07:25.291Z"
+    "lastVerified": "2026-11-20T22:49:30.808Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1028,9 +1028,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-20T17:12:12.688Z",
+    "lastChecked": "2026-11-20T22:49:25.650Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-20T17:12:12.688Z"
+    "lastVerified": "2026-11-20T22:49:25.650Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -2581,12 +2581,12 @@
     "lastVerified": "2026-11-20T20:28:13.925Z"
   },
   "ontos-ai-knowhere": {
-    "name": "Ontos-AI/knowhere",
+    "name": "knowhere",
     "officialUrl": "https://github.com/Ontos-AI/knowhere",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-19T19:12:08.382Z",
-    "lastVerified": "2026-11-19T19:12:08.382Z",
+    "lastChecked": "2026-11-20T22:49:28.276Z",
+    "lastVerified": "2026-11-20T22:49:28.276Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ontos-ai-knowhere",
@@ -2595,7 +2595,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3352f322"
   },
   "sharkdp-hyperfine": {
     "name": "hyperfine",
@@ -3345,12 +3346,12 @@
     "officialUrl": "https://github.com/okteto/okteto",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T21:08:17.406Z",
-    "lastVerified": "2026-11-19T21:08:17.406Z",
+    "lastChecked": "2026-11-20T22:49:27.793Z",
+    "lastVerified": "2026-11-20T22:49:27.793Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-okteto-okteto",
-    "contentHash": "61e12621247893585a2051368227783767cc77792d932d05cdb0ad6017c60caf",
+    "contentHash": "b2ee57e092f67fcd70d7452d0b3a7223e391a9e59babee623620edbfa6507a0c",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
@@ -7160,14 +7161,14 @@
     "officialUrl": "https://github.com/restatedev/restate",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T07:51:04.006Z",
-    "lastVerified": "2026-11-19T07:51:04.006Z",
+    "lastChecked": "2026-11-20T22:49:20.786Z",
+    "lastVerified": "2026-11-20T22:49:20.786Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-restatedev-restate",
-    "contentHash": "96568a1a87569317985432b70f4fa7dbd126962560fb957cf773834b9f479519",
+    "contentHash": "d3b520de71649a73406f17f913ea5c99ad5e4a4b2c68962b931469b59ccd4eb9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10953,5 +10954,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "miso-belica-justext": {
+    "name": "justext",
+    "officialUrl": "https://github.com/miso-belica/justext",
+    "lastChecked": "2026-11-20T22:49:18.439Z",
+    "revisionIdentifier": "5fadda90",
+    "lastVerified": "2026-11-20T22:49:18.439Z"
+  },
+  "mikelikesdesign-swiftui-experiments": {
+    "name": "SwiftUI-experiments",
+    "officialUrl": "https://github.com/mikelikesdesign/SwiftUI-experiments",
+    "lastChecked": "2026-11-20T22:49:20.680Z",
+    "revisionIdentifier": "8deaa990",
+    "lastVerified": "2026-11-20T22:49:20.680Z"
   }
 }

@@ -11679,3 +11679,5 @@ Every entry in this ledger must capture:
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `796b8d3b` | Multi-dimensional audit evidence | 2026-11-20T22:39:52.376Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `778697dd` | Multi-dimensional audit evidence | 2026-11-20T22:41:36.527Z |
 | `learn-dom-d-6e87e9f5` | `project://skyhook-io-radar` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md` | 2026-11-20T22:42:05.596Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `7b61a76b` | Multi-dimensional audit evidence | 2026-11-20T22:49:21.839Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `112af098` | Multi-dimensional audit evidence | 2026-11-20T22:49:28.666Z |

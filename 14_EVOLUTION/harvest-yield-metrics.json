@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T22:41:36.532Z",
-  "total_cycles_completed": 11089,
-  "total_learnings_persisted": 11089,
-  "total_rules_promoted": 10439,
+  "last_updated": "2026-11-20T22:49:28.671Z",
+  "total_cycles_completed": 11091,
+  "total_learnings_persisted": 11091,
+  "total_rules_promoted": 10441,
   "history": [
-    {
-      "timestamp": "2026-11-20T00:06:36.532Z",
-      "repository": "vinceglb/FileKit",
-      "learningId": "learn-github-vinceglb-filekit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T00:06:38.551Z",
-      "repository": "Agent-Field/agentfield",
-      "learningId": "learn-github-agent-field-agentfield",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T00:06:41.204Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1403,6 +1389,20 @@
       "repository": "skyhook-io/radar",
       "learningId": "learn-github-skyhook-io-radar",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T22:49:21.843Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T22:49:28.671Z",
+      "repository": "okteto/okteto",
+      "learningId": "learn-github-okteto-okteto",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

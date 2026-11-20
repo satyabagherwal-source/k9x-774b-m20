@@ -11646,3 +11646,5 @@
 | `CYCLE-20261120-AQET` | `2026-11-20T22:39:52.373Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9648` | Yes (`3ad7fc8f...`) |
 | `CYCLE-20261120-CYRV` | `2026-11-20T22:41:36.523Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md` | Yes (`b026fe51...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T22:42:05.596Z` | `skyhook-io-radar` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6E87E9F5` [Domain D] | Yes (`97b968de...`) |
+| `CYCLE-20261120-MXT7` | `2026-11-20T22:49:21.835Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9649` | Yes (`d3b520de...`) |
+| `CYCLE-20261120-N32V` | `2026-11-20T22:49:28.663Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9650` | Yes (`b2ee57e0...`) |
